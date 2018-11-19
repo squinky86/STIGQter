@@ -24,21 +24,56 @@
 #include <QNetworkAccessManager>
 #include <QNetworkReply>
 #include <QNetworkRequest>
+#include <QXmlStreamReader>
 
-CCIThread::CCIThread(DbManager *db) : _db(db)
+CCIThread::CCIThread()
 {
 }
 
 void CCIThread::run()
 {
+    //open database in this thread
+    DbManager db;
+
     //populate CCIs
+
+    //Step 1: download NIST Families
     QUrl nist("https://nvd.nist.gov/800-53/Rev4/");
-    //TODO: download Families
     QString rmf = DownloadPage(nist);
 
-    //read the families into "rmf"
-    qDebug() << QDir::currentPath();
-    qDebug() << rmf;
+    //Step 2: Convert NIST page to XHTML
+    rmf = HTML2XHTML(rmf);
+
+    //read the families
+    QXmlStreamReader xml(rmf);
+    int numFamilies = 0;
+    while (!xml.atEnd() && !xml.hasError())
+    {
+        xml.readNext();
+        if (xml.isStartElement() && (xml.name() == "a"))
+        {
+            if (xml.attributes().hasAttribute("id") && xml.attributes().hasAttribute("href"))
+            {
+                QString id("");
+                QString href("");
+                foreach(const QXmlStreamAttribute &attr, xml.attributes())
+                {
+                    if (attr.name() == "id")
+                        id = attr.value().toString();
+                    else if (attr.name() == "href")
+                        href = attr.value().toString();
+                }
+                if (id.endsWith("FamilyLink"))
+                {
+                    QString family(xml.readElementText());
+                    QString acronym(family.left(2));
+                    QString familyName(family.right(family.length() - 5));
+                    db.AddFamily(acronym, familyName);
+                    numFamilies++;
+                }
+            }
+        }
+    }
 
     //TODO: download Controls
     //TODO: download CCIs

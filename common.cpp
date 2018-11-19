@@ -18,9 +18,13 @@
  */
 
 #include "common.h"
+#include "tidy.h"
+#include "tidybuffio.h"
 
 #include <QEventLoop>
+#include <QString>
 #include <QtNetwork>
+#include <iostream>
 
 QString DownloadPage(QUrl u)
 {
@@ -30,5 +34,40 @@ QString DownloadPage(QUrl u)
     QObject::connect(response,SIGNAL(finished()),&event,SLOT(quit()));
     event.exec();
     QString html = response->readAll();
+    delete response;
     return html;
+}
+
+QString HTML2XHTML(QString s)
+{
+    TidyBuffer output = {nullptr};
+    TidyBuffer err = {nullptr};
+
+    int rc = -1;
+    bool ok = false;
+
+    TidyDoc tdoc = tidyCreate();
+    ok = tidyOptSetBool( tdoc, TidyXhtmlOut, yes );
+    if (ok)
+        rc = tidySetErrorBuffer(tdoc, &err);
+    if (rc >= 0)
+        rc = tidyParseString(tdoc, s.toStdString().c_str());
+    if (rc >= 0)
+        rc = tidyCleanAndRepair(tdoc);
+    if (rc >= 0)
+        rc = tidyRunDiagnostics(tdoc);
+    if (rc > 1)
+        rc = (tidyOptSetBool(tdoc, TidyForceOutput, yes) ? rc : -1);
+    if (rc >= 0)
+        rc = tidySaveBuffer(tdoc, &output);
+    if ( rc >= 0 )
+        s = QString::fromUtf8(reinterpret_cast<char*>(output.bp));
+    else
+        qDebug() << "A severe error (" << rc << ") occurred.";
+
+    tidyBufFree(&output);
+    tidyBufFree(&err);
+    tidyRelease(tdoc);
+
+    return s;
 }

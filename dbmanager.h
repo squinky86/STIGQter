@@ -27,10 +27,14 @@ class DbManager
 {
 public:
     DbManager();
-    DbManager(const QString& path);
+    DbManager(const QString& connectionName);
+    DbManager(const QString& path, const QString& connectionName);
+
+    void AddFamily(QString acronym, QString description);
+
 private:
-    QSqlDatabase m_db;
     bool UpdateDatabaseFromVersion(int version);
+    bool CheckDatabase(QSqlDatabase &db);
 };
 
 #endif // DBMANAGER_H

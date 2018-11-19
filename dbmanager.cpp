@@ -23,45 +23,80 @@
 #include <QCoreApplication>
 #include <QFile>
 #include <QSqlQuery>
+#include <QSqlError>
 #include <QtDebug>
+#include <QThread>
 
-DbManager::DbManager() : DbManager(QCoreApplication::applicationDirPath() + "/STIGQter.db") { }
+DbManager::DbManager() : DbManager(QString::number(reinterpret_cast<quint64>(QThread::currentThreadId()))) { }
 
-DbManager::DbManager(const QString& path)
+DbManager::DbManager(const QString& connectionName) : DbManager(QCoreApplication::applicationDirPath() + "/STIGQter.db", connectionName) { }
+
+DbManager::DbManager(const QString& path, const QString& connectionName)
 {
     bool initialize = false;
 
-    //check if database exists or create it
+    //check if database file exists or create it
     if (!QFile::exists(path))
         initialize = true;
 
     //open SQLite Database
-    m_db = QSqlDatabase::addDatabase("QSQLITE");
-    m_db.setDatabaseName(path);
+    QSqlDatabase db = QSqlDatabase::database(connectionName);
+    if (!db.isValid())
+    {
+        db = QSqlDatabase::addDatabase("QSQLITE", connectionName);
+        db.setDatabaseName(path);
+    }
 
-    if (!m_db.open())
-        qDebug() << "Error: connection with database fail";
-    else
-        qDebug() << "Database: connection ok";
+    if (!db.open())
+        qDebug() << "Error: Unable to open SQLite database.";
 
     if (initialize)
         UpdateDatabaseFromVersion(0);
 }
 
+void DbManager::AddFamily(QString acronym, QString description)
+{
+    QSqlDatabase db;
+    if (this->CheckDatabase(db))
+    {
+        QSqlQuery q(db);
+        q.prepare("INSERT INTO Family (Acronym, Description) VALUES(:acronym, :description)");
+        q.bindValue(":acronym", acronym);
+        q.bindValue(":description", description);
+        q.exec();
+        db.commit();
+    }
+}
+
+bool DbManager::CheckDatabase(QSqlDatabase &db)
+{
+    db = QSqlDatabase::database(QString::number(reinterpret_cast<quint64>(QThread::currentThreadId())));
+    if (!db.isOpen())
+        db.open();
+    if (!db.isOpen())
+        return false;
+    return db.isValid();
+}
+
 bool DbManager::UpdateDatabaseFromVersion(int version)
 {
-    if (version <= 0)
+    QSqlDatabase db;
+    if (this->CheckDatabase(db))
     {
-        //New database; initial setup
-        QSqlQuery q("CREATE TABLE `Family` ( "
-                    "`id`	INTEGER PRIMARY KEY AUTOINCREMENT, "
-                    "`Acronym`	TEXT UNIQUE, "
-                    "`Description`	TEXT UNIQUE"
-                    ")");
-        q.exec();
+        if (version <= 0)
+        {
+            //New database; initial setups
+            QSqlQuery q(db);
+            q.prepare("CREATE TABLE `Family` ( "
+                        "`id`	INTEGER PRIMARY KEY AUTOINCREMENT, "
+                        "`Acronym`	TEXT UNIQUE, "
+                        "`Description`	TEXT UNIQUE"
+                        ")");
+            q.exec();
 
-        //write changes from update
-        m_db.commit();
+            //write changes from update
+            db.commit();
+        }
     }
 
     return EXIT_SUCCESS;

@@ -20,16 +20,16 @@
 #ifndef CCITHREAD_H
 #define CCITHREAD_H
 
+#include <QProgressBar>
 #include <QThread>
 #include "dbmanager.h"
 
 class CCIThread : public QThread
 {
 public:
-    CCIThread(DbManager *db);
+    CCIThread();
 
 private:
-    DbManager *_db;
     void run();
 };
 

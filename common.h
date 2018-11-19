@@ -23,5 +23,6 @@
 #include <QNetworkReply>
 
 QString DownloadPage(QUrl u);
+QString HTML2XHTML(QString s);
 
 #endif // COMMON_H

@@ -49,7 +49,7 @@ void STIGQter::UpdateCCIs()
     DisableInput();
 
     //Create thread to download CCIs and keep GUI active
-    CCIThread *t = new CCIThread(db);
+    CCIThread *t = new CCIThread();
     connect(t, SIGNAL(finished()), this, SLOT(CompletedThread()));
     threads.append(t);
     t->start();
