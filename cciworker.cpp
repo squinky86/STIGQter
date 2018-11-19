@@ -117,30 +117,32 @@ void CCIWorker::process()
         QUrl control(nist.toString() + s);
         QString c = DownloadPage(control);
         c = HTML2XHTML(c);
-        QFile file("qt.txt");
-        file.open(QIODevice::WriteOnly);
-        QTextStream stream(&file);
-        stream << c;
         xml = new QXmlStreamReader(c);
         while (!xml->atEnd() && !xml->hasError())
         {
             xml->readNext();
-            if (xml->isStartElement() && (xml->name() == "h2") && xml->attributes().hasAttribute("id"))
+            if (xml->isStartElement() && (xml->name() == "title"))
             {
-                QString id("");
-                foreach (const QXmlStreamAttribute &attr, xml->attributes())
+                QString title(xml->readElementText().trimmed());
+                QStringRef control(&title, 16, title.length()-16);
+                QStringList ctrl = control.toString().split(" - ");
+                qDebug() << ctrl;
+                //TODO: insert controls
+            }
+            else if (xml->isStartElement() && (xml->name() == "span"))
+            {
+                if (xml->attributes().hasAttribute("id"))
                 {
-                    if (attr.name() == "id")
-                        id = attr.value().toString();
-                }
-                if (id.endsWith("TitleHeader"))
-                {
-                    QString control(xml->readElementText());
-                    while (!xml->atEnd())
+                    QString id("");
+                    foreach (const QXmlStreamAttribute &attr, xml->attributes())
                     {
-                    xml->readNextStartElement();
-                    QString description(xml->readElementText());
-                    qDebug() << xml->name() << ": " << description;
+                        if (attr.name() == "id")
+                            id = attr.value().toString();
+                    }
+                    if (id.endsWith("EnhancementNameDT"))
+                    {
+                        QString enhancement(xml->readElementText().trimmed());
+                        qDebug() << "\t" << enhancement;
                     }
                 }
             }
