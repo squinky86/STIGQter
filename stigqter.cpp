@@ -53,6 +53,7 @@ void STIGQter::UpdateCCIs()
     CCIWorker *c = new CCIWorker();
     c->moveToThread(t);
     connect(t, SIGNAL(started()), c, SLOT(process()));
+    connect(c, SIGNAL(finished()), t, SLOT(quit()));
     connect(t, SIGNAL(finished()), this, SLOT(CompletedThread()));
     connect(c, SIGNAL(initialize(int, int)), this, SLOT(Initialize(int, int)));
     connect(c, SIGNAL(progress(int)), this, SLOT(Progress(int)));
@@ -82,6 +83,7 @@ void STIGQter::EnableInput()
     ui->btnClearCCIs->setEnabled(true);
     ui->btnClearSTIGs->setEnabled(true);
     ui->btnCreateCKL->setEnabled(true);
+    ui->btnDeleteCKL->setEnabled(true);
     ui->btnFindingsReport->setEnabled(true);
     ui->btnImportCCIs->setEnabled(true);
     ui->btnImportCKL->setEnabled(true);
@@ -92,19 +94,16 @@ void STIGQter::EnableInput()
 
 void STIGQter::Initialize(int max, int val)
 {
-    qDebug() << "Got here " << max << ", " << val;
-    ui->progressBar->setMaximum(max);
     ui->progressBar->reset();
+    ui->progressBar->setMaximum(max);
     ui->progressBar->setValue(val);
 }
 
 void STIGQter::Progress(int val)
 {
-    qDebug() << "Got here 2 " << val << "(" << ui->progressBar->minimum() << "," << ui->progressBar->maximum() << "," << ui->progressBar->value() << ")";
     if (val < 0)
     {
         ui->progressBar->setValue(ui->progressBar->value() + 1);
-    qDebug() << "Got here 3 " << ui->progressBar->value();
     }
     else
         ui->progressBar->setValue(val);
@@ -115,6 +114,7 @@ void STIGQter::DisableInput()
     ui->btnClearCCIs->setEnabled(false);
     ui->btnClearSTIGs->setEnabled(false);
     ui->btnCreateCKL->setEnabled(false);
+    ui->btnDeleteCKL->setEnabled(false);
     ui->btnFindingsReport->setEnabled(false);
     ui->btnImportCCIs->setEnabled(false);
     ui->btnImportCKL->setEnabled(false);

@@ -26,10 +26,15 @@
 #include <QtNetwork>
 #include <iostream>
 
+#define VERSION "0.0.1"
+
 QString DownloadPage(QUrl u)
 {
     QNetworkAccessManager manager;
-    QNetworkReply *response = manager.get(QNetworkRequest(QUrl(u)));
+    QNetworkRequest req = QNetworkRequest(QUrl(u));
+    QString userAgent = QString("STIGQter/") + VERSION;
+    req.setRawHeader("User-Agent", userAgent.toStdString().c_str());
+    QNetworkReply *response = manager.get(req);
     QEventLoop event;
     QObject::connect(response,SIGNAL(finished()),&event,SLOT(quit()));
     event.exec();
@@ -60,7 +65,7 @@ QString HTML2XHTML(QString s)
         rc = (tidyOptSetBool(tdoc, TidyForceOutput, yes) ? rc : -1);
     if (rc >= 0)
         rc = tidySaveBuffer(tdoc, &output);
-    if ( rc >= 0 )
+    if (rc >= 0 && (output.bp))
         s = QString::fromUtf8(reinterpret_cast<char*>(output.bp));
     else
         qDebug() << "A severe error (" << rc << ") occurred.";
