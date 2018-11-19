@@ -17,7 +17,7 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#include "ccithread.h"
+#include "cciworker.h"
 #include "stigqter.h"
 #include "ui_stigqter.h"
 
@@ -49,9 +49,15 @@ void STIGQter::UpdateCCIs()
     DisableInput();
 
     //Create thread to download CCIs and keep GUI active
-    CCIThread *t = new CCIThread();
+    QThread* t = new QThread;
+    CCIWorker *c = new CCIWorker();
+    c->moveToThread(t);
+    connect(t, SIGNAL(started()), c, SLOT(process()));
     connect(t, SIGNAL(finished()), this, SLOT(CompletedThread()));
+    connect(c, SIGNAL(initialize(int, int)), this, SLOT(Initialize(int, int)));
+    connect(c, SIGNAL(progress(int)), this, SLOT(Progress(int)));
     threads.append(t);
+
     t->start();
 }
 
@@ -82,6 +88,26 @@ void STIGQter::EnableInput()
     ui->btnImportSTIGs->setEnabled(true);
     ui->btnOpenCKL->setEnabled(true);
     ui->btnQuit->setEnabled(true);
+}
+
+void STIGQter::Initialize(int max, int val)
+{
+    qDebug() << "Got here " << max << ", " << val;
+    ui->progressBar->setMaximum(max);
+    ui->progressBar->reset();
+    ui->progressBar->setValue(val);
+}
+
+void STIGQter::Progress(int val)
+{
+    qDebug() << "Got here 2 " << val << "(" << ui->progressBar->minimum() << "," << ui->progressBar->maximum() << "," << ui->progressBar->value() << ")";
+    if (val < 0)
+    {
+        ui->progressBar->setValue(ui->progressBar->value() + 1);
+    qDebug() << "Got here 3 " << ui->progressBar->value();
+    }
+    else
+        ui->progressBar->setValue(val);
 }
 
 void STIGQter::DisableInput()

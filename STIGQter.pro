@@ -45,14 +45,14 @@ SOURCES += \
         main.cpp \
         stigqter.cpp \
     dbmanager.cpp \
-    ccithread.cpp \
-    common.cpp
+    common.cpp \
+    cciworker.cpp
 
 HEADERS += \
         stigqter.h \
     dbmanager.h \
-    ccithread.h \
-    common.h
+    common.h \
+    cciworker.h
 
 FORMS += \
         stigqter.ui

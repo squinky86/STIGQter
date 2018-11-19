@@ -39,6 +39,8 @@ public:
 private slots:
     void UpdateCCIs();
     void CompletedThread();
+    void Initialize(int max, int val = 0);
+    void Progress(int val);
 
 private:
     Ui::STIGQter *ui;
