@@ -78,3 +78,29 @@ QString HTML2XHTML(QString s)
     ret = ret.replace("&nbsp;", " ");
     return ret;
 }
+
+bool DownloadFile(QUrl u, QFile *f)
+{
+    bool close = false;
+    if (!f->isOpen())
+    {
+        f->open(QIODevice::WriteOnly);
+        if (!f->isOpen())
+            return false;
+        close = true;
+    }
+    QNetworkAccessManager manager;
+    QNetworkRequest req = QNetworkRequest(u);
+    QString userAgent = QString("STIGQter/") + VERSION;
+    req.setRawHeader("User-Agent", userAgent.toStdString().c_str());
+    QNetworkReply *response = manager.get(req);
+    QEventLoop event;
+    QObject::connect(response,SIGNAL(finished()),&event,SLOT(quit()));
+    event.exec();
+    f->write(response->readAll());
+    delete response;
+
+    if (close)
+        f->close();
+    return true;
+}

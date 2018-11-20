@@ -115,6 +115,8 @@ void DbManager::DeleteCCIs()
         q.exec();
         q.prepare("DELETE FROM Control");
         q.exec();
+        q.prepare("DELETE FROM CCI");
+        q.exec();
         db.commit();
     }
 }
@@ -222,6 +224,14 @@ bool DbManager::UpdateDatabaseFromVersion(int version)
                         "`title`	INTEGER, "
                         "FOREIGN KEY(`FamilyID`) REFERENCES `Family`(`id`) "
                         ")");
+            q.exec();
+            q.prepare("CREATE TABLE `CCI` ( "
+                      "`id`	INTEGER PRIMARY KEY AUTOINCREMENT, "
+                      "`ControlId`	INTEGER, "
+                      "`cci`    INTEGER, "
+                      "`definition`	TEXT, "
+                      "FOREIGN KEY(`ControlId`) REFERENCES `Control`(`id`) "
+                      ")");
             q.exec();
 
             //write changes from update

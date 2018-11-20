@@ -20,9 +20,11 @@
 #ifndef COMMON_H
 #define COMMON_H
 
+#include <QFile>
 #include <QNetworkReply>
 
 QString DownloadPage(QUrl u);
+bool DownloadFile(QUrl u, QFile *f);
 QString HTML2XHTML(QString s);
 
 #endif // COMMON_H

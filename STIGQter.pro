@@ -65,5 +65,6 @@ qnx: target.path = /tmp/$${TARGET}/bin
 else: unix:!android: target.path = /opt/$${TARGET}/bin
 !isEmpty(target.path): INSTALLS += target
 
-LIBS += -ltidy
-INCLUDEPATH += ../tidy/include
+LIBS += -ltidy -lzip
+INCLUDEPATH += ../tidy/include \
+               ../libzip/lib

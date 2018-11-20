@@ -35,5 +35,6 @@ void WorkerCCIDelete::process()
     emit progress(-1);
 
     //complete
+    emit updateStatus("Done!");
     emit finished();
 }

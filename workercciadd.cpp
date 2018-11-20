@@ -20,10 +20,13 @@
 #include "workercciadd.h"
 #include "common.h"
 
+#include <zip.h>
+
 #include <QDir>
 #include <QNetworkAccessManager>
 #include <QNetworkReply>
 #include <QNetworkRequest>
+#include <QTemporaryFile>
 #include <QXmlStreamReader>
 
 WorkerCCIAdd::WorkerCCIAdd()
@@ -114,7 +117,7 @@ void WorkerCCIAdd::process()
     }
 
     //Step 5: get all control and enhancement information
-    emit initialize(controls.size() + 1, 1);
+    emit initialize(controls.size() + 3, 1);
     foreach (const QString &s, controls)
     {
         emit updateStatus("Indexing " + s + "…");
@@ -181,8 +184,53 @@ void WorkerCCIAdd::process()
         emit progress(-1);
     }
 
-    //TODO: download CCIs
+    QTemporaryFile tmpFile;
+    QByteArray xmlFile;
+    if (tmpFile.open())
+    {
+        struct zip *za;
+        int err;
+        struct zip_stat sb;
+        struct zip_file *zf;
+        QUrl ccis("http://iasecontent.disa.mil/stigs/zip/u_cci_list.zip");
+        DownloadFile(ccis, &tmpFile);
+        za = zip_open(tmpFile.fileName().toStdString().c_str(), 0, &err);
+        if (za != nullptr)
+        {
+            for (int i = 0; i < zip_get_num_entries(za, 0); i++)
+            {
+                if (zip_stat_index(za, i, 0, &sb) == 0)
+                {
+                    QString name(sb.name);
+                    if (name.endsWith(".xml", Qt::CaseInsensitive))
+                    {
+                        zf = zip_fopen_index(za, i, 0);
+                        if (zf)
+                        {
+                            int sum = 0;
+                            while (sum < sb.size)
+                            {
+                                char buf[1024];
+                                int len = zip_fread(zf, buf, 1024);
+                                if (len > 0)
+                                {
+                                    xmlFile.append(buf, len);
+                                    sum += len;
+                                }
+                            }
+                            zip_fclose(zf);
+                        }
+                    }
+                }
+            }
+            zip_close(za);
+        }
+        tmpFile.close();
+    }
+    xml = new QXmlStreamReader(xmlFile);
+    QFile::remove(tmpFile.fileName());
 
     //complete
+    emit updateStatus("Done!");
     emit finished();
 }
