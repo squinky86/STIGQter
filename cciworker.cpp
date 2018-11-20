@@ -147,6 +147,8 @@ void CCIWorker::process()
                 }
             }
         }
+        if (xml->hasError())
+            qDebug() << xml->error();
         delete xml;
         emit progress(-1);
     }

@@ -52,7 +52,7 @@ QString HTML2XHTML(QString s)
     bool ok = false;
 
     TidyDoc tdoc = tidyCreate();
-    ok = tidyOptSetBool( tdoc, TidyXhtmlOut, yes );
+    ok = tidyOptSetBool( tdoc, TidyXmlOut, yes );
     if (ok)
         rc = tidySetErrorBuffer(tdoc, &err);
     if (rc >= 0)
@@ -74,5 +74,7 @@ QString HTML2XHTML(QString s)
     tidyBufFree(&err);
     tidyRelease(tdoc);
 
-    return s;
+    QString ret(s);
+    ret = ret.replace("&nbsp;", " ");
+    return ret;
 }
