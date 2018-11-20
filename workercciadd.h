@@ -17,43 +17,27 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#ifndef STIGQTER_H
-#define STIGQTER_H
+#ifndef WORKERCCIADD_H
+#define WORKERCCIADD_H
 
-#include <QMainWindow>
-
+#include <QThread>
 #include "dbmanager.h"
 
-namespace Ui {
-class STIGQter;
-}
-
-class STIGQter : public QMainWindow
+class WorkerCCIAdd : public QObject
 {
     Q_OBJECT
 
 public:
-    explicit STIGQter(QWidget *parent = nullptr);
-    ~STIGQter();
+    WorkerCCIAdd();
 
-private slots:
+public slots:
+    void process();
 
-    void CompletedThread();
-
-    void DeleteCCIs();
-    void UpdateCCIs();
-
-    void Initialize(int max, int val = 0);
-    void Progress(int val);
-
-private:
-    Ui::STIGQter *ui;
-    DbManager *db;
-    QList<QThread *> threads;
-    QList<QObject *> workers;
-    void CleanThreads();
-    void DisableInput();
-    void EnableInput();
+signals:
+    void initialize(int, int);
+    void progress(int);
+    void updateStatus(QString);
+    void finished();
 };
 
-#endif // STIGQTER_H
+#endif // WORKERCCIADD_H

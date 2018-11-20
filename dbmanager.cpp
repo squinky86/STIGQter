@@ -54,6 +54,43 @@ DbManager::DbManager(const QString& path, const QString& connectionName)
         UpdateDatabaseFromVersion(0);
 }
 
+void DbManager::AddControl(QString control, QString title)
+{
+    if (control.length() < 4)
+    {
+        qDebug() << "Received bad control.";
+        return;
+    }
+    QString family(control.left(2));
+    control = control.right(control.length()-3);
+    QString enhancement("");
+    if (control.contains('('))
+    {
+        int tmpIndex = control.indexOf('(');
+        enhancement = control.right(control.length() - tmpIndex - 1);
+        enhancement = enhancement.left(enhancement.length() - 1);
+        control = control.left(control.indexOf('('));
+    }
+
+    Family f = GetFamily(family);
+
+    if (f.id >= 0)
+    {
+        QSqlDatabase db;
+        if (this->CheckDatabase(db))
+        {
+            QSqlQuery q(db);
+            q.prepare("INSERT INTO Control (FamilyId, number, enhancement, title) VALUES(:FamilyId, :number, :enhancement, :title)");
+            q.bindValue(":FamilyId", f.id);
+            q.bindValue(":number", control.toInt());
+            q.bindValue(":enhancement", enhancement.isEmpty() ? QVariant(QVariant::Int) : enhancement.toInt());
+            q.bindValue(":title", title);
+            q.exec();
+            db.commit();
+        }
+    }
+}
+
 void DbManager::AddFamily(QString acronym, QString description)
 {
     QSqlDatabase db;
@@ -62,10 +99,94 @@ void DbManager::AddFamily(QString acronym, QString description)
         QSqlQuery q(db);
         q.prepare("INSERT INTO Family (Acronym, Description) VALUES(:acronym, :description)");
         q.bindValue(":acronym", acronym);
-        q.bindValue(":description", description);
+        q.bindValue(":description", Sanitize(description));
         q.exec();
         db.commit();
     }
+}
+
+void DbManager::DeleteCCIs()
+{
+    QSqlDatabase db;
+    if (this->CheckDatabase(db))
+    {
+        QSqlQuery q(db);
+        q.prepare("DELETE FROM Family");
+        q.exec();
+        q.prepare("DELETE FROM Control");
+        q.exec();
+        db.commit();
+    }
+}
+
+Family DbManager::GetFamily(int id)
+{
+    QSqlDatabase db;
+    Family ret;
+    ret.id = -1;
+    if (this->CheckDatabase(db))
+    {
+        QSqlQuery q(db);
+        q.prepare("SELECT id, acronym, description FROM Family WHERE id = :id");
+        q.bindValue(":id", id);
+        q.exec();
+        if (q.next())
+        {
+            ret.id = q.value(0).toInt();
+            ret.acronym = q.value(1).toString();
+            ret.description = q.value(2).toString();
+        }
+    }
+    return ret;
+}
+
+Family DbManager::GetFamily(QString acronym)
+{
+    QSqlDatabase db;
+    Family ret;
+    ret.id = -1;
+    if (this->CheckDatabase(db))
+    {
+        QSqlQuery q(db);
+        q.prepare("SELECT id, acronym, description FROM Family WHERE acronym = :acronym");
+        q.bindValue(":acronym", acronym);
+        q.exec();
+        if (q.next())
+        {
+            ret.id = q.value(0).toInt();
+            ret.acronym = q.value(1).toString();
+            ret.description = q.value(2).toString();
+        }
+    }
+    return ret;
+}
+
+QList<Family> DbManager::GetFamilies()
+{
+    QSqlDatabase db;
+    QList<Family> ret;
+    if (this->CheckDatabase(db))
+    {
+        QSqlQuery q(db);
+        q.prepare("SELECT id, acronym, description FROM Family");
+        q.exec();
+        while (q.next())
+        {
+            Family f;
+            f.id = q.value(0).toInt();
+            f.acronym = q.value(1).toString();
+            f.description = q.value(2).toString();
+            ret.append(f);
+        }
+    }
+    return ret;
+}
+
+QString DbManager::Sanitize(QString s)
+{
+    s = s.replace("\r\n", "\n");
+    s = s.replace("\n", " ");
+    return s;
 }
 
 bool DbManager::CheckDatabase(QSqlDatabase &db)
@@ -91,6 +212,15 @@ bool DbManager::UpdateDatabaseFromVersion(int version)
                         "`id`	INTEGER PRIMARY KEY AUTOINCREMENT, "
                         "`Acronym`	TEXT UNIQUE, "
                         "`Description`	TEXT UNIQUE"
+                        ")");
+            q.exec();
+            q.prepare("CREATE TABLE `Control` ( "
+                        "`id`	INTEGER PRIMARY KEY AUTOINCREMENT, "
+                        "`FamilyId`	INTEGER NOT NULL, "
+                        "`number`	INTEGER NOT NULL, "
+                        "`enhancement`	INTEGER, "
+                        "`title`	INTEGER, "
+                        "FOREIGN KEY(`FamilyID`) REFERENCES `Family`(`id`) "
                         ")");
             q.exec();
 

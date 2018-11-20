@@ -17,7 +17,7 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#include "cciworker.h"
+#include "workercciadd.h"
 #include "common.h"
 
 #include <QDir>
@@ -26,11 +26,11 @@
 #include <QNetworkRequest>
 #include <QXmlStreamReader>
 
-CCIWorker::CCIWorker()
+WorkerCCIAdd::WorkerCCIAdd()
 {
 }
 
-void CCIWorker::process()
+void WorkerCCIAdd::process()
 {
     //open database in this thread
     emit initialize(1, 0);
@@ -39,6 +39,7 @@ void CCIWorker::process()
     //populate CCIs
 
     //Step 1: download NIST Families
+    emit updateStatus("Downloading Families…");
     QUrl nist("https://nvd.nist.gov");
     QString rmf = DownloadPage(nist.toString() + "/800-53/Rev4/");
 
@@ -69,6 +70,7 @@ void CCIWorker::process()
                     QString family(xml->readElementText());
                     QString acronym(family.left(2));
                     QString familyName(family.right(family.length() - 5));
+                    emit updateStatus("Adding " + acronym + "—" + familyName + "…");
                     db.AddFamily(acronym, familyName);
                     todo.append(href);
                 }
@@ -82,6 +84,7 @@ void CCIWorker::process()
     QList<QString> controls;
     foreach (const QString &s, todo)
     {
+        emit updateStatus("Indexing " + s + "…");
         QUrl family(nist.toString() + s);
         QString fam = DownloadPage(family);
         fam = HTML2XHTML(fam);
@@ -114,9 +117,11 @@ void CCIWorker::process()
     emit initialize(controls.size() + 1, 1);
     foreach (const QString &s, controls)
     {
+        emit updateStatus("Indexing " + s + "…");
         QUrl control(nist.toString() + s);
         QString c = DownloadPage(control);
         c = HTML2XHTML(c);
+
         xml = new QXmlStreamReader(c);
         while (!xml->atEnd() && !xml->hasError())
         {
@@ -126,9 +131,10 @@ void CCIWorker::process()
                 QString title(xml->readElementText().trimmed());
                 QStringRef control(&title, 16, title.length()-16);
                 QStringList ctrl = control.toString().split(" - ");
-                qDebug() << ctrl;
-                //TODO: insert controls
+                emit updateStatus("Adding " + ctrl.first() + "—" + ctrl.last() + "…");
+                db.AddControl(ctrl.first(), ctrl.last());
             }
+            /** TODO: Qt XML parser fails on these elements
             else if (xml->isStartElement() && (xml->name() == "span"))
             {
                 if (xml->attributes().hasAttribute("id"))
@@ -142,13 +148,35 @@ void CCIWorker::process()
                     if (id.endsWith("EnhancementNameDT"))
                     {
                         QString enhancement(xml->readElementText().trimmed());
-                        qDebug() << "\t" << enhancement;
+                        xml->readNext();
+                        qDebug() << xml->name();
+                        xml->readNext();
+                        qDebug() << xml->name();
+                        xml->readNext();
+                        qDebug() << xml->name();
+                        xml->readNext();
+                        qDebug() << xml->name();
+                        if (xml->name() == "td")
+                        {
+                            QString enhancementName(xml->readElementText().trimmed());
+                            qDebug() << "\t" << enhancement << enhancementName;
+                        }
                     }
                 }
             }
+            */
+            while (c.contains("EnhancementNameDT"))
+            {
+                //TODO: brute-force parsing until QXmlStreamReader can handle it
+                c = c.right(c.length() - c.indexOf("EnhancementNameDT") - 19);
+                QString enhancement(c.left(c.indexOf('<')).trimmed());
+                c = c.right(c.length() - c.indexOf("<td>") - 4);
+                QString name(c.left(c.indexOf('<')).trimmed());
+                emit updateStatus("Adding " + enhancement + "—" + name + "…");
+                db.AddControl(enhancement, name);
+            }
         }
-        if (xml->hasError())
-            qDebug() << xml->error();
+
         delete xml;
         emit progress(-1);
     }

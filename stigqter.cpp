@@ -17,7 +17,8 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#include "cciworker.h"
+#include "workercciadd.h"
+#include "workerccidelete.h"
 #include "stigqter.h"
 #include "ui_stigqter.h"
 
@@ -30,6 +31,7 @@ STIGQter::STIGQter(QWidget *parent) :
     db(new DbManager)
 {
     ui->setupUi(this);
+    EnableInput();
 }
 
 STIGQter::~STIGQter()
@@ -50,14 +52,16 @@ void STIGQter::UpdateCCIs()
 
     //Create thread to download CCIs and keep GUI active
     QThread* t = new QThread;
-    CCIWorker *c = new CCIWorker();
+    WorkerCCIAdd *c = new WorkerCCIAdd();
     c->moveToThread(t);
     connect(t, SIGNAL(started()), c, SLOT(process()));
     connect(c, SIGNAL(finished()), t, SLOT(quit()));
     connect(t, SIGNAL(finished()), this, SLOT(CompletedThread()));
     connect(c, SIGNAL(initialize(int, int)), this, SLOT(Initialize(int, int)));
     connect(c, SIGNAL(progress(int)), this, SLOT(Progress(int)));
+    connect(c, SIGNAL(updateStatus(QString)), ui->lblStatus, SLOT(setText(QString)));
     threads.append(t);
+    workers.append(c);
 
     t->start();
 }
@@ -70,6 +74,11 @@ void STIGQter::CleanThreads()
         t->wait();
         delete t;
     }
+    foreach (const QObject *o, workers)
+    {
+        delete o;
+    }
+    workers.clear();
 }
 
 void STIGQter::CompletedThread()
@@ -78,14 +87,43 @@ void STIGQter::CompletedThread()
     CleanThreads();
 }
 
+void STIGQter::DeleteCCIs()
+{
+    DisableInput();
+
+    //Create thread to download CCIs and keep GUI active
+    QThread* t = new QThread;
+    WorkerCCIDelete *c = new WorkerCCIDelete();
+    c->moveToThread(t);
+    connect(t, SIGNAL(started()), c, SLOT(process()));
+    connect(c, SIGNAL(finished()), t, SLOT(quit()));
+    connect(t, SIGNAL(finished()), this, SLOT(CompletedThread()));
+    connect(c, SIGNAL(initialize(int, int)), this, SLOT(Initialize(int, int)));
+    connect(c, SIGNAL(progress(int)), this, SLOT(Progress(int)));
+    connect(c, SIGNAL(updateStatus(QString)), ui->lblStatus, SLOT(setText(QString)));
+    threads.append(t);
+    workers.append(c);
+
+    t->start();
+}
+
 void STIGQter::EnableInput()
 {
-    ui->btnClearCCIs->setEnabled(true);
+    QList<Family> f = db->GetFamilies();
+    if (f.count() > 0)
+    {
+        ui->btnClearCCIs->setEnabled(true);
+        ui->btnImportCCIs->setEnabled(false);
+    }
+    else
+    {
+        ui->btnClearCCIs->setEnabled(false);
+        ui->btnImportCCIs->setEnabled(true);
+    }
     ui->btnClearSTIGs->setEnabled(true);
     ui->btnCreateCKL->setEnabled(true);
     ui->btnDeleteCKL->setEnabled(true);
     ui->btnFindingsReport->setEnabled(true);
-    ui->btnImportCCIs->setEnabled(true);
     ui->btnImportCKL->setEnabled(true);
     ui->btnImportSTIGs->setEnabled(true);
     ui->btnOpenCKL->setEnabled(true);

@@ -46,13 +46,16 @@ SOURCES += \
         stigqter.cpp \
     dbmanager.cpp \
     common.cpp \
-    cciworker.cpp
+    workerccidelete.cpp \
+    workercciadd.cpp
 
 HEADERS += \
         stigqter.h \
     dbmanager.h \
     common.h \
-    cciworker.h
+    family.h \
+    workerccidelete.h \
+    workercciadd.h
 
 FORMS += \
         stigqter.ui

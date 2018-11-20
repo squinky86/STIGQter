@@ -17,18 +17,18 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#ifndef CCIWORKER_H
-#define CCIWORKER_H
+#ifndef WORKERCCIDELETE_H
+#define WORKERCCIDELETE_H
 
 #include <QThread>
 #include "dbmanager.h"
 
-class CCIWorker : public QObject
+class WorkerCCIDelete : public QObject
 {
     Q_OBJECT
 
 public:
-    CCIWorker();
+    WorkerCCIDelete();
 
 public slots:
     void process();
@@ -36,7 +36,8 @@ public slots:
 signals:
     void initialize(int, int);
     void progress(int);
+    void updateStatus(QString);
     void finished();
 };
 
-#endif // CCITHREAD_H
+#endif // WORKERCCIDELETE_H

@@ -17,43 +17,17 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#ifndef STIGQTER_H
-#define STIGQTER_H
+#ifndef FAMILY_H
+#define FAMILY_H
 
-#include <QMainWindow>
+#include <QString>
 
-#include "dbmanager.h"
-
-namespace Ui {
-class STIGQter;
-}
-
-class STIGQter : public QMainWindow
+struct Family
 {
-    Q_OBJECT
-
 public:
-    explicit STIGQter(QWidget *parent = nullptr);
-    ~STIGQter();
-
-private slots:
-
-    void CompletedThread();
-
-    void DeleteCCIs();
-    void UpdateCCIs();
-
-    void Initialize(int max, int val = 0);
-    void Progress(int val);
-
-private:
-    Ui::STIGQter *ui;
-    DbManager *db;
-    QList<QThread *> threads;
-    QList<QObject *> workers;
-    void CleanThreads();
-    void DisableInput();
-    void EnableInput();
+    int id;
+    QString acronym;
+    QString description;
 };
 
-#endif // STIGQTER_H
+#endif // FAMILY_H

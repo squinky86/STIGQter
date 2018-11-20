@@ -17,43 +17,23 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#ifndef STIGQTER_H
-#define STIGQTER_H
+#include "workerccidelete.h"
+#include "common.h"
 
-#include <QMainWindow>
-
-#include "dbmanager.h"
-
-namespace Ui {
-class STIGQter;
+WorkerCCIDelete::WorkerCCIDelete()
+{
 }
 
-class STIGQter : public QMainWindow
+void WorkerCCIDelete::process()
 {
-    Q_OBJECT
+    //open database in this thread
+    emit initialize(2, 1);
+    DbManager db;
 
-public:
-    explicit STIGQter(QWidget *parent = nullptr);
-    ~STIGQter();
+    emit updateStatus("Clearing DB of CCI/RMF information…");
+    db.DeleteCCIs();
+    emit progress(-1);
 
-private slots:
-
-    void CompletedThread();
-
-    void DeleteCCIs();
-    void UpdateCCIs();
-
-    void Initialize(int max, int val = 0);
-    void Progress(int val);
-
-private:
-    Ui::STIGQter *ui;
-    DbManager *db;
-    QList<QThread *> threads;
-    QList<QObject *> workers;
-    void CleanThreads();
-    void DisableInput();
-    void EnableInput();
-};
-
-#endif // STIGQTER_H
+    //complete
+    emit finished();
+}

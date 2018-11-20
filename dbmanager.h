@@ -23,6 +23,8 @@
 #include <QSqlDatabase>
 #include <QString>
 
+#include "family.h"
+
 class DbManager
 {
 public:
@@ -30,7 +32,16 @@ public:
     DbManager(const QString& connectionName);
     DbManager(const QString& path, const QString& connectionName);
 
+    void AddControl(QString control, QString title);
     void AddFamily(QString acronym, QString description);
+
+    void DeleteCCIs();
+
+    Family GetFamily(QString acronym);
+    Family GetFamily(int id);
+    QList<Family> GetFamilies();
+
+    QString Sanitize(QString s);
 
 private:
     bool UpdateDatabaseFromVersion(int version);
