@@ -199,10 +199,14 @@ Control DbManager::GetControl(QString control, bool includeId)
         if (this->CheckDatabase(db))
         {
             QSqlQuery q(db);
-            q.prepare("SELECT id, title FROM Control WHERE number = :number, FamilyId = :FamilyId, enhancement = :enhancement");
+            if (ret.enhancement >= 0)
+                q.prepare("SELECT id, title FROM Control WHERE number = :number AND FamilyId = :FamilyId AND enhancement = :enhancement");
+            else
+                q.prepare("SELECT id, title FROM Control WHERE number = :number AND FamilyId = :FamilyId");
             q.bindValue(":number", ret.number);
             q.bindValue(":FamilyId", ret.family.id);
-            q.bindValue(":enhancement", (ret.enhancement < 0) ? QVariant(QVariant::Int) : ret.enhancement);
+            if (ret.enhancement >= 0)
+                q.bindValue(":enhancement", ret.enhancement);
             q.exec();
             if (q.next())
             {
