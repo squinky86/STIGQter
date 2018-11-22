@@ -99,7 +99,6 @@ bool DownloadFile(QUrl u, QFile *f)
     QObject::connect(response,SIGNAL(finished()),&event,SLOT(quit()));
     event.exec();
     QByteArray tmpArray = response->readAll();
-    qDebug() << tmpArray;
     f->write(tmpArray, tmpArray.size());
     f->flush();
     delete response;

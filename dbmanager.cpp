@@ -34,6 +34,7 @@ DbManager::DbManager(const QString& connectionName) : DbManager(QCoreApplication
 DbManager::DbManager(const QString& path, const QString& connectionName)
 {
     bool initialize = false;
+    _delayCommit = false;
 
     //check if database file exists or create it
     if (!QFile::exists(path))
@@ -52,6 +53,31 @@ DbManager::DbManager(const QString& path, const QString& connectionName)
 
     if (initialize)
         UpdateDatabaseFromVersion(0);
+}
+
+DbManager::~DbManager()
+{
+    if (_delayCommit)
+    {
+        QSqlDatabase db;
+        if (this->CheckDatabase(db))
+        {
+            db.commit();
+        }
+    }
+}
+
+void DbManager::DelayCommit(bool delay)
+{
+    if (!delay)
+    {
+        QSqlDatabase db;
+        if (this->CheckDatabase(db))
+        {
+            db.commit();
+        }
+    }
+    _delayCommit = delay;
 }
 
 void DbManager::AddControl(QString control, QString title)
@@ -86,7 +112,8 @@ void DbManager::AddControl(QString control, QString title)
             q.bindValue(":enhancement", enhancement.isEmpty() ? QVariant(QVariant::Int) : enhancement.toInt());
             q.bindValue(":title", title);
             q.exec();
-            db.commit();
+            if (!_delayCommit)
+                db.commit();
         }
     }
 }
@@ -101,7 +128,8 @@ void DbManager::AddFamily(QString acronym, QString description)
         q.bindValue(":acronym", acronym);
         q.bindValue(":description", Sanitize(description));
         q.exec();
-        db.commit();
+        if (!_delayCommit)
+            db.commit();
     }
 }
 
@@ -117,7 +145,8 @@ void DbManager::DeleteCCIs()
         q.exec();
         q.prepare("DELETE FROM CCI");
         q.exec();
-        db.commit();
+        if (!_delayCommit)
+            db.commit();
     }
 }
 

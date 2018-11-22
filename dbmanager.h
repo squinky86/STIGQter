@@ -31,6 +31,8 @@ public:
     DbManager();
     DbManager(const QString& connectionName);
     DbManager(const QString& path, const QString& connectionName);
+    ~DbManager();
+    void DelayCommit(bool delay);
 
     void AddControl(QString control, QString title);
     void AddFamily(QString acronym, QString description);
@@ -46,6 +48,7 @@ public:
 private:
     bool UpdateDatabaseFromVersion(int version);
     bool CheckDatabase(QSqlDatabase &db);
+    bool _delayCommit;
 };
 
 #endif // DBMANAGER_H

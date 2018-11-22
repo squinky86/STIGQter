@@ -85,6 +85,7 @@ void STIGQter::CompletedThread()
 {
     EnableInput();
     CleanThreads();
+    ui->progressBar->setValue(ui->progressBar->maximum());
 }
 
 void STIGQter::DeleteCCIs()

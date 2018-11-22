@@ -52,6 +52,7 @@ void WorkerCCIAdd::process()
     //Step 3: read the families
     QXmlStreamReader *xml = new QXmlStreamReader(rmf);
     QList<QString> todo;
+    db.DelayCommit(true);
     while (!xml->atEnd() && !xml->hasError())
     {
         xml->readNext();
@@ -80,11 +81,13 @@ void WorkerCCIAdd::process()
             }
         }
     }
+    db.DelayCommit(false);
     emit initialize(todo.size() + 1, 1);
     delete xml;
 
     //Step 4: download all controls for each family
     QList<QString> controls;
+    db.DelayCommit(true);
     foreach (const QString &s, todo)
     {
         emit updateStatus("Indexing " + s + "…");
@@ -115,9 +118,11 @@ void WorkerCCIAdd::process()
         delete xml;
         emit progress(-1);
     }
+    db.DelayCommit(false);
 
     //Step 5: get all control and enhancement information
     emit initialize(controls.size() + 3, 1);
+    db.DelayCommit(true);
     foreach (const QString &s, controls)
     {
         emit updateStatus("Indexing " + s + "…");
@@ -183,9 +188,11 @@ void WorkerCCIAdd::process()
         delete xml;
         emit progress(-1);
     }
+    db.DelayCommit(false);
 
     QTemporaryFile tmpFile;
     QByteArray xmlFile;
+    db.DelayCommit(true);
     if (tmpFile.open())
     {
         struct zip *za;
@@ -193,7 +200,10 @@ void WorkerCCIAdd::process()
         struct zip_stat sb;
         struct zip_file *zf;
         QUrl ccis("http://iasecontent.disa.mil/stigs/zip/u_cci_list.zip");
+        emit updateStatus("Downloading " + ccis.toString() + "…");
         DownloadFile(ccis, &tmpFile);
+        emit progress(-1);
+        emit updateStatus("Extracting CCIs…");
         za = zip_open(tmpFile.fileName().toStdString().c_str(), 0, &err);
         if (za != nullptr)
         {
@@ -227,8 +237,11 @@ void WorkerCCIAdd::process()
         }
         tmpFile.close();
     }
+    emit updateStatus("Parsing CCIs…");
     xml = new QXmlStreamReader(xmlFile);
+    //TODO: parse CCIs
     QFile::remove(tmpFile.fileName());
+    delete xml;
 
     //complete
     emit updateStatus("Done!");
