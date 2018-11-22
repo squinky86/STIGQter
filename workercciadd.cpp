@@ -190,6 +190,7 @@ void WorkerCCIAdd::process()
     }
     db.DelayCommit(false);
 
+    //Step 6: download all CCIs
     QTemporaryFile tmpFile;
     QByteArray xmlFile;
     db.DelayCommit(true);
@@ -237,9 +238,68 @@ void WorkerCCIAdd::process()
         }
         tmpFile.close();
     }
+
+    //Step 7: Parse all CCIs
     emit updateStatus("Parsing CCIs…");
     xml = new QXmlStreamReader(xmlFile);
-    //TODO: parse CCIs
+    db.DelayCommit(true);
+    QString cci("");
+    QString definition("");
+    while (!xml->atEnd() && !xml->hasError())
+    {
+        xml->readNext();
+        if (xml->isStartElement())
+        {
+            if (xml->name() == "cci_item")
+            {
+                if (xml->attributes().hasAttribute("id"))
+                {
+                    foreach (const QXmlStreamAttribute &attr, xml->attributes())
+                    {
+                        if (attr.name() == "id")
+                            cci = attr.value().toString();
+                    }
+                }
+            }
+            else if (xml->name() == "definition")
+            {
+                definition = xml->readElementText();
+            }
+            else if (xml->name() == "reference")
+            {
+                if (xml->attributes().hasAttribute("version") && xml->attributes().hasAttribute("index") && !cci.isEmpty())
+                {
+                    QString version("");
+                    QString index("");
+                    foreach (const QXmlStreamAttribute &attr, xml->attributes())
+                    {
+                        if (attr.name() == "version")
+                            version = attr.value().toString();
+                        else if (attr.name() == "index")
+                            index = attr.value().toString();
+                    }
+                    if (!version.isEmpty() && !index.isEmpty() && (version == "4")) //Only Rev 4 supported
+                    {
+                        int cciInt = cci.right(6).toInt();
+                        QString control = index;
+                        if (control.contains(' '))
+                            control = control.left(control.indexOf(" "));
+                        if (control.contains('.'))
+                            control = control.left(control.indexOf("."));
+                        if (index.contains('('))
+                        {
+                            int tmpInt = index.indexOf('(');
+                            QStringRef enhancement(&index, tmpInt, index.indexOf(')') - tmpInt + 1);
+                            control.append(enhancement);
+                        }
+                        //TODO: add cci
+                        //db.AddCCI(cciInt, control, definition);
+                    }
+                }
+            }
+        }
+    }
+    db.DelayCommit(false);
     QFile::remove(tmpFile.fileName());
     delete xml;
 
