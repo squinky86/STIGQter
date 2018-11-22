@@ -66,5 +66,6 @@ else: unix:!android: target.path = /opt/$${TARGET}/bin
 !isEmpty(target.path): INSTALLS += target
 
 LIBS += -ltidy -lzip
-INCLUDEPATH += ../tidy/include \
-               ../libzip/lib
+
+INCLUDEPATH= ../tidy/include \
+             ../libzip/include

@@ -91,16 +91,22 @@ bool DownloadFile(QUrl u, QFile *f)
     }
     QNetworkAccessManager manager;
     QNetworkRequest req = QNetworkRequest(u);
+    req.setAttribute(QNetworkRequest::FollowRedirectsAttribute, true);
     QString userAgent = QString("STIGQter/") + VERSION;
     req.setRawHeader("User-Agent", userAgent.toStdString().c_str());
     QNetworkReply *response = manager.get(req);
     QEventLoop event;
     QObject::connect(response,SIGNAL(finished()),&event,SLOT(quit()));
     event.exec();
-    f->write(response->readAll());
+    QByteArray tmpArray = response->readAll();
+    qDebug() << tmpArray;
+    f->write(tmpArray, tmpArray.size());
+    f->flush();
     delete response;
 
     if (close)
         f->close();
+    else
+        f->seek(0);
     return true;
 }

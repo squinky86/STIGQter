@@ -197,7 +197,7 @@ void WorkerCCIAdd::process()
         za = zip_open(tmpFile.fileName().toStdString().c_str(), 0, &err);
         if (za != nullptr)
         {
-            for (int i = 0; i < zip_get_num_entries(za, 0); i++)
+            for (unsigned int i = 0; i < zip_get_num_entries(za, 0); i++)
             {
                 if (zip_stat_index(za, i, 0, &sb) == 0)
                 {
@@ -207,14 +207,14 @@ void WorkerCCIAdd::process()
                         zf = zip_fopen_index(za, i, 0);
                         if (zf)
                         {
-                            int sum = 0;
+                            unsigned int sum = 0;
                             while (sum < sb.size)
                             {
                                 char buf[1024];
-                                int len = zip_fread(zf, buf, 1024);
+                                zip_int64_t len = zip_fread(zf, buf, 1024);
                                 if (len > 0)
                                 {
-                                    xmlFile.append(buf, len);
+                                    xmlFile.append(buf, static_cast<int>(len));
                                     sum += len;
                                 }
                             }
