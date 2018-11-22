@@ -23,6 +23,7 @@
 #include <QSqlDatabase>
 #include <QString>
 
+#include "control.h"
 #include "family.h"
 
 class DbManager
@@ -39,6 +40,7 @@ public:
 
     void DeleteCCIs();
 
+    Control GetControl(QString control, bool includeId = true);
     Family GetFamily(QString acronym);
     Family GetFamily(int id);
     QList<Family> GetFamilies();

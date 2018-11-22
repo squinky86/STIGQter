@@ -150,6 +150,51 @@ void DbManager::DeleteCCIs()
     }
 }
 
+Control DbManager::GetControl(QString control, bool includeId)
+{
+    Control ret;
+    ret.id = -1;
+    ret.enhancement = -1;
+    ret.title = "";
+    ret.family.id = -1;
+    QString family(control.left(2));
+    control = control.right(control.length()-3);
+    QString enhancement("");
+    if (control.contains('('))
+    {
+        int tmpIndex = control.indexOf('(');
+        enhancement = control.right(control.length() - tmpIndex - 1);
+        enhancement = enhancement.left(enhancement.length() - 1);
+        control = control.left(control.indexOf('('));
+        ret.enhancement = enhancement.toInt();
+    }
+    ret.number = control.toInt();
+    if (includeId)
+    {
+        ret.family = GetFamily(family);
+        QSqlDatabase db;
+        if (this->CheckDatabase(db))
+        {
+            QSqlQuery q(db);
+            q.prepare("SELECT id, title FROM Control WHERE number = :number, FamilyId = :FamilyId, enhancement = :enhancement");
+            q.bindValue(":number", ret.number);
+            q.bindValue(":FamilyId", ret.family.id);
+            q.bindValue(":enhancement", (ret.enhancement < 0) ? QVariant(QVariant::Int) : ret.enhancement);
+            q.exec();
+            if (q.next())
+            {
+                ret.id = q.value(0).toInt();
+                ret.title = q.value(1).toString();
+            }
+        }
+        else
+        {
+            ret.family.acronym = family;
+        }
+    }
+    return ret;
+}
+
 Family DbManager::GetFamily(int id)
 {
     QSqlDatabase db;
@@ -250,7 +295,7 @@ bool DbManager::UpdateDatabaseFromVersion(int version)
                         "`FamilyId`	INTEGER NOT NULL, "
                         "`number`	INTEGER NOT NULL, "
                         "`enhancement`	INTEGER, "
-                        "`title`	INTEGER, "
+                        "`title`	TEXT, "
                         "FOREIGN KEY(`FamilyID`) REFERENCES `Family`(`id`) "
                         ")");
             q.exec();
