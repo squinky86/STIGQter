@@ -292,8 +292,8 @@ void WorkerCCIAdd::process()
                             QStringRef enhancement(&index, tmpInt, index.indexOf(')') - tmpInt + 1);
                             control.append(enhancement);
                         }
-                        //TODO: add cci
-                        //db.AddCCI(cciInt, control, definition);
+                        emit updateStatus("Adding " + cci + "…");
+                        db.AddCCI(cciInt, control, definition);
                     }
                 }
             }

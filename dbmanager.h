@@ -35,6 +35,7 @@ public:
     ~DbManager();
     void DelayCommit(bool delay);
 
+    void AddCCI(int cci, QString control, QString definition);
     void AddControl(QString control, QString title);
     void AddFamily(QString acronym, QString description);
 
@@ -44,6 +45,9 @@ public:
     Family GetFamily(QString acronym);
     Family GetFamily(int id);
     QList<Family> GetFamilies();
+    QString GetVariable(QString name);
+
+    void UpdateVariable(QString name, QString value);
 
     QString Sanitize(QString s);
 

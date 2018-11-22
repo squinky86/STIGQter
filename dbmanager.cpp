@@ -53,6 +53,9 @@ DbManager::DbManager(const QString& path, const QString& connectionName)
 
     if (initialize)
         UpdateDatabaseFromVersion(0);
+
+    int version = GetVariable("version").toInt();
+    UpdateDatabaseFromVersion(version);
 }
 
 DbManager::~DbManager()
@@ -78,6 +81,26 @@ void DbManager::DelayCommit(bool delay)
         }
     }
     _delayCommit = delay;
+}
+
+void DbManager::AddCCI(int cci, QString control, QString definition)
+{
+    Control c = GetControl(control);
+    if (c.id >= 0)
+    {
+        QSqlDatabase db;
+        if (this->CheckDatabase(db))
+        {
+            QSqlQuery q(db);
+            q.prepare("INSERT INTO CCI (ControlId, cci, definition) VALUES(:ControlId, :CCI, :definition)");
+            q.bindValue(":ControlId", c.id);
+            q.bindValue(":CCI", cci);
+            q.bindValue(":definition", definition);
+            q.exec();
+            if (!_delayCommit)
+                db.commit();
+        }
+    }
 }
 
 void DbManager::AddControl(QString control, QString title)
@@ -258,6 +281,37 @@ QList<Family> DbManager::GetFamilies()
     return ret;
 }
 
+QString DbManager::GetVariable(QString name)
+{
+    QSqlDatabase db;
+    QString ret;
+    if (this->CheckDatabase(db))
+    {
+        QSqlQuery q(db);
+        q.prepare("SELECT value FROM variables WHERE name = :name");
+        q.bindValue(":name", name);
+        q.exec();
+        if (q.next())
+        {
+            ret = q.value(0).toString();
+        }
+    }
+    return ret;
+}
+
+void DbManager::UpdateVariable(QString name, QString value)
+{
+    QSqlDatabase db;
+    if (this->CheckDatabase(db))
+    {
+        QSqlQuery q(db);
+        q.prepare("UPDATE variables SET value = :value WHERE name = :name");
+        q.bindValue(":value", value);
+        q.bindValue(":name", name);
+        q.exec();
+    }
+}
+
 QString DbManager::Sanitize(QString s)
 {
     s = s.replace("\r\n", "\n");
@@ -280,6 +334,7 @@ bool DbManager::UpdateDatabaseFromVersion(int version)
     QSqlDatabase db;
     if (this->CheckDatabase(db))
     {
+        //upgrade to version 1 of the database
         if (version <= 0)
         {
             //New database; initial setups
@@ -306,6 +361,15 @@ bool DbManager::UpdateDatabaseFromVersion(int version)
                       "`definition`	TEXT, "
                       "FOREIGN KEY(`ControlId`) REFERENCES `Control`(`id`) "
                       ")");
+            q.exec();
+            q.prepare("CREATE TABLE `variables` ( "
+                      "`name`	TEXT, "
+                      "`value`	TEXT "
+                      ")");
+            q.exec();
+            q.prepare("INSERT INTO variables (name, value) VALUES(:name, :value)");
+            q.bindValue(":name", "version");
+            q.bindValue(":value", "1");
             q.exec();
 
             //write changes from update
