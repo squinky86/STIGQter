@@ -56,7 +56,8 @@ HEADERS += \
     family.h \
     workerccidelete.h \
     workercciadd.h \
-    control.h
+    control.h \
+    cci.h
 
 FORMS += \
         stigqter.ui

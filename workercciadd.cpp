@@ -19,6 +19,7 @@
 
 #include "workercciadd.h"
 #include "common.h"
+#include "cci.h"
 
 #include <zip.h>
 
@@ -28,8 +29,6 @@
 #include <QNetworkRequest>
 #include <QTemporaryFile>
 #include <QXmlStreamReader>
-
-#include <tuple>
 
 WorkerCCIAdd::WorkerCCIAdd()
 {
@@ -246,7 +245,7 @@ void WorkerCCIAdd::process()
     xml = new QXmlStreamReader(xmlFile);
     QString cci("");
     QString definition("");
-    QList<std::tuple<int, QString, QString>> toAdd;
+    QList<CCI> toAdd;
     while (!xml->atEnd() && !xml->hasError())
     {
         xml->readNext();
@@ -294,7 +293,12 @@ void WorkerCCIAdd::process()
                             QStringRef enhancement(&index, tmpInt, index.indexOf(')') - tmpInt + 1);
                             control.append(enhancement);
                         }
-                        toAdd.append(std::make_tuple(cciInt, control, definition));
+                        CCI c;
+                        c.cci = cciInt;
+                        c.control.title = control;
+                        c.definition = definition;
+                        toAdd.append(c);
+                        //delayed add
                         //db.AddCCI(cciInt, control, definition);
                     }
                 }
@@ -307,15 +311,10 @@ void WorkerCCIAdd::process()
     //Step 8: add CCIs
     emit initialize(toAdd.size() + 1, 1);
     db.DelayCommit(true);
-    std::tuple<int, QString, QString> c;
-    for (int i = 0; i < toAdd.size(); i++)
+    foreach (const CCI &c, toAdd)
     {
-        int cciId;
-        QString control;
-        QString description;
-        std::tie(cciId, control, description) = toAdd.at(i);
-        emit updateStatus("Adding CCI-" + QString::number(cciId) + "…");
-        db.AddCCI(cciId, control, description);
+        emit updateStatus("Adding CCI-" + QString::number(c.cci) + "…");
+        db.AddCCI(c.cci, c.control.title, c.definition);
         emit progress(-1);
     }
     db.DelayCommit(false);
