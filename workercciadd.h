@@ -21,14 +21,13 @@
 #define WORKERCCIADD_H
 
 #include <QThread>
-#include "dbmanager.h"
 
 class WorkerCCIAdd : public QObject
 {
     Q_OBJECT
 
 public:
-    WorkerCCIAdd();
+    explicit WorkerCCIAdd(QObject *parent = nullptr);
 
 public slots:
     void process();

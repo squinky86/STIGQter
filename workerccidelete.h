@@ -21,14 +21,13 @@
 #define WORKERCCIDELETE_H
 
 #include <QThread>
-#include "dbmanager.h"
 
 class WorkerCCIDelete : public QObject
 {
     Q_OBJECT
 
 public:
-    WorkerCCIDelete();
+    explicit WorkerCCIDelete(QObject *parent = nullptr);
 
 public slots:
     void process();

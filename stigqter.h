@@ -41,6 +41,7 @@ private slots:
     void CompletedThread();
 
     void About();
+    void AddSTIGs();
     void DeleteCCIs();
     void UpdateCCIs();
 

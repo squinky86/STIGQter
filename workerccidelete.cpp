@@ -19,8 +19,9 @@
 
 #include "workerccidelete.h"
 #include "common.h"
+#include "dbmanager.h"
 
-WorkerCCIDelete::WorkerCCIDelete()
+WorkerCCIDelete::WorkerCCIDelete(QObject *parent) : QObject(parent)
 {
 }
 

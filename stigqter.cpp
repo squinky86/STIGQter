@@ -23,9 +23,11 @@
 #include "workerccidelete.h"
 #include "ui_stigqter.h"
 #include "help.h"
+#include "workerstigadd.h"
 
 #include <QThread>
 #include <QDebug>
+#include <QFileDialog>
 
 STIGQter::STIGQter(QWidget *parent) :
     QMainWindow(parent),
@@ -104,6 +106,26 @@ void STIGQter::About()
     Help *h = new Help();
     h->setAttribute(Qt::WA_DeleteOnClose); //clean up after itself (no explicit "delete" needed)
     h->show();
+}
+
+void STIGQter::AddSTIGs()
+{
+    QStringList fileNames = QFileDialog::getOpenFileNames(this,
+        "Open STIG", "", "Compressed STIG (*.zip)");
+    DisableInput();
+    QThread* t = new QThread;
+    WorkerSTIGAdd *s = new WorkerSTIGAdd();
+    s->AddSTIGs(fileNames);
+    connect(t, SIGNAL(started()), s, SLOT(process()));
+    connect(s, SIGNAL(finished()), t, SLOT(quit()));
+    connect(t, SIGNAL(finished()), this, SLOT(CompletedThread()));
+    connect(s, SIGNAL(initialize(int, int)), this, SLOT(Initialize(int, int)));
+    connect(s, SIGNAL(progress(int)), this, SLOT(Progress(int)));
+    connect(s, SIGNAL(updateStatus(QString)), ui->lblStatus, SLOT(setText(QString)));
+    threads.append(t);
+    workers.append(s);
+
+    t->start();
 }
 
 void STIGQter::DeleteCCIs()

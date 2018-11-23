@@ -20,6 +20,7 @@
 #include "workercciadd.h"
 #include "common.h"
 #include "cci.h"
+#include "dbmanager.h"
 
 #include <zip.h>
 
@@ -30,7 +31,7 @@
 #include <QTemporaryFile>
 #include <QXmlStreamReader>
 
-WorkerCCIAdd::WorkerCCIAdd()
+WorkerCCIAdd::WorkerCCIAdd(QObject *parent) : QObject(parent)
 {
 }
 
