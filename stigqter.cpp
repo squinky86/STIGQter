@@ -30,11 +30,13 @@
 STIGQter::STIGQter(QWidget *parent) :
     QMainWindow(parent),
     ui(new Ui::STIGQter),
-    db(new DbManager)
+    db(new DbManager),
+    _updatedCCIs(false)
 {
     ui->setupUi(this);
     this->setWindowTitle(QString("STIGQter ") + QString(VERSION));
     EnableInput();
+    DisplayCCIs();
 }
 
 STIGQter::~STIGQter()
@@ -52,6 +54,7 @@ STIGQter::~STIGQter()
 void STIGQter::UpdateCCIs()
 {
     DisableInput();
+    _updatedCCIs = true;
 
     //Create thread to download CCIs and keep GUI active
     QThread* t = new QThread;
@@ -88,6 +91,11 @@ void STIGQter::CompletedThread()
 {
     EnableInput();
     CleanThreads();
+    if (_updatedCCIs)
+    {
+        DisplayCCIs();
+        _updatedCCIs = false;
+    }
     ui->progressBar->setValue(ui->progressBar->maximum());
 }
 
@@ -170,4 +178,13 @@ void STIGQter::DisableInput()
     ui->btnImportSTIGs->setEnabled(false);
     ui->btnOpenCKL->setEnabled(false);
     ui->btnQuit->setEnabled(false);
+}
+
+void STIGQter::DisplayCCIs()
+{
+    ui->lstCCIs->clear();
+    foreach(const CCI &c, db->GetCCIs())
+    {
+        ui->lstCCIs->addItem(PrintControl(c.control) + " " + PrintCCI(c));
+    }
 }

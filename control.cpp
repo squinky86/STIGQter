@@ -17,46 +17,12 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#ifndef STIGQTER_H
-#define STIGQTER_H
+#include "control.h"
 
-#include <QMainWindow>
-
-#include "dbmanager.h"
-
-namespace Ui {
-class STIGQter;
-}
-
-class STIGQter : public QMainWindow
+QString PrintControl(Control c)
 {
-    Q_OBJECT
-
-public:
-    explicit STIGQter(QWidget *parent = nullptr);
-    ~STIGQter();
-
-private slots:
-
-    void CompletedThread();
-
-    void About();
-    void DeleteCCIs();
-    void UpdateCCIs();
-
-    void Initialize(int max, int val = 0);
-    void Progress(int val);
-
-private:
-    Ui::STIGQter *ui;
-    DbManager *db;
-    QList<QThread *> threads;
-    QList<QObject *> workers;
-    bool _updatedCCIs;
-    void CleanThreads();
-    void DisableInput();
-    void DisplayCCIs();
-    void EnableInput();
-};
-
-#endif // STIGQTER_H
+    QString ret = c.family.acronym + "-" + QString::number(c.number);
+    if (c.enhancement > 0)
+        ret.append("(" + QString::number(c.enhancement) + ")");
+    return ret;
+}

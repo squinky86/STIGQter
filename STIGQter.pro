@@ -48,7 +48,9 @@ SOURCES += \
     common.cpp \
     workerccidelete.cpp \
     workercciadd.cpp \
-    help.cpp
+    help.cpp \
+    control.cpp \
+    cci.cpp
 
 HEADERS += \
         stigqter.h \

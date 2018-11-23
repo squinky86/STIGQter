@@ -33,4 +33,6 @@ public:
     QString definition;
 };
 
+QString PrintCCI(CCI c);
+
 #endif // CCI_H

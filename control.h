@@ -34,4 +34,6 @@ public:
     QString title;
 };
 
+QString PrintControl(Control c);
+
 #endif // CONTROL_H

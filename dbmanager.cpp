@@ -173,6 +173,55 @@ void DbManager::DeleteCCIs()
     }
 }
 
+QList<CCI> DbManager::GetCCIs(bool includeControl)
+{
+    QSqlDatabase db;
+    QList<CCI> ret;
+    if (this->CheckDatabase(db))
+    {
+        QSqlQuery q(db);
+        q.prepare("SELECT id, ControlId, cci, definition FROM CCI ORDER BY cci");
+        q.exec();
+        while (q.next())
+        {
+            CCI c;
+            c.id = q.value(0).toInt();
+            if (includeControl)
+            {
+                c.control = GetControl(q.value(1).toInt());
+            }
+            c.cci = q.value(2).toInt();
+            c.definition = q.value(3).toString();
+
+            ret.append(c);
+        }
+    }
+    return ret;
+}
+
+Control DbManager::GetControl(int id, bool includeFamily)
+{
+    Control ret;
+    QSqlDatabase db;
+    if (this->CheckDatabase(db))
+    {
+        QSqlQuery q(db);
+        q.prepare("SELECT id, FamilyId, number, enhancement, title FROM Control WHERE id = :id");
+        q.bindValue(":id", id);
+        q.exec();
+        if (q.next())
+        {
+            ret.id = q.value(0).toInt();;
+            if (includeFamily)
+                ret.family = GetFamily(q.value(1).toInt());
+            ret.number = q.value(2).toInt();
+            ret.enhancement = q.value(3).isNull() ? -1 : q.value(3).toInt();
+            ret.title = q.value(4).toString();
+        }
+    }
+    return ret;
+}
+
 Control DbManager::GetControl(QString control, bool includeId)
 {
     Control ret;
