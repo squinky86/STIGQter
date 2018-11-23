@@ -40,6 +40,7 @@ private slots:
 
     void CompletedThread();
 
+    void About();
     void DeleteCCIs();
     void UpdateCCIs();
 

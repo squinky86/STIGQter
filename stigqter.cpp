@@ -17,10 +17,12 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
+#include "common.h"
+#include "stigqter.h"
 #include "workercciadd.h"
 #include "workerccidelete.h"
-#include "stigqter.h"
 #include "ui_stigqter.h"
+#include "help.h"
 
 #include <QThread>
 #include <QDebug>
@@ -31,6 +33,7 @@ STIGQter::STIGQter(QWidget *parent) :
     db(new DbManager)
 {
     ui->setupUi(this);
+    this->setWindowTitle(QString("STIGQter ") + QString(VERSION));
     EnableInput();
 }
 
@@ -86,6 +89,13 @@ void STIGQter::CompletedThread()
     EnableInput();
     CleanThreads();
     ui->progressBar->setValue(ui->progressBar->maximum());
+}
+
+void STIGQter::About()
+{
+    Help *h = new Help();
+    h->setAttribute(Qt::WA_DeleteOnClose); //clean up after itself (no explicit "delete" needed)
+    h->show();
 }
 
 void STIGQter::DeleteCCIs()

@@ -24,9 +24,6 @@
 #include <QEventLoop>
 #include <QString>
 #include <QtNetwork>
-#include <iostream>
-
-#define VERSION "0.0.1"
 
 QString DownloadPage(QUrl u)
 {

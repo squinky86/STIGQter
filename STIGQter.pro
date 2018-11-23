@@ -47,7 +47,8 @@ SOURCES += \
     dbmanager.cpp \
     common.cpp \
     workerccidelete.cpp \
-    workercciadd.cpp
+    workercciadd.cpp \
+    help.cpp
 
 HEADERS += \
         stigqter.h \
@@ -57,10 +58,12 @@ HEADERS += \
     workerccidelete.h \
     workercciadd.h \
     control.h \
-    cci.h
+    cci.h \
+    help.h
 
 FORMS += \
-        stigqter.ui
+        stigqter.ui \
+    help.ui
 
 # Default rules for deployment.
 qnx: target.path = /tmp/$${TARGET}/bin
