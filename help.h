@@ -1,6 +1,3 @@
-#ifndef HELP_H
-#define HELP_H
-
 /*
  * STIGQter - STIG fun with Qt
  *
@@ -19,6 +16,9 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
+
+#ifndef HELP_H
+#define HELP_H
 
 #include <QWidget>
 #include <QWidgetAction>
