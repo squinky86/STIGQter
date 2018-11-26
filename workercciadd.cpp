@@ -73,9 +73,9 @@ void WorkerCCIAdd::process()
                 }
                 if (id.endsWith("FamilyLink"))
                 {
-                    QString family(xml->readElementText());
+                    QString family(xml->readElementText().trimmed());
                     QString acronym(family.left(2));
-                    QString familyName(family.right(family.length() - 5));
+                    QString familyName(family.right(family.length() - 5).trimmed());
                     emit updateStatus("Adding " + acronym + "—" + familyName + "…");
                     db.AddFamily(acronym, familyName);
                     todo.append(href);

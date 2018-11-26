@@ -131,6 +131,7 @@ void STIGQter::AddSTIGs()
 void STIGQter::DeleteCCIs()
 {
     DisableInput();
+    _updatedCCIs = true;
 
     //Create thread to download CCIs and keep GUI active
     QThread* t = new QThread;
@@ -169,6 +170,7 @@ void STIGQter::EnableInput()
     ui->btnImportSTIGs->setEnabled(true);
     ui->btnOpenCKL->setEnabled(true);
     ui->btnQuit->setEnabled(true);
+    ui->menubar->setEnabled(true);
 }
 
 void STIGQter::Initialize(int max, int val)
@@ -200,6 +202,7 @@ void STIGQter::DisableInput()
     ui->btnImportSTIGs->setEnabled(false);
     ui->btnOpenCKL->setEnabled(false);
     ui->btnQuit->setEnabled(false);
+    ui->menubar->setEnabled(false);
 }
 
 void STIGQter::DisplayCCIs()
