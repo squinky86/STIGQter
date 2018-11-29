@@ -21,9 +21,42 @@
 #include "tidy.h"
 #include "tidybuffio.h"
 
+#include <zip.h>
+
 #include <QEventLoop>
 #include <QString>
 #include <QtNetwork>
+
+bool DownloadFile(QUrl u, QFile *f)
+{
+    bool close = false;
+    if (!f->isOpen())
+    {
+        f->open(QIODevice::WriteOnly);
+        if (!f->isOpen())
+            return false;
+        close = true;
+    }
+    QNetworkAccessManager manager;
+    QNetworkRequest req = QNetworkRequest(u);
+    req.setAttribute(QNetworkRequest::FollowRedirectsAttribute, true);
+    QString userAgent = QString("STIGQter/") + VERSION;
+    req.setRawHeader("User-Agent", userAgent.toStdString().c_str());
+    QNetworkReply *response = manager.get(req);
+    QEventLoop event;
+    QObject::connect(response,SIGNAL(finished()),&event,SLOT(quit()));
+    event.exec();
+    QByteArray tmpArray = response->readAll();
+    f->write(tmpArray, tmpArray.size());
+    f->flush();
+    delete response;
+
+    if (close)
+        f->close();
+    else
+        f->seek(0);
+    return true;
+}
 
 QString DownloadPage(QUrl u)
 {
@@ -38,6 +71,49 @@ QString DownloadPage(QUrl u)
     QString html = response->readAll();
     delete response;
     return html;
+}
+
+QByteArrayList GetXMLFromZip(const char* f)
+{
+    QByteArrayList ret;
+    struct zip *za;
+    int err;
+    struct zip_stat sb;
+    struct zip_file *zf;
+    za = zip_open(f, 0, &err);
+    if (za != nullptr)
+    {
+        for (unsigned int i = 0; i < zip_get_num_entries(za, 0); i++)
+        {
+            if (zip_stat_index(za, i, 0, &sb) == 0)
+            {
+                QString name(sb.name);
+                if (name.endsWith(".xml", Qt::CaseInsensitive))
+                {
+                    QByteArray todo;
+                    zf = zip_fopen_index(za, i, 0);
+                    if (zf)
+                    {
+                        unsigned int sum = 0;
+                        while (sum < sb.size)
+                        {
+                            char buf[1024];
+                            zip_int64_t len = zip_fread(zf, buf, 1024);
+                            if (len > 0)
+                            {
+                                todo.append(buf, static_cast<int>(len));
+                                sum += len;
+                            }
+                        }
+                        zip_fclose(zf);
+                    }
+                    ret.append(todo);
+                }
+            }
+        }
+        zip_close(za);
+    }
+    return ret;
 }
 
 QString HTML2XHTML(QString s)
@@ -74,35 +150,4 @@ QString HTML2XHTML(QString s)
     QString ret(s);
     ret = ret.replace("&nbsp;", " ");
     return ret;
-}
-
-bool DownloadFile(QUrl u, QFile *f)
-{
-    bool close = false;
-    if (!f->isOpen())
-    {
-        f->open(QIODevice::WriteOnly);
-        if (!f->isOpen())
-            return false;
-        close = true;
-    }
-    QNetworkAccessManager manager;
-    QNetworkRequest req = QNetworkRequest(u);
-    req.setAttribute(QNetworkRequest::FollowRedirectsAttribute, true);
-    QString userAgent = QString("STIGQter/") + VERSION;
-    req.setRawHeader("User-Agent", userAgent.toStdString().c_str());
-    QNetworkReply *response = manager.get(req);
-    QEventLoop event;
-    QObject::connect(response,SIGNAL(finished()),&event,SLOT(quit()));
-    event.exec();
-    QByteArray tmpArray = response->readAll();
-    f->write(tmpArray, tmpArray.size());
-    f->flush();
-    delete response;
-
-    if (close)
-        f->close();
-    else
-        f->seek(0);
-    return true;
 }

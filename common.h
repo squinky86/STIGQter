@@ -20,13 +20,15 @@
 #ifndef COMMON_H
 #define COMMON_H
 
+#include <QByteArrayList>
 #include <QFile>
 #include <QNetworkReply>
 
 #define VERSION "0.0.1"
 
-QString DownloadPage(QUrl u);
 bool DownloadFile(QUrl u, QFile *f);
+QString DownloadPage(QUrl u);
+QByteArrayList GetXMLFromZip(const char* f);
 QString HTML2XHTML(QString s);
 
 #endif // COMMON_H

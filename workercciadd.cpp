@@ -194,120 +194,89 @@ void WorkerCCIAdd::process()
 
     //Step 6: download all CCIs
     QTemporaryFile tmpFile;
-    QByteArray xmlFile;
+    QByteArrayList xmlFiles;
     db.DelayCommit(true);
     if (tmpFile.open())
     {
-        struct zip *za;
-        int err;
-        struct zip_stat sb;
-        struct zip_file *zf;
         QUrl ccis("http://iasecontent.disa.mil/stigs/zip/u_cci_list.zip");
         emit updateStatus("Downloading " + ccis.toString() + "…");
         DownloadFile(ccis, &tmpFile);
         emit progress(-1);
         emit updateStatus("Extracting CCIs…");
-        za = zip_open(tmpFile.fileName().toStdString().c_str(), 0, &err);
-        if (za != nullptr)
-        {
-            for (unsigned int i = 0; i < zip_get_num_entries(za, 0); i++)
-            {
-                if (zip_stat_index(za, i, 0, &sb) == 0)
-                {
-                    QString name(sb.name);
-                    if (name.endsWith(".xml", Qt::CaseInsensitive))
-                    {
-                        zf = zip_fopen_index(za, i, 0);
-                        if (zf)
-                        {
-                            unsigned int sum = 0;
-                            while (sum < sb.size)
-                            {
-                                char buf[1024];
-                                zip_int64_t len = zip_fread(zf, buf, 1024);
-                                if (len > 0)
-                                {
-                                    xmlFile.append(buf, static_cast<int>(len));
-                                    sum += len;
-                                }
-                            }
-                            zip_fclose(zf);
-                        }
-                    }
-                }
-            }
-            zip_close(za);
-        }
+        xmlFiles = GetXMLFromZip(tmpFile.fileName().toStdString().c_str());
         tmpFile.close();
     }
 
     //Step 7: Parse all CCIs
     emit updateStatus("Parsing CCIs…");
-    xml = new QXmlStreamReader(xmlFile);
-    QString cci("");
-    QString definition("");
     QList<CCI> toAdd;
-    while (!xml->atEnd() && !xml->hasError())
+    foreach (const QByteArray &xmlFile, xmlFiles)
     {
-        xml->readNext();
-        if (xml->isStartElement())
+        xml = new QXmlStreamReader(xmlFile);
+        QString cci("");
+        QString definition("");
+        while (!xml->atEnd() && !xml->hasError())
         {
-            if (xml->name() == "cci_item")
+            xml->readNext();
+            if (xml->isStartElement())
             {
-                if (xml->attributes().hasAttribute("id"))
+                if (xml->name() == "cci_item")
                 {
-                    foreach (const QXmlStreamAttribute &attr, xml->attributes())
+                    if (xml->attributes().hasAttribute("id"))
                     {
-                        if (attr.name() == "id")
-                            cci = attr.value().toString();
+                        foreach (const QXmlStreamAttribute &attr, xml->attributes())
+                        {
+                            if (attr.name() == "id")
+                                cci = attr.value().toString();
+                        }
                     }
                 }
-            }
-            else if (xml->name() == "definition")
-            {
-                definition = xml->readElementText();
-            }
-            else if (xml->name() == "reference")
-            {
-                if (xml->attributes().hasAttribute("version") && xml->attributes().hasAttribute("index") && !cci.isEmpty())
+                else if (xml->name() == "definition")
                 {
-                    QString version("");
-                    QString index("");
-                    foreach (const QXmlStreamAttribute &attr, xml->attributes())
+                    definition = xml->readElementText();
+                }
+                else if (xml->name() == "reference")
+                {
+                    if (xml->attributes().hasAttribute("version") && xml->attributes().hasAttribute("index") && !cci.isEmpty())
                     {
-                        if (attr.name() == "version")
-                            version = attr.value().toString();
-                        else if (attr.name() == "index")
-                            index = attr.value().toString();
-                    }
-                    if (!version.isEmpty() && !index.isEmpty() && (version == "4")) //Only Rev 4 supported
-                    {
-                        int cciInt = cci.right(6).toInt();
-                        QString control = index;
-                        if (control.contains(' '))
-                            control = control.left(control.indexOf(" "));
-                        if (control.contains('.'))
-                            control = control.left(control.indexOf("."));
-                        if (index.contains('('))
+                        QString version("");
+                        QString index("");
+                        foreach (const QXmlStreamAttribute &attr, xml->attributes())
                         {
-                            int tmpInt = index.indexOf('(');
-                            QStringRef enhancement(&index, tmpInt, index.indexOf(')') - tmpInt + 1);
-                            control.append(enhancement);
+                            if (attr.name() == "version")
+                                version = attr.value().toString();
+                            else if (attr.name() == "index")
+                                index = attr.value().toString();
                         }
-                        CCI c;
-                        c.cci = cciInt;
-                        c.control.title = control;
-                        c.definition = definition;
-                        toAdd.append(c);
-                        //delayed add
-                        //db.AddCCI(cciInt, control, definition);
+                        if (!version.isEmpty() && !index.isEmpty() && (version == "4")) //Only Rev 4 supported
+                        {
+                            int cciInt = cci.right(6).toInt();
+                            QString control = index;
+                            if (control.contains(' '))
+                                control = control.left(control.indexOf(" "));
+                            if (control.contains('.'))
+                                control = control.left(control.indexOf("."));
+                            if (index.contains('('))
+                            {
+                                int tmpInt = index.indexOf('(');
+                                QStringRef enhancement(&index, tmpInt, index.indexOf(')') - tmpInt + 1);
+                                control.append(enhancement);
+                            }
+                            CCI c;
+                            c.cci = cciInt;
+                            c.control.title = control;
+                            c.definition = definition;
+                            toAdd.append(c);
+                            //delayed add
+                            //db.AddCCI(cciInt, control, definition);
+                        }
                     }
                 }
             }
         }
+        delete xml;
     }
     QFile::remove(tmpFile.fileName());
-    delete xml;
 
     //Step 8: add CCIs
     emit initialize(toAdd.size() + 1, 1);

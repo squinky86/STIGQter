@@ -17,8 +17,19 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#include "workerstigadd.h"
+#include "common.h"
 #include "dbmanager.h"
+#include "workerstigadd.h"
+
+#include <QXmlStreamReader>
+
+void WorkerSTIGAdd::ParseSTIG(QByteArray stig)
+{
+    //should be the .xml file inside of the STIG .zip file here
+    QXmlStreamReader *xml = new QXmlStreamReader(stig);
+    //TODO: parse STIG XML
+    delete xml;
+}
 
 WorkerSTIGAdd::WorkerSTIGAdd(QObject *parent) : QObject(parent)
 {
@@ -32,13 +43,19 @@ void WorkerSTIGAdd::AddSTIGs(QStringList stigs)
 
 void WorkerSTIGAdd::process()
 {
+    //get the list of STIG .zip files selected
     emit initialize(_todo.count(), 0);
+    //loop through it and parse all XML files inside
     foreach(const QString s, _todo)
     {
         updateStatus("Extracting " + s + "…");
-        //TODO: extract zip
+        //get the list of XML files inside the STIG
+        QByteArrayList toParse = GetXMLFromZip(s.toStdString().c_str());
         updateStatus("Parsing " + s + "…");
-        //TODO: parse extracted XML
+        foreach(const QByteArray stig, toParse)
+        {
+            ParseSTIG(stig);
+        }
         emit progress(-1);
     }
     emit updateStatus("Done!");

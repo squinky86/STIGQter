@@ -28,6 +28,7 @@ class WorkerSTIGAdd : public QObject
 
 private:
     QStringList _todo;
+    void ParseSTIG(QByteArray stig);
 
 public:
     explicit WorkerSTIGAdd(QObject *parent = nullptr);
