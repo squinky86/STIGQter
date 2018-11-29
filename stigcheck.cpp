@@ -23,3 +23,36 @@ QString PrintSTIGCheck(STIGCheck s)
 {
     return QString::number(s.id);
 }
+
+STIGCheck::STIGCheck()
+{
+
+}
+
+STIGCheck::STIGCheck(const STIGCheck &right) : STIGCheck()
+{
+    id = right.id;
+    stig = right.stig;
+    cci = right.cci;
+    rule = right.rule;
+    severity = right.severity;
+    title = right.title;
+    vulnDescription = right.vulnDescription;
+    falsePositives = right.falsePositives;
+    falseNegatives = right.falseNegatives;
+    fix = right.fix;
+    check = right.check;
+    documentable = right.documentable;
+    mitigations = right.mitigations;
+    severityOverrideGuidance = right.severityOverrideGuidance;
+    checkContentRef = right.checkContentRef;
+    potentialImpact = right.potentialImpact;
+    thirdPartyTools = right.thirdPartyTools;
+    mitigationControl = right.mitigationControl;
+    responsibility = right.responsibility;
+}
+
+STIGCheck::~STIGCheck()
+{
+
+}

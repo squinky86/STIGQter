@@ -20,20 +20,23 @@
 #ifndef STIG_H
 #define STIG_H
 
-#include "stigcheck.h"
-
 #include <QList>
 #include <QString>
 
-struct STIG
+class STIGCheck;
+
+class STIG
 {
 public:
+    STIG();
+    ~STIG();
+
     int id;
     QString title;
     QString description;
     QString release;
     int version;
-    QList<STIGCheck> checks;
+    QList<STIGCheck*> checks;
 };
 
 QString PrintSTIG(STIG s);

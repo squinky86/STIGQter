@@ -420,6 +420,14 @@ bool DbManager::UpdateDatabaseFromVersion(int version)
                       "`value`	TEXT "
                       ")");
             q.exec();
+            q.prepare("CREATE TABLE `STIG` ( "
+                      "`id`	INTEGER PRIMARY KEY AUTOINCREMENT, "
+                      "`title`	TEXT, "
+                      "`description`	TEXT, "
+                      "`release`	TEXT, "
+                      "`version`	INTEGER "
+                      ")");
+            q.exec();
             q.prepare("INSERT INTO variables (name, value) VALUES(:name, :value)");
             q.bindValue(":name", "version");
             q.bindValue(":value", "1");

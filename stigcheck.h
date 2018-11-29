@@ -32,17 +32,13 @@ enum Severity
     low
 };
 
-enum Status
-{
-    NotReviewed,
-    Open,
-    NotAFinding,
-    NotApplicable
-};
-
-struct STIGCheck
+class STIGCheck
 {
 public:
+    STIGCheck();
+    STIGCheck(const STIGCheck &right);
+    ~STIGCheck();
+
     int id;
     STIG stig;
     CCI cci;
@@ -62,7 +58,6 @@ public:
     QString thirdPartyTools;
     QString mitigationControl;
     QString responsibility;
-    Status status;
 };
 
 QString PrintSTIGCheck(STIGCheck s);

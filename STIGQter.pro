@@ -53,7 +53,8 @@ SOURCES += \
     cci.cpp \
     workerstigadd.cpp \
     stig.cpp \
-    stigcheck.cpp
+    stigcheck.cpp \
+    cklcheck.cpp
 
 HEADERS += \
         stigqter.h \
@@ -67,7 +68,8 @@ HEADERS += \
     help.h \
     workerstigadd.h \
     stig.h \
-    stigcheck.h
+    stigcheck.h \
+    cklcheck.h
 
 FORMS += \
         stigqter.ui \

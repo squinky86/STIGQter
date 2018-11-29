@@ -18,8 +18,20 @@
  */
 
 #include "stig.h"
+#include "stigcheck.h"
 
 QString PrintSTIG(STIG s)
 {
     return QString::number(s.id);
+}
+
+STIG::STIG()
+{
+}
+
+STIG::~STIG()
+{
+    //clean up the STIGChecks
+    foreach(STIGCheck *c, checks)
+        delete c;
 }
