@@ -32,6 +32,8 @@ enum Severity
     low
 };
 
+Severity GetSeverity(QString severity);
+
 class STIGCheck
 {
 public:
@@ -42,8 +44,12 @@ public:
     int id;
     STIG stig;
     CCI cci;
+    QString vulnNum;
+    QString groupTitle;
+    QString ruleVersion;
     QString rule;
     Severity severity;
+    double weight;
     QString title;
     QString vulnDescription;
     QString falsePositives;

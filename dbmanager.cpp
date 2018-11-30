@@ -182,13 +182,17 @@ void DbManager::AddSTIG(STIG stig, QList<STIGCheck *> checks)
         foreach(STIGCheck* c, checks)
         {
             newChecks = true;
-            q.prepare("INSERT INTO STIGCheck (STIGId, CCIId, rule, severity, title, vulnDescription, falsePositives, falseNegatives, fix, check, documentable, mitigations, severityOverrideGuidance, checkContentRef, potentialImpact, thirdPartyTools, mitigationControl, responsibility) VALUES(:STIGId, :CCIId, :rule, :severity, :title, :vulnDescription, :falsePositives, :falseNegatives, :fix, :check, :documentable, :mitigations, :severityOverrideGuidance, :checkContentRef, :potentialImpact, :thirdPartyTools, :mitigationControl, :responsibility)");
+            q.prepare("INSERT INTO STIGCheck (STIGId, CCIId, rule, vulnNum, groupTitle, ruleVersion, severity, weight, title, vulnDescription, falsePositives, falseNegatives, fix, check, documentable, mitigations, severityOverrideGuidance, checkContentRef, potentialImpact, thirdPartyTools, mitigationControl, responsibility) VALUES(:STIGId, :CCIId, :rule, :vulnNum, :groupTitle, :ruleVersion, :severity, :weight, :title, :vulnDescription, :falsePositives, :falseNegatives, :fix, :check, :documentable, :mitigations, :severityOverrideGuidance, :checkContentRef, :potentialImpact, :thirdPartyTools, :mitigationControl, :responsibility)");
             if (c->cci.id <= 0)
                 c->cci = GetCCI(c->cci.cci, false); //don't need control information
             q.bindValue(":STIGId", stig.id);
             q.bindValue(":CCIId", c->cci.id);
             q.bindValue(":rule", c->rule);
+            q.bindValue(":vulnNum", c->vulnNum);
+            q.bindValue(":groupTitle", c->groupTitle);
+            q.bindValue(":ruleVersion", c->ruleVersion);
             q.bindValue(":severity", c->severity);
+            q.bindValue(":weight", c->weight);
             q.bindValue(":title", c->title);
             q.bindValue(":vulnDescription", c->vulnDescription);
             q.bindValue(":falsePositives", c->falsePositives);
@@ -516,7 +520,11 @@ bool DbManager::UpdateDatabaseFromVersion(int version)
                       "`STIGId`	INTEGER, "
                       "`CCIId`	INTEGER, "
                       "`rule`	TEXT, "
+                      "`vulnNum`    TEXT, "
+                      "`groupTitle`    TEXT, "
+                      "`ruleVersion`    TEXT, "
                       "`severity`	INTEGER, "
+                      "`weight` REAL, "
                       "`title`	TEXT, "
                       "`vulnDescription`	TEXT, "
                       "`falsePositives`	TEXT, "

@@ -30,17 +30,17 @@ void WorkerSTIGAdd::ParseSTIG(QByteArray stig)
     //should be the .xml file inside of the STIG .zip file here
     QXmlStreamReader *xml = new QXmlStreamReader(stig);
     STIG s;
+    STIGCheck c;
+    c.id = -1;
     QList<STIGCheck*> checks;
     bool inStigRules = false;
+    bool inGroup = false;
+    DbManager db;
     while (!xml->atEnd() && !xml->hasError())
     {
-        if (inStigRules)
+        xml->readNext();
+        if (!inStigRules)
         {
-            //TODO: build STIG checks
-        }
-        else
-        {
-            xml->readNext();
             if (xml->isStartElement())
             {
                 if (xml->name() == "title")
@@ -66,12 +66,83 @@ void WorkerSTIGAdd::ParseSTIG(QByteArray stig)
                 {
                     s.version = xml->readElementText().toInt();
                 }
+                else if (xml->name() == "Group")
+                {
+                    inStigRules = true; //Read all basic STIG data - switch to processing STIG checks
+                }
+            }
+        }
+        if (inStigRules)
+        {
+            if (xml->isStartElement())
+            {
+                if (xml->name() == "Group" && xml->attributes().hasAttribute("id"))
+                {
+                    inGroup = true;
+                    foreach (const QXmlStreamAttribute &attr, xml->attributes())
+                    {
+                        if (attr.name() == "id")
+                        {
+                            c.vulnNum = attr.value().toString().trimmed();
+                        }
+                    }
+                }
+                if (xml->name() == "Rule" && xml->attributes().hasAttribute("id") && xml->attributes().hasAttribute("severity") && xml->attributes().hasAttribute("weight"))
+                {
+                    inGroup = false;
+                    //check if we moved to another rule
+                    if (c.id == 0)
+                    {
+                        //new rule; add the previous one!
+                        STIGCheck *tempCheck = new STIGCheck(c); //this will be deleted after all checks are added
+                        checks.append(tempCheck);
+                    }
+                    foreach (const QXmlStreamAttribute &attr, xml->attributes())
+                    {
+                        if (attr.name() == "id")
+                        {
+                            c.rule = attr.value().toString().trimmed();
+                        }
+                        else if (attr.name() == "severity")
+                        {
+                            c.severity = GetSeverity(attr.value().toString().trimmed());
+                        }
+                        else if (attr.name() == "weight")
+                        {
+                            c.weight = attr.value().toDouble();
+                        }
+                    }
+                }
+                else if (xml->name() == "title")
+                {
+                    if (inGroup)
+                        c.groupTitle = xml->readElementText().trimmed();
+                    if (!inGroup)
+                        c.title = xml->readElementText().trimmed();
+                }
+                else if (xml->name() == "description")
+                {
+                    if (!inGroup)
+                        c.vulnDescription = xml->readElementText().trimmed();
+                }
+                else if (xml->name() == "ident")
+                {
+                    QString cci(xml->readElementText().trimmed());
+                    if (cci.startsWith("CCI", Qt::CaseInsensitive))
+                        c.cci = db.GetCCI(GetCCINumber(cci));
+                }
             }
         }
     }
+    if (inStigRules)
+    {
+        STIGCheck *tempCheck = new STIGCheck(c);
+        checks.append(tempCheck);
+    }
     delete xml;
-    DbManager db;
     db.AddSTIG(s, checks);
+
+    //delete STIGCheck memory
     foreach (STIGCheck *c, checks)
         delete c;
 }

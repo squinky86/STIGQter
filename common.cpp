@@ -151,3 +151,11 @@ QString HTML2XHTML(QString s)
     ret = ret.replace("&nbsp;", " ");
     return ret;
 }
+
+int GetCCINumber(QString cci)
+{
+    cci = cci.trimmed();
+    if (cci.startsWith("CCI-"))
+        cci = cci.right(cci.length() - 4);
+    return cci.toInt();
+}

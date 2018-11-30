@@ -19,6 +19,8 @@
 
 #include "stigcheck.h"
 
+#include <QString>
+
 QString PrintSTIGCheck(STIGCheck s)
 {
     return QString::number(s.id);
@@ -35,7 +37,11 @@ STIGCheck::STIGCheck(const STIGCheck &right) : STIGCheck()
     stig = right.stig;
     cci = right.cci;
     rule = right.rule;
+    vulnNum = right.vulnNum;
+    groupTitle = right.groupTitle;
+    ruleVersion = right.ruleVersion;
     severity = right.severity;
+    weight = right.weight;
     title = right.title;
     vulnDescription = right.vulnDescription;
     falsePositives = right.falsePositives;
@@ -55,4 +61,14 @@ STIGCheck::STIGCheck(const STIGCheck &right) : STIGCheck()
 STIGCheck::~STIGCheck()
 {
 
+}
+
+Severity GetSeverity(QString severity)
+{
+    Severity ret = Severity::low;
+    if (severity.startsWith("medium", Qt::CaseInsensitive))
+        ret = Severity::medium;
+    else if (severity.startsWith("high", Qt::CaseInsensitive))
+        ret = Severity::high;
+    return ret;
 }
