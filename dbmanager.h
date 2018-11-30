@@ -26,6 +26,8 @@
 #include "cci.h"
 #include "control.h"
 #include "family.h"
+#include "stig.h"
+#include "stigcheck.h"
 
 class DbManager
 {
@@ -39,9 +41,12 @@ public:
     void AddCCI(int cci, QString control, QString definition);
     void AddControl(QString control, QString title);
     void AddFamily(QString acronym, QString description);
+    void AddSTIG(STIG s, QList<STIGCheck*> c);
 
     void DeleteCCIs();
 
+    CCI GetCCI(int cci, bool includeControl = true);
+    CCI GetCCI(CCI cci, bool includeControl = true);
     QList<CCI> GetCCIs(bool includeControl = true);
     Control GetControl(int id, bool includeFamily = true);
     Control GetControl(QString control, bool includeId = true);

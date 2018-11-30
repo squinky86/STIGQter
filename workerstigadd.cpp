@@ -19,6 +19,8 @@
 
 #include "common.h"
 #include "dbmanager.h"
+#include "stig.h"
+#include "stigcheck.h"
 #include "workerstigadd.h"
 
 #include <QXmlStreamReader>
@@ -27,8 +29,51 @@ void WorkerSTIGAdd::ParseSTIG(QByteArray stig)
 {
     //should be the .xml file inside of the STIG .zip file here
     QXmlStreamReader *xml = new QXmlStreamReader(stig);
-    //TODO: parse STIG XML
+    STIG s;
+    QList<STIGCheck*> checks;
+    bool inStigRules = false;
+    while (!xml->atEnd() && !xml->hasError())
+    {
+        if (inStigRules)
+        {
+            //TODO: build STIG checks
+        }
+        else
+        {
+            xml->readNext();
+            if (xml->isStartElement())
+            {
+                if (xml->name() == "title")
+                {
+                    s.title = xml->readElementText().trimmed();
+                }
+                else if (xml->name() == "description")
+                {
+                    s.description = xml->readElementText().trimmed();
+                }
+                else if (xml->name() == "plain-text" && xml->attributes().hasAttribute("id"))
+                {
+                    foreach (const QXmlStreamAttribute &attr, xml->attributes())
+                    {
+                        if (attr.name() == "id")
+                        {
+                            s.release = attr.value().toString().trimmed();
+                            break;
+                        }
+                    }
+                }
+                else if (xml->name() == "version")
+                {
+                    s.version = xml->readElementText().toInt();
+                }
+            }
+        }
+    }
     delete xml;
+    DbManager db;
+    db.AddSTIG(s, checks);
+    foreach (STIGCheck *c, checks)
+        delete c;
 }
 
 WorkerSTIGAdd::WorkerSTIGAdd(QObject *parent) : QObject(parent)

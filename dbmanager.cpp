@@ -156,6 +156,60 @@ void DbManager::AddFamily(QString acronym, QString description)
     }
 }
 
+void DbManager::AddSTIG(STIG stig, QList<STIGCheck *> checks)
+{
+    QSqlDatabase db;
+    if (this->CheckDatabase(db))
+    {
+        QSqlQuery q(db);
+        if (stig.id <= 0)
+        {
+            q.prepare("INSERT INTO STIG (title, description, release, version) VALUES(:title, :description, :release, :version)");
+            q.bindValue(":title", stig.title);
+            q.bindValue(":description", stig.description);
+            q.bindValue(":release", stig.release);
+            q.bindValue(":version", stig.version);
+            q.exec();
+            db.commit();
+            q.prepare("SELECT last_insert_rowid()");
+            q.exec();
+            while (q.next())
+            {
+                stig.id = q.value(0).toInt();
+            }
+        }
+        bool newChecks = false;
+        foreach(STIGCheck* c, checks)
+        {
+            newChecks = true;
+            q.prepare("INSERT INTO STIGCheck (STIGId, CCIId, rule, severity, title, vulnDescription, falsePositives, falseNegatives, fix, check, documentable, mitigations, severityOverrideGuidance, checkContentRef, potentialImpact, thirdPartyTools, mitigationControl, responsibility) VALUES(:STIGId, :CCIId, :rule, :severity, :title, :vulnDescription, :falsePositives, :falseNegatives, :fix, :check, :documentable, :mitigations, :severityOverrideGuidance, :checkContentRef, :potentialImpact, :thirdPartyTools, :mitigationControl, :responsibility)");
+            if (c->cci.id <= 0)
+                c->cci = GetCCI(c->cci.cci, false); //don't need control information
+            q.bindValue(":STIGId", stig.id);
+            q.bindValue(":CCIId", c->cci.id);
+            q.bindValue(":rule", c->rule);
+            q.bindValue(":severity", c->severity);
+            q.bindValue(":title", c->title);
+            q.bindValue(":vulnDescription", c->vulnDescription);
+            q.bindValue(":falsePositives", c->falsePositives);
+            q.bindValue(":falseNegatives", c->falseNegatives);
+            q.bindValue(":fix", c->fix);
+            q.bindValue(":check", c->check);
+            q.bindValue(":documentable", c->documentable);
+            q.bindValue(":mitigations", c->mitigations);
+            q.bindValue(":severityOverrideGuidance", c->severityOverrideGuidance);
+            q.bindValue(":checkContentRef", c->checkContentRef);
+            q.bindValue(":potentialImpact", c->potentialImpact);
+            q.bindValue(":thirdPartyTools", c->thirdPartyTools);
+            q.bindValue(":mitigationControl", c->mitigationControl);
+            q.bindValue(":responsibility", c->responsibility);
+            q.exec();
+        }
+        if (newChecks)
+            db.commit();
+    }
+}
+
 void DbManager::DeleteCCIs()
 {
     QSqlDatabase db;
@@ -171,6 +225,35 @@ void DbManager::DeleteCCIs()
         if (!_delayCommit)
             db.commit();
     }
+}
+
+CCI DbManager::GetCCI(int cci, bool includeControl)
+{
+    QSqlDatabase db;
+    CCI c;
+    if (this->CheckDatabase(db))
+    {
+        QSqlQuery q(db);
+        q.prepare("SELECT id, ControlId, cci, definition FROM CCI WHERE cci = :cci");
+        q.bindValue(":cci", cci);
+        q.exec();
+        while (q.next())
+        {
+            c.id = q.value(0).toInt();
+            if (includeControl)
+            {
+                c.control = GetControl(q.value(1).toInt());
+            }
+            c.cci = q.value(2).toInt();
+            c.definition = q.value(3).toString();
+        }
+    }
+    return c;
+}
+
+CCI DbManager::GetCCI(CCI cci, bool includeControl)
+{
+    return GetCCI(cci.cci, includeControl);
 }
 
 QList<CCI> DbManager::GetCCIs(bool includeControl)
@@ -426,6 +509,30 @@ bool DbManager::UpdateDatabaseFromVersion(int version)
                       "`description`	TEXT, "
                       "`release`	TEXT, "
                       "`version`	INTEGER "
+                      ")");
+            q.exec();
+            q.prepare("CREATE TABLE `STIGCheck` ( "
+                      "`id`	INTEGER PRIMARY KEY AUTOINCREMENT, "
+                      "`STIGId`	INTEGER, "
+                      "`CCIId`	INTEGER, "
+                      "`rule`	TEXT, "
+                      "`severity`	INTEGER, "
+                      "`title`	TEXT, "
+                      "`vulnDescription`	TEXT, "
+                      "`falsePositives`	TEXT, "
+                      "`falseNegatives`	TEXT, "
+                      "`fix`	TEXT, "
+                      "`check`	TEXT, "
+                      "`documentable`	INTEGER, "
+                      "`mitigations`	TEXT, "
+                      "`severityOverrideGuidance`	TEXT, "
+                      "`checkContentRef`	TEXT, "
+                      "`potentialImpact`	TEXT, "
+                      "`thirdPartyTools`	TEXT, "
+                      "`mitigationControl`	TEXT, "
+                      "`responsibility`	TEXT, "
+                      "FOREIGN KEY(`STIGId`) REFERENCES `STIG`(`id`), "
+                      "FOREIGN KEY(`CCIId`) REFERENCES `CCI`(`id`) "
                       ")");
             q.exec();
             q.prepare("INSERT INTO variables (name, value) VALUES(:name, :value)");
