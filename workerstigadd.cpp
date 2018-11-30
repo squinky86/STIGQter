@@ -58,7 +58,6 @@ void WorkerSTIGAdd::ParseSTIG(QByteArray stig)
                         if (attr.name() == "id")
                         {
                             s.release = attr.value().toString().trimmed();
-                            break;
                         }
                     }
                 }
@@ -123,13 +122,34 @@ void WorkerSTIGAdd::ParseSTIG(QByteArray stig)
                 else if (xml->name() == "description")
                 {
                     if (!inGroup)
-                        c.vulnDescription = xml->readElementText().trimmed();
+                    {
+                        QString toParse = xml->readElementText().trimmed();
+                        //TODO: parse description
+                    }
                 }
                 else if (xml->name() == "ident")
                 {
                     QString cci(xml->readElementText().trimmed());
                     if (cci.startsWith("CCI", Qt::CaseInsensitive))
                         c.cci = db.GetCCI(GetCCINumber(cci));
+                }
+                else if (xml->name() == "fixtext")
+                {
+                    c.fix = xml->readElementText().trimmed();
+                }
+                else if (xml->name() == "check-content-ref" && xml->attributes().hasAttribute("name"))
+                {
+                    foreach (const QXmlStreamAttribute &attr, xml->attributes())
+                    {
+                        if (attr.name() == "name")
+                        {
+                            c.checkContentRef = attr.value().toString().trimmed();
+                        }
+                    }
+                }
+                else if (xml->name() == "check-content")
+                {
+                    c.check = xml->readElementText().trimmed();
                 }
             }
         }
