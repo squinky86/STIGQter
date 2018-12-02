@@ -98,6 +98,9 @@ void STIGQter::CompletedThread()
         DisplayCCIs();
         _updatedCCIs = false;
     }
+    //when maximum <= 0, the progress bar loops
+    if (ui->progressBar->maximum() <= 0)
+        ui->progressBar->setMaximum(1);
     ui->progressBar->setValue(ui->progressBar->maximum());
 }
 
