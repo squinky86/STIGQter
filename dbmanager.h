@@ -48,6 +48,8 @@ public:
     CCI GetCCI(int cci, bool includeControl = true);
     CCI GetCCI(CCI cci, bool includeControl = true);
     QList<CCI> GetCCIs(bool includeControl = true);
+    QList<STIGCheck*> GetSTIGChecksPtr(STIG stig, bool includeCCI = true);
+    QList<STIG> GetSTIGs(bool includeChecks = true);
     Control GetControl(int id, bool includeFamily = true);
     Control GetControl(QString control, bool includeId = true);
     Family GetFamily(QString acronym);

@@ -22,7 +22,7 @@
 
 QString PrintSTIG(STIG s)
 {
-    return QString::number(s.id);
+    return QString::number(s.id) + ": " + s.title + " Version: " + QString::number(s.version) + " " + s.release;
 }
 
 STIG::STIG()

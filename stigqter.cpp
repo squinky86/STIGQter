@@ -33,12 +33,14 @@ STIGQter::STIGQter(QWidget *parent) :
     QMainWindow(parent),
     ui(new Ui::STIGQter),
     db(new DbManager),
-    _updatedCCIs(false)
+    _updatedCCIs(false),
+    _updatedSTIGs(false)
 {
     ui->setupUi(this);
     this->setWindowTitle(QString("STIGQter ") + QString(VERSION));
     EnableInput();
     DisplayCCIs();
+    DisplaySTIGs();
 }
 
 STIGQter::~STIGQter()
@@ -98,6 +100,11 @@ void STIGQter::CompletedThread()
         DisplayCCIs();
         _updatedCCIs = false;
     }
+    if (_updatedSTIGs)
+    {
+        DisplaySTIGs();
+        _updatedSTIGs = false;
+    }
     //when maximum <= 0, the progress bar loops
     if (ui->progressBar->maximum() <= 0)
         ui->progressBar->setMaximum(1);
@@ -116,6 +123,7 @@ void STIGQter::AddSTIGs()
     QStringList fileNames = QFileDialog::getOpenFileNames(this,
         "Open STIG", "", "Compressed STIG (*.zip)");
     DisableInput();
+    _updatedSTIGs = true;
     QThread* t = new QThread;
     WorkerSTIGAdd *s = new WorkerSTIGAdd();
     s->AddSTIGs(fileNames);
@@ -214,5 +222,14 @@ void STIGQter::DisplayCCIs()
     foreach(const CCI &c, db->GetCCIs())
     {
         ui->lstCCIs->addItem(PrintControl(c.control) + " " + PrintCCI(c));
+    }
+}
+
+void STIGQter::DisplaySTIGs()
+{
+    ui->lstSTIGs->clear();
+    foreach(const STIG &s, db->GetSTIGs(false))
+    {
+        ui->lstSTIGs->addItem(PrintSTIG(s));
     }
 }

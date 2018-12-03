@@ -275,7 +275,30 @@ CCI DbManager::GetCCI(int cci, bool includeControl)
 
 CCI DbManager::GetCCI(CCI cci, bool includeControl)
 {
-    return GetCCI(cci.cci, includeControl);
+    if (cci.id < 0)
+    {
+        return GetCCI(cci.cci, includeControl);
+    }
+    QSqlDatabase db;
+    CCI c;
+    if (this->CheckDatabase(db))
+    {
+        QSqlQuery q(db);
+        q.prepare("SELECT id, ControlId, cci, definition FROM CCI WHERE id = :id");
+        q.bindValue(":id", cci.id);
+        q.exec();
+        while (q.next())
+        {
+            c.id = q.value(0).toInt();
+            if (includeControl)
+            {
+                c.control = GetControl(q.value(1).toInt());
+            }
+            c.cci = q.value(2).toInt();
+            c.definition = q.value(3).toString();
+        }
+    }
+    return c;
 }
 
 QList<CCI> DbManager::GetCCIs(bool includeControl)
@@ -299,6 +322,77 @@ QList<CCI> DbManager::GetCCIs(bool includeControl)
             c.definition = q.value(3).toString();
 
             ret.append(c);
+        }
+    }
+    return ret;
+}
+
+QList<STIGCheck *> DbManager::GetSTIGChecksPtr(STIG s, bool includeCCI)
+{
+    QSqlDatabase db;
+    QList<STIGCheck*> ret;
+    if (this->CheckDatabase(db))
+    {
+        QSqlQuery q(db);
+        q.prepare("SELECT `id`, `STIGId`, `CCIId`, `rule`, `vulnNum`, `groupTitle`, `ruleVersion`, `severity`, `weight`, `title`, `vulnDiscussion`, `falsePositives`, `falseNegatives`, `fix`, `check`, `documentable`, `mitigations`, `severityOverrideGuidance`, `checkContentRef`, `potentialImpact`, `thirdPartyTools`, `mitigationControl`, `responsibility` FROM STIGCheck WHERE STIGId = :STIGId");
+        q.bindValue(":STIGId", s.id);
+        q.exec();
+        while (q.next())
+        {
+            STIGCheck *c = new STIGCheck(); //must be deleted by STIG container or by caller
+            c->id = q.value(0).toInt();
+            c->stig = s;
+            CCI cci;
+            cci.id = q.value(2).toInt();
+            c->cci = includeCCI ? GetCCI(cci) : cci;
+            c->rule = q.value(3).toString();
+            c->vulnNum = q.value(4).toString();
+            c->groupTitle = q.value(5).toString();
+            c->ruleVersion = q.value(6).toString();
+            c->severity = static_cast<Severity>(q.value(7).toInt());
+            c->weight = q.value(8).toDouble();
+            c->title = q.value(9).toString();
+            c->vulnDiscussion = q.value(10).toString();
+            c->falsePositives = q.value(11).toString();
+            c->falseNegatives = q.value(12).toString();
+            c->fix = q.value(13).toString();
+            c->check = q.value(14).toString();
+            c->documentable = q.value(15).toBool();
+            c->mitigations = q.value(16).toString();
+            c->severityOverrideGuidance = q.value(17).toString();
+            c->checkContentRef = q.value(18).toString();
+            c->potentialImpact = q.value(19).toString();
+            c->thirdPartyTools = q.value(20).toString();
+            c->mitigationControl = q.value(21).toString();
+            c->thirdPartyTools = q.value(22).toString();
+            ret.append(c);
+        }
+    }
+    return ret;
+}
+
+QList<STIG> DbManager::GetSTIGs(bool includeChecks)
+{
+    QSqlDatabase db;
+    QList<STIG> ret;
+    if (this->CheckDatabase(db))
+    {
+        QSqlQuery q(db);
+        q.prepare("SELECT id, title, description, release, version FROM STIG ORDER BY title");
+        q.exec();
+        while (q.next())
+        {
+            STIG s;
+            s.id = q.value(0).toInt();
+            s.title = q.value(1).toString();
+            s.description = q.value(2).toString();
+            s.release = q.value(3).toString();
+            s.version = q.value(4).toInt();
+            if (includeChecks)
+            {
+                s.checks = GetSTIGChecksPtr(s, false);
+            }
+            ret.append(s);
         }
     }
     return ret;

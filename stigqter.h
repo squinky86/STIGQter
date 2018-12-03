@@ -54,9 +54,11 @@ private:
     QList<QThread *> threads;
     QList<QObject *> workers;
     bool _updatedCCIs;
+    bool _updatedSTIGs;
     void CleanThreads();
     void DisableInput();
     void DisplayCCIs();
+    void DisplaySTIGs();
     void EnableInput();
 };
 
