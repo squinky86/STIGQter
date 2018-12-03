@@ -21,14 +21,17 @@
 #define STIG_H
 
 #include <QList>
+#include <QObject>
 #include <QString>
 
 class STIGCheck;
 
-class STIG
+class STIG : public QObject
 {
+    Q_OBJECT
 public:
     STIG();
+    STIG(const STIG &right);
     ~STIG();
 
     int id;
@@ -37,7 +40,11 @@ public:
     QString release;
     int version;
     QList<STIGCheck*> checks;
+    void SetValues(const STIG &right, bool deepCopy = true);
+    STIG& operator=(const STIG &right);
 };
+
+Q_DECLARE_METATYPE(STIG);
 
 QString PrintSTIG(STIG s);
 

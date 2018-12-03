@@ -22,11 +22,16 @@
 
 QString PrintSTIG(STIG s)
 {
-    return QString::number(s.id) + ": " + s.title + " Version: " + QString::number(s.version) + " " + s.release;
+    return s.title + " Version: " + QString::number(s.version) + " " + s.release;
 }
 
-STIG::STIG()
+STIG::STIG() : QObject()
 {
+}
+
+STIG::STIG(const STIG &right) : STIG()
+{
+    *this = right;
 }
 
 STIG::~STIG()
@@ -34,4 +39,41 @@ STIG::~STIG()
     //clean up the STIGChecks
     foreach(STIGCheck *c, checks)
         delete c;
+}
+
+void STIG::SetValues(const STIG &right, bool deepCopy)
+{
+    id = right.id;
+    title = right.title;
+    description = right.description;
+    release = right.release;
+    version = right.version;
+
+    if (deepCopy)
+    {
+        //delete old checks
+        foreach(STIGCheck* c, checks)
+        {
+            delete c;
+        }
+
+        //copy new checks
+        foreach(STIGCheck* c, right.checks)
+        {
+            STIGCheck *tmpCheck = new STIGCheck(*c);
+            checks.append(tmpCheck);
+        }
+    }
+
+    QList<STIGCheck*> checks;
+    void SetValues(const STIG &right);
+}
+
+STIG &STIG::operator=(const STIG &right)
+{
+    if (this != &right)
+    {
+        SetValues(right, false);
+    }
+    return *this;
 }

@@ -20,14 +20,19 @@
 #ifndef FAMILY_H
 #define FAMILY_H
 
+#include <QObject>
 #include <QString>
 
-struct Family
+struct Family : public QObject
 {
+    Q_OBJECT
 public:
+    Family();
+    Family(const Family &right);
     int id;
     QString acronym;
     QString description;
+    Family& operator=(const Family &right);
 };
 
 #endif // FAMILY_H

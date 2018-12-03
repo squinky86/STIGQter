@@ -20,18 +20,27 @@
 #ifndef CCI_H
 #define CCI_H
 
+#include <QObject>
 #include <QString>
 
+#include "cci.h"
 #include "control.h"
 
-struct CCI
+class CCI : public QObject
 {
+    Q_OBJECT
+
 public:
+    CCI();
+    CCI(const CCI &right);
     int id;
     Control control;
     int cci;
     QString definition;
+    CCI& operator=(const CCI &right);
 };
+
+Q_DECLARE_METATYPE(CCI);
 
 QString PrintCCI(CCI c);
 

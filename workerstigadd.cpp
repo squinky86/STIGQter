@@ -31,6 +31,7 @@ void WorkerSTIGAdd::ParseSTIG(QByteArray stig)
     QXmlStreamReader *xml = new QXmlStreamReader(stig);
     STIG s;
     STIGCheck c;
+    s.id = -1;
     c.id = -1;
     QList<STIGCheck*> checks;
     bool inStigRules = false;

@@ -23,6 +23,7 @@
 #include "cci.h"
 #include "stig.h"
 
+#include <QObject>
 #include <QString>
 
 enum Severity
@@ -34,12 +35,14 @@ enum Severity
 
 Severity GetSeverity(QString severity);
 
-class STIGCheck
+class STIGCheck : public QObject
 {
+    Q_OBJECT
 public:
     STIGCheck();
-    STIGCheck(const STIGCheck &right);
+    STIGCheck(const STIGCheck& right);
     ~STIGCheck();
+    STIGCheck& operator=(const STIGCheck &right);
 
     int id;
     STIG stig;

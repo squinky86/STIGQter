@@ -221,7 +221,10 @@ void STIGQter::DisplayCCIs()
     ui->lstCCIs->clear();
     foreach(const CCI &c, db->GetCCIs())
     {
-        ui->lstCCIs->addItem(PrintControl(c.control) + " " + PrintCCI(c));
+        QListWidgetItem *tmpItem = new QListWidgetItem(); //memory managed by ui->lstCCIs container
+        tmpItem->setData(Qt::UserRole, QVariant::fromValue<CCI>(c));
+        tmpItem->setText(PrintControl(c.control) + " " + PrintCCI(c));
+        ui->lstCCIs->addItem(tmpItem);
     }
 }
 
@@ -230,6 +233,9 @@ void STIGQter::DisplaySTIGs()
     ui->lstSTIGs->clear();
     foreach(const STIG &s, db->GetSTIGs(false))
     {
-        ui->lstSTIGs->addItem(PrintSTIG(s));
+        QListWidgetItem *tmpItem = new QListWidgetItem(); //memory managed by ui->lstSTIGs container
+        tmpItem->setData(Qt::UserRole, QVariant::fromValue<STIG>(s));
+        tmpItem->setText(PrintSTIG(s));
+        ui->lstSTIGs->addItem(tmpItem);
     }
 }

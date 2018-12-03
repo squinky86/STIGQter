@@ -26,36 +26,45 @@ QString PrintSTIGCheck(STIGCheck s)
     return QString::number(s.id);
 }
 
-STIGCheck::STIGCheck()
+STIGCheck::STIGCheck() : QObject()
 {
 
 }
 
 STIGCheck::STIGCheck(const STIGCheck &right) : STIGCheck()
 {
-    id = right.id;
-    stig = right.stig;
-    cci = right.cci;
-    rule = right.rule;
-    vulnNum = right.vulnNum;
-    groupTitle = right.groupTitle;
-    ruleVersion = right.ruleVersion;
-    severity = right.severity;
-    weight = right.weight;
-    title = right.title;
-    vulnDiscussion = right.vulnDiscussion;
-    falsePositives = right.falsePositives;
-    falseNegatives = right.falseNegatives;
-    fix = right.fix;
-    check = right.check;
-    documentable = right.documentable;
-    mitigations = right.mitigations;
-    severityOverrideGuidance = right.severityOverrideGuidance;
-    checkContentRef = right.checkContentRef;
-    potentialImpact = right.potentialImpact;
-    thirdPartyTools = right.thirdPartyTools;
-    mitigationControl = right.mitigationControl;
-    responsibility = right.responsibility;
+    *this = right;
+}
+
+STIGCheck& STIGCheck::operator=(const STIGCheck &right)
+{
+    if (this != &right)
+    {
+        id = right.id;
+        stig.SetValues(right.stig, false);
+        cci = right.cci;
+        rule = right.rule;
+        vulnNum = right.vulnNum;
+        groupTitle = right.groupTitle;
+        ruleVersion = right.ruleVersion;
+        severity = right.severity;
+        weight = right.weight;
+        title = right.title;
+        vulnDiscussion = right.vulnDiscussion;
+        falsePositives = right.falsePositives;
+        falseNegatives = right.falseNegatives;
+        fix = right.fix;
+        check = right.check;
+        documentable = right.documentable;
+        mitigations = right.mitigations;
+        severityOverrideGuidance = right.severityOverrideGuidance;
+        checkContentRef = right.checkContentRef;
+        potentialImpact = right.potentialImpact;
+        thirdPartyTools = right.thirdPartyTools;
+        mitigationControl = right.mitigationControl;
+        responsibility = right.responsibility;
+    }
+    return *this;
 }
 
 STIGCheck::~STIGCheck()

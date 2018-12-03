@@ -17,35 +17,32 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#include "control.h"
+#include "family.h"
 
-QString PrintControl(Control c)
+#include <QDebug>
+
+QString PrintFamily(Family c)
 {
-    QString ret = c.family.acronym + "-" + QString::number(c.number);
-    if (c.enhancement > 0)
-        ret.append("(" + QString::number(c.enhancement) + ")");
-    return ret;
+    return c.acronym;
 }
 
-Control::Control() : QObject()
+Family::Family() : QObject()
 {
 
 }
 
-Control::Control(const Control &right) : Control()
+Family::Family(const Family &right) : Family()
 {
     *this = right;
 }
 
-Control& Control::operator=(const Control &right)
+Family& Family::operator=(const Family &right)
 {
     if (this != &right)
     {
         id = right.id;
-        family = right.family;
-        number = right.number;
-        enhancement = right.enhancement;
-        title = right.title;
+        acronym = right.acronym;
+        description = right.description;
     }
     return *this;
 }

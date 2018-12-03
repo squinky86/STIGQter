@@ -25,3 +25,25 @@ QString PrintCCI(CCI c)
 {
     return "CCI-" + QString::number(c.cci).rightJustified(6, '0');
 }
+
+CCI::CCI() : QObject()
+{
+
+}
+
+CCI::CCI(const CCI &right) : CCI()
+{
+    *this = right;
+}
+
+CCI& CCI::operator=(const CCI &right)
+{
+    if (this != &right)
+    {
+        id = right.id;
+        control = right.control;
+        cci = right.cci;
+        definition = right.definition;
+    }
+    return *this;
+}

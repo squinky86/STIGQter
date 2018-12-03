@@ -54,7 +54,8 @@ SOURCES += \
     workerstigadd.cpp \
     stig.cpp \
     stigcheck.cpp \
-    cklcheck.cpp
+    cklcheck.cpp \
+    family.cpp
 
 HEADERS += \
         stigqter.h \

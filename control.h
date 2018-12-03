@@ -22,16 +22,21 @@
 
 #include "family.h"
 
+#include <QObject>
 #include <QString>
 
-struct Control
+class Control : public QObject
 {
+    Q_OBJECT
 public:
+    Control();
+    Control(const Control &right);
     int id;
     Family family;
     int number;
     int enhancement;
     QString title;
+    Control& operator=(const Control &right);
 };
 
 QString PrintControl(Control c);
