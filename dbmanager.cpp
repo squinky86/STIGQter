@@ -72,11 +72,22 @@ DbManager::~DbManager()
 
 void DbManager::DelayCommit(bool delay)
 {
-    if (!delay)
+    if (delay)
     {
         QSqlDatabase db;
         if (this->CheckDatabase(db))
         {
+            QSqlQuery("PRAGMA journal_mode = OFF", db);
+            QSqlQuery("PRAGMA synchronous = OFF", db);
+        }
+    }
+    else
+    {
+        QSqlDatabase db;
+        if (this->CheckDatabase(db))
+        {
+            QSqlQuery("PRAGMA journal_mode = ON", db);
+            QSqlQuery("PRAGMA synchronous = ON", db);
             db.commit();
         }
     }
