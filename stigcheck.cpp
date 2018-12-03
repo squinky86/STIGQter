@@ -43,7 +43,7 @@ STIGCheck::STIGCheck(const STIGCheck &right) : STIGCheck()
     severity = right.severity;
     weight = right.weight;
     title = right.title;
-    vulnDescription = right.vulnDescription;
+    vulnDiscussion = right.vulnDiscussion;
     falsePositives = right.falsePositives;
     falseNegatives = right.falseNegatives;
     fix = right.fix;

@@ -51,7 +51,7 @@ public:
     Severity severity;
     double weight;
     QString title;
-    QString vulnDescription;
+    QString vulnDiscussion;
     QString falsePositives;
     QString falseNegatives;
     QString fix;

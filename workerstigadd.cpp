@@ -34,6 +34,7 @@ void WorkerSTIGAdd::ParseSTIG(QByteArray stig)
     c.id = -1;
     QList<STIGCheck*> checks;
     bool inStigRules = false;
+    bool inProfile = false;
     bool inGroup = false;
     DbManager db;
     while (!xml->atEnd() && !xml->hasError())
@@ -43,31 +44,39 @@ void WorkerSTIGAdd::ParseSTIG(QByteArray stig)
         {
             if (xml->isStartElement())
             {
-                if (xml->name() == "title")
+                if (!inProfile)
                 {
-                    s.title = xml->readElementText().trimmed();
-                }
-                else if (xml->name() == "description")
-                {
-                    s.description = xml->readElementText().trimmed();
-                }
-                else if (xml->name() == "plain-text" && xml->attributes().hasAttribute("id"))
-                {
-                    foreach (const QXmlStreamAttribute &attr, xml->attributes())
+                    if (xml->name() == "title")
                     {
-                        if (attr.name() == "id")
+                        s.title = xml->readElementText().trimmed();
+                    }
+                    else if (xml->name() == "description")
+                    {
+                        s.description = xml->readElementText().trimmed();
+                    }
+                    else if (xml->name() == "plain-text" && xml->attributes().hasAttribute("id"))
+                    {
+                        foreach (const QXmlStreamAttribute &attr, xml->attributes())
                         {
-                            s.release = attr.value().toString().trimmed();
+                            if (attr.name() == "id")
+                            {
+                                if (attr.value().toString().trimmed() == "release-info")
+                                    s.release = xml->readElementText().trimmed();
+                            }
                         }
                     }
+                    else if (xml->name() == "version")
+                    {
+                        s.version = xml->readElementText().toInt();
+                    }
                 }
-                else if (xml->name() == "version")
-                {
-                    s.version = xml->readElementText().toInt();
-                }
-                else if (xml->name() == "Group")
+                if (xml->name() == "Group")
                 {
                     inStigRules = true; //Read all basic STIG data - switch to processing STIG checks
+                }
+                else if (xml->name() == "Profile")
+                {
+                    inProfile = true; // stop reading STIG details
                 }
             }
         }
@@ -96,6 +105,7 @@ void WorkerSTIGAdd::ParseSTIG(QByteArray stig)
                         STIGCheck *tempCheck = new STIGCheck(c); //this will be deleted after all checks are added
                         checks.append(tempCheck);
                     }
+                    c.id = 0;
                     foreach (const QXmlStreamAttribute &attr, xml->attributes())
                     {
                         if (attr.name() == "id")
@@ -123,8 +133,56 @@ void WorkerSTIGAdd::ParseSTIG(QByteArray stig)
                 {
                     if (!inGroup)
                     {
-                        QString toParse = xml->readElementText().trimmed();
-                        //TODO: parse description
+                        QString toParse = CleanXML("<?xml version=\"1.0\" encoding=\"UTF-8\"?><VulnDescription>" + xml->readElementText().trimmed() + "</VulnDescription>", true);
+                        //parse vulnerability description elements
+                        QXmlStreamReader xml2(toParse);
+                        while (!xml2.atEnd() && !xml2.hasError())
+                        {
+                            xml2.readNext();
+                            if (xml2.isStartElement())
+                            {
+                                if (xml2.name() == "VulnDiscussion")
+                                {
+                                    c.vulnDiscussion = xml2.readElementText().trimmed();
+                                }
+                                else if (xml2.name() == "FalsePositives")
+                                {
+                                    c.falsePositives = xml2.readElementText().trimmed();
+                                }
+                                else if (xml2.name() == "FalseNegatives")
+                                {
+                                    c.falseNegatives = xml2.readElementText().trimmed();
+                                }
+                                else if (xml2.name() == "Documentable")
+                                {
+                                    c.documentable = xml2.readElementText().trimmed().startsWith("t", Qt::CaseInsensitive);
+                                }
+                                else if (xml2.name() == "Mitigations")
+                                {
+                                    c.mitigations = xml2.readElementText().trimmed();
+                                }
+                                else if (xml2.name() == "SeverityOverrideGuidance")
+                                {
+                                    c.severityOverrideGuidance = xml2.readElementText().trimmed();
+                                }
+                                else if (xml2.name() == "PotentialImpacts")
+                                {
+                                    c.potentialImpact = xml2.readElementText().trimmed();
+                                }
+                                else if (xml2.name() == "ThirdPartyTools")
+                                {
+                                    c.thirdPartyTools = xml2.readElementText().trimmed();
+                                }
+                                else if (xml2.name() == "MitigationControl")
+                                {
+                                    c.mitigationControl = xml2.readElementText().trimmed();
+                                }
+                                else if (xml2.name() == "Responsibility")
+                                {
+                                    c.responsibility = xml2.readElementText().trimmed();
+                                }
+                            }
+                        }
                     }
                 }
                 else if (xml->name() == "ident")

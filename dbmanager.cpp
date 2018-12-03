@@ -190,10 +190,13 @@ void DbManager::AddSTIG(STIG stig, QList<STIGCheck *> checks)
             }
         }
         bool newChecks = false;
+        bool delayed = _delayCommit;
+        if (!delayed)
+            this->DelayCommit(true);
         foreach(STIGCheck* c, checks)
         {
             newChecks = true;
-            q.prepare("INSERT INTO STIGCheck (STIGId, CCIId, rule, vulnNum, groupTitle, ruleVersion, severity, weight, title, vulnDescription, falsePositives, falseNegatives, fix, check, documentable, mitigations, severityOverrideGuidance, checkContentRef, potentialImpact, thirdPartyTools, mitigationControl, responsibility) VALUES(:STIGId, :CCIId, :rule, :vulnNum, :groupTitle, :ruleVersion, :severity, :weight, :title, :vulnDescription, :falsePositives, :falseNegatives, :fix, :check, :documentable, :mitigations, :severityOverrideGuidance, :checkContentRef, :potentialImpact, :thirdPartyTools, :mitigationControl, :responsibility)");
+            q.prepare("INSERT INTO STIGCheck (`STIGId`, `CCIId`, `rule`, `vulnNum`, `groupTitle`, `ruleVersion`, `severity`, `weight`, `title`, `vulnDiscussion`, `falsePositives`, `falseNegatives`, `fix`, `check`, `documentable`, `mitigations`, `severityOverrideGuidance`, `checkContentRef`, `potentialImpact`, `thirdPartyTools`, `mitigationControl`, `responsibility`) VALUES(:STIGId, :CCIId, :rule, :vulnNum, :groupTitle, :ruleVersion, :severity, :weight, :title, :vulnDiscussion, :falsePositives, :falseNegatives, :fix, :check, :documentable, :mitigations, :severityOverrideGuidance, :checkContentRef, :potentialImpact, :thirdPartyTools, :mitigationControl, :responsibility)");
             if (c->cci.id <= 0)
                 c->cci = GetCCI(c->cci.cci, false); //don't need control information
             q.bindValue(":STIGId", stig.id);
@@ -205,7 +208,7 @@ void DbManager::AddSTIG(STIG stig, QList<STIGCheck *> checks)
             q.bindValue(":severity", c->severity);
             q.bindValue(":weight", c->weight);
             q.bindValue(":title", c->title);
-            q.bindValue(":vulnDescription", c->vulnDescription);
+            q.bindValue(":vulnDiscussion", c->vulnDiscussion);
             q.bindValue(":falsePositives", c->falsePositives);
             q.bindValue(":falseNegatives", c->falseNegatives);
             q.bindValue(":fix", c->fix);
@@ -219,6 +222,10 @@ void DbManager::AddSTIG(STIG stig, QList<STIGCheck *> checks)
             q.bindValue(":mitigationControl", c->mitigationControl);
             q.bindValue(":responsibility", c->responsibility);
             q.exec();
+        }
+        if (!delayed)
+        {
+            this->DelayCommit(false);
         }
         if (newChecks)
             db.commit();
@@ -537,7 +544,7 @@ bool DbManager::UpdateDatabaseFromVersion(int version)
                       "`severity`	INTEGER, "
                       "`weight` REAL, "
                       "`title`	TEXT, "
-                      "`vulnDescription`	TEXT, "
+                      "`vulnDiscussion`	TEXT, "
                       "`falsePositives`	TEXT, "
                       "`falseNegatives`	TEXT, "
                       "`fix`	TEXT, "

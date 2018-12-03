@@ -30,6 +30,6 @@ bool DownloadFile(QUrl u, QFile *f);
 QString DownloadPage(QUrl u);
 int GetCCINumber(QString cci);
 QByteArrayList GetXMLFromZip(const char* f);
-QString HTML2XHTML(QString s);
+QString CleanXML(QString s, bool isXml = false);
 
 #endif // COMMON_H

@@ -48,8 +48,8 @@ void WorkerCCIAdd::process()
     QUrl nist("https://nvd.nist.gov");
     QString rmf = DownloadPage(nist.toString() + "/800-53/Rev4/");
 
-    //Step 2: Convert NIST page to XHTML
-    rmf = HTML2XHTML(rmf);
+    //Step 2: Convert NIST page to XML
+    rmf = CleanXML(rmf);
 
     //Step 3: read the families
     QXmlStreamReader *xml = new QXmlStreamReader(rmf);
@@ -95,7 +95,7 @@ void WorkerCCIAdd::process()
         emit updateStatus("Indexing " + s + "…");
         QUrl family(nist.toString() + s);
         QString fam = DownloadPage(family);
-        fam = HTML2XHTML(fam);
+        fam = CleanXML(fam);
         xml = new QXmlStreamReader(fam);
         while (!xml->atEnd() && !xml->hasError())
         {
@@ -130,7 +130,7 @@ void WorkerCCIAdd::process()
         emit updateStatus("Indexing " + s + "…");
         QUrl control(nist.toString() + s);
         QString c = DownloadPage(control);
-        c = HTML2XHTML(c);
+        c = CleanXML(c);
 
         xml = new QXmlStreamReader(c);
         while (!xml->atEnd() && !xml->hasError())

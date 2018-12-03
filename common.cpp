@@ -116,7 +116,7 @@ QByteArrayList GetXMLFromZip(const char* f)
     return ret;
 }
 
-QString HTML2XHTML(QString s)
+QString CleanXML(QString s, bool isXml)
 {
     TidyBuffer output = {nullptr};
     TidyBuffer err = {nullptr};
@@ -125,7 +125,9 @@ QString HTML2XHTML(QString s)
     bool ok = false;
 
     TidyDoc tdoc = tidyCreate();
-    ok = tidyOptSetBool( tdoc, TidyXmlOut, yes );
+    ok = tidyOptSetBool(tdoc, TidyXmlOut, yes);
+    if (isXml)
+        ok = ok && tidyOptSetBool(tdoc, TidyXmlTags, yes);
     if (ok)
         rc = tidySetErrorBuffer(tdoc, &err);
     if (rc >= 0)
