@@ -44,6 +44,7 @@ public:
     void AddSTIG(STIG s, QList<STIGCheck*> c);
 
     void DeleteCCIs();
+    void DeleteSTIG(int id);
 
     CCI GetCCI(int cci, bool includeControl = true);
     CCI GetCCI(CCI cci, bool includeControl = true);

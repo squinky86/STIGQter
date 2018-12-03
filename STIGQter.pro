@@ -55,7 +55,8 @@ SOURCES += \
     stig.cpp \
     stigcheck.cpp \
     cklcheck.cpp \
-    family.cpp
+    family.cpp \
+    workerstigdelete.cpp
 
 HEADERS += \
         stigqter.h \
@@ -70,7 +71,8 @@ HEADERS += \
     workerstigadd.h \
     stig.h \
     stigcheck.h \
-    cklcheck.h
+    cklcheck.h \
+    workerstigdelete.h
 
 FORMS += \
         stigqter.ui \

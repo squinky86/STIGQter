@@ -36,7 +36,9 @@ void WorkerSTIGAdd::ParseSTIG(QByteArray stig)
     QList<STIGCheck*> checks;
     bool inStigRules = false;
     bool inProfile = false;
+    bool inReference = false;
     bool inGroup = false;
+    bool addedGroup = false; //if the rule has already been added by the new group tag
     DbManager db;
     while (!xml->atEnd() && !xml->hasError())
     {
@@ -88,6 +90,14 @@ void WorkerSTIGAdd::ParseSTIG(QByteArray stig)
                 if (xml->name() == "Group" && xml->attributes().hasAttribute("id"))
                 {
                     inGroup = true;
+                    //add the previous rule
+                    if (c.id == 0)
+                    {
+                        addedGroup = true;
+                        //new rule; add the previous one!
+                        STIGCheck *tempCheck = new STIGCheck(c); //this will be deleted after all checks are added
+                        checks.append(tempCheck);
+                    }
                     foreach (const QXmlStreamAttribute &attr, xml->attributes())
                     {
                         if (attr.name() == "id")
@@ -99,12 +109,20 @@ void WorkerSTIGAdd::ParseSTIG(QByteArray stig)
                 if (xml->name() == "Rule" && xml->attributes().hasAttribute("id") && xml->attributes().hasAttribute("severity") && xml->attributes().hasAttribute("weight"))
                 {
                     inGroup = false;
+                    inReference = false;
                     //check if we moved to another rule
-                    if (c.id == 0)
+                    if (addedGroup)
                     {
-                        //new rule; add the previous one!
-                        STIGCheck *tempCheck = new STIGCheck(c); //this will be deleted after all checks are added
-                        checks.append(tempCheck);
+                        addedGroup = false;
+                    }
+                    else
+                    {
+                        if (c.id == 0)
+                        {
+                            //new rule; add the previous one!
+                            STIGCheck *tempCheck = new STIGCheck(c); //this will be deleted after all checks are added
+                            checks.append(tempCheck);
+                        }
                     }
                     c.id = 0;
                     foreach (const QXmlStreamAttribute &attr, xml->attributes())
@@ -127,7 +145,7 @@ void WorkerSTIGAdd::ParseSTIG(QByteArray stig)
                 {
                     if (inGroup)
                         c.groupTitle = xml->readElementText().trimmed();
-                    if (!inGroup)
+                    if (!inGroup && !inReference)
                         c.title = xml->readElementText().trimmed();
                 }
                 else if (xml->name() == "description")
@@ -209,6 +227,10 @@ void WorkerSTIGAdd::ParseSTIG(QByteArray stig)
                 else if (xml->name() == "check-content")
                 {
                     c.check = xml->readElementText().trimmed();
+                }
+                else if (xml->name() == "reference")
+                {
+                    inReference = true;
                 }
             }
         }

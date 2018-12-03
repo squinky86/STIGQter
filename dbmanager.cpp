@@ -182,12 +182,7 @@ void DbManager::AddSTIG(STIG stig, QList<STIGCheck *> checks)
             q.bindValue(":version", stig.version);
             q.exec();
             db.commit();
-            q.prepare("SELECT last_insert_rowid()");
-            q.exec();
-            while (q.next())
-            {
-                stig.id = q.value(0).toInt();
-            }
+            stig.id = q.lastInsertId().toInt();
         }
         bool newChecks = false;
         bool delayed = _delayCommit;
@@ -243,6 +238,20 @@ void DbManager::DeleteCCIs()
         q.prepare("DELETE FROM Control");
         q.exec();
         q.prepare("DELETE FROM CCI");
+        q.exec();
+        if (!_delayCommit)
+            db.commit();
+    }
+}
+
+void DbManager::DeleteSTIG(int id)
+{
+    QSqlDatabase db;
+    if (this->CheckDatabase(db))
+    {
+        QSqlQuery q(db);
+        q.prepare("DELETE FROM STIG WHERE id = :id");
+        q.bindValue(":id", id);
         q.exec();
         if (!_delayCommit)
             db.commit();
@@ -651,7 +660,7 @@ bool DbManager::UpdateDatabaseFromVersion(int version)
                       "`thirdPartyTools`	TEXT, "
                       "`mitigationControl`	TEXT, "
                       "`responsibility`	TEXT, "
-                      "FOREIGN KEY(`STIGId`) REFERENCES `STIG`(`id`), "
+                      "FOREIGN KEY(`STIGId`) REFERENCES `STIG`(`id`) ON DELETE CASCADE, "
                       "FOREIGN KEY(`CCIId`) REFERENCES `CCI`(`id`) "
                       ")");
             q.exec();
