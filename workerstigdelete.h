@@ -20,7 +20,7 @@
 #ifndef WORKERSTIGDELETE_H
 #define WORKERSTIGDELETE_H
 
-#include <QObject>
+#include <QThread>
 
 class WorkerSTIGDelete : public QObject
 {

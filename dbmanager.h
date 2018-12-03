@@ -45,6 +45,7 @@ public:
 
     void DeleteCCIs();
     void DeleteSTIG(int id);
+    void DeleteSTIG(STIG s);
 
     CCI GetCCI(int cci, bool includeControl = true);
     CCI GetCCI(CCI cci, bool includeControl = true);

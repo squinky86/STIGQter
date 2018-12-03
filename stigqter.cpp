@@ -24,6 +24,7 @@
 #include "ui_stigqter.h"
 #include "help.h"
 #include "workerstigadd.h"
+#include "workerstigdelete.h"
 
 #include <QThread>
 #include <QDebug>
@@ -160,12 +161,40 @@ void STIGQter::DeleteCCIs()
     t->start();
 }
 
+void STIGQter::DeleteSTIGs()
+{
+    DisableInput();
+    _updatedSTIGs = true;
+
+    //Create thread to download CCIs and keep GUI active
+    QThread* t = new QThread;
+    WorkerSTIGDelete *s = new WorkerSTIGDelete();
+    foreach (QListWidgetItem *i, ui->lstSTIGs->selectedItems())
+    {
+        STIG s = i->data(Qt::UserRole).value<STIG>();
+        db->DeleteSTIG(s);
+    }
+    s->moveToThread(t);
+    connect(t, SIGNAL(started()), s, SLOT(process()));
+    connect(s, SIGNAL(finished()), t, SLOT(quit()));
+    connect(t, SIGNAL(finished()), this, SLOT(CompletedThread()));
+    connect(s, SIGNAL(initialize(int, int)), this, SLOT(Initialize(int, int)));
+    connect(s, SIGNAL(progress(int)), this, SLOT(Progress(int)));
+    connect(s, SIGNAL(updateStatus(QString)), ui->lblStatus, SLOT(setText(QString)));
+    threads.append(t);
+    workers.append(s);
+
+    t->start();
+}
+
 void STIGQter::EnableInput()
 {
     QList<Family> f = db->GetFamilies();
+    QList<STIG> s = db->GetSTIGs(false);
     if (f.count() > 0)
     {
-        ui->btnClearCCIs->setEnabled(true);
+        //disable deleting CCIs if STIGs have been imported
+        ui->btnClearCCIs->setEnabled(s.count() <= 0);
         ui->btnImportCCIs->setEnabled(false);
     }
     else

@@ -22,6 +22,7 @@
 #include <cstdlib>
 #include <QCoreApplication>
 #include <QFile>
+#include <QMessageBox>
 #include <QSqlQuery>
 #include <QSqlError>
 #include <QtDebug>
@@ -175,6 +176,19 @@ void DbManager::AddSTIG(STIG stig, QList<STIGCheck *> checks)
         QSqlQuery q(db);
         if (stig.id <= 0)
         {
+            q.prepare("SELECT count(*) FROM STIG WHERE title = :title AND release = :release AND version = :version");
+            q.bindValue(":title", stig.title);
+            q.bindValue(":release", stig.release);
+            q.bindValue(":version", stig.version);
+            q.exec();
+            while (q.next())
+            {
+                if (q.value(0).toInt() > 0)
+                {
+                    QMessageBox::warning(nullptr, "STIG Already Exists", "The STIG " + PrintSTIG(stig) + " already exists in the database.");
+                    return;
+                }
+            }
             q.prepare("INSERT INTO STIG (title, description, release, version) VALUES(:title, :description, :release, :version)");
             q.bindValue(":title", stig.title);
             q.bindValue(":description", stig.description);
@@ -250,12 +264,20 @@ void DbManager::DeleteSTIG(int id)
     if (this->CheckDatabase(db))
     {
         QSqlQuery q(db);
+        q.prepare("DELETE FROM STIGCheck WHERE STIGId = :STIGId");
+        q.bindValue(":STIGId", id);
+        q.exec();
         q.prepare("DELETE FROM STIG WHERE id = :id");
         q.bindValue(":id", id);
         q.exec();
         if (!_delayCommit)
             db.commit();
     }
+}
+
+void DbManager::DeleteSTIG(STIG s)
+{
+    DeleteSTIG(s.id);
 }
 
 CCI DbManager::GetCCI(int cci, bool includeControl)
@@ -660,7 +682,7 @@ bool DbManager::UpdateDatabaseFromVersion(int version)
                       "`thirdPartyTools`	TEXT, "
                       "`mitigationControl`	TEXT, "
                       "`responsibility`	TEXT, "
-                      "FOREIGN KEY(`STIGId`) REFERENCES `STIG`(`id`) ON DELETE CASCADE, "
+                      "FOREIGN KEY(`STIGId`) REFERENCES `STIG`(`id`), "
                       "FOREIGN KEY(`CCIId`) REFERENCES `CCI`(`id`) "
                       ")");
             q.exec();

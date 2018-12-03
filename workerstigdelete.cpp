@@ -22,7 +22,6 @@
 
 WorkerSTIGDelete::WorkerSTIGDelete(QObject *parent) : QObject(parent)
 {
-
 }
 
 void WorkerSTIGDelete::AddId(int id)
@@ -37,10 +36,13 @@ void WorkerSTIGDelete::process()
     DbManager db;
 
     emit updateStatus("Clearing DB of selected STIG information…");
+    db.DelayCommit(true);
     foreach (int i, _ids)
     {
         db.DeleteSTIG(i);
+        emit progress(-1);
     }
+    db.DelayCommit(false);
     emit progress(-1);
 
     //complete
