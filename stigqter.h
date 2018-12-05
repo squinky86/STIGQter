@@ -44,6 +44,7 @@ private slots:
     void AddSTIGs();
     void DeleteCCIs();
     void DeleteSTIGs();
+    void SelectSTIG();
     void UpdateCCIs();
 
     void Initialize(int max, int val = 0);

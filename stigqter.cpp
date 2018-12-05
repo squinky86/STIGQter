@@ -187,6 +187,12 @@ void STIGQter::DeleteSTIGs()
     t->start();
 }
 
+void STIGQter::SelectSTIG()
+{
+    //select STIGs to create checklists
+    ui->btnCreateCKL->setEnabled(ui->lstSTIGs->selectedItems().count() > 0);
+}
+
 void STIGQter::EnableInput()
 {
     QList<Family> f = db->GetFamilies();
@@ -211,6 +217,7 @@ void STIGQter::EnableInput()
     ui->btnOpenCKL->setEnabled(true);
     ui->btnQuit->setEnabled(true);
     ui->menubar->setEnabled(true);
+    SelectSTIG();
 }
 
 void STIGQter::Initialize(int max, int val)

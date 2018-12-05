@@ -409,7 +409,7 @@ QList<STIG> DbManager::GetSTIGs(bool includeChecks)
     if (this->CheckDatabase(db))
     {
         QSqlQuery q(db);
-        q.prepare("SELECT id, title, description, release, version FROM STIG ORDER BY title");
+        q.prepare("SELECT id, title, description, release, version FROM STIG ORDER BY LOWER(title), title");
         q.exec();
         while (q.next())
         {
