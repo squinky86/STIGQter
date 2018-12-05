@@ -686,6 +686,41 @@ bool DbManager::UpdateDatabaseFromVersion(int version)
                       "FOREIGN KEY(`CCIId`) REFERENCES `CCI`(`id`) "
                       ")");
             q.exec();
+            q.prepare("CREATE TABLE `Asset` ( "
+                      "`id`	INTEGER PRIMARY KEY AUTOINCREMENT, "
+                      "`assetType`	TEXT, "
+                      "`hostName`	TEXT UNIQUE, "
+                      "`hostIP`	TEXT, "
+                      "`hostMAC`	TEXT, "
+                      "`hostFQDN`	TEXT, "
+                      "`techArea`	TEXT, "
+                      "`targetKey`	TEXT, "
+                      "`webOrDatabase`	INTEGER, "
+                      "`webDBSite`	TEXT, "
+                      "`webDBInstance`	TEXT "
+                      ")");
+            q.exec();
+            q.prepare("CREATE TABLE `AssetSTIG` ( "
+                      "`id`	INTEGER PRIMARY KEY AUTOINCREMENT, "
+                      "`AssetId`	INTEGER, "
+                      "`STIGId`	INTEGER, "
+                      "FOREIGN KEY(`AssetId`) REFERENCES `Asset`(`id`), "
+                      "FOREIGN KEY(`STIGId`) REFERENCES `STIG`(`id`) "
+                      ")");
+            q.exec();
+            q.prepare("CREATE TABLE `Checklist` ( "
+                      "`id`	INTEGER PRIMARY KEY AUTOINCREMENT, "
+                      "`AssetSTIGId`	INTEGER, "
+                      "`STIGCheckId`	INTEGER, "
+                      "`status` TEXT, "
+                      "`findingDetails` TEXT, "
+                      "`comments`   TEXT, "
+                      "`severityOverride`   TEXT, "
+                      "`severityJustification`  TEXT, "
+                      "FOREIGN KEY(`AssetSTIGId`) REFERENCES `AssetSTIG`(`id`), "
+                      "FOREIGN KEY(`STIGCheckId`) REFERENCES `STIGCheck`(`id`) "
+                      ")");
+            q.exec();
             q.prepare("INSERT INTO variables (name, value) VALUES(:name, :value)");
             q.bindValue(":name", "version");
             q.bindValue(":value", "1");
