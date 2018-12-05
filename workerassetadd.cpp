@@ -24,31 +24,26 @@ WorkerAssetAdd::WorkerAssetAdd(QObject *parent) : QObject(parent)
 {
 }
 
-void WorkerAssetAdd::AddAsset(QString asset)
+void WorkerAssetAdd::AddAsset(Asset asset)
 {
-    _todoAsset = asset;
-}
-
-void WorkerAssetAdd::AddSTIG(STIG s)
-{
-    _todoSTIGs.append(s);
+    _todo = asset;
 }
 
 void WorkerAssetAdd::process()
 {
     DbManager db;
     //get the list of STIGs to add to this asset
-    emit initialize(_todoSTIGs.count() + 1, 0);
+    emit initialize(_todo.STIGs.count() + 1, 0);
 
     //add asset to DB
     Asset a;
-    a.hostName = _todoAsset;
+    a.hostName = _todo.hostName;
     if (db.AddAsset(a))
     {
         updateStatus("Adding asset " + PrintAsset(a));
         emit progress(-1);
         //loop through STIGs and add to new asset
-        foreach(STIG s, _todoSTIGs)
+        foreach(STIG s, _todo.STIGs)
         {
             updateStatus("Adding " + PrintSTIG(s) + " to " + PrintAsset(a) + "…");
             db.AddSTIGToAsset(s, a);

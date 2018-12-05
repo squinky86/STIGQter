@@ -20,6 +20,7 @@
 #ifndef WORKERASSETADD_H
 #define WORKERASSETADD_H
 
+#include "asset.h"
 #include "stig.h"
 
 #include <QThread>
@@ -29,13 +30,11 @@ class WorkerAssetAdd : public QObject
     Q_OBJECT
 
 private:
-    QString _todoAsset;
-    QList<STIG> _todoSTIGs;
+    Asset _todo;
 
 public:
     explicit WorkerAssetAdd(QObject *parent = nullptr);
-    void AddAsset(QString a);
-    void AddSTIG(STIG s);
+    void AddAsset(Asset a);
 
 public slots:
     void process();

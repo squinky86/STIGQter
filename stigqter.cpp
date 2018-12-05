@@ -139,11 +139,13 @@ void STIGQter::AddAsset()
         _updatedAssets = true;
         QThread* t = new QThread;
         WorkerAssetAdd *a = new WorkerAssetAdd();
-        a->AddAsset(asset);
+        Asset tmpAsset;
+        tmpAsset.hostName = asset;
         foreach(QListWidgetItem *i, ui->lstSTIGs->selectedItems())
         {
-            a->AddSTIG(i->data(Qt::UserRole).value<STIG>());
+            tmpAsset.STIGs.append(i->data(Qt::UserRole).value<STIG>());
         }
+        a->AddAsset(tmpAsset);
         connect(t, SIGNAL(started()), a, SLOT(process()));
         connect(a, SIGNAL(finished()), t, SLOT(quit()));
         connect(t, SIGNAL(finished()), this, SLOT(CompletedThread()));
