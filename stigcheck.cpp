@@ -26,12 +26,12 @@ QString PrintSTIGCheck(STIGCheck s)
     return QString::number(s.id);
 }
 
-STIGCheck::STIGCheck() : QObject()
+STIGCheck::STIGCheck(QObject *parent) : QObject(parent)
 {
 
 }
 
-STIGCheck::STIGCheck(const STIGCheck &right) : STIGCheck()
+STIGCheck::STIGCheck(const STIGCheck &right) : STIGCheck(right.parent())
 {
     *this = right;
 }

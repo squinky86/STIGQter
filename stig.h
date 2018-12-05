@@ -30,8 +30,8 @@ class STIG : public QObject
 {
     Q_OBJECT
 public:
-    STIG();
     STIG(const STIG &right);
+    STIG(QObject *parent = nullptr);
     ~STIG();
 
     int id;

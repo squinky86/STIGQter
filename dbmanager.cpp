@@ -95,6 +95,45 @@ void DbManager::DelayCommit(bool delay)
     _delayCommit = delay;
 }
 
+bool DbManager::AddAsset(Asset &a)
+{
+    QSqlDatabase db;
+    if (this->CheckDatabase(db))
+    {
+        QSqlQuery q(db);
+        if (a.id <= 0)
+        {
+            q.prepare("SELECT count(*) FROM Asset WHERE hostName = :hostName");
+            q.bindValue(":hostName", a.hostName);
+            q.exec();
+            while (q.next())
+            {
+                if (q.value(0).toInt() > 0)
+                {
+                    QMessageBox::warning(nullptr, "Asset Already Exists", "The Asset " + PrintAsset(a) + " already exists in the database.");
+                    return false;
+                }
+            }
+            q.prepare("INSERT INTO Asset (`assetType`, `hostName`, `hostIP`, `hostMAC`, `hostFQDN`, `techArea`, `targetKey`, `webOrDatabase`, `webDBSite`, `webDBInstance`) VALUES(:assetType, :hostName, :hostIP, :hostMAC, :hostFQDN, :techArea, :targetKey, :webOrDatabase, :webDBSite, :webDBInstance)");
+            q.bindValue(":assetType", a.assetType);
+            q.bindValue(":hostName", a.hostName);
+            q.bindValue(":hostIP", a.hostIP);
+            q.bindValue(":hostMAC", a.hostMAC);
+            q.bindValue(":hostFQDN", a.hostFQDN);
+            q.bindValue(":techArea", a.techArea);
+            q.bindValue(":targetKey", a.targetKey);
+            q.bindValue(":webOrDatabase", a.webOrDB);
+            q.bindValue(":webDBSite", a.webDbSite);
+            q.bindValue(":webDBInstance", a.webDbInstance);
+            q.exec();
+            db.commit();
+            a.id = q.lastInsertId().toInt();
+            return true;
+        }
+    }
+    return false;
+}
+
 void DbManager::AddCCI(int cci, QString control, QString definition)
 {
     Control c = GetControl(control);
@@ -241,6 +280,48 @@ void DbManager::AddSTIG(STIG stig, QList<STIGCheck *> checks)
     }
 }
 
+void DbManager::AddSTIGToAsset(STIG s, Asset a)
+{
+    QSqlDatabase db;
+    if (this->CheckDatabase(db))
+    {
+        QSqlQuery q(db);
+        if (a.id > 0 && s.id > 0)
+        {
+            bool assetExists = false;
+            bool stigExists = false;
+            q.prepare("SELECT count(*) FROM Asset WHERE id = :id");
+            q.bindValue(":id", a.id);
+            q.exec();
+            while (q.next())
+            {
+                if (q.value(0).toInt() > 0)
+                {
+                    assetExists = true;
+                }
+            }
+            q.prepare("SELECT count(*) FROM STIG WHERE id = :id");
+            q.bindValue(":id", s.id);
+            q.exec();
+            while (q.next())
+            {
+                if (q.value(0).toInt() > 0)
+                {
+                    stigExists = true;
+                }
+            }
+            if (assetExists && stigExists)
+            {
+                q.prepare("INSERT INTO AssetSTIG (`AssetId`, `STIGId`) VALUES(:AssetId, :STIGId)");
+                q.bindValue(":AssetId", a.id);
+                q.bindValue(":STIGId", s.id);
+                q.exec();
+                db.commit();
+            }
+        }
+    }
+}
+
 void DbManager::DeleteCCIs()
 {
     QSqlDatabase db;
@@ -278,6 +359,40 @@ void DbManager::DeleteSTIG(int id)
 void DbManager::DeleteSTIG(STIG s)
 {
     DeleteSTIG(s.id);
+}
+
+QList<Asset> DbManager::GetAssets(bool includeSTIGs)
+{
+    QSqlDatabase db;
+    QList<Asset> ret;
+    if (this->CheckDatabase(db))
+    {
+        QSqlQuery q(db);
+        q.prepare("SELECT `id`, `assetType`, `hostName`, `hostIP`, `hostMAC`, `hostFQDN`, `techArea`, `targetKey`, `webOrDatabase`, `webDBSite`, `webDBInstance` FROM Asset ORDER BY LOWER(hostName), hostName");
+        q.exec();
+        while (q.next())
+        {
+            Asset a;
+            a.id = q.value(0).toInt();
+            a.assetType = q.value(1).toString();
+            a.hostName = q.value(2).toString();
+            a.hostIP = q.value(3).toString();
+            a.hostMAC = q.value(4).toString();
+            a.hostFQDN = q.value(5).toString();
+            a.techArea = q.value(6).toString();
+            a.targetKey = q.value(7).toString();
+            a.webOrDB = q.value(8).toBool();
+            a.webDbSite = q.value(9).toString();
+            a.webDbInstance = q.value(10).toString();
+
+            if (includeSTIGs)
+            {
+                a.STIGs = GetSTIGs(a, includeSTIGs);
+            }
+            ret.append(a);
+        }
+    }
+    return ret;
 }
 
 CCI DbManager::GetCCI(int cci, bool includeControl)
@@ -402,14 +517,31 @@ QList<STIGCheck *> DbManager::GetSTIGChecksPtr(STIG s, bool includeCCI)
     return ret;
 }
 
-QList<STIG> DbManager::GetSTIGs(bool includeChecks)
+QList<STIG> DbManager::GetSTIGs(Asset a, bool includeChecks)
+{
+    QList<std::tuple<QString, QVariant>> variables;
+    variables.append(std::make_tuple<QString, QVariant>(":AssetId", a.id));
+    return GetSTIGs(includeChecks, "WHERE `id` IN (SELECT STIGId FROM AssetSTIG WHERE AssetId = :AssetId)", variables);
+}
+
+QList<STIG> DbManager::GetSTIGs(bool includeChecks, QString whereClause, QList<std::tuple<QString, QVariant>> variables)
 {
     QSqlDatabase db;
     QList<STIG> ret;
     if (this->CheckDatabase(db))
     {
         QSqlQuery q(db);
-        q.prepare("SELECT id, title, description, release, version FROM STIG ORDER BY LOWER(title), title");
+        QString toPrep = "SELECT id, title, description, release, version FROM STIG ORDER BY LOWER(title), title";
+        if (!whereClause.isNull() && !whereClause.isEmpty())
+            toPrep.append(" " + whereClause);
+        q.prepare(toPrep);
+        for (int i = 0; i < variables.size(); i++)
+        {
+            QString key;
+            QVariant val;
+            std::tie(key, val) = variables.at(i);
+            q.bindValue(key, val);
+        }
         q.exec();
         while (q.next())
         {

@@ -39,8 +39,8 @@ class STIGCheck : public QObject
 {
     Q_OBJECT
 public:
-    STIGCheck();
     STIGCheck(const STIGCheck& right);
+    STIGCheck(QObject *parent = nullptr);
     ~STIGCheck();
     STIGCheck& operator=(const STIGCheck &right);
 
@@ -68,6 +68,8 @@ public:
     QString mitigationControl;
     QString responsibility;
 };
+
+Q_DECLARE_METATYPE(STIGCheck);
 
 QString PrintSTIGCheck(STIGCheck s);
 

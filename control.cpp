@@ -27,12 +27,12 @@ QString PrintControl(Control c)
     return ret;
 }
 
-Control::Control() : QObject()
+Control::Control(QObject *parent) : QObject(parent)
 {
 
 }
 
-Control::Control(const Control &right) : Control()
+Control::Control(const Control &right) : Control(right.parent())
 {
     *this = right;
 }

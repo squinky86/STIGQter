@@ -25,15 +25,18 @@
 #include "help.h"
 #include "workerstigadd.h"
 #include "workerstigdelete.h"
+#include "workerassetadd.h"
 
 #include <QThread>
 #include <QDebug>
 #include <QFileDialog>
+#include <QInputDialog>
 
 STIGQter::STIGQter(QWidget *parent) :
     QMainWindow(parent),
     ui(new Ui::STIGQter),
     db(new DbManager),
+    _updatedAssets(false),
     _updatedCCIs(false),
     _updatedSTIGs(false)
 {
@@ -106,6 +109,11 @@ void STIGQter::CompletedThread()
         DisplaySTIGs();
         _updatedSTIGs = false;
     }
+    if (_updatedAssets)
+    {
+        DisplayAssets();
+        _updatedAssets = false;
+    }
     //when maximum <= 0, the progress bar loops
     if (ui->progressBar->maximum() <= 0)
         ui->progressBar->setMaximum(1);
@@ -119,10 +127,40 @@ void STIGQter::About()
     h->show();
 }
 
+void STIGQter::AddAsset()
+{
+    bool ok;
+    QString asset = QInputDialog::getText(this, tr("Enter Asset Name"),
+                                          tr("Asset:"), QLineEdit::Normal,
+                                          QDir::home().dirName(), &ok);
+    if (ok)
+    {
+        DisableInput();
+        _updatedAssets = true;
+        QThread* t = new QThread;
+        WorkerAssetAdd *a = new WorkerAssetAdd();
+        a->AddAsset(asset);
+        foreach(QListWidgetItem *i, ui->lstSTIGs->selectedItems())
+        {
+            a->AddSTIG(i->data(Qt::UserRole).value<STIG>());
+        }
+        connect(t, SIGNAL(started()), a, SLOT(process()));
+        connect(a, SIGNAL(finished()), t, SLOT(quit()));
+        connect(t, SIGNAL(finished()), this, SLOT(CompletedThread()));
+        connect(a, SIGNAL(initialize(int, int)), this, SLOT(Initialize(int, int)));
+        connect(a, SIGNAL(progress(int)), this, SLOT(Progress(int)));
+        connect(a, SIGNAL(updateStatus(QString)), ui->lblStatus, SLOT(setText(QString)));
+        threads.append(t);
+        workers.append(a);
+
+        t->start();
+    }
+}
+
 void STIGQter::AddSTIGs()
 {
     QStringList fileNames = QFileDialog::getOpenFileNames(this,
-        "Open STIG", "", "Compressed STIG (*.zip)");
+        "Open STIG", QDir::home().dirName(), "Compressed STIG (*.zip)");
     DisableInput();
     _updatedSTIGs = true;
     QThread* t = new QThread;
@@ -210,7 +248,6 @@ void STIGQter::EnableInput()
     }
     ui->btnClearSTIGs->setEnabled(true);
     ui->btnCreateCKL->setEnabled(true);
-    ui->btnDeleteCKL->setEnabled(true);
     ui->btnFindingsReport->setEnabled(true);
     ui->btnImportCKL->setEnabled(true);
     ui->btnImportSTIGs->setEnabled(true);
@@ -242,7 +279,6 @@ void STIGQter::DisableInput()
     ui->btnClearCCIs->setEnabled(false);
     ui->btnClearSTIGs->setEnabled(false);
     ui->btnCreateCKL->setEnabled(false);
-    ui->btnDeleteCKL->setEnabled(false);
     ui->btnFindingsReport->setEnabled(false);
     ui->btnImportCCIs->setEnabled(false);
     ui->btnImportCKL->setEnabled(false);
@@ -250,6 +286,18 @@ void STIGQter::DisableInput()
     ui->btnOpenCKL->setEnabled(false);
     ui->btnQuit->setEnabled(false);
     ui->menubar->setEnabled(false);
+}
+
+void STIGQter::DisplayAssets()
+{
+    ui->lstAssets->clear();
+    foreach(const Asset &a, db->GetAssets(false))
+    {
+        QListWidgetItem *tmpItem = new QListWidgetItem(); //memory managed by ui->lstAssets container
+        tmpItem->setData(Qt::UserRole, QVariant::fromValue<Asset>(a));
+        tmpItem->setText(PrintAsset(a));
+        ui->lstAssets->addItem(tmpItem);
+    }
 }
 
 void STIGQter::DisplayCCIs()

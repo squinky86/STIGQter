@@ -23,6 +23,9 @@
 #include <QSqlDatabase>
 #include <QString>
 
+#include <tuple>
+
+#include "asset.h"
 #include "cci.h"
 #include "control.h"
 #include "family.h"
@@ -38,20 +41,24 @@ public:
     ~DbManager();
     void DelayCommit(bool delay);
 
+    bool AddAsset(Asset &a);
     void AddCCI(int cci, QString control, QString definition);
     void AddControl(QString control, QString title);
     void AddFamily(QString acronym, QString description);
     void AddSTIG(STIG s, QList<STIGCheck*> c);
+    void AddSTIGToAsset(STIG s, Asset a);
 
     void DeleteCCIs();
     void DeleteSTIG(int id);
     void DeleteSTIG(STIG s);
 
+    QList<Asset> GetAssets(bool includeSTIGs = true);
     CCI GetCCI(int cci, bool includeControl = true);
     CCI GetCCI(CCI cci, bool includeControl = true);
     QList<CCI> GetCCIs(bool includeControl = true);
     QList<STIGCheck*> GetSTIGChecksPtr(STIG stig, bool includeCCI = true);
-    QList<STIG> GetSTIGs(bool includeChecks = true);
+    QList<STIG> GetSTIGs(Asset a, bool includeChecks = true);
+    QList<STIG> GetSTIGs(bool includeChecks = true, QString whereClause = "", QList<std::tuple<QString, QVariant>> = {});
     Control GetControl(int id, bool includeFamily = true);
     Control GetControl(QString control, bool includeId = true);
     Family GetFamily(QString acronym);

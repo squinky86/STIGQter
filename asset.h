@@ -17,31 +17,38 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#ifndef CCI_H
-#define CCI_H
+#ifndef ASSET_H
+#define ASSET_H
 
+#include <QList>
 #include <QObject>
 #include <QString>
 
-#include "cci.h"
-#include "control.h"
+#include "stig.h"
 
-class CCI : public QObject
+class Asset : public QObject
 {
     Q_OBJECT
-
 public:
-    CCI(const CCI &right);
-    CCI(QObject *parent = nullptr);
+    Asset(const Asset &a);
+    Asset(QObject *parent = nullptr);
+    Asset& operator=(const Asset &right);
+    QList<STIG> STIGs;
     int id;
-    Control control;
-    int cci;
-    QString definition;
-    CCI& operator=(const CCI &right);
+    QString assetType;
+    QString hostName;
+    QString hostIP;
+    QString hostMAC;
+    QString hostFQDN;
+    QString techArea;
+    QString targetKey;
+    bool webOrDB;
+    QString webDbSite;
+    QString webDbInstance;
 };
 
-Q_DECLARE_METATYPE(CCI);
+Q_DECLARE_METATYPE(Asset);
 
-QString PrintCCI(CCI c);
+QString PrintAsset(Asset a);
 
-#endif // CCI_H
+#endif // ASSET_H

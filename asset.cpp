@@ -17,33 +17,43 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#include "cci.h"
+#include "asset.h"
 
-#include <QDebug>
-
-QString PrintCCI(CCI c)
+Asset::Asset(const Asset &a) : Asset(a.parent())
 {
-    return "CCI-" + QString::number(c.cci).rightJustified(6, '0');
+    *this = a;
 }
 
-CCI::CCI(QObject *parent) : QObject(parent)
+Asset::Asset(QObject *parent) : QObject(parent)
 {
-
+    id = -1;
 }
 
-CCI::CCI(const CCI &right) : CCI(right.parent())
-{
-    *this = right;
-}
-
-CCI& CCI::operator=(const CCI &right)
+Asset &Asset::operator=(const Asset &right)
 {
     if (this != &right)
     {
         id = right.id;
-        control = right.control;
-        cci = right.cci;
-        definition = right.definition;
+        STIGs.clear();
+        foreach (STIG s, STIGs)
+        {
+            STIGs.append(s);
+        }
+        assetType = right.assetType;
+        hostName = right.hostName;
+        hostIP = right.hostIP;
+        hostMAC = right.hostMAC;
+        hostFQDN = right.hostFQDN;
+        techArea = right.techArea;
+        targetKey = right.targetKey;
+        webOrDB = right.webOrDB;
+        webDbSite = right.webDbSite;
+        webDbInstance = right.webDbInstance;
     }
     return *this;
+}
+
+QString PrintAsset(Asset a)
+{
+    return a.hostName;
 }

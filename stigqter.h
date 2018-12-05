@@ -41,6 +41,7 @@ private slots:
     void CompletedThread();
 
     void About();
+    void AddAsset();
     void AddSTIGs();
     void DeleteCCIs();
     void DeleteSTIGs();
@@ -55,10 +56,12 @@ private:
     DbManager *db;
     QList<QThread *> threads;
     QList<QObject *> workers;
+    bool _updatedAssets;
     bool _updatedCCIs;
     bool _updatedSTIGs;
     void CleanThreads();
     void DisableInput();
+    void DisplayAssets();
     void DisplayCCIs();
     void DisplaySTIGs();
     void EnableInput();

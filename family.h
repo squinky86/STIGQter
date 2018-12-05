@@ -27,12 +27,14 @@ struct Family : public QObject
 {
     Q_OBJECT
 public:
-    Family();
     Family(const Family &right);
+    Family(QObject *parent = nullptr);
     int id;
     QString acronym;
     QString description;
     Family& operator=(const Family &right);
 };
+
+Q_DECLARE_METATYPE(Family);
 
 #endif // FAMILY_H

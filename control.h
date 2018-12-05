@@ -29,8 +29,8 @@ class Control : public QObject
 {
     Q_OBJECT
 public:
-    Control();
     Control(const Control &right);
+    Control(QObject *parent = nullptr);
     int id;
     Family family;
     int number;
@@ -38,6 +38,8 @@ public:
     QString title;
     Control& operator=(const Control &right);
 };
+
+Q_DECLARE_METATYPE(Control);
 
 QString PrintControl(Control c);
 

@@ -25,11 +25,11 @@ QString PrintSTIG(STIG s)
     return s.title + " Version: " + QString::number(s.version) + " " + s.release;
 }
 
-STIG::STIG() : QObject()
+STIG::STIG(QObject *parent) : QObject(parent)
 {
 }
 
-STIG::STIG(const STIG &right) : STIG()
+STIG::STIG(const STIG &right) : STIG(right.parent())
 {
     *this = right;
 }

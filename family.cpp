@@ -26,12 +26,12 @@ QString PrintFamily(Family c)
     return c.acronym;
 }
 
-Family::Family() : QObject()
+Family::Family(QObject *parent) : QObject(parent)
 {
 
 }
 
-Family::Family(const Family &right) : Family()
+Family::Family(const Family &right) : Family(right.parent())
 {
     *this = right;
 }
