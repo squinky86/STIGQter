@@ -32,15 +32,13 @@ class STIG : public QObject
 public:
     STIG(const STIG &right);
     STIG(QObject *parent = nullptr);
-    ~STIG();
 
     int id;
     QString title;
     QString description;
     QString release;
     int version;
-    QList<STIGCheck*> checks;
-    void SetValues(const STIG &right, bool deepCopy = true);
+    QList<STIGCheck> STIGChecks();
     STIG& operator=(const STIG &right);
 };
 

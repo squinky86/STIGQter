@@ -53,7 +53,7 @@ public:
     void DeleteSTIG(STIG s);
 
     Asset GetAsset(int id);
-    QList<Asset> GetAssets(bool includeSTIGs = true);
+    QList<Asset> GetAssets();
     CCI GetCCI(int cci);
     CCI GetCCIByCCI(int cci);
     CCI GetCCIByCCI(CCI cci);
@@ -65,9 +65,9 @@ public:
     QList<Family> GetFamilies();
     STIG GetSTIG(int id);
     STIGCheck GetSTIGCheck(int id);
-    QList<STIGCheck*> GetSTIGChecksPtr(STIG stig);
-    QList<STIG> GetSTIGs(Asset a, bool includeChecks = true);
-    QList<STIG> GetSTIGs(bool includeChecks = true, QString whereClause = "", QList<std::tuple<QString, QVariant>> = {});
+    QList<STIGCheck> GetSTIGChecks(STIG stig);
+    QList<STIG> GetSTIGs(Asset a);
+    QList<STIG> GetSTIGs(QString whereClause = "", QList<std::tuple<QString, QVariant>> = {});
     QString GetVariable(QString name);
 
     void UpdateVariable(QString name, QString value);

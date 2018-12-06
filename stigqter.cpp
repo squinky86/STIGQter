@@ -143,7 +143,7 @@ void STIGQter::AddAsset()
         tmpAsset.hostName = asset;
         foreach(QListWidgetItem *i, ui->lstSTIGs->selectedItems())
         {
-            tmpAsset.STIGs.append(i->data(Qt::UserRole).value<STIG>());
+            a->AddSTIG(i->data(Qt::UserRole).value<STIG>());
         }
         a->AddAsset(tmpAsset);
         connect(t, SIGNAL(started()), a, SLOT(process()));
@@ -236,7 +236,7 @@ void STIGQter::SelectSTIG()
 void STIGQter::EnableInput()
 {
     QList<Family> f = db->GetFamilies();
-    QList<STIG> s = db->GetSTIGs(false);
+    QList<STIG> s = db->GetSTIGs();
     if (f.count() > 0)
     {
         //disable deleting CCIs if STIGs have been imported
@@ -293,7 +293,7 @@ void STIGQter::DisableInput()
 void STIGQter::DisplayAssets()
 {
     ui->lstAssets->clear();
-    foreach(const Asset &a, db->GetAssets(false))
+    foreach(const Asset &a, db->GetAssets())
     {
         QListWidgetItem *tmpItem = new QListWidgetItem(); //memory managed by ui->lstAssets container
         tmpItem->setData(Qt::UserRole, QVariant::fromValue<Asset>(a));
@@ -318,7 +318,7 @@ void STIGQter::DisplayCCIs()
 void STIGQter::DisplaySTIGs()
 {
     ui->lstSTIGs->clear();
-    foreach(const STIG &s, db->GetSTIGs(false))
+    foreach(const STIG &s, db->GetSTIGs())
     {
         QListWidgetItem *tmpItem = new QListWidgetItem(); //memory managed by ui->lstSTIGs container
         tmpItem->setData(Qt::UserRole, QVariant::fromValue<STIG>(s));

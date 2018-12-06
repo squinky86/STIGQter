@@ -17,6 +17,7 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
+#include "dbmanager.h"
 #include "stig.h"
 #include "stigcheck.h"
 
@@ -29,51 +30,26 @@ STIG::STIG(QObject *parent) : QObject(parent)
 {
 }
 
+QList<STIGCheck> STIG::STIGChecks()
+{
+    DbManager db;
+    return db.GetSTIGChecks(*this);
+}
+
 STIG::STIG(const STIG &right) : STIG(right.parent())
 {
     *this = right;
-}
-
-STIG::~STIG()
-{
-    //clean up the STIGChecks
-    foreach(STIGCheck *c, checks)
-        delete c;
-}
-
-void STIG::SetValues(const STIG &right, bool deepCopy)
-{
-    id = right.id;
-    title = right.title;
-    description = right.description;
-    release = right.release;
-    version = right.version;
-
-    if (deepCopy)
-    {
-        //delete old checks
-        foreach(STIGCheck* c, checks)
-        {
-            delete c;
-        }
-
-        //copy new checks
-        foreach(STIGCheck* c, right.checks)
-        {
-            STIGCheck *tmpCheck = new STIGCheck(*c);
-            checks.append(tmpCheck);
-        }
-    }
-
-    QList<STIGCheck*> checks;
-    void SetValues(const STIG &right);
 }
 
 STIG &STIG::operator=(const STIG &right)
 {
     if (this != &right)
     {
-        SetValues(right, false);
+        id = right.id;
+        title = right.title;
+        description = right.description;
+        release = right.release;
+        version = right.version;
     }
     return *this;
 }

@@ -389,7 +389,7 @@ Asset DbManager::GetAsset(int id)
     return a;
 }
 
-QList<Asset> DbManager::GetAssets(bool includeSTIGs)
+QList<Asset> DbManager::GetAssets()
 {
     QSqlDatabase db;
     QList<Asset> ret;
@@ -412,11 +412,6 @@ QList<Asset> DbManager::GetAssets(bool includeSTIGs)
             a.webOrDB = q.value(8).toBool();
             a.webDbSite = q.value(9).toString();
             a.webDbInstance = q.value(10).toString();
-
-            if (includeSTIGs)
-            {
-                a.STIGs = GetSTIGs(a, includeSTIGs);
-            }
             ret.append(a);
         }
     }
@@ -538,10 +533,10 @@ STIGCheck DbManager::GetSTIGCheck(int id)
     return c;
 }
 
-QList<STIGCheck *> DbManager::GetSTIGChecksPtr(STIG s)
+QList<STIGCheck> DbManager::GetSTIGChecks(STIG s)
 {
     QSqlDatabase db;
-    QList<STIGCheck*> ret;
+    QList<STIGCheck> ret;
     if (this->CheckDatabase(db))
     {
         QSqlQuery q(db);
@@ -550,45 +545,45 @@ QList<STIGCheck *> DbManager::GetSTIGChecksPtr(STIG s)
         q.exec();
         while (q.next())
         {
-            STIGCheck *c = new STIGCheck(); //must be deleted by STIG container or by caller
-            c->id = q.value(0).toInt();
-            c->stigId = q.value(1).toInt();
-            c->cciId = q.value(2).toInt();
-            c->rule = q.value(3).toString();
-            c->vulnNum = q.value(4).toString();
-            c->groupTitle = q.value(5).toString();
-            c->ruleVersion = q.value(6).toString();
-            c->severity = static_cast<Severity>(q.value(7).toInt());
-            c->weight = q.value(8).toDouble();
-            c->title = q.value(9).toString();
-            c->vulnDiscussion = q.value(10).toString();
-            c->falsePositives = q.value(11).toString();
-            c->falseNegatives = q.value(12).toString();
-            c->fix = q.value(13).toString();
-            c->check = q.value(14).toString();
-            c->documentable = q.value(15).toBool();
-            c->mitigations = q.value(16).toString();
-            c->severityOverrideGuidance = q.value(17).toString();
-            c->checkContentRef = q.value(18).toString();
-            c->potentialImpact = q.value(19).toString();
-            c->thirdPartyTools = q.value(20).toString();
-            c->mitigationControl = q.value(21).toString();
-            c->thirdPartyTools = q.value(22).toString();
-            c->iaControls = q.value(23).toString();
+            STIGCheck c;
+            c.id = q.value(0).toInt();
+            c.stigId = q.value(1).toInt();
+            c.cciId = q.value(2).toInt();
+            c.rule = q.value(3).toString();
+            c.vulnNum = q.value(4).toString();
+            c.groupTitle = q.value(5).toString();
+            c.ruleVersion = q.value(6).toString();
+            c.severity = static_cast<Severity>(q.value(7).toInt());
+            c.weight = q.value(8).toDouble();
+            c.title = q.value(9).toString();
+            c.vulnDiscussion = q.value(10).toString();
+            c.falsePositives = q.value(11).toString();
+            c.falseNegatives = q.value(12).toString();
+            c.fix = q.value(13).toString();
+            c.check = q.value(14).toString();
+            c.documentable = q.value(15).toBool();
+            c.mitigations = q.value(16).toString();
+            c.severityOverrideGuidance = q.value(17).toString();
+            c.checkContentRef = q.value(18).toString();
+            c.potentialImpact = q.value(19).toString();
+            c.thirdPartyTools = q.value(20).toString();
+            c.mitigationControl = q.value(21).toString();
+            c.thirdPartyTools = q.value(22).toString();
+            c.iaControls = q.value(23).toString();
             ret.append(c);
         }
     }
     return ret;
 }
 
-QList<STIG> DbManager::GetSTIGs(Asset a, bool includeChecks)
+QList<STIG> DbManager::GetSTIGs(Asset a)
 {
     QList<std::tuple<QString, QVariant>> variables;
     variables.append(std::make_tuple<QString, QVariant>(":AssetId", a.id));
-    return GetSTIGs(includeChecks, "WHERE `id` IN (SELECT STIGId FROM AssetSTIG WHERE AssetId = :AssetId)", variables);
+    return GetSTIGs("WHERE `id` IN (SELECT STIGId FROM AssetSTIG WHERE AssetId = :AssetId)", variables);
 }
 
-QList<STIG> DbManager::GetSTIGs(bool includeChecks, QString whereClause, QList<std::tuple<QString, QVariant>> variables)
+QList<STIG> DbManager::GetSTIGs(QString whereClause, QList<std::tuple<QString, QVariant>> variables)
 {
     QSqlDatabase db;
     QList<STIG> ret;
@@ -615,10 +610,6 @@ QList<STIG> DbManager::GetSTIGs(bool includeChecks, QString whereClause, QList<s
             s.description = q.value(2).toString();
             s.release = q.value(3).toString();
             s.version = q.value(4).toInt();
-            if (includeChecks)
-            {
-                s.checks = GetSTIGChecksPtr(s);
-            }
             ret.append(s);
         }
     }

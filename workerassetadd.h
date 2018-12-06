@@ -31,10 +31,12 @@ class WorkerAssetAdd : public QObject
 
 private:
     Asset _todo;
+    QList<STIG> _todoSTIGs;
 
 public:
     explicit WorkerAssetAdd(QObject *parent = nullptr);
     void AddAsset(Asset a);
+    void AddSTIG(STIG s);
 
 public slots:
     void process();

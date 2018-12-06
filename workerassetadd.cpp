@@ -29,11 +29,16 @@ void WorkerAssetAdd::AddAsset(Asset asset)
     _todo = asset;
 }
 
+void WorkerAssetAdd::AddSTIG(STIG s)
+{
+    _todoSTIGs.append(s);
+}
+
 void WorkerAssetAdd::process()
 {
     DbManager db;
     //get the list of STIGs to add to this asset
-    emit initialize(_todo.STIGs.count() + 1, 0);
+    emit initialize(_todoSTIGs.count() + 1, 0);
 
     //add asset to DB
     Asset a;
@@ -43,7 +48,7 @@ void WorkerAssetAdd::process()
         updateStatus("Adding asset " + PrintAsset(a));
         emit progress(-1);
         //loop through STIGs and add to new asset
-        foreach(STIG s, _todo.STIGs)
+        foreach(STIG s, _todoSTIGs)
         {
             updateStatus("Adding " + PrintSTIG(s) + " to " + PrintAsset(a) + "…");
             db.AddSTIGToAsset(s, a);

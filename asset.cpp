@@ -18,6 +18,7 @@
  */
 
 #include "asset.h"
+#include "dbmanager.h"
 
 Asset::Asset(const Asset &a) : Asset(a.parent())
 {
@@ -34,11 +35,6 @@ Asset &Asset::operator=(const Asset &right)
     if (this != &right)
     {
         id = right.id;
-        STIGs.clear();
-        foreach (STIG s, STIGs)
-        {
-            STIGs.append(s);
-        }
         assetType = right.assetType;
         hostName = right.hostName;
         hostIP = right.hostIP;
@@ -51,6 +47,12 @@ Asset &Asset::operator=(const Asset &right)
         webDbInstance = right.webDbInstance;
     }
     return *this;
+}
+
+QList<STIG> Asset::STIGs()
+{
+    DbManager db;
+    return db.GetSTIGs(*this);
 }
 
 QString PrintAsset(Asset a)
