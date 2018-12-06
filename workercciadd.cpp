@@ -87,6 +87,17 @@ void WorkerCCIAdd::process()
     emit initialize(todo.size() + 1, 1);
     delete xml;
 
+    //Step 3a: Additional Privacy Controls
+    //obtained from https://nvlpubs.nist.gov/nistpubs/SpecialPublications/NIST.SP.800-53r4.pdf contents
+    db.AddFamily("AP", "Authority and Purpose");
+    db.AddFamily("AR", "Accountability, Audit, and Risk Management");
+    db.AddFamily("DI", "Data Quality and Integrity");
+    db.AddFamily("DM", "Data Minimization and Retention");
+    db.AddFamily("IP", "Individual Participation and Redress");
+    db.AddFamily("SE", "Security");
+    db.AddFamily("TR", "Transparency");
+    db.AddFamily("UL", "Use Limitation");
+
     //Step 4: download all controls for each family
     QString rmfControls = DownloadPage(nist.toString() + "/static/feeds/xml/sp80053/rev4/800-53-controls.xml");
     xml = new QXmlStreamReader(rmfControls);
@@ -139,7 +150,46 @@ void WorkerCCIAdd::process()
     if (!control.isEmpty())
         db.AddControl(control, title, description);
 
-    //Step 6: download all CCIs
+    //Step 4a: additional privacy controls
+    //obtained from https://nvlpubs.nist.gov/nistpubs/SpecialPublications/NIST.SP.800-53r4.pdf (Appendix J) contents
+    db.AddControl("AP-1", "AUTHORITY TO COLLECT", "");
+    db.AddControl("AP-2", "PURPOSE SPECIFICATION", "");
+    db.AddControl("AR-1", "GOVERNANCE AND PRIVACY PROGRAM", "");
+    db.AddControl("AR-2", "PRIVACY IMPACT AND RISK ASSESSMENT", "");
+    db.AddControl("AR-3", "PRIVACY REQUIREMENTS FOR CONTRACTORS AND SERVICE PROVIDERS", "");
+    db.AddControl("AR-4", "PRIVACY MONITORING AND AUDITING", "");
+    db.AddControl("AR-5", "PRIVACY AWARENESS AND TRAINING", "");
+    db.AddControl("AR-6", "PRIVACY REPORTING", "");
+    db.AddControl("AR-7", "PRIVACY-ENHANCED SYSTEM DESIGN AND DEVELOPMENT", "");
+    db.AddControl("AR-8", "ACCOUNTING OF DISCLOSURES", "");
+    db.AddControl("DI-1", "DATA QUALITY", "");
+    db.AddControl("DI-1 (1)", "DATA QUALITY | VALIDATE PII", "");
+    db.AddControl("DI-1 (2)", "DATA QUALITY | RE-VALIDATE PII", "");
+    db.AddControl("DI-2", "DATA INTEGRITY AND DATA INTEGRITY BOARD", "");
+    db.AddControl("DI-2 (1)", "DATA INTEGRITY AND DATA INTEGRITY BOARD | PUBLISH AREEMENTS ON WEBSITE", "");
+    db.AddControl("DM-1", "MINIMIZATION OF PERSONALLY IDENTIFIABLE INFORMATION", "");
+    db.AddControl("DM-1 (1)", "MINIMIZATION OF PERSONALLY IDENTIFIABLE INFORMATION | LOCATE / REMOVE / REDACT / ANONYMIZE PII", "");
+    db.AddControl("DM-2", "DATA RETENTION AND DISPOSAL", "");
+    db.AddControl("DM-2 (1)", "DATA RETENTION AND DISPOSAL | SYSTEM CONFIGURATION", "");
+    db.AddControl("DM-3", "MINIMIZATION OF PII USED IN TESTING, TRAINING, AND RESEARCH", "");
+    db.AddControl("DM-3 (1)", "MINIMIZATION OF PII USED IN TESTING, TRAINING, AND RESEARCH | RISK MINIMIZATION TECHNIQUES", "");
+    db.AddControl("IP-1", "CONSENT", "");
+    db.AddControl("IP-1 (1)", "CONSENT | MECHANISMS SUPPORTING ITEMIZED OR TIERED CONSENT", "");
+    db.AddControl("IP-2", "INDIVIDUAL ACCESS", "");
+    db.AddControl("IP-3", "REDRESS", "");
+    db.AddControl("IP-4", "COMPLAINT MANAGEMENT", "");
+    db.AddControl("IP-4 (1)", "COMPLAINT MANAGEMENT | RESPONSE TIMES", "");
+    db.AddControl("SE-1", "INVENTORY OF PERSONALLY IDENTIFIABLE INFORMATION", "");
+    db.AddControl("SE-2", "PRIVACY INCIDENT RESPONSE", "");
+    db.AddControl("TR-1", "PRIVACY NOTICE", "");
+    db.AddControl("TR-1 (1)", "PRIVACY NOTICE | REAL-TIME OR LAYERED NOTICE", "");
+    db.AddControl("TR-2", "SYSTEM OF RECORDS NOTICES AND PRIVACY ACT STATEMENTS", "");
+    db.AddControl("TR-2 (1)", "SYSTEM OF RECORDS NOTICES AND PRIVACY ACT STATEMENTS | PUBLIC WEBSITE PUBLICATION", "");
+    db.AddControl("TR-3", "DISSEMINATION OF PRIVACY PROGRAM INFORMATION", "");
+    db.AddControl("UL-1", "INTERNAL USE", "");
+    db.AddControl("UL-2", "INFORMATION SHARING WITH THIRD PARTIES", "");
+
+    //Step 5: download all CCIs
     QTemporaryFile tmpFile;
     QByteArrayList xmlFiles;
     db.DelayCommit(true);
@@ -154,7 +204,7 @@ void WorkerCCIAdd::process()
         tmpFile.close();
     }
 
-    //Step 7: Parse all CCIs
+    //Step 6: Parse all CCIs
     emit updateStatus("Parsing CCIs…");
     QList<CCI> toAdd;
     foreach (const QByteArray &xmlFile, xmlFiles)
@@ -225,7 +275,7 @@ void WorkerCCIAdd::process()
     }
     QFile::remove(tmpFile.fileName());
 
-    //Step 8: add CCIs
+    //Step 7: add CCIs
     emit initialize(toAdd.size() + 1, 1);
     db.DelayCommit(true);
     foreach (const CCI &c, toAdd)

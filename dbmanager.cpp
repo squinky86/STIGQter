@@ -637,6 +637,17 @@ Control DbManager::GetControl(int id)
 
 Control DbManager::GetControl(QString control)
 {
+    //see if there are spaces
+    int tmpIndex = control.indexOf(' ');
+    if (tmpIndex > 0)
+    {
+        //see if there's a second space
+        tmpIndex = control.indexOf(' ', tmpIndex+1);
+        if (tmpIndex > 0)
+        {
+            control = control.left(tmpIndex+1).trimmed();
+        }
+    }
     Control ret;
     ret.id = -1;
     ret.enhancement = -1;
