@@ -55,10 +55,10 @@ public:
     Asset GetAsset(const int &id);
     Asset GetAsset(const QString &hostName);
     QList<Asset> GetAssets(const QString &whereClause = "", const QList<std::tuple<QString, QVariant>> &variables = {});
-    CCI GetCCI(int cci);
-    CCI GetCCIByCCI(int cci);
-    CCI GetCCIByCCI(CCI cci);
-    QList<CCI> GetCCIs();
+    CCI GetCCI(const int &id);
+    CCI GetCCIByCCI(const int &cci);
+    CCI GetCCIByCCI(const CCI &cci);
+    QList<CCI> GetCCIs(const QString &whereClause = "", const QList<std::tuple<QString, QVariant>> &variables = {});
     Control GetControl(int id);
     Control GetControl(QString control);
     Family GetFamily(const QString &acronym);

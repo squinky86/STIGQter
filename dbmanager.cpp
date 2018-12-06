@@ -430,49 +430,17 @@ QList<Asset> DbManager::GetAssets(const QString &whereClause, const QList<std::t
     return ret;
 }
 
-CCI DbManager::GetCCI(int id)
+CCI DbManager::GetCCI(const int &id)
 {
-    QSqlDatabase db;
-    CCI c;
-    if (this->CheckDatabase(db))
-    {
-        QSqlQuery q(db);
-        q.prepare("SELECT id, ControlId, cci, definition FROM CCI WHERE id = :id");
-        q.bindValue(":id", id);
-        q.exec();
-        if (q.next())
-        {
-            c.id = q.value(0).toInt();
-            c.controlId = q.value(1).toInt();
-            c.cci = q.value(2).toInt();
-            c.definition = q.value(3).toString();
-        }
-    }
-    return c;
+    return GetCCIs("WHERE id = :id", {std::make_tuple<QString, QVariant>(":id", id)}).first();
 }
 
-CCI DbManager::GetCCIByCCI(int cci)
+CCI DbManager::GetCCIByCCI(const int &cci)
 {
-    QSqlDatabase db;
-    CCI c;
-    if (this->CheckDatabase(db))
-    {
-        QSqlQuery q(db);
-        q.prepare("SELECT id, ControlId, cci, definition FROM CCI WHERE cci = :cci");
-        q.bindValue(":cci", cci);
-        q.exec();
-        if (q.next())
-        {
-            c.id = q.value(0).toInt();
-            c.controlId = q.value(1).toInt();
-            c.cci = q.value(2).toInt();
-            c.definition = q.value(3).toString();
-        }
-    }
-    return c;
+    return GetCCIs("WHERE cci = :cci", {std::make_tuple<QString, QVariant>(":cci", cci)}).first();
 }
 
-CCI DbManager::GetCCIByCCI(CCI cci)
+CCI DbManager::GetCCIByCCI(const CCI &cci)
 {
     if (cci.id < 0)
     {
@@ -481,14 +449,24 @@ CCI DbManager::GetCCIByCCI(CCI cci)
     return GetCCI(cci.id);
 }
 
-QList<CCI> DbManager::GetCCIs()
+QList<CCI> DbManager::GetCCIs(const QString &whereClause, const QList<std::tuple<QString, QVariant>> &variables)
 {
     QSqlDatabase db;
     QList<CCI> ret;
     if (this->CheckDatabase(db))
     {
         QSqlQuery q(db);
-        q.prepare("SELECT id, ControlId, cci, definition FROM CCI ORDER BY cci");
+        QString toPrep = "SELECT id, ControlId, cci, definition FROM CCI ORDER BY cci";
+        if (!whereClause.isNull() && !whereClause.isEmpty())
+            toPrep.append(" " + whereClause);
+        q.prepare(toPrep);
+        for (const auto &variable : variables)
+        {
+            QString key;
+            QVariant val;
+            std::tie(key, val) = variable;
+            q.bindValue(key, val);
+        }
         q.exec();
         while (q.next())
         {
