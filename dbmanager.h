@@ -45,8 +45,8 @@ public:
     bool AddCCI(CCI &c);
     void AddControl(const QString &control, const QString &title);
     void AddFamily(const QString &acronym, const QString &description);
-    void AddSTIG(STIG s, QList<STIGCheck*> c);
-    void AddSTIGToAsset(STIG s, Asset a);
+    void AddSTIG(STIG s, QList<STIGCheck> c);
+    void AddSTIGToAsset(const STIG &s, const Asset &a);
 
     void DeleteCCIs();
     void DeleteSTIG(int id);

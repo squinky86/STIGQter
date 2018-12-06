@@ -27,6 +27,8 @@
 #include <QSqlError>
 #include <QtDebug>
 #include <QThread>
+#include <QSqlField>
+#include <QSqlDriver>
 
 DbManager::DbManager() : DbManager(QString::number(reinterpret_cast<quint64>(QThread::currentThreadId()))) { }
 
@@ -209,7 +211,7 @@ void DbManager::AddFamily(const QString &acronym, const QString &description)
     }
 }
 
-void DbManager::AddSTIG(STIG stig, QList<STIGCheck *> checks)
+void DbManager::AddSTIG(STIG stig, QList<STIGCheck> checks)
 {
     QSqlDatabase db;
     if (this->CheckDatabase(db))
@@ -236,40 +238,40 @@ void DbManager::AddSTIG(STIG stig, QList<STIGCheck *> checks)
             q.bindValue(":release", stig.release);
             q.bindValue(":version", stig.version);
             q.exec();
-            db.commit();
             stig.id = q.lastInsertId().toInt();
+            db.commit();
         }
         bool newChecks = false;
         bool delayed = _delayCommit;
         if (!delayed)
             this->DelayCommit(true);
-        foreach(STIGCheck* c, checks)
+        foreach(STIGCheck c, checks)
         {
             newChecks = true;
             q.prepare("INSERT INTO STIGCheck (`STIGId`, `CCIId`, `rule`, `vulnNum`, `groupTitle`, `ruleVersion`, `severity`, `weight`, `title`, `vulnDiscussion`, `falsePositives`, `falseNegatives`, `fix`, `check`, `documentable`, `mitigations`, `severityOverrideGuidance`, `checkContentRef`, `potentialImpact`, `thirdPartyTools`, `mitigationControl`, `responsibility`, `IAControls`) VALUES(:STIGId, :CCIId, :rule, :vulnNum, :groupTitle, :ruleVersion, :severity, :weight, :title, :vulnDiscussion, :falsePositives, :falseNegatives, :fix, :check, :documentable, :mitigations, :severityOverrideGuidance, :checkContentRef, :potentialImpact, :thirdPartyTools, :mitigationControl, :responsibility, :IAControls)");
             q.bindValue(":STIGId", stig.id);
-            q.bindValue(":CCIId", c->CCI().id);
-            q.bindValue(":rule", c->rule);
-            q.bindValue(":vulnNum", c->vulnNum);
-            q.bindValue(":groupTitle", c->groupTitle);
-            q.bindValue(":ruleVersion", c->ruleVersion);
-            q.bindValue(":severity", c->severity);
-            q.bindValue(":weight", c->weight);
-            q.bindValue(":title", c->title);
-            q.bindValue(":vulnDiscussion", c->vulnDiscussion);
-            q.bindValue(":falsePositives", c->falsePositives);
-            q.bindValue(":falseNegatives", c->falseNegatives);
-            q.bindValue(":fix", c->fix);
-            q.bindValue(":check", c->check);
-            q.bindValue(":documentable", c->documentable);
-            q.bindValue(":mitigations", c->mitigations);
-            q.bindValue(":severityOverrideGuidance", c->severityOverrideGuidance);
-            q.bindValue(":checkContentRef", c->checkContentRef);
-            q.bindValue(":potentialImpact", c->potentialImpact);
-            q.bindValue(":thirdPartyTools", c->thirdPartyTools);
-            q.bindValue(":mitigationControl", c->mitigationControl);
-            q.bindValue(":responsibility", c->responsibility);
-            q.bindValue(":IAControls", c->iaControls);
+            q.bindValue(":CCIId", c.cciId);
+            q.bindValue(":rule", c.rule);
+            q.bindValue(":vulnNum", c.vulnNum);
+            q.bindValue(":groupTitle", c.groupTitle);
+            q.bindValue(":ruleVersion", c.ruleVersion);
+            q.bindValue(":severity", c.severity);
+            q.bindValue(":weight", c.weight);
+            q.bindValue(":title", c.title);
+            q.bindValue(":vulnDiscussion", c.vulnDiscussion);
+            q.bindValue(":falsePositives", c.falsePositives);
+            q.bindValue(":falseNegatives", c.falseNegatives);
+            q.bindValue(":fix", c.fix);
+            q.bindValue(":check", c.check);
+            q.bindValue(":documentable", c.documentable ? 1 : 0);
+            q.bindValue(":mitigations", c.mitigations);
+            q.bindValue(":severityOverrideGuidance", c.severityOverrideGuidance);
+            q.bindValue(":checkContentRef", c.checkContentRef);
+            q.bindValue(":potentialImpact", c.potentialImpact);
+            q.bindValue(":thirdPartyTools", c.thirdPartyTools);
+            q.bindValue(":mitigationControl", c.mitigationControl);
+            q.bindValue(":responsibility", c.responsibility);
+            q.bindValue(":IAControls", c.iaControls);
             q.exec();
         }
         if (!delayed)
@@ -281,7 +283,7 @@ void DbManager::AddSTIG(STIG stig, QList<STIGCheck *> checks)
     }
 }
 
-void DbManager::AddSTIGToAsset(STIG s, Asset a)
+void DbManager::AddSTIGToAsset(const STIG &s, const Asset &a)
 {
     QSqlDatabase db;
     if (this->CheckDatabase(db))

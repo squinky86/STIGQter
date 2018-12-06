@@ -33,7 +33,7 @@ void WorkerSTIGAdd::ParseSTIG(const QByteArray &stig)
     STIGCheck c;
     s.id = -1;
     c.id = -1;
-    QList<STIGCheck*> checks;
+    QList<STIGCheck> checks;
     bool inStigRules = false;
     bool inProfile = false;
     bool inReference = false;
@@ -95,8 +95,7 @@ void WorkerSTIGAdd::ParseSTIG(const QByteArray &stig)
                     {
                         addedGroup = true;
                         //new rule; add the previous one!
-                        STIGCheck *tempCheck = new STIGCheck(c); //this will be deleted after all checks are added
-                        checks.append(tempCheck);
+                        checks.append(c);
                     }
                     foreach (const QXmlStreamAttribute &attr, xml->attributes())
                     {
@@ -120,8 +119,7 @@ void WorkerSTIGAdd::ParseSTIG(const QByteArray &stig)
                         if (c.id == 0)
                         {
                             //new rule; add the previous one!
-                            STIGCheck *tempCheck = new STIGCheck(c); //this will be deleted after all checks are added
-                            checks.append(tempCheck);
+                            checks.append(c);
                         }
                     }
                     c.id = 0;
@@ -237,15 +235,10 @@ void WorkerSTIGAdd::ParseSTIG(const QByteArray &stig)
     }
     if (inStigRules)
     {
-        STIGCheck *tempCheck = new STIGCheck(c);
-        checks.append(tempCheck);
+        checks.append(c);
     }
     delete xml;
     db.AddSTIG(s, checks);
-
-    //delete STIGCheck memory
-    foreach (STIGCheck *c, checks)
-        delete c;
 }
 
 WorkerSTIGAdd::WorkerSTIGAdd(QObject *parent) : QObject(parent)
