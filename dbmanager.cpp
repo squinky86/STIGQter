@@ -244,7 +244,7 @@ void DbManager::AddSTIG(STIG stig, QList<STIGCheck *> checks)
         foreach(STIGCheck* c, checks)
         {
             newChecks = true;
-            q.prepare("INSERT INTO STIGCheck (`STIGId`, `CCIId`, `rule`, `vulnNum`, `groupTitle`, `ruleVersion`, `severity`, `weight`, `title`, `vulnDiscussion`, `falsePositives`, `falseNegatives`, `fix`, `check`, `documentable`, `mitigations`, `severityOverrideGuidance`, `checkContentRef`, `potentialImpact`, `thirdPartyTools`, `mitigationControl`, `responsibility`) VALUES(:STIGId, :CCIId, :rule, :vulnNum, :groupTitle, :ruleVersion, :severity, :weight, :title, :vulnDiscussion, :falsePositives, :falseNegatives, :fix, :check, :documentable, :mitigations, :severityOverrideGuidance, :checkContentRef, :potentialImpact, :thirdPartyTools, :mitigationControl, :responsibility)");
+            q.prepare("INSERT INTO STIGCheck (`STIGId`, `CCIId`, `rule`, `vulnNum`, `groupTitle`, `ruleVersion`, `severity`, `weight`, `title`, `vulnDiscussion`, `falsePositives`, `falseNegatives`, `fix`, `check`, `documentable`, `mitigations`, `severityOverrideGuidance`, `checkContentRef`, `potentialImpact`, `thirdPartyTools`, `mitigationControl`, `responsibility`, `IAControls`) VALUES(:STIGId, :CCIId, :rule, :vulnNum, :groupTitle, :ruleVersion, :severity, :weight, :title, :vulnDiscussion, :falsePositives, :falseNegatives, :fix, :check, :documentable, :mitigations, :severityOverrideGuidance, :checkContentRef, :potentialImpact, :thirdPartyTools, :mitigationControl, :responsibility, :IAControls)");
             if (c->cci.id <= 0)
                 c->cci = GetCCI(c->cci.cci, false); //don't need control information
             q.bindValue(":STIGId", stig.id);
@@ -269,6 +269,7 @@ void DbManager::AddSTIG(STIG stig, QList<STIGCheck *> checks)
             q.bindValue(":thirdPartyTools", c->thirdPartyTools);
             q.bindValue(":mitigationControl", c->mitigationControl);
             q.bindValue(":responsibility", c->responsibility);
+            q.bindValue(":IAControls", c->iaControls);
             q.exec();
         }
         if (!delayed)
@@ -359,6 +360,34 @@ void DbManager::DeleteSTIG(int id)
 void DbManager::DeleteSTIG(STIG s)
 {
     DeleteSTIG(s.id);
+}
+
+Asset DbManager::GetAsset(int id)
+{
+    QSqlDatabase db;
+    Asset a;
+    if (this->CheckDatabase(db))
+    {
+        QSqlQuery q(db);
+        q.prepare("SELECT `id`, `assetType`, `hostName`, `hostIP`, `hostMAC`, `hostFQDN`, `techArea`, `targetKey`, `webOrDatabase`, `webDBSite`, `webDBInstance` FROM Asset WHERE id = :id");
+        q.bindValue(":id", id);
+        q.exec();
+        if (q.next())
+        {
+            a.id = q.value(0).toInt();
+            a.assetType = q.value(1).toString();
+            a.hostName = q.value(2).toString();
+            a.hostIP = q.value(3).toString();
+            a.hostMAC = q.value(4).toString();
+            a.hostFQDN = q.value(5).toString();
+            a.techArea = q.value(6).toString();
+            a.targetKey = q.value(7).toString();
+            a.webOrDB = q.value(8).toBool();
+            a.webDbSite = q.value(9).toString();
+            a.webDbInstance = q.value(10).toString();
+        }
+    }
+    return a;
 }
 
 QList<Asset> DbManager::GetAssets(bool includeSTIGs)
@@ -480,7 +509,7 @@ QList<STIGCheck *> DbManager::GetSTIGChecksPtr(STIG s, bool includeCCI)
     if (this->CheckDatabase(db))
     {
         QSqlQuery q(db);
-        q.prepare("SELECT `id`, `STIGId`, `CCIId`, `rule`, `vulnNum`, `groupTitle`, `ruleVersion`, `severity`, `weight`, `title`, `vulnDiscussion`, `falsePositives`, `falseNegatives`, `fix`, `check`, `documentable`, `mitigations`, `severityOverrideGuidance`, `checkContentRef`, `potentialImpact`, `thirdPartyTools`, `mitigationControl`, `responsibility` FROM STIGCheck WHERE STIGId = :STIGId");
+        q.prepare("SELECT `id`, `STIGId`, `CCIId`, `rule`, `vulnNum`, `groupTitle`, `ruleVersion`, `severity`, `weight`, `title`, `vulnDiscussion`, `falsePositives`, `falseNegatives`, `fix`, `check`, `documentable`, `mitigations`, `severityOverrideGuidance`, `checkContentRef`, `potentialImpact`, `thirdPartyTools`, `mitigationControl`, `responsibility`, `IAControls` FROM STIGCheck WHERE STIGId = :STIGId");
         q.bindValue(":STIGId", s.id);
         q.exec();
         while (q.next())
@@ -511,6 +540,7 @@ QList<STIGCheck *> DbManager::GetSTIGChecksPtr(STIG s, bool includeCCI)
             c->thirdPartyTools = q.value(20).toString();
             c->mitigationControl = q.value(21).toString();
             c->thirdPartyTools = q.value(22).toString();
+            c->iaControls = q.value(23).toString();
             ret.append(c);
         }
     }
@@ -814,6 +844,7 @@ bool DbManager::UpdateDatabaseFromVersion(int version)
                       "`thirdPartyTools`	TEXT, "
                       "`mitigationControl`	TEXT, "
                       "`responsibility`	TEXT, "
+                      "`IAControls` TEXT, "
                       "FOREIGN KEY(`STIGId`) REFERENCES `STIG`(`id`), "
                       "FOREIGN KEY(`CCIId`) REFERENCES `CCI`(`id`) "
                       ")");
@@ -840,17 +871,17 @@ bool DbManager::UpdateDatabaseFromVersion(int version)
                       "FOREIGN KEY(`STIGId`) REFERENCES `STIG`(`id`) "
                       ")");
             q.exec();
-            q.prepare("CREATE TABLE `Checklist` ( "
+            q.prepare("CREATE TABLE `CKLCheck` ( "
                       "`id`	INTEGER PRIMARY KEY AUTOINCREMENT, "
-                      "`AssetSTIGId`	INTEGER, "
+                      "`AssetId`	INTEGER, "
                       "`STIGCheckId`	INTEGER, "
-                      "`status` TEXT, "
-                      "`findingDetails` TEXT, "
-                      "`comments`   TEXT, "
-                      "`severityOverride`   TEXT, "
-                      "`severityJustification`  TEXT, "
-                      "FOREIGN KEY(`AssetSTIGId`) REFERENCES `AssetSTIG`(`id`), "
-                      "FOREIGN KEY(`STIGCheckId`) REFERENCES `STIGCheck`(`id`) "
+                      "`status`	INTEGER, "
+                      "`findingDetails`	TEXT, "
+                      "`comments`	TEXT, "
+                      "`sesverityOverride`	INTEGER, "
+                      "`severityJustification`	TEXT, "
+                      "FOREIGN KEY(`STIGCheckId`) REFERENCES `STIGCheck`(`id`), "
+                      "FOREIGN KEY(`AssetId`) REFERENCES `Asset`(`id`) "
                       ")");
             q.exec();
             q.prepare("INSERT INTO variables (name, value) VALUES(:name, :value)");

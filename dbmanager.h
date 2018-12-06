@@ -52,6 +52,7 @@ public:
     void DeleteSTIG(int id);
     void DeleteSTIG(STIG s);
 
+    Asset GetAsset(int id);
     QList<Asset> GetAssets(bool includeSTIGs = true);
     CCI GetCCI(int cci, bool includeControl = true);
     CCI GetCCI(CCI cci, bool includeControl = true);

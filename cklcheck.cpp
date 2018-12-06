@@ -19,4 +19,26 @@
 
 #include "cklcheck.h"
 
-//TODO
+CKLCheck::CKLCheck(const CKLCheck &right) : CKLCheck(right.parent())
+{
+    *this = right;
+}
+
+CKLCheck::CKLCheck(QObject *parent) : QObject(parent)
+{
+}
+
+CKLCheck &CKLCheck::operator=(const CKLCheck &right)
+{
+    if (this != &right)
+    {
+        AssetId = right.AssetId;
+        STIGCheckId = right.STIGCheckId;
+        status = right.status;
+        findingDetails = right.findingDetails;
+        comments = right.comments;
+        severityOverride = right.severityOverride;
+        severityJustification = right.severityJustification;
+    }
+    return *this;
+}

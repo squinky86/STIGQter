@@ -20,6 +20,12 @@
 #ifndef CKLCHECK_H
 #define CKLCHECK_H
 
+#include <QObject>
+#include <QString>
+
+#include "asset.h"
+#include "stigcheck.h"
+
 enum Status
 {
     NotReviewed,
@@ -27,5 +33,27 @@ enum Status
     NotAFinding,
     NotApplicable
 };
+
+class CKLCheck : public QObject
+{
+    Q_OBJECT
+protected:
+    int AssetId;
+    int STIGCheckId;
+public:
+    CKLCheck(const CKLCheck &right);
+    CKLCheck(QObject *parent = nullptr);
+    int id;
+    Asset Asset();
+    STIGCheck STIGCheck(); //TODO
+    Status status;
+    QString findingDetails;
+    QString comments;
+    Severity severityOverride;
+    QString severityJustification;
+    CKLCheck& operator=(const CKLCheck &right);
+};
+
+Q_DECLARE_METATYPE(CKLCheck);
 
 #endif // CKLCHECK_H

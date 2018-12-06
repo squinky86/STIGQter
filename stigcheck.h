@@ -67,6 +67,7 @@ public:
     QString thirdPartyTools;
     QString mitigationControl;
     QString responsibility;
+    QString iaControls;
 };
 
 Q_DECLARE_METATYPE(STIGCheck);

@@ -63,6 +63,7 @@ STIGCheck& STIGCheck::operator=(const STIGCheck &right)
         thirdPartyTools = right.thirdPartyTools;
         mitigationControl = right.mitigationControl;
         responsibility = right.responsibility;
+        iaControls = right.iaControls;
     }
     return *this;
 }
