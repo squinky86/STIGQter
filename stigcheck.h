@@ -45,8 +45,10 @@ public:
     STIGCheck& operator=(const STIGCheck &right);
 
     int id;
-    STIG stig;
-    CCI cci;
+    int stigId;
+    int cciId;
+    STIG STIG();
+    CCI CCI();
     QString vulnNum;
     QString groupTitle;
     QString ruleVersion;

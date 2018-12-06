@@ -42,7 +42,7 @@ public:
     void DelayCommit(bool delay);
 
     bool AddAsset(Asset &a);
-    void AddCCI(int cci, QString control, QString definition);
+    bool AddCCI(CCI &c);
     void AddControl(QString control, QString title);
     void AddFamily(QString acronym, QString description);
     void AddSTIG(STIG s, QList<STIGCheck*> c);
@@ -54,17 +54,20 @@ public:
 
     Asset GetAsset(int id);
     QList<Asset> GetAssets(bool includeSTIGs = true);
-    CCI GetCCI(int cci, bool includeControl = true);
-    CCI GetCCI(CCI cci, bool includeControl = true);
-    QList<CCI> GetCCIs(bool includeControl = true);
-    QList<STIGCheck*> GetSTIGChecksPtr(STIG stig, bool includeCCI = true);
-    QList<STIG> GetSTIGs(Asset a, bool includeChecks = true);
-    QList<STIG> GetSTIGs(bool includeChecks = true, QString whereClause = "", QList<std::tuple<QString, QVariant>> = {});
-    Control GetControl(int id, bool includeFamily = true);
-    Control GetControl(QString control, bool includeId = true);
+    CCI GetCCI(int cci);
+    CCI GetCCIByCCI(int cci);
+    CCI GetCCIByCCI(CCI cci);
+    QList<CCI> GetCCIs();
+    Control GetControl(int id);
+    Control GetControl(QString control);
     Family GetFamily(QString acronym);
     Family GetFamily(int id);
     QList<Family> GetFamilies();
+    STIG GetSTIG(int id);
+    STIGCheck GetSTIGCheck(int id);
+    QList<STIGCheck*> GetSTIGChecksPtr(STIG stig);
+    QList<STIG> GetSTIGs(Asset a, bool includeChecks = true);
+    QList<STIG> GetSTIGs(bool includeChecks = true, QString whereClause = "", QList<std::tuple<QString, QVariant>> = {});
     QString GetVariable(QString name);
 
     void UpdateVariable(QString name, QString value);

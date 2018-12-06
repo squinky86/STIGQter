@@ -45,7 +45,7 @@ public:
     CKLCheck(QObject *parent = nullptr);
     int id;
     Asset Asset();
-    STIGCheck STIGCheck(); //TODO
+    STIGCheck STIGCheck();
     Status status;
     QString findingDetails;
     QString comments;

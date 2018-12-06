@@ -134,24 +134,25 @@ bool DbManager::AddAsset(Asset &a)
     return false;
 }
 
-void DbManager::AddCCI(int cci, QString control, QString definition)
+bool DbManager::AddCCI(CCI &c)
 {
-    Control c = GetControl(control);
-    if (c.id >= 0)
+    QSqlDatabase db;
+    if (this->CheckDatabase(db))
     {
-        QSqlDatabase db;
-        if (this->CheckDatabase(db))
+        QSqlQuery q(db);
+        q.prepare("INSERT INTO CCI (ControlId, cci, definition) VALUES(:ControlId, :CCI, :definition)");
+        q.bindValue(":ControlId", c.controlId);
+        q.bindValue(":CCI", c.cci);
+        q.bindValue(":definition", c.definition);
+        q.exec();
+        if (!_delayCommit)
         {
-            QSqlQuery q(db);
-            q.prepare("INSERT INTO CCI (ControlId, cci, definition) VALUES(:ControlId, :CCI, :definition)");
-            q.bindValue(":ControlId", c.id);
-            q.bindValue(":CCI", cci);
-            q.bindValue(":definition", definition);
-            q.exec();
-            if (!_delayCommit)
-                db.commit();
+            db.commit();
+            c.id = q.lastInsertId().toInt();
         }
+        return true;
     }
+    return false;
 }
 
 void DbManager::AddControl(QString control, QString title)
@@ -245,10 +246,8 @@ void DbManager::AddSTIG(STIG stig, QList<STIGCheck *> checks)
         {
             newChecks = true;
             q.prepare("INSERT INTO STIGCheck (`STIGId`, `CCIId`, `rule`, `vulnNum`, `groupTitle`, `ruleVersion`, `severity`, `weight`, `title`, `vulnDiscussion`, `falsePositives`, `falseNegatives`, `fix`, `check`, `documentable`, `mitigations`, `severityOverrideGuidance`, `checkContentRef`, `potentialImpact`, `thirdPartyTools`, `mitigationControl`, `responsibility`, `IAControls`) VALUES(:STIGId, :CCIId, :rule, :vulnNum, :groupTitle, :ruleVersion, :severity, :weight, :title, :vulnDiscussion, :falsePositives, :falseNegatives, :fix, :check, :documentable, :mitigations, :severityOverrideGuidance, :checkContentRef, :potentialImpact, :thirdPartyTools, :mitigationControl, :responsibility, :IAControls)");
-            if (c->cci.id <= 0)
-                c->cci = GetCCI(c->cci.cci, false); //don't need control information
             q.bindValue(":STIGId", stig.id);
-            q.bindValue(":CCIId", c->cci.id);
+            q.bindValue(":CCIId", c->CCI().id);
             q.bindValue(":rule", c->rule);
             q.bindValue(":vulnNum", c->vulnNum);
             q.bindValue(":groupTitle", c->groupTitle);
@@ -424,7 +423,28 @@ QList<Asset> DbManager::GetAssets(bool includeSTIGs)
     return ret;
 }
 
-CCI DbManager::GetCCI(int cci, bool includeControl)
+CCI DbManager::GetCCI(int id)
+{
+    QSqlDatabase db;
+    CCI c;
+    if (this->CheckDatabase(db))
+    {
+        QSqlQuery q(db);
+        q.prepare("SELECT id, ControlId, cci, definition FROM CCI WHERE id = :id");
+        q.bindValue(":id", id);
+        q.exec();
+        if (q.next())
+        {
+            c.id = q.value(0).toInt();
+            c.controlId = q.value(1).toInt();
+            c.cci = q.value(2).toInt();
+            c.definition = q.value(3).toString();
+        }
+    }
+    return c;
+}
+
+CCI DbManager::GetCCIByCCI(int cci)
 {
     QSqlDatabase db;
     CCI c;
@@ -434,13 +454,10 @@ CCI DbManager::GetCCI(int cci, bool includeControl)
         q.prepare("SELECT id, ControlId, cci, definition FROM CCI WHERE cci = :cci");
         q.bindValue(":cci", cci);
         q.exec();
-        while (q.next())
+        if (q.next())
         {
             c.id = q.value(0).toInt();
-            if (includeControl)
-            {
-                c.control = GetControl(q.value(1).toInt());
-            }
+            c.controlId = q.value(1).toInt();
             c.cci = q.value(2).toInt();
             c.definition = q.value(3).toString();
         }
@@ -448,35 +465,16 @@ CCI DbManager::GetCCI(int cci, bool includeControl)
     return c;
 }
 
-CCI DbManager::GetCCI(CCI cci, bool includeControl)
+CCI DbManager::GetCCIByCCI(CCI cci)
 {
     if (cci.id < 0)
     {
-        return GetCCI(cci.cci, includeControl);
+        return GetCCIByCCI(cci.cci);
     }
-    QSqlDatabase db;
-    CCI c;
-    if (this->CheckDatabase(db))
-    {
-        QSqlQuery q(db);
-        q.prepare("SELECT id, ControlId, cci, definition FROM CCI WHERE id = :id");
-        q.bindValue(":id", cci.id);
-        q.exec();
-        while (q.next())
-        {
-            c.id = q.value(0).toInt();
-            if (includeControl)
-            {
-                c.control = GetControl(q.value(1).toInt());
-            }
-            c.cci = q.value(2).toInt();
-            c.definition = q.value(3).toString();
-        }
-    }
-    return c;
+    return GetCCI(cci.id);
 }
 
-QList<CCI> DbManager::GetCCIs(bool includeControl)
+QList<CCI> DbManager::GetCCIs()
 {
     QSqlDatabase db;
     QList<CCI> ret;
@@ -489,10 +487,7 @@ QList<CCI> DbManager::GetCCIs(bool includeControl)
         {
             CCI c;
             c.id = q.value(0).toInt();
-            if (includeControl)
-            {
-                c.control = GetControl(q.value(1).toInt());
-            }
+            c.controlId = q.value(1).toInt();
             c.cci = q.value(2).toInt();
             c.definition = q.value(3).toString();
 
@@ -502,7 +497,48 @@ QList<CCI> DbManager::GetCCIs(bool includeControl)
     return ret;
 }
 
-QList<STIGCheck *> DbManager::GetSTIGChecksPtr(STIG s, bool includeCCI)
+STIGCheck DbManager::GetSTIGCheck(int id)
+{
+    QSqlDatabase db;
+    STIGCheck c;
+    if (this->CheckDatabase(db))
+    {
+        QSqlQuery q(db);
+        q.prepare("SELECT `id`, `STIGId`, `CCIId`, `rule`, `vulnNum`, `groupTitle`, `ruleVersion`, `severity`, `weight`, `title`, `vulnDiscussion`, `falsePositives`, `falseNegatives`, `fix`, `check`, `documentable`, `mitigations`, `severityOverrideGuidance`, `checkContentRef`, `potentialImpact`, `thirdPartyTools`, `mitigationControl`, `responsibility`, `IAControls` FROM STIGCheck WHERE id = :id");
+        q.bindValue(":id", id);
+        q.exec();
+        if (q.next())
+        {
+            c.id = q.value(0).toInt();
+            c.stigId = q.value(1).toInt();
+            c.cciId = q.value(2).toInt();
+            c.rule = q.value(3).toString();
+            c.vulnNum = q.value(4).toString();
+            c.groupTitle = q.value(5).toString();
+            c.ruleVersion = q.value(6).toString();
+            c.severity = static_cast<Severity>(q.value(7).toInt());
+            c.weight = q.value(8).toDouble();
+            c.title = q.value(9).toString();
+            c.vulnDiscussion = q.value(10).toString();
+            c.falsePositives = q.value(11).toString();
+            c.falseNegatives = q.value(12).toString();
+            c.fix = q.value(13).toString();
+            c.check = q.value(14).toString();
+            c.documentable = q.value(15).toBool();
+            c.mitigations = q.value(16).toString();
+            c.severityOverrideGuidance = q.value(17).toString();
+            c.checkContentRef = q.value(18).toString();
+            c.potentialImpact = q.value(19).toString();
+            c.thirdPartyTools = q.value(20).toString();
+            c.mitigationControl = q.value(21).toString();
+            c.thirdPartyTools = q.value(22).toString();
+            c.iaControls = q.value(23).toString();
+        }
+    }
+    return c;
+}
+
+QList<STIGCheck *> DbManager::GetSTIGChecksPtr(STIG s)
 {
     QSqlDatabase db;
     QList<STIGCheck*> ret;
@@ -516,10 +552,8 @@ QList<STIGCheck *> DbManager::GetSTIGChecksPtr(STIG s, bool includeCCI)
         {
             STIGCheck *c = new STIGCheck(); //must be deleted by STIG container or by caller
             c->id = q.value(0).toInt();
-            c->stig = s;
-            CCI cci;
-            cci.id = q.value(2).toInt();
-            c->cci = includeCCI ? GetCCI(cci) : cci;
+            c->stigId = q.value(1).toInt();
+            c->cciId = q.value(2).toInt();
             c->rule = q.value(3).toString();
             c->vulnNum = q.value(4).toString();
             c->groupTitle = q.value(5).toString();
@@ -583,7 +617,7 @@ QList<STIG> DbManager::GetSTIGs(bool includeChecks, QString whereClause, QList<s
             s.version = q.value(4).toInt();
             if (includeChecks)
             {
-                s.checks = GetSTIGChecksPtr(s, false);
+                s.checks = GetSTIGChecksPtr(s);
             }
             ret.append(s);
         }
@@ -591,7 +625,7 @@ QList<STIG> DbManager::GetSTIGs(bool includeChecks, QString whereClause, QList<s
     return ret;
 }
 
-Control DbManager::GetControl(int id, bool includeFamily)
+Control DbManager::GetControl(int id)
 {
     Control ret;
     QSqlDatabase db;
@@ -604,8 +638,7 @@ Control DbManager::GetControl(int id, bool includeFamily)
         if (q.next())
         {
             ret.id = q.value(0).toInt();;
-            if (includeFamily)
-                ret.family = GetFamily(q.value(1).toInt());
+            ret.familyId = q.value(1).toInt();
             ret.number = q.value(2).toInt();
             ret.enhancement = q.value(3).isNull() ? -1 : q.value(3).toInt();
             ret.title = q.value(4).toString();
@@ -614,13 +647,13 @@ Control DbManager::GetControl(int id, bool includeFamily)
     return ret;
 }
 
-Control DbManager::GetControl(QString control, bool includeId)
+Control DbManager::GetControl(QString control)
 {
     Control ret;
     ret.id = -1;
     ret.enhancement = -1;
     ret.title = "";
-    ret.family.id = -1;
+    ret.familyId = -1;
     QString family(control.left(2));
     control = control.right(control.length()-3);
     QString enhancement("");
@@ -633,31 +666,24 @@ Control DbManager::GetControl(QString control, bool includeId)
         ret.enhancement = enhancement.toInt();
     }
     ret.number = control.toInt();
-    if (includeId)
+    ret.familyId = GetFamily(family).id;
+    QSqlDatabase db;
+    if (this->CheckDatabase(db))
     {
-        ret.family = GetFamily(family);
-        QSqlDatabase db;
-        if (this->CheckDatabase(db))
-        {
-            QSqlQuery q(db);
-            if (ret.enhancement >= 0)
-                q.prepare("SELECT id, title FROM Control WHERE number = :number AND FamilyId = :FamilyId AND enhancement = :enhancement");
-            else
-                q.prepare("SELECT id, title FROM Control WHERE number = :number AND FamilyId = :FamilyId");
-            q.bindValue(":number", ret.number);
-            q.bindValue(":FamilyId", ret.family.id);
-            if (ret.enhancement >= 0)
-                q.bindValue(":enhancement", ret.enhancement);
-            q.exec();
-            if (q.next())
-            {
-                ret.id = q.value(0).toInt();
-                ret.title = q.value(1).toString();
-            }
-        }
+        QSqlQuery q(db);
+        if (ret.enhancement >= 0)
+            q.prepare("SELECT id, title FROM Control WHERE number = :number AND FamilyId = :FamilyId AND enhancement = :enhancement");
         else
+            q.prepare("SELECT id, title FROM Control WHERE number = :number AND FamilyId = :FamilyId");
+        q.bindValue(":number", ret.number);
+        q.bindValue(":FamilyId", ret.familyId);
+        if (ret.enhancement >= 0)
+            q.bindValue(":enhancement", ret.enhancement);
+        q.exec();
+        if (q.next())
         {
-            ret.family.acronym = family;
+            ret.id = q.value(0).toInt();
+            ret.title = q.value(1).toString();
         }
     }
     return ret;
@@ -721,6 +747,27 @@ QList<Family> DbManager::GetFamilies()
             f.acronym = q.value(1).toString();
             f.description = q.value(2).toString();
             ret.append(f);
+        }
+    }
+    return ret;
+}
+
+STIG DbManager::GetSTIG(int id)
+{
+    QSqlDatabase db;
+    STIG ret;
+    if (this->CheckDatabase(db))
+    {
+        QSqlQuery q(db);
+        q.prepare("SELECT id, title, description, release, version FROM STIG WHERE id = :id");
+        q.bindValue(":id", id);
+        if (q.next())
+        {
+            ret.id = q.value(0).toInt();
+            ret.title = q.value(1).toString();
+            ret.description = q.value(2).toString();
+            ret.release = q.value(3).toString();
+            ret.version = q.value(4).toInt();
         }
     }
     return ret;

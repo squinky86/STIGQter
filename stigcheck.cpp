@@ -17,6 +17,7 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
+#include "dbmanager.h"
 #include "stigcheck.h"
 
 #include <QString>
@@ -41,8 +42,8 @@ STIGCheck& STIGCheck::operator=(const STIGCheck &right)
     if (this != &right)
     {
         id = right.id;
-        stig.SetValues(right.stig, false);
-        cci = right.cci;
+        stigId = right.stigId;
+        cciId = right.cciId;
         rule = right.rule;
         vulnNum = right.vulnNum;
         groupTitle = right.groupTitle;
@@ -66,6 +67,18 @@ STIGCheck& STIGCheck::operator=(const STIGCheck &right)
         iaControls = right.iaControls;
     }
     return *this;
+}
+
+STIG STIGCheck::STIG()
+{
+    DbManager db;
+    return db.GetSTIG(stigId);
+}
+
+CCI STIGCheck::CCI()
+{
+    DbManager db;
+    return db.GetCCI(cciId);
 }
 
 STIGCheck::~STIGCheck()

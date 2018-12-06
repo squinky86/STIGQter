@@ -18,6 +18,7 @@
  */
 
 #include "cci.h"
+#include "dbmanager.h"
 
 #include <QDebug>
 
@@ -31,6 +32,12 @@ CCI::CCI(QObject *parent) : QObject(parent)
 
 }
 
+Control CCI::Control()
+{
+    DbManager db;
+    return db.GetControl(controlId);
+}
+
 CCI::CCI(const CCI &right) : CCI(right.parent())
 {
     *this = right;
@@ -41,7 +48,7 @@ CCI& CCI::operator=(const CCI &right)
     if (this != &right)
     {
         id = right.id;
-        control = right.control;
+        controlId = right.controlId;
         cci = right.cci;
         definition = right.definition;
     }

@@ -208,7 +208,7 @@ void WorkerSTIGAdd::ParseSTIG(QByteArray stig)
                 {
                     QString cci(xml->readElementText().trimmed());
                     if (cci.startsWith("CCI", Qt::CaseInsensitive))
-                        c.cci = db.GetCCI(GetCCINumber(cci));
+                        c.cciId = db.GetCCIByCCI(GetCCINumber(cci)).id;
                 }
                 else if (xml->name() == "fixtext")
                 {

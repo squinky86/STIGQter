@@ -18,6 +18,7 @@
  */
 
 #include "cklcheck.h"
+#include "dbmanager.h"
 
 CKLCheck::CKLCheck(const CKLCheck &right) : CKLCheck(right.parent())
 {
@@ -26,6 +27,18 @@ CKLCheck::CKLCheck(const CKLCheck &right) : CKLCheck(right.parent())
 
 CKLCheck::CKLCheck(QObject *parent) : QObject(parent)
 {
+}
+
+Asset CKLCheck::Asset()
+{
+    DbManager db;
+    return db.GetAsset(AssetId);
+}
+
+STIGCheck CKLCheck::STIGCheck()
+{
+    DbManager db;
+    return db.GetSTIGCheck(STIGCheckId);
 }
 
 CKLCheck &CKLCheck::operator=(const CKLCheck &right)

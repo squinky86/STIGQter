@@ -34,7 +34,8 @@ public:
     CCI(const CCI &right);
     CCI(QObject *parent = nullptr);
     int id;
-    Control control;
+    Control Control();
+    int controlId;
     int cci;
     QString definition;
     CCI& operator=(const CCI &right);

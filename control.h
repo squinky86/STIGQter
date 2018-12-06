@@ -32,7 +32,8 @@ public:
     Control(const Control &right);
     Control(QObject *parent = nullptr);
     int id;
-    Family family;
+    int familyId;
+    Family Family();
     int number;
     int enhancement;
     QString title;

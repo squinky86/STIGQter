@@ -264,7 +264,7 @@ void WorkerCCIAdd::process()
                             }
                             CCI c;
                             c.cci = cciInt;
-                            c.control.title = control;
+                            c.controlId = db.GetControl(control).id;
                             c.definition = definition;
                             toAdd.append(c);
                             //delayed add
@@ -283,8 +283,9 @@ void WorkerCCIAdd::process()
     db.DelayCommit(true);
     foreach (const CCI &c, toAdd)
     {
+        CCI tmpCCI = c;
         emit updateStatus("Adding CCI-" + QString::number(c.cci) + "…");
-        db.AddCCI(c.cci, c.control.title, c.definition);
+        db.AddCCI(tmpCCI);
         emit progress(-1);
     }
     db.DelayCommit(false);

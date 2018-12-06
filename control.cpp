@@ -18,10 +18,11 @@
  */
 
 #include "control.h"
+#include "dbmanager.h"
 
 QString PrintControl(Control c)
 {
-    QString ret = c.family.acronym + "-" + QString::number(c.number);
+    QString ret = c.Family().acronym + "-" + QString::number(c.number);
     if (c.enhancement > 0)
         ret.append("(" + QString::number(c.enhancement) + ")");
     return ret;
@@ -30,6 +31,12 @@ QString PrintControl(Control c)
 Control::Control(QObject *parent) : QObject(parent)
 {
 
+}
+
+Family Control::Family()
+{
+    DbManager db;
+    return db.GetFamily(familyId);
 }
 
 Control::Control(const Control &right) : Control(right.parent())
@@ -42,7 +49,7 @@ Control& Control::operator=(const Control &right)
     if (this != &right)
     {
         id = right.id;
-        family = right.family;
+        familyId = right.familyId;
         number = right.number;
         enhancement = right.enhancement;
         title = right.title;
