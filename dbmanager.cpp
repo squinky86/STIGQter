@@ -160,12 +160,25 @@ bool DbManager::AddCCI(CCI &c)
 
 void DbManager::AddControl(const QString &control, const QString &title, const QString &description)
 {
-    QString tmpControl(control);
+    QString tmpControl(control.trimmed());
     if (tmpControl.length() < 4)
     {
         qDebug() << "Received bad control.";
         return;
     }
+
+    //see if there are spaces
+    int tmpIndex = tmpControl.indexOf(' ');
+    if (tmpIndex > 0)
+    {
+        //see if there's a second space
+        tmpIndex = tmpControl.indexOf(' ', tmpIndex+1);
+        if (tmpIndex > 0)
+        {
+            tmpControl = tmpControl.left(tmpIndex+1).trimmed();
+        }
+    }
+
     QString family(tmpControl.left(2));
     tmpControl = tmpControl.right(tmpControl.length()-3);
     QString enhancement("");
@@ -638,6 +651,7 @@ Control DbManager::GetControl(int id)
 Control DbManager::GetControl(QString control)
 {
     //see if there are spaces
+    control = control.trimmed();
     int tmpIndex = control.indexOf(' ');
     if (tmpIndex > 0)
     {

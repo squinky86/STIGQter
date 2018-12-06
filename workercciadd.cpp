@@ -249,15 +249,20 @@ void WorkerCCIAdd::process()
                         {
                             int cciInt = cci.rightRef(6).toInt();
                             QString control = index;
+                            int tmpIndex = index.indexOf(' ');
                             if (control.contains(' '))
                                 control = control.left(control.indexOf(" "));
                             if (control.contains('.'))
                                 control = control.left(control.indexOf("."));
                             if (index.contains('('))
                             {
+                                tmpIndex = index.indexOf(' ', tmpIndex + 1);
                                 int tmpInt = index.indexOf('(');
-                                QStringRef enhancement(&index, tmpInt, index.indexOf(')') - tmpInt + 1);
-                                control.append(enhancement);
+                                if (tmpIndex == 0 || tmpInt < tmpIndex)
+                                {
+                                    QStringRef enhancement(&index, tmpInt, index.indexOf(')') - tmpInt + 1);
+                                    control.append(enhancement);
+                                }
                             }
                             CCI c;
                             c.cci = cciInt;
