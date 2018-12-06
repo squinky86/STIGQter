@@ -109,7 +109,7 @@ bool DbManager::AddAsset(Asset &a)
             q.prepare("SELECT count(*) FROM Asset WHERE hostName = :hostName");
             q.bindValue(":hostName", a.hostName);
             q.exec();
-            while (q.next())
+            if (q.next())
             {
                 if (q.value(0).toInt() > 0)
                 {
@@ -324,6 +324,7 @@ void DbManager::AddSTIGToAsset(const STIG &s, const Asset &a)
                 q.bindValue(":AssetId", a.id);
                 q.bindValue(":status", Status::NotReviewed);
                 q.bindValue(":STIGId", s.id);
+                q.exec();
                 db.commit();
             }
         }
@@ -347,13 +348,21 @@ void DbManager::DeleteCCIs()
     }
 }
 
-void DbManager::DeleteSTIG(int id)
+bool DbManager::DeleteSTIG(int id)
 {
     QSqlDatabase db;
-    //TODO: make sure that stig is not currently in use by an asset
     if (this->CheckDatabase(db))
     {
         QSqlQuery q(db);
+        q.prepare("SELECT hostName FROM AssetSTIG JOIN Asset ON AssetSTIG.AssetID = Asset.id WHERE STIGId = :STIGId");
+        q.bindValue(":STIGId", id);
+        q.exec();
+        if (q.next())
+        {
+            QMessageBox::warning(nullptr, "STIG In Use", "The Asset '" + q.value(0).toString() + "' is currently using the selected STIG.");
+            return false;
+        }
+
         q.prepare("DELETE FROM STIGCheck WHERE STIGId = :STIGId");
         q.bindValue(":STIGId", id);
         q.exec();
@@ -362,12 +371,14 @@ void DbManager::DeleteSTIG(int id)
         q.exec();
         if (!_delayCommit)
             db.commit();
+        return true;
     }
+    return false;
 }
 
-void DbManager::DeleteSTIG(STIG s)
+bool DbManager::DeleteSTIG(STIG s)
 {
-    DeleteSTIG(s.id);
+    return DeleteSTIG(s.id);
 }
 
 Asset DbManager::GetAsset(int id)

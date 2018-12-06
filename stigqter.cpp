@@ -45,6 +45,7 @@ STIGQter::STIGQter(QWidget *parent) :
     EnableInput();
     DisplayCCIs();
     DisplaySTIGs();
+    DisplayAssets();
 }
 
 STIGQter::~STIGQter()

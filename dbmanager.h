@@ -49,8 +49,8 @@ public:
     void AddSTIGToAsset(const STIG &s, const Asset &a);
 
     void DeleteCCIs();
-    void DeleteSTIG(int id);
-    void DeleteSTIG(STIG s);
+    bool DeleteSTIG(int id);
+    bool DeleteSTIG(STIG s);
 
     Asset GetAsset(int id);
     QList<Asset> GetAssets();
