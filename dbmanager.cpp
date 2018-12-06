@@ -18,6 +18,7 @@
  */
 
 #include "dbmanager.h"
+#include "cklcheck.h"
 
 #include <cstdlib>
 #include <QCoreApplication>
@@ -319,6 +320,10 @@ void DbManager::AddSTIGToAsset(const STIG &s, const Asset &a)
                 q.bindValue(":AssetId", a.id);
                 q.bindValue(":STIGId", s.id);
                 q.exec();
+                q.prepare("INSERT INTO CKLCheck (AssetId, STIGCheckId, status, findingDetails, comments, severityOverride, severityJustification) SELECT :AssetId, id, :status, '', '', '', '' FROM STIGCheck WHERE STIGId = :STIGId");
+                q.bindValue(":AssetId", a.id);
+                q.bindValue(":status", Status::NotReviewed);
+                q.bindValue(":STIGId", s.id);
                 db.commit();
             }
         }
@@ -345,6 +350,7 @@ void DbManager::DeleteCCIs()
 void DbManager::DeleteSTIG(int id)
 {
     QSqlDatabase db;
+    //TODO: make sure that stig is not currently in use by an asset
     if (this->CheckDatabase(db))
     {
         QSqlQuery q(db);
@@ -919,7 +925,7 @@ bool DbManager::UpdateDatabaseFromVersion(int version)
                       "`status`	INTEGER, "
                       "`findingDetails`	TEXT, "
                       "`comments`	TEXT, "
-                      "`sesverityOverride`	INTEGER, "
+                      "`severityOverride`	INTEGER, "
                       "`severityJustification`	TEXT, "
                       "FOREIGN KEY(`STIGCheckId`) REFERENCES `STIGCheck`(`id`), "
                       "FOREIGN KEY(`AssetId`) REFERENCES `Asset`(`id`) "
