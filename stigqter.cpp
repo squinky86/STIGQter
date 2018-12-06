@@ -26,6 +26,7 @@
 #include "workerstigadd.h"
 #include "workerstigdelete.h"
 #include "workerassetadd.h"
+#include "workercklimport.h"
 
 #include <QThread>
 #include <QDebug>
@@ -220,6 +221,27 @@ void STIGQter::DeleteSTIGs()
     connect(s, SIGNAL(updateStatus(QString)), ui->lblStatus, SLOT(setText(QString)));
     threads.append(t);
     workers.append(s);
+
+    t->start();
+}
+
+void STIGQter::ImportCKLs()
+{
+    QStringList fileNames = QFileDialog::getOpenFileNames(this,
+        "Import CKL(s)", QDir::home().dirName(), "STIG Checklist (*.ckl)");
+    DisableInput();
+    _updatedAssets = true;
+    QThread* t = new QThread;
+    WorkerCKLImport *c = new WorkerCKLImport();
+    c->AddCKLs(fileNames);
+    connect(t, SIGNAL(started()), c, SLOT(process()));
+    connect(c, SIGNAL(finished()), t, SLOT(quit()));
+    connect(t, SIGNAL(finished()), this, SLOT(CompletedThread()));
+    connect(c, SIGNAL(initialize(int, int)), this, SLOT(Initialize(int, int)));
+    connect(c, SIGNAL(progress(int)), this, SLOT(Progress(int)));
+    connect(c, SIGNAL(updateStatus(QString)), ui->lblStatus, SLOT(setText(QString)));
+    threads.append(t);
+    workers.append(c);
 
     t->start();
 }

@@ -45,6 +45,7 @@ private slots:
     void AddSTIGs();
     void DeleteCCIs();
     void DeleteSTIGs();
+    void ImportCKLs();
     void SelectSTIG();
     void UpdateCCIs();
 
