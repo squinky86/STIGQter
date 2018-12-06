@@ -25,9 +25,19 @@ Asset::Asset(const Asset &a) : Asset(a.parent())
     *this = a;
 }
 
-Asset::Asset(QObject *parent) : QObject(parent)
+Asset::Asset(QObject *parent) : QObject(parent),
+    id(-1),
+    assetType(),
+    hostName(),
+    hostIP(),
+    hostMAC(),
+    hostFQDN(),
+    techArea(),
+    targetKey(),
+    webOrDB(false),
+    webDbSite(),
+    webDbInstance()
 {
-    id = -1;
 }
 
 Asset &Asset::operator=(const Asset &right)

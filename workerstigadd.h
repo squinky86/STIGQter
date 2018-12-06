@@ -28,11 +28,11 @@ class WorkerSTIGAdd : public QObject
 
 private:
     QStringList _todo;
-    void ParseSTIG(QByteArray stig);
+    void ParseSTIG(const QByteArray &stig);
 
 public:
     explicit WorkerSTIGAdd(QObject *parent = nullptr);
-    void AddSTIGs(QStringList stigs);
+    void AddSTIGs(const QStringList &stigs);
 
 public slots:
     void process();

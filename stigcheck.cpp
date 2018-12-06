@@ -27,9 +27,32 @@ QString PrintSTIGCheck(STIGCheck s)
     return QString::number(s.id);
 }
 
-STIGCheck::STIGCheck(QObject *parent) : QObject(parent)
+STIGCheck::STIGCheck(QObject *parent) : QObject(parent),
+    id(-1),
+    stigId(-1),
+    cciId(-1),
+    vulnNum(),
+    groupTitle(),
+    ruleVersion(),
+    rule(),
+    severity(Severity::high),
+    weight(10.0),
+    title(),
+    vulnDiscussion(),
+    falsePositives(),
+    falseNegatives(),
+    fix(),
+    check(),
+    documentable(false),
+    mitigations(),
+    severityOverrideGuidance(),
+    checkContentRef(),
+    potentialImpact(),
+    thirdPartyTools(),
+    mitigationControl(),
+    responsibility(),
+    iaControls()
 {
-
 }
 
 STIGCheck::STIGCheck(const STIGCheck &right) : STIGCheck(right.parent())
@@ -81,12 +104,7 @@ CCI STIGCheck::CCI()
     return db.GetCCI(cciId);
 }
 
-STIGCheck::~STIGCheck()
-{
-
-}
-
-Severity GetSeverity(QString severity)
+Severity GetSeverity(const QString &severity)
 {
     Severity ret = Severity::low;
     if (severity.startsWith("medium", Qt::CaseInsensitive))

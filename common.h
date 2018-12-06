@@ -26,8 +26,8 @@
 
 #define VERSION "0.0.1"
 
-bool DownloadFile(QUrl u, QFile *f);
-QString DownloadPage(QUrl u);
+bool DownloadFile(const QUrl &u, QFile *f);
+QString DownloadPage(const QUrl &u);
 int GetCCINumber(QString cci);
 QByteArrayList GetXMLFromZip(const char* f);
 QString CleanXML(QString s, bool isXml = false);

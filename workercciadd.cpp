@@ -250,7 +250,7 @@ void WorkerCCIAdd::process()
                         }
                         if (!version.isEmpty() && !index.isEmpty() && (version == "4")) //Only Rev 4 supported
                         {
-                            int cciInt = cci.right(6).toInt();
+                            int cciInt = cci.rightRef(6).toInt();
                             QString control = index;
                             if (control.contains(' '))
                                 control = control.left(control.indexOf(" "));

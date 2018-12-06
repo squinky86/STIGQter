@@ -35,8 +35,8 @@ private:
 
 public:
     explicit WorkerAssetAdd(QObject *parent = nullptr);
-    void AddAsset(Asset a);
-    void AddSTIG(STIG s);
+    void AddAsset(const Asset &a);
+    void AddSTIG(const STIG &s);
 
 public slots:
     void process();

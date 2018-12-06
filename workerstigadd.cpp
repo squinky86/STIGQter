@@ -25,7 +25,7 @@
 
 #include <QXmlStreamReader>
 
-void WorkerSTIGAdd::ParseSTIG(QByteArray stig)
+void WorkerSTIGAdd::ParseSTIG(const QByteArray &stig)
 {
     //should be the .xml file inside of the STIG .zip file here
     QXmlStreamReader *xml = new QXmlStreamReader(stig);
@@ -152,7 +152,7 @@ void WorkerSTIGAdd::ParseSTIG(QByteArray stig)
                 {
                     if (!inGroup)
                     {
-                        QString toParse = CleanXML("<?xml version=\"1.0\" encoding=\"UTF-8\"?><VulnDescription>" + xml->readElementText().trimmed() + "</VulnDescription>", true);
+                        QString toParse = CleanXML(R"(<?xml version="1.0" encoding="UTF-8"?><VulnDescription>)" + xml->readElementText().trimmed() + "</VulnDescription>", true);
                         //parse vulnerability description elements
                         QXmlStreamReader xml2(toParse);
                         while (!xml2.atEnd() && !xml2.hasError())
@@ -253,7 +253,7 @@ WorkerSTIGAdd::WorkerSTIGAdd(QObject *parent) : QObject(parent)
 
 }
 
-void WorkerSTIGAdd::AddSTIGs(QStringList stigs)
+void WorkerSTIGAdd::AddSTIGs(const QStringList &stigs)
 {
     _todo = stigs;
 }

@@ -27,7 +27,7 @@
 #include <QString>
 #include <QtNetwork>
 
-bool DownloadFile(QUrl u, QFile *f)
+bool DownloadFile(const QUrl &u, QFile *f)
 {
     bool close = false;
     if (!f->isOpen())
@@ -58,7 +58,7 @@ bool DownloadFile(QUrl u, QFile *f)
     return true;
 }
 
-QString DownloadPage(QUrl u)
+QString DownloadPage(const QUrl &u)
 {
     QNetworkAccessManager manager;
     QNetworkRequest req = QNetworkRequest(QUrl(u));
@@ -79,6 +79,7 @@ QByteArrayList GetXMLFromZip(const char* f)
     struct zip *za;
     int err;
     struct zip_stat sb;
+    zip_stat_init(&sb); //initializes sb
     struct zip_file *zf;
     za = zip_open(f, 0, &err);
     if (za != nullptr)
@@ -98,10 +99,10 @@ QByteArrayList GetXMLFromZip(const char* f)
                         while (sum < sb.size)
                         {
                             char buf[1024];
-                            zip_int64_t len = zip_fread(zf, buf, 1024);
+                            zip_int64_t len = zip_fread(zf, static_cast<void*>(buf), 1024);
                             if (len > 0)
                             {
-                                todo.append(buf, static_cast<int>(len));
+                                todo.append(static_cast<const char*>(buf), static_cast<int>(len));
                                 sum += len;
                             }
                         }
@@ -141,7 +142,9 @@ QString CleanXML(QString s, bool isXml)
     if (rc >= 0)
         rc = tidySaveBuffer(tdoc, &output);
     if (rc >= 0 && (output.bp))
+    {
         s = QString::fromUtf8(reinterpret_cast<char*>(output.bp));
+    }
     else
         qDebug() << "A severe error (" << rc << ") occurred.";
 

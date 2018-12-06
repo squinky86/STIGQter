@@ -24,12 +24,12 @@ WorkerAssetAdd::WorkerAssetAdd(QObject *parent) : QObject(parent)
 {
 }
 
-void WorkerAssetAdd::AddAsset(Asset asset)
+void WorkerAssetAdd::AddAsset(const Asset &asset)
 {
     _todo = asset;
 }
 
-void WorkerAssetAdd::AddSTIG(STIG s)
+void WorkerAssetAdd::AddSTIG(const STIG &s)
 {
     _todoSTIGs.append(s);
 }

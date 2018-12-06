@@ -33,7 +33,7 @@ enum Severity
     low
 };
 
-Severity GetSeverity(QString severity);
+Severity GetSeverity(const QString &severity);
 
 class STIGCheck : public QObject
 {
@@ -41,7 +41,6 @@ class STIGCheck : public QObject
 public:
     STIGCheck(const STIGCheck& right);
     STIGCheck(QObject *parent = nullptr);
-    ~STIGCheck();
     STIGCheck& operator=(const STIGCheck &right);
 
     int id;

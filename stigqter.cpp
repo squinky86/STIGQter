@@ -50,12 +50,8 @@ STIGQter::STIGQter(QWidget *parent) :
 STIGQter::~STIGQter()
 {
     CleanThreads();
-    if (db)
-    {
-        delete db;
-    }
-    if (ui)
-        delete ui;
+    delete db;
+    delete ui;
 
 }
 

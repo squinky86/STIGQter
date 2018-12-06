@@ -43,8 +43,8 @@ public:
 
     bool AddAsset(Asset &a);
     bool AddCCI(CCI &c);
-    void AddControl(QString control, QString title);
-    void AddFamily(QString acronym, QString description);
+    void AddControl(const QString &control, const QString &title);
+    void AddFamily(const QString &acronym, const QString &description);
     void AddSTIG(STIG s, QList<STIGCheck*> c);
     void AddSTIGToAsset(STIG s, Asset a);
 
@@ -60,17 +60,17 @@ public:
     QList<CCI> GetCCIs();
     Control GetControl(int id);
     Control GetControl(QString control);
-    Family GetFamily(QString acronym);
+    Family GetFamily(const QString &acronym);
     Family GetFamily(int id);
     QList<Family> GetFamilies();
     STIG GetSTIG(int id);
     STIGCheck GetSTIGCheck(int id);
     QList<STIGCheck> GetSTIGChecks(STIG stig);
     QList<STIG> GetSTIGs(Asset a);
-    QList<STIG> GetSTIGs(QString whereClause = "", QList<std::tuple<QString, QVariant>> = {});
-    QString GetVariable(QString name);
+    QList<STIG> GetSTIGs(const QString &whereClause = "", const QList<std::tuple<QString, QVariant> > &variables = {});
+    QString GetVariable(const QString &name);
 
-    void UpdateVariable(QString name, QString value);
+    void UpdateVariable(const QString &name, const QString &value);
 
     QString Sanitize(QString s);
 

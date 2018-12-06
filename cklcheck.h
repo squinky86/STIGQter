@@ -37,13 +37,13 @@ enum Status
 class CKLCheck : public QObject
 {
     Q_OBJECT
-protected:
-    int AssetId;
-    int STIGCheckId;
+
 public:
     CKLCheck(const CKLCheck &right);
     CKLCheck(QObject *parent = nullptr);
     int id;
+    int assetId;
+    int stigCheckId;
     Asset Asset();
     STIGCheck STIGCheck();
     Status status;

@@ -155,22 +155,23 @@ bool DbManager::AddCCI(CCI &c)
     return false;
 }
 
-void DbManager::AddControl(QString control, QString title)
+void DbManager::AddControl(const QString &control, const QString &title)
 {
-    if (control.length() < 4)
+    QString tmpControl(control);
+    if (tmpControl.length() < 4)
     {
         qDebug() << "Received bad control.";
         return;
     }
-    QString family(control.left(2));
-    control = control.right(control.length()-3);
+    QString family(tmpControl.left(2));
+    tmpControl = tmpControl.right(tmpControl.length()-3);
     QString enhancement("");
-    if (control.contains('('))
+    if (tmpControl.contains('('))
     {
-        int tmpIndex = control.indexOf('(');
-        enhancement = control.right(control.length() - tmpIndex - 1);
+        int tmpIndex = tmpControl.indexOf('(');
+        enhancement = tmpControl.right(tmpControl.length() - tmpIndex - 1);
         enhancement = enhancement.left(enhancement.length() - 1);
-        control = control.left(control.indexOf('('));
+        tmpControl = tmpControl.left(tmpControl.indexOf('('));
     }
 
     Family f = GetFamily(family);
@@ -183,7 +184,7 @@ void DbManager::AddControl(QString control, QString title)
             QSqlQuery q(db);
             q.prepare("INSERT INTO Control (FamilyId, number, enhancement, title) VALUES(:FamilyId, :number, :enhancement, :title)");
             q.bindValue(":FamilyId", f.id);
-            q.bindValue(":number", control.toInt());
+            q.bindValue(":number", tmpControl.toInt());
             q.bindValue(":enhancement", enhancement.isEmpty() ? QVariant(QVariant::Int) : enhancement.toInt());
             q.bindValue(":title", title);
             q.exec();
@@ -193,7 +194,7 @@ void DbManager::AddControl(QString control, QString title)
     }
 }
 
-void DbManager::AddFamily(QString acronym, QString description)
+void DbManager::AddFamily(const QString &acronym, const QString &description)
 {
     QSqlDatabase db;
     if (this->CheckDatabase(db))
@@ -583,7 +584,7 @@ QList<STIG> DbManager::GetSTIGs(Asset a)
     return GetSTIGs("WHERE `id` IN (SELECT STIGId FROM AssetSTIG WHERE AssetId = :AssetId)", variables);
 }
 
-QList<STIG> DbManager::GetSTIGs(QString whereClause, QList<std::tuple<QString, QVariant>> variables)
+QList<STIG> DbManager::GetSTIGs(const QString &whereClause, const QList<std::tuple<QString, QVariant>> &variables)
 {
     QSqlDatabase db;
     QList<STIG> ret;
@@ -594,11 +595,11 @@ QList<STIG> DbManager::GetSTIGs(QString whereClause, QList<std::tuple<QString, Q
         if (!whereClause.isNull() && !whereClause.isEmpty())
             toPrep.append(" " + whereClause);
         q.prepare(toPrep);
-        for (int i = 0; i < variables.size(); i++)
+        for (const auto &variable : variables)
         {
             QString key;
             QVariant val;
-            std::tie(key, val) = variables.at(i);
+            std::tie(key, val) = variable;
             q.bindValue(key, val);
         }
         q.exec();
@@ -701,7 +702,7 @@ Family DbManager::GetFamily(int id)
     return ret;
 }
 
-Family DbManager::GetFamily(QString acronym)
+Family DbManager::GetFamily(const QString &acronym)
 {
     QSqlDatabase db;
     Family ret;
@@ -764,7 +765,7 @@ STIG DbManager::GetSTIG(int id)
     return ret;
 }
 
-QString DbManager::GetVariable(QString name)
+QString DbManager::GetVariable(const QString &name)
 {
     QSqlDatabase db;
     QString ret;
@@ -782,7 +783,7 @@ QString DbManager::GetVariable(QString name)
     return ret;
 }
 
-void DbManager::UpdateVariable(QString name, QString value)
+void DbManager::UpdateVariable(const QString &name, const QString &value)
 {
     QSqlDatabase db;
     if (this->CheckDatabase(db))

@@ -27,9 +27,12 @@ QString PrintCCI(CCI c)
     return "CCI-" + QString::number(c.cci).rightJustified(6, '0');
 }
 
-CCI::CCI(QObject *parent) : QObject(parent)
+CCI::CCI(QObject *parent) : QObject(parent),
+    id(-1),
+    controlId(-1),
+    cci(0),
+    definition()
 {
-
 }
 
 Control CCI::Control()

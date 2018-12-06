@@ -25,28 +25,36 @@ CKLCheck::CKLCheck(const CKLCheck &right) : CKLCheck(right.parent())
     *this = right;
 }
 
-CKLCheck::CKLCheck(QObject *parent) : QObject(parent)
+CKLCheck::CKLCheck(QObject *parent) : QObject(parent),
+    id(-1),
+    assetId(-1),
+    stigCheckId(-1),
+    status(Status::NotReviewed),
+    findingDetails(),
+    comments(),
+    severityOverride(),
+    severityJustification()
 {
 }
 
 Asset CKLCheck::Asset()
 {
     DbManager db;
-    return db.GetAsset(AssetId);
+    return db.GetAsset(assetId);
 }
 
 STIGCheck CKLCheck::STIGCheck()
 {
     DbManager db;
-    return db.GetSTIGCheck(STIGCheckId);
+    return db.GetSTIGCheck(stigCheckId);
 }
 
 CKLCheck &CKLCheck::operator=(const CKLCheck &right)
 {
     if (this != &right)
     {
-        AssetId = right.AssetId;
-        STIGCheckId = right.STIGCheckId;
+        assetId = right.assetId;
+        stigCheckId = right.stigCheckId;
         status = right.status;
         findingDetails = right.findingDetails;
         comments = right.comments;

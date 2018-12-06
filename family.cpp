@@ -26,9 +26,11 @@ QString PrintFamily(Family c)
     return c.acronym;
 }
 
-Family::Family(QObject *parent) : QObject(parent)
+Family::Family(QObject *parent) : QObject(parent),
+    id(-1),
+    acronym("ZZ"),
+    description("Default Family")
 {
-
 }
 
 Family::Family(const Family &right) : Family(right.parent())

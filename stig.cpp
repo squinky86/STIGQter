@@ -26,7 +26,12 @@ QString PrintSTIG(STIG s)
     return s.title + " Version: " + QString::number(s.version) + " " + s.release;
 }
 
-STIG::STIG(QObject *parent) : QObject(parent)
+STIG::STIG(QObject *parent) : QObject(parent),
+    id(-1),
+    title(),
+    description(),
+    release(),
+    version(0)
 {
 }
 

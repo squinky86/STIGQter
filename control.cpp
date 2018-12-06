@@ -28,9 +28,13 @@ QString PrintControl(Control c)
     return ret;
 }
 
-Control::Control(QObject *parent) : QObject(parent)
+Control::Control(QObject *parent) : QObject(parent),
+    id(-1),
+    familyId(-1),
+    number(0),
+    enhancement(),
+    title()
 {
-
 }
 
 Family Control::Family()
