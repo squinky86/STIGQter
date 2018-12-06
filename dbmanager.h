@@ -52,8 +52,9 @@ public:
     bool DeleteSTIG(int id);
     bool DeleteSTIG(STIG s);
 
-    Asset GetAsset(int id);
-    QList<Asset> GetAssets();
+    Asset GetAsset(const int &id);
+    Asset GetAsset(const QString &hostName);
+    QList<Asset> GetAssets(const QString &whereClause = "", const QList<std::tuple<QString, QVariant>> &variables = {});
     CCI GetCCI(int cci);
     CCI GetCCIByCCI(int cci);
     CCI GetCCIByCCI(CCI cci);

@@ -381,42 +381,34 @@ bool DbManager::DeleteSTIG(STIG s)
     return DeleteSTIG(s.id);
 }
 
-Asset DbManager::GetAsset(int id)
+Asset DbManager::GetAsset(const QString &hostName)
 {
-    QSqlDatabase db;
-    Asset a;
-    if (this->CheckDatabase(db))
-    {
-        QSqlQuery q(db);
-        q.prepare("SELECT `id`, `assetType`, `hostName`, `hostIP`, `hostMAC`, `hostFQDN`, `techArea`, `targetKey`, `webOrDatabase`, `webDBSite`, `webDBInstance` FROM Asset WHERE id = :id");
-        q.bindValue(":id", id);
-        q.exec();
-        if (q.next())
-        {
-            a.id = q.value(0).toInt();
-            a.assetType = q.value(1).toString();
-            a.hostName = q.value(2).toString();
-            a.hostIP = q.value(3).toString();
-            a.hostMAC = q.value(4).toString();
-            a.hostFQDN = q.value(5).toString();
-            a.techArea = q.value(6).toString();
-            a.targetKey = q.value(7).toString();
-            a.webOrDB = q.value(8).toBool();
-            a.webDbSite = q.value(9).toString();
-            a.webDbInstance = q.value(10).toString();
-        }
-    }
-    return a;
+    return GetAssets("WHERE hostName = :hostName", {std::make_tuple<QString, QVariant>(":hostName", hostName)}).first();
 }
 
-QList<Asset> DbManager::GetAssets()
+Asset DbManager::GetAsset(const int &id)
+{
+    return GetAssets("WHERE id = :id", {std::make_tuple<QString, QVariant>(":id", id)}).first();
+}
+
+QList<Asset> DbManager::GetAssets(const QString &whereClause, const QList<std::tuple<QString, QVariant>> &variables)
 {
     QSqlDatabase db;
     QList<Asset> ret;
     if (this->CheckDatabase(db))
     {
         QSqlQuery q(db);
-        q.prepare("SELECT `id`, `assetType`, `hostName`, `hostIP`, `hostMAC`, `hostFQDN`, `techArea`, `targetKey`, `webOrDatabase`, `webDBSite`, `webDBInstance` FROM Asset ORDER BY LOWER(hostName), hostName");
+        QString toPrep = "SELECT `id`, `assetType`, `hostName`, `hostIP`, `hostMAC`, `hostFQDN`, `techArea`, `targetKey`, `webOrDatabase`, `webDBSite`, `webDBInstance` FROM Asset ORDER BY LOWER(hostName), hostName";
+        if (!whereClause.isNull() && !whereClause.isEmpty())
+            toPrep.append(" " + whereClause);
+        q.prepare(toPrep);
+        for (const auto &variable : variables)
+        {
+            QString key;
+            QVariant val;
+            std::tie(key, val) = variable;
+            q.bindValue(key, val);
+        }
         q.exec();
         while (q.next())
         {
