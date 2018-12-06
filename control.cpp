@@ -33,7 +33,8 @@ Control::Control(QObject *parent) : QObject(parent),
     familyId(-1),
     number(0),
     enhancement(),
-    title()
+    title(),
+    description()
 {
 }
 
@@ -57,6 +58,7 @@ Control& Control::operator=(const Control &right)
         number = right.number;
         enhancement = right.enhancement;
         title = right.title;
+        description = right.description;
     }
     return *this;
 }

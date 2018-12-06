@@ -37,6 +37,7 @@ public:
     int number;
     int enhancement;
     QString title;
+    QString description;
     Control& operator=(const Control &right);
 };
 

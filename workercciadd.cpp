@@ -88,7 +88,59 @@ void WorkerCCIAdd::process()
     delete xml;
 
     //Step 4: download all controls for each family
-    QList<QString> controls;
+    QString rmfControls = DownloadPage(nist.toString() + "/static/feeds/xml/sp80053/rev4/800-53-controls.xml");
+    xml = new QXmlStreamReader(rmfControls);
+    QString control;
+    QString title;
+    QString description;
+    bool inStatement = false;
+    while (!xml->atEnd() && !xml->hasError())
+    {
+        xml->readNext();
+        if (xml->isStartElement())
+        {
+            if (inStatement)
+            {
+                if (xml->name() == "supplemental-guidance")
+                {
+                    inStatement = false;
+                }
+                else if (xml->name() == "description")
+                {
+                    description = xml->readElementText().trimmed();
+                }
+                else if (xml->name() == "control" || xml->name() == "control-enhancement")
+                {
+                    inStatement = false;
+                    emit updateStatus("Adding " + control);
+                    db.AddControl(control, title, description);
+                    emit progress(-1);
+                }
+            }
+            else
+            {
+                if (xml->name() == "statement")
+                    inStatement = true;
+                else if (xml->name() == "number")
+                    control = xml->readElementText().trimmed();
+                else if (xml->name() == "title")
+                    title = xml->readElementText().trimmed();
+                else if (xml->name() == "description")
+                    description = xml->readElementText().trimmed();
+                else if (xml->name() == "control" || xml->name() == "control-enhancement")
+                {
+                    emit updateStatus("Adding " + control);
+                    db.AddControl(control, title, description);
+                    emit progress(-1);
+                }
+            }
+        }
+    }
+    if (!control.isEmpty())
+        db.AddControl(control, title, description);
+
+    //Step 4: download all controls for each family
+    /*QList<QString> controls;
     db.DelayCommit(true);
     foreach (const QString &s, todo)
     {
@@ -142,39 +194,8 @@ void WorkerCCIAdd::process()
                 QStringRef control(&title, 16, title.length()-16);
                 QStringList ctrl = control.toString().split(" - ");
                 emit updateStatus("Adding " + ctrl.first() + "—" + ctrl.last() + "…");
-                db.AddControl(ctrl.first(), ctrl.last());
+                db.AddControl(ctrl.first(), ctrl.last(), "");
             }
-            /** TODO: Qt XML parser fails on these elements
-            else if (xml->isStartElement() && (xml->name() == "span"))
-            {
-                if (xml->attributes().hasAttribute("id"))
-                {
-                    QString id("");
-                    foreach (const QXmlStreamAttribute &attr, xml->attributes())
-                    {
-                        if (attr.name() == "id")
-                            id = attr.value().toString();
-                    }
-                    if (id.endsWith("EnhancementNameDT"))
-                    {
-                        QString enhancement(xml->readElementText().trimmed());
-                        xml->readNext();
-                        qDebug() << xml->name();
-                        xml->readNext();
-                        qDebug() << xml->name();
-                        xml->readNext();
-                        qDebug() << xml->name();
-                        xml->readNext();
-                        qDebug() << xml->name();
-                        if (xml->name() == "td")
-                        {
-                            QString enhancementName(xml->readElementText().trimmed());
-                            qDebug() << "\t" << enhancement << enhancementName;
-                        }
-                    }
-                }
-            }
-            */
             while (c.contains("EnhancementNameDT"))
             {
                 //TODO: brute-force parsing until QXmlStreamReader can handle it
@@ -183,7 +204,7 @@ void WorkerCCIAdd::process()
                 c = c.right(c.length() - c.indexOf("<td>") - 4);
                 QString name(c.left(c.indexOf('<')).trimmed());
                 emit updateStatus("Adding " + enhancement + "—" + name + "…");
-                db.AddControl(enhancement, name);
+                db.AddControl(enhancement, name, "");
             }
         }
 
@@ -191,6 +212,7 @@ void WorkerCCIAdd::process()
         emit progress(-1);
     }
     db.DelayCommit(false);
+    */
 
     //Step 6: download all CCIs
     QTemporaryFile tmpFile;

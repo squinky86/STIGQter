@@ -43,7 +43,7 @@ public:
 
     bool AddAsset(Asset &a);
     bool AddCCI(CCI &c);
-    void AddControl(const QString &control, const QString &title);
+    void AddControl(const QString &control, const QString &title, const QString &description);
     void AddFamily(const QString &acronym, const QString &description);
     void AddSTIG(STIG s, QList<STIGCheck> c);
     void AddSTIGToAsset(const STIG &s, const Asset &a);

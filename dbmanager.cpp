@@ -158,7 +158,7 @@ bool DbManager::AddCCI(CCI &c)
     return false;
 }
 
-void DbManager::AddControl(const QString &control, const QString &title)
+void DbManager::AddControl(const QString &control, const QString &title, const QString &description)
 {
     QString tmpControl(control);
     if (tmpControl.length() < 4)
@@ -175,6 +175,8 @@ void DbManager::AddControl(const QString &control, const QString &title)
         enhancement = tmpControl.right(tmpControl.length() - tmpIndex - 1);
         enhancement = enhancement.left(enhancement.length() - 1);
         tmpControl = tmpControl.left(tmpControl.indexOf('('));
+        if (enhancement.toInt() == 0)
+            enhancement = "";
     }
 
     Family f = GetFamily(family);
@@ -185,11 +187,12 @@ void DbManager::AddControl(const QString &control, const QString &title)
         if (this->CheckDatabase(db))
         {
             QSqlQuery q(db);
-            q.prepare("INSERT INTO Control (FamilyId, number, enhancement, title) VALUES(:FamilyId, :number, :enhancement, :title)");
+            q.prepare("INSERT INTO Control (FamilyId, number, enhancement, title, description) VALUES(:FamilyId, :number, :enhancement, :title, :description)");
             q.bindValue(":FamilyId", f.id);
             q.bindValue(":number", tmpControl.toInt());
             q.bindValue(":enhancement", enhancement.isEmpty() ? QVariant(QVariant::Int) : enhancement.toInt());
             q.bindValue(":title", title);
+            q.bindValue(":description", description);
             q.exec();
             if (!_delayCommit)
                 db.commit();
@@ -398,9 +401,10 @@ QList<Asset> DbManager::GetAssets(const QString &whereClause, const QList<std::t
     if (this->CheckDatabase(db))
     {
         QSqlQuery q(db);
-        QString toPrep = "SELECT `id`, `assetType`, `hostName`, `hostIP`, `hostMAC`, `hostFQDN`, `techArea`, `targetKey`, `webOrDatabase`, `webDBSite`, `webDBInstance` FROM Asset ORDER BY LOWER(hostName), hostName";
+        QString toPrep = "SELECT `id`, `assetType`, `hostName`, `hostIP`, `hostMAC`, `hostFQDN`, `techArea`, `targetKey`, `webOrDatabase`, `webDBSite`, `webDBInstance` FROM Asset";
         if (!whereClause.isNull() && !whereClause.isEmpty())
             toPrep.append(" " + whereClause);
+        toPrep.append(" ORDER BY LOWER(hostName), hostName");
         q.prepare(toPrep);
         for (const auto &variable : variables)
         {
@@ -456,9 +460,10 @@ QList<CCI> DbManager::GetCCIs(const QString &whereClause, const QList<std::tuple
     if (this->CheckDatabase(db))
     {
         QSqlQuery q(db);
-        QString toPrep = "SELECT id, ControlId, cci, definition FROM CCI ORDER BY cci";
+        QString toPrep = "SELECT id, ControlId, cci, definition FROM CCI";
         if (!whereClause.isNull() && !whereClause.isEmpty())
             toPrep.append(" " + whereClause);
+        toPrep.append(" ORDER BY cci");
         q.prepare(toPrep);
         for (const auto &variable : variables)
         {
@@ -580,9 +585,10 @@ QList<STIG> DbManager::GetSTIGs(const QString &whereClause, const QList<std::tup
     if (this->CheckDatabase(db))
     {
         QSqlQuery q(db);
-        QString toPrep = "SELECT id, title, description, release, version FROM STIG ORDER BY LOWER(title), title";
+        QString toPrep = "SELECT id, title, description, release, version FROM STIG";
         if (!whereClause.isNull() && !whereClause.isEmpty())
             toPrep.append(" " + whereClause);
+        toPrep.append(" ORDER BY LOWER(title), title");
         q.prepare(toPrep);
         for (const auto &variable : variables)
         {
@@ -613,7 +619,7 @@ Control DbManager::GetControl(int id)
     if (this->CheckDatabase(db))
     {
         QSqlQuery q(db);
-        q.prepare("SELECT id, FamilyId, number, enhancement, title FROM Control WHERE id = :id");
+        q.prepare("SELECT id, FamilyId, number, enhancement, title, description FROM Control WHERE id = :id");
         q.bindValue(":id", id);
         q.exec();
         if (q.next())
@@ -623,6 +629,7 @@ Control DbManager::GetControl(int id)
             ret.number = q.value(2).toInt();
             ret.enhancement = q.value(3).isNull() ? -1 : q.value(3).toInt();
             ret.title = q.value(4).toString();
+            ret.description = q.value(5).toString();
         }
     }
     return ret;
@@ -644,7 +651,7 @@ Control DbManager::GetControl(QString control)
         enhancement = control.right(control.length() - tmpIndex - 1);
         enhancement = enhancement.left(enhancement.length() - 1);
         control = control.left(control.indexOf('('));
-        ret.enhancement = enhancement.toInt();
+        ret.enhancement = enhancement.toInt(); //will return 0 if enhancement doesn't exist
     }
     ret.number = control.toInt();
     ret.familyId = GetFamily(family).id;
@@ -652,19 +659,20 @@ Control DbManager::GetControl(QString control)
     if (this->CheckDatabase(db))
     {
         QSqlQuery q(db);
-        if (ret.enhancement >= 0)
-            q.prepare("SELECT id, title FROM Control WHERE number = :number AND FamilyId = :FamilyId AND enhancement = :enhancement");
+        if (ret.enhancement > 0)
+            q.prepare("SELECT id, title, description FROM Control WHERE number = :number AND FamilyId = :FamilyId AND enhancement = :enhancement");
         else
-            q.prepare("SELECT id, title FROM Control WHERE number = :number AND FamilyId = :FamilyId");
+            q.prepare("SELECT id, title, description FROM Control WHERE number = :number AND FamilyId = :FamilyId");
         q.bindValue(":number", ret.number);
         q.bindValue(":FamilyId", ret.familyId);
-        if (ret.enhancement >= 0)
+        if (ret.enhancement > 0)
             q.bindValue(":enhancement", ret.enhancement);
         q.exec();
         if (q.next())
         {
             ret.id = q.value(0).toInt();
             ret.title = q.value(1).toString();
+            ret.description = q.value(2).toString();
         }
     }
     return ret;
@@ -824,6 +832,7 @@ bool DbManager::UpdateDatabaseFromVersion(int version)
                         "`number`	INTEGER NOT NULL, "
                         "`enhancement`	INTEGER, "
                         "`title`	TEXT, "
+                        "`description`  TEXT, "
                         "FOREIGN KEY(`FamilyID`) REFERENCES `Family`(`id`) "
                         ")");
             q.exec();
