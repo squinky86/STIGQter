@@ -261,17 +261,18 @@ void STIGQter::EnableInput()
         //disable deleting CCIs if STIGs have been imported
         ui->btnClearCCIs->setEnabled(s.count() <= 0);
         ui->btnImportCCIs->setEnabled(false);
+        ui->btnImportSTIGs->setEnabled(true);
     }
     else
     {
         ui->btnClearCCIs->setEnabled(false);
         ui->btnImportCCIs->setEnabled(true);
+        ui->btnImportSTIGs->setEnabled(false);
     }
     ui->btnClearSTIGs->setEnabled(true);
     ui->btnCreateCKL->setEnabled(true);
     ui->btnFindingsReport->setEnabled(true);
     ui->btnImportCKL->setEnabled(true);
-    ui->btnImportSTIGs->setEnabled(true);
     ui->btnOpenCKL->setEnabled(true);
     ui->btnQuit->setEnabled(true);
     ui->menubar->setEnabled(true);

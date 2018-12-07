@@ -454,7 +454,15 @@ CCI DbManager::GetCCI(const int &id)
 
 CCI DbManager::GetCCIByCCI(const int &cci)
 {
-    return GetCCIs("WHERE cci = :cci", {std::make_tuple<QString, QVariant>(":cci", cci)}).first();
+    QList<CCI> tmpList = GetCCIs("WHERE cci = :cci", {std::make_tuple<QString, QVariant>(":cci", cci)});
+    if (tmpList.count() > 0)
+        return tmpList.first();
+    QMessageBox::warning(nullptr, "Broken CCI", "The CCI CCI-" + QString::number(cci) + " does not exist in NIST 800-53r4. If you are importing a STIG, please file a bug with the STIG author (probably DISA, disa.stig_spt@mail.mil) and let them know that their CCI mapping for the STIG you are trying to import is broken. For now, this broken STIG check is being remapped to CCI-366.");
+    tmpList = GetCCIs("WHERE cci = :cci", {std::make_tuple<QString, QVariant>(":cci", 366)});
+    if (tmpList.count() > 0)
+        return tmpList.first();
+    CCI ret;
+    return ret;
 }
 
 CCI DbManager::GetCCIByCCI(const CCI &cci)
