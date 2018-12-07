@@ -30,7 +30,8 @@ enum Severity
 {
     high,
     medium,
-    low
+    low,
+    none
 };
 
 Severity GetSeverity(const QString &severity);

@@ -18,6 +18,7 @@
  */
 
 #include "asset.h"
+#include "cklcheck.h"
 #include "dbmanager.h"
 #include "workercklimport.h"
 
@@ -33,17 +34,77 @@ void WorkerCKLImport::ParseCKL(QString fileName)
         QMessageBox::warning(nullptr, "Unable to Open CKL", "The CKL file " + fileName + " cannot be opened.");
         return;
     }
+    DbManager db;
     bool inStigs = false;
     QXmlStreamReader *xml = new QXmlStreamReader(f.readAll());
     Asset a;
+    QList<CKLCheck> checks;
+    STIGCheck tmpCheck;
+    CKLCheck tmpCKL;
+    QString onVar;
+    STIG tmpSTIG;
     while (!xml->atEnd() && !xml->hasError())
     {
         xml->readNext();
+        if (xml->isEndElement())
+        {
+            if (xml->name() == "VULN")
+            {
+                tmpCKL.stigCheckId = tmpCheck.id;
+                checks.append(tmpCKL);
+            }
+        }
         if (xml->isStartElement())
         {
             if (inStigs)
             {
-                //todo: parsers for STIGs and STIG checks
+                if (xml->name() == "SID_NAME" || xml->name() == "VULN_ATTRIBUTE")
+                {
+                    onVar = xml->readElementText().trimmed();
+                }
+                else if (xml->name() == "SID_DATA")
+                {
+                    if (onVar == "version")
+                    {
+                        tmpSTIG.version = xml->readElementText().trimmed().toInt();
+                    }
+                    else if (onVar == "releaseinfo")
+                    {
+                        tmpSTIG.release = xml->readElementText().trimmed();
+                    }
+                    else if (onVar == "title")
+                    {
+                        tmpSTIG.title = xml->readElementText().trimmed();
+                    }
+                }
+                else if (xml->name() == "ATTRIBUTE_DATA")
+                {
+                    if (onVar == "Rule_ID")
+                    {
+                        tmpSTIG = db.GetSTIG(tmpSTIG.title, tmpSTIG.version, tmpSTIG.release);
+                        tmpCheck = db.GetSTIGCheck(tmpSTIG, xml->readElementText().trimmed());
+                    }
+                }
+                else if (xml->name() == "STATUS")
+                {
+                    tmpCKL.status = GetStatus(xml->readElementText().trimmed());
+                }
+                else if (xml->name() == "FINDING_DETAILS")
+                {
+                    tmpCKL.findingDetails = xml->readElementText().trimmed();
+                }
+                else if (xml->name() == "COMMENTS")
+                {
+                    tmpCKL.comments = xml->readElementText().trimmed();
+                }
+                else if (xml->name() == "SEVERITY_OVERRIDE")
+                {
+                    tmpCKL.severityOverride = GetSeverity(xml->readElementText().trimmed());
+                }
+                else if (xml->name() == "SEVERITY_JUSTIFICATION")
+                {
+                    tmpCKL.severityJustification = xml->readElementText().trimmed();
+                }
             }
             else
             {
@@ -94,16 +155,24 @@ void WorkerCKLImport::ParseCKL(QString fileName)
             }
         }
     }
-    DbManager db;
+
     //if the asset is already in the database, use it as the one to import the CKL against
     Asset tmpAsset = db.GetAsset(a.hostName);
     if (tmpAsset.id > 0)
         a = tmpAsset;
     else
         db.AddAsset(a);
-    //todo: check if STIG is already a part of Asset
-    //todo: add STIG check to DB
-    //todo: add CKL checks to DB
+    if (a.STIGs().contains(tmpSTIG))
+    {
+        QMessageBox::warning(nullptr, "Asset already has STIG applied!", "The asset " + PrintAsset(a) + " already has the STIG " + PrintSTIG(tmpSTIG) + " applied.");
+        return;
+    }
+    db.AddSTIGToAsset(tmpSTIG, a);
+    foreach (CKLCheck c, checks)
+    {
+        c.assetId = a.id;
+        db.UpdateCKLCheck(c);
+    }
     delete xml;
 }
 

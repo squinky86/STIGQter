@@ -53,7 +53,10 @@ DbManager::DbManager(const QString& path, const QString& connectionName)
     }
 
     if (!db.open())
+    {
         qDebug() << "Error: Unable to open SQLite database.";
+        QMessageBox::warning(nullptr, "Unable to Open DB", "Unable to open DB " + path);
+    }
 
     if (initialize)
         UpdateDatabaseFromVersion(0);
@@ -399,12 +402,22 @@ bool DbManager::DeleteSTIG(STIG s)
 
 Asset DbManager::GetAsset(const QString &hostName)
 {
-    return GetAssets("WHERE hostName = :hostName", {std::make_tuple<QString, QVariant>(":hostName", hostName)}).first();
+    //fail quietly
+    QList<Asset> tmp = GetAssets("WHERE hostName = :hostName", {std::make_tuple<QString, QVariant>(":hostName", hostName)});
+    if (tmp.count() > 0)
+        return tmp.first();
+    Asset a;
+    return a;
 }
 
 Asset DbManager::GetAsset(const int &id)
 {
-    return GetAssets("WHERE id = :id", {std::make_tuple<QString, QVariant>(":id", id)}).first();
+    QList<Asset> tmp = GetAssets("WHERE id = :id", {std::make_tuple<QString, QVariant>(":id", id)});
+    if (tmp.count() > 0)
+        return tmp.first();
+    QMessageBox::warning(nullptr, "Unable to Find Asset", "The Asset ID " + QString::number(id) + " was not found in the database.");
+    Asset a;
+    return a;
 }
 
 QList<Asset> DbManager::GetAssets(const QString &whereClause, const QList<std::tuple<QString, QVariant>> &variables)
@@ -508,56 +521,52 @@ QList<CCI> DbManager::GetCCIs(const QString &whereClause, const QList<std::tuple
     return ret;
 }
 
-STIGCheck DbManager::GetSTIGCheck(int id)
+STIGCheck DbManager::GetSTIGCheck(const int &id)
 {
-    QSqlDatabase db;
-    STIGCheck c;
-    if (this->CheckDatabase(db))
-    {
-        QSqlQuery q(db);
-        q.prepare("SELECT `id`, `STIGId`, `CCIId`, `rule`, `vulnNum`, `groupTitle`, `ruleVersion`, `severity`, `weight`, `title`, `vulnDiscussion`, `falsePositives`, `falseNegatives`, `fix`, `check`, `documentable`, `mitigations`, `severityOverrideGuidance`, `checkContentRef`, `potentialImpact`, `thirdPartyTools`, `mitigationControl`, `responsibility`, `IAControls` FROM STIGCheck WHERE id = :id");
-        q.bindValue(":id", id);
-        q.exec();
-        if (q.next())
-        {
-            c.id = q.value(0).toInt();
-            c.stigId = q.value(1).toInt();
-            c.cciId = q.value(2).toInt();
-            c.rule = q.value(3).toString();
-            c.vulnNum = q.value(4).toString();
-            c.groupTitle = q.value(5).toString();
-            c.ruleVersion = q.value(6).toString();
-            c.severity = static_cast<Severity>(q.value(7).toInt());
-            c.weight = q.value(8).toDouble();
-            c.title = q.value(9).toString();
-            c.vulnDiscussion = q.value(10).toString();
-            c.falsePositives = q.value(11).toString();
-            c.falseNegatives = q.value(12).toString();
-            c.fix = q.value(13).toString();
-            c.check = q.value(14).toString();
-            c.documentable = q.value(15).toBool();
-            c.mitigations = q.value(16).toString();
-            c.severityOverrideGuidance = q.value(17).toString();
-            c.checkContentRef = q.value(18).toString();
-            c.potentialImpact = q.value(19).toString();
-            c.thirdPartyTools = q.value(20).toString();
-            c.mitigationControl = q.value(21).toString();
-            c.thirdPartyTools = q.value(22).toString();
-            c.iaControls = q.value(23).toString();
-        }
-    }
-    return c;
+    QList<STIGCheck> tmp = GetSTIGChecks("WHERE STIGId = :STIGId", {std::make_tuple<QString, QVariant>(":id", id)});
+    if (tmp.count() > 0)
+        return tmp.first();
+    STIGCheck ret;
+    QMessageBox::warning(nullptr, "Unable to Find STIGCheck", "The STIGCheck of ID " + QString::number(id) + " was not found in the database.");
+    return ret;
 }
 
-QList<STIGCheck> DbManager::GetSTIGChecks(STIG s)
+STIGCheck DbManager::GetSTIGCheck(const STIG &stig, const QString &rule)
+{
+    QList<STIGCheck> tmp = GetSTIGChecks("WHERE STIGId = :STIGId AND rule = :rule", {
+                                             std::make_tuple<QString, QVariant>(":STIGId", stig.id),
+                                             std::make_tuple<QString, QVariant>(":rule", rule)
+                                         });
+    if (tmp.count() > 0)
+        return tmp.first();
+    STIGCheck ret;
+    QMessageBox::warning(nullptr, "Unable to Find STIGCheck", "The STIGCheck " + rule + " (STIG ID " + QString::number(stig.id) + ") was not found in the database.");
+    return ret;
+}
+
+QList<STIGCheck> DbManager::GetSTIGChecks(const STIG &s)
+{
+    return GetSTIGChecks("WHERE STIGId = :STIGId", {std::make_tuple<QString, QVariant>(":STIGId", s.id)});
+}
+
+QList<STIGCheck> DbManager::GetSTIGChecks(const QString &whereClause, const QList<std::tuple<QString, QVariant> > &variables)
 {
     QSqlDatabase db;
     QList<STIGCheck> ret;
     if (this->CheckDatabase(db))
     {
         QSqlQuery q(db);
-        q.prepare("SELECT `id`, `STIGId`, `CCIId`, `rule`, `vulnNum`, `groupTitle`, `ruleVersion`, `severity`, `weight`, `title`, `vulnDiscussion`, `falsePositives`, `falseNegatives`, `fix`, `check`, `documentable`, `mitigations`, `severityOverrideGuidance`, `checkContentRef`, `potentialImpact`, `thirdPartyTools`, `mitigationControl`, `responsibility`, `IAControls` FROM STIGCheck WHERE STIGId = :STIGId");
-        q.bindValue(":STIGId", s.id);
+        QString toPrep = "SELECT `id`, `STIGId`, `CCIId`, `rule`, `vulnNum`, `groupTitle`, `ruleVersion`, `severity`, `weight`, `title`, `vulnDiscussion`, `falsePositives`, `falseNegatives`, `fix`, `check`, `documentable`, `mitigations`, `severityOverrideGuidance`, `checkContentRef`, `potentialImpact`, `thirdPartyTools`, `mitigationControl`, `responsibility`, `IAControls` FROM STIGCheck";
+        if (!whereClause.isNull() && !whereClause.isEmpty())
+            toPrep.append(" " + whereClause);
+        q.prepare(toPrep);
+        for (const auto &variable : variables)
+        {
+            QString key;
+            QVariant val;
+            std::tie(key, val) = variable;
+            q.bindValue(key, val);
+        }
         q.exec();
         while (q.next())
         {
@@ -594,9 +603,7 @@ QList<STIGCheck> DbManager::GetSTIGChecks(STIG s)
 
 QList<STIG> DbManager::GetSTIGs(Asset a)
 {
-    QList<std::tuple<QString, QVariant>> variables;
-    variables.append(std::make_tuple<QString, QVariant>(":AssetId", a.id));
-    return GetSTIGs("WHERE `id` IN (SELECT STIGId FROM AssetSTIG WHERE AssetId = :AssetId)", variables);
+    return GetSTIGs("WHERE `id` IN (SELECT STIGId FROM AssetSTIG WHERE AssetId = :AssetId)", {std::make_tuple<QString, QVariant>(":AssetId", a.id)});
 }
 
 QList<STIG> DbManager::GetSTIGs(const QString &whereClause, const QList<std::tuple<QString, QVariant>> &variables)
@@ -774,24 +781,27 @@ QList<Family> DbManager::GetFamilies()
     return ret;
 }
 
-STIG DbManager::GetSTIG(int id)
+STIG DbManager::GetSTIG(const int &id)
 {
-    QSqlDatabase db;
+    QList<STIG> tmpStigs = GetSTIGs("WHERE id = :id", {std::make_tuple<QString, QVariant>(":id", id)});
+    if (tmpStigs.count() > 0)
+        return tmpStigs.first();
     STIG ret;
-    if (this->CheckDatabase(db))
-    {
-        QSqlQuery q(db);
-        q.prepare("SELECT id, title, description, release, version FROM STIG WHERE id = :id");
-        q.bindValue(":id", id);
-        if (q.next())
-        {
-            ret.id = q.value(0).toInt();
-            ret.title = q.value(1).toString();
-            ret.description = q.value(2).toString();
-            ret.release = q.value(3).toString();
-            ret.version = q.value(4).toInt();
-        }
-    }
+    QMessageBox::warning(nullptr, "Unable to Find STIG", "The STIG of ID " + QString::number(id) + " was not found in the database.");
+    return ret;
+}
+
+STIG DbManager::GetSTIG(const QString &title, const int &version, const QString &release)
+{
+    QList<STIG> tmpStigs = GetSTIGs("WHERE title = :title AND release = :release AND version = :version", {
+                                        std::make_tuple<QString, QVariant>(":title", title),
+                                        std::make_tuple<QString, QVariant>(":release", release),
+                                        std::make_tuple<QString, QVariant>(":version", version)
+                                    });
+    if (tmpStigs.count() > 0)
+        return tmpStigs.first();
+    STIG ret;
+    QMessageBox::warning(nullptr, "Unable to Find STIG", "The following STIG has not been added to the master database:\nTitle: " + title + "\nVersion: " + QString::number(version) + "\nRelease: " + release);
     return ret;
 }
 
@@ -811,6 +821,24 @@ QString DbManager::GetVariable(const QString &name)
         }
     }
     return ret;
+}
+
+void DbManager::UpdateCKLCheck(const CKLCheck &check)
+{
+    QSqlDatabase db;
+    if (this->CheckDatabase(db))
+    {
+        QSqlQuery q(db);
+        q.prepare("UPDATE CKLCheck SET status = :status, findingDetails = :findingDetails, comments = :comments, severityOverride = :severityOverride, severityJustification = :severityJustification WHERE AssetId = :AssetId AND STIGCheckId = :STIGCheckId");
+        q.bindValue(":status", check.status);
+        q.bindValue(":findingDetails", check.findingDetails);
+        q.bindValue(":comments", check.comments);
+        q.bindValue(":severityOverride", check.severityOverride);
+        q.bindValue(":severityJustification", check.severityJustification);
+        q.bindValue(":AssetId", check.assetId);
+        q.bindValue(":STIGCheckId", check.stigCheckId);
+        q.exec();
+    }
 }
 
 void DbManager::UpdateVariable(const QString &name, const QString &value)

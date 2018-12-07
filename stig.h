@@ -40,6 +40,7 @@ public:
     int version;
     QList<STIGCheck> STIGChecks();
     STIG& operator=(const STIG &right);
+    bool operator==(const STIG &right);
 };
 
 Q_DECLARE_METATYPE(STIG);

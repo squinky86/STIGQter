@@ -63,3 +63,16 @@ CKLCheck &CKLCheck::operator=(const CKLCheck &right)
     }
     return *this;
 }
+
+Status GetStatus(const QString &status)
+{
+    if (status.startsWith("open", Qt::CaseInsensitive))
+        return Status::Open;
+    if (status.startsWith("not_applicable", Qt::CaseInsensitive))
+        return Status::NotApplicable;
+    if (status.startsWith("notafinding", Qt::CaseInsensitive))
+        return Status::NotAFinding;
+    if (status.startsWith("open", Qt::CaseInsensitive))
+        return Status::Open;
+    return Status::NotReviewed;
+}

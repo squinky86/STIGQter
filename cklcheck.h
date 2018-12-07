@@ -34,6 +34,8 @@ enum Status
     NotApplicable
 };
 
+Status GetStatus(const QString &status);
+
 class CKLCheck : public QObject
 {
     Q_OBJECT

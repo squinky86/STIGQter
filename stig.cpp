@@ -58,3 +58,15 @@ STIG &STIG::operator=(const STIG &right)
     }
     return *this;
 }
+
+bool STIG::operator==(const STIG &right)
+{
+    if ((id <= 0) || (right.id <= 0))
+    {
+        return ((title == right.title) &&
+                // (description == right.description) && // description is irrelevant to a STIG being the same; the version numbers are what matter!
+                (release == right.release) &&
+                (version == right.version));
+    }
+    return id == right.id;
+}

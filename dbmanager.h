@@ -27,6 +27,7 @@
 
 #include "asset.h"
 #include "cci.h"
+#include "cklcheck.h"
 #include "control.h"
 #include "family.h"
 #include "stig.h"
@@ -64,13 +65,17 @@ public:
     Family GetFamily(const QString &acronym);
     Family GetFamily(int id);
     QList<Family> GetFamilies();
-    STIG GetSTIG(int id);
-    STIGCheck GetSTIGCheck(int id);
-    QList<STIGCheck> GetSTIGChecks(STIG stig);
+    STIG GetSTIG(const int &id);
+    STIG GetSTIG(const QString &title, const int &version, const QString &release);
+    STIGCheck GetSTIGCheck(const int &id);
+    STIGCheck GetSTIGCheck(const STIG &stig, const QString &rule);
+    QList<STIGCheck> GetSTIGChecks(const STIG &stig);
+    QList<STIGCheck> GetSTIGChecks(const QString &whereClause = "", const QList<std::tuple<QString, QVariant>> &variables = {});
     QList<STIG> GetSTIGs(Asset a);
     QList<STIG> GetSTIGs(const QString &whereClause = "", const QList<std::tuple<QString, QVariant> > &variables = {});
     QString GetVariable(const QString &name);
 
+    void UpdateCKLCheck(const CKLCheck &check);
     void UpdateVariable(const QString &name, const QString &value);
 
     QString Sanitize(QString s);

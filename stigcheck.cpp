@@ -106,10 +106,11 @@ CCI STIGCheck::CCI()
 
 Severity GetSeverity(const QString &severity)
 {
-    Severity ret = Severity::low;
+    if (severity.isEmpty())
+        return Severity::none;
     if (severity.startsWith("medium", Qt::CaseInsensitive))
-        ret = Severity::medium;
-    else if (severity.startsWith("high", Qt::CaseInsensitive))
-        ret = Severity::high;
-    return ret;
+        return Severity::medium;
+    if (severity.startsWith("high", Qt::CaseInsensitive))
+        return Severity::high;
+    return Severity::low;
 }
