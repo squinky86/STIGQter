@@ -50,8 +50,8 @@ void AssetView::SelectSTIGs(const QList<STIG> &stigs)
     foreach (const STIG s, db.GetSTIGs())
     {
         QListWidgetItem *i = new QListWidgetItem(PrintSTIG(s));
-        i->setData(Qt::UserRole, QVariant::fromValue<STIG>(s));
-        i->setSelected(stigs.contains(s)); //TODO: this is not selecting the item
         ui->lstSTIGs->addItem(i);
+        i->setData(Qt::UserRole, QVariant::fromValue<STIG>(s));
+        i->setSelected(stigs.contains(s));
     }
 }
