@@ -33,7 +33,7 @@ public:
     Asset(const Asset &a);
     Asset(QObject *parent = nullptr);
     Asset& operator=(const Asset &right);
-    QList<STIG> STIGs();
+    QList<STIG> STIGs() const;
     int id;
     QString assetType;
     QString hostName;

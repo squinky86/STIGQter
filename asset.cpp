@@ -59,7 +59,7 @@ Asset &Asset::operator=(const Asset &right)
     return *this;
 }
 
-QList<STIG> Asset::STIGs()
+QList<STIG> Asset::STIGs() const
 {
     DbManager db;
     return db.GetSTIGs(*this);

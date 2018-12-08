@@ -18,6 +18,7 @@
  */
 
 #include "assetview.h"
+#include "dbmanager.h"
 #include "ui_assetview.h"
 
 AssetView::AssetView(QWidget *parent) :
@@ -27,7 +28,30 @@ AssetView::AssetView(QWidget *parent) :
     ui->setupUi(this);
 }
 
+AssetView::AssetView(const Asset &a, QWidget *parent) : AssetView(parent)
+{
+    Display(a);
+}
+
 AssetView::~AssetView()
 {
     delete ui;
+}
+
+void AssetView::Display(const Asset &a)
+{
+    SelectSTIGs(a.STIGs());
+}
+
+void AssetView::SelectSTIGs(const QList<STIG> &stigs)
+{
+    DbManager db;
+    ui->lstSTIGs->clear();
+    foreach (const STIG s, db.GetSTIGs())
+    {
+        QListWidgetItem *i = new QListWidgetItem(PrintSTIG(s));
+        i->setData(Qt::UserRole, QVariant::fromValue<STIG>(s));
+        i->setSelected(stigs.contains(s)); //TODO: this is not selecting the item
+        ui->lstSTIGs->addItem(i);
+    }
 }

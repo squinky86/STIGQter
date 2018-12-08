@@ -27,11 +27,13 @@
 #include "workerstigdelete.h"
 #include "workerassetadd.h"
 #include "workercklimport.h"
+#include "assetview.h"
 
 #include <QThread>
 #include <QDebug>
 #include <QFileDialog>
 #include <QInputDialog>
+#include <QMessageBox>
 
 STIGQter::STIGQter(QWidget *parent) :
     QMainWindow(parent),
@@ -76,6 +78,30 @@ void STIGQter::UpdateCCIs()
     workers.append(c);
 
     t->start();
+}
+
+void STIGQter::OpenCKL()
+{
+    foreach(QListWidgetItem *i, ui->lstAssets->selectedItems())
+    {
+        Asset a = i->data(Qt::UserRole).value<Asset>();
+        QString assetName = PrintAsset(a);
+        for (int j = 0; j < ui->tabDB->count(); j++)
+        {
+             if (ui->tabDB->tabText(j) == assetName)
+             {
+                 QMessageBox::warning(nullptr, "Checklist is Already Open", "The checklist you are trying to open is already open.");
+                 return;
+             }
+        }
+        int index = ui->tabDB->addTab(new AssetView(a), assetName);
+        ui->tabDB->setCurrentIndex(index);
+    }
+}
+
+void STIGQter::SelectAsset()
+{
+    EnableInput();
 }
 
 void STIGQter::CleanThreads()
@@ -273,7 +299,7 @@ void STIGQter::EnableInput()
     ui->btnCreateCKL->setEnabled(true);
     ui->btnFindingsReport->setEnabled(true);
     ui->btnImportCKL->setEnabled(true);
-    ui->btnOpenCKL->setEnabled(true);
+    ui->btnOpenCKL->setEnabled(ui->lstAssets->selectedItems().count() > 0);
     ui->btnQuit->setEnabled(true);
     ui->menubar->setEnabled(true);
     SelectSTIG();

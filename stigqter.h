@@ -48,6 +48,8 @@ private slots:
     void ImportCKLs();
     void SelectSTIG();
     void UpdateCCIs();
+    void OpenCKL();
+    void SelectAsset();
 
     void Initialize(int max, int val = 0);
     void Progress(int val);

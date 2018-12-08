@@ -20,6 +20,8 @@
 #ifndef ASSETVIEW_H
 #define ASSETVIEW_H
 
+#include "asset.h"
+
 #include <QWidget>
 
 namespace Ui {
@@ -32,7 +34,10 @@ class AssetView : public QWidget
 
 public:
     explicit AssetView(QWidget *parent = nullptr);
+    AssetView(const Asset &a, QWidget *parent = nullptr);
     ~AssetView();
+    void Display(const Asset &a);
+    void SelectSTIGs(const QList<STIG> &);
 
 private:
     Ui::AssetView *ui;
