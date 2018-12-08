@@ -59,7 +59,8 @@ SOURCES += \
     workerstigdelete.cpp \
     asset.cpp \
     workerassetadd.cpp \
-    workercklimport.cpp
+    workercklimport.cpp \
+    assetview.cpp
 
 HEADERS += \
         stigqter.h \
@@ -78,11 +79,13 @@ HEADERS += \
     workerstigdelete.h \
     asset.h \
     workerassetadd.h \
-    workercklimport.h
+    workercklimport.h \
+    assetview.h
 
 FORMS += \
         stigqter.ui \
-    help.ui
+    help.ui \
+    assetview.ui
 
 # Default rules for deployment.
 qnx: target.path = /tmp/$${TARGET}/bin
