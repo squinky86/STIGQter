@@ -26,6 +26,8 @@
 
 #include "stig.h"
 
+class CKLCheck;
+
 class Asset : public QObject
 {
     Q_OBJECT
@@ -34,6 +36,7 @@ public:
     Asset(QObject *parent = nullptr);
     Asset& operator=(const Asset &right);
     QList<STIG> STIGs() const;
+    QList<CKLCheck> CKLChecks() const;
     int id;
     QString assetType;
     QString hostName;

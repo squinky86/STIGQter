@@ -18,6 +18,7 @@
  */
 
 #include "asset.h"
+#include "cklcheck.h"
 #include "dbmanager.h"
 
 Asset::Asset(const Asset &a) : Asset(a.parent())
@@ -63,6 +64,13 @@ QList<STIG> Asset::STIGs() const
 {
     DbManager db;
     return db.GetSTIGs(*this);
+}
+
+QList<CKLCheck> Asset::CKLChecks() const
+{
+    QList<CKLCheck> ret;
+    DbManager db;
+    return db.GetCKLChecks(*this);
 }
 
 QString PrintAsset(Asset a)

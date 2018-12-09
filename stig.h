@@ -38,7 +38,7 @@ public:
     QString description;
     QString release;
     int version;
-    QList<STIGCheck> STIGChecks();
+    QList<STIGCheck> STIGChecks() const;
     STIG& operator=(const STIG &right);
     bool operator==(const STIG &right);
 };

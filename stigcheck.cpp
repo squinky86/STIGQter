@@ -24,7 +24,7 @@
 
 QString PrintSTIGCheck(STIGCheck s)
 {
-    return QString::number(s.id);
+    return s.rule;
 }
 
 STIGCheck::STIGCheck(QObject *parent) : QObject(parent),

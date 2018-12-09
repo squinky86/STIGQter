@@ -19,6 +19,8 @@
 
 #include "assetview.h"
 #include "dbmanager.h"
+#include "stig.h"
+#include "stigcheck.h"
 #include "ui_assetview.h"
 
 AssetView::AssetView(QWidget *parent) :
@@ -30,7 +32,8 @@ AssetView::AssetView(QWidget *parent) :
 
 AssetView::AssetView(const Asset &a, QWidget *parent) : AssetView(parent)
 {
-    Display(a);
+    _a = a;
+    Display();
 }
 
 AssetView::~AssetView()
@@ -38,20 +41,33 @@ AssetView::~AssetView()
     delete ui;
 }
 
-void AssetView::Display(const Asset &a)
+void AssetView::Display()
 {
-    SelectSTIGs(a.STIGs());
+    SelectSTIGs();
+    ShowChecks();
 }
 
-void AssetView::SelectSTIGs(const QList<STIG> &stigs)
+void AssetView::SelectSTIGs()
 {
     DbManager db;
     ui->lstSTIGs->clear();
+    QList<STIG> stigs = _a.STIGs();
     foreach (const STIG s, db.GetSTIGs())
     {
         QListWidgetItem *i = new QListWidgetItem(PrintSTIG(s));
         ui->lstSTIGs->addItem(i);
         i->setData(Qt::UserRole, QVariant::fromValue<STIG>(s));
         i->setSelected(stigs.contains(s));
+    }
+}
+
+void AssetView::ShowChecks()
+{
+    ui->lstChecks->clear();
+    foreach(const CKLCheck c, _a.CKLChecks())
+    {
+        QListWidgetItem *i = new QListWidgetItem(PrintCKLCheck(c));
+        ui->lstChecks->addItem(i);
+        i->setData(Qt::UserRole, QVariant::fromValue<CKLCheck>(c));
     }
 }

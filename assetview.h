@@ -36,11 +36,13 @@ public:
     explicit AssetView(QWidget *parent = nullptr);
     AssetView(const Asset &a, QWidget *parent = nullptr);
     ~AssetView();
-    void Display(const Asset &a);
-    void SelectSTIGs(const QList<STIG> &);
+    void Display();
+    void SelectSTIGs();
+    void ShowChecks();
 
 private:
     Ui::AssetView *ui;
+    Asset _a;
 };
 
 #endif // ASSETVIEW_H

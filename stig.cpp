@@ -35,7 +35,7 @@ STIG::STIG(QObject *parent) : QObject(parent),
 {
 }
 
-QList<STIGCheck> STIG::STIGChecks()
+QList<STIGCheck> STIG::STIGChecks() const
 {
     DbManager db;
     return db.GetSTIGChecks(*this);

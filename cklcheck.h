@@ -46,8 +46,8 @@ public:
     int id;
     int assetId;
     int stigCheckId;
-    Asset Asset();
-    STIGCheck STIGCheck();
+    Asset Asset() const;
+    STIGCheck STIGCheck() const;
     Status status;
     QString findingDetails;
     QString comments;
@@ -57,5 +57,7 @@ public:
 };
 
 Q_DECLARE_METATYPE(CKLCheck);
+
+QString PrintCKLCheck(const CKLCheck &c);
 
 #endif // CKLCHECK_H

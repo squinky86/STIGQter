@@ -521,9 +521,51 @@ QList<CCI> DbManager::GetCCIs(const QString &whereClause, const QList<std::tuple
     return ret;
 }
 
+QList<CKLCheck> DbManager::GetCKLChecks(const Asset &a)
+{
+    return GetCKLChecks("WHERE AssetId = :AssetId", {std::make_tuple<QString, QVariant>(":AssetId", a.id)});
+}
+
+QList<CKLCheck> DbManager::GetCKLChecks(const QString &whereClause, const QList<std::tuple<QString, QVariant> > &variables)
+{
+    QSqlDatabase db;
+    QList<CKLCheck> ret;
+    if (this->CheckDatabase(db))
+    {
+        QSqlQuery q(db);
+        QString toPrep = "SELECT id, AssetId, STIGCheckId, status, findingDetails, comments, severityOverride, severityJustification FROM CKLCheck";
+        if (!whereClause.isNull() && !whereClause.isEmpty())
+            toPrep.append(" " + whereClause);
+        q.prepare(toPrep);
+        for (const auto &variable : variables)
+        {
+            QString key;
+            QVariant val;
+            std::tie(key, val) = variable;
+            q.bindValue(key, val);
+        }
+        q.exec();
+        while (q.next())
+        {
+            CKLCheck c;
+            c.id = q.value(0).toInt();
+            c.assetId = q.value(1).toInt();
+            c.stigCheckId = q.value(2).toInt();
+            c.status = static_cast<Status>(q.value(3).toInt());
+            c.findingDetails = q.value(4).toString();
+            c.comments = q.value(5).toString();
+            c.severityOverride = static_cast<Severity>(q.value(6).toInt());
+            c.severityJustification = q.value(7).toString();
+
+            ret.append(c);
+        }
+    }
+    return ret;
+}
+
 STIGCheck DbManager::GetSTIGCheck(const int &id)
 {
-    QList<STIGCheck> tmp = GetSTIGChecks("WHERE STIGId = :STIGId", {std::make_tuple<QString, QVariant>(":id", id)});
+    QList<STIGCheck> tmp = GetSTIGChecks("WHERE id = :id", {std::make_tuple<QString, QVariant>(":id", id)});
     if (tmp.count() > 0)
         return tmp.first();
     STIGCheck ret;

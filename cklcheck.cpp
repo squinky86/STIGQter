@@ -37,13 +37,13 @@ CKLCheck::CKLCheck(QObject *parent) : QObject(parent),
 {
 }
 
-Asset CKLCheck::Asset()
+Asset CKLCheck::Asset() const
 {
     DbManager db;
     return db.GetAsset(assetId);
 }
 
-STIGCheck CKLCheck::STIGCheck()
+STIGCheck CKLCheck::STIGCheck() const
 {
     DbManager db;
     return db.GetSTIGCheck(stigCheckId);
@@ -75,4 +75,9 @@ Status GetStatus(const QString &status)
     if (status.startsWith("open", Qt::CaseInsensitive))
         return Status::Open;
     return Status::NotReviewed;
+}
+
+QString PrintCKLCheck(const CKLCheck &c)
+{
+    return PrintSTIGCheck(c.STIGCheck());
 }
