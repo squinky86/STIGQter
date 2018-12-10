@@ -28,10 +28,10 @@
 
 enum Status
 {
-    NotReviewed,
-    Open,
-    NotAFinding,
-    NotApplicable
+    NotReviewed [[maybe_unused]],
+    Open [[maybe_unused]],
+    NotAFinding [[maybe_unused]],
+    NotApplicable [[maybe_unused]]
 };
 
 Status GetStatus(const QString &status);

@@ -64,10 +64,27 @@ void AssetView::SelectSTIGs()
 void AssetView::ShowChecks()
 {
     ui->lstChecks->clear();
+    int total = 0;
+    int open = 0;
+    int closed = 0;
     foreach(const CKLCheck c, _a.CKLChecks())
     {
+        total++;
+        switch (c.status)
+        {
+        case Status::NotAFinding:
+            closed++;
+            break;
+        case Status::Open:
+            open++;
+            break;
+        }
         QListWidgetItem *i = new QListWidgetItem(PrintCKLCheck(c));
         ui->lstChecks->addItem(i);
         i->setData(Qt::UserRole, QVariant::fromValue<CKLCheck>(c));
     }
+    ui->lblTotalChecks->setText(QString::number(total));
+    ui->lblOpen->setText(QString::number(open));
+    ui->lblNotAFinding->setText(QString::number(closed));
+    ui->lstChecks->sortItems();
 }
