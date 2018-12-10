@@ -35,6 +35,7 @@ enum Severity
 };
 
 Severity GetSeverity(const QString &severity);
+QString GetSeverity(const Severity &severity);
 
 class STIGCheck : public QObject
 {

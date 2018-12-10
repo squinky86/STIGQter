@@ -68,13 +68,26 @@ Status GetStatus(const QString &status)
 {
     if (status.startsWith("open", Qt::CaseInsensitive))
         return Status::Open;
-    if (status.startsWith("not_applicable", Qt::CaseInsensitive))
+    if (status.startsWith("not_applicable", Qt::CaseInsensitive) || status.startsWith("not applicable", Qt::CaseInsensitive))
         return Status::NotApplicable;
-    if (status.startsWith("notafinding", Qt::CaseInsensitive))
+    if (status.startsWith("notafinding", Qt::CaseInsensitive) || status.startsWith("not a finding", Qt::CaseInsensitive))
         return Status::NotAFinding;
-    if (status.startsWith("open", Qt::CaseInsensitive))
-        return Status::Open;
     return Status::NotReviewed;
+}
+
+QString GetStatus(const Status &status)
+{
+    switch (status)
+    {
+    case Status::Open:
+        return "Open";
+    case Status::NotApplicable:
+        return "Not Applicable";
+    case Status::NotAFinding:
+        return "Not a Finding";
+    default:
+        return "Not Reviewed";
+    }
 }
 
 QString PrintCKLCheck(const CKLCheck &c)

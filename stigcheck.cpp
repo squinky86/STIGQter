@@ -108,9 +108,24 @@ Severity GetSeverity(const QString &severity)
 {
     if (severity.isEmpty())
         return Severity::none;
-    if (severity.startsWith("medium", Qt::CaseInsensitive))
+    if (severity.startsWith("medium", Qt::CaseInsensitive) || severity.endsWith(" II"))
         return Severity::medium;
-    if (severity.startsWith("high", Qt::CaseInsensitive))
+    if (severity.startsWith("high", Qt::CaseInsensitive) || severity.endsWith(" I"))
         return Severity::high;
     return Severity::low;
+}
+
+QString GetSeverity(const Severity &severity)
+{
+    switch (severity)
+    {
+    case Severity::high:
+        return "CAT I";
+    case Severity::medium:
+        return "CAT II";
+    case Severity::low:
+        return "CAT III";
+    default:
+        return "CAT IV";
+    }
 }

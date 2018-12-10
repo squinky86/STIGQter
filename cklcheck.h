@@ -28,13 +28,14 @@
 
 enum Status
 {
-    NotReviewed [[maybe_unused]],
-    Open [[maybe_unused]],
-    NotAFinding [[maybe_unused]],
-    NotApplicable [[maybe_unused]]
+    NotReviewed,
+    Open,
+    NotAFinding,
+    NotApplicable
 };
 
 Status GetStatus(const QString &status);
+QString GetStatus(const Status &status);
 
 class CKLCheck : public QObject
 {

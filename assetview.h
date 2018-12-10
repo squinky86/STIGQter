@@ -22,6 +22,7 @@
 
 #include "asset.h"
 
+#include <QListWidget>
 #include <QWidget>
 
 namespace Ui {
@@ -39,6 +40,11 @@ public:
     void Display();
     void SelectSTIGs();
     void ShowChecks();
+    void UpdateCKLCheck(const CKLCheck &cc);
+    void UpdateSTIGCheck(const STIGCheck &sc);
+
+private slots:
+    void CheckSelected(QListWidgetItem *current, QListWidgetItem *previous);
 
 private:
     Ui::AssetView *ui;

@@ -78,6 +78,8 @@ void AssetView::ShowChecks()
         case Status::Open:
             open++;
             break;
+        default:
+            break;
         }
         QListWidgetItem *i = new QListWidgetItem(PrintCKLCheck(c));
         ui->lstChecks->addItem(i);
@@ -87,4 +89,38 @@ void AssetView::ShowChecks()
     ui->lblOpen->setText(QString::number(open));
     ui->lblNotAFinding->setText(QString::number(closed));
     ui->lstChecks->sortItems();
+}
+
+void AssetView::UpdateCKLCheck(const CKLCheck &cc)
+{
+    ui->cboBoxStatus->setCurrentText(GetStatus(cc.status));
+    ui->txtComments->clear();
+    ui->txtComments->insertPlainText(cc.comments);
+    ui->txtFindingDetails->clear();
+    ui->txtFindingDetails->insertPlainText(cc.findingDetails);
+    if (cc.severityOverride != Severity::none)
+        ui->cboBoxSeverity->setCurrentText(GetSeverity(cc.severityOverride));
+    UpdateSTIGCheck(cc.STIGCheck());
+}
+
+void AssetView::UpdateSTIGCheck(const STIGCheck &sc)
+{
+    ui->lblCheckRule->setText(sc.rule);
+    ui->lblCheckTitle->setText(sc.title);
+    ui->cboBoxSeverity->setCurrentText(GetSeverity(sc.severity));
+    ui->cbDocumentable->setChecked(sc.documentable);
+    ui->lblDiscussion->setText(sc.vulnDiscussion);
+    ui->lblFalsePositives->setText(sc.falsePositives);
+    ui->lblFalseNegatives->setText(sc.falseNegatives);
+    ui->lblFix->setText(sc.fix);
+    ui->lblCheck->setText(sc.check);
+}
+
+void AssetView::CheckSelected(QListWidgetItem *current, QListWidgetItem *previous [[maybe_unused]])
+{
+    if (current)
+    {
+        CKLCheck cc = current->data(Qt::UserRole).value<CKLCheck>();
+        UpdateCKLCheck(cc);
+    }
 }
