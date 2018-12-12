@@ -45,10 +45,12 @@ public:
 
 private slots:
     void CheckSelected(QListWidgetItem *current, QListWidgetItem *previous);
+    void UpdateCKL();
 
 private:
     Ui::AssetView *ui;
     Asset _a;
+    QString _justification;
 };
 
 #endif // ASSETVIEW_H

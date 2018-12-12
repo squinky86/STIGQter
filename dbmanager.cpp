@@ -521,6 +521,40 @@ QList<CCI> DbManager::GetCCIs(const QString &whereClause, const QList<std::tuple
     return ret;
 }
 
+CKLCheck DbManager::GetCKLCheck(const int &id)
+{
+    QList<CKLCheck> tmp = GetCKLChecks("WHERE id = :id", {std::make_tuple<QString, QVariant>(":id", id)});
+    if (tmp.count() > 0)
+    {
+        return tmp.first();
+    }
+    CKLCheck ret;
+    QMessageBox::warning(nullptr, "Unable to Find CKLCheck", "The CKLCheck of ID " + QString::number(id) + " was not found in the database.");
+    return ret;
+}
+
+CKLCheck DbManager::GetCKLCheck(const CKLCheck &ckl)
+{
+    QList<CKLCheck> tmp;
+    if (ckl.id <= 0)
+    {
+        tmp = GetCKLChecks("WHERE AssetId = :AssetId AND STIGCheckId = :STIGCheckId",
+            {std::make_tuple<QString, QVariant>(":AssetId", ckl.assetId),
+             std::make_tuple<QString, QVariant>(":STIGCheckId", ckl.stigCheckId)});
+    }
+    else
+    {
+        tmp = GetCKLChecks("WHERE id = :id", {std::make_tuple<QString, QVariant>(":id", ckl.id)});
+    }
+    if (tmp.count() > 0)
+    {
+        return tmp.first();
+    }
+    CKLCheck ret;
+    QMessageBox::warning(nullptr, "Unable to Find CKLCheck", "The CKLCheck of ID " + QString::number(ckl.id) + " (asset " + QString::number(ckl.assetId) + ", " + QString::number(ckl.stigCheckId) + ") was not found in the database.");
+    return ret;
+}
+
 QList<CKLCheck> DbManager::GetCKLChecks(const Asset &a)
 {
     return GetCKLChecks("WHERE AssetId = :AssetId", {std::make_tuple<QString, QVariant>(":AssetId", a.id)});
@@ -871,14 +905,26 @@ void DbManager::UpdateCKLCheck(const CKLCheck &check)
     if (this->CheckDatabase(db))
     {
         QSqlQuery q(db);
-        q.prepare("UPDATE CKLCheck SET status = :status, findingDetails = :findingDetails, comments = :comments, severityOverride = :severityOverride, severityJustification = :severityJustification WHERE AssetId = :AssetId AND STIGCheckId = :STIGCheckId");
+        QString toPrep("");
+        if (check.id > 0)
+            toPrep = "UPDATE CKLCheck SET status = :status, findingDetails = :findingDetails, comments = :comments, severityOverride = :severityOverride, severityJustification = :severityJustification WHERE id = :id";
+        else
+            toPrep = "UPDATE CKLCheck SET status = :status, findingDetails = :findingDetails, comments = :comments, severityOverride = :severityOverride, severityJustification = :severityJustification WHERE AssetId = :AssetId AND STIGCheckId = :STIGCheckId";
+        q.prepare(toPrep);
         q.bindValue(":status", check.status);
         q.bindValue(":findingDetails", check.findingDetails);
         q.bindValue(":comments", check.comments);
         q.bindValue(":severityOverride", check.severityOverride);
         q.bindValue(":severityJustification", check.severityJustification);
-        q.bindValue(":AssetId", check.assetId);
-        q.bindValue(":STIGCheckId", check.stigCheckId);
+        if (check.id > 0)
+        {
+            q.bindValue(":id", check.id);
+        }
+        else
+        {
+            q.bindValue(":AssetId", check.assetId);
+            q.bindValue(":STIGCheckId", check.stigCheckId);
+        }
         q.exec();
     }
 }

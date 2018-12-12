@@ -25,7 +25,8 @@
 
 AssetView::AssetView(QWidget *parent) :
     QWidget(parent),
-    ui(new Ui::AssetView)
+    ui(new Ui::AssetView),
+    _justification()
 {
     ui->setupUi(this);
 }
@@ -94,12 +95,17 @@ void AssetView::ShowChecks()
 void AssetView::UpdateCKLCheck(const CKLCheck &cc)
 {
     ui->cboBoxStatus->setCurrentText(GetStatus(cc.status));
+    ui->txtComments->blockSignals(true);
     ui->txtComments->clear();
     ui->txtComments->insertPlainText(cc.comments);
+    ui->txtComments->blockSignals(false);
+    ui->txtFindingDetails->blockSignals(true);
     ui->txtFindingDetails->clear();
     ui->txtFindingDetails->insertPlainText(cc.findingDetails);
+    ui->txtFindingDetails->blockSignals(false);
     if (cc.severityOverride != Severity::none)
         ui->cboBoxSeverity->setCurrentText(GetSeverity(cc.severityOverride));
+    _justification = cc.severityJustification;
     UpdateSTIGCheck(cc.STIGCheck());
 }
 
@@ -116,11 +122,27 @@ void AssetView::UpdateSTIGCheck(const STIGCheck &sc)
     ui->lblCheck->setText(sc.check);
 }
 
+void AssetView::UpdateCKL()
+{
+    QList<QListWidgetItem*> selectedItems = ui->lstChecks->selectedItems();
+    if (selectedItems.count() > 0)
+    {
+        CKLCheck cc = selectedItems.first()->data(Qt::UserRole).value<CKLCheck>();
+        cc.comments = ui->txtComments->toPlainText();
+        cc.findingDetails = ui->txtFindingDetails->toPlainText();
+        cc.severityOverride = GetSeverity(ui->cboBoxSeverity->currentText());
+        cc.severityJustification = _justification;
+        DbManager db;
+        db.UpdateCKLCheck(cc);
+    }
+}
+
 void AssetView::CheckSelected(QListWidgetItem *current, QListWidgetItem *previous [[maybe_unused]])
 {
     if (current)
     {
         CKLCheck cc = current->data(Qt::UserRole).value<CKLCheck>();
-        UpdateCKLCheck(cc);
+        DbManager db;
+        UpdateCKLCheck(db.GetCKLCheck(cc));
     }
 }

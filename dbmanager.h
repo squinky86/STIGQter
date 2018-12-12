@@ -60,6 +60,8 @@ public:
     CCI GetCCIByCCI(const int &cci);
     CCI GetCCIByCCI(const CCI &cci);
     QList<CCI> GetCCIs(const QString &whereClause = "", const QList<std::tuple<QString, QVariant>> &variables = {});
+    CKLCheck GetCKLCheck(const int &id);
+    CKLCheck GetCKLCheck(const CKLCheck &ckl);
     QList<CKLCheck> GetCKLChecks(const Asset &a);
     QList<CKLCheck> GetCKLChecks(const QString &whereClause = "", const QList<std::tuple<QString, QVariant>> &variables = {});
     Control GetControl(int id);
