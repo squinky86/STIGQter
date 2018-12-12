@@ -46,6 +46,7 @@ public:
 private slots:
     void CheckSelected(QListWidgetItem *current, QListWidgetItem *previous);
     void UpdateCKL();
+    void UpdateCKLSeverity(const QString &val);
 
 private:
     Ui::AssetView *ui;

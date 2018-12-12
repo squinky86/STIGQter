@@ -23,6 +23,9 @@
 #include "stigcheck.h"
 #include "ui_assetview.h"
 
+#include <QInputDialog>
+#include <QMessageBox>
+
 AssetView::AssetView(QWidget *parent) :
     QWidget(parent),
     ui(new Ui::AssetView),
@@ -94,19 +97,25 @@ void AssetView::ShowChecks()
 
 void AssetView::UpdateCKLCheck(const CKLCheck &cc)
 {
-    ui->cboBoxStatus->setCurrentText(GetStatus(cc.status));
     ui->txtComments->blockSignals(true);
+    ui->txtFindingDetails->blockSignals(true);
+    ui->cboBoxStatus->blockSignals(true);
+    ui->cboBoxSeverity->blockSignals(true);
+    ui->cboBoxStatus->setCurrentText(GetStatus(cc.status));
     ui->txtComments->clear();
     ui->txtComments->insertPlainText(cc.comments);
-    ui->txtComments->blockSignals(false);
-    ui->txtFindingDetails->blockSignals(true);
     ui->txtFindingDetails->clear();
     ui->txtFindingDetails->insertPlainText(cc.findingDetails);
-    ui->txtFindingDetails->blockSignals(false);
+    _justification = cc.severityJustification;
+
+    UpdateSTIGCheck(cc.STIGCheck());
     if (cc.severityOverride != Severity::none)
         ui->cboBoxSeverity->setCurrentText(GetSeverity(cc.severityOverride));
-    _justification = cc.severityJustification;
-    UpdateSTIGCheck(cc.STIGCheck());
+
+    ui->txtComments->blockSignals(false);
+    ui->txtFindingDetails->blockSignals(false);
+    ui->cboBoxStatus->blockSignals(false);
+    ui->cboBoxSeverity->blockSignals(false);
 }
 
 void AssetView::UpdateSTIGCheck(const STIGCheck &sc)
@@ -130,10 +139,52 @@ void AssetView::UpdateCKL()
         CKLCheck cc = selectedItems.first()->data(Qt::UserRole).value<CKLCheck>();
         cc.comments = ui->txtComments->toPlainText();
         cc.findingDetails = ui->txtFindingDetails->toPlainText();
-        cc.severityOverride = GetSeverity(ui->cboBoxSeverity->currentText());
+        Severity tmpSeverity = GetSeverity(ui->cboBoxSeverity->currentText());
+        cc.severityOverride = (tmpSeverity == cc.STIGCheck().severity) ? cc.severityOverride = Severity::none : tmpSeverity;
+        cc.status = GetStatus(ui->cboBoxStatus->currentText());
         cc.severityJustification = _justification;
         DbManager db;
         db.UpdateCKLCheck(cc);
+    }
+}
+
+void AssetView::UpdateCKLSeverity(const QString &val)
+{
+    QList<QListWidgetItem*> selectedItems = ui->lstChecks->selectedItems();
+    if (selectedItems.count() > 0)
+    {
+        CKLCheck cc = selectedItems.first()->data(Qt::UserRole).value<CKLCheck>();
+        STIGCheck sc = cc.STIGCheck();
+        Severity tmpSeverity = GetSeverity(val);
+        if (sc.severity != tmpSeverity)
+        {
+            if (tmpSeverity == Severity::none)
+            {
+                QMessageBox::warning(nullptr, "Removed Severity Override", "Severity override is removed; findings cannot be downgraded to CAT IV.");
+                _justification = "";
+                ui->cboBoxSeverity->blockSignals(true);
+                ui->cboBoxSeverity->setCurrentText(GetSeverity(sc.severity));
+                ui->cboBoxSeverity->blockSignals(false);
+            }
+            else
+            {
+                bool ok(false);
+                QString justification = QInputDialog::getMultiLineText(this, tr("Severity Override Justification"),
+                                        tr("Justification:"), _justification, &ok);
+                if (ok)
+                {
+                    _justification = justification;
+                }
+                else
+                {
+                    ui->cboBoxSeverity->blockSignals(true);
+                    ui->cboBoxSeverity->setCurrentText(GetSeverity(sc.severity));
+                    ui->cboBoxSeverity->blockSignals(false);
+                    return;
+                }
+            }
+        }
+        UpdateCKL();
     }
 }
 

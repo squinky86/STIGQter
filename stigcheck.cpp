@@ -106,7 +106,7 @@ CCI STIGCheck::CCI()
 
 Severity GetSeverity(const QString &severity)
 {
-    if (severity.isEmpty())
+    if (severity.isEmpty() || severity.endsWith(" IV"))
         return Severity::none;
     if (severity.startsWith("medium", Qt::CaseInsensitive) || severity.endsWith(" II"))
         return Severity::medium;
