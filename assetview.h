@@ -21,6 +21,8 @@
 #define ASSETVIEW_H
 
 #include "asset.h"
+#include "cklcheck.h"
+#include "stigcheck.h"
 
 #include <QListWidget>
 #include <QWidget>
@@ -46,12 +48,14 @@ public:
 private slots:
     void CheckSelected(QListWidgetItem *current, QListWidgetItem *previous);
     void UpdateCKL();
+    void UpdateCKLStatus(const QString &val);
     void UpdateCKLSeverity(const QString &val);
 
 private:
     Ui::AssetView *ui;
     Asset _a;
     QString _justification;
+    void SetItemColor(QListWidgetItem *i, const Status &stat, const Severity &sev);
 };
 
 #endif // ASSETVIEW_H

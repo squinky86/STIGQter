@@ -23,6 +23,7 @@
 #include "stigcheck.h"
 #include "ui_assetview.h"
 
+#include <QFont>
 #include <QInputDialog>
 #include <QMessageBox>
 
@@ -88,6 +89,7 @@ void AssetView::ShowChecks()
         QListWidgetItem *i = new QListWidgetItem(PrintCKLCheck(c));
         ui->lstChecks->addItem(i);
         i->setData(Qt::UserRole, QVariant::fromValue<CKLCheck>(c));
+        SetItemColor(i, c.status, (c.severityOverride == Severity::none) ? c.STIGCheck().severity : c.severityOverride);
     }
     ui->lblTotalChecks->setText(QString::number(total));
     ui->lblOpen->setText(QString::number(open));
@@ -136,7 +138,8 @@ void AssetView::UpdateCKL()
     QList<QListWidgetItem*> selectedItems = ui->lstChecks->selectedItems();
     if (selectedItems.count() > 0)
     {
-        CKLCheck cc = selectedItems.first()->data(Qt::UserRole).value<CKLCheck>();
+        QListWidgetItem *i = selectedItems.first();
+        CKLCheck cc = i->data(Qt::UserRole).value<CKLCheck>();
         cc.comments = ui->txtComments->toPlainText();
         cc.findingDetails = ui->txtFindingDetails->toPlainText();
         Severity tmpSeverity = GetSeverity(ui->cboBoxSeverity->currentText());
@@ -145,6 +148,22 @@ void AssetView::UpdateCKL()
         cc.severityJustification = _justification;
         DbManager db;
         db.UpdateCKLCheck(cc);
+        i->setData(Qt::UserRole, QVariant::fromValue<CKLCheck>(db.GetCKLCheck(cc)));
+    }
+}
+
+void AssetView::UpdateCKLStatus(const QString &val)
+{
+    QList<QListWidgetItem*> selectedItems = ui->lstChecks->selectedItems();
+    Status stat;
+    stat = GetStatus(val);
+    if (selectedItems.count() > 0)
+    {
+        QListWidgetItem *i = selectedItems.first();
+        CKLCheck cc = i->data(Qt::UserRole).value<CKLCheck>();
+        STIGCheck sc = cc.STIGCheck();
+        SetItemColor(i, stat, (cc.severityOverride == Severity::none) ? sc.severity : cc.severityOverride);
+        UpdateCKL();
     }
 }
 
@@ -153,7 +172,8 @@ void AssetView::UpdateCKLSeverity(const QString &val)
     QList<QListWidgetItem*> selectedItems = ui->lstChecks->selectedItems();
     if (selectedItems.count() > 0)
     {
-        CKLCheck cc = selectedItems.first()->data(Qt::UserRole).value<CKLCheck>();
+        QListWidgetItem *i = selectedItems.first();
+        CKLCheck cc = i->data(Qt::UserRole).value<CKLCheck>();
         STIGCheck sc = cc.STIGCheck();
         Severity tmpSeverity = GetSeverity(val);
         if (sc.severity != tmpSeverity)
@@ -184,7 +204,46 @@ void AssetView::UpdateCKLSeverity(const QString &val)
                 }
             }
         }
+        SetItemColor(i, GetStatus(ui->cboBoxStatus->currentText()), GetSeverity(ui->cboBoxSeverity->currentText()));
         UpdateCKL();
+    }
+}
+
+void AssetView::SetItemColor(QListWidgetItem *i, const Status &stat, const Severity &sev)
+{
+    QFont f;
+    i->setFont(f);
+    if (stat == Status::Open)
+    {
+        f.setBold(true);
+        i->setFont(f);
+        switch (sev)
+        {
+        case Severity::high:
+            i->setForeground(Qt::red);
+            break;
+        case Severity::medium:
+            i->setForeground(QColor("orange"));
+            break;
+        case Severity::low:
+            i->setForeground(Qt::yellow);
+            break;
+        default:
+            i->setForeground(Qt::black);
+            break;
+        }
+    }
+    else if (stat == Status::NotAFinding)
+    {
+        i->setForeground(Qt::green);
+    }
+    else if (stat == Status::NotApplicable)
+    {
+        i->setForeground(Qt::gray);
+    }
+    else
+    {
+        i->setForeground(Qt::black);
     }
 }
 
