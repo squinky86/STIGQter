@@ -400,6 +400,24 @@ bool DbManager::DeleteSTIG(STIG s)
     return DeleteSTIG(s.id);
 }
 
+void DbManager::DeleteSTIGFromAsset(const STIG &s, const Asset &a)
+{
+    QSqlDatabase db;
+    if (this->CheckDatabase(db))
+    {
+        QSqlQuery q(db);
+        q.prepare("DELETE FROM AssetSTIG WHERE AssetId = :AssetId AND STIGId = :STIGId");
+        q.bindValue(":AssetId", a.id);
+        q.bindValue(":STIGId", s.id);
+        q.exec();
+        q.prepare("DELETE FROM CKLCheck WHERE AssetId = :AssetId AND STIGCheckId IN (SELECT id FROM STIGCheck WHERE STIGId = :STIGId)");
+        q.bindValue(":AssetId", a.id);
+        q.bindValue(":STIGId", s.id);
+        q.exec();
+        db.commit();
+    }
+}
+
 Asset DbManager::GetAsset(const QString &hostName)
 {
     //fail quietly

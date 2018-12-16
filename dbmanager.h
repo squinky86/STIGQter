@@ -52,6 +52,7 @@ public:
     void DeleteCCIs();
     bool DeleteSTIG(int id);
     bool DeleteSTIG(STIG s);
+    void DeleteSTIGFromAsset(const STIG &s, const Asset &a);
 
     Asset GetAsset(const int &id);
     Asset GetAsset(const QString &hostName);

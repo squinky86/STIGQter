@@ -55,6 +55,7 @@ void AssetView::Display()
 void AssetView::SelectSTIGs()
 {
     DbManager db;
+    //ui->lstSTIGs->blockSignals(true);
     ui->lstSTIGs->clear();
     QList<STIG> stigs = _a.STIGs();
     foreach (const STIG s, db.GetSTIGs())
@@ -64,6 +65,7 @@ void AssetView::SelectSTIGs()
         i->setData(Qt::UserRole, QVariant::fromValue<STIG>(s));
         i->setSelected(stigs.contains(s));
     }
+    //ui->lstSTIGs->blockSignals(false);
 }
 
 void AssetView::ShowChecks()
@@ -206,6 +208,33 @@ void AssetView::UpdateCKLSeverity(const QString &val)
         }
         SetItemColor(i, GetStatus(ui->cboBoxStatus->currentText()), GetSeverity(ui->cboBoxSeverity->currentText()));
         UpdateCKL();
+    }
+}
+
+void AssetView::UpdateSTIGs()
+{
+    DbManager db;
+    QList<STIG> stigs = _a.STIGs();
+    for (int i = 0; i < ui->lstSTIGs->count(); i++)
+    {
+        QListWidgetItem *item = ui->lstSTIGs->item(i);
+        STIG s = item->data(Qt::UserRole).value<STIG>();
+        if (item->isSelected() && !stigs.contains(s))
+        {
+            db.AddSTIGToAsset(s, _a);
+            ShowChecks();
+        }
+        else if (!item->isSelected() && stigs.contains(s))
+        {
+            //confirm to delete the STIG (avoid accidental clicks in the STIG box)
+            QMessageBox::StandardButton confirm = QMessageBox::question(this, "Confirm STIG Removal", "Really delete the " + PrintSTIG(s) + " stig from " + PrintAsset(_a) + "?",
+                                            QMessageBox::Yes|QMessageBox::No);
+            if (confirm == QMessageBox::Yes)
+            {
+                db.DeleteSTIGFromAsset(s, _a);
+                ShowChecks();
+            }
+        }
     }
 }
 
