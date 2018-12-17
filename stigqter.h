@@ -43,6 +43,7 @@ private slots:
     void About();
     void AddAsset();
     void AddSTIGs();
+    void CloseTab(int i);
     void DeleteCCIs();
     void DeleteSTIGs();
     void ImportCKLs();

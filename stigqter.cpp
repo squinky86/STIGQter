@@ -49,6 +49,7 @@ STIGQter::STIGQter(QWidget *parent) :
     DisplayCCIs();
     DisplaySTIGs();
     DisplayAssets();
+    ui->tabDB->tabBar()->tabButton(0, QTabBar::RightSide)->resize(0, 0);
 }
 
 STIGQter::~STIGQter()
@@ -90,7 +91,7 @@ void STIGQter::OpenCKL()
         {
              if (ui->tabDB->tabText(j) == assetName)
              {
-                 QMessageBox::warning(nullptr, "Checklist is Already Open", "The checklist you are trying to open is already open.");
+                 ui->tabDB->setCurrentIndex(j);
                  return;
              }
         }
@@ -202,6 +203,12 @@ void STIGQter::AddSTIGs()
     workers.append(s);
 
     t->start();
+}
+
+void STIGQter::CloseTab(int i)
+{
+    if (ui->tabDB->count() > i)
+        ui->tabDB->removeTab(i);
 }
 
 void STIGQter::DeleteCCIs()
