@@ -33,6 +33,7 @@ AssetView::AssetView(QWidget *parent) :
     _justification()
 {
     ui->setupUi(this);
+    //ui->col1->setst
 }
 
 AssetView::AssetView(const Asset &a, QWidget *parent) : AssetView(parent)
@@ -233,6 +234,13 @@ void AssetView::UpdateSTIGs()
             {
                 db.DeleteSTIGFromAsset(s, _a);
                 ShowChecks();
+            }
+            else
+            {
+                //keep STIG selected on accidental click
+                ui->lstSTIGs->blockSignals(true);
+                item->setSelected(true);
+                ui->lstSTIGs->blockSignals(false);
             }
         }
     }
