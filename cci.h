@@ -23,7 +23,6 @@
 #include <QObject>
 #include <QString>
 
-#include "cci.h"
 #include "control.h"
 
 class CCI : public QObject
@@ -38,6 +37,10 @@ public:
     int controlId;
     int cci;
     QString definition;
+    friend bool operator<(const CCI &left, const CCI &right)
+    {
+        return left.cci < right.cci;
+    }
     CCI& operator=(const CCI &right);
     bool operator==(const CCI &right);
 };

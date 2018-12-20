@@ -17,6 +17,8 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
+#include <algorithm>
+
 #include "dbmanager.h"
 #include "cklcheck.h"
 #include "common.h"
@@ -36,18 +38,21 @@ void WorkerFindingsReport::process()
 {
     DbManager db;
 
-    QList<CCI> failedCCIs;
+    QMap<CCI, QList<CKLCheck>> failedCCIs;
     QList<CKLCheck> checks = db.GetCKLChecks();
-    emit initialize(checks.count()+3, 0);
+    int numChecks = checks.count();
+    emit initialize(numChecks+3, 0);
 
     //new workbook
     lxw_workbook  *wb = workbook_new(_fileName.toStdString().c_str());
     //2 sheets - findings and controls
     lxw_worksheet *wsFindings = workbook_add_worksheet(wb, "Findings");
-    lxw_worksheet *wsCCCIs = workbook_add_worksheet(wb, "CCIs");
+    lxw_worksheet *wsCCIs = workbook_add_worksheet(wb, "CCIs");
     //add formats
     lxw_format *fmtBold = workbook_add_format(wb);
     lxw_format *fmtCci = workbook_add_format(wb);
+    lxw_format *fmtWrapped = workbook_add_format(wb);
+    format_set_text_wrap(fmtWrapped);
     format_set_num_format(fmtCci, "CCI-000000");
     format_set_bold(fmtBold);
 
@@ -57,16 +62,23 @@ void WorkerFindingsReport::process()
     worksheet_write_string(wsFindings, 0, 2, "Status", fmtBold);
     worksheet_write_string(wsFindings, 0, 3, "Severity", fmtBold);
     worksheet_write_string(wsFindings, 0, 4, "CCI", fmtBold);
+    worksheet_set_column(wsFindings, 4, 4, 10, fmtBold);
     worksheet_write_string(wsFindings, 0, 5, "Rule", fmtBold);
+    worksheet_set_column(wsFindings, 5, 5, 18, fmtBold);
     worksheet_write_string(wsFindings, 0, 6, "Vuln", fmtBold);
     worksheet_write_string(wsFindings, 0, 7, "Discussion", fmtBold);
     worksheet_write_string(wsFindings, 0, 8, "Details", fmtBold);
     worksheet_write_string(wsFindings, 0, 9, "Comments", fmtBold);
     //todo
-    worksheet_write_string(wsCCCIs, 0, 0, "Col1", fmtBold);
+    worksheet_write_string(wsCCIs, 0, 0, "Control", fmtBold);
+    worksheet_write_string(wsCCIs, 0, 1, "CCI", fmtBold);
+    worksheet_set_column(wsCCIs, 1, 1, 10, fmtBold);
+    worksheet_write_string(wsCCIs, 0, 2, "Severity", fmtBold);
+    worksheet_write_string(wsCCIs, 0, 3, "Checks", fmtBold);
+    worksheet_set_column(wsCCIs, 3, 3, 18, fmtBold);
 
     //write each failed check
-    for (int i = 0; i < checks.count(); i++)
+    for (int i = 0; i < numChecks; i++)
     {
         unsigned int onRow = static_cast<unsigned int>(i+1);
         CKLCheck cc = checks[i];
@@ -74,7 +86,7 @@ void WorkerFindingsReport::process()
         CCI c = sc.CCI();
         Asset a = cc.Asset();
         Status s = cc.status;
-        emit updateStatus("Adding " + PrintAsset(a) + ", " + PrintSTIGCheck(sc));
+        emit updateStatus("Adding " + PrintAsset(a) + ", " + PrintSTIGCheck(sc) + "…");
         //internal id
         worksheet_write_number(wsFindings, onRow, 0, cc.id, nullptr);
         //host
@@ -82,7 +94,7 @@ void WorkerFindingsReport::process()
         //status
         worksheet_write_string(wsFindings, onRow, 2, GetStatus(s).toStdString().c_str(), nullptr);
         //severity
-        worksheet_write_string(wsFindings, onRow, 3, (cc.severityOverride != Severity::none) ? GetSeverity(cc.severityOverride).toStdString().c_str() : GetSeverity(sc.severity).toStdString().c_str(), nullptr);
+        worksheet_write_string(wsFindings, onRow, 3, GetSeverity(cc.GetSeverity()).toStdString().c_str(), nullptr);
         //cci
         worksheet_write_number(wsFindings, onRow, 4, c.cci, fmtCci);
         //rule
@@ -99,13 +111,44 @@ void WorkerFindingsReport::process()
         //if the check is a finding, add it to the CCI sheet
         if (s == Status::Open)
         {
-            if (!failedCCIs.contains(c))
-            {
-                failedCCIs.append(c);
-            }
+            if (failedCCIs.contains(c))
+                failedCCIs[c].append(cc);
+            else
+                failedCCIs.insert(c, {cc});
         }
         emit progress(-1);
     }
+
+    emit initialize(numChecks+failedCCIs.count()+1, numChecks);
+
+    unsigned int onRow = 0;
+    for (auto i = failedCCIs.constBegin(); i != failedCCIs.constEnd(); i++)
+    {
+        onRow++;
+        CCI c = i.key();
+        emit updateStatus("Adding " + PrintCCI(c) + "…");
+        QList<CKLCheck> checks = i.value();
+        std::sort(checks.begin(), checks.end());
+        Control control = c.Control();
+        //control
+        worksheet_write_string(wsCCIs, onRow, 0, PrintControl(control).toStdString().c_str(), nullptr);
+        //cci
+        worksheet_write_number(wsCCIs, onRow, 1, c.cci, fmtCci);
+        //severity
+        worksheet_write_string(wsCCIs, onRow, 2, GetSeverity(checks.first().GetSeverity()).toStdString().c_str(), nullptr);
+        //Checks
+        QString assets = "";
+        foreach (CKLCheck cc, checks)
+        {
+            if (!assets.isEmpty())
+                assets.append("\n");
+            assets.append(PrintCKLCheck(cc));
+        }
+        worksheet_write_string(wsCCIs, onRow, 3, assets.toStdString().c_str(), fmtWrapped);
+        emit progress(-1);
+    }
+
+    emit updateStatus("Writing workbook…");
 
     //close and write the workbook
     workbook_close(wb);

@@ -49,6 +49,13 @@ STIGCheck CKLCheck::STIGCheck() const
     return db.GetSTIGCheck(stigCheckId);
 }
 
+Severity CKLCheck::GetSeverity() const
+{
+    if (severityOverride == Severity::none)
+        return STIGCheck().severity;
+    return severityOverride;
+}
+
 CKLCheck &CKLCheck::operator=(const CKLCheck &right)
 {
     if (this != &right)

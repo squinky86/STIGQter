@@ -49,11 +49,20 @@ public:
     int stigCheckId;
     Asset Asset() const;
     STIGCheck STIGCheck() const;
+    Severity GetSeverity() const;
     Status status;
     QString findingDetails;
     QString comments;
     Severity severityOverride;
     QString severityJustification;
+    friend bool operator<(const CKLCheck &left, const CKLCheck &right)
+    {
+        Severity l = left.GetSeverity();
+        Severity r = right.GetSeverity();
+        if (l == r)
+            return (left.STIGCheck().rule.compare(right.STIGCheck().rule) < 0);
+        return l < r;
+    }
     CKLCheck& operator=(const CKLCheck &right);
 };
 

@@ -28,10 +28,10 @@
 
 enum Severity
 {
-    high,
-    medium,
-    low,
-    none
+    high = 3,
+    medium = 2,
+    low = 1,
+    none = 0
 };
 
 Severity GetSeverity(const QString &severity);
