@@ -56,23 +56,24 @@ void WorkerFindingsReport::process()
     format_set_num_format(fmtCci, "CCI-000000");
     format_set_bold(fmtBold);
 
-    //write headers
+    //write headers for findings
     worksheet_write_string(wsFindings, 0, 0, "ID", fmtBold);
     worksheet_write_string(wsFindings, 0, 1, "Host", fmtBold);
     worksheet_write_string(wsFindings, 0, 2, "Status", fmtBold);
     worksheet_write_string(wsFindings, 0, 3, "Severity", fmtBold);
+    worksheet_set_column(wsFindings, 4, 4, 10, nullptr);
     worksheet_write_string(wsFindings, 0, 4, "CCI", fmtBold);
-    worksheet_set_column(wsFindings, 4, 4, 10, fmtBold);
+    worksheet_set_column(wsFindings, 5, 5, 18, nullptr);
     worksheet_write_string(wsFindings, 0, 5, "Rule", fmtBold);
-    worksheet_set_column(wsFindings, 5, 5, 18, fmtBold);
     worksheet_write_string(wsFindings, 0, 6, "Vuln", fmtBold);
     worksheet_write_string(wsFindings, 0, 7, "Discussion", fmtBold);
     worksheet_write_string(wsFindings, 0, 8, "Details", fmtBold);
     worksheet_write_string(wsFindings, 0, 9, "Comments", fmtBold);
-    //todo
+
+    //write headers for CCI findings
     worksheet_write_string(wsCCIs, 0, 0, "Control", fmtBold);
+    worksheet_set_column(wsCCIs, 1, 1, 10, nullptr);
     worksheet_write_string(wsCCIs, 0, 1, "CCI", fmtBold);
-    worksheet_set_column(wsCCIs, 1, 1, 10, fmtBold);
     worksheet_write_string(wsCCIs, 0, 2, "Severity", fmtBold);
     worksheet_write_string(wsCCIs, 0, 3, "Checks", fmtBold);
     worksheet_set_column(wsCCIs, 3, 3, 18, fmtBold);

@@ -61,7 +61,7 @@ public:
         Severity r = right.GetSeverity();
         if (l == r)
             return (left.STIGCheck().rule.compare(right.STIGCheck().rule) < 0);
-        return l < r;
+        return r < l;
     }
     CKLCheck& operator=(const CKLCheck &right);
 };

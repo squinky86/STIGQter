@@ -158,9 +158,9 @@ void AssetView::UpdateCKLHelper()
 
 void AssetView::UpdateCKL()
 {
-    //avoid updating the database for every keypress. Wait for 1/10 of a second before saving
+    //avoid updating the database for every keypress. Wait for 3/20 of a second before saving
     //https://forum.qt.io/topic/97857/qplaintextedit-autosave-to-database
-    _timer.start(100);
+    _timer.start(150);
 }
 
 void AssetView::UpdateCKLStatus(const QString &val)
