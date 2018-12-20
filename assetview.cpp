@@ -26,6 +26,7 @@
 #include <QFont>
 #include <QInputDialog>
 #include <QMessageBox>
+#include <QTimer>
 
 AssetView::AssetView(QWidget *parent) :
     QWidget(parent),
@@ -33,7 +34,7 @@ AssetView::AssetView(QWidget *parent) :
     _justification()
 {
     ui->setupUi(this);
-    //ui->col1->setst
+    connect(&_timer, SIGNAL(timeout()), this, SLOT(UpdateCKLHelper()));
 }
 
 AssetView::AssetView(const Asset &a, QWidget *parent) : AssetView(parent)
@@ -136,7 +137,7 @@ void AssetView::UpdateSTIGCheck(const STIGCheck &sc)
     ui->lblCheck->setText(sc.check);
 }
 
-void AssetView::UpdateCKL()
+void AssetView::UpdateCKLHelper()
 {
     QList<QListWidgetItem*> selectedItems = ui->lstChecks->selectedItems();
     if (selectedItems.count() > 0)
@@ -153,6 +154,11 @@ void AssetView::UpdateCKL()
         db.UpdateCKLCheck(cc);
         i->setData(Qt::UserRole, QVariant::fromValue<CKLCheck>(db.GetCKLCheck(cc)));
     }
+}
+
+void AssetView::UpdateCKL()
+{
+    _timer.start(200);
 }
 
 void AssetView::UpdateCKLStatus(const QString &val)

@@ -25,6 +25,7 @@
 #include "stigcheck.h"
 
 #include <QListWidget>
+#include <QTimer>
 #include <QWidget>
 
 namespace Ui {
@@ -48,6 +49,7 @@ public:
 private slots:
     void CheckSelected(QListWidgetItem *current, QListWidgetItem *previous);
     void UpdateCKL();
+    void UpdateCKLHelper();
     void UpdateCKLStatus(const QString &val);
     void UpdateCKLSeverity(const QString &val);
     void UpdateSTIGs();
@@ -56,6 +58,8 @@ private:
     Ui::AssetView *ui;
     Asset _a;
     QString _justification;
+    QTimer _timer;
+
     void SetItemColor(QListWidgetItem *i, const Status &stat, const Severity &sev);
 };
 
