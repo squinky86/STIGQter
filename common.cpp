@@ -164,3 +164,10 @@ int GetCCINumber(QString cci)
         cci = cci.right(cci.length() - 4);
     return cci.toInt();
 }
+
+QString Excelify(const QString &s)
+{
+    //Excel is limited to 32,767 characters per-cell
+    QString ret = s.left(32767);
+    return ret;
+}

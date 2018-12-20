@@ -60,7 +60,8 @@ SOURCES += \
     asset.cpp \
     workerassetadd.cpp \
     workercklimport.cpp \
-    assetview.cpp
+    assetview.cpp \
+    workerfindingsreport.cpp
 
 HEADERS += \
         stigqter.h \
@@ -80,7 +81,8 @@ HEADERS += \
     asset.h \
     workerassetadd.h \
     workercklimport.h \
-    assetview.h
+    assetview.h \
+    workerfindingsreport.h
 
 FORMS += \
         stigqter.ui \
@@ -92,7 +94,8 @@ qnx: target.path = /tmp/$${TARGET}/bin
 else: unix:!android: target.path = /opt/$${TARGET}/bin
 !isEmpty(target.path): INSTALLS += target
 
-LIBS += -ltidy -lzip
+LIBS += -ltidy -lzip -lxlsxwriter -lzlib
 
 INCLUDEPATH= ../tidy/include \
-             ../libzip/include
+             ../libzip/include\
+             ../xlsxwriter/include

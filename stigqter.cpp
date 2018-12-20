@@ -28,6 +28,7 @@
 #include "workerassetadd.h"
 #include "workercklimport.h"
 #include "assetview.h"
+#include "workerfindingsreport.h"
 
 #include <QThread>
 #include <QDebug>
@@ -254,6 +255,27 @@ void STIGQter::DeleteSTIGs()
     connect(s, SIGNAL(updateStatus(QString)), ui->lblStatus, SLOT(setText(QString)));
     threads.append(t);
     workers.append(s);
+
+    t->start();
+}
+
+void STIGQter::FindingsReport()
+{
+    QString fileName = QFileDialog::getSaveFileName(this,
+        "Save Detailed Findings", QDir::home().dirName(), "Microsoft Excel (*.xlsx)");
+    DisableInput();
+    _updatedAssets = true;
+    QThread* t = new QThread;
+    WorkerFindingsReport *f = new WorkerFindingsReport();
+    f->SetReportName(fileName);
+    connect(t, SIGNAL(started()), f, SLOT(process()));
+    connect(f, SIGNAL(finished()), t, SLOT(quit()));
+    connect(t, SIGNAL(finished()), this, SLOT(CompletedThread()));
+    connect(f, SIGNAL(initialize(int, int)), this, SLOT(Initialize(int, int)));
+    connect(f, SIGNAL(progress(int)), this, SLOT(Progress(int)));
+    connect(f, SIGNAL(updateStatus(QString)), ui->lblStatus, SLOT(setText(QString)));
+    threads.append(t);
+    workers.append(f);
 
     t->start();
 }

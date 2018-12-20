@@ -17,33 +17,30 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#ifndef CCI_H
-#define CCI_H
+#ifndef WORKERFINDINGSREPORT_H
+#define WORKERFINDINGSREPORT_H
 
 #include <QObject>
-#include <QString>
 
-#include "cci.h"
-#include "control.h"
-
-class CCI : public QObject
+class WorkerFindingsReport : public QObject
 {
     Q_OBJECT
 
+private:
+    QString _fileName;
+
 public:
-    CCI(const CCI &right);
-    CCI(QObject *parent = nullptr);
-    int id;
-    Control Control();
-    int controlId;
-    int cci;
-    QString definition;
-    CCI& operator=(const CCI &right);
-    bool operator==(const CCI &right);
+    explicit WorkerFindingsReport(QObject *parent = nullptr);
+    void SetReportName(const QString &fileName);
+
+public slots:
+    void process();
+
+signals:
+    void initialize(int, int);
+    void progress(int);
+    void updateStatus(QString);
+    void finished();
 };
 
-Q_DECLARE_METATYPE(CCI);
-
-QString PrintCCI(CCI c);
-
-#endif // CCI_H
+#endif // WORKERFINDINGSREPORT_H

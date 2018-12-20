@@ -57,3 +57,12 @@ CCI& CCI::operator=(const CCI &right)
     }
     return *this;
 }
+
+bool CCI::operator==(const CCI &right)
+{
+    if ((id <= 0) || (right.id <= 0))
+    {
+        return cci == right.cci;
+    }
+    return id == right.id;
+}

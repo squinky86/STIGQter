@@ -53,6 +53,7 @@ CKLCheck &CKLCheck::operator=(const CKLCheck &right)
 {
     if (this != &right)
     {
+        id = right.id;
         assetId = right.assetId;
         stigCheckId = right.stigCheckId;
         status = right.status;
