@@ -18,6 +18,7 @@
  */
 
 #include "assetview.h"
+#include "cklcheck.h"
 #include "dbmanager.h"
 #include "stig.h"
 #include "stigcheck.h"
@@ -26,6 +27,7 @@
 #include <QFont>
 #include <QInputDialog>
 #include <QMessageBox>
+#include <QShortcut>
 #include <QTimer>
 
 AssetView::AssetView(QWidget *parent) :
@@ -35,6 +37,10 @@ AssetView::AssetView(QWidget *parent) :
 {
     ui->setupUi(this);
     connect(&_timer, SIGNAL(timeout()), this, SLOT(UpdateCKLHelper()));
+    _shortcuts.append(new QShortcut(QKeySequence(Qt::CTRL + Qt::Key_N), this, SLOT(KeyShortcut(Status::NotAFinding))));
+    _shortcuts.append(new QShortcut(QKeySequence(Qt::CTRL + Qt::Key_O), this, SLOT(KeyShortcut(Status::Open))));
+    _shortcuts.append(new QShortcut(QKeySequence(Qt::CTRL + Qt::Key_R), this, SLOT(KeyShortcut(Status::NotReviewed))));
+    _shortcuts.append(new QShortcut(QKeySequence(Qt::CTRL + Qt::Key_X), this, SLOT(KeyShortcut(Status::NotApplicable))));
 }
 
 AssetView::AssetView(const Asset &a, QWidget *parent) : AssetView(parent)
@@ -45,6 +51,9 @@ AssetView::AssetView(const Asset &a, QWidget *parent) : AssetView(parent)
 
 AssetView::~AssetView()
 {
+    foreach (QShortcut *shortcut, _shortcuts)
+        delete shortcut;
+    _shortcuts.clear();
     delete ui;
 }
 
@@ -135,6 +144,12 @@ void AssetView::UpdateSTIGCheck(const STIGCheck &sc)
     ui->lblFalseNegatives->setText(sc.falseNegatives);
     ui->lblFix->setText(sc.fix);
     ui->lblCheck->setText(sc.check);
+}
+
+void AssetView::KeyShortcut(const Status action)
+{
+    if (this->isVisible())
+        ui->cboBoxStatus->setCurrentIndex(ui->cboBoxStatus->findData(action));
 }
 
 void AssetView::UpdateCKLHelper()
