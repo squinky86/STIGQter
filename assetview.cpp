@@ -37,10 +37,11 @@ AssetView::AssetView(QWidget *parent) :
 {
     ui->setupUi(this);
     connect(&_timer, SIGNAL(timeout()), this, SLOT(UpdateCKLHelper()));
-    _shortcuts.append(new QShortcut(QKeySequence(Qt::CTRL + Qt::Key_N), this, SLOT(KeyShortcut(Status::NotAFinding))));
-    _shortcuts.append(new QShortcut(QKeySequence(Qt::CTRL + Qt::Key_O), this, SLOT(KeyShortcut(Status::Open))));
-    _shortcuts.append(new QShortcut(QKeySequence(Qt::CTRL + Qt::Key_R), this, SLOT(KeyShortcut(Status::NotReviewed))));
-    _shortcuts.append(new QShortcut(QKeySequence(Qt::CTRL + Qt::Key_X), this, SLOT(KeyShortcut(Status::NotApplicable))));
+
+    _shortcuts.append(new QShortcut(QKeySequence(Qt::CTRL + Qt::Key_N), this, SLOT(KeyShortcutCtrlN())));
+    _shortcuts.append(new QShortcut(QKeySequence(Qt::CTRL + Qt::Key_O), this, SLOT(KeyShortcutCtrlO())));
+    _shortcuts.append(new QShortcut(QKeySequence(Qt::CTRL + Qt::Key_R), this, SLOT(KeyShortcutCtrlR())));
+    _shortcuts.append(new QShortcut(QKeySequence(Qt::CTRL + Qt::Key_X), this, SLOT(KeyShortcutCtrlX())));
 }
 
 AssetView::AssetView(const Asset &a, QWidget *parent) : AssetView(parent)
@@ -146,10 +147,46 @@ void AssetView::UpdateSTIGCheck(const STIGCheck &sc)
     ui->lblCheck->setText(sc.check);
 }
 
-void AssetView::KeyShortcut(const Status action)
+void AssetView::KeyShortcutCtrlN()
+{
+    KeyShortcut(Status::NotAFinding);
+}
+
+void AssetView::KeyShortcutCtrlO()
+{
+    KeyShortcut(Status::Open);
+}
+
+void AssetView::KeyShortcutCtrlR()
+{
+    KeyShortcut(Status::NotReviewed);
+}
+
+void AssetView::KeyShortcutCtrlX()
+{
+    KeyShortcut(Status::NotApplicable);
+}
+
+void AssetView::KeyShortcut(const Status &action)
 {
     if (this->isVisible())
-        ui->cboBoxStatus->setCurrentIndex(ui->cboBoxStatus->findData(action));
+    {
+        switch (action)
+        {
+        case Status::NotReviewed:
+            ui->cboBoxStatus->setCurrentIndex(0);
+            break;
+        case Status::Open:
+            ui->cboBoxStatus->setCurrentIndex(1);
+            break;
+        case Status::NotAFinding:
+            ui->cboBoxStatus->setCurrentIndex(2);
+            break;
+        default:
+            ui->cboBoxStatus->setCurrentIndex(3);
+            break;
+        }
+    }
 }
 
 void AssetView::UpdateCKLHelper()
