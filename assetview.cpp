@@ -33,7 +33,8 @@
 AssetView::AssetView(QWidget *parent) :
     QWidget(parent),
     ui(new Ui::AssetView),
-    _justification()
+    _justification(),
+    _updateStatus(false)
 {
     ui->setupUi(this);
     connect(&_timer, SIGNAL(timeout()), this, SLOT(UpdateCKLHelper()));
@@ -147,6 +148,24 @@ void AssetView::UpdateSTIGCheck(const STIGCheck &sc)
     ui->lblCheck->setText(sc.check);
 }
 
+void AssetView::CheckSelectedChanged()
+{
+    if (ui->lstChecks->selectedItems().count() > 1)
+    {
+        //disable multi-editable fields
+        ui->txtComments->setEnabled(false);
+        ui->txtFindingDetails->setEnabled(false);
+        ui->cboBoxSeverity->setEnabled(false);
+    }
+    else
+    {
+        //enable multi-editable fields
+        ui->txtComments->setEnabled(true);
+        ui->txtFindingDetails->setEnabled(true);
+        ui->cboBoxSeverity->setEnabled(true);
+    }
+}
+
 void AssetView::KeyShortcutCtrlN()
 {
     KeyShortcut(Status::NotAFinding);
@@ -192,27 +211,42 @@ void AssetView::KeyShortcut(const Status &action)
 void AssetView::UpdateCKLHelper()
 {
     QList<QListWidgetItem*> selectedItems = ui->lstChecks->selectedItems();
-    if (selectedItems.count() > 0)
+    int count = selectedItems.count();
+    //make sure that something is selected
+    if (count > 0)
     {
-        QListWidgetItem *i = selectedItems.first();
-        CKLCheck cc = i->data(Qt::UserRole).value<CKLCheck>();
-        cc.comments = ui->txtComments->toPlainText();
-        cc.findingDetails = ui->txtFindingDetails->toPlainText();
-        Severity tmpSeverity = GetSeverity(ui->cboBoxSeverity->currentText());
-        cc.severityOverride = (tmpSeverity == cc.STIGCheck().severity) ? cc.severityOverride = Severity::none : tmpSeverity;
-        cc.status = GetStatus(ui->cboBoxStatus->currentText());
-        cc.severityJustification = _justification;
-        DbManager db;
-        db.UpdateCKLCheck(cc);
-        i->setData(Qt::UserRole, QVariant::fromValue<CKLCheck>(db.GetCKLCheck(cc)));
+        foreach (QListWidgetItem *i, selectedItems)
+        {
+            CKLCheck cc = i->data(Qt::UserRole).value<CKLCheck>();
+            //if multiple checks are selected, only update their status
+            if (count < 2)
+            {
+                cc.comments = ui->txtComments->toPlainText();
+                cc.findingDetails = ui->txtFindingDetails->toPlainText();
+                Severity tmpSeverity = GetSeverity(ui->cboBoxSeverity->currentText());
+                cc.severityOverride = (tmpSeverity == cc.STIGCheck().severity) ? cc.severityOverride = Severity::none : tmpSeverity;
+                cc.severityJustification = _justification;
+                cc.status = GetStatus(ui->cboBoxStatus->currentText());
+            }
+            else {
+                if (_updateStatus)
+                {
+                    cc.status = GetStatus(ui->cboBoxStatus->currentText());
+                    _updateStatus = false;
+                }
+            }
+            DbManager db;
+            db.UpdateCKLCheck(cc);
+            i->setData(Qt::UserRole, QVariant::fromValue<CKLCheck>(db.GetCKLCheck(cc)));
+        }
     }
 }
 
 void AssetView::UpdateCKL()
 {
-    //avoid updating the database for every keypress. Wait for 3/20 of a second before saving
+    //avoid updating the database for every keypress. Wait for 9/50 of a second before saving
     //https://forum.qt.io/topic/97857/qplaintextedit-autosave-to-database
-    _timer.start(150);
+    _timer.start(180);
 }
 
 void AssetView::UpdateCKLStatus(const QString &val)
@@ -222,10 +256,13 @@ void AssetView::UpdateCKLStatus(const QString &val)
     stat = GetStatus(val);
     if (selectedItems.count() > 0)
     {
-        QListWidgetItem *i = selectedItems.first();
-        CKLCheck cc = i->data(Qt::UserRole).value<CKLCheck>();
-        STIGCheck sc = cc.STIGCheck();
-        SetItemColor(i, stat, (cc.severityOverride == Severity::none) ? sc.severity : cc.severityOverride);
+        foreach (QListWidgetItem *i, selectedItems)
+        {
+            CKLCheck cc = i->data(Qt::UserRole).value<CKLCheck>();
+            STIGCheck sc = cc.STIGCheck();
+            SetItemColor(i, stat, (cc.severityOverride == Severity::none) ? sc.severity : cc.severityOverride);
+        }
+        _updateStatus = true;
         UpdateCKL();
     }
 }
@@ -233,6 +270,7 @@ void AssetView::UpdateCKLStatus(const QString &val)
 void AssetView::UpdateCKLSeverity(const QString &val)
 {
     QList<QListWidgetItem*> selectedItems = ui->lstChecks->selectedItems();
+    //should only be executed if one severity is set
     if (selectedItems.count() > 0)
     {
         QListWidgetItem *i = selectedItems.first();

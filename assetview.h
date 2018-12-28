@@ -48,6 +48,7 @@ public:
 
 private slots:
     void CheckSelected(QListWidgetItem *current, QListWidgetItem *previous);
+    void CheckSelectedChanged();
     void KeyShortcutCtrlN();
     void KeyShortcutCtrlO();
     void KeyShortcutCtrlR();
@@ -64,6 +65,7 @@ private:
     QString _justification;
     QTimer _timer;
     QList<QShortcut*> _shortcuts;
+    bool _updateStatus;
     void KeyShortcut(const Status &action);
 
     void SetItemColor(QListWidgetItem *i, const Status &stat, const Severity &sev);
