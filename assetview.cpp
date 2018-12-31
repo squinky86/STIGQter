@@ -18,23 +18,27 @@
  */
 
 #include "assetview.h"
+#include "common.h"
 #include "cklcheck.h"
 #include "dbmanager.h"
 #include "stig.h"
 #include "stigcheck.h"
 #include "ui_assetview.h"
 
+#include <QFileDialog>
 #include <QFont>
 #include <QInputDialog>
 #include <QMessageBox>
 #include <QShortcut>
+#include <QXmlStreamWriter>
 #include <QTimer>
 
 AssetView::AssetView(QWidget *parent) :
     QWidget(parent),
     ui(new Ui::AssetView),
     _justification(),
-    _updateStatus(false)
+    _updateStatus(false),
+    _tabIndex(-1)
 {
     ui->setupUi(this);
     connect(&_timer, SIGNAL(timeout()), this, SLOT(UpdateCKLHelper()));
@@ -148,6 +152,11 @@ void AssetView::UpdateSTIGCheck(const STIGCheck &sc)
     ui->lblCheck->setText(sc.check);
 }
 
+void AssetView::SetTabIndex(int index)
+{
+    _tabIndex = index;
+}
+
 void AssetView::CheckSelectedChanged()
 {
     if (ui->lstChecks->selectedItems().count() > 1)
@@ -163,6 +172,20 @@ void AssetView::CheckSelectedChanged()
         ui->txtComments->setEnabled(true);
         ui->txtFindingDetails->setEnabled(true);
         ui->cboBoxSeverity->setEnabled(true);
+    }
+}
+
+void AssetView::DeleteAsset()
+{
+    QMessageBox::StandardButton reply = QMessageBox::question(this, "Confirm", "Are you sure you want to delete " + PrintAsset(_a) + "?", QMessageBox::Yes|QMessageBox::No);
+    if (reply == QMessageBox::Yes)
+    {
+        DbManager db;
+        foreach (const STIG &s, _a.STIGs())
+            db.DeleteSTIGFromAsset(s, _a);
+        db.DeleteAsset(_a);
+        if (_tabIndex > 0)
+            emit CloseTab(_tabIndex);
     }
 }
 
@@ -184,6 +207,366 @@ void AssetView::KeyShortcutCtrlR()
 void AssetView::KeyShortcutCtrlX()
 {
     KeyShortcut(Status::NotApplicable);
+}
+
+void AssetView::SaveCKL()
+{
+    QString fileName = QFileDialog::getSaveFileName(this, "Save STIG/SRG Checklist", QDir::home().dirName(), "STIG Checklist (*.ckl)");
+    QFile file(fileName);
+    if (file.open(QIODevice::WriteOnly))
+    {
+        QXmlStreamWriter stream(&file);
+        //xml for a CKL file
+        stream.writeStartDocument("1.0");
+        stream.writeComment("STIGQter :: " + QString(VERSION));
+        stream.writeStartElement("CHECKLIST");
+        stream.writeStartElement("ASSET");
+        stream.writeStartElement("ROLE");
+        stream.writeCharacters("None");
+        stream.writeEndElement(); //ROLE
+        stream.writeStartElement("ASSET_TYPE");
+        stream.writeCharacters(_a.assetType);
+        stream.writeEndElement(); //ASSET_TYPE
+        stream.writeStartElement("HOST_NAME");
+        stream.writeCharacters(_a.hostName);
+        stream.writeEndElement(); //HOST_NAME
+        stream.writeStartElement("HOST_IP");
+        stream.writeCharacters(_a.hostIP);
+        stream.writeEndElement(); //HOST_IP
+        stream.writeStartElement("HOST_MAC");
+        stream.writeCharacters(_a.hostMAC);
+        stream.writeEndElement(); //HOST_MAC
+        stream.writeStartElement("HOST_FQDN");
+        stream.writeCharacters(_a.hostFQDN);
+        stream.writeEndElement(); //HOST_FQDN
+        stream.writeStartElement("TECH_AREA");
+        stream.writeCharacters(_a.techArea);
+        stream.writeEndElement(); //TECH_AREA
+        stream.writeStartElement("TARGET_KEY");
+        stream.writeCharacters(_a.targetKey);
+        stream.writeEndElement(); //TARGET_KEY
+        stream.writeStartElement("WEB_OR_DATABASE");
+        stream.writeCharacters(PrintTrueFalse(_a.webOrDB));
+        stream.writeEndElement(); //WEB_OR_DATABASE
+        stream.writeStartElement("WEB_DB_SITE");
+        stream.writeCharacters(_a.webDbSite);
+        stream.writeEndElement(); //WEB_DB_SITE
+        stream.writeStartElement("WEB_DB_INSTANCE");
+        stream.writeCharacters(_a.webDbInstance);
+        stream.writeEndElement(); //WEB_DB_INSTANCE
+        stream.writeEndElement(); //ASSET
+        stream.writeStartElement("STIGS");
+        foreach (const STIG &s, _a.STIGs())
+        {
+            stream.writeStartElement("iSTIG");
+            stream.writeStartElement("STIG_INFO");
+
+            stream.writeStartElement("SI_DATA");
+            stream.writeStartElement("SID_NAME");
+            stream.writeCharacters("version");
+            stream.writeEndElement(); //SID_NAME
+            stream.writeStartElement("SID_DATA");
+            stream.writeCharacters(QString::number(s.version));
+            stream.writeEndElement(); //SID_DATA
+            stream.writeEndElement(); //SI_DATA
+
+            stream.writeStartElement("SI_DATA");
+            stream.writeStartElement("SID_NAME");
+            stream.writeCharacters("stigid");
+            stream.writeEndElement(); //SID_NAME
+            stream.writeStartElement("SID_DATA");
+            stream.writeCharacters(s.benchmarkId);
+            stream.writeEndElement(); //SID_DATA
+            stream.writeEndElement(); //SI_DATA
+
+            stream.writeStartElement("SI_DATA");
+            stream.writeStartElement("SID_NAME");
+            stream.writeCharacters("description");
+            stream.writeEndElement(); //SID_NAME
+            stream.writeStartElement("SID_DATA");
+            stream.writeCharacters(s.description);
+            stream.writeEndElement(); //SID_DATA
+            stream.writeEndElement(); //SI_DATA
+
+            stream.writeStartElement("SI_DATA");
+            stream.writeStartElement("SID_NAME");
+            stream.writeCharacters("filename");
+            stream.writeEndElement(); //SID_NAME
+            stream.writeStartElement("SID_DATA");
+            stream.writeCharacters(s.fileName);
+            stream.writeEndElement(); //SID_DATA
+            stream.writeEndElement(); //SI_DATA
+
+            stream.writeStartElement("SI_DATA");
+            stream.writeStartElement("SID_NAME");
+            stream.writeCharacters("releaseinfo");
+            stream.writeEndElement(); //SID_NAME
+            stream.writeStartElement("SID_DATA");
+            stream.writeCharacters(s.release);
+            stream.writeEndElement(); //SID_DATA
+            stream.writeEndElement(); //SI_DATA
+
+            stream.writeStartElement("SI_DATA");
+            stream.writeStartElement("SID_NAME");
+            stream.writeCharacters("title");
+            stream.writeEndElement(); //SID_NAME
+            stream.writeStartElement("SID_DATA");
+            stream.writeCharacters(s.title);
+            stream.writeEndElement(); //SID_DATA
+            stream.writeEndElement(); //SI_DATA
+
+            stream.writeEndElement(); //STIG_INFO
+
+            foreach (const CKLCheck &cc, _a.CKLChecks(&s))
+            {
+                const STIGCheck sc = cc.STIGCheck();
+                stream.writeStartElement("VULN");
+
+                stream.writeStartElement("STIG_DATA");
+                stream.writeStartElement("VULN_ATTRIBUTE");
+                stream.writeCharacters("Vuln_Num");
+                stream.writeEndElement(); //VULN_ATTRIBUTE
+                stream.writeStartElement("ATTRIBUTE_DATA");
+                stream.writeCharacters(sc.vulnNum);
+                stream.writeEndElement(); //ATTRIBUTE_DATA
+                stream.writeEndElement(); //STIG_DATA
+
+                stream.writeStartElement("STIG_DATA");
+                stream.writeStartElement("VULN_ATTRIBUTE");
+                stream.writeCharacters("Severity");
+                stream.writeEndElement(); //VULN_ATTRIBUTE
+                stream.writeStartElement("ATTRIBUTE_DATA");
+                stream.writeCharacters(GetSeverity(cc.GetSeverity(), false));
+                stream.writeEndElement(); //ATTRIBUTE_DATA
+                stream.writeEndElement(); //STIG_DATA
+
+                stream.writeStartElement("STIG_DATA");
+                stream.writeStartElement("VULN_ATTRIBUTE");
+                stream.writeCharacters("Group_Title");
+                stream.writeEndElement(); //VULN_ATTRIBUTE
+                stream.writeStartElement("ATTRIBUTE_DATA");
+                stream.writeCharacters(sc.groupTitle);
+                stream.writeEndElement(); //ATTRIBUTE_DATA
+                stream.writeEndElement(); //STIG_DATA
+
+                stream.writeStartElement("STIG_DATA");
+                stream.writeStartElement("VULN_ATTRIBUTE");
+                stream.writeCharacters("Rule_ID");
+                stream.writeEndElement(); //VULN_ATTRIBUTE
+                stream.writeStartElement("ATTRIBUTE_DATA");
+                stream.writeCharacters(sc.rule);
+                stream.writeEndElement(); //ATTRIBUTE_DATA
+                stream.writeEndElement(); //STIG_DATA
+
+                stream.writeStartElement("STIG_DATA");
+                stream.writeStartElement("VULN_ATTRIBUTE");
+                stream.writeCharacters("Rule_Ver");
+                stream.writeEndElement(); //VULN_ATTRIBUTE
+                stream.writeStartElement("ATTRIBUTE_DATA");
+                stream.writeCharacters(sc.ruleVersion);
+                stream.writeEndElement(); //ATTRIBUTE_DATA
+                stream.writeEndElement(); //STIG_DATA
+
+                stream.writeStartElement("STIG_DATA");
+                stream.writeStartElement("VULN_ATTRIBUTE");
+                stream.writeCharacters("Rule_Title");
+                stream.writeEndElement(); //VULN_ATTRIBUTE
+                stream.writeStartElement("ATTRIBUTE_DATA");
+                stream.writeCharacters(sc.title);
+                stream.writeEndElement(); //ATTRIBUTE_DATA
+                stream.writeEndElement(); //STIG_DATA
+
+                stream.writeStartElement("STIG_DATA");
+                stream.writeStartElement("VULN_ATTRIBUTE");
+                stream.writeCharacters("Vuln_Discuss");
+                stream.writeEndElement(); //VULN_ATTRIBUTE
+                stream.writeStartElement("ATTRIBUTE_DATA");
+                stream.writeCharacters(sc.vulnDiscussion);
+                stream.writeEndElement(); //ATTRIBUTE_DATA
+                stream.writeEndElement(); //STIG_DATA
+
+                stream.writeStartElement("STIG_DATA");
+                stream.writeStartElement("VULN_ATTRIBUTE");
+                stream.writeCharacters("IA_Controls");
+                stream.writeEndElement(); //VULN_ATTRIBUTE
+                stream.writeStartElement("ATTRIBUTE_DATA");
+                stream.writeCharacters(sc.iaControls);
+                stream.writeEndElement(); //ATTRIBUTE_DATA
+                stream.writeEndElement(); //STIG_DATA
+
+                stream.writeStartElement("STIG_DATA");
+                stream.writeStartElement("VULN_ATTRIBUTE");
+                stream.writeCharacters("Check_Content");
+                stream.writeEndElement(); //VULN_ATTRIBUTE
+                stream.writeStartElement("ATTRIBUTE_DATA");
+                stream.writeCharacters(sc.check);
+                stream.writeEndElement(); //ATTRIBUTE_DATA
+                stream.writeEndElement(); //STIG_DATA
+
+                stream.writeStartElement("STIG_DATA");
+                stream.writeStartElement("VULN_ATTRIBUTE");
+                stream.writeCharacters("Fix_Text");
+                stream.writeEndElement(); //VULN_ATTRIBUTE
+                stream.writeStartElement("ATTRIBUTE_DATA");
+                stream.writeCharacters(sc.fix);
+                stream.writeEndElement(); //ATTRIBUTE_DATA
+                stream.writeEndElement(); //STIG_DATA
+
+                stream.writeStartElement("STIG_DATA");
+                stream.writeStartElement("VULN_ATTRIBUTE");
+                stream.writeCharacters("False_Positives");
+                stream.writeEndElement(); //VULN_ATTRIBUTE
+                stream.writeStartElement("ATTRIBUTE_DATA");
+                stream.writeCharacters(sc.falsePositives);
+                stream.writeEndElement(); //ATTRIBUTE_DATA
+                stream.writeEndElement(); //STIG_DATA
+
+                stream.writeStartElement("STIG_DATA");
+                stream.writeStartElement("VULN_ATTRIBUTE");
+                stream.writeCharacters("False_Negatives");
+                stream.writeEndElement(); //VULN_ATTRIBUTE
+                stream.writeStartElement("ATTRIBUTE_DATA");
+                stream.writeCharacters(sc.falseNegatives);
+                stream.writeEndElement(); //ATTRIBUTE_DATA
+                stream.writeEndElement(); //STIG_DATA
+
+                stream.writeStartElement("STIG_DATA");
+                stream.writeStartElement("VULN_ATTRIBUTE");
+                stream.writeCharacters("Documentable");
+                stream.writeEndElement(); //VULN_ATTRIBUTE
+                stream.writeStartElement("ATTRIBUTE_DATA");
+                stream.writeCharacters(PrintTrueFalse(sc.documentable));
+                stream.writeEndElement(); //ATTRIBUTE_DATA
+                stream.writeEndElement(); //STIG_DATA
+
+                stream.writeStartElement("STIG_DATA");
+                stream.writeStartElement("VULN_ATTRIBUTE");
+                stream.writeCharacters("Mitigations");
+                stream.writeEndElement(); //VULN_ATTRIBUTE
+                stream.writeStartElement("ATTRIBUTE_DATA");
+                stream.writeCharacters(sc.mitigations);
+                stream.writeEndElement(); //ATTRIBUTE_DATA
+                stream.writeEndElement(); //STIG_DATA
+
+                stream.writeStartElement("STIG_DATA");
+                stream.writeStartElement("VULN_ATTRIBUTE");
+                stream.writeCharacters("Potential_Impact");
+                stream.writeEndElement(); //VULN_ATTRIBUTE
+                stream.writeStartElement("ATTRIBUTE_DATA");
+                stream.writeCharacters(sc.potentialImpact);
+                stream.writeEndElement(); //ATTRIBUTE_DATA
+                stream.writeEndElement(); //STIG_DATA
+
+                stream.writeStartElement("STIG_DATA");
+                stream.writeStartElement("VULN_ATTRIBUTE");
+                stream.writeCharacters("Third_Party_Tools");
+                stream.writeEndElement(); //VULN_ATTRIBUTE
+                stream.writeStartElement("ATTRIBUTE_DATA");
+                stream.writeCharacters(sc.thirdPartyTools);
+                stream.writeEndElement(); //ATTRIBUTE_DATA
+                stream.writeEndElement(); //STIG_DATA
+
+                stream.writeStartElement("STIG_DATA");
+                stream.writeStartElement("VULN_ATTRIBUTE");
+                stream.writeCharacters("Mitigation_Control");
+                stream.writeEndElement(); //VULN_ATTRIBUTE
+                stream.writeStartElement("ATTRIBUTE_DATA");
+                stream.writeCharacters(sc.mitigationControl);
+                stream.writeEndElement(); //ATTRIBUTE_DATA
+                stream.writeEndElement(); //STIG_DATA
+
+                stream.writeStartElement("STIG_DATA");
+                stream.writeStartElement("VULN_ATTRIBUTE");
+                stream.writeCharacters("Responsibility");
+                stream.writeEndElement(); //VULN_ATTRIBUTE
+                stream.writeStartElement("ATTRIBUTE_DATA");
+                stream.writeCharacters(sc.responsibility);
+                stream.writeEndElement(); //ATTRIBUTE_DATA
+                stream.writeEndElement(); //STIG_DATA
+
+                stream.writeStartElement("STIG_DATA");
+                stream.writeStartElement("VULN_ATTRIBUTE");
+                stream.writeCharacters("Security_Override_Guidance");
+                stream.writeEndElement(); //VULN_ATTRIBUTE
+                stream.writeStartElement("ATTRIBUTE_DATA");
+                stream.writeCharacters(sc.severityOverrideGuidance);
+                stream.writeEndElement(); //ATTRIBUTE_DATA
+                stream.writeEndElement(); //STIG_DATA
+
+                stream.writeStartElement("STIG_DATA");
+                stream.writeStartElement("VULN_ATTRIBUTE");
+                stream.writeCharacters("Check_Content_Ref");
+                stream.writeEndElement(); //VULN_ATTRIBUTE
+                stream.writeStartElement("ATTRIBUTE_DATA");
+                stream.writeCharacters(sc.checkContentRef);
+                stream.writeEndElement(); //ATTRIBUTE_DATA
+                stream.writeEndElement(); //STIG_DATA
+
+                stream.writeStartElement("STIG_DATA");
+                stream.writeStartElement("VULN_ATTRIBUTE");
+                stream.writeCharacters("Weight");
+                stream.writeEndElement(); //VULN_ATTRIBUTE
+                stream.writeStartElement("ATTRIBUTE_DATA");
+                stream.writeCharacters(QString::number(sc.weight));
+                stream.writeEndElement(); //ATTRIBUTE_DATA
+                stream.writeEndElement(); //STIG_DATA
+
+                stream.writeStartElement("STIG_DATA");
+                stream.writeStartElement("VULN_ATTRIBUTE");
+                stream.writeCharacters("STIGRef");
+                stream.writeEndElement(); //VULN_ATTRIBUTE
+                stream.writeStartElement("ATTRIBUTE_DATA");
+                stream.writeCharacters(s.title + " :: Version " + QString::number(s.version) + ", " + s.release);
+                stream.writeEndElement(); //ATTRIBUTE_DATA
+                stream.writeEndElement(); //STIG_DATA
+
+                stream.writeStartElement("STIG_DATA");
+                stream.writeStartElement("VULN_ATTRIBUTE");
+                stream.writeCharacters("TargetKey");
+                stream.writeEndElement(); //VULN_ATTRIBUTE
+                stream.writeStartElement("ATTRIBUTE_DATA");
+                stream.writeCharacters(sc.targetKey);
+                stream.writeEndElement(); //ATTRIBUTE_DATA
+                stream.writeEndElement(); //STIG_DATA
+
+                stream.writeStartElement("STIG_DATA");
+                stream.writeStartElement("VULN_ATTRIBUTE");
+                stream.writeCharacters("CCI_REF");
+                stream.writeEndElement(); //VULN_ATTRIBUTE
+                stream.writeStartElement("ATTRIBUTE_DATA");
+                stream.writeCharacters(PrintCCI(sc.CCI()));
+                stream.writeEndElement(); //ATTRIBUTE_DATA
+                stream.writeEndElement(); //STIG_DATA
+
+                stream.writeStartElement("STATUS");
+                stream.writeCharacters(GetStatus(cc.status, true));
+                stream.writeEndElement(); //STATUS
+
+                stream.writeStartElement("FINDING_DETAILS");
+                stream.writeCharacters(cc.findingDetails);
+                stream.writeEndElement(); //FINDING_DETAILS
+
+                stream.writeStartElement("COMMENTS");
+                stream.writeCharacters(cc.comments);
+                stream.writeEndElement(); //COMMENTS
+
+                stream.writeStartElement("SEVERITY_OVERRIDE");
+                stream.writeCharacters(GetSeverity(cc.severityOverride, false));
+                stream.writeEndElement(); //SEVERITY_OVERRIDE
+
+                stream.writeStartElement("SEVERITY_JUSTIFICATION");
+                stream.writeCharacters(cc.severityJustification);
+                stream.writeEndElement(); //SEVERITY_JUSTIFICATION
+
+                stream.writeEndElement(); //VULN
+            }
+
+            stream.writeEndElement(); //iSTIG
+        }
+        stream.writeEndElement(); //STIGS
+        stream.writeEndElement(); //CHECKLIST
+        stream.writeEndDocument();
+    }
 }
 
 void AssetView::KeyShortcut(const Status &action)

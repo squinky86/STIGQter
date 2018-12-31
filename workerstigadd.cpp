@@ -25,11 +25,12 @@
 
 #include <QXmlStreamReader>
 
-void WorkerSTIGAdd::ParseSTIG(const QByteArray &stig)
+void WorkerSTIGAdd::ParseSTIG(const QByteArray &stig, const QString &fileName)
 {
     //should be the .xml file inside of the STIG .zip file here
     QXmlStreamReader *xml = new QXmlStreamReader(stig);
     STIG s;
+    s.fileName = fileName;
     STIGCheck c;
     s.id = -1;
     c.id = -1;
@@ -80,6 +81,16 @@ void WorkerSTIGAdd::ParseSTIG(const QByteArray &stig)
                 else if (xml->name() == "Profile")
                 {
                     inProfile = true; // stop reading STIG details
+                }
+                else if (xml->name() == "Benchmark" && xml->attributes().hasAttribute("id"))
+                {
+                    foreach (const QXmlStreamAttribute &attr, xml->attributes())
+                    {
+                        if (attr.name() == "id")
+                        {
+                            s.benchmarkId = attr.value().toString().trimmed();
+                        }
+                    }
                 }
             }
         }
@@ -138,6 +149,11 @@ void WorkerSTIGAdd::ParseSTIG(const QByteArray &stig)
                             c.weight = attr.value().toDouble();
                         }
                     }
+                }
+                else if (xml->name() == "version")
+                {
+                    if (!inGroup && !inReference)
+                        c.ruleVersion = xml->readElementText().trimmed();
                 }
                 else if (xml->name() == "title")
                 {
@@ -202,6 +218,10 @@ void WorkerSTIGAdd::ParseSTIG(const QByteArray &stig)
                         }
                     }
                 }
+                else if (xml->name() == "identifier")
+                {
+                    c.targetKey = xml->readElementText().trimmed();
+                }
                 else if (xml->name() == "ident")
                 {
                     QString cci(xml->readElementText().trimmed());
@@ -260,11 +280,12 @@ void WorkerSTIGAdd::process()
     {
         updateStatus("Extracting " + s + "…");
         //get the list of XML files inside the STIG
-        QByteArrayList toParse = GetXMLFromZip(s.toStdString().c_str());
+        QString fileName;
+        QByteArrayList toParse = GetXMLFromZip(s.toStdString().c_str(), &fileName);
         updateStatus("Parsing " + s + "…");
         foreach(const QByteArray stig, toParse)
         {
-            ParseSTIG(stig);
+            ParseSTIG(stig, fileName);
         }
         emit progress(-1);
     }

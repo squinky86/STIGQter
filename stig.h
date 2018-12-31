@@ -38,6 +38,8 @@ public:
     QString description;
     QString release;
     int version;
+    QString benchmarkId;
+    QString fileName;
     QList<STIGCheck> STIGChecks() const;
     STIG& operator=(const STIG &right);
     bool operator==(const STIG &right);

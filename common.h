@@ -30,7 +30,8 @@ bool DownloadFile(const QUrl &u, QFile *f);
 QString DownloadPage(const QUrl &u);
 QString Excelify(const QString &s);
 int GetCCINumber(QString cci);
-QByteArrayList GetXMLFromZip(const char* f);
+QByteArrayList GetXMLFromZip(const char* f, QString *fileName = nullptr);
+QString PrintTrueFalse(bool tf);
 QString CleanXML(QString s, bool isXml = false);
 
 #endif // COMMON_H

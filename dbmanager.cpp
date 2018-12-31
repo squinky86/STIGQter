@@ -252,11 +252,13 @@ void DbManager::AddSTIG(STIG stig, QList<STIGCheck> checks)
                     return;
                 }
             }
-            q.prepare("INSERT INTO STIG (title, description, release, version) VALUES(:title, :description, :release, :version)");
+            q.prepare("INSERT INTO STIG (title, description, release, version, benchmarkId, fileName) VALUES(:title, :description, :release, :version, :benchmarkId, :fileName)");
             q.bindValue(":title", stig.title);
             q.bindValue(":description", stig.description);
             q.bindValue(":release", stig.release);
             q.bindValue(":version", stig.version);
+            q.bindValue(":benchmarkId", stig.benchmarkId);
+            q.bindValue(":fileName", stig.fileName);
             q.exec();
             stig.id = q.lastInsertId().toInt();
             db.commit();
@@ -268,7 +270,7 @@ void DbManager::AddSTIG(STIG stig, QList<STIGCheck> checks)
         foreach(STIGCheck c, checks)
         {
             newChecks = true;
-            q.prepare("INSERT INTO STIGCheck (`STIGId`, `CCIId`, `rule`, `vulnNum`, `groupTitle`, `ruleVersion`, `severity`, `weight`, `title`, `vulnDiscussion`, `falsePositives`, `falseNegatives`, `fix`, `check`, `documentable`, `mitigations`, `severityOverrideGuidance`, `checkContentRef`, `potentialImpact`, `thirdPartyTools`, `mitigationControl`, `responsibility`, `IAControls`) VALUES(:STIGId, :CCIId, :rule, :vulnNum, :groupTitle, :ruleVersion, :severity, :weight, :title, :vulnDiscussion, :falsePositives, :falseNegatives, :fix, :check, :documentable, :mitigations, :severityOverrideGuidance, :checkContentRef, :potentialImpact, :thirdPartyTools, :mitigationControl, :responsibility, :IAControls)");
+            q.prepare("INSERT INTO STIGCheck (`STIGId`, `CCIId`, `rule`, `vulnNum`, `groupTitle`, `ruleVersion`, `severity`, `weight`, `title`, `vulnDiscussion`, `falsePositives`, `falseNegatives`, `fix`, `check`, `documentable`, `mitigations`, `severityOverrideGuidance`, `checkContentRef`, `potentialImpact`, `thirdPartyTools`, `mitigationControl`, `responsibility`, `IAControls`, `targetKey`) VALUES(:STIGId, :CCIId, :rule, :vulnNum, :groupTitle, :ruleVersion, :severity, :weight, :title, :vulnDiscussion, :falsePositives, :falseNegatives, :fix, :check, :documentable, :mitigations, :severityOverrideGuidance, :checkContentRef, :potentialImpact, :thirdPartyTools, :mitigationControl, :responsibility, :IAControls, :targetKey)");
             q.bindValue(":STIGId", stig.id);
             q.bindValue(":CCIId", c.cciId);
             q.bindValue(":rule", c.rule);
@@ -292,6 +294,7 @@ void DbManager::AddSTIG(STIG stig, QList<STIGCheck> checks)
             q.bindValue(":mitigationControl", c.mitigationControl);
             q.bindValue(":responsibility", c.responsibility);
             q.bindValue(":IAControls", c.iaControls);
+            q.bindValue(":targetKey", c.targetKey);
             q.exec();
         }
         if (!delayed)
@@ -347,6 +350,30 @@ void DbManager::AddSTIGToAsset(const STIG &s, const Asset &a)
                 db.commit();
             }
         }
+    }
+}
+
+void DbManager::DeleteAsset(int id)
+{
+    DeleteAsset(GetAsset(id));
+}
+
+void DbManager::DeleteAsset(const Asset &a)
+{
+    if (a.STIGs().count() > 0)
+    {
+        QMessageBox::warning(nullptr, "Asset Has Mapped STIGs", "The Asset '" + PrintAsset(a) + "' has STIGs selected that must be removed.");
+        return;
+    }
+    QSqlDatabase db;
+    if (this->CheckDatabase(db))
+    {
+        QSqlQuery q(db);
+        q.prepare("DELETE FROM Asset WHERE id = :AssetId");
+        q.bindValue(":AssetId", a.id);
+        q.exec();
+        if (!_delayCommit)
+            db.commit();
     }
 }
 
@@ -573,9 +600,16 @@ CKLCheck DbManager::GetCKLCheck(const CKLCheck &ckl)
     return ret;
 }
 
-QList<CKLCheck> DbManager::GetCKLChecks(const Asset &a)
+QList<CKLCheck> DbManager::GetCKLChecks(const Asset &a, const STIG *s)
 {
-    return GetCKLChecks("WHERE AssetId = :AssetId", {std::make_tuple<QString, QVariant>(":AssetId", a.id)});
+    QString whereClause = "WHERE AssetId = :AssetId";
+    QList<std::tuple<QString, QVariant> > variables = {std::make_tuple<QString, QVariant>(":AssetId", a.id)};
+    if (s != nullptr)
+    {
+        whereClause.append(" AND STIGCheckId IN (SELECT id FROM STIGCheck WHERE STIGId = :STIGId)");
+        variables.append(std::make_tuple<QString, QVariant>(":STIGId", s->id));
+    }
+    return GetCKLChecks(whereClause, variables);
 }
 
 QList<CKLCheck> DbManager::GetCKLChecks(const QString &whereClause, const QList<std::tuple<QString, QVariant> > &variables)
@@ -650,7 +684,7 @@ QList<STIGCheck> DbManager::GetSTIGChecks(const QString &whereClause, const QLis
     if (this->CheckDatabase(db))
     {
         QSqlQuery q(db);
-        QString toPrep = "SELECT `id`, `STIGId`, `CCIId`, `rule`, `vulnNum`, `groupTitle`, `ruleVersion`, `severity`, `weight`, `title`, `vulnDiscussion`, `falsePositives`, `falseNegatives`, `fix`, `check`, `documentable`, `mitigations`, `severityOverrideGuidance`, `checkContentRef`, `potentialImpact`, `thirdPartyTools`, `mitigationControl`, `responsibility`, `IAControls` FROM STIGCheck";
+        QString toPrep = "SELECT `id`, `STIGId`, `CCIId`, `rule`, `vulnNum`, `groupTitle`, `ruleVersion`, `severity`, `weight`, `title`, `vulnDiscussion`, `falsePositives`, `falseNegatives`, `fix`, `check`, `documentable`, `mitigations`, `severityOverrideGuidance`, `checkContentRef`, `potentialImpact`, `thirdPartyTools`, `mitigationControl`, `responsibility`, `IAControls`, `targetKey` FROM STIGCheck";
         if (!whereClause.isNull() && !whereClause.isEmpty())
             toPrep.append(" " + whereClause);
         q.prepare(toPrep);
@@ -689,6 +723,7 @@ QList<STIGCheck> DbManager::GetSTIGChecks(const QString &whereClause, const QLis
             c.mitigationControl = q.value(21).toString();
             c.thirdPartyTools = q.value(22).toString();
             c.iaControls = q.value(23).toString();
+            c.targetKey = q.value(24).toString();
             ret.append(c);
         }
     }
@@ -707,7 +742,7 @@ QList<STIG> DbManager::GetSTIGs(const QString &whereClause, const QList<std::tup
     if (this->CheckDatabase(db))
     {
         QSqlQuery q(db);
-        QString toPrep = "SELECT id, title, description, release, version FROM STIG";
+        QString toPrep = "SELECT id, title, description, release, version, benchmarkId, fileName FROM STIG";
         if (!whereClause.isNull() && !whereClause.isEmpty())
             toPrep.append(" " + whereClause);
         toPrep.append(" ORDER BY LOWER(title), title");
@@ -728,6 +763,8 @@ QList<STIG> DbManager::GetSTIGs(const QString &whereClause, const QList<std::tup
             s.description = q.value(2).toString();
             s.release = q.value(3).toString();
             s.version = q.value(4).toInt();
+            s.benchmarkId = q.value(5).toString();
+            s.fileName = q.value(6).toString();
             ret.append(s);
         }
     }
@@ -1021,7 +1058,9 @@ bool DbManager::UpdateDatabaseFromVersion(int version)
                       "`title`	TEXT, "
                       "`description`	TEXT, "
                       "`release`	TEXT, "
-                      "`version`	INTEGER "
+                      "`version`	INTEGER, "
+                      "`benchmarkId`	TEXT, "
+                      "`fileName`	TEXT "
                       ")");
             q.exec();
             q.prepare("CREATE TABLE `STIGCheck` ( "
@@ -1049,6 +1088,7 @@ bool DbManager::UpdateDatabaseFromVersion(int version)
                       "`mitigationControl`	TEXT, "
                       "`responsibility`	TEXT, "
                       "`IAControls` TEXT, "
+                      "`targetKey` TEXT, "
                       "FOREIGN KEY(`STIGId`) REFERENCES `STIG`(`id`), "
                       "FOREIGN KEY(`CCIId`) REFERENCES `CCI`(`id`) "
                       ")");

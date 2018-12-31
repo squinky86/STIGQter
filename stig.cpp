@@ -31,7 +31,9 @@ STIG::STIG(QObject *parent) : QObject(parent),
     title(),
     description(),
     release(),
-    version(0)
+    version(0),
+    benchmarkId(),
+    fileName()
 {
 }
 
@@ -55,6 +57,8 @@ STIG &STIG::operator=(const STIG &right)
         description = right.description;
         release = right.release;
         version = right.version;
+        benchmarkId = right.benchmarkId;
+        fileName = right.fileName;
     }
     return *this;
 }

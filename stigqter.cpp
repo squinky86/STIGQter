@@ -96,7 +96,10 @@ void STIGQter::OpenCKL()
                  return;
              }
         }
-        int index = ui->tabDB->addTab(new AssetView(a), assetName);
+        AssetView *av = new AssetView(a);
+        connect(av, SIGNAL(CloseTab(int)), this, SLOT(CloseTab(int)));
+        int index = ui->tabDB->addTab(av, assetName);
+        av->SetTabIndex(index);
         ui->tabDB->setCurrentIndex(index);
     }
 }
@@ -210,6 +213,7 @@ void STIGQter::CloseTab(int i)
 {
     if (ui->tabDB->count() > i)
         ui->tabDB->removeTab(i);
+    DisplayAssets();
 }
 
 void STIGQter::DeleteCCIs()

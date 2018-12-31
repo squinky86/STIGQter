@@ -83,18 +83,18 @@ Status GetStatus(const QString &status)
     return Status::NotReviewed;
 }
 
-QString GetStatus(const Status &status)
+QString GetStatus(const Status &status, bool xmlFormat)
 {
     switch (status)
     {
     case Status::Open:
         return "Open";
     case Status::NotApplicable:
-        return "Not Applicable";
+        return xmlFormat ? "Not_Applicable" : "Not Applicable";
     case Status::NotAFinding:
-        return "Not a Finding";
+        return xmlFormat ? "NotAFinding" : "Not a Finding";
     default:
-        return "Not Reviewed";
+        return xmlFormat ? "Not_Reviewed" : "Not Reviewed";
     }
 }
 

@@ -73,7 +73,7 @@ QString DownloadPage(const QUrl &u)
     return html;
 }
 
-QByteArrayList GetXMLFromZip(const char* f)
+QByteArrayList GetXMLFromZip(const char* f, QString *fileName)
 {
     QByteArrayList ret;
     struct zip *za;
@@ -91,6 +91,15 @@ QByteArrayList GetXMLFromZip(const char* f)
                 QString name(sb.name);
                 if (name.endsWith(".xml", Qt::CaseInsensitive))
                 {
+                    if (fileName)
+                    {
+                        //trim of subdirectory
+                        if (name.contains('/'))
+                        {
+                            name = name.right(name.length() - name.lastIndexOf('/') - 1);
+                        }
+                        *fileName = name;
+                    }
                     QByteArray todo;
                     zf = zip_fopen_index(za, i, 0);
                     if (zf)
@@ -170,4 +179,9 @@ QString Excelify(const QString &s)
     //Excel is limited to 32,767 characters per-cell
     QString ret = s.left(32767);
     return ret;
+}
+
+QString PrintTrueFalse(bool tf)
+{
+    return tf ? "true" : "false";
 }

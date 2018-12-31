@@ -49,6 +49,8 @@ public:
     void AddSTIG(STIG s, QList<STIGCheck> c);
     void AddSTIGToAsset(const STIG &s, const Asset &a);
 
+    void DeleteAsset(int id);
+    void DeleteAsset(const Asset &a);
     void DeleteCCIs();
     bool DeleteSTIG(int id);
     bool DeleteSTIG(STIG s);
@@ -63,7 +65,7 @@ public:
     QList<CCI> GetCCIs(const QString &whereClause = "", const QList<std::tuple<QString, QVariant>> &variables = {});
     CKLCheck GetCKLCheck(const int &id);
     CKLCheck GetCKLCheck(const CKLCheck &ckl);
-    QList<CKLCheck> GetCKLChecks(const Asset &a);
+    QList<CKLCheck> GetCKLChecks(const Asset &a, const STIG *s = nullptr);
     QList<CKLCheck> GetCKLChecks(const QString &whereClause = "", const QList<std::tuple<QString, QVariant>> &variables = {});
     Control GetControl(int id);
     Control GetControl(QString control);

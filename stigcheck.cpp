@@ -51,7 +51,8 @@ STIGCheck::STIGCheck(QObject *parent) : QObject(parent),
     thirdPartyTools(),
     mitigationControl(),
     responsibility(),
-    iaControls()
+    iaControls(),
+    targetKey()
 {
 }
 
@@ -88,17 +89,18 @@ STIGCheck& STIGCheck::operator=(const STIGCheck &right)
         mitigationControl = right.mitigationControl;
         responsibility = right.responsibility;
         iaControls = right.iaControls;
+        targetKey = right.targetKey;
     }
     return *this;
 }
 
-STIG STIGCheck::STIG()
+STIG STIGCheck::STIG() const
 {
     DbManager db;
     return db.GetSTIG(stigId);
 }
 
-CCI STIGCheck::CCI()
+CCI STIGCheck::CCI() const
 {
     DbManager db;
     return db.GetCCI(cciId);
@@ -115,17 +117,17 @@ Severity GetSeverity(const QString &severity)
     return Severity::low;
 }
 
-QString GetSeverity(const Severity &severity)
+QString GetSeverity(const Severity &severity, bool cat)
 {
     switch (severity)
     {
     case Severity::high:
-        return "CAT I";
+        return cat ? "CAT I" : "high";
     case Severity::medium:
-        return "CAT II";
+        return cat ? "CAT II" : "medium";
     case Severity::low:
-        return "CAT III";
+        return cat ? "CAT III" : "low";
     default:
-        return "CAT IV";
+        return cat ? "CAT IV" : "";
     }
 }

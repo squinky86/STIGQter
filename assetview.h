@@ -45,14 +45,17 @@ public:
     void ShowChecks();
     void UpdateCKLCheck(const CKLCheck &cc);
     void UpdateSTIGCheck(const STIGCheck &sc);
+    void SetTabIndex(int index);
 
 private slots:
     void CheckSelected(QListWidgetItem *current, QListWidgetItem *previous);
     void CheckSelectedChanged();
+    void DeleteAsset();
     void KeyShortcutCtrlN();
     void KeyShortcutCtrlO();
     void KeyShortcutCtrlR();
     void KeyShortcutCtrlX();
+    void SaveCKL();
     void UpdateCKL();
     void UpdateCKLHelper();
     void UpdateCKLStatus(const QString &val);
@@ -66,9 +69,12 @@ private:
     QTimer _timer;
     QList<QShortcut*> _shortcuts;
     bool _updateStatus;
+    int _tabIndex;
     void KeyShortcut(const Status &action);
-
     void SetItemColor(QListWidgetItem *i, const Status &stat, const Severity &sev);
+
+signals:
+    void CloseTab(int);
 };
 
 #endif // ASSETVIEW_H
