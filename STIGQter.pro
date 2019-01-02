@@ -61,7 +61,8 @@ SOURCES += \
     workerassetadd.cpp \
     workercklimport.cpp \
     assetview.cpp \
-    workerfindingsreport.cpp
+    workerfindingsreport.cpp \
+    workeremassreport.cpp
 
 HEADERS += \
         stigqter.h \
@@ -82,7 +83,8 @@ HEADERS += \
     workerassetadd.h \
     workercklimport.h \
     assetview.h \
-    workerfindingsreport.h
+    workerfindingsreport.h \
+    workeremassreport.h
 
 FORMS += \
         stigqter.ui \
