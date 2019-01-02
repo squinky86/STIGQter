@@ -58,7 +58,27 @@ void WorkerCKLImport::ParseCKL(QString fileName)
         {
             if (inStigs)
             {
-                if (xml->name() == "SID_NAME" || xml->name() == "VULN_ATTRIBUTE")
+                if (xml->name() == "iSTIG" && checks.count() > 0)
+                {
+                    a = CheckAsset(a);
+                    if (a.STIGs().contains(tmpSTIG))
+                    {
+                        QMessageBox::warning(nullptr, "Asset already has STIG applied!", "The asset " + PrintAsset(a) + " already has the STIG " + PrintSTIG(tmpSTIG) + " applied and will not be imported.");
+                    }
+                    else
+                    {
+                        db.AddSTIGToAsset(tmpSTIG, a);
+                        db.DelayCommit(true);
+                        foreach (CKLCheck c, checks)
+                        {
+                            c.assetId = a.id;
+                            db.UpdateCKLCheck(c);
+                        }
+                        db.DelayCommit(false);
+                    }
+                    checks.clear();
+                }
+                else if (xml->name() == "SID_NAME" || xml->name() == "VULN_ATTRIBUTE")
                 {
                     onVar = xml->readElementText().trimmed();
                 }
@@ -82,6 +102,11 @@ void WorkerCKLImport::ParseCKL(QString fileName)
                     if (onVar == "Rule_ID")
                     {
                         tmpSTIG = db.GetSTIG(tmpSTIG.title, tmpSTIG.version, tmpSTIG.release);
+                        if (tmpSTIG.id < 0)
+                        {
+                            //This STIG does not exist in the database and a warning message has already been presented to the user
+                            return;
+                        }
                         tmpCheck = db.GetSTIGCheck(tmpSTIG, xml->readElementText().trimmed());
                     }
                 }
@@ -157,23 +182,32 @@ void WorkerCKLImport::ParseCKL(QString fileName)
     }
 
     //if the asset is already in the database, use it as the one to import the CKL against
-    Asset tmpAsset = db.GetAsset(a.hostName);
-    if (tmpAsset.id > 0)
-        a = tmpAsset;
-    else
-        db.AddAsset(a);
+    a = CheckAsset(a);
     if (a.STIGs().contains(tmpSTIG))
     {
         QMessageBox::warning(nullptr, "Asset already has STIG applied!", "The asset " + PrintAsset(a) + " already has the STIG " + PrintSTIG(tmpSTIG) + " applied.");
         return;
     }
     db.AddSTIGToAsset(tmpSTIG, a);
+    db.DelayCommit(true);
     foreach (CKLCheck c, checks)
     {
         c.assetId = a.id;
         db.UpdateCKLCheck(c);
     }
+    db.DelayCommit(false);
     delete xml;
+}
+
+Asset WorkerCKLImport::CheckAsset(Asset &a)
+{
+    DbManager db;
+    Asset tmpAsset = db.GetAsset(a.hostName);
+    if (tmpAsset.id > 0)
+        a = tmpAsset;
+    else
+        db.AddAsset(a);
+    return a;
 }
 
 WorkerCKLImport::WorkerCKLImport(QObject *parent) : QObject(parent)

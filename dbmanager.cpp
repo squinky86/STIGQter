@@ -932,7 +932,7 @@ STIG DbManager::GetSTIG(const QString &title, const int &version, const QString 
     if (tmpStigs.count() > 0)
         return tmpStigs.first();
     STIG ret;
-    QMessageBox::warning(nullptr, "Unable to Find STIG", "The following STIG has not been added to the master database:\nTitle: " + title + "\nVersion: " + QString::number(version) + "\nRelease: " + release);
+    QMessageBox::warning(nullptr, "Unable to Find STIG", "The following STIG has not been added to the master database:\nTitle: " + title + "\nVersion: " + QString::number(version) + "\n" + release);
     return ret;
 }
 

@@ -258,7 +258,9 @@ void WorkerSTIGAdd::ParseSTIG(const QByteArray &stig, const QString &fileName)
         checks.append(c);
     }
     delete xml;
-    db.AddSTIG(s, checks);
+    //Sometimes the .zip file contains extraneous .xml files
+    if (checks.count() > 0)
+        db.AddSTIG(s, checks);
 }
 
 WorkerSTIGAdd::WorkerSTIGAdd(QObject *parent) : QObject(parent)

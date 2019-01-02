@@ -20,6 +20,8 @@
 #ifndef WORKERCKLIMPORT_H
 #define WORKERCKLIMPORT_H
 
+#include "asset.h"
+
 #include <QThread>
 
 class WorkerCKLImport : public QObject
@@ -29,6 +31,7 @@ class WorkerCKLImport : public QObject
 protected:
     QStringList _fileNames;
     void ParseCKL(QString fileName);
+    Asset CheckAsset(Asset &a);
 
 public:
     explicit WorkerCKLImport(QObject *parent = nullptr);
