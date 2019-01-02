@@ -113,6 +113,8 @@ void WorkerSTIGAdd::ParseSTIG(const QByteArray &stig, const QString &fileName)
                         if (attr.name() == "id")
                         {
                             c.vulnNum = attr.value().toString().trimmed();
+                            if (!c.vulnNum.startsWith("V-") && c.vulnNum.contains("V-"))
+                                c.vulnNum = c.vulnNum.right(c.vulnNum.length() - c.vulnNum.indexOf("V-"));
                         }
                     }
                 }
@@ -139,6 +141,8 @@ void WorkerSTIGAdd::ParseSTIG(const QByteArray &stig, const QString &fileName)
                         if (attr.name() == "id")
                         {
                             c.rule = attr.value().toString().trimmed();
+                            if (!c.rule.startsWith("SV-") && c.rule.contains("SV-"))
+                                c.rule = c.rule.right(c.rule.length() - c.rule.indexOf("SV-"));
                         }
                         else if (attr.name() == "severity")
                         {
@@ -226,7 +230,7 @@ void WorkerSTIGAdd::ParseSTIG(const QByteArray &stig, const QString &fileName)
                 {
                     QString cci(xml->readElementText().trimmed());
                     if (cci.startsWith("CCI", Qt::CaseInsensitive))
-                        c.cciId = db.GetCCIByCCI(GetCCINumber(cci)).id;
+                        c.cciId = db.GetCCIByCCI(GetCCINumber(cci), &s).id;
                 }
                 else if (xml->name() == "fixtext")
                 {

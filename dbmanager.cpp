@@ -510,12 +510,15 @@ CCI DbManager::GetCCI(const int &id)
     return GetCCIs("WHERE id = :id", {std::make_tuple<QString, QVariant>(":id", id)}).first();
 }
 
-CCI DbManager::GetCCIByCCI(const int &cci)
+CCI DbManager::GetCCIByCCI(const int &cci, const STIG *s)
 {
     QList<CCI> tmpList = GetCCIs("WHERE cci = :cci", {std::make_tuple<QString, QVariant>(":cci", cci)});
     if (tmpList.count() > 0)
         return tmpList.first();
-    QMessageBox::warning(nullptr, "Broken CCI", "The CCI CCI-" + QString::number(cci) + " does not exist in NIST 800-53r4. If you are importing a STIG, please file a bug with the STIG author (probably DISA, disa.stig_spt@mail.mil) and let them know that their CCI mapping for the STIG you are trying to import is broken. For now, this broken STIG check is being remapped to CCI-366.");
+    QString tmpMessage = "&lt;insert%20STIG%20information%20here&gt;";
+    if (s)
+        tmpMessage = PrintSTIG(*s);
+    QMessageBox::warning(nullptr, "Broken CCI", "The CCI CCI-" + QString::number(cci) + " does not exist in NIST 800-53r4. If you are importing a STIG, please file a bug with the STIG author (probably DISA, disa.stig_spt@mail.mil) and let them know that their CCI mapping for the STIG you are trying to import is broken. For now, this broken STIG check is being remapped to CCI-366. <a href=\"mailto:disa.stig_spt@mail.mil?subject=Incorrectly%20Mapped%20STIG%20Check&body=DISA,%0d&" + tmpMessage + "%20contains%20rule(s)%20mapped%20against%20CCI-" + QString::number(cci) + "%20which%20does%20not%20exist%20in%20the%20current%20version%20of%20NIST%20800-53r4.\">Click here</a> to file this bug with DISA automatically.");
     tmpList = GetCCIs("WHERE cci = :cci", {std::make_tuple<QString, QVariant>(":cci", 366)});
     if (tmpList.count() > 0)
         return tmpList.first();
@@ -523,11 +526,11 @@ CCI DbManager::GetCCIByCCI(const int &cci)
     return ret;
 }
 
-CCI DbManager::GetCCIByCCI(const CCI &cci)
+CCI DbManager::GetCCIByCCI(const CCI &cci, const STIG *s)
 {
     if (cci.id < 0)
     {
-        return GetCCIByCCI(cci.cci);
+        return GetCCIByCCI(cci.cci, s);
     }
     return GetCCI(cci.id);
 }

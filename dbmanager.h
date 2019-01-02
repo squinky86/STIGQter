@@ -60,8 +60,8 @@ public:
     Asset GetAsset(const QString &hostName);
     QList<Asset> GetAssets(const QString &whereClause = "", const QList<std::tuple<QString, QVariant>> &variables = {});
     CCI GetCCI(const int &id);
-    CCI GetCCIByCCI(const int &cci);
-    CCI GetCCIByCCI(const CCI &cci);
+    CCI GetCCIByCCI(const int &cci, const STIG *s = nullptr);
+    CCI GetCCIByCCI(const CCI &cci, const STIG *s = nullptr);
     QList<CCI> GetCCIs(const QString &whereClause = "", const QList<std::tuple<QString, QVariant>> &variables = {});
     CKLCheck GetCKLCheck(const int &id);
     CKLCheck GetCKLCheck(const CKLCheck &ckl);
