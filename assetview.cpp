@@ -41,7 +41,10 @@ AssetView::AssetView(QWidget *parent) :
     _tabIndex(-1)
 {
     ui->setupUi(this);
+    _timer.setSingleShot(true);
+    _timerChecks.setSingleShot(true);
     connect(&_timer, SIGNAL(timeout()), this, SLOT(UpdateCKLHelper()));
+    connect(&_timerChecks, SIGNAL(timeout()), this, SLOT(CountChecks()));
 
     _shortcuts.append(new QShortcut(QKeySequence(Qt::CTRL + Qt::Key_N), this, SLOT(KeyShortcutCtrlN())));
     _shortcuts.append(new QShortcut(QKeySequence(Qt::CTRL + Qt::Key_O), this, SLOT(KeyShortcutCtrlO())));
@@ -85,9 +88,15 @@ void AssetView::SelectSTIGs()
     //ui->lstSTIGs->blockSignals(false);
 }
 
-void AssetView::ShowChecks()
+void AssetView::CountChecks()
 {
-    ui->lstChecks->clear();
+    ShowChecks(true);
+}
+
+void AssetView::ShowChecks(bool countOnly)
+{
+    if (!countOnly)
+        ui->lstChecks->clear();
     int total = 0;
     int open = 0;
     int closed = 0;
@@ -105,15 +114,19 @@ void AssetView::ShowChecks()
         default:
             break;
         }
-        QListWidgetItem *i = new QListWidgetItem(PrintCKLCheck(c));
-        ui->lstChecks->addItem(i);
-        i->setData(Qt::UserRole, QVariant::fromValue<CKLCheck>(c));
-        SetItemColor(i, c.status, (c.severityOverride == Severity::none) ? c.STIGCheck().severity : c.severityOverride);
+        if (!countOnly)
+        {
+            QListWidgetItem *i = new QListWidgetItem(PrintCKLCheck(c));
+            ui->lstChecks->addItem(i);
+            i->setData(Qt::UserRole, QVariant::fromValue<CKLCheck>(c));
+            SetItemColor(i, c.status, (c.severityOverride == Severity::none) ? c.STIGCheck().severity : c.severityOverride);
+        }
     }
     ui->lblTotalChecks->setText(QString::number(total));
     ui->lblOpen->setText(QString::number(open));
     ui->lblNotAFinding->setText(QString::number(closed));
-    ui->lstChecks->sortItems();
+    if (!countOnly)
+        ui->lstChecks->sortItems();
 }
 
 void AssetView::UpdateCKLCheck(const CKLCheck &cc)
@@ -615,13 +628,14 @@ void AssetView::UpdateCKLHelper()
                 if (_updateStatus)
                 {
                     cc.status = GetStatus(ui->cboBoxStatus->currentText());
-                    _updateStatus = false;
                 }
             }
             DbManager db;
             db.UpdateCKLCheck(cc);
             i->setData(Qt::UserRole, QVariant::fromValue<CKLCheck>(db.GetCKLCheck(cc)));
         }
+        _updateStatus = false;
+        _timerChecks.start(1000);
     }
 }
 

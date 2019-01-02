@@ -42,7 +42,7 @@ public:
     ~AssetView();
     void Display();
     void SelectSTIGs();
-    void ShowChecks();
+    void ShowChecks(bool countOnly = false);
     void UpdateCKLCheck(const CKLCheck &cc);
     void UpdateSTIGCheck(const STIGCheck &sc);
     void SetTabIndex(int index);
@@ -50,6 +50,7 @@ public:
 private slots:
     void CheckSelected(QListWidgetItem *current, QListWidgetItem *previous);
     void CheckSelectedChanged();
+    void CountChecks();
     void DeleteAsset();
     void KeyShortcutCtrlN();
     void KeyShortcutCtrlO();
@@ -67,6 +68,7 @@ private:
     Asset _a;
     QString _justification;
     QTimer _timer;
+    QTimer _timerChecks;
     QList<QShortcut*> _shortcuts;
     bool _updateStatus;
     int _tabIndex;
