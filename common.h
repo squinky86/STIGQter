@@ -24,7 +24,7 @@
 #include <QFile>
 #include <QNetworkReply>
 
-#define VERSION "0.0.1"
+#define VERSION "0.1.0"
 
 bool DownloadFile(const QUrl &u, QFile *f);
 QString DownloadPage(const QUrl &u);
