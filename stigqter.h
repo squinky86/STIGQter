@@ -71,6 +71,7 @@ private:
     void DisplayCCIs();
     void DisplaySTIGs();
     void EnableInput();
+    void UpdateSTIGs();
 };
 
 #endif // STIGQTER_H

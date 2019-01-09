@@ -107,6 +107,7 @@ void STIGQter::OpenCKL()
 
 void STIGQter::SelectAsset()
 {
+    UpdateSTIGs();
     EnableInput();
 }
 
@@ -356,6 +357,19 @@ void STIGQter::EnableInput()
     ui->btnQuit->setEnabled(true);
     ui->menubar->setEnabled(true);
     SelectSTIG();
+}
+
+void STIGQter::UpdateSTIGs()
+{
+    ui->lstCKLs->clear();
+    foreach (QListWidgetItem *i, ui->lstAssets->selectedItems())
+    {
+        Asset a = i->data(Qt::UserRole).value<Asset>();
+        foreach (const STIG &s, a.STIGs())
+        {
+            ui->lstCKLs->addItem(PrintSTIG(s));
+        }
+    }
 }
 
 void STIGQter::Initialize(int max, int val)
