@@ -611,6 +611,8 @@ void AssetView::UpdateCKLHelper()
     //make sure that something is selected
     if (count > 0)
     {
+        DbManager db;
+        db.DelayCommit(true);
         foreach (QListWidgetItem *i, selectedItems)
         {
             CKLCheck cc = i->data(Qt::UserRole).value<CKLCheck>();
@@ -630,10 +632,10 @@ void AssetView::UpdateCKLHelper()
                     cc.status = GetStatus(ui->cboBoxStatus->currentText());
                 }
             }
-            DbManager db;
             db.UpdateCKLCheck(cc);
             i->setData(Qt::UserRole, QVariant::fromValue<CKLCheck>(db.GetCKLCheck(cc)));
         }
+        db.DelayCommit(false);
         _updateStatus = false;
         _timerChecks.start(1000);
     }
