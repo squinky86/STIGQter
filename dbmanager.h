@@ -82,6 +82,7 @@ public:
     QList<STIG> GetSTIGs(const QString &whereClause = "", const QList<std::tuple<QString, QVariant> > &variables = {});
     QString GetVariable(const QString &name);
 
+    void ImportCCI(const CCI &cci);
     void UpdateCKLCheck(const CKLCheck &check);
     void UpdateVariable(const QString &name, const QString &value);
 

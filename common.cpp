@@ -73,15 +73,17 @@ QString DownloadPage(const QUrl &u)
     return html;
 }
 
-QByteArrayList GetXMLFromZip(const char* f, QString *fileName)
+//extract a .zip file and store the contents in memory
+//fileNameFilter is a case-insensitive end-of-filename search
+QMap<QString, QByteArray> GetFilesFromZip(const QString &fileName, QString fileNameFilter)
 {
-    QByteArrayList ret;
+    QMap<QString, QByteArray> ret;
     struct zip *za;
     int err;
     struct zip_stat sb;
     zip_stat_init(&sb); //initializes sb
     struct zip_file *zf;
-    za = zip_open(f, 0, &err);
+    za = zip_open(fileName.toStdString().c_str(), 0, &err);
     if (za != nullptr)
     {
         for (unsigned int i = 0; i < zip_get_num_entries(za, 0); i++)
@@ -89,36 +91,33 @@ QByteArrayList GetXMLFromZip(const char* f, QString *fileName)
             if (zip_stat_index(za, i, 0, &sb) == 0)
             {
                 QString name(sb.name);
-                if (name.endsWith(".xml", Qt::CaseInsensitive))
+                if (!fileNameFilter.isNull() && !fileNameFilter.isEmpty())
                 {
-                    if (fileName)
+                    if (!name.endsWith(fileNameFilter, Qt::CaseInsensitive))
                     {
-                        //trim of subdirectory
-                        if (name.contains('/'))
-                        {
-                            name = name.right(name.length() - name.lastIndexOf('/') - 1);
-                        }
-                        *fileName = name;
+                        continue;
                     }
-                    QByteArray todo;
-                    zf = zip_fopen_index(za, i, 0);
-                    if (zf)
-                    {
-                        unsigned int sum = 0;
-                        while (sum < sb.size)
-                        {
-                            char buf[1024];
-                            zip_int64_t len = zip_fread(zf, static_cast<void*>(buf), 1024);
-                            if (len > 0)
-                            {
-                                todo.append(static_cast<const char*>(buf), static_cast<int>(len));
-                                sum += len;
-                            }
-                        }
-                        zip_fclose(zf);
-                    }
-                    ret.append(todo);
                 }
+
+                QString zipName(name);
+                QByteArray todo;
+                zf = zip_fopen_index(za, i, 0);
+                if (zf)
+                {
+                    unsigned int sum = 0;
+                    while (sum < sb.size)
+                    {
+                        char buf[1024];
+                        zip_int64_t len = zip_fread(zf, static_cast<void*>(buf), 1024);
+                        if (len > 0)
+                        {
+                            todo.append(static_cast<const char*>(buf), static_cast<int>(len));
+                            sum += len;
+                        }
+                    }
+                    zip_fclose(zf);
+                }
+                ret.insert(zipName, todo);
             }
         }
         zip_close(za);

@@ -1,7 +1,7 @@
 /*
  * STIGQter - STIG fun with Qt
  *
- * Copyright © 2018–2019 Jon Hood, http://www.hoodsecurity.com/
+ * Copyright © 2019 Jon Hood, http://www.hoodsecurity.com/
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -17,21 +17,30 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#ifndef COMMON_H
-#define COMMON_H
+#ifndef WORKERIMPORTEMASS_H
+#define WORKERIMPORTEMASS_H
 
-#include <QByteArrayList>
-#include <QFile>
-#include <QNetworkReply>
+#include <QObject>
 
-#define VERSION "0.1.1"
+class WorkerImportEMASS : public QObject
+{
+    Q_OBJECT
 
-bool DownloadFile(const QUrl &u, QFile *f);
-QString DownloadPage(const QUrl &u);
-QString Excelify(const QString &s);
-int GetCCINumber(QString cci);
-QMap<QString, QByteArray> GetFilesFromZip(const QString &fileName, QString fileNameFilter = "");
-QString PrintTrueFalse(bool tf);
-QString CleanXML(QString s, bool isXml = false);
+private:
+    QString _fileName;
 
-#endif // COMMON_H
+public:
+    explicit WorkerImportEMASS(QObject *parent = nullptr);
+    void SetReportName(const QString &fileName);
+
+public slots:
+    void process();
+
+signals:
+    void initialize(int, int);
+    void progress(int);
+    void updateStatus(QString);
+    void finished();
+};
+
+#endif // WORKERIMPORTEMASS_H

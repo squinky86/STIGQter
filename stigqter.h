@@ -49,6 +49,7 @@ private slots:
     void ExportEMASS();
     void FindingsReport();
     void ImportCKLs();
+    void ImportEMASS();
     void SelectSTIG();
     void UpdateCCIs();
     void OpenCKL();

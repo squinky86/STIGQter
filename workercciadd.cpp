@@ -200,7 +200,7 @@ void WorkerCCIAdd::process()
         DownloadFile(ccis, &tmpFile);
         emit progress(-1);
         emit updateStatus("Extracting CCIs…");
-        xmlFiles = GetXMLFromZip(tmpFile.fileName().toStdString().c_str());
+        xmlFiles = GetFilesFromZip(tmpFile.fileName().toStdString().c_str(), ".xml").values();
         tmpFile.close();
     }
 

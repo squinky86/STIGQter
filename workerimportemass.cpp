@@ -1,7 +1,7 @@
 /*
  * STIGQter - STIG fun with Qt
  *
- * Copyright © 2018–2019 Jon Hood, http://www.hoodsecurity.com/
+ * Copyright © 2019 Jon Hood, http://www.hoodsecurity.com/
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -17,21 +17,25 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#ifndef COMMON_H
-#define COMMON_H
+#include "common.h"
+#include "dbmanager.h"
+#include "workerimportemass.h"
 
-#include <QByteArrayList>
-#include <QFile>
-#include <QNetworkReply>
+WorkerImportEMASS::WorkerImportEMASS(QObject *parent) : QObject(parent), _fileName()
+{
+}
 
-#define VERSION "0.1.1"
+void WorkerImportEMASS::SetReportName(const QString &fileName)
+{
+    _fileName = fileName;
+}
 
-bool DownloadFile(const QUrl &u, QFile *f);
-QString DownloadPage(const QUrl &u);
-QString Excelify(const QString &s);
-int GetCCINumber(QString cci);
-QMap<QString, QByteArray> GetFilesFromZip(const QString &fileName, QString fileNameFilter = "");
-QString PrintTrueFalse(bool tf);
-QString CleanXML(QString s, bool isXml = false);
+void WorkerImportEMASS::process()
+{
+    DbManager db;
 
-#endif // COMMON_H
+    //TODO: import EMASS sheet
+
+    emit updateStatus("Done!");
+    emit finished();
+}

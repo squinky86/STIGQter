@@ -217,4 +217,3 @@ void WorkerEMASSReport::process()
     emit updateStatus("Done!");
     emit finished();
 }
-

@@ -54,6 +54,11 @@ CCI& CCI::operator=(const CCI &right)
         controlId = right.controlId;
         cci = right.cci;
         definition = right.definition;
+        isImport = right.isImport;
+        importCompliance = right.importCompliance;
+        importDateTested = right.importDateTested;
+        importTestedBy = right.importTestedBy;
+        importTestResults = right.importTestResults;
     }
     return *this;
 }

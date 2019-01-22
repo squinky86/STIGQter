@@ -30,6 +30,7 @@
 #include "assetview.h"
 #include "workerfindingsreport.h"
 #include "workeremassreport.h"
+#include "workerimportemass.h"
 
 #include <QThread>
 #include <QDebug>
@@ -326,6 +327,29 @@ void STIGQter::ImportCKLs()
     t->start();
 }
 
+void STIGQter::ImportEMASS()
+{
+    DisableInput();
+
+    QString fileName = QFileDialog::getOpenFileName(this,
+        "Import eMASS TRExport", QDir::home().dirName(), "Excel Spreadsheet (*.xlsx)");
+
+    QThread* t = new QThread;
+    WorkerImportEMASS *c = new WorkerImportEMASS();
+    c->SetReportName(fileName);
+    c->moveToThread(t);
+    connect(t, SIGNAL(started()), c, SLOT(process()));
+    connect(c, SIGNAL(finished()), t, SLOT(quit()));
+    connect(t, SIGNAL(finished()), this, SLOT(CompletedThread()));
+    connect(c, SIGNAL(initialize(int, int)), this, SLOT(Initialize(int, int)));
+    connect(c, SIGNAL(progress(int)), this, SLOT(Progress(int)));
+    connect(c, SIGNAL(updateStatus(QString)), ui->lblStatus, SLOT(setText(QString)));
+    threads.append(t);
+    workers.append(c);
+
+    t->start();
+}
+
 void STIGQter::SelectSTIG()
 {
     //select STIGs to create checklists
@@ -353,6 +377,7 @@ void STIGQter::EnableInput()
     ui->btnCreateCKL->setEnabled(true);
     ui->btnFindingsReport->setEnabled(true);
     ui->btnImportCKL->setEnabled(true);
+    ui->btnImportEmass->setEnabled(true);
     ui->btnOpenCKL->setEnabled(ui->lstAssets->selectedItems().count() > 0);
     ui->btnQuit->setEnabled(true);
     ui->menubar->setEnabled(true);
@@ -397,6 +422,7 @@ void STIGQter::DisableInput()
     ui->btnFindingsReport->setEnabled(false);
     ui->btnImportCCIs->setEnabled(false);
     ui->btnImportCKL->setEnabled(false);
+    ui->btnImportEmass->setEnabled(false);
     ui->btnImportSTIGs->setEnabled(false);
     ui->btnOpenCKL->setEnabled(false);
     ui->btnQuit->setEnabled(false);

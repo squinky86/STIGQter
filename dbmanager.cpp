@@ -542,7 +542,7 @@ QList<CCI> DbManager::GetCCIs(const QString &whereClause, const QList<std::tuple
     if (this->CheckDatabase(db))
     {
         QSqlQuery q(db);
-        QString toPrep = "SELECT id, ControlId, cci, definition FROM CCI";
+        QString toPrep = "SELECT id, ControlId, cci, definition, isImport, importCompliance, importDateTested, importTestedBy, importTestResults FROM CCI";
         if (!whereClause.isNull() && !whereClause.isEmpty())
             toPrep.append(" " + whereClause);
         toPrep.append(" ORDER BY cci");
@@ -562,6 +562,11 @@ QList<CCI> DbManager::GetCCIs(const QString &whereClause, const QList<std::tuple
             c.controlId = q.value(1).toInt();
             c.cci = q.value(2).toInt();
             c.definition = q.value(3).toString();
+            c.isImport = q.value(4).toBool();
+            c.importCompliance = q.value(5).toString();
+            c.importDateTested = q.value(6).toString();
+            c.importTestedBy = q.value(7).toString();
+            c.importTestResults = q.value(8).toString();
 
             ret.append(c);
         }
@@ -957,6 +962,22 @@ QString DbManager::GetVariable(const QString &name)
     return ret;
 }
 
+void DbManager::ImportCCI(const CCI &cci)
+{
+    QSqlDatabase db;
+    if (this->CheckDatabase(db))
+    {
+        QSqlQuery q(db);
+        q.prepare("UPDATE CCI SET isImport = :isImport, importCompliance = :importCompliance, importDateTested = :importDateTested, importTestedBy = :importTestedBy, importTestResults = :importTestResults");
+        q.bindValue(":isImport", cci.isImport);
+        q.bindValue(":importCompliance", cci.importCompliance);
+        q.bindValue(":importDateTested", cci.importDateTested);
+        q.bindValue(":importTestedBy", cci.importTestedBy);
+        q.bindValue(":importTestResults", cci.importTestResults);
+        q.exec();
+    }
+}
+
 void DbManager::UpdateCKLCheck(const CKLCheck &check)
 {
     QSqlDatabase db;
@@ -1048,6 +1069,11 @@ bool DbManager::UpdateDatabaseFromVersion(int version)
                       "`ControlId`	INTEGER, "
                       "`cci`    INTEGER, "
                       "`definition`	TEXT, "
+                      "`isImport` INTEGER NOT NULL DEFAULT 0, "
+                      "`importCompliance`	TEXT, "
+                      "`importDateTested`	TEXT, "
+                      "`importTestedBy`	TEXT, "
+                      "`importTestResults`	TEXT, "
                       "FOREIGN KEY(`ControlId`) REFERENCES `Control`(`id`) "
                       ")");
             q.exec();

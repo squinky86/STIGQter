@@ -37,6 +37,11 @@ public:
     int controlId;
     int cci;
     QString definition;
+    bool isImport;
+    QString importCompliance;
+    QString importDateTested;
+    QString importTestedBy;
+    QString importTestResults;
     friend bool operator<(const CCI &left, const CCI &right)
     {
         return left.cci < right.cci;

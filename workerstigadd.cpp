@@ -286,12 +286,17 @@ void WorkerSTIGAdd::process()
     {
         updateStatus("Extracting " + s + "…");
         //get the list of XML files inside the STIG
-        QString fileName;
-        QByteArrayList toParse = GetXMLFromZip(s.toStdString().c_str(), &fileName);
+        QMap<QString, QByteArray> toParse = GetFilesFromZip(s.toStdString().c_str(), ".xml");
         updateStatus("Parsing " + s + "…");
-        foreach(const QByteArray stig, toParse)
+        foreach(const QString stig, toParse.keys())
         {
-            ParseSTIG(stig, fileName);
+            //trim off subdirectory
+            QString tmpFileName = stig;
+            if (tmpFileName.contains('/'))
+            {
+                tmpFileName = tmpFileName.right(tmpFileName.length() - tmpFileName.lastIndexOf('/') - 1);
+            }
+            ParseSTIG(toParse.value(stig), tmpFileName);
         }
         emit progress(-1);
     }
