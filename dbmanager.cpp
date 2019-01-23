@@ -101,60 +101,60 @@ void DbManager::DelayCommit(bool delay)
     _delayCommit = delay;
 }
 
-bool DbManager::AddAsset(Asset &a)
+bool DbManager::AddAsset(Asset &asset)
 {
     QSqlDatabase db;
     if (this->CheckDatabase(db))
     {
         QSqlQuery q(db);
-        if (a.id <= 0)
+        if (asset.id <= 0)
         {
             q.prepare("SELECT count(*) FROM Asset WHERE hostName = :hostName");
-            q.bindValue(":hostName", a.hostName);
+            q.bindValue(":hostName", asset.hostName);
             q.exec();
             if (q.next())
             {
                 if (q.value(0).toInt() > 0)
                 {
-                    QMessageBox::warning(nullptr, "Asset Already Exists", "The Asset " + PrintAsset(a) + " already exists in the database.");
+                    QMessageBox::warning(nullptr, "Asset Already Exists", "The Asset " + PrintAsset(asset) + " already exists in the database.");
                     return false;
                 }
             }
             q.prepare("INSERT INTO Asset (`assetType`, `hostName`, `hostIP`, `hostMAC`, `hostFQDN`, `techArea`, `targetKey`, `webOrDatabase`, `webDBSite`, `webDBInstance`) VALUES(:assetType, :hostName, :hostIP, :hostMAC, :hostFQDN, :techArea, :targetKey, :webOrDatabase, :webDBSite, :webDBInstance)");
-            q.bindValue(":assetType", a.assetType);
-            q.bindValue(":hostName", a.hostName);
-            q.bindValue(":hostIP", a.hostIP);
-            q.bindValue(":hostMAC", a.hostMAC);
-            q.bindValue(":hostFQDN", a.hostFQDN);
-            q.bindValue(":techArea", a.techArea);
-            q.bindValue(":targetKey", a.targetKey);
-            q.bindValue(":webOrDatabase", a.webOrDB);
-            q.bindValue(":webDBSite", a.webDbSite);
-            q.bindValue(":webDBInstance", a.webDbInstance);
+            q.bindValue(":assetType", asset.assetType);
+            q.bindValue(":hostName", asset.hostName);
+            q.bindValue(":hostIP", asset.hostIP);
+            q.bindValue(":hostMAC", asset.hostMAC);
+            q.bindValue(":hostFQDN", asset.hostFQDN);
+            q.bindValue(":techArea", asset.techArea);
+            q.bindValue(":targetKey", asset.targetKey);
+            q.bindValue(":webOrDatabase", asset.webOrDB);
+            q.bindValue(":webDBSite", asset.webDbSite);
+            q.bindValue(":webDBInstance", asset.webDbInstance);
             q.exec();
             db.commit();
-            a.id = q.lastInsertId().toInt();
+            asset.id = q.lastInsertId().toInt();
             return true;
         }
     }
     return false;
 }
 
-bool DbManager::AddCCI(CCI &c)
+bool DbManager::AddCCI(CCI &cci)
 {
     QSqlDatabase db;
     if (this->CheckDatabase(db))
     {
         QSqlQuery q(db);
         q.prepare("INSERT INTO CCI (ControlId, cci, definition) VALUES(:ControlId, :CCI, :definition)");
-        q.bindValue(":ControlId", c.controlId);
-        q.bindValue(":CCI", c.cci);
-        q.bindValue(":definition", c.definition);
+        q.bindValue(":ControlId", cci.controlId);
+        q.bindValue(":CCI", cci.cci);
+        q.bindValue(":definition", cci.definition);
         q.exec();
         if (!_delayCommit)
         {
             db.commit();
-            c.id = q.lastInsertId().toInt();
+            cci.id = q.lastInsertId().toInt();
         }
         return true;
     }
@@ -306,18 +306,18 @@ void DbManager::AddSTIG(STIG stig, QList<STIGCheck> checks)
     }
 }
 
-void DbManager::AddSTIGToAsset(const STIG &s, const Asset &a)
+void DbManager::AddSTIGToAsset(const STIG &stig, const Asset &asset)
 {
     QSqlDatabase db;
     if (this->CheckDatabase(db))
     {
         QSqlQuery q(db);
-        if (a.id > 0 && s.id > 0)
+        if (asset.id > 0 && stig.id > 0)
         {
             bool assetExists = false;
             bool stigExists = false;
             q.prepare("SELECT count(*) FROM Asset WHERE id = :id");
-            q.bindValue(":id", a.id);
+            q.bindValue(":id", asset.id);
             q.exec();
             while (q.next())
             {
@@ -327,7 +327,7 @@ void DbManager::AddSTIGToAsset(const STIG &s, const Asset &a)
                 }
             }
             q.prepare("SELECT count(*) FROM STIG WHERE id = :id");
-            q.bindValue(":id", s.id);
+            q.bindValue(":id", stig.id);
             q.exec();
             while (q.next())
             {
@@ -339,13 +339,13 @@ void DbManager::AddSTIGToAsset(const STIG &s, const Asset &a)
             if (assetExists && stigExists)
             {
                 q.prepare("INSERT INTO AssetSTIG (`AssetId`, `STIGId`) VALUES(:AssetId, :STIGId)");
-                q.bindValue(":AssetId", a.id);
-                q.bindValue(":STIGId", s.id);
+                q.bindValue(":AssetId", asset.id);
+                q.bindValue(":STIGId", stig.id);
                 q.exec();
                 q.prepare("INSERT INTO CKLCheck (AssetId, STIGCheckId, status, findingDetails, comments, severityOverride, severityJustification) SELECT :AssetId, id, :status, '', '', '', '' FROM STIGCheck WHERE STIGId = :STIGId");
-                q.bindValue(":AssetId", a.id);
+                q.bindValue(":AssetId", asset.id);
                 q.bindValue(":status", Status::NotReviewed);
-                q.bindValue(":STIGId", s.id);
+                q.bindValue(":STIGId", stig.id);
                 q.exec();
                 db.commit();
             }
@@ -358,11 +358,11 @@ void DbManager::DeleteAsset(int id)
     DeleteAsset(GetAsset(id));
 }
 
-void DbManager::DeleteAsset(const Asset &a)
+void DbManager::DeleteAsset(const Asset &asset)
 {
-    if (a.STIGs().count() > 0)
+    if (asset.STIGs().count() > 0)
     {
-        QMessageBox::warning(nullptr, "Asset Has Mapped STIGs", "The Asset '" + PrintAsset(a) + "' has STIGs selected that must be removed.");
+        QMessageBox::warning(nullptr, "Asset Has Mapped STIGs", "The Asset '" + PrintAsset(asset) + "' has STIGs selected that must be removed.");
         return;
     }
     QSqlDatabase db;
@@ -370,7 +370,7 @@ void DbManager::DeleteAsset(const Asset &a)
     {
         QSqlQuery q(db);
         q.prepare("DELETE FROM Asset WHERE id = :AssetId");
-        q.bindValue(":AssetId", a.id);
+        q.bindValue(":AssetId", asset.id);
         q.exec();
         if (!_delayCommit)
             db.commit();
@@ -422,24 +422,24 @@ bool DbManager::DeleteSTIG(int id)
     return false;
 }
 
-bool DbManager::DeleteSTIG(STIG s)
+bool DbManager::DeleteSTIG(STIG stig)
 {
-    return DeleteSTIG(s.id);
+    return DeleteSTIG(stig.id);
 }
 
-void DbManager::DeleteSTIGFromAsset(const STIG &s, const Asset &a)
+void DbManager::DeleteSTIGFromAsset(const STIG &stig, const Asset &asset)
 {
     QSqlDatabase db;
     if (this->CheckDatabase(db))
     {
         QSqlQuery q(db);
         q.prepare("DELETE FROM AssetSTIG WHERE AssetId = :AssetId AND STIGId = :STIGId");
-        q.bindValue(":AssetId", a.id);
-        q.bindValue(":STIGId", s.id);
+        q.bindValue(":AssetId", asset.id);
+        q.bindValue(":STIGId", stig.id);
         q.exec();
         q.prepare("DELETE FROM CKLCheck WHERE AssetId = :AssetId AND STIGCheckId IN (SELECT id FROM STIGCheck WHERE STIGId = :STIGId)");
-        q.bindValue(":AssetId", a.id);
-        q.bindValue(":STIGId", s.id);
+        q.bindValue(":AssetId", asset.id);
+        q.bindValue(":STIGId", stig.id);
         q.exec();
         db.commit();
     }
@@ -510,14 +510,14 @@ CCI DbManager::GetCCI(const int &id)
     return GetCCIs("WHERE id = :id", {std::make_tuple<QString, QVariant>(":id", id)}).first();
 }
 
-CCI DbManager::GetCCIByCCI(const int &cci, const STIG *s)
+CCI DbManager::GetCCIByCCI(const int &cci, const STIG *stig)
 {
     QList<CCI> tmpList = GetCCIs("WHERE cci = :cci", {std::make_tuple<QString, QVariant>(":cci", cci)});
     if (tmpList.count() > 0)
         return tmpList.first();
     QString tmpMessage = "&lt;insert%20STIG%20information%20here&gt;";
-    if (s)
-        tmpMessage = PrintSTIG(*s);
+    if (stig)
+        tmpMessage = PrintSTIG(*stig);
     QMessageBox::warning(nullptr, "Broken CCI", "The CCI CCI-" + QString::number(cci) + " does not exist in NIST 800-53r4. If you are importing a STIG, please file a bug with the STIG author (probably DISA, disa.stig_spt@mail.mil) and let them know that their CCI mapping for the STIG you are trying to import is broken. For now, this broken STIG check is being remapped to CCI-366. <a href=\"mailto:disa.stig_spt@mail.mil?subject=Incorrectly%20Mapped%20STIG%20Check&body=DISA,%0d" + tmpMessage + "%20contains%20rule(s)%20mapped%20against%20CCI-" + QString::number(cci) + "%20which%20does%20not%20exist%20in%20the%20current%20version%20of%20NIST%20800-53r4.\">Click here</a> to file this bug with DISA automatically.");
     tmpList = GetCCIs("WHERE cci = :cci", {std::make_tuple<QString, QVariant>(":cci", 366)});
     if (tmpList.count() > 0)
@@ -526,11 +526,11 @@ CCI DbManager::GetCCIByCCI(const int &cci, const STIG *s)
     return ret;
 }
 
-CCI DbManager::GetCCIByCCI(const CCI &cci, const STIG *s)
+CCI DbManager::GetCCIByCCI(const CCI &cci, const STIG *stig)
 {
     if (cci.id < 0)
     {
-        return GetCCIByCCI(cci.cci, s);
+        return GetCCIByCCI(cci.cci, stig);
     }
     return GetCCI(cci.id);
 }
@@ -608,14 +608,14 @@ CKLCheck DbManager::GetCKLCheck(const CKLCheck &ckl)
     return ret;
 }
 
-QList<CKLCheck> DbManager::GetCKLChecks(const Asset &a, const STIG *s)
+QList<CKLCheck> DbManager::GetCKLChecks(const Asset &asset, const STIG *stig)
 {
     QString whereClause = "WHERE AssetId = :AssetId";
-    QList<std::tuple<QString, QVariant> > variables = {std::make_tuple<QString, QVariant>(":AssetId", a.id)};
-    if (s != nullptr)
+    QList<std::tuple<QString, QVariant> > variables = {std::make_tuple<QString, QVariant>(":AssetId", asset.id)};
+    if (stig != nullptr)
     {
         whereClause.append(" AND STIGCheckId IN (SELECT id FROM STIGCheck WHERE STIGId = :STIGId)");
-        variables.append(std::make_tuple<QString, QVariant>(":STIGId", s->id));
+        variables.append(std::make_tuple<QString, QVariant>(":STIGId", stig->id));
     }
     return GetCKLChecks(whereClause, variables);
 }
@@ -680,9 +680,9 @@ STIGCheck DbManager::GetSTIGCheck(const STIG &stig, const QString &rule)
     return ret;
 }
 
-QList<STIGCheck> DbManager::GetSTIGChecks(const STIG &s)
+QList<STIGCheck> DbManager::GetSTIGChecks(const STIG &stig)
 {
-    return GetSTIGChecks("WHERE STIGId = :STIGId", {std::make_tuple<QString, QVariant>(":STIGId", s.id)});
+    return GetSTIGChecks("WHERE STIGId = :STIGId", {std::make_tuple<QString, QVariant>(":STIGId", stig.id)});
 }
 
 QList<STIGCheck> DbManager::GetSTIGChecks(const QString &whereClause, const QList<std::tuple<QString, QVariant> > &variables)
@@ -738,9 +738,9 @@ QList<STIGCheck> DbManager::GetSTIGChecks(const QString &whereClause, const QLis
     return ret;
 }
 
-QList<STIG> DbManager::GetSTIGs(Asset a)
+QList<STIG> DbManager::GetSTIGs(Asset asset)
 {
-    return GetSTIGs("WHERE `id` IN (SELECT STIGId FROM AssetSTIG WHERE AssetId = :AssetId)", {std::make_tuple<QString, QVariant>(":AssetId", a.id)});
+    return GetSTIGs("WHERE `id` IN (SELECT STIGId FROM AssetSTIG WHERE AssetId = :AssetId)", {std::make_tuple<QString, QVariant>(":AssetId", asset.id)});
 }
 
 QList<STIG> DbManager::GetSTIGs(const QString &whereClause, const QList<std::tuple<QString, QVariant>> &variables)

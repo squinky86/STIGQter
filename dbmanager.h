@@ -42,30 +42,30 @@ public:
     ~DbManager();
     void DelayCommit(bool delay);
 
-    bool AddAsset(Asset &a);
-    bool AddCCI(CCI &c);
+    bool AddAsset(Asset &asset);
+    bool AddCCI(CCI &cci);
     void AddControl(const QString &control, const QString &title, const QString &description);
     void AddFamily(const QString &acronym, const QString &description);
-    void AddSTIG(STIG s, QList<STIGCheck> c);
-    void AddSTIGToAsset(const STIG &s, const Asset &a);
+    void AddSTIG(STIG stig, QList<STIGCheck> checks);
+    void AddSTIGToAsset(const STIG &stig, const Asset &asset);
 
     void DeleteAsset(int id);
-    void DeleteAsset(const Asset &a);
+    void DeleteAsset(const Asset &asset);
     void DeleteCCIs();
     bool DeleteSTIG(int id);
-    bool DeleteSTIG(STIG s);
-    void DeleteSTIGFromAsset(const STIG &s, const Asset &a);
+    bool DeleteSTIG(STIG stig);
+    void DeleteSTIGFromAsset(const STIG &stig, const Asset &asset);
 
     Asset GetAsset(const int &id);
     Asset GetAsset(const QString &hostName);
     QList<Asset> GetAssets(const QString &whereClause = "", const QList<std::tuple<QString, QVariant>> &variables = {});
     CCI GetCCI(const int &id);
-    CCI GetCCIByCCI(const int &cci, const STIG *s = nullptr);
-    CCI GetCCIByCCI(const CCI &cci, const STIG *s = nullptr);
+    CCI GetCCIByCCI(const int &cci, const STIG *stig = nullptr);
+    CCI GetCCIByCCI(const CCI &cci, const STIG *stig = nullptr);
     QList<CCI> GetCCIs(const QString &whereClause = "", const QList<std::tuple<QString, QVariant>> &variables = {});
     CKLCheck GetCKLCheck(const int &id);
     CKLCheck GetCKLCheck(const CKLCheck &ckl);
-    QList<CKLCheck> GetCKLChecks(const Asset &a, const STIG *s = nullptr);
+    QList<CKLCheck> GetCKLChecks(const Asset &asset, const STIG *stig = nullptr);
     QList<CKLCheck> GetCKLChecks(const QString &whereClause = "", const QList<std::tuple<QString, QVariant>> &variables = {});
     Control GetControl(int id);
     Control GetControl(QString control);
@@ -78,7 +78,7 @@ public:
     STIGCheck GetSTIGCheck(const STIG &stig, const QString &rule);
     QList<STIGCheck> GetSTIGChecks(const STIG &stig);
     QList<STIGCheck> GetSTIGChecks(const QString &whereClause = "", const QList<std::tuple<QString, QVariant>> &variables = {});
-    QList<STIG> GetSTIGs(Asset a);
+    QList<STIG> GetSTIGs(Asset asset);
     QList<STIG> GetSTIGs(const QString &whereClause = "", const QList<std::tuple<QString, QVariant> > &variables = {});
     QString GetVariable(const QString &name);
 

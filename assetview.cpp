@@ -100,9 +100,9 @@ AssetView::AssetView(QWidget *parent) :
  *
  * A new tab is created for the supplied Asset.
  */
-AssetView::AssetView(const Asset &a, QWidget *parent) : AssetView(parent)
+AssetView::AssetView(const Asset &asset, QWidget *parent) : AssetView(parent)
 {
-    _a = a;
+    _asset = asset;
     Display();
 }
 
@@ -139,7 +139,7 @@ void AssetView::SelectSTIGs()
     DbManager db;
     //ui->lstSTIGs->blockSignals(true);
     ui->lstSTIGs->clear();
-    QList<STIG> stigs = _a.STIGs();
+    QList<STIG> stigs = _asset.STIGs();
     foreach (const STIG s, db.GetSTIGs())
     {
         QListWidgetItem *i = new QListWidgetItem(PrintSTIG(s));
@@ -175,7 +175,7 @@ void AssetView::ShowChecks(bool countOnly)
     int total = 0; //total checks
     int open = 0; //findings
     int closed = 0; //passed checks
-    foreach(const CKLCheck c, _a.CKLChecks())
+    foreach(const CKLCheck c, _asset.CKLChecks())
     {
         total++;
         switch (c.status)
@@ -207,12 +207,12 @@ void AssetView::ShowChecks(bool countOnly)
 
 /*!
  * \brief AssetView::UpdateCKLCheck
- * \param cc
+ * \param cklCheck
  *
  * Updates the displayed information about the selected CKL check,
  * \a cc, with information from the database.
  */
-void AssetView::UpdateCKLCheck(const CKLCheck &cc)
+void AssetView::UpdateCKLCheck(const CKLCheck &cklCheck)
 {
     //write database elemnets to user interface
 
@@ -223,17 +223,17 @@ void AssetView::UpdateCKLCheck(const CKLCheck &cc)
     ui->cboBoxSeverity->blockSignals(true);
 
     //write \a cc information to the user interface
-    ui->cboBoxStatus->setCurrentText(GetStatus(cc.status));
+    ui->cboBoxStatus->setCurrentText(GetStatus(cklCheck.status));
     ui->txtComments->clear();
-    ui->txtComments->insertPlainText(cc.comments);
+    ui->txtComments->insertPlainText(cklCheck.comments);
     ui->txtFindingDetails->clear();
-    ui->txtFindingDetails->insertPlainText(cc.findingDetails);
-    _justification = cc.severityJustification;
+    ui->txtFindingDetails->insertPlainText(cklCheck.findingDetails);
+    _justification = cklCheck.severityJustification;
 
     //see if the check has a category-level override
-    UpdateSTIGCheck(cc.STIGCheck());
-    if (cc.severityOverride != Severity::none)
-        ui->cboBoxSeverity->setCurrentText(GetSeverity(cc.severityOverride));
+    UpdateSTIGCheck(cklCheck.STIGCheck());
+    if (cklCheck.severityOverride != Severity::none)
+        ui->cboBoxSeverity->setCurrentText(GetSeverity(cklCheck.severityOverride));
 
     //Now that the elements are updated from the DB, they can throw events again.
     ui->txtComments->blockSignals(false);
@@ -244,21 +244,21 @@ void AssetView::UpdateCKLCheck(const CKLCheck &cc)
 
 /*!
  * \brief AssetView::UpdateSTIGCheck
- * \param sc
+ * \param stigCheck
  *
  * Fill in user-interface information with the provided STIG.
  */
-void AssetView::UpdateSTIGCheck(const STIGCheck &sc)
+void AssetView::UpdateSTIGCheck(const STIGCheck &stigCheck)
 {
-    ui->lblCheckRule->setText(sc.rule);
-    ui->lblCheckTitle->setText(sc.title);
-    ui->cboBoxSeverity->setCurrentText(GetSeverity(sc.severity));
-    ui->cbDocumentable->setChecked(sc.documentable);
-    ui->lblDiscussion->setText(sc.vulnDiscussion);
-    ui->lblFalsePositives->setText(sc.falsePositives);
-    ui->lblFalseNegatives->setText(sc.falseNegatives);
-    ui->lblFix->setText(sc.fix);
-    ui->lblCheck->setText(sc.check);
+    ui->lblCheckRule->setText(stigCheck.rule);
+    ui->lblCheckTitle->setText(stigCheck.title);
+    ui->cboBoxSeverity->setCurrentText(GetSeverity(stigCheck.severity));
+    ui->cbDocumentable->setChecked(stigCheck.documentable);
+    ui->lblDiscussion->setText(stigCheck.vulnDiscussion);
+    ui->lblFalsePositives->setText(stigCheck.falsePositives);
+    ui->lblFalseNegatives->setText(stigCheck.falseNegatives);
+    ui->lblFix->setText(stigCheck.fix);
+    ui->lblCheck->setText(stigCheck.check);
 }
 
 /*!
@@ -304,14 +304,14 @@ void AssetView::CheckSelectedChanged()
 void AssetView::DeleteAsset()
 {
     //prompt user for confirmation of a destructive task
-    QMessageBox::StandardButton reply = QMessageBox::question(this, "Confirm", "Are you sure you want to delete " + PrintAsset(_a) + "?", QMessageBox::Yes|QMessageBox::No);
+    QMessageBox::StandardButton reply = QMessageBox::question(this, "Confirm", "Are you sure you want to delete " + PrintAsset(_asset) + "?", QMessageBox::Yes|QMessageBox::No);
     if (reply == QMessageBox::Yes)
     {
         DbManager db;
         //remove all associated STIGs from this asset.
-        foreach (const STIG &s, _a.STIGs())
-            db.DeleteSTIGFromAsset(s, _a);
-        db.DeleteAsset(_a);
+        foreach (const STIG &s, _asset.STIGs())
+            db.DeleteSTIGFromAsset(s, _asset);
+        db.DeleteAsset(_asset);
         if (_tabIndex > 0)
             emit CloseTab(_tabIndex);
     }
@@ -358,38 +358,38 @@ void AssetView::SaveCKL()
         stream.writeCharacters("None");
         stream.writeEndElement(); //ROLE
         stream.writeStartElement("ASSET_TYPE");
-        stream.writeCharacters(_a.assetType);
+        stream.writeCharacters(_asset.assetType);
         stream.writeEndElement(); //ASSET_TYPE
         stream.writeStartElement("HOST_NAME");
-        stream.writeCharacters(_a.hostName);
+        stream.writeCharacters(_asset.hostName);
         stream.writeEndElement(); //HOST_NAME
         stream.writeStartElement("HOST_IP");
-        stream.writeCharacters(_a.hostIP);
+        stream.writeCharacters(_asset.hostIP);
         stream.writeEndElement(); //HOST_IP
         stream.writeStartElement("HOST_MAC");
-        stream.writeCharacters(_a.hostMAC);
+        stream.writeCharacters(_asset.hostMAC);
         stream.writeEndElement(); //HOST_MAC
         stream.writeStartElement("HOST_FQDN");
-        stream.writeCharacters(_a.hostFQDN);
+        stream.writeCharacters(_asset.hostFQDN);
         stream.writeEndElement(); //HOST_FQDN
         stream.writeStartElement("TECH_AREA");
-        stream.writeCharacters(_a.techArea);
+        stream.writeCharacters(_asset.techArea);
         stream.writeEndElement(); //TECH_AREA
         stream.writeStartElement("TARGET_KEY");
-        stream.writeCharacters(_a.targetKey);
+        stream.writeCharacters(_asset.targetKey);
         stream.writeEndElement(); //TARGET_KEY
         stream.writeStartElement("WEB_OR_DATABASE");
         stream.writeCharacters(PrintTrueFalse(_a.webOrDB));
         stream.writeEndElement(); //WEB_OR_DATABASE
         stream.writeStartElement("WEB_DB_SITE");
-        stream.writeCharacters(_a.webDbSite);
+        stream.writeCharacters(_asset.webDbSite);
         stream.writeEndElement(); //WEB_DB_SITE
         stream.writeStartElement("WEB_DB_INSTANCE");
-        stream.writeCharacters(_a.webDbInstance);
+        stream.writeCharacters(_asset.webDbInstance);
         stream.writeEndElement(); //WEB_DB_INSTANCE
         stream.writeEndElement(); //ASSET
         stream.writeStartElement("STIGS");
-        foreach (const STIG &s, _a.STIGs())
+        foreach (const STIG &s, _asset.STIGs())
         {
             stream.writeStartElement("iSTIG");
             stream.writeStartElement("STIG_INFO");
@@ -450,7 +450,7 @@ void AssetView::SaveCKL()
 
             stream.writeEndElement(); //STIG_INFO
 
-            foreach (const CKLCheck &cc, _a.CKLChecks(&s))
+            foreach (const CKLCheck &cc, _asset.CKLChecks(&s))
             {
                 const STIGCheck sc = cc.STIGCheck();
                 stream.writeStartElement("VULN");
@@ -868,24 +868,24 @@ void AssetView::UpdateCKLSeverity(const QString &val)
 void AssetView::UpdateSTIGs()
 {
     DbManager db;
-    QList<STIG> stigs = _a.STIGs();
+    QList<STIG> stigs = _asset.STIGs();
     for (int i = 0; i < ui->lstSTIGs->count(); i++)
     {
         QListWidgetItem *item = ui->lstSTIGs->item(i);
         STIG s = item->data(Qt::UserRole).value<STIG>();
         if (item->isSelected() && !stigs.contains(s))
         {
-            db.AddSTIGToAsset(s, _a);
+            db.AddSTIGToAsset(s, _asset);
             ShowChecks();
         }
         else if (!item->isSelected() && stigs.contains(s))
         {
             //confirm to delete the STIG (avoid accidental clicks in the STIG box)
-            QMessageBox::StandardButton confirm = QMessageBox::question(this, "Confirm STIG Removal", "Really delete the " + PrintSTIG(s) + " stig from " + PrintAsset(_a) + "?",
+            QMessageBox::StandardButton confirm = QMessageBox::question(this, "Confirm STIG Removal", "Really delete the " + PrintSTIG(s) + " stig from " + PrintAsset(_asset) + "?",
                                             QMessageBox::Yes|QMessageBox::No);
             if (confirm == QMessageBox::Yes)
             {
-                db.DeleteSTIGFromAsset(s, _a);
+                db.DeleteSTIGFromAsset(s, _asset);
                 ShowChecks();
             }
             else

@@ -38,13 +38,13 @@ class AssetView : public QWidget
 
 public:
     explicit AssetView(QWidget *parent = nullptr);
-    AssetView(const Asset &a, QWidget *parent = nullptr);
+    AssetView(const Asset &asset, QWidget *parent = nullptr);
     ~AssetView();
     void Display();
     void SelectSTIGs();
     void ShowChecks(bool countOnly = false);
-    void UpdateCKLCheck(const CKLCheck &cc);
-    void UpdateSTIGCheck(const STIGCheck &sc);
+    void UpdateCKLCheck(const CKLCheck &cklCheck);
+    void UpdateSTIGCheck(const STIGCheck &stigCheck);
     void SetTabIndex(int index);
 
 private slots:
