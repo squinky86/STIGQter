@@ -21,11 +21,31 @@
 #include "cklcheck.h"
 #include "dbmanager.h"
 
-Asset::Asset(const Asset &a) : Asset(a.parent())
-{
-    *this = a;
-}
+/*!
+ * \class Asset
+ * \brief An Asset is a single node, database, or element that would
+ * usually be represented by an entry in a system's hardware/software
+ * list.
+ *
+ * An Asset is a way to group checklist files in a logical way.
+ * Projects may have many assets, and an asset may contain many
+ * checklists.
+ *
+ * Once an asset has been created, the individual checklists for that
+ * asset are selected. An asset may contain only unique checklists.
+ * For example, the asset "Computer 1" containing Windows 10 would
+ * only contain one checklist for Windows 10. When the example asset
+ * contains multiple installations of Windows 10 (such as may be the
+ * case for a multi-boot system), the differing installations should
+ * be given unique asset names (and be seen as separate assets).
+ */
 
+/*!
+ * \brief Asset::Asset
+ * \param parent
+ *
+ * The default constructor sets up an empty Asset.
+ */
 Asset::Asset(QObject *parent) : QObject(parent),
     id(-1),
     assetType("Computing"),
@@ -41,6 +61,21 @@ Asset::Asset(QObject *parent) : QObject(parent),
 {
 }
 
+/*!
+ * \overload Asset()
+ *
+ * Copy constructor.
+ */
+Asset::Asset(const Asset &a) : Asset(a.parent())
+{
+    *this = a;
+}
+
+/*!
+ * \brief Asset::operator=
+ * \param right
+ * \return copied Asset
+ */
 Asset &Asset::operator=(const Asset &right)
 {
     if (this != &right)
@@ -60,12 +95,24 @@ Asset &Asset::operator=(const Asset &right)
     return *this;
 }
 
+/*!
+ * \brief Asset::STIGs
+ * \return list of STIGs associated with this Asset
+ */
 QList<STIG> Asset::STIGs() const
 {
     DbManager db;
     return db.GetSTIGs(*this);
 }
 
+/*!
+ * \brief Asset::CKLChecks
+ * \param s
+ * \return list of CKLChecks associated with this Asset
+ *
+ * When \a s is a nullptr, all CKL checks associated with all STIGs
+ * mapped to this Asset are returned.
+ */
 QList<CKLCheck> Asset::CKLChecks(const STIG *s) const
 {
     QList<CKLCheck> ret;
@@ -73,6 +120,11 @@ QList<CKLCheck> Asset::CKLChecks(const STIG *s) const
     return db.GetCKLChecks(*this, s);
 }
 
+/*!
+ * \brief PrintAsset
+ * \param a
+ * \return human-readable Asset description
+ */
 QString PrintAsset(const Asset &a)
 {
     return a.hostName;
