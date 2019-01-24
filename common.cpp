@@ -23,10 +23,21 @@
 
 #include <zip.h>
 
+#include <QDebug>
 #include <QEventLoop>
 #include <QString>
 #include <QtNetwork>
 
+/*!
+ * \brief CleanXML
+ * \param s
+ * \param isXml
+ * \return The Tidy'd, well-formed XML.
+ *
+ * This function comes from Tidy's documentation and has been
+ * slightly modified. For more information, see
+ * \l {http://api.html-tidy.org/tidy/tidylib_api_5.1.25/group__Basic.html#details} {Tidy's documentation}
+ */
 QString CleanXML(QString s, bool isXml)
 {
     TidyBuffer output = {nullptr};
@@ -55,7 +66,7 @@ QString CleanXML(QString s, bool isXml)
         s = QString::fromUtf8(reinterpret_cast<char*>(output.bp));
     }
     else
-        qDebug() << "A severe error (" << rc << ") occurred.";
+        qDebug() << "A severe error (" << rc << ") occurred in tidying the XML.";
 
     tidyBufFree(&output);
     tidyBufFree(&err);
@@ -66,57 +77,122 @@ QString CleanXML(QString s, bool isXml)
     return ret;
 }
 
-bool DownloadFile(const QUrl &u, QFile *f)
+/*!
+ * \brief DownloadFile
+ * \param url
+ * \param file
+ * \return \c True when the file is successfully downloaded.
+ * Otherwise, \c false.
+ *
+ * Given a \a url, the contents of that URL are written to the handle
+ * supplied in the \a file parameter.
+ */
+bool DownloadFile(const QUrl &url, QFile *file)
 {
     bool close = false;
-    if (!f->isOpen())
+
+    //check if the file is currently open
+    if (!file->isOpen())
     {
-        f->open(QIODevice::WriteOnly);
-        if (!f->isOpen())
+        file->open(QIODevice::WriteOnly);
+        if (!file->isOpen())
             return false;
         close = true;
     }
     QNetworkAccessManager manager;
-    QNetworkRequest req = QNetworkRequest(u);
+    QNetworkRequest req = QNetworkRequest(url);
     req.setAttribute(QNetworkRequest::FollowRedirectsAttribute, true);
-    QString userAgent = QString("STIGQter/") + VERSION;
-    req.setRawHeader("User-Agent", userAgent.toStdString().c_str());
+
+    //set the User-Agent so that this program appears in logs correctly
+    req.setRawHeader("User-Agent", GetUserAgent().toStdString().c_str());
+
+    //clean up the socket event when the response is finished reading
     QNetworkReply *response = manager.get(req);
     QEventLoop event;
     QObject::connect(response,SIGNAL(finished()),&event,SLOT(quit()));
     event.exec();
+
+    //read entire contents to memory before saving it to the file
     QByteArray tmpArray = response->readAll();
-    f->write(tmpArray, tmpArray.size());
-    f->flush();
+
+    //save contents of the response to the file
+    file->write(tmpArray, tmpArray.size());
+    file->flush();
     delete response;
 
+    /*
+     * If the file was already open, seek back to the beginning of
+     * the file. Otherwise, close it. This preserves the state of the
+     * file before this function ran.
+     */
     if (close)
-        f->close();
+        file->close();
     else
-        f->seek(0);
+        file->seek(0);
+
     return true;
 }
-
-QString DownloadPage(const QUrl &u)
+/*!
+ * \brief DownloadPage
+ * \param url
+ * \return A string of the downloaded page.
+ *
+ * Downloads the text from the requested \a url.
+ */
+QString DownloadPage(const QUrl &url)
 {
     QNetworkAccessManager manager;
-    QNetworkRequest req = QNetworkRequest(QUrl(u));
-    QString userAgent = QString("STIGQter/") + VERSION;
-    req.setRawHeader("User-Agent", userAgent.toStdString().c_str());
+    QNetworkRequest req = QNetworkRequest(QUrl(url));
+
+    //set the User-Agent so that this program appears in logs correctly
+    req.setRawHeader("User-Agent", GetUserAgent().toStdString().c_str());
+
+    //send request and get response
     QNetworkReply *response = manager.get(req);
+
+    //clean up the socket event when the response is finished reading
     QEventLoop event;
     QObject::connect(response,SIGNAL(finished()),&event,SLOT(quit()));
     event.exec();
+
+    //read the response and return its contents
     QString html = response->readAll();
     delete response;
     return html;
 }
 
-//extract a .zip file and store the contents in memory
-//fileNameFilter is a case-insensitive end-of-filename search
+/*!
+ * \brief GetCCINumber
+ * \param cci
+ * \return The numeric value of the CCI.
+ *
+ * Converts a string "CCI-######" to its integral format.
+ */
+int GetCCINumber(QString cci)
+{
+    cci = cci.trimmed();
+    if (cci.startsWith("CCI-"))
+        cci = cci.right(cci.length() - 4);
+    return cci.toInt();
+}
+
+/*!
+ * \brief GetFilesFromZip
+ * \param fileName
+ * \param fileNameFilter
+ * \return A map of the extracted files in the zip.
+ *
+ * Extracts a zip file and stores the contents in memory.
+ *
+ * When fileNameFilter is set, only the files that end with the
+ * provided filter are extracted and returned (case-insensitive).
+ */
 QMap<QString, QByteArray> GetFilesFromZip(const QString &fileName, QString fileNameFilter)
 {
+    //map to return
     QMap<QString, QByteArray> ret;
+
+    //open the zip with libzip
     struct zip *za;
     int err;
     struct zip_stat sb;
@@ -124,6 +200,7 @@ QMap<QString, QByteArray> GetFilesFromZip(const QString &fileName, QString fileN
     za = zip_open(fileName.toStdString().c_str(), 0, &err);
     if (za != nullptr)
     {
+        //cycle through each zip file entry
         for (unsigned int i = 0; i < zip_get_num_entries(za, 0); i++)
         {
             if (zip_stat_index(za, i, 0, &sb) == 0)
@@ -163,14 +240,21 @@ QMap<QString, QByteArray> GetFilesFromZip(const QString &fileName, QString fileN
     return ret;
 }
 
-int GetCCINumber(QString cci)
+/*!
+ * \brief GetUserAgent
+ * \return The User-Agent to use when making web requests.
+ */
+QString GetUserAgent()
 {
-    cci = cci.trimmed();
-    if (cci.startsWith("CCI-"))
-        cci = cci.right(cci.length() - 4);
-    return cci.toInt();
+    return QString("STIGQter/") + VERSION;
 }
 
+/*!
+ * \brief Excelify
+ * \param s
+ * \return The string \a s formatted in a way that Excel can
+ * understand.
+ */
 QString Excelify(const QString &s)
 {
     //Excel is limited to 32,767 characters per-cell
@@ -178,11 +262,21 @@ QString Excelify(const QString &s)
     return ret;
 }
 
+/*!
+ * \brief PrintTrueFalse
+ * \param tf
+ * \return human-readable boolean.
+ */
 QString PrintTrueFalse(bool tf)
 {
     return tf ? "true" : "false";
 }
 
+/*!
+ * \brief TrimFileName
+ * \param fileName
+ * \return The fileName without any leading directory structure.
+ */
 QString TrimFileName(const QString &fileName)
 {
     QString tmpFileName(fileName);

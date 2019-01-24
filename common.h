@@ -32,6 +32,7 @@ QString DownloadPage(const QUrl &u);
 QString Excelify(const QString &s);
 int GetCCINumber(QString cci);
 QMap<QString, QByteArray> GetFilesFromZip(const QString &fileName, QString fileNameFilter = "");
+QString GetUserAgent();
 QString PrintTrueFalse(bool tf);
 QString TrimFileName(const QString &fileName);
 

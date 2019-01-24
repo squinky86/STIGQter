@@ -20,8 +20,6 @@
 #include "cci.h"
 #include "dbmanager.h"
 
-#include <QDebug>
-
 /*!
  * \class CCI
  * \brief A Control Correlation Identifier (CCI) corresponds to a
@@ -57,6 +55,18 @@ CCI::CCI(QObject *parent) : QObject(parent),
 }
 
 /*!
+ * \overload CCI::CCI()
+ * \brief CCI::CCI
+ * \param right
+ *
+ * Copy constructor.
+ */
+CCI::CCI(const CCI &right) : CCI(right.parent())
+{
+    *this = right;
+}
+
+/*!
  * \brief CCI::Control
  * \return the RMF control associated with this CCI
  *
@@ -70,21 +80,9 @@ Control CCI::Control()
 }
 
 /*!
- * \overload CCI::CCI()
- * \brief CCI::CCI
- * \param right
- *
- * Copy constructor.
- */
-CCI::CCI(const CCI &right) : CCI(right.parent())
-{
-    *this = right;
-}
-
-/*!
  * \brief CCI::operator=
  * \param right
- * \return this CCI, copied from the assignee
+ * \return This \a CCI, copied from the assignee.
  *
  * Deep copy assignment operator.
  */

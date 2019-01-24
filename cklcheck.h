@@ -68,6 +68,6 @@ public:
 
 Q_DECLARE_METATYPE(CKLCheck);
 
-QString PrintCKLCheck(const CKLCheck &c);
+QString PrintCKLCheck(const CKLCheck &cklCheck);
 
 #endif // CKLCHECK_H
