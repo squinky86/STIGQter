@@ -26,12 +26,13 @@
 
 #define VERSION "0.1.1"
 
+QString CleanXML(QString s, bool isXml = false);
 bool DownloadFile(const QUrl &u, QFile *f);
 QString DownloadPage(const QUrl &u);
 QString Excelify(const QString &s);
 int GetCCINumber(QString cci);
 QMap<QString, QByteArray> GetFilesFromZip(const QString &fileName, QString fileNameFilter = "");
 QString PrintTrueFalse(bool tf);
-QString CleanXML(QString s, bool isXml = false);
+QString TrimFileName(const QString &fileName);
 
 #endif // COMMON_H

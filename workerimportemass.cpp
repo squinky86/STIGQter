@@ -34,7 +34,10 @@ void WorkerImportEMASS::process()
 {
     DbManager db;
 
-    //TODO: import EMASS sheet
+    emit initialize(1, 0);
+
+    emit updateStatus("Opening xlsx file…");
+    QMap<QString, QByteArray> files = GetFilesFromZip(_fileName, ".xml");
 
     emit updateStatus("Done!");
     emit finished();

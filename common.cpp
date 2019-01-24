@@ -27,6 +27,46 @@
 #include <QString>
 #include <QtNetwork>
 
+QString CleanXML(QString s, bool isXml)
+{
+    TidyBuffer output = {nullptr};
+    TidyBuffer err = {nullptr};
+
+    int rc = -1;
+    bool ok = false;
+
+    TidyDoc tdoc = tidyCreate();
+    ok = tidyOptSetBool(tdoc, TidyXmlOut, yes);
+    if (isXml)
+        ok = ok && tidyOptSetBool(tdoc, TidyXmlTags, yes);
+    if (ok)
+        rc = tidySetErrorBuffer(tdoc, &err);
+    if (rc >= 0)
+        rc = tidyParseString(tdoc, s.toStdString().c_str());
+    if (rc >= 0)
+        rc = tidyCleanAndRepair(tdoc);
+    if (rc >= 0)
+        rc = tidyRunDiagnostics(tdoc);
+    if (rc > 1)
+        rc = (tidyOptSetBool(tdoc, TidyForceOutput, yes) ? rc : -1);
+    if (rc >= 0)
+        rc = tidySaveBuffer(tdoc, &output);
+    if (rc >= 0 && (output.bp))
+    {
+        s = QString::fromUtf8(reinterpret_cast<char*>(output.bp));
+    }
+    else
+        qDebug() << "A severe error (" << rc << ") occurred.";
+
+    tidyBufFree(&output);
+    tidyBufFree(&err);
+    tidyRelease(tdoc);
+
+    QString ret(s);
+    ret = ret.replace("&nbsp;", " ");
+    return ret;
+}
+
 bool DownloadFile(const QUrl &u, QFile *f)
 {
     bool close = false;
@@ -125,46 +165,6 @@ QMap<QString, QByteArray> GetFilesFromZip(const QString &fileName, QString fileN
     return ret;
 }
 
-QString CleanXML(QString s, bool isXml)
-{
-    TidyBuffer output = {nullptr};
-    TidyBuffer err = {nullptr};
-
-    int rc = -1;
-    bool ok = false;
-
-    TidyDoc tdoc = tidyCreate();
-    ok = tidyOptSetBool(tdoc, TidyXmlOut, yes);
-    if (isXml)
-        ok = ok && tidyOptSetBool(tdoc, TidyXmlTags, yes);
-    if (ok)
-        rc = tidySetErrorBuffer(tdoc, &err);
-    if (rc >= 0)
-        rc = tidyParseString(tdoc, s.toStdString().c_str());
-    if (rc >= 0)
-        rc = tidyCleanAndRepair(tdoc);
-    if (rc >= 0)
-        rc = tidyRunDiagnostics(tdoc);
-    if (rc > 1)
-        rc = (tidyOptSetBool(tdoc, TidyForceOutput, yes) ? rc : -1);
-    if (rc >= 0)
-        rc = tidySaveBuffer(tdoc, &output);
-    if (rc >= 0 && (output.bp))
-    {
-        s = QString::fromUtf8(reinterpret_cast<char*>(output.bp));
-    }
-    else
-        qDebug() << "A severe error (" << rc << ") occurred.";
-
-    tidyBufFree(&output);
-    tidyBufFree(&err);
-    tidyRelease(tdoc);
-
-    QString ret(s);
-    ret = ret.replace("&nbsp;", " ");
-    return ret;
-}
-
 int GetCCINumber(QString cci)
 {
     cci = cci.trimmed();
@@ -183,4 +183,14 @@ QString Excelify(const QString &s)
 QString PrintTrueFalse(bool tf)
 {
     return tf ? "true" : "false";
+}
+
+QString TrimFileName(const QString &fileName)
+{
+    QString tmpFileName(fileName);
+    if (tmpFileName.contains('/'))
+    {
+        tmpFileName = tmpFileName.right(tmpFileName.length() - tmpFileName.lastIndexOf('/') - 1);
+    }
+    return tmpFileName;
 }
