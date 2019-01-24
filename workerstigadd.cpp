@@ -290,13 +290,7 @@ void WorkerSTIGAdd::process()
         updateStatus("Parsing " + s + "…");
         foreach(const QString stig, toParse.keys())
         {
-            //trim off subdirectory
-            QString tmpFileName = stig;
-            if (tmpFileName.contains('/'))
-            {
-                tmpFileName = tmpFileName.right(tmpFileName.length() - tmpFileName.lastIndexOf('/') - 1);
-            }
-            ParseSTIG(toParse.value(stig), tmpFileName);
+            ParseSTIG(toParse.value(stig), TrimFileName(stig));
         }
         emit progress(-1);
     }
