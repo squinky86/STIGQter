@@ -122,7 +122,6 @@ QMap<QString, QByteArray> GetFilesFromZip(const QString &fileName, QString fileN
     int err;
     struct zip_stat sb;
     zip_stat_init(&sb); //initializes sb
-    struct zip_file *zf;
     za = zip_open(fileName.toStdString().c_str(), 0, &err);
     if (za != nullptr)
     {
@@ -141,7 +140,7 @@ QMap<QString, QByteArray> GetFilesFromZip(const QString &fileName, QString fileN
 
                 QString zipName(name);
                 QByteArray todo;
-                zf = zip_fopen_index(za, i, 0);
+                struct zip_file *zf = zip_fopen_index(za, i, 0);
                 if (zf)
                 {
                     unsigned int sum = 0;

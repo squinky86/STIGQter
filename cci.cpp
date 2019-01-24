@@ -31,7 +31,12 @@ CCI::CCI(QObject *parent) : QObject(parent),
     id(-1),
     controlId(-1),
     cci(0),
-    definition()
+    definition(),
+    isImport(false),
+    importCompliance(),
+    importDateTested(),
+    importTestedBy(),
+    importTestResults()
 {
 }
 

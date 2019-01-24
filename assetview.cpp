@@ -33,6 +33,25 @@
 #include <QXmlStreamWriter>
 #include <QTimer>
 
+/*!
+ * \class AssetView
+ * \brief The STIGViewer-like display of an Asset's STIG, checks, and
+ * compliance status.
+ *
+ * The AssetView is the main STIG compliance view for a singular
+ * Asset. It enumerates the applicable checks, their compliance
+ * status, and provides commentary fields for each of the checks.
+ *
+ * The AssetView is a tabbed page, created dynamically, and closeable
+ * by the user.
+ */
+
+/*!
+ * \brief AssetView::AssetView
+ * \param parent
+ *
+ * Main constructor.
+ */
 AssetView::AssetView(QWidget *parent) :
     QWidget(parent),
     ui(new Ui::AssetView),
@@ -41,23 +60,55 @@ AssetView::AssetView(QWidget *parent) :
     _tabIndex(-1)
 {
     ui->setupUi(this);
+
+    /*
+     * The main timer signals that the checklist entries have been
+     * modified by the user. Since the user may be modifying large
+     * portions of text, it is inefficient to update the database for
+     * every user keystroke. Instead, the database of checklist
+     * information is only updated if the user has been idle for a
+     * little while. Delays are defined in UpdateCKL().
+     */
     _timer.setSingleShot(true);
-    _timerChecks.setSingleShot(true);
     connect(&_timer, SIGNAL(timeout()), this, SLOT(UpdateCKLHelper()));
+
+    /*
+     * CKLCheck counts are updated as defined in UpdateCKLHelper()
+     */
+    _timerChecks.setSingleShot(true);
     connect(&_timerChecks, SIGNAL(timeout()), this, SLOT(CountChecks()));
 
+    /*
+     * Shortcuts for quickly setting compliance state of selected
+     * check(s):
+     * 1. CTRL+N: Not a Finding
+     * 2. CTRL+O: Open Finding
+     * 3. CTRL+R: Not Reviewed
+     * 4. CTRL+X: Not Applicable
+     */
     _shortcuts.append(new QShortcut(QKeySequence(Qt::CTRL + Qt::Key_N), this, SLOT(KeyShortcutCtrlN())));
     _shortcuts.append(new QShortcut(QKeySequence(Qt::CTRL + Qt::Key_O), this, SLOT(KeyShortcutCtrlO())));
     _shortcuts.append(new QShortcut(QKeySequence(Qt::CTRL + Qt::Key_R), this, SLOT(KeyShortcutCtrlR())));
     _shortcuts.append(new QShortcut(QKeySequence(Qt::CTRL + Qt::Key_X), this, SLOT(KeyShortcutCtrlX())));
 }
 
-AssetView::AssetView(const Asset &a, QWidget *parent) : AssetView(parent)
+/*!
+ * \overload AssetView()
+ * \brief AssetView::AssetView
+ * \param a
+ * \param parent
+ *
+ * A new tab is created for the supplied Asset.
+ */
+AssetView::AssetView(const Asset &asset, QWidget *parent) : AssetView(parent)
 {
-    _a = a;
+    _asset = asset;
     Display();
 }
 
+/*!
+ * Destructor.
+ */
 AssetView::~AssetView()
 {
     foreach (QShortcut *shortcut, _shortcuts)
@@ -66,18 +117,29 @@ AssetView::~AssetView()
     delete ui;
 }
 
+/*!
+ * \brief AssetView::Display
+ *
+ * Shows the STIGs and CKL Checks for the selected Asset
+ */
 void AssetView::Display()
 {
     SelectSTIGs();
     ShowChecks();
 }
 
+/*!
+ * \brief AssetView::SelectSTIGs
+ *
+ * Marks the STIGs that are tied to the Asset as selected in the
+ * list of all possible STIGs.
+ */
 void AssetView::SelectSTIGs()
 {
     DbManager db;
     //ui->lstSTIGs->blockSignals(true);
     ui->lstSTIGs->clear();
-    QList<STIG> stigs = _a.STIGs();
+    QList<STIG> stigs = _asset.STIGs();
     foreach (const STIG s, db.GetSTIGs())
     {
         QListWidgetItem *i = new QListWidgetItem(PrintSTIG(s));
@@ -88,19 +150,32 @@ void AssetView::SelectSTIGs()
     //ui->lstSTIGs->blockSignals(false);
 }
 
+/*!
+ * \brief AssetView::CountChecks
+ *
+ * Display/update the count of checks and their compliance statuses.
+ */
 void AssetView::CountChecks()
 {
     ShowChecks(true);
 }
 
+/*!
+ * \brief AssetView::ShowChecks
+ * \param countOnly
+ *
+ * When \a countOnly is \c true, the number of checks and their
+ * compliance statuses are updated. When \a countOnly is \c false,
+ * the display of CKL Checks is also updated.
+ */
 void AssetView::ShowChecks(bool countOnly)
 {
     if (!countOnly)
         ui->lstChecks->clear();
-    int total = 0;
-    int open = 0;
-    int closed = 0;
-    foreach(const CKLCheck c, _a.CKLChecks())
+    int total = 0; //total checks
+    int open = 0; //findings
+    int closed = 0; //passed checks
+    foreach(const CKLCheck c, _asset.CKLChecks())
     {
         total++;
         switch (c.status)
@@ -116,6 +191,7 @@ void AssetView::ShowChecks(bool countOnly)
         }
         if (!countOnly)
         {
+            //update the list of CKL checks
             QListWidgetItem *i = new QListWidgetItem(PrintCKLCheck(c));
             ui->lstChecks->addItem(i);
             i->setData(Qt::UserRole, QVariant::fromValue<CKLCheck>(c));
@@ -129,47 +205,79 @@ void AssetView::ShowChecks(bool countOnly)
         ui->lstChecks->sortItems();
 }
 
-void AssetView::UpdateCKLCheck(const CKLCheck &cc)
+/*!
+ * \brief AssetView::UpdateCKLCheck
+ * \param cklCheck
+ *
+ * Updates the displayed information about the selected CKL check,
+ * \a cc, with information from the database.
+ */
+void AssetView::UpdateCKLCheck(const CKLCheck &cklCheck)
 {
+    //write database elemnets to user interface
+
+    //While reading ui elements, disable their ability to throw an event.
     ui->txtComments->blockSignals(true);
     ui->txtFindingDetails->blockSignals(true);
     ui->cboBoxStatus->blockSignals(true);
     ui->cboBoxSeverity->blockSignals(true);
-    ui->cboBoxStatus->setCurrentText(GetStatus(cc.status));
+
+    //write \a cc information to the user interface
+    ui->cboBoxStatus->setCurrentText(GetStatus(cklCheck.status));
     ui->txtComments->clear();
-    ui->txtComments->insertPlainText(cc.comments);
+    ui->txtComments->insertPlainText(cklCheck.comments);
     ui->txtFindingDetails->clear();
-    ui->txtFindingDetails->insertPlainText(cc.findingDetails);
-    _justification = cc.severityJustification;
+    ui->txtFindingDetails->insertPlainText(cklCheck.findingDetails);
+    _justification = cklCheck.severityJustification;
 
-    UpdateSTIGCheck(cc.STIGCheck());
-    if (cc.severityOverride != Severity::none)
-        ui->cboBoxSeverity->setCurrentText(GetSeverity(cc.severityOverride));
+    //see if the check has a category-level override
+    UpdateSTIGCheck(cklCheck.STIGCheck());
+    if (cklCheck.severityOverride != Severity::none)
+        ui->cboBoxSeverity->setCurrentText(GetSeverity(cklCheck.severityOverride));
 
+    //Now that the elements are updated from the DB, they can throw events again.
     ui->txtComments->blockSignals(false);
     ui->txtFindingDetails->blockSignals(false);
     ui->cboBoxStatus->blockSignals(false);
     ui->cboBoxSeverity->blockSignals(false);
 }
 
-void AssetView::UpdateSTIGCheck(const STIGCheck &sc)
+/*!
+ * \brief AssetView::UpdateSTIGCheck
+ * \param stigCheck
+ *
+ * Fill in user-interface information with the provided STIG.
+ */
+void AssetView::UpdateSTIGCheck(const STIGCheck &stigCheck)
 {
-    ui->lblCheckRule->setText(sc.rule);
-    ui->lblCheckTitle->setText(sc.title);
-    ui->cboBoxSeverity->setCurrentText(GetSeverity(sc.severity));
-    ui->cbDocumentable->setChecked(sc.documentable);
-    ui->lblDiscussion->setText(sc.vulnDiscussion);
-    ui->lblFalsePositives->setText(sc.falsePositives);
-    ui->lblFalseNegatives->setText(sc.falseNegatives);
-    ui->lblFix->setText(sc.fix);
-    ui->lblCheck->setText(sc.check);
+    ui->lblCheckRule->setText(stigCheck.rule);
+    ui->lblCheckTitle->setText(stigCheck.title);
+    ui->cboBoxSeverity->setCurrentText(GetSeverity(stigCheck.severity));
+    ui->cbDocumentable->setChecked(stigCheck.documentable);
+    ui->lblDiscussion->setText(stigCheck.vulnDiscussion);
+    ui->lblFalsePositives->setText(stigCheck.falsePositives);
+    ui->lblFalseNegatives->setText(stigCheck.falseNegatives);
+    ui->lblFix->setText(stigCheck.fix);
+    ui->lblCheck->setText(stigCheck.check);
 }
 
+/*!
+ * \brief AssetView::SetTabIndex
+ * \param index
+ *
+ * Keep up with which index this tab is in the interface.
+ */
 void AssetView::SetTabIndex(int index)
 {
     _tabIndex = index;
 }
 
+/*!
+ * \brief AssetView::CheckSelectedChanged
+ *
+ * Disables the ability to set finding details for multiple CKL
+ * Checks at a time.
+ */
 void AssetView::CheckSelectedChanged()
 {
     if (ui->lstChecks->selectedItems().count() > 1)
@@ -188,15 +296,22 @@ void AssetView::CheckSelectedChanged()
     }
 }
 
+/*!
+ * \brief AssetView::DeleteAsset
+ *
+ * Deletes this Asset from the database.
+ */
 void AssetView::DeleteAsset()
 {
-    QMessageBox::StandardButton reply = QMessageBox::question(this, "Confirm", "Are you sure you want to delete " + PrintAsset(_a) + "?", QMessageBox::Yes|QMessageBox::No);
+    //prompt user for confirmation of a destructive task
+    QMessageBox::StandardButton reply = QMessageBox::question(this, "Confirm", "Are you sure you want to delete " + PrintAsset(_asset) + "?", QMessageBox::Yes|QMessageBox::No);
     if (reply == QMessageBox::Yes)
     {
         DbManager db;
-        foreach (const STIG &s, _a.STIGs())
-            db.DeleteSTIGFromAsset(s, _a);
-        db.DeleteAsset(_a);
+        //remove all associated STIGs from this asset.
+        foreach (const STIG &s, _asset.STIGs())
+            db.DeleteSTIGFromAsset(s, _asset);
+        db.DeleteAsset(_asset);
         if (_tabIndex > 0)
             emit CloseTab(_tabIndex);
     }
@@ -222,6 +337,11 @@ void AssetView::KeyShortcutCtrlX()
     KeyShortcut(Status::NotApplicable);
 }
 
+/*!
+ * \brief AssetView::SaveCKL
+ *
+ * Save the selected Asset as a single CKL file.
+ */
 void AssetView::SaveCKL()
 {
     QString fileName = QFileDialog::getSaveFileName(this, "Save STIG/SRG Checklist", QDir::home().dirName(), "STIG Checklist (*.ckl)");
@@ -238,38 +358,38 @@ void AssetView::SaveCKL()
         stream.writeCharacters("None");
         stream.writeEndElement(); //ROLE
         stream.writeStartElement("ASSET_TYPE");
-        stream.writeCharacters(_a.assetType);
+        stream.writeCharacters(_asset.assetType);
         stream.writeEndElement(); //ASSET_TYPE
         stream.writeStartElement("HOST_NAME");
-        stream.writeCharacters(_a.hostName);
+        stream.writeCharacters(_asset.hostName);
         stream.writeEndElement(); //HOST_NAME
         stream.writeStartElement("HOST_IP");
-        stream.writeCharacters(_a.hostIP);
+        stream.writeCharacters(_asset.hostIP);
         stream.writeEndElement(); //HOST_IP
         stream.writeStartElement("HOST_MAC");
-        stream.writeCharacters(_a.hostMAC);
+        stream.writeCharacters(_asset.hostMAC);
         stream.writeEndElement(); //HOST_MAC
         stream.writeStartElement("HOST_FQDN");
-        stream.writeCharacters(_a.hostFQDN);
+        stream.writeCharacters(_asset.hostFQDN);
         stream.writeEndElement(); //HOST_FQDN
         stream.writeStartElement("TECH_AREA");
-        stream.writeCharacters(_a.techArea);
+        stream.writeCharacters(_asset.techArea);
         stream.writeEndElement(); //TECH_AREA
         stream.writeStartElement("TARGET_KEY");
-        stream.writeCharacters(_a.targetKey);
+        stream.writeCharacters(_asset.targetKey);
         stream.writeEndElement(); //TARGET_KEY
         stream.writeStartElement("WEB_OR_DATABASE");
         stream.writeCharacters(PrintTrueFalse(_a.webOrDB));
         stream.writeEndElement(); //WEB_OR_DATABASE
         stream.writeStartElement("WEB_DB_SITE");
-        stream.writeCharacters(_a.webDbSite);
+        stream.writeCharacters(_asset.webDbSite);
         stream.writeEndElement(); //WEB_DB_SITE
         stream.writeStartElement("WEB_DB_INSTANCE");
-        stream.writeCharacters(_a.webDbInstance);
+        stream.writeCharacters(_asset.webDbInstance);
         stream.writeEndElement(); //WEB_DB_INSTANCE
         stream.writeEndElement(); //ASSET
         stream.writeStartElement("STIGS");
-        foreach (const STIG &s, _a.STIGs())
+        foreach (const STIG &s, _asset.STIGs())
         {
             stream.writeStartElement("iSTIG");
             stream.writeStartElement("STIG_INFO");
@@ -330,7 +450,7 @@ void AssetView::SaveCKL()
 
             stream.writeEndElement(); //STIG_INFO
 
-            foreach (const CKLCheck &cc, _a.CKLChecks(&s))
+            foreach (const CKLCheck &cc, _asset.CKLChecks(&s))
             {
                 const STIGCheck sc = cc.STIGCheck();
                 stream.writeStartElement("VULN");
@@ -582,6 +702,13 @@ void AssetView::SaveCKL()
     }
 }
 
+/*!
+ * \brief AssetView::KeyShortcut
+ * \param action
+ *
+ * When a keyboard shortcut is used, set the display element to
+ * correspond.
+ */
 void AssetView::KeyShortcut(const Status &action)
 {
     if (this->isVisible())
@@ -604,6 +731,11 @@ void AssetView::KeyShortcut(const Status &action)
     }
 }
 
+/*!
+ * \brief AssetView::UpdateCKLHelper
+ *
+ * Update the database with user-modified data from the interface.
+ */
 void AssetView::UpdateCKLHelper()
 {
     QList<QListWidgetItem*> selectedItems = ui->lstChecks->selectedItems();
@@ -641,6 +773,11 @@ void AssetView::UpdateCKLHelper()
     }
 }
 
+/*!
+ * \brief AssetView::UpdateCKL
+ *
+ * Detects when the user has made a change and been idle for a while.
+ */
 void AssetView::UpdateCKL()
 {
     //avoid updating the database for every keypress. Wait for 9/50 of a second before saving
@@ -648,6 +785,12 @@ void AssetView::UpdateCKL()
     _timer.start(180);
 }
 
+/*!
+ * \brief AssetView::UpdateCKLStatus
+ * \param val
+ * Trigger updating the visual elements for when the CKL status
+ * changes its compliance state.
+ */
 void AssetView::UpdateCKLStatus(const QString &val)
 {
     QList<QListWidgetItem*> selectedItems = ui->lstChecks->selectedItems();
@@ -666,6 +809,13 @@ void AssetView::UpdateCKLStatus(const QString &val)
     }
 }
 
+/*!
+ * \brief AssetView::UpdateCKLSeverity
+ * \param val
+ *
+ * Handle changing the CKL check's severity when the CKL check's
+ * severity has been overwritten.
+ */
 void AssetView::UpdateCKLSeverity(const QString &val)
 {
     QList<QListWidgetItem*> selectedItems = ui->lstChecks->selectedItems();
@@ -709,27 +859,33 @@ void AssetView::UpdateCKLSeverity(const QString &val)
     }
 }
 
+/*!
+ * \brief AssetView::UpdateSTIGs
+ *
+ * Handle the selection of which STIGs are included with the viewed
+ * Asset;
+ */
 void AssetView::UpdateSTIGs()
 {
     DbManager db;
-    QList<STIG> stigs = _a.STIGs();
+    QList<STIG> stigs = _asset.STIGs();
     for (int i = 0; i < ui->lstSTIGs->count(); i++)
     {
         QListWidgetItem *item = ui->lstSTIGs->item(i);
         STIG s = item->data(Qt::UserRole).value<STIG>();
         if (item->isSelected() && !stigs.contains(s))
         {
-            db.AddSTIGToAsset(s, _a);
+            db.AddSTIGToAsset(s, _asset);
             ShowChecks();
         }
         else if (!item->isSelected() && stigs.contains(s))
         {
             //confirm to delete the STIG (avoid accidental clicks in the STIG box)
-            QMessageBox::StandardButton confirm = QMessageBox::question(this, "Confirm STIG Removal", "Really delete the " + PrintSTIG(s) + " stig from " + PrintAsset(_a) + "?",
+            QMessageBox::StandardButton confirm = QMessageBox::question(this, "Confirm STIG Removal", "Really delete the " + PrintSTIG(s) + " stig from " + PrintAsset(_asset) + "?",
                                             QMessageBox::Yes|QMessageBox::No);
             if (confirm == QMessageBox::Yes)
             {
-                db.DeleteSTIGFromAsset(s, _a);
+                db.DeleteSTIGFromAsset(s, _asset);
                 ShowChecks();
             }
             else
@@ -743,6 +899,15 @@ void AssetView::UpdateSTIGs()
     }
 }
 
+/*!
+ * \brief AssetView::SetItemColor
+ * \param i
+ * \param stat
+ * \param sev
+ *
+ * Sets the QListWidgetItem's color so that attention is drawn to it,
+ * particularly when the check is non-compliant.
+ */
 void AssetView::SetItemColor(QListWidgetItem *i, const Status &stat, const Severity &sev)
 {
     QFont f;
@@ -781,6 +946,12 @@ void AssetView::SetItemColor(QListWidgetItem *i, const Status &stat, const Sever
     }
 }
 
+/*!
+ * \brief AssetView::CheckSelected
+ *
+ * When a new CKL check is selected, make sure that the previously displayed
+ * one has updated its elements correctly.
+ */
 void AssetView::CheckSelected(QListWidgetItem *current, QListWidgetItem *previous [[maybe_unused]])
 {
     if (current)

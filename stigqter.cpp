@@ -216,6 +216,11 @@ void STIGQter::CloseTab(int i)
 {
     if (ui->tabDB->count() > i)
         ui->tabDB->removeTab(i);
+    for (int j = 1; j < ui->tabDB->count(); j++)
+    {
+        //reset the tab indices for the tabs that were not closed
+        static_cast<AssetView*>(ui->tabDB->widget(j))->SetTabIndex(j);
+    }
     DisplayAssets();
 }
 

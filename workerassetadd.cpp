@@ -29,9 +29,9 @@ void WorkerAssetAdd::AddAsset(const Asset &asset)
     _todo = asset;
 }
 
-void WorkerAssetAdd::AddSTIG(const STIG &s)
+void WorkerAssetAdd::AddSTIG(const STIG &stig)
 {
-    _todoSTIGs.append(s);
+    _todoSTIGs.append(stig);
 }
 
 void WorkerAssetAdd::process()
