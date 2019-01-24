@@ -379,7 +379,7 @@ void AssetView::SaveCKL()
         stream.writeCharacters(_asset.targetKey);
         stream.writeEndElement(); //TARGET_KEY
         stream.writeStartElement("WEB_OR_DATABASE");
-        stream.writeCharacters(PrintTrueFalse(_a.webOrDB));
+        stream.writeCharacters(PrintTrueFalse(_asset.webOrDB));
         stream.writeEndElement(); //WEB_OR_DATABASE
         stream.writeStartElement("WEB_DB_SITE");
         stream.writeCharacters(_asset.webDbSite);

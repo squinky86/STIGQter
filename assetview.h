@@ -65,7 +65,7 @@ private slots:
 
 private:
     Ui::AssetView *ui;
-    Asset _a;
+    Asset _asset;
     QString _justification;
     QTimer _timer;
     QTimer _timerChecks;
