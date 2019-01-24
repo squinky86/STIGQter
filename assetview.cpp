@@ -48,13 +48,15 @@
 
 /*!
  * \brief AssetView::AssetView
+ * \param asset
  * \param parent
  *
  * Main constructor.
  */
-AssetView::AssetView(QWidget *parent) :
+AssetView::AssetView(const Asset &asset, QWidget *parent) :
     QWidget(parent),
     ui(new Ui::AssetView),
+    _asset(asset),
     _justification(),
     _updateStatus(false),
     _tabIndex(-1)
@@ -90,20 +92,20 @@ AssetView::AssetView(QWidget *parent) :
     _shortcuts.append(new QShortcut(QKeySequence(Qt::CTRL + Qt::Key_O), this, SLOT(KeyShortcutCtrlO())));
     _shortcuts.append(new QShortcut(QKeySequence(Qt::CTRL + Qt::Key_R), this, SLOT(KeyShortcutCtrlR())));
     _shortcuts.append(new QShortcut(QKeySequence(Qt::CTRL + Qt::Key_X), this, SLOT(KeyShortcutCtrlX())));
+
+    if (_asset.id >= 0)
+        Display();
 }
 
 /*!
  * \overload AssetView()
  * \brief AssetView::AssetView
- * \param a
  * \param parent
  *
  * A new tab is created for the supplied Asset.
  */
-AssetView::AssetView(const Asset &asset, QWidget *parent) : AssetView(parent)
+AssetView::AssetView(QWidget *parent) : AssetView(_asset, parent)
 {
-    _asset = asset;
-    Display();
 }
 
 /*!

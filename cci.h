@@ -52,6 +52,7 @@ public:
 
 Q_DECLARE_METATYPE(CCI);
 
-QString PrintCCI(CCI c);
+QString PrintCCI(int cci);
+QString PrintCCI(CCI cci);
 
 #endif // CCI_H

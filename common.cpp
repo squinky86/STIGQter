@@ -33,10 +33,9 @@ QString CleanXML(QString s, bool isXml)
     TidyBuffer err = {nullptr};
 
     int rc = -1;
-    bool ok = false;
-
     TidyDoc tdoc = tidyCreate();
-    ok = tidyOptSetBool(tdoc, TidyXmlOut, yes);
+    bool ok = tidyOptSetBool(tdoc, TidyXmlOut, yes);
+
     if (isXml)
         ok = ok && tidyOptSetBool(tdoc, TidyXmlTags, yes);
     if (ok)

@@ -22,11 +22,27 @@
 
 #include <QDebug>
 
-QString PrintCCI(CCI c)
-{
-    return "CCI-" + QString::number(c.cci).rightJustified(6, '0');
-}
+/*!
+ * \class CCI
+ * \brief A Control Correlation Identifier (CCI) corresponds to a
+ * particular RMF checklist item. The RMF hierarchy consists of
+ * Family → Control → CCI.
+ *
+ * A CCI is also referred to as an "Assessment Procedure" or AP. The
+ * current list of AP numbers is not available from a standard
+ * repository.
+ *
+ * More information about CCIs is available from
+ * \l {https://iase.disa.mil/stigs/cci/Pages/index.aspx} {DISA's IASE
+ * website}.
+ */
 
+/*!
+ * \brief CCI::CCI
+ * \param parent
+ *
+ * Default constructor.
+ */
 CCI::CCI(QObject *parent) : QObject(parent),
     id(-1),
     controlId(-1),
@@ -40,17 +56,38 @@ CCI::CCI(QObject *parent) : QObject(parent),
 {
 }
 
+/*!
+ * \brief CCI::Control
+ * \return the RMF control associated with this CCI
+ *
+ * Control() calls the database to obtain the control which maps to
+ * this CCI.
+ */
 Control CCI::Control()
 {
     DbManager db;
     return db.GetControl(controlId);
 }
 
+/*!
+ * \overload CCI::CCI()
+ * \brief CCI::CCI
+ * \param right
+ *
+ * Copy constructor.
+ */
 CCI::CCI(const CCI &right) : CCI(right.parent())
 {
     *this = right;
 }
 
+/*!
+ * \brief CCI::operator=
+ * \param right
+ * \return this CCI, copied from the assignee
+ *
+ * Deep copy assignment operator.
+ */
 CCI& CCI::operator=(const CCI &right)
 {
     if (this != &right)
@@ -68,6 +105,16 @@ CCI& CCI::operator=(const CCI &right)
     return *this;
 }
 
+/*!
+ * \brief CCI::operator==
+ * \param right
+ * \return \c true when the actual CCI numbers are the same.
+ * Otherwise, \c false.
+ *
+ * Only the CCI number is compared, in case there is a shallow copy
+ * or database inconsistency. The database IDs and compliance state
+ * are irrelevant to determining if the CCI is actually the same.
+ */
 bool CCI::operator==(const CCI &right)
 {
     if ((id <= 0) || (right.id <= 0))
@@ -75,4 +122,25 @@ bool CCI::operator==(const CCI &right)
         return cci == right.cci;
     }
     return id == right.id;
+}
+
+/*!
+ * \brief PrintCCI
+ * \param cci
+ * \return human-readable CCI description
+ */
+QString PrintCCI(int cci)
+{
+    return "CCI-" + QString::number(cci).rightJustified(6, '0');
+}
+
+/*!
+ * \overload PrintCCI(cci)
+ * \brief PrintCCI
+ * \param cci
+ * \return human-readable CCI description
+ */
+QString PrintCCI(CCI cci)
+{
+    return PrintCCI(cci.cci);
 }
