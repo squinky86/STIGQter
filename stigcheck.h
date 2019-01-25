@@ -35,14 +35,14 @@ enum Severity
 };
 
 Severity GetSeverity(const QString &severity);
-QString GetSeverity(const Severity &severity, bool cat = true); //cat levels or low/mod/high
+QString GetSeverity(Severity severity, bool cat = true); //cat levels or low/mod/high
 
 class STIGCheck : public QObject
 {
     Q_OBJECT
 public:
     STIGCheck(const STIGCheck& right);
-    STIGCheck(QObject *parent = nullptr);
+    explicit STIGCheck(QObject *parent = nullptr);
     STIGCheck& operator=(const STIGCheck &right);
 
     int id;
@@ -76,6 +76,6 @@ public:
 
 Q_DECLARE_METATYPE(STIGCheck);
 
-QString PrintSTIGCheck(STIGCheck s);
+QString PrintSTIGCheck(const STIGCheck &stigCheck);
 
 #endif // STIGCHECK_H

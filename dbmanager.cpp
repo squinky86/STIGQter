@@ -19,6 +19,7 @@
 
 #include "dbmanager.h"
 #include "cklcheck.h"
+#include "common.h"
 
 #include <cstdlib>
 #include <QCoreApplication>
@@ -48,20 +49,20 @@ DbManager::DbManager(const QString& path, const QString& connectionName)
     QSqlDatabase db = QSqlDatabase::database(connectionName);
     if (!db.isValid())
     {
-        db = QSqlDatabase::addDatabase("QSQLITE", connectionName);
+        db = QSqlDatabase::addDatabase(QStringLiteral("QSQLITE"), connectionName);
         db.setDatabaseName(path);
     }
 
     if (!db.open())
     {
         qDebug() << "Error: Unable to open SQLite database.";
-        QMessageBox::warning(nullptr, "Unable to Open DB", "Unable to open DB " + path);
+        QMessageBox::warning(nullptr, QStringLiteral("Unable to Open DB"), "Unable to open DB " + path);
     }
 
     if (initialize)
         UpdateDatabaseFromVersion(0);
 
-    int version = GetVariable("version").toInt();
+    int version = GetVariable(QStringLiteral("version")).toInt();
     UpdateDatabaseFromVersion(version);
 }
 
@@ -84,8 +85,8 @@ void DbManager::DelayCommit(bool delay)
         QSqlDatabase db;
         if (this->CheckDatabase(db))
         {
-            QSqlQuery("PRAGMA journal_mode = OFF", db);
-            QSqlQuery("PRAGMA synchronous = OFF", db);
+            QSqlQuery(QStringLiteral("PRAGMA journal_mode = OFF"), db);
+            QSqlQuery(QStringLiteral("PRAGMA synchronous = OFF"), db);
         }
     }
     else
@@ -93,8 +94,8 @@ void DbManager::DelayCommit(bool delay)
         QSqlDatabase db;
         if (this->CheckDatabase(db))
         {
-            QSqlQuery("PRAGMA journal_mode = ON", db);
-            QSqlQuery("PRAGMA synchronous = ON", db);
+            QSqlQuery(QStringLiteral("PRAGMA journal_mode = ON"), db);
+            QSqlQuery(QStringLiteral("PRAGMA synchronous = ON"), db);
             db.commit();
         }
     }
@@ -109,28 +110,28 @@ bool DbManager::AddAsset(Asset &asset)
         QSqlQuery q(db);
         if (asset.id <= 0)
         {
-            q.prepare("SELECT count(*) FROM Asset WHERE hostName = :hostName");
-            q.bindValue(":hostName", asset.hostName);
+            q.prepare(QStringLiteral("SELECT count(*) FROM Asset WHERE hostName = :hostName"));
+            q.bindValue(QStringLiteral(":hostName"), asset.hostName);
             q.exec();
             if (q.next())
             {
                 if (q.value(0).toInt() > 0)
                 {
-                    QMessageBox::warning(nullptr, "Asset Already Exists", "The Asset " + PrintAsset(asset) + " already exists in the database.");
+                    QMessageBox::warning(nullptr, QStringLiteral("Asset Already Exists"), "The Asset " + PrintAsset(asset) + " already exists in the database.");
                     return false;
                 }
             }
-            q.prepare("INSERT INTO Asset (`assetType`, `hostName`, `hostIP`, `hostMAC`, `hostFQDN`, `techArea`, `targetKey`, `webOrDatabase`, `webDBSite`, `webDBInstance`) VALUES(:assetType, :hostName, :hostIP, :hostMAC, :hostFQDN, :techArea, :targetKey, :webOrDatabase, :webDBSite, :webDBInstance)");
-            q.bindValue(":assetType", asset.assetType);
-            q.bindValue(":hostName", asset.hostName);
-            q.bindValue(":hostIP", asset.hostIP);
-            q.bindValue(":hostMAC", asset.hostMAC);
-            q.bindValue(":hostFQDN", asset.hostFQDN);
-            q.bindValue(":techArea", asset.techArea);
-            q.bindValue(":targetKey", asset.targetKey);
-            q.bindValue(":webOrDatabase", asset.webOrDB);
-            q.bindValue(":webDBSite", asset.webDbSite);
-            q.bindValue(":webDBInstance", asset.webDbInstance);
+            q.prepare(QStringLiteral("INSERT INTO Asset (`assetType`, `hostName`, `hostIP`, `hostMAC`, `hostFQDN`, `techArea`, `targetKey`, `webOrDatabase`, `webDBSite`, `webDBInstance`) VALUES(:assetType, :hostName, :hostIP, :hostMAC, :hostFQDN, :techArea, :targetKey, :webOrDatabase, :webDBSite, :webDBInstance)"));
+            q.bindValue(QStringLiteral(":assetType"), asset.assetType);
+            q.bindValue(QStringLiteral(":hostName"), asset.hostName);
+            q.bindValue(QStringLiteral(":hostIP"), asset.hostIP);
+            q.bindValue(QStringLiteral(":hostMAC"), asset.hostMAC);
+            q.bindValue(QStringLiteral(":hostFQDN"), asset.hostFQDN);
+            q.bindValue(QStringLiteral(":techArea"), asset.techArea);
+            q.bindValue(QStringLiteral(":targetKey"), asset.targetKey);
+            q.bindValue(QStringLiteral(":webOrDatabase"), asset.webOrDB);
+            q.bindValue(QStringLiteral(":webDBSite"), asset.webDbSite);
+            q.bindValue(QStringLiteral(":webDBInstance"), asset.webDbInstance);
             q.exec();
             db.commit();
             asset.id = q.lastInsertId().toInt();
@@ -146,10 +147,10 @@ bool DbManager::AddCCI(CCI &cci)
     if (this->CheckDatabase(db))
     {
         QSqlQuery q(db);
-        q.prepare("INSERT INTO CCI (ControlId, cci, definition) VALUES(:ControlId, :CCI, :definition)");
-        q.bindValue(":ControlId", cci.controlId);
-        q.bindValue(":CCI", cci.cci);
-        q.bindValue(":definition", cci.definition);
+        q.prepare(QStringLiteral("INSERT INTO CCI (ControlId, cci, definition) VALUES(:ControlId, :CCI, :definition)"));
+        q.bindValue(QStringLiteral(":ControlId"), cci.controlId);
+        q.bindValue(QStringLiteral(":CCI"), cci.cci);
+        q.bindValue(QStringLiteral(":definition"), cci.definition);
         q.exec();
         if (!_delayCommit)
         {
@@ -166,7 +167,7 @@ void DbManager::AddControl(const QString &control, const QString &title, const Q
     QString tmpControl(control.trimmed());
     if (tmpControl.length() < 4)
     {
-        qDebug() << "Received bad control.";
+        qDebug() << QStringLiteral("Received bad control.");
         return;
     }
 
@@ -184,7 +185,7 @@ void DbManager::AddControl(const QString &control, const QString &title, const Q
 
     QString family(tmpControl.left(2));
     tmpControl = tmpControl.right(tmpControl.length()-3);
-    QString enhancement("");
+    QString enhancement = QString();
     if (tmpControl.contains('('))
     {
         int tmpIndex = tmpControl.indexOf('(');
@@ -192,7 +193,7 @@ void DbManager::AddControl(const QString &control, const QString &title, const Q
         enhancement = enhancement.left(enhancement.length() - 1);
         tmpControl = tmpControl.left(tmpControl.indexOf('('));
         if (enhancement.toInt() == 0)
-            enhancement = "";
+            enhancement = QString();
     }
 
     Family f = GetFamily(family);
@@ -203,12 +204,12 @@ void DbManager::AddControl(const QString &control, const QString &title, const Q
         if (this->CheckDatabase(db))
         {
             QSqlQuery q(db);
-            q.prepare("INSERT INTO Control (FamilyId, number, enhancement, title, description) VALUES(:FamilyId, :number, :enhancement, :title, :description)");
-            q.bindValue(":FamilyId", f.id);
-            q.bindValue(":number", tmpControl.toInt());
-            q.bindValue(":enhancement", enhancement.isEmpty() ? QVariant(QVariant::Int) : enhancement.toInt());
-            q.bindValue(":title", title);
-            q.bindValue(":description", description);
+            q.prepare(QStringLiteral("INSERT INTO Control (FamilyId, number, enhancement, title, description) VALUES(:FamilyId, :number, :enhancement, :title, :description)"));
+            q.bindValue(QStringLiteral(":FamilyId"), f.id);
+            q.bindValue(QStringLiteral(":number"), tmpControl.toInt());
+            q.bindValue(QStringLiteral(":enhancement"), enhancement.isEmpty() ? QVariant(QVariant::Int) : enhancement.toInt());
+            q.bindValue(QStringLiteral(":title"), title);
+            q.bindValue(QStringLiteral(":description"), description);
             q.exec();
             if (!_delayCommit)
                 db.commit();
@@ -222,9 +223,9 @@ void DbManager::AddFamily(const QString &acronym, const QString &description)
     if (this->CheckDatabase(db))
     {
         QSqlQuery q(db);
-        q.prepare("INSERT INTO Family (Acronym, Description) VALUES(:acronym, :description)");
-        q.bindValue(":acronym", acronym);
-        q.bindValue(":description", Sanitize(description));
+        q.prepare(QStringLiteral("INSERT INTO Family (Acronym, Description) VALUES(:acronym, :description)"));
+        q.bindValue(QStringLiteral(":acronym"), acronym);
+        q.bindValue(QStringLiteral(":description"), Sanitize(description));
         q.exec();
         if (!_delayCommit)
             db.commit();
@@ -239,26 +240,26 @@ void DbManager::AddSTIG(STIG stig, QList<STIGCheck> checks)
         QSqlQuery q(db);
         if (stig.id <= 0)
         {
-            q.prepare("SELECT count(*) FROM STIG WHERE title = :title AND release = :release AND version = :version");
-            q.bindValue(":title", stig.title);
-            q.bindValue(":release", stig.release);
-            q.bindValue(":version", stig.version);
+            q.prepare(QStringLiteral("SELECT count(*) FROM STIG WHERE title = :title AND release = :release AND version = :version"));
+            q.bindValue(QStringLiteral(":title"), stig.title);
+            q.bindValue(QStringLiteral(":release"), stig.release);
+            q.bindValue(QStringLiteral(":version"), stig.version);
             q.exec();
             while (q.next())
             {
                 if (q.value(0).toInt() > 0)
                 {
-                    QMessageBox::warning(nullptr, "STIG Already Exists", "The STIG " + PrintSTIG(stig) + " already exists in the database.");
+                    QMessageBox::warning(nullptr, QStringLiteral("STIG Already Exists"), "The STIG " + PrintSTIG(stig) + " already exists in the database.");
                     return;
                 }
             }
-            q.prepare("INSERT INTO STIG (title, description, release, version, benchmarkId, fileName) VALUES(:title, :description, :release, :version, :benchmarkId, :fileName)");
-            q.bindValue(":title", stig.title);
-            q.bindValue(":description", stig.description);
-            q.bindValue(":release", stig.release);
-            q.bindValue(":version", stig.version);
-            q.bindValue(":benchmarkId", stig.benchmarkId);
-            q.bindValue(":fileName", stig.fileName);
+            q.prepare(QStringLiteral("INSERT INTO STIG (title, description, release, version, benchmarkId, fileName) VALUES(:title, :description, :release, :version, :benchmarkId, :fileName)"));
+            q.bindValue(QStringLiteral(":title"), stig.title);
+            q.bindValue(QStringLiteral(":description"), stig.description);
+            q.bindValue(QStringLiteral(":release"), stig.release);
+            q.bindValue(QStringLiteral(":version"), stig.version);
+            q.bindValue(QStringLiteral(":benchmarkId"), stig.benchmarkId);
+            q.bindValue(QStringLiteral(":fileName"), stig.fileName);
             q.exec();
             stig.id = q.lastInsertId().toInt();
             db.commit();
@@ -270,31 +271,31 @@ void DbManager::AddSTIG(STIG stig, QList<STIGCheck> checks)
         foreach(STIGCheck c, checks)
         {
             newChecks = true;
-            q.prepare("INSERT INTO STIGCheck (`STIGId`, `CCIId`, `rule`, `vulnNum`, `groupTitle`, `ruleVersion`, `severity`, `weight`, `title`, `vulnDiscussion`, `falsePositives`, `falseNegatives`, `fix`, `check`, `documentable`, `mitigations`, `severityOverrideGuidance`, `checkContentRef`, `potentialImpact`, `thirdPartyTools`, `mitigationControl`, `responsibility`, `IAControls`, `targetKey`) VALUES(:STIGId, :CCIId, :rule, :vulnNum, :groupTitle, :ruleVersion, :severity, :weight, :title, :vulnDiscussion, :falsePositives, :falseNegatives, :fix, :check, :documentable, :mitigations, :severityOverrideGuidance, :checkContentRef, :potentialImpact, :thirdPartyTools, :mitigationControl, :responsibility, :IAControls, :targetKey)");
-            q.bindValue(":STIGId", stig.id);
-            q.bindValue(":CCIId", c.cciId);
-            q.bindValue(":rule", c.rule);
-            q.bindValue(":vulnNum", c.vulnNum);
-            q.bindValue(":groupTitle", c.groupTitle);
-            q.bindValue(":ruleVersion", c.ruleVersion);
-            q.bindValue(":severity", c.severity);
-            q.bindValue(":weight", c.weight);
-            q.bindValue(":title", c.title);
-            q.bindValue(":vulnDiscussion", c.vulnDiscussion);
-            q.bindValue(":falsePositives", c.falsePositives);
-            q.bindValue(":falseNegatives", c.falseNegatives);
-            q.bindValue(":fix", c.fix);
-            q.bindValue(":check", c.check);
-            q.bindValue(":documentable", c.documentable ? 1 : 0);
-            q.bindValue(":mitigations", c.mitigations);
-            q.bindValue(":severityOverrideGuidance", c.severityOverrideGuidance);
-            q.bindValue(":checkContentRef", c.checkContentRef);
-            q.bindValue(":potentialImpact", c.potentialImpact);
-            q.bindValue(":thirdPartyTools", c.thirdPartyTools);
-            q.bindValue(":mitigationControl", c.mitigationControl);
-            q.bindValue(":responsibility", c.responsibility);
-            q.bindValue(":IAControls", c.iaControls);
-            q.bindValue(":targetKey", c.targetKey);
+            q.prepare(QStringLiteral("INSERT INTO STIGCheck (`STIGId`, `CCIId`, `rule`, `vulnNum`, `groupTitle`, `ruleVersion`, `severity`, `weight`, `title`, `vulnDiscussion`, `falsePositives`, `falseNegatives`, `fix`, `check`, `documentable`, `mitigations`, `severityOverrideGuidance`, `checkContentRef`, `potentialImpact`, `thirdPartyTools`, `mitigationControl`, `responsibility`, `IAControls`, `targetKey`) VALUES(:STIGId, :CCIId, :rule, :vulnNum, :groupTitle, :ruleVersion, :severity, :weight, :title, :vulnDiscussion, :falsePositives, :falseNegatives, :fix, :check, :documentable, :mitigations, :severityOverrideGuidance, :checkContentRef, :potentialImpact, :thirdPartyTools, :mitigationControl, :responsibility, :IAControls, :targetKey)"));
+            q.bindValue(QStringLiteral(":STIGId"), stig.id);
+            q.bindValue(QStringLiteral(":CCIId"), c.cciId);
+            q.bindValue(QStringLiteral(":rule"), c.rule);
+            q.bindValue(QStringLiteral(":vulnNum"), c.vulnNum);
+            q.bindValue(QStringLiteral(":groupTitle"), c.groupTitle);
+            q.bindValue(QStringLiteral(":ruleVersion"), c.ruleVersion);
+            q.bindValue(QStringLiteral(":severity"), c.severity);
+            q.bindValue(QStringLiteral(":weight"), c.weight);
+            q.bindValue(QStringLiteral(":title"), c.title);
+            q.bindValue(QStringLiteral(":vulnDiscussion"), c.vulnDiscussion);
+            q.bindValue(QStringLiteral(":falsePositives"), c.falsePositives);
+            q.bindValue(QStringLiteral(":falseNegatives"), c.falseNegatives);
+            q.bindValue(QStringLiteral(":fix"), c.fix);
+            q.bindValue(QStringLiteral(":check"), c.check);
+            q.bindValue(QStringLiteral(":documentable"), c.documentable ? 1 : 0);
+            q.bindValue(QStringLiteral(":mitigations"), c.mitigations);
+            q.bindValue(QStringLiteral(":severityOverrideGuidance"), c.severityOverrideGuidance);
+            q.bindValue(QStringLiteral(":checkContentRef"), c.checkContentRef);
+            q.bindValue(QStringLiteral(":potentialImpact"), c.potentialImpact);
+            q.bindValue(QStringLiteral(":thirdPartyTools"), c.thirdPartyTools);
+            q.bindValue(QStringLiteral(":mitigationControl"), c.mitigationControl);
+            q.bindValue(QStringLiteral(":responsibility"), c.responsibility);
+            q.bindValue(QStringLiteral(":IAControls"), c.iaControls);
+            q.bindValue(QStringLiteral(":targetKey"), c.targetKey);
             q.exec();
         }
         if (!delayed)
@@ -316,8 +317,8 @@ void DbManager::AddSTIGToAsset(const STIG &stig, const Asset &asset)
         {
             bool assetExists = false;
             bool stigExists = false;
-            q.prepare("SELECT count(*) FROM Asset WHERE id = :id");
-            q.bindValue(":id", asset.id);
+            q.prepare(QStringLiteral("SELECT count(*) FROM Asset WHERE id = :id"));
+            q.bindValue(QStringLiteral(":id"), asset.id);
             q.exec();
             while (q.next())
             {
@@ -326,8 +327,8 @@ void DbManager::AddSTIGToAsset(const STIG &stig, const Asset &asset)
                     assetExists = true;
                 }
             }
-            q.prepare("SELECT count(*) FROM STIG WHERE id = :id");
-            q.bindValue(":id", stig.id);
+            q.prepare(QStringLiteral("SELECT count(*) FROM STIG WHERE id = :id"));
+            q.bindValue(QStringLiteral(":id"), stig.id);
             q.exec();
             while (q.next())
             {
@@ -338,14 +339,14 @@ void DbManager::AddSTIGToAsset(const STIG &stig, const Asset &asset)
             }
             if (assetExists && stigExists)
             {
-                q.prepare("INSERT INTO AssetSTIG (`AssetId`, `STIGId`) VALUES(:AssetId, :STIGId)");
-                q.bindValue(":AssetId", asset.id);
-                q.bindValue(":STIGId", stig.id);
+                q.prepare(QStringLiteral("INSERT INTO AssetSTIG (`AssetId`, `STIGId`) VALUES(:AssetId, :STIGId)"));
+                q.bindValue(QStringLiteral(":AssetId"), asset.id);
+                q.bindValue(QStringLiteral(":STIGId"), stig.id);
                 q.exec();
-                q.prepare("INSERT INTO CKLCheck (AssetId, STIGCheckId, status, findingDetails, comments, severityOverride, severityJustification) SELECT :AssetId, id, :status, '', '', '', '' FROM STIGCheck WHERE STIGId = :STIGId");
-                q.bindValue(":AssetId", asset.id);
-                q.bindValue(":status", Status::NotReviewed);
-                q.bindValue(":STIGId", stig.id);
+                q.prepare(QStringLiteral("INSERT INTO CKLCheck (AssetId, STIGCheckId, status, findingDetails, comments, severityOverride, severityJustification) SELECT :AssetId, id, :status, '', '', '', '' FROM STIGCheck WHERE STIGId = :STIGId"));
+                q.bindValue(QStringLiteral(":AssetId"), asset.id);
+                q.bindValue(QStringLiteral(":status"), Status::NotReviewed);
+                q.bindValue(QStringLiteral(":STIGId"), stig.id);
                 q.exec();
                 db.commit();
             }
@@ -362,15 +363,15 @@ void DbManager::DeleteAsset(const Asset &asset)
 {
     if (asset.STIGs().count() > 0)
     {
-        QMessageBox::warning(nullptr, "Asset Has Mapped STIGs", "The Asset '" + PrintAsset(asset) + "' has STIGs selected that must be removed.");
+        QMessageBox::warning(nullptr, QStringLiteral("Asset Has Mapped STIGs"), "The Asset '" + PrintAsset(asset) + "' has STIGs selected that must be removed.");
         return;
     }
     QSqlDatabase db;
     if (this->CheckDatabase(db))
     {
         QSqlQuery q(db);
-        q.prepare("DELETE FROM Asset WHERE id = :AssetId");
-        q.bindValue(":AssetId", asset.id);
+        q.prepare(QStringLiteral("DELETE FROM Asset WHERE id = :AssetId"));
+        q.bindValue(QStringLiteral(":AssetId"), asset.id);
         q.exec();
         if (!_delayCommit)
             db.commit();
@@ -383,11 +384,11 @@ void DbManager::DeleteCCIs()
     if (this->CheckDatabase(db))
     {
         QSqlQuery q(db);
-        q.prepare("DELETE FROM Family");
+        q.prepare(QStringLiteral("DELETE FROM Family"));
         q.exec();
-        q.prepare("DELETE FROM Control");
+        q.prepare(QStringLiteral("DELETE FROM Control"));
         q.exec();
-        q.prepare("DELETE FROM CCI");
+        q.prepare(QStringLiteral("DELETE FROM CCI"));
         q.exec();
         if (!_delayCommit)
             db.commit();
@@ -400,20 +401,20 @@ bool DbManager::DeleteSTIG(int id)
     if (this->CheckDatabase(db))
     {
         QSqlQuery q(db);
-        q.prepare("SELECT hostName FROM AssetSTIG JOIN Asset ON AssetSTIG.AssetID = Asset.id WHERE STIGId = :STIGId");
-        q.bindValue(":STIGId", id);
+        q.prepare(QStringLiteral("SELECT hostName FROM AssetSTIG JOIN Asset ON AssetSTIG.AssetID = Asset.id WHERE STIGId = :STIGId"));
+        q.bindValue(QStringLiteral(":STIGId"), id);
         q.exec();
         if (q.next())
         {
-            QMessageBox::warning(nullptr, "STIG In Use", "The Asset '" + q.value(0).toString() + "' is currently using the selected STIG.");
+            QMessageBox::warning(nullptr, QStringLiteral("STIG In Use"), "The Asset '" + q.value(0).toString() + "' is currently using the selected STIG.");
             return false;
         }
 
-        q.prepare("DELETE FROM STIGCheck WHERE STIGId = :STIGId");
-        q.bindValue(":STIGId", id);
+        q.prepare(QStringLiteral("DELETE FROM STIGCheck WHERE STIGId = :STIGId"));
+        q.bindValue(QStringLiteral(":STIGId"), id);
         q.exec();
-        q.prepare("DELETE FROM STIG WHERE id = :id");
-        q.bindValue(":id", id);
+        q.prepare(QStringLiteral("DELETE FROM STIG WHERE id = :id"));
+        q.bindValue(QStringLiteral(":id"), id);
         q.exec();
         if (!_delayCommit)
             db.commit();
@@ -422,7 +423,7 @@ bool DbManager::DeleteSTIG(int id)
     return false;
 }
 
-bool DbManager::DeleteSTIG(STIG stig)
+bool DbManager::DeleteSTIG(const STIG &stig)
 {
     return DeleteSTIG(stig.id);
 }
@@ -433,13 +434,13 @@ void DbManager::DeleteSTIGFromAsset(const STIG &stig, const Asset &asset)
     if (this->CheckDatabase(db))
     {
         QSqlQuery q(db);
-        q.prepare("DELETE FROM AssetSTIG WHERE AssetId = :AssetId AND STIGId = :STIGId");
-        q.bindValue(":AssetId", asset.id);
-        q.bindValue(":STIGId", stig.id);
+        q.prepare(QStringLiteral("DELETE FROM AssetSTIG WHERE AssetId = :AssetId AND STIGId = :STIGId"));
+        q.bindValue(QStringLiteral(":AssetId"), asset.id);
+        q.bindValue(QStringLiteral(":STIGId"), stig.id);
         q.exec();
-        q.prepare("DELETE FROM CKLCheck WHERE AssetId = :AssetId AND STIGCheckId IN (SELECT id FROM STIGCheck WHERE STIGId = :STIGId)");
-        q.bindValue(":AssetId", asset.id);
-        q.bindValue(":STIGId", stig.id);
+        q.prepare(QStringLiteral("DELETE FROM CKLCheck WHERE AssetId = :AssetId AND STIGCheckId IN (SELECT id FROM STIGCheck WHERE STIGId = :STIGId)"));
+        q.bindValue(QStringLiteral(":AssetId"), asset.id);
+        q.bindValue(QStringLiteral(":STIGId"), stig.id);
         q.exec();
         db.commit();
     }
@@ -448,19 +449,19 @@ void DbManager::DeleteSTIGFromAsset(const STIG &stig, const Asset &asset)
 Asset DbManager::GetAsset(const QString &hostName)
 {
     //fail quietly
-    QList<Asset> tmp = GetAssets("WHERE hostName = :hostName", {std::make_tuple<QString, QVariant>(":hostName", hostName)});
+    QList<Asset> tmp = GetAssets(QStringLiteral("WHERE hostName = :hostName"), {std::make_tuple<QString, QVariant>(QStringLiteral(":hostName"), hostName)});
     if (tmp.count() > 0)
         return tmp.first();
     Asset a;
     return a;
 }
 
-Asset DbManager::GetAsset(const int &id)
+Asset DbManager::GetAsset(int id)
 {
-    QList<Asset> tmp = GetAssets("WHERE id = :id", {std::make_tuple<QString, QVariant>(":id", id)});
+    QList<Asset> tmp = GetAssets(QStringLiteral("WHERE id = :id"), {std::make_tuple<QString, QVariant>(":id", id)});
     if (tmp.count() > 0)
         return tmp.first();
-    QMessageBox::warning(nullptr, "Unable to Find Asset", "The Asset ID " + QString::number(id) + " was not found in the database.");
+    QMessageBox::warning(nullptr, QStringLiteral("Unable to Find Asset"), "The Asset ID " + QString::number(id) + " was not found in the database.");
     Asset a;
     return a;
 }
@@ -472,10 +473,10 @@ QList<Asset> DbManager::GetAssets(const QString &whereClause, const QList<std::t
     if (this->CheckDatabase(db))
     {
         QSqlQuery q(db);
-        QString toPrep = "SELECT `id`, `assetType`, `hostName`, `hostIP`, `hostMAC`, `hostFQDN`, `techArea`, `targetKey`, `webOrDatabase`, `webDBSite`, `webDBInstance` FROM Asset";
+        QString toPrep = QStringLiteral("SELECT `id`, `assetType`, `hostName`, `hostIP`, `hostMAC`, `hostFQDN`, `techArea`, `targetKey`, `webOrDatabase`, `webDBSite`, `webDBInstance` FROM Asset");
         if (!whereClause.isNull() && !whereClause.isEmpty())
             toPrep.append(" " + whereClause);
-        toPrep.append(" ORDER BY LOWER(hostName), hostName");
+        toPrep.append(QStringLiteral(" ORDER BY LOWER(hostName), hostName"));
         q.prepare(toPrep);
         for (const auto &variable : variables)
         {
@@ -505,22 +506,26 @@ QList<Asset> DbManager::GetAssets(const QString &whereClause, const QList<std::t
     return ret;
 }
 
-CCI DbManager::GetCCI(const int &id)
+CCI DbManager::GetCCI(int id)
 {
-    return GetCCIs("WHERE id = :id", {std::make_tuple<QString, QVariant>(":id", id)}).first();
+    QList<CCI> ccis = GetCCIs(QStringLiteral("WHERE id = :id"), {std::make_tuple<QString, QVariant>(QStringLiteral(":id"), id)});
+    if (ccis.count() > 0)
+        return ccis.first();
+    CCI ret;
+    return ret;
 }
 
-CCI DbManager::GetCCIByCCI(const int &cci, const STIG *stig)
+CCI DbManager::GetCCIByCCI(int cci, const STIG *stig)
 {
-    QList<CCI> tmpList = GetCCIs("WHERE cci = :cci", {std::make_tuple<QString, QVariant>(":cci", cci)});
+    QList<CCI> tmpList = GetCCIs(QStringLiteral("WHERE cci = :cci"), {std::make_tuple<QString, QVariant>(QStringLiteral(":cci"), cci)});
     if (tmpList.count() > 0)
         return tmpList.first();
-    QString tmpMessage = "&lt;insert%20STIG%20information%20here&gt;";
+    QString tmpMessage = QStringLiteral("&lt;insert%20STIG%20information%20here&gt;");
     if (stig)
         tmpMessage = PrintSTIG(*stig);
     QString cciStr = PrintCCI(cci);
-    QMessageBox::warning(nullptr, "Broken CCI", "The CCI " + cciStr + " does not exist in NIST 800-53r4. If you are importing a STIG, please file a bug with the STIG author (probably DISA, disa.stig_spt@mail.mil) and let them know that their CCI mapping for the STIG you are trying to import is broken. For now, this broken STIG check is being remapped to CCI-000366. <a href=\"mailto:disa.stig_spt@mail.mil?subject=Incorrectly%20Mapped%20STIG%20Check&body=DISA,%0d" + tmpMessage + "%20contains%20rule(s)%20mapped%20against%20" + cciStr + "%20which%20does%20not%20exist%20in%20the%20current%20version%20of%20NIST%20800-53r4.\">Click here</a> to file this bug with DISA automatically.");
-    tmpList = GetCCIs("WHERE cci = :cci", {std::make_tuple<QString, QVariant>(":cci", 366)});
+    QMessageBox::warning(nullptr, QStringLiteral("Broken CCI"), "The CCI " + cciStr + " does not exist in NIST 800-53r4. If you are importing a STIG, please file a bug with the STIG author (probably DISA, disa.stig_spt@mail.mil) and let them know that their CCI mapping for the STIG you are trying to import is broken. For now, this broken STIG check is being remapped to CCI-000366. <a href=\"mailto:disa.stig_spt@mail.mil?subject=Incorrectly%20Mapped%20STIG%20Check&body=DISA,%0d" + tmpMessage + "%20contains%20rule(s)%20mapped%20against%20" + cciStr + "%20which%20does%20not%20exist%20in%20the%20current%20version%20of%20NIST%20800-53r4.\">Click here</a> to file this bug with DISA automatically.");
+    tmpList = GetCCIs(QStringLiteral("WHERE cci = :cci"), {std::make_tuple<QString, QVariant>(QStringLiteral(":cci"), 366)});
     if (tmpList.count() > 0)
         return tmpList.first();
     CCI ret;
@@ -543,10 +548,10 @@ QList<CCI> DbManager::GetCCIs(const QString &whereClause, const QList<std::tuple
     if (this->CheckDatabase(db))
     {
         QSqlQuery q(db);
-        QString toPrep = "SELECT id, ControlId, cci, definition, isImport, importCompliance, importDateTested, importTestedBy, importTestResults FROM CCI";
+        QString toPrep = QStringLiteral("SELECT id, ControlId, cci, definition, isImport, importCompliance, importDateTested, importTestedBy, importTestResults FROM CCI");
         if (!whereClause.isNull() && !whereClause.isEmpty())
             toPrep.append(" " + whereClause);
-        toPrep.append(" ORDER BY cci");
+        toPrep.append(QStringLiteral(" ORDER BY cci"));
         q.prepare(toPrep);
         for (const auto &variable : variables)
         {
@@ -575,15 +580,15 @@ QList<CCI> DbManager::GetCCIs(const QString &whereClause, const QList<std::tuple
     return ret;
 }
 
-CKLCheck DbManager::GetCKLCheck(const int &id)
+CKLCheck DbManager::GetCKLCheck(int id)
 {
-    QList<CKLCheck> tmp = GetCKLChecks("WHERE id = :id", {std::make_tuple<QString, QVariant>(":id", id)});
+    QList<CKLCheck> tmp = GetCKLChecks(QStringLiteral("WHERE id = :id"), {std::make_tuple<QString, QVariant>(QStringLiteral(":id"), id)});
     if (tmp.count() > 0)
     {
         return tmp.first();
     }
     CKLCheck ret;
-    QMessageBox::warning(nullptr, "Unable to Find CKLCheck", "The CKLCheck of ID " + QString::number(id) + " was not found in the database.");
+    QMessageBox::warning(nullptr, QStringLiteral("Unable to Find CKLCheck"), "The CKLCheck of ID " + QString::number(id) + " was not found in the database.");
     return ret;
 }
 
@@ -592,31 +597,31 @@ CKLCheck DbManager::GetCKLCheck(const CKLCheck &ckl)
     QList<CKLCheck> tmp;
     if (ckl.id <= 0)
     {
-        tmp = GetCKLChecks("WHERE AssetId = :AssetId AND STIGCheckId = :STIGCheckId",
-            {std::make_tuple<QString, QVariant>(":AssetId", ckl.assetId),
-             std::make_tuple<QString, QVariant>(":STIGCheckId", ckl.stigCheckId)});
+        tmp = GetCKLChecks(QStringLiteral("WHERE AssetId = :AssetId AND STIGCheckId = :STIGCheckId"),
+            {std::make_tuple<QString, QVariant>(QStringLiteral(":AssetId"), ckl.assetId),
+             std::make_tuple<QString, QVariant>(QStringLiteral(":STIGCheckId"), ckl.stigCheckId)});
     }
     else
     {
-        tmp = GetCKLChecks("WHERE id = :id", {std::make_tuple<QString, QVariant>(":id", ckl.id)});
+        tmp = GetCKLChecks(QStringLiteral("WHERE id = :id"), {std::make_tuple<QString, QVariant>(QStringLiteral(":id"), ckl.id)});
     }
     if (tmp.count() > 0)
     {
         return tmp.first();
     }
     CKLCheck ret;
-    QMessageBox::warning(nullptr, "Unable to Find CKLCheck", "The CKLCheck of ID " + QString::number(ckl.id) + " (asset " + QString::number(ckl.assetId) + ", " + QString::number(ckl.stigCheckId) + ") was not found in the database.");
+    QMessageBox::warning(nullptr, QStringLiteral("Unable to Find CKLCheck"), "The CKLCheck of ID " + QString::number(ckl.id) + " (asset " + QString::number(ckl.assetId) + ", " + QString::number(ckl.stigCheckId) + ") was not found in the database.");
     return ret;
 }
 
 QList<CKLCheck> DbManager::GetCKLChecks(const Asset &asset, const STIG *stig)
 {
-    QString whereClause = "WHERE AssetId = :AssetId";
-    QList<std::tuple<QString, QVariant> > variables = {std::make_tuple<QString, QVariant>(":AssetId", asset.id)};
+    QString whereClause = QStringLiteral("WHERE AssetId = :AssetId");
+    QList<std::tuple<QString, QVariant> > variables = {std::make_tuple<QString, QVariant>(QStringLiteral(":AssetId"), asset.id)};
     if (stig != nullptr)
     {
-        whereClause.append(" AND STIGCheckId IN (SELECT id FROM STIGCheck WHERE STIGId = :STIGId)");
-        variables.append(std::make_tuple<QString, QVariant>(":STIGId", stig->id));
+        whereClause.append(QStringLiteral(" AND STIGCheckId IN (SELECT id FROM STIGCheck WHERE STIGId = :STIGId)"));
+        variables.append(std::make_tuple<QString, QVariant>(QStringLiteral(":STIGId"), stig->id));
     }
     return GetCKLChecks(whereClause, variables);
 }
@@ -628,7 +633,7 @@ QList<CKLCheck> DbManager::GetCKLChecks(const QString &whereClause, const QList<
     if (this->CheckDatabase(db))
     {
         QSqlQuery q(db);
-        QString toPrep = "SELECT id, AssetId, STIGCheckId, status, findingDetails, comments, severityOverride, severityJustification FROM CKLCheck";
+        QString toPrep = QStringLiteral("SELECT id, AssetId, STIGCheckId, status, findingDetails, comments, severityOverride, severityJustification FROM CKLCheck");
         if (!whereClause.isNull() && !whereClause.isEmpty())
             toPrep.append(" " + whereClause);
         q.prepare(toPrep);
@@ -658,32 +663,32 @@ QList<CKLCheck> DbManager::GetCKLChecks(const QString &whereClause, const QList<
     return ret;
 }
 
-STIGCheck DbManager::GetSTIGCheck(const int &id)
+STIGCheck DbManager::GetSTIGCheck(int id)
 {
-    QList<STIGCheck> tmp = GetSTIGChecks("WHERE id = :id", {std::make_tuple<QString, QVariant>(":id", id)});
+    QList<STIGCheck> tmp = GetSTIGChecks(QStringLiteral("WHERE id = :id"), {std::make_tuple<QString, QVariant>(QStringLiteral(":id"), id)});
     if (tmp.count() > 0)
         return tmp.first();
     STIGCheck ret;
-    QMessageBox::warning(nullptr, "Unable to Find STIGCheck", "The STIGCheck of ID " + QString::number(id) + " was not found in the database.");
+    QMessageBox::warning(nullptr, QStringLiteral("Unable to Find STIGCheck"), "The STIGCheck of ID " + QString::number(id) + " was not found in the database.");
     return ret;
 }
 
 STIGCheck DbManager::GetSTIGCheck(const STIG &stig, const QString &rule)
 {
-    QList<STIGCheck> tmp = GetSTIGChecks("WHERE STIGId = :STIGId AND rule = :rule", {
-                                             std::make_tuple<QString, QVariant>(":STIGId", stig.id),
-                                             std::make_tuple<QString, QVariant>(":rule", rule)
+    QList<STIGCheck> tmp = GetSTIGChecks(QStringLiteral("WHERE STIGId = :STIGId AND rule = :rule"), {
+                                             std::make_tuple<QString, QVariant>(QStringLiteral(":STIGId"), stig.id),
+                                             std::make_tuple<QString, QVariant>(QStringLiteral(":rule"), rule)
                                          });
     if (tmp.count() > 0)
         return tmp.first();
     STIGCheck ret;
-    QMessageBox::warning(nullptr, "Unable to Find STIGCheck", "The STIGCheck " + rule + " (STIG ID " + QString::number(stig.id) + ") was not found in the database.");
+    QMessageBox::warning(nullptr, QStringLiteral("Unable to Find STIGCheck"), "The STIGCheck " + rule + " (STIG ID " + QString::number(stig.id) + ") was not found in the database.");
     return ret;
 }
 
 QList<STIGCheck> DbManager::GetSTIGChecks(const STIG &stig)
 {
-    return GetSTIGChecks("WHERE STIGId = :STIGId", {std::make_tuple<QString, QVariant>(":STIGId", stig.id)});
+    return GetSTIGChecks(QStringLiteral("WHERE STIGId = :STIGId"), {std::make_tuple<QString, QVariant>(QStringLiteral(":STIGId"), stig.id)});
 }
 
 QList<STIGCheck> DbManager::GetSTIGChecks(const QString &whereClause, const QList<std::tuple<QString, QVariant> > &variables)
@@ -693,7 +698,7 @@ QList<STIGCheck> DbManager::GetSTIGChecks(const QString &whereClause, const QLis
     if (this->CheckDatabase(db))
     {
         QSqlQuery q(db);
-        QString toPrep = "SELECT `id`, `STIGId`, `CCIId`, `rule`, `vulnNum`, `groupTitle`, `ruleVersion`, `severity`, `weight`, `title`, `vulnDiscussion`, `falsePositives`, `falseNegatives`, `fix`, `check`, `documentable`, `mitigations`, `severityOverrideGuidance`, `checkContentRef`, `potentialImpact`, `thirdPartyTools`, `mitigationControl`, `responsibility`, `IAControls`, `targetKey` FROM STIGCheck";
+        QString toPrep = QStringLiteral("SELECT `id`, `STIGId`, `CCIId`, `rule`, `vulnNum`, `groupTitle`, `ruleVersion`, `severity`, `weight`, `title`, `vulnDiscussion`, `falsePositives`, `falseNegatives`, `fix`, `check`, `documentable`, `mitigations`, `severityOverrideGuidance`, `checkContentRef`, `potentialImpact`, `thirdPartyTools`, `mitigationControl`, `responsibility`, `IAControls`, `targetKey` FROM STIGCheck");
         if (!whereClause.isNull() && !whereClause.isEmpty())
             toPrep.append(" " + whereClause);
         q.prepare(toPrep);
@@ -739,9 +744,9 @@ QList<STIGCheck> DbManager::GetSTIGChecks(const QString &whereClause, const QLis
     return ret;
 }
 
-QList<STIG> DbManager::GetSTIGs(Asset asset)
+QList<STIG> DbManager::GetSTIGs(const Asset &asset)
 {
-    return GetSTIGs("WHERE `id` IN (SELECT STIGId FROM AssetSTIG WHERE AssetId = :AssetId)", {std::make_tuple<QString, QVariant>(":AssetId", asset.id)});
+    return GetSTIGs(QStringLiteral("WHERE `id` IN (SELECT STIGId FROM AssetSTIG WHERE AssetId = :AssetId)"), {std::make_tuple<QString, QVariant>(QStringLiteral(":AssetId"), asset.id)});
 }
 
 QList<STIG> DbManager::GetSTIGs(const QString &whereClause, const QList<std::tuple<QString, QVariant>> &variables)
@@ -751,10 +756,10 @@ QList<STIG> DbManager::GetSTIGs(const QString &whereClause, const QList<std::tup
     if (this->CheckDatabase(db))
     {
         QSqlQuery q(db);
-        QString toPrep = "SELECT id, title, description, release, version, benchmarkId, fileName FROM STIG";
+        QString toPrep = QStringLiteral("SELECT id, title, description, release, version, benchmarkId, fileName FROM STIG");
         if (!whereClause.isNull() && !whereClause.isEmpty())
             toPrep.append(" " + whereClause);
-        toPrep.append(" ORDER BY LOWER(title), title");
+        toPrep.append(QStringLiteral(" ORDER BY LOWER(title), title"));
         q.prepare(toPrep);
         for (const auto &variable : variables)
         {
@@ -787,8 +792,8 @@ Control DbManager::GetControl(int id)
     if (this->CheckDatabase(db))
     {
         QSqlQuery q(db);
-        q.prepare("SELECT id, FamilyId, number, enhancement, title, description FROM Control WHERE id = :id");
-        q.bindValue(":id", id);
+        q.prepare(QStringLiteral("SELECT id, FamilyId, number, enhancement, title, description FROM Control WHERE id = :id"));
+        q.bindValue(QStringLiteral(":id"), id);
         q.exec();
         if (q.next())
         {
@@ -820,11 +825,11 @@ Control DbManager::GetControl(QString control)
     Control ret;
     ret.id = -1;
     ret.enhancement = -1;
-    ret.title = "";
+    ret.title = QString();
     ret.familyId = -1;
     QString family(control.left(2));
     control = control.right(control.length()-3);
-    QString enhancement("");
+    QString enhancement = QString();
     if (control.contains('('))
     {
         int tmpIndex = control.indexOf('(');
@@ -840,13 +845,13 @@ Control DbManager::GetControl(QString control)
     {
         QSqlQuery q(db);
         if (ret.enhancement > 0)
-            q.prepare("SELECT id, title, description FROM Control WHERE number = :number AND FamilyId = :FamilyId AND enhancement = :enhancement");
+            q.prepare(QStringLiteral("SELECT id, title, description FROM Control WHERE number = :number AND FamilyId = :FamilyId AND enhancement = :enhancement"));
         else
-            q.prepare("SELECT id, title, description FROM Control WHERE number = :number AND FamilyId = :FamilyId");
-        q.bindValue(":number", ret.number);
-        q.bindValue(":FamilyId", ret.familyId);
+            q.prepare(QStringLiteral("SELECT id, title, description FROM Control WHERE number = :number AND FamilyId = :FamilyId"));
+        q.bindValue(QStringLiteral(":number"), ret.number);
+        q.bindValue(QStringLiteral(":FamilyId"), ret.familyId);
         if (ret.enhancement > 0)
-            q.bindValue(":enhancement", ret.enhancement);
+            q.bindValue(QStringLiteral(":enhancement"), ret.enhancement);
         q.exec();
         if (q.next())
         {
@@ -866,8 +871,8 @@ Family DbManager::GetFamily(int id)
     if (this->CheckDatabase(db))
     {
         QSqlQuery q(db);
-        q.prepare("SELECT id, acronym, description FROM Family WHERE id = :id");
-        q.bindValue(":id", id);
+        q.prepare(QStringLiteral("SELECT id, acronym, description FROM Family WHERE id = :id"));
+        q.bindValue(QStringLiteral(":id"), id);
         q.exec();
         if (q.next())
         {
@@ -887,8 +892,8 @@ Family DbManager::GetFamily(const QString &acronym)
     if (this->CheckDatabase(db))
     {
         QSqlQuery q(db);
-        q.prepare("SELECT id, acronym, description FROM Family WHERE acronym = :acronym");
-        q.bindValue(":acronym", acronym);
+        q.prepare(QStringLiteral("SELECT id, acronym, description FROM Family WHERE acronym = :acronym"));
+        q.bindValue(QStringLiteral(":acronym"), acronym);
         q.exec();
         if (q.next())
         {
@@ -907,7 +912,7 @@ QList<Family> DbManager::GetFamilies()
     if (this->CheckDatabase(db))
     {
         QSqlQuery q(db);
-        q.prepare("SELECT id, acronym, description FROM Family");
+        q.prepare(QStringLiteral("SELECT id, acronym, description FROM Family"));
         q.exec();
         while (q.next())
         {
@@ -921,27 +926,27 @@ QList<Family> DbManager::GetFamilies()
     return ret;
 }
 
-STIG DbManager::GetSTIG(const int &id)
+STIG DbManager::GetSTIG(int id)
 {
-    QList<STIG> tmpStigs = GetSTIGs("WHERE id = :id", {std::make_tuple<QString, QVariant>(":id", id)});
+    QList<STIG> tmpStigs = GetSTIGs(QStringLiteral("WHERE id = :id"), {std::make_tuple<QString, QVariant>(QStringLiteral(":id"), id)});
     if (tmpStigs.count() > 0)
         return tmpStigs.first();
     STIG ret;
-    QMessageBox::warning(nullptr, "Unable to Find STIG", "The STIG of ID " + QString::number(id) + " was not found in the database.");
+    QMessageBox::warning(nullptr, QStringLiteral("Unable to Find STIG"), "The STIG of ID " + QString::number(id) + " was not found in the database.");
     return ret;
 }
 
-STIG DbManager::GetSTIG(const QString &title, const int &version, const QString &release)
+STIG DbManager::GetSTIG(const QString &title, int version, const QString &release)
 {
-    QList<STIG> tmpStigs = GetSTIGs("WHERE title = :title AND release = :release AND version = :version", {
-                                        std::make_tuple<QString, QVariant>(":title", title),
-                                        std::make_tuple<QString, QVariant>(":release", release),
-                                        std::make_tuple<QString, QVariant>(":version", version)
+    QList<STIG> tmpStigs = GetSTIGs(QStringLiteral("WHERE title = :title AND release = :release AND version = :version"), {
+                                        std::make_tuple<QString, QVariant>(QStringLiteral(":title"), title),
+                                        std::make_tuple<QString, QVariant>(QStringLiteral(":release"), release),
+                                        std::make_tuple<QString, QVariant>(QStringLiteral(":version"), version)
                                     });
     if (tmpStigs.count() > 0)
         return tmpStigs.first();
     STIG ret;
-    QMessageBox::warning(nullptr, "Unable to Find STIG", "The following STIG has not been added to the master database:\nTitle: " + title + "\nVersion: " + QString::number(version) + "\n" + release);
+    QMessageBox::warning(nullptr, QStringLiteral("Unable to Find STIG"), "The following STIG has not been added to the master database:\nTitle: " + title + "\nVersion: " + QString::number(version) + "\n" + release);
     return ret;
 }
 
@@ -952,8 +957,8 @@ QString DbManager::GetVariable(const QString &name)
     if (this->CheckDatabase(db))
     {
         QSqlQuery q(db);
-        q.prepare("SELECT value FROM variables WHERE name = :name");
-        q.bindValue(":name", name);
+        q.prepare(QStringLiteral("SELECT value FROM variables WHERE name = :name"));
+        q.bindValue(QStringLiteral(":name"), name);
         q.exec();
         if (q.next())
         {
@@ -969,12 +974,12 @@ void DbManager::ImportCCI(const CCI &cci)
     if (this->CheckDatabase(db))
     {
         QSqlQuery q(db);
-        q.prepare("UPDATE CCI SET isImport = :isImport, importCompliance = :importCompliance, importDateTested = :importDateTested, importTestedBy = :importTestedBy, importTestResults = :importTestResults");
-        q.bindValue(":isImport", cci.isImport);
-        q.bindValue(":importCompliance", cci.importCompliance);
-        q.bindValue(":importDateTested", cci.importDateTested);
-        q.bindValue(":importTestedBy", cci.importTestedBy);
-        q.bindValue(":importTestResults", cci.importTestResults);
+        q.prepare(QStringLiteral("UPDATE CCI SET isImport = :isImport, importCompliance = :importCompliance, importDateTested = :importDateTested, importTestedBy = :importTestedBy, importTestResults = :importTestResults"));
+        q.bindValue(QStringLiteral(":isImport"), cci.isImport);
+        q.bindValue(QStringLiteral(":importCompliance"), cci.importCompliance);
+        q.bindValue(QStringLiteral(":importDateTested"), cci.importDateTested);
+        q.bindValue(QStringLiteral(":importTestedBy"), cci.importTestedBy);
+        q.bindValue(QStringLiteral(":importTestResults"), cci.importTestResults);
         q.exec();
     }
 }
@@ -985,25 +990,25 @@ void DbManager::UpdateCKLCheck(const CKLCheck &check)
     if (this->CheckDatabase(db))
     {
         QSqlQuery q(db);
-        QString toPrep("");
+        QString toPrep = QString();
         if (check.id > 0)
-            toPrep = "UPDATE CKLCheck SET status = :status, findingDetails = :findingDetails, comments = :comments, severityOverride = :severityOverride, severityJustification = :severityJustification WHERE id = :id";
+            toPrep = QStringLiteral("UPDATE CKLCheck SET status = :status, findingDetails = :findingDetails, comments = :comments, severityOverride = :severityOverride, severityJustification = :severityJustification WHERE id = :id");
         else
-            toPrep = "UPDATE CKLCheck SET status = :status, findingDetails = :findingDetails, comments = :comments, severityOverride = :severityOverride, severityJustification = :severityJustification WHERE AssetId = :AssetId AND STIGCheckId = :STIGCheckId";
+            toPrep = QStringLiteral("UPDATE CKLCheck SET status = :status, findingDetails = :findingDetails, comments = :comments, severityOverride = :severityOverride, severityJustification = :severityJustification WHERE AssetId = :AssetId AND STIGCheckId = :STIGCheckId");
         q.prepare(toPrep);
-        q.bindValue(":status", check.status);
-        q.bindValue(":findingDetails", check.findingDetails);
-        q.bindValue(":comments", check.comments);
-        q.bindValue(":severityOverride", check.severityOverride);
-        q.bindValue(":severityJustification", check.severityJustification);
+        q.bindValue(QStringLiteral(":status"), check.status);
+        q.bindValue(QStringLiteral(":findingDetails"), check.findingDetails);
+        q.bindValue(QStringLiteral(":comments"), check.comments);
+        q.bindValue(QStringLiteral(":severityOverride"), check.severityOverride);
+        q.bindValue(QStringLiteral(":severityJustification"), check.severityJustification);
         if (check.id > 0)
         {
-            q.bindValue(":id", check.id);
+            q.bindValue(QStringLiteral(":id"), check.id);
         }
         else
         {
-            q.bindValue(":AssetId", check.assetId);
-            q.bindValue(":STIGCheckId", check.stigCheckId);
+            q.bindValue(QStringLiteral(":AssetId"), check.assetId);
+            q.bindValue(QStringLiteral(":STIGCheckId"), check.stigCheckId);
         }
         q.exec();
     }
@@ -1015,18 +1020,11 @@ void DbManager::UpdateVariable(const QString &name, const QString &value)
     if (this->CheckDatabase(db))
     {
         QSqlQuery q(db);
-        q.prepare("UPDATE variables SET value = :value WHERE name = :name");
-        q.bindValue(":value", value);
-        q.bindValue(":name", name);
+        q.prepare(QStringLiteral("UPDATE variables SET value = :value WHERE name = :name"));
+        q.bindValue(QStringLiteral(":value"), value);
+        q.bindValue(QStringLiteral(":name"), name);
         q.exec();
     }
-}
-
-QString DbManager::Sanitize(QString s)
-{
-    s = s.replace("\r\n", "\n");
-    s = s.replace("\n", " ");
-    return s;
 }
 
 bool DbManager::CheckDatabase(QSqlDatabase &db)
@@ -1049,13 +1047,13 @@ bool DbManager::UpdateDatabaseFromVersion(int version)
         {
             //New database; initial setups
             QSqlQuery q(db);
-            q.prepare("CREATE TABLE `Family` ( "
+            q.prepare(QStringLiteral("CREATE TABLE `Family` ( "
                         "`id`	INTEGER PRIMARY KEY AUTOINCREMENT, "
                         "`Acronym`	TEXT UNIQUE, "
                         "`Description`	TEXT UNIQUE"
-                        ")");
+                        ")"));
             q.exec();
-            q.prepare("CREATE TABLE `Control` ( "
+            q.prepare(QStringLiteral("CREATE TABLE `Control` ( "
                         "`id`	INTEGER PRIMARY KEY AUTOINCREMENT, "
                         "`FamilyId`	INTEGER NOT NULL, "
                         "`number`	INTEGER NOT NULL, "
@@ -1063,9 +1061,9 @@ bool DbManager::UpdateDatabaseFromVersion(int version)
                         "`title`	TEXT, "
                         "`description`  TEXT, "
                         "FOREIGN KEY(`FamilyID`) REFERENCES `Family`(`id`) "
-                        ")");
+                        ")"));
             q.exec();
-            q.prepare("CREATE TABLE `CCI` ( "
+            q.prepare(QStringLiteral("CREATE TABLE `CCI` ( "
                       "`id`	INTEGER PRIMARY KEY AUTOINCREMENT, "
                       "`ControlId`	INTEGER, "
                       "`cci`    INTEGER, "
@@ -1076,14 +1074,14 @@ bool DbManager::UpdateDatabaseFromVersion(int version)
                       "`importTestedBy`	TEXT, "
                       "`importTestResults`	TEXT, "
                       "FOREIGN KEY(`ControlId`) REFERENCES `Control`(`id`) "
-                      ")");
+                      ")"));
             q.exec();
-            q.prepare("CREATE TABLE `variables` ( "
+            q.prepare(QStringLiteral("CREATE TABLE `variables` ( "
                       "`name`	TEXT, "
                       "`value`	TEXT "
-                      ")");
+                      ")"));
             q.exec();
-            q.prepare("CREATE TABLE `STIG` ( "
+            q.prepare(QStringLiteral("CREATE TABLE `STIG` ( "
                       "`id`	INTEGER PRIMARY KEY AUTOINCREMENT, "
                       "`title`	TEXT, "
                       "`description`	TEXT, "
@@ -1091,9 +1089,9 @@ bool DbManager::UpdateDatabaseFromVersion(int version)
                       "`version`	INTEGER, "
                       "`benchmarkId`	TEXT, "
                       "`fileName`	TEXT "
-                      ")");
+                      ")"));
             q.exec();
-            q.prepare("CREATE TABLE `STIGCheck` ( "
+            q.prepare(QStringLiteral("CREATE TABLE `STIGCheck` ( "
                       "`id`	INTEGER PRIMARY KEY AUTOINCREMENT, "
                       "`STIGId`	INTEGER, "
                       "`CCIId`	INTEGER, "
@@ -1121,9 +1119,9 @@ bool DbManager::UpdateDatabaseFromVersion(int version)
                       "`targetKey` TEXT, "
                       "FOREIGN KEY(`STIGId`) REFERENCES `STIG`(`id`), "
                       "FOREIGN KEY(`CCIId`) REFERENCES `CCI`(`id`) "
-                      ")");
+                      ")"));
             q.exec();
-            q.prepare("CREATE TABLE `Asset` ( "
+            q.prepare(QStringLiteral("CREATE TABLE `Asset` ( "
                       "`id`	INTEGER PRIMARY KEY AUTOINCREMENT, "
                       "`assetType`	TEXT, "
                       "`hostName`	TEXT UNIQUE, "
@@ -1135,17 +1133,17 @@ bool DbManager::UpdateDatabaseFromVersion(int version)
                       "`webOrDatabase`	INTEGER, "
                       "`webDBSite`	TEXT, "
                       "`webDBInstance`	TEXT "
-                      ")");
+                      ")"));
             q.exec();
-            q.prepare("CREATE TABLE `AssetSTIG` ( "
+            q.prepare(QStringLiteral("CREATE TABLE `AssetSTIG` ( "
                       "`id`	INTEGER PRIMARY KEY AUTOINCREMENT, "
                       "`AssetId`	INTEGER, "
                       "`STIGId`	INTEGER, "
                       "FOREIGN KEY(`AssetId`) REFERENCES `Asset`(`id`), "
                       "FOREIGN KEY(`STIGId`) REFERENCES `STIG`(`id`) "
-                      ")");
+                      ")"));
             q.exec();
-            q.prepare("CREATE TABLE `CKLCheck` ( "
+            q.prepare(QStringLiteral("CREATE TABLE `CKLCheck` ( "
                       "`id`	INTEGER PRIMARY KEY AUTOINCREMENT, "
                       "`AssetId`	INTEGER, "
                       "`STIGCheckId`	INTEGER, "
@@ -1156,11 +1154,11 @@ bool DbManager::UpdateDatabaseFromVersion(int version)
                       "`severityJustification`	TEXT, "
                       "FOREIGN KEY(`STIGCheckId`) REFERENCES `STIGCheck`(`id`), "
                       "FOREIGN KEY(`AssetId`) REFERENCES `Asset`(`id`) "
-                      ")");
+                      ")"));
             q.exec();
-            q.prepare("INSERT INTO variables (name, value) VALUES(:name, :value)");
-            q.bindValue(":name", "version");
-            q.bindValue(":value", "1");
+            q.prepare(QStringLiteral("INSERT INTO variables (name, value) VALUES(:name, :value)"));
+            q.bindValue(QStringLiteral(":name"), "version");
+            q.bindValue(QStringLiteral(":value"), "1");
             q.exec();
 
             //write changes from update

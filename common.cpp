@@ -73,7 +73,7 @@ QString CleanXML(QString s, bool isXml)
     tidyRelease(tdoc);
 
     QString ret(s);
-    ret = ret.replace("&nbsp;", " ");
+    ret = ret.replace(QStringLiteral("&nbsp;"), QStringLiteral(" "));
     return ret;
 }
 
@@ -171,7 +171,7 @@ QString DownloadPage(const QUrl &url)
 int GetCCINumber(QString cci)
 {
     cci = cci.trimmed();
-    if (cci.startsWith("CCI-"))
+    if (cci.startsWith(QStringLiteral("CCI-")))
         cci = cci.right(cci.length() - 4);
     return cci.toInt();
 }
@@ -187,7 +187,7 @@ int GetCCINumber(QString cci)
  * When fileNameFilter is set, only the files that end with the
  * provided filter are extracted and returned (case-insensitive).
  */
-QMap<QString, QByteArray> GetFilesFromZip(const QString &fileName, QString fileNameFilter)
+QMap<QString, QByteArray> GetFilesFromZip(const QString &fileName, const QString &fileNameFilter)
 {
     //map to return
     QMap<QString, QByteArray> ret;
@@ -246,7 +246,7 @@ QMap<QString, QByteArray> GetFilesFromZip(const QString &fileName, QString fileN
  */
 QString GetUserAgent()
 {
-    return QString("STIGQter/") + VERSION;
+    return QString(QStringLiteral("STIGQter/")) + QStringLiteral(VERSION);
 }
 
 /*!
@@ -269,7 +269,14 @@ QString Excelify(const QString &s)
  */
 QString PrintTrueFalse(bool tf)
 {
-    return tf ? "true" : "false";
+    return tf ? QStringLiteral("true") : QStringLiteral("false");
+}
+
+QString Sanitize(QString s)
+{
+    s = s.replace(QStringLiteral("\r\n"), QStringLiteral("\n"));
+    s = s.replace(QStringLiteral("\n"), QStringLiteral(" "));
+    return s;
 }
 
 /*!

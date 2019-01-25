@@ -28,7 +28,7 @@ struct Family : public QObject
     Q_OBJECT
 public:
     Family(const Family &right);
-    Family(QObject *parent = nullptr);
+    explicit Family(QObject *parent = nullptr);
     int id;
     QString acronym;
     QString description;
@@ -36,5 +36,7 @@ public:
 };
 
 Q_DECLARE_METATYPE(Family);
+
+QString PrintFamily(const Family &c);
 
 #endif // FAMILY_H

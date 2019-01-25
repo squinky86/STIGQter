@@ -31,7 +31,7 @@ class STIG : public QObject
     Q_OBJECT
 public:
     STIG(const STIG &right);
-    STIG(QObject *parent = nullptr);
+    explicit STIG(QObject *parent = nullptr);
 
     int id;
     QString title;
@@ -47,6 +47,6 @@ public:
 
 Q_DECLARE_METATYPE(STIG);
 
-QString PrintSTIG(STIG s);
+QString PrintSTIG(const STIG &stig);
 
 #endif // STIG_H

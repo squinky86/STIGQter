@@ -30,12 +30,12 @@ class WorkerCKLImport : public QObject
 
 protected:
     QStringList _fileNames;
-    void ParseCKL(QString fileName);
+    void ParseCKL(const QString &fileName);
     Asset CheckAsset(Asset &a);
 
 public:
     explicit WorkerCKLImport(QObject *parent = nullptr);
-    void AddCKLs(QStringList ckls);
+    void AddCKLs(const QStringList &ckls);
 
 public slots:
     void process();

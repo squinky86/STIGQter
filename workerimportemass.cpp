@@ -36,9 +36,11 @@ void WorkerImportEMASS::process()
 
     emit initialize(1, 0);
 
-    emit updateStatus("Opening xlsx file…");
-    QMap<QString, QByteArray> files = GetFilesFromZip(_fileName, ".xml");
+    emit updateStatus(QStringLiteral("Opening xlsx file…"));
+    QMap<QString, QByteArray> files = GetFilesFromZip(_fileName, QStringLiteral(".xml"));
 
-    emit updateStatus("Done!");
+    //TODO
+
+    emit updateStatus(QStringLiteral("Done!"));
     emit finished();
 }

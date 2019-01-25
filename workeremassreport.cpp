@@ -41,7 +41,7 @@ void WorkerEMASSReport::process()
     emit initialize(numChecks+2, 0);
 
     //current date in eMASS format
-    QString curDate = QDate::currentDate().toString("dd-MMM-yyyy");
+    QString curDate = QDate::currentDate().toString(QStringLiteral("dd-MMM-yyyy"));
 
     //new workbook
     lxw_workbook  *wb = workbook_new(_fileName.toStdString().c_str());
@@ -105,10 +105,10 @@ void WorkerEMASSReport::process()
     //unclassified header
     worksheet_merge_range(ws, 0, 0, 0, 14, "UNCLASSIFIED", fmtBoldGreen);
     //export date
-    worksheet_merge_range(ws, 1, 0, 1, 14, (QString("Exported on ") + curDate).toStdString().c_str(), fmtGrayBGRight);
+    worksheet_merge_range(ws, 1, 0, 1, 14, (QStringLiteral("Exported on ") + curDate).toStdString().c_str(), fmtGrayBGRight);
     //information on export
     worksheet_merge_range(ws, 2, 0, 2, 13, "Test Result Import Template", fmtBoldGrayBG);
-    worksheet_write_string(ws, 2, 14, (QString("Provided by STIGQter ") + VERSION).toStdString().c_str(), fmtGrayBGRight);
+    worksheet_write_string(ws, 2, 14, (QStringLiteral("Provided by STIGQter ") + VERSION).toStdString().c_str(), fmtGrayBGRight);
     //IS information
     worksheet_merge_range(ws, 3, 0, 3, 14, "(System Type: UNKNOWN, DoD Component: Public)", fmtGrayBG);
     //High-Level Headers
@@ -187,11 +187,11 @@ void WorkerEMASSReport::process()
         if (username.isNull() || username.isEmpty())
             username = qgetenv("USERNAME");
         if (username.isNull() || username.isEmpty())
-            username = "UNKNOWN";
+            username = QStringLiteral("UNKNOWN");
         worksheet_write_string(ws, onRow, 9, username.toStdString().c_str(), nullptr);
 
         //test results
-        QString testResult = "The following checks are open:";
+        QString testResult = QStringLiteral("The following checks are open:");
         foreach (CKLCheck cc, checks)
         {
             testResult.append("\n" + PrintAsset(cc.Asset()) + ": " + PrintCKLCheck(cc) + " - " + GetSeverity(cc.GetSeverity()));
@@ -209,11 +209,11 @@ void WorkerEMASSReport::process()
         emit progress(-1);
     }
 
-    emit updateStatus("Writing workbook…");
+    emit updateStatus(QStringLiteral("Writing workbook…"));
 
     //close and write the workbook
     workbook_close(wb);
 
-    emit updateStatus("Done!");
+    emit updateStatus(QStringLiteral("Done!"));
     emit finished();
 }

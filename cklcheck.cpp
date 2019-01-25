@@ -136,11 +136,11 @@ CKLCheck &CKLCheck::operator=(const CKLCheck &right)
  */
 Status GetStatus(const QString &status)
 {
-    if (status.startsWith("open", Qt::CaseInsensitive))
+    if (status.startsWith(QStringLiteral("open"), Qt::CaseInsensitive))
         return Status::Open;
-    if (status.startsWith("not_applicable", Qt::CaseInsensitive) || status.startsWith("not applicable", Qt::CaseInsensitive))
+    if (status.startsWith(QStringLiteral("not_applicable"), Qt::CaseInsensitive) || status.startsWith(QStringLiteral("not applicable"), Qt::CaseInsensitive))
         return Status::NotApplicable;
-    if (status.startsWith("notafinding", Qt::CaseInsensitive) || status.startsWith("not a finding", Qt::CaseInsensitive))
+    if (status.startsWith(QStringLiteral("notafinding"), Qt::CaseInsensitive) || status.startsWith(QStringLiteral("not a finding"), Qt::CaseInsensitive))
         return Status::NotAFinding;
     return Status::NotReviewed;
 }
@@ -155,18 +155,18 @@ Status GetStatus(const QString &status)
  * \a xmlFormat is \c false) or XML-formatted (when \a xmlFormat is
  * \c true) string.
  */
-QString GetStatus(const Status &status, bool xmlFormat)
+QString GetStatus(Status status, bool xmlFormat)
 {
     switch (status)
     {
     case Status::Open:
-        return "Open";
+        return QStringLiteral("Open");
     case Status::NotApplicable:
-        return xmlFormat ? "Not_Applicable" : "Not Applicable";
+        return xmlFormat ? QStringLiteral("Not_Applicable") : QStringLiteral("Not Applicable");
     case Status::NotAFinding:
-        return xmlFormat ? "NotAFinding" : "Not a Finding";
+        return xmlFormat ? QStringLiteral("NotAFinding") : QStringLiteral("Not a Finding");
     default:
-        return xmlFormat ? "Not_Reviewed" : "Not Reviewed";
+        return xmlFormat ? QStringLiteral("Not_Reviewed") : QStringLiteral("Not Reviewed");
     }
 }
 

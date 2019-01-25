@@ -19,17 +19,10 @@
 
 #include "family.h"
 
-#include <QDebug>
-
-QString PrintFamily(Family c)
-{
-    return c.acronym;
-}
-
 Family::Family(QObject *parent) : QObject(parent),
     id(-1),
-    acronym("ZZ"),
-    description("Default Family")
+    acronym(QStringLiteral("ZZ")),
+    description(QStringLiteral("Default Family"))
 {
 }
 
@@ -47,4 +40,9 @@ Family& Family::operator=(const Family &right)
         description = right.description;
     }
     return *this;
+}
+
+QString PrintFamily(const Family &c)
+{
+    return c.acronym;
 }

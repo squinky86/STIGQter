@@ -47,7 +47,7 @@ STIGQter::STIGQter(QWidget *parent) :
     _updatedSTIGs(false)
 {
     ui->setupUi(this);
-    this->setWindowTitle(QString("STIGQter ") + QString(VERSION));
+    this->setWindowTitle(QStringLiteral("STIGQter ") + QStringLiteral(VERSION));
     EnableInput();
     DisplayCCIs();
     DisplaySTIGs();
@@ -194,7 +194,7 @@ void STIGQter::AddAsset()
 void STIGQter::AddSTIGs()
 {
     QStringList fileNames = QFileDialog::getOpenFileNames(this,
-        "Open STIG", QDir::home().dirName(), "Compressed STIG (*.zip)");
+        QStringLiteral("Open STIG"), QDir::home().dirName(), QStringLiteral("Compressed STIG (*.zip)"));
     DisableInput();
     _updatedSTIGs = true;
     QThread* t = new QThread;
@@ -274,7 +274,7 @@ void STIGQter::DeleteSTIGs()
 void STIGQter::ExportEMASS()
 {
     QString fileName = QFileDialog::getSaveFileName(this,
-        "Save eMASS Report", QDir::home().dirName(), "Microsoft Excel (*.xlsx)");
+        QStringLiteral("Save eMASS Report"), QDir::home().dirName(), QStringLiteral("Microsoft Excel (*.xlsx)"));
     DisableInput();
     QThread* t = new QThread;
     WorkerEMASSReport *f = new WorkerEMASSReport();
@@ -294,7 +294,7 @@ void STIGQter::ExportEMASS()
 void STIGQter::FindingsReport()
 {
     QString fileName = QFileDialog::getSaveFileName(this,
-        "Save Detailed Findings", QDir::home().dirName(), "Microsoft Excel (*.xlsx)");
+        QStringLiteral("Save Detailed Findings"), QDir::home().dirName(), QStringLiteral("Microsoft Excel (*.xlsx)"));
     DisableInput();
     QThread* t = new QThread;
     WorkerFindingsReport *f = new WorkerFindingsReport();
@@ -314,7 +314,7 @@ void STIGQter::FindingsReport()
 void STIGQter::ImportCKLs()
 {
     QStringList fileNames = QFileDialog::getOpenFileNames(this,
-        "Import CKL(s)", QDir::home().dirName(), "STIG Checklist (*.ckl)");
+        QStringLiteral("Import CKL(s)"), QDir::home().dirName(), QStringLiteral("STIG Checklist (*.ckl)"));
     DisableInput();
     _updatedAssets = true;
     QThread* t = new QThread;
@@ -337,7 +337,7 @@ void STIGQter::ImportEMASS()
     DisableInput();
 
     QString fileName = QFileDialog::getOpenFileName(this,
-        "Import eMASS TRExport", QDir::home().dirName(), "Excel Spreadsheet (*.xlsx)");
+        QStringLiteral("Import eMASS TRExport"), QDir::home().dirName(), QStringLiteral("Excel Spreadsheet (*.xlsx)"));
 
     QThread* t = new QThread;
     WorkerImportEMASS *c = new WorkerImportEMASS();

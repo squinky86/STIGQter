@@ -35,7 +35,7 @@ void WorkerSTIGDelete::process()
     emit initialize(2 + _ids.count(), 1);
     DbManager db;
 
-    emit updateStatus("Clearing DB of selected STIG information…");
+    emit updateStatus(QStringLiteral("Clearing DB of selected STIG information…"));
     db.DelayCommit(true);
     foreach (int i, _ids)
     {
@@ -46,6 +46,6 @@ void WorkerSTIGDelete::process()
     emit progress(-1);
 
     //complete
-    emit updateStatus("Done!");
+    emit updateStatus(QStringLiteral("Done!"));
     emit finished();
 }

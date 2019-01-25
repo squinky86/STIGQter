@@ -58,13 +58,13 @@ void WorkerSTIGAdd::ParseSTIG(const QByteArray &stig, const QString &fileName)
                     {
                         s.description = xml->readElementText().trimmed();
                     }
-                    else if (xml->name() == "plain-text" && xml->attributes().hasAttribute("id"))
+                    else if (xml->name() == "plain-text" && xml->attributes().hasAttribute(QStringLiteral("id")))
                     {
                         foreach (const QXmlStreamAttribute &attr, xml->attributes())
                         {
                             if (attr.name() == "id")
                             {
-                                if (attr.value().toString().trimmed() == "release-info")
+                                if (attr.value().toString().trimmed() == QStringLiteral("release-info"))
                                     s.release = xml->readElementText().trimmed();
                             }
                         }
@@ -82,7 +82,7 @@ void WorkerSTIGAdd::ParseSTIG(const QByteArray &stig, const QString &fileName)
                 {
                     inProfile = true; // stop reading STIG details
                 }
-                else if (xml->name() == "Benchmark" && xml->attributes().hasAttribute("id"))
+                else if (xml->name() == "Benchmark" && xml->attributes().hasAttribute(QStringLiteral("id")))
                 {
                     foreach (const QXmlStreamAttribute &attr, xml->attributes())
                     {
@@ -98,7 +98,7 @@ void WorkerSTIGAdd::ParseSTIG(const QByteArray &stig, const QString &fileName)
         {
             if (xml->isStartElement())
             {
-                if (xml->name() == "Group" && xml->attributes().hasAttribute("id"))
+                if (xml->name() == "Group" && xml->attributes().hasAttribute(QStringLiteral("id")))
                 {
                     inGroup = true;
                     //add the previous rule
@@ -113,12 +113,12 @@ void WorkerSTIGAdd::ParseSTIG(const QByteArray &stig, const QString &fileName)
                         if (attr.name() == "id")
                         {
                             c.vulnNum = attr.value().toString().trimmed();
-                            if (!c.vulnNum.startsWith("V-") && c.vulnNum.contains("V-"))
-                                c.vulnNum = c.vulnNum.right(c.vulnNum.length() - c.vulnNum.indexOf("V-"));
+                            if (!c.vulnNum.startsWith(QStringLiteral("V-")) && c.vulnNum.contains(QStringLiteral("V-")))
+                                c.vulnNum = c.vulnNum.right(c.vulnNum.length() - c.vulnNum.indexOf(QStringLiteral("V-")));
                         }
                     }
                 }
-                if (xml->name() == "Rule" && xml->attributes().hasAttribute("id") && xml->attributes().hasAttribute("severity") && xml->attributes().hasAttribute("weight"))
+                if (xml->name() == "Rule" && xml->attributes().hasAttribute(QStringLiteral("id")) && xml->attributes().hasAttribute(QStringLiteral("severity")) && xml->attributes().hasAttribute(QStringLiteral("weight")))
                 {
                     inGroup = false;
                     inReference = false;
@@ -141,8 +141,8 @@ void WorkerSTIGAdd::ParseSTIG(const QByteArray &stig, const QString &fileName)
                         if (attr.name() == "id")
                         {
                             c.rule = attr.value().toString().trimmed();
-                            if (!c.rule.startsWith("SV-") && c.rule.contains("SV-"))
-                                c.rule = c.rule.right(c.rule.length() - c.rule.indexOf("SV-"));
+                            if (!c.rule.startsWith(QStringLiteral("SV-")) && c.rule.contains(QStringLiteral("SV-")))
+                                c.rule = c.rule.right(c.rule.length() - c.rule.indexOf(QStringLiteral("SV-")));
                         }
                         else if (attr.name() == "severity")
                         {
@@ -192,7 +192,7 @@ void WorkerSTIGAdd::ParseSTIG(const QByteArray &stig, const QString &fileName)
                                 }
                                 else if (xml2.name() == "Documentable")
                                 {
-                                    c.documentable = xml2.readElementText().trimmed().startsWith("t", Qt::CaseInsensitive);
+                                    c.documentable = xml2.readElementText().trimmed().startsWith(QStringLiteral("t"), Qt::CaseInsensitive);
                                 }
                                 else if (xml2.name() == "Mitigations")
                                 {
@@ -229,14 +229,14 @@ void WorkerSTIGAdd::ParseSTIG(const QByteArray &stig, const QString &fileName)
                 else if (xml->name() == "ident")
                 {
                     QString cci(xml->readElementText().trimmed());
-                    if (cci.startsWith("CCI", Qt::CaseInsensitive))
+                    if (cci.startsWith(QStringLiteral("CCI"), Qt::CaseInsensitive))
                         c.cciId = db.GetCCIByCCI(GetCCINumber(cci), &s).id;
                 }
                 else if (xml->name() == "fixtext")
                 {
                     c.fix = xml->readElementText().trimmed();
                 }
-                else if (xml->name() == "check-content-ref" && xml->attributes().hasAttribute("name"))
+                else if (xml->name() == "check-content-ref" && xml->attributes().hasAttribute(QStringLiteral("name")))
                 {
                     foreach (const QXmlStreamAttribute &attr, xml->attributes())
                     {
@@ -284,16 +284,16 @@ void WorkerSTIGAdd::process()
     //loop through it and parse all XML files inside
     foreach(const QString s, _todo)
     {
-        updateStatus("Extracting " + s + "…");
+        emit updateStatus("Extracting " + s + "…");
         //get the list of XML files inside the STIG
-        QMap<QString, QByteArray> toParse = GetFilesFromZip(s.toStdString().c_str(), ".xml");
-        updateStatus("Parsing " + s + "…");
+        QMap<QString, QByteArray> toParse = GetFilesFromZip(s.toStdString().c_str(), QStringLiteral(".xml"));
+        emit updateStatus("Parsing " + s + "…");
         foreach(const QString stig, toParse.keys())
         {
             ParseSTIG(toParse.value(stig), TrimFileName(stig));
         }
         emit progress(-1);
     }
-    emit updateStatus("Done!");
+    emit updateStatus(QStringLiteral("Done!"));
     emit finished();
 }

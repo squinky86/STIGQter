@@ -44,8 +44,8 @@ void WorkerCCIAdd::process()
     //populate CCIs
 
     //Step 1: download NIST Families
-    emit updateStatus("Downloading Families…");
-    QUrl nist("https://nvd.nist.gov");
+    emit updateStatus(QStringLiteral("Downloading Families…"));
+    QUrl nist(QStringLiteral("https://nvd.nist.gov"));
     QString rmf = DownloadPage(nist.toString() + "/800-53/Rev4/");
 
     //Step 2: Convert NIST page to XML
@@ -60,10 +60,10 @@ void WorkerCCIAdd::process()
         xml->readNext();
         if (xml->isStartElement() && (xml->name() == "a"))
         {
-            if (xml->attributes().hasAttribute("id") && xml->attributes().hasAttribute("href"))
+            if (xml->attributes().hasAttribute(QStringLiteral("id")) && xml->attributes().hasAttribute(QStringLiteral("href")))
             {
-                QString id("");
-                QString href("");
+                QString id = QString();
+                QString href = QString();
                 foreach (const QXmlStreamAttribute &attr, xml->attributes())
                 {
                     if (attr.name() == "id")
@@ -71,7 +71,7 @@ void WorkerCCIAdd::process()
                     else if (attr.name() == "href")
                         href = attr.value().toString();
                 }
-                if (id.endsWith("FamilyLink"))
+                if (id.endsWith(QStringLiteral("FamilyLink")))
                 {
                     QString family(xml->readElementText().trimmed());
                     QString acronym(family.left(2));
@@ -89,14 +89,14 @@ void WorkerCCIAdd::process()
 
     //Step 3a: Additional Privacy Controls
     //obtained from https://nvlpubs.nist.gov/nistpubs/SpecialPublications/NIST.SP.800-53r4.pdf contents
-    db.AddFamily("AP", "Authority and Purpose");
-    db.AddFamily("AR", "Accountability, Audit, and Risk Management");
-    db.AddFamily("DI", "Data Quality and Integrity");
-    db.AddFamily("DM", "Data Minimization and Retention");
-    db.AddFamily("IP", "Individual Participation and Redress");
-    db.AddFamily("SE", "Security");
-    db.AddFamily("TR", "Transparency");
-    db.AddFamily("UL", "Use Limitation");
+    db.AddFamily(QStringLiteral("AP"), QStringLiteral("Authority and Purpose"));
+    db.AddFamily(QStringLiteral("AR"), QStringLiteral("Accountability, Audit, and Risk Management"));
+    db.AddFamily(QStringLiteral("DI"), QStringLiteral("Data Quality and Integrity"));
+    db.AddFamily(QStringLiteral("DM"), QStringLiteral("Data Minimization and Retention"));
+    db.AddFamily(QStringLiteral("IP"), QStringLiteral("Individual Participation and Redress"));
+    db.AddFamily(QStringLiteral("SE"), QStringLiteral("Security"));
+    db.AddFamily(QStringLiteral("TR"), QStringLiteral("Transparency"));
+    db.AddFamily(QStringLiteral("UL"), QStringLiteral("Use Limitation"));
 
     //Step 4: download all controls for each family
     QString rmfControls = DownloadPage(nist.toString() + "/static/feeds/xml/sp80053/rev4/800-53-controls.xml");
@@ -152,42 +152,42 @@ void WorkerCCIAdd::process()
 
     //Step 4a: additional privacy controls
     //obtained from https://nvlpubs.nist.gov/nistpubs/SpecialPublications/NIST.SP.800-53r4.pdf (Appendix J) contents
-    db.AddControl("AP-1", "AUTHORITY TO COLLECT", "");
-    db.AddControl("AP-2", "PURPOSE SPECIFICATION", "");
-    db.AddControl("AR-1", "GOVERNANCE AND PRIVACY PROGRAM", "");
-    db.AddControl("AR-2", "PRIVACY IMPACT AND RISK ASSESSMENT", "");
-    db.AddControl("AR-3", "PRIVACY REQUIREMENTS FOR CONTRACTORS AND SERVICE PROVIDERS", "");
-    db.AddControl("AR-4", "PRIVACY MONITORING AND AUDITING", "");
-    db.AddControl("AR-5", "PRIVACY AWARENESS AND TRAINING", "");
-    db.AddControl("AR-6", "PRIVACY REPORTING", "");
-    db.AddControl("AR-7", "PRIVACY-ENHANCED SYSTEM DESIGN AND DEVELOPMENT", "");
-    db.AddControl("AR-8", "ACCOUNTING OF DISCLOSURES", "");
-    db.AddControl("DI-1", "DATA QUALITY", "");
-    db.AddControl("DI-1 (1)", "DATA QUALITY | VALIDATE PII", "");
-    db.AddControl("DI-1 (2)", "DATA QUALITY | RE-VALIDATE PII", "");
-    db.AddControl("DI-2", "DATA INTEGRITY AND DATA INTEGRITY BOARD", "");
-    db.AddControl("DI-2 (1)", "DATA INTEGRITY AND DATA INTEGRITY BOARD | PUBLISH AREEMENTS ON WEBSITE", "");
-    db.AddControl("DM-1", "MINIMIZATION OF PERSONALLY IDENTIFIABLE INFORMATION", "");
-    db.AddControl("DM-1 (1)", "MINIMIZATION OF PERSONALLY IDENTIFIABLE INFORMATION | LOCATE / REMOVE / REDACT / ANONYMIZE PII", "");
-    db.AddControl("DM-2", "DATA RETENTION AND DISPOSAL", "");
-    db.AddControl("DM-2 (1)", "DATA RETENTION AND DISPOSAL | SYSTEM CONFIGURATION", "");
-    db.AddControl("DM-3", "MINIMIZATION OF PII USED IN TESTING, TRAINING, AND RESEARCH", "");
-    db.AddControl("DM-3 (1)", "MINIMIZATION OF PII USED IN TESTING, TRAINING, AND RESEARCH | RISK MINIMIZATION TECHNIQUES", "");
-    db.AddControl("IP-1", "CONSENT", "");
-    db.AddControl("IP-1 (1)", "CONSENT | MECHANISMS SUPPORTING ITEMIZED OR TIERED CONSENT", "");
-    db.AddControl("IP-2", "INDIVIDUAL ACCESS", "");
-    db.AddControl("IP-3", "REDRESS", "");
-    db.AddControl("IP-4", "COMPLAINT MANAGEMENT", "");
-    db.AddControl("IP-4 (1)", "COMPLAINT MANAGEMENT | RESPONSE TIMES", "");
-    db.AddControl("SE-1", "INVENTORY OF PERSONALLY IDENTIFIABLE INFORMATION", "");
-    db.AddControl("SE-2", "PRIVACY INCIDENT RESPONSE", "");
-    db.AddControl("TR-1", "PRIVACY NOTICE", "");
-    db.AddControl("TR-1 (1)", "PRIVACY NOTICE | REAL-TIME OR LAYERED NOTICE", "");
-    db.AddControl("TR-2", "SYSTEM OF RECORDS NOTICES AND PRIVACY ACT STATEMENTS", "");
-    db.AddControl("TR-2 (1)", "SYSTEM OF RECORDS NOTICES AND PRIVACY ACT STATEMENTS | PUBLIC WEBSITE PUBLICATION", "");
-    db.AddControl("TR-3", "DISSEMINATION OF PRIVACY PROGRAM INFORMATION", "");
-    db.AddControl("UL-1", "INTERNAL USE", "");
-    db.AddControl("UL-2", "INFORMATION SHARING WITH THIRD PARTIES", "");
+    db.AddControl(QStringLiteral("AP-1"), QStringLiteral("AUTHORITY TO COLLECT"), QString());
+    db.AddControl(QStringLiteral("AP-2"), QStringLiteral("PURPOSE SPECIFICATION"), QString());
+    db.AddControl(QStringLiteral("AR-1"), QStringLiteral("GOVERNANCE AND PRIVACY PROGRAM"), QString());
+    db.AddControl(QStringLiteral("AR-2"), QStringLiteral("PRIVACY IMPACT AND RISK ASSESSMENT"), QString());
+    db.AddControl(QStringLiteral("AR-3"), QStringLiteral("PRIVACY REQUIREMENTS FOR CONTRACTORS AND SERVICE PROVIDERS"), QString());
+    db.AddControl(QStringLiteral("AR-4"), QStringLiteral("PRIVACY MONITORING AND AUDITING"), QString());
+    db.AddControl(QStringLiteral("AR-5"), QStringLiteral("PRIVACY AWARENESS AND TRAINING"), QString());
+    db.AddControl(QStringLiteral("AR-6"), QStringLiteral("PRIVACY REPORTING"), QString());
+    db.AddControl(QStringLiteral("AR-7"), QStringLiteral("PRIVACY-ENHANCED SYSTEM DESIGN AND DEVELOPMENT"), QString());
+    db.AddControl(QStringLiteral("AR-8"), QStringLiteral("ACCOUNTING OF DISCLOSURES"), QString());
+    db.AddControl(QStringLiteral("DI-1"), QStringLiteral("DATA QUALITY"), QString());
+    db.AddControl(QStringLiteral("DI-1 (1)"), QStringLiteral("DATA QUALITY | VALIDATE PII"), QString());
+    db.AddControl(QStringLiteral("DI-1 (2)"), QStringLiteral("DATA QUALITY | RE-VALIDATE PII"), QString());
+    db.AddControl(QStringLiteral("DI-2"), QStringLiteral("DATA INTEGRITY AND DATA INTEGRITY BOARD"), QString());
+    db.AddControl(QStringLiteral("DI-2 (1)"), QStringLiteral("DATA INTEGRITY AND DATA INTEGRITY BOARD | PUBLISH AREEMENTS ON WEBSITE"), QString());
+    db.AddControl(QStringLiteral("DM-1"), QStringLiteral("MINIMIZATION OF PERSONALLY IDENTIFIABLE INFORMATION"), QString());
+    db.AddControl(QStringLiteral("DM-1 (1)"), QStringLiteral("MINIMIZATION OF PERSONALLY IDENTIFIABLE INFORMATION | LOCATE / REMOVE / REDACT / ANONYMIZE PII"), QString());
+    db.AddControl(QStringLiteral("DM-2"), QStringLiteral("DATA RETENTION AND DISPOSAL"), QString());
+    db.AddControl(QStringLiteral("DM-2 (1)"), QStringLiteral("DATA RETENTION AND DISPOSAL | SYSTEM CONFIGURATION"), QString());
+    db.AddControl(QStringLiteral("DM-3"), QStringLiteral("MINIMIZATION OF PII USED IN TESTING, TRAINING, AND RESEARCH"), QString());
+    db.AddControl(QStringLiteral("DM-3 (1)"), QStringLiteral("MINIMIZATION OF PII USED IN TESTING, TRAINING, AND RESEARCH | RISK MINIMIZATION TECHNIQUES"), QString());
+    db.AddControl(QStringLiteral("IP-1"), QStringLiteral("CONSENT"), QString());
+    db.AddControl(QStringLiteral("IP-1 (1)"), QStringLiteral("CONSENT | MECHANISMS SUPPORTING ITEMIZED OR TIERED CONSENT"), QString());
+    db.AddControl(QStringLiteral("IP-2"), QStringLiteral("INDIVIDUAL ACCESS"), QString());
+    db.AddControl(QStringLiteral("IP-3"), QStringLiteral("REDRESS"), QString());
+    db.AddControl(QStringLiteral("IP-4"), QStringLiteral("COMPLAINT MANAGEMENT"), QString());
+    db.AddControl(QStringLiteral("IP-4 (1)"), QStringLiteral("COMPLAINT MANAGEMENT | RESPONSE TIMES"), QString());
+    db.AddControl(QStringLiteral("SE-1"), QStringLiteral("INVENTORY OF PERSONALLY IDENTIFIABLE INFORMATION"), QString());
+    db.AddControl(QStringLiteral("SE-2"), QStringLiteral("PRIVACY INCIDENT RESPONSE"), QString());
+    db.AddControl(QStringLiteral("TR-1"), QStringLiteral("PRIVACY NOTICE"), QString());
+    db.AddControl(QStringLiteral("TR-1 (1)"), QStringLiteral("PRIVACY NOTICE | REAL-TIME OR LAYERED NOTICE"), QString());
+    db.AddControl(QStringLiteral("TR-2"), QStringLiteral("SYSTEM OF RECORDS NOTICES AND PRIVACY ACT STATEMENTS"), QString());
+    db.AddControl(QStringLiteral("TR-2 (1)"), QStringLiteral("SYSTEM OF RECORDS NOTICES AND PRIVACY ACT STATEMENTS | PUBLIC WEBSITE PUBLICATION"), QString());
+    db.AddControl(QStringLiteral("TR-3"), QStringLiteral("DISSEMINATION OF PRIVACY PROGRAM INFORMATION"), QString());
+    db.AddControl(QStringLiteral("UL-1"), QStringLiteral("INTERNAL USE"), QString());
+    db.AddControl(QStringLiteral("UL-2"), QStringLiteral("INFORMATION SHARING WITH THIRD PARTIES"), QString());
 
     //Step 5: download all CCIs
     QTemporaryFile tmpFile;
@@ -195,23 +195,23 @@ void WorkerCCIAdd::process()
     db.DelayCommit(true);
     if (tmpFile.open())
     {
-        QUrl ccis("http://iasecontent.disa.mil/stigs/zip/u_cci_list.zip");
+        QUrl ccis(QStringLiteral("http://iasecontent.disa.mil/stigs/zip/u_cci_list.zip"));
         emit updateStatus("Downloading " + ccis.toString() + "…");
         DownloadFile(ccis, &tmpFile);
         emit progress(-1);
-        emit updateStatus("Extracting CCIs…");
-        xmlFiles = GetFilesFromZip(tmpFile.fileName().toStdString().c_str(), ".xml").values();
+        emit updateStatus(QStringLiteral("Extracting CCIs…"));
+        xmlFiles = GetFilesFromZip(tmpFile.fileName().toStdString().c_str(), QStringLiteral(".xml")).values();
         tmpFile.close();
     }
 
     //Step 6: Parse all CCIs
-    emit updateStatus("Parsing CCIs…");
+    emit updateStatus(QStringLiteral("Parsing CCIs…"));
     QList<CCI> toAdd;
     foreach (const QByteArray &xmlFile, xmlFiles)
     {
         xml = new QXmlStreamReader(xmlFile);
-        QString cci("");
-        QString definition("");
+        QString cci = QString();
+        QString definition = QString();
         while (!xml->atEnd() && !xml->hasError())
         {
             xml->readNext();
@@ -219,7 +219,7 @@ void WorkerCCIAdd::process()
             {
                 if (xml->name() == "cci_item")
                 {
-                    if (xml->attributes().hasAttribute("id"))
+                    if (xml->attributes().hasAttribute(QStringLiteral("id")))
                     {
                         foreach (const QXmlStreamAttribute &attr, xml->attributes())
                         {
@@ -234,10 +234,10 @@ void WorkerCCIAdd::process()
                 }
                 else if (xml->name() == "reference")
                 {
-                    if (xml->attributes().hasAttribute("version") && xml->attributes().hasAttribute("index") && !cci.isEmpty())
+                    if (xml->attributes().hasAttribute(QStringLiteral("version")) && xml->attributes().hasAttribute(QStringLiteral("index")) && !cci.isEmpty())
                     {
-                        QString version("");
-                        QString index("");
+                        QString version = QString();
+                        QString index = QString();
                         foreach (const QXmlStreamAttribute &attr, xml->attributes())
                         {
                             if (attr.name() == "version")
@@ -245,15 +245,15 @@ void WorkerCCIAdd::process()
                             else if (attr.name() == "index")
                                 index = attr.value().toString();
                         }
-                        if (!version.isEmpty() && !index.isEmpty() && (version == "4")) //Only Rev 4 supported
+                        if (!version.isEmpty() && !index.isEmpty() && (version == QStringLiteral("4"))) //Only Rev 4 supported
                         {
                             int cciInt = cci.rightRef(6).toInt();
                             QString control = index;
                             int tmpIndex = index.indexOf(' ');
                             if (control.contains(' '))
-                                control = control.left(control.indexOf(" "));
+                                control = control.left(control.indexOf(' '));
                             if (control.contains('.'))
-                                control = control.left(control.indexOf("."));
+                                control = control.left(control.indexOf('.'));
                             if (index.contains('('))
                             {
                                 tmpIndex = index.indexOf(' ', tmpIndex + 1);
@@ -293,6 +293,6 @@ void WorkerCCIAdd::process()
     db.DelayCommit(false);
 
     //complete
-    emit updateStatus("Done!");
+    emit updateStatus(QStringLiteral("Done!"));
     emit finished();
 }

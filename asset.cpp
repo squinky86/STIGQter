@@ -48,7 +48,7 @@
  */
 Asset::Asset(QObject *parent) : QObject(parent),
     id(-1),
-    assetType("Computing"),
+    assetType(QStringLiteral("Computing")),
     hostName(),
     hostIP(),
     hostMAC(),
@@ -115,7 +115,6 @@ QList<STIG> Asset::STIGs() const
  */
 QList<CKLCheck> Asset::CKLChecks(const STIG *s) const
 {
-    QList<CKLCheck> ret;
     DbManager db;
     return db.GetCKLChecks(*this, s);
 }

@@ -31,11 +31,11 @@ void WorkerCCIDelete::process()
     emit initialize(2, 1);
     DbManager db;
 
-    emit updateStatus("Clearing DB of CCI/RMF information…");
+    emit updateStatus(QStringLiteral("Clearing DB of CCI/RMF information…"));
     db.DeleteCCIs();
     emit progress(-1);
 
     //complete
-    emit updateStatus("Done!");
+    emit updateStatus(QStringLiteral("Done!"));
     emit finished();
 }

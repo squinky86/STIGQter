@@ -30,7 +30,7 @@ class Control : public QObject
     Q_OBJECT
 public:
     Control(const Control &right);
-    Control(QObject *parent = nullptr);
+    explicit Control(QObject *parent = nullptr);
     int id;
     int familyId;
     Family Family();

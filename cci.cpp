@@ -138,7 +138,7 @@ QString PrintCCI(int cci)
  * \param cci
  * \return human-readable CCI description
  */
-QString PrintCCI(CCI cci)
+QString PrintCCI(const CCI &cci)
 {
     return PrintCCI(cci.cci);
 }

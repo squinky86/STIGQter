@@ -25,7 +25,7 @@ Help::Help(QWidget *parent) :
     ui(new Ui::Help)
 {
     ui->setupUi(this);
-    this->setWindowTitle("About");
+    this->setWindowTitle(QStringLiteral("About"));
 }
 
 Help::~Help()

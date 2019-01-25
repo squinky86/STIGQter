@@ -21,11 +21,6 @@
 #include "stig.h"
 #include "stigcheck.h"
 
-QString PrintSTIG(STIG s)
-{
-    return s.title + " Version: " + QString::number(s.version) + " " + s.release;
-}
-
 STIG::STIG(QObject *parent) : QObject(parent),
     id(-1),
     title(),
@@ -73,4 +68,9 @@ bool STIG::operator==(const STIG &right)
                 (version == right.version));
     }
     return id == right.id;
+}
+
+QString PrintSTIG(const STIG &stig)
+{
+    return stig.title + " Version: " + QString::number(stig.version) + " " + stig.release;
 }

@@ -45,16 +45,16 @@ void WorkerAssetAdd::process()
     a.hostName = _todo.hostName;
     if (db.AddAsset(a))
     {
-        updateStatus("Adding asset " + PrintAsset(a));
+        emit updateStatus("Adding asset " + PrintAsset(a));
         emit progress(-1);
         //loop through STIGs and add to new asset
         foreach(STIG s, _todoSTIGs)
         {
-            updateStatus("Adding " + PrintSTIG(s) + " to " + PrintAsset(a) + "…");
+            emit updateStatus("Adding " + PrintSTIG(s) + " to " + PrintAsset(a) + "…");
             db.AddSTIGToAsset(s, a);
             emit progress(-1);
         }
     }
-    emit updateStatus("Done!");
+    emit updateStatus(QStringLiteral("Done!"));
     emit finished();
 }

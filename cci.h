@@ -31,7 +31,7 @@ class CCI : public QObject
 
 public:
     CCI(const CCI &right);
-    CCI(QObject *parent = nullptr);
+    explicit CCI(QObject *parent = nullptr);
     int id;
     Control Control();
     int controlId;
@@ -53,6 +53,6 @@ public:
 Q_DECLARE_METATYPE(CCI);
 
 QString PrintCCI(int cci);
-QString PrintCCI(CCI cci);
+QString PrintCCI(const CCI &cci);
 
 #endif // CCI_H

@@ -72,8 +72,8 @@ private:
     QList<QShortcut*> _shortcuts;
     bool _updateStatus;
     int _tabIndex;
-    void KeyShortcut(const Status &action);
-    void SetItemColor(QListWidgetItem *i, const Status &stat, const Severity &sev);
+    void KeyShortcut(Status action);
+    void SetItemColor(QListWidgetItem *i, Status stat, Severity sev);
 
 signals:
     void CloseTab(int);

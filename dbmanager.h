@@ -36,9 +36,9 @@
 class DbManager
 {
 public:
-    DbManager();
-    DbManager(const QString& connectionName);
-    DbManager(const QString& path, const QString& connectionName);
+    explicit DbManager();
+    explicit DbManager(const QString& connectionName);
+    explicit DbManager(const QString& path, const QString& connectionName);
     ~DbManager();
     void DelayCommit(bool delay);
 
@@ -53,17 +53,17 @@ public:
     void DeleteAsset(const Asset &asset);
     void DeleteCCIs();
     bool DeleteSTIG(int id);
-    bool DeleteSTIG(STIG stig);
+    bool DeleteSTIG(const STIG &stig);
     void DeleteSTIGFromAsset(const STIG &stig, const Asset &asset);
 
-    Asset GetAsset(const int &id);
+    Asset GetAsset(int id);
     Asset GetAsset(const QString &hostName);
     QList<Asset> GetAssets(const QString &whereClause = "", const QList<std::tuple<QString, QVariant>> &variables = {});
-    CCI GetCCI(const int &id);
-    CCI GetCCIByCCI(const int &cci, const STIG *stig = nullptr);
+    CCI GetCCI(int id);
+    CCI GetCCIByCCI(int cci, const STIG *stig = nullptr);
     CCI GetCCIByCCI(const CCI &cci, const STIG *stig = nullptr);
     QList<CCI> GetCCIs(const QString &whereClause = "", const QList<std::tuple<QString, QVariant>> &variables = {});
-    CKLCheck GetCKLCheck(const int &id);
+    CKLCheck GetCKLCheck(int id);
     CKLCheck GetCKLCheck(const CKLCheck &ckl);
     QList<CKLCheck> GetCKLChecks(const Asset &asset, const STIG *stig = nullptr);
     QList<CKLCheck> GetCKLChecks(const QString &whereClause = "", const QList<std::tuple<QString, QVariant>> &variables = {});
@@ -72,13 +72,13 @@ public:
     Family GetFamily(const QString &acronym);
     Family GetFamily(int id);
     QList<Family> GetFamilies();
-    STIG GetSTIG(const int &id);
-    STIG GetSTIG(const QString &title, const int &version, const QString &release);
-    STIGCheck GetSTIGCheck(const int &id);
+    STIG GetSTIG(int id);
+    STIG GetSTIG(const QString &title, int version, const QString &release);
+    STIGCheck GetSTIGCheck(int id);
     STIGCheck GetSTIGCheck(const STIG &stig, const QString &rule);
     QList<STIGCheck> GetSTIGChecks(const STIG &stig);
     QList<STIGCheck> GetSTIGChecks(const QString &whereClause = "", const QList<std::tuple<QString, QVariant>> &variables = {});
-    QList<STIG> GetSTIGs(Asset asset);
+    QList<STIG> GetSTIGs(const Asset &asset);
     QList<STIG> GetSTIGs(const QString &whereClause = "", const QList<std::tuple<QString, QVariant> > &variables = {});
     QString GetVariable(const QString &name);
 
@@ -86,11 +86,9 @@ public:
     void UpdateCKLCheck(const CKLCheck &check);
     void UpdateVariable(const QString &name, const QString &value);
 
-    QString Sanitize(QString s);
-
 private:
     bool UpdateDatabaseFromVersion(int version);
-    bool CheckDatabase(QSqlDatabase &db);
+    static bool CheckDatabase(QSqlDatabase &db);
     bool _delayCommit;
 };
 

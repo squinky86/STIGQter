@@ -26,12 +26,12 @@
 #include <QMessageBox>
 #include <QXmlStreamReader>
 
-void WorkerCKLImport::ParseCKL(QString fileName)
+void WorkerCKLImport::ParseCKL(const QString &fileName)
 {
     QFile f(fileName);
     if (!f.open(QFile::ReadOnly | QFile::Text))
     {
-        QMessageBox::warning(nullptr, "Unable to Open CKL", "The CKL file " + fileName + " cannot be opened.");
+        QMessageBox::warning(nullptr, QStringLiteral("Unable to Open CKL"), "The CKL file " + fileName + " cannot be opened.");
         return;
     }
     DbManager db;
@@ -63,7 +63,7 @@ void WorkerCKLImport::ParseCKL(QString fileName)
                     a = CheckAsset(a);
                     if (a.STIGs().contains(tmpSTIG))
                     {
-                        QMessageBox::warning(nullptr, "Asset already has STIG applied!", "The asset " + PrintAsset(a) + " already has the STIG " + PrintSTIG(tmpSTIG) + " applied and will not be imported.");
+                        QMessageBox::warning(nullptr, QStringLiteral("Asset already has STIG applied!"), "The asset " + PrintAsset(a) + " already has the STIG " + PrintSTIG(tmpSTIG) + " applied and will not be imported.");
                     }
                     else
                     {
@@ -84,22 +84,22 @@ void WorkerCKLImport::ParseCKL(QString fileName)
                 }
                 else if (xml->name() == "SID_DATA")
                 {
-                    if (onVar == "version")
+                    if (onVar == QStringLiteral("version"))
                     {
                         tmpSTIG.version = xml->readElementText().trimmed().toInt();
                     }
-                    else if (onVar == "releaseinfo")
+                    else if (onVar == QStringLiteral("releaseinfo"))
                     {
                         tmpSTIG.release = xml->readElementText().trimmed();
                     }
-                    else if (onVar == "title")
+                    else if (onVar == QStringLiteral("title"))
                     {
                         tmpSTIG.title = xml->readElementText().trimmed();
                     }
                 }
                 else if (xml->name() == "ATTRIBUTE_DATA")
                 {
-                    if (onVar == "Rule_ID")
+                    if (onVar == QStringLiteral("Rule_ID"))
                     {
                         tmpSTIG = db.GetSTIG(tmpSTIG.title, tmpSTIG.version, tmpSTIG.release);
                         if (tmpSTIG.id < 0)
@@ -167,7 +167,7 @@ void WorkerCKLImport::ParseCKL(QString fileName)
                 }
                 else if (xml->name() == "WEB_OR_DATABASE")
                 {
-                    a.webOrDB = xml->readElementText().trimmed().startsWith("t", Qt::CaseInsensitive);
+                    a.webOrDB = xml->readElementText().trimmed().startsWith(QStringLiteral("t"), Qt::CaseInsensitive);
                 }
                 else if (xml->name() == "WEB_DB_SITE")
                 {
@@ -185,7 +185,7 @@ void WorkerCKLImport::ParseCKL(QString fileName)
     a = CheckAsset(a);
     if (a.STIGs().contains(tmpSTIG))
     {
-        QMessageBox::warning(nullptr, "Asset already has STIG applied!", "The asset " + PrintAsset(a) + " already has the STIG " + PrintSTIG(tmpSTIG) + " applied.");
+        QMessageBox::warning(nullptr, QStringLiteral("Asset already has STIG applied!"), "The asset " + PrintAsset(a) + " already has the STIG " + PrintSTIG(tmpSTIG) + " applied.");
         return;
     }
     db.AddSTIGToAsset(tmpSTIG, a);
@@ -214,7 +214,7 @@ WorkerCKLImport::WorkerCKLImport(QObject *parent) : QObject(parent)
 {
 }
 
-void WorkerCKLImport::AddCKLs(QStringList ckls)
+void WorkerCKLImport::AddCKLs(const QStringList &ckls)
 {
     _fileNames = ckls;
 }
@@ -228,6 +228,6 @@ void WorkerCKLImport::process()
         ParseCKL(fileName);
         emit progress(-1);
     }
-    emit updateStatus("Done!");
+    emit updateStatus(QStringLiteral("Done!"));
     emit finished();
 }

@@ -22,11 +22,6 @@
 
 #include <QString>
 
-QString PrintSTIGCheck(STIGCheck s)
-{
-    return s.rule;
-}
-
 STIGCheck::STIGCheck(QObject *parent) : QObject(parent),
     id(-1),
     stigId(-1),
@@ -108,26 +103,31 @@ CCI STIGCheck::CCI() const
 
 Severity GetSeverity(const QString &severity)
 {
-    if (severity.isEmpty() || severity.endsWith(" IV"))
+    if (severity.isEmpty() || severity.endsWith(QStringLiteral(" IV")))
         return Severity::none;
-    if (severity.startsWith("medium", Qt::CaseInsensitive) || severity.endsWith(" II"))
+    if (severity.startsWith(QStringLiteral("medium"), Qt::CaseInsensitive) || severity.endsWith(QStringLiteral(" II")))
         return Severity::medium;
-    if (severity.startsWith("high", Qt::CaseInsensitive) || severity.endsWith(" I"))
+    if (severity.startsWith(QStringLiteral("high"), Qt::CaseInsensitive) || severity.endsWith(QStringLiteral(" I")))
         return Severity::high;
     return Severity::low;
 }
 
-QString GetSeverity(const Severity &severity, bool cat)
+QString GetSeverity(Severity severity, bool cat)
 {
     switch (severity)
     {
     case Severity::high:
-        return cat ? "CAT I" : "high";
+        return cat ? QStringLiteral("CAT I") : QStringLiteral("high");
     case Severity::medium:
-        return cat ? "CAT II" : "medium";
+        return cat ? QStringLiteral("CAT II") : QStringLiteral("medium");
     case Severity::low:
-        return cat ? "CAT III" : "low";
+        return cat ? QStringLiteral("CAT III") : QStringLiteral("low");
     default:
-        return cat ? "CAT IV" : "";
+        return cat ? QStringLiteral("CAT IV") : QString();
     }
+}
+
+QString PrintSTIGCheck(const STIGCheck &stigCheck)
+{
+    return stigCheck.rule;
 }

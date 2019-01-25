@@ -138,7 +138,7 @@ void WorkerFindingsReport::process()
         //severity
         worksheet_write_string(wsCCIs, onRow, 2, GetSeverity(checks.first().GetSeverity()).toStdString().c_str(), nullptr);
         //Checks
-        QString assets = "";
+        QString assets = QString();
         foreach (CKLCheck cc, checks)
         {
             if (!assets.isEmpty())
@@ -149,11 +149,11 @@ void WorkerFindingsReport::process()
         emit progress(-1);
     }
 
-    emit updateStatus("Writing workbook…");
+    emit updateStatus(QStringLiteral("Writing workbook…"));
 
     //close and write the workbook
     workbook_close(wb);
 
-    emit updateStatus("Done!");
+    emit updateStatus(QStringLiteral("Done!"));
     emit finished();
 }

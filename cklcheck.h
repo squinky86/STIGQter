@@ -35,7 +35,7 @@ enum Status
 };
 
 Status GetStatus(const QString &status);
-QString GetStatus(const Status &status, bool xmlFormat = false);
+QString GetStatus(Status status, bool xmlFormat = false);
 
 class CKLCheck : public QObject
 {
@@ -43,7 +43,7 @@ class CKLCheck : public QObject
 
 public:
     CKLCheck(const CKLCheck &right);
-    CKLCheck(QObject *parent = nullptr);
+    explicit CKLCheck(QObject *parent = nullptr);
     int id;
     int assetId;
     int stigCheckId;

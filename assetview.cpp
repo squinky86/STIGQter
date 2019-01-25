@@ -306,7 +306,7 @@ void AssetView::CheckSelectedChanged()
 void AssetView::DeleteAsset()
 {
     //prompt user for confirmation of a destructive task
-    QMessageBox::StandardButton reply = QMessageBox::question(this, "Confirm", "Are you sure you want to delete " + PrintAsset(_asset) + "?", QMessageBox::Yes|QMessageBox::No);
+    QMessageBox::StandardButton reply = QMessageBox::question(this, QStringLiteral("Confirm"), "Are you sure you want to delete " + PrintAsset(_asset) + "?", QMessageBox::Yes|QMessageBox::No);
     if (reply == QMessageBox::Yes)
     {
         DbManager db;
@@ -346,106 +346,106 @@ void AssetView::KeyShortcutCtrlX()
  */
 void AssetView::SaveCKL()
 {
-    QString fileName = QFileDialog::getSaveFileName(this, "Save STIG/SRG Checklist", QDir::home().dirName(), "STIG Checklist (*.ckl)");
+    QString fileName = QFileDialog::getSaveFileName(this, QStringLiteral("Save STIG/SRG Checklist"), QDir::home().dirName(), QStringLiteral("STIG Checklist (*.ckl)"));
     QFile file(fileName);
     if (file.open(QIODevice::WriteOnly))
     {
         QXmlStreamWriter stream(&file);
         //xml for a CKL file
-        stream.writeStartDocument("1.0");
-        stream.writeComment("STIGQter :: " + QString(VERSION));
-        stream.writeStartElement("CHECKLIST");
-        stream.writeStartElement("ASSET");
-        stream.writeStartElement("ROLE");
-        stream.writeCharacters("None");
+        stream.writeStartDocument(QStringLiteral("1.0"));
+        stream.writeComment("STIGQter :: " + QString(QStringLiteral(VERSION)));
+        stream.writeStartElement(QStringLiteral("CHECKLIST"));
+        stream.writeStartElement(QStringLiteral("ASSET"));
+        stream.writeStartElement(QStringLiteral("ROLE"));
+        stream.writeCharacters(QStringLiteral("None"));
         stream.writeEndElement(); //ROLE
-        stream.writeStartElement("ASSET_TYPE");
+        stream.writeStartElement(QStringLiteral("ASSET_TYPE"));
         stream.writeCharacters(_asset.assetType);
         stream.writeEndElement(); //ASSET_TYPE
-        stream.writeStartElement("HOST_NAME");
+        stream.writeStartElement(QStringLiteral("HOST_NAME"));
         stream.writeCharacters(_asset.hostName);
         stream.writeEndElement(); //HOST_NAME
-        stream.writeStartElement("HOST_IP");
+        stream.writeStartElement(QStringLiteral("HOST_IP"));
         stream.writeCharacters(_asset.hostIP);
         stream.writeEndElement(); //HOST_IP
-        stream.writeStartElement("HOST_MAC");
+        stream.writeStartElement(QStringLiteral("HOST_MAC"));
         stream.writeCharacters(_asset.hostMAC);
         stream.writeEndElement(); //HOST_MAC
-        stream.writeStartElement("HOST_FQDN");
+        stream.writeStartElement(QStringLiteral("HOST_FQDN"));
         stream.writeCharacters(_asset.hostFQDN);
         stream.writeEndElement(); //HOST_FQDN
-        stream.writeStartElement("TECH_AREA");
+        stream.writeStartElement(QStringLiteral("TECH_AREA"));
         stream.writeCharacters(_asset.techArea);
         stream.writeEndElement(); //TECH_AREA
-        stream.writeStartElement("TARGET_KEY");
+        stream.writeStartElement(QStringLiteral("TARGET_KEY"));
         stream.writeCharacters(_asset.targetKey);
         stream.writeEndElement(); //TARGET_KEY
-        stream.writeStartElement("WEB_OR_DATABASE");
+        stream.writeStartElement(QStringLiteral("WEB_OR_DATABASE"));
         stream.writeCharacters(PrintTrueFalse(_asset.webOrDB));
         stream.writeEndElement(); //WEB_OR_DATABASE
-        stream.writeStartElement("WEB_DB_SITE");
+        stream.writeStartElement(QStringLiteral("WEB_DB_SITE"));
         stream.writeCharacters(_asset.webDbSite);
         stream.writeEndElement(); //WEB_DB_SITE
-        stream.writeStartElement("WEB_DB_INSTANCE");
+        stream.writeStartElement(QStringLiteral("WEB_DB_INSTANCE"));
         stream.writeCharacters(_asset.webDbInstance);
         stream.writeEndElement(); //WEB_DB_INSTANCE
         stream.writeEndElement(); //ASSET
-        stream.writeStartElement("STIGS");
+        stream.writeStartElement(QStringLiteral("STIGS"));
         foreach (const STIG &s, _asset.STIGs())
         {
-            stream.writeStartElement("iSTIG");
-            stream.writeStartElement("STIG_INFO");
+            stream.writeStartElement(QStringLiteral("iSTIG"));
+            stream.writeStartElement(QStringLiteral("STIG_INFO"));
 
-            stream.writeStartElement("SI_DATA");
-            stream.writeStartElement("SID_NAME");
-            stream.writeCharacters("version");
+            stream.writeStartElement(QStringLiteral("SI_DATA"));
+            stream.writeStartElement(QStringLiteral("SID_NAME"));
+            stream.writeCharacters(QStringLiteral("version"));
             stream.writeEndElement(); //SID_NAME
-            stream.writeStartElement("SID_DATA");
+            stream.writeStartElement(QStringLiteral("SID_DATA"));
             stream.writeCharacters(QString::number(s.version));
             stream.writeEndElement(); //SID_DATA
             stream.writeEndElement(); //SI_DATA
 
-            stream.writeStartElement("SI_DATA");
-            stream.writeStartElement("SID_NAME");
-            stream.writeCharacters("stigid");
+            stream.writeStartElement(QStringLiteral("SI_DATA"));
+            stream.writeStartElement(QStringLiteral("SID_NAME"));
+            stream.writeCharacters(QStringLiteral("stigid"));
             stream.writeEndElement(); //SID_NAME
-            stream.writeStartElement("SID_DATA");
+            stream.writeStartElement(QStringLiteral("SID_DATA"));
             stream.writeCharacters(s.benchmarkId);
             stream.writeEndElement(); //SID_DATA
             stream.writeEndElement(); //SI_DATA
 
-            stream.writeStartElement("SI_DATA");
-            stream.writeStartElement("SID_NAME");
-            stream.writeCharacters("description");
+            stream.writeStartElement(QStringLiteral("SI_DATA"));
+            stream.writeStartElement(QStringLiteral("SID_NAME"));
+            stream.writeCharacters(QStringLiteral("description"));
             stream.writeEndElement(); //SID_NAME
-            stream.writeStartElement("SID_DATA");
+            stream.writeStartElement(QStringLiteral("SID_DATA"));
             stream.writeCharacters(s.description);
             stream.writeEndElement(); //SID_DATA
             stream.writeEndElement(); //SI_DATA
 
-            stream.writeStartElement("SI_DATA");
-            stream.writeStartElement("SID_NAME");
-            stream.writeCharacters("filename");
+            stream.writeStartElement(QStringLiteral("SI_DATA"));
+            stream.writeStartElement(QStringLiteral("SID_NAME"));
+            stream.writeCharacters(QStringLiteral("filename"));
             stream.writeEndElement(); //SID_NAME
-            stream.writeStartElement("SID_DATA");
+            stream.writeStartElement(QStringLiteral("SID_DATA"));
             stream.writeCharacters(s.fileName);
             stream.writeEndElement(); //SID_DATA
             stream.writeEndElement(); //SI_DATA
 
-            stream.writeStartElement("SI_DATA");
-            stream.writeStartElement("SID_NAME");
-            stream.writeCharacters("releaseinfo");
+            stream.writeStartElement(QStringLiteral("SI_DATA"));
+            stream.writeStartElement(QStringLiteral("SID_NAME"));
+            stream.writeCharacters(QStringLiteral("releaseinfo"));
             stream.writeEndElement(); //SID_NAME
-            stream.writeStartElement("SID_DATA");
+            stream.writeStartElement(QStringLiteral("SID_DATA"));
             stream.writeCharacters(s.release);
             stream.writeEndElement(); //SID_DATA
             stream.writeEndElement(); //SI_DATA
 
-            stream.writeStartElement("SI_DATA");
-            stream.writeStartElement("SID_NAME");
-            stream.writeCharacters("title");
+            stream.writeStartElement(QStringLiteral("SI_DATA"));
+            stream.writeStartElement(QStringLiteral("SID_NAME"));
+            stream.writeCharacters(QStringLiteral("title"));
             stream.writeEndElement(); //SID_NAME
-            stream.writeStartElement("SID_DATA");
+            stream.writeStartElement(QStringLiteral("SID_DATA"));
             stream.writeCharacters(s.title);
             stream.writeEndElement(); //SID_DATA
             stream.writeEndElement(); //SI_DATA
@@ -455,241 +455,241 @@ void AssetView::SaveCKL()
             foreach (const CKLCheck &cc, _asset.CKLChecks(&s))
             {
                 const STIGCheck sc = cc.STIGCheck();
-                stream.writeStartElement("VULN");
+                stream.writeStartElement(QStringLiteral("VULN"));
 
-                stream.writeStartElement("STIG_DATA");
-                stream.writeStartElement("VULN_ATTRIBUTE");
-                stream.writeCharacters("Vuln_Num");
+                stream.writeStartElement(QStringLiteral("STIG_DATA"));
+                stream.writeStartElement(QStringLiteral("VULN_ATTRIBUTE"));
+                stream.writeCharacters(QStringLiteral("Vuln_Num"));
                 stream.writeEndElement(); //VULN_ATTRIBUTE
-                stream.writeStartElement("ATTRIBUTE_DATA");
+                stream.writeStartElement(QStringLiteral("ATTRIBUTE_DATA"));
                 stream.writeCharacters(sc.vulnNum);
                 stream.writeEndElement(); //ATTRIBUTE_DATA
                 stream.writeEndElement(); //STIG_DATA
 
-                stream.writeStartElement("STIG_DATA");
-                stream.writeStartElement("VULN_ATTRIBUTE");
-                stream.writeCharacters("Severity");
+                stream.writeStartElement(QStringLiteral("STIG_DATA"));
+                stream.writeStartElement(QStringLiteral("VULN_ATTRIBUTE"));
+                stream.writeCharacters(QStringLiteral("Severity"));
                 stream.writeEndElement(); //VULN_ATTRIBUTE
-                stream.writeStartElement("ATTRIBUTE_DATA");
+                stream.writeStartElement(QStringLiteral("ATTRIBUTE_DATA"));
                 stream.writeCharacters(GetSeverity(cc.GetSeverity(), false));
                 stream.writeEndElement(); //ATTRIBUTE_DATA
                 stream.writeEndElement(); //STIG_DATA
 
-                stream.writeStartElement("STIG_DATA");
-                stream.writeStartElement("VULN_ATTRIBUTE");
-                stream.writeCharacters("Group_Title");
+                stream.writeStartElement(QStringLiteral("STIG_DATA"));
+                stream.writeStartElement(QStringLiteral("VULN_ATTRIBUTE"));
+                stream.writeCharacters(QStringLiteral("Group_Title"));
                 stream.writeEndElement(); //VULN_ATTRIBUTE
-                stream.writeStartElement("ATTRIBUTE_DATA");
+                stream.writeStartElement(QStringLiteral("ATTRIBUTE_DATA"));
                 stream.writeCharacters(sc.groupTitle);
                 stream.writeEndElement(); //ATTRIBUTE_DATA
                 stream.writeEndElement(); //STIG_DATA
 
-                stream.writeStartElement("STIG_DATA");
-                stream.writeStartElement("VULN_ATTRIBUTE");
-                stream.writeCharacters("Rule_ID");
+                stream.writeStartElement(QStringLiteral("STIG_DATA"));
+                stream.writeStartElement(QStringLiteral("VULN_ATTRIBUTE"));
+                stream.writeCharacters(QStringLiteral("Rule_ID"));
                 stream.writeEndElement(); //VULN_ATTRIBUTE
-                stream.writeStartElement("ATTRIBUTE_DATA");
+                stream.writeStartElement(QStringLiteral("ATTRIBUTE_DATA"));
                 stream.writeCharacters(sc.rule);
                 stream.writeEndElement(); //ATTRIBUTE_DATA
                 stream.writeEndElement(); //STIG_DATA
 
-                stream.writeStartElement("STIG_DATA");
-                stream.writeStartElement("VULN_ATTRIBUTE");
-                stream.writeCharacters("Rule_Ver");
+                stream.writeStartElement(QStringLiteral("STIG_DATA"));
+                stream.writeStartElement(QStringLiteral("VULN_ATTRIBUTE"));
+                stream.writeCharacters(QStringLiteral("Rule_Ver"));
                 stream.writeEndElement(); //VULN_ATTRIBUTE
-                stream.writeStartElement("ATTRIBUTE_DATA");
+                stream.writeStartElement(QStringLiteral("ATTRIBUTE_DATA"));
                 stream.writeCharacters(sc.ruleVersion);
                 stream.writeEndElement(); //ATTRIBUTE_DATA
                 stream.writeEndElement(); //STIG_DATA
 
-                stream.writeStartElement("STIG_DATA");
-                stream.writeStartElement("VULN_ATTRIBUTE");
-                stream.writeCharacters("Rule_Title");
+                stream.writeStartElement(QStringLiteral("STIG_DATA"));
+                stream.writeStartElement(QStringLiteral("VULN_ATTRIBUTE"));
+                stream.writeCharacters(QStringLiteral("Rule_Title"));
                 stream.writeEndElement(); //VULN_ATTRIBUTE
-                stream.writeStartElement("ATTRIBUTE_DATA");
+                stream.writeStartElement(QStringLiteral("ATTRIBUTE_DATA"));
                 stream.writeCharacters(sc.title);
                 stream.writeEndElement(); //ATTRIBUTE_DATA
                 stream.writeEndElement(); //STIG_DATA
 
-                stream.writeStartElement("STIG_DATA");
-                stream.writeStartElement("VULN_ATTRIBUTE");
-                stream.writeCharacters("Vuln_Discuss");
+                stream.writeStartElement(QStringLiteral("STIG_DATA"));
+                stream.writeStartElement(QStringLiteral("VULN_ATTRIBUTE"));
+                stream.writeCharacters(QStringLiteral("Vuln_Discuss"));
                 stream.writeEndElement(); //VULN_ATTRIBUTE
-                stream.writeStartElement("ATTRIBUTE_DATA");
+                stream.writeStartElement(QStringLiteral("ATTRIBUTE_DATA"));
                 stream.writeCharacters(sc.vulnDiscussion);
                 stream.writeEndElement(); //ATTRIBUTE_DATA
                 stream.writeEndElement(); //STIG_DATA
 
-                stream.writeStartElement("STIG_DATA");
-                stream.writeStartElement("VULN_ATTRIBUTE");
-                stream.writeCharacters("IA_Controls");
+                stream.writeStartElement(QStringLiteral("STIG_DATA"));
+                stream.writeStartElement(QStringLiteral("VULN_ATTRIBUTE"));
+                stream.writeCharacters(QStringLiteral("IA_Controls"));
                 stream.writeEndElement(); //VULN_ATTRIBUTE
-                stream.writeStartElement("ATTRIBUTE_DATA");
+                stream.writeStartElement(QStringLiteral("ATTRIBUTE_DATA"));
                 stream.writeCharacters(sc.iaControls);
                 stream.writeEndElement(); //ATTRIBUTE_DATA
                 stream.writeEndElement(); //STIG_DATA
 
-                stream.writeStartElement("STIG_DATA");
-                stream.writeStartElement("VULN_ATTRIBUTE");
-                stream.writeCharacters("Check_Content");
+                stream.writeStartElement(QStringLiteral("STIG_DATA"));
+                stream.writeStartElement(QStringLiteral("VULN_ATTRIBUTE"));
+                stream.writeCharacters(QStringLiteral("Check_Content"));
                 stream.writeEndElement(); //VULN_ATTRIBUTE
-                stream.writeStartElement("ATTRIBUTE_DATA");
+                stream.writeStartElement(QStringLiteral("ATTRIBUTE_DATA"));
                 stream.writeCharacters(sc.check);
                 stream.writeEndElement(); //ATTRIBUTE_DATA
                 stream.writeEndElement(); //STIG_DATA
 
-                stream.writeStartElement("STIG_DATA");
-                stream.writeStartElement("VULN_ATTRIBUTE");
-                stream.writeCharacters("Fix_Text");
+                stream.writeStartElement(QStringLiteral("STIG_DATA"));
+                stream.writeStartElement(QStringLiteral("VULN_ATTRIBUTE"));
+                stream.writeCharacters(QStringLiteral("Fix_Text"));
                 stream.writeEndElement(); //VULN_ATTRIBUTE
-                stream.writeStartElement("ATTRIBUTE_DATA");
+                stream.writeStartElement(QStringLiteral("ATTRIBUTE_DATA"));
                 stream.writeCharacters(sc.fix);
                 stream.writeEndElement(); //ATTRIBUTE_DATA
                 stream.writeEndElement(); //STIG_DATA
 
-                stream.writeStartElement("STIG_DATA");
-                stream.writeStartElement("VULN_ATTRIBUTE");
-                stream.writeCharacters("False_Positives");
+                stream.writeStartElement(QStringLiteral("STIG_DATA"));
+                stream.writeStartElement(QStringLiteral("VULN_ATTRIBUTE"));
+                stream.writeCharacters(QStringLiteral("False_Positives"));
                 stream.writeEndElement(); //VULN_ATTRIBUTE
-                stream.writeStartElement("ATTRIBUTE_DATA");
+                stream.writeStartElement(QStringLiteral("ATTRIBUTE_DATA"));
                 stream.writeCharacters(sc.falsePositives);
                 stream.writeEndElement(); //ATTRIBUTE_DATA
                 stream.writeEndElement(); //STIG_DATA
 
-                stream.writeStartElement("STIG_DATA");
-                stream.writeStartElement("VULN_ATTRIBUTE");
-                stream.writeCharacters("False_Negatives");
+                stream.writeStartElement(QStringLiteral("STIG_DATA"));
+                stream.writeStartElement(QStringLiteral("VULN_ATTRIBUTE"));
+                stream.writeCharacters(QStringLiteral("False_Negatives"));
                 stream.writeEndElement(); //VULN_ATTRIBUTE
-                stream.writeStartElement("ATTRIBUTE_DATA");
+                stream.writeStartElement(QStringLiteral("ATTRIBUTE_DATA"));
                 stream.writeCharacters(sc.falseNegatives);
                 stream.writeEndElement(); //ATTRIBUTE_DATA
                 stream.writeEndElement(); //STIG_DATA
 
-                stream.writeStartElement("STIG_DATA");
-                stream.writeStartElement("VULN_ATTRIBUTE");
-                stream.writeCharacters("Documentable");
+                stream.writeStartElement(QStringLiteral("STIG_DATA"));
+                stream.writeStartElement(QStringLiteral("VULN_ATTRIBUTE"));
+                stream.writeCharacters(QStringLiteral("Documentable"));
                 stream.writeEndElement(); //VULN_ATTRIBUTE
-                stream.writeStartElement("ATTRIBUTE_DATA");
+                stream.writeStartElement(QStringLiteral("ATTRIBUTE_DATA"));
                 stream.writeCharacters(PrintTrueFalse(sc.documentable));
                 stream.writeEndElement(); //ATTRIBUTE_DATA
                 stream.writeEndElement(); //STIG_DATA
 
-                stream.writeStartElement("STIG_DATA");
-                stream.writeStartElement("VULN_ATTRIBUTE");
-                stream.writeCharacters("Mitigations");
+                stream.writeStartElement(QStringLiteral("STIG_DATA"));
+                stream.writeStartElement(QStringLiteral("VULN_ATTRIBUTE"));
+                stream.writeCharacters(QStringLiteral("Mitigations"));
                 stream.writeEndElement(); //VULN_ATTRIBUTE
-                stream.writeStartElement("ATTRIBUTE_DATA");
+                stream.writeStartElement(QStringLiteral("ATTRIBUTE_DATA"));
                 stream.writeCharacters(sc.mitigations);
                 stream.writeEndElement(); //ATTRIBUTE_DATA
                 stream.writeEndElement(); //STIG_DATA
 
-                stream.writeStartElement("STIG_DATA");
-                stream.writeStartElement("VULN_ATTRIBUTE");
-                stream.writeCharacters("Potential_Impact");
+                stream.writeStartElement(QStringLiteral("STIG_DATA"));
+                stream.writeStartElement(QStringLiteral("VULN_ATTRIBUTE"));
+                stream.writeCharacters(QStringLiteral("Potential_Impact"));
                 stream.writeEndElement(); //VULN_ATTRIBUTE
-                stream.writeStartElement("ATTRIBUTE_DATA");
+                stream.writeStartElement(QStringLiteral("ATTRIBUTE_DATA"));
                 stream.writeCharacters(sc.potentialImpact);
                 stream.writeEndElement(); //ATTRIBUTE_DATA
                 stream.writeEndElement(); //STIG_DATA
 
-                stream.writeStartElement("STIG_DATA");
-                stream.writeStartElement("VULN_ATTRIBUTE");
-                stream.writeCharacters("Third_Party_Tools");
+                stream.writeStartElement(QStringLiteral("STIG_DATA"));
+                stream.writeStartElement(QStringLiteral("VULN_ATTRIBUTE"));
+                stream.writeCharacters(QStringLiteral("Third_Party_Tools"));
                 stream.writeEndElement(); //VULN_ATTRIBUTE
-                stream.writeStartElement("ATTRIBUTE_DATA");
+                stream.writeStartElement(QStringLiteral("ATTRIBUTE_DATA"));
                 stream.writeCharacters(sc.thirdPartyTools);
                 stream.writeEndElement(); //ATTRIBUTE_DATA
                 stream.writeEndElement(); //STIG_DATA
 
-                stream.writeStartElement("STIG_DATA");
-                stream.writeStartElement("VULN_ATTRIBUTE");
-                stream.writeCharacters("Mitigation_Control");
+                stream.writeStartElement(QStringLiteral("STIG_DATA"));
+                stream.writeStartElement(QStringLiteral("VULN_ATTRIBUTE"));
+                stream.writeCharacters(QStringLiteral("Mitigation_Control"));
                 stream.writeEndElement(); //VULN_ATTRIBUTE
-                stream.writeStartElement("ATTRIBUTE_DATA");
+                stream.writeStartElement(QStringLiteral("ATTRIBUTE_DATA"));
                 stream.writeCharacters(sc.mitigationControl);
                 stream.writeEndElement(); //ATTRIBUTE_DATA
                 stream.writeEndElement(); //STIG_DATA
 
-                stream.writeStartElement("STIG_DATA");
-                stream.writeStartElement("VULN_ATTRIBUTE");
-                stream.writeCharacters("Responsibility");
+                stream.writeStartElement(QStringLiteral("STIG_DATA"));
+                stream.writeStartElement(QStringLiteral("VULN_ATTRIBUTE"));
+                stream.writeCharacters(QStringLiteral("Responsibility"));
                 stream.writeEndElement(); //VULN_ATTRIBUTE
-                stream.writeStartElement("ATTRIBUTE_DATA");
+                stream.writeStartElement(QStringLiteral("ATTRIBUTE_DATA"));
                 stream.writeCharacters(sc.responsibility);
                 stream.writeEndElement(); //ATTRIBUTE_DATA
                 stream.writeEndElement(); //STIG_DATA
 
-                stream.writeStartElement("STIG_DATA");
-                stream.writeStartElement("VULN_ATTRIBUTE");
-                stream.writeCharacters("Security_Override_Guidance");
+                stream.writeStartElement(QStringLiteral("STIG_DATA"));
+                stream.writeStartElement(QStringLiteral("VULN_ATTRIBUTE"));
+                stream.writeCharacters(QStringLiteral("Security_Override_Guidance"));
                 stream.writeEndElement(); //VULN_ATTRIBUTE
-                stream.writeStartElement("ATTRIBUTE_DATA");
+                stream.writeStartElement(QStringLiteral("ATTRIBUTE_DATA"));
                 stream.writeCharacters(sc.severityOverrideGuidance);
                 stream.writeEndElement(); //ATTRIBUTE_DATA
                 stream.writeEndElement(); //STIG_DATA
 
-                stream.writeStartElement("STIG_DATA");
-                stream.writeStartElement("VULN_ATTRIBUTE");
-                stream.writeCharacters("Check_Content_Ref");
+                stream.writeStartElement(QStringLiteral("STIG_DATA"));
+                stream.writeStartElement(QStringLiteral("VULN_ATTRIBUTE"));
+                stream.writeCharacters(QStringLiteral("Check_Content_Ref"));
                 stream.writeEndElement(); //VULN_ATTRIBUTE
-                stream.writeStartElement("ATTRIBUTE_DATA");
+                stream.writeStartElement(QStringLiteral("ATTRIBUTE_DATA"));
                 stream.writeCharacters(sc.checkContentRef);
                 stream.writeEndElement(); //ATTRIBUTE_DATA
                 stream.writeEndElement(); //STIG_DATA
 
-                stream.writeStartElement("STIG_DATA");
-                stream.writeStartElement("VULN_ATTRIBUTE");
-                stream.writeCharacters("Weight");
+                stream.writeStartElement(QStringLiteral("STIG_DATA"));
+                stream.writeStartElement(QStringLiteral("VULN_ATTRIBUTE"));
+                stream.writeCharacters(QStringLiteral("Weight"));
                 stream.writeEndElement(); //VULN_ATTRIBUTE
-                stream.writeStartElement("ATTRIBUTE_DATA");
+                stream.writeStartElement(QStringLiteral("ATTRIBUTE_DATA"));
                 stream.writeCharacters(QString::number(sc.weight));
                 stream.writeEndElement(); //ATTRIBUTE_DATA
                 stream.writeEndElement(); //STIG_DATA
 
-                stream.writeStartElement("STIG_DATA");
-                stream.writeStartElement("VULN_ATTRIBUTE");
-                stream.writeCharacters("STIGRef");
+                stream.writeStartElement(QStringLiteral("STIG_DATA"));
+                stream.writeStartElement(QStringLiteral("VULN_ATTRIBUTE"));
+                stream.writeCharacters(QStringLiteral("STIGRef"));
                 stream.writeEndElement(); //VULN_ATTRIBUTE
-                stream.writeStartElement("ATTRIBUTE_DATA");
+                stream.writeStartElement(QStringLiteral("ATTRIBUTE_DATA"));
                 stream.writeCharacters(s.title + " :: Version " + QString::number(s.version) + ", " + s.release);
                 stream.writeEndElement(); //ATTRIBUTE_DATA
                 stream.writeEndElement(); //STIG_DATA
 
-                stream.writeStartElement("STIG_DATA");
-                stream.writeStartElement("VULN_ATTRIBUTE");
-                stream.writeCharacters("TargetKey");
+                stream.writeStartElement(QStringLiteral("STIG_DATA"));
+                stream.writeStartElement(QStringLiteral("VULN_ATTRIBUTE"));
+                stream.writeCharacters(QStringLiteral("TargetKey"));
                 stream.writeEndElement(); //VULN_ATTRIBUTE
-                stream.writeStartElement("ATTRIBUTE_DATA");
+                stream.writeStartElement(QStringLiteral("ATTRIBUTE_DATA"));
                 stream.writeCharacters(sc.targetKey);
                 stream.writeEndElement(); //ATTRIBUTE_DATA
                 stream.writeEndElement(); //STIG_DATA
 
-                stream.writeStartElement("STIG_DATA");
-                stream.writeStartElement("VULN_ATTRIBUTE");
-                stream.writeCharacters("CCI_REF");
+                stream.writeStartElement(QStringLiteral("STIG_DATA"));
+                stream.writeStartElement(QStringLiteral("VULN_ATTRIBUTE"));
+                stream.writeCharacters(QStringLiteral("CCI_REF"));
                 stream.writeEndElement(); //VULN_ATTRIBUTE
-                stream.writeStartElement("ATTRIBUTE_DATA");
+                stream.writeStartElement(QStringLiteral("ATTRIBUTE_DATA"));
                 stream.writeCharacters(PrintCCI(sc.CCI()));
                 stream.writeEndElement(); //ATTRIBUTE_DATA
                 stream.writeEndElement(); //STIG_DATA
 
-                stream.writeStartElement("STATUS");
+                stream.writeStartElement(QStringLiteral("STATUS"));
                 stream.writeCharacters(GetStatus(cc.status, true));
                 stream.writeEndElement(); //STATUS
 
-                stream.writeStartElement("FINDING_DETAILS");
+                stream.writeStartElement(QStringLiteral("FINDING_DETAILS"));
                 stream.writeCharacters(cc.findingDetails);
                 stream.writeEndElement(); //FINDING_DETAILS
 
-                stream.writeStartElement("COMMENTS");
+                stream.writeStartElement(QStringLiteral("COMMENTS"));
                 stream.writeCharacters(cc.comments);
                 stream.writeEndElement(); //COMMENTS
 
-                stream.writeStartElement("SEVERITY_OVERRIDE");
+                stream.writeStartElement(QStringLiteral("SEVERITY_OVERRIDE"));
                 stream.writeCharacters(GetSeverity(cc.severityOverride, false));
                 stream.writeEndElement(); //SEVERITY_OVERRIDE
 
-                stream.writeStartElement("SEVERITY_JUSTIFICATION");
+                stream.writeStartElement(QStringLiteral("SEVERITY_JUSTIFICATION"));
                 stream.writeCharacters(cc.severityJustification);
                 stream.writeEndElement(); //SEVERITY_JUSTIFICATION
 
@@ -711,7 +711,7 @@ void AssetView::SaveCKL()
  * When a keyboard shortcut is used, set the display element to
  * correspond.
  */
-void AssetView::KeyShortcut(const Status &action)
+void AssetView::KeyShortcut(Status action)
 {
     if (this->isVisible())
     {
@@ -832,8 +832,8 @@ void AssetView::UpdateCKLSeverity(const QString &val)
         {
             if (tmpSeverity == Severity::none)
             {
-                QMessageBox::warning(nullptr, "Removed Severity Override", "Severity override is removed; findings cannot be downgraded to CAT IV.");
-                _justification = "";
+                QMessageBox::warning(nullptr, QStringLiteral("Removed Severity Override"), QStringLiteral("Severity override is removed; findings cannot be downgraded to CAT IV."));
+                _justification = QString();
                 ui->cboBoxSeverity->blockSignals(true);
                 ui->cboBoxSeverity->setCurrentText(GetSeverity(sc.severity));
                 ui->cboBoxSeverity->blockSignals(false);
@@ -883,7 +883,7 @@ void AssetView::UpdateSTIGs()
         else if (!item->isSelected() && stigs.contains(s))
         {
             //confirm to delete the STIG (avoid accidental clicks in the STIG box)
-            QMessageBox::StandardButton confirm = QMessageBox::question(this, "Confirm STIG Removal", "Really delete the " + PrintSTIG(s) + " stig from " + PrintAsset(_asset) + "?",
+            QMessageBox::StandardButton confirm = QMessageBox::question(this, QStringLiteral("Confirm STIG Removal"), "Really delete the " + PrintSTIG(s) + " stig from " + PrintAsset(_asset) + "?",
                                             QMessageBox::Yes|QMessageBox::No);
             if (confirm == QMessageBox::Yes)
             {
@@ -910,7 +910,7 @@ void AssetView::UpdateSTIGs()
  * Sets the QListWidgetItem's color so that attention is drawn to it,
  * particularly when the check is non-compliant.
  */
-void AssetView::SetItemColor(QListWidgetItem *i, const Status &stat, const Severity &sev)
+void AssetView::SetItemColor(QListWidgetItem *i, Status stat, Severity sev)
 {
     QFont f;
     i->setFont(f);
