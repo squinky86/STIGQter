@@ -55,14 +55,38 @@
  * each new STIGQter revision (for major releases). For example, a
  * database built with STIGQter 1.0.0 would be compatible with
  * STIGQter 1.5.3. However, a database built with STIGQter 1.5.3 may
- * not work with STIGQter 1.0.0. The constructor for the DbManager
- * handles the automatic detection and upgrade of the database.
+ * have features unsupported by STIGQter 1.0.0. The constructor for
+ * the DbManager handles the automatic detection and upgrade of the
+ * database.
  */
 
+/*!
+ * \brief DbManager::DbManager
+ *
+ * Default constructor.
+ */
 DbManager::DbManager() : DbManager(QString::number(reinterpret_cast<quint64>(QThread::currentThreadId()))) { }
 
+/*!
+ * \overload DbManager::DbManager()
+ * \brief DbManager::DbManager
+ * \param connectionName
+ *
+ * Overloaded constructor with current thread's connection already
+ * provided.
+ */
 DbManager::DbManager(const QString& connectionName) : DbManager(QCoreApplication::applicationDirPath() + "/STIGQter.db", connectionName) { }
 
+
+/*!
+ * \overload DbManager::DbManager()
+ * \brief DbManager::DbManager
+ * \param path
+ * \param connectionName
+ *
+ * Overloaded constructor with path to SQLite DB and current thread's
+ * connection already provided.
+ */
 DbManager::DbManager(const QString& path, const QString& connectionName)
 {
     bool initialize = false;
@@ -93,6 +117,12 @@ DbManager::DbManager(const QString& path, const QString& connectionName)
     UpdateDatabaseFromVersion(version);
 }
 
+/*!
+ * \brief DbManager::~DbManager
+ *
+ * The destructor verifies that all changes have been written to the
+ * database and closes its connection.
+ */
 DbManager::~DbManager()
 {
     if (_delayCommit)
@@ -105,6 +135,20 @@ DbManager::~DbManager()
     }
 }
 
+/*!
+ * \brief DbManager::DelayCommit
+ * \param delay
+ *
+ * When engaging in a large quantity of writes, the data may be
+ * buffered in memory without committing the changes to the database
+ * temporarily by setting \a delay to \c true. Setting \a delay to
+ * \c false or destructing the database connection will commit the
+ * changes that have been buffered.
+ *
+ * Developers should be cautious: buffered changes may not show up in
+ * parallel threads or in threads that are executing and need the
+ * data that have not yet been committed.
+ */
 void DbManager::DelayCommit(bool delay)
 {
     if (delay)
@@ -129,6 +173,20 @@ void DbManager::DelayCommit(bool delay)
     _delayCommit = delay;
 }
 
+/*!
+ * \brief DbManager::AddAsset
+ * \param asset
+ * \return \c True when the \a Asset is added to the database,
+ * \c false when the \a Asset is already part of the database or has
+ * not been added.
+ *
+ * To add a new \a Asset to the database, a new \a Asset instance is
+ * created in code and sent to this function. If the \a Asset has the
+ * default \a id (or an \a id less than or equal to 0), it is assumed
+ * to not be part of the database and is committed. On commit, the
+ * provided \a Asset's \a id is set to the newly inserted record's
+ * \a id.
+ */
 bool DbManager::AddAsset(Asset &asset)
 {
     QSqlDatabase db;
