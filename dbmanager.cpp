@@ -32,6 +32,33 @@
 #include <QSqlField>
 #include <QSqlDriver>
 
+/*!
+ * \class DbManager
+ * \brief DbManager::DbManager represents the data layer for the
+ * application.
+ *
+ * Each instance of the \a DbManager uses a thread-specific
+ * connection to the SQLite database. Before executing queries, each
+ * function checks the connection to the database by checking if the
+ * current thread currently has a connection. If it does, the
+ * thread's connection is reused. If not, a new, parallel connection
+ * is established.
+ *
+ * Upon successful connection to the database, the version of the
+ * database is checked to make sure that it is the latest version.
+ *
+ * The Semantic Versioning 2.0.0 system is utilized with the database
+ * version being the main driver. While in beta (0.1.x), database
+ * consistency is not kept. This means that databases built using
+ * version 0.1.0_beta of STIGQter are incompatible with 0.1.1_beta.
+ * Once released, the database will automatically be upgraded for
+ * each new STIGQter revision (for major releases). For example, a
+ * database built with STIGQter 1.0.0 would be compatible with
+ * STIGQter 1.5.3. However, a database built with STIGQter 1.5.3 may
+ * not work with STIGQter 1.0.0. The constructor for the DbManager
+ * handles the automatic detection and upgrade of the database.
+ */
+
 DbManager::DbManager() : DbManager(QString::number(reinterpret_cast<quint64>(QThread::currentThreadId()))) { }
 
 DbManager::DbManager(const QString& connectionName) : DbManager(QCoreApplication::applicationDirPath() + "/STIGQter.db", connectionName) { }

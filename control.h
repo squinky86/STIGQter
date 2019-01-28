@@ -33,7 +33,7 @@ public:
     explicit Control(QObject *parent = nullptr);
     int id;
     int familyId;
-    Family Family();
+    Family Family() const;
     int number;
     int enhancement;
     QString title;
@@ -43,6 +43,6 @@ public:
 
 Q_DECLARE_METATYPE(Control);
 
-QString PrintControl(Control c);
+QString PrintControl(const Control &control);
 
 #endif // CONTROL_H

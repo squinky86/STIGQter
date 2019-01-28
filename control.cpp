@@ -20,14 +20,27 @@
 #include "control.h"
 #include "dbmanager.h"
 
-QString PrintControl(Control c)
-{
-    QString ret = c.Family().acronym + "-" + QString::number(c.number);
-    if (c.enhancement > 0)
-        ret.append("(" + QString::number(c.enhancement) + ")");
-    return ret;
-}
+/*!
+ * \class Control
+ * \brief A \a Control corresponds to a particular RMF checklist
+ * grouping of assessment procedures. The RMF hierarchy consists of
+ * \a Family → \a Control → \a CCI.
+ *
+ * A \a Control is the base unit of RMF by which assessment scoring
+ * takes place. Risk calculations roll up and are reported at the
+ * \a Control level to provide management with a high-level overview
+ * of the security posture of a system.
+ *
+ * Selection of applicable controls is performed by baselining and
+ * tailoring the system's capabilities and security needs.
+ */
 
+/*!
+ * \brief Control::Control
+ * \param parent
+ *
+ * Default constructor.
+ */
 Control::Control(QObject *parent) : QObject(parent),
     id(-1),
     familyId(-1),
@@ -38,17 +51,34 @@ Control::Control(QObject *parent) : QObject(parent),
 {
 }
 
-Family Control::Family()
-{
-    DbManager db;
-    return db.GetFamily(familyId);
-}
-
+/*!
+ * \brief Control::Control
+ * \param right
+ *
+ * Copy constructor.
+ */
 Control::Control(const Control &right) : Control(right.parent())
 {
     *this = right;
 }
 
+/*!
+ * \brief Control::Family
+ * \return The \a Family associated with this \a Control
+ */
+Family Control::Family() const
+{
+    DbManager db;
+    return db.GetFamily(familyId);
+}
+
+/*!
+ * \brief Control::operator=
+ * \param right
+ * \return This \a Control, copied from the assignee.
+ *
+ * Deep copy assignment operator.
+ */
 Control& Control::operator=(const Control &right)
 {
     if (this != &right)
@@ -61,4 +91,17 @@ Control& Control::operator=(const Control &right)
         description = right.description;
     }
     return *this;
+}
+
+/*!
+ * \brief PrintControl
+ * \param control
+ * \return Human-readable \a Control
+ */
+QString PrintControl(const Control &control)
+{
+    QString ret = control.Family().acronym + "-" + QString::number(control.number);
+    if (control.enhancement > 0)
+        ret.append("(" + QString::number(control.enhancement) + ")");
+    return ret;
 }
