@@ -33,8 +33,10 @@ QString Excelify(const QString &s);
 int GetCCINumber(QString cci);
 QMap<QString, QByteArray> GetFilesFromZip(const QString &fileName, const QString &fileNameFilter = "");
 QString GetUserAgent();
+QString Pluralize(int count, QString plural = "s", QString singular = "");
 QString PrintTrueFalse(bool tf);
 QString Sanitize(QString s);
 QString TrimFileName(const QString &fileName);
+void Warning(QString title, QString message, bool quiet = false);
 
 #endif // COMMON_H

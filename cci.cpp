@@ -31,8 +31,7 @@
  * repository.
  *
  * More information about CCIs is available from
- * \l {https://iase.disa.mil/stigs/cci/Pages/index.aspx} {DISA's IASE
- * website}.
+ * \l {https://iase.disa.mil/stigs/cci/Pages/index.aspx} {DISA's IASE website}.
  */
 
 /*!

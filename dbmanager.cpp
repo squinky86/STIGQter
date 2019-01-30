@@ -27,7 +27,6 @@
 #include <QMessageBox>
 #include <QSqlQuery>
 #include <QSqlError>
-#include <QtDebug>
 #include <QThread>
 #include <QSqlField>
 #include <QSqlDriver>
@@ -106,8 +105,7 @@ DbManager::DbManager(const QString& path, const QString& connectionName)
 
     if (!db.open())
     {
-        qDebug() << "Error: Unable to open SQLite database.";
-        QMessageBox::warning(nullptr, QStringLiteral("Unable to Open DB"), "Unable to open DB " + path);
+        Warning(QStringLiteral("Unable to Open DB"), "Unable to open DB " + path);
     }
 
     if (initialize)
@@ -186,74 +184,130 @@ void DbManager::DelayCommit(bool delay)
  * to not be part of the database and is committed. On commit, the
  * provided \a Asset's \a id is set to the newly inserted record's
  * \a id.
+ *
+ * \a Assets must be uniquely named. A single Asset can have multiple
+ * \a STIGs that are performed against it. A single computing node
+ * usually qualifies as an \a Asset, and the individual components it
+ * contains (the OS, applications, custom devices) have \a STIGs that
+ * correspond to them. The hierarchy is
+ * \a Asset → \a STIG → \a STIGCheck.
+ *
+ * Example: A single desktop computer will often have the following
+ * \a STIGs: Windows 10, Internet Explorer, Microsoft Office (and its
+ * subcomponents), FireFox, JRE, and Adobe.
  */
 bool DbManager::AddAsset(Asset &asset)
 {
     QSqlDatabase db;
+    bool ret = false;
     if (this->CheckDatabase(db))
     {
         QSqlQuery q(db);
-        if (asset.id <= 0)
+
+        //check if Asset exists in the database
+        q.prepare(QStringLiteral("SELECT count(*) FROM Asset WHERE hostName = :hostName"));
+        q.bindValue(QStringLiteral(":hostName"), asset.hostName);
+        q.exec();
+        if (q.next())
         {
-            q.prepare(QStringLiteral("SELECT count(*) FROM Asset WHERE hostName = :hostName"));
-            q.bindValue(QStringLiteral(":hostName"), asset.hostName);
-            q.exec();
-            if (q.next())
+            if (q.value(0).toInt() > 0)
             {
-                if (q.value(0).toInt() > 0)
-                {
-                    QMessageBox::warning(nullptr, QStringLiteral("Asset Already Exists"), "The Asset " + PrintAsset(asset) + " already exists in the database.");
-                    return false;
-                }
+                Warning(QStringLiteral("Asset Already Exists"), "The Asset " + PrintAsset(asset) + " already exists in the database.");
+                return false;
             }
-            q.prepare(QStringLiteral("INSERT INTO Asset (`assetType`, `hostName`, `hostIP`, `hostMAC`, `hostFQDN`, `techArea`, `targetKey`, `webOrDatabase`, `webDBSite`, `webDBInstance`) VALUES(:assetType, :hostName, :hostIP, :hostMAC, :hostFQDN, :techArea, :targetKey, :webOrDatabase, :webDBSite, :webDBInstance)"));
-            q.bindValue(QStringLiteral(":assetType"), asset.assetType);
-            q.bindValue(QStringLiteral(":hostName"), asset.hostName);
-            q.bindValue(QStringLiteral(":hostIP"), asset.hostIP);
-            q.bindValue(QStringLiteral(":hostMAC"), asset.hostMAC);
-            q.bindValue(QStringLiteral(":hostFQDN"), asset.hostFQDN);
-            q.bindValue(QStringLiteral(":techArea"), asset.techArea);
-            q.bindValue(QStringLiteral(":targetKey"), asset.targetKey);
-            q.bindValue(QStringLiteral(":webOrDatabase"), asset.webOrDB);
-            q.bindValue(QStringLiteral(":webDBSite"), asset.webDbSite);
-            q.bindValue(QStringLiteral(":webDBInstance"), asset.webDbInstance);
-            q.exec();
-            db.commit();
-            asset.id = q.lastInsertId().toInt();
-            return true;
         }
+        q.prepare(QStringLiteral("INSERT INTO Asset (`assetType`, `hostName`, `hostIP`, `hostMAC`, `hostFQDN`, `techArea`, `targetKey`, `webOrDatabase`, `webDBSite`, `webDBInstance`) VALUES(:assetType, :hostName, :hostIP, :hostMAC, :hostFQDN, :techArea, :targetKey, :webOrDatabase, :webDBSite, :webDBInstance)"));
+        q.bindValue(QStringLiteral(":assetType"), asset.assetType);
+        q.bindValue(QStringLiteral(":hostName"), asset.hostName);
+        q.bindValue(QStringLiteral(":hostIP"), asset.hostIP);
+        q.bindValue(QStringLiteral(":hostMAC"), asset.hostMAC);
+        q.bindValue(QStringLiteral(":hostFQDN"), asset.hostFQDN);
+        q.bindValue(QStringLiteral(":techArea"), asset.techArea);
+        q.bindValue(QStringLiteral(":targetKey"), asset.targetKey);
+        q.bindValue(QStringLiteral(":webOrDatabase"), asset.webOrDB);
+        q.bindValue(QStringLiteral(":webDBSite"), asset.webDbSite);
+        q.bindValue(QStringLiteral(":webDBInstance"), asset.webDbInstance);
+        ret = q.exec();
+        db.commit();
+        asset.id = q.lastInsertId().toInt();
     }
-    return false;
+    return ret;
 }
 
+/*!
+ * \brief DbManager::AddCCI
+ * \param cci
+ * \return \c True when the \a CCI is added to the database,
+ * \c false when the \a CCI is already part of the database or has
+ * not been added.
+ *
+ * To add a new \a CCI to the database, a new \a CCI instance is
+ * created in code and sent to this function. If the \a CCI has the
+ * default \a id (or an \a id less than or equal to 0), it is assumed
+ * to not be part of the database and is committed. On commit, the
+ * provided \a CCI's \a id is set to the newly inserted record's
+ * \a id.
+ */
 bool DbManager::AddCCI(CCI &cci)
 {
     QSqlDatabase db;
+    bool ret = false;
     if (this->CheckDatabase(db))
     {
         QSqlQuery q(db);
+
+        //check if CCI already exists in the DB
+        q.prepare(QStringLiteral("SELECT count(*) FROM CCI WHERE cci = :cci"));
+        q.bindValue(QStringLiteral(":cci"), cci.cci);
+        q.exec();
+        if (q.next())
+        {
+            if (q.value(0).toInt() > 0)
+            {
+                Warning(QStringLiteral("CCI Already Exists"), "The CCI " + PrintCCI(cci) + " already exists in the database.");
+                return ret;
+            }
+        }
+
         q.prepare(QStringLiteral("INSERT INTO CCI (ControlId, cci, definition) VALUES(:ControlId, :CCI, :definition)"));
         q.bindValue(QStringLiteral(":ControlId"), cci.controlId);
         q.bindValue(QStringLiteral(":CCI"), cci.cci);
         q.bindValue(QStringLiteral(":definition"), cci.definition);
-        q.exec();
+        ret = q.exec();
         if (!_delayCommit)
         {
             db.commit();
             cci.id = q.lastInsertId().toInt();
         }
-        return true;
     }
-    return false;
+    return ret;
 }
 
-void DbManager::AddControl(const QString &control, const QString &title, const QString &description)
+/*!
+ * \brief DbManager::AddControl
+ * \param control
+ * \param title
+ * \param description
+ * \return \c True when the \a Control is added to the database,
+ * \c false when the \a Control is already part of the database or
+ * has not been added.
+ *
+ * When providing controls formatted as FAMILY-NUMBER (ENHANCEMENT),
+ * this function parses the Family, Control Number, and Enhancement
+ * Number out of the string before adding it to the database. This is
+ * useful when receiving new \a Controls formatted in human-readable
+ * format from an external data source.
+ */
+bool DbManager::AddControl(const QString &control, const QString &title, const QString &description)
 {
+    bool ret = false;
+
     QString tmpControl(control.trimmed());
     if (tmpControl.length() < 4)
     {
-        qDebug() << QStringLiteral("Received bad control.");
-        return;
+        //control length can't store the family an a control number.
+        Warning(QStringLiteral("Control Does Not Exist"), "Received bad control, \"" + control + "\".");
+        return ret;
     }
 
     //see if there are spaces
@@ -273,14 +327,17 @@ void DbManager::AddControl(const QString &control, const QString &title, const Q
     QString enhancement = QString();
     if (tmpControl.contains('('))
     {
+        //Attempt to parse the parenthesised portion of the control as an enhancement
         int tmpIndex = tmpControl.indexOf('(');
         enhancement = tmpControl.right(tmpControl.length() - tmpIndex - 1);
         enhancement = enhancement.left(enhancement.length() - 1);
         tmpControl = tmpControl.left(tmpControl.indexOf('('));
+        //if it's not an integral, remove the enhancement
         if (enhancement.toInt() == 0)
             enhancement = QString();
     }
 
+    //The family should already be in the database.
     Family f = GetFamily(family);
 
     if (f.id >= 0)
@@ -295,64 +352,132 @@ void DbManager::AddControl(const QString &control, const QString &title, const Q
             q.bindValue(QStringLiteral(":enhancement"), enhancement.isEmpty() ? QVariant(QVariant::Int) : enhancement.toInt());
             q.bindValue(QStringLiteral(":title"), title);
             q.bindValue(QStringLiteral(":description"), description);
-            q.exec();
+            ret = q.exec();
             if (!_delayCommit)
                 db.commit();
         }
     }
+    else
+    {
+        //Family was not found in the database.
+        Warning(QStringLiteral("Family Does Not Exist"), "The Family " + family + " does not exist in the database.");
+    }
+
+    return ret;
 }
 
-void DbManager::AddFamily(const QString &acronym, const QString &description)
+/*!
+ * \brief DbManager::AddFamily
+ * \param acronym
+ * \param description
+ * \return \c True when the \a Family is added to the database,
+ * \c false when the \a Family is already part of the database or
+ * has not been added.
+ *
+ * When parsing \a Families, the standard Acronym (which becomes
+ * incorporated into the \a Control's human-readable presentation)
+ * corresponds to a particular \a Family. The NIST 800-53rev4
+ * \a Families are (obtained from
+ * \l {https://nvd.nist.gov/800-53/Rev4} {NIST}.):
+ * \list
+ * \li AC - Access Control
+ * \li AU - Audit and Accountability
+ * \li AT - Awareness and Training
+ * \li CM - Configuration Management
+ * \li CP - Contingency Planning
+ * \li IA - Identification and Authentication
+ * \li IR - Incident Response
+ * \li MA - Maintenance
+ * \li MP - Media Protection
+ * \li PS - Personnel Security
+ * \li PE - Physical and Environmental Protection
+ * \li PL - Planning
+ * \li PM - Program Management
+ * \li RA - Risk Assessment
+ * \li CA - Security Assessment and Authorization
+ * \li SC - System and Communications Protection
+ * \li SI - System and Information Integrity
+ * \li SA - System and Services Acquisition
+ */
+bool DbManager::AddFamily(const QString &acronym, const QString &description)
 {
     QSqlDatabase db;
+    bool ret = false;
     if (this->CheckDatabase(db))
     {
         QSqlQuery q(db);
         q.prepare(QStringLiteral("INSERT INTO Family (Acronym, Description) VALUES(:acronym, :description)"));
         q.bindValue(QStringLiteral(":acronym"), acronym);
         q.bindValue(QStringLiteral(":description"), Sanitize(description));
-        q.exec();
+        ret = q.exec();
         if (!_delayCommit)
             db.commit();
     }
+    return ret;
 }
 
-void DbManager::AddSTIG(STIG stig, QList<STIGCheck> checks)
+/*!
+ * \brief DbManager::AddSTIG
+ * \param stig
+ * \param checks
+ * \return \c True when the \a STIG and its \a STIGChecks are added
+ * to the database, \c false when the any part of the data have not
+ * been added.
+ *
+ * When \a stigExists is \c true, the \a STIGChecks are added to the
+ * existing \a STIG already in the database. Otherwise, if the
+ * \a STIG already exists, the \a STIGChecks are not added.
+ */
+bool DbManager::AddSTIG(STIG stig, QList<STIGCheck> checks, bool stigExists)
 {
     QSqlDatabase db;
+    bool ret = false;
+    bool stigCheckRet = true; //turns "false" if a check fails to be added
     if (this->CheckDatabase(db))
     {
         QSqlQuery q(db);
         if (stig.id <= 0)
         {
-            q.prepare(QStringLiteral("SELECT count(*) FROM STIG WHERE title = :title AND release = :release AND version = :version"));
-            q.bindValue(QStringLiteral(":title"), stig.title);
-            q.bindValue(QStringLiteral(":release"), stig.release);
-            q.bindValue(QStringLiteral(":version"), stig.version);
-            q.exec();
-            while (q.next())
+            STIG tmpSTIG = GetSTIG(stig.title, stig.version, stig.release);
+            if (tmpSTIG.id > 0)
             {
-                if (q.value(0).toInt() > 0)
+                if (stigExists)
                 {
-                    QMessageBox::warning(nullptr, QStringLiteral("STIG Already Exists"), "The STIG " + PrintSTIG(stig) + " already exists in the database.");
-                    return;
+                    stig = tmpSTIG;
+                }
+                else
+                {
+                    Warning(QStringLiteral("STIG Already Exists"), "The STIG " + PrintSTIG(stig) + " already exists in the database.");
+                    return ret;
                 }
             }
-            q.prepare(QStringLiteral("INSERT INTO STIG (title, description, release, version, benchmarkId, fileName) VALUES(:title, :description, :release, :version, :benchmarkId, :fileName)"));
-            q.bindValue(QStringLiteral(":title"), stig.title);
-            q.bindValue(QStringLiteral(":description"), stig.description);
-            q.bindValue(QStringLiteral(":release"), stig.release);
-            q.bindValue(QStringLiteral(":version"), stig.version);
-            q.bindValue(QStringLiteral(":benchmarkId"), stig.benchmarkId);
-            q.bindValue(QStringLiteral(":fileName"), stig.fileName);
-            q.exec();
-            stig.id = q.lastInsertId().toInt();
-            db.commit();
+            else
+            {
+                q.prepare(QStringLiteral("INSERT INTO STIG (title, description, release, version, benchmarkId, fileName) VALUES(:title, :description, :release, :version, :benchmarkId, :fileName)"));
+                q.bindValue(QStringLiteral(":title"), stig.title);
+                q.bindValue(QStringLiteral(":description"), stig.description);
+                q.bindValue(QStringLiteral(":release"), stig.release);
+                q.bindValue(QStringLiteral(":version"), stig.version);
+                q.bindValue(QStringLiteral(":benchmarkId"), stig.benchmarkId);
+                q.bindValue(QStringLiteral(":fileName"), stig.fileName);
+                ret = q.exec();
+                stig.id = q.lastInsertId().toInt();
+                //do not delay this commit; the STIG should be added to the DB to prevent inconsistencies with adding the checks.
+                db.commit();
+            }
         }
+        if (stig.id <= 0)
+        {
+            Warning(QStringLiteral("Unable to Add STIG"), "The new STIG, " + PrintSTIG(stig) + ", could not be added to the database.");
+            return ret;
+        }
+        ret = true; // we have a valid STIG
         bool newChecks = false;
+        //store the old value of the "delay commit" feature. The STIGCheck additions will always be a delayed commit.
         bool delayed = _delayCommit;
         if (!delayed)
             this->DelayCommit(true);
+
         foreach(STIGCheck c, checks)
         {
             newChecks = true;
@@ -381,8 +506,15 @@ void DbManager::AddSTIG(STIG stig, QList<STIGCheck> checks)
             q.bindValue(QStringLiteral(":responsibility"), c.responsibility);
             q.bindValue(QStringLiteral(":IAControls"), c.iaControls);
             q.bindValue(QStringLiteral(":targetKey"), c.targetKey);
-            q.exec();
+            bool tmpRet = q.exec();
+            stigCheckRet = stigCheckRet && tmpRet;
+            if (!tmpRet)
+            {
+                //for every check that can't be added, pop a warning.
+                Warning(QStringLiteral("Unable to Add STIGCheck"), "The STIGCheck " + PrintSTIGCheck(c) + " could not be added to STIG " + PrintSTIG(stig) + ".");
+            }
         }
+        //restore the old value of the "delayed commit" feature
         if (!delayed)
         {
             this->DelayCommit(false);
@@ -390,66 +522,78 @@ void DbManager::AddSTIG(STIG stig, QList<STIGCheck> checks)
         if (newChecks)
             db.commit();
     }
+    return ret && stigCheckRet;
 }
 
-void DbManager::AddSTIGToAsset(const STIG &stig, const Asset &asset)
+/*!
+ * \brief DbManager::AddSTIGToAsset
+ * \param stig
+ * \param asset
+ * \return \c True when the \a STIG is mapped to the \a Asset.
+ * Otherwise, \c false.
+ *
+ * When a \a STIG is mapped to an \a Asset, a new STIG Checklist
+ * is created for the Asset, and all of the \a STIG's \a STIGChecks
+ * are added to the \a CKLCheck with a default status of
+ * \a Status.NotChecked.
+ */
+bool DbManager::AddSTIGToAsset(const STIG &stig, const Asset &asset)
 {
     QSqlDatabase db;
+    bool ret = false;
     if (this->CheckDatabase(db))
     {
-        QSqlQuery q(db);
-        if (asset.id > 0 && stig.id > 0)
+        //check if Asset and STIG exist
+        Asset tmpAsset = GetAsset(asset);
+        STIG tmpSTIG = GetSTIG(stig);
+
+        //if so, attempt to add the relationship to the DB
+        if (tmpAsset.id > 0 && tmpSTIG.id > 0)
         {
-            bool assetExists = false;
-            bool stigExists = false;
-            q.prepare(QStringLiteral("SELECT count(*) FROM Asset WHERE id = :id"));
-            q.bindValue(QStringLiteral(":id"), asset.id);
-            q.exec();
-            while (q.next())
-            {
-                if (q.value(0).toInt() > 0)
-                {
-                    assetExists = true;
-                }
-            }
-            q.prepare(QStringLiteral("SELECT count(*) FROM STIG WHERE id = :id"));
-            q.bindValue(QStringLiteral(":id"), stig.id);
-            q.exec();
-            while (q.next())
-            {
-                if (q.value(0).toInt() > 0)
-                {
-                    stigExists = true;
-                }
-            }
-            if (assetExists && stigExists)
-            {
+            QSqlQuery q(db);
                 q.prepare(QStringLiteral("INSERT INTO AssetSTIG (`AssetId`, `STIGId`) VALUES(:AssetId, :STIGId)"));
-                q.bindValue(QStringLiteral(":AssetId"), asset.id);
-                q.bindValue(QStringLiteral(":STIGId"), stig.id);
-                q.exec();
-                q.prepare(QStringLiteral("INSERT INTO CKLCheck (AssetId, STIGCheckId, status, findingDetails, comments, severityOverride, severityJustification) SELECT :AssetId, id, :status, '', '', '', '' FROM STIGCheck WHERE STIGId = :STIGId"));
-                q.bindValue(QStringLiteral(":AssetId"), asset.id);
-                q.bindValue(QStringLiteral(":status"), Status::NotReviewed);
-                q.bindValue(QStringLiteral(":STIGId"), stig.id);
-                q.exec();
-                db.commit();
-            }
+                q.bindValue(QStringLiteral(":AssetId"), tmpAsset.id);
+                q.bindValue(QStringLiteral(":STIGId"), tmpSTIG.id);
+                ret = q.exec();
+                if (ret)
+                {
+                    q.prepare(QStringLiteral("INSERT INTO CKLCheck (AssetId, STIGCheckId, status, findingDetails, comments, severityOverride, severityJustification) SELECT :AssetId, id, :status, '', '', '', '' FROM STIGCheck WHERE STIGId = :STIGId"));
+                    q.bindValue(QStringLiteral(":AssetId"), tmpAsset.id);
+                    q.bindValue(QStringLiteral(":status"), Status::NotReviewed);
+                    q.bindValue(QStringLiteral(":STIGId"), tmpSTIG.id);
+                    ret = q.exec();
+                    db.commit();
+                }
         }
     }
+    return ret;
 }
 
-void DbManager::DeleteAsset(int id)
+/*!
+ * \override DbManager::DeleteAsset(Asset)
+ * \brief DbManager::DeleteAsset
+ * \param id
+ * \return \c True when the supplied \a Asset with the supplied \a id
+ * is removed from the database. Otherwise, \c false.
+ */
+bool DbManager::DeleteAsset(int id)
 {
-    DeleteAsset(GetAsset(id));
+    return DeleteAsset(GetAsset(id));
 }
 
-void DbManager::DeleteAsset(const Asset &asset)
+/*!
+ * \brief DbManager::DeleteAsset
+ * \param asset
+ * \return \c True when the supplied \a Asset with the supplied \a id
+ * is removed from the database. Otherwise, \c false.
+ */
+bool DbManager::DeleteAsset(const Asset &asset)
 {
+    bool ret = false;
     if (asset.STIGs().count() > 0)
     {
-        QMessageBox::warning(nullptr, QStringLiteral("Asset Has Mapped STIGs"), "The Asset '" + PrintAsset(asset) + "' has STIGs selected that must be removed.");
-        return;
+        Warning(QStringLiteral("Asset Has Mapped STIGs"), "The Asset '" + PrintAsset(asset) + "' has STIGs selected that must be removed.");
+        return ret;
     }
     QSqlDatabase db;
     if (this->CheckDatabase(db))
@@ -457,80 +601,134 @@ void DbManager::DeleteAsset(const Asset &asset)
         QSqlQuery q(db);
         q.prepare(QStringLiteral("DELETE FROM Asset WHERE id = :AssetId"));
         q.bindValue(QStringLiteral(":AssetId"), asset.id);
-        q.exec();
+        ret = q.exec();
         if (!_delayCommit)
             db.commit();
     }
+    return ret;
 }
 
-void DbManager::DeleteCCIs()
+/*!
+ * \brief DbManager::DeleteCCIs
+ * \return \c True when the CCIs and controls are cleared from the
+ * database. Otherwise, \c false.
+ *
+ * Removes RMF \a Controls and \a CCIs from the database.
+ */
+bool DbManager::DeleteCCIs()
 {
     QSqlDatabase db;
+    bool ret = false;
     if (this->CheckDatabase(db))
     {
+        ret = true; //assume success until one of the queries fails.
         QSqlQuery q(db);
         q.prepare(QStringLiteral("DELETE FROM Family"));
-        q.exec();
+        ret = q.exec() && ret; //q.exec() first to avoid short-circuit evaluation
         q.prepare(QStringLiteral("DELETE FROM Control"));
-        q.exec();
+        ret = q.exec() && ret;
         q.prepare(QStringLiteral("DELETE FROM CCI"));
-        q.exec();
+        ret = q.exec() && ret;
         if (!_delayCommit)
             db.commit();
     }
+    return ret;
 }
 
+/*!
+ * \brief DbManager::DeleteSTIG
+ * \param id
+ * \return \c True when the STIG identified by the provided ID is
+ * deleted from the database. Otherwise, \c false.
+ */
 bool DbManager::DeleteSTIG(int id)
 {
     QSqlDatabase db;
+    bool ret = false;
     if (this->CheckDatabase(db))
     {
-        QSqlQuery q(db);
-        q.prepare(QStringLiteral("SELECT hostName FROM AssetSTIG JOIN Asset ON AssetSTIG.AssetID = Asset.id WHERE STIGId = :STIGId"));
-        q.bindValue(QStringLiteral(":STIGId"), id);
-        q.exec();
-        if (q.next())
+        //check if this STIG is used by any Assets
+        STIG tmpStig = GetSTIG(id);
+        QList<Asset> assets = tmpStig.Assets();
+        int tmpCount = assets.count();
+        if (tmpCount > 0)
         {
-            QMessageBox::warning(nullptr, QStringLiteral("STIG In Use"), "The Asset '" + q.value(0).toString() + "' is currently using the selected STIG.");
-            return false;
+            QString tmpAssetStr = QString();
+            foreach (const Asset &a, assets)
+            {
+                tmpAssetStr.append(" '" + PrintAsset(a) + "'");
+            }
+            Warning(QStringLiteral("STIG In Use"), "The Asset" + Pluralize(tmpCount) + tmpAssetStr + " " + Pluralize(tmpCount, "are", "is") + " currently using the selected STIG.");
+            return ret;
         }
-
+        QSqlQuery q(db);
+        ret = true; //assume success from here.
         q.prepare(QStringLiteral("DELETE FROM STIGCheck WHERE STIGId = :STIGId"));
         q.bindValue(QStringLiteral(":STIGId"), id);
-        q.exec();
+        ret = q.exec() && ret; //q.exec() first toavoid short-circuit evaluation
         q.prepare(QStringLiteral("DELETE FROM STIG WHERE id = :id"));
         q.bindValue(QStringLiteral(":id"), id);
-        q.exec();
+        ret = q.exec() && ret;
         if (!_delayCommit)
             db.commit();
-        return true;
     }
-    return false;
+    return ret;
 }
 
+/*!
+ * \override DbManager::DeleteSTIG(int id)
+ * \brief DbManager::DeleteSTIG
+ * \param stig
+ * \return \c True when the supplied \a STIG is removed rom the
+ * database. Otherwise, \c false.
+ */
 bool DbManager::DeleteSTIG(const STIG &stig)
 {
     return DeleteSTIG(stig.id);
 }
 
-void DbManager::DeleteSTIGFromAsset(const STIG &stig, const Asset &asset)
+/*!
+ * \brief DbManager::DeleteSTIGFromAsset
+ * \param stig
+ * \param asset
+ * \return \c True when the \a STIG has been disassociated with the
+ * \a Asset in the database. Otherwise, \c false.
+ */
+bool DbManager::DeleteSTIGFromAsset(const STIG &stig, const Asset &asset)
 {
     QSqlDatabase db;
+    bool ret = false;
     if (this->CheckDatabase(db))
     {
-        QSqlQuery q(db);
-        q.prepare(QStringLiteral("DELETE FROM AssetSTIG WHERE AssetId = :AssetId AND STIGId = :STIGId"));
-        q.bindValue(QStringLiteral(":AssetId"), asset.id);
-        q.bindValue(QStringLiteral(":STIGId"), stig.id);
-        q.exec();
-        q.prepare(QStringLiteral("DELETE FROM CKLCheck WHERE AssetId = :AssetId AND STIGCheckId IN (SELECT id FROM STIGCheck WHERE STIGId = :STIGId)"));
-        q.bindValue(QStringLiteral(":AssetId"), asset.id);
-        q.bindValue(QStringLiteral(":STIGId"), stig.id);
-        q.exec();
-        db.commit();
+        //make sure the STIG and Asset exist in th database
+        STIG tmpSTIG = GetSTIG(stig);
+        Asset tmpAsset = GetAsset(asset);
+
+        if (tmpSTIG.id > 0 && tmpAsset.id > 0)
+        {
+            QSqlQuery q(db);
+            ret = true; //assume success from this point
+            q.prepare(QStringLiteral("DELETE FROM AssetSTIG WHERE AssetId = :AssetId AND STIGId = :STIGId"));
+            q.bindValue(QStringLiteral(":AssetId"), tmpAsset.id);
+            q.bindValue(QStringLiteral(":STIGId"), tmpSTIG.id);
+            ret = q.exec() && ret; //q.exec() first to avoid short-circuit execution
+            q.prepare(QStringLiteral("DELETE FROM CKLCheck WHERE AssetId = :AssetId AND STIGCheckId IN (SELECT id FROM STIGCheck WHERE STIGId = :STIGId)"));
+            q.bindValue(QStringLiteral(":AssetId"), tmpAsset.id);
+            q.bindValue(QStringLiteral(":STIGId"), tmpSTIG.id);
+            ret = q.exec() && ret;
+            db.commit();
+        }
     }
+    return ret;
 }
 
+/*!
+ * \brief DbManager::GetAsset
+ * \param hostName
+ * \return The \a Asset object associated with the supplied
+ * \a hostName. If the hostname does not exist, the \a Asset that is
+ * returned is the default empty one with an ID of -1.
+ */
 Asset DbManager::GetAsset(const QString &hostName)
 {
     //fail quietly
@@ -541,6 +739,35 @@ Asset DbManager::GetAsset(const QString &hostName)
     return a;
 }
 
+/*!
+ * \brief DbManager::GetAsset
+ * \param asset
+ * \return The \a Asset object associated with the supplied \a Asset
+ * \a id or \a hostName. If the id does not exist in the database,
+ * the \a hostName is used. The \a Asset that is returned when
+ * neither the \a id nor the \a hostName is in the database is the
+ * default empty one with an ID of -1.
+ */
+Asset DbManager::GetAsset(const Asset &asset)
+{
+    //first try to find the Asset by ID
+    if (asset.id > 0)
+    {
+        Asset tmpAsset = GetAsset(asset.id);
+        if (tmpAsset.id > 0)
+            return tmpAsset;
+    }
+    //can't find by ID, findby hostName
+    return GetAsset(asset.hostName);
+}
+
+/*!
+ * \brief DbManager::GetAsset
+ * \param id
+ * \return The \a Asset object associated with the supplied \a id.
+ * If the \a id does not exist, the \a Asset that is returned is the
+ * default empty one with an ID of -1.
+ */
 Asset DbManager::GetAsset(int id)
 {
     QList<Asset> tmp = GetAssets(QStringLiteral("WHERE id = :id"), {std::make_tuple<QString, QVariant>(":id", id)});
@@ -551,6 +778,51 @@ Asset DbManager::GetAsset(int id)
     return a;
 }
 
+/*!
+ * \brief DbManager::GetAssets
+ * \param whereClause
+ * \param variables
+ * \return A QList of \a Assets that are in the database. SQL
+ * commands are dynamically built from an optional supplied
+ * \a whereClause. SQL parameters are bound by supplying them in a
+ * list of tuples in the \a variables parameter.
+ *
+ * \example GetAssets
+ * \title default
+ *
+ * The default GetAssets() with no parameters returns all Assets in
+ * the database.
+ *
+ * \code
+ * DbManager db;
+ * QList<Asset> assets = db.GetAssets();
+ * \endcode
+ *
+ * \example GetAssets(whereClause, variabes)
+ * \title where clause
+ *
+ * A WHERE clause with parameterized SQL can be added to the query.
+ *
+ * \code
+ * DbManager db;
+ * int id = 4; //Asset ID 4 in the database
+ * QString sampleHost = "Sample";
+ * //get Asset by ID
+ * Asset asset = GetAssets("WHERE id = :id"),
+ *                         {std::make_tuple<QString, QVariant>(QStringLiteral(":id"), id)});
+ *
+ * //get Asset by HostName
+ * asset = GetAssets("WHERE hostName = :hostName"),
+ *                    {std::make_tuple<QString, QVariant>(QStringLiteral(":hostName"), sampleHost)});
+ *
+ * //get Asset by ID and HostName
+ * asset = GetAssets("WHERE id = :id AND hostName = :hostName"),
+ *                   {
+ *                       std::make_tuple<QString, QVariant>(QStringLiteral(":id"), id),
+ *                       std::make_tuple<QString, QVariant>(QStringLiteral(":hostName"), sampleHost)
+ *                   });
+ * \endcode
+ */
 QList<Asset> DbManager::GetAssets(const QString &whereClause, const QList<std::tuple<QString, QVariant>> &variables)
 {
     QSqlDatabase db;
@@ -558,11 +830,13 @@ QList<Asset> DbManager::GetAssets(const QString &whereClause, const QList<std::t
     if (this->CheckDatabase(db))
     {
         QSqlQuery q(db);
-        QString toPrep = QStringLiteral("SELECT `id`, `assetType`, `hostName`, `hostIP`, `hostMAC`, `hostFQDN`, `techArea`, `targetKey`, `webOrDatabase`, `webDBSite`, `webDBInstance` FROM Asset");
+        QString toPrep = QStringLiteral("SELECT Asset.`id`, Asset.`assetType`, Asset.`hostName`, Asset.`hostIP`, Asset.`hostMAC`, Asset.`hostFQDN`, Asset.`techArea`, Asset.`targetKey`, Asset.`webOrDatabase`, Asset.`webDBSite`, Asset.`webDBInstance`");
+        toPrep.append(" FROM Asset");
         if (!whereClause.isNull() && !whereClause.isEmpty())
             toPrep.append(" " + whereClause);
         toPrep.append(QStringLiteral(" ORDER BY LOWER(hostName), hostName"));
         q.prepare(toPrep);
+        qDebug() << toPrep;
         for (const auto &variable : variables)
         {
             QString key;
@@ -591,6 +865,18 @@ QList<Asset> DbManager::GetAssets(const QString &whereClause, const QList<std::t
     return ret;
 }
 
+/*!
+ * \overload DbManager::GetAssets
+ * \brief DbManager::GetAssets
+ * \param stig
+ * \return A QList of \a Assets that are associated with the supplied
+ * \a STIG.
+ */
+QList<Asset> DbManager::GetAssets(const STIG &stig)
+{
+    return GetAssets("JOIN AssetSTIG ON AssetSTIG.AssetId = Asset.id JOIN STIG ON STIG.id = AssetSTIG.STIGId WHERE STIG.id = :id", {std::make_tuple<QString, QVariant>(QStringLiteral(":id"), stig.id)});
+}
+
 CCI DbManager::GetCCI(int id)
 {
     QList<CCI> ccis = GetCCIs(QStringLiteral("WHERE id = :id"), {std::make_tuple<QString, QVariant>(QStringLiteral(":id"), id)});
@@ -600,23 +886,57 @@ CCI DbManager::GetCCI(int id)
     return ret;
 }
 
+/*!
+ * \brief DbManager::GetCCIByCCI
+ * \param cci
+ * \param stig
+ * \return The \a CCI in the database that corresponds to the
+ * supplied \a cci.
+ *
+ * The \a stig parameter is optional, but it is useful for generating
+ * error messages when a CCI is requested by the selected STIG.
+ *
+ * When the \a cci does not exist in the database, an error message
+ * is opened displaying the broken \a cci information. This function
+ * is typically called by STIG import routines, and the failure
+ * scenario is most often triggered by STIGs not mapped to CCIs that
+ * are part of the latest NIST 800-53rev4. Some STIG checks were
+ * errantly "mapped" by DISA to CCIs that were removed or replaced.
+ *
+ * Current standard practice is to temporarily remap these to CCI-366
+ * until a better mapping can be found.
+ *
+ * When the explicitly requested CCI or assumed default CCI-366 are
+ * not in the database, the default \a CCI with ID -1 is returned.
+ */
 CCI DbManager::GetCCIByCCI(int cci, const STIG *stig)
 {
     QList<CCI> tmpList = GetCCIs(QStringLiteral("WHERE cci = :cci"), {std::make_tuple<QString, QVariant>(QStringLiteral(":cci"), cci)});
     if (tmpList.count() > 0)
         return tmpList.first();
-    QString tmpMessage = QStringLiteral("&lt;insert%20STIG%20information%20here&gt;");
-    if (stig)
-        tmpMessage = PrintSTIG(*stig);
+    QString tmpMessage = stig ? PrintSTIG(*stig) : QStringLiteral("&lt;insert%20STIG%20information%20here&gt;");
     QString cciStr = PrintCCI(cci);
-    QMessageBox::warning(nullptr, QStringLiteral("Broken CCI"), "The CCI " + cciStr + " does not exist in NIST 800-53r4. If you are importing a STIG, please file a bug with the STIG author (probably DISA, disa.stig_spt@mail.mil) and let them know that their CCI mapping for the STIG you are trying to import is broken. For now, this broken STIG check is being remapped to CCI-000366. <a href=\"mailto:disa.stig_spt@mail.mil?subject=Incorrectly%20Mapped%20STIG%20Check&body=DISA,%0d" + tmpMessage + "%20contains%20rule(s)%20mapped%20against%20" + cciStr + "%20which%20does%20not%20exist%20in%20the%20current%20version%20of%20NIST%20800-53r4.\">Click here</a> to file this bug with DISA automatically.");
+
+    //The CCI could not be found. Assume that this will be remapped to CCI-366.
+    Warning(QStringLiteral("Broken CCI"), "The CCI " + cciStr + " does not exist in NIST 800-53r4. If you are importing a STIG, please file a bug with the STIG author (probably DISA, disa.stig_spt@mail.mil) and let them know that their CCI mapping for the STIG you are trying to import is broken. For now, this broken STIG check is being remapped to CCI-000366. <a href=\"mailto:disa.stig_spt@mail.mil?subject=Incorrectly%20Mapped%20STIG%20Check&body=DISA,%0d" + tmpMessage + "%20contains%20rule(s)%20mapped%20against%20" + cciStr + "%20which%20does%20not%20exist%20in%20the%20current%20version%20of%20NIST%20800-53r4.\">Click here</a> to file this bug with DISA automatically.");
     tmpList = GetCCIs(QStringLiteral("WHERE cci = :cci"), {std::make_tuple<QString, QVariant>(QStringLiteral(":cci"), 366)});
     if (tmpList.count() > 0)
         return tmpList.first();
+
+    //If CCI-366 isn't in the database, provide unsuccessful default CCI.
     CCI ret;
     return ret;
 }
 
+/*!
+ * \overload GetCCIByCCI
+ * \brief DbManager::GetCCIByCCI
+ * \param cci
+ * \param stig
+ * \return The \a CCI identified by the ID of the supplied \a cci.
+ * If the \a cci.id is not valid, the actual \a cci.cci number is
+ * used.
+ */
 CCI DbManager::GetCCIByCCI(const CCI &cci, const STIG *stig)
 {
     if (cci.id < 0)
@@ -1017,7 +1337,7 @@ STIG DbManager::GetSTIG(int id)
     if (tmpStigs.count() > 0)
         return tmpStigs.first();
     STIG ret;
-    QMessageBox::warning(nullptr, QStringLiteral("Unable to Find STIG"), "The STIG of ID " + QString::number(id) + " was not found in the database.");
+    Warning(QStringLiteral("Unable to Find STIG"), "The STIG of ID " + QString::number(id) + " was not found in the database.", true);
     return ret;
 }
 
@@ -1031,8 +1351,21 @@ STIG DbManager::GetSTIG(const QString &title, int version, const QString &releas
     if (tmpStigs.count() > 0)
         return tmpStigs.first();
     STIG ret;
-    QMessageBox::warning(nullptr, QStringLiteral("Unable to Find STIG"), "The following STIG has not been added to the master database:\nTitle: " + title + "\nVersion: " + QString::number(version) + "\n" + release);
+    Warning(QStringLiteral("Unable to Find STIG"), "The following STIG has not been added to the master database (This is normal if you are attempting to import a new STIG that does not currently exist in the DB, and the new STIG will likely be inserted if there are no other errors.):\nTitle: " + title + "\nVersion: " + QString::number(version) + "\n" + release, true);
     return ret;
+}
+
+STIG DbManager::GetSTIG(const STIG &stig)
+{
+    //find STIG by ID
+    if (stig.id > 0)
+    {
+        STIG tmpSTIG = GetSTIG(stig.id);
+        if (tmpSTIG.id > 0)
+            return tmpSTIG;
+    }
+    //if ID is not provided or isn't in DB, find by STIG parameters
+    return GetSTIG(stig.title, stig.version, stig.release);
 }
 
 QString DbManager::GetVariable(const QString &name)

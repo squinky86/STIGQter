@@ -38,6 +38,12 @@ QList<STIGCheck> STIG::STIGChecks() const
     return db.GetSTIGChecks(*this);
 }
 
+QList<Asset> STIG::Assets() const
+{
+    DbManager db;
+    return db.GetAssets(*this);
+}
+
 STIG::STIG(const STIG &right) : STIG(right.parent())
 {
     *this = right;

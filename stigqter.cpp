@@ -33,7 +33,6 @@
 #include "workerimportemass.h"
 
 #include <QThread>
-#include <QDebug>
 #include <QFileDialog>
 #include <QInputDialog>
 #include <QMessageBox>

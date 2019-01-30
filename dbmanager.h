@@ -44,21 +44,23 @@ public:
 
     bool AddAsset(Asset &asset);
     bool AddCCI(CCI &cci);
-    void AddControl(const QString &control, const QString &title, const QString &description);
-    void AddFamily(const QString &acronym, const QString &description);
-    void AddSTIG(STIG stig, QList<STIGCheck> checks);
-    void AddSTIGToAsset(const STIG &stig, const Asset &asset);
+    bool AddControl(const QString &control, const QString &title, const QString &description);
+    bool AddFamily(const QString &acronym, const QString &description);
+    bool AddSTIG(STIG stig, QList<STIGCheck> checks, bool stigExists = false);
+    bool AddSTIGToAsset(const STIG &stig, const Asset &asset);
 
-    void DeleteAsset(int id);
-    void DeleteAsset(const Asset &asset);
-    void DeleteCCIs();
+    bool DeleteAsset(int id);
+    bool DeleteAsset(const Asset &asset);
+    bool DeleteCCIs();
     bool DeleteSTIG(int id);
     bool DeleteSTIG(const STIG &stig);
-    void DeleteSTIGFromAsset(const STIG &stig, const Asset &asset);
+    bool DeleteSTIGFromAsset(const STIG &stig, const Asset &asset);
 
     Asset GetAsset(int id);
     Asset GetAsset(const QString &hostName);
+    Asset GetAsset(const Asset &asset);
     QList<Asset> GetAssets(const QString &whereClause = "", const QList<std::tuple<QString, QVariant>> &variables = {});
+    QList<Asset> GetAssets(const STIG &stig);
     CCI GetCCI(int id);
     CCI GetCCIByCCI(int cci, const STIG *stig = nullptr);
     CCI GetCCIByCCI(const CCI &cci, const STIG *stig = nullptr);
@@ -74,6 +76,7 @@ public:
     QList<Family> GetFamilies();
     STIG GetSTIG(int id);
     STIG GetSTIG(const QString &title, int version, const QString &release);
+    STIG GetSTIG(const STIG &stig);
     STIGCheck GetSTIGCheck(int id);
     STIGCheck GetSTIGCheck(const STIG &stig, const QString &rule);
     QList<STIGCheck> GetSTIGChecks(const STIG &stig);

@@ -25,6 +25,7 @@
 
 #include <QDebug>
 #include <QEventLoop>
+#include <QMessageBox>
 #include <QString>
 #include <QtNetwork>
 
@@ -292,4 +293,34 @@ QString TrimFileName(const QString &fileName)
         tmpFileName = tmpFileName.right(tmpFileName.length() - tmpFileName.lastIndexOf('/') - 1);
     }
     return tmpFileName;
+}
+
+/*!
+ * \brief Warning
+ * \param title
+ * \param message
+ * \param quiet
+ *
+ * When \a quiet is \c true, displays a warning box with the provided
+ * \a title and \a message. The title and message are always printed
+ * on the console/debug log.
+ */
+void Warning(QString title, QString message, bool quiet)
+{
+    qDebug() << title << ": " << message << endl;
+    if (!quiet)
+        QMessageBox::warning(nullptr, title, message);
+}
+
+/*!
+ * \brief Pluralize
+ * \param count
+ * \param plural
+ * \param singular
+ * \return \c \a plural when \a count indicates that plural usage is
+ * appropriate. Otherwise, \c \a singular.
+ */
+QString Pluralize(int count, QString plural, QString singular)
+{
+    return (count == 1) ? singular : plural;
 }

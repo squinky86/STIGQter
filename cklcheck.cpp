@@ -29,6 +29,22 @@
  */
 
 /*!
+ * \enum Status
+ *
+ * A \a CKLCheck maps a \a STIGCheck to an \a Asset, and the
+ * compliance state is stored as a \a Status.
+ *
+ * \value NotReviewed
+ *        The check has not been reviewed.
+ * \value Open
+ *        The check is not compliant.
+ * \value NotAFinding,
+ *        The check is compliant.
+ * \value NotApplicable
+ *        The check is not applicable to the \a Asset.
+ */
+
+/*!
  * \brief CKLCheck::CKLCheck
  * \param parent
  *

@@ -25,6 +25,7 @@
 #include <QString>
 
 class STIGCheck;
+class Asset;
 
 class STIG : public QObject
 {
@@ -41,6 +42,7 @@ public:
     QString benchmarkId;
     QString fileName;
     QList<STIGCheck> STIGChecks() const;
+    QList<Asset> Assets() const;
     STIG& operator=(const STIG &right);
     bool operator==(const STIG &right);
 };
