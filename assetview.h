@@ -25,6 +25,7 @@
 #include "stigcheck.h"
 
 #include <QListWidget>
+#include <QShortcut>
 #include <QTimer>
 #include <QWidget>
 
