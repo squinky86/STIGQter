@@ -20,6 +20,17 @@
 #include "help.h"
 #include "ui_help.h"
 
+/*!
+ * \class Help
+ * \brief Displays the Help/About screen with metainformation on the
+ * program.
+ */
+
+/*!
+ * \brief Help::Help
+ * \param parent
+ * Default constructor.
+ */
 Help::Help(QWidget *parent) :
     QWidget(parent),
     ui(new Ui::Help)
@@ -28,6 +39,11 @@ Help::Help(QWidget *parent) :
     this->setWindowTitle(QStringLiteral("About"));
 }
 
+/*!
+ * \brief Help::~Help
+ *
+ * Destructor.
+ */
 Help::~Help()
 {
     delete ui;

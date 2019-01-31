@@ -398,6 +398,7 @@ bool DbManager::AddControl(const QString &control, const QString &title, const Q
  * \li SC - System and Communications Protection
  * \li SI - System and Information Integrity
  * \li SA - System and Services Acquisition
+ * \endlist
  */
 bool DbManager::AddFamily(const QString &acronym, const QString &description)
 {
@@ -658,7 +659,7 @@ bool DbManager::DeleteSTIG(int id)
             {
                 tmpAssetStr.append(" '" + PrintAsset(a) + "'");
             }
-            Warning(QStringLiteral("STIG In Use"), "The Asset" + Pluralize(tmpCount) + tmpAssetStr + " " + Pluralize(tmpCount, "are", "is") + " currently using the selected STIG.");
+            Warning(QStringLiteral("STIG In Use"), "The Asset" + Pluralize(tmpCount) + tmpAssetStr + " " + Pluralize(tmpCount, QStringLiteral("are"), QStringLiteral("is")) + " currently using the selected STIG.");
             return ret;
         }
         QSqlQuery q(db);
@@ -877,7 +878,7 @@ QList<Asset> DbManager::GetAssets(const QString &whereClause, const QList<std::t
  */
 QList<Asset> DbManager::GetAssets(const STIG &stig)
 {
-    return GetAssets("JOIN AssetSTIG ON AssetSTIG.AssetId = Asset.id JOIN STIG ON STIG.id = AssetSTIG.STIGId WHERE STIG.id = :id", {std::make_tuple<QString, QVariant>(QStringLiteral(":id"), stig.id)});
+    return GetAssets(QStringLiteral("JOIN AssetSTIG ON AssetSTIG.AssetId = Asset.id JOIN STIG ON STIG.id = AssetSTIG.STIGId WHERE STIG.id = :id"), {std::make_tuple<QString, QVariant>(QStringLiteral(":id"), stig.id)});
 }
 
 /*!
@@ -1446,7 +1447,7 @@ QList<STIG> DbManager::GetSTIGs(const QString &whereClause, const QList<std::tup
  */
 Control DbManager::GetControl(int id)
 {
-    QList<Control> tmpControl = GetControls("WHERE Control.id = :id", {std::make_tuple<QString, QVariant>(QStringLiteral(":id"), id)});
+    QList<Control> tmpControl = GetControls(QStringLiteral("WHERE Control.id = :id"), {std::make_tuple<QString, QVariant>(QStringLiteral(":id"), id)});
     if (tmpControl.count() > 0)
         return tmpControl.first();
     Control ret;

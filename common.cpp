@@ -271,7 +271,7 @@ QString Excelify(const QString &s)
  * \return \c \a plural when \a count indicates that plural usage is
  * appropriate. Otherwise, \c \a singular.
  */
-QString Pluralize(int count, QString plural, QString singular)
+QString Pluralize(const int count, const QString &plural, const QString &singular)
 {
     return (count == 1) ? singular : plural;
 }
@@ -318,7 +318,7 @@ QString TrimFileName(const QString &fileName)
  * \a title and \a message. The title and message are always printed
  * on the console/debug log.
  */
-void Warning(QString title, QString message, bool quiet)
+void Warning(const QString &title, const QString &message, const bool quiet)
 {
     qDebug() << title << ": " << message << endl;
     if (!quiet)
