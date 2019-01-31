@@ -74,7 +74,7 @@ public:
     QList<Control> GetControls(const QString &whereClause = "", const QList<std::tuple<QString, QVariant>> &variables = {});
     Family GetFamily(const QString &acronym);
     Family GetFamily(int id);
-    QList<Family> GetFamilies();
+    QList<Family> GetFamilies(const QString &whereClause = "", const QList<std::tuple<QString, QVariant>> &variables = {});
     STIG GetSTIG(int id);
     STIG GetSTIG(const QString &title, int version, const QString &release);
     STIG GetSTIG(const STIG &stig);
@@ -86,9 +86,8 @@ public:
     QList<STIG> GetSTIGs(const QString &whereClause = "", const QList<std::tuple<QString, QVariant> > &variables = {});
     QString GetVariable(const QString &name);
 
-    void ImportCCI(const CCI &cci);
-    void UpdateCKLCheck(const CKLCheck &check);
-    void UpdateVariable(const QString &name, const QString &value);
+    bool UpdateCKLCheck(const CKLCheck &check);
+    bool UpdateVariable(const QString &name, const QString &value);
 
 private:
     bool UpdateDatabaseFromVersion(int version);

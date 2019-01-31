@@ -1387,7 +1387,7 @@ QList<STIG> DbManager::GetSTIGs(const Asset &asset)
  *
  * \code
  * DbManager db;
- * int id = 4; //Asset ID 4 in the database
+ * int id = 4; //STIG ID 4 in the database
  * QString sampleTitle = "Application Security and Development Security Technical Implementation Guide";
  *
  * //get STIG by ID
@@ -1460,6 +1460,14 @@ Control DbManager::GetControl(int id)
  * \return The \a Control in the database associated with the
  * provided control string. If the \a Control does not exist in the
  * database, the default Control with an ID of -1 is returned.
+ *
+ * \example GetControl
+ * \title Control Name Parsing
+ *
+ * \code
+ * DbManager db;
+ * Control control = db.GetControl("AC-1 (4)");
+ * \endcode
  */
 Control DbManager::GetControl(const QString &control)
 {
@@ -1511,6 +1519,50 @@ Control DbManager::GetControl(const QString &control)
     return ret;
 }
 
+/*!
+ * \brief DbManager::GetControls
+ * \param whereClause
+ * \param variables
+ * \return A QList of \a Controls that are in the database. SQL
+ * commands are dynamically built from an optional supplied
+ * \a whereClause. SQL parameters are bound by supplying them in a
+ * list of tuples in the \a variables parameter.
+ *
+ * Since a \a Control cannot exist without a \a Family, the \a Family
+ * table is automatically joined to the \a Control in the internal
+ * query.
+ *
+ * \example GetControls
+ * \title default
+ *
+ * The default GetControls() with no parameters returns all
+ * \a Controls in the database.
+ *
+ * \code
+ * DbManager db;
+ * QList<Control> controls = db.GetControls();
+ * \endcode
+ *
+ * \example GetControls(whereClause, variabes)
+ * \title where clause
+ *
+ * A WHERE clause with parameterized SQL can be added to the query.
+ *
+ * \code
+ * DbManager db;
+ * int id = 4; //Control ID 4 in the database
+ *
+ * //get Control by ID
+ * Control control = GetControls("WHERE Control.id = :id",
+ *                                    {std::make_tuple<QString, QVariant>(":id", id)}
+ *                              ).first();
+ *
+ * //get Controls that relate to audit records
+ * QList<Control> controls = GetControls("WHERE Control.description LIKE :description",
+ *                                            {std::make_tuple<QString, QVariant>(":description", "%audit record%")}
+ *                                      );
+ * \endcode
+ */
 QList<Control> DbManager::GetControls(const QString &whereClause, const QList<std::tuple<QString, QVariant>> &variables)
 {
     QSqlDatabase db;
@@ -1521,7 +1573,7 @@ QList<Control> DbManager::GetControls(const QString &whereClause, const QList<st
         QString toPrep = QStringLiteral("SELECT Control.id, Control.FamilyId, Control.number, Control.enhancement, Control.title, Control.description FROM Control JOIN Family ON Family.id = Control.FamilyId");
         if (!whereClause.isNull() && !whereClause.isEmpty())
             toPrep.append(" " + whereClause);
-        toPrep.append(QStringLiteral(" ORDER BY Family.Acronym, Control.number, Control.enhancement"));
+        toPrep.append(QStringLiteral(" ORDER BY Family.acronym, Control.number, Control.enhancement"));
         q.prepare(toPrep);
         for (const auto &variable : variables)
         {
@@ -1546,56 +1598,100 @@ QList<Control> DbManager::GetControls(const QString &whereClause, const QList<st
     return ret;
 }
 
+/*!
+ * \brief DbManager::GetFamily
+ * \param id
+ * \return The \a Family associated with the provided database \a id.
+ * If the \a id is not in the database, the default \a Family with an
+ * ID of -1 is returned.
+ */
 Family DbManager::GetFamily(int id)
 {
-    QSqlDatabase db;
+    QList<Family> tmpFamily = GetFamilies(QStringLiteral("WHERE Family.id = :id"), {std::make_tuple<QString, QVariant>(QStringLiteral(":id"), id)});
+    if (tmpFamily.count() > 0)
+        return tmpFamily.first();
     Family ret;
-    ret.id = -1;
-    if (this->CheckDatabase(db))
-    {
-        QSqlQuery q(db);
-        q.prepare(QStringLiteral("SELECT id, acronym, description FROM Family WHERE id = :id"));
-        q.bindValue(QStringLiteral(":id"), id);
-        q.exec();
-        if (q.next())
-        {
-            ret.id = q.value(0).toInt();
-            ret.acronym = q.value(1).toString();
-            ret.description = q.value(2).toString();
-        }
-    }
+    Warning(QStringLiteral("Family Not Found"), "The Family associated with ID " + QString::number(id) + " could not be found.");
     return ret;
 }
 
+/*!
+ * \brief DbManager::GetFamily
+ * \param acronym
+ * \return The \a Family associated with the provided \a acronym. If
+ * the \a acronym is not in the database, the default \a Family with
+ * an ID of -1 is returned.
+ */
 Family DbManager::GetFamily(const QString &acronym)
 {
-    QSqlDatabase db;
+    QList<Family> tmpFamily = GetFamilies(QStringLiteral("WHERE Family.acronym = :acronym"), {std::make_tuple<QString, QVariant>(QStringLiteral(":acronym"), acronym)});
+    if (tmpFamily.count() > 0)
+        return tmpFamily.first();
     Family ret;
-    ret.id = -1;
-    if (this->CheckDatabase(db))
-    {
-        QSqlQuery q(db);
-        q.prepare(QStringLiteral("SELECT id, acronym, description FROM Family WHERE acronym = :acronym"));
-        q.bindValue(QStringLiteral(":acronym"), acronym);
-        q.exec();
-        if (q.next())
-        {
-            ret.id = q.value(0).toInt();
-            ret.acronym = q.value(1).toString();
-            ret.description = q.value(2).toString();
-        }
-    }
+    Warning(QStringLiteral("Family Not Found"), "The Family associated with " + acronym + " could not be found.");
     return ret;
 }
 
-QList<Family> DbManager::GetFamilies()
+/*!
+ * \brief DbManager::GetFamilies
+ * \param whereClause
+ * \param variables
+ * \return A QList of \a Families that are in the database. SQL
+ * commands are dynamically built from an optional supplied
+ * \a whereClause. SQL parameters are bound by supplying them in a
+ * list of tuples in the \a variables parameter.
+ *
+ * \example GetFamilies
+ * \title default
+ *
+ * The default GetFamilies() with no parameters returns all
+ * \a Families in the database.
+ *
+ * \code
+ * DbManager db;
+ * QList<Family> families = db.GetFamilies();
+ * \endcode
+ *
+ * \example GetFamilies(whereClause, variabes)
+ * \title where clause
+ *
+ * A WHERE clause with parameterized SQL can be added to the query.
+ *
+ * \code
+ * DbManager db;
+ * int id = 4; //Family ID 4 in the database
+ * QString sampleAcronym = "AC";
+ *
+ * //get Family by ID
+ * Family family = GetFamilies("WHERE Family.id = :id",
+ *                                  {std::make_tuple<QString, QVariant>(":id", id)}
+ *                            ).first();
+ *
+ * //get Family by Acronym
+ * family = GetFamilies("WHERE Family.acronym = :acronym",
+ *                           {std::make_tuple<QString, QVariant>(":acronym", "AC")}
+ *                     ).first();
+ * \endcode
+ */
+QList<Family> DbManager::GetFamilies(const QString &whereClause, const QList<std::tuple<QString, QVariant>> &variables)
 {
     QSqlDatabase db;
     QList<Family> ret;
     if (this->CheckDatabase(db))
     {
         QSqlQuery q(db);
-        q.prepare(QStringLiteral("SELECT id, acronym, description FROM Family"));
+        QString toPrep = QStringLiteral("SELECT Family.id, Family.acronym, Family.description FROM Family");
+        if (!whereClause.isNull() && !whereClause.isEmpty())
+            toPrep.append(" " + whereClause);
+        toPrep.append(QStringLiteral(" ORDER BY Family.acronym"));
+        q.prepare(toPrep);
+        for (const auto &variable : variables)
+        {
+            QString key;
+            QVariant val;
+            std::tie(key, val) = variable;
+            q.bindValue(key, val);
+        }
         q.exec();
         while (q.next())
         {
@@ -1609,6 +1705,13 @@ QList<Family> DbManager::GetFamilies()
     return ret;
 }
 
+/*!
+ * \brief DbManager::GetSTIG
+ * \param id
+ * \return The \a STIG associated with the provided database \a id.
+ * If the \a STIG does not exist in the database, the default \a STIG
+ * with an id of -1 is returned.
+ */
 STIG DbManager::GetSTIG(int id)
 {
     QList<STIG> tmpStigs = GetSTIGs(QStringLiteral("WHERE id = :id"), {std::make_tuple<QString, QVariant>(QStringLiteral(":id"), id)});
@@ -1619,6 +1722,16 @@ STIG DbManager::GetSTIG(int id)
     return ret;
 }
 
+/*!
+ * \brief DbManager::GetSTIG
+ * \param id
+ * \return The \a STIG associated with the provided \a STIG metadata.
+ * If the \a STIG does not exist in the database, the default \a STIG
+ * with an id of -1 is returned.
+ *
+ * A \a STIG has an implied unique constraint formed with the
+ * \a title, \a version, and \a release metadata.
+ */
 STIG DbManager::GetSTIG(const QString &title, int version, const QString &release)
 {
     QList<STIG> tmpStigs = GetSTIGs(QStringLiteral("WHERE title = :title AND release = :release AND version = :version"), {
@@ -1633,6 +1746,14 @@ STIG DbManager::GetSTIG(const QString &title, int version, const QString &releas
     return ret;
 }
 
+/*!
+ * \brief DbManager::GetSTIG
+ * \param stig
+ * \return The provided \a STIG is checked to make sure that it is
+ * part of the database. If the provided \a stig.id is not in the
+ * database, the metadata elements are checked. If the \a STIG is
+ * still not found, the default \a STIG with an id of -1 is returned.
+ */
 STIG DbManager::GetSTIG(const STIG &stig)
 {
     //find STIG by ID
@@ -1646,10 +1767,20 @@ STIG DbManager::GetSTIG(const STIG &stig)
     return GetSTIG(stig.title, stig.version, stig.release);
 }
 
+/*!
+ * \brief DbManager::GetVariable
+ * \param name
+ * \return The value associated with the requested variable.
+ *
+ * The internal variables table stores program-related metadata, such
+ * as the version of the database. This version number is checked
+ * each time the database object is created to make sure that it is
+ * valid.
+ */
 QString DbManager::GetVariable(const QString &name)
 {
     QSqlDatabase db;
-    QString ret;
+    QString ret = QString();
     if (this->CheckDatabase(db))
     {
         QSqlQuery q(db);
@@ -1664,65 +1795,70 @@ QString DbManager::GetVariable(const QString &name)
     return ret;
 }
 
-void DbManager::ImportCCI(const CCI &cci)
+/*!
+ * \brief DbManager::UpdateCKLCheck
+ * \param check
+ * \return \c True when the database is updated with the supplied
+ * \a CKLCheck information. Otherwise, \c false.
+ */
+bool DbManager::UpdateCKLCheck(const CKLCheck &check)
 {
-    QSqlDatabase db;
-    if (this->CheckDatabase(db))
+    CKLCheck tmpCheck = GetCKLCheck(check);
+    bool ret = false;
+    if (tmpCheck.id > 0)
     {
-        QSqlQuery q(db);
-        q.prepare(QStringLiteral("UPDATE CCI SET isImport = :isImport, importCompliance = :importCompliance, importDateTested = :importDateTested, importTestedBy = :importTestedBy, importTestResults = :importTestResults"));
-        q.bindValue(QStringLiteral(":isImport"), cci.isImport);
-        q.bindValue(QStringLiteral(":importCompliance"), cci.importCompliance);
-        q.bindValue(QStringLiteral(":importDateTested"), cci.importDateTested);
-        q.bindValue(QStringLiteral(":importTestedBy"), cci.importTestedBy);
-        q.bindValue(QStringLiteral(":importTestResults"), cci.importTestResults);
-        q.exec();
+        QSqlDatabase db;
+        ret = true;
+        if (this->CheckDatabase(db))
+        {
+            QSqlQuery q(db);
+            //NOTE: The new values use the provided "check" while the WHERE clause uses the Database-identified "tmpCheck".
+            q.prepare(QStringLiteral("UPDATE CKLCheck SET status = :status, findingDetails = :findingDetails, comments = :comments, severityOverride = :severityOverride, severityJustification = :severityJustification WHERE id = :id"));
+            q.bindValue(QStringLiteral(":status"), check.status);
+            q.bindValue(QStringLiteral(":findingDetails"), check.findingDetails);
+            q.bindValue(QStringLiteral(":comments"), check.comments);
+            q.bindValue(QStringLiteral(":severityOverride"), check.severityOverride);
+            q.bindValue(QStringLiteral(":severityJustification"), check.severityJustification);
+            q.bindValue(QStringLiteral(":id"), tmpCheck.id);
+            ret = q.exec();
+        }
     }
+    return ret;
 }
 
-void DbManager::UpdateCKLCheck(const CKLCheck &check)
+/*!
+ * \brief DbManager::UpdateVariable
+ * \param name
+ * \param value
+ * \return \c True when the variable is updated in the database.
+ * Otherwise, \c false.
+ */
+bool DbManager::UpdateVariable(const QString &name, const QString &value)
 {
     QSqlDatabase db;
-    if (this->CheckDatabase(db))
-    {
-        QSqlQuery q(db);
-        QString toPrep = QString();
-        if (check.id > 0)
-            toPrep = QStringLiteral("UPDATE CKLCheck SET status = :status, findingDetails = :findingDetails, comments = :comments, severityOverride = :severityOverride, severityJustification = :severityJustification WHERE id = :id");
-        else
-            toPrep = QStringLiteral("UPDATE CKLCheck SET status = :status, findingDetails = :findingDetails, comments = :comments, severityOverride = :severityOverride, severityJustification = :severityJustification WHERE AssetId = :AssetId AND STIGCheckId = :STIGCheckId");
-        q.prepare(toPrep);
-        q.bindValue(QStringLiteral(":status"), check.status);
-        q.bindValue(QStringLiteral(":findingDetails"), check.findingDetails);
-        q.bindValue(QStringLiteral(":comments"), check.comments);
-        q.bindValue(QStringLiteral(":severityOverride"), check.severityOverride);
-        q.bindValue(QStringLiteral(":severityJustification"), check.severityJustification);
-        if (check.id > 0)
-        {
-            q.bindValue(QStringLiteral(":id"), check.id);
-        }
-        else
-        {
-            q.bindValue(QStringLiteral(":AssetId"), check.assetId);
-            q.bindValue(QStringLiteral(":STIGCheckId"), check.stigCheckId);
-        }
-        q.exec();
-    }
-}
-
-void DbManager::UpdateVariable(const QString &name, const QString &value)
-{
-    QSqlDatabase db;
+    bool ret = false;
     if (this->CheckDatabase(db))
     {
         QSqlQuery q(db);
         q.prepare(QStringLiteral("UPDATE variables SET value = :value WHERE name = :name"));
         q.bindValue(QStringLiteral(":value"), value);
         q.bindValue(QStringLiteral(":name"), name);
-        q.exec();
+        ret = q.exec();
     }
+    return ret;
 }
 
+/*!
+ * \brief DbManager::CheckDatabase
+ * \param db
+ * \return \c True when the database connection is ready to use.
+ * Otherwise, \c false.
+ *
+ * Each thread in the application gets it own database connection.
+ * Calling CheckDatabase on the QSqlDatabase will bind it to the
+ * thread's existing connection or create a new one for the current
+ * thread.
+ */
 bool DbManager::CheckDatabase(QSqlDatabase &db)
 {
     db = QSqlDatabase::database(QString::number(reinterpret_cast<quint64>(QThread::currentThreadId())));
@@ -1733,22 +1869,32 @@ bool DbManager::CheckDatabase(QSqlDatabase &db)
     return db.isValid();
 }
 
+/*!
+ * \brief DbManager::UpdateDatabaseFromVersion
+ * \param version
+ * \return \c True when the database is up-to-date or updated.
+ * Otherwise, \c false.
+ */
 bool DbManager::UpdateDatabaseFromVersion(int version)
 {
     QSqlDatabase db;
+    bool ret = false;
     if (this->CheckDatabase(db))
     {
+        ret = true; //assume success from here
+
         //upgrade to version 1 of the database
         if (version <= 0)
         {
-            //New database; initial setups
+            //New database; initial creation and setup
+
             QSqlQuery q(db);
             q.prepare(QStringLiteral("CREATE TABLE `Family` ( "
                         "`id`	INTEGER PRIMARY KEY AUTOINCREMENT, "
                         "`Acronym`	TEXT UNIQUE, "
                         "`Description`	TEXT UNIQUE"
                         ")"));
-            q.exec();
+            ret = q.exec() && ret;
             q.prepare(QStringLiteral("CREATE TABLE `Control` ( "
                         "`id`	INTEGER PRIMARY KEY AUTOINCREMENT, "
                         "`FamilyId`	INTEGER NOT NULL, "
@@ -1758,7 +1904,7 @@ bool DbManager::UpdateDatabaseFromVersion(int version)
                         "`description`  TEXT, "
                         "FOREIGN KEY(`FamilyID`) REFERENCES `Family`(`id`) "
                         ")"));
-            q.exec();
+            ret = q.exec() && ret;
             q.prepare(QStringLiteral("CREATE TABLE `CCI` ( "
                       "`id`	INTEGER PRIMARY KEY AUTOINCREMENT, "
                       "`ControlId`	INTEGER, "
@@ -1771,12 +1917,12 @@ bool DbManager::UpdateDatabaseFromVersion(int version)
                       "`importTestResults`	TEXT, "
                       "FOREIGN KEY(`ControlId`) REFERENCES `Control`(`id`) "
                       ")"));
-            q.exec();
+            ret = q.exec() && ret;
             q.prepare(QStringLiteral("CREATE TABLE `variables` ( "
                       "`name`	TEXT, "
                       "`value`	TEXT "
                       ")"));
-            q.exec();
+            ret = q.exec() && ret;
             q.prepare(QStringLiteral("CREATE TABLE `STIG` ( "
                       "`id`	INTEGER PRIMARY KEY AUTOINCREMENT, "
                       "`title`	TEXT, "
@@ -1786,7 +1932,7 @@ bool DbManager::UpdateDatabaseFromVersion(int version)
                       "`benchmarkId`	TEXT, "
                       "`fileName`	TEXT "
                       ")"));
-            q.exec();
+            ret = q.exec() && ret;
             q.prepare(QStringLiteral("CREATE TABLE `STIGCheck` ( "
                       "`id`	INTEGER PRIMARY KEY AUTOINCREMENT, "
                       "`STIGId`	INTEGER, "
@@ -1816,7 +1962,7 @@ bool DbManager::UpdateDatabaseFromVersion(int version)
                       "FOREIGN KEY(`STIGId`) REFERENCES `STIG`(`id`), "
                       "FOREIGN KEY(`CCIId`) REFERENCES `CCI`(`id`) "
                       ")"));
-            q.exec();
+            ret = q.exec() && ret;
             q.prepare(QStringLiteral("CREATE TABLE `Asset` ( "
                       "`id`	INTEGER PRIMARY KEY AUTOINCREMENT, "
                       "`assetType`	TEXT, "
@@ -1830,7 +1976,7 @@ bool DbManager::UpdateDatabaseFromVersion(int version)
                       "`webDBSite`	TEXT, "
                       "`webDBInstance`	TEXT "
                       ")"));
-            q.exec();
+            ret = q.exec() && ret;
             q.prepare(QStringLiteral("CREATE TABLE `AssetSTIG` ( "
                       "`id`	INTEGER PRIMARY KEY AUTOINCREMENT, "
                       "`AssetId`	INTEGER, "
@@ -1838,7 +1984,7 @@ bool DbManager::UpdateDatabaseFromVersion(int version)
                       "FOREIGN KEY(`AssetId`) REFERENCES `Asset`(`id`), "
                       "FOREIGN KEY(`STIGId`) REFERENCES `STIG`(`id`) "
                       ")"));
-            q.exec();
+            ret = q.exec() && ret;
             q.prepare(QStringLiteral("CREATE TABLE `CKLCheck` ( "
                       "`id`	INTEGER PRIMARY KEY AUTOINCREMENT, "
                       "`AssetId`	INTEGER, "
@@ -1851,16 +1997,15 @@ bool DbManager::UpdateDatabaseFromVersion(int version)
                       "FOREIGN KEY(`STIGCheckId`) REFERENCES `STIGCheck`(`id`), "
                       "FOREIGN KEY(`AssetId`) REFERENCES `Asset`(`id`) "
                       ")"));
-            q.exec();
+            ret = q.exec() && ret;
             q.prepare(QStringLiteral("INSERT INTO variables (name, value) VALUES(:name, :value)"));
             q.bindValue(QStringLiteral(":name"), "version");
             q.bindValue(QStringLiteral(":value"), "1");
-            q.exec();
+            ret = q.exec() && ret;
 
             //write changes from update
             db.commit();
         }
     }
-
-    return EXIT_SUCCESS;
+    return ret;
 }
