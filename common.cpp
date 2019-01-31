@@ -264,6 +264,19 @@ QString Excelify(const QString &s)
 }
 
 /*!
+ * \brief Pluralize
+ * \param count
+ * \param plural
+ * \param singular
+ * \return \c \a plural when \a count indicates that plural usage is
+ * appropriate. Otherwise, \c \a singular.
+ */
+QString Pluralize(int count, QString plural, QString singular)
+{
+    return (count == 1) ? singular : plural;
+}
+
+/*!
  * \brief PrintTrueFalse
  * \param tf
  * \return human-readable boolean.
@@ -310,17 +323,4 @@ void Warning(QString title, QString message, bool quiet)
     qDebug() << title << ": " << message << endl;
     if (!quiet)
         QMessageBox::warning(nullptr, title, message);
-}
-
-/*!
- * \brief Pluralize
- * \param count
- * \param plural
- * \param singular
- * \return \c \a plural when \a count indicates that plural usage is
- * appropriate. Otherwise, \c \a singular.
- */
-QString Pluralize(int count, QString plural, QString singular)
-{
-    return (count == 1) ? singular : plural;
 }

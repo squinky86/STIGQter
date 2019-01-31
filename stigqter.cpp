@@ -453,7 +453,7 @@ void STIGQter::DisplayCCIs()
         CCI tmpCci = c;
         QListWidgetItem *tmpItem = new QListWidgetItem(); //memory managed by ui->lstCCIs container
         tmpItem->setData(Qt::UserRole, QVariant::fromValue<CCI>(tmpCci));
-        tmpItem->setText(PrintControl(tmpCci.Control()) + " " + PrintCCI(tmpCci));
+        tmpItem->setText(PrintCCI(tmpCci));
         ui->lstCCIs->addItem(tmpItem);
     }
 }

@@ -70,7 +70,8 @@ public:
     QList<CKLCheck> GetCKLChecks(const Asset &asset, const STIG *stig = nullptr);
     QList<CKLCheck> GetCKLChecks(const QString &whereClause = "", const QList<std::tuple<QString, QVariant>> &variables = {});
     Control GetControl(int id);
-    Control GetControl(QString control);
+    Control GetControl(const QString &control);
+    QList<Control> GetControls(const QString &whereClause = "", const QList<std::tuple<QString, QVariant>> &variables = {});
     Family GetFamily(const QString &acronym);
     Family GetFamily(int id);
     QList<Family> GetFamilies();

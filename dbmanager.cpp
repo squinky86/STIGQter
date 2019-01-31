@@ -732,7 +732,7 @@ bool DbManager::DeleteSTIGFromAsset(const STIG &stig, const Asset &asset)
 Asset DbManager::GetAsset(const QString &hostName)
 {
     //fail quietly
-    QList<Asset> tmp = GetAssets(QStringLiteral("WHERE hostName = :hostName"), {std::make_tuple<QString, QVariant>(QStringLiteral(":hostName"), hostName)});
+    QList<Asset> tmp = GetAssets(QStringLiteral("WHERE Asset.hostName = :hostName"), {std::make_tuple<QString, QVariant>(QStringLiteral(":hostName"), hostName)});
     if (tmp.count() > 0)
         return tmp.first();
     Asset a;
@@ -770,7 +770,7 @@ Asset DbManager::GetAsset(const Asset &asset)
  */
 Asset DbManager::GetAsset(int id)
 {
-    QList<Asset> tmp = GetAssets(QStringLiteral("WHERE id = :id"), {std::make_tuple<QString, QVariant>(":id", id)});
+    QList<Asset> tmp = GetAssets(QStringLiteral("WHERE Asset.id = :id"), {std::make_tuple<QString, QVariant>(":id", id)});
     if (tmp.count() > 0)
         return tmp.first();
     QMessageBox::warning(nullptr, QStringLiteral("Unable to Find Asset"), "The Asset ID " + QString::number(id) + " was not found in the database.");
@@ -889,7 +889,7 @@ QList<Asset> DbManager::GetAssets(const STIG &stig)
  */
 CCI DbManager::GetCCI(int id)
 {
-    QList<CCI> ccis = GetCCIs(QStringLiteral("WHERE id = :id"), {std::make_tuple<QString, QVariant>(QStringLiteral(":id"), id)});
+    QList<CCI> ccis = GetCCIs(QStringLiteral("WHERE CCI.id = :id"), {std::make_tuple<QString, QVariant>(QStringLiteral(":id"), id)});
     if (ccis.count() > 0)
         return ccis.first();
     CCI ret;
@@ -921,7 +921,7 @@ CCI DbManager::GetCCI(int id)
  */
 CCI DbManager::GetCCIByCCI(int cci, const STIG *stig)
 {
-    QList<CCI> tmpList = GetCCIs(QStringLiteral("WHERE cci = :cci"), {std::make_tuple<QString, QVariant>(QStringLiteral(":cci"), cci)});
+    QList<CCI> tmpList = GetCCIs(QStringLiteral("WHERE CCI.cci = :cci"), {std::make_tuple<QString, QVariant>(QStringLiteral(":cci"), cci)});
     if (tmpList.count() > 0)
         return tmpList.first();
     QString tmpMessage = stig ? PrintSTIG(*stig) : QStringLiteral("&lt;insert%20STIG%20information%20here&gt;");
@@ -929,7 +929,7 @@ CCI DbManager::GetCCIByCCI(int cci, const STIG *stig)
 
     //The CCI could not be found. Assume that this will be remapped to CCI-366.
     Warning(QStringLiteral("Broken CCI"), "The CCI " + cciStr + " does not exist in NIST 800-53r4. If you are importing a STIG, please file a bug with the STIG author (probably DISA, disa.stig_spt@mail.mil) and let them know that their CCI mapping for the STIG you are trying to import is broken. For now, this broken STIG check is being remapped to CCI-000366. <a href=\"mailto:disa.stig_spt@mail.mil?subject=Incorrectly%20Mapped%20STIG%20Check&body=DISA,%0d" + tmpMessage + "%20contains%20rule(s)%20mapped%20against%20" + cciStr + "%20which%20does%20not%20exist%20in%20the%20current%20version%20of%20NIST%20800-53r4.\">Click here</a> to file this bug with DISA automatically.");
-    tmpList = GetCCIs(QStringLiteral("WHERE cci = :cci"), {std::make_tuple<QString, QVariant>(QStringLiteral(":cci"), 366)});
+    tmpList = GetCCIs(QStringLiteral("WHERE CCI.cci = :cci"), {std::make_tuple<QString, QVariant>(QStringLiteral(":cci"), 366)});
     if (tmpList.count() > 0)
         return tmpList.first();
 
@@ -1051,7 +1051,7 @@ QList<CCI> DbManager::GetCCIs(const QString &whereClause, const QList<std::tuple
  */
 CKLCheck DbManager::GetCKLCheck(int id)
 {
-    QList<CKLCheck> tmp = GetCKLChecks(QStringLiteral("WHERE id = :id"), {std::make_tuple<QString, QVariant>(QStringLiteral(":id"), id)});
+    QList<CKLCheck> tmp = GetCKLChecks(QStringLiteral("WHERE CKLCheck.id = :id"), {std::make_tuple<QString, QVariant>(QStringLiteral(":id"), id)});
     if (tmp.count() > 0)
     {
         return tmp.first();
@@ -1074,13 +1074,13 @@ CKLCheck DbManager::GetCKLCheck(const CKLCheck &ckl)
     QList<CKLCheck> tmp;
     if (ckl.id <= 0)
     {
-        tmp = GetCKLChecks(QStringLiteral("WHERE AssetId = :AssetId AND STIGCheckId = :STIGCheckId"),
+        tmp = GetCKLChecks(QStringLiteral("WHERE CKLCheck.AssetId = :AssetId AND CKLCheck.STIGCheckId = :STIGCheckId"),
             {std::make_tuple<QString, QVariant>(QStringLiteral(":AssetId"), ckl.assetId),
              std::make_tuple<QString, QVariant>(QStringLiteral(":STIGCheckId"), ckl.stigCheckId)});
     }
     else
     {
-        tmp = GetCKLChecks(QStringLiteral("WHERE id = :id"), {std::make_tuple<QString, QVariant>(QStringLiteral(":id"), ckl.id)});
+        tmp = GetCKLChecks(QStringLiteral("WHERE CKLCheck.id = :id"), {std::make_tuple<QString, QVariant>(QStringLiteral(":id"), ckl.id)});
     }
     if (tmp.count() > 0)
     {
@@ -1102,11 +1102,11 @@ CKLCheck DbManager::GetCKLCheck(const CKLCheck &ckl)
  */
 QList<CKLCheck> DbManager::GetCKLChecks(const Asset &asset, const STIG *stig)
 {
-    QString whereClause = QStringLiteral("WHERE AssetId = :AssetId");
+    QString whereClause = QStringLiteral("WHERE CKLCheck.AssetId = :AssetId");
     QList<std::tuple<QString, QVariant> > variables = {std::make_tuple<QString, QVariant>(QStringLiteral(":AssetId"), asset.id)};
     if (stig != nullptr)
     {
-        whereClause.append(QStringLiteral(" AND STIGCheckId IN (SELECT id FROM STIGCheck WHERE STIGId = :STIGId)"));
+        whereClause.append(QStringLiteral(" AND CKLCheck.STIGCheckId IN (SELECT id FROM STIGCheck WHERE STIGId = :STIGId)"));
         variables.append(std::make_tuple<QString, QVariant>(QStringLiteral(":STIGId"), stig->id));
     }
     return GetCKLChecks(whereClause, variables);
@@ -1205,7 +1205,7 @@ QList<CKLCheck> DbManager::GetCKLChecks(const QString &whereClause, const QList<
  */
 STIGCheck DbManager::GetSTIGCheck(int id)
 {
-    QList<STIGCheck> tmp = GetSTIGChecks(QStringLiteral("WHERE id = :id"), {std::make_tuple<QString, QVariant>(QStringLiteral(":id"), id)});
+    QList<STIGCheck> tmp = GetSTIGChecks(QStringLiteral("WHERE STIGCheck.id = :id"), {std::make_tuple<QString, QVariant>(QStringLiteral(":id"), id)});
     if (tmp.count() > 0)
         return tmp.first();
     STIGCheck ret;
@@ -1226,7 +1226,7 @@ STIGCheck DbManager::GetSTIGCheck(const STIG &stig, const QString &rule)
     STIG tmpStig = GetSTIG(stig);
     if (tmpStig.id > 0)
     {
-        QList<STIGCheck> tmp = GetSTIGChecks(QStringLiteral("WHERE STIGId = :STIGId AND rule = :rule"), {
+        QList<STIGCheck> tmp = GetSTIGChecks(QStringLiteral("WHERE STIGCheck.STIGId = :STIGId AND STIGCheck.rule = :rule"), {
                                                  std::make_tuple<QString, QVariant>(QStringLiteral(":STIGId"), tmpStig.id),
                                                  std::make_tuple<QString, QVariant>(QStringLiteral(":rule"), rule)
                                              });
@@ -1245,7 +1245,7 @@ STIGCheck DbManager::GetSTIGCheck(const STIG &stig, const QString &rule)
  */
 QList<STIGCheck> DbManager::GetSTIGChecks(const STIG &stig)
 {
-    return GetSTIGChecks(QStringLiteral("WHERE STIGId = :STIGId"), {std::make_tuple<QString, QVariant>(QStringLiteral(":STIGId"), stig.id)});
+    return GetSTIGChecks(QStringLiteral("WHERE STIGCheck.STIGId = :STIGId"), {std::make_tuple<QString, QVariant>(QStringLiteral(":STIGId"), stig.id)});
 }
 
 /*!
@@ -1349,11 +1349,58 @@ QList<STIGCheck> DbManager::GetSTIGChecks(const QString &whereClause, const QLis
     return ret;
 }
 
+/*!
+ * \brief DbManager::GetSTIGs
+ * \param asset
+ * \return The \a STIGs in the database associated with the provided
+ * \a Asset.
+ */
 QList<STIG> DbManager::GetSTIGs(const Asset &asset)
 {
-    return GetSTIGs(QStringLiteral("WHERE `id` IN (SELECT STIGId FROM AssetSTIG WHERE AssetId = :AssetId)"), {std::make_tuple<QString, QVariant>(QStringLiteral(":AssetId"), asset.id)});
+    return GetSTIGs(QStringLiteral("WHERE STIG.id IN (SELECT STIGId FROM AssetSTIG WHERE AssetId = :AssetId)"), {std::make_tuple<QString, QVariant>(QStringLiteral(":AssetId"), asset.id)});
 }
 
+/*!
+ * \brief DbManager::GetSTIGs
+ * \param whereClause
+ * \param variables
+ * \return A QList of \a STIGs that are in the database. SQL
+ * commands are dynamically built from an optional supplied
+ * \a whereClause. SQL parameters are bound by supplying them in a
+ * list of tuples in the \a variables parameter.
+ *
+ * \example GetSTIGs
+ * \title default
+ *
+ * The default GetSTIGs() with no parameters returns all \a STIGs in
+ * the database.
+ *
+ * \code
+ * DbManager db;
+ * QList<STIG> stigs = db.GetSTIGs();
+ * \endcode
+ *
+ * \example GetSTIGs(whereClause, variabes)
+ * \title where clause
+ *
+ * A WHERE clause with parameterized SQL can be added to the query.
+ *
+ * \code
+ * DbManager db;
+ * int id = 4; //Asset ID 4 in the database
+ * QString sampleTitle = "Application Security and Development Security Technical Implementation Guide";
+ *
+ * //get STIG by ID
+ * STIG stig = GetAssets("WHERE id = :id",
+ *                            {std::make_tuple<QString, QVariant>(":id", id)}
+ *                      ).first();
+ *
+ * //get STIG by STIG title
+ * stig = GetSTIGs("WHERE title = :title",
+ *                      {std::make_tuple<QString, QVariant>(":title", sampleTitle)}
+ *                ).first();
+ * \endcode
+ */
 QList<STIG> DbManager::GetSTIGs(const QString &whereClause, const QList<std::tuple<QString, QVariant>> &variables)
 {
     QSqlDatabase db;
@@ -1390,79 +1437,110 @@ QList<STIG> DbManager::GetSTIGs(const QString &whereClause, const QList<std::tup
     return ret;
 }
 
+/*!
+ * \brief DbManager::GetControl
+ * \param id
+ * \return The \a Control in the database associated with the
+ * provided ID. If the \a Control does not exist in the database, the
+ * default Control with an ID of -1 is returned.
+ */
 Control DbManager::GetControl(int id)
 {
+    QList<Control> tmpControl = GetControls("WHERE Control.id = :id", {std::make_tuple<QString, QVariant>(QStringLiteral(":id"), id)});
+    if (tmpControl.count() > 0)
+        return tmpControl.first();
     Control ret;
-    QSqlDatabase db;
-    if (this->CheckDatabase(db))
-    {
-        QSqlQuery q(db);
-        q.prepare(QStringLiteral("SELECT id, FamilyId, number, enhancement, title, description FROM Control WHERE id = :id"));
-        q.bindValue(QStringLiteral(":id"), id);
-        q.exec();
-        if (q.next())
-        {
-            ret.id = q.value(0).toInt();;
-            ret.familyId = q.value(1).toInt();
-            ret.number = q.value(2).toInt();
-            ret.enhancement = q.value(3).isNull() ? -1 : q.value(3).toInt();
-            ret.title = q.value(4).toString();
-            ret.description = q.value(5).toString();
-        }
-    }
+    Warning(QStringLiteral("Control Not Found"), "The Control ID " + QString::number(id) + " was not found in the database.");
     return ret;
 }
 
-Control DbManager::GetControl(QString control)
+/*!
+ * \brief DbManager::GetControl
+ * \param control
+ * \return The \a Control in the database associated with the
+ * provided control string. If the \a Control does not exist in the
+ * database, the default Control with an ID of -1 is returned.
+ */
+Control DbManager::GetControl(const QString &control)
 {
     //see if there are spaces
-    control = control.trimmed();
-    int tmpIndex = control.indexOf(' ');
+    QString tmpControl = control.trimmed();
+    int tmpIndex = tmpControl.indexOf(' ');
     if (tmpIndex > 0)
     {
         //see if there's a second space
-        tmpIndex = control.indexOf(' ', tmpIndex+1);
+        tmpIndex = tmpControl.indexOf(' ', tmpIndex+1);
         if (tmpIndex > 0)
         {
-            control = control.left(tmpIndex+1).trimmed();
+            tmpControl = tmpControl.left(tmpIndex+1).trimmed();
         }
     }
-    Control ret;
-    ret.id = -1;
-    ret.enhancement = -1;
-    ret.title = QString();
-    ret.familyId = -1;
-    QString family(control.left(2));
-    control = control.right(control.length()-3);
+    QString family(tmpControl.left(2));
+    tmpControl = tmpControl.right(tmpControl.length()-3);
     QString enhancement = QString();
-    if (control.contains('('))
+    int enhancementInt = -1;
+    if (tmpControl.contains('('))
     {
-        int tmpIndex = control.indexOf('(');
-        enhancement = control.right(control.length() - tmpIndex - 1);
+        int tmpIndex = tmpControl.indexOf('(');
+        enhancement = tmpControl.right(tmpControl.length() - tmpIndex - 1);
         enhancement = enhancement.left(enhancement.length() - 1);
-        control = control.left(control.indexOf('('));
-        ret.enhancement = enhancement.toInt(); //will return 0 if enhancement doesn't exist
+        tmpControl = tmpControl.left(tmpControl.indexOf('('));
+        enhancementInt = enhancement.toInt(); //will return 0 if enhancement doesn't exist
     }
-    ret.number = control.toInt();
-    ret.familyId = GetFamily(family).id;
+    int controlNumber = control.toInt();
+    int familyId = GetFamily(family).id;
+
+    QString whereClause = QStringLiteral("WHERE Control.number = :number AND Control.FamilyId = :FamilyId");
+    QList<std::tuple<QString, QVariant>> variables = {
+        std::make_tuple<QString, QVariant>(QStringLiteral(":number"), controlNumber),
+        std::make_tuple<QString, QVariant>(QStringLiteral(":FamilyId"), familyId)
+    };
+
+    if (enhancementInt > 0)
+    {
+        whereClause = whereClause + QStringLiteral("AND Control.enhancement = :enhancement");
+        variables.append(std::make_tuple<QString, QVariant>(QStringLiteral(":enhancement"), enhancementInt));
+    }
+
+    QList<Control> tmpControls = GetControls(whereClause, variables);
+    if (tmpControls.count() > 0)
+        return tmpControls.first();
+
+    Control ret;
+    Warning(QStringLiteral("Unable to Find Control"), "The Control '" + control + "' could not be found in the database.");
+    return ret;
+}
+
+QList<Control> DbManager::GetControls(const QString &whereClause, const QList<std::tuple<QString, QVariant>> &variables)
+{
     QSqlDatabase db;
+    QList<Control> ret;
     if (this->CheckDatabase(db))
     {
         QSqlQuery q(db);
-        if (ret.enhancement > 0)
-            q.prepare(QStringLiteral("SELECT id, title, description FROM Control WHERE number = :number AND FamilyId = :FamilyId AND enhancement = :enhancement"));
-        else
-            q.prepare(QStringLiteral("SELECT id, title, description FROM Control WHERE number = :number AND FamilyId = :FamilyId"));
-        q.bindValue(QStringLiteral(":number"), ret.number);
-        q.bindValue(QStringLiteral(":FamilyId"), ret.familyId);
-        if (ret.enhancement > 0)
-            q.bindValue(QStringLiteral(":enhancement"), ret.enhancement);
-        q.exec();
-        if (q.next())
+        QString toPrep = QStringLiteral("SELECT Control.id, Control.FamilyId, Control.number, Control.enhancement, Control.title, Control.description FROM Control JOIN Family ON Family.id = Control.FamilyId");
+        if (!whereClause.isNull() && !whereClause.isEmpty())
+            toPrep.append(" " + whereClause);
+        toPrep.append(QStringLiteral(" ORDER BY Family.Acronym, Control.number, Control.enhancement"));
+        q.prepare(toPrep);
+        for (const auto &variable : variables)
         {
-            ret.id = q.value(0).toInt();
-            ret.title = q.value(1).toString();
-            ret.description = q.value(2).toString();
+            QString key;
+            QVariant val;
+            std::tie(key, val) = variable;
+            q.bindValue(key, val);
+        }
+        q.exec();
+        while (q.next())
+        {
+            Control c;
+            c.id = q.value(0).toInt();
+            c.familyId = q.value(1).toInt();
+            c.number = q.value(2).toInt();
+            c.enhancement = q.value(3).isNull() ? -1 : q.value(3).toInt();
+            c.title = q.value(4).toString();
+            c.description = q.value(5).toString();
+            ret.append(c);
         }
     }
     return ret;
