@@ -36,7 +36,7 @@ public:
     explicit Asset(QObject *parent = nullptr);
     Asset& operator=(const Asset &right);
     QList<STIG> STIGs() const;
-    QList<CKLCheck> CKLChecks(const STIG *s = nullptr) const;
+    QList<CKLCheck> CKLChecks(const STIG *stig = nullptr) const;
     int id;
     QString assetType;
     QString hostName;

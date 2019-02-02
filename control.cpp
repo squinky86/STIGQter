@@ -20,24 +20,24 @@
 #include "control.h"
 #include "dbmanager.h"
 
-/*!
- * \class Control
- * \brief A \a Control corresponds to a particular RMF checklist
+/**
+ * @class Control
+ * @brief A @a Control corresponds to a particular RMF checklist
  * grouping of assessment procedures. The RMF hierarchy consists of
- * \a Family → \a Control → \a CCI.
+ * @a Family → @a Control → @a CCI.
  *
- * A \a Control is the base unit of RMF by which assessment scoring
+ * A @a Control is the base unit of RMF by which assessment scoring
  * takes place. Risk calculations roll up and are reported at the
- * \a Control level to provide management with a high-level overview
+ * @a Control level to provide management with a high-level overview
  * of the security posture of a system.
  *
  * Selection of applicable controls is performed by baselining and
  * tailoring the system's capabilities and security needs.
  */
 
-/*!
- * \brief Control::Control
- * \param parent
+/**
+ * @brief Control::Control
+ * @param parent
  *
  * Default constructor.
  */
@@ -51,9 +51,9 @@ Control::Control(QObject *parent) : QObject(parent),
 {
 }
 
-/*!
- * \brief Control::Control
- * \param right
+/**
+ * @brief Control::Control
+ * @param right
  *
  * Copy constructor.
  */
@@ -62,9 +62,9 @@ Control::Control(const Control &right) : Control(right.parent())
     *this = right;
 }
 
-/*!
- * \brief Control::Family
- * \return The \a Family associated with this \a Control
+/**
+ * @brief Control::Family
+ * @return The @a Family associated with this @a Control
  */
 Family Control::Family() const
 {
@@ -72,10 +72,10 @@ Family Control::Family() const
     return db.GetFamily(familyId);
 }
 
-/*!
- * \brief Control::operator=
- * \param right
- * \return This \a Control, copied from the assignee.
+/**
+ * @brief Control::operator=
+ * @param right
+ * @return This @a Control, copied from the assignee.
  *
  * Deep copy assignment operator.
  */
@@ -93,10 +93,10 @@ Control& Control::operator=(const Control &right)
     return *this;
 }
 
-/*!
- * \brief PrintControl
- * \param control
- * \return Human-readable \a Control
+/**
+ * @brief PrintControl
+ * @param control
+ * @return Human-readable @a Control
  */
 QString PrintControl(const Control &control)
 {

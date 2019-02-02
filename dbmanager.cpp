@@ -31,12 +31,12 @@
 #include <QSqlField>
 #include <QSqlDriver>
 
-/*!
- * \class DbManager
- * \brief DbManager::DbManager represents the data layer for the
+/**
+ * @class DbManager
+ * @brief DbManager::DbManager represents the data layer for the
  * application.
  *
- * Each instance of the \a DbManager uses a thread-specific
+ * Each instance of the @a DbManager uses a thread-specific
  * connection to the SQLite database. Before executing queries, each
  * function checks the connection to the database by checking if the
  * current thread currently has a connection. If it does, the
@@ -59,17 +59,17 @@
  * database.
  */
 
-/*!
- * \brief DbManager::DbManager
+/**
+ * @brief DbManager::DbManager
  *
  * Default constructor.
  */
 DbManager::DbManager() : DbManager(QString::number(reinterpret_cast<quint64>(QThread::currentThreadId()))) { }
 
-/*!
- * \overload DbManager::DbManager()
- * \brief DbManager::DbManager
- * \param connectionName
+/**
+ * @overload DbManager::DbManager()
+ * @brief DbManager::DbManager
+ * @param connectionName
  *
  * Overloaded constructor with current thread's connection already
  * provided.
@@ -77,11 +77,11 @@ DbManager::DbManager() : DbManager(QString::number(reinterpret_cast<quint64>(QTh
 DbManager::DbManager(const QString& connectionName) : DbManager(QCoreApplication::applicationDirPath() + "/STIGQter.db", connectionName) { }
 
 
-/*!
- * \overload DbManager::DbManager()
- * \brief DbManager::DbManager
- * \param path
- * \param connectionName
+/**
+ * @overload DbManager::DbManager()
+ * @brief DbManager::DbManager
+ * @param path
+ * @param connectionName
  *
  * Overloaded constructor with path to SQLite DB and current thread's
  * connection already provided.
@@ -115,8 +115,8 @@ DbManager::DbManager(const QString& path, const QString& connectionName)
     UpdateDatabaseFromVersion(version);
 }
 
-/*!
- * \brief DbManager::~DbManager
+/**
+ * @brief DbManager::~DbManager
  *
  * The destructor verifies that all changes have been written to the
  * database and closes its connection.
@@ -133,14 +133,14 @@ DbManager::~DbManager()
     }
 }
 
-/*!
- * \brief DbManager::DelayCommit
- * \param delay
+/**
+ * @brief DbManager::DelayCommit
+ * @param delay
  *
  * When engaging in a large quantity of writes, the data may be
  * buffered in memory without committing the changes to the database
- * temporarily by setting \a delay to \c true. Setting \a delay to
- * \c false or destructing the database connection will commit the
+ * temporarily by setting @a delay to @c true. Setting @a delay to
+ * @c false or destructing the database connection will commit the
  * changes that have been buffered.
  *
  * Developers should be cautious: buffered changes may not show up in
@@ -171,29 +171,29 @@ void DbManager::DelayCommit(bool delay)
     _delayCommit = delay;
 }
 
-/*!
- * \brief DbManager::AddAsset
- * \param asset
- * \return \c True when the \a Asset is added to the database,
- * \c false when the \a Asset is already part of the database or has
+/**
+ * @brief DbManager::AddAsset
+ * @param asset
+ * @return @c True when the @a Asset is added to the database,
+ * @c false when the @a Asset is already part of the database or has
  * not been added.
  *
- * To add a new \a Asset to the database, a new \a Asset instance is
- * created in code and sent to this function. If the \a Asset has the
- * default \a id (or an \a id less than or equal to 0), it is assumed
+ * To add a new @a Asset to the database, a new @a Asset instance is
+ * created in code and sent to this function. If the @a Asset has the
+ * default @a id (or an @a id less than or equal to 0), it is assumed
  * to not be part of the database and is committed. On commit, the
- * provided \a Asset's \a id is set to the newly inserted record's
- * \a id.
+ * provided @a Asset's @a id is set to the newly inserted record's
+ * @a id.
  *
- * \a Assets must be uniquely named. A single Asset can have multiple
- * \a STIGs that are performed against it. A single computing node
- * usually qualifies as an \a Asset, and the individual components it
- * contains (the OS, applications, custom devices) have \a STIGs that
+ * @a Assets must be uniquely named. A single Asset can have multiple
+ * @a STIGs that are performed against it. A single computing node
+ * usually qualifies as an @a Asset, and the individual components it
+ * contains (the OS, applications, custom devices) have @a STIGs that
  * correspond to them. The hierarchy is
- * \a Asset → \a STIG → \a STIGCheck.
+ * @a Asset → @a STIG → @a STIGCheck.
  *
  * Example: A single desktop computer will often have the following
- * \a STIGs: Windows 10, Internet Explorer, Microsoft Office (and its
+ * @a STIGs: Windows 10, Internet Explorer, Microsoft Office (and its
  * subcomponents), FireFox, JRE, and Adobe.
  */
 bool DbManager::AddAsset(Asset &asset)
@@ -234,19 +234,19 @@ bool DbManager::AddAsset(Asset &asset)
     return ret;
 }
 
-/*!
- * \brief DbManager::AddCCI
- * \param cci
- * \return \c True when the \a CCI is added to the database,
- * \c false when the \a CCI is already part of the database or has
+/**
+ * @brief DbManager::AddCCI
+ * @param cci
+ * @return @c True when the @a CCI is added to the database,
+ * @c false when the @a CCI is already part of the database or has
  * not been added.
  *
- * To add a new \a CCI to the database, a new \a CCI instance is
- * created in code and sent to this function. If the \a CCI has the
- * default \a id (or an \a id less than or equal to 0), it is assumed
+ * To add a new @a CCI to the database, a new @a CCI instance is
+ * created in code and sent to this function. If the @a CCI has the
+ * default @a id (or an @a id less than or equal to 0), it is assumed
  * to not be part of the database and is committed. On commit, the
- * provided \a CCI's \a id is set to the newly inserted record's
- * \a id.
+ * provided @a CCI's @a id is set to the newly inserted record's
+ * @a id.
  */
 bool DbManager::AddCCI(CCI &cci)
 {
@@ -283,19 +283,19 @@ bool DbManager::AddCCI(CCI &cci)
     return ret;
 }
 
-/*!
- * \brief DbManager::AddControl
- * \param control
- * \param title
- * \param description
- * \return \c True when the \a Control is added to the database,
- * \c false when the \a Control is already part of the database or
+/**
+ * @brief DbManager::AddControl
+ * @param control
+ * @param title
+ * @param description
+ * @return @c True when the @a Control is added to the database,
+ * @c false when the @a Control is already part of the database or
  * has not been added.
  *
  * When providing controls formatted as FAMILY-NUMBER (ENHANCEMENT),
  * this function parses the Family, Control Number, and Enhancement
  * Number out of the string before adding it to the database. This is
- * useful when receiving new \a Controls formatted in human-readable
+ * useful when receiving new @a Controls formatted in human-readable
  * format from an external data source.
  */
 bool DbManager::AddControl(const QString &control, const QString &title, const QString &description)
@@ -366,39 +366,39 @@ bool DbManager::AddControl(const QString &control, const QString &title, const Q
     return ret;
 }
 
-/*!
- * \brief DbManager::AddFamily
- * \param acronym
- * \param description
- * \return \c True when the \a Family is added to the database,
- * \c false when the \a Family is already part of the database or
+/**
+ * @brief DbManager::AddFamily
+ * @param acronym
+ * @param description
+ * @return @c True when the @a Family is added to the database,
+ * @c false when the @a Family is already part of the database or
  * has not been added.
  *
- * When parsing \a Families, the standard Acronym (which becomes
- * incorporated into the \a Control's human-readable presentation)
- * corresponds to a particular \a Family. The NIST 800-53rev4
- * \a Families are (obtained from
- * \l {https://nvd.nist.gov/800-53/Rev4} {NIST}.):
- * \list
- * \li AC - Access Control
- * \li AU - Audit and Accountability
- * \li AT - Awareness and Training
- * \li CM - Configuration Management
- * \li CP - Contingency Planning
- * \li IA - Identification and Authentication
- * \li IR - Incident Response
- * \li MA - Maintenance
- * \li MP - Media Protection
- * \li PS - Personnel Security
- * \li PE - Physical and Environmental Protection
- * \li PL - Planning
- * \li PM - Program Management
- * \li RA - Risk Assessment
- * \li CA - Security Assessment and Authorization
- * \li SC - System and Communications Protection
- * \li SI - System and Information Integrity
- * \li SA - System and Services Acquisition
- * \endlist
+ * When parsing @a Families, the standard Acronym (which becomes
+ * incorporated into the @a Control's human-readable presentation)
+ * corresponds to a particular @a Family. The NIST 800-53rev4
+ * @a Families are (obtained from
+ * @l {https://nvd.nist.gov/800-53/Rev4} {NIST}.):
+ * @list
+ * @li AC - Access Control
+ * @li AU - Audit and Accountability
+ * @li AT - Awareness and Training
+ * @li CM - Configuration Management
+ * @li CP - Contingency Planning
+ * @li IA - Identification and Authentication
+ * @li IR - Incident Response
+ * @li MA - Maintenance
+ * @li MP - Media Protection
+ * @li PS - Personnel Security
+ * @li PE - Physical and Environmental Protection
+ * @li PL - Planning
+ * @li PM - Program Management
+ * @li RA - Risk Assessment
+ * @li CA - Security Assessment and Authorization
+ * @li SC - System and Communications Protection
+ * @li SI - System and Information Integrity
+ * @li SA - System and Services Acquisition
+ * @endlist
  */
 bool DbManager::AddFamily(const QString &acronym, const QString &description)
 {
@@ -417,17 +417,17 @@ bool DbManager::AddFamily(const QString &acronym, const QString &description)
     return ret;
 }
 
-/*!
- * \brief DbManager::AddSTIG
- * \param stig
- * \param checks
- * \return \c True when the \a STIG and its \a STIGChecks are added
- * to the database, \c false when the any part of the data have not
+/**
+ * @brief DbManager::AddSTIG
+ * @param stig
+ * @param checks
+ * @return @c True when the @a STIG and its @a STIGChecks are added
+ * to the database, @c false when the any part of the data have not
  * been added.
  *
- * When \a stigExists is \c true, the \a STIGChecks are added to the
- * existing \a STIG already in the database. Otherwise, if the
- * \a STIG already exists, the \a STIGChecks are not added.
+ * When @a stigExists is @c true, the @a STIGChecks are added to the
+ * existing @a STIG already in the database. Otherwise, if the
+ * @a STIG already exists, the @a STIGChecks are not added.
  */
 bool DbManager::AddSTIG(STIG stig, QList<STIGCheck> checks, bool stigExists)
 {
@@ -526,17 +526,17 @@ bool DbManager::AddSTIG(STIG stig, QList<STIGCheck> checks, bool stigExists)
     return ret && stigCheckRet;
 }
 
-/*!
- * \brief DbManager::AddSTIGToAsset
- * \param stig
- * \param asset
- * \return \c True when the \a STIG is mapped to the \a Asset.
- * Otherwise, \c false.
+/**
+ * @brief DbManager::AddSTIGToAsset
+ * @param stig
+ * @param asset
+ * @return @c True when the @a STIG is mapped to the @a Asset.
+ * Otherwise, @c false.
  *
- * When a \a STIG is mapped to an \a Asset, a new STIG Checklist
- * is created for the Asset, and all of the \a STIG's \a STIGChecks
- * are added to the \a CKLCheck with a default status of
- * \a Status.NotChecked.
+ * When a @a STIG is mapped to an @a Asset, a new STIG Checklist
+ * is created for the Asset, and all of the @a STIG's @a STIGChecks
+ * are added to the @a CKLCheck with a default status of
+ * @a Status.NotChecked.
  */
 bool DbManager::AddSTIGToAsset(const STIG &stig, const Asset &asset)
 {
@@ -570,23 +570,23 @@ bool DbManager::AddSTIGToAsset(const STIG &stig, const Asset &asset)
     return ret;
 }
 
-/*!
- * \override DbManager::DeleteAsset(Asset)
- * \brief DbManager::DeleteAsset
- * \param id
- * \return \c True when the supplied \a Asset with the supplied \a id
- * is removed from the database. Otherwise, \c false.
+/**
+ * @override DbManager::DeleteAsset(Asset)
+ * @brief DbManager::DeleteAsset
+ * @param id
+ * @return @c True when the supplied @a Asset with the supplied @a id
+ * is removed from the database. Otherwise, @c false.
  */
 bool DbManager::DeleteAsset(int id)
 {
     return DeleteAsset(GetAsset(id));
 }
 
-/*!
- * \brief DbManager::DeleteAsset
- * \param asset
- * \return \c True when the supplied \a Asset with the supplied \a id
- * is removed from the database. Otherwise, \c false.
+/**
+ * @brief DbManager::DeleteAsset
+ * @param asset
+ * @return @c True when the supplied @a Asset with the supplied @a id
+ * is removed from the database. Otherwise, @c false.
  */
 bool DbManager::DeleteAsset(const Asset &asset)
 {
@@ -609,12 +609,12 @@ bool DbManager::DeleteAsset(const Asset &asset)
     return ret;
 }
 
-/*!
- * \brief DbManager::DeleteCCIs
- * \return \c True when the CCIs and controls are cleared from the
- * database. Otherwise, \c false.
+/**
+ * @brief DbManager::DeleteCCIs
+ * @return @c True when the CCIs and controls are cleared from the
+ * database. Otherwise, @c false.
  *
- * Removes RMF \a Controls and \a CCIs from the database.
+ * Removes RMF @a Controls and @a CCIs from the database.
  */
 bool DbManager::DeleteCCIs()
 {
@@ -636,11 +636,11 @@ bool DbManager::DeleteCCIs()
     return ret;
 }
 
-/*!
- * \brief DbManager::DeleteSTIG
- * \param id
- * \return \c True when the STIG identified by the provided ID is
- * deleted from the database. Otherwise, \c false.
+/**
+ * @brief DbManager::DeleteSTIG
+ * @param id
+ * @return @c True when the STIG identified by the provided ID is
+ * deleted from the database. Otherwise, @c false.
  */
 bool DbManager::DeleteSTIG(int id)
 {
@@ -676,24 +676,24 @@ bool DbManager::DeleteSTIG(int id)
     return ret;
 }
 
-/*!
- * \override DbManager::DeleteSTIG(int id)
- * \brief DbManager::DeleteSTIG
- * \param stig
- * \return \c True when the supplied \a STIG is removed rom the
- * database. Otherwise, \c false.
+/**
+ * @override DbManager::DeleteSTIG(int id)
+ * @brief DbManager::DeleteSTIG
+ * @param stig
+ * @return @c True when the supplied @a STIG is removed rom the
+ * database. Otherwise, @c false.
  */
 bool DbManager::DeleteSTIG(const STIG &stig)
 {
     return DeleteSTIG(stig.id);
 }
 
-/*!
- * \brief DbManager::DeleteSTIGFromAsset
- * \param stig
- * \param asset
- * \return \c True when the \a STIG has been disassociated with the
- * \a Asset in the database. Otherwise, \c false.
+/**
+ * @brief DbManager::DeleteSTIGFromAsset
+ * @param stig
+ * @param asset
+ * @return @c True when the @a STIG has been disassociated with the
+ * @a Asset in the database. Otherwise, @c false.
  */
 bool DbManager::DeleteSTIGFromAsset(const STIG &stig, const Asset &asset)
 {
@@ -723,11 +723,11 @@ bool DbManager::DeleteSTIGFromAsset(const STIG &stig, const Asset &asset)
     return ret;
 }
 
-/*!
- * \brief DbManager::GetAsset
- * \param hostName
- * \return The \a Asset object associated with the supplied
- * \a hostName. If the hostname does not exist, the \a Asset that is
+/**
+ * @brief DbManager::GetAsset
+ * @param hostName
+ * @return The @a Asset object associated with the supplied
+ * @a hostName. If the hostname does not exist, the @a Asset that is
  * returned is the default empty one with an ID of -1.
  */
 Asset DbManager::GetAsset(const QString &hostName)
@@ -740,13 +740,13 @@ Asset DbManager::GetAsset(const QString &hostName)
     return a;
 }
 
-/*!
- * \brief DbManager::GetAsset
- * \param asset
- * \return The \a Asset object associated with the supplied \a Asset
- * \a id or \a hostName. If the id does not exist in the database,
- * the \a hostName is used. The \a Asset that is returned when
- * neither the \a id nor the \a hostName is in the database is the
+/**
+ * @brief DbManager::GetAsset
+ * @param asset
+ * @return The @a Asset object associated with the supplied @a Asset
+ * @a id or @a hostName. If the id does not exist in the database,
+ * the @a hostName is used. The @a Asset that is returned when
+ * neither the @a id nor the @a hostName is in the database is the
  * default empty one with an ID of -1.
  */
 Asset DbManager::GetAsset(const Asset &asset)
@@ -762,11 +762,11 @@ Asset DbManager::GetAsset(const Asset &asset)
     return GetAsset(asset.hostName);
 }
 
-/*!
- * \brief DbManager::GetAsset
- * \param id
- * \return The \a Asset object associated with the supplied \a id.
- * If the \a id does not exist, the \a Asset that is returned is the
+/**
+ * @brief DbManager::GetAsset
+ * @param id
+ * @return The @a Asset object associated with the supplied @a id.
+ * If the @a id does not exist, the @a Asset that is returned is the
  * default empty one with an ID of -1.
  */
 Asset DbManager::GetAsset(int id)
@@ -779,32 +779,32 @@ Asset DbManager::GetAsset(int id)
     return a;
 }
 
-/*!
- * \brief DbManager::GetAssets
- * \param whereClause
- * \param variables
- * \return A QList of \a Assets that are in the database. SQL
+/**
+ * @brief DbManager::GetAssets
+ * @param whereClause
+ * @param variables
+ * @return A QList of @a Assets that are in the database. SQL
  * commands are dynamically built from an optional supplied
- * \a whereClause. SQL parameters are bound by supplying them in a
- * list of tuples in the \a variables parameter.
+ * @a whereClause. SQL parameters are bound by supplying them in a
+ * list of tuples in the @a variables parameter.
  *
- * \example GetAssets
- * \title default
+ * @example GetAssets
+ * @title default
  *
  * The default GetAssets() with no parameters returns all Assets in
  * the database.
  *
- * \code
+ * @code
  * DbManager db;
  * QList<Asset> assets = db.GetAssets();
- * \endcode
+ * @endcode
  *
- * \example GetAssets(whereClause, variabes)
- * \title where clause
+ * @example GetAssetsWhere
+ * @title where clause
  *
  * A WHERE clause with parameterized SQL can be added to the query.
  *
- * \code
+ * @code
  * DbManager db;
  * int id = 4; //Asset ID 4 in the database
  * QString sampleHost = "Sample";
@@ -825,7 +825,7 @@ Asset DbManager::GetAsset(int id)
  *                       std::make_tuple<QString, QVariant>(":id", id),
  *                       std::make_tuple<QString, QVariant>(":hostName", sampleHost)
  *                   }).first();
- * \endcode
+ * @endcode
  */
 QList<Asset> DbManager::GetAssets(const QString &whereClause, const QList<std::tuple<QString, QVariant>> &variables)
 {
@@ -869,23 +869,23 @@ QList<Asset> DbManager::GetAssets(const QString &whereClause, const QList<std::t
     return ret;
 }
 
-/*!
- * \overload DbManager::GetAssets
- * \brief DbManager::GetAssets
- * \param stig
- * \return A QList of \a Assets that are associated with the supplied
- * \a STIG.
+/**
+ * @overload DbManager::GetAssets
+ * @brief DbManager::GetAssets
+ * @param stig
+ * @return A QList of @a Assets that are associated with the supplied
+ * @a STIG.
  */
 QList<Asset> DbManager::GetAssets(const STIG &stig)
 {
     return GetAssets(QStringLiteral("JOIN AssetSTIG ON AssetSTIG.AssetId = Asset.id JOIN STIG ON STIG.id = AssetSTIG.STIGId WHERE STIG.id = :id"), {std::make_tuple<QString, QVariant>(QStringLiteral(":id"), stig.id)});
 }
 
-/*!
- * \brief DbManager::GetCCI
- * \param id
- * \return The \a CCI specified by the provided database id. If the
- * \a CCI does not exist in the database, the default \a CCI with an
+/**
+ * @brief DbManager::GetCCI
+ * @param id
+ * @return The @a CCI specified by the provided database id. If the
+ * @a CCI does not exist in the database, the default @a CCI with an
  * ID of -1 is returned.
  */
 CCI DbManager::GetCCI(int id)
@@ -897,18 +897,18 @@ CCI DbManager::GetCCI(int id)
     return ret;
 }
 
-/*!
- * \brief DbManager::GetCCIByCCI
- * \param cci
- * \param stig
- * \return The \a CCI in the database that corresponds to the
- * supplied \a cci.
+/**
+ * @brief DbManager::GetCCIByCCI
+ * @param cci
+ * @param stig
+ * @return The @a CCI in the database that corresponds to the
+ * supplied @a cci.
  *
- * The \a stig parameter is optional, but it is useful for generating
+ * The @a stig parameter is optional, but it is useful for generating
  * error messages when a CCI is requested by the selected STIG.
  *
- * When the \a cci does not exist in the database, an error message
- * is opened displaying the broken \a cci information. This function
+ * When the @a cci does not exist in the database, an error message
+ * is opened displaying the broken @a cci information. This function
  * is typically called by STIG import routines, and the failure
  * scenario is most often triggered by STIGs not mapped to CCIs that
  * are part of the latest NIST 800-53rev4. Some STIG checks were
@@ -918,7 +918,7 @@ CCI DbManager::GetCCI(int id)
  * until a better mapping can be found.
  *
  * When the explicitly requested CCI or assumed default CCI-366 are
- * not in the database, the default \a CCI with ID -1 is returned.
+ * not in the database, the default @a CCI with ID -1 is returned.
  */
 CCI DbManager::GetCCIByCCI(int cci, const STIG *stig)
 {
@@ -939,13 +939,13 @@ CCI DbManager::GetCCIByCCI(int cci, const STIG *stig)
     return ret;
 }
 
-/*!
- * \overload GetCCIByCCI
- * \brief DbManager::GetCCIByCCI
- * \param cci
- * \param stig
- * \return The \a CCI identified by the ID of the supplied \a cci.
- * If the \a cci.id is not valid, the actual \a cci.cci number is
+/**
+ * @overload GetCCIByCCI
+ * @brief DbManager::GetCCIByCCI
+ * @param cci
+ * @param stig
+ * @return The @a CCI identified by the ID of the supplied @a cci.
+ * If the @a cci.id is not valid, the actual @a cci.cci number is
  * used.
  */
 CCI DbManager::GetCCIByCCI(const CCI &cci, const STIG *stig)
@@ -957,32 +957,32 @@ CCI DbManager::GetCCIByCCI(const CCI &cci, const STIG *stig)
     return GetCCI(cci.id);
 }
 
-/*!
- * \brief DbManager::GetCCIs
- * \param whereClause
- * \param variables
- * \return A QList of \a CCIs that are in the database. SQL
+/**
+ * @brief DbManager::GetCCIs
+ * @param whereClause
+ * @param variables
+ * @return A QList of @a CCIs that are in the database. SQL
  * commands are dynamically built from an optional supplied
- * \a whereClause. SQL parameters are bound by supplying them in a
- * list of tuples in the \a variables parameter.
+ * @a whereClause. SQL parameters are bound by supplying them in a
+ * list of tuples in the @a variables parameter.
  *
- * \example GetCCIs
- * \title default
+ * @example GetCCIs
+ * @title default
  *
  * The default GetCCIs() with no parameters returns all CCIs in
  * the database.
  *
- * \code
+ * @code
  * DbManager db;
  * QList<CCI> ccis = db.GetCCIs();
- * \endcode
+ * @endcode
  *
- * \example GetCCIs(whereClause, variabes)
- * \title where clause
+ * @example GetCCIsWhere
+ * @title where clause
  *
  * A WHERE clause with parameterized SQL can be added to the query.
  *
- * \code
+ * @code
  * DbManager db;
  * int id = 4; //CCI ID 4 in the database
  * int sampleCCI = 366;
@@ -1003,7 +1003,7 @@ CCI DbManager::GetCCIByCCI(const CCI &cci, const STIG *stig)
  *                       std::make_tuple<QString, QVariant>(":id", id),
  *                       std::make_tuple<QString, QVariant>(":cci", cci)
  *                   }).first();
- * \endcode
+ * @endcode
  */
 QList<CCI> DbManager::GetCCIs(const QString &whereClause, const QList<std::tuple<QString, QVariant>> &variables)
 {
@@ -1044,11 +1044,11 @@ QList<CCI> DbManager::GetCCIs(const QString &whereClause, const QList<std::tuple
     return ret;
 }
 
-/*!
- * \brief DbManager::GetCKLCheck
- * \param id
- * \return The \a CKLCheck associated with the provided database
- * \a id.
+/**
+ * @brief DbManager::GetCKLCheck
+ * @param id
+ * @return The @a CKLCheck associated with the provided database
+ * @a id.
  */
 CKLCheck DbManager::GetCKLCheck(int id)
 {
@@ -1062,13 +1062,13 @@ CKLCheck DbManager::GetCKLCheck(int id)
     return ret;
 }
 
-/*!
- * \brief DbManager::GetCKLCheck
- * \param ckl
- * \return The \a CKLCheck associated with the provided database
- * \a ckl.id. If the \a ckl.id is not set, the associated
- * \a ckl.assetId and \a ckl.stigCheckId are used to find the
- * \a CKLCheck in the database.
+/**
+ * @brief DbManager::GetCKLCheck
+ * @param ckl
+ * @return The @a CKLCheck associated with the provided database
+ * @a ckl.id. If the @a ckl.id is not set, the associated
+ * @a ckl.assetId and @a ckl.stigCheckId are used to find the
+ * @a CKLCheck in the database.
  */
 CKLCheck DbManager::GetCKLCheck(const CKLCheck &ckl)
 {
@@ -1092,14 +1092,14 @@ CKLCheck DbManager::GetCKLCheck(const CKLCheck &ckl)
     return ret;
 }
 
-/*!
- * \overload DbManager::GetCKLChecks(whereClause, variables)
- * \brief DbManager::GetCKLChecks
- * \param asset
- * \param stig
- * \return The set of \a CKLChecks associated wth the supplied
- * \a Asset. If an optional \a STIG is provided, only the
- * \a CKLChecks also associated with that STIG are returned.
+/**
+ * @overload DbManager::GetCKLChecks(whereClause, variables)
+ * @brief DbManager::GetCKLChecks
+ * @param asset
+ * @param stig
+ * @return The set of @a CKLChecks associated wth the supplied
+ * @a Asset. If an optional @a STIG is provided, only the
+ * @a CKLChecks also associated with that STIG are returned.
  */
 QList<CKLCheck> DbManager::GetCKLChecks(const Asset &asset, const STIG *stig)
 {
@@ -1113,32 +1113,32 @@ QList<CKLCheck> DbManager::GetCKLChecks(const Asset &asset, const STIG *stig)
     return GetCKLChecks(whereClause, variables);
 }
 
-/*!
- * \brief DbManager::GetCKLChecks
- * \param whereClause
- * \param variables
- * \return A QList of \a CKLChecks that are in the database. SQL
+/**
+ * @brief DbManager::GetCKLChecks
+ * @param whereClause
+ * @param variables
+ * @return A QList of @a CKLChecks that are in the database. SQL
  * commands are dynamically built from an optional supplied
- * \a whereClause. SQL parameters are bound by supplying them in a
- * list of tuples in the \a variables parameter.
+ * @a whereClause. SQL parameters are bound by supplying them in a
+ * list of tuples in the @a variables parameter.
  *
- * \example GetCKLChecks
- * \title default
+ * @example GetCKLChecks
+ * @title default
  *
  * The default GetCKLChecks() with no parameters returns all
  * CKLChecks in the database.
  *
- * \code
+ * @code
  * DbManager db;
  * QList<CKLCheck> ckls = db.GetCKLChecks();
- * \endcode
+ * @endcode
  *
- * \example GetCKLChecks(whereClause, variabes)
- * \title where clause
+ * @example GetCKLChecksWhere
+ * @title where clause
  *
  * A WHERE clause with parameterized SQL can be added to the query.
  *
- * \code
+ * @code
  * DbManager db;
  * Asset asset = GetAsset(1); //get the Asset with ID of 1 from the DB
  * STIG stig = GetSTIG(1); //get the STIG of ID 1 from the DB
@@ -1159,7 +1159,7 @@ QList<CKLCheck> DbManager::GetCKLChecks(const Asset &asset, const STIG *stig)
  *                              std::make_tuple<QString, QVariant>(":AssetId", asset.id),
  *                              std::make_tuple<QString, QVariant>(":STIGId", stig.id)
  *                          });
- * \endcode
+ * @endcode
  */
 QList<CKLCheck> DbManager::GetCKLChecks(const QString &whereClause, const QList<std::tuple<QString, QVariant> > &variables)
 {
@@ -1198,11 +1198,11 @@ QList<CKLCheck> DbManager::GetCKLChecks(const QString &whereClause, const QList<
     return ret;
 }
 
-/*!
- * \brief DbManager::GetSTIGCheck
- * \param id
- * \return The \a STIGCheck associated with the provided database
- * \a id.
+/**
+ * @brief DbManager::GetSTIGCheck
+ * @param id
+ * @return The @a STIGCheck associated with the provided database
+ * @a id.
  */
 STIGCheck DbManager::GetSTIGCheck(int id)
 {
@@ -1214,11 +1214,11 @@ STIGCheck DbManager::GetSTIGCheck(int id)
     return ret;
 }
 
-/*!
- * \brief DbManager::GetSTIGCheck
- * \param stig
- * \param rule
- * \return The \a STIGCheck associated with the provided \a STIG and
+/**
+ * @brief DbManager::GetSTIGCheck
+ * @param stig
+ * @param rule
+ * @return The @a STIGCheck associated with the provided @a STIG and
  * STIG Rule ID.
  */
 STIGCheck DbManager::GetSTIGCheck(const STIG &stig, const QString &rule)
@@ -1239,42 +1239,42 @@ STIGCheck DbManager::GetSTIGCheck(const STIG &stig, const QString &rule)
     return ret;
 }
 
-/*!
- * \brief DbManager::GetSTIGChecks
- * \param stig
- * \return All \a STIGChecks associated with the provided \a stig.
+/**
+ * @brief DbManager::GetSTIGChecks
+ * @param stig
+ * @return All @a STIGChecks associated with the provided @a stig.
  */
 QList<STIGCheck> DbManager::GetSTIGChecks(const STIG &stig)
 {
     return GetSTIGChecks(QStringLiteral("WHERE STIGCheck.STIGId = :STIGId"), {std::make_tuple<QString, QVariant>(QStringLiteral(":STIGId"), stig.id)});
 }
 
-/*!
- * \brief DbManager::GetSTIGChecks
- * \param whereClause
- * \param variables
- * \return A QList of \a STIGCheck that are in the database. SQL
+/**
+ * @brief DbManager::GetSTIGChecks
+ * @param whereClause
+ * @param variables
+ * @return A QList of @a STIGCheck that are in the database. SQL
  * commands are dynamically built from an optional supplied
- * \a whereClause. SQL parameters are bound by supplying them in a
- * list of tuples in the \a variables parameter.
+ * @a whereClause. SQL parameters are bound by supplying them in a
+ * list of tuples in the @a variables parameter.
  *
- * \example GetSTIGChecks
- * \title default
+ * @example GetSTIGChecks
+ * @title default
  *
  * The default GetSTIGChecks() with no parameters returns all
  * STIGChecks in the database.
  *
- * \code
+ * @code
  * DbManager db;
  * QList<STIGCheck> checks = db.GetSTIGChecks();
- * \endcode
+ * @endcode
  *
- * \example GetSTIGChecks(whereClause, variabes)
- * \title where clause
+ * @example GetSTIGChecksWhere
+ * @title where clause
  *
  * A WHERE clause with parameterized SQL can be added to the query.
  *
- * \code
+ * @code
  * DbManager db;
  * CCI cci = GetCCIByCCI(366); //get the CCI "CCI-000366" from the DB
  * STIG stig = GetSTIG(1); //get the STIG of ID 1 from the DB
@@ -1295,7 +1295,7 @@ QList<STIGCheck> DbManager::GetSTIGChecks(const STIG &stig)
  *                                 std::make_tuple<QString, QVariant>(":CCIId", cci.id),
  *                                 std::make_tuple<QString, QVariant>(":STIGId", stig.id)
  *                      });
- * \endcode
+ * @endcode
  */
 QList<STIGCheck> DbManager::GetSTIGChecks(const QString &whereClause, const QList<std::tuple<QString, QVariant> > &variables)
 {
@@ -1350,43 +1350,43 @@ QList<STIGCheck> DbManager::GetSTIGChecks(const QString &whereClause, const QLis
     return ret;
 }
 
-/*!
- * \brief DbManager::GetSTIGs
- * \param asset
- * \return The \a STIGs in the database associated with the provided
- * \a Asset.
+/**
+ * @brief DbManager::GetSTIGs
+ * @param asset
+ * @return The @a STIGs in the database associated with the provided
+ * @a Asset.
  */
 QList<STIG> DbManager::GetSTIGs(const Asset &asset)
 {
     return GetSTIGs(QStringLiteral("WHERE STIG.id IN (SELECT STIGId FROM AssetSTIG WHERE AssetId = :AssetId)"), {std::make_tuple<QString, QVariant>(QStringLiteral(":AssetId"), asset.id)});
 }
 
-/*!
- * \brief DbManager::GetSTIGs
- * \param whereClause
- * \param variables
- * \return A QList of \a STIGs that are in the database. SQL
+/**
+ * @brief DbManager::GetSTIGs
+ * @param whereClause
+ * @param variables
+ * @return A QList of @a STIGs that are in the database. SQL
  * commands are dynamically built from an optional supplied
- * \a whereClause. SQL parameters are bound by supplying them in a
- * list of tuples in the \a variables parameter.
+ * @a whereClause. SQL parameters are bound by supplying them in a
+ * list of tuples in the @a variables parameter.
  *
- * \example GetSTIGs
- * \title default
+ * @example GetSTIGs
+ * @title default
  *
- * The default GetSTIGs() with no parameters returns all \a STIGs in
+ * The default GetSTIGs() with no parameters returns all @a STIGs in
  * the database.
  *
- * \code
+ * @code
  * DbManager db;
  * QList<STIG> stigs = db.GetSTIGs();
- * \endcode
+ * @endcode
  *
- * \example GetSTIGs(whereClause, variabes)
- * \title where clause
+ * @example GetSTIGsWhere
+ * @title where clause
  *
  * A WHERE clause with parameterized SQL can be added to the query.
  *
- * \code
+ * @code
  * DbManager db;
  * int id = 4; //STIG ID 4 in the database
  * QString sampleTitle = "Application Security and Development Security Technical Implementation Guide";
@@ -1400,7 +1400,7 @@ QList<STIG> DbManager::GetSTIGs(const Asset &asset)
  * stig = GetSTIGs("WHERE title = :title",
  *                      {std::make_tuple<QString, QVariant>(":title", sampleTitle)}
  *                ).first();
- * \endcode
+ * @endcode
  */
 QList<STIG> DbManager::GetSTIGs(const QString &whereClause, const QList<std::tuple<QString, QVariant>> &variables)
 {
@@ -1438,11 +1438,11 @@ QList<STIG> DbManager::GetSTIGs(const QString &whereClause, const QList<std::tup
     return ret;
 }
 
-/*!
- * \brief DbManager::GetControl
- * \param id
- * \return The \a Control in the database associated with the
- * provided ID. If the \a Control does not exist in the database, the
+/**
+ * @brief DbManager::GetControl
+ * @param id
+ * @return The @a Control in the database associated with the
+ * provided ID. If the @a Control does not exist in the database, the
  * default Control with an ID of -1 is returned.
  */
 Control DbManager::GetControl(int id)
@@ -1455,20 +1455,20 @@ Control DbManager::GetControl(int id)
     return ret;
 }
 
-/*!
- * \brief DbManager::GetControl
- * \param control
- * \return The \a Control in the database associated with the
- * provided control string. If the \a Control does not exist in the
+/**
+ * @brief DbManager::GetControl
+ * @param control
+ * @return The @a Control in the database associated with the
+ * provided control string. If the @a Control does not exist in the
  * database, the default Control with an ID of -1 is returned.
  *
- * \example GetControl
- * \title Control Name Parsing
+ * @example GetControl
+ * @title Control Name Parsing
  *
- * \code
+ * @code
  * DbManager db;
  * Control control = db.GetControl("AC-1 (4)");
- * \endcode
+ * @endcode
  */
 Control DbManager::GetControl(const QString &control)
 {
@@ -1520,36 +1520,36 @@ Control DbManager::GetControl(const QString &control)
     return ret;
 }
 
-/*!
- * \brief DbManager::GetControls
- * \param whereClause
- * \param variables
- * \return A QList of \a Controls that are in the database. SQL
+/**
+ * @brief DbManager::GetControls
+ * @param whereClause
+ * @param variables
+ * @return A QList of @a Controls that are in the database. SQL
  * commands are dynamically built from an optional supplied
- * \a whereClause. SQL parameters are bound by supplying them in a
- * list of tuples in the \a variables parameter.
+ * @a whereClause. SQL parameters are bound by supplying them in a
+ * list of tuples in the @a variables parameter.
  *
- * Since a \a Control cannot exist without a \a Family, the \a Family
- * table is automatically joined to the \a Control in the internal
+ * Since a @a Control cannot exist without a @a Family, the @a Family
+ * table is automatically joined to the @a Control in the internal
  * query.
  *
- * \example GetControls
- * \title default
+ * @example GetControls
+ * @title default
  *
  * The default GetControls() with no parameters returns all
- * \a Controls in the database.
+ * @a Controls in the database.
  *
- * \code
+ * @code
  * DbManager db;
  * QList<Control> controls = db.GetControls();
- * \endcode
+ * @endcode
  *
- * \example GetControls(whereClause, variabes)
- * \title where clause
+ * @example GetControlsWhere
+ * @title where clause
  *
  * A WHERE clause with parameterized SQL can be added to the query.
  *
- * \code
+ * @code
  * DbManager db;
  * int id = 4; //Control ID 4 in the database
  *
@@ -1562,7 +1562,7 @@ Control DbManager::GetControl(const QString &control)
  * QList<Control> controls = GetControls("WHERE Control.description LIKE :description",
  *                                            {std::make_tuple<QString, QVariant>(":description", "%audit record%")}
  *                                      );
- * \endcode
+ * @endcode
  */
 QList<Control> DbManager::GetControls(const QString &whereClause, const QList<std::tuple<QString, QVariant>> &variables)
 {
@@ -1599,11 +1599,11 @@ QList<Control> DbManager::GetControls(const QString &whereClause, const QList<st
     return ret;
 }
 
-/*!
- * \brief DbManager::GetFamily
- * \param id
- * \return The \a Family associated with the provided database \a id.
- * If the \a id is not in the database, the default \a Family with an
+/**
+ * @brief DbManager::GetFamily
+ * @param id
+ * @return The @a Family associated with the provided database @a id.
+ * If the @a id is not in the database, the default @a Family with an
  * ID of -1 is returned.
  */
 Family DbManager::GetFamily(int id)
@@ -1616,11 +1616,11 @@ Family DbManager::GetFamily(int id)
     return ret;
 }
 
-/*!
- * \brief DbManager::GetFamily
- * \param acronym
- * \return The \a Family associated with the provided \a acronym. If
- * the \a acronym is not in the database, the default \a Family with
+/**
+ * @brief DbManager::GetFamily
+ * @param acronym
+ * @return The @a Family associated with the provided @a acronym. If
+ * the @a acronym is not in the database, the default @a Family with
  * an ID of -1 is returned.
  */
 Family DbManager::GetFamily(const QString &acronym)
@@ -1633,32 +1633,32 @@ Family DbManager::GetFamily(const QString &acronym)
     return ret;
 }
 
-/*!
- * \brief DbManager::GetFamilies
- * \param whereClause
- * \param variables
- * \return A QList of \a Families that are in the database. SQL
+/**
+ * @brief DbManager::GetFamilies
+ * @param whereClause
+ * @param variables
+ * @return A QList of @a Families that are in the database. SQL
  * commands are dynamically built from an optional supplied
- * \a whereClause. SQL parameters are bound by supplying them in a
- * list of tuples in the \a variables parameter.
+ * @a whereClause. SQL parameters are bound by supplying them in a
+ * list of tuples in the @a variables parameter.
  *
- * \example GetFamilies
- * \title default
+ * @example GetFamilies
+ * @title default
  *
  * The default GetFamilies() with no parameters returns all
- * \a Families in the database.
+ * @a Families in the database.
  *
- * \code
+ * @code
  * DbManager db;
  * QList<Family> families = db.GetFamilies();
- * \endcode
+ * @endcode
  *
- * \example GetFamilies(whereClause, variabes)
- * \title where clause
+ * @example GetFamiliesWhere
+ * @title where clause
  *
  * A WHERE clause with parameterized SQL can be added to the query.
  *
- * \code
+ * @code
  * DbManager db;
  * int id = 4; //Family ID 4 in the database
  * QString sampleAcronym = "AC";
@@ -1672,7 +1672,7 @@ Family DbManager::GetFamily(const QString &acronym)
  * family = GetFamilies("WHERE Family.acronym = :acronym",
  *                           {std::make_tuple<QString, QVariant>(":acronym", "AC")}
  *                     ).first();
- * \endcode
+ * @endcode
  */
 QList<Family> DbManager::GetFamilies(const QString &whereClause, const QList<std::tuple<QString, QVariant>> &variables)
 {
@@ -1706,11 +1706,11 @@ QList<Family> DbManager::GetFamilies(const QString &whereClause, const QList<std
     return ret;
 }
 
-/*!
- * \brief DbManager::GetSTIG
- * \param id
- * \return The \a STIG associated with the provided database \a id.
- * If the \a STIG does not exist in the database, the default \a STIG
+/**
+ * @brief DbManager::GetSTIG
+ * @param id
+ * @return The @a STIG associated with the provided database @a id.
+ * If the @a STIG does not exist in the database, the default @a STIG
  * with an id of -1 is returned.
  */
 STIG DbManager::GetSTIG(int id)
@@ -1723,15 +1723,15 @@ STIG DbManager::GetSTIG(int id)
     return ret;
 }
 
-/*!
- * \brief DbManager::GetSTIG
- * \param id
- * \return The \a STIG associated with the provided \a STIG metadata.
- * If the \a STIG does not exist in the database, the default \a STIG
+/**
+ * @brief DbManager::GetSTIG
+ * @param id
+ * @return The @a STIG associated with the provided @a STIG metadata.
+ * If the @a STIG does not exist in the database, the default @a STIG
  * with an id of -1 is returned.
  *
- * A \a STIG has an implied unique constraint formed with the
- * \a title, \a version, and \a release metadata.
+ * A @a STIG has an implied unique constraint formed with the
+ * @a title, @a version, and @a release metadata.
  */
 STIG DbManager::GetSTIG(const QString &title, int version, const QString &release)
 {
@@ -1747,13 +1747,13 @@ STIG DbManager::GetSTIG(const QString &title, int version, const QString &releas
     return ret;
 }
 
-/*!
- * \brief DbManager::GetSTIG
- * \param stig
- * \return The provided \a STIG is checked to make sure that it is
- * part of the database. If the provided \a stig.id is not in the
- * database, the metadata elements are checked. If the \a STIG is
- * still not found, the default \a STIG with an id of -1 is returned.
+/**
+ * @brief DbManager::GetSTIG
+ * @param stig
+ * @return The provided @a STIG is checked to make sure that it is
+ * part of the database. If the provided @a stig.id is not in the
+ * database, the metadata elements are checked. If the @a STIG is
+ * still not found, the default @a STIG with an id of -1 is returned.
  */
 STIG DbManager::GetSTIG(const STIG &stig)
 {
@@ -1768,10 +1768,10 @@ STIG DbManager::GetSTIG(const STIG &stig)
     return GetSTIG(stig.title, stig.version, stig.release);
 }
 
-/*!
- * \brief DbManager::GetVariable
- * \param name
- * \return The value associated with the requested variable.
+/**
+ * @brief DbManager::GetVariable
+ * @param name
+ * @return The value associated with the requested variable.
  *
  * The internal variables table stores program-related metadata, such
  * as the version of the database. This version number is checked
@@ -1796,11 +1796,11 @@ QString DbManager::GetVariable(const QString &name)
     return ret;
 }
 
-/*!
- * \brief DbManager::UpdateCKLCheck
- * \param check
- * \return \c True when the database is updated with the supplied
- * \a CKLCheck information. Otherwise, \c false.
+/**
+ * @brief DbManager::UpdateCKLCheck
+ * @param check
+ * @return @c True when the database is updated with the supplied
+ * @a CKLCheck information. Otherwise, @c false.
  */
 bool DbManager::UpdateCKLCheck(const CKLCheck &check)
 {
@@ -1827,12 +1827,12 @@ bool DbManager::UpdateCKLCheck(const CKLCheck &check)
     return ret;
 }
 
-/*!
- * \brief DbManager::UpdateVariable
- * \param name
- * \param value
- * \return \c True when the variable is updated in the database.
- * Otherwise, \c false.
+/**
+ * @brief DbManager::UpdateVariable
+ * @param name
+ * @param value
+ * @return @c True when the variable is updated in the database.
+ * Otherwise, @c false.
  */
 bool DbManager::UpdateVariable(const QString &name, const QString &value)
 {
@@ -1849,11 +1849,11 @@ bool DbManager::UpdateVariable(const QString &name, const QString &value)
     return ret;
 }
 
-/*!
- * \brief DbManager::CheckDatabase
- * \param db
- * \return \c True when the database connection is ready to use.
- * Otherwise, \c false.
+/**
+ * @brief DbManager::CheckDatabase
+ * @param db
+ * @return @c True when the database connection is ready to use.
+ * Otherwise, @c false.
  *
  * Each thread in the application gets it own database connection.
  * Calling CheckDatabase on the QSqlDatabase will bind it to the
@@ -1870,11 +1870,11 @@ bool DbManager::CheckDatabase(QSqlDatabase &db)
     return db.isValid();
 }
 
-/*!
- * \brief DbManager::UpdateDatabaseFromVersion
- * \param version
- * \return \c True when the database is up-to-date or updated.
- * Otherwise, \c false.
+/**
+ * @brief DbManager::UpdateDatabaseFromVersion
+ * @param version
+ * @return @c True when the database is up-to-date or updated.
+ * Otherwise, @c false.
  */
 bool DbManager::UpdateDatabaseFromVersion(int version)
 {

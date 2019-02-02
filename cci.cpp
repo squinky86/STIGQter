@@ -20,9 +20,9 @@
 #include "cci.h"
 #include "dbmanager.h"
 
-/*!
- * \class CCI
- * \brief A Control Correlation Identifier (CCI) corresponds to a
+/**
+ * @class CCI
+ * @brief A Control Correlation Identifier (CCI) corresponds to a
  * particular RMF checklist item. The RMF hierarchy consists of
  * Family → Control → CCI.
  *
@@ -31,12 +31,12 @@
  * repository.
  *
  * More information about CCIs is available from
- * \l {https://iase.disa.mil/stigs/cci/Pages/index.aspx} {DISA's IASE website}.
+ * @l {https://iase.disa.mil/stigs/cci/Pages/index.aspx} {DISA's IASE website}.
  */
 
-/*!
- * \brief CCI::CCI
- * \param parent
+/**
+ * @brief CCI::CCI
+ * @param parent
  *
  * Default constructor.
  */
@@ -53,10 +53,10 @@ CCI::CCI(QObject *parent) : QObject(parent),
 {
 }
 
-/*!
- * \overload CCI::CCI()
- * \brief CCI::CCI
- * \param right
+/**
+ * @overload CCI::CCI()
+ * @brief CCI::CCI
+ * @param right
  *
  * Copy constructor.
  */
@@ -65,9 +65,9 @@ CCI::CCI(const CCI &right) : CCI(right.parent())
     *this = right;
 }
 
-/*!
- * \brief CCI::Control
- * \return the RMF control associated with this CCI
+/**
+ * @brief CCI::Control
+ * @return the RMF control associated with this CCI
  *
  * Control() calls the database to obtain the control which maps to
  * this CCI.
@@ -78,10 +78,10 @@ Control CCI::Control()
     return db.GetControl(controlId);
 }
 
-/*!
- * \brief CCI::operator=
- * \param right
- * \return This \a CCI, copied from the assignee.
+/**
+ * @brief CCI::operator=
+ * @param right
+ * @return This @a CCI, copied from the assignee.
  *
  * Deep copy assignment operator.
  */
@@ -102,11 +102,11 @@ CCI& CCI::operator=(const CCI &right)
     return *this;
 }
 
-/*!
- * \brief CCI::operator==
- * \param right
- * \return \c true when the actual CCI numbers are the same.
- * Otherwise, \c false.
+/**
+ * @brief CCI::operator==
+ * @param right
+ * @return @c true when the actual CCI numbers are the same.
+ * Otherwise, @c false.
  *
  * Only the CCI number is compared, in case there is a shallow copy
  * or database inconsistency. The database IDs and compliance state
@@ -121,21 +121,21 @@ bool CCI::operator==(const CCI &right)
     return id == right.id;
 }
 
-/*!
- * \brief PrintCCI
- * \param cci
- * \return human-readable CCI description
+/**
+ * @brief PrintCCI
+ * @param cci
+ * @return human-readable CCI description
  */
 QString PrintCCI(int cci)
 {
     return "CCI-" + QString::number(cci).rightJustified(6, '0');
 }
 
-/*!
- * \overload PrintCCI(cci)
- * \brief PrintCCI
- * \param cci
- * \return human-readable CCI description
+/**
+ * @overload PrintCCI(cci)
+ * @brief PrintCCI
+ * @param cci
+ * @return human-readable CCI description
  */
 QString PrintCCI(const CCI &cci)
 {

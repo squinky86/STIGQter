@@ -20,33 +20,33 @@
 #include "cklcheck.h"
 #include "dbmanager.h"
 
-/*!
- * \class CKLCheck
- * \brief A Checklist (CKL) Check represents the compliance \a Status
- * of an \a Asset's individual \a STIGCheck.
+/**
+ * @class CKLCheck
+ * @brief A Checklist (CKL) Check represents the compliance @a Status
+ * of an @a Asset's individual @a STIGCheck.
  *
- * The \a Severity of the check be overridden at the CKL level.
+ * The @a Severity of the check be overridden at the CKL level.
  */
 
-/*!
- * \enum Status
+/**
+ * @enum Status
  *
- * A \a CKLCheck maps a \a STIGCheck to an \a Asset, and the
- * compliance state is stored as a \a Status.
+ * A @a CKLCheck maps a @a STIGCheck to an @a Asset, and the
+ * compliance state is stored as a @a Status.
  *
- * \value NotReviewed
+ * @value NotReviewed
  *        The check has not been reviewed.
- * \value Open
+ * @value Open
  *        The check is not compliant.
- * \value NotAFinding,
+ * @value NotAFinding,
  *        The check is compliant.
- * \value NotApplicable
- *        The check is not applicable to the \a Asset.
+ * @value NotApplicable
+ *        The check is not applicable to the @a Asset.
  */
 
-/*!
- * \brief CKLCheck::CKLCheck
- * \param parent
+/**
+ * @brief CKLCheck::CKLCheck
+ * @param parent
  *
  * Default constructor.
  */
@@ -62,10 +62,10 @@ CKLCheck::CKLCheck(QObject *parent) : QObject(parent),
 {
 }
 
-/*!
- * \overload CKLCheck::CKLCheck()
- * \brief CKLCheck::CKLCheck
- * \param right
+/**
+ * @overload CKLCheck::CKLCheck()
+ * @brief CKLCheck::CKLCheck
+ * @param right
  *
  * Copy constructor.
  */
@@ -74,13 +74,13 @@ CKLCheck::CKLCheck(const CKLCheck &right) : CKLCheck(right.parent())
     *this = right;
 }
 
-/*!
- * \brief CKLCheck::Asset
- * \return The \a Asset associated with this check.
+/**
+ * @brief CKLCheck::Asset
+ * @return The @a Asset associated with this check.
  *
- * A check maps an \a Asset to a \a STIGCheck and stores its
+ * A check maps an @a Asset to a @a STIGCheck and stores its
  * compliance state. This function retrieves the associated
- * \a Asset.
+ * @a Asset.
  */
 Asset CKLCheck::Asset() const
 {
@@ -88,13 +88,13 @@ Asset CKLCheck::Asset() const
     return db.GetAsset(assetId);
 }
 
-/*!
- * \brief CKLCheck::STIGCheck
- * \return The \a STIGCheck associated with this check.
+/**
+ * @brief CKLCheck::STIGCheck
+ * @return The @a STIGCheck associated with this check.
  *
- * A check maps an \a Asset to a \a STIGCheck and stores its
+ * A check maps an @a Asset to a @a STIGCheck and stores its
  * compliance state. This function retrieves the associated
- * \a STIGCheck.
+ * @a STIGCheck.
  */
 STIGCheck CKLCheck::STIGCheck() const
 {
@@ -102,12 +102,12 @@ STIGCheck CKLCheck::STIGCheck() const
     return db.GetSTIGCheck(stigCheckId);
 }
 
-/*!
- * \brief CKLCheck::GetSeverity
- * \return The \a Severity of this check.
+/**
+ * @brief CKLCheck::GetSeverity
+ * @return The @a Severity of this check.
  *
- * When the \a Severity is overridden, the overridden \a Severity is
- * returned. Otherwise, the \a STIGCheck's default \a Severity is
+ * When the @a Severity is overridden, the overridden @a Severity is
+ * returned. Otherwise, the @a STIGCheck's default @a Severity is
  * returned.
  */
 Severity CKLCheck::GetSeverity() const
@@ -117,10 +117,10 @@ Severity CKLCheck::GetSeverity() const
     return severityOverride;
 }
 
-/*!
- * \brief CKLCheck::operator =
- * \param right
- * \return This \a CKLCheck, copied from the assignee.
+/**
+ * @brief CKLCheck::operator =
+ * @param right
+ * @return This @a CKLCheck, copied from the assignee.
  *
  * Deep copy assignment operator.
  */
@@ -140,15 +140,15 @@ CKLCheck &CKLCheck::operator=(const CKLCheck &right)
     return *this;
 }
 
-/*!
- * \brief GetStatus
- * \param status
- * \return A \a Status enum representing the provided string's
+/**
+ * @brief GetStatus
+ * @param status
+ * @return A @a Status enum representing the provided string's
  * compliance.
  *
  * When parsing XML, several file types are inconsistent with how the
  * compliance status is stored. Passing the string to this function
- * will retrieve a standard \a Status enum from the string.
+ * will retrieve a standard @a Status enum from the string.
  */
 Status GetStatus(const QString &status)
 {
@@ -161,15 +161,15 @@ Status GetStatus(const QString &status)
     return Status::NotReviewed;
 }
 
-/*!
- * \brief GetStatus
- * \param status
- * \param xmlFormat
- * \return The XML-formatted string for the compliance status.
+/**
+ * @brief GetStatus
+ * @param status
+ * @param xmlFormat
+ * @return The XML-formatted string for the compliance status.
  *
- * Converts the \a Status enum back to a human-readable (when
- * \a xmlFormat is \c false) or XML-formatted (when \a xmlFormat is
- * \c true) string.
+ * Converts the @a Status enum back to a human-readable (when
+ * @a xmlFormat is @c false) or XML-formatted (when @a xmlFormat is
+ * @c true) string.
  */
 QString GetStatus(Status status, bool xmlFormat)
 {
@@ -186,10 +186,10 @@ QString GetStatus(Status status, bool xmlFormat)
     }
 }
 
-/*!
- * \brief PrintCKLCheck
- * \param cklCheck
- * \return Human-readable printout of the \a STIGCheck component.
+/**
+ * @brief PrintCKLCheck
+ * @param cklCheck
+ * @return Human-readable printout of the @a STIGCheck component.
  */
 QString PrintCKLCheck(const CKLCheck &cklCheck)
 {

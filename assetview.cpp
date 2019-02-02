@@ -33,9 +33,9 @@
 #include <QXmlStreamWriter>
 #include <QTimer>
 
-/*!
- * \class AssetView
- * \brief The STIGViewer-like display of an Asset's STIG, checks, and
+/**
+ * @class AssetView
+ * @brief The STIGViewer-like display of an Asset's STIG, checks, and
  * compliance status.
  *
  * The AssetView is the main STIG compliance view for a singular
@@ -46,10 +46,10 @@
  * by the user.
  */
 
-/*!
- * \brief AssetView::AssetView
- * \param asset
- * \param parent
+/**
+ * @brief AssetView::AssetView
+ * @param asset
+ * @param parent
  *
  * Main constructor.
  */
@@ -97,10 +97,10 @@ AssetView::AssetView(const Asset &asset, QWidget *parent) :
         Display();
 }
 
-/*!
- * \overload AssetView()
- * \brief AssetView::AssetView
- * \param parent
+/**
+ * @overload AssetView()
+ * @brief AssetView::AssetView
+ * @param parent
  *
  * A new tab is created for the supplied Asset.
  */
@@ -108,7 +108,7 @@ AssetView::AssetView(QWidget *parent) : AssetView(_asset, parent)
 {
 }
 
-/*!
+/**
  * Destructor.
  */
 AssetView::~AssetView()
@@ -119,8 +119,8 @@ AssetView::~AssetView()
     delete ui;
 }
 
-/*!
- * \brief AssetView::Display
+/**
+ * @brief AssetView::Display
  *
  * Shows the STIGs and CKL Checks for the selected Asset
  */
@@ -130,8 +130,8 @@ void AssetView::Display()
     ShowChecks();
 }
 
-/*!
- * \brief AssetView::SelectSTIGs
+/**
+ * @brief AssetView::SelectSTIGs
  *
  * Marks the STIGs that are tied to the Asset as selected in the
  * list of all possible STIGs.
@@ -152,8 +152,8 @@ void AssetView::SelectSTIGs()
     //ui->lstSTIGs->blockSignals(false);
 }
 
-/*!
- * \brief AssetView::CountChecks
+/**
+ * @brief AssetView::CountChecks
  *
  * Display/update the count of checks and their compliance statuses.
  */
@@ -162,12 +162,12 @@ void AssetView::CountChecks()
     ShowChecks(true);
 }
 
-/*!
- * \brief AssetView::ShowChecks
- * \param countOnly
+/**
+ * @brief AssetView::ShowChecks
+ * @param countOnly
  *
- * When \a countOnly is \c true, the number of checks and their
- * compliance statuses are updated. When \a countOnly is \c false,
+ * When @a countOnly is @c true, the number of checks and their
+ * compliance statuses are updated. When @a countOnly is @c false,
  * the display of CKL Checks is also updated.
  */
 void AssetView::ShowChecks(bool countOnly)
@@ -207,12 +207,12 @@ void AssetView::ShowChecks(bool countOnly)
         ui->lstChecks->sortItems();
 }
 
-/*!
- * \brief AssetView::UpdateCKLCheck
- * \param cklCheck
+/**
+ * @brief AssetView::UpdateCKLCheck
+ * @param cklCheck
  *
  * Updates the displayed information about the selected CKL check,
- * \a cc, with information from the database.
+ * @a cc, with information from the database.
  */
 void AssetView::UpdateCKLCheck(const CKLCheck &cklCheck)
 {
@@ -224,7 +224,7 @@ void AssetView::UpdateCKLCheck(const CKLCheck &cklCheck)
     ui->cboBoxStatus->blockSignals(true);
     ui->cboBoxSeverity->blockSignals(true);
 
-    //write \a cc information to the user interface
+    //write @a cc information to the user interface
     ui->cboBoxStatus->setCurrentText(GetStatus(cklCheck.status));
     ui->txtComments->clear();
     ui->txtComments->insertPlainText(cklCheck.comments);
@@ -244,9 +244,9 @@ void AssetView::UpdateCKLCheck(const CKLCheck &cklCheck)
     ui->cboBoxSeverity->blockSignals(false);
 }
 
-/*!
- * \brief AssetView::UpdateSTIGCheck
- * \param stigCheck
+/**
+ * @brief AssetView::UpdateSTIGCheck
+ * @param stigCheck
  *
  * Fill in user-interface information with the provided STIG.
  */
@@ -263,9 +263,9 @@ void AssetView::UpdateSTIGCheck(const STIGCheck &stigCheck)
     ui->lblCheck->setText(stigCheck.check);
 }
 
-/*!
- * \brief AssetView::SetTabIndex
- * \param index
+/**
+ * @brief AssetView::SetTabIndex
+ * @param index
  *
  * Keep up with which index this tab is in the interface.
  */
@@ -274,8 +274,8 @@ void AssetView::SetTabIndex(int index)
     _tabIndex = index;
 }
 
-/*!
- * \brief AssetView::CheckSelectedChanged
+/**
+ * @brief AssetView::CheckSelectedChanged
  *
  * Disables the ability to set finding details for multiple CKL
  * Checks at a time.
@@ -298,8 +298,8 @@ void AssetView::CheckSelectedChanged()
     }
 }
 
-/*!
- * \brief AssetView::DeleteAsset
+/**
+ * @brief AssetView::DeleteAsset
  *
  * Deletes this Asset from the database.
  */
@@ -339,8 +339,8 @@ void AssetView::KeyShortcutCtrlX()
     KeyShortcut(Status::NotApplicable);
 }
 
-/*!
- * \brief AssetView::SaveCKL
+/**
+ * @brief AssetView::SaveCKL
  *
  * Save the selected Asset as a single CKL file.
  */
@@ -704,9 +704,9 @@ void AssetView::SaveCKL()
     }
 }
 
-/*!
- * \brief AssetView::KeyShortcut
- * \param action
+/**
+ * @brief AssetView::KeyShortcut
+ * @param action
  *
  * When a keyboard shortcut is used, set the display element to
  * correspond.
@@ -733,8 +733,8 @@ void AssetView::KeyShortcut(Status action)
     }
 }
 
-/*!
- * \brief AssetView::UpdateCKLHelper
+/**
+ * @brief AssetView::UpdateCKLHelper
  *
  * Update the database with user-modified data from the interface.
  */
@@ -775,8 +775,8 @@ void AssetView::UpdateCKLHelper()
     }
 }
 
-/*!
- * \brief AssetView::UpdateCKL
+/**
+ * @brief AssetView::UpdateCKL
  *
  * Detects when the user has made a change and been idle for a while.
  */
@@ -787,9 +787,9 @@ void AssetView::UpdateCKL()
     _timer.start(180);
 }
 
-/*!
- * \brief AssetView::UpdateCKLStatus
- * \param val
+/**
+ * @brief AssetView::UpdateCKLStatus
+ * @param val
  * Trigger updating the visual elements for when the CKL status
  * changes its compliance state.
  */
@@ -811,9 +811,9 @@ void AssetView::UpdateCKLStatus(const QString &val)
     }
 }
 
-/*!
- * \brief AssetView::UpdateCKLSeverity
- * \param val
+/**
+ * @brief AssetView::UpdateCKLSeverity
+ * @param val
  *
  * Handle changing the CKL check's severity when the CKL check's
  * severity has been overwritten.
@@ -861,8 +861,8 @@ void AssetView::UpdateCKLSeverity(const QString &val)
     }
 }
 
-/*!
- * \brief AssetView::UpdateSTIGs
+/**
+ * @brief AssetView::UpdateSTIGs
  *
  * Handle the selection of which STIGs are included with the viewed
  * Asset;
@@ -901,11 +901,11 @@ void AssetView::UpdateSTIGs()
     }
 }
 
-/*!
- * \brief AssetView::SetItemColor
- * \param i
- * \param stat
- * \param sev
+/**
+ * @brief AssetView::SetItemColor
+ * @param i
+ * @param stat
+ * @param sev
  *
  * Sets the QListWidgetItem's color so that attention is drawn to it,
  * particularly when the check is non-compliant.
@@ -948,8 +948,8 @@ void AssetView::SetItemColor(QListWidgetItem *i, Status stat, Severity sev)
     }
 }
 
-/*!
- * \brief AssetView::CheckSelected
+/**
+ * @brief AssetView::CheckSelected
  *
  * When a new CKL check is selected, make sure that the previously displayed
  * one has updated its elements correctly.

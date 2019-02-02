@@ -29,15 +29,15 @@
 #include <QString>
 #include <QtNetwork>
 
-/*!
- * \brief CleanXML
- * \param s
- * \param isXml
- * \return The Tidy'd, well-formed XML.
+/**
+ * @brief CleanXML
+ * @param s
+ * @param isXml
+ * @return The Tidy'd, well-formed XML.
  *
  * This function comes from Tidy's documentation and has been
  * slightly modified. For more information, see
- * \l {http://api.html-tidy.org/tidy/tidylib_api_5.1.25/group__Basic.html#details} {Tidy's documentation}
+ * @l {http://api.html-tidy.org/tidy/tidylib_api_5.1.25/group__Basic.html#details} {Tidy's documentation}
  */
 QString CleanXML(QString s, bool isXml)
 {
@@ -78,15 +78,15 @@ QString CleanXML(QString s, bool isXml)
     return ret;
 }
 
-/*!
- * \brief DownloadFile
- * \param url
- * \param file
- * \return \c True when the file is successfully downloaded.
- * Otherwise, \c false.
+/**
+ * @brief DownloadFile
+ * @param url
+ * @param file
+ * @return @c True when the file is successfully downloaded.
+ * Otherwise, @c false.
  *
- * Given a \a url, the contents of that URL are written to the handle
- * supplied in the \a file parameter.
+ * Given a @a url, the contents of that URL are written to the handle
+ * supplied in the @a file parameter.
  */
 bool DownloadFile(const QUrl &url, QFile *file)
 {
@@ -133,12 +133,12 @@ bool DownloadFile(const QUrl &url, QFile *file)
 
     return true;
 }
-/*!
- * \brief DownloadPage
- * \param url
- * \return A string of the downloaded page.
+/**
+ * @brief DownloadPage
+ * @param url
+ * @return A string of the downloaded page.
  *
- * Downloads the text from the requested \a url.
+ * Downloads the text from the requested @a url.
  */
 QString DownloadPage(const QUrl &url)
 {
@@ -162,10 +162,10 @@ QString DownloadPage(const QUrl &url)
     return html;
 }
 
-/*!
- * \brief GetCCINumber
- * \param cci
- * \return The numeric value of the CCI.
+/**
+ * @brief GetCCINumber
+ * @param cci
+ * @return The numeric value of the CCI.
  *
  * Converts a string "CCI-######" to its integral format.
  */
@@ -177,11 +177,11 @@ int GetCCINumber(QString cci)
     return cci.toInt();
 }
 
-/*!
- * \brief GetFilesFromZip
- * \param fileName
- * \param fileNameFilter
- * \return A map of the extracted files in the zip.
+/**
+ * @brief GetFilesFromZip
+ * @param fileName
+ * @param fileNameFilter
+ * @return A map of the extracted files in the zip.
  *
  * Extracts a zip file and stores the contents in memory.
  *
@@ -241,19 +241,19 @@ QMap<QString, QByteArray> GetFilesFromZip(const QString &fileName, const QString
     return ret;
 }
 
-/*!
- * \brief GetUserAgent
- * \return The User-Agent to use when making web requests.
+/**
+ * @brief GetUserAgent
+ * @return The User-Agent to use when making web requests.
  */
 QString GetUserAgent()
 {
     return QString(QStringLiteral("STIGQter/")) + QStringLiteral(VERSION);
 }
 
-/*!
- * \brief Excelify
- * \param s
- * \return The string \a s formatted in a way that Excel can
+/**
+ * @brief Excelify
+ * @param s
+ * @return The string @a s formatted in a way that Excel can
  * understand.
  */
 QString Excelify(const QString &s)
@@ -263,23 +263,23 @@ QString Excelify(const QString &s)
     return ret;
 }
 
-/*!
- * \brief Pluralize
- * \param count
- * \param plural
- * \param singular
- * \return \c \a plural when \a count indicates that plural usage is
- * appropriate. Otherwise, \c \a singular.
+/**
+ * @brief Pluralize
+ * @param count
+ * @param plural
+ * @param singular
+ * @return @c @a plural when @a count indicates that plural usage is
+ * appropriate. Otherwise, @c @a singular.
  */
 QString Pluralize(const int count, const QString &plural, const QString &singular)
 {
     return (count == 1) ? singular : plural;
 }
 
-/*!
- * \brief PrintTrueFalse
- * \param tf
- * \return human-readable boolean.
+/**
+ * @brief PrintTrueFalse
+ * @param tf
+ * @return human-readable boolean.
  */
 QString PrintTrueFalse(bool tf)
 {
@@ -293,10 +293,10 @@ QString Sanitize(QString s)
     return s;
 }
 
-/*!
- * \brief TrimFileName
- * \param fileName
- * \return The fileName without any leading directory structure.
+/**
+ * @brief TrimFileName
+ * @param fileName
+ * @return The fileName without any leading directory structure.
  */
 QString TrimFileName(const QString &fileName)
 {
@@ -308,14 +308,14 @@ QString TrimFileName(const QString &fileName)
     return tmpFileName;
 }
 
-/*!
- * \brief Warning
- * \param title
- * \param message
- * \param quiet
+/**
+ * @brief Warning
+ * @param title
+ * @param message
+ * @param quiet
  *
- * When \a quiet is \c true, displays a warning box with the provided
- * \a title and \a message. The title and message are always printed
+ * When @a quiet is @c true, displays a warning box with the provided
+ * @a title and @a message. The title and message are always printed
  * on the console/debug log.
  */
 void Warning(const QString &title, const QString &message, const bool quiet)
