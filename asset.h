@@ -32,7 +32,7 @@ class Asset : public QObject
 {
     Q_OBJECT
 public:
-    Asset(const Asset &a);
+    Asset(const Asset &asset);
     explicit Asset(QObject *parent = nullptr);
     Asset& operator=(const Asset &right);
     QList<STIG> STIGs() const;
@@ -52,6 +52,6 @@ public:
 
 Q_DECLARE_METATYPE(Asset);
 
-QString PrintAsset(const Asset &a);
+QString PrintAsset(const Asset &asset);
 
 #endif // ASSET_H

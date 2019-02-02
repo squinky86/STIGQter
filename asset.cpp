@@ -62,7 +62,8 @@ Asset::Asset(QObject *parent) : QObject(parent),
 }
 
 /**
- * @overload Asset()
+ * @brief Asset::Asset
+ * @param asset
  *
  * Copy constructor.
  */
@@ -107,11 +108,11 @@ QList<STIG> Asset::STIGs() const
 
 /**
  * @brief Asset::CKLChecks
- * @param s
+ * @param stig
  * @return list of CKLChecks associated with this Asset
  *
- * When @a s is a nullptr, all CKL checks associated with all STIGs
- * mapped to this Asset are returned.
+ * When @a stig is a nullptr, all CKL checks associated with all
+ * STIGs mapped to this Asset are returned.
  */
 QList<CKLCheck> Asset::CKLChecks(const STIG *stig) const
 {
@@ -121,10 +122,10 @@ QList<CKLCheck> Asset::CKLChecks(const STIG *stig) const
 
 /**
  * @brief PrintAsset
- * @param a
+ * @param asset
  * @return human-readable Asset description
  */
-QString PrintAsset(const Asset &a)
+QString PrintAsset(const Asset &asset)
 {
-    return a.hostName;
+    return asset.hostName;
 }
