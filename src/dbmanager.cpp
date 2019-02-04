@@ -637,6 +637,26 @@ bool DbManager::DeleteCCIs()
 }
 
 /**
+ * @brief DbManager::DeleteEmassImport
+ * @return \c True when the eMASS import is deleted. Otherwise,
+ * \c false.
+ */
+bool DbManager::DeleteEmassImport()
+{
+    QSqlDatabase db;
+    bool ret = false;
+    if (this->CheckDatabase(db))
+    {
+        QSqlQuery q(db);
+        q.prepare(QStringLiteral("UPDATE CCI SET isImport = 0, importCompliance = NULL, importDateTested = NULL, importTestedBy = NULL, importTestResults = NULL"));
+        ret = q.exec();
+        if (!_delayCommit)
+            db.commit();
+    }
+    return ret;
+}
+
+/**
  * @brief DbManager::DeleteSTIG
  * @param id
  * @return @c True when the STIG identified by the provided ID is
@@ -840,7 +860,6 @@ QList<Asset> DbManager::GetAssets(const QString &whereClause, const QList<std::t
             toPrep.append(" " + whereClause);
         toPrep.append(QStringLiteral(" ORDER BY LOWER(hostName), hostName"));
         q.prepare(toPrep);
-        qDebug() << toPrep;
         for (const auto &variable : variables)
         {
             QString key;
@@ -940,15 +959,15 @@ CCI DbManager::GetCCIByCCI(int cci, const STIG *stig)
 }
 
 /**
- * @overload GetCCIByCCI
- * @brief DbManager::GetCCIByCCI
+ * @overload GetCCI
+ * @brief DbManager::GetCCI
  * @param cci
  * @param stig
  * @return The @a CCI identified by the ID of the supplied @a cci.
  * If the @a cci.id is not valid, the actual @a cci.cci number is
  * used.
  */
-CCI DbManager::GetCCIByCCI(const CCI &cci, const STIG *stig)
+CCI DbManager::GetCCI(const CCI &cci, const STIG *stig)
 {
     if (cci.id < 0)
     {
@@ -1791,6 +1810,64 @@ QString DbManager::GetVariable(const QString &name)
         if (q.next())
         {
             ret = q.value(0).toString();
+        }
+    }
+    return ret;
+}
+
+/**
+ * @brief DbManager::IsEmassImport
+ * @return \c True when an eMASS spreadsheet has been imported.
+ * Otherwise, \c false.
+ */
+bool DbManager::IsEmassImport()
+{
+    QSqlDatabase db;
+    if (this->CheckDatabase(db))
+    {
+        QSqlQuery q(db);
+        q.prepare(QStringLiteral("SELECT COUNT(*) FROM CCI WHERE isImport > 0"));
+        q.exec();
+        if (q.next())
+        {
+            if (q.value(0).toInt() > 0)
+            {
+                return true;
+            }
+        }
+    }
+    return false;
+}
+
+/**
+ * @brief DbManager::UpdateCCI
+ * @param cci
+ * @return \c True when the CCI is updated with the provided
+ * metadata. Otherwise, \c false.
+ */
+bool DbManager::UpdateCCI(const CCI &cci)
+{
+    CCI tmpCCI = GetCCI(cci);
+    bool ret = false;
+    if (tmpCCI.id > 0)
+    {
+        QSqlDatabase db;
+        ret = true;
+        if (this->CheckDatabase(db))
+        {
+            QSqlQuery q(db);
+            //NOTE: The new values use the provided "cci" while the WHERE clause uses the Database-identified "tmpCCI".
+            q.prepare(QStringLiteral("UPDATE CCI SET ControlId = :ControlId, cci = :cci, definition = :definition, isImport = :isImport, importCompliance = :importCompliance, importDateTested = :importDateTested, importTestedBy = :importTestedBy, importTestResults = :importTestResults WHERE id = :id"));
+            q.bindValue(QStringLiteral(":ControlId"), cci.controlId);
+            q.bindValue(QStringLiteral(":cci"), cci.cci);
+            q.bindValue(QStringLiteral(":definition"), cci.definition);
+            q.bindValue(QStringLiteral(":isImport"), cci.isImport);
+            q.bindValue(QStringLiteral(":importCompliance"), cci.isImport ? cci.importCompliance : nullptr);
+            q.bindValue(QStringLiteral(":importDateTested"), cci.isImport ? cci.importDateTested : nullptr);
+            q.bindValue(QStringLiteral(":importTestedBy"), cci.isImport ? cci.importTestedBy : nullptr);
+            q.bindValue(QStringLiteral(":importTestResults"), cci.isImport ? cci.importTestResults : nullptr);
+            q.bindValue(QStringLiteral(":id"), tmpCCI.id);
+            ret = q.exec();
         }
     }
     return ret;

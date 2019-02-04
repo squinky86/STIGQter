@@ -45,6 +45,7 @@ private slots:
     void AddSTIGs();
     void CloseTab(int i);
     void DeleteCCIs();
+    void DeleteEmass();
     void DeleteSTIGs();
     void ExportEMASS();
     void FindingsReport();

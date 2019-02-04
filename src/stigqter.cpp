@@ -244,6 +244,12 @@ void STIGQter::DeleteCCIs()
     t->start();
 }
 
+void STIGQter::DeleteEmass()
+{
+    db->DeleteEmassImport();
+    EnableInput();
+}
+
 void STIGQter::DeleteSTIGs()
 {
     DisableInput();
@@ -364,6 +370,7 @@ void STIGQter::EnableInput()
 {
     QList<Family> f = db->GetFamilies();
     QList<STIG> s = db->GetSTIGs();
+    bool isImport = db->IsEmassImport();
     if (f.count() > 0)
     {
         //disable deleting CCIs if STIGs have been imported
@@ -379,9 +386,10 @@ void STIGQter::EnableInput()
     }
     ui->btnClearSTIGs->setEnabled(true);
     ui->btnCreateCKL->setEnabled(true);
+    ui->btnDeleteEmassImport->setEnabled(isImport);
     ui->btnFindingsReport->setEnabled(true);
     ui->btnImportCKL->setEnabled(true);
-    ui->btnImportEmass->setEnabled(true);
+    ui->btnImportEmass->setEnabled(!isImport);
     ui->btnOpenCKL->setEnabled(ui->lstAssets->selectedItems().count() > 0);
     ui->btnQuit->setEnabled(true);
     ui->menubar->setEnabled(true);
@@ -423,6 +431,7 @@ void STIGQter::DisableInput()
     ui->btnClearCCIs->setEnabled(false);
     ui->btnClearSTIGs->setEnabled(false);
     ui->btnCreateCKL->setEnabled(false);
+    ui->btnDeleteEmassImport->setEnabled(false);
     ui->btnFindingsReport->setEnabled(false);
     ui->btnImportCCIs->setEnabled(false);
     ui->btnImportCKL->setEnabled(false);

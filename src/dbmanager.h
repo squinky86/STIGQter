@@ -52,6 +52,7 @@ public:
     bool DeleteAsset(int id);
     bool DeleteAsset(const Asset &asset);
     bool DeleteCCIs();
+    bool DeleteEmassImport();
     bool DeleteSTIG(int id);
     bool DeleteSTIG(const STIG &stig);
     bool DeleteSTIGFromAsset(const STIG &stig, const Asset &asset);
@@ -62,8 +63,8 @@ public:
     QList<Asset> GetAssets(const QString &whereClause = "", const QList<std::tuple<QString, QVariant>> &variables = {});
     QList<Asset> GetAssets(const STIG &stig);
     CCI GetCCI(int id);
+    CCI GetCCI(const CCI &cci, const STIG *stig = nullptr);
     CCI GetCCIByCCI(int cci, const STIG *stig = nullptr);
-    CCI GetCCIByCCI(const CCI &cci, const STIG *stig = nullptr);
     QList<CCI> GetCCIs(const QString &whereClause = "", const QList<std::tuple<QString, QVariant>> &variables = {});
     CKLCheck GetCKLCheck(int id);
     CKLCheck GetCKLCheck(const CKLCheck &ckl);
@@ -86,6 +87,9 @@ public:
     QList<STIG> GetSTIGs(const QString &whereClause = "", const QList<std::tuple<QString, QVariant> > &variables = {});
     QString GetVariable(const QString &name);
 
+    bool IsEmassImport();
+
+    bool UpdateCCI(const CCI &cci);
     bool UpdateCKLCheck(const CKLCheck &check);
     bool UpdateVariable(const QString &name, const QString &value);
 
