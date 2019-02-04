@@ -4,7 +4,7 @@
 #
 # STIGQter - STIG fun with Qt
 #
-# Copyright © 2018 Jon Hood, http://www.hoodsecurity.com/
+# Copyright © 2018–2019 Jon Hood, http://www.hoodsecurity.com/
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -42,56 +42,56 @@ DEFINES += QT_DEPRECATED_WARNINGS
 CONFIG += c++1z
 
 SOURCES += \
-        main.cpp \
-        stigqter.cpp \
-    dbmanager.cpp \
-    common.cpp \
-    workerccidelete.cpp \
-    workercciadd.cpp \
-    help.cpp \
-    control.cpp \
-    cci.cpp \
-    workerstigadd.cpp \
-    stig.cpp \
-    stigcheck.cpp \
-    cklcheck.cpp \
-    family.cpp \
-    workerstigdelete.cpp \
-    asset.cpp \
-    workerassetadd.cpp \
-    workercklimport.cpp \
-    assetview.cpp \
-    workerfindingsreport.cpp \
-    workeremassreport.cpp \
-    workerimportemass.cpp
+           src/main.cpp \
+	   src/stigqter.cpp \
+           src/dbmanager.cpp \
+           src/common.cpp \
+           src/workerccidelete.cpp \
+           src/workercciadd.cpp \
+           src/help.cpp \
+           src/control.cpp \
+           src/cci.cpp \
+           src/workerstigadd.cpp \
+           src/stig.cpp \
+           src/stigcheck.cpp \
+           src/cklcheck.cpp \
+           src/family.cpp \
+           src/workerstigdelete.cpp \
+           src/asset.cpp \
+           src/workerassetadd.cpp \
+           src/workercklimport.cpp \
+           src/assetview.cpp \
+           src/workerfindingsreport.cpp \
+           src/workeremassreport.cpp \
+           src/workerimportemass.cpp
 
 HEADERS += \
-        stigqter.h \
-    dbmanager.h \
-    common.h \
-    family.h \
-    workerccidelete.h \
-    workercciadd.h \
-    control.h \
-    cci.h \
-    help.h \
-    workerstigadd.h \
-    stig.h \
-    stigcheck.h \
-    cklcheck.h \
-    workerstigdelete.h \
-    asset.h \
-    workerassetadd.h \
-    workercklimport.h \
-    assetview.h \
-    workerfindingsreport.h \
-    workeremassreport.h \
-    workerimportemass.h
+           src/stigqter.h \
+           src/dbmanager.h \
+           src/common.h \
+           src/family.h \
+           src/workerccidelete.h \
+           src/workercciadd.h \
+           src/control.h \
+           src/cci.h \
+           src/help.h \
+           src/workerstigadd.h \
+           src/stig.h \
+           src/stigcheck.h \
+           src/cklcheck.h \
+           src/workerstigdelete.h \
+           src/asset.h \
+           src/workerassetadd.h \
+           src/workercklimport.h \
+           src/assetview.h \
+           src/workerfindingsreport.h \
+           src/workeremassreport.h \
+           src/workerimportemass.h
 
 FORMS += \
-        stigqter.ui \
-    help.ui \
-    assetview.ui
+         src/stigqter.ui \
+         src/help.ui \
+         src/assetview.ui
 
 # Default rules for deployment.
 qnx: target.path = /tmp/$${TARGET}/bin
@@ -100,6 +100,7 @@ else: unix:!android: target.path = /opt/$${TARGET}/bin
 
 LIBS += -ltidy -lzip -lxlsxwriter -lzlib
 
-INCLUDEPATH= ../tidy/include \
+INCLUDEPATH= src \
+             ../tidy/include \
              ../libzip/include\
              ../xlsxwriter/include
