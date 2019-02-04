@@ -196,6 +196,10 @@ void STIGQter::AddSTIGs()
 {
     QStringList fileNames = QFileDialog::getOpenFileNames(this,
         QStringLiteral("Open STIG"), QDir::home().dirName(), QStringLiteral("Compressed STIG (*.zip)"));
+
+    if (fileNames.count() <= 0)
+        return; // cancel button pressed
+
     DisableInput();
     _updatedSTIGs = true;
     QThread* t = new QThread;
@@ -305,6 +309,10 @@ void STIGQter::ExportEMASS()
 {
     QString fileName = QFileDialog::getSaveFileName(this,
         QStringLiteral("Save eMASS Report"), QDir::home().dirName(), QStringLiteral("Microsoft Excel (*.xlsx)"));
+
+    if (fileName.isNull() || fileName.isEmpty())
+        return; // cancel button pressed
+
     DisableInput();
     QThread* t = new QThread;
     WorkerEMASSReport *f = new WorkerEMASSReport();
@@ -325,6 +333,10 @@ void STIGQter::FindingsReport()
 {
     QString fileName = QFileDialog::getSaveFileName(this,
         QStringLiteral("Save Detailed Findings"), QDir::home().dirName(), QStringLiteral("Microsoft Excel (*.xlsx)"));
+
+    if (fileName.isNull() || fileName.isEmpty())
+        return; // cancel button pressed
+
     DisableInput();
     QThread* t = new QThread;
     WorkerFindingsReport *f = new WorkerFindingsReport();
@@ -345,6 +357,10 @@ void STIGQter::ImportCKLs()
 {
     QStringList fileNames = QFileDialog::getOpenFileNames(this,
         QStringLiteral("Import CKL(s)"), QDir::home().dirName(), QStringLiteral("STIG Checklist (*.ckl)"));
+
+    if (fileNames.count() <= 0)
+        return; // cancel button pressed
+
     DisableInput();
     _updatedAssets = true;
     QThread* t = new QThread;
@@ -364,10 +380,13 @@ void STIGQter::ImportCKLs()
 
 void STIGQter::ImportEMASS()
 {
-    DisableInput();
-
     QString fileName = QFileDialog::getOpenFileName(this,
         QStringLiteral("Import eMASS TRExport"), QDir::home().dirName(), QStringLiteral("Excel Spreadsheet (*.xlsx)"));
+
+    if (fileName.isNull() || fileName.isEmpty())
+        return; // cancel button pressed
+
+    DisableInput();
 
     QThread* t = new QThread;
     WorkerImportEMASS *c = new WorkerImportEMASS();
