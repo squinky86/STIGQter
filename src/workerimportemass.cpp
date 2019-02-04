@@ -21,6 +21,8 @@
 #include "dbmanager.h"
 #include "workerimportemass.h"
 
+#include <QXmlStreamReader>
+
 WorkerImportEMASS::WorkerImportEMASS(QObject *parent) : QObject(parent), _fileName()
 {
 }
@@ -39,7 +41,32 @@ void WorkerImportEMASS::process()
     emit updateStatus(QStringLiteral("Opening xlsx file…"));
     QMap<QString, QByteArray> files = GetFilesFromZip(_fileName, QStringLiteral(".xml"));
 
-    //TODO
+    //First, create Shared Strings table
+    QStringList sst;
+    if (files.keys().contains("xl/sharedStrings.xml"))
+    {
+        //There is a sharedStrings table! Parse it:
+        QString toAdd = QString();
+        QXmlStreamReader xml(files["xl/sharedStrings.xml"]);
+        while (!xml.atEnd() && !xml.hasError())
+        {
+            xml.readNext();
+            if (xml.isStartElement())
+            {
+                if (xml.name() == "si")
+                    toAdd = QString(); //new string
+                else if (xml.name() == "t")
+                    toAdd.append(xml.readElementText());
+            }
+            if (xml.isEndElement())
+            {
+                if (xml.name() == "si")
+                    sst.append(toAdd); //end of shared string element; add it to the table
+            }
+        }
+    }
+
+    //TODO: parse sheets
 
     emit updateStatus(QStringLiteral("Done!"));
     emit finished();
