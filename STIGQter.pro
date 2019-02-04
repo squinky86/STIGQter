@@ -104,3 +104,5 @@ INCLUDEPATH= src \
              ../tidy/include \
              ../libzip/include\
              ../xlsxwriter/include
+
+RC_FILE = STIGQter.rc
