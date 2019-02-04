@@ -72,7 +72,7 @@ CCI::CCI(const CCI &right) : CCI(right.parent())
  * Control() calls the database to obtain the control which maps to
  * this CCI.
  */
-Control CCI::Control()
+Control CCI::Control() const
 {
     DbManager db;
     return db.GetControl(controlId);

@@ -36,6 +36,8 @@ void WorkerEMASSReport::process()
     DbManager db;
 
     QMap<CCI, QList<CKLCheck>> failedCCIs;
+    QMap<CCI, QList<CKLCheck>> passedCCIs;
+    QMap<CCI, QList<CKLCheck>> importedCCIs;
     QList<CKLCheck> checks = db.GetCKLChecks();
     int numChecks = checks.count();
     emit initialize(numChecks+2, 0);
@@ -144,10 +146,19 @@ void WorkerEMASSReport::process()
         //if the check is a finding, add it to the CCI sheet
         if (s == Status::Open)
         {
+            if (passedCCIs.contains(c))
+                passedCCIs.remove(c);
             if (failedCCIs.contains(c))
                 failedCCIs[c].append(cc);
             else
                 failedCCIs.insert(c, {cc});
+        }
+        else if (s == Status::NotAFinding && !failedCCIs.contains(c))
+        {
+            if (passedCCIs.contains(c))
+                passedCCIs[c].append(cc);
+            else
+                passedCCIs.insert(c, {cc});
         }
         emit progress(-1);
     }
@@ -155,6 +166,16 @@ void WorkerEMASSReport::process()
     emit initialize(numChecks+failedCCIs.count()+1, numChecks);
 
     unsigned int onRow = 5;
+
+    //print out all failed CCIs
+    QString username = qgetenv("USER");
+    if (username.isNull() || username.isEmpty())
+        username = qgetenv("USERNAME");
+    if (username.isNull() || username.isEmpty())
+        username = QStringLiteral("UNKNOWN");
+
+    bool unimportedCCI = false;
+
     for (auto i = failedCCIs.constBegin(); i != failedCCIs.constEnd(); i++)
     {
         onRow++;
@@ -183,11 +204,6 @@ void WorkerEMASSReport::process()
         //date tested
         worksheet_write_string(ws, onRow, 8, curDate.toStdString().c_str(), nullptr);
         //tested by
-        QString username = qgetenv("USER");
-        if (username.isNull() || username.isEmpty())
-            username = qgetenv("USERNAME");
-        if (username.isNull() || username.isEmpty())
-            username = QStringLiteral("UNKNOWN");
         worksheet_write_string(ws, onRow, 9, username.toStdString().c_str(), nullptr);
 
         //test results
@@ -200,14 +216,114 @@ void WorkerEMASSReport::process()
         }
         worksheet_write_string(ws, onRow, 10, Excelify(testResult).toStdString().c_str(), fmtWrapped);
 
+        if (!c.isImport)
+            unimportedCCI = true;
+
         //ignore previous test results
-        worksheet_write_string(ws, onRow, 11, "", nullptr);
-        worksheet_write_string(ws, onRow, 12, "", nullptr);
-        worksheet_write_string(ws, onRow, 13, "", nullptr);
-        worksheet_write_string(ws, onRow, 14, "", nullptr);
+        worksheet_write_string(ws, onRow, 11, c.isImport ? c.importCompliance.toStdString().c_str() : "", nullptr);
+        worksheet_write_string(ws, onRow, 12, c.isImport ? c.importDateTested.toStdString().c_str() : "", nullptr);
+        worksheet_write_string(ws, onRow, 13, c.isImport ? c.importTestedBy.toStdString().c_str() : "", nullptr);
+        worksheet_write_string(ws, onRow, 14, c.isImport ? c.importTestResults.toStdString().c_str() : "", fmtWrapped);
 
         emit progress(-1);
     }
+
+    //print out all passed CCIs
+    for (auto i = passedCCIs.constBegin(); i != passedCCIs.constEnd(); i++)
+    {
+        onRow++;
+        CCI c = i.key();
+        emit updateStatus("Adding " + PrintCCI(c) + "…");
+        QList<CKLCheck> checks = i.value();
+        std::sort(checks.begin(), checks.end());
+        Control control = c.Control();
+        //control
+        worksheet_write_string(ws, onRow, 0, PrintControl(control).toStdString().c_str(), nullptr);
+        //control information
+        worksheet_write_string(ws, onRow, 1, Excelify(control.description).toStdString().c_str(), fmtWrapped);
+        //AP Acronym is nonsense; ignore it
+        worksheet_write_string(ws, onRow, 2, "", nullptr);
+        //CCI
+        QString cci = QString::number(c.cci);
+        while (cci.length() < 6)
+            cci = "0" + cci;
+        worksheet_write_string(ws, onRow, 3, cci.toStdString().c_str(), nullptr);
+        worksheet_write_string(ws, onRow, 4, Excelify(c.definition).toStdString().c_str(), fmtWrapped);
+        //implementation guidance and assessment procedures not available
+        worksheet_write_string(ws, onRow, 5, "", nullptr);
+        worksheet_write_string(ws, onRow, 6, "", nullptr);
+        //compliance status
+        worksheet_write_string(ws, onRow, 7, "Compliant", nullptr);
+        //date tested
+        worksheet_write_string(ws, onRow, 8, curDate.toStdString().c_str(), nullptr);
+        //tested by
+        worksheet_write_string(ws, onRow, 9, username.toStdString().c_str(), nullptr);
+
+        //test results
+        QString testResult = QStringLiteral("The following checks were compliant:");
+        foreach (CKLCheck cc, checks)
+        {
+            testResult.append("\n" + PrintAsset(cc.Asset()) + ": " + PrintCKLCheck(cc));
+        }
+        worksheet_write_string(ws, onRow, 10, Excelify(testResult).toStdString().c_str(), fmtWrapped);
+
+        if (!c.isImport)
+            unimportedCCI = true;
+
+        //previous test results
+        worksheet_write_string(ws, onRow, 11, c.isImport ? c.importCompliance.toStdString().c_str() : "", nullptr);
+        worksheet_write_string(ws, onRow, 12, c.isImport ? c.importDateTested.toStdString().c_str() : "", nullptr);
+        worksheet_write_string(ws, onRow, 13, c.isImport ? c.importTestedBy.toStdString().c_str() : "", nullptr);
+        worksheet_write_string(ws, onRow, 14, c.isImport ? c.importTestResults.toStdString().c_str() : "", fmtWrapped);
+
+        emit progress(-1);
+    }
+
+    //print out all old test results
+    foreach (const CCI &c, db.GetCCIs())
+    {
+        if (!c.isImport || failedCCIs.contains(c) || passedCCIs.contains(c))
+            continue;
+
+        onRow++;
+        emit updateStatus("Adding " + PrintCCI(c) + "…");
+        Control control = c.Control();
+        //control
+        worksheet_write_string(ws, onRow, 0, PrintControl(control).toStdString().c_str(), nullptr);
+        //control information
+        worksheet_write_string(ws, onRow, 1, Excelify(control.description).toStdString().c_str(), fmtWrapped);
+        //AP Acronym is nonsense; ignore it
+        worksheet_write_string(ws, onRow, 2, "", nullptr);
+        //CCI
+        QString cci = QString::number(c.cci);
+        while (cci.length() < 6)
+            cci = "0" + cci;
+        worksheet_write_string(ws, onRow, 3, cci.toStdString().c_str(), nullptr);
+        worksheet_write_string(ws, onRow, 4, Excelify(c.definition).toStdString().c_str(), fmtWrapped);
+        //implementation guidance and assessment procedures not available
+        worksheet_write_string(ws, onRow, 5, "", nullptr);
+        worksheet_write_string(ws, onRow, 6, "", nullptr);
+        //compliance status
+        worksheet_write_string(ws, onRow, 7, "", nullptr);
+        //date tested
+        worksheet_write_string(ws, onRow, 8, "", nullptr);
+        //tested by
+        worksheet_write_string(ws, onRow, 9, "", nullptr);
+
+        //test results
+        worksheet_write_string(ws, onRow, 10, "", nullptr);
+
+        //previous test results
+        worksheet_write_string(ws, onRow, 11, c.isImport ? c.importCompliance.toStdString().c_str() : "", nullptr);
+        worksheet_write_string(ws, onRow, 12, c.isImport ? c.importDateTested.toStdString().c_str() : "", nullptr);
+        worksheet_write_string(ws, onRow, 13, c.isImport ? c.importTestedBy.toStdString().c_str() : "", nullptr);
+        worksheet_write_string(ws, onRow, 14, c.isImport ? c.importTestResults.toStdString().c_str() : "", fmtWrapped);
+
+        emit progress(-1);
+    }
+
+    if (unimportedCCI && db.IsEmassImport())
+        Warning(QStringLiteral("New CCI Detected"), QStringLiteral("One or more CCIs were detected that were not part of the eMASS TR Import. Please check your exported spreadsheet for test results that do not have data in the \"Latest Test Results\" columns."));
 
     emit updateStatus(QStringLiteral("Writing workbook…"));
 

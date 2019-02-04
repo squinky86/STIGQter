@@ -33,7 +33,7 @@ public:
     CCI(const CCI &right);
     explicit CCI(QObject *parent = nullptr);
     int id;
-    Control Control();
+    Control Control() const;
     int controlId;
     int cci;
     QString definition;
