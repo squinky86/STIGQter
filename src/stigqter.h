@@ -47,6 +47,7 @@ private slots:
     void DeleteCCIs();
     void DeleteEmass();
     void DeleteSTIGs();
+    void ExportCKLs();
     void ExportEMASS();
     void FindingsReport();
     void ImportCKLs();

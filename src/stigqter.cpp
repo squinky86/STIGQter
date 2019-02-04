@@ -17,20 +17,22 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
+#include "assetview.h"
 #include "common.h"
+#include "help.h"
 #include "stigqter.h"
+#include "workerassetadd.h"
 #include "workercciadd.h"
 #include "workerccidelete.h"
-#include "ui_stigqter.h"
-#include "help.h"
+#include "workercklexport.h"
+#include "workercklimport.h"
+#include "workeremassreport.h"
+#include "workerfindingsreport.h"
+#include "workerimportemass.h"
 #include "workerstigadd.h"
 #include "workerstigdelete.h"
-#include "workerassetadd.h"
-#include "workercklimport.h"
-#include "assetview.h"
-#include "workerfindingsreport.h"
-#include "workeremassreport.h"
-#include "workerimportemass.h"
+
+#include "ui_stigqter.h"
 
 #include <QThread>
 #include <QFileDialog>
@@ -274,6 +276,29 @@ void STIGQter::DeleteSTIGs()
     workers.append(s);
 
     t->start();
+}
+
+void STIGQter::ExportCKLs()
+{
+    QString dirName = QFileDialog::getExistingDirectory(this, QStringLiteral("Save to Directory"), QDir::home().dirName());
+
+    if (!dirName.isNull() && !dirName.isEmpty())
+    {
+        DisableInput();
+        QThread* t = new QThread;
+        WorkerCKLExport *f = new WorkerCKLExport();
+        f->SetExportDir(dirName);
+        connect(t, SIGNAL(started()), f, SLOT(process()));
+        connect(f, SIGNAL(finished()), t, SLOT(quit()));
+        connect(t, SIGNAL(finished()), this, SLOT(CompletedThread()));
+        connect(f, SIGNAL(initialize(int, int)), this, SLOT(Initialize(int, int)));
+        connect(f, SIGNAL(progress(int)), this, SLOT(Progress(int)));
+        connect(f, SIGNAL(updateStatus(QString)), ui->lblStatus, SLOT(setText(QString)));
+        threads.append(t);
+        workers.append(f);
+
+        t->start();
+    }
 }
 
 void STIGQter::ExportEMASS()

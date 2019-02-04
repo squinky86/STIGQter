@@ -242,6 +242,22 @@ QMap<QString, QByteArray> GetFilesFromZip(const QString &fileName, const QString
 }
 
 /**
+ * @brief GetReleaseNumber
+ * @param release
+ * @return The release number from a STIG release string
+ */
+int GetReleaseNumber(const QString &release)
+{
+    int ret = -1;
+    QStringList rel = release.split(' ');
+    if (rel.size() > 1)
+    {
+        return rel[1].toInt();
+    }
+    return ret;
+}
+
+/**
  * @brief GetUserAgent
  * @return The User-Agent to use when making web requests.
  */
