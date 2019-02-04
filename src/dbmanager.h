@@ -89,6 +89,7 @@ public:
 
     bool IsEmassImport();
 
+    bool UpdateAsset(const Asset &asset);
     bool UpdateCCI(const CCI &cci);
     bool UpdateCKLCheck(const CKLCheck &check);
     bool UpdateVariable(const QString &name, const QString &value);

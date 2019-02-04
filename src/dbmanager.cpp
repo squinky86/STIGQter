@@ -1840,6 +1840,42 @@ bool DbManager::IsEmassImport()
 }
 
 /**
+ * @brief DbManager::UpdateAsset
+ * @param asset
+ * @return \c True when the Asset is updated with the provided
+ * metadata. Otherwise, \c false.
+ */
+bool DbManager::UpdateAsset(const Asset &asset)
+{
+    Asset tmpAsset = GetAsset(asset);
+    bool ret = false;
+    if (tmpAsset.id > 0)
+    {
+        QSqlDatabase db;
+        ret = true;
+        if (this->CheckDatabase(db))
+        {
+            QSqlQuery q(db);
+            //NOTE: The new values use the provided "cci" while the WHERE clause uses the Database-identified "tmpCCI".
+            q.prepare(QStringLiteral("UPDATE Asset SET assetType = :assetType, hostName = :hostName, hostIP = :hostIP, hostMAC = :hostMAC, hostFQDN = :hostFQDN, techArea = :techArea, targetKey = :targetKey, webOrDatabase = :webOrDatabase, webDBSite = :webDBSite, webDBInstance = :webDBInstance WHERE id = :id"));
+            q.bindValue(QStringLiteral(":assetType"), asset.assetType.isEmpty() ? nullptr : asset.assetType);
+            q.bindValue(QStringLiteral(":hostName"), asset.hostName);
+            q.bindValue(QStringLiteral(":hostIP"), asset.hostIP.isEmpty() ? nullptr : asset.hostIP);
+            q.bindValue(QStringLiteral(":hostMAC"), asset.hostMAC.isEmpty() ? nullptr : asset.hostMAC);
+            q.bindValue(QStringLiteral(":hostFQDN"), asset.hostFQDN.isEmpty() ? nullptr : asset.hostFQDN);
+            q.bindValue(QStringLiteral(":techArea"), asset.techArea.isEmpty() ? nullptr : asset.techArea);
+            q.bindValue(QStringLiteral(":targetKey"), asset.targetKey.isEmpty() ? nullptr : asset.targetKey);
+            q.bindValue(QStringLiteral(":webOrDatabase"), asset.webOrDB);
+            q.bindValue(QStringLiteral(":webDBSite"), asset.webDbSite.isEmpty() ? nullptr : asset.webDbSite);
+            q.bindValue(QStringLiteral(":webDBInstance"), asset.webDbInstance.isEmpty() ? nullptr : asset.webDbInstance);
+            q.bindValue(QStringLiteral(":id"), tmpAsset.id);
+            ret = q.exec();
+        }
+    }
+    return ret;
+}
+
+/**
  * @brief DbManager::UpdateCCI
  * @param cci
  * @return \c True when the CCI is updated with the provided

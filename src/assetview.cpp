@@ -340,6 +340,29 @@ void AssetView::KeyShortcutCtrlX()
 }
 
 /**
+ * @brief AssetView::RenameAsset
+ *
+ * Prompts the user, requesting the new name for the asset.
+ */
+void AssetView::RenameAsset()
+{
+    bool ok;
+    QString assetName = QInputDialog::getText(this, QStringLiteral("Input New Asset Name"), QStringLiteral("Asset Name"), QLineEdit::Normal, _asset.hostName, &ok);
+    DbManager db;
+    if (db.GetAsset(assetName).id > 0)
+    {
+        Warning(QStringLiteral("Unable to Update Asset"), "Unable to change Asset name. " + assetName + " already exists in the database.");
+    }
+    else if (ok)
+    {
+        _asset.hostName = assetName;
+        db.UpdateAsset(_asset);
+        if (_tabIndex > 0)
+            emit CloseTab(_tabIndex);
+    }
+}
+
+/**
  * @brief AssetView::SaveCKL
  *
  * Save the selected Asset as a single CKL file.

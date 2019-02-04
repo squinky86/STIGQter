@@ -57,6 +57,7 @@ private slots:
     void KeyShortcutCtrlO();
     void KeyShortcutCtrlR();
     void KeyShortcutCtrlX();
+    void RenameAsset();
     void SaveCKL();
     void UpdateCKL();
     void UpdateCKLHelper();
