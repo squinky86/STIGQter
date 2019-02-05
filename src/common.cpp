@@ -41,8 +41,10 @@
  */
 QString CleanXML(QString s, bool isXml)
 {
-    TidyBuffer output = {nullptr};
-    TidyBuffer err = {nullptr};
+    TidyBuffer output;
+    tidyBufInit(&output);
+    TidyBuffer err;
+    tidyBufInit(&err);
 
     int rc = -1;
     TidyDoc tdoc = tidyCreate();

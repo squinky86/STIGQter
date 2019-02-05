@@ -264,7 +264,7 @@ bool DbManager::AddCCI(CCI &cci)
         {
             if (q.value(0).toInt() > 0)
             {
-                Warning(QStringLiteral("CCI Already Exists"), "The CCI " + PrintCCI(cci) + " already exists in the database.");
+                Warning(QStringLiteral("CCI Already Exists"), "The CCI " + PrintCCI(cci) + " already exists in the database.", true);
                 return ret;
             }
         }
@@ -306,7 +306,7 @@ bool DbManager::AddControl(const QString &control, const QString &title, const Q
     if (tmpControl.length() < 4)
     {
         //control length can't store the family an a control number.
-        Warning(QStringLiteral("Control Does Not Exist"), "Received bad control, \"" + control + "\".");
+        Warning(QStringLiteral("Control Does Not Exist"), "Received bad control, \"" + control + "\".", true);
         return ret;
     }
 
@@ -1515,7 +1515,7 @@ Control DbManager::GetControl(const QString &control)
         tmpControl = tmpControl.left(tmpControl.indexOf('('));
         enhancementInt = enhancement.toInt(); //will return 0 if enhancement doesn't exist
     }
-    int controlNumber = control.toInt();
+    int controlNumber = tmpControl.trimmed().toInt();
     int familyId = GetFamily(family).id;
 
     QString whereClause = QStringLiteral("WHERE Control.number = :number AND Control.FamilyId = :FamilyId");
@@ -1526,7 +1526,7 @@ Control DbManager::GetControl(const QString &control)
 
     if (enhancementInt > 0)
     {
-        whereClause = whereClause + QStringLiteral("AND Control.enhancement = :enhancement");
+        whereClause = whereClause + QStringLiteral(" AND Control.enhancement = :enhancement");
         variables.append(std::make_tuple<QString, QVariant>(QStringLiteral(":enhancement"), enhancementInt));
     }
 
