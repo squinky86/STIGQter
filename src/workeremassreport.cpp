@@ -37,7 +37,6 @@ void WorkerEMASSReport::process()
 
     QMap<CCI, QList<CKLCheck>> failedCCIs;
     QMap<CCI, QList<CKLCheck>> passedCCIs;
-    QMap<CCI, QList<CKLCheck>> importedCCIs;
     QList<CKLCheck> checks = db.GetCKLChecks();
     int numChecks = checks.count();
     emit initialize(numChecks+2, 0);

@@ -43,7 +43,7 @@ void WorkerCKLExport::process()
         emit updateStatus("Exporting CKLs for " + PrintAsset(a));
         foreach (STIG s, a.STIGs())
         {
-            updateStatus("Exporting CKL " + PrintSTIG(s) + " for " + PrintAsset(a));
+            emit updateStatus("Exporting CKL " + PrintSTIG(s) + " for " + PrintAsset(a));
             QString fileName = QDir(_dirName).filePath(PrintAsset(a) + "_" + s.title + "_V" + QString::number(s.version) + "R" + QString::number(GetReleaseNumber(s.release)) + ".ckl");
             QFile file(fileName);
             if (file.exists(fileName))
@@ -405,6 +405,6 @@ void WorkerCKLExport::process()
         }
         emit progress(-1);
     }
-    emit updateStatus("Done!");
+    emit updateStatus(QStringLiteral("Done!"));
     emit finished();
 }

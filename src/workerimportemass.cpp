@@ -45,11 +45,11 @@ void WorkerImportEMASS::process()
     //First, create Shared Strings table
     emit updateStatus(QStringLiteral("Reading Shared Strings Table…"));
     QStringList sst;
-    if (files.keys().contains("xl/sharedStrings.xml"))
+    if (files.contains(QStringLiteral("xl/sharedStrings.xml")))
     {
         //There is a sharedStrings table! Parse it:
         QString toAdd = QString();
-        QXmlStreamReader xml(files["xl/sharedStrings.xml"]);
+        QXmlStreamReader xml(files[QStringLiteral("xl/sharedStrings.xml")]);
         while (!xml.atEnd() && !xml.hasError())
         {
             xml.readNext();
@@ -72,10 +72,10 @@ void WorkerImportEMASS::process()
     //Second, get the list of sheet IDs from the workbook relationships
     emit updateStatus(QStringLiteral("Getting Worksheet IDs…"));
     QMap<QString, QString> relationshipIds;
-    if (files.keys().contains("xl/_rels/workbook.xml.rels"))
+    if (files.contains(QStringLiteral("xl/_rels/workbook.xml.rels")))
     {
         //Get the IDs of the worksheets
-        QXmlStreamReader xml(files["xl/_rels/workbook.xml.rels"]);
+        QXmlStreamReader xml(files[QStringLiteral("xl/_rels/workbook.xml.rels")]);
         while (!xml.atEnd() && !xml.hasError())
         {
             xml.readNext();
@@ -105,10 +105,10 @@ void WorkerImportEMASS::process()
     //Third, get the names of the sheets by relationship ID
     emit updateStatus(QStringLiteral("Getting Worksheet Names…"));
     QMap<QString, QString> sheetNames;
-    if (files.keys().contains("xl/workbook.xml"))
+    if (files.contains(QStringLiteral("xl/workbook.xml")))
     {
         //Get the Worksheets
-        QXmlStreamReader xml(files["xl/workbook.xml"]);
+        QXmlStreamReader xml(files[QStringLiteral("xl/workbook.xml")]);
         while (!xml.atEnd() && !xml.hasError())
         {
             xml.readNext();
@@ -136,16 +136,16 @@ void WorkerImportEMASS::process()
     emit progress(-1);
 
     //Fourth, find out if a worksheet is named "Test Result Import"
-    if (sheetNames.keys().contains("Test Result Import") && relationshipIds.keys().contains(sheetNames["Test Result Import"]) && files.keys().contains("xl/" + relationshipIds[sheetNames["Test Result Import"]]))
+    if (sheetNames.contains(QStringLiteral("Test Result Import")) && relationshipIds.contains(sheetNames[QStringLiteral("Test Result Import")]) && files.contains("xl/" + relationshipIds[sheetNames[QStringLiteral("Test Result Import")]]))
     {
         //It does! Continue parsing.
         //Fifth, read the correct spreadsheet that has the needed data
         emit updateStatus(QStringLiteral("Reading worksheet…"));
-        QXmlStreamReader xml(files["xl/" + relationshipIds[sheetNames["Test Result Import"]]]);
+        QXmlStreamReader xml(files["xl/" + relationshipIds[sheetNames[QStringLiteral("Test Result Import")]]]);
         int onRow = 0;
         QString onCol = QString();
         bool isSharedString = false; //keep up with whether the current record is a shared string
-        QStringList meaningfulCols = {"D", "L", "M", "N", "O"};
+        QStringList meaningfulCols = {QStringLiteral("D"), QStringLiteral("L"), QStringLiteral("M"), QStringLiteral("N"), QStringLiteral("O")};
         CCI curCCI;
         DbManager db;
         db.DelayCommit(true);
@@ -157,9 +157,9 @@ void WorkerImportEMASS::process()
                 //Get the dimensions of the sheet to set the progress bar
                 if (xml.name() == "dimension")
                 {
-                    if (xml.attributes().hasAttribute("ref"))
+                    if (xml.attributes().hasAttribute(QStringLiteral("ref")))
                     {
-                        QStringRef ref = xml.attributes().value("ref");
+                        QStringRef ref = xml.attributes().value(QStringLiteral("ref"));
                         if (ref.contains(':'))
                         {
                             ref = ref.right(ref.length() - ref.lastIndexOf(':'));
@@ -184,14 +184,14 @@ void WorkerImportEMASS::process()
                 else if (xml.name() == "c")
                 {
                     isSharedString = false;
-                    if (xml.attributes().hasAttribute("t"))
+                    if (xml.attributes().hasAttribute(QStringLiteral("t")))
                     {
-                        if (xml.attributes().value("t") == "s")
+                        if (xml.attributes().value(QStringLiteral("t")) == "s")
                             isSharedString = true;
                     }
-                    if (xml.attributes().hasAttribute("r"))
+                    if (xml.attributes().hasAttribute(QStringLiteral("r")))
                     {
-                        onCol = xml.attributes().value("r").left(1).toString();
+                        onCol = xml.attributes().value(QStringLiteral("r")).left(1).toString();
                     }
                 }
                 else if (xml.name() == "v" && meaningfulCols.contains(onCol))
@@ -208,18 +208,18 @@ void WorkerImportEMASS::process()
                     }
                     if (onRow > 6)
                     {
-                        if (onCol == "D")
+                        if (onCol == QStringLiteral("D"))
                         {
                             curCCI = db.GetCCIByCCI(value.toInt());
                         }
                         else {
-                            if (onCol == "L")
+                            if (onCol == QStringLiteral("L"))
                                 curCCI.importCompliance = value;
-                            else if (onCol == "M")
+                            else if (onCol == QStringLiteral("M"))
                                 curCCI.importDateTested = value;
-                            else if (onCol == "N")
+                            else if (onCol == QStringLiteral("N"))
                                 curCCI.importTestedBy = value;
-                            else if (onCol == "O")
+                            else if (onCol == QStringLiteral("O"))
                                 curCCI.importTestResults = value;
                             curCCI.isImport = true;
                             db.UpdateCCI(curCCI);
