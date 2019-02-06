@@ -21,11 +21,11 @@
 
 /**
  * @class Family
- * @brief A \a Family corresponds to a particular RMF checklist
- * grouping of \a Controls. The RMF hierarchy consists of
- * @a Family → \a Control → \a CCI.
+ * @brief A @a Family corresponds to a particular RMF checklist
+ * grouping of @a Controls. The RMF hierarchy consists of
+ * @a Family → @a Control → @a CCI.
  *
- * A \a Family is the largest unit of RMF by which \a Controls are
+ * A @a Family is the largest unit of RMF by which @a Controls are
  * grouped. Normally, systems divide documentation into separate
  * @a Families.
  *
@@ -51,11 +51,11 @@
  * @li SA - System and Services Acquisition
  * @endlist
  *
- * A \a Family provides a high-level, logical grouping for
+ * A @a Family provides a high-level, logical grouping for
  * documentation, but the level is too high for conducting any risk
- * analyses. For risk determinations, the \a CCI level should report
- * the individual weaknesses for a system, and the \a Control level
- * should roll up the highest issues identified by the \a Control's
+ * analyses. For risk determinations, the @a CCI level should report
+ * the individual weaknesses for a system, and the @a Control level
+ * should roll up the highest issues identified by the @a Control's
  * @a CCIs.
  */
 
@@ -86,7 +86,7 @@ Family::Family(const Family &right) : Family(right.parent())
 /**
  * @brief Family::operator=
  * @param right
- * @return This \a Family, copied from the assignee.
+ * @return This @a Family, copied from the assignee.
  *
  * Deep copy assignment operator.
  */
@@ -104,7 +104,7 @@ Family& Family::operator=(const Family &right)
 /**
  * @brief PrintFamily
  * @param family
- * @return Human-readable \a Family
+ * @return Human-readable @a Family
  */
 QString PrintFamily(const Family &family)
 {

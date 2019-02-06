@@ -105,7 +105,7 @@ CCI& CCI::operator=(const CCI &right)
 /**
  * @brief CCI::operator==
  * @param right
- * @return @c true when the actual CCI numbers are the same.
+ * @return @c True when the actual CCI numbers are the same.
  * Otherwise, @c false.
  *
  * Only the CCI number is compared, in case there is a shallow copy
