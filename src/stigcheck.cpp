@@ -22,6 +22,52 @@
 
 #include <QString>
 
+/**
+ * @class STIGCheck
+ * @brief A @a STIGCheck is an individual component of a @a STIG. A
+ * @a STIG is composed of any number of @a STIGChecks and form a
+ * security checklist for an applicable @a Asset.
+ *
+ * Most importantly, a @a STIGCheck details the overall risk
+ * severity, non-compliance situations, and vulnerability information
+ * related to an individual setting or check component for the
+ * affected @a Asset. Mitigations and fixes are also presented to
+ * bring the @a Asset into a compliant state.
+ *
+ * A @a STIG is composed of @a STIGChecks. These @a STIGChecks are
+ * then mapped against @a CCIs. The hierarchy is:
+ * @a STIG → @a STIGCheck   ↴
+ * @a Family → @a Control → @a CCI.
+ */
+
+/**
+ * @enum Severity
+ *
+ * A @a STIGCheck is associated with a general \a Severity level.
+ * Severities have historically been mapped to a Category (CAT)
+ * Level. It's important to remember that the default severity level
+ * can be overridden for a particular @a Asset.
+ *
+ * @value high
+ *        The check is a CAT I or HIGH severity.
+ * @value medium
+ *        The check is a CAT II or MODERATE severity.
+ * @value low
+ *        The check is a CAT III or LOW severity.
+ * @value none
+ *        The check is a CAT IV or NO severity. The term "CAT IV" is
+ *        a misnomer and is not defined by any particular standard.
+ *        It usually refers to an informational commentary on non-
+ *        compliance rather than one that imparts any risk.
+ */
+
+/**
+ * @brief STIGCheck::STIGCheck
+ * @param parent
+ *
+ * Default constructor. An ID of -1 is used to represent a
+ * @a STIGCheck that is detached from the database or incomplete.
+ */
 STIGCheck::STIGCheck(QObject *parent) : QObject(parent),
     id(-1),
     stigId(-1),
@@ -51,11 +97,24 @@ STIGCheck::STIGCheck(QObject *parent) : QObject(parent),
 {
 }
 
+/**
+ * @brief STIGCheck::STIGCheck
+ * @param right
+ *
+ * Copy constructor.
+ */
 STIGCheck::STIGCheck(const STIGCheck &right) : STIGCheck(right.parent())
 {
     *this = right;
 }
 
+/**
+ * @brief STIGCheck::operator =
+ * @param right
+ * @return This @a STIGCheck, copied from the assignee.
+ *
+ * Deep copy assignment operator.
+ */
 STIGCheck& STIGCheck::operator=(const STIGCheck &right)
 {
     if (this != &right)
@@ -89,18 +148,32 @@ STIGCheck& STIGCheck::operator=(const STIGCheck &right)
     return *this;
 }
 
+/**
+ * @brief STIGCheck::STIG
+ * @return The @a STIG associated with this @a STIGCheck.
+ */
 STIG STIGCheck::STIG() const
 {
     DbManager db;
     return db.GetSTIG(stigId);
 }
 
+/**
+ * @brief STIGCheck::CCI
+ * @return The @a CCI associated with this @a STIGCheck.
+ */
 CCI STIGCheck::CCI() const
 {
     DbManager db;
     return db.GetCCI(cciId);
 }
 
+/**
+ * @brief GetSeverity
+ * @param severity
+ * @return Converts the @a severity string to a value defined in the
+ * @a Severity enum.
+ */
 Severity GetSeverity(const QString &severity)
 {
     if (severity.isEmpty() || severity.endsWith(QStringLiteral(" IV")))
@@ -112,6 +185,14 @@ Severity GetSeverity(const QString &severity)
     return Severity::low;
 }
 
+/**
+ * @brief GetSeverity
+ * @param severity
+ * @param cat
+ * @return When @a cat is @c true, returns a human-readable Category
+ * level for the supplied @a severity. Otherwise, returns a human-
+ * readable general severity rank.
+ */
 QString GetSeverity(Severity severity, bool cat)
 {
     switch (severity)
@@ -127,6 +208,11 @@ QString GetSeverity(Severity severity, bool cat)
     }
 }
 
+/**
+ * @brief PrintSTIGCheck
+ * @param stigCheck
+ * @return A human-readable @a STIGCheck representation.
+ */
 QString PrintSTIGCheck(const STIGCheck &stigCheck)
 {
     return stigCheck.rule;
