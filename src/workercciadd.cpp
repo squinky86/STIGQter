@@ -31,10 +31,35 @@
 #include <QTemporaryFile>
 #include <QXmlStreamReader>
 
+/**
+ * @class WorkerCCIAdd
+ * @brief Indexing @a CCI and @a Control information from the
+ * internet can take a while. These tasks are sent to a background
+ * worker process to afford progress to the user.
+ *
+ * This class indexes @a Family and @a Control information from NIST,
+ * and it indexes @a CCI information from DISA.
+ */
+
+/**
+ * @brief WorkerCCIAdd::WorkerCCIAdd
+ * @param parent
+ *
+ * Default constructor.
+ */
 WorkerCCIAdd::WorkerCCIAdd(QObject *parent) : QObject(parent)
 {
 }
 
+/**
+ * @brief WorkerCCIAdd::process
+ *
+ * In general:
+ * @list
+ * @li Download and parse the NIST RMF information.
+ * @li Download and parse the IASE CCI information.
+ * @endlist
+ */
 void WorkerCCIAdd::process()
 {
     //open database in this thread

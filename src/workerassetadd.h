@@ -30,8 +30,8 @@ class WorkerAssetAdd : public QObject
     Q_OBJECT
 
 private:
-    Asset _todo;
-    QList<STIG> _todoSTIGs;
+    Asset _toAdd;
+    QList<STIG> _toMapSTIGs;
 
 public:
     explicit WorkerAssetAdd(QObject *parent = nullptr);
