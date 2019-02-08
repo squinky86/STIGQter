@@ -39,6 +39,34 @@
 #include <QInputDialog>
 #include <QMessageBox>
 
+/**
+ * @class STIGQter
+ * @brief @a STIGQter is an open-source STIG Viewer alternative
+ * capable of generating findings reports and eMASS-compatible
+ * resources.
+ *
+ * The original goal of STIGQter was to help familiarize the original
+ * developer (Jon Hood) with the latest Qt framework (5.12) after
+ * leaving the Qt world after version 3.1.
+ *
+ * After building a STIG Viewer-like, Asset-based interface, members
+ * of certain Army SCA-V teams began requesting new features.
+ * STIGQter incorporated those features in a faster, open way than
+ * DISA's STIG Viewer, and the first beta of the product was released
+ * on github.
+ *
+ * STIGQter now supports eMASS Test Result (TR) imports and exports,
+ * and it automates several of the validation tasks in the self-
+ * assessment and validation roles of the Army's Risk Management
+ * Framework (RMF) process.
+ */
+
+/**
+ * @brief STIGQter::STIGQter
+ * @param parent
+ *
+ * Main constructor for the main GUI.
+ */
 STIGQter::STIGQter(QWidget *parent) :
     QMainWindow(parent),
     ui(new Ui::STIGQter),
@@ -48,14 +76,25 @@ STIGQter::STIGQter(QWidget *parent) :
     _updatedSTIGs(false)
 {
     ui->setupUi(this);
+
+    //set the title bar
     this->setWindowTitle(QStringLiteral("STIGQter ") + QStringLiteral(VERSION));
+
+    //make sure that the initial data are populated and active
     EnableInput();
     DisplayCCIs();
     DisplaySTIGs();
     DisplayAssets();
+
+    //remove the close button on the main DB tab.
     ui->tabDB->tabBar()->tabButton(0, QTabBar::RightSide)->resize(0, 0);
 }
 
+/**
+ * @brief STIGQter::~STIGQter
+ *
+ * Destructor.
+ */
 STIGQter::~STIGQter()
 {
     CleanThreads();
@@ -64,6 +103,13 @@ STIGQter::~STIGQter()
 
 }
 
+/**
+ * @brief STIGQter::UpdateCCIs
+ *
+ * Start a thread to update the @a Family, @a Control, and @a CCI
+ * information from the NIST and IASE websites. A @a WorkerCCIAdd
+ * instance is created.
+ */
 void STIGQter::UpdateCCIs()
 {
     DisableInput();
@@ -85,6 +131,11 @@ void STIGQter::UpdateCCIs()
     t->start();
 }
 
+/**
+ * @brief STIGQter::OpenCKL
+ *
+ * Opens the selected @a Asset in a new tab.
+ */
 void STIGQter::OpenCKL()
 {
     foreach(QListWidgetItem *i, ui->lstAssets->selectedItems())
@@ -107,12 +158,22 @@ void STIGQter::OpenCKL()
     }
 }
 
+/**
+ * @brief STIGQter::SelectAsset
+ *
+ * Show the @a STIGs associated with the selected @a Asset.
+ */
 void STIGQter::SelectAsset()
 {
     UpdateSTIGs();
     EnableInput();
 }
 
+/**
+ * @brief STIGQter::CleanThreads
+ * When the program closes, wait on all background threads to finish
+ * processing.
+ */
 void STIGQter::CleanThreads()
 {
     while (!threads.isEmpty())
@@ -128,6 +189,12 @@ void STIGQter::CleanThreads()
     workers.clear();
 }
 
+/**
+ * @brief STIGQter::CompletedThread
+ *
+ * When a background thread completes, this function is signaled to
+ * update UI elements with the new data.
+ */
 void STIGQter::CompletedThread()
 {
     EnableInput();
@@ -153,6 +220,11 @@ void STIGQter::CompletedThread()
     ui->progressBar->setValue(ui->progressBar->maximum());
 }
 
+/**
+ * @brief STIGQter::About
+ *
+ * Display an About @a Help screen.
+ */
 void STIGQter::About()
 {
     Help *h = new Help();
@@ -160,6 +232,11 @@ void STIGQter::About()
     h->show();
 }
 
+/**
+ * @brief STIGQter::AddAsset
+ *
+ * Create a new @a Asset with the selected \a STIGs associated with it.
+ */
 void STIGQter::AddAsset()
 {
     bool ok;
@@ -192,6 +269,12 @@ void STIGQter::AddAsset()
     }
 }
 
+/**
+ * @brief STIGQter::AddSTIGs
+ *
+ * Adds @a STIG checklists to the database. See
+ * @l {https://iase.disa.mil/stigs/Pages/a-z.aspx} for more details.
+ */
 void STIGQter::AddSTIGs()
 {
     QStringList fileNames = QFileDialog::getOpenFileNames(this,
@@ -217,10 +300,16 @@ void STIGQter::AddSTIGs()
     t->start();
 }
 
-void STIGQter::CloseTab(int i)
+/**
+ * @brief STIGQter::CloseTab
+ * @param i
+ *
+ * Close the tab with the identified index.
+ */
+void STIGQter::CloseTab(int index)
 {
-    if (ui->tabDB->count() > i)
-        ui->tabDB->removeTab(i);
+    if (ui->tabDB->count() > index)
+        ui->tabDB->removeTab(index);
     for (int j = 1; j < ui->tabDB->count(); j++)
     {
         //reset the tab indices for the tabs that were not closed
@@ -229,6 +318,11 @@ void STIGQter::CloseTab(int i)
     DisplayAssets();
 }
 
+/**
+ * @brief STIGQter::DeleteCCIs
+ *
+ * Clear the database of initial NIST and DISA information.
+ */
 void STIGQter::DeleteCCIs()
 {
     DisableInput();
@@ -250,12 +344,23 @@ void STIGQter::DeleteCCIs()
     t->start();
 }
 
+/**
+ * @brief STIGQter::DeleteEmass
+ *
+ * Remove eMASS Test Results (TR) from the database.
+ */
 void STIGQter::DeleteEmass()
 {
     db->DeleteEmassImport();
     EnableInput();
 }
 
+/**
+ * @brief STIGQter::DeleteSTIGs
+ *
+ * Remove the selected @a STIGs from the database after making sure
+ * that no @a Asset is using them.
+ */
 void STIGQter::DeleteSTIGs()
 {
     DisableInput();
@@ -282,6 +387,11 @@ void STIGQter::DeleteSTIGs()
     t->start();
 }
 
+/**
+ * @brief STIGQter::ExportCKLs
+ *
+ * Export all possible .ckl files into the selected directory.
+ */
 void STIGQter::ExportCKLs()
 {
     QString dirName = QFileDialog::getExistingDirectory(this, QStringLiteral("Save to Directory"), QDir::home().dirName());
@@ -305,6 +415,11 @@ void STIGQter::ExportCKLs()
     }
 }
 
+/**
+ * @brief STIGQter::ExportEMASS
+ *
+ * Create an eMASS Test Result Import workbook.
+ */
 void STIGQter::ExportEMASS()
 {
     QString fileName = QFileDialog::getSaveFileName(this,
@@ -329,6 +444,12 @@ void STIGQter::ExportEMASS()
     t->start();
 }
 
+/**
+ * @brief STIGQter::FindingsReport
+ *
+ * Create a detailed findings report to make the findings data more
+ * human-readable.
+ */
 void STIGQter::FindingsReport()
 {
     QString fileName = QFileDialog::getSaveFileName(this,
@@ -353,6 +474,12 @@ void STIGQter::FindingsReport()
     t->start();
 }
 
+/**
+ * @brief STIGQter::ImportCKLs
+ *
+ * Import existing CKL files (potentially from STIG Viewer or old
+ * versions of STIG Qter).
+ */
 void STIGQter::ImportCKLs()
 {
     QStringList fileNames = QFileDialog::getOpenFileNames(this,
@@ -378,6 +505,11 @@ void STIGQter::ImportCKLs()
     t->start();
 }
 
+/**
+ * @brief STIGQter::ImportEMASS
+ *
+ * Import an existing Test Result Import spreadsheet.
+ */
 void STIGQter::ImportEMASS()
 {
     QString fileName = QFileDialog::getOpenFileName(this,
@@ -404,12 +536,25 @@ void STIGQter::ImportEMASS()
     t->start();
 }
 
+/**
+ * @brief STIGQter::SelectSTIG
+ *
+ * This function is triggered when the @a STIG selection changes.
+ */
 void STIGQter::SelectSTIG()
 {
     //select STIGs to create checklists
     ui->btnCreateCKL->setEnabled(ui->lstSTIGs->selectedItems().count() > 0);
 }
 
+/**
+ * @brief STIGQter::EnableInput
+ *
+ * At the end of several background workers' processing task, the
+ * EnableInput() routine will allow the GUI elements to interact with
+ * the user. This function is used in conjunction with
+ * @a DisableInput().
+ */
 void STIGQter::EnableInput()
 {
     QList<Family> f = db->GetFamilies();
@@ -443,6 +588,11 @@ void STIGQter::EnableInput()
     SelectSTIG();
 }
 
+/**
+ * @brief STIGQter::UpdateSTIGs
+ *
+ * Update the display of STIGs available in the database.
+ */
 void STIGQter::UpdateSTIGs()
 {
     ui->lstCKLs->clear();
@@ -456,6 +606,14 @@ void STIGQter::UpdateSTIGs()
     }
 }
 
+/**
+ * @brief STIGQter::Initialize
+ * @param max
+ * @param val
+ *
+ * Initializes the progress bar so that it has @a max steps and is
+ * currently at step @a val.
+ */
 void STIGQter::Initialize(int max, int val)
 {
     ui->progressBar->reset();
@@ -463,6 +621,14 @@ void STIGQter::Initialize(int max, int val)
     ui->progressBar->setValue(val);
 }
 
+/**
+ * @brief STIGQter::Progress
+ * @param val
+ *
+ * Sets the progress bar to display that it is at step @a val. If a
+ * negative number is given, it increments the progress bar by one
+ * step.
+ */
 void STIGQter::Progress(int val)
 {
     if (val < 0)
@@ -473,6 +639,11 @@ void STIGQter::Progress(int val)
         ui->progressBar->setValue(val);
 }
 
+/**
+ * @brief STIGQter::DisableInput
+ *
+ * Prevent user interaction while background processes are busy.
+ */
 void STIGQter::DisableInput()
 {
     ui->btnClearCCIs->setEnabled(false);
@@ -489,6 +660,11 @@ void STIGQter::DisableInput()
     ui->menubar->setEnabled(false);
 }
 
+/**
+ * @brief STIGQter::DisplayAssets
+ *
+ * Show the list of @a Assets to the user.
+ */
 void STIGQter::DisplayAssets()
 {
     ui->lstAssets->clear();
@@ -501,6 +677,11 @@ void STIGQter::DisplayAssets()
     }
 }
 
+/**
+ * @brief STIGQter::DisplayCCIs
+ *
+ * Show the list of @a CCIs to the user.
+ */
 void STIGQter::DisplayCCIs()
 {
     ui->lstCCIs->clear();
@@ -514,6 +695,13 @@ void STIGQter::DisplayCCIs()
     }
 }
 
+/**
+ * @brief STIGQter::DisplaySTIGs
+ *
+ * Show the list of @a STIGs to the user. This represents the global
+ * @a STIG list in the database representing all @a STIGs that have
+ * been imported, not only the @a STIGs for a particular @a Asset.
+ */
 void STIGQter::DisplaySTIGs()
 {
     ui->lstSTIGs->clear();

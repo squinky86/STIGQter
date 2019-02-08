@@ -23,6 +23,7 @@
 
 #include <zip.h>
 
+#include <QApplication>
 #include <QDebug>
 #include <QEventLoop>
 #include <QMessageBox>
@@ -339,6 +340,6 @@ QString TrimFileName(const QString &fileName)
 void Warning(const QString &title, const QString &message, const bool quiet)
 {
     qDebug() << title << ": " << message << endl;
-    if (!quiet)
+    if (!quiet && (QThread::currentThread() == QApplication::instance()->thread())) //make sure we're in the GUI thread before popping a messagae box
         QMessageBox::warning(nullptr, title, message);
 }
