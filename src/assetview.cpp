@@ -109,6 +109,8 @@ AssetView::AssetView(QWidget *parent) : AssetView(_asset, parent)
 }
 
 /**
+ * @brief AssetView::~AssetView
+ *
  * Destructor.
  */
 AssetView::~AssetView()
@@ -772,7 +774,7 @@ void AssetView::UpdateCKLHelper()
         db.DelayCommit(true);
         foreach (QListWidgetItem *i, selectedItems)
         {
-            CKLCheck cc = i->data(Qt::UserRole).value<CKLCheck>();
+            auto cc = i->data(Qt::UserRole).value<CKLCheck>();
             //if multiple checks are selected, only update their status
             if (count < 2)
             {
@@ -825,7 +827,7 @@ void AssetView::UpdateCKLStatus(const QString &val)
     {
         foreach (QListWidgetItem *i, selectedItems)
         {
-            CKLCheck cc = i->data(Qt::UserRole).value<CKLCheck>();
+            auto cc = i->data(Qt::UserRole).value<CKLCheck>();
             STIGCheck sc = cc.STIGCheck();
             SetItemColor(i, stat, (cc.severityOverride == Severity::none) ? sc.severity : cc.severityOverride);
         }
@@ -848,7 +850,7 @@ void AssetView::UpdateCKLSeverity(const QString &val)
     if (selectedItems.count() > 0)
     {
         QListWidgetItem *i = selectedItems.first();
-        CKLCheck cc = i->data(Qt::UserRole).value<CKLCheck>();
+        auto cc = i->data(Qt::UserRole).value<CKLCheck>();
         STIGCheck sc = cc.STIGCheck();
         Severity tmpSeverity = GetSeverity(val);
         if (sc.severity != tmpSeverity)
@@ -981,7 +983,7 @@ void AssetView::CheckSelected(QListWidgetItem *current, QListWidgetItem *previou
 {
     if (current)
     {
-        CKLCheck cc = current->data(Qt::UserRole).value<CKLCheck>();
+        auto cc = current->data(Qt::UserRole).value<CKLCheck>();
         DbManager db;
         UpdateCKLCheck(db.GetCKLCheck(cc));
     }

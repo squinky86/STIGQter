@@ -81,7 +81,7 @@ void WorkerFindingsReport::process()
     //write each failed check
     for (int i = 0; i < numChecks; i++)
     {
-        unsigned int onRow = static_cast<unsigned int>(i+1);
+        auto onRow = static_cast<unsigned int>(i+1);
         CKLCheck cc = checks[i];
         STIGCheck sc = cc.STIGCheck();
         CCI c = sc.CCI();

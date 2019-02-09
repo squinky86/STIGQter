@@ -218,7 +218,6 @@ QMap<QString, QByteArray> GetFilesFromZip(const QString &fileName, const QString
                     }
                 }
 
-                QString zipName(name);
                 QByteArray todo;
                 struct zip_file *zf = zip_fopen_index(za, i, 0);
                 if (zf)
@@ -236,7 +235,7 @@ QMap<QString, QByteArray> GetFilesFromZip(const QString &fileName, const QString
                     }
                     zip_fclose(zf);
                 }
-                ret.insert(zipName, todo);
+                ret.insert(name, todo);
             }
         }
         zip_close(za);

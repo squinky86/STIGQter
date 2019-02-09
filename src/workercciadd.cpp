@@ -77,7 +77,7 @@ void WorkerCCIAdd::process()
     rmf = CleanXML(rmf);
 
     //Step 3: read the families
-    QXmlStreamReader *xml = new QXmlStreamReader(rmf);
+    auto *xml = new QXmlStreamReader(rmf);
     QList<QString> todo;
     db.DelayCommit(true);
     while (!xml->atEnd() && !xml->hasError())

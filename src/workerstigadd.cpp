@@ -28,7 +28,7 @@
 void WorkerSTIGAdd::ParseSTIG(const QByteArray &stig, const QString &fileName)
 {
     //should be the .xml file inside of the STIG .zip file here
-    QXmlStreamReader *xml = new QXmlStreamReader(stig);
+    auto *xml = new QXmlStreamReader(stig);
     STIG s;
     s.fileName = fileName;
     STIGCheck c;

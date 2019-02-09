@@ -116,8 +116,8 @@ void STIGQter::UpdateCCIs()
     _updatedCCIs = true;
 
     //Create thread to download CCIs and keep GUI active
-    QThread* t = new QThread;
-    WorkerCCIAdd *c = new WorkerCCIAdd();
+    auto *t = new QThread;
+    auto *c = new WorkerCCIAdd();
     c->moveToThread(t);
     connect(t, SIGNAL(started()), c, SLOT(process()));
     connect(c, SIGNAL(finished()), t, SLOT(quit()));
@@ -140,7 +140,7 @@ void STIGQter::OpenCKL()
 {
     foreach(QListWidgetItem *i, ui->lstAssets->selectedItems())
     {
-        Asset a = i->data(Qt::UserRole).value<Asset>();
+        auto a = i->data(Qt::UserRole).value<Asset>();
         QString assetName = PrintAsset(a);
         for (int j = 0; j < ui->tabDB->count(); j++)
         {
@@ -150,7 +150,7 @@ void STIGQter::OpenCKL()
                  return;
              }
         }
-        AssetView *av = new AssetView(a);
+        auto *av = new AssetView(a);
         connect(av, SIGNAL(CloseTab(int)), this, SLOT(CloseTab(int)));
         int index = ui->tabDB->addTab(av, assetName);
         av->SetTabIndex(index);
@@ -247,8 +247,8 @@ void STIGQter::AddAsset()
     {
         DisableInput();
         _updatedAssets = true;
-        QThread* t = new QThread;
-        WorkerAssetAdd *a = new WorkerAssetAdd();
+        auto *t = new QThread;
+        auto *a = new WorkerAssetAdd();
         Asset tmpAsset;
         tmpAsset.hostName = asset;
         foreach(QListWidgetItem *i, ui->lstSTIGs->selectedItems())
@@ -285,8 +285,8 @@ void STIGQter::AddSTIGs()
 
     DisableInput();
     _updatedSTIGs = true;
-    QThread* t = new QThread;
-    WorkerSTIGAdd *s = new WorkerSTIGAdd();
+    auto *t = new QThread;
+    auto *s = new WorkerSTIGAdd();
     s->AddSTIGs(fileNames);
     connect(t, SIGNAL(started()), s, SLOT(process()));
     connect(s, SIGNAL(finished()), t, SLOT(quit()));
@@ -313,7 +313,7 @@ void STIGQter::CloseTab(int index)
     for (int j = 1; j < ui->tabDB->count(); j++)
     {
         //reset the tab indices for the tabs that were not closed
-        static_cast<AssetView*>(ui->tabDB->widget(j))->SetTabIndex(j);
+        dynamic_cast<AssetView*>(ui->tabDB->widget(j))->SetTabIndex(j);
     }
     DisplayAssets();
 }
@@ -329,8 +329,8 @@ void STIGQter::DeleteCCIs()
     _updatedCCIs = true;
 
     //Create thread to download CCIs and keep GUI active
-    QThread* t = new QThread;
-    WorkerCCIDelete *c = new WorkerCCIDelete();
+    auto *t = new QThread;
+    auto *c = new WorkerCCIDelete();
     c->moveToThread(t);
     connect(t, SIGNAL(started()), c, SLOT(process()));
     connect(c, SIGNAL(finished()), t, SLOT(quit()));
@@ -367,8 +367,8 @@ void STIGQter::DeleteSTIGs()
     _updatedSTIGs = true;
 
     //Create thread to download CCIs and keep GUI active
-    QThread* t = new QThread;
-    WorkerSTIGDelete *s = new WorkerSTIGDelete();
+    auto *t = new QThread;
+    auto *s = new WorkerSTIGDelete();
     foreach (QListWidgetItem *i, ui->lstSTIGs->selectedItems())
     {
         STIG s = i->data(Qt::UserRole).value<STIG>();
@@ -399,8 +399,8 @@ void STIGQter::ExportCKLs()
     if (!dirName.isNull() && !dirName.isEmpty())
     {
         DisableInput();
-        QThread* t = new QThread;
-        WorkerCKLExport *f = new WorkerCKLExport();
+        auto *t = new QThread;
+        auto *f = new WorkerCKLExport();
         f->SetExportDir(dirName);
         connect(t, SIGNAL(started()), f, SLOT(process()));
         connect(f, SIGNAL(finished()), t, SLOT(quit()));
@@ -429,8 +429,8 @@ void STIGQter::ExportEMASS()
         return; // cancel button pressed
 
     DisableInput();
-    QThread* t = new QThread;
-    WorkerEMASSReport *f = new WorkerEMASSReport();
+    auto *t = new QThread;
+    auto *f = new WorkerEMASSReport();
     f->SetReportName(fileName);
     connect(t, SIGNAL(started()), f, SLOT(process()));
     connect(f, SIGNAL(finished()), t, SLOT(quit()));
@@ -459,8 +459,8 @@ void STIGQter::FindingsReport()
         return; // cancel button pressed
 
     DisableInput();
-    QThread* t = new QThread;
-    WorkerFindingsReport *f = new WorkerFindingsReport();
+    auto *t = new QThread;
+    auto *f = new WorkerFindingsReport();
     f->SetReportName(fileName);
     connect(t, SIGNAL(started()), f, SLOT(process()));
     connect(f, SIGNAL(finished()), t, SLOT(quit()));
@@ -490,8 +490,8 @@ void STIGQter::ImportCKLs()
 
     DisableInput();
     _updatedAssets = true;
-    QThread* t = new QThread;
-    WorkerCKLImport *c = new WorkerCKLImport();
+    auto *t = new QThread();
+    auto *c = new WorkerCKLImport();
     c->AddCKLs(fileNames);
     connect(t, SIGNAL(started()), c, SLOT(process()));
     connect(c, SIGNAL(finished()), t, SLOT(quit()));
@@ -520,8 +520,8 @@ void STIGQter::ImportEMASS()
 
     DisableInput();
 
-    QThread* t = new QThread;
-    WorkerImportEMASS *c = new WorkerImportEMASS();
+    auto *t = new QThread;
+    auto *c = new WorkerImportEMASS();
     c->SetReportName(fileName);
     c->moveToThread(t);
     connect(t, SIGNAL(started()), c, SLOT(process()));
@@ -598,7 +598,7 @@ void STIGQter::UpdateSTIGs()
     ui->lstCKLs->clear();
     foreach (QListWidgetItem *i, ui->lstAssets->selectedItems())
     {
-        Asset a = i->data(Qt::UserRole).value<Asset>();
+        auto a = i->data(Qt::UserRole).value<Asset>();
         foreach (const STIG &s, a.STIGs())
         {
             ui->lstCKLs->addItem(PrintSTIG(s));
@@ -688,7 +688,7 @@ void STIGQter::DisplayCCIs()
     foreach(const CCI &c, db->GetCCIs())
     {
         CCI tmpCci = c;
-        QListWidgetItem *tmpItem = new QListWidgetItem(); //memory managed by ui->lstCCIs container
+        auto *tmpItem = new QListWidgetItem(); //memory managed by ui->lstCCIs container
         tmpItem->setData(Qt::UserRole, QVariant::fromValue<CCI>(tmpCci));
         tmpItem->setText(PrintCCI(tmpCci));
         ui->lstCCIs->addItem(tmpItem);
@@ -707,7 +707,7 @@ void STIGQter::DisplaySTIGs()
     ui->lstSTIGs->clear();
     foreach(const STIG &s, db->GetSTIGs())
     {
-        QListWidgetItem *tmpItem = new QListWidgetItem(); //memory managed by ui->lstSTIGs container
+        auto *tmpItem = new QListWidgetItem(); //memory managed by ui->lstSTIGs container
         tmpItem->setData(Qt::UserRole, QVariant::fromValue<STIG>(s));
         tmpItem->setText(PrintSTIG(s));
         ui->lstSTIGs->addItem(tmpItem);
