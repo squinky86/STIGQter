@@ -41,8 +41,8 @@ public:
     int version;
     QString benchmarkId;
     QString fileName;
-    QList<STIGCheck> STIGChecks() const;
-    QList<Asset> Assets() const;
+    QList<STIGCheck> GetSTIGChecks() const;
+    QList<Asset> GetAssets() const;
     STIG& operator=(const STIG &right);
     bool operator==(const STIG &right);
 };

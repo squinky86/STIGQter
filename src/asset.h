@@ -35,8 +35,8 @@ public:
     Asset(const Asset &asset);
     explicit Asset(QObject *parent = nullptr);
     Asset& operator=(const Asset &right);
-    QList<STIG> STIGs() const;
-    QList<CKLCheck> CKLChecks(const STIG *stig = nullptr) const;
+    QList<STIG> GetSTIGs() const;
+    QList<CKLCheck> GetCKLChecks(const STIG *stig = nullptr) const;
     int id; /**< Database ID */
     QString assetType; /**< Specifies if asset is "Computing" or "Non-Computing" */
     QString hostName; /**< Unique asset identifier */

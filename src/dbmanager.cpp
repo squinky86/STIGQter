@@ -591,7 +591,7 @@ bool DbManager::DeleteAsset(int id)
 bool DbManager::DeleteAsset(const Asset &asset)
 {
     bool ret = false;
-    if (asset.STIGs().count() > 0)
+    if (asset.GetSTIGs().count() > 0)
     {
         Warning(QStringLiteral("Asset Has Mapped STIGs"), "The Asset '" + PrintAsset(asset) + "' has STIGs selected that must be removed.");
         return ret;
@@ -670,7 +670,7 @@ bool DbManager::DeleteSTIG(int id)
     {
         //check if this STIG is used by any Assets
         STIG tmpStig = GetSTIG(id);
-        QList<Asset> assets = tmpStig.Assets();
+        QList<Asset> assets = tmpStig.GetAssets();
         int tmpCount = assets.count();
         if (tmpCount > 0)
         {

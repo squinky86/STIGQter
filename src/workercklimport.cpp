@@ -61,7 +61,7 @@ void WorkerCKLImport::ParseCKL(const QString &fileName)
                 if (xml->name() == "iSTIG" && checks.count() > 0)
                 {
                     a = CheckAsset(a);
-                    if (a.STIGs().contains(tmpSTIG))
+                    if (a.GetSTIGs().contains(tmpSTIG))
                     {
                         QMessageBox::warning(nullptr, QStringLiteral("Asset already has STIG applied!"), "The asset " + PrintAsset(a) + " already has the STIG " + PrintSTIG(tmpSTIG) + " applied and will not be imported.");
                     }
@@ -183,7 +183,7 @@ void WorkerCKLImport::ParseCKL(const QString &fileName)
 
     //if the asset is already in the database, use it as the one to import the CKL against
     a = CheckAsset(a);
-    if (a.STIGs().contains(tmpSTIG))
+    if (a.GetSTIGs().contains(tmpSTIG))
     {
         QMessageBox::warning(nullptr, QStringLiteral("Asset already has STIG applied!"), "The asset " + PrintAsset(a) + " already has the STIG " + PrintSTIG(tmpSTIG) + " applied.");
         return;

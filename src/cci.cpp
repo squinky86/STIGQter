@@ -66,13 +66,13 @@ CCI::CCI(const CCI &right) : CCI(right.parent())
 }
 
 /**
- * @brief CCI::Control
+ * @brief CCI::GetControl
  * @return the RMF control associated with this CCI
  *
  * Control() calls the database to obtain the control which maps to
  * this CCI.
  */
-Control CCI::Control() const
+Control CCI::GetControl() const
 {
     DbManager db;
     return db.GetControl(controlId);

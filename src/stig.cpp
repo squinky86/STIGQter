@@ -64,20 +64,20 @@ STIG::STIG(QObject *parent) : QObject(parent),
 }
 
 /**
- * @brief STIG::STIGChecks
+ * @brief STIG::GetSTIGChecks
  * @return The list of @a STIGChecks associated with this @a STIG.
  */
-QList<STIGCheck> STIG::STIGChecks() const
+QList<STIGCheck> STIG::GetSTIGChecks() const
 {
     DbManager db;
     return db.GetSTIGChecks(*this);
 }
 
 /**
- * @brief STIG::Assets
+ * @brief STIG::GetAssets
  * @return The list of @a Assets that use this @a STIG.
  */
-QList<Asset> STIG::Assets() const
+QList<Asset> STIG::GetAssets() const
 {
     DbManager db;
     return db.GetAssets(*this);

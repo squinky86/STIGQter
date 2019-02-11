@@ -48,8 +48,8 @@ public:
     int id;
     int stigId;
     int cciId;
-    STIG STIG() const;
-    CCI CCI() const;
+    STIG GetSTIG() const;
+    CCI GetCCI() const;
     QString vulnNum;
     QString groupTitle;
     QString ruleVersion;

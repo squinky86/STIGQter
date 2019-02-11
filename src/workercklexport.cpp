@@ -41,7 +41,7 @@ void WorkerCKLExport::process()
     foreach (Asset a, assets)
     {
         emit updateStatus("Exporting CKLs for " + PrintAsset(a));
-        foreach (STIG s, a.STIGs())
+        foreach (STIG s, a.GetSTIGs())
         {
             emit updateStatus("Exporting CKL " + PrintSTIG(s) + " for " + PrintAsset(a));
             QString fileName = QDir(_dirName).filePath(PrintAsset(a) + "_" + s.title + "_V" + QString::number(s.version) + "R" + QString::number(GetReleaseNumber(s.release)) + ".ckl");
@@ -154,9 +154,9 @@ void WorkerCKLExport::process()
 
                 stream.writeEndElement(); //STIG_INFO
 
-                foreach (const CKLCheck &cc, a.CKLChecks(&s))
+                foreach (const CKLCheck &cc, a.GetCKLChecks(&s))
                 {
-                    const STIGCheck sc = cc.STIGCheck();
+                    const STIGCheck sc = cc.GetSTIGCheck();
                     stream.writeStartElement(QStringLiteral("VULN"));
 
                     stream.writeStartElement(QStringLiteral("STIG_DATA"));
@@ -371,7 +371,7 @@ void WorkerCKLExport::process()
                     stream.writeCharacters(QStringLiteral("CCI_REF"));
                     stream.writeEndElement(); //VULN_ATTRIBUTE
                     stream.writeStartElement(QStringLiteral("ATTRIBUTE_DATA"));
-                    stream.writeCharacters(PrintCCI(sc.CCI()));
+                    stream.writeCharacters(PrintCCI(sc.GetCCI()));
                     stream.writeEndElement(); //ATTRIBUTE_DATA
                     stream.writeEndElement(); //STIG_DATA
 

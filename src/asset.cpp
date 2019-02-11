@@ -97,24 +97,24 @@ Asset &Asset::operator=(const Asset &right)
 }
 
 /**
- * @brief Asset::STIGs
+ * @brief Asset::GetSTIGs
  * @return list of STIGs associated with this Asset
  */
-QList<STIG> Asset::STIGs() const
+QList<STIG> Asset::GetSTIGs() const
 {
     DbManager db;
     return db.GetSTIGs(*this);
 }
 
 /**
- * @brief Asset::CKLChecks
+ * @brief Asset::GetCKLChecks
  * @param stig
  * @return list of CKLChecks associated with this Asset
  *
  * When @a stig is a nullptr, all CKL checks associated with all
  * STIGs mapped to this Asset are returned.
  */
-QList<CKLCheck> Asset::CKLChecks(const STIG *stig) const
+QList<CKLCheck> Asset::GetCKLChecks(const STIG *stig) const
 {
     DbManager db;
     return db.GetCKLChecks(*this, stig);

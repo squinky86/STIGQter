@@ -23,7 +23,7 @@
 #include <QObject>
 #include <QString>
 
-struct Family : public QObject
+class Family : public QObject
 {
     Q_OBJECT
 public:

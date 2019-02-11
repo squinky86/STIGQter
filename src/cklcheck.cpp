@@ -75,28 +75,28 @@ CKLCheck::CKLCheck(const CKLCheck &right) : CKLCheck(right.parent())
 }
 
 /**
- * @brief CKLCheck::Asset
+ * @brief CKLCheck::GetAsset
  * @return The @a Asset associated with this check.
  *
  * A check maps an @a Asset to a @a STIGCheck and stores its
  * compliance state. This function retrieves the associated
  * @a Asset.
  */
-Asset CKLCheck::Asset() const
+Asset CKLCheck::GetAsset() const
 {
     DbManager db;
     return db.GetAsset(assetId);
 }
 
 /**
- * @brief CKLCheck::STIGCheck
+ * @brief CKLCheck::GetSTIGCheck
  * @return The @a STIGCheck associated with this check.
  *
  * A check maps an @a Asset to a @a STIGCheck and stores its
  * compliance state. This function retrieves the associated
  * @a STIGCheck.
  */
-STIGCheck CKLCheck::STIGCheck() const
+STIGCheck CKLCheck::GetSTIGCheck() const
 {
     DbManager db;
     return db.GetSTIGCheck(stigCheckId);
@@ -193,5 +193,5 @@ QString GetStatus(Status status, bool xmlFormat)
  */
 QString PrintCKLCheck(const CKLCheck &cklCheck)
 {
-    return PrintSTIGCheck(cklCheck.STIGCheck());
+    return PrintSTIGCheck(cklCheck.GetSTIGCheck());
 }

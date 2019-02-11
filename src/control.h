@@ -33,7 +33,7 @@ public:
     explicit Control(QObject *parent = nullptr);
     int id;
     int familyId;
-    Family Family() const;
+    Family GetFamily() const;
     int number;
     int enhancement;
     QString title;

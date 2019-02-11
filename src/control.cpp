@@ -63,10 +63,10 @@ Control::Control(const Control &right) : Control(right.parent())
 }
 
 /**
- * @brief Control::Family
+ * @brief Control::GetFamily
  * @return The @a Family associated with this @a Control
  */
-Family Control::Family() const
+Family Control::GetFamily() const
 {
     DbManager db;
     return db.GetFamily(familyId);
@@ -100,7 +100,7 @@ Control& Control::operator=(const Control &right)
  */
 QString PrintControl(const Control &control)
 {
-    QString ret = control.Family().acronym + "-" + QString::number(control.number);
+    QString ret = control.GetFamily().acronym + "-" + QString::number(control.number);
     if (control.enhancement > 0)
         ret.append("(" + QString::number(control.enhancement) + ")");
     return ret;

@@ -137,8 +137,8 @@ void WorkerEMASSReport::process()
     for (int i = 0; i < numChecks; i++)
     {
         CKLCheck cc = checks[i];
-        STIGCheck sc = cc.STIGCheck();
-        CCI c = sc.CCI();
+        STIGCheck sc = cc.GetSTIGCheck();
+        CCI c = sc.GetCCI();
         Status s = cc.status;
         emit updateStatus("Checking " + PrintSTIGCheck(sc) + "…");
 
@@ -182,7 +182,7 @@ void WorkerEMASSReport::process()
         emit updateStatus("Adding " + PrintCCI(c) + "…");
         QList<CKLCheck> checks = i.value();
         std::sort(checks.begin(), checks.end());
-        Control control = c.Control();
+        Control control = c.GetControl();
         //control
         worksheet_write_string(ws, onRow, 0, PrintControl(control).toStdString().c_str(), nullptr);
         //control information
@@ -209,7 +209,7 @@ void WorkerEMASSReport::process()
         QString testResult = QStringLiteral("The following checks are open:");
         foreach (CKLCheck cc, checks)
         {
-            testResult.append("\n" + PrintAsset(cc.Asset()) + ": " + PrintCKLCheck(cc) + " - " + GetSeverity(cc.GetSeverity()));
+            testResult.append("\n" + PrintAsset(cc.GetAsset()) + ": " + PrintCKLCheck(cc) + " - " + GetSeverity(cc.GetSeverity()));
             if (!cc.findingDetails.isEmpty())
                 testResult.append(" - " + cc.findingDetails);
         }
@@ -235,7 +235,7 @@ void WorkerEMASSReport::process()
         emit updateStatus("Adding " + PrintCCI(c) + "…");
         QList<CKLCheck> checks = i.value();
         std::sort(checks.begin(), checks.end());
-        Control control = c.Control();
+        Control control = c.GetControl();
         //control
         worksheet_write_string(ws, onRow, 0, PrintControl(control).toStdString().c_str(), nullptr);
         //control information
@@ -262,7 +262,7 @@ void WorkerEMASSReport::process()
         QString testResult = QStringLiteral("The following checks were compliant:");
         foreach (CKLCheck cc, checks)
         {
-            testResult.append("\n" + PrintAsset(cc.Asset()) + ": " + PrintCKLCheck(cc));
+            testResult.append("\n" + PrintAsset(cc.GetAsset()) + ": " + PrintCKLCheck(cc));
         }
         worksheet_write_string(ws, onRow, 10, Excelify(testResult).toStdString().c_str(), fmtWrapped);
 
@@ -286,7 +286,7 @@ void WorkerEMASSReport::process()
 
         onRow++;
         emit updateStatus("Adding " + PrintCCI(c) + "…");
-        Control control = c.Control();
+        Control control = c.GetControl();
         //control
         worksheet_write_string(ws, onRow, 0, PrintControl(control).toStdString().c_str(), nullptr);
         //control information

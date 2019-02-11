@@ -83,9 +83,9 @@ void WorkerFindingsReport::process()
     {
         auto onRow = static_cast<unsigned int>(i+1);
         CKLCheck cc = checks[i];
-        STIGCheck sc = cc.STIGCheck();
-        CCI c = sc.CCI();
-        Asset a = cc.Asset();
+        STIGCheck sc = cc.GetSTIGCheck();
+        CCI c = sc.GetCCI();
+        Asset a = cc.GetAsset();
         Status s = cc.status;
         emit updateStatus("Adding " + PrintAsset(a) + ", " + PrintSTIGCheck(sc) + "…");
         //internal id
@@ -130,7 +130,7 @@ void WorkerFindingsReport::process()
         emit updateStatus("Adding " + PrintCCI(c) + "…");
         QList<CKLCheck> checks = i.value();
         std::sort(checks.begin(), checks.end());
-        Control control = c.Control();
+        Control control = c.GetControl();
         //control
         worksheet_write_string(wsCCIs, onRow, 0, PrintControl(control).toStdString().c_str(), nullptr);
         //cci

@@ -599,7 +599,7 @@ void STIGQter::UpdateSTIGs()
     foreach (QListWidgetItem *i, ui->lstAssets->selectedItems())
     {
         auto a = i->data(Qt::UserRole).value<Asset>();
-        foreach (const STIG &s, a.STIGs())
+        foreach (const STIG &s, a.GetSTIGs())
         {
             ui->lstCKLs->addItem(PrintSTIG(s));
         }

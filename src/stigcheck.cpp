@@ -149,20 +149,20 @@ STIGCheck& STIGCheck::operator=(const STIGCheck &right)
 }
 
 /**
- * @brief STIGCheck::STIG
+ * @brief STIGCheck::GetSTIG
  * @return The @a STIG associated with this @a STIGCheck.
  */
-STIG STIGCheck::STIG() const
+STIG STIGCheck::GetSTIG() const
 {
     DbManager db;
     return db.GetSTIG(stigId);
 }
 
 /**
- * @brief STIGCheck::CCI
+ * @brief STIGCheck::GetCCI
  * @return The @a CCI associated with this @a STIGCheck.
  */
-CCI STIGCheck::CCI() const
+CCI STIGCheck::GetCCI() const
 {
     DbManager db;
     return db.GetCCI(cciId);

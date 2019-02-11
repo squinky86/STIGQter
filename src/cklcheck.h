@@ -47,8 +47,8 @@ public:
     int id;
     int assetId;
     int stigCheckId;
-    Asset Asset() const;
-    STIGCheck STIGCheck() const;
+    Asset GetAsset() const;
+    STIGCheck GetSTIGCheck() const;
     Severity GetSeverity() const;
     Status status;
     QString findingDetails;
@@ -60,7 +60,7 @@ public:
         Severity l = left.GetSeverity();
         Severity r = right.GetSeverity();
         if (l == r)
-            return (left.STIGCheck().rule.compare(right.STIGCheck().rule) < 0);
+            return (left.GetSTIGCheck().rule.compare(right.GetSTIGCheck().rule) < 0);
         return r < l;
     }
     CKLCheck& operator=(const CKLCheck &right);

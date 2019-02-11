@@ -143,7 +143,7 @@ void AssetView::SelectSTIGs()
     DbManager db;
     //ui->lstSTIGs->blockSignals(true);
     ui->lstSTIGs->clear();
-    QList<STIG> stigs = _asset.STIGs();
+    QList<STIG> stigs = _asset.GetSTIGs();
     foreach (const STIG s, db.GetSTIGs())
     {
         QListWidgetItem *i = new QListWidgetItem(PrintSTIG(s));
@@ -179,7 +179,7 @@ void AssetView::ShowChecks(bool countOnly)
     int total = 0; //total checks
     int open = 0; //findings
     int closed = 0; //passed checks
-    foreach(const CKLCheck c, _asset.CKLChecks())
+    foreach(const CKLCheck c, _asset.GetCKLChecks())
     {
         total++;
         switch (c.status)
@@ -199,7 +199,7 @@ void AssetView::ShowChecks(bool countOnly)
             QListWidgetItem *i = new QListWidgetItem(PrintCKLCheck(c));
             ui->lstChecks->addItem(i);
             i->setData(Qt::UserRole, QVariant::fromValue<CKLCheck>(c));
-            SetItemColor(i, c.status, (c.severityOverride == Severity::none) ? c.STIGCheck().severity : c.severityOverride);
+            SetItemColor(i, c.status, (c.severityOverride == Severity::none) ? c.GetSTIGCheck().severity : c.severityOverride);
         }
     }
     ui->lblTotalChecks->setText(QString::number(total));
@@ -235,7 +235,7 @@ void AssetView::UpdateCKLCheck(const CKLCheck &cklCheck)
     _justification = cklCheck.severityJustification;
 
     //see if the check has a category-level override
-    UpdateSTIGCheck(cklCheck.STIGCheck());
+    UpdateSTIGCheck(cklCheck.GetSTIGCheck());
     if (cklCheck.severityOverride != Severity::none)
         ui->cboBoxSeverity->setCurrentText(GetSeverity(cklCheck.severityOverride));
 
@@ -313,7 +313,7 @@ void AssetView::DeleteAsset()
     {
         DbManager db;
         //remove all associated STIGs from this asset.
-        foreach (const STIG &s, _asset.STIGs())
+        foreach (const STIG &s, _asset.GetSTIGs())
             db.DeleteSTIGFromAsset(s, _asset);
         db.DeleteAsset(_asset);
         if (_tabIndex > 0)
@@ -416,7 +416,7 @@ void AssetView::SaveCKL()
         stream.writeEndElement(); //WEB_DB_INSTANCE
         stream.writeEndElement(); //ASSET
         stream.writeStartElement(QStringLiteral("STIGS"));
-        foreach (const STIG &s, _asset.STIGs())
+        foreach (const STIG &s, _asset.GetSTIGs())
         {
             stream.writeStartElement(QStringLiteral("iSTIG"));
             stream.writeStartElement(QStringLiteral("STIG_INFO"));
@@ -477,9 +477,9 @@ void AssetView::SaveCKL()
 
             stream.writeEndElement(); //STIG_INFO
 
-            foreach (const CKLCheck &cc, _asset.CKLChecks(&s))
+            foreach (const CKLCheck &cc, _asset.GetCKLChecks(&s))
             {
-                const STIGCheck sc = cc.STIGCheck();
+                const STIGCheck sc = cc.GetSTIGCheck();
                 stream.writeStartElement(QStringLiteral("VULN"));
 
                 stream.writeStartElement(QStringLiteral("STIG_DATA"));
@@ -694,7 +694,7 @@ void AssetView::SaveCKL()
                 stream.writeCharacters(QStringLiteral("CCI_REF"));
                 stream.writeEndElement(); //VULN_ATTRIBUTE
                 stream.writeStartElement(QStringLiteral("ATTRIBUTE_DATA"));
-                stream.writeCharacters(PrintCCI(sc.CCI()));
+                stream.writeCharacters(PrintCCI(sc.GetCCI()));
                 stream.writeEndElement(); //ATTRIBUTE_DATA
                 stream.writeEndElement(); //STIG_DATA
 
@@ -781,7 +781,7 @@ void AssetView::UpdateCKLHelper()
                 cc.comments = ui->txtComments->toPlainText();
                 cc.findingDetails = ui->txtFindingDetails->toPlainText();
                 Severity tmpSeverity = GetSeverity(ui->cboBoxSeverity->currentText());
-                cc.severityOverride = (tmpSeverity == cc.STIGCheck().severity) ? cc.severityOverride = Severity::none : tmpSeverity;
+                cc.severityOverride = (tmpSeverity == cc.GetSTIGCheck().severity) ? cc.severityOverride = Severity::none : tmpSeverity;
                 cc.severityJustification = _justification;
                 cc.status = GetStatus(ui->cboBoxStatus->currentText());
             }
@@ -828,7 +828,7 @@ void AssetView::UpdateCKLStatus(const QString &val)
         foreach (QListWidgetItem *i, selectedItems)
         {
             auto cc = i->data(Qt::UserRole).value<CKLCheck>();
-            STIGCheck sc = cc.STIGCheck();
+            STIGCheck sc = cc.GetSTIGCheck();
             SetItemColor(i, stat, (cc.severityOverride == Severity::none) ? sc.severity : cc.severityOverride);
         }
         _updateStatus = true;
@@ -851,7 +851,7 @@ void AssetView::UpdateCKLSeverity(const QString &val)
     {
         QListWidgetItem *i = selectedItems.first();
         auto cc = i->data(Qt::UserRole).value<CKLCheck>();
-        STIGCheck sc = cc.STIGCheck();
+        STIGCheck sc = cc.GetSTIGCheck();
         Severity tmpSeverity = GetSeverity(val);
         if (sc.severity != tmpSeverity)
         {
@@ -895,7 +895,7 @@ void AssetView::UpdateCKLSeverity(const QString &val)
 void AssetView::UpdateSTIGs()
 {
     DbManager db;
-    QList<STIG> stigs = _asset.STIGs();
+    QList<STIG> stigs = _asset.GetSTIGs();
     for (int i = 0; i < ui->lstSTIGs->count(); i++)
     {
         QListWidgetItem *item = ui->lstSTIGs->item(i);
