@@ -21,10 +21,30 @@
 #include "common.h"
 #include "dbmanager.h"
 
+/**
+ * @class WorkerCCIDelete
+ * @brief Deleting the data indexed by the @a WorkerCCIAdd task is
+ * performed by this background worker.
+ *
+ * This class resets the database to a state before a @a CCI is
+ * indexed.
+ */
+
+/**
+ * @brief WorkerCCIDelete::WorkerCCIDelete
+ * @param parent
+ *
+ * Default constructor.
+ */
 WorkerCCIDelete::WorkerCCIDelete(QObject *parent) : QObject(parent)
 {
 }
 
+/**
+ * @brief WorkerCCIDelete::process
+ *
+ * Delete the @a CCI and @a Control information from the database.
+ */
 void WorkerCCIDelete::process()
 {
     //open database in this thread

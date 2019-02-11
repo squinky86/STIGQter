@@ -43,7 +43,7 @@ private slots:
     void About();
     void AddAsset();
     void AddSTIGs();
-    void CloseTab(int i);
+    void CloseTab(int index);
     void DeleteCCIs();
     void DeleteEmass();
     void DeleteSTIGs();

@@ -24,15 +24,49 @@
 #include <QDir>
 #include <QXmlStreamWriter>
 
+/**
+ * @class WorkerCKLExport
+ * @brief Export a STIG Viewer-compatible version of the results in a
+ * CKL file.
+ *
+ * Many systems and tools require data in a CKL file containing
+ * @a STIG @a CKLCheck data. This background worker takes a directory
+ * as input and generates individual CKL files for each @a Asset ↔
+ * @a STIG relationship.
+ *
+ * To comply with eMASS' Asset Manager, only unique mappings between
+ * @a Asset and @a STIG are allowed.
+ */
+
+/**
+ * @brief WorkerCKLExport::WorkerCKLExport
+ * @param parent
+ *
+ * Default constructor.
+ */
 WorkerCKLExport::WorkerCKLExport(QObject *parent) : QObject(parent)
 {
 }
 
+/**
+ * @brief WorkerCKLExport::SetExportDir
+ * @param dir
+ *
+ * Set the output directory. This is the directory where all of the
+ * individual CKL files will be exported to.
+ */
 void WorkerCKLExport::SetExportDir(const QString &dir)
 {
     _dirName = dir;
 }
 
+/**
+ * @brief WorkerCKLExport::process
+ *
+ * Using the provided output directory of SetExportDir(), generate
+ * every combination of @a Asset ↔ @a STIG mapping stored in the
+ * database and build the CKL file for that mapping.
+ */
 void WorkerCKLExport::process()
 {
     DbManager db;
