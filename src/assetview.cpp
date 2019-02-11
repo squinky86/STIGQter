@@ -781,7 +781,7 @@ void AssetView::UpdateCKLHelper()
                 cc.comments = ui->txtComments->toPlainText();
                 cc.findingDetails = ui->txtFindingDetails->toPlainText();
                 Severity tmpSeverity = GetSeverity(ui->cboBoxSeverity->currentText());
-                cc.severityOverride = (tmpSeverity == cc.GetSTIGCheck().severity) ? cc.severityOverride = Severity::none : tmpSeverity;
+                cc.severityOverride = (tmpSeverity == cc.GetSTIGCheck().severity) ? Severity::none : tmpSeverity;
                 cc.severityJustification = _justification;
                 cc.status = GetStatus(ui->cboBoxStatus->currentText());
             }

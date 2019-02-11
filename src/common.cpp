@@ -18,8 +18,8 @@
  */
 
 #include "common.h"
-#include "tidy.h"
-#include "tidybuffio.h"
+#include "tidy/tidy.h"
+#include "tidy/tidybuffio.h"
 
 #include <zip.h>
 
