@@ -26,6 +26,25 @@
 #include <QMessageBox>
 #include <QXmlStreamReader>
 
+/**
+ * @class WorkerCKLImport
+ * @brief Import a STIG Viewer-compatible version of the results from
+ * a CKL file.
+ *
+ * Many systems and tools require data in a CKL file containing
+ * @a STIG @a CKLCheck data. This background worker parses a CKL file
+ * that has been created by one of these external tools.
+ *
+ * To comply with eMASS' Asset Manager, only unique mappings between
+ * @a Asset and @a STIG are allowed.
+ */
+
+/**
+ * @brief WorkerCKLImport::ParseCKL
+ * @param fileName
+ *
+ * Given a CKL file, parse it and put its data into the database.
+ */
 void WorkerCKLImport::ParseCKL(const QString &fileName)
 {
     QFile f(fileName);
@@ -210,15 +229,32 @@ Asset WorkerCKLImport::CheckAsset(Asset &a)
     return a;
 }
 
+/**
+ * @brief WorkerCKLImport::WorkerCKLImport
+ * @param parent
+ *
+ * Default constructor.
+ */
 WorkerCKLImport::WorkerCKLImport(QObject *parent) : QObject(parent)
 {
 }
 
+/**
+ * @brief WorkerCKLImport::AddCKLs
+ * @param ckls
+ *
+ * Add the provided CKLs to the queue for processing.
+ */
 void WorkerCKLImport::AddCKLs(const QStringList &ckls)
 {
     _fileNames = ckls;
 }
 
+/**
+ * @brief WorkerCKLImport::process
+ *
+ * Begin cycling through the queue of CKL files to process.
+ */
 void WorkerCKLImport::process()
 {
     emit initialize(_fileNames.count(), 0);

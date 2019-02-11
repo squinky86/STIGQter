@@ -22,15 +22,43 @@
 #include "workeremassreport.h"
 #include "xlsxwriter.h"
 
+/**
+ * @class WorkerEMASSReport
+ * @brief Export an eMASS-compatible Test Result Import (TR) report.
+ *
+ * eMASS uses a TR import spreadsheet to quickly process data. The
+ * format for this spreadsheet is duplicated by this report so that
+ * the results generated for the system can be directly imported into
+ * eMASS.
+ */
+
+/**
+ * @brief WorkerEMASSReport::WorkerEMASSReport
+ * @param parent
+ *
+ * Default constructor.
+ */
 WorkerEMASSReport::WorkerEMASSReport(QObject *parent) : QObject(parent), _fileName()
 {
 }
 
+/**
+ * @brief WorkerEMASSReport::SetReportName
+ * @param fileName
+ *
+ * Set the location of the file to write to (should end in .xlsx).
+ */
 void WorkerEMASSReport::SetReportName(const QString &fileName)
 {
     _fileName = fileName;
 }
 
+/**
+ * @brief WorkerEMASSReport::process
+ *
+ * Write the report to the selected file location. The spreadsheet is
+ * written in a format compatible with eMASS.
+ */
 void WorkerEMASSReport::process()
 {
     DbManager db;
