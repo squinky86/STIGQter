@@ -128,6 +128,9 @@ AssetView::~AssetView()
  */
 void AssetView::Display()
 {
+    ui->txtIP->setText(_asset.hostIP);
+    ui->txtMAC->setText(_asset.hostMAC);
+    ui->txtFQDN->setText(_asset.hostFQDN);
     SelectSTIGs();
     ShowChecks();
 }
@@ -797,6 +800,15 @@ void AssetView::UpdateCKLHelper()
         db.DelayCommit(false);
         _updateStatus = false;
         _timerChecks.start(1000);
+    }
+    //check if Asset was updated
+    if ((_asset.hostIP != ui->txtIP->text()) || (_asset.hostMAC != ui->txtMAC->text()) || (_asset.hostFQDN != ui->txtFQDN->text()))
+    {
+        DbManager db;
+        _asset.hostIP = ui->txtIP->text();
+        _asset.hostMAC = ui->txtMAC->text();
+        _asset.hostFQDN = ui->txtFQDN->text();
+        db.UpdateAsset(_asset);
     }
 }
 
