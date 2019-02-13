@@ -25,15 +25,51 @@
 #include "workerfindingsreport.h"
 #include "xlsxwriter.h"
 
+/**
+ * @class WorkerFindingsReport
+ * @brief Export a human-readable detailed findings report. This
+ * report is a workbook in .xlsx format with two worksheets:
+ * @list
+ * @li The first sheet is a detailed list of all @a CKLChecks that
+ * have been imported.
+ * @li The second sheet details the RMF @a Controls, their highest-
+ * watermark @a Severity for every non-compliant @a CCI, and a
+ * summary of each @a CKLCheck that is non-compliant under that
+ * @a CCI.
+ *
+ * This report is generally  used when performing on-site validations
+ * to help management understand the "big picture" of what needs to
+ * be fixed on their system.
+ */
+
+/**
+ * @brief WorkerFindingsReport::WorkerFindingsReport
+ * @param parent
+ *
+ * Default constructor.
+ */
 WorkerFindingsReport::WorkerFindingsReport(QObject *parent) : QObject(parent), _fileName()
 {
 }
 
+/**
+ * @brief WorkerFindingsReport::SetReportName
+ * @param fileName
+ *
+ * Set the name of the output file before writing to it.
+ */
 void WorkerFindingsReport::SetReportName(const QString &fileName)
 {
     _fileName = fileName;
 }
 
+/**
+ * @brief WorkerFindingsReport::process
+ *
+ * This background worker uses the suplied fileName (see
+ * SetReportName()) to output the workbook into .xlsx format.
+ * Libxlsxwriter is used to generate this report.
+ */
 void WorkerFindingsReport::process()
 {
     DbManager db;
