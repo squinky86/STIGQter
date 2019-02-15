@@ -23,6 +23,15 @@
 
 #include <QXmlStreamReader>
 
+/**
+ * @class WorkerImportEMASS
+ * @brief Imports an eMASS-generated Test Result Import spreadsheet.
+ *
+ * Including self-assessment data during a validation event allows
+ * for faster vetting of results and understandig of the system's
+ * categorization, tailoring, and inheritance relationships.
+ */
+
 WorkerImportEMASS::WorkerImportEMASS(QObject *parent) : QObject(parent), _fileName()
 {
 }

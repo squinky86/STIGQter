@@ -68,6 +68,7 @@ public:
     QList<CCI> GetCCIs(const QString &whereClause = "", const QList<std::tuple<QString, QVariant>> &variables = {});
     CKLCheck GetCKLCheck(int id);
     CKLCheck GetCKLCheck(const CKLCheck &ckl);
+    CKLCheck GetCKLCheckByDISAId(int assetId, const QString &disaId);
     QList<CKLCheck> GetCKLChecks(const Asset &asset, const STIG *stig = nullptr);
     QList<CKLCheck> GetCKLChecks(const QString &whereClause = "", const QList<std::tuple<QString, QVariant>> &variables = {});
     Control GetControl(int id);

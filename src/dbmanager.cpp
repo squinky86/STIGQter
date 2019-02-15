@@ -1112,6 +1112,25 @@ CKLCheck DbManager::GetCKLCheck(const CKLCheck &ckl)
 }
 
 /**
+ * @brief DbManager::GetCKLCheckByDISAId
+ * @param assetId
+ * @param disaId
+ * @return The CKLCheck mapped against the provided @a assetId and
+ * having the provided @a disaId.
+ */
+CKLCheck DbManager::GetCKLCheckByDISAId(int assetId, const QString &disaId)
+{
+    QList<CKLCheck> ret = GetCKLChecks(QStringLiteral("JOIN STIGCheck ON CKLCheck.STIGCheckId = STIGCheck.id WHERE AssetId = :AssetId AND rule = :DISAId"), {
+                        std::make_tuple<QString, QVariant>(QStringLiteral(":AssetId"), assetId),
+                        std::make_tuple<QString, QVariant>(QStringLiteral(":DISAId"), disaId)
+                    });
+    if (ret.count() > 0)
+        return ret.first();
+    CKLCheck check;
+    return check;
+}
+
+/**
  * @overload DbManager::GetCKLChecks(whereClause, variables)
  * @brief DbManager::GetCKLChecks
  * @param asset
@@ -1187,7 +1206,7 @@ QList<CKLCheck> DbManager::GetCKLChecks(const QString &whereClause, const QList<
     if (this->CheckDatabase(db))
     {
         QSqlQuery q(db);
-        QString toPrep = QStringLiteral("SELECT id, AssetId, STIGCheckId, status, findingDetails, comments, severityOverride, severityJustification FROM CKLCheck");
+        QString toPrep = QStringLiteral("SELECT CKLCheck.id, CKLCheck.AssetId, CKLCheck.STIGCheckId, CKLCheck.status, CKLCheck.findingDetails, CKLCheck.comments, CKLCheck.severityOverride, CKLCheck.severityJustification FROM CKLCheck");
         if (!whereClause.isNull() && !whereClause.isEmpty())
             toPrep.append(" " + whereClause);
         q.prepare(toPrep);

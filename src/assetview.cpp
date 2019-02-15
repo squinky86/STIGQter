@@ -324,6 +324,86 @@ void AssetView::DeleteAsset()
     }
 }
 
+/**
+ * @brief AssetView::ImportXCCDF
+ *
+ * Import XCCDF file into this @a Asset.
+ */
+void AssetView::ImportXCCDF()
+{
+    DbManager db;
+    db.DelayCommit(true);
+
+    QStringList fileNames = QFileDialog::getOpenFileNames(this,
+        QStringLiteral("Open XCCDF"), QDir::home().dirName(), QStringLiteral("XCCDF (*.xml)"));
+
+    bool updates = false;
+
+    foreach (const QString fileName, fileNames)
+    {
+        QFile f(fileName);
+        if (!f.open(QFile::ReadOnly | QFile::Text))
+        {
+            QMessageBox::warning(nullptr, QStringLiteral("Unable to Open XCCDF"), "The XCCDF file " + fileName + " cannot be opened.");
+            continue;
+        }
+        QXmlStreamReader *xml = new QXmlStreamReader(f.readAll());
+        QStringRef onCheck;
+        while (!xml->atEnd() && !xml->hasError())
+        {
+            xml->readNext();
+            if (xml->isStartElement())
+            {
+                if (xml->name() == QStringLiteral("rule-result"))
+                {
+                    if (xml->attributes().hasAttribute(QStringLiteral("idref")))
+                    {
+                        onCheck = xml->attributes().value(QStringLiteral("idref"));
+                    }
+                }
+                if (xml->name() == "result")
+                {
+                    CKLCheck ckl = db.GetCKLCheckByDISAId(_asset.id, onCheck.toString());
+                    if (ckl.id < 0)
+                    {
+                        Warning(QStringLiteral("Unable to Find Check"), QStringLiteral("The CKLCheck '") + onCheck + QStringLiteral("' was not found in this STIG."));
+                    }
+                    else
+                    {
+                        QString result = xml->readElementText();
+                        bool update = false;
+                        if (result.startsWith(QStringLiteral("pass"), Qt::CaseInsensitive))
+                        {
+                            update = true;
+                            ckl.status = Status::NotAFinding;
+                        }
+                        else if (result.startsWith(QStringLiteral("notapplicable"), Qt::CaseInsensitive))
+                        {
+                            update = true;
+                            ckl.status = Status::NotApplicable;
+                        }
+                        else if (result.startsWith(QStringLiteral("fail"), Qt::CaseInsensitive))
+                        {
+                            update = true;
+                            ckl.status = Status::Open;
+                        }
+                        if (update)
+                        {
+                            updates = true;
+                            QFileInfo fi(f);
+                            ckl.findingDetails += "This finding information was set by XCCDF file " + fi.fileName();
+                            db.UpdateCKLCheck(ckl);
+                        }
+                    }
+                }
+            }
+        }
+        delete xml;
+    }
+    db.DelayCommit(false);
+    ShowChecks();
+}
+
 void AssetView::KeyShortcutCtrlN()
 {
     KeyShortcut(Status::NotAFinding);

@@ -53,6 +53,7 @@ private slots:
     void CheckSelectedChanged();
     void CountChecks();
     void DeleteAsset();
+    void ImportXCCDF();
     void KeyShortcutCtrlN();
     void KeyShortcutCtrlO();
     void KeyShortcutCtrlR();
