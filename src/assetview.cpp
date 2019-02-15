@@ -354,15 +354,50 @@ void AssetView::ImportXCCDF()
             xml->readNext();
             if (xml->isStartElement())
             {
-                if (xml->name() == QStringLiteral("rule-result"))
+                if (xml->name() == QStringLiteral("fact"))
+                {
+                    if (xml->attributes().hasAttribute("name"))
+                    {
+                        QStringRef name = xml->attributes().value("name");
+                        if (name.endsWith("ipv4", Qt::CaseInsensitive))
+                        {
+                            QString tmpStr = xml->readElementText();
+                            if (!tmpStr.isNull() && !tmpStr.isEmpty())
+                            {
+                                ui->txtIP->setText(tmpStr);
+                            }
+                        }
+                        else if (name.endsWith("mac", Qt::CaseInsensitive))
+                        {
+                            QString tmpStr = xml->readElementText();
+                            if (!tmpStr.isNull() && !tmpStr.isEmpty())
+                            {
+                                ui->txtMAC->setText(tmpStr);
+                            }
+                        }
+                        else if (name.endsWith("fqdn", Qt::CaseInsensitive))
+                        {
+                            QString tmpStr = xml->readElementText();
+                            if (!tmpStr.isNull() && !tmpStr.isEmpty())
+                            {
+                                ui->txtFQDN->setText(tmpStr);
+                            }
+                        }
+                    }
+                }
+                else if (xml->name() == QStringLiteral("rule-result"))
                 {
                     if (xml->attributes().hasAttribute(QStringLiteral("idref")))
                     {
                         onCheck = xml->attributes().value(QStringLiteral("idref"));
                     }
                 }
-                if (xml->name() == "result")
+                else if (xml->name() == "result")
                 {
+                    if (!onCheck.startsWith("SV") && onCheck.contains("SV"))
+                    {
+                        onCheck = onCheck.right(onCheck.length() - onCheck.indexOf("SV"));
+                    }
                     CKLCheck ckl = db.GetCKLCheckByDISAId(_asset.id, onCheck.toString());
                     if (ckl.id < 0)
                     {
