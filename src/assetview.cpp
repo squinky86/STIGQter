@@ -349,6 +349,7 @@ void AssetView::ImportXCCDF()
         }
         QXmlStreamReader *xml = new QXmlStreamReader(f.readAll());
         QStringRef onCheck;
+        QStringList warnings;
         while (!xml->atEnd() && !xml->hasError())
         {
             xml->readNext();
@@ -401,7 +402,8 @@ void AssetView::ImportXCCDF()
                     CKLCheck ckl = db.GetCKLCheckByDISAId(_asset.id, onCheck.toString());
                     if (ckl.id < 0)
                     {
-                        Warning(QStringLiteral("Unable to Find Check"), QStringLiteral("The CKLCheck '") + onCheck + QStringLiteral("' was not found in this STIG."));
+                        warnings.push_back(onCheck.toString());
+                        //Warning(QStringLiteral("Unable to Find Check"), QStringLiteral("The CKLCheck '") + onCheck + QStringLiteral("' was not found in this STIG."));
                     }
                     else
                     {
@@ -434,6 +436,11 @@ void AssetView::ImportXCCDF()
             }
         }
         delete xml;
+        int tmpCount = warnings.count();
+        if (tmpCount > 0)
+        {
+            Warning(QStringLiteral("Unable to Find Check") + Pluralize(tmpCount), QStringLiteral("The CKLCheck") + Pluralize(tmpCount) + QStringLiteral(" ") + warnings.join(", ") + QStringLiteral(" w") + Pluralize(tmpCount, QStringLiteral("ere"), QStringLiteral("as")) + QStringLiteral(" not found in this STIG."));
+        }
     }
     db.DelayCommit(false);
     ShowChecks();
