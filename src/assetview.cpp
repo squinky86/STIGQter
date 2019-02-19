@@ -443,7 +443,8 @@ void AssetView::ImportXCCDF()
         }
     }
     db.DelayCommit(false);
-    ShowChecks();
+    if (updates) //only update the checks if something changed
+        ShowChecks();
 }
 
 void AssetView::KeyShortcutCtrlN()
