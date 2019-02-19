@@ -1,10 +1,6 @@
 # Copyright 1999-2019 Gentoo Foundation
 # Distributed under the terms of the GNU General Public License v2
 
-# This ebuild was created by Jon Hood <jwh0011@auburn.edu>, a former Gentoo
-# developer (squinky86) under the Gentoo Foundation. Copyright for this ebuild
-# is hereby assigned to the Gentoo Foundation.
-
 EAPI=7
 
 inherit cmake-utils
@@ -16,17 +12,18 @@ SRC_URI="https://github.com/jmcnamara/libxlsxwriter/archive/RELEASE_${PV}.tar.gz
 LICENSE="BSD-2"
 SLOT="0"
 KEYWORDS="~amd64 ~x86"
-IUSE=""
+IUSE="minizip static-libs"
 S="${WORKDIR}/${PN}-RELEASE_${PV}"
 
 CDEPEND="sys-libs/zlib"
 DEPEND="${CDEPEND}"
-RDEPEND=""
+RDEPEND="minizip? ( sys-libs/zlib[minizip] )"
 
 src_configure() {
+	local mycmakeargs=(
+		-DCMAKE_BUILD_TYPE=Release
+		-DUSE_SYSTEM_MINIZIP="$(usex minizip)"
+		-DBUILD_SHARED_LIBS="$(usex static-libs OFF ON)"
+	)
 	cmake-utils_src_configure
-}
-
-src_install() {
-	cmake-utils_src_install
 }
