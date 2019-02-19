@@ -15,7 +15,9 @@ KEYWORDS="~amd64 ~x86"
 IUSE="minizip static-libs"
 S="${WORKDIR}/${PN}-RELEASE_${PV}"
 
-DEPEND="minizip? ( sys-libs/zlib[minizip] )"
+DEPEND="
+	sys-libs/zlib
+	minizip? ( sys-libs/zlib[minizip] )"
 RDEPEND="${DEPEND}"
 
 src_configure() {
