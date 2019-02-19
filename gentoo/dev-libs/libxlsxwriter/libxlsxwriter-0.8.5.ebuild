@@ -15,9 +15,8 @@ KEYWORDS="~amd64 ~x86"
 IUSE="minizip static-libs"
 S="${WORKDIR}/${PN}-RELEASE_${PV}"
 
-CDEPEND="sys-libs/zlib"
-DEPEND="${CDEPEND}"
-RDEPEND="minizip? ( sys-libs/zlib[minizip] )"
+DEPEND="minizip? ( sys-libs/zlib[minizip] )"
+RDEPEND="${DEPEND}"
 
 src_configure() {
 	local mycmakeargs=(
