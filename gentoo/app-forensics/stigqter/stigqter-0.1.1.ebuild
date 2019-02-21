@@ -1,10 +1,6 @@
 # Copyright 1999-2019 Gentoo Foundation
 # Distributed under the terms of the GNU General Public License v2
 
-# This ebuild was created by Jon Hood <jwh0011@auburn.edu>, a former Gentoo
-# developer (squinky86) under the Gentoo Foundation. Copyright for this ebuild
-# is hereby assigned to the Gentoo Foundation.
-
 EAPI=7
 
 inherit qmake-utils
