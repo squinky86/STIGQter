@@ -63,6 +63,11 @@ AssetView::AssetView(const Asset &asset, QWidget *parent) :
 {
     ui->setupUi(this);
 
+    //set splitter stretch factors
+    ui->splitter->setStretchFactor(0, 1);
+    ui->splitter->setStretchFactor(1, 3);
+    ui->splitter->setStretchFactor(2, 2);
+
     /*
      * The main timer signals that the checklist entries have been
      * modified by the user. Since the user may be modifying large

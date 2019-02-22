@@ -24,7 +24,7 @@
 #include <QFile>
 #include <QNetworkReply>
 
-#define VERSION "0.1.1"
+#define VERSION "0.1.2"
 
 QString CleanXML(QString s, bool isXml = false);
 bool DownloadFile(const QUrl &url, QFile *file);

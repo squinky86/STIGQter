@@ -95,11 +95,6 @@ FORMS += \
          src/help.ui \
          src/assetview.ui
 
-# Default rules for deployment.
-qnx: target.path = /tmp/$${TARGET}/bin
-else: unix:!android: target.path = /opt/$${TARGET}/bin
-!isEmpty(target.path): INSTALLS += target
-
 LIBS += -ltidy -lzip -lxlsxwriter -lz
 
 INCLUDEPATH= src
