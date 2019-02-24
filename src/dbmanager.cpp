@@ -1875,6 +1875,31 @@ bool DbManager::IsEmassImport()
 }
 
 /**
+ * @brief DbManager::LoadDB
+ * @param path
+ * @return @c True when the database is restored from @a path,
+ * otherwise @c false.
+ */
+bool DbManager::LoadDB(const QString &path)
+{
+    QFile source = QFile(path);
+    QFile dest = QFile(_dbPath);
+    if (source.open(QFile::ReadOnly) && dest.open(QFile::WriteOnly))
+    {
+        dest.write(qUncompress(source.readAll()));
+        source.close();
+        dest.close();
+        return true;
+    }
+    else
+    {
+        Warning(QStringLiteral("Unable to Open File"), "The file " + path + " could not be opened for writing.");
+    }
+
+    return false;
+}
+
+/**
  * @brief DbManager::SaveDB
  * @param path
  * @return @c True when the database is saved to @a path. Otherwise,
@@ -1882,7 +1907,21 @@ bool DbManager::IsEmassImport()
  */
 bool DbManager::SaveDB(const QString &path)
 {
-    return QFile::copy(_dbPath, path);
+    QFile source = QFile(_dbPath);
+    QFile dest = QFile(path);
+    if (source.open(QFile::ReadOnly) && dest.open(QFile::WriteOnly))
+    {
+        dest.write(qCompress(source.readAll(), 9));
+        source.close();
+        dest.close();
+        return true;
+    }
+    else
+    {
+        Warning(QStringLiteral("Unable to Open File"), "The file " + path + " could not be opened for writing.");
+    }
+
+    return false;
 }
 
 /**

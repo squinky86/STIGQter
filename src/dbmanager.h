@@ -90,6 +90,7 @@ public:
 
     bool IsEmassImport();
 
+    bool LoadDB(const QString &path);
     bool SaveDB(const QString &path);
 
     bool UpdateAsset(const Asset &asset);
