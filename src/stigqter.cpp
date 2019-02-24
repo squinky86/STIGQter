@@ -159,6 +159,23 @@ void STIGQter::OpenCKL()
 }
 
 /**
+ * @brief STIGQter::Save
+ *
+ * Prompt the user for where to save the .stigqter file
+ */
+void STIGQter::Save()
+{
+    QString fileName = QFileDialog::getSaveFileName(this,
+        QStringLiteral("Save STIGQter Database"), QDir::home().dirName(), QStringLiteral("STIGQter Save File (*.stigqter)"));
+
+    if (!fileName.isNull() && !fileName.isEmpty())
+    {
+        DbManager db;
+        db.SaveDB(fileName);
+    }
+}
+
+/**
  * @brief STIGQter::SelectAsset
  *
  * Show the @a STIGs associated with the selected @a Asset.
@@ -534,6 +551,30 @@ void STIGQter::ImportEMASS()
     workers.append(c);
 
     t->start();
+}
+
+/**
+ * @brief STIGQter::Load
+ *
+ * The user is prompted for the *.stigqter file to load.
+ */
+void STIGQter::Load()
+{
+    QString fileName = QFileDialog::getOpenFileName(this,
+        QStringLiteral("Open STIGQter Save File"), QDir::home().dirName(), QStringLiteral("STIGQter Save File (*.stigqter)"));
+
+    if (!fileName.isNull() && !fileName.isEmpty())
+    {
+        while (ui->tabDB->count() > 1)
+            ui->tabDB->removeTab(1);
+        DbManager *db = new DbManager();
+        db->LoadDB(fileName);
+        delete db;
+        EnableInput();
+        DisplayCCIs();
+        DisplaySTIGs();
+        DisplayAssets();
+    }
 }
 
 /**

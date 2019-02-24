@@ -52,10 +52,12 @@ private slots:
     void FindingsReport();
     void ImportCKLs();
     void ImportEMASS();
+    void Load();
+    void OpenCKL();
+    void Save();
+    void SelectAsset();
     void SelectSTIG();
     void UpdateCCIs();
-    void OpenCKL();
-    void SelectAsset();
 
     void Initialize(int max, int val = 0);
     void Progress(int val);
