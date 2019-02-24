@@ -22,7 +22,6 @@
 #include "common.h"
 
 #include <cstdlib>
-#include <QCoreApplication>
 #include <QFile>
 #include <QMessageBox>
 #include <QSqlQuery>
@@ -30,6 +29,10 @@
 #include <QThread>
 #include <QSqlField>
 #include <QSqlDriver>
+#include <QStandardPaths>
+#include <QFileInfo>
+#include <QDir>
+#include <QCoreApplication>
 
 /**
  * @class DbManager
@@ -72,9 +75,15 @@ DbManager::DbManager() : DbManager(QString::number(reinterpret_cast<quint64>(QTh
  * @param connectionName
  *
  * Overloaded constructor with current thread's connection already
- * provided.
+ * provided. If running from a standalone directory, STIGQter.db can
+ * be present locally. If there is not a local STIGQter.db, the
+ * application directory for the user is used.
  */
-DbManager::DbManager(const QString& connectionName) : DbManager(QCoreApplication::applicationDirPath() + "/STIGQter.db", connectionName) { }
+DbManager::DbManager(const QString& connectionName) : DbManager(
+                                                          QFile::exists(QCoreApplication::applicationDirPath() + "/STIGQter.db") ?
+                                                              (QCoreApplication::applicationDirPath() + "/STIGQter.db") :
+                                                              QStandardPaths::writableLocation(QStandardPaths::AppDataLocation) + "/STIGQter.db",
+                                                          connectionName) { }
 
 
 /**
@@ -88,8 +97,15 @@ DbManager::DbManager(const QString& connectionName) : DbManager(QCoreApplication
  */
 DbManager::DbManager(const QString& path, const QString& connectionName)
 {
+    _dbPath = path;
     bool initialize = false;
     _delayCommit = false;
+
+    QFileInfo fi(path);
+    if (!fi.absoluteDir().exists())
+    {
+        fi.absoluteDir().mkpath(".");
+    }
 
     //check if database file exists or create it
     if (!QFile::exists(path))
@@ -1856,6 +1872,17 @@ bool DbManager::IsEmassImport()
         }
     }
     return false;
+}
+
+/**
+ * @brief DbManager::SaveDB
+ * @param path
+ * @return @c True when the database is saved to @a path. Otherwise,
+ * @c false.
+ */
+bool DbManager::SaveDB(const QString &path)
+{
+    return QFile::copy(_dbPath, path);
 }
 
 /**

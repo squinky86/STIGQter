@@ -90,6 +90,8 @@ public:
 
     bool IsEmassImport();
 
+    bool SaveDB(const QString &path);
+
     bool UpdateAsset(const Asset &asset);
     bool UpdateCCI(const CCI &cci);
     bool UpdateCKLCheck(const CKLCheck &check);
@@ -99,6 +101,7 @@ private:
     bool UpdateDatabaseFromVersion(int version);
     static bool CheckDatabase(QSqlDatabase &db);
     bool _delayCommit;
+    QString _dbPath;
 };
 
 #endif // DBMANAGER_H
