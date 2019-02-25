@@ -104,7 +104,7 @@ DbManager::DbManager(const QString& path, const QString& connectionName)
     QFileInfo fi(path);
     if (!fi.absoluteDir().exists())
     {
-        fi.absoluteDir().mkpath(".");
+        fi.absoluteDir().mkpath(QStringLiteral("."));
     }
 
     //check if database file exists or create it

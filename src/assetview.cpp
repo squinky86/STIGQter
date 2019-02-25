@@ -362,10 +362,10 @@ void AssetView::ImportXCCDF()
             {
                 if (xml->name() == QStringLiteral("fact"))
                 {
-                    if (xml->attributes().hasAttribute("name"))
+                    if (xml->attributes().hasAttribute(QStringLiteral("name")))
                     {
-                        QStringRef name = xml->attributes().value("name");
-                        if (name.endsWith("ipv4", Qt::CaseInsensitive))
+                        QStringRef name = xml->attributes().value(QStringLiteral("name"));
+                        if (name.endsWith(QStringLiteral("ipv4"), Qt::CaseInsensitive))
                         {
                             QString tmpStr = xml->readElementText();
                             if (!tmpStr.isNull() && !tmpStr.isEmpty())
@@ -373,7 +373,7 @@ void AssetView::ImportXCCDF()
                                 ui->txtIP->setText(tmpStr);
                             }
                         }
-                        else if (name.endsWith("mac", Qt::CaseInsensitive))
+                        else if (name.endsWith(QStringLiteral("mac"), Qt::CaseInsensitive))
                         {
                             QString tmpStr = xml->readElementText();
                             if (!tmpStr.isNull() && !tmpStr.isEmpty())
@@ -381,7 +381,7 @@ void AssetView::ImportXCCDF()
                                 ui->txtMAC->setText(tmpStr);
                             }
                         }
-                        else if (name.endsWith("fqdn", Qt::CaseInsensitive))
+                        else if (name.endsWith(QStringLiteral("fqdn"), Qt::CaseInsensitive))
                         {
                             QString tmpStr = xml->readElementText();
                             if (!tmpStr.isNull() && !tmpStr.isEmpty())
@@ -400,9 +400,9 @@ void AssetView::ImportXCCDF()
                 }
                 else if (xml->name() == "result")
                 {
-                    if (!onCheck.startsWith("SV") && onCheck.contains("SV"))
+                    if (!onCheck.startsWith(QStringLiteral("SV")) && onCheck.contains(QStringLiteral("SV"))) //trim off XCCDF perfunctory information for benchmark files
                     {
-                        onCheck = onCheck.right(onCheck.length() - onCheck.indexOf("SV"));
+                        onCheck = onCheck.right(onCheck.length() - onCheck.indexOf(QStringLiteral("SV")));
                     }
                     CKLCheck ckl = db.GetCKLCheckByDISAId(_asset.id, onCheck.toString());
                     if (ckl.id < 0)
@@ -444,7 +444,7 @@ void AssetView::ImportXCCDF()
         int tmpCount = warnings.count();
         if (tmpCount > 0)
         {
-            Warning(QStringLiteral("Unable to Find Check") + Pluralize(tmpCount), QStringLiteral("The CKLCheck") + Pluralize(tmpCount) + QStringLiteral(" ") + warnings.join(", ") + QStringLiteral(" w") + Pluralize(tmpCount, QStringLiteral("ere"), QStringLiteral("as")) + QStringLiteral(" not found in this STIG."));
+            Warning(QStringLiteral("Unable to Find Check") + Pluralize(tmpCount), QStringLiteral("The CKLCheck") + Pluralize(tmpCount) + QStringLiteral(" ") + warnings.join(QStringLiteral(", ")) + QStringLiteral(" w") + Pluralize(tmpCount, QStringLiteral("ere"), QStringLiteral("as")) + QStringLiteral(" not found in this STIG."));
         }
     }
     db.DelayCommit(false);
