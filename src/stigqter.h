@@ -55,6 +55,7 @@ private slots:
     void Load();
     void OpenCKL();
     void Save();
+    void SaveAs();
     void SelectAsset();
     void SelectSTIG();
     void UpdateCCIs();
@@ -70,6 +71,8 @@ private:
     bool _updatedAssets;
     bool _updatedCCIs;
     bool _updatedSTIGs;
+    QString lastSaveLocation;
+    QList<QShortcut*> _shortcuts;
     void CleanThreads();
     void DisableInput();
     void DisplayAssets();

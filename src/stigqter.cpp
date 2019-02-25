@@ -88,6 +88,8 @@ STIGQter::STIGQter(QWidget *parent) :
 
     //remove the close button on the main DB tab.
     ui->tabDB->tabBar()->tabButton(0, QTabBar::RightSide)->resize(0, 0);
+
+    _shortcuts.append(new QShortcut(QKeySequence(Qt::CTRL + Qt::Key_S), this, SLOT(Save())));
 }
 
 /**
@@ -100,7 +102,9 @@ STIGQter::~STIGQter()
     CleanThreads();
     delete db;
     delete ui;
-
+    foreach (QShortcut *shortcut, _shortcuts)
+        delete shortcut;
+    _shortcuts.clear();
 }
 
 /**
@@ -161,17 +165,35 @@ void STIGQter::OpenCKL()
 /**
  * @brief STIGQter::Save
  *
- * Prompt the user for where to save the .stigqter file
+ * Override the last saved .stigqter file or prompt the user for
+ * where to save a new one.
  */
 void STIGQter::Save()
+{
+    if (lastSaveLocation.isNull() || lastSaveLocation.isEmpty())
+        SaveAs();
+
+    if (!lastSaveLocation.isNull() && !lastSaveLocation.isEmpty())
+    {
+        DbManager db;
+        db.SaveDB(lastSaveLocation);
+    }
+}
+
+/**
+ * @brief STIGQter::SaveAs
+ *
+ * Prompt the user for where to save the .stigqter file
+ */
+void STIGQter::SaveAs()
 {
     QString fileName = QFileDialog::getSaveFileName(this,
         QStringLiteral("Save STIGQter Database"), QDir::home().dirName(), QStringLiteral("STIGQter Save File (*.stigqter)"));
 
     if (!fileName.isNull() && !fileName.isEmpty())
     {
-        DbManager db;
-        db.SaveDB(fileName);
+        lastSaveLocation = fileName;
+        Save();
     }
 }
 
@@ -574,6 +596,7 @@ void STIGQter::Load()
         DisplayCCIs();
         DisplaySTIGs();
         DisplayAssets();
+        lastSaveLocation = fileName;
     }
 }
 
