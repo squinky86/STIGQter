@@ -60,6 +60,7 @@ private slots:
     void KeyShortcutCtrlX();
     void RenameAsset();
     void SaveCKL();
+    void UpdateChecks();
     void UpdateCKL();
     void UpdateCKLHelper();
     void UpdateCKLStatus(const QString &val);

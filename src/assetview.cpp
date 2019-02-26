@@ -187,6 +187,12 @@ void AssetView::ShowChecks(bool countOnly)
     int total = 0; //total checks
     int open = 0; //findings
     int closed = 0; //passed checks
+
+    QString filterSeverityText = ui->cboBoxFilterSeverity->currentText();
+    Severity filterSeverity = GetSeverity(ui->cboBoxFilterSeverity->currentText());
+    QString filterStatusText = ui->cboBoxFilterStatus->currentText();
+    Status filterStatus = GetStatus(ui->cboBoxFilterStatus->currentText());
+
     foreach(const CKLCheck c, _asset.GetCKLChecks())
     {
         total++;
@@ -203,11 +209,25 @@ void AssetView::ShowChecks(bool countOnly)
         }
         if (!countOnly)
         {
+            qDebug() << "Filter Severity Text: " << filterSeverityText;
+            qDebug() << "Filter Severity: " << filterSeverity;
+            qDebug() << PrintCKLCheck(c) + " Severity:" << c.GetSeverity();
+
             //update the list of CKL checks
-            QListWidgetItem *i = new QListWidgetItem(PrintCKLCheck(c));
-            ui->lstChecks->addItem(i);
-            i->setData(Qt::UserRole, QVariant::fromValue<CKLCheck>(c));
-            SetItemColor(i, c.status, (c.severityOverride == Severity::none) ? c.GetSTIGCheck().severity : c.severityOverride);
+            if (
+                    //severity filter
+                    ((filterSeverityText == QStringLiteral("All")) ||
+                     (filterSeverity == c.GetSeverity()))
+                    && //status filter
+                    ((filterStatusText == QStringLiteral("All")) ||
+                     (filterStatus == c.status))
+                )
+            {
+                QListWidgetItem *i = new QListWidgetItem(PrintCKLCheck(c));
+                ui->lstChecks->addItem(i);
+                i->setData(Qt::UserRole, QVariant::fromValue<CKLCheck>(c));
+                SetItemColor(i, c.status, (c.severityOverride == Severity::none) ? c.GetSTIGCheck().severity : c.severityOverride);
+            }
         }
     }
     ui->lblTotalChecks->setText(QString::number(total));
@@ -858,6 +878,17 @@ void AssetView::SaveCKL()
         stream.writeEndElement(); //CHECKLIST
         stream.writeEndDocument();
     }
+}
+
+/**
+ * @brief AssetView::UpdateChecks
+ *
+ * Triggered when filters are updated, this will filter out the
+ * checks that are not selected.
+ */
+void AssetView::UpdateChecks()
+{
+    ShowChecks();
 }
 
 /**

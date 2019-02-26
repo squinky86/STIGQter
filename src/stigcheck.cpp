@@ -176,11 +176,14 @@ CCI STIGCheck::GetCCI() const
  */
 Severity GetSeverity(const QString &severity)
 {
-    if (severity.isEmpty() || severity.endsWith(QStringLiteral(" IV")))
+    QString toCheck = severity;
+    if (toCheck.startsWith(QStringLiteral("I")))
+        toCheck = QStringLiteral("CAT ") + toCheck;
+    if (toCheck.isEmpty() || toCheck.endsWith(QStringLiteral(" IV")))
         return Severity::none;
-    if (severity.startsWith(QStringLiteral("medium"), Qt::CaseInsensitive) || severity.endsWith(QStringLiteral(" II")))
+    if (toCheck.startsWith(QStringLiteral("medium"), Qt::CaseInsensitive) || toCheck.endsWith(QStringLiteral(" II")))
         return Severity::medium;
-    if (severity.startsWith(QStringLiteral("high"), Qt::CaseInsensitive) || severity.endsWith(QStringLiteral(" I")))
+    if (toCheck.startsWith(QStringLiteral("high"), Qt::CaseInsensitive) || toCheck.endsWith(QStringLiteral(" I")))
         return Severity::high;
     return Severity::low;
 }

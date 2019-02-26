@@ -113,7 +113,7 @@ STIGCheck CKLCheck::GetSTIGCheck() const
 Severity CKLCheck::GetSeverity() const
 {
     if (severityOverride == Severity::none)
-        return STIGCheck().severity;
+        return GetSTIGCheck().severity;
     return severityOverride;
 }
 
@@ -152,11 +152,11 @@ CKLCheck &CKLCheck::operator=(const CKLCheck &right)
  */
 Status GetStatus(const QString &status)
 {
-    if (status.startsWith(QStringLiteral("open"), Qt::CaseInsensitive))
+    if (status.startsWith(QStringLiteral("o"), Qt::CaseInsensitive))
         return Status::Open;
-    if (status.startsWith(QStringLiteral("not_applicable"), Qt::CaseInsensitive) || status.startsWith(QStringLiteral("not applicable"), Qt::CaseInsensitive))
+    if (status.startsWith(QStringLiteral("not_applicable"), Qt::CaseInsensitive) || status.startsWith(QStringLiteral("not applicable"), Qt::CaseInsensitive) || status.startsWith(QStringLiteral("na"), Qt::CaseInsensitive))
         return Status::NotApplicable;
-    if (status.startsWith(QStringLiteral("notafinding"), Qt::CaseInsensitive) || status.startsWith(QStringLiteral("not a finding"), Qt::CaseInsensitive))
+    if (status.startsWith(QStringLiteral("notafinding"), Qt::CaseInsensitive) || status.startsWith(QStringLiteral("not a finding"), Qt::CaseInsensitive) || status.startsWith(QStringLiteral("nf"), Qt::CaseInsensitive))
         return Status::NotAFinding;
     return Status::NotReviewed;
 }
