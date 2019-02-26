@@ -209,10 +209,6 @@ void AssetView::ShowChecks(bool countOnly)
         }
         if (!countOnly)
         {
-            qDebug() << "Filter Severity Text: " << filterSeverityText;
-            qDebug() << "Filter Severity: " << filterSeverity;
-            qDebug() << PrintCKLCheck(c) + " Severity:" << c.GetSeverity();
-
             //update the list of CKL checks
             if (
                     //severity filter
