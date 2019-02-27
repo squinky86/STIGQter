@@ -33,6 +33,7 @@
 #include "workerstigdelete.h"
 
 #include "ui_stigqter.h"
+#include "workerhtml.h"
 
 #include <QThread>
 #include <QFileDialog>
@@ -481,6 +482,35 @@ void STIGQter::ExportEMASS()
     workers.append(f);
 
     t->start();
+}
+
+/**
+ * @brief STIGQter::ExportHTML
+ *
+ * Instantiates an instance of WorkerHTML to export the HTML
+ * templates for the manual STIG lists.
+ */
+void STIGQter::ExportHTML()
+{
+    QString dirName = QFileDialog::getExistingDirectory(this, QStringLiteral("Save to Directory"), QDir::home().dirName());
+
+    if (!dirName.isNull() && !dirName.isEmpty())
+    {
+        DisableInput();
+        auto *t = new QThread;
+        auto *f = new WorkerHTML();
+        f->SetDir(dirName);
+        connect(t, SIGNAL(started()), f, SLOT(process()));
+        connect(f, SIGNAL(finished()), t, SLOT(quit()));
+        connect(t, SIGNAL(finished()), this, SLOT(CompletedThread()));
+        connect(f, SIGNAL(initialize(int, int)), this, SLOT(Initialize(int, int)));
+        connect(f, SIGNAL(progress(int)), this, SLOT(Progress(int)));
+        connect(f, SIGNAL(updateStatus(QString)), ui->lblStatus, SLOT(setText(QString)));
+        threads.append(t);
+        workers.append(f);
+
+        t->start();
+    }
 }
 
 /**

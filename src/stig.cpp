@@ -119,8 +119,8 @@ STIG &STIG::operator=(const STIG &right)
 /**
  * @brief STIG::operator==
  * @param right
- * @return \c True when the @a STIG entities refer to the same
- * @a STIG. Otherwise, \c false.
+ * @return @c True when the @a STIG entities refer to the same
+ * @a STIG. Otherwise, @c false.
  *
  * If the @a STIG @a id is the same between the comparates, they
  * are assumed to be equivalent. If not, the @a title, @a release,
@@ -136,6 +136,25 @@ bool STIG::operator==(const STIG &right)
                 (version == right.version));
     }
     return id == right.id;
+}
+
+/**
+ * @brief STIG::operator <
+ * @param right
+ * @return @c True when this STIG is less than the provided operator.
+ * Otherwise, @c false.
+ */
+bool STIG::operator<(const STIG &right) const
+{
+    if (title == right.title)
+    {
+        if (version == right.version)
+        {
+            return release < right.release;
+        }
+        return version < right.version;
+    }
+    return title < right.title;
 }
 
 /**

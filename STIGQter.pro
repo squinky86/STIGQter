@@ -64,7 +64,8 @@ SOURCES += \
            src/workerfindingsreport.cpp \
            src/workeremassreport.cpp \
            src/workerimportemass.cpp \
-    src/workercklexport.cpp
+    src/workercklexport.cpp \
+    src/workerhtml.cpp
 
 HEADERS += \
            src/stigqter.h \
@@ -88,7 +89,8 @@ HEADERS += \
            src/workerfindingsreport.h \
            src/workeremassreport.h \
            src/workerimportemass.h \
-    src/workercklexport.h
+    src/workercklexport.h \
+    src/workerhtml.h
 
 FORMS += \
          src/stigqter.ui \

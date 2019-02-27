@@ -1,7 +1,7 @@
 /*
  * STIGQter - STIG fun with Qt
  *
- * Copyright © 2018–2019 Jon Hood, http://www.hoodsecurity.com/
+ * Copyright © 2019 Jon Hood, http://www.hoodsecurity.com/
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -17,39 +17,30 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#ifndef STIG_H
-#define STIG_H
+#ifndef WORKERHTML_H
+#define WORKERHTML_H
 
-#include <QList>
 #include <QObject>
-#include <QString>
 
-class STIGCheck;
-class Asset;
-
-class STIG : public QObject
+class WorkerHTML : public QObject
 {
     Q_OBJECT
-public:
-    STIG(const STIG &right);
-    explicit STIG(QObject *parent = nullptr);
 
-    int id;
-    QString title;
-    QString description;
-    QString release;
-    int version;
-    QString benchmarkId;
-    QString fileName;
-    QList<STIGCheck> GetSTIGChecks() const;
-    QList<Asset> GetAssets() const;
-    STIG& operator=(const STIG &right);
-    bool operator==(const STIG &right);
-    bool operator<(const STIG &right) const;
+private:
+    QString _exportDir;
+
+public:
+    explicit WorkerHTML(QObject *parent = nullptr);
+    void SetDir(const QString &dir);
+
+public slots:
+    void process();
+
+signals:
+    void initialize(int, int);
+    void progress(int);
+    void updateStatus(QString);
+    void finished();
 };
 
-Q_DECLARE_METATYPE(STIG);
-
-QString PrintSTIG(const STIG &stig);
-
-#endif // STIG_H
+#endif // WORKERHTML_H
