@@ -121,14 +121,16 @@ void WorkerHTML::process()
     foreach (const STIG &s, checkMap.keys())
     {
         QString STIGName = PrintSTIG(s);
+        QString STIGFileName = s.fileName;
+        STIGFileName = STIGFileName.replace(".xml", ".html", Qt::CaseInsensitive);
         emit updateStatus("Creating page for " + STIGName + "…");
         main.write("<li><a href=\"");
-        main.write(STIGName.toStdString().c_str());
-        main.write(".html\">");
+        main.write(STIGFileName.toStdString().c_str());
+        main.write("\">");
         main.write(STIGName.toStdString().c_str());
         main.write("</li>");
 
-        QFile stig(outputDir.filePath(STIGName + ".html"));
+        QFile stig(outputDir.filePath(STIGFileName));
         stig.open(QIODevice::WriteOnly);
 
         stig.write("<!doctype html>"
@@ -147,19 +149,38 @@ void WorkerHTML::process()
         stig.write("</h1><h2>Version: ");
         stig.write(QString::number(s.version).toStdString().c_str());
         stig.write("</h2>"
-                   "<h2>Release: ");
+                   "<h2>");
         stig.write(QString(s.release).toStdString().c_str());
         stig.write("</h2>"
-                   "<ul>");
+                   "<table border=\"1\">"
+                   "<tr>"
+                   "<th>Checked</th>"
+                   "<th>Name</th>"
+                   "<th>Title</th>"
+                   "</tr>");
 
-        //TODO: Build STIG page
         foreach (const STIGCheck &c, checkMap[s])
         {
+            QString check(PrintSTIGCheck(c));
+            stig.write("<tr>"
+                       "<td>☐</td>"
+                       "<td style=\"white-space:nowrap;\">"
+                       "<a href=\"");
+            stig.write(check.toStdString().c_str());
+            stig.write(".html\">");
+            stig.write(check.toStdString().c_str());
+            stig.write("</a>"
+                       "</td>"
+                       "<td>");
+            stig.write(c.title.toStdString().c_str());
+            stig.write("</td>"
+                       "</tr>");
+
             //TODO: Build STIGCheck page
             emit progress(-1);
         }
         emit progress(-1);
-        stig.write("</ul>"
+        stig.write("</table>"
                    "</body>"
                    "</html>");
         stig.close();
