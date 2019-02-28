@@ -339,6 +339,13 @@ QString TrimFileName(const QString &fileName)
 void Warning(const QString &title, const QString &message, const bool quiet)
 {
     qDebug() << title << ": " << message << endl;
-    if (!quiet && (QThread::currentThread() == QApplication::instance()->thread())) //make sure we're in the GUI thread before popping a messagae box
-        QMessageBox::warning(nullptr, title, message);
+    if (!IgnoreWarnings && !quiet && (QThread::currentThread() == QApplication::instance()->thread())) //make sure we're in the GUI thread before popping a messagae box
+    {
+        int ret = QMessageBox::warning(nullptr, title, message, QMessageBox::Ignore | QMessageBox::Ok);
+        //if ignoring messages, move to quiet mode
+        if (ret == QMessageBox::Ignore)
+        {
+            IgnoreWarnings = true;
+        }
+    }
 }
