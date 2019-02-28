@@ -1882,8 +1882,8 @@ bool DbManager::IsEmassImport()
  */
 bool DbManager::LoadDB(const QString &path)
 {
-    QFile source = QFile(path);
-    QFile dest = QFile(_dbPath);
+    QFile source(path);
+    QFile dest(_dbPath);
     if (source.open(QFile::ReadOnly) && dest.open(QFile::WriteOnly))
     {
         dest.write(qUncompress(source.readAll()));
@@ -1907,8 +1907,8 @@ bool DbManager::LoadDB(const QString &path)
  */
 bool DbManager::SaveDB(const QString &path)
 {
-    QFile source = QFile(_dbPath);
-    QFile dest = QFile(path);
+    QFile source(_dbPath);
+    QFile dest(path);
     if (source.open(QFile::ReadOnly) && dest.open(QFile::WriteOnly))
     {
         dest.write(qCompress(source.readAll(), 9));
