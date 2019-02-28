@@ -161,14 +161,14 @@ void WorkerHTML::process()
 
         foreach (const STIGCheck &c, checkMap[s])
         {
-            QString check(PrintSTIGCheck(c));
+            QString checkName(PrintSTIGCheck(c));
             stig.write("<tr>"
                        "<td>☐</td>"
                        "<td style=\"white-space:nowrap;\">"
                        "<a href=\"");
-            stig.write(check.toStdString().c_str());
+            stig.write(checkName.toStdString().c_str());
             stig.write(".html\">");
-            stig.write(check.toStdString().c_str());
+            stig.write(checkName.toStdString().c_str());
             stig.write("</a>"
                        "</td>"
                        "<td>");
@@ -176,7 +176,129 @@ void WorkerHTML::process()
             stig.write("</td>"
                        "</tr>");
 
-            //TODO: Build STIGCheck page
+            QFile check(outputDir.filePath(checkName + ".html"));
+            check.open(QIODevice::WriteOnly);
+            check.write("<!doctype html>"
+                       "<html lang=\"en\">"
+                       "<head>"
+                       "<meta charset=\"utf-8\">"
+                       "<title>STIGQter: STIG Check Details: ");
+            check.write(checkName.toStdString().c_str());
+            check.write(": ");
+            check.write(c.title.toStdString().c_str());
+            check.write("</title>");
+            check.write(headerExtra.toStdString().c_str());
+            check.write("</head>"
+                       "<body>"
+                       "<h1>"
+                       "<a href=\"https://www.stigqter.com/\">STIGQter</a>: <a href=\"main.html\">STIG Summary</a>: <a href=\"");
+            check.write(STIGFileName.toStdString().c_str());
+            check.write("\">");
+            check.write(STIGName.toStdString().c_str());
+            check.write("</a>"
+                        ": ");
+            check.write(c.title.toStdString().c_str());
+            check.write("</h1>"
+                        "<h2>DISA Rule</h2>"
+                        "<p>");
+            check.write(c.rule.toStdString().c_str());
+            check.write("</p>"
+                        "<h2>Vulnerability Number</h2>"
+                        "<p>");
+            check.write(c.vulnNum.toStdString().c_str());
+            check.write("</p>"
+                        "<h2>Group Title</h2>"
+                        "<p>");
+            check.write(c.groupTitle.toStdString().c_str());
+            check.write("</p>"
+                        "<h2>Rule Version</h2>"
+                        "<p>");
+            check.write(c.ruleVersion.toStdString().c_str());
+            check.write("</p>"
+                        "<h2>Severity</h2>"
+                        "<p>");
+            check.write(GetSeverity(c.severity).toStdString().c_str());
+            check.write("</p>");
+            CCI cci = c.GetCCI();
+            if (cci.id >= 0)
+            {
+                check.write("<h2>Control Correlation Identifier (CCI)</h2>"
+                            "<p>");
+                check.write(PrintCCI(cci).toStdString().c_str());
+                check.write("</p>"
+                            "<h2>CCI Definition</h2>"
+                            "<p>");
+                check.write(cci.definition.toStdString().c_str());
+                check.write("</p>");
+            }
+            check.write("<h2>Weight</h2>"
+                        "<p>");
+            check.write(QString::number(c.weight).toStdString().c_str());
+            check.write("</p>"
+                        "<h2>False Positives</h2>"
+                        "<p>");
+            check.write(c.falsePositives.toStdString().c_str());
+            check.write("</p>"
+                        "<h2>False Negatives</h2>"
+                        "<p>");
+            check.write(c.falseNegatives.toStdString().c_str());
+            check.write("</p>"
+                        "<h2>Fix Recommendation</h2>"
+                        "<p>");
+            check.write(c.fix.toStdString().c_str());
+            check.write("</p>"
+                        "<h2>Check Contents</h2>"
+                        "<p>");
+            check.write(c.check.toStdString().c_str());
+            check.write("</p>"
+                        "<h2>Documentable</h2>"
+                        "<p>");
+            check.write(c.documentable ? "True" : "False");
+            check.write("</p>"
+                        "<h2>Rule Version</h2>"
+                        "<p>");
+            check.write(c.ruleVersion.toStdString().c_str());
+            check.write("</p>"
+                        "<h2>Mitigations</h2>"
+                        "<p>");
+            check.write(c.mitigations.toStdString().c_str());
+            check.write("</p>"
+                        "<h2>Severity Override Guidance</h2>"
+                        "<p>");
+            check.write(c.severityOverrideGuidance.toStdString().c_str());
+            check.write("</p>"
+                        "<h2>Check Content Reference</h2>"
+                        "<p>");
+            check.write(c.checkContentRef.toStdString().c_str());
+            check.write("</p>"
+                        "<h2>Potential Impact</h2>"
+                        "<p>");
+            check.write(c.potentialImpact.toStdString().c_str());
+            check.write("</p>"
+                        "<h2>Third-Party Tools</h2>"
+                        "<p>");
+            check.write(c.thirdPartyTools.toStdString().c_str());
+            check.write("</p>"
+                        "<h2>Mitigation Control</h2>"
+                        "<p>");
+            check.write(c.mitigationControl.toStdString().c_str());
+            check.write("</p>"
+                        "<h2>Responsibility</h2>"
+                        "<p>");
+            check.write(c.responsibility.toStdString().c_str());
+            check.write("</p>"
+                        "<h2>IA Controls</h2>"
+                        "<p>");
+            check.write(c.iaControls.toStdString().c_str());
+            check.write("</p>"
+                        "<h2>Target Key</h2>"
+                        "<p>");
+            check.write(c.targetKey.toStdString().c_str());
+            check.write("</p>"
+                        "</body>"
+                        "</html>");
+            check.close();
+
             emit progress(-1);
         }
         emit progress(-1);

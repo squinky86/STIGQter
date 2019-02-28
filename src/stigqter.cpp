@@ -674,7 +674,6 @@ void STIGQter::EnableInput()
     ui->btnClearSTIGs->setEnabled(true);
     ui->btnCreateCKL->setEnabled(true);
     ui->btnDeleteEmassImport->setEnabled(isImport);
-    ui->btnFindingsReport->setEnabled(true);
     ui->btnImportCKL->setEnabled(true);
     ui->btnOpenCKL->setEnabled(ui->lstAssets->selectedItems().count() > 0);
     ui->btnQuit->setEnabled(true);
@@ -744,7 +743,6 @@ void STIGQter::DisableInput()
     ui->btnClearSTIGs->setEnabled(false);
     ui->btnCreateCKL->setEnabled(false);
     ui->btnDeleteEmassImport->setEnabled(false);
-    ui->btnFindingsReport->setEnabled(false);
     ui->btnImportCCIs->setEnabled(false);
     ui->btnImportCKL->setEnabled(false);
     ui->btnImportEmass->setEnabled(false);
