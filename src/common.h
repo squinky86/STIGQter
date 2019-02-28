@@ -26,7 +26,7 @@
 
 #define VERSION "0.1.2"
 
-static bool IgnoreWarnings = false;
+[[maybe_unused]] static bool IgnoreWarnings = false;
 
 QString CleanXML(QString s, bool isXml = false);
 bool DownloadFile(const QUrl &url, QFile *file);
