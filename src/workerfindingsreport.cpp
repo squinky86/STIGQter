@@ -17,13 +17,17 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#include <algorithm>
-
 #include "dbmanager.h"
 #include "cklcheck.h"
 #include "common.h"
 #include "workerfindingsreport.h"
 #include "xlsxwriter.h"
+
+#include <QDir>
+#include <QTemporaryDir>
+#include <algorithm>
+#include <cstdio>
+#include <string>
 
 /**
  * @class WorkerFindingsReport
@@ -80,7 +84,12 @@ void WorkerFindingsReport::process()
     emit initialize(numChecks+3, 0);
 
     //new workbook
-    lxw_workbook  *wb = workbook_new(_fileName.toStdString().c_str());
+    QTemporaryDir tmpDir;
+    lxw_workbook_options options;
+    options.constant_memory = LXW_FALSE;
+    std::string tmpStr = tmpDir.path().replace("/", QDir::separator()).toStdString();
+    options.tmpdir = const_cast<char*>(tmpStr.c_str());
+    lxw_workbook  *wb = workbook_new_opt(_fileName.replace("/", QDir::separator()).toStdString().c_str(), &options);
     //2 sheets - findings and controls
     lxw_worksheet *wsFindings = workbook_add_worksheet(wb, "Findings");
     lxw_worksheet *wsCCIs = workbook_add_worksheet(wb, "CCIs");

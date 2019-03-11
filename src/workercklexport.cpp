@@ -105,6 +105,7 @@ void WorkerCKLExport::process()
                 stream.writeStartElement(QStringLiteral("HOST_IP"));
                 stream.writeCharacters(a.hostIP);
                 stream.writeEndElement(); //HOST_IP
+                //HOST_GUID was part of STIG Viewer 2.3-2.4, but it was removed.
                 stream.writeStartElement(QStringLiteral("HOST_MAC"));
                 stream.writeCharacters(a.hostMAC);
                 stream.writeEndElement(); //HOST_MAC
