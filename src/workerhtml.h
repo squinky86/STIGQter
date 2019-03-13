@@ -28,7 +28,7 @@ class WorkerHTML : public QObject
 
 private:
     QString _exportDir;
-    QString CheckItem(QString title, QString contents);
+    QString CheckItem(const QString &title, const QString &contents);
 
 public:
     explicit WorkerHTML(QObject *parent = nullptr);

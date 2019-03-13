@@ -51,9 +51,9 @@ WorkerHTML::WorkerHTML(QObject *parent) : QObject(parent)
  * @return An HTML-formatted section within the @a STIGCheck file
  * detailing the @a contents, but only when @a contents exist.
  */
-QString WorkerHTML::CheckItem(QString title, QString contents)
+QString WorkerHTML::CheckItem(const QString &title, const QString &contents)
 {
-    QString ret("");
+    QString ret = QLatin1String();
     if (!contents.isNull() && !contents.isEmpty())
     {
         ret.append("<h2>" + title + "</h2><p>" + contents + "</p>");
@@ -109,7 +109,7 @@ void WorkerHTML::process()
 
     QMap<STIG, QList<STIGCheck>> checkMap;
     int count = 0;
-    foreach (const STIG &s, db.GetSTIGs())
+    foreach (const STIG &s, stigs)
     {
         QList<STIGCheck> checks = s.GetSTIGChecks();
         count += checks.count();
@@ -120,9 +120,9 @@ void WorkerHTML::process()
     emit initialize(1 + checkMap.count() + count, 1);
 
     QDir outputDir(_exportDir);
-    QFile main(outputDir.filePath("main.html"));
+    QFile main(outputDir.filePath(QStringLiteral("main.html")));
     main.open(QIODevice::WriteOnly);
-    QString headerExtra = db.GetVariable("HTMLHeader");
+    QString headerExtra = db.GetVariable(QStringLiteral("HTMLHeader"));
 
     main.write("<!doctype html>"
                "<html lang=\"en\">"
@@ -139,7 +139,7 @@ void WorkerHTML::process()
     {
         QString STIGName = PrintSTIG(s);
         QString STIGFileName = s.fileName;
-        STIGFileName = STIGFileName.replace(".xml", ".html", Qt::CaseInsensitive);
+        STIGFileName = STIGFileName.replace(QStringLiteral(".xml"), QStringLiteral(".html"), Qt::CaseInsensitive);
         emit updateStatus("Creating page for " + STIGName + "…");
         main.write("<li><a href=\"");
         main.write(STIGFileName.toStdString().c_str());
@@ -263,7 +263,7 @@ void WorkerHTML::process()
                "</html>");
     main.close();
 
-    QFile svg(outputDir.filePath("STIGQter.svg"));
+    QFile svg(outputDir.filePath(QStringLiteral("STIGQter.svg")));
     svg.open(QIODevice::WriteOnly);
     svg.write("<?xml version=\"1.0\" encoding=\"UTF-8\"?>"
               "<svg width=\"6.2129mm\" height=\"8.3859mm\" version=\"1.1\" viewBox=\"0 0 6.2129421 8.3859148\" xmlns=\"http://www.w3.org/2000/svg\" xmlns:cc=\"http://creativecommons.org/ns#\" xmlns:dc=\"http://purl.org/dc/elements/1.1/\" xmlns:rdf=\"http://www.w3.org/1999/02/22-rdf-syntax-ns#\">"
