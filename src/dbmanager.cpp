@@ -22,6 +22,7 @@
 #include "common.h"
 
 #include <cstdlib>
+#include <QCryptographicHash>
 #include <QFile>
 #include <QMessageBox>
 #include <QSqlQuery>
@@ -650,6 +651,23 @@ bool DbManager::DeleteCCIs()
             db.commit();
     }
     return ret;
+}
+
+/**
+ * @brief DbManager::DeleteDB
+ * @return @c True when the database is recreated. Otherwise,
+ * @c false.
+ */
+bool DbManager::DeleteDB()
+{
+    QFile dest(_dbPath);
+    if (dest.open(QFile::WriteOnly))
+    {
+        dest.write("", 0);
+        dest.close();
+        return UpdateDatabaseFromVersion(0);
+    }
+    return false;
 }
 
 /**
@@ -1922,6 +1940,22 @@ bool DbManager::SaveDB(const QString &path)
     }
 
     return false;
+}
+
+/**
+ * @brief DbManager::HashDB
+ * @return The SHA3_256 hash of the database file
+ */
+QByteArray DbManager::HashDB()
+{
+    QFile source(_dbPath);
+    QByteArray ret;
+    if (source.open(QFile::ReadOnly))
+    {
+        ret = QCryptographicHash::hash(qCompress(source.readAll(), 9), QCryptographicHash::Sha3_256);
+        source.close();
+    }
+    return ret;
 }
 
 /**

@@ -52,6 +52,7 @@ public:
     bool DeleteAsset(int id);
     bool DeleteAsset(const Asset &asset);
     bool DeleteCCIs();
+    bool DeleteDB();
     bool DeleteEmassImport();
     bool DeleteSTIG(int id);
     bool DeleteSTIG(const STIG &stig);
@@ -92,6 +93,7 @@ public:
 
     bool LoadDB(const QString &path);
     bool SaveDB(const QString &path);
+    QByteArray HashDB();
 
     bool UpdateAsset(const Asset &asset);
     bool UpdateCCI(const CCI &cci);

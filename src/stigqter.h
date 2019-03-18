@@ -56,6 +56,7 @@ private slots:
     void ImportEMASS();
     void Load();
     void OpenCKL();
+    void Reset();
     void Save();
     void SaveAs();
     void SelectAsset();

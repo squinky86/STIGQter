@@ -35,10 +35,12 @@
 #include "ui_stigqter.h"
 #include "workerhtml.h"
 
-#include <QThread>
+#include <QCryptographicHash>
 #include <QFileDialog>
 #include <QInputDialog>
 #include <QMessageBox>
+#include <QProcess>
+#include <QThread>
 
 /**
  * @class STIGQter
@@ -160,6 +162,52 @@ void STIGQter::OpenCKL()
         int index = ui->tabDB->addTab(av, assetName);
         av->SetTabIndex(index);
         ui->tabDB->setCurrentIndex(index);
+    }
+}
+
+/**
+ * @brief STIGQter::Reset
+ *
+ * Check if the .stigqter file has been saved before closing the
+ * database. If it has not, give the user an opportunity to save it.
+ */
+void STIGQter::Reset()
+{
+    if (lastSaveLocation.isNull() || lastSaveLocation.isEmpty())
+    {
+        QMessageBox::StandardButton reply = QMessageBox::question(this, QStringLiteral("Unsaved Changes"), QStringLiteral("The data have not been saved. Really close?"), QMessageBox::Yes|QMessageBox::No);
+        if (reply == QMessageBox::Yes)
+        {
+            db->DeleteDB();
+            qApp->quit();
+            QProcess::startDetached(qApp->arguments()[0], qApp->arguments());
+        }
+    }
+    else
+    {
+        //check if saved database is up-to-date
+        QFile dest(lastSaveLocation);
+        dest.open(QFile::ReadOnly);
+        QByteArray destHash = QCryptographicHash::hash(dest.readAll(), QCryptographicHash::Sha3_256);
+        dest.close();
+        if (destHash == db->HashDB())
+        {
+            //database was saved without changes; reset application.
+            db->DeleteDB();
+            qApp->quit();
+            QProcess::startDetached(qApp->arguments()[0], qApp->arguments());
+        }
+        else
+        {
+            //there are unsaved changes; verify closing the DB
+            QMessageBox::StandardButton reply = QMessageBox::question(this, QStringLiteral("Unsaved Changes"), QStringLiteral("There are unsaved changes to the file you wrote. Really close?"), QMessageBox::Yes|QMessageBox::No);
+            if (reply == QMessageBox::Yes)
+            {
+                db->DeleteDB();
+                qApp->quit();
+                QProcess::startDetached(qApp->arguments()[0], qApp->arguments());
+            }
+        }
     }
 }
 

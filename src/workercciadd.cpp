@@ -109,7 +109,7 @@ void WorkerCCIAdd::process()
         }
     }
     db.DelayCommit(false);
-    emit initialize(todo.size() + 1, 1);
+    emit initialize(todo.size() + 959, 1); //# of base controls: 958
     delete xml;
 
     //Step 3a: Additional Privacy Controls
