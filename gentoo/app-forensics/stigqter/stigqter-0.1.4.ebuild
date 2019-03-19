@@ -28,7 +28,7 @@ RDEPEND="${CDEPEND}
 	>=dev-libs/openssl-1"
 
 src_configure() {
-	eqmake5 ${MY_PN}.pro
+	eqmake5 ${MY_PN}.pro -r PREFIX="/usr"
 }
 
 src_install() {
