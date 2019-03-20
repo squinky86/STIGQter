@@ -42,7 +42,8 @@ WorkerCheckVersion::WorkerCheckVersion(QObject *parent) : QObject(parent)
 /**
  * @brief WorkerCheckVersion::process
  *
- * Perform the actual work.
+ * Download the page that displays the version number if an update is
+ * needed. If the version is the latest, it displays "OK".
  */
 void WorkerCheckVersion::process()
 {
