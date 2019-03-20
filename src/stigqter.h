@@ -61,6 +61,7 @@ private slots:
     void SaveAs();
     void SelectAsset();
     void SelectSTIG();
+    void ShowMessage(QString title, QString message);
     void UpdateCCIs();
 
     void Initialize(int max, int val = 0);

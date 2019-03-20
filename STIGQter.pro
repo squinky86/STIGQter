@@ -65,7 +65,8 @@ SOURCES += \
            src/workeremassreport.cpp \
            src/workerimportemass.cpp \
     src/workercklexport.cpp \
-    src/workerhtml.cpp
+    src/workerhtml.cpp \
+    src/workercheckversion.cpp
 
 HEADERS += \
            src/stigqter.h \
@@ -90,7 +91,8 @@ HEADERS += \
            src/workeremassreport.h \
            src/workerimportemass.h \
     src/workercklexport.h \
-    src/workerhtml.h
+    src/workerhtml.h \
+    src/workercheckversion.h
 
 FORMS += \
          src/stigqter.ui \

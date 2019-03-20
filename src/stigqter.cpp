@@ -33,6 +33,7 @@
 #include "workerstigdelete.h"
 
 #include "ui_stigqter.h"
+#include "workercheckversion.h"
 #include "workerhtml.h"
 
 #include <QCryptographicHash>
@@ -93,6 +94,18 @@ STIGQter::STIGQter(QWidget *parent) :
     ui->tabDB->tabBar()->tabButton(0, QTabBar::RightSide)->resize(0, 0);
 
     _shortcuts.append(new QShortcut(QKeySequence(Qt::CTRL + Qt::Key_S), this, SLOT(Save())));
+
+    //check version number
+    auto *t = new QThread;
+    auto *c = new WorkerCheckVersion();
+    c->moveToThread(t);
+    connect(t, SIGNAL(started()), c, SLOT(process()));
+    connect(c, SIGNAL(finished()), t, SLOT(quit()));
+    connect(c, SIGNAL(ThrowWarning(QString, QString)), this, SLOT(ShowMessage(QString, QString)));
+    threads.append(t);
+    workers.append(c);
+
+    t->start(); //WorkerCheckVersion()
 }
 
 /**
@@ -687,6 +700,18 @@ void STIGQter::SelectSTIG()
 {
     //select STIGs to create checklists
     ui->btnCreateCKL->setEnabled(ui->lstSTIGs->selectedItems().count() > 0);
+}
+
+/**
+ * @brief STIGQter::ShowMessage
+ * @param title
+ * @param message
+ *
+ * Display a message on the main thread.
+ */
+void STIGQter::ShowMessage(QString title, QString message)
+{
+    Warning(title, message);
 }
 
 /**
