@@ -49,7 +49,7 @@ void WorkerCheckVersion::process()
 {
     //get the latest version
     QString ret = DownloadPage(QStringLiteral("https://www.stigqter.com/update.php"));
-    if (!ret.startsWith(QStringLiteral("OK")))
+    if (!ret.isNull() && !ret.isEmpty() && !ret.startsWith(QStringLiteral("OK")))
     {
         emit ThrowWarning(QStringLiteral("Please update to the latest version of STIGQter."), "Please visit <a href=\"https://www.stigqter.com/\">www.stigqter.com</a> to download version " + ret + ".");
     }
