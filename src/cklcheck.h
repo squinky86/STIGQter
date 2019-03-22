@@ -36,6 +36,7 @@ enum Status
 
 Status GetStatus(const QString &status);
 QString GetStatus(Status status, bool xmlFormat = false);
+QString GetCMRSStatus(Status status);
 
 class CKLCheck : public QObject
 {

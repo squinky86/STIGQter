@@ -78,4 +78,6 @@ Q_DECLARE_METATYPE(STIGCheck);
 
 QString PrintSTIGCheck(const STIGCheck &stigCheck);
 
+QString PrintCMRSVulnId(const STIGCheck &stigCheck);
+
 #endif // STIGCHECK_H

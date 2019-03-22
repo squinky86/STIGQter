@@ -187,6 +187,28 @@ QString GetStatus(Status status, bool xmlFormat)
 }
 
 /**
+ * @brief GetCMRSStatus
+ * @param status
+ * @return The CMRS-formatted string for the compliance status.
+ *
+ * Converts the @a Status enum back to a CMRS-standard finding.
+ */
+QString GetCMRSStatus(Status status)
+{
+    switch (status)
+    {
+    case Status::Open:
+        return QStringLiteral("O");
+    case Status::NotApplicable:
+        return QStringLiteral("NA");
+    case Status::NotAFinding:
+        return QStringLiteral("NF");
+    default:
+        return QStringLiteral("NR");
+    }
+}
+
+/**
  * @brief PrintCKLCheck
  * @param cklCheck
  * @return Human-readable printout of the @a STIGCheck component.

@@ -220,3 +220,20 @@ QString PrintSTIGCheck(const STIGCheck &stigCheck)
 {
     return stigCheck.rule;
 }
+
+/**
+ * @brief PrintCMRSVulnId
+ * @param stigCheck
+ * @return CMRS-formatted V-ID
+ */
+QString PrintCMRSVulnId(const STIGCheck &stigCheck)
+{
+    QString ret = stigCheck.vulnNum;
+    if (ret.startsWith(QStringLiteral("V-")))
+    {
+        ret = ret.remove(1, 1);
+        while (ret.length() < 8)
+            ret = ret.insert(1, '0');
+    }
+    return ret;
+}

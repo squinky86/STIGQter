@@ -24,6 +24,7 @@
 #include "workerassetadd.h"
 #include "workercciadd.h"
 #include "workerccidelete.h"
+#include "workercmrsexport.h"
 #include "workercklexport.h"
 #include "workercklimport.h"
 #include "workeremassreport.h"
@@ -514,6 +515,34 @@ void STIGQter::ExportCKLs()
 
         t->start();
     }
+}
+
+/**
+ * @brief STIGQter::ExportCMRS
+ *
+ * Generate a CMRS report of the findings.
+ */
+void STIGQter::ExportCMRS()
+{
+    QString fileName = QFileDialog::getSaveFileName(this, QStringLiteral("Save CMRS Report"), QDir::home().dirName(), QStringLiteral("CMRS XML (*.xml)"));
+
+    if (fileName.isNull() || fileName.isEmpty())
+        return; // cancel button pressed
+
+    DisableInput();
+    auto *t = new QThread;
+    auto *f = new WorkerCMRSExport();
+    f->SetExportPath(fileName);
+    connect(t, SIGNAL(started()), f, SLOT(process()));
+    connect(f, SIGNAL(finished()), t, SLOT(quit()));
+    connect(t, SIGNAL(finished()), this, SLOT(CompletedThread()));
+    connect(f, SIGNAL(initialize(int, int)), this, SLOT(Initialize(int, int)));
+    connect(f, SIGNAL(progress(int)), this, SLOT(Progress(int)));
+    connect(f, SIGNAL(updateStatus(QString)), ui->lblStatus, SLOT(setText(QString)));
+    threads.append(t);
+    workers.append(f);
+
+    t->start();
 }
 
 /**
