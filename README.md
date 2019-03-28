@@ -6,12 +6,12 @@
 
 Each release is published with a Windows 64-bit binary that has been tested on Windows 10. This is the only supported binary release. Ebuilds for Gentoo Linux are also supported for building from source.
 
-The source has the following dependencies:
-* [HTML Tidy 5.6.0](http://www.html-tidy.org/)
+The source has the following dependencies (with minimum version numbers):
+* [HTML Tidy 5.6](http://www.html-tidy.org/)
 * [libzip 1.5.1](https://libzip.org/)
-* [libxlsxwriter 0.8.4](https://libxlsxwriter.github.io/)
+* [libxlsxwriter 0.8](https://libxlsxwriter.github.io/)
 * [Qt 5](https://www.qt.io/)
-* [OpenSSL 1.0](https://www.openssl.org/)
+* [OpenSSL 1](https://www.openssl.org/)
 
 ## Authors
 
