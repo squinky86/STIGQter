@@ -154,7 +154,7 @@ void WorkerImportEMASS::process()
         int onRow = 0;
         QString onCol = QString();
         bool isSharedString = false; //keep up with whether the current record is a shared string
-        QStringList meaningfulCols = {QStringLiteral("D"), QStringLiteral("L"), QStringLiteral("M"), QStringLiteral("N"), QStringLiteral("O")};
+        QStringList meaningfulCols = {QStringLiteral("D"), QStringLiteral("H"), QStringLiteral("I"), QStringLiteral("J"), QStringLiteral("K"), QStringLiteral("L"), QStringLiteral("M"), QStringLiteral("N"), QStringLiteral("O")};
         CCI curCCI;
         DbManager db;
         db.DelayCommit(true);
@@ -230,6 +230,26 @@ void WorkerImportEMASS::process()
                                 curCCI.importTestedBy = value;
                             else if (onCol == QStringLiteral("O"))
                                 curCCI.importTestResults = value;
+                            else if (onCol == QStringLiteral("H"))
+                                curCCI.importCompliance2 = value;
+                            else if (onCol == QStringLiteral("I"))
+                            {
+                                curCCI.importDateTested2 = value;
+                                //read value may be Excel serial date
+                                /*bool ok = false;
+                                int excelSerialDate = curCCI.importDateTested2.toInt(&ok);
+                                if (ok && excelSerialDate > 0)
+                                {
+                                    QDate tempDate(1899, 12, 31);
+                                    tempDate.addDays(excelSerialDate);
+                                    curCCI.importDateTested2 = tempDate.to
+                                }*/
+                            }
+                            else if (onCol == QStringLiteral("J"))
+                                curCCI.importTestedBy2 = value;
+                            else if (onCol == QStringLiteral("K"))
+                                curCCI.importTestResults2 = value;
+
                             curCCI.isImport = true;
                             db.UpdateCCI(curCCI);
                         }

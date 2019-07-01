@@ -71,6 +71,9 @@ void WorkerEMASSReport::process()
 
     //current date in eMASS format
     QString curDate = QDate::currentDate().toString(QStringLiteral("dd-MMM-yyyy"));
+    //current date in Excel format
+    QDate tempDate(1899, 12, 31);
+    qint64 excelCurDate = QDate::currentDate().toJulianDay() - tempDate.toJulianDay() + 1;
 
     //new workbook
     lxw_workbook  *wb = workbook_new(_fileName.toStdString().c_str());
@@ -108,6 +111,10 @@ void WorkerEMASSReport::process()
     //format - wrapped text
     lxw_format *fmtWrapped = workbook_add_format(wb);
     format_set_text_wrap(fmtWrapped);
+
+    //format - date/time
+    lxw_format *fmtDate = workbook_add_format(wb);
+    format_set_num_format(fmtDate, "[$-en-US]dd-mmm-yyyy;@");
 
     //write headers for findings
 
@@ -229,12 +236,15 @@ void WorkerEMASSReport::process()
         //compliance status
         worksheet_write_string(ws, onRow, 7, "Non-Compliant", nullptr);
         //date tested
-        worksheet_write_string(ws, onRow, 8, curDate.toStdString().c_str(), nullptr);
+        worksheet_write_number(ws, onRow, 8, excelCurDate, fmtDate);
         //tested by
         worksheet_write_string(ws, onRow, 9, username.toStdString().c_str(), nullptr);
 
         //test results
-        QString testResult = QStringLiteral("The following checks are open:");
+        QString testResult = c.importTestResults2;
+        if (!testResult.isEmpty())
+            testResult += "\n";
+        testResult += QStringLiteral("The following checks are open:");
         foreach (CKLCheck cc, checks)
         {
             testResult.append("\n" + PrintAsset(cc.GetAsset()) + ": " + PrintCKLCheck(cc) + " - " + GetSeverity(cc.GetSeverity()));
@@ -282,12 +292,15 @@ void WorkerEMASSReport::process()
         //compliance status
         worksheet_write_string(ws, onRow, 7, "Compliant", nullptr);
         //date tested
-        worksheet_write_string(ws, onRow, 8, curDate.toStdString().c_str(), nullptr);
+        worksheet_write_number(ws, onRow, 8, excelCurDate, fmtDate);
         //tested by
         worksheet_write_string(ws, onRow, 9, username.toStdString().c_str(), nullptr);
 
         //test results
-        QString testResult = QStringLiteral("The following checks were compliant:");
+        QString testResult = c.importTestResults2;
+        if (!testResult.isEmpty())
+            testResult += "\n";
+        testResult += QStringLiteral("The following checks were compliant:");
         foreach (CKLCheck cc, checks)
         {
             testResult.append("\n" + PrintAsset(cc.GetAsset()) + ": " + PrintCKLCheck(cc));
@@ -331,14 +344,19 @@ void WorkerEMASSReport::process()
         worksheet_write_string(ws, onRow, 5, "", nullptr);
         worksheet_write_string(ws, onRow, 6, "", nullptr);
         //compliance status
-        worksheet_write_string(ws, onRow, 7, "", nullptr);
+        worksheet_write_string(ws, onRow, 7, c.importCompliance2.toStdString().c_str(), nullptr);
         //date tested
-        worksheet_write_string(ws, onRow, 8, "", nullptr);
+        bool ok = false;
+        int tmpInt = c.importDateTested2.toInt(&ok);
+        if (ok)
+            worksheet_write_number(ws, onRow, 8, tmpInt, fmtDate);
+        else
+            worksheet_write_number(ws, onRow, 8, excelCurDate, fmtDate);
         //tested by
-        worksheet_write_string(ws, onRow, 9, "", nullptr);
+        worksheet_write_string(ws, onRow, 9, c.importTestedBy2.toStdString().c_str(), nullptr);
 
         //test results
-        worksheet_write_string(ws, onRow, 10, "", nullptr);
+        worksheet_write_string(ws, onRow, 10, c.importTestResults2.toStdString().c_str(), fmtWrapped);
 
         //previous test results
         worksheet_write_string(ws, onRow, 11, c.isImport ? c.importCompliance.toStdString().c_str() : "", nullptr);

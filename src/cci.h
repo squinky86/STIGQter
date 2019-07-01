@@ -42,6 +42,10 @@ public:
     QString importDateTested;
     QString importTestedBy;
     QString importTestResults;
+    QString importCompliance2;
+    QString importDateTested2;
+    QString importTestedBy2;
+    QString importTestResults2;
     friend bool operator<(const CCI &left, const CCI &right)
     {
         return left.cci < right.cci;

@@ -682,7 +682,7 @@ bool DbManager::DeleteEmassImport()
     if (this->CheckDatabase(db))
     {
         QSqlQuery q(db);
-        q.prepare(QStringLiteral("UPDATE CCI SET isImport = 0, importCompliance = NULL, importDateTested = NULL, importTestedBy = NULL, importTestResults = NULL"));
+        q.prepare(QStringLiteral("UPDATE CCI SET isImport = 0, importCompliance = NULL, importDateTested = NULL, importTestedBy = NULL, importTestResults = NULL, importCompliance2 = NULL, importDateTested2 = NULL, importTestedBy2 = NULL, importTestResults2 = NULL"));
         ret = q.exec();
         if (!_delayCommit)
             db.commit();
@@ -1065,7 +1065,7 @@ QList<CCI> DbManager::GetCCIs(const QString &whereClause, const QList<std::tuple
     if (this->CheckDatabase(db))
     {
         QSqlQuery q(db);
-        QString toPrep = QStringLiteral("SELECT id, ControlId, cci, definition, isImport, importCompliance, importDateTested, importTestedBy, importTestResults FROM CCI");
+        QString toPrep = QStringLiteral("SELECT id, ControlId, cci, definition, isImport, importCompliance, importDateTested, importTestedBy, importTestResults, importCompliance2, importDateTested2, importTestedBy2, importTestResults2 FROM CCI");
         if (!whereClause.isNull() && !whereClause.isEmpty())
             toPrep.append(" " + whereClause);
         toPrep.append(QStringLiteral(" ORDER BY cci"));
@@ -1090,6 +1090,10 @@ QList<CCI> DbManager::GetCCIs(const QString &whereClause, const QList<std::tuple
             c.importDateTested = q.value(6).toString();
             c.importTestedBy = q.value(7).toString();
             c.importTestResults = q.value(8).toString();
+            c.importCompliance2 = q.value(9).toString();
+            c.importDateTested2 = q.value(10).toString();
+            c.importTestedBy2 = q.value(11).toString();
+            c.importTestResults2 = q.value(12).toString();
 
             ret.append(c);
         }
@@ -2012,7 +2016,7 @@ bool DbManager::UpdateCCI(const CCI &cci)
         {
             QSqlQuery q(db);
             //NOTE: The new values use the provided "cci" while the WHERE clause uses the Database-identified "tmpCCI".
-            q.prepare(QStringLiteral("UPDATE CCI SET ControlId = :ControlId, cci = :cci, definition = :definition, isImport = :isImport, importCompliance = :importCompliance, importDateTested = :importDateTested, importTestedBy = :importTestedBy, importTestResults = :importTestResults WHERE id = :id"));
+            q.prepare(QStringLiteral("UPDATE CCI SET ControlId = :ControlId, cci = :cci, definition = :definition, isImport = :isImport, importCompliance = :importCompliance, importDateTested = :importDateTested, importTestedBy = :importTestedBy, importTestResults = :importTestResults, importCompliance2 = :importCompliance2, importDateTested2 = :importDateTested2, importTestedBy2 = :importTestedBy2, importTestResults2 = :importTestResults2 WHERE id = :id"));
             q.bindValue(QStringLiteral(":ControlId"), cci.controlId);
             q.bindValue(QStringLiteral(":cci"), cci.cci);
             q.bindValue(QStringLiteral(":definition"), cci.definition);
@@ -2021,6 +2025,10 @@ bool DbManager::UpdateCCI(const CCI &cci)
             q.bindValue(QStringLiteral(":importDateTested"), cci.isImport ? cci.importDateTested : nullptr);
             q.bindValue(QStringLiteral(":importTestedBy"), cci.isImport ? cci.importTestedBy : nullptr);
             q.bindValue(QStringLiteral(":importTestResults"), cci.isImport ? cci.importTestResults : nullptr);
+            q.bindValue(QStringLiteral(":importCompliance2"), cci.isImport ? cci.importCompliance2 : nullptr);
+            q.bindValue(QStringLiteral(":importDateTested2"), cci.isImport ? cci.importDateTested2 : nullptr);
+            q.bindValue(QStringLiteral(":importTestedBy2"), cci.isImport ? cci.importTestedBy2 : nullptr);
+            q.bindValue(QStringLiteral(":importTestResults2"), cci.isImport ? cci.importTestResults2 : nullptr);
             q.bindValue(QStringLiteral(":id"), tmpCCI.id);
             ret = q.exec();
         }
@@ -2148,6 +2156,10 @@ bool DbManager::UpdateDatabaseFromVersion(int version)
                       "`importDateTested`	TEXT, "
                       "`importTestedBy`	TEXT, "
                       "`importTestResults`	TEXT, "
+                      "`importCompliance2`	TEXT, "
+                      "`importDateTested2`	TEXT, "
+                      "`importTestedBy2`	TEXT, "
+                      "`importTestResults2`	TEXT, "
                       "FOREIGN KEY(`ControlId`) REFERENCES `Control`(`id`) "
                       ")"));
             ret = q.exec() && ret;

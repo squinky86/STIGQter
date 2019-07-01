@@ -49,7 +49,11 @@ CCI::CCI(QObject *parent) : QObject(parent),
     importCompliance(),
     importDateTested(),
     importTestedBy(),
-    importTestResults()
+    importTestResults(),
+    importCompliance2(),
+    importDateTested2(),
+    importTestedBy2(),
+    importTestResults2()
 {
 }
 
@@ -98,6 +102,10 @@ CCI& CCI::operator=(const CCI &right)
         importDateTested = right.importDateTested;
         importTestedBy = right.importTestedBy;
         importTestResults = right.importTestResults;
+        importCompliance2 = right.importCompliance2;
+        importDateTested2 = right.importDateTested2;
+        importTestedBy2 = right.importTestedBy2;
+        importTestResults2 = right.importTestResults2;
     }
     return *this;
 }
