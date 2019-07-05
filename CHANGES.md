@@ -1,3 +1,7 @@
+## 0.1.5 20190704
+
+- Support for Partial eMASS Test Result Import
+
 ## 0.1.4 20190323
 
 - CMRS import/export
