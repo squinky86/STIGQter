@@ -24,7 +24,7 @@
 #include <QFile>
 #include <QNetworkReply>
 
-#define VERSION "0.1.5"
+#define VERSION "0.1.6"
 
 [[maybe_unused]] static bool IgnoreWarnings = false;
 

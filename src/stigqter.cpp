@@ -415,7 +415,9 @@ void STIGQter::CloseTab(int index)
     for (int j = 1; j < ui->tabDB->count(); j++)
     {
         //reset the tab indices for the tabs that were not closed
-        dynamic_cast<AssetView*>(ui->tabDB->widget(j))->SetTabIndex(j);
+        AssetView *tmpAssetView = dynamic_cast<AssetView*>(ui->tabDB->widget(j));
+        if (tmpAssetView)
+            tmpAssetView->SetTabIndex(j);
     }
     DisplayAssets();
 }
