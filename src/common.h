@@ -39,6 +39,7 @@ QString GetUserAgent();
 QString Pluralize(const int count, const QString &plural = "s", const QString &singular = "");
 QString PrintTrueFalse(bool tf);
 QString Sanitize(QString s);
+QString SanitizeFile(QString s);
 QString TrimFileName(const QString &fileName);
 void Warning(const QString &title, const QString &message, const bool quiet = false);
 

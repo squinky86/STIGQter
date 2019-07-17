@@ -311,6 +311,30 @@ QString Sanitize(QString s)
     return s;
 }
 
+QString SanitizeFile(QString s)
+{
+    //UTF replacements have trouble with QStrings
+    /*s = s.replace(QStringLiteral("/"), QStringLiteral(" ̸"));
+    s = s.replace(QStringLiteral("\\"), QStringLiteral("＼"));
+    s = s.replace(QStringLiteral("?"), QStringLiteral("？"));
+    s = s.replace(QStringLiteral("*"), QStringLiteral("⁎"));
+    s = s.replace(QStringLiteral("\""), QStringLiteral("״"));
+    s = s.replace(QStringLiteral("<"), QStringLiteral("‹"));
+    s = s.replace(QStringLiteral(">"), QStringLiteral("›"));
+    s = s.replace(QStringLiteral("|"), QStringLiteral("ǀ"));
+    s = s.replace(QStringLiteral(":"), QStringLiteral("։"));*/
+    s = s.replace(QStringLiteral("/"), QStringLiteral(" ̸"));
+    s = s.replace(QStringLiteral("\\"), QStringLiteral("-"));
+    s = s.replace(QStringLiteral("?"), QStringLiteral("-"));
+    s = s.replace(QStringLiteral("*"), QStringLiteral("-"));
+    s = s.replace(QStringLiteral("\""), QStringLiteral("-"));
+    s = s.replace(QStringLiteral("<"), QStringLiteral("-"));
+    s = s.replace(QStringLiteral(">"), QStringLiteral("-"));
+    s = s.replace(QStringLiteral("|"), QStringLiteral("-"));
+    s = s.replace(QStringLiteral(":"), QStringLiteral("-"));
+    return s;
+}
+
 /**
  * @brief TrimFileName
  * @param fileName

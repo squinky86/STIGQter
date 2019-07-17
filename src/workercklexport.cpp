@@ -78,11 +78,11 @@ void WorkerCKLExport::process()
         foreach (STIG s, a.GetSTIGs())
         {
             emit updateStatus("Exporting CKL " + PrintSTIG(s) + " for " + PrintAsset(a));
-            QString fileName = QDir(_dirName).filePath(PrintAsset(a) + "_" + s.title + "_V" + QString::number(s.version) + "R" + QString::number(GetReleaseNumber(s.release)) + ".ckl");
+            QString fileName = QDir(_dirName).filePath(PrintAsset(a) + "_" + SanitizeFile(s.title) + "_V" + QString::number(s.version) + "R" + QString::number(GetReleaseNumber(s.release)) + ".ckl");
             if (QFile::exists(fileName))
             {
                 Warning(QStringLiteral("File Exists"), "The file " + fileName + " already exists. Please save to an empty directory.");
-                return;
+                continue;
             }
             QFile file(fileName);
             if (file.open(QIODevice::WriteOnly))
