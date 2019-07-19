@@ -51,6 +51,7 @@ SOURCES += \
            src/help.cpp \
            src/control.cpp \
            src/cci.cpp \
+    src/workermapunmapped.cpp \
            src/workerstigadd.cpp \
            src/stig.cpp \
            src/stigcheck.cpp \
@@ -79,6 +80,7 @@ HEADERS += \
            src/control.h \
            src/cci.h \
            src/help.h \
+    src/workermapunmapped.h \
            src/workerstigadd.h \
            src/stig.h \
            src/stigcheck.h \

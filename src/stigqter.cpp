@@ -32,6 +32,7 @@
 #include "workerimportemass.h"
 #include "workerstigadd.h"
 #include "workerstigdelete.h"
+#include "workermapunmapped.h"
 
 #include "ui_stigqter.h"
 #include "workercheckversion.h"
@@ -723,6 +724,34 @@ void STIGQter::Load()
 }
 
 /**
+ * @brief STIGQter::UpdateCCIs
+ *
+ * Start a thread to update the @a Family, @a Control, and @a CCI
+ * information from the NIST and IASE websites. A @a WorkerCCIAdd
+ * instance is created.
+ */
+void STIGQter::MapUnmapped()
+{
+    DisableInput();
+    _updatedCCIs = true;
+
+    //Create thread to download CCIs and keep GUI active
+    auto *t = new QThread;
+    auto *c = new WorkerMapUnmapped();
+    c->moveToThread(t);
+    connect(t, SIGNAL(started()), c, SLOT(process()));
+    connect(c, SIGNAL(finished()), t, SLOT(quit()));
+    connect(t, SIGNAL(finished()), this, SLOT(CompletedThread()));
+    connect(c, SIGNAL(initialize(int, int)), this, SLOT(Initialize(int, int)));
+    connect(c, SIGNAL(progress(int)), this, SLOT(Progress(int)));
+    connect(c, SIGNAL(updateStatus(QString)), ui->lblStatus, SLOT(setText(QString)));
+    threads.append(t);
+    workers.append(c);
+
+    t->start();
+}
+
+/**
  * @brief STIGQter::SelectSTIG
  *
  * This function is triggered when the @a STIG selection changes.
@@ -779,6 +808,7 @@ void STIGQter::EnableInput()
     ui->btnCreateCKL->setEnabled(true);
     ui->btnDeleteEmassImport->setEnabled(isImport);
     ui->btnImportCKL->setEnabled(true);
+    ui->btnMapUnmapped->setEnabled(isImport);
     ui->btnOpenCKL->setEnabled(ui->lstAssets->selectedItems().count() > 0);
     ui->btnQuit->setEnabled(true);
     ui->menubar->setEnabled(true);
@@ -851,6 +881,7 @@ void STIGQter::DisableInput()
     ui->btnImportCKL->setEnabled(false);
     ui->btnImportEmass->setEnabled(false);
     ui->btnImportSTIGs->setEnabled(false);
+    ui->btnMapUnmapped->setEnabled(false);
     ui->btnOpenCKL->setEnabled(false);
     ui->btnQuit->setEnabled(false);
     ui->menubar->setEnabled(false);

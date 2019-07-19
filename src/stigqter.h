@@ -56,6 +56,7 @@ private slots:
     void ImportCKLs();
     void ImportEMASS();
     void Load();
+    void MapUnmapped();
     void OpenCKL();
     void Reset();
     void Save();

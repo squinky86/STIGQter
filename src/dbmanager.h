@@ -83,6 +83,7 @@ public:
     STIG GetSTIG(const STIG &stig);
     STIGCheck GetSTIGCheck(int id);
     STIGCheck GetSTIGCheck(const STIG &stig, const QString &rule);
+    STIGCheck GetSTIGCheck(const STIGCheck &stigcheck);
     QList<STIGCheck> GetSTIGChecks(const STIG &stig);
     QList<STIGCheck> GetSTIGChecks(const QString &whereClause = "", const QList<std::tuple<QString, QVariant>> &variables = {});
     QList<STIG> GetSTIGs(const Asset &asset);
@@ -98,6 +99,7 @@ public:
     bool UpdateAsset(const Asset &asset);
     bool UpdateCCI(const CCI &cci);
     bool UpdateCKLCheck(const CKLCheck &check);
+    bool UpdateSTIGCheck(const STIGCheck &check);
     bool UpdateVariable(const QString &name, const QString &value);
 
 private:

@@ -1316,6 +1316,25 @@ STIGCheck DbManager::GetSTIGCheck(const STIG &stig, const QString &rule)
 }
 
 /**
+ * @brief DbManager::GetSTIGCheck
+ * @param stigcheck
+ * @param rule
+ * @return The @a STIGCheck associated with the provided @a STIGCheck
+ */
+STIGCheck DbManager::GetSTIGCheck(const STIGCheck &stigcheck)
+{
+    //find STIGCheck by ID
+    if (stigcheck.id > 0)
+    {
+        STIGCheck tmpSTIGCheck = GetSTIGCheck(stigcheck.id);
+        if (tmpSTIGCheck.id > 0)
+            return tmpSTIGCheck;
+    }
+    //if ID is not provided or isn't in DB, find by STIG parameters
+    return GetSTIGCheck(stigcheck.GetSTIG(), stigcheck.rule);
+}
+
+/**
  * @brief DbManager::GetSTIGChecks
  * @param stig
  * @return All @a STIGChecks associated with the provided @a stig.
@@ -2061,6 +2080,56 @@ bool DbManager::UpdateCKLCheck(const CKLCheck &check)
             q.bindValue(QStringLiteral(":severityOverride"), check.severityOverride);
             q.bindValue(QStringLiteral(":severityJustification"), check.severityJustification);
             q.bindValue(QStringLiteral(":id"), tmpCheck.id);
+            ret = q.exec();
+        }
+    }
+    return ret;
+}
+
+/**
+ * @brief DbManager::UpdateSTIGCheck
+ * @param check
+ * @return @c True when the database is updated with the supplied
+ * @a STIGCheck information. Otherwise, @c false.
+ */
+bool DbManager::UpdateSTIGCheck(const STIGCheck &check)
+{
+    STIGCheck tmpCheck = GetSTIGCheck(check);
+    bool ret = false;
+    if (tmpCheck.id > 0)
+    {
+        QSqlDatabase db;
+        ret = true;
+        if (this->CheckDatabase(db))
+        {
+            QSqlQuery q(db);
+            //NOTE: The new values use the provided "check" while the WHERE clause uses the Database-identified "tmpCheck".
+            q.prepare(QStringLiteral("UPDATE STIGCheck SET STIGId = :STIGId, CCIId = :CCIId, rule = :rule, vulnNum = :vulnNum, groupTitle = :groupTitle, ruleVersion = :ruleVersion, severity = :severity, weight = :weight, title = :title, vulnDiscussion = :vulnDiscussion, falsePositives = :falsePositives, falseNegatives = :falseNegatives, fix = :fix, check = :check, documentable = :documentable, mitigations = :mitigations, severityOverrideGuidance = :severityOverrideGuidance, checkContentRef = :checkContentRef, potentialImpact = :potentialImpact, thirdPartyTools = :thirdPartyTools, mitigationControl = :mitigationControl, responsibility = :responsibility, IAControls = :IAControls, targetKey = :targetKey WHERE id = :id"));
+            q.bindValue(QStringLiteral(":STIGId"), check.stigId);
+            q.bindValue(QStringLiteral(":CCIId"), check.cciId);
+            q.bindValue(QStringLiteral(":rule"), check.rule);
+            q.bindValue(QStringLiteral(":vulnNum"), check.vulnNum);
+            q.bindValue(QStringLiteral(":groupTitle"), check.groupTitle);
+            q.bindValue(QStringLiteral(":ruleVersion"), check.ruleVersion);
+            q.bindValue(QStringLiteral(":severity"), check.severity);
+            q.bindValue(QStringLiteral(":weight"), check.weight);
+            q.bindValue(QStringLiteral(":title"), check.title);
+            q.bindValue(QStringLiteral(":vulnDiscussion"), check.vulnDiscussion);
+            q.bindValue(QStringLiteral(":falsePositives"), check.falsePositives);
+            q.bindValue(QStringLiteral(":falseNegatives"), check.falseNegatives);
+            q.bindValue(QStringLiteral(":fix"), check.fix);
+            q.bindValue(QStringLiteral(":check"), check.check);
+            q.bindValue(QStringLiteral(":documentable"), check.documentable);
+            q.bindValue(QStringLiteral(":mitigations"), check.mitigations);
+            q.bindValue(QStringLiteral(":severityOverrideGuidance"), check.severityOverrideGuidance);
+            q.bindValue(QStringLiteral(":checkContentRef"), check.checkContentRef);
+            q.bindValue(QStringLiteral(":potentialImpact"), check.potentialImpact);
+            q.bindValue(QStringLiteral(":thirdPartyTools"), check.thirdPartyTools);
+            q.bindValue(QStringLiteral(":mitigationControl"), check.mitigationControl);
+            q.bindValue(QStringLiteral(":responsibility"), check.responsibility);
+            q.bindValue(QStringLiteral(":IAControls"), check.iaControls);
+            q.bindValue(QStringLiteral(":targetKey"), check.targetKey);
+            q.bindValue(QStringLiteral(":id"), check.id);
             ret = q.exec();
         }
     }
