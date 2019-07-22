@@ -2316,6 +2316,9 @@ bool DbManager::UpdateDatabaseFromVersion(int version)
             q.bindValue(QStringLiteral(":name"), "version");
             q.bindValue(QStringLiteral(":value"), "1");
             ret = q.exec() && ret;
+            q.bindValue(QStringLiteral(":name"), "lastdir");
+            q.bindValue(QStringLiteral(":value"), QStandardPaths::writableLocation(QStandardPaths::DocumentsLocation));
+            ret = q.exec() && ret;
 
             //write changes from update
             db.commit();

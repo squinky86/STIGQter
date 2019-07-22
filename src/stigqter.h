@@ -21,6 +21,7 @@
 #define STIGQTER_H
 
 #include <QMainWindow>
+#include <QSettings>
 #include <QShortcut>
 
 #include "dbmanager.h"

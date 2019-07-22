@@ -43,6 +43,7 @@
 #include <QInputDialog>
 #include <QMessageBox>
 #include <QProcess>
+#include <QStandardPaths>
 #include <QThread>
 
 /**
@@ -251,12 +252,14 @@ void STIGQter::Save()
  */
 void STIGQter::SaveAs()
 {
+    DbManager db;
     QString fileName = QFileDialog::getSaveFileName(this,
-        QStringLiteral("Save STIGQter Database"), QDir::home().dirName(), QStringLiteral("STIGQter Save File (*.stigqter)"));
+        QStringLiteral("Save STIGQter Database"), db.GetVariable(QStringLiteral("lastdir")), QStringLiteral("STIGQter Save File (*.stigqter)"));
 
     if (!fileName.isNull() && !fileName.isEmpty())
     {
         lastSaveLocation = fileName;
+        db.UpdateVariable(QStringLiteral("lastdir"), QFileInfo(fileName).absolutePath());
         Save();
     }
 }
@@ -380,11 +383,14 @@ void STIGQter::AddAsset()
  */
 void STIGQter::AddSTIGs()
 {
+    DbManager db;
     QStringList fileNames = QFileDialog::getOpenFileNames(this,
-        QStringLiteral("Open STIG"), QDir::home().dirName(), QStringLiteral("Compressed STIG (*.zip)"));
+        QStringLiteral("Open STIG"), db.GetVariable(QStringLiteral("lastdir")), QStringLiteral("Compressed STIG (*.zip)"));
 
     if (fileNames.count() <= 0)
         return; // cancel button pressed
+
+    db.UpdateVariable(QStringLiteral("lastdir"), QFileInfo(fileNames[0]).absolutePath());
 
     DisableInput();
     _updatedSTIGs = true;
@@ -499,11 +505,13 @@ void STIGQter::DeleteSTIGs()
  */
 void STIGQter::ExportCKLs()
 {
-    QString dirName = QFileDialog::getExistingDirectory(this, QStringLiteral("Save to Directory"), QDir::home().dirName());
+    DbManager db;
+    QString dirName = QFileDialog::getExistingDirectory(this, QStringLiteral("Save to Directory"), db.GetVariable(QStringLiteral("lastdir")));
 
     if (!dirName.isNull() && !dirName.isEmpty())
     {
         DisableInput();
+        db.UpdateVariable(QStringLiteral("lastdir"), QFileInfo(dirName).absolutePath());
         auto *t = new QThread;
         auto *f = new WorkerCKLExport();
         f->SetExportDir(dirName);
@@ -527,12 +535,14 @@ void STIGQter::ExportCKLs()
  */
 void STIGQter::ExportCMRS()
 {
-    QString fileName = QFileDialog::getSaveFileName(this, QStringLiteral("Save CMRS Report"), QDir::home().dirName(), QStringLiteral("CMRS XML (*.xml)"));
+    DbManager db;
+    QString fileName = QFileDialog::getSaveFileName(this, QStringLiteral("Save CMRS Report"), db.GetVariable(QStringLiteral("lastdir")), QStringLiteral("CMRS XML (*.xml)"));
 
     if (fileName.isNull() || fileName.isEmpty())
         return; // cancel button pressed
 
     DisableInput();
+    db.UpdateVariable(QStringLiteral("lastdir"), QFileInfo(fileName).absolutePath());
     auto *t = new QThread;
     auto *f = new WorkerCMRSExport();
     f->SetExportPath(fileName);
@@ -555,13 +565,14 @@ void STIGQter::ExportCMRS()
  */
 void STIGQter::ExportEMASS()
 {
-    QString fileName = QFileDialog::getSaveFileName(this,
-        QStringLiteral("Save eMASS Report"), QDir::home().dirName(), QStringLiteral("Microsoft Excel (*.xlsx)"));
+    DbManager db;
+    QString fileName = QFileDialog::getSaveFileName(this, QStringLiteral("Save eMASS Report"), db.GetVariable(QStringLiteral("lastdir")), QStringLiteral("Microsoft Excel (*.xlsx)"));
 
     if (fileName.isNull() || fileName.isEmpty())
         return; // cancel button pressed
 
     DisableInput();
+    db.UpdateVariable(QStringLiteral("lastdir"), QFileInfo(fileName).absolutePath());
     auto *t = new QThread;
     auto *f = new WorkerEMASSReport();
     f->SetReportName(fileName);
@@ -585,11 +596,13 @@ void STIGQter::ExportEMASS()
  */
 void STIGQter::ExportHTML()
 {
-    QString dirName = QFileDialog::getExistingDirectory(this, QStringLiteral("Save to Directory"), QDir::home().dirName());
+    DbManager db;
+    QString dirName = QFileDialog::getExistingDirectory(this, QStringLiteral("Save to Directory"), db.GetVariable(QStringLiteral("lastdir")));
 
     if (!dirName.isNull() && !dirName.isEmpty())
     {
         DisableInput();
+        db.UpdateVariable(QStringLiteral("lastdir"), QFileInfo(dirName).absolutePath());
         auto *t = new QThread;
         auto *f = new WorkerHTML();
         f->SetDir(dirName);
@@ -614,12 +627,14 @@ void STIGQter::ExportHTML()
  */
 void STIGQter::FindingsReport()
 {
+    DbManager db;
     QString fileName = QFileDialog::getSaveFileName(this,
-        QStringLiteral("Save Detailed Findings"), QDir::home().dirName(), QStringLiteral("Microsoft Excel (*.xlsx)"));
+        QStringLiteral("Save Detailed Findings"), db.GetVariable(QStringLiteral("lastdir")), QStringLiteral("Microsoft Excel (*.xlsx)"));
 
     if (fileName.isNull() || fileName.isEmpty())
         return; // cancel button pressed
 
+    db.UpdateVariable(QStringLiteral("lastdir"), QFileInfo(fileName).absolutePath());
     DisableInput();
     auto *t = new QThread;
     auto *f = new WorkerFindingsReport();
@@ -644,12 +659,14 @@ void STIGQter::FindingsReport()
  */
 void STIGQter::ImportCKLs()
 {
+    DbManager db;
     QStringList fileNames = QFileDialog::getOpenFileNames(this,
-        QStringLiteral("Import CKL(s)"), QDir::home().dirName(), QStringLiteral("STIG Checklist (*.ckl)"));
+        QStringLiteral("Import CKL(s)"), db.GetVariable(QStringLiteral("lastdir")), QStringLiteral("STIG Checklist (*.ckl)"));
 
     if (fileNames.count() <= 0)
         return; // cancel button pressed
 
+    db.UpdateVariable(QStringLiteral("lastdir"), QFileInfo(fileNames[0]).absolutePath());
     DisableInput();
     _updatedAssets = true;
     auto *t = new QThread();
@@ -674,14 +691,15 @@ void STIGQter::ImportCKLs()
  */
 void STIGQter::ImportEMASS()
 {
+    DbManager db;
     QString fileName = QFileDialog::getOpenFileName(this,
-        QStringLiteral("Import eMASS TRExport"), QDir::home().dirName(), QStringLiteral("Excel Spreadsheet (*.xlsx)"));
+        QStringLiteral("Import eMASS TRExport"), db.GetVariable(QStringLiteral("lastdir")), QStringLiteral("Excel Spreadsheet (*.xlsx)"));
 
     if (fileName.isNull() || fileName.isEmpty())
         return; // cancel button pressed
 
     DisableInput();
-
+    db.UpdateVariable(QStringLiteral("lastdir"), QFileInfo(fileName).absolutePath());
     auto *t = new QThread;
     auto *c = new WorkerImportEMASS();
     c->SetReportName(fileName);
@@ -705,16 +723,15 @@ void STIGQter::ImportEMASS()
  */
 void STIGQter::Load()
 {
+    DbManager db;
     QString fileName = QFileDialog::getOpenFileName(this,
-        QStringLiteral("Open STIGQter Save File"), QDir::home().dirName(), QStringLiteral("STIGQter Save File (*.stigqter)"));
+        QStringLiteral("Open STIGQter Save File"), db.GetVariable(QStringLiteral("lastdir")), QStringLiteral("STIGQter Save File (*.stigqter)"));
 
     if (!fileName.isNull() && !fileName.isEmpty())
     {
         while (ui->tabDB->count() > 1)
             ui->tabDB->removeTab(1);
-        DbManager *db = new DbManager();
-        db->LoadDB(fileName);
-        delete db;
+        db.LoadDB(fileName);
         EnableInput();
         DisplayCCIs();
         DisplaySTIGs();
