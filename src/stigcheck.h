@@ -25,6 +25,7 @@
 
 #include <QObject>
 #include <QString>
+#include <QVector>
 
 enum Severity
 {
@@ -47,9 +48,9 @@ public:
 
     int id;
     int stigId;
-    int cciId;
+    QVector<int> cciIds;
     STIG GetSTIG() const;
-    CCI GetCCI() const;
+    QList<CCI> GetCCIs() const;
     QString vulnNum;
     QString groupTitle;
     QString ruleVersion;

@@ -499,9 +499,8 @@ bool DbManager::AddSTIG(STIG stig, QList<STIGCheck> checks, bool stigExists)
         foreach(STIGCheck c, checks)
         {
             newChecks = true;
-            q.prepare(QStringLiteral("INSERT INTO STIGCheck (`STIGId`, `CCIId`, `rule`, `vulnNum`, `groupTitle`, `ruleVersion`, `severity`, `weight`, `title`, `vulnDiscussion`, `falsePositives`, `falseNegatives`, `fix`, `check`, `documentable`, `mitigations`, `severityOverrideGuidance`, `checkContentRef`, `potentialImpact`, `thirdPartyTools`, `mitigationControl`, `responsibility`, `IAControls`, `targetKey`) VALUES(:STIGId, :CCIId, :rule, :vulnNum, :groupTitle, :ruleVersion, :severity, :weight, :title, :vulnDiscussion, :falsePositives, :falseNegatives, :fix, :check, :documentable, :mitigations, :severityOverrideGuidance, :checkContentRef, :potentialImpact, :thirdPartyTools, :mitigationControl, :responsibility, :IAControls, :targetKey)"));
+            q.prepare(QStringLiteral("INSERT INTO STIGCheck (`STIGId`, `rule`, `vulnNum`, `groupTitle`, `ruleVersion`, `severity`, `weight`, `title`, `vulnDiscussion`, `falsePositives`, `falseNegatives`, `fix`, `check`, `documentable`, `mitigations`, `severityOverrideGuidance`, `checkContentRef`, `potentialImpact`, `thirdPartyTools`, `mitigationControl`, `responsibility`, `IAControls`, `targetKey`) VALUES(:STIGId, :rule, :vulnNum, :groupTitle, :ruleVersion, :severity, :weight, :title, :vulnDiscussion, :falsePositives, :falseNegatives, :fix, :check, :documentable, :mitigations, :severityOverrideGuidance, :checkContentRef, :potentialImpact, :thirdPartyTools, :mitigationControl, :responsibility, :IAControls, :targetKey)"));
             q.bindValue(QStringLiteral(":STIGId"), stig.id);
-            q.bindValue(QStringLiteral(":CCIId"), c.cciId);
             q.bindValue(QStringLiteral(":rule"), c.rule);
             q.bindValue(QStringLiteral(":vulnNum"), c.vulnNum);
             q.bindValue(QStringLiteral(":groupTitle"), c.groupTitle);
@@ -530,6 +529,17 @@ bool DbManager::AddSTIG(STIG stig, QList<STIGCheck> checks, bool stigExists)
             {
                 //for every check that can't be added, pop a warning.
                 Warning(QStringLiteral("Unable to Add STIGCheck"), "The STIGCheck " + PrintSTIGCheck(c) + " could not be added to STIG " + PrintSTIG(stig) + ".");
+            }
+            int STIGCheckId = q.lastInsertId().toInt();
+            if (STIGCheckId > 0)
+            {
+                foreach (int cciId, c.cciIds)
+                {
+                    q.prepare(QStringLiteral("INSERT INTO STIGCheckCCI (`STIGCheckId`, `CCIId`) VALUES(:STIGCheckId, :CCIId)"));
+                    q.bindValue(QStringLiteral(":STIGCheckId"), STIGCheckId);
+                    q.bindValue(QStringLiteral(":CCIId"), cciId);
+                    tmpRet = q.exec() && tmpRet;
+                }
             }
         }
         //restore the old value of the "delayed commit" feature
@@ -718,6 +728,9 @@ bool DbManager::DeleteSTIG(int id)
         }
         QSqlQuery q(db);
         ret = true; //assume success from here.
+        q.prepare(QStringLiteral("DELETE FROM STIGCheckCCI WHERE STIGCheckId IN (SELECT id FROM STIGCheck WHERE STIGId = :STIGId)"));
+        q.bindValue(QStringLiteral(":STIGId"), id);
+        ret = q.exec() && ret; //q.exec() first toavoid short-circuit evaluation
         q.prepare(QStringLiteral("DELETE FROM STIGCheck WHERE STIGId = :STIGId"));
         q.bindValue(QStringLiteral(":STIGId"), id);
         ret = q.exec() && ret; //q.exec() first toavoid short-circuit evaluation
@@ -947,6 +960,48 @@ CCI DbManager::GetCCI(int id)
     if (ccis.count() > 0)
         return ccis.first();
     CCI ret;
+    return ret;
+}
+
+/**
+ * @brief DbManager::GetCCIs
+ * @param ccis
+ * @return The @a CCIs specified by the provided database ids. If a
+ * @a CCI does not exist in the database, the default @a CCI with an
+ * ID of -1 is returned.
+ */
+QList<CCI> DbManager::GetCCIs(QVector<int> ccis)
+{
+    QList<CCI> ret;
+    foreach (int cci, ccis)
+    {
+        ret.append(GetCCIs(QStringLiteral("WHERE CCI.id = :id"), {std::make_tuple<QString, QVariant>(QStringLiteral(":id"), cci)}));
+    }
+    return ret;
+}
+
+/**
+ * @brief DbManager::GetCCIs
+ * @param STIGCheckId
+ * @return The @a CCIs specified by the provided @a STIGCheck. If a
+ * @a CCI does not exist in the database, the default @a CCI with an
+ * ID of -1 is returned.
+ */
+QList<CCI> DbManager::GetCCIs(int STIGCheckId)
+{
+    QList<CCI> ret;
+    QSqlDatabase db;
+    if (this->CheckDatabase(db))
+    {
+        QSqlQuery q(db);
+        q.prepare(QStringLiteral("SELECT CCIId FROM STIGCheckCCI WHERE STIGCheckCCI.STIGCheckId = :STIGCheckId"));
+        q.bindValue(QStringLiteral(":STIGCheckId"), STIGCheckId);
+        q.exec();
+        while (q.next())
+        {
+            ret.append(GetCCI(q.value(0).toInt()));
+        }
+    }
     return ret;
 }
 
@@ -1399,7 +1454,7 @@ QList<STIGCheck> DbManager::GetSTIGChecks(const QString &whereClause, const QLis
     if (this->CheckDatabase(db))
     {
         QSqlQuery q(db);
-        QString toPrep = QStringLiteral("SELECT `id`, `STIGId`, `CCIId`, `rule`, `vulnNum`, `groupTitle`, `ruleVersion`, `severity`, `weight`, `title`, `vulnDiscussion`, `falsePositives`, `falseNegatives`, `fix`, `check`, `documentable`, `mitigations`, `severityOverrideGuidance`, `checkContentRef`, `potentialImpact`, `thirdPartyTools`, `mitigationControl`, `responsibility`, `IAControls`, `targetKey` FROM STIGCheck");
+        QString toPrep = QStringLiteral("SELECT `id`, `STIGId`, `rule`, `vulnNum`, `groupTitle`, `ruleVersion`, `severity`, `weight`, `title`, `vulnDiscussion`, `falsePositives`, `falseNegatives`, `fix`, `check`, `documentable`, `mitigations`, `severityOverrideGuidance`, `checkContentRef`, `potentialImpact`, `thirdPartyTools`, `mitigationControl`, `responsibility`, `IAControls`, `targetKey` FROM STIGCheck");
         if (!whereClause.isNull() && !whereClause.isEmpty())
             toPrep.append(" " + whereClause);
         q.prepare(toPrep);
@@ -1416,29 +1471,32 @@ QList<STIGCheck> DbManager::GetSTIGChecks(const QString &whereClause, const QLis
             STIGCheck c;
             c.id = q.value(0).toInt();
             c.stigId = q.value(1).toInt();
-            c.cciId = q.value(2).toInt();
-            c.rule = q.value(3).toString();
-            c.vulnNum = q.value(4).toString();
-            c.groupTitle = q.value(5).toString();
-            c.ruleVersion = q.value(6).toString();
-            c.severity = static_cast<Severity>(q.value(7).toInt());
-            c.weight = q.value(8).toDouble();
-            c.title = q.value(9).toString();
-            c.vulnDiscussion = q.value(10).toString();
-            c.falsePositives = q.value(11).toString();
-            c.falseNegatives = q.value(12).toString();
-            c.fix = q.value(13).toString();
-            c.check = q.value(14).toString();
-            c.documentable = q.value(15).toBool();
-            c.mitigations = q.value(16).toString();
-            c.severityOverrideGuidance = q.value(17).toString();
-            c.checkContentRef = q.value(18).toString();
-            c.potentialImpact = q.value(19).toString();
-            c.thirdPartyTools = q.value(20).toString();
-            c.mitigationControl = q.value(21).toString();
-            c.thirdPartyTools = q.value(22).toString();
-            c.iaControls = q.value(23).toString();
-            c.targetKey = q.value(24).toString();
+            c.rule = q.value(2).toString();
+            c.vulnNum = q.value(3).toString();
+            c.groupTitle = q.value(4).toString();
+            c.ruleVersion = q.value(5).toString();
+            c.severity = static_cast<Severity>(q.value(6).toInt());
+            c.weight = q.value(7).toDouble();
+            c.title = q.value(8).toString();
+            c.vulnDiscussion = q.value(9).toString();
+            c.falsePositives = q.value(10).toString();
+            c.falseNegatives = q.value(11).toString();
+            c.fix = q.value(12).toString();
+            c.check = q.value(13).toString();
+            c.documentable = q.value(14).toBool();
+            c.mitigations = q.value(15).toString();
+            c.severityOverrideGuidance = q.value(16).toString();
+            c.checkContentRef = q.value(17).toString();
+            c.potentialImpact = q.value(18).toString();
+            c.thirdPartyTools = q.value(19).toString();
+            c.mitigationControl = q.value(20).toString();
+            c.thirdPartyTools = q.value(21).toString();
+            c.iaControls = q.value(22).toString();
+            c.targetKey = q.value(23).toString();
+            foreach (CCI cci, GetCCIs(c.id))
+            {
+                c.cciIds.append(cci.id);
+            }
             ret.append(c);
         }
     }
@@ -2104,9 +2162,8 @@ bool DbManager::UpdateSTIGCheck(const STIGCheck &check)
         {
             QSqlQuery q(db);
             //NOTE: The new values use the provided "check" while the WHERE clause uses the Database-identified "tmpCheck".
-            q.prepare(QStringLiteral("UPDATE STIGCheck SET `STIGId` = :STIGId, `CCIId` = :CCIId, `rule` = :rule, `vulnNum` = :vulnNum, `groupTitle` = :groupTitle, `ruleVersion` = :ruleVersion, `severity` = :severity, `weight` = :weight, `title` = :title, `vulnDiscussion` = :vulnDiscussion, `falsePositives` = :falsePositives, `falseNegatives` = :falseNegatives, `fix` = :fix, `check` = :check, `documentable` = :documentable, `mitigations` = :mitigations, `severityOverrideGuidance` = :severityOverrideGuidance, `checkContentRef` = :checkContentRef, `potentialImpact` = :potentialImpact, `thirdPartyTools` = :thirdPartyTools, `mitigationControl` = :mitigationControl, `responsibility` = :responsibility, `IAControls` = :IAControls, `targetKey` = :targetKey WHERE `id` = :id"));
+            q.prepare(QStringLiteral("UPDATE STIGCheck SET `STIGId` = :STIGId, `rule` = :rule, `vulnNum` = :vulnNum, `groupTitle` = :groupTitle, `ruleVersion` = :ruleVersion, `severity` = :severity, `weight` = :weight, `title` = :title, `vulnDiscussion` = :vulnDiscussion, `falsePositives` = :falsePositives, `falseNegatives` = :falseNegatives, `fix` = :fix, `check` = :check, `documentable` = :documentable, `mitigations` = :mitigations, `severityOverrideGuidance` = :severityOverrideGuidance, `checkContentRef` = :checkContentRef, `potentialImpact` = :potentialImpact, `thirdPartyTools` = :thirdPartyTools, `mitigationControl` = :mitigationControl, `responsibility` = :responsibility, `IAControls` = :IAControls, `targetKey` = :targetKey WHERE `id` = :id"));
             q.bindValue(QStringLiteral(":STIGId"), check.stigId);
-            q.bindValue(QStringLiteral(":CCIId"), check.cciId);
             q.bindValue(QStringLiteral(":rule"), check.rule);
             q.bindValue(QStringLiteral(":vulnNum"), check.vulnNum);
             q.bindValue(QStringLiteral(":groupTitle"), check.groupTitle);
@@ -2131,6 +2188,16 @@ bool DbManager::UpdateSTIGCheck(const STIGCheck &check)
             q.bindValue(QStringLiteral(":targetKey"), check.targetKey);
             q.bindValue(QStringLiteral(":id"), check.id);
             ret = q.exec();
+            q.prepare(QStringLiteral("DELETE FROM STIGCheckCCI WHERE STIGCheckId = :STIGCheckId"));
+            q.bindValue(QStringLiteral(":STIGCheckId"), tmpCheck.id);
+            ret = q.exec() && ret;
+            foreach (int cciId, check.cciIds)
+            {
+                q.prepare(QStringLiteral("INSERT INTO STIGCheckCCI (`STIGCheckId`, `CCIId`) VALUES(:STIGCheckId, :CCIId)"));
+                q.bindValue(QStringLiteral(":STIGCheckId"), tmpCheck.id);
+                q.bindValue(QStringLiteral(":CCIId"), cciId);
+                ret = q.exec() && ret;
+            }
         }
     }
     return ret;
@@ -2250,7 +2317,6 @@ bool DbManager::UpdateDatabaseFromVersion(int version)
             q.prepare(QStringLiteral("CREATE TABLE `STIGCheck` ( "
                       "`id`	INTEGER PRIMARY KEY AUTOINCREMENT, "
                       "`STIGId`	INTEGER, "
-                      "`CCIId`	INTEGER, "
                       "`rule`	TEXT, "
                       "`vulnNum`    TEXT, "
                       "`groupTitle`    TEXT, "
@@ -2273,7 +2339,14 @@ bool DbManager::UpdateDatabaseFromVersion(int version)
                       "`responsibility`	TEXT, "
                       "`IAControls` TEXT, "
                       "`targetKey` TEXT, "
-                      "FOREIGN KEY(`STIGId`) REFERENCES `STIG`(`id`), "
+                      "FOREIGN KEY(`STIGId`) REFERENCES `STIG`(`id`) "
+                      ")"));
+            ret = q.exec() && ret;
+            q.prepare(QStringLiteral("CREATE TABLE `STIGCheckCCI` ( "
+                      "`id`	INTEGER PRIMARY KEY AUTOINCREMENT, "
+                      "`STIGCheckId`	INTEGER, "
+                      "`CCIId`	INTEGER, "
+                      "FOREIGN KEY(`STIGCheckId`) REFERENCES `STIGCheck`(`id`), "
                       "FOREIGN KEY(`CCIId`) REFERENCES `CCI`(`id`) "
                       ")"));
             ret = q.exec() && ret;

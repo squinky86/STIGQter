@@ -401,14 +401,17 @@ void WorkerCKLExport::process()
                     stream.writeEndElement(); //ATTRIBUTE_DATA
                     stream.writeEndElement(); //STIG_DATA
 
-                    stream.writeStartElement(QStringLiteral("STIG_DATA"));
-                    stream.writeStartElement(QStringLiteral("VULN_ATTRIBUTE"));
-                    stream.writeCharacters(QStringLiteral("CCI_REF"));
-                    stream.writeEndElement(); //VULN_ATTRIBUTE
-                    stream.writeStartElement(QStringLiteral("ATTRIBUTE_DATA"));
-                    stream.writeCharacters(PrintCCI(sc.GetCCI()));
-                    stream.writeEndElement(); //ATTRIBUTE_DATA
-                    stream.writeEndElement(); //STIG_DATA
+                    foreach (CCI cci, sc.GetCCIs())
+                    {
+                        stream.writeStartElement(QStringLiteral("STIG_DATA"));
+                        stream.writeStartElement(QStringLiteral("VULN_ATTRIBUTE"));
+                        stream.writeCharacters(QStringLiteral("CCI_REF"));
+                        stream.writeEndElement(); //VULN_ATTRIBUTE
+                        stream.writeStartElement(QStringLiteral("ATTRIBUTE_DATA"));
+                        stream.writeCharacters(PrintCCI(cci));
+                        stream.writeEndElement(); //ATTRIBUTE_DATA
+                        stream.writeEndElement(); //STIG_DATA
+                    }
 
                     stream.writeStartElement(QStringLiteral("STATUS"));
                     stream.writeCharacters(GetStatus(cc.status, true));

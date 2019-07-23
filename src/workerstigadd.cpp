@@ -107,6 +107,7 @@ void WorkerSTIGAdd::ParseSTIG(const QByteArray &stig, const QString &fileName)
                         addedGroup = true;
                         //new rule; add the previous one!
                         checks.append(c);
+                        c.cciIds.clear();
                     }
                     foreach (const QXmlStreamAttribute &attr, xml->attributes())
                     {
@@ -133,6 +134,7 @@ void WorkerSTIGAdd::ParseSTIG(const QByteArray &stig, const QString &fileName)
                         {
                             //new rule; add the previous one!
                             checks.append(c);
+                            c.cciIds.clear();
                         }
                     }
                     c.id = 0;
@@ -230,7 +232,7 @@ void WorkerSTIGAdd::ParseSTIG(const QByteArray &stig, const QString &fileName)
                 {
                     QString cci(xml->readElementText().trimmed());
                     if (cci.startsWith(QStringLiteral("CCI"), Qt::CaseInsensitive))
-                        c.cciId = db.GetCCIByCCI(GetCCINumber(cci), &s).id;
+                        c.cciIds.append(db.GetCCIByCCI(GetCCINumber(cci), &s).id);
                 }
                 else if (xml->name() == "fixtext")
                 {
@@ -260,6 +262,7 @@ void WorkerSTIGAdd::ParseSTIG(const QByteArray &stig, const QString &fileName)
     if (inStigRules)
     {
         checks.append(c);
+        c.cciIds.clear();
     }
     delete xml;
     //Sometimes the .zip file contains extraneous .xml files

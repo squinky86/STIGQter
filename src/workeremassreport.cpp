@@ -173,26 +173,29 @@ void WorkerEMASSReport::process()
     {
         CKLCheck cc = checks[i];
         STIGCheck sc = cc.GetSTIGCheck();
-        CCI c = sc.GetCCI();
+        QList<CCI> ccis = sc.GetCCIs();
         Status s = cc.status;
         emit updateStatus("Checking " + PrintSTIGCheck(sc) + "…");
 
         //if the check is a finding, add it to the CCI sheet
-        if (s == Status::Open)
+        foreach (CCI c, ccis)
         {
-            if (passedCCIs.contains(c))
-                passedCCIs.remove(c);
-            if (failedCCIs.contains(c))
-                failedCCIs[c].append(cc);
-            else
-                failedCCIs.insert(c, {cc});
-        }
-        else if (s == Status::NotAFinding && !failedCCIs.contains(c))
-        {
-            if (passedCCIs.contains(c))
-                passedCCIs[c].append(cc);
-            else
-                passedCCIs.insert(c, {cc});
+            if (s == Status::Open)
+            {
+                if (passedCCIs.contains(c))
+                    passedCCIs.remove(c);
+                if (failedCCIs.contains(c))
+                    failedCCIs[c].append(cc);
+                else
+                    failedCCIs.insert(c, {cc});
+            }
+            else if (s == Status::NotAFinding && !failedCCIs.contains(c))
+            {
+                if (passedCCIs.contains(c))
+                    passedCCIs[c].append(cc);
+                else
+                    passedCCIs.insert(c, {cc});
+            }
         }
         emit progress(-1);
     }

@@ -71,7 +71,6 @@
 STIGCheck::STIGCheck(QObject *parent) : QObject(parent),
     id(-1),
     stigId(-1),
-    cciId(-1),
     vulnNum(),
     groupTitle(),
     ruleVersion(),
@@ -95,6 +94,7 @@ STIGCheck::STIGCheck(QObject *parent) : QObject(parent),
     iaControls(),
     targetKey()
 {
+    cciIds.clear();
 }
 
 /**
@@ -121,7 +121,7 @@ STIGCheck& STIGCheck::operator=(const STIGCheck &right)
     {
         id = right.id;
         stigId = right.stigId;
-        cciId = right.cciId;
+        cciIds = right.cciIds;
         rule = right.rule;
         vulnNum = right.vulnNum;
         groupTitle = right.groupTitle;
@@ -162,10 +162,10 @@ STIG STIGCheck::GetSTIG() const
  * @brief STIGCheck::GetCCI
  * @return The @a CCI associated with this @a STIGCheck.
  */
-CCI STIGCheck::GetCCI() const
+QList<CCI> STIGCheck::GetCCIs() const
 {
     DbManager db;
-    return db.GetCCI(cciId);
+    return db.GetCCIs(cciIds);
 }
 
 /**

@@ -222,11 +222,14 @@ void WorkerHTML::process()
             check.write(CheckItem(QStringLiteral("Group Title"), c.groupTitle).toStdString().c_str());
             check.write(CheckItem(QStringLiteral("Rule Version"), c.ruleVersion).toStdString().c_str());
             check.write(CheckItem(QStringLiteral("Severity"), GetSeverity(c.severity)).toStdString().c_str());
-            CCI cci = c.GetCCI();
-            if (cci.id >= 0)
+            QList<CCI> ccis = c.GetCCIs();
+            if (ccis.count() > 0)
             {
-                check.write(CheckItem(QStringLiteral("Control Correlation Identifier (CCI)"), PrintCCI(cci)).toStdString().c_str());
-                check.write(CheckItem(QStringLiteral("CCI Definition"), cci.definition).toStdString().c_str());
+                foreach (CCI cci, ccis)
+                {
+                    check.write(CheckItem(QStringLiteral("Control Correlation Identifier (CCI)"), PrintCCI(cci)).toStdString().c_str());
+                    check.write(CheckItem(QStringLiteral("CCI Definition"), cci.definition).toStdString().c_str());
+                }
             }
             check.write(CheckItem(QStringLiteral("Weight"), QString::number(c.weight)).toStdString().c_str());
             check.write(CheckItem(QStringLiteral("False Positives"), c.falsePositives).toStdString().c_str());

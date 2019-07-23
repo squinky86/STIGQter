@@ -67,10 +67,17 @@ void WorkerMapUnmapped::process()
     {
         emit updateStatus(QStringLiteral("Checking ") + PrintSTIGCheck(check) + QStringLiteral("…"));
         //if the associated CCI was not imported in the eMASS import, remap to CM-6, CCI-366.
-        if (!check.GetCCI().isImport)
+        foreach (CCI c, check.GetCCIs())
+        {
+            if (!c.isImport)
+            {
+                check.cciIds.remove(c.id);
+            }
+        }
+        if (check.cciIds.count() <= 0)
         {
             emit updateStatus(QStringLiteral("Remapping ") + PrintSTIGCheck(check) + QStringLiteral("…"));
-            check.cciId = cci366.id;
+            check.cciIds.append(cci366.id);
             db.UpdateSTIGCheck(check);
         }
     }

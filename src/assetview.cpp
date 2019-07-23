@@ -356,13 +356,14 @@ void AssetView::ImportXCCDF()
     db.DelayCommit(true);
 
     QStringList fileNames = QFileDialog::getOpenFileNames(this,
-        QStringLiteral("Open XCCDF"), QDir::home().dirName(), QStringLiteral("XCCDF (*.xml)"));
+        QStringLiteral("Open XCCDF"), db.GetVariable(QStringLiteral("lastdir")), QStringLiteral("XCCDF (*.xml)"));
 
     bool updates = false;
 
     foreach (const QString fileName, fileNames)
     {
         QFile f(fileName);
+        db.UpdateVariable(QStringLiteral("lastdir"), QFileInfo(fileName).absolutePath());
         if (!f.open(QFile::ReadOnly | QFile::Text))
         {
             QMessageBox::warning(nullptr, QStringLiteral("Unable to Open XCCDF"), "The XCCDF file " + fileName + " cannot be opened.");
@@ -518,10 +519,12 @@ void AssetView::RenameAsset()
  */
 void AssetView::SaveCKL()
 {
-    QString fileName = QFileDialog::getSaveFileName(this, QStringLiteral("Save STIG/SRG Checklist"), QDir::home().dirName(), QStringLiteral("STIG Checklist (*.ckl)"));
+    DbManager db;
+    QString fileName = QFileDialog::getSaveFileName(this, QStringLiteral("Save STIG/SRG Checklist"), db.GetVariable(QStringLiteral("lastdir")), QStringLiteral("STIG Checklist (*.ckl)"));
     QFile file(fileName);
     if (file.open(QIODevice::WriteOnly))
     {
+        db.UpdateVariable(QStringLiteral("lastdir"), QFileInfo(fileName).absolutePath());
         QXmlStreamWriter stream(&file);
         //xml for a CKL file
         stream.writeStartDocument(QStringLiteral("1.0"));
@@ -836,14 +839,17 @@ void AssetView::SaveCKL()
                 stream.writeEndElement(); //ATTRIBUTE_DATA
                 stream.writeEndElement(); //STIG_DATA
 
-                stream.writeStartElement(QStringLiteral("STIG_DATA"));
-                stream.writeStartElement(QStringLiteral("VULN_ATTRIBUTE"));
-                stream.writeCharacters(QStringLiteral("CCI_REF"));
-                stream.writeEndElement(); //VULN_ATTRIBUTE
-                stream.writeStartElement(QStringLiteral("ATTRIBUTE_DATA"));
-                stream.writeCharacters(PrintCCI(sc.GetCCI()));
-                stream.writeEndElement(); //ATTRIBUTE_DATA
-                stream.writeEndElement(); //STIG_DATA
+                foreach(CCI cci, sc.GetCCIs())
+                {
+                    stream.writeStartElement(QStringLiteral("STIG_DATA"));
+                    stream.writeStartElement(QStringLiteral("VULN_ATTRIBUTE"));
+                    stream.writeCharacters(QStringLiteral("CCI_REF"));
+                    stream.writeEndElement(); //VULN_ATTRIBUTE
+                    stream.writeStartElement(QStringLiteral("ATTRIBUTE_DATA"));
+                    stream.writeCharacters(PrintCCI(cci));
+                    stream.writeEndElement(); //ATTRIBUTE_DATA
+                    stream.writeEndElement(); //STIG_DATA
+                }
 
                 stream.writeStartElement(QStringLiteral("STATUS"));
                 stream.writeCharacters(GetStatus(cc.status, true));

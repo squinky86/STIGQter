@@ -22,6 +22,7 @@
 
 #include <QSqlDatabase>
 #include <QString>
+#include <QVector>
 
 #include <tuple>
 
@@ -65,6 +66,8 @@ public:
     QList<Asset> GetAssets(const STIG &stig);
     CCI GetCCI(int id);
     CCI GetCCI(const CCI &cci, const STIG *stig = nullptr);
+    QList<CCI> GetCCIs(QVector<int> ccis);
+    QList<CCI> GetCCIs(int STIGCheckId);
     CCI GetCCIByCCI(int cci, const STIG *stig = nullptr);
     QList<CCI> GetCCIs(const QString &whereClause = "", const QList<std::tuple<QString, QVariant>> &variables = {});
     CKLCheck GetCKLCheck(int id);

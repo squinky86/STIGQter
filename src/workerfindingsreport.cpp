@@ -124,38 +124,42 @@ void WorkerFindingsReport::process()
         auto onRow = static_cast<unsigned int>(i+1);
         CKLCheck cc = checks[i];
         STIGCheck sc = cc.GetSTIGCheck();
-        CCI c = sc.GetCCI();
+        QList<CCI> ccis = sc.GetCCIs();
         Asset a = cc.GetAsset();
         Status s = cc.status;
         emit updateStatus("Adding " + PrintAsset(a) + ", " + PrintSTIGCheck(sc) + "…");
-        //internal id
-        worksheet_write_number(wsFindings, onRow, 0, cc.id, nullptr);
-        //host
-        worksheet_write_string(wsFindings, onRow, 1, a.hostName.toStdString().c_str(), nullptr);
-        //status
-        worksheet_write_string(wsFindings, onRow, 2, GetStatus(s).toStdString().c_str(), nullptr);
-        //severity
-        worksheet_write_string(wsFindings, onRow, 3, GetSeverity(cc.GetSeverity()).toStdString().c_str(), nullptr);
-        //cci
-        worksheet_write_number(wsFindings, onRow, 4, c.cci, fmtCci);
-        //rule
-        worksheet_write_string(wsFindings, onRow, 5, sc.rule.toStdString().c_str(), nullptr);
-        //vuln
-        worksheet_write_string(wsFindings, onRow, 6, sc.vulnNum.toStdString().c_str(), nullptr);
-        //discussion
-        worksheet_write_string(wsFindings, onRow, 7, Excelify(sc.vulnDiscussion).toStdString().c_str(), nullptr);
-        //details
-        worksheet_write_string(wsFindings, onRow, 8, Excelify(cc.findingDetails).toStdString().c_str(), nullptr);
-        //comments
-        worksheet_write_string(wsFindings, onRow, 9, Excelify(cc.comments).toStdString().c_str(), nullptr);
-
-        //if the check is a finding, add it to the CCI sheet
-        if (s == Status::Open)
+        foreach (CCI c, ccis)
         {
-            if (failedCCIs.contains(c))
-                failedCCIs[c].append(cc);
-            else
-                failedCCIs.insert(c, {cc});
+            //internal id
+            worksheet_write_number(wsFindings, onRow, 0, cc.id, nullptr);
+            //host
+            worksheet_write_string(wsFindings, onRow, 1, a.hostName.toStdString().c_str(), nullptr);
+            //status
+            worksheet_write_string(wsFindings, onRow, 2, GetStatus(s).toStdString().c_str(), nullptr);
+            //severity
+            worksheet_write_string(wsFindings, onRow, 3, GetSeverity(cc.GetSeverity()).toStdString().c_str(), nullptr);
+            //cci
+            QList<QString> cciStrs;
+            worksheet_write_number(wsFindings, onRow, 4, c.cci, fmtCci);
+            //rule
+            worksheet_write_string(wsFindings, onRow, 5, sc.rule.toStdString().c_str(), nullptr);
+            //vuln
+            worksheet_write_string(wsFindings, onRow, 6, sc.vulnNum.toStdString().c_str(), nullptr);
+            //discussion
+            worksheet_write_string(wsFindings, onRow, 7, Excelify(sc.vulnDiscussion).toStdString().c_str(), nullptr);
+            //details
+            worksheet_write_string(wsFindings, onRow, 8, Excelify(cc.findingDetails).toStdString().c_str(), nullptr);
+            //comments
+            worksheet_write_string(wsFindings, onRow, 9, Excelify(cc.comments).toStdString().c_str(), nullptr);
+
+            //if the check is a finding, add it to the CCI sheet
+            if (s == Status::Open)
+            {
+                if (failedCCIs.contains(c))
+                    failedCCIs[c].append(cc);
+                else
+                    failedCCIs.insert(c, {cc});
+            }
         }
         emit progress(-1);
     }

@@ -749,23 +749,27 @@ void STIGQter::Load()
  */
 void STIGQter::MapUnmapped()
 {
-    DisableInput();
-    _updatedCCIs = true;
+    QMessageBox::StandardButton reply = QMessageBox::question(this, QStringLiteral("Non-Standard CKLs"), QStringLiteral("This feature will map all unmapped STIG checks, STIG checks from other system categorizations, and incorrectly mapped STIG checks to CM-6, CCI-366. CKL files generated will no longer be consistent with STIGViewer and other tools. Are you sure you want to proceed?"), QMessageBox::Yes|QMessageBox::No);
+    if (reply == QMessageBox::Yes)
+    {
+        DisableInput();
+        _updatedCCIs = true;
 
-    //Create thread to download CCIs and keep GUI active
-    auto *t = new QThread;
-    auto *c = new WorkerMapUnmapped();
-    c->moveToThread(t);
-    connect(t, SIGNAL(started()), c, SLOT(process()));
-    connect(c, SIGNAL(finished()), t, SLOT(quit()));
-    connect(t, SIGNAL(finished()), this, SLOT(CompletedThread()));
-    connect(c, SIGNAL(initialize(int, int)), this, SLOT(Initialize(int, int)));
-    connect(c, SIGNAL(progress(int)), this, SLOT(Progress(int)));
-    connect(c, SIGNAL(updateStatus(QString)), ui->lblStatus, SLOT(setText(QString)));
-    threads.append(t);
-    workers.append(c);
+        //Create thread to download CCIs and keep GUI active
+        auto *t = new QThread;
+        auto *c = new WorkerMapUnmapped();
+        c->moveToThread(t);
+        connect(t, SIGNAL(started()), c, SLOT(process()));
+        connect(c, SIGNAL(finished()), t, SLOT(quit()));
+        connect(t, SIGNAL(finished()), this, SLOT(CompletedThread()));
+        connect(c, SIGNAL(initialize(int, int)), this, SLOT(Initialize(int, int)));
+        connect(c, SIGNAL(progress(int)), this, SLOT(Progress(int)));
+        connect(c, SIGNAL(updateStatus(QString)), ui->lblStatus, SLOT(setText(QString)));
+        threads.append(t);
+        workers.append(c);
 
-    t->start();
+        t->start();
+    }
 }
 
 /**
