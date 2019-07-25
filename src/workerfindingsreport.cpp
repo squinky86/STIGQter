@@ -107,7 +107,7 @@ void WorkerFindingsReport::process()
     worksheet_write_string(wsFindings, 0, 5, "Rule", fmtBold);
     worksheet_write_string(wsFindings, 0, 6, "Vuln", fmtBold);
     worksheet_write_string(wsFindings, 0, 7, "Discussion", fmtBold);
-    worksheet_write_string(wsFindings, 0, 8, "Details", fmtBold);
+    worksheet_write_string(wsFindings, 0, 8, "Finding Details", fmtBold);
     worksheet_write_string(wsFindings, 0, 9, "Comments", fmtBold);
 
     //write headers for CCI findings
