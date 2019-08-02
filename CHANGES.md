@@ -1,3 +1,10 @@
+## 0.1.6
+
+- CKL export fixes (issue #32)
+- CCI mapping fixes (issue #37)
+- Last save/open location is preserved
+- Double free fixed (Coverity Scan results)
+
 ## 0.1.5 20190704
 
 - Support for Partial eMASS Test Result Import
