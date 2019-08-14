@@ -220,7 +220,8 @@ void WorkerCCIAdd::process()
     db.DelayCommit(true);
     if (tmpFile.open())
     {
-        QUrl ccis(QStringLiteral("http://iasecontent.disa.mil/stigs/zip/u_cci_list.zip"));
+        //On 8/12/19, the content was removed from http://iasecontent.disa.mil/stigs/zip/u_cci_list.zip
+        QUrl ccis(QStringLiteral("https://dl.dod.cyber.mil/wp-content/uploads/stigs/zip/u_cci_list.zip"));
         emit updateStatus("Downloading " + ccis.toString() + "…");
         DownloadFile(ccis, &tmpFile);
         emit progress(-1);
