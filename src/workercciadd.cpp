@@ -57,7 +57,7 @@ WorkerCCIAdd::WorkerCCIAdd(QObject *parent) : QObject(parent)
  * In general:
  * @list
  * @li Download and parse the NIST RMF information.
- * @li Download and parse the IASE CCI information.
+ * @li Download and parse the cyber.mil CCI information.
  * @endlist
  */
 void WorkerCCIAdd::process()
