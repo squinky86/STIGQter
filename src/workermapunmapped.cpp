@@ -71,7 +71,7 @@ void WorkerMapUnmapped::process()
         {
             if (!c.isImport)
             {
-                check.cciIds.remove(c.id);
+                check.cciIds.removeOne(c.id);
             }
         }
         if (check.cciIds.count() <= 0)
