@@ -3,7 +3,7 @@
 
 EAPI=7
 
-inherit qmake-utils
+inherit qmake-utils desktop
 
 DESCRIPTION="STIGQter is an open-source reimplementation of DISA's STIG Viewer."
 HOMEPAGE="https://www.stigqter.com/"
@@ -29,6 +29,8 @@ RDEPEND="${CDEPEND}
 
 src_configure() {
 	eqmake5 ${MY_PN}.pro -r PREFIX="/usr"
+	doicon src/STIGQter.svg
+	domenu STIGQter.desktop
 }
 
 src_install() {
