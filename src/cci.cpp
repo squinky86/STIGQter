@@ -106,6 +106,9 @@ CCI& CCI::operator=(const CCI &right)
         importDateTested2 = right.importDateTested2;
         importTestedBy2 = right.importTestedBy2;
         importTestResults2 = right.importTestResults2;
+        importControlImplementationStatus = right.importControlImplementationStatus;
+        importSecurityControlDesignation = right.importSecurityControlDesignation;
+        importInherited = right.importInherited;
     }
     return *this;
 }
