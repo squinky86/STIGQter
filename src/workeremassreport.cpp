@@ -123,52 +123,58 @@ void WorkerEMASSReport::process()
     //column sizes
     worksheet_set_column(ws, 0, 0, 12.29, nullptr);
     worksheet_set_column(ws, 1, 1, 50.57, nullptr);
-    worksheet_set_column(ws, 2, 2, 10.57, nullptr);
-    worksheet_set_column(ws, 3, 3, 8.71, nullptr);
-    worksheet_set_column(ws, 4, 4, 23.57, nullptr);
-    worksheet_set_column(ws, 5, 5, 26.29, nullptr);
-    worksheet_set_column(ws, 6, 6, 33.43, nullptr);
-    worksheet_set_column(ws, 7, 7, 19.29, nullptr);
-    worksheet_set_column(ws, 8, 8, 15.86, nullptr);
-    worksheet_set_column(ws, 9, 9, 19.29, nullptr);
-    worksheet_set_column(ws, 10, 10, 39.29, nullptr);
-    worksheet_set_column(ws, 11, 11, 19.29, nullptr);
-    worksheet_set_column(ws, 12, 12, 15.86, nullptr);
-    worksheet_set_column(ws, 13, 13, 19.29, nullptr);
-    worksheet_set_column(ws, 14, 14, 39.29, nullptr);
+    worksheet_set_column(ws, 2, 2, 26.22, nullptr);
+    worksheet_set_column(ws, 3, 3, 26.22, nullptr);
+    worksheet_set_column(ws, 4, 4, 10.57, nullptr);
+    worksheet_set_column(ws, 5, 5, 8.71, nullptr);
+    worksheet_set_column(ws, 6, 6, 23.57, nullptr);
+    worksheet_set_column(ws, 7, 7, 26.29, nullptr);
+    worksheet_set_column(ws, 8, 8, 33.43, nullptr);
+    worksheet_set_column(ws, 9, 9, 19.89, nullptr);
+    worksheet_set_column(ws, 10, 10, 19.29, nullptr);
+    worksheet_set_column(ws, 11, 11, 15.86, nullptr);
+    worksheet_set_column(ws, 12, 12, 19.29, nullptr);
+    worksheet_set_column(ws, 13, 13, 39.29, nullptr);
+    worksheet_set_column(ws, 14, 14, 19.29, nullptr);
+    worksheet_set_column(ws, 15, 15, 15.86, nullptr);
+    worksheet_set_column(ws, 16, 16, 19.29, nullptr);
+    worksheet_set_column(ws, 17, 17, 39.29, nullptr);
 
     //zoom factor
     worksheet_set_zoom(ws, 70);
 
     //unclassified header
-    worksheet_merge_range(ws, 0, 0, 0, 14, "UNCLASSIFIED", fmtBoldGreen);
+    worksheet_merge_range(ws, 0, 0, 0, 17, "UNCLASSIFIED", fmtBoldGreen);
     //export date
-    worksheet_merge_range(ws, 1, 0, 1, 14, (QStringLiteral("Exported on ") + curDate).toStdString().c_str(), fmtGrayBGRight);
+    worksheet_merge_range(ws, 1, 0, 1, 17, (QStringLiteral("Exported on ") + curDate).toStdString().c_str(), fmtGrayBGRight);
     //information on export
-    worksheet_merge_range(ws, 2, 0, 2, 13, "Test Result Import Template", fmtBoldGrayBG);
-    worksheet_write_string(ws, 2, 14, (QStringLiteral("Provided by STIGQter ") + VERSION).toStdString().c_str(), fmtGrayBGRight);
+    worksheet_merge_range(ws, 2, 0, 2, 16, "Test Result Import Template", fmtBoldGrayBG);
+    worksheet_write_string(ws, 2, 17, (QStringLiteral("Provided by STIGQter ") + VERSION).toStdString().c_str(), fmtGrayBGRight);
     //IS information
-    worksheet_merge_range(ws, 3, 0, 3, 14, "(System Type: UNKNOWN, DoD Component: Public)", fmtGrayBG);
+    worksheet_merge_range(ws, 3, 0, 3, 17, "(System Type: UNKNOWN, DoD Component: Public)", fmtGrayBG);
     //High-Level Headers
-    worksheet_merge_range(ws, 4, 0, 4, 6, "Control / AP Information", fmtBoldCenter);
-    worksheet_merge_range(ws, 4, 7, 4, 10, "Enter Test Results Here", fmtBoldCenter);
-    worksheet_merge_range(ws, 4, 11, 4, 14, "Latest Test Result", fmtBoldCenter);
+    worksheet_merge_range(ws, 4, 0, 4, 9, "Control / AP Information", fmtBoldCenter);
+    worksheet_merge_range(ws, 4, 10, 4, 13, "Enter Test Results Here", fmtBoldCenter);
+    worksheet_merge_range(ws, 4, 14, 4, 17, "Latest Test Result", fmtBoldCenter);
     //column-level headers
-    worksheet_write_string(ws, 5, 0, "Control Number", fmtBoldCenter);
+    worksheet_write_string(ws, 5, 0, "Control Acronym", fmtBoldCenter);
     worksheet_write_string(ws, 5, 1, "Control Information", fmtBoldCenter);
-    worksheet_write_string(ws, 5, 2, "AP Acronym", fmtBoldCenter);
-    worksheet_write_string(ws, 5, 3, "CCI", fmtBoldCenter);
-    worksheet_write_string(ws, 5, 4, "CCI Definition", fmtBoldCenter);
-    worksheet_write_string(ws, 5, 5, "Implementation Guidance", fmtBoldCenter);
-    worksheet_write_string(ws, 5, 6, "Assessment Procedures", fmtBoldCenter);
-    worksheet_write_string(ws, 5, 7, "Compliance Status", fmtBoldCenter);
-    worksheet_write_string(ws, 5, 8, "Date Tested", fmtBoldCenter);
-    worksheet_write_string(ws, 5, 9, "Tested By", fmtBoldCenter);
-    worksheet_write_string(ws, 5, 10, "Test Results", fmtBoldCenter);
-    worksheet_write_string(ws, 5, 11, "Compliance Status", fmtBoldCenter);
-    worksheet_write_string(ws, 5, 12, "Date Tested", fmtBoldCenter);
-    worksheet_write_string(ws, 5, 13, "Tested By", fmtBoldCenter);
-    worksheet_write_string(ws, 5, 14, "Test Results", fmtBoldCenter);
+    worksheet_write_string(ws, 5, 2, "Control Implementation Status", fmtBoldCenter);
+    worksheet_write_string(ws, 5, 3, "Security Control Designation", fmtBoldCenter);
+    worksheet_write_string(ws, 5, 4, "AP Acronym", fmtBoldCenter);
+    worksheet_write_string(ws, 5, 5, "CCI", fmtBoldCenter);
+    worksheet_write_string(ws, 5, 6, "CCI Definition", fmtBoldCenter);
+    worksheet_write_string(ws, 5, 7, "Implementation Guidance", fmtBoldCenter);
+    worksheet_write_string(ws, 5, 8, "Assessment Procedures", fmtBoldCenter);
+    worksheet_write_string(ws, 5, 9, "Inherited", fmtBoldCenter);
+    worksheet_write_string(ws, 5, 10, "Compliance Status", fmtBoldCenter);
+    worksheet_write_string(ws, 5, 11, "Date Tested", fmtBoldCenter);
+    worksheet_write_string(ws, 5, 12, "Tested By", fmtBoldCenter);
+    worksheet_write_string(ws, 5, 13, "Test Results", fmtBoldCenter);
+    worksheet_write_string(ws, 5, 14, "Compliance Status", fmtBoldCenter);
+    worksheet_write_string(ws, 5, 15, "Date Tested", fmtBoldCenter);
+    worksheet_write_string(ws, 5, 16, "Tested By", fmtBoldCenter);
+    worksheet_write_string(ws, 5, 17, "Test Results", fmtBoldCenter);
 
     //build list of failed controls and what failed
     for (int i = 0; i < numChecks; i++)
@@ -223,27 +229,33 @@ void WorkerEMASSReport::process()
         QList<CKLCheck> checks = i.value();
         std::sort(checks.begin(), checks.end());
         Control control = c.GetControl();
-        //control
+        //control acronym
         worksheet_write_string(ws, onRow, 0, PrintControl(control).toStdString().c_str(), nullptr);
         //control information
         worksheet_write_string(ws, onRow, 1, Excelify(control.description).toStdString().c_str(), fmtWrapped);
+        //control implementation status
+        worksheet_write_string(ws, onRow, 2, c.isImport ? c.importControlImplementationStatus.toStdString().c_str() : "", nullptr);
+        //security control designation
+        worksheet_write_string(ws, onRow, 3, c.isImport ? c.importSecurityControlDesignation.toStdString().c_str() : "", nullptr);
         //AP Acronym is nonsense; ignore it
-        worksheet_write_string(ws, onRow, 2, "", nullptr);
+        worksheet_write_string(ws, onRow, 4, "", nullptr);
         //CCI
         QString cci = QString::number(c.cci);
         while (cci.length() < 6)
             cci = "0" + cci;
-        worksheet_write_string(ws, onRow, 3, cci.toStdString().c_str(), nullptr);
-        worksheet_write_string(ws, onRow, 4, Excelify(c.definition).toStdString().c_str(), fmtWrapped);
+        worksheet_write_string(ws, onRow, 5, cci.toStdString().c_str(), nullptr);
+        worksheet_write_string(ws, onRow, 6, Excelify(c.definition).toStdString().c_str(), fmtWrapped);
         //implementation guidance and assessment procedures not available
-        worksheet_write_string(ws, onRow, 5, "", nullptr);
-        worksheet_write_string(ws, onRow, 6, "", nullptr);
+        worksheet_write_string(ws, onRow, 7, "", nullptr);
+        worksheet_write_string(ws, onRow, 8, "", nullptr);
+        //inherited
+        worksheet_write_string(ws, onRow, 9, c.isImport ? c.importInherited.toStdString().c_str() : "", fmtWrapped);
         //compliance status
-        worksheet_write_string(ws, onRow, 7, "Non-Compliant", nullptr);
+        worksheet_write_string(ws, onRow, 10, "Non-Compliant", nullptr);
         //date tested
-        worksheet_write_number(ws, onRow, 8, excelCurDate, fmtDate);
+        worksheet_write_number(ws, onRow, 11, excelCurDate, fmtDate);
         //tested by
-        worksheet_write_string(ws, onRow, 9, username.toStdString().c_str(), nullptr);
+        worksheet_write_string(ws, onRow, 12, username.toStdString().c_str(), nullptr);
 
         //test results
         QString testResult = c.importTestResults2;
@@ -256,16 +268,16 @@ void WorkerEMASSReport::process()
             if (!cc.findingDetails.isEmpty())
                 testResult.append(" - " + cc.findingDetails);
         }
-        worksheet_write_string(ws, onRow, 10, Excelify(testResult).toStdString().c_str(), fmtWrapped);
+        worksheet_write_string(ws, onRow, 13, Excelify(testResult).toStdString().c_str(), fmtWrapped);
 
         if (!c.isImport)
             unimportedCCI = true;
 
         //ignore previous test results
-        worksheet_write_string(ws, onRow, 11, c.isImport ? c.importCompliance.toStdString().c_str() : "", nullptr);
-        worksheet_write_string(ws, onRow, 12, c.isImport ? c.importDateTested.toStdString().c_str() : "", nullptr);
-        worksheet_write_string(ws, onRow, 13, c.isImport ? c.importTestedBy.toStdString().c_str() : "", nullptr);
-        worksheet_write_string(ws, onRow, 14, c.isImport ? c.importTestResults.toStdString().c_str() : "", fmtWrapped);
+        worksheet_write_string(ws, onRow, 14, c.isImport ? c.importCompliance.toStdString().c_str() : "", nullptr);
+        worksheet_write_string(ws, onRow, 15, c.isImport ? c.importDateTested.toStdString().c_str() : "", nullptr);
+        worksheet_write_string(ws, onRow, 16, c.isImport ? c.importTestedBy.toStdString().c_str() : "", nullptr);
+        worksheet_write_string(ws, onRow, 17, c.isImport ? c.importTestResults.toStdString().c_str() : "", fmtWrapped);
 
         emit progress(-1);
     }
@@ -283,23 +295,29 @@ void WorkerEMASSReport::process()
         worksheet_write_string(ws, onRow, 0, PrintControl(control).toStdString().c_str(), nullptr);
         //control information
         worksheet_write_string(ws, onRow, 1, Excelify(control.description).toStdString().c_str(), fmtWrapped);
+        //control implementation status
+        worksheet_write_string(ws, onRow, 2, c.isImport ? c.importControlImplementationStatus.toStdString().c_str() : "", nullptr);
+        //security control designation
+        worksheet_write_string(ws, onRow, 3, c.isImport ? c.importSecurityControlDesignation.toStdString().c_str() : "", nullptr);
         //AP Acronym is nonsense; ignore it
-        worksheet_write_string(ws, onRow, 2, "", nullptr);
+        worksheet_write_string(ws, onRow, 4, "", nullptr);
         //CCI
         QString cci = QString::number(c.cci);
         while (cci.length() < 6)
             cci = "0" + cci;
-        worksheet_write_string(ws, onRow, 3, cci.toStdString().c_str(), nullptr);
-        worksheet_write_string(ws, onRow, 4, Excelify(c.definition).toStdString().c_str(), fmtWrapped);
+        worksheet_write_string(ws, onRow, 5, cci.toStdString().c_str(), nullptr);
+        worksheet_write_string(ws, onRow, 6, Excelify(c.definition).toStdString().c_str(), fmtWrapped);
         //implementation guidance and assessment procedures not available
-        worksheet_write_string(ws, onRow, 5, "", nullptr);
-        worksheet_write_string(ws, onRow, 6, "", nullptr);
+        worksheet_write_string(ws, onRow, 7, "", nullptr);
+        worksheet_write_string(ws, onRow, 8, "", nullptr);
+        //inherited
+        worksheet_write_string(ws, onRow, 9, c.isImport ? c.importInherited.toStdString().c_str() : "", fmtWrapped);
         //compliance status
-        worksheet_write_string(ws, onRow, 7, "Compliant", nullptr);
+        worksheet_write_string(ws, onRow, 10, "Compliant", nullptr);
         //date tested
-        worksheet_write_number(ws, onRow, 8, excelCurDate, fmtDate);
+        worksheet_write_number(ws, onRow, 11, excelCurDate, fmtDate);
         //tested by
-        worksheet_write_string(ws, onRow, 9, username.toStdString().c_str(), nullptr);
+        worksheet_write_string(ws, onRow, 12, username.toStdString().c_str(), nullptr);
 
         //test results
         QString testResult = c.importTestResults2;
@@ -310,16 +328,16 @@ void WorkerEMASSReport::process()
         {
             testResult.append("\n" + PrintAsset(cc.GetAsset()) + ": " + PrintCKLCheck(cc));
         }
-        worksheet_write_string(ws, onRow, 10, Excelify(testResult).toStdString().c_str(), fmtWrapped);
+        worksheet_write_string(ws, onRow, 13, Excelify(testResult).toStdString().c_str(), fmtWrapped);
 
         if (!c.isImport)
             unimportedCCI = true;
 
         //previous test results
-        worksheet_write_string(ws, onRow, 11, c.isImport ? c.importCompliance.toStdString().c_str() : "", nullptr);
-        worksheet_write_string(ws, onRow, 12, c.isImport ? c.importDateTested.toStdString().c_str() : "", nullptr);
-        worksheet_write_string(ws, onRow, 13, c.isImport ? c.importTestedBy.toStdString().c_str() : "", nullptr);
-        worksheet_write_string(ws, onRow, 14, c.isImport ? c.importTestResults.toStdString().c_str() : "", fmtWrapped);
+        worksheet_write_string(ws, onRow, 14, c.isImport ? c.importCompliance.toStdString().c_str() : "", nullptr);
+        worksheet_write_string(ws, onRow, 15, c.isImport ? c.importDateTested.toStdString().c_str() : "", nullptr);
+        worksheet_write_string(ws, onRow, 16, c.isImport ? c.importTestedBy.toStdString().c_str() : "", nullptr);
+        worksheet_write_string(ws, onRow, 17, c.isImport ? c.importTestResults.toStdString().c_str() : "", fmtWrapped);
 
         emit progress(-1);
     }
@@ -337,37 +355,43 @@ void WorkerEMASSReport::process()
         worksheet_write_string(ws, onRow, 0, PrintControl(control).toStdString().c_str(), nullptr);
         //control information
         worksheet_write_string(ws, onRow, 1, Excelify(control.description).toStdString().c_str(), fmtWrapped);
+        //control implementation status
+        worksheet_write_string(ws, onRow, 2, c.isImport ? c.importControlImplementationStatus.toStdString().c_str() : "", nullptr);
+        //security control designation
+        worksheet_write_string(ws, onRow, 3, c.isImport ? c.importSecurityControlDesignation.toStdString().c_str() : "", nullptr);
         //AP Acronym is nonsense; ignore it
-        worksheet_write_string(ws, onRow, 2, "", nullptr);
+        worksheet_write_string(ws, onRow, 4, "", nullptr);
         //CCI
         QString cci = QString::number(c.cci);
         while (cci.length() < 6)
             cci = "0" + cci;
-        worksheet_write_string(ws, onRow, 3, cci.toStdString().c_str(), nullptr);
-        worksheet_write_string(ws, onRow, 4, Excelify(c.definition).toStdString().c_str(), fmtWrapped);
+        worksheet_write_string(ws, onRow, 5, cci.toStdString().c_str(), nullptr);
+        worksheet_write_string(ws, onRow, 6, Excelify(c.definition).toStdString().c_str(), fmtWrapped);
         //implementation guidance and assessment procedures not available
-        worksheet_write_string(ws, onRow, 5, "", nullptr);
-        worksheet_write_string(ws, onRow, 6, "", nullptr);
+        worksheet_write_string(ws, onRow, 7, "", nullptr);
+        worksheet_write_string(ws, onRow, 8, "", nullptr);
+        //inherited
+        worksheet_write_string(ws, onRow, 9, c.isImport ? c.importInherited.toStdString().c_str() : "", fmtWrapped);
         //compliance status
-        worksheet_write_string(ws, onRow, 7, c.importCompliance2.toStdString().c_str(), nullptr);
+        worksheet_write_string(ws, onRow, 10, c.importCompliance2.toStdString().c_str(), nullptr);
         //date tested
         bool ok = false;
         int tmpInt = c.importDateTested2.toInt(&ok);
         if (ok)
-            worksheet_write_number(ws, onRow, 8, tmpInt, fmtDate);
+            worksheet_write_number(ws, onRow, 11, tmpInt, fmtDate);
         else
-            worksheet_write_number(ws, onRow, 8, excelCurDate, fmtDate);
+            worksheet_write_number(ws, onRow, 11, excelCurDate, fmtDate);
         //tested by
-        worksheet_write_string(ws, onRow, 9, c.importTestedBy2.toStdString().c_str(), nullptr);
+        worksheet_write_string(ws, onRow, 12, c.importTestedBy2.toStdString().c_str(), nullptr);
 
         //test results
-        worksheet_write_string(ws, onRow, 10, c.importTestResults2.toStdString().c_str(), fmtWrapped);
+        worksheet_write_string(ws, onRow, 13, c.importTestResults2.toStdString().c_str(), fmtWrapped);
 
         //previous test results
-        worksheet_write_string(ws, onRow, 11, c.isImport ? c.importCompliance.toStdString().c_str() : "", nullptr);
-        worksheet_write_string(ws, onRow, 12, c.isImport ? c.importDateTested.toStdString().c_str() : "", nullptr);
-        worksheet_write_string(ws, onRow, 13, c.isImport ? c.importTestedBy.toStdString().c_str() : "", nullptr);
-        worksheet_write_string(ws, onRow, 14, c.isImport ? c.importTestResults.toStdString().c_str() : "", fmtWrapped);
+        worksheet_write_string(ws, onRow, 14, c.isImport ? c.importCompliance.toStdString().c_str() : "", nullptr);
+        worksheet_write_string(ws, onRow, 15, c.isImport ? c.importDateTested.toStdString().c_str() : "", nullptr);
+        worksheet_write_string(ws, onRow, 16, c.isImport ? c.importTestedBy.toStdString().c_str() : "", nullptr);
+        worksheet_write_string(ws, onRow, 17, c.isImport ? c.importTestResults.toStdString().c_str() : "", fmtWrapped);
 
         emit progress(-1);
     }

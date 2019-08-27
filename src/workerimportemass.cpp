@@ -154,7 +154,7 @@ void WorkerImportEMASS::process()
         int onRow = 0;
         QString onCol = QString();
         bool isSharedString = false; //keep up with whether the current record is a shared string
-        QStringList meaningfulCols = {QStringLiteral("D"), QStringLiteral("H"), QStringLiteral("I"), QStringLiteral("J"), QStringLiteral("K"), QStringLiteral("L"), QStringLiteral("M"), QStringLiteral("N"), QStringLiteral("O")};
+        QStringList meaningfulCols = {QStringLiteral("C"), QStringLiteral("D"), QStringLiteral("F"), QStringLiteral("J"), QStringLiteral("K"), QStringLiteral("L"), QStringLiteral("M"), QStringLiteral("N"), QStringLiteral("O"), QStringLiteral("P"), QStringLiteral("Q"), QStringLiteral("R")};
         CCI curCCI;
         DbManager db;
         db.DelayCommit(true);
@@ -217,22 +217,22 @@ void WorkerImportEMASS::process()
                     }
                     if (onRow > 6)
                     {
-                        if (onCol == QStringLiteral("D"))
+                        if (onCol == QStringLiteral("F"))
                         {
                             curCCI = db.GetCCIByCCI(value.toInt());
                         }
                         else {
-                            if (onCol == QStringLiteral("L"))
+                            if (onCol == QStringLiteral("O"))
                                 curCCI.importCompliance = value;
-                            else if (onCol == QStringLiteral("M"))
+                            else if (onCol == QStringLiteral("P"))
                                 curCCI.importDateTested = value;
-                            else if (onCol == QStringLiteral("N"))
+                            else if (onCol == QStringLiteral("Q"))
                                 curCCI.importTestedBy = value;
-                            else if (onCol == QStringLiteral("O"))
+                            else if (onCol == QStringLiteral("R"))
                                 curCCI.importTestResults = value;
-                            else if (onCol == QStringLiteral("H"))
+                            else if (onCol == QStringLiteral("K"))
                                 curCCI.importCompliance2 = value;
-                            else if (onCol == QStringLiteral("I"))
+                            else if (onCol == QStringLiteral("L"))
                             {
                                 curCCI.importDateTested2 = value;
                                 //read value may be Excel serial date
@@ -245,10 +245,16 @@ void WorkerImportEMASS::process()
                                     curCCI.importDateTested2 = tempDate.to
                                 }*/
                             }
-                            else if (onCol == QStringLiteral("J"))
+                            else if (onCol == QStringLiteral("M"))
                                 curCCI.importTestedBy2 = value;
-                            else if (onCol == QStringLiteral("K"))
+                            else if (onCol == QStringLiteral("N"))
                                 curCCI.importTestResults2 = value;
+                            else if (onCol == QStringLiteral("C"))
+                                curCCI.importControlImplementationStatus = value;
+                            else if (onCol == QStringLiteral("D"))
+                                curCCI.importSecurityControlDesignation = value;
+                            else if (onCol == QStringLiteral("J"))
+                                curCCI.importInherited = value;
 
                             curCCI.isImport = true;
                             db.UpdateCCI(curCCI);
