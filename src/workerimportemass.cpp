@@ -155,6 +155,8 @@ void WorkerImportEMASS::process()
         QString onCol = QString();
         bool isSharedString = false; //keep up with whether the current record is a shared string
         QStringList meaningfulCols = {QStringLiteral("C"), QStringLiteral("D"), QStringLiteral("F"), QStringLiteral("J"), QStringLiteral("K"), QStringLiteral("L"), QStringLiteral("M"), QStringLiteral("N"), QStringLiteral("O"), QStringLiteral("P"), QStringLiteral("Q"), QStringLiteral("R")};
+        QString tempImportControlImplementationStatus = QString();
+        QString tempImportSecurityControlDesignation = QString();
         CCI curCCI;
         DbManager db;
         db.DelayCommit(true);
@@ -220,6 +222,18 @@ void WorkerImportEMASS::process()
                         if (onCol == QStringLiteral("F"))
                         {
                             curCCI = db.GetCCIByCCI(value.toInt());
+                            curCCI.importControlImplementationStatus = tempImportControlImplementationStatus;
+                            curCCI.importSecurityControlDesignation = tempImportSecurityControlDesignation;
+                            tempImportControlImplementationStatus = QString();
+                            tempImportSecurityControlDesignation = QString();
+                        }
+                        else if (onCol == QStringLiteral("C"))
+                        {
+                            tempImportControlImplementationStatus = value;
+                        }
+                        else if (onCol == QStringLiteral("D"))
+                        {
+                            tempImportSecurityControlDesignation = value;
                         }
                         else {
                             if (onCol == QStringLiteral("O"))
@@ -249,10 +263,6 @@ void WorkerImportEMASS::process()
                                 curCCI.importTestedBy2 = value;
                             else if (onCol == QStringLiteral("N"))
                                 curCCI.importTestResults2 = value;
-                            else if (onCol == QStringLiteral("C"))
-                                curCCI.importControlImplementationStatus = value;
-                            else if (onCol == QStringLiteral("D"))
-                                curCCI.importSecurityControlDesignation = value;
                             else if (onCol == QStringLiteral("J"))
                                 curCCI.importInherited = value;
 
