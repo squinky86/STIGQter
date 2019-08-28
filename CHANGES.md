@@ -1,5 +1,6 @@
-## 0.1.6
+## 0.1.6 20190827
 
+- Updated eMASS Test Result report (issue #38)
 - CKL export fixes (issue #32)
 - CCI mapping fixes (issue #37)
 - Last save/open location is preserved
