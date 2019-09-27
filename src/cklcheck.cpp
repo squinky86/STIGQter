@@ -63,7 +63,7 @@ CKLCheck::CKLCheck(QObject *parent) : QObject(parent),
 }
 
 /**
- * @overload CKLCheck::CKLCheck()
+ * @overload CKLCheck::CKLCheck(const CKLCheck &right)
  * @brief CKLCheck::CKLCheck
  * @param right
  *

@@ -856,7 +856,6 @@ Asset DbManager::GetAsset(int id)
  * list of tuples in the @a variables parameter.
  *
  * @example GetAssets
- * @title default
  *
  * The default GetAssets() with no parameters returns all Assets in
  * the database.
@@ -867,7 +866,6 @@ Asset DbManager::GetAsset(int id)
  * @endcode
  *
  * @example GetAssetsWhere
- * @title where clause
  *
  * A WHERE clause with parameterized SQL can be added to the query.
  *
@@ -936,7 +934,7 @@ QList<Asset> DbManager::GetAssets(const QString &whereClause, const QList<std::t
 }
 
 /**
- * @overload DbManager::GetAssets
+ * @overload DbManager::GetAssets(const STIG &stig)
  * @brief DbManager::GetAssets
  * @param stig
  * @return A QList of @a Assets that are associated with the supplied
@@ -1227,7 +1225,7 @@ CKLCheck DbManager::GetCKLCheckByDISAId(int assetId, const QString &disaId)
 }
 
 /**
- * @overload DbManager::GetCKLChecks(whereClause, variables)
+ * @overload DbManager::GetCKLChecks(const QString &whereClause, const QList<std::tuple<QString, QVariant> > &variables)
  * @brief DbManager::GetCKLChecks
  * @param asset
  * @param stig

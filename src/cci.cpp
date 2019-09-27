@@ -58,7 +58,7 @@ CCI::CCI(QObject *parent) : QObject(parent),
 }
 
 /**
- * @overload CCI::CCI()
+ * @overload CCI::CCI(const CCI &right)
  * @brief CCI::CCI
  * @param right
  *

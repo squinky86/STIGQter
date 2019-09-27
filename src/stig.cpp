@@ -25,7 +25,7 @@
  * @class STIG
  * @brief A @a STIG is a Security Technical Implementation Guide.
  * Each @a STIG details a set of @a STIGChecks which can be used to
- * help the security posture of an @Asset.
+ * help the security posture of an @a Asset.
  *
  * The Defense Information Systems Agency (DISA) has been tasked
  * with issuing official STIG guidance. This duty has been one of

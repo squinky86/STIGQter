@@ -77,8 +77,8 @@ void WorkerHTML::SetDir(const QString &dir)
  *
  * Perform the operations of this worker process.
  *
- * @example process
- * @title process
+ * @example WorkerHTML::process
+ * @title WorkerHTML::process
  *
  * This function should be kicked off as a background task. It emits
  * signals that describe its progress and state.
