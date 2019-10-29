@@ -39,6 +39,18 @@ public:
     QString title;
     QString description;
     Control& operator=(const Control &right);
+    friend bool operator<(const Control &left, const Control &right)
+    {
+        if (left.familyId == right.familyId)
+        {
+            if (left.number == right.number)
+            {
+                return left.enhancement < right.enhancement;
+            }
+            return left.number < right.number;
+        }
+        return left.GetFamily().acronym < right.GetFamily().acronym;
+    }
 };
 
 Q_DECLARE_METATYPE(Control);

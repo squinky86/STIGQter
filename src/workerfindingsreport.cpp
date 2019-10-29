@@ -87,6 +87,7 @@ void WorkerFindingsReport::process()
     //2 sheets - findings and controls
     lxw_worksheet *wsFindings = workbook_add_worksheet(wb, "Findings");
     lxw_worksheet *wsCCIs = workbook_add_worksheet(wb, "CCIs");
+    lxw_worksheet *wsControls = workbook_add_worksheet(wb, "Controls");
 
     //add formats
     lxw_format *fmtBold = workbook_add_format(wb);
@@ -117,6 +118,11 @@ void WorkerFindingsReport::process()
     worksheet_write_string(wsCCIs, 0, 2, "Severity", fmtBold);
     worksheet_write_string(wsCCIs, 0, 3, "Checks", fmtBold);
     worksheet_set_column(wsCCIs, 3, 3, 18, fmtBold);
+
+    //write headers for Controls
+    worksheet_write_string(wsControls, 0, 0, "Control", fmtBold);
+    worksheet_set_column(wsControls, 1, 1, 50, nullptr);
+    worksheet_write_string(wsControls, 0, 0, "CCI(s)", fmtBold);
 
     //write each failed check
     for (int i = 0; i < numChecks; i++)
@@ -164,9 +170,10 @@ void WorkerFindingsReport::process()
         emit progress(-1);
     }
 
-    emit initialize(numChecks+failedCCIs.count()+1, numChecks);
+    emit initialize(numChecks+failedCCIs.count()*2+1, numChecks);
 
     unsigned int onRow = 0;
+    QMap<Control, QList<CCI>> failedControls;
     for (auto i = failedCCIs.constBegin(); i != failedCCIs.constEnd(); i++)
     {
         onRow++;
@@ -175,6 +182,17 @@ void WorkerFindingsReport::process()
         QList<CKLCheck> checks = i.value();
         std::sort(checks.begin(), checks.end());
         Control control = c.GetControl();
+
+        //build failed Control list
+        if (!failedControls.contains(control))
+        {
+            failedControls.insert(control, {c});
+        }
+        else
+        {
+            failedControls[control].append(c);
+        }
+
         //control
         worksheet_write_string(wsCCIs, onRow, 0, PrintControl(control).toStdString().c_str(), nullptr);
         //cci
@@ -191,6 +209,35 @@ void WorkerFindingsReport::process()
         }
         worksheet_write_string(wsCCIs, onRow, 3, assets.toStdString().c_str(), fmtWrapped);
         emit progress(-1);
+    }
+
+    // build non-compliant Controls worksheet
+    onRow = 0;
+    for (auto i = failedControls.constBegin(); i != failedControls.constEnd(); i++)
+    {
+        emit updateStatus("Adding " + PrintControl(i.key()) + "…");
+        onRow++;
+        worksheet_write_string(wsControls, onRow, 0, PrintControl(i.key()).toStdString().c_str(), fmtWrapped);
+        QString preamble = QStringLiteral("The following CCI");
+        if (i.value().count() > 1)
+        {
+            preamble = preamble + QStringLiteral("s are");
+        }
+        else
+        {
+            preamble = preamble + QStringLiteral(" is");
+        }
+        preamble = preamble + QStringLiteral(" found to be non-compliant:");
+        bool notFirst = false;
+        for (auto j = i.value().constBegin(); j != i.value().constEnd(); j++)
+        {
+            emit progress(-1);
+            if (notFirst)
+                preamble = preamble + QStringLiteral(",");
+            preamble = preamble + QStringLiteral(" ") + PrintCCI(*j);
+            notFirst = true;
+        }
+        worksheet_write_string(wsControls, onRow, 1, preamble.toStdString().c_str(), fmtWrapped);
     }
 
     emit updateStatus(QStringLiteral("Writing workbook…"));
