@@ -117,7 +117,7 @@ void WorkerFindingsReport::process()
     worksheet_write_string(wsCCIs, 0, 1, "CCI", fmtBold);
     worksheet_write_string(wsCCIs, 0, 2, "Severity", fmtBold);
     worksheet_write_string(wsCCIs, 0, 3, "Checks", fmtBold);
-    worksheet_set_column(wsCCIs, 3, 3, 18, fmtBold);
+    worksheet_set_column(wsCCIs, 3, 3, 30.86, fmtBold);
 
     //write headers for Controls
     worksheet_write_string(wsControls, 0, 0, "Control", fmtBold);
@@ -174,13 +174,24 @@ void WorkerFindingsReport::process()
 
     unsigned int onRow = 0;
     QMap<Control, QList<CCI>> failedControls;
+    auto ccis = db.GetCCIs();
+    for (auto i = ccis.constBegin(); i != ccis.constEnd(); i++)
+    {
+        if (failedCCIs.contains(*i))
+            continue;
+        if (i->importCompliance.compare(QStringLiteral("non-compliant"), Qt::CaseSensitivity::CaseInsensitive) == 0)
+        {
+            failedCCIs.insert(*i, {});
+        }
+    }
     for (auto i = failedCCIs.constBegin(); i != failedCCIs.constEnd(); i++)
     {
         onRow++;
         CCI c = i.key();
         emit updateStatus("Adding " + PrintCCI(c) + "…");
         QList<CKLCheck> checks = i.value();
-        std::sort(checks.begin(), checks.end());
+        if (checks.count() > 1)
+            std::sort(checks.begin(), checks.end());
         Control control = c.GetControl();
 
         //build failed Control list
@@ -198,9 +209,14 @@ void WorkerFindingsReport::process()
         //cci
         worksheet_write_number(wsCCIs, onRow, 1, c.cci, fmtCci);
         //severity
-        worksheet_write_string(wsCCIs, onRow, 2, GetSeverity(checks.first().GetSeverity()).toStdString().c_str(), nullptr);
+        if (checks.count() > 0)
+            worksheet_write_string(wsCCIs, onRow, 2, GetSeverity(checks.first().GetSeverity()).toStdString().c_str(), nullptr);
+        else
+            worksheet_write_string(wsCCIs, onRow, 2, GetSeverity(Severity::low).toStdString().c_str(), nullptr);
         //Checks
         QString assets = QString();
+        if (checks.count() <= 0)
+            assets.append(QStringLiteral("Imported/Documentation Findings"));
         foreach (CKLCheck cc, checks)
         {
             if (!assets.isEmpty())
