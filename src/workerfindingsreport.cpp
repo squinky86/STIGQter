@@ -102,14 +102,19 @@ void WorkerFindingsReport::process()
     worksheet_write_string(wsFindings, 0, 1, "Host", fmtBold);
     worksheet_write_string(wsFindings, 0, 2, "Status", fmtBold);
     worksheet_write_string(wsFindings, 0, 3, "Severity", fmtBold);
-    worksheet_set_column(wsFindings, 4, 4, 10, nullptr);
-    worksheet_write_string(wsFindings, 0, 4, "CCI", fmtBold);
-    worksheet_set_column(wsFindings, 5, 5, 18, nullptr);
-    worksheet_write_string(wsFindings, 0, 5, "Rule", fmtBold);
-    worksheet_write_string(wsFindings, 0, 6, "Vuln", fmtBold);
-    worksheet_write_string(wsFindings, 0, 7, "Discussion", fmtBold);
-    worksheet_write_string(wsFindings, 0, 8, "Finding Details", fmtBold);
-    worksheet_write_string(wsFindings, 0, 9, "Comments", fmtBold);
+    worksheet_write_string(wsFindings, 0, 4, "Control", fmtBold);
+    worksheet_set_column(wsFindings, 5, 5, 10, nullptr);
+    worksheet_write_string(wsFindings, 0, 5, "CCI", fmtBold);
+    worksheet_set_column(wsFindings, 6, 6, 30, nullptr);
+    worksheet_write_string(wsFindings, 0, 6, "STIG/SRG", fmtBold);
+    worksheet_set_column(wsFindings, 7, 7, 18, nullptr);
+    worksheet_write_string(wsFindings, 0, 7, "Rule", fmtBold);
+    worksheet_set_column(wsFindings, 8, 8, 30, nullptr);
+    worksheet_write_string(wsFindings, 0, 8, "Title", fmtBold);
+    worksheet_write_string(wsFindings, 0, 9, "Vuln", fmtBold);
+    worksheet_write_string(wsFindings, 0, 10, "Discussion", fmtBold);
+    worksheet_write_string(wsFindings, 0, 11, "Finding Details", fmtBold);
+    worksheet_write_string(wsFindings, 0, 12, "Comments", fmtBold);
 
     //write headers for CCI findings
     worksheet_write_string(wsCCIs, 0, 0, "Control", fmtBold);
@@ -144,19 +149,24 @@ void WorkerFindingsReport::process()
             worksheet_write_string(wsFindings, onRow, 2, GetStatus(s).toStdString().c_str(), nullptr);
             //severity
             worksheet_write_string(wsFindings, onRow, 3, GetSeverity(cc.GetSeverity()).toStdString().c_str(), nullptr);
+            //control
+            worksheet_write_string(wsFindings, onRow, 4, PrintControl(c.GetControl()).toStdString().c_str(), nullptr);
             //cci
-            QList<QString> cciStrs;
-            worksheet_write_number(wsFindings, onRow, 4, c.cci, fmtCci);
+            worksheet_write_number(wsFindings, onRow, 5, c.cci, fmtCci);
+            //STIG/SRG
+            worksheet_write_string(wsFindings, onRow, 6, Excelify(PrintSTIG(sc.GetSTIG())).toStdString().c_str(), nullptr);
             //rule
-            worksheet_write_string(wsFindings, onRow, 5, sc.rule.toStdString().c_str(), nullptr);
+            worksheet_write_string(wsFindings, onRow, 7, Excelify(sc.rule).toStdString().c_str(), nullptr);
+            //rule title
+            worksheet_write_string(wsFindings, onRow, 8, Excelify(sc.title).toStdString().c_str(), nullptr);
             //vuln
-            worksheet_write_string(wsFindings, onRow, 6, sc.vulnNum.toStdString().c_str(), nullptr);
+            worksheet_write_string(wsFindings, onRow, 9, Excelify(sc.vulnNum).toStdString().c_str(), nullptr);
             //discussion
-            worksheet_write_string(wsFindings, onRow, 7, Excelify(sc.vulnDiscussion).toStdString().c_str(), nullptr);
+            worksheet_write_string(wsFindings, onRow, 10, Excelify(sc.vulnDiscussion).toStdString().c_str(), nullptr);
             //details
-            worksheet_write_string(wsFindings, onRow, 8, Excelify(cc.findingDetails).toStdString().c_str(), nullptr);
+            worksheet_write_string(wsFindings, onRow, 11, Excelify(cc.findingDetails).toStdString().c_str(), nullptr);
             //comments
-            worksheet_write_string(wsFindings, onRow, 9, Excelify(cc.comments).toStdString().c_str(), nullptr);
+            worksheet_write_string(wsFindings, onRow, 12, Excelify(cc.comments).toStdString().c_str(), nullptr);
 
             //if the check is a finding, add it to the CCI sheet
             if (s == Status::Open)
