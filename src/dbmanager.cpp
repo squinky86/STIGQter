@@ -451,6 +451,7 @@ bool DbManager::AddSTIG(STIG stig, QList<STIGCheck> checks, bool stigExists)
     QSqlDatabase db;
     bool ret = false;
     bool stigCheckRet = true; //turns "false" if a check fails to be added
+    int cci366Id = -1;
     if (this->CheckDatabase(db))
     {
         QSqlQuery q(db);
@@ -533,6 +534,18 @@ bool DbManager::AddSTIG(STIG stig, QList<STIGCheck> checks, bool stigExists)
             int STIGCheckId = q.lastInsertId().toInt();
             if (STIGCheckId > 0)
             {
+                //check if the STIG is mapped to at least one CCI
+                if (c.cciIds.count() <= 0)
+                {
+                    Warning(QStringLiteral("Broken CCI"), "The STIGCheck rule " + c.rule + " is not mapped against a known CCI. If you are importing a STIG, please file a bug with the STIG author (probably DISA, disa.stig_spt@mail.mil) and let them know that their CCI mapping for the STIG you are trying to import is broken. For now, this broken STIG check is being remapped to CCI-000366. <a href=\"mailto:disa.stig_spt@mail.mil?subject=Incorrectly%20Mapped%20STIG%20Check&body=DISA,%0d" + PrintSTIG(stig) + "%20contains%20rule%20" + c.rule + "%20mapped%20against%20an%20unknown%20CCI%20which%20does%20not%20exist%20in%20the%20current%20version%20of%20NIST%20800-53r4.\">Click here</a> to file this bug with DISA automatically.");
+                    if (cci366Id < 0)
+                    {
+                        CCI cci366 = GetCCIByCCI(366);
+                        cci366Id = cci366.id;
+                    }
+                    c.cciIds.append(cci366Id);
+                }
+
                 foreach (int cciId, c.cciIds)
                 {
                     q.prepare(QStringLiteral("INSERT INTO STIGCheckCCI (`STIGCheckId`, `CCIId`) VALUES(:STIGCheckId, :CCIId)"));
