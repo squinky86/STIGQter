@@ -189,7 +189,7 @@ void WorkerFindingsReport::process()
     {
         if (failedCCIs.contains(*i))
             continue;
-        if (i->importCompliance.compare(QStringLiteral("non-compliant"), Qt::CaseSensitivity::CaseInsensitive) == 0)
+        if (i->importCompliance2.compare(QStringLiteral("non-compliant"), Qt::CaseSensitivity::CaseInsensitive) == 0)
         {
             failedCCIs.insert(*i, {});
         }
