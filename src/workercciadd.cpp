@@ -290,7 +290,6 @@ void WorkerCCIAdd::process()
                                     QStringRef enhancement(&index, tmpInt, index.indexOf(')') - tmpInt + 1);
                                     control.append(enhancement);
                                 }
-                                qDebug() << index << endl << control << endl;
                             }
                             CCI c;
                             c.cci = cciInt;
