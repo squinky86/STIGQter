@@ -282,13 +282,15 @@ void WorkerCCIAdd::process()
                                 control = control.left(control.indexOf('.'));
                             if (index.contains('('))
                             {
+                                //check if a second space is present. If the parenthesis is after the second space, it is not an enhancement.
                                 tmpIndex = index.indexOf(' ', tmpIndex + 1);
                                 int tmpInt = index.indexOf('(');
-                                if (tmpIndex == 0 || tmpInt < tmpIndex)
+                                if (tmpIndex <= 0 || tmpInt < tmpIndex)
                                 {
                                     QStringRef enhancement(&index, tmpInt, index.indexOf(')') - tmpInt + 1);
                                     control.append(enhancement);
                                 }
+                                qDebug() << index << endl << control << endl;
                             }
                             CCI c;
                             c.cci = cciInt;
