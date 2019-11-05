@@ -53,7 +53,13 @@ CCI::CCI(QObject *parent) : QObject(parent),
     importCompliance2(),
     importDateTested2(),
     importTestedBy2(),
-    importTestResults2()
+    importTestResults2(),
+    importControlImplementationStatus(),
+    importSecurityControlDesignation(),
+    importInherited(),
+    importApNum(),
+    importImplementationGuidance(),
+    importAssessmentProcedures()
 {
 }
 
@@ -109,6 +115,9 @@ CCI& CCI::operator=(const CCI &right)
         importControlImplementationStatus = right.importControlImplementationStatus;
         importSecurityControlDesignation = right.importSecurityControlDesignation;
         importInherited = right.importInherited;
+        importApNum = right.importApNum;
+        importImplementationGuidance = right.importImplementationGuidance;
+        importAssessmentProcedures = right.importAssessmentProcedures;
     }
     return *this;
 }

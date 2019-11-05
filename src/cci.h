@@ -49,6 +49,9 @@ public:
     QString importControlImplementationStatus;
     QString importSecurityControlDesignation;
     QString importInherited;
+    QString importApNum;
+    QString importImplementationGuidance;
+    QString importAssessmentProcedures;
     friend bool operator<(const CCI &left, const CCI &right)
     {
         return left.cci < right.cci;

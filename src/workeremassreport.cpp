@@ -237,8 +237,8 @@ void WorkerEMASSReport::process()
         worksheet_write_string(ws, onRow, 2, c.isImport ? c.importControlImplementationStatus.toStdString().c_str() : "", nullptr);
         //security control designation
         worksheet_write_string(ws, onRow, 3, c.isImport ? c.importSecurityControlDesignation.toStdString().c_str() : "", nullptr);
-        //AP Acronym is nonsense; ignore it
-        worksheet_write_string(ws, onRow, 4, "", nullptr);
+        //AP Acronym
+        worksheet_write_string(ws, onRow, 4, c.isImport ? c.importApNum.toStdString().c_str() : "", nullptr);
         //CCI
         QString cci = QString::number(c.cci);
         while (cci.length() < 6)
@@ -246,8 +246,8 @@ void WorkerEMASSReport::process()
         worksheet_write_string(ws, onRow, 5, cci.toStdString().c_str(), nullptr);
         worksheet_write_string(ws, onRow, 6, Excelify(c.definition).toStdString().c_str(), fmtWrapped);
         //implementation guidance and assessment procedures not available
-        worksheet_write_string(ws, onRow, 7, "", nullptr);
-        worksheet_write_string(ws, onRow, 8, "", nullptr);
+        worksheet_write_string(ws, onRow, 7, c.isImport ? c.importImplementationGuidance.toStdString().c_str() : "", fmtWrapped);
+        worksheet_write_string(ws, onRow, 8, c.isImport ? c.importAssessmentProcedures.toStdString().c_str() : "", fmtWrapped);
         //inherited
         worksheet_write_string(ws, onRow, 9, c.isImport ? c.importInherited.toStdString().c_str() : "", fmtWrapped);
         //compliance status
@@ -300,7 +300,7 @@ void WorkerEMASSReport::process()
         //security control designation
         worksheet_write_string(ws, onRow, 3, c.isImport ? c.importSecurityControlDesignation.toStdString().c_str() : "", nullptr);
         //AP Acronym is nonsense; ignore it
-        worksheet_write_string(ws, onRow, 4, "", nullptr);
+        worksheet_write_string(ws, onRow, 4, c.isImport ? c.importApNum.toStdString().c_str() : "", nullptr);
         //CCI
         QString cci = QString::number(c.cci);
         while (cci.length() < 6)
@@ -308,8 +308,8 @@ void WorkerEMASSReport::process()
         worksheet_write_string(ws, onRow, 5, cci.toStdString().c_str(), nullptr);
         worksheet_write_string(ws, onRow, 6, Excelify(c.definition).toStdString().c_str(), fmtWrapped);
         //implementation guidance and assessment procedures not available
-        worksheet_write_string(ws, onRow, 7, "", nullptr);
-        worksheet_write_string(ws, onRow, 8, "", nullptr);
+        worksheet_write_string(ws, onRow, 7, c.isImport ? c.importImplementationGuidance.toStdString().c_str() : "", fmtWrapped);
+        worksheet_write_string(ws, onRow, 8, c.isImport ? c.importAssessmentProcedures.toStdString().c_str() : "", fmtWrapped);
         //inherited
         worksheet_write_string(ws, onRow, 9, c.isImport ? c.importInherited.toStdString().c_str() : "", fmtWrapped);
         //compliance status
@@ -360,7 +360,7 @@ void WorkerEMASSReport::process()
         //security control designation
         worksheet_write_string(ws, onRow, 3, c.isImport ? c.importSecurityControlDesignation.toStdString().c_str() : "", nullptr);
         //AP Acronym is nonsense; ignore it
-        worksheet_write_string(ws, onRow, 4, "", nullptr);
+        worksheet_write_string(ws, onRow, 4, c.isImport ? c.importApNum.toStdString().c_str() : "", nullptr);
         //CCI
         QString cci = QString::number(c.cci);
         while (cci.length() < 6)
@@ -368,8 +368,8 @@ void WorkerEMASSReport::process()
         worksheet_write_string(ws, onRow, 5, cci.toStdString().c_str(), nullptr);
         worksheet_write_string(ws, onRow, 6, Excelify(c.definition).toStdString().c_str(), fmtWrapped);
         //implementation guidance and assessment procedures not available
-        worksheet_write_string(ws, onRow, 7, "", nullptr);
-        worksheet_write_string(ws, onRow, 8, "", nullptr);
+        worksheet_write_string(ws, onRow, 7, c.isImport ? c.importImplementationGuidance.toStdString().c_str() : "", fmtWrapped);
+        worksheet_write_string(ws, onRow, 8, c.isImport ? c.importAssessmentProcedures.toStdString().c_str() : "", fmtWrapped);
         //inherited
         worksheet_write_string(ws, onRow, 9, c.isImport ? c.importInherited.toStdString().c_str() : "", fmtWrapped);
         //compliance status

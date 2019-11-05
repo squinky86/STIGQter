@@ -154,9 +154,10 @@ void WorkerImportEMASS::process()
         int onRow = 0;
         QString onCol = QString();
         bool isSharedString = false; //keep up with whether the current record is a shared string
-        QStringList meaningfulCols = {QStringLiteral("C"), QStringLiteral("D"), QStringLiteral("F"), QStringLiteral("J"), QStringLiteral("K"), QStringLiteral("L"), QStringLiteral("M"), QStringLiteral("N"), QStringLiteral("O"), QStringLiteral("P"), QStringLiteral("Q"), QStringLiteral("R")};
+        QStringList meaningfulCols = {QStringLiteral("C"), QStringLiteral("D"), QStringLiteral("E"), QStringLiteral("F"), QStringLiteral("H"), QStringLiteral("I"), QStringLiteral("J"), QStringLiteral("K"), QStringLiteral("L"), QStringLiteral("M"), QStringLiteral("N"), QStringLiteral("O"), QStringLiteral("P"), QStringLiteral("Q"), QStringLiteral("R")};
         QString tempImportControlImplementationStatus = QString();
         QString tempImportSecurityControlDesignation = QString();
+        QString tempImportApNum = QString();
         CCI curCCI;
         DbManager db;
         db.DelayCommit(true);
@@ -224,8 +225,10 @@ void WorkerImportEMASS::process()
                             curCCI = db.GetCCIByCCI(value.toInt());
                             curCCI.importControlImplementationStatus = tempImportControlImplementationStatus;
                             curCCI.importSecurityControlDesignation = tempImportSecurityControlDesignation;
+                            curCCI.importApNum = tempImportApNum;
                             tempImportControlImplementationStatus = QString();
                             tempImportSecurityControlDesignation = QString();
+                            tempImportApNum = QString();
                         }
                         else if (onCol == QStringLiteral("C"))
                         {
@@ -235,8 +238,16 @@ void WorkerImportEMASS::process()
                         {
                             tempImportSecurityControlDesignation = value;
                         }
+                        else if (onCol == QStringLiteral("E"))
+                        {
+                            tempImportApNum = value;
+                        }
                         else {
-                            if (onCol == QStringLiteral("O"))
+                            if (onCol == QStringLiteral("H"))
+                                curCCI.importImplementationGuidance = value;
+                            else if (onCol == QStringLiteral("I"))
+                                curCCI.importAssessmentProcedures = value;
+                            else if (onCol == QStringLiteral("O"))
                                 curCCI.importCompliance = value;
                             else if (onCol == QStringLiteral("P"))
                                 curCCI.importDateTested = value;
