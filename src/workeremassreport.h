@@ -28,6 +28,7 @@ class WorkerEMASSReport : public QObject
 
 private:
     QString _fileName;
+    qint64 DateChooser(bool isImport, qint64 curDate, QString importDate, bool useCurDate);
 
 public:
     explicit WorkerEMASSReport(QObject *parent = nullptr);

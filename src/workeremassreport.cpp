@@ -35,6 +35,30 @@
  */
 
 /**
+ * @brief WorkerEMASSReport::DateChooser
+ * @param isImport
+ * @param curDate
+ * @param importDate
+ * @param useCurDate
+ *
+ * Return the correct date format
+ */
+qint64 WorkerEMASSReport::DateChooser(bool isImport, qint64 curDate, QString importDate, bool useCurDate = false)
+{
+    if (useCurDate)
+        return curDate;
+
+    if (isImport)
+    {
+        qint64 tmpRet = importDate.toInt();
+        if (tmpRet > 0)
+            return tmpRet;
+    }
+
+    return curDate;
+}
+
+/**
  * @brief WorkerEMASSReport::WorkerEMASSReport
  * @param parent
  *
@@ -252,8 +276,6 @@ void WorkerEMASSReport::process()
         worksheet_write_string(ws, onRow, 9, c.isImport ? c.importInherited.toStdString().c_str() : "", fmtWrapped);
         //compliance status
         worksheet_write_string(ws, onRow, 10, "Non-Compliant", nullptr);
-        //date tested
-        worksheet_write_number(ws, onRow, 11, excelCurDate, fmtDate);
         //tested by
         worksheet_write_string(ws, onRow, 12, username.toStdString().c_str(), nullptr);
 
@@ -262,12 +284,17 @@ void WorkerEMASSReport::process()
         if (!testResult.isEmpty())
             testResult += "\n";
         testResult += QStringLiteral("The following checks are open:");
+        bool useCurDate = false;
         foreach (CKLCheck cc, checks)
         {
             testResult.append("\n" + PrintAsset(cc.GetAsset()) + ": " + PrintCKLCheck(cc) + " - " + GetSeverity(cc.GetSeverity()));
             if (!cc.findingDetails.isEmpty())
                 testResult.append(" - " + cc.findingDetails);
+            useCurDate = true;
         }
+        //date tested
+        worksheet_write_number(ws, onRow, 11, DateChooser(c.isImport, excelCurDate, c.importDateTested2, useCurDate), fmtDate);
+
         worksheet_write_string(ws, onRow, 13, Excelify(testResult).toStdString().c_str(), fmtWrapped);
 
         if (!c.isImport)
@@ -380,7 +407,7 @@ void WorkerEMASSReport::process()
         if (ok)
             worksheet_write_number(ws, onRow, 11, tmpInt, fmtDate);
         else
-            worksheet_write_number(ws, onRow, 11, excelCurDate, fmtDate);
+            worksheet_write_string(ws, onRow, 11, "", fmtDate);
         //tested by
         worksheet_write_string(ws, onRow, 12, c.importTestedBy2.toStdString().c_str(), nullptr);
 
