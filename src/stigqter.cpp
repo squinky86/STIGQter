@@ -96,7 +96,11 @@ STIGQter::STIGQter(QWidget *parent) :
     //remove the close button on the main DB tab.
     ui->tabDB->tabBar()->tabButton(0, QTabBar::RightSide)->resize(0, 0);
 
+    //set keyboard shortcuts
     _shortcuts.append(new QShortcut(QKeySequence(Qt::CTRL + Qt::Key_S), this, SLOT(Save())));
+
+    //display path to database file
+    ui->lblDBLoc->setText(QStringLiteral("DB: ") + db->GetDBPath());
 
     //check version number
     auto *t = new QThread;

@@ -1770,6 +1770,15 @@ QList<Control> DbManager::GetControls(const QString &whereClause, const QList<st
 }
 
 /**
+ * @brief DbManager::GetDBPath
+ * @return The path to the database file
+ */
+QString DbManager::GetDBPath()
+{
+    return _dbPath;
+}
+
+/**
  * @brief DbManager::GetFamily
  * @param id
  * @return The @a Family associated with the provided database @a id.

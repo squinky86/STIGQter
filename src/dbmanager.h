@@ -78,6 +78,7 @@ public:
     Control GetControl(int id);
     Control GetControl(const QString &control);
     QList<Control> GetControls(const QString &whereClause = "", const QList<std::tuple<QString, QVariant>> &variables = {});
+    QString GetDBPath();
     Family GetFamily(const QString &acronym);
     Family GetFamily(int id);
     QList<Family> GetFamilies(const QString &whereClause = "", const QList<std::tuple<QString, QVariant>> &variables = {});
