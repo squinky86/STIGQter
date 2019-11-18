@@ -187,14 +187,18 @@ void STIGQter::OpenCKL()
 
 /**
  * @brief STIGQter::Reset
+ * @param checkOnly
  *
  * Check if the .stigqter file has been saved before closing the
  * database. If it has not, give the user an opportunity to save it.
  */
-void STIGQter::Reset()
+bool STIGQter::Reset(bool checkOnly)
 {
     if (lastSaveLocation.isNull() || lastSaveLocation.isEmpty())
     {
+        if (checkOnly)
+            return true; // database is not saved externally
+
         QMessageBox::StandardButton reply = QMessageBox::question(this, QStringLiteral("Unsaved Changes"), QStringLiteral("The data have not been saved. Really close?"), QMessageBox::Yes|QMessageBox::No);
         if (reply == QMessageBox::Yes)
         {
@@ -213,6 +217,8 @@ void STIGQter::Reset()
         if (destHash == db->HashDB())
         {
             //database was saved without changes; reset application.
+            if (checkOnly)
+                return true;
             db->DeleteDB();
             qApp->quit();
             QProcess::startDetached(qApp->arguments()[0], qApp->arguments());
@@ -223,12 +229,15 @@ void STIGQter::Reset()
             QMessageBox::StandardButton reply = QMessageBox::question(this, QStringLiteral("Unsaved Changes"), QStringLiteral("There are unsaved changes to the file you wrote. Really close?"), QMessageBox::Yes|QMessageBox::No);
             if (reply == QMessageBox::Yes)
             {
+                if (checkOnly)
+                    return true;
                 db->DeleteDB();
                 qApp->quit();
                 QProcess::startDetached(qApp->arguments()[0], qApp->arguments());
             }
         }
     }
+    return false;
 }
 
 /**
@@ -277,6 +286,20 @@ void STIGQter::SelectAsset()
 {
     UpdateSTIGs();
     EnableInput();
+}
+
+/**
+ * @brief STIGQter::closeEvent
+ * @param event
+ *
+ * Overrides the close event to make sure the database has been saved.
+ */
+void STIGQter::closeEvent(QCloseEvent *event)
+{
+    if (Reset(true))
+        event->accept();
+    else
+        event->ignore();
 }
 
 /**

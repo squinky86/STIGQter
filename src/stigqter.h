@@ -59,7 +59,7 @@ private slots:
     void Load();
     void MapUnmapped();
     void OpenCKL();
-    void Reset();
+    bool Reset(bool checkOnly = false);
     void Save();
     void SaveAs();
     void SelectAsset();
@@ -80,6 +80,7 @@ private:
     bool _updatedSTIGs;
     QString lastSaveLocation;
     QList<QShortcut*> _shortcuts;
+    void closeEvent(QCloseEvent *event);
     void CleanThreads();
     void DisableInput();
     void DisplayAssets();
