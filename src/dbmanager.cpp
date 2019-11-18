@@ -171,8 +171,11 @@ void DbManager::DelayCommit(bool delay)
         QSqlDatabase db;
         if (this->CheckDatabase(db))
         {
-            QSqlQuery(QStringLiteral("PRAGMA journal_mode = OFF"), db);
-            QSqlQuery(QStringLiteral("PRAGMA synchronous = OFF"), db);
+            QSqlQuery q(db);
+            q.prepare(QStringLiteral("PRAGMA journal_mode = OFF"));
+            q.exec();
+            q.prepare(QStringLiteral("PRAGMA synchronous = OFF"));
+            q.exec();
         }
     }
     else
@@ -180,8 +183,11 @@ void DbManager::DelayCommit(bool delay)
         QSqlDatabase db;
         if (this->CheckDatabase(db))
         {
-            QSqlQuery(QStringLiteral("PRAGMA journal_mode = ON"), db);
-            QSqlQuery(QStringLiteral("PRAGMA synchronous = ON"), db);
+            QSqlQuery q(db);
+            q.prepare(QStringLiteral("PRAGMA journal_mode = ON"));
+            q.exec();
+            q.prepare(QStringLiteral("PRAGMA synchronous = ON"));
+            q.exec();
             db.commit();
         }
     }
