@@ -2,6 +2,12 @@ language: cpp
 compiler: gcc
 dist: bionic
 
+addons:
+        sonarcloud:
+                organization: "squinky86"
+                token:
+                        secure: "1627f17c5f4b2974c221d3b6fcd2e0c4bebb6ecf"
+
 before_install:
  - sudo apt-get update -qq
  - sudo apt-get install qtbase5-dev qt5-qmake qt5-default
@@ -14,4 +20,5 @@ before_install:
 script:
  - sed -i -e 's:INCLUDEPATH[ ]*=[ ]*:INCLUDEPATH = /usr/include/tidy :g' STIGQter.pro
  - qmake STIGQter.pro
- - make
+ - build-wrapper-linux-x86-64 --out-dir bw-output make
+ - sonar-scanner

@@ -33,12 +33,15 @@ class Asset : public QObject
     Q_OBJECT
 public:
     Asset(const Asset &asset);
+    Asset(Asset&& orig) noexcept;
+    ~Asset() override = default;
     explicit Asset(QObject *parent = nullptr);
     Asset& operator=(const Asset &right);
+    Asset& operator=(Asset &&orig) noexcept;
     QList<STIG> GetSTIGs() const;
     QList<CKLCheck> GetCKLChecks(const STIG *stig = nullptr) const;
-    int id; /**< Database ID */
-    QString assetType; /**< Specifies if asset is "Computing" or "Non-Computing" */
+    int id{-1}; /**< Database ID */
+    QString assetType{QStringLiteral("Computing")}; /**< Specifies if asset is "Computing" or "Non-Computing" */
     QString hostName; /**< Unique asset identifier */
     QString hostIP; /**< IP address of the asset */
     QString hostMAC; /**< MAC address of the asset */
@@ -64,7 +67,7 @@ public:
                            "Other Review"
                        */
     QString targetKey; /**< Target identifier specified in STIG */
-    bool webOrDB; /**< whether the asset is a web or database asset */
+    bool webOrDB{false}; /**< whether the asset is a web or database asset */
     QString webDbSite; /**< If webOrDatabase is true, specify the site identifier (usually node name) */
     QString webDbInstance; /**< If webOrDatabase is true, specify the instance (usually the DB's name) */
 };

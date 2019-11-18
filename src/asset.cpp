@@ -21,6 +21,8 @@
 #include "cklcheck.h"
 #include "dbmanager.h"
 
+using namespace std;
+
 /**
  * @class Asset
  * @brief An Asset is a single node, database, or element that would
@@ -46,18 +48,7 @@
  *
  * The default constructor sets up an empty Asset.
  */
-Asset::Asset(QObject *parent) : QObject(parent),
-    id(-1),
-    assetType(QStringLiteral("Computing")),
-    hostName(),
-    hostIP(),
-    hostMAC(),
-    hostFQDN(),
-    techArea(),
-    targetKey(),
-    webOrDB(false),
-    webDbSite(),
-    webDbInstance()
+Asset::Asset(QObject *parent) : QObject(parent)
 {
 }
 
@@ -70,6 +61,27 @@ Asset::Asset(QObject *parent) : QObject(parent),
 Asset::Asset(const Asset &asset) : Asset(asset.parent())
 {
     *this = asset;
+}
+
+/**
+ * @brief Asset::Asset
+ * @param asset
+ *
+ * Move constructor.
+ */
+Asset::Asset(Asset &&orig) noexcept
+{
+    id = orig.id;
+    assetType = move(orig.assetType);
+    hostName = move(orig.hostName);
+    hostIP = move(orig.hostIP);
+    hostMAC = move(orig.hostMAC);
+    hostFQDN = move(orig.hostFQDN);
+    techArea = move(orig.techArea);
+    targetKey = move(orig.targetKey);
+    webOrDB = orig.webOrDB;
+    webDbSite = move(orig.webDbSite);
+    webDbInstance = move(orig.webDbInstance);
 }
 
 /**
@@ -92,6 +104,25 @@ Asset &Asset::operator=(const Asset &right)
         webOrDB = right.webOrDB;
         webDbSite = right.webDbSite;
         webDbInstance = right.webDbInstance;
+    }
+    return *this;
+}
+
+Asset &Asset::operator=(Asset &&orig) noexcept
+{
+    if (this != &orig)
+    {
+        id = orig.id;
+        assetType = move(orig.assetType);
+        hostName = move(orig.hostName);
+        hostIP = move(orig.hostIP);
+        hostMAC = move(orig.hostMAC);
+        hostFQDN = move(orig.hostFQDN);
+        techArea = move(orig.techArea);
+        targetKey = move(orig.targetKey);
+        webOrDB = orig.webOrDB;
+        webDbSite = move(orig.webDbSite);
+        webDbInstance = move(orig.webDbInstance);
     }
     return *this;
 }
