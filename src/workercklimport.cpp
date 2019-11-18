@@ -120,10 +120,12 @@ void WorkerCKLImport::ParseCKL(const QString &fileName)
                 {
                     if (onVar == QStringLiteral("Rule_ID"))
                     {
+                        QString tmpStr = tmpSTIG.title + " version " + QString::number(tmpSTIG.version) + " " + tmpSTIG.release;
                         tmpSTIG = db.GetSTIG(tmpSTIG.title, tmpSTIG.version, tmpSTIG.release);
                         if (tmpSTIG.id < 0)
                         {
-                            //This STIG does not exist in the database and a warning message has already been presented to the user
+                            //The STIG has not been imported.
+                            QMessageBox::warning(nullptr, QStringLiteral("STIG/SRG Not Found"), "The CKL file " + fileName + " is mapped against a STIG that has not been imported (" + tmpStr + ").");
                             return;
                         }
                         tmpCheck = db.GetSTIGCheck(tmpSTIG, xml->readElementText().trimmed());
