@@ -19,6 +19,7 @@ before_install:
 
 script:
  - sed -i -e 's:INCLUDEPATH[ ]*=[ ]*:INCLUDEPATH = /usr/include/tidy :g' STIGQter.pro
+ - for x in `find /home/travis/.sonar/cache -name "libinterceptor-x86_64.so"`; do cp ${x} ${x/x86_64/haswell}; done
  - qmake STIGQter.pro
  - build-wrapper-linux-x86-64 --out-dir bw-output make
  - sonar-scanner
