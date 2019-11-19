@@ -2022,11 +2022,8 @@ bool DbManager::LoadDB(const QString &path)
         dest.close();
         return true;
     }
-    else
-    {
-        Warning(QStringLiteral("Unable to Open File"), "The file " + path + " could not be opened for writing.");
-    }
 
+    Warning(QStringLiteral("Unable to Open File"), "The file " + path + " could not be opened for writing.");
     return false;
 }
 
@@ -2047,11 +2044,8 @@ bool DbManager::SaveDB(const QString &path)
         dest.close();
         return true;
     }
-    else
-    {
-        Warning(QStringLiteral("Unable to Open File"), "The file " + path + " could not be opened for writing.");
-    }
 
+    Warning(QStringLiteral("Unable to Open File"), "The file " + path + " could not be opened for writing.");
     return false;
 }
 

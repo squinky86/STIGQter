@@ -449,7 +449,7 @@ void STIGQter::CloseTab(int index)
     for (int j = 1; j < ui->tabDB->count(); j++)
     {
         //reset the tab indices for the tabs that were not closed
-        AssetView *tmpAssetView = dynamic_cast<AssetView*>(ui->tabDB->widget(j));
+        auto *tmpAssetView = dynamic_cast<AssetView*>(ui->tabDB->widget(j));
         if (tmpAssetView)
             tmpAssetView->SetTabIndex(j);
     }
@@ -817,7 +817,7 @@ void STIGQter::SelectSTIG()
  *
  * Display a message on the main thread.
  */
-void STIGQter::ShowMessage(QString title, QString message)
+void STIGQter::ShowMessage(const QString &title, const QString &message)
 {
     Warning(title, message);
 }
@@ -945,7 +945,7 @@ void STIGQter::DisplayAssets()
     ui->lstAssets->clear();
     foreach(const Asset &a, db->GetAssets())
     {
-        QListWidgetItem *tmpItem = new QListWidgetItem(); //memory managed by ui->lstAssets container
+        auto *tmpItem = new QListWidgetItem(); //memory managed by ui->lstAssets container
         tmpItem->setData(Qt::UserRole, QVariant::fromValue<Asset>(a));
         tmpItem->setText(PrintAsset(a));
         ui->lstAssets->addItem(tmpItem);
@@ -962,10 +962,9 @@ void STIGQter::DisplayCCIs()
     ui->lstCCIs->clear();
     foreach(const CCI &c, db->GetCCIs())
     {
-        CCI tmpCci = c;
         auto *tmpItem = new QListWidgetItem(); //memory managed by ui->lstCCIs container
-        tmpItem->setData(Qt::UserRole, QVariant::fromValue<CCI>(tmpCci));
-        tmpItem->setText(PrintCCI(tmpCci));
+        tmpItem->setData(Qt::UserRole, QVariant::fromValue<CCI>(c));
+        tmpItem->setText(PrintCCI(c));
         ui->lstCCIs->addItem(tmpItem);
     }
 }

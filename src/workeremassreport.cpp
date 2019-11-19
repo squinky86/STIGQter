@@ -43,7 +43,7 @@
  *
  * Return the correct date format
  */
-qint64 WorkerEMASSReport::DateChooser(bool isImport, qint64 curDate, QString importDate, bool useCurDate = false)
+qint64 WorkerEMASSReport::DateChooser(bool isImport, qint64 curDate, const QString &importDate, bool useCurDate = false)
 {
     if (useCurDate)
         return curDate;

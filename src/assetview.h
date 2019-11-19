@@ -39,8 +39,8 @@ class AssetView : public QWidget
 
 public:
     explicit AssetView(QWidget *parent = nullptr);
-    AssetView(const Asset &asset, QWidget *parent = nullptr);
-    ~AssetView();
+    AssetView(Asset asset, QWidget *parent = nullptr);
+    ~AssetView() override;
     void Display();
     void SelectSTIGs();
     void ShowChecks(bool countOnly = false);

@@ -32,6 +32,7 @@
 #include <QShortcut>
 #include <QXmlStreamWriter>
 #include <QTimer>
+#include <utility>
 
 /**
  * @class AssetView
@@ -53,10 +54,10 @@
  *
  * Main constructor.
  */
-AssetView::AssetView(const Asset &asset, QWidget *parent) :
+AssetView::AssetView(Asset asset, QWidget *parent) :
     QWidget(parent),
     ui(new Ui::AssetView),
-    _asset(asset),
+    _asset(std::move(asset)),
     _justification(),
     _updateStatus(false),
     _tabIndex(-1)

@@ -21,8 +21,6 @@
 #include "cklcheck.h"
 #include "dbmanager.h"
 
-using namespace std;
-
 /**
  * @class Asset
  * @brief An Asset is a single node, database, or element that would
@@ -72,16 +70,16 @@ Asset::Asset(const Asset &asset) : Asset(asset.parent())
 Asset::Asset(Asset &&orig) noexcept
 {
     id = orig.id;
-    assetType = move(orig.assetType);
-    hostName = move(orig.hostName);
-    hostIP = move(orig.hostIP);
-    hostMAC = move(orig.hostMAC);
-    hostFQDN = move(orig.hostFQDN);
-    techArea = move(orig.techArea);
-    targetKey = move(orig.targetKey);
+    assetType = std::move(orig.assetType);
+    hostName = std::move(orig.hostName);
+    hostIP = std::move(orig.hostIP);
+    hostMAC = std::move(orig.hostMAC);
+    hostFQDN = std::move(orig.hostFQDN);
+    techArea = std::move(orig.techArea);
+    targetKey = std::move(orig.targetKey);
     webOrDB = orig.webOrDB;
-    webDbSite = move(orig.webDbSite);
-    webDbInstance = move(orig.webDbInstance);
+    webDbSite = std::move(orig.webDbSite);
+    webDbInstance = std::move(orig.webDbInstance);
 }
 
 /**
@@ -113,16 +111,16 @@ Asset &Asset::operator=(Asset &&orig) noexcept
     if (this != &orig)
     {
         id = orig.id;
-        assetType = move(orig.assetType);
-        hostName = move(orig.hostName);
-        hostIP = move(orig.hostIP);
-        hostMAC = move(orig.hostMAC);
-        hostFQDN = move(orig.hostFQDN);
-        techArea = move(orig.techArea);
-        targetKey = move(orig.targetKey);
+        assetType = std::move(orig.assetType);
+        hostName = std::move(orig.hostName);
+        hostIP = std::move(orig.hostIP);
+        hostMAC = std::move(orig.hostMAC);
+        hostFQDN = std::move(orig.hostFQDN);
+        techArea = std::move(orig.techArea);
+        targetKey = std::move(orig.targetKey);
         webOrDB = orig.webOrDB;
-        webDbSite = move(orig.webDbSite);
-        webDbInstance = move(orig.webDbInstance);
+        webDbSite = std::move(orig.webDbSite);
+        webDbInstance = std::move(orig.webDbInstance);
     }
     return *this;
 }
