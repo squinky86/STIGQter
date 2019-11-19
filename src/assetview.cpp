@@ -104,17 +104,6 @@ AssetView::AssetView(Asset asset, QWidget *parent) :
 }
 
 /**
- * @overload AssetView()
- * @brief AssetView::AssetView
- * @param parent
- *
- * A new tab is created for the supplied Asset.
- */
-AssetView::AssetView(QWidget *parent) : AssetView(_asset, parent)
-{
-}
-
-/**
  * @brief AssetView::~AssetView
  *
  * Destructor.

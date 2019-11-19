@@ -67,19 +67,19 @@ Asset::Asset(const Asset &asset) : Asset(asset.parent())
  *
  * Move constructor.
  */
-Asset::Asset(Asset &&orig) noexcept
+Asset::Asset(Asset &&orig) noexcept :
+    id(orig.id),
+    assetType(std::move(orig.assetType)),
+    hostName(std::move(orig.hostName)),
+    hostIP(std::move(orig.hostIP)),
+    hostMAC(std::move(orig.hostMAC)),
+    hostFQDN(std::move(orig.hostFQDN)),
+    techArea(std::move(orig.techArea)),
+    targetKey(std::move(orig.targetKey)),
+    webOrDB(orig.webOrDB),
+    webDbSite(std::move(orig.webDbSite)),
+    webDbInstance(std::move(orig.webDbInstance))
 {
-    id = orig.id;
-    assetType = std::move(orig.assetType);
-    hostName = std::move(orig.hostName);
-    hostIP = std::move(orig.hostIP);
-    hostMAC = std::move(orig.hostMAC);
-    hostFQDN = std::move(orig.hostFQDN);
-    techArea = std::move(orig.techArea);
-    targetKey = std::move(orig.targetKey);
-    webOrDB = orig.webOrDB;
-    webDbSite = std::move(orig.webDbSite);
-    webDbInstance = std::move(orig.webDbInstance);
 }
 
 /**

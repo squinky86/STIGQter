@@ -38,8 +38,7 @@ class AssetView : public QWidget
     Q_OBJECT
 
 public:
-    explicit AssetView(QWidget *parent = nullptr);
-    AssetView(Asset asset, QWidget *parent = nullptr);
+    explicit AssetView(Asset asset, QWidget *parent = nullptr);
     ~AssetView() override;
     void Display();
     void SelectSTIGs();
