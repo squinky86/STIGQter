@@ -85,7 +85,7 @@ STIGQter::STIGQter(QWidget *parent) :
     ui->setupUi(this);
 
     //set the title bar
-    this->setWindowTitle(QStringLiteral("STIGQter ") + QStringLiteral(VERSION));
+    this->setWindowTitle(QStringLiteral("STIGQter ") + VERSION);
 
     //make sure that the initial data are populated and active
     EnableInput();

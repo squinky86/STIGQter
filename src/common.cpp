@@ -210,12 +210,9 @@ QMap<QString, QByteArray> GetFilesFromZip(const QString &fileName, const QString
             if (zip_stat_index(za, i, 0, &sb) == 0)
             {
                 QString name(sb.name);
-                if (!fileNameFilter.isNull() && !fileNameFilter.isEmpty())
+                if (!fileNameFilter.isNull() && !fileNameFilter.isEmpty() && !name.endsWith(fileNameFilter, Qt::CaseInsensitive))
                 {
-                    if (!name.endsWith(fileNameFilter, Qt::CaseInsensitive))
-                    {
-                        continue;
-                    }
+                    continue;
                 }
 
                 QByteArray todo;
@@ -265,7 +262,7 @@ int GetReleaseNumber(const QString &release)
  */
 QString GetUserAgent()
 {
-    return QString(QStringLiteral("STIGQter/")) + QStringLiteral(VERSION);
+    return QString(QStringLiteral("STIGQter/")) + VERSION;
 }
 
 /**

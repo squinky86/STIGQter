@@ -54,7 +54,7 @@
  *
  * Main constructor.
  */
-AssetView::AssetView(Asset asset, QWidget *parent) :
+AssetView::AssetView(const Asset &asset, QWidget *parent) :
     QWidget(parent),
     ui(new Ui::AssetView),
     _asset(std::move(asset)),
@@ -197,23 +197,21 @@ void AssetView::ShowChecks(bool countOnly)
         default:
             break;
         }
-        if (!countOnly)
+        //update the list of CKL checks
+        if (
+                !countOnly //perform filtering
+                && //severity filter
+                ((filterSeverityText == QStringLiteral("All")) ||
+                 (filterSeverity == c.GetSeverity()))
+                && //status filter
+                ((filterStatusText == QStringLiteral("All")) ||
+                 (filterStatus == c.status))
+            )
         {
-            //update the list of CKL checks
-            if (
-                    //severity filter
-                    ((filterSeverityText == QStringLiteral("All")) ||
-                     (filterSeverity == c.GetSeverity()))
-                    && //status filter
-                    ((filterStatusText == QStringLiteral("All")) ||
-                     (filterStatus == c.status))
-                )
-            {
-                QListWidgetItem *i = new QListWidgetItem(PrintCKLCheck(c));
-                ui->lstChecks->addItem(i);
-                i->setData(Qt::UserRole, QVariant::fromValue<CKLCheck>(c));
-                SetItemColor(i, c.status, (c.severityOverride == Severity::none) ? c.GetSTIGCheck().severity : c.severityOverride);
-            }
+            QListWidgetItem *i = new QListWidgetItem(PrintCKLCheck(c));
+            ui->lstChecks->addItem(i);
+            i->setData(Qt::UserRole, QVariant::fromValue<CKLCheck>(c));
+            SetItemColor(i, c.status, (c.severityOverride == Severity::none) ? c.GetSTIGCheck().severity : c.severityOverride);
         }
     }
     ui->lblTotalChecks->setText(QString::number(total));
@@ -518,7 +516,7 @@ void AssetView::SaveCKL()
         QXmlStreamWriter stream(&file);
         //xml for a CKL file
         stream.writeStartDocument(QStringLiteral("1.0"));
-        stream.writeComment("STIGQter :: " + QString(QStringLiteral(VERSION)));
+        stream.writeComment("STIGQter :: " + VERSION);
         stream.writeStartElement(QStringLiteral("CHECKLIST"));
         stream.writeStartElement(QStringLiteral("ASSET"));
         stream.writeStartElement(QStringLiteral("ROLE"));
