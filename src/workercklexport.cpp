@@ -90,7 +90,7 @@ void WorkerCKLExport::process()
                 QXmlStreamWriter stream(&file);
                 //xml for a CKL file
                 stream.writeStartDocument(QStringLiteral("1.0"));
-                stream.writeComment("STIGQter :: " + QString(QStringLiteral(VERSION)));
+                stream.writeComment("STIGQter :: " + VERSION);
                 stream.writeStartElement(QStringLiteral("CHECKLIST"));
                 stream.writeStartElement(QStringLiteral("ASSET"));
                 stream.writeStartElement(QStringLiteral("ROLE"));

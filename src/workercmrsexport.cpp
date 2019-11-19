@@ -77,7 +77,7 @@ void WorkerCMRSExport::process()
     {
         QXmlStreamWriter stream(&file); //write to the stream as an XML file
         stream.writeStartDocument(QStringLiteral("1.0"));
-        stream.writeComment("STIGQter :: " + QString(QStringLiteral(VERSION)));
+        stream.writeComment("STIGQter :: " + VERSION);
         stream.writeStartElement(QStringLiteral("IMPORT_FILE"));
         stream.writeAttribute(QStringLiteral("xmlns"), QStringLiteral("urn:FindingImport"));
 
@@ -180,7 +180,7 @@ void WorkerCMRSExport::process()
                     stream.writeEndElement(); //TOOL
 
                     stream.writeStartElement(QStringLiteral("TOOL_VERSION"));
-                    stream.writeCharacters(QStringLiteral(VERSION));
+                    stream.writeCharacters(VERSION);
                     stream.writeEndElement(); //TOOL_VERSION
 
                     stream.writeStartElement(QStringLiteral("AUTHENTICATED_FINDING"));
