@@ -45,6 +45,7 @@
 #include <QProcess>
 #include <QStandardPaths>
 #include <QThread>
+#include <QDebug>
 
 /**
  * @class STIGQter

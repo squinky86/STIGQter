@@ -19,12 +19,29 @@
 
 #include "stigqter.h"
 #include <QApplication>
+#include <cstdlib>
 
 int main(int argc, char *argv[])
 {
     QApplication a(argc, argv);
+
+    bool tests = false;
+
+    for (int i = 0; i < argc; i++)
+    {
+        if (std::string_view(argv[i]) == "tests")
+            tests = true;
+    }
+
     STIGQter w;
     w.show();
+
+    if (tests)
+    {
+        //run tests
+        w.close();
+        exit(EXIT_SUCCESS);
+    }
 
     return a.exec();
 }

@@ -1,6 +1,8 @@
 language: cpp
 compiler: gcc
 dist: bionic
+services:
+        - xvfb
 
 addons:
         sonarcloud:
@@ -22,8 +24,7 @@ script:
  - for x in `find /home/travis/.sonar/cache -name "libinterceptor-x86_64.so"`; do cp ${x} ${x/x86_64/haswell}; done
  - qmake STIGQter.pro
  - sed -i -e 's:-O2:-O0 -fprofile-arcs -ftest-coverage:g' -e 's:-Wl,-O1:-Wl,-O1 -lgcov --coverage:g' Makefile
- - make -j2
- - for x in src/*.cpp; do LC_ALL=en gcov --branch-probabilities --branch-counts ${x} -o .; done
- - make clean
  - build-wrapper-linux-x86-64 --out-dir bw-output make
+ - for x in src/*.cpp; do LC_ALL=en gcov --branch-probabilities --branch-counts ${x} -o .; done
+ - xvfb-run ./STIGQter.exe tests
  - sonar-scanner
