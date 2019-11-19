@@ -143,7 +143,7 @@ DbManager::~DbManager()
     if (_delayCommit)
     {
         QSqlDatabase db;
-        if (this->CheckDatabase(db))
+        if (CheckDatabase(db))
         {
             db.commit();
         }
@@ -169,7 +169,7 @@ void DbManager::DelayCommit(bool delay)
     if (delay)
     {
         QSqlDatabase db;
-        if (this->CheckDatabase(db))
+        if (CheckDatabase(db))
         {
             QSqlQuery q(db);
             q.prepare(QStringLiteral("PRAGMA journal_mode = OFF"));
@@ -181,7 +181,7 @@ void DbManager::DelayCommit(bool delay)
     else
     {
         QSqlDatabase db;
-        if (this->CheckDatabase(db))
+        if (CheckDatabase(db))
         {
             QSqlQuery q(db);
             q.prepare(QStringLiteral("PRAGMA journal_mode = ON"));
@@ -223,7 +223,7 @@ bool DbManager::AddAsset(Asset &asset)
 {
     QSqlDatabase db;
     bool ret = false;
-    if (this->CheckDatabase(db))
+    if (CheckDatabase(db))
     {
         QSqlQuery q(db);
 
@@ -275,7 +275,7 @@ bool DbManager::AddCCI(CCI &cci)
 {
     QSqlDatabase db;
     bool ret = false;
-    if (this->CheckDatabase(db))
+    if (CheckDatabase(db))
     {
         QSqlQuery q(db);
 
@@ -366,7 +366,7 @@ bool DbManager::AddControl(const QString &control, const QString &title, const Q
     if (f.id >= 0)
     {
         QSqlDatabase db;
-        if (this->CheckDatabase(db))
+        if (CheckDatabase(db))
         {
             QSqlQuery q(db);
             q.prepare(QStringLiteral("INSERT INTO Control (FamilyId, number, enhancement, title, description) VALUES(:FamilyId, :number, :enhancement, :title, :description)"));
@@ -427,7 +427,7 @@ bool DbManager::AddFamily(const QString &acronym, const QString &description)
 {
     QSqlDatabase db;
     bool ret = false;
-    if (this->CheckDatabase(db))
+    if (CheckDatabase(db))
     {
         QSqlQuery q(db);
         q.prepare(QStringLiteral("INSERT INTO Family (Acronym, Description) VALUES(:acronym, :description)"));
@@ -458,7 +458,7 @@ bool DbManager::AddSTIG(STIG stig, QList<STIGCheck> checks, bool stigExists)
     bool ret = false;
     bool stigCheckRet = true; //turns "false" if a check fails to be added
     int cci366Id = -1;
-    if (this->CheckDatabase(db))
+    if (CheckDatabase(db))
     {
         QSqlQuery q(db);
         if (stig.id <= 0)
@@ -588,7 +588,7 @@ bool DbManager::AddSTIGToAsset(const STIG &stig, const Asset &asset)
 {
     QSqlDatabase db;
     bool ret = false;
-    if (this->CheckDatabase(db))
+    if (CheckDatabase(db))
     {
         //check if Asset and STIG exist
         Asset tmpAsset = GetAsset(asset);
@@ -643,7 +643,7 @@ bool DbManager::DeleteAsset(const Asset &asset)
         return ret;
     }
     QSqlDatabase db;
-    if (this->CheckDatabase(db))
+    if (CheckDatabase(db))
     {
         QSqlQuery q(db);
         q.prepare(QStringLiteral("DELETE FROM Asset WHERE id = :AssetId"));
@@ -666,7 +666,7 @@ bool DbManager::DeleteCCIs()
 {
     QSqlDatabase db;
     bool ret = false;
-    if (this->CheckDatabase(db))
+    if (CheckDatabase(db))
     {
         ret = true; //assume success until one of the queries fails.
         QSqlQuery q(db);
@@ -708,7 +708,7 @@ bool DbManager::DeleteEmassImport()
 {
     QSqlDatabase db;
     bool ret = false;
-    if (this->CheckDatabase(db))
+    if (CheckDatabase(db))
     {
         QSqlQuery q(db);
         q.prepare(QStringLiteral("UPDATE CCI SET isImport = 0, importCompliance = NULL, importDateTested = NULL, importTestedBy = NULL, importTestResults = NULL, importCompliance2 = NULL, importDateTested2 = NULL, importTestedBy2 = NULL, importTestResults2 = NULL, importControlImplementationStatus = NULL, importSecurityControlDesignation = NULL, importInherited = NULL, importApNum = NULL, importImplementationGuidance = NULL, importAssessmentProcedures = NULL"));
@@ -729,7 +729,7 @@ bool DbManager::DeleteSTIG(int id)
 {
     QSqlDatabase db;
     bool ret = false;
-    if (this->CheckDatabase(db))
+    if (CheckDatabase(db))
     {
         //check if this STIG is used by any Assets
         STIG tmpStig = GetSTIG(id);
@@ -785,7 +785,7 @@ bool DbManager::DeleteSTIGFromAsset(const STIG &stig, const Asset &asset)
 {
     QSqlDatabase db;
     bool ret = false;
-    if (this->CheckDatabase(db))
+    if (CheckDatabase(db))
     {
         //make sure the STIG and Asset exist in th database
         STIG tmpSTIG = GetSTIG(stig);
@@ -915,7 +915,7 @@ QList<Asset> DbManager::GetAssets(const QString &whereClause, const QList<std::t
 {
     QSqlDatabase db;
     QList<Asset> ret;
-    if (this->CheckDatabase(db))
+    if (CheckDatabase(db))
     {
         QSqlQuery q(db);
         QString toPrep = QStringLiteral("SELECT Asset.`id`, Asset.`assetType`, Asset.`hostName`, Asset.`hostIP`, Asset.`hostMAC`, Asset.`hostFQDN`, Asset.`techArea`, Asset.`targetKey`, Asset.`webOrDatabase`, Asset.`webDBSite`, Asset.`webDBInstance`");
@@ -1008,7 +1008,7 @@ QList<CCI> DbManager::GetCCIs(int STIGCheckId)
 {
     QList<CCI> ret;
     QSqlDatabase db;
-    if (this->CheckDatabase(db))
+    if (CheckDatabase(db))
     {
         QSqlQuery q(db);
         q.prepare(QStringLiteral("SELECT CCIId FROM STIGCheckCCI WHERE STIGCheckCCI.STIGCheckId = :STIGCheckId"));
@@ -1134,7 +1134,7 @@ QList<CCI> DbManager::GetCCIs(const QString &whereClause, const QList<std::tuple
 {
     QSqlDatabase db;
     QList<CCI> ret;
-    if (this->CheckDatabase(db))
+    if (CheckDatabase(db))
     {
         QSqlQuery q(db);
         QString toPrep = QStringLiteral("SELECT id, ControlId, cci, definition, isImport, importCompliance, importDateTested, importTestedBy, importTestResults, importCompliance2, importDateTested2, importTestedBy2, importTestResults2, importControlImplementationStatus, importSecurityControlDesignation, importInherited, importApNum, importImplementationGuidance, importAssessmentProcedures FROM CCI");
@@ -1319,7 +1319,7 @@ QList<CKLCheck> DbManager::GetCKLChecks(const QString &whereClause, const QList<
 {
     QSqlDatabase db;
     QList<CKLCheck> ret;
-    if (this->CheckDatabase(db))
+    if (CheckDatabase(db))
     {
         QSqlQuery q(db);
         QString toPrep = QStringLiteral("SELECT CKLCheck.id, CKLCheck.AssetId, CKLCheck.STIGCheckId, CKLCheck.status, CKLCheck.findingDetails, CKLCheck.comments, CKLCheck.severityOverride, CKLCheck.severityJustification FROM CKLCheck");
@@ -1474,7 +1474,7 @@ QList<STIGCheck> DbManager::GetSTIGChecks(const QString &whereClause, const QLis
 {
     QSqlDatabase db;
     QList<STIGCheck> ret;
-    if (this->CheckDatabase(db))
+    if (CheckDatabase(db))
     {
         QSqlQuery q(db);
         QString toPrep = QStringLiteral("SELECT `id`, `STIGId`, `rule`, `vulnNum`, `groupTitle`, `ruleVersion`, `severity`, `weight`, `title`, `vulnDiscussion`, `falsePositives`, `falseNegatives`, `fix`, `check`, `documentable`, `mitigations`, `severityOverrideGuidance`, `checkContentRef`, `potentialImpact`, `thirdPartyTools`, `mitigationControl`, `responsibility`, `IAControls`, `targetKey` FROM STIGCheck");
@@ -1582,7 +1582,7 @@ QList<STIG> DbManager::GetSTIGs(const QString &whereClause, const QList<std::tup
 {
     QSqlDatabase db;
     QList<STIG> ret;
-    if (this->CheckDatabase(db))
+    if (CheckDatabase(db))
     {
         QSqlQuery q(db);
         QString toPrep = QStringLiteral("SELECT id, title, description, release, version, benchmarkId, fileName FROM STIG");
@@ -1744,7 +1744,7 @@ QList<Control> DbManager::GetControls(const QString &whereClause, const QList<st
 {
     QSqlDatabase db;
     QList<Control> ret;
-    if (this->CheckDatabase(db))
+    if (CheckDatabase(db))
     {
         QSqlQuery q(db);
         QString toPrep = QStringLiteral("SELECT Control.id, Control.FamilyId, Control.number, Control.enhancement, Control.title, Control.description FROM Control JOIN Family ON Family.id = Control.FamilyId");
@@ -1863,7 +1863,7 @@ QList<Family> DbManager::GetFamilies(const QString &whereClause, const QList<std
 {
     QSqlDatabase db;
     QList<Family> ret;
-    if (this->CheckDatabase(db))
+    if (CheckDatabase(db))
     {
         QSqlQuery q(db);
         QString toPrep = QStringLiteral("SELECT Family.id, Family.acronym, Family.description FROM Family");
@@ -1967,7 +1967,7 @@ QString DbManager::GetVariable(const QString &name)
 {
     QSqlDatabase db;
     QString ret = QString();
-    if (this->CheckDatabase(db))
+    if (CheckDatabase(db))
     {
         QSqlQuery q(db);
         q.prepare(QStringLiteral("SELECT value FROM variables WHERE name = :name"));
@@ -1989,7 +1989,7 @@ QString DbManager::GetVariable(const QString &name)
 bool DbManager::IsEmassImport()
 {
     QSqlDatabase db;
-    if (this->CheckDatabase(db))
+    if (CheckDatabase(db))
     {
         QSqlQuery q(db);
         q.prepare(QStringLiteral("SELECT COUNT(*) FROM CCI WHERE isImport > 0"));
@@ -2085,7 +2085,7 @@ bool DbManager::UpdateAsset(const Asset &asset)
     {
         QSqlDatabase db;
         ret = true;
-        if (this->CheckDatabase(db))
+        if (CheckDatabase(db))
         {
             QSqlQuery q(db);
             //NOTE: The new values use the provided "cci" while the WHERE clause uses the Database-identified "tmpCCI".
@@ -2121,7 +2121,7 @@ bool DbManager::UpdateCCI(const CCI &cci)
     {
         QSqlDatabase db;
         ret = true;
-        if (this->CheckDatabase(db))
+        if (CheckDatabase(db))
         {
             QSqlQuery q(db);
             //NOTE: The new values use the provided "cci" while the WHERE clause uses the Database-identified "tmpCCI".
@@ -2165,7 +2165,7 @@ bool DbManager::UpdateCKLCheck(const CKLCheck &check)
     {
         QSqlDatabase db;
         ret = true;
-        if (this->CheckDatabase(db))
+        if (CheckDatabase(db))
         {
             QSqlQuery q(db);
             //NOTE: The new values use the provided "check" while the WHERE clause uses the Database-identified "tmpCheck".
@@ -2196,7 +2196,7 @@ bool DbManager::UpdateSTIGCheck(const STIGCheck &check)
     {
         QSqlDatabase db;
         ret = true;
-        if (this->CheckDatabase(db))
+        if (CheckDatabase(db))
         {
             QSqlQuery q(db);
             //NOTE: The new values use the provided "check" while the WHERE clause uses the Database-identified "tmpCheck".
@@ -2252,7 +2252,7 @@ bool DbManager::UpdateVariable(const QString &name, const QString &value)
 {
     QSqlDatabase db;
     bool ret = false;
-    if (this->CheckDatabase(db))
+    if (CheckDatabase(db))
     {
         QSqlQuery q(db);
         q.prepare(QStringLiteral("UPDATE variables SET value = :value WHERE name = :name"));
@@ -2294,7 +2294,7 @@ bool DbManager::UpdateDatabaseFromVersion(int version)
 {
     QSqlDatabase db;
     bool ret = false;
-    if (this->CheckDatabase(db))
+    if (CheckDatabase(db))
     {
         ret = true; //assume success from here
 
