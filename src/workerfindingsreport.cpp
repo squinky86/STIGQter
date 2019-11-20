@@ -127,7 +127,7 @@ void WorkerFindingsReport::process()
     //write headers for Controls
     worksheet_write_string(wsControls, 0, 0, "Control", fmtBold);
     worksheet_set_column(wsControls, 1, 1, 50, nullptr);
-    worksheet_write_string(wsControls, 0, 0, "CCI(s)", fmtBold);
+    worksheet_write_string(wsControls, 0, 1, "Compliance Status", fmtBold);
 
     //write each failed check
     for (int i = 0; i < numChecks; i++)

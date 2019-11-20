@@ -32,7 +32,6 @@ int main(int argc, char *argv[])
 #ifdef USE_TESTS
     bool tests = false;
 
-
     for (int i = 0; i < argc; i++)
     {
         if (std::string_view(argv[i]) == "tests")
