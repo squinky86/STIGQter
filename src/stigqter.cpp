@@ -132,6 +132,15 @@ STIGQter::~STIGQter()
 }
 
 /**
+ * @brief STIGQter::isEnabled
+ * @return true when quit button is disabled; otherwise, false
+ */
+bool STIGQter::isEnabled()
+{
+    return ui->btnQuit->isEnabled();
+}
+
+/**
  * @brief STIGQter::UpdateCCIs
  *
  * Start a thread to update the @a Family, @a Control, and @a CCI

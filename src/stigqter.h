@@ -37,6 +37,7 @@ class STIGQter : public QMainWindow
 public:
     explicit STIGQter(QWidget *parent = nullptr);
     ~STIGQter();
+    bool isEnabled();
 
 private slots:
 

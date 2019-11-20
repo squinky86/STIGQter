@@ -19,6 +19,7 @@
 
 #include "stigqter.h"
 #include <QApplication>
+#include <QThread>
 #include <cstdlib>
 
 int main(int argc, char *argv[])
@@ -39,6 +40,23 @@ int main(int argc, char *argv[])
     if (tests)
     {
         //run tests
+
+        //test 1 - index CCIs
+        QMetaObject::invokeMethod(&w, "UpdateCCIs", Qt::DirectConnection);
+        while (!w.isEnabled())
+        {
+            QThread::sleep(1);
+            a.processEvents();
+        }
+
+        //test 2 - delete CCIs
+        QMetaObject::invokeMethod(&w, "DeleteCCIs", Qt::DirectConnection);
+        while (!w.isEnabled())
+        {
+            QThread::sleep(1);
+            a.processEvents();
+        }
+
         w.close();
         exit(EXIT_SUCCESS);
     }
