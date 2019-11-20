@@ -132,10 +132,10 @@ STIGQter::~STIGQter()
 }
 
 /**
- * @brief STIGQter::isEnabled
+ * @brief STIGQter::isProcessingEnabled
  * @return true when quit button is disabled; otherwise, false
  */
-bool STIGQter::isEnabled()
+bool STIGQter::isProcessingEnabled()
 {
     return ui->btnQuit->isEnabled();
 }

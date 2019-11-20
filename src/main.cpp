@@ -26,7 +26,12 @@ int main(int argc, char *argv[])
 {
     QApplication a(argc, argv);
 
+    STIGQter w;
+    w.show();
+
+#ifdef USE_TESTS
     bool tests = false;
+
 
     for (int i = 0; i < argc; i++)
     {
@@ -34,16 +39,13 @@ int main(int argc, char *argv[])
             tests = true;
     }
 
-    STIGQter w;
-    w.show();
-
     if (tests)
     {
         //run tests
 
         //test 1 - index CCIs
         QMetaObject::invokeMethod(&w, "UpdateCCIs", Qt::DirectConnection);
-        while (!w.isEnabled())
+        while (!w.isProcessingEnabled())
         {
             QThread::sleep(1);
             a.processEvents();
@@ -51,7 +53,7 @@ int main(int argc, char *argv[])
 
         //test 2 - delete CCIs
         QMetaObject::invokeMethod(&w, "DeleteCCIs", Qt::DirectConnection);
-        while (!w.isEnabled())
+        while (!w.isProcessingEnabled())
         {
             QThread::sleep(1);
             a.processEvents();
@@ -60,6 +62,7 @@ int main(int argc, char *argv[])
         w.close();
         exit(EXIT_SUCCESS);
     }
+#endif
 
     return a.exec();
 }
