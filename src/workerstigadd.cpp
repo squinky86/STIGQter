@@ -272,7 +272,6 @@ void WorkerSTIGAdd::ParseSTIG(const QByteArray &stig, const QString &fileName)
 
 WorkerSTIGAdd::WorkerSTIGAdd(QObject *parent) : QObject(parent)
 {
-
 }
 
 void WorkerSTIGAdd::AddSTIGs(const QStringList &stigs)

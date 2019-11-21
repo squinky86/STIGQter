@@ -557,7 +557,7 @@ bool DbManager::AddSTIG(STIG stig, QList<STIGCheck> checks, bool stigExists)
                     q.prepare(QStringLiteral("INSERT INTO STIGCheckCCI (`STIGCheckId`, `CCIId`) VALUES(:STIGCheckId, :CCIId)"));
                     q.bindValue(QStringLiteral(":STIGCheckId"), STIGCheckId);
                     q.bindValue(QStringLiteral(":CCIId"), cciId);
-                    tmpRet = q.exec() && tmpRet;
+                    ret = q.exec() && ret;
                 }
             }
         }
