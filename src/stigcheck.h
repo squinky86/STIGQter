@@ -44,6 +44,7 @@ class STIGCheck : public QObject
 public:
     STIGCheck(const STIGCheck& right);
     explicit STIGCheck(QObject *parent = nullptr);
+    ~STIGCheck() override = default;
     STIGCheck& operator=(const STIGCheck &right);
 
     int id;

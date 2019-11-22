@@ -33,7 +33,7 @@ class Asset : public QObject
     Q_OBJECT
 public:
     Asset(const Asset &asset);
-    Asset(Asset const&& orig) noexcept;
+    Asset(Asset &&orig) noexcept;
     ~Asset() override = default;
     explicit Asset(QObject *parent = nullptr);
     Asset& operator=(const Asset &right);

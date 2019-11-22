@@ -32,6 +32,7 @@ class CCI : public QObject
 public:
     CCI(const CCI &right);
     explicit CCI(QObject *parent = nullptr);
+    ~CCI() override = default;
     int id;
     Control GetControl() const;
     int controlId;

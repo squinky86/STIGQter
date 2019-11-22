@@ -45,6 +45,7 @@ class CKLCheck : public QObject
 public:
     CKLCheck(const CKLCheck &right);
     explicit CKLCheck(QObject *parent = nullptr);
+    ~CKLCheck() override = default;
     int id;
     int assetId;
     int stigCheckId;

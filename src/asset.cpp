@@ -67,7 +67,7 @@ Asset::Asset(const Asset &asset) : Asset(asset.parent())
  *
  * Move constructor.
  */
-Asset::Asset(Asset const &&orig) noexcept :
+Asset::Asset(Asset &&orig) noexcept :
     id(orig.id),
     assetType(std::move(orig.assetType)),
     hostName(std::move(orig.hostName)),

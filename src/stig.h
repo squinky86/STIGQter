@@ -33,6 +33,7 @@ class STIG : public QObject
 public:
     STIG(const STIG &right);
     explicit STIG(QObject *parent = nullptr);
+    ~STIG() override = default;
 
     int id;
     QString title;

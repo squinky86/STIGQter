@@ -31,6 +31,7 @@ class Control : public QObject
 public:
     Control(const Control &right);
     explicit Control(QObject *parent = nullptr);
+    ~Control() override = default;
     int id;
     int familyId;
     Family GetFamily() const;

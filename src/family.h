@@ -29,6 +29,7 @@ class Family : public QObject
 public:
     Family(const Family &right);
     explicit Family(QObject *parent = nullptr);
+    ~Family() override = default;
     int id;
     QString acronym;
     QString description;

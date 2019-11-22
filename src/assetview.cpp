@@ -54,7 +54,7 @@
  *
  * Main constructor.
  */
-AssetView::AssetView(const Asset &asset, QWidget *parent) :
+AssetView::AssetView(Asset &asset, QWidget *parent) :
     QWidget(parent),
     ui(new Ui::AssetView),
     _asset(std::move(asset)),
