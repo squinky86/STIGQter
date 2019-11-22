@@ -98,38 +98,39 @@ DbManager::DbManager(const QString& connectionName) : DbManager(
  */
 DbManager::DbManager(const QString& path, const QString& connectionName)
 {
-    _dbPath = path;
-    bool initialize = false;
-    _delayCommit = false;
-
-    QFileInfo fi(path);
-    if (!fi.absoluteDir().exists())
-    {
-        fi.absoluteDir().mkpath(QStringLiteral("."));
-    }
-
-    //check if database file exists or create it
-    if (!QFile::exists(path))
-        initialize = true;
-
-    //open SQLite Database
     QSqlDatabase db = QSqlDatabase::database(connectionName);
+
     if (!db.isValid())
     {
+        _dbPath = path;
+        bool initialize = false;
+        _delayCommit = false;
+
+        QFileInfo fi(path);
+        if (!fi.absoluteDir().exists())
+        {
+            fi.absoluteDir().mkpath(QStringLiteral("."));
+        }
+
+        //check if database file exists or create it
+        if (!QFile::exists(path))
+            initialize = true;
+
         db = QSqlDatabase::addDatabase(QStringLiteral("QSQLITE"), connectionName);
         db.setDatabaseName(path);
+
+        if (initialize)
+            UpdateDatabaseFromVersion(0);
+
+        int version = GetVariable(QStringLiteral("version")).toInt();
+        UpdateDatabaseFromVersion(version);
+
     }
 
     if (!db.open())
     {
         Warning(QStringLiteral("Unable to Open DB"), "Unable to open DB " + path);
     }
-
-    if (initialize)
-        UpdateDatabaseFromVersion(0);
-
-    int version = GetVariable(QStringLiteral("version")).toInt();
-    UpdateDatabaseFromVersion(version);
 }
 
 /**
