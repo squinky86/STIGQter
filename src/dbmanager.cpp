@@ -124,7 +124,6 @@ DbManager::DbManager(const QString& path, const QString& connectionName)
 
         int version = GetVariable(QStringLiteral("version")).toInt();
         UpdateDatabaseFromVersion(version);
-
     }
 
     if (!db.open())
@@ -458,10 +457,12 @@ bool DbManager::AddSTIG(STIG stig, QList<STIGCheck> checks, bool stigExists)
     QSqlDatabase db;
     bool ret = false;
     bool stigCheckRet = true; //turns "false" if a check fails to be added
-    int cci366Id = -1;
+
     if (CheckDatabase(db))
     {
         QSqlQuery q(db);
+        int cci366Id = -1;
+
         if (stig.id <= 0)
         {
             STIG tmpSTIG = GetSTIG(stig.title, stig.version, stig.release);
@@ -641,18 +642,21 @@ bool DbManager::DeleteAsset(const Asset &asset)
     if (asset.GetSTIGs().count() > 0)
     {
         Warning(QStringLiteral("Asset Has Mapped STIGs"), "The Asset '" + PrintAsset(asset) + "' has STIGs selected that must be removed.");
-        return ret;
     }
-    QSqlDatabase db;
-    if (CheckDatabase(db))
+    else
     {
-        QSqlQuery q(db);
-        q.prepare(QStringLiteral("DELETE FROM Asset WHERE id = :AssetId"));
-        q.bindValue(QStringLiteral(":AssetId"), asset.id);
-        ret = q.exec();
-        if (!_delayCommit)
-            db.commit();
+        QSqlDatabase db;
+        if (CheckDatabase(db))
+        {
+            QSqlQuery q(db);
+            q.prepare(QStringLiteral("DELETE FROM Asset WHERE id = :AssetId"));
+            q.bindValue(QStringLiteral(":AssetId"), asset.id);
+            ret = q.exec();
+            if (!_delayCommit)
+                db.commit();
+        }
     }
+
     return ret;
 }
 
@@ -1514,7 +1518,7 @@ QList<STIGCheck> DbManager::GetSTIGChecks(const QString &whereClause, const QLis
             c.potentialImpact = q.value(18).toString();
             c.thirdPartyTools = q.value(19).toString();
             c.mitigationControl = q.value(20).toString();
-            c.thirdPartyTools = q.value(21).toString();
+            c.responsibility = q.value(21).toString();
             c.iaControls = q.value(22).toString();
             c.targetKey = q.value(23).toString();
             foreach (CCI cci, GetCCIs(c.id))
@@ -1663,12 +1667,11 @@ Control DbManager::GetControl(const QString &control)
     }
     QString family(tmpControl.left(2));
     tmpControl = tmpControl.right(tmpControl.length()-3);
-    QString enhancement = QString();
     int enhancementInt = -1;
     if (tmpControl.contains('('))
     {
         int tmpIndex = tmpControl.indexOf('(');
-        enhancement = tmpControl.right(tmpControl.length() - tmpIndex - 1);
+        QString enhancement = tmpControl.right(tmpControl.length() - tmpIndex - 1);
         enhancement = enhancement.left(enhancement.length() - 1);
         tmpControl = tmpControl.left(tmpControl.indexOf('('));
         enhancementInt = enhancement.toInt(); //will return 0 if enhancement doesn't exist
