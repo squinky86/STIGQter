@@ -328,62 +328,63 @@ bool DbManager::AddControl(const QString &control, const QString &title, const Q
     QString tmpControl(control.trimmed());
     if (tmpControl.length() < 4)
     {
-        //control length can't store the family an a control number.
+        //control length can't store the family and a control number.
         Warning(QStringLiteral("Control Does Not Exist"), "Received bad control, \"" + control + "\".", true);
-        return ret;
-    }
-
-    //see if there are spaces
-    int tmpIndex = tmpControl.indexOf(' ');
-    if (tmpIndex > 0)
-    {
-        //see if there's a second space
-        tmpIndex = tmpControl.indexOf(' ', tmpIndex+1);
-        if (tmpIndex > 0)
-        {
-            tmpControl = tmpControl.left(tmpIndex+1).trimmed();
-        }
-    }
-
-    QString family(tmpControl.left(2));
-    tmpControl = tmpControl.right(tmpControl.length()-3);
-    QString enhancement = QString();
-    if (tmpControl.contains('('))
-    {
-        //Attempt to parse the parenthesised portion of the control as an enhancement
-        int tmpIndex = tmpControl.indexOf('(');
-        enhancement = tmpControl.right(tmpControl.length() - tmpIndex - 1);
-        enhancement = enhancement.left(enhancement.length() - 1);
-        tmpControl = tmpControl.left(tmpControl.indexOf('('));
-        //if it's not an integral, remove the enhancement
-        if (enhancement.toInt() == 0)
-            enhancement = QString();
-    }
-
-    //The family should already be in the database.
-    Family f = GetFamily(family);
-
-    if (f.id >= 0)
-    {
-        QSqlDatabase db;
-        if (CheckDatabase(db))
-        {
-            QSqlQuery q(db);
-            q.prepare(QStringLiteral("INSERT INTO Control (FamilyId, number, enhancement, title, description) VALUES(:FamilyId, :number, :enhancement, :title, :description)"));
-            q.bindValue(QStringLiteral(":FamilyId"), f.id);
-            q.bindValue(QStringLiteral(":number"), tmpControl.toInt());
-            q.bindValue(QStringLiteral(":enhancement"), enhancement.isEmpty() ? QVariant(QVariant::Int) : enhancement.toInt());
-            q.bindValue(QStringLiteral(":title"), title);
-            q.bindValue(QStringLiteral(":description"), description);
-            ret = q.exec();
-            if (!_delayCommit)
-                db.commit();
-        }
     }
     else
     {
-        //Family was not found in the database.
-        Warning(QStringLiteral("Family Does Not Exist"), "The Family " + family + " does not exist in the database.");
+        //see if there are spaces
+        int tmpIndex = tmpControl.indexOf(' ');
+        if (tmpIndex > 0)
+        {
+            //see if there's a second space
+            tmpIndex = tmpControl.indexOf(' ', tmpIndex+1);
+            if (tmpIndex > 0)
+            {
+                tmpControl = tmpControl.left(tmpIndex+1).trimmed();
+            }
+        }
+
+        QString family(tmpControl.left(2));
+        tmpControl = tmpControl.right(tmpControl.length()-3);
+        QString enhancement = QString();
+        if (tmpControl.contains('('))
+        {
+            //Attempt to parse the parenthesised portion of the control as an enhancement
+            int tmpIndex = tmpControl.indexOf('(');
+            enhancement = tmpControl.right(tmpControl.length() - tmpIndex - 1);
+            enhancement = enhancement.left(enhancement.length() - 1);
+            tmpControl = tmpControl.left(tmpControl.indexOf('('));
+            //if it's not an integral, remove the enhancement
+            if (enhancement.toInt() == 0)
+                enhancement = QString();
+        }
+
+        //The family should already be in the database.
+        Family f = GetFamily(family);
+
+        if (f.id >= 0)
+        {
+            QSqlDatabase db;
+            if (CheckDatabase(db))
+            {
+                QSqlQuery q(db);
+                q.prepare(QStringLiteral("INSERT INTO Control (FamilyId, number, enhancement, title, description) VALUES(:FamilyId, :number, :enhancement, :title, :description)"));
+                q.bindValue(QStringLiteral(":FamilyId"), f.id);
+                q.bindValue(QStringLiteral(":number"), tmpControl.toInt());
+                q.bindValue(QStringLiteral(":enhancement"), enhancement.isEmpty() ? QVariant(QVariant::Int) : enhancement.toInt());
+                q.bindValue(QStringLiteral(":title"), title);
+                q.bindValue(QStringLiteral(":description"), description);
+                ret = q.exec();
+                if (!_delayCommit)
+                    db.commit();
+            }
+        }
+        else
+        {
+            //Family was not found in the database.
+            Warning(QStringLiteral("Family Does Not Exist"), "The Family " + family + " does not exist in the database.");
+        }
     }
 
     return ret;
