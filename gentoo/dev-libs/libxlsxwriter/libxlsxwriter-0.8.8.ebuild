@@ -24,8 +24,10 @@ src_prepare() {
 		if ! [[ "${x}" =~ ^en* ]]; then
 			#non-english locale detected; apply l10n patch
 			epatch "${FILESDIR}/libxlsxwriter-0.8.7-double-function.patch"
+			break
 		fi
 	done
+	cmake-utils_src_prepare
 }
 
 src_configure() {
