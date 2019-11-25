@@ -18,6 +18,7 @@ before_install:
  - wget https://github.com/jmcnamara/libxlsxwriter/archive/RELEASE_0.8.8.tar.gz
  - tar -zxf RELEASE_0.8.8.tar.gz
  - pushd libxlsxwriter-RELEASE_0.8.8 && make && sudo make install INSTALL_DIR=/usr && popd
+ - pip install --user cpp-coveralls
 
 script:
  - sed -i -e 's:INCLUDEPATH[ ]*=[ ]*:INCLUDEPATH = /usr/include/tidy :g' STIGQter.pro
@@ -27,5 +28,8 @@ script:
  - sed -i -e 's:-O2:-O0 -fprofile-arcs -ftest-coverage:g' -e 's:-Wl,-O1:-Wl,-O1 -lgcov --coverage:g' Makefile
  - build-wrapper-linux-x86-64 --out-dir bw-output make
  - ./STIGQter tests
+
+after_success:
  - for x in src/*.cpp; do LC_ALL=en gcov --branch-probabilities --branch-counts ${x} -o .; done
+ - coveralls --gcov-options '\-lp'
  - sonar-scanner
