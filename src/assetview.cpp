@@ -139,7 +139,7 @@ void AssetView::Display()
 void AssetView::SelectSTIGs()
 {
     DbManager db;
-    //ui->lstSTIGs->blockSignals(true);
+
     ui->lstSTIGs->clear();
     QList<STIG> stigs = _asset.GetSTIGs();
     foreach (const STIG s, db.GetSTIGs())
@@ -149,7 +149,6 @@ void AssetView::SelectSTIGs()
         i->setData(Qt::UserRole, QVariant::fromValue<STIG>(s));
         i->setSelected(stigs.contains(s));
     }
-    //ui->lstSTIGs->blockSignals(false);
 }
 
 /**
@@ -413,7 +412,6 @@ void AssetView::ImportXCCDF()
                     if (ckl.id < 0)
                     {
                         warnings.push_back(onCheck.toString());
-                        //Warning(QStringLiteral("Unable to Find Check"), QStringLiteral("The CKLCheck '") + onCheck + QStringLiteral("' was not found in this STIG."));
                     }
                     else
                     {

@@ -3,7 +3,7 @@
 
 EAPI=7
 
-inherit cmake-utils
+inherit cmake-utils l10n
 
 DESCRIPTION="Libxlsxwriter is a C library for creating Excel XLSX files."
 HOMEPAGE="http://libxlsxwriter.github.io/"
@@ -18,6 +18,15 @@ S="${WORKDIR}/${PN}-RELEASE_${PV}"
 DEPEND="sys-libs/zlib
 	minizip? ( sys-libs/zlib[minizip] )"
 RDEPEND="${DEPEND}"
+
+src_prepare() {
+	for x in $(l10n_get_locales); do
+		if ! [[ "${x}" =~ ^en* ]]; then
+			#non-english locale detected; apply l10n patch
+			epatch "${FILESDIR}/libxlsxwriter-0.8.7-double-function.patch"
+		fi
+	done
+}
 
 src_configure() {
 	local mycmakeargs=(
