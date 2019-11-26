@@ -99,10 +99,10 @@ DbManager::DbManager(const QString& connectionName) : DbManager(
 DbManager::DbManager(const QString& path, const QString& connectionName)
 {
     QSqlDatabase db = QSqlDatabase::database(connectionName);
+    _dbPath = path;
 
     if (!db.isValid())
     {
-        _dbPath = path;
         bool initialize = false;
         _delayCommit = false;
 
@@ -2042,6 +2042,7 @@ bool DbManager::SaveDB(const QString &path)
 {
     QFile source(_dbPath);
     QFile dest(path);
+
     if (source.open(QFile::ReadOnly) && dest.open(QFile::WriteOnly))
     {
         dest.write(qCompress(source.readAll(), 9));
