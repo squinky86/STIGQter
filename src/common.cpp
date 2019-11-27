@@ -160,7 +160,7 @@ QString DownloadPage(const QUrl &url)
     event.exec();
 
     //read the response and return its contents
-    QString html = response->readAll();
+    QString html = QString::fromLatin1(response->readAll());
     delete response;
     return html;
 }
@@ -209,7 +209,7 @@ QMap<QString, QByteArray> GetFilesFromZip(const QString &fileName, const QString
         {
             if (zip_stat_index(za, i, 0, &sb) == 0)
             {
-                QString name(sb.name);
+                QString name(QString::fromLatin1(sb.name));
                 if (!fileNameFilter.isNull() && !fileNameFilter.isEmpty() && !name.endsWith(fileNameFilter, Qt::CaseInsensitive))
                 {
                     continue;
@@ -360,7 +360,7 @@ QString TrimFileName(const QString &fileName)
 void Warning(const QString &title, const QString &message, const bool quiet)
 {
     qDebug() << title << ": " << message << endl;
-    if (!IgnoreWarnings && !quiet && (QThread::currentThread() == QApplication::instance()->thread())) //make sure we're in the GUI thread before popping a messagae box
+    if (!IgnoreWarnings && !quiet && (QThread::currentThread() == QApplication::instance()->thread())) //make sure we're in the GUI thread before popping a message box
     {
         int ret = QMessageBox::warning(nullptr, title, message, QMessageBox::Ignore | QMessageBox::Ok);
         //if ignoring messages, move to quiet mode

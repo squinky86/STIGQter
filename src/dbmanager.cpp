@@ -920,7 +920,7 @@ Asset DbManager::GetAsset(const Asset &asset)
  */
 Asset DbManager::GetAsset(int id)
 {
-    QList<Asset> tmp = GetAssets(QStringLiteral("WHERE Asset.id = :id"), {std::make_tuple<QString, QVariant>(":id", id)});
+    QList<Asset> tmp = GetAssets(QStringLiteral("WHERE Asset.id = :id"), {std::make_tuple<QString, QVariant>(QStringLiteral(":id"), id)});
     if (tmp.count() > 0)
         return tmp.first();
     QMessageBox::warning(nullptr, QStringLiteral("Unable to Find Asset"), "The Asset ID " + QString::number(id) + " was not found in the database.");
@@ -982,7 +982,7 @@ QList<Asset> DbManager::GetAssets(const QString &whereClause, const QList<std::t
     {
         QSqlQuery q(db);
         QString toPrep = QStringLiteral("SELECT Asset.`id`, Asset.`assetType`, Asset.`hostName`, Asset.`hostIP`, Asset.`hostMAC`, Asset.`hostFQDN`, Asset.`techArea`, Asset.`targetKey`, Asset.`webOrDatabase`, Asset.`webDBSite`, Asset.`webDBInstance`");
-        toPrep.append(" FROM Asset");
+        toPrep.append(QStringLiteral(" FROM Asset"));
         if (!whereClause.isNull() && !whereClause.isEmpty())
             toPrep.append(" " + whereClause);
         toPrep.append(QStringLiteral(" ORDER BY LOWER(hostName), hostName"));

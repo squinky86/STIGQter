@@ -24,7 +24,7 @@
 #include <QFile>
 #include <QNetworkReply>
 
-#define VERSION QLatin1String("1.0.0")
+#define VERSION QStringLiteral("1.0.0")
 
 [[maybe_unused]] static bool IgnoreWarnings = false;
 
@@ -33,10 +33,10 @@ bool DownloadFile(const QUrl &url, QFile *file);
 QString DownloadPage(const QUrl &url);
 QString Excelify(const QString &s);
 int GetCCINumber(QString cci);
-QMap<QString, QByteArray> GetFilesFromZip(const QString &fileName, const QString &fileNameFilter = "");
+QMap<QString, QByteArray> GetFilesFromZip(const QString &fileName, const QString &fileNameFilter = QLatin1String(""));
 int GetReleaseNumber(const QString &release);
 QString GetUserAgent();
-QString Pluralize(const int count, const QString &plural = "s", const QString &singular = "");
+QString Pluralize(const int count, const QString &plural = QStringLiteral("s"), const QString &singular = QLatin1String(""));
 QString PrintTrueFalse(bool tf);
 QString Sanitize(QString s);
 QString SanitizeFile(QString s);

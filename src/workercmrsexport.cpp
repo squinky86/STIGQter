@@ -147,7 +147,7 @@ void WorkerCMRSExport::process()
                 stream.writeCharacters(elementKey);
                 stream.writeEndElement(); //TARGET_KEY
 
-                foreach (CKLCheck c, a.GetCKLChecks(&s))
+                Q_FOREACH (CKLCheck c, a.GetCKLChecks(&s))
                 {
                     STIGCheck s = c.GetSTIGCheck();
 
@@ -203,5 +203,5 @@ void WorkerCMRSExport::process()
     }
 
     Q_EMIT updateStatus(QStringLiteral("Done!"));
-    emit finished();
+    Q_EMIT finished();
 }
