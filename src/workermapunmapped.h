@@ -29,10 +29,10 @@ class WorkerMapUnmapped : public QObject
 public:
     explicit WorkerMapUnmapped(QObject *parent = nullptr);
 
-public slots:
+public Q_SLOTS:
     void process();
 
-signals:
+Q_SIGNALS:
     void initialize(int, int);
     void progress(int);
     void updateStatus(QString);

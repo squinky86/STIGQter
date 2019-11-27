@@ -49,7 +49,7 @@ public:
     void UpdateSTIGCheck(const STIGCheck &stigCheck);
     void SetTabIndex(int index);
 
-private slots:
+private Q_SLOTS:
     void CheckSelected(QListWidgetItem *current, QListWidgetItem *previous);
     void CheckSelectedChanged();
     void CountChecks();
@@ -80,7 +80,7 @@ private:
     void KeyShortcut(Status action);
     void SetItemColor(QListWidgetItem *i, Status stat, Severity sev);
 
-signals:
+Q_SIGNALS:
     void CloseTab(int);
 };
 

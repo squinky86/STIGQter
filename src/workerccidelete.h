@@ -29,10 +29,10 @@ class WorkerCCIDelete : public QObject
 public:
     explicit WorkerCCIDelete(QObject *parent = nullptr);
 
-public slots:
+public Q_SLOTS:
     void process();
 
-signals:
+Q_SIGNALS:
     void initialize(int, int);
     void progress(int);
     void updateStatus(QString);

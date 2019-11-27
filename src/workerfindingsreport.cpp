@@ -79,7 +79,7 @@ void WorkerFindingsReport::process()
     QMap<CCI, QList<CKLCheck>> failedCCIs;
     QList<CKLCheck> checks = db.GetCKLChecks();
     int numChecks = checks.count();
-    emit initialize(numChecks+3, 0);
+    Q_EMIT initialize(numChecks+3, 0);
 
     //new workbook
     lxw_workbook  *wb = workbook_new(_fileName.toStdString().c_str());
@@ -138,8 +138,8 @@ void WorkerFindingsReport::process()
         QList<CCI> ccis = sc.GetCCIs();
         Asset a = cc.GetAsset();
         Status s = cc.status;
-        emit updateStatus("Adding " + PrintAsset(a) + ", " + PrintSTIGCheck(sc) + "…");
-        foreach (CCI c, ccis)
+        Q_EMIT updateStatus("Adding " + PrintAsset(a) + ", " + PrintSTIGCheck(sc) + "…");
+        Q_FOREACH (CCI c, ccis)
         {
             //internal id
             worksheet_write_number(wsFindings, onRow, 0, cc.id, nullptr);
@@ -177,10 +177,10 @@ void WorkerFindingsReport::process()
                     failedCCIs.insert(c, {cc});
             }
         }
-        emit progress(-1);
+        Q_EMIT progress(-1);
     }
 
-    emit initialize(numChecks+failedCCIs.count()*2+1, numChecks);
+    Q_EMIT initialize(numChecks+failedCCIs.count()*2+1, numChecks);
 
     unsigned int onRow = 0;
     QMap<Control, QList<CCI>> failedControls;
@@ -198,7 +198,7 @@ void WorkerFindingsReport::process()
     {
         onRow++;
         CCI c = i.key();
-        emit updateStatus("Adding " + PrintCCI(c) + "…");
+        Q_EMIT updateStatus("Adding " + PrintCCI(c) + "…");
         QList<CKLCheck> checks = i.value();
         if (checks.count() > 1)
             std::sort(checks.begin(), checks.end());
@@ -227,21 +227,21 @@ void WorkerFindingsReport::process()
         QString assets = QString();
         if (checks.count() <= 0)
             assets.append(QStringLiteral("Imported/Documentation Findings"));
-        foreach (CKLCheck cc, checks)
+        Q_FOREACH (CKLCheck cc, checks)
         {
             if (!assets.isEmpty())
                 assets.append("\n");
             assets.append(PrintCKLCheck(cc));
         }
         worksheet_write_string(wsCCIs, onRow, 3, assets.toStdString().c_str(), fmtWrapped);
-        emit progress(-1);
+        Q_EMIT progress(-1);
     }
 
     // build non-compliant Controls worksheet
     onRow = 0;
     for (auto i = failedControls.constBegin(); i != failedControls.constEnd(); i++)
     {
-        emit updateStatus("Adding " + PrintControl(i.key()) + "…");
+        Q_EMIT updateStatus("Adding " + PrintControl(i.key()) + "…");
         onRow++;
         worksheet_write_string(wsControls, onRow, 0, PrintControl(i.key()).toStdString().c_str(), fmtWrapped);
         QString preamble = QStringLiteral("The following CCI");
@@ -257,7 +257,7 @@ void WorkerFindingsReport::process()
         bool notFirst = false;
         for (auto j = i.value().constBegin(); j != i.value().constEnd(); j++)
         {
-            emit progress(-1);
+            Q_EMIT progress(-1);
             if (notFirst)
                 preamble = preamble + QStringLiteral(",");
             preamble = preamble + QStringLiteral(" ") + PrintCCI(*j);
@@ -266,11 +266,11 @@ void WorkerFindingsReport::process()
         worksheet_write_string(wsControls, onRow, 1, preamble.toStdString().c_str(), fmtWrapped);
     }
 
-    emit updateStatus(QStringLiteral("Writing workbook…"));
+    Q_EMIT updateStatus(QStringLiteral("Writing workbook…"));
 
     //close and write the workbook
     workbook_close(wb);
 
-    emit updateStatus(QStringLiteral("Done!"));
-    emit finished();
+    Q_EMIT updateStatus(QStringLiteral("Done!"));
+    Q_EMIT finished();
 }

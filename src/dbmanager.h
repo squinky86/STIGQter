@@ -40,7 +40,11 @@ public:
     explicit DbManager();
     explicit DbManager(const QString& connectionName);
     explicit DbManager(const QString& path, const QString& connectionName);
+    DbManager(const DbManager &db);
+    DbManager(DbManager &&orig) noexcept;
     ~DbManager();
+    DbManager& operator=(const DbManager &right);
+    DbManager& operator=(DbManager &&orig) noexcept;
     void DelayCommit(bool delay);
 
     bool AddAsset(Asset &asset);
@@ -109,7 +113,7 @@ public:
 private:
     bool UpdateDatabaseFromVersion(int version);
     static bool CheckDatabase(QSqlDatabase &db);
-    bool _delayCommit;
+    bool _delayCommit{};
     QString _dbPath;
 };
 

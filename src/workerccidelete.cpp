@@ -48,14 +48,14 @@ WorkerCCIDelete::WorkerCCIDelete(QObject *parent) : QObject(parent)
 void WorkerCCIDelete::process()
 {
     //open database in this thread
-    emit initialize(2, 1);
+    Q_EMIT initialize(2, 1);
     DbManager db;
 
-    emit updateStatus(QStringLiteral("Clearing DB of CCI/RMF information…"));
+    Q_EMIT updateStatus(QStringLiteral("Clearing DB of CCI/RMF information…"));
     db.DeleteCCIs();
-    emit progress(-1);
+    Q_EMIT progress(-1);
 
     //complete
-    emit updateStatus(QStringLiteral("Done!"));
-    emit finished();
+    Q_EMIT updateStatus(QStringLiteral("Done!"));
+    Q_EMIT finished();
 }

@@ -68,9 +68,9 @@ void WorkerCMRSExport::process()
 {
     DbManager db;
     QList<Asset> assets = db.GetAssets();
-    emit initialize(assets.count(), 0);
+    Q_EMIT initialize(assets.count(), 0);
 
-    emit updateStatus(QStringLiteral("Preparing Data…"));
+    Q_EMIT updateStatus(QStringLiteral("Preparing Data…"));
 
     QFile file(_fileName); //open the output file
     if (file.open(QIODevice::WriteOnly))
@@ -84,9 +84,9 @@ void WorkerCMRSExport::process()
         QString curDate = QDateTime::currentDateTime().toTimeSpec(Qt::OffsetFromUTC).toString(Qt::ISODate); //current UTC time
         QString elementKey = QStringLiteral("0"); //doesn't make sense for target keys to be at this level
 
-        foreach (Asset a, assets)
+        Q_FOREACH (Asset a, assets)
         {
-            emit updateStatus("Adding " + PrintAsset(a));
+            Q_EMIT updateStatus("Adding " + PrintAsset(a));
 
             stream.writeStartElement(QStringLiteral("ASSET"));
 
@@ -135,7 +135,7 @@ void WorkerCMRSExport::process()
 
             stream.writeEndElement(); //ELEMENT
 
-            foreach (STIG s, a.GetSTIGs())
+            Q_FOREACH (STIG s, a.GetSTIGs())
             {
                 stream.writeStartElement(QStringLiteral("TARGET"));
 
@@ -195,13 +195,13 @@ void WorkerCMRSExport::process()
 
             stream.writeEndElement(); //ASSET
 
-            emit progress(-1);
+            Q_EMIT progress(-1);
         }
 
         stream.writeEndElement(); //IMPORT_FILE
         stream.writeEndDocument();
     }
 
-    emit updateStatus(QStringLiteral("Done!"));
+    Q_EMIT updateStatus(QStringLiteral("Done!"));
     emit finished();
 }

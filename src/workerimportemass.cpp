@@ -45,14 +45,14 @@ void WorkerImportEMASS::process()
 {
     DbManager db;
 
-    emit initialize(5, 0);
+    Q_EMIT initialize(5, 0);
 
-    emit updateStatus(QStringLiteral("Opening xlsx file…"));
+    Q_EMIT updateStatus(QStringLiteral("Opening xlsx file…"));
     QMap<QString, QByteArray> files = GetFilesFromZip(_fileName);
-    emit progress(-1);
+    Q_EMIT progress(-1);
 
     //First, create Shared Strings table
-    emit updateStatus(QStringLiteral("Reading Shared Strings Table…"));
+    Q_EMIT updateStatus(QStringLiteral("Reading Shared Strings Table…"));
     QStringList sst;
     if (files.contains(QStringLiteral("xl/sharedStrings.xml")))
     {
@@ -76,10 +76,10 @@ void WorkerImportEMASS::process()
             }
         }
     }
-    emit progress(-1);
+    Q_EMIT progress(-1);
 
     //Second, get the list of sheet IDs from the workbook relationships
-    emit updateStatus(QStringLiteral("Getting Worksheet IDs…"));
+    Q_EMIT updateStatus(QStringLiteral("Getting Worksheet IDs…"));
     QMap<QString, QString> relationshipIds;
     if (files.contains(QStringLiteral("xl/_rels/workbook.xml.rels")))
     {
@@ -96,7 +96,7 @@ void WorkerImportEMASS::process()
                     {
                         QString id = QString();
                         QString target = QString();
-                        foreach (const QXmlStreamAttribute &attr, xml.attributes())
+                        Q_FOREACH (const QXmlStreamAttribute &attr, xml.attributes())
                         {
                             if (attr.name() == "Id")
                                 id = attr.value().toString();
@@ -109,10 +109,10 @@ void WorkerImportEMASS::process()
             }
         }
     }
-    emit progress(-1);
+    Q_EMIT progress(-1);
 
     //Third, get the names of the sheets by relationship ID
-    emit updateStatus(QStringLiteral("Getting Worksheet Names…"));
+    Q_EMIT updateStatus(QStringLiteral("Getting Worksheet Names…"));
     QMap<QString, QString> sheetNames;
     if (files.contains(QStringLiteral("xl/workbook.xml")))
     {
@@ -129,7 +129,7 @@ void WorkerImportEMASS::process()
                     {
                         QString id = QString();
                         QString name = QString();
-                        foreach (const QXmlStreamAttribute &attr, xml.attributes())
+                        Q_FOREACH (const QXmlStreamAttribute &attr, xml.attributes())
                         {
                             if (attr.name() == "id")
                                 id = attr.value().toString();
@@ -142,14 +142,14 @@ void WorkerImportEMASS::process()
             }
         }
     }
-    emit progress(-1);
+    Q_EMIT progress(-1);
 
     //Fourth, find out if a worksheet is named "Test Result Import"
     if (sheetNames.contains(QStringLiteral("Test Result Import")) && relationshipIds.contains(sheetNames[QStringLiteral("Test Result Import")]) && files.contains("xl/" + relationshipIds[sheetNames[QStringLiteral("Test Result Import")]]))
     {
         //It does! Continue parsing.
         //Fifth, read the correct spreadsheet that has the needed data
-        emit updateStatus(QStringLiteral("Reading worksheet…"));
+        Q_EMIT updateStatus(QStringLiteral("Reading worksheet…"));
         QXmlStreamReader xml(files["xl/" + relationshipIds[sheetNames[QStringLiteral("Test Result Import")]]]);
         int onRow = 0;
         QString onCol = QString();
@@ -182,7 +182,7 @@ void WorkerImportEMASS::process()
                             }
                             if (re.exactMatch(ref.toString()))
                             {
-                                emit initialize(ref.toInt(), 5);
+                                Q_EMIT initialize(ref.toInt(), 5);
                             }
                         }
                     }
@@ -191,7 +191,7 @@ void WorkerImportEMASS::process()
                 else if (xml.name() == "row")
                 {
                     onRow++;
-                    emit progress(-1);
+                    Q_EMIT progress(-1);
                 }
                 else if (xml.name() == "c")
                 {
@@ -292,6 +292,6 @@ void WorkerImportEMASS::process()
         Warning(QStringLiteral("Worksheet Not Found"), QStringLiteral("No sheet named \"Test Result Import\" found."));
     }
 
-    emit updateStatus(QStringLiteral("Done!"));
-    emit finished();
+    Q_EMIT updateStatus(QStringLiteral("Done!"));
+    Q_EMIT finished();
 }

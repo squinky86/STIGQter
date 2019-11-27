@@ -33,10 +33,10 @@ public:
     explicit WorkerSTIGDelete(QObject *parent = nullptr);
     void AddId(int id);
 
-public slots:
+public Q_SLOTS:
     void process();
 
-signals:
+Q_SIGNALS:
     void initialize(int, int);
     void progress(int);
     void updateStatus(QString);

@@ -71,13 +71,13 @@ void WorkerCKLExport::process()
 {
     DbManager db;
     QList<Asset> assets = db.GetAssets();
-    emit initialize(assets.count(), 0);
-    foreach (Asset a, assets)
+    Q_EMIT initialize(assets.count(), 0);
+    Q_FOREACH (Asset a, assets)
     {
-        emit updateStatus("Exporting CKLs for " + PrintAsset(a));
-        foreach (STIG s, a.GetSTIGs())
+        Q_EMIT updateStatus("Exporting CKLs for " + PrintAsset(a));
+        Q_FOREACH (STIG s, a.GetSTIGs())
         {
-            emit updateStatus("Exporting CKL " + PrintSTIG(s) + " for " + PrintAsset(a));
+            Q_EMIT updateStatus("Exporting CKL " + PrintSTIG(s) + " for " + PrintAsset(a));
             QString fileName = QDir(_dirName).filePath(PrintAsset(a) + "_" + SanitizeFile(s.title) + "_V" + QString::number(s.version) + "R" + QString::number(GetReleaseNumber(s.release)) + ".ckl");
             if (QFile::exists(fileName))
             {
@@ -189,7 +189,7 @@ void WorkerCKLExport::process()
 
                 stream.writeEndElement(); //STIG_INFO
 
-                foreach (const CKLCheck &cc, a.GetCKLChecks(&s))
+                Q_FOREACH (const CKLCheck &cc, a.GetCKLChecks(&s))
                 {
                     const STIGCheck sc = cc.GetSTIGCheck();
                     stream.writeStartElement(QStringLiteral("VULN"));
@@ -401,7 +401,7 @@ void WorkerCKLExport::process()
                     stream.writeEndElement(); //ATTRIBUTE_DATA
                     stream.writeEndElement(); //STIG_DATA
 
-                    foreach (CCI cci, sc.GetCCIs())
+                    Q_FOREACH (CCI cci, sc.GetCCIs())
                     {
                         stream.writeStartElement(QStringLiteral("STIG_DATA"));
                         stream.writeStartElement(QStringLiteral("VULN_ATTRIBUTE"));
@@ -441,8 +441,8 @@ void WorkerCKLExport::process()
                 stream.writeEndDocument();
             }
         }
-        emit progress(-1);
+        Q_EMIT progress(-1);
     }
-    emit updateStatus(QStringLiteral("Done!"));
-    emit finished();
+    Q_EMIT updateStatus(QStringLiteral("Done!"));
+    Q_EMIT finished();
 }

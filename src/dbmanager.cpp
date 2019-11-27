@@ -100,11 +100,11 @@ DbManager::DbManager(const QString& path, const QString& connectionName)
 {
     QSqlDatabase db = QSqlDatabase::database(connectionName);
     _dbPath = path;
+    _delayCommit = false;
 
     if (!db.isValid())
     {
         bool initialize = false;
-        _delayCommit = false;
 
         QFileInfo fi(path);
         if (!fi.absoluteDir().exists())
@@ -133,10 +133,33 @@ DbManager::DbManager(const QString& path, const QString& connectionName)
 }
 
 /**
+ * @brief DbManager::DbManager
+ * @param db
+ *
+ * Copy Constructor
+ */
+DbManager::DbManager(const DbManager &db)
+{
+    *this = db;
+}
+
+/**
+ * @brief DbManager::DbManager
+ * @param orig
+ *
+ * Move Constructor
+ */
+DbManager::DbManager(DbManager &&orig) noexcept :
+    _delayCommit(std::move(orig._delayCommit)),
+    _dbPath(std::move(orig._dbPath))
+{
+}
+
+/**
  * @brief DbManager::~DbManager
  *
  * The destructor verifies that all changes have been written to the
- * database and closes its connection.
+ * database. The connection remains open for multithreaded processing.
  */
 DbManager::~DbManager()
 {
@@ -148,6 +171,40 @@ DbManager::~DbManager()
             db.commit();
         }
     }
+}
+
+/**
+ * @brief DbManager::operator =
+ * @param right
+ * @return this
+ *
+ * Copy Operator
+ */
+DbManager &DbManager::operator=(const DbManager &right)
+{
+    if (this != &right)
+    {
+        _delayCommit = right._delayCommit;
+        _dbPath = right._dbPath;
+    }
+    return *this;
+}
+
+/**
+ * @brief DbManager::operator =
+ * @param orig
+ * @return
+ *
+ * Move Operator
+ */
+DbManager &DbManager::operator=(DbManager &&orig) noexcept
+{
+    if (this != &orig)
+    {
+        _delayCommit = std::move(orig._delayCommit);
+        _dbPath = std::move(orig._dbPath);
+    }
+    return *this;
 }
 
 /**
@@ -506,7 +563,7 @@ bool DbManager::AddSTIG(STIG stig, QList<STIGCheck> checks, bool stigExists)
         if (!delayed)
             this->DelayCommit(true);
 
-        foreach(STIGCheck c, checks)
+        Q_FOREACH(STIGCheck c, checks)
         {
             newChecks = true;
             q.prepare(QStringLiteral("INSERT INTO STIGCheck (`STIGId`, `rule`, `vulnNum`, `groupTitle`, `ruleVersion`, `severity`, `weight`, `title`, `vulnDiscussion`, `falsePositives`, `falseNegatives`, `fix`, `check`, `documentable`, `mitigations`, `severityOverrideGuidance`, `checkContentRef`, `potentialImpact`, `thirdPartyTools`, `mitigationControl`, `responsibility`, `IAControls`, `targetKey`) VALUES(:STIGId, :rule, :vulnNum, :groupTitle, :ruleVersion, :severity, :weight, :title, :vulnDiscussion, :falsePositives, :falseNegatives, :fix, :check, :documentable, :mitigations, :severityOverrideGuidance, :checkContentRef, :potentialImpact, :thirdPartyTools, :mitigationControl, :responsibility, :IAControls, :targetKey)"));
@@ -555,7 +612,7 @@ bool DbManager::AddSTIG(STIG stig, QList<STIGCheck> checks, bool stigExists)
                     c.cciIds.append(cci366Id);
                 }
 
-                foreach (int cciId, c.cciIds)
+                Q_FOREACH (int cciId, c.cciIds)
                 {
                     q.prepare(QStringLiteral("INSERT INTO STIGCheckCCI (`STIGCheckId`, `CCIId`) VALUES(:STIGCheckId, :CCIId)"));
                     q.bindValue(QStringLiteral(":STIGCheckId"), STIGCheckId);
@@ -744,7 +801,7 @@ bool DbManager::DeleteSTIG(int id)
         if (tmpCount > 0)
         {
             QString tmpAssetStr = QString();
-            foreach (const Asset &a, assets)
+            Q_FOREACH (const Asset &a, assets)
             {
                 tmpAssetStr.append(" '" + PrintAsset(a) + "'");
             }
@@ -996,7 +1053,7 @@ CCI DbManager::GetCCI(int id)
 QList<CCI> DbManager::GetCCIs(QVector<int> ccis)
 {
     QList<CCI> ret;
-    foreach (int cci, ccis)
+    Q_FOREACH (int cci, ccis)
     {
         ret.append(GetCCIs(QStringLiteral("WHERE CCI.id = :id"), {std::make_tuple<QString, QVariant>(QStringLiteral(":id"), cci)}));
     }
@@ -1522,7 +1579,7 @@ QList<STIGCheck> DbManager::GetSTIGChecks(const QString &whereClause, const QLis
             c.responsibility = q.value(21).toString();
             c.iaControls = q.value(22).toString();
             c.targetKey = q.value(23).toString();
-            foreach (CCI cci, GetCCIs(c.id))
+            Q_FOREACH (CCI cci, GetCCIs(c.id))
             {
                 c.cciIds.append(cci.id);
             }
@@ -2229,7 +2286,7 @@ bool DbManager::UpdateSTIGCheck(const STIGCheck &check)
             q.prepare(QStringLiteral("DELETE FROM STIGCheckCCI WHERE STIGCheckId = :STIGCheckId"));
             q.bindValue(QStringLiteral(":STIGCheckId"), tmpCheck.id);
             ret = q.exec() && ret;
-            foreach (int cciId, check.cciIds)
+            Q_FOREACH (int cciId, check.cciIds)
             {
                 q.prepare(QStringLiteral("INSERT INTO STIGCheckCCI (`STIGCheckId`, `CCIId`) VALUES(:STIGCheckId, :CCIId)"));
                 q.bindValue(QStringLiteral(":STIGCheckId"), tmpCheck.id);

@@ -32,20 +32,20 @@ void WorkerSTIGDelete::AddId(int id)
 void WorkerSTIGDelete::process()
 {
     //open database in this thread
-    emit initialize(2 + _ids.count(), 1);
+    Q_EMIT initialize(2 + _ids.count(), 1);
     DbManager db;
 
-    emit updateStatus(QStringLiteral("Clearing DB of selected STIG information…"));
+    Q_EMIT updateStatus(QStringLiteral("Clearing DB of selected STIG information…"));
     db.DelayCommit(true);
-    foreach (int i, _ids)
+    Q_FOREACH (int i, _ids)
     {
         db.DeleteSTIG(i);
-        emit progress(-1);
+        Q_EMIT progress(-1);
     }
     db.DelayCommit(false);
-    emit progress(-1);
+    Q_EMIT progress(-1);
 
     //complete
-    emit updateStatus(QStringLiteral("Done!"));
-    emit finished();
+    Q_EMIT updateStatus(QStringLiteral("Done!"));
+    Q_EMIT finished();
 }

@@ -63,13 +63,13 @@ WorkerCCIAdd::WorkerCCIAdd(QObject *parent) : QObject(parent)
 void WorkerCCIAdd::process()
 {
     //open database in this thread
-    emit initialize(1, 0);
+    Q_EMIT initialize(1, 0);
     DbManager db;
 
     //populate CCIs
 
     //Step 1: download NIST Families
-    emit updateStatus(QStringLiteral("Downloading Families…"));
+    Q_EMIT updateStatus(QStringLiteral("Downloading Families…"));
     QUrl nist(QStringLiteral("https://nvd.nist.gov"));
     QString rmf = DownloadPage(nist.toString() + "/800-53/Rev4/");
 
@@ -89,7 +89,7 @@ void WorkerCCIAdd::process()
             {
                 QString id = QString();
                 QString href = QString();
-                foreach (const QXmlStreamAttribute &attr, xml->attributes())
+                Q_FOREACH (const QXmlStreamAttribute &attr, xml->attributes())
                 {
                     if (attr.name() == "id")
                         id = attr.value().toString();
@@ -101,7 +101,7 @@ void WorkerCCIAdd::process()
                     QString family(xml->readElementText().trimmed());
                     QString acronym(family.left(2));
                     QString familyName(family.right(family.length() - 5).trimmed());
-                    emit updateStatus("Adding " + acronym + "—" + familyName + "…");
+                    Q_EMIT updateStatus("Adding " + acronym + "—" + familyName + "…");
                     db.AddFamily(acronym, familyName);
                     todo.append(href);
                 }
@@ -109,7 +109,7 @@ void WorkerCCIAdd::process()
         }
     }
     db.DelayCommit(false);
-    emit initialize(todo.size() + 959, 1); //# of base controls: 958
+    Q_EMIT initialize(todo.size() + 959, 1); //# of base controls: 958
     delete xml;
 
     //Step 3a: Additional Privacy Controls
@@ -148,9 +148,9 @@ void WorkerCCIAdd::process()
                 else if (xml->name() == "control" || xml->name() == "control-enhancement")
                 {
                     inStatement = false;
-                    emit updateStatus("Adding " + control);
+                    Q_EMIT updateStatus("Adding " + control);
                     db.AddControl(control, title, description);
-                    emit progress(-1);
+                    Q_EMIT progress(-1);
                 }
             }
             else
@@ -165,9 +165,9 @@ void WorkerCCIAdd::process()
                     description = xml->readElementText().trimmed();
                 else if (xml->name() == "control" || xml->name() == "control-enhancement")
                 {
-                    emit updateStatus("Adding " + control);
+                    Q_EMIT updateStatus("Adding " + control);
                     db.AddControl(control, title, description);
-                    emit progress(-1);
+                    Q_EMIT progress(-1);
                 }
             }
         }
@@ -222,18 +222,18 @@ void WorkerCCIAdd::process()
     {
         //On 8/12/19, the content was removed from http://iasecontent.disa.mil/stigs/zip/u_cci_list.zip
         QUrl ccis(QStringLiteral("https://dl.dod.cyber.mil/wp-content/uploads/stigs/zip/u_cci_list.zip"));
-        emit updateStatus("Downloading " + ccis.toString() + "…");
+        Q_EMIT updateStatus("Downloading " + ccis.toString() + "…");
         DownloadFile(ccis, &tmpFile);
-        emit progress(-1);
-        emit updateStatus(QStringLiteral("Extracting CCIs…"));
+        Q_EMIT progress(-1);
+        Q_EMIT updateStatus(QStringLiteral("Extracting CCIs…"));
         xmlFiles = GetFilesFromZip(tmpFile.fileName().toStdString().c_str(), QStringLiteral(".xml")).values();
         tmpFile.close();
     }
 
     //Step 6: Parse all CCIs
-    emit updateStatus(QStringLiteral("Parsing CCIs…"));
+    Q_EMIT updateStatus(QStringLiteral("Parsing CCIs…"));
     QList<CCI> toAdd;
-    foreach (const QByteArray &xmlFile, xmlFiles)
+    Q_FOREACH (const QByteArray &xmlFile, xmlFiles)
     {
         xml = new QXmlStreamReader(xmlFile);
         QString cci = QString();
@@ -247,7 +247,7 @@ void WorkerCCIAdd::process()
                 {
                     if (xml->attributes().hasAttribute(QStringLiteral("id")))
                     {
-                        foreach (const QXmlStreamAttribute &attr, xml->attributes())
+                        Q_FOREACH (const QXmlStreamAttribute &attr, xml->attributes())
                         {
                             if (attr.name() == "id")
                                 cci = attr.value().toString();
@@ -264,7 +264,7 @@ void WorkerCCIAdd::process()
                     {
                         QString version = QString();
                         QString index = QString();
-                        foreach (const QXmlStreamAttribute &attr, xml->attributes())
+                        Q_FOREACH (const QXmlStreamAttribute &attr, xml->attributes())
                         {
                             if (attr.name() == "version")
                                 version = attr.value().toString();
@@ -308,18 +308,18 @@ void WorkerCCIAdd::process()
     QFile::remove(tmpFile.fileName());
 
     //Step 7: add CCIs
-    emit initialize(toAdd.size() + 1, 1);
+    Q_EMIT initialize(toAdd.size() + 1, 1);
     db.DelayCommit(true);
-    foreach (const CCI &c, toAdd)
+    Q_FOREACH (const CCI &c, toAdd)
     {
         CCI tmpCCI = c;
-        emit updateStatus("Adding CCI-" + QString::number(c.cci) + "…");
+        Q_EMIT updateStatus("Adding CCI-" + QString::number(c.cci) + "…");
         db.AddCCI(tmpCCI);
-        emit progress(-1);
+        Q_EMIT progress(-1);
     }
     db.DelayCommit(false);
 
     //complete
-    emit updateStatus(QStringLiteral("Done!"));
-    emit finished();
+    Q_EMIT updateStatus(QStringLiteral("Done!"));
+    Q_EMIT finished();
 }

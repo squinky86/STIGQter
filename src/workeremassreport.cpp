@@ -93,7 +93,7 @@ void WorkerEMASSReport::process()
     QMap<CCI, QList<CKLCheck>> passedCCIs;
     QList<CKLCheck> checks = db.GetCKLChecks();
     int numChecks = checks.count();
-    emit initialize(numChecks+2, 0);
+    Q_EMIT initialize(numChecks+2, 0);
 
     //current date in eMASS format
     QString curDate = QDate::currentDate().toString(QStringLiteral("dd-MMM-yyyy"));
@@ -207,10 +207,10 @@ void WorkerEMASSReport::process()
         STIGCheck sc = cc.GetSTIGCheck();
         QList<CCI> ccis = sc.GetCCIs();
         Status s = cc.status;
-        emit updateStatus("Checking " + PrintSTIGCheck(sc) + "…");
+        Q_EMIT updateStatus("Checking " + PrintSTIGCheck(sc) + "…");
 
         //if the check is a finding, add it to the CCI sheet
-        foreach (CCI c, ccis)
+        Q_FOREACH (CCI c, ccis)
         {
             if (s == Status::Open)
             {
@@ -229,10 +229,10 @@ void WorkerEMASSReport::process()
                     passedCCIs.insert(c, {cc});
             }
         }
-        emit progress(-1);
+        Q_EMIT progress(-1);
     }
 
-    emit initialize(numChecks+failedCCIs.count()+1, numChecks);
+    Q_EMIT initialize(numChecks+failedCCIs.count()+1, numChecks);
 
     unsigned int onRow = 5;
 
@@ -249,7 +249,7 @@ void WorkerEMASSReport::process()
     {
         onRow++;
         CCI c = i.key();
-        emit updateStatus("Adding " + PrintCCI(c) + "…");
+        Q_EMIT updateStatus("Adding " + PrintCCI(c) + "…");
         QList<CKLCheck> checks = i.value();
         std::sort(checks.begin(), checks.end());
         Control control = c.GetControl();
@@ -285,7 +285,7 @@ void WorkerEMASSReport::process()
             testResult += "\n";
         testResult += QStringLiteral("The following checks are open:");
         bool useCurDate = false;
-        foreach (CKLCheck cc, checks)
+        Q_FOREACH (CKLCheck cc, checks)
         {
             testResult.append("\n" + PrintAsset(cc.GetAsset()) + ": " + PrintCKLCheck(cc) + " - " + GetSeverity(cc.GetSeverity()));
             if (!cc.findingDetails.isEmpty())
@@ -306,7 +306,7 @@ void WorkerEMASSReport::process()
         worksheet_write_string(ws, onRow, 16, c.isImport ? c.importTestedBy.toStdString().c_str() : "", nullptr);
         worksheet_write_string(ws, onRow, 17, c.isImport ? c.importTestResults.toStdString().c_str() : "", fmtWrapped);
 
-        emit progress(-1);
+        Q_EMIT progress(-1);
     }
 
     //print out all passed CCIs
@@ -314,7 +314,7 @@ void WorkerEMASSReport::process()
     {
         onRow++;
         CCI c = i.key();
-        emit updateStatus("Adding " + PrintCCI(c) + "…");
+        Q_EMIT updateStatus("Adding " + PrintCCI(c) + "…");
         QList<CKLCheck> checks = i.value();
         std::sort(checks.begin(), checks.end());
         Control control = c.GetControl();
@@ -351,7 +351,7 @@ void WorkerEMASSReport::process()
         if (!testResult.isEmpty())
             testResult += "\n";
         testResult += QStringLiteral("The following checks were compliant:");
-        foreach (CKLCheck cc, checks)
+        Q_FOREACH (CKLCheck cc, checks)
         {
             testResult.append("\n" + PrintAsset(cc.GetAsset()) + ": " + PrintCKLCheck(cc));
         }
@@ -366,17 +366,17 @@ void WorkerEMASSReport::process()
         worksheet_write_string(ws, onRow, 16, c.isImport ? c.importTestedBy.toStdString().c_str() : "", nullptr);
         worksheet_write_string(ws, onRow, 17, c.isImport ? c.importTestResults.toStdString().c_str() : "", fmtWrapped);
 
-        emit progress(-1);
+        Q_EMIT progress(-1);
     }
 
     //print out all old test results
-    foreach (const CCI &c, db.GetCCIs())
+    Q_FOREACH (const CCI &c, db.GetCCIs())
     {
         if (!c.isImport || failedCCIs.contains(c) || passedCCIs.contains(c))
             continue;
 
         onRow++;
-        emit updateStatus("Adding " + PrintCCI(c) + "…");
+        Q_EMIT updateStatus("Adding " + PrintCCI(c) + "…");
         Control control = c.GetControl();
         //control
         worksheet_write_string(ws, onRow, 0, PrintControl(control).toStdString().c_str(), nullptr);
@@ -420,17 +420,17 @@ void WorkerEMASSReport::process()
         worksheet_write_string(ws, onRow, 16, c.isImport ? c.importTestedBy.toStdString().c_str() : "", nullptr);
         worksheet_write_string(ws, onRow, 17, c.isImport ? c.importTestResults.toStdString().c_str() : "", fmtWrapped);
 
-        emit progress(-1);
+        Q_EMIT progress(-1);
     }
 
     if (unimportedCCI && db.IsEmassImport())
         Warning(QStringLiteral("New CCI Detected"), QStringLiteral("One or more CCIs were detected that were not part of the eMASS TR Import. Please check your exported spreadsheet for test results that do not have data in the \"Latest Test Results\" columns."));
 
-    emit updateStatus(QStringLiteral("Writing workbook…"));
+    Q_EMIT updateStatus(QStringLiteral("Writing workbook…"));
 
     //close and write the workbook
     workbook_close(wb);
 
-    emit updateStatus(QStringLiteral("Done!"));
-    emit finished();
+    Q_EMIT updateStatus(QStringLiteral("Done!"));
+    Q_EMIT finished();
 }

@@ -103,13 +103,13 @@ void WorkerHTML::process()
     DbManager db;
 
     //Load the STIG checks into memory
-    emit initialize(1, 0);
-    emit updateStatus(QStringLiteral("Loading STIG information into memory…"));
+    Q_EMIT initialize(1, 0);
+    Q_EMIT updateStatus(QStringLiteral("Loading STIG information into memory…"));
     QList<STIG> stigs = db.GetSTIGs();
 
     QMap<STIG, QList<STIGCheck>> checkMap;
     int count = 0;
-    foreach (const STIG &s, stigs)
+    Q_FOREACH (const STIG &s, stigs)
     {
         QList<STIGCheck> checks = s.GetSTIGChecks();
         count += checks.count();
@@ -117,7 +117,7 @@ void WorkerHTML::process()
     }
 
     //update progress bar to reflect number of steps
-    emit initialize(1 + checkMap.count() + count, 1);
+    Q_EMIT initialize(1 + checkMap.count() + count, 1);
 
     QDir outputDir(_exportDir);
     QFile main(outputDir.filePath(QStringLiteral("main.html")));
@@ -135,12 +135,12 @@ void WorkerHTML::process()
                "<h1><img src=\"STIGQter.svg\" alt=\"STIGQter\" style=\"height:1em;\" /> <a href=\"https://www.stigqter.com/\">STIGQter</a>: STIG Summary</h1>"
                "<ul>");
 
-    foreach (const STIG &s, checkMap.keys())
+    Q_FOREACH (const STIG &s, checkMap.keys())
     {
         QString STIGName = PrintSTIG(s);
         QString STIGFileName = s.fileName;
         STIGFileName = STIGFileName.replace(QStringLiteral(".xml"), QStringLiteral(".html"), Qt::CaseInsensitive);
-        emit updateStatus("Creating page for " + STIGName + "…");
+        Q_EMIT updateStatus("Creating page for " + STIGName + "…");
         main.write("<li><a href=\"");
         main.write(STIGFileName.toStdString().c_str());
         main.write("\">");
@@ -176,10 +176,10 @@ void WorkerHTML::process()
                    "<th>Title</th>"
                    "</tr>");
 
-        foreach (const STIGCheck &c, checkMap[s])
+        Q_FOREACH (const STIGCheck &c, checkMap[s])
         {
             QString checkName(PrintSTIGCheck(c));
-            emit updateStatus("Creating Check " + checkName + "…");
+            Q_EMIT updateStatus("Creating Check " + checkName + "…");
             stig.write("<tr>"
                        "<td>☐</td>"
                        "<td style=\"white-space:nowrap;\">"
@@ -225,7 +225,7 @@ void WorkerHTML::process()
             QList<CCI> ccis = c.GetCCIs();
             if (ccis.count() > 0)
             {
-                foreach (CCI cci, ccis)
+                Q_FOREACH (CCI cci, ccis)
                 {
                     check.write(CheckItem(QStringLiteral("Control Correlation Identifier (CCI)"), PrintCCI(cci)).toStdString().c_str());
                     check.write(CheckItem(QStringLiteral("CCI Definition"), cci.definition).toStdString().c_str());
@@ -252,9 +252,9 @@ void WorkerHTML::process()
                         "</html>");
             check.close();
 
-            emit progress(-1);
+            Q_EMIT progress(-1);
         }
-        emit progress(-1);
+        Q_EMIT progress(-1);
         stig.write("</table>"
                    "</body>"
                    "</html>");
@@ -289,5 +289,5 @@ void WorkerHTML::process()
               "</svg>");
     svg.close();
 
-    emit finished();
+    Q_EMIT finished();
 }

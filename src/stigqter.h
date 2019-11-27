@@ -39,7 +39,7 @@ public:
     ~STIGQter();
     bool isProcessingEnabled();
 
-private slots:
+private Q_SLOTS:
 
     void CompletedThread();
 

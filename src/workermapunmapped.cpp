@@ -56,19 +56,19 @@ WorkerMapUnmapped::WorkerMapUnmapped(QObject *parent) : QObject(parent)
  */
 void WorkerMapUnmapped::process()
 {
-    emit updateStatus(QStringLiteral("Enumerating STIG Checks…"));
+    Q_EMIT updateStatus(QStringLiteral("Enumerating STIG Checks…"));
     DbManager db;
     QList<STIGCheck> stigchecks = db.GetSTIGChecks();
-    emit initialize(stigchecks.count(), 0);
+    Q_EMIT initialize(stigchecks.count(), 0);
 
     CCI cci366 = db.GetCCIByCCI(366);
 
-    foreach (STIGCheck check, stigchecks)
+    Q_FOREACH (STIGCheck check, stigchecks)
     {
-        emit updateStatus(QStringLiteral("Checking ") + PrintSTIGCheck(check) + QStringLiteral("…"));
+        Q_EMIT updateStatus(QStringLiteral("Checking ") + PrintSTIGCheck(check) + QStringLiteral("…"));
         bool updateCheck = false;
         //if the associated CCI was not imported in the eMASS import, remap to CM-6, CCI-366.
-        foreach (CCI c, check.GetCCIs())
+        Q_FOREACH (CCI c, check.GetCCIs())
         {
             if (!c.isImport)
             {
@@ -83,11 +83,11 @@ void WorkerMapUnmapped::process()
         }
         if (updateCheck)
         {
-            emit updateStatus(QStringLiteral("Updating mapping for ") + PrintSTIGCheck(check) + QStringLiteral("…"));
+            Q_EMIT updateStatus(QStringLiteral("Updating mapping for ") + PrintSTIGCheck(check) + QStringLiteral("…"));
             db.UpdateSTIGCheck(check);
         }
     }
 
-    emit updateStatus(QStringLiteral("Done!"));
-    emit finished();
+    Q_EMIT updateStatus(QStringLiteral("Done!"));
+    Q_EMIT finished();
 }

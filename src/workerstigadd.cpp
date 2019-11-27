@@ -60,7 +60,7 @@ void WorkerSTIGAdd::ParseSTIG(const QByteArray &stig, const QString &fileName)
                     }
                     else if (xml->name() == "plain-text" && xml->attributes().hasAttribute(QStringLiteral("id")))
                     {
-                        foreach (const QXmlStreamAttribute &attr, xml->attributes())
+                        Q_FOREACH (const QXmlStreamAttribute &attr, xml->attributes())
                         {
                             if (attr.name() == "id")
                             {
@@ -84,7 +84,7 @@ void WorkerSTIGAdd::ParseSTIG(const QByteArray &stig, const QString &fileName)
                 }
                 else if (xml->name() == "Benchmark" && xml->attributes().hasAttribute(QStringLiteral("id")))
                 {
-                    foreach (const QXmlStreamAttribute &attr, xml->attributes())
+                    Q_FOREACH (const QXmlStreamAttribute &attr, xml->attributes())
                     {
                         if (attr.name() == "id")
                         {
@@ -109,7 +109,7 @@ void WorkerSTIGAdd::ParseSTIG(const QByteArray &stig, const QString &fileName)
                         checks.append(c);
                         c.cciIds.clear();
                     }
-                    foreach (const QXmlStreamAttribute &attr, xml->attributes())
+                    Q_FOREACH (const QXmlStreamAttribute &attr, xml->attributes())
                     {
                         if (attr.name() == "id")
                         {
@@ -138,7 +138,7 @@ void WorkerSTIGAdd::ParseSTIG(const QByteArray &stig, const QString &fileName)
                         }
                     }
                     c.id = 0;
-                    foreach (const QXmlStreamAttribute &attr, xml->attributes())
+                    Q_FOREACH (const QXmlStreamAttribute &attr, xml->attributes())
                     {
                         if (attr.name() == "id")
                         {
@@ -240,7 +240,7 @@ void WorkerSTIGAdd::ParseSTIG(const QByteArray &stig, const QString &fileName)
                 }
                 else if (xml->name() == "check-content-ref" && xml->attributes().hasAttribute(QStringLiteral("name")))
                 {
-                    foreach (const QXmlStreamAttribute &attr, xml->attributes())
+                    Q_FOREACH (const QXmlStreamAttribute &attr, xml->attributes())
                     {
                         if (attr.name() == "name")
                         {
@@ -282,20 +282,20 @@ void WorkerSTIGAdd::AddSTIGs(const QStringList &stigs)
 void WorkerSTIGAdd::process()
 {
     //get the list of STIG .zip files selected
-    emit initialize(_todo.count(), 0);
+    Q_EMIT initialize(_todo.count(), 0);
     //loop through it and parse all XML files inside
-    foreach(const QString s, _todo)
+    Q_FOREACH(const QString s, _todo)
     {
-        emit updateStatus("Extracting " + s + "…");
+        Q_EMIT updateStatus("Extracting " + s + "…");
         //get the list of XML files inside the STIG
         QMap<QString, QByteArray> toParse = GetFilesFromZip(s.toStdString().c_str(), QStringLiteral(".xml"));
-        emit updateStatus("Parsing " + s + "…");
-        foreach(const QString stig, toParse.keys())
+        Q_EMIT updateStatus("Parsing " + s + "…");
+        Q_FOREACH(const QString stig, toParse.keys())
         {
             ParseSTIG(toParse.value(stig), TrimFileName(stig));
         }
-        emit progress(-1);
+        Q_EMIT progress(-1);
     }
-    emit updateStatus(QStringLiteral("Done!"));
-    emit finished();
+    Q_EMIT updateStatus(QStringLiteral("Done!"));
+    Q_EMIT finished();
 }

@@ -37,10 +37,10 @@ public:
     explicit WorkerCKLImport(QObject *parent = nullptr);
     void AddCKLs(const QStringList &ckls);
 
-public slots:
+public Q_SLOTS:
     void process();
 
-signals:
+Q_SIGNALS:
     void initialize(int, int);
     void progress(int);
     void updateStatus(QString);

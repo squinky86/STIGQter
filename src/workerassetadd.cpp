@@ -97,23 +97,23 @@ void WorkerAssetAdd::process()
 {
     DbManager db;
     //get the list of STIGs to add to this asset
-    emit initialize(_toMapSTIGs.count() + 1, 0);
+    Q_EMIT initialize(_toMapSTIGs.count() + 1, 0);
 
     //add asset to DB
     Asset a;
     a.hostName = _toAdd.hostName;
     if (db.AddAsset(a))
     {
-        emit updateStatus("Adding asset " + PrintAsset(a));
-        emit progress(-1);
+        Q_EMIT updateStatus("Adding asset " + PrintAsset(a));
+        Q_EMIT progress(-1);
         //loop through STIGs and add to new asset
-        foreach(STIG s, _toMapSTIGs)
+        Q_FOREACH(STIG s, _toMapSTIGs)
         {
-            emit updateStatus("Adding " + PrintSTIG(s) + " to " + PrintAsset(a) + "…");
+            Q_EMIT updateStatus("Adding " + PrintSTIG(s) + " to " + PrintAsset(a) + "…");
             db.AddSTIGToAsset(s, a);
-            emit progress(-1);
+            Q_EMIT progress(-1);
         }
     }
-    emit updateStatus(QStringLiteral("Done!"));
-    emit finished();
+    Q_EMIT updateStatus(QStringLiteral("Done!"));
+    Q_EMIT finished();
 }

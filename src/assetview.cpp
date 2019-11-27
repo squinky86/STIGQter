@@ -110,7 +110,7 @@ AssetView::AssetView(Asset &asset, QWidget *parent) :
  */
 AssetView::~AssetView()
 {
-    foreach (QShortcut *shortcut, _shortcuts)
+    Q_FOREACH (QShortcut *shortcut, _shortcuts)
         delete shortcut;
     _shortcuts.clear();
     delete ui;
@@ -142,7 +142,7 @@ void AssetView::SelectSTIGs()
 
     ui->lstSTIGs->clear();
     QList<STIG> stigs = _asset.GetSTIGs();
-    foreach (const STIG s, db.GetSTIGs())
+    Q_FOREACH (const STIG s, db.GetSTIGs())
     {
         QListWidgetItem *i = new QListWidgetItem(PrintSTIG(s));
         ui->lstSTIGs->addItem(i);
@@ -182,7 +182,7 @@ void AssetView::ShowChecks(bool countOnly)
     QString filterStatusText = ui->cboBoxFilterStatus->currentText();
     Status filterStatus = GetStatus(ui->cboBoxFilterStatus->currentText());
 
-    foreach(const CKLCheck c, _asset.GetCKLChecks())
+    Q_FOREACH(const CKLCheck c, _asset.GetCKLChecks())
     {
         total++;
         switch (c.status)
@@ -324,11 +324,11 @@ void AssetView::DeleteAsset()
     {
         DbManager db;
         //remove all associated STIGs from this asset.
-        foreach (const STIG &s, _asset.GetSTIGs())
+        Q_FOREACH (const STIG &s, _asset.GetSTIGs())
             db.DeleteSTIGFromAsset(s, _asset);
         db.DeleteAsset(_asset);
         if (_tabIndex > 0)
-            emit CloseTab(_tabIndex);
+            Q_EMIT CloseTab(_tabIndex);
     }
 }
 
@@ -347,7 +347,7 @@ void AssetView::ImportXCCDF()
 
     bool updates = false;
 
-    foreach (const QString fileName, fileNames)
+    Q_FOREACH (const QString fileName, fileNames)
     {
         QFile f(fileName);
         db.UpdateVariable(QStringLiteral("lastdir"), QFileInfo(fileName).absolutePath());
@@ -494,7 +494,7 @@ void AssetView::RenameAsset()
         _asset.hostName = assetName;
         db.UpdateAsset(_asset);
         if (_tabIndex > 0)
-            emit CloseTab(_tabIndex);
+            Q_EMIT CloseTab(_tabIndex);
     }
 }
 
@@ -552,7 +552,7 @@ void AssetView::SaveCKL()
         stream.writeEndElement(); //WEB_DB_INSTANCE
         stream.writeEndElement(); //ASSET
         stream.writeStartElement(QStringLiteral("STIGS"));
-        foreach (const STIG &s, _asset.GetSTIGs())
+        Q_FOREACH (const STIG &s, _asset.GetSTIGs())
         {
             stream.writeStartElement(QStringLiteral("iSTIG"));
             stream.writeStartElement(QStringLiteral("STIG_INFO"));
@@ -613,7 +613,7 @@ void AssetView::SaveCKL()
 
             stream.writeEndElement(); //STIG_INFO
 
-            foreach (const CKLCheck &cc, _asset.GetCKLChecks(&s))
+            Q_FOREACH (const CKLCheck &cc, _asset.GetCKLChecks(&s))
             {
                 const STIGCheck sc = cc.GetSTIGCheck();
                 stream.writeStartElement(QStringLiteral("VULN"));
@@ -825,7 +825,7 @@ void AssetView::SaveCKL()
                 stream.writeEndElement(); //ATTRIBUTE_DATA
                 stream.writeEndElement(); //STIG_DATA
 
-                foreach(CCI cci, sc.GetCCIs())
+                Q_FOREACH(CCI cci, sc.GetCCIs())
                 {
                     stream.writeStartElement(QStringLiteral("STIG_DATA"));
                     stream.writeStartElement(QStringLiteral("VULN_ATTRIBUTE"));
@@ -922,7 +922,7 @@ void AssetView::UpdateCKLHelper()
     {
         DbManager db;
         db.DelayCommit(true);
-        foreach (QListWidgetItem *i, selectedItems)
+        Q_FOREACH (QListWidgetItem *i, selectedItems)
         {
             auto cc = i->data(Qt::UserRole).value<CKLCheck>();
             //if multiple checks are selected, only update their status
@@ -984,7 +984,7 @@ void AssetView::UpdateCKLStatus(const QString &val)
     stat = GetStatus(val);
     if (selectedItems.count() > 0)
     {
-        foreach (QListWidgetItem *i, selectedItems)
+        Q_FOREACH (QListWidgetItem *i, selectedItems)
         {
             auto cc = i->data(Qt::UserRole).value<CKLCheck>();
             STIGCheck sc = cc.GetSTIGCheck();

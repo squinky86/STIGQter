@@ -126,7 +126,7 @@ STIGQter::~STIGQter()
     CleanThreads();
     delete db;
     delete ui;
-    foreach (QShortcut *shortcut, _shortcuts)
+    Q_FOREACH (QShortcut *shortcut, _shortcuts)
         delete shortcut;
     _shortcuts.clear();
 }
@@ -175,7 +175,7 @@ void STIGQter::UpdateCCIs()
  */
 void STIGQter::OpenCKL()
 {
-    foreach(QListWidgetItem *i, ui->lstAssets->selectedItems())
+    Q_FOREACH(QListWidgetItem *i, ui->lstAssets->selectedItems())
     {
         auto a = i->data(Qt::UserRole).value<Asset>();
         QString assetName = PrintAsset(a);
@@ -325,7 +325,7 @@ void STIGQter::CleanThreads()
         t->wait();
         delete t;
     }
-    foreach (const QObject *o, workers)
+    Q_FOREACH (const QObject *o, workers)
     {
         delete o;
     }
@@ -394,7 +394,7 @@ void STIGQter::AddAsset()
         auto *a = new WorkerAssetAdd();
         Asset tmpAsset;
         tmpAsset.hostName = asset;
-        foreach(QListWidgetItem *i, ui->lstSTIGs->selectedItems())
+        Q_FOREACH(QListWidgetItem *i, ui->lstSTIGs->selectedItems())
         {
             a->AddSTIG(i->data(Qt::UserRole).value<STIG>());
         }
@@ -517,7 +517,7 @@ void STIGQter::DeleteSTIGs()
     //Create thread to download CCIs and keep GUI active
     auto *t = new QThread;
     auto *s = new WorkerSTIGDelete();
-    foreach (QListWidgetItem *i, ui->lstSTIGs->selectedItems())
+    Q_FOREACH (QListWidgetItem *i, ui->lstSTIGs->selectedItems())
     {
         STIG s = i->data(Qt::UserRole).value<STIG>();
         db->DeleteSTIG(s);
@@ -881,10 +881,10 @@ void STIGQter::EnableInput()
 void STIGQter::UpdateSTIGs()
 {
     ui->lstCKLs->clear();
-    foreach (QListWidgetItem *i, ui->lstAssets->selectedItems())
+    Q_FOREACH (QListWidgetItem *i, ui->lstAssets->selectedItems())
     {
         auto a = i->data(Qt::UserRole).value<Asset>();
-        foreach (const STIG &s, a.GetSTIGs())
+        Q_FOREACH (const STIG &s, a.GetSTIGs())
         {
             ui->lstCKLs->addItem(PrintSTIG(s));
         }
@@ -953,7 +953,7 @@ void STIGQter::DisableInput()
 void STIGQter::DisplayAssets()
 {
     ui->lstAssets->clear();
-    foreach(const Asset &a, db->GetAssets())
+    Q_FOREACH(const Asset &a, db->GetAssets())
     {
         auto *tmpItem = new QListWidgetItem(); //memory managed by ui->lstAssets container
         tmpItem->setData(Qt::UserRole, QVariant::fromValue<Asset>(a));
@@ -970,7 +970,7 @@ void STIGQter::DisplayAssets()
 void STIGQter::DisplayCCIs()
 {
     ui->lstCCIs->clear();
-    foreach(const CCI &c, db->GetCCIs())
+    Q_FOREACH(const CCI &c, db->GetCCIs())
     {
         auto *tmpItem = new QListWidgetItem(); //memory managed by ui->lstCCIs container
         tmpItem->setData(Qt::UserRole, QVariant::fromValue<CCI>(c));
@@ -989,7 +989,7 @@ void STIGQter::DisplayCCIs()
 void STIGQter::DisplaySTIGs()
 {
     ui->lstSTIGs->clear();
-    foreach(const STIG &s, db->GetSTIGs())
+    Q_FOREACH(const STIG &s, db->GetSTIGs())
     {
         auto *tmpItem = new QListWidgetItem(); //memory managed by ui->lstSTIGs container
         tmpItem->setData(Qt::UserRole, QVariant::fromValue<STIG>(s));
