@@ -89,6 +89,26 @@ Control CCI::GetControl() const
 }
 
 /**
+ * @brief CCI::GetCKLChecks
+ * @return The list of @a CKLChecks associated with this @a CCI.
+ */
+QList<CKLCheck> CCI::GetCKLChecks() const
+{
+    DbManager db;
+    return db.GetCKLChecks(*this);
+}
+
+/**
+ * @brief CCI::GetSTIGChecks
+ * @return The list of @a STIGChecks associated with this @a CCI
+ */
+QList<STIGCheck> CCI::GetSTIGChecks() const
+{
+    DbManager db;
+    return db.GetSTIGChecks(*this);
+}
+
+/**
  * @brief CCI::operator=
  * @param right
  * @return This @a CCI, copied from the assignee.

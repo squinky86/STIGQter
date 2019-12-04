@@ -22,6 +22,8 @@
 
 #include "family.h"
 
+class CCI;
+
 #include <QObject>
 #include <QString>
 
@@ -35,6 +37,7 @@ public:
     int id;
     int familyId;
     Family GetFamily() const;
+    QList<CCI> GetCCIs() const;
     int number;
     int enhancement;
     QString title;

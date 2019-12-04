@@ -23,7 +23,9 @@
 #include <QObject>
 #include <QString>
 
-#include "control.h"
+class CKLCheck;
+class Control;
+class STIGCheck;
 
 class CCI : public QObject
 {
@@ -35,6 +37,8 @@ public:
     ~CCI() override = default;
     int id;
     Control GetControl() const;
+    QList<CKLCheck> GetCKLChecks() const;
+    QList<STIGCheck> GetSTIGChecks() const;
     int controlId;
     int cci;
     QString definition;

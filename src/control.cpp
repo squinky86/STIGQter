@@ -72,6 +72,12 @@ Family Control::GetFamily() const
     return db.GetFamily(familyId);
 }
 
+QList<CCI> Control::GetCCIs() const
+{
+    DbManager db;
+    return db.GetCCIs(*this);
+}
+
 /**
  * @brief Control::operator=
  * @param right

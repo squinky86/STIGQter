@@ -71,6 +71,7 @@ public:
     CCI GetCCI(int id);
     CCI GetCCI(const CCI &cci, const STIG *stig = nullptr);
     QList<CCI> GetCCIs(QVector<int> ccis);
+    QList<CCI> GetCCIs(const Control &c);
     QList<CCI> GetCCIs(int STIGCheckId);
     CCI GetCCIByCCI(int cci, const STIG *stig = nullptr);
     QList<CCI> GetCCIs(const QString &whereClause = "", const QList<std::tuple<QString, QVariant>> &variables = {});
@@ -78,6 +79,7 @@ public:
     CKLCheck GetCKLCheck(const CKLCheck &ckl);
     CKLCheck GetCKLCheckByDISAId(int assetId, const QString &disaId);
     QList<CKLCheck> GetCKLChecks(const Asset &asset, const STIG *stig = nullptr);
+    QList<CKLCheck> GetCKLChecks(const CCI &cci);
     QList<CKLCheck> GetCKLChecks(const QString &whereClause = "", const QList<std::tuple<QString, QVariant>> &variables = {});
     Control GetControl(int id);
     Control GetControl(const QString &control);
@@ -93,6 +95,7 @@ public:
     STIGCheck GetSTIGCheck(const STIG &stig, const QString &rule);
     STIGCheck GetSTIGCheck(const STIGCheck &stigcheck);
     QList<STIGCheck> GetSTIGChecks(const STIG &stig);
+    QList<STIGCheck> GetSTIGChecks(const CCI &cci);
     QList<STIGCheck> GetSTIGChecks(const QString &whereClause = "", const QList<std::tuple<QString, QVariant>> &variables = {});
     QList<STIG> GetSTIGs(const Asset &asset);
     QList<STIG> GetSTIGs(const QString &whereClause = "", const QList<std::tuple<QString, QVariant> > &variables = {});

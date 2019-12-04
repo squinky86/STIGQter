@@ -1062,6 +1062,16 @@ QList<CCI> DbManager::GetCCIs(QVector<int> ccis)
 
 /**
  * @brief DbManager::GetCCIs
+ * @param c
+ * @return The @a CCIs mapped to the specified @a Control.
+ */
+QList<CCI> DbManager::GetCCIs(const Control &c)
+{
+    return GetCCIs("WHERE ControlId = :id", {std::make_tuple<QString, QVariant>(QStringLiteral(":id"), c.id)});
+}
+
+/**
+ * @brief DbManager::GetCCIs
  * @param STIGCheckId
  * @return The @a CCIs specified by the provided @a STIGCheck. If a
  * @a CCI does not exist in the database, the default @a CCI with an
@@ -1332,6 +1342,17 @@ QList<CKLCheck> DbManager::GetCKLChecks(const Asset &asset, const STIG *stig)
 
 /**
  * @brief DbManager::GetCKLChecks
+ * @param cci
+ * @return The set of @a CKLChecks associated with the supplied
+ * @a CCI.
+ */
+QList<CKLCheck> DbManager::GetCKLChecks(const CCI &cci)
+{
+    return GetCKLChecks("WHERE STIGCheckId IN (SELECT STIGCheckId FROM STIGCheckCCI WHERE CCIId = :CCIId)", {std::make_tuple<QString, QVariant>(":CCIId", cci.id)});
+}
+
+/**
+ * @brief DbManager::GetCKLChecks
  * @param whereClause
  * @param variables
  * @return A QList of @a CKLChecks that are in the database. SQL
@@ -1483,6 +1504,16 @@ STIGCheck DbManager::GetSTIGCheck(const STIGCheck &stigcheck)
 QList<STIGCheck> DbManager::GetSTIGChecks(const STIG &stig)
 {
     return GetSTIGChecks(QStringLiteral("WHERE STIGCheck.STIGId = :STIGId"), {std::make_tuple<QString, QVariant>(QStringLiteral(":STIGId"), stig.id)});
+}
+
+/**
+ * @brief DbManager::GetSTIGChecks
+ * @param cci
+ * @return All @a STIGChecks associated with the provided @a cci.
+ */
+QList<STIGCheck> DbManager::GetSTIGChecks(const CCI &cci)
+{
+    return GetSTIGChecks("WHERE id IN (SELECT STIGCheckId FROM STIGCheckCCI WHERE CCIId = :CCIId)", {std::make_tuple<QString, QVariant>(QStringLiteral(":CCIId"), cci.id)});
 }
 
 /**
