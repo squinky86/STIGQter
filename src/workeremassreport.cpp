@@ -201,7 +201,6 @@ void WorkerEMASSReport::process()
     worksheet_write_string(ws, 5, 17, "Test Results", fmtBoldCenter);
 
     bool dbIsImport = db.IsEmassImport();
-    bool badCciMap = false; //determine if CCI mapping of check is correct
 
     QList<CCI> ccis = db.GetCCIs();
 
@@ -228,10 +227,6 @@ void WorkerEMASSReport::process()
             if (sc.status == Status::Open)
             {
                 failedChecks.append(sc);
-                if (!cci.isImport)
-                {
-                    badCciMap = true;
-                }
             }
             else if (sc.status == Status::NotAFinding)
             {
