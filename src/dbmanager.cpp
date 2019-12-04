@@ -96,11 +96,11 @@ DbManager::DbManager(const QString& connectionName) : DbManager(
  * Overloaded constructor with path to SQLite DB and current thread's
  * connection already provided.
  */
-DbManager::DbManager(const QString& path, const QString& connectionName)
+DbManager::DbManager(const QString& path, const QString& connectionName) :
+    _dbPath(path),
+    _delayCommit(false)
 {
     QSqlDatabase db = QSqlDatabase::database(connectionName);
-    _dbPath = path;
-    _delayCommit = false;
 
     if (!db.isValid())
     {

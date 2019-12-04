@@ -116,8 +116,8 @@ public:
 private:
     bool UpdateDatabaseFromVersion(int version);
     static bool CheckDatabase(QSqlDatabase &db);
-    bool _delayCommit{};
     QString _dbPath;
+    bool _delayCommit{};
 };
 
 #endif // DBMANAGER_H

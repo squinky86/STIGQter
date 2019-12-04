@@ -22,10 +22,10 @@
 
 #include "family.h"
 
-class CCI;
-
 #include <QObject>
 #include <QString>
+
+class CCI;
 
 class Control : public QObject
 {
