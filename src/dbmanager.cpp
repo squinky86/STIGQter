@@ -150,8 +150,8 @@ DbManager::DbManager(const DbManager &db)
  * Move Constructor
  */
 DbManager::DbManager(DbManager &&orig) noexcept :
-    _delayCommit(std::move(orig._delayCommit)),
-    _dbPath(std::move(orig._dbPath))
+    _dbPath(std::move(orig._dbPath)),
+    _delayCommit(std::move(orig._delayCommit))
 {
 }
 
