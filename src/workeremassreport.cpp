@@ -339,6 +339,15 @@ void WorkerEMASSReport::process()
             Q_FOREACH (CKLCheck cc, failed ? failedChecks : passedChecks)
             {
                 testResult.append("\n" + PrintAsset(cc.GetAsset()) + ": " + PrintCKLCheck(cc));
+                //if failed check, print out severity and finding details (if available)
+                if (failed)
+                {
+                    testResult.append(" - " + GetSeverity(cc.GetSeverity()));
+                    if (!cc.findingDetails.isEmpty())
+                    {
+                        testResult.append(" - " + cc.findingDetails);
+                    }
+                }
             }
         }
         worksheet_write_string(ws, onRow, 13, Excelify(testResult).toStdString().c_str(), fmtWrapped);
