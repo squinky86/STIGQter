@@ -23,6 +23,9 @@
 #include "stig.h"
 
 #include <QDir>
+#include <QList>
+#include <QMap>
+#include <QVariant>
 
 /**
  * @class WorkerHTML
