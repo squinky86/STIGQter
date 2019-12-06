@@ -216,6 +216,8 @@ void WorkerEMASSReport::process()
 
     Q_FOREACH (CCI cci, db.GetCCIs())
     {
+        if (cci.cci == 1)
+            qDebug() << "ping" << endl;
         Q_EMIT progress(-1);
         Q_EMIT updateStatus("Adding " + PrintCCI(cci) + "…");
         QList<CKLCheck> failedChecks;
@@ -262,7 +264,7 @@ void WorkerEMASSReport::process()
                 continue;
             }
         }
-        else if (!hasChecks)
+        else if (!cci.isImport && !hasChecks)
         {
             //not import and no checks
             continue;
@@ -270,7 +272,11 @@ void WorkerEMASSReport::process()
 
         //print out check
         onRow++;
-        std::sort(passedChecks.begin(), passedChecks.end());
+        //sort only failed checks
+        if (failed)
+        {
+            std::sort(failedChecks.begin(), failedChecks.end());
+        }
         Control control = cci.GetControl();
         //control
         worksheet_write_string(ws, onRow, 0, PrintControl(control).toStdString().c_str(), nullptr);
@@ -319,7 +325,7 @@ void WorkerEMASSReport::process()
             worksheet_write_string(ws, onRow, 11, "", nullptr);
         }
         //tested by
-        worksheet_write_string(ws, onRow, 12, username.toStdString().c_str(), nullptr);
+        worksheet_write_string(ws, onRow, 12, hasChecks ? username.toStdString().c_str() : cci.isImport ? cci.importTestedBy2.toStdString().c_str() : "", nullptr);
 
         //test results
         QString testResult = cci.importTestResults2;
