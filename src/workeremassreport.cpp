@@ -216,8 +216,6 @@ void WorkerEMASSReport::process()
 
     Q_FOREACH (CCI cci, db.GetCCIs())
     {
-        if (cci.cci == 1)
-            qDebug() << "ping" << endl;
         Q_EMIT progress(-1);
         Q_EMIT updateStatus("Adding " + PrintCCI(cci) + "…");
         QList<CKLCheck> failedChecks;
