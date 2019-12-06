@@ -39,13 +39,13 @@
 #include "workerhtml.h"
 
 #include <QCryptographicHash>
+#include <QCloseEvent>
 #include <QFileDialog>
 #include <QInputDialog>
 #include <QMessageBox>
 #include <QProcess>
 #include <QStandardPaths>
 #include <QThread>
-#include <QDebug>
 
 /**
  * @class STIGQter
@@ -306,10 +306,7 @@ void STIGQter::SelectAsset()
  */
 void STIGQter::closeEvent(QCloseEvent *event)
 {
-    if (Reset(true))
-        event->accept();
-    else
-        event->ignore();
+    event->setAccepted(Reset(true));
 }
 
 /**
