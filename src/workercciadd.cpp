@@ -296,8 +296,6 @@ void WorkerCCIAdd::process()
                             c.controlId = db.GetControl(control).id;
                             c.definition = definition;
                             toAdd.append(c);
-                            //delayed add
-                            //db.AddCCI(cciInt, control, definition);
                         }
                     }
                 }
