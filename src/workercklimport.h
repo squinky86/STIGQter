@@ -28,7 +28,7 @@ class WorkerCKLImport : public QObject
 {
     Q_OBJECT
 
-protected:
+private:
     QStringList _fileNames;
     void ParseCKL(const QString &fileName);
     Asset CheckAsset(Asset &a);

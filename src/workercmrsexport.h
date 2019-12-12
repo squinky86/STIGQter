@@ -26,7 +26,7 @@ class WorkerCMRSExport : public QObject
 {
     Q_OBJECT
 
-protected:
+private:
     QString _fileName;
 
 public:

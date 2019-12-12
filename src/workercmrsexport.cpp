@@ -149,14 +149,14 @@ void WorkerCMRSExport::process()
 
                 Q_FOREACH (CKLCheck c, a.GetCKLChecks(&s))
                 {
-                    STIGCheck s = c.GetSTIGCheck();
+                    STIGCheck sc = c.GetSTIGCheck();
 
                     stream.writeStartElement(QStringLiteral("FINDING"));
 
                     stream.writeStartElement(QStringLiteral("FINDING_ID"));
                     stream.writeAttribute(QStringLiteral("TYPE"), QStringLiteral("VK"));
-                    stream.writeAttribute(QStringLiteral("ID"), s.rule);
-                    stream.writeCharacters(PrintCMRSVulnId(s));
+                    stream.writeAttribute(QStringLiteral("ID"), sc.rule);
+                    stream.writeCharacters(PrintCMRSVulnId(sc));
                     stream.writeEndElement(); //FINDING_ID
 
                     stream.writeStartElement(QStringLiteral("FINDING_STATUS"));

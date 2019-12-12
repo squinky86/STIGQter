@@ -51,7 +51,7 @@ public:
     bool AddCCI(CCI &cci);
     bool AddControl(const QString &control, const QString &title, const QString &description);
     bool AddFamily(const QString &acronym, const QString &description);
-    bool AddSTIG(STIG stig, QList<STIGCheck> checks, bool stigExists = false);
+    bool AddSTIG(STIG &stig, QList<STIGCheck> checks, bool stigExists = false);
     bool AddSTIGToAsset(const STIG &stig, const Asset &asset);
 
     bool DeleteAsset(int id);

@@ -26,7 +26,7 @@ class WorkerCKLExport : public QObject
 {
     Q_OBJECT
 
-protected:
+private:
     QString _dirName;
 
 public:

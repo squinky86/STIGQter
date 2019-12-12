@@ -288,13 +288,10 @@ bool DbManager::AddAsset(Asset &asset)
         q.prepare(QStringLiteral("SELECT count(*) FROM Asset WHERE hostName = :hostName"));
         q.bindValue(QStringLiteral(":hostName"), asset.hostName);
         q.exec();
-        if (q.next())
+        if (q.next() && q.value(0).toInt() > 0)
         {
-            if (q.value(0).toInt() > 0)
-            {
-                Warning(QStringLiteral("Asset Already Exists"), "The Asset " + PrintAsset(asset) + " already exists in the database.");
-                return false;
-            }
+            Warning(QStringLiteral("Asset Already Exists"), "The Asset " + PrintAsset(asset) + " already exists in the database.");
+            return false;
         }
         q.prepare(QStringLiteral("INSERT INTO Asset (`assetType`, `hostName`, `hostIP`, `hostMAC`, `hostFQDN`, `techArea`, `targetKey`, `webOrDatabase`, `webDBSite`, `webDBInstance`) VALUES(:assetType, :hostName, :hostIP, :hostMAC, :hostFQDN, :techArea, :targetKey, :webOrDatabase, :webDBSite, :webDBInstance)"));
         q.bindValue(QStringLiteral(":assetType"), asset.assetType);
@@ -340,13 +337,10 @@ bool DbManager::AddCCI(CCI &cci)
         q.prepare(QStringLiteral("SELECT count(*) FROM CCI WHERE cci = :cci"));
         q.bindValue(QStringLiteral(":cci"), cci.cci);
         q.exec();
-        if (q.next())
+        if (q.next() && q.value(0).toInt() > 0)
         {
-            if (q.value(0).toInt() > 0)
-            {
-                Warning(QStringLiteral("CCI Already Exists"), "The CCI " + PrintCCI(cci) + " already exists in the database.", true);
-                return ret;
-            }
+            Warning(QStringLiteral("CCI Already Exists"), "The CCI " + PrintCCI(cci) + " already exists in the database.", true);
+            return ret;
         }
 
         q.prepare(QStringLiteral("INSERT INTO CCI (ControlId, cci, definition) VALUES(:ControlId, :CCI, :definition)"));
@@ -408,8 +402,8 @@ bool DbManager::AddControl(const QString &control, const QString &title, const Q
         if (tmpControl.contains('('))
         {
             //Attempt to parse the parenthesised portion of the control as an enhancement
-            int tmpIndex = tmpControl.indexOf('(');
-            enhancement = tmpControl.right(tmpControl.length() - tmpIndex - 1);
+            int tmpIndex2 = tmpControl.indexOf('(');
+            enhancement = tmpControl.right(tmpControl.length() - tmpIndex2 - 1);
             enhancement = enhancement.left(enhancement.length() - 1);
             tmpControl = tmpControl.left(tmpControl.indexOf('('));
             //if it's not an integral, remove the enhancement
@@ -510,7 +504,7 @@ bool DbManager::AddFamily(const QString &acronym, const QString &description)
  * existing @a STIG already in the database. Otherwise, if the
  * @a STIG already exists, the @a STIGChecks are not added.
  */
-bool DbManager::AddSTIG(STIG stig, QList<STIGCheck> checks, bool stigExists)
+bool DbManager::AddSTIG(STIG &stig, QList<STIGCheck> checks, bool stigExists)
 {
     QSqlDatabase db;
     bool ret = false;
@@ -2087,12 +2081,9 @@ bool DbManager::IsEmassImport()
         QSqlQuery q(db);
         q.prepare(QStringLiteral("SELECT COUNT(*) FROM CCI WHERE isImport > 0"));
         q.exec();
-        if (q.next())
+        if (q.next() && q.value(0).toInt() > 0)
         {
-            if (q.value(0).toInt() > 0)
-            {
-                return true;
-            }
+            return true;
         }
     }
     return false;
