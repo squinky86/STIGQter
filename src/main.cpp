@@ -20,6 +20,7 @@
 #include "common.h"
 #include "dbmanager.h"
 #include "stigqter.h"
+#include "workerassetadd.h"
 #include "workerstigadd.h"
 
 #include <QApplication>
@@ -90,7 +91,41 @@ int main(int argc, char *argv[])
             a.processEvents();
         }
 
-        //test 3 - delete STIGs
+        //test 3 - create Asset
+        {
+            DbManager db;
+            WorkerAssetAdd w;
+            Asset tmpAsset;
+            tmpAsset.hostName = QString("TEST");
+            tmpAsset.hostIP = QString("127.0.0.1");
+            tmpAsset.hostMAC = QString("00:00:00:00:00");
+            tmpAsset.hostFQDN = QString("localhost");
+            w.AddAsset(tmpAsset);
+            //map each STIG to this asset
+            Q_FOREACH (auto stig, db.GetSTIGs())
+            {
+                w.AddSTIG(stig);
+            }
+            w.process();
+            a.processEvents();
+        }
+
+        //test 4 - delete Asset
+        {
+            DbManager db;
+            Q_FOREACH (auto asset, db.GetAssets())
+            {
+                //remove each STIG from this asset
+                Q_FOREACH (auto stig, asset.GetSTIGs())
+                {
+                    db.DeleteSTIGFromAsset(stig, asset);
+                }
+                db.DeleteAsset(asset);
+            }
+            a.processEvents();
+        }
+
+        //test 5 - delete STIGs
         {
             DbManager db;
             Q_FOREACH (auto stig, db.GetSTIGs())
@@ -101,7 +136,7 @@ int main(int argc, char *argv[])
             a.processEvents();
         }
 
-        //test 4 - delete CCIs
+        //test 6 - delete CCIs
         QMetaObject::invokeMethod(&w, "DeleteCCIs", Qt::DirectConnection);
         while (!w.isProcessingEnabled())
         {
