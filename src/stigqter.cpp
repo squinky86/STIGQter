@@ -140,6 +140,33 @@ bool STIGQter::isProcessingEnabled()
     return ui->btnQuit->isEnabled();
 }
 
+#ifdef USE_TESTS
+/**
+ * @brief STIGQter::RunTests
+ * Test functionality
+ */
+void STIGQter::RunTests()
+{
+    //step 1 - open all assets
+    {
+        Q_FOREACH(Asset asset, db->GetAssets())
+        {
+            Warning("On Asset", PrintAsset(asset));
+
+            //open tab
+            auto *av = new AssetView(asset);
+            connect(av, SIGNAL(CloseTab(int)), this, SLOT(CloseTab(int)));
+            int index = ui->tabDB->addTab(av, asset.hostName);
+            av->SetTabIndex(index);
+            ui->tabDB->setCurrentIndex(index);
+
+            //close tab
+            av->CloseTab(index);
+        }
+    }
+}
+#endif
+
 /**
  * @brief STIGQter::UpdateCCIs
  *

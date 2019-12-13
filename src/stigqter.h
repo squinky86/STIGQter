@@ -27,7 +27,7 @@
 #include "dbmanager.h"
 
 namespace Ui {
-class STIGQter;
+    class STIGQter;
 }
 
 class STIGQter : public QMainWindow
@@ -38,6 +38,9 @@ public:
     explicit STIGQter(QWidget *parent = nullptr);
     ~STIGQter();
     bool isProcessingEnabled();
+#ifdef USE_TESTS
+    void RunTests();
+#endif
 
 private Q_SLOTS:
 

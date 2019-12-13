@@ -17,6 +17,7 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
+#include "assetview.h"
 #include "common.h"
 #include "dbmanager.h"
 #include "stigqter.h"
@@ -94,23 +95,29 @@ int main(int argc, char *argv[])
         //test 3 - create Asset
         {
             DbManager db;
-            WorkerAssetAdd w;
+            WorkerAssetAdd wa;
             Asset tmpAsset;
             tmpAsset.hostName = QString("TEST");
             tmpAsset.hostIP = QString("127.0.0.1");
             tmpAsset.hostMAC = QString("00:00:00:00:00");
             tmpAsset.hostFQDN = QString("localhost");
-            w.AddAsset(tmpAsset);
+            wa.AddAsset(tmpAsset);
             //map each STIG to this asset
             Q_FOREACH (auto stig, db.GetSTIGs())
             {
-                w.AddSTIG(stig);
+                wa.AddSTIG(stig);
             }
-            w.process();
+            wa.process();
             a.processEvents();
         }
 
-        //test 4 - delete Asset
+        //test 4 - run STIGQter tests
+        {
+            w.RunTests();
+            a.processEvents();
+        }
+
+        //test 5 - delete Asset
         {
             DbManager db;
             Q_FOREACH (auto asset, db.GetAssets())
@@ -125,7 +132,7 @@ int main(int argc, char *argv[])
             a.processEvents();
         }
 
-        //test 5 - delete STIGs
+        //test 6 - delete STIGs
         {
             DbManager db;
             Q_FOREACH (auto stig, db.GetSTIGs())
@@ -136,7 +143,7 @@ int main(int argc, char *argv[])
             a.processEvents();
         }
 
-        //test 6 - delete CCIs
+        //test 7 - delete CCIs
         QMetaObject::invokeMethod(&w, "DeleteCCIs", Qt::DirectConnection);
         while (!w.isProcessingEnabled())
         {

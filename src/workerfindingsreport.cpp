@@ -130,9 +130,9 @@ void WorkerFindingsReport::process()
     worksheet_write_string(wsControls, 0, 1, "Compliance Status", fmtBold);
 
     //write each failed check
+    unsigned int onRow = 0;
     for (int i = 0; i < numChecks; i++)
     {
-        auto onRow = static_cast<unsigned int>(i+1);
         CKLCheck cc = checks[i];
         STIGCheck sc = cc.GetSTIGCheck();
         QList<CCI> ccis = sc.GetCCIs();
@@ -141,6 +141,7 @@ void WorkerFindingsReport::process()
         Q_EMIT updateStatus("Adding " + PrintAsset(a) + ", " + PrintSTIGCheck(sc) + "…");
         Q_FOREACH (CCI c, ccis)
         {
+            onRow++;
             //internal id
             worksheet_write_number(wsFindings, onRow, 0, cc.id, nullptr);
             //host
@@ -182,7 +183,7 @@ void WorkerFindingsReport::process()
 
     Q_EMIT initialize(numChecks+failedCCIs.count()*2+1, numChecks);
 
-    unsigned int onRow = 0;
+    onRow = 0;
     QMap<Control, QList<CCI>> failedControls;
     auto ccis = db.GetCCIs();
     for (auto i = ccis.constBegin(); i != ccis.constEnd(); i++)
