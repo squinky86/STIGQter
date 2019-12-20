@@ -137,6 +137,7 @@ int main(int argc, char *argv[])
             DbManager db;
             Q_FOREACH (auto stig, db.GetSTIGs())
             {
+                Warning("On STIG", PrintSTIG(stig));
                 db.DeleteSTIG(stig);
                 a.processEvents();
             }
