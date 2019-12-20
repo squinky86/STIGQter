@@ -4,6 +4,8 @@
 -   Updates for eMASS Test Results (issues #42, #43, #48)
 -   Affordability fixes (issues #45, #46, #44)
 -   General code cleanups and spelling fixes
+-   Addition of STIG Quarterly Download
+-   Addition of User's Guide (issue #7)
 
 ## 0.1.6 20190827
 

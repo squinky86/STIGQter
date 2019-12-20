@@ -53,6 +53,7 @@ private Q_SLOTS:
     void DeleteCCIs();
     void DeleteEmass();
     void DeleteSTIGs();
+    void DownloadSTIGs();
     void ExportCKLs();
     void ExportCMRS();
     void ExportEMASS();

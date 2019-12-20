@@ -68,7 +68,8 @@ SOURCES += \
     src/workercklexport.cpp \
     src/workerhtml.cpp \
     src/workercheckversion.cpp \
-    src/workercmrsexport.cpp
+    src/workercmrsexport.cpp \
+    src/workerstigdownload.cpp
 
 HEADERS += \
            src/stigqter.h \
@@ -96,7 +97,8 @@ HEADERS += \
     src/workercklexport.h \
     src/workerhtml.h \
     src/workercheckversion.h \
-    src/workercmrsexport.h
+    src/workercmrsexport.h \
+    src/workerstigdownload.h
 
 FORMS += \
          src/stigqter.ui \

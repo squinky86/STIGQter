@@ -30,9 +30,10 @@
 #include "workeremassreport.h"
 #include "workerfindingsreport.h"
 #include "workerimportemass.h"
+#include "workermapunmapped.h"
 #include "workerstigadd.h"
 #include "workerstigdelete.h"
-#include "workermapunmapped.h"
+#include "workerstigdownload.h"
 
 #include "ui_stigqter.h"
 #include "workercheckversion.h"
@@ -560,6 +561,34 @@ void STIGQter::DeleteSTIGs()
 }
 
 /**
+ * @brief STIGQter::DownloadSTIGs
+ *
+ * Download the latest unclassified STIG release from cyber.mil
+ * and process the new STIGs
+ */
+void STIGQter::DownloadSTIGs()
+{
+    DisableInput();
+    _updatedSTIGs = true;
+
+    //Create thread to download CCIs and keep GUI active
+    auto *t = new QThread;
+    auto *s = new WorkerSTIGDownload();
+
+    s->moveToThread(t);
+    connect(t, SIGNAL(started()), s, SLOT(process()));
+    connect(s, SIGNAL(finished()), t, SLOT(quit()));
+    connect(t, SIGNAL(finished()), this, SLOT(CompletedThread()));
+    connect(s, SIGNAL(initialize(int, int)), this, SLOT(Initialize(int, int)));
+    connect(s, SIGNAL(progress(int)), this, SLOT(Progress(int)));
+    connect(s, SIGNAL(updateStatus(QString)), ui->lblStatus, SLOT(setText(QString)));
+    threads.append(t);
+    workers.append(s);
+
+    t->start();
+}
+
+/**
  * @brief STIGQter::ExportCKLs
  *
  * Export all possible .ckl files into the selected directory.
@@ -868,6 +897,7 @@ void STIGQter::EnableInput()
 {
     QList<Family> f = db->GetFamilies();
     QList<STIG> s = db->GetSTIGs();
+    bool stigsNotImported = s.count() <= 0;
     bool isImport = db->IsEmassImport();
 
     ui->btnImportEmass->setEnabled(!isImport);
@@ -875,13 +905,15 @@ void STIGQter::EnableInput()
     if (f.count() > 0)
     {
         //disable deleting CCIs if STIGs have been imported
-        ui->btnClearCCIs->setEnabled(s.count() <= 0);
+        ui->btnClearCCIs->setEnabled(stigsNotImported);
+        ui->btnDownloadSTIGs->setEnabled(stigsNotImported);
         ui->btnImportCCIs->setEnabled(false);
         ui->btnImportSTIGs->setEnabled(true);
     }
     else
     {
         ui->btnClearCCIs->setEnabled(false);
+        ui->btnDownloadSTIGs->setEnabled(false);
         ui->btnImportEmass->setEnabled(false);
         ui->btnImportCCIs->setEnabled(true);
         ui->btnImportSTIGs->setEnabled(false);
@@ -959,6 +991,7 @@ void STIGQter::DisableInput()
     ui->btnClearSTIGs->setEnabled(false);
     ui->btnCreateCKL->setEnabled(false);
     ui->btnDeleteEmassImport->setEnabled(false);
+    ui->btnDownloadSTIGs->setEnabled(false);
     ui->btnImportCCIs->setEnabled(false);
     ui->btnImportCKL->setEnabled(false);
     ui->btnImportEmass->setEnabled(false);

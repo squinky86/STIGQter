@@ -67,28 +67,10 @@ int main(int argc, char *argv[])
         }
 
         //test 2 - add STIGs
-        QTemporaryFile tmpFile;
-        if (tmpFile.open())
+        QMetaObject::invokeMethod(&w, "DownloadSTIGs", Qt::DirectConnection);
+        while (!w.isProcessingEnabled())
         {
-            QUrl stigs(QStringLiteral("https://dl.dod.cyber.mil/wp-content/uploads/stigs/zip/U_SRG-STIG_Library_2019_10v2.zip"));
-            DownloadFile(stigs, &tmpFile);
-            auto stigFiles = GetFilesFromZip(tmpFile.fileName().toStdString().c_str(), QStringLiteral(".zip")).values();
-            Q_FOREACH (auto stigFile, stigFiles)
-            {
-                WorkerSTIGAdd tmpWorker;
-                QTemporaryFile tmpFile2;
-                if (tmpFile2.open())
-                {
-                    tmpFile2.write((stigFile));
-                }
-                tmpFile2.close();
-                QStringList tmpList;
-                tmpList.push_back(tmpFile2.fileName());
-                tmpWorker.AddSTIGs(tmpList);
-                tmpWorker.process();
-                a.processEvents();
-            }
-            tmpFile.close();
+            QThread::sleep(1);
             a.processEvents();
         }
 
