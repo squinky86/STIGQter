@@ -32,15 +32,53 @@
  * categorization, tailoring, and inheritance relationships.
  */
 
+/**
+ * @brief WorkerImportEMASS::WorkerImportEMASS
+ * @param parent
+ *
+ * Main constructor.
+ */
 WorkerImportEMASS::WorkerImportEMASS(QObject *parent) : QObject(parent), _fileName()
 {
 }
 
+/**
+ * @brief WorkerImportEMASS::SetReportName
+ * @param fileName
+ *
+ * Before calling the processing function, set the filename to import.
+ */
 void WorkerImportEMASS::SetReportName(const QString &fileName)
 {
     _fileName = fileName;
 }
 
+/**
+ * @brief WorkerImportEMASS::process
+ *
+ * Perform the operations of this worker process.
+ *
+ * @example WorkerImportEMASS::process
+ * @title WorkerImportEMASS::process
+ *
+ * This function should be kicked off as a background task. It emits
+ * signals that describe its progress and state.
+ *
+ * @code
+ * QThread *thread = new QThread;
+ * WorkerImportEMASS *import = new WorkerImportEMASS();
+ * html->SetReportName(file); // "file" is the path to the eMASS report to import.
+ * connect(thread, SIGNAL(started()), html, SLOT(process())); // Start the worker when the new thread emits its started() signal.
+ * connect(html, SIGNAL(finished()), thread, SLOT(quit())); // Kill the thread once the worker emits its finished() signal.
+ * connect(thread, SIGNAL(finished()), this, SLOT(EndFunction()));  // execute some EndFunction() (custom code) when the thread is cleaned up.
+ * connect(html, SIGNAL(initialize(int, int)), this, SLOT(Initialize(int, int))); // If progress status is needed, connect a custom Initialize(int, int) function to the initialize slot.
+ * connect(html, SIGNAL(progress(int)), this, SLOT(Progress(int))); // If progress status is needed, connect the progress slot to a custom Progress(int) function.
+ * connect(html, SIGNAL(updateStatus(QString)), ui->lblStatus, SLOT(setText(QString))); // If progress status is needed, connect a human-readable display of the status to the updateStatus(QString) slot.
+ * t->start(); // Start the thread
+ *
+ * //Don't forget to handle the *thread and *import cleanup!
+ * @endcode
+ */
 void WorkerImportEMASS::process()
 {
     DbManager db;

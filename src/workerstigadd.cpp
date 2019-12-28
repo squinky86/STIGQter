@@ -25,6 +25,33 @@
 
 #include <QXmlStreamReader>
 
+/**
+ * @class WorkerSTIGAdd
+ * @brief Add STIGs and SRGs to the internal database.
+ *
+ * STIGs and SRGs are supplied as compressed archives with XML files
+ * that detail the checklist items. The extraction and parsing of
+ * these files is handled here.
+ */
+
+/**
+ * @brief WorkerSTIGAdd::WorkerSTIGAdd
+ * @param parent
+ *
+ * Default constructor.
+ */
+WorkerSTIGAdd::WorkerSTIGAdd(QObject *parent) : QObject(parent)
+{
+}
+
+/**
+ * @brief WorkerSTIGAdd::ParseSTIG
+ * @param stig
+ * @param fileName
+ *
+ * Once a STIG is extracted, it is then parsed for STIGChecks and
+ * version information.
+ */
 void WorkerSTIGAdd::ParseSTIG(const QByteArray &stig, const QString &fileName)
 {
     //should be the .xml file inside of the STIG .zip file here
@@ -270,15 +297,27 @@ void WorkerSTIGAdd::ParseSTIG(const QByteArray &stig, const QString &fileName)
         db.AddSTIG(s, checks);
 }
 
-WorkerSTIGAdd::WorkerSTIGAdd(QObject *parent) : QObject(parent)
-{
-}
-
+/**
+ * @brief WorkerSTIGAdd::AddSTIGs
+ * @param stigs
+ *
+ * Before processing the STIGs, set the list of STIG filenames to
+ * parse.
+ */
 void WorkerSTIGAdd::AddSTIGs(const QStringList &stigs)
 {
-    _todo = stigs;
+    _todo.append(stigs);
 }
 
+/**
+ * @brief WorkerSTIGAdd::process
+ *
+ * For each provided STIG/SRG zip file,
+ * @list
+ * @li extract the .xml files
+ * @li attempt to parse the .xml file as a STIG checklist
+ * @endlist
+ */
 void WorkerSTIGAdd::process()
 {
     //get the list of STIG .zip files selected

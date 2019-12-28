@@ -220,6 +220,14 @@ void WorkerCKLImport::ParseCKL(const QString &fileName)
     delete xml;
 }
 
+/**
+ * @brief WorkerCKLImport::CheckAsset
+ * @param a
+ * @return The Asset from the database
+ *
+ * Make sure that the Asset object you have is the one from the
+ * database.
+ */
 Asset WorkerCKLImport::CheckAsset(Asset &a)
 {
     DbManager db;

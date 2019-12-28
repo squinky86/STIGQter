@@ -90,7 +90,7 @@ void WorkerAssetAdd::AddSTIG(const STIG &stig)
  * connect(addAsset, SIGNAL(updateStatus(QString)), ui->lblStatus, SLOT(setText(QString))); // If progress status is needed, connect a human-readable display of the status to the updateStatus(QString) slot.
  * t->start(); // Start the thread
  *
- * //Don't forget to handle the *t and *addAsset cleanup!
+ * //Don't forget to handle the *thread and *addAsset cleanup!
  * @endcode
  */
 void WorkerAssetAdd::process()
