@@ -20,15 +20,39 @@
 #include "dbmanager.h"
 #include "workerstigdelete.h"
 
+/**
+ * @class WorkerSTIGDelete
+ * @brief Remove STIGs and SRGs from the internal database.
+ *
+ * STIG and SRG IDs are provided and removed from the database.
+ */
+
+/**
+ * @brief WorkerSTIGDelete::WorkerSTIGDelete
+ * @param parent
+ *
+ * Default constructor.
+ */
 WorkerSTIGDelete::WorkerSTIGDelete(QObject *parent) : QObject(parent)
 {
 }
 
+/**
+ * @brief WorkerSTIGDelete::AddId
+ * @param id
+ *
+ * Provide the IDs to delete.
+ */
 void WorkerSTIGDelete::AddId(int id)
 {
     _ids.append(id);
 }
 
+/**
+ * @brief WorkerSTIGDelete::process
+ *
+ * Loop through the provided IDs and remove them from the database.
+ */
 void WorkerSTIGDelete::process()
 {
     //open database in this thread

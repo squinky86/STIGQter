@@ -23,6 +23,7 @@
 #include "stigqter.h"
 #include "workerassetadd.h"
 #include "workerstigadd.h"
+#include "workerstigdelete.h"
 
 #include <QApplication>
 #include <QTemporaryFile>
@@ -116,13 +117,13 @@ int main(int argc, char *argv[])
 
         //test 6 - delete STIGs
         {
+            WorkerSTIGDelete wd;
             DbManager db;
             Q_FOREACH (auto stig, db.GetSTIGs())
             {
-                Warning("On STIG", PrintSTIG(stig));
-                db.DeleteSTIG(stig);
-                a.processEvents();
+                wd.AddID(stig.id);
             }
+            wd.process();
             a.processEvents();
         }
 

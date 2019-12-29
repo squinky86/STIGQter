@@ -26,10 +26,33 @@
 #include "workerstigadd.h"
 #include <QTemporaryFile>
 
+/**
+ * @class WorkerSTIGDownload
+ * @brief Download the latest quarterly STIG release from DISA and
+ * add the checklists to the internal database.
+ *
+ * The main source of STIG and SRG information is from DISA. They
+ * publish a quarterly STIG release that is downloaded and processed
+ * in this worker.
+ */
+
+/**
+ * @brief WorkerSTIGDownload::WorkerSTIGDownload
+ * @param parent
+ *
+ * Default constructor.
+ */
 WorkerSTIGDownload::WorkerSTIGDownload(QObject *parent) : QObject(parent)
 {
 }
 
+/**
+ * @brief WorkerSTIGDownload::process
+ *
+ * Download the STIG library and process it as a .zip file of .zip
+ * files. Assume that each .zip file within the main archive is a
+ * STIG and attempt to parse it.
+ */
 void WorkerSTIGDownload::process()
 {
     //get the list of STIG .zip files selected
