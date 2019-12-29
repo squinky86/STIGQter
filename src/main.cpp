@@ -121,7 +121,7 @@ int main(int argc, char *argv[])
             DbManager db;
             Q_FOREACH (auto stig, db.GetSTIGs())
             {
-                wd.AddID(stig.id);
+                wd.AddId(stig.id);
             }
             wd.process();
             a.processEvents();
