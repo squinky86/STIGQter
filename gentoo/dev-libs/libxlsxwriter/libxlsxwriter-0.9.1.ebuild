@@ -1,4 +1,4 @@
-# Copyright 1999-2019 Gentoo Foundation
+# Copyright 1999-2020 Gentoo Foundation
 # Distributed under the terms of the GNU General Public License v2
 
 EAPI=7
@@ -23,7 +23,7 @@ src_prepare() {
 	for x in $(l10n_get_locales); do
 		if ! [[ "${x}" =~ ^en* ]]; then
 			#non-english locale detected; apply l10n patch
-			epatch "${FILESDIR}/libxlsxwriter-0.8.7-double-function.patch"
+			epatch "${FILESDIR}/libxlsxwriter-0.9.1-double-function.patch"
 			break
 		fi
 	done
