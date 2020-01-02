@@ -4,7 +4,7 @@ InstallDirRegKey HKLM 'Software\STIGQter' InstallDir
 !define LANG_ENGLISH 1033-English
 VIAddVersionKey /LANG=${LANG_ENGLISH} "ProductName" "STIGQter"
 VIAddVersionKey /LANG=${LANG_ENGLISH} "FileDescription" "Open Source STIGViewer Reimplementation"
-VIAddVersionKey /LANG=${LANG_ENGLISH} "LegalCopyright" "2018-2019 Jon Hood"
+VIAddVersionKey /LANG=${LANG_ENGLISH} "LegalCopyright" "2018-2020 Jon Hood"
 VIAddVersionKey /LANG=${LANG_ENGLISH} "CompanyName" "Jon Hood"
 VIAddVersionKey /LANG=${LANG_ENGLISH} "FileVersion" "1.0.0-1"
 VIProductVersion "1.0.0.0"
