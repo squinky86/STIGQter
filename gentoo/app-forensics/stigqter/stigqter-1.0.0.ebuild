@@ -7,7 +7,7 @@ inherit qmake-utils desktop
 
 DESCRIPTION="STIGQter is an open-source reimplementation of DISA's STIG Viewer."
 HOMEPAGE="https://www.stigqter.com/"
-SRC_URI="https://github.com/squinky86/STIGQter/archive/${PV}-beta.tar.gz"
+SRC_URI="https://github.com/squinky86/STIGQter/archive/${PV}.tar.gz ${P}.tar.gz"
 
 LICENSE="GPL-3"
 SLOT="0"
@@ -15,7 +15,7 @@ KEYWORDS="~amd64 ~x86"
 IUSE=""
 
 MY_PN="STIGQter"
-S="${WORKDIR}/${MY_PN}-${PV}-beta"
+S="${WORKDIR}/${MY_PN}-${PV}"
 
 CDEPEND="
 	>=app-text/tidy-html5-5.6
