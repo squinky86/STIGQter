@@ -115,3 +115,6 @@ LIBS += -ltidy -lzip -lxlsxwriter -lz
 INCLUDEPATH= src
 
 RC_FILE = STIGQter.rc
+
+DISTFILES += \
+    tests/emassTRImport.xlsx

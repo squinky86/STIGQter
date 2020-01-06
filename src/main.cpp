@@ -81,7 +81,7 @@ int main(int argc, char *argv[])
         {
             DbManager db;
             WorkerImportEMASS wi;
-            wi.SetReportName("./tests/eMASSTRImport.xlsx");
+            wi.SetReportName("tests/eMASSTRImport.xlsx");
             wi.process();
             a.processEvents();
         }
