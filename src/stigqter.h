@@ -93,6 +93,7 @@ private:
     void DisplaySTIGs();
     void EnableInput();
     void UpdateSTIGs();
+    bool _isTesting;
 };
 
 #endif // STIGQTER_H

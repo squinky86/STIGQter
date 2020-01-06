@@ -274,6 +274,12 @@ void AssetView::UpdateSTIGCheck(const STIGCheck &stigCheck)
     ui->lblFalseNegatives->setText(stigCheck.falseNegatives);
     ui->lblFix->setText(stigCheck.fix);
     ui->lblCheck->setText(stigCheck.check);
+    QString ccis(QStringLiteral("Relevant CCI(s):\n"));
+    foreach (auto cci, stigCheck.GetCCIs())
+    {
+        ccis.append(PrintCCI(cci) + QStringLiteral(": ") + cci.definition + QStringLiteral("\n"));
+    }
+    ui->lblCcis->setText(ccis);
 }
 
 /**

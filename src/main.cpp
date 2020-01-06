@@ -22,6 +22,8 @@
 #include "dbmanager.h"
 #include "stigqter.h"
 #include "workerassetadd.h"
+#include "workerimportemass.h"
+#include "workermapunmapped.h"
 #include "workerstigadd.h"
 #include "workerstigdelete.h"
 
@@ -75,7 +77,24 @@ int main(int argc, char *argv[])
             a.processEvents();
         }
 
-        //test 3 - create Asset
+        //test 3 - import eMASS
+        {
+            DbManager db;
+            WorkerImportEMASS wi;
+            wi.SetReportName("./tests/eMASSTRImport.xlsx");
+            wi.process();
+            a.processEvents();
+        }
+
+        //test 4 - remap to CM-6
+        {
+            DbManager db;
+            WorkerMapUnmapped wm;
+            wm.process();
+            a.processEvents();
+        }
+
+        //test 5 - create Asset
         {
             DbManager db;
             WorkerAssetAdd wa;
@@ -94,13 +113,13 @@ int main(int argc, char *argv[])
             a.processEvents();
         }
 
-        //test 4 - run STIGQter tests
+        //test 6 - run STIGQter tests
         {
             w.RunTests();
             a.processEvents();
         }
 
-        //test 5 - delete Asset
+        //test 7 - delete Asset
         {
             DbManager db;
             Q_FOREACH (auto asset, db.GetAssets())
@@ -115,7 +134,7 @@ int main(int argc, char *argv[])
             a.processEvents();
         }
 
-        //test 6 - delete STIGs
+        //test 8 - delete STIGs
         {
             WorkerSTIGDelete wd;
             DbManager db;
@@ -127,7 +146,7 @@ int main(int argc, char *argv[])
             a.processEvents();
         }
 
-        //test 7 - delete CCIs
+        //test 9 - delete CCIs
         QMetaObject::invokeMethod(&w, "DeleteCCIs", Qt::DirectConnection);
         while (!w.isProcessingEnabled())
         {

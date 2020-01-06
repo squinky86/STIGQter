@@ -86,6 +86,7 @@ void WorkerMapUnmapped::process()
             Q_EMIT updateStatus(QStringLiteral("Updating mapping for ") + PrintSTIGCheck(check) + QStringLiteral("…"));
             db.UpdateSTIGCheck(check);
         }
+        Q_EMIT progress(-1);
     }
 
     Q_EMIT updateStatus(QStringLiteral("Done!"));
