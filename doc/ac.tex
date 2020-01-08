@@ -158,9 +158,41 @@ This page intentionally left blank for 2-sided printing compatibility.
 \pagenumbering{arabic} %use standard numbers for the page number
 
 \section{Background}
-STIGQter is an open source tool used to perform RMF and STIG compliance mapping. It does not store or manage user accounts. Access control is managed by the overlying operating system's user account. If the software is installed and functional for the user, it is assumed that the user is permitted to access the software.
 
-\section{AC-2 -- Account Management}
+STIGQter is an open source tool used to perform RMF and STIG compliance mapping. It does not store or manage user accounts. Access Control (AC) is managed by the overlying operating system's user account. If the software is installed and functional for the user, it is assumed that the user is permitted to access the software.
+
+\section{Purpose}
+
+This AC policy is intended to define access control protections of roles (Section~\ref{sec:roles}) and their responsibilities (Section~\ref{sec:responsibilities}) to maintain secure access of STIGQter data.
+
+\section{Scope}
+
+The AC policy details the account protections afforded to all users.
+
+\section{Roles}
+\label{sec:roles}
+
+The following role(s) are defined as being applicable to STIGQter:
+\begin{enumerate}
+	\item \textbf{User} -- The user of the software is defined as the individual account given permissions to execute the software.
+\end{enumerate}
+
+\section{Responsibilities}
+\label{sec:responsibilities}
+
+The user should make sure that their \texttt{\%appdata\%} (Windows) and/or \texttt{~/.local} (Linux) folders have the default permissions for their user and group accounts, and no other users are explicitly granted privileges. All supported operating systems handle this appropriately by default.
+
+\section{Management Commitment}
+
+STIGQter development is committed to occur in an approved open source repository for maximum visibility and distribution.
+
+\section{Coordination}
+
+No coordination with other organizations is required to operate this software.
+
+\section{RMF Control Compliance}
+
+\subsection{AC-2 -- Account Management}
 
 \paragraph{Applicable CCIs:} None
 
@@ -170,11 +202,24 @@ The only role defined for the software is the ``user.'' The user is assumed to b
 
 There are no administrative or management accounts to manage, and there are no privileged functions to protect. No account management is performed at the application level.
 
-\section{AC-3 -- Access Enforcement}
+\subsection{AC-3 -- Access Enforcement}
+\label{sec:ac-3}
 
 \paragraph{Applicable CCIs:} CCI-213
 
 Access to the application and its data are handled at the operating system level. The application creates an internal SQLite database and protects it with the privileges of the user. On Windows systems, the internal database is stored at \texttt{\%appdata\%\textbackslash\allowbreak STIGQter\textbackslash\allowbreak STIGQter.db}. On Linux and most other operating systems, the internal database is stored at \texttt{~/.local/\allowbreak share/\allowbreak STIGQter/\allowbreak STIGQter.db}. Only the user and administrators have access to this file.
+
+\subsection{AC-3(4) -- Access Enforcement -- Discretionary Access Control}
+
+\paragraph{Applicable CCIs:} CCI-2165
+
+Role-Based Access Control (RBAC) and Discretionary Access Control (DAC) are handled by the operating system. The files and permissions that are created by the application must use the principle of least privilege on the file protection listed in Section~\ref{sec:ac-3}.
+
+\subsection{AC-23 -- Data Mining Protection}
+
+\paragraph{Applicable CCIs:} CCI-2346, CCI-2347
+
+Data mining protection is provided by protecting the data files using the file-level protection detailed in Section~\ref{sec:ac-3}.
 
 \clearpage
 \printbibliography
