@@ -42,6 +42,7 @@
 #include <QCryptographicHash>
 #include <QCloseEvent>
 #include <QFileDialog>
+#include <QHostInfo>
 #include <QInputDialog>
 #include <QMessageBox>
 #include <QProcess>
@@ -84,6 +85,9 @@ STIGQter::STIGQter(QWidget *parent) :
     _updatedCCIs(false),
     _updatedSTIGs(false)
 {
+    //log software startup as required by SV-84041r1_rule
+    Warning("System is Starting", QHostInfo::localHostName(), true, 4);
+
     ui->setupUi(this);
 
     //set the title bar
@@ -130,6 +134,8 @@ STIGQter::~STIGQter()
     Q_FOREACH (QShortcut *shortcut, _shortcuts)
         delete shortcut;
     _shortcuts.clear();
+    //log software shutdown as required by SV-84041r1_rule
+    Warning("System is Shutting Down", QHostInfo::localHostName(), true, 4);
 }
 
 /**
