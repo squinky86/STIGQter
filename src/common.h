@@ -28,6 +28,7 @@
 
 [[maybe_unused]] extern bool IgnoreWarnings;
 
+void MessageHandler(QtMsgType type, const QMessageLogContext &context, const QString &msg);
 QString CleanXML(QString s, bool isXml = false);
 bool DownloadFile(const QUrl &url, QFile *file);
 QString DownloadPage(const QUrl &url);
@@ -41,6 +42,6 @@ QString PrintTrueFalse(bool tf);
 QString Sanitize(QString s);
 QString SanitizeFile(QString s);
 QString TrimFileName(const QString &fileName);
-void Warning(const QString &title, const QString &message, const bool quiet = false);
+void Warning(const QString &title, const QString &message, const bool quiet = false, const int level = 5);
 
 #endif // COMMON_H

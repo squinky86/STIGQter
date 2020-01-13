@@ -104,6 +104,7 @@ public:
     bool IsEmassImport();
 
     bool LoadDB(const QString &path);
+    bool Log(int severity, const QString &location, const QString &message);
     bool SaveDB(const QString &path);
     QByteArray HashDB();
 

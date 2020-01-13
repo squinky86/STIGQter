@@ -2112,6 +2112,31 @@ bool DbManager::LoadDB(const QString &path)
 }
 
 /**
+ * @brief DbManager::Log
+ * @param severity
+ * @param location
+ * @param message
+ * @return
+ *
+ * Log events to the logging table.
+ */
+bool DbManager::Log(int severity, const QString &location, const QString &message)
+{
+    QSqlDatabase db;
+    bool ret = false;
+    if (CheckDatabase(db))
+    {
+        QSqlQuery q(db);
+        q.prepare(QStringLiteral("INSERT INTO Log (`when`, `severity`, `location`, `message`) VALUES(datetime('now'), :severity, :location, :message)"));
+        q.bindValue(QStringLiteral(":severity"), severity);
+        q.bindValue(QStringLiteral(":location"), location);
+        q.bindValue(QStringLiteral(":message"), message);
+        ret = q.exec();
+    }
+    return ret;
+}
+
+/**
  * @brief DbManager::SaveDB
  * @param path
  * @return @c True when the database is saved to @a path. Otherwise,
@@ -2506,6 +2531,13 @@ bool DbManager::UpdateDatabaseFromVersion(int version)
                       "`severityJustification`	TEXT, "
                       "FOREIGN KEY(`STIGCheckId`) REFERENCES `STIGCheck`(`id`), "
                       "FOREIGN KEY(`AssetId`) REFERENCES `Asset`(`id`) "
+                      ")"));
+            ret = q.exec() && ret;q.prepare(QStringLiteral("CREATE TABLE `Log` ( "
+                      "`id`	INTEGER PRIMARY KEY AUTOINCREMENT, "
+                      "`when`	DATETIME, "
+                      "`severity`	INTEGER, "
+                      "`location`	TEXT, "
+                      "`message`	TEXT "
                       ")"));
             ret = q.exec() && ret;
             q.prepare(QStringLiteral("INSERT INTO variables (name, value) VALUES(:name, :value)"));

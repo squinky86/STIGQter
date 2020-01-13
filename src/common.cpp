@@ -18,6 +18,7 @@
  */
 
 #include "common.h"
+#include "dbmanager.h"
 #include "tidy.h"
 #include "tidybuffio.h"
 
@@ -26,9 +27,49 @@
 #include <QApplication>
 #include <QDebug>
 #include <QEventLoop>
+#include <QtGlobal>
 #include <QMessageBox>
 #include <QString>
 #include <QtNetwork>
+
+/**
+ * @brief MessageHandler
+ * @param type
+ * @param context
+ * @param msg
+ *
+ * Logging of Qt messages occurs here. Set the LogLevel to 6 for full
+ * debugging. Default is LogLevel 5.
+ */
+void MessageHandler(QtMsgType type, const QMessageLogContext &context, const QString &msg)
+{
+    int severity = 0;
+    switch (type)
+    {
+    case QtDebugMsg:
+        severity = 5;
+        break;
+    case QtInfoMsg:
+        severity = 4;
+        break;
+    case QtWarningMsg:
+        severity = 3;
+        break;
+    case QtCriticalMsg:
+        severity = 2;
+        break;
+    case QtFatalMsg:
+        severity = 1;
+        break;
+    //should not be any other types; "default" is for scenarios where new types are added later.
+    //[[unlikely]] - uncomment when moving to >=Qt 5.14 and C++20
+    default:
+        severity = 0;
+        break;
+    }
+    DbManager db;
+    db.Log(severity, context.file + QStringLiteral(":") + QString::number(context.line) + QStringLiteral(" ") + context.function, msg);
+}
 
 /**
  * @brief CleanXML
@@ -108,7 +149,11 @@ bool DownloadFile(const QUrl &url, QFile *file)
     req.setAttribute(QNetworkRequest::FollowRedirectsAttribute, true);
 
     //set the User-Agent so that this program appears in logs correctly
-    req.setRawHeader("User-Agent", GetUserAgent().toStdString().c_str());
+    QString userAgent = GetUserAgent();
+    req.setRawHeader("User-Agent", userAgent.toStdString().c_str());
+
+    //log HTTP headers, STIG Rule SV-83997r1_rule
+    Warning("Downloading File", "Downloading " + url.toString() + " with header User-Agent: " + userAgent, true);
 
     //clean up the socket event when the response is finished reading
     QNetworkReply *response = manager.get(req);
@@ -149,7 +194,11 @@ QString DownloadPage(const QUrl &url)
     QNetworkRequest req = QNetworkRequest(QUrl(url));
 
     //set the User-Agent so that this program appears in logs correctly
-    req.setRawHeader("User-Agent", GetUserAgent().toStdString().c_str());
+    QString userAgent = GetUserAgent();
+    req.setRawHeader("User-Agent", userAgent.toStdString().c_str());
+
+    //log HTTP headers, STIG Rule SV-83997r1_rule
+    Warning("Downloading Page", "Downloading " + url.toString() + " with header User-Agent: " + userAgent, true);
 
     //send request and get response
     QNetworkReply *response = manager.get(req);
@@ -352,14 +401,16 @@ QString TrimFileName(const QString &fileName)
  * @param title
  * @param message
  * @param quiet
+ * @param level
  *
  * When @a quiet is @c true, displays a warning box with the provided
  * @a title and @a message. The title and message are always printed
  * on the console/debug log.
  */
-void Warning(const QString &title, const QString &message, const bool quiet)
+void Warning(const QString &title, const QString &message, const bool quiet, const int level)
 {
-    qDebug() << title << ": " << message << endl;
+    DbManager db;
+    db.Log(level, "", message);
     if (!IgnoreWarnings && !quiet && (QThread::currentThread() == QApplication::instance()->thread())) //make sure we're in the GUI thread before popping a message box
     {
         int ret = QMessageBox::warning(nullptr, title, message, QMessageBox::Ignore | QMessageBox::Ok);

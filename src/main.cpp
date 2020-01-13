@@ -36,6 +36,7 @@
 
 int main(int argc, char *argv[])
 {
+    qInstallMessageHandler(MessageHandler);
     QApplication a(argc, argv);
 
     STIGQter w;
