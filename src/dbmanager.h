@@ -87,6 +87,7 @@ public:
     QString GetDBPath();
     Family GetFamily(const QString &acronym);
     Family GetFamily(int id);
+    int GetLogLevel();
     QList<Family> GetFamilies(const QString &whereClause = "", const QList<std::tuple<QString, QVariant>> &variables = {});
     STIG GetSTIG(int id);
     STIG GetSTIG(const QString &title, int version, const QString &release);
@@ -105,6 +106,7 @@ public:
 
     bool LoadDB(const QString &path);
     bool Log(int severity, const QString &location, const QString &message);
+    bool Log(int severity, const QString &location, const QSqlQuery& query);
     bool SaveDB(const QString &path);
     QByteArray HashDB();
 
@@ -119,6 +121,9 @@ private:
     static bool CheckDatabase(QSqlDatabase &db);
     QString _dbPath;
     bool _delayCommit{};
+    int _logLevel;
 };
+
+QString GetLastExecutedQuery(const QSqlQuery& query);
 
 #endif // DBMANAGER_H

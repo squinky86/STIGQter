@@ -98,7 +98,8 @@ DbManager::DbManager(const QString& connectionName) : DbManager(
  */
 DbManager::DbManager(const QString& path, const QString& connectionName) :
     _dbPath(path),
-    _delayCommit(false)
+    _delayCommit(false),
+    _logLevel(-1)
 {
     QSqlDatabase db = QSqlDatabase::database(connectionName);
 
@@ -151,7 +152,8 @@ DbManager::DbManager(const DbManager &db)
  */
 DbManager::DbManager(DbManager &&orig) noexcept :
     _dbPath(std::move(orig._dbPath)),
-    _delayCommit(std::move(orig._delayCommit))
+    _delayCommit(std::move(orig._delayCommit)),
+    _logLevel(orig._logLevel)
 {
 }
 
@@ -305,6 +307,7 @@ bool DbManager::AddAsset(Asset &asset)
         q.bindValue(QStringLiteral(":webDBSite"), asset.webDbSite);
         q.bindValue(QStringLiteral(":webDBInstance"), asset.webDbInstance);
         ret = q.exec();
+        Log(6, QStringLiteral("AddAsset"), q);
         db.commit();
         asset.id = q.lastInsertId().toInt();
     }
@@ -348,6 +351,7 @@ bool DbManager::AddCCI(CCI &cci)
         q.bindValue(QStringLiteral(":CCI"), cci.cci);
         q.bindValue(QStringLiteral(":definition"), cci.definition);
         ret = q.exec();
+        Log(6, QStringLiteral("AddCCI"), q);
         if (!_delayCommit)
         {
             db.commit();
@@ -427,6 +431,7 @@ bool DbManager::AddControl(const QString &control, const QString &title, const Q
                 q.bindValue(QStringLiteral(":title"), title);
                 q.bindValue(QStringLiteral(":description"), description);
                 ret = q.exec();
+                Log(6, QStringLiteral("AddControl"), q);
                 if (!_delayCommit)
                     db.commit();
             }
@@ -486,6 +491,7 @@ bool DbManager::AddFamily(const QString &acronym, const QString &description)
         q.bindValue(QStringLiteral(":acronym"), acronym);
         q.bindValue(QStringLiteral(":description"), Sanitize(description));
         ret = q.exec();
+        Log(6, QStringLiteral("AddFamily"), q);
         if (!_delayCommit)
             db.commit();
     }
@@ -540,6 +546,7 @@ bool DbManager::AddSTIG(STIG &stig, QList<STIGCheck> checks, bool stigExists)
                 q.bindValue(QStringLiteral(":benchmarkId"), stig.benchmarkId);
                 q.bindValue(QStringLiteral(":fileName"), stig.fileName);
                 ret = q.exec();
+                Log(6, QStringLiteral("AddSTIG"), q);
                 stig.id = q.lastInsertId().toInt();
                 //do not delay this commit; the STIG should be added to the DB to prevent inconsistencies with adding the checks.
                 db.commit();
@@ -585,6 +592,7 @@ bool DbManager::AddSTIG(STIG &stig, QList<STIGCheck> checks, bool stigExists)
             q.bindValue(QStringLiteral(":IAControls"), c.iaControls);
             q.bindValue(QStringLiteral(":targetKey"), c.targetKey);
             bool tmpRet = q.exec();
+            Log(6, QStringLiteral("AddSTIG-check"), q);
             stigCheckRet = stigCheckRet && tmpRet;
             if (!tmpRet)
             {
@@ -612,6 +620,7 @@ bool DbManager::AddSTIG(STIG &stig, QList<STIGCheck> checks, bool stigExists)
                     q.bindValue(QStringLiteral(":STIGCheckId"), STIGCheckId);
                     q.bindValue(QStringLiteral(":CCIId"), cciId);
                     ret = q.exec() && ret;
+                    Log(6, QStringLiteral("AddAsset-CCI"), q);
                 }
             }
         }
@@ -656,6 +665,7 @@ bool DbManager::AddSTIGToAsset(const STIG &stig, const Asset &asset)
                 q.bindValue(QStringLiteral(":AssetId"), tmpAsset.id);
                 q.bindValue(QStringLiteral(":STIGId"), tmpSTIG.id);
                 ret = q.exec();
+                Log(6, QStringLiteral("AddSTIGToAsset"), q);
                 if (ret)
                 {
                     q.prepare(QStringLiteral("INSERT INTO CKLCheck (AssetId, STIGCheckId, status, findingDetails, comments, severityOverride, severityJustification) SELECT :AssetId, id, :status, '', '', '', '' FROM STIGCheck WHERE STIGId = :STIGId"));
@@ -663,6 +673,7 @@ bool DbManager::AddSTIGToAsset(const STIG &stig, const Asset &asset)
                     q.bindValue(QStringLiteral(":status"), Status::NotReviewed);
                     q.bindValue(QStringLiteral(":STIGId"), tmpSTIG.id);
                     ret = q.exec();
+                    Log(6, QStringLiteral("AddSTIGToAsset-2"), q);
                     db.commit();
                 }
         }
@@ -704,6 +715,7 @@ bool DbManager::DeleteAsset(const Asset &asset)
             q.prepare(QStringLiteral("DELETE FROM Asset WHERE id = :AssetId"));
             q.bindValue(QStringLiteral(":AssetId"), asset.id);
             ret = q.exec();
+            Log(6, QStringLiteral("DeleteAsset"), q);
             if (!_delayCommit)
                 db.commit();
         }
@@ -729,10 +741,13 @@ bool DbManager::DeleteCCIs()
         QSqlQuery q(db);
         q.prepare(QStringLiteral("DELETE FROM Family"));
         ret = q.exec() && ret; //q.exec() first to avoid short-circuit evaluation
+        Log(6, QStringLiteral("DeleteCCIs-Family"), q);
         q.prepare(QStringLiteral("DELETE FROM Control"));
         ret = q.exec() && ret;
+        Log(6, QStringLiteral("DeleteCCIs-Control"), q);
         q.prepare(QStringLiteral("DELETE FROM CCI"));
         ret = q.exec() && ret;
+        Log(6, QStringLiteral("DeleteCCIs-CCI"), q);
         if (!_delayCommit)
             db.commit();
     }
@@ -770,6 +785,7 @@ bool DbManager::DeleteEmassImport()
         QSqlQuery q(db);
         q.prepare(QStringLiteral("UPDATE CCI SET isImport = 0, importCompliance = NULL, importDateTested = NULL, importTestedBy = NULL, importTestResults = NULL, importCompliance2 = NULL, importDateTested2 = NULL, importTestedBy2 = NULL, importTestResults2 = NULL, importControlImplementationStatus = NULL, importSecurityControlDesignation = NULL, importInherited = NULL, importApNum = NULL, importImplementationGuidance = NULL, importAssessmentProcedures = NULL"));
         ret = q.exec();
+        Log(6, QStringLiteral("DeleteEmassImport"), q);
         if (!_delayCommit)
             db.commit();
     }
@@ -807,12 +823,15 @@ bool DbManager::DeleteSTIG(int id)
         q.prepare(QStringLiteral("DELETE FROM STIGCheckCCI WHERE STIGCheckId IN (SELECT id FROM STIGCheck WHERE STIGId = :STIGId)"));
         q.bindValue(QStringLiteral(":STIGId"), id);
         ret = q.exec() && ret; //q.exec() first toavoid short-circuit evaluation
+        Log(6, QStringLiteral("DeleteSTIG-STIGCheckCCI"), q);
         q.prepare(QStringLiteral("DELETE FROM STIGCheck WHERE STIGId = :STIGId"));
         q.bindValue(QStringLiteral(":STIGId"), id);
         ret = q.exec() && ret; //q.exec() first toavoid short-circuit evaluation
+        Log(6, QStringLiteral("DeleteSTIG-STIGCheck"), q);
         q.prepare(QStringLiteral("DELETE FROM STIG WHERE id = :id"));
         q.bindValue(QStringLiteral(":id"), id);
         ret = q.exec() && ret;
+        Log(6, QStringLiteral("DeleteSTIG-STIG"), q);
         if (!_delayCommit)
             db.commit();
     }
@@ -856,10 +875,12 @@ bool DbManager::DeleteSTIGFromAsset(const STIG &stig, const Asset &asset)
             q.bindValue(QStringLiteral(":AssetId"), tmpAsset.id);
             q.bindValue(QStringLiteral(":STIGId"), tmpSTIG.id);
             ret = q.exec() && ret; //q.exec() first to avoid short-circuit execution
+            Log(6, QStringLiteral("DeleteSTIGFromAsset-AssetSTIG"), q);
             q.prepare(QStringLiteral("DELETE FROM CKLCheck WHERE AssetId = :AssetId AND STIGCheckId IN (SELECT id FROM STIGCheck WHERE STIGId = :STIGId)"));
             q.bindValue(QStringLiteral(":AssetId"), tmpAsset.id);
             q.bindValue(QStringLiteral(":STIGId"), tmpSTIG.id);
             ret = q.exec() && ret;
+            Log(6, QStringLiteral("DeleteSTIGFromAsset-CKLCheck"), q);
             db.commit();
         }
     }
@@ -1889,6 +1910,19 @@ Family DbManager::GetFamily(int id)
 }
 
 /**
+ * @brief DbManager::GetLogLevel
+ * @return the log level of the database
+ *
+ * This function is used for caching and multithreading optimization.
+ */
+int DbManager::GetLogLevel()
+{
+    if (_logLevel < 0)
+        _logLevel = GetVariable(QStringLiteral("loglevel")).toInt();
+    return _logLevel;
+}
+
+/**
  * @brief DbManager::GetFamily
  * @param acronym
  * @return The @a Family associated with the provided @a acronym. If
@@ -2115,15 +2149,32 @@ bool DbManager::LoadDB(const QString &path)
  * @brief DbManager::Log
  * @param severity
  * @param location
+ * @param query
+ * @return true if the log record is written to the database; otherwise, false.
+ */
+bool DbManager::Log(int severity, const QString &location, const QSqlQuery &query)
+{
+    if (GetLogLevel() > 1)
+    {
+        return Log(severity, location, GetLastExecutedQuery(query));
+    }
+    return false;
+}
+
+/**
+ * @brief DbManager::Log
+ * @param severity
+ * @param location
  * @param message
- * @return
+ * @param level
+ * @return true if the log record is written to the database; otherwise, false.
  *
  * Log events to the logging table.
  */
 bool DbManager::Log(int severity, const QString &location, const QString &message)
 {
-    QSqlDatabase db;
     bool ret = false;
+    QSqlDatabase db;
     if (CheckDatabase(db))
     {
         QSqlQuery q(db);
@@ -2132,6 +2183,7 @@ bool DbManager::Log(int severity, const QString &location, const QString &messag
         q.bindValue(QStringLiteral(":location"), location);
         q.bindValue(QStringLiteral(":message"), message);
         ret = q.exec();
+        //logging is not logged
     }
     return ret;
 }
@@ -2206,6 +2258,7 @@ bool DbManager::UpdateAsset(const Asset &asset)
             q.bindValue(QStringLiteral(":webDBInstance"), asset.webDbInstance.isEmpty() ? nullptr : asset.webDbInstance);
             q.bindValue(QStringLiteral(":id"), tmpAsset.id);
             ret = q.exec();
+            Log(6, QStringLiteral("UpdateAsset"), q);
         }
     }
     return ret;
@@ -2250,6 +2303,7 @@ bool DbManager::UpdateCCI(const CCI &cci)
             q.bindValue(QStringLiteral(":importAssessmentProcedures"), cci.isImport ? cci.importAssessmentProcedures : nullptr);
             q.bindValue(QStringLiteral(":id"), tmpCCI.id);
             ret = q.exec();
+            Log(6, QStringLiteral("UpdateCCI"), q);
         }
     }
     return ret;
@@ -2281,6 +2335,7 @@ bool DbManager::UpdateCKLCheck(const CKLCheck &check)
             q.bindValue(QStringLiteral(":severityJustification"), check.severityJustification);
             q.bindValue(QStringLiteral(":id"), tmpCheck.id);
             ret = q.exec();
+            Log(6, QStringLiteral("UpdateCKLCheck"), q);
         }
     }
     return ret;
@@ -2330,15 +2385,18 @@ bool DbManager::UpdateSTIGCheck(const STIGCheck &check)
             q.bindValue(QStringLiteral(":targetKey"), check.targetKey);
             q.bindValue(QStringLiteral(":id"), check.id);
             ret = q.exec();
+            Log(6, QStringLiteral("UpdateSTIGCheck-STIGCheck"), q);
             q.prepare(QStringLiteral("DELETE FROM STIGCheckCCI WHERE STIGCheckId = :STIGCheckId"));
             q.bindValue(QStringLiteral(":STIGCheckId"), tmpCheck.id);
             ret = q.exec() && ret;
+            Log(6, QStringLiteral("UpdateSTIGCheck-STIGCheckCCI1"), q);
             Q_FOREACH (int cciId, check.cciIds)
             {
                 q.prepare(QStringLiteral("INSERT INTO STIGCheckCCI (`STIGCheckId`, `CCIId`) VALUES(:STIGCheckId, :CCIId)"));
                 q.bindValue(QStringLiteral(":STIGCheckId"), tmpCheck.id);
                 q.bindValue(QStringLiteral(":CCIId"), cciId);
                 ret = q.exec() && ret;
+                Log(6, QStringLiteral("UpdateSTIGCheck-STIGCheckCCI2"), q);
             }
         }
     }
@@ -2363,6 +2421,7 @@ bool DbManager::UpdateVariable(const QString &name, const QString &value)
         q.bindValue(QStringLiteral(":value"), value);
         q.bindValue(QStringLiteral(":name"), name);
         ret = q.exec();
+        Log(6, QStringLiteral("UpdateVariable"), q);
     }
     return ret;
 }
@@ -2547,10 +2606,46 @@ bool DbManager::UpdateDatabaseFromVersion(int version)
             q.bindValue(QStringLiteral(":name"), "lastdir");
             q.bindValue(QStringLiteral(":value"), QStandardPaths::writableLocation(QStandardPaths::DocumentsLocation));
             ret = q.exec() && ret;
+            q.bindValue(QStringLiteral(":name"), "loglevel");
+            q.bindValue(QStringLiteral(":value"), "1");
+            ret = q.exec() && ret;
 
             //write changes from update
             db.commit();
         }
     }
     return ret;
+}
+
+/**
+ * @brief GetLastExecutedQuery
+ * @param query
+ * @return String of the last executed query.
+ *
+ * Modified from:
+ *   https://stackoverflow.com/questions/5777409/how-to-get-last-prepared-and-executed-query-using-qsqlquery
+ */
+QString GetLastExecutedQuery(const QSqlQuery& query)
+{
+    QString sql = query.executedQuery();
+
+    QMapIterator<QString, QVariant> it(query.boundValues());
+
+    while (it.hasNext())
+    {
+        it.next();
+        const QVariant &var = it.value();
+        QSqlField field(QLatin1String(""), var.type());
+        if (var.isNull())
+        {
+            field.clear();
+        }
+        else
+        {
+            field.setValue(var);
+        }
+        QString formatV = query.driver()->formatValue(field);
+        sql.replace(it.key(), formatV);
+    }
+    return sql;
 }
