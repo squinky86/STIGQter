@@ -23,7 +23,7 @@ src_prepare() {
 	for x in $(l10n_get_locales); do
 		if ! [[ "${x}" =~ ^en* ]]; then
 			#non-english locale detected; apply l10n patch
-			epatch "${FILESDIR}/libxlsxwriter-0.9.1-double-function.patch"
+			epatch "${FILESDIR}/libxlsxwriter-0.9.3-double-function.patch"
 			break
 		fi
 	done

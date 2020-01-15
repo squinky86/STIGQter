@@ -24,7 +24,10 @@
 #include "workerassetadd.h"
 #include "workercklexport.h"
 #include "workercklimport.h"
+#include "workercmrsexport.h"
 #include "workeremassreport.h"
+#include "workerfindingsreport.h"
+#include "workerhtml.h"
 #include "workerimportemass.h"
 #include "workermapunmapped.h"
 #include "workerstigadd.h"
@@ -49,7 +52,6 @@ int main(int argc, char *argv[])
 
 #ifdef USE_TESTS
     bool tests = false;
-    int onTest = 0;
 
     for (int i = 0; i < argc; i++)
     {
@@ -59,6 +61,8 @@ int main(int argc, char *argv[])
 
     if (tests)
     {
+        int onTest = 0;
+
         //run tests
         IgnoreWarnings = true;
 
@@ -171,6 +175,30 @@ int main(int argc, char *argv[])
                 }
             }
             wc.process();
+            a.processEvents();
+        }
+
+        {
+            std::cout << "Test " << ++onTest << ": Export CMRS" << std::endl;
+            WorkerCMRSExport wc;
+            wc.SetExportPath("tests/CMRS.xml");
+            wc.process();
+            a.processEvents();
+        }
+
+        {
+            std::cout << "Test " << ++onTest << ": Detailed Findings Report" << std::endl;
+            WorkerFindingsReport wf;
+            wf.SetReportName("tests/DFR.xlsx");
+            wf.process();
+            a.processEvents();
+        }
+
+        {
+            std::cout << "Test " << ++onTest << ": Export HTML" << std::endl;
+            WorkerHTML wh;
+            wh.SetDir("tests");
+            wh.process();
             a.processEvents();
         }
 

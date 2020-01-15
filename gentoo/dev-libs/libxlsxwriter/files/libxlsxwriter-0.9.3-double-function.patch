@@ -1,7 +1,7 @@
-diff -Naur libxlsxwriter-RELEASE_0.9.1.orig/CMakeLists.txt libxlsxwriter-RELEASE_0.9.1.patched/CMakeLists.txt
---- libxlsxwriter-RELEASE_0.9.1.orig/CMakeLists.txt	2019-12-27 05:40:12.000000000 -0600
-+++ libxlsxwriter-RELEASE_0.9.1.patched/CMakeLists.txt	2020-01-02 13:49:03.275192359 -0600
-@@ -119,6 +119,7 @@
+diff -Naur libxlsxwriter-RELEASE_0.9.3.orig/CMakeLists.txt libxlsxwriter-RELEASE_0.9.3/CMakeLists.txt
+--- libxlsxwriter-RELEASE_0.9.3.orig/CMakeLists.txt	2020-01-13 17:50:48.000000000 -0600
++++ libxlsxwriter-RELEASE_0.9.3/CMakeLists.txt	2020-01-15 12:40:24.823604800 -0600
+@@ -119,11 +119,16 @@
  option(USE_STANDARD_TMPFILE "Use the C standard library's tmpfile()" OFF)
  option(USE_NO_MD5 "Build libxlsxwriter without third party MD5 lib" OFF)
  option(IOAPI_NO_64 "Disable 64-bit filesystem support" OFF)
@@ -9,14 +9,12 @@ diff -Naur libxlsxwriter-RELEASE_0.9.1.orig/CMakeLists.txt libxlsxwriter-RELEASE
  
  if(MSVC)
      option(USE_STATIC_MSVC_RUNTIME "Use the static runtime library" OFF)
-@@ -173,6 +174,10 @@
-     endforeach()
  endif()
  
 +IF(USE_DOUBLE_FUNCTION)
 +    ADD_DEFINITIONS(-DUSE_DOUBLE_FUNCTION)
 +ENDIF(USE_DOUBLE_FUNCTION)
 +
- # INCLUDES
- # --------
- enable_language(CXX)
+ if(DEFINED ENV{${ZLIB_ROOT}})
+     set(ZLIB_ROOT $ENV{ZLIB_ROOT})
+ endif()
