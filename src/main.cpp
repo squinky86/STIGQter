@@ -22,15 +22,20 @@
 #include "dbmanager.h"
 #include "stigqter.h"
 #include "workerassetadd.h"
+#include "workercklexport.h"
+#include "workercklimport.h"
+#include "workeremassreport.h"
 #include "workerimportemass.h"
 #include "workermapunmapped.h"
 #include "workerstigadd.h"
 #include "workerstigdelete.h"
 
 #include <QApplication>
+#include <QDirIterator>
 #include <QTemporaryFile>
 #include <QThread>
 #include <cstdlib>
+#include <iostream>
 
 [[maybe_unused]] bool IgnoreWarnings = false; //see common.h
 
@@ -44,6 +49,7 @@ int main(int argc, char *argv[])
 
 #ifdef USE_TESTS
     bool tests = false;
+    int onTest = 0;
 
     for (int i = 0; i < argc; i++)
     {
@@ -56,13 +62,13 @@ int main(int argc, char *argv[])
         //run tests
         IgnoreWarnings = true;
 
-        //test 0 - reset DB
         {
+            std::cout << "Test " << ++onTest << ": Reset the DB" << std::endl;
             DbManager db;
             db.DeleteDB();
         }
 
-        //test 1 - index CCIs
+        std::cout << "Test " << ++onTest << ": Index CCIs" << std::endl;
         QMetaObject::invokeMethod(&w, "UpdateCCIs", Qt::DirectConnection);
         while (!w.isProcessingEnabled())
         {
@@ -70,7 +76,7 @@ int main(int argc, char *argv[])
             a.processEvents();
         }
 
-        //test 2 - add STIGs
+        std::cout << "Test " << ++onTest << ": Index STIGs" << std::endl;
         QMetaObject::invokeMethod(&w, "DownloadSTIGs", Qt::DirectConnection);
         while (!w.isProcessingEnabled())
         {
@@ -78,8 +84,8 @@ int main(int argc, char *argv[])
             a.processEvents();
         }
 
-        //test 3 - import eMASS
         {
+            std::cout << "Test " << ++onTest << ": Import eMASS Test Results" << std::endl;
             DbManager db;
             WorkerImportEMASS wi;
             wi.SetReportName("tests/eMASSTRImport.xlsx");
@@ -87,16 +93,16 @@ int main(int argc, char *argv[])
             a.processEvents();
         }
 
-        //test 4 - remap to CM-6
         {
+            std::cout << "Test " << ++onTest << ": Remap Unmapped CCIs" << std::endl;
             DbManager db;
             WorkerMapUnmapped wm;
             wm.process();
             a.processEvents();
         }
 
-        //test 5 - create Asset
         {
+            std::cout << "Test " << ++onTest << ": Add an Asset" << std::endl;
             DbManager db;
             WorkerAssetAdd wa;
             Asset tmpAsset;
@@ -114,14 +120,30 @@ int main(int argc, char *argv[])
             a.processEvents();
         }
 
-        //test 6 - run STIGQter tests
         {
+            std::cout << "Test " << ++onTest << ": Run STIGQter Interface Tests" << std::endl;
             w.RunTests();
             a.processEvents();
         }
 
-        //test 7 - delete Asset
         {
+            std::cout << "Test " << ++onTest << ": Export eMASS Results" << std::endl;
+            WorkerEMASSReport we;
+            we.SetReportName("tests/eMASSTRExport.xlsx");
+            we.process();
+            a.processEvents();
+        }
+
+        {
+            std::cout << "Test " << ++onTest << ": Export CKLs" << std::endl;
+            WorkerCKLExport wc;
+            wc.SetExportDir("tests");
+            wc.process();
+            a.processEvents();
+        }
+
+        {
+            std::cout << "Test " << ++onTest << ": Delete an Asset" << std::endl;
             DbManager db;
             Q_FOREACH (auto asset, db.GetAssets())
             {
@@ -135,8 +157,25 @@ int main(int argc, char *argv[])
             a.processEvents();
         }
 
-        //test 8 - delete STIGs
         {
+            std::cout << "Test " << ++onTest << ": Import CKLs" << std::endl;
+            QDirIterator it("tests");
+            WorkerCKLImport wc;
+            while (it.hasNext())
+            {
+                QFile f(it.next());
+                if (f.fileName().endsWith(".ckl", Qt::CaseInsensitive))
+                {
+                    QFileInfo fi(f);
+                    wc.AddCKLs({fi.filePath()});
+                }
+            }
+            wc.process();
+            a.processEvents();
+        }
+
+        {
+            std::cout << "Test " << ++onTest << ": Delete STIGs" << std::endl;
             WorkerSTIGDelete wd;
             DbManager db;
             Q_FOREACH (auto stig, db.GetSTIGs())
@@ -147,7 +186,7 @@ int main(int argc, char *argv[])
             a.processEvents();
         }
 
-        //test 9 - delete CCIs
+        std::cout << "Test " << ++onTest << ": Delete CCIs" << std::endl;
         QMetaObject::invokeMethod(&w, "DeleteCCIs", Qt::DirectConnection);
         while (!w.isProcessingEnabled())
         {

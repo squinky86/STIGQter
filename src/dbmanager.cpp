@@ -188,6 +188,7 @@ DbManager &DbManager::operator=(const DbManager &right)
     {
         _delayCommit = right._delayCommit;
         _dbPath = right._dbPath;
+        _logLevel = right._logLevel;
     }
     return *this;
 }
@@ -205,6 +206,7 @@ DbManager &DbManager::operator=(DbManager &&orig) noexcept
     {
         _delayCommit = std::move(orig._delayCommit);
         _dbPath = std::move(orig._dbPath);
+        _logLevel = orig._logLevel;
     }
     return *this;
 }

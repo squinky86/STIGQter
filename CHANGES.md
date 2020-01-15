@@ -6,6 +6,7 @@
 -   General code cleanups and spelling fixes
 -   Addition of STIG Quarterly Download
 -   Addition of User's Guide (issue #7)
+-   Addition of logging layer
 
 ## 0.1.6 20190827
 
