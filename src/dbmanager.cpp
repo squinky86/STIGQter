@@ -2178,10 +2178,14 @@ bool DbManager::Log(int severity, const QString &location, const QString &messag
     if (CheckDatabase(db))
     {
         QSqlQuery q(db);
-        q.prepare(QStringLiteral("INSERT INTO Log (`when`, `severity`, `location`, `message`) VALUES(datetime('now'), :severity, :location, :message)"));
+        q.prepare(QStringLiteral("INSERT INTO Log (`when`, `severity`, `location`, `message`, `user`) VALUES(:datetime, :severity, :location, :message, :user)"));
+        //get ISO 8601 datestamp with timezone
+        q.bindValue(QStringLiteral(":datetime"), QDateTime::currentDateTime().toOffsetFromUtc(QDateTime::currentDateTime().offsetFromUtc()).toString(Qt::ISODate));
         q.bindValue(QStringLiteral(":severity"), severity);
         q.bindValue(QStringLiteral(":location"), location);
         q.bindValue(QStringLiteral(":message"), message);
+        //logging of username required by STIG rule SV-84059r1_rule
+        q.bindValue(QStringLiteral(":user"), QDir::home().dirName());
         ret = q.exec();
         //logging is not logged
     }
@@ -2596,7 +2600,8 @@ bool DbManager::UpdateDatabaseFromVersion(int version)
                       "`when`	DATETIME, "
                       "`severity`	INTEGER, "
                       "`location`	TEXT, "
-                      "`message`	TEXT "
+                      "`message`	TEXT, "
+                      "`user`	TEXT"
                       ")"));
             ret = q.exec() && ret;
             q.prepare(QStringLiteral("INSERT INTO variables (name, value) VALUES(:name, :value)"));

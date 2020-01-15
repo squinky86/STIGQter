@@ -113,12 +113,14 @@
 \lstdefinestyle{PHPStyle} {language=php}
 \lstdefinestyle{JavaStyle} {language=java}
 \lstdefinestyle{BashStyle} {language=bash}
+\lstdefinestyle{SqlStyle} {language=SQL}
 
 \lstset{language=C}
 \lstset{language=[Sharp]C}
 \lstset{language=php}
 \lstset{language=java}
 \lstset{language=bash}
+\lstset{language=SQL}
 
 \newcolumntype{L}[1]{>{\raggedright\let\newline\\\arraybackslash\hspace{0pt}}m{#1}}
 \newcolumntype{C}[1]{>{\centering\let\newline\\\arraybackslash\hspace{0pt}}m{#1}}
@@ -194,9 +196,83 @@ No coordination with other organizations is required to operate this software.
 
 \subsection{AU-3 -- Content of Audit Records}
 
-\paragraph{Applicable CCIs:} CCI-130
+\paragraph{Applicable CCIs:} CCI-130, CCI-131, CCI-132, CCI-133, CCI-134, CCI-1487
 
 The application logs HTTP header information, IP addresses, events, start-ups, shut-downs, and other required technical information to trace events. SQL-level logging is turned off by default. If required, SQL queries can also be logged by setting the \texttt{loglevel} variable in the \texttt{Variables} table to a value of 2 or greater.
+
+All logged entries contain the system's local date and time along with the user that is operating the application. If an issue occurs in the Qt framework, the location of the issue is logged. If the logged entry occurs as part of the STIGQter application, when applicable, the function where the log entry is generated is preserved. Log records are given a unique identifier. When an event fails, an additional log record of the failure is created.
+
+\subsubsection{AU-3(2) -- Centralized Management of Planned Audit Record Content}
+\label{sec:au-3-2}
+
+\paragraph{Applicable CCIs:} CCI-1844
+
+Logs are placed into the \texttt{Log} table. Any SQLite viewing software can review the logs. The recommended tool to use to correlate and manage the logs is the \href{https://sqlitebrowser.org/}{DB Browser for SQLite}.
+
+\subsection{AU-4 -- Audit Storage Capacity}
+
+\subsubsection{AU-4(1) -- Transfer to Alternate Storage}
+\label{sec:au-4-1}
+
+\paragraph{Applicable CCIs:} CCI-1851
+
+Since no user, administrative, or logging roles are defined by the application, audit/log retention is at the discression of the user. If the user would like to off-load the audit records, the user may use the tool(s) defined in Section~\ref{sec:au-3-2} to perform the following actions:
+\begin{enumerate}
+	\item Export a dump of the \texttt{Log} table
+	\item Clear the \texttt{Log} table (\texttt{DELETE FROM Log})
+	\item Compact the database
+\end{enumerate}
+
+If required by an implementing organization, centralized logging can be enabled by adding a trigger on the \texttt{Log} table:
+
+\begin{lstlisting}[style=SqlStyle]
+CREATE TRIGGER CentralLog 
+	AFTER INSERT ON Log
+BEGIN
+	-- Place export logic here, sending NEW record where it needs to go
+END;
+\end{lstlisting}
+
+Alternatively, a central logging mechanism can be set to connect to the SQLite database and pull the latest logs.
+
+\subsection{AU-5 -- Response to Audit Processing Failures}
+
+\paragraph{Applicable CCIs:} CCI-140
+
+The application will show an error message when logging failures occur. This message can be ignored if availability of the application is an overriding concern. Software availability conerns are left to the user.
+
+\subsection{AU-6 -- Audit Review, Analysis, and Reporting}
+
+\subsubsection{AU-6(4) -- Central Review and Analysis}
+
+\paragraph{Applicable CCIs:} CCI-154
+
+Central logging can be configured with the procedures in Section~\ref{sec:au-4-1}.
+
+\subsection{AU-7 -- Audit Reduction and Report Generation}
+\label{sec:au-7}
+
+\paragraph{Applicable CCIs:} CCI-1875, CCI-1876, CCI-1877, CCI-1878, CCI-1879, CCI-1880, CCI-1881, CCI-1882
+
+Audit records can be filtered, sorted, and reduced using the tools detailed in Section~\ref{sec:au-3-2}.
+
+\subsubsection{AU-7(1) -- Automatic Processing}
+
+\paragraph{Applicable CCIs:} CCI-158
+
+The audit record sorting and filtering defined in Section~\ref{sec:au-7} can be automated by the processes defined in Section~\ref{sec-au-4-1}.
+
+\subsection{AU-8 -- Time Stamps}
+
+\paragraph{Aplicable CCIs:} CCI-159, CCI-1889, CCI-1890
+
+The application uses the local system clock for logging. Timestamps are recorded in ISO 8601 format with timezones and to-the-second granularity.
+
+\subsection{AU-9 -- Protection of Audit Information}
+
+\paragraph{Applicable CCIs:} CCI-162, CCI-163, CCI-164
+
+No user management occurs in the application. The user is granted permissions to their files, and the user is defined as the proper role for accessing these records.
 
 \subsection{AU-10 -- Non-Repudiation}
 
@@ -206,11 +282,11 @@ The application design does not dictate any non-repudiation services or requirem
 
 \subsection{AU-12 -- Audit Generation}
 
-\paragraph{Applicable CCIs} CCI-169
+\paragraph{Applicable CCIs:} CCI-169
 
 When an auditable/loggable event is triggered, a new entry in the \texttt{Log} table is created. This includes logs where a header is set.
 
-\subsection{AU-12 (3) -- Audit Generation | Changes by Authorized Individuals}
+\subsubsection{AU-12(3) -- Audit Generation | Changes by Authorized Individuals}
 
 \paragraph{Applicable CCIs:} CCI-1914
 
@@ -224,7 +300,9 @@ Log records are stored in the SQLite database under the \texttt{Log} table. User
 	\item Debugging
 \end{enumerate}
 
-\subsection{AU-14 (1) -- Session Audit | System Start-Up}
+\subsection{AU-14 -- Session Audit}
+
+\subsection{AU-14(1) -- System Start-Up}
 
 \paragraph{Applicable CCIs:} CCI-1464
 
