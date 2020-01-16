@@ -63,6 +63,17 @@ int main(int argc, char *argv[])
     {
         int onTest = 0;
 
+        //general information
+        {
+            std::cout << "Running Tests in " << QDir::currentPath().toStdString() << std::endl;
+            QDirIterator it(QDir::currentPath());
+            while (it.hasNext())
+            {
+                QFile f(it.next());
+                std::cout << f.fileName().toStdString() << std::endl;
+            }
+        }
+
         //run tests
         IgnoreWarnings = true;
 
