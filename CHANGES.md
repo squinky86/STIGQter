@@ -7,6 +7,7 @@
 -   Addition of STIG Quarterly Download
 -   Addition of User's Guide (issue #7)
 -   Addition of logging layer
+-   Selectable accordion text (issue #54)
 
 ## 0.1.6 20190827
 

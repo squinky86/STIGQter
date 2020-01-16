@@ -931,6 +931,7 @@ Asset DbManager::GetAsset(const Asset &asset)
 /**
  * @brief DbManager::GetAsset
  * @param id
+ * @param mayNotExist
  * @return The @a Asset object associated with the supplied @a id.
  * If the @a id does not exist, the @a Asset that is returned is the
  * default empty one with an ID of -1.
