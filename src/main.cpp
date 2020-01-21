@@ -20,6 +20,7 @@
 #include "assetview.h"
 #include "common.h"
 #include "dbmanager.h"
+#include "help.h"
 #include "stigqter.h"
 #include "workerassetadd.h"
 #include "workercklexport.h"
@@ -224,6 +225,16 @@ int main(int argc, char *argv[])
         while (!w.isProcessingEnabled())
         {
             QThread::sleep(1);
+            a.processEvents();
+        }
+
+        std::cout << "Test " << ++onTest << ": Help Screen" << std::endl;
+        {
+            Help *h = new Help();
+            h->setAttribute(Qt::WA_DeleteOnClose); //clean up after itself (no explicit "delete" needed)
+            h->show();
+            a.processEvents();
+            h->close();
             a.processEvents();
         }
 
