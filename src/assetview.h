@@ -43,23 +43,27 @@ public:
     explicit AssetView(Asset &asset, QWidget *parent = nullptr);
     ~AssetView() override;
     void Display();
-    void SelectSTIGs();
+    void SelectSTIGs(const QString &search = QString());
     void ShowChecks(bool countOnly = false);
     void UpdateCKLCheck(const CKLCheck &cklCheck);
     void UpdateSTIGCheck(const STIGCheck &stigCheck);
     void SetTabIndex(int index);
+#ifdef USE_TESTS
+    void RunTests();
+#endif
 
 private Q_SLOTS:
     void CheckSelected(QListWidgetItem *current, QListWidgetItem *previous);
     void CheckSelectedChanged();
     void CountChecks();
     void DeleteAsset();
+    void FilterSTIGs(const QString &text);
     void ImportXCCDF();
     void KeyShortcutCtrlN();
     void KeyShortcutCtrlO();
     void KeyShortcutCtrlR();
     void KeyShortcutCtrlX();
-    void RenameAsset();
+    void RenameAsset(const QString &name = QString());
     void SaveCKL();
     void UpdateChecks();
     void UpdateCKL();
@@ -79,6 +83,7 @@ private:
     int _tabIndex;
     void KeyShortcut(Status action);
     void SetItemColor(QListWidgetItem *i, Status stat, Severity sev);
+    bool _isFiltered;
 
 Q_SIGNALS:
     void CloseTab(int);

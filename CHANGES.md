@@ -8,6 +8,7 @@
 -   Addition of User's Guide (issue #7)
 -   Addition of logging layer
 -   Selectable accordion text (issue #54)
+-   Filter STIG list on main interface and Asset viewer (issue #55)
 
 ## 0.1.6 20190827
 

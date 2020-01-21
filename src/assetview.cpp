@@ -60,7 +60,8 @@ AssetView::AssetView(Asset &asset, QWidget *parent) :
     _asset(std::move(asset)),
     _justification(),
     _updateStatus(false),
-    _tabIndex(-1)
+    _tabIndex(-1),
+    _isFiltered(false)
 {
     ui->setupUi(this);
 
@@ -132,11 +133,12 @@ void AssetView::Display()
 
 /**
  * @brief AssetView::SelectSTIGs
+ * @param search
  *
  * Marks the STIGs that are tied to the Asset as selected in the
  * list of all possible STIGs.
  */
-void AssetView::SelectSTIGs()
+void AssetView::SelectSTIGs(const QString &search)
 {
     DbManager db;
 
@@ -144,6 +146,11 @@ void AssetView::SelectSTIGs()
     QList<STIG> stigs = _asset.GetSTIGs();
     Q_FOREACH (const STIG s, db.GetSTIGs())
     {
+        if (!search.isEmpty())
+        {
+            if (!s.title.contains(search, Qt::CaseInsensitive))
+                continue;
+        }
         QListWidgetItem *i = new QListWidgetItem(PrintSTIG(s));
         ui->lstSTIGs->addItem(i);
         i->setData(Qt::UserRole, QVariant::fromValue<STIG>(s));
@@ -293,6 +300,13 @@ void AssetView::SetTabIndex(int index)
     _tabIndex = index;
 }
 
+#ifdef USE_TESTS
+void AssetView::RunTests()
+{
+    ui->txtSTIGFilter->setText(QStringLiteral("Windows"));
+}
+#endif
+
 /**
  * @brief AssetView::CheckSelectedChanged
  *
@@ -336,6 +350,28 @@ void AssetView::DeleteAsset()
         if (_tabIndex > 0)
             Q_EMIT CloseTab(_tabIndex);
     }
+}
+
+/**
+ * @brief STIGQter::FilterSTIGs
+ * @param text
+ *
+ * Filter the STIG list based on search text
+ */
+void AssetView::FilterSTIGs(const QString &text)
+{
+    ui->lstSTIGs->blockSignals(true);
+    if (text.length() > 2)
+    {
+        _isFiltered = true;
+        SelectSTIGs(text);
+    }
+    else if (_isFiltered)
+    {
+        _isFiltered = false;
+        SelectSTIGs();
+    }
+    ui->lstSTIGs->blockSignals(false);
 }
 
 /**
@@ -483,13 +519,14 @@ void AssetView::KeyShortcutCtrlX()
 
 /**
  * @brief AssetView::RenameAsset
+ * @param name
  *
  * Prompts the user, requesting the new name for the asset.
  */
-void AssetView::RenameAsset()
+void AssetView::RenameAsset(const QString &name)
 {
-    bool ok;
-    QString assetName = QInputDialog::getText(this, QStringLiteral("Input New Asset Name"), QStringLiteral("Asset Name"), QLineEdit::Normal, _asset.hostName, &ok);
+    bool ok = true;
+    QString assetName = name.isEmpty() ? QInputDialog::getText(this, QStringLiteral("Input New Asset Name"), QStringLiteral("Asset Name"), QLineEdit::Normal, _asset.hostName, &ok) : name;
     DbManager db;
     if (db.GetAsset(assetName).id > 0)
     {

@@ -58,6 +58,7 @@ private Q_SLOTS:
     void ExportCMRS();
     void ExportEMASS();
     void ExportHTML();
+    void FilterSTIGs(const QString &text);
     void FindingsReport();
     void ImportCKLs();
     void ImportEMASS();
@@ -90,10 +91,10 @@ private:
     void DisableInput();
     void DisplayAssets();
     void DisplayCCIs();
-    void DisplaySTIGs();
+    void DisplaySTIGs(const QString &search = QString());
     void EnableInput();
     void UpdateSTIGs();
-    bool _isTesting;
+    bool _isFiltered;
 };
 
 #endif // STIGQTER_H

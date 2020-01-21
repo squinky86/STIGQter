@@ -83,7 +83,8 @@ STIGQter::STIGQter(QWidget *parent) :
     db(new DbManager),
     _updatedAssets(false),
     _updatedCCIs(false),
-    _updatedSTIGs(false)
+    _updatedSTIGs(false),
+    _isFiltered(false)
 {
     //log software startup as required by SV-84041r1_rule
     Warning("System is Starting", QHostInfo::localHostName(), true, 4);
@@ -160,6 +161,9 @@ void STIGQter::RunTests()
         {
             Warning("On Asset", PrintAsset(asset));
 
+            //filter STIGs
+            ui->txtSTIGSearch->setText(QStringLiteral("Windows"));
+
             //open tab
             auto *av = new AssetView(asset);
             connect(av, SIGNAL(CloseTab(int)), this, SLOT(CloseTab(int)));
@@ -167,8 +171,12 @@ void STIGQter::RunTests()
             av->SetTabIndex(index);
             ui->tabDB->setCurrentIndex(index);
 
+            //step 2 - run AssetView tests
+            av->RunTests();
+
             //close tab
             av->CloseTab(index);
+            delete av;
         }
     }
 }
@@ -716,6 +724,26 @@ void STIGQter::ExportHTML()
 }
 
 /**
+ * @brief STIGQter::FilterSTIGs
+ * @param text
+ *
+ * Filter the STIG list based on search text
+ */
+void STIGQter::FilterSTIGs(const QString &text)
+{
+    if (text.length() > 2)
+    {
+        _isFiltered = true;
+        DisplaySTIGs(text);
+    }
+    else if (_isFiltered)
+    {
+        _isFiltered = false;
+        DisplaySTIGs();
+    }
+}
+
+/**
  * @brief STIGQter::FindingsReport
  *
  * Create a detailed findings report to make the findings data more
@@ -1044,16 +1072,24 @@ void STIGQter::DisplayCCIs()
 
 /**
  * @brief STIGQter::DisplaySTIGs
+ * @param search
  *
  * Show the list of @a STIGs to the user. This represents the global
  * @a STIG list in the database representing all @a STIGs that have
  * been imported, not only the @a STIGs for a particular @a Asset.
  */
-void STIGQter::DisplaySTIGs()
+void STIGQter::DisplaySTIGs(const QString &search)
 {
     ui->lstSTIGs->clear();
     Q_FOREACH(const STIG &s, db->GetSTIGs())
     {
+        //check to see if the filter is applied
+        if (!search.isEmpty())
+        {
+            if (!s.title.contains(search, Qt::CaseInsensitive))
+                continue;
+        }
+
         auto *tmpItem = new QListWidgetItem(); //memory managed by ui->lstSTIGs container
         tmpItem->setData(Qt::UserRole, QVariant::fromValue<STIG>(s));
         tmpItem->setText(PrintSTIG(s));
