@@ -62,7 +62,7 @@ void WorkerSTIGDownload::process()
     QTemporaryFile tmpFile;
     if (tmpFile.open())
     {
-        QUrl stigs(QStringLiteral("https://dl.dod.cyber.mil/wp-content/uploads/stigs/zip/U_SRG-STIG_Library_2019_10v2.zip"));
+        QUrl stigs(QStringLiteral("https://dl.dod.cyber.mil/wp-content/uploads/stigs/zip/U_SRG-STIG_Library_2020_01.zip"));
         DownloadFile(stigs, &tmpFile);
         //get all zip files within the master zip file
         auto stigFiles = GetFilesFromZip(tmpFile.fileName().toStdString().c_str(), QStringLiteral(".zip")).values();

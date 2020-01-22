@@ -199,9 +199,32 @@ No coordination with other organizations is required to operate this software.
 
 \section{RMF Control Compliance}
 
-\subsection{SA-11 -- Developer Security Testing and Evaluation}
+\subsection{SA-4 -- Acquisition Process}
 
-\paragraph{Applicable CCIs:} CCI-3177, CCI-3178
+\subsubsection{SA-4(5) -- System / Component / Service Configurations}
+
+\paragraph{Applicable CCIs:} CCI-3109
+
+The application is delivered in a secure state and with no additional user accounts created.
+
+\subsection{SA-5 -- Information System Documentation}
+
+\paragraph{Applicable CCIs:} CCI-3124
+
+Application Configuration Guide is included as part of the Configuration, Installation, and Usage Guide.
+
+\subsection{SA-10 -- Developer Configuration Management}
+
+\subsubsection{SA-10(1) -- Software / Firmware Integrity Verification}
+
+\paragraph{Applicable CCIs:} CCI-698
+
+The software is hashed with SHA512 and Blake2b512. Hashes are included with all final releases.
+
+\subsection{SA-11 -- Developer Security Testing and Evaluation}
+\label{sec:sa-11}
+
+\paragraph{Applicable CCIs:} CCI-3173, CCI-3177, CCI-3178
 
 Scans are performed, at a minimum, on each release of the software. Most scans are performed with each commit of the source code using several automated tools. For each commit, Travis-CI is initialized and begins a scanning, debug build of the software. The following tools are run automatically:
 \begin{itemize}
@@ -217,6 +240,71 @@ Scans are performed, at a minimum, on each release of the software. Most scans a
 Additionally, each release of the application is scanned by Coverity, Clazy, and Clang-Analyzer for defects.
 
 When quality or security defects are identified, they are resolved before the next release of the application. An application will not be released if high or critical risk findings are detected in the security or quality scans.
+
+\subsubsection{SA-11(2) -- Threat and Vulnerability Analyses}
+
+\paragraph{Applicable CCIs:} CCI-3182
+
+Testing is the responsibility of the Administrators for the project on Github. Tests are run by Travis-CI for every new commit.
+
+\subsubsection{SA-11(3) -- Independent Verification of Assessment Plans / Evidence}
+
+\paragraph{Applicable CCIs:} CCI-3183, CCI-3184, CCI-3185, CCI-3186
+
+The scanning services listed in Section~\ref{sec:sa-11} are independent of the development team, publish their assessment results publicly, and have been granted full access to the source repositories.
+
+\subsubsection{SA-11(4) -- Manual Code Reviews}
+
+\paragraph{Applicable CCIs:} CCI-3187, CCI-3188
+
+The Github project administrators are responsible for verifying that the scanning documented in Section~\ref{sec:sa-11} is performed. Code coverage of security scans is 100\%.
+
+\subsubsection{SA-11(8) -- Dynamic Code Analysis}
+
+\paragraph{Applicable CCIs:} CCI-3197
+
+High and Critical risk security findings from the scans in Section~\ref{sec:sa-11} are tracked in the project's Github issue tracker. Some historical data is preserved in the cloud scanner's history.
+
+\subsection{SA-15 -- Development Process, Standards, and Tools}
+
+\paragraph{Applicable CCIs:} CCI-3233
+
+The \href{http://isocpp.github.io/CppCoreGuidelines/CppCoreGuidelines#S-functions}{C++ Core Guidelines} are used as the standard for development. The \href{https://google.github.io/styleguide/cppguide.html}{Google C++ Style Guide}, \href{https://resources.sei.cmu.edu/downloads/secure-coding/assets/sei-cert-cpp-coding-standard-2016-v01.pdf}{CERT Coding Standards}, and \href{https://wiki.qt.io/Qt_Coding_Style}{Qt Coding Style} are used as secondary references.
+
+Since there is a single user role for the application, the design document is defined as the User's Guide.
+
+\subsubsection{SA-15(4) -- Threat Modeling / Vulnerability Analysis}
+
+\paragraph{Applicable CCIs:} CCI-3256
+
+The following sections are required by STIG rule SV-85011r1\_rule:
+\begin{enumerate}
+	\item \textbf{Identified Threats:} none
+	\item \textbf{Potential Vulnerabilities:} XML Bomb (Lots of Laughs attack, \href{https://github.com/squinky86/STIGQter/issues/26}{issue \#26})
+	\item \textbf{Counter Measures Taken:} none; The threat of malicious CKL files is well-documented.
+	\item \textbf{Potential Mitigations:} Train the user not to open CKL files from unknown sources.
+	\item \textbf{Mitigations Selected based on Risk Analysis:} A risk acceptance is recommended.
+\end{enumerate}
+
+\subsubsection{SA-15(5) -- Attack Surface Reduction}
+
+\paragraph{Applicable CCIs:} CCI-3272
+
+Error handling vulnerabilities are included in the scanning process of Section~\ref{sec:sa-11}.
+
+\subsubsection{SA-15(10) -- Incident Response Plan}
+
+\paragraph{Applicable CCIs:} CCI-3289
+
+All incidents should be logged as issues in the Github project's issue tracker. These incidents will be triaged on a best-effort basis.
+
+\subsection{SA-22 -- Unsupported System Components}
+
+\paragraph{Applicable CCIs:} CCI-3374, CCI-3376
+
+When a dependency is updated for a security reason, the build revision of STIGQter is automatically updated as well to enforce updates. This includes vulnerabilities in any of the dependent components. For example, if STIGQter 1.0.0 is released and the next day a Qt vulnerability is released that affects STIGQter, STIGQter documentation will be updated and a new release of STIGQter 1.0.1 will occur. New releases are made available on https://www.stigqter.com/.
+
+When no longer supported, the STIGQter website will be updated to reflect its status.
 
 \clearpage
 \printbibliography
