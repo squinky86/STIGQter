@@ -214,9 +214,13 @@ All shared resources are protected in accordance with the protections listed in 
 \subsection{SC-5 -- Denial of Service Protection}
 \label{sec:sc-5}
 
+\paragraph{Compliant CCIs:} CCI-1093, CCI-2386
+
+Current DoS attacks are listed under CCI-2385. Mitigation is to not load CKLs or XCCDF files from untrusted sources.
+
 \paragraph{\textcolor{red}{Non-Compliant CCIs:}} CCI-2385
 
-\paragraph{Not-Applicable CCIs:} CCI-2386
+A current DoS attack
 
 The software has a known bug involving XML bombs. See \href{Issue #26}{https://github.com/squinky86/STIGQter/issues/26} in the STIGQter issue tracker.
 
@@ -229,6 +233,10 @@ See SA-15(4) in the SA documentation for threat models.
 \paragraph{\textcolor{red}{Non-Compliant CCIs:}} CCI-1094
 
 See Section~\ref{sec:sc-5} for more details.
+
+\paragraph{Applicable CCIs:} CCI-2387
+
+The software does not connect to services in a way that would launch a DoS attack.
 
 \subsection{SC-8 -- Transmission Confidentiality and Integrity}
 \label{sec:sc-8}
@@ -262,12 +270,39 @@ Network connections are used to download CCI and RMF data from public repositori
 All hashes generated include SHA-3. Database integrity of saved files uses SHA-3-512. All connections to external entities obtain only publicly released information over HTTPS connections.
 
 \subsection{SC-18 -- Mobile Code}
+\label{sec:sc-18}
+
+Mobile code is not used in the application.
+
+\subsubsection{SC-18(1) -- Identify Unacceptable Code / Take Corrective Actions}
+
+\paragraph{Applicable CCIs:} CCI-1166, CCI-1662, CCI-2458
+
+Mobile code, when found, should be removed from the application to comply with the policy in Section~\ref{sec:sc-18}.
 
 \subsubsection{SC-18(2) -- Acquisition / Development / Use}
 
-\paragraph{Applicable CCIs:} CCI-1167
+\paragraph{Applicable CCIs:} CCI-1167, CCI-1168, CCI-1687, CCI-1688
 
-Mobile code is not used in the application.
+Mobile code, when found, should be removed from the application to comply with the policy in Section~\ref{sec:sc-18}.
+
+\subsection{SC-23 -- System and Communications Protection}
+
+\paragraph{Applicable CCIs:} CCI-1184
+
+Communication sessions use HTTPS with authenticated certificates.
+
+\subsubsection{SC-23(1) -- Invalidate Session Identifiers at Logout}
+
+\paragraph{Applicable CCIs:} CCI-1185
+
+On certificate validation failure or session close, HTTPS protocol ends the session.
+
+\subsubsection{SC-23(3) -- Unique Session Identifiers with Randomization}
+
+\paragraph{Applicable CCIs:} CCI-1188, CCI-1189, CCI-1664
+
+Randomness and negotiation of session IDs are inherent in the HTTPS protocol.
 
 \subsection{SC-24 -- Fail in Known State}
 
@@ -278,15 +313,15 @@ If the application fails, it logs the failure and allows the user to ignore the 
 \subsection{SC-28 -- Protection of Information at Rest}
 \label{sec:sc-28}
 
-\paragraph{Applicable CCIs:} CCI-1199
+\paragraph{Applicable CCIs:} CCI-1199, CCI-2472
 
 All data handled by the default application is publicly releasable and does not require encryption. If data-at-rest encryption is required by an implementing program, verify that the user's \texttt{\$HOME} directory (Linux) or \texttt{\%APPDATA\%} directory (Windows) are on the encrypted partition.
 
 \subsubsection{SC-28(1) -- Cryptographic Protection}
 
-\paragraph{Applicable CCIs:} CCI-2475, CCI-2476
+\paragraph{Applicable CCIs:} CCI-2473, CCI-2475, CCI-2476
 
-Please see Section~\ref{sec:sc-28} for encryption protections.
+Please see Section~\ref{sec:sc-28} for encryption protections. Encryption should be commensurate with the protection required for the data.
 
 \clearpage
 \printbibliography

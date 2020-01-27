@@ -303,7 +303,26 @@ void AssetView::SetTabIndex(int index)
 #ifdef USE_TESTS
 void AssetView::RunTests()
 {
+    //step 1: search for Windows components
     ui->txtSTIGFilter->setText(QStringLiteral("Windows"));
+
+    //step 2: clear search
+    ui->txtSTIGFilter->setText(QString());
+
+    //step 3: view all CKL checks
+    {
+        DbManager db;
+        Q_FOREACH (const CKLCheck &cklCheck, db.GetCKLChecks())
+        {
+            UpdateCKLCheck(cklCheck);
+        }
+    }
+
+    //step 4: when selected check changes
+    ui->lstChecks->selectAll();
+
+    //step 5: import XCCDF
+    ImportXCCDF("tests/xccdf_lol.xml");
 }
 #endif
 
@@ -379,13 +398,22 @@ void AssetView::FilterSTIGs(const QString &text)
  *
  * Import XCCDF file into this @a Asset.
  */
-void AssetView::ImportXCCDF()
+void AssetView::ImportXCCDF(const QString &filename)
 {
     DbManager db;
     db.DelayCommit(true);
 
-    QStringList fileNames = QFileDialog::getOpenFileNames(this,
-        QStringLiteral("Open XCCDF"), db.GetVariable(QStringLiteral("lastdir")), QStringLiteral("XCCDF (*.xml)"));
+    QStringList fileNames;
+
+    if (filename.isEmpty())
+    {
+        fileNames = QFileDialog::getOpenFileNames(this,
+            QStringLiteral("Open XCCDF"), db.GetVariable(QStringLiteral("lastdir")), QStringLiteral("XCCDF (*.xml)"));
+    }
+    else
+    {
+        fileNames.append(filename);
+    }
 
     bool updates = false;
 

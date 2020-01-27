@@ -58,7 +58,7 @@ private Q_SLOTS:
     void CountChecks();
     void DeleteAsset();
     void FilterSTIGs(const QString &text);
-    void ImportXCCDF();
+    void ImportXCCDF(const QString &filename = QString());
     void KeyShortcutCtrlN();
     void KeyShortcutCtrlO();
     void KeyShortcutCtrlR();
