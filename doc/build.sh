@@ -25,10 +25,12 @@ function lbll {
 	if exists pdfsizeopt 1; then
 		OPTS=""
 		if exists pngwolf 1; then
-			pdfsizeopt --use-image-optimizer="pngwolf --in=%(sourcefnq)s --out=%(targetfnq)s" $1.pdf
-		else
-			pdfsizeopt $1.pdf
+			OPTS="--use-image-optimizer=pngwolf"
 		fi
+		if exists advpng 1; then
+			OPTS="${OPTS} --use-image-optimizer=advpng4"
+		fi
+		pdfsizeopt $OPTS $1.pdf
 		if [ -f "${1}.pso.pdf" ]; then
 			mv ${1}.pso.pdf ${1}.pdf
 		fi
