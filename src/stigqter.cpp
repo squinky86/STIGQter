@@ -700,6 +700,7 @@ void STIGQter::ExportEMASS()
  */
 void STIGQter::ExportHTML()
 {
+
     DbManager db;
     QString dirName = QFileDialog::getExistingDirectory(this, QStringLiteral("Save to Directory"), db.GetVariable(QStringLiteral("lastdir")));
 

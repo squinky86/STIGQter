@@ -59,9 +59,44 @@ QString WorkerHTML::CheckItem(const QString &title, const QString &contents)
     QString ret = QLatin1String();
     if (!contents.isNull() && !contents.isEmpty())
     {
-        ret.append("<h2>" + title + "</h2><p>" + contents + "</p>");
+        ret.append("<h2>" + title.toHtmlEscaped() + "</h2><p>" + contents.toHtmlEscaped() + "</p>");
     }
-    return ret;
+    return Sanitize(ret);
+}
+
+/**
+ * @brief WorkerHTML::CheckItem
+ * @param title
+ * @param contents
+ * @return An HTML-formatted section within the @a STIGCheck file
+ * detailing the @a contents, but only when @a contents exist.
+ */
+QString WorkerHTML::CheckItem(const QString &title, const QStringList &contents)
+{
+    QString ret = QLatin1String();
+    if (contents.count() > 0)
+    {
+        ret.append("<h2>" + title.toHtmlEscaped() + "</h2><ul>");
+        Q_FOREACH(const QString &content, contents)
+        {
+            ret.append("<li>" + content.toHtmlEscaped() + "</li>");
+        }
+        ret.append(QStringLiteral("</ul>"));
+    }
+    return Sanitize(ret);
+}
+
+/**
+ * @brief WorkerHTML::Sanitize
+ * @param contents
+ * @return Better HTML formatting of newlines
+ */
+QString WorkerHTML::Sanitize(const QString &contents)
+{
+    if (contents.isEmpty())
+        return contents;
+    QString ret(contents);
+    return ret.replace(QStringLiteral("\n"), QStringLiteral("<br />\n"));
 }
 
 /**
@@ -226,14 +261,15 @@ void WorkerHTML::process()
             check.write(CheckItem(QStringLiteral("Rule Version"), c.ruleVersion).toStdString().c_str());
             check.write(CheckItem(QStringLiteral("Severity"), GetSeverity(c.severity)).toStdString().c_str());
             QList<CCI> ccis = c.GetCCIs();
+            QStringList cciStr;
             if (ccis.count() > 0)
             {
                 Q_FOREACH (CCI cci, ccis)
                 {
-                    check.write(CheckItem(QStringLiteral("Control Correlation Identifier (CCI)"), PrintCCI(cci)).toStdString().c_str());
-                    check.write(CheckItem(QStringLiteral("CCI Definition"), cci.definition).toStdString().c_str());
+                    cciStr.append(PrintCCI(cci) + " - " + cci.definition);
                 }
             }
+            check.write(CheckItem(QStringLiteral("CCI(s)"), cciStr).toStdString().c_str());
             check.write(CheckItem(QStringLiteral("Weight"), QString::number(c.weight)).toStdString().c_str());
             check.write(CheckItem(QStringLiteral("False Positives"), c.falsePositives).toStdString().c_str());
             check.write(CheckItem(QStringLiteral("False Negatives"), c.falseNegatives).toStdString().c_str());
@@ -292,5 +328,6 @@ void WorkerHTML::process()
               "</svg>");
     svg.close();
 
+    Q_EMIT updateStatus(QStringLiteral("Done!"));
     Q_EMIT finished();
 }
