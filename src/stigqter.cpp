@@ -431,6 +431,7 @@ void STIGQter::AddAsset()
         _updatedAssets = true;
         auto *t = new QThread;
         auto *a = new WorkerAssetAdd();
+        a->moveToThread(t);
         Asset tmpAsset;
         tmpAsset.hostName = asset;
         Q_FOREACH(QListWidgetItem *i, ui->lstSTIGs->selectedItems())
@@ -472,6 +473,7 @@ void STIGQter::AddSTIGs()
     _updatedSTIGs = true;
     auto *t = new QThread;
     auto *s = new WorkerSTIGAdd();
+    s->moveToThread(t);
     s->AddSTIGs(fileNames);
     connect(t, SIGNAL(started()), s, SLOT(process()));
     connect(s, SIGNAL(finished()), t, SLOT(quit()));
@@ -556,6 +558,7 @@ void STIGQter::DeleteSTIGs()
     //Create thread to download CCIs and keep GUI active
     auto *t = new QThread;
     auto *s = new WorkerSTIGDelete();
+    s->moveToThread(t);
     Q_FOREACH (QListWidgetItem *i, ui->lstSTIGs->selectedItems())
     {
         STIG s = i->data(Qt::UserRole).value<STIG>();
@@ -618,6 +621,7 @@ void STIGQter::ExportCKLs()
         db.UpdateVariable(QStringLiteral("lastdir"), QFileInfo(dirName).absolutePath());
         auto *t = new QThread;
         auto *f = new WorkerCKLExport();
+        f->moveToThread(t);
         f->SetExportDir(dirName);
         connect(t, SIGNAL(started()), f, SLOT(process()));
         connect(f, SIGNAL(finished()), t, SLOT(quit()));
@@ -649,6 +653,7 @@ void STIGQter::ExportCMRS()
     db.UpdateVariable(QStringLiteral("lastdir"), QFileInfo(fileName).absolutePath());
     auto *t = new QThread;
     auto *f = new WorkerCMRSExport();
+    f->moveToThread(t);
     f->SetExportPath(fileName);
     connect(t, SIGNAL(started()), f, SLOT(process()));
     connect(f, SIGNAL(finished()), t, SLOT(quit()));
@@ -679,6 +684,7 @@ void STIGQter::ExportEMASS()
     db.UpdateVariable(QStringLiteral("lastdir"), QFileInfo(fileName).absolutePath());
     auto *t = new QThread;
     auto *f = new WorkerEMASSReport();
+    f->moveToThread(t);
     f->SetReportName(fileName);
     connect(t, SIGNAL(started()), f, SLOT(process()));
     connect(f, SIGNAL(finished()), t, SLOT(quit()));
@@ -709,6 +715,7 @@ void STIGQter::ExportHTML()
         db.UpdateVariable(QStringLiteral("lastdir"), QFileInfo(dirName).absolutePath());
         auto *t = new QThread;
         auto *f = new WorkerHTML();
+        f->moveToThread(t);
         f->SetDir(dirName);
         connect(t, SIGNAL(started()), f, SLOT(process()));
         connect(f, SIGNAL(finished()), t, SLOT(quit()));
@@ -762,6 +769,7 @@ void STIGQter::FindingsReport()
     DisableInput();
     auto *t = new QThread;
     auto *f = new WorkerFindingsReport();
+    f->moveToThread(t);
     f->SetReportName(fileName);
     connect(t, SIGNAL(started()), f, SLOT(process()));
     connect(f, SIGNAL(finished()), t, SLOT(quit()));
@@ -795,6 +803,7 @@ void STIGQter::ImportCKLs()
     _updatedAssets = true;
     auto *t = new QThread();
     auto *c = new WorkerCKLImport();
+    c->moveToThread(t);
     c->AddCKLs(fileNames);
     connect(t, SIGNAL(started()), c, SLOT(process()));
     connect(c, SIGNAL(finished()), t, SLOT(quit()));
