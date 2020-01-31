@@ -17,6 +17,7 @@ Section
 	file CHANGES.md
 	file LICENSE
 	file README.md
+	file doc/UsersGuide.pdf
 	CreateShortCut "$SMPROGRAMS\STIGQter.lnk" "$INSTDIR\STIGQter.exe"
 SectionEnd
 Section "uninstall"
@@ -26,4 +27,5 @@ Section "uninstall"
 	Delete "$INSTDIR\CHANGES.md"
 	Delete "$INSTDIR\LICENSE"
 	Delete "$INSTDIR\README.md"
+	Delete "$INSTDIR\UsersGuide.pdf"
 SectionEnd

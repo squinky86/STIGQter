@@ -11,6 +11,8 @@
 \usepackage{wrapfig}
 \usepackage{attachfile}
 \usepackage{luatex85}
+\usepackage{tikz}
+\usetikzlibrary{shapes,arrows,positioning}
 
 %                Main Variables
 \newcommand{\repdate}{\formatdate{28}{1}{2020}}
@@ -163,17 +165,38 @@ This page intentionally left blank for 2-sided printing compatibility.
 STIGViewer has been the DISA-provided tool of choice for creating STIG Checklists (CKL) and Continuous Monitoring Risk Scoring (CMRS) reports for eMASS. It is a solid tool, stable, and unfortunately closed-source. STIGQter attempts to recreate the features of STIGViewer in an open and extensible way. The goal of STIGQter is to abide by free and open source principles so that it may be incorporated and distributed freely in any operating system.
 
 \section{Starting Up}
+
+STIGQter connects to \url{https://nvd.nist.gov/} and \url{https://dl.dod.cyber.mil/} (linked to from \url{https://public.cyber.mil/}).
+
+\begin{figure}[h]
+	\tikzstyle{block} = [rectangle, draw, fill=blue!20, text width=5em, text centered, rounded corners, minimum height=4em]
+	\tikzstyle{extern} = [draw, ellipse,fill=red!20, node distance=3cm, minimum height=2em]
+	\tikzstyle{line} = [draw, -latex']
+	\begin{tikzpicture}
+		\node [block] (STIGQter) {STIGQter Application};
+		\node [extern, left of=STIGQter, xshift=-7em] (Cyber) {https://dl.dod.cyber.mil/};
+		\node [extern, right of=STIGQter, xshift=7em] (NIST) {https://nvd.nist.gov/};
+		\path [line] (STIGQter) -- node {Port: 443} (Cyber);
+		\path [line] (STIGQter) -- node {Port: 443} (NIST);
+	\end{tikzpicture}
+	\caption{Data Flow Diagram}
+	\label{fig:dataflow}
+\end{figure}
+
+To use STIGQter, you will need to index the set of RMF Controls from NIST, the set of CCIs from DISA, and obtain the relevant STIGs for your system. Figure~\ref{fig:dataflow} shows the data flow for the application.
+
+\clearpage
+\subsection{Indexing Controls and CCIs}
 \begin{wrapfigure}{R}{0.6\textwidth}
 	\centering
-	\vspace{-70pt}
+	\vspace{-10pt}
 	\includegraphics[width=0.59\textwidth]{images/main-01.png}
 	\caption{Starting Main Interface}
-	\vspace{-10pt}
+	\vspace{-30pt}
 	\label{fig:importccis}
 \end{wrapfigure}
-To use STIGQter, you will need to index the set of RMF Controls from NIST, the set of CCIs from DISA, and obtain the relevant STIGs for your system.
 
-\subsection{Indexing Controls and CCIs}
+
 The first step in using STIGQter is to index the latest RMF Controls and CCIs from NIST and Cyber.mil respectively. To do this, click the ``Import CCIs'' button (Figure~\ref{fig:importccis}).
 
 STIGQter will index the base CCIs associated with NIST 800-53 Revision 4 automatically. When done, it will download the latest CCI list from DISA to incorporate the latest DoD modifications. These CCIs form the base units of validation in eMASS: issues are recorded at the CCI level and roll up to the Control level.
@@ -185,7 +208,7 @@ STIGQter will index the base CCIs associated with NIST 800-53 Revision 4 automat
 	\vspace{-10pt}
 	\includegraphics[width=0.59\textwidth]{images/main-02.png}
 	\caption{Importing STIGs}
-	\vspace{-10pt}
+	\vspace{-40pt}
 	\label{fig:importstigs}
 \end{wrapfigure}
 DISA generally publishes Security Technical Implementation Guides and Security Requirements Guides (STIG/SRG) at \url{http://public.cyber.mil/stigs/}. The ``document library'' provides a list of STIGs available for download. These STIG .zip files may be downloaded and imported into the application (Figure~\ref{fig:importstigs}).
