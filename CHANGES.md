@@ -1,4 +1,4 @@
-## 1.0.0
+## 1.0.0 20200131
 -   Stabilized database (reverse compatibility will be maintained)
 -   Updated Detailed Findings Report (issues #41, #34)
 -   Updates for eMASS Test Results (issues #42, #43, #48)

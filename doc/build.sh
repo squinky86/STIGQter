@@ -5,14 +5,16 @@ function exists {
 	ret=$?
 	#program doesn't exist; check if aliased
 	if [ $ret -gt 0 ]; then
-		echo "Checking alias for $1..."
+		if [ -z "$2" ]; then
+			echo "Checking alias for $1..."
+		fi
 		type -a $1
 		# > /dev/null 2> /dev/null
 		ret=$?
 	fi
 	if [ $ret -gt 0 ]; then
-		echo "Please install ${1} before building the documentation."
 		if [ -z "$2" ]; then
+			echo "Please install ${1} before building the documentation."
 			exit 1
 		fi
 		return 1
@@ -40,8 +42,7 @@ function lbll {
 exists lualatex
 exists biber
 if ! exists pdfsizeopt 1; then
-	echo "Warning, pdfsizeopt is not installed."
-	sleep 5
+	echo "Not running pdfsizeopt for documentation compression."
 fi
 
 for x in [a-z][a-z].tex; do
