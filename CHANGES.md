@@ -1,3 +1,6 @@
+## 1.0.1
+-   General fixes and code cleanups
+
 ## 1.0.0 20200131
 -   Stabilized database (reverse compatibility will be maintained)
 -   Updated Detailed Findings Report (issues #41, #34)

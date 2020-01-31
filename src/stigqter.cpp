@@ -969,6 +969,7 @@ void STIGQter::EnableInput()
     ui->btnOpenCKL->setEnabled(ui->lstAssets->selectedItems().count() > 0);
     ui->btnQuit->setEnabled(true);
     ui->menubar->setEnabled(true);
+    ui->txtSTIGSearch->setEnabled(true);
     SelectSTIG();
 }
 
@@ -1043,6 +1044,7 @@ void STIGQter::DisableInput()
     ui->btnOpenCKL->setEnabled(false);
     ui->btnQuit->setEnabled(false);
     ui->menubar->setEnabled(false);
+    ui->txtSTIGSearch->setEnabled(false);
 }
 
 /**
