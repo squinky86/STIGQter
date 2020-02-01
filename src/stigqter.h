@@ -78,7 +78,6 @@ private Q_SLOTS:
 
 private:
     Ui::STIGQter *ui;
-    DbManager *db;
     QList<QThread *> threads;
     QList<QObject *> workers;
     bool _updatedAssets;

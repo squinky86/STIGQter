@@ -80,7 +80,6 @@
 STIGQter::STIGQter(QWidget *parent) :
     QMainWindow(parent),
     ui(new Ui::STIGQter),
-    db(new DbManager),
     _updatedAssets(false),
     _updatedCCIs(false),
     _updatedSTIGs(false),
@@ -107,7 +106,8 @@ STIGQter::STIGQter(QWidget *parent) :
     _shortcuts.append(new QShortcut(QKeySequence(Qt::CTRL + Qt::Key_S), this, SLOT(Save())));
 
     //display path to database file
-    ui->lblDBLoc->setText(QStringLiteral("DB: ") + db->GetDBPath());
+    DbManager db;
+    ui->lblDBLoc->setText(QStringLiteral("DB: ") + db.GetDBPath());
 
     //check version number
     auto *t = new QThread;
@@ -130,7 +130,6 @@ STIGQter::STIGQter(QWidget *parent) :
 STIGQter::~STIGQter()
 {
     CleanThreads();
-    delete db;
     delete ui;
     Q_FOREACH (QShortcut *shortcut, _shortcuts)
         delete shortcut;
@@ -254,7 +253,8 @@ bool STIGQter::Reset(bool checkOnly)
         QMessageBox::StandardButton reply = QMessageBox::question(this, QStringLiteral("Unsaved Changes"), QStringLiteral("The data have not been saved. Really close?"), QMessageBox::Yes|QMessageBox::No);
         if (reply == QMessageBox::Yes)
         {
-            db->DeleteDB();
+            DbManager db;
+            db.DeleteDB();
             qApp->quit();
             QProcess::startDetached(qApp->arguments()[0], qApp->arguments());
         }
@@ -266,12 +266,13 @@ bool STIGQter::Reset(bool checkOnly)
         dest.open(QFile::ReadOnly);
         QByteArray destHash = QCryptographicHash::hash(dest.readAll(), QCryptographicHash::Sha3_256);
         dest.close();
-        if (destHash == db->HashDB())
+        DbManager db;
+        if (destHash == db.HashDB())
         {
             //database was saved without changes; reset application.
             if (checkOnly)
                 return true;
-            db->DeleteDB();
+            db.DeleteDB();
             qApp->quit();
             QProcess::startDetached(qApp->arguments()[0], qApp->arguments());
         }
@@ -283,7 +284,7 @@ bool STIGQter::Reset(bool checkOnly)
             {
                 if (checkOnly)
                     return true;
-                db->DeleteDB();
+                db.DeleteDB();
                 qApp->quit();
                 QProcess::startDetached(qApp->arguments()[0], qApp->arguments());
             }
@@ -540,7 +541,8 @@ void STIGQter::DeleteCCIs()
  */
 void STIGQter::DeleteEmass()
 {
-    db->DeleteEmassImport();
+    DbManager db;
+    db.DeleteEmassImport();
     EnableInput();
 }
 
@@ -555,16 +557,14 @@ void STIGQter::DeleteSTIGs()
     DisableInput();
     _updatedSTIGs = true;
 
-    //Create thread to download CCIs and keep GUI active
     auto *t = new QThread;
     auto *s = new WorkerSTIGDelete();
     s->moveToThread(t);
     Q_FOREACH (QListWidgetItem *i, ui->lstSTIGs->selectedItems())
     {
-        STIG s = i->data(Qt::UserRole).value<STIG>();
-        db->DeleteSTIG(s);
+        STIG stig = i->data(Qt::UserRole).value<STIG>();
+        s->AddId(stig.id);
     }
-    s->moveToThread(t);
     connect(t, SIGNAL(started()), s, SLOT(process()));
     connect(s, SIGNAL(finished()), t, SLOT(quit()));
     connect(t, SIGNAL(finished()), this, SLOT(CompletedThread()));
@@ -938,10 +938,11 @@ void STIGQter::ShowMessage(const QString &title, const QString &message)
  */
 void STIGQter::EnableInput()
 {
-    QList<Family> f = db->GetFamilies();
-    QList<STIG> s = db->GetSTIGs();
+    DbManager db;
+    QList<Family> f = db.GetFamilies();
+    QList<STIG> s = db.GetSTIGs();
     bool stigsNotImported = s.count() <= 0;
-    bool isImport = db->IsEmassImport();
+    bool isImport = db.IsEmassImport();
 
     ui->btnImportEmass->setEnabled(!isImport);
 
@@ -1055,7 +1056,8 @@ void STIGQter::DisableInput()
 void STIGQter::DisplayAssets()
 {
     ui->lstAssets->clear();
-    Q_FOREACH(const Asset &a, db->GetAssets())
+    DbManager db;
+    Q_FOREACH(const Asset &a, db.GetAssets())
     {
         auto *tmpItem = new QListWidgetItem(); //memory managed by ui->lstAssets container
         tmpItem->setData(Qt::UserRole, QVariant::fromValue<Asset>(a));
@@ -1072,7 +1074,8 @@ void STIGQter::DisplayAssets()
 void STIGQter::DisplayCCIs()
 {
     ui->lstCCIs->clear();
-    Q_FOREACH(const CCI &c, db->GetCCIs())
+    DbManager db;
+    Q_FOREACH(const CCI &c, db.GetCCIs())
     {
         auto *tmpItem = new QListWidgetItem(); //memory managed by ui->lstCCIs container
         tmpItem->setData(Qt::UserRole, QVariant::fromValue<CCI>(c));
@@ -1092,7 +1095,8 @@ void STIGQter::DisplayCCIs()
 void STIGQter::DisplaySTIGs(const QString &search)
 {
     ui->lstSTIGs->clear();
-    Q_FOREACH(const STIG &s, db->GetSTIGs())
+    DbManager db;
+    Q_FOREACH(const STIG &s, db.GetSTIGs())
     {
         //check to see if the filter is applied
         if (!search.isEmpty())
