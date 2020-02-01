@@ -154,9 +154,10 @@ bool STIGQter::isProcessingEnabled()
  */
 void STIGQter::RunTests()
 {
+    DbManager db;
     //step 1 - open all assets
     {
-        Q_FOREACH(Asset asset, db->GetAssets())
+        Q_FOREACH(Asset asset, db.GetAssets())
         {
             Warning("On Asset", PrintAsset(asset));
 
