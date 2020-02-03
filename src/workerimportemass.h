@@ -20,9 +20,11 @@
 #ifndef WORKERIMPORTEMASS_H
 #define WORKERIMPORTEMASS_H
 
+#include "worker.h"
+
 #include <QObject>
 
-class WorkerImportEMASS : public QObject
+class WorkerImportEMASS : public Worker
 {
     Q_OBJECT
 
@@ -35,12 +37,6 @@ public:
 
 public Q_SLOTS:
     void process();
-
-Q_SIGNALS:
-    void initialize(int, int);
-    void progress(int);
-    void updateStatus(QString);
-    void finished();
 };
 
 #endif // WORKERIMPORTEMASS_H

@@ -20,9 +20,11 @@
 #ifndef WORKERCCIADD_H
 #define WORKERCCIADD_H
 
-#include <QThread>
+#include "worker.h"
 
-class WorkerCCIAdd : public QObject
+#include <QObject>
+
+class WorkerCCIAdd : public Worker
 {
     Q_OBJECT
 
@@ -31,12 +33,6 @@ public:
 
 public Q_SLOTS:
     void process();
-
-Q_SIGNALS:
-    void initialize(int, int);
-    void progress(int);
-    void updateStatus(QString);
-    void finished();
 };
 
 #endif // WORKERCCIADD_H

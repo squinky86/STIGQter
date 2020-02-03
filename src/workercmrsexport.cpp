@@ -42,7 +42,7 @@
  *
  * Default constructor.
  */
-WorkerCMRSExport::WorkerCMRSExport(QObject *parent) : QObject(parent)
+WorkerCMRSExport::WorkerCMRSExport(QObject *parent) : Worker(parent)
 {
 }
 

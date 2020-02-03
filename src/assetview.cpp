@@ -23,6 +23,7 @@
 #include "dbmanager.h"
 #include "stig.h"
 #include "stigcheck.h"
+#include "stigqter.h"
 #include "ui_assetview.h"
 
 #include <QFileDialog>
@@ -61,7 +62,10 @@ AssetView::AssetView(Asset &asset, QWidget *parent) :
     _justification(),
     _updateStatus(false),
     _tabIndex(-1),
-    _isFiltered(false)
+    _isFiltered(false),
+    _progressBar(nullptr),
+    _lblStatus(nullptr),
+    _parent(dynamic_cast<STIGQter *>(parent))
 {
     ui->setupUi(this);
 
@@ -118,6 +122,32 @@ AssetView::~AssetView()
 }
 
 /**
+ * @brief STIGQter::DisableInput
+ *
+ * Prevent user interaction while background processes are busy.
+ */
+void AssetView::DisableInput()
+{
+    ui->txtIP->setEnabled(false);
+    ui->txtMAC->setEnabled(false);
+    ui->txtFQDN->setEnabled(false);
+    ui->txtSTIGFilter->setEnabled(false);
+    ui->lstSTIGs->setEnabled(false);
+    ui->cboBoxFilterStatus->setEnabled(false);
+    ui->cboBoxFilterSeverity->setEnabled(false);
+    ui->lstChecks->setEnabled(false);
+    ui->btnDeleteAsset->setEnabled(false);
+    ui->btnRename->setEnabled(false);
+    ui->cboBoxSeverity->setEnabled(false);
+    ui->toolBox->setEnabled(false);
+    ui->cboBoxStatus->setEnabled(false);
+    ui->txtFindingDetails->setEnabled(false);
+    ui->txtComments->setEnabled(false);
+    ui->btnImportXCCDF->setEnabled(false);
+    ui->btnSaveCKL->setEnabled(false);
+}
+
+/**
  * @brief AssetView::Display
  *
  * Shows the STIGs and CKL Checks for the selected Asset
@@ -129,6 +159,32 @@ void AssetView::Display()
     ui->txtFQDN->setText(_asset.hostFQDN);
     SelectSTIGs();
     ShowChecks();
+}
+
+/**
+ * @brief AssetView::EnableInput
+ *
+ * Enable all controls when background worker finishes.
+ */
+void AssetView::EnableInput()
+{
+    ui->txtIP->setEnabled(true);
+    ui->txtMAC->setEnabled(true);
+    ui->txtFQDN->setEnabled(true);
+    ui->txtSTIGFilter->setEnabled(true);
+    ui->lstSTIGs->setEnabled(true);
+    ui->cboBoxFilterStatus->setEnabled(true);
+    ui->cboBoxFilterSeverity->setEnabled(true);
+    ui->lstChecks->setEnabled(true);
+    ui->btnDeleteAsset->setEnabled(true);
+    ui->btnRename->setEnabled(true);
+    ui->cboBoxSeverity->setEnabled(true);
+    ui->toolBox->setEnabled(true);
+    ui->cboBoxStatus->setEnabled(true);
+    ui->txtFindingDetails->setEnabled(true);
+    ui->txtComments->setEnabled(true);
+    ui->btnImportXCCDF->setEnabled(true);
+    ui->btnSaveCKL->setEnabled(true);
 }
 
 /**
@@ -327,13 +383,16 @@ void AssetView::RunTests()
     KeyShortcutCtrlR();
     KeyShortcutCtrlX();
 
-    //step 6: save CKL
+    //step 6: update asset
+    ui->txtFQDN->setText("test.example.org");
+
+    //step 7: save CKL
     SaveCKL("tests/monolithic.ckl");
 
-    //step 7: Count Checks
+    //step 8: Count Checks
     UpdateChecks();
 
-    //step 8: import XCCDF
+    //step 9: import XCCDF
     ImportXCCDF("tests/xccdf_lol.xml");
 }
 #endif

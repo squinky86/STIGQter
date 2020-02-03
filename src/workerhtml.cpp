@@ -43,7 +43,7 @@
  *
  * Main constructor.
  */
-WorkerHTML::WorkerHTML(QObject *parent) : QObject(parent)
+WorkerHTML::WorkerHTML(QObject *parent) : Worker(parent)
 {
 }
 

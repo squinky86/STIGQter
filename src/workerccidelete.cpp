@@ -36,7 +36,7 @@
  *
  * Default constructor.
  */
-WorkerCCIDelete::WorkerCCIDelete(QObject *parent) : QObject(parent)
+WorkerCCIDelete::WorkerCCIDelete(QObject *parent) : Worker(parent)
 {
 }
 

@@ -20,9 +20,11 @@
 #ifndef WORKERMAPUNMAPPED_H
 #define WORKERMAPUNMAPPED_H
 
-#include <QThread>
+#include "worker.h"
 
-class WorkerMapUnmapped : public QObject
+#include <QObject>
+
+class WorkerMapUnmapped : public Worker
 {
     Q_OBJECT
 
@@ -31,12 +33,6 @@ public:
 
 public Q_SLOTS:
     void process();
-
-Q_SIGNALS:
-    void initialize(int, int);
-    void progress(int);
-    void updateStatus(QString);
-    void finished();
 };
 
 #endif // WORKERMAPUNMAPPED_H

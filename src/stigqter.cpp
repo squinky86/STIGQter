@@ -165,7 +165,7 @@ void STIGQter::RunTests()
             ui->txtSTIGSearch->setText(QStringLiteral("Windows"));
 
             //open tab
-            auto *av = new AssetView(asset);
+            auto *av = new AssetView(asset, this);
             connect(av, SIGNAL(CloseTab(int)), this, SLOT(CloseTab(int)));
             int index = ui->tabDB->addTab(av, asset.hostName);
             av->SetTabIndex(index);
@@ -178,6 +178,12 @@ void STIGQter::RunTests()
             av->CloseTab(index);
             delete av;
         }
+    }
+
+    //step 2 - reopen assets
+    {
+        ui->lstAssets->selectAll();
+        OpenCKL();
     }
 }
 #endif
@@ -229,7 +235,7 @@ void STIGQter::OpenCKL()
                  return;
              }
         }
-        auto *av = new AssetView(a);
+        auto *av = new AssetView(a, this);
         connect(av, SIGNAL(CloseTab(int)), this, SLOT(CloseTab(int)));
         int index = ui->tabDB->addTab(av, assetName);
         av->SetTabIndex(index);
@@ -972,6 +978,12 @@ void STIGQter::EnableInput()
     ui->btnQuit->setEnabled(true);
     ui->menubar->setEnabled(true);
     ui->txtSTIGSearch->setEnabled(true);
+    ui->tabDB->setEnabled(true);
+    for (int i = 1; i < ui->tabDB->count(); i++)
+    {
+        auto *tmpAssetView = dynamic_cast<AssetView*>(ui->tabDB->widget(i));
+        tmpAssetView->EnableInput();
+    }
     SelectSTIG();
 }
 
@@ -1047,6 +1059,12 @@ void STIGQter::DisableInput()
     ui->btnQuit->setEnabled(false);
     ui->menubar->setEnabled(false);
     ui->txtSTIGSearch->setEnabled(false);
+    ui->tabDB->setEnabled(false);
+    for (int i = 1; i < ui->tabDB->count(); i++)
+    {
+        auto *tmpAssetView = dynamic_cast<AssetView*>(ui->tabDB->widget(i));
+        tmpAssetView->DisableInput();
+    }
 }
 
 /**

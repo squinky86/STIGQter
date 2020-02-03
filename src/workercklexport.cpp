@@ -44,7 +44,7 @@
  *
  * Default constructor.
  */
-WorkerCKLExport::WorkerCKLExport(QObject *parent) : QObject(parent)
+WorkerCKLExport::WorkerCKLExport(QObject *parent) : Worker(parent)
 {
 }
 

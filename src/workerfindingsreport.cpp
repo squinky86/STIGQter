@@ -50,7 +50,7 @@
  *
  * Default constructor.
  */
-WorkerFindingsReport::WorkerFindingsReport(QObject *parent) : QObject(parent), _fileName()
+WorkerFindingsReport::WorkerFindingsReport(QObject *parent) : Worker(parent), _fileName()
 {
 }
 

@@ -25,6 +25,7 @@
 #include <QShortcut>
 
 #include "dbmanager.h"
+#include "worker.h"
 
 namespace Ui {
     class STIGQter;
@@ -79,7 +80,7 @@ private Q_SLOTS:
 private:
     Ui::STIGQter *ui;
     QList<QThread *> threads;
-    QList<QObject *> workers;
+    QList<Worker *> workers;
     bool _updatedAssets;
     bool _updatedCCIs;
     bool _updatedSTIGs;

@@ -20,9 +20,11 @@
 #ifndef WORKERCMRSEXPORT_H
 #define WORKERCMRSEXPORT_H
 
-#include <QThread>
+#include "worker.h"
 
-class WorkerCMRSExport : public QObject
+#include <QObject>
+
+class WorkerCMRSExport : public Worker
 {
     Q_OBJECT
 
@@ -35,12 +37,6 @@ public:
 
 public Q_SLOTS:
     void process();
-
-Q_SIGNALS:
-    void initialize(int, int);
-    void progress(int);
-    void updateStatus(QString);
-    void finished();
 };
 
 #endif // WORKERCMRSEXPORT_H

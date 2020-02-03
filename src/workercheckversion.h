@@ -20,11 +20,11 @@
 #ifndef WORKERCHECKVERSION_H
 #define WORKERCHECKVERSION_H
 
+#include "worker.h"
+
 #include <QObject>
 
-#include <QThread>
-
-class WorkerCheckVersion : public QObject
+class WorkerCheckVersion : public Worker
 {
     Q_OBJECT
 
@@ -33,10 +33,6 @@ public:
 
 public Q_SLOTS:
     void process();
-
-Q_SIGNALS:
-    void ThrowWarning(QString title, QString message);
-    void finished();
 };
 
 #endif // WORKERCHECKVERSION_H

@@ -38,7 +38,7 @@
  *
  * Default constructor.
  */
-WorkerAssetAdd::WorkerAssetAdd(QObject *parent) : QObject(parent)
+WorkerAssetAdd::WorkerAssetAdd(QObject *parent) : Worker(parent)
 {
 }
 

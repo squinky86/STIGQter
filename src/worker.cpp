@@ -1,7 +1,7 @@
 /*
  * STIGQter - STIG fun with Qt
  *
- * Copyright © 2019-2020 Jon Hood, http://www.hoodsecurity.com/
+ * Copyright © 2020 Jon Hood, http://www.hoodsecurity.com/
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -17,26 +17,20 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#ifndef WORKERCKLEXPORT_H
-#define WORKERCKLEXPORT_H
-
+#include "dbmanager.h"
 #include "worker.h"
 
-#include <QObject>
+/**
+ * @class Worker
+ * @brief Base abstract class for thread workers
+ */
 
-class WorkerCKLExport : public Worker
+/**
+ * @brief WorkerAssetAdd::WorkerAssetAdd
+ * @param parent
+ *
+ * Default constructor.
+ */
+Worker::Worker(QObject *parent) : QObject(parent)
 {
-    Q_OBJECT
-
-private:
-    QString _dirName;
-
-public:
-    explicit WorkerCKLExport(QObject *parent = nullptr);
-    void SetExportDir(const QString &dir);
-
-public Q_SLOTS:
-    void process();
-};
-
-#endif // WORKERCKLEXPORT_H
+}

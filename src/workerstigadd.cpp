@@ -40,7 +40,7 @@
  *
  * Default constructor.
  */
-WorkerSTIGAdd::WorkerSTIGAdd(QObject *parent) : QObject(parent)
+WorkerSTIGAdd::WorkerSTIGAdd(QObject *parent) : Worker(parent)
 {
 }
 

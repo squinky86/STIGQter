@@ -35,7 +35,7 @@
  *
  * Default constructor.
  */
-WorkerCheckVersion::WorkerCheckVersion(QObject *parent) : QObject(parent)
+WorkerCheckVersion::WorkerCheckVersion(QObject *parent) : Worker(parent)
 {
 }
 

@@ -64,7 +64,7 @@ qint64 WorkerEMASSReport::DateChooser(bool isImport, qint64 curDate, const QStri
  *
  * Default constructor.
  */
-WorkerEMASSReport::WorkerEMASSReport(QObject *parent) : QObject(parent), _fileName()
+WorkerEMASSReport::WorkerEMASSReport(QObject *parent) : Worker(parent), _fileName()
 {
 }
 

@@ -20,9 +20,11 @@
 #ifndef WORKERSTIGDOWNLOAD_H
 #define WORKERSTIGDOWNLOAD_H
 
+#include "worker.h"
+
 #include <QObject>
 
-class WorkerSTIGDownload : public QObject
+class WorkerSTIGDownload : public Worker
 {
     Q_OBJECT
 
@@ -31,12 +33,6 @@ public:
 
 public Q_SLOTS:
     void process();
-
-Q_SIGNALS:
-    void initialize(int, int);
-    void progress(int);
-    void updateStatus(QString);
-    void finished();
 };
 
 #endif // WORKERSTIGDOWNLOAD_H

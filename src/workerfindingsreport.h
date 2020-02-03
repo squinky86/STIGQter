@@ -20,9 +20,11 @@
 #ifndef WORKERFINDINGSREPORT_H
 #define WORKERFINDINGSREPORT_H
 
+#include "worker.h"
+
 #include <QObject>
 
-class WorkerFindingsReport : public QObject
+class WorkerFindingsReport : public Worker
 {
     Q_OBJECT
 
@@ -35,12 +37,6 @@ public:
 
 public Q_SLOTS:
     void process();
-
-Q_SIGNALS:
-    void initialize(int, int);
-    void progress(int);
-    void updateStatus(QString);
-    void finished();
 };
 
 #endif // WORKERFINDINGSREPORT_H

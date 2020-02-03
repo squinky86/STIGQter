@@ -43,7 +43,7 @@
  *
  * Default constructor.
  */
-WorkerSTIGDownload::WorkerSTIGDownload(QObject *parent) : QObject(parent)
+WorkerSTIGDownload::WorkerSTIGDownload(QObject *parent) : Worker(parent)
 {
 }
 

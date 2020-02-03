@@ -23,8 +23,11 @@
 #include "asset.h"
 #include "cklcheck.h"
 #include "stigcheck.h"
+#include "stigqter.h"
 
+#include <QLabel>
 #include <QListWidget>
+#include <QProgressBar>
 #include <QShortcut>
 #include <QTimer>
 #include <QWidget>
@@ -42,7 +45,9 @@ public:
     AssetView(const AssetView &av) = delete;
     explicit AssetView(Asset &asset, QWidget *parent = nullptr);
     ~AssetView() override;
+    void DisableInput();
     void Display();
+    void EnableInput();
     void SelectSTIGs(const QString &search = QString());
     void ShowChecks(bool countOnly = false);
     void UpdateCKLCheck(const CKLCheck &cklCheck);
@@ -84,6 +89,9 @@ private:
     void KeyShortcut(Status action);
     void SetItemColor(QListWidgetItem *i, Status stat, Severity sev);
     bool _isFiltered;
+    QProgressBar *_progressBar;
+    QLabel *_lblStatus;
+    STIGQter *_parent;
 
 Q_SIGNALS:
     void CloseTab(int);

@@ -20,9 +20,11 @@
 #ifndef WORKERCCIDELETE_H
 #define WORKERCCIDELETE_H
 
-#include <QThread>
+#include "worker.h"
 
-class WorkerCCIDelete : public QObject
+#include <QObject>
+
+class WorkerCCIDelete : public Worker
 {
     Q_OBJECT
 
@@ -31,12 +33,6 @@ public:
 
 public Q_SLOTS:
     void process();
-
-Q_SIGNALS:
-    void initialize(int, int);
-    void progress(int);
-    void updateStatus(QString);
-    void finished();
 };
 
 #endif // WORKERCCIDELETE_H

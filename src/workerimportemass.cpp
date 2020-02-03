@@ -38,7 +38,7 @@
  *
  * Main constructor.
  */
-WorkerImportEMASS::WorkerImportEMASS(QObject *parent) : QObject(parent), _fileName()
+WorkerImportEMASS::WorkerImportEMASS(QObject *parent) : Worker(parent), _fileName()
 {
 }
 

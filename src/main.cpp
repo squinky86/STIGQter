@@ -78,6 +78,12 @@ int main(int argc, char *argv[])
             db.DeleteDB();
         }
 
+        {
+            std::cout << "Test " << ++onTest << ": Increase Log Level" << std::endl;
+            DbManager db;
+            db.UpdateVariable(QStringLiteral("loglevel"), QStringLiteral("99"));
+        }
+
         std::cout << "Test " << ++onTest << ": Index CCIs" << std::endl;
         QMetaObject::invokeMethod(&w, "UpdateCCIs", Qt::DirectConnection);
         while (!w.isProcessingEnabled())
@@ -246,6 +252,12 @@ int main(int argc, char *argv[])
             WorkerHTML wh;
             wh.SetDir("tests");
             wh.process();
+            a.processEvents();
+        }
+
+        {
+            std::cout << "Test " << ++onTest << ": Delete eMASS Import" << std::endl;
+            QMetaObject::invokeMethod(&w, "DeleteEmass", Qt::DirectConnection);
             a.processEvents();
         }
 

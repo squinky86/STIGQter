@@ -47,7 +47,7 @@
  *
  * Default constructor.
  */
-WorkerCCIAdd::WorkerCCIAdd(QObject *parent) : QObject(parent)
+WorkerCCIAdd::WorkerCCIAdd(QObject *parent) : Worker(parent)
 {
 }
 

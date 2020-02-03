@@ -245,7 +245,7 @@ Asset WorkerCKLImport::CheckAsset(Asset &a)
  *
  * Default constructor.
  */
-WorkerCKLImport::WorkerCKLImport(QObject *parent) : QObject(parent)
+WorkerCKLImport::WorkerCKLImport(QObject *parent) : Worker(parent)
 {
 }
 

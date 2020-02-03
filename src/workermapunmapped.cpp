@@ -44,7 +44,7 @@
  *
  * Default constructor.
  */
-WorkerMapUnmapped::WorkerMapUnmapped(QObject *parent) : QObject(parent)
+WorkerMapUnmapped::WorkerMapUnmapped(QObject *parent) : Worker(parent)
 {
 }
 

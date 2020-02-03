@@ -33,7 +33,7 @@
  *
  * Default constructor.
  */
-WorkerSTIGDelete::WorkerSTIGDelete(QObject *parent) : QObject(parent)
+WorkerSTIGDelete::WorkerSTIGDelete(QObject *parent) : Worker(parent)
 {
 }
 
