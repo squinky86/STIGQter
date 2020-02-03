@@ -171,6 +171,7 @@ int main(int argc, char *argv[])
             //map each STIG to this asset
             Q_FOREACH (auto stig, db.GetSTIGs())
             {
+                std::cout << "Test " << ++onTest << ": Adding " << PrintSTIG(stig).toStdString() << " to " << PrintAsset(tmpAsset).toStdString() << std::endl;
                 wa.AddSTIG(stig);
             }
             wa.process();
@@ -207,6 +208,7 @@ int main(int argc, char *argv[])
                 //remove each STIG from this asset
                 Q_FOREACH (auto stig, asset.GetSTIGs())
                 {
+                    std::cout << "Test " << ++onTest << ": Delete " << PrintSTIG(stig).toStdString() << " from " << PrintAsset(asset).toStdString() << std::endl;
                     db.DeleteSTIGFromAsset(stig, asset);
                 }
                 db.DeleteAsset(asset);
@@ -221,6 +223,7 @@ int main(int argc, char *argv[])
             while (it.hasNext())
             {
                 QFile f(it.next());
+                std::cout << "Test " << ++onTest << ": Import CKL " << f.fileName().toStdString() << std::endl;
                 if (f.fileName().endsWith(".ckl", Qt::CaseInsensitive))
                 {
                     QFileInfo fi(f);

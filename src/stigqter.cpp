@@ -49,6 +49,8 @@
 #include <QStandardPaths>
 #include <QThread>
 
+#include <iostream>
+
 /**
  * @class STIGQter
  * @brief @a STIGQter is an open-source STIG Viewer alternative
@@ -156,6 +158,7 @@ void STIGQter::RunTests()
 {
     DbManager db;
     //step 1 - open all assets
+    std::cout << "\tOpening Assets" << std::endl;
     {
         Q_FOREACH(Asset asset, db.GetAssets())
         {
@@ -172,6 +175,7 @@ void STIGQter::RunTests()
             ui->tabDB->setCurrentIndex(index);
 
             //step 2 - run AssetView tests
+            std::cout << "\tRunning Asset Tests" << std::endl;
             av->RunTests();
 
             //close tab
@@ -181,6 +185,7 @@ void STIGQter::RunTests()
     }
 
     //step 2 - reopen assets
+    std::cout << "\tReopening Assets" << std::endl;
     {
         ui->lstAssets->selectAll();
         OpenCKL();
