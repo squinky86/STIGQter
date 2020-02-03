@@ -157,6 +157,16 @@ bool STIGQter::isProcessingEnabled()
 void STIGQter::RunTests()
 {
     DbManager db;
+
+    //step 0 - create asset
+    std::cout << "\tCreating Asset \"TEST\"" << std::endl;
+    ui->lstSTIGs->selectAll();
+    AddAsset("TEST");
+
+    //step 1 - map unmapped STIGs
+    std::cout << "\tRemapping unmapped STIGs" << std::endl;
+    MapUnmapped(true);
+
     //step 1 - open all assets
     std::cout << "\tOpening Assets" << std::endl;
     {
@@ -214,7 +224,7 @@ void STIGQter::UpdateCCIs()
     connect(t, SIGNAL(finished()), this, SLOT(CompletedThread()));
     connect(c, SIGNAL(initialize(int, int)), this, SLOT(Initialize(int, int)));
     connect(c, SIGNAL(progress(int)), this, SLOT(Progress(int)));
-    connect(c, SIGNAL(updateStatus(QString)), ui->lblStatus, SLOT(setText(QString)));
+    connect(c, SIGNAL(updateStatus(QString)), this, SLOT(StatusChange(QString)));
     threads.append(t);
     workers.append(c);
 
@@ -432,10 +442,10 @@ void STIGQter::About()
  *
  * Create a new @a Asset with the selected \a STIGs associated with it.
  */
-void STIGQter::AddAsset()
+void STIGQter::AddAsset(const QString &name)
 {
-    bool ok;
-    QString asset = QInputDialog::getText(this, tr("Enter Asset Name"),
+    bool ok = true;
+    QString asset = !name.isEmpty() ? name : QInputDialog::getText(this, tr("Enter Asset Name"),
                                           tr("Asset:"), QLineEdit::Normal,
                                           QDir::home().dirName(), &ok);
     if (ok)
@@ -457,7 +467,7 @@ void STIGQter::AddAsset()
         connect(t, SIGNAL(finished()), this, SLOT(CompletedThread()));
         connect(a, SIGNAL(initialize(int, int)), this, SLOT(Initialize(int, int)));
         connect(a, SIGNAL(progress(int)), this, SLOT(Progress(int)));
-        connect(a, SIGNAL(updateStatus(QString)), ui->lblStatus, SLOT(setText(QString)));
+        connect(a, SIGNAL(updateStatus(QString)), this, SLOT(StatusChange(QString)));
         threads.append(t);
         workers.append(a);
 
@@ -493,7 +503,7 @@ void STIGQter::AddSTIGs()
     connect(t, SIGNAL(finished()), this, SLOT(CompletedThread()));
     connect(s, SIGNAL(initialize(int, int)), this, SLOT(Initialize(int, int)));
     connect(s, SIGNAL(progress(int)), this, SLOT(Progress(int)));
-    connect(s, SIGNAL(updateStatus(QString)), ui->lblStatus, SLOT(setText(QString)));
+    connect(s, SIGNAL(updateStatus(QString)), this, SLOT(StatusChange(QString)));
     threads.append(t);
     workers.append(s);
 
@@ -539,7 +549,7 @@ void STIGQter::DeleteCCIs()
     connect(t, SIGNAL(finished()), this, SLOT(CompletedThread()));
     connect(c, SIGNAL(initialize(int, int)), this, SLOT(Initialize(int, int)));
     connect(c, SIGNAL(progress(int)), this, SLOT(Progress(int)));
-    connect(c, SIGNAL(updateStatus(QString)), ui->lblStatus, SLOT(setText(QString)));
+    connect(c, SIGNAL(updateStatus(QString)), this, SLOT(StatusChange(QString)));
     threads.append(t);
     workers.append(c);
 
@@ -582,7 +592,7 @@ void STIGQter::DeleteSTIGs()
     connect(t, SIGNAL(finished()), this, SLOT(CompletedThread()));
     connect(s, SIGNAL(initialize(int, int)), this, SLOT(Initialize(int, int)));
     connect(s, SIGNAL(progress(int)), this, SLOT(Progress(int)));
-    connect(s, SIGNAL(updateStatus(QString)), ui->lblStatus, SLOT(setText(QString)));
+    connect(s, SIGNAL(updateStatus(QString)), this, SLOT(StatusChange(QString)));
     threads.append(t);
     workers.append(s);
 
@@ -610,7 +620,7 @@ void STIGQter::DownloadSTIGs()
     connect(t, SIGNAL(finished()), this, SLOT(CompletedThread()));
     connect(s, SIGNAL(initialize(int, int)), this, SLOT(Initialize(int, int)));
     connect(s, SIGNAL(progress(int)), this, SLOT(Progress(int)));
-    connect(s, SIGNAL(updateStatus(QString)), ui->lblStatus, SLOT(setText(QString)));
+    connect(s, SIGNAL(updateStatus(QString)), this, SLOT(StatusChange(QString)));
     threads.append(t);
     workers.append(s);
 
@@ -640,7 +650,7 @@ void STIGQter::ExportCKLs()
         connect(t, SIGNAL(finished()), this, SLOT(CompletedThread()));
         connect(f, SIGNAL(initialize(int, int)), this, SLOT(Initialize(int, int)));
         connect(f, SIGNAL(progress(int)), this, SLOT(Progress(int)));
-        connect(f, SIGNAL(updateStatus(QString)), ui->lblStatus, SLOT(setText(QString)));
+        connect(f, SIGNAL(updateStatus(QString)), this, SLOT(StatusChange(QString)));
         threads.append(t);
         workers.append(f);
 
@@ -672,7 +682,7 @@ void STIGQter::ExportCMRS()
     connect(t, SIGNAL(finished()), this, SLOT(CompletedThread()));
     connect(f, SIGNAL(initialize(int, int)), this, SLOT(Initialize(int, int)));
     connect(f, SIGNAL(progress(int)), this, SLOT(Progress(int)));
-    connect(f, SIGNAL(updateStatus(QString)), ui->lblStatus, SLOT(setText(QString)));
+    connect(f, SIGNAL(updateStatus(QString)), this, SLOT(StatusChange(QString)));
     threads.append(t);
     workers.append(f);
 
@@ -703,7 +713,7 @@ void STIGQter::ExportEMASS()
     connect(t, SIGNAL(finished()), this, SLOT(CompletedThread()));
     connect(f, SIGNAL(initialize(int, int)), this, SLOT(Initialize(int, int)));
     connect(f, SIGNAL(progress(int)), this, SLOT(Progress(int)));
-    connect(f, SIGNAL(updateStatus(QString)), ui->lblStatus, SLOT(setText(QString)));
+    connect(f, SIGNAL(updateStatus(QString)), this, SLOT(StatusChange(QString)));
     threads.append(t);
     workers.append(f);
 
@@ -734,7 +744,7 @@ void STIGQter::ExportHTML()
         connect(t, SIGNAL(finished()), this, SLOT(CompletedThread()));
         connect(f, SIGNAL(initialize(int, int)), this, SLOT(Initialize(int, int)));
         connect(f, SIGNAL(progress(int)), this, SLOT(Progress(int)));
-        connect(f, SIGNAL(updateStatus(QString)), ui->lblStatus, SLOT(setText(QString)));
+        connect(f, SIGNAL(updateStatus(QString)), this, SLOT(StatusChange(QString)));
         threads.append(t);
         workers.append(f);
 
@@ -788,7 +798,7 @@ void STIGQter::FindingsReport()
     connect(t, SIGNAL(finished()), this, SLOT(CompletedThread()));
     connect(f, SIGNAL(initialize(int, int)), this, SLOT(Initialize(int, int)));
     connect(f, SIGNAL(progress(int)), this, SLOT(Progress(int)));
-    connect(f, SIGNAL(updateStatus(QString)), ui->lblStatus, SLOT(setText(QString)));
+    connect(f, SIGNAL(updateStatus(QString)), this, SLOT(StatusChange(QString)));
     threads.append(t);
     workers.append(f);
 
@@ -822,7 +832,7 @@ void STIGQter::ImportCKLs()
     connect(t, SIGNAL(finished()), this, SLOT(CompletedThread()));
     connect(c, SIGNAL(initialize(int, int)), this, SLOT(Initialize(int, int)));
     connect(c, SIGNAL(progress(int)), this, SLOT(Progress(int)));
-    connect(c, SIGNAL(updateStatus(QString)), ui->lblStatus, SLOT(setText(QString)));
+    connect(c, SIGNAL(updateStatus(QString)), this, SLOT(StatusChange(QString)));
     threads.append(t);
     workers.append(c);
 
@@ -854,7 +864,7 @@ void STIGQter::ImportEMASS()
     connect(t, SIGNAL(finished()), this, SLOT(CompletedThread()));
     connect(c, SIGNAL(initialize(int, int)), this, SLOT(Initialize(int, int)));
     connect(c, SIGNAL(progress(int)), this, SLOT(Progress(int)));
-    connect(c, SIGNAL(updateStatus(QString)), ui->lblStatus, SLOT(setText(QString)));
+    connect(c, SIGNAL(updateStatus(QString)), this, SLOT(StatusChange(QString)));
     threads.append(t);
     workers.append(c);
 
@@ -892,9 +902,9 @@ void STIGQter::Load()
  * information from the NIST and IASE websites. A @a WorkerCCIAdd
  * instance is created.
  */
-void STIGQter::MapUnmapped()
+void STIGQter::MapUnmapped(bool confirm)
 {
-    QMessageBox::StandardButton reply = QMessageBox::question(this, QStringLiteral("Non-Standard CKLs"), QStringLiteral("This feature will map all unmapped STIG checks, STIG checks from other system categorizations, and incorrectly mapped STIG checks to CM-6, CCI-366. CKL files generated will no longer be consistent with STIGViewer and other tools. Are you sure you want to proceed?"), QMessageBox::Yes|QMessageBox::No);
+    QMessageBox::StandardButton reply = confirm ? QMessageBox::Yes : QMessageBox::question(this, QStringLiteral("Non-Standard CKLs"), QStringLiteral("This feature will map all unmapped STIG checks, STIG checks from other system categorizations, and incorrectly mapped STIG checks to CM-6, CCI-366. CKL files generated will no longer be consistent with STIGViewer and other tools. Are you sure you want to proceed?"), QMessageBox::Yes|QMessageBox::No);
     if (reply == QMessageBox::Yes)
     {
         DisableInput();
@@ -909,7 +919,7 @@ void STIGQter::MapUnmapped()
         connect(t, SIGNAL(finished()), this, SLOT(CompletedThread()));
         connect(c, SIGNAL(initialize(int, int)), this, SLOT(Initialize(int, int)));
         connect(c, SIGNAL(progress(int)), this, SLOT(Progress(int)));
-        connect(c, SIGNAL(updateStatus(QString)), ui->lblStatus, SLOT(setText(QString)));
+        connect(c, SIGNAL(updateStatus(QString)), this, SLOT(StatusChange(QString)));
         threads.append(t);
         workers.append(c);
 
@@ -926,6 +936,20 @@ void STIGQter::SelectSTIG()
 {
     //select STIGs to create checklists
     ui->btnCreateCKL->setEnabled(ui->lstSTIGs->selectedItems().count() > 0);
+}
+
+/**
+ * @brief STIGQter::StatusChange
+ * @param status
+ *
+ * Show status updates
+ */
+void STIGQter::StatusChange(const QString &status)
+{
+    ui->lblStatus->setText(status);
+#ifdef USE_TESTS
+    std::cout << "\t" << status.toStdString() << std::endl;
+#endif
 }
 
 /**

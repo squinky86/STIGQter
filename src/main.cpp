@@ -110,21 +110,13 @@ int main(int argc, char *argv[])
         }
 
         {
-            std::cout << "Test " << ++onTest << ": Remap Unmapped CCIs" << std::endl;
-            DbManager db;
-            WorkerMapUnmapped wm;
-            wm.process();
-            a.processEvents();
-        }
-
-        {
             std::cout << "Test " << ++onTest << ": Severity Override" << std::endl;
             DbManager db;
             int count = 0;
             Q_FOREACH(auto cklCheck, db.GetCKLChecks())
             {
                 count++;
-                //override half of the checks' severity
+                //override checks' severity pseudorandomly
                 switch (count % 4)
                 {
                 case 0:
@@ -159,26 +151,6 @@ int main(int argc, char *argv[])
         }
 
         {
-            std::cout << "Test " << ++onTest << ": Add an Asset" << std::endl;
-            DbManager db;
-            WorkerAssetAdd wa;
-            Asset tmpAsset;
-            tmpAsset.hostName = QString("TEST");
-            tmpAsset.hostIP = QString("127.0.0.1");
-            tmpAsset.hostMAC = QString("00:00:00:00:00");
-            tmpAsset.hostFQDN = QString("localhost");
-            wa.AddAsset(tmpAsset);
-            //map each STIG to this asset
-            Q_FOREACH (auto stig, db.GetSTIGs())
-            {
-                std::cout << "Test " << ++onTest << ": Adding " << PrintSTIG(stig).toStdString() << " to " << PrintAsset(tmpAsset).toStdString() << std::endl;
-                wa.AddSTIG(stig);
-            }
-            wa.process();
-            a.processEvents();
-        }
-
-        {
             std::cout << "Test " << ++onTest << ": Run STIGQter Interface Tests" << std::endl;
             w.RunTests();
             a.processEvents();
@@ -208,8 +180,8 @@ int main(int argc, char *argv[])
                 //remove each STIG from this asset
                 Q_FOREACH (auto stig, asset.GetSTIGs())
                 {
-                    std::cout << "Test " << ++onTest << ": Delete " << PrintSTIG(stig).toStdString() << " from " << PrintAsset(asset).toStdString() << std::endl;
                     db.DeleteSTIGFromAsset(stig, asset);
+                    a.processEvents();
                 }
                 db.DeleteAsset(asset);
             }
@@ -261,6 +233,11 @@ int main(int argc, char *argv[])
         {
             std::cout << "Test " << ++onTest << ": Delete eMASS Import" << std::endl;
             QMetaObject::invokeMethod(&w, "DeleteEmass", Qt::DirectConnection);
+            while (!w.isProcessingEnabled())
+            {
+                QThread::sleep(1);
+                a.processEvents();
+            }
             a.processEvents();
         }
 

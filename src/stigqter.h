@@ -48,7 +48,7 @@ private Q_SLOTS:
     void CompletedThread();
 
     void About();
-    void AddAsset();
+    void AddAsset(const QString &name = QString());
     void AddSTIGs();
     void CloseTab(int index);
     void DeleteCCIs();
@@ -64,13 +64,14 @@ private Q_SLOTS:
     void ImportCKLs();
     void ImportEMASS();
     void Load();
-    void MapUnmapped();
+    void MapUnmapped(bool confirm = false);
     void OpenCKL();
     bool Reset(bool checkOnly = false);
     void Save();
     void SaveAs();
     void SelectAsset();
     void SelectSTIG();
+    void StatusChange(const QString &status);
     void ShowMessage(const QString &title, const QString &message);
     void UpdateCCIs();
 

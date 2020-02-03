@@ -33,6 +33,8 @@
 #include <QShortcut>
 #include <QXmlStreamWriter>
 #include <QTimer>
+
+#include <iostream>
 #include <utility>
 
 /**
@@ -360,6 +362,7 @@ void AssetView::SetTabIndex(int index)
 void AssetView::RunTests()
 {
     //step 1: search for Windows components
+    std::cout << "\t\tRunning Filter Test" << std::endl;
     ui->txtSTIGFilter->setText(QStringLiteral("Windows"));
 
     //step 2: clear search
@@ -370,6 +373,7 @@ void AssetView::RunTests()
         DbManager db;
         Q_FOREACH (const CKLCheck &cklCheck, db.GetCKLChecks())
         {
+            std::cout << "\t\tViewing CKL " << PrintCKLCheck(cklCheck).toStdString() << std::endl;
             UpdateCKLCheck(cklCheck);
         }
     }
@@ -378,15 +382,22 @@ void AssetView::RunTests()
     ui->lstChecks->selectAll();
 
     //step 5: change findings
+    std::cout << "\t\tNot a Finding" << std::endl;
     KeyShortcutCtrlN();
+    std::cout << "\t\tOpen Finding" << std::endl;
     KeyShortcutCtrlO();
+    std::cout << "\t\tNot Reviewed Finding" << std::endl;
     KeyShortcutCtrlR();
+    std::cout << "\t\tNot Applicable Finding" << std::endl;
     KeyShortcutCtrlX();
 
     //step 6: update asset
     ui->txtFQDN->setText("test.example.org");
+    ui->txtIP->setText("127.0.0.1");
+    ui->txtMAC->setText("00:00:00:00:00:00");
 
     //step 7: save CKL
+    std::cout << "\t\tSaving CKL" << std::endl;
     SaveCKL("tests/monolithic.ckl");
 
     //step 8: Count Checks
@@ -394,6 +405,10 @@ void AssetView::RunTests()
 
     //step 9: import XCCDF
     ImportXCCDF("tests/xccdf_lol.xml");
+
+    //step 10: delete asset
+    std::cout << "\t\tDeleting Asset" << std::endl;
+    DeleteAsset(true);
 }
 #endif
 
@@ -426,10 +441,10 @@ void AssetView::CheckSelectedChanged()
  *
  * Deletes this Asset from the database.
  */
-void AssetView::DeleteAsset()
+void AssetView::DeleteAsset(bool confirm)
 {
     //prompt user for confirmation of a destructive task
-    QMessageBox::StandardButton reply = QMessageBox::question(this, QStringLiteral("Confirm"), "Are you sure you want to delete " + PrintAsset(_asset) + "?", QMessageBox::Yes|QMessageBox::No);
+    QMessageBox::StandardButton reply = confirm ? QMessageBox::Yes : QMessageBox::question(this, QStringLiteral("Confirm"), "Are you sure you want to delete " + PrintAsset(_asset) + "?", QMessageBox::Yes|QMessageBox::No);
     if (reply == QMessageBox::Yes)
     {
         DbManager db;

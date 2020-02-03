@@ -61,7 +61,7 @@ private Q_SLOTS:
     void CheckSelected(QListWidgetItem *current, QListWidgetItem *previous);
     void CheckSelectedChanged();
     void CountChecks();
-    void DeleteAsset();
+    void DeleteAsset(bool confirm = false);
     void FilterSTIGs(const QString &text);
     void ImportXCCDF(const QString &filename = QString());
     void KeyShortcutCtrlN();
