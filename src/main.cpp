@@ -112,6 +112,47 @@ int main(int argc, char *argv[])
         }
 
         {
+            std::cout << "Test " << ++onTest << ": Severity Override" << std::endl;
+            DbManager db;
+            int count = 0;
+            Q_FOREACH(auto cklCheck, db.GetCKLChecks())
+            {
+                count++;
+                //override half of the checks' severity
+                switch (count % 4)
+                {
+                case 0:
+                    if (cklCheck.GetSeverity() == Severity::none)
+                        continue;
+                    cklCheck.severityOverride = Severity::none;
+                    cklCheck.severityJustification = QStringLiteral("Overridden to none.");
+                    break;
+                case 1:
+                    if (cklCheck.GetSeverity() == Severity::low)
+                        continue;
+                    cklCheck.severityOverride = Severity::low;
+                    cklCheck.severityJustification = QStringLiteral("Overridden to low.");
+                    break;
+                case 2:
+                    if (cklCheck.GetSeverity() == Severity::medium)
+                        continue;
+                    cklCheck.severityOverride = Severity::medium;
+                    cklCheck.severityJustification = QStringLiteral("Overridden to medium.");
+                    break;
+                case 3:
+                    if (cklCheck.GetSeverity() == Severity::high)
+                        continue;
+                    cklCheck.severityOverride = Severity::high;
+                    cklCheck.severityJustification = QStringLiteral("Overridden to high.");
+                    break;
+                default:
+                    continue;
+                }
+            }
+            a.processEvents();
+        }
+
+        {
             std::cout << "Test " << ++onTest << ": Add an Asset" << std::endl;
             DbManager db;
             WorkerAssetAdd wa;

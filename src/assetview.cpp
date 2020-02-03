@@ -321,7 +321,19 @@ void AssetView::RunTests()
     //step 4: when selected check changes
     ui->lstChecks->selectAll();
 
-    //step 5: import XCCDF
+    //step 5: change findings
+    KeyShortcutCtrlN();
+    KeyShortcutCtrlO();
+    KeyShortcutCtrlR();
+    KeyShortcutCtrlX();
+
+    //step 6: save CKL
+    SaveCKL("tests/monolithic.ckl");
+
+    //step 7: Count Checks
+    UpdateChecks();
+
+    //step 8: import XCCDF
     ImportXCCDF("tests/xccdf_lol.xml");
 }
 #endif
@@ -574,10 +586,12 @@ void AssetView::RenameAsset(const QString &name)
  *
  * Save the selected Asset as a single CKL file.
  */
-void AssetView::SaveCKL()
+void AssetView::SaveCKL(const QString &name)
 {
     DbManager db;
-    QString fileName = QFileDialog::getSaveFileName(this, QStringLiteral("Save STIG/SRG Checklist"), db.GetVariable(QStringLiteral("lastdir")), QStringLiteral("STIG Checklist (*.ckl)"));
+    QString fileName = name;
+    if (fileName.isEmpty())
+        fileName = QFileDialog::getSaveFileName(this, QStringLiteral("Save STIG/SRG Checklist"), db.GetVariable(QStringLiteral("lastdir")), QStringLiteral("STIG Checklist (*.ckl)"));
     QFile file(fileName);
     if (file.open(QIODevice::WriteOnly))
     {

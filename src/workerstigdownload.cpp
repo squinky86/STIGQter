@@ -25,6 +25,7 @@
 
 #include "workerstigadd.h"
 #include <QTemporaryFile>
+#include <QMap>
 
 /**
  * @class WorkerSTIGDownload
@@ -65,17 +66,19 @@ void WorkerSTIGDownload::process()
         QUrl stigs(QStringLiteral("https://dl.dod.cyber.mil/wp-content/uploads/stigs/zip/U_SRG-STIG_Library_2020_01.zip"));
         DownloadFile(stigs, &tmpFile);
         //get all zip files within the master zip file
-        auto stigFiles = GetFilesFromZip(tmpFile.fileName().toStdString().c_str(), QStringLiteral(".zip")).values();
-        Q_EMIT initialize(stigFiles.count() + 2, 2);
         Q_EMIT updateStatus(QStringLiteral("Extracting and adding STIGs…"));
+        auto stigFiles = GetFilesFromZip(tmpFile.fileName().toStdString().c_str(), QStringLiteral(".zip"));
+        Q_EMIT initialize(stigFiles.count() + 2, 2);
         //assume that each zip file within the archive is its own STIG and try to process it
-        Q_FOREACH (auto stigFile, stigFiles)
+        QMap<QString, QByteArray>::iterator i;
+        for (i = stigFiles.begin(); i != stigFiles.end(); ++i)
         {
+            Q_EMIT updateStatus("Parsing " + i.key() + "…");
             WorkerSTIGAdd tmpWorker;
             QTemporaryFile tmpFile2;
             if (tmpFile2.open())
             {
-                tmpFile2.write((stigFile));
+                tmpFile2.write(i.value());
             }
             tmpFile2.close();
             QStringList tmpList;
