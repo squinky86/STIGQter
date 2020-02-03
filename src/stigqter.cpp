@@ -162,10 +162,18 @@ void STIGQter::RunTests()
     std::cout << "\tCreating Asset \"TEST\"" << std::endl;
     ui->lstSTIGs->selectAll();
     AddAsset("TEST");
+    while (!isProcessingEnabled())
+    {
+        QThread::sleep(1);
+    }
 
     //step 1 - map unmapped STIGs
     std::cout << "\tRemapping unmapped STIGs" << std::endl;
     MapUnmapped(true);
+    while (!isProcessingEnabled())
+    {
+        QThread::sleep(1);
+    }
 
     //step 1 - open all assets
     std::cout << "\tOpening Assets" << std::endl;
@@ -178,19 +186,15 @@ void STIGQter::RunTests()
             ui->txtSTIGSearch->setText(QStringLiteral("Windows"));
 
             //open tab
-            auto *av = new AssetView(asset, this);
-            connect(av, SIGNAL(CloseTab(int)), this, SLOT(CloseTab(int)));
-            int index = ui->tabDB->addTab(av, asset.hostName);
-            av->SetTabIndex(index);
+            AssetView av(asset, this);
+            connect(&av, SIGNAL(CloseTab(int)), this, SLOT(CloseTab(int)));
+            int index = ui->tabDB->addTab(&av, asset.hostName);
+            av.SetTabIndex(index);
             ui->tabDB->setCurrentIndex(index);
 
             //step 2 - run AssetView tests
             std::cout << "\tRunning Asset Tests" << std::endl;
-            av->RunTests();
-
-            //close tab
-            av->CloseTab(index);
-            delete av;
+            av.RunTests(); //will delete asset
         }
     }
 
