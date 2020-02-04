@@ -31,7 +31,6 @@ class Worker : public QObject
 
 public:
     explicit Worker(QObject *parent = nullptr);
-    ~Worker();
     virtual void process() = 0;
     [[nodiscard]] QThread* ConnectThreads(STIGQter *sq = nullptr);
 
