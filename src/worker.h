@@ -20,6 +20,8 @@
 #ifndef WORKER_H
 #define WORKER_H
 
+class STIGQter;
+
 #include <QThread>
 #include <QString>
 
@@ -29,7 +31,9 @@ class Worker : public QObject
 
 public:
     explicit Worker(QObject *parent = nullptr);
+    ~Worker();
     virtual void process() = 0;
+    [[nodiscard]] QThread* ConnectThreads(STIGQter *sq = nullptr);
 
 Q_SIGNALS:
     void initialize(int, int);

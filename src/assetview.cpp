@@ -373,7 +373,6 @@ void AssetView::RunTests()
         DbManager db;
         Q_FOREACH (const CKLCheck &cklCheck, db.GetCKLChecks())
         {
-            std::cout << "\t\tViewing CKL " << PrintCKLCheck(cklCheck).toStdString() << std::endl;
             UpdateCKLCheck(cklCheck);
         }
     }

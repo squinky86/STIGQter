@@ -18,7 +18,10 @@
  */
 
 #include "dbmanager.h"
+#include "stigqter.h"
 #include "worker.h"
+
+#include <QThread>
 
 /**
  * @class Worker
@@ -33,4 +36,28 @@
  */
 Worker::Worker(QObject *parent) : QObject(parent)
 {
+}
+
+/**
+ * @brief Worker::ConnectThreads
+ * @param thread
+ * @param sq
+ *
+ * Connect the signals and slots and move the worker to the supplied thread.
+ */
+[[nodiscard]] QThread* Worker::ConnectThreads(STIGQter *sq)
+{
+    QThread *thread = new QThread();
+    this->moveToThread(thread);
+    connect(thread, SIGNAL(started()), this, SLOT(process()));
+    connect(this, SIGNAL(finished()), thread, SLOT(quit()));
+    if (sq)
+    {
+        connect(thread, SIGNAL(finished()), sq, SLOT(CompletedThread()));
+        connect(this, SIGNAL(initialize(int, int)), sq, SLOT(Initialize(int, int)));
+        connect(this, SIGNAL(progress(int)), sq, SLOT(Progress(int)));
+        connect(this, SIGNAL(updateStatus(QString)), sq, SLOT(StatusChange(QString)));
+        connect(this, SIGNAL(ThrowWarning(QString, QString)), sq, SLOT(ShowMessage(QString, QString)));
+    }
+    return thread;
 }

@@ -222,15 +222,10 @@ void STIGQter::UpdateCCIs()
     _updatedCCIs = true;
 
     //Create thread to download CCIs and keep GUI active
-    auto *t = new QThread;
     auto *c = new WorkerCCIAdd();
-    c->moveToThread(t);
-    connect(t, SIGNAL(started()), c, SLOT(process()));
-    connect(c, SIGNAL(finished()), t, SLOT(quit()));
-    connect(t, SIGNAL(finished()), this, SLOT(CompletedThread()));
-    connect(c, SIGNAL(initialize(int, int)), this, SLOT(Initialize(int, int)));
-    connect(c, SIGNAL(progress(int)), this, SLOT(Progress(int)));
-    connect(c, SIGNAL(updateStatus(QString)), this, SLOT(StatusChange(QString)));
+
+    auto *t = c->ConnectThreads(this);
+
     threads.append(t);
     workers.append(c);
 
@@ -389,7 +384,7 @@ void STIGQter::CleanThreads()
 {
     while (!threads.isEmpty())
     {
-        QThread *t = threads.takeFirst();
+        auto *t = threads.takeFirst();
         t->wait();
         delete t;
     }
@@ -458,9 +453,7 @@ void STIGQter::AddAsset(const QString &name)
     {
         DisableInput();
         _updatedAssets = true;
-        auto *t = new QThread;
         auto *a = new WorkerAssetAdd();
-        a->moveToThread(t);
         Asset tmpAsset;
         tmpAsset.hostName = asset;
         Q_FOREACH(QListWidgetItem *i, ui->lstSTIGs->selectedItems())
@@ -468,12 +461,9 @@ void STIGQter::AddAsset(const QString &name)
             a->AddSTIG(i->data(Qt::UserRole).value<STIG>());
         }
         a->AddAsset(tmpAsset);
-        connect(t, SIGNAL(started()), a, SLOT(process()));
-        connect(a, SIGNAL(finished()), t, SLOT(quit()));
-        connect(t, SIGNAL(finished()), this, SLOT(CompletedThread()));
-        connect(a, SIGNAL(initialize(int, int)), this, SLOT(Initialize(int, int)));
-        connect(a, SIGNAL(progress(int)), this, SLOT(Progress(int)));
-        connect(a, SIGNAL(updateStatus(QString)), this, SLOT(StatusChange(QString)));
+
+        auto *t = a->ConnectThreads(this);
+
         threads.append(t);
         workers.append(a);
 
@@ -500,16 +490,11 @@ void STIGQter::AddSTIGs()
 
     DisableInput();
     _updatedSTIGs = true;
-    auto *t = new QThread;
     auto *s = new WorkerSTIGAdd();
-    s->moveToThread(t);
     s->AddSTIGs(fileNames);
-    connect(t, SIGNAL(started()), s, SLOT(process()));
-    connect(s, SIGNAL(finished()), t, SLOT(quit()));
-    connect(t, SIGNAL(finished()), this, SLOT(CompletedThread()));
-    connect(s, SIGNAL(initialize(int, int)), this, SLOT(Initialize(int, int)));
-    connect(s, SIGNAL(progress(int)), this, SLOT(Progress(int)));
-    connect(s, SIGNAL(updateStatus(QString)), this, SLOT(StatusChange(QString)));
+
+    auto *t = s->ConnectThreads(this);
+
     threads.append(t);
     workers.append(s);
 
@@ -547,15 +532,10 @@ void STIGQter::DeleteCCIs()
     _updatedCCIs = true;
 
     //Create thread to download CCIs and keep GUI active
-    auto *t = new QThread;
     auto *c = new WorkerCCIDelete();
-    c->moveToThread(t);
-    connect(t, SIGNAL(started()), c, SLOT(process()));
-    connect(c, SIGNAL(finished()), t, SLOT(quit()));
-    connect(t, SIGNAL(finished()), this, SLOT(CompletedThread()));
-    connect(c, SIGNAL(initialize(int, int)), this, SLOT(Initialize(int, int)));
-    connect(c, SIGNAL(progress(int)), this, SLOT(Progress(int)));
-    connect(c, SIGNAL(updateStatus(QString)), this, SLOT(StatusChange(QString)));
+
+    auto *t = c->ConnectThreads(this);
+
     threads.append(t);
     workers.append(c);
 
@@ -585,20 +565,15 @@ void STIGQter::DeleteSTIGs()
     DisableInput();
     _updatedSTIGs = true;
 
-    auto *t = new QThread;
     auto *s = new WorkerSTIGDelete();
-    s->moveToThread(t);
     Q_FOREACH (QListWidgetItem *i, ui->lstSTIGs->selectedItems())
     {
         STIG stig = i->data(Qt::UserRole).value<STIG>();
         s->AddId(stig.id);
     }
-    connect(t, SIGNAL(started()), s, SLOT(process()));
-    connect(s, SIGNAL(finished()), t, SLOT(quit()));
-    connect(t, SIGNAL(finished()), this, SLOT(CompletedThread()));
-    connect(s, SIGNAL(initialize(int, int)), this, SLOT(Initialize(int, int)));
-    connect(s, SIGNAL(progress(int)), this, SLOT(Progress(int)));
-    connect(s, SIGNAL(updateStatus(QString)), this, SLOT(StatusChange(QString)));
+
+    auto *t = s->ConnectThreads(this);
+
     threads.append(t);
     workers.append(s);
 
@@ -617,16 +592,10 @@ void STIGQter::DownloadSTIGs()
     _updatedSTIGs = true;
 
     //Create thread to download CCIs and keep GUI active
-    auto *t = new QThread;
     auto *s = new WorkerSTIGDownload();
 
-    s->moveToThread(t);
-    connect(t, SIGNAL(started()), s, SLOT(process()));
-    connect(s, SIGNAL(finished()), t, SLOT(quit()));
-    connect(t, SIGNAL(finished()), this, SLOT(CompletedThread()));
-    connect(s, SIGNAL(initialize(int, int)), this, SLOT(Initialize(int, int)));
-    connect(s, SIGNAL(progress(int)), this, SLOT(Progress(int)));
-    connect(s, SIGNAL(updateStatus(QString)), this, SLOT(StatusChange(QString)));
+    auto *t = s->ConnectThreads(this);
+
     threads.append(t);
     workers.append(s);
 
@@ -647,16 +616,11 @@ void STIGQter::ExportCKLs()
     {
         DisableInput();
         db.UpdateVariable(QStringLiteral("lastdir"), QFileInfo(dirName).absolutePath());
-        auto *t = new QThread;
         auto *f = new WorkerCKLExport();
-        f->moveToThread(t);
         f->SetExportDir(dirName);
-        connect(t, SIGNAL(started()), f, SLOT(process()));
-        connect(f, SIGNAL(finished()), t, SLOT(quit()));
-        connect(t, SIGNAL(finished()), this, SLOT(CompletedThread()));
-        connect(f, SIGNAL(initialize(int, int)), this, SLOT(Initialize(int, int)));
-        connect(f, SIGNAL(progress(int)), this, SLOT(Progress(int)));
-        connect(f, SIGNAL(updateStatus(QString)), this, SLOT(StatusChange(QString)));
+
+        auto *t = f->ConnectThreads(this);
+
         threads.append(t);
         workers.append(f);
 
@@ -679,16 +643,11 @@ void STIGQter::ExportCMRS()
 
     DisableInput();
     db.UpdateVariable(QStringLiteral("lastdir"), QFileInfo(fileName).absolutePath());
-    auto *t = new QThread;
     auto *f = new WorkerCMRSExport();
-    f->moveToThread(t);
     f->SetExportPath(fileName);
-    connect(t, SIGNAL(started()), f, SLOT(process()));
-    connect(f, SIGNAL(finished()), t, SLOT(quit()));
-    connect(t, SIGNAL(finished()), this, SLOT(CompletedThread()));
-    connect(f, SIGNAL(initialize(int, int)), this, SLOT(Initialize(int, int)));
-    connect(f, SIGNAL(progress(int)), this, SLOT(Progress(int)));
-    connect(f, SIGNAL(updateStatus(QString)), this, SLOT(StatusChange(QString)));
+
+    auto *t = f->ConnectThreads(this);
+
     threads.append(t);
     workers.append(f);
 
@@ -710,16 +669,11 @@ void STIGQter::ExportEMASS()
 
     DisableInput();
     db.UpdateVariable(QStringLiteral("lastdir"), QFileInfo(fileName).absolutePath());
-    auto *t = new QThread;
     auto *f = new WorkerEMASSReport();
-    f->moveToThread(t);
     f->SetReportName(fileName);
-    connect(t, SIGNAL(started()), f, SLOT(process()));
-    connect(f, SIGNAL(finished()), t, SLOT(quit()));
-    connect(t, SIGNAL(finished()), this, SLOT(CompletedThread()));
-    connect(f, SIGNAL(initialize(int, int)), this, SLOT(Initialize(int, int)));
-    connect(f, SIGNAL(progress(int)), this, SLOT(Progress(int)));
-    connect(f, SIGNAL(updateStatus(QString)), this, SLOT(StatusChange(QString)));
+
+    auto *t = f->ConnectThreads(this);
+
     threads.append(t);
     workers.append(f);
 
@@ -741,16 +695,11 @@ void STIGQter::ExportHTML()
     {
         DisableInput();
         db.UpdateVariable(QStringLiteral("lastdir"), QFileInfo(dirName).absolutePath());
-        auto *t = new QThread;
         auto *f = new WorkerHTML();
-        f->moveToThread(t);
         f->SetDir(dirName);
-        connect(t, SIGNAL(started()), f, SLOT(process()));
-        connect(f, SIGNAL(finished()), t, SLOT(quit()));
-        connect(t, SIGNAL(finished()), this, SLOT(CompletedThread()));
-        connect(f, SIGNAL(initialize(int, int)), this, SLOT(Initialize(int, int)));
-        connect(f, SIGNAL(progress(int)), this, SLOT(Progress(int)));
-        connect(f, SIGNAL(updateStatus(QString)), this, SLOT(StatusChange(QString)));
+
+        auto *t = f->ConnectThreads(this);
+
         threads.append(t);
         workers.append(f);
 
@@ -795,16 +744,11 @@ void STIGQter::FindingsReport()
 
     db.UpdateVariable(QStringLiteral("lastdir"), QFileInfo(fileName).absolutePath());
     DisableInput();
-    auto *t = new QThread;
     auto *f = new WorkerFindingsReport();
-    f->moveToThread(t);
     f->SetReportName(fileName);
-    connect(t, SIGNAL(started()), f, SLOT(process()));
-    connect(f, SIGNAL(finished()), t, SLOT(quit()));
-    connect(t, SIGNAL(finished()), this, SLOT(CompletedThread()));
-    connect(f, SIGNAL(initialize(int, int)), this, SLOT(Initialize(int, int)));
-    connect(f, SIGNAL(progress(int)), this, SLOT(Progress(int)));
-    connect(f, SIGNAL(updateStatus(QString)), this, SLOT(StatusChange(QString)));
+
+    auto *t = f->ConnectThreads(this);
+
     threads.append(t);
     workers.append(f);
 
@@ -829,16 +773,11 @@ void STIGQter::ImportCKLs()
     db.UpdateVariable(QStringLiteral("lastdir"), QFileInfo(fileNames[0]).absolutePath());
     DisableInput();
     _updatedAssets = true;
-    auto *t = new QThread();
     auto *c = new WorkerCKLImport();
-    c->moveToThread(t);
     c->AddCKLs(fileNames);
-    connect(t, SIGNAL(started()), c, SLOT(process()));
-    connect(c, SIGNAL(finished()), t, SLOT(quit()));
-    connect(t, SIGNAL(finished()), this, SLOT(CompletedThread()));
-    connect(c, SIGNAL(initialize(int, int)), this, SLOT(Initialize(int, int)));
-    connect(c, SIGNAL(progress(int)), this, SLOT(Progress(int)));
-    connect(c, SIGNAL(updateStatus(QString)), this, SLOT(StatusChange(QString)));
+
+    auto *t = c->ConnectThreads(this);
+
     threads.append(t);
     workers.append(c);
 
@@ -861,16 +800,11 @@ void STIGQter::ImportEMASS()
 
     DisableInput();
     db.UpdateVariable(QStringLiteral("lastdir"), QFileInfo(fileName).absolutePath());
-    auto *t = new QThread;
     auto *c = new WorkerImportEMASS();
     c->SetReportName(fileName);
-    c->moveToThread(t);
-    connect(t, SIGNAL(started()), c, SLOT(process()));
-    connect(c, SIGNAL(finished()), t, SLOT(quit()));
-    connect(t, SIGNAL(finished()), this, SLOT(CompletedThread()));
-    connect(c, SIGNAL(initialize(int, int)), this, SLOT(Initialize(int, int)));
-    connect(c, SIGNAL(progress(int)), this, SLOT(Progress(int)));
-    connect(c, SIGNAL(updateStatus(QString)), this, SLOT(StatusChange(QString)));
+
+    auto *t = c->ConnectThreads(this);
+
     threads.append(t);
     workers.append(c);
 
@@ -917,16 +851,11 @@ void STIGQter::MapUnmapped(bool confirm)
         _updatedCCIs = true;
 
         //Create thread to download CCIs and keep GUI active
-        auto *t = new QThread;
         auto *c = new WorkerMapUnmapped();
-        c->moveToThread(t);
-        connect(t, SIGNAL(started()), c, SLOT(process()));
-        connect(c, SIGNAL(finished()), t, SLOT(quit()));
-        connect(t, SIGNAL(finished()), this, SLOT(CompletedThread()));
-        connect(c, SIGNAL(initialize(int, int)), this, SLOT(Initialize(int, int)));
-        connect(c, SIGNAL(progress(int)), this, SLOT(Progress(int)));
-        connect(c, SIGNAL(updateStatus(QString)), this, SLOT(StatusChange(QString)));
+
+        auto *t = c->ConnectThreads(this);
         threads.append(t);
+
         workers.append(c);
 
         t->start();

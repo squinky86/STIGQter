@@ -65,11 +65,13 @@ void WorkerMapUnmapped::process()
 
     Q_FOREACH (STIGCheck check, stigchecks)
     {
-        Q_EMIT updateStatus(QStringLiteral("Checking ") + PrintSTIGCheck(check) + QStringLiteral("…"));
+        //Q_EMIT updateStatus(QStringLiteral("Checking ") + PrintSTIGCheck(check) + QStringLiteral("…"));
         bool updateCheck = false;
         //if the associated CCI was not imported in the eMASS import, remap to CM-6, CCI-366.
         Q_FOREACH (CCI c, check.GetCCIs())
         {
+            if (c == cci366)
+                continue;
             if (!c.isImport)
             {
                 check.cciIds.removeOne(c.id);

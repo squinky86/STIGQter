@@ -151,6 +151,12 @@ int main(int argc, char *argv[])
         }
 
         {
+            std::cout << "Test " << ++onTest << ": Decrease Log Level" << std::endl;
+            DbManager db;
+            db.UpdateVariable(QStringLiteral("loglevel"), QStringLiteral("0"));
+        }
+
+        {
             std::cout << "Test " << ++onTest << ": Run STIGQter Interface Tests" << std::endl;
             w.RunTests();
             a.processEvents();
@@ -189,15 +195,14 @@ int main(int argc, char *argv[])
         }
 
         {
-            std::cout << "Test " << ++onTest << ": Import CKLs" << std::endl;
             QDirIterator it("tests");
             WorkerCKLImport wc;
             while (it.hasNext())
             {
                 QFile f(it.next());
-                std::cout << "Test " << ++onTest << ": Import CKL " << f.fileName().toStdString() << std::endl;
                 if (f.fileName().endsWith(".ckl", Qt::CaseInsensitive))
                 {
+                    std::cout << "Test " << ++onTest << ": Import CKL " << f.fileName().toStdString() << std::endl;
                     QFileInfo fi(f);
                     wc.AddCKLs({fi.filePath()});
                 }
