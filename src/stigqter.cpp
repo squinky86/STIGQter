@@ -165,6 +165,7 @@ void STIGQter::RunTests()
     while (!isProcessingEnabled())
     {
         QThread::sleep(1);
+        QApplication::processEvents();
     }
 
     //step 1 - map unmapped STIGs
@@ -173,6 +174,7 @@ void STIGQter::RunTests()
     while (!isProcessingEnabled())
     {
         QThread::sleep(1);
+        QApplication::processEvents();
     }
 
     //step 1 - open all assets
