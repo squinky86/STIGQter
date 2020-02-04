@@ -1,5 +1,6 @@
 ## 1.0.1
 -   General fixes and code cleanups
+-   Fix very verbose debugging (issue #57)
 
 ## 1.0.0 20200131
 -   Stabilized database (reverse compatibility will be maintained)

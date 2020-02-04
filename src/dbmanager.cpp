@@ -309,9 +309,9 @@ bool DbManager::AddAsset(Asset &asset)
         q.bindValue(QStringLiteral(":webDBSite"), asset.webDbSite);
         q.bindValue(QStringLiteral(":webDBInstance"), asset.webDbInstance);
         ret = q.exec();
-        Log(6, QStringLiteral("AddAsset"), q);
         db.commit();
         asset.id = q.lastInsertId().toInt();
+        Log(6, QStringLiteral("AddAsset"), q);
     }
     return ret;
 }
@@ -353,12 +353,12 @@ bool DbManager::AddCCI(CCI &cci)
         q.bindValue(QStringLiteral(":CCI"), cci.cci);
         q.bindValue(QStringLiteral(":definition"), cci.definition);
         ret = q.exec();
-        Log(6, QStringLiteral("AddCCI"), q);
         if (!_delayCommit)
         {
             db.commit();
             cci.id = q.lastInsertId().toInt();
         }
+        Log(6, QStringLiteral("AddCCI"), q);
     }
     return ret;
 }
@@ -433,9 +433,9 @@ bool DbManager::AddControl(const QString &control, const QString &title, const Q
                 q.bindValue(QStringLiteral(":title"), title);
                 q.bindValue(QStringLiteral(":description"), description);
                 ret = q.exec();
-                Log(6, QStringLiteral("AddControl"), q);
                 if (!_delayCommit)
                     db.commit();
+                Log(6, QStringLiteral("AddControl"), q);
             }
         }
         else
@@ -493,9 +493,9 @@ bool DbManager::AddFamily(const QString &acronym, const QString &description)
         q.bindValue(QStringLiteral(":acronym"), acronym);
         q.bindValue(QStringLiteral(":description"), Sanitize(description));
         ret = q.exec();
-        Log(6, QStringLiteral("AddFamily"), q);
         if (!_delayCommit)
             db.commit();
+        Log(6, QStringLiteral("AddFamily"), q);
     }
     return ret;
 }
@@ -548,10 +548,10 @@ bool DbManager::AddSTIG(STIG &stig, QList<STIGCheck> checks, bool stigExists)
                 q.bindValue(QStringLiteral(":benchmarkId"), stig.benchmarkId);
                 q.bindValue(QStringLiteral(":fileName"), stig.fileName);
                 ret = q.exec();
-                Log(6, QStringLiteral("AddSTIG"), q);
                 stig.id = q.lastInsertId().toInt();
                 //do not delay this commit; the STIG should be added to the DB to prevent inconsistencies with adding the checks.
                 db.commit();
+                Log(6, QStringLiteral("AddSTIG"), q);
             }
         }
         if (stig.id <= 0)
@@ -594,7 +594,6 @@ bool DbManager::AddSTIG(STIG &stig, QList<STIGCheck> checks, bool stigExists)
             q.bindValue(QStringLiteral(":IAControls"), c.iaControls);
             q.bindValue(QStringLiteral(":targetKey"), c.targetKey);
             bool tmpRet = q.exec();
-            Log(6, QStringLiteral("AddSTIG-check"), q);
             stigCheckRet = stigCheckRet && tmpRet;
             if (!tmpRet)
             {
@@ -602,6 +601,7 @@ bool DbManager::AddSTIG(STIG &stig, QList<STIGCheck> checks, bool stigExists)
                 Warning(QStringLiteral("Unable to Add STIGCheck"), "The STIGCheck " + PrintSTIGCheck(c) + " could not be added to STIG " + PrintSTIG(stig) + ".");
             }
             int STIGCheckId = q.lastInsertId().toInt();
+            Log(6, QStringLiteral("AddSTIG-check"), q);
             if (STIGCheckId > 0)
             {
                 //check if the STIG is mapped to at least one CCI
@@ -675,8 +675,8 @@ bool DbManager::AddSTIGToAsset(const STIG &stig, const Asset &asset)
                     q.bindValue(QStringLiteral(":status"), Status::NotReviewed);
                     q.bindValue(QStringLiteral(":STIGId"), tmpSTIG.id);
                     ret = q.exec();
-                    Log(6, QStringLiteral("AddSTIGToAsset-2"), q);
                     db.commit();
+                    Log(6, QStringLiteral("AddSTIGToAsset-2"), q);
                 }
         }
     }
@@ -717,9 +717,9 @@ bool DbManager::DeleteAsset(const Asset &asset)
             q.prepare(QStringLiteral("DELETE FROM Asset WHERE id = :AssetId"));
             q.bindValue(QStringLiteral(":AssetId"), asset.id);
             ret = q.exec();
-            Log(6, QStringLiteral("DeleteAsset"), q);
             if (!_delayCommit)
                 db.commit();
+            Log(6, QStringLiteral("DeleteAsset"), q);
         }
     }
 
@@ -749,9 +749,9 @@ bool DbManager::DeleteCCIs()
         Log(6, QStringLiteral("DeleteCCIs-Control"), q);
         q.prepare(QStringLiteral("DELETE FROM CCI"));
         ret = q.exec() && ret;
-        Log(6, QStringLiteral("DeleteCCIs-CCI"), q);
         if (!_delayCommit)
             db.commit();
+        Log(6, QStringLiteral("DeleteCCIs-CCI"), q);
     }
     return ret;
 }
@@ -787,9 +787,9 @@ bool DbManager::DeleteEmassImport()
         QSqlQuery q(db);
         q.prepare(QStringLiteral("UPDATE CCI SET isImport = 0, importCompliance = NULL, importDateTested = NULL, importTestedBy = NULL, importTestResults = NULL, importCompliance2 = NULL, importDateTested2 = NULL, importTestedBy2 = NULL, importTestResults2 = NULL, importControlImplementationStatus = NULL, importSecurityControlDesignation = NULL, importInherited = NULL, importApNum = NULL, importImplementationGuidance = NULL, importAssessmentProcedures = NULL"));
         ret = q.exec();
-        Log(6, QStringLiteral("DeleteEmassImport"), q);
         if (!_delayCommit)
             db.commit();
+        Log(6, QStringLiteral("DeleteEmassImport"), q);
     }
     return ret;
 }
@@ -833,9 +833,9 @@ bool DbManager::DeleteSTIG(int id)
         q.prepare(QStringLiteral("DELETE FROM STIG WHERE id = :id"));
         q.bindValue(QStringLiteral(":id"), id);
         ret = q.exec() && ret;
-        Log(6, QStringLiteral("DeleteSTIG-STIG"), q);
         if (!_delayCommit)
             db.commit();
+        Log(6, QStringLiteral("DeleteSTIG-STIG"), q);
     }
     return ret;
 }
@@ -882,8 +882,8 @@ bool DbManager::DeleteSTIGFromAsset(const STIG &stig, const Asset &asset)
             q.bindValue(QStringLiteral(":AssetId"), tmpAsset.id);
             q.bindValue(QStringLiteral(":STIGId"), tmpSTIG.id);
             ret = q.exec() && ret;
-            Log(6, QStringLiteral("DeleteSTIGFromAsset-CKLCheck"), q);
             db.commit();
+            Log(6, QStringLiteral("DeleteSTIGFromAsset-CKLCheck"), q);
         }
     }
     return ret;
