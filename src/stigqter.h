@@ -39,6 +39,7 @@ public:
     explicit STIGQter(QWidget *parent = nullptr);
     ~STIGQter();
     bool isProcessingEnabled();
+    QThread* ConnectThreads(Worker *worker);
 #ifdef USE_TESTS
     void RunTests();
 #endif

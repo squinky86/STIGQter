@@ -80,6 +80,7 @@ void WorkerAssetAdd::AddSTIG(const STIG &stig)
  * @code
  * QThread *thread = new QThread;
  * WorkerAssetAdd *addAsset = new WorkerAssetAdd();
+ * addAsset->moveToThread(thread); // move the asset to the new thread
  * addAsset->AddAsset(asset); // "asset" is an instance of an Asset that will be added to the DB
  * addAsset->AddSTIG(stig); // "stig" is an instance of a STIG that will be mapped to the new "asset" once it's inserted into the database.
  * connect(thread, SIGNAL(started()), addAsset, SLOT(process())); // Start the worker when the new thread emits its started() signal.

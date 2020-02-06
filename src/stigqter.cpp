@@ -149,6 +149,23 @@ bool STIGQter::isProcessingEnabled()
     return ui->btnQuit->isEnabled();
 }
 
+/**
+ * @brief STIGQter::ConnectThreads
+ * @param worker
+ *
+ * Connect STIGQter input/output to the worker and its thread
+ */
+QThread* STIGQter::ConnectThreads(Worker *worker)
+{
+    DisableInput();
+    auto *t = worker->ConnectThreads(this);
+
+    threads.append(t);
+    workers.append(worker);
+
+    return t;
+}
+
 #ifdef USE_TESTS
 /**
  * @brief STIGQter::RunTests
@@ -218,18 +235,12 @@ void STIGQter::RunTests()
  */
 void STIGQter::UpdateCCIs()
 {
-    DisableInput();
     _updatedCCIs = true;
 
     //Create thread to download CCIs and keep GUI active
     auto *c = new WorkerCCIAdd();
 
-    auto *t = c->ConnectThreads(this);
-
-    threads.append(t);
-    workers.append(c);
-
-    t->start();
+    ConnectThreads(c)->start();
 }
 
 /**
@@ -462,12 +473,7 @@ void STIGQter::AddAsset(const QString &name)
         }
         a->AddAsset(tmpAsset);
 
-        auto *t = a->ConnectThreads(this);
-
-        threads.append(t);
-        workers.append(a);
-
-        t->start();
+        ConnectThreads(a)->start();
     }
 }
 
@@ -493,12 +499,7 @@ void STIGQter::AddSTIGs()
     auto *s = new WorkerSTIGAdd();
     s->AddSTIGs(fileNames);
 
-    auto *t = s->ConnectThreads(this);
-
-    threads.append(t);
-    workers.append(s);
-
-    t->start();
+    ConnectThreads(s)->start();
 }
 
 /**
@@ -534,12 +535,7 @@ void STIGQter::DeleteCCIs()
     //Create thread to download CCIs and keep GUI active
     auto *c = new WorkerCCIDelete();
 
-    auto *t = c->ConnectThreads(this);
-
-    threads.append(t);
-    workers.append(c);
-
-    t->start();
+    ConnectThreads(c)->start();
 }
 
 /**
@@ -572,12 +568,7 @@ void STIGQter::DeleteSTIGs()
         s->AddId(stig.id);
     }
 
-    auto *t = s->ConnectThreads(this);
-
-    threads.append(t);
-    workers.append(s);
-
-    t->start();
+    ConnectThreads(s)->start();
 }
 
 /**
@@ -594,12 +585,7 @@ void STIGQter::DownloadSTIGs()
     //Create thread to download CCIs and keep GUI active
     auto *s = new WorkerSTIGDownload();
 
-    auto *t = s->ConnectThreads(this);
-
-    threads.append(t);
-    workers.append(s);
-
-    t->start();
+    ConnectThreads(s)->start();
 }
 
 /**
@@ -619,12 +605,7 @@ void STIGQter::ExportCKLs()
         auto *f = new WorkerCKLExport();
         f->SetExportDir(dirName);
 
-        auto *t = f->ConnectThreads(this);
-
-        threads.append(t);
-        workers.append(f);
-
-        t->start();
+        ConnectThreads(f)->start();
     }
 }
 
@@ -646,12 +627,7 @@ void STIGQter::ExportCMRS()
     auto *f = new WorkerCMRSExport();
     f->SetExportPath(fileName);
 
-    auto *t = f->ConnectThreads(this);
-
-    threads.append(t);
-    workers.append(f);
-
-    t->start();
+    ConnectThreads(f)->start();
 }
 
 /**
@@ -672,12 +648,7 @@ void STIGQter::ExportEMASS()
     auto *f = new WorkerEMASSReport();
     f->SetReportName(fileName);
 
-    auto *t = f->ConnectThreads(this);
-
-    threads.append(t);
-    workers.append(f);
-
-    t->start();
+    ConnectThreads(f)->start();
 }
 
 /**
@@ -698,12 +669,7 @@ void STIGQter::ExportHTML()
         auto *f = new WorkerHTML();
         f->SetDir(dirName);
 
-        auto *t = f->ConnectThreads(this);
-
-        threads.append(t);
-        workers.append(f);
-
-        t->start();
+        ConnectThreads(f)->start();
     }
 }
 
@@ -747,12 +713,7 @@ void STIGQter::FindingsReport()
     auto *f = new WorkerFindingsReport();
     f->SetReportName(fileName);
 
-    auto *t = f->ConnectThreads(this);
-
-    threads.append(t);
-    workers.append(f);
-
-    t->start();
+    ConnectThreads(f)->start();
 }
 
 /**
@@ -776,12 +737,7 @@ void STIGQter::ImportCKLs()
     auto *c = new WorkerCKLImport();
     c->AddCKLs(fileNames);
 
-    auto *t = c->ConnectThreads(this);
-
-    threads.append(t);
-    workers.append(c);
-
-    t->start();
+    ConnectThreads(c)->start();
 }
 
 /**
@@ -803,12 +759,7 @@ void STIGQter::ImportEMASS()
     auto *c = new WorkerImportEMASS();
     c->SetReportName(fileName);
 
-    auto *t = c->ConnectThreads(this);
-
-    threads.append(t);
-    workers.append(c);
-
-    t->start();
+    ConnectThreads(c)->start();
 }
 
 /**
@@ -853,12 +804,7 @@ void STIGQter::MapUnmapped(bool confirm)
         //Create thread to download CCIs and keep GUI active
         auto *c = new WorkerMapUnmapped();
 
-        auto *t = c->ConnectThreads(this);
-        threads.append(t);
-
-        workers.append(c);
-
-        t->start();
+        ConnectThreads(c)->start();
     }
 }
 

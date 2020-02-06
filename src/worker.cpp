@@ -44,6 +44,9 @@ Worker::Worker(QObject *parent) : QObject(parent)
  * @param sq
  *
  * Connect the signals and slots and move the worker to the supplied thread.
+ *
+ * Returns the new QThread that the worker is attached to. It is up to the
+ * calling entity to clean up the thread.
  */
 [[nodiscard]] QThread* Worker::ConnectThreads(STIGQter *sq)
 {

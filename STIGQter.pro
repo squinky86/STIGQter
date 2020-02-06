@@ -47,6 +47,7 @@ SOURCES += \
            src/dbmanager.cpp \
            src/common.cpp \
     src/worker.cpp \
+    src/workerassetckl.cpp \
            src/workerccidelete.cpp \
            src/workercciadd.cpp \
            src/help.cpp \
@@ -78,6 +79,7 @@ HEADERS += \
            src/common.h \
            src/family.h \
     src/worker.h \
+    src/workerassetckl.h \
            src/workerccidelete.h \
            src/workercciadd.h \
            src/control.h \

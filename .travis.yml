@@ -13,8 +13,8 @@ addons:
 before_install:
  - sudo apt-get update -qq
  - sudo apt-get install qtbase5-dev qt5-qmake qt5-default libqt5sql5-sqlite
- - sudo apt-get install libtidy-dev libzip-dev
- - sudo apt-get install zlib1g-dev
+ - sudo apt-get install libtidy-dev libzip-dev zlib1g-dev
+ - apt-get install texlive-luatex texlive-latex-recommended biber texlive-fonts-extra
  - pushd /tmp && wget https://github.com/jmcnamara/libxlsxwriter/archive/RELEASE_0.9.4.tar.gz && tar -zxf RELEASE_0.9.4.tar.gz && popd
  - pushd /tmp/libxlsxwriter-RELEASE_0.9.4 && make && sudo make install PREFIX=/usr && popd
  - pip install --user cpp-coveralls
@@ -26,6 +26,7 @@ script:
  - qmake STIGQter.pro
  - sed -i -e 's:-O2:-O0 -fprofile-arcs -ftest-coverage:g' -e 's:-Wl,-O1:-Wl,-O1 -lgcov --coverage:g' Makefile
  - build-wrapper-linux-x86-64 --out-dir bw-output make -j3
+ - pushd doc && ./build.sh && popd
  - ./STIGQter tests
 
 after_success:

@@ -89,8 +89,6 @@ private:
     void KeyShortcut(Status action);
     void SetItemColor(QListWidgetItem *i, Status stat, Severity sev);
     bool _isFiltered;
-    QProgressBar *_progressBar;
-    QLabel *_lblStatus;
     STIGQter *_parent;
 
 Q_SIGNALS:
