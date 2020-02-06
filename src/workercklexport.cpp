@@ -70,7 +70,7 @@ void WorkerCKLExport::SetExportDir(const QString &dir)
 void WorkerCKLExport::process()
 {
     DbManager db;
-    QList<Asset> assets = db.GetAssets();
+    auto assets = db.GetAssets();
     Q_EMIT initialize(assets.count(), 0);
     Q_FOREACH (Asset a, assets)
     {
