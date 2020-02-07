@@ -174,9 +174,10 @@ QThread* STIGQter::ConnectThreads(Worker *worker)
 void STIGQter::RunTests()
 {
     DbManager db;
+    int step = 0;
 
-    //step 0 - create asset
-    std::cout << "\tCreating Asset \"TEST\"" << std::endl;
+    // create asset
+    std::cout << "\tTest " << step++ << ": Creating Asset \"TEST\"" << std::endl;
     ui->lstSTIGs->selectAll();
     AddAsset("TEST");
     while (!isProcessingEnabled())
@@ -185,8 +186,27 @@ void STIGQter::RunTests()
         QApplication::processEvents();
     }
 
-    //step 1 - map unmapped STIGs
-    std::cout << "\tRemapping unmapped STIGs" << std::endl;
+    // select the asset
+    std::cout << "\tTest " << step++ << ": Sellecting Asset \"TEST\"" << std::endl;
+    ui->lstAssets->selectAll();
+    QApplication::processEvents();
+
+    // build CKL files
+    std::cout << "\tTest " << step++ << ": Exporting CKL files" << std::endl;
+    ExportCKLs("tests");
+    while (!isProcessingEnabled())
+    {
+        QThread::sleep(1);
+        QApplication::processEvents();
+    }
+
+    // save .stigqter file
+    // build CKL files
+    std::cout << "\tTest " << step++ << ": Saving .stigqter file" << std::endl;
+    SaveAs("tests/test.stigqter");
+
+    // map unmapped STIGs
+    std::cout << "\tTest " << step++ << ": Remapping unmapped STIGs" << std::endl;
     MapUnmapped(true);
     while (!isProcessingEnabled())
     {
@@ -194,8 +214,8 @@ void STIGQter::RunTests()
         QApplication::processEvents();
     }
 
-    //step 1 - open all assets
-    std::cout << "\tOpening Assets" << std::endl;
+    // open all assets
+    std::cout << "\tTest " << step++ << ": Opening Assets" << std::endl;
     {
         Q_FOREACH(Asset asset, db.GetAssets())
         {
@@ -212,16 +232,34 @@ void STIGQter::RunTests()
             ui->tabDB->setCurrentIndex(index);
 
             //step 2 - run AssetView tests
-            std::cout << "\tRunning Asset Tests" << std::endl;
+            std::cout << "\tTest " << step++ << ": Running Asset Tests" << std::endl;
             av.RunTests(); //will delete asset
         }
     }
 
-    //step 2 - reopen assets
-    std::cout << "\tReopening Assets" << std::endl;
+    // reopen assets
+    std::cout << "\tTest " << step++ << ": Reopening Assets" << std::endl;
     {
         ui->lstAssets->selectAll();
         OpenCKL();
+    }
+
+    // export CMRS
+    std::cout << "\tTest " << step++ << ": Export CMRS" << std::endl;
+    ExportCMRS("tests/cmrs.xml");
+    while (!isProcessingEnabled())
+    {
+        QThread::sleep(1);
+        QApplication::processEvents();
+    }
+
+    // export eMASS
+    std::cout << "\tTest " << step++ << ": Export eMASS TR" << std::endl;
+    ExportEMASS("tests/emass.xlsx");
+    while (!isProcessingEnabled())
+    {
+        QThread::sleep(1);
+        QApplication::processEvents();
     }
 }
 #endif
@@ -347,19 +385,20 @@ void STIGQter::Save()
 
 /**
  * @brief STIGQter::SaveAs
+ * @param fileName
  *
  * Prompt the user for where to save the .stigqter file
  */
-void STIGQter::SaveAs()
+void STIGQter::SaveAs(const QString &fileName)
 {
     DbManager db;
-    QString fileName = QFileDialog::getSaveFileName(this,
+    QString fn = !fileName.isEmpty() ? fileName : QFileDialog::getSaveFileName(this,
         QStringLiteral("Save STIGQter Database"), db.GetVariable(QStringLiteral("lastdir")), QStringLiteral("STIGQter Save File (*.stigqter)"));
 
-    if (!fileName.isNull() && !fileName.isEmpty())
+    if (!fn.isNull() && !fn.isEmpty())
     {
-        lastSaveLocation = fileName;
-        db.UpdateVariable(QStringLiteral("lastdir"), QFileInfo(fileName).absolutePath());
+        lastSaveLocation = fn;
+        db.UpdateVariable(QStringLiteral("lastdir"), QFileInfo(fn).absolutePath());
         Save();
     }
 }
@@ -590,13 +629,14 @@ void STIGQter::DownloadSTIGs()
 
 /**
  * @brief STIGQter::ExportCKLs
+ * @param dir
  *
  * Export all possible .ckl files into the selected directory.
  */
-void STIGQter::ExportCKLs()
+void STIGQter::ExportCKLs(const QString &dir)
 {
     DbManager db;
-    QString dirName = QFileDialog::getExistingDirectory(this, QStringLiteral("Save to Directory"), db.GetVariable(QStringLiteral("lastdir")));
+    QString dirName = !dir.isEmpty() ? dir : QFileDialog::getExistingDirectory(this, QStringLiteral("Save to Directory"), db.GetVariable(QStringLiteral("lastdir")));
 
     if (!dirName.isNull() && !dirName.isEmpty())
     {
@@ -614,18 +654,18 @@ void STIGQter::ExportCKLs()
  *
  * Generate a CMRS report of the findings.
  */
-void STIGQter::ExportCMRS()
+void STIGQter::ExportCMRS(const QString &fileName)
 {
     DbManager db;
-    QString fileName = QFileDialog::getSaveFileName(this, QStringLiteral("Save CMRS Report"), db.GetVariable(QStringLiteral("lastdir")), QStringLiteral("CMRS XML (*.xml)"));
+    QString fn = !fileName.isEmpty() ? fileName : QFileDialog::getSaveFileName(this, QStringLiteral("Save CMRS Report"), db.GetVariable(QStringLiteral("lastdir")), QStringLiteral("CMRS XML (*.xml)"));
 
-    if (fileName.isNull() || fileName.isEmpty())
+    if (fn.isNull() || fn.isEmpty())
         return; // cancel button pressed
 
     DisableInput();
-    db.UpdateVariable(QStringLiteral("lastdir"), QFileInfo(fileName).absolutePath());
+    db.UpdateVariable(QStringLiteral("lastdir"), QFileInfo(fn).absolutePath());
     auto *f = new WorkerCMRSExport();
-    f->SetExportPath(fileName);
+    f->SetExportPath(fn);
 
     ConnectThreads(f)->start();
 }
@@ -635,18 +675,18 @@ void STIGQter::ExportCMRS()
  *
  * Create an eMASS Test Result Import workbook.
  */
-void STIGQter::ExportEMASS()
+void STIGQter::ExportEMASS(const QString &fileName)
 {
     DbManager db;
-    QString fileName = QFileDialog::getSaveFileName(this, QStringLiteral("Save eMASS Report"), db.GetVariable(QStringLiteral("lastdir")), QStringLiteral("Microsoft Excel (*.xlsx)"));
+    QString fn = !fileName.isEmpty() ? fileName : QFileDialog::getSaveFileName(this, QStringLiteral("Save eMASS Report"), db.GetVariable(QStringLiteral("lastdir")), QStringLiteral("Microsoft Excel (*.xlsx)"));
 
-    if (fileName.isNull() || fileName.isEmpty())
+    if (fn.isNull() || fn.isEmpty())
         return; // cancel button pressed
 
     DisableInput();
-    db.UpdateVariable(QStringLiteral("lastdir"), QFileInfo(fileName).absolutePath());
+    db.UpdateVariable(QStringLiteral("lastdir"), QFileInfo(fn).absolutePath());
     auto *f = new WorkerEMASSReport();
-    f->SetReportName(fileName);
+    f->SetReportName(fn);
 
     ConnectThreads(f)->start();
 }

@@ -152,35 +152,46 @@ bool DownloadFile(const QUrl &url, QFile *file)
     QString userAgent = GetUserAgent();
     req.setRawHeader("User-Agent", userAgent.toStdString().c_str());
 
-    //log HTTP headers, STIG Rule SV-83997r1_rule
-    //log IP address, STIG Rule SV-84045r1_rule
-    Warning("Downloading File", "Downloading " + url.toString() + " (ip address " + QHostInfo::fromName(url.host()).addresses().first().toString() + ") with header User-Agent: " + userAgent, true);
+    auto addresses = QHostInfo::fromName(url.host()).addresses();
+    if (addresses.count() > 0)
+    {
+        //log HTTP headers, STIG Rule SV-83997r1_rule
+        //log IP address, STIG Rule SV-84045r1_rule
+        Warning("Downloading File", "Downloading " + url.toString() + " (ip address " + addresses.first().toString() + ") with header User-Agent: " + userAgent, true);
 
-    //clean up the socket event when the response is finished reading
-    QNetworkReply *response = manager.get(req);
-    QEventLoop event;
-    QObject::connect(response,SIGNAL(finished()),&event,SLOT(quit()));
-    event.exec();
+        //clean up the socket event when the response is finished reading
+        QNetworkReply *response = manager.get(req);
+        QEventLoop event;
+        QObject::connect(response,SIGNAL(finished()),&event,SLOT(quit()));
+        event.exec();
 
-    //read entire contents to memory before saving it to the file
-    QByteArray tmpArray = response->readAll();
+        //read entire contents to memory before saving it to the file
+        QByteArray tmpArray = response->readAll();
 
-    //save contents of the response to the file
-    file->write(tmpArray, tmpArray.size());
-    file->flush();
-    delete response;
+        //save contents of the response to the file
+        file->write(tmpArray, tmpArray.size());
+        file->flush();
+        delete response;
 
-    /*
-     * If the file was already open, seek back to the beginning of
-     * the file. Otherwise, close it. This preserves the state of the
-     * file before this function ran.
-     */
+        /*
+         * If the file was already open, seek back to the beginning of
+         * the file. Otherwise, close it. This preserves the state of the
+         * file before this function ran.
+         */
+        if (close)
+            file->close();
+        else
+            file->seek(0);
+
+        return true;
+    }
+
     if (close)
         file->close();
     else
         file->seek(0);
 
-    return true;
+    return false;
 }
 /**
  * @brief DownloadPage
@@ -198,22 +209,27 @@ QString DownloadPage(const QUrl &url)
     QString userAgent = GetUserAgent();
     req.setRawHeader("User-Agent", userAgent.toStdString().c_str());
 
-    //log HTTP headers, STIG Rule SV-83997r1_rule
-    //log IP address, STIG Rule SV-84045r1_rule
-    Warning("Downloading Page", "Downloading " + url.toString() + " (ip address " + QHostInfo::fromName(url.host()).addresses().first().toString() + ") with header User-Agent: " + userAgent, true);
+    auto addresses = QHostInfo::fromName(url.host()).addresses();
+    if (addresses.count() > 0)
+    {
+        //log HTTP headers, STIG Rule SV-83997r1_rule
+        //log IP address, STIG Rule SV-84045r1_rule
+        Warning("Downloading Page", "Downloading " + url.toString() + " (ip address " + addresses.first().toString() + ") with header User-Agent: " + userAgent, true);
 
-    //send request and get response
-    QNetworkReply *response = manager.get(req);
+        //send request and get response
+        QNetworkReply *response = manager.get(req);
 
-    //clean up the socket event when the response is finished reading
-    QEventLoop event;
-    QObject::connect(response,SIGNAL(finished()),&event,SLOT(quit()));
-    event.exec();
+        //clean up the socket event when the response is finished reading
+        QEventLoop event;
+        QObject::connect(response,SIGNAL(finished()),&event,SLOT(quit()));
+        event.exec();
 
-    //read the response and return its contents
-    QString html = QString::fromLatin1(response->readAll());
-    delete response;
-    return html;
+        //read the response and return its contents
+        QString html = QString::fromLatin1(response->readAll());
+        delete response;
+        return html;
+    }
+    return QString(); // unable to download
 }
 
 /**

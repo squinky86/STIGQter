@@ -397,6 +397,11 @@ void AssetView::RunTests()
     //step 7: save CKL
     std::cout << "\t\tSaving CKL" << std::endl;
     SaveCKL("tests/monolithic.ckl");
+    while (!_parent->isProcessingEnabled())
+    {
+        QThread::sleep(1);
+        QApplication::processEvents();
+    }
 
     //step 8: Count Checks
     UpdateChecks();

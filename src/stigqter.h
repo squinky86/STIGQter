@@ -56,9 +56,9 @@ private Q_SLOTS:
     void DeleteEmass();
     void DeleteSTIGs();
     void DownloadSTIGs();
-    void ExportCKLs();
-    void ExportCMRS();
-    void ExportEMASS();
+    void ExportCKLs(const QString &dir = QString());
+    void ExportCMRS(const QString &fileName = QString());
+    void ExportEMASS(const QString &fileName = QString());
     void ExportHTML();
     void FilterSTIGs(const QString &text);
     void FindingsReport();
@@ -69,7 +69,7 @@ private Q_SLOTS:
     void OpenCKL();
     bool Reset(bool checkOnly = false);
     void Save();
-    void SaveAs();
+    void SaveAs(const QString &fileName = QString());
     void SelectAsset();
     void SelectSTIG();
     void StatusChange(const QString &status);

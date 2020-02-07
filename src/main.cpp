@@ -163,22 +163,6 @@ int main(int argc, char *argv[])
         }
 
         {
-            std::cout << "Test " << ++onTest << ": Export eMASS Results" << std::endl;
-            WorkerEMASSReport we;
-            we.SetReportName("tests/eMASSTRExport.xlsx");
-            we.process();
-            a.processEvents();
-        }
-
-        {
-            std::cout << "Test " << ++onTest << ": Export CKLs" << std::endl;
-            WorkerCKLExport wc;
-            wc.SetExportDir("tests");
-            wc.process();
-            a.processEvents();
-        }
-
-        {
             std::cout << "Test " << ++onTest << ": Delete an Asset" << std::endl;
             DbManager db;
             Q_FOREACH (auto asset, db.GetAssets())
@@ -207,14 +191,6 @@ int main(int argc, char *argv[])
                     wc.AddCKLs({fi.filePath()});
                 }
             }
-            wc.process();
-            a.processEvents();
-        }
-
-        {
-            std::cout << "Test " << ++onTest << ": Export CMRS" << std::endl;
-            WorkerCMRSExport wc;
-            wc.SetExportPath("tests/CMRS.xml");
             wc.process();
             a.processEvents();
         }
