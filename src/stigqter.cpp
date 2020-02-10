@@ -50,7 +50,6 @@
 #include <QThread>
 
 #include <iostream>
-#include <functional>
 
 /**
  * @class STIGQter
@@ -237,8 +236,20 @@ void STIGQter::RunTests()
     {
         // reopen assets
         {
+            ui->lstAssets->clearSelection();
+            ProcEvents();
             ui->lstAssets->selectAll();
             ProcEvents();
+
+            for (int i = 0; i < ui->lstAssets->count(); i++)
+            {
+                auto a = ui->lstAssets->item(i);
+                if (!a->isSelected())
+                    a->setSelected(true);
+            }
+
+            ProcEvents();
+
             OpenCKL();
             ProcEvents();
         }
