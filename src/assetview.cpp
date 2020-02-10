@@ -358,16 +358,29 @@ void AssetView::SetTabIndex(int index)
 }
 
 #ifdef USE_TESTS
+void AssetView::ProcEvents()
+{
+    while (_parent->isProcessingEnabled())
+    {
+        QThread::sleep(1);
+        QApplication::processEvents();
+    }
+    QApplication::processEvents();
+}
+
 void AssetView::RunTests()
 {
+    int onTest = 0;
     //step 1: search for Windows components
-    std::cout << "\t\tRunning Filter Test" << std::endl;
+    std::cout << "\t\tTest " << onTest++ << ": Filter" << std::endl;
     ui->txtSTIGFilter->setText(QStringLiteral("Windows"));
 
     //step 2: clear search
+    std::cout << "\t\tTest " << onTest++ << ": Clear Filter" << std::endl;
     ui->txtSTIGFilter->setText(QString());
 
     //step 3: view all CKL checks
+    std::cout << "\t\tTest " << onTest++ << ": View CKLs" << std::endl;
     {
         DbManager db;
         Q_FOREACH (const CKLCheck &cklCheck, db.GetCKLChecks())
@@ -377,19 +390,26 @@ void AssetView::RunTests()
     }
 
     //step 4: when selected check changes
+    std::cout << "\t\tTest " << onTest++ << ": Change Check Selection" << std::endl;
     ui->lstChecks->selectAll();
 
     //step 5: change findings
+    std::cout << "\t\tTest " << onTest++ << ": Change Findings Status" << std::endl;
     std::cout << "\t\tNot a Finding" << std::endl;
     KeyShortcutCtrlN();
+    ProcEvents();
     std::cout << "\t\tOpen Finding" << std::endl;
     KeyShortcutCtrlO();
+    ProcEvents();
     std::cout << "\t\tNot Reviewed Finding" << std::endl;
     KeyShortcutCtrlR();
+    ProcEvents();
     std::cout << "\t\tNot Applicable Finding" << std::endl;
     KeyShortcutCtrlX();
+    ProcEvents();
 
     //step 6: update asset
+    std::cout << "\t\tTest " << onTest++ << ": Change Asset" << std::endl;
     ui->txtFQDN->setText("test.example.org");
     ui->txtIP->setText("127.0.0.1");
     ui->txtMAC->setText("00:00:00:00:00:00");
@@ -397,20 +417,20 @@ void AssetView::RunTests()
     //step 7: save CKL
     std::cout << "\t\tSaving CKL" << std::endl;
     SaveCKL("tests/monolithic.ckl");
-    while (!_parent->isProcessingEnabled())
-    {
-        QThread::sleep(1);
-        QApplication::processEvents();
-    }
+    ProcEvents();
 
     //step 8: Count Checks
+    std::cout << "\t\tTest " << onTest++ << ": Counting Checks" << std::endl;
     UpdateChecks();
 
     //step 9: import XCCDF
+    std::cout << "\t\tTest " << onTest++ << ": Importing XCCDF" << std::endl;
     ImportXCCDF("tests/xccdf_lol.xml");
 
+    ProcEvents();
+
     //step 10: delete asset
-    std::cout << "\t\tDeleting Asset" << std::endl;
+    std::cout << "\t\tTest " << onTest++ << ":Deleting Asset" << std::endl;
     DeleteAsset(true);
 }
 #endif

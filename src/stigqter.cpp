@@ -189,7 +189,27 @@ void STIGQter::RunTests()
     // refresh STIGs
     std::cout << "\tTest " << step++ << ": Refresh STIGs" << std::endl;
     UpdateSTIGs();
-    QApplication::processEvents();
+    ProcEvents();
+
+    // filter STIGs
+    std::cout << "\t\tTest " << step++ << ": Filter" << std::endl;
+    ui->txtSTIGSearch->setText(QStringLiteral("Windows"));
+    ProcEvents();
+
+    // unfilter STIGs
+    std::cout << "\t\tTest " << step++ << ": Clear Filter" << std::endl;
+    ui->txtSTIGSearch->setText(QString());
+    ProcEvents();
+
+    // message handler
+    std::cout << "\t\tTest " << step++ << ": Message Handling" << std::endl;
+    QMessageLogContext c("test.cpp", 1, "TestFunc", "TestCat");
+    MessageHandler(QtMsgType::QtDebugMsg, c, "Test Message");
+    MessageHandler(QtMsgType::QtInfoMsg, c, "Test Message");
+    MessageHandler(QtMsgType::QtWarningMsg, c, "Test Message");
+    MessageHandler(QtMsgType::QtCriticalMsg, c, "Test Message");
+    MessageHandler(QtMsgType::QtFatalMsg, c, "Test Message");
+    ProcEvents();
 
     // import eMASS results
     std::cout << "\tTest " << step++ << ": Import eMASS Results" << std::endl;
@@ -206,6 +226,48 @@ void STIGQter::RunTests()
     ui->lstSTIGs->selectAll();
     AddAsset("TEST");
     ProcEvents();
+
+    // severity override
+    {
+        std::cout << "Test " << step++ << ": Severity Override" << std::endl;
+        DbManager db;
+        int count = 0;
+        Q_FOREACH(auto cklCheck, db.GetCKLChecks())
+        {
+            count++;
+            //override checks' severity pseudorandomly
+            switch (count % 4)
+            {
+            case 0:
+                if (cklCheck.GetSeverity() == Severity::none)
+                    continue;
+                cklCheck.severityOverride = Severity::none;
+                cklCheck.severityJustification = QStringLiteral("Overridden to none.");
+                break;
+            case 1:
+                if (cklCheck.GetSeverity() == Severity::low)
+                    continue;
+                cklCheck.severityOverride = Severity::low;
+                cklCheck.severityJustification = QStringLiteral("Overridden to low.");
+                break;
+            case 2:
+                if (cklCheck.GetSeverity() == Severity::medium)
+                    continue;
+                cklCheck.severityOverride = Severity::medium;
+                cklCheck.severityJustification = QStringLiteral("Overridden to medium.");
+                break;
+            case 3:
+                if (cklCheck.GetSeverity() == Severity::high)
+                    continue;
+                cklCheck.severityOverride = Severity::high;
+                cklCheck.severityJustification = QStringLiteral("Overridden to high.");
+                break;
+            default:
+                continue;
+            }
+        }
+        ProcEvents();
+    }
 
     // select the asset
     std::cout << "\tTest " << step++ << ": Selecting Asset \"TEST\"" << std::endl;

@@ -54,6 +54,7 @@ public:
     void UpdateSTIGCheck(const STIGCheck &stigCheck);
     void SetTabIndex(int index);
 #ifdef USE_TESTS
+    void ProcEvents();
     void RunTests();
 #endif
 
