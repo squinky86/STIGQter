@@ -208,12 +208,20 @@ void STIGQter::RunTests()
     // save .stigqter file
     std::cout << "\tTest " << step++ << ": Saving .stigqter file" << std::endl;
     SaveAs("tests/test.stigqter");
-    QApplication::processEvents();
+    while (!isProcessingEnabled())
+    {
+        QThread::sleep(1);
+        QApplication::processEvents();
+    }
 
     //load .stigqter file
     std::cout << "\tTest " << step++ << ": Loading .stigqter file" << std::endl;
     Load("tests/test.stigqter");
-    QApplication::processEvents();
+    while (!isProcessingEnabled())
+    {
+        QThread::sleep(1);
+        QApplication::processEvents();
+    }
 
     // map unmapped STIGs
     std::cout << "\tTest " << step++ << ": Remapping unmapped STIGs" << std::endl;
@@ -249,17 +257,29 @@ void STIGQter::RunTests()
     // reopen asset
     std::cout << "\tTest " << step++ << ": Reopen Asset" << std::endl;
     ImportCKLs({QStringLiteral("tests/monolithic.ckl")});
-    QApplication::processEvents();
+    while (!isProcessingEnabled())
+    {
+        QThread::sleep(1);
+        QApplication::processEvents();
+    }
 
     // export Findings Report
     std::cout << "\tTest " << step++ << ": Findings Report" << std::endl;
     FindingsReport("tests/DFR.xlsx");
-    QApplication::processEvents();
+    while (!isProcessingEnabled())
+    {
+        QThread::sleep(1);
+        QApplication::processEvents();
+    }
 
     // export HTML
     std::cout << "\tTest " << step++ << ": HTML Checklists" << std::endl;
     ExportHTML("tests");
-    QApplication::processEvents();
+    while (!isProcessingEnabled())
+    {
+        QThread::sleep(1);
+        QApplication::processEvents();
+    }
 
     // export CMRS
     std::cout << "\tTest " << step++ << ": Export CMRS" << std::endl;
