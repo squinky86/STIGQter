@@ -42,6 +42,7 @@ public:
     bool isProcessingEnabled();
     QThread* ConnectThreads(Worker *worker);
 #ifdef USE_TESTS
+    void ProcEvents();
     void RunTests();
 #endif
 

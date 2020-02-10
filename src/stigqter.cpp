@@ -50,6 +50,7 @@
 #include <QThread>
 
 #include <iostream>
+#include <functional>
 
 /**
  * @class STIGQter
@@ -171,6 +172,16 @@ QThread* STIGQter::ConnectThreads(Worker *worker)
  * @brief STIGQter::RunTests
  * Test functionality
  */
+void STIGQter::ProcEvents()
+{
+    while (!isProcessingEnabled())
+    {
+        QThread::sleep(1);
+        QApplication::processEvents();
+    }
+    QApplication::processEvents();
+}
+
 void STIGQter::RunTests()
 {
     DbManager db;
@@ -184,35 +195,23 @@ void STIGQter::RunTests()
     // import eMASS results
     std::cout << "\tTest " << step++ << ": Import eMASS Results" << std::endl;
     ImportEMASS("tests/emassTRImport.xlsx");
-    while (!isProcessingEnabled())
-    {
-        QThread::sleep(1);
-        QApplication::processEvents();
-    }
+    ProcEvents();
 
     // remap unmapped to CM-6
     std::cout << "\tTest " << step++ << ": Remapping Unmapped to CM-6" << std::endl;
     MapUnmapped(true);
-    while (!isProcessingEnabled())
-    {
-        QThread::sleep(1);
-        QApplication::processEvents();
-    }
+    ProcEvents();
 
     // create asset
     std::cout << "\tTest " << step++ << ": Creating Asset \"TEST\"" << std::endl;
     ui->lstSTIGs->selectAll();
     AddAsset("TEST");
-    while (!isProcessingEnabled())
-    {
-        QThread::sleep(1);
-        QApplication::processEvents();
-    }
+    ProcEvents();
 
     // select the asset
     std::cout << "\tTest " << step++ << ": Selecting Asset \"TEST\"" << std::endl;
     ui->lstAssets->selectAll();
-    QApplication::processEvents();
+    ProcEvents();
 
     // build CKL files
     std::cout << "\tTest " << step++ << ": Exporting CKL files" << std::endl;
@@ -220,26 +219,18 @@ void STIGQter::RunTests()
     while (!isProcessingEnabled())
     {
         QThread::sleep(1);
-        QApplication::processEvents();
+        ProcEvents();
     }
 
     // save .stigqter file
     std::cout << "\tTest " << step++ << ": Saving .stigqter file" << std::endl;
     SaveAs("tests/test.stigqter");
-    while (!isProcessingEnabled())
-    {
-        QThread::sleep(1);
-        QApplication::processEvents();
-    }
+    ProcEvents();
 
     //load .stigqter file
     std::cout << "\tTest " << step++ << ": Loading .stigqter file" << std::endl;
     Load("tests/test.stigqter");
-    while (!isProcessingEnabled())
-    {
-        QThread::sleep(1);
-        QApplication::processEvents();
-    }
+    ProcEvents();
 
     // open all assets
     std::cout << "\tTest " << step++ << ": Opening Assets" << std::endl;
@@ -247,9 +238,9 @@ void STIGQter::RunTests()
         // reopen assets
         {
             ui->lstAssets->selectAll();
-            QApplication::processEvents();
+            ProcEvents();
             OpenCKL();
-            QApplication::processEvents();
+            ProcEvents();
         }
 
         for (int j = 1; j < ui->tabDB->count(); j++)
@@ -259,65 +250,47 @@ void STIGQter::RunTests()
             if (tmpAssetView)
                 tmpAssetView->SetTabIndex(j);
 
+            ProcEvents();
+
             //run AssetView tests
             std::cout << "\tTest " << step++ << ": Running Asset Tests" << std::endl;
             tmpAssetView->RunTests(); //will delete asset
-            QApplication::processEvents();
+            ProcEvents();
         }
     }
 
     // reopen asset
     std::cout << "\tTest " << step++ << ": Reopen Asset" << std::endl;
     ImportCKLs({QStringLiteral("tests/monolithic.ckl")});
-    while (!isProcessingEnabled())
-    {
-        QThread::sleep(1);
-        QApplication::processEvents();
-    }
+    ProcEvents();
 
     // export Findings Report
     std::cout << "\tTest " << step++ << ": Findings Report" << std::endl;
     FindingsReport("tests/DFR.xlsx");
-    while (!isProcessingEnabled())
-    {
-        QThread::sleep(1);
-        QApplication::processEvents();
-    }
+    ProcEvents();
 
     // export HTML
     std::cout << "\tTest " << step++ << ": HTML Checklists" << std::endl;
     ExportHTML("tests");
-    while (!isProcessingEnabled())
-    {
-        QThread::sleep(1);
-        QApplication::processEvents();
-    }
+    ProcEvents();
 
     // export CMRS
     std::cout << "\tTest " << step++ << ": Export CMRS" << std::endl;
     ExportCMRS("tests/cmrs.xml");
-    while (!isProcessingEnabled())
-    {
-        QThread::sleep(1);
-        QApplication::processEvents();
-    }
+    ProcEvents();
 
     // export eMASS
     std::cout << "\tTest " << step++ << ": Export eMASS TR" << std::endl;
     ExportEMASS("tests/emass.xlsx");
-    while (!isProcessingEnabled())
-    {
-        QThread::sleep(1);
-        QApplication::processEvents();
-    }
+    ProcEvents();
 
     // help screen
     std::cout << "\tTest " << step++ << ": Help Screen" << std::endl;
     {
         auto a = About();
-        QApplication::processEvents();
+        ProcEvents();
         a->close();
-        QApplication::processEvents();
+        ProcEvents();
     }
 }
 #endif
