@@ -191,7 +191,7 @@ void STIGQter::RunTests()
     }
 
     // remap unmapped to CM-6
-    std::cout << "\tTest " << step++ << ": Import eMASS Results" << std::endl;
+    std::cout << "\tTest " << step++ << ": Remapping Unmapped to CM-6" << std::endl;
     MapUnmapped(true);
     while (!isProcessingEnabled())
     {
@@ -247,7 +247,9 @@ void STIGQter::RunTests()
         // reopen assets
         {
             ui->lstAssets->selectAll();
+            QApplication::processEvents();
             OpenCKL();
+            QApplication::processEvents();
         }
 
         for (int j = 1; j < ui->tabDB->count(); j++)
@@ -260,6 +262,7 @@ void STIGQter::RunTests()
             //run AssetView tests
             std::cout << "\tTest " << step++ << ": Running Asset Tests" << std::endl;
             tmpAssetView->RunTests(); //will delete asset
+            QApplication::processEvents();
         }
     }
 

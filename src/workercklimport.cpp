@@ -82,6 +82,7 @@ void WorkerCKLImport::ParseCKL(const QString &fileName)
                     a = CheckAsset(a);
                     if (a.GetSTIGs().contains(tmpSTIG))
                     {
+                        Q_EMIT updateStatus("Unable to add " + PrintSTIG(tmpSTIG) + " to " + PrintAsset(a) + "!");
                         QMessageBox::warning(nullptr, QStringLiteral("Asset already has STIG applied!"), "The asset " + PrintAsset(a) + " already has the STIG " + PrintSTIG(tmpSTIG) + " applied and will not be imported.");
                     }
                     else
