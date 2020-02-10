@@ -98,7 +98,7 @@ void WorkerImportEMASS::process()
     QMap<QString, QByteArray>::iterator i;
     for (i  = files.begin(); i != files.end(); i++)
     {
-        std::cout << "FILE ENTRY: " << i.key() << std::endl;
+        std::cout << "FILE ENTRY: " << i.key().toStdString() << std::endl;
     }
     if (files.contains(QStringLiteral("xl/sharedStrings.xml")))
     {
