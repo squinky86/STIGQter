@@ -192,7 +192,7 @@ void STIGQter::RunTests()
     }
 
     // select the asset
-    std::cout << "\tTest " << step++ << ": Sellecting Asset \"TEST\"" << std::endl;
+    std::cout << "\tTest " << step++ << ": Selecting Asset \"TEST\"" << std::endl;
     ui->lstAssets->selectAll();
     QApplication::processEvents();
 
@@ -245,6 +245,21 @@ void STIGQter::RunTests()
             tmpAssetView->RunTests(); //will delete asset
         }
     }
+
+    // reopen asset
+    std::cout << "\tTest " << step++ << ": Reopen Asset" << std::endl;
+    ImportCKLs({QStringLiteral("tests/monolithic.ckl")});
+    QApplication::processEvents();
+
+    // export Findings Report
+    std::cout << "\tTest " << step++ << ": Findings Report" << std::endl;
+    FindingsReport("tests/DFR.xlsx");
+    QApplication::processEvents();
+
+    // export HTML
+    std::cout << "\tTest " << step++ << ": HTML Checklists" << std::endl;
+    ExportHTML("tests");
+    QApplication::processEvents();
 
     // export CMRS
     std::cout << "\tTest " << step++ << ": Export CMRS" << std::endl;
@@ -709,10 +724,10 @@ void STIGQter::ExportEMASS(const QString &fileName)
  * Instantiates an instance of WorkerHTML to export the HTML
  * templates for the manual STIG lists.
  */
-void STIGQter::ExportHTML()
+void STIGQter::ExportHTML(const QString &dir)
 {
     DbManager db;
-    QString dirName = QFileDialog::getExistingDirectory(this, QStringLiteral("Save to Directory"), db.GetVariable(QStringLiteral("lastdir")));
+    QString dirName = !dir.isNull() ? dir : QFileDialog::getExistingDirectory(this, QStringLiteral("Save to Directory"), db.GetVariable(QStringLiteral("lastdir")));
 
     if (!dirName.isNull() && !dirName.isEmpty())
     {
@@ -751,19 +766,19 @@ void STIGQter::FilterSTIGs(const QString &text)
  * Create a detailed findings report to make the findings data more
  * human-readable.
  */
-void STIGQter::FindingsReport()
+void STIGQter::FindingsReport(const QString &fileName)
 {
     DbManager db;
-    QString fileName = QFileDialog::getSaveFileName(this,
+    QString fn = !fileName.isEmpty() ? fileName : QFileDialog::getSaveFileName(this,
         QStringLiteral("Save Detailed Findings"), db.GetVariable(QStringLiteral("lastdir")), QStringLiteral("Microsoft Excel (*.xlsx)"));
 
-    if (fileName.isNull() || fileName.isEmpty())
+    if (fn.isNull() || fn.isEmpty())
         return; // cancel button pressed
 
-    db.UpdateVariable(QStringLiteral("lastdir"), QFileInfo(fileName).absolutePath());
+    db.UpdateVariable(QStringLiteral("lastdir"), QFileInfo(fn).absolutePath());
     DisableInput();
     auto *f = new WorkerFindingsReport();
-    f->SetReportName(fileName);
+    f->SetReportName(fn);
 
     ConnectThreads(f)->start();
 }
@@ -774,20 +789,20 @@ void STIGQter::FindingsReport()
  * Import existing CKL files (potentially from STIG Viewer or old
  * versions of STIG Qter).
  */
-void STIGQter::ImportCKLs()
+void STIGQter::ImportCKLs(const QStringList &fileNames)
 {
     DbManager db;
-    QStringList fileNames = QFileDialog::getOpenFileNames(this,
+    QStringList fn = fileNames.count() > 0 ? fileNames : QFileDialog::getOpenFileNames(this,
         QStringLiteral("Import CKL(s)"), db.GetVariable(QStringLiteral("lastdir")), QStringLiteral("STIG Checklist (*.ckl)"));
 
-    if (fileNames.count() <= 0)
+    if (fn.count() <= 0)
         return; // cancel button pressed
 
-    db.UpdateVariable(QStringLiteral("lastdir"), QFileInfo(fileNames[0]).absolutePath());
+    db.UpdateVariable(QStringLiteral("lastdir"), QFileInfo(fn[0]).absolutePath());
     DisableInput();
     _updatedAssets = true;
     auto *c = new WorkerCKLImport();
-    c->AddCKLs(fileNames);
+    c->AddCKLs(fn);
 
     ConnectThreads(c)->start();
 }

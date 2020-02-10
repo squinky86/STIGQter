@@ -60,10 +60,10 @@ private Q_SLOTS:
     void ExportCKLs(const QString &dir = QString());
     void ExportCMRS(const QString &fileName = QString());
     void ExportEMASS(const QString &fileName = QString());
-    void ExportHTML();
+    void ExportHTML(const QString &dir = QString());
     void FilterSTIGs(const QString &text);
-    void FindingsReport();
-    void ImportCKLs();
+    void FindingsReport(const QString &fileName = QString());
+    void ImportCKLs(const QStringList &fileNames = {});
     void ImportEMASS();
     void Load(const QString &fileName = QString());
     void MapUnmapped(bool confirm = false);

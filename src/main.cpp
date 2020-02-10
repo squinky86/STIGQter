@@ -186,28 +186,15 @@ int main(int argc, char *argv[])
                 QFile f(it.next());
                 if (f.fileName().endsWith(".ckl", Qt::CaseInsensitive))
                 {
+                    //skip monolithic CKL
+                    if (f.fileName().endsWith("monolithic.ckl", Qt::CaseInsensitive))
+                        continue;
                     std::cout << "Test " << ++onTest << ": Import CKL " << f.fileName().toStdString() << std::endl;
                     QFileInfo fi(f);
                     wc.AddCKLs({fi.filePath()});
                 }
             }
             wc.process();
-            a.processEvents();
-        }
-
-        {
-            std::cout << "Test " << ++onTest << ": Detailed Findings Report" << std::endl;
-            WorkerFindingsReport wf;
-            wf.SetReportName("tests/DFR.xlsx");
-            wf.process();
-            a.processEvents();
-        }
-
-        {
-            std::cout << "Test " << ++onTest << ": Export HTML" << std::endl;
-            WorkerHTML wh;
-            wh.SetDir("tests");
-            wh.process();
             a.processEvents();
         }
 
