@@ -86,6 +86,7 @@ void WorkerCKLImport::ParseCKL(const QString &fileName)
                     }
                     else
                     {
+                        Q_EMIT updateStatus("Adding " + PrintSTIG(tmpSTIG) + " to " + PrintAsset(a) + "…");
                         db.AddSTIGToAsset(tmpSTIG, a);
                         db.DelayCommit(true);
                         Q_FOREACH (CKLCheck c, checks)

@@ -181,6 +181,24 @@ void STIGQter::RunTests()
     UpdateSTIGs();
     QApplication::processEvents();
 
+    // import eMASS results
+    std::cout << "\tTest " << step++ << ": Import eMASS Results" << std::endl;
+    ImportEMASS("tests/emassTRImport.xlsx");
+    while (!isProcessingEnabled())
+    {
+        QThread::sleep(1);
+        QApplication::processEvents();
+    }
+
+    // remap unmapped to CM-6
+    std::cout << "\tTest " << step++ << ": Import eMASS Results" << std::endl;
+    MapUnmapped(true);
+    while (!isProcessingEnabled())
+    {
+        QThread::sleep(1);
+        QApplication::processEvents();
+    }
+
     // create asset
     std::cout << "\tTest " << step++ << ": Creating Asset \"TEST\"" << std::endl;
     ui->lstSTIGs->selectAll();
@@ -217,15 +235,6 @@ void STIGQter::RunTests()
     //load .stigqter file
     std::cout << "\tTest " << step++ << ": Loading .stigqter file" << std::endl;
     Load("tests/test.stigqter");
-    while (!isProcessingEnabled())
-    {
-        QThread::sleep(1);
-        QApplication::processEvents();
-    }
-
-    // map unmapped STIGs
-    std::cout << "\tTest " << step++ << ": Remapping unmapped STIGs" << std::endl;
-    MapUnmapped(true);
     while (!isProcessingEnabled())
     {
         QThread::sleep(1);
@@ -832,19 +841,19 @@ void STIGQter::ImportCKLs(const QStringList &fileNames)
  *
  * Import an existing Test Result Import spreadsheet.
  */
-void STIGQter::ImportEMASS()
+void STIGQter::ImportEMASS(const QString &fileName)
 {
     DbManager db;
-    QString fileName = QFileDialog::getOpenFileName(this,
+    QString fn = !fileName.isEmpty() ? fileName : QFileDialog::getOpenFileName(this,
         QStringLiteral("Import eMASS TRExport"), db.GetVariable(QStringLiteral("lastdir")), QStringLiteral("Excel Spreadsheet (*.xlsx)"));
 
-    if (fileName.isNull() || fileName.isEmpty())
+    if (fn.isNull() || fn.isEmpty())
         return; // cancel button pressed
 
     DisableInput();
-    db.UpdateVariable(QStringLiteral("lastdir"), QFileInfo(fileName).absolutePath());
+    db.UpdateVariable(QStringLiteral("lastdir"), QFileInfo(fn).absolutePath());
     auto *c = new WorkerImportEMASS();
-    c->SetReportName(fileName);
+    c->SetReportName(fn);
 
     ConnectThreads(c)->start();
 }

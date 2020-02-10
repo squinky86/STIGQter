@@ -23,8 +23,6 @@
 
 #include <QXmlStreamReader>
 
-#include <iostream>
-
 /**
  * @class WorkerImportEMASS
  * @brief Imports an eMASS-generated Test Result Import spreadsheet.
@@ -94,12 +92,6 @@ void WorkerImportEMASS::process()
     //First, create Shared Strings table
     Q_EMIT updateStatus(QStringLiteral("Reading Shared Strings Table…"));
     QStringList sst;
-    //TODO: REMOVE THIS DEBUGGING FOR TRAVIS-CI FAILURE
-    QMap<QString, QByteArray>::iterator i;
-    for (i  = files.begin(); i != files.end(); i++)
-    {
-        std::cout << "FILE ENTRY: " << i.key().toStdString() << std::endl;
-    }
     if (files.contains(QStringLiteral("xl/sharedStrings.xml")))
     {
         //There is a sharedStrings table! Parse it:

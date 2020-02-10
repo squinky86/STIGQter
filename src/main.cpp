@@ -20,18 +20,8 @@
 #include "assetview.h"
 #include "common.h"
 #include "dbmanager.h"
-#include "help.h"
 #include "stigqter.h"
-#include "workerassetadd.h"
-#include "workercklexport.h"
 #include "workercklimport.h"
-#include "workercmrsexport.h"
-#include "workeremassreport.h"
-#include "workerfindingsreport.h"
-#include "workerhtml.h"
-#include "workerimportemass.h"
-#include "workermapunmapped.h"
-#include "workerstigadd.h"
 #include "workerstigdelete.h"
 
 #include <QApplication>
@@ -97,15 +87,6 @@ int main(int argc, char *argv[])
         while (!w.isProcessingEnabled())
         {
             QThread::sleep(1);
-            a.processEvents();
-        }
-
-        {
-            std::cout << "Test " << ++onTest << ": Import eMASS Test Results" << std::endl;
-            DbManager db;
-            WorkerImportEMASS wi;
-            wi.SetReportName("tests/eMASSTRImport.xlsx");
-            wi.process();
             a.processEvents();
         }
 

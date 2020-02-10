@@ -64,7 +64,7 @@ private Q_SLOTS:
     void FilterSTIGs(const QString &text);
     void FindingsReport(const QString &fileName = QString());
     void ImportCKLs(const QStringList &fileNames = {});
-    void ImportEMASS();
+    void ImportEMASS(const QString &fileName = QString());
     void Load(const QString &fileName = QString());
     void MapUnmapped(bool confirm = false);
     void OpenCKL();
