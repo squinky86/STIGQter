@@ -176,6 +176,11 @@ void STIGQter::RunTests()
     DbManager db;
     int step = 0;
 
+    // refresh STIGs
+    std::cout << "\tTest " << step++ << ": Refresh STIGs" << std::endl;
+    UpdateSTIGs();
+    QApplication::processEvents();
+
     // create asset
     std::cout << "\tTest " << step++ << ": Creating Asset \"TEST\"" << std::endl;
     ui->lstSTIGs->selectAll();
@@ -201,9 +206,14 @@ void STIGQter::RunTests()
     }
 
     // save .stigqter file
-    // build CKL files
     std::cout << "\tTest " << step++ << ": Saving .stigqter file" << std::endl;
     SaveAs("tests/test.stigqter");
+    QApplication::processEvents();
+
+    //load .stigqter file
+    std::cout << "\tTest " << step++ << ": Loading .stigqter file" << std::endl;
+    Load("tests/test.stigqter");
+    QApplication::processEvents();
 
     // map unmapped STIGs
     std::cout << "\tTest " << step++ << ": Remapping unmapped STIGs" << std::endl;
@@ -217,31 +227,23 @@ void STIGQter::RunTests()
     // open all assets
     std::cout << "\tTest " << step++ << ": Opening Assets" << std::endl;
     {
-        Q_FOREACH(Asset asset, db.GetAssets())
+        // reopen assets
         {
-            Warning("On Asset", PrintAsset(asset));
-
-            //filter STIGs
-            ui->txtSTIGSearch->setText(QStringLiteral("Windows"));
-
-            //open tab
-            AssetView av(asset, this);
-            connect(&av, SIGNAL(CloseTab(int)), this, SLOT(CloseTab(int)));
-            int index = ui->tabDB->addTab(&av, asset.hostName);
-            av.SetTabIndex(index);
-            ui->tabDB->setCurrentIndex(index);
-
-            //step 2 - run AssetView tests
-            std::cout << "\tTest " << step++ << ": Running Asset Tests" << std::endl;
-            av.RunTests(); //will delete asset
+            ui->lstAssets->selectAll();
+            OpenCKL();
         }
-    }
 
-    // reopen assets
-    std::cout << "\tTest " << step++ << ": Reopening Assets" << std::endl;
-    {
-        ui->lstAssets->selectAll();
-        OpenCKL();
+        for (int j = 1; j < ui->tabDB->count(); j++)
+        {
+            auto *tmpAssetView = dynamic_cast<AssetView*>(ui->tabDB->widget(j));
+
+            if (tmpAssetView)
+                tmpAssetView->SetTabIndex(j);
+
+            //run AssetView tests
+            std::cout << "\tTest " << step++ << ": Running Asset Tests" << std::endl;
+            tmpAssetView->RunTests(); //will delete asset
+        }
     }
 
     // export CMRS
@@ -259,6 +261,15 @@ void STIGQter::RunTests()
     while (!isProcessingEnabled())
     {
         QThread::sleep(1);
+        QApplication::processEvents();
+    }
+
+    // help screen
+    std::cout << "\tTest " << step++ << ": Help Screen" << std::endl;
+    {
+        auto a = About();
+        QApplication::processEvents();
+        a->close();
         QApplication::processEvents();
     }
 }
@@ -481,11 +492,12 @@ void STIGQter::CompletedThread()
  *
  * Display an About @a Help screen.
  */
-void STIGQter::About()
+Help* STIGQter::About()
 {
     Help *h = new Help();
     h->setAttribute(Qt::WA_DeleteOnClose); //clean up after itself (no explicit "delete" needed)
     h->show();
+    return h;
 }
 
 /**
@@ -807,22 +819,22 @@ void STIGQter::ImportEMASS()
  *
  * The user is prompted for the *.stigqter file to load.
  */
-void STIGQter::Load()
+void STIGQter::Load(const QString &fileName)
 {
     DbManager db;
-    QString fileName = QFileDialog::getOpenFileName(this,
+    QString fn = !fileName.isEmpty() ? fileName : QFileDialog::getOpenFileName(this,
         QStringLiteral("Open STIGQter Save File"), db.GetVariable(QStringLiteral("lastdir")), QStringLiteral("STIGQter Save File (*.stigqter)"));
 
-    if (!fileName.isNull() && !fileName.isEmpty())
+    if (!fn.isNull() && !fn.isEmpty())
     {
         while (ui->tabDB->count() > 1)
             ui->tabDB->removeTab(1);
-        db.LoadDB(fileName);
+        db.LoadDB(fn);
         EnableInput();
         DisplayCCIs();
         DisplaySTIGs();
         DisplayAssets();
-        lastSaveLocation = fileName;
+        lastSaveLocation = fn;
     }
 }
 

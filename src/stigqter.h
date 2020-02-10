@@ -25,6 +25,7 @@
 #include <QShortcut>
 
 #include "dbmanager.h"
+#include "help.h"
 #include "worker.h"
 
 namespace Ui {
@@ -48,7 +49,7 @@ private Q_SLOTS:
 
     void CompletedThread();
 
-    void About();
+    Help* About();
     void AddAsset(const QString &name = QString());
     void AddSTIGs();
     void CloseTab(int index);
@@ -64,7 +65,7 @@ private Q_SLOTS:
     void FindingsReport();
     void ImportCKLs();
     void ImportEMASS();
-    void Load();
+    void Load(const QString &fileName = QString());
     void MapUnmapped(bool confirm = false);
     void OpenCKL();
     bool Reset(bool checkOnly = false);

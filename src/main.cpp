@@ -242,16 +242,6 @@ int main(int argc, char *argv[])
             a.processEvents();
         }
 
-        std::cout << "Test " << ++onTest << ": Help Screen" << std::endl;
-        {
-            Help *h = new Help();
-            h->setAttribute(Qt::WA_DeleteOnClose); //clean up after itself (no explicit "delete" needed)
-            h->show();
-            a.processEvents();
-            h->close();
-            a.processEvents();
-        }
-
         //std::cout << "Test " << ++onTest << ": Close Application" << std::endl;
         //w.close();
 
