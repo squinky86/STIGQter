@@ -360,8 +360,11 @@ void AssetView::SetTabIndex(int index)
 #ifdef USE_TESTS
 void AssetView::ProcEvents()
 {
+    int i = 0;
     while (_parent->isProcessingEnabled())
     {
+        if (i++ % 60 == 0)
+            std::cout << "[keepalive] " << i << std::endl;
         QThread::sleep(1);
         QApplication::processEvents();
     }
@@ -394,7 +397,7 @@ void AssetView::RunTests()
     ui->lstChecks->selectAll();
 
     //step 5: change findings
-    std::cout << "\t\tTest " << onTest++ << ": Change Findings Status…";
+    std::cout << "\t\tTest " << onTest++ << ": Change Findings Status…" << std::endl;
     std::cout << "\t\t\tNot a Finding" << std::endl;
     KeyShortcutCtrlN();
     std::cout << "\t\t\t…" << std::endl;
