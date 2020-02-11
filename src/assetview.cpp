@@ -394,19 +394,24 @@ void AssetView::RunTests()
     ui->lstChecks->selectAll();
 
     //step 5: change findings
-    std::cout << "\t\tTest " << onTest++ << ": Change Findings Status" << std::endl;
-    std::cout << "\t\tNot a Finding" << std::endl;
+    std::cout << "\t\tTest " << onTest++ << ": Change Findings Status…";
+    std::cout << "Not a Finding";
     KeyShortcutCtrlN();
+    std::cout << "…";
     ProcEvents();
-    std::cout << "\t\tOpen Finding" << std::endl;
+    std::cout << "Open";
     KeyShortcutCtrlO();
+    std::cout << "…";
     ProcEvents();
-    std::cout << "\t\tNot Reviewed Finding" << std::endl;
+    std::cout << "Not Reviewed";
     KeyShortcutCtrlR();
+    std::cout << "…";
     ProcEvents();
-    std::cout << "\t\tNot Applicable Finding" << std::endl;
+    std::cout << "Not Applicable";
     KeyShortcutCtrlX();
+    std::cout << "…";
     ProcEvents();
+    std::cout << "done!" << std::endl;
 
     //step 6: update asset
     std::cout << "\t\tTest " << onTest++ << ": Change Asset" << std::endl;
