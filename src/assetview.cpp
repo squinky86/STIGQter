@@ -360,11 +360,8 @@ void AssetView::SetTabIndex(int index)
 #ifdef USE_TESTS
 void AssetView::ProcEvents()
 {
-    int i = 0;
-    while (_parent->isProcessingEnabled())
+    while (!_parent->isProcessingEnabled())
     {
-        if (i++ % 60 == 0)
-            std::cout << "[keepalive] " << i << std::endl;
         QThread::sleep(1);
         QApplication::processEvents();
     }
