@@ -394,24 +394,24 @@ void AssetView::RunTests()
     ui->lstChecks->selectAll();
 
     //step 5: change findings
-    std::cout << "\t\tTest " << onTest++ << ": Change Findings Status…" << std::endl;
-    std::cout << "\t\t\tNot a Finding" << std::endl;
+    std::cout << "\t\tTest " << onTest++ << ": Change Findings Status…";
+    std::cout << "Not a Finding";
     KeyShortcutCtrlN();
-    std::cout << "\t\t\t…" << std::endl;
+    std::cout << "…";
     ProcEvents();
-    std::cout << "\t\t\tOpen" << std::endl;
+    std::cout << "Open";
     KeyShortcutCtrlO();
-    std::cout << "\t\t\t…" << std::endl;
+    std::cout << "…";
     ProcEvents();
-    std::cout << "\t\t\tNot Reviewed" << std::endl;
+    std::cout << "Not Reviewed";
     KeyShortcutCtrlR();
-    std::cout << "\t\t\t…" << std::endl;
+    std::cout << "…";
     ProcEvents();
-    std::cout << "\t\t\tNot Applicable" << std::endl;
+    std::cout << "Not Applicable";
     KeyShortcutCtrlX();
-    std::cout << "\t\t\t…" << std::endl;
+    std::cout << "…";
     ProcEvents();
-    std::cout << "\t\t\tdone!" << std::endl;
+    std::cout << "done!" << std::endl;
 
     //step 6: update asset
     std::cout << "\t\tTest " << onTest++ << ": Change Asset" << std::endl;
