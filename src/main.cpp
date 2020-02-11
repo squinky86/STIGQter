@@ -120,15 +120,15 @@ int main(int argc, char *argv[])
         }
 
         {
-            QDirIterator it("tests");
+            QDirIterator it(QStringLiteral("tests"));
             WorkerCKLImport wc;
             while (it.hasNext())
             {
                 QFile f(it.next());
-                if (f.fileName().endsWith(".ckl", Qt::CaseInsensitive))
+                if (f.fileName().endsWith(QStringLiteral(".ckl"), Qt::CaseInsensitive))
                 {
                     //skip monolithic CKL
-                    if (f.fileName().endsWith("monolithic.ckl", Qt::CaseInsensitive))
+                    if (f.fileName().endsWith(QStringLiteral("monolithic.ckl"), Qt::CaseInsensitive))
                         continue;
                     std::cout << "Test " << ++onTest << ": Import CKL " << f.fileName().toStdString() << std::endl;
                     QFileInfo fi(f);

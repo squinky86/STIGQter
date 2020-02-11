@@ -226,7 +226,7 @@ void WorkerCCIAdd::process()
         DownloadFile(ccis, &tmpFile);
         Q_EMIT progress(-1);
         Q_EMIT updateStatus(QStringLiteral("Extracting CCIs…"));
-        xmlFiles = GetFilesFromZip(tmpFile.fileName().toStdString().c_str(), QStringLiteral(".xml")).values();
+        xmlFiles = GetFilesFromZip(tmpFile.fileName(), QStringLiteral(".xml")).values();
         tmpFile.close();
     }
 

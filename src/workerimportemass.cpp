@@ -213,7 +213,7 @@ void WorkerImportEMASS::process()
                         if (ref.contains(':'))
                         {
                             ref = ref.right(ref.length() - ref.lastIndexOf(':'));
-                            QRegExp re("\\d*");
+                            QRegExp re(QStringLiteral("\\d*"));
                             while (!re.exactMatch(ref.toString()) && (ref.length() > 1))
                             {
                                 ref = ref.right(ref.length() - 1);

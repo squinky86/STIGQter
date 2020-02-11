@@ -327,7 +327,7 @@ void WorkerSTIGAdd::process()
     {
         Q_EMIT updateStatus("Extracting " + s + "…");
         //get the list of XML files inside the STIG
-        QMap<QString, QByteArray> toParse = GetFilesFromZip(s.toStdString().c_str(), QStringLiteral(".xml"));
+        QMap<QString, QByteArray> toParse = GetFilesFromZip(s, QStringLiteral(".xml"));
         Q_EMIT updateStatus("Parsing " + s + "…");
         Q_FOREACH(const QString stig, toParse.keys())
         {

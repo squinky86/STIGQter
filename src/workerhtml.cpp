@@ -170,7 +170,7 @@ void WorkerHTML::process()
     main.write(headerExtra.toStdString().c_str());
     main.write("</head>"
                "<body>"
-               "<h1><img src=\"STIGQter.svg\" alt=\"STIGQter\" style=\"height:1em;\" /> <a href=\"https://www.stigqter.com/\">STIGQter</a>: STIG Summary</h1>"
+               "<div><img src=\"STIGQter.svg\" alt=\"STIGQter\" style=\"height:1em;\" /> <a href=\"https://www.stigqter.com/\">STIGQter</a>:</div> <h1>STIG Summary</h1>"
                "<ul>");
 
     Q_FOREACH (const STIG &s, checkMap.keys())
@@ -183,7 +183,7 @@ void WorkerHTML::process()
         main.write(STIGFileName.toStdString().c_str());
         main.write("\">");
         main.write(STIGName.toStdString().c_str());
-        main.write("</li>");
+        main.write("</a></li>");
 
         QFile stig(outputDir.filePath(STIGFileName));
         stig.open(QIODevice::WriteOnly);
@@ -198,8 +198,8 @@ void WorkerHTML::process()
         stig.write(headerExtra.toStdString().c_str());
         stig.write("</head>"
                    "<body>"
-                   "<h1><img src=\"STIGQter.svg\" alt=\"STIGQter\" style=\"height:1em;\" /> "
-                   "<a href=\"https://www.stigqter.com/\">STIGQter</a>: <a href=\"main.html\">STIG Summary</a>: ");
+                   "<div><img src=\"STIGQter.svg\" alt=\"STIGQter\" style=\"height:1em;\" /> "
+                   "<a href=\"https://www.stigqter.com/\">STIGQter</a>: <a href=\"main.html\">STIG Summary</a>:</div> <h1>");
         stig.write(s.title.toStdString().c_str());
         stig.write("</h1><h2>Version: ");
         stig.write(QString::number(s.version).toStdString().c_str());
@@ -207,11 +207,11 @@ void WorkerHTML::process()
                    "<h2>");
         stig.write(QString(s.release).toStdString().c_str());
         stig.write("</h2>"
-                   "<table border=\"1\">"
+                   "<table style=\"border-collapse: collapse; border: 1px solid black;\">"
                    "<tr>"
-                   "<th>Checked</th>"
-                   "<th>Name</th>"
-                   "<th>Title</th>"
+                   "<th style=\"border: 1px solid black;\">Checked</th>"
+                   "<th style=\"border: 1px solid black;\">Name</th>"
+                   "<th style=\"border: 1px solid black;\">Title</th>"
                    "</tr>");
 
         Q_FOREACH (const STIGCheck &c, checkMap[s])
@@ -219,15 +219,15 @@ void WorkerHTML::process()
             QString checkName(PrintSTIGCheck(c));
             Q_EMIT updateStatus("Creating Check " + checkName + "…");
             stig.write("<tr>"
-                       "<td>☐</td>"
-                       "<td style=\"white-space:nowrap;\">"
+                       "<td style=\"border: 1px solid black;\">☐</td>"
+                       "<td style=\"border: 1px solid black; white-space: nowrap;\">"
                        "<a href=\"");
             stig.write(checkName.toStdString().c_str());
             stig.write(".html\">");
             stig.write(checkName.toStdString().c_str());
             stig.write("</a>"
                        "</td>"
-                       "<td>");
+                       "<td style=\"border: 1px solid black;\">");
             stig.write(c.title.toStdString().c_str());
             stig.write("</td>"
                        "</tr>");
@@ -246,13 +246,13 @@ void WorkerHTML::process()
             check.write(headerExtra.toStdString().c_str());
             check.write("</head>"
                        "<body>"
-                       "<h1><img src=\"STIGQter.svg\" alt=\"STIGQter\" style=\"height:1em;\" /> "
+                       "<div><img src=\"STIGQter.svg\" alt=\"STIGQter\" style=\"height:1em;\" /> "
                        "<a href=\"https://www.stigqter.com/\">STIGQter</a>: <a href=\"main.html\">STIG Summary</a>: <a href=\"");
             check.write(STIGFileName.toStdString().c_str());
             check.write("\">");
             check.write(STIGName.toStdString().c_str());
             check.write("</a>"
-                        ": ");
+                        ":</div> <h1>");
             check.write(c.title.toStdString().c_str());
             check.write("</h1>");
             check.write(CheckItem(QStringLiteral("DISA Rule"), c.rule).toStdString().c_str());

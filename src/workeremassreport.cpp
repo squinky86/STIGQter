@@ -89,8 +89,6 @@ void WorkerEMASSReport::process()
 {
     DbManager db;
 
-    QMap<CCI, QList<CKLCheck>> failedCCIs;
-    QMap<CCI, QList<CKLCheck>> passedCCIs;
     QList<CKLCheck> checks = db.GetCKLChecks();
     int numChecks = checks.count();
     Q_EMIT initialize(numChecks+2, 0);
@@ -208,18 +206,21 @@ void WorkerEMASSReport::process()
 
     unsigned int onRow = 5;
 
-    QString username = qgetenv("USER");
+    QString username(QString::fromLocal8Bit(qgetenv("USER")));
     if (username.isNull() || username.isEmpty())
-        username = qgetenv("USERNAME");
+        username = QString::fromLocal8Bit(qgetenv("USERNAME"));
     if (username.isNull() || username.isEmpty())
         username = QStringLiteral("UNKNOWN");
+
+    QVector<CKLCheck> failedChecks;
+    QVector<CKLCheck> passedChecks;
 
     Q_FOREACH (CCI cci, db.GetCCIs())
     {
         Q_EMIT progress(-1);
         Q_EMIT updateStatus("Adding " + PrintCCI(cci) + "…");
-        QList<CKLCheck> failedChecks;
-        QList<CKLCheck> passedChecks;
+        failedChecks.clear();
+        passedChecks.clear();
 
         //step 1: check if control is passed or failed
         Q_FOREACH (CKLCheck sc, cci.GetCKLChecks())
@@ -328,7 +329,7 @@ void WorkerEMASSReport::process()
         //test results
         QString testResult = cci.importTestResults2;
         if (!testResult.isEmpty())
-            testResult += "\n";
+            testResult += QStringLiteral("\n");
         if (hasChecks)
         {
             testResult += QStringLiteral("The following checks are ");

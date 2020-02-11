@@ -88,7 +88,7 @@ STIGQter::STIGQter(QWidget *parent) :
     _isFiltered(false)
 {
     //log software startup as required by SV-84041r1_rule
-    Warning("System is Starting", QHostInfo::localHostName(), true, 4);
+    Warning(QStringLiteral("System is Starting"), QHostInfo::localHostName(), true, 4);
 
     ui->setupUi(this);
 
@@ -137,7 +137,7 @@ STIGQter::~STIGQter()
         delete shortcut;
     _shortcuts.clear();
     //log software shutdown as required by SV-84041r1_rule
-    Warning("System is Shutting Down", QHostInfo::localHostName(), true, 4);
+    Warning(QStringLiteral("System is Shutting Down"), QHostInfo::localHostName(), true, 4);
 }
 
 /**
@@ -204,16 +204,16 @@ void STIGQter::RunTests()
     // message handler
     std::cout << "\t\tTest " << step++ << ": Message Handling" << std::endl;
     QMessageLogContext c("test.cpp", 1, "TestFunc", "TestCat");
-    MessageHandler(QtMsgType::QtDebugMsg, c, "Test Message");
-    MessageHandler(QtMsgType::QtInfoMsg, c, "Test Message");
-    MessageHandler(QtMsgType::QtWarningMsg, c, "Test Message");
-    MessageHandler(QtMsgType::QtCriticalMsg, c, "Test Message");
-    MessageHandler(QtMsgType::QtFatalMsg, c, "Test Message");
+    MessageHandler(QtMsgType::QtDebugMsg, c, QStringLiteral("Test Message"));
+    MessageHandler(QtMsgType::QtInfoMsg, c, QStringLiteral("Test Message"));
+    MessageHandler(QtMsgType::QtWarningMsg, c, QStringLiteral("Test Message"));
+    MessageHandler(QtMsgType::QtCriticalMsg, c, QStringLiteral("Test Message"));
+    MessageHandler(QtMsgType::QtFatalMsg, c, QStringLiteral("Test Message"));
     ProcEvents();
 
     // import eMASS results
     std::cout << "\tTest " << step++ << ": Import eMASS Results" << std::endl;
-    ImportEMASS("tests/emassTRImport.xlsx");
+    ImportEMASS(QStringLiteral("tests/emassTRImport.xlsx"));
     ProcEvents();
 
     // remap unmapped to CM-6
@@ -224,7 +224,7 @@ void STIGQter::RunTests()
     // create asset
     std::cout << "\tTest " << step++ << ": Creating Asset \"TEST\"" << std::endl;
     ui->lstSTIGs->selectAll();
-    AddAsset("TEST");
+    AddAsset(QStringLiteral("TEST"));
     ProcEvents();
 
     // severity override
@@ -276,7 +276,7 @@ void STIGQter::RunTests()
 
     // build CKL files
     std::cout << "\tTest " << step++ << ": Exporting CKL files" << std::endl;
-    ExportCKLs("tests");
+    ExportCKLs(QStringLiteral("tests"));
     while (!isProcessingEnabled())
     {
         QThread::sleep(1);
@@ -285,12 +285,12 @@ void STIGQter::RunTests()
 
     // save .stigqter file
     std::cout << "\tTest " << step++ << ": Saving .stigqter file" << std::endl;
-    SaveAs("tests/test.stigqter");
+    SaveAs(QStringLiteral("tests/test.stigqter"));
     ProcEvents();
 
     //load .stigqter file
     std::cout << "\tTest " << step++ << ": Loading .stigqter file" << std::endl;
-    Load("tests/test.stigqter");
+    Load(QStringLiteral("tests/test.stigqter"));
     ProcEvents();
 
     // open all assets
@@ -339,22 +339,22 @@ void STIGQter::RunTests()
 
     // export Findings Report
     std::cout << "\tTest " << step++ << ": Findings Report" << std::endl;
-    FindingsReport("tests/DFR.xlsx");
+    FindingsReport(QStringLiteral("tests/DFR.xlsx"));
     ProcEvents();
 
     // export HTML
     std::cout << "\tTest " << step++ << ": HTML Checklists" << std::endl;
-    ExportHTML("tests");
+    ExportHTML(QStringLiteral("tests"));
     ProcEvents();
 
     // export CMRS
     std::cout << "\tTest " << step++ << ": Export CMRS" << std::endl;
-    ExportCMRS("tests/cmrs.xml");
+    ExportCMRS(QStringLiteral("tests/cmrs.xml"));
     ProcEvents();
 
     // export eMASS
     std::cout << "\tTest " << step++ << ": Export eMASS TR" << std::endl;
-    ExportEMASS("tests/emass.xlsx");
+    ExportEMASS(QStringLiteral("tests/emass.xlsx"));
     ProcEvents();
 
     // help screen
@@ -432,7 +432,9 @@ bool STIGQter::Reset(bool checkOnly)
             DbManager db;
             db.DeleteDB();
             qApp->quit();
-            QProcess::startDetached(qApp->arguments()[0], qApp->arguments());
+            auto args = qApp->arguments();
+            if (args.count() > 0)
+                QProcess::startDetached(args[0], args);
         }
     }
     else
@@ -450,7 +452,9 @@ bool STIGQter::Reset(bool checkOnly)
                 return true;
             db.DeleteDB();
             qApp->quit();
-            QProcess::startDetached(qApp->arguments()[0], qApp->arguments());
+            auto args = qApp->arguments();
+            if (args.count() > 0)
+                QProcess::startDetached(args[0], args);
         }
         else
         {
@@ -462,7 +466,9 @@ bool STIGQter::Reset(bool checkOnly)
                     return true;
                 db.DeleteDB();
                 qApp->quit();
-                QProcess::startDetached(qApp->arguments()[0], qApp->arguments());
+                auto args = qApp->arguments();
+                if (args.count() > 0)
+                    QProcess::startDetached(args[0], args);
             }
         }
     }

@@ -67,7 +67,7 @@ void WorkerSTIGDownload::process()
         DownloadFile(stigs, &tmpFile);
         //get all zip files within the master zip file
         Q_EMIT updateStatus(QStringLiteral("Extracting and adding STIGs…"));
-        auto stigFiles = GetFilesFromZip(tmpFile.fileName().toStdString().c_str(), QStringLiteral(".zip"));
+        auto stigFiles = GetFilesFromZip(tmpFile.fileName(), QStringLiteral(".zip"));
         Q_EMIT initialize(stigFiles.count() + 2, 2);
         //assume that each zip file within the archive is its own STIG and try to process it
         QMap<QString, QByteArray>::iterator i;

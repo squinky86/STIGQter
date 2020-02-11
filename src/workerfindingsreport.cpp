@@ -231,7 +231,7 @@ void WorkerFindingsReport::process()
         Q_FOREACH (CKLCheck cc, checks)
         {
             if (!assets.isEmpty())
-                assets.append("\n");
+                assets.append(QStringLiteral("\n"));
             assets.append(PrintCKLCheck(cc));
         }
         worksheet_write_string(wsCCIs, onRow, 3, assets.toStdString().c_str(), fmtWrapped);

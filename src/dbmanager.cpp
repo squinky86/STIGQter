@@ -1366,7 +1366,7 @@ QList<CKLCheck> DbManager::GetCKLChecks(const Asset &asset, const STIG *stig)
  */
 QList<CKLCheck> DbManager::GetCKLChecks(const CCI &cci)
 {
-    return GetCKLChecks(QStringLiteral("WHERE STIGCheckId IN (SELECT STIGCheckId FROM STIGCheckCCI WHERE CCIId = :CCIId)"), {std::make_tuple<QString, QVariant>(":CCIId", cci.id)});
+    return GetCKLChecks(QStringLiteral("WHERE STIGCheckId IN (SELECT STIGCheckId FROM STIGCheckCCI WHERE CCIId = :CCIId)"), {std::make_tuple<QString, QVariant>(QStringLiteral(":CCIId"), cci.id)});
 }
 
 /**
