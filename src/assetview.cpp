@@ -395,23 +395,23 @@ void AssetView::RunTests()
 
     //step 5: change findings
     std::cout << "\t\tTest " << onTest++ << ": Change Findings Status…";
-    std::cout << "Not a Finding";
+    std::cout << "\t\t\tNot a Finding" << std::endl;
     KeyShortcutCtrlN();
-    std::cout << "…";
+    std::cout << "\t\t\t…" << std::endl;
     ProcEvents();
-    std::cout << "Open";
+    std::cout << "\t\t\tOpen" << std::endl;
     KeyShortcutCtrlO();
-    std::cout << "…";
+    std::cout << "\t\t\t…" << std::endl;
     ProcEvents();
-    std::cout << "Not Reviewed";
+    std::cout << "\t\t\tNot Reviewed" << std::endl;
     KeyShortcutCtrlR();
-    std::cout << "…";
+    std::cout << "\t\t\t…" << std::endl;
     ProcEvents();
-    std::cout << "Not Applicable";
+    std::cout << "\t\t\tNot Applicable" << std::endl;
     KeyShortcutCtrlX();
-    std::cout << "…";
+    std::cout << "\t\t\t…" << std::endl;
     ProcEvents();
-    std::cout << "done!" << std::endl;
+    std::cout << "\t\t\tdone!" << std::endl;
 
     //step 6: update asset
     std::cout << "\t\tTest " << onTest++ << ": Change Asset" << std::endl;
