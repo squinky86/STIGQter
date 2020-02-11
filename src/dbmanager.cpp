@@ -1085,7 +1085,7 @@ QList<CCI> DbManager::GetCCIs(QVector<int> ccis)
  */
 QList<CCI> DbManager::GetCCIs(const Control &c)
 {
-    return GetCCIs("WHERE ControlId = :id", {std::make_tuple<QString, QVariant>(QStringLiteral(":id"), c.id)});
+    return GetCCIs(QStringLiteral("WHERE ControlId = :id"), {std::make_tuple<QString, QVariant>(QStringLiteral(":id"), c.id)});
 }
 
 /**
@@ -1366,7 +1366,7 @@ QList<CKLCheck> DbManager::GetCKLChecks(const Asset &asset, const STIG *stig)
  */
 QList<CKLCheck> DbManager::GetCKLChecks(const CCI &cci)
 {
-    return GetCKLChecks("WHERE STIGCheckId IN (SELECT STIGCheckId FROM STIGCheckCCI WHERE CCIId = :CCIId)", {std::make_tuple<QString, QVariant>(":CCIId", cci.id)});
+    return GetCKLChecks(QStringLiteral("WHERE STIGCheckId IN (SELECT STIGCheckId FROM STIGCheckCCI WHERE CCIId = :CCIId)"), {std::make_tuple<QString, QVariant>(":CCIId", cci.id)});
 }
 
 /**
@@ -1531,7 +1531,7 @@ QList<STIGCheck> DbManager::GetSTIGChecks(const STIG &stig)
  */
 QList<STIGCheck> DbManager::GetSTIGChecks(const CCI &cci)
 {
-    return GetSTIGChecks("WHERE id IN (SELECT STIGCheckId FROM STIGCheckCCI WHERE CCIId = :CCIId)", {std::make_tuple<QString, QVariant>(QStringLiteral(":CCIId"), cci.id)});
+    return GetSTIGChecks(QStringLiteral("WHERE id IN (SELECT STIGCheckId FROM STIGCheckCCI WHERE CCIId = :CCIId)"), {std::make_tuple<QString, QVariant>(QStringLiteral(":CCIId"), cci.id)});
 }
 
 /**

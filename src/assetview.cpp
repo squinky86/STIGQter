@@ -339,7 +339,7 @@ void AssetView::UpdateSTIGCheck(const STIGCheck &stigCheck)
     ui->lblFix->setText(stigCheck.fix);
     ui->lblCheck->setText(stigCheck.check);
     QString ccis(QStringLiteral("Relevant CCI(s):\n"));
-    foreach (auto cci, stigCheck.GetCCIs())
+    Q_FOREACH (auto cci, stigCheck.GetCCIs())
     {
         ccis.append(PrintCCI(cci) + QStringLiteral(": ") + cci.definition + QStringLiteral("\n"));
     }
@@ -415,13 +415,13 @@ void AssetView::RunTests()
 
     //step 6: update asset
     std::cout << "\t\tTest " << onTest++ << ": Change Asset" << std::endl;
-    ui->txtFQDN->setText("test.example.org");
-    ui->txtIP->setText("127.0.0.1");
-    ui->txtMAC->setText("00:00:00:00:00:00");
+    ui->txtFQDN->setText(QStringLiteral("test.example.org"));
+    ui->txtIP->setText(QStringLiteral("127.0.0.1"));
+    ui->txtMAC->setText(QStringLiteral("00:00:00:00:00:00"));
 
     //step 7: save CKL
     std::cout << "\t\tSaving CKL" << std::endl;
-    SaveCKL("tests/monolithic.ckl");
+    SaveCKL(QStringLiteral("tests/monolithic.ckl"));
     ProcEvents();
 
     //step 8: Count Checks
@@ -430,7 +430,7 @@ void AssetView::RunTests()
 
     //step 9: import XCCDF
     std::cout << "\t\tTest " << onTest++ << ": Importing XCCDF" << std::endl;
-    ImportXCCDF("tests/xccdf_lol.xml");
+    ImportXCCDF(QStringLiteral("tests/xccdf_lol.xml"));
 
     ProcEvents();
 

@@ -66,7 +66,7 @@ public:
     Asset GetAsset(int id);
     Asset GetAsset(const QString &hostName);
     Asset GetAsset(const Asset &asset);
-    QList<Asset> GetAssets(const QString &whereClause = "", const QList<std::tuple<QString, QVariant>> &variables = {});
+    QList<Asset> GetAssets(const QString &whereClause = QString(), const QList<std::tuple<QString, QVariant>> &variables = {});
     QList<Asset> GetAssets(const STIG &stig);
     CCI GetCCI(int id);
     CCI GetCCI(const CCI &cci, const STIG *stig = nullptr);
@@ -74,21 +74,21 @@ public:
     QList<CCI> GetCCIs(const Control &c);
     QList<CCI> GetCCIs(int STIGCheckId);
     CCI GetCCIByCCI(int cci, const STIG *stig = nullptr);
-    QList<CCI> GetCCIs(const QString &whereClause = "", const QList<std::tuple<QString, QVariant>> &variables = {});
+    QList<CCI> GetCCIs(const QString &whereClause = QString(), const QList<std::tuple<QString, QVariant>> &variables = {});
     CKLCheck GetCKLCheck(int id);
     CKLCheck GetCKLCheck(const CKLCheck &ckl);
     CKLCheck GetCKLCheckByDISAId(int assetId, const QString &disaId);
     QList<CKLCheck> GetCKLChecks(const Asset &asset, const STIG *stig = nullptr);
     QList<CKLCheck> GetCKLChecks(const CCI &cci);
-    QList<CKLCheck> GetCKLChecks(const QString &whereClause = "", const QList<std::tuple<QString, QVariant>> &variables = {});
+    QList<CKLCheck> GetCKLChecks(const QString &whereClause = QString(), const QList<std::tuple<QString, QVariant>> &variables = {});
     Control GetControl(int id);
     Control GetControl(const QString &control);
-    QList<Control> GetControls(const QString &whereClause = "", const QList<std::tuple<QString, QVariant>> &variables = {});
+    QList<Control> GetControls(const QString &whereClause = QString(), const QList<std::tuple<QString, QVariant>> &variables = {});
     QString GetDBPath();
     Family GetFamily(const QString &acronym);
     Family GetFamily(int id);
     int GetLogLevel();
-    QList<Family> GetFamilies(const QString &whereClause = "", const QList<std::tuple<QString, QVariant>> &variables = {});
+    QList<Family> GetFamilies(const QString &whereClause = QString(), const QList<std::tuple<QString, QVariant>> &variables = {});
     STIG GetSTIG(int id);
     STIG GetSTIG(const QString &title, int version, const QString &release);
     STIG GetSTIG(const STIG &stig);
@@ -97,9 +97,9 @@ public:
     STIGCheck GetSTIGCheck(const STIGCheck &stigcheck);
     QList<STIGCheck> GetSTIGChecks(const STIG &stig);
     QList<STIGCheck> GetSTIGChecks(const CCI &cci);
-    QList<STIGCheck> GetSTIGChecks(const QString &whereClause = "", const QList<std::tuple<QString, QVariant>> &variables = {});
+    QList<STIGCheck> GetSTIGChecks(const QString &whereClause = QString(), const QList<std::tuple<QString, QVariant>> &variables = {});
     QList<STIG> GetSTIGs(const Asset &asset);
-    QList<STIG> GetSTIGs(const QString &whereClause = "", const QList<std::tuple<QString, QVariant> > &variables = {});
+    QList<STIG> GetSTIGs(const QString &whereClause = QString(), const QList<std::tuple<QString, QVariant> > &variables = {});
     QString GetVariable(const QString &name);
 
     bool IsEmassImport();

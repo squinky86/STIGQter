@@ -157,7 +157,7 @@ bool DownloadFile(const QUrl &url, QFile *file)
     {
         //log HTTP headers, STIG Rule SV-83997r1_rule
         //log IP address, STIG Rule SV-84045r1_rule
-        Warning("Downloading File", "Downloading " + url.toString() + " (ip address " + addresses.first().toString() + ") with header User-Agent: " + userAgent, true);
+        Warning(QStringLiteral("Downloading File"), "Downloading " + url.toString() + " (ip address " + addresses.first().toString() + ") with header User-Agent: " + userAgent, true);
 
         //clean up the socket event when the response is finished reading
         QNetworkReply *response = manager.get(req);
@@ -214,7 +214,7 @@ QString DownloadPage(const QUrl &url)
     {
         //log HTTP headers, STIG Rule SV-83997r1_rule
         //log IP address, STIG Rule SV-84045r1_rule
-        Warning("Downloading Page", "Downloading " + url.toString() + " (ip address " + addresses.first().toString() + ") with header User-Agent: " + userAgent, true);
+        Warning(QStringLiteral("Downloading Page"), "Downloading " + url.toString() + " (ip address " + addresses.first().toString() + ") with header User-Agent: " + userAgent, true);
 
         //send request and get response
         QNetworkReply *response = manager.get(req);
@@ -428,7 +428,7 @@ QString TrimFileName(const QString &fileName)
 void Warning(const QString &title, const QString &message, const bool quiet, const int level)
 {
     DbManager db;
-    db.Log(level, "", title + ": " + message);
+    db.Log(level, QString(), title + ": " + message);
     if (!IgnoreWarnings && !quiet && (QThread::currentThread() == QApplication::instance()->thread())) //make sure we're in the GUI thread before popping a message box
     {
         int ret = QMessageBox::warning(nullptr, title, message, QMessageBox::Ignore | QMessageBox::Ok);
