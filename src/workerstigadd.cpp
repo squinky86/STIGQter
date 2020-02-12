@@ -40,7 +40,8 @@
  *
  * Default constructor.
  */
-WorkerSTIGAdd::WorkerSTIGAdd(QObject *parent) : Worker(parent)
+WorkerSTIGAdd::WorkerSTIGAdd(QObject *parent) : Worker(parent),
+    _enableSupplements(false)
 {
 }
 
@@ -52,7 +53,7 @@ WorkerSTIGAdd::WorkerSTIGAdd(QObject *parent) : Worker(parent)
  * Once a STIG is extracted, it is then parsed for STIGChecks and
  * version information.
  */
-void WorkerSTIGAdd::ParseSTIG(const QByteArray &stig, const QString &fileName)
+void WorkerSTIGAdd::ParseSTIG(const QByteArray &stig, const QString &fileName, const QMap<QString, QByteArray> &supplements)
 {
     //should be the .xml file inside of the STIG .zip file here
     auto *xml = new QXmlStreamReader(stig);
@@ -292,9 +293,23 @@ void WorkerSTIGAdd::ParseSTIG(const QByteArray &stig, const QString &fileName)
         c.cciIds.clear();
     }
     delete xml;
+
+    QVector<Supplement> supplementsToAdd;
+
+    if (_enableSupplements)
+    {
+        Q_FOREACH(const QString key, supplements.keys())
+        {
+            Supplement sup;
+            sup.path = key;
+            sup.contents = supplements.value(key);
+            supplementsToAdd.append(sup);
+        }
+    }
+
     //Sometimes the .zip file contains extraneous .xml files
     if (checks.count() > 0)
-        db.AddSTIG(s, checks);
+        db.AddSTIG(s, checks, supplementsToAdd);
 }
 
 /**
@@ -307,6 +322,18 @@ void WorkerSTIGAdd::ParseSTIG(const QByteArray &stig, const QString &fileName)
 void WorkerSTIGAdd::AddSTIGs(const QStringList &stigs)
 {
     _todo.append(stigs);
+}
+
+/**
+ * @brief WorkerSTIGAdd::SetEnableSupplements
+ * @param enableSupplements
+ *
+ * Sets whether to enable or disable importing the STIG supplementary
+ * material into the DB
+ */
+void WorkerSTIGAdd::SetEnableSupplements(bool enableSupplements)
+{
+    _enableSupplements = enableSupplements;
 }
 
 /**
@@ -327,11 +354,17 @@ void WorkerSTIGAdd::process()
     {
         Q_EMIT updateStatus("Extracting " + s + "…");
         //get the list of XML files inside the STIG
-        QMap<QString, QByteArray> toParse = GetFilesFromZip(s, QStringLiteral(".xml"));
+        QMap<QString, QByteArray> toParse = GetFilesFromZip(s);
+
         Q_EMIT updateStatus("Parsing " + s + "…");
         Q_FOREACH(const QString stig, toParse.keys())
         {
-            ParseSTIG(toParse.value(stig), TrimFileName(stig));
+            if (stig.endsWith(QStringLiteral("-xccdf.xml"), Qt::CaseInsensitive))
+            {
+                QByteArray val = toParse.value(stig);
+                toParse.remove(stig);
+                ParseSTIG(val, TrimFileName(stig), toParse);
+            }
         }
         Q_EMIT progress(-1);
     }

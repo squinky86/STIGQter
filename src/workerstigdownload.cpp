@@ -43,8 +43,21 @@
  *
  * Default constructor.
  */
-WorkerSTIGDownload::WorkerSTIGDownload(QObject *parent) : Worker(parent)
+WorkerSTIGDownload::WorkerSTIGDownload(QObject *parent) : Worker(parent),
+    _enableSupplements(false)
 {
+}
+
+/**
+ * @brief WorkerSTIGDownload::SetEnableSupplements
+ * @param enableSupplements
+ *
+ * Sets whether to enable or disable importing the STIG supplementary
+ * material into the DB
+ */
+void WorkerSTIGDownload::SetEnableSupplements(bool enableSupplements)
+{
+    _enableSupplements = enableSupplements;
 }
 
 /**
@@ -63,7 +76,8 @@ void WorkerSTIGDownload::process()
     QTemporaryFile tmpFile;
     if (tmpFile.open())
     {
-        QUrl stigs(QStringLiteral("https://dl.dod.cyber.mil/wp-content/uploads/stigs/zip/U_SRG-STIG_Library_2020_01.zip"));
+        DbManager db;
+        QUrl stigs(db.GetVariable(QStringLiteral("quarterly")));
         DownloadFile(stigs, &tmpFile);
         //get all zip files within the master zip file
         Q_EMIT updateStatus(QStringLiteral("Extracting and adding STIGs…"));
@@ -75,6 +89,7 @@ void WorkerSTIGDownload::process()
         {
             Q_EMIT updateStatus("Parsing " + i.key() + "…");
             WorkerSTIGAdd tmpWorker;
+            tmpWorker.SetEnableSupplements(_enableSupplements);
             QTemporaryFile tmpFile2;
             if (tmpFile2.open())
             {

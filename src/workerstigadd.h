@@ -30,11 +30,13 @@ class WorkerSTIGAdd : public Worker
 
 private:
     QStringList _todo;
-    void ParseSTIG(const QByteArray &stig, const QString &fileName);
+    bool _enableSupplements;
+    void ParseSTIG(const QByteArray &stig, const QString &fileName, const QMap<QString, QByteArray> &supplements);
 
 public:
     explicit WorkerSTIGAdd(QObject *parent = nullptr);
     void AddSTIGs(const QStringList &stigs);
+    void SetEnableSupplements(bool enableSupplements);
 
 public Q_SLOTS:
     void process();

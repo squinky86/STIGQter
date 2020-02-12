@@ -76,6 +76,7 @@ private Q_SLOTS:
     void SelectSTIG();
     void StatusChange(const QString &status);
     void ShowMessage(const QString &title, const QString &message);
+    void SupplementsChanged(int checkState);
     void UpdateCCIs();
 
     void Initialize(int max, int val = 0);

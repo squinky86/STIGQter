@@ -82,6 +82,14 @@ int main(int argc, char *argv[])
             a.processEvents();
         }
 
+        std::cout << "Test " << ++onTest << ": Include STIG Supplements" << std::endl;
+        QMetaObject::invokeMethod(&w, "SupplementsChanged", Qt::DirectConnection, Q_ARG(Qt::CheckState, Qt::Checked));
+        while (!w.isProcessingEnabled())
+        {
+            QThread::sleep(1);
+            a.processEvents();
+        }
+
         std::cout << "Test " << ++onTest << ": Index STIGs" << std::endl;
         QMetaObject::invokeMethod(&w, "DownloadSTIGs", Qt::DirectConnection);
         while (!w.isProcessingEnabled())

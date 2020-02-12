@@ -28,8 +28,12 @@ class WorkerSTIGDownload : public Worker
 {
     Q_OBJECT
 
+private:
+    bool _enableSupplements;
+
 public:
     explicit WorkerSTIGDownload(QObject *parent = nullptr);
+    void SetEnableSupplements(bool enableSupplements);
 
 public Q_SLOTS:
     void process();

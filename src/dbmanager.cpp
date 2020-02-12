@@ -504,15 +504,17 @@ bool DbManager::AddFamily(const QString &acronym, const QString &description)
  * @brief DbManager::AddSTIG
  * @param stig
  * @param checks
- * @return @c True when the @a STIG and its @a STIGChecks are added
- * to the database, @c false when the any part of the data have not
- * been added.
+ * @param supplements
+ * @param stigExists
+ * @return @c True when the @a STIG, its @a STIGChecks, and its
+ * @a Supplements are added to the database, @c false when the any
+ * part of the data have not been added.
  *
  * When @a stigExists is @c true, the @a STIGChecks are added to the
  * existing @a STIG already in the database. Otherwise, if the
  * @a STIG already exists, the @a STIGChecks are not added.
  */
-bool DbManager::AddSTIG(STIG &stig, QVector<STIGCheck> checks, bool stigExists)
+bool DbManager::AddSTIG(STIG &stig, const QVector<STIGCheck> &checks, const QVector<Supplement> &supplements, bool stigExists)
 {
     QSqlDatabase db;
     bool ret = false;
@@ -626,6 +628,18 @@ bool DbManager::AddSTIG(STIG &stig, QVector<STIGCheck> checks, bool stigExists)
                 }
             }
         }
+
+        Q_FOREACH(auto supplement, supplements)
+        {
+            newChecks = true;
+            q.prepare(QStringLiteral("INSERT INTO Supplement (`STIGId`, `path`, `contents`) VALUES(:STIGId, :path, :contents)"));
+            q.bindValue(QStringLiteral(":STIGId"), stig.id);
+            q.bindValue(QStringLiteral(":path"), supplement.path);
+            q.bindValue(QStringLiteral(":contents"), supplement.contents);
+            ret = q.exec() && ret;
+            Log(6, QStringLiteral("AddAsset-Supplement"), q);
+        }
+
         //restore the old value of the "delayed commit" feature
         if (!delayed)
         {
@@ -828,8 +842,12 @@ bool DbManager::DeleteSTIG(int id)
         Log(6, QStringLiteral("DeleteSTIG-STIGCheckCCI"), q);
         q.prepare(QStringLiteral("DELETE FROM STIGCheck WHERE STIGId = :STIGId"));
         q.bindValue(QStringLiteral(":STIGId"), id);
-        ret = q.exec() && ret; //q.exec() first toavoid short-circuit evaluation
+        ret = q.exec() && ret;
         Log(6, QStringLiteral("DeleteSTIG-STIGCheck"), q);
+        q.prepare(QStringLiteral("DELETE FROM Supplement WHERE STIGId = :STIGId"));
+        q.bindValue(QStringLiteral(":STIGId"), id);
+        ret = q.exec() && ret;
+        Log(6, QStringLiteral("DeleteSTIG-Supplement"), q);
         q.prepare(QStringLiteral("DELETE FROM STIG WHERE id = :id"));
         q.bindValue(QStringLiteral(":id"), id);
         ret = q.exec() && ret;
@@ -2663,8 +2681,14 @@ bool DbManager::UpdateDatabaseFromVersion(int version)
                         "FOREIGN KEY(`STIGId`) REFERENCES `STIG`(`id`)"
                         ")"));
             ret = q.exec() && ret;
-            ret = UpdateVariable("version", "2") && ret;
+            q.prepare(QStringLiteral("INSERT INTO variables (name, value) VALUES(:name, :value)"));
+            q.bindValue(QStringLiteral(":name"), QStringLiteral("indexSupplements"));
+            q.bindValue(QStringLiteral(":value"), QStringLiteral("n"));
             ret = q.exec() && ret;
+            q.bindValue(QStringLiteral(":name"), QStringLiteral("quarterly"));
+            q.bindValue(QStringLiteral(":value"), QStringLiteral("https://dl.dod.cyber.mil/wp-content/uploads/stigs/zip/U_SRG-STIG_Library_2020_01.zip"));
+            ret = q.exec() && ret;
+            ret = UpdateVariable(QStringLiteral("version"), QStringLiteral("2")) && ret;
         }
     }
     return ret;

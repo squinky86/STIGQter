@@ -111,6 +111,9 @@ STIGQter::STIGQter(QWidget *parent) :
     DbManager db;
     ui->lblDBLoc->setText(QStringLiteral("DB: ") + db.GetDBPath());
 
+    //remember if we're indexing STIG checks
+    ui->cbIncludeSupplements->setChecked(db.GetVariable("indexSupplements").startsWith(QStringLiteral("y"), Qt::CaseInsensitive));
+
     //check version number
     auto *t = new QThread;
     auto *c = new WorkerCheckVersion();
@@ -648,6 +651,7 @@ void STIGQter::AddSTIGs()
     _updatedSTIGs = true;
     auto *s = new WorkerSTIGAdd();
     s->AddSTIGs(fileNames);
+    s->SetEnableSupplements(ui->cbIncludeSupplements->isChecked());
 
     ConnectThreads(s)->start();
 }
@@ -734,6 +738,7 @@ void STIGQter::DownloadSTIGs()
 
     //Create thread to download CCIs and keep GUI active
     auto *s = new WorkerSTIGDownload();
+    s->SetEnableSupplements(ui->cbIncludeSupplements->isChecked());
 
     ConnectThreads(s)->start();
 }
@@ -997,6 +1002,18 @@ void STIGQter::ShowMessage(const QString &title, const QString &message)
 }
 
 /**
+ * @brief STIGQter::SupplementsChanged
+ * @param checkState
+ *
+ * Handle when the user wants to index STIG supplementary data or not
+ */
+void STIGQter::SupplementsChanged(int checkState)
+{
+    DbManager db;
+    db.UpdateVariable(QStringLiteral("indexSupplements"), checkState == Qt::Checked ? QStringLiteral("y") : QStringLiteral("n"));
+}
+
+/**
  * @brief STIGQter::EnableInput
  *
  * At the end of several background workers' processing task, the
@@ -1035,6 +1052,7 @@ void STIGQter::EnableInput()
     ui->btnDeleteEmassImport->setEnabled(isImport);
     ui->btnImportCKL->setEnabled(true);
     ui->btnMapUnmapped->setEnabled(isImport);
+    ui->cbIncludeSupplements->setEnabled(true);
     ui->btnOpenCKL->setEnabled(ui->lstAssets->selectedItems().count() > 0);
     ui->btnQuit->setEnabled(true);
     ui->menubar->setEnabled(true);
@@ -1116,6 +1134,7 @@ void STIGQter::DisableInput()
     ui->btnImportEmass->setEnabled(false);
     ui->btnImportSTIGs->setEnabled(false);
     ui->btnMapUnmapped->setEnabled(false);
+    ui->cbIncludeSupplements->setEnabled(false);
     ui->btnOpenCKL->setEnabled(false);
     ui->btnQuit->setEnabled(false);
     ui->menubar->setEnabled(false);
