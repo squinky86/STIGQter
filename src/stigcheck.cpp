@@ -162,7 +162,7 @@ STIG STIGCheck::GetSTIG() const
  * @brief STIGCheck::GetCCI
  * @return The @a CCI associated with this @a STIGCheck.
  */
-QList<CCI> STIGCheck::GetCCIs() const
+QVector<CCI> STIGCheck::GetCCIs() const
 {
     DbManager db;
     return db.GetCCIs(cciIds);

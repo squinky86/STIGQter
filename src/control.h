@@ -37,7 +37,7 @@ public:
     int id;
     int familyId;
     Family GetFamily() const;
-    QList<CCI> GetCCIs() const;
+    QVector<CCI> GetCCIs() const;
     int number;
     int enhancement;
     QString title;

@@ -37,8 +37,8 @@ public:
     ~CCI() override = default;
     int id;
     Control GetControl() const;
-    QList<CKLCheck> GetCKLChecks() const;
-    QList<STIGCheck> GetSTIGChecks() const;
+    QVector<CKLCheck> GetCKLChecks() const;
+    QVector<STIGCheck> GetSTIGChecks() const;
     int controlId;
     int cci;
     QString definition;

@@ -51,7 +51,7 @@ public:
     int stigId;
     QVector<int> cciIds;
     STIG GetSTIG() const;
-    QList<CCI> GetCCIs() const;
+    QVector<CCI> GetCCIs() const;
     QString vulnNum;
     QString groupTitle;
     QString ruleVersion;

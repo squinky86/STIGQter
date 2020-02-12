@@ -129,7 +129,7 @@ Asset &Asset::operator=(Asset &&orig) noexcept
  * @brief Asset::GetSTIGs
  * @return list of STIGs associated with this Asset
  */
-QList<STIG> Asset::GetSTIGs() const
+QVector<STIG> Asset::GetSTIGs() const
 {
     DbManager db;
     return db.GetSTIGs(*this);
@@ -143,7 +143,7 @@ QList<STIG> Asset::GetSTIGs() const
  * When @a stig is a nullptr, all CKL checks associated with all
  * STIGs mapped to this Asset are returned.
  */
-QList<CKLCheck> Asset::GetCKLChecks(const STIG *stig) const
+QVector<CKLCheck> Asset::GetCKLChecks(const STIG *stig) const
 {
     DbManager db;
     return db.GetCKLChecks(*this, stig);

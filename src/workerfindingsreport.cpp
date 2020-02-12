@@ -76,8 +76,8 @@ void WorkerFindingsReport::process()
 {
     DbManager db;
 
-    QMap<CCI, QList<CKLCheck>> failedCCIs;
-    QList<CKLCheck> checks = db.GetCKLChecks();
+    QMap<CCI, QVector<CKLCheck>> failedCCIs;
+    QVector<CKLCheck> checks = db.GetCKLChecks();
     int numChecks = checks.count();
     Q_EMIT initialize(numChecks+3, 0);
 
@@ -135,7 +135,7 @@ void WorkerFindingsReport::process()
     {
         CKLCheck cc = checks[i];
         STIGCheck sc = cc.GetSTIGCheck();
-        QList<CCI> ccis = sc.GetCCIs();
+        QVector<CCI> ccis = sc.GetCCIs();
         Asset a = cc.GetAsset();
         Status s = cc.status;
         Q_EMIT updateStatus("Adding " + PrintAsset(a) + ", " + PrintSTIGCheck(sc) + "…");
@@ -184,7 +184,7 @@ void WorkerFindingsReport::process()
     Q_EMIT initialize(numChecks+failedCCIs.count()*2+1, numChecks);
 
     onRow = 0;
-    QMap<Control, QList<CCI>> failedControls;
+    QMap<Control, QVector<CCI>> failedControls;
     auto ccis = db.GetCCIs();
     for (auto i = ccis.constBegin(); i != ccis.constEnd(); i++)
     {
@@ -200,7 +200,7 @@ void WorkerFindingsReport::process()
         onRow++;
         CCI c = i.key();
         Q_EMIT updateStatus("Adding " + PrintCCI(c) + "…");
-        QList<CKLCheck> checks = i.value();
+        QVector<CKLCheck> checks = i.value();
         if (checks.count() > 1)
             std::sort(checks.begin(), checks.end());
         Control control = c.GetControl();

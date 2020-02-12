@@ -26,6 +26,7 @@
 
 class STIGCheck;
 class Asset;
+class Supplement;
 
 class STIG : public QObject
 {
@@ -42,12 +43,14 @@ public:
     int version;
     QString benchmarkId;
     QString fileName;
-    QList<STIGCheck> GetSTIGChecks() const;
-    QList<Asset> GetAssets() const;
+    QVector<Asset> GetAssets() const;
+    QVector<STIGCheck> GetSTIGChecks() const;
+    QVector<Supplement> GetSupplements() const;
     STIG& operator=(const STIG &right);
-    bool operator==(const STIG &right);
     bool operator<(const STIG &right) const;
 };
+
+bool operator==(STIG const& lhs, STIG const& rhs);
 
 Q_DECLARE_METATYPE(STIG);
 

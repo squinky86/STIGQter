@@ -38,8 +38,8 @@ public:
     explicit Asset(QObject *parent = nullptr);
     Asset& operator=(const Asset &right);
     Asset& operator=(Asset &&orig) noexcept;
-    QList<STIG> GetSTIGs() const;
-    QList<CKLCheck> GetCKLChecks(const STIG *stig = nullptr) const;
+    QVector<STIG> GetSTIGs() const;
+    QVector<CKLCheck> GetCKLChecks(const STIG *stig = nullptr) const;
     int id{-1}; /**< Database ID */
     QString assetType{QStringLiteral("Computing")}; /**< Specifies if asset is "Computing" or "Non-Computing" */
     QString hostName; /**< Unique asset identifier */

@@ -57,7 +57,7 @@ void WorkerCKLImport::ParseCKL(const QString &fileName)
     bool inStigs = false;
     QXmlStreamReader *xml = new QXmlStreamReader(f.readAll());
     Asset a;
-    QList<CKLCheck> checks;
+    QVector<CKLCheck> checks;
     STIGCheck tmpCheck;
     CKLCheck tmpCKL;
     QString onVar;
@@ -80,7 +80,8 @@ void WorkerCKLImport::ParseCKL(const QString &fileName)
                 if (xml->name() == "iSTIG" && checks.count() > 0)
                 {
                     a = CheckAsset(a);
-                    if (a.GetSTIGs().contains(tmpSTIG))
+                    QVector<STIG> stigs = a.GetSTIGs();
+                    if (stigs.contains(tmpSTIG))
                     {
                         Q_EMIT updateStatus("Unable to add " + PrintSTIG(tmpSTIG) + " to " + PrintAsset(a) + "!");
                         QMessageBox::warning(nullptr, QStringLiteral("Asset already has STIG applied!"), "The asset " + PrintAsset(a) + " already has the STIG " + PrintSTIG(tmpSTIG) + " applied and will not be imported.");

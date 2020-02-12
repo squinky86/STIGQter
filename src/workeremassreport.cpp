@@ -89,7 +89,7 @@ void WorkerEMASSReport::process()
 {
     DbManager db;
 
-    QList<CKLCheck> checks = db.GetCKLChecks();
+    QVector<CKLCheck> checks = db.GetCKLChecks();
     int numChecks = checks.count();
     Q_EMIT initialize(numChecks+2, 0);
 
@@ -200,7 +200,7 @@ void WorkerEMASSReport::process()
 
     bool dbIsImport = db.IsEmassImport();
 
-    QList<CCI> ccis = db.GetCCIs();
+    QVector<CCI> ccis = db.GetCCIs();
 
     Q_EMIT initialize(ccis.count()+1, 0);
 

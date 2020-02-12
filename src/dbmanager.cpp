@@ -512,7 +512,7 @@ bool DbManager::AddFamily(const QString &acronym, const QString &description)
  * existing @a STIG already in the database. Otherwise, if the
  * @a STIG already exists, the @a STIGChecks are not added.
  */
-bool DbManager::AddSTIG(STIG &stig, QList<STIGCheck> checks, bool stigExists)
+bool DbManager::AddSTIG(STIG &stig, QVector<STIGCheck> checks, bool stigExists)
 {
     QSqlDatabase db;
     bool ret = false;
@@ -808,7 +808,7 @@ bool DbManager::DeleteSTIG(int id)
     {
         //check if this STIG is used by any Assets
         STIG tmpStig = GetSTIG(id);
-        QList<Asset> assets = tmpStig.GetAssets();
+        QVector<Asset> assets = tmpStig.GetAssets();
         int tmpCount = assets.count();
         if (tmpCount > 0)
         {
@@ -899,7 +899,7 @@ bool DbManager::DeleteSTIGFromAsset(const STIG &stig, const Asset &asset)
 Asset DbManager::GetAsset(const QString &hostName)
 {
     //fail quietly
-    QList<Asset> tmp = GetAssets(QStringLiteral("WHERE Asset.hostName = :hostName"), {std::make_tuple<QString, QVariant>(QStringLiteral(":hostName"), hostName)});
+    QVector<Asset> tmp = GetAssets(QStringLiteral("WHERE Asset.hostName = :hostName"), {std::make_tuple<QString, QVariant>(QStringLiteral(":hostName"), hostName)});
     if (tmp.count() > 0)
         return tmp.first();
     Asset a;
@@ -938,7 +938,7 @@ Asset DbManager::GetAsset(const Asset &asset)
  */
 Asset DbManager::GetAsset(int id)
 {
-    QList<Asset> tmp = GetAssets(QStringLiteral("WHERE Asset.id = :id"), {std::make_tuple<QString, QVariant>(QStringLiteral(":id"), id)});
+    QVector<Asset> tmp = GetAssets(QStringLiteral("WHERE Asset.id = :id"), {std::make_tuple<QString, QVariant>(QStringLiteral(":id"), id)});
     if (tmp.count() > 0)
         return tmp.first();
     QMessageBox::warning(nullptr, QStringLiteral("Unable to Find Asset"), "The Asset ID " + QString::number(id) + " was not found in the database.");
@@ -950,7 +950,7 @@ Asset DbManager::GetAsset(int id)
  * @brief DbManager::GetAssets
  * @param whereClause
  * @param variables
- * @return A QList of @a Assets that are in the database. SQL
+ * @return A QVector of @a Assets that are in the database. SQL
  * commands are dynamically built from an optional supplied
  * @a whereClause. SQL parameters are bound by supplying them in a
  * list of tuples in the @a variables parameter.
@@ -962,7 +962,7 @@ Asset DbManager::GetAsset(int id)
  *
  * @code
  * DbManager db;
- * QList<Asset> assets = db.GetAssets();
+ * QVector<Asset> assets = db.GetAssets();
  * @endcode
  *
  * @example GetAssetsWhere
@@ -992,10 +992,10 @@ Asset DbManager::GetAsset(int id)
  *                   }).first();
  * @endcode
  */
-QList<Asset> DbManager::GetAssets(const QString &whereClause, const QList<std::tuple<QString, QVariant>> &variables)
+QVector<Asset> DbManager::GetAssets(const QString &whereClause, const QVector<std::tuple<QString, QVariant>> &variables)
 {
     QSqlDatabase db;
-    QList<Asset> ret;
+    QVector<Asset> ret;
     if (CheckDatabase(db))
     {
         QSqlQuery q(db);
@@ -1037,10 +1037,10 @@ QList<Asset> DbManager::GetAssets(const QString &whereClause, const QList<std::t
  * @overload DbManager::GetAssets(const STIG &stig)
  * @brief DbManager::GetAssets
  * @param stig
- * @return A QList of @a Assets that are associated with the supplied
+ * @return A QVector of @a Assets that are associated with the supplied
  * @a STIG.
  */
-QList<Asset> DbManager::GetAssets(const STIG &stig)
+QVector<Asset> DbManager::GetAssets(const STIG &stig)
 {
     return GetAssets(QStringLiteral("JOIN AssetSTIG ON AssetSTIG.AssetId = Asset.id JOIN STIG ON STIG.id = AssetSTIG.STIGId WHERE STIG.id = :id"), {std::make_tuple<QString, QVariant>(QStringLiteral(":id"), stig.id)});
 }
@@ -1054,7 +1054,7 @@ QList<Asset> DbManager::GetAssets(const STIG &stig)
  */
 CCI DbManager::GetCCI(int id)
 {
-    QList<CCI> ccis = GetCCIs(QStringLiteral("WHERE CCI.id = :id"), {std::make_tuple<QString, QVariant>(QStringLiteral(":id"), id)});
+    QVector<CCI> ccis = GetCCIs(QStringLiteral("WHERE CCI.id = :id"), {std::make_tuple<QString, QVariant>(QStringLiteral(":id"), id)});
     if (ccis.count() > 0)
         return ccis.first();
     CCI ret;
@@ -1068,9 +1068,9 @@ CCI DbManager::GetCCI(int id)
  * @a CCI does not exist in the database, the default @a CCI with an
  * ID of -1 is returned.
  */
-QList<CCI> DbManager::GetCCIs(QVector<int> ccis)
+QVector<CCI> DbManager::GetCCIs(QVector<int> ccis)
 {
-    QList<CCI> ret;
+    QVector<CCI> ret;
     Q_FOREACH (int cci, ccis)
     {
         ret.append(GetCCIs(QStringLiteral("WHERE CCI.id = :id"), {std::make_tuple<QString, QVariant>(QStringLiteral(":id"), cci)}));
@@ -1083,7 +1083,7 @@ QList<CCI> DbManager::GetCCIs(QVector<int> ccis)
  * @param c
  * @return The @a CCIs mapped to the specified @a Control.
  */
-QList<CCI> DbManager::GetCCIs(const Control &c)
+QVector<CCI> DbManager::GetCCIs(const Control &c)
 {
     return GetCCIs(QStringLiteral("WHERE ControlId = :id"), {std::make_tuple<QString, QVariant>(QStringLiteral(":id"), c.id)});
 }
@@ -1095,9 +1095,9 @@ QList<CCI> DbManager::GetCCIs(const Control &c)
  * @a CCI does not exist in the database, the default @a CCI with an
  * ID of -1 is returned.
  */
-QList<CCI> DbManager::GetCCIs(int STIGCheckId)
+QVector<CCI> DbManager::GetCCIs(int STIGCheckId)
 {
-    QList<CCI> ret;
+    QVector<CCI> ret;
     QSqlDatabase db;
     if (CheckDatabase(db))
     {
@@ -1138,7 +1138,7 @@ QList<CCI> DbManager::GetCCIs(int STIGCheckId)
  */
 CCI DbManager::GetCCIByCCI(int cci, const STIG *stig)
 {
-    QList<CCI> tmpList = GetCCIs(QStringLiteral("WHERE CCI.cci = :cci"), {std::make_tuple<QString, QVariant>(QStringLiteral(":cci"), cci)});
+    QVector<CCI> tmpList = GetCCIs(QStringLiteral("WHERE CCI.cci = :cci"), {std::make_tuple<QString, QVariant>(QStringLiteral(":cci"), cci)});
     if (tmpList.count() > 0)
         return tmpList.first();
     QString tmpMessage = stig ? PrintSTIG(*stig) : QStringLiteral("&lt;insert%20STIG%20information%20here&gt;");
@@ -1177,7 +1177,7 @@ CCI DbManager::GetCCI(const CCI &cci, const STIG *stig)
  * @brief DbManager::GetCCIs
  * @param whereClause
  * @param variables
- * @return A QList of @a CCIs that are in the database. SQL
+ * @return A QVector of @a CCIs that are in the database. SQL
  * commands are dynamically built from an optional supplied
  * @a whereClause. SQL parameters are bound by supplying them in a
  * list of tuples in the @a variables parameter.
@@ -1190,7 +1190,7 @@ CCI DbManager::GetCCI(const CCI &cci, const STIG *stig)
  *
  * @code
  * DbManager db;
- * QList<CCI> ccis = db.GetCCIs();
+ * QVector<CCI> ccis = db.GetCCIs();
  * @endcode
  *
  * @example GetCCIsWhere
@@ -1221,10 +1221,10 @@ CCI DbManager::GetCCI(const CCI &cci, const STIG *stig)
  *                   }).first();
  * @endcode
  */
-QList<CCI> DbManager::GetCCIs(const QString &whereClause, const QList<std::tuple<QString, QVariant>> &variables)
+QVector<CCI> DbManager::GetCCIs(const QString &whereClause, const QVector<std::tuple<QString, QVariant>> &variables)
 {
     QSqlDatabase db;
-    QList<CCI> ret;
+    QVector<CCI> ret;
     if (CheckDatabase(db))
     {
         QSqlQuery q(db);
@@ -1278,7 +1278,7 @@ QList<CCI> DbManager::GetCCIs(const QString &whereClause, const QList<std::tuple
  */
 CKLCheck DbManager::GetCKLCheck(int id)
 {
-    QList<CKLCheck> tmp = GetCKLChecks(QStringLiteral("WHERE CKLCheck.id = :id"), {std::make_tuple<QString, QVariant>(QStringLiteral(":id"), id)});
+    QVector<CKLCheck> tmp = GetCKLChecks(QStringLiteral("WHERE CKLCheck.id = :id"), {std::make_tuple<QString, QVariant>(QStringLiteral(":id"), id)});
     if (tmp.count() > 0)
     {
         return tmp.first();
@@ -1298,7 +1298,7 @@ CKLCheck DbManager::GetCKLCheck(int id)
  */
 CKLCheck DbManager::GetCKLCheck(const CKLCheck &ckl)
 {
-    QList<CKLCheck> tmp;
+    QVector<CKLCheck> tmp;
     if (ckl.id <= 0)
     {
         tmp = GetCKLChecks(QStringLiteral("WHERE CKLCheck.AssetId = :AssetId AND CKLCheck.STIGCheckId = :STIGCheckId"),
@@ -1327,7 +1327,7 @@ CKLCheck DbManager::GetCKLCheck(const CKLCheck &ckl)
  */
 CKLCheck DbManager::GetCKLCheckByDISAId(int assetId, const QString &disaId)
 {
-    QList<CKLCheck> ret = GetCKLChecks(QStringLiteral("JOIN STIGCheck ON CKLCheck.STIGCheckId = STIGCheck.id WHERE AssetId = :AssetId AND rule = :DISAId"), {
+    QVector<CKLCheck> ret = GetCKLChecks(QStringLiteral("JOIN STIGCheck ON CKLCheck.STIGCheckId = STIGCheck.id WHERE AssetId = :AssetId AND rule = :DISAId"), {
                         std::make_tuple<QString, QVariant>(QStringLiteral(":AssetId"), assetId),
                         std::make_tuple<QString, QVariant>(QStringLiteral(":DISAId"), disaId)
                     });
@@ -1338,7 +1338,7 @@ CKLCheck DbManager::GetCKLCheckByDISAId(int assetId, const QString &disaId)
 }
 
 /**
- * @overload DbManager::GetCKLChecks(const QString &whereClause, const QList<std::tuple<QString, QVariant> > &variables)
+ * @overload DbManager::GetCKLChecks(const QString &whereClause, const QVector<std::tuple<QString, QVariant> > &variables)
  * @brief DbManager::GetCKLChecks
  * @param asset
  * @param stig
@@ -1346,10 +1346,10 @@ CKLCheck DbManager::GetCKLCheckByDISAId(int assetId, const QString &disaId)
  * @a Asset. If an optional @a STIG is provided, only the
  * @a CKLChecks also associated with that STIG are returned.
  */
-QList<CKLCheck> DbManager::GetCKLChecks(const Asset &asset, const STIG *stig)
+QVector<CKLCheck> DbManager::GetCKLChecks(const Asset &asset, const STIG *stig)
 {
     QString whereClause = QStringLiteral("WHERE CKLCheck.AssetId = :AssetId");
-    QList<std::tuple<QString, QVariant> > variables = {std::make_tuple<QString, QVariant>(QStringLiteral(":AssetId"), asset.id)};
+    QVector<std::tuple<QString, QVariant> > variables = {std::make_tuple<QString, QVariant>(QStringLiteral(":AssetId"), asset.id)};
     if (stig != nullptr)
     {
         whereClause.append(QStringLiteral(" AND CKLCheck.STIGCheckId IN (SELECT id FROM STIGCheck WHERE STIGId = :STIGId)"));
@@ -1364,7 +1364,7 @@ QList<CKLCheck> DbManager::GetCKLChecks(const Asset &asset, const STIG *stig)
  * @return The set of @a CKLChecks associated with the supplied
  * @a CCI.
  */
-QList<CKLCheck> DbManager::GetCKLChecks(const CCI &cci)
+QVector<CKLCheck> DbManager::GetCKLChecks(const CCI &cci)
 {
     return GetCKLChecks(QStringLiteral("WHERE STIGCheckId IN (SELECT STIGCheckId FROM STIGCheckCCI WHERE CCIId = :CCIId)"), {std::make_tuple<QString, QVariant>(QStringLiteral(":CCIId"), cci.id)});
 }
@@ -1373,7 +1373,7 @@ QList<CKLCheck> DbManager::GetCKLChecks(const CCI &cci)
  * @brief DbManager::GetCKLChecks
  * @param whereClause
  * @param variables
- * @return A QList of @a CKLChecks that are in the database. SQL
+ * @return A QVector of @a CKLChecks that are in the database. SQL
  * commands are dynamically built from an optional supplied
  * @a whereClause. SQL parameters are bound by supplying them in a
  * list of tuples in the @a variables parameter.
@@ -1386,7 +1386,7 @@ QList<CKLCheck> DbManager::GetCKLChecks(const CCI &cci)
  *
  * @code
  * DbManager db;
- * QList<CKLCheck> ckls = db.GetCKLChecks();
+ * QVector<CKLCheck> ckls = db.GetCKLChecks();
  * @endcode
  *
  * @example GetCKLChecksWhere
@@ -1417,10 +1417,10 @@ QList<CKLCheck> DbManager::GetCKLChecks(const CCI &cci)
  *                          });
  * @endcode
  */
-QList<CKLCheck> DbManager::GetCKLChecks(const QString &whereClause, const QList<std::tuple<QString, QVariant> > &variables)
+QVector<CKLCheck> DbManager::GetCKLChecks(const QString &whereClause, const QVector<std::tuple<QString, QVariant> > &variables)
 {
     QSqlDatabase db;
-    QList<CKLCheck> ret;
+    QVector<CKLCheck> ret;
     if (CheckDatabase(db))
     {
         QSqlQuery q(db);
@@ -1462,7 +1462,7 @@ QList<CKLCheck> DbManager::GetCKLChecks(const QString &whereClause, const QList<
  */
 STIGCheck DbManager::GetSTIGCheck(int id)
 {
-    QList<STIGCheck> tmp = GetSTIGChecks(QStringLiteral("WHERE STIGCheck.id = :id"), {std::make_tuple<QString, QVariant>(QStringLiteral(":id"), id)});
+    QVector<STIGCheck> tmp = GetSTIGChecks(QStringLiteral("WHERE STIGCheck.id = :id"), {std::make_tuple<QString, QVariant>(QStringLiteral(":id"), id)});
     if (tmp.count() > 0)
         return tmp.first();
     STIGCheck ret;
@@ -1483,7 +1483,7 @@ STIGCheck DbManager::GetSTIGCheck(const STIG &stig, const QString &rule)
     STIG tmpStig = GetSTIG(stig);
     if (tmpStig.id > 0)
     {
-        QList<STIGCheck> tmp = GetSTIGChecks(QStringLiteral("WHERE STIGCheck.STIGId = :STIGId AND STIGCheck.rule = :rule"), {
+        QVector<STIGCheck> tmp = GetSTIGChecks(QStringLiteral("WHERE STIGCheck.STIGId = :STIGId AND STIGCheck.rule = :rule"), {
                                                  std::make_tuple<QString, QVariant>(QStringLiteral(":STIGId"), tmpStig.id),
                                                  std::make_tuple<QString, QVariant>(QStringLiteral(":rule"), rule)
                                              });
@@ -1519,7 +1519,7 @@ STIGCheck DbManager::GetSTIGCheck(const STIGCheck &stigcheck)
  * @param stig
  * @return All @a STIGChecks associated with the provided @a stig.
  */
-QList<STIGCheck> DbManager::GetSTIGChecks(const STIG &stig)
+QVector<STIGCheck> DbManager::GetSTIGChecks(const STIG &stig)
 {
     return GetSTIGChecks(QStringLiteral("WHERE STIGCheck.STIGId = :STIGId"), {std::make_tuple<QString, QVariant>(QStringLiteral(":STIGId"), stig.id)});
 }
@@ -1529,7 +1529,7 @@ QList<STIGCheck> DbManager::GetSTIGChecks(const STIG &stig)
  * @param cci
  * @return All @a STIGChecks associated with the provided @a cci.
  */
-QList<STIGCheck> DbManager::GetSTIGChecks(const CCI &cci)
+QVector<STIGCheck> DbManager::GetSTIGChecks(const CCI &cci)
 {
     return GetSTIGChecks(QStringLiteral("WHERE id IN (SELECT STIGCheckId FROM STIGCheckCCI WHERE CCIId = :CCIId)"), {std::make_tuple<QString, QVariant>(QStringLiteral(":CCIId"), cci.id)});
 }
@@ -1538,7 +1538,7 @@ QList<STIGCheck> DbManager::GetSTIGChecks(const CCI &cci)
  * @brief DbManager::GetSTIGChecks
  * @param whereClause
  * @param variables
- * @return A QList of @a STIGCheck that are in the database. SQL
+ * @return A QVector of @a STIGCheck that are in the database. SQL
  * commands are dynamically built from an optional supplied
  * @a whereClause. SQL parameters are bound by supplying them in a
  * list of tuples in the @a variables parameter.
@@ -1551,7 +1551,7 @@ QList<STIGCheck> DbManager::GetSTIGChecks(const CCI &cci)
  *
  * @code
  * DbManager db;
- * QList<STIGCheck> checks = db.GetSTIGChecks();
+ * QVector<STIGCheck> checks = db.GetSTIGChecks();
  * @endcode
  *
  * @example GetSTIGChecksWhere
@@ -1582,10 +1582,10 @@ QList<STIGCheck> DbManager::GetSTIGChecks(const CCI &cci)
  *                      });
  * @endcode
  */
-QList<STIGCheck> DbManager::GetSTIGChecks(const QString &whereClause, const QList<std::tuple<QString, QVariant> > &variables)
+QVector<STIGCheck> DbManager::GetSTIGChecks(const QString &whereClause, const QVector<std::tuple<QString, QVariant> > &variables)
 {
     QSqlDatabase db;
-    QList<STIGCheck> ret;
+    QVector<STIGCheck> ret;
     if (CheckDatabase(db))
     {
         QSqlQuery q(db);
@@ -1644,7 +1644,7 @@ QList<STIGCheck> DbManager::GetSTIGChecks(const QString &whereClause, const QLis
  * @return The @a STIGs in the database associated with the provided
  * @a Asset.
  */
-QList<STIG> DbManager::GetSTIGs(const Asset &asset)
+QVector<STIG> DbManager::GetSTIGs(const Asset &asset)
 {
     return GetSTIGs(QStringLiteral("WHERE STIG.id IN (SELECT STIGId FROM AssetSTIG WHERE AssetId = :AssetId)"), {std::make_tuple<QString, QVariant>(QStringLiteral(":AssetId"), asset.id)});
 }
@@ -1653,7 +1653,7 @@ QList<STIG> DbManager::GetSTIGs(const Asset &asset)
  * @brief DbManager::GetSTIGs
  * @param whereClause
  * @param variables
- * @return A QList of @a STIGs that are in the database. SQL
+ * @return A QVector of @a STIGs that are in the database. SQL
  * commands are dynamically built from an optional supplied
  * @a whereClause. SQL parameters are bound by supplying them in a
  * list of tuples in the @a variables parameter.
@@ -1666,7 +1666,7 @@ QList<STIG> DbManager::GetSTIGs(const Asset &asset)
  *
  * @code
  * DbManager db;
- * QList<STIG> stigs = db.GetSTIGs();
+ * QVector<STIG> stigs = db.GetSTIGs();
  * @endcode
  *
  * @example GetSTIGsWhere
@@ -1690,10 +1690,10 @@ QList<STIG> DbManager::GetSTIGs(const Asset &asset)
  *                ).first();
  * @endcode
  */
-QList<STIG> DbManager::GetSTIGs(const QString &whereClause, const QList<std::tuple<QString, QVariant>> &variables)
+QVector<STIG> DbManager::GetSTIGs(const QString &whereClause, const QVector<std::tuple<QString, QVariant>> &variables)
 {
     QSqlDatabase db;
-    QList<STIG> ret;
+    QVector<STIG> ret;
     if (CheckDatabase(db))
     {
         QSqlQuery q(db);
@@ -1727,6 +1727,35 @@ QList<STIG> DbManager::GetSTIGs(const QString &whereClause, const QList<std::tup
 }
 
 /**
+ * @brief DbManager::GetSupplements
+ * @param stig
+ * @return The list of @a Supplements associated with the provided @a STIG.
+ */
+QVector<Supplement> DbManager::GetSupplements(const STIG &stig)
+{
+    QSqlDatabase db;
+    QVector<Supplement> ret;
+    if (CheckDatabase(db))
+    {
+        QSqlQuery q(db);
+        QString toPrep = QStringLiteral("SELECT id, path, contents FROM Supplement WHERE STIGId = :STIGId");
+        q.prepare(toPrep);
+        q.bindValue(QStringLiteral(":STIGId"), stig.id);
+        q.exec();
+        while (q.next())
+        {
+            Supplement s;
+            s.id = q.value(0).toInt();
+            s.STIGId = stig.id;
+            s.path = q.value(1).toString();
+            s.contents = q.value(2).toByteArray();
+            ret.append(s);
+        }
+    }
+    return ret;
+}
+
+/**
  * @brief DbManager::GetControl
  * @param id
  * @return The @a Control in the database associated with the
@@ -1735,7 +1764,7 @@ QList<STIG> DbManager::GetSTIGs(const QString &whereClause, const QList<std::tup
  */
 Control DbManager::GetControl(int id)
 {
-    QList<Control> tmpControl = GetControls(QStringLiteral("WHERE Control.id = :id"), {std::make_tuple<QString, QVariant>(QStringLiteral(":id"), id)});
+    QVector<Control> tmpControl = GetControls(QStringLiteral("WHERE Control.id = :id"), {std::make_tuple<QString, QVariant>(QStringLiteral(":id"), id)});
     if (tmpControl.count() > 0)
         return tmpControl.first();
     Control ret;
@@ -1787,7 +1816,7 @@ Control DbManager::GetControl(const QString &control)
     int familyId = GetFamily(family).id;
 
     QString whereClause = QStringLiteral("WHERE Control.number = :number AND Control.FamilyId = :FamilyId");
-    QList<std::tuple<QString, QVariant>> variables = {
+    QVector<std::tuple<QString, QVariant>> variables = {
         std::make_tuple<QString, QVariant>(QStringLiteral(":number"), controlNumber),
         std::make_tuple<QString, QVariant>(QStringLiteral(":FamilyId"), familyId)
     };
@@ -1798,7 +1827,7 @@ Control DbManager::GetControl(const QString &control)
         variables.append(std::make_tuple<QString, QVariant>(QStringLiteral(":enhancement"), enhancementInt));
     }
 
-    QList<Control> tmpControls = GetControls(whereClause, variables);
+    QVector<Control> tmpControls = GetControls(whereClause, variables);
     if (tmpControls.count() > 0)
         return tmpControls.first();
 
@@ -1811,7 +1840,7 @@ Control DbManager::GetControl(const QString &control)
  * @brief DbManager::GetControls
  * @param whereClause
  * @param variables
- * @return A QList of @a Controls that are in the database. SQL
+ * @return A QVector of @a Controls that are in the database. SQL
  * commands are dynamically built from an optional supplied
  * @a whereClause. SQL parameters are bound by supplying them in a
  * list of tuples in the @a variables parameter.
@@ -1828,7 +1857,7 @@ Control DbManager::GetControl(const QString &control)
  *
  * @code
  * DbManager db;
- * QList<Control> controls = db.GetControls();
+ * QVector<Control> controls = db.GetControls();
  * @endcode
  *
  * @example GetControlsWhere
@@ -1846,15 +1875,15 @@ Control DbManager::GetControl(const QString &control)
  *                              ).first();
  *
  * //get Controls that relate to audit records
- * QList<Control> controls = GetControls("WHERE Control.description LIKE :description",
+ * QVector<Control> controls = GetControls("WHERE Control.description LIKE :description",
  *                                            {std::make_tuple<QString, QVariant>(":description", "%audit record%")}
  *                                      );
  * @endcode
  */
-QList<Control> DbManager::GetControls(const QString &whereClause, const QList<std::tuple<QString, QVariant>> &variables)
+QVector<Control> DbManager::GetControls(const QString &whereClause, const QVector<std::tuple<QString, QVariant>> &variables)
 {
     QSqlDatabase db;
-    QList<Control> ret;
+    QVector<Control> ret;
     if (CheckDatabase(db))
     {
         QSqlQuery q(db);
@@ -1904,7 +1933,7 @@ QString DbManager::GetDBPath()
  */
 Family DbManager::GetFamily(int id)
 {
-    QList<Family> tmpFamily = GetFamilies(QStringLiteral("WHERE Family.id = :id"), {std::make_tuple<QString, QVariant>(QStringLiteral(":id"), id)});
+    QVector<Family> tmpFamily = GetFamilies(QStringLiteral("WHERE Family.id = :id"), {std::make_tuple<QString, QVariant>(QStringLiteral(":id"), id)});
     if (tmpFamily.count() > 0)
         return tmpFamily.first();
     Family ret;
@@ -1934,7 +1963,7 @@ int DbManager::GetLogLevel()
  */
 Family DbManager::GetFamily(const QString &acronym)
 {
-    QList<Family> tmpFamily = GetFamilies(QStringLiteral("WHERE Family.acronym = :acronym"), {std::make_tuple<QString, QVariant>(QStringLiteral(":acronym"), acronym)});
+    QVector<Family> tmpFamily = GetFamilies(QStringLiteral("WHERE Family.acronym = :acronym"), {std::make_tuple<QString, QVariant>(QStringLiteral(":acronym"), acronym)});
     if (tmpFamily.count() > 0)
         return tmpFamily.first();
     Family ret;
@@ -1946,7 +1975,7 @@ Family DbManager::GetFamily(const QString &acronym)
  * @brief DbManager::GetFamilies
  * @param whereClause
  * @param variables
- * @return A QList of @a Families that are in the database. SQL
+ * @return A QVector of @a Families that are in the database. SQL
  * commands are dynamically built from an optional supplied
  * @a whereClause. SQL parameters are bound by supplying them in a
  * list of tuples in the @a variables parameter.
@@ -1959,7 +1988,7 @@ Family DbManager::GetFamily(const QString &acronym)
  *
  * @code
  * DbManager db;
- * QList<Family> families = db.GetFamilies();
+ * QVector<Family> families = db.GetFamilies();
  * @endcode
  *
  * @example GetFamiliesWhere
@@ -1983,10 +2012,10 @@ Family DbManager::GetFamily(const QString &acronym)
  *                     ).first();
  * @endcode
  */
-QList<Family> DbManager::GetFamilies(const QString &whereClause, const QList<std::tuple<QString, QVariant>> &variables)
+QVector<Family> DbManager::GetFamilies(const QString &whereClause, const QVector<std::tuple<QString, QVariant>> &variables)
 {
     QSqlDatabase db;
-    QList<Family> ret;
+    QVector<Family> ret;
     if (CheckDatabase(db))
     {
         QSqlQuery q(db);
@@ -2024,7 +2053,7 @@ QList<Family> DbManager::GetFamilies(const QString &whereClause, const QList<std
  */
 STIG DbManager::GetSTIG(int id)
 {
-    QList<STIG> tmpStigs = GetSTIGs(QStringLiteral("WHERE id = :id"), {std::make_tuple<QString, QVariant>(QStringLiteral(":id"), id)});
+    QVector<STIG> tmpStigs = GetSTIGs(QStringLiteral("WHERE id = :id"), {std::make_tuple<QString, QVariant>(QStringLiteral(":id"), id)});
     if (tmpStigs.count() > 0)
         return tmpStigs.first();
     STIG ret;
@@ -2044,7 +2073,7 @@ STIG DbManager::GetSTIG(int id)
  */
 STIG DbManager::GetSTIG(const QString &title, int version, const QString &release)
 {
-    QList<STIG> tmpStigs = GetSTIGs(QStringLiteral("WHERE title = :title AND release = :release AND version = :version"), {
+    QVector<STIG> tmpStigs = GetSTIGs(QStringLiteral("WHERE title = :title AND release = :release AND version = :version"), {
                                         std::make_tuple<QString, QVariant>(QStringLiteral(":title"), title),
                                         std::make_tuple<QString, QVariant>(QStringLiteral(":release"), release),
                                         std::make_tuple<QString, QVariant>(QStringLiteral(":version"), version)
@@ -2620,6 +2649,22 @@ bool DbManager::UpdateDatabaseFromVersion(int version)
 
             //write changes from update
             db.commit();
+        }
+
+        //upgrade to version 2 of the database
+        if (version < 2)
+        {
+            QSqlQuery q(db);
+            q.prepare(QStringLiteral("CREATE TABLE `Supplement` ( "
+                        "`id`	INTEGER PRIMARY KEY AUTOINCREMENT, "
+                        "`STIGId`	INTEGER, "
+                        "`path`	TEXT, "
+                        "`contents`	BLOB, "
+                        "FOREIGN KEY(`STIGId`) REFERENCES `STIG`(`id`)"
+                        ")"));
+            ret = q.exec() && ret;
+            ret = UpdateVariable("version", "2") && ret;
+            ret = q.exec() && ret;
         }
     }
     return ret;

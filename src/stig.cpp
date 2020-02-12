@@ -67,17 +67,27 @@ STIG::STIG(QObject *parent) : QObject(parent),
  * @brief STIG::GetSTIGChecks
  * @return The list of @a STIGChecks associated with this @a STIG.
  */
-QList<STIGCheck> STIG::GetSTIGChecks() const
+QVector<STIGCheck> STIG::GetSTIGChecks() const
 {
     DbManager db;
     return db.GetSTIGChecks(*this);
 }
 
 /**
+ * @brief STIG::GetSupplements
+ * @return The list of @a Supplements associated with this @a STIG.
+ */
+QVector<Supplement> STIG::GetSupplements() const
+{
+    DbManager db;
+    return db.GetSupplements(*this);
+}
+
+/**
  * @brief STIG::GetAssets
  * @return The list of @a Assets that use this @a STIG.
  */
-QList<Asset> STIG::GetAssets() const
+QVector<Asset> STIG::GetAssets() const
 {
     DbManager db;
     return db.GetAssets(*this);
@@ -126,16 +136,16 @@ STIG &STIG::operator=(const STIG &right)
  * are assumed to be equivalent. If not, the @a title, @a release,
  * and @a version form a unique key to test equivalence with.
  */
-bool STIG::operator==(const STIG &right)
+bool operator==(STIG const& lhs, STIG const& rhs)
 {
-    if ((id <= 0) || (right.id <= 0))
+    if ((lhs.id <= 0) || (rhs.id <= 0))
     {
-        return ((title == right.title) &&
+        return ((lhs.title == rhs.title) &&
                 // (description == right.description) && // description is irrelevant to a STIG being the same; the version numbers are what matter!
-                (release == right.release) &&
-                (version == right.version));
+                (lhs.release == rhs.release) &&
+                (lhs.version == rhs.version));
     }
-    return id == right.id;
+    return lhs.id == rhs.id;
 }
 
 /**

@@ -61,7 +61,7 @@ void WorkerSTIGAdd::ParseSTIG(const QByteArray &stig, const QString &fileName)
     STIGCheck c;
     s.id = -1;
     c.id = -1;
-    QList<STIGCheck> checks;
+    QVector<STIGCheck> checks;
     bool inStigRules = false;
     bool inProfile = false;
     bool inReference = false;

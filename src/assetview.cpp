@@ -200,7 +200,7 @@ void AssetView::SelectSTIGs(const QString &search)
     DbManager db;
 
     ui->lstSTIGs->clear();
-    QList<STIG> stigs = _asset.GetSTIGs();
+    QVector<STIG> stigs = _asset.GetSTIGs();
     Q_FOREACH (const STIG s, db.GetSTIGs())
     {
         if (!search.isEmpty())
@@ -885,7 +885,7 @@ void AssetView::UpdateCKLSeverity(const QString &val)
 void AssetView::UpdateSTIGs()
 {
     DbManager db;
-    QList<STIG> stigs = _asset.GetSTIGs();
+    QVector<STIG> stigs = _asset.GetSTIGs();
     for (int i = 0; i < ui->lstSTIGs->count(); i++)
     {
         QListWidgetItem *item = ui->lstSTIGs->item(i);

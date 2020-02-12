@@ -67,7 +67,7 @@ void WorkerCMRSExport::SetExportPath(const QString &fileName)
 void WorkerCMRSExport::process()
 {
     DbManager db;
-    QList<Asset> assets = db.GetAssets();
+    QVector<Asset> assets = db.GetAssets();
     Q_EMIT initialize(assets.count(), 0);
 
     Q_EMIT updateStatus(QStringLiteral("Preparing Data…"));

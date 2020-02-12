@@ -1007,8 +1007,8 @@ void STIGQter::ShowMessage(const QString &title, const QString &message)
 void STIGQter::EnableInput()
 {
     DbManager db;
-    QList<Family> f = db.GetFamilies();
-    QList<STIG> s = db.GetSTIGs();
+    QVector<Family> f = db.GetFamilies();
+    QVector<STIG> s = db.GetSTIGs();
     bool stigsNotImported = s.count() <= 0;
     bool isImport = db.IsEmassImport();
 

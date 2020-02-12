@@ -143,13 +143,13 @@ void WorkerHTML::process()
     //Load the STIG checks into memory
     Q_EMIT initialize(1, 0);
     Q_EMIT updateStatus(QStringLiteral("Loading STIG information into memory…"));
-    QList<STIG> stigs = db.GetSTIGs();
+    QVector<STIG> stigs = db.GetSTIGs();
 
-    QMap<STIG, QList<STIGCheck>> checkMap;
+    QMap<STIG, QVector<STIGCheck>> checkMap;
     int count = 0;
     Q_FOREACH (const STIG &s, stigs)
     {
-        QList<STIGCheck> checks = s.GetSTIGChecks();
+        QVector<STIGCheck> checks = s.GetSTIGChecks();
         count += checks.count();
         checkMap.insert(s, checks);
     }
@@ -260,7 +260,7 @@ void WorkerHTML::process()
             check.write(CheckItem(QStringLiteral("Group Title"), c.groupTitle).toStdString().c_str());
             check.write(CheckItem(QStringLiteral("Rule Version"), c.ruleVersion).toStdString().c_str());
             check.write(CheckItem(QStringLiteral("Severity"), GetSeverity(c.severity)).toStdString().c_str());
-            QList<CCI> ccis = c.GetCCIs();
+            QVector<CCI> ccis = c.GetCCIs();
             QStringList cciStr;
             if (ccis.count() > 0)
             {

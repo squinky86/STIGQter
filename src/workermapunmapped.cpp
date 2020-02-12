@@ -58,7 +58,7 @@ void WorkerMapUnmapped::process()
 {
     Q_EMIT updateStatus(QStringLiteral("Enumerating STIG Checks…"));
     DbManager db;
-    QList<STIGCheck> stigchecks = db.GetSTIGChecks();
+    QVector<STIGCheck> stigchecks = db.GetSTIGChecks();
     Q_EMIT initialize(stigchecks.count(), 0);
 
     CCI cci366 = db.GetCCIByCCI(366);
