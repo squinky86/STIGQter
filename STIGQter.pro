@@ -107,6 +107,7 @@ HEADERS += \
     src/supplement.h
 
 FORMS += \
+         src/stigedit.ui \
          src/stigqter.ui \
          src/help.ui \
          src/assetview.ui
