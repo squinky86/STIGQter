@@ -128,7 +128,7 @@ void WorkerCKLImport::ParseCKL(const QString &fileName)
                         if (tmpSTIG.id < 0)
                         {
                             //The STIG has not been imported.
-                            QMessageBox::warning(nullptr, QStringLiteral("STIG/SRG Not Found"), "The CKL file " + fileName + " is mapped against a STIG that has not been imported (" + tmpStr + ").");
+                            Q_EMIT ThrowWarning(QStringLiteral("STIG/SRG Not Found"), "The CKL file " + fileName + " is mapped against a STIG that has not been imported (" + tmpStr + ").");
                             return;
                         }
                         tmpCheck = db.GetSTIGCheck(tmpSTIG, xml->readElementText().trimmed());
@@ -209,7 +209,7 @@ void WorkerCKLImport::ParseCKL(const QString &fileName)
     a = CheckAsset(a);
     if (a.GetSTIGs().contains(tmpSTIG))
     {
-        QMessageBox::warning(nullptr, QStringLiteral("Asset already has STIG applied!"), "The asset " + PrintAsset(a) + " already has the STIG " + PrintSTIG(tmpSTIG) + " applied.");
+        Q_EMIT ThrowWarning(QStringLiteral("Asset already has STIG applied!"), "The asset " + PrintAsset(a) + " already has the STIG " + PrintSTIG(tmpSTIG) + " applied.");
         return;
     }
     db.AddSTIGToAsset(tmpSTIG, a);
