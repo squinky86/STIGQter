@@ -30,6 +30,7 @@ class Supplement : public QObject
 public:
     Supplement(const Supplement &right);
     explicit Supplement(QObject *parent = nullptr);
+    ~Supplement() override = default;
 
     int id;
     int STIGId;
