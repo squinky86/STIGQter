@@ -23,7 +23,6 @@
 #include "workercklimport.h"
 
 #include <QFile>
-#include <QMessageBox>
 #include <QXmlStreamReader>
 
 /**
@@ -50,7 +49,7 @@ void WorkerCKLImport::ParseCKL(const QString &fileName)
     QFile f(fileName);
     if (!f.open(QFile::ReadOnly | QFile::Text))
     {
-        QMessageBox::warning(nullptr, QStringLiteral("Unable to Open CKL"), "The CKL file " + fileName + " cannot be opened.");
+	Q_EMIT ThrowWarning(QStringLiteral("Unable to Open CKL"), "The CKL file " + fileName + " cannot be opened.");
         return;
     }
     DbManager db;
@@ -84,7 +83,7 @@ void WorkerCKLImport::ParseCKL(const QString &fileName)
                     if (stigs.contains(tmpSTIG))
                     {
                         Q_EMIT updateStatus("Unable to add " + PrintSTIG(tmpSTIG) + " to " + PrintAsset(a) + "!");
-                        QMessageBox::warning(nullptr, QStringLiteral("Asset already has STIG applied!"), "The asset " + PrintAsset(a) + " already has the STIG " + PrintSTIG(tmpSTIG) + " applied and will not be imported.");
+			Q_EMIT ThrowWarning(QStringLiteral("Asset already has STIG applied!"), "The asset " + PrintAsset(a) + " already has the STIG " + PrintSTIG(tmpSTIG) + " applied and will not be imported.");
                     }
                     else
                     {

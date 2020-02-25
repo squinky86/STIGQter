@@ -421,9 +421,9 @@ QString TrimFileName(const QString &fileName)
  * @param quiet
  * @param level
  *
- * When @a quiet is @c true, displays a warning box with the provided
- * @a title and @a message. The title and message are always printed
- * on the console/debug log.
+ * When @a quiet is not @c true, displays a warning box with the
+ * provided @a title and @a message. The title and message are always
+ * printed on the console/debug log.
  */
 void Warning(const QString &title, const QString &message, const bool quiet, const int level)
 {

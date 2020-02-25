@@ -24,7 +24,6 @@
 #include <cstdlib>
 #include <QCryptographicHash>
 #include <QFile>
-#include <QMessageBox>
 #include <QSqlQuery>
 #include <QSqlError>
 #include <QThread>
@@ -959,7 +958,7 @@ Asset DbManager::GetAsset(int id)
     QVector<Asset> tmp = GetAssets(QStringLiteral("WHERE Asset.id = :id"), {std::make_tuple<QString, QVariant>(QStringLiteral(":id"), id)});
     if (tmp.count() > 0)
         return tmp.first();
-    QMessageBox::warning(nullptr, QStringLiteral("Unable to Find Asset"), "The Asset ID " + QString::number(id) + " was not found in the database.");
+    Warning(QStringLiteral("Unable to Find Asset"), "The Asset ID " + QString::number(id) + " was not found in the database.", true);
     Asset a;
     return a;
 }
@@ -1302,7 +1301,7 @@ CKLCheck DbManager::GetCKLCheck(int id)
         return tmp.first();
     }
     CKLCheck ret;
-    QMessageBox::warning(nullptr, QStringLiteral("Unable to Find CKLCheck"), "The CKLCheck of ID " + QString::number(id) + " was not found in the database.");
+    Warning(QStringLiteral("Unable to Find CKLCheck"), "The CKLCheck of ID " + QString::number(id) + " was not found in the database.");
     return ret;
 }
 
@@ -2075,7 +2074,7 @@ STIG DbManager::GetSTIG(int id)
     if (tmpStigs.count() > 0)
         return tmpStigs.first();
     STIG ret;
-    Warning(QStringLiteral("Unable to Find STIG"), "The STIG of ID " + QString::number(id) + " was not found in the database.", true);
+    Warning(QStringLiteral("Unable to Find STIG"), "The STIG of ID " + QString::number(id) + " was not found in the database.");
     return ret;
 }
 
