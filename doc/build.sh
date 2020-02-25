@@ -1,14 +1,14 @@
 #!/bin/bash
 
 function exists {
-	which $1 > /dev/null 2> /dev/null
+	which "$1" > /dev/null 2> /dev/null
 	ret=$?
 	#program doesn't exist; check if aliased
 	if [ $ret -gt 0 ]; then
 		if [ -z "$2" ]; then
 			echo "Checking alias for $1..."
 		fi
-		type -a $1
+		type -a "$1"
 		# > /dev/null 2> /dev/null
 		ret=$?
 	fi
@@ -23,7 +23,7 @@ function exists {
 }
 
 function lbll {
-	lualatex $1 && biber $1 && lualatex $1 && lualatex $1
+	lualatex "$1" && biber "$1" && lualatex "$1" && lualatex "$1"
 	if exists pdfsizeopt 1; then
 		OPTS=""
 		if exists pngwolf 1; then
@@ -32,9 +32,9 @@ function lbll {
 		if exists advpng 1; then
 			OPTS="${OPTS} --use-image-optimizer=advpng4"
 		fi
-		pdfsizeopt $OPTS $1.pdf
+		pdfsizeopt $OPTS "$1.pdf"
 		if [ -f "${1}.pso.pdf" ]; then
-			mv ${1}.pso.pdf ${1}.pdf
+			mv "${1}.pso.pdf" "${1}.pdf"
 		fi
 	fi
 }

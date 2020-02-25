@@ -18,6 +18,7 @@ before_install:
  - pushd /tmp && wget https://github.com/jmcnamara/libxlsxwriter/archive/RELEASE_0.9.4.tar.gz && tar -zxf RELEASE_0.9.4.tar.gz && popd
  - pushd /tmp/libxlsxwriter-RELEASE_0.9.4 && make && sudo make install PREFIX=/usr && popd
  - pip install --user cpp-coveralls
+ - cpanm --quiet --notest Devel::Cover::Report::Kritika
 
 script:
  - sed -i -e 's:INCLUDEPATH[ ]*=[ ]*:INCLUDEPATH = /usr/include/tidy :g' STIGQter.pro
@@ -33,4 +34,5 @@ after_success:
  - for x in src/*.cpp; do LC_ALL=en gcov --branch-probabilities --branch-counts ${x} -o .; done
  - sonar-scanner
  - coveralls --gcov-options '\-lp'
+ - cover -ignore_re=^/ -ignore_re=^t -report kritika
  - bash <(curl -s https://codecov.io/bash)
