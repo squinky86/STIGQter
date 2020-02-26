@@ -146,6 +146,7 @@ This page intentionally left blank for 2-sided printing compatibility.
 \begin{Revision}
 \RevisionEntry{\date{\changelog\formatdate{16}{1}{2020}}}{Jon Hood}{Initial Release of SC Policy}
 \RevisionEntry{\date{\changelog\formatdate{28}{1}{2020}}}{Jon Hood}{Prepare for 1.0 Release}
+\RevisionEntry{\date{\changelog\formatdate{26}{2}{2020}}}{James Shelton}{Update to support not-applicable CCI documentation}
 \end{Revision}
 \newpage
 
@@ -199,6 +200,12 @@ No coordination with other organizations is required to operate this software.
 
 \section{RMF Control Compliance}
 
+\subsection{SC-2 -- Application Partitioning}
+
+\paragraph{Applicable CCIs:} CCI-1082
+
+Application functionality is kept separate from information system management functionality. Application data is protected in an application-generated database which has the same access control as the application and the underlying operating system.
+
 \subsection{SC-3 -- Security Function Isolation}
 
 \paragraph{Applicable CCIs:} CCI-1084
@@ -214,13 +221,11 @@ All shared resources are protected in accordance with the protections listed in 
 \subsection{SC-5 -- Denial of Service Protection}
 \label{sec:sc-5}
 
-\paragraph{Compliant CCIs:} CCI-1093, CCI-2386
+\paragraph{Applicable CCIs:} CCI-1093, CCI-2386
 
 Current DoS attacks are listed under CCI-2385. Mitigation is to not load CKLs or XCCDF files from untrusted sources.
 
-\paragraph{\textcolor{red}{Non-Compliant CCIs:}} CCI-2385
-
-A current DoS attack
+\paragraph{\textcolor{red}{Non-Compliant CCI(s):}} CCI-2385
 
 The software has a known bug involving XML bombs. See \href{Issue #26}{https://github.com/squinky86/STIGQter/issues/26} in the STIGQter issue tracker.
 
@@ -230,13 +235,31 @@ See SA-15(4) in the SA documentation for threat models.
 
 \subsubsection{SC-5(1) -- Restrict Internal Users}
 
+\paragraph{Applicable CCIs:} CCI-2387
+
+The software does not connect to services in a way that would launch a DoS attack.
+
 \paragraph{\textcolor{red}{Non-Compliant CCIs:}} CCI-1094
 
 See Section~\ref{sec:sc-5} for more details.
 
-\paragraph{Applicable CCIs:} CCI-2387
+\subsubsection{SC-5(2) -- Excess Capacity / Bandwidth / Redundancy}
 
-The software does not connect to services in a way that would launch a DoS attack.
+\paragraph{Applicable CCIs:} None
+
+\paragraph{Non-Applicable CCI(s):} CCI-1095
+
+The application does not define capacity, bandwidth, or other redundancy limits to reduce the impact of information flooding types of denial of service attacks. Definition of these limits is external to this accreditation boundary.
+
+\subsection{SC-7 -- Boundary Protection}
+
+\subsubsection{SC-7(13) - Isolation of Security Tools / Mechanisms / Support Components}
+
+\paragraph{Applicable CCIs:} None
+
+\paragraph{Non-Applicable CCI(s):} CCI-1119, CCI-1120
+
+Because of the non-privileged nature of the application, the application does not define information security tools, mechanisms, and support components to be isolated, nor does it implement any form of isolation mechanisms.
 
 \subsection{SC-8 -- Transmission Confidentiality and Integrity}
 \label{sec:sc-8}
@@ -249,7 +272,11 @@ All connections opened by the application are HTTPS to publicly released sources
 
 \paragraph{Applicable CCIs:} CCI-2421
 
+\paragraph{Non-Applicable CCI(s):} CCI-2419
+
 All connections are protected with the safeguards listed in Section~\ref{sec:sc-8}.
+
+The application does not implement an alternate means of physical protection when not using cryptographic protection.
 
 \subsubsection{SC-8(2) -- Pre/Post Transmission Handling}
 
@@ -304,11 +331,17 @@ On certificate validation failure or session close, HTTPS protocol ends the sess
 
 Randomness and negotiation of session IDs are inherent in the HTTPS protocol.
 
+\subsubsection{SC-23(5) -- Allowed Certificate Authorities}
+
+\paragraph{Applicable CCIs:} CCI-2469, CCI-2470 
+
+Configuration of certificate authorities for session authentication is inherent in the HTTPS protocol.
+
 \subsection{SC-24 -- Fail in Known State}
 
-\paragraph{Applicable CCIs:} CCI-1190, CCI-1665
+\paragraph{Applicable CCIs:} CCI-1190, CCI-1191, CCI-1192, CCI-1193, CCI-1665
 
-If the application fails, it logs the failure and allows the user to ignore the error if possible, or exists the program.
+If the application fails, it logs the failure and allows the user to ignore the error if possible, or exits the program.
 
 \subsection{SC-28 -- Protection of Information at Rest}
 \label{sec:sc-28}
@@ -319,9 +352,17 @@ All data handled by the default application is publicly releasable and does not 
 
 \subsubsection{SC-28(1) -- Cryptographic Protection}
 
-\paragraph{Applicable CCIs:} CCI-2473, CCI-2475, CCI-2476
+\paragraph{Applicable CCIs:} CCI-2473, CCI-2474, CCI-2475, CCI-2476
 
-Please see Section~\ref{sec:sc-28} for encryption protections. Encryption should be commensurate with the protection required for the data.
+See Section~\ref{sec:sc-28} for encryption protections. Encryption should be commensurate with the protection required for the data.
+
+\subsection{SC-39 -- Process Isolation}
+
+\paragraph{Applicable CCIs:} None
+
+\paragraph{Non-Applicable CCI(s):} CCI-2530
+
+The application does not support multiple execution processes, and therefore does not define requirements with respect to the isolation of execution processes into separate execution domains. Details pertaining to multiple processes and process isolation is external to this accreditation boundary.
 
 \clearpage
 \printbibliography
