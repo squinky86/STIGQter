@@ -329,7 +329,7 @@ void AssetView::UpdateCKLCheck(const CKLCheck &cklCheck)
  */
 void AssetView::UpdateSTIGCheck(const STIGCheck &stigCheck)
 {
-    ui->lblCheckRule->setText(stigCheck.rule);
+    ui->lblCheckRule->setText(stigCheck.rule + " (" + stigCheck.vulnNum + ")");
     ui->lblCheckTitle->setText(stigCheck.title);
     ui->cboBoxSeverity->setCurrentText(GetSeverity(stigCheck.severity));
     ui->cbDocumentable->setChecked(stigCheck.documentable);
