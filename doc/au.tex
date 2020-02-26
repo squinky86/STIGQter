@@ -146,6 +146,7 @@ This page intentionally left blank for 2-sided printing compatibility.
 \begin{Revision}
 \RevisionEntry{\date{\changelog\formatdate{9}{1}{2020}}}{Jon Hood}{Initial Release of AU Policy}
 \RevisionEntry{\date{\changelog\formatdate{28}{1}{2020}}}{Jon Hood}{Prepare for 1.0 Release}
+\RevisionEntry{\date{\changelog\formatdate{26}{2}{2020}}}{James Shelton}{Update to support not-applicable CCI documentation}
 \end{Revision}
 \newpage
 
@@ -195,6 +196,7 @@ No coordination with other organizations is required to operate this software.
 \section{RMF Control Compliance}
 
 \subsection{AU-3 -- Content of Audit Records}
+\label{sec:au-3}
 
 \paragraph{Applicable CCIs:} CCI-130, CCI-131, CCI-132, CCI-133, CCI-134, CCI-1487
 
@@ -211,7 +213,7 @@ The application logs failures, including errors in STIG↔CCI mappings.
 \subsubsection{AU-3(2) -- Centralized Management of Planned Audit Record Content}
 \label{sec:au-3-2}
 
-\paragraph{Applicable CCIs:} CCI-1844
+\paragraph{Applicable CCIs:} CCI-1844, CCI-1846, CCI-1847
 
 Logs are placed into the \texttt{Log} table. Any SQLite viewing software can review the logs. The recommended tool to use to correlate and manage the logs is the \href{https://sqlitebrowser.org/}{DB Browser for SQLite}.
 
@@ -250,23 +252,35 @@ The application will show an error message when logging failures occur. This mes
 
 If desired, the user may issue a bug report to STIGQter's issue tracker on GitHub.
 
+\subsubsection{AU-5(1) -- Audit Storage Capacity}
+
+\paragraph{Applicable CCIs:} None
+
+\paragraph{Non-Applicable CCI(s):} CCI-1852, CCI-1853, CCI-1854, CCI-1855
+
+Audit storage control is performed at the operating system level, and the nature of audit record storage is also determined by the underlying operating system.
+
 \subsubsection{AU-5(2) -- Real-Time Alerts}
 
-\paragraph{Applicable CCIs:} CCI-1857, CCI-1858
+\paragraph{Applicable CCIs:} CCI-147, CCI-1856, CCI-1857, CCI-1858
 
 The alerts in Section~\ref{sec:au-5} are displayed to the user immediately.
 
 \subsection{AU-6 -- Audit Review, Analysis, and Reporting}
 
-\paragraph{Applicable CCIs:} CCI-148, CCI-1862, CCI-1863
+\paragraph{Applicable CCIs:} None
 
-Any anomalous log records should be reported to the project's GitHub issue tracker.
+\paragraph{Non-Applicable CCI(s):} CCI-148, CCI-149, CCI-151, CCI-1862, CCI-1863
+
+The application does not implement any audit processing at an application level. Any audit processing is done at the operating system level. Any review, analysis, or reporting of audit generation or audit content must be done manually by the user. The user can define activity to be reviewed and analyzed in the audit contents, but these definitions are not stored or implemented by the application itself. Any anomalous log records should be reported to the project's GitHub issue tracker.
 
 \subsubsection{AU-6(4) -- Central Review and Analysis}
 
-\paragraph{Applicable CCIs:} CCI-154
+\paragraph{Applicable CCIs:} None
 
-Central logging can be configured with the procedures in Section~\ref{sec:au-4-1}.
+\paragraph{Non-Applicable CCI(s):} CCI-154
+
+Central logging can be configured with the procedures in Section~\ref{sec:au-4-1}, but any review, analysis, or reporting of audit generation or audit content must be done manually by the user. The user can define a centralized entity to review and analyze the audit contents, but this definition is not stored or implemented by the application itself.
 
 \subsubsection{AU-6(10) -- Audit Level Adjustment}
 
@@ -289,43 +303,45 @@ The audit record sorting and filtering defined in Section~\ref{sec:au-7} can be 
 
 \subsection{AU-8 -- Time Stamps}
 
-\paragraph{Aplicable CCIs:} CCI-159, CCI-1889, CCI-1890
+\paragraph{Applicable CCIs:} CCI-159, CCI-1888, CCI-1889, CCI-1890
 
 The application uses the local system clock for logging. Timestamps are recorded in ISO 8601 format with timezones and to-the-second granularity.
 
 \subsection{AU-9 -- Protection of Audit Information}
 
-\paragraph{Applicable CCIs:} CCI-162, CCI-163, CCI-164
+\paragraph{Applicable CCIs:} CCI-162, CCI-163, CCI-164, CCI-1493, CCI-1494, CCI-1495
 
 No user management occurs in the application. The user is granted permissions to their files, and the user is defined as the proper role for accessing these records.
 
 \subsubsection{AU-9(2) -- Audit Backup on Separate Physical Systems / Components}
 
-\paragraph{Applicable CCIs:} CCI-1348
+\paragraph{Applicable CCIs:} CCI-1348, CCI-1349, CCI-1575
 
 Backups, including audits, are available on the off-site backup/nightly server documented in the CP policy.
 
 \subsubsection{AU-9(3) -- Cryptographic Protection}
 
-\paragraph{Applicable CCIs:} CCI-1350
+\paragraph{Applicable CCIs:} CCI-1350, CCI-1496
 
 The application builds a SHA3\_256 sum of the database when writing the database out to a file, including the \texttt{Log} table.
 
 \subsection{AU-10 -- Non-Repudiation}
 
-\paragraph{Non-Applicable CCIs:} CCI-166
+\paragraph{Applicable CCIs:} None
 
-The application design does not dictate any non-repudiation services or requirements.
+\paragraph{Non-Applicable CCI(s):} CCI-166, CCI-1899
+
+The application does not implement any non-repudiation features. Actions and outputs can be manually assigned non-repudiation factors by the users, but no non-repudiation additions or checks occur at an application level. Non-repudiation measures are external to this accreditation boundary.
 
 \subsection{AU-11 -- Audit Record Retention}
 
-\paragraph{Applicable CCIs:} CCI-167
+\paragraph{Applicable CCIs:} CCI-167, CCI-168
 
 Audit and log records are retained indefinitely.
 
 \subsection{AU-12 -- Audit Generation}
 
-\paragraph{Applicable CCIs:} CCI-169, CCI-172
+\paragraph{Applicable CCIs:} CCI-169, CCI-171, CCI-172, CCI-1459, CCI-1910
 
 When an auditable/loggable event is triggered, a new entry in the \texttt{Log} table is created. This includes logs where a header is set. All errors and issues are logged.
 
@@ -338,7 +354,7 @@ All log records are timestamped to the second. Correlation can be managed by the
 \subsubsection{AU-12(3) -- Audit Generation | Changes by Authorized Individuals}
 \label{au-12-3}
 
-\paragraph{Applicable CCIs:} CCI-1911, CCI-1912, CCI-1914, CCI-2047
+\paragraph{Applicable CCIs:} CCI-1911, CCI-1912, CCI-1913, CCI-1914, CCI-2047
 
 Log records are stored in the SQLite database under the \texttt{Log} table. Users may select only the severity level of errors they wish to see:
 \begin{enumerate}
@@ -350,11 +366,17 @@ Log records are stored in the SQLite database under the \texttt{Log} table. User
 	\item Debugging
 \end{enumerate}
 
-Logs should be reviewed by the user as needed by the user.
+Logs should be reviewed by the user as needed.
 
 \subsection{AU-14 -- Session Audit}
 
-\subsection{AU-14(1) -- System Start-Up}
+\paragraph{Applicable CCIs:} None
+
+\paragraph{Non-Applicable CCI(s):} CCI-1919
+
+The application does not define user accounts or account classifications. Because of the non-privileged nature of the application, the application does not implement user sessions, and therefore does not implement session audits as described in the relevant CCI. The capability of authorized users to capture or record user sessions is external to this accreditation boundary.
+
+\subsubsection{AU-14(1) -- System Start-Up}
 
 \paragraph{Applicable CCIs:} CCI-1464
 
