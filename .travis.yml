@@ -31,14 +31,19 @@ script:
  - echo "DEFINES += USE_TESTS" >> STIGQter.pro
  - qmake STIGQter.pro
  - sed -i -e 's:-O2:-O0 -fprofile-arcs -ftest-coverage:g' -e 's:-Wl,-O1:-Wl,-O1 -lgcov --coverage:g' Makefile
- - build-wrapper-linux-x86-64 --out-dir bw-output make -j3
+ - build-wrapper-linux-x86-64 --out-dir bw-output make --quiet -j3
  - pushd doc && ./build.sh && popd
- - ./STIGQter tests
+ - ./STIGQter tests > STIGQter.tests &
+ - while [ ! -z "`pgrep STIGQter`" ]; do sleep 10 && tail -n 1 STIGQter.tests; done
+ - tail -n 100 STIGQter.tests
 
 after_success:
  - for x in src/*.cpp; do LC_ALL=en gcov --branch-probabilities --branch-counts ${x} -o .; done
  - sonar-scanner
  - coveralls --gcov-options '\-lp'
- - gcov2perl *.gcov
- - cover -ignore_re=^/ -ignore_re=^t -report kritika
- - bash <(curl -s https://codecov.io/bash)
+ - gcov2perl *.gcov >> STIGQter.tests
+ - tail -n 100 STIGQter.tests
+ - cover -ignore_re=^/ -ignore_re=^t -report kritika >> STIGQter.tests
+ - tail -n 100 STIGQter.tests
+ - bash <(curl -s https://codecov.io/bash) >> STIGQter.tests
+ - tail -n 100 STIGQter.tests
