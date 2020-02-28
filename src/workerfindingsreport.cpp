@@ -113,8 +113,9 @@ void WorkerFindingsReport::process()
     worksheet_write_string(wsFindings, 0, 8, "Title", fmtBold);
     worksheet_write_string(wsFindings, 0, 9, "Vuln", fmtBold);
     worksheet_write_string(wsFindings, 0, 10, "Discussion", fmtBold);
-    worksheet_write_string(wsFindings, 0, 11, "Finding Details", fmtBold);
-    worksheet_write_string(wsFindings, 0, 12, "Comments", fmtBold);
+    worksheet_write_string(wsFindings, 0, 11, "Fix", fmtBold);
+    worksheet_write_string(wsFindings, 0, 12, "Finding Details", fmtBold);
+    worksheet_write_string(wsFindings, 0, 13, "Comments", fmtBold);
 
     //write headers for CCI findings
     worksheet_write_string(wsCCIs, 0, 0, "Control", fmtBold);
@@ -164,10 +165,12 @@ void WorkerFindingsReport::process()
             worksheet_write_string(wsFindings, onRow, 9, Excelify(sc.vulnNum).toStdString().c_str(), nullptr);
             //discussion
             worksheet_write_string(wsFindings, onRow, 10, Excelify(sc.vulnDiscussion).toStdString().c_str(), nullptr);
+            //fix text
+            worksheet_write_string(wsFindings, onRow, 11, Excelify(sc.fix).toStdString().c_str(), nullptr);
             //details
-            worksheet_write_string(wsFindings, onRow, 11, Excelify(cc.findingDetails).toStdString().c_str(), nullptr);
+            worksheet_write_string(wsFindings, onRow, 12, Excelify(cc.findingDetails).toStdString().c_str(), nullptr);
             //comments
-            worksheet_write_string(wsFindings, onRow, 12, Excelify(cc.comments).toStdString().c_str(), nullptr);
+            worksheet_write_string(wsFindings, onRow, 13, Excelify(cc.comments).toStdString().c_str(), nullptr);
 
             //if the check is a finding, add it to the CCI sheet
             if (s == Status::Open)
