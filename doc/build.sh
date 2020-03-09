@@ -23,8 +23,17 @@ function exists {
 }
 
 function lbll {
-	lualatex "$1" && biber "$1" && lualatex "$1" && lualatex "$1"
+	echo -n "Building $1..."
+	buf=$(mktemp)
+	lualatex "$1" >> $buf && biber "$1" >> $buf && lualatex "$1" >> $buf && lualatex "$1" >> $buf
+	if [ $? -eq 0 ]; then
+		echo "OK!"
+	else
+		echo "FAILED!"
+		tail -n 100 $buf
+	fi
 	if exists pdfsizeopt 1; then
+		echo -n "Compressing $1..."
 		OPTS=""
 		if exists pngwolf 1; then
 			OPTS="--use-image-optimizer=pngwolf"
@@ -32,11 +41,15 @@ function lbll {
 		if exists advpng 1; then
 			OPTS="${OPTS} --use-image-optimizer=advpng4"
 		fi
-		pdfsizeopt $OPTS "$1.pdf"
+		pdfsizeopt $OPTS "$1.pdf" >> $buf
 		if [ -f "${1}.pso.pdf" ]; then
+			echo "OK!"
 			mv "${1}.pso.pdf" "${1}.pdf"
+		else
+			echo "FAILED!"
 		fi
 	fi
+	rm $buf
 }
 
 exists lualatex
