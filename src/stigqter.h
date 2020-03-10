@@ -58,6 +58,7 @@ private Q_SLOTS:
     void DeleteEmass();
     void DeleteSTIGs();
     void DownloadSTIGs();
+    void EditSTIG();
     void ExportCKLs(const QString &dir = QString());
     void ExportCMRS(const QString &fileName = QString());
     void ExportEMASS(const QString &fileName = QString());

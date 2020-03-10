@@ -1,7 +1,7 @@
 /*
  * STIGQter - STIG fun with Qt
  *
- * Copyright © 2020 Jon Hood, http://www.hoodsecurity.com/
+ * Copyright © 2018–2020 Jon Hood, http://www.hoodsecurity.com/
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -17,31 +17,30 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#ifndef TABVIEWWIDGET_H
-#define TABVIEWWIDGET_H
+#ifndef STIGEDIT_H
+#define STIGEDIT_H
 
 #include <QWidget>
 
-enum TabType
-{
-    stig = 2,
-    asset = 1,
-    root = 0
-};
+#include "stig.h"
+#include "tabviewwidget.h"
 
-class TabViewWidget : public QWidget
+namespace Ui {
+class STIGEdit;
+}
+
+class STIGEdit : public TabViewWidget
 {
     Q_OBJECT
+
 public:
-    explicit TabViewWidget(QWidget *parent = nullptr);
-    void SetTabIndex(int index);
-    virtual TabType GetTabType();
+    STIGEdit() = delete;
+    STIGEdit(const STIGEdit &se) = delete;
+    explicit STIGEdit(STIG &stig, QWidget *parent = nullptr);
+    TabType GetTabType() override;
 
-protected:
-    int _tabIndex;
-
-Q_SIGNALS:
-    void CloseTab(int);
+private:
+    Ui::STIGEdit *ui;
 };
 
-#endif // TABVIEWWIDGET_H
+#endif // STIGEDIT_H

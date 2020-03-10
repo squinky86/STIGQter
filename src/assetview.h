@@ -50,7 +50,7 @@ public:
     void DisableInput();
     void Display();
     void EnableInput();
-    TabType GetTabType();
+    TabType GetTabType() override;
     void SelectSTIGs(const QString &search = QString());
     void ShowChecks(bool countOnly = false);
     void UpdateCKLCheck(const CKLCheck &cklCheck);
@@ -92,9 +92,6 @@ private:
     void SetItemColor(QListWidgetItem *i, Status stat, Severity sev);
     bool _isFiltered;
     STIGQter *_parent;
-
-Q_SIGNALS:
-    void CloseTab(int);
 };
 
 #endif // ASSETVIEW_H

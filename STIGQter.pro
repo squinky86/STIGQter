@@ -42,77 +42,79 @@ DEFINES += QT_DEPRECATED_WARNINGS
 CONFIG += c++1z
 
 SOURCES += \
-           src/main.cpp \
-	   src/stigqter.cpp \
-           src/dbmanager.cpp \
-           src/common.cpp \
+    src/asset.cpp \
+    src/assetview.cpp \
+    src/cci.cpp \
+    src/cklcheck.cpp \
+    src/common.cpp \
+    src/control.cpp \
+    src/dbmanager.cpp \
+    src/family.cpp \
+    src/help.cpp \
+    src/main.cpp \
+    src/stig.cpp \
+    src/stigcheck.cpp \
+    src/stigedit.cpp \
+    src/stigqter.cpp \
+    src/supplement.cpp \
     src/tabviewwidget.cpp \
     src/worker.cpp \
+    src/workerassetadd.cpp \
     src/workerassetckl.cpp \
-           src/workerccidelete.cpp \
-           src/workercciadd.cpp \
-           src/help.cpp \
-           src/control.cpp \
-           src/cci.cpp \
-    src/workermapunmapped.cpp \
-           src/workerstigadd.cpp \
-           src/stig.cpp \
-           src/stigcheck.cpp \
-           src/cklcheck.cpp \
-           src/family.cpp \
-           src/workerstigdelete.cpp \
-           src/asset.cpp \
-           src/workerassetadd.cpp \
-           src/workercklimport.cpp \
-           src/assetview.cpp \
-           src/workerfindingsreport.cpp \
-           src/workeremassreport.cpp \
-           src/workerimportemass.cpp \
-    src/workercklexport.cpp \
-    src/workerhtml.cpp \
+    src/workercciadd.cpp \
+    src/workerccidelete.cpp \
     src/workercheckversion.cpp \
+    src/workercklexport.cpp \
+    src/workercklimport.cpp \
     src/workercmrsexport.cpp \
-    src/workerstigdownload.cpp \
-    src/supplement.cpp
+    src/workeremassreport.cpp \
+    src/workerfindingsreport.cpp \
+    src/workerhtml.cpp \
+    src/workerimportemass.cpp \
+    src/workermapunmapped.cpp \
+    src/workerstigadd.cpp \
+    src/workerstigdelete.cpp \
+    src/workerstigdownload.cpp
 
 HEADERS += \
-           src/stigqter.h \
-           src/dbmanager.h \
-           src/common.h \
-           src/family.h \
+    src/asset.h \
+    src/assetview.h \
+    src/cci.h \
+    src/cklcheck.h \
+    src/common.h \
+    src/control.h \
+    src/dbmanager.h \
+    src/family.h \
+    src/help.h \
+    src/stig.h \
+    src/stigcheck.h \
+    src/stigedit.h \
+    src/stigqter.h \
+    src/supplement.h \
     src/tabviewwidget.h \
     src/worker.h \
+    src/workerassetadd.h \
     src/workerassetckl.h \
-           src/workerccidelete.h \
-           src/workercciadd.h \
-           src/control.h \
-           src/cci.h \
-           src/help.h \
-    src/workermapunmapped.h \
-           src/workerstigadd.h \
-           src/stig.h \
-           src/stigcheck.h \
-           src/cklcheck.h \
-           src/workerstigdelete.h \
-           src/asset.h \
-           src/workerassetadd.h \
-           src/workercklimport.h \
-           src/assetview.h \
-           src/workerfindingsreport.h \
-           src/workeremassreport.h \
-           src/workerimportemass.h \
-    src/workercklexport.h \
-    src/workerhtml.h \
+    src/workercciadd.h \
+    src/workerccidelete.h \
     src/workercheckversion.h \
+    src/workercklexport.h \
+    src/workercklimport.h \
     src/workercmrsexport.h \
-    src/workerstigdownload.h \
-    src/supplement.h
+    src/workeremassreport.h \
+    src/workerfindingsreport.h \
+    src/workerhtml.h \
+    src/workerimportemass.h \
+    src/workermapunmapped.h \
+    src/workerstigadd.h \
+    src/workerstigdelete.h \
+    src/workerstigdownload.h
 
 FORMS += \
-         src/stigedit.ui \
-         src/stigqter.ui \
-         src/help.ui \
-         src/assetview.ui
+    src/assetview.ui \
+    src/help.ui \
+    src/stigedit.ui \
+    src/stigqter.ui
 
 # Default rules for deployment.
 qnx: target.path = /tmp/$${TARGET}/bin

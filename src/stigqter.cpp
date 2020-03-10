@@ -20,6 +20,7 @@
 #include "assetview.h"
 #include "common.h"
 #include "help.h"
+#include "stigedit.h"
 #include "stigqter.h"
 #include "workerassetadd.h"
 #include "workercciadd.h"
@@ -748,6 +749,33 @@ void STIGQter::DownloadSTIGs()
 }
 
 /**
+ * @brief STIGQter::EditSTIG
+ *
+ * Opens the selected STIG(s) for editing
+ */
+void STIGQter::EditSTIG()
+{
+    Q_FOREACH(QListWidgetItem *i, ui->lstSTIGs->selectedItems())
+    {
+        auto s = i->data(Qt::UserRole).value<STIG>();
+        QString stigName = PrintSTIG(s);
+        for (int j = 0; j < ui->tabDB->count(); j++)
+        {
+             if (ui->tabDB->tabText(j) == stigName)
+             {
+                 ui->tabDB->setCurrentIndex(j);
+                 return;
+             }
+        }
+        auto *se = new STIGEdit(s, this);
+        connect(se, SIGNAL(CloseTab(int)), this, SLOT(CloseTab(int)));
+        int index = ui->tabDB->addTab(se, stigName);
+        se->SetTabIndex(index);
+        ui->tabDB->setCurrentIndex(index);
+    }
+}
+
+/**
  * @brief STIGQter::ExportCKLs
  * @param dir
  *
@@ -1052,6 +1080,7 @@ void STIGQter::EnableInput()
         ui->btnImportSTIGs->setEnabled(false);
     }
     ui->btnClearSTIGs->setEnabled(true);
+    ui->btnEditSTIG->setEnabled(true);
     ui->btnCreateCKL->setEnabled(true);
     ui->btnDeleteEmassImport->setEnabled(isImport);
     ui->btnImportCKL->setEnabled(true);
@@ -1137,6 +1166,7 @@ void STIGQter::DisableInput()
     ui->btnCreateCKL->setEnabled(false);
     ui->btnDeleteEmassImport->setEnabled(false);
     ui->btnDownloadSTIGs->setEnabled(false);
+    ui->btnEditSTIG->setEnabled(false);
     ui->btnImportCCIs->setEnabled(false);
     ui->btnImportCKL->setEnabled(false);
     ui->btnImportEmass->setEnabled(false);
