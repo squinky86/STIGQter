@@ -32,11 +32,13 @@
 #include <QTimer>
 #include <QWidget>
 
+#include "tabviewwidget.h"
+
 namespace Ui {
 class AssetView;
 }
 
-class AssetView : public QWidget
+class AssetView : public TabViewWidget
 {
     Q_OBJECT
 
@@ -48,11 +50,11 @@ public:
     void DisableInput();
     void Display();
     void EnableInput();
+    TabType GetTabType();
     void SelectSTIGs(const QString &search = QString());
     void ShowChecks(bool countOnly = false);
     void UpdateCKLCheck(const CKLCheck &cklCheck);
     void UpdateSTIGCheck(const STIGCheck &stigCheck);
-    void SetTabIndex(int index);
 #ifdef USE_TESTS
     void ProcEvents();
     void RunTests();
@@ -86,7 +88,6 @@ private:
     QTimer _timerChecks;
     QList<QShortcut*> _shortcuts;
     bool _updateStatus;
-    int _tabIndex;
     void KeyShortcut(Status action);
     void SetItemColor(QListWidgetItem *i, Status stat, Severity sev);
     bool _isFiltered;

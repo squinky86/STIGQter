@@ -321,16 +321,20 @@ void STIGQter::RunTests()
 
         for (int j = 1; j < ui->tabDB->count(); j++)
         {
-            auto *tmpAssetView = dynamic_cast<AssetView*>(ui->tabDB->widget(j));
+            auto *tmpTabView = dynamic_cast<TabViewWidget*>(ui->tabDB->widget(j));
 
-            if (tmpAssetView)
-                tmpAssetView->SetTabIndex(j);
+            if (tmpTabView)
+                tmpTabView->SetTabIndex(j);
 
             ProcEvents();
 
             //run AssetView tests
             std::cout << "\tTest " << step++ << ": Running Asset Tests" << std::endl;
-            tmpAssetView->RunTests(); //will delete asset
+            if (tmpTabView->GetTabType() == TabType::asset)
+            {
+                auto *tmpAssetView = dynamic_cast<AssetView*>(tmpTabView);
+                tmpAssetView->RunTests(); //will delete asset
+            }
             ProcEvents();
         }
     }
@@ -669,9 +673,9 @@ void STIGQter::CloseTab(int index)
     for (int j = 1; j < ui->tabDB->count(); j++)
     {
         //reset the tab indices for the tabs that were not closed
-        auto *tmpAssetView = dynamic_cast<AssetView*>(ui->tabDB->widget(j));
-        if (tmpAssetView)
-            tmpAssetView->SetTabIndex(j);
+        auto *tmpTabView = dynamic_cast<TabViewWidget*>(ui->tabDB->widget(j));
+        if (tmpTabView)
+            tmpTabView->SetTabIndex(j);
     }
     DisplayAssets();
 }
@@ -1060,8 +1064,12 @@ void STIGQter::EnableInput()
     ui->tabDB->setEnabled(true);
     for (int i = 1; i < ui->tabDB->count(); i++)
     {
-        auto *tmpAssetView = dynamic_cast<AssetView*>(ui->tabDB->widget(i));
-        tmpAssetView->EnableInput();
+        auto *tmpTabView = dynamic_cast<TabViewWidget*>(ui->tabDB->widget(i));
+        if (tmpTabView->GetTabType() == TabType::asset)
+        {
+            auto *tmpAssetView = dynamic_cast<AssetView*>(tmpTabView);
+            tmpAssetView->EnableInput();
+        }
     }
     SelectSTIG();
 }
@@ -1142,8 +1150,12 @@ void STIGQter::DisableInput()
     ui->tabDB->setEnabled(false);
     for (int i = 1; i < ui->tabDB->count(); i++)
     {
-        auto *tmpAssetView = dynamic_cast<AssetView*>(ui->tabDB->widget(i));
-        tmpAssetView->DisableInput();
+        auto *tmpTabView = dynamic_cast<TabViewWidget*>(ui->tabDB->widget(i));
+        if (tmpTabView->GetTabType() == TabType::asset)
+        {
+            auto *tmpAssetView = dynamic_cast<AssetView*>(tmpTabView);
+            tmpAssetView->DisableInput();
+        }
     }
 }
 

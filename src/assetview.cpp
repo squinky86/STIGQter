@@ -59,12 +59,11 @@
  * Main constructor.
  */
 AssetView::AssetView(Asset &asset, QWidget *parent) :
-    QWidget(parent),
+    TabViewWidget(parent),
     ui(new Ui::AssetView),
     _asset(std::move(asset)),
     _justification(),
     _updateStatus(false),
-    _tabIndex(-1),
     _isFiltered(false),
     _parent(dynamic_cast<STIGQter *>(parent))
 {
@@ -186,6 +185,15 @@ void AssetView::EnableInput()
     ui->txtComments->setEnabled(true);
     ui->btnImportXCCDF->setEnabled(true);
     ui->btnSaveCKL->setEnabled(true);
+}
+
+/**
+ * @brief AssetView::GetTabType
+ * @return TabType of Asset
+ */
+TabType AssetView::GetTabType()
+{
+    return TabType::asset;
 }
 
 /**
@@ -344,17 +352,6 @@ void AssetView::UpdateSTIGCheck(const STIGCheck &stigCheck)
         ccis.append(PrintCCI(cci) + QStringLiteral(": ") + cci.definition + QStringLiteral("\n"));
     }
     ui->lblCcis->setText(ccis);
-}
-
-/**
- * @brief AssetView::SetTabIndex
- * @param index
- *
- * Keep up with which index this tab is in the interface.
- */
-void AssetView::SetTabIndex(int index)
-{
-    _tabIndex = index;
 }
 
 #ifdef USE_TESTS

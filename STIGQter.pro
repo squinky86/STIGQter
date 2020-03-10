@@ -46,6 +46,7 @@ SOURCES += \
 	   src/stigqter.cpp \
            src/dbmanager.cpp \
            src/common.cpp \
+    src/tabviewwidget.cpp \
     src/worker.cpp \
     src/workerassetckl.cpp \
            src/workerccidelete.cpp \
@@ -79,6 +80,7 @@ HEADERS += \
            src/dbmanager.h \
            src/common.h \
            src/family.h \
+    src/tabviewwidget.h \
     src/worker.h \
     src/workerassetckl.h \
            src/workerccidelete.h \
