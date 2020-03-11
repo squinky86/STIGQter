@@ -35,6 +35,23 @@ STIGEdit::STIGEdit(STIG &stig, QWidget *parent) : TabViewWidget (parent),
 
     ui->txtTitle->setText(stig.title);
     ui->txtDescription->setText(stig.description);
+    ui->txtVersion->setText(QString::number(stig.version));
+    QString tmpRelease = stig.release;
+    if (tmpRelease.contains(QStringLiteral("Release: ")))
+    {
+        tmpRelease = tmpRelease.right(tmpRelease.size() - 9);
+        if (tmpRelease.contains(QStringLiteral(" ")))
+        {
+            ui->txtRelease->setText(tmpRelease.left(tmpRelease.indexOf(QStringLiteral(" "))));
+        }
+    }
+    if (tmpRelease.contains(QStringLiteral("Date: ")))
+    {
+        tmpRelease = tmpRelease.right(tmpRelease.size() - tmpRelease.indexOf(QStringLiteral("Date: ")) - 6);
+
+        QDate d = QDate::fromString(tmpRelease, QStringLiteral("dd MMM yyyy"));
+        ui->date->setDate(d);
+    }
 }
 
 /**
