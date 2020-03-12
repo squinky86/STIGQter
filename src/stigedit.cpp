@@ -17,6 +17,8 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
+#include "stig.h"
+#include "stigcheck.h"
 #include "stigedit.h"
 
 #include "ui_stigedit.h"
@@ -29,14 +31,15 @@
  * Main Constructor
  */
 STIGEdit::STIGEdit(STIG &stig, QWidget *parent) : TabViewWidget (parent),
-    ui(new Ui::STIGEdit)
+    ui(new Ui::STIGEdit),
+    _s(stig)
 {
     ui->setupUi(this);
 
-    ui->txtTitle->setText(stig.title);
-    ui->txtDescription->setText(stig.description);
-    ui->txtVersion->setText(QString::number(stig.version));
-    QString tmpRelease = stig.release;
+    ui->txtTitle->setText(_s.title);
+    ui->txtDescription->setText(_s.description);
+    ui->txtVersion->setText(QString::number(_s.version));
+    QString tmpRelease = _s.release;
     if (tmpRelease.contains(QStringLiteral("Release: ")))
     {
         tmpRelease = tmpRelease.right(tmpRelease.size() - 9);
@@ -52,6 +55,8 @@ STIGEdit::STIGEdit(STIG &stig, QWidget *parent) : TabViewWidget (parent),
         QDate d = QDate::fromString(tmpRelease, QStringLiteral("dd MMM yyyy"));
         ui->date->setDate(d);
     }
+
+    UpdateChecks();
 }
 
 /**
@@ -91,4 +96,42 @@ void STIGEdit::EnableInput()
 TabType STIGEdit::GetTabType()
 {
     return TabType::stig;
+}
+
+/**
+ * @brief STIGEdit::UpdateChecks
+ *
+ * Update the list of STIGChecks
+ */
+void STIGEdit::UpdateChecks()
+{
+    Q_FOREACH(auto sc, _s.GetSTIGChecks())
+    {
+        auto *tmpItem = new QListWidgetItem(); //memory managed by ui->lstChecks container
+        tmpItem->setData(Qt::UserRole, QVariant::fromValue<STIGCheck>(sc));
+        tmpItem->setText(PrintSTIGCheck(sc));
+        ui->lstChecks->addItem(tmpItem);
+    }
+}
+
+/**
+ * @brief STIGEdit::SelectCheck
+ *
+ * A new STIGCheck has been selected
+ */
+void STIGEdit::SelectCheck()
+{
+    Q_FOREACH(QListWidgetItem *i, ui->lstChecks->selectedItems())
+    {
+        auto sc = i->data(Qt::UserRole).value<STIGCheck>();
+        ui->txtCheckRule->setText(sc.rule);
+        ui->txtCheckRuleVersion->setText(sc.ruleVersion);
+        ui->txtCheckTitle->setText(sc.title);
+        ui->txtDiscussion->setText(sc.vulnDiscussion);
+        ui->txtFalsePositives->setText(sc.falsePositives);
+        ui->txtFalseNegatives->setText(sc.falseNegatives);
+        ui->txtFix->setText(sc.fix);
+        ui->txtCheck->setText(sc.check);
+        //set CCI selector
+    }
 }

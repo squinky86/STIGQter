@@ -43,6 +43,11 @@ public:
 
 private:
     Ui::STIGEdit *ui;
+    STIG _s;
+    void UpdateChecks();
+
+private Q_SLOTS:
+    void SelectCheck();
 };
 
 #endif // STIGEDIT_H
