@@ -81,7 +81,7 @@ Supplement &Supplement::operator=(const Supplement &right)
 /**
  * @brief PrintSupplement
  * @param supplement
- * @return string representing the supplement's identifier
+ * @return String representing the supplement's identifier
  */
 QString PrintSupplement(const Supplement &supplement)
 {
