@@ -47,9 +47,9 @@ public:
     AssetView(const AssetView &av) = delete;
     explicit AssetView(Asset &asset, QWidget *parent = nullptr);
     ~AssetView() override;
-    void DisableInput();
+    void DisableInput() override;
     void Display();
-    void EnableInput();
+    void EnableInput() override;
     TabType GetTabType() override;
     void SelectSTIGs(const QString &search = QString());
     void ShowChecks(bool countOnly = false);

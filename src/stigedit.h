@@ -37,6 +37,8 @@ public:
     STIGEdit() = delete;
     STIGEdit(const STIGEdit &se) = delete;
     explicit STIGEdit(STIG &stig, QWidget *parent = nullptr);
+    void DisableInput() override;
+    void EnableInput() override;
     TabType GetTabType() override;
 
 private:

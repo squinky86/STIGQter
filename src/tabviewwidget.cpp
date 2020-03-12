@@ -49,3 +49,23 @@ TabType TabViewWidget::GetTabType()
 {
     return TabType::root;
 }
+
+/**
+ * @brief TabViewWidget::DisableInput
+ *
+ * Override this function to disable user input
+ */
+void TabViewWidget::DisableInput()
+{
+
+}
+
+/**
+ * @brief TabViewWidget::DisableInput
+ *
+ * Override this function to enable user input
+ */
+void TabViewWidget::EnableInput()
+{
+
+}

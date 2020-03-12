@@ -55,6 +55,36 @@ STIGEdit::STIGEdit(STIG &stig, QWidget *parent) : TabViewWidget (parent),
 }
 
 /**
+ * @brief STIGEdit::DisableInput
+ *
+ * Disable all button input
+ */
+void STIGEdit::DisableInput()
+{
+    ui->btnSave->setEnabled(false);
+    ui->txtTitle->setEnabled(false);
+    ui->txtRelease->setEnabled(false);
+    ui->txtVersion->setEnabled(false);
+    ui->txtDescription->setEnabled(false);
+    ui->txtFindingDetails->setEnabled(false);
+}
+
+/**
+ * @brief STIGEdit::EnableInput
+ *
+ * Enable all button input
+ */
+void STIGEdit::EnableInput()
+{
+    ui->btnSave->setEnabled(true);
+    ui->txtTitle->setEnabled(true);
+    ui->txtRelease->setEnabled(true);
+    ui->txtVersion->setEnabled(true);
+    ui->txtDescription->setEnabled(true);
+    ui->txtFindingDetails->setEnabled(true);
+}
+
+/**
  * @brief STIGEdit::GetTabType
  * @return Indication that this is a STIG editing tab
  */

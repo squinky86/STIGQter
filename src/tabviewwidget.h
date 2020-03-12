@@ -36,6 +36,8 @@ public:
     explicit TabViewWidget(QWidget *parent = nullptr);
     void SetTabIndex(int index);
     virtual TabType GetTabType();
+    virtual void DisableInput();
+    virtual void EnableInput();
 
 protected:
     int _tabIndex;

@@ -1094,11 +1094,8 @@ void STIGQter::EnableInput()
     for (int i = 1; i < ui->tabDB->count(); i++)
     {
         auto *tmpTabView = dynamic_cast<TabViewWidget*>(ui->tabDB->widget(i));
-        if (tmpTabView->GetTabType() == TabType::asset)
-        {
-            auto *tmpAssetView = dynamic_cast<AssetView*>(tmpTabView);
-            tmpAssetView->EnableInput();
-        }
+        if (tmpTabView)
+            tmpTabView->EnableInput();
     }
     SelectSTIG();
 }
@@ -1181,11 +1178,8 @@ void STIGQter::DisableInput()
     for (int i = 1; i < ui->tabDB->count(); i++)
     {
         auto *tmpTabView = dynamic_cast<TabViewWidget*>(ui->tabDB->widget(i));
-        if (tmpTabView->GetTabType() == TabType::asset)
-        {
-            auto *tmpAssetView = dynamic_cast<AssetView*>(tmpTabView);
-            tmpAssetView->DisableInput();
-        }
+        if (tmpTabView)
+            tmpTabView->DisableInput();
     }
 }
 
