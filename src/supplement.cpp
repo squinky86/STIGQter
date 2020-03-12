@@ -77,3 +77,13 @@ Supplement &Supplement::operator=(const Supplement &right)
     }
     return *this;
 }
+
+/**
+ * @brief PrintSupplement
+ * @param supplement
+ * @return string representing the supplement's identifier
+ */
+QString PrintSupplement(const Supplement &supplement)
+{
+    return supplement.path;
+}

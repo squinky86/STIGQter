@@ -45,6 +45,7 @@ private:
     Ui::STIGEdit *ui;
     STIG _s;
     void UpdateChecks();
+    void UpdateSupplements();
 
 private Q_SLOTS:
     void SelectCheck();

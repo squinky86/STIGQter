@@ -20,6 +20,7 @@
 #include "stig.h"
 #include "stigcheck.h"
 #include "stigedit.h"
+#include "supplement.h"
 
 #include "ui_stigedit.h"
 
@@ -57,6 +58,7 @@ STIGEdit::STIGEdit(STIG &stig, QWidget *parent) : TabViewWidget (parent),
     }
 
     UpdateChecks();
+    UpdateSupplements();
 }
 
 /**
@@ -71,7 +73,6 @@ void STIGEdit::DisableInput()
     ui->txtRelease->setEnabled(false);
     ui->txtVersion->setEnabled(false);
     ui->txtDescription->setEnabled(false);
-    ui->txtFindingDetails->setEnabled(false);
 }
 
 /**
@@ -86,7 +87,6 @@ void STIGEdit::EnableInput()
     ui->txtRelease->setEnabled(true);
     ui->txtVersion->setEnabled(true);
     ui->txtDescription->setEnabled(true);
-    ui->txtFindingDetails->setEnabled(true);
 }
 
 /**
@@ -105,12 +105,30 @@ TabType STIGEdit::GetTabType()
  */
 void STIGEdit::UpdateChecks()
 {
+    ui->lstChecks->clear();
     Q_FOREACH(auto sc, _s.GetSTIGChecks())
     {
         auto *tmpItem = new QListWidgetItem(); //memory managed by ui->lstChecks container
         tmpItem->setData(Qt::UserRole, QVariant::fromValue<STIGCheck>(sc));
         tmpItem->setText(PrintSTIGCheck(sc));
         ui->lstChecks->addItem(tmpItem);
+    }
+}
+
+/**
+ * @brief STIGEdit::UpdateSupplements
+ *
+ * Update the list of STIG supplementary material
+ */
+void STIGEdit::UpdateSupplements()
+{
+    ui->lstSupplements->clear();
+    Q_FOREACH(auto s, _s.GetSupplements())
+    {
+        auto *tmpItem = new QListWidgetItem(); //memory managed by ui->lstChecks container
+        tmpItem->setData(Qt::UserRole, QVariant::fromValue<Supplement>(s));
+        tmpItem->setText(PrintSupplement(s));
+        ui->lstSupplements->addItem(tmpItem);
     }
 }
 

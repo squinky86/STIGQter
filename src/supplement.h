@@ -42,4 +42,6 @@ public:
 
 Q_DECLARE_METATYPE(Supplement);
 
+QString PrintSupplement(const Supplement &supplement);
+
 #endif // SUPPLEMENT_H
