@@ -19,15 +19,18 @@
 
 #include "tabviewwidget.h"
 
+#include <QApplication>
+
 /**
  * @brief TabViewWidget::TabViewWidget
  * @param parent
  *
  * Main Constructor
  */
-TabViewWidget::TabViewWidget(QWidget *parent) : QWidget(parent), _tabIndex(-1)
+TabViewWidget::TabViewWidget(QWidget *parent) : QWidget(parent),
+    _tabIndex(-1),
+    _parent(dynamic_cast<STIGQter *>(parent))
 {
-
 }
 
 /**
@@ -57,7 +60,6 @@ TabType TabViewWidget::GetTabType()
  */
 void TabViewWidget::DisableInput()
 {
-
 }
 
 /**
@@ -67,5 +69,30 @@ void TabViewWidget::DisableInput()
  */
 void TabViewWidget::EnableInput()
 {
-
 }
+
+#ifdef USE_TESTS
+/**
+ * @brief TabViewWidget::ProcEvents
+ *
+ * Override to execute run-time tests.
+ */
+void TabViewWidget::ProcEvents()
+{
+    while (!_parent->isProcessingEnabled())
+    {
+        QThread::sleep(1);
+        QApplication::processEvents();
+    }
+    QApplication::processEvents();
+}
+
+/**
+ * @brief TabViewWidget::RunTests
+ *
+ * Override to execute run-time tests.
+ */
+void TabViewWidget::RunTests()
+{
+}
+#endif

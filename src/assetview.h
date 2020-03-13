@@ -56,8 +56,7 @@ public:
     void UpdateCKLCheck(const CKLCheck &cklCheck);
     void UpdateSTIGCheck(const STIGCheck &stigCheck);
 #ifdef USE_TESTS
-    void ProcEvents();
-    void RunTests();
+    void RunTests() override;
 #endif
 
 private Q_SLOTS:
@@ -91,7 +90,6 @@ private:
     void KeyShortcut(Status action);
     void SetItemColor(QListWidgetItem *i, Status stat, Severity sev);
     bool _isFiltered;
-    STIGQter *_parent;
 };
 
 #endif // ASSETVIEW_H

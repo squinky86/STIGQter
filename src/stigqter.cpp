@@ -320,6 +320,10 @@ void STIGQter::RunTests()
             ProcEvents();
         }
 
+        // open STIGs
+        EditSTIG();
+        ProcEvents();
+
         for (int j = 1; j < ui->tabDB->count(); j++)
         {
             auto *tmpTabView = dynamic_cast<TabViewWidget*>(ui->tabDB->widget(j));
@@ -330,11 +334,10 @@ void STIGQter::RunTests()
             ProcEvents();
 
             //run AssetView tests
-            std::cout << "\tTest " << step++ << ": Running Asset Tests" << std::endl;
-            if (tmpTabView->GetTabType() == TabType::asset)
+            std::cout << "\tTest " << step++ << ": Running Tab Tests" << std::endl;
+            if (tmpTabView)
             {
-                auto *tmpAssetView = dynamic_cast<AssetView*>(tmpTabView);
-                tmpAssetView->RunTests(); //will delete asset
+                tmpTabView->RunTests(); //will delete tab
             }
             ProcEvents();
         }

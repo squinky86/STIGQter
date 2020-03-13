@@ -22,6 +22,8 @@
 
 #include <QWidget>
 
+#include "stigqter.h"
+
 enum TabType
 {
     stig = 2,
@@ -38,9 +40,14 @@ public:
     virtual TabType GetTabType();
     virtual void DisableInput();
     virtual void EnableInput();
+#ifdef USE_TESTS
+    void ProcEvents();
+    virtual void RunTests();
+#endif
 
 protected:
     int _tabIndex;
+    STIGQter *_parent;
 
 Q_SIGNALS:
     void CloseTab(int);

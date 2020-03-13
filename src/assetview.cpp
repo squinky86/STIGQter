@@ -64,8 +64,7 @@ AssetView::AssetView(Asset &asset, QWidget *parent) :
     _asset(std::move(asset)),
     _justification(),
     _updateStatus(false),
-    _isFiltered(false),
-    _parent(dynamic_cast<STIGQter *>(parent))
+    _isFiltered(false)
 {
     ui->setupUi(this);
 
@@ -355,16 +354,6 @@ void AssetView::UpdateSTIGCheck(const STIGCheck &stigCheck)
 }
 
 #ifdef USE_TESTS
-void AssetView::ProcEvents()
-{
-    while (!_parent->isProcessingEnabled())
-    {
-        QThread::sleep(1);
-        QApplication::processEvents();
-    }
-    QApplication::processEvents();
-}
-
 void AssetView::RunTests()
 {
     int onTest = 0;

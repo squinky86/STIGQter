@@ -40,6 +40,9 @@ public:
     void DisableInput() override;
     void EnableInput() override;
     TabType GetTabType() override;
+#ifdef USE_TESTS
+    virtual void RunTests() override;
+#endif
 
 private:
     Ui::STIGEdit *ui;

@@ -98,6 +98,26 @@ TabType STIGEdit::GetTabType()
     return TabType::stig;
 }
 
+#ifdef USE_TESTS
+/**
+ * @brief STIGEdit::RunTests
+ *
+ * Run interface tests.
+ */
+void STIGEdit::RunTests()
+{
+    //select each of the STIGChecks
+    for (int i = 0; i < ui->lstChecks->count(); ++i)
+    {
+        ui->lstChecks->item(i)->setSelected(true);
+        ProcEvents();
+    }
+
+    //close the tab
+    Q_EMIT CloseTab(_tabIndex);
+}
+#endif
+
 /**
  * @brief STIGEdit::UpdateChecks
  *
