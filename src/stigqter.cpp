@@ -231,6 +231,11 @@ void STIGQter::RunTests()
     AddAsset(QStringLiteral("TEST"));
     ProcEvents();
 
+    // open STIGs
+    std::cout << "\tTest " << step++ << ": Opening STIGs" << std::endl;
+    EditSTIG();
+    ProcEvents();
+
     // severity override
     {
         std::cout << "Test " << step++ << ": Severity Override" << std::endl;
@@ -319,10 +324,6 @@ void STIGQter::RunTests()
             OpenCKL();
             ProcEvents();
         }
-
-        // open STIGs
-        EditSTIG();
-        ProcEvents();
 
         for (int j = 1; j < ui->tabDB->count(); j++)
         {
