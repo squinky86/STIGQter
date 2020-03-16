@@ -59,6 +59,12 @@ STIGEdit::STIGEdit(STIG &stig, QWidget *parent) : TabViewWidget (parent),
 
     UpdateChecks();
     UpdateSupplements();
+
+    DbManager db;
+    Q_FOREACH(auto cci, db.GetCCIs())
+    {
+        ui->cbCCIs->addItem(QString::number(cci.cci));
+    }
 }
 
 /**
@@ -170,6 +176,10 @@ void STIGEdit::SelectCheck()
         ui->txtFalseNegatives->setText(sc.falseNegatives);
         ui->txtFix->setText(sc.fix);
         ui->txtCheck->setText(sc.check);
-        //set CCI selector
+        ui->lstCCIs->clear();
+        Q_FOREACH(auto cci, sc.GetCCIs())
+        {
+            ui->lstCCIs->addItem(PrintCCI(cci));
+        }
     }
 }
