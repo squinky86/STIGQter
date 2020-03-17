@@ -22,6 +22,8 @@
 #include "stigedit.h"
 #include "supplement.h"
 
+#include <iostream>
+
 #include "ui_stigedit.h"
 
 /**
@@ -112,12 +114,25 @@ TabType STIGEdit::GetTabType()
  */
 void STIGEdit::RunTests()
 {
+    int onTest = 0;
+
     //select each of the STIGChecks
+    std::cout << "\t\t\tTest " << onTest++ << ": Select STIGChecks" << std::endl;
     for (int i = 0; i < ui->lstChecks->count(); ++i)
     {
         ui->lstChecks->item(i)->setSelected(true);
         ProcEvents();
+
+        //change something about STIG
+        std::cout << "\t\t\t\tTest " << onTest++ << ": Change STIGCheck" << std::endl;
+        ui->txtFix->setText(QStringLiteral("FIX IT"));
+        ProcEvents();
     }
+
+    //change STIG name
+    std::cout << "\t\tTest " << onTest++ << ": Edit STIG" << std::endl;
+    ui->txtTitle->setText(ui->txtTitle->text() + " (edited)");
+    ProcEvents();
 
     //close the tab
     Q_EMIT CloseTab(_tabIndex);
@@ -179,7 +194,61 @@ void STIGEdit::SelectCheck()
         ui->lstCCIs->clear();
         Q_FOREACH(auto cci, sc.GetCCIs())
         {
-            ui->lstCCIs->addItem(PrintCCI(cci));
+            auto *tmpItem = new QListWidgetItem(); //memory managed by ui->lstCCIs container
+            tmpItem->setData(Qt::UserRole, QVariant::fromValue<CCI>(cci));
+            tmpItem->setText(PrintCCI(cci));
+            ui->lstCCIs->addItem(tmpItem);
         }
     }
+}
+
+/**
+ * @brief STIGEdit::UpdateSTIG
+ *
+ * Update the database with the new STIG values
+ */
+void STIGEdit::UpdateSTIG()
+{
+    DbManager db;
+    _s.title = ui->txtTitle->text();
+    _s.release = "Release: " + ui->txtRelease->text() + " Benchmark Date: " + ui->date->date().toString(QStringLiteral("dd MMM yyyy"));
+    _s.version = ui->txtVersion->text().toInt();
+    db.UpdateSTIG(_s);
+    if (_parent)
+        _parent->UpdateSTIGs();
+}
+
+/**
+ * @brief STIGEdit::UpdateCheck
+ *
+ * Update the database with the new STIGCheck values
+ */
+void STIGEdit::UpdateCheck()
+{
+    DbManager db;
+    Q_FOREACH(QListWidgetItem *i, ui->lstChecks->selectedItems())
+    {
+        auto sc = i->data(Qt::UserRole).value<STIGCheck>();
+        sc.rule = ui->txtCheckRule->text();
+        sc.ruleVersion = ui->txtCheckRuleVersion->text();
+        sc.title = ui->txtCheckTitle->text();
+        sc.vulnDiscussion = ui->txtDiscussion->toPlainText();
+        sc.falsePositives = ui->txtFalsePositives->toPlainText();
+        sc.falseNegatives = ui->txtFalseNegatives->toPlainText();
+        sc.fix = ui->txtFix->toPlainText();
+        sc.check = ui->txtCheck->toPlainText();
+
+        sc.cciIds.clear();
+        for (int j = 0; j < ui->lstCCIs->count(); ++j)
+        {
+            QListWidgetItem *tmpCCIItem = ui->lstCCIs->item(j);
+            auto cci = tmpCCIItem->data(Qt::UserRole).value<CCI>();
+            sc.cciIds.append(cci.id);
+        }
+
+        db.UpdateSTIGCheck(sc);
+    }
+
+    if (_parent)
+        _parent->UpdateSTIGs();
 }

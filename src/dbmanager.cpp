@@ -2395,6 +2395,40 @@ bool DbManager::UpdateCKLCheck(const CKLCheck &check)
 }
 
 /**
+ * @brief DbManager::UpdateSTIG
+ * @param stig
+ * @return @c True when the STIG is updated with the provided @a STIG.
+ * Otherwise, @c false.
+ */
+bool DbManager::UpdateSTIG(const STIG &stig)
+{
+    STIG tmpSTIG = GetSTIG(stig);
+    bool ret = false;
+
+    if (tmpSTIG.id > 0)
+    {
+        QSqlDatabase db;
+        ret = true;
+        if (CheckDatabase(db))
+        {
+            QSqlQuery q(db);
+            q.prepare(QStringLiteral("UPDATE STIG SET title = :title, description = :description, release = :release, version = :version, benchmarkId = :benchmarkId, fileName = :fileName WHERE id = :id"));
+            q.bindValue(QStringLiteral(":title"), stig.title);
+            q.bindValue(QStringLiteral(":description"), stig.description);
+            q.bindValue(QStringLiteral(":release"), stig.release);
+            q.bindValue(QStringLiteral(":version"), stig.version);
+            q.bindValue(QStringLiteral(":benchmarkId"), stig.benchmarkId);
+            q.bindValue(QStringLiteral(":fileName"), stig.fileName);
+            q.bindValue(QStringLiteral(":id"), stig.id);
+            ret = q.exec();
+            Log(6, QStringLiteral("UpdateSTIG"), q);
+        }
+    }
+
+    return ret;
+}
+
+/**
  * @brief DbManager::UpdateSTIGCheck
  * @param check
  * @return @c True when the database is updated with the supplied

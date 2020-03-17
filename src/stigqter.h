@@ -41,6 +41,7 @@ public:
     ~STIGQter();
     bool isProcessingEnabled();
     QThread* ConnectThreads(Worker *worker);
+    void UpdateSTIGs();
 #ifdef USE_TESTS
     void ProcEvents();
     void RunTests();
@@ -99,7 +100,6 @@ private:
     void DisplayCCIs();
     void DisplaySTIGs(const QString &search = QString());
     void EnableInput();
-    void UpdateSTIGs();
     bool _isFiltered;
 };
 

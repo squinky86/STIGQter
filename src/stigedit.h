@@ -52,6 +52,8 @@ private:
 
 private Q_SLOTS:
     void SelectCheck();
+    void UpdateSTIG();
+    void UpdateCheck();
 };
 
 #endif // STIGEDIT_H

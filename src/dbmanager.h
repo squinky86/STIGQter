@@ -115,6 +115,7 @@ public:
     bool UpdateAsset(const Asset &asset);
     bool UpdateCCI(const CCI &cci);
     bool UpdateCKLCheck(const CKLCheck &check);
+    bool UpdateSTIG(const STIG &stig);
     bool UpdateSTIGCheck(const STIGCheck &check);
     bool UpdateVariable(const QString &name, const QString &value);
 
