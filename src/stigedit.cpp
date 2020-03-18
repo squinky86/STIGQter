@@ -214,8 +214,13 @@ void STIGEdit::UpdateSTIG()
     _s.release = "Release: " + ui->txtRelease->text() + " Benchmark Date: " + ui->date->date().toString(QStringLiteral("dd MMM yyyy"));
     _s.version = ui->txtVersion->text().toInt();
     db.UpdateSTIG(_s);
+
+    Q_EMIT RenameTab(_tabIndex, PrintSTIG(_s));
+
     if (_parent)
-        _parent->UpdateSTIGs();
+    {
+        _parent->Display();
+    }
 }
 
 /**
@@ -250,5 +255,5 @@ void STIGEdit::UpdateCheck()
     }
 
     if (_parent)
-        _parent->UpdateSTIGs();
+        _parent->Display();
 }

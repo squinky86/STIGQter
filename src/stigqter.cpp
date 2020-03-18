@@ -97,10 +97,7 @@ STIGQter::STIGQter(QWidget *parent) :
     this->setWindowTitle(QStringLiteral("STIGQter ") + VERSION);
 
     //make sure that the initial data are populated and active
-    EnableInput();
-    DisplayCCIs();
-    DisplaySTIGs();
-    DisplayAssets();
+    Display();
 
     //remove the close button on the main DB tab.
     ui->tabDB->tabBar()->tabButton(0, QTabBar::RightSide)->resize(0, 0);
@@ -417,11 +414,39 @@ void STIGQter::OpenCKL()
              }
         }
         auto *av = new AssetView(a, this);
-        connect(av, SIGNAL(CloseTab(int)), this, SLOT(CloseTab(int)));
         int index = ui->tabDB->addTab(av, assetName);
         av->SetTabIndex(index);
         ui->tabDB->setCurrentIndex(index);
     }
+}
+
+/**
+ * @brief STIGQter::RenameTab
+ * @param index
+ * @param title
+ *
+ * Signal to indicate that a tab wishes to rename itself.
+ */
+void STIGQter::RenameTab(int index, QString title)
+{
+    //make sure we're not rename to itself
+    if (QString::compare(ui->tabDB->tabText(index), title) == 0)
+        return;
+
+    //make sure another tab doesn't already exist
+    for (int i = 1; i < ui->tabDB->count(); ++i)
+    {
+        if (i == index)
+            continue;
+        if (QString::compare(ui->tabDB->tabText(index), title) == 0)
+        {
+            CloseTab(index);
+            return;
+        }
+    }
+
+    //rename the tab
+    ui->tabDB->setTabText(index, title);
 }
 
 /**
@@ -735,6 +760,19 @@ void STIGQter::DeleteSTIGs()
 }
 
 /**
+ * @brief STIGQter::Display
+ *
+ * Trigger updating the data elements on the page.
+ */
+void STIGQter::Display()
+{
+    EnableInput();
+    DisplayCCIs();
+    DisplaySTIGs();
+    DisplayAssets();
+}
+
+/**
  * @brief STIGQter::DownloadSTIGs
  *
  * Download the latest unclassified STIG release from cyber.mil
@@ -772,7 +810,6 @@ void STIGQter::EditSTIG()
              }
         }
         auto *se = new STIGEdit(s, this);
-        connect(se, SIGNAL(CloseTab(int)), this, SLOT(CloseTab(int)));
         int index = ui->tabDB->addTab(se, stigName);
         se->SetTabIndex(index);
         ui->tabDB->setCurrentIndex(index);

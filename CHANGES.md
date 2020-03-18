@@ -1,6 +1,8 @@
 ## 1.0.1
 -   General fixes and code cleanups
 -   Fix very verbose debugging (issue #57)
+-   Add "Fix Text" contents to Detailed Findings Report (issue #64)
+-   Add STIG editor (issue #59)
 
 ## 1.0.0 20200131
 -   Stabilized database (reverse compatibility will be maintained)

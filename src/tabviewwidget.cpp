@@ -31,6 +31,8 @@ TabViewWidget::TabViewWidget(QWidget *parent) : QWidget(parent),
     _tabIndex(-1),
     _parent(dynamic_cast<STIGQter *>(parent))
 {
+    connect(this, SIGNAL(CloseTab(int)), _parent, SLOT(CloseTab(int)));
+    connect(this, SIGNAL(RenameTab(int, QString)), _parent, SLOT(RenameTab(int, QString)));
 }
 
 /**

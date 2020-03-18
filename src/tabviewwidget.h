@@ -51,6 +51,7 @@ protected:
 
 Q_SIGNALS:
     void CloseTab(int);
+    void RenameTab(int, QString);
 };
 
 #endif // TABVIEWWIDGET_H

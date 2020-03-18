@@ -41,6 +41,7 @@ public:
     ~STIGQter();
     bool isProcessingEnabled();
     QThread* ConnectThreads(Worker *worker);
+    void Display();
     void UpdateSTIGs();
 #ifdef USE_TESTS
     void ProcEvents();
@@ -71,6 +72,7 @@ private Q_SLOTS:
     void Load(const QString &fileName = QString());
     void MapUnmapped(bool confirm = false);
     void OpenCKL();
+    void RenameTab(int index, QString title);
     bool Reset(bool checkOnly = false);
     void Save();
     void SaveAs(const QString &fileName = QString());

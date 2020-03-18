@@ -417,10 +417,14 @@ void AssetView::RunTests()
     //step 9: import XCCDF
     std::cout << "\t\tTest " << onTest++ << ": Importing XCCDF" << std::endl;
     ImportXCCDF(QStringLiteral("tests/xccdf_lol.xml"));
-
     ProcEvents();
 
-    //step 10: delete asset
+    //step 10: rename asset
+    std::cout << "\t\tTest " << onTest++ << ": Rename Asset" << std::endl;
+    RenameAsset("TEST2");
+    RenameAsset("TEST");
+
+    //step 11: delete asset
     std::cout << "\t\tTest " << onTest++ << ":Deleting Asset" << std::endl;
     DeleteAsset(true);
 }
@@ -665,7 +669,7 @@ void AssetView::RenameAsset(const QString &name)
         _asset.hostName = assetName;
         db.UpdateAsset(_asset);
         if (_tabIndex > 0)
-            Q_EMIT CloseTab(_tabIndex);
+            Q_EMIT RenameTab(_tabIndex, assetName);
     }
 }
 
