@@ -51,6 +51,7 @@ private:
     void UpdateSupplements();
 
 private Q_SLOTS:
+    void AddCCI();
     void SelectCheck();
     void UpdateSTIG();
     void UpdateCheck();

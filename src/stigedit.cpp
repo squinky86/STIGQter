@@ -65,7 +65,7 @@ STIGEdit::STIGEdit(STIG &stig, QWidget *parent) : TabViewWidget (parent),
     DbManager db;
     Q_FOREACH(auto cci, db.GetCCIs())
     {
-        ui->cbCCIs->addItem(QString::number(cci.cci));
+        ui->cbCCIs->addItem(QString::number(cci.cci), QVariant::fromValue(cci));
     }
 }
 
@@ -123,9 +123,14 @@ void STIGEdit::RunTests()
         ui->lstChecks->item(i)->setSelected(true);
         ProcEvents();
 
-        //change something about STIG
+        //change something about STIGCheck
         std::cout << "\t\t\t\tTest " << onTest++ << ": Change STIGCheck" << std::endl;
         ui->txtFix->setText(QStringLiteral("FIX IT"));
+        ProcEvents();
+
+        //add CCI
+        std::cout << "\t\t\t\tTest " << onTest++ << ": Add CCI" << std::endl;
+        AddCCI();
         ProcEvents();
     }
 
@@ -171,6 +176,32 @@ void STIGEdit::UpdateSupplements()
         tmpItem->setText(PrintSupplement(s));
         ui->lstSupplements->addItem(tmpItem);
     }
+}
+
+/**
+ * @brief STIGEdit::AddCCI
+ *
+ * Adds the selected CCI to the STIGCheck's mapping
+ */
+void STIGEdit::AddCCI()
+{
+    CCI toAdd = ui->cbCCIs->currentData().value<CCI>();
+    for (int i = 0; i < ui->lstCCIs->count(); ++i)
+    {
+        QListWidgetItem *cciItem = ui->lstCCIs->item(i);
+        if (cciItem)
+        {
+            CCI cci = cciItem->data(Qt::UserRole).value<CCI>();
+            if (cci == toAdd)
+                return;
+        }
+    }
+    auto *tmpItem = new QListWidgetItem(); //memory managed by ui->lstCCIs container
+    tmpItem->setData(Qt::UserRole, QVariant::fromValue<CCI>(toAdd));
+    tmpItem->setText(PrintCCI(toAdd));
+    ui->lstCCIs->addItem(tmpItem);
+    QApplication::processEvents();
+    UpdateCheck();
 }
 
 /**
