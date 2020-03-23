@@ -25,7 +25,7 @@ function exists {
 function lbll {
 	echo -n "Building $1..."
 	buf=$(mktemp)
-	lualatex "$1" >> $buf && biber "$1" >> $buf && lualatex "$1" >> $buf && lualatex "$1" >> $buf
+	lualatex -interaction=nonstopmode "$1" >> $buf && biber "$1" >> $buf && lualatex -interaction=nonstopmode "$1" >> $buf && lualatex -interaction=nonstopmode "$1" >> $buf
 	if [ $? -eq 0 ]; then
 		echo "OK!"
 	else
