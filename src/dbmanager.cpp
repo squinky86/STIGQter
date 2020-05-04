@@ -2778,7 +2778,7 @@ bool DbManager::UpdateDatabaseFromVersion(int version)
             q.bindValue(QStringLiteral(":value"), QStringLiteral("n"));
             ret = q.exec() && ret;
             q.bindValue(QStringLiteral(":name"), QStringLiteral("quarterly"));
-            q.bindValue(QStringLiteral(":value"), QStringLiteral("https://dl.dod.cyber.mil/wp-content/uploads/stigs/zip/U_SRG-STIG_Library_2020_01v4.zip"));
+            q.bindValue(QStringLiteral(":value"), QStringLiteral("https://dl.dod.cyber.mil/wp-content/uploads/stigs/zip/U_SRG-STIG_Library_2020_04v1.zip"));
             ret = q.exec() && ret;
             ret = UpdateVariable(QStringLiteral("version"), QStringLiteral("2")) && ret;
         }

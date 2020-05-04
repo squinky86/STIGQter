@@ -73,7 +73,7 @@ public:
     CCI GetCCI(const CCI &cci, const STIG *stig = nullptr);
     QVector<CCI> GetCCIs(QVector<int> ccis);
     QVector<CCI> GetCCIs(const Control &c);
-    QVector<CCI> GetCCIs(const int STIGCheckId);
+    QVector<CCI> GetCCIs(int STIGCheckId);
     CCI GetCCIByCCI(int cci, const STIG *stig = nullptr);
     QVector<CCI> GetCCIs(const QString &whereClause = QString(), const QVector<std::tuple<QString, QVariant>> &variables = {});
     CKLCheck GetCKLCheck(int id);
@@ -88,7 +88,7 @@ public:
     QString GetDBPath();
     Family GetFamily(const QString &acronym);
     Family GetFamily(int id);
-    QVector<QString> GetLegacyIds(const int STIGCheckId);
+    QVector<QString> GetLegacyIds(int STIGCheckId);
     int GetLogLevel();
     QVector<Family> GetFamilies(const QString &whereClause = QString(), const QVector<std::tuple<QString, QVariant>> &variables = {});
     STIG GetSTIG(int id);
