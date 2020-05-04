@@ -265,6 +265,7 @@ void WorkerSTIGAdd::ParseSTIG(const QByteArray &stig, const QString &fileName, c
                         {
                             if (attr.name().endsWith(QStringLiteral("legacy"), Qt::CaseSensitivity::CaseInsensitive))
                             {
+                                legacy = true;
                                 QString toAppend = xml->readElementText().trimmed();
                                 if (!c.legacyIds.contains(toAppend))
                                 {
