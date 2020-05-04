@@ -8,8 +8,7 @@ function exists {
 		if [ -z "$2" ]; then
 			echo "Checking alias for $1..."
 		fi
-		type -a "$1"
-		# > /dev/null 2> /dev/null
+		type -a "$1" > /dev/null 2> /dev/null
 		ret=$?
 	fi
 	if [ $ret -gt 0 ]; then
