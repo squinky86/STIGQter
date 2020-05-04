@@ -258,9 +258,27 @@ void WorkerSTIGAdd::ParseSTIG(const QByteArray &stig, const QString &fileName, c
                 }
                 else if (xml->name() == "ident")
                 {
-                    QString cci(xml->readElementText().trimmed());
-                    if (cci.startsWith(QStringLiteral("CCI"), Qt::CaseInsensitive))
-                        c.cciIds.append(db.GetCCIByCCI(GetCCINumber(cci), &s).id);
+                    bool legacy = false;
+                    if (xml->attributes().hasAttribute(QStringLiteral("system")))
+                    {
+                        Q_FOREACH (const QXmlStreamAttribute &attr, xml->attributes())
+                        {
+                            if (attr.name().endsWith(QStringLiteral("legacy"), Qt::CaseSensitivity::CaseInsensitive))
+                            {
+                                QString toAppend = xml->readElementText().trimmed();
+                                if (!c.legacyIds.contains(toAppend))
+                                {
+                                    c.legacyIds.append(toAppend);
+                                }
+                            }
+                        }
+                    }
+                    if (!legacy)
+                    {
+                        QString cci(xml->readElementText().trimmed());
+                        if (cci.startsWith(QStringLiteral("CCI"), Qt::CaseInsensitive))
+                            c.cciIds.append(db.GetCCIByCCI(GetCCINumber(cci), &s).id);
+                    }
                 }
                 else if (xml->name() == "fixtext")
                 {

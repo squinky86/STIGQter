@@ -95,6 +95,7 @@ STIGCheck::STIGCheck(QObject *parent) : QObject(parent),
     targetKey()
 {
     cciIds.clear();
+    legacyIds.clear();
 }
 
 /**
@@ -122,6 +123,7 @@ STIGCheck& STIGCheck::operator=(const STIGCheck &right)
         id = right.id;
         stigId = right.stigId;
         cciIds = right.cciIds;
+        legacyIds = right.legacyIds;
         rule = right.rule;
         vulnNum = right.vulnNum;
         groupTitle = right.groupTitle;

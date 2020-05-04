@@ -413,6 +413,18 @@ void WorkerCKLExport::process()
                         stream.writeEndElement(); //STIG_DATA
                     }
 
+                    Q_FOREACH (QString legacyId, sc.legacyIds)
+                    {
+                        stream.writeStartElement(QStringLiteral("STIG_DATA"));
+                        stream.writeStartElement(QStringLiteral("VULN_ATTRIBUTE"));
+                        stream.writeCharacters(QStringLiteral("LEGACY_ID"));
+                        stream.writeEndElement(); //VULN_ATTRIBUTE
+                        stream.writeStartElement(QStringLiteral("ATTRIBUTE_DATA"));
+                        stream.writeCharacters(legacyId);
+                        stream.writeEndElement(); //ATTRIBUTE_DATA
+                        stream.writeEndElement(); //STIG_DATA
+                    }
+
                     stream.writeStartElement(QStringLiteral("STATUS"));
                     stream.writeCharacters(GetStatus(cc.status, true));
                     stream.writeEndElement(); //STATUS

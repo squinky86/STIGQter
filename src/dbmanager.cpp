@@ -625,6 +625,15 @@ bool DbManager::AddSTIG(STIG &stig, const QVector<STIGCheck> &checks, const QVec
                     ret = q.exec() && ret;
                     Log(6, QStringLiteral("AddAsset-CCI"), q);
                 }
+
+                Q_FOREACH (QString legacyId, c.legacyIds)
+                {
+                    q.prepare(QStringLiteral("INSERT INTO STIGCheckLegacyId (`STIGCheckId`, `LegacyId`) VALUES(:STIGCheckId, :LegacyId)"));
+                    q.bindValue(QStringLiteral(":STIGCheckId"), STIGCheckId);
+                    q.bindValue(QStringLiteral(":LegacyId"), legacyId);
+                    ret = q.exec() && ret;
+                    Log(6, QStringLiteral("AddAsset-LegacyIds"), q);
+                }
             }
         }
 
@@ -838,6 +847,9 @@ bool DbManager::DeleteSTIG(int id)
         q.prepare(QStringLiteral("DELETE FROM STIGCheckCCI WHERE STIGCheckId IN (SELECT id FROM STIGCheck WHERE STIGId = :STIGId)"));
         q.bindValue(QStringLiteral(":STIGId"), id);
         ret = q.exec() && ret; //q.exec() first toavoid short-circuit evaluation
+        q.prepare(QStringLiteral("DELETE FROM STIGCheckLegacyId WHERE STIGCheckId IN (SELECT id FROM STIGCheck WHERE STIGId = :STIGId)"));
+        q.bindValue(QStringLiteral(":STIGId"), id);
+        ret = q.exec() && ret;
         Log(6, QStringLiteral("DeleteSTIG-STIGCheckCCI"), q);
         q.prepare(QStringLiteral("DELETE FROM STIGCheck WHERE STIGId = :STIGId"));
         q.bindValue(QStringLiteral(":STIGId"), id);
@@ -1649,6 +1661,10 @@ QVector<STIGCheck> DbManager::GetSTIGChecks(const QString &whereClause, const QV
             {
                 c.cciIds.append(cci.id);
             }
+            Q_FOREACH (QString legacyId, GetLegacyIds(c.id))
+            {
+                c.legacyIds.append(legacyId);
+            }
             ret.append(c);
         }
     }
@@ -1955,6 +1971,29 @@ Family DbManager::GetFamily(int id)
         return tmpFamily.first();
     Family ret;
     Warning(QStringLiteral("Family Not Found"), "The Family associated with ID " + QString::number(id) + " could not be found.");
+    return ret;
+}
+
+/**
+ * @brief DbManager::GetLegacyIds
+ * @param STIGCheckId
+ * @return The list of Legacy IDs associated with this STIGCheck
+ */
+QVector<QString> DbManager::GetLegacyIds(int STIGCheckId)
+{
+    QVector<QString> ret;
+    QSqlDatabase db;
+    if (CheckDatabase(db))
+    {
+        QSqlQuery q(db);
+        q.prepare(QStringLiteral("SELECT LegacyId FROM STIGCheckLegacyId WHERE STIGCheckCCI.STIGCheckId = :STIGCheckId"));
+        q.bindValue(QStringLiteral(":STIGCheckId"), STIGCheckId);
+        q.exec();
+        while (q.next())
+        {
+            ret.append(q.value(0).toString());
+        }
+    }
     return ret;
 }
 
@@ -2485,6 +2524,18 @@ bool DbManager::UpdateSTIGCheck(const STIGCheck &check)
                 ret = q.exec() && ret;
                 Log(6, QStringLiteral("UpdateSTIGCheck-STIGCheckCCI2"), q);
             }
+            q.prepare(QStringLiteral("DELETE FROM STIGCheckLegacyId WHERE STIGCheckId = :STIGCheckId"));
+            q.bindValue(QStringLiteral(":STIGCheckId"), tmpCheck.id);
+            ret = q.exec() && ret;
+            Log(6, QStringLiteral("UpdateSTIGCheck-STIGCheckLegacyId1"), q);
+            Q_FOREACH (QString legacyId, check.legacyIds)
+            {
+                q.prepare(QStringLiteral("INSERT INTO STIGCheckLegacyId (`STIGCheckId`, `LegacyId`) VALUES(:STIGCheckId, :LegacyId)"));
+                q.bindValue(QStringLiteral(":STIGCheckId"), tmpCheck.id);
+                q.bindValue(QStringLiteral(":LegacyId"), legacyId);
+                ret = q.exec() && ret;
+                Log(6, QStringLiteral("UpdateSTIGCheck-STIGCheckLegacyId2"), q);
+            }
         }
     }
     return ret;
@@ -2678,7 +2729,8 @@ bool DbManager::UpdateDatabaseFromVersion(int version)
                       "FOREIGN KEY(`STIGCheckId`) REFERENCES `STIGCheck`(`id`), "
                       "FOREIGN KEY(`AssetId`) REFERENCES `Asset`(`id`) "
                       ")"));
-            ret = q.exec() && ret;q.prepare(QStringLiteral("CREATE TABLE `Log` ( "
+            ret = q.exec() && ret;
+            q.prepare(QStringLiteral("CREATE TABLE `Log` ( "
                       "`id`	INTEGER PRIMARY KEY AUTOINCREMENT, "
                       "`when`	DATETIME, "
                       "`severity`	INTEGER, "
@@ -2712,6 +2764,13 @@ bool DbManager::UpdateDatabaseFromVersion(int version)
                         "`path`	TEXT, "
                         "`contents`	BLOB, "
                         "FOREIGN KEY(`STIGId`) REFERENCES `STIG`(`id`)"
+                        ")"));
+            ret = q.exec() && ret;
+            q.prepare(QStringLiteral("CREATE TABLE `STIGCheckLegacyId` ( "
+                        "`id`	INTEGER PRIMARY KEY AUTOINCREMENT, "
+                        "`STIGCheckId`	INTEGER, "
+                        "`LegacyId`	TEXT, "
+                        "FOREIGN KEY(`STIGCheckId`) REFERENCES `STIGCheck`(`id`)"
                         ")"));
             ret = q.exec() && ret;
             q.prepare(QStringLiteral("INSERT INTO variables (name, value) VALUES(:name, :value)"));

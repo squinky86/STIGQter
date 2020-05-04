@@ -50,6 +50,7 @@ public:
     int id;
     int stigId;
     QVector<int> cciIds;
+    QVector<QString> legacyIds;
     STIG GetSTIG() const;
     QVector<CCI> GetCCIs() const;
     QString vulnNum;
