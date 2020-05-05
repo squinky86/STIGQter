@@ -263,13 +263,13 @@ void WorkerSTIGAdd::ParseSTIG(const QByteArray &stig, const QString &fileName, c
                     {
                         Q_FOREACH (const QXmlStreamAttribute &attr, xml->attributes())
                         {
-                            if (attr.name().endsWith(QStringLiteral("legacy"), Qt::CaseSensitivity::CaseInsensitive))
+                            QString elementText = xml->readElementText().trimmed();
+                            if (attr.name() == "system" && elementText.endsWith(QStringLiteral("legacy"), Qt::CaseSensitivity::CaseInsensitive))
                             {
                                 legacy = true;
-                                QString toAppend = xml->readElementText().trimmed();
-                                if (!c.legacyIds.contains(toAppend))
+                                if (!c.legacyIds.contains(elementText))
                                 {
-                                    c.legacyIds.append(toAppend);
+                                    c.legacyIds.append(elementText);
                                 }
                             }
                         }
