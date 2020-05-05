@@ -797,6 +797,7 @@ void STIGQter::DownloadSTIGs()
  */
 void STIGQter::EditSTIG()
 {
+    int currentIndex = ui->tabDB->currentIndex();
     Q_FOREACH(QListWidgetItem *i, ui->lstSTIGs->selectedItems())
     {
         auto s = i->data(Qt::UserRole).value<STIG>();
@@ -812,8 +813,9 @@ void STIGQter::EditSTIG()
         auto *se = new STIGEdit(s, this);
         int index = ui->tabDB->addTab(se, stigName);
         se->SetTabIndex(index);
-        ui->tabDB->setCurrentIndex(index);
+        currentIndex = index;
     }
+    ui->tabDB->setCurrentIndex(currentIndex);
 }
 
 /**
