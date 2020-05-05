@@ -797,10 +797,19 @@ void STIGQter::DownloadSTIGs()
  */
 void STIGQter::EditSTIG()
 {
+    //set the index to the last STIG opened, or remain on main screen if none opened
     int currentIndex = ui->tabDB->currentIndex();
+
+    //buffer the STIGs before opening them
+    QVector<STIG> stigs;
     Q_FOREACH(QListWidgetItem *i, ui->lstSTIGs->selectedItems())
     {
-        auto s = i->data(Qt::UserRole).value<STIG>();
+        stigs.append(i->data(Qt::UserRole).value<STIG>());
+    }
+
+    //open each buffered STIG
+    Q_FOREACH(STIG s, stigs)
+    {
         QString stigName = PrintSTIG(s);
         for (int j = 0; j < ui->tabDB->count(); j++)
         {
@@ -815,6 +824,8 @@ void STIGQter::EditSTIG()
         se->SetTabIndex(index);
         currentIndex = index;
     }
+
+    //open the last created tab to edit
     ui->tabDB->setCurrentIndex(currentIndex);
 }
 
