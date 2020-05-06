@@ -210,10 +210,9 @@ void AssetView::SelectSTIGs(const QString &search)
     QVector<STIG> stigs = _asset.GetSTIGs();
     Q_FOREACH (const STIG s, db.GetSTIGs())
     {
-        if (!search.isEmpty())
+        if (!search.isEmpty() && !s.title.contains(search, Qt::CaseInsensitive))
         {
-            if (!s.title.contains(search, Qt::CaseInsensitive))
-                continue;
+            continue;
         }
         QListWidgetItem *i = new QListWidgetItem(PrintSTIG(s));
         ui->lstSTIGs->addItem(i);
