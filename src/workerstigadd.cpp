@@ -136,6 +136,7 @@ void WorkerSTIGAdd::ParseSTIG(const QByteArray &stig, const QString &fileName, c
                         //new rule; add the previous one!
                         checks.append(c);
                         c.cciIds.clear();
+                        c.legacyIds.clear();
                     }
                     Q_FOREACH (const QXmlStreamAttribute &attr, xml->attributes())
                     {
@@ -163,6 +164,7 @@ void WorkerSTIGAdd::ParseSTIG(const QByteArray &stig, const QString &fileName, c
                             //new rule; add the previous one!
                             checks.append(c);
                             c.cciIds.clear();
+                            c.legacyIds.clear();
                         }
                     }
                     c.id = 0;
@@ -259,22 +261,29 @@ void WorkerSTIGAdd::ParseSTIG(const QByteArray &stig, const QString &fileName, c
                 else if (xml->name() == "ident")
                 {
                     bool legacy = false;
-                    QString elementText = xml->readElementText().trimmed();
+
                     if (xml->attributes().hasAttribute(QStringLiteral("system")))
                     {
                         Q_FOREACH (const QXmlStreamAttribute &attr, xml->attributes())
                         {
-                            if (attr.name() == "system" && elementText.endsWith(QStringLiteral("legacy"), Qt::CaseSensitivity::CaseInsensitive))
+                            if (attr.name() == "system" && attr.value().endsWith(QStringLiteral("legacy"), Qt::CaseSensitivity::CaseInsensitive))
                             {
                                 legacy = true;
-                                if (!c.legacyIds.contains(elementText))
-                                {
-                                    c.legacyIds.append(elementText);
-                                }
+                                break;
                             }
                         }
                     }
-                    if (!legacy)
+
+                    QString elementText = xml->readElementText().trimmed();
+
+                    if (legacy)
+                    {
+                        if (!c.legacyIds.contains(elementText))
+                        {
+                            c.legacyIds.append(elementText);
+                        }
+                    }
+                    else
                     {
                         QString cci(elementText);
                         if (cci.startsWith(QStringLiteral("CCI"), Qt::CaseInsensitive))
@@ -310,6 +319,7 @@ void WorkerSTIGAdd::ParseSTIG(const QByteArray &stig, const QString &fileName, c
     {
         checks.append(c);
         c.cciIds.clear();
+        c.legacyIds.clear();
     }
     delete xml;
 
