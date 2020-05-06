@@ -259,11 +259,11 @@ void WorkerSTIGAdd::ParseSTIG(const QByteArray &stig, const QString &fileName, c
                 else if (xml->name() == "ident")
                 {
                     bool legacy = false;
+                    QString elementText = xml->readElementText().trimmed();
                     if (xml->attributes().hasAttribute(QStringLiteral("system")))
                     {
                         Q_FOREACH (const QXmlStreamAttribute &attr, xml->attributes())
                         {
-                            QString elementText = xml->readElementText().trimmed();
                             if (attr.name() == "system" && elementText.endsWith(QStringLiteral("legacy"), Qt::CaseSensitivity::CaseInsensitive))
                             {
                                 legacy = true;
@@ -276,7 +276,7 @@ void WorkerSTIGAdd::ParseSTIG(const QByteArray &stig, const QString &fileName, c
                     }
                     if (!legacy)
                     {
-                        QString cci(xml->readElementText().trimmed());
+                        QString cci(elementText);
                         if (cci.startsWith(QStringLiteral("CCI"), Qt::CaseInsensitive))
                             c.cciIds.append(db.GetCCIByCCI(GetCCINumber(cci), &s).id);
                     }
