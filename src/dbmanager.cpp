@@ -1839,7 +1839,7 @@ Control DbManager::GetControl(const QString &control)
     int enhancementInt = -1;
     if (tmpControl.contains('('))
     {
-        int tmpIndex = tmpControl.indexOf('(');
+        tmpIndex = tmpControl.indexOf('(');
         QString enhancement = tmpControl.right(tmpControl.length() - tmpIndex - 1);
         enhancement = enhancement.left(enhancement.length() - 1);
         tmpControl = tmpControl.left(tmpControl.indexOf('('));

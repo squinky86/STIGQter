@@ -335,7 +335,7 @@ void AssetView::UpdateCKLCheck(const CKLCheck &cklCheck)
  */
 void AssetView::UpdateSTIGCheck(const STIGCheck &stigCheck)
 {
-    ui->lblCheckRule->setText(stigCheck.rule + " (" + stigCheck.vulnNum + ")");
+    ui->lblCheckRule->setText(stigCheck.rule + QStringLiteral(" (") + (stigCheck.legacyIds.count() > 0 ? stigCheck.legacyIds.join(QStringLiteral(", ")) : stigCheck.vulnNum) + QStringLiteral(")"));
     ui->lblCheckTitle->setText(stigCheck.title);
     ui->cboBoxSeverity->setCurrentText(GetSeverity(stigCheck.severity));
     ui->cbDocumentable->setChecked(stigCheck.documentable);
