@@ -111,6 +111,8 @@ STIGQter::STIGQter(QWidget *parent) :
 
     //remember if we're indexing STIG checks
     ui->cbIncludeSupplements->setChecked(db.GetVariable("indexSupplements").startsWith(QStringLiteral("y"), Qt::CaseInsensitive));
+    ui->cbRemapCM6->setChecked(db.GetVariable("remapCM6").startsWith(QStringLiteral("y"), Qt::CaseInsensitive));
+    UpdateRemapButton();
 
     //check version number
     auto *t = new QThread;
@@ -418,6 +420,19 @@ void STIGQter::OpenCKL()
         av->SetTabIndex(index);
         ui->tabDB->setCurrentIndex(index);
     }
+}
+
+/**
+ * @brief STIGQter::RemapChanged
+ * @param checkState
+ *
+ * Change whether the user wants to remap to CCI-366 or all CM-6
+ */
+void STIGQter::RemapChanged(int checkState)
+{
+    DbManager db;
+    db.UpdateVariable(QStringLiteral("remapCM6"), checkState == Qt::Checked ? QStringLiteral("y") : QStringLiteral("n"));
+    UpdateRemapButton();
 }
 
 /**
@@ -1037,7 +1052,7 @@ void STIGQter::Load(const QString &fileName)
  */
 void STIGQter::MapUnmapped(bool confirm)
 {
-    QMessageBox::StandardButton reply = confirm ? QMessageBox::Yes : QMessageBox::question(this, QStringLiteral("Non-Standard CKLs"), QStringLiteral("This feature will map all unmapped STIG checks, STIG checks from other system categorizations, and incorrectly mapped STIG checks to CM-6, CCI-366. CKL files generated will no longer be consistent with STIGViewer and other tools. Are you sure you want to proceed?"), QMessageBox::Yes|QMessageBox::No);
+    QMessageBox::StandardButton reply = confirm ? QMessageBox::Yes : QMessageBox::question(this, QStringLiteral("Non-Standard CKLs"), QStringLiteral("This feature will map all unmapped STIG checks, STIG checks from other system categorizations, and incorrectly mapped STIG checks to CM-6/CCI-366. CKL files generated will no longer be consistent with STIGViewer and other tools. Are you sure you want to proceed?"), QMessageBox::Yes|QMessageBox::No);
     if (reply == QMessageBox::Yes)
     {
         DisableInput();
@@ -1140,6 +1155,7 @@ void STIGQter::EnableInput()
     ui->btnImportCKL->setEnabled(true);
     ui->btnMapUnmapped->setEnabled(isImport);
     ui->cbIncludeSupplements->setEnabled(true);
+    ui->cbRemapCM6->setEnabled(true);
     ui->btnOpenCKL->setEnabled(ui->lstAssets->selectedItems().count() > 0);
     ui->btnQuit->setEnabled(true);
     ui->menubar->setEnabled(true);
@@ -1152,6 +1168,17 @@ void STIGQter::EnableInput()
             tmpTabView->EnableInput();
     }
     SelectSTIG();
+}
+
+/**
+ * @brief STIGQter::UpdateRemapButton
+ *
+ * Change the text of the remap button to reflect if STIG checks are being
+ * remapped to CM-6 or CCI-366.
+ */
+void STIGQter::UpdateRemapButton()
+{
+    ui->btnMapUnmapped->setText(ui->cbRemapCM6->isChecked() ? QStringLiteral("Remap CM-6") : QStringLiteral("Remap CCI-366"));
 }
 
 /**
@@ -1224,6 +1251,7 @@ void STIGQter::DisableInput()
     ui->btnImportSTIGs->setEnabled(false);
     ui->btnMapUnmapped->setEnabled(false);
     ui->cbIncludeSupplements->setEnabled(false);
+    ui->cbRemapCM6->setEnabled(false);
     ui->btnOpenCKL->setEnabled(false);
     ui->btnQuit->setEnabled(false);
     ui->menubar->setEnabled(false);

@@ -287,7 +287,11 @@ void WorkerSTIGAdd::ParseSTIG(const QByteArray &stig, const QString &fileName, c
                     {
                         QString cci(elementText);
                         if (cci.startsWith(QStringLiteral("CCI"), Qt::CaseInsensitive))
-                            c.cciIds.append(db.GetCCIByCCI(GetCCINumber(cci), &s).id);
+                        {
+                            auto tmpCci = db.GetCCIByCCI(GetCCINumber(cci), &s);
+                            if (!c.cciIds.contains(tmpCci.id))
+                                c.cciIds.append(tmpCci.id);
+                        }
                     }
                 }
                 else if (xml->name() == "fixtext")

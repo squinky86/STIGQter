@@ -61,7 +61,12 @@ void WorkerMapUnmapped::process()
     QVector<STIGCheck> stigchecks = db.GetSTIGChecks();
     Q_EMIT initialize(stigchecks.count(), 0);
 
-    CCI cci366 = db.GetCCIByCCI(366);
+    QVector<CCI> remapCCIs = db.GetRemapCCIs();
+    QVector<int> remapCCIIds;
+    Q_FOREACH (CCI c, remapCCIs)
+    {
+        remapCCIIds.append(c.id);
+    }
 
     Q_FOREACH (STIGCheck check, stigchecks)
     {
@@ -70,7 +75,7 @@ void WorkerMapUnmapped::process()
         //if the associated CCI was not imported in the eMASS import, remap to CM-6, CCI-366.
         Q_FOREACH (CCI c, check.GetCCIs())
         {
-            if (c == cci366)
+            if (remapCCIIds.contains(c.id))
                 continue;
             if (!c.isImport)
             {
@@ -80,7 +85,10 @@ void WorkerMapUnmapped::process()
         }
         if (check.cciIds.count() <= 0)
         {
-            check.cciIds.append(cci366.id);
+            Q_FOREACH (CCI c, remapCCIs)
+            {
+                check.cciIds.append(c.id);
+            }
             updateCheck = true;
         }
         if (updateCheck)

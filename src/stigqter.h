@@ -72,6 +72,7 @@ private Q_SLOTS:
     void Load(const QString &fileName = QString());
     void MapUnmapped(bool confirm = false);
     void OpenCKL();
+    void RemapChanged(int checkState);
     void RenameTab(int index, QString title);
     bool Reset(bool checkOnly = false);
     void Save();
@@ -102,6 +103,7 @@ private:
     void DisplayCCIs();
     void DisplaySTIGs(const QString &search = QString());
     void EnableInput();
+    void UpdateRemapButton();
     bool _isFiltered;
 };
 

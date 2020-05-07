@@ -522,7 +522,8 @@ bool DbManager::AddSTIG(STIG &stig, const QVector<STIGCheck> &checks, const QVec
     if (CheckDatabase(db))
     {
         QSqlQuery q(db);
-        int cci366Id = -1;
+        //int cci366Id = -1;
+        QVector<CCI> remapCCIs = GetRemapCCIs();
 
         if (stig.id <= 0)
         {
@@ -608,13 +609,15 @@ bool DbManager::AddSTIG(STIG &stig, const QVector<STIGCheck> &checks, const QVec
                 //check if the STIG is mapped to at least one CCI
                 if (c.cciIds.count() <= 0)
                 {
-                    Warning(QStringLiteral("Broken CCI"), "The STIGCheck rule " + c.rule + " is not mapped against a known CCI. If you are importing a STIG, please file a bug with the STIG author (probably DISA, disa.stig_spt@mail.mil) and let them know that their CCI mapping for the STIG you are trying to import is broken. For now, this broken STIG check is being remapped to CCI-000366. <a href=\"mailto:disa.stig_spt@mail.mil?subject=Incorrectly%20Mapped%20STIG%20Check&body=DISA,%0d" + PrintSTIG(stig) + "%20contains%20rule%20" + c.rule + "%20mapped%20against%20an%20unknown%20CCI%20which%20does%20not%20exist%20in%20the%20current%20version%20of%20NIST%20800-53r4.\">Click here</a> to file this bug with DISA automatically.");
-                    if (cci366Id < 0)
+                    QString remapCCIsStr = QString();
+                    Q_FOREACH (CCI cci, remapCCIs)
                     {
-                        CCI cci366 = GetCCIByCCI(366);
-                        cci366Id = cci366.id;
+                        if (!remapCCIsStr.isEmpty())
+                            remapCCIsStr = remapCCIsStr + QStringLiteral(", ");
+                        remapCCIsStr = remapCCIsStr + PrintCCI(cci);
+                        c.cciIds.append(cci.id);
                     }
-                    c.cciIds.append(cci366Id);
+                    Warning(QStringLiteral("Broken CCI"), "The STIGCheck rule " + c.rule + " is not mapped against a known CCI. If you are importing a STIG, please file a bug with the STIG author (probably DISA, disa.stig_spt@mail.mil) and let them know that their CCI mapping for the STIG you are trying to import is broken. For now, this broken STIG check is being remapped to " + remapCCIsStr + ". <a href=\"mailto:disa.stig_spt@mail.mil?subject=Incorrectly%20Mapped%20STIG%20Check&body=DISA,%0d" + PrintSTIG(stig) + "%20contains%20rule%20" + c.rule + "%20mapped%20against%20an%20unknown%20CCI%20which%20does%20not%20exist%20in%20the%20current%20version%20of%20NIST%20800-53r4.\">Click here</a> to file this bug with DISA automatically.");
                 }
 
                 Q_FOREACH (int cciId, c.cciIds)
@@ -2010,6 +2013,25 @@ int DbManager::GetLogLevel()
     return _logLevel;
 }
 
+QVector<CCI> DbManager::GetRemapCCIs()
+{
+    CCI cci366 = GetCCIByCCI(366);
+
+    if (GetVariable("remapCM6") == QStringLiteral("n"))
+    {
+        return {cci366};
+    }
+
+    QString isImportStr = IsEmassImport() ? QStringLiteral(" isImport > 0 AND") : QString();
+
+    QVector<CCI> toRet = GetCCIs("WHERE" + isImportStr + " ControlId = (SELECT id FROM Control WHERE FamilyId = (SELECT id FROM Family WHERE Acronym = 'CM') AND number = 6 AND enhancement IS NULL)");
+
+    if (toRet.count() > 0)
+        return toRet;
+
+    return {cci366};
+}
+
 /**
  * @brief DbManager::GetFamily
  * @param acronym
@@ -2779,6 +2801,9 @@ bool DbManager::UpdateDatabaseFromVersion(int version)
             ret = q.exec() && ret;
             q.bindValue(QStringLiteral(":name"), QStringLiteral("quarterly"));
             q.bindValue(QStringLiteral(":value"), QStringLiteral("https://dl.dod.cyber.mil/wp-content/uploads/stigs/zip/U_SRG-STIG_Library_2020_04v1.zip"));
+            ret = q.exec() && ret;
+            q.bindValue(QStringLiteral(":name"), QStringLiteral("remapCM6"));
+            q.bindValue(QStringLiteral(":value"), QStringLiteral("n"));
             ret = q.exec() && ret;
             ret = UpdateVariable(QStringLiteral("version"), QStringLiteral("2")) && ret;
         }

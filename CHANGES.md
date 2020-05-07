@@ -4,6 +4,7 @@
 -   Add "Fix Text" contents to Detailed Findings Report (issue #64)
 -   Add STIG editor (issue #59)
 -   Support new STIG format with legacy IDs (issue #69)
+-   Allow mapping to all CCIs under CM-6 (issue #70)
 
 ## 1.0.0 20200131
 -   Stabilized database (reverse compatibility will be maintained)

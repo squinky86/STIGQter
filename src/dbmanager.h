@@ -88,9 +88,10 @@ public:
     QString GetDBPath();
     Family GetFamily(const QString &acronym);
     Family GetFamily(int id);
+    QVector<Family> GetFamilies(const QString &whereClause = QString(), const QVector<std::tuple<QString, QVariant>> &variables = {});
     QVector<QString> GetLegacyIds(int STIGCheckId);
     int GetLogLevel();
-    QVector<Family> GetFamilies(const QString &whereClause = QString(), const QVector<std::tuple<QString, QVariant>> &variables = {});
+    QVector<CCI> GetRemapCCIs();
     STIG GetSTIG(int id);
     STIG GetSTIG(const QString &title, int version, const QString &release);
     STIG GetSTIG(const STIG &stig);
