@@ -1052,7 +1052,16 @@ void STIGQter::Load(const QString &fileName)
  */
 void STIGQter::MapUnmapped(bool confirm)
 {
-    QMessageBox::StandardButton reply = confirm ? QMessageBox::Yes : QMessageBox::question(this, QStringLiteral("Non-Standard CKLs"), QStringLiteral("This feature will map all unmapped STIG checks, STIG checks from other system categorizations, and incorrectly mapped STIG checks to CM-6/CCI-366. CKL files generated will no longer be consistent with STIGViewer and other tools. Are you sure you want to proceed?"), QMessageBox::Yes|QMessageBox::No);
+    DbManager db;
+    QVector<CCI> ccis = db.GetRemapCCIs();
+    QString cciStr = QString();
+    Q_FOREACH (CCI c, ccis)
+    {
+        if (!cciStr.isEmpty())
+            cciStr = cciStr + ", ";
+        cciStr = cciStr + PrintCCI(c);
+    }
+    QMessageBox::StandardButton reply = confirm ? QMessageBox::Yes : QMessageBox::question(this, QStringLiteral("Non-Standard CKLs"), QStringLiteral("This feature will map all unmapped STIG checks, STIG checks from other system categorizations, and incorrectly mapped STIG checks to ") + cciStr + QStringLiteral(". CKL files generated will no longer be consistent with STIGViewer and other tools. Are you sure you want to proceed?"), QMessageBox::Yes|QMessageBox::No);
     if (reply == QMessageBox::Yes)
     {
         DisableInput();
@@ -1179,6 +1188,7 @@ void STIGQter::EnableInput()
 void STIGQter::UpdateRemapButton()
 {
     ui->btnMapUnmapped->setText(ui->cbRemapCM6->isChecked() ? QStringLiteral("Remap CM-6") : QStringLiteral("Remap CCI-366"));
+    ui->btnMapUnmapped->setToolTip(ui->btnMapUnmapped->text());
 }
 
 /**
