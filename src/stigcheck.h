@@ -75,6 +75,7 @@ public:
     QString responsibility;
     QString iaControls;
     QString targetKey;
+    bool isRemap;
 };
 
 Q_DECLARE_METATYPE(STIGCheck);
