@@ -92,7 +92,8 @@ STIGCheck::STIGCheck(QObject *parent) : QObject(parent),
     mitigationControl(),
     responsibility(),
     iaControls(),
-    targetKey()
+    targetKey(),
+    isRemap(false)
 {
     cciIds.clear();
     legacyIds.clear();
@@ -146,6 +147,7 @@ STIGCheck& STIGCheck::operator=(const STIGCheck &right)
         responsibility = right.responsibility;
         iaControls = right.iaControls;
         targetKey = right.targetKey;
+        isRemap = right.isRemap;
     }
     return *this;
 }

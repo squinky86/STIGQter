@@ -221,6 +221,8 @@ void STIGQter::RunTests()
 
     // remap unmapped to CM-6
     std::cout << "\tTest " << step++ << ": Remapping Unmapped to CM-6" << std::endl;
+    ui->cbRemapCM6->setChecked(true);
+    ProcEvents();
     MapUnmapped(true);
     ProcEvents();
 
