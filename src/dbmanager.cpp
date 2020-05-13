@@ -595,7 +595,7 @@ bool DbManager::AddSTIG(STIG &stig, const QVector<STIGCheck> &checks, const QVec
             q.bindValue(QStringLiteral(":responsibility"), c.responsibility);
             q.bindValue(QStringLiteral(":IAControls"), c.iaControls);
             q.bindValue(QStringLiteral(":targetKey"), c.targetKey);
-            q.bindValue(QStringLiteral(":isRemap"), c.isRemap ? 1 : 0);
+            q.bindValue(QStringLiteral(":isRemap"), (c.isRemap || c.cciIds.count() <= 0) ? 1 : 0);
             bool tmpRet = q.exec();
             stigCheckRet = stigCheckRet && tmpRet;
             if (!tmpRet)
