@@ -1164,11 +1164,10 @@ QVector<CCI> DbManager::GetCCIs(int STIGCheckId)
  * are part of the latest NIST 800-53rev4. Some STIG checks were
  * errantly "mapped" by DISA to CCIs that were removed or replaced.
  *
- * Current standard practice is to temporarily remap these to CCI-366
- * until a better mapping can be found.
- *
- * When the explicitly requested CCI or assumed default CCI-366 are
- * not in the database, the default @a CCI with ID -1 is returned.
+ * Formerly, the CCI was supposed to be remapped to CCI-366; however,
+ * new commands and updated eMASS implementations now map things
+ * differently. A default CCI of ID -1 is returned when the CCI does
+ * not exist.
  */
 CCI DbManager::GetCCIByCCI(int cci, const STIG *stig)
 {
@@ -1178,14 +1177,12 @@ CCI DbManager::GetCCIByCCI(int cci, const STIG *stig)
     QString tmpMessage = stig ? PrintSTIG(*stig) : QStringLiteral("&lt;insert%20STIG%20information%20here&gt;");
     QString cciStr = PrintCCI(cci);
 
-    //The CCI could not be found. Assume that this will be remapped to CCI-366.
+    //The CCI could not be found. Assume that this will be remapped later.
     Warning(QStringLiteral("Broken CCI"), "The CCI " + cciStr + " does not exist in NIST 800-53r4. If you are importing a STIG, please file a bug with the STIG author (probably DISA, disa.stig_spt@mail.mil) and let them know that their CCI mapping for the STIG you are trying to import is broken. For now, this broken STIG check is being remapped to CCI-000366. <a href=\"mailto:disa.stig_spt@mail.mil?subject=Incorrectly%20Mapped%20STIG%20Check&body=DISA,%0d" + tmpMessage + "%20contains%20rule(s)%20mapped%20against%20" + cciStr + "%20which%20does%20not%20exist%20in%20the%20current%20version%20of%20NIST%20800-53r4.\">Click here</a> to file this bug with DISA automatically.");
-    tmpList = GetCCIs(QStringLiteral("WHERE CCI.cci = :cci"), {std::make_tuple<QString, QVariant>(QStringLiteral(":cci"), 366)});
-    if (tmpList.count() > 0)
-        return tmpList.first();
 
-    //If CCI-366 isn't in the database, provide unsuccessful default CCI.
+    //If the CCI isn't in the database, provide unsuccessful default CCI.
     CCI ret;
+    ret.cci = cci;
     return ret;
 }
 
