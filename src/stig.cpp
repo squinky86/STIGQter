@@ -30,15 +30,16 @@
  * The Defense Information Systems Agency (DISA) has been tasked
  * with issuing official STIG guidance. This duty has been one of
  * the Information Assurance Support Environment's (IASE) main
- * missions for DISA.
+ * missions for DISA, and has now been moved to the public cyber.mil
+ * portal.
  *
- * STIGs can be downloaded publicly from @l {https://iase.disa.mil/}.
+ * STIGs can be downloaded publicly from @l {https://public.cyber.mil/}.
  * Some STIGs are only provided at the FOUO level and require
  * government authentication to access them. Others are fully
  * unclassified, and though they have no markings that they are clear
  * for public release, are distributed freely over the internet from
- * the public IASE website. Only the freely available public STIGs
- * are supported in STIGQter.
+ * the public public.cyber.mil portal. Only the freely available,
+ * public STIGs are supported in STIGQter.
  *
  * A @a STIG is composed of @a STIGChecks. These @a STIGChecks are
  * then mapped against @a CCIs. The hierarchy is:
