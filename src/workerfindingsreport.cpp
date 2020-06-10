@@ -140,11 +140,14 @@ void WorkerFindingsReport::process()
         Asset a = cc.GetAsset();
         Status s = cc.status;
         Q_EMIT updateStatus("Adding " + PrintAsset(a) + ", " + PrintSTIGCheck(sc) + "…");
+        int findingNumber = 0;
         Q_FOREACH (CCI c, ccis)
         {
             onRow++;
+            findingNumber++;
+            int divisor = QString::number(findingNumber).length() * 10;
             //internal id
-            worksheet_write_number(wsFindings, onRow, 0, cc.id, nullptr);
+            worksheet_write_number(wsFindings, onRow, 0, (double) cc.id + ((double) findingNumber / (double) divisor), nullptr);
             //host
             worksheet_write_string(wsFindings, onRow, 1, a.hostName.toStdString().c_str(), nullptr);
             //status

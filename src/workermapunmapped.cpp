@@ -72,25 +72,38 @@ void WorkerMapUnmapped::process()
     {
         //Q_EMIT updateStatus(QStringLiteral("Checking ") + PrintSTIGCheck(check) + QStringLiteral("…"));
         bool updateCheck = false;
-        //if the associated CCI was not imported in the eMASS import, remap to CM-6, CCI-366.
-        Q_FOREACH (CCI c, check.GetCCIs())
+
+        //step one - see if this STIG Check is already an imported one
+        if (check.isRemap)
         {
-            if (remapCCIIds.contains(c.id))
-                continue;
-            if (!c.isImport)
+            check.cciIds.clear();
+        }
+        else
+        {
+
+            //step two - make sure that each of the CCIs are in the import
+            Q_FOREACH (CCI c, check.GetCCIs())
             {
-                check.cciIds.removeOne(c.id);
-                updateCheck = true;
+                if (!c.isImport)
+                {
+                    check.cciIds.removeAll(c.id);
+                    updateCheck = true;
+                }
             }
         }
+
+        //step three - remap to CM-6
         if (check.cciIds.count() <= 0)
         {
             Q_FOREACH (CCI c, remapCCIs)
             {
                 check.cciIds.append(c.id);
             }
+            check.isRemap = true;
             updateCheck = true;
         }
+
+        //step four - write the changes
         if (updateCheck)
         {
             Q_EMIT updateStatus(QStringLiteral("Updating mapping for ") + PrintSTIGCheck(check) + QStringLiteral("…"));

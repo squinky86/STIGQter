@@ -571,7 +571,7 @@ bool DbManager::AddSTIG(STIG &stig, const QVector<STIGCheck> &checks, const QVec
         Q_FOREACH(STIGCheck c, checks)
         {
             newChecks = true;
-            q.prepare(QStringLiteral("INSERT INTO STIGCheck (`STIGId`, `rule`, `vulnNum`, `groupTitle`, `ruleVersion`, `severity`, `weight`, `title`, `vulnDiscussion`, `falsePositives`, `falseNegatives`, `fix`, `check`, `documentable`, `mitigations`, `severityOverrideGuidance`, `checkContentRef`, `potentialImpact`, `thirdPartyTools`, `mitigationControl`, `responsibility`, `IAControls`, `targetKey`) VALUES(:STIGId, :rule, :vulnNum, :groupTitle, :ruleVersion, :severity, :weight, :title, :vulnDiscussion, :falsePositives, :falseNegatives, :fix, :check, :documentable, :mitigations, :severityOverrideGuidance, :checkContentRef, :potentialImpact, :thirdPartyTools, :mitigationControl, :responsibility, :IAControls, :targetKey)"));
+            q.prepare(QStringLiteral("INSERT INTO STIGCheck (`STIGId`, `rule`, `vulnNum`, `groupTitle`, `ruleVersion`, `severity`, `weight`, `title`, `vulnDiscussion`, `falsePositives`, `falseNegatives`, `fix`, `check`, `documentable`, `mitigations`, `severityOverrideGuidance`, `checkContentRef`, `potentialImpact`, `thirdPartyTools`, `mitigationControl`, `responsibility`, `IAControls`, `targetKey`, `isRemap`) VALUES(:STIGId, :rule, :vulnNum, :groupTitle, :ruleVersion, :severity, :weight, :title, :vulnDiscussion, :falsePositives, :falseNegatives, :fix, :check, :documentable, :mitigations, :severityOverrideGuidance, :checkContentRef, :potentialImpact, :thirdPartyTools, :mitigationControl, :responsibility, :IAControls, :targetKey, :isRemap)"));
             q.bindValue(QStringLiteral(":STIGId"), stig.id);
             q.bindValue(QStringLiteral(":rule"), c.rule);
             q.bindValue(QStringLiteral(":vulnNum"), c.vulnNum);
@@ -595,6 +595,7 @@ bool DbManager::AddSTIG(STIG &stig, const QVector<STIGCheck> &checks, const QVec
             q.bindValue(QStringLiteral(":responsibility"), c.responsibility);
             q.bindValue(QStringLiteral(":IAControls"), c.iaControls);
             q.bindValue(QStringLiteral(":targetKey"), c.targetKey);
+            q.bindValue(QStringLiteral(":isRemap"), (c.isRemap || c.cciIds.count() <= 0) ? 1 : 0);
             bool tmpRet = q.exec();
             stigCheckRet = stigCheckRet && tmpRet;
             if (!tmpRet)
@@ -609,6 +610,7 @@ bool DbManager::AddSTIG(STIG &stig, const QVector<STIGCheck> &checks, const QVec
                 //check if the STIG is mapped to at least one CCI
                 if (c.cciIds.count() <= 0)
                 {
+                    c.isRemap = true;
                     QString remapCCIsStr = QString();
                     Q_FOREACH (CCI cci, remapCCIs)
                     {
@@ -1162,11 +1164,10 @@ QVector<CCI> DbManager::GetCCIs(int STIGCheckId)
  * are part of the latest NIST 800-53rev4. Some STIG checks were
  * errantly "mapped" by DISA to CCIs that were removed or replaced.
  *
- * Current standard practice is to temporarily remap these to CCI-366
- * until a better mapping can be found.
- *
- * When the explicitly requested CCI or assumed default CCI-366 are
- * not in the database, the default @a CCI with ID -1 is returned.
+ * Formerly, the CCI was supposed to be remapped to CCI-366; however,
+ * new commands and updated eMASS implementations now map things
+ * differently. A default CCI of ID -1 is returned when the CCI does
+ * not exist.
  */
 CCI DbManager::GetCCIByCCI(int cci, const STIG *stig)
 {
@@ -1176,14 +1177,12 @@ CCI DbManager::GetCCIByCCI(int cci, const STIG *stig)
     QString tmpMessage = stig ? PrintSTIG(*stig) : QStringLiteral("&lt;insert%20STIG%20information%20here&gt;");
     QString cciStr = PrintCCI(cci);
 
-    //The CCI could not be found. Assume that this will be remapped to CCI-366.
+    //The CCI could not be found. Assume that this will be remapped later.
     Warning(QStringLiteral("Broken CCI"), "The CCI " + cciStr + " does not exist in NIST 800-53r4. If you are importing a STIG, please file a bug with the STIG author (probably DISA, disa.stig_spt@mail.mil) and let them know that their CCI mapping for the STIG you are trying to import is broken. For now, this broken STIG check is being remapped to CCI-000366. <a href=\"mailto:disa.stig_spt@mail.mil?subject=Incorrectly%20Mapped%20STIG%20Check&body=DISA,%0d" + tmpMessage + "%20contains%20rule(s)%20mapped%20against%20" + cciStr + "%20which%20does%20not%20exist%20in%20the%20current%20version%20of%20NIST%20800-53r4.\">Click here</a> to file this bug with DISA automatically.");
-    tmpList = GetCCIs(QStringLiteral("WHERE CCI.cci = :cci"), {std::make_tuple<QString, QVariant>(QStringLiteral(":cci"), 366)});
-    if (tmpList.count() > 0)
-        return tmpList.first();
 
-    //If CCI-366 isn't in the database, provide unsuccessful default CCI.
+    //If the CCI isn't in the database, provide unsuccessful default CCI.
     CCI ret;
+    ret.cci = cci;
     return ret;
 }
 
@@ -1621,7 +1620,7 @@ QVector<STIGCheck> DbManager::GetSTIGChecks(const QString &whereClause, const QV
     if (CheckDatabase(db))
     {
         QSqlQuery q(db);
-        QString toPrep = QStringLiteral("SELECT `id`, `STIGId`, `rule`, `vulnNum`, `groupTitle`, `ruleVersion`, `severity`, `weight`, `title`, `vulnDiscussion`, `falsePositives`, `falseNegatives`, `fix`, `check`, `documentable`, `mitigations`, `severityOverrideGuidance`, `checkContentRef`, `potentialImpact`, `thirdPartyTools`, `mitigationControl`, `responsibility`, `IAControls`, `targetKey` FROM STIGCheck");
+        QString toPrep = QStringLiteral("SELECT `id`, `STIGId`, `rule`, `vulnNum`, `groupTitle`, `ruleVersion`, `severity`, `weight`, `title`, `vulnDiscussion`, `falsePositives`, `falseNegatives`, `fix`, `check`, `documentable`, `mitigations`, `severityOverrideGuidance`, `checkContentRef`, `potentialImpact`, `thirdPartyTools`, `mitigationControl`, `responsibility`, `IAControls`, `targetKey`, `isRemap` FROM STIGCheck");
         if (!whereClause.isNull() && !whereClause.isEmpty())
             toPrep.append(" " + whereClause);
         q.prepare(toPrep);
@@ -1660,6 +1659,7 @@ QVector<STIGCheck> DbManager::GetSTIGChecks(const QString &whereClause, const QV
             c.responsibility = q.value(21).toString();
             c.iaControls = q.value(22).toString();
             c.targetKey = q.value(23).toString();
+            c.isRemap = q.value(24).toBool();
             Q_FOREACH (CCI cci, GetCCIs(c.id))
             {
                 c.cciIds.append(cci.id);
@@ -2507,7 +2507,7 @@ bool DbManager::UpdateSTIGCheck(const STIGCheck &check)
         {
             QSqlQuery q(db);
             //NOTE: The new values use the provided "check" while the WHERE clause uses the Database-identified "tmpCheck".
-            q.prepare(QStringLiteral("UPDATE STIGCheck SET `STIGId` = :STIGId, `rule` = :rule, `vulnNum` = :vulnNum, `groupTitle` = :groupTitle, `ruleVersion` = :ruleVersion, `severity` = :severity, `weight` = :weight, `title` = :title, `vulnDiscussion` = :vulnDiscussion, `falsePositives` = :falsePositives, `falseNegatives` = :falseNegatives, `fix` = :fix, `check` = :check, `documentable` = :documentable, `mitigations` = :mitigations, `severityOverrideGuidance` = :severityOverrideGuidance, `checkContentRef` = :checkContentRef, `potentialImpact` = :potentialImpact, `thirdPartyTools` = :thirdPartyTools, `mitigationControl` = :mitigationControl, `responsibility` = :responsibility, `IAControls` = :IAControls, `targetKey` = :targetKey WHERE `id` = :id"));
+            q.prepare(QStringLiteral("UPDATE STIGCheck SET `STIGId` = :STIGId, `rule` = :rule, `vulnNum` = :vulnNum, `groupTitle` = :groupTitle, `ruleVersion` = :ruleVersion, `severity` = :severity, `weight` = :weight, `title` = :title, `vulnDiscussion` = :vulnDiscussion, `falsePositives` = :falsePositives, `falseNegatives` = :falseNegatives, `fix` = :fix, `check` = :check, `documentable` = :documentable, `mitigations` = :mitigations, `severityOverrideGuidance` = :severityOverrideGuidance, `checkContentRef` = :checkContentRef, `potentialImpact` = :potentialImpact, `thirdPartyTools` = :thirdPartyTools, `mitigationControl` = :mitigationControl, `responsibility` = :responsibility, `IAControls` = :IAControls, `targetKey` = :targetKey, `isRemap` = :isRemap WHERE `id` = :id"));
             q.bindValue(QStringLiteral(":STIGId"), check.stigId);
             q.bindValue(QStringLiteral(":rule"), check.rule);
             q.bindValue(QStringLiteral(":vulnNum"), check.vulnNum);
@@ -2531,6 +2531,7 @@ bool DbManager::UpdateSTIGCheck(const STIGCheck &check)
             q.bindValue(QStringLiteral(":responsibility"), check.responsibility);
             q.bindValue(QStringLiteral(":IAControls"), check.iaControls);
             q.bindValue(QStringLiteral(":targetKey"), check.targetKey);
+            q.bindValue(QStringLiteral(":isRemap"), check.isRemap);
             q.bindValue(QStringLiteral(":id"), check.id);
             ret = q.exec();
             Log(6, QStringLiteral("UpdateSTIGCheck-STIGCheck"), q);
@@ -2804,6 +2805,8 @@ bool DbManager::UpdateDatabaseFromVersion(int version)
             ret = q.exec() && ret;
             q.bindValue(QStringLiteral(":name"), QStringLiteral("remapCM6"));
             q.bindValue(QStringLiteral(":value"), QStringLiteral("n"));
+            ret = q.exec() && ret;
+            q.prepare(QStringLiteral("ALTER TABLE STIGCheck ADD COLUMN isRemap INTEGER NOT NULL DEFAULT 0"));
             ret = q.exec() && ret;
             ret = UpdateVariable(QStringLiteral("version"), QStringLiteral("2")) && ret;
         }

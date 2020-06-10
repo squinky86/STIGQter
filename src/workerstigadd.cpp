@@ -289,7 +289,7 @@ void WorkerSTIGAdd::ParseSTIG(const QByteArray &stig, const QString &fileName, c
                         if (cci.startsWith(QStringLiteral("CCI"), Qt::CaseInsensitive))
                         {
                             auto tmpCci = db.GetCCIByCCI(GetCCINumber(cci), &s);
-                            if (!c.cciIds.contains(tmpCci.id))
+                            if (tmpCci.id >= 0 && !c.cciIds.contains(tmpCci.id))
                                 c.cciIds.append(tmpCci.id);
                         }
                     }

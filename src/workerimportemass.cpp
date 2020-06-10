@@ -316,7 +316,15 @@ void WorkerImportEMASS::process()
                                 curCCI.importInherited = value;
 
                             curCCI.isImport = true;
-                            db.UpdateCCI(curCCI);
+                            if (curCCI.id >= 0)
+                            {
+                                db.UpdateCCI(curCCI);
+                            }
+                            else
+                            {
+                                //A bad CCI was listed in the sheet
+                                Warning(QStringLiteral("CCI Not Imported"), QStringLiteral("No CCI \"") + PrintCCI(curCCI) + QStringLiteral("\" exists in the database."));
+                            }
                         }
                     }
                 }
