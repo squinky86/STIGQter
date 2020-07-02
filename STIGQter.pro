@@ -123,7 +123,11 @@ else: unix:!android: target.path = $${PREFIX}/bin
 
 LIBS += -ltidy -lzip -lxlsxwriter -lz
 
-INCLUDEPATH= src
+INCLUDEPATH = src
+
+exists(/usr/include/tidy) {
+	INCLUDEPATH += /usr/include/tidy
+}
 
 RC_FILE = STIGQter.rc
 

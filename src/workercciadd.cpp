@@ -71,7 +71,7 @@ void WorkerCCIAdd::process()
     //Step 1: download NIST Families
     Q_EMIT updateStatus(QStringLiteral("Downloading Families…"));
     QUrl nist(QStringLiteral("https://nvd.nist.gov"));
-    QString rmf = DownloadPage(nist.toString() + "/800-53/Rev4/");
+    QString rmf = DownloadPage(nist.toString() + "/800-53/Rev4");
 
     //Step 2: Convert NIST page to XML
     rmf = CleanXML(rmf);
