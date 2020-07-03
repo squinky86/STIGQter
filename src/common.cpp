@@ -203,7 +203,7 @@ bool DownloadFile(const QUrl &url, QFile *file)
 QString DownloadPage(const QUrl &url)
 {
     QNetworkAccessManager manager;
-    QNetworkRequest req = QNetworkRequest(QUrl(url));
+    QNetworkRequest req = QNetworkRequest(url);
 
     //set the User-Agent so that this program appears in logs correctly
     QString userAgent = GetUserAgent();
