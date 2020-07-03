@@ -204,6 +204,7 @@ QString DownloadPage(const QUrl &url)
 {
     QNetworkAccessManager manager;
     QNetworkRequest req = QNetworkRequest(url);
+    req.setAttribute(QNetworkRequest::FollowRedirectsAttribute, true);
 
     //set the User-Agent so that this program appears in logs correctly
     QString userAgent = GetUserAgent();
