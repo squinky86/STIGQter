@@ -1,10 +1,12 @@
-## 1.0.1
+## 1.0.1 20200706
 -   General fixes and code cleanups
 -   Fix very verbose debugging (issue #57)
 -   Add "Fix Text" contents to Detailed Findings Report (issue #64)
 -   Add STIG editor (issue #59)
 -   Support new STIG format with legacy IDs (issue #69)
 -   Allow mapping to all CCIs under CM-6 (issue #70)
+-   Indexing fixes (issue #77)
+-   New logo
 
 ## 1.0.0 20200131
 -   Stabilized database (reverse compatibility will be maintained)
