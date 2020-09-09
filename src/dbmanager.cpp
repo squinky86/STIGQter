@@ -2721,7 +2721,7 @@ bool DbManager::UpdateDatabaseFromVersion(int version)
             q.prepare(QStringLiteral("CREATE TABLE `Asset` ( "
                       "`id`	INTEGER PRIMARY KEY AUTOINCREMENT, "
                       "`assetType`	TEXT, "
-                      "`hostName`	TEXT UNIQUE, "
+                      "`hostName`	TEXT UNIQUE COLLATE NOCASE, "
                       "`hostIP`	TEXT, "
                       "`hostMAC`	TEXT, "
                       "`hostFQDN`	TEXT, "
