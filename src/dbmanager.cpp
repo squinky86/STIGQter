@@ -2812,7 +2812,7 @@ bool DbManager::UpdateDatabaseFromVersion(int version)
         }
         if (version < 3)
         {
-            ret = UpdateVariable(QStringLiteral("quarterly"), QStringLiteral("https://dl.dod.cyber.mil/wp-content/uploads/stigs/zip/U_SRG-STIG_Library_2020_07v1.zip")) && ret;
+            ret = UpdateVariable(QStringLiteral("quarterly"), QStringLiteral("https://dl.dod.cyber.mil/wp-content/uploads/stigs/zip/U_SRG-STIG_Library_2020_07v2.zip")) && ret;
             ret = UpdateVariable(QStringLiteral("version"), QStringLiteral("3")) && ret;
         }
     }
