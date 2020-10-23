@@ -392,7 +392,7 @@ void WorkerSTIGAdd::process()
         Q_EMIT updateStatus("Parsing " + s + "…");
         Q_FOREACH(const QString stig, toParse.keys())
         {
-            if (stig.endsWith(QStringLiteral("-xccdf.xml"), Qt::CaseInsensitive))
+            if (stig.endsWith(QStringLiteral("-xccdf.xml"), Qt::CaseInsensitive) || stig.endsWith(QStringLiteral("Manual_STIG.xml"), Qt::CaseInsensitive))
             {
                 QByteArray val = toParse.value(stig);
                 toParse.remove(stig);
