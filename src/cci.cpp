@@ -139,7 +139,7 @@ CCI& CCI::operator=(const CCI &right)
         importApNum = right.importApNum;
         importImplementationGuidance = right.importImplementationGuidance;
         importAssessmentProcedures = right.importAssessmentProcedures;
-        importNarratives = right.importNarratives;
+        importNarrative = right.importNarrative;
     }
     return *this;
 }
