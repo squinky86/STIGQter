@@ -59,7 +59,8 @@ CCI::CCI(QObject *parent) : QObject(parent),
     importInherited(),
     importApNum(),
     importImplementationGuidance(),
-    importAssessmentProcedures()
+    importAssessmentProcedures(),
+    importNarrative()
 {
 }
 
@@ -138,6 +139,7 @@ CCI& CCI::operator=(const CCI &right)
         importApNum = right.importApNum;
         importImplementationGuidance = right.importImplementationGuidance;
         importAssessmentProcedures = right.importAssessmentProcedures;
+        importNarratives = right.importNarratives;
     }
     return *this;
 }

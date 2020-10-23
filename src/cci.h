@@ -57,6 +57,7 @@ public:
     QString importApNum;
     QString importImplementationGuidance;
     QString importAssessmentProcedures;
+    QString importNarrative;
     friend bool operator<(const CCI &left, const CCI &right)
     {
         return left.cci < right.cci;

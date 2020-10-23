@@ -812,7 +812,7 @@ bool DbManager::DeleteEmassImport()
     if (CheckDatabase(db))
     {
         QSqlQuery q(db);
-        q.prepare(QStringLiteral("UPDATE CCI SET isImport = 0, importCompliance = NULL, importDateTested = NULL, importTestedBy = NULL, importTestResults = NULL, importCompliance2 = NULL, importDateTested2 = NULL, importTestedBy2 = NULL, importTestResults2 = NULL, importControlImplementationStatus = NULL, importSecurityControlDesignation = NULL, importInherited = NULL, importApNum = NULL, importImplementationGuidance = NULL, importAssessmentProcedures = NULL"));
+        q.prepare(QStringLiteral("UPDATE CCI SET isImport = 0, importCompliance = NULL, importDateTested = NULL, importTestedBy = NULL, importTestResults = NULL, importCompliance2 = NULL, importDateTested2 = NULL, importTestedBy2 = NULL, importTestResults2 = NULL, importControlImplementationStatus = NULL, importSecurityControlDesignation = NULL, importInherited = NULL, importApNum = NULL, importImplementationGuidance = NULL, importAssessmentProcedures = NULL, importNarrative = NULL"));
         ret = q.exec();
         if (!_delayCommit)
             db.commit();
@@ -1259,7 +1259,7 @@ QVector<CCI> DbManager::GetCCIs(const QString &whereClause, const QVector<std::t
     if (CheckDatabase(db))
     {
         QSqlQuery q(db);
-        QString toPrep = QStringLiteral("SELECT id, ControlId, cci, definition, isImport, importCompliance, importDateTested, importTestedBy, importTestResults, importCompliance2, importDateTested2, importTestedBy2, importTestResults2, importControlImplementationStatus, importSecurityControlDesignation, importInherited, importApNum, importImplementationGuidance, importAssessmentProcedures FROM CCI");
+        QString toPrep = QStringLiteral("SELECT id, ControlId, cci, definition, isImport, importCompliance, importDateTested, importTestedBy, importTestResults, importCompliance2, importDateTested2, importTestedBy2, importTestResults2, importControlImplementationStatus, importSecurityControlDesignation, importInherited, importApNum, importImplementationGuidance, importAssessmentProcedures, importNarrative FROM CCI");
         if (!whereClause.isNull() && !whereClause.isEmpty())
             toPrep.append(" " + whereClause);
         toPrep.append(QStringLiteral(" ORDER BY cci"));
@@ -1294,6 +1294,7 @@ QVector<CCI> DbManager::GetCCIs(const QString &whereClause, const QVector<std::t
             c.importApNum = q.value(16).toString();
             c.importImplementationGuidance = q.value(17).toString();
             c.importAssessmentProcedures = q.value(18).toString();
+            c.importNarrative = q.value(19).toString();
 
             ret.append(c);
         }
@@ -2396,7 +2397,7 @@ bool DbManager::UpdateCCI(const CCI &cci)
         {
             QSqlQuery q(db);
             //NOTE: The new values use the provided "cci" while the WHERE clause uses the Database-identified "tmpCCI".
-            q.prepare(QStringLiteral("UPDATE CCI SET ControlId = :ControlId, cci = :cci, definition = :definition, isImport = :isImport, importCompliance = :importCompliance, importDateTested = :importDateTested, importTestedBy = :importTestedBy, importTestResults = :importTestResults, importCompliance2 = :importCompliance2, importDateTested2 = :importDateTested2, importTestedBy2 = :importTestedBy2, importTestResults2 = :importTestResults2, importControlImplementationStatus = :importControlImplementationStatus, importSecurityControlDesignation = :importSecurityControlDesignation, importInherited = :importInherited, importApNum = :importApNum, importImplementationGuidance = :importImplementationGuidance, importAssessmentProcedures = :importAssessmentProcedures WHERE id = :id"));
+            q.prepare(QStringLiteral("UPDATE CCI SET ControlId = :ControlId, cci = :cci, definition = :definition, isImport = :isImport, importCompliance = :importCompliance, importDateTested = :importDateTested, importTestedBy = :importTestedBy, importTestResults = :importTestResults, importCompliance2 = :importCompliance2, importDateTested2 = :importDateTested2, importTestedBy2 = :importTestedBy2, importTestResults2 = :importTestResults2, importControlImplementationStatus = :importControlImplementationStatus, importSecurityControlDesignation = :importSecurityControlDesignation, importInherited = :importInherited, importApNum = :importApNum, importImplementationGuidance = :importImplementationGuidance, importAssessmentProcedures = :importAssessmentProcedures, importNarrative = :importNarrative WHERE id = :id"));
             q.bindValue(QStringLiteral(":ControlId"), cci.controlId);
             q.bindValue(QStringLiteral(":cci"), cci.cci);
             q.bindValue(QStringLiteral(":definition"), cci.definition);
@@ -2415,6 +2416,7 @@ bool DbManager::UpdateCCI(const CCI &cci)
             q.bindValue(QStringLiteral(":importApNum"), cci.isImport ? cci.importApNum : nullptr);
             q.bindValue(QStringLiteral(":importImplementationGuidance"), cci.isImport ? cci.importImplementationGuidance : nullptr);
             q.bindValue(QStringLiteral(":importAssessmentProcedures"), cci.isImport ? cci.importAssessmentProcedures : nullptr);
+            q.bindValue(QStringLiteral(":importNarrative"), cci.isImport ? cci.importNarrative : nullptr);
             q.bindValue(QStringLiteral(":id"), tmpCCI.id);
             ret = q.exec();
             Log(6, QStringLiteral("UpdateCCI"), q);
@@ -2810,6 +2812,16 @@ bool DbManager::UpdateDatabaseFromVersion(int version)
             ret = q.exec() && ret;
             ret = UpdateVariable(QStringLiteral("version"), QStringLiteral("2")) && ret;
         }
+	if (version < 3)
+	{
+            QSqlQuery q(db);
+            q.bindValue(QStringLiteral(":name"), QStringLiteral("quarterly"));
+	    q.bindValue(QStringLiteral(":value"), QStringLiteral("https://dl.dod.cyber.mil/wp-content/uploads/stigs/zip/U_SRG-STIG_Library_2020_07v2.zip"));
+            ret = q.exec() && ret;
+            q.prepare(QStringLiteral("ALTER TABLE CCI ADD COLUMN importNarrative TEXT"));
+            ret = q.exec() && ret;
+            ret = UpdateVariable(QStringLiteral("version"), QStringLiteral("3")) && ret;
+	}
     }
     return ret;
 }
