@@ -24,7 +24,7 @@
 #include <QFile>
 #include <QNetworkReply>
 
-#define VERSION QStringLiteral("1.0.1")
+#define VERSION QStringLiteral("1.0.2")
 
 [[maybe_unused]] extern bool IgnoreWarnings;
 

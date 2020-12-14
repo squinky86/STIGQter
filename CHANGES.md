@@ -1,8 +1,9 @@
-## 1.0.2 20201110
+## 1.0.2 20201214
 -   General fixes and code cleanups
 -   Change to the eMASS Test Result Import (issue #85)
 -   Fix case sensitivity of asset names (issue #82)
 -   Fix import of Splunk STIG (issue #86)
+-   Update quarterly STIG release information
 
 ## 1.0.1 20200706
 -   General fixes and code cleanups

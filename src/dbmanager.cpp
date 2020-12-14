@@ -2816,7 +2816,7 @@ bool DbManager::UpdateDatabaseFromVersion(int version)
 	{
             QSqlQuery q(db);
             q.bindValue(QStringLiteral(":name"), QStringLiteral("quarterly"));
-	    q.bindValue(QStringLiteral(":value"), QStringLiteral("https://dl.dod.cyber.mil/wp-content/uploads/stigs/zip/U_SRG-STIG_Library_2020_07v2.zip"));
+	    q.bindValue(QStringLiteral(":value"), QStringLiteral("https://dl.dod.cyber.mil/wp-content/uploads/stigs/zip/U_SRG-STIG_Library_2020_10v2.zip"));
             ret = q.exec() && ret;
             q.prepare(QStringLiteral("ALTER TABLE CCI ADD COLUMN importNarrative TEXT"));
             ret = q.exec() && ret;
