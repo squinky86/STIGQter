@@ -86,18 +86,15 @@ void WorkerCCIAdd::process()
         xml->readNext();
         if (xml->isStartElement() && (xml->name() == "a"))
         {
-            if (xml->attributes().hasAttribute(QStringLiteral("id")) && xml->attributes().hasAttribute(QStringLiteral("href")))
+            if (xml->attributes().hasAttribute(QStringLiteral("href")))
             {
-                QString id = QString();
                 QString href = QString();
                 Q_FOREACH (const QXmlStreamAttribute &attr, xml->attributes())
                 {
-                    if (attr.name() == "id")
-                        id = attr.value().toString();
-                    else if (attr.name() == "href")
+                    if (attr.name() == "href")
                         href = attr.value().toString();
                 }
-                if (id.endsWith(QStringLiteral("FamilyLink")))
+                if (href.startsWith(QStringLiteral("/800-53/Rev4/family")))
                 {
                     QString family(xml->readElementText().trimmed());
                     QString acronym(family.left(2));
