@@ -337,14 +337,13 @@ void WorkerEMASSReport::process()
             testResult += QStringLiteral("\n");
         if (hasChecks)
         {
-            testResult += QStringLiteral("The following checks are ");
             if (failed)
             {
-                testResult += QStringLiteral("open:");
+            	testResult += QStringLiteral("Non-Compliant. The following checks are open:");
             }
             else
             {
-                testResult += QStringLiteral("compliant:");
+            	testResult += QStringLiteral("Compliant. The following checks are not a finding:");
             }
             Q_FOREACH (CKLCheck cc, failed ? failedChecks : passedChecks)
             {
