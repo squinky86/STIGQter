@@ -417,21 +417,21 @@ void AssetView::RunTests()
     SaveCKLs(_asset.hostName, QStringLiteral("tests/"));
     ProcEvents();
 
-    //step 8: Count Checks
+    //step 9: Count Checks
     std::cout << "\t\tTest " << onTest++ << ": Counting Checks" << std::endl;
     UpdateChecks();
 
-    //step 9: import XCCDF
+    //step 10: import XCCDF
     std::cout << "\t\tTest " << onTest++ << ": Importing XCCDF" << std::endl;
     ImportXCCDF(QStringLiteral("tests/xccdf_lol.xml"));
     ProcEvents();
 
-    //step 10: rename asset
+    //step 11: rename asset
     std::cout << "\t\tTest " << onTest++ << ": Rename Asset" << std::endl;
     RenameAsset("TEST2");
     RenameAsset("TEST");
 
-    //step 11: delete asset
+    //step 12: delete asset
     std::cout << "\t\tTest " << onTest++ << ":Deleting Asset" << std::endl;
     DeleteAsset(true);
 }

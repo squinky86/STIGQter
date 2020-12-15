@@ -3,7 +3,8 @@
 -   Change to the eMASS Test Result Import (issue #85)
 -   Fix case sensitivity of asset names (issue #82)
 -   Fix import of Splunk STIG (issue #86)
--   Update quarterly STIG release information
+-   Update quarterly STIG release information (issues #89 and #90)
+-   Export individual CKLs for an asset (issue #79)
 
 ## 1.0.1 20200706
 -   General fixes and code cleanups
