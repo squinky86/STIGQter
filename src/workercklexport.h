@@ -30,9 +30,11 @@ class WorkerCKLExport : public Worker
 
 private:
     QString _dirName;
+    QString _assetName;
 
 public:
     explicit WorkerCKLExport(QObject *parent = nullptr);
+    void SetAssetName(const QString &assetName);
     void SetExportDir(const QString &dir);
 
 public Q_SLOTS:

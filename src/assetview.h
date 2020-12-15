@@ -72,6 +72,7 @@ private Q_SLOTS:
     void KeyShortcutCtrlX();
     void RenameAsset(const QString &name = QString());
     void SaveCKL(const QString &name = QString());
+    void SaveCKLs(const QString &dir = QString());
     void UpdateChecks();
     void UpdateCKL();
     void UpdateCKLHelper();

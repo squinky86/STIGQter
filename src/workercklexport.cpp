@@ -46,6 +46,18 @@
  */
 WorkerCKLExport::WorkerCKLExport(QObject *parent) : Worker(parent)
 {
+    _assetName = QString();
+}
+
+/**
+ * @brief WorkerCKLExport::SetAssetName
+ * @param assetName
+ *
+ * Set the asset name for the CKLs that will be exported.
+ */
+void WorkerCKLExport::SetAssetName(const QString &assetName)
+{
+    _assetName = assetName;
 }
 
 /**
@@ -70,7 +82,15 @@ void WorkerCKLExport::SetExportDir(const QString &dir)
 void WorkerCKLExport::process()
 {
     DbManager db;
-    auto assets = db.GetAssets();
+    QVector<Asset> assets;
+    if (_assetName.isEmpty())
+    {
+        assets.append(db.GetAssets());
+    }
+    else
+    {
+        assets.append(db.GetAsset(_assetName));
+    }
     Q_EMIT initialize(assets.count(), 0);
     Q_FOREACH (Asset a, assets)
     {

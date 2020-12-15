@@ -26,6 +26,7 @@
 #include "stigqter.h"
 #include "ui_assetview.h"
 #include "workerassetckl.h"
+#include "workercklexport.h"
 
 #include <QFileDialog>
 #include <QFont>
@@ -144,6 +145,7 @@ void AssetView::DisableInput()
     ui->txtComments->setEnabled(false);
     ui->btnImportXCCDF->setEnabled(false);
     ui->btnSaveCKL->setEnabled(false);
+    ui->btnSaveCKLs->setEnabled(false);
 }
 
 /**
@@ -184,6 +186,7 @@ void AssetView::EnableInput()
     ui->txtComments->setEnabled(true);
     ui->btnImportXCCDF->setEnabled(true);
     ui->btnSaveCKL->setEnabled(true);
+    ui->btnSaveCKLs->setEnabled(true);
 }
 
 /**
@@ -407,6 +410,11 @@ void AssetView::RunTests()
     //step 7: save CKL
     std::cout << "\t\tSaving CKL" << std::endl;
     SaveCKL(QStringLiteral("tests/monolithic.ckl"));
+    ProcEvents();
+
+    //step 8: save CKLs
+    std::cout << "\t\tSaving CKL" << std::endl;
+    SaveCKLs(_asset.hostName, QStringLiteral("tests/"));
     ProcEvents();
 
     //step 8: Count Checks
@@ -686,6 +694,28 @@ void AssetView::SaveCKL(const QString &name)
     a->AddAsset(_asset);
     a->AddFilename(fileName);
     _parent->ConnectThreads(a)->start();
+}
+
+/**
+ * @brief AssetView::SaveCKLs
+ *
+ * Save the selected Asset as multiple CKL files.
+ */
+void AssetView::SaveCKLs(const QString &dir)
+{
+    DbManager db;
+    QString dirName = !dir.isEmpty() ? dir : QFileDialog::getExistingDirectory(this, QStringLiteral("Save to Directory"), db.GetVariable(QStringLiteral("lastdir")));
+
+    if (!dirName.isNull() && !dirName.isEmpty())
+    {
+        DisableInput();
+        db.UpdateVariable(QStringLiteral("lastdir"), QFileInfo(dirName).absolutePath());
+        auto *f = new WorkerCKLExport();
+        f->SetExportDir(dirName);
+        f->SetAssetName(_asset.hostName);
+
+        _parent->ConnectThreads(f)->start();
+    }
 }
 
 /**
