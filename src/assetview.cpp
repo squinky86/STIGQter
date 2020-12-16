@@ -408,13 +408,13 @@ void AssetView::RunTests()
     ui->txtMAC->setText(QStringLiteral("00:00:00:00:00:00"));
 
     //step 7: save CKL
-    std::cout << "\t\tSaving CKL" << std::endl;
+    std::cout << "\t\tSaving Monolithic CKL" << std::endl;
     SaveCKL(QStringLiteral("tests/monolithic.ckl"));
     ProcEvents();
 
     //step 8: save CKLs
-    std::cout << "\t\tSaving CKL" << std::endl;
-    SaveCKLs(_asset.hostName, QStringLiteral("tests/"));
+    std::cout << "\t\tSaving Individual CKLs" << std::endl;
+    SaveCKLs(QStringLiteral("tests/"));
     ProcEvents();
 
     //step 9: Count Checks
