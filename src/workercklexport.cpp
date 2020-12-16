@@ -44,9 +44,9 @@
  *
  * Default constructor.
  */
-WorkerCKLExport::WorkerCKLExport(QObject *parent) : Worker(parent)
+WorkerCKLExport::WorkerCKLExport(QObject *parent) : Worker(parent),
+	_assetName()
 {
-    _assetName = QString();
 }
 
 /**
