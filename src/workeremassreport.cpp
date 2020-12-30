@@ -288,7 +288,6 @@ void WorkerEMASSReport::process()
         //security control designation
         worksheet_write_string(ws, onRow, 3, cci.isImport ? cci.importSecurityControlDesignation.toStdString().c_str() : "", nullptr);
 	//Control Implementation Narrative
-	
         worksheet_write_string(ws, onRow, 4, cci.isImport ? cci.importNarrative.toStdString().c_str() : "", nullptr);
         //AP Acronym is nonsense; ignore it
         worksheet_write_string(ws, onRow, 5, cci.isImport ? cci.importApNum.toStdString().c_str() : "", nullptr);
