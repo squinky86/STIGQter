@@ -70,6 +70,10 @@ public:
     bool webOrDB{false}; /**< whether the asset is a web or database asset */
     QString webDbSite; /**< If webOrDatabase is true, specify the site identifier (usually node name) */
     QString webDbInstance; /**< If webOrDatabase is true, specify the instance (usually the DB's name) */
+    friend bool operator<(const Asset &left, const Asset &right)
+    {
+        return left.hostName < right.hostName;
+    }
 };
 
 Q_DECLARE_METATYPE(Asset);

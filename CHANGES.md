@@ -1,5 +1,6 @@
 ## 1.1.0
 -   Fix LEGACY IDs for exported CKL files
+-   Allow deletion of multiple Assets (issue #83)
 
 ## 1.0.2 20201214
 -   General fixes and code cleanups
