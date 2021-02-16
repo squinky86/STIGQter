@@ -1,3 +1,6 @@
+## 1.1.0
+-   Fix LEGACY IDs for exported CKL files
+
 ## 1.0.2 20201214
 -   General fixes and code cleanups
 -   Change to the eMASS Test Result Import (issue #85)
