@@ -299,6 +299,14 @@ void WorkerAssetCKL::process()
                     stream.writeEndElement(); //STIG_DATA
                 }
 
+                Q_FOREACH (QString legacyId, sc.legacyIds)
+                {
+                    stream.writeStartElement(QStringLiteral("STIG_DATA"));
+                    WriteXMLEntry(stream, QStringLiteral("VULN_ATTRIBUTE"), QStringLiteral("LEGACY_ID")); //VULN_ATTRIBUTE
+                    WriteXMLEntry(stream, QStringLiteral("ATTRIBUTE_DATA"), legacyId); //ATTRIBUTE_DATA
+                    stream.writeEndElement(); //STIG_DATA
+                }
+
                 WriteXMLEntry(stream, QStringLiteral("STATUS"), GetStatus(cc.status, true)); //STATUS
 
                 WriteXMLEntry(stream, QStringLiteral("FINDING_DETAILS"), cc.findingDetails); //FINDING_DETAILS
