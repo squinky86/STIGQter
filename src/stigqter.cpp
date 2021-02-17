@@ -383,9 +383,7 @@ void STIGQter::RunTests()
     // mass delete assets
     std::cout << "\tTest " << step++ << ": Mass delete assets" << std::endl;
     {
-        auto a = ui->lstAssets->item(i);
-        if (!a->isSelected())
-            a->setSelected(true);
+        ui->lstAssets->selectAll();
         ProcEvents();
         DeleteAssets();
         ProcEvents();
