@@ -388,6 +388,7 @@ void STIGQter::RunTests()
         DeleteAssets();
         ProcEvents();
     }
+}
 #endif
 
 /**
