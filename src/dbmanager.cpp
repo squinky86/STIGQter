@@ -1990,7 +1990,7 @@ QVector<QString> DbManager::GetLegacyIds(int STIGCheckId)
     if (CheckDatabase(db))
     {
         QSqlQuery q(db);
-        q.prepare(QStringLiteral("SELECT LegacyId FROM STIGCheckLegacyId WHERE STIGCheckCCI.STIGCheckId = :STIGCheckId"));
+        q.prepare(QStringLiteral("SELECT LegacyId FROM STIGCheckLegacyId WHERE STIGCheckLegacyId.STIGCheckId = :STIGCheckId"));
         q.bindValue(QStringLiteral(":STIGCheckId"), STIGCheckId);
         q.exec();
         while (q.next())

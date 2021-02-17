@@ -23,6 +23,7 @@
 #include "stigedit.h"
 #include "stigqter.h"
 #include "workerassetadd.h"
+#include "workerassetdelete.h"
 #include "workercciadd.h"
 #include "workerccidelete.h"
 #include "workercmrsexport.h"
@@ -728,6 +729,42 @@ void STIGQter::CloseTab(int index)
 }
 
 /**
+ * @brief STIGQter::DeleteAssets
+ *
+ * Deletes the selected @a Asset and closes its tab.
+ */
+void STIGQter::DeleteAssets()
+{
+    QList<int> toClose;
+    QVector<Asset> toDelete;
+    _updatedAssets = true;
+    Q_FOREACH(QListWidgetItem *i, ui->lstAssets->selectedItems())
+    {
+        auto a = i->data(Qt::UserRole).value<Asset>();
+        toDelete.append(a);
+        QString assetName = PrintAsset(a);
+        for (int j = 0; j < ui->tabDB->count(); j++)
+        {
+             if (ui->tabDB->tabText(j) == assetName)
+             {
+                 toClose.append(j);
+             }
+        }
+    }
+    QList<int>::const_iterator it = toClose.constEnd();
+    while (it != toClose.constBegin())
+    {
+        it--;
+        ui->tabDB->removeTab(*it);
+    }
+
+    auto *s = new WorkerAssetDelete();
+    s->AddAssets(toDelete);
+
+    ConnectThreads(s)->start();
+}
+
+/**
  * @brief STIGQter::DeleteCCIs
  *
  * Clear the database of initial NIST and DISA information.
@@ -1201,12 +1238,17 @@ void STIGQter::UpdateRemapButton()
 void STIGQter::UpdateSTIGs()
 {
     ui->lstCKLs->clear();
+    QList<STIG> addedStigs;
     Q_FOREACH (QListWidgetItem *i, ui->lstAssets->selectedItems())
     {
         auto a = i->data(Qt::UserRole).value<Asset>();
         Q_FOREACH (const STIG &s, a.GetSTIGs())
         {
-            ui->lstCKLs->addItem(PrintSTIG(s));
+            if (!addedStigs.contains(s))
+            {
+                ui->lstCKLs->addItem(PrintSTIG(s));
+                addedStigs.append(s);
+            }
         }
     }
 }

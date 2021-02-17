@@ -61,6 +61,7 @@ SOURCES += \
     src/worker.cpp \
     src/workerassetadd.cpp \
     src/workerassetckl.cpp \
+    src/workerassetdelete.cpp \
     src/workercciadd.cpp \
     src/workerccidelete.cpp \
     src/workercheckversion.cpp \
@@ -95,6 +96,7 @@ HEADERS += \
     src/worker.h \
     src/workerassetadd.h \
     src/workerassetckl.h \
+    src/workerassetdelete.h \
     src/workercciadd.h \
     src/workerccidelete.h \
     src/workercheckversion.h \

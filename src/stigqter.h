@@ -56,6 +56,7 @@ private Q_SLOTS:
     void AddAsset(const QString &name = QString());
     void AddSTIGs();
     void CloseTab(int index);
+    void DeleteAssets();
     void DeleteCCIs();
     void DeleteEmass();
     void DeleteSTIGs();
