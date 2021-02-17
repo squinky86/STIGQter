@@ -45,7 +45,7 @@ WorkerAssetDelete::WorkerAssetDelete(QObject *parent) : Worker(parent)
  *
  * Provide the Assets to delete.
  */
-void WorkerAssetDelete::AddAssets(const QVector<Asset> assets)
+void WorkerAssetDelete::AddAssets(const QVector<Asset> &assets)
 {
     _assets.append(assets);
 }
@@ -56,7 +56,7 @@ void WorkerAssetDelete::AddAssets(const QVector<Asset> assets)
  *
  * Provide the Assets to delete.
  */
-void WorkerAssetDelete::AddAsset(const Asset asset)
+void WorkerAssetDelete::AddAsset(const Asset &asset)
 {
     _assets.append(asset);
 }

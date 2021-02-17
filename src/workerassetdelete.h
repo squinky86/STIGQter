@@ -34,8 +34,8 @@ private:
 
 public:
     explicit WorkerAssetDelete(QObject *parent = nullptr);
-    void AddAssets(const QVector<Asset> assets);
-    void AddAsset(const Asset asset);
+    void AddAssets(const QVector<Asset> &assets);
+    void AddAsset(const Asset &asset);
 
 public Q_SLOTS:
     void process();
