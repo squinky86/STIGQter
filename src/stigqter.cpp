@@ -379,7 +379,17 @@ void STIGQter::RunTests()
         a->close();
         ProcEvents();
     }
-}
+
+    // mass delete assets
+    std::cout << "\tTest " << step++ << ": Mass delete assets" << std::endl;
+    {
+        auto a = ui->lstAssets->item(i);
+        if (!a->isSelected())
+            a->setSelected(true);
+        ProcEvents();
+        DeleteAssets();
+        ProcEvents();
+    }
 #endif
 
 /**
@@ -445,7 +455,7 @@ void STIGQter::RemapChanged(int checkState)
  *
  * Signal to indicate that a tab wishes to rename itself.
  */
-void STIGQter::RenameTab(int index, QString title)
+void STIGQter::RenameTab(int index, const QString &title)
 {
     //make sure we're not rename to itself
     if (QString::compare(ui->tabDB->tabText(index), title) == 0)

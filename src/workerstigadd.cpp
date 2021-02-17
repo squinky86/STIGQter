@@ -285,10 +285,9 @@ void WorkerSTIGAdd::ParseSTIG(const QByteArray &stig, const QString &fileName, c
                     }
                     else
                     {
-                        QString cci(elementText);
-                        if (cci.startsWith(QStringLiteral("CCI"), Qt::CaseInsensitive))
+                        if (elementText.startsWith(QStringLiteral("CCI"), Qt::CaseInsensitive))
                         {
-                            auto tmpCci = db.GetCCIByCCI(GetCCINumber(cci), &s);
+                            auto tmpCci = db.GetCCIByCCI(GetCCINumber(elementText), &s);
                             if (tmpCci.id >= 0 && !c.cciIds.contains(tmpCci.id))
                                 c.cciIds.append(tmpCci.id);
                         }

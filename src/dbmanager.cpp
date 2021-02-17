@@ -151,7 +151,7 @@ DbManager::DbManager(const DbManager &db)
  */
 DbManager::DbManager(DbManager &&orig) noexcept :
     _dbPath(std::move(orig._dbPath)),
-    _delayCommit(std::move(orig._delayCommit)),
+    _delayCommit(orig._delayCommit),
     _logLevel(orig._logLevel)
 {
 }
@@ -175,7 +175,7 @@ DbManager::~DbManager()
 }
 
 /**
- * @brief DbManager::operator =
+ * @brief DbManager::operator=
  * @param right
  * @return this
  *
@@ -203,7 +203,7 @@ DbManager &DbManager::operator=(DbManager &&orig) noexcept
 {
     if (this != &orig)
     {
-        _delayCommit = std::move(orig._delayCommit);
+        _delayCommit = orig._delayCommit;
         _dbPath = std::move(orig._dbPath);
         _logLevel = orig._logLevel;
     }
@@ -1102,7 +1102,7 @@ CCI DbManager::GetCCI(int id)
  * @a CCI does not exist in the database, the default @a CCI with an
  * ID of -1 is returned.
  */
-QVector<CCI> DbManager::GetCCIs(QVector<int> ccis)
+QVector<CCI> DbManager::GetCCIs(const QVector<int> &ccis)
 {
     QVector<CCI> ret;
     Q_FOREACH (int cci, ccis)

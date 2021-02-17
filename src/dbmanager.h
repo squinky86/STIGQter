@@ -71,7 +71,7 @@ public:
     QVector<Asset> GetAssets(const STIG &stig);
     CCI GetCCI(int id);
     CCI GetCCI(const CCI &cci, const STIG *stig = nullptr);
-    QVector<CCI> GetCCIs(QVector<int> ccis);
+    QVector<CCI> GetCCIs(const QVector<int> &ccis);
     QVector<CCI> GetCCIs(const Control &c);
     QVector<CCI> GetCCIs(int STIGCheckId);
     CCI GetCCIByCCI(int cci, const STIG *stig = nullptr);
@@ -126,7 +126,7 @@ private:
     static bool CheckDatabase(QSqlDatabase &db);
     QString _dbPath;
     bool _delayCommit{};
-    int _logLevel;
+    int _logLevel{};
 };
 
 QString GetLastExecutedQuery(const QSqlQuery& query);
