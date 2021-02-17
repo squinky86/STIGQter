@@ -1,0 +1,68 @@
+version: 1.1.0.{build}
+image: Ubuntu2004
+platform: x64
+environment:
+  OPENSSL_PREFIX: /tmp/openssl-1.1.1j
+  OPENSSL_LIBS: -L/tmp/openssl-1.1.1j -llibssl -llibcrypto -luser32 -lcrypt32 -lws2_32 -lgdi32
+  CFLAGS: -Os -fomit-frame-pointer -fno-stack-protector -pipe
+  CXXFLAGS: -Os -fomit-frame-pointer -fno-stack-protector -pipe
+  QMAKE_CFLAGS: -m64 -Os -fomit-frame-pointer -fno-stack-protector -pipe
+  QMAKE_CXXFLAGS: -m64 -Os -fomit-frame-pointer -fno-stack-protector -pipe
+build_script:
+- sh: >-
+    sudo apt-get update
+
+    sudo apt-get install -y texlive-luatex texlive-latex-recommended texlive-latex-extra texlive-fonts-extra texlive-fonts-extra-links texlive-bibtex-extra biber gcc-mingw-w64-x86-64 g++-mingw-w64-x86-64 upx-ucl advancecomp
+
+    echo -e "set(CMAKE_SYSTEM_NAME Windows)\nset(TOOLCHAIN_PREFIX x86_64-w64-mingw32)\nset(CMAKE_C_COMPILER \${TOOLCHAIN_PREFIX}-gcc)\nset(CMAKE_CXX_COMPILER \${TOOLCHAIN_PREFIX}-g++)\nset(CMAKE_Fortran_COMPILER \${TOOLCHAIN_PREFIX}-gfortran)\nset(CMAKE_RC_COMPILER \${TOOLCHAIN_PREFIX}-windres)\nset(CMAKE_FIND_ROOT_PATH /usr/)\nset(CMAKE_FIND_ROOT_PATH_MODE_PROGRAM NEVER)\nset(CMAKE_FIND_ROOT_PATH_MODE_LIBRARY ONLY)\nset(CMAKE_FIND_ROOT_PATH_MODE_INCLUDE ONLY)\nset(CMAKE_C_FLAGS_RELEASE \"-m64 -Os -fomit-frame-pointer -fno-stack-protector\")\nset(CMAKE_CXX_FLAGS_RELEASE \"-m64 -Os -fomit-frame-pointer -fno-stack-protector\")" > /tmp/profile.cmake
+
+    pushd /tmp && wget https://zlib.net/zlib-1.2.11.tar.gz && tar -zxf zlib-1.2.11.tar.gz && popd
+
+    pushd /tmp/zlib-1.2.11 && cmake ./ -DCMAKE_TOOLCHAIN_FILE=/tmp/profile.cmake -DBUILD_SHARED_LIBS=OFF && make -j3 && popd
+
+    pushd /tmp && wget https://github.com/jmcnamara/libxlsxwriter/archive/RELEASE_1.0.0.tar.gz && tar -zxf RELEASE_1.0.0.tar.gz && popd
+
+    pushd /tmp/libxlsxwriter-RELEASE_1.0.0 && cmake -DUSE_STANDARD_TMPFILE=OFF -DCMAKE_TOOLCHAIN_FILE=/tmp/profile.cmake -DBUILD_SHARED_LIBS=OFF -DZLIB_INCLUDE_DIR=/tmp/zlib-1.2.11 -DZLIB_LIBRARY=/tmp/zlib-1.2.11/libzlibstatic.a && make -j3 && popd
+
+    pushd /tmp && wget https://github.com/htacg/tidy-html5/archive/5.6.0.tar.gz && tar -zxf 5.6.0.tar.gz && popd
+
+    pushd /tmp/tidy-html5-5.6.0 && cmake ./ -DCMAKE_TOOLCHAIN_FILE=/tmp/profile.cmake -DBUILD_SHARED_LIBS=OFF && make -j3 && popd
+
+    pushd /tmp && wget https://www.openssl.org/source/openssl-1.1.1j.tar.gz && tar -zxf openssl-1.1.1j.tar.gz && popd
+
+    pushd /tmp/openssl-1.1.1j && ./Configure mingw64 no-shared no-asm no-err no-tests CROSS_COMPILE=x86_64-w64-mingw32- && make -j3 && if [ ! -d "lib" ]; then mkdir lib; fi && cp *.a lib/ && popd
+
+    pushd /tmp && wget https://libzip.org/download/libzip-1.7.3.tar.gz && tar -zxf libzip-1.7.3.tar.gz && popd
+
+    pushd /tmp/libzip-1.7.3 && cmake ./ -DCMAKE_TOOLCHAIN_FILE=/tmp/profile.cmake -DBUILD_SHARED_LIBS=OFF -DZLIB_INCLUDE_DIR=/tmp/zlib-1.2.11 -DZLIB_LIBRARY=/tmp/zlib-1.2.11/libzlibstatic.a -DENABLE_WINDOWS_CRYPTO=OFF && make -j3 && popd
+
+    pushd /tmp && wget https://download.qt.io/official_releases/qt/5.15/5.15.2/submodules/qtbase-everywhere-src-5.15.2.tar.xz && tar -xf qtbase-everywhere-src-5.15.2.tar.xz && popd
+
+    sudo update-alternatives --set x86_64-w64-mingw32-gcc /usr/bin/x86_64-w64-mingw32-gcc-posix
+
+    sudo update-alternatives --set x86_64-w64-mingw32-g++ /usr/bin/x86_64-w64-mingw32-g++-posix
+
+    pushd /tmp/qtbase-everywhere-src-5.15.2 && ./configure -prefix /tmp/qt -platform linux-g++-64 -xplatform win32-g++ -device-option CROSS_COMPILE=x86_64-w64-mingw32- -opensource -release -confirm-license -opengl desktop -mp -static -static-runtime -no-shared -qt-libpng -qt-libjpeg -qt-zlib -qt-pcre -no-compile-examples -nomake examples -no-icu -optimize-size -openssl-linked -I/tmp/openssl-1.1.1j/include && make -j3 && make install && popd
+
+    sed -i -e '/^LIBS/d' STIGQter.pro
+
+    echo "LIBS += /tmp/tidy-html5-5.6.0/libtidys.a /tmp/libzip-1.7.3/lib/libzip.a /tmp/libxlsxwriter-RELEASE_1.0.0/libxlsxwriter.a /tmp/zlib-1.2.11/libzlibstatic.a" >> STIGQter.pro
+
+    echo "INCLUDEPATH += /tmp/tidy-html5-5.6.0/include /tmp/libzip-1.7.3/lib /tmp/libzip-1.7.3 /tmp/libxlsxwriter-RELEASE_1.0.0/include" >> STIGQter.pro
+
+    /tmp/qt/bin/qmake STIGQter.pro
+
+    sed -i -e 's:-O2:-Os -fomit-frame-pointer -fno-stack-protector:g' Makefile.Release
+
+    make -j3
+
+    pushd doc && ./build.sh && mv UsersGuide.pdf ../ && popd
+
+    upx-ucl --force --lzma --best -o STIGQter-nightly.exe release/STIGQter.exe
+
+    zip -9 STIGQter-nightly.zip STIGQter-nightly.exe CHANGES.md LICENSE README.md UsersGuide.pdf
+
+    advzip --recompress -4 --iter 100 STIGQter-nightly.zip
+artifacts:
+- path: STIGQter-nightly.zip
+  name: STIGQter-nightly
