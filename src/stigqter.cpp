@@ -171,6 +171,7 @@ QThread* STIGQter::ConnectThreads(Worker *worker)
 }
 
 #ifdef USE_TESTS
+#include <algorithm>
 /**
  * @brief STIGQter::RunTests
  * Test functionality
@@ -194,6 +195,26 @@ void STIGQter::RunTests()
     std::cout << "\tTest " << step++ << ": Refresh STIGs" << std::endl;
     UpdateSTIGs();
     ProcEvents();
+
+    // delete random STIGs (required to finish travis-ci build)
+    std::cout << "\tTest " << step++ << ": Deleting Some STIGs" << std::endl;
+    {
+        int size = ui->lstSTIGs->count();
+        if (size > 5)
+        {
+            ui->lstSTIGs->selectAll();
+            ProcEvents();
+            auto stigs = ui->lstSTIGs->selectedItems();
+            std::random_shuffle(stigs.begin(), stigs.end());
+            for (int i = 0; i < 5; i++)
+            {
+                stigs.at(i)->setSelected(false);
+            }
+            ProcEvents();
+            DeleteSTIGs();
+            ProcEvents();
+        }
+    }
 
     // filter STIGs
     std::cout << "\t\tTest " << step++ << ": Filter" << std::endl;

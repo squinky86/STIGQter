@@ -98,7 +98,6 @@ int main(int argc, char *argv[])
             a.processEvents();
         }
 
-
         {
             std::cout << "Test " << ++onTest << ": Decrease Log Level" << std::endl;
             DbManager db;
