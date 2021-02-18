@@ -379,15 +379,6 @@ void STIGQter::RunTests()
         a->close();
         ProcEvents();
     }
-
-    // mass delete assets
-    std::cout << "\tTest " << step++ << ": Mass delete assets" << std::endl;
-    {
-        ui->lstAssets->selectAll();
-        ProcEvents();
-        DeleteAssets();
-        ProcEvents();
-    }
 }
 #endif
 

@@ -2826,11 +2826,9 @@ bool DbManager::UpdateDatabaseFromVersion(int version)
         if (version < 4)
         {
                 QSqlQuery q(db);
-                q.bindValue(QStringLiteral(":name"), QStringLiteral("quarterly"));
-                q.bindValue(QStringLiteral(":value"), QStringLiteral("https://www.stigqter.com/stig.php"));
-                ret = q.exec() && ret;
                 q.prepare(QStringLiteral("ALTER TABLE CCI ADD COLUMN importNarrative TEXT"));
                 ret = q.exec() && ret;
+                ret = UpdateVariable(QStringLiteral("quarterly"), QStringLiteral("https://www.stigqter.com/stig.php")) && ret;
                 ret = UpdateVariable(QStringLiteral("version"), QStringLiteral("4")) && ret;
         }
     }

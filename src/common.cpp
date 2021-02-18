@@ -146,7 +146,7 @@ bool DownloadFile(const QUrl &url, QFile *file)
     }
     QNetworkAccessManager manager;
     QNetworkRequest req = QNetworkRequest(url);
-    req.setAttribute(QNetworkRequest::FollowRedirectsAttribute, true);
+    req.setAttribute(QNetworkRequest::RedirectPolicyAttribute, QNetworkRequest::NoLessSafeRedirectPolicy);
 
     //set the User-Agent so that this program appears in logs correctly
     QString userAgent = GetUserAgent();
@@ -193,6 +193,7 @@ bool DownloadFile(const QUrl &url, QFile *file)
 
     return false;
 }
+
 /**
  * @brief DownloadPage
  * @param url
@@ -204,7 +205,7 @@ QString DownloadPage(const QUrl &url)
 {
     QNetworkAccessManager manager;
     QNetworkRequest req = QNetworkRequest(url);
-    req.setAttribute(QNetworkRequest::FollowRedirectsAttribute, true);
+    req.setAttribute(QNetworkRequest::RedirectPolicyAttribute, QNetworkRequest::NoLessSafeRedirectPolicy);
 
     //set the User-Agent so that this program appears in logs correctly
     QString userAgent = GetUserAgent();
@@ -213,8 +214,8 @@ QString DownloadPage(const QUrl &url)
     auto addresses = QHostInfo::fromName(url.host()).addresses();
     if (addresses.count() > 0)
     {
-        //log HTTP headers, STIG Rule SV-83997r1_rule
-        //log IP address, STIG Rule SV-84045r1_rule
+        //log HTTP headers, STIG Rule SV-222447r508029_rule
+        //log IP address, STIG Rule SV-222448r508029_rule
         Warning(QStringLiteral("Downloading Page"), "Downloading " + url.toString() + " (ip address " + addresses.first().toString() + ") with header User-Agent: " + userAgent, true);
 
         //send request and get response

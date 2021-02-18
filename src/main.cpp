@@ -178,6 +178,14 @@ int main(int argc, char *argv[])
             a.processEvents();
         }
 
+        std::cout << "Test " << ++onTest << ": Delete All Assets" << std::endl;
+        QMetaObject::invokeMethod(&w, "DeleteAssets", Qt::DirectConnection);
+        while (!w.isProcessingEnabled())
+        {
+            QThread::sleep(1);
+            a.processEvents();
+        }
+
         //std::cout << "Test " << ++onTest << ": Close Application" << std::endl;
         //w.close();
 

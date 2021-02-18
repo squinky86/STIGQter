@@ -99,6 +99,7 @@ void WorkerCCIAdd::process()
                     QString family(xml->readElementText().trimmed());
                     QString acronym(family.left(2));
                     QString familyName(family.right(family.length() - 5).trimmed());
+                    familyName = familyName.replace(QStringLiteral("\n"), QStringLiteral(" "));
                     Q_EMIT updateStatus("Adding " + acronym + "—" + familyName + "…");
                     db.AddFamily(acronym, familyName);
                     todo.append(href);
