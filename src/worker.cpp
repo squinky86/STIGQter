@@ -47,10 +47,12 @@ Worker::Worker(QObject *parent) : QObject(parent)
 Worker::~Worker()
 {
     //check if we are in a thread or the main application
-    if (QThread::currentThread() != QApplication::instance()->thread())
+    QString mainConnection = QString::number(reinterpret_cast<quint64>(QApplication::instance()->thread()->currentThreadId()));
+    QSqlDatabase db;
+    Q_FOREACH(auto connName, db.connectionNames())
     {
-        DbManager db;
-        db.CloseThread();
+        if (connName != mainConnection)
+            db.removeDatabase(connName);
     }
 }
 

@@ -116,16 +116,8 @@ STIGQter::STIGQter(QWidget *parent) :
     UpdateRemapButton();
 
     //check version number
-    auto *t = new QThread;
     auto *c = new WorkerCheckVersion();
-    c->moveToThread(t);
-    connect(t, SIGNAL(started()), c, SLOT(process()));
-    connect(c, SIGNAL(finished()), t, SLOT(quit()));
-    connect(c, SIGNAL(ThrowWarning(QString, QString)), this, SLOT(ShowMessage(QString, QString)));
-    threads.append(t);
-    workers.append(c);
-
-    t->start(); //WorkerCheckVersion()
+    ConnectThreads(c, false)->start(); //WorkerCheckVersion()
 }
 
 /**
@@ -159,9 +151,11 @@ bool STIGQter::isProcessingEnabled()
  *
  * Connect STIGQter input/output to the worker and its thread
  */
-QThread* STIGQter::ConnectThreads(Worker *worker)
+QThread* STIGQter::ConnectThreads(Worker *worker, bool foreground)
 {
-    DisableInput();
+    if (foreground)
+        DisableInput();
+
     auto *t = worker->ConnectThreads(this);
 
     threads.append(t);
@@ -618,17 +612,20 @@ void STIGQter::closeEvent(QCloseEvent *event)
  */
 void STIGQter::CleanThreads()
 {
-    while (!threads.isEmpty())
+    Q_FOREACH (auto *t, threads)
     {
-        auto *t = threads.takeFirst();
         t->wait();
-        delete t;
     }
     Q_FOREACH (const QObject *o, workers)
     {
         delete o;
     }
     workers.clear();
+    while (!threads.isEmpty())
+    {
+        auto *t = threads.takeFirst();
+        delete t;
+    }
 }
 
 /**

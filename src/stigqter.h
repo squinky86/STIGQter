@@ -40,7 +40,7 @@ public:
     explicit STIGQter(QWidget *parent = nullptr);
     ~STIGQter();
     bool isProcessingEnabled();
-    QThread* ConnectThreads(Worker *worker);
+    QThread* ConnectThreads(Worker *worker, bool foreground = true);
     void Display();
     void UpdateSTIGs();
 #ifdef USE_TESTS
