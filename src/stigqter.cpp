@@ -615,6 +615,10 @@ void STIGQter::CleanThreads()
     Q_FOREACH (auto *t, threads)
     {
         t->wait();
+
+        QString connName = QString::number(reinterpret_cast<quint64>(t->currentThreadId()));
+        if (QSqlDatabase::connectionNames().contains(connName))
+            QSqlDatabase::removeDatabase(connName);
     }
     Q_FOREACH (const QObject *o, workers)
     {

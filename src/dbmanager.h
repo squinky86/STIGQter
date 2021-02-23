@@ -46,7 +46,6 @@ public:
     ~DbManager();
     DbManager& operator=(const DbManager &right);
     DbManager& operator=(DbManager &&orig) noexcept;
-    void CloseThread();
     void DelayCommit(bool delay);
 
     bool AddAsset(Asset &asset);

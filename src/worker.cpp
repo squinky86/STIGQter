@@ -40,23 +40,6 @@ Worker::Worker(QObject *parent) : QObject(parent)
 }
 
 /**
- * @brief Worker::~Worker
- *
- * Default destructor. Removes thread's database connection.
- */
-Worker::~Worker()
-{
-    //check if we are in a thread or the main application
-    QString mainConnection = QString::number(reinterpret_cast<quint64>(QApplication::instance()->thread()->currentThreadId()));
-    QSqlDatabase db;
-    Q_FOREACH(auto connName, db.connectionNames())
-    {
-        if (connName != mainConnection)
-            db.removeDatabase(connName);
-    }
-}
-
-/**
  * @brief Worker::ConnectThreads
  * @param thread
  * @param sq
