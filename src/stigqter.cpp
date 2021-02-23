@@ -116,8 +116,8 @@ STIGQter::STIGQter(QWidget *parent) :
     UpdateRemapButton();
 
     //check version number
-    auto *c = new WorkerCheckVersion();
-    ConnectThreads(c, false)->start(); //WorkerCheckVersion()
+    /*auto *c = new WorkerCheckVersion();
+    ConnectThreads(c, false)->start(); //WorkerCheckVersion()*/
 }
 
 /**
@@ -612,22 +612,22 @@ void STIGQter::closeEvent(QCloseEvent *event)
  */
 void STIGQter::CleanThreads()
 {
-    Q_FOREACH (auto *t, threads)
+    Q_FOREACH (auto *o, workers)
     {
+        auto *t = o->thread();
+
+        if (t->isRunning())
+            continue;
+
         t->wait();
 
         QString connName = QString::number(reinterpret_cast<quint64>(t->currentThreadId()));
         if (QSqlDatabase::connectionNames().contains(connName))
             QSqlDatabase::removeDatabase(connName);
-    }
-    Q_FOREACH (const QObject *o, workers)
-    {
+
+        workers.removeOne(o);
+        threads.removeOne(t);
         delete o;
-    }
-    workers.clear();
-    while (!threads.isEmpty())
-    {
-        auto *t = threads.takeFirst();
         delete t;
     }
 }
