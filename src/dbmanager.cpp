@@ -193,6 +193,23 @@ DbManager &DbManager::operator=(const DbManager &right)
 }
 
 /**
+ * @brief DbManager::CloseThread
+ *
+ * Close and remove the connection to the database for the current thread.
+ */
+void DbManager::CloseThread()
+{
+    QSqlDatabase db;
+    if (CheckDatabase(db))
+    {
+        QString connName = db.connectionName();
+        db.close();
+        db = QSqlDatabase();
+        QSqlDatabase::removeDatabase(connName);
+    }
+}
+
+/**
  * @brief DbManager::operator =
  * @param orig
  * @return

@@ -21,6 +21,7 @@
 #include "stigqter.h"
 #include "worker.h"
 
+#include <QApplication>
 #include <QThread>
 
 /**
@@ -36,6 +37,21 @@
  */
 Worker::Worker(QObject *parent) : QObject(parent)
 {
+}
+
+/**
+ * @brief Worker::~Worker
+ *
+ * Default destructor. Removes thread's database connection.
+ */
+Worker::~Worker()
+{
+    //check if we are in a thread or the main application
+    if (QThread::currentThread() != QApplication::instance()->thread())
+    {
+        DbManager db;
+        db.CloseThread();
+    }
 }
 
 /**
