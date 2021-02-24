@@ -116,8 +116,7 @@ STIGQter::STIGQter(QWidget *parent) :
     UpdateRemapButton();
 
     //check version number
-    /*auto *c = new WorkerCheckVersion();
-    ConnectThreads(c, false)->start(); //WorkerCheckVersion()*/
+    QTimer::singleShot(0, this, SLOT(CheckVersion()));
 }
 
 /**
@@ -728,6 +727,17 @@ void STIGQter::AddSTIGs()
     s->SetEnableSupplements(ui->cbIncludeSupplements->isChecked());
 
     ConnectThreads(s)->start();
+}
+
+/**
+ * @brief STIGQter::CheckVersion
+ *
+ * Check for latest version of STIGQter
+ */
+void STIGQter::CheckVersion()
+{
+    auto *c = new WorkerCheckVersion();
+    ConnectThreads(c, false)->start(); //WorkerCheckVersion()
 }
 
 /**
