@@ -56,6 +56,8 @@ WorkerMapUnmapped::WorkerMapUnmapped(QObject *parent) : Worker(parent)
  */
 void WorkerMapUnmapped::process()
 {
+    Worker::process();
+
     Q_EMIT updateStatus(QStringLiteral("Enumerating STIG Checks…"));
     DbManager db;
     QVector<STIGCheck> stigchecks = db.GetSTIGChecks();

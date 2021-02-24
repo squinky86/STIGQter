@@ -66,6 +66,8 @@ void WorkerCMRSExport::SetExportPath(const QString &fileName)
  */
 void WorkerCMRSExport::process()
 {
+    Worker::process();
+
     DbManager db;
     QVector<Asset> assets = db.GetAssets();
     Q_EMIT initialize(assets.count(), 0);

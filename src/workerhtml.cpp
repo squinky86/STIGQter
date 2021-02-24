@@ -138,6 +138,8 @@ void WorkerHTML::SetDir(const QString &dir)
  */
 void WorkerHTML::process()
 {
+    Worker::process();
+
     DbManager db;
 
     //Load the STIG checks into memory

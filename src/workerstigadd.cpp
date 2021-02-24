@@ -379,6 +379,8 @@ void WorkerSTIGAdd::SetEnableSupplements(bool enableSupplements)
  */
 void WorkerSTIGAdd::process()
 {
+    Worker::process();
+
     //get the list of STIG .zip files selected
     Q_EMIT initialize(_todo.count(), 0);
     //loop through it and parse all XML files inside

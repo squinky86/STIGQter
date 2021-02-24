@@ -269,6 +269,8 @@ void WorkerCKLImport::AddCKLs(const QStringList &ckls)
  */
 void WorkerCKLImport::process()
 {
+    Worker::process();
+
     Q_EMIT initialize(_fileNames.count(), 0);
     Q_FOREACH(const QString fileName, _fileNames)
     {

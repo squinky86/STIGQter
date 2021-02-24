@@ -55,6 +55,8 @@ void WorkerSTIGDelete::AddId(int id)
  */
 void WorkerSTIGDelete::process()
 {
+    Worker::process();
+
     //open database in this thread
     Q_EMIT initialize(2 + _ids.count(), 1);
     DbManager db;

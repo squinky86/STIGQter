@@ -99,6 +99,8 @@ void WorkerAssetCKL::AddFilename(const QString &name)
  */
 void WorkerAssetCKL::process()
 {
+    Worker::process();
+
     Q_EMIT updateStatus(QStringLiteral("Writing CKL file…"));
     auto stigs = _asset.GetSTIGs();
     Q_EMIT initialize(stigs.count() + 1, 0);

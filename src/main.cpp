@@ -74,6 +74,14 @@ int main(int argc, char *argv[])
             db.UpdateVariable(QStringLiteral("loglevel"), QStringLiteral("99"));
         }
 
+        std::cout << "Test " << ++onTest << ": Waiting for version check to complete." << std::endl;
+        a.processEvents();
+        while (!w.isProcessingEnabled())
+        {
+            QThread::sleep(1);
+            a.processEvents();
+        }
+
         std::cout << "Test " << ++onTest << ": Index CCIs" << std::endl;
         QMetaObject::invokeMethod(&w, "UpdateCCIs", Qt::DirectConnection);
         while (!w.isProcessingEnabled())

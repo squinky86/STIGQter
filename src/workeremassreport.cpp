@@ -87,6 +87,8 @@ void WorkerEMASSReport::SetReportName(const QString &fileName)
  */
 void WorkerEMASSReport::process()
 {
+    Worker::process();
+
     DbManager db;
 
     QVector<CKLCheck> checks = db.GetCKLChecks();

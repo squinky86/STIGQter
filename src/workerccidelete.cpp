@@ -47,6 +47,8 @@ WorkerCCIDelete::WorkerCCIDelete(QObject *parent) : Worker(parent)
  */
 void WorkerCCIDelete::process()
 {
+    Worker::process();
+
     //open database in this thread
     Q_EMIT initialize(2, 1);
     DbManager db;

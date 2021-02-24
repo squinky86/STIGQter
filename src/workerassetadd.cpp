@@ -96,6 +96,8 @@ void WorkerAssetAdd::AddSTIG(const STIG &stig)
  */
 void WorkerAssetAdd::process()
 {
+    Worker::process();
+
     DbManager db;
     //get the list of STIGs to add to this asset
     Q_EMIT initialize(_toMapSTIGs.count() + 1, 0);

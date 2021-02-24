@@ -2602,6 +2602,7 @@ bool DbManager::UpdateVariable(const QString &name, const QString &value)
  */
 bool DbManager::CheckDatabase(QSqlDatabase &db)
 {
+    QString tempId = QString::number(reinterpret_cast<quint64>(QThread::currentThreadId()));
     db = QSqlDatabase::database(QString::number(reinterpret_cast<quint64>(QThread::currentThreadId())));
     if (!db.isOpen())
         db.open();
@@ -2830,6 +2831,15 @@ bool DbManager::UpdateDatabaseFromVersion(int version)
                 ret = q.exec() && ret;
                 ret = UpdateVariable(QStringLiteral("quarterly"), QStringLiteral("https://www.stigqter.com/stig.php")) && ret;
                 ret = UpdateVariable(QStringLiteral("version"), QStringLiteral("4")) && ret;
+        }
+        if (version < 5)
+        {
+            QSqlQuery q(db);
+            q.prepare(QStringLiteral("INSERT INTO variables (name, value) VALUES(:name, :value)"));
+            q.bindValue(QStringLiteral(":name"), QStringLiteral("checkVersion"));
+            q.bindValue(QStringLiteral(":value"), QStringLiteral("true"));
+            ret = q.exec() && ret;
+            ret = UpdateVariable(QStringLiteral("version"), QStringLiteral("5")) && ret;
         }
     }
     return ret;

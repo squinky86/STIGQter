@@ -68,6 +68,8 @@ void WorkerAssetDelete::AddAsset(const Asset &asset)
  */
 void WorkerAssetDelete::process()
 {
+    Worker::process();
+
     //open database in this thread
     Q_EMIT initialize(2 + _assets.count(), 1);
     DbManager db;

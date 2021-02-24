@@ -62,6 +62,8 @@ WorkerCCIAdd::WorkerCCIAdd(QObject *parent) : Worker(parent)
  */
 void WorkerCCIAdd::process()
 {
+    Worker::process();
+
     //open database in this thread
     Q_EMIT initialize(1, 0);
     DbManager db;

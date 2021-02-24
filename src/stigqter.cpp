@@ -150,10 +150,9 @@ bool STIGQter::isProcessingEnabled()
  *
  * Connect STIGQter input/output to the worker and its thread
  */
-QThread* STIGQter::ConnectThreads(Worker *worker, bool foreground)
+QThread* STIGQter::ConnectThreads(Worker *worker)
 {
-    if (foreground)
-        DisableInput();
+    DisableInput();
 
     auto *t = worker->ConnectThreads(this);
 
@@ -620,9 +619,12 @@ void STIGQter::CleanThreads()
 
         t->wait();
 
-        QString connName = QString::number(reinterpret_cast<quint64>(t->currentThreadId()));
-        if (QSqlDatabase::connectionNames().contains(connName))
-            QSqlDatabase::removeDatabase(connName);
+        QString connName = o->GetThreadId();
+        if (!connName.isNull() && !connName.isEmpty())
+        {
+            if (QSqlDatabase::connectionNames().contains(connName))
+                QSqlDatabase::removeDatabase(connName);
+        }
 
         workers.removeOne(o);
         threads.removeOne(t);
@@ -736,8 +738,9 @@ void STIGQter::AddSTIGs()
  */
 void STIGQter::CheckVersion()
 {
+    DisableInput();
     auto *c = new WorkerCheckVersion();
-    ConnectThreads(c, false)->start(); //WorkerCheckVersion()
+    ConnectThreads(c)->start(); //WorkerCheckVersion()
 }
 
 /**

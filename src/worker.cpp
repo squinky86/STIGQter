@@ -30,13 +30,18 @@
  */
 
 /**
- * @brief WorkerAssetAdd::WorkerAssetAdd
+ * @brief Worker::Worker
  * @param parent
  *
  * Default constructor.
  */
-Worker::Worker(QObject *parent) : QObject(parent)
+Worker::Worker(QObject *parent) : QObject(parent), _threadId(QString())
 {
+}
+
+void Worker::process()
+{
+    _threadId = QString::number(reinterpret_cast<quint64>(QThread::currentThreadId()));
 }
 
 /**
@@ -64,4 +69,13 @@ Worker::Worker(QObject *parent) : QObject(parent)
         connect(this, SIGNAL(ThrowWarning(QString, QString)), sq, SLOT(ShowMessage(QString, QString)));
     }
     return thread;
+}
+
+/**
+ * @brief Worker::GetThreadId
+ * @return the thread id of the previously attached thread
+ */
+QString Worker::GetThreadId()
+{
+    return _threadId;
 }

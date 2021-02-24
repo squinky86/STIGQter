@@ -74,6 +74,8 @@ void WorkerFindingsReport::SetReportName(const QString &fileName)
  */
 void WorkerFindingsReport::process()
 {
+    Worker::process();
+
     DbManager db;
 
     QMap<CCI, QVector<CKLCheck>> failedCCIs;

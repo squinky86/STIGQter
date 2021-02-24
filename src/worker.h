@@ -31,8 +31,9 @@ class Worker : public QObject
 
 public:
     explicit Worker(QObject *parent = nullptr);
-    virtual void process() = 0;
+    virtual void process();
     [[nodiscard]] QThread* ConnectThreads(STIGQter *sq = nullptr);
+    QString GetThreadId();
 
 Q_SIGNALS:
     void initialize(int, int);
@@ -40,6 +41,9 @@ Q_SIGNALS:
     void updateStatus(QString);
     void finished();
     void ThrowWarning(QString title, QString message);
+
+private:
+    QString _threadId;
 };
 
 #endif // WORKER_H

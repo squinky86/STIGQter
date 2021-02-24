@@ -81,6 +81,8 @@ void WorkerCKLExport::SetExportDir(const QString &dir)
  */
 void WorkerCKLExport::process()
 {
+    Worker::process();
+
     DbManager db;
     QVector<Asset> assets;
     if (_assetName.isEmpty())

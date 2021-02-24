@@ -19,6 +19,7 @@
 
 #include "workercheckversion.h"
 #include "common.h"
+#include "dbmanager.h"
 
 /**
  * @class WorkerCheckVersion
@@ -47,11 +48,24 @@ WorkerCheckVersion::WorkerCheckVersion(QObject *parent) : Worker(parent)
  */
 void WorkerCheckVersion::process()
 {
-    //get the latest version
-    QString ret = DownloadPage(QStringLiteral("https://www.stigqter.com/update.php"));
-    if (!ret.isNull() && !ret.isEmpty() && !ret.startsWith(QStringLiteral("OK")))
+    Worker::process();
+
+    //open database in this thread
+    Q_EMIT initialize(1, 0);
+    DbManager db;
+
+    if (db.GetVariable("checkVersion").compare("true", Qt::CaseInsensitive) == 0)
     {
-        Q_EMIT ThrowWarning(QStringLiteral("Please update to the latest version of STIGQter."), "Please visit <a href=\"https://www.stigqter.com/\">www.stigqter.com</a> to download version " + ret + ".");
+        //get the latest version
+        QString ret = DownloadPage(QStringLiteral("https://www.stigqter.com/update.php"));
+        if (!ret.isNull() && !ret.isEmpty() && !ret.startsWith(QStringLiteral("OK")))
+        {
+            Q_EMIT ThrowWarning(QStringLiteral("Please update to the latest version of STIGQter."), "Please visit <a href=\"https://www.stigqter.com/\">www.stigqter.com</a> to download version " + ret + ".");
+        }
+        else
+        {
+            Q_EMIT updateStatus("STIGQter version is up-to-date.");
+        }
     }
 
     Q_EMIT finished();

@@ -69,6 +69,8 @@ void WorkerSTIGDownload::SetEnableSupplements(bool enableSupplements)
  */
 void WorkerSTIGDownload::process()
 {
+    Worker::process();
+
     //get the list of STIG .zip files selected
     Q_EMIT initialize(2, 1);
     Q_EMIT updateStatus(QStringLiteral("Downloading quarterly…"));

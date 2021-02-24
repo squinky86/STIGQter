@@ -81,6 +81,8 @@ void WorkerImportEMASS::SetReportName(const QString &fileName)
  */
 void WorkerImportEMASS::process()
 {
+    Worker::process();
+
     DbManager db;
 
     Q_EMIT initialize(5, 0);
