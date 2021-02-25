@@ -29,7 +29,7 @@ script:
  - for x in `find /home/travis/.sonar/cache -name "libinterceptor-x86_64.so"`; do cp ${x} ${x/x86_64/haswell}; done
  - echo "DEFINES += USE_TESTS" >> STIGQter.pro
  - qmake STIGQter.pro
- - sed -i -e 's:-O2:-O0 -fprofile-arcs -ftest-coverage:g' -e 's:-Wl,-O1:-Wl,-O1 -lgcov --coverage:g' Makefile
+ - sed -i -e 's:-O2:-O0 -fprofile-arcs -ftest-coverage -fno-exceptions -fno-inline:g' -e 's:-Wl,-O1:-Wl,-O1 -lgcov --coverage:g' Makefile
  - build-wrapper-linux-x86-64 --out-dir bw-output make --quiet -j3
  - pushd doc && ./build.sh && popd
  - ./STIGQter tests > STIGQter.tests &
