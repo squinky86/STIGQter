@@ -8,7 +8,7 @@ addons:
         sonarcloud:
                 organization: "squinky86"
                 token:
-                        secure: "1627f17c5f4b2974c221d3b6fcd2e0c4bebb6ecf"
+                        secure: "EcujzM9RjtCz0/T7Mhd/Ex+BqEe4stL3PZWBsrVGnL99bozffPX4HoPMa2RTC0uppdBF0bfZ7ApYi/CtzUJCGqIPQIqIfD/NrX9WwgjWXH7ZfJlzy8syq0YIvIYpsqY4uurdHYfzzItSrduhcPPUogMYS3YrBfCB4ShjO0suX5exukMpkBLlgPJivZWdFMcpCK+Kf00eyD0WoNkbcJYf2kbP8RDzxccn/5e8mOZtzbplTzXmZKUCFPQrq1IHWEY8S4S/4Ilpt2AFNHO4e6IqR5FqGzjVoobR5iaCDCvnkgi3MPcVrSpjbD8gdAYJdx4uN7TcnH8Rq4smJXn6gc3GQqyFFEQW6L/J15PepPz8Joj7awYCIksb2iOs1u0d87cdLGaE/XsrpTsoT8JokORxfhXst1P7g9O2LHTItO9Ahg1MrpSDZkDsrWDuAtSurpubTY6Kb+j/EbkZJEl/GST64jJqAHmPoXIlqLMrjUkwOmHMWH8xgmGJ7BYbbb7zJ7vUsjJgJmXEsrq72A88QG6iS2fXwHHS2A2jzaKLTVanb3qugExNhTDKm9MDcNxIEwARmgyCWR5ytP6S6HkPHMG2tggXa3kyGBGUMMBieF6dZmfNYK+uyZ51mCwplLFeOAvAwrqBJyIqSeH718wTIypkkadYpRvwSIgyI4PFy2KzZxI="
 
 env:
         global:
@@ -38,7 +38,7 @@ script:
 
 after_success:
  - for x in src/*.cpp; do LC_ALL=en gcov --branch-probabilities --branch-counts ${x} -o .; done
- - sonar-scanner
+ - sonar-scanner -Dsonar.cfamily.build-wrapper-output=bw-output
  - coveralls --gcov-options '\-lp'
  - gcov2perl *.gcov >> STIGQter.tests
  - tail -n 100 STIGQter.tests
