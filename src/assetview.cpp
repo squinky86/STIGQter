@@ -528,6 +528,7 @@ void AssetView::ImportXCCDF(const QString &filename)
 
     bool updates = false;
 
+    //Allow multiple XCCDF files to be selected
     Q_FOREACH (const QString fileName, fileNames)
     {
         QFile f(fileName);
@@ -547,6 +548,14 @@ void AssetView::ImportXCCDF(const QString &filename)
             {
                 if (xml->name() == QStringLiteral("fact"))
                 {
+                    /*
+                     * iterate through elements that can fill out .ckl checklist
+                     * Elements include:
+                     * ipv4
+                     * mac
+                     * fqdn
+                     * We already have the Asset named, so don't overwrite it.
+                     */
                     if (xml->attributes().hasAttribute(QStringLiteral("name")))
                     {
                         QStringRef name = xml->attributes().value(QStringLiteral("name"));
@@ -576,6 +585,7 @@ void AssetView::ImportXCCDF(const QString &filename)
                         }
                     }
                 }
+                //Iterate through each rule and pull the status
                 else if (xml->name() == QStringLiteral("rule-result"))
                 {
                     if (xml->attributes().hasAttribute(QStringLiteral("idref")))
@@ -626,6 +636,7 @@ void AssetView::ImportXCCDF(const QString &filename)
         }
         delete xml;
         int tmpCount = warnings.count();
+        //save a warning if the result can't be mapped to a check
         if (tmpCount > 0)
         {
             Warning(QStringLiteral("Unable to Find Check") + Pluralize(tmpCount), QStringLiteral("The CKLCheck") + Pluralize(tmpCount) + QStringLiteral(" ") + warnings.join(QStringLiteral(", ")) + QStringLiteral(" w") + Pluralize(tmpCount, QStringLiteral("ere"), QStringLiteral("as")) + QStringLiteral(" not found in this STIG."));

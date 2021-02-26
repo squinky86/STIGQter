@@ -11,8 +11,8 @@
 
 Any security vulnerabilities should be brought to the attention of the STIGQter team. Two options exist for reporting a security concern:
 
-1. File an issue on github requesting that someone reach out to you with an encryption key
-2. Reach out to squinky86 directly (jwh0011@auburn.edu)
+1.  File an issue on github requesting that someone reach out to you with an encryption key
+2.  Reach out to squinky86 directly (jwh0011@auburn.edu)
 
 An option for a private encryption key to continue security discussions will be provided within 72 hours.
 

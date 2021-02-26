@@ -160,10 +160,13 @@ void WorkerHTML::process()
     Q_EMIT initialize(1 + checkMap.count() + count, 1);
 
     QDir outputDir(_exportDir);
+    //main.html is the root point of navigating the STIGs.
+    //Each STIGCheck and STIG will get its own .html file.
     QFile main(outputDir.filePath(QStringLiteral("main.html")));
     main.open(QIODevice::WriteOnly);
     QString headerExtra = db.GetVariable(QStringLiteral("HTMLHeader"));
 
+    //header of main index file
     main.write("<!doctype html>"
                "<html lang=\"en\">"
                "<head>"
@@ -176,6 +179,7 @@ void WorkerHTML::process()
                "<div><img src=\"STIGQter.svg\" alt=\"STIGQter\" style=\"height:1em;\" /> <a href=\"https://www.stigqter.com/\">STIGQter</a>:</div> <h1>STIG Summary</h1>"
                "<ul>");
 
+    //iterate through STIGs. Each STIG is a reference file to its STIGChecks.
     Q_FOREACH (const STIG &s, checkMap.keys())
     {
         QString STIGName = PrintSTIG(s);
@@ -218,6 +222,7 @@ void WorkerHTML::process()
                    "<th style=\"border: 1px solid black;\">Title</th>"
                    "</tr>");
 
+        //Create individual .html files for every STIGCheck
         Q_FOREACH (const STIGCheck &c, checkMap[s])
         {
             QString checkName(PrintSTIGCheck(c));
@@ -310,6 +315,7 @@ void WorkerHTML::process()
                "</html>");
     main.close();
 
+    //Use the main STIGQter graphic for the logo (what browsers use to create shortcuts)
     QFile svg(outputDir.filePath(QStringLiteral("STIGQter.svg")));
     svg.open(QIODevice::WriteOnly);
     svg.write("<?xml version=\"1.0\" encoding=\"UTF-8\" standalone=\"no\"?>"
