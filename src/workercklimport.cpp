@@ -61,6 +61,8 @@ void WorkerCKLImport::ParseCKL(const QString &fileName)
     CKLCheck tmpCKL;
     QString onVar;
     STIG tmpSTIG;
+
+    // Cycle through all XML elements looking for ones we care about
     while (!xml->atEnd() && !xml->hasError())
     {
         xml->readNext();
@@ -80,13 +82,15 @@ void WorkerCKLImport::ParseCKL(const QString &fileName)
                 {
                     a = CheckAsset(a);
                     QVector<STIG> stigs = a.GetSTIGs();
+                    //Make sure the Asset doesn't already have STIG details for this STIG
                     if (stigs.contains(tmpSTIG))
                     {
                         Q_EMIT updateStatus("Unable to add " + PrintSTIG(tmpSTIG) + " to " + PrintAsset(a) + "!");
-			Q_EMIT ThrowWarning(QStringLiteral("Asset already has STIG applied!"), "The asset " + PrintAsset(a) + " already has the STIG " + PrintSTIG(tmpSTIG) + " applied and will not be imported.");
+                        Q_EMIT ThrowWarning(QStringLiteral("Asset already has STIG applied!"), "The asset " + PrintAsset(a) + " already has the STIG " + PrintSTIG(tmpSTIG) + " applied and will not be imported.");
                     }
                     else
                     {
+                        //Apply STIG - the Asset does not have this STIG yet
                         Q_EMIT updateStatus("Adding " + PrintSTIG(tmpSTIG) + " to " + PrintAsset(a) + "…");
                         db.AddSTIGToAsset(tmpSTIG, a);
                         db.DelayCommit(true);
