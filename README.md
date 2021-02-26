@@ -4,7 +4,10 @@
 
 ## Installation
 
-Each release is published with a Windows 64-bit binary that has been tested on Windows 10. This is the only supported binary release. Ebuilds for Gentoo Linux are also supported for building from source.
+Only the source package is supported. To help with implementations, different installation options are provided:
+*    64-bit Windows standalone binary and installer (tested on Windows 10)
+*    ebuilds for Gentoo Linux (tested on unstable ~amd64)
+*    64-bit Debian packages (tested on Ubuntu and Kali)
 
 The source has the following dependencies (with minimum version numbers):
 *   [HTML Tidy 5.6](http://www.html-tidy.org/)
