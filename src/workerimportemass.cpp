@@ -21,6 +21,7 @@
 #include "dbmanager.h"
 #include "workerimportemass.h"
 
+#include <QRegularExpression>
 #include <QXmlStreamReader>
 
 /**
@@ -104,14 +105,14 @@ void WorkerImportEMASS::process()
             xml.readNext();
             if (xml.isStartElement())
             {
-                if (xml.name() == "si")
+                if (xml.name().compare(QStringLiteral("si")) == 0)
                     toAdd = QString(); //new string
-                else if (xml.name() == "t")
+                else if (xml.name().compare(QStringLiteral("t")) == 0)
                     toAdd.append(xml.readElementText());
             }
             if (xml.isEndElement())
             {
-                if (xml.name() == "si")
+                if (xml.name().compare(QStringLiteral("si")) == 0)
                     sst.append(toAdd); //end of shared string element; add it to the table
             }
         }
@@ -130,7 +131,7 @@ void WorkerImportEMASS::process()
             xml.readNext();
             if (xml.isStartElement())
             {
-                if (xml.name() == "Relationship")
+                if (xml.name().compare(QStringLiteral("Relationship")) == 0)
                 {
                     if (xml.attributes().hasAttribute(QStringLiteral("Id")) && xml.attributes().hasAttribute(QStringLiteral("Target")))
                     {
@@ -138,9 +139,9 @@ void WorkerImportEMASS::process()
                         QString target = QString();
                         Q_FOREACH (const QXmlStreamAttribute &attr, xml.attributes())
                         {
-                            if (attr.name() == "Id")
+                            if (attr.name().compare(QStringLiteral("Id")) == 0)
                                 id = attr.value().toString();
-                            else if (attr.name() == "Target")
+                            else if (attr.name().compare(QStringLiteral("Target")) == 0)
                                 target = attr.value().toString();
                         }
                         relationshipIds.insert(id, target);
@@ -163,7 +164,7 @@ void WorkerImportEMASS::process()
             xml.readNext();
             if (xml.isStartElement())
             {
-                if (xml.name() == "sheet")
+                if (xml.name().compare(QStringLiteral("sheet")) == 0)
                 {
                     if (xml.attributes().hasAttribute(QStringLiteral("r:id")) && xml.attributes().hasAttribute(QStringLiteral("name")))
                     {
@@ -171,9 +172,9 @@ void WorkerImportEMASS::process()
                         QString name = QString();
                         Q_FOREACH (const QXmlStreamAttribute &attr, xml.attributes())
                         {
-                            if (attr.name() == "id")
+                            if (attr.name().compare(QStringLiteral("id")) == 0)
                                 id = attr.value().toString();
-                            else if (attr.name() == "name")
+                            else if (attr.name().compare(QStringLiteral("name")) == 0)
                                 name = attr.value().toString();
                         }
                         sheetNames.insert(name, id);
@@ -208,38 +209,40 @@ void WorkerImportEMASS::process()
             if (xml.isStartElement())
             {
                 //Get the dimensions of the sheet to set the progress bar
-                if (xml.name() == "dimension")
+                if (xml.name().compare(QStringLiteral("dimension")) == 0)
                 {
                     if (xml.attributes().hasAttribute(QStringLiteral("ref")))
                     {
-                        QStringRef ref = xml.attributes().value(QStringLiteral("ref"));
+                        QStringView ref = xml.attributes().value(QStringLiteral("ref"));
                         if (ref.contains(':'))
                         {
                             ref = ref.right(ref.length() - ref.lastIndexOf(':'));
-                            QRegExp re(QStringLiteral("\\d*"));
-                            while (!re.exactMatch(ref.toString()) && (ref.length() > 1))
+
+                            bool isNumeric = false;
+                            int size = 0;
+                            for (size = ref.toInt(&isNumeric); !isNumeric && ref.length() > 1; size = ref.toInt(&isNumeric))
                             {
                                 ref = ref.right(ref.length() - 1);
                             }
-                            if (re.exactMatch(ref.toString()))
-                            {
-                                Q_EMIT initialize(ref.toInt(), 5);
-                            }
+
+                            if (isNumeric)
+                                Q_EMIT initialize(size, 5);
+
                         }
                     }
                 }
                 //read the next line
-                else if (xml.name() == "row")
+                else if (xml.name().compare(QStringLiteral("row")) == 0)
                 {
                     onRow++;
                     Q_EMIT progress(-1);
                 }
-                else if (xml.name() == "c")
+                else if (xml.name().compare(QStringLiteral("c")) == 0)
                 {
                     isSharedString = false;
                     if (xml.attributes().hasAttribute(QStringLiteral("t")))
                     {
-                        if (xml.attributes().value(QStringLiteral("t")) == "s")
+                        if (xml.attributes().value(QStringLiteral("t")).compare(QStringLiteral("s")) == 0)
                             isSharedString = true;
                     }
                     if (xml.attributes().hasAttribute(QStringLiteral("r")))
@@ -247,7 +250,7 @@ void WorkerImportEMASS::process()
                         onCol = xml.attributes().value(QStringLiteral("r")).left(1).toString();
                     }
                 }
-                else if (xml.name() == "v" && meaningfulCols.contains(onCol))
+                else if ((xml.name().compare(QStringLiteral("v")) == 0) && meaningfulCols.contains(onCol))
                 {
                     QString value = xml.readElementText();
                     if (isSharedString)

@@ -24,6 +24,8 @@
 #include <cstdlib>
 #include <QCryptographicHash>
 #include <QFile>
+#include <QMap>
+#include <QRegularExpression>
 #include <QSqlQuery>
 #include <QSqlError>
 #include <QThread>
@@ -2857,6 +2859,30 @@ QString GetLastExecutedQuery(const QSqlQuery& query)
 {
     QString sql = query.executedQuery();
 
+    //Bound name placeholder lookups are not compatible with Qt 6.
+#if QT_VERSION >= 0x060000
+
+    QVector<QVariant> values = query.boundValues();
+
+    QRegularExpression reg(QStringLiteral(":[a-zA-Z0-9_]*"));
+
+    for (auto value = values.begin(); value != values.end(); ++value)
+    {
+        QRegularExpressionMatch match = reg.match(sql);
+        QSqlField field(QLatin1String(""), value->metaType());
+        if (value->isNull())
+        {
+            field.clear();
+        }
+        else
+        {
+            field.setValue(*value);
+        }
+        QString formatV = query.driver()->formatValue(field);
+        if (match.isValid())
+            sql.replace(match.capturedStart(), match.capturedLength(), formatV);
+    }
+#else
     QMapIterator<QString, QVariant> it(query.boundValues());
 
     while (it.hasNext())
@@ -2875,5 +2901,7 @@ QString GetLastExecutedQuery(const QSqlQuery& query)
         QString formatV = query.driver()->formatValue(field);
         sql.replace(it.key(), formatV);
     }
+#endif
+
     return sql;
 }

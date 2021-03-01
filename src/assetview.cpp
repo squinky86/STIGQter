@@ -539,7 +539,7 @@ void AssetView::ImportXCCDF(const QString &filename)
             continue;
         }
         QXmlStreamReader *xml = new QXmlStreamReader(f.readAll());
-        QStringRef onCheck;
+        QStringView onCheck;
         QStringList warnings;
         while (!xml->atEnd() && !xml->hasError())
         {
@@ -558,7 +558,7 @@ void AssetView::ImportXCCDF(const QString &filename)
                      */
                     if (xml->attributes().hasAttribute(QStringLiteral("name")))
                     {
-                        QStringRef name = xml->attributes().value(QStringLiteral("name"));
+                        QStringView name = xml->attributes().value(QStringLiteral("name"));
                         if (name.endsWith(QStringLiteral("ipv4"), Qt::CaseInsensitive))
                         {
                             QString tmpStr = xml->readElementText();
@@ -593,7 +593,7 @@ void AssetView::ImportXCCDF(const QString &filename)
                         onCheck = xml->attributes().value(QStringLiteral("idref"));
                     }
                 }
-                else if (xml->name() == "result")
+                else if (xml->name().compare(QStringLiteral("result")) == 0)
                 {
                     if (!onCheck.startsWith(QStringLiteral("SV")) && onCheck.contains(QStringLiteral("SV"))) //trim off XCCDF perfunctory information for benchmark files
                     {

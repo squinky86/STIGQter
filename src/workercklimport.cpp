@@ -68,7 +68,7 @@ void WorkerCKLImport::ParseCKL(const QString &fileName)
         xml->readNext();
         if (xml->isEndElement())
         {
-            if (xml->name() == "VULN")
+            if (xml->name().compare(QStringLiteral("VULN")) == 0)
             {
                 tmpCKL.stigCheckId = tmpCheck.id;
                 checks.append(tmpCKL);
@@ -78,7 +78,7 @@ void WorkerCKLImport::ParseCKL(const QString &fileName)
         {
             if (inStigs)
             {
-                if (xml->name() == "iSTIG" && checks.count() > 0)
+                if ((xml->name().compare(QStringLiteral("iSTIG")) == 0) && (checks.count() > 0))
                 {
                     a = CheckAsset(a);
                     QVector<STIG> stigs = a.GetSTIGs();
@@ -103,11 +103,11 @@ void WorkerCKLImport::ParseCKL(const QString &fileName)
                     }
                     checks.clear();
                 }
-                else if (xml->name() == "SID_NAME" || xml->name() == "VULN_ATTRIBUTE")
+                else if ((xml->name().compare(QStringLiteral("SID_NAME")) == 0) || (xml->name().compare(QStringLiteral("VULN_ATTRIBUTE")) == 0))
                 {
                     onVar = xml->readElementText().trimmed();
                 }
-                else if (xml->name() == "SID_DATA")
+                else if (xml->name().compare(QStringLiteral("SID_DATA")) == 0)
                 {
                     if (onVar == QStringLiteral("version"))
                     {
@@ -122,7 +122,7 @@ void WorkerCKLImport::ParseCKL(const QString &fileName)
                         tmpSTIG.title = xml->readElementText().trimmed();
                     }
                 }
-                else if (xml->name() == "ATTRIBUTE_DATA")
+                else if (xml->name().compare(QStringLiteral("ATTRIBUTE_DATA")) == 0)
                 {
                     if (onVar == QStringLiteral("Rule_ID"))
                     {
@@ -137,70 +137,70 @@ void WorkerCKLImport::ParseCKL(const QString &fileName)
                         tmpCheck = db.GetSTIGCheck(tmpSTIG, xml->readElementText().trimmed());
                     }
                 }
-                else if (xml->name() == "STATUS")
+                else if (xml->name().compare(QStringLiteral("STATUS")) == 0)
                 {
                     tmpCKL.status = GetStatus(xml->readElementText().trimmed());
                 }
-                else if (xml->name() == "FINDING_DETAILS")
+                else if (xml->name().compare(QStringLiteral("FINDING_DETAILS")) == 0)
                 {
                     tmpCKL.findingDetails = xml->readElementText().trimmed();
                 }
-                else if (xml->name() == "COMMENTS")
+                else if (xml->name().compare(QStringLiteral("COMMENTS")) == 0)
                 {
                     tmpCKL.comments = xml->readElementText().trimmed();
                 }
-                else if (xml->name() == "SEVERITY_OVERRIDE")
+                else if (xml->name().compare(QStringLiteral("SEVERITY_OVERRIDE")) == 0)
                 {
                     tmpCKL.severityOverride = GetSeverity(xml->readElementText().trimmed());
                 }
-                else if (xml->name() == "SEVERITY_JUSTIFICATION")
+                else if (xml->name().compare(QStringLiteral("SEVERITY_JUSTIFICATION")) == 0)
                 {
                     tmpCKL.severityJustification = xml->readElementText().trimmed();
                 }
             }
             else
             {
-                if (xml->name() == "STIGS")
+                if (xml->name().compare(QStringLiteral("STIGS")) == 0)
                 {
                     inStigs = true;
                 }
-                else if (xml->name() == "ASSET_TYPE")
+                else if (xml->name().compare(QStringLiteral("ASSET_TYPE")) == 0)
                 {
                     a.assetType = xml->readElementText().trimmed();
                 }
-                else if (xml->name() == "HOST_NAME")
+                else if (xml->name().compare(QStringLiteral("HOST_NAME")) == 0)
                 {
                     a.hostName = xml->readElementText().trimmed();
                 }
-                else if (xml->name() == "HOST_IP")
+                else if (xml->name().compare(QStringLiteral("HOST_IP")) == 0)
                 {
                     a.hostIP = xml->readElementText().trimmed();
                 }
-                else if (xml->name() == "HOST_MAC")
+                else if (xml->name().compare(QStringLiteral("HOST_MAC")) == 0)
                 {
                     a.hostMAC = xml->readElementText().trimmed();
                 }
-                else if (xml->name() == "HOST_FQDN")
+                else if (xml->name().compare(QStringLiteral("HOST_FQDN")) == 0)
                 {
                     a.hostFQDN = xml->readElementText().trimmed();
                 }
-                else if (xml->name() == "TECH_AREA")
+                else if (xml->name().compare(QStringLiteral("TECH_AREA")) == 0)
                 {
                     a.techArea = xml->readElementText().trimmed();
                 }
-                else if (xml->name() == "TARGET_KEY")
+                else if (xml->name().compare(QStringLiteral("TARGET_KEY")) == 0)
                 {
                     a.targetKey = xml->readElementText().trimmed();
                 }
-                else if (xml->name() == "WEB_OR_DATABASE")
+                else if (xml->name().compare(QStringLiteral("WEB_OR_DATABASE")) == 0)
                 {
                     a.webOrDB = xml->readElementText().trimmed().startsWith(QStringLiteral("t"), Qt::CaseInsensitive);
                 }
-                else if (xml->name() == "WEB_DB_SITE")
+                else if (xml->name().compare(QStringLiteral("WEB_DB_SITE")) == 0)
                 {
                     a.webDbSite = xml->readElementText().trimmed();
                 }
-                else if (xml->name() == "WEB_DB_INSTANCE")
+                else if (xml->name().compare(QStringLiteral("WEB_DB_INSTANCE")) == 0)
                 {
                     a.webDbInstance = xml->readElementText().trimmed();
                 }

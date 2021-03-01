@@ -86,14 +86,14 @@ void WorkerCCIAdd::process()
     while (!xml->atEnd() && !xml->hasError())
     {
         xml->readNext();
-        if (xml->isStartElement() && (xml->name() == "a"))
+        if (xml->isStartElement() && (xml->name().compare(QStringLiteral("a")) == 0))
         {
             if (xml->attributes().hasAttribute(QStringLiteral("href")))
             {
                 QString href = QString();
                 Q_FOREACH (const QXmlStreamAttribute &attr, xml->attributes())
                 {
-                    if (attr.name() == "href")
+                    if (attr.name().compare(QStringLiteral("href")) == 0)
                         href = attr.value().toString();
                 }
                 if (href.startsWith(QStringLiteral("/800-53/Rev4/family")))
@@ -138,15 +138,15 @@ void WorkerCCIAdd::process()
         {
             if (inStatement)
             {
-                if (xml->name() == "supplemental-guidance")
+                if (xml->name().compare(QStringLiteral("supplemental-guidance")) == 0)
                 {
                     inStatement = false;
                 }
-                else if (xml->name() == "description")
+                else if (xml->name().compare(QStringLiteral("description")) == 0)
                 {
                     description = xml->readElementText().trimmed();
                 }
-                else if (xml->name() == "control" || xml->name() == "control-enhancement")
+                else if ((xml->name().compare(QStringLiteral("control")) == 0) || (xml->name().compare(QStringLiteral("control-enhancement")) == 0))
                 {
                     inStatement = false;
                     Q_EMIT updateStatus("Adding " + control);
@@ -156,15 +156,15 @@ void WorkerCCIAdd::process()
             }
             else
             {
-                if (xml->name() == "statement")
+                if (xml->name().compare(QStringLiteral("statement")) == 0)
                     inStatement = true;
-                else if (xml->name() == "number")
+                else if (xml->name().compare(QStringLiteral("number")) == 0)
                     control = xml->readElementText().trimmed();
-                else if (xml->name() == "title")
+                else if (xml->name().compare(QStringLiteral("title")) == 0)
                     title = xml->readElementText().trimmed();
-                else if (xml->name() == "description")
+                else if (xml->name().compare(QStringLiteral("description")) == 0)
                     description = xml->readElementText().trimmed();
-                else if (xml->name() == "control" || xml->name() == "control-enhancement")
+                else if ((xml->name().compare(QStringLiteral("control")) == 0) || (xml->name().compare(QStringLiteral("control-enhancement")) == 0))
                 {
                     Q_EMIT updateStatus("Adding " + control);
                     db.AddControl(control, title, description);
@@ -244,22 +244,22 @@ void WorkerCCIAdd::process()
             xml->readNext();
             if (xml->isStartElement())
             {
-                if (xml->name() == "cci_item")
+                if (xml->name().compare(QStringLiteral("cci_item")) == 0)
                 {
                     if (xml->attributes().hasAttribute(QStringLiteral("id")))
                     {
                         Q_FOREACH (const QXmlStreamAttribute &attr, xml->attributes())
                         {
-                            if (attr.name() == "id")
+                            if (attr.name().compare(QStringLiteral("id")) == 0)
                                 cci = attr.value().toString();
                         }
                     }
                 }
-                else if (xml->name() == "definition")
+                else if (xml->name().compare(QStringLiteral("definition")) == 0)
                 {
                     definition = xml->readElementText();
                 }
-                else if (xml->name() == "reference")
+                else if (xml->name().compare(QStringLiteral("reference")) == 0)
                 {
                     if (xml->attributes().hasAttribute(QStringLiteral("version")) && xml->attributes().hasAttribute(QStringLiteral("index")) && !cci.isEmpty())
                     {
@@ -267,14 +267,14 @@ void WorkerCCIAdd::process()
                         QString index = QString();
                         Q_FOREACH (const QXmlStreamAttribute &attr, xml->attributes())
                         {
-                            if (attr.name() == "version")
+                            if (attr.name().compare(QStringLiteral("version")) == 0)
                                 version = attr.value().toString();
-                            else if (attr.name() == "index")
+                            else if (attr.name().compare(QStringLiteral("index")) == 0)
                                 index = attr.value().toString();
                         }
                         if (!version.isEmpty() && !index.isEmpty() && (version == QStringLiteral("4"))) //Only Rev 4 supported
                         {
-                            int cciInt = cci.rightRef(6).toInt();
+                            int cciInt = QStringView{cci}.right(6).toInt();
                             QString control = index;
                             int tmpIndex = index.indexOf(' ');
                             if (control.contains(' '))
@@ -288,7 +288,9 @@ void WorkerCCIAdd::process()
                                 int tmpInt = index.indexOf('(');
                                 if (tmpIndex <= 0 || tmpInt < tmpIndex)
                                 {
-                                    QStringRef enhancement(&index, tmpInt, index.indexOf(')') - tmpInt + 1);
+                                    QString enhancement(index);
+                                    enhancement = enhancement.remove(0, tmpInt);
+                                    enhancement = enhancement.left(index.indexOf(')') - tmpInt);
                                     control.append(enhancement);
                                 }
                             }

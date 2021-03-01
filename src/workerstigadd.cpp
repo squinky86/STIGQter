@@ -78,43 +78,43 @@ void WorkerSTIGAdd::ParseSTIG(const QByteArray &stig, const QString &fileName, c
             {
                 if (!inProfile)
                 {
-                    if (xml->name() == "title")
+                    if (xml->name().compare(QStringLiteral("title")) == 0)
                     {
                         s.title = xml->readElementText().trimmed();
                     }
-                    else if (xml->name() == "description")
+                    else if (xml->name().compare(QStringLiteral("description")) == 0)
                     {
                         s.description = xml->readElementText().trimmed();
                     }
-                    else if (xml->name() == "plain-text" && xml->attributes().hasAttribute(QStringLiteral("id")))
+                    else if ((xml->name().compare(QStringLiteral("plain-text")) == 0) && xml->attributes().hasAttribute(QStringLiteral("id")))
                     {
                         Q_FOREACH (const QXmlStreamAttribute &attr, xml->attributes())
                         {
-                            if (attr.name() == "id")
+                            if (attr.name().compare(QStringLiteral("id")) == 0)
                             {
                                 if (attr.value().toString().trimmed() == QStringLiteral("release-info"))
                                     s.release = xml->readElementText().trimmed();
                             }
                         }
                     }
-                    else if (xml->name() == "version")
+                    else if (xml->name().compare(QStringLiteral("version")) == 0)
                     {
                         s.version = xml->readElementText().toInt();
                     }
                 }
-                if (xml->name() == "Group")
+                if (xml->name().compare(QStringLiteral("Group")) == 0)
                 {
                     inStigRules = true; //Read all basic STIG data - switch to processing STIG checks
                 }
-                else if (xml->name() == "Profile")
+                else if (xml->name().compare(QStringLiteral("Profile")) == 0)
                 {
                     inProfile = true; // stop reading STIG details
                 }
-                else if (xml->name() == "Benchmark" && xml->attributes().hasAttribute(QStringLiteral("id")))
+                else if ((xml->name().compare(QStringLiteral("Benchmark")) == 0) && xml->attributes().hasAttribute(QStringLiteral("id")))
                 {
                     Q_FOREACH (const QXmlStreamAttribute &attr, xml->attributes())
                     {
-                        if (attr.name() == "id")
+                        if (attr.name().compare(QStringLiteral("id")) == 0)
                         {
                             s.benchmarkId = attr.value().toString().trimmed();
                         }
@@ -126,7 +126,7 @@ void WorkerSTIGAdd::ParseSTIG(const QByteArray &stig, const QString &fileName, c
         {
             if (xml->isStartElement())
             {
-                if (xml->name() == "Group" && xml->attributes().hasAttribute(QStringLiteral("id")))
+                if ((xml->name().compare(QStringLiteral("Group")) == 0) && xml->attributes().hasAttribute(QStringLiteral("id")))
                 {
                     inGroup = true;
                     //add the previous rule
@@ -140,7 +140,7 @@ void WorkerSTIGAdd::ParseSTIG(const QByteArray &stig, const QString &fileName, c
                     }
                     Q_FOREACH (const QXmlStreamAttribute &attr, xml->attributes())
                     {
-                        if (attr.name() == "id")
+                        if (attr.name().compare(QStringLiteral("id")) == 0)
                         {
                             c.vulnNum = attr.value().toString().trimmed();
                             if (!c.vulnNum.startsWith(QStringLiteral("V-")) && c.vulnNum.contains(QStringLiteral("V-")))
@@ -148,7 +148,7 @@ void WorkerSTIGAdd::ParseSTIG(const QByteArray &stig, const QString &fileName, c
                         }
                     }
                 }
-                if (xml->name() == "Rule" && xml->attributes().hasAttribute(QStringLiteral("id")) && xml->attributes().hasAttribute(QStringLiteral("severity")) && xml->attributes().hasAttribute(QStringLiteral("weight")))
+                if ((xml->name().compare(QStringLiteral("Rule")) == 0) && xml->attributes().hasAttribute(QStringLiteral("id")) && xml->attributes().hasAttribute(QStringLiteral("severity")) && xml->attributes().hasAttribute(QStringLiteral("weight")))
                 {
                     inGroup = false;
                     inReference = false;
@@ -170,35 +170,35 @@ void WorkerSTIGAdd::ParseSTIG(const QByteArray &stig, const QString &fileName, c
                     c.id = 0;
                     Q_FOREACH (const QXmlStreamAttribute &attr, xml->attributes())
                     {
-                        if (attr.name() == "id")
+                        if (attr.name().compare(QStringLiteral("id")) == 0)
                         {
                             c.rule = attr.value().toString().trimmed();
                             if (!c.rule.startsWith(QStringLiteral("SV-")) && c.rule.contains(QStringLiteral("SV-")))
                                 c.rule = c.rule.right(c.rule.length() - c.rule.indexOf(QStringLiteral("SV-")));
                         }
-                        else if (attr.name() == "severity")
+                        else if (attr.name().compare(QStringLiteral("severity")) == 0)
                         {
                             c.severity = GetSeverity(attr.value().toString().trimmed());
                         }
-                        else if (attr.name() == "weight")
+                        else if (attr.name().compare(QStringLiteral("weight")) == 0)
                         {
                             c.weight = attr.value().toDouble();
                         }
                     }
                 }
-                else if (xml->name() == "version")
+                else if (xml->name().compare(QStringLiteral("version")) == 0)
                 {
                     if (!inGroup && !inReference)
                         c.ruleVersion = xml->readElementText().trimmed();
                 }
-                else if (xml->name() == "title")
+                else if (xml->name().compare(QStringLiteral("title")) == 0)
                 {
                     if (inGroup)
                         c.groupTitle = xml->readElementText().trimmed();
                     if (!inGroup && !inReference)
                         c.title = xml->readElementText().trimmed();
                 }
-                else if (xml->name() == "description")
+                else if (xml->name().compare(QStringLiteral("description")) == 0)
                 {
                     if (!inGroup)
                     {
@@ -210,43 +210,43 @@ void WorkerSTIGAdd::ParseSTIG(const QByteArray &stig, const QString &fileName, c
                             xml2.readNext();
                             if (xml2.isStartElement())
                             {
-                                if (xml2.name() == "VulnDiscussion")
+                                if (xml2.name().compare(QStringLiteral("VulnDiscussion")) == 0)
                                 {
                                     c.vulnDiscussion = xml2.readElementText().trimmed();
                                 }
-                                else if (xml2.name() == "FalsePositives")
+                                else if (xml2.name().compare(QStringLiteral("FalsePositives")) == 0)
                                 {
                                     c.falsePositives = xml2.readElementText().trimmed();
                                 }
-                                else if (xml2.name() == "FalseNegatives")
+                                else if (xml2.name().compare(QStringLiteral("FalseNegatives")) == 0)
                                 {
                                     c.falseNegatives = xml2.readElementText().trimmed();
                                 }
-                                else if (xml2.name() == "Documentable")
+                                else if (xml2.name().compare(QStringLiteral("Documentable")) == 0)
                                 {
                                     c.documentable = xml2.readElementText().trimmed().startsWith(QStringLiteral("t"), Qt::CaseInsensitive);
                                 }
-                                else if (xml2.name() == "Mitigations")
+                                else if (xml2.name().compare(QStringLiteral("Mitigations")) == 0)
                                 {
                                     c.mitigations = xml2.readElementText().trimmed();
                                 }
-                                else if (xml2.name() == "SeverityOverrideGuidance")
+                                else if (xml2.name().compare(QStringLiteral("SeverityOverrideGuidance")) == 0)
                                 {
                                     c.severityOverrideGuidance = xml2.readElementText().trimmed();
                                 }
-                                else if (xml2.name() == "PotentialImpacts")
+                                else if (xml2.name().compare(QStringLiteral("PotentialImpacts")) == 0)
                                 {
                                     c.potentialImpact = xml2.readElementText().trimmed();
                                 }
-                                else if (xml2.name() == "ThirdPartyTools")
+                                else if (xml2.name().compare(QStringLiteral("ThirdPartyTools")) == 0)
                                 {
                                     c.thirdPartyTools = xml2.readElementText().trimmed();
                                 }
-                                else if (xml2.name() == "MitigationControl")
+                                else if (xml2.name().compare(QStringLiteral("MitigationControl")) == 0)
                                 {
                                     c.mitigationControl = xml2.readElementText().trimmed();
                                 }
-                                else if (xml2.name() == "Responsibility")
+                                else if (xml2.name().compare(QStringLiteral("Responsibility")) == 0)
                                 {
                                     c.responsibility = xml2.readElementText().trimmed();
                                 }
@@ -254,11 +254,11 @@ void WorkerSTIGAdd::ParseSTIG(const QByteArray &stig, const QString &fileName, c
                         }
                     }
                 }
-                else if (xml->name() == "identifier")
+                else if (xml->name().compare(QStringLiteral("identifier")) == 0)
                 {
                     c.targetKey = xml->readElementText().trimmed();
                 }
-                else if (xml->name() == "ident")
+                else if (xml->name().compare(QStringLiteral("ident")) == 0)
                 {
                     bool legacy = false;
 
@@ -266,7 +266,7 @@ void WorkerSTIGAdd::ParseSTIG(const QByteArray &stig, const QString &fileName, c
                     {
                         Q_FOREACH (const QXmlStreamAttribute &attr, xml->attributes())
                         {
-                            if (attr.name() == "system" && attr.value().endsWith(QStringLiteral("legacy"), Qt::CaseSensitivity::CaseInsensitive))
+                            if ((attr.name().compare(QStringLiteral("system")) == 0) && attr.value().endsWith(QStringLiteral("legacy"), Qt::CaseSensitivity::CaseInsensitive))
                             {
                                 legacy = true;
                                 break;
@@ -293,25 +293,25 @@ void WorkerSTIGAdd::ParseSTIG(const QByteArray &stig, const QString &fileName, c
                         }
                     }
                 }
-                else if (xml->name() == "fixtext")
+                else if (xml->name().compare(QStringLiteral("fixtext")) == 0)
                 {
                     c.fix = xml->readElementText().trimmed();
                 }
-                else if (xml->name() == "check-content-ref" && xml->attributes().hasAttribute(QStringLiteral("name")))
+                else if ((xml->name().compare(QStringLiteral("check-content-ref")) == 0) && xml->attributes().hasAttribute(QStringLiteral("name")))
                 {
                     Q_FOREACH (const QXmlStreamAttribute &attr, xml->attributes())
                     {
-                        if (attr.name() == "name")
+                        if (attr.name().compare(QStringLiteral("name")) == 0)
                         {
                             c.checkContentRef = attr.value().toString().trimmed();
                         }
                     }
                 }
-                else if (xml->name() == "check-content")
+                else if (xml->name().compare(QStringLiteral("check-content")) == 0)
                 {
                     c.check = xml->readElementText().trimmed();
                 }
-                else if (xml->name() == "reference")
+                else if (xml->name().compare(QStringLiteral("reference")) == 0)
                 {
                     inReference = true;
                 }
