@@ -24,6 +24,8 @@
 
 #include <zip.h>
 
+#include <iostream>
+
 #include <QDir>
 #include <QNetworkAccessManager>
 #include <QNetworkReply>
@@ -76,6 +78,12 @@ void WorkerCCIAdd::process()
     QUrl nistRev4(nist.toString() + "/800-53/Rev4");
     QString rmf = DownloadPage(nistRev4.adjusted(QUrl::StripTrailingSlash));
 
+    std::cout << "contents" << std::endl;
+
+    std::cout << rmf.toStdString() << std::endl;
+
+    qDebug() << "end contents";
+
     //Step 2: Convert NIST page to XML
     rmf = CleanXML(rmf);
 
@@ -86,6 +94,7 @@ void WorkerCCIAdd::process()
     while (!xml->atEnd() && !xml->hasError())
     {
         xml->readNext();
+
         if (xml->isStartElement() && (xml->name().compare(QStringLiteral("a")) == 0))
         {
             if (xml->attributes().hasAttribute(QStringLiteral("href")))
@@ -290,7 +299,7 @@ void WorkerCCIAdd::process()
                                 {
                                     QString enhancement(index);
                                     enhancement = enhancement.remove(0, tmpInt);
-                                    enhancement = enhancement.left(index.indexOf(')') - tmpInt);
+                                    enhancement = enhancement.left(index.indexOf(')') - tmpInt + 1);
                                     control.append(enhancement);
                                 }
                             }
