@@ -595,9 +595,9 @@ void AssetView::ImportXCCDF(const QString &filename)
                 }
                 else if (xml->name().compare(QStringLiteral("result")) == 0)
                 {
-                    if (!onCheck.startsWith(QStringLiteral("SV")) && onCheck.contains(QStringLiteral("SV"))) //trim off XCCDF perfunctory information for benchmark files
+                    if (!onCheck.startsWith(QStringLiteral("SV")) && onCheck.toString().contains(QStringLiteral("SV"))) //trim off XCCDF perfunctory information for benchmark files
                     {
-                        onCheck = onCheck.right(onCheck.length() - onCheck.indexOf(QStringLiteral("SV")));
+                        onCheck = onCheck.right(onCheck.length() - onCheck.toString().indexOf(QStringLiteral("SV")));
                     }
                     CKLCheck ckl = db.GetCKLCheckByDISAId(_asset.id, onCheck.toString());
                     if (ckl.id < 0)

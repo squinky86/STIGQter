@@ -1,6 +1,6 @@
 language: cpp
 compiler: gcc
-dist: bionic
+dist: focal
 services:
         - xvfb
 
@@ -14,7 +14,6 @@ before_install:
  - sudo apt-get update -qq
  - sudo apt-get install qtbase5-dev qt5-qmake qt5-default libqt5sql5-sqlite
  - sudo apt-get install libtidy-dev libzip-dev zlib1g-dev
- - sudo apt-get install texlive-luatex texlive-latex-recommended texlive-latex-extra texlive-fonts-extra texlive-fonts-extra-links texlive-bibtex-extra biber
  - sudo apt-get install libdevel-cover-perl
  - pushd /tmp && wget https://github.com/jmcnamara/libxlsxwriter/archive/RELEASE_1.0.0.tar.gz && tar -zxf RELEASE_1.0.0.tar.gz && popd
  - pushd /tmp/libxlsxwriter-RELEASE_1.0.0 && make && sudo make install PREFIX=/usr && popd
@@ -22,12 +21,10 @@ before_install:
  - cpanm --sudo --quiet --notest Devel::Cover::Report::Kritika
 
 script:
- - for x in `find /home/travis/.sonar/cache -name "libinterceptor-x86_64.so"`; do cp ${x} ${x/x86_64/haswell}; done
  - echo "DEFINES += USE_TESTS" >> STIGQter.pro
  - qmake STIGQter.pro
  - sed -i -e 's:-O2:-O0 -fprofile-arcs -ftest-coverage -fno-exceptions -fno-inline:g' -e 's:-Wl,-O1:-Wl,-O1 -lgcov --coverage:g' Makefile
  - build-wrapper-linux-x86-64 --out-dir bw-output make --quiet -j3
- - pushd doc && ./build.sh && popd
  - ./STIGQter tests > STIGQter.tests &
  - while [ ! -z "`pgrep STIGQter`" ]; do sleep 10 && tail -n 1 STIGQter.tests; done
  - tail -n 100 STIGQter.tests
@@ -37,8 +34,8 @@ after_success:
  - sonar-scanner -Dsonar.cfamily.build-wrapper-output=bw-output
  - coveralls --gcov-options '\-lp'
  - gcov2perl *.gcov >> STIGQter.tests
- - tail -n 100 STIGQter.tests
+ - tail -n 10 STIGQter.tests
  - cover -ignore_re=^/ -ignore_re=^t -report kritika >> STIGQter.tests
- - tail -n 100 STIGQter.tests
+ - tail -n 10 STIGQter.tests
  - bash <(curl -s https://codecov.io/bash) >> STIGQter.tests
- - tail -n 100 STIGQter.tests
+ - tail -n 10 STIGQter.tests

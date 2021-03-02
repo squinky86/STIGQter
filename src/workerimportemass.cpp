@@ -214,9 +214,9 @@ void WorkerImportEMASS::process()
                     if (xml.attributes().hasAttribute(QStringLiteral("ref")))
                     {
                         QStringView ref = xml.attributes().value(QStringLiteral("ref"));
-                        if (ref.contains(':'))
+                        if (ref.toString().contains(':'))
                         {
-                            ref = ref.right(ref.length() - ref.lastIndexOf(':'));
+                            ref = ref.right(ref.length() - ref.toString().lastIndexOf(':'));
 
                             bool isNumeric = false;
                             int size = 0;

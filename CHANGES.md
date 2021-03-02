@@ -1,4 +1,5 @@
 ## 1.1.0
+-   Build Debian packages automatically
 -   Fix LEGACY IDs for exported CKL files
 -   Allow deletion of multiple Assets (issue #83)
 
