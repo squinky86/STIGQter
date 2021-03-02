@@ -220,7 +220,7 @@ void WorkerImportEMASS::process()
 
                             bool isNumeric = false;
                             int size = 0;
-                            for (size = ref.toInt(&isNumeric); !isNumeric && ref.length() > 1; size = ref.toInt(&isNumeric))
+                            for (size = ref.toString().toInt(&isNumeric); !isNumeric && ref.length() > 1; size = ref.toString().toInt(&isNumeric))
                             {
                                 ref = ref.right(ref.length() - 1);
                             }

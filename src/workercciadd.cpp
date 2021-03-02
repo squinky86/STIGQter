@@ -283,7 +283,7 @@ void WorkerCCIAdd::process()
                         }
                         if (!version.isEmpty() && !index.isEmpty() && (version == QStringLiteral("4"))) //Only Rev 4 supported
                         {
-                            int cciInt = QStringView{cci}.right(6).toInt();
+                            int cciInt = QStringView{cci}.right(6).toString().toInt();
                             QString control = index;
                             int tmpIndex = index.indexOf(' ');
                             if (control.contains(' '))
