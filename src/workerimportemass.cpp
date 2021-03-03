@@ -201,7 +201,6 @@ void WorkerImportEMASS::process()
         QString tempImportApNum = QString();
         QString tempImportNarrative = QString();
         CCI curCCI;
-        DbManager db;
         db.DelayCommit(true);
         while (!xml.atEnd() && !xml.hasError())
         {
@@ -310,15 +309,6 @@ void WorkerImportEMASS::process()
                             else if (onCol == QStringLiteral("M"))
                             {
                                 curCCI.importDateTested2 = value;
-                                //read value may be Excel serial date
-                                /*bool ok = false;
-                                int excelSerialDate = curCCI.importDateTested2.toInt(&ok);
-                                if (ok && excelSerialDate > 0)
-                                {
-                                    QDate tempDate(1899, 12, 31);
-                                    tempDate.addDays(excelSerialDate);
-                                    curCCI.importDateTested2 = tempDate.to
-                                }*/
                             }
                             else if (onCol == QStringLiteral("N"))
                                 curCCI.importTestedBy2 = value;

@@ -208,9 +208,9 @@ void WorkerFindingsReport::process()
         onRow++;
         CCI c = i.key();
         Q_EMIT updateStatus("Adding " + PrintCCI(c) + "…");
-        QVector<CKLCheck> checks = i.value();
-        if (checks.count() > 1)
-            std::sort(checks.begin(), checks.end());
+        QVector<CKLCheck> checks2 = i.value();
+        if (checks2.count() > 1)
+            std::sort(checks2.begin(), checks2.end());
         Control control = c.GetControl();
 
         //build failed Control list
@@ -228,15 +228,15 @@ void WorkerFindingsReport::process()
         //cci
         worksheet_write_number(wsCCIs, onRow, 1, c.cci, fmtCci);
         //severity
-        if (checks.count() > 0)
-            worksheet_write_string(wsCCIs, onRow, 2, GetSeverity(checks.first().GetSeverity()).toStdString().c_str(), nullptr);
+        if (checks2.count() > 0)
+            worksheet_write_string(wsCCIs, onRow, 2, GetSeverity(checks2.first().GetSeverity()).toStdString().c_str(), nullptr);
         else
             worksheet_write_string(wsCCIs, onRow, 2, GetSeverity(Severity::low).toStdString().c_str(), nullptr);
         //Checks
         QString assets = QString();
-        if (checks.count() <= 0)
+        if (checks2.count() <= 0)
             assets.append(QStringLiteral("Imported/Documentation Findings"));
-        Q_FOREACH (CKLCheck cc, checks)
+        Q_FOREACH (CKLCheck cc, checks2)
         {
             if (!assets.isEmpty())
                 assets.append(QStringLiteral("\n"));

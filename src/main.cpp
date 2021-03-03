@@ -193,9 +193,6 @@ int main(int argc, char *argv[])
             a.processEvents();
         }
 
-        //std::cout << "Test " << ++onTest << ": Close Application" << std::endl;
-        //w.close();
-
         std::cout << "Tests complete!" << std::endl;
         exit(EXIT_SUCCESS);
     }

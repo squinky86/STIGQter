@@ -284,12 +284,12 @@ void WorkerCCIAdd::process()
                         if (!version.isEmpty() && !index.isEmpty() && (version == QStringLiteral("4"))) //Only Rev 4 supported
                         {
                             int cciInt = QStringView{cci}.right(6).toString().toInt();
-                            QString control = index;
+                            QString control2 = index;
                             int tmpIndex = index.indexOf(' ');
-                            if (control.contains(' '))
-                                control = control.left(control.indexOf(' '));
-                            if (control.contains('.'))
-                                control = control.left(control.indexOf('.'));
+                            if (control2.contains(' '))
+                                control2 = control2.left(control2.indexOf(' '));
+                            if (control2.contains('.'))
+                                control2 = control2.left(control2.indexOf('.'));
                             if (index.contains('('))
                             {
                                 //check if a second space is present. If the parenthesis is after the second space, it is not an enhancement.
@@ -300,12 +300,12 @@ void WorkerCCIAdd::process()
                                     QString enhancement(index);
                                     enhancement = enhancement.remove(0, tmpInt);
                                     enhancement = enhancement.left(index.indexOf(')') - tmpInt + 1);
-                                    control.append(enhancement);
+                                    control2.append(enhancement);
                                 }
                             }
                             CCI c;
                             c.cci = cciInt;
-                            c.controlId = db.GetControl(control).id;
+                            c.controlId = db.GetControl(control2).id;
                             c.definition = definition;
                             toAdd.append(c);
                         }

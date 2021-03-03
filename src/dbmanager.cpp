@@ -524,7 +524,6 @@ bool DbManager::AddSTIG(STIG &stig, const QVector<STIGCheck> &checks, const QVec
     if (CheckDatabase(db))
     {
         QSqlQuery q(db);
-        //int cci366Id = -1;
         QVector<CCI> remapCCIs = GetRemapCCIs();
 
         if (stig.id <= 0)
@@ -2817,13 +2816,11 @@ bool DbManager::UpdateDatabaseFromVersion(int version)
         }
         if (version < 3)
         {
-                /* Depcrecated with version 4 of DB
-                QSqlQuery q(db);
-                q.bindValue(QStringLiteral(":name"), QStringLiteral("quarterly"));
-                q.bindValue(QStringLiteral(":value"), QStringLiteral("https://dl.dod.cyber.mil/wp-content/uploads/stigs/zip/U_SRG-STIG_Library_2020_10v2.zip"));
-                ret = q.exec() && ret;
-                q.prepare(QStringLiteral("ALTER TABLE CCI ADD COLUMN importNarrative TEXT"));
-                ret = q.exec() && ret;*/
+		/*
+		 * No longer needed.
+		 * This routine previously set the new quarterly download package.
+		 * This has been deprecated by version 4 of the DB.
+		 */
                 ret = UpdateVariable(QStringLiteral("version"), QStringLiteral("3")) && ret;
         }
         if (version < 4)

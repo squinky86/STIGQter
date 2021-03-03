@@ -72,7 +72,6 @@ void WorkerMapUnmapped::process()
 
     Q_FOREACH (STIGCheck check, stigchecks)
     {
-        //Q_EMIT updateStatus(QStringLiteral("Checking ") + PrintSTIGCheck(check) + QStringLiteral("…"));
         bool updateCheck = false;
 
         //step one - see if this STIG Check is already an imported one
