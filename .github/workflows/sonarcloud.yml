@@ -3,8 +3,7 @@ name: SonarCloud
 on:
   push:
     branches: [ master ]
-  pull_request:
-    branches: [ master ]
+  - cron: "0 0 1 * *"
 
 jobs:
   analyze:
@@ -64,6 +63,6 @@ jobs:
     - name: Run gcov
       run: for x in src/*.cpp; do LC_ALL=en gcov --branch-probabilities --branch-counts ${x} -o .; done
     - name: Add Sonar Scanner to PATH
-      run: echo "$HOME/.sonar/bin" >> $GITHUB_PATH
+      run: echo "$SONAR_SCANNER_HOME/bin" >> $GITHUB_PATH
     - name: Run Sonar Scanner
       run: sonar-scanner -Dsonar.organization=squinky86 -Dsonar.projectKey=squinky86_STIGQter -Dsonar.sources=. -Dsonar.cfamily.build-wrapper-output=bw-output -Dsonar.host.url=https://sonarcloud.io
