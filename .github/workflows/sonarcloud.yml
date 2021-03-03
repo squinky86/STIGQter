@@ -2,7 +2,7 @@ name: SonarCloud
 
 on:
   schedule:
-    - cron: "0 0 1 * *"
+    - cron: "0 0 * * 1"
 
 jobs:
   analyze:
@@ -31,7 +31,7 @@ jobs:
 #    - name: install latex dependencies
 #      run: DEBIAN_FRONTEND="noninteractive" sudo apt-get install -q -y --force-yes texlive-luatex texlive-latex-recommended texlive-latex-extra texlive-fonts-extra texlive-fonts-extra-links texlive-bibtex-extra biber
     - name: install dependencies
-      run: DEBIAN_FRONTEND="noninteractive" sudo apt-get install -q -y --force-yes qt5-default libtidy-dev libzip-dev cmake g++ debhelper dpkg-dev xvfb libxkbcommon-x11-0 libxcb-icccm4 libxcb-image0 libxcb-keysyms1 libxcb-randr0 libxcb-render-util0 libxcb-xinerama0 libxcb-xinput0 libxcb-xfixes0
+      run: DEBIAN_FRONTEND="noninteractive" sudo apt-get install -q -y --force-yes qt5-default libtidy-dev libzip-dev cmake g++ debhelper dpkg-dev xvfb libxkbcommon-x11-0 libxcb-icccm4 libxcb-image0 libxcb-keysyms1 libxcb-randr0 libxcb-render-util0 libxcb-xinerama0 libxcb-xinput0 libxcb-xfixes0 libdevel-cover-perl
     - name: start xvfb
       run: sudo /usr/bin/Xvfb $DISPLAY -screen 0 1280x1024x24 &
     - name: download libxlsxwriter
@@ -59,12 +59,22 @@ jobs:
     - name: Build STIGQter
       run: build-wrapper-linux-x86-64 --out-dir bw-output make -j3
     - name: Run STIGQter tests
-      run: ./STIGQter tests > STIGQter.tests &
-    - name: Wait for tests to finish
-      run: while [ ! -z "`pgrep STIGQter`" ]; do sleep 10 && tail -n 1 STIGQter.tests; done
+      run: ./STIGQter tests
     - name: Run gcov
       run: for x in src/*.cpp; do LC_ALL=en gcov --branch-probabilities --branch-counts ${x} -o .; done
     - name: Add Sonar Scanner to PATH
       run: echo "$SONAR_SCANNER_HOME/bin" >> $GITHUB_PATH
     - name: Run Sonar Scanner
       run: sonar-scanner -Dsonar.organization=squinky86 -Dsonar.projectKey=squinky86_STIGQter -Dsonar.sources=./src/ -Dsonar.cfamily.build-wrapper-output=bw-output -Dsonar.host.url=https://sonarcloud.io
+    - name: Run codecov.io
+      run: bash <(curl -s https://codecov.io/bash)
+    - name: Run Coveralls
+      uses: coverallsapp/github-action@master
+      with:
+        github-token: ${{ secrets.GITHUB_TOKEN }}
+    - name: Run gcov2perl
+      run: gcov2perl *.gcov
+    - name: Install Kritika
+      run: cpanm --sudo --quiet --notest Devel::Cover::Report::Kritika
+    - name: Run Kritika
+      run: cover -ignore_re=^/ -ignore_re=^t -report kritika
