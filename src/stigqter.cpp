@@ -164,6 +164,8 @@ QThread* STIGQter::ConnectThreads(Worker *worker)
 
 #ifdef USE_TESTS
 #include <algorithm>
+#include <random>
+
 /**
  * @brief STIGQter::RunTests
  * Test functionality
@@ -183,6 +185,9 @@ void STIGQter::RunTests()
     DbManager db;
     int step = 0;
 
+    std::random_device rd;
+    std::mt19937 g(rd());
+
     // refresh STIGs
     std::cout << "\tTest " << step++ << ": Refresh STIGs" << std::endl;
     UpdateSTIGs();
@@ -197,7 +202,7 @@ void STIGQter::RunTests()
             ui->lstSTIGs->selectAll();
             ProcEvents();
             auto stigs = ui->lstSTIGs->selectedItems();
-            std::random_shuffle(stigs.begin(), stigs.end());
+            std::shuffle(stigs.begin(), stigs.end(), g);
             for (int i = 0; i < 5; i++)
             {
                 stigs.at(i)->setSelected(false);
