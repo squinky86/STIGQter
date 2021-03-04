@@ -260,12 +260,28 @@ void STIGQter::RunTests()
     {
         std::cout << "Test " << step++ << ": Severity Override" << std::endl;
         DbManager db;
-        int count = 0;
         Q_FOREACH(auto cklCheck, db.GetCKLChecks())
         {
-            count++;
+            switch (std::uniform_int_distribution<>{0, 3}(g))
+            {
+            case 0:
+                cklCheck.status = Status::Open;
+                break;
+            case 1:
+                cklCheck.status = Status::NotAFinding;
+                break;
+            case 2:
+                cklCheck.status = Status::NotReviewed;
+                break;
+            case 3:
+                cklCheck.status = Status::NotApplicable;
+                break;
+            default:
+                continue;
+            }
+
             //override checks' severity pseudorandomly
-            switch (count % 4)
+            switch (std::uniform_int_distribution<>{0, 3}(g))
             {
             case 0:
                 if (cklCheck.GetSeverity() == Severity::none)
@@ -294,6 +310,7 @@ void STIGQter::RunTests()
             default:
                 continue;
             }
+            db.UpdateCKLCheck(cklCheck);
         }
         ProcEvents();
     }
