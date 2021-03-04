@@ -34,7 +34,7 @@ jobs:
 #    - name: install latex dependencies
 #      run: DEBIAN_FRONTEND="noninteractive" sudo apt-get install -q -y --force-yes texlive-luatex texlive-latex-recommended texlive-latex-extra texlive-fonts-extra texlive-fonts-extra-links texlive-bibtex-extra biber
     - name: install dependencies
-      run: DEBIAN_FRONTEND="noninteractive" sudo apt-get install -q -y --force-yes qt5-default libtidy-dev libzip-dev cmake g++ debhelper dpkg-dev xvfb libxkbcommon-x11-0 libxcb-icccm4 libxcb-image0 libxcb-keysyms1 libxcb-randr0 libxcb-render-util0 libxcb-xinerama0 libxcb-xinput0 libxcb-xfixes0 libdevel-cover-perl
+      run: DEBIAN_FRONTEND="noninteractive" sudo apt-get install -q -y --force-yes qt5-default libtidy-dev libzip-dev cmake g++ debhelper dpkg-dev xvfb libxkbcommon-x11-0 libxcb-icccm4 libxcb-image0 libxcb-keysyms1 libxcb-randr0 libxcb-render-util0 libxcb-xinerama0 libxcb-xinput0 libxcb-xfixes0 libdevel-cover-perl lcov
     - name: start xvfb
       run: sudo /usr/bin/Xvfb $DISPLAY -screen 0 1280x1024x24 &
     - name: download libxlsxwriter
@@ -71,6 +71,8 @@ jobs:
       run: sonar-scanner -Dsonar.organization=squinky86 -Dsonar.projectKey=squinky86_STIGQter -Dsonar.sources=./src/ -Dsonar.cfamily.build-wrapper-output=bw-output -Dsonar.host.url=https://sonarcloud.io
     - name: Run codecov.io
       run: bash <(curl -s https://codecov.io/bash)
+    - name: Build LCOV files
+      run: mkdir -p coverage && lcov --coverage --directory . --output-file coverage/lcov.info
     - name: Run Coveralls
       uses: coverallsapp/github-action@master
       with:
