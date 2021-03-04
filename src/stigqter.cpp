@@ -186,7 +186,7 @@ void STIGQter::RunTests()
     int step = 0;
 
     std::random_device rd;
-    std::mt19937 g(rd());
+    std::default_random_engine g(rd());
 
     // refresh STIGs
     std::cout << "\tTest " << step++ << ": Refresh STIGs" << std::endl;
