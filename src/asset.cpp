@@ -150,6 +150,19 @@ QVector<CKLCheck> Asset::GetCKLChecks(const STIG *stig) const
 }
 
 /**
+ * @brief Asset::operator==
+ * @param right
+ * @return true if right Asset is the same as this one.
+ * Otherwise, false.
+ *
+ * For performance, only the asset name is compared.
+ */
+bool Asset::operator==(const Asset &right)
+{
+    return (hostName.compare(right.hostName, Qt::CaseInsensitive) == 0);
+}
+
+/**
  * @brief PrintAsset
  * @param asset
  * @return human-readable Asset description

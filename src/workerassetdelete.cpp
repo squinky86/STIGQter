@@ -82,6 +82,10 @@ void WorkerAssetDelete::process()
 
     Q_FOREACH (Asset a, _assets)
     {
+        //don't double-delete assets that were double-added
+        if (toDelete.keys().contains(a))
+            continue;
+
         toDelete.insert(a, a.GetSTIGs());
         numChecks += toDelete.value(a).count();
     }

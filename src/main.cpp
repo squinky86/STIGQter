@@ -17,19 +17,27 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
+#include "stigqter.h"
+
+#include <QApplication>
+
+#ifdef USE_TESTS
+
 #include "assetview.h"
 #include "common.h"
 #include "dbmanager.h"
 #include "stigqter.h"
+#include "workerassetdelete.h"
 #include "workercklimport.h"
 #include "workerstigdelete.h"
 
-#include <QApplication>
 #include <QDirIterator>
 #include <QTemporaryFile>
 #include <QThread>
 #include <cstdlib>
 #include <iostream>
+
+#endif
 
 [[maybe_unused]] bool IgnoreWarnings = false; //see common.h
 
@@ -119,18 +127,25 @@ int main(int argc, char *argv[])
         }
 
         {
-            std::cout << "Test " << ++onTest << ": Delete an Asset" << std::endl;
+            std::cout << "Test " << ++onTest << ": Delete Asset" << std::endl;
+            WorkerAssetDelete wd;
             DbManager db;
-            Q_FOREACH (auto asset, db.GetAssets())
+            QVector<Asset> toDelete = db.GetAssets();
+            wd.AddAssets(toDelete);
+            Q_FOREACH (auto asset, toDelete)
             {
                 //remove each STIG from this asset
                 Q_FOREACH (auto stig, asset.GetSTIGs())
                 {
-                    db.DeleteSTIGFromAsset(stig, asset);
+                    WorkerSTIGDelete wsd;
+                    wsd.AddId(stig.id);
+                    wsd.process();
                     a.processEvents();
                 }
-                db.DeleteAsset(asset);
+                //double-adding the asset should be gracefully handled without error
+                wd.AddAsset(asset);
             }
+            wd.process();
             a.processEvents();
         }
 

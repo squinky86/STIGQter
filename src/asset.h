@@ -74,6 +74,7 @@ public:
     {
         return left.hostName < right.hostName;
     }
+    bool operator==(const Asset &right);
 };
 
 Q_DECLARE_METATYPE(Asset);
