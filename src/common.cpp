@@ -278,7 +278,6 @@ QMap<QString, QByteArray> GetFilesFromZip(const QString &fileName, const QString
         {
             if (zip_stat_index(za, i, 0, &sb) == 0)
             {
-
                 //zip bomb protection
                 //if file is > 1GB extracted, do not read it
                 if (sb.size > 4294967295)

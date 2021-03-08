@@ -811,7 +811,7 @@ void STIGQter::DeleteAssets()
     QList<int>::const_iterator it = toClose.constEnd();
     while (it != toClose.constBegin())
     {
-        it--;
+        --it;
         ui->tabDB->removeTab(*it);
     }
 

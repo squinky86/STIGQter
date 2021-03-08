@@ -226,7 +226,6 @@ void WorkerImportEMASS::process()
 
                             if (isNumeric)
                                 Q_EMIT initialize(size, 5);
-
                         }
                     }
                 }

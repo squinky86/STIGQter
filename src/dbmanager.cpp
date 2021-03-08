@@ -2603,7 +2603,6 @@ bool DbManager::UpdateVariable(const QString &name, const QString &value)
  */
 bool DbManager::CheckDatabase(QSqlDatabase &db)
 {
-    QString tempId = QString::number(reinterpret_cast<quint64>(QThread::currentThreadId()));
     db = QSqlDatabase::database(QString::number(reinterpret_cast<quint64>(QThread::currentThreadId())));
     if (!db.isOpen())
         db.open();

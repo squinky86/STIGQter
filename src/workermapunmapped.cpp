@@ -81,7 +81,6 @@ void WorkerMapUnmapped::process()
         }
         else
         {
-
             //step two - make sure that each of the CCIs are in the import
             Q_FOREACH (CCI c, check.GetCCIs())
             {

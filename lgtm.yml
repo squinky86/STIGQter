@@ -1,0 +1,14 @@
+queries:
+  - include: "*"
+
+extraction:
+  cpp:
+    after_prepare:    # Customizable step used by all languages.
+      - wget https://github.com/jmcnamara/libxlsxwriter/archive/RELEASE_1.0.0.tar.gz
+      - tar -zxf RELEASE_1.0.0.tar.gz
+      - pushd libxlsxwriter-RELEASE_1.0.0 && make -j3 && popd
+    configure:
+      command:
+        - echo "LIBS += -L/opt/src/libxlsxwriter-RELEASE_1.0.0/lib" >> STIGQter.pro
+        - echo "INCLUDEPATH += /opt/src/libxlsxwriter-RELEASE_1.0.0/include /usr/include/tidy" >> STIGQter.pro
+        - qmake STIGQter.pro
