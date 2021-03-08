@@ -17,14 +17,13 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
+#include "common.h"
 #include "stigqter.h"
 
 #include <QApplication>
 
 #ifdef USE_TESTS
-
 #include "assetview.h"
-#include "common.h"
 #include "dbmanager.h"
 #include "stigqter.h"
 #include "workerassetdelete.h"
@@ -36,7 +35,6 @@
 #include <QThread>
 #include <cstdlib>
 #include <iostream>
-
 #endif
 
 [[maybe_unused]] bool IgnoreWarnings = false; //see common.h
