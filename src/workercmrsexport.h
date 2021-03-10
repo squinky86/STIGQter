@@ -36,7 +36,7 @@ public:
     void SetExportPath(const QString &fileName);
 
 public Q_SLOTS:
-    void process();
+    void process() override;
 };
 
 #endif // WORKERCMRSEXPORT_H

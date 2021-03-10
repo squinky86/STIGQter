@@ -36,7 +36,7 @@ public:
     void SetEnableSupplements(bool enableSupplements);
 
 public Q_SLOTS:
-    void process();
+    void process() override;
 };
 
 #endif // WORKERSTIGDOWNLOAD_H

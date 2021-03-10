@@ -37,7 +37,7 @@ public:
     void SetReportName(const QString &fileName);
 
 public Q_SLOTS:
-    void process();
+    void process() override;
 };
 
 #endif // WORKEREMASSREPORT_H

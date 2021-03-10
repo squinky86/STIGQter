@@ -38,7 +38,7 @@ public:
     void AddAsset(const Asset &asset);
 
 public Q_SLOTS:
-    void process();
+    void process() override;
 };
 
 #endif // WORKERASSETDELETE_H

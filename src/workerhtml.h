@@ -39,7 +39,7 @@ public:
     void SetDir(const QString &dir);
 
 public Q_SLOTS:
-    void process();
+    void process() override;
 };
 
 #endif // WORKERHTML_H

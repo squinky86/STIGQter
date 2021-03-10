@@ -32,7 +32,7 @@ public:
     explicit WorkerCCIAdd(QObject *parent = nullptr);
 
 public Q_SLOTS:
-    void process();
+    void process() override;
 };
 
 #endif // WORKERCCIADD_H

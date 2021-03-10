@@ -32,7 +32,7 @@ public:
     explicit WorkerMapUnmapped(QObject *parent = nullptr);
 
 public Q_SLOTS:
-    void process();
+    void process() override;
 };
 
 #endif // WORKERMAPUNMAPPED_H

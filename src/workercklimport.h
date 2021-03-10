@@ -39,7 +39,7 @@ public:
     void AddCKLs(const QStringList &ckls);
 
 public Q_SLOTS:
-    void process();
+    void process() override;
 };
 
 #endif // WORKERCKLIMPORT_H

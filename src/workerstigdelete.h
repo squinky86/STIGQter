@@ -36,7 +36,7 @@ public:
     void AddId(int id);
 
 public Q_SLOTS:
-    void process();
+    void process() override;
 };
 
 #endif // WORKERSTIGDELETE_H

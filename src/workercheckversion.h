@@ -32,7 +32,7 @@ public:
     explicit WorkerCheckVersion(QObject *parent = nullptr);
 
 public Q_SLOTS:
-    void process();
+    void process() override;
 };
 
 #endif // WORKERCHECKVERSION_H

@@ -38,7 +38,7 @@ public:
     void SetExportDir(const QString &dir);
 
 public Q_SLOTS:
-    void process();
+    void process() override;
 };
 
 #endif // WORKERCKLEXPORT_H

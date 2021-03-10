@@ -50,6 +50,8 @@ void WorkerCheckVersion::process()
 {
     Worker::process();
 
+    Q_EMIT updateStatus("Checking for latest version.");
+
     //open database in this thread
     Q_EMIT initialize(1, 0);
     DbManager db;

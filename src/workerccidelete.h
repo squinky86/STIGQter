@@ -32,7 +32,7 @@ public:
     explicit WorkerCCIDelete(QObject *parent = nullptr);
 
 public Q_SLOTS:
-    void process();
+    void process() override;
 };
 
 #endif // WORKERCCIDELETE_H

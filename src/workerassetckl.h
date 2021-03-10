@@ -41,7 +41,7 @@ public:
     void AddFilename(const QString &name);
 
 public Q_SLOTS:
-    void process();
+    void process() override;
 };
 
 #endif // WORKERASSETCKL_H

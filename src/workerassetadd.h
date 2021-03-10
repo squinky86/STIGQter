@@ -40,7 +40,7 @@ public:
     void AddSTIG(const STIG &stig);
 
 public Q_SLOTS:
-    void process();
+    void process() override;
 };
 
 #endif // WORKERASSETADD_H
