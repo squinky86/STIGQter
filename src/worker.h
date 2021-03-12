@@ -32,7 +32,7 @@ class Worker : public QObject
 public:
     explicit Worker(QObject *parent = nullptr);
     virtual void process();
-    [[nodiscard]] QThread* ConnectThreads(STIGQter *sq = nullptr);
+    [[nodiscard]] QThread* ConnectThreads(STIGQter *sq = nullptr, bool blocking = true);
     QString GetThreadId();
 
 Q_SIGNALS:

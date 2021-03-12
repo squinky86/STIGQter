@@ -60,11 +60,11 @@ SOURCES += \
     src/tabviewwidget.cpp \
     src/worker.cpp \
     src/workerassetadd.cpp \
-    src/workerassetckl.cpp \
     src/workerassetdelete.cpp \
     src/workercciadd.cpp \
     src/workerccidelete.cpp \
     src/workercheckversion.cpp \
+    src/workerckl.cpp \
     src/workercklexport.cpp \
     src/workercklimport.cpp \
     src/workercmrsexport.cpp \
@@ -95,11 +95,11 @@ HEADERS += \
     src/tabviewwidget.h \
     src/worker.h \
     src/workerassetadd.h \
-    src/workerassetckl.h \
     src/workerassetdelete.h \
     src/workercciadd.h \
     src/workerccidelete.h \
     src/workercheckversion.h \
+    src/workerckl.h \
     src/workercklexport.h \
     src/workercklimport.h \
     src/workercmrsexport.h \

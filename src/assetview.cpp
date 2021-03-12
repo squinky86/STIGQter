@@ -25,7 +25,7 @@
 #include "stigcheck.h"
 #include "stigqter.h"
 #include "ui_assetview.h"
-#include "workerassetckl.h"
+#include "workerckl.h"
 #include "workercklexport.h"
 
 #include <QFileDialog>
@@ -701,7 +701,7 @@ void AssetView::SaveCKL(const QString &name)
     DbManager db;
     QString fileName = !name.isEmpty() ? name : QFileDialog::getSaveFileName(this, QStringLiteral("Save STIG/SRG Checklist"), db.GetVariable(QStringLiteral("lastdir")), QStringLiteral("STIG Checklist (*.ckl)"));
 
-    auto *a = new WorkerAssetCKL();
+    auto *a = new WorkerCKL();
     a->AddAsset(_asset);
     a->AddFilename(fileName);
     _parent->ConnectThreads(a)->start();

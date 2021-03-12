@@ -147,14 +147,16 @@ bool STIGQter::isProcessingEnabled()
 /**
  * @brief STIGQter::ConnectThreads
  * @param worker
+ * @param blocking
  *
  * Connect STIGQter input/output to the worker and its thread
  */
-QThread* STIGQter::ConnectThreads(Worker *worker)
+QThread* STIGQter::ConnectThreads(Worker *worker, bool blocking)
 {
-    DisableInput();
+    if (blocking)
+        DisableInput();
 
-    auto *t = worker->ConnectThreads(this);
+    auto *t = worker->ConnectThreads(this, blocking);
 
     threads.append(t);
     workers.append(worker);
@@ -687,6 +689,16 @@ void STIGQter::CompletedThread()
 }
 
 /**
+ * @brief STIGQter::CompletedThreadUnblocked
+ *
+ * Clean up threads, but don't update interface.
+ */
+void STIGQter::CompletedThreadUnblocked()
+{
+    CleanThreads();
+}
+
+/**
  * @brief STIGQter::About
  *
  * Display an About @a Help screen.
@@ -760,9 +772,8 @@ void STIGQter::AddSTIGs()
  */
 void STIGQter::CheckVersion()
 {
-    DisableInput();
     auto *c = new WorkerCheckVersion();
-    ConnectThreads(c)->start(); //WorkerCheckVersion()
+    ConnectThreads(c, false)->start(); //WorkerCheckVersion()
 }
 
 /**
@@ -957,6 +968,30 @@ void STIGQter::ExportCKLs(const QString &dir)
         db.UpdateVariable(QStringLiteral("lastdir"), QFileInfo(dirName).absolutePath());
         auto *f = new WorkerCKLExport();
         f->SetExportDir(dirName);
+        f->SetMonolithic(false);
+
+        ConnectThreads(f)->start();
+    }
+}
+
+/**
+ * @brief STIGQter::ExportCKLsMonolithic
+ * @param dir
+ *
+ * Export all possible .ckl files into the selected directory.
+ */
+void STIGQter::ExportCKLsMonolithic(const QString &dir)
+{
+    DbManager db;
+    QString dirName = !dir.isEmpty() ? dir : QFileDialog::getExistingDirectory(this, QStringLiteral("Save to Directory"), db.GetVariable(QStringLiteral("lastdir")));
+
+    if (!dirName.isNull() && !dirName.isEmpty())
+    {
+        DisableInput();
+        db.UpdateVariable(QStringLiteral("lastdir"), QFileInfo(dirName).absolutePath());
+        auto *f = new WorkerCKLExport();
+        f->SetExportDir(dirName);
+        f->SetMonolithic(true);
 
         ConnectThreads(f)->start();
     }

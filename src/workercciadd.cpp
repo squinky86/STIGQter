@@ -314,11 +314,16 @@ void WorkerCCIAdd::process()
     //Step 7: add CCIs
     Q_EMIT initialize(toAdd.size() + 1, 1);
     db.DelayCommit(true);
+    QList<CCI> inDB = db.GetCCIs().toList();
     Q_FOREACH (const CCI &c, toAdd)
     {
+        //check if the DB has this CCI already here for performance
+        if (inDB.contains(c))
+            continue;
+        inDB.append(c);
         CCI tmpCCI = c;
         Q_EMIT updateStatus("Adding CCI-" + QString::number(c.cci) + "…");
-        db.AddCCI(tmpCCI);
+        db.AddCCI(tmpCCI, false);
         Q_EMIT progress(-1);
     }
     db.DelayCommit(false);

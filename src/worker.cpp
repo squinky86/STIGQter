@@ -46,15 +46,15 @@ void Worker::process()
 
 /**
  * @brief Worker::ConnectThreads
- * @param thread
  * @param sq
+ * @param blocking
  *
  * Connect the signals and slots and move the worker to the supplied thread.
  *
  * Returns the new QThread that the worker is attached to. It is up to the
  * calling entity to clean up the thread.
  */
-[[nodiscard]] QThread* Worker::ConnectThreads(STIGQter *sq)
+[[nodiscard]] QThread* Worker::ConnectThreads(STIGQter *sq, bool blocking)
 {
     QThread *thread = new QThread();
     this->moveToThread(thread);
@@ -62,10 +62,18 @@ void Worker::process()
     connect(this, SIGNAL(finished()), thread, SLOT(quit()));
     if (sq)
     {
-        connect(thread, SIGNAL(finished()), sq, SLOT(CompletedThread()));
-        connect(this, SIGNAL(initialize(int, int)), sq, SLOT(Initialize(int, int)));
-        connect(this, SIGNAL(progress(int)), sq, SLOT(Progress(int)));
-        connect(this, SIGNAL(updateStatus(QString)), sq, SLOT(StatusChange(QString)));
+        //check if this is a blocking thread
+        if (blocking)
+        {
+            connect(thread, SIGNAL(finished()), sq, SLOT(CompletedThread()));
+            connect(this, SIGNAL(initialize(int, int)), sq, SLOT(Initialize(int, int)));
+            connect(this, SIGNAL(progress(int)), sq, SLOT(Progress(int)));
+            connect(this, SIGNAL(updateStatus(QString)), sq, SLOT(StatusChange(QString)));
+        }
+        else
+        {
+            connect(thread, SIGNAL(finished()), sq, SLOT(CompletedThreadUnblocked()));
+        }
         connect(this, SIGNAL(ThrowWarning(QString, QString)), sq, SLOT(ShowMessage(QString, QString)));
     }
     return thread;

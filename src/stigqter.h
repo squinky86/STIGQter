@@ -40,7 +40,7 @@ public:
     explicit STIGQter(QWidget *parent = nullptr);
     ~STIGQter();
     bool isProcessingEnabled();
-    QThread* ConnectThreads(Worker *worker);
+    QThread* ConnectThreads(Worker *worker, bool blocking = true);
     void Display();
     void UpdateSTIGs();
 #ifdef USE_TESTS
@@ -51,6 +51,7 @@ public:
 private Q_SLOTS:
 
     void CompletedThread();
+    void CompletedThreadUnblocked();
 
     Help* About();
     void AddAsset(const QString &name = QString());
@@ -64,6 +65,7 @@ private Q_SLOTS:
     void DownloadSTIGs();
     void EditSTIG();
     void ExportCKLs(const QString &dir = QString());
+    void ExportCKLsMonolithic(const QString &dir = QString());
     void ExportCMRS(const QString &fileName = QString());
     void ExportEMASS(const QString &fileName = QString());
     void ExportHTML(const QString &dir = QString());

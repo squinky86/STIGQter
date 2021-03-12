@@ -1,7 +1,7 @@
 /*
  * STIGQter - STIG fun with Qt
  *
- * Copyright © 2020–2021 Jon Hood, http://www.hoodsecurity.com/
+ * Copyright © 2021 Jon Hood, http://www.hoodsecurity.com/
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -19,7 +19,7 @@
 
 #include "common.h"
 #include "dbmanager.h"
-#include "workerassetckl.h"
+#include "workerckl.h"
 
 #include <QFile>
 #include <QFileInfo>
@@ -28,7 +28,7 @@
 #include <functional>
 
 /**
- * @class WorkerAssetCKL
+ * @class WorkerCKL
  * @brief When generating an asset's CKL file, multiple STIG checklists can be
  * used to comprise it. Traditionally, CKL files are used to store a single
  * asset's individual test results for one STIG; however, the format supports
@@ -39,39 +39,59 @@
  */
 
 /**
- * @brief WorkerAssetCKL::WorkerAssetCKL
+ * @brief WorkerCKL::WorkerCKL
  * @param parent
  *
  * Default Constructor
  */
-WorkerAssetCKL::WorkerAssetCKL(QObject *parent) : Worker(parent)
+WorkerCKL::WorkerCKL(QObject *parent) : Worker(parent)
 {
 }
 
 /**
- * @brief WorkerAssetCKL::AddAsset
+ * @brief WorkerCKL::AddAsset
  * @param asset
+ * @param stigs
  *
- * The asset to operate on
+ * The asset to operate on and an optional set of STIGs
  */
-void WorkerAssetCKL::AddAsset(const Asset &asset)
+void WorkerCKL::AddAsset(const Asset &asset, const QVector<STIG> &stigs)
 {
     _asset = asset;
+    if (stigs.count() > 0)
+    {
+        AddSTIGs(stigs);
+    }
+    else
+    {
+        AddSTIGs(asset.GetSTIGs());
+    }
 }
 
 /**
- * @brief WorkerAssetCKL::AddFilename
+ * @brief WorkerCKL::AddSTIGs
+ * @param stigs
+ *
+ * List of STIGs to use with CKL file
+ */
+void WorkerCKL::AddSTIGs(const QVector<STIG> &stigs)
+{
+    _stigs.append(stigs.toList());
+}
+
+/**
+ * @brief WorkerCKL::AddFilename
  * @param name
  *
  * The checklist will be written to this supplied filename.
  */
-void WorkerAssetCKL::AddFilename(const QString &name)
+void WorkerCKL::AddFilename(const QString &name)
 {
     _fileName = name;
 }
 
 /**
- * @brief WorkerAssetCKL::process
+ * @brief WorkerCKL::process
  *
  * Perform the operations of this worker process.
  *
@@ -83,7 +103,7 @@ void WorkerAssetCKL::AddFilename(const QString &name)
  *
  * @code
  * QThread *thread = new QThread;
- * WorkerAssetCKL *ckl = new WorkerAssetCKL();
+ * WorkerCKL *ckl = new WorkerCKL();
  * ckl->moveToThread(thread); // move the worker to the new thread
  * ckl->AddFilename(fileName); // "fileName" is a QString with the path to where the CKL file should be exported.
  * connect(thread, SIGNAL(started()), ckl, SLOT(process())); // Start the worker when the new thread emits its started() signal.
@@ -97,13 +117,12 @@ void WorkerAssetCKL::AddFilename(const QString &name)
  * //Don't forget to handle the *thread and *addAsset cleanup!
  * @endcode
  */
-void WorkerAssetCKL::process()
+void WorkerCKL::process()
 {
     Worker::process();
 
     Q_EMIT updateStatus(QStringLiteral("Writing CKL file…"));
-    auto stigs = _asset.GetSTIGs();
-    Q_EMIT initialize(stigs.count() + 1, 0);
+    Q_EMIT initialize(_stigs.count() + 1, 0);
     QFile file(_fileName);
     if (file.open(QIODevice::WriteOnly))
     {
@@ -134,7 +153,7 @@ void WorkerAssetCKL::process()
 
         Q_EMIT progress(-1);
 
-        Q_FOREACH (const STIG &s, stigs)
+        Q_FOREACH (const STIG &s, _stigs)
         {
             Q_EMIT updateStatus("Adding " + PrintSTIG(s) + "…");
             stream.writeStartElement(QStringLiteral("iSTIG"));
@@ -334,16 +353,17 @@ void WorkerAssetCKL::process()
 }
 
 /**
- * @brief WorkerAssetCKL::WriteXMLEntry
+ * @brief WorkerCKL::WriteXMLEntry
  * @param stream
  * @param name
  * @param value
  *
  * Write an element to the XML stream
  */
-void WorkerAssetCKL::WriteXMLEntry(QXmlStreamWriter &stream, const QString &name, const QString &value)
+void WorkerCKL::WriteXMLEntry(QXmlStreamWriter &stream, const QString &name, const QString &value)
 {
     stream.writeStartElement(name);
     stream.writeCharacters(value);
     stream.writeEndElement();
 }
+

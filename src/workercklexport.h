@@ -31,11 +31,13 @@ class WorkerCKLExport : public Worker
 private:
     QString _dirName;
     QString _assetName;
+    bool _monolithic;
 
 public:
     explicit WorkerCKLExport(QObject *parent = nullptr);
     void SetAssetName(const QString &assetName);
     void SetExportDir(const QString &dir);
+    void SetMonolithic(const bool monolithic);
 
 public Q_SLOTS:
     void process() override;

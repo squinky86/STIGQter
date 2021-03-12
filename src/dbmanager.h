@@ -49,7 +49,7 @@ public:
     void DelayCommit(bool delay);
 
     bool AddAsset(Asset &asset);
-    bool AddCCI(CCI &cci);
+    bool AddCCI(CCI &cci, bool check = true);
     bool AddControl(const QString &control, const QString &title, const QString &description);
     bool AddFamily(const QString &acronym, const QString &description);
     bool AddSTIG(STIG &stig, const QVector<STIGCheck> &checks, const QVector<Supplement> &supplements = {}, bool stigExists = false);

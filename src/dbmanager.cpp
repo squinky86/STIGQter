@@ -320,6 +320,7 @@ bool DbManager::AddAsset(Asset &asset)
 /**
  * @brief DbManager::AddCCI
  * @param cci
+ * @param check
  * @return @c True when the @a CCI is added to the database,
  * @c false when the @a CCI is already part of the database or has
  * not been added.
@@ -331,7 +332,7 @@ bool DbManager::AddAsset(Asset &asset)
  * provided @a CCI's @a id is set to the newly inserted record's
  * @a id.
  */
-bool DbManager::AddCCI(CCI &cci)
+bool DbManager::AddCCI(CCI &cci, bool check)
 {
     QSqlDatabase db;
     bool ret = false;
@@ -339,14 +340,17 @@ bool DbManager::AddCCI(CCI &cci)
     {
         QSqlQuery q(db);
 
-        //check if CCI already exists in the DB
-        q.prepare(QStringLiteral("SELECT count(*) FROM CCI WHERE cci = :cci"));
-        q.bindValue(QStringLiteral(":cci"), cci.cci);
-        q.exec();
-        if (q.next() && q.value(0).toInt() > 0)
+        if (check)
         {
-            Warning(QStringLiteral("CCI Already Exists"), "The CCI " + PrintCCI(cci) + " already exists in the database.", true);
-            return ret;
+            //check if CCI already exists in the DB
+            q.prepare(QStringLiteral("SELECT count(*) FROM CCI WHERE cci = :cci"));
+            q.bindValue(QStringLiteral(":cci"), cci.cci);
+            q.exec();
+            if (q.next() && q.value(0).toInt() > 0)
+            {
+                Warning(QStringLiteral("CCI Already Exists"), "The CCI " + PrintCCI(cci) + " already exists in the database.", true);
+                return ret;
+            }
         }
 
         q.prepare(QStringLiteral("INSERT INTO CCI (ControlId, cci, definition) VALUES(:ControlId, :CCI, :definition)"));

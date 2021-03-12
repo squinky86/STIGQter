@@ -1,3 +1,7 @@
+## 1.1.0
+-   Build monolithic CKLs (fixes #91)
+-   Don't block UI when on a disconnected system (fixes #92)
+
 ## 1.1.0 20210305
 -   Build Debian packages automatically
 -   Fix LEGACY IDs for exported CKL files
