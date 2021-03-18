@@ -28,6 +28,9 @@ class WorkerCCIAdd : public Worker
 {
     Q_OBJECT
 
+private:
+    void CheckFamily(const QString &acronym, const QString &description, QList<QString> &addedFamilies, bool resetDelay = false);
+
 public:
     explicit WorkerCCIAdd(QObject *parent = nullptr);
 

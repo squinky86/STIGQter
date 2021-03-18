@@ -54,6 +54,30 @@ WorkerCCIAdd::WorkerCCIAdd(QObject *parent) : Worker(parent)
 }
 
 /**
+ * @brief WorkerCCIAdd::CheckFamily
+ * @param acronym
+ * @param addedFamilies
+ * @param resetDelay
+ *
+ * Verifies that families have been added to the database
+ */
+void WorkerCCIAdd::CheckFamily(const QString &acronym, const QString &description, QList<QString> &addedFamilies, bool resetDelay)
+{
+    if (addedFamilies.contains(acronym))
+        return;
+
+    DbManager db;
+    if (resetDelay)
+        db.DelayCommit(false);
+
+    db.AddFamily(acronym, description);
+    addedFamilies.append(acronym);
+
+    if (resetDelay)
+        db.DelayCommit(true);
+}
+
+/**
  * @brief WorkerCCIAdd::process
  *
  * In general:
@@ -72,52 +96,14 @@ void WorkerCCIAdd::process()
 
     //populate CCIs
 
-    //Step 1: download NIST Families
-    Q_EMIT updateStatus(QStringLiteral("Downloading Families…"));
-    QUrl nist(QStringLiteral("https://nvd.nist.gov"));
-    QUrl nistRev4(nist.toString() + "/800-53/Rev4");
-    QString rmf = DownloadPage(nistRev4.adjusted(QUrl::StripTrailingSlash));
+    //Step 1: download NIST Families and controls
+    Q_EMIT updateStatus(QStringLiteral("Downloading Families and Controls…"));
 
-    //Step 2: Convert NIST page to XML
-    rmf = CleanXML(rmf);
-
-    //Step 3: read the families
-    auto *xml = new QXmlStreamReader(rmf);
-    QList<QString> todo;
+    //Step 2: read the families and controls
+    //privacy controls obtained from https://nvlpubs.nist.gov/nistpubs/SpecialPublications/NIST.SP.800-53r4.pdf contents
+    QList<QString> familiesAdded = {QStringLiteral("AP"), QStringLiteral("AR"), QStringLiteral("DI"), QStringLiteral("DM"), QStringLiteral("IP"), QStringLiteral("SE"), QStringLiteral("TR"), QStringLiteral("UL")};
     db.DelayCommit(true);
-    while (!xml->atEnd() && !xml->hasError())
-    {
-        xml->readNext();
-
-        if (xml->isStartElement() && (xml->name().compare(QStringLiteral("a")) == 0))
-        {
-            if (xml->attributes().hasAttribute(QStringLiteral("href")))
-            {
-                QString href = QString();
-                Q_FOREACH (const QXmlStreamAttribute &attr, xml->attributes())
-                {
-                    if (attr.name().compare(QStringLiteral("href")) == 0)
-                        href = attr.value().toString();
-                }
-                if (href.startsWith(QStringLiteral("/800-53/Rev4/family")))
-                {
-                    QString family(xml->readElementText().trimmed());
-                    QString acronym(family.left(2));
-                    QString familyName(family.right(family.length() - 5).trimmed());
-                    familyName = familyName.replace(QStringLiteral("\n"), QStringLiteral(" "));
-                    Q_EMIT updateStatus("Adding " + acronym + "—" + familyName + "…");
-                    db.AddFamily(acronym, familyName);
-                    todo.append(href);
-                }
-            }
-        }
-    }
-    db.DelayCommit(false);
-    Q_EMIT initialize(todo.size() + 959, 1); //# of base controls: 958
-    delete xml;
-
-    //Step 3a: Additional Privacy Controls
-    //obtained from https://nvlpubs.nist.gov/nistpubs/SpecialPublications/NIST.SP.800-53r4.pdf contents
+    Q_EMIT initialize(959, 1); //# of base controls: 958
     db.AddFamily(QStringLiteral("AP"), QStringLiteral("Authority and Purpose"));
     db.AddFamily(QStringLiteral("AR"), QStringLiteral("Accountability, Audit, and Risk Management"));
     db.AddFamily(QStringLiteral("DI"), QStringLiteral("Data Quality and Integrity"));
@@ -126,11 +112,14 @@ void WorkerCCIAdd::process()
     db.AddFamily(QStringLiteral("SE"), QStringLiteral("Security"));
     db.AddFamily(QStringLiteral("TR"), QStringLiteral("Transparency"));
     db.AddFamily(QStringLiteral("UL"), QStringLiteral("Use Limitation"));
+    db.DelayCommit(false);
 
-    //Step 4: download all controls for each family
-    QString rmfControls = DownloadPage(nist.toString() + "/static/feeds/xml/sp80053/rev4/800-53-controls.xml");
-    xml = new QXmlStreamReader(rmfControls);
+    //Step 3: download all controls for each family
+    db.DelayCommit(true);
+    QString rmfControls = DownloadPage(QUrl("https://csrc.nist.gov/CSRC/media/Projects/risk-management/800-53%20Downloads/800-53r4/800-53-rev4-controls.xml"));
+    auto *xml = new QXmlStreamReader(rmfControls);
     QString control;
+    QString family;
     QString title;
     QString description;
     bool inStatement = false;
@@ -142,17 +131,16 @@ void WorkerCCIAdd::process()
             if (inStatement)
             {
                 if (xml->name().compare(QStringLiteral("supplemental-guidance")) == 0)
-                {
                     inStatement = false;
-                }
                 else if (xml->name().compare(QStringLiteral("description")) == 0)
-                {
                     description = xml->readElementText().trimmed();
-                }
+                else if (xml->name().compare(QStringLiteral("family")) == 0)
+                    family = xml->readElementText().trimmed();
                 else if ((xml->name().compare(QStringLiteral("control")) == 0) || (xml->name().compare(QStringLiteral("control-enhancement")) == 0))
                 {
                     inStatement = false;
                     Q_EMIT updateStatus("Adding " + control);
+                    CheckFamily(control.left(2), family, familiesAdded, true);
                     db.AddControl(control, title, description);
                     Q_EMIT progress(-1);
                 }
@@ -167,9 +155,12 @@ void WorkerCCIAdd::process()
                     title = xml->readElementText().trimmed();
                 else if (xml->name().compare(QStringLiteral("description")) == 0)
                     description = xml->readElementText().trimmed();
+                else if (xml->name().compare(QStringLiteral("family")) == 0)
+                    family = xml->readElementText().trimmed();
                 else if ((xml->name().compare(QStringLiteral("control")) == 0) || (xml->name().compare(QStringLiteral("control-enhancement")) == 0))
                 {
                     Q_EMIT updateStatus("Adding " + control);
+                    CheckFamily(control.left(2), family, familiesAdded, true);
                     db.AddControl(control, title, description);
                     Q_EMIT progress(-1);
                 }
@@ -177,9 +168,12 @@ void WorkerCCIAdd::process()
         }
     }
     if (!control.isEmpty())
+    {
+        CheckFamily(control.left(2), family, familiesAdded, true);
         db.AddControl(control, title, description);
+    }
 
-    //Step 4a: additional privacy controls
+    //Step 4: additional privacy controls
     //obtained from https://nvlpubs.nist.gov/nistpubs/SpecialPublications/NIST.SP.800-53r4.pdf (Appendix J) contents
     db.AddControl(QStringLiteral("AP-1"), QStringLiteral("AUTHORITY TO COLLECT"), QString());
     db.AddControl(QStringLiteral("AP-2"), QStringLiteral("PURPOSE SPECIFICATION"), QString());

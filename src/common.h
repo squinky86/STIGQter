@@ -29,7 +29,6 @@
 [[maybe_unused]] extern bool IgnoreWarnings;
 
 void MessageHandler(QtMsgType type, const QMessageLogContext &context, const QString &msg);
-QString CleanXML(QString s, bool isXml = false);
 bool DownloadFile(const QUrl &url, QFile *file);
 QString DownloadPage(const QUrl &url);
 QString Excelify(const QString &s);

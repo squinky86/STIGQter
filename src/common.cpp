@@ -19,8 +19,6 @@
 
 #include "common.h"
 #include "dbmanager.h"
-#include "tidy.h"
-#include "tidybuffio.h"
 
 #include <zip.h>
 
@@ -69,57 +67,6 @@ void MessageHandler(QtMsgType type, const QMessageLogContext &context, const QSt
     }
     DbManager db;
     db.Log(severity, context.file + QStringLiteral(":") + QString::number(context.line) + QStringLiteral(" ") + context.function, msg);
-}
-
-/**
- * @brief CleanXML
- * @param s
- * @param isXml
- * @return The Tidy'd, well-formed XML.
- *
- * This function comes from Tidy's documentation and has been
- * slightly modified. For more information, see
- * @l {http://api.html-tidy.org/tidy/tidylib_api_5.1.25/group__Basic.html#details} {Tidy's documentation}
- */
-QString CleanXML(QString s, bool isXml)
-{
-    TidyBuffer output;
-    tidyBufInit(&output);
-    TidyBuffer err;
-    tidyBufInit(&err);
-
-    int rc = -1;
-    TidyDoc tdoc = tidyCreate();
-    bool ok = tidyOptSetBool(tdoc, TidyXmlOut, yes);
-
-    if (isXml)
-        ok = ok && tidyOptSetBool(tdoc, TidyXmlTags, yes);
-    if (ok)
-        rc = tidySetErrorBuffer(tdoc, &err);
-    if (rc >= 0)
-        rc = tidyParseString(tdoc, s.toStdString().c_str());
-    if (rc >= 0)
-        rc = tidyCleanAndRepair(tdoc);
-    if (rc >= 0)
-        rc = tidyRunDiagnostics(tdoc);
-    if (rc > 1)
-        rc = (tidyOptSetBool(tdoc, TidyForceOutput, yes) ? rc : -1);
-    if (rc >= 0)
-        rc = tidySaveBuffer(tdoc, &output);
-    if (rc >= 0 && (output.bp))
-    {
-        s = QString::fromUtf8(reinterpret_cast<char*>(output.bp));
-    }
-    else
-        qDebug() << "A severe error (" << rc << ") occurred in tidying the XML.";
-
-    tidyBufFree(&output);
-    tidyBufFree(&err);
-    tidyRelease(tdoc);
-
-    QString ret(s);
-    ret = ret.replace(QStringLiteral("&nbsp;"), QStringLiteral(" "));
-    return ret;
 }
 
 /**

@@ -10,7 +10,6 @@ Only the source package is supported. To help with implementations, different in
 *   64-bit Debian packages (tested on Ubuntu and Kali)
 
 The source has the following dependencies (with minimum version numbers):
-*   [HTML Tidy 5.6](http://www.html-tidy.org/)
 *   [libzip 1.5.1](https://libzip.org/)
 *   [libxlsxwriter 0.8](https://libxlsxwriter.github.io/)
 *   [Qt 5.12](https://www.qt.io/) (supports Qt 6)
