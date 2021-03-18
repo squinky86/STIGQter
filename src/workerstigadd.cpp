@@ -202,7 +202,7 @@ void WorkerSTIGAdd::ParseSTIG(const QByteArray &stig, const QString &fileName, c
                 {
                     if (!inGroup)
                     {
-                        QString toParse = CleanXML(R"(<?xml version="1.0" encoding="UTF-8"?><VulnDescription>)" + xml->readElementText().trimmed() + "</VulnDescription>", true);
+                        QString toParse = "(<?xml version=\"1.0\" encoding=\"UTF-8\"?><VulnDescription>)" + xml->readElementText().trimmed() + "</VulnDescription>";
                         //parse vulnerability description elements
                         QXmlStreamReader xml2(toParse);
                         while (!xml2.atEnd() && !xml2.hasError())
