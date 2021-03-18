@@ -24,10 +24,6 @@ build_script:
 
     pushd /tmp/libxlsxwriter-RELEASE_1.0.0 && cmake -DUSE_STANDARD_TMPFILE=OFF -DCMAKE_TOOLCHAIN_FILE=/tmp/profile.cmake -DBUILD_SHARED_LIBS=OFF -DZLIB_INCLUDE_DIR=/tmp/zlib-1.2.11 -DZLIB_LIBRARY=/tmp/zlib-1.2.11/libzlibstatic.a && make -j3 && popd
 
-    pushd /tmp && wget https://github.com/htacg/tidy-html5/archive/5.6.0.tar.gz && tar -zxf 5.6.0.tar.gz && popd
-
-    pushd /tmp/tidy-html5-5.6.0 && cmake ./ -DCMAKE_TOOLCHAIN_FILE=/tmp/profile.cmake -DBUILD_SHARED_LIBS=OFF && make -j3 && popd
-
     pushd /tmp && wget https://www.openssl.org/source/openssl-1.1.1j.tar.gz && tar -zxf openssl-1.1.1j.tar.gz && popd
 
     pushd /tmp/openssl-1.1.1j && ./Configure mingw64 no-shared no-asm no-err no-tests CROSS_COMPILE=x86_64-w64-mingw32- && make -j3 && if [ ! -d "lib" ]; then mkdir lib; fi && cp *.a lib/ && popd
@@ -46,9 +42,9 @@ build_script:
 
     sed -i -e '/^LIBS/d' STIGQter.pro
 
-    echo "LIBS += /tmp/tidy-html5-5.6.0/libtidys.a /tmp/libzip-1.7.3/lib/libzip.a /tmp/libxlsxwriter-RELEASE_1.0.0/libxlsxwriter.a /tmp/zlib-1.2.11/libzlibstatic.a" >> STIGQter.pro
+    echo "LIBS += /tmp/libzip-1.7.3/lib/libzip.a /tmp/libxlsxwriter-RELEASE_1.0.0/libxlsxwriter.a /tmp/zlib-1.2.11/libzlibstatic.a" >> STIGQter.pro
 
-    echo "INCLUDEPATH += /tmp/tidy-html5-5.6.0/include /tmp/libzip-1.7.3/lib /tmp/libzip-1.7.3 /tmp/libxlsxwriter-RELEASE_1.0.0/include" >> STIGQter.pro
+    echo "INCLUDEPATH += /tmp/libzip-1.7.3/lib /tmp/libzip-1.7.3 /tmp/libxlsxwriter-RELEASE_1.0.0/include" >> STIGQter.pro
 
     /tmp/qt/bin/qmake STIGQter.pro
 

@@ -123,13 +123,9 @@ qnx: target.path = /tmp/$${TARGET}/bin
 else: unix:!android: target.path = $${PREFIX}/bin
 !isEmpty(target.path): INSTALLS += target
 
-LIBS += -ltidy -lzip -lxlsxwriter -lz
+LIBS += -lzip -lxlsxwriter -lz
 
 INCLUDEPATH = src
-
-exists(/usr/include/tidy) {
-	INCLUDEPATH += /usr/include/tidy
-}
 
 RC_FILE = STIGQter.rc
 

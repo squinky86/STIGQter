@@ -18,7 +18,6 @@ MY_PN="STIGQter"
 S="${WORKDIR}/${MY_PN}-${PV}"
 
 CDEPEND="
-	>=app-text/tidy-html5-5.6
 	>=dev-libs/libxlsxwriter-0.8
 	>=dev-libs/libzip-1.3
 	>=dev-qt/qtgui-5"
