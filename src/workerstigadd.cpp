@@ -23,6 +23,7 @@
 #include "stigcheck.h"
 #include "workerstigadd.h"
 
+#include <QTextDocument>
 #include <QXmlStreamReader>
 
 /**
@@ -202,7 +203,11 @@ void WorkerSTIGAdd::ParseSTIG(const QByteArray &stig, const QString &fileName, c
                 {
                     if (!inGroup)
                     {
-                        QString toParse = "(<?xml version=\"1.0\" encoding=\"UTF-8\"?><VulnDescription>)" + xml->readElementText().trimmed() + "</VulnDescription>";
+                        //Convert to an HTML document to convert HTML special characters (eg: &gt;, &lt;)
+                        QTextDocument tmpText;
+                        tmpText.setHtml(xml->readElementText().trimmed());
+                        QString toParse = "(<?xml version=\"1.0\" encoding=\"UTF-8\"?><VulnDescription>)" + tmpText.toPlainText() + "</VulnDescription>";
+
                         //parse vulnerability description elements
                         QXmlStreamReader xml2(toParse);
                         while (!xml2.atEnd() && !xml2.hasError())
