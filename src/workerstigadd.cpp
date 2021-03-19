@@ -23,7 +23,6 @@
 #include "stigcheck.h"
 #include "workerstigadd.h"
 
-#include <QTextDocument>
 #include <QXmlStreamReader>
 
 /**
@@ -203,10 +202,7 @@ void WorkerSTIGAdd::ParseSTIG(const QByteArray &stig, const QString &fileName, c
                 {
                     if (!inGroup)
                     {
-                        //Convert to an HTML document to convert HTML special characters (eg: &gt;, &lt;)
-                        QTextDocument tmpText;
-                        tmpText.setHtml(xml->readElementText().trimmed());
-                        QString toParse = "(<?xml version=\"1.0\" encoding=\"UTF-8\"?><VulnDescription>)" + tmpText.toPlainText() + "</VulnDescription>";
+                        QString toParse = "<?xml version=\"1.0\" encoding=\"UTF-8\"?><VulnDescription>" + XMLVulnFix(xml->readElementText().trimmed()) + "</VulnDescription>";
 
                         //parse vulnerability description elements
                         QXmlStreamReader xml2(toParse);
@@ -347,6 +343,44 @@ void WorkerSTIGAdd::ParseSTIG(const QByteArray &stig, const QString &fileName, c
     //Sometimes the .zip file contains extraneous .xml files
     if (checks.count() > 0)
         db.AddSTIG(s, checks, supplementsToAdd);
+}
+
+/**
+ * @brief WorkerSTIGAdd::XMLVulnFix
+ * @param xml
+ * @return formatted XML data encoded properly for STIG vulnDescription field
+ */
+QString WorkerSTIGAdd::XMLVulnFix(const QString &xml)
+{
+        QString temp(xml);
+
+        temp.replace(QStringLiteral("&"), QStringLiteral("&amp;"));
+        temp.replace(QStringLiteral("'"), QStringLiteral("&apos;"));
+        temp.replace(QStringLiteral("\""), QStringLiteral("&quot;"));
+        temp.replace(QStringLiteral("<"), QStringLiteral("&lt;"));
+        temp.replace(QStringLiteral(">"), QStringLiteral("&gt;"));
+        temp.replace(QStringLiteral("&lt;VulnDiscussion&gt;"), QStringLiteral("<VulnDiscussion>"));
+        temp.replace(QStringLiteral("&lt;/VulnDiscussion&gt;"), QStringLiteral("</VulnDiscussion>"));
+        temp.replace(QStringLiteral("&lt;FalsePositives&gt;"), QStringLiteral("<FalsePositives>"));
+        temp.replace(QStringLiteral("&lt;/FalsePositives&gt;"), QStringLiteral("</FalsePositives>"));
+        temp.replace(QStringLiteral("&lt;FalseNegatives&gt;"), QStringLiteral("<FalseNegatives>"));
+        temp.replace(QStringLiteral("&lt;/FalseNegatives&gt;"), QStringLiteral("</FalseNegatives>"));
+        temp.replace(QStringLiteral("&lt;Documentable&gt;"), QStringLiteral("<Documentable>"));
+        temp.replace(QStringLiteral("&lt;/Documentable&gt;"), QStringLiteral("</Documentable>"));
+        temp.replace(QStringLiteral("&lt;Mitigations&gt;"), QStringLiteral("<Mitigations>"));
+        temp.replace(QStringLiteral("&lt;/Mitigations&gt;"), QStringLiteral("</Mitigations>"));
+        temp.replace(QStringLiteral("&lt;SeverityOverrideGuidance&gt;"), QStringLiteral("<SeverityOverrideGuidance>"));
+        temp.replace(QStringLiteral("&lt;/SeverityOverrideGuidance&gt;"), QStringLiteral("</SeverityOverrideGuidance>"));
+        temp.replace(QStringLiteral("&lt;PotentialImpacts&gt;"), QStringLiteral("<PotentialImpacts>"));
+        temp.replace(QStringLiteral("&lt;/PotentialImpacts&gt;"), QStringLiteral("</PotentialImpacts>"));
+        temp.replace(QStringLiteral("&lt;ThirdPartyTools&gt;"), QStringLiteral("<ThirdPartyTools>"));
+        temp.replace(QStringLiteral("&lt;/ThirdPartyTools&gt;"), QStringLiteral("</ThirdPartyTools>"));
+        temp.replace(QStringLiteral("&lt;MitigationControl&gt;"), QStringLiteral("<MitigationControl>"));
+        temp.replace(QStringLiteral("&lt;/MitigationControl&gt;"), QStringLiteral("</MitigationControl>"));
+        temp.replace(QStringLiteral("&lt;Responsibility&gt;"), QStringLiteral("<Responsibility>"));
+        temp.replace(QStringLiteral("&lt;/Responsibility&gt;"), QStringLiteral("</Responsibility>"));
+
+        return temp;
 }
 
 /**

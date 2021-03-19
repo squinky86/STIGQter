@@ -32,6 +32,7 @@ private:
     QStringList _todo;
     bool _enableSupplements;
     void ParseSTIG(const QByteArray &stig, const QString &fileName, const QMap<QString, QByteArray> &supplements);
+    QString XMLVulnFix(const QString &xml);
 
 public:
     explicit WorkerSTIGAdd(QObject *parent = nullptr);
