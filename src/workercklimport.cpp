@@ -19,10 +19,14 @@
 
 #include "asset.h"
 #include "cklcheck.h"
+#include "common.h"
 #include "dbmanager.h"
 #include "workercklimport.h"
+#include "workerstigadd.h"
 
 #include <QFile>
+#include <QTemporaryFile>
+#include <QUrlQuery>
 #include <QXmlStreamReader>
 
 /**
@@ -127,14 +131,44 @@ void WorkerCKLImport::ParseCKL(const QString &fileName)
                     if (onVar == QStringLiteral("Rule_ID"))
                     {
                         QString tmpStr = tmpSTIG.title + " version " + QString::number(tmpSTIG.version) + " " + tmpSTIG.release;
-                        tmpSTIG = db.GetSTIG(tmpSTIG.title, tmpSTIG.version, tmpSTIG.release);
-                        if (tmpSTIG.id < 0)
+                        STIG tmpSTIG2 = db.GetSTIG(tmpSTIG.title, tmpSTIG.version, tmpSTIG.release);
+                        if (tmpSTIG2.id < 0)
+                        {
+                            QString autostig = db.GetVariable("autostig");
+                            if (autostig == QStringLiteral("true"))
+                            {
+                                QUrl u("https://www.stigqter.com/autostig.php");
+                                QUrlQuery q;
+                                q.addQueryItem(QStringLiteral("stig"), tmpStr);
+                                u.setQuery(q);
+                                QString u2 = DownloadPage(u);
+
+                                if (!u2.isEmpty())
+                                {
+                                    QTemporaryFile tf;
+                                    if (tf.open())
+                                    {
+                                        Q_EMIT updateStatus(QStringLiteral("Attempting to download missing STIG…"));
+                                        if (DownloadFile(u2, &tf))
+                                        {
+                                            Q_EMIT updateStatus(QStringLiteral("Parsing missing STIG…"));
+                                            WorkerSTIGAdd wa;
+                                            wa.AddSTIGs({tf.fileName()});
+                                            wa.process();
+                                            tmpSTIG2 = db.GetSTIG(tmpSTIG.title, tmpSTIG.version, tmpSTIG.release);
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                        if (tmpSTIG2.id < 0)
                         {
                             //The STIG has not been imported.
                             Q_EMIT ThrowWarning(QStringLiteral("STIG/SRG Not Found"), "The CKL file " + fileName + " is mapped against a STIG that has not been imported (" + tmpStr + ").");
                             return;
                         }
-                        tmpCheck = db.GetSTIGCheck(tmpSTIG, xml->readElementText().trimmed());
+                        tmpSTIG = tmpSTIG2;
+                        tmpCheck = db.GetSTIGCheck(tmpSTIG2, xml->readElementText().trimmed());
                     }
                 }
                 else if (xml->name().compare(QStringLiteral("STATUS")) == 0)
