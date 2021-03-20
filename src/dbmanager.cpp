@@ -2843,6 +2843,15 @@ bool DbManager::UpdateDatabaseFromVersion(int version)
             ret = q.exec() && ret;
             ret = UpdateVariable(QStringLiteral("version"), QStringLiteral("5")) && ret;
         }
+        if (version < 6)
+        {
+            QSqlQuery q(db);
+            q.prepare(QStringLiteral("INSERT INTO variables (name, value) VALUES(:name, :value)"));
+            q.bindValue(QStringLiteral(":name"), QStringLiteral("autostig"));
+            q.bindValue(QStringLiteral(":value"), QStringLiteral("true"));
+            ret = q.exec() && ret;
+            ret = UpdateVariable(QStringLiteral("version"), QStringLiteral("6")) && ret;
+        }
     }
     return ret;
 }

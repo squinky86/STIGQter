@@ -2,6 +2,7 @@
 -   Build monolithic CKLs (fixes #91)
 -   Don't block UI when on a disconnected system (fixes #92)
 -   New location for RMF controls (fixes #93)
+-   Autodownload of missing STIGs (fixes #78)
 
 ## 1.1.0 20210305
 -   Build Debian packages automatically

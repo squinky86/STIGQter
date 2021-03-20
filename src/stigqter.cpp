@@ -1121,6 +1121,7 @@ void STIGQter::ImportCKLs(const QStringList &fileNames)
 
     db.UpdateVariable(QStringLiteral("lastdir"), QFileInfo(fn[0]).absolutePath());
     DisableInput();
+    _updatedSTIGs = true;
     _updatedAssets = true;
     auto *c = new WorkerCKLImport();
     c->AddCKLs(fn);
