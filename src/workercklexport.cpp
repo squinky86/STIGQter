@@ -123,7 +123,7 @@ void WorkerCKLExport::process()
         if (_monolithic)
         {
             WorkerCKL wc;
-            wc.AddFilename(QDir(_dirName).filePath(PrintAsset(a) + ".ckl"));
+            wc.AddFilename(QDir(_dirName).filePath(PrintAsset(a) + "-monolithic.ckl"));
             wc.AddAsset(a);
             wc.process();
         }

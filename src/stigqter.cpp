@@ -331,6 +331,15 @@ void STIGQter::RunTests()
         ProcEvents();
     }
 
+    // build monolithic CKL files
+    std::cout << "\tTest " << step++ << ": Exporting Monolithic CKL files" << std::endl;
+    ExportCKLsMonolithic(QStringLiteral("tests"));
+    while (!isProcessingEnabled())
+    {
+        QThread::sleep(1);
+        ProcEvents();
+    }
+
     // save .stigqter file
     std::cout << "\tTest " << step++ << ": Saving .stigqter file" << std::endl;
     SaveAs(QStringLiteral("tests/test.stigqter"));

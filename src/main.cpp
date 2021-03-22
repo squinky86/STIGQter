@@ -97,7 +97,7 @@ int main(int argc, char *argv[])
         }
 
         std::cout << "Test " << ++onTest << ": Include STIG Supplements" << std::endl;
-        QMetaObject::invokeMethod(&w, "SupplementsChanged", Qt::DirectConnection, Q_ARG(Qt::CheckState, Qt::Checked));
+        QMetaObject::invokeMethod(&w, "SupplementsChanged", Qt::DirectConnection, Q_ARG(int, Qt::Checked));
         while (!w.isProcessingEnabled())
         {
             QThread::sleep(1);
@@ -148,6 +148,18 @@ int main(int argc, char *argv[])
         }
 
         {
+            std::cout << "Test " << ++onTest << ": Delete STIGs" << std::endl;
+            WorkerSTIGDelete wd;
+            DbManager db;
+            Q_FOREACH (auto stig, db.GetSTIGs())
+            {
+                wd.AddId(stig.id);
+            }
+            wd.process();
+            a.processEvents();
+        }
+
+        {
             QDirIterator it(QStringLiteral("tests"));
             WorkerCKLImport wc;
             while (it.hasNext())
@@ -175,18 +187,6 @@ int main(int argc, char *argv[])
                 QThread::sleep(1);
                 a.processEvents();
             }
-            a.processEvents();
-        }
-
-        {
-            std::cout << "Test " << ++onTest << ": Delete STIGs" << std::endl;
-            WorkerSTIGDelete wd;
-            DbManager db;
-            Q_FOREACH (auto stig, db.GetSTIGs())
-            {
-                wd.AddId(stig.id);
-            }
-            wd.process();
             a.processEvents();
         }
 
