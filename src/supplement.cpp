@@ -83,7 +83,7 @@ Supplement &Supplement::operator=(const Supplement &right)
  * @param supplement
  * @return String representing the supplement's identifier
  */
-QString PrintSupplement(const Supplement &supplement)
+[[nodiscard]] QString PrintSupplement(const Supplement &supplement)
 {
     return supplement.path;
 }

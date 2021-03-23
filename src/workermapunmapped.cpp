@@ -93,7 +93,7 @@ void WorkerMapUnmapped::process()
         }
 
         //step three - remap to CM-6
-        if (check.cciIds.count() <= 0)
+        if (check.cciIds.isEmpty())
         {
             Q_FOREACH (CCI c, remapCCIs)
             {

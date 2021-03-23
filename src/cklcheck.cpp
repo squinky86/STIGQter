@@ -213,7 +213,7 @@ QString GetCMRSStatus(Status status)
  * @param cklCheck
  * @return Human-readable printout of the @a STIGCheck component.
  */
-QString PrintCKLCheck(const CKLCheck &cklCheck)
+[[nodiscard]] QString PrintCKLCheck(const CKLCheck &cklCheck)
 {
     return PrintSTIGCheck(cklCheck.GetSTIGCheck());
 }

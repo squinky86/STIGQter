@@ -38,6 +38,6 @@ public:
 
 Q_DECLARE_METATYPE(Family);
 
-QString PrintFamily(const Family &family);
+[[nodiscard]] QString PrintFamily(const Family &family);
 
 #endif // FAMILY_H

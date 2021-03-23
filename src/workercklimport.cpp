@@ -82,7 +82,7 @@ void WorkerCKLImport::ParseCKL(const QString &fileName)
         {
             if (inStigs)
             {
-                if ((xml->name().compare(QStringLiteral("iSTIG")) == 0) && (checks.count() > 0))
+                if ((xml->name().compare(QStringLiteral("iSTIG")) == 0) && (!checks.isEmpty()))
                 {
                     a = CheckAsset(a);
                     QVector<STIG> stigs = a.GetSTIGs();

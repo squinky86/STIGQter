@@ -341,7 +341,7 @@ void WorkerSTIGAdd::ParseSTIG(const QByteArray &stig, const QString &fileName, c
     }
 
     //Sometimes the .zip file contains extraneous .xml files
-    if (checks.count() > 0)
+    if (!checks.isEmpty())
         db.AddSTIG(s, checks, supplementsToAdd);
 }
 

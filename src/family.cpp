@@ -106,7 +106,7 @@ Family& Family::operator=(const Family &right)
  * @param family
  * @return Human-readable @a Family
  */
-QString PrintFamily(const Family &family)
+[[nodiscard]] QString PrintFamily(const Family &family)
 {
     return family.acronym;
 }

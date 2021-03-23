@@ -173,7 +173,7 @@ bool STIG::operator<(const STIG &right) const
  * @param stig
  * @return A human-readable @a STIG representation.
  */
-QString PrintSTIG(const STIG &stig)
+[[nodiscard]] QString PrintSTIG(const STIG &stig)
 {
     return stig.title + " Version: " + QString::number(stig.version) + " " + stig.release;
 }

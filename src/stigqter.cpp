@@ -261,7 +261,6 @@ void STIGQter::RunTests()
     // severity override
     {
         std::cout << "Test " << step++ << ": Severity Override" << std::endl;
-        DbManager db;
         Q_FOREACH(auto cklCheck, db.GetCKLChecks())
         {
             switch (std::uniform_int_distribution<>{0, 3}(g))
@@ -534,7 +533,7 @@ bool STIGQter::Reset(bool checkOnly)
             db.DeleteDB();
             qApp->quit();
             auto args = qApp->arguments();
-            if (args.count() > 0)
+            if (!args.isEmpty())
                 QProcess::startDetached(args[0], args);
         }
     }
@@ -554,7 +553,7 @@ bool STIGQter::Reset(bool checkOnly)
             db.DeleteDB();
             qApp->quit();
             auto args = qApp->arguments();
-            if (args.count() > 0)
+            if (!args.isEmpty())
                 QProcess::startDetached(args[0], args);
         }
         else
@@ -568,7 +567,7 @@ bool STIGQter::Reset(bool checkOnly)
                 db.DeleteDB();
                 qApp->quit();
                 auto args = qApp->arguments();
-                if (args.count() > 0)
+                if (!args.isEmpty())
                     QProcess::startDetached(args[0], args);
             }
         }
@@ -760,7 +759,7 @@ void STIGQter::AddSTIGs()
     QStringList fileNames = QFileDialog::getOpenFileNames(this,
         QStringLiteral("Open STIG"), db.GetVariable(QStringLiteral("lastdir")), QStringLiteral("Compressed STIG (*.zip)"));
 
-    if (fileNames.count() <= 0)
+    if (fileNames.isEmpty())
         return; // cancel button pressed
 
     db.UpdateVariable(QStringLiteral("lastdir"), QFileInfo(fileNames[0]).absolutePath());
@@ -1122,10 +1121,10 @@ void STIGQter::FindingsReport(const QString &fileName)
 void STIGQter::ImportCKLs(const QStringList &fileNames)
 {
     DbManager db;
-    QStringList fn = fileNames.count() > 0 ? fileNames : QFileDialog::getOpenFileNames(this,
+    QStringList fn = !fileNames.isEmpty() ? fileNames : QFileDialog::getOpenFileNames(this,
         QStringLiteral("Import CKL(s)"), db.GetVariable(QStringLiteral("lastdir")), QStringLiteral("STIG Checklist (*.ckl)"));
 
-    if (fn.count() <= 0)
+    if (fn.isEmpty())
         return; // cancel button pressed
 
     db.UpdateVariable(QStringLiteral("lastdir"), QFileInfo(fn[0]).absolutePath());
@@ -1223,7 +1222,7 @@ void STIGQter::MapUnmapped(bool confirm)
 void STIGQter::SelectSTIG()
 {
     //select STIGs to create checklists
-    ui->btnCreateCKL->setEnabled(ui->lstSTIGs->selectedItems().count() > 0);
+    ui->btnCreateCKL->setEnabled(!ui->lstSTIGs->selectedItems().isEmpty());
 }
 
 /**
@@ -1277,20 +1276,12 @@ void STIGQter::EnableInput()
     DbManager db;
     QVector<Family> f = db.GetFamilies();
     QVector<STIG> s = db.GetSTIGs();
-    bool stigsNotImported = s.count() <= 0;
+    bool stigsNotImported = s.isEmpty();
     bool isImport = db.IsEmassImport();
 
     ui->btnImportEmass->setEnabled(!isImport);
 
-    if (f.count() > 0)
-    {
-        //disable deleting CCIs if STIGs have been imported
-        ui->btnClearCCIs->setEnabled(stigsNotImported);
-        ui->btnDownloadSTIGs->setEnabled(stigsNotImported);
-        ui->btnImportCCIs->setEnabled(false);
-        ui->btnImportSTIGs->setEnabled(true);
-    }
-    else
+    if (f.isEmpty())
     {
         ui->btnClearCCIs->setEnabled(false);
         ui->btnDownloadSTIGs->setEnabled(false);
@@ -1298,6 +1289,15 @@ void STIGQter::EnableInput()
         ui->btnImportCCIs->setEnabled(true);
         ui->btnImportSTIGs->setEnabled(false);
     }
+    else
+    {
+        //disable deleting CCIs if STIGs have been imported
+        ui->btnClearCCIs->setEnabled(stigsNotImported);
+        ui->btnDownloadSTIGs->setEnabled(stigsNotImported);
+        ui->btnImportCCIs->setEnabled(false);
+        ui->btnImportSTIGs->setEnabled(true);
+    }
+
     ui->btnClearSTIGs->setEnabled(true);
     ui->btnEditSTIG->setEnabled(true);
     ui->btnCreateCKL->setEnabled(true);
@@ -1306,7 +1306,7 @@ void STIGQter::EnableInput()
     ui->btnMapUnmapped->setEnabled(isImport);
     ui->cbIncludeSupplements->setEnabled(true);
     ui->cbRemapCM6->setEnabled(true);
-    ui->btnOpenCKL->setEnabled(ui->lstAssets->selectedItems().count() > 0);
+    ui->btnOpenCKL->setEnabled(!ui->lstAssets->selectedItems().isEmpty());
     ui->btnQuit->setEnabled(true);
     ui->menubar->setEnabled(true);
     ui->txtSTIGSearch->setEnabled(true);

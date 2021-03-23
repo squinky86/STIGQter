@@ -167,7 +167,7 @@ bool Asset::operator==(const Asset &right)
  * @param asset
  * @return human-readable Asset description
  */
-QString PrintAsset(const Asset &asset)
+[[nodiscard]] QString PrintAsset(const Asset &asset)
 {
     return asset.hostName;
 }

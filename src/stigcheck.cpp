@@ -220,7 +220,7 @@ QString GetSeverity(Severity severity, bool cat)
  * @param stigCheck
  * @return A human-readable @a STIGCheck representation.
  */
-QString PrintSTIGCheck(const STIGCheck &stigCheck)
+[[nodiscard]] QString PrintSTIGCheck(const STIGCheck &stigCheck)
 {
     return stigCheck.rule;
 }
@@ -230,7 +230,7 @@ QString PrintSTIGCheck(const STIGCheck &stigCheck)
  * @param stigCheck
  * @return CMRS-formatted V-ID
  */
-QString PrintCMRSVulnId(const STIGCheck &stigCheck)
+[[nodiscard]] QString PrintCMRSVulnId(const STIGCheck &stigCheck)
 {
     QString ret = stigCheck.vulnNum;
     if (ret.startsWith(QStringLiteral("V-")))

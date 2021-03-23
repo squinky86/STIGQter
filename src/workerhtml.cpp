@@ -74,7 +74,7 @@ QString WorkerHTML::CheckItem(const QString &title, const QString &contents)
 QString WorkerHTML::CheckItem(const QString &title, const QStringList &contents)
 {
     QString ret = QLatin1String();
-    if (contents.count() > 0)
+    if (!contents.isEmpty())
     {
         ret.append("<h2>" + title.toHtmlEscaped() + "</h2><ul>");
         Q_FOREACH(const QString &content, contents)
@@ -272,7 +272,7 @@ void WorkerHTML::process()
             check.write(CheckItem(QStringLiteral("Severity"), GetSeverity(c.severity)).toStdString().c_str());
             QVector<CCI> ccis = c.GetCCIs();
             QStringList cciStr;
-            if (ccis.count() > 0)
+            if (!ccis.isEmpty())
             {
                 Q_FOREACH (CCI cci, ccis)
                 {

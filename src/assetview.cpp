@@ -338,7 +338,7 @@ void AssetView::UpdateCKLCheck(const CKLCheck &cklCheck)
  */
 void AssetView::UpdateSTIGCheck(const STIGCheck &stigCheck)
 {
-    ui->lblCheckRule->setText(stigCheck.rule + QStringLiteral(" (") + (stigCheck.legacyIds.count() > 0 ? stigCheck.legacyIds.join(QStringLiteral(", ")) : stigCheck.vulnNum) + QStringLiteral(")"));
+    ui->lblCheckRule->setText(stigCheck.rule + QStringLiteral(" (") + (stigCheck.legacyIds.isEmpty() ? stigCheck.vulnNum : stigCheck.legacyIds.join(QStringLiteral(", "))) + QStringLiteral(")"));
     ui->lblCheckTitle->setText(stigCheck.title);
     ui->cboBoxSeverity->setCurrentText(GetSeverity(stigCheck.severity));
     ui->cbDocumentable->setChecked(stigCheck.documentable);
@@ -843,7 +843,7 @@ void AssetView::UpdateCKLStatus(const QString &val)
     QList<QListWidgetItem*> selectedItems = ui->lstChecks->selectedItems();
     Status stat;
     stat = GetStatus(val);
-    if (selectedItems.count() > 0)
+    if (!selectedItems.isEmpty())
     {
         Q_FOREACH (QListWidgetItem *i, selectedItems)
         {
@@ -867,7 +867,7 @@ void AssetView::UpdateCKLSeverity(const QString &val)
 {
     QList<QListWidgetItem*> selectedItems = ui->lstChecks->selectedItems();
     //should only be executed if one severity is set
-    if (selectedItems.count() > 0)
+    if (!selectedItems.isEmpty())
     {
         QListWidgetItem *i = selectedItems.first();
         auto cc = i->data(Qt::UserRole).value<CKLCheck>();

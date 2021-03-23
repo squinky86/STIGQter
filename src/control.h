@@ -59,6 +59,6 @@ public:
 
 Q_DECLARE_METATYPE(Control);
 
-QString PrintControl(const Control &control);
+[[nodiscard]] QString PrintControl(const Control &control);
 
 #endif // CONTROL_H

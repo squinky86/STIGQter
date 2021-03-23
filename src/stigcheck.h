@@ -80,8 +80,8 @@ public:
 
 Q_DECLARE_METATYPE(STIGCheck);
 
-QString PrintSTIGCheck(const STIGCheck &stigCheck);
+[[nodiscard]] QString PrintSTIGCheck(const STIGCheck &stigCheck);
 
-QString PrintCMRSVulnId(const STIGCheck &stigCheck);
+[[nodiscard]] QString PrintCMRSVulnId(const STIGCheck &stigCheck);
 
 #endif // STIGCHECK_H

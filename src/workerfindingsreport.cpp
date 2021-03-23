@@ -228,13 +228,13 @@ void WorkerFindingsReport::process()
         //cci
         worksheet_write_number(wsCCIs, onRow, 1, c.cci, fmtCci);
         //severity
-        if (checks2.count() > 0)
-            worksheet_write_string(wsCCIs, onRow, 2, GetSeverity(checks2.first().GetSeverity()).toStdString().c_str(), nullptr);
+        if (checks2.isEmpty())
+             worksheet_write_string(wsCCIs, onRow, 2, GetSeverity(Severity::low).toStdString().c_str(), nullptr);
         else
-            worksheet_write_string(wsCCIs, onRow, 2, GetSeverity(Severity::low).toStdString().c_str(), nullptr);
+            worksheet_write_string(wsCCIs, onRow, 2, GetSeverity(checks2.first().GetSeverity()).toStdString().c_str(), nullptr);
         //Checks
         QString assets = QString();
-        if (checks2.count() <= 0)
+        if (checks2.isEmpty())
             assets.append(QStringLiteral("Imported/Documentation Findings"));
         Q_FOREACH (CKLCheck cc, checks2)
         {

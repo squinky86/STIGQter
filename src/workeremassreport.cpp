@@ -250,8 +250,8 @@ void WorkerEMASSReport::process()
          * 3) If an eMASS record was not imported, print the pass or
          * fail results as they are.
          */
-        bool failed = failedChecks.count() > 0;
-        bool hasChecks = failed || passedChecks.count() > 0;
+        bool failed = !failedChecks.isEmpty();
+        bool hasChecks = failed || !passedChecks.isEmpty();
 
         if (dbIsImport && !cci.isImport)
         {

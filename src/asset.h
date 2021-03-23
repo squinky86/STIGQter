@@ -79,6 +79,6 @@ public:
 
 Q_DECLARE_METATYPE(Asset);
 
-QString PrintAsset(const Asset &asset);
+[[nodiscard]] QString PrintAsset(const Asset &asset);
 
 #endif // ASSET_H

@@ -104,7 +104,7 @@ Control& Control::operator=(const Control &right)
  * @param control
  * @return Human-readable @a Control
  */
-QString PrintControl(const Control &control)
+[[nodiscard]] QString PrintControl(const Control &control)
 {
     QString ret = control.GetFamily().acronym + "-" + QString::number(control.number);
     if (control.enhancement > 0)

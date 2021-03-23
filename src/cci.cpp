@@ -168,7 +168,7 @@ bool CCI::operator==(const CCI &right)
  * @param cci
  * @return human-readable CCI description
  */
-QString PrintCCI(int cci)
+[[nodiscard]] QString PrintCCI(int cci)
 {
     return "CCI-" + QString::number(cci).rightJustified(6, '0');
 }
@@ -179,7 +179,7 @@ QString PrintCCI(int cci)
  * @param cci
  * @return human-readable CCI description
  */
-QString PrintCCI(const CCI &cci)
+[[nodiscard]] QString PrintCCI(const CCI &cci)
 {
     return PrintCCI(cci.cci);
 }

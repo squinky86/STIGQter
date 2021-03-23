@@ -600,7 +600,7 @@ bool DbManager::AddSTIG(STIG &stig, const QVector<STIGCheck> &checks, const QVec
             q.bindValue(QStringLiteral(":responsibility"), c.responsibility);
             q.bindValue(QStringLiteral(":IAControls"), c.iaControls);
             q.bindValue(QStringLiteral(":targetKey"), c.targetKey);
-            q.bindValue(QStringLiteral(":isRemap"), (c.isRemap || c.cciIds.count() <= 0) ? 1 : 0);
+            q.bindValue(QStringLiteral(":isRemap"), (c.isRemap || c.cciIds.isEmpty()) ? 1 : 0);
             bool tmpRet = q.exec();
             stigCheckRet = stigCheckRet && tmpRet;
             if (!tmpRet)
@@ -613,7 +613,7 @@ bool DbManager::AddSTIG(STIG &stig, const QVector<STIGCheck> &checks, const QVec
             if (STIGCheckId > 0)
             {
                 //check if the STIG is mapped to at least one CCI
-                if (c.cciIds.count() <= 0)
+                if (c.cciIds.isEmpty())
                 {
                     c.isRemap = true;
                     QString remapCCIsStr = QString();
@@ -736,11 +736,7 @@ bool DbManager::DeleteAsset(int id)
 bool DbManager::DeleteAsset(const Asset &asset)
 {
     bool ret = false;
-    if (asset.GetSTIGs().count() > 0)
-    {
-        Warning(QStringLiteral("Asset Has Mapped STIGs"), "The Asset '" + PrintAsset(asset) + "' has STIGs selected that must be removed.");
-    }
-    else
+    if (asset.GetSTIGs().isEmpty())
     {
         QSqlDatabase db;
         if (CheckDatabase(db))
@@ -753,6 +749,10 @@ bool DbManager::DeleteAsset(const Asset &asset)
                 db.commit();
             Log(6, QStringLiteral("DeleteAsset"), q);
         }
+    }
+    else
+    {
+        Warning(QStringLiteral("Asset Has Mapped STIGs"), "The Asset '" + PrintAsset(asset) + "' has STIGs selected that must be removed.");
     }
 
     return ret;
@@ -939,7 +939,7 @@ Asset DbManager::GetAsset(const QString &hostName)
 {
     //fail quietly
     QVector<Asset> tmp = GetAssets(QStringLiteral("WHERE Asset.hostName = :hostName"), {std::make_tuple<QString, QVariant>(QStringLiteral(":hostName"), hostName)});
-    if (tmp.count() > 0)
+    if (!tmp.isEmpty())
         return tmp.first();
     Asset a;
     return a;
@@ -978,7 +978,7 @@ Asset DbManager::GetAsset(const Asset &asset)
 Asset DbManager::GetAsset(int id)
 {
     QVector<Asset> tmp = GetAssets(QStringLiteral("WHERE Asset.id = :id"), {std::make_tuple<QString, QVariant>(QStringLiteral(":id"), id)});
-    if (tmp.count() > 0)
+    if (!tmp.isEmpty())
         return tmp.first();
     Warning(QStringLiteral("Unable to Find Asset"), "The Asset ID " + QString::number(id) + " was not found in the database.", true);
     Asset a;
@@ -1094,7 +1094,7 @@ QVector<Asset> DbManager::GetAssets(const STIG &stig)
 CCI DbManager::GetCCI(int id)
 {
     QVector<CCI> ccis = GetCCIs(QStringLiteral("WHERE CCI.id = :id"), {std::make_tuple<QString, QVariant>(QStringLiteral(":id"), id)});
-    if (ccis.count() > 0)
+    if (!ccis.isEmpty())
         return ccis.first();
     CCI ret;
     return ret;
@@ -1177,7 +1177,7 @@ QVector<CCI> DbManager::GetCCIs(int STIGCheckId)
 CCI DbManager::GetCCIByCCI(int cci, const STIG *stig)
 {
     QVector<CCI> tmpList = GetCCIs(QStringLiteral("WHERE CCI.cci = :cci"), {std::make_tuple<QString, QVariant>(QStringLiteral(":cci"), cci)});
-    if (tmpList.count() > 0)
+    if (!tmpList.isEmpty())
         return tmpList.first();
     QString tmpMessage = stig ? PrintSTIG(*stig) : QStringLiteral("&lt;insert%20STIG%20information%20here&gt;");
     QString cciStr = PrintCCI(cci);
@@ -1316,10 +1316,10 @@ QVector<CCI> DbManager::GetCCIs(const QString &whereClause, const QVector<std::t
 CKLCheck DbManager::GetCKLCheck(int id)
 {
     QVector<CKLCheck> tmp = GetCKLChecks(QStringLiteral("WHERE CKLCheck.id = :id"), {std::make_tuple<QString, QVariant>(QStringLiteral(":id"), id)});
-    if (tmp.count() > 0)
-    {
+
+    if (!tmp.isEmpty())
         return tmp.first();
-    }
+
     CKLCheck ret;
     Warning(QStringLiteral("Unable to Find CKLCheck"), "The CKLCheck of ID " + QString::number(id) + " was not found in the database.");
     return ret;
@@ -1346,10 +1346,10 @@ CKLCheck DbManager::GetCKLCheck(const CKLCheck &ckl)
     {
         tmp = GetCKLChecks(QStringLiteral("WHERE CKLCheck.id = :id"), {std::make_tuple<QString, QVariant>(QStringLiteral(":id"), ckl.id)});
     }
-    if (tmp.count() > 0)
-    {
+
+    if (!tmp.isEmpty())
         return tmp.first();
-    }
+
     CKLCheck ret;
     Warning(QStringLiteral("Unable to Find CKLCheck"), "The CKLCheck of ID " + QString::number(ckl.id) + " (asset " + QString::number(ckl.assetId) + ", " + QString::number(ckl.stigCheckId) + ") was not found in the database.");
     return ret;
@@ -1368,8 +1368,10 @@ CKLCheck DbManager::GetCKLCheckByDISAId(int assetId, const QString &disaId)
                         std::make_tuple<QString, QVariant>(QStringLiteral(":AssetId"), assetId),
                         std::make_tuple<QString, QVariant>(QStringLiteral(":DISAId"), disaId)
                     });
-    if (ret.count() > 0)
+
+    if (!ret.isEmpty())
         return ret.first();
+
     CKLCheck check;
     return check;
 }
@@ -1500,7 +1502,7 @@ QVector<CKLCheck> DbManager::GetCKLChecks(const QString &whereClause, const QVec
 STIGCheck DbManager::GetSTIGCheck(int id)
 {
     QVector<STIGCheck> tmp = GetSTIGChecks(QStringLiteral("WHERE STIGCheck.id = :id"), {std::make_tuple<QString, QVariant>(QStringLiteral(":id"), id)});
-    if (tmp.count() > 0)
+    if (!tmp.isEmpty())
         return tmp.first();
     STIGCheck ret;
     Warning(QStringLiteral("Unable to Find STIGCheck"), "The STIGCheck of ID " + QString::number(id) + " was not found in the database.");
@@ -1524,7 +1526,7 @@ STIGCheck DbManager::GetSTIGCheck(const STIG &stig, const QString &rule)
                                                  std::make_tuple<QString, QVariant>(QStringLiteral(":STIGId"), tmpStig.id),
                                                  std::make_tuple<QString, QVariant>(QStringLiteral(":rule"), rule)
                                              });
-        if (tmp.count() > 0)
+        if (!tmp.isEmpty())
             return tmp.first();
     }
     STIGCheck ret;
@@ -1807,7 +1809,7 @@ QVector<Supplement> DbManager::GetSupplements(const STIG &stig)
 Control DbManager::GetControl(int id)
 {
     QVector<Control> tmpControl = GetControls(QStringLiteral("WHERE Control.id = :id"), {std::make_tuple<QString, QVariant>(QStringLiteral(":id"), id)});
-    if (tmpControl.count() > 0)
+    if (!tmpControl.isEmpty())
         return tmpControl.first();
     Control ret;
     Warning(QStringLiteral("Control Not Found"), "The Control ID " + QString::number(id) + " was not found in the database.");
@@ -1870,7 +1872,7 @@ Control DbManager::GetControl(const QString &control)
     }
 
     QVector<Control> tmpControls = GetControls(whereClause, variables);
-    if (tmpControls.count() > 0)
+    if (!tmpControls.isEmpty())
         return tmpControls.first();
 
     Control ret;
@@ -1976,7 +1978,7 @@ QString DbManager::GetDBPath()
 Family DbManager::GetFamily(int id)
 {
     QVector<Family> tmpFamily = GetFamilies(QStringLiteral("WHERE Family.id = :id"), {std::make_tuple<QString, QVariant>(QStringLiteral(":id"), id)});
-    if (tmpFamily.count() > 0)
+    if (!tmpFamily.isEmpty())
         return tmpFamily.first();
     Family ret;
     Warning(QStringLiteral("Family Not Found"), "The Family associated with ID " + QString::number(id) + " could not be found.");
@@ -2032,7 +2034,7 @@ QVector<CCI> DbManager::GetRemapCCIs()
 
     QVector<CCI> toRet = GetCCIs("WHERE" + isImportStr + " ControlId = (SELECT id FROM Control WHERE FamilyId = (SELECT id FROM Family WHERE Acronym = 'CM') AND number = 6 AND enhancement IS NULL)");
 
-    if (toRet.count() > 0)
+    if (!toRet.isEmpty())
         return toRet;
 
     return {cci366};
@@ -2048,7 +2050,7 @@ QVector<CCI> DbManager::GetRemapCCIs()
 Family DbManager::GetFamily(const QString &acronym)
 {
     QVector<Family> tmpFamily = GetFamilies(QStringLiteral("WHERE Family.acronym = :acronym"), {std::make_tuple<QString, QVariant>(QStringLiteral(":acronym"), acronym)});
-    if (tmpFamily.count() > 0)
+    if (!tmpFamily.isEmpty())
         return tmpFamily.first();
     Family ret;
     Warning(QStringLiteral("Family Not Found"), "The Family associated with " + acronym + " could not be found.");
@@ -2138,7 +2140,7 @@ QVector<Family> DbManager::GetFamilies(const QString &whereClause, const QVector
 STIG DbManager::GetSTIG(int id)
 {
     QVector<STIG> tmpStigs = GetSTIGs(QStringLiteral("WHERE id = :id"), {std::make_tuple<QString, QVariant>(QStringLiteral(":id"), id)});
-    if (tmpStigs.count() > 0)
+    if (!tmpStigs.isEmpty())
         return tmpStigs.first();
     STIG ret;
     Warning(QStringLiteral("Unable to Find STIG"), "The STIG of ID " + QString::number(id) + " was not found in the database.");
@@ -2162,7 +2164,7 @@ STIG DbManager::GetSTIG(const QString &title, int version, const QString &releas
                                         std::make_tuple<QString, QVariant>(QStringLiteral(":release"), release),
                                         std::make_tuple<QString, QVariant>(QStringLiteral(":version"), version)
                                     });
-    if (tmpStigs.count() > 0)
+    if (!tmpStigs.isEmpty())
         return tmpStigs.first();
     STIG ret;
     Warning(QStringLiteral("Unable to Find STIG"), "The following STIG has not been added to the master database (This is normal if you are attempting to import a new STIG that does not currently exist in the DB, and the new STIG will likely be inserted if there are no other errors.):\nTitle: " + title + "\nVersion: " + QString::number(version) + "\n" + release, true);

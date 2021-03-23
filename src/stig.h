@@ -54,6 +54,6 @@ bool operator==(STIG const& lhs, STIG const& rhs);
 
 Q_DECLARE_METATYPE(STIG);
 
-QString PrintSTIG(const STIG &stig);
+[[nodiscard]] QString PrintSTIG(const STIG &stig);
 
 #endif // STIG_H

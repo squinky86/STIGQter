@@ -58,13 +58,13 @@ WorkerCKL::WorkerCKL(QObject *parent) : Worker(parent)
 void WorkerCKL::AddAsset(const Asset &asset, const QVector<STIG> &stigs)
 {
     _asset = asset;
-    if (stigs.count() > 0)
+    if (stigs.isEmpty())
     {
-        AddSTIGs(stigs);
+        AddSTIGs(asset.GetSTIGs());
     }
     else
     {
-        AddSTIGs(asset.GetSTIGs());
+        AddSTIGs(stigs);
     }
 }
 
