@@ -158,8 +158,7 @@ QString DownloadPage(const QUrl &url)
     QString userAgent = GetUserAgent();
     req.setRawHeader("User-Agent", userAgent.toStdString().c_str());
 
-    auto addresses = QHostInfo::fromName(url.host()).addresses();
-    if (!addresses.isEmpty())
+    if (auto addresses = QHostInfo::fromName(url.host()).addresses(); !addresses.isEmpty())
     {
         //log HTTP headers, STIG Rule SV-222447r508029_rule
         //log IP address, STIG Rule SV-222448r508029_rule

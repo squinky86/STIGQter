@@ -35,30 +35,6 @@
  */
 
 /**
- * @brief WorkerEMASSReport::DateChooser
- * @param isImport
- * @param curDate
- * @param importDate
- * @param useCurDate
- *
- * Return the correct date format
- */
-qint64 WorkerEMASSReport::DateChooser(bool isImport, qint64 curDate, const QString &importDate, bool useCurDate = false)
-{
-    if (useCurDate)
-        return curDate;
-
-    if (isImport)
-    {
-        qint64 tmpRet = importDate.toInt();
-        if (tmpRet > 0)
-            return tmpRet;
-    }
-
-    return curDate;
-}
-
-/**
  * @brief WorkerEMASSReport::WorkerEMASSReport
  * @param parent
  *

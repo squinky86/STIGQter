@@ -258,6 +258,24 @@ void STIGQter::RunTests()
     EditSTIG();
     ProcEvents();
 
+    for (int j = 1; j < ui->tabDB->count(); j++)
+    {
+        auto *tmpTabView = dynamic_cast<TabViewWidget*>(ui->tabDB->widget(j));
+
+        if (tmpTabView)
+            tmpTabView->SetTabIndex(j);
+
+        ProcEvents();
+
+        //run STIGEdit tests
+        std::cout << "\tTest " << step++ << ": Running STIG Editing" << std::endl;
+        if (tmpTabView)
+        {
+            tmpTabView->RunTests(); //will delete tab
+        }
+        ProcEvents();
+    }
+
     // severity override
     {
         std::cout << "Test " << step++ << ": Severity Override" << std::endl;
