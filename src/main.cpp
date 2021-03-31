@@ -75,9 +75,10 @@ int main(int argc, char *argv[])
         }
 
         {
-            std::cout << "Test " << ++onTest << ": Increase Log Level" << std::endl;
+            std::cout << "Test " << ++onTest << ": Increase Log Level & set supplements" << std::endl;
             DbManager db;
             db.UpdateVariable(QStringLiteral("loglevel"), QStringLiteral("99"));
+            db.UpdateVariable(QStringLiteral("indexSupplements"), QStringLiteral("y"));
         }
 
         std::cout << "Test " << ++onTest << ": Waiting for version check to complete." << std::endl;
