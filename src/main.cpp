@@ -96,6 +96,15 @@ int main(int argc, char *argv[])
             a.processEvents();
         }
 
+        {
+            std::cout << "Test " << ++onTest << ": Update a CCI" << std::endl;
+            DbManager db;
+            CCI cci = db.GetCCIByCCI(366);
+            cci.definition.append(QStringLiteral(" (edited)"));
+            db.UpdateCCI(cci);
+            a.processEvents();
+        }
+
         std::cout << "Test " << ++onTest << ": Include STIG Supplements" << std::endl;
         QMetaObject::invokeMethod(&w, "SupplementsChanged", Qt::DirectConnection, Q_ARG(int, Qt::Checked));
         while (!w.isProcessingEnabled())
@@ -144,6 +153,15 @@ int main(int argc, char *argv[])
                 wd.AddAsset(asset);
             }
             wd.process();
+            a.processEvents();
+        }
+
+        {
+            std::cout << "Test " << ++onTest << ": Hasing DB" << std::endl;
+            DbManager db;
+            auto hashInfo = db.HashDB();
+            if (hashInfo.isNull() || hashInfo.isEmpty())
+                std::cout << "Hashing failed." << std::endl;
             a.processEvents();
         }
 
