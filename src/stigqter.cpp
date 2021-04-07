@@ -33,6 +33,7 @@
 #include "workerfindingsreport.h"
 #include "workerimportemass.h"
 #include "workermapunmapped.h"
+#include "workerpoamreport.h"
 #include "workerstigadd.h"
 #include "workerstigdelete.h"
 #include "workerstigdownload.h"
@@ -419,6 +420,11 @@ void STIGQter::RunTests()
     FindingsReport(QStringLiteral("tests/DFR.xlsx"));
     ProcEvents();
 
+    // export POAM Report
+    std::cout << "\tTest " << step++ << ": POAM Report" << std::endl;
+    POAMTemplate(QStringLiteral("tests/POAM.xlsx"));
+    ProcEvents();
+
     // export HTML
     std::cout << "\tTest " << step++ << ": HTML Checklists" << std::endl;
     ExportHTML(QStringLiteral("tests"));
@@ -486,6 +492,29 @@ void STIGQter::OpenCKL()
         av->SetTabIndex(index);
         ui->tabDB->setCurrentIndex(index);
     }
+}
+
+/**
+ * @brief STIGQter::FindingsReport
+ *
+ * Create a detailed findings report to make the findings data more
+ * human-readable.
+ */
+void STIGQter::POAMTemplate(const QString &fileName)
+{
+    DbManager db;
+    QString fn = !fileName.isEmpty() ? fileName : QFileDialog::getSaveFileName(this,
+        QStringLiteral("Save POA&M Template"), db.GetVariable(QStringLiteral("lastdir")), QStringLiteral("Microsoft Excel (*.xlsx)"));
+
+    if (fn.isNull() || fn.isEmpty())
+        return; // cancel button pressed
+
+    db.UpdateVariable(QStringLiteral("lastdir"), QFileInfo(fn).absolutePath());
+    DisableInput();
+    auto *f = new WorkerPOAMReport();
+    f->SetReportName(fn);
+
+    ConnectThreads(f)->start();
 }
 
 /**

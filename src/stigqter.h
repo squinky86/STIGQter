@@ -76,6 +76,7 @@ private Q_SLOTS:
     void Load(const QString &fileName = QString());
     void MapUnmapped(bool confirm = false);
     void OpenCKL();
+    void POAMTemplate(const QString &fileName = QString());
     void RemapChanged(int checkState);
     void RenameTab(int index, const QString &title);
     bool Reset(bool checkOnly = false);

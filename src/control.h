@@ -57,6 +57,8 @@ public:
     }
 };
 
+bool operator==(Control const& lhs, Control const& rhs);
+
 Q_DECLARE_METATYPE(Control);
 
 [[nodiscard]] QString PrintControl(const Control &control);

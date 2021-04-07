@@ -73,6 +73,7 @@ SOURCES += \
     src/workerhtml.cpp \
     src/workerimportemass.cpp \
     src/workermapunmapped.cpp \
+    src/workerpoamreport.cpp \
     src/workerstigadd.cpp \
     src/workerstigdelete.cpp \
     src/workerstigdownload.cpp
@@ -108,6 +109,7 @@ HEADERS += \
     src/workerhtml.h \
     src/workerimportemass.h \
     src/workermapunmapped.h \
+    src/workerpoamreport.h \
     src/workerstigadd.h \
     src/workerstigdelete.h \
     src/workerstigdownload.h

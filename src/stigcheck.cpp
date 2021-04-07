@@ -216,6 +216,18 @@ QString GetSeverity(Severity severity, bool cat)
 }
 
 /**
+ * @brief STIGCheck::operator==
+ * @param right
+ * @return @c True when the @a STIGCheck entities refer to the same
+ * @a STIGCheck. Otherwise, @c false.
+ */
+bool operator==(STIGCheck const& lhs, STIGCheck const& rhs)
+{
+    return ((lhs.rule.compare(rhs.rule, Qt::CaseInsensitive) == 0) &&
+           (lhs.ruleVersion.compare(rhs.ruleVersion, Qt::CaseInsensitive) == 0) );
+}
+
+/**
  * @brief PrintSTIGCheck
  * @param stigCheck
  * @return A human-readable @a STIGCheck representation.

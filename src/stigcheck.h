@@ -78,6 +78,8 @@ public:
     bool isRemap;
 };
 
+bool operator==(STIGCheck const& lhs, STIGCheck const& rhs);
+
 Q_DECLARE_METATYPE(STIGCheck);
 
 [[nodiscard]] QString PrintSTIGCheck(const STIGCheck &stigCheck);

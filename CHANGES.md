@@ -1,4 +1,7 @@
-## 1.1.1
+## 1.1.2
+-   Add POA&M report (fixes #94)
+
+## 1.1.1 20210323
 -   Build monolithic CKLs (fixes #91)
 -   Don't block UI when on a disconnected system (fixes #92)
 -   New location for RMF controls (fixes #93)

@@ -100,6 +100,17 @@ Control& Control::operator=(const Control &right)
 }
 
 /**
+ * @brief Control::operator==
+ * @param right
+ * @return @c True when the @a Control entities refer to the same
+ * @a Control. Otherwise, @c false.
+ */
+bool operator==(Control const& lhs, Control const& rhs)
+{
+    return (PrintControl(lhs).compare(PrintControl(rhs), Qt::CaseInsensitive) == 0);
+}
+
+/**
  * @brief PrintControl
  * @param control
  * @return Human-readable @a Control
