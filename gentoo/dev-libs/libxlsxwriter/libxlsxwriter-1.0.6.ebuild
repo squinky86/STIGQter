@@ -1,4 +1,4 @@
-# Copyright 1999-2020 Gentoo Foundation
+# Copyright 1999-2021 Gentoo Foundation
 # Distributed under the terms of the GNU General Public License v2
 
 EAPI=7
@@ -12,7 +12,7 @@ SRC_URI="https://github.com/jmcnamara/libxlsxwriter/archive/RELEASE_${PV}.tar.gz
 LICENSE="BSD-2"
 SLOT="0"
 KEYWORDS="~amd64 ~x86"
-IUSE="minizip static-libs"
+IUSE="minizip openssl static-libs"
 S="${WORKDIR}/${PN}-RELEASE_${PV}"
 
 DEPEND="sys-libs/zlib
@@ -23,7 +23,7 @@ src_prepare() {
 	for x in $(l10n_get_locales); do
 		if ! [[ "${x}" =~ ^en* ]]; then
 			#non-english locale detected; apply l10n patch
-			epatch "${FILESDIR}/libxlsxwriter-0.9.3-double-function.patch"
+			epatch "${FILESDIR}/libxlsxwriter-1.0.6-double-function.patch"
 			break
 		fi
 	done
@@ -34,6 +34,7 @@ src_configure() {
 	local mycmakeargs=(
 		-DCMAKE_BUILD_TYPE=Release
 		-DUSE_SYSTEM_MINIZIP="$(usex minizip)"
+		-DUSE_OPENSSL_MD5="$(usex openssl OFF ON)"
 		-DBUILD_SHARED_LIBS="$(usex static-libs OFF ON)"
 		-DUSE_DOUBLE_FUNCTION=ON
 	)
