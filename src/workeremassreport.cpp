@@ -348,7 +348,7 @@ void WorkerEMASSReport::process()
     Q_EMIT updateStatus(QStringLiteral("Writing workbook…"));
 
     //filter on column 1
-    worksheet_autofilter(ws, 5, 0, onRow, 17);
+    worksheet_autofilter(ws, 5, 0, onRow, 18);
 
     //close and write the workbook
     workbook_close(wb);
