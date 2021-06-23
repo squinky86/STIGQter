@@ -1,5 +1,6 @@
 ## 1.1.2
 -   Add POA&M report (fixes #94)
+-   Fix eMASS TRExport (fixes #96)
 
 ## 1.1.1 20210323
 -   Build monolithic CKLs (fixes #91)
