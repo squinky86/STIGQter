@@ -369,7 +369,7 @@ void WorkerPOAMReport::process()
             //check if any CCI is NC
             Q_FOREACH (auto cci, c.GetCCIs())
             {
-                if (cci.importControlImplementationStatus.compare(QStringLiteral("Non-Compliant"), Qt::CaseInsensitive) != 0)
+                if (cci.importControlImplementationStatus.compare(QStringLiteral("Non-Compliant"), Qt::CaseInsensitive) == 0)
                 {
                     isNC = true;
                     break;
