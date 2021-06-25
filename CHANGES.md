@@ -1,4 +1,7 @@
-## 1.1.2
+## 1.1.3
+-   Fix POA&M issues (fixes #97)
+
+## 1.1.2 20210624
 -   Add POA&M report (fixes #94)
 -   Fix eMASS TRExport (fixes #96)
 
