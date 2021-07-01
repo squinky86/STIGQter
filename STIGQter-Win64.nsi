@@ -7,8 +7,13 @@ VIAddVersionKey /LANG=${LANG_ENGLISH} "ProductName" "STIGQter"
 VIAddVersionKey /LANG=${LANG_ENGLISH} "FileDescription" "Open Source STIGViewer Reimplementation"
 VIAddVersionKey /LANG=${LANG_ENGLISH} "LegalCopyright" "2018-2021 Jon Hood"
 VIAddVersionKey /LANG=${LANG_ENGLISH} "CompanyName" "Jon Hood"
+<<<<<<< HEAD
 VIAddVersionKey /LANG=${LANG_ENGLISH} "FileVersion" "1.1.3-1"
 VIProductVersion "1.1.3.0"
+=======
+VIAddVersionKey /LANG=${LANG_ENGLISH} "FileVersion" "1.1.2-1"
+VIProductVersion "1.1.2.0"
+>>>>>>> 4c739b2 (update versions)
 RequestExecutionLevel admin
 Section
 	${IfNot} ${RunningX64}
