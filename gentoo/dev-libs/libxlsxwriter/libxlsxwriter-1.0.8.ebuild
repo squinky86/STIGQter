@@ -20,23 +20,24 @@ DEPEND="sys-libs/zlib
 RDEPEND="${DEPEND}"
 
 src_prepare() {
-	for x in $(l10n_get_locales); do
-		if ! [[ "${x}" =~ ^en* ]]; then
-			#non-english locale detected; apply l10n patch
-			epatch "${FILESDIR}/libxlsxwriter-1.0.6-double-function.patch"
-			break
-		fi
-	done
 	cmake-utils_src_prepare
 }
 
 src_configure() {
+	DOUBLEFUNCTION=OFF
+	for x in $(l10n_get_locales); do
+		if ! [[ "${x}" =~ ^en* ]]; then
+			#non-english locale detected; apply double function fix
+			DOUBLEFUNCTION=ON
+			break
+		fi
+	done
 	local mycmakeargs=(
 		-DCMAKE_BUILD_TYPE=Release
 		-DUSE_SYSTEM_MINIZIP="$(usex minizip)"
 		-DUSE_OPENSSL_MD5="$(usex openssl OFF ON)"
 		-DBUILD_SHARED_LIBS="$(usex static-libs OFF ON)"
-		-DUSE_DOUBLE_FUNCTION=ON
+		-DUSE_DOUBLE_FUNCTION=${DOUBLEFUNCTION}
 	)
 	cmake-utils_src_configure
 }
