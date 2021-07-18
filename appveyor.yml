@@ -15,7 +15,7 @@ build_script:
 
     sudo apt-get install -y texlive-luatex texlive-latex-recommended texlive-latex-extra texlive-fonts-extra texlive-fonts-extra-links texlive-bibtex-extra biber gcc-mingw-w64-x86-64 g++-mingw-w64-x86-64 upx-ucl advancecomp
 
-    echo -e "set(CMAKE_SYSTEM_NAME Windows)\nset(TOOLCHAIN_PREFIX x86_64-w64-mingw32)\nset(CMAKE_C_COMPILER \${TOOLCHAIN_PREFIX}-gcc)\nset(CMAKE_CXX_COMPILER \${TOOLCHAIN_PREFIX}-g++)\nset(CMAKE_Fortran_COMPILER \${TOOLCHAIN_PREFIX}-gfortran)\nset(CMAKE_RC_COMPILER \${TOOLCHAIN_PREFIX}-windres)\nset(CMAKE_FIND_ROOT_PATH /usr/)\nset(CMAKE_FIND_ROOT_PATH_MODE_PROGRAM NEVER)\nset(CMAKE_FIND_ROOT_PATH_MODE_LIBRARY ONLY)\nset(CMAKE_FIND_ROOT_PATH_MODE_INCLUDE ONLY)\nset(CMAKE_C_FLAGS_RELEASE \"-m64 -Os -fomit-frame-pointer -fno-stack-protector\")\nset(CMAKE_CXX_FLAGS_RELEASE \"-m64 -Os -fomit-frame-pointer -fno-stack-protector\")" > /tmp/profile.cmake
+    echo -e "set(CMAKE_SYSTEM_NAME Windows)\nset(TOOLCHAIN_PREFIX x86_64-w64-mingw32)\nset(CMAKE_C_COMPILER \${TOOLCHAIN_PREFIX}-gcc)\nset(CMAKE_CXX_COMPILER \${TOOLCHAIN_PREFIX}-g++)\nset(CMAKE_Fortran_COMPILER \${TOOLCHAIN_PREFIX}-gfortran)\nset(CMAKE_RC_COMPILER \${TOOLCHAIN_PREFIX}-windres)\nset(CMAKE_FIND_ROOT_PATH_MODE_PROGRAM NEVER)\nset(CMAKE_FIND_ROOT_PATH_MODE_LIBRARY ONLY)\nset(CMAKE_FIND_ROOT_PATH_MODE_INCLUDE ONLY)\nset(CMAKE_C_FLAGS_RELEASE \"-m64 -Os -fomit-frame-pointer -fno-stack-protector\")\nset(CMAKE_CXX_FLAGS_RELEASE \"-m64 -Os -fomit-frame-pointer -fno-stack-protector\")" > /tmp/profile.cmake
 
     pushd /tmp && wget https://zlib.net/zlib-1.2.11.tar.gz && tar -zxf zlib-1.2.11.tar.gz && popd
 
@@ -29,9 +29,9 @@ build_script:
 
     pushd /tmp/libzip-1.8.0 && cmake ./ -DCMAKE_TOOLCHAIN_FILE=/tmp/profile.cmake -DBUILD_SHARED_LIBS=OFF -DZLIB_INCLUDE_DIR=/tmp/zlib-1.2.11 -DZLIB_LIBRARY=/tmp/zlib-1.2.11/libzlibstatic.a -DENABLE_WINDOWS_CRYPTO=OFF && make -j3 && popd
 
-    pushd /tmp && wget https://github.com/jmcnamara/libxlsxwriter/archive/RELEASE_1.1.0.tar.gz && tar -zxf RELEASE_1.1.0.tar.gz && popd
+    pushd /tmp && wget https://github.com/jmcnamara/libxlsxwriter/archive/RELEASE_1.1.1.tar.gz && tar -zxf RELEASE_1.1.1.tar.gz && popd
 
-    pushd /tmp/libxlsxwriter-RELEASE_1.1.0 && cmake -DUSE_STANDARD_TMPFILE=OFF -DCMAKE_TOOLCHAIN_FILE=/tmp/profile.cmake -DBUILD_SHARED_LIBS=OFF -DZLIB_INCLUDE_DIR=/tmp/zlib-1.2.11 -DZLIB_LIBRARY=/tmp/zlib-1.2.11/libzlibstatic.a -DUSE_OPENSSL_MD5=ON -DCMAKE_C_FLAGS=-I/tmp/openssl-1.1.1k/include -DOPENSSL_ROOT_DIR=/tmp/openssl-1.1.1k && make -j3 && popd
+    pushd /tmp/libxlsxwriter-RELEASE_1.1.1 && cmake -DUSE_STANDARD_TMPFILE=OFF -DCMAKE_TOOLCHAIN_FILE=/tmp/profile.cmake -DBUILD_SHARED_LIBS=OFF -DZLIB_INCLUDE_DIR=/tmp/zlib-1.2.11 -DZLIB_LIBRARY=/tmp/zlib-1.2.11/libzlibstatic.a -DUSE_OPENSSL_MD5=ON -DCMAKE_C_FLAGS=-I/tmp/openssl-1.1.1k/include -DOPENSSL_ROOT_DIR=/tmp/openssl-1.1.1k && make -j3 && popd
 
     pushd /tmp && wget https://download.qt.io/official_releases/qt/5.15/5.15.2/submodules/qtbase-everywhere-src-5.15.2.tar.xz && tar -xf qtbase-everywhere-src-5.15.2.tar.xz && popd
 
@@ -43,9 +43,9 @@ build_script:
 
     sed -i -e '/^LIBS/d' STIGQter.pro
 
-    echo "LIBS += /tmp/libzip-1.8.0/lib/libzip.a /tmp/libxlsxwriter-RELEASE_1.1.0/libxlsxwriter.a /tmp/zlib-1.2.11/libzlibstatic.a" >> STIGQter.pro
+    echo "LIBS += /tmp/libzip-1.8.0/lib/libzip.a /tmp/libxlsxwriter-RELEASE_1.1.1/libxlsxwriter.a /tmp/zlib-1.2.11/libzlibstatic.a" >> STIGQter.pro
 
-    echo "INCLUDEPATH += /tmp/libzip-1.8.0/lib /tmp/libzip-1.8.0 /tmp/libxlsxwriter-RELEASE_1.1.0/include" >> STIGQter.pro
+    echo "INCLUDEPATH += /tmp/libzip-1.8.0/lib /tmp/libzip-1.8.0 /tmp/libxlsxwriter-RELEASE_1.1.1/include" >> STIGQter.pro
 
     /tmp/qt/bin/qmake STIGQter.pro
 

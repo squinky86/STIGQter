@@ -37,7 +37,7 @@ src_configure() {
 		-DUSE_SYSTEM_MINIZIP="$(usex minizip)"
 		-DUSE_OPENSSL_MD5="$(usex openssl OFF ON)"
 		-DBUILD_SHARED_LIBS="$(usex static-libs OFF ON)"
-		-DUSE_DOUBLE_FUNCTION=${DOUBLEFUNCTION}
+		-DUSE_DTOA_LIBRARY=${DOUBLEFUNCTION}
 	)
 	cmake-utils_src_configure
 }
