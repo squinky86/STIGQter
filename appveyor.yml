@@ -33,13 +33,13 @@ build_script:
 
     pushd /tmp/libxlsxwriter-RELEASE_1.1.1 && cmake -DUSE_STANDARD_TMPFILE=OFF -DCMAKE_TOOLCHAIN_FILE=/tmp/profile.cmake -DBUILD_SHARED_LIBS=OFF -DZLIB_INCLUDE_DIR=/tmp/zlib-1.2.11 -DZLIB_LIBRARY=/tmp/zlib-1.2.11/libzlibstatic.a -DUSE_OPENSSL_MD5=ON -DCMAKE_C_FLAGS=-I/tmp/openssl-1.1.1k/include -DOPENSSL_ROOT_DIR=/tmp/openssl-1.1.1k && make -j3 && popd
 
-    pushd /tmp && wget https://download.qt.io/official_releases/qt/5.15/5.15.2/submodules/qtbase-everywhere-src-5.15.2.tar.xz && tar -xf qtbase-everywhere-src-5.15.2.tar.xz && popd
+    pushd /tmp && git clone -b kde/5.15 --single-branch https://invent.kde.org/qt/qt/qtbase.git && popd
 
     sudo update-alternatives --set x86_64-w64-mingw32-gcc /usr/bin/x86_64-w64-mingw32-gcc-posix
 
     sudo update-alternatives --set x86_64-w64-mingw32-g++ /usr/bin/x86_64-w64-mingw32-g++-posix
 
-    pushd /tmp/qtbase-everywhere-src-5.15.2 && ./configure -prefix /tmp/qt -platform linux-g++-64 -xplatform win32-g++ -device-option CROSS_COMPILE=x86_64-w64-mingw32- -opensource -release -confirm-license -opengl desktop -mp -static -static-runtime -no-shared -qt-libpng -qt-libjpeg -qt-zlib -qt-pcre -no-compile-examples -nomake examples -no-icu -optimize-size -openssl-linked -I/tmp/openssl-1.1.1k/include && make -j3 && make install && popd
+    pushd /tmp/qtbase && ./configure -prefix /tmp/qt -platform linux-g++-64 -xplatform win32-g++ -device-option CROSS_COMPILE=x86_64-w64-mingw32- -opensource -release -confirm-license -opengl desktop -mp -static -static-runtime -no-shared -qt-libpng -qt-libjpeg -qt-zlib -qt-pcre -no-compile-examples -nomake examples -no-icu -optimize-size -openssl-linked -I/tmp/openssl-1.1.1k/include && make -j3 && make install && popd
 
     sed -i -e '/^LIBS/d' STIGQter.pro
 
