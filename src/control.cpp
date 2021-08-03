@@ -100,6 +100,21 @@ Control& Control::operator=(const Control &right)
 }
 
 /**
+ * @brief Control::IsImport
+ * @return @c True when a CCI has been imported under this control.
+ * Otherwise, @c false.
+ */
+bool Control::IsImport() const
+{
+    Q_FOREACH (auto cci, GetCCIs())
+    {
+        if (cci.isImport)
+            return true;
+    }
+    return false;
+}
+
+/**
  * @brief Control::operator==
  * @param right
  * @return @c True when the @a Control entities refer to the same

@@ -320,6 +320,12 @@ void WorkerPOAMReport::process()
     {
         Q_FOREACH (Control c, db.GetControls())
         {
+            //skip controls that are not part of the import
+            if (!c.IsImport())
+            {
+                continue;
+            }
+
             //skip controls that were already marked as failed
             if (failedControls.keys().contains(c))
             {
@@ -327,6 +333,7 @@ void WorkerPOAMReport::process()
             }
 
             bool isNA = true;
+
             //check if all CCIs are not applicable
             Q_FOREACH (auto cci, c.GetCCIs())
             {

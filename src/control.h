@@ -55,6 +55,7 @@ public:
         }
         return left.GetFamily().acronym < right.GetFamily().acronym;
     }
+    bool IsImport() const;
 };
 
 bool operator==(Control const& lhs, Control const& rhs);
