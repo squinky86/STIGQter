@@ -27,11 +27,11 @@ build_script:
 
     pushd /tmp && wget https://libzip.org/download/libzip-1.8.0.tar.gz && tar -zxf libzip-1.8.0.tar.gz && popd
 
-    pushd /tmp/libzip-1.8.0 && cmake ./ -DCMAKE_TOOLCHAIN_FILE=/tmp/profile.cmake -DBUILD_SHARED_LIBS=OFF -DZLIB_INCLUDE_DIR=/tmp/zlib-ng-2.0.5 -DZLIB_LIBRARY=/tmp/zlib-ng-2.0.5/libzlibstatic-ng.a -DENABLE_WINDOWS_CRYPTO=OFF && make -j3 && popd
+    pushd /tmp/libzip-1.8.0 && cmake ./ -DCMAKE_TOOLCHAIN_FILE=/tmp/profile.cmake -DBUILD_SHARED_LIBS=OFF -DZLIB_INCLUDE_DIR=/tmp/zlib-ng-2.0.5 -DZLIB_LIBRARY=/tmp/zlib-ng-2.0.5/libz.a -DENABLE_WINDOWS_CRYPTO=OFF && make -j3 && popd
 
     pushd /tmp && wget https://github.com/jmcnamara/libxlsxwriter/archive/RELEASE_1.1.1.tar.gz && tar -zxf RELEASE_1.1.1.tar.gz && popd
 
-    pushd /tmp/libxlsxwriter-RELEASE_1.1.1 && cmake -DUSE_STANDARD_TMPFILE=OFF -DCMAKE_TOOLCHAIN_FILE=/tmp/profile.cmake -DBUILD_SHARED_LIBS=OFF -DZLIB_INCLUDE_DIR=/tmp/zlib-ng-2.0.5 -DZLIB_LIBRARY=/tmp/zlib-ng-2.0.5/libzlibstatic-ng.a -DUSE_OPENSSL_MD5=ON -DCMAKE_C_FLAGS=-I/tmp/openssl-1.1.1k/include -DOPENSSL_ROOT_DIR=/tmp/openssl-1.1.1k && make -j3 && popd
+    pushd /tmp/libxlsxwriter-RELEASE_1.1.1 && cmake -DUSE_STANDARD_TMPFILE=OFF -DCMAKE_TOOLCHAIN_FILE=/tmp/profile.cmake -DBUILD_SHARED_LIBS=OFF -DZLIB_INCLUDE_DIR=/tmp/zlib-ng-2.0.5 -DZLIB_LIBRARY=/tmp/zlib-ng-2.0.5/libz.a -DUSE_OPENSSL_MD5=ON -DCMAKE_C_FLAGS=-I/tmp/openssl-1.1.1k/include -DOPENSSL_ROOT_DIR=/tmp/openssl-1.1.1k && make -j3 && popd
 
     pushd /tmp && git clone -b kde/5.15 --single-branch https://invent.kde.org/qt/qt/qtbase.git && popd
 
@@ -43,7 +43,7 @@ build_script:
 
     sed -i -e '/^LIBS/d' STIGQter.pro
 
-    echo "LIBS += /tmp/libzip-1.8.0/lib/libzip.a /tmp/libxlsxwriter-RELEASE_1.1.1/libxlsxwriter.a /tmp/zlib-ng-2.0.5/libzlibstatic-ng.a" >> STIGQter.pro
+    echo "LIBS += /tmp/libzip-1.8.0/lib/libzip.a /tmp/libxlsxwriter-RELEASE_1.1.1/libxlsxwriter.a /tmp/zlib-ng-2.0.5/libz.a" >> STIGQter.pro
 
     echo "INCLUDEPATH += /tmp/libzip-1.8.0/lib /tmp/libzip-1.8.0 /tmp/libxlsxwriter-RELEASE_1.1.1/include" >> STIGQter.pro
 
