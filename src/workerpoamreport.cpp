@@ -68,8 +68,9 @@ void WorkerPOAMReport::process()
 
     QVector<CKLCheck> checks = db.GetCKLChecks();
     QMap<Control, QPair<Severity, QVector<STIGCheck>>> failedControls;
+    QMap<CCI, QPair<Severity, QVector<STIGCheck>>> failedCCIs;
     int numChecks = checks.count();
-    Q_EMIT initialize(numChecks+2, 0);
+    Q_EMIT initialize(numChecks+3, 0);
 
     //current date in eMASS format
     QString curDate = QDate::currentDate().toString(QStringLiteral("dd-MMM-yyyy"));
@@ -231,7 +232,7 @@ void WorkerPOAMReport::process()
 
     Q_EMIT progress(-1);
 
-    Q_EMIT updateStatus("Finding non-compliant technical controls...");
+    Q_EMIT updateStatus("Finding non-compliant technical Checks...");
 
     //build list of non-compliant controls
     Q_FOREACH(auto a, checks)
@@ -243,23 +244,106 @@ void WorkerPOAMReport::process()
             auto ccis = tmpCheck.GetCCIs();
             Q_FOREACH(auto cci, ccis)
             {
-                auto tmpControl = cci.GetControl();
-
-                if (!failedControls.keys().contains(tmpControl))
-                    failedControls.insert(tmpControl, {Severity::none, {}});
-
-                if (failedControls[tmpControl].first < tmpSeverity)
+                //check if CCI is imported from eMASS or not
+                if (cci.importApNum.isEmpty())
                 {
-                    failedControls[tmpControl].first = tmpSeverity;
-                }
+                    //The CCI was not imported - add the finding at the control level
+                    auto tmpControl = cci.GetControl();
 
-                if (!failedControls[tmpControl].second.contains(tmpCheck))
-                    failedControls[tmpControl].second.append(tmpCheck);
+                    if (!failedControls.keys().contains(tmpControl))
+                        failedControls.insert(tmpControl, {Severity::none, {}});
+
+                    if (failedControls[tmpControl].first < tmpSeverity)
+                    {
+                        failedControls[tmpControl].first = tmpSeverity;
+                    }
+
+                    if (!failedControls[tmpControl].second.contains(tmpCheck))
+                        failedControls[tmpControl].second.append(tmpCheck);
+                }
+                else
+                {
+                    //The CCI was imported - add the finding at the cci level
+                    if (failedCCIs.keys().contains(cci))
+                    {
+                        failedCCIs.insert(cci, {Severity::none, {}});
+                    }
+
+                    //set the severity of the CCI if it is now higher
+                    if (failedCCIs[cci].first < tmpSeverity)
+                    {
+                        failedCCIs[cci].first = tmpSeverity;
+                    }
+
+                    if (!failedCCIs[cci].second.contains(tmpCheck))
+                        failedCCIs[cci].second.append(tmpCheck);
+                }
             }
         }
     }
 
     unsigned onRow = 7;
+
+    Q_EMIT progress(-1);
+
+    Q_EMIT updateStatus("Finding non-compliant technical CCIs...");
+
+    //write non-compliant ccis
+    QMap<CCI, QPair<Severity, QVector<STIGCheck>>>::const_iterator j = failedCCIs.constBegin();
+    while (j != failedCCIs.constEnd())
+    {
+        CCI tmpCCI = j.key();
+        Control tmpControl = tmpCCI.GetControl();
+        worksheet_write_string(ws, onRow, 1, QString::number(onRow-6).toStdString().c_str(), nullptr);
+        worksheet_write_string(ws, onRow, 2, (tmpControl.title + QStringLiteral(" failed STIG checks")).toStdString().c_str(), nullptr);
+        worksheet_write_string(ws, onRow, 3, tmpCCI.importApNum.toStdString().c_str(), nullptr);
+        QString tmpFailed;
+        Q_FOREACH(auto check, j->second)
+        {
+            if (!tmpFailed.isEmpty())
+                tmpFailed += QStringLiteral("\r\n");
+            tmpFailed += PrintSTIGCheck(check);
+        }
+        if (!tmpFailed.isEmpty())
+            worksheet_write_string(ws, onRow, 5, tmpFailed.toStdString().c_str(), nullptr);
+        worksheet_write_string(ws, onRow, 10, stigqterName.toStdString().c_str(), nullptr);
+        worksheet_write_string(ws, onRow, 11, "Ongoing", nullptr);
+        worksheet_write_string(ws, onRow, 12, "The referenced STIG checks were identified as OPEN.", nullptr);
+        QString tmpSeverity = "";
+        QString residualLevel = "";
+        switch (j->first)
+        {
+        case (Severity::high):
+            tmpSeverity = "I";
+            residualLevel = "High";
+            break;
+        case (Severity::medium):
+            tmpSeverity = "II";
+            residualLevel = "Moderate";
+            break;
+        case (Severity::low):
+            tmpSeverity = "III";
+            residualLevel = "Low";
+            break;
+        case (Severity::none):
+            residualLevel = "Very Low";
+            break;
+        }
+
+        worksheet_write_string(ws, onRow, 13, tmpSeverity.toStdString().c_str(), nullptr);
+        worksheet_write_string(ws, onRow, 15, residualLevel.toStdString().c_str(), nullptr);
+        worksheet_write_string(ws, onRow, 17, residualLevel.toStdString().c_str(), nullptr);
+        worksheet_write_string(ws, onRow, 18, residualLevel.toStdString().c_str(), nullptr);
+        worksheet_write_string(ws, onRow, 20, residualLevel.toStdString().c_str(), nullptr);
+
+        ++j;
+        ++onRow;
+        Q_EMIT progress(-1);
+    }
+
+    Q_EMIT progress(-1);
+
+    Q_EMIT updateStatus("Finding non-compliant technical Controls...");
 
     //write non-compliant controls
     QMap<Control, QPair<Severity, QVector<STIGCheck>>>::const_iterator i = failedControls.constBegin();
