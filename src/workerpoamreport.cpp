@@ -264,7 +264,7 @@ void WorkerPOAMReport::process()
                 else
                 {
                     //The CCI was imported - add the finding at the cci level
-                    if (failedCCIs.keys().contains(cci))
+                    if (!failedCCIs.keys().contains(cci))
                     {
                         failedCCIs.insert(cci, {Severity::none, {}});
                     }
