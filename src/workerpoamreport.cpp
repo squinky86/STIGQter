@@ -499,7 +499,7 @@ void WorkerPOAMReport::process()
                         worksheet_write_string(ws, onRow, 3, cci.importApNum.toStdString().c_str(), nullptr);
                         worksheet_write_string(ws, onRow, 10, stigqterName.toStdString().c_str(), nullptr);
                         worksheet_write_string(ws, onRow, 11, "Ongoing", nullptr);
-                        worksheet_write_string(ws, onRow, 12, cci.importNarrative, nullptr);
+                        worksheet_write_string(ws, onRow, 12, cci.importNarrative.toStdString().c_str(), nullptr);
                         worksheet_write_string(ws, onRow, 15, "Low", nullptr);
                         worksheet_write_string(ws, onRow, 17, "Low", nullptr);
                         worksheet_write_string(ws, onRow, 18, "Low", nullptr);
