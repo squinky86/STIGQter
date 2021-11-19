@@ -34,6 +34,7 @@ private:
 public:
     explicit WorkerPOAMReport(QObject *parent = nullptr);
     void SetReportName(const QString &fileName);
+    void SetAPNums(const bool apNums = false);
 
 public Q_SLOTS:
     void process() override;

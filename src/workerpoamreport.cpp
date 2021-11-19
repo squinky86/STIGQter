@@ -54,6 +54,18 @@ void WorkerPOAMReport::SetReportName(const QString &fileName)
 }
 
 /**
+ * @brief WorkerPOAMReport::SetAPNums
+ * @param apNums
+ *
+ * Set whether to generate the report at the AP level rather than
+ * the @a Control level
+ */
+void WorkerPOAMReport::SetAPNums(const bool apNums)
+{
+    _apNums = apNums;
+}
+
+/**
  * @brief WorkerPOAMReport::process
  *
  * Write the report to the selected file location. The spreadsheet is
@@ -245,7 +257,7 @@ void WorkerPOAMReport::process()
             Q_FOREACH(auto cci, ccis)
             {
                 //check if CCI is imported from eMASS or not
-                if (cci.importApNum.isEmpty())
+                if (!_apNums || cci.importApNum.isEmpty())
                 {
                     //The CCI was not imported - add the finding at the control level
                     auto tmpControl = cci.GetControl();
@@ -295,7 +307,7 @@ void WorkerPOAMReport::process()
         CCI tmpCCI = j.key();
         Control tmpControl = tmpCCI.GetControl();
         worksheet_write_string(ws, onRow, 1, QString::number(onRow-6).toStdString().c_str(), nullptr);
-        worksheet_write_string(ws, onRow, 2, (tmpControl.title + QStringLiteral(" failed STIG checks")).toStdString().c_str(), nullptr);
+        worksheet_write_string(ws, onRow, 2, (PrintCCI(tmpCCI) + QStringLiteral(" failed STIG checks")).toStdString().c_str(), nullptr);
         worksheet_write_string(ws, onRow, 3, tmpCCI.importApNum.toStdString().c_str(), nullptr);
         QString tmpFailed;
         Q_FOREACH(auto check, j->second)
@@ -416,31 +428,49 @@ void WorkerPOAMReport::process()
                 continue;
             }
 
-            bool isNA = true;
-
-            //check if all CCIs are not applicable
-            Q_FOREACH (auto cci, c.GetCCIs())
+            //check for NAs at the CCI level
+            if (_apNums)
             {
-                if (cci.importControlImplementationStatus.compare(QStringLiteral("Not Applicable"), Qt::CaseInsensitive) != 0)
+                Q_FOREACH (auto cci, c.GetCCIs())
                 {
-                    isNA = false;
-                    break;
+                    worksheet_write_string(ws, onRow, 1, QString::number(onRow-6).toStdString().c_str(), nullptr);
+                    worksheet_write_string(ws, onRow, 2, (PrintCCI(cci) + QStringLiteral(" is marked NA")).toStdString().c_str(), nullptr);
+                    worksheet_write_string(ws, onRow, 3, cci.importApNum.toStdString().c_str(), nullptr);
+                    worksheet_write_string(ws, onRow, 10, stigqterName.toStdString().c_str(), nullptr);
+                    worksheet_write_string(ws, onRow, 11, "Not Applicable", nullptr);
+                    worksheet_write_string(ws, onRow, 12, "The NA justification will be stored in the Security Plan", nullptr);
+
+                    ++onRow;
                 }
             }
-            if (isNA)
+            else
             {
-                worksheet_write_string(ws, onRow, 1, QString::number(onRow-6).toStdString().c_str(), nullptr);
-                worksheet_write_string(ws, onRow, 2, (c.title + QStringLiteral(" is marked NA")).toStdString().c_str(), nullptr);
-                worksheet_write_string(ws, onRow, 3, PrintControl(c).toStdString().c_str(), nullptr);
-                worksheet_write_string(ws, onRow, 10, stigqterName.toStdString().c_str(), nullptr);
-                worksheet_write_string(ws, onRow, 11, "Not Applicable", nullptr);
-                worksheet_write_string(ws, onRow, 12, "The NA justification will be stored in the Security Plan", nullptr);
+                //this is a control-level POA&M
+                bool isNA = true;
 
-                ++onRow;
-                Q_EMIT progress(-1);
+                //check if all CCIs are not applicable
+                Q_FOREACH (auto cci, c.GetCCIs())
+                {
+                    if (cci.importControlImplementationStatus.compare(QStringLiteral("Not Applicable"), Qt::CaseInsensitive) != 0)
+                    {
+                        isNA = false;
+                        break;
+                    }
+                }
+                if (isNA)
+                {
+                    worksheet_write_string(ws, onRow, 1, QString::number(onRow-6).toStdString().c_str(), nullptr);
+                    worksheet_write_string(ws, onRow, 2, (c.title + QStringLiteral(" is marked NA")).toStdString().c_str(), nullptr);
+                    worksheet_write_string(ws, onRow, 3, PrintControl(c).toStdString().c_str(), nullptr);
+                    worksheet_write_string(ws, onRow, 10, stigqterName.toStdString().c_str(), nullptr);
+                    worksheet_write_string(ws, onRow, 11, "Not Applicable", nullptr);
+                    worksheet_write_string(ws, onRow, 12, "The NA justification will be stored in the Security Plan", nullptr);
+
+                    ++onRow;
+                }
             }
+            Q_EMIT progress(-1);
         }
-
     }
 
     Q_EMIT updateStatus("Finding self-assessed NC controls...");
@@ -462,26 +492,44 @@ void WorkerPOAMReport::process()
             {
                 if (cci.importControlImplementationStatus.compare(QStringLiteral("Non-Compliant"), Qt::CaseInsensitive) == 0)
                 {
-                    isNC = true;
-                    break;
+                    if (_apNums && cci.isImport)
+                    {
+                        worksheet_write_string(ws, onRow, 1, QString::number(onRow-6).toStdString().c_str(), nullptr);
+                        worksheet_write_string(ws, onRow, 2, (PrintCCI(cci) + QStringLiteral(" is marked NA")).toStdString().c_str(), nullptr);
+                        worksheet_write_string(ws, onRow, 3, cci.importApNum.toStdString().c_str(), nullptr);
+                        worksheet_write_string(ws, onRow, 10, stigqterName.toStdString().c_str(), nullptr);
+                        worksheet_write_string(ws, onRow, 11, "Ongoing", nullptr);
+                        worksheet_write_string(ws, onRow, 12, cci.importNarrative, nullptr);
+                        worksheet_write_string(ws, onRow, 15, "Low", nullptr);
+                        worksheet_write_string(ws, onRow, 17, "Low", nullptr);
+                        worksheet_write_string(ws, onRow, 18, "Low", nullptr);
+                        worksheet_write_string(ws, onRow, 20, "Low", nullptr);
+
+                        ++onRow;
+                    }
+                    else
+                    {
+                        isNC = true;
+                    }
                 }
             }
             if (isNC)
             {
+                //should only trigger if a non-imported CCI is non-compliant
                 worksheet_write_string(ws, onRow, 1, QString::number(onRow-6).toStdString().c_str(), nullptr);
                 worksheet_write_string(ws, onRow, 2, (c.title + QStringLiteral(" is marked NA")).toStdString().c_str(), nullptr);
                 worksheet_write_string(ws, onRow, 3, PrintControl(c).toStdString().c_str(), nullptr);
                 worksheet_write_string(ws, onRow, 10, stigqterName.toStdString().c_str(), nullptr);
                 worksheet_write_string(ws, onRow, 11, "Ongoing", nullptr);
-                worksheet_write_string(ws, onRow, 12, "CCIs were self-assessed as non-compliant.", nullptr);
+                worksheet_write_string(ws, onRow, 12, "CCIs are self-assessed as non-compliant.", nullptr);
                 worksheet_write_string(ws, onRow, 15, "Low", nullptr);
                 worksheet_write_string(ws, onRow, 17, "Low", nullptr);
                 worksheet_write_string(ws, onRow, 18, "Low", nullptr);
                 worksheet_write_string(ws, onRow, 20, "Low", nullptr);
 
                 ++onRow;
-                Q_EMIT progress(-1);
             }
+            Q_EMIT progress(-1);
         }
 
     }

@@ -495,12 +495,11 @@ void STIGQter::OpenCKL()
 }
 
 /**
- * @brief STIGQter::FindingsReport
+ * @brief STIGQter::POAMTemplate
  *
- * Create a detailed findings report to make the findings data more
- * human-readable.
+ * Create a POA&M template at the CCI/APNum level or Control level
  */
-void STIGQter::POAMTemplate(const QString &fileName)
+void STIGQter::POAMTemplate(const QString &fileName, bool APNumLevel)
 {
     DbManager db;
     QString fn = !fileName.isEmpty() ? fileName : QFileDialog::getSaveFileName(this,
@@ -513,8 +512,19 @@ void STIGQter::POAMTemplate(const QString &fileName)
     DisableInput();
     auto *f = new WorkerPOAMReport();
     f->SetReportName(fn);
+    f->SetAPNums(APNumLevel);
 
     ConnectThreads(f)->start();
+}
+
+/**
+ * @brief STIGQter::POAMTemplateControl
+ *
+ * Create a POA&M template at the Control level
+ */
+void STIGQter::POAMTemplateControl(const QString &fileName)
+{
+    POAMTemplate(fileName, false);
 }
 
 /**
