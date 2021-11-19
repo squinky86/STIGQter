@@ -38,7 +38,7 @@
  *
  * Default constructor.
  */
-WorkerPOAMReport::WorkerPOAMReport(QObject *parent) : Worker(parent), _fileName()
+WorkerPOAMReport::WorkerPOAMReport(QObject *parent) : Worker(parent), _fileName(), _apNums(true)
 {
 }
 

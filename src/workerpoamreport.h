@@ -30,6 +30,7 @@ class WorkerPOAMReport : public Worker
 
 private:
     QString _fileName;
+    bool _apNums;
 
 public:
     explicit WorkerPOAMReport(QObject *parent = nullptr);
