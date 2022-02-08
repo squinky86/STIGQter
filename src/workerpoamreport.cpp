@@ -198,7 +198,7 @@ void WorkerPOAMReport::process()
     worksheet_merge_range(ws, 4, 3, 4, 8, "", nullptr);
 
     //POC Phone
-    worksheet_write_string(ws, 4, 9, "POC Name: ", fmtGrayBGRight);
+    worksheet_write_string(ws, 4, 9, "POC Phone: ", fmtGrayBGRight);
     worksheet_merge_range(ws, 4, 10, 4, 11, "", nullptr);
 
     //Security Costs
