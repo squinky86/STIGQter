@@ -50,7 +50,7 @@ public:
 
     bool AddAsset(Asset &asset);
     bool AddCCI(CCI &cci, bool check = true);
-    bool AddControl(const QString &control, const QString &title, const QString &description);
+    bool AddControl(const QString &control, const QString &title, const QString &description, const QString &importSeverity = QString(), const QString &importRelevanceOfThreat = QString(), const QString &importLikelihood = QString(), const QString &importImpact = QString(), const QString &importImpactDescription = QString(), const QString &importResidualRiskLevel = QString(), const QString &importRecommendations = QString());
     bool AddFamily(const QString &acronym, const QString &description);
     bool AddSTIG(STIG &stig, const QVector<STIGCheck> &checks, const QVector<Supplement> &supplements = {}, bool stigExists = false);
     bool AddSTIGToAsset(const STIG &stig, const Asset &asset);
@@ -117,6 +117,7 @@ public:
     bool UpdateAsset(const Asset &asset);
     bool UpdateCCI(const CCI &cci);
     bool UpdateCKLCheck(const CKLCheck &check);
+    bool UpdateControl(const Control &control);
     bool UpdateSTIG(const STIG &stig);
     bool UpdateSTIGCheck(const STIGCheck &check);
     bool UpdateVariable(const QString &name, const QString &value);

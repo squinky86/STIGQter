@@ -42,6 +42,13 @@ public:
     int enhancement;
     QString title;
     QString description;
+    QString importSeverity;
+    QString importRelevanceOfThreat;
+    QString importLikelihood;
+    QString importImpact;
+    QString importImpactDescription;
+    QString importResidualRiskLevel;
+    QString importRecommendations;
     Control& operator=(const Control &right);
     friend bool operator<(const Control &left, const Control &right)
     {

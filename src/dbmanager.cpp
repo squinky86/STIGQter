@@ -373,6 +373,13 @@ bool DbManager::AddCCI(CCI &cci, bool check)
  * @param control
  * @param title
  * @param description
+ * @param importSeverity
+ * @param importRelevanceOfThreat
+ * @param importLikelihood
+ * @param importImpact
+ * @param importImpactDescription
+ * @param importResidualRiskLevel
+ * @param importRecommendations
  * @return @c True when the @a Control is added to the database,
  * @c false when the @a Control is already part of the database or
  * has not been added.
@@ -383,7 +390,7 @@ bool DbManager::AddCCI(CCI &cci, bool check)
  * useful when receiving new @a Controls formatted in human-readable
  * format from an external data source.
  */
-bool DbManager::AddControl(const QString &control, const QString &title, const QString &description)
+bool DbManager::AddControl(const QString &control, const QString &title, const QString &description, const QString &importSeverity, const QString &importRelevanceOfThreat, const QString &importLikelihood, const QString &importImpact, const QString &importImpactDescription, const QString &importResidualRiskLevel, const QString &importRecommendations)
 {
     bool ret = false;
 
@@ -431,7 +438,7 @@ bool DbManager::AddControl(const QString &control, const QString &title, const Q
             if (CheckDatabase(db))
             {
                 QSqlQuery q(db);
-                q.prepare(QStringLiteral("INSERT INTO Control (FamilyId, number, enhancement, title, description) VALUES(:FamilyId, :number, :enhancement, :title, :description)"));
+                q.prepare(QStringLiteral("INSERT INTO Control (FamilyId, number, enhancement, title, description, importSeverity, importRelevanceOfThreat, importLikelihood, importImpact, importImpactDescription, importResidualRiskLevel, importRecommendations) VALUES(:FamilyId, :number, :enhancement, :title, :description, :importSeverity, :importRelevanceOfThreat, :importLikelihood, :importImpact, :importImpactDescription, :importResidualRiskLevel, :importRecommendations)"));
                 q.bindValue(QStringLiteral(":FamilyId"), f.id);
                 q.bindValue(QStringLiteral(":number"), tmpControl.toInt());
                 q.bindValue(QStringLiteral(":enhancement"), enhancement.isEmpty() ? QVariant(QVariant::Int) : enhancement.toInt());
@@ -1931,7 +1938,7 @@ QVector<Control> DbManager::GetControls(const QString &whereClause, const QVecto
     if (CheckDatabase(db))
     {
         QSqlQuery q(db);
-        QString toPrep = QStringLiteral("SELECT Control.id, Control.FamilyId, Control.number, Control.enhancement, Control.title, Control.description FROM Control JOIN Family ON Family.id = Control.FamilyId");
+        QString toPrep = QStringLiteral("SELECT Control.id, Control.FamilyId, Control.number, Control.enhancement, Control.title, Control.description, Control.importSeverity, Control.importRelevanceOfThreat, Control.importLikelihood, Control.importImpact, Control.importImpactDescription, Control.importResidualRiskLevel, Control.importRecommendations FROM Control JOIN Family ON Family.id = Control.FamilyId");
         if (!whereClause.isNull() && !whereClause.isEmpty())
             toPrep.append(" " + whereClause);
         toPrep.append(QStringLiteral(" ORDER BY Family.acronym, Control.number, Control.enhancement"));
@@ -1953,6 +1960,13 @@ QVector<Control> DbManager::GetControls(const QString &whereClause, const QVecto
             c.enhancement = q.value(3).isNull() ? -1 : q.value(3).toInt();
             c.title = q.value(4).toString();
             c.description = q.value(5).toString();
+	    c.importSeverity = q.value(6).toString();
+	    c.importRelevanceOfThreat = q.value(7).toString();
+	    c.importLikelihood = q.value(8).toString();
+	    c.importImpact = q.value(9).toString();
+	    c.importImpactDescription = q.value(10).toString();
+	    c.importResidualRiskLevel = q.value(11).toString();
+	    c.importRecommendations = q.value(12).toString();
             ret.append(c);
         }
     }
@@ -2853,6 +2867,25 @@ bool DbManager::UpdateDatabaseFromVersion(int version)
             q.bindValue(QStringLiteral(":value"), QStringLiteral("true"));
             ret = q.exec() && ret;
             ret = UpdateVariable(QStringLiteral("version"), QStringLiteral("6")) && ret;
+        }
+        if (version < 7)
+        {
+                QSqlQuery q(db);
+                q.prepare(QStringLiteral("ALTER TABLE Control ADD COLUMN importSeverity TEXT"));
+                ret = q.exec() && ret;
+                q.prepare(QStringLiteral("ALTER TABLE Control ADD COLUMN importRelevanceOfThreat TEXT"));
+                ret = q.exec() && ret;
+                q.prepare(QStringLiteral("ALTER TABLE Control ADD COLUMN importLikelihood TEXT"));
+                ret = q.exec() && ret;
+                q.prepare(QStringLiteral("ALTER TABLE Control ADD COLUMN importImpact TEXT"));
+                ret = q.exec() && ret;
+                q.prepare(QStringLiteral("ALTER TABLE Control ADD COLUMN importImpactDescription TEXT"));
+                ret = q.exec() && ret;
+                q.prepare(QStringLiteral("ALTER TABLE Control ADD COLUMN importResidualRiskLevel TEXT"));
+                ret = q.exec() && ret;
+                q.prepare(QStringLiteral("ALTER TABLE Control ADD COLUMN importRecommendations TEXT"));
+                ret = q.exec() && ret;
+                ret = UpdateVariable(QStringLiteral("version"), QStringLiteral("7")) && ret;
         }
     }
     return ret;

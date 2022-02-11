@@ -47,7 +47,14 @@ Control::Control(QObject *parent) : QObject(parent),
     number(0),
     enhancement(),
     title(),
-    description()
+    description(),
+    importSeverity(),
+    importRelevanceOfThreat(),
+    importLikelihood(),
+    importImpact(),
+    importImpactDescription(),
+    importResidualRiskLevel(),
+    importRecommendations()
 {
 }
 
@@ -95,6 +102,13 @@ Control& Control::operator=(const Control &right)
         enhancement = right.enhancement;
         title = right.title;
         description = right.description;
+	importSeverity = right.importSeverity;
+	importRelevanceOfThreat = right.importRelevanceOfThreat;
+	importLikelihood = right.importLikelihood;
+	importImpact = right.importImpact;
+	importImpactDescription = right.importImpactDescription;
+	importResidualRiskLevel = right.importResidualRiskLevel;
+	importRecommendations = right.importRecommendations;
     }
     return *this;
 }
