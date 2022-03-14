@@ -72,6 +72,7 @@ SOURCES += \
     src/workerfindingsreport.cpp \
     src/workerhtml.cpp \
     src/workerimportemass.cpp \
+    src/workerimportemasscontrol.cpp \
     src/workermapunmapped.cpp \
     src/workerpoamreport.cpp \
     src/workerstigadd.cpp \
@@ -108,6 +109,7 @@ HEADERS += \
     src/workerfindingsreport.h \
     src/workerhtml.h \
     src/workerimportemass.h \
+    src/workerimportemasscontrol.h \
     src/workermapunmapped.h \
     src/workerpoamreport.h \
     src/workerstigadd.h \

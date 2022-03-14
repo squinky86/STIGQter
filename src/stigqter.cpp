@@ -32,6 +32,7 @@
 #include "workeremassreport.h"
 #include "workerfindingsreport.h"
 #include "workerimportemass.h"
+#include "workerimportemasscontrol.h"
 #include "workermapunmapped.h"
 #include "workerpoamreport.h"
 #include "workerstigadd.h"
@@ -1211,6 +1212,28 @@ void STIGQter::ImportEMASS(const QString &fileName)
     DisableInput();
     db.UpdateVariable(QStringLiteral("lastdir"), QFileInfo(fn).absolutePath());
     auto *c = new WorkerImportEMASS();
+    c->SetReportName(fn);
+
+    ConnectThreads(c)->start();
+}
+
+/**
+ * @brief STIGQter::ImportEmassControl
+ *
+ * Import an existing Test Result Import spreadsheet.
+ */
+void STIGQter::ImportEmassControl(const QString &fileName)
+{
+    DbManager db;
+    QString fn = !fileName.isEmpty() ? fileName : QFileDialog::getOpenFileName(this,
+        QStringLiteral("Import eMASS ControlInfoExport"), db.GetVariable(QStringLiteral("lastdir")), QStringLiteral("Excel Spreadsheet (*.xlsx)"));
+
+    if (fn.isNull() || fn.isEmpty())
+        return; // cancel button pressed
+
+    DisableInput();
+    db.UpdateVariable(QStringLiteral("lastdir"), QFileInfo(fn).absolutePath());
+    auto *c = new WorkerImportEMASSControl();
     c->SetReportName(fn);
 
     ConnectThreads(c)->start();

@@ -195,17 +195,17 @@ void WorkerImportEMASSControl::process()
         int onRow = 0;
         QString onCol = QString();
         bool isSharedString = false; //keep up with whether the current record is a shared string
-	QStringList meaningfulCols = {
-		QStringLiteral("D"),
-		QStringLiteral("U"),
-		QStringLiteral("V"),
-		QStringLiteral("W"),
-		QStringLiteral("X"),
-		QStringLiteral("Y"),
-		QStringLiteral("AA"),
-		QStringLiteral("AB")
-	};
-	Control tmpControl;
+        QStringList meaningfulCols = {
+            QStringLiteral("A"),
+            QStringLiteral("U"),
+            QStringLiteral("V"),
+            QStringLiteral("W"),
+            QStringLiteral("X"),
+            QStringLiteral("Y"),
+            QStringLiteral("AA"),
+            QStringLiteral("AB")
+        };
+        Control tmpControl;
         QString tempImportSeverity = QString();
         QString tempImportRelevanceOfThreat = QString();
         QString tempImportLikelihood = QString();
@@ -274,68 +274,55 @@ void WorkerImportEMASSControl::process()
                     }
                     if (onRow > 6)
                     {
-                        if (onCol == QStringLiteral("D"))
+                        if (onCol == QStringLiteral("A"))
                         {
-                            tmpControl = db.GetControl(value);
-			    //TODO: you are here
-                        }
-                        else if (onCol == QStringLiteral("C"))
-                        {
-                            tempImportControlImplementationStatus = value;
-                        }
-                        else if (onCol == QStringLiteral("D"))
-                        {
-                            tempImportSecurityControlDesignation = value;
-                        }
-                        else if (onCol == QStringLiteral("E"))
-                        {
-                            tempImportNarrative = value;
-                        }
-                        else if (onCol == QStringLiteral("F"))
-                        {
-                            tempImportApNum = value;
-                        }
-                        else {
-                            if (onCol == QStringLiteral("I"))
-                                curCCI.importImplementationGuidance = value;
-                            else if (onCol == QStringLiteral("J"))
-                                curCCI.importAssessmentProcedures = value;
-                            else if (onCol == QStringLiteral("P"))
-                                curCCI.importCompliance = value;
-                            else if (onCol == QStringLiteral("Q"))
-                                curCCI.importDateTested = value;
-                            else if (onCol == QStringLiteral("R"))
-                                curCCI.importTestedBy = value;
-                            else if (onCol == QStringLiteral("S"))
-                                curCCI.importTestResults = value;
-                            else if (onCol == QStringLiteral("L"))
-                                curCCI.importCompliance2 = value;
-                            else if (onCol == QStringLiteral("M"))
-                            {
-                                curCCI.importDateTested2 = value;
-                            }
-                            else if (onCol == QStringLiteral("N"))
-                                curCCI.importTestedBy2 = value;
-                            else if (onCol == QStringLiteral("O"))
-                                curCCI.importTestResults2 = value;
-                            else if (onCol == QStringLiteral("K"))
-                                curCCI.importInherited = value;
+                            if (tmpControl.id > 0)
+                                db.UpdateControl(tmpControl);
 
-                            curCCI.isImport = true;
-                            if (curCCI.id >= 0)
+                            tmpControl = db.GetControl(value);
+                        }
+                        else if (tmpControl.id > 0)
+                        {
+                            if (onCol == QStringLiteral("U"))
                             {
-                                db.UpdateCCI(curCCI);
+                                tmpControl.importSeverity = value;
                             }
-                            else
+                            else if (onCol == QStringLiteral("V"))
                             {
-                                //A bad CCI was listed in the sheet
-                                Warning(QStringLiteral("CCI Not Imported"), QStringLiteral("No CCI \"") + PrintCCI(curCCI) + QStringLiteral("\" exists in the database."));
+                                tmpControl.importRelevanceOfThreat = value;
                             }
+                            else if (onCol == QStringLiteral("W"))
+                            {
+                                tmpControl.importLikelihood = value;
+                            }
+                            else if (onCol == QStringLiteral("X"))
+                            {
+                                tmpControl.importImpact = value;
+                            }
+                            else if (onCol == QStringLiteral("Y"))
+                            {
+                                tmpControl.importResidualRiskLevel = value;
+                            }
+                            else if (onCol == QStringLiteral("AA"))
+                            {
+                                tmpControl.importImpactDescription = value;
+                            }
+                            else if (onCol == QStringLiteral("AB"))
+                            {
+                                tmpControl.importRecommendations = value;
+                            }
+                        }
+                        else if (onCol == "U")
+                        {
+                            //A bad Control was listed in the sheet
+                            Warning(QStringLiteral("Control Not Imported"), QStringLiteral("No Control \"") + PrintControl(tmpControl) + QStringLiteral("\" exists in the database."));
                         }
                     }
                 }
             }
         }
+        if (tmpControl.id > 0)
+            db.UpdateControl(tmpControl);
         db.DelayCommit(false);
     }
     else

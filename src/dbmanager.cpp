@@ -438,12 +438,20 @@ bool DbManager::AddControl(const QString &control, const QString &title, const Q
             if (CheckDatabase(db))
             {
                 QSqlQuery q(db);
+
                 q.prepare(QStringLiteral("INSERT INTO Control (FamilyId, number, enhancement, title, description, importSeverity, importRelevanceOfThreat, importLikelihood, importImpact, importImpactDescription, importResidualRiskLevel, importRecommendations) VALUES(:FamilyId, :number, :enhancement, :title, :description, :importSeverity, :importRelevanceOfThreat, :importLikelihood, :importImpact, :importImpactDescription, :importResidualRiskLevel, :importRecommendations)"));
                 q.bindValue(QStringLiteral(":FamilyId"), f.id);
                 q.bindValue(QStringLiteral(":number"), tmpControl.toInt());
                 q.bindValue(QStringLiteral(":enhancement"), enhancement.isEmpty() ? QVariant(QVariant::Int) : enhancement.toInt());
                 q.bindValue(QStringLiteral(":title"), title);
                 q.bindValue(QStringLiteral(":description"), description);
+                q.bindValue(QStringLiteral(":importSeverity"), importSeverity);
+                q.bindValue(QStringLiteral(":importRelevanceOfThreat"), importRelevanceOfThreat);
+                q.bindValue(QStringLiteral(":importLikelihood"), importLikelihood);
+                q.bindValue(QStringLiteral(":importImpact"), importImpact);
+                q.bindValue(QStringLiteral(":importImpactDescription"), importImpactDescription);
+                q.bindValue(QStringLiteral(":importResidualRiskLevel"), importResidualRiskLevel);
+                q.bindValue(QStringLiteral(":importRecommendations"), importRecommendations);
                 ret = q.exec();
                 if (!_delayCommit)
                     db.commit();
@@ -2471,6 +2479,44 @@ bool DbManager::UpdateCKLCheck(const CKLCheck &check)
             q.bindValue(QStringLiteral(":severityOverride"), check.severityOverride);
             q.bindValue(QStringLiteral(":severityJustification"), check.severityJustification);
             q.bindValue(QStringLiteral(":id"), tmpCheck.id);
+            ret = q.exec();
+            Log(6, QStringLiteral("UpdateCKLCheck"), q);
+        }
+    }
+    return ret;
+}
+
+/**
+ * @brief DbManager::UpdateControl
+ * @param control
+ * @return @c True when the database is updated with the supplied
+ * @a Control information. Otherwise, @c false.
+ */
+bool DbManager::UpdateControl(const Control &control)
+{
+    Control tmpControl = GetControl(control.id);
+    bool ret = false;
+    if (tmpControl.id > 0)
+    {
+        QSqlDatabase db;
+        ret = true;
+        if (CheckDatabase(db))
+        {
+            QSqlQuery q(db);
+            q.prepare(QStringLiteral("UPDATE Control SET FamilyId = :FamilyId, number = :number, enhancement = :enhancement, title = :title, description = :description, importSeverity = :importSeverity, importRelevanceOfThreat = :importRelevanceOfThreat, importLikelihood = :importLikelihood, importImpact = :importImpact, importImpactDescription = :importImpactDescription, importResidualRiskLevel = :importResidualRiskLevel, importRecommendations = :importRecommendations WHERE id = :id"));
+            q.bindValue(QStringLiteral(":FamilyId"), control.familyId);
+            q.bindValue(QStringLiteral(":number"), control.number);
+            q.bindValue(QStringLiteral(":enhancement"), control.enhancement);
+            q.bindValue(QStringLiteral(":title"), control.title);
+            q.bindValue(QStringLiteral(":description"), control.description);
+            q.bindValue(QStringLiteral(":importSeverity"), control.importSeverity);
+            q.bindValue(QStringLiteral(":importRelevanceOfThreat"), control.importRelevanceOfThreat);
+            q.bindValue(QStringLiteral(":importLikelihood"), control.importLikelihood);
+            q.bindValue(QStringLiteral(":importImpact"), control.importImpact);
+            q.bindValue(QStringLiteral(":importImpactDescription"), control.importImpactDescription);
+            q.bindValue(QStringLiteral(":importResidualRiskLevel"), control.importResidualRiskLevel);
+            q.bindValue(QStringLiteral(":importRecommendations"), control.importRecommendations);
+            q.bindValue(QStringLiteral(":id"), tmpControl.id);
             ret = q.exec();
             Log(6, QStringLiteral("UpdateCKLCheck"), q);
         }

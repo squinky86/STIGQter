@@ -343,10 +343,12 @@ void WorkerPOAMReport::process()
         }
 
         worksheet_write_string(ws, onRow, 13, tmpSeverity.toStdString().c_str(), nullptr);
-        worksheet_write_string(ws, onRow, 15, residualLevel.toStdString().c_str(), nullptr);
-        worksheet_write_string(ws, onRow, 17, residualLevel.toStdString().c_str(), nullptr);
-        worksheet_write_string(ws, onRow, 18, residualLevel.toStdString().c_str(), nullptr);
-        worksheet_write_string(ws, onRow, 20, residualLevel.toStdString().c_str(), nullptr);
+        worksheet_write_string(ws, onRow, 15, tmpControl.importSeverity.isEmpty() ? residualLevel.toStdString().c_str() : tmpControl.importSeverity.toStdString().c_str(), nullptr);
+        worksheet_write_string(ws, onRow, 16, tmpControl.importRelevanceOfThreat.isEmpty() ? "" : tmpControl.importRelevanceOfThreat.toStdString().c_str(), nullptr);
+        worksheet_write_string(ws, onRow, 17, tmpControl.importLikelihood.isEmpty() ? residualLevel.toStdString().c_str() : tmpControl.importLikelihood.toStdString().c_str(), nullptr);
+        worksheet_write_string(ws, onRow, 18, tmpControl.importImpact.isEmpty() ? residualLevel.toStdString().c_str() : tmpControl.importImpact.toStdString().c_str(), nullptr);
+        worksheet_write_string(ws, onRow, 19, tmpControl.importImpactDescription.isEmpty() ? "" : tmpControl.importImpactDescription.toStdString().c_str(), nullptr);
+        worksheet_write_string(ws, onRow, 20, tmpControl.importResidualRiskLevel.isEmpty() ? residualLevel.toStdString().c_str() : tmpControl.importResidualRiskLevel.toStdString().c_str(), nullptr);
 
         ++j;
         ++onRow;
@@ -399,10 +401,12 @@ void WorkerPOAMReport::process()
         }
 
         worksheet_write_string(ws, onRow, 13, tmpSeverity.toStdString().c_str(), nullptr);
-        worksheet_write_string(ws, onRow, 15, residualLevel.toStdString().c_str(), nullptr);
-        worksheet_write_string(ws, onRow, 17, residualLevel.toStdString().c_str(), nullptr);
-        worksheet_write_string(ws, onRow, 18, residualLevel.toStdString().c_str(), nullptr);
-        worksheet_write_string(ws, onRow, 20, residualLevel.toStdString().c_str(), nullptr);
+        worksheet_write_string(ws, onRow, 15, tmpControl.importSeverity.isEmpty() ? residualLevel.toStdString().c_str() : tmpControl.importSeverity.toStdString().c_str(), nullptr);
+        worksheet_write_string(ws, onRow, 16, tmpControl.importRelevanceOfThreat.isEmpty() ? "" : tmpControl.importRelevanceOfThreat.toStdString().c_str(), nullptr);
+        worksheet_write_string(ws, onRow, 17, tmpControl.importLikelihood.isEmpty() ? residualLevel.toStdString().c_str() : tmpControl.importLikelihood.toStdString().c_str(), nullptr);
+        worksheet_write_string(ws, onRow, 18, tmpControl.importImpact.isEmpty() ? residualLevel.toStdString().c_str() : tmpControl.importImpact.toStdString().c_str(), nullptr);
+        worksheet_write_string(ws, onRow, 19, tmpControl.importImpactDescription.isEmpty() ? "" : tmpControl.importImpactDescription.toStdString().c_str(), nullptr);
+        worksheet_write_string(ws, onRow, 20, tmpControl.importResidualRiskLevel.isEmpty() ? residualLevel.toStdString().c_str() : tmpControl.importResidualRiskLevel.toStdString().c_str(), nullptr);
 
         ++i;
         ++onRow;
@@ -500,10 +504,12 @@ void WorkerPOAMReport::process()
                         worksheet_write_string(ws, onRow, 10, stigqterName.toStdString().c_str(), nullptr);
                         worksheet_write_string(ws, onRow, 11, "Ongoing", nullptr);
                         worksheet_write_string(ws, onRow, 12, cci.importNarrative.toStdString().c_str(), nullptr);
-                        worksheet_write_string(ws, onRow, 15, "Low", nullptr);
-                        worksheet_write_string(ws, onRow, 17, "Low", nullptr);
-                        worksheet_write_string(ws, onRow, 18, "Low", nullptr);
-                        worksheet_write_string(ws, onRow, 20, "Low", nullptr);
+                        worksheet_write_string(ws, onRow, 15, c.importSeverity.isEmpty() ? "Low" : c.importSeverity.toStdString().c_str(), nullptr);
+                        worksheet_write_string(ws, onRow, 16, c.importRelevanceOfThreat.isEmpty() ? "" : c.importRelevanceOfThreat.toStdString().c_str(), nullptr);
+                        worksheet_write_string(ws, onRow, 17, c.importLikelihood.isEmpty() ? "Low" : c.importLikelihood.toStdString().c_str(), nullptr);
+                        worksheet_write_string(ws, onRow, 18, c.importImpact.isEmpty() ? "Low" : c.importImpact.toStdString().c_str(), nullptr);
+                        worksheet_write_string(ws, onRow, 19, c.importImpactDescription.isEmpty() ? "" : c.importImpactDescription.toStdString().c_str(), nullptr);
+                        worksheet_write_string(ws, onRow, 20, c.importResidualRiskLevel.isEmpty() ? "Low" : c.importResidualRiskLevel.toStdString().c_str(), nullptr);
 
                         ++onRow;
                     }

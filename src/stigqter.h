@@ -73,6 +73,7 @@ private Q_SLOTS:
     void FindingsReport(const QString &fileName = QString());
     void ImportCKLs(const QStringList &fileNames = {});
     void ImportEMASS(const QString &fileName = QString());
+    void ImportEmassControl(const QString &fileName = QString());
     void Load(const QString &fileName = QString());
     void MapUnmapped(bool confirm = false);
     void OpenCKL();
