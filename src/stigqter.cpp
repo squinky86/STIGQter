@@ -1368,6 +1368,7 @@ void STIGQter::EnableInput()
         ui->btnImportEmass->setEnabled(false);
         ui->btnImportCCIs->setEnabled(true);
         ui->btnImportSTIGs->setEnabled(false);
+        ui->btnImportEmassControl->setEnabled(false);
     }
     else
     {
@@ -1376,6 +1377,7 @@ void STIGQter::EnableInput()
         ui->btnDownloadSTIGs->setEnabled(stigsNotImported);
         ui->btnImportCCIs->setEnabled(false);
         ui->btnImportSTIGs->setEnabled(true);
+        ui->btnImportEmassControl->setEnabled(true);
     }
 
     ui->btnClearSTIGs->setEnabled(true);
@@ -1484,6 +1486,7 @@ void STIGQter::DisableInput()
     ui->btnImportCCIs->setEnabled(false);
     ui->btnImportCKL->setEnabled(false);
     ui->btnImportEmass->setEnabled(false);
+    ui->btnImportEmassControl->setEnabled(false);
     ui->btnImportSTIGs->setEnabled(false);
     ui->btnMapUnmapped->setEnabled(false);
     ui->cbIncludeSupplements->setEnabled(false);

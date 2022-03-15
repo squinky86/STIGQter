@@ -1,4 +1,7 @@
-## 1.1.3
+## 1.1.4
+-   Accept Control Info Export report (fixes #99)
+
+## 1.1.3 20210730
 -   Fix POA&M issues (fixes #97)
 
 ## 1.1.2 20210624
