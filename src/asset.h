@@ -67,6 +67,7 @@ public:
                            "Other Review"
                        */
     QString targetKey; /**< Target identifier specified in STIG */
+    QString targetComment; /**< Target comment specified in STIG */
     bool webOrDB{false}; /**< whether the asset is a web or database asset */
     QString webDbSite; /**< If webOrDatabase is true, specify the site identifier (usually node name) */
     QString webDbInstance; /**< If webOrDatabase is true, specify the instance (usually the DB's name) */

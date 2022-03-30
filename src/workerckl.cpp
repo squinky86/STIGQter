@@ -138,12 +138,14 @@ void WorkerCKL::process()
         stream.writeStartElement(QStringLiteral("ASSET"));
         WriteXMLEntry(stream, QStringLiteral("ROLE"), QStringLiteral("None")); //ROLE
         WriteXMLEntry(stream, QStringLiteral("ASSET_TYPE"), _asset.assetType); //ASSET_TYPE
+        WriteXMLEntry(stream, QStringLiteral("MARKING"), db.GetVariable("marking")); //MARKING
         WriteXMLEntry(stream, QStringLiteral("HOST_NAME"), _asset.hostName);//HOST_NAME
         WriteXMLEntry(stream, QStringLiteral("HOST_IP"), _asset.hostIP); //HOST_IP
         WriteXMLEntry(stream, QStringLiteral("HOST_MAC"), _asset.hostMAC);//HOST_MAC
         WriteXMLEntry(stream, QStringLiteral("HOST_FQDN"), _asset.hostFQDN); //HOST_FQDN
         WriteXMLEntry(stream, QStringLiteral("TECH_AREA"), _asset.techArea); //TECH_AREA
         WriteXMLEntry(stream, QStringLiteral("TARGET_KEY"), _asset.targetKey); //TARGET_KEY
+        WriteXMLEntry(stream, QStringLiteral("TARGET_COMMENT"), _asset.targetComment); //TARGET_COMMENT
         WriteXMLEntry(stream, QStringLiteral("WEB_OR_DATABASE"), PrintTrueFalse(_asset.webOrDB)); //WEB_OR_DATABASE
         WriteXMLEntry(stream, QStringLiteral("WEB_DB_SITE"), _asset.webDbSite); //WEB_DB_SITE
         WriteXMLEntry(stream, QStringLiteral("WEB_DB_INSTANCE"), _asset.webDbInstance); //WEB_DB_INSTANCE

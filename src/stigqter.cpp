@@ -112,6 +112,9 @@ STIGQter::STIGQter(QWidget *parent) :
     DbManager db;
     ui->lblDBLoc->setText(QStringLiteral("DB: ") + db.GetDBPath());
 
+    //display classification marking
+    ui->txtMarking->setText(db.GetVariable("marking"));
+
     //remember if we're indexing STIG checks
     ui->cbIncludeSupplements->setChecked(db.GetVariable("indexSupplements").startsWith(QStringLiteral("y"), Qt::CaseInsensitive));
     ui->cbRemapCM6->setChecked(db.GetVariable("remapCM6").startsWith(QStringLiteral("y"), Qt::CaseInsensitive));
@@ -441,6 +444,11 @@ void STIGQter::RunTests()
     ExportEMASS(QStringLiteral("tests/emass.xlsx"));
     ProcEvents();
 
+    // change classification
+    std::cout << "\tTest " << step++ << ": Changing Classification Marking" << std::endl;
+    ui->txtMarking->setText("PUBLIC RELEASE");
+    ProcEvents();
+
     // help screen
     std::cout << "\tTest " << step++ << ": Help Screen" << std::endl;
     {
@@ -669,6 +677,17 @@ void STIGQter::SaveAs(const QString &fileName)
         db.UpdateVariable(QStringLiteral("lastdir"), QFileInfo(fn).absolutePath());
         Save();
     }
+}
+
+/**
+ * @brief STIGQter::SaveMarking
+ *
+ * Change the marking of the STIGs
+ */
+void STIGQter::SaveMarking()
+{
+    DbManager db;
+    db.UpdateVariable(QStringLiteral("marking"), ui->txtMarking->text());
 }
 
 /**
@@ -1360,6 +1379,7 @@ void STIGQter::EnableInput()
     bool isImport = db.IsEmassImport();
 
     ui->btnImportEmass->setEnabled(!isImport);
+    ui->txtMarking->setEnabled(true);
 
     if (f.isEmpty())
     {
@@ -1477,6 +1497,7 @@ void STIGQter::Progress(int val)
  */
 void STIGQter::DisableInput()
 {
+    ui->txtMarking->setEnabled(false);
     ui->btnClearCCIs->setEnabled(false);
     ui->btnClearSTIGs->setEnabled(false);
     ui->btnCreateCKL->setEnabled(false);
