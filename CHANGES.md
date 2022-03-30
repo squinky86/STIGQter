@@ -1,5 +1,6 @@
 ## 1.1.4
 -   Accept Control Info Export report (fixes #99)
+-   Support for STIG Viewer 2.16 (fixes #103)
 
 ## 1.1.3 20210730
 -   Fix POA&M issues (fixes #97)
