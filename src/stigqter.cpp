@@ -113,7 +113,9 @@ STIGQter::STIGQter(QWidget *parent) :
     ui->lblDBLoc->setText(QStringLiteral("DB: ") + db.GetDBPath());
 
     //display classification marking
+    ui->txtMarking->blockSignals(true);
     ui->txtMarking->setText(db.GetVariable("marking"));
+    ui->txtMarking->blockSignals(false);
 
     //remember if we're indexing STIG checks
     ui->cbIncludeSupplements->setChecked(db.GetVariable("indexSupplements").startsWith(QStringLiteral("y"), Qt::CaseInsensitive));
