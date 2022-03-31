@@ -2941,7 +2941,10 @@ bool DbManager::UpdateDatabaseFromVersion(int version)
             QSqlQuery q(db);
             q.prepare(QStringLiteral("ALTER TABLE Asset ADD COLUMN targetComment TEXT"));
             ret = q.exec() && ret;
-            ret = UpdateVariable(QStringLiteral("marking"), QStringLiteral("UNCLASSIFIED")) && ret;
+            q.prepare(QStringLiteral("INSERT INTO variables (name, value) VALUES(:name, :value)"));
+            q.bindValue(QStringLiteral(":name"), QStringLiteral("marking"));
+            q.bindValue(QStringLiteral(":value"), QStringLiteral("UNCLASSIFIED"));
+            ret = q.exec() && ret;
             ret = UpdateVariable(QStringLiteral("version"), QStringLiteral("8")) && ret;
         }
     }
