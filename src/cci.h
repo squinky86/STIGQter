@@ -63,7 +63,7 @@ public:
         return left.cci < right.cci;
     }
     CCI& operator=(const CCI &right);
-    bool operator==(const CCI &right);
+    bool operator==(const CCI &right) const;
 };
 
 Q_DECLARE_METATYPE(CCI);

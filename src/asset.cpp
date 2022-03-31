@@ -160,7 +160,7 @@ QVector<CKLCheck> Asset::GetCKLChecks(const STIG *stig) const
  *
  * For performance, only the asset name is compared.
  */
-bool Asset::operator==(const Asset &right)
+bool Asset::operator==(const Asset &right) const
 {
     return (hostName.compare(right.hostName, Qt::CaseInsensitive) == 0);
 }

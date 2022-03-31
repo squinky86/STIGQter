@@ -154,7 +154,7 @@ CCI& CCI::operator=(const CCI &right)
  * or database inconsistency. The database IDs and compliance state
  * are irrelevant to determining if the CCI is actually the same.
  */
-bool CCI::operator==(const CCI &right)
+bool CCI::operator==(const CCI &right) const
 {
     if ((id <= 0) || (right.id <= 0))
     {
