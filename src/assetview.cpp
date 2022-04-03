@@ -131,6 +131,7 @@ void AssetView::DisableInput()
     ui->txtIP->setEnabled(false);
     ui->txtMAC->setEnabled(false);
     ui->txtFQDN->setEnabled(false);
+    ui->txtMarking->setEnabled(false);
     ui->txtSTIGFilter->setEnabled(false);
     ui->lstSTIGs->setEnabled(false);
     ui->cboBoxFilterStatus->setEnabled(false);
@@ -158,6 +159,7 @@ void AssetView::Display()
     ui->txtIP->setText(_asset.hostIP);
     ui->txtMAC->setText(_asset.hostMAC);
     ui->txtFQDN->setText(_asset.hostFQDN);
+    ui->txtMarking->setText(_asset.marking);
     SelectSTIGs();
     ShowChecks();
 }
@@ -172,6 +174,7 @@ void AssetView::EnableInput()
     ui->txtIP->setEnabled(true);
     ui->txtMAC->setEnabled(true);
     ui->txtFQDN->setEnabled(true);
+    ui->txtMarking->setEnabled(true);
     ui->txtSTIGFilter->setEnabled(true);
     ui->lstSTIGs->setEnabled(true);
     ui->cboBoxFilterStatus->setEnabled(true);
@@ -406,6 +409,7 @@ void AssetView::RunTests()
     ui->txtFQDN->setText(QStringLiteral("test.example.org"));
     ui->txtIP->setText(QStringLiteral("127.0.0.1"));
     ui->txtMAC->setText(QStringLiteral("00:00:00:00:00:00"));
+    ui->txtMarking->setText(QStringLiteral("PUBLIC RELEASE"));
 
     //step 7: save CKL
     std::cout << "\t\tSaving Monolithic CKL" << std::endl;
@@ -810,12 +814,13 @@ void AssetView::UpdateCKLHelper()
         _timerChecks.start(1000);
     }
     //check if Asset was updated
-    if ((_asset.hostIP != ui->txtIP->text()) || (_asset.hostMAC != ui->txtMAC->text()) || (_asset.hostFQDN != ui->txtFQDN->text()))
+    if ((_asset.hostIP != ui->txtIP->text()) || (_asset.hostMAC != ui->txtMAC->text()) || (_asset.hostFQDN != ui->txtFQDN->text()) || (_asset.marking != ui->txtMarking->text()))
     {
         DbManager db;
         _asset.hostIP = ui->txtIP->text();
         _asset.hostMAC = ui->txtMAC->text();
         _asset.hostFQDN = ui->txtFQDN->text();
+        _asset.marking = ui->txtMarking->text();
         db.UpdateAsset(_asset);
     }
 }

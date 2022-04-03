@@ -138,7 +138,7 @@ void WorkerCKL::process()
         stream.writeStartElement(QStringLiteral("ASSET"));
         WriteXMLEntry(stream, QStringLiteral("ROLE"), QStringLiteral("None")); //ROLE
         WriteXMLEntry(stream, QStringLiteral("ASSET_TYPE"), _asset.assetType); //ASSET_TYPE
-        WriteXMLEntry(stream, QStringLiteral("MARKING"), db.GetVariable("marking")); //MARKING
+        WriteXMLEntry(stream, QStringLiteral("MARKING"), _asset.marking); //MARKING
         WriteXMLEntry(stream, QStringLiteral("HOST_NAME"), _asset.hostName);//HOST_NAME
         WriteXMLEntry(stream, QStringLiteral("HOST_IP"), _asset.hostIP); //HOST_IP
         WriteXMLEntry(stream, QStringLiteral("HOST_MAC"), _asset.hostMAC);//HOST_MAC

@@ -298,7 +298,7 @@ bool DbManager::AddAsset(Asset &asset)
             Warning(QStringLiteral("Asset Already Exists"), "The Asset " + PrintAsset(asset) + " already exists in the database.");
             return false;
         }
-        q.prepare(QStringLiteral("INSERT INTO Asset (`assetType`, `hostName`, `hostIP`, `hostMAC`, `hostFQDN`, `techArea`, `targetKey`, `targetComment`, `webOrDatabase`, `webDBSite`, `webDBInstance`) VALUES(:assetType, :hostName, :hostIP, :hostMAC, :hostFQDN, :techArea, :targetKey, :webOrDatabase, :webDBSite, :webDBInstance)"));
+        q.prepare(QStringLiteral("INSERT INTO Asset (`assetType`, `hostName`, `hostIP`, `hostMAC`, `hostFQDN`, `techArea`, `targetKey`, `marking`, `targetComment`, `webOrDatabase`, `webDBSite`, `webDBInstance`) VALUES(:assetType, :hostName, :hostIP, :hostMAC, :hostFQDN, :techArea, :targetKey, :marking, :targetComment, :webOrDatabase, :webDBSite, :webDBInstance)"));
         q.bindValue(QStringLiteral(":assetType"), asset.assetType);
         q.bindValue(QStringLiteral(":hostName"), asset.hostName);
         q.bindValue(QStringLiteral(":hostIP"), asset.hostIP);
@@ -306,6 +306,7 @@ bool DbManager::AddAsset(Asset &asset)
         q.bindValue(QStringLiteral(":hostFQDN"), asset.hostFQDN);
         q.bindValue(QStringLiteral(":techArea"), asset.techArea);
         q.bindValue(QStringLiteral(":targetKey"), asset.targetKey);
+        q.bindValue(QStringLiteral(":marking"), asset.marking);
         q.bindValue(QStringLiteral(":targetComment"), asset.targetComment);
         q.bindValue(QStringLiteral(":webOrDatabase"), asset.webOrDB);
         q.bindValue(QStringLiteral(":webDBSite"), asset.webDbSite);
@@ -1054,7 +1055,7 @@ QVector<Asset> DbManager::GetAssets(const QString &whereClause, const QVector<st
     if (CheckDatabase(db))
     {
         QSqlQuery q(db);
-        QString toPrep = QStringLiteral("SELECT Asset.`id`, Asset.`assetType`, Asset.`hostName`, Asset.`hostIP`, Asset.`hostMAC`, Asset.`hostFQDN`, Asset.`techArea`, Asset.`targetKey`, Asset.`targetComment`, Asset.`webOrDatabase`, Asset.`webDBSite`, Asset.`webDBInstance`");
+        QString toPrep = QStringLiteral("SELECT Asset.`id`, Asset.`assetType`, Asset.`hostName`, Asset.`hostIP`, Asset.`hostMAC`, Asset.`hostFQDN`, Asset.`techArea`, Asset.`targetKey`, Asset.`marking`, Asset.`targetComment`, Asset.`webOrDatabase`, Asset.`webDBSite`, Asset.`webDBInstance`");
         toPrep.append(QStringLiteral(" FROM Asset"));
         if (!whereClause.isNull() && !whereClause.isEmpty())
             toPrep.append(" " + whereClause);
@@ -1079,10 +1080,11 @@ QVector<Asset> DbManager::GetAssets(const QString &whereClause, const QVector<st
             a.hostFQDN = q.value(5).toString();
             a.techArea = q.value(6).toString();
             a.targetKey = q.value(7).toString();
-            a.targetComment = q.value(8).toString();
-            a.webOrDB = q.value(9).toBool();
-            a.webDbSite = q.value(10).toString();
-            a.webDbInstance = q.value(11).toString();
+            a.marking = q.value(8).toString();
+            a.targetComment = q.value(9).toString();
+            a.webOrDB = q.value(10).toBool();
+            a.webDbSite = q.value(11).toString();
+            a.webDbInstance = q.value(12).toString();
             ret.append(a);
         }
     }
@@ -2391,7 +2393,7 @@ bool DbManager::UpdateAsset(const Asset &asset)
         {
             QSqlQuery q(db);
             //NOTE: The new values use the provided "cci" while the WHERE clause uses the Database-identified "tmpCCI".
-            q.prepare(QStringLiteral("UPDATE Asset SET assetType = :assetType, hostName = :hostName, hostIP = :hostIP, hostMAC = :hostMAC, hostFQDN = :hostFQDN, techArea = :techArea, targetKey = :targetKey, targetComment = :targetComment, webOrDatabase = :webOrDatabase, webDBSite = :webDBSite, webDBInstance = :webDBInstance WHERE id = :id"));
+            q.prepare(QStringLiteral("UPDATE Asset SET assetType = :assetType, hostName = :hostName, hostIP = :hostIP, hostMAC = :hostMAC, hostFQDN = :hostFQDN, techArea = :techArea, targetKey = :targetKey, marking = :marking, targetComment = :targetComment, webOrDatabase = :webOrDatabase, webDBSite = :webDBSite, webDBInstance = :webDBInstance WHERE id = :id"));
             q.bindValue(QStringLiteral(":assetType"), asset.assetType.isEmpty() ? nullptr : asset.assetType);
             q.bindValue(QStringLiteral(":hostName"), asset.hostName);
             q.bindValue(QStringLiteral(":hostIP"), asset.hostIP.isEmpty() ? nullptr : asset.hostIP);
@@ -2399,6 +2401,7 @@ bool DbManager::UpdateAsset(const Asset &asset)
             q.bindValue(QStringLiteral(":hostFQDN"), asset.hostFQDN.isEmpty() ? nullptr : asset.hostFQDN);
             q.bindValue(QStringLiteral(":techArea"), asset.techArea.isEmpty() ? nullptr : asset.techArea);
             q.bindValue(QStringLiteral(":targetKey"), asset.targetKey.isEmpty() ? nullptr : asset.targetKey);
+            q.bindValue(QStringLiteral(":marking"), asset.marking.isEmpty() ? nullptr : asset.marking);
             q.bindValue(QStringLiteral(":targetComment"), asset.targetComment.isEmpty() ? nullptr : asset.targetComment);
             q.bindValue(QStringLiteral(":webOrDatabase"), asset.webOrDB);
             q.bindValue(QStringLiteral(":webDBSite"), asset.webDbSite.isEmpty() ? nullptr : asset.webDbSite);
@@ -2939,11 +2942,9 @@ bool DbManager::UpdateDatabaseFromVersion(int version)
         if (version < 8)
         {
             QSqlQuery q(db);
-            q.prepare(QStringLiteral("ALTER TABLE Asset ADD COLUMN targetComment TEXT"));
+            q.prepare(QStringLiteral("ALTER TABLE Asset ADD COLUMN marking TEXT"));
             ret = q.exec() && ret;
-            q.prepare(QStringLiteral("INSERT INTO variables (name, value) VALUES(:name, :value)"));
-            q.bindValue(QStringLiteral(":name"), QStringLiteral("marking"));
-            q.bindValue(QStringLiteral(":value"), QStringLiteral("UNCLASSIFIED"));
+            q.prepare(QStringLiteral("ALTER TABLE Asset ADD COLUMN targetComment TEXT"));
             ret = q.exec() && ret;
             ret = UpdateVariable(QStringLiteral("version"), QStringLiteral("8")) && ret;
         }

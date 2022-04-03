@@ -204,12 +204,7 @@ void WorkerCKLImport::ParseCKL(const QString &fileName)
                 }
                 else if (xml->name().compare(QStringLiteral("MARKING")) == 0)
                 {
-                    QString importedClassification = xml->readElementText().trimmed();
-                    QString systemClassification = db.GetVariable("marking");
-                    if (importedClassification.compare(systemClassification) != 0)
-                    {
-                        Q_EMIT ThrowWarning(QStringLiteral("Classification Mismatch!"), "The imported checklist has a different marking (" + importedClassification + ") than the system (" + systemClassification + ").");
-                    }
+                    a.marking = xml->readElementText().trimmed();
                 }
                 else if (xml->name().compare(QStringLiteral("HOST_NAME")) == 0)
                 {

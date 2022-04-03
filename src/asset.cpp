@@ -76,6 +76,7 @@ Asset::Asset(Asset &&orig) noexcept :
     hostFQDN(std::move(orig.hostFQDN)),
     techArea(std::move(orig.techArea)),
     targetKey(std::move(orig.targetKey)),
+    marking(std::move(orig.marking)),
     targetComment(std::move(orig.targetComment)),
     webOrDB(orig.webOrDB),
     webDbSite(std::move(orig.webDbSite)),
@@ -100,6 +101,7 @@ Asset &Asset::operator=(const Asset &right)
         hostFQDN = right.hostFQDN;
         techArea = right.techArea;
         targetKey = right.targetKey;
+        marking = right.marking;
         targetComment = right.targetComment;
         webOrDB = right.webOrDB;
         webDbSite = right.webDbSite;
@@ -120,6 +122,7 @@ Asset &Asset::operator=(Asset &&orig) noexcept
         hostFQDN = std::move(orig.hostFQDN);
         techArea = std::move(orig.techArea);
         targetKey = std::move(orig.targetKey);
+        marking = std::move(orig.marking);
         targetComment = std::move(orig.targetComment);
         webOrDB = orig.webOrDB;
         webDbSite = std::move(orig.webDbSite);

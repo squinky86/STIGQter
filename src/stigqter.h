@@ -84,7 +84,6 @@ private Q_SLOTS:
     bool Reset(bool checkOnly = false);
     void Save();
     void SaveAs(const QString &fileName = QString());
-    void SaveMarking();
     void SelectAsset();
     void SelectSTIG();
     void StatusChange(const QString &status);
