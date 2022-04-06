@@ -81,6 +81,7 @@ public:
     CKLCheck GetCKLCheckByDISAId(int assetId, const QString &disaId);
     QVector<CKLCheck> GetCKLChecks(const Asset &asset, const STIG *stig = nullptr);
     QVector<CKLCheck> GetCKLChecks(const CCI &cci);
+    QVector<CKLCheck> GetCKLChecks(const STIGCheck &stigCheck);
     QVector<CKLCheck> GetCKLChecks(const QString &whereClause = QString(), const QVector<std::tuple<QString, QVariant>> &variables = {});
     Control GetControl(int id);
     Control GetControl(const QString &control);

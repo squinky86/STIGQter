@@ -236,11 +236,30 @@ void WorkerFindingsReport::process()
         QString assets = QString();
         if (checks2.isEmpty())
             assets.append(QStringLiteral("Imported/Documentation Findings"));
+        QList<STIGCheck> completedChecks;
         Q_FOREACH (CKLCheck cc, checks2)
         {
+            STIGCheck sc = cc.GetSTIGCheck();
+            if (completedChecks.contains(sc))
+                continue;
+            completedChecks.append(sc);
+
+            //start a new line if the field already has text
             if (!assets.isEmpty())
                 assets.append(QStringLiteral("\n"));
-            assets.append(PrintCKLCheck(cc));
+
+            int nf = 0; //not a finding
+            int f = 0; //finding
+            QVector<CKLCheck> checks3 = db.GetCKLChecks(sc);
+            Q_FOREACH(CKLCheck c3, checks3)
+            {
+                if (c3.status == Status::NotAFinding)
+                    nf++;
+                else if (c3.status == Status::Open)
+                    f++;
+            }
+            QString samples = QString(" (Occurred on %1 of %2 samples: %3\%)").arg(QString::number(f), QString::number(f + nf), QString::number((double)100 * (double)f / (double)(f + nf), 'f', 2));
+            assets.append(PrintCKLCheck(cc) + samples);
         }
         worksheet_write_string(wsCCIs, onRow, 3, assets.toStdString().c_str(), fmtWrapped);
         Q_EMIT progress(-1);

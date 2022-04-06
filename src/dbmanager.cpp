@@ -1396,7 +1396,7 @@ CKLCheck DbManager::GetCKLCheckByDISAId(int assetId, const QString &disaId)
 }
 
 /**
- * @overload DbManager::GetCKLChecks(const QString &whereClause, const QVector<std::tuple<QString, QVariant> > &variables)
+ * @overload DbManager::GetCKLChecks(const Asset &asset, const STIG &stig)
  * @brief DbManager::GetCKLChecks
  * @param asset
  * @param stig
@@ -1413,6 +1413,20 @@ QVector<CKLCheck> DbManager::GetCKLChecks(const Asset &asset, const STIG *stig)
         whereClause.append(QStringLiteral(" AND CKLCheck.STIGCheckId IN (SELECT id FROM STIGCheck WHERE STIGId = :STIGId)"));
         variables.append(std::make_tuple<QString, QVariant>(QStringLiteral(":STIGId"), stig->id));
     }
+    return GetCKLChecks(whereClause, variables);
+}
+
+/**
+ * @overload DbManager::GetCKLChecks(const STIGCheck &stigCheck)
+ * @brief DbManager::GetCKLChecks
+ * @param stigCheck
+ * @return The set of @a CKLChecks associated wth the supplied
+ * @a STIGCheck.
+ */
+QVector<CKLCheck> DbManager::GetCKLChecks(const STIGCheck &stigCheck)
+{
+    QString whereClause = QStringLiteral("WHERE CKLCheck.STIGCheckId = :STIGCheckId");
+    QVector<std::tuple<QString, QVariant> > variables = {std::make_tuple<QString, QVariant>(QStringLiteral(":STIGCheckId"), stigCheck.id)};
     return GetCKLChecks(whereClause, variables);
 }
 

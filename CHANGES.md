@@ -1,4 +1,7 @@
-## 1.1.4
+## 1.2.0
+-   Display defect density in DFR (fixes #110)
+
+## 1.1.4 20220404
 -   Accept Control Info Export report (fixes #99)
 -   Support for STIG Viewer 2.16 (fixes #103)
 -   Multiuser support (fixes #87)
