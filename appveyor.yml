@@ -8,9 +8,11 @@ environment:
   QMAKE_CXXFLAGS: -m64 -Os -fomit-frame-pointer -fno-stack-protector -pipe
 build_script:
 - sh: >-
+    add-apt-repository ppa:rncbc/qt6.3-static-focal
+
     sudo apt-get update
 
-    sudo apt-get install -y texlive-luatex texlive-latex-recommended texlive-latex-extra texlive-fonts-extra texlive-fonts-extra-links texlive-bibtex-extra biber gcc-mingw-w64-x86-64 g++-mingw-w64-x86-64 upx-ucl advancecomp
+    sudo apt-get install -y texlive-luatex texlive-latex-recommended texlive-latex-extra texlive-fonts-extra texlive-fonts-extra-links texlive-bibtex-extra biber gcc-mingw-w64-x86-64 g++-mingw-w64-x86-64 upx-ucl advancecomp qtbase6-static
 
     echo -e "set(CMAKE_SYSTEM_NAME Windows)\nset(TOOLCHAIN_PREFIX x86_64-w64-mingw32)\nset(CMAKE_C_COMPILER \${TOOLCHAIN_PREFIX}-gcc)\nset(CMAKE_CXX_COMPILER \${TOOLCHAIN_PREFIX}-g++)\nset(CMAKE_Fortran_COMPILER \${TOOLCHAIN_PREFIX}-gfortran)\nset(CMAKE_RC_COMPILER \${TOOLCHAIN_PREFIX}-windres)\nset(CMAKE_FIND_ROOT_PATH_MODE_PROGRAM NEVER)\nset(CMAKE_FIND_ROOT_PATH_MODE_LIBRARY ONLY)\nset(CMAKE_FIND_ROOT_PATH_MODE_INCLUDE ONLY)\nset(CMAKE_FIND_ROOT_PATH /usr/x86_64-w64-mingw32)\nset(CMAKE_C_FLAGS_RELEASE \"-m64 -Os -fomit-frame-pointer -fno-stack-protector\")\nset(CMAKE_CXX_FLAGS_RELEASE \"-m64 -Os -fomit-frame-pointer -fno-stack-protector\")" > /tmp/profile.cmake
 
@@ -28,7 +30,7 @@ build_script:
 
     pushd /tmp && wget https://github.com/jmcnamara/libxlsxwriter/archive/RELEASE_1.1.4.tar.gz && tar -zxf RELEASE_1.1.4.tar.gz && popd
 
-    pushd /tmp/libxlsxwriter-RELEASE_1.1.4 && cmake -DUSE_STANDARD_TMPFILE=OFF -DCMAKE_TOOLCHAIN_FILE=/tmp/profile.cmake -DBUILD_SHARED_LIBS=OFF -DZLIB_INCLUDE_DIR=/tmp/zlib-ng-2.0.6 -DZLIB_LIBRARY=/tmp/zlib-ng-2.0.6/libz.a -DUSE_OPENSSL_MD5=ON -DCMAKE_C_FLAGS=-I/tmp/openssl-1.1.1m/include -DOPENSSL_ROOT_DIR=/tmp/openssl-1.1.1m && make -j3 && popd
+    pushd /tmp/libxlsxwriter-RELEASE_1.1.4 && cmake -DUSE_STANDARD_TMPFILE=OFF -DCMAKE_TOOLCHAIN_FILE=/tmp/profile.cmake -DBUILD_SHARED_LIBS=OFF -DZLIB_INCLUDE_DIR=/tmp/zlib-ng-2.0.6 -DZLIB_LIBRARY=/tmp/zlib-ng-2.0.6/libz.a -DUSE_OPENSSL_MD5=ON -DCMAKE_C_FLAGS=-I/tmp/openssl-2.0.3/include -DOPENSSL_ROOT_DIR=/tmp/openssl-2.0.3 && make -j3 && popd
 
     pushd /tmp && wget https://download.qt.io/development_releases/qt/6.3/6.3.0-rc/submodules/qtbase-everywhere-src-6.3.0-rc.tar.xz && tar -xf qtbase-everywhere-src-6.3.0-rc.tar.xz && popd
 
