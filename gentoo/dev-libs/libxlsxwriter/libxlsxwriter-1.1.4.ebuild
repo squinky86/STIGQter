@@ -1,9 +1,9 @@
 # Copyright 1999-2022 Gentoo Foundation
 # Distributed under the terms of the GNU General Public License v2
 
-EAPI=7
+EAPI=8
 
-inherit cmake-utils l10n
+inherit cmake-utils plocale
 
 DESCRIPTION="Libxlsxwriter is a C library for creating Excel XLSX files."
 HOMEPAGE="http://libxlsxwriter.github.io/"
@@ -25,7 +25,7 @@ src_prepare() {
 
 src_configure() {
 	DOUBLEFUNCTION=OFF
-	for x in $(l10n_get_locales); do
+	for x in $(plocale_get_locales); do
 		if ! [[ "${x}" =~ ^en* ]]; then
 			#non-english locale detected; apply double function fix
 			DOUBLEFUNCTION=ON
