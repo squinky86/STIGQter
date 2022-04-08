@@ -219,7 +219,7 @@ void WorkerCCIAdd::process()
     if (tmpFile.open())
     {
         //On 8/12/19, the content was removed from http://iasecontent.disa.mil/stigs/zip/u_cci_list.zip
-        QUrl ccis(QStringLiteral("https://dl.dod.cyber.mil/wp-content/uploads/stigs/zip/U_CCI_List_.zip"));
+        QUrl ccis(QStringLiteral("https://dl.dod.cyber.mil/wp-content/uploads/stigs/zip/U_CCI_List.zip"));
         Q_EMIT updateStatus("Downloading " + ccis.toString() + "…");
         DownloadFile(ccis, &tmpFile);
         Q_EMIT progress(-1);
