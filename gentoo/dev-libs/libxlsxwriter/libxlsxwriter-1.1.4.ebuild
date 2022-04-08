@@ -3,7 +3,7 @@
 
 EAPI=8
 
-inherit cmake-utils plocale
+inherit cmake plocale
 
 DESCRIPTION="Libxlsxwriter is a C library for creating Excel XLSX files."
 HOMEPAGE="http://libxlsxwriter.github.io/"
@@ -20,7 +20,7 @@ DEPEND="sys-libs/zlib
 RDEPEND="${DEPEND}"
 
 src_prepare() {
-	cmake-utils_src_prepare
+	cmake_src_prepare
 }
 
 src_configure() {
@@ -39,11 +39,11 @@ src_configure() {
 		-DBUILD_SHARED_LIBS="$(usex static-libs OFF ON)"
 		-DUSE_DTOA_LIBRARY=${DOUBLEFUNCTION}
 	)
-	cmake-utils_src_configure
+	cmake_src_configure
 }
 
 src_install() {
-	cmake-utils_src_install
+	cmake_src_install
 	dodoc CONTRIBUTING.md License.txt Readme.md Changes.txt
 	dodoc -r docs examples
 }
