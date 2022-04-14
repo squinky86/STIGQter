@@ -121,7 +121,7 @@ STIGQter::STIGQter(QWidget *parent) :
     QTimer::singleShot(0, this, SLOT(CheckVersion()));
 
     //check for CCI indexing
-    if (db.GetFamilies().isEmpty())
+    if (db.GetCCIs().isEmpty())
     {
         _updatedCCIs = true;
 

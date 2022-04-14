@@ -139,6 +139,6 @@ DISTFILES += \
 resources.files = \
     src/U_CCI_List.xml \
     src/800-53-rev4-controls.xml
-resources.prefix = /
+resources.prefix = /dod
 
 RESOURCES = resources

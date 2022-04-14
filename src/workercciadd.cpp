@@ -25,6 +25,7 @@
 #include <iostream>
 
 #include <QDir>
+#include <QDirIterator>
 #include <QNetworkAccessManager>
 #include <QNetworkReply>
 #include <QNetworkRequest>
@@ -114,7 +115,12 @@ void WorkerCCIAdd::process()
 
     //Step 3: download all controls for each family
     db.DelayCommit(true);
-    QString rmfControls = DownloadPage(QUrl("qrc:///src/800-53-rev4-controls.xml"));
+
+    QFile file2(QStringLiteral(":/dod/src/800-53-rev4-controls.xml"));
+    file2.open(QIODevice::ReadOnly);
+    const QByteArray rmfControls = file2.readAll();
+    file2.close();
+
     auto *xml = new QXmlStreamReader(rmfControls);
     QString control;
     QString family;
@@ -171,6 +177,8 @@ void WorkerCCIAdd::process()
         db.AddControl(control, title, description);
     }
 
+    delete xml;
+
     //Step 4: additional privacy controls
     //obtained from https://nvlpubs.nist.gov/nistpubs/SpecialPublications/NIST.SP.800-53r4.pdf (Appendix J) contents
     db.AddControl(QStringLiteral("AP-1"), QStringLiteral("AUTHORITY TO COLLECT"), QString());
@@ -211,8 +219,10 @@ void WorkerCCIAdd::process()
     db.AddControl(QStringLiteral("UL-2"), QStringLiteral("INFORMATION SHARING WITH THIRD PARTIES"), QString());
 
     //Step 5: prepare CCIs
-    QFile file(QStringLiteral("qrc:///src/U_CCI_List.xml"));
+    QFile file(QStringLiteral(":/dod/src/U_CCI_List.xml"));
+    file.open(QIODevice::ReadOnly);
     const QByteArray xmlFile = file.readAll();
+    file.close();
 
     //Step 6: Parse all CCIs
     Q_EMIT updateStatus(QStringLiteral("Parsing CCIs…"));
@@ -284,8 +294,8 @@ void WorkerCCIAdd::process()
                 }
             }
         }
-        delete xml;
     }
+    delete xml;
 
     //Step 7: add CCIs
     Q_EMIT initialize(toAdd.size() + 1, 1);
