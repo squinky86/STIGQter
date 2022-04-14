@@ -22,8 +22,6 @@
 #include "cci.h"
 #include "dbmanager.h"
 
-#include <zip.h>
-
 #include <iostream>
 
 #include <QDir>
@@ -116,7 +114,7 @@ void WorkerCCIAdd::process()
 
     //Step 3: download all controls for each family
     db.DelayCommit(true);
-    QString rmfControls = DownloadPage(QUrl("https://csrc.nist.gov/CSRC/media/Projects/risk-management/800-53%20Downloads/800-53r4/800-53-rev4-controls.xml"));
+    QString rmfControls = DownloadPage(QUrl("qrc:///src/800-53-rev4-controls.xml"));
     auto *xml = new QXmlStreamReader(rmfControls);
     QString control;
     QString family;
@@ -212,98 +210,82 @@ void WorkerCCIAdd::process()
     db.AddControl(QStringLiteral("UL-1"), QStringLiteral("INTERNAL USE"), QString());
     db.AddControl(QStringLiteral("UL-2"), QStringLiteral("INFORMATION SHARING WITH THIRD PARTIES"), QString());
 
-    //Step 5: download all CCIs
-    QTemporaryFile tmpFile;
-    QByteArrayList xmlFiles;
-    db.DelayCommit(true);
-    if (tmpFile.open())
-    {
-        //On 8/12/19, the content was removed from http://iasecontent.disa.mil/stigs/zip/u_cci_list.zip
-        QUrl ccis(QStringLiteral("https://dl.dod.cyber.mil/wp-content/uploads/stigs/zip/U_CCI_List.zip"));
-        Q_EMIT updateStatus("Downloading " + ccis.toString() + "…");
-        DownloadFile(ccis, &tmpFile);
-        Q_EMIT progress(-1);
-        Q_EMIT updateStatus(QStringLiteral("Extracting CCIs…"));
-        xmlFiles = GetFilesFromZip(tmpFile.fileName(), QStringLiteral(".xml")).values();
-        tmpFile.close();
-    }
+    //Step 5: prepare CCIs
+    QFile file(QStringLiteral("qrc:///src/U_CCI_List.xml"));
+    const QByteArray xmlFile = file.readAll();
 
     //Step 6: Parse all CCIs
     Q_EMIT updateStatus(QStringLiteral("Parsing CCIs…"));
     QList<CCI> toAdd;
-    Q_FOREACH (const QByteArray &xmlFile, xmlFiles)
+    xml = new QXmlStreamReader(xmlFile);
+    QString cci = QString();
+    QString definition = QString();
+    while (!xml->atEnd() && !xml->hasError())
     {
-        xml = new QXmlStreamReader(xmlFile);
-        QString cci = QString();
-        QString definition = QString();
-        while (!xml->atEnd() && !xml->hasError())
+        xml->readNext();
+        if (xml->isStartElement())
         {
-            xml->readNext();
-            if (xml->isStartElement())
+            if (xml->name().compare(QStringLiteral("cci_item")) == 0)
             {
-                if (xml->name().compare(QStringLiteral("cci_item")) == 0)
+                if (xml->attributes().hasAttribute(QStringLiteral("id")))
                 {
-                    if (xml->attributes().hasAttribute(QStringLiteral("id")))
+                    Q_FOREACH (const QXmlStreamAttribute &attr, xml->attributes())
                     {
-                        Q_FOREACH (const QXmlStreamAttribute &attr, xml->attributes())
-                        {
-                            if (attr.name().compare(QStringLiteral("id")) == 0)
-                                cci = attr.value().toString();
-                        }
+                        if (attr.name().compare(QStringLiteral("id")) == 0)
+                            cci = attr.value().toString();
                     }
                 }
-                else if (xml->name().compare(QStringLiteral("definition")) == 0)
+            }
+            else if (xml->name().compare(QStringLiteral("definition")) == 0)
+            {
+                definition = xml->readElementText();
+            }
+            else if (xml->name().compare(QStringLiteral("reference")) == 0)
+            {
+                if (xml->attributes().hasAttribute(QStringLiteral("version")) && xml->attributes().hasAttribute(QStringLiteral("index")) && !cci.isEmpty())
                 {
-                    definition = xml->readElementText();
-                }
-                else if (xml->name().compare(QStringLiteral("reference")) == 0)
-                {
-                    if (xml->attributes().hasAttribute(QStringLiteral("version")) && xml->attributes().hasAttribute(QStringLiteral("index")) && !cci.isEmpty())
+                    QString version = QString();
+                    QString index = QString();
+                    Q_FOREACH (const QXmlStreamAttribute &attr, xml->attributes())
                     {
-                        QString version = QString();
-                        QString index = QString();
-                        Q_FOREACH (const QXmlStreamAttribute &attr, xml->attributes())
+                        if (attr.name().compare(QStringLiteral("version")) == 0)
+                            version = attr.value().toString();
+                        else if (attr.name().compare(QStringLiteral("index")) == 0)
+                            index = attr.value().toString();
+                    }
+                    if (!version.isEmpty() && !index.isEmpty() && (version == QStringLiteral("4"))) //Only Rev 4 supported
+                    {
+                        int cciInt = QStringView{cci}.right(6).toString().toInt();
+                        QString control2 = index;
+                        int tmpIndex = index.indexOf(' ');
+                        if (control2.contains(' '))
+                            control2 = control2.left(control2.indexOf(' '));
+                        if (control2.contains('.'))
+                            control2 = control2.left(control2.indexOf('.'));
+                        if (index.contains('('))
                         {
-                            if (attr.name().compare(QStringLiteral("version")) == 0)
-                                version = attr.value().toString();
-                            else if (attr.name().compare(QStringLiteral("index")) == 0)
-                                index = attr.value().toString();
-                        }
-                        if (!version.isEmpty() && !index.isEmpty() && (version == QStringLiteral("4"))) //Only Rev 4 supported
-                        {
-                            int cciInt = QStringView{cci}.right(6).toString().toInt();
-                            QString control2 = index;
-                            int tmpIndex = index.indexOf(' ');
-                            if (control2.contains(' '))
-                                control2 = control2.left(control2.indexOf(' '));
-                            if (control2.contains('.'))
-                                control2 = control2.left(control2.indexOf('.'));
-                            if (index.contains('('))
+                            //check if a second space is present. If the parenthesis is after the second space, it is not an enhancement.
+                            tmpIndex = index.indexOf(' ', tmpIndex + 1);
+                            int tmpInt = index.indexOf('(');
+                            if (tmpIndex <= 0 || tmpInt < tmpIndex)
                             {
-                                //check if a second space is present. If the parenthesis is after the second space, it is not an enhancement.
-                                tmpIndex = index.indexOf(' ', tmpIndex + 1);
-                                int tmpInt = index.indexOf('(');
-                                if (tmpIndex <= 0 || tmpInt < tmpIndex)
-                                {
-                                    QString enhancement(index);
-                                    enhancement = enhancement.remove(0, tmpInt);
-                                    enhancement = enhancement.left(index.indexOf(')') - tmpInt + 1);
-                                    control2.append(enhancement);
-                                }
+                                QString enhancement(index);
+                                enhancement = enhancement.remove(0, tmpInt);
+                                enhancement = enhancement.left(index.indexOf(')') - tmpInt + 1);
+                                control2.append(enhancement);
                             }
-                            CCI c;
-                            c.cci = cciInt;
-                            c.controlId = db.GetControl(control2).id;
-                            c.definition = definition;
-                            toAdd.append(c);
                         }
+                        CCI c;
+                        c.cci = cciInt;
+                        c.controlId = db.GetControl(control2).id;
+                        c.definition = definition;
+                        toAdd.append(c);
                     }
                 }
             }
         }
         delete xml;
     }
-    QFile::remove(tmpFile.fileName());
 
     //Step 7: add CCIs
     Q_EMIT initialize(toAdd.size() + 1, 1);

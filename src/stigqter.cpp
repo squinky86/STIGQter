@@ -119,6 +119,17 @@ STIGQter::STIGQter(QWidget *parent) :
 
     //check version number
     QTimer::singleShot(0, this, SLOT(CheckVersion()));
+
+    //check for CCI indexing
+    if (db.GetFamilies().isEmpty())
+    {
+        _updatedCCIs = true;
+
+        //Create thread to download CCIs and keep GUI active
+        auto *c = new WorkerCCIAdd();
+
+        ConnectThreads(c)->start();
+    }
 }
 
 /**
@@ -1264,11 +1275,9 @@ void STIGQter::Load(const QString &fileName)
 }
 
 /**
- * @brief STIGQter::UpdateCCIs
+ * @brief STIGQter::MapUnmapped
  *
- * Start a thread to update the @a Family, @a Control, and @a CCI
- * information from the NIST and IASE websites. A @a WorkerCCIAdd
- * instance is created.
+ * Start a thread to remap unmapped STIGChecks against CM-6
  */
 void STIGQter::MapUnmapped(bool confirm)
 {
@@ -1366,16 +1375,15 @@ void STIGQter::EnableInput()
         ui->btnClearCCIs->setEnabled(false);
         ui->btnDownloadSTIGs->setEnabled(false);
         ui->btnImportEmass->setEnabled(false);
-        ui->btnImportCCIs->setEnabled(true);
         ui->btnImportSTIGs->setEnabled(false);
         ui->btnImportEmassControl->setEnabled(false);
+        _updatedCCIs = true;
     }
     else
     {
         //disable deleting CCIs if STIGs have been imported
         ui->btnClearCCIs->setEnabled(stigsNotImported);
         ui->btnDownloadSTIGs->setEnabled(stigsNotImported);
-        ui->btnImportCCIs->setEnabled(false);
         ui->btnImportSTIGs->setEnabled(true);
         ui->btnImportEmassControl->setEnabled(true);
     }
@@ -1483,7 +1491,6 @@ void STIGQter::DisableInput()
     ui->btnDeleteEmassImport->setEnabled(false);
     ui->btnDownloadSTIGs->setEnabled(false);
     ui->btnEditSTIG->setEnabled(false);
-    ui->btnImportCCIs->setEnabled(false);
     ui->btnImportCKL->setEnabled(false);
     ui->btnImportEmass->setEnabled(false);
     ui->btnImportEmassControl->setEnabled(false);
