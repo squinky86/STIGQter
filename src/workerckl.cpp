@@ -23,6 +23,7 @@
 
 #include <QFile>
 #include <QFileInfo>
+#include <QUuid>
 #include <QXmlStreamReader>
 
 #include <functional>
@@ -168,6 +169,15 @@ void WorkerCKL::process()
             stream.writeEndElement(); //SI_DATA
 
             stream.writeStartElement(QStringLiteral("SI_DATA"));
+            WriteXMLEntry(stream, QStringLiteral("SID_NAME"), QStringLiteral("classification")); //SID_NAME
+            WriteXMLEntry(stream, QStringLiteral("SID_DATA"), QStringLiteral("UNCLASSIFIED")); //SID_DATA
+            stream.writeEndElement(); //SI_DATA
+
+            stream.writeStartElement(QStringLiteral("SI_DATA"));
+            WriteXMLEntry(stream, QStringLiteral("SID_NAME"), QStringLiteral("customname")); //SID_NAME
+            stream.writeEndElement(); //SI_DATA
+
+            stream.writeStartElement(QStringLiteral("SI_DATA"));
             WriteXMLEntry(stream, QStringLiteral("SID_NAME"), QStringLiteral("stigid")); //SID_NAME
             WriteXMLEntry(stream, QStringLiteral("SID_DATA"), s.benchmarkId); //SID_DATA
             stream.writeEndElement(); //SI_DATA
@@ -190,6 +200,21 @@ void WorkerCKL::process()
             stream.writeStartElement(QStringLiteral("SI_DATA"));
             WriteXMLEntry(stream, QStringLiteral("SID_NAME"), QStringLiteral("title")); //SID_NAME
             WriteXMLEntry(stream, QStringLiteral("SID_DATA"), s.title); //SID_DATA
+            stream.writeEndElement(); //SI_DATA
+
+            stream.writeStartElement(QStringLiteral("SI_DATA"));
+            WriteXMLEntry(stream, QStringLiteral("SID_NAME"), QStringLiteral("uuid")); //SID_NAME
+            WriteXMLEntry(stream, QStringLiteral("SID_DATA"), QUuid::createUuid().toString(QUuid::WithoutBraces)); //SID_DATA
+            stream.writeEndElement(); //SI_DATA
+
+            stream.writeStartElement(QStringLiteral("SI_DATA"));
+            WriteXMLEntry(stream, QStringLiteral("SID_NAME"), QStringLiteral("notice")); //SID_NAME
+            WriteXMLEntry(stream, QStringLiteral("SID_DATA"), QStringLiteral("terms-of-use")); //SID_DATA
+            stream.writeEndElement(); //SI_DATA
+
+            stream.writeStartElement(QStringLiteral("SI_DATA"));
+            WriteXMLEntry(stream, QStringLiteral("SID_NAME"), QStringLiteral("source")); //SID_NAME
+            WriteXMLEntry(stream, QStringLiteral("SID_DATA"), QStringLiteral("STIG.DOD.MIL")); //SID_DATA
             stream.writeEndElement(); //SI_DATA
 
             stream.writeEndElement(); //STIG_INFO
@@ -302,6 +327,11 @@ void WorkerCKL::process()
                 stream.writeStartElement(QStringLiteral("STIG_DATA"));
                 WriteXMLEntry(stream, QStringLiteral("VULN_ATTRIBUTE"), QStringLiteral("Weight")); //VULN_ATTRIBUTE
                 WriteXMLEntry(stream, QStringLiteral("ATTRIBUTE_DATA"), QString::number(sc.weight)); //ATTRIBUTE_DATA
+                stream.writeEndElement(); //STIG_DATA
+
+                stream.writeStartElement(QStringLiteral("STIG_DATA"));
+                WriteXMLEntry(stream, QStringLiteral("VULN_ATTRIBUTE"), QStringLiteral("Class")); //VULN_ATTRIBUTE
+                WriteXMLEntry(stream, QStringLiteral("ATTRIBUTE_DATA"), QStringLiteral("Unclass")); //ATTRIBUTE_DATA
                 stream.writeEndElement(); //STIG_DATA
 
                 stream.writeStartElement(QStringLiteral("STIG_DATA"));
