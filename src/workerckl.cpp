@@ -153,6 +153,7 @@ void WorkerCKL::process()
         stream.writeEndElement(); //ASSET
 
         stream.writeStartElement(QStringLiteral("STIGS"));
+	QString stigUuid = QUuid::createUuid().toString(QUuid::WithoutBraces);
 
         Q_EMIT progress(-1);
 
@@ -327,6 +328,11 @@ void WorkerCKL::process()
                 stream.writeStartElement(QStringLiteral("STIG_DATA"));
                 WriteXMLEntry(stream, QStringLiteral("VULN_ATTRIBUTE"), QStringLiteral("Weight")); //VULN_ATTRIBUTE
                 WriteXMLEntry(stream, QStringLiteral("ATTRIBUTE_DATA"), QString::number(sc.weight)); //ATTRIBUTE_DATA
+                stream.writeEndElement(); //STIG_DATA
+
+                stream.writeStartElement(QStringLiteral("STIG_DATA"));
+                WriteXMLEntry(stream, QStringLiteral("VULN_ATTRIBUTE"), QStringLiteral("STIG_UUID")); //VULN_ATTRIBUTE
+                WriteXMLEntry(stream, QStringLiteral("ATTRIBUTE_DATA"), stigUuid); //ATTRIBUTE_DATA
                 stream.writeEndElement(); //STIG_DATA
 
                 stream.writeStartElement(QStringLiteral("STIG_DATA"));

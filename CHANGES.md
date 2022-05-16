@@ -1,3 +1,9 @@
+## 1.2.2
+-   Emergency release to fix #111 - corrupted CCI list from DISA
+
+## 1.2.1
+-   Emergency release to fix #106 - moving of CCI list
+
 ## 1.2.0
 -   Display defect density in DFR (fixes #110)
 
