@@ -144,9 +144,9 @@ void WorkerCKL::process()
         WriteXMLEntry(stream, QStringLiteral("HOST_IP"), _asset.hostIP); //HOST_IP
         WriteXMLEntry(stream, QStringLiteral("HOST_MAC"), _asset.hostMAC);//HOST_MAC
         WriteXMLEntry(stream, QStringLiteral("HOST_FQDN"), _asset.hostFQDN); //HOST_FQDN
+        WriteXMLEntry(stream, QStringLiteral("TARGET_COMMENT"), _asset.targetComment); //TARGET_COMMENT
         WriteXMLEntry(stream, QStringLiteral("TECH_AREA"), _asset.techArea); //TECH_AREA
         WriteXMLEntry(stream, QStringLiteral("TARGET_KEY"), _asset.targetKey); //TARGET_KEY
-        WriteXMLEntry(stream, QStringLiteral("TARGET_COMMENT"), _asset.targetComment); //TARGET_COMMENT
         WriteXMLEntry(stream, QStringLiteral("WEB_OR_DATABASE"), PrintTrueFalse(_asset.webOrDB)); //WEB_OR_DATABASE
         WriteXMLEntry(stream, QStringLiteral("WEB_DB_SITE"), _asset.webDbSite); //WEB_DB_SITE
         WriteXMLEntry(stream, QStringLiteral("WEB_DB_INSTANCE"), _asset.webDbInstance); //WEB_DB_INSTANCE
