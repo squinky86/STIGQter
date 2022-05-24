@@ -639,7 +639,7 @@ void AssetView::ImportXCCDF(const QString &filename)
             }
         }
         delete xml;
-        int tmpCount = warnings.count();
+        auto tmpCount = warnings.count();
         //save a warning if the result can't be mapped to a check
         if (tmpCount > 0)
         {

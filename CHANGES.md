@@ -1,10 +1,13 @@
-## 1.2.2
+## 1.2.3
+-   XML schema validation with newest STIGViewer (fixes #112)
+
+## 1.2.2 20220505
 -   Emergency release to fix #111 - corrupted CCI list from DISA
 
-## 1.2.1
+## 1.2.1 20220418
 -   Emergency release to fix #106 - moving of CCI list
 
-## 1.2.0
+## 1.2.0 20220408
 -   Display defect density in DFR (fixes #110)
 
 ## 1.1.4 20220404

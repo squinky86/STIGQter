@@ -258,7 +258,7 @@ void WorkerFindingsReport::process()
                 else if (c3.status == Status::Open)
                     f++;
             }
-            QString samples = QString(" (Occurred on %1 of %2 samples: %3\%)").arg(QString::number(f), QString::number(f + nf), QString::number((double)100 * (double)f / (double)(f + nf), 'f', 2));
+            QString samples = QString(" (Occurred on %1 of %2 samples: %3%%)").arg(QString::number(f), QString::number(f + nf), QString::number((double)100 * (double)f / (double)(f + nf), 'f', 2));
             assets.append(PrintCKLCheck(cc) + samples);
         }
         worksheet_write_string(wsCCIs, onRow, 3, assets.toStdString().c_str(), fmtWrapped);
