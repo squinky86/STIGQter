@@ -8,7 +8,7 @@ VIAddVersionKey /LANG=${LANG_ENGLISH} "FileDescription" "Open Source STIGViewer 
 VIAddVersionKey /LANG=${LANG_ENGLISH} "LegalCopyright" "2018-2022 Jon Hood"
 VIAddVersionKey /LANG=${LANG_ENGLISH} "CompanyName" "Jon Hood"
 VIAddVersionKey /LANG=${LANG_ENGLISH} "FileVersion" "1.2.0-1"
-VIProductVersion "1.2.0.0"
+VIProductVersion "1.2.4.0"
 RequestExecutionLevel admin
 Section
 	${IfNot} ${RunningX64}

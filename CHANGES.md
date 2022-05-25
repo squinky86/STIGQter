@@ -1,4 +1,4 @@
-## 1.2.3
+## 1.2.3 20220525
 -   XML schema validation with newest STIGViewer (fixes #112)
 
 ## 1.2.2 20220505
