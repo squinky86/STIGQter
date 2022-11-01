@@ -22,9 +22,9 @@ build_script:
 
     pushd /tmp/zlib-ng-2.0.6 && cmake ./ -DCMAKE_TOOLCHAIN_FILE=/tmp/profile.cmake -DBUILD_SHARED_LIBS=OFF -DZLIB_COMPAT=ON -DZLIB_ENABLE_TESTS=OFF && make -j3 && popd
 
-    pushd /tmp && wget https://www.openssl.org/source/openssl-3.0.5.tar.gz && tar -zxf openssl-3.0.5.tar.gz && popd
+    pushd /tmp && wget https://www.openssl.org/source/openssl-3.0.7.tar.gz && tar -zxf openssl-3.0.7.tar.gz && popd
 
-    pushd /tmp/openssl-3.0.5 && ./Configure mingw64 no-shared no-asm no-err no-tests CROSS_COMPILE=x86_64-w64-mingw32- CFLAGS="${CFLAGS}" CXXFLAGS="${CXXFLAGS}" && make -j3 && popd
+    pushd /tmp/openssl-3.0.7 && ./Configure mingw64 no-shared no-asm no-err no-tests CROSS_COMPILE=x86_64-w64-mingw32- CFLAGS="${CFLAGS}" CXXFLAGS="${CXXFLAGS}" && make -j3 && popd
 
     pushd /tmp && wget https://libzip.org/download/libzip-1.9.2.tar.xz && tar -xf libzip-1.9.2.tar.xz && popd
 
@@ -32,7 +32,7 @@ build_script:
 
     pushd /tmp && wget https://github.com/jmcnamara/libxlsxwriter/archive/RELEASE_1.1.4.tar.gz && tar -zxf RELEASE_1.1.4.tar.gz && popd
 
-    pushd /tmp/libxlsxwriter-RELEASE_1.1.4 && cmake -DUSE_STANDARD_TMPFILE=OFF -DCMAKE_TOOLCHAIN_FILE=/tmp/profile.cmake -DBUILD_SHARED_LIBS=OFF -DZLIB_INCLUDE_DIR=/tmp/zlib-ng-2.0.6 -DZLIB_LIBRARY=/tmp/zlib-ng-2.0.6/libz.a -DUSE_OPENSSL_MD5=ON -DCMAKE_C_FLAGS=-I/tmp/openssl-3.0.5/include -DOPENSSL_ROOT_DIR=/tmp/openssl-3.0.5 && make -j3 && popd
+    pushd /tmp/libxlsxwriter-RELEASE_1.1.4 && cmake -DUSE_STANDARD_TMPFILE=OFF -DCMAKE_TOOLCHAIN_FILE=/tmp/profile.cmake -DBUILD_SHARED_LIBS=OFF -DZLIB_INCLUDE_DIR=/tmp/zlib-ng-2.0.6 -DZLIB_LIBRARY=/tmp/zlib-ng-2.0.6/libz.a -DUSE_OPENSSL_MD5=ON -DCMAKE_C_FLAGS=-I/tmp/openssl-3.0.7/include -DOPENSSL_ROOT_DIR=/tmp/openssl-3.0.7 && make -j3 && popd
 
     pushd /tmp && wget https://download.qt.io/official_releases/qt/6.4/6.4.0/submodules/qtbase-everywhere-src-6.4.0.tar.xz && tar -xf qtbase-everywhere-src-6.4.0.tar.xz && popd
 
@@ -40,7 +40,7 @@ build_script:
 
     sudo update-alternatives --set x86_64-w64-mingw32-g++ /usr/bin/x86_64-w64-mingw32-g++-posix
 
-    pushd /tmp/qtbase-everywhere-src-6.4.0 && ./configure -prefix /tmp/qt -no-feature-sql-odbc -sql-sqlite -platform linux-g++-64 -qt-host-path /opt/qt6.4-static -xplatform win32-g++ -device-option CROSS_COMPILE=x86_64-w64-mingw32- -release -opengl desktop -mp -static -static-runtime -no-shared -nomake examples -no-icu -optimize-size -openssl-linked -- -DOPENSSL_ROOT_DIR=/tmp/openssl-3.0.5 -DCMAKE_TOOLCHAIN_FILE=/tmp/profile.cmake && cmake --build . && cmake --install . && popd
+    pushd /tmp/qtbase-everywhere-src-6.4.0 && ./configure -prefix /tmp/qt -no-feature-sql-odbc -sql-sqlite -platform linux-g++-64 -qt-host-path /opt/qt6.4-static -xplatform win32-g++ -device-option CROSS_COMPILE=x86_64-w64-mingw32- -release -opengl desktop -mp -static -static-runtime -no-shared -nomake examples -no-icu -optimize-size -openssl-linked -- -DOPENSSL_ROOT_DIR=/tmp/openssl-3.0.7 -DCMAKE_TOOLCHAIN_FILE=/tmp/profile.cmake && cmake --build . && cmake --install . && popd
 
     sed -i -e '/^LIBS/d' STIGQter.pro
 
