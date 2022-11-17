@@ -27,6 +27,7 @@
 #include "ui_assetview.h"
 #include "workerckl.h"
 #include "workercklexport.h"
+#include "workercklupgrade.h"
 
 #include <QFileDialog>
 #include <QFont>
@@ -983,54 +984,15 @@ void AssetView::UpdateSTIGs()
  */
 void AssetView::UpgradeCKL()
 {
+    DisableInput();
     QListWidgetItem *i = ui->lstChecks->selectedItems().first();
     DbManager db;
     db.DelayCommit(true);
     auto cc = i->data(Qt::UserRole).value<CKLCheck>();
-    //check if STIG is upgradable
-    STIG selectedSTIG = cc.GetSTIGCheck().GetSTIG();
-    Q_FOREACH (STIG s, db.GetSTIGs())
-    {
-        if (s != selectedSTIG)
-        {
-            if (
-                    (s.title == selectedSTIG.title) &&
-                    (
-                        (s.version > selectedSTIG.version) ||
-                        ((s.version == selectedSTIG.version) && (s.release.compare(selectedSTIG.release) > 0))
-                    ) &&
-                    (!_asset.GetSTIGs().contains(s))
-                )
-            {
-                //found STIG to upgrade to
-                db.AddSTIGToAsset(s, _asset);
-                db.DelayCommit(true);
-                Q_FOREACH (CKLCheck ckl, _asset.GetCKLChecks(&s))
-                {
-                    bool updated = false;
-                    Q_FOREACH(CKLCheck ckl_old, _asset.GetCKLChecks(&selectedSTIG))
-                    {
-                        if (ckl_old.GetSTIGCheck().vulnNum == ckl.GetSTIGCheck().vulnNum)
-                        {
-                            ckl.status = ckl_old.status;
-                            ckl.findingDetails = ckl_old.findingDetails;
-                            ckl.comments = ckl_old.comments;
-                            ckl.severityOverride = ckl_old.severityOverride;
-                            ckl.severityJustification = ckl_old.severityJustification;
-                            db.UpdateCKLCheck(ckl);
-                            updated = true;
-                            break;
-                        }
-                    }
-                    if (updated)
-                        continue;
-                }
-                db.DelayCommit(false);
-                break;
-            }
-        }
-    }
-    QMessageBox::information(nullptr, QStringLiteral("STIG Added"), QStringLiteral("The upgraded STIG has been added to the asset. You will need to reload the asset and delete the old STIG from it."));
+
+    auto *a = new WorkerCKLUpgrade();
+    a->AddSTIG(_asset, cc.GetSTIGCheck().GetSTIG());
+    _parent->ConnectThreads(a)->start();
     Q_EMIT CloseTab(_tabIndex);
 }
 

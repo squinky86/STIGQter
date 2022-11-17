@@ -67,6 +67,7 @@ SOURCES += \
     src/workerckl.cpp \
     src/workercklexport.cpp \
     src/workercklimport.cpp \
+    src/workercklupgrade.cpp \
     src/workercmrsexport.cpp \
     src/workeremassreport.cpp \
     src/workerfindingsreport.cpp \
@@ -104,6 +105,7 @@ HEADERS += \
     src/workerckl.h \
     src/workercklexport.h \
     src/workercklimport.h \
+    src/workercklupgrade.h \
     src/workercmrsexport.h \
     src/workeremassreport.h \
     src/workerfindingsreport.h \
