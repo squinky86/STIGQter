@@ -157,6 +157,7 @@ void AssetView::DisableInput()
  */
 void AssetView::Display()
 {
+    ui->btnUpgradeCKL->setEnabled(false);
     ui->txtIP->setText(_asset.hostIP);
     ui->txtMAC->setText(_asset.hostMAC);
     ui->txtFQDN->setText(_asset.hostFQDN);
@@ -306,7 +307,7 @@ void AssetView::ShowChecks(bool countOnly)
  */
 void AssetView::UpdateCKLCheck(const CKLCheck &cklCheck)
 {
-    //write database elemnets to user interface
+    DbManager db;
 
     //While reading ui elements, disable their ability to throw an event.
     ui->txtComments->blockSignals(true);
@@ -332,6 +333,27 @@ void AssetView::UpdateCKLCheck(const CKLCheck &cklCheck)
     ui->txtFindingDetails->blockSignals(false);
     ui->cboBoxStatus->blockSignals(false);
     ui->cboBoxSeverity->blockSignals(false);
+
+    //check if STIG is upgradable
+    STIG selectedSTIG = cklCheck.GetSTIGCheck().GetSTIG();
+    Q_FOREACH (STIG s, db.GetSTIGs())
+    {
+        if (s != selectedSTIG)
+        {
+            if (
+                    (s.title == selectedSTIG.title) &&
+                    (
+                        (s.version > selectedSTIG.version) ||
+                        ((s.version == selectedSTIG.version) && (s.release.compare(selectedSTIG.release) > 0))
+                    ) &&
+                    (!_asset.GetSTIGs().contains(s))
+                )
+            {
+                ui->btnUpgradeCKL->setEnabled(true);
+                break;
+            }
+        }
+    }
 }
 
 /**
@@ -783,7 +805,7 @@ void AssetView::UpdateCKLHelper()
 {
     QList<QListWidgetItem*> selectedItems = ui->lstChecks->selectedItems();
     int count = selectedItems.count();
-    ui->btnUpgradeCKL->setEnabled(false);
+
     //make sure that something is selected
     if (count > 0)
     {
@@ -801,27 +823,6 @@ void AssetView::UpdateCKLHelper()
                 cc.severityOverride = (tmpSeverity == cc.GetSTIGCheck().severity) ? Severity::none : tmpSeverity;
                 cc.severityJustification = _justification;
                 cc.status = GetStatus(ui->cboBoxStatus->currentText());
-
-                //check if STIG is upgradable
-                STIG selectedSTIG = cc.GetSTIGCheck().GetSTIG();
-                Q_FOREACH (STIG s, db.GetSTIGs())
-                {
-                    if (s != selectedSTIG)
-                    {
-                        if (
-                                (s.title == selectedSTIG.title) &&
-                                (
-                                    (s.version > selectedSTIG.version) ||
-                                    ((s.version == selectedSTIG.version) && (s.release.compare(selectedSTIG.release) > 0))
-                                ) &&
-                                (!_asset.GetSTIGs().contains(s))
-                            )
-                        {
-                            ui->btnUpgradeCKL->setEnabled(true);
-                            break;
-                        }
-                    }
-                }
             }
             else {
                 if (_updateStatus)
@@ -1029,8 +1030,8 @@ void AssetView::UpgradeCKL()
             }
         }
     }
-    QMessageBox::information(nullptr, QStringLiteral("STIG Added"), QStringLiteral("The upgraded STIG has been added to the asset."));
-    ShowChecks();
+    QMessageBox::information(nullptr, QStringLiteral("STIG Added"), QStringLiteral("The upgraded STIG has been added to the asset. You will need to reload the asset and delete the old STIG from it."));
+    Q_EMIT CloseTab(_tabIndex);
 }
 
 /**
@@ -1088,6 +1089,7 @@ void AssetView::SetItemColor(QListWidgetItem *i, Status stat, Severity sev)
  */
 void AssetView::CheckSelected(QListWidgetItem *current, QListWidgetItem *previous [[maybe_unused]])
 {
+    ui->btnUpgradeCKL->setEnabled(false);
     if (current)
     {
         auto cc = current->data(Qt::UserRole).value<CKLCheck>();
