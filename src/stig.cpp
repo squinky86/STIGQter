@@ -150,6 +150,21 @@ bool operator==(STIG const& lhs, STIG const& rhs)
 }
 
 /**
+ * @brief STIG::operator!=
+ * @param right
+ * @return @c True when the @a STIG entities refer to different
+ * @a STIGs. Otherwise, @c false.
+ *
+ * If the @a STIG @a id is the same between the comparates, they
+ * are assumed to be equivalent. If not, the @a title, @a release,
+ * and @a version form a unique key to test equivalence with.
+ */
+bool operator!=(STIG const& lhs, STIG const& rhs)
+{
+    return !(lhs == rhs);
+}
+
+/**
  * @brief STIG::operator <
  * @param right
  * @return @c True when this STIG is less than the provided operator.

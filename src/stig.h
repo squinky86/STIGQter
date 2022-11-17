@@ -51,6 +51,7 @@ public:
 };
 
 bool operator==(STIG const& lhs, STIG const& rhs);
+bool operator!=(STIG const& lhs, STIG const& rhs);
 
 Q_DECLARE_METATYPE(STIG);
 

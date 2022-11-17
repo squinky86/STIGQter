@@ -147,6 +147,7 @@ void AssetView::DisableInput()
     ui->btnImportXCCDF->setEnabled(false);
     ui->btnSaveCKL->setEnabled(false);
     ui->btnSaveCKLs->setEnabled(false);
+    ui->btnUpgradeCKL->setEnabled(false);
 }
 
 /**
@@ -782,6 +783,7 @@ void AssetView::UpdateCKLHelper()
 {
     QList<QListWidgetItem*> selectedItems = ui->lstChecks->selectedItems();
     int count = selectedItems.count();
+    ui->btnUpgradeCKL->setEnabled(false);
     //make sure that something is selected
     if (count > 0)
     {
@@ -799,6 +801,27 @@ void AssetView::UpdateCKLHelper()
                 cc.severityOverride = (tmpSeverity == cc.GetSTIGCheck().severity) ? Severity::none : tmpSeverity;
                 cc.severityJustification = _justification;
                 cc.status = GetStatus(ui->cboBoxStatus->currentText());
+
+                //check if STIG is upgradable
+                STIG selectedSTIG = cc.GetSTIGCheck().GetSTIG();
+                Q_FOREACH (STIG s, db.GetSTIGs())
+                {
+                    if (s != selectedSTIG)
+                    {
+                        if (
+                                (s.title == selectedSTIG.title) &&
+                                (
+                                    (s.version > selectedSTIG.version) ||
+                                    ((s.version == selectedSTIG.version) && (s.release.compare(selectedSTIG.release) > 0))
+                                ) &&
+                                (!_asset.GetSTIGs().contains(s))
+                            )
+                        {
+                            ui->btnUpgradeCKL->setEnabled(true);
+                            break;
+                        }
+                    }
+                }
             }
             else {
                 if (_updateStatus)
@@ -811,6 +834,7 @@ void AssetView::UpdateCKLHelper()
         }
         db.DelayCommit(false);
         _updateStatus = false;
+
         _timerChecks.start(1000);
     }
     //check if Asset was updated
@@ -949,6 +973,64 @@ void AssetView::UpdateSTIGs()
             }
         }
     }
+}
+
+/**
+ * @brief AssetView::UpgradeCKL
+ *
+ * Upgrades the selected STIG to a newer version
+ */
+void AssetView::UpgradeCKL()
+{
+    QListWidgetItem *i = ui->lstChecks->selectedItems().first();
+    DbManager db;
+    db.DelayCommit(true);
+    auto cc = i->data(Qt::UserRole).value<CKLCheck>();
+    //check if STIG is upgradable
+    STIG selectedSTIG = cc.GetSTIGCheck().GetSTIG();
+    Q_FOREACH (STIG s, db.GetSTIGs())
+    {
+        if (s != selectedSTIG)
+        {
+            if (
+                    (s.title == selectedSTIG.title) &&
+                    (
+                        (s.version > selectedSTIG.version) ||
+                        ((s.version == selectedSTIG.version) && (s.release.compare(selectedSTIG.release) > 0))
+                    ) &&
+                    (!_asset.GetSTIGs().contains(s))
+                )
+            {
+                //found STIG to upgrade to
+                db.AddSTIGToAsset(s, _asset);
+                db.DelayCommit(true);
+                Q_FOREACH (CKLCheck ckl, _asset.GetCKLChecks(&s))
+                {
+                    bool updated = false;
+                    Q_FOREACH(CKLCheck ckl_old, _asset.GetCKLChecks(&selectedSTIG))
+                    {
+                        if (ckl_old.GetSTIGCheck().vulnNum == ckl.GetSTIGCheck().vulnNum)
+                        {
+                            ckl.status = ckl_old.status;
+                            ckl.findingDetails = ckl_old.findingDetails;
+                            ckl.comments = ckl_old.comments;
+                            ckl.severityOverride = ckl_old.severityOverride;
+                            ckl.severityJustification = ckl_old.severityJustification;
+                            db.UpdateCKLCheck(ckl);
+                            updated = true;
+                            break;
+                        }
+                    }
+                    if (updated)
+                        continue;
+                }
+                db.DelayCommit(false);
+                break;
+            }
+        }
+    }
+    QMessageBox::information(nullptr, QStringLiteral("STIG Added"), QStringLiteral("The upgraded STIG has been added to the asset."));
+    ShowChecks();
 }
 
 /**

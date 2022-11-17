@@ -79,6 +79,7 @@ private Q_SLOTS:
     void UpdateCKLStatus(const QString &val);
     void UpdateCKLSeverity(const QString &val);
     void UpdateSTIGs();
+    void UpgradeCKL();
 
 private:
     Ui::AssetView *ui;
