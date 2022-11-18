@@ -1,3 +1,7 @@
+## 1.2.4
+-   Documentation Updates
+-   STIG checklist upgrader
+
 ## 1.2.3 20220525
 -   XML schema validation with newest STIGViewer (fixes #112)
 
