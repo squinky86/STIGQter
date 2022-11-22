@@ -100,10 +100,10 @@ AssetView::AssetView(Asset &asset, QWidget *parent) :
      * 3. CTRL+R: Not Reviewed
      * 4. CTRL+X: Not Applicable
      */
-    _shortcuts.append(new QShortcut(QKeySequence(Qt::CTRL + Qt::Key_N), this, SLOT(KeyShortcutCtrlN())));
-    _shortcuts.append(new QShortcut(QKeySequence(Qt::CTRL + Qt::Key_O), this, SLOT(KeyShortcutCtrlO())));
-    _shortcuts.append(new QShortcut(QKeySequence(Qt::CTRL + Qt::Key_R), this, SLOT(KeyShortcutCtrlR())));
-    _shortcuts.append(new QShortcut(QKeySequence(Qt::CTRL + Qt::Key_X), this, SLOT(KeyShortcutCtrlX())));
+    _shortcuts.append(new QShortcut(QKeySequence(Qt::CTRL | Qt::Key_N), this, SLOT(KeyShortcutCtrlN())));
+    _shortcuts.append(new QShortcut(QKeySequence(Qt::CTRL | Qt::Key_O), this, SLOT(KeyShortcutCtrlO())));
+    _shortcuts.append(new QShortcut(QKeySequence(Qt::CTRL | Qt::Key_R), this, SLOT(KeyShortcutCtrlR())));
+    _shortcuts.append(new QShortcut(QKeySequence(Qt::CTRL | Qt::Key_X), this, SLOT(KeyShortcutCtrlX())));
 
     if (_asset.id >= 0)
         Display();
@@ -459,7 +459,24 @@ void AssetView::RunTests()
     RenameAsset("TEST2");
     RenameAsset("TEST");
 
-    //step 12: delete asset
+    //step 12: upgrade ASD STIG
+    std::cout << "\t\tTest " << onTest++ << ": Upgrade ASD STIG" << std::endl;
+    ui->lstChecks->clearSelection();
+    ProcEvents();
+    for (int j = 0; j < ui->lstChecks->count(); j++)
+    {
+        CKLCheck cc = ui->lstChecks->item(j)->data(Qt::UserRole).value<CKLCheck>();
+        if (cc.GetSTIGCheck().GetSTIG().fileName.compare("U_ASD_STIG_V5R1_Manual-xccdf.xml"))
+        {
+            ui->lstChecks->item(j)->setSelected(true);
+            ProcEvents();
+            break;
+        }
+    }
+    UpgradeCKL();
+    ProcEvents();
+
+    //step 13: delete asset
     std::cout << "\t\tTest " << onTest++ << ":Deleting Asset" << std::endl;
     DeleteAsset(true);
 }

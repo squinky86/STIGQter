@@ -106,7 +106,7 @@ STIGQter::STIGQter(QWidget *parent) :
     ui->tabDB->tabBar()->tabButton(0, QTabBar::RightSide)->resize(0, 0);
 
     //set keyboard shortcuts
-    _shortcuts.append(new QShortcut(QKeySequence(Qt::CTRL + Qt::Key_S), this, SLOT(Save())));
+    _shortcuts.append(new QShortcut(QKeySequence(Qt::CTRL | Qt::Key_S), this, SLOT(Save())));
 
     //display path to database file
     DbManager db;
@@ -228,6 +228,15 @@ void STIGQter::RunTests()
         }
     }
 
+    // add old ASD STIGs
+    std::cout << "\t\tTest " << step++ << ": Old ASD STIG" << std::endl;
+    {
+        WorkerSTIGAdd s;
+        s.AddSTIGs({"tests/U_ASD_V5R1_STIG.zip", "tests/U_ASD_V5R2_STIG.zip"});
+        s.SetEnableSupplements(false);
+        s.process();
+    }
+
     // filter STIGs
     std::cout << "\t\tTest " << step++ << ": Filter" << std::endl;
     ui->txtSTIGSearch->setText(QStringLiteral("Windows"));
@@ -263,6 +272,15 @@ void STIGQter::RunTests()
     // create asset
     std::cout << "\tTest " << step++ << ": Creating Asset \"TEST\"" << std::endl;
     ui->lstSTIGs->selectAll();
+    //deselect the latest ASD STIG
+    for (int j = 0; j < ui->lstSTIGs->count(); j++)
+    {
+        auto *li = ui->lstSTIGs->item(j);
+        if (li->data(Qt::UserRole).value<STIG>().fileName.compare("U_ASD_STIG_V5R2_Manual-xccdf.xml"))
+        {
+            li->setSelected(false);
+        }
+    }
     AddAsset(QStringLiteral("TEST"));
     ProcEvents();
 

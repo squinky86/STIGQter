@@ -158,7 +158,7 @@ int main(int argc, char *argv[])
         }
 
         {
-            std::cout << "Test " << ++onTest << ": Hasing DB" << std::endl;
+            std::cout << "Test " << ++onTest << ": Hashing DB" << std::endl;
             DbManager db;
             auto hashInfo = db.HashDB();
             if (hashInfo.isNull() || hashInfo.isEmpty())
