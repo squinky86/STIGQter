@@ -85,19 +85,20 @@ void WorkerCKLUpgrade::process()
                 //found STIG to upgrade to
                 db.AddSTIGToAsset(s, _asset);
                 db.DelayCommit(true);
+                QVector<CKLCheck> oldChecks = _asset.GetCKLChecks(&_stig);
                 Q_FOREACH (CKLCheck ckl, _asset.GetCKLChecks(&s))
                 {
                     bool updated = false;
-                    Q_FOREACH(CKLCheck ckl_old, _asset.GetCKLChecks(&_stig))
+                    Q_FOREACH(CKLCheck cklOld, oldChecks)
                     {
-                        if (ckl_old.GetSTIGCheck().vulnNum == ckl.GetSTIGCheck().vulnNum)
+                        if (cklOld.GetSTIGCheck().vulnNum == ckl.GetSTIGCheck().vulnNum)
                         {
                             Q_EMIT updateStatus("Updating " + PrintCKLCheck(ckl) + "...");
-                            ckl.status = ckl_old.status;
-                            ckl.findingDetails = ckl_old.findingDetails;
-                            ckl.comments = ckl_old.comments;
-                            ckl.severityOverride = ckl_old.severityOverride;
-                            ckl.severityJustification = ckl_old.severityJustification;
+                            ckl.status = cklOld.status;
+                            ckl.findingDetails = cklOld.findingDetails;
+                            ckl.comments = cklOld.comments;
+                            ckl.severityOverride = cklOld.severityOverride;
+                            ckl.severityJustification = cklOld.severityJustification;
                             db.UpdateCKLCheck(ckl);
                             updated = true;
                             Q_EMIT progress(-1);
