@@ -1,4 +1,4 @@
-## 1.2.4
+## 1.2.4 20221123
 -   Documentation Updates
 -   STIG checklist upgrader
 

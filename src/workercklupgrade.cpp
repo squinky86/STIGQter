@@ -88,12 +88,12 @@ void WorkerCKLUpgrade::process()
                 QVector<CKLCheck> oldChecks = _asset.GetCKLChecks(&_stig);
                 Q_FOREACH (CKLCheck ckl, _asset.GetCKLChecks(&s))
                 {
+                    Q_EMIT updateStatus("Updating " + PrintCKLCheck(ckl) + "...");
                     bool updated = false;
                     Q_FOREACH(CKLCheck cklOld, oldChecks)
                     {
                         if (cklOld.GetSTIGCheck().vulnNum == ckl.GetSTIGCheck().vulnNum)
                         {
-                            Q_EMIT updateStatus("Updating " + PrintCKLCheck(ckl) + "...");
                             ckl.status = cklOld.status;
                             ckl.findingDetails = cklOld.findingDetails;
                             ckl.comments = cklOld.comments;

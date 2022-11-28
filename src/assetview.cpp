@@ -466,7 +466,7 @@ void AssetView::RunTests()
     for (int j = 0; j < ui->lstChecks->count(); j++)
     {
         CKLCheck cc = ui->lstChecks->item(j)->data(Qt::UserRole).value<CKLCheck>();
-        if (cc.GetSTIGCheck().GetSTIG().fileName.compare("U_ASD_STIG_V5R1_Manual-xccdf.xml"))
+        if (cc.GetSTIGCheck().GetSTIG().fileName.compare("U_ASD_STIG_V5R1_Manual-xccdf.xml") == 0)
         {
             ui->lstChecks->item(j)->setSelected(true);
             ProcEvents();
