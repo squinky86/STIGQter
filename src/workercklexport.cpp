@@ -133,7 +133,7 @@ void WorkerCKLExport::process()
             Q_FOREACH (STIG s, a.GetSTIGs())
             {
                 WorkerCKL wc;
-                wc.AddFilename(QDir(_dirName).filePath(PrintAsset(a) + "_" + SanitizeFile(s.title) + "_V" + QString::number(s.version) + "R" + QString::number(GetReleaseNumber(s.release)) + ".ckl"));
+                wc.AddFilename(QDir(_dirName).filePath(SanitizeFile(PrintAsset(a) + "_" + s.title + "_V" + QString::number(s.version) + "R" + QString::number(GetReleaseNumber(s.release))) + ".ckl"));
                 wc.AddAsset(a, {s});
                 wc.process();
             }

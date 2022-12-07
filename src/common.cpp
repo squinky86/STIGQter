@@ -340,6 +340,13 @@ QString SanitizeFile(QString s)
     s = s.replace(QStringLiteral(">"), QStringLiteral("-"));
     s = s.replace(QStringLiteral("|"), QStringLiteral("-"));
     s = s.replace(QStringLiteral(":"), QStringLiteral("-"));
+    s = s.replace(QStringLiteral("#"), QStringLiteral("-"));
+    s = s.replace(QStringLiteral("%"), QStringLiteral("-"));
+    s = s.replace(QStringLiteral("$"), QStringLiteral("-"));
+    s = s.replace(QStringLiteral("!"), QStringLiteral("-"));
+    s = s.replace(QStringLiteral("{"), QStringLiteral("-"));
+    s = s.replace(QStringLiteral("}"), QStringLiteral("-"));
+    s = s.replace(QStringLiteral("@"), QStringLiteral("-"));
     return s;
 }
 
