@@ -57,6 +57,7 @@ CCI::CCI(QObject *parent) : QObject(parent),
     importControlImplementationStatus(),
     importSecurityControlDesignation(),
     importInherited(),
+    importRemoteInheritanceInstance(),
     importApNum(),
     importImplementationGuidance(),
     importAssessmentProcedures(),
@@ -136,6 +137,7 @@ CCI& CCI::operator=(const CCI &right)
         importControlImplementationStatus = right.importControlImplementationStatus;
         importSecurityControlDesignation = right.importSecurityControlDesignation;
         importInherited = right.importInherited;
+        importRemoteInheritanceInstance = right.importRemoteInheritanceInstance;
         importApNum = right.importApNum;
         importImplementationGuidance = right.importImplementationGuidance;
         importAssessmentProcedures = right.importAssessmentProcedures;

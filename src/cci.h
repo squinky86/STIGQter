@@ -54,6 +54,7 @@ public:
     QString importControlImplementationStatus;
     QString importSecurityControlDesignation;
     QString importInherited;
+    QString importRemoteInheritanceInstance;
     QString importApNum;
     QString importImplementationGuidance;
     QString importAssessmentProcedures;

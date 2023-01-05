@@ -268,7 +268,7 @@ void WorkerImportEMASS::process()
                             curCCI.importControlImplementationStatus = tempImportControlImplementationStatus;
                             curCCI.importSecurityControlDesignation = tempImportSecurityControlDesignation;
                             curCCI.importApNum = tempImportApNum;
-			    curCCI.importNarrative = tempImportNarrative;
+                            curCCI.importNarrative = tempImportNarrative;
                             tempImportControlImplementationStatus = QString();
                             tempImportSecurityControlDesignation = QString();
                             tempImportApNum = QString();
@@ -295,26 +295,26 @@ void WorkerImportEMASS::process()
                                 curCCI.importImplementationGuidance = value;
                             else if (onCol == QStringLiteral("J"))
                                 curCCI.importAssessmentProcedures = value;
-                            else if (onCol == QStringLiteral("P"))
-                                curCCI.importCompliance = value;
                             else if (onCol == QStringLiteral("Q"))
-                                curCCI.importDateTested = value;
+                                curCCI.importCompliance = value;
                             else if (onCol == QStringLiteral("R"))
-                                curCCI.importTestedBy = value;
+                                curCCI.importDateTested = value;
                             else if (onCol == QStringLiteral("S"))
+                                curCCI.importTestedBy = value;
+                            else if (onCol == QStringLiteral("T"))
                                 curCCI.importTestResults = value;
-                            else if (onCol == QStringLiteral("L"))
-                                curCCI.importCompliance2 = value;
                             else if (onCol == QStringLiteral("M"))
-                            {
-                                curCCI.importDateTested2 = value;
-                            }
+                                curCCI.importCompliance2 = value;
                             else if (onCol == QStringLiteral("N"))
-                                curCCI.importTestedBy2 = value;
+                                curCCI.importDateTested2 = value;
                             else if (onCol == QStringLiteral("O"))
+                                curCCI.importTestedBy2 = value;
+                            else if (onCol == QStringLiteral("P"))
                                 curCCI.importTestResults2 = value;
                             else if (onCol == QStringLiteral("K"))
                                 curCCI.importInherited = value;
+                            else if (onCol == QStringLiteral("L"))
+                                curCCI.importRemoteInheritanceInstance = value;
 
                             curCCI.isImport = true;
                             if (curCCI.id >= 0)

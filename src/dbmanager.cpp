@@ -834,7 +834,7 @@ bool DbManager::DeleteEmassImport()
     if (CheckDatabase(db))
     {
         QSqlQuery q(db);
-        q.prepare(QStringLiteral("UPDATE CCI SET isImport = 0, importCompliance = NULL, importDateTested = NULL, importTestedBy = NULL, importTestResults = NULL, importCompliance2 = NULL, importDateTested2 = NULL, importTestedBy2 = NULL, importTestResults2 = NULL, importControlImplementationStatus = NULL, importSecurityControlDesignation = NULL, importInherited = NULL, importApNum = NULL, importImplementationGuidance = NULL, importAssessmentProcedures = NULL, importNarrative = NULL"));
+        q.prepare(QStringLiteral("UPDATE CCI SET isImport = 0, importCompliance = NULL, importDateTested = NULL, importTestedBy = NULL, importTestResults = NULL, importCompliance2 = NULL, importDateTested2 = NULL, importTestedBy2 = NULL, importTestResults2 = NULL, importControlImplementationStatus = NULL, importSecurityControlDesignation = NULL, importInherited = NULL, importRemoteInheritanceInstance = NULL, importApNum = NULL, importImplementationGuidance = NULL, importAssessmentProcedures = NULL, importNarrative = NULL"));
         ret = q.exec();
         if (!_delayCommit)
             db.commit();
@@ -1283,7 +1283,7 @@ QVector<CCI> DbManager::GetCCIs(const QString &whereClause, const QVector<std::t
     if (CheckDatabase(db))
     {
         QSqlQuery q(db);
-        QString toPrep = QStringLiteral("SELECT id, ControlId, cci, definition, isImport, importCompliance, importDateTested, importTestedBy, importTestResults, importCompliance2, importDateTested2, importTestedBy2, importTestResults2, importControlImplementationStatus, importSecurityControlDesignation, importInherited, importApNum, importImplementationGuidance, importAssessmentProcedures, importNarrative FROM CCI");
+        QString toPrep = QStringLiteral("SELECT id, ControlId, cci, definition, isImport, importCompliance, importDateTested, importTestedBy, importTestResults, importCompliance2, importDateTested2, importTestedBy2, importTestResults2, importControlImplementationStatus, importSecurityControlDesignation, importInherited, importRemoteInheritanceInstance, importApNum, importImplementationGuidance, importAssessmentProcedures, importNarrative FROM CCI");
         if (!whereClause.isNull() && !whereClause.isEmpty())
             toPrep.append(" " + whereClause);
         toPrep.append(QStringLiteral(" ORDER BY cci"));
@@ -1315,10 +1315,11 @@ QVector<CCI> DbManager::GetCCIs(const QString &whereClause, const QVector<std::t
             c.importControlImplementationStatus = q.value(13).toString();
             c.importSecurityControlDesignation = q.value(14).toString();
             c.importInherited = q.value(15).toString();
-            c.importApNum = q.value(16).toString();
-            c.importImplementationGuidance = q.value(17).toString();
-            c.importAssessmentProcedures = q.value(18).toString();
-            c.importNarrative = q.value(19).toString();
+            c.importRemoteInheritanceInstance = q.value(16).toString();
+            c.importApNum = q.value(17).toString();
+            c.importImplementationGuidance = q.value(18).toString();
+            c.importAssessmentProcedures = q.value(19).toString();
+            c.importNarrative = q.value(20).toString();
 
             ret.append(c);
         }
@@ -2446,7 +2447,7 @@ bool DbManager::UpdateCCI(const CCI &cci)
         {
             QSqlQuery q(db);
             //NOTE: The new values use the provided "cci" while the WHERE clause uses the Database-identified "tmpCCI".
-            q.prepare(QStringLiteral("UPDATE CCI SET ControlId = :ControlId, cci = :cci, definition = :definition, isImport = :isImport, importCompliance = :importCompliance, importDateTested = :importDateTested, importTestedBy = :importTestedBy, importTestResults = :importTestResults, importCompliance2 = :importCompliance2, importDateTested2 = :importDateTested2, importTestedBy2 = :importTestedBy2, importTestResults2 = :importTestResults2, importControlImplementationStatus = :importControlImplementationStatus, importSecurityControlDesignation = :importSecurityControlDesignation, importInherited = :importInherited, importApNum = :importApNum, importImplementationGuidance = :importImplementationGuidance, importAssessmentProcedures = :importAssessmentProcedures, importNarrative = :importNarrative WHERE id = :id"));
+            q.prepare(QStringLiteral("UPDATE CCI SET ControlId = :ControlId, cci = :cci, definition = :definition, isImport = :isImport, importCompliance = :importCompliance, importDateTested = :importDateTested, importTestedBy = :importTestedBy, importTestResults = :importTestResults, importCompliance2 = :importCompliance2, importDateTested2 = :importDateTested2, importTestedBy2 = :importTestedBy2, importTestResults2 = :importTestResults2, importControlImplementationStatus = :importControlImplementationStatus, importSecurityControlDesignation = :importSecurityControlDesignation, importInherited = :importInherited, importRemoteInheritanceInstance = :importRemoteInheritanceInstance, importApNum = :importApNum, importImplementationGuidance = :importImplementationGuidance, importAssessmentProcedures = :importAssessmentProcedures, importNarrative = :importNarrative WHERE id = :id"));
             q.bindValue(QStringLiteral(":ControlId"), cci.controlId);
             q.bindValue(QStringLiteral(":cci"), cci.cci);
             q.bindValue(QStringLiteral(":definition"), cci.definition);
@@ -2462,6 +2463,7 @@ bool DbManager::UpdateCCI(const CCI &cci)
             q.bindValue(QStringLiteral(":importControlImplementationStatus"), cci.isImport ? cci.importControlImplementationStatus : nullptr);
             q.bindValue(QStringLiteral(":importSecurityControlDesignation"), cci.isImport ? cci.importSecurityControlDesignation : nullptr);
             q.bindValue(QStringLiteral(":importInherited"), cci.isImport ? cci.importInherited : nullptr);
+            q.bindValue(QStringLiteral(":importRemoteInheritanceInstance"), cci.isImport ? cci.importRemoteInheritanceInstance : nullptr);
             q.bindValue(QStringLiteral(":importApNum"), cci.isImport ? cci.importApNum : nullptr);
             q.bindValue(QStringLiteral(":importImplementationGuidance"), cci.isImport ? cci.importImplementationGuidance : nullptr);
             q.bindValue(QStringLiteral(":importAssessmentProcedures"), cci.isImport ? cci.importAssessmentProcedures : nullptr);
@@ -2961,6 +2963,13 @@ bool DbManager::UpdateDatabaseFromVersion(int version)
             q.prepare(QStringLiteral("ALTER TABLE Asset ADD COLUMN targetComment TEXT"));
             ret = q.exec() && ret;
             ret = UpdateVariable(QStringLiteral("version"), QStringLiteral("8")) && ret;
+        }
+        if (version < 9)
+        {
+            QSqlQuery q(db);
+            q.prepare(QStringLiteral("ALTER TABLE CCI ADD COLUMN importRemoteInheritanceInstance TEXT"));
+            ret = q.exec() && ret;
+            ret = UpdateVariable(QStringLiteral("version"), QStringLiteral("9")) && ret;
         }
     }
     return ret;
