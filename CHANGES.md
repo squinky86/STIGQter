@@ -1,3 +1,7 @@
+## 1.2.5
+-   Add fix text to detailed findings report (fixes #114)
+-   Ad Remote Inheritance Instance column (fixes #115)
+
 ## 1.2.4 20221123
 -   Documentation Updates
 -   STIG checklist upgrader

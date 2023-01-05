@@ -1,4 +1,4 @@
-# Copyright 1999-2022 Gentoo Foundation
+# Copyright 1999-2023 Gentoo Foundation
 # Distributed under the terms of the GNU General Public License v2
 
 EAPI=8
@@ -12,7 +12,7 @@ SRC_URI="https://github.com/jmcnamara/libxlsxwriter/archive/RELEASE_${PV}.tar.gz
 LICENSE="BSD-2"
 SLOT="0"
 KEYWORDS="~amd64 ~x86"
-IUSE="minizip openssl static-libs"
+IUSE="minizip mmap openssl static-libs"
 S="${WORKDIR}/${PN}-RELEASE_${PV}"
 
 DEPEND="sys-libs/zlib
@@ -35,6 +35,7 @@ src_configure() {
 	local mycmakeargs=(
 		-DCMAKE_BUILD_TYPE=Release
 		-DUSE_SYSTEM_MINIZIP="$(usex minizip)"
+		-DUSE_MEM_FILE="$(usex mmap OFF ON)"
 		-DUSE_OPENSSL_MD5="$(usex openssl OFF ON)"
 		-DBUILD_SHARED_LIBS="$(usex static-libs OFF ON)"
 		-DUSE_DTOA_LIBRARY=${DOUBLEFUNCTION}

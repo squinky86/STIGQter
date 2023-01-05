@@ -1,7 +1,7 @@
 /*
  * STIGQter - STIG fun with Qt
  *
- * Copyright © 2018–2022 Jon Hood, http://www.hoodsecurity.com/
+ * Copyright © 2018–2023 Jon Hood, http://www.hoodsecurity.com/
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -250,7 +250,7 @@ void WorkerFindingsReport::process()
             //start a new line if the field already has text
             if (!assets.isEmpty())
                 assets.append(QStringLiteral("\n"));
-            if (!fixes.isEmpty())
+            if (!fixes.isEmpty() && !sc.fix.trimmed().isEmpty())
                 fixes.append(QStringLiteral("\n"));
 
             int nf = 0; //not a finding
