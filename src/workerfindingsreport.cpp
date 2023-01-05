@@ -126,6 +126,8 @@ void WorkerFindingsReport::process()
     worksheet_write_string(wsCCIs, 0, 2, "Severity", fmtBold);
     worksheet_write_string(wsCCIs, 0, 3, "Checks", fmtBold);
     worksheet_set_column(wsCCIs, 3, 3, 30.86, fmtBold);
+    worksheet_write_string(wsCCIs, 0, 4, "Recommended Fixes", fmtBold);
+    worksheet_set_column(wsCCIs, 4, 4, 30.86, fmtBold);
 
     //write headers for Controls
     worksheet_write_string(wsControls, 0, 0, "Control", fmtBold);
@@ -234,6 +236,7 @@ void WorkerFindingsReport::process()
             worksheet_write_string(wsCCIs, onRow, 2, GetSeverity(checks2.first().GetSeverity()).toStdString().c_str(), nullptr);
         //Checks
         QString assets = QString();
+        QString fixes = QString();
         if (checks2.isEmpty())
             assets.append(QStringLiteral("Imported/Documentation Findings"));
         QList<STIGCheck> completedChecks;
@@ -247,6 +250,8 @@ void WorkerFindingsReport::process()
             //start a new line if the field already has text
             if (!assets.isEmpty())
                 assets.append(QStringLiteral("\n"));
+            if (!fixes.isEmpty())
+                fixes.append(QStringLiteral("\n"));
 
             int nf = 0; //not a finding
             int f = 0; //finding
@@ -258,10 +263,12 @@ void WorkerFindingsReport::process()
                 else if (c3.status == Status::Open)
                     f++;
             }
-            QString samples = QString(" (Occurred on %1 of %2 samples: %3%%)").arg(QString::number(f), QString::number(f + nf), QString::number((double)100 * (double)f / (double)(f + nf), 'f', 2));
+            QString samples = QString(" (Occurred on %1 of %2 samples: %3%)").arg(QString::number(f), QString::number(f + nf), QString::number((double)100 * (double)f / (double)(f + nf), 'f', 2));
             assets.append(PrintCKLCheck(cc) + samples);
+            fixes.append(sc.fix);
         }
         worksheet_write_string(wsCCIs, onRow, 3, assets.toStdString().c_str(), fmtWrapped);
+        worksheet_write_string(wsCCIs, onRow, 4, fixes.toStdString().c_str(), fmtWrapped);
         Q_EMIT progress(-1);
     }
 
