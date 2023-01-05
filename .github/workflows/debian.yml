@@ -20,11 +20,11 @@ jobs:
     - name: install dependencies
       run: DEBIAN_FRONTEND="noninteractive" sudo apt-get install -q -y --force-yes qtbase5-dev qt5-qmake libzip-dev cmake g++ debhelper dpkg-dev
     - name: download libxlsxwriter
-      run: pushd /tmp && wget https://github.com/jmcnamara/libxlsxwriter/archive/RELEASE_1.1.4.tar.gz && tar -zxf RELEASE_1.1.4.tar.gz && popd
+      run: pushd /tmp && wget https://github.com/jmcnamara/libxlsxwriter/archive/RELEASE_1.1.5.tar.gz && tar -zxf RELEASE_1.1.5.tar.gz && popd
     - name: build libxlsxwriter
-      run: pushd /tmp/libxlsxwriter-RELEASE_1.1.4 && echo -e "SET(CPACK_GENERATOR \"DEB\")\nset(CPACK_PACKAGE_NAME \"libxlsxwriter\")\nSET(CPACK_DEBIAN_PACKAGE_MAINTAINER \"jwh0011@auburn.edu\")\nset(CPACK_PACKAGE_VERSION \"1.1.4\")\nINCLUDE(CPack)" >> CMakeLists.txt && cmake ./ && make -j3 && cpack && popd
+      run: pushd /tmp/libxlsxwriter-RELEASE_1.1.5 && echo -e "SET(CPACK_GENERATOR \"DEB\")\nset(CPACK_PACKAGE_NAME \"libxlsxwriter\")\nSET(CPACK_DEBIAN_PACKAGE_MAINTAINER \"jwh0011@auburn.edu\")\nset(CPACK_PACKAGE_VERSION \"1.1.5\")\nINCLUDE(CPack)" >> CMakeLists.txt && cmake ./ && make -j3 && cpack && popd
     - name: install libxlsxwriter
-      run: sudo dpkg -i /tmp/libxlsxwriter-RELEASE_1.1.4/libxlsxwriter-1.1.4-Linux.deb
+      run: sudo dpkg -i /tmp/libxlsxwriter-RELEASE_1.1.5/libxlsxwriter-1.1.5-Linux.deb
     - name: build tarball
       run: git archive --format=tar.gz -o ../stigqter_1.2.5.orig.tar.gz master
     - name: dpkg-buildpackage
@@ -38,4 +38,4 @@ jobs:
     - uses: actions/upload-artifact@v2
       with:
         name: libxlsxwriter Debian Package
-        path: /tmp/libxlsxwriter-RELEASE_1.1.4/libxlsxwriter-1.1.4-Linux.deb
+        path: /tmp/libxlsxwriter-RELEASE_1.1.5/libxlsxwriter-1.1.5-Linux.deb

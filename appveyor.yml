@@ -30,9 +30,9 @@ build_script:
 
     pushd /tmp/libzip-1.9.2 && cmake ./ -DCMAKE_TOOLCHAIN_FILE=/tmp/profile.cmake -DBUILD_SHARED_LIBS=OFF -DZLIB_INCLUDE_DIR=/tmp/zlib-ng-2.0.6 -DZLIB_LIBRARY=/tmp/zlib-ng-2.0.6/libz.a -DENABLE_WINDOWS_CRYPTO=OFF && make -j3 && popd
 
-    pushd /tmp && wget https://github.com/jmcnamara/libxlsxwriter/archive/RELEASE_1.1.4.tar.gz && tar -zxf RELEASE_1.1.4.tar.gz && popd
+    pushd /tmp && wget https://github.com/jmcnamara/libxlsxwriter/archive/RELEASE_1.1.5.tar.gz && tar -zxf RELEASE_1.1.5.tar.gz && popd
 
-    pushd /tmp/libxlsxwriter-RELEASE_1.1.4 && cmake -DUSE_STANDARD_TMPFILE=OFF -DCMAKE_TOOLCHAIN_FILE=/tmp/profile.cmake -DBUILD_SHARED_LIBS=OFF -DZLIB_INCLUDE_DIR=/tmp/zlib-ng-2.0.6 -DZLIB_LIBRARY=/tmp/zlib-ng-2.0.6/libz.a -DUSE_OPENSSL_MD5=ON -DCMAKE_C_FLAGS=-I/tmp/openssl-3.0.7/include -DOPENSSL_ROOT_DIR=/tmp/openssl-3.0.7 && make -j3 && popd
+    pushd /tmp/libxlsxwriter-RELEASE_1.1.5 && cmake -DUSE_STANDARD_TMPFILE=OFF -DUSE_MEM_FILE=ON -DCMAKE_TOOLCHAIN_FILE=/tmp/profile.cmake -DBUILD_SHARED_LIBS=OFF -DZLIB_INCLUDE_DIR=/tmp/zlib-ng-2.0.6 -DZLIB_LIBRARY=/tmp/zlib-ng-2.0.6/libz.a -DUSE_OPENSSL_MD5=ON -DCMAKE_C_FLAGS=-I/tmp/openssl-3.0.7/include -DOPENSSL_ROOT_DIR=/tmp/openssl-3.0.7 && make -j3 && popd
 
     pushd /tmp && wget https://download.qt.io/official_releases/qt/6.4/6.4.0/submodules/qtbase-everywhere-src-6.4.0.tar.xz && tar -xf qtbase-everywhere-src-6.4.0.tar.xz && popd
 
@@ -44,9 +44,9 @@ build_script:
 
     sed -i -e '/^LIBS/d' STIGQter.pro
 
-    echo "LIBS += /tmp/libzip-1.9.2/lib/libzip.a /tmp/libxlsxwriter-RELEASE_1.1.4/libxlsxwriter.a /tmp/zlib-ng-2.0.6/libz.a" >> STIGQter.pro
+    echo "LIBS += /tmp/libzip-1.9.2/lib/libzip.a /tmp/libxlsxwriter-RELEASE_1.1.5/libxlsxwriter.a /tmp/zlib-ng-2.0.6/libz.a" >> STIGQter.pro
 
-    echo "INCLUDEPATH += /tmp/libzip-1.9.2/lib /tmp/libzip-1.9.2 /tmp/libxlsxwriter-RELEASE_1.1.4/include" >> STIGQter.pro
+    echo "INCLUDEPATH += /tmp/libzip-1.9.2/lib /tmp/libzip-1.9.2 /tmp/libxlsxwriter-RELEASE_1.1.5/include" >> STIGQter.pro
 
     /tmp/qt/bin/qmake STIGQter.pro
 
