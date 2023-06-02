@@ -133,6 +133,10 @@ void WorkerFindingsReport::process()
     worksheet_write_string(wsControls, 0, 0, "Control", fmtBold);
     worksheet_set_column(wsControls, 1, 1, 50, nullptr);
     worksheet_write_string(wsControls, 0, 1, "Compliance Status", fmtBold);
+    worksheet_write_string(wsControls, 0, 2, "Control Technical Deficiency Description", fmtBold);
+    worksheet_set_column(wsControls, 2, 2, 50, nullptr);
+    worksheet_write_string(wsControls, 0, 3, "Control Technical Recommendations", fmtBold);
+    worksheet_set_column(wsControls, 3, 3, 50, nullptr);
 
     //write each failed check
     unsigned int onRow = 0;
@@ -290,8 +294,24 @@ void WorkerFindingsReport::process()
         }
         preamble = preamble + QStringLiteral(" found to be non-compliant:");
         bool notFirst = false;
+        QString technicalDesc = QString();
+        QString technicalRec = QString();
         for (auto j = i.value().constBegin(); j != i.value().constEnd(); j++)
         {
+            if (failedCCIs.contains(*j))
+            {
+                auto ccis = failedCCIs.value(*j);
+                for (auto k = ccis.constBegin(); k != ccis.constEnd(); k++)
+                {
+                    auto sc = k->GetSTIGCheck();
+                    if (technicalDesc.isEmpty())
+                        technicalDesc = QStringLiteral("Technical Vulnerabilities:");
+                    technicalDesc += "\n" + sc.vulnDiscussion;
+                    if (technicalRec.isEmpty())
+                        technicalRec = QStringLiteral("Technical Recommendations:");
+                    technicalRec += "\n" + sc.fix;
+                }
+            }
             Q_EMIT progress(-1);
             if (notFirst)
                 preamble = preamble + QStringLiteral(",");
@@ -299,6 +319,22 @@ void WorkerFindingsReport::process()
             notFirst = true;
         }
         worksheet_write_string(wsControls, onRow, 1, preamble.toStdString().c_str(), fmtWrapped);
+        if (technicalDesc.isEmpty())
+            technicalDesc = QStringLiteral("Documentation Deficiency");
+        if (technicalDesc.length() > 2500)
+        {
+            technicalDesc.truncate(2386);
+            technicalDesc += QStringLiteral("\nThis has been truncated due to character limitations; please, see the STIG Checklist files for more information.");
+        }
+        worksheet_write_string(wsControls, onRow, 2, technicalDesc.toStdString().c_str(), fmtWrapped);
+        if (technicalRec.isEmpty())
+            technicalRec = QStringLiteral("Documentation Deficiency");
+        if (technicalRec.length() > 4900)
+        {
+            technicalRec.truncate(4786);
+            technicalRec += QStringLiteral("\nThis has been truncated due to character limitations; please, see the STIG Checklist files for more information.");
+        }
+        worksheet_write_string(wsControls, onRow, 3, technicalRec.toStdString().c_str(), fmtWrapped);
     }
 
     Q_EMIT updateStatus(QStringLiteral("Writing workbook…"));
