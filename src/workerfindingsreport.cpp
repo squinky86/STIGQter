@@ -300,8 +300,8 @@ void WorkerFindingsReport::process()
         {
             if (failedCCIs.contains(*j))
             {
-                auto ccis = failedCCIs.value(*j);
-                for (auto k = ccis.constBegin(); k != ccis.constEnd(); k++)
+                auto ccis2 = failedCCIs.value(*j);
+                for (auto k = ccis2.constBegin(); k != ccis2.constEnd(); k++)
                 {
                     auto sc = k->GetSTIGCheck();
                     if (technicalDesc.isEmpty())
