@@ -35,13 +35,13 @@ jobs:
 #    - name: install latex dependencies
 #      run: DEBIAN_FRONTEND="noninteractive" sudo apt-get install -q -y --force-yes texlive-luatex texlive-latex-recommended texlive-latex-extra texlive-fonts-extra texlive-fonts-extra-links texlive-bibtex-extra biber
     - name: install dependencies
-      run: DEBIAN_FRONTEND="noninteractive" sudo apt-get install -q -y --force-yes qtbase5-dev qt5-qmake libzip-dev cmake g++ debhelper dpkg-dev xvfb libxkbcommon-x11-0 libxcb-icccm4 libxcb-image0 libxcb-keysyms1 libxcb-randr0 libxcb-render-util0 libxcb-xinerama0 libxcb-xinput0 libxcb-xfixes0 libdevel-cover-perl lcov cpanminus zlib1g-dev
+      run: DEBIAN_FRONTEND="noninteractive" sudo apt-get install -q -y --force-yes qtbase5-dev qt5-qmake libzip-dev cmake g++ debhelper dpkg-dev xvfb libxkbcommon-x11-0 libxcb-icccm4 libxcb-image0 libxcb-keysyms1 libxcb-randr0 libxcb-render-util0 libxcb-xinerama0 libxcb-xinput0 libxcb-xfixes0 libdevel-cover-perl lcov cpanminus zlib1g-dev libminizip-dev libssl-dev
     - name: start xvfb
       run: sudo /usr/bin/Xvfb $DISPLAY -screen 0 1280x1024x24 &
     - name: download libxlsxwriter
       run: pushd /tmp && wget https://github.com/jmcnamara/libxlsxwriter/archive/RELEASE_1.1.5.tar.gz && tar -zxf RELEASE_1.1.5.tar.gz && popd
     - name: build libxlsxwriter
-      run: pushd /tmp/libxlsxwriter-RELEASE_1.1.5 && echo -e "SET(CPACK_GENERATOR \"DEB\")\nset(CPACK_PACKAGE_NAME \"libxlsxwriter\")\nSET(CPACK_DEBIAN_PACKAGE_MAINTAINER \"jwh0011@auburn.edu\")\nset(CPACK_PACKAGE_VERSION \"1.1.5\")\nINCLUDE(CPack)" >> CMakeLists.txt && cmake ./ && make -j3 && cpack && popd
+      run: pushd /tmp/libxlsxwriter-RELEASE_1.1.5 && echo -e "SET(CPACK_GENERATOR \"DEB\")\nset(CPACK_PACKAGE_NAME \"libxlsxwriter\")\nSET(CPACK_DEBIAN_PACKAGE_MAINTAINER \"jwh0011@auburn.edu\")\nset(CPACK_PACKAGE_VERSION \"1.1.5\")\nINCLUDE(CPack)" >> CMakeLists.txt && /usr/bin/cmake ./ && make -j3 && cpack && popd
     - name: install libxlsxwriter
       run: sudo dpkg -i /tmp/libxlsxwriter-RELEASE_1.1.5/libxlsxwriter-1.1.5-Linux.deb
     - name: Download Sonar Scanner
