@@ -1,4 +1,5 @@
-## 1.2.5
+## 1.2.5 20230606
+-   Add extra control information to Detailed Findings Report (fixes #116)
 -   Add fix text to detailed findings report (fixes #114)
 -   Ad Remote Inheritance Instance column (fixes #115)
 

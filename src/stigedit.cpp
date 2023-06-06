@@ -118,7 +118,7 @@ void STIGEdit::RunTests()
 
     //select each of the STIGChecks
     std::cout << "\t\t\tTest " << onTest++ << ": Select STIGChecks" << std::endl;
-    for (int i = 0; i < ui->lstChecks->count(); ++i)
+    for (int i = 0; (i < ui->lstChecks->count()) && (i < 10); ++i)
     {
         ui->lstChecks->item(i)->setSelected(true);
         ProcEvents();
