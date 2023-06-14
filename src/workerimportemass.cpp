@@ -195,7 +195,7 @@ void WorkerImportEMASS::process()
         int onRow = 0;
         QString onCol = QString();
         bool isSharedString = false; //keep up with whether the current record is a shared string
-        QStringList meaningfulCols = {QStringLiteral("C"), QStringLiteral("D"), QStringLiteral("E"), QStringLiteral("F"), QStringLiteral("G"), QStringLiteral("I"), QStringLiteral("J"), QStringLiteral("K"), QStringLiteral("L"), QStringLiteral("M"), QStringLiteral("N"), QStringLiteral("O"), QStringLiteral("P"), QStringLiteral("Q"), QStringLiteral("R"), QStringLiteral("S")};
+        QStringList meaningfulCols = {QStringLiteral("C"), QStringLiteral("D"), QStringLiteral("E"), QStringLiteral("F"), QStringLiteral("G"), QStringLiteral("I"), QStringLiteral("J"), QStringLiteral("K"), QStringLiteral("L"), QStringLiteral("M"), QStringLiteral("N"), QStringLiteral("O"), QStringLiteral("P"), QStringLiteral("Q"), QStringLiteral("R"), QStringLiteral("S"), QStringLiteral("T")};
         QString tempImportControlImplementationStatus = QString();
         QString tempImportSecurityControlDesignation = QString();
         QString tempImportApNum = QString();
