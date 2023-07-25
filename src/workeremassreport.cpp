@@ -196,6 +196,7 @@ void WorkerEMASSReport::process()
 
     QVector<CKLCheck> failedChecks;
     QVector<CKLCheck> passedChecks;
+    QVector<CKLCheck> naChecks;
 
     Q_FOREACH (CCI cci, db.GetCCIs())
     {
@@ -203,6 +204,7 @@ void WorkerEMASSReport::process()
         Q_EMIT updateStatus("Adding " + PrintCCI(cci) + "…");
         failedChecks.clear();
         passedChecks.clear();
+        naChecks.clear();
 
         //step 1: check if control is passed or failed
         Q_FOREACH (CKLCheck sc, cci.GetCKLChecks())
@@ -214,6 +216,10 @@ void WorkerEMASSReport::process()
             else if (sc.status == Status::NotAFinding)
             {
                 passedChecks.append(sc);
+            }
+            else if (sc.status == Status::NotApplicable)
+            {
+                naChecks.append(sc);
             }
         }
 
@@ -229,7 +235,7 @@ void WorkerEMASSReport::process()
          * fail results as they are.
          */
         bool failed = !failedChecks.isEmpty();
-        bool hasChecks = failed || !passedChecks.isEmpty();
+        bool hasChecks = failed || !passedChecks.isEmpty() || !naChecks.isEmpty();
 
         if (dbIsImport && !cci.isImport)
         {
@@ -285,7 +291,24 @@ void WorkerEMASSReport::process()
         //remote inheritance instance
         worksheet_write_string(ws, onRow, 11, cci.isImport ? cci.importRemoteInheritanceInstance.toStdString().c_str() : "", fmtWrapped);
         //compliance status
-        worksheet_write_string(ws, onRow, 12, failed ? "Non-Compliant" : hasChecks ? "Compliant" : cci.importCompliance2.toStdString().c_str(), nullptr);
+        QString complianceStatus = cci.importCompliance2;
+        if (hasChecks)
+        {
+            if (!failedChecks.isEmpty())
+            {
+                complianceStatus = QStringLiteral("Non-Compliant");
+            }
+            if (!passedChecks.isEmpty())
+            {
+                complianceStatus = QStringLiteral("Compliant");
+            }
+            else if (!naChecks.isEmpty())
+            {
+                complianceStatus = QStringLiteral("Not Applicable");
+            }
+        }
+        else if (cci.importCompliance2.toStdString().c_str())
+        worksheet_write_string(ws, onRow, 12, complianceStatus.toStdString().c_str(), nullptr);
         //date tested
         qint64 testedDate = excelCurDate;
         bool ok = true;
@@ -320,13 +343,17 @@ void WorkerEMASSReport::process()
         {
             if (failed)
             {
-            	testResult += QStringLiteral("Non-Compliant. The following checks are open:");
+                testResult += QStringLiteral("Non-Compliant. The following technical STIG/SRG checks are open:");
+            }
+            else if (!passedChecks.isEmpty())
+            {
+                testResult += QStringLiteral("Compliant. The following technical STIG/SRG checks are not a finding:");
             }
             else
             {
-            	testResult += QStringLiteral("Compliant. The following checks are not a finding:");
+                testResult += QStringLiteral("Not Applicable. All associated technical STIG/SRG checks are determined to be Not Applicable:");
             }
-            Q_FOREACH (CKLCheck cc, failed ? failedChecks : passedChecks)
+            Q_FOREACH (CKLCheck cc, failed ? failedChecks : passedChecks.isEmpty() ? naChecks : passedChecks)
             {
                 testResult.append("\n" + PrintAsset(cc.GetAsset()) + ": " + PrintCKLCheck(cc));
                 //if failed check, print out severity and finding details (if available)
