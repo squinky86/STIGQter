@@ -40,7 +40,7 @@ build_script:
 
     sudo update-alternatives --set x86_64-w64-mingw32-g++ /usr/bin/x86_64-w64-mingw32-g++-posix
 
-    pushd /tmp/qtbase-everywhere-src-6.5.2 && ./configure -prefix /tmp/qt -no-feature-sql-odbc -sql-sqlite -platform linux-g++-64 -qt-host-path /opt/qt6.5-static -xplatform win32-g++ -device-option CROSS_COMPILE=x86_64-w64-mingw32- -release -opengl desktop -mp -static -static-runtime -no-shared -nomake examples -no-icu -optimize-size -openssl-linked -- -DOPENSSL_ROOT_DIR=/tmp/openssl-3.0.9 -DCMAKE_TOOLCHAIN_FILE=/tmp/profile.cmake && cmake --build . && cmake --install . && popd
+    pushd /tmp/qtbase-everywhere-src-6.5.2 && wget "https://codereview.qt-project.org/changes/qt%2Fqtbase~484198/revisions/2/patch?zip&path=src%2Fplugins%2Fnetworkinformation%2Fnetworklistmanager%2FCMakeLists.txt" -O patch.gz && zcat patch.gz | patch -p1 && ./configure -prefix /tmp/qt -no-feature-sql-odbc -sql-sqlite -platform linux-g++-64 -qt-host-path /opt/qt6.5-static -xplatform win32-g++ -device-option CROSS_COMPILE=x86_64-w64-mingw32- -release -opengl desktop -mp -static -static-runtime -no-shared -nomake examples -no-icu -optimize-size -openssl-linked -- -DOPENSSL_ROOT_DIR=/tmp/openssl-3.0.9 -DCMAKE_TOOLCHAIN_FILE=/tmp/profile.cmake && cmake --build . && cmake --install . && popd
 
     sed -i -e '/^LIBS/d' STIGQter.pro
 
