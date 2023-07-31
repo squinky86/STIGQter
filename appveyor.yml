@@ -2,10 +2,10 @@ version: 1.2.5.{build}
 image: Ubuntu2004
 platform: x64
 environment:
-  CFLAGS: -Os -fomit-frame-pointer -fno-stack-protector -pipe
-  CXXFLAGS: -Os -fomit-frame-pointer -fno-stack-protector -pipe
-  QMAKE_CFLAGS: -m64 -Os -fomit-frame-pointer -fno-stack-protector -pipe
-  QMAKE_CXXFLAGS: -m64 -Os -fomit-frame-pointer -fno-stack-protector -pipe
+  CFLAGS: -Os -mtune=generic -pipe
+  CXXFLAGS: -Os -mtune=generic -pipe
+  QMAKE_CFLAGS: -m64 -Os -mtune=generic -pipe
+  QMAKE_CXXFLAGS: -m64 -Os -mtune=generic -pipe
 build_script:
 - sh: >-
     sudo add-apt-repository ppa:rncbc/qt6.5-static-focal
@@ -16,7 +16,7 @@ build_script:
 
     sudo apt-get install -y texlive-luatex texlive-latex-recommended texlive-latex-extra texlive-fonts-extra texlive-fonts-extra-links texlive-bibtex-extra biber gcc-mingw-w64-x86-64 g++-mingw-w64-x86-64 upx-ucl advancecomp qtbase6.5-static
 
-    echo -e "set(CMAKE_SYSTEM_NAME Windows)\nset(TOOLCHAIN_PREFIX x86_64-w64-mingw32)\nset(CMAKE_C_COMPILER \${TOOLCHAIN_PREFIX}-gcc)\nset(CMAKE_CXX_COMPILER \${TOOLCHAIN_PREFIX}-g++)\nset(CMAKE_Fortran_COMPILER \${TOOLCHAIN_PREFIX}-gfortran)\nset(CMAKE_RC_COMPILER \${TOOLCHAIN_PREFIX}-windres)\nset(CMAKE_FIND_ROOT_PATH_MODE_PROGRAM NEVER)\nset(CMAKE_FIND_ROOT_PATH_MODE_LIBRARY ONLY)\nset(CMAKE_FIND_ROOT_PATH_MODE_INCLUDE ONLY)\nset(CMAKE_FIND_ROOT_PATH /usr/x86_64-w64-mingw32 /)\nset(CMAKE_C_FLAGS_RELEASE \"-m64 -Os -fomit-frame-pointer -fno-stack-protector\")\nset(CMAKE_CXX_FLAGS_RELEASE \"-m64 -Os -fomit-frame-pointer -fno-stack-protector\")" > /tmp/profile.cmake
+    echo -e "set(CMAKE_SYSTEM_NAME Windows)\nset(TOOLCHAIN_PREFIX x86_64-w64-mingw32)\nset(CMAKE_C_COMPILER \${TOOLCHAIN_PREFIX}-gcc)\nset(CMAKE_CXX_COMPILER \${TOOLCHAIN_PREFIX}-g++)\nset(CMAKE_Fortran_COMPILER \${TOOLCHAIN_PREFIX}-gfortran)\nset(CMAKE_RC_COMPILER \${TOOLCHAIN_PREFIX}-windres)\nset(CMAKE_FIND_ROOT_PATH_MODE_PROGRAM NEVER)\nset(CMAKE_FIND_ROOT_PATH_MODE_LIBRARY ONLY)\nset(CMAKE_FIND_ROOT_PATH_MODE_INCLUDE ONLY)\nset(CMAKE_FIND_ROOT_PATH /usr/x86_64-w64-mingw32 /)\nset(CMAKE_C_FLAGS_RELEASE \"-m64 -Os -mtune=generic\")\nset(CMAKE_CXX_FLAGS_RELEASE \"-m64 -Os -mtune=generic\")" > /tmp/profile.cmake
 
     pushd /tmp && wget https://github.com/zlib-ng/zlib-ng/archive/refs/tags/2.1.3.tar.gz && tar -zxf 2.1.3.tar.gz && popd
 
@@ -50,7 +50,7 @@ build_script:
 
     /tmp/qt/bin/qmake STIGQter.pro
 
-    sed -i -e 's:-O2:-Os -fomit-frame-pointer -fno-stack-protector:g' Makefile.Release
+    sed -i -e 's:-O2:-Os -mtune=generic:g' Makefile.Release
 
     sed -i -e 's:-loleaut32 ::g' Makefile.Release #fix for https://bugreports.qt.io/browse/QTBUG-114243
 
