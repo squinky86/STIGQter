@@ -273,7 +273,7 @@ void WorkerEMASSReport::process()
         worksheet_write_string(ws, onRow, 2, cci.isImport ? cci.importControlImplementationStatus.toStdString().c_str() : "", nullptr);
         //security control designation
         worksheet_write_string(ws, onRow, 3, cci.isImport ? cci.importSecurityControlDesignation.toStdString().c_str() : "", nullptr);
-	//Control Implementation Narrative
+        //Control Implementation Narrative
         worksheet_write_string(ws, onRow, 4, cci.isImport ? cci.importNarrative.toStdString().c_str() : "", nullptr);
         //AP Acronym
         worksheet_write_string(ws, onRow, 5, cci.isImport ? cci.importApNum.toStdString().c_str() : "", nullptr);
@@ -291,7 +291,9 @@ void WorkerEMASSReport::process()
         //remote inheritance instance
         worksheet_write_string(ws, onRow, 11, cci.isImport ? cci.importRemoteInheritanceInstance.toStdString().c_str() : "", fmtWrapped);
         //compliance status
-        QString complianceStatus = cci.importCompliance2;
+        QString complianceStatus("");
+        if (dbIsImport)
+            complianceStatus = cci.importCompliance2;
         if (hasChecks)
         {
             if (!failedChecks.isEmpty())
@@ -307,7 +309,6 @@ void WorkerEMASSReport::process()
                 complianceStatus = QStringLiteral("Not Applicable");
             }
         }
-        else if (cci.importCompliance2.toStdString().c_str())
         worksheet_write_string(ws, onRow, 12, complianceStatus.toStdString().c_str(), nullptr);
         //date tested
         qint64 testedDate = excelCurDate;

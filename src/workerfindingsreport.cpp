@@ -306,10 +306,10 @@ void WorkerFindingsReport::process()
                     auto sc = k->GetSTIGCheck();
                     if (technicalDesc.isEmpty())
                         technicalDesc = QStringLiteral("Technical Vulnerabilities:");
-                    technicalDesc += "\n" + sc.vulnDiscussion;
+                    technicalDesc += "\n\n-----" + sc.rule + "-----\n" + sc.vulnDiscussion;
                     if (technicalRec.isEmpty())
                         technicalRec = QStringLiteral("Technical Recommendations:");
-                    technicalRec += "\n" + sc.fix;
+                    technicalRec += "\n\n-----" + sc.rule + "-----\n" + sc.fix;
                 }
             }
             Q_EMIT progress(-1);

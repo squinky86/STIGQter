@@ -1,3 +1,9 @@
+## 1.2.6
+-   Update for blank column T (fixes #118)
+-   Auto NA marking (fixes #119)
+-   Enhanced DFR vulnerability information output (fixes #120)
+-   Updated appveyor building to fix QTBUG-114243
+
 ## 1.2.5 20230606
 -   Add extra control information to Detailed Findings Report (fixes #116)
 -   Add fix text to detailed findings report (fixes #114)
