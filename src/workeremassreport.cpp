@@ -300,7 +300,7 @@ void WorkerEMASSReport::process()
             {
                 complianceStatus = QStringLiteral("Non-Compliant");
             }
-            if (!passedChecks.isEmpty())
+            else if (!passedChecks.isEmpty())
             {
                 complianceStatus = QStringLiteral("Compliant");
             }
