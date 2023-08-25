@@ -11,10 +11,10 @@
 \usepackage{wrapfig}
 
 %                Main Variables
-\newcommand{\repdate}{\formatdate{15}{5}{2020}}
+\newcommand{\repdate}{\formatdate{25}{8}{2023}}
 \def \ProjectName{Security Technical Implementation Guide Qt Viewer}
 \def \ProjectAcronym{STIGQter}
-\def \ProjectVersion{1.1.0}
+\def \ProjectVersion{1.2.x}
 
 %-------------------------------------------------------------------------------
 %                Header & Footer Setup
@@ -284,6 +284,48 @@ The GitHub project administrators are responsible for verifying that the scannin
 
 High and Critical risk security findings from the scans in Section~\ref{sec:sa-11} are tracked in the project's GitHub issue tracker. Some historical data is preserved in the cloud scanner's history.
 
+\subsection{SA-12 -- Supply Chain Protection}
+
+\paragraph{Applicable CCIs:} CCI-722, CCI-723
+
+The STIGQter source code is provided under the GPL as open source software. Dynamically linked dependencies are the responsibility of the one who builds the software. The STIGQter binary is compiled on appveyor and the Software Bill of Materials is included in the source code repository as \texttt{LICENSE.spdx}. This SBOM is maintained with the latest supported security updates of all STIGQter dependencies. Hashes of the supply chain verification are included in the SPDX SBOM.
+
+\subsubsection{SA-12(1) -- Acquisition Strategies / Tools / Methods}
+
+\paragraph{Applicable CCIs:} CCI-3198, CCI-3199
+
+The tracing strategy is to broadcast the dependency acquisition in the public domain using the \texttt{LICENSE.spdx} file.
+
+\subsubsection{SA-12(2) -- Supplier Reviews}
+
+\paragraph{Applicable CCI:} CCI-3200
+
+All suppliers are included in the automated software composition analysis conducted on all dependencies for the application.
+
+\subsubsection{SA-12(7) -- Assessments Prior To Selection / Acceptance / Update}
+
+\paragraph{Applicable CCI:} CCI-3203
+
+Dependencies have not changed since STIGQter was released. Dependencies were assessed by conducting a vulnerability analysis on each component and subscribing to their update channels.
+
+\subsubsection{SA-12(10) -- Validate As Genuine And Not Altered}
+
+\paragraph{Applicable CCIs:} CCI-3212, CCI-3213
+
+Hashes are checked against the releases of all dependencies. The hashes are documented in \texttt{LICENSE.spdx} for verification against changes.
+
+\subsubsection{SA-12(13) -- Critical Information System Components}
+
+\paragraph{Applicable CCIs:} CCI-3218, CCI-3219, CCI-3220
+
+This is software and is not an information system. All dependencies are available from their unique websites and channels. Qt updates are obtained from qt.io. OpenSSL updates are obtained from openssl.org. All other dependencies are available via their respective github release channels. Only the official release channels are used for obtaining of the releases, and as software, the only limitations are on the licenses, which have been verified as compatible with the GPL.
+
+\subsubsection{SA-12(15) -- Processes To Address Weaknesses Or Deficiencies}
+
+\paragraph{Applicable CCI:} CCI-3224
+
+Supply chain vulnerabilities are identified as part of the software composition analysis performed in the SA-11 and SA-15 processes. Issues are triaged through the same processes as Section~\ref{sec:sa-15-10}.
+
 \subsection{SA-15 -- Development Process, Standards, and Tools}
 
 \paragraph{Applicable CCIs:} CCI-3233, CCI-3234, CCI-3235, CCI-3236, CCI-3237, CCI-3238, CCI-3239, CCI-3240, CCI-3241, CCI-3242, CCI-3243, CCI-3244, CCI-3245, CCI-3246
@@ -316,6 +358,7 @@ The following sections are required by STIG rule SV-85011r1\_rule:
 Error handling vulnerabilities are included in the scanning process of Section~\ref{sec:sa-11}.
 
 \subsubsection{SA-15(10) -- Incident Response Plan}
+\label{sec:sa-15-10}
 
 \paragraph{Applicable CCIs:} CCI-3289
 
