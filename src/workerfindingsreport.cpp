@@ -300,16 +300,49 @@ void WorkerFindingsReport::process()
         {
             if (failedCCIs.contains(*j))
             {
-                auto ccis2 = failedCCIs.value(*j);
-                for (auto k = ccis2.constBegin(); k != ccis2.constEnd(); k++)
+                auto failedChecks = failedCCIs.value(*j);
+                QVector<STIGCheck> failedChecksDup;
+                for (auto k = failedChecks.constBegin(); k != failedChecks.constEnd(); k++)
                 {
                     auto sc = k->GetSTIGCheck();
-                    if (technicalDesc.isEmpty())
-                        technicalDesc = QStringLiteral("Technical Vulnerabilities:");
-                    technicalDesc += "\n\n-----" + sc.rule + "-----\n" + sc.vulnDiscussion;
-                    if (technicalRec.isEmpty())
-                        technicalRec = QStringLiteral("Technical Recommendations:");
-                    technicalRec += "\n\n-----" + sc.rule + "-----\n" + sc.fix;
+                    if (failedChecksDup.contains(sc))
+                        continue;
+                    failedChecksDup.push_back(sc);
+                }
+                //calculate amount of text allowed for each entry
+                auto numFailure = failedChecksDup.count();
+                if (numFailure > 0)
+                {
+                    Q_FOREACH (STIGCheck sc2, failedChecksDup)
+                    {
+                        auto width = (2472 / numFailure) - (13 + sc2.rule.length());
+                        if (technicalDesc.isEmpty())
+                            technicalDesc = QStringLiteral("Technical Vulnerabilities:");
+                        technicalDesc += "\n\n-----" + sc2.rule + "-----\n";
+                        if (width > 15)
+                        {
+                            QString tmpVulnDisc = sc2.vulnDiscussion;
+                            if (tmpVulnDisc.length() > width)
+                            {
+                                tmpVulnDisc.truncate(width - 11);
+                                tmpVulnDisc += "(truncated)";
+                            }
+                            technicalDesc += tmpVulnDisc;
+                        }
+                        if (technicalRec.isEmpty())
+                            technicalRec = QStringLiteral("Technical Recommendations:");
+                        technicalRec += "\n\n-----" + sc2.rule + "-----\n";
+                        if (width > 15)
+                        {
+                            QString tmpVulnFix = sc2.fix;
+                            if (tmpVulnFix.length() > width)
+                            {
+                                tmpVulnFix.truncate(width - 11);
+                                tmpVulnFix += "(truncated)";
+                            }
+                            technicalRec += tmpVulnFix;
+                        }
+                    }
                 }
             }
             Q_EMIT progress(-1);

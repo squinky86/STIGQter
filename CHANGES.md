@@ -1,4 +1,8 @@
-## 1.2.6
+## 1.2.7
+-   Fix duplicate rules in DFR (fixes #121)
+-   Update truncation method of DFR text (fixes #122)
+
+## 1.2.6 20230807
 -   Update for blank column T (fixes #118)
 -   Auto NA marking (fixes #119)
 -   Enhanced DFR vulnerability information output (fixes #120)
