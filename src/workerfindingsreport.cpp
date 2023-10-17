@@ -235,7 +235,7 @@ void WorkerFindingsReport::process()
         worksheet_write_number(wsCCIs, onRow, 1, c.cci, fmtCci);
         //severity
         if (checks2.isEmpty())
-             worksheet_write_string(wsCCIs, onRow, 2, GetSeverity(Severity::low).toStdString().c_str(), nullptr);
+            worksheet_write_string(wsCCIs, onRow, 2, GetSeverity(Severity::low).toStdString().c_str(), nullptr);
         else
             worksheet_write_string(wsCCIs, onRow, 2, GetSeverity(checks2.first().GetSeverity()).toStdString().c_str(), nullptr);
         //Checks
@@ -269,7 +269,16 @@ void WorkerFindingsReport::process()
             }
             QString samples = QString(" (Occurred on %1 of %2 samples: %3%)").arg(QString::number(f), QString::number(f + nf), QString::number((double)100 * (double)f / (double)(f + nf), 'f', 2));
             assets.append(PrintCKLCheck(cc) + samples);
-            fixes.append(sc.fix);
+            if (!sc.fix.trimmed().isEmpty())
+            {
+                fixes.append("\n\n-----" + sc.rule + "-----\n");
+                fixes.append(sc.fix);
+            }
+        }
+        if (fixes.length() > 2500)
+        {
+            fixes.truncate(2488);
+            fixes.append("(truncated)");
         }
         worksheet_write_string(wsCCIs, onRow, 3, assets.toStdString().c_str(), fmtWrapped);
         worksheet_write_string(wsCCIs, onRow, 4, fixes.toStdString().c_str(), fmtWrapped);
@@ -296,12 +305,12 @@ void WorkerFindingsReport::process()
         bool notFirst = false;
         QString technicalDesc = QString();
         QString technicalRec = QString();
+        QVector<STIGCheck> failedChecksDup;
         for (auto j = i.value().constBegin(); j != i.value().constEnd(); j++)
         {
             if (failedCCIs.contains(*j))
             {
                 auto failedChecks = failedCCIs.value(*j);
-                QVector<STIGCheck> failedChecksDup;
                 for (auto k = failedChecks.constBegin(); k != failedChecks.constEnd(); k++)
                 {
                     auto sc = k->GetSTIGCheck();
