@@ -271,7 +271,9 @@ void WorkerFindingsReport::process()
             assets.append(PrintCKLCheck(cc) + samples);
             if (!sc.fix.trimmed().isEmpty())
             {
-                fixes.append("\n\n-----" + sc.rule + "-----\n");
+                if (!fixes.isEmpty())
+                    fixes.append("\n\n");
+                fixes.append("-----" + sc.rule + "-----\n");
                 fixes.append(sc.fix);
             }
         }
@@ -317,39 +319,40 @@ void WorkerFindingsReport::process()
                     if (failedChecksDup.contains(sc))
                         continue;
                     failedChecksDup.push_back(sc);
-                }
-                //calculate amount of text allowed for each entry
-                auto numFailure = failedChecksDup.count();
-                if (numFailure > 0)
-                {
-                    Q_FOREACH (STIGCheck sc2, failedChecksDup)
+
+                    //calculate amount of text allowed for each entry
+                    auto numFailure = failedChecksDup.count();
+                    if (numFailure > 0)
                     {
-                        auto width = (2472 / numFailure) - (13 + sc2.rule.length());
-                        if (technicalDesc.isEmpty())
-                            technicalDesc = QStringLiteral("Technical Vulnerabilities:");
-                        technicalDesc += "\n\n-----" + sc2.rule + "-----\n";
-                        if (width > 15)
+                        Q_FOREACH (STIGCheck sc2, failedChecksDup)
                         {
-                            QString tmpVulnDisc = sc2.vulnDiscussion;
-                            if (tmpVulnDisc.length() > width)
+                            auto width = (2472 / numFailure) - (13 + sc2.rule.length());
+                            if (technicalDesc.isEmpty())
+                                technicalDesc = QStringLiteral("Technical Vulnerabilities:");
+                            technicalDesc += "\n\n-----" + sc2.rule + "-----\n";
+                            if (width > 15)
                             {
-                                tmpVulnDisc.truncate(width - 11);
-                                tmpVulnDisc += "(truncated)";
+                                QString tmpVulnDisc = sc2.vulnDiscussion;
+                                if (tmpVulnDisc.length() > width)
+                                {
+                                    tmpVulnDisc.truncate(width - 11);
+                                    tmpVulnDisc += "(truncated)";
+                                }
+                                technicalDesc += tmpVulnDisc;
                             }
-                            technicalDesc += tmpVulnDisc;
-                        }
-                        if (technicalRec.isEmpty())
-                            technicalRec = QStringLiteral("Technical Recommendations:");
-                        technicalRec += "\n\n-----" + sc2.rule + "-----\n";
-                        if (width > 15)
-                        {
-                            QString tmpVulnFix = sc2.fix;
-                            if (tmpVulnFix.length() > width)
+                            if (technicalRec.isEmpty())
+                                technicalRec = QStringLiteral("Technical Recommendations:");
+                            technicalRec += "\n\n-----" + sc2.rule + "-----\n";
+                            if (width > 15)
                             {
-                                tmpVulnFix.truncate(width - 11);
-                                tmpVulnFix += "(truncated)";
+                                QString tmpVulnFix = sc2.fix;
+                                if (tmpVulnFix.length() > width)
+                                {
+                                    tmpVulnFix.truncate(width - 11);
+                                    tmpVulnFix += "(truncated)";
+                                }
+                                technicalRec += tmpVulnFix;
                             }
-                            technicalRec += tmpVulnFix;
                         }
                     }
                 }
