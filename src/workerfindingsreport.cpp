@@ -310,6 +310,7 @@ void WorkerFindingsReport::process()
         QVector<STIGCheck> failedChecksDup;
         for (auto j = i.value().constBegin(); j != i.value().constEnd(); j++)
         {
+            Q_EMIT progress(-1);
             if (failedCCIs.contains(*j))
             {
                 auto failedChecks = failedCCIs.value(*j);
@@ -319,49 +320,47 @@ void WorkerFindingsReport::process()
                     if (failedChecksDup.contains(sc))
                         continue;
                     failedChecksDup.push_back(sc);
-
-                    //calculate amount of text allowed for each entry
-                    auto numFailure = failedChecksDup.count();
-                    if (numFailure > 0)
-                    {
-                        Q_FOREACH (STIGCheck sc2, failedChecksDup)
-                        {
-                            auto width = (2472 / numFailure) - (13 + sc2.rule.length());
-                            if (technicalDesc.isEmpty())
-                                technicalDesc = QStringLiteral("Technical Vulnerabilities:");
-                            technicalDesc += "\n\n-----" + sc2.rule + "-----\n";
-                            if (width > 15)
-                            {
-                                QString tmpVulnDisc = sc2.vulnDiscussion;
-                                if (tmpVulnDisc.length() > width)
-                                {
-                                    tmpVulnDisc.truncate(width - 11);
-                                    tmpVulnDisc += "(truncated)";
-                                }
-                                technicalDesc += tmpVulnDisc;
-                            }
-                            if (technicalRec.isEmpty())
-                                technicalRec = QStringLiteral("Technical Recommendations:");
-                            technicalRec += "\n\n-----" + sc2.rule + "-----\n";
-                            if (width > 15)
-                            {
-                                QString tmpVulnFix = sc2.fix;
-                                if (tmpVulnFix.length() > width)
-                                {
-                                    tmpVulnFix.truncate(width - 11);
-                                    tmpVulnFix += "(truncated)";
-                                }
-                                technicalRec += tmpVulnFix;
-                            }
-                        }
-                    }
                 }
             }
-            Q_EMIT progress(-1);
             if (notFirst)
                 preamble = preamble + QStringLiteral(",");
             preamble = preamble + QStringLiteral(" ") + PrintCCI(*j);
             notFirst = true;
+        }
+        for (auto sc2 = failedChecksDup.constBegin(); sc2 != failedChecksDup.constEnd(); sc2++)
+        {
+            //calculate amount of text allowed for each entry
+            auto numFailure = failedChecksDup.count();
+            if (numFailure > 0)
+            {
+                auto width = (2472 / numFailure) - (13 + sc2->rule.length());
+                if (technicalDesc.isEmpty())
+                    technicalDesc = QStringLiteral("Technical Vulnerabilities:");
+                technicalDesc += "\n\n-----" + sc2->rule + "-----\n";
+                if (width > 15)
+                {
+                    QString tmpVulnDisc = sc2->vulnDiscussion;
+                    if (tmpVulnDisc.length() > width)
+                    {
+                        tmpVulnDisc.truncate(width - 11);
+                        tmpVulnDisc += "(truncated)";
+                    }
+                    technicalDesc += tmpVulnDisc;
+                }
+                if (technicalRec.isEmpty())
+                    technicalRec = QStringLiteral("Technical Recommendations:");
+                technicalRec += "\n\n-----" + sc2->rule + "-----\n";
+                if (width > 15)
+                {
+                    QString tmpVulnFix = sc2->fix;
+                    if (tmpVulnFix.length() > width)
+                    {
+                        tmpVulnFix.truncate(width - 11);
+                        tmpVulnFix += "(truncated)";
+                    }
+                    technicalRec += tmpVulnFix;
+                }
+            }
         }
         worksheet_write_string(wsControls, onRow, 1, preamble.toStdString().c_str(), fmtWrapped);
         if (technicalDesc.isEmpty())
