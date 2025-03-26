@@ -1,4 +1,4 @@
-version: 1.2.6.{build}
+version: 1.2.7.{build}
 image: Ubuntu2004
 platform: x64
 environment:
@@ -18,35 +18,35 @@ build_script:
 
     echo -e "set(CMAKE_SYSTEM_NAME Windows)\nset(TOOLCHAIN_PREFIX x86_64-w64-mingw32)\nset(CMAKE_C_COMPILER \${TOOLCHAIN_PREFIX}-gcc)\nset(CMAKE_CXX_COMPILER \${TOOLCHAIN_PREFIX}-g++)\nset(CMAKE_Fortran_COMPILER \${TOOLCHAIN_PREFIX}-gfortran)\nset(CMAKE_RC_COMPILER \${TOOLCHAIN_PREFIX}-windres)\nset(CMAKE_FIND_ROOT_PATH_MODE_PROGRAM NEVER)\nset(CMAKE_FIND_ROOT_PATH_MODE_LIBRARY ONLY)\nset(CMAKE_FIND_ROOT_PATH_MODE_INCLUDE ONLY)\nset(CMAKE_FIND_ROOT_PATH /usr/x86_64-w64-mingw32 /)\nset(CMAKE_C_FLAGS_RELEASE \"-m64 -Os -mtune=generic\")\nset(CMAKE_CXX_FLAGS_RELEASE \"-m64 -Os -mtune=generic\")" > /tmp/profile.cmake
 
-    pushd /tmp && wget https://github.com/zlib-ng/zlib-ng/archive/refs/tags/2.1.4.tar.gz && tar -zxf 2.1.4.tar.gz && popd
+    pushd /tmp && wget https://github.com/zlib-ng/zlib-ng/archive/refs/tags/2.2.4.tar.gz && tar -zxf 2.2.4.tar.gz && popd
 
-    pushd /tmp/zlib-ng-2.1.4 && cmake ./ -DCMAKE_TOOLCHAIN_FILE=/tmp/profile.cmake -DBUILD_SHARED_LIBS=OFF -DZLIB_COMPAT=ON -DZLIB_ENABLE_TESTS=OFF && make -j3 && popd
+    pushd /tmp/zlib-ng-2.2.4 && cmake ./ -DCMAKE_TOOLCHAIN_FILE=/tmp/profile.cmake -DBUILD_SHARED_LIBS=OFF -DZLIB_COMPAT=ON -DZLIB_ENABLE_TESTS=OFF && make -j3 && popd
 
-    pushd /tmp && wget https://www.openssl.org/source/openssl-3.0.12.tar.gz && tar -zxf openssl-3.0.12.tar.gz && popd
+    pushd /tmp && wget https://www.openssl.org/source/openssl-3.0.16.tar.gz && tar -zxf openssl-3.0.16.tar.gz && popd
 
-    pushd /tmp/openssl-3.0.12 && ./Configure mingw64 no-shared no-asm no-err no-tests CROSS_COMPILE=x86_64-w64-mingw32- CFLAGS="${CFLAGS}" CXXFLAGS="${CXXFLAGS}" && make -j3 && popd
+    pushd /tmp/openssl-3.0.16 && ./Configure mingw64 no-shared no-asm no-err no-tests CROSS_COMPILE=x86_64-w64-mingw32- CFLAGS="${CFLAGS}" CXXFLAGS="${CXXFLAGS}" && make -j3 && popd
 
-    pushd /tmp && wget https://libzip.org/download/libzip-1.10.1.tar.xz && tar -xf libzip-1.10.1.tar.xz && popd
+    pushd /tmp && wget https://libzip.org/download/libzip-1.11.3.tar.xz && tar -xf libzip-1.11.3.tar.xz && popd
 
-    pushd /tmp/libzip-1.10.1 && cmake ./ -DCMAKE_TOOLCHAIN_FILE=/tmp/profile.cmake -DBUILD_SHARED_LIBS=OFF -DZLIB_INCLUDE_DIR=/tmp/zlib-ng-2.1.4 -DZLIB_LIBRARY=/tmp/zlib-ng-2.1.4/libz.a -DOPENSSL_ROOT_DIR=/tmp/openssl-3.0.12 -DCMAKE_C_STANDARD_LIBRARIES="-lws2_32 -lcrypt32" && make -j3 && popd
+    pushd /tmp/libzip-1.11.3 && cmake ./ -DCMAKE_TOOLCHAIN_FILE=/tmp/profile.cmake -DBUILD_SHARED_LIBS=OFF -DZLIB_INCLUDE_DIR=/tmp/zlib-ng-2.2.4 -DZLIB_LIBRARY=/tmp/zlib-ng-2.2.4/libz.a -DOPENSSL_ROOT_DIR=/tmp/openssl-3.0.16 -DCMAKE_C_STANDARD_LIBRARIES="-lws2_32 -lcrypt32" && make -j3 && popd
 
-    pushd /tmp && wget https://github.com/jmcnamara/libxlsxwriter/archive/RELEASE_1.1.5.tar.gz && tar -zxf RELEASE_1.1.5.tar.gz && popd
+    pushd /tmp && wget https://github.com/jmcnamara/libxlsxwriter/archive/RELEASE_1.2.1.tar.gz && tar -zxf RELEASE_1.2.1.tar.gz && popd
 
-    pushd /tmp/libxlsxwriter-RELEASE_1.1.5 && sed -i -e 's:REQUIRED "1.0":"1.0" REQUIRED:g' CMakeLists.txt && cmake -DUSE_STANDARD_TMPFILE=OFF -DCMAKE_TOOLCHAIN_FILE=/tmp/profile.cmake -DBUILD_SHARED_LIBS=OFF -DZLIB_INCLUDE_DIR=/tmp/zlib-ng-2.1.4 -DZLIB_LIBRARY=/tmp/zlib-ng-2.1.4/libz.a -DUSE_OPENSSL_MD5=ON -DCMAKE_C_FLAGS=-I/tmp/openssl-3.0.12/include -DOPENSSL_ROOT_DIR=/tmp/openssl-3.0.12 && make -j3 && popd
+    pushd /tmp/libxlsxwriter-RELEASE_1.2.1 && sed -i -e 's:REQUIRED "1.0":"1.0" REQUIRED:g' CMakeLists.txt && cmake -DUSE_STANDARD_TMPFILE=OFF -DCMAKE_TOOLCHAIN_FILE=/tmp/profile.cmake -DBUILD_SHARED_LIBS=OFF -DZLIB_INCLUDE_DIR=/tmp/zlib-ng-2.2.4 -DZLIB_LIBRARY=/tmp/zlib-ng-2.2.4/libz.a -DUSE_OPENSSL_MD5=ON -DCMAKE_C_FLAGS=-I/tmp/openssl-3.0.16/include -DOPENSSL_ROOT_DIR=/tmp/openssl-3.0.16 && make -j3 && popd
 
-    pushd /tmp && wget https://download.qt.io/official_releases/qt/6.5/6.5.3/submodules/qtbase-everywhere-src-6.5.3.tar.xz && tar -xf qtbase-everywhere-src-6.5.3.tar.xz && popd
+    pushd /tmp && wget https://download.qt.io/official_releases/qt/6.5/6.5.5/submodules/qtbase-everywhere-src-6.5.5.tar.xz && tar -xf qtbase-everywhere-src-6.5.5.tar.xz && popd
 
     sudo update-alternatives --set x86_64-w64-mingw32-gcc /usr/bin/x86_64-w64-mingw32-gcc-posix
 
     sudo update-alternatives --set x86_64-w64-mingw32-g++ /usr/bin/x86_64-w64-mingw32-g++-posix
 
-    pushd /tmp/qtbase-everywhere-src-6.5.3 && ./configure -prefix /tmp/qt -no-vulkan -no-feature-sql-odbc -sql-sqlite -platform linux-g++-64 -qt-host-path /opt/qt6.5-static -xplatform win32-g++ -device-option CROSS_COMPILE=x86_64-w64-mingw32- -release -opengl desktop -mp -static -static-runtime -no-shared -nomake examples -no-icu -optimize-size -openssl-linked -- -DOPENSSL_ROOT_DIR=/tmp/openssl-3.0.12 -DCMAKE_TOOLCHAIN_FILE=/tmp/profile.cmake && cmake --build . && cmake --install . && popd
+    pushd /tmp/qtbase-everywhere-src-6.5.5 && ./configure -prefix /tmp/qt -no-vulkan -no-feature-sql-odbc -sql-sqlite -platform linux-g++-64 -qt-host-path /opt/qt6.5-static -xplatform win32-g++ -device-option CROSS_COMPILE=x86_64-w64-mingw32- -release -opengl desktop -mp -static -static-runtime -no-shared -nomake examples -no-icu -optimize-size -openssl-linked -- -DOPENSSL_ROOT_DIR=/tmp/openssl-3.0.16 -DCMAKE_TOOLCHAIN_FILE=/tmp/profile.cmake && cmake --build . && cmake --install . && popd
 
     sed -i -e '/^LIBS/d' STIGQter.pro
 
-    echo "LIBS += /tmp/libzip-1.10.1/lib/libzip.a /tmp/libxlsxwriter-RELEASE_1.1.5/libxlsxwriter.a /tmp/zlib-ng-2.1.4/libz.a" >> STIGQter.pro
+    echo "LIBS += /tmp/libzip-1.11.3/lib/libzip.a /tmp/libxlsxwriter-RELEASE_1.2.1/libxlsxwriter.a /tmp/zlib-ng-2.2.4/libz.a" >> STIGQter.pro
 
-    echo "INCLUDEPATH += /tmp/libzip-1.10.1/lib /tmp/libzip-1.10.1 /tmp/libxlsxwriter-RELEASE_1.1.5/include" >> STIGQter.pro
+    echo "INCLUDEPATH += /tmp/libzip-1.11.3/lib /tmp/libzip-1.11.3 /tmp/libxlsxwriter-RELEASE_1.2.1/include" >> STIGQter.pro
 
     /tmp/qt/bin/qmake STIGQter.pro
 
