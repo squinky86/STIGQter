@@ -116,26 +116,44 @@ void WorkerCKLExport::process()
     //build a new thread for each CKL file to generate
     Q_EMIT initialize(assets.count(), 0);
 
+    QDir outputDir(_dirName);
+    if (!outputDir.exists())
+        outputDir.mkpath(_dirName);
+
+    QString cleanExportDir = outputDir.absolutePath();
+    if (!cleanExportDir.endsWith(QDir::separator()))
+        cleanExportDir += QDir::separator();
+
     Q_FOREACH (Asset a, assets)
     {
         Q_EMIT updateStatus("Building CKL Files for " + PrintAsset(a) + "…");
         //monolithic - one CKL file per asset
         if (_monolithic)
         {
-            WorkerCKL wc;
-            wc.AddFilename(QDir(_dirName).filePath(PrintAsset(a) + "-monolithic.ckl"));
-            wc.AddAsset(a);
-            wc.process();
+            QString fileName = SanitizeFile(PrintAsset(a)) + QStringLiteral("-monolithic.ckl");
+            QString fullPath = QDir::cleanPath(outputDir.filePath(fileName));
+            if (fullPath.startsWith(cleanExportDir))
+            {
+                WorkerCKL wc;
+                wc.AddFilename(fullPath);
+                wc.AddAsset(a);
+                wc.process();
+            }
         }
         //not monolithic - one CKL file per asset/stig combo
         else
         {
             Q_FOREACH (STIG s, a.GetSTIGs())
             {
-                WorkerCKL wc;
-                wc.AddFilename(QDir(_dirName).filePath(SanitizeFile(PrintAsset(a) + "_" + s.title + "_V" + QString::number(s.version) + "R" + QString::number(GetReleaseNumber(s.release))) + ".ckl"));
-                wc.AddAsset(a, {s});
-                wc.process();
+                QString fileName = SanitizeFile(PrintAsset(a) + "_" + s.title + "_V" + QString::number(s.version) + "R" + QString::number(GetReleaseNumber(s.release))) + ".ckl";
+                QString fullPath = QDir::cleanPath(outputDir.filePath(fileName));
+                if (fullPath.startsWith(cleanExportDir))
+                {
+                    WorkerCKL wc;
+                    wc.AddFilename(fullPath);
+                    wc.AddAsset(a, {s});
+                    wc.process();
+                }
             }
         }
         Q_EMIT progress(-1);

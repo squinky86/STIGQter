@@ -19,10 +19,12 @@
 
 #include "workerhtml.h"
 
+#include "common.h"
 #include "dbmanager.h"
 #include "stig.h"
 
 #include <QDir>
+#include <QFileInfo>
 #include <QList>
 #include <QMap>
 #include <QVariant>
@@ -160,11 +162,18 @@ void WorkerHTML::process()
     Q_EMIT initialize(1 + checkMap.count() + count, 1);
 
     QDir outputDir(_exportDir);
+    if (!outputDir.exists())
+        outputDir.mkpath(_exportDir);
+
+    QString cleanExportDir = outputDir.absolutePath();
+    if (!cleanExportDir.endsWith(QDir::separator()))
+        cleanExportDir += QDir::separator();
+
     //main.html is the root point of navigating the STIGs.
     //Each STIGCheck and STIG will get its own .html file.
     QFile main(outputDir.filePath(QStringLiteral("main.html")));
     main.open(QIODevice::WriteOnly);
-    QString headerExtra = db.GetVariable(QStringLiteral("HTMLHeader"));
+    QString headerExtra = db.GetVariable(QStringLiteral("HTMLHeader")).toHtmlEscaped();
 
     //header of main index file
     main.write("<!doctype html>"
@@ -183,16 +192,25 @@ void WorkerHTML::process()
     Q_FOREACH (const STIG &s, checkMap.keys())
     {
         QString STIGName = PrintSTIG(s);
-        QString STIGFileName = s.fileName;
+        QString STIGFileName = TrimFileName(s.fileName);
         STIGFileName = STIGFileName.replace(QStringLiteral(".xml"), QStringLiteral(".html"), Qt::CaseInsensitive);
+        if (STIGFileName.isEmpty())
+            STIGFileName = SanitizeFile(STIGName) + QStringLiteral(".html");
+        else
+            STIGFileName = SanitizeFile(STIGFileName);
+
+        QString stigPath = QDir::cleanPath(outputDir.filePath(STIGFileName));
+        if (!stigPath.startsWith(cleanExportDir))
+            continue;
+
         Q_EMIT updateStatus("Creating page for " + STIGName + "…");
         main.write("<li><a href=\"");
         main.write(STIGFileName.toStdString().c_str());
         main.write("\">");
-        main.write(STIGName.toStdString().c_str());
+        main.write(STIGName.toHtmlEscaped().toStdString().c_str());
         main.write("</a></li>");
 
-        QFile stig(outputDir.filePath(STIGFileName));
+        QFile stig(stigPath);
         stig.open(QIODevice::WriteOnly);
 
         stig.write("<!doctype html>"
@@ -200,7 +218,7 @@ void WorkerHTML::process()
                    "<head>"
                    "<meta charset=\"utf-8\">"
                    "<title>STIGQter: STIG Details: ");
-        stig.write(STIGName.toStdString().c_str());
+        stig.write(STIGName.toHtmlEscaped().toStdString().c_str());
         stig.write("</title>");
         stig.write("<link rel=\"icon\" type=\"image/svg+xml\" href=\"STIGQter.svg\" />");
         stig.write(headerExtra.toStdString().c_str());
@@ -208,12 +226,12 @@ void WorkerHTML::process()
                    "<body>"
                    "<div><img src=\"STIGQter.svg\" alt=\"STIGQter\" style=\"height:1em;\" /> "
                    "<a href=\"https://www.stigqter.com/\">STIGQter</a>: <a href=\"main.html\">STIG Summary</a>:</div> <h1>");
-        stig.write(s.title.toStdString().c_str());
+        stig.write(s.title.toHtmlEscaped().toStdString().c_str());
         stig.write("</h1><h2>Version: ");
         stig.write(QString::number(s.version).toStdString().c_str());
         stig.write("</h2>"
                    "<h2>");
-        stig.write(QString(s.release).toStdString().c_str());
+        stig.write(s.release.toHtmlEscaped().toStdString().c_str());
         stig.write("</h2>"
                    "<table style=\"border-collapse: collapse; border: 1px solid black;\">"
                    "<tr>"
@@ -225,7 +243,7 @@ void WorkerHTML::process()
         //Create individual .html files for every STIGCheck
         Q_FOREACH (const STIGCheck &c, checkMap[s])
         {
-            QString checkName(PrintSTIGCheck(c));
+            QString checkName(SanitizeFile(PrintSTIGCheck(c)));
             Q_EMIT updateStatus("Creating Check " + checkName + "…");
             stig.write("<tr>"
                        "<td style=\"border: 1px solid black;\">☐</td>"
@@ -233,24 +251,29 @@ void WorkerHTML::process()
                        "<a href=\"");
             stig.write(checkName.toStdString().c_str());
             stig.write(".html\">");
-            stig.write(checkName.toStdString().c_str());
+            stig.write(checkName.toHtmlEscaped().toStdString().c_str());
             stig.write("</a>"
                        "</td>"
                        "<td style=\"border: 1px solid black;\">");
-            stig.write(c.title.toStdString().c_str());
-            stig.write("</td>"
+                       stig.write(c.title.toHtmlEscaped().toStdString().c_str());
+                       stig.write("</td>"
                        "</tr>");
 
-            QFile check(outputDir.filePath(checkName + ".html"));
+
+            QString checkPath = QDir::cleanPath(outputDir.filePath(checkName + ".html"));
+            if (!checkPath.startsWith(cleanExportDir))
+                continue;
+
+            QFile check(checkPath);
             check.open(QIODevice::WriteOnly);
             check.write("<!doctype html>"
                        "<html lang=\"en\">"
                        "<head>"
                        "<meta charset=\"utf-8\">"
                        "<title>STIGQter: STIG Check Details: ");
-            check.write(checkName.toStdString().c_str());
+            check.write(checkName.toHtmlEscaped().toStdString().c_str());
             check.write(": ");
-            check.write(c.title.toStdString().c_str());
+            check.write(c.title.toHtmlEscaped().toStdString().c_str());
             check.write("</title>");
             check.write("<link rel=\"icon\" type=\"image/svg+xml\" href=\"STIGQter.svg\" />");
             check.write(headerExtra.toStdString().c_str());
@@ -260,10 +283,10 @@ void WorkerHTML::process()
                        "<a href=\"https://www.stigqter.com/\">STIGQter</a>: <a href=\"main.html\">STIG Summary</a>: <a href=\"");
             check.write(STIGFileName.toStdString().c_str());
             check.write("\">");
-            check.write(STIGName.toStdString().c_str());
+            check.write(STIGName.toHtmlEscaped().toStdString().c_str());
             check.write("</a>"
                         ":</div> <h1>");
-            check.write(c.title.toStdString().c_str());
+            check.write(c.title.toHtmlEscaped().toStdString().c_str());
             check.write("</h1>");
             check.write(CheckItem(QStringLiteral("DISA Rule"), c.rule).toStdString().c_str());
             check.write(CheckItem(QStringLiteral("Vulnerability Number"), c.vulnNum).toStdString().c_str());

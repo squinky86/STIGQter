@@ -25,6 +25,7 @@
 #include <QApplication>
 #include <QDebug>
 #include <QEventLoop>
+#include <QFileInfo>
 #include <QtGlobal>
 #include <QMessageBox>
 #include <QString>
@@ -357,12 +358,8 @@ QString SanitizeFile(QString s)
  */
 QString TrimFileName(const QString &fileName)
 {
-    QString tmpFileName(fileName);
-    if (tmpFileName.contains('/'))
-    {
-        tmpFileName = tmpFileName.right(tmpFileName.length() - tmpFileName.lastIndexOf('/') - 1);
-    }
-    return tmpFileName;
+    QFileInfo fi(fileName);
+    return fi.fileName();
 }
 
 /**
