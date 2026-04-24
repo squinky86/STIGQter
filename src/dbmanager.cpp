@@ -590,7 +590,7 @@ bool DbManager::AddSTIG(STIG &stig, const QVector<STIGCheck> &checks, const QVec
         if (!delayed)
             this->DelayCommit(true);
 
-        Q_FOREACH(STIGCheck c, checks)
+        for (STIGCheck c : checks)
         {
             newChecks = true;
             q.prepare(QStringLiteral("INSERT INTO STIGCheck (`STIGId`, `rule`, `vulnNum`, `groupTitle`, `ruleVersion`, `severity`, `weight`, `title`, `vulnDiscussion`, `falsePositives`, `falseNegatives`, `fix`, `check`, `documentable`, `mitigations`, `severityOverrideGuidance`, `checkContentRef`, `potentialImpact`, `thirdPartyTools`, `mitigationControl`, `responsibility`, `IAControls`, `targetKey`, `isRemap`) VALUES(:STIGId, :rule, :vulnNum, :groupTitle, :ruleVersion, :severity, :weight, :title, :vulnDiscussion, :falsePositives, :falseNegatives, :fix, :check, :documentable, :mitigations, :severityOverrideGuidance, :checkContentRef, :potentialImpact, :thirdPartyTools, :mitigationControl, :responsibility, :IAControls, :targetKey, :isRemap)"));
@@ -634,7 +634,7 @@ bool DbManager::AddSTIG(STIG &stig, const QVector<STIGCheck> &checks, const QVec
                 {
                     c.isRemap = true;
                     QString remapCCIsStr = QString();
-                    Q_FOREACH (CCI cci, remapCCIs)
+                    for (CCI cci : remapCCIs)
                     {
                         if (!remapCCIsStr.isEmpty())
                             remapCCIsStr = remapCCIsStr + QStringLiteral(", ");
@@ -644,7 +644,7 @@ bool DbManager::AddSTIG(STIG &stig, const QVector<STIGCheck> &checks, const QVec
                     Warning(QStringLiteral("Broken CCI"), "The STIGCheck rule " + c.rule + " is not mapped against a known CCI. If you are importing a STIG, please file a bug with the STIG author (probably DISA, disa.stig_spt@mail.mil) and let them know that their CCI mapping for the STIG you are trying to import is broken. For now, this broken STIG check is being remapped to " + remapCCIsStr + ". <a href=\"mailto:disa.stig_spt@mail.mil?subject=Incorrectly%20Mapped%20STIG%20Check&body=DISA,%0d" + PrintSTIG(stig) + "%20contains%20rule%20" + c.rule + "%20mapped%20against%20an%20unknown%20CCI%20which%20does%20not%20exist%20in%20the%20current%20version%20of%20NIST%20800-53r4.\">Click here</a> to file this bug with DISA automatically.");
                 }
 
-                Q_FOREACH (int cciId, c.cciIds)
+                for (int cciId : c.cciIds)
                 {
                     q.prepare(QStringLiteral("INSERT INTO STIGCheckCCI (`STIGCheckId`, `CCIId`) VALUES(:STIGCheckId, :CCIId)"));
                     q.bindValue(QStringLiteral(":STIGCheckId"), STIGCheckId);
@@ -653,7 +653,7 @@ bool DbManager::AddSTIG(STIG &stig, const QVector<STIGCheck> &checks, const QVec
                     Log(6, QStringLiteral("AddAsset-CCI"), q);
                 }
 
-                Q_FOREACH (QString legacyId, c.legacyIds)
+                for (QString legacyId : c.legacyIds)
                 {
                     q.prepare(QStringLiteral("INSERT INTO STIGCheckLegacyId (`STIGCheckId`, `LegacyId`) VALUES(:STIGCheckId, :LegacyId)"));
                     q.bindValue(QStringLiteral(":STIGCheckId"), STIGCheckId);
@@ -664,7 +664,7 @@ bool DbManager::AddSTIG(STIG &stig, const QVector<STIGCheck> &checks, const QVec
             }
         }
 
-        Q_FOREACH(auto supplement, supplements)
+        for (auto supplement : supplements)
         {
             newChecks = true;
             q.prepare(QStringLiteral("INSERT INTO Supplement (`STIGId`, `path`, `contents`) VALUES(:STIGId, :path, :contents)"));
@@ -862,7 +862,7 @@ bool DbManager::DeleteSTIG(int id)
         if (tmpCount > 0)
         {
             QString tmpAssetStr = QString();
-            Q_FOREACH (const Asset &a, assets)
+            for (const Asset &a : assets)
             {
                 tmpAssetStr.append(" '" + PrintAsset(a) + "'");
             }
@@ -1129,7 +1129,7 @@ CCI DbManager::GetCCI(int id)
 QVector<CCI> DbManager::GetCCIs(const QVector<int> &ccis)
 {
     QVector<CCI> ret;
-    Q_FOREACH (int cci, ccis)
+    for (int cci : ccis)
     {
         ret.append(GetCCIs(QStringLiteral("WHERE CCI.id = :id"), {std::make_tuple<QString, QVariant>(QStringLiteral(":id"), cci)}));
     }
@@ -1702,11 +1702,11 @@ QVector<STIGCheck> DbManager::GetSTIGChecks(const QString &whereClause, const QV
             c.iaControls = q.value(22).toString();
             c.targetKey = q.value(23).toString();
             c.isRemap = q.value(24).toBool();
-            Q_FOREACH (CCI cci, GetCCIs(c.id))
+            for (CCI cci : GetCCIs(c.id))
             {
                 c.cciIds.append(cci.id);
             }
-            Q_FOREACH (QString legacyId, GetLegacyIds(c.id))
+            for (QString legacyId : GetLegacyIds(c.id))
             {
                 c.legacyIds.append(legacyId);
             }
@@ -2292,12 +2292,32 @@ bool DbManager::LoadDB(const QString &path)
 {
     QFile source(path);
     QFile dest(_dbPath);
-    if (source.open(QFile::ReadOnly) && dest.open(QFile::WriteOnly))
+    if (source.open(QFile::ReadOnly))
     {
-        dest.write(qUncompress(source.readAll()));
-        source.close();
-        dest.close();
-        return true;
+        QByteArray compressedData = source.readAll();
+        if (compressedData.size() < 4)
+            return false;
+
+        //qUncompress expects the first 4 bytes to be the expected uncompressed size in big-endian
+        quint32 expectedSize = (static_cast<quint32>(static_cast<unsigned char>(compressedData[0])) << 24) |
+                               (static_cast<quint32>(static_cast<unsigned char>(compressedData[1])) << 16) |
+                               (static_cast<quint32>(static_cast<unsigned char>(compressedData[2])) << 8) |
+                               (static_cast<quint32>(static_cast<unsigned char>(compressedData[3])));
+
+        // Limit to 1GB to prevent resource exhaustion
+        if (expectedSize > 1073741824)
+        {
+            Warning(QStringLiteral("File Too Large"), "The uncompressed database size (" + QString::number(expectedSize) + " bytes) exceeds the safety limit of 1GB.");
+            return false;
+        }
+
+        if (dest.open(QFile::WriteOnly))
+        {
+            dest.write(qUncompress(compressedData));
+            source.close();
+            dest.close();
+            return true;
+        }
     }
 
     Warning(QStringLiteral("Unable to Open File"), "The file " + path + " could not be opened for writing.");
@@ -2630,7 +2650,7 @@ bool DbManager::UpdateSTIGCheck(const STIGCheck &check)
             q.bindValue(QStringLiteral(":STIGCheckId"), tmpCheck.id);
             ret = q.exec() && ret;
             Log(6, QStringLiteral("UpdateSTIGCheck-STIGCheckCCI1"), q);
-            Q_FOREACH (int cciId, check.cciIds)
+            for (int cciId : check.cciIds)
             {
                 q.prepare(QStringLiteral("INSERT INTO STIGCheckCCI (`STIGCheckId`, `CCIId`) VALUES(:STIGCheckId, :CCIId)"));
                 q.bindValue(QStringLiteral(":STIGCheckId"), tmpCheck.id);
@@ -2642,7 +2662,7 @@ bool DbManager::UpdateSTIGCheck(const STIGCheck &check)
             q.bindValue(QStringLiteral(":STIGCheckId"), tmpCheck.id);
             ret = q.exec() && ret;
             Log(6, QStringLiteral("UpdateSTIGCheck-STIGCheckLegacyId1"), q);
-            Q_FOREACH (QString legacyId, check.legacyIds)
+            for (QString legacyId : check.legacyIds)
             {
                 q.prepare(QStringLiteral("INSERT INTO STIGCheckLegacyId (`STIGCheckId`, `LegacyId`) VALUES(:STIGCheckId, :LegacyId)"));
                 q.bindValue(QStringLiteral(":STIGCheckId"), tmpCheck.id);
@@ -3007,7 +3027,7 @@ QString GetLastExecutedQuery(const QSqlQuery& query)
             field.setValue(*value);
         }
         QString formatV = query.driver()->formatValue(field);
-        if (match.isValid())
+        if (match.hasMatch())
             sql.replace(match.capturedStart(), match.capturedLength(), formatV);
     }
 #else
@@ -3017,7 +3037,7 @@ QString GetLastExecutedQuery(const QSqlQuery& query)
     {
         it.next();
         const QVariant &var = it.value();
-        QSqlField field(QLatin1String(""), var.type());
+        QSqlField field(QLatin1String(""), var.userType());
         if (var.isNull())
         {
             field.clear();

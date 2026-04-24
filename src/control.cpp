@@ -120,7 +120,7 @@ Control& Control::operator=(const Control &right)
  */
 bool Control::IsImport() const
 {
-    Q_FOREACH (auto cci, GetCCIs())
+    for (auto cci : GetCCIs())
     {
         if (cci.isImport)
             return true;

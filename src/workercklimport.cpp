@@ -98,7 +98,7 @@ void WorkerCKLImport::ParseCKL(const QString &fileName)
                         Q_EMIT updateStatus("Adding " + PrintSTIG(tmpSTIG) + " to " + PrintAsset(a) + "…");
                         db.AddSTIGToAsset(tmpSTIG, a);
                         db.DelayCommit(true);
-                        Q_FOREACH (CKLCheck c, checks)
+                        for (CKLCheck c : checks)
                         {
                             c.assetId = a.id;
                             db.UpdateCKLCheck(c);
@@ -259,7 +259,7 @@ void WorkerCKLImport::ParseCKL(const QString &fileName)
     }
     db.AddSTIGToAsset(tmpSTIG, a);
     db.DelayCommit(true);
-    Q_FOREACH (CKLCheck c, checks)
+    for (CKLCheck c : checks)
     {
         c.assetId = a.id;
         db.UpdateCKLCheck(c);
@@ -318,7 +318,7 @@ void WorkerCKLImport::process()
     Worker::process();
 
     Q_EMIT initialize(_fileNames.count(), 0);
-    Q_FOREACH(const QString fileName, _fileNames)
+    for (const QString fileName : _fileNames)
     {
         Q_EMIT updateStatus("Parsing " + fileName);
         ParseCKL(fileName);

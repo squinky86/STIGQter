@@ -137,7 +137,7 @@ void WorkerImportEMASS::process()
                     {
                         QString id = QString();
                         QString target = QString();
-                        Q_FOREACH (const QXmlStreamAttribute &attr, xml.attributes())
+                        for (const QXmlStreamAttribute &attr : xml.attributes())
                         {
                             if (attr.name().compare(QStringLiteral("Id")) == 0)
                                 id = attr.value().toString();
@@ -170,7 +170,7 @@ void WorkerImportEMASS::process()
                     {
                         QString id = QString();
                         QString name = QString();
-                        Q_FOREACH (const QXmlStreamAttribute &attr, xml.attributes())
+                        for (const QXmlStreamAttribute &attr : xml.attributes())
                         {
                             if (attr.name().compare(QStringLiteral("id")) == 0)
                                 id = attr.value().toString();

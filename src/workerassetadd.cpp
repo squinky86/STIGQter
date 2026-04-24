@@ -110,7 +110,7 @@ void WorkerAssetAdd::process()
         Q_EMIT updateStatus("Adding asset " + PrintAsset(a));
         Q_EMIT progress(-1);
         //loop through STIGs and add to new asset
-        Q_FOREACH(STIG s, _toMapSTIGs)
+        for (STIG s : _toMapSTIGs)
         {
             Q_EMIT updateStatus("Adding " + PrintSTIG(s) + " to " + PrintAsset(a) + "…");
             db.AddSTIGToAsset(s, a);

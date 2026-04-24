@@ -86,7 +86,7 @@ void WorkerCMRSExport::process()
         QString curDate = QDateTime::currentDateTime().toTimeSpec(Qt::OffsetFromUTC).toString(Qt::ISODate); //current UTC time
         QString elementKey = QStringLiteral("0"); //doesn't make sense for target keys to be at this level
 
-        Q_FOREACH (Asset a, assets)
+        for (Asset a : assets)
         {
             Q_EMIT updateStatus("Adding " + PrintAsset(a));
 
@@ -137,7 +137,7 @@ void WorkerCMRSExport::process()
 
             stream.writeEndElement(); //ELEMENT
 
-            Q_FOREACH (STIG s, a.GetSTIGs())
+            for (STIG s : a.GetSTIGs())
             {
                 stream.writeStartElement(QStringLiteral("TARGET"));
 
@@ -149,7 +149,7 @@ void WorkerCMRSExport::process()
                 stream.writeCharacters(elementKey);
                 stream.writeEndElement(); //TARGET_KEY
 
-                Q_FOREACH (CKLCheck c, a.GetCKLChecks(&s))
+                for (CKLCheck c : a.GetCKLChecks(&s))
                 {
                     STIGCheck sc = c.GetSTIGCheck();
 

@@ -65,12 +65,12 @@ void WorkerMapUnmapped::process()
 
     QVector<CCI> remapCCIs = db.GetRemapCCIs();
     QVector<int> remapCCIIds;
-    Q_FOREACH (CCI c, remapCCIs)
+    for (CCI c : remapCCIs)
     {
         remapCCIIds.append(c.id);
     }
 
-    Q_FOREACH (STIGCheck check, stigchecks)
+    for (STIGCheck check : stigchecks)
     {
         bool updateCheck = false;
 
@@ -82,7 +82,7 @@ void WorkerMapUnmapped::process()
         else
         {
             //step two - make sure that each of the CCIs are in the import
-            Q_FOREACH (CCI c, check.GetCCIs())
+            for (CCI c : check.GetCCIs())
             {
                 if (!c.isImport)
                 {
@@ -95,7 +95,7 @@ void WorkerMapUnmapped::process()
         //step three - remap to CM-6
         if (check.cciIds.isEmpty())
         {
-            Q_FOREACH (CCI c, remapCCIs)
+            for (CCI c : remapCCIs)
             {
                 check.cciIds.append(c.id);
             }

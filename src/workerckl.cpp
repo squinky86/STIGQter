@@ -157,7 +157,7 @@ void WorkerCKL::process()
 
         Q_EMIT progress(-1);
 
-        Q_FOREACH (const STIG &s, _stigs)
+        for (const STIG &s : _stigs)
         {
             Q_EMIT updateStatus("Adding " + PrintSTIG(s) + "…");
             stream.writeStartElement(QStringLiteral("iSTIG"));
@@ -220,7 +220,7 @@ void WorkerCKL::process()
 
             stream.writeEndElement(); //STIG_INFO
 
-            Q_FOREACH (const CKLCheck &cc, _asset.GetCKLChecks(&s))
+            for (const CKLCheck &cc : _asset.GetCKLChecks(&s))
             {
                 const STIGCheck sc = cc.GetSTIGCheck();
                 stream.writeStartElement(QStringLiteral("VULN"));
@@ -350,7 +350,7 @@ void WorkerCKL::process()
                 WriteXMLEntry(stream, QStringLiteral("ATTRIBUTE_DATA"), sc.targetKey); //ATTRIBUTE_DATA
                 stream.writeEndElement(); //STIG_DATA
 
-                Q_FOREACH(CCI cci, sc.GetCCIs())
+                for (CCI cci : sc.GetCCIs())
                 {
                     stream.writeStartElement(QStringLiteral("STIG_DATA"));
                     WriteXMLEntry(stream, QStringLiteral("VULN_ATTRIBUTE"), QStringLiteral("CCI_REF")); //VULN_ATTRIBUTE
@@ -358,7 +358,7 @@ void WorkerCKL::process()
                     stream.writeEndElement(); //STIG_DATA
                 }
 
-                Q_FOREACH (QString legacyId, sc.legacyIds)
+                for (QString legacyId : sc.legacyIds)
                 {
                     stream.writeStartElement(QStringLiteral("STIG_DATA"));
                     WriteXMLEntry(stream, QStringLiteral("VULN_ATTRIBUTE"), QStringLiteral("LEGACY_ID")); //VULN_ATTRIBUTE

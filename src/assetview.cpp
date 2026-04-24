@@ -116,7 +116,7 @@ AssetView::AssetView(Asset &asset, QWidget *parent) :
  */
 AssetView::~AssetView()
 {
-    Q_FOREACH (QShortcut *shortcut, _shortcuts)
+    for (QShortcut *shortcut : _shortcuts)
         delete shortcut;
     _shortcuts.clear();
     delete ui;
@@ -217,7 +217,7 @@ void AssetView::SelectSTIGs(const QString &search)
 
     ui->lstSTIGs->clear();
     QVector<STIG> stigs = _asset.GetSTIGs();
-    Q_FOREACH (const STIG s, db.GetSTIGs())
+    for (const STIG s : db.GetSTIGs())
     {
         if (!search.isEmpty() && !s.title.contains(search, Qt::CaseInsensitive))
         {
@@ -261,7 +261,7 @@ void AssetView::ShowChecks(bool countOnly)
     QString filterStatusText = ui->cboBoxFilterStatus->currentText();
     Status filterStatus = GetStatus(ui->cboBoxFilterStatus->currentText());
 
-    Q_FOREACH(const CKLCheck c, _asset.GetCKLChecks())
+    for (const CKLCheck c : _asset.GetCKLChecks())
     {
         total++;
         switch (c.status)
@@ -337,7 +337,7 @@ void AssetView::UpdateCKLCheck(const CKLCheck &cklCheck)
 
     //check if STIG is upgradable
     STIG selectedSTIG = cklCheck.GetSTIGCheck().GetSTIG();
-    Q_FOREACH (STIG s, db.GetSTIGs())
+    for (STIG s : db.GetSTIGs())
     {
         if (s != selectedSTIG)
         {
@@ -375,7 +375,7 @@ void AssetView::UpdateSTIGCheck(const STIGCheck &stigCheck)
     ui->lblFix->setText(stigCheck.fix);
     ui->lblCheck->setText(stigCheck.check);
     QString ccis(QStringLiteral("Relevant CCI(s):\n"));
-    Q_FOREACH (auto cci, stigCheck.GetCCIs())
+    for (auto cci : stigCheck.GetCCIs())
     {
         ccis.append(PrintCCI(cci) + QStringLiteral(": ") + cci.definition + QStringLiteral("\n"));
     }
@@ -398,7 +398,7 @@ void AssetView::RunTests()
     std::cout << "\t\tTest " << onTest++ << ": View CKLs" << std::endl;
     {
         DbManager db;
-        Q_FOREACH (const CKLCheck &cklCheck, db.GetCKLChecks())
+        for (const CKLCheck &cklCheck : db.GetCKLChecks())
         {
             UpdateCKLCheck(cklCheck);
         }
@@ -519,7 +519,7 @@ void AssetView::DeleteAsset(bool confirm)
     {
         DbManager db;
         //remove all associated STIGs from this asset.
-        Q_FOREACH (const STIG &s, _asset.GetSTIGs())
+        for (const STIG &s : _asset.GetSTIGs())
             db.DeleteSTIGFromAsset(s, _asset);
         db.DeleteAsset(_asset);
         if (_tabIndex > 0)
@@ -574,7 +574,7 @@ void AssetView::ImportXCCDF(const QString &filename)
     bool updates = false;
 
     //Allow multiple XCCDF files to be selected
-    Q_FOREACH (const QString fileName, fileNames)
+    for (const QString fileName : fileNames)
     {
         QFile f(fileName);
         db.UpdateVariable(QStringLiteral("lastdir"), QFileInfo(fileName).absolutePath());
@@ -829,7 +829,7 @@ void AssetView::UpdateCKLHelper()
     {
         DbManager db;
         db.DelayCommit(true);
-        Q_FOREACH (QListWidgetItem *i, selectedItems)
+        for (QListWidgetItem *i : selectedItems)
         {
             auto cc = i->data(Qt::UserRole).value<CKLCheck>();
             //if multiple checks are selected, only update their status
@@ -893,7 +893,7 @@ void AssetView::UpdateCKLStatus(const QString &val)
     stat = GetStatus(val);
     if (!selectedItems.isEmpty())
     {
-        Q_FOREACH (QListWidgetItem *i, selectedItems)
+        for (QListWidgetItem *i : selectedItems)
         {
             auto cc = i->data(Qt::UserRole).value<CKLCheck>();
             STIGCheck sc = cc.GetSTIGCheck();

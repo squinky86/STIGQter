@@ -12,7 +12,7 @@ Only the source package is supported. To help with implementations, different in
 The source has the following dependencies (with minimum version numbers):
 *   [libzip 1.5.1](https://libzip.org/)
 *   [libxlsxwriter 0.8](https://libxlsxwriter.github.io/)
-*   [Qt 6.0 (with OpenSSL support)](https://www.qt.io/)
+*   [Qt 6.9 (with OpenSSL support)](https://www.qt.io/)
 
 ## Authors
 

@@ -124,7 +124,7 @@ void WorkerCKLExport::process()
     if (!cleanExportDir.endsWith(QDir::separator()))
         cleanExportDir += QDir::separator();
 
-    Q_FOREACH (Asset a, assets)
+    for (Asset a : assets)
     {
         Q_EMIT updateStatus("Building CKL Files for " + PrintAsset(a) + "…");
         //monolithic - one CKL file per asset
@@ -143,7 +143,7 @@ void WorkerCKLExport::process()
         //not monolithic - one CKL file per asset/stig combo
         else
         {
-            Q_FOREACH (STIG s, a.GetSTIGs())
+            for (STIG s : a.GetSTIGs())
             {
                 QString fileName = SanitizeFile(PrintAsset(a) + "_" + s.title + "_V" + QString::number(s.version) + "R" + QString::number(GetReleaseNumber(s.release))) + ".ckl";
                 QString fullPath = QDir::cleanPath(outputDir.filePath(fileName));

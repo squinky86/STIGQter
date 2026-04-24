@@ -149,7 +149,7 @@ void WorkerFindingsReport::process()
         Status s = cc.status;
         Q_EMIT updateStatus("Adding " + PrintAsset(a) + ", " + PrintSTIGCheck(sc) + "…");
         int findingNumber = 0;
-        Q_FOREACH (CCI c, ccis)
+        for (CCI c : ccis)
         {
             onRow++;
             findingNumber++;
@@ -204,7 +204,7 @@ void WorkerFindingsReport::process()
     {
         if (failedCCIs.contains(*i))
             continue;
-        if (i->importCompliance2.compare(QStringLiteral("non-compliant"), Qt::CaseSensitivity::CaseInsensitive) == 0)
+        if (i->importCompliance2.compare(QStringLiteral("non-compliant"), Qt::CaseInsensitive) == 0)
         {
             failedCCIs.insert(*i, {});
         }
@@ -244,7 +244,7 @@ void WorkerFindingsReport::process()
         if (checks2.isEmpty())
             assets.append(QStringLiteral("Imported/Documentation Findings"));
         QList<STIGCheck> completedChecks;
-        Q_FOREACH (CKLCheck cc, checks2)
+        for (CKLCheck cc : checks2)
         {
             STIGCheck sc = cc.GetSTIGCheck();
             if (completedChecks.contains(sc))
@@ -260,7 +260,7 @@ void WorkerFindingsReport::process()
             int nf = 0; //not a finding
             int f = 0; //finding
             QVector<CKLCheck> checks3 = db.GetCKLChecks(sc);
-            Q_FOREACH(CKLCheck c3, checks3)
+            for (CKLCheck c3 : checks3)
             {
                 if (c3.status == Status::NotAFinding)
                     nf++;

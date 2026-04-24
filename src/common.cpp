@@ -296,6 +296,11 @@ QString Excelify(const QString &s)
 {
     //Excel is limited to 32,767 characters per-cell
     QString ret = s.left(32767);
+    //STIG Rule SV-222447r508029_rule - Prevent CSV Injection
+    if (ret.startsWith('=') || ret.startsWith('+') || ret.startsWith('-') || ret.startsWith('@'))
+    {
+        ret.prepend('\'');
+    }
     return ret;
 }
 

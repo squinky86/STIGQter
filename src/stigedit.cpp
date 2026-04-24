@@ -63,7 +63,7 @@ STIGEdit::STIGEdit(STIG &stig, QWidget *parent) : TabViewWidget (parent),
     UpdateSupplements();
 
     DbManager db;
-    Q_FOREACH(auto cci, db.GetCCIs())
+    for (auto cci : db.GetCCIs())
     {
         ui->cbCCIs->addItem(QString::number(cci.cci), QVariant::fromValue(cci));
     }
@@ -152,7 +152,7 @@ void STIGEdit::RunTests()
 void STIGEdit::UpdateChecks()
 {
     ui->lstChecks->clear();
-    Q_FOREACH(auto sc, _s.GetSTIGChecks())
+    for (auto sc : _s.GetSTIGChecks())
     {
         auto *tmpItem = new QListWidgetItem(); //memory managed by ui->lstChecks container
         tmpItem->setData(Qt::UserRole, QVariant::fromValue<STIGCheck>(sc));
@@ -169,7 +169,7 @@ void STIGEdit::UpdateChecks()
 void STIGEdit::UpdateSupplements()
 {
     ui->lstSupplements->clear();
-    Q_FOREACH(auto s, _s.GetSupplements())
+    for (auto s : _s.GetSupplements())
     {
         auto *tmpItem = new QListWidgetItem(); //memory managed by ui->lstChecks container
         tmpItem->setData(Qt::UserRole, QVariant::fromValue<Supplement>(s));
@@ -211,7 +211,7 @@ void STIGEdit::AddCCI()
  */
 void STIGEdit::SelectCheck()
 {
-    Q_FOREACH(QListWidgetItem *i, ui->lstChecks->selectedItems())
+    for (QListWidgetItem *i : ui->lstChecks->selectedItems())
     {
         auto sc = i->data(Qt::UserRole).value<STIGCheck>();
         ui->txtCheckRule->setText(sc.rule);
@@ -223,7 +223,7 @@ void STIGEdit::SelectCheck()
         ui->txtFix->setText(sc.fix);
         ui->txtCheck->setText(sc.check);
         ui->lstCCIs->clear();
-        Q_FOREACH(auto cci, sc.GetCCIs())
+        for (auto cci : sc.GetCCIs())
         {
             auto *tmpItem = new QListWidgetItem(); //memory managed by ui->lstCCIs container
             tmpItem->setData(Qt::UserRole, QVariant::fromValue<CCI>(cci));
@@ -262,7 +262,7 @@ void STIGEdit::UpdateSTIG()
 void STIGEdit::UpdateCheck()
 {
     DbManager db;
-    Q_FOREACH(QListWidgetItem *i, ui->lstChecks->selectedItems())
+    for (QListWidgetItem *i : ui->lstChecks->selectedItems())
     {
         auto sc = i->data(Qt::UserRole).value<STIGCheck>();
         sc.rule = ui->txtCheckRule->text();

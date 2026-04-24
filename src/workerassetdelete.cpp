@@ -80,7 +80,7 @@ void WorkerAssetDelete::process()
 
     QMap<Asset, QVector<STIG>> toDelete;
 
-    Q_FOREACH (Asset a, _assets)
+    for (Asset a : _assets)
     {
         //don't double-delete assets that were double-added
         if (toDelete.keys().contains(a))
@@ -93,11 +93,11 @@ void WorkerAssetDelete::process()
     Q_EMIT initialize(2 + _assets.count() + numChecks, 1);
     Q_EMIT progress(-1);
 
-    Q_FOREACH (Asset a, toDelete.keys())
+    for (Asset a : toDelete.keys())
     {
         Q_EMIT updateStatus(QStringLiteral("Deleting Asset ") + PrintAsset(a) + QStringLiteral("…"));
         //remove all associated STIGs from this asset.
-        Q_FOREACH (const STIG &s, toDelete.value(a))
+        for (const STIG &s : toDelete.value(a))
         {
             db.DeleteSTIGFromAsset(s, a);
             Q_EMIT progress(-1);

@@ -7,61 +7,79 @@ environment:
   QMAKE_CFLAGS: -m64 -Os -mtune=generic -pipe
   QMAKE_CXXFLAGS: -m64 -Os -mtune=generic -pipe
 build_script:
-- sh: >-
-    sudo add-apt-repository ppa:rncbc/qt6.11-static-jammy
-
+- sh: |
+    sudo add-apt-repository -y ppa:rncbc/qt6.11-static-jammy
     sudo apt-get update
-
     sudo apt-get install -y texlive-luatex texlive-latex-recommended texlive-latex-extra texlive-fonts-extra texlive-fonts-extra-links texlive-bibtex-extra biber gcc-mingw-w64-x86-64 g++-mingw-w64-x86-64 upx-ucl advancecomp qtbase6.11-static
 
     echo -e "set(CMAKE_SYSTEM_NAME Windows)\nset(TOOLCHAIN_PREFIX x86_64-w64-mingw32)\nset(CMAKE_C_COMPILER \${TOOLCHAIN_PREFIX}-gcc)\nset(CMAKE_CXX_COMPILER \${TOOLCHAIN_PREFIX}-g++)\nset(CMAKE_Fortran_COMPILER \${TOOLCHAIN_PREFIX}-gfortran)\nset(CMAKE_RC_COMPILER \${TOOLCHAIN_PREFIX}-windres)\nset(CMAKE_FIND_ROOT_PATH_MODE_PROGRAM NEVER)\nset(CMAKE_FIND_ROOT_PATH_MODE_LIBRARY ONLY)\nset(CMAKE_FIND_ROOT_PATH_MODE_INCLUDE ONLY)\nset(CMAKE_FIND_ROOT_PATH /usr/x86_64-w64-mingw32 /)\nset(CMAKE_C_FLAGS_RELEASE \"-m64 -Os -mtune=generic\")\nset(CMAKE_CXX_FLAGS_RELEASE \"-m64 -Os -mtune=generic\")" > /tmp/profile.cmake
 
-    pushd /tmp && wget https://github.com/zlib-ng/zlib-ng/archive/refs/tags/2.3.3.tar.gz && tar -zxf 2.3.3.tar.gz && popd
+    # zlib-ng
+    cd /tmp
+    wget -q https://github.com/zlib-ng/zlib-ng/archive/refs/tags/2.3.3.tar.gz
+    tar -zxf 2.3.3.tar.gz
+    cd zlib-ng-2.3.3
+    cmake ./ -DCMAKE_TOOLCHAIN_FILE=/tmp/profile.cmake -DBUILD_SHARED_LIBS=OFF -DZLIB_COMPAT=ON -DZLIB_ENABLE_TESTS=OFF
+    make -j$(nproc)
 
-    pushd /tmp/zlib-ng-2.3.3 && cmake ./ -DCMAKE_TOOLCHAIN_FILE=/tmp/profile.cmake -DBUILD_SHARED_LIBS=OFF -DZLIB_COMPAT=ON -DZLIB_ENABLE_TESTS=OFF && make -j3 && popd
+    # OpenSSL
+    cd /tmp
+    wget -q https://www.openssl.org/source/openssl-3.5.6.tar.gz || wget -q https://github.com/openssl/openssl/releases/download/openssl-3.4.0/openssl-3.4.0.tar.gz
+    if [ -f openssl-3.5.6.tar.gz ]; then
+        tar -zxf openssl-3.5.6.tar.gz
+        cd openssl-3.5.6
+    else
+        tar -zxf openssl-3.4.0.tar.gz
+        cd openssl-3.4.0
+    fi
+    ./Configure mingw64 no-shared no-asm no-err no-tests CROSS_COMPILE=x86_64-w64-mingw32- CFLAGS="${CFLAGS}" CXXFLAGS="${CXXFLAGS}"
+    make -j$(nproc)
 
-    pushd /tmp && wget https://www.openssl.org/source/openssl-3.5.6.tar.gz && tar -zxf openssl-3.5.6.tar.gz && popd
+    # libzip
+    cd /tmp
+    wget -q https://github.com/nih-at/libzip/archive/refs/tags/v1.11.2.tar.gz
+    tar -zxf v1.11.2.tar.gz
+    cd libzip-1.11.2
+    cmake ./ -DCMAKE_TOOLCHAIN_FILE=/tmp/profile.cmake -DBUILD_SHARED_LIBS=OFF -DZLIB_INCLUDE_DIR=/tmp/zlib-ng-2.3.3 -DZLIB_LIBRARY=/tmp/zlib-ng-2.3.3/libz.a -DOPENSSL_ROOT_DIR=/tmp/openssl-3.5.6 -DCMAKE_C_STANDARD_LIBRARIES="-lws2_32 -lcrypt32" -DBUILD_TOOLS=OFF -DBUILD_REGRESS=OFF -DBUILD_EXAMPLES=OFF -DBUILD_DOC=OFF
+    make -j$(nproc)
 
-    pushd /tmp/openssl-3.5.6 && ./Configure mingw64 no-shared no-asm no-err no-tests CROSS_COMPILE=x86_64-w64-mingw32- CFLAGS="${CFLAGS}" CXXFLAGS="${CXXFLAGS}" && make -j3 && popd
+    # libxlsxwriter
+    cd /tmp
+    wget -q https://github.com/jmcnamara/libxlsxwriter/archive/refs/tags/v1.2.4.tar.gz
+    tar -zxf v1.2.4.tar.gz
+    cd libxlsxwriter-1.2.4
+    sed -i -e 's:REQUIRED "1.0":"1.0" REQUIRED:g' CMakeLists.txt
+    cmake -DUSE_STANDARD_TMPFILE=OFF -DCMAKE_TOOLCHAIN_FILE=/tmp/profile.cmake -DBUILD_SHARED_LIBS=OFF -DZLIB_INCLUDE_DIR=/tmp/zlib-ng-2.3.3 -DZLIB_LIBRARY=/tmp/zlib-ng-2.3.3/libz.a -DUSE_OPENSSL_MD5=ON -DCMAKE_C_FLAGS=-I/tmp/openssl-3.5.6/include -DOPENSSL_ROOT_DIR=/tmp/openssl-3.5.6
+    make -j$(nproc)
 
-    pushd /tmp && wget https://libzip.org/download/libzip-1.11.4.tar.xz && tar -xf libzip-1.11.4.tar.xz && popd
-
-    pushd /tmp/libzip-1.11.4 && cmake ./ -DCMAKE_TOOLCHAIN_FILE=/tmp/profile.cmake -DBUILD_SHARED_LIBS=OFF -DZLIB_INCLUDE_DIR=/tmp/zlib-ng-2.3.3 -DZLIB_LIBRARY=/tmp/zlib-ng-2.3.3/libz.a -DOPENSSL_ROOT_DIR=/tmp/openssl-3.5.6 -DCMAKE_C_STANDARD_LIBRARIES="-lws2_32 -lcrypt32" && make -j3 && popd
-
-    pushd /tmp && wget https://github.com/jmcnamara/libxlsxwriter/archive/RELEASE_1.2.4.tar.gz && tar -zxf RELEASE_1.2.4.tar.gz && popd
-
-    pushd /tmp/libxlsxwriter-RELEASE_1.2.4 && sed -i -e 's:REQUIRED "1.0":"1.0" REQUIRED:g' CMakeLists.txt && cmake -DUSE_STANDARD_TMPFILE=OFF -DCMAKE_TOOLCHAIN_FILE=/tmp/profile.cmake -DBUILD_SHARED_LIBS=OFF -DZLIB_INCLUDE_DIR=/tmp/zlib-ng-2.3.3 -DZLIB_LIBRARY=/tmp/zlib-ng-2.3.3/libz.a -DUSE_OPENSSL_MD5=ON -DCMAKE_C_FLAGS=-I/tmp/openssl-3.5.6/include -DOPENSSL_ROOT_DIR=/tmp/openssl-3.5.6 && make -j3 && popd
-
-    pushd /tmp && wget https://download.qt.io/official_releases/qt/6.11/6.11.0/submodules/qtbase-everywhere-src-6.11.0.tar.xz && tar -xf qtbase-everywhere-src-6.11.0.tar.xz && popd
-
+    # Qt6
+    cd /tmp
+    wget -q https://download.qt.io/official_releases/qt/6.11/6.11.0/submodules/qtbase-everywhere-src-6.11.0.tar.xz
+    tar -xf qtbase-everywhere-src-6.11.0.tar.xz
     sudo update-alternatives --set x86_64-w64-mingw32-gcc /usr/bin/x86_64-w64-mingw32-gcc-posix
-
     sudo update-alternatives --set x86_64-w64-mingw32-g++ /usr/bin/x86_64-w64-mingw32-g++-posix
+    cd qtbase-everywhere-src-6.11.0
+    ./configure -prefix /tmp/qt -no-vulkan -no-feature-sql-odbc -sql-sqlite -platform linux-g++-64 -qt-host-path /opt/qt6.11-static -xplatform win32-g++ -device-option CROSS_COMPILE=x86_64-w64-mingw32- -release -opengl desktop -static -static-runtime -no-shared -nomake examples -no-icu -optimize-size -openssl-linked -- -DOPENSSL_ROOT_DIR=/tmp/openssl-3.5.6 -DCMAKE_TOOLCHAIN_FILE=/tmp/profile.cmake
+    cmake --build . -j$(nproc)
+    cmake --install .
 
-    pushd /tmp/qtbase-everywhere-src-6.11.0 && ./configure -prefix /tmp/qt -no-vulkan -no-feature-sql-odbc -sql-sqlite -platform linux-g++-64 -qt-host-path /opt/qt6.11-static -xplatform win32-g++ -device-option CROSS_COMPILE=x86_64-w64-mingw32- -release -opengl desktop -mp -static -static-runtime -no-shared -nomake examples -no-icu -optimize-size -openssl-linked -- -DOPENSSL_ROOT_DIR=/tmp/openssl-3.5.6 -DCMAKE_TOOLCHAIN_FILE=/tmp/profile.cmake && cmake --build . && cmake --install . && popd
-
+    # Build STIGQter
+    cd $APPVEYOR_BUILD_FOLDER
     sed -i -e '/^LIBS/d' STIGQter.pro
-
-    echo "LIBS += /tmp/libzip-1.11.4/lib/libzip.a /tmp/libxlsxwriter-RELEASE_1.2.4/libxlsxwriter.a /tmp/zlib-ng-2.3.3/libz.a" >> STIGQter.pro
-
-    echo "INCLUDEPATH += /tmp/libzip-1.11.4/lib /tmp/libzip-1.11.4 /tmp/libxlsxwriter-RELEASE_1.2.4/include" >> STIGQter.pro
-
+    echo "LIBS += /tmp/libzip-1.11.2/lib/libzip.a /tmp/libxlsxwriter-1.2.4/libxlsxwriter.a /tmp/zlib-ng-2.3.3/libz.a -lws2_32 -lcrypt32 -lbcrypt" >> STIGQter.pro
+    echo "INCLUDEPATH += /tmp/libzip-1.11.2/lib /tmp/libzip-1.11.2 /tmp/libxlsxwriter-1.2.4/include" >> STIGQter.pro
     /tmp/qt/bin/qmake STIGQter.pro
-
     sed -i -e 's:-O2:-Os -mtune=generic:g' Makefile.Release
-
     sed -i -e 's:-loleaut32 ::g' Makefile.Release #fix for https://bugreports.qt.io/browse/QTBUG-114243
-
     sed -i -e 's:-lshell32:-lshell32 -loleaut32:g' Makefile.Release
+    make -j$(nproc)
 
-    make -j3
-
+    # Documentation
     pushd doc && ./build.sh && mv UsersGuide.pdf ../ && popd
 
+    # Packaging
     upx-ucl --force --lzma --best -o STIGQter-nightly.exe release/STIGQter.exe
-
     zip -9 STIGQter-nightly.zip STIGQter-nightly.exe CHANGES.md LICENSE README.md UsersGuide.pdf
-
     advzip --recompress -4 --iter 100 STIGQter-nightly.zip
 artifacts:
 - path: STIGQter-nightly.zip

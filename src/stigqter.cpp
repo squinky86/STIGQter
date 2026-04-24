@@ -141,7 +141,7 @@ STIGQter::~STIGQter()
 {
     CleanThreads();
     delete ui;
-    Q_FOREACH (QShortcut *shortcut, _shortcuts)
+    for (QShortcut *shortcut : _shortcuts)
         delete shortcut;
     _shortcuts.clear();
     //log software shutdown as required by SV-84041r1_rule
@@ -310,7 +310,7 @@ void STIGQter::RunTests()
     // severity override
     {
         std::cout << "Test " << step++ << ": Severity Override" << std::endl;
-        Q_FOREACH(auto cklCheck, db.GetCKLChecks())
+        for (auto cklCheck : db.GetCKLChecks())
         {
             switch (std::uniform_int_distribution<>{0, 3}(g))
             {
@@ -505,7 +505,7 @@ void STIGQter::UpdateCCIs()
  */
 void STIGQter::OpenCKL()
 {
-    Q_FOREACH(QListWidgetItem *i, ui->lstAssets->selectedItems())
+    for (QListWidgetItem *i : ui->lstAssets->selectedItems())
     {
         auto a = i->data(Qt::UserRole).value<Asset>();
         QString assetName = PrintAsset(a);
@@ -729,7 +729,7 @@ void STIGQter::closeEvent(QCloseEvent *event)
  */
 void STIGQter::CleanThreads()
 {
-    Q_FOREACH (auto *o, workers)
+    for (auto *o : workers)
     {
         auto *t = o->thread();
 
@@ -824,7 +824,7 @@ void STIGQter::AddAsset(const QString &name)
         auto *a = new WorkerAssetAdd();
         Asset tmpAsset;
         tmpAsset.hostName = asset;
-        Q_FOREACH(QListWidgetItem *i, ui->lstSTIGs->selectedItems())
+        for (QListWidgetItem *i : ui->lstSTIGs->selectedItems())
         {
             a->AddSTIG(i->data(Qt::UserRole).value<STIG>());
         }
@@ -901,7 +901,7 @@ void STIGQter::DeleteAssets()
     QList<int> toClose;
     QVector<Asset> toDelete;
     _updatedAssets = true;
-    Q_FOREACH(QListWidgetItem *i, ui->lstAssets->selectedItems())
+    for (QListWidgetItem *i : ui->lstAssets->selectedItems())
     {
         auto a = i->data(Qt::UserRole).value<Asset>();
         toDelete.append(a);
@@ -967,7 +967,7 @@ void STIGQter::DeleteSTIGs()
     _updatedSTIGs = true;
 
     auto *s = new WorkerSTIGDelete();
-    Q_FOREACH (QListWidgetItem *i, ui->lstSTIGs->selectedItems())
+    for (QListWidgetItem *i : ui->lstSTIGs->selectedItems())
     {
         STIG stig = i->data(Qt::UserRole).value<STIG>();
         s->AddId(stig.id);
@@ -1019,13 +1019,13 @@ void STIGQter::EditSTIG()
 
     //buffer the STIGs before opening them
     QVector<STIG> stigs;
-    Q_FOREACH(QListWidgetItem *i, ui->lstSTIGs->selectedItems())
+    for (QListWidgetItem *i : ui->lstSTIGs->selectedItems())
     {
         stigs.append(i->data(Qt::UserRole).value<STIG>());
     }
 
     //open each buffered STIG
-    Q_FOREACH(STIG s, stigs)
+    for (STIG s : stigs)
     {
         QString stigName = PrintSTIG(s);
         for (int j = 0; j < ui->tabDB->count(); j++)
@@ -1302,7 +1302,7 @@ void STIGQter::MapUnmapped(bool confirm)
     DbManager db;
     QVector<CCI> ccis = db.GetRemapCCIs();
     QString cciStr = QString();
-    Q_FOREACH (CCI c, ccis)
+    for (CCI c : ccis)
     {
         if (!cciStr.isEmpty())
             cciStr = cciStr + ", ";
@@ -1449,10 +1449,10 @@ void STIGQter::UpdateSTIGs()
 {
     ui->lstCKLs->clear();
     QList<STIG> addedStigs;
-    Q_FOREACH (QListWidgetItem *i, ui->lstAssets->selectedItems())
+    for (QListWidgetItem *i : ui->lstAssets->selectedItems())
     {
         auto a = i->data(Qt::UserRole).value<Asset>();
-        Q_FOREACH (const STIG &s, a.GetSTIGs())
+        for (const STIG &s : a.GetSTIGs())
         {
             if (!addedStigs.contains(s))
             {
@@ -1538,7 +1538,7 @@ void STIGQter::DisplayAssets()
 {
     ui->lstAssets->clear();
     DbManager db;
-    Q_FOREACH(const Asset &a, db.GetAssets())
+    for (const Asset &a : db.GetAssets())
     {
         auto *tmpItem = new QListWidgetItem(); //memory managed by ui->lstAssets container
         tmpItem->setData(Qt::UserRole, QVariant::fromValue<Asset>(a));
@@ -1556,7 +1556,7 @@ void STIGQter::DisplayCCIs()
 {
     ui->lstCCIs->clear();
     DbManager db;
-    Q_FOREACH(const CCI &c, db.GetCCIs())
+    for (const CCI &c : db.GetCCIs())
     {
         auto *tmpItem = new QListWidgetItem(); //memory managed by ui->lstCCIs container
         tmpItem->setData(Qt::UserRole, QVariant::fromValue<CCI>(c));
@@ -1577,7 +1577,7 @@ void STIGQter::DisplaySTIGs(const QString &search)
 {
     ui->lstSTIGs->clear();
     DbManager db;
-    Q_FOREACH(const STIG &s, db.GetSTIGs())
+    for (const STIG &s : db.GetSTIGs())
     {
         //check to see if the filter is applied
         if (!search.isEmpty())

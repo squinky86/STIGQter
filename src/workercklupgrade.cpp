@@ -69,7 +69,7 @@ void WorkerCKLUpgrade::process()
     DbManager db;
     db.DelayCommit(true);
 
-    Q_FOREACH (STIG s, db.GetSTIGs())
+    for (STIG s : db.GetSTIGs())
     {
         if (s != _stig)
         {
@@ -86,11 +86,11 @@ void WorkerCKLUpgrade::process()
                 db.AddSTIGToAsset(s, _asset);
                 db.DelayCommit(true);
                 QVector<CKLCheck> oldChecks = _asset.GetCKLChecks(&_stig);
-                Q_FOREACH (CKLCheck ckl, _asset.GetCKLChecks(&s))
+                for (CKLCheck ckl : _asset.GetCKLChecks(&s))
                 {
                     Q_EMIT updateStatus("Updating " + PrintCKLCheck(ckl) + "...");
                     bool updated = false;
-                    Q_FOREACH(CKLCheck cklOld, oldChecks)
+                    for (CKLCheck cklOld : oldChecks)
                     {
                         if (cklOld.GetSTIGCheck().vulnNum == ckl.GetSTIGCheck().vulnNum)
                         {

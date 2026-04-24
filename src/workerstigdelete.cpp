@@ -63,7 +63,7 @@ void WorkerSTIGDelete::process()
 
     Q_EMIT updateStatus(QStringLiteral("Clearing DB of selected STIG information…"));
     db.DelayCommit(true);
-    Q_FOREACH (int i, _ids)
+    for (int i : _ids)
     {
         db.DeleteSTIG(i);
         Q_EMIT progress(-1);

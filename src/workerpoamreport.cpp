@@ -247,14 +247,14 @@ void WorkerPOAMReport::process()
     Q_EMIT updateStatus("Finding non-compliant technical Checks...");
 
     //build list of non-compliant controls
-    Q_FOREACH(auto a, checks)
+    for (auto a : checks)
     {
         if (a.status == Status::Open)
         {
             Severity tmpSeverity = a.GetSeverity();
             STIGCheck tmpCheck = a.GetSTIGCheck();
             auto ccis = tmpCheck.GetCCIs();
-            Q_FOREACH(auto cci, ccis)
+            for (auto cci : ccis)
             {
                 //check if CCI is imported from eMASS or not
                 if (!_apNums || cci.importApNum.isEmpty())
@@ -310,7 +310,7 @@ void WorkerPOAMReport::process()
         worksheet_write_string(ws, onRow, 2, (PrintCCI(tmpCCI) + QStringLiteral(" failed STIG checks")).toStdString().c_str(), nullptr);
         worksheet_write_string(ws, onRow, 3, tmpCCI.importApNum.toStdString().c_str(), nullptr);
         QString tmpFailed;
-        Q_FOREACH(auto check, j->second)
+        for (auto check : j->second)
         {
             if (!tmpFailed.isEmpty())
                 tmpFailed += QStringLiteral("\r\n");
@@ -368,7 +368,7 @@ void WorkerPOAMReport::process()
         worksheet_write_string(ws, onRow, 2, (tmpControl.title + QStringLiteral(" failed STIG checks")).toStdString().c_str(), nullptr);
         worksheet_write_string(ws, onRow, 3, PrintControl(tmpControl).toStdString().c_str(), nullptr);
         QString tmpFailed;
-        Q_FOREACH(auto check, i->second)
+        for (auto check : i->second)
         {
             if (!tmpFailed.isEmpty())
                 tmpFailed += QStringLiteral("\r\n");
@@ -418,7 +418,7 @@ void WorkerPOAMReport::process()
     //write not applicable controls
     if (db.IsEmassImport())
     {
-        Q_FOREACH (Control c, db.GetControls())
+        for (Control c : db.GetControls())
         {
             //skip controls that are not part of the import
             if (!c.IsImport())
@@ -435,7 +435,7 @@ void WorkerPOAMReport::process()
             //check for NAs at the CCI level
             if (_apNums)
             {
-                Q_FOREACH (auto cci, c.GetCCIs())
+                for (auto cci : c.GetCCIs())
                 {
                     worksheet_write_string(ws, onRow, 1, QString::number(onRow-6).toStdString().c_str(), nullptr);
                     worksheet_write_string(ws, onRow, 2, (PrintCCI(cci) + QStringLiteral(" is marked NA")).toStdString().c_str(), nullptr);
@@ -453,7 +453,7 @@ void WorkerPOAMReport::process()
                 bool isNA = true;
 
                 //check if all CCIs are not applicable
-                Q_FOREACH (auto cci, c.GetCCIs())
+                for (auto cci : c.GetCCIs())
                 {
                     if (cci.importControlImplementationStatus.compare(QStringLiteral("Not Applicable"), Qt::CaseInsensitive) != 0)
                     {
@@ -482,7 +482,7 @@ void WorkerPOAMReport::process()
     //write non-compliant controls
     if (db.IsEmassImport())
     {
-        Q_FOREACH (Control c, db.GetControls())
+        for (Control c : db.GetControls())
         {
             //skip controls that were already marked as failed
             if (failedControls.keys().contains(c))
@@ -492,7 +492,7 @@ void WorkerPOAMReport::process()
 
             bool isNC = false;
             //check if any CCI is NC
-            Q_FOREACH (auto cci, c.GetCCIs())
+            for (auto cci : c.GetCCIs())
             {
                 if (cci.importControlImplementationStatus.compare(QStringLiteral("Non-Compliant"), Qt::CaseInsensitive) == 0)
                 {

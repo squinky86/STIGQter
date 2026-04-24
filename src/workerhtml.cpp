@@ -79,7 +79,7 @@ QString WorkerHTML::CheckItem(const QString &title, const QStringList &contents)
     if (!contents.isEmpty())
     {
         ret.append("<h2>" + title.toHtmlEscaped() + "</h2><ul>");
-        Q_FOREACH(const QString &content, contents)
+        for (const QString &content : contents)
         {
             ret.append("<li>" + content.toHtmlEscaped() + "</li>");
         }
@@ -151,7 +151,7 @@ void WorkerHTML::process()
 
     QMap<STIG, QVector<STIGCheck>> checkMap;
     int count = 0;
-    Q_FOREACH (const STIG &s, stigs)
+    for (const STIG &s : stigs)
     {
         QVector<STIGCheck> checks = s.GetSTIGChecks();
         count += checks.count();
@@ -189,7 +189,7 @@ void WorkerHTML::process()
                "<ul>");
 
     //iterate through STIGs. Each STIG is a reference file to its STIGChecks.
-    Q_FOREACH (const STIG &s, checkMap.keys())
+    for (const STIG &s : checkMap.keys())
     {
         QString STIGName = PrintSTIG(s);
         QString STIGFileName = TrimFileName(s.fileName);
@@ -241,7 +241,7 @@ void WorkerHTML::process()
                    "</tr>");
 
         //Create individual .html files for every STIGCheck
-        Q_FOREACH (const STIGCheck &c, checkMap[s])
+        for (const STIGCheck &c : checkMap[s])
         {
             QString checkName(SanitizeFile(PrintSTIGCheck(c)));
             Q_EMIT updateStatus("Creating Check " + checkName + "…");
@@ -297,7 +297,7 @@ void WorkerHTML::process()
             QStringList cciStr;
             if (!ccis.isEmpty())
             {
-                Q_FOREACH (CCI cci, ccis)
+                for (CCI cci : ccis)
                 {
                     cciStr.append(PrintCCI(cci) + " - " + cci.definition);
                 }

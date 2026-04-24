@@ -198,7 +198,7 @@ void WorkerEMASSReport::process()
     QVector<CKLCheck> passedChecks;
     QVector<CKLCheck> naChecks;
 
-    Q_FOREACH (CCI cci, db.GetCCIs())
+    for (CCI cci : db.GetCCIs())
     {
         Q_EMIT progress(-1);
         Q_EMIT updateStatus("Adding " + PrintCCI(cci) + "…");
@@ -207,7 +207,7 @@ void WorkerEMASSReport::process()
         naChecks.clear();
 
         //step 1: check if control is passed or failed
-        Q_FOREACH (CKLCheck sc, cci.GetCKLChecks())
+        for (CKLCheck sc : cci.GetCKLChecks())
         {
             if (sc.status == Status::Open)
             {
@@ -354,7 +354,7 @@ void WorkerEMASSReport::process()
             {
                 testResult += QStringLiteral("Not Applicable. All associated technical STIG/SRG checks are determined to be Not Applicable:");
             }
-            Q_FOREACH (CKLCheck cc, failed ? failedChecks : passedChecks.isEmpty() ? naChecks : passedChecks)
+            for (CKLCheck cc : failed ? failedChecks : passedChecks.isEmpty() ? naChecks : passedChecks)
             {
                 testResult.append("\n" + PrintAsset(cc.GetAsset()) + ": " + PrintCKLCheck(cc));
                 //if failed check, print out severity and finding details (if available)

@@ -140,10 +140,10 @@ int main(int argc, char *argv[])
             DbManager db;
             QVector<Asset> toDelete = db.GetAssets();
             wd.AddAssets(toDelete);
-            Q_FOREACH (auto asset, toDelete)
+            for (auto asset : toDelete)
             {
                 //remove each STIG from this asset
-                Q_FOREACH (auto stig, asset.GetSTIGs())
+                for (auto stig : asset.GetSTIGs())
                 {
                     WorkerSTIGDelete wsd;
                     wsd.AddId(stig.id);
@@ -170,7 +170,7 @@ int main(int argc, char *argv[])
             std::cout << "Test " << ++onTest << ": Delete STIGs" << std::endl;
             WorkerSTIGDelete wd;
             DbManager db;
-            Q_FOREACH (auto stig, db.GetSTIGs())
+            for (auto stig : db.GetSTIGs())
             {
                 wd.AddId(stig.id);
             }

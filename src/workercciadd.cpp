@@ -239,7 +239,7 @@ void WorkerCCIAdd::process()
             {
                 if (xml->attributes().hasAttribute(QStringLiteral("id")))
                 {
-                    Q_FOREACH (const QXmlStreamAttribute &attr, xml->attributes())
+                    for (const QXmlStreamAttribute &attr : xml->attributes())
                     {
                         if (attr.name().compare(QStringLiteral("id")) == 0)
                             cci = attr.value().toString();
@@ -256,7 +256,7 @@ void WorkerCCIAdd::process()
                 {
                     QString version = QString();
                     QString index = QString();
-                    Q_FOREACH (const QXmlStreamAttribute &attr, xml->attributes())
+                    for (const QXmlStreamAttribute &attr : xml->attributes())
                     {
                         if (attr.name().compare(QStringLiteral("version")) == 0)
                             version = attr.value().toString();
@@ -301,7 +301,7 @@ void WorkerCCIAdd::process()
     Q_EMIT initialize(toAdd.size() + 1, 1);
     db.DelayCommit(true);
     QList<CCI> inDB = db.GetCCIs().toList();
-    Q_FOREACH (const CCI &c, toAdd)
+    for (const CCI &c : toAdd)
     {
         //check if the DB has this CCI already here for performance
         if (inDB.contains(c))
