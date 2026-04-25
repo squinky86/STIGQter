@@ -21,7 +21,7 @@ build_script:
     wget -q https://github.com/zlib-ng/zlib-ng/archive/refs/tags/2.3.3.tar.gz
     tar -zxf 2.3.3.tar.gz
     cd zlib-ng-2.3.3
-    cmake ./ -DCMAKE_TOOLCHAIN_FILE=/tmp/profile.cmake -DCMAKE_BUILD_TYPE=Release -DBUILD_SHARED_LIBS=OFF -DZLIB_COMPAT=ON -DZLIB_ENABLE_TESTS=OFF -DCMAKE_INSTALL_PREFIX=/tmp/deps
+    cmake ./ -DCMAKE_TOOLCHAIN_FILE=/tmp/profile.cmake -DCMAKE_BUILD_TYPE=Release -DBUILD_SHARED_LIBS=OFF -DZLIB_COMPAT=ON -DZLIB_ENABLE_TESTS=OFF -DCMAKE_INSTALL_PREFIX=/tmp/deps -DARCH=x86_64
     make -j$(nproc) install
 
     # OpenSSL
@@ -56,9 +56,7 @@ build_script:
     sudo update-alternatives --set x86_64-w64-mingw32-gcc /usr/bin/x86_64-w64-mingw32-gcc-posix
     sudo update-alternatives --set x86_64-w64-mingw32-g++ /usr/bin/x86_64-w64-mingw32-g++-posix
     cd qtbase-everywhere-src-6.11.0
-    ./configure -prefix /tmp/qt -no-vulkan -no-feature-sql-odbc -sql-sqlite -platform linux-g++-64 -qt-host-path /opt/qt6.11-static -xplatform win32-g++ -device-option CROSS_COMPILE=x86_64-w64-mingw32- -release -opengl desktop -static -static-runtime -no-shared -nomake examples -no-icu -optimize-size -openssl-linked -- -DOPENSSL_ROOT_DIR=/tmp/deps -DCMAKE_TOOLCHAIN_FILE=/tmp/profile.cmake
-    cmake --build . -j$(nproc)
-    cmake --install .
+    ./configure -prefix /tmp/qt -no-vulkan -no-feature-sql-odbc -sql-sqlite -platform linux-g++-64 -qt-host-path /opt/qt6.11-static -xplatform win32-g++ -device-option CROSS_COMPILE=x86_64-w64-mingw32- -release -opengl desktop -static -static-runtime -no-shared -nomake examples -no-icu -optimize-size -openssl-linked -- -DOPENSSL_ROOT_DIR=/tmp/deps -DCMAKE_TOOLCHAIN_FILE=/tmp/profile.cmake -DZLIB_ROOT=/tmp/deps -DZLIB_INCLUDE_DIR=/tmp/deps/include -DZLIB_LIBRARY=/tmp/deps/lib/libz.a
 
     # Build STIGQter
     cd $APPVEYOR_BUILD_FOLDER
