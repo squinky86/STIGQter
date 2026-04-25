@@ -12,7 +12,7 @@ build_script:
     sudo apt-get update
     sudo apt-get install -y texlive-luatex texlive-latex-recommended texlive-latex-extra texlive-fonts-extra texlive-fonts-extra-links texlive-bibtex-extra biber gcc-mingw-w64-x86-64 g++-mingw-w64-x86-64 upx-ucl advancecomp qtbase6.11-static
 
-    echo -e "set(CMAKE_SYSTEM_NAME Windows)\nset(TOOLCHAIN_PREFIX x86_64-w64-mingw32)\nset(CMAKE_C_COMPILER \${TOOLCHAIN_PREFIX}-gcc)\nset(CMAKE_CXX_COMPILER \${TOOLCHAIN_PREFIX}-g++)\nset(CMAKE_Fortran_COMPILER \${TOOLCHAIN_PREFIX}-gfortran)\nset(CMAKE_RC_COMPILER \${TOOLCHAIN_PREFIX}-windres)\nset(CMAKE_FIND_ROOT_PATH_MODE_PROGRAM NEVER)\nset(CMAKE_FIND_ROOT_PATH_MODE_LIBRARY ONLY)\nset(CMAKE_FIND_ROOT_PATH_MODE_INCLUDE ONLY)\nset(CMAKE_FIND_ROOT_PATH /usr/x86_64-w64-mingw32 /tmp/deps /)\nset(CMAKE_C_FLAGS_RELEASE \"-m64 -Os -mtune=generic\")\nset(CMAKE_CXX_FLAGS_RELEASE \"-m64 -Os -mtune=generic\")" > /tmp/profile.cmake
+    echo -e "set(CMAKE_SYSTEM_NAME Windows)\nset(TOOLCHAIN_PREFIX x86_64-w64-mingw32)\nset(CMAKE_C_COMPILER \${TOOLCHAIN_PREFIX}-gcc)\nset(CMAKE_CXX_COMPILER \${TOOLCHAIN_PREFIX}-g++)\nset(CMAKE_Fortran_COMPILER \${TOOLCHAIN_PREFIX}-gfortran)\nset(CMAKE_RC_COMPILER \${TOOLCHAIN_PREFIX}-windres)\nset(CMAKE_FIND_ROOT_PATH_MODE_PROGRAM NEVER)\nset(CMAKE_FIND_ROOT_PATH_MODE_LIBRARY ONLY)\nset(CMAKE_FIND_ROOT_PATH_MODE_INCLUDE ONLY)\nset(CMAKE_FIND_ROOT_PATH /tmp/deps /usr/x86_64-w64-mingw32)\nset(CMAKE_C_FLAGS_RELEASE \"-m64 -Os -mtune=generic\")\nset(CMAKE_CXX_FLAGS_RELEASE \"-m64 -Os -mtune=generic\")" > /tmp/profile.cmake
 
     mkdir -p /tmp/deps
 
@@ -21,7 +21,7 @@ build_script:
     wget -q https://github.com/zlib-ng/zlib-ng/archive/refs/tags/2.3.3.tar.gz
     tar -zxf 2.3.3.tar.gz
     cd zlib-ng-2.3.3
-    cmake ./ -DCMAKE_TOOLCHAIN_FILE=/tmp/profile.cmake -DBUILD_SHARED_LIBS=OFF -DZLIB_COMPAT=ON -DZLIB_ENABLE_TESTS=OFF -DCMAKE_INSTALL_PREFIX=/tmp/deps
+    cmake ./ -DCMAKE_TOOLCHAIN_FILE=/tmp/profile.cmake -DCMAKE_BUILD_TYPE=Release -DBUILD_SHARED_LIBS=OFF -DZLIB_COMPAT=ON -DZLIB_ENABLE_TESTS=OFF -DCMAKE_INSTALL_PREFIX=/tmp/deps
     make -j$(nproc) install
 
     # OpenSSL
@@ -37,7 +37,7 @@ build_script:
     wget -q https://github.com/nih-at/libzip/archive/refs/tags/v1.11.2.tar.gz
     tar -zxf v1.11.2.tar.gz
     cd libzip-1.11.2
-    cmake ./ -DCMAKE_TOOLCHAIN_FILE=/tmp/profile.cmake -DBUILD_SHARED_LIBS=OFF -DCMAKE_INSTALL_PREFIX=/tmp/deps -DZLIB_ROOT=/tmp/deps -DOPENSSL_ROOT_DIR=/tmp/deps -DCMAKE_C_STANDARD_LIBRARIES="-lws2_32 -lcrypt32" -DBUILD_TOOLS=OFF -DBUILD_REGRESS=OFF -DBUILD_EXAMPLES=OFF -DBUILD_DOC=OFF
+    cmake ./ -DCMAKE_TOOLCHAIN_FILE=/tmp/profile.cmake -DCMAKE_BUILD_TYPE=Release -DBUILD_SHARED_LIBS=OFF -DCMAKE_INSTALL_PREFIX=/tmp/deps -DZLIB_ROOT=/tmp/deps -DZLIB_INCLUDE_DIR=/tmp/deps/include -DZLIB_LIBRARY=/tmp/deps/lib/libz.a -DOPENSSL_ROOT_DIR=/tmp/deps -DCMAKE_C_STANDARD_LIBRARIES="-lws2_32 -lcrypt32" -DBUILD_TOOLS=OFF -DBUILD_REGRESS=OFF -DBUILD_EXAMPLES=OFF -DBUILD_DOC=OFF
     make -j$(nproc) install
 
     # libxlsxwriter
@@ -45,8 +45,8 @@ build_script:
     wget -q https://github.com/jmcnamara/libxlsxwriter/archive/refs/tags/v1.2.4.tar.gz
     tar -zxf v1.2.4.tar.gz
     cd libxlsxwriter-1.2.4
-    sed -i -e 's:REQUIRED "1.0":"1.0" REQUIRED:g' CMakeLists.txt
-    cmake ./ -DCMAKE_TOOLCHAIN_FILE=/tmp/profile.cmake -DBUILD_SHARED_LIBS=OFF -DCMAKE_INSTALL_PREFIX=/tmp/deps -DZLIB_ROOT=/tmp/deps -DUSE_OPENSSL_MD5=ON -DOPENSSL_ROOT_DIR=/tmp/deps
+    sed -i -e 's:find_package(ZLIB "1.2.8" REQUIRED):find_package(ZLIB REQUIRED):g' CMakeLists.txt
+    cmake ./ -DCMAKE_TOOLCHAIN_FILE=/tmp/profile.cmake -DCMAKE_BUILD_TYPE=Release -DBUILD_SHARED_LIBS=OFF -DCMAKE_INSTALL_PREFIX=/tmp/deps -DZLIB_ROOT=/tmp/deps -DZLIB_INCLUDE_DIR=/tmp/deps/include -DZLIB_LIBRARY=/tmp/deps/lib/libz.a -DUSE_OPENSSL_MD5=ON -DOPENSSL_ROOT_DIR=/tmp/deps
     make -j$(nproc) install
 
     # Qt6
