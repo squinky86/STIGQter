@@ -43,10 +43,8 @@ public:
     QThread* ConnectThreads(Worker *worker, bool blocking = true);
     void Display();
     void UpdateSTIGs();
-#ifdef USE_TESTS
     void ProcEvents();
     void RunTests();
-#endif
 
 private Q_SLOTS:
 

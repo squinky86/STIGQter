@@ -55,9 +55,7 @@ public:
     void ShowChecks(bool countOnly = false);
     void UpdateCKLCheck(const CKLCheck &cklCheck);
     void UpdateSTIGCheck(const STIGCheck &stigCheck);
-#ifdef USE_TESTS
     void RunTests() override;
-#endif
 
 private Q_SLOTS:
     void CheckSelected(QListWidgetItem *current, QListWidgetItem *previous);

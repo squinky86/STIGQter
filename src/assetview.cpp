@@ -38,7 +38,6 @@
 #include <QXmlStreamWriter>
 #include <QTimer>
 
-#include <iostream>
 #include <utility>
 
 /**
@@ -383,20 +382,16 @@ void AssetView::UpdateSTIGCheck(const STIGCheck &stigCheck)
     ui->lblCcis->setText(ccis);
 }
 
-#ifdef USE_TESTS
 void AssetView::RunTests()
 {
     int onTest = 0;
-    //step 1: search for Windows components
-    std::cout << "\t\tTest " << onTest++ << ": Filter" << std::endl;
+    qDebug("AssetView test %d: Filter", onTest++);
     ui->txtSTIGFilter->setText(QStringLiteral("Windows"));
 
-    //step 2: clear search
-    std::cout << "\t\tTest " << onTest++ << ": Clear Filter" << std::endl;
+    qDebug("AssetView test %d: Clear Filter", onTest++);
     ui->txtSTIGFilter->setText(QString());
 
-    //step 3: view all CKL checks
-    std::cout << "\t\tTest " << onTest++ << ": View CKLs" << std::endl;
+    qDebug("AssetView test %d: View CKLs", onTest++);
     {
         DbManager db;
         for (const CKLCheck &cklCheck : db.GetCKLChecks())
@@ -405,69 +400,51 @@ void AssetView::RunTests()
         }
     }
 
-    //step 4: when selected check changes
-    std::cout << "\t\tTest " << onTest++ << ": Change Check Selection" << std::endl;
+    qDebug("AssetView test %d: Change Check Selection", onTest++);
     ui->lstChecks->selectAll();
 
-    //step 5: change findings
-    std::cout << "\t\tTest " << onTest++ << ": Change Findings Status…";
-    std::cout << "Not a Finding";
+    qDebug("AssetView test %d: Change Findings Status", onTest++);
     KeyShortcutCtrlN();
-    std::cout << "…";
     ProcEvents();
-    std::cout << "Open";
     KeyShortcutCtrlO();
-    std::cout << "…";
     ProcEvents();
-    std::cout << "Not Reviewed";
     KeyShortcutCtrlR();
-    std::cout << "…";
     ProcEvents();
-    std::cout << "Not Applicable";
     KeyShortcutCtrlX();
-    std::cout << "…";
     ProcEvents();
-    std::cout << "done!" << std::endl;
 
-    //step 6: update asset
-    std::cout << "\t\tTest " << onTest++ << ": Change Asset" << std::endl;
+    qDebug("AssetView test %d: Change Asset", onTest++);
     ui->txtFQDN->setText(QStringLiteral("test.example.org"));
     ui->txtIP->setText(QStringLiteral("127.0.0.1"));
     ui->txtMAC->setText(QStringLiteral("00:00:00:00:00:00"));
     ui->txtMarking->setText(QStringLiteral("PUBLIC RELEASE"));
 
-    //step 7: save CKL
-    std::cout << "\t\tSaving Monolithic CKL" << std::endl;
+    qDebug("AssetView test %d: Save Monolithic CKL", onTest++);
     SaveCKL(QStringLiteral("tests/monolithic.ckl"));
     ProcEvents();
 
-    //step 8: save CKLs
-    std::cout << "\t\tSaving Individual CKLs" << std::endl;
+    qDebug("AssetView test %d: Save Individual CKLs", onTest++);
     SaveCKLs(QStringLiteral("tests/"));
     ProcEvents();
 
-    //step 9: Count Checks
-    std::cout << "\t\tTest " << onTest++ << ": Counting Checks" << std::endl;
+    qDebug("AssetView test %d: Count Checks", onTest++);
     UpdateChecks();
 
-    //step 10: import XCCDF
-    std::cout << "\t\tTest " << onTest++ << ": Importing XCCDF" << std::endl;
+    qDebug("AssetView test %d: Import XCCDF", onTest++);
     ImportXCCDF(QStringLiteral("tests/xccdf_lol.xml"));
     ProcEvents();
 
-    //step 11: rename asset
-    std::cout << "\t\tTest " << onTest++ << ": Rename Asset" << std::endl;
-    RenameAsset("TEST2");
-    RenameAsset("TEST");
+    qDebug("AssetView test %d: Rename Asset", onTest++);
+    RenameAsset(QStringLiteral("TEST2"));
+    RenameAsset(QStringLiteral("TEST"));
 
-    //step 12: upgrade ASD STIG
-    std::cout << "\t\tTest " << onTest++ << ": Upgrade ASD STIG" << std::endl;
+    qDebug("AssetView test %d: Upgrade ASD STIG", onTest++);
     ui->lstChecks->clearSelection();
     ProcEvents();
     for (int j = 0; j < ui->lstChecks->count(); j++)
     {
         CKLCheck cc = ui->lstChecks->item(j)->data(Qt::UserRole).value<CKLCheck>();
-        if (cc.GetSTIGCheck().GetSTIG().fileName.compare("U_ASD_STIG_V5R1_Manual-xccdf.xml") == 0)
+        if (cc.GetSTIGCheck().GetSTIG().fileName.compare(QStringLiteral("U_ASD_STIG_V5R1_Manual-xccdf.xml")) == 0)
         {
             ui->lstChecks->item(j)->setSelected(true);
             ProcEvents();
@@ -477,11 +454,9 @@ void AssetView::RunTests()
     UpgradeCKL();
     ProcEvents();
 
-    //step 13: delete asset
-    std::cout << "\t\tTest " << onTest++ << ":Deleting Asset" << std::endl;
+    qDebug("AssetView test %d: Delete Asset", onTest++);
     DeleteAsset(true);
 }
-#endif
 
 /**
  * @brief AssetView::CheckSelectedChanged

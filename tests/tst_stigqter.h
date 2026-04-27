@@ -17,18 +17,31 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#include "common.h"
-#include "stigqter.h"
+#pragma once
 
-#include <QApplication>
+#include <QObject>
 
-int main(int argc, char *argv[])
+class STIGQter;
+
+class TestSTIGQter : public QObject
 {
-    qInstallMessageHandler(MessageHandler);
-    QApplication a(argc, argv);
+    Q_OBJECT
 
-    STIGQter w;
-    w.show();
+public:
+    explicit TestSTIGQter(QObject *parent = nullptr);
 
-    return a.exec();
-}
+private:
+    STIGQter *w = nullptr;
+    void procEvents();
+
+private Q_SLOTS:
+    void initTestCase();
+    void test01_IndexCCIs();
+    void test02_UpdateCCI();
+    void test03_IndexSTIGs();
+    void test04_RunInterface();
+    void test05_DeleteAndHash();
+    void test06_CKLImport();
+    void test07_Cleanup();
+    void cleanupTestCase();
+};

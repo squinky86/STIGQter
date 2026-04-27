@@ -20,6 +20,8 @@
 #include "common.h"
 #include "dbmanager.h"
 
+bool IgnoreWarnings = false;
+
 #include <zip.h>
 
 #include <QApplication>

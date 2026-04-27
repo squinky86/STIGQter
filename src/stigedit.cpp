@@ -22,8 +22,6 @@
 #include "stigedit.h"
 #include "supplement.h"
 
-#include <iostream>
-
 #include "ui_stigedit.h"
 
 /**
@@ -106,43 +104,31 @@ TabType STIGEdit::GetTabType()
     return TabType::stig;
 }
 
-#ifdef USE_TESTS
-/**
- * @brief STIGEdit::RunTests
- *
- * Run interface tests.
- */
 void STIGEdit::RunTests()
 {
     int onTest = 0;
 
-    //select each of the STIGChecks
-    std::cout << "\t\t\tTest " << onTest++ << ": Select STIGChecks" << std::endl;
     for (int i = 0; (i < ui->lstChecks->count()) && (i < 10); ++i)
     {
+        qDebug("STIGEdit test %d: Select STIGCheck %d", onTest++, i);
         ui->lstChecks->item(i)->setSelected(true);
         ProcEvents();
 
-        //change something about STIGCheck
-        std::cout << "\t\t\t\tTest " << onTest++ << ": Change STIGCheck" << std::endl;
+        qDebug("STIGEdit test %d: Change STIGCheck", onTest++);
         ui->txtFix->setText(QStringLiteral("FIX IT"));
         ProcEvents();
 
-        //add CCI
-        std::cout << "\t\t\t\tTest " << onTest++ << ": Add CCI" << std::endl;
+        qDebug("STIGEdit test %d: Add CCI", onTest++);
         AddCCI();
         ProcEvents();
     }
 
-    //change STIG name
-    std::cout << "\t\tTest " << onTest++ << ": Edit STIG" << std::endl;
-    ui->txtTitle->setText(ui->txtTitle->text() + " (edited)");
+    qDebug("STIGEdit test %d: Edit STIG title", onTest++);
+    ui->txtTitle->setText(ui->txtTitle->text() + QStringLiteral(" (edited)"));
     ProcEvents();
 
-    //close the tab
     Q_EMIT CloseTab(_tabIndex);
 }
-#endif
 
 /**
  * @brief STIGEdit::UpdateChecks

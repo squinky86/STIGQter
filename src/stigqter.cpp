@@ -53,7 +53,8 @@
 #include <QStandardPaths>
 #include <QThread>
 
-#include <iostream>
+#include <algorithm>
+#include <random>
 
 /**
  * @class STIGQter
@@ -177,14 +178,6 @@ QThread* STIGQter::ConnectThreads(Worker *worker, bool blocking)
     return t;
 }
 
-#ifdef USE_TESTS
-#include <algorithm>
-#include <random>
-
-/**
- * @brief STIGQter::RunTests
- * Test functionality
- */
 void STIGQter::ProcEvents()
 {
     while (!isProcessingEnabled())
@@ -203,13 +196,11 @@ void STIGQter::RunTests()
     std::random_device rd;
     std::default_random_engine g(rd());
 
-    // refresh STIGs
-    std::cout << "\tTest " << step++ << ": Refresh STIGs" << std::endl;
+    qDebug("STIGQter test %d: Refresh STIGs", step++);
     UpdateSTIGs();
     ProcEvents();
 
-    // delete random STIGs (required to finish travis-ci build)
-    std::cout << "\tTest " << step++ << ": Deleting Some STIGs" << std::endl;
+    qDebug("STIGQter test %d: Deleting Some STIGs", step++);
     {
         int size = ui->lstSTIGs->count();
         if (size > 5)
@@ -228,27 +219,23 @@ void STIGQter::RunTests()
         }
     }
 
-    // add old ASD STIGs
-    std::cout << "\t\tTest " << step++ << ": Old ASD STIG" << std::endl;
+    qDebug("STIGQter test %d: Old ASD STIG", step++);
     {
         WorkerSTIGAdd s;
-        s.AddSTIGs({"tests/U_ASD_V5R1_STIG.zip", "tests/U_ASD_V5R2_STIG.zip"});
+        s.AddSTIGs({QStringLiteral("tests/U_ASD_V5R1_STIG.zip"), QStringLiteral("tests/U_ASD_V5R2_STIG.zip")});
         s.SetEnableSupplements(false);
         s.process();
     }
 
-    // filter STIGs
-    std::cout << "\t\tTest " << step++ << ": Filter" << std::endl;
+    qDebug("STIGQter test %d: Filter", step++);
     ui->txtSTIGSearch->setText(QStringLiteral("Windows"));
     ProcEvents();
 
-    // unfilter STIGs
-    std::cout << "\t\tTest " << step++ << ": Clear Filter" << std::endl;
+    qDebug("STIGQter test %d: Clear Filter", step++);
     ui->txtSTIGSearch->setText(QString());
     ProcEvents();
 
-    // message handler
-    std::cout << "\t\tTest " << step++ << ": Message Handling" << std::endl;
+    qDebug("STIGQter test %d: Message Handling", step++);
     QMessageLogContext c("test.cpp", 1, "TestFunc", "TestCat");
     MessageHandler(QtMsgType::QtDebugMsg, c, QStringLiteral("Test Message"));
     MessageHandler(QtMsgType::QtInfoMsg, c, QStringLiteral("Test Message"));
@@ -257,26 +244,22 @@ void STIGQter::RunTests()
     MessageHandler(QtMsgType::QtFatalMsg, c, QStringLiteral("Test Message"));
     ProcEvents();
 
-    // import eMASS results
-    std::cout << "\tTest " << step++ << ": Import eMASS Results" << std::endl;
+    qDebug("STIGQter test %d: Import eMASS Results", step++);
     ImportEMASS(QStringLiteral("tests/emassTRImport.xlsx"));
     ProcEvents();
 
-    // remap unmapped to CM-6
-    std::cout << "\tTest " << step++ << ": Remapping Unmapped to CM-6" << std::endl;
+    qDebug("STIGQter test %d: Remapping Unmapped to CM-6", step++);
     ui->cbRemapCM6->setChecked(true);
     ProcEvents();
     MapUnmapped(true);
     ProcEvents();
 
-    // create asset
-    std::cout << "\tTest " << step++ << ": Creating Asset \"TEST\"" << std::endl;
+    qDebug("STIGQter test %d: Creating Asset \"TEST\"", step++);
     ui->lstSTIGs->selectAll();
-    //deselect the latest ASD STIG
     for (int j = 0; j < ui->lstSTIGs->count(); j++)
     {
         auto *li = ui->lstSTIGs->item(j);
-        if (li->data(Qt::UserRole).value<STIG>().fileName.compare("U_ASD_STIG_V5R2_Manual-xccdf.xml"))
+        if (li->data(Qt::UserRole).value<STIG>().fileName.compare(QStringLiteral("U_ASD_STIG_V5R2_Manual-xccdf.xml")))
         {
             li->setSelected(false);
         }
@@ -284,8 +267,7 @@ void STIGQter::RunTests()
     AddAsset(QStringLiteral("TEST"));
     ProcEvents();
 
-    // open STIGs
-    std::cout << "\tTest " << step++ << ": Opening STIGs" << std::endl;
+    qDebug("STIGQter test %d: Opening STIGs", step++);
     EditSTIG();
     ProcEvents();
 
@@ -298,18 +280,16 @@ void STIGQter::RunTests()
 
         ProcEvents();
 
-        //run STIGEdit tests
-        std::cout << "\tTest " << step++ << ": Running STIG Editing" << std::endl;
+        qDebug("STIGQter test %d: Running STIG Editing", step++);
         if (tmpTabView)
         {
-            tmpTabView->RunTests(); //will delete tab
+            tmpTabView->RunTests();
         }
         ProcEvents();
     }
 
-    // severity override
+    qDebug("STIGQter test %d: Severity Override", step++);
     {
-        std::cout << "Test " << step++ << ": Severity Override" << std::endl;
         for (auto cklCheck : db.GetCKLChecks())
         {
             switch (std::uniform_int_distribution<>{0, 3}(g))
@@ -330,7 +310,6 @@ void STIGQter::RunTests()
                 continue;
             }
 
-            //override checks' severity pseudorandomly
             switch (std::uniform_int_distribution<>{0, 3}(g))
             {
             case 0:
@@ -365,13 +344,11 @@ void STIGQter::RunTests()
         ProcEvents();
     }
 
-    // select the asset
-    std::cout << "\tTest " << step++ << ": Selecting Asset \"TEST\"" << std::endl;
+    qDebug("STIGQter test %d: Selecting Asset \"TEST\"", step++);
     ui->lstAssets->selectAll();
     ProcEvents();
 
-    // build CKL files
-    std::cout << "\tTest " << step++ << ": Exporting CKL files" << std::endl;
+    qDebug("STIGQter test %d: Exporting CKL files", step++);
     ExportCKLs(QStringLiteral("tests"));
     while (!isProcessingEnabled())
     {
@@ -379,8 +356,7 @@ void STIGQter::RunTests()
         ProcEvents();
     }
 
-    // build monolithic CKL files
-    std::cout << "\tTest " << step++ << ": Exporting Monolithic CKL files" << std::endl;
+    qDebug("STIGQter test %d: Exporting Monolithic CKL files", step++);
     ExportCKLsMonolithic(QStringLiteral("tests"));
     while (!isProcessingEnabled())
     {
@@ -388,38 +364,32 @@ void STIGQter::RunTests()
         ProcEvents();
     }
 
-    // save .stigqter file
-    std::cout << "\tTest " << step++ << ": Saving .stigqter file" << std::endl;
+    qDebug("STIGQter test %d: Saving .stigqter file", step++);
     SaveAs(QStringLiteral("tests/test.stigqter"));
     ProcEvents();
 
-    //load .stigqter file
-    std::cout << "\tTest " << step++ << ": Loading .stigqter file" << std::endl;
+    qDebug("STIGQter test %d: Loading .stigqter file", step++);
     Load(QStringLiteral("tests/test.stigqter"));
     ProcEvents();
 
-    // open all assets
-    std::cout << "\tTest " << step++ << ": Opening Assets" << std::endl;
+    qDebug("STIGQter test %d: Opening Assets", step++);
     {
-        // reopen assets
+        ui->lstAssets->clearSelection();
+        ProcEvents();
+        ui->lstAssets->selectAll();
+        ProcEvents();
+
+        for (int i = 0; i < ui->lstAssets->count(); i++)
         {
-            ui->lstAssets->clearSelection();
-            ProcEvents();
-            ui->lstAssets->selectAll();
-            ProcEvents();
-
-            for (int i = 0; i < ui->lstAssets->count(); i++)
-            {
-                auto a = ui->lstAssets->item(i);
-                if (!a->isSelected())
-                    a->setSelected(true);
-            }
-
-            ProcEvents();
-
-            OpenCKL();
-            ProcEvents();
+            auto a = ui->lstAssets->item(i);
+            if (!a->isSelected())
+                a->setSelected(true);
         }
+
+        ProcEvents();
+
+        OpenCKL();
+        ProcEvents();
 
         for (int j = 1; j < ui->tabDB->count(); j++)
         {
@@ -430,48 +400,40 @@ void STIGQter::RunTests()
 
             ProcEvents();
 
-            //run AssetView tests
-            std::cout << "\tTest " << step++ << ": Running Tab Tests" << std::endl;
+            qDebug("STIGQter test %d: Running Tab Tests", step++);
             if (tmpTabView)
             {
-                tmpTabView->RunTests(); //will delete tab
+                tmpTabView->RunTests();
             }
             ProcEvents();
         }
     }
 
-    // reopen asset
-    std::cout << "\tTest " << step++ << ": Reopen Asset" << std::endl;
+    qDebug("STIGQter test %d: Reopen Asset", step++);
     ImportCKLs({QStringLiteral("tests/monolithic.ckl")});
     ProcEvents();
 
-    // export Findings Report
-    std::cout << "\tTest " << step++ << ": Findings Report" << std::endl;
+    qDebug("STIGQter test %d: Findings Report", step++);
     FindingsReport(QStringLiteral("tests/DFR.xlsx"));
     ProcEvents();
 
-    // export POAM Report
-    std::cout << "\tTest " << step++ << ": POAM Report" << std::endl;
+    qDebug("STIGQter test %d: POAM Report", step++);
     POAMTemplate(QStringLiteral("tests/POAM.xlsx"));
     ProcEvents();
 
-    // export HTML
-    std::cout << "\tTest " << step++ << ": HTML Checklists" << std::endl;
+    qDebug("STIGQter test %d: HTML Checklists", step++);
     ExportHTML(QStringLiteral("tests"));
     ProcEvents();
 
-    // export CMRS
-    std::cout << "\tTest " << step++ << ": Export CMRS" << std::endl;
+    qDebug("STIGQter test %d: Export CMRS", step++);
     ExportCMRS(QStringLiteral("tests/cmrs.xml"));
     ProcEvents();
 
-    // export eMASS
-    std::cout << "\tTest " << step++ << ": Export eMASS TR" << std::endl;
+    qDebug("STIGQter test %d: Export eMASS TR", step++);
     ExportEMASS(QStringLiteral("tests/emass.xlsx"));
     ProcEvents();
 
-    // help screen
-    std::cout << "\tTest " << step++ << ": Help Screen" << std::endl;
+    qDebug("STIGQter test %d: Help Screen", step++);
     {
         auto a = About();
         ProcEvents();
@@ -479,7 +441,6 @@ void STIGQter::RunTests()
         ProcEvents();
     }
 }
-#endif
 
 /**
  * @brief STIGQter::UpdateCCIs

@@ -20,6 +20,7 @@
 #include "tabviewwidget.h"
 
 #include <QApplication>
+#include <QThread>
 
 /**
  * @brief TabViewWidget::TabViewWidget
@@ -73,12 +74,6 @@ void TabViewWidget::EnableInput()
 {
 }
 
-#ifdef USE_TESTS
-/**
- * @brief TabViewWidget::ProcEvents
- *
- * Override to execute run-time tests.
- */
 void TabViewWidget::ProcEvents()
 {
     while (!_parent->isProcessingEnabled())
@@ -89,12 +84,6 @@ void TabViewWidget::ProcEvents()
     QApplication::processEvents();
 }
 
-/**
- * @brief TabViewWidget::RunTests
- *
- * Override to execute run-time tests.
- */
 void TabViewWidget::RunTests()
 {
 }
-#endif
