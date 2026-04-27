@@ -26,12 +26,6 @@ jobs:
     steps:
       - uses: actions/checkout@v4
 
-      - name: Initialize CodeQL
-        uses: github/codeql-action/init@v3
-        with:
-          languages: ${{ matrix.language }}
-          queries: +security-and-quality
-
       - name: Set timezone
         run: sudo ln -fs /usr/share/zoneinfo/America/Chicago /etc/localtime
 
@@ -63,10 +57,18 @@ jobs:
           cpack
           sudo dpkg -i libxlsxwriter-1.2.4-Linux.deb
 
+      - name: Configure build (outside CodeQL tracer)
+        run: qmake6 STIGQter.pro
+
+      - name: Initialize CodeQL
+        uses: github/codeql-action/init@v4
+        with:
+          languages: ${{ matrix.language }}
+          build-mode: manual
+          queries: +security-and-quality
+
       - name: Build STIGQter
-        run: |
-          qmake6 STIGQter.pro
-          make -j"$(nproc)"
+        run: make -j"$(nproc)"
 
       - name: Perform CodeQL Analysis
-        uses: github/codeql-action/analyze@v3
+        uses: github/codeql-action/analyze@v4
