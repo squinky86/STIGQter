@@ -20,6 +20,7 @@
 #include "common.h"
 #include "dbmanager.h"
 #include "workerckl.h"
+#include "workercklb.h"
 #include "workercklexport.h"
 
 #include <QDir>
@@ -48,7 +49,8 @@
  */
 WorkerCKLExport::WorkerCKLExport(QObject *parent) : Worker(parent),
     _assetName(),
-    _monolithic(false)
+    _monolithic(false),
+    _cklb(false)
 {
 }
 
@@ -73,6 +75,18 @@ void WorkerCKLExport::SetAssetName(const QString &assetName)
 void WorkerCKLExport::SetExportDir(const QString &dir)
 {
     _dirName = dir;
+}
+
+/**
+ * @brief WorkerCKLExport::SetCKLB
+ * @param cklb
+ *
+ * When @c true, exports CKLB (JSON, STIG Viewer 3) files instead of the
+ * legacy CKL (XML) format.
+ */
+void WorkerCKLExport::SetCKLB(const bool cklb)
+{
+    _cklb = cklb;
 }
 
 /**
@@ -127,32 +141,54 @@ void WorkerCKLExport::process()
     for (Asset a : assets)
     {
         Q_EMIT updateStatus("Building CKL Files for " + PrintAsset(a) + "…");
-        //monolithic - one CKL file per asset
+        const QString ext = _cklb ? QStringLiteral(".cklb") : QStringLiteral(".ckl");
+
+        //monolithic - one file per asset
         if (_monolithic)
         {
-            QString fileName = SanitizeFile(PrintAsset(a)) + QStringLiteral("-monolithic.ckl");
+            QString fileName = SanitizeFile(PrintAsset(a)) + QStringLiteral("-monolithic") + ext;
             QString fullPath = QDir::cleanPath(outputDir.filePath(fileName));
             if (fullPath.startsWith(cleanExportDir))
             {
-                WorkerCKL wc;
-                wc.AddFilename(fullPath);
-                wc.AddAsset(a);
-                wc.process();
+                if (_cklb)
+                {
+                    WorkerCKLB wc;
+                    wc.AddFilename(fullPath);
+                    wc.AddAsset(a);
+                    wc.process();
+                }
+                else
+                {
+                    WorkerCKL wc;
+                    wc.AddFilename(fullPath);
+                    wc.AddAsset(a);
+                    wc.process();
+                }
             }
         }
-        //not monolithic - one CKL file per asset/stig combo
+        //not monolithic - one file per asset/stig combo
         else
         {
             for (STIG s : a.GetSTIGs())
             {
-                QString fileName = SanitizeFile(PrintAsset(a) + "_" + s.title + "_V" + QString::number(s.version) + "R" + QString::number(GetReleaseNumber(s.release))) + ".ckl";
+                QString fileName = SanitizeFile(PrintAsset(a) + "_" + s.title + "_V" + QString::number(s.version) + "R" + QString::number(GetReleaseNumber(s.release))) + ext;
                 QString fullPath = QDir::cleanPath(outputDir.filePath(fileName));
                 if (fullPath.startsWith(cleanExportDir))
                 {
-                    WorkerCKL wc;
-                    wc.AddFilename(fullPath);
-                    wc.AddAsset(a, {s});
-                    wc.process();
+                    if (_cklb)
+                    {
+                        WorkerCKLB wc;
+                        wc.AddFilename(fullPath);
+                        wc.AddAsset(a, {s});
+                        wc.process();
+                    }
+                    else
+                    {
+                        WorkerCKL wc;
+                        wc.AddFilename(fullPath);
+                        wc.AddAsset(a, {s});
+                        wc.process();
+                    }
                 }
             }
         }

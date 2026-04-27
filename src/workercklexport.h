@@ -32,10 +32,12 @@ private:
     QString _dirName;
     QString _assetName;
     bool _monolithic;
+    bool _cklb;
 
 public:
     explicit WorkerCKLExport(QObject *parent = nullptr);
     void SetAssetName(const QString &assetName);
+    void SetCKLB(const bool cklb);
     void SetExportDir(const QString &dir);
     void SetMonolithic(const bool monolithic);
 

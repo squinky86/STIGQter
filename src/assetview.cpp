@@ -26,6 +26,7 @@
 #include "stigqter.h"
 #include "ui_assetview.h"
 #include "workerckl.h"
+#include "workercklb.h"
 #include "workercklexport.h"
 #include "workercklupgrade.h"
 
@@ -744,12 +745,33 @@ void AssetView::RenameAsset(const QString &name)
 void AssetView::SaveCKL(const QString &name)
 {
     DbManager db;
-    QString fileName = !name.isEmpty() ? name : QFileDialog::getSaveFileName(this, QStringLiteral("Save STIG/SRG Checklist"), db.GetVariable(QStringLiteral("lastdir")), QStringLiteral("STIG Checklist (*.ckl)"));
+    QString fileName = name;
+    if (fileName.isEmpty())
+    {
+        fileName = QFileDialog::getSaveFileName(
+            this,
+            QStringLiteral("Save STIG/SRG Checklist"),
+            db.GetVariable(QStringLiteral("lastdir")),
+            QStringLiteral("STIG Checklist (*.ckl);;STIG Viewer 3 Checklist (*.cklb)"));
+    }
 
-    auto *a = new WorkerCKL();
-    a->AddAsset(_asset);
-    a->AddFilename(fileName);
-    _parent->ConnectThreads(a)->start();
+    if (fileName.isEmpty())
+        return;
+
+    if (fileName.endsWith(QStringLiteral(".cklb"), Qt::CaseInsensitive))
+    {
+        auto *a = new WorkerCKLB();
+        a->AddAsset(_asset);
+        a->AddFilename(fileName);
+        _parent->ConnectThreads(a)->start();
+    }
+    else
+    {
+        auto *a = new WorkerCKL();
+        a->AddAsset(_asset);
+        a->AddFilename(fileName);
+        _parent->ConnectThreads(a)->start();
+    }
 }
 
 /**
@@ -760,6 +782,24 @@ void AssetView::SaveCKL(const QString &name)
 void AssetView::SaveCKLs(const QString &dir)
 {
     DbManager db;
+
+    // When called from tests a dir is pre-supplied; otherwise ask the user for
+    // both the output directory and the desired file format.
+    bool cklb = false;
+    if (dir.isEmpty())
+    {
+        QMessageBox fmt;
+        fmt.setWindowTitle(QStringLiteral("Choose export format"));
+        fmt.setText(QStringLiteral("Select the checklist format to export:"));
+        fmt.addButton(QStringLiteral("CKL (STIG Viewer 2)"),  QMessageBox::AcceptRole);
+        QPushButton *btnCKLB = fmt.addButton(QStringLiteral("CKLB (STIG Viewer 3)"), QMessageBox::AcceptRole);
+        fmt.addButton(QMessageBox::Cancel);
+        fmt.exec();
+        if (fmt.clickedButton() == nullptr || fmt.clickedButton() == fmt.button(QMessageBox::Cancel))
+            return;
+        cklb = (fmt.clickedButton() == btnCKLB);
+    }
+
     QString dirName = !dir.isEmpty() ? dir : QFileDialog::getExistingDirectory(this, QStringLiteral("Save to Directory"), db.GetVariable(QStringLiteral("lastdir")));
 
     if (!dirName.isNull() && !dirName.isEmpty())
@@ -769,6 +809,7 @@ void AssetView::SaveCKLs(const QString &dir)
         auto *f = new WorkerCKLExport();
         f->SetExportDir(dirName);
         f->SetAssetName(_asset.hostName);
+        f->SetCKLB(cklb);
 
         _parent->ConnectThreads(f)->start();
     }

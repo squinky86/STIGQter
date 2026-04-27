@@ -68,6 +68,7 @@ SOURCES += \
     src/workerccidelete.cpp \
     src/workercheckversion.cpp \
     src/workerckl.cpp \
+    src/workercklb.cpp \
     src/workercklexport.cpp \
     src/workercklimport.cpp \
     src/workercklupgrade.cpp \
@@ -106,6 +107,7 @@ HEADERS += \
     src/workerccidelete.h \
     src/workercheckversion.h \
     src/workerckl.h \
+    src/workercklb.h \
     src/workercklexport.h \
     src/workercklimport.h \
     src/workercklupgrade.h \
