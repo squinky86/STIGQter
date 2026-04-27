@@ -1,0 +1,333 @@
+name: Windows static build
+
+on:
+  push:
+    branches: [master]
+  pull_request:
+    branches: [master]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  build:
+    name: Cross-compile static x64 binary
+    runs-on: ubuntu-24.04
+
+    env:
+      MINGW: x86_64-w64-mingw32
+      DEPS_PREFIX: /tmp/deps
+      QT_TARGET_PREFIX: /tmp/qt-static
+      QT_HOST_PREFIX: /tmp/qt-host
+      ZLIB_NG_VERSION: "2.2.4"
+      OPENSSL_VERSION: "3.4.0"
+      LIBZIP_VERSION: "1.11.2"
+      LIBXLSXWRITER_VERSION: "1.2.4"
+      QT_VERSION: "6.11.0"
+      # Hardening flags. _FORTIFY_SOURCE is omitted: mingw's default msvcrt does
+      # not provide the runtime checks it relies on, so it is a footgun there.
+      HARDENING_CFLAGS: >-
+        -O2
+        -fstack-protector-strong
+        -fstack-clash-protection
+        -fcf-protection
+        -fno-strict-overflow
+        -fno-delete-null-pointer-checks
+        -fno-plt
+        -Wformat
+        -Wformat-security
+        -Werror=format-security
+      HARDENING_LDFLAGS: >-
+        -Wl,--dynamicbase
+        -Wl,--nxcompat
+        -Wl,--high-entropy-va
+        -Wl,--no-insert-timestamp
+        -Wl,--disable-auto-image-base
+        -Wl,-O1
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Extract STIGQter version
+        id: version
+        run: |
+          v=$(sed -n 's/^#define VERSION QStringLiteral("\([^"]*\)").*/\1/p' src/common.h)
+          echo "version=${v}" >> "$GITHUB_OUTPUT"
+
+      - name: Install host toolchain
+        env:
+          DEBIAN_FRONTEND: noninteractive
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y --no-install-recommends \
+            build-essential cmake ninja-build perl python3 python3-pip \
+            wget curl ca-certificates xz-utils zip unzip \
+            gcc-mingw-w64-x86-64-posix g++-mingw-w64-x86-64-posix \
+            mingw-w64-tools nasm pkg-config
+          sudo update-alternatives --set "${MINGW}-gcc" "/usr/bin/${MINGW}-gcc-posix"
+          sudo update-alternatives --set "${MINGW}-g++" "/usr/bin/${MINGW}-g++-posix"
+          # pefile is used by the verification step to inspect PE headers/imports.
+          python3 -m pip install --user --quiet pefile
+
+      - name: Cache dependency tree
+        id: cache-deps
+        uses: actions/cache@v4
+        with:
+          path: |
+            ${{ env.DEPS_PREFIX }}
+            ${{ env.QT_TARGET_PREFIX }}
+            ${{ env.QT_HOST_PREFIX }}
+          key: win-static-${{ runner.os }}-${{ hashFiles('.github/workflows/windows.yml') }}
+
+      - name: Write mingw CMake toolchain file
+        if: steps.cache-deps.outputs.cache-hit != 'true'
+        run: |
+          mkdir -p "${DEPS_PREFIX}"
+          cat > /tmp/mingw-toolchain.cmake <<EOF
+          set(CMAKE_SYSTEM_NAME Windows)
+          set(CMAKE_SYSTEM_PROCESSOR x86_64)
+          set(TOOLCHAIN_PREFIX ${MINGW})
+          set(CMAKE_C_COMPILER \${TOOLCHAIN_PREFIX}-gcc)
+          set(CMAKE_CXX_COMPILER \${TOOLCHAIN_PREFIX}-g++)
+          set(CMAKE_RC_COMPILER \${TOOLCHAIN_PREFIX}-windres)
+          set(CMAKE_FIND_ROOT_PATH ${DEPS_PREFIX} /usr/${MINGW})
+          set(CMAKE_FIND_ROOT_PATH_MODE_PROGRAM NEVER)
+          set(CMAKE_FIND_ROOT_PATH_MODE_LIBRARY ONLY)
+          set(CMAKE_FIND_ROOT_PATH_MODE_INCLUDE ONLY)
+          set(CMAKE_C_FLAGS_INIT "${HARDENING_CFLAGS}")
+          set(CMAKE_CXX_FLAGS_INIT "${HARDENING_CFLAGS}")
+          set(CMAKE_EXE_LINKER_FLAGS_INIT "${HARDENING_LDFLAGS}")
+          set(CMAKE_SHARED_LINKER_FLAGS_INIT "${HARDENING_LDFLAGS}")
+          set(CMAKE_MODULE_LINKER_FLAGS_INIT "${HARDENING_LDFLAGS}")
+          EOF
+
+      - name: Build zlib-ng (static, zlib-compat)
+        if: steps.cache-deps.outputs.cache-hit != 'true'
+        run: |
+          cd /tmp
+          wget -q "https://github.com/zlib-ng/zlib-ng/archive/refs/tags/${ZLIB_NG_VERSION}.tar.gz" -O zlib-ng.tar.gz
+          tar -xzf zlib-ng.tar.gz
+          cd "zlib-ng-${ZLIB_NG_VERSION}"
+          cmake -S . -B build -G Ninja \
+            -DCMAKE_TOOLCHAIN_FILE=/tmp/mingw-toolchain.cmake \
+            -DCMAKE_BUILD_TYPE=Release \
+            -DCMAKE_INSTALL_PREFIX="${DEPS_PREFIX}" \
+            -DBUILD_SHARED_LIBS=OFF \
+            -DZLIB_COMPAT=ON \
+            -DZLIB_ENABLE_TESTS=OFF \
+            -DWITH_GTEST=OFF
+          cmake --build build --parallel "$(nproc)"
+          cmake --install build
+
+      - name: Build OpenSSL (static, mingw64)
+        if: steps.cache-deps.outputs.cache-hit != 'true'
+        run: |
+          cd /tmp
+          wget -q "https://github.com/openssl/openssl/releases/download/openssl-${OPENSSL_VERSION}/openssl-${OPENSSL_VERSION}.tar.gz"
+          tar -xzf "openssl-${OPENSSL_VERSION}.tar.gz"
+          cd "openssl-${OPENSSL_VERSION}"
+          ./Configure mingw64 \
+            no-shared no-tests no-docs no-apps \
+            --cross-compile-prefix="${MINGW}-" \
+            --prefix="${DEPS_PREFIX}" \
+            --openssldir="${DEPS_PREFIX}/ssl" \
+            ${HARDENING_CFLAGS}
+          make -j"$(nproc)"
+          make install_sw
+
+      - name: Build libzip (static)
+        if: steps.cache-deps.outputs.cache-hit != 'true'
+        run: |
+          cd /tmp
+          wget -q "https://github.com/nih-at/libzip/releases/download/v${LIBZIP_VERSION}/libzip-${LIBZIP_VERSION}.tar.gz"
+          tar -xzf "libzip-${LIBZIP_VERSION}.tar.gz"
+          cd "libzip-${LIBZIP_VERSION}"
+          cmake -S . -B build -G Ninja \
+            -DCMAKE_TOOLCHAIN_FILE=/tmp/mingw-toolchain.cmake \
+            -DCMAKE_BUILD_TYPE=Release \
+            -DCMAKE_INSTALL_PREFIX="${DEPS_PREFIX}" \
+            -DBUILD_SHARED_LIBS=OFF \
+            -DZLIB_ROOT="${DEPS_PREFIX}" \
+            -DZLIB_LIBRARY="${DEPS_PREFIX}/lib/libz.a" \
+            -DZLIB_INCLUDE_DIR="${DEPS_PREFIX}/include" \
+            -DOPENSSL_ROOT_DIR="${DEPS_PREFIX}" \
+            -DBUILD_TOOLS=OFF \
+            -DBUILD_REGRESS=OFF \
+            -DBUILD_EXAMPLES=OFF \
+            -DBUILD_DOC=OFF \
+            -DCMAKE_C_STANDARD_LIBRARIES="-lws2_32 -lcrypt32 -lbcrypt"
+          cmake --build build --parallel "$(nproc)"
+          cmake --install build
+
+      - name: Build libxlsxwriter (static)
+        if: steps.cache-deps.outputs.cache-hit != 'true'
+        run: |
+          cd /tmp
+          wget -q "https://github.com/jmcnamara/libxlsxwriter/archive/refs/tags/v${LIBXLSXWRITER_VERSION}.tar.gz" -O libxlsxwriter.tar.gz
+          tar -xzf libxlsxwriter.tar.gz
+          cd "libxlsxwriter-${LIBXLSXWRITER_VERSION}"
+          # libxlsxwriter pins a stale ZLIB version requirement that fails to match zlib-ng.
+          sed -i -e 's:find_package(ZLIB "1.2.8" REQUIRED):find_package(ZLIB REQUIRED):g' CMakeLists.txt
+          cmake -S . -B build -G Ninja \
+            -DCMAKE_TOOLCHAIN_FILE=/tmp/mingw-toolchain.cmake \
+            -DCMAKE_BUILD_TYPE=Release \
+            -DCMAKE_INSTALL_PREFIX="${DEPS_PREFIX}" \
+            -DBUILD_SHARED_LIBS=OFF \
+            -DBUILD_TESTS=OFF \
+            -DBUILD_EXAMPLES=OFF \
+            -DUSE_OPENSSL_MD5=ON \
+            -DZLIB_ROOT="${DEPS_PREFIX}" \
+            -DZLIB_LIBRARY="${DEPS_PREFIX}/lib/libz.a" \
+            -DZLIB_INCLUDE_DIR="${DEPS_PREFIX}/include" \
+            -DOPENSSL_ROOT_DIR="${DEPS_PREFIX}"
+          cmake --build build --parallel "$(nproc)"
+          cmake --install build
+
+      - name: Build host Qt (tools only, dynamic)
+        if: steps.cache-deps.outputs.cache-hit != 'true'
+        env:
+          DEBIAN_FRONTEND: noninteractive
+        run: |
+          sudo apt-get install -y --no-install-recommends \
+            libgl1-mesa-dev libglu1-mesa-dev libfontconfig1-dev libfreetype6-dev \
+            libx11-dev libx11-xcb-dev libxext-dev libxfixes-dev libxi-dev \
+            libxrender-dev libxcb1-dev libxcb-cursor-dev libxcb-glx0-dev \
+            libxcb-keysyms1-dev libxcb-image0-dev libxcb-shm0-dev \
+            libxcb-icccm4-dev libxcb-sync-dev libxcb-xfixes0-dev \
+            libxcb-shape0-dev libxcb-randr0-dev libxcb-render-util0-dev \
+            libxcb-util-dev libxcb-xkb-dev libxkbcommon-dev libxkbcommon-x11-dev
+          cd /tmp
+          wget -q "https://download.qt.io/official_releases/qt/${QT_VERSION%.*}/${QT_VERSION}/submodules/qtbase-everywhere-src-${QT_VERSION}.tar.xz"
+          tar -xf "qtbase-everywhere-src-${QT_VERSION}.tar.xz"
+          mv "qtbase-everywhere-src-${QT_VERSION}" qtbase-host
+          cd qtbase-host
+          ./configure -prefix "${QT_HOST_PREFIX}" \
+            -release -opensource -confirm-license \
+            -nomake examples -nomake tests \
+            -no-icu -no-opengl -no-feature-sql-odbc -no-feature-sql-psql \
+            -no-feature-sql-mysql -sql-sqlite
+          cmake --build . --parallel "$(nproc)"
+          cmake --install .
+
+      - name: Build target Qt (static, mingw, OpenSSL-linked)
+        if: steps.cache-deps.outputs.cache-hit != 'true'
+        run: |
+          cd /tmp
+          # Reuse the source tree we already downloaded.
+          tar -xf "qtbase-everywhere-src-${QT_VERSION}.tar.xz"
+          cd "qtbase-everywhere-src-${QT_VERSION}"
+          ./configure -prefix "${QT_TARGET_PREFIX}" \
+            -release -opensource -confirm-license \
+            -static -static-runtime -no-shared \
+            -platform linux-g++-64 -xplatform win32-g++ \
+            -device-option CROSS_COMPILE="${MINGW}-" \
+            -qt-host-path "${QT_HOST_PREFIX}" \
+            -nomake examples -nomake tests \
+            -no-icu -no-opengl \
+            -openssl-linked \
+            -sql-sqlite -no-feature-sql-odbc \
+            -no-feature-sql-psql -no-feature-sql-mysql \
+            -optimize-size \
+            -- \
+            -DOPENSSL_ROOT_DIR="${DEPS_PREFIX}" \
+            -DOPENSSL_USE_STATIC_LIBS=ON \
+            -DZLIB_ROOT="${DEPS_PREFIX}" \
+            -DZLIB_LIBRARY="${DEPS_PREFIX}/lib/libz.a" \
+            -DZLIB_INCLUDE_DIR="${DEPS_PREFIX}/include" \
+            -DCMAKE_C_FLAGS_RELEASE="${HARDENING_CFLAGS}" \
+            -DCMAKE_CXX_FLAGS_RELEASE="${HARDENING_CFLAGS}" \
+            -DCMAKE_EXE_LINKER_FLAGS_RELEASE="${HARDENING_LDFLAGS}"
+          cmake --build . --parallel "$(nproc)"
+          cmake --install .
+
+      - name: Build STIGQter
+        run: |
+          # Splice static deps into the .pro file. The order matters: libxlsxwriter
+          # depends on libz; libzip depends on libz + OpenSSL; OpenSSL needs the
+          # Windows crypto/network DLLs at the end.
+          sed -i -e '/^LIBS/d' STIGQter.pro
+          {
+            echo "LIBS += ${DEPS_PREFIX}/lib/libxlsxwriter.a ${DEPS_PREFIX}/lib/libzip.a ${DEPS_PREFIX}/lib/libz.a ${DEPS_PREFIX}/lib/libssl.a ${DEPS_PREFIX}/lib/libcrypto.a -lws2_32 -lcrypt32 -lbcrypt"
+            echo "INCLUDEPATH += ${DEPS_PREFIX}/include"
+            echo "QMAKE_CFLAGS_RELEASE += ${HARDENING_CFLAGS}"
+            echo "QMAKE_CXXFLAGS_RELEASE += ${HARDENING_CFLAGS}"
+            echo "QMAKE_LFLAGS_RELEASE += ${HARDENING_LDFLAGS}"
+          } >> STIGQter.pro
+          "${QT_TARGET_PREFIX}/bin/qmake" STIGQter.pro
+          # QTBUG-114243 workaround: -loleaut32 must come after -lshell32.
+          sed -i -e 's:-loleaut32 ::g' -e 's:-lshell32:-lshell32 -loleaut32:g' Makefile.Release
+          make -j"$(nproc)"
+
+      - name: Strip release binary
+        run: "${MINGW}-strip --strip-all release/STIGQter.exe"
+
+      - name: Verify static linkage (no third-party DLLs)
+        run: |
+          python3 - <<'PY'
+          import pefile, sys
+          allowed = {
+              'KERNEL32.dll', 'USER32.dll', 'GDI32.dll', 'ADVAPI32.dll',
+              'WS2_32.dll', 'CRYPT32.dll', 'BCRYPT.dll', 'SHELL32.dll',
+              'OLE32.dll', 'OLEAUT32.dll', 'COMDLG32.dll', 'IMM32.dll',
+              'WINMM.dll', 'WINSPOOL.DRV', 'NETAPI32.dll', 'USERENV.dll',
+              'VERSION.dll', 'UXTHEME.dll', 'DWMAPI.dll', 'D3D9.dll',
+              'msvcrt.dll', 'AUTHZ.dll', 'WTSAPI32.dll', 'IPHLPAPI.dll',
+              'DNSAPI.dll', 'MPR.dll',
+          }
+          allowed_lower = {x.lower() for x in allowed}
+          pe = pefile.PE('release/STIGQter.exe', fast_load=True)
+          pe.parse_data_directories(directories=[
+              pefile.DIRECTORY_ENTRY['IMAGE_DIRECTORY_ENTRY_IMPORT']])
+          imports = sorted({e.dll.decode() for e in pe.DIRECTORY_ENTRY_IMPORT})
+          print('Imported DLLs:')
+          for d in imports:
+              print(f'  {d}')
+          unexpected = [d for d in imports if d.lower() not in allowed_lower]
+          if unexpected:
+              print(f'\nERROR: non-system DLL imports detected: {unexpected}')
+              sys.exit(1)
+          print('\nOK: only Windows system DLLs are imported.')
+          PY
+
+      - name: Verify PE hardening (ASLR / DEP / High-Entropy-VA)
+        run: |
+          python3 - <<'PY'
+          import pefile, sys
+          pe = pefile.PE('release/STIGQter.exe', fast_load=True)
+          dc = pe.OPTIONAL_HEADER.DllCharacteristics
+          flags = {
+              'HIGH_ENTROPY_VA':  0x0020,
+              'DYNAMIC_BASE':     0x0040,  # ASLR
+              'NX_COMPAT':        0x0100,  # DEP
+              'GUARD_CF':         0x4000,  # informational; mingw doesn't emit /guard:cf
+          }
+          print(f'DllCharacteristics = 0x{dc:04x}')
+          missing = []
+          for name, bit in flags.items():
+              ok = bool(dc & bit)
+              print(f'  {name:18s} {"YES" if ok else "no"}')
+              # GUARD_CF is informational only.
+              if not ok and name != 'GUARD_CF':
+                  missing.append(name)
+          if missing:
+              print(f'\nERROR: missing required PE security flags: {missing}')
+              sys.exit(1)
+          print('\nOK: ASLR + DEP + High-Entropy-VA all enabled.')
+          PY
+
+      - name: Stage release artifact
+        run: |
+          v="${{ steps.version.outputs.version }}"
+          mkdir -p dist
+          cp release/STIGQter.exe "dist/STIGQter-${v}-win64.exe"
+          cp CHANGES.md LICENSE README.md dist/
+          cd dist && zip -9 "STIGQter-${v}-win64.zip" \
+            "STIGQter-${v}-win64.exe" CHANGES.md LICENSE README.md
+
+      - name: Upload artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: STIGQter-${{ steps.version.outputs.version }}-win64
+          path: dist/STIGQter-${{ steps.version.outputs.version }}-win64.zip
+          if-no-files-found: error
