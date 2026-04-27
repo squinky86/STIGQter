@@ -29,15 +29,23 @@ jobs:
       - name: Set timezone
         run: sudo ln -fs /usr/share/zoneinfo/America/Chicago /etc/localtime
 
-      - name: Install dependencies
+      - name: Install system dependencies
         env:
           DEBIAN_FRONTEND: noninteractive
         run: |
           sudo apt-get update
           sudo apt-get install -y --no-install-recommends \
-            qt6-base-dev qmake6 libqt6sql6-sqlite \
             libzip-dev g++ debhelper dpkg-dev zlib1g-dev \
             libminizip-dev libssl-dev cmake wget
+
+      - name: Install Qt 6.8
+        uses: jurplel/install-qt-action@v4
+        with:
+          version: '6.8.*'
+          host: 'linux'
+          target: 'desktop'
+          arch: 'linux_gcc_64'
+          cache: true
 
       - name: Build & install libxlsxwriter
         run: |
@@ -58,7 +66,7 @@ jobs:
           sudo dpkg -i libxlsxwriter-1.2.4-Linux.deb
 
       - name: Configure build (outside CodeQL tracer)
-        run: qmake6 STIGQter.pro
+        run: qmake STIGQter.pro
 
       - name: Initialize CodeQL
         uses: github/codeql-action/init@v4

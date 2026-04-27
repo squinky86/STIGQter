@@ -84,7 +84,7 @@ void WorkerCMRSExport::process()
         stream.writeStartElement(QStringLiteral("IMPORT_FILE"));
         stream.writeAttribute(QStringLiteral("xmlns"), QStringLiteral("urn:FindingImport"));
 
-        QString curDate = QDateTime::currentDateTime().toTimeZone(QTimeZone::UTC).toString(Qt::ISODate);
+        QString curDate = QDateTime::currentDateTime(QTimeZone::UTC).toString(Qt::ISODate);
         QString elementKey = QStringLiteral("0"); //doesn't make sense for target keys to be at this level
 
         for (Asset a : assets)
