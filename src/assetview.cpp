@@ -218,7 +218,7 @@ void AssetView::SelectSTIGs(const QString &search)
 
     ui->lstSTIGs->clear();
     QVector<STIG> stigs = _asset.GetSTIGs();
-    for (const STIG s : db.GetSTIGs())
+    for (const STIG &s : db.GetSTIGs())
     {
         if (!search.isEmpty() && !s.title.contains(search, Qt::CaseInsensitive))
         {
@@ -262,7 +262,7 @@ void AssetView::ShowChecks(bool countOnly)
     QString filterStatusText = ui->cboBoxFilterStatus->currentText();
     Status filterStatus = GetStatus(ui->cboBoxFilterStatus->currentText());
 
-    for (const CKLCheck c : _asset.GetCKLChecks())
+    for (const CKLCheck &c : _asset.GetCKLChecks())
     {
         total++;
         switch (c.status)
@@ -575,7 +575,7 @@ void AssetView::ImportXCCDF(const QString &filename)
     bool updates = false;
 
     //Allow multiple XCCDF files to be selected
-    for (const QString fileName : fileNames)
+    for (const QString &fileName : fileNames)
     {
         QFile f(fileName);
         db.UpdateVariable(QStringLiteral("lastdir"), QFileInfo(fileName).absolutePath());

@@ -331,7 +331,7 @@ void WorkerSTIGAdd::ParseSTIG(const QByteArray &stig, const QString &fileName, c
 
     if (_enableSupplements)
     {
-        for (const QString key : supplements.keys())
+        for (const QString &key : supplements.keys())
         {
             Supplement sup;
             sup.path = key;
@@ -423,14 +423,14 @@ void WorkerSTIGAdd::process()
     //get the list of STIG .zip files selected
     Q_EMIT initialize(_todo.count(), 0);
     //loop through it and parse all XML files inside
-    for (const QString s : _todo)
+    for (const QString &s : _todo)
     {
         Q_EMIT updateStatus("Extracting " + s + "…");
         //get the list of XML files inside the STIG
         QMap<QString, QByteArray> toParse = GetFilesFromZip(s);
 
         Q_EMIT updateStatus("Parsing " + s + "…");
-        for (const QString stig : toParse.keys())
+        for (const QString &stig : toParse.keys())
         {
             if (stig.endsWith(QStringLiteral("-xccdf.xml"), Qt::CaseInsensitive) || stig.endsWith(QStringLiteral("Manual_STIG.xml"), Qt::CaseInsensitive) || stig.endsWith(QStringLiteral("Manual_xccdf.xml"), Qt::CaseInsensitive))
             {

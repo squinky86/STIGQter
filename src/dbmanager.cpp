@@ -444,7 +444,7 @@ bool DbManager::AddControl(const QString &control, const QString &title, const Q
                 q.prepare(QStringLiteral("INSERT INTO Control (FamilyId, number, enhancement, title, description, importSeverity, importRelevanceOfThreat, importLikelihood, importImpact, importImpactDescription, importResidualRiskLevel, importRecommendations) VALUES(:FamilyId, :number, :enhancement, :title, :description, :importSeverity, :importRelevanceOfThreat, :importLikelihood, :importImpact, :importImpactDescription, :importResidualRiskLevel, :importRecommendations)"));
                 q.bindValue(QStringLiteral(":FamilyId"), f.id);
                 q.bindValue(QStringLiteral(":number"), tmpControl.toInt());
-                q.bindValue(QStringLiteral(":enhancement"), enhancement.isEmpty() ? QVariant(QVariant::Int) : enhancement.toInt());
+                q.bindValue(QStringLiteral(":enhancement"), enhancement.isEmpty() ? QVariant(QMetaType(QMetaType::Int)) : enhancement.toInt());
                 q.bindValue(QStringLiteral(":title"), title);
                 q.bindValue(QStringLiteral(":description"), description);
                 q.bindValue(QStringLiteral(":importSeverity"), importSeverity);
