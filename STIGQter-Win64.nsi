@@ -1,14 +1,15 @@
 !include x64.nsh
+!define /file STIGQTER_VERSION "VERSION"
 OutFile "STIGQter-Win64.exe"
 InstallDir $PROGRAMFILES64\STIGQter
 InstallDirRegKey HKLM 'Software\STIGQter' InstallDir
 !define LANG_ENGLISH 1033-English
 VIAddVersionKey /LANG=${LANG_ENGLISH} "ProductName" "STIGQter"
 VIAddVersionKey /LANG=${LANG_ENGLISH} "FileDescription" "Open Source STIGViewer Reimplementation"
-VIAddVersionKey /LANG=${LANG_ENGLISH} "LegalCopyright" "2018-2022 Jon Hood"
+VIAddVersionKey /LANG=${LANG_ENGLISH} "LegalCopyright" "2018-2026 Jon Hood"
 VIAddVersionKey /LANG=${LANG_ENGLISH} "CompanyName" "Jon Hood"
-VIAddVersionKey /LANG=${LANG_ENGLISH} "FileVersion" "1.2.0-1"
-VIProductVersion "1.2.4.0"
+VIAddVersionKey /LANG=${LANG_ENGLISH} "FileVersion" "${STIGQTER_VERSION}"
+VIProductVersion "${STIGQTER_VERSION}.0"
 RequestExecutionLevel admin
 Section
 	${IfNot} ${RunningX64}

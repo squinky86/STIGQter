@@ -17,11 +17,13 @@ jobs:
       - name: Set timezone
         run: sudo ln -fs /usr/share/zoneinfo/America/Chicago /etc/localtime
 
-      - name: Extract version
+      - name: Extract version & arch
         id: version
         run: |
-          v=$(sed -n 's/^#define VERSION QStringLiteral("\([^"]*\)").*/\1/p' src/common.h)
+          v=$(cat VERSION)
+          a=$(dpkg --print-architecture)
           echo "version=${v}" >> "$GITHUB_OUTPUT"
+          echo "arch=${a}" >> "$GITHUB_OUTPUT"
 
       - name: Install dependencies
         env:
@@ -62,12 +64,13 @@ jobs:
       - name: Stage Debian package
         run: |
           v="${{ steps.version.outputs.version }}"
-          mv "../stigqter_${v}-1_all.deb" /tmp/
+          a="${{ steps.version.outputs.arch }}"
+          mv "../stigqter_${v}-1_${a}.deb" /tmp/
 
       - uses: actions/upload-artifact@v4
         with:
           name: STIGQter-debian-package
-          path: /tmp/stigqter_${{ steps.version.outputs.version }}-1_all.deb
+          path: /tmp/stigqter_${{ steps.version.outputs.version }}-1_${{ steps.version.outputs.arch }}.deb
 
       - uses: actions/upload-artifact@v4
         with:

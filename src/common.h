@@ -24,7 +24,10 @@
 #include <QFile>
 #include <QNetworkReply>
 
-#define VERSION QStringLiteral("1.2.7")
+#ifndef APP_VERSION
+#error "APP_VERSION must be defined by the build system (qmake reads it from the VERSION file at the repo root)"
+#endif
+#define VERSION QStringLiteral(APP_VERSION)
 
 [[maybe_unused]] extern bool IgnoreWarnings;
 
