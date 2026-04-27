@@ -25,6 +25,9 @@
 #include "workerstigadd.h"
 
 #include <QFile>
+#include <QJsonArray>
+#include <QJsonDocument>
+#include <QJsonObject>
 #include <QTemporaryFile>
 #include <QUrlQuery>
 #include <QXmlStreamReader>
@@ -269,6 +272,107 @@ void WorkerCKLImport::ParseCKL(const QString &fileName)
 }
 
 /**
+ * @brief WorkerCKLImport::ParseCKLB
+ * @param fileName
+ *
+ * Given a CKLB (STIG Viewer 3 JSON) file, parse it and put its data
+ * into the database.
+ */
+void WorkerCKLImport::ParseCKLB(const QString &fileName)
+{
+    QFile f(fileName);
+    if (!f.open(QFile::ReadOnly))
+    {
+        Q_EMIT ThrowWarning(QStringLiteral("Unable to Open CKLB"), "The CKLB file " + fileName + " cannot be opened.");
+        return;
+    }
+
+    QJsonParseError err;
+    QJsonDocument doc = QJsonDocument::fromJson(f.readAll(), &err);
+    if (doc.isNull())
+    {
+        Q_EMIT ThrowWarning(QStringLiteral("Invalid CKLB"), "The CKLB file " + fileName + " could not be parsed: " + err.errorString());
+        return;
+    }
+
+    DbManager db;
+    QJsonObject root = doc.object();
+
+    // Parse asset/target metadata
+    Asset a;
+    QJsonObject td = root[QStringLiteral("target_data")].toObject();
+    a.assetType     = td[QStringLiteral("target_type")].toString();
+    a.hostName      = td[QStringLiteral("host_name")].toString();
+    a.hostIP        = td[QStringLiteral("ip_address")].toString();
+    a.hostMAC       = td[QStringLiteral("mac_address")].toString();
+    a.hostFQDN      = td[QStringLiteral("fqdn")].toString();
+    a.targetComment = td[QStringLiteral("comments")].toString();
+    a.webOrDB       = td[QStringLiteral("is_web_database")].toBool();
+    a.techArea      = td[QStringLiteral("technology_area")].toString();
+    a.webDbSite     = td[QStringLiteral("web_db_site")].toString();
+    a.webDbInstance = td[QStringLiteral("web_db_instance")].toString();
+    a.marking       = td[QStringLiteral("marking")].toString();
+
+    // Ensure asset exists in DB
+    a = CheckAsset(a);
+
+    for (const QJsonValue &stigVal : root[QStringLiteral("stigs")].toArray())
+    {
+        QJsonObject stigObj = stigVal.toObject();
+        QString benchmarkId = stigObj[QStringLiteral("stig_id")].toString();
+
+        // Look up the STIG by benchmarkId
+        QVector<STIG> matches = db.GetSTIGs(
+            QStringLiteral("WHERE benchmarkId = :benchmarkId"),
+            {std::make_tuple<QString, QVariant>(QStringLiteral(":benchmarkId"), benchmarkId)});
+
+        if (matches.isEmpty())
+        {
+            QString stigName = stigObj[QStringLiteral("stig_name")].toString();
+            Q_EMIT ThrowWarning(QStringLiteral("STIG/SRG Not Found"),
+                "The CKLB file " + fileName + " references a STIG that has not been imported (" + stigName + " / " + benchmarkId + ").");
+            return;
+        }
+
+        STIG stig = matches.first();
+
+        QVector<STIG> assetStigs = a.GetSTIGs();
+        if (assetStigs.contains(stig))
+        {
+            Q_EMIT ThrowWarning(QStringLiteral("Asset already has STIG applied!"),
+                "The asset " + PrintAsset(a) + " already has the STIG " + PrintSTIG(stig) + " applied and will not be imported.");
+            continue;
+        }
+
+        Q_EMIT updateStatus("Adding " + PrintSTIG(stig) + " to " + PrintAsset(a) + "…");
+        db.AddSTIGToAsset(stig, a);
+
+        db.DelayCommit(true);
+        for (const QJsonValue &ruleVal : stigObj[QStringLiteral("rules")].toArray())
+        {
+            QJsonObject rule = ruleVal.toObject();
+            QString ruleId = rule[QStringLiteral("rule_id")].toString();
+
+            STIGCheck sc = db.GetSTIGCheck(stig, ruleId);
+            if (sc.id < 0)
+                continue;
+
+            CKLCheck cc;
+            cc.assetId        = a.id;
+            cc.stigCheckId    = sc.id;
+            cc.status         = GetStatus(rule[QStringLiteral("status")].toString());
+            cc.findingDetails = rule[QStringLiteral("finding_details")].toString();
+            cc.comments       = rule[QStringLiteral("comments")].toString();
+            cc.severityOverride     = GetSeverity(rule[QStringLiteral("severity_override")].toString());
+            cc.severityJustification = rule[QStringLiteral("severity_justification")].toString();
+
+            db.UpdateCKLCheck(cc);
+        }
+        db.DelayCommit(false);
+    }
+}
+
+/**
  * @brief WorkerCKLImport::CheckAsset
  * @param a
  * @return The Asset from the database
@@ -318,10 +422,13 @@ void WorkerCKLImport::process()
     Worker::process();
 
     Q_EMIT initialize(_fileNames.count(), 0);
-    for (const QString fileName : _fileNames)
+    for (const QString &fileName : _fileNames)
     {
         Q_EMIT updateStatus("Parsing " + fileName);
-        ParseCKL(fileName);
+        if (fileName.endsWith(QStringLiteral(".cklb"), Qt::CaseInsensitive))
+            ParseCKLB(fileName);
+        else
+            ParseCKL(fileName);
         Q_EMIT progress(-1);
     }
     Q_EMIT updateStatus(QStringLiteral("Done!"));

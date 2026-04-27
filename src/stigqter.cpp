@@ -1209,7 +1209,7 @@ void STIGQter::ImportCKLs(const QStringList &fileNames)
 {
     DbManager db;
     QStringList fn = !fileNames.isEmpty() ? fileNames : QFileDialog::getOpenFileNames(this,
-        QStringLiteral("Import CKL(s)"), db.GetVariable(QStringLiteral("lastdir")), QStringLiteral("STIG Checklist (*.ckl)"));
+        QStringLiteral("Import CKL(s)"), db.GetVariable(QStringLiteral("lastdir")), QStringLiteral("All Checklists (*.ckl *.cklb);;STIG Checklist (*.ckl);;STIG Viewer 3 Checklist (*.cklb)"));
 
     if (fn.isEmpty())
         return; // cancel button pressed

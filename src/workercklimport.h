@@ -32,6 +32,7 @@ class WorkerCKLImport : public Worker
 private:
     QStringList _fileNames;
     void ParseCKL(const QString &fileName);
+    void ParseCKLB(const QString &fileName);
     Asset CheckAsset(Asset &a);
 
 public:
