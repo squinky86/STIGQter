@@ -1,4 +1,4 @@
-name: SonarCloud
+name: SonarQube Cloud
 
 on:
   workflow_dispatch:
@@ -12,17 +12,27 @@ jobs:
   analyze:
     name: Code Coverage
     runs-on: ubuntu-latest
+    container:
+      image: debian:trixie-slim
 
     env:
       DISPLAY: ":0"
-      SONAR_SCANNER_VERSION: 6.2.1.4610
+      BUILD_WRAPPER_OUT_DIR: bw-output
       GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
       SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
       LC_ALL: en
 
     steps:
+      - name: Bootstrap container
+        env:
+          DEBIAN_FRONTEND: noninteractive
+        run: |
+          apt-get update
+          apt-get install -y --no-install-recommends ca-certificates git
+
       - uses: actions/checkout@v4
         with:
+          # Disabling shallow clones is recommended for improving the relevancy of reporting
           fetch-depth: 0
 
       - name: Extract version
@@ -32,86 +42,73 @@ jobs:
           echo "version=${v}" >> "$GITHUB_OUTPUT"
 
       - name: Set timezone
-        run: sudo ln -fs /usr/share/zoneinfo/America/Chicago /etc/localtime
+        run: ln -fs /usr/share/zoneinfo/America/Chicago /etc/localtime
 
       - name: Install dependencies
         env:
           DEBIAN_FRONTEND: noninteractive
         run: |
-          sudo apt-get update
-          sudo apt-get install -y --no-install-recommends \
-            qt6-base-dev qmake6 libqt6sql6-sqlite \
-            libzip-dev cmake g++ debhelper dpkg-dev xvfb \
+          apt-get install -y --no-install-recommends \
+            qt6-base-dev qt6-base-dev-tools qmake6 libqt6sql6-sqlite \
+            libzip-dev libxlsxwriter-dev build-essential \
+            zlib1g-dev xvfb lcov gcovr unzip curl \
             libxkbcommon-x11-0 libxcb-icccm4 libxcb-image0 \
             libxcb-keysyms1 libxcb-randr0 libxcb-render-util0 \
             libxcb-xinerama0 libxcb-xinput0 libxcb-xfixes0 \
-            libxcb-cursor0 \
-            lcov zlib1g-dev libminizip-dev libssl-dev curl unzip wget
+            libxcb-cursor0
+
+      - name: Mark workspace safe for git
+        run: git config --global --add safe.directory "$PWD"
 
       - name: Start Xvfb
-        run: sudo /usr/bin/Xvfb "$DISPLAY" -screen 0 1280x1024x24 &
+        run: Xvfb "$DISPLAY" -screen 0 1280x1024x24 &
 
-      - name: Build & install libxlsxwriter
-        run: |
-          cd /tmp
-          wget -q https://github.com/jmcnamara/libxlsxwriter/archive/refs/tags/v1.2.4.tar.gz
-          tar -zxf v1.2.4.tar.gz
-          cd libxlsxwriter-1.2.4
-          cat >> CMakeLists.txt <<'EOF'
-          SET(CPACK_GENERATOR "DEB")
-          set(CPACK_PACKAGE_NAME "libxlsxwriter")
-          SET(CPACK_DEBIAN_PACKAGE_MAINTAINER "jwh0011@auburn.edu")
-          set(CPACK_PACKAGE_VERSION "1.2.4")
-          INCLUDE(CPack)
-          EOF
-          cmake -DCMAKE_BUILD_TYPE=Release .
-          make -j"$(nproc)"
-          cpack
-          sudo dpkg -i libxlsxwriter-1.2.4-Linux.deb
+      - name: Install Sonar Build Wrapper
+        uses: SonarSource/sonarqube-scan-action/install-build-wrapper@v6
 
-      - name: Install SonarCloud build wrapper & scanner
+      - name: Configure STIGQter for coverage
         run: |
-          mkdir -p "$HOME/.sonar"
-          curl -sSLo "$HOME/.sonar/sonar-scanner.zip" \
-            "https://binaries.sonarsource.com/Distribution/sonar-scanner-cli/sonar-scanner-cli-${SONAR_SCANNER_VERSION}-linux-x64.zip"
-          unzip -o "$HOME/.sonar/sonar-scanner.zip" -d "$HOME/.sonar/"
-          curl -sSLo "$HOME/.sonar/build-wrapper-linux-x86.zip" \
-            "https://sonarcloud.io/static/cpp/build-wrapper-linux-x86.zip"
-          unzip -o "$HOME/.sonar/build-wrapper-linux-x86.zip" -d "$HOME/.sonar/"
-          echo "$HOME/.sonar/sonar-scanner-${SONAR_SCANNER_VERSION}-linux-x64/bin" >> "$GITHUB_PATH"
-          echo "$HOME/.sonar/build-wrapper-linux-x86" >> "$GITHUB_PATH"
-
-      - name: Configure STIGQter for tests + coverage
-        run: |
-          echo "DEFINES += USE_TESTS" >> STIGQter.pro
           qmake6 STIGQter.pro
           sed -i \
             -e 's:-O2:-O0 -fprofile-arcs -ftest-coverage -fno-exceptions -fno-inline:g' \
             -e 's:-Wl,-O1:-Wl,-O1 -lgcov --coverage:g' \
             Makefile
 
-      - name: Build STIGQter under build-wrapper
-        run: build-wrapper-linux-x86-64 --out-dir bw-output make -j"$(nproc)"
+      - name: Build STIGQter under Build Wrapper
+        run: build-wrapper-linux-x86-64 --out-dir "${BUILD_WRAPPER_OUT_DIR}" make -j"$(nproc)"
 
-      - name: Run STIGQter tests
-        run: ./STIGQter tests
+      - name: Build test binary
+        run: |
+          cd tests
+          qmake6 tests.pro
+          # Match the coverage flags used for the main build so test-driven
+          # exercise of src/*.cpp produces .gcda alongside the existing .gcno.
+          sed -i \
+            -e 's:-O2:-O0 -fprofile-arcs -ftest-coverage -fno-exceptions -fno-inline:g' \
+            -e 's:-Wl,-O1:-Wl,-O1 -lgcov --coverage:g' \
+            Makefile
+          make -j"$(nproc)"
+
+      - name: Run tests
+        run: ./tests/tst_stigqter
 
       - name: Generate gcov reports
         run: for x in src/*.cpp; do gcov --branch-probabilities --branch-counts "${x}" -o .; done
 
-      - name: Run Sonar Scanner
-        run: |
-          rm -rf tests/*.ckl
-          sonar-scanner \
-            -Dsonar.organization=squinky86 \
-            -Dsonar.projectKey=squinky86_STIGQter \
-            -Dsonar.projectName=STIGQter \
-            -Dsonar.projectVersion="${{ steps.version.outputs.version }}" \
-            -Dsonar.sources=./src/ \
-            -Dsonar.cfamily.build-wrapper-output=bw-output \
-            -Dsonar.cfamily.threads=2 \
-            -Dsonar.cfamily.gcov.reportsPath=. \
-            -Dsonar.host.url=https://sonarcloud.io
+      - name: SonarQube Scan
+        uses: SonarSource/sonarqube-scan-action@v6
+        env:
+          SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
+        with:
+          args: >
+            -Dsonar.organization=squinky86
+            -Dsonar.projectKey=squinky86_STIGQter
+            -Dsonar.projectName=STIGQter
+            -Dsonar.projectVersion=${{ steps.version.outputs.version }}
+            -Dsonar.sources=./src/
+            -Dsonar.cfamily.compile-commands=${{ env.BUILD_WRAPPER_OUT_DIR }}/compile_commands.json
+            -Dsonar.cfamily.threads=2
+            -Dsonar.cfamily.gcov.reportsPath=.
 
       - name: Build LCOV report
         run: |
