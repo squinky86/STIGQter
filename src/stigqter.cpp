@@ -188,6 +188,25 @@ void STIGQter::ProcEvents()
     QApplication::processEvents();
 }
 
+/**
+ * @brief STIGQter::RunTests
+ *
+ * Executes an end-to-end smoke/regression sequence against the current
+ * STIGQter data set and UI workflow.
+ *
+ * This routine intentionally performs a long series of state-changing
+ * operations (for example: refresh, selective deletes/adds/imports/exports)
+ * to validate that the main processing paths complete without runtime errors.
+ * Each phase emits a step-indexed debug message for traceability.
+ *
+ * Because many actions are asynchronous and run on worker threads, the test
+ * flow repeatedly calls ProcEvents() between phases to allow the UI event loop
+ * and background workers to complete before proceeding to the next assertion-
+ * by-action step.
+ *
+ * @note This function mutates application data and UI selections; run only in
+ * controlled test scenarios where those side effects are expected.
+ */
 void STIGQter::RunTests()
 {
     DbManager db;
@@ -196,10 +215,12 @@ void STIGQter::RunTests()
     std::random_device rd;
     std::default_random_engine g(rd());
 
+    // Phase 1: refresh STIG catalog before performing mutation tests.
     qDebug("STIGQter test %d: Refresh STIGs", step++);
     UpdateSTIGs();
     ProcEvents();
 
+    // Phase 2: randomly keep 5 STIGs selected and delete the remainder.
     qDebug("STIGQter test %d: Deleting Some STIGs", step++);
     {
         int size = ui->lstSTIGs->count();
