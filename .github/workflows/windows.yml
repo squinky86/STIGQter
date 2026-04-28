@@ -282,8 +282,15 @@ jobs:
               'VERSION.dll', 'UXTHEME.dll', 'DWMAPI.dll', 'D3D9.dll',
               'msvcrt.dll', 'AUTHZ.dll', 'WTSAPI32.dll', 'IPHLPAPI.dll',
               'DNSAPI.dll', 'MPR.dll',
+              'DWrite.dll', 'SETUPAPI.dll', 'SHCORE.dll', 'SHLWAPI.dll',
+              'Secur32.dll', 'WINHTTP.dll', 'd3d11.dll', 'dxgi.dll',
+              'ncrypt.dll', 'ntdll.dll',
           }
           allowed_lower = {x.lower() for x in allowed}
+          # Windows API Sets (api-ms-win-*) are virtual forwarders to system DLLs.
+          def is_allowed(d):
+              dl = d.lower()
+              return dl in allowed_lower or dl.startswith('api-ms-win-')
           pe = pefile.PE('release/STIGQter.exe', fast_load=True)
           pe.parse_data_directories(directories=[
               pefile.DIRECTORY_ENTRY['IMAGE_DIRECTORY_ENTRY_IMPORT']])
@@ -291,7 +298,7 @@ jobs:
           print('Imported DLLs:')
           for d in imports:
               print(f'  {d}')
-          unexpected = [d for d in imports if d.lower() not in allowed_lower]
+          unexpected = [d for d in imports if not is_allowed(d)]
           if unexpected:
               print(f'\nERROR: non-system DLL imports detected: {unexpected}')
               sys.exit(1)
