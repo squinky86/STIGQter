@@ -10,12 +10,21 @@ on:
 jobs:
   build:
     runs-on: ubuntu-latest
+    container:
+      image: debian:trixie-slim
 
     steps:
+      - name: Bootstrap container
+        env:
+          DEBIAN_FRONTEND: noninteractive
+        run: |
+          apt-get update
+          apt-get install -y --no-install-recommends ca-certificates git
+
       - uses: actions/checkout@v4
 
       - name: Set timezone
-        run: sudo ln -fs /usr/share/zoneinfo/America/Chicago /etc/localtime
+        run: ln -fs /usr/share/zoneinfo/America/Chicago /etc/localtime
 
       - name: Extract version & arch
         id: version
@@ -29,34 +38,19 @@ jobs:
         env:
           DEBIAN_FRONTEND: noninteractive
         run: |
-          sudo apt-get update
-          sudo apt-get install -y --no-install-recommends \
+          apt-get install -y --no-install-recommends \
+            qt6-base-dev qt6-base-dev-tools qmake6 libqt6sql6-sqlite \
             libzip-dev libxlsxwriter-dev build-essential \
-            debhelper dpkg-dev zlib1g-dev \
-            libqt6gui6 libqt6widgets6 libqt6network6 \
-            libqt6sql6-sqlite libqt6xml6
-
-      - name: Install Qt 6.8
-        uses: jurplel/install-qt-action@v4
-        with:
-          version: '6.8.*'
-          host: 'linux'
-          target: 'desktop'
-          arch: 'linux_gcc_64'
-          cache: true
-
-      - name: Expose Qt as qmake6 for debhelper
-        run: sudo ln -sf "${QT_ROOT_DIR}/bin/qmake" /usr/local/bin/qmake6
+            debhelper dpkg-dev zlib1g-dev fakeroot
 
       - name: Build source tarball
         run: |
           v="${{ steps.version.outputs.version }}"
+          git config --global --add safe.directory "$PWD"
           git archive --format=tar.gz -o "../stigqter_${v}.orig.tar.gz" master
 
       - name: dpkg-buildpackage
-        # -d: bypass dpkg-checkbuilddeps for qt6-base-dev/qmake6 — Qt comes
-        # from install-qt-action (newer than the apt packages), not apt.
-        run: dpkg-buildpackage --no-sign -d
+        run: dpkg-buildpackage --no-sign
 
       - name: Stage Debian package
         run: |
