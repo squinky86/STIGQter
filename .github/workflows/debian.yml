@@ -32,26 +32,8 @@ jobs:
           sudo apt-get update
           sudo apt-get install -y --no-install-recommends \
             qt6-base-dev qmake6 libqt6sql6-sqlite \
-            libzip-dev g++ debhelper dpkg-dev zlib1g-dev \
-            libminizip-dev libssl-dev cmake wget
-
-      - name: Build & install libxlsxwriter
-        run: |
-          cd /tmp
-          wget -q https://github.com/jmcnamara/libxlsxwriter/archive/refs/tags/v1.2.4.tar.gz
-          tar -zxf v1.2.4.tar.gz
-          cd libxlsxwriter-1.2.4
-          cat >> CMakeLists.txt <<'EOF'
-          SET(CPACK_GENERATOR "DEB")
-          set(CPACK_PACKAGE_NAME "libxlsxwriter")
-          SET(CPACK_DEBIAN_PACKAGE_MAINTAINER "jwh0011@auburn.edu")
-          set(CPACK_PACKAGE_VERSION "1.2.4")
-          INCLUDE(CPack)
-          EOF
-          cmake -DCMAKE_BUILD_TYPE=Release .
-          make -j"$(nproc)"
-          cpack
-          sudo dpkg -i libxlsxwriter-1.2.4-Linux.deb
+            libzip-dev libxlsxwriter-dev build-essential \
+            debhelper dpkg-dev zlib1g-dev
 
       - name: Build source tarball
         run: |
@@ -71,8 +53,3 @@ jobs:
         with:
           name: STIGQter-debian-package
           path: /tmp/stigqter_${{ steps.version.outputs.version }}-1_${{ steps.version.outputs.arch }}.deb
-
-      - uses: actions/upload-artifact@v4
-        with:
-          name: libxlsxwriter-debian-package
-          path: /tmp/libxlsxwriter-1.2.4/libxlsxwriter-1.2.4-Linux.deb
