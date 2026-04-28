@@ -217,11 +217,12 @@ jobs:
           # Reuse the source tree we already downloaded.
           tar -xf "qtbase-everywhere-src-${QT_VERSION}.tar.xz"
           cd "qtbase-everywhere-src-${QT_VERSION}"
+          # Qt 6.11 dropped implicit CROSS_COMPILE→CMAKE_C_COMPILER wiring; pass
+          # the cmake toolchain file directly so cmake picks up the right compiler.
           ./configure -prefix "${QT_TARGET_PREFIX}" \
             -release -opensource -confirm-license \
             -static -static-runtime -no-shared \
             -platform linux-g++-64 -xplatform win32-g++ \
-            -device-option CROSS_COMPILE="${MINGW}-" \
             -qt-host-path "${QT_HOST_PREFIX}" \
             -nomake examples -nomake tests \
             -no-icu -no-opengl \
@@ -230,6 +231,7 @@ jobs:
             -no-feature-sql-psql -no-feature-sql-mysql \
             -optimize-size \
             -- \
+            -DCMAKE_TOOLCHAIN_FILE=/tmp/mingw-toolchain.cmake \
             -DOPENSSL_ROOT_DIR="${DEPS_PREFIX}" \
             -DOPENSSL_USE_STATIC_LIBS=ON \
             -DZLIB_ROOT="${DEPS_PREFIX}" \
