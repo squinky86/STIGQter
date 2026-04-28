@@ -219,10 +219,14 @@ jobs:
           cd "qtbase-everywhere-src-${QT_VERSION}"
           # Qt 6.11 dropped implicit CROSS_COMPILE→CMAKE_C_COMPILER wiring; pass
           # the cmake toolchain file directly so cmake picks up the right compiler.
+          # -device-option CROSS_COMPILE is still needed: it is baked into the
+          # installed qdevice.pri so that the target qmake resolves $${CROSS_COMPILE}g++
+          # correctly when building STIGQter.
           ./configure -prefix "${QT_TARGET_PREFIX}" \
             -release -opensource -confirm-license \
             -static -static-runtime -no-shared \
             -platform linux-g++-64 -xplatform win32-g++ \
+            -device-option CROSS_COMPILE="${MINGW}-" \
             -qt-host-path "${QT_HOST_PREFIX}" \
             -nomake examples -nomake tests \
             -no-icu -no-opengl \
