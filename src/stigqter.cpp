@@ -276,13 +276,13 @@ void STIGQter::RunTests()
     ProcEvents();
 
     qDebug("STIGQter test %d: Creating Asset \"TEST\"", step++);
-    ui->lstSTIGs->selectAll();
+    ui->lstSTIGs->clearSelection();
     for (int j = 0; j < ui->lstSTIGs->count(); j++)
     {
         auto *li = ui->lstSTIGs->item(j);
-        if (li->data(Qt::UserRole).value<STIG>().fileName.compare(QStringLiteral("U_ASD_STIG_V5R2_Manual-xccdf.xml")))
+        if (li->data(Qt::UserRole).value<STIG>().fileName.compare(QStringLiteral("U_ASD_STIG_V5R1_Manual-xccdf.xml")) == 0)
         {
-            li->setSelected(false);
+            li->setSelected(true);
         }
     }
     AddAsset(QStringLiteral("TEST"));
