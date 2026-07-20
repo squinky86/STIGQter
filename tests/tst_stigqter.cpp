@@ -96,15 +96,47 @@ void TestSTIGQter::test03_IndexSTIGs()
     QVERIFY(db.GetSTIGs().count() > 0);
 }
 
-void TestSTIGQter::test04_RunInterface()
+// STIGQter::RunTests() is split into five phases so that each gets its own
+// Qt Test per-function watchdog budget (default 300 s). Running the whole
+// sequence as a single test function under the SonarCloud coverage build
+// (-O0 with gcov instrumentation) exceeded that budget and aborted.
+void TestSTIGQter::test04a_RunInterface()
 {
     {
         DbManager db;
         db.UpdateVariable(QStringLiteral("loglevel"), QStringLiteral("0"));
     }
 
-    w->RunTests();
-    QApplication::processEvents();
+    w->RunTests1();
+    procEvents();
+    QVERIFY(w->isProcessingEnabled());
+}
+
+void TestSTIGQter::test04b_RunInterface()
+{
+    w->RunTests2();
+    procEvents();
+    QVERIFY(w->isProcessingEnabled());
+}
+
+void TestSTIGQter::test04c_RunInterface()
+{
+    w->RunTests3();
+    procEvents();
+    QVERIFY(w->isProcessingEnabled());
+}
+
+void TestSTIGQter::test04d_RunInterface()
+{
+    w->RunTests4();
+    procEvents();
+    QVERIFY(w->isProcessingEnabled());
+}
+
+void TestSTIGQter::test04e_RunInterface()
+{
+    w->RunTests5();
+    procEvents();
     QVERIFY(w->isProcessingEnabled());
 }
 

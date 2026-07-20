@@ -45,6 +45,11 @@ public:
     void UpdateSTIGs();
     void ProcEvents();
     void RunTests();
+    void RunTests1();
+    void RunTests2();
+    void RunTests3();
+    void RunTests4();
+    void RunTests5();
 
 private Q_SLOTS:
 
@@ -110,6 +115,7 @@ private:
     void EnableInput();
     void UpdateRemapButton();
     bool _isFiltered;
+    int _testStep = 0;
 };
 
 #endif // STIGQTER_H

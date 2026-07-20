@@ -39,7 +39,11 @@ private Q_SLOTS:
     void test01_IndexCCIs();
     void test02_UpdateCCI();
     void test03_IndexSTIGs();
-    void test04_RunInterface();
+    void test04a_RunInterface();
+    void test04b_RunInterface();
+    void test04c_RunInterface();
+    void test04d_RunInterface();
+    void test04e_RunInterface();
     void test05_DeleteAndHash();
     void test06_CKLImport();
     void test07_Cleanup();
