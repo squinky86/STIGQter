@@ -36,6 +36,7 @@ private:
 
 private Q_SLOTS:
     void initTestCase();
+    void test00_Classification();
     void test01_IndexCCIs();
     void test02_UpdateCCI();
     void test03_IndexSTIGs();
@@ -44,6 +45,7 @@ private Q_SLOTS:
     void test04c_RunInterface();
     void test04d_RunInterface();
     void test04e_RunInterface();
+    void test04f_Escalation();
     void test05_DeleteAndHash();
     void test06_CKLImport();
     void test07_Cleanup();

@@ -3102,6 +3102,16 @@ bool DbManager::UpdateDatabaseFromVersion(int version)
             ret = q.exec() && ret;
             ret = UpdateVariable(QStringLiteral("version"), QStringLiteral("9")) && ret;
         }
+        if (version < 10)
+        {
+            //system-wide classification marking used to mark generated reports
+            QSqlQuery q(db);
+            q.prepare(QStringLiteral("INSERT INTO variables (name, value) VALUES(:name, :value)"));
+            q.bindValue(QStringLiteral(":name"), QStringLiteral("systemMarking"));
+            q.bindValue(QStringLiteral(":value"), QStringLiteral("UNCLASSIFIED"));
+            ret = q.exec() && ret;
+            ret = UpdateVariable(QStringLiteral("version"), QStringLiteral("10")) && ret;
+        }
     }
     return ret;
 }

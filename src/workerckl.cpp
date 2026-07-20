@@ -171,7 +171,7 @@ void WorkerCKL::process()
 
             stream.writeStartElement(QStringLiteral("SI_DATA"));
             WriteXMLEntry(stream, QStringLiteral("SID_NAME"), QStringLiteral("classification")); //SID_NAME
-            WriteXMLEntry(stream, QStringLiteral("SID_DATA"), QStringLiteral("UNCLASSIFIED")); //SID_DATA
+            WriteXMLEntry(stream, QStringLiteral("SID_DATA"), _asset.marking.isEmpty() ? QStringLiteral("UNCLASSIFIED") : GetClassificationString(GetClassification(_asset.marking))); //SID_DATA
             stream.writeEndElement(); //SI_DATA
 
             stream.writeStartElement(QStringLiteral("SI_DATA"));

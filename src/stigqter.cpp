@@ -118,6 +118,10 @@ STIGQter::STIGQter(QWidget *parent) :
     ui->cbRemapCM6->setChecked(db.GetVariable("remapCM6").startsWith(QStringLiteral("y"), Qt::CaseInsensitive));
     UpdateRemapButton();
 
+    //load the system-wide classification marking and paint the banners
+    ui->txtSystemMarking->setText(db.GetVariable(QStringLiteral("systemMarking")));
+    RefreshClassificationBanner();
+
     //check version number
     QTimer::singleShot(0, this, SLOT(CheckVersion()));
 
@@ -272,6 +276,11 @@ void STIGQter::RunTests1()
 
     qDebug("STIGQter test %d: Clear Filter", _testStep++);
     ui->txtSTIGSearch->setText(QString());
+    ProcEvents();
+
+    qDebug("STIGQter test %d: System Classification Marking", _testStep++);
+    ui->txtSystemMarking->setText(QStringLiteral("CUI"));
+    SaveMarking();
     ProcEvents();
 
     qDebug("STIGQter test %d: Message Handling", _testStep++);
@@ -611,6 +620,65 @@ void STIGQter::RemapChanged(int checkState)
 }
 
 /**
+ * @brief STIGQter::SaveMarking
+ *
+ * Persist the user-entered system-wide classification marking and
+ * repaint the classification banners.
+ */
+void STIGQter::SaveMarking()
+{
+    DbManager db;
+    db.UpdateVariable(QStringLiteral("systemMarking"), ui->txtSystemMarking->text());
+    RefreshClassificationBanner();
+}
+
+/**
+ * @brief STIGQter::RefreshClassificationBanner
+ *
+ * Update the top and bottom classification banners to reflect the
+ * current system-wide marking. The banner text is the user's free-text
+ * marking (falling back to "UNCLASSIFIED" when empty); the banner color
+ * is derived from the parsed classification level so a higher marking is
+ * never shown on a lower-classification color.
+ */
+void STIGQter::RefreshClassificationBanner()
+{
+    DbManager db;
+    QString marking = db.GetVariable(QStringLiteral("systemMarking"));
+    Classification systemClass = GetClassification(marking);
+
+    //auto-escalate: the system marking is never lower than the highest asset marking
+    Classification highest = systemClass;
+    QString highestMarking = marking;
+    for (const Asset &a : db.GetAssets())
+    {
+        Classification assetClass = GetClassification(a.marking);
+        if (assetClass > highest)
+        {
+            highest = assetClass;
+            highestMarking = a.marking;
+        }
+    }
+    if (highest > systemClass)
+    {
+        marking = highestMarking;
+        db.UpdateVariable(QStringLiteral("systemMarking"), marking);
+        if (ui->txtSystemMarking->text() != marking)
+            ui->txtSystemMarking->setText(marking);
+    }
+
+    if (marking.isEmpty())
+        marking = QStringLiteral("UNCLASSIFIED");
+    quint32 color = GetClassificationColor(GetClassification(marking));
+    const QString style = QStringLiteral("QLabel { background-color: #%1; color: white; font-weight: bold; padding: 2px; }")
+                              .arg(color, 6, 16, QLatin1Char('0'));
+    ui->lblClassificationTop->setText(marking);
+    ui->lblClassificationTop->setStyleSheet(style);
+    ui->lblClassificationBottom->setText(marking);
+    ui->lblClassificationBottom->setStyleSheet(style);
+}
+
+/**
  * @brief STIGQter::RenameTab
  * @param index
  * @param title
@@ -817,6 +885,8 @@ void STIGQter::CompletedThread()
         DisplayAssets();
         _updatedAssets = false;
     }
+    //escalate the system marking in case an imported asset is classified higher
+    RefreshClassificationBanner();
     //when maximum <= 0, the progress bar loops
     if (ui->progressBar->maximum() <= 0)
         ui->progressBar->setMaximum(1);
@@ -1027,6 +1097,7 @@ void STIGQter::Display()
     DisplayCCIs();
     DisplaySTIGs();
     DisplayAssets();
+    RefreshClassificationBanner();
 }
 
 /**
@@ -1328,6 +1399,8 @@ void STIGQter::Load(const QString &fileName)
         DisplayCCIs();
         DisplaySTIGs();
         DisplayAssets();
+        ui->txtSystemMarking->setText(db.GetVariable(QStringLiteral("systemMarking")));
+        RefreshClassificationBanner();
         lastSaveLocation = fn;
     }
 }

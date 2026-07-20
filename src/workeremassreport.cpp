@@ -93,6 +93,16 @@ void WorkerEMASSReport::process()
     format_set_bold(fmtBoldGreen);
     format_set_font_color(fmtBoldGreen, LXW_COLOR_GREEN);
 
+    //format - classification banner: bold, white, centered on the classification color
+    QString marking = db.GetVariable(QStringLiteral("systemMarking"));
+    if (marking.isEmpty())
+        marking = QStringLiteral("UNCLASSIFIED");
+    lxw_format *fmtMarking = workbook_add_format(wb);
+    format_set_bold(fmtMarking);
+    format_set_align(fmtMarking, LXW_ALIGN_CENTER);
+    format_set_font_color(fmtMarking, LXW_COLOR_WHITE);
+    format_set_fg_color(fmtMarking, static_cast<lxw_color_t>(GetClassificationColor(GetClassification(marking))));
+
     //format - bold, white text on a gray background
     lxw_format *fmtBoldGrayBG = workbook_add_format(wb);
     format_set_bold(fmtBoldGrayBG);
@@ -145,8 +155,8 @@ void WorkerEMASSReport::process()
     //zoom factor
     worksheet_set_zoom(ws, 70);
 
-    //unclassified header
-    worksheet_merge_range(ws, 0, 0, 0, 19, "UNCLASSIFIED", fmtBoldGreen);
+    //classification header
+    worksheet_merge_range(ws, 0, 0, 0, 19, marking.toStdString().c_str(), fmtMarking);
     //export date
     worksheet_merge_range(ws, 1, 0, 1, 19, (QStringLiteral("Exported on ") + curDate).toStdString().c_str(), fmtGrayBGRight);
     //information on export

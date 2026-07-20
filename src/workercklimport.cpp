@@ -383,6 +383,18 @@ void WorkerCKLImport::ParseCKLB(const QString &fileName)
 Asset WorkerCKLImport::CheckAsset(Asset &a)
 {
     DbManager db;
+
+    //warn (but continue) if the imported marking is classified higher than the system marking
+    Classification assetClass = GetClassification(a.marking);
+    Classification systemClass = GetClassification(db.GetVariable(QStringLiteral("systemMarking")));
+    if (assetClass > systemClass)
+    {
+        Q_EMIT ThrowWarning(QStringLiteral("Classification Mismatch"),
+            "The imported asset " + PrintAsset(a) + " is marked \"" + a.marking +
+            "\", which is classified higher than the system marking (" +
+            GetClassificationString(systemClass) + "). The import will continue; verify the system classification marking.");
+    }
+
     Asset tmpAsset = db.GetAsset(a.hostName);
     if (tmpAsset.id > 0)
         a = tmpAsset;

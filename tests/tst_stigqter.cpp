@@ -66,6 +66,40 @@ void TestSTIGQter::initTestCase()
     procEvents();
 }
 
+void TestSTIGQter::test00_Classification()
+{
+    //parsing of free-text markings into ranked classification levels
+    QCOMPARE(GetClassification(QStringLiteral("")), Classification::classPublicRelease);
+    QCOMPARE(GetClassification(QStringLiteral("PUBLIC RELEASE")), Classification::classPublicRelease);
+    QCOMPARE(GetClassification(QStringLiteral("UNCLASSIFIED")), Classification::classUnclassified);
+    QCOMPARE(GetClassification(QStringLiteral("FOUO")), Classification::classFOUO);
+    QCOMPARE(GetClassification(QStringLiteral("CUI [Controlled by: ...]")), Classification::classCUI);
+    QCOMPARE(GetClassification(QStringLiteral("CONTROLLED")), Classification::classCUI);
+    QCOMPARE(GetClassification(QStringLiteral("CONFIDENTIAL")), Classification::classConfidential);
+    QCOMPARE(GetClassification(QStringLiteral("SECRET//NOFORN")), Classification::classSecret);
+    QCOMPARE(GetClassification(QStringLiteral("TOP SECRET//SI")), Classification::classTopSecret);
+    QCOMPARE(GetClassification(QStringLiteral("N/A")), Classification::classPublicRelease);
+
+    //a complete classification word is required: markings that merely start with
+    //the same letter (or embed the word in another word) must not escalate
+    QCOMPARE(GetClassification(QStringLiteral("Storage array")), Classification::classPublicRelease);
+    QCOMPARE(GetClassification(QStringLiteral("Firewall")), Classification::classPublicRelease);
+    QCOMPARE(GetClassification(QStringLiteral("Unit 5")), Classification::classPublicRelease);
+    QCOMPARE(GetClassification(QStringLiteral("Secretary workstation")), Classification::classPublicRelease);
+    QCOMPARE(GetClassification(QStringLiteral("Controller node")), Classification::classPublicRelease);
+
+    //ordering used for the import mismatch comparison
+    QVERIFY(Classification::classTopSecret > Classification::classSecret);
+    QVERIFY(Classification::classSecret > Classification::classCUI);
+    QVERIFY(Classification::classCUI > Classification::classUnclassified);
+
+    //canonical labels
+    QCOMPARE(GetClassificationString(Classification::classCUI), QStringLiteral("CUI"));
+    QCOMPARE(GetClassificationString(Classification::classSecret), QStringLiteral("SECRET"));
+    QCOMPARE(GetClassificationString(Classification::classTopSecret), QStringLiteral("TOP SECRET"));
+    QCOMPARE(GetClassificationString(Classification::classPublicRelease), QStringLiteral("PUBLIC RELEASE"));
+}
+
 void TestSTIGQter::test01_IndexCCIs()
 {
     QMetaObject::invokeMethod(w, "UpdateCCIs", Qt::DirectConnection);
@@ -110,6 +144,12 @@ void TestSTIGQter::test04a_RunInterface()
     w->RunTests1();
     procEvents();
     QVERIFY(w->isProcessingEnabled());
+
+    //RunTests1 sets the system classification marking via the Main-tab field
+    {
+        DbManager db;
+        QCOMPARE(db.GetVariable(QStringLiteral("systemMarking")), QStringLiteral("CUI"));
+    }
 }
 
 void TestSTIGQter::test04b_RunInterface()
@@ -157,6 +197,24 @@ void TestSTIGQter::test04e_RunInterface()
     w->RunTests5();
     procEvents();
     QVERIFY(w->isProcessingEnabled());
+}
+
+void TestSTIGQter::test04f_Escalation()
+{
+    DbManager db;
+    QVector<Asset> assets = db.GetAssets();
+    QVERIFY(!assets.isEmpty());
+
+    //lower the system marking, then mark an asset higher than it
+    db.UpdateVariable(QStringLiteral("systemMarking"), QStringLiteral("UNCLASSIFIED"));
+    Asset a = assets.first();
+    a.marking = QStringLiteral("SECRET");
+    db.UpdateAsset(a);
+
+    //the system marking auto-escalates to the highest asset marking
+    w->RefreshClassificationBanner();
+    procEvents();
+    QCOMPARE(GetClassification(db.GetVariable(QStringLiteral("systemMarking"))), Classification::classSecret);
 }
 
 void TestSTIGQter::test05_DeleteAndHash()

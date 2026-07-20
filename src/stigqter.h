@@ -42,6 +42,7 @@ public:
     bool isProcessingEnabled();
     QThread* ConnectThreads(Worker *worker, bool blocking = true);
     void Display();
+    void RefreshClassificationBanner();
     void UpdateSTIGs();
     void ProcEvents();
     void RunTests();
@@ -87,6 +88,7 @@ private Q_SLOTS:
     bool Reset(bool checkOnly = false);
     void Save();
     void SaveAs(const QString &fileName = QString());
+    void SaveMarking();
     void SelectAsset();
     void SelectSTIG();
     void StatusChange(const QString &status);

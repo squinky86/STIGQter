@@ -159,7 +159,7 @@ void WorkerCKLB::process()
             rule[QStringLiteral("rule_id")]                   = sc.rule;
             rule[QStringLiteral("rule_id_src")]               = sc.rule;
             rule[QStringLiteral("weight")]                    = QString::number(sc.weight, 'f', 1);
-            rule[QStringLiteral("classification")]            = QStringLiteral("Unclassified");
+            rule[QStringLiteral("classification")]            = _asset.marking.isEmpty() ? QStringLiteral("UNCLASSIFIED") : GetClassificationString(GetClassification(_asset.marking));
             rule[QStringLiteral("severity")]                  = GetSeverity(cc.GetSeverity(), false);
             rule[QStringLiteral("rule_fix_txt")]              = sc.fix;
             rule[QStringLiteral("false_positives")]           = sc.falsePositives;

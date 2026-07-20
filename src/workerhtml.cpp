@@ -175,6 +175,14 @@ void WorkerHTML::process()
     main.open(QIODevice::WriteOnly);
     QString headerExtra = db.GetVariable(QStringLiteral("HTMLHeader")).toHtmlEscaped();
 
+    //system classification banner (shown at the top and bottom of the report)
+    QString marking = db.GetVariable(QStringLiteral("systemMarking"));
+    if (marking.isEmpty())
+        marking = QStringLiteral("UNCLASSIFIED");
+    QString bannerHtml = QStringLiteral("<div style=\"background-color:#%1;color:white;font-weight:bold;text-align:center;padding:4px;\">%2</div>")
+                             .arg(GetClassificationColor(GetClassification(marking)), 6, 16, QLatin1Char('0'))
+                             .arg(marking.toHtmlEscaped());
+
     //header of main index file
     main.write("<!doctype html>"
                "<html lang=\"en\">"
@@ -184,8 +192,9 @@ void WorkerHTML::process()
     main.write("<link rel=\"icon\" type=\"image/svg+xml\" href=\"STIGQter.svg\" />");
     main.write(headerExtra.toStdString().c_str());
     main.write("</head>"
-               "<body>"
-               "<div><img src=\"STIGQter.svg\" alt=\"STIGQter\" style=\"height:1em;\" /> <a href=\"https://www.stigqter.com/\">STIGQter</a>:</div> <h1>STIG Summary</h1>"
+               "<body>");
+    main.write(bannerHtml.toStdString().c_str());
+    main.write("<div><img src=\"STIGQter.svg\" alt=\"STIGQter\" style=\"height:1em;\" /> <a href=\"https://www.stigqter.com/\">STIGQter</a>:</div> <h1>STIG Summary</h1>"
                "<ul>");
 
     //iterate through STIGs. Each STIG is a reference file to its STIGChecks.
@@ -333,8 +342,9 @@ void WorkerHTML::process()
         stig.close();
     }
 
-    main.write("</ul>"
-               "</body>"
+    main.write("</ul>");
+    main.write(bannerHtml.toStdString().c_str());
+    main.write("</body>"
                "</html>");
     main.close();
 

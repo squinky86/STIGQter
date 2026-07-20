@@ -31,6 +31,27 @@
 
 [[maybe_unused]] extern bool IgnoreWarnings;
 
+/**
+ * @enum Classification
+ * @brief Ranked classification levels understood by STIGQter, from
+ * lowest to highest. The integral ordering is used to compare a
+ * (free-text) marking against the system-wide marking.
+ */
+enum Classification
+{
+    classPublicRelease = 0,
+    classUnclassified = 1,
+    classFOUO = 2,
+    classCUI = 3,
+    classConfidential = 4,
+    classSecret = 5,
+    classTopSecret = 6
+};
+
+Classification GetClassification(const QString &marking);
+QString GetClassificationString(Classification classification);
+quint32 GetClassificationColor(Classification classification);
+
 void MessageHandler(QtMsgType type, const QMessageLogContext &context, const QString &msg);
 bool DownloadFile(const QUrl &url, QFile *file);
 QString DownloadPage(const QUrl &url);

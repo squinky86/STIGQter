@@ -881,6 +881,9 @@ void AssetView::UpdateCKLHelper()
         _asset.hostFQDN = ui->txtFQDN->text();
         _asset.marking = ui->txtMarking->text();
         db.UpdateAsset(_asset);
+        //the system marking auto-escalates to the highest asset marking
+        if (_parent)
+            _parent->RefreshClassificationBanner();
     }
 }
 

@@ -91,6 +91,18 @@ void WorkerFindingsReport::process()
     lxw_worksheet *wsCCIs = workbook_add_worksheet(wb, "CCIs");
     lxw_worksheet *wsControls = workbook_add_worksheet(wb, "Controls");
 
+    //stamp the system classification marking as a centered print header/footer on
+    //every worksheet (non-invasive; does not disturb the data grid)
+    QString marking = db.GetVariable(QStringLiteral("systemMarking"));
+    if (marking.isEmpty())
+        marking = QStringLiteral("UNCLASSIFIED");
+    const std::string markHdr = (QStringLiteral("&C&\"Arial,Bold\"") + marking).toStdString();
+    for (lxw_worksheet *ws : {wsFindings, wsCCIs, wsControls})
+    {
+        worksheet_set_header(ws, markHdr.c_str());
+        worksheet_set_footer(ws, markHdr.c_str());
+    }
+
     //add formats
     lxw_format *fmtBold = workbook_add_format(wb);
     lxw_format *fmtCci = workbook_add_format(wb);
