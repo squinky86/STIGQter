@@ -1,3 +1,9 @@
+## 2.0.0
+-   Migrate NIST 800-53 controls to Revision 5 (RMF)
+-   Add support for cklb files
+-   Complete the STIG editor: edit, add, and delete checks and CCI mappings, and export a STIG to a re-importable XCCDF zip
+-   Add a system-wide classification marking that auto-escalates to the highest asset classification and marks generated reports (fixes #104)
+
 ## 1.2.7
 -   Fix duplicate rules in DFR (fixes #122)
 -   Update truncation method of DFR text (fixes #123)
