@@ -53,6 +53,7 @@ public:
     bool AddControl(const QString &control, const QString &title, const QString &description, const QString &importSeverity = QString(), const QString &importRelevanceOfThreat = QString(), const QString &importLikelihood = QString(), const QString &importImpact = QString(), const QString &importImpactDescription = QString(), const QString &importResidualRiskLevel = QString(), const QString &importRecommendations = QString());
     bool AddFamily(const QString &acronym, const QString &description);
     bool AddSTIG(STIG &stig, const QVector<STIGCheck> &checks, const QVector<Supplement> &supplements = {}, bool stigExists = false);
+    bool AddSTIGCheck(const STIG &stig, STIGCheck &check);
     bool AddSTIGToAsset(const STIG &stig, const Asset &asset);
 
     bool DeleteAsset(int id);
@@ -62,6 +63,7 @@ public:
     bool DeleteEmassImport();
     bool DeleteSTIG(int id);
     bool DeleteSTIG(const STIG &stig);
+    bool DeleteSTIGCheck(const STIGCheck &check);
     bool DeleteSTIGFromAsset(const STIG &stig, const Asset &asset);
 
     Asset GetAsset(int id);

@@ -45,14 +45,19 @@ public:
 private:
     Ui::STIGEdit *ui;
     STIG _s;
+    bool _loading = false;
     void UpdateChecks();
     void UpdateSupplements();
 
 private Q_SLOTS:
     void AddCCI();
+    void DeleteCCI();
+    void AddCheck();
+    void DeleteCheck();
     void SelectCheck();
     void UpdateSTIG();
     void UpdateCheck();
+    void SaveSTIG(const QString &fileName = QString());
 };
 
 #endif // STIGEDIT_H

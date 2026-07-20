@@ -37,6 +37,8 @@ QString DownloadPage(const QUrl &url);
 QString Excelify(const QString &s);
 int GetCCINumber(QString cci);
 QMap<QString, QByteArray> GetFilesFromZip(const QString &fileName, const QString &fileNameFilter = QLatin1String(""));
+
+bool CreateZip(const QString &fileName, const QMap<QString, QByteArray> &files);
 int GetReleaseNumber(const QString &release);
 QString GetUserAgent();
 QString Pluralize(const int count, const QString &plural = QStringLiteral("s"), const QString &singular = QLatin1String(""));

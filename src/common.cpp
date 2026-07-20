@@ -264,6 +264,54 @@ QMap<QString, QByteArray> GetFilesFromZip(const QString &fileName, const QString
 }
 
 /**
+ * @brief CreateZip
+ * @param fileName
+ * @param files
+ * @return @c true when the archive was written successfully.
+ *
+ * Writes an in-memory set of files (keyed by their path inside the
+ * archive) to a new zip archive at @a fileName using libzip. Any
+ * existing archive at that path is truncated first.
+ *
+ * The @a files map is passed by const reference and must outlive this
+ * call: zip_source_buffer() does not copy the supplied bytes, so the
+ * QByteArrays are kept alive until zip_close() has flushed them.
+ */
+bool CreateZip(const QString &fileName, const QMap<QString, QByteArray> &files)
+{
+    int err = 0;
+    struct zip *za = zip_open(fileName.toStdString().c_str(), ZIP_CREATE | ZIP_TRUNCATE, &err);
+    if (za == nullptr)
+        return false;
+
+    bool ret = true;
+    for (auto i = files.constBegin(); i != files.constEnd(); ++i)
+    {
+        const QByteArray &contents = i.value();
+        //the buffer is not copied by libzip; the const-ref map keeps it alive until zip_close()
+        struct zip_source *zs = zip_source_buffer(za, contents.constData(), static_cast<zip_uint64_t>(contents.size()), 0);
+        if (zs == nullptr)
+        {
+            ret = false;
+            continue;
+        }
+        if (zip_file_add(za, i.key().toStdString().c_str(), zs, ZIP_FL_ENC_UTF_8 | ZIP_FL_OVERWRITE) < 0)
+        {
+            zip_source_free(zs);
+            ret = false;
+        }
+    }
+
+    if (zip_close(za) < 0)
+    {
+        zip_discard(za);
+        ret = false;
+    }
+
+    return ret;
+}
+
+/**
  * @brief GetReleaseNumber
  * @param release
  * @return The release number from a STIG release string

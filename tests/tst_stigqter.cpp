@@ -117,6 +117,25 @@ void TestSTIGQter::test04b_RunInterface()
     w->RunTests2();
     procEvents();
     QVERIFY(w->isProcessingEnabled());
+
+    //STIGEdit::RunTests() exports a STIG via WorkerSTIGExport; confirm the
+    //archive was written and is a well-formed, re-importable XCCDF benchmark.
+    QVERIFY(QFile::exists(QStringLiteral("tests/exported_stig.zip")));
+    QMap<QString, QByteArray> exported = GetFilesFromZip(QStringLiteral("tests/exported_stig.zip"));
+    bool foundXccdf = false;
+    for (auto i = exported.constBegin(); i != exported.constEnd(); ++i)
+    {
+        if (i.key().endsWith(QStringLiteral("-xccdf.xml"), Qt::CaseInsensitive) ||
+            i.key().endsWith(QStringLiteral("Manual_STIG.xml"), Qt::CaseInsensitive) ||
+            i.key().endsWith(QStringLiteral("Manual_xccdf.xml"), Qt::CaseInsensitive))
+        {
+            foundXccdf = true;
+            const QByteArray &xml = i.value();
+            QVERIFY(xml.contains("<Benchmark"));
+            QVERIFY(xml.contains("<Rule"));
+        }
+    }
+    QVERIFY(foundXccdf);
 }
 
 void TestSTIGQter::test04c_RunInterface()

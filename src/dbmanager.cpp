@@ -689,6 +689,81 @@ bool DbManager::AddSTIG(STIG &stig, const QVector<STIGCheck> &checks, const QVec
 }
 
 /**
+ * @brief DbManager::AddSTIGCheck
+ * @param stig
+ * @param check
+ * @return @c true when the @a check was added to the database.
+ *
+ * Adds a single @a STIGCheck to an existing @a STIG. This is used by the
+ * STIG editor to author new checks. Unlike @a AddSTIG, a freshly authored
+ * check is allowed to start with no @a CCI mapping, so no remap-to-CCI-366
+ * warning is raised here. On success, @a check.id is populated with the new
+ * database id.
+ */
+bool DbManager::AddSTIGCheck(const STIG &stig, STIGCheck &check)
+{
+    QSqlDatabase db;
+    bool ret = false;
+    if (CheckDatabase(db))
+    {
+        QSqlQuery q(db);
+        q.prepare(QStringLiteral("INSERT INTO STIGCheck (`STIGId`, `rule`, `vulnNum`, `groupTitle`, `ruleVersion`, `severity`, `weight`, `title`, `vulnDiscussion`, `falsePositives`, `falseNegatives`, `fix`, `check`, `documentable`, `mitigations`, `severityOverrideGuidance`, `checkContentRef`, `potentialImpact`, `thirdPartyTools`, `mitigationControl`, `responsibility`, `IAControls`, `targetKey`, `isRemap`) VALUES(:STIGId, :rule, :vulnNum, :groupTitle, :ruleVersion, :severity, :weight, :title, :vulnDiscussion, :falsePositives, :falseNegatives, :fix, :check, :documentable, :mitigations, :severityOverrideGuidance, :checkContentRef, :potentialImpact, :thirdPartyTools, :mitigationControl, :responsibility, :IAControls, :targetKey, :isRemap)"));
+        q.bindValue(QStringLiteral(":STIGId"), stig.id);
+        q.bindValue(QStringLiteral(":rule"), check.rule);
+        q.bindValue(QStringLiteral(":vulnNum"), check.vulnNum);
+        q.bindValue(QStringLiteral(":groupTitle"), check.groupTitle);
+        q.bindValue(QStringLiteral(":ruleVersion"), check.ruleVersion);
+        q.bindValue(QStringLiteral(":severity"), check.severity);
+        q.bindValue(QStringLiteral(":weight"), check.weight);
+        q.bindValue(QStringLiteral(":title"), check.title);
+        q.bindValue(QStringLiteral(":vulnDiscussion"), check.vulnDiscussion);
+        q.bindValue(QStringLiteral(":falsePositives"), check.falsePositives);
+        q.bindValue(QStringLiteral(":falseNegatives"), check.falseNegatives);
+        q.bindValue(QStringLiteral(":fix"), check.fix);
+        q.bindValue(QStringLiteral(":check"), check.check);
+        q.bindValue(QStringLiteral(":documentable"), check.documentable ? 1 : 0);
+        q.bindValue(QStringLiteral(":mitigations"), check.mitigations);
+        q.bindValue(QStringLiteral(":severityOverrideGuidance"), check.severityOverrideGuidance);
+        q.bindValue(QStringLiteral(":checkContentRef"), check.checkContentRef);
+        q.bindValue(QStringLiteral(":potentialImpact"), check.potentialImpact);
+        q.bindValue(QStringLiteral(":thirdPartyTools"), check.thirdPartyTools);
+        q.bindValue(QStringLiteral(":mitigationControl"), check.mitigationControl);
+        q.bindValue(QStringLiteral(":responsibility"), check.responsibility);
+        q.bindValue(QStringLiteral(":IAControls"), check.iaControls);
+        q.bindValue(QStringLiteral(":targetKey"), check.targetKey);
+        q.bindValue(QStringLiteral(":isRemap"), check.isRemap ? 1 : 0);
+        ret = q.exec();
+        Log(6, QStringLiteral("AddSTIGCheck"), q);
+        if (ret)
+        {
+            check.id = q.lastInsertId().toInt();
+            check.stigId = stig.id;
+
+            for (int cciId : check.cciIds)
+            {
+                q.prepare(QStringLiteral("INSERT INTO STIGCheckCCI (`STIGCheckId`, `CCIId`) VALUES(:STIGCheckId, :CCIId)"));
+                q.bindValue(QStringLiteral(":STIGCheckId"), check.id);
+                q.bindValue(QStringLiteral(":CCIId"), cciId);
+                ret = q.exec() && ret;
+                Log(6, QStringLiteral("AddSTIGCheck-CCI"), q);
+            }
+
+            for (const QString &legacyId : check.legacyIds)
+            {
+                q.prepare(QStringLiteral("INSERT INTO STIGCheckLegacyId (`STIGCheckId`, `LegacyId`) VALUES(:STIGCheckId, :LegacyId)"));
+                q.bindValue(QStringLiteral(":STIGCheckId"), check.id);
+                q.bindValue(QStringLiteral(":LegacyId"), legacyId);
+                ret = q.exec() && ret;
+                Log(6, QStringLiteral("AddSTIGCheck-LegacyId"), q);
+            }
+        }
+        if (!_delayCommit)
+            db.commit();
+    }
+    return ret;
+}
+
+/**
  * @brief DbManager::AddSTIGToAsset
  * @param stig
  * @param asset
@@ -908,6 +983,40 @@ bool DbManager::DeleteSTIG(int id)
 bool DbManager::DeleteSTIG(const STIG &stig)
 {
     return DeleteSTIG(stig.id);
+}
+
+/**
+ * @brief DbManager::DeleteSTIGCheck
+ * @param check
+ * @return @c true when the @a STIGCheck (and its CCI/legacy-id mappings)
+ * has been removed from the database.
+ *
+ * Removes a single @a STIGCheck from a @a STIG. Child rows are deleted
+ * before the check itself, mirroring the ordering used by @a DeleteSTIG.
+ */
+bool DbManager::DeleteSTIGCheck(const STIGCheck &check)
+{
+    QSqlDatabase db;
+    bool ret = false;
+    if (CheckDatabase(db))
+    {
+        QSqlQuery q(db);
+        ret = true; //assume success from here.
+        q.prepare(QStringLiteral("DELETE FROM STIGCheckCCI WHERE STIGCheckId = :STIGCheckId"));
+        q.bindValue(QStringLiteral(":STIGCheckId"), check.id);
+        ret = q.exec() && ret; //q.exec() first to avoid short-circuit evaluation
+        q.prepare(QStringLiteral("DELETE FROM STIGCheckLegacyId WHERE STIGCheckId = :STIGCheckId"));
+        q.bindValue(QStringLiteral(":STIGCheckId"), check.id);
+        ret = q.exec() && ret;
+        Log(6, QStringLiteral("DeleteSTIGCheck-mappings"), q);
+        q.prepare(QStringLiteral("DELETE FROM STIGCheck WHERE id = :id"));
+        q.bindValue(QStringLiteral(":id"), check.id);
+        ret = q.exec() && ret;
+        Log(6, QStringLiteral("DeleteSTIGCheck-STIGCheck"), q);
+        if (!_delayCommit)
+            db.commit();
+    }
+    return ret;
 }
 
 /**

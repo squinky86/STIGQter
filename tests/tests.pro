@@ -50,7 +50,8 @@ SOURCES += \
     ../src/workerpoamreport.cpp \
     ../src/workerstigadd.cpp \
     ../src/workerstigdelete.cpp \
-    ../src/workerstigdownload.cpp
+    ../src/workerstigdownload.cpp \
+    ../src/workerstigexport.cpp
 
 HEADERS += \
     tst_stigqter.h \
@@ -90,7 +91,8 @@ HEADERS += \
     ../src/workerpoamreport.h \
     ../src/workerstigadd.h \
     ../src/workerstigdelete.h \
-    ../src/workerstigdownload.h
+    ../src/workerstigdownload.h \
+    ../src/workerstigexport.h
 
 FORMS += \
     ../src/assetview.ui \
