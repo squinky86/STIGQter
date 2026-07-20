@@ -29,26 +29,28 @@
  * grouped. Normally, systems divide documentation into separate
  * @a Families.
  *
- * The standard set of Families defined by NIST 800-53rev4 is
+ * The standard set of Families defined by NIST 800-53rev5 is
  * @list
  * @li AC - Access Control
- * @li AU - Audit and Accountability
  * @li AT - Awareness and Training
+ * @li AU - Audit and Accountability
+ * @li CA - Assessment, Authorization, and Monitoring
  * @li CM - Configuration Management
  * @li CP - Contingency Planning
  * @li IA - Identification and Authentication
  * @li IR - Incident Response
  * @li MA - Maintenance
  * @li MP - Media Protection
- * @li PS - Personnel Security
  * @li PE - Physical and Environmental Protection
  * @li PL - Planning
  * @li PM - Program Management
+ * @li PS - Personnel Security
+ * @li PT - PII Processing and Transparency
  * @li RA - Risk Assessment
- * @li CA - Security Assessment and Authorization
+ * @li SA - System and Services Acquisition
  * @li SC - System and Communications Protection
  * @li SI - System and Information Integrity
- * @li SA - System and Services Acquisition
+ * @li SR - Supply Chain Risk Management
  * @endlist
  *
  * A @a Family provides a high-level, logical grouping for

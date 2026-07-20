@@ -2,6 +2,8 @@
 
 [STIGQter](https://www.stigqter.com/) is an open-source reimplementation of DISA's STIG Viewer. It is used to generate STIG Checklist files (CKLs) and build finding reports. These reports can then be used to determine compliance in eMASS.
 
+STIG checks are mapped to CCIs and rolled up against the NIST SP 800-53 Revision 5 control catalog (RMF). The bundled control set (`src/800-53-rev5-controls.xml`) is regenerated from NIST's authoritative OSCAL catalog via `scripts/generate_rev5_controls.py`.
+
 ## Installation
 
 Only the source package is supported. To help with implementations, different installation options are provided:

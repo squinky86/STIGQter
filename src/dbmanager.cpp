@@ -480,28 +480,30 @@ bool DbManager::AddControl(const QString &control, const QString &title, const Q
  *
  * When parsing @a Families, the standard Acronym (which becomes
  * incorporated into the @a Control's human-readable presentation)
- * corresponds to a particular @a Family. The NIST 800-53rev4
+ * corresponds to a particular @a Family. The NIST 800-53rev5
  * @a Families are (obtained from
- * @l {https://nvd.nist.gov/800-53/Rev4} {NIST}.):
+ * @l {https://csrc.nist.gov/pubs/sp/800/53/r5/upd1/final} {NIST}.):
  * @list
  * @li AC - Access Control
- * @li AU - Audit and Accountability
  * @li AT - Awareness and Training
+ * @li AU - Audit and Accountability
+ * @li CA - Assessment, Authorization, and Monitoring
  * @li CM - Configuration Management
  * @li CP - Contingency Planning
  * @li IA - Identification and Authentication
  * @li IR - Incident Response
  * @li MA - Maintenance
  * @li MP - Media Protection
- * @li PS - Personnel Security
  * @li PE - Physical and Environmental Protection
  * @li PL - Planning
  * @li PM - Program Management
+ * @li PS - Personnel Security
+ * @li PT - PII Processing and Transparency
  * @li RA - Risk Assessment
- * @li CA - Security Assessment and Authorization
+ * @li SA - System and Services Acquisition
  * @li SC - System and Communications Protection
  * @li SI - System and Information Integrity
- * @li SA - System and Services Acquisition
+ * @li SR - Supply Chain Risk Management
  * @endlist
  */
 bool DbManager::AddFamily(const QString &acronym, const QString &description)
@@ -641,7 +643,7 @@ bool DbManager::AddSTIG(STIG &stig, const QVector<STIGCheck> &checks, const QVec
                         remapCCIsStr = remapCCIsStr + PrintCCI(cci);
                         c.cciIds.append(cci.id);
                     }
-                    Warning(QStringLiteral("Broken CCI"), "The STIGCheck rule " + c.rule + " is not mapped against a known CCI. If you are importing a STIG, please file a bug with the STIG author (probably DISA, disa.stig_spt@mail.mil) and let them know that their CCI mapping for the STIG you are trying to import is broken. For now, this broken STIG check is being remapped to " + remapCCIsStr + ". <a href=\"mailto:disa.stig_spt@mail.mil?subject=Incorrectly%20Mapped%20STIG%20Check&body=DISA,%0d" + PrintSTIG(stig) + "%20contains%20rule%20" + c.rule + "%20mapped%20against%20an%20unknown%20CCI%20which%20does%20not%20exist%20in%20the%20current%20version%20of%20NIST%20800-53r4.\">Click here</a> to file this bug with DISA automatically.");
+                    Warning(QStringLiteral("Broken CCI"), "The STIGCheck rule " + c.rule + " is not mapped against a known CCI. If you are importing a STIG, please file a bug with the STIG author (probably DISA, disa.stig_spt@mail.mil) and let them know that their CCI mapping for the STIG you are trying to import is broken. For now, this broken STIG check is being remapped to " + remapCCIsStr + ". <a href=\"mailto:disa.stig_spt@mail.mil?subject=Incorrectly%20Mapped%20STIG%20Check&body=DISA,%0d" + PrintSTIG(stig) + "%20contains%20rule%20" + c.rule + "%20mapped%20against%20an%20unknown%20CCI%20which%20does%20not%20exist%20in%20the%20current%20version%20of%20NIST%20800-53r5.\">Click here</a> to file this bug with DISA automatically.");
                 }
 
                 for (int cciId : c.cciIds)
@@ -1185,7 +1187,7 @@ QVector<CCI> DbManager::GetCCIs(int STIGCheckId)
  * is opened displaying the broken @a cci information. This function
  * is typically called by STIG import routines, and the failure
  * scenario is most often triggered by STIGs not mapped to CCIs that
- * are part of the latest NIST 800-53rev4. Some STIG checks were
+ * are part of the latest NIST 800-53rev5. Some STIG checks were
  * errantly "mapped" by DISA to CCIs that were removed or replaced.
  *
  * Formerly, the CCI was supposed to be remapped to CCI-366; however,
@@ -1202,7 +1204,7 @@ CCI DbManager::GetCCIByCCI(int cci, const STIG *stig)
     QString cciStr = PrintCCI(cci);
 
     //The CCI could not be found. Assume that this will be remapped later.
-    Warning(QStringLiteral("Broken CCI"), "The CCI " + cciStr + " does not exist in NIST 800-53r4. If you are importing a STIG, please file a bug with the STIG author (probably DISA, disa.stig_spt@mail.mil) and let them know that their CCI mapping for the STIG you are trying to import is broken. For now, this broken STIG check is being remapped to CCI-000366. <a href=\"mailto:disa.stig_spt@mail.mil?subject=Incorrectly%20Mapped%20STIG%20Check&body=DISA,%0d" + tmpMessage + "%20contains%20rule(s)%20mapped%20against%20" + cciStr + "%20which%20does%20not%20exist%20in%20the%20current%20version%20of%20NIST%20800-53r4.\">Click here</a> to file this bug with DISA automatically.");
+    Warning(QStringLiteral("Broken CCI"), "The CCI " + cciStr + " does not exist in NIST 800-53r5. If you are importing a STIG, please file a bug with the STIG author (probably DISA, disa.stig_spt@mail.mil) and let them know that their CCI mapping for the STIG you are trying to import is broken. For now, this broken STIG check is being remapped to CCI-000366. <a href=\"mailto:disa.stig_spt@mail.mil?subject=Incorrectly%20Mapped%20STIG%20Check&body=DISA,%0d" + tmpMessage + "%20contains%20rule(s)%20mapped%20against%20" + cciStr + "%20which%20does%20not%20exist%20in%20the%20current%20version%20of%20NIST%20800-53r5.\">Click here</a> to file this bug with DISA automatically.");
 
     //If the CCI isn't in the database, provide unsuccessful default CCI.
     CCI ret;
