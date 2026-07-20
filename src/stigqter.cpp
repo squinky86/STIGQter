@@ -721,7 +721,8 @@ bool STIGQter::Reset(bool checkOnly)
         if (checkOnly)
             return true; // database is not saved externally
 
-        QMessageBox::StandardButton reply = QMessageBox::question(this, QStringLiteral("Unsaved Changes"), QStringLiteral("The data have not been saved. Really close?"), QMessageBox::Yes|QMessageBox::No);
+        //IgnoreWarnings is set by the test runner; never block teardown on a modal
+        QMessageBox::StandardButton reply = IgnoreWarnings ? QMessageBox::Yes : QMessageBox::question(this, QStringLiteral("Unsaved Changes"), QStringLiteral("The data have not been saved. Really close?"), QMessageBox::Yes|QMessageBox::No);
         if (reply == QMessageBox::Yes)
         {
             DbManager db;
@@ -754,7 +755,8 @@ bool STIGQter::Reset(bool checkOnly)
         else
         {
             //there are unsaved changes; verify closing the DB
-            QMessageBox::StandardButton reply = QMessageBox::question(this, QStringLiteral("Unsaved Changes"), QStringLiteral("There are unsaved changes to the file you wrote. Really close?"), QMessageBox::Yes|QMessageBox::No);
+            //IgnoreWarnings is set by the test runner; never block teardown on a modal
+            QMessageBox::StandardButton reply = IgnoreWarnings ? QMessageBox::Yes : QMessageBox::question(this, QStringLiteral("Unsaved Changes"), QStringLiteral("There are unsaved changes to the file you wrote. Really close?"), QMessageBox::Yes|QMessageBox::No);
             if (reply == QMessageBox::Yes)
             {
                 if (checkOnly)
