@@ -1595,6 +1595,12 @@ void STIGQter::SetButtonIcons()
 
     //footer
     ui->btnQuit->setIcon(s->standardIcon(QStyle::SP_DialogCloseButton));
+
+    //subtle zebra striping makes dense reference lists easier to scan
+    ui->lstCCIs->setAlternatingRowColors(true);
+    ui->lstSTIGs->setAlternatingRowColors(true);
+    ui->lstAssets->setAlternatingRowColors(true);
+    ui->lstCKLs->setAlternatingRowColors(true);
 }
 
 /**

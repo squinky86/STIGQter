@@ -107,6 +107,10 @@ AssetView::AssetView(Asset &asset, QWidget *parent) :
     ui->txtComments->setToolTip(QStringLiteral("Reviewer comments recorded for this check (exported to CKL and reports)."));
     ui->txtSTIGFilter->setPlaceholderText(QStringLiteral("Filter STIGs by title…"));
 
+    //subtle zebra striping for the longer scanning lists
+    ui->lstChecks->setAlternatingRowColors(true);
+    ui->lstSTIGs->setAlternatingRowColors(true);
+
     /*
      * The main timer signals that the checklist entries have been
      * modified by the user. Since the user may be modifying large
