@@ -115,6 +115,7 @@ private:
     void DisplayCCIs();
     void DisplaySTIGs(const QString &search = QString());
     void EnableInput();
+    void SetButtonIcons();
     void UpdateRemapButton();
     bool _isFiltered;
     int _testStep = 0;

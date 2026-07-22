@@ -51,6 +51,7 @@
 #include <QMessageBox>
 #include <QProcess>
 #include <QStandardPaths>
+#include <QStyle>
 #include <QThread>
 
 #include <algorithm>
@@ -99,6 +100,10 @@ STIGQter::STIGQter(QWidget *parent) :
 
     //set the title bar
     this->setWindowTitle(QStringLiteral("STIGQter ") + VERSION);
+
+    //add theme-consistent icons to the action buttons for at-a-glance affordance.
+    //Icons are purely presentational; button text (the technical labels) is unchanged.
+    SetButtonIcons();
 
     //make sure that the initial data are populated and active
     Display();
@@ -1552,7 +1557,44 @@ void STIGQter::EnableInput()
 void STIGQter::UpdateRemapButton()
 {
     ui->btnMapUnmapped->setText(ui->cbRemapCM6->isChecked() ? QStringLiteral("Remap CM-6") : QStringLiteral("Remap CCI-366"));
-    ui->btnMapUnmapped->setToolTip(ui->btnMapUnmapped->text());
+    ui->btnMapUnmapped->setToolTip(ui->cbRemapCM6->isChecked()
+        ? QStringLiteral("Remap unmapped/mis-mapped STIG checks to CM-6.")
+        : QStringLiteral("Remap unmapped/mis-mapped STIG checks to CCI-000366."));
+}
+
+/**
+ * @brief STIGQter::SetButtonIcons
+ *
+ * Attach theme-consistent standard icons to the main-window action
+ * buttons so their purpose is recognizable at a glance. This is purely
+ * cosmetic: every button keeps its existing text label (and therefore
+ * all of its technical meaning); the icon is an additional cue.
+ */
+void STIGQter::SetButtonIcons()
+{
+    QStyle *s = style();
+
+    //Step 1 - reference data
+    ui->btnClearCCIs->setIcon(s->standardIcon(QStyle::SP_TrashIcon));
+    ui->btnImportEmass->setIcon(s->standardIcon(QStyle::SP_DialogOpenButton));
+    ui->btnDeleteEmassImport->setIcon(s->standardIcon(QStyle::SP_TrashIcon));
+    ui->btnImportEmassControl->setIcon(s->standardIcon(QStyle::SP_DialogOpenButton));
+
+    //Step 2 - STIG library
+    ui->btnClearSTIGs->setIcon(s->standardIcon(QStyle::SP_TrashIcon));
+    ui->btnCreateCKL->setIcon(s->standardIcon(QStyle::SP_FileDialogNewFolder));
+    ui->btnImportSTIGs->setIcon(s->standardIcon(QStyle::SP_DialogOpenButton));
+    ui->btnDownloadSTIGs->setIcon(s->standardIcon(QStyle::SP_ArrowDown));
+    ui->btnMapUnmapped->setIcon(s->standardIcon(QStyle::SP_BrowserReload));
+    ui->btnEditSTIG->setIcon(s->standardIcon(QStyle::SP_FileDialogDetailedView));
+
+    //Step 3 - assets & checklists
+    ui->btnDeleteAssets->setIcon(s->standardIcon(QStyle::SP_TrashIcon));
+    ui->btnImportCKL->setIcon(s->standardIcon(QStyle::SP_DialogOpenButton));
+    ui->btnOpenCKL->setIcon(s->standardIcon(QStyle::SP_DirOpenIcon));
+
+    //footer
+    ui->btnQuit->setIcon(s->standardIcon(QStyle::SP_DialogCloseButton));
 }
 
 /**

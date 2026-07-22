@@ -147,7 +147,8 @@ DISTFILES += \
 
 resources.files = \
     src/U_CCI_List.xml \
-    src/800-53-rev5-controls.xml
+    src/800-53-rev5-controls.xml \
+    src/STIGQter.svg
 resources.prefix = /dod
 
 RESOURCES = resources

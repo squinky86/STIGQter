@@ -136,10 +136,15 @@ void WorkerCCIAdd::process()
                 else if ((xml->name().compare(QStringLiteral("control")) == 0) || (xml->name().compare(QStringLiteral("control-enhancement")) == 0))
                 {
                     inStatement = false;
-                    Q_EMIT updateStatus("Adding " + control);
-                    CheckFamily(control.left(2), family, familiesAdded, true);
-                    db.AddControl(control, title, description);
-                    Q_EMIT progress(-1);
+                    //commit the previous control; skip the empty priming state
+                    //that exists before the first <number> is read.
+                    if (!control.isEmpty())
+                    {
+                        Q_EMIT updateStatus("Adding " + control);
+                        CheckFamily(control.left(2), family, familiesAdded, true);
+                        db.AddControl(control, title, description);
+                        Q_EMIT progress(-1);
+                    }
                 }
             }
             else
@@ -156,10 +161,15 @@ void WorkerCCIAdd::process()
                     family = xml->readElementText().trimmed();
                 else if ((xml->name().compare(QStringLiteral("control")) == 0) || (xml->name().compare(QStringLiteral("control-enhancement")) == 0))
                 {
-                    Q_EMIT updateStatus("Adding " + control);
-                    CheckFamily(control.left(2), family, familiesAdded, true);
-                    db.AddControl(control, title, description);
-                    Q_EMIT progress(-1);
+                    //commit the previous control; skip the empty priming state
+                    //that exists before the first <number> is read.
+                    if (!control.isEmpty())
+                    {
+                        Q_EMIT updateStatus("Adding " + control);
+                        CheckFamily(control.left(2), family, familiesAdded, true);
+                        db.AddControl(control, title, description);
+                        Q_EMIT progress(-1);
+                    }
                 }
             }
         }
@@ -220,22 +230,31 @@ void WorkerCCIAdd::process()
                     if (!version.isEmpty() && !index.isEmpty() && (version == QStringLiteral("5"))) //Only Rev 5 (RMF) supported
                     {
                         int cciInt = QStringView{cci}.right(6).toString().toInt();
-                        QString control2 = index;
-                        int tmpIndex = index.indexOf(' ');
+                        //Some CCI references list multiple controls in a single
+                        //index attribute (e.g. "SC-37, SC-37 (1)"). The data model
+                        //maps a CCI to a single control, so keep only the first
+                        //control (matching the Rev 4 mapping) by truncating at the
+                        //first comma; otherwise the trailing entry corrupts parsing
+                        //(the control resolves to id -1).
+                        QString indexStr = index;
+                        if (indexStr.contains(QLatin1Char(',')))
+                            indexStr = indexStr.left(indexStr.indexOf(QLatin1Char(','))).trimmed();
+                        QString control2 = indexStr;
+                        int tmpIndex = indexStr.indexOf(' ');
                         if (control2.contains(' '))
                             control2 = control2.left(control2.indexOf(' '));
                         if (control2.contains('.'))
                             control2 = control2.left(control2.indexOf('.'));
-                        if (index.contains('('))
+                        if (indexStr.contains('('))
                         {
                             //check if a second space is present. If the parenthesis is after the second space, it is not an enhancement.
-                            tmpIndex = index.indexOf(' ', tmpIndex + 1);
-                            int tmpInt = index.indexOf('(');
+                            tmpIndex = indexStr.indexOf(' ', tmpIndex + 1);
+                            int tmpInt = indexStr.indexOf('(');
                             if (tmpIndex <= 0 || tmpInt < tmpIndex)
                             {
-                                QString enhancement(index);
+                                QString enhancement(indexStr);
                                 enhancement = enhancement.remove(0, tmpInt);
-                                enhancement = enhancement.left(index.indexOf(')') - tmpInt + 1);
+                                enhancement = enhancement.left(indexStr.indexOf(')') - tmpInt + 1);
                                 control2.append(enhancement);
                             }
                         }

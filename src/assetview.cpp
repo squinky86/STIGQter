@@ -35,6 +35,7 @@
 #include <QInputDialog>
 #include <QMessageBox>
 #include <QShortcut>
+#include <QStyle>
 #include <QXmlStreamWriter>
 #include <QTimer>
 
@@ -74,6 +75,37 @@ AssetView::AssetView(Asset &asset, QWidget *parent) :
     ui->splitter->setStretchFactor(0, 1);
     ui->splitter->setStretchFactor(1, 3);
     ui->splitter->setStretchFactor(2, 2);
+
+    //theme-consistent icons on the action buttons (purely cosmetic cues)
+    QStyle *st = style();
+    ui->btnDeleteAsset->setIcon(st->standardIcon(QStyle::SP_TrashIcon));
+    ui->btnRename->setIcon(st->standardIcon(QStyle::SP_FileDialogDetailedView));
+    ui->btnImportXCCDF->setIcon(st->standardIcon(QStyle::SP_DialogOpenButton));
+    ui->btnSaveCKL->setIcon(st->standardIcon(QStyle::SP_DialogSaveButton));
+    ui->btnSaveCKLs->setIcon(st->standardIcon(QStyle::SP_DialogSaveButton));
+    ui->btnUpgradeCKL->setIcon(st->standardIcon(QStyle::SP_ArrowUp));
+
+    //spell out the terse filter/severity codes so newcomers aren't lost;
+    //the on-screen codes stay exactly as-is for experienced users.
+    ui->cboBoxFilterStatus->setToolTip(QStringLiteral(
+        "Filter checks by status:\n"
+        "All — every check\n"
+        "NR — Not Reviewed\n"
+        "O — Open (a finding)\n"
+        "NA — Not Applicable\n"
+        "NF — Not a Finding (compliant)"));
+    ui->cboBoxFilterSeverity->setToolTip(QStringLiteral(
+        "Filter checks by CAT severity:\n"
+        "All — every severity\n"
+        "I — CAT I (high)\n"
+        "II — CAT II (medium)\n"
+        "III — CAT III (low)\n"
+        "IV — informational"));
+    ui->cboBoxStatus->setToolTip(QStringLiteral("Compliance status of the selected check."));
+    ui->cboBoxSeverity->setToolTip(QStringLiteral("Severity override for the selected check (requires a justification)."));
+    ui->txtFindingDetails->setToolTip(QStringLiteral("Finding details recorded for this check (exported to CKL and reports)."));
+    ui->txtComments->setToolTip(QStringLiteral("Reviewer comments recorded for this check (exported to CKL and reports)."));
+    ui->txtSTIGFilter->setPlaceholderText(QStringLiteral("Filter STIGs by title…"));
 
     /*
      * The main timer signals that the checklist entries have been
@@ -293,8 +325,16 @@ void AssetView::ShowChecks(bool countOnly)
         }
     }
     ui->lblTotalChecks->setText(QString::number(total));
+    //emphasize the compliance posture: open findings in red when present,
+    //compliant count in green. Counts themselves are unchanged.
     ui->lblOpen->setText(QString::number(open));
+    ui->lblOpen->setStyleSheet(open > 0
+        ? QStringLiteral("QLabel { color: #C8102E; font-weight: bold; }")
+        : QStringLiteral("QLabel { color: #6B7280; }"));
     ui->lblNotAFinding->setText(QString::number(closed));
+    ui->lblNotAFinding->setStyleSheet(closed > 0
+        ? QStringLiteral("QLabel { color: #007A33; font-weight: bold; }")
+        : QStringLiteral("QLabel { color: #6B7280; }"));
     if (!countOnly)
         ui->lstChecks->sortItems();
 }
@@ -1043,6 +1083,10 @@ void AssetView::UpgradeCKL()
  */
 void AssetView::SetItemColor(QListWidgetItem *i, Status stat, Severity sev)
 {
+    //Accessible palette: these colors are chosen to stay legible on the
+    //white check-list background (unlike bright yellow/green). Open findings
+    //are bold and warm-colored by severity to draw the eye; compliant and
+    //not-applicable checks recede.
     QFont f;
     i->setFont(f);
     if (stat == Status::Open)
@@ -1052,30 +1096,30 @@ void AssetView::SetItemColor(QListWidgetItem *i, Status stat, Severity sev)
         switch (sev)
         {
         case Severity::high:
-            i->setForeground(Qt::red);
+            i->setForeground(QColor(0xC8, 0x10, 0x2E)); //CAT I - deep red
             break;
         case Severity::medium:
-            i->setForeground(QColor("orange"));
+            i->setForeground(QColor(0xC1, 0x67, 0x00)); //CAT II - dark orange
             break;
         case Severity::low:
-            i->setForeground(Qt::yellow);
+            i->setForeground(QColor(0x8A, 0x6D, 0x00)); //CAT III - dark amber (legible on white)
             break;
         default:
-            i->setForeground(Qt::black);
+            i->setForeground(QColor(0x1C, 0x1E, 0x21)); //informational/open - near-black
             break;
         }
     }
     else if (stat == Status::NotAFinding)
     {
-        i->setForeground(Qt::green);
+        i->setForeground(QColor(0x00, 0x7A, 0x33)); //compliant - accessible green
     }
     else if (stat == Status::NotApplicable)
     {
-        i->setForeground(Qt::gray);
+        i->setForeground(QColor(0x6B, 0x72, 0x80)); //N/A - muted grey
     }
     else
     {
-        i->setForeground(Qt::black);
+        i->setForeground(QColor(0x1C, 0x1E, 0x21)); //not reviewed - near-black
     }
 }
 
