@@ -29,6 +29,7 @@
 #include <QDir>
 #include <QFileDialog>
 #include <QFileInfo>
+#include <QStyle>
 
 /**
  * @brief STIGEdit::STIGEdit
@@ -42,6 +43,25 @@ STIGEdit::STIGEdit(STIG &stig, QWidget *parent) : TabViewWidget (parent),
     _s(stig)
 {
     ui->setupUi(this);
+
+    //give the check list the least room and the detail/CCI panes the most,
+    //matching the AssetView layout so the two editors feel consistent
+    ui->splitter->setStretchFactor(0, 1);
+    ui->splitter->setStretchFactor(1, 3);
+    ui->splitter->setStretchFactor(2, 2);
+
+    //theme-consistent icons on the action buttons (purely cosmetic cues)
+    QStyle *st = style();
+    ui->btnNewCheck->setIcon(st->standardIcon(QStyle::SP_FileDialogNewFolder));
+    ui->btnDeleteCheck->setIcon(st->standardIcon(QStyle::SP_TrashIcon));
+    ui->btnCciAdd->setIcon(st->standardIcon(QStyle::SP_ArrowLeft));
+    ui->btnCciDelete->setIcon(st->standardIcon(QStyle::SP_TrashIcon));
+    ui->btnSave->setIcon(st->standardIcon(QStyle::SP_DialogSaveButton));
+
+    //subtle zebra striping for the longer scanning lists
+    ui->lstChecks->setAlternatingRowColors(true);
+    ui->lstCCIs->setAlternatingRowColors(true);
+    ui->lstSupplements->setAlternatingRowColors(true);
 
     ui->txtTitle->setText(_s.title);
     ui->txtDescription->setText(_s.description);
