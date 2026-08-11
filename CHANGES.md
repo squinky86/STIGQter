@@ -7,6 +7,10 @@
 -   Validate and migrate saved projects before atomically replacing the active database
 -   Add confirmations and selection-aware states for destructive actions
 -   Improve compact-window layouts and standard Ctrl/Shift multi-selection behavior
+-   Prevent programmatic STIG-list refreshes from prompting to remove assigned STIGs
+-   Preserve severity overrides when a replacement is cancelled, require justification, and clear stale justification when restoring the baseline
+-   Correct informational severity parsing and numeric release ordering, and upgrade checklists directly to the newest available STIG release
+-   Make short STIG searches immediate, expose previously hidden rule metadata, and remove per-row database lookups from checklist filtering
 
 ## 1.2.7
 -   Fix duplicate rules in DFR (fixes #122)

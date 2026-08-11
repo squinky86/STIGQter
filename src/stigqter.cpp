@@ -1327,7 +1327,7 @@ void STIGQter::ExportHTML(const QString &dir)
  */
 void STIGQter::FilterSTIGs(const QString &text)
 {
-    if (text.length() > 2)
+    if (!text.isEmpty())
     {
         _isFiltered = true;
         DisplaySTIGs(text);

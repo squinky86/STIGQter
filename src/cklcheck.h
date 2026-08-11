@@ -50,6 +50,7 @@ public:
     int assetId;
     int stigCheckId;
     Asset GetAsset() const;
+    QString GetRule() const;
     STIGCheck GetSTIGCheck() const;
     Severity GetSeverity() const;
     Status status;
@@ -62,10 +63,16 @@ public:
         Severity l = left.GetSeverity();
         Severity r = right.GetSeverity();
         if (l == r)
-            return (left.GetSTIGCheck().rule.compare(right.GetSTIGCheck().rule) < 0);
+            return left.GetRule().compare(right.GetRule()) < 0;
         return r < l;
     }
     CKLCheck& operator=(const CKLCheck &right);
+
+private:
+    Severity _cachedSTIGSeverity;
+    QString _cachedRule;
+    bool _hasCachedSTIGData;
+    friend class DbManager;
 };
 
 Q_DECLARE_METATYPE(CKLCheck);

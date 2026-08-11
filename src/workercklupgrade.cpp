@@ -69,49 +69,41 @@ void WorkerCKLUpgrade::process()
     DbManager db;
     db.DelayCommit(true);
 
-    for (STIG s : db.GetSTIGs())
+    STIG replacement;
+    for (const STIG &s : db.GetSTIGs())
     {
-        if (s != _stig)
+        if (s != _stig && s.title == _stig.title && s.IsNewerThan(_stig) &&
+            !_asset.GetSTIGs().contains(s) &&
+            (replacement.id < 0 || s.IsNewerThan(replacement)))
         {
-            if (
-                    (s.title == _stig.title) &&
-                    (
-                        (s.version > _stig.version) ||
-                        ((s.version == _stig.version) && (s.release.compare(_stig.release) > 0))
-                    ) &&
-                    (!_asset.GetSTIGs().contains(s))
-                )
+            replacement = s;
+        }
+    }
+
+    if (replacement.id >= 0)
+    {
+        db.AddSTIGToAsset(replacement, _asset);
+        db.DelayCommit(true);
+        QVector<CKLCheck> oldChecks = _asset.GetCKLChecks(&_stig);
+        for (CKLCheck ckl : _asset.GetCKLChecks(&replacement))
+        {
+            Q_EMIT updateStatus("Updating " + PrintCKLCheck(ckl) + "...");
+            for (const CKLCheck &cklOld : oldChecks)
             {
-                //found STIG to upgrade to
-                db.AddSTIGToAsset(s, _asset);
-                db.DelayCommit(true);
-                QVector<CKLCheck> oldChecks = _asset.GetCKLChecks(&_stig);
-                for (CKLCheck ckl : _asset.GetCKLChecks(&s))
+                if (cklOld.GetSTIGCheck().vulnNum == ckl.GetSTIGCheck().vulnNum)
                 {
-                    Q_EMIT updateStatus("Updating " + PrintCKLCheck(ckl) + "...");
-                    bool updated = false;
-                    for (CKLCheck cklOld : oldChecks)
-                    {
-                        if (cklOld.GetSTIGCheck().vulnNum == ckl.GetSTIGCheck().vulnNum)
-                        {
-                            ckl.status = cklOld.status;
-                            ckl.findingDetails = cklOld.findingDetails;
-                            ckl.comments = cklOld.comments;
-                            ckl.severityOverride = cklOld.severityOverride;
-                            ckl.severityJustification = cklOld.severityJustification;
-                            db.UpdateCKLCheck(ckl);
-                            updated = true;
-                            Q_EMIT progress(-1);
-                            break;
-                        }
-                    }
-                    if (updated)
-                        continue;
+                    ckl.status = cklOld.status;
+                    ckl.findingDetails = cklOld.findingDetails;
+                    ckl.comments = cklOld.comments;
+                    ckl.severityOverride = cklOld.severityOverride;
+                    ckl.severityJustification = cklOld.severityJustification;
+                    db.UpdateCKLCheck(ckl);
+                    Q_EMIT progress(-1);
+                    break;
                 }
-                db.DelayCommit(false);
-                break;
             }
         }
+        db.DelayCommit(false);
     }
     Q_EMIT updateStatus(QStringLiteral("Done!"));
     Q_EMIT finished();

@@ -46,6 +46,7 @@ public:
     QVector<Asset> GetAssets() const;
     QVector<STIGCheck> GetSTIGChecks() const;
     QVector<Supplement> GetSupplements() const;
+    bool IsNewerThan(const STIG &other) const;
     STIG& operator=(const STIG &right);
     bool operator<(const STIG &right) const;
 };

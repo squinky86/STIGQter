@@ -1567,7 +1567,7 @@ CKLCheck DbManager::GetCKLCheck(const CKLCheck &ckl)
  */
 CKLCheck DbManager::GetCKLCheckByDISAId(int assetId, const QString &disaId)
 {
-    QVector<CKLCheck> ret = GetCKLChecks(QStringLiteral("JOIN STIGCheck ON CKLCheck.STIGCheckId = STIGCheck.id WHERE AssetId = :AssetId AND rule = :DISAId"), {
+    QVector<CKLCheck> ret = GetCKLChecks(QStringLiteral("WHERE AssetId = :AssetId AND STIGCheck.rule = :DISAId"), {
                         std::make_tuple<QString, QVariant>(QStringLiteral(":AssetId"), assetId),
                         std::make_tuple<QString, QVariant>(QStringLiteral(":DISAId"), disaId)
                     });
@@ -1680,7 +1680,7 @@ QVector<CKLCheck> DbManager::GetCKLChecks(const QString &whereClause, const QVec
     if (CheckDatabase(db))
     {
         QSqlQuery q(db);
-        QString toPrep = QStringLiteral("SELECT CKLCheck.id, CKLCheck.AssetId, CKLCheck.STIGCheckId, CKLCheck.status, CKLCheck.findingDetails, CKLCheck.comments, CKLCheck.severityOverride, CKLCheck.severityJustification FROM CKLCheck");
+        QString toPrep = QStringLiteral("SELECT CKLCheck.id, CKLCheck.AssetId, CKLCheck.STIGCheckId, CKLCheck.status, CKLCheck.findingDetails, CKLCheck.comments, CKLCheck.severityOverride, CKLCheck.severityJustification, STIGCheck.severity, STIGCheck.rule FROM CKLCheck JOIN STIGCheck ON CKLCheck.STIGCheckId = STIGCheck.id");
         if (!whereClause.isNull() && !whereClause.isEmpty())
             toPrep.append(" " + whereClause);
         q.prepare(toPrep);
@@ -1703,6 +1703,9 @@ QVector<CKLCheck> DbManager::GetCKLChecks(const QString &whereClause, const QVec
             c.comments = q.value(5).toString();
             c.severityOverride = static_cast<Severity>(q.value(6).toInt());
             c.severityJustification = q.value(7).toString();
+            c._cachedSTIGSeverity = static_cast<Severity>(q.value(8).toInt());
+            c._cachedRule = q.value(9).toString();
+            c._hasCachedSTIGData = true;
 
             ret.append(c);
         }

@@ -58,7 +58,10 @@ CKLCheck::CKLCheck(QObject *parent) : QObject(parent),
     findingDetails(),
     comments(),
     severityOverride(),
-    severityJustification()
+    severityJustification(),
+    _cachedSTIGSeverity(Severity::none),
+    _cachedRule(),
+    _hasCachedSTIGData(false)
 {
 }
 
@@ -103,6 +106,15 @@ STIGCheck CKLCheck::GetSTIGCheck() const
 }
 
 /**
+ * @brief CKLCheck::GetRule
+ * @return The rule identifier for this checklist entry.
+ */
+QString CKLCheck::GetRule() const
+{
+    return _hasCachedSTIGData ? _cachedRule : GetSTIGCheck().rule;
+}
+
+/**
  * @brief CKLCheck::GetSeverity
  * @return The @a Severity of this check.
  *
@@ -113,7 +125,7 @@ STIGCheck CKLCheck::GetSTIGCheck() const
 Severity CKLCheck::GetSeverity() const
 {
     if (severityOverride == Severity::none)
-        return GetSTIGCheck().severity;
+        return _hasCachedSTIGData ? _cachedSTIGSeverity : GetSTIGCheck().severity;
     return severityOverride;
 }
 
@@ -136,6 +148,9 @@ CKLCheck &CKLCheck::operator=(const CKLCheck &right)
         comments = right.comments;
         severityOverride = right.severityOverride;
         severityJustification = right.severityJustification;
+        _cachedSTIGSeverity = right._cachedSTIGSeverity;
+        _cachedRule = right._cachedRule;
+        _hasCachedSTIGData = right._hasCachedSTIGData;
     }
     return *this;
 }
@@ -215,5 +230,5 @@ QString GetCMRSStatus(Status status)
  */
 [[nodiscard]] QString PrintCKLCheck(const CKLCheck &cklCheck)
 {
-    return PrintSTIGCheck(cklCheck.GetSTIGCheck());
+    return cklCheck.GetRule();
 }

@@ -35,10 +35,12 @@
 #include <QInputDialog>
 #include <QMessageBox>
 #include <QShortcut>
+#include <QSignalBlocker>
 #include <QStyle>
 #include <QXmlStreamWriter>
 #include <QTimer>
 
+#include <algorithm>
 #include <utility>
 
 /**
@@ -109,6 +111,7 @@ AssetView::AssetView(Asset &asset, QWidget *parent) :
 
     //subtle zebra striping for the longer scanning lists
     ui->lstChecks->setAlternatingRowColors(true);
+    ui->lstChecks->setUniformItemSizes(true);
     ui->lstSTIGs->setAlternatingRowColors(true);
 
     /*
@@ -252,6 +255,7 @@ TabType AssetView::GetTabType()
 void AssetView::SelectSTIGs(const QString &search)
 {
     DbManager db;
+    const QSignalBlocker selectionGuard(ui->lstSTIGs);
 
     ui->lstSTIGs->clear();
     QVector<STIG> stigs = _asset.GetSTIGs();
@@ -288,8 +292,14 @@ void AssetView::CountChecks()
  */
 void AssetView::ShowChecks(bool countOnly)
 {
+    const bool signalsWereBlocked = ui->lstChecks->signalsBlocked();
+    const bool updatesWereEnabled = ui->lstChecks->updatesEnabled();
     if (!countOnly)
+    {
+        ui->lstChecks->blockSignals(true);
+        ui->lstChecks->setUpdatesEnabled(false);
         ui->lstChecks->clear();
+    }
     int total = 0; //total checks
     int open = 0; //findings
     int closed = 0; //passed checks
@@ -299,7 +309,15 @@ void AssetView::ShowChecks(bool countOnly)
     QString filterStatusText = ui->cboBoxFilterStatus->currentText();
     Status filterStatus = GetStatus(ui->cboBoxFilterStatus->currentText());
 
-    for (const CKLCheck &c : _asset.GetCKLChecks())
+    QVector<CKLCheck> checks = _asset.GetCKLChecks();
+    if (!countOnly)
+    {
+        std::sort(checks.begin(), checks.end(), [](const CKLCheck &left, const CKLCheck &right) {
+            return left.GetRule().compare(right.GetRule(), Qt::CaseInsensitive) < 0;
+        });
+    }
+
+    for (const CKLCheck &c : checks)
     {
         total++;
         switch (c.status)
@@ -327,7 +345,7 @@ void AssetView::ShowChecks(bool countOnly)
             QListWidgetItem *i = new QListWidgetItem(PrintCKLCheck(c));
             ui->lstChecks->addItem(i);
             i->setData(Qt::UserRole, QVariant::fromValue<CKLCheck>(c));
-            SetItemColor(i, c.status, (c.severityOverride == Severity::none) ? c.GetSTIGCheck().severity : c.severityOverride);
+            SetItemColor(i, c.status, c.GetSeverity());
         }
     }
     ui->lblTotalChecks->setText(QString::number(total));
@@ -342,7 +360,15 @@ void AssetView::ShowChecks(bool countOnly)
         ? QStringLiteral("QLabel { color: #007A33; font-weight: bold; }")
         : QStringLiteral("QLabel { color: #6B7280; }"));
     if (!countOnly)
-        ui->lstChecks->sortItems();
+    {
+        ui->lstChecks->setUpdatesEnabled(updatesWereEnabled);
+        ui->lstChecks->blockSignals(signalsWereBlocked);
+        if (!signalsWereBlocked)
+        {
+            CheckSelected(nullptr, nullptr);
+            CheckSelectedChanged();
+        }
+    }
 }
 
 /**
@@ -390,8 +416,7 @@ void AssetView::UpdateCKLCheck(const CKLCheck &cklCheck)
             if (
                     (s.title == selectedSTIG.title) &&
                     (
-                        (s.version > selectedSTIG.version) ||
-                        ((s.version == selectedSTIG.version) && (s.release.compare(selectedSTIG.release) > 0))
+                        s.IsNewerThan(selectedSTIG)
                     ) &&
                     (!_asset.GetSTIGs().contains(s))
                 )
@@ -415,17 +440,36 @@ void AssetView::UpdateSTIGCheck(const STIGCheck &stigCheck)
     ui->lblCheckTitle->setText(stigCheck.title);
     ui->cboBoxSeverity->setCurrentText(GetSeverity(stigCheck.severity));
     ui->cbDocumentable->setChecked(stigCheck.documentable);
-    ui->lblDiscussion->setText(stigCheck.vulnDiscussion);
-    ui->lblFalsePositives->setText(stigCheck.falsePositives);
-    ui->lblFalseNegatives->setText(stigCheck.falseNegatives);
-    ui->lblFix->setText(stigCheck.fix);
-    ui->lblCheck->setText(stigCheck.check);
+    ui->lblDiscussion->setPlainText(stigCheck.vulnDiscussion);
+    ui->lblFalsePositives->setPlainText(stigCheck.falsePositives);
+    ui->lblFalseNegatives->setPlainText(stigCheck.falseNegatives);
+    ui->lblFix->setPlainText(stigCheck.fix);
+    ui->lblCheck->setPlainText(stigCheck.check);
+    const auto displayValue = [](const QString &value) {
+        return value.trimmed().isEmpty() ? QStringLiteral("Not provided") : value;
+    };
+    QStringList additionalDetails;
+    additionalDetails
+        << QStringLiteral("Vulnerability ID: ") + displayValue(stigCheck.vulnNum)
+        << QStringLiteral("Group title: ") + displayValue(stigCheck.groupTitle)
+        << QStringLiteral("Rule version: ") + displayValue(stigCheck.ruleVersion)
+        << QStringLiteral("Weight: ") + QString::number(stigCheck.weight)
+        << QStringLiteral("Mitigations: ") + displayValue(stigCheck.mitigations)
+        << QStringLiteral("Severity override guidance: ") + displayValue(stigCheck.severityOverrideGuidance)
+        << QStringLiteral("Check content reference: ") + displayValue(stigCheck.checkContentRef)
+        << QStringLiteral("Potential impact: ") + displayValue(stigCheck.potentialImpact)
+        << QStringLiteral("Third-party tools: ") + displayValue(stigCheck.thirdPartyTools)
+        << QStringLiteral("Mitigation control: ") + displayValue(stigCheck.mitigationControl)
+        << QStringLiteral("Responsibility: ") + displayValue(stigCheck.responsibility)
+        << QStringLiteral("IA controls: ") + displayValue(stigCheck.iaControls)
+        << QStringLiteral("Target key: ") + displayValue(stigCheck.targetKey);
+    ui->lblAdditionalDetails->setPlainText(additionalDetails.join(QStringLiteral("\n\n")));
     QString ccis(QStringLiteral("Relevant CCI(s):\n"));
     for (auto cci : stigCheck.GetCCIs())
     {
         ccis.append(PrintCCI(cci) + QStringLiteral(": ") + cci.definition + QStringLiteral("\n"));
     }
-    ui->lblCcis->setText(ccis);
+    ui->lblCcis->setPlainText(ccis);
 }
 
 void AssetView::RunTests()
@@ -552,8 +596,7 @@ void AssetView::DeleteAsset(bool confirm)
  */
 void AssetView::FilterSTIGs(const QString &text)
 {
-    ui->lstSTIGs->blockSignals(true);
-    if (text.length() > 2)
+    if (!text.isEmpty())
     {
         _isFiltered = true;
         SelectSTIGs(text);
@@ -563,7 +606,6 @@ void AssetView::FilterSTIGs(const QString &text)
         _isFiltered = false;
         SelectSTIGs();
     }
-    ui->lstSTIGs->blockSignals(false);
 }
 
 /**
@@ -976,8 +1018,7 @@ void AssetView::UpdateCKLStatus(const QString &val)
         for (QListWidgetItem *i : selectedItems)
         {
             auto cc = i->data(Qt::UserRole).value<CKLCheck>();
-            STIGCheck sc = cc.GetSTIGCheck();
-            SetItemColor(i, stat, (cc.severityOverride == Severity::none) ? sc.severity : cc.severityOverride);
+            SetItemColor(i, stat, cc.GetSeverity());
         }
         _updateStatus = true;
         UpdateCKL();
@@ -1000,6 +1041,7 @@ void AssetView::UpdateCKLSeverity(const QString &val)
         QListWidgetItem *i = selectedItems.first();
         auto cc = i->data(Qt::UserRole).value<CKLCheck>();
         STIGCheck sc = cc.GetSTIGCheck();
+        const Severity previousSeverity = cc.GetSeverity();
         Severity tmpSeverity = GetSeverity(val);
         if (sc.severity != tmpSeverity)
         {
@@ -1014,20 +1056,30 @@ void AssetView::UpdateCKLSeverity(const QString &val)
             else
             {
                 bool ok(false);
+                QString prompt = tr("Justification:");
+                if (!sc.severityOverrideGuidance.trimmed().isEmpty())
+                    prompt += tr("\n\nSTIG guidance:\n") + sc.severityOverrideGuidance;
                 QString justification = QInputDialog::getMultiLineText(this, tr("Severity Override Justification"),
-                                        tr("Justification:"), _justification, &ok);
-                if (ok)
+                                        prompt, _justification, &ok);
+                if (ok && !justification.trimmed().isEmpty())
                 {
                     _justification = justification;
                 }
                 else
                 {
+                    if (ok)
+                        Warning(QStringLiteral("Severity Override Requires Justification"),
+                                QStringLiteral("Enter a justification before changing the severity."));
                     ui->cboBoxSeverity->blockSignals(true);
-                    ui->cboBoxSeverity->setCurrentText(GetSeverity(sc.severity));
+                    ui->cboBoxSeverity->setCurrentText(GetSeverity(previousSeverity));
                     ui->cboBoxSeverity->blockSignals(false);
                     return;
                 }
             }
+        }
+        else
+        {
+            _justification.clear();
         }
         SetItemColor(i, GetStatus(ui->cboBoxStatus->currentText()), GetSeverity(ui->cboBoxSeverity->currentText()));
         UpdateCKL();

@@ -412,13 +412,16 @@ quint32 GetClassificationColor(Classification classification)
  */
 int GetReleaseNumber(const QString &release)
 {
-    int ret = -1;
-    QStringList rel = release.split(' ');
-    if (rel.size() > 1)
-    {
-        return rel[1].toInt();
-    }
-    return ret;
+    static const QRegularExpression releasePattern(
+        QStringLiteral("(?:^|\\b)(?:release\\s*:?|r)\\s*(\\d+)\\b"),
+        QRegularExpression::CaseInsensitiveOption);
+    const QRegularExpressionMatch match = releasePattern.match(release);
+    if (!match.hasMatch())
+        return -1;
+
+    bool ok = false;
+    const int releaseNumber = match.captured(1).toInt(&ok);
+    return ok ? releaseNumber : -1;
 }
 
 /**

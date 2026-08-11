@@ -180,10 +180,20 @@ QVector<CCI> STIGCheck::GetCCIs() const
  */
 Severity GetSeverity(const QString &severity)
 {
-    QString toCheck = severity;
-    if (toCheck.startsWith(QStringLiteral("I")))
+    QString toCheck = severity.trimmed();
+    if (toCheck.isEmpty() ||
+        toCheck.startsWith(QStringLiteral("none"), Qt::CaseInsensitive) ||
+        toCheck.startsWith(QStringLiteral("info"), Qt::CaseInsensitive) ||
+        toCheck.startsWith(QStringLiteral("unknown"), Qt::CaseInsensitive))
+    {
+        return Severity::none;
+    }
+    if (toCheck == QStringLiteral("I") || toCheck == QStringLiteral("II") ||
+        toCheck == QStringLiteral("III") || toCheck == QStringLiteral("IV"))
+    {
         toCheck = QStringLiteral("CAT ") + toCheck;
-    if (toCheck.isEmpty() || toCheck.endsWith(QStringLiteral(" IV")))
+    }
+    if (toCheck.endsWith(QStringLiteral(" IV")))
         return Severity::none;
     if (toCheck.startsWith(QStringLiteral("medium"), Qt::CaseInsensitive) || toCheck.endsWith(QStringLiteral(" II")))
         return Severity::medium;
