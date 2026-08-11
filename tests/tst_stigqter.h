@@ -43,6 +43,8 @@ private Q_SLOTS:
     void test04a_RunInterface();
     void test04b_RunInterface();
     void test04c_RunInterface();
+    void test04c_ProjectLoadSafety();
+    void test04c_ChecklistAutosave();
     void test04d_RunInterface();
     void test04e_RunInterface();
     void test04f_Escalation();

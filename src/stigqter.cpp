@@ -1015,10 +1015,21 @@ void STIGQter::CloseTab(int index)
  */
 void STIGQter::DeleteAssets()
 {
+    const QList<QListWidgetItem*> selectedItems = ui->lstAssets->selectedItems();
+    if (selectedItems.isEmpty())
+        return;
+
+    const QMessageBox::StandardButton reply = IgnoreWarnings ? QMessageBox::Yes : QMessageBox::question(
+        this, QStringLiteral("Delete Assets"),
+        QStringLiteral("Delete %1 selected asset(s) and all associated checklist results? This cannot be undone.").arg(selectedItems.count()),
+        QMessageBox::Yes | QMessageBox::No, QMessageBox::No);
+    if (reply != QMessageBox::Yes)
+        return;
+
     QList<int> toClose;
     QVector<Asset> toDelete;
     _updatedAssets = true;
-    for (QListWidgetItem *i : ui->lstAssets->selectedItems())
+    for (QListWidgetItem *i : selectedItems)
     {
         auto a = i->data(Qt::UserRole).value<Asset>();
         toDelete.append(a);
@@ -1035,7 +1046,9 @@ void STIGQter::DeleteAssets()
     while (it != toClose.constBegin())
     {
         --it;
+        QWidget *tab = ui->tabDB->widget(*it);
         ui->tabDB->removeTab(*it);
+        delete tab;
     }
 
     auto *s = new WorkerAssetDelete();
@@ -1051,6 +1064,17 @@ void STIGQter::DeleteAssets()
  */
 void STIGQter::DeleteCCIs()
 {
+    DbManager db;
+    if (db.GetFamilies().isEmpty())
+        return;
+
+    const QMessageBox::StandardButton reply = IgnoreWarnings ? QMessageBox::Yes : QMessageBox::question(
+        this, QStringLiteral("Clear RMF Controls"),
+        QStringLiteral("Remove all imported RMF controls and CCI mappings? This cannot be undone."),
+        QMessageBox::Yes | QMessageBox::No, QMessageBox::No);
+    if (reply != QMessageBox::Yes)
+        return;
+
     DisableInput();
     _updatedCCIs = true;
 
@@ -1068,6 +1092,16 @@ void STIGQter::DeleteCCIs()
 void STIGQter::DeleteEmass()
 {
     DbManager db;
+    if (!db.IsEmassImport())
+        return;
+
+    const QMessageBox::StandardButton reply = IgnoreWarnings ? QMessageBox::Yes : QMessageBox::question(
+        this, QStringLiteral("Delete eMASS Results"),
+        QStringLiteral("Remove all imported eMASS test results? This cannot be undone."),
+        QMessageBox::Yes | QMessageBox::No, QMessageBox::No);
+    if (reply != QMessageBox::Yes)
+        return;
+
     db.DeleteEmassImport();
     EnableInput();
 }
@@ -1080,11 +1114,22 @@ void STIGQter::DeleteEmass()
  */
 void STIGQter::DeleteSTIGs()
 {
+    const QList<QListWidgetItem*> selectedItems = ui->lstSTIGs->selectedItems();
+    if (selectedItems.isEmpty())
+        return;
+
+    const QMessageBox::StandardButton reply = IgnoreWarnings ? QMessageBox::Yes : QMessageBox::question(
+        this, QStringLiteral("Delete STIGs"),
+        QStringLiteral("Delete %1 selected STIG(s) from the library? STIGs assigned to assets will be retained.").arg(selectedItems.count()),
+        QMessageBox::Yes | QMessageBox::No, QMessageBox::No);
+    if (reply != QMessageBox::Yes)
+        return;
+
     DisableInput();
     _updatedSTIGs = true;
 
     auto *s = new WorkerSTIGDelete();
-    for (QListWidgetItem *i : ui->lstSTIGs->selectedItems())
+    for (QListWidgetItem *i : selectedItems)
     {
         STIG stig = i->data(Qt::UserRole).value<STIG>();
         s->AddId(stig.id);
@@ -1399,9 +1444,23 @@ void STIGQter::Load(const QString &fileName)
 
     if (!fn.isNull() && !fn.isEmpty())
     {
+        for (int i = 1; i < ui->tabDB->count(); ++i)
+        {
+            if (auto *assetView = dynamic_cast<AssetView*>(ui->tabDB->widget(i)))
+                assetView->FlushPendingChanges();
+        }
+        DisableInput();
+        if (!db.LoadDB(fn))
+        {
+            EnableInput();
+            return;
+        }
         while (ui->tabDB->count() > 1)
+        {
+            QWidget *tab = ui->tabDB->widget(1);
             ui->tabDB->removeTab(1);
-        db.LoadDB(fn);
+            delete tab;
+        }
         EnableInput();
         DisplayCCIs();
         DisplaySTIGs();
@@ -1448,8 +1507,10 @@ void STIGQter::MapUnmapped(bool confirm)
  */
 void STIGQter::SelectSTIG()
 {
-    //select STIGs to create checklists
-    ui->btnCreateCKL->setEnabled(!ui->lstSTIGs->selectedItems().isEmpty());
+    const bool hasSelection = !ui->lstSTIGs->selectedItems().isEmpty();
+    ui->btnClearSTIGs->setEnabled(hasSelection);
+    ui->btnEditSTIG->setEnabled(hasSelection);
+    ui->btnCreateCKL->setEnabled(hasSelection);
 }
 
 /**
@@ -1527,14 +1588,15 @@ void STIGQter::EnableInput()
     }
 
     ui->btnClearSTIGs->setEnabled(true);
-    ui->btnEditSTIG->setEnabled(true);
-    ui->btnCreateCKL->setEnabled(true);
+    ui->btnEditSTIG->setEnabled(false);
+    ui->btnCreateCKL->setEnabled(false);
     ui->btnDeleteEmassImport->setEnabled(isImport);
     ui->btnImportCKL->setEnabled(true);
     ui->btnMapUnmapped->setEnabled(isImport);
     ui->cbIncludeSupplements->setEnabled(true);
     ui->cbRemapCM6->setEnabled(true);
     ui->btnOpenCKL->setEnabled(!ui->lstAssets->selectedItems().isEmpty());
+    ui->btnDeleteAssets->setEnabled(!ui->lstAssets->selectedItems().isEmpty());
     ui->btnQuit->setEnabled(true);
     ui->menubar->setEnabled(true);
     ui->txtSTIGSearch->setEnabled(true);
@@ -1680,6 +1742,7 @@ void STIGQter::DisableInput()
     ui->cbIncludeSupplements->setEnabled(false);
     ui->cbRemapCM6->setEnabled(false);
     ui->btnOpenCKL->setEnabled(false);
+    ui->btnDeleteAssets->setEnabled(false);
     ui->btnQuit->setEnabled(false);
     ui->menubar->setEnabled(false);
     ui->txtSTIGSearch->setEnabled(false);

@@ -27,6 +27,7 @@
 
 #include <QLabel>
 #include <QListWidget>
+#include <QMap>
 #include <QProgressBar>
 #include <QShortcut>
 #include <QTimer>
@@ -50,6 +51,7 @@ public:
     void DisableInput() override;
     void Display();
     void EnableInput() override;
+    void FlushPendingChanges();
     TabType GetTabType() override;
     void SelectSTIGs(const QString &search = QString());
     void ShowChecks(bool countOnly = false);
@@ -86,6 +88,7 @@ private:
     QTimer _timer;
     QTimer _timerChecks;
     QList<QShortcut*> _shortcuts;
+    QMap<int, CKLCheck> _pendingChecks;
     bool _updateStatus;
     void KeyShortcut(Status action);
     void SetItemColor(QListWidgetItem *i, Status stat, Severity sev);

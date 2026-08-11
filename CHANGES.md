@@ -3,6 +3,10 @@
 -   Add support for cklb files
 -   Complete the STIG editor: edit, add, and delete checks and CCI mappings, and export a STIG to a re-importable XCCDF zip
 -   Add a system-wide classification marking that auto-escalates to the highest asset classification and marks generated reports (fixes #104)
+-   Prevent checklist edits from being lost when changing selection, filtering, exporting, or closing a tab
+-   Validate and migrate saved projects before atomically replacing the active database
+-   Add confirmations and selection-aware states for destructive actions
+-   Improve compact-window layouts and standard Ctrl/Shift multi-selection behavior
 
 ## 1.2.7
 -   Fix duplicate rules in DFR (fixes #122)

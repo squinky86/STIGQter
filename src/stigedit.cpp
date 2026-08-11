@@ -29,6 +29,7 @@
 #include <QDir>
 #include <QFileDialog>
 #include <QFileInfo>
+#include <QMessageBox>
 
 /**
  * @brief STIGEdit::STIGEdit
@@ -100,7 +101,7 @@ void STIGEdit::EnableInput()
 {
     ui->btnSave->setEnabled(true);
     ui->btnNewCheck->setEnabled(true);
-    ui->btnDeleteCheck->setEnabled(true);
+    ui->btnDeleteCheck->setEnabled(!ui->lstChecks->selectedItems().isEmpty());
     ui->btnCciAdd->setEnabled(true);
     ui->btnCciDelete->setEnabled(true);
     ui->txtTitle->setEnabled(true);
@@ -297,6 +298,13 @@ void STIGEdit::DeleteCheck()
     if (selected.isEmpty())
         return;
 
+    const QMessageBox::StandardButton reply = IgnoreWarnings ? QMessageBox::Yes : QMessageBox::question(
+        this, QStringLiteral("Delete STIG Checks"),
+        QStringLiteral("Delete %1 selected check(s) from this STIG? This cannot be undone.").arg(selected.count()),
+        QMessageBox::Yes | QMessageBox::No, QMessageBox::No);
+    if (reply != QMessageBox::Yes)
+        return;
+
     DbManager db;
     for (QListWidgetItem *i : selected)
     {
@@ -344,6 +352,7 @@ void STIGEdit::SelectCheck()
         }
     }
     _loading = false;
+    ui->btnDeleteCheck->setEnabled(!ui->lstChecks->selectedItems().isEmpty());
 }
 
 /**

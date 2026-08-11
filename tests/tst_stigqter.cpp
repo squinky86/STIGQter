@@ -19,6 +19,7 @@
 
 #include "tst_stigqter.h"
 
+#include "assetview.h"
 #include "common.h"
 #include "dbmanager.h"
 #include "stigqter.h"
@@ -27,6 +28,8 @@
 #include "workerstigdelete.h"
 
 #include <QDirIterator>
+#include <QPlainTextEdit>
+#include <QTemporaryFile>
 #include <QThread>
 #include <QtTest>
 
@@ -50,6 +53,7 @@ void TestSTIGQter::initTestCase()
 
     w = new STIGQter();
     w->show();
+    w->resize(800, 600);
 
     {
         DbManager db;
@@ -63,6 +67,7 @@ void TestSTIGQter::initTestCase()
     }
 
     QApplication::processEvents();
+    QCOMPARE(w->size(), QSize(800, 600));
     procEvents();
 }
 
@@ -183,6 +188,82 @@ void TestSTIGQter::test04c_RunInterface()
     w->RunTests3();
     procEvents();
     QVERIFY(w->isProcessingEnabled());
+
+    DbManager db;
+    QCOMPARE(db.GetVariable(QStringLiteral("version")), QStringLiteral("10"));
+    QVERIFY(!db.GetSTIGs().isEmpty());
+    QVERIFY(!db.GetAssets().isEmpty());
+    QVERIFY(!db.GetCKLChecks().isEmpty());
+}
+
+void TestSTIGQter::test04c_ProjectLoadSafety()
+{
+    DbManager db;
+    const int stigCount = db.GetSTIGs().count();
+    const int assetCount = db.GetAssets().count();
+    const QVector<CKLCheck> checks = db.GetCKLChecks();
+    QVERIFY(!checks.isEmpty());
+    const CKLCheck protectedCheck = checks.first();
+    const QString databaseVersion = db.GetVariable(QStringLiteral("version"));
+    const QString systemMarking = db.GetVariable(QStringLiteral("systemMarking"));
+
+    const auto verifyProjectContent = [&db, stigCount, assetCount, checks,
+                                       protectedCheck, databaseVersion, systemMarking]() {
+        QCOMPARE(db.GetSTIGs().count(), stigCount);
+        QCOMPARE(db.GetAssets().count(), assetCount);
+        QCOMPARE(db.GetCKLChecks().count(), checks.count());
+        QCOMPARE(db.GetVariable(QStringLiteral("version")), databaseVersion);
+        QCOMPARE(db.GetVariable(QStringLiteral("systemMarking")), systemMarking);
+        const CKLCheck reloadedCheck = db.GetCKLCheck(protectedCheck);
+        QCOMPARE(reloadedCheck.status, protectedCheck.status);
+        QCOMPARE(reloadedCheck.comments, protectedCheck.comments);
+        QCOMPARE(reloadedCheck.findingDetails, protectedCheck.findingDetails);
+    };
+
+    QTemporaryFile invalidDatabase;
+    QVERIFY(invalidDatabase.open());
+    const QByteArray invalidData = qCompress(QByteArrayLiteral("not a SQLite database"));
+    QCOMPARE(invalidDatabase.write(invalidData), invalidData.size());
+    invalidDatabase.flush();
+    QVERIFY(!db.LoadDB(invalidDatabase.fileName()));
+    verifyProjectContent();
+
+    QTemporaryFile truncatedFile;
+    QVERIFY(truncatedFile.open());
+    QCOMPARE(truncatedFile.write(QByteArrayLiteral("bad")), 3);
+    truncatedFile.flush();
+    QVERIFY(!db.LoadDB(truncatedFile.fileName()));
+    verifyProjectContent();
+}
+
+void TestSTIGQter::test04c_ChecklistAutosave()
+{
+    QListWidget *assets = w->findChild<QListWidget*>(QStringLiteral("lstAssets"));
+    QVERIFY(assets);
+    QVERIFY(assets->count() > 0);
+    assets->setCurrentRow(0, QItemSelectionModel::ClearAndSelect);
+    QMetaObject::invokeMethod(w, "OpenCKL", Qt::DirectConnection);
+    QApplication::processEvents();
+
+    AssetView *assetView = w->findChild<AssetView*>();
+    QVERIFY(assetView);
+    QListWidget *checks = assetView->findChild<QListWidget*>(QStringLiteral("lstChecks"));
+    QPlainTextEdit *comments = assetView->findChild<QPlainTextEdit*>(QStringLiteral("txtComments"));
+    QVERIFY(checks);
+    QVERIFY(comments);
+    QVERIFY(checks->count() > 1);
+
+    checks->setCurrentRow(0, QItemSelectionModel::ClearAndSelect);
+    QApplication::processEvents();
+    const CKLCheck first = checks->item(0)->data(Qt::UserRole).value<CKLCheck>();
+    const CKLCheck second = checks->item(1)->data(Qt::UserRole).value<CKLCheck>();
+    const QString marker = QStringLiteral("Rapid-selection autosave regression");
+
+    comments->setPlainText(marker);
+    checks->setCurrentRow(1, QItemSelectionModel::ClearAndSelect);
+
+    QTRY_COMPARE_WITH_TIMEOUT(DbManager().GetCKLCheck(first).comments, marker, 2000);
+    QVERIFY(DbManager().GetCKLCheck(second).comments != marker);
 }
 
 void TestSTIGQter::test04d_RunInterface()

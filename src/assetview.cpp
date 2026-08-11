@@ -152,6 +152,7 @@ AssetView::AssetView(Asset &asset, QWidget *parent) :
  */
 AssetView::~AssetView()
 {
+    FlushPendingChanges();
     for (QShortcut *shortcut : _shortcuts)
         delete shortcut;
     _shortcuts.clear();
@@ -229,6 +230,7 @@ void AssetView::EnableInput()
     ui->btnImportXCCDF->setEnabled(true);
     ui->btnSaveCKL->setEnabled(true);
     ui->btnSaveCKLs->setEnabled(true);
+    CheckSelectedChanged();
 }
 
 /**
@@ -510,20 +512,14 @@ void AssetView::RunTests()
  */
 void AssetView::CheckSelectedChanged()
 {
-    if (ui->lstChecks->selectedItems().count() > 1)
-    {
-        //disable multi-editable fields
-        ui->txtComments->setEnabled(false);
-        ui->txtFindingDetails->setEnabled(false);
-        ui->cboBoxSeverity->setEnabled(false);
-    }
-    else
-    {
-        //enable multi-editable fields
-        ui->txtComments->setEnabled(true);
-        ui->txtFindingDetails->setEnabled(true);
-        ui->cboBoxSeverity->setEnabled(true);
-    }
+    const int selectedCount = ui->lstChecks->selectedItems().count();
+    const bool inputEnabled = ui->lstChecks->isEnabled();
+    const bool hasSingleSelection = inputEnabled && selectedCount == 1;
+
+    ui->txtComments->setEnabled(hasSingleSelection);
+    ui->txtFindingDetails->setEnabled(hasSingleSelection);
+    ui->cboBoxSeverity->setEnabled(hasSingleSelection);
+    ui->cboBoxStatus->setEnabled(inputEnabled && selectedCount > 0);
 }
 
 /**
@@ -533,6 +529,7 @@ void AssetView::CheckSelectedChanged()
  */
 void AssetView::DeleteAsset(bool confirm)
 {
+    FlushPendingChanges();
     //prompt user for confirmation of a destructive task
     QMessageBox::StandardButton reply = confirm ? QMessageBox::Yes : QMessageBox::question(this, QStringLiteral("Confirm"), "Are you sure you want to delete " + PrintAsset(_asset) + "?", QMessageBox::Yes|QMessageBox::No);
     if (reply == QMessageBox::Yes)
@@ -763,6 +760,7 @@ void AssetView::RenameAsset(const QString &name)
  */
 void AssetView::SaveCKL(const QString &name)
 {
+    FlushPendingChanges();
     DbManager db;
     QString fileName = name;
     if (fileName.isEmpty())
@@ -800,6 +798,7 @@ void AssetView::SaveCKL(const QString &name)
  */
 void AssetView::SaveCKLs(const QString &dir)
 {
+    FlushPendingChanges();
     DbManager db;
 
     // When called from tests a dir is pre-supplied; otherwise ask the user for
@@ -842,6 +841,7 @@ void AssetView::SaveCKLs(const QString &dir)
  */
 void AssetView::UpdateChecks()
 {
+    FlushPendingChanges();
     ShowChecks();
 }
 
@@ -881,38 +881,27 @@ void AssetView::KeyShortcut(Status action)
  */
 void AssetView::UpdateCKLHelper()
 {
-    QList<QListWidgetItem*> selectedItems = ui->lstChecks->selectedItems();
-    int count = selectedItems.count();
-
-    //make sure that something is selected
-    if (count > 0)
+    if (!_pendingChecks.isEmpty())
     {
         DbManager db;
         db.DelayCommit(true);
-        for (QListWidgetItem *i : selectedItems)
+        const QMap<int, CKLCheck> pendingChecks = _pendingChecks;
+        for (const CKLCheck &cc : pendingChecks)
         {
-            auto cc = i->data(Qt::UserRole).value<CKLCheck>();
-            //if multiple checks are selected, only update their status
-            if (count < 2)
+            db.UpdateCKLCheck(cc);
+            const CKLCheck savedCheck = db.GetCKLCheck(cc);
+            for (int row = 0; row < ui->lstChecks->count(); ++row)
             {
-                cc.comments = ui->txtComments->toPlainText();
-                cc.findingDetails = ui->txtFindingDetails->toPlainText();
-                Severity tmpSeverity = GetSeverity(ui->cboBoxSeverity->currentText());
-                cc.severityOverride = (tmpSeverity == cc.GetSTIGCheck().severity) ? Severity::none : tmpSeverity;
-                cc.severityJustification = _justification;
-                cc.status = GetStatus(ui->cboBoxStatus->currentText());
-            }
-            else {
-                if (_updateStatus)
+                QListWidgetItem *item = ui->lstChecks->item(row);
+                if (item->data(Qt::UserRole).value<CKLCheck>().id == cc.id)
                 {
-                    cc.status = GetStatus(ui->cboBoxStatus->currentText());
+                    item->setData(Qt::UserRole, QVariant::fromValue<CKLCheck>(savedCheck));
+                    break;
                 }
             }
-            db.UpdateCKLCheck(cc);
-            i->setData(Qt::UserRole, QVariant::fromValue<CKLCheck>(db.GetCKLCheck(cc)));
         }
         db.DelayCommit(false);
-        _updateStatus = false;
+        _pendingChecks.clear();
 
         _timerChecks.start(1000);
     }
@@ -938,6 +927,34 @@ void AssetView::UpdateCKLHelper()
  */
 void AssetView::UpdateCKL()
 {
+    const QList<QListWidgetItem*> selectedItems = ui->lstChecks->selectedItems();
+    const int count = selectedItems.count();
+    for (QListWidgetItem *item : selectedItems)
+    {
+        CKLCheck cc = item->data(Qt::UserRole).value<CKLCheck>();
+        if (count == 1)
+        {
+            cc.comments = ui->txtComments->toPlainText();
+            cc.findingDetails = ui->txtFindingDetails->toPlainText();
+            const Severity severity = GetSeverity(ui->cboBoxSeverity->currentText());
+            cc.severityOverride = (severity == cc.GetSTIGCheck().severity) ? Severity::none : severity;
+            cc.severityJustification = _justification;
+            cc.status = GetStatus(ui->cboBoxStatus->currentText());
+        }
+        else if (_updateStatus)
+        {
+            cc.status = GetStatus(ui->cboBoxStatus->currentText());
+        }
+        else
+        {
+            continue;
+        }
+
+        _pendingChecks.insert(cc.id, cc);
+        item->setData(Qt::UserRole, QVariant::fromValue<CKLCheck>(cc));
+    }
+    _updateStatus = false;
+
     //avoid updating the database for every keypress. Wait for 9/50 of a second before saving
     //https://forum.qt.io/topic/97857/qplaintextedit-autosave-to-database
     _timer.start(180);
@@ -1025,6 +1042,7 @@ void AssetView::UpdateCKLSeverity(const QString &val)
  */
 void AssetView::UpdateSTIGs()
 {
+    FlushPendingChanges();
     DbManager db;
     QVector<STIG> stigs = _asset.GetSTIGs();
     for (int i = 0; i < ui->lstSTIGs->count(); i++)
@@ -1064,6 +1082,7 @@ void AssetView::UpdateSTIGs()
  */
 void AssetView::UpgradeCKL()
 {
+    FlushPendingChanges();
     DisableInput();
     QListWidgetItem *i = ui->lstChecks->selectedItems().first();
     DbManager db;
@@ -1139,7 +1158,23 @@ void AssetView::CheckSelected(QListWidgetItem *current, QListWidgetItem *previou
     if (current)
     {
         auto cc = current->data(Qt::UserRole).value<CKLCheck>();
-        DbManager db;
-        UpdateCKLCheck(db.GetCKLCheck(cc));
+        if (_pendingChecks.contains(cc.id))
+        {
+            UpdateCKLCheck(_pendingChecks.value(cc.id));
+        }
+        else
+        {
+            DbManager db;
+            UpdateCKLCheck(db.GetCKLCheck(cc));
+        }
     }
+}
+
+void AssetView::FlushPendingChanges()
+{
+    const bool needsFlush = _timer.isActive() || !_pendingChecks.isEmpty();
+    if (_timer.isActive())
+        _timer.stop();
+    if (needsFlush)
+        UpdateCKLHelper();
 }
