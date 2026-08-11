@@ -30,7 +30,7 @@ jobs:
           apt-get update
           apt-get install -y --no-install-recommends ca-certificates git
 
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
         with:
           # Disabling shallow clones is recommended for improving the relevancy of reporting
           fetch-depth: 0
@@ -52,6 +52,7 @@ jobs:
             qt6-base-dev qt6-base-dev-tools qmake6 libqt6sql6-sqlite \
             libzip-dev libxlsxwriter-dev build-essential \
             zlib1g-dev xvfb lcov gcovr unzip curl \
+            gnupg dirmngr \
             libxkbcommon-x11-0 libxcb-icccm4 libxcb-image0 \
             libxcb-keysyms1 libxcb-randr0 libxcb-render-util0 \
             libxcb-xinerama0 libxcb-xinput0 libxcb-xfixes0 \
@@ -64,7 +65,7 @@ jobs:
         run: Xvfb "$DISPLAY" -screen 0 1280x1024x24 &
 
       - name: Install Sonar Build Wrapper
-        uses: SonarSource/sonarqube-scan-action/install-build-wrapper@v6
+        uses: SonarSource/sonarqube-scan-action/install-build-wrapper@22918119ff8e1ca75a623e15c8296b6ea4fbe28f # v8.2.1
 
       - name: Configure STIGQter for coverage
         run: |
@@ -96,7 +97,7 @@ jobs:
         run: for x in src/*.cpp; do gcov --branch-probabilities --branch-counts "${x}" -o .; done
 
       - name: SonarQube Scan
-        uses: SonarSource/sonarqube-scan-action@v6
+        uses: SonarSource/sonarqube-scan-action@22918119ff8e1ca75a623e15c8296b6ea4fbe28f # v8.2.1
         env:
           SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
         with:
@@ -116,7 +117,7 @@ jobs:
           lcov --capture --directory . --output-file coverage/lcov.info
 
       - name: Upload to Coveralls
-        uses: coverallsapp/github-action@v2
+        uses: coverallsapp/github-action@8d6379e14d29928660c4ba802d8e85393440b329 # v2.3.8
         with:
           github-token: ${{ secrets.GITHUB_TOKEN }}
           path-to-lcov: coverage/lcov.info
