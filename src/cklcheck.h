@@ -51,7 +51,10 @@ public:
     int stigCheckId;
     Asset GetAsset() const;
     QString GetRule() const;
+    QString GetSTIGTitle() const;
     STIGCheck GetSTIGCheck() const;
+    QString GetTitle() const;
+    QString GetVulnerabilityId() const;
     Severity GetSeverity() const;
     Status status;
     QString findingDetails;
@@ -71,6 +74,9 @@ public:
 private:
     Severity _cachedSTIGSeverity;
     QString _cachedRule;
+    QString _cachedSTIGTitle;
+    QString _cachedTitle;
+    QString _cachedVulnerabilityId;
     bool _hasCachedSTIGData;
     friend class DbManager;
 };

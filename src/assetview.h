@@ -70,6 +70,7 @@ private Q_SLOTS:
     void KeyShortcutCtrlO();
     void KeyShortcutCtrlR();
     void KeyShortcutCtrlX();
+    void NextNotReviewed();
     void RenameAsset(const QString &name = QString());
     void SaveCKL(const QString &name = QString());
     void SaveCKLs(const QString &dir = QString());
@@ -91,6 +92,7 @@ private:
     QMap<int, CKLCheck> _pendingChecks;
     bool _updateStatus;
     void KeyShortcut(Status action);
+    void UpdateCheckItem(QListWidgetItem *item, const CKLCheck &check);
     void SetItemColor(QListWidgetItem *i, Status stat, Severity sev);
     bool _isFiltered;
 };

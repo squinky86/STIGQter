@@ -1680,7 +1680,7 @@ QVector<CKLCheck> DbManager::GetCKLChecks(const QString &whereClause, const QVec
     if (CheckDatabase(db))
     {
         QSqlQuery q(db);
-        QString toPrep = QStringLiteral("SELECT CKLCheck.id, CKLCheck.AssetId, CKLCheck.STIGCheckId, CKLCheck.status, CKLCheck.findingDetails, CKLCheck.comments, CKLCheck.severityOverride, CKLCheck.severityJustification, STIGCheck.severity, STIGCheck.rule FROM CKLCheck JOIN STIGCheck ON CKLCheck.STIGCheckId = STIGCheck.id");
+        QString toPrep = QStringLiteral("SELECT CKLCheck.id, CKLCheck.AssetId, CKLCheck.STIGCheckId, CKLCheck.status, CKLCheck.findingDetails, CKLCheck.comments, CKLCheck.severityOverride, CKLCheck.severityJustification, STIGCheck.severity, STIGCheck.rule, STIG.title, STIGCheck.title, STIGCheck.vulnNum FROM CKLCheck JOIN STIGCheck ON CKLCheck.STIGCheckId = STIGCheck.id JOIN STIG ON STIGCheck.STIGId = STIG.id");
         if (!whereClause.isNull() && !whereClause.isEmpty())
             toPrep.append(" " + whereClause);
         q.prepare(toPrep);
@@ -1705,6 +1705,9 @@ QVector<CKLCheck> DbManager::GetCKLChecks(const QString &whereClause, const QVec
             c.severityJustification = q.value(7).toString();
             c._cachedSTIGSeverity = static_cast<Severity>(q.value(8).toInt());
             c._cachedRule = q.value(9).toString();
+            c._cachedSTIGTitle = q.value(10).toString();
+            c._cachedTitle = q.value(11).toString();
+            c._cachedVulnerabilityId = q.value(12).toString();
             c._hasCachedSTIGData = true;
 
             ret.append(c);

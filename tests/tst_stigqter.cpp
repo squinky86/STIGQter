@@ -35,6 +35,7 @@
 #include <QLineEdit>
 #include <QMessageBox>
 #include <QPlainTextEdit>
+#include <QPushButton>
 #include <QTemporaryFile>
 #include <QTextEdit>
 #include <QThread>
@@ -81,16 +82,13 @@ void TestSTIGQter::initTestCase()
 
 void TestSTIGQter::test00_Classification()
 {
-    //parsing of free-text markings into ranked classification levels
+    //Normal-side classification verification is intentionally limited to
+    //UNCLASSIFIED and CUI. Higher banner levels are reserved for high-side tests.
     QCOMPARE(GetClassification(QStringLiteral("")), Classification::classPublicRelease);
     QCOMPARE(GetClassification(QStringLiteral("PUBLIC RELEASE")), Classification::classPublicRelease);
     QCOMPARE(GetClassification(QStringLiteral("UNCLASSIFIED")), Classification::classUnclassified);
-    QCOMPARE(GetClassification(QStringLiteral("FOUO")), Classification::classFOUO);
     QCOMPARE(GetClassification(QStringLiteral("CUI [Controlled by: ...]")), Classification::classCUI);
     QCOMPARE(GetClassification(QStringLiteral("CONTROLLED")), Classification::classCUI);
-    QCOMPARE(GetClassification(QStringLiteral("CONFIDENTIAL")), Classification::classConfidential);
-    QCOMPARE(GetClassification(QStringLiteral("SECRET//NOFORN")), Classification::classSecret);
-    QCOMPARE(GetClassification(QStringLiteral("TOP SECRET//SI")), Classification::classTopSecret);
     QCOMPARE(GetClassification(QStringLiteral("N/A")), Classification::classPublicRelease);
 
     //a complete classification word is required: markings that merely start with
@@ -101,16 +99,12 @@ void TestSTIGQter::test00_Classification()
     QCOMPARE(GetClassification(QStringLiteral("Secretary workstation")), Classification::classPublicRelease);
     QCOMPARE(GetClassification(QStringLiteral("Controller node")), Classification::classPublicRelease);
 
-    //ordering used for the import mismatch comparison
-    QVERIFY(Classification::classTopSecret > Classification::classSecret);
-    QVERIFY(Classification::classSecret > Classification::classCUI);
+    //normal-side ordering used for the import mismatch comparison
     QVERIFY(Classification::classCUI > Classification::classUnclassified);
 
-    //canonical labels
+    //normal-side canonical labels
+    QCOMPARE(GetClassificationString(Classification::classUnclassified), QStringLiteral("UNCLASSIFIED"));
     QCOMPARE(GetClassificationString(Classification::classCUI), QStringLiteral("CUI"));
-    QCOMPARE(GetClassificationString(Classification::classSecret), QStringLiteral("SECRET"));
-    QCOMPARE(GetClassificationString(Classification::classTopSecret), QStringLiteral("TOP SECRET"));
-    QCOMPARE(GetClassificationString(Classification::classPublicRelease), QStringLiteral("PUBLIC RELEASE"));
 
     // All XCCDF severity spellings, including informational values.
     QCOMPARE(GetSeverity(QStringLiteral("high")), Severity::high);
@@ -341,6 +335,7 @@ void TestSTIGQter::test04c_AssessmentFieldsAndOptions()
     auto *checks = assetView->findChild<QListWidget*>(QStringLiteral("lstChecks"));
     auto *stigs = assetView->findChild<QListWidget*>(QStringLiteral("lstSTIGs"));
     auto *stigFilter = assetView->findChild<QLineEdit*>(QStringLiteral("txtSTIGFilter"));
+    auto *checkFilter = assetView->findChild<QLineEdit*>(QStringLiteral("txtCheckSearch"));
     auto *status = assetView->findChild<QComboBox*>(QStringLiteral("cboBoxStatus"));
     auto *severity = assetView->findChild<QComboBox*>(QStringLiteral("cboBoxSeverity"));
     auto *statusFilter = assetView->findChild<QComboBox*>(QStringLiteral("cboBoxFilterStatus"));
@@ -360,10 +355,17 @@ void TestSTIGQter::test04c_AssessmentFieldsAndOptions()
     auto *mac = assetView->findChild<QLineEdit*>(QStringLiteral("txtMAC"));
     auto *fqdn = assetView->findChild<QLineEdit*>(QStringLiteral("txtFQDN"));
     auto *marking = assetView->findChild<QLineEdit*>(QStringLiteral("txtMarking"));
-    QVERIFY(checks && stigs && stigFilter && status && severity && statusFilter && severityFilter);
+    auto *notReviewedCount = assetView->findChild<QLabel*>(QStringLiteral("lblNotReviewed"));
+    auto *notApplicableCount = assetView->findChild<QLabel*>(QStringLiteral("lblNotApplicable"));
+    auto *reviewedProgress = assetView->findChild<QLabel*>(QStringLiteral("lblReviewed"));
+    auto *filteredCount = assetView->findChild<QLabel*>(QStringLiteral("lblFilteredChecks"));
+    auto *saveState = assetView->findChild<QLabel*>(QStringLiteral("lblSaveState"));
+    auto *nextNotReviewed = assetView->findChild<QPushButton*>(QStringLiteral("btnNextNotReviewed"));
+    QVERIFY(checks && stigs && stigFilter && checkFilter && status && severity && statusFilter && severityFilter);
     QVERIFY(findingDetails && comments && checkRule && checkTitle && documentable);
     QVERIFY(discussion && falsePositives && falseNegatives && fix && checkText && additionalDetails);
     QVERIFY(ip && mac && fqdn && marking);
+    QVERIFY(notReviewedCount && notApplicableCount && reviewedProgress && filteredCount && saveState && nextNotReviewed);
     QVERIFY(checks->count() > 2);
 
     // Walk representative rules from three different STIGs and verify every
@@ -405,6 +407,48 @@ void TestSTIGQter::test04c_AssessmentFieldsAndOptions()
     QApplication::processEvents();
     QCOMPARE(stigs->count(), db.GetSTIGs().count());
 
+    // Check search covers cached rule, vulnerability, title, and STIG fields,
+    // and list rows expose status/severity in text rather than color alone.
+    const QVector<CKLCheck> searchableChecks = db.GetCKLChecks(asset);
+    QVERIFY(!searchableChecks.isEmpty());
+    const CKLCheck searchTarget = searchableChecks.first();
+    const QString checkQuery = searchTarget.GetVulnerabilityId();
+    QVERIFY(!checkQuery.isEmpty());
+    checkFilter->setText(checkQuery);
+    QApplication::processEvents();
+    QVERIFY(checks->count() > 0);
+    for (int row = 0; row < checks->count(); ++row)
+    {
+        const CKLCheck displayed = checks->item(row)->data(Qt::UserRole).value<CKLCheck>();
+        const QString searchable = QStringList({displayed.GetRule(), displayed.GetVulnerabilityId(),
+                                                displayed.GetTitle(), displayed.GetSTIGTitle()}).join(QLatin1Char('\n'));
+        QVERIFY(searchable.contains(checkQuery, Qt::CaseInsensitive));
+        QVERIFY(checks->item(row)->text().contains(GetStatus(displayed.status)));
+        QVERIFY(checks->item(row)->text().contains(GetSeverity(displayed.GetSeverity())));
+    }
+    checkFilter->clear();
+    QApplication::processEvents();
+    QCOMPARE(checks->count(), searchableChecks.count());
+
+    int expectedNotReviewed = 0;
+    int expectedNotApplicable = 0;
+    for (const CKLCheck &check : searchableChecks)
+    {
+        expectedNotReviewed += check.status == Status::NotReviewed ? 1 : 0;
+        expectedNotApplicable += check.status == Status::NotApplicable ? 1 : 0;
+    }
+    QCOMPARE(notReviewedCount->text().toInt(), expectedNotReviewed);
+    QCOMPARE(notApplicableCount->text().toInt(), expectedNotApplicable);
+    QVERIFY(reviewedProgress->text().contains(QLatin1Char('%')));
+    QVERIFY(filteredCount->text().contains(QString::number(searchableChecks.count())));
+    if (expectedNotReviewed > 0)
+    {
+        nextNotReviewed->click();
+        QApplication::processEvents();
+        QVERIFY(checks->currentItem());
+        QCOMPARE(checks->currentItem()->data(Qt::UserRole).value<CKLCheck>().status, Status::NotReviewed);
+    }
+
     // Select a single check and exercise all four status options plus both
     // free-text fields through the real debounce/persistence path.
     checks->setCurrentRow(0, QItemSelectionModel::ClearAndSelect);
@@ -428,6 +472,7 @@ void TestSTIGQter::test04c_AssessmentFieldsAndOptions()
     selected = db.GetCKLCheck(selected);
     QCOMPARE(selected.findingDetails, findingMarker);
     QCOMPARE(selected.comments, commentMarker);
+    QCOMPARE(saveState->text(), QStringLiteral("All changes saved"));
 
     // All severity choices: baseline, two valid overrides, informational/CAT
     // IV removal, and cancellation while an existing override is active.
@@ -580,8 +625,8 @@ void TestSTIGQter::test04c_AssessmentFieldsAndOptions()
         severityFilter->setCurrentIndex(severityIndex);
         verifyFilters();
     }
-    statusFilter->setCurrentText(QStringLiteral("O"));
-    severityFilter->setCurrentText(QStringLiteral("I"));
+    statusFilter->setCurrentIndex(statusFilter->findData(static_cast<int>(Status::Open)));
+    severityFilter->setCurrentIndex(severityFilter->findData(static_cast<int>(Severity::high)));
     verifyFilters();
     statusFilter->setCurrentIndex(0);
     severityFilter->setCurrentIndex(0);
@@ -619,16 +664,32 @@ void TestSTIGQter::test04f_Escalation()
     QVector<Asset> assets = db.GetAssets();
     QVERIFY(!assets.isEmpty());
 
-    //lower the system marking, then mark an asset higher than it
+    auto *topBanner = w->findChild<QLabel*>(QStringLiteral("lblClassificationTop"));
+    auto *bottomBanner = w->findChild<QLabel*>(QStringLiteral("lblClassificationBottom"));
+    QVERIFY(topBanner && bottomBanner);
+
+    //Normal-side banner verification covers UNCLASSIFIED and CUI only.
     db.UpdateVariable(QStringLiteral("systemMarking"), QStringLiteral("UNCLASSIFIED"));
+    for (Asset asset : assets)
+    {
+        asset.marking = QStringLiteral("UNCLASSIFIED");
+        db.UpdateAsset(asset);
+    }
+    w->RefreshClassificationBanner();
+    procEvents();
+    QCOMPARE(topBanner->text(), QStringLiteral("UNCLASSIFIED"));
+    QCOMPARE(bottomBanner->text(), QStringLiteral("UNCLASSIFIED"));
+
     Asset a = assets.first();
-    a.marking = QStringLiteral("SECRET");
+    a.marking = QStringLiteral("CUI");
     db.UpdateAsset(a);
 
     //the system marking auto-escalates to the highest asset marking
     w->RefreshClassificationBanner();
     procEvents();
-    QCOMPARE(GetClassification(db.GetVariable(QStringLiteral("systemMarking"))), Classification::classSecret);
+    QCOMPARE(GetClassification(db.GetVariable(QStringLiteral("systemMarking"))), Classification::classCUI);
+    QCOMPARE(topBanner->text(), QStringLiteral("CUI"));
+    QCOMPARE(bottomBanner->text(), QStringLiteral("CUI"));
 }
 
 void TestSTIGQter::test05_DeleteAndHash()

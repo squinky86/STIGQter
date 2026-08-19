@@ -54,9 +54,6 @@
 #include <QStyle>
 #include <QThread>
 
-#include <algorithm>
-#include <random>
-
 /**
  * @class STIGQter
  * @brief @a STIGQter is an open-source STIG Viewer alternative
@@ -91,6 +88,7 @@ STIGQter::STIGQter(QWidget *parent) :
     _updatedAssets(false),
     _updatedCCIs(false),
     _updatedSTIGs(false),
+    _busy(false),
     _isFiltered(false)
 {
     //log software startup as required by SV-84041r1_rule
@@ -111,12 +109,20 @@ STIGQter::STIGQter(QWidget *parent) :
     //remove the close button on the main DB tab.
     ui->tabDB->tabBar()->tabButton(0, QTabBar::RightSide)->resize(0, 0);
 
-    //set keyboard shortcuts
-    _shortcuts.append(new QShortcut(QKeySequence(Qt::CTRL | Qt::Key_S), this, SLOT(Save())));
-
-    //display path to database file
+    //display persistence locations. The working database is auto-saved;
+    //Save/Save As create an external project snapshot.
     DbManager db;
-    ui->lblDBLoc->setText(QStringLiteral("DB: ") + db.GetDBPath());
+    ui->lblDBLoc->setText(QStringLiteral("Working database (auto-saved): ") + db.GetDBPath());
+    UpdateProjectStatus();
+
+    QSettings settings(QSettings::NativeFormat, QSettings::UserScope,
+                       QStringLiteral("STIGQter"), QStringLiteral("STIGQter"));
+    const QByteArray geometry = settings.value(QStringLiteral("main/geometry")).toByteArray();
+    if (!geometry.isEmpty())
+        restoreGeometry(geometry);
+
+    connect(ui->lstAssets, &QListWidget::itemDoubleClicked, this,
+            [this](QListWidgetItem *) { OpenCKL(); });
 
     //remember if we're indexing STIG checks
     ui->cbIncludeSupplements->setChecked(db.GetVariable("indexSupplements").startsWith(QStringLiteral("y"), Qt::CaseInsensitive));
@@ -150,10 +156,10 @@ STIGQter::STIGQter(QWidget *parent) :
 STIGQter::~STIGQter()
 {
     CleanThreads();
+    QSettings settings(QSettings::NativeFormat, QSettings::UserScope,
+                       QStringLiteral("STIGQter"), QStringLiteral("STIGQter"));
+    settings.setValue(QStringLiteral("main/geometry"), saveGeometry());
     delete ui;
-    for (QShortcut *shortcut : _shortcuts)
-        delete shortcut;
-    _shortcuts.clear();
     //log software shutdown as required by SV-84041r1_rule
     Warning(QStringLiteral("System is Shutting Down"), QHostInfo::localHostName(), true, 4);
 }
@@ -239,15 +245,12 @@ void STIGQter::RunTests1()
 {
     _testStep = 0;
 
-    std::random_device rd;
-    std::default_random_engine g(rd());
-
     // Phase 1: refresh STIG catalog before performing mutation tests.
     qDebug("STIGQter test %d: Refresh STIGs", _testStep++);
     UpdateSTIGs();
     ProcEvents();
 
-    // Phase 2: randomly keep 5 STIGs selected and delete the remainder.
+    // Phase 2: deterministically keep the first 5 STIGs and delete the remainder.
     qDebug("STIGQter test %d: Deleting Some STIGs", _testStep++);
     {
         int size = ui->lstSTIGs->count();
@@ -256,7 +259,6 @@ void STIGQter::RunTests1()
             ui->lstSTIGs->selectAll();
             ProcEvents();
             auto stigs = ui->lstSTIGs->selectedItems();
-            std::shuffle(stigs.begin(), stigs.end(), g);
             for (int i = 0; i < 5; i++)
             {
                 stigs.at(i)->setSelected(false);
@@ -354,68 +356,41 @@ void STIGQter::RunTests2()
 /**
  * @brief STIGQter::RunTests3
  *
- * Phase 3 of @a RunTests: apply randomized severity overrides, then exercise
+ * Phase 3 of @a RunTests: apply deterministic status/severity changes, then exercise
  * the CKL/monolithic export and .stigqter save/load round-trip.
  */
 void STIGQter::RunTests3()
 {
     DbManager db;
 
-    std::random_device rd;
-    std::default_random_engine g(rd());
-
     qDebug("STIGQter test %d: Severity Override", _testStep++);
     {
+        int checkIndex = 0;
+        const QVector<Status> statuses = {
+            Status::Open, Status::NotAFinding, Status::NotReviewed, Status::NotApplicable
+        };
+        const QVector<Severity> severities = {
+            Severity::high, Severity::medium, Severity::low
+        };
         for (auto cklCheck : db.GetCKLChecks())
         {
-            switch (std::uniform_int_distribution<>{0, 3}(g))
+            cklCheck.status = statuses.at(checkIndex % statuses.count());
+            if (checkIndex % 4 == 0)
             {
-            case 0:
-                cklCheck.status = Status::Open;
-                break;
-            case 1:
-                cklCheck.status = Status::NotAFinding;
-                break;
-            case 2:
-                cklCheck.status = Status::NotReviewed;
-                break;
-            case 3:
-                cklCheck.status = Status::NotApplicable;
-                break;
-            default:
-                continue;
-            }
-
-            switch (std::uniform_int_distribution<>{0, 3}(g))
-            {
-            case 0:
-                if (cklCheck.GetSeverity() == Severity::none)
-                    continue;
                 cklCheck.severityOverride = Severity::none;
-                cklCheck.severityJustification = QStringLiteral("Overridden to none.");
-                break;
-            case 1:
-                if (cklCheck.GetSeverity() == Severity::low)
-                    continue;
-                cklCheck.severityOverride = Severity::low;
-                cklCheck.severityJustification = QStringLiteral("Overridden to low.");
-                break;
-            case 2:
-                if (cklCheck.GetSeverity() == Severity::medium)
-                    continue;
-                cklCheck.severityOverride = Severity::medium;
-                cklCheck.severityJustification = QStringLiteral("Overridden to medium.");
-                break;
-            case 3:
-                if (cklCheck.GetSeverity() == Severity::high)
-                    continue;
-                cklCheck.severityOverride = Severity::high;
-                cklCheck.severityJustification = QStringLiteral("Overridden to high.");
-                break;
-            default:
-                continue;
+                cklCheck.severityJustification.clear();
+            }
+            else
+            {
+                Severity overrideSeverity = severities.at(checkIndex % severities.count());
+                if (overrideSeverity == cklCheck.GetSTIGCheck().severity)
+                    overrideSeverity = severities.at((checkIndex + 1) % severities.count());
+                cklCheck.severityOverride = overrideSeverity;
+                cklCheck.severityJustification = QStringLiteral("Deterministic test override to %1.")
+                                                     .arg(GetSeverity(overrideSeverity));
             }
             db.UpdateCKLCheck(cklCheck);
+            ++checkIndex;
         }
         ProcEvents();
     }
@@ -791,7 +766,9 @@ void STIGQter::Save()
     if (!lastSaveLocation.isNull() && !lastSaveLocation.isEmpty())
     {
         DbManager db;
-        db.SaveDB(lastSaveLocation);
+        if (db.SaveDB(lastSaveLocation))
+            StatusChange(QStringLiteral("Project snapshot saved to %1").arg(lastSaveLocation));
+        UpdateProjectStatus();
     }
 }
 
@@ -815,6 +792,20 @@ void STIGQter::SaveAs(const QString &fileName)
     }
 }
 
+void STIGQter::UpdateProjectStatus()
+{
+    if (lastSaveLocation.isEmpty())
+    {
+        ui->lblProjectFile->setText(QStringLiteral("Project snapshot: Not created — working data are saved automatically"));
+        ui->lblProjectFile->setStyleSheet(QStringLiteral("QLabel { color: #6B7280; }"));
+    }
+    else
+    {
+        ui->lblProjectFile->setText(QStringLiteral("Project snapshot: ") + lastSaveLocation);
+        ui->lblProjectFile->setStyleSheet(QString());
+    }
+}
+
 /**
  * @brief STIGQter::SelectAsset
  *
@@ -823,7 +814,7 @@ void STIGQter::SaveAs(const QString &fileName)
 void STIGQter::SelectAsset()
 {
     UpdateSTIGs();
-    EnableInput();
+    RefreshUiState();
 }
 
 /**
@@ -898,6 +889,8 @@ void STIGQter::CompletedThread()
     if (ui->progressBar->maximum() <= 0)
         ui->progressBar->setMaximum(1);
     ui->progressBar->setValue(ui->progressBar->maximum());
+    ui->progressBar->setFormat(QStringLiteral("Completed"));
+    ui->lblStatus->setText(QStringLiteral("Ready — operation completed"));
 }
 
 /**
@@ -934,6 +927,18 @@ void STIGQter::AddAsset(const QString &name)
     QString asset = !name.isEmpty() ? name : QInputDialog::getText(this, tr("Enter Asset Name"),
                                           tr("Asset:"), QLineEdit::Normal,
                                           QDir::home().dirName(), &ok);
+    asset = asset.trimmed();
+    if (ok && asset.isEmpty())
+    {
+        Warning(QStringLiteral("Asset Name Required"), QStringLiteral("Enter a name for the asset."));
+        return;
+    }
+    DbManager db;
+    if (ok && db.GetAsset(asset).id > 0)
+    {
+        Warning(QStringLiteral("Asset Already Exists"), QStringLiteral("An asset named %1 already exists.").arg(asset));
+        return;
+    }
     if (ok)
     {
         DisableInput();
@@ -1468,6 +1473,8 @@ void STIGQter::Load(const QString &fileName)
         ui->txtSystemMarking->setText(db.GetVariable(QStringLiteral("systemMarking")));
         RefreshClassificationBanner();
         lastSaveLocation = fn;
+        UpdateProjectStatus();
+        StatusChange(QStringLiteral("Project snapshot opened from %1").arg(fn));
     }
 }
 
@@ -1508,9 +1515,9 @@ void STIGQter::MapUnmapped(bool confirm)
 void STIGQter::SelectSTIG()
 {
     const bool hasSelection = !ui->lstSTIGs->selectedItems().isEmpty();
-    ui->btnClearSTIGs->setEnabled(hasSelection);
-    ui->btnEditSTIG->setEnabled(hasSelection);
-    ui->btnCreateCKL->setEnabled(hasSelection);
+    ui->btnClearSTIGs->setEnabled(!_busy && hasSelection);
+    ui->btnEditSTIG->setEnabled(!_busy && hasSelection);
+    ui->btnCreateCKL->setEnabled(!_busy && hasSelection);
 }
 
 /**
@@ -1521,7 +1528,8 @@ void STIGQter::SelectSTIG()
  */
 void STIGQter::StatusChange(const QString &status)
 {
-    ui->lblStatus->setText(status);
+    ui->lblStatus->setText(_busy ? QStringLiteral("Working — ") + status : status);
+    ui->lblStatus->setAccessibleDescription(ui->lblStatus->text());
 #ifdef USE_TESTS
     std::cout << "\t" << status.toStdString() << std::endl;
 #endif
@@ -1561,53 +1569,51 @@ void STIGQter::SupplementsChanged(int checkState)
  */
 void STIGQter::EnableInput()
 {
-    DbManager db;
-    QVector<Family> f = db.GetFamilies();
-    QVector<STIG> s = db.GetSTIGs();
-    bool stigsNotImported = s.isEmpty();
-    bool isImport = db.IsEmassImport();
-
-    ui->btnImportEmass->setEnabled(!isImport);
-
-    if (f.isEmpty())
-    {
-        ui->btnClearCCIs->setEnabled(false);
-        ui->btnDownloadSTIGs->setEnabled(false);
-        ui->btnImportEmass->setEnabled(false);
-        ui->btnImportSTIGs->setEnabled(false);
-        ui->btnImportEmassControl->setEnabled(false);
-        _updatedCCIs = true;
-    }
-    else
-    {
-        //disable deleting CCIs if STIGs have been imported
-        ui->btnClearCCIs->setEnabled(stigsNotImported);
-        ui->btnDownloadSTIGs->setEnabled(stigsNotImported);
-        ui->btnImportSTIGs->setEnabled(true);
-        ui->btnImportEmassControl->setEnabled(true);
-    }
-
-    ui->btnClearSTIGs->setEnabled(true);
-    ui->btnEditSTIG->setEnabled(false);
-    ui->btnCreateCKL->setEnabled(false);
-    ui->btnDeleteEmassImport->setEnabled(isImport);
-    ui->btnImportCKL->setEnabled(true);
-    ui->btnMapUnmapped->setEnabled(isImport);
-    ui->cbIncludeSupplements->setEnabled(true);
-    ui->cbRemapCM6->setEnabled(true);
-    ui->btnOpenCKL->setEnabled(!ui->lstAssets->selectedItems().isEmpty());
-    ui->btnDeleteAssets->setEnabled(!ui->lstAssets->selectedItems().isEmpty());
-    ui->btnQuit->setEnabled(true);
-    ui->menubar->setEnabled(true);
-    ui->txtSTIGSearch->setEnabled(true);
-    ui->tabDB->setEnabled(true);
+    _busy = false;
+    RefreshUiState();
     for (int i = 1; i < ui->tabDB->count(); i++)
     {
         auto *tmpTabView = dynamic_cast<TabViewWidget*>(ui->tabDB->widget(i));
         if (tmpTabView)
             tmpTabView->EnableInput();
     }
-    SelectSTIG();
+}
+
+void STIGQter::RefreshUiState()
+{
+    ui->btnQuit->setEnabled(!_busy);
+    ui->menubar->setEnabled(!_busy);
+    ui->tabDB->setEnabled(!_busy);
+    if (_busy)
+        return;
+
+    DbManager db;
+    const bool hasReferenceData = !db.GetFamilies().isEmpty();
+    const bool hasSTIGs = !db.GetSTIGs().isEmpty();
+    const bool hasAssets = !db.GetAssets().isEmpty();
+    const bool hasEmassImport = db.IsEmassImport();
+    const bool hasSelectedSTIGs = !ui->lstSTIGs->selectedItems().isEmpty();
+    const bool hasSelectedAssets = !ui->lstAssets->selectedItems().isEmpty();
+
+    if (!hasReferenceData)
+        _updatedCCIs = true;
+    ui->btnClearCCIs->setEnabled(hasReferenceData && !hasSTIGs);
+    ui->btnDownloadSTIGs->setEnabled(hasReferenceData && !hasSTIGs);
+    ui->btnImportSTIGs->setEnabled(hasReferenceData);
+    ui->btnImportEmass->setEnabled(hasReferenceData && !hasEmassImport);
+    ui->btnImportEmassControl->setEnabled(hasReferenceData);
+    ui->btnDeleteEmassImport->setEnabled(hasEmassImport);
+    ui->btnMapUnmapped->setEnabled(hasEmassImport);
+    ui->btnClearSTIGs->setEnabled(hasSelectedSTIGs);
+    ui->btnEditSTIG->setEnabled(hasSelectedSTIGs);
+    ui->btnCreateCKL->setEnabled(hasSelectedSTIGs);
+    ui->btnImportCKL->setEnabled(true);
+    ui->cbIncludeSupplements->setEnabled(true);
+    ui->cbRemapCM6->setEnabled(true);
+    ui->btnOpenCKL->setEnabled(hasSelectedAssets);
+    ui->btnDeleteAssets->setEnabled(hasSelectedAssets);
+    ui->txtSTIGSearch->setEnabled(true);
+    ui->menuReports->setEnabled(hasAssets);
 }
 
 /**
@@ -1686,6 +1692,18 @@ void STIGQter::UpdateSTIGs()
             }
         }
     }
+    if (ui->lstAssets->selectedItems().isEmpty())
+    {
+        auto *emptyItem = new QListWidgetItem(QStringLiteral("Select an asset to view its attached checklists."));
+        emptyItem->setFlags(Qt::NoItemFlags);
+        ui->lstCKLs->addItem(emptyItem);
+    }
+    else if (addedStigs.isEmpty())
+    {
+        auto *emptyItem = new QListWidgetItem(QStringLiteral("No STIGs are attached to the selected asset."));
+        emptyItem->setFlags(Qt::NoItemFlags);
+        ui->lstCKLs->addItem(emptyItem);
+    }
 }
 
 /**
@@ -1699,8 +1717,9 @@ void STIGQter::UpdateSTIGs()
 void STIGQter::Initialize(int max, int val)
 {
     ui->progressBar->reset();
-    ui->progressBar->setMaximum(max);
+    ui->progressBar->setRange(0, max);
     ui->progressBar->setValue(val);
+    ui->progressBar->setFormat(max > 0 ? QStringLiteral("%p%") : QStringLiteral("Working…"));
 }
 
 /**
@@ -1728,25 +1747,10 @@ void STIGQter::Progress(int val)
  */
 void STIGQter::DisableInput()
 {
-    ui->btnClearCCIs->setEnabled(false);
-    ui->btnClearSTIGs->setEnabled(false);
-    ui->btnCreateCKL->setEnabled(false);
-    ui->btnDeleteEmassImport->setEnabled(false);
-    ui->btnDownloadSTIGs->setEnabled(false);
-    ui->btnEditSTIG->setEnabled(false);
-    ui->btnImportCKL->setEnabled(false);
-    ui->btnImportEmass->setEnabled(false);
-    ui->btnImportEmassControl->setEnabled(false);
-    ui->btnImportSTIGs->setEnabled(false);
-    ui->btnMapUnmapped->setEnabled(false);
-    ui->cbIncludeSupplements->setEnabled(false);
-    ui->cbRemapCM6->setEnabled(false);
-    ui->btnOpenCKL->setEnabled(false);
-    ui->btnDeleteAssets->setEnabled(false);
-    ui->btnQuit->setEnabled(false);
-    ui->menubar->setEnabled(false);
-    ui->txtSTIGSearch->setEnabled(false);
-    ui->tabDB->setEnabled(false);
+    _busy = true;
+    ui->lblStatus->setText(QStringLiteral("Working…"));
+    ui->progressBar->setRange(0, 0);
+    RefreshUiState();
     for (int i = 1; i < ui->tabDB->count(); i++)
     {
         auto *tmpTabView = dynamic_cast<TabViewWidget*>(ui->tabDB->widget(i));
@@ -1764,13 +1768,22 @@ void STIGQter::DisplayAssets()
 {
     ui->lstAssets->clear();
     DbManager db;
-    for (const Asset &a : db.GetAssets())
+    const QVector<Asset> assets = db.GetAssets();
+    for (const Asset &a : assets)
     {
         auto *tmpItem = new QListWidgetItem(); //memory managed by ui->lstAssets container
         tmpItem->setData(Qt::UserRole, QVariant::fromValue<Asset>(a));
         tmpItem->setText(PrintAsset(a));
         ui->lstAssets->addItem(tmpItem);
     }
+    ui->grpAssets->setTitle(QStringLiteral("Step 3 — Assets & Checklists (%1 assets)").arg(assets.count()));
+    if (assets.isEmpty())
+    {
+        auto *emptyItem = new QListWidgetItem(QStringLiteral("No assets yet — select STIGs above or import a checklist."));
+        emptyItem->setFlags(Qt::NoItemFlags);
+        ui->lstAssets->addItem(emptyItem);
+    }
+    UpdateSTIGs();
 }
 
 /**
@@ -1782,13 +1795,17 @@ void STIGQter::DisplayCCIs()
 {
     ui->lstCCIs->clear();
     DbManager db;
-    for (const CCI &c : db.GetCCIs())
-    {
-        auto *tmpItem = new QListWidgetItem(); //memory managed by ui->lstCCIs container
-        tmpItem->setData(Qt::UserRole, QVariant::fromValue<CCI>(c));
-        tmpItem->setText(PrintControl(c.GetControl()).leftJustified(10, ' ') + PrintCCI(c));
-        ui->lstCCIs->addItem(tmpItem);
-    }
+    const int cciCount = db.GetCCIs().count();
+    const int controlCount = db.GetControls().count();
+    const bool ready = cciCount > 0 && controlCount > 0;
+    auto *summary = new QListWidgetItem(ready
+        ? QStringLiteral("Ready — %1 controls and %2 CCIs are indexed.").arg(controlCount).arg(cciCount)
+        : QStringLiteral("Reference data are being prepared. STIG actions will become available when indexing completes."));
+    summary->setFlags(Qt::NoItemFlags);
+    ui->lstCCIs->addItem(summary);
+    ui->grpReference->setTitle(ready
+        ? QStringLiteral("Step 1 — Reference Data — Ready")
+        : QStringLiteral("Step 1 — Reference Data — Loading"));
 }
 
 /**
@@ -1803,7 +1820,9 @@ void STIGQter::DisplaySTIGs(const QString &search)
 {
     ui->lstSTIGs->clear();
     DbManager db;
-    for (const STIG &s : db.GetSTIGs())
+    const QVector<STIG> stigs = db.GetSTIGs();
+    int displayed = 0;
+    for (const STIG &s : stigs)
     {
         //check to see if the filter is applied
         if (!search.isEmpty())
@@ -1816,5 +1835,15 @@ void STIGQter::DisplaySTIGs(const QString &search)
         tmpItem->setData(Qt::UserRole, QVariant::fromValue<STIG>(s));
         tmpItem->setText(PrintSTIG(s));
         ui->lstSTIGs->addItem(tmpItem);
+        ++displayed;
+    }
+    ui->grpStigLibrary->setTitle(QStringLiteral("Step 2 — STIG Library (%1 STIGs)").arg(stigs.count()));
+    if (displayed == 0)
+    {
+        auto *emptyItem = new QListWidgetItem(stigs.isEmpty()
+            ? QStringLiteral("No STIGs indexed — import a STIG archive or download the quarterly library.")
+            : QStringLiteral("No STIGs match the current filter."));
+        emptyItem->setFlags(Qt::NoItemFlags);
+        ui->lstSTIGs->addItem(emptyItem);
     }
 }

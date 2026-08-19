@@ -182,6 +182,7 @@ Severity GetSeverity(const QString &severity)
 {
     QString toCheck = severity.trimmed();
     if (toCheck.isEmpty() ||
+        toCheck.startsWith(QStringLiteral("all"), Qt::CaseInsensitive) ||
         toCheck.startsWith(QStringLiteral("none"), Qt::CaseInsensitive) ||
         toCheck.startsWith(QStringLiteral("info"), Qt::CaseInsensitive) ||
         toCheck.startsWith(QStringLiteral("unknown"), Qt::CaseInsensitive))
@@ -193,11 +194,15 @@ Severity GetSeverity(const QString &severity)
     {
         toCheck = QStringLiteral("CAT ") + toCheck;
     }
-    if (toCheck.endsWith(QStringLiteral(" IV")))
+    if (toCheck.startsWith(QStringLiteral("CAT IV"), Qt::CaseInsensitive) || toCheck.endsWith(QStringLiteral(" IV")))
         return Severity::none;
-    if (toCheck.startsWith(QStringLiteral("medium"), Qt::CaseInsensitive) || toCheck.endsWith(QStringLiteral(" II")))
+    if (toCheck.startsWith(QStringLiteral("CAT III"), Qt::CaseInsensitive))
+        return Severity::low;
+    if (toCheck.startsWith(QStringLiteral("CAT II"), Qt::CaseInsensitive) ||
+        toCheck.startsWith(QStringLiteral("medium"), Qt::CaseInsensitive) || toCheck.endsWith(QStringLiteral(" II")))
         return Severity::medium;
-    if (toCheck.startsWith(QStringLiteral("high"), Qt::CaseInsensitive) || toCheck.endsWith(QStringLiteral(" I")))
+    if (toCheck.startsWith(QStringLiteral("CAT I"), Qt::CaseInsensitive) ||
+        toCheck.startsWith(QStringLiteral("high"), Qt::CaseInsensitive) || toCheck.endsWith(QStringLiteral(" I")))
         return Severity::high;
     return Severity::low;
 }

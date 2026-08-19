@@ -61,6 +61,9 @@ CKLCheck::CKLCheck(QObject *parent) : QObject(parent),
     severityJustification(),
     _cachedSTIGSeverity(Severity::none),
     _cachedRule(),
+    _cachedSTIGTitle(),
+    _cachedTitle(),
+    _cachedVulnerabilityId(),
     _hasCachedSTIGData(false)
 {
 }
@@ -114,6 +117,21 @@ QString CKLCheck::GetRule() const
     return _hasCachedSTIGData ? _cachedRule : GetSTIGCheck().rule;
 }
 
+QString CKLCheck::GetSTIGTitle() const
+{
+    return _hasCachedSTIGData ? _cachedSTIGTitle : GetSTIGCheck().GetSTIG().title;
+}
+
+QString CKLCheck::GetTitle() const
+{
+    return _hasCachedSTIGData ? _cachedTitle : GetSTIGCheck().title;
+}
+
+QString CKLCheck::GetVulnerabilityId() const
+{
+    return _hasCachedSTIGData ? _cachedVulnerabilityId : GetSTIGCheck().vulnNum;
+}
+
 /**
  * @brief CKLCheck::GetSeverity
  * @return The @a Severity of this check.
@@ -150,6 +168,9 @@ CKLCheck &CKLCheck::operator=(const CKLCheck &right)
         severityJustification = right.severityJustification;
         _cachedSTIGSeverity = right._cachedSTIGSeverity;
         _cachedRule = right._cachedRule;
+        _cachedSTIGTitle = right._cachedSTIGTitle;
+        _cachedTitle = right._cachedTitle;
+        _cachedVulnerabilityId = right._cachedVulnerabilityId;
         _hasCachedSTIGData = right._hasCachedSTIGData;
     }
     return *this;

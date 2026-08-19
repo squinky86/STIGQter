@@ -22,7 +22,6 @@
 
 #include <QMainWindow>
 #include <QSettings>
-#include <QShortcut>
 
 #include "dbmanager.h"
 #include "help.h"
@@ -106,8 +105,8 @@ private:
     bool _updatedAssets;
     bool _updatedCCIs;
     bool _updatedSTIGs;
+    bool _busy;
     QString lastSaveLocation;
-    QList<QShortcut*> _shortcuts;
     void closeEvent(QCloseEvent *event);
     void CleanThreads();
     void DisableInput();
@@ -115,7 +114,9 @@ private:
     void DisplayCCIs();
     void DisplaySTIGs(const QString &search = QString());
     void EnableInput();
+    void RefreshUiState();
     void SetButtonIcons();
+    void UpdateProjectStatus();
     void UpdateRemapButton();
     bool _isFiltered;
     int _testStep = 0;
