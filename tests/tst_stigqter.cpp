@@ -138,6 +138,40 @@ void TestSTIGQter::test00_Classification()
 
 }
 
+void TestSTIGQter::test00_LocalFileDownload()
+{
+    const QByteArray payload = QByteArrayLiteral("local download fixture");
+    QTemporaryFile source;
+    QVERIFY(source.open());
+    QCOMPARE(source.write(payload), payload.size());
+    QVERIFY(source.flush());
+
+    // DownloadFile owns the open/close cycle when given a closed destination.
+    QTemporaryFile destination;
+    QVERIFY(destination.open());
+    const QString destinationPath = destination.fileName();
+    destination.close();
+    QVERIFY(DownloadFile(QUrl::fromLocalFile(source.fileName()), &destination));
+    QVERIFY(!destination.isOpen());
+
+    QFile downloaded(destinationPath);
+    QVERIFY(downloaded.open(QIODevice::ReadOnly));
+    QCOMPARE(downloaded.readAll(), payload);
+
+    // A missing local source must fail and restore the destination's state.
+    QTemporaryFile missingSource;
+    QVERIFY(missingSource.open());
+    const QString missingPath = missingSource.fileName();
+    missingSource.close();
+    QVERIFY(QFile::remove(missingPath));
+
+    QTemporaryFile failedDestination;
+    QVERIFY(failedDestination.open());
+    failedDestination.close();
+    QVERIFY(!DownloadFile(QUrl::fromLocalFile(missingPath), &failedDestination));
+    QVERIFY(!failedDestination.isOpen());
+}
+
 void TestSTIGQter::test01_IndexCCIs()
 {
     QMetaObject::invokeMethod(w, "UpdateCCIs", Qt::DirectConnection);

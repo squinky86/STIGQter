@@ -37,6 +37,7 @@ private:
 private Q_SLOTS:
     void initTestCase();
     void test00_Classification();
+    void test00_LocalFileDownload();
     void test01_IndexCCIs();
     void test02_UpdateCCI();
     void test03_IndexSTIGs();
