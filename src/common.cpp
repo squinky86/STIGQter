@@ -95,6 +95,29 @@ bool DownloadFile(const QUrl &url, QFile *file)
             return false;
         close = true;
     }
+
+    // Local URLs are useful for offline imports and deterministic tests. They
+    // have no host name, so the network-only path below would reject them.
+    if (url.isLocalFile())
+    {
+        QFile source(url.toLocalFile());
+        if (!source.open(QIODevice::ReadOnly))
+        {
+            if (close)
+                file->close();
+            return false;
+        }
+
+        const QByteArray contents = source.readAll();
+        const bool written = file->write(contents) == contents.size();
+        file->flush();
+        if (close)
+            file->close();
+        else
+            file->seek(0);
+        return written;
+    }
+
     QNetworkAccessManager manager;
     QNetworkRequest req = QNetworkRequest(url);
     req.setAttribute(QNetworkRequest::RedirectPolicyAttribute, QNetworkRequest::NoLessSafeRedirectPolicy);
@@ -412,13 +435,16 @@ quint32 GetClassificationColor(Classification classification)
  */
 int GetReleaseNumber(const QString &release)
 {
-    int ret = -1;
-    QStringList rel = release.split(' ');
-    if (rel.size() > 1)
-    {
-        return rel[1].toInt();
-    }
-    return ret;
+    static const QRegularExpression releasePattern(
+        QStringLiteral("(?:^|\\b)(?:release\\s*:?|r)\\s*(\\d+)\\b"),
+        QRegularExpression::CaseInsensitiveOption);
+    const QRegularExpressionMatch match = releasePattern.match(release);
+    if (!match.hasMatch())
+        return -1;
+
+    bool ok = false;
+    const int releaseNumber = match.captured(1).toInt(&ok);
+    return ok ? releaseNumber : -1;
 }
 
 /**

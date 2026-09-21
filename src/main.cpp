@@ -119,7 +119,7 @@ static void ApplyTheme(QApplication &a)
         "QComboBox::drop-down { border: 0; width: 18px; }"
         "QProgressBar {"
         "  border: 0; border-radius: 5px; text-align: center;"
-        "  background-color: #E6EAF0; min-height: 10px; max-height: 10px; color: transparent;"
+        "  background-color: #E6EAF0; min-height: 14px; max-height: 14px; color: #1F2328;"
         "}"
         "QProgressBar::chunk { background-color: #2563EB; border-radius: 5px; }"
         "QTabWidget::pane { border: 1px solid #E3E8EF; border-radius: 8px; top: -1px; background: #FFFFFF; }"

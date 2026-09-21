@@ -58,7 +58,13 @@ CKLCheck::CKLCheck(QObject *parent) : QObject(parent),
     findingDetails(),
     comments(),
     severityOverride(),
-    severityJustification()
+    severityJustification(),
+    _cachedSTIGSeverity(Severity::none),
+    _cachedRule(),
+    _cachedSTIGTitle(),
+    _cachedTitle(),
+    _cachedVulnerabilityId(),
+    _hasCachedSTIGData(false)
 {
 }
 
@@ -103,6 +109,30 @@ STIGCheck CKLCheck::GetSTIGCheck() const
 }
 
 /**
+ * @brief CKLCheck::GetRule
+ * @return The rule identifier for this checklist entry.
+ */
+QString CKLCheck::GetRule() const
+{
+    return _hasCachedSTIGData ? _cachedRule : GetSTIGCheck().rule;
+}
+
+QString CKLCheck::GetSTIGTitle() const
+{
+    return _hasCachedSTIGData ? _cachedSTIGTitle : GetSTIGCheck().GetSTIG().title;
+}
+
+QString CKLCheck::GetTitle() const
+{
+    return _hasCachedSTIGData ? _cachedTitle : GetSTIGCheck().title;
+}
+
+QString CKLCheck::GetVulnerabilityId() const
+{
+    return _hasCachedSTIGData ? _cachedVulnerabilityId : GetSTIGCheck().vulnNum;
+}
+
+/**
  * @brief CKLCheck::GetSeverity
  * @return The @a Severity of this check.
  *
@@ -113,7 +143,7 @@ STIGCheck CKLCheck::GetSTIGCheck() const
 Severity CKLCheck::GetSeverity() const
 {
     if (severityOverride == Severity::none)
-        return GetSTIGCheck().severity;
+        return _hasCachedSTIGData ? _cachedSTIGSeverity : GetSTIGCheck().severity;
     return severityOverride;
 }
 
@@ -136,6 +166,12 @@ CKLCheck &CKLCheck::operator=(const CKLCheck &right)
         comments = right.comments;
         severityOverride = right.severityOverride;
         severityJustification = right.severityJustification;
+        _cachedSTIGSeverity = right._cachedSTIGSeverity;
+        _cachedRule = right._cachedRule;
+        _cachedSTIGTitle = right._cachedSTIGTitle;
+        _cachedTitle = right._cachedTitle;
+        _cachedVulnerabilityId = right._cachedVulnerabilityId;
+        _hasCachedSTIGData = right._hasCachedSTIGData;
     }
     return *this;
 }
@@ -215,5 +251,5 @@ QString GetCMRSStatus(Status status)
  */
 [[nodiscard]] QString PrintCKLCheck(const CKLCheck &cklCheck)
 {
-    return PrintSTIGCheck(cklCheck.GetSTIGCheck());
+    return cklCheck.GetRule();
 }

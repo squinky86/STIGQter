@@ -18,6 +18,7 @@
  */
 
 #include "dbmanager.h"
+#include "common.h"
 #include "stig.h"
 #include "stigcheck.h"
 
@@ -128,6 +129,24 @@ STIG &STIG::operator=(const STIG &right)
 }
 
 /**
+ * @brief STIG::IsNewerThan
+ * @param other
+ * @return Whether this STIG is a later version or release than @a other.
+ */
+bool STIG::IsNewerThan(const STIG &other) const
+{
+    if (version != other.version)
+        return version > other.version;
+
+    const int releaseNumber = GetReleaseNumber(release);
+    const int otherReleaseNumber = GetReleaseNumber(other.release);
+    if (releaseNumber >= 0 && otherReleaseNumber >= 0)
+        return releaseNumber > otherReleaseNumber;
+
+    return release.compare(other.release, Qt::CaseInsensitive) > 0;
+}
+
+/**
  * @brief STIG::operator==
  * @param right
  * @return @c True when the @a STIG entities refer to the same
@@ -176,7 +195,7 @@ bool STIG::operator<(const STIG &right) const
     {
         if (version == right.version)
         {
-            return release < right.release;
+            return right.IsNewerThan(*this);
         }
         return version < right.version;
     }

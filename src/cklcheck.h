@@ -50,7 +50,11 @@ public:
     int assetId;
     int stigCheckId;
     Asset GetAsset() const;
+    QString GetRule() const;
+    QString GetSTIGTitle() const;
     STIGCheck GetSTIGCheck() const;
+    QString GetTitle() const;
+    QString GetVulnerabilityId() const;
     Severity GetSeverity() const;
     Status status;
     QString findingDetails;
@@ -62,10 +66,19 @@ public:
         Severity l = left.GetSeverity();
         Severity r = right.GetSeverity();
         if (l == r)
-            return (left.GetSTIGCheck().rule.compare(right.GetSTIGCheck().rule) < 0);
+            return left.GetRule().compare(right.GetRule()) < 0;
         return r < l;
     }
     CKLCheck& operator=(const CKLCheck &right);
+
+private:
+    Severity _cachedSTIGSeverity;
+    QString _cachedRule;
+    QString _cachedSTIGTitle;
+    QString _cachedTitle;
+    QString _cachedVulnerabilityId;
+    bool _hasCachedSTIGData;
+    friend class DbManager;
 };
 
 Q_DECLARE_METATYPE(CKLCheck);

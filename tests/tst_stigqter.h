@@ -37,12 +37,16 @@ private:
 private Q_SLOTS:
     void initTestCase();
     void test00_Classification();
+    void test00_LocalFileDownload();
     void test01_IndexCCIs();
     void test02_UpdateCCI();
     void test03_IndexSTIGs();
     void test04a_RunInterface();
     void test04b_RunInterface();
     void test04c_RunInterface();
+    void test04c_ProjectLoadSafety();
+    void test04c_ChecklistAutosave();
+    void test04c_AssessmentFieldsAndOptions();
     void test04d_RunInterface();
     void test04e_RunInterface();
     void test04f_Escalation();

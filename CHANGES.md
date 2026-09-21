@@ -3,6 +3,22 @@
 -   Add support for cklb files
 -   Complete the STIG editor: edit, add, and delete checks and CCI mappings, and export a STIG to a re-importable XCCDF zip
 -   Add a system-wide classification marking that auto-escalates to the highest asset classification and marks generated reports (fixes #104)
+-   Prevent checklist edits from being lost when changing selection, filtering, exporting, or closing a tab
+-   Validate and migrate saved projects before atomically replacing the active database
+-   Add confirmations and selection-aware states for destructive actions
+-   Improve compact-window layouts and standard Ctrl/Shift multi-selection behavior
+-   Prevent programmatic STIG-list refreshes from prompting to remove assigned STIGs
+-   Preserve severity overrides when a replacement is cancelled, require justification, and clear stale justification when restoring the baseline
+-   Correct informational severity parsing and numeric release ordering, and upgrade checklists directly to the newest available STIG release
+-   Make short STIG searches immediate, expose previously hidden rule metadata, and remove per-row database lookups from checklist filtering
+-   Add fast checklist search across rule IDs, vulnerability IDs, titles, and STIG titles
+-   Show each checklist rule's status, CAT severity, and title without relying on color alone
+-   Add complete assessment progress counts, reviewed percentage, and next-not-reviewed navigation
+-   Make assessment filters readable, preserve selection across refreshes, and show autosave feedback
+-   Clarify the auto-saved working database and external `.stigqter` project snapshot workflow
+-   Add main-workflow readiness and empty states, persistent window/splitter preferences, and clearer progress feedback
+-   Centralize main-window busy and action availability state
+-   Make the integration workflow deterministic and restrict normal-side banner verification to UNCLASSIFIED and CUI
 
 ## 1.2.7
 -   Fix duplicate rules in DFR (fixes #122)

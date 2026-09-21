@@ -34,11 +34,15 @@
 #include <QFont>
 #include <QInputDialog>
 #include <QMessageBox>
+#include <QSettings>
+#include <QSet>
 #include <QShortcut>
+#include <QSignalBlocker>
 #include <QStyle>
 #include <QXmlStreamWriter>
 #include <QTimer>
 
+#include <algorithm>
 #include <utility>
 
 /**
@@ -84,31 +88,29 @@ AssetView::AssetView(Asset &asset, QWidget *parent) :
     ui->btnSaveCKL->setIcon(st->standardIcon(QStyle::SP_DialogSaveButton));
     ui->btnSaveCKLs->setIcon(st->standardIcon(QStyle::SP_DialogSaveButton));
     ui->btnUpgradeCKL->setIcon(st->standardIcon(QStyle::SP_ArrowUp));
+    ui->btnNextNotReviewed->setIcon(st->standardIcon(QStyle::SP_ArrowForward));
 
-    //spell out the terse filter/severity codes so newcomers aren't lost;
-    //the on-screen codes stay exactly as-is for experienced users.
-    ui->cboBoxFilterStatus->setToolTip(QStringLiteral(
-        "Filter checks by status:\n"
-        "All — every check\n"
-        "NR — Not Reviewed\n"
-        "O — Open (a finding)\n"
-        "NA — Not Applicable\n"
-        "NF — Not a Finding (compliant)"));
-    ui->cboBoxFilterSeverity->setToolTip(QStringLiteral(
-        "Filter checks by CAT severity:\n"
-        "All — every severity\n"
-        "I — CAT I (high)\n"
-        "II — CAT II (medium)\n"
-        "III — CAT III (low)\n"
-        "IV — informational"));
-    ui->cboBoxStatus->setToolTip(QStringLiteral("Compliance status of the selected check."));
+    ui->cboBoxFilterStatus->setItemData(1, static_cast<int>(Status::NotReviewed));
+    ui->cboBoxFilterStatus->setItemData(2, static_cast<int>(Status::Open));
+    ui->cboBoxFilterStatus->setItemData(3, static_cast<int>(Status::NotApplicable));
+    ui->cboBoxFilterStatus->setItemData(4, static_cast<int>(Status::NotAFinding));
+    ui->cboBoxFilterSeverity->setItemData(1, static_cast<int>(Severity::high));
+    ui->cboBoxFilterSeverity->setItemData(2, static_cast<int>(Severity::medium));
+    ui->cboBoxFilterSeverity->setItemData(3, static_cast<int>(Severity::low));
+    ui->cboBoxFilterSeverity->setItemData(4, static_cast<int>(Severity::none));
+    ui->cboBoxStatus->setToolTip(QStringLiteral(
+        "Compliance status of the selected check(s).\n"
+        "Shortcuts: Ctrl+R Not Reviewed, Ctrl+O Open, Ctrl+N Not a Finding, Ctrl+X Not Applicable."));
     ui->cboBoxSeverity->setToolTip(QStringLiteral("Severity override for the selected check (requires a justification)."));
     ui->txtFindingDetails->setToolTip(QStringLiteral("Finding details recorded for this check (exported to CKL and reports)."));
     ui->txtComments->setToolTip(QStringLiteral("Reviewer comments recorded for this check (exported to CKL and reports)."));
     ui->txtSTIGFilter->setPlaceholderText(QStringLiteral("Filter STIGs by title…"));
+    ui->lblSaveState->setStyleSheet(QStringLiteral("QLabel { color: #007A33; }"));
 
     //subtle zebra striping for the longer scanning lists
     ui->lstChecks->setAlternatingRowColors(true);
+    ui->lstChecks->setUniformItemSizes(true);
+    ui->lstChecks->setTextElideMode(Qt::ElideRight);
     ui->lstSTIGs->setAlternatingRowColors(true);
 
     /*
@@ -127,6 +129,20 @@ AssetView::AssetView(Asset &asset, QWidget *parent) :
      */
     _timerChecks.setSingleShot(true);
     connect(&_timerChecks, SIGNAL(timeout()), this, SLOT(CountChecks()));
+    connect(ui->txtCheckSearch, &QLineEdit::textChanged, this, &AssetView::UpdateChecks);
+    connect(ui->btnNextNotReviewed, &QPushButton::clicked, this, &AssetView::NextNotReviewed);
+
+    {
+        QSettings settings(QSettings::NativeFormat, QSettings::UserScope,
+                           QStringLiteral("STIGQter"), QStringLiteral("STIGQter"));
+        const QByteArray splitterState = settings.value(QStringLiteral("assessment/splitterState")).toByteArray();
+        if (!splitterState.isEmpty())
+            ui->splitter->restoreState(splitterState);
+        const QSignalBlocker statusGuard(ui->cboBoxFilterStatus);
+        const QSignalBlocker severityGuard(ui->cboBoxFilterSeverity);
+        ui->cboBoxFilterStatus->setCurrentIndex(settings.value(QStringLiteral("assessment/statusFilter"), 0).toInt());
+        ui->cboBoxFilterSeverity->setCurrentIndex(settings.value(QStringLiteral("assessment/severityFilter"), 0).toInt());
+    }
 
     /*
      * Shortcuts for quickly setting compliance state of selected
@@ -152,6 +168,12 @@ AssetView::AssetView(Asset &asset, QWidget *parent) :
  */
 AssetView::~AssetView()
 {
+    FlushPendingChanges();
+    QSettings settings(QSettings::NativeFormat, QSettings::UserScope,
+                       QStringLiteral("STIGQter"), QStringLiteral("STIGQter"));
+    settings.setValue(QStringLiteral("assessment/splitterState"), ui->splitter->saveState());
+    settings.setValue(QStringLiteral("assessment/statusFilter"), ui->cboBoxFilterStatus->currentIndex());
+    settings.setValue(QStringLiteral("assessment/severityFilter"), ui->cboBoxFilterSeverity->currentIndex());
     for (QShortcut *shortcut : _shortcuts)
         delete shortcut;
     _shortcuts.clear();
@@ -170,6 +192,7 @@ void AssetView::DisableInput()
     ui->txtFQDN->setEnabled(false);
     ui->txtMarking->setEnabled(false);
     ui->txtSTIGFilter->setEnabled(false);
+    ui->txtCheckSearch->setEnabled(false);
     ui->lstSTIGs->setEnabled(false);
     ui->cboBoxFilterStatus->setEnabled(false);
     ui->cboBoxFilterSeverity->setEnabled(false);
@@ -185,6 +208,7 @@ void AssetView::DisableInput()
     ui->btnSaveCKL->setEnabled(false);
     ui->btnSaveCKLs->setEnabled(false);
     ui->btnUpgradeCKL->setEnabled(false);
+    ui->btnNextNotReviewed->setEnabled(false);
 }
 
 /**
@@ -215,6 +239,7 @@ void AssetView::EnableInput()
     ui->txtFQDN->setEnabled(true);
     ui->txtMarking->setEnabled(true);
     ui->txtSTIGFilter->setEnabled(true);
+    ui->txtCheckSearch->setEnabled(true);
     ui->lstSTIGs->setEnabled(true);
     ui->cboBoxFilterStatus->setEnabled(true);
     ui->cboBoxFilterSeverity->setEnabled(true);
@@ -229,6 +254,8 @@ void AssetView::EnableInput()
     ui->btnImportXCCDF->setEnabled(true);
     ui->btnSaveCKL->setEnabled(true);
     ui->btnSaveCKLs->setEnabled(true);
+    ui->btnNextNotReviewed->setEnabled(ui->lblNotReviewed->text().toInt() > 0);
+    CheckSelectedChanged();
 }
 
 /**
@@ -250,6 +277,7 @@ TabType AssetView::GetTabType()
 void AssetView::SelectSTIGs(const QString &search)
 {
     DbManager db;
+    const QSignalBlocker selectionGuard(ui->lstSTIGs);
 
     ui->lstSTIGs->clear();
     QVector<STIG> stigs = _asset.GetSTIGs();
@@ -273,7 +301,10 @@ void AssetView::SelectSTIGs(const QString &search)
  */
 void AssetView::CountChecks()
 {
-    ShowChecks(true);
+    const bool filtersActive = !ui->txtCheckSearch->text().trimmed().isEmpty()
+        || ui->cboBoxFilterStatus->currentIndex() != 0
+        || ui->cboBoxFilterSeverity->currentIndex() != 0;
+    ShowChecks(!filtersActive);
 }
 
 /**
@@ -286,61 +317,127 @@ void AssetView::CountChecks()
  */
 void AssetView::ShowChecks(bool countOnly)
 {
+    const bool signalsWereBlocked = ui->lstChecks->signalsBlocked();
+    const bool updatesWereEnabled = ui->lstChecks->updatesEnabled();
+    QSet<int> selectedIds;
+    int currentId = -1;
     if (!countOnly)
+    {
+        for (QListWidgetItem *item : ui->lstChecks->selectedItems())
+            selectedIds.insert(item->data(Qt::UserRole).value<CKLCheck>().id);
+        if (ui->lstChecks->currentItem())
+            currentId = ui->lstChecks->currentItem()->data(Qt::UserRole).value<CKLCheck>().id;
+        ui->lstChecks->blockSignals(true);
+        ui->lstChecks->setUpdatesEnabled(false);
         ui->lstChecks->clear();
-    int total = 0; //total checks
-    int open = 0; //findings
-    int closed = 0; //passed checks
+    }
+    int total = 0;
+    int open = 0;
+    int notAFinding = 0;
+    int notReviewed = 0;
+    int notApplicable = 0;
+    int shown = countOnly ? ui->lstChecks->count() : 0;
 
-    QString filterSeverityText = ui->cboBoxFilterSeverity->currentText();
-    Severity filterSeverity = GetSeverity(ui->cboBoxFilterSeverity->currentText());
-    QString filterStatusText = ui->cboBoxFilterStatus->currentText();
-    Status filterStatus = GetStatus(ui->cboBoxFilterStatus->currentText());
+    const bool filterSeverity = ui->cboBoxFilterSeverity->currentIndex() != 0;
+    const Severity selectedSeverity = static_cast<Severity>(ui->cboBoxFilterSeverity->currentData().toInt());
+    const bool filterStatus = ui->cboBoxFilterStatus->currentIndex() != 0;
+    const Status selectedStatus = static_cast<Status>(ui->cboBoxFilterStatus->currentData().toInt());
+    const QString search = ui->txtCheckSearch->text().trimmed();
+    QListWidgetItem *restoredCurrent = nullptr;
 
-    for (const CKLCheck &c : _asset.GetCKLChecks())
+    QVector<CKLCheck> checks = _asset.GetCKLChecks();
+    if (!countOnly)
+    {
+        std::sort(checks.begin(), checks.end(), [](const CKLCheck &left, const CKLCheck &right) {
+            return left.GetRule().compare(right.GetRule(), Qt::CaseInsensitive) < 0;
+        });
+    }
+
+    for (const CKLCheck &c : checks)
     {
         total++;
         switch (c.status)
         {
         case Status::NotAFinding:
-            closed++;
+            notAFinding++;
             break;
         case Status::Open:
             open++;
             break;
+        case Status::NotApplicable:
+            notApplicable++;
+            break;
+        case Status::NotReviewed:
+            notReviewed++;
+            break;
         default:
             break;
         }
-        //update the list of CKL checks
-        if (
-                !countOnly //perform filtering
-                && //severity filter
-                ((filterSeverityText == QStringLiteral("All")) ||
-                 (filterSeverity == c.GetSeverity()))
-                && //status filter
-                ((filterStatusText == QStringLiteral("All")) ||
-                 (filterStatus == c.status))
-            )
+
+        const QString searchable = QStringList({c.GetRule(), c.GetVulnerabilityId(), c.GetTitle(), c.GetSTIGTitle()})
+                                       .join(QLatin1Char('\n'));
+        const bool matches = (!filterSeverity || selectedSeverity == c.GetSeverity())
+            && (!filterStatus || selectedStatus == c.status)
+            && (search.isEmpty() || searchable.contains(search, Qt::CaseInsensitive));
+        if (!countOnly && matches)
         {
-            QListWidgetItem *i = new QListWidgetItem(PrintCKLCheck(c));
+            auto *i = new QListWidgetItem();
             ui->lstChecks->addItem(i);
-            i->setData(Qt::UserRole, QVariant::fromValue<CKLCheck>(c));
-            SetItemColor(i, c.status, (c.severityOverride == Severity::none) ? c.GetSTIGCheck().severity : c.severityOverride);
+            UpdateCheckItem(i, c);
+            ++shown;
+            if (selectedIds.contains(c.id))
+                i->setSelected(true);
+            if (c.id == currentId)
+                restoredCurrent = i;
         }
     }
     ui->lblTotalChecks->setText(QString::number(total));
-    //emphasize the compliance posture: open findings in red when present,
-    //compliant count in green. Counts themselves are unchanged.
     ui->lblOpen->setText(QString::number(open));
     ui->lblOpen->setStyleSheet(open > 0
         ? QStringLiteral("QLabel { color: #C8102E; font-weight: bold; }")
         : QStringLiteral("QLabel { color: #6B7280; }"));
-    ui->lblNotAFinding->setText(QString::number(closed));
-    ui->lblNotAFinding->setStyleSheet(closed > 0
+    ui->lblNotAFinding->setText(QString::number(notAFinding));
+    ui->lblNotAFinding->setStyleSheet(notAFinding > 0
         ? QStringLiteral("QLabel { color: #007A33; font-weight: bold; }")
         : QStringLiteral("QLabel { color: #6B7280; }"));
+    ui->lblNotReviewed->setText(QString::number(notReviewed));
+    ui->lblNotApplicable->setText(QString::number(notApplicable));
+    const int reviewed = total - notReviewed;
+    const int percentReviewed = total > 0 ? (reviewed * 100) / total : 0;
+    ui->lblReviewed->setText(QStringLiteral("Reviewed: %1/%2 (%3%)")
+                                 .arg(reviewed).arg(total).arg(percentReviewed));
+    ui->lblFilteredChecks->setText(QStringLiteral("Showing %1 of %2 checks").arg(shown).arg(total));
+    ui->btnNextNotReviewed->setEnabled(ui->lstChecks->isEnabled() && notReviewed > 0);
     if (!countOnly)
-        ui->lstChecks->sortItems();
+    {
+        if (restoredCurrent)
+            ui->lstChecks->setCurrentItem(restoredCurrent);
+        ui->lstChecks->setUpdatesEnabled(updatesWereEnabled);
+        ui->lstChecks->blockSignals(signalsWereBlocked);
+        if (!signalsWereBlocked)
+        {
+            CheckSelected(ui->lstChecks->currentItem(), nullptr);
+            CheckSelectedChanged();
+        }
+    }
+}
+
+void AssetView::UpdateCheckItem(QListWidgetItem *item, const CKLCheck &check)
+{
+    if (!item)
+        return;
+
+    const QString status = GetStatus(check.status);
+    const QString severity = GetSeverity(check.GetSeverity());
+    item->setText(QStringLiteral("%1  ·  %2  ·  %3 — %4")
+                      .arg(check.GetRule(), status, severity, check.GetTitle()));
+    item->setToolTip(QStringLiteral("%1\n%2\n%3 — %4\n%5")
+                         .arg(check.GetSTIGTitle(), check.GetRule(), check.GetVulnerabilityId(),
+                              check.GetTitle(), status + QStringLiteral(" · ") + severity));
+    item->setData(Qt::AccessibleTextRole, item->text());
+    item->setData(Qt::AccessibleDescriptionRole, item->toolTip());
+    item->setData(Qt::UserRole, QVariant::fromValue<CKLCheck>(check));
+    SetItemColor(item, check.status, check.GetSeverity());
 }
 
 /**
@@ -388,8 +485,7 @@ void AssetView::UpdateCKLCheck(const CKLCheck &cklCheck)
             if (
                     (s.title == selectedSTIG.title) &&
                     (
-                        (s.version > selectedSTIG.version) ||
-                        ((s.version == selectedSTIG.version) && (s.release.compare(selectedSTIG.release) > 0))
+                        s.IsNewerThan(selectedSTIG)
                     ) &&
                     (!_asset.GetSTIGs().contains(s))
                 )
@@ -413,17 +509,36 @@ void AssetView::UpdateSTIGCheck(const STIGCheck &stigCheck)
     ui->lblCheckTitle->setText(stigCheck.title);
     ui->cboBoxSeverity->setCurrentText(GetSeverity(stigCheck.severity));
     ui->cbDocumentable->setChecked(stigCheck.documentable);
-    ui->lblDiscussion->setText(stigCheck.vulnDiscussion);
-    ui->lblFalsePositives->setText(stigCheck.falsePositives);
-    ui->lblFalseNegatives->setText(stigCheck.falseNegatives);
-    ui->lblFix->setText(stigCheck.fix);
-    ui->lblCheck->setText(stigCheck.check);
+    ui->lblDiscussion->setPlainText(stigCheck.vulnDiscussion);
+    ui->lblFalsePositives->setPlainText(stigCheck.falsePositives);
+    ui->lblFalseNegatives->setPlainText(stigCheck.falseNegatives);
+    ui->lblFix->setPlainText(stigCheck.fix);
+    ui->lblCheck->setPlainText(stigCheck.check);
+    const auto displayValue = [](const QString &value) {
+        return value.trimmed().isEmpty() ? QStringLiteral("Not provided") : value;
+    };
+    QStringList additionalDetails;
+    additionalDetails
+        << QStringLiteral("Vulnerability ID: ") + displayValue(stigCheck.vulnNum)
+        << QStringLiteral("Group title: ") + displayValue(stigCheck.groupTitle)
+        << QStringLiteral("Rule version: ") + displayValue(stigCheck.ruleVersion)
+        << QStringLiteral("Weight: ") + QString::number(stigCheck.weight)
+        << QStringLiteral("Mitigations: ") + displayValue(stigCheck.mitigations)
+        << QStringLiteral("Severity override guidance: ") + displayValue(stigCheck.severityOverrideGuidance)
+        << QStringLiteral("Check content reference: ") + displayValue(stigCheck.checkContentRef)
+        << QStringLiteral("Potential impact: ") + displayValue(stigCheck.potentialImpact)
+        << QStringLiteral("Third-party tools: ") + displayValue(stigCheck.thirdPartyTools)
+        << QStringLiteral("Mitigation control: ") + displayValue(stigCheck.mitigationControl)
+        << QStringLiteral("Responsibility: ") + displayValue(stigCheck.responsibility)
+        << QStringLiteral("IA controls: ") + displayValue(stigCheck.iaControls)
+        << QStringLiteral("Target key: ") + displayValue(stigCheck.targetKey);
+    ui->lblAdditionalDetails->setPlainText(additionalDetails.join(QStringLiteral("\n\n")));
     QString ccis(QStringLiteral("Relevant CCI(s):\n"));
     for (auto cci : stigCheck.GetCCIs())
     {
         ccis.append(PrintCCI(cci) + QStringLiteral(": ") + cci.definition + QStringLiteral("\n"));
     }
-    ui->lblCcis->setText(ccis);
+    ui->lblCcis->setPlainText(ccis);
 }
 
 void AssetView::RunTests()
@@ -510,20 +625,14 @@ void AssetView::RunTests()
  */
 void AssetView::CheckSelectedChanged()
 {
-    if (ui->lstChecks->selectedItems().count() > 1)
-    {
-        //disable multi-editable fields
-        ui->txtComments->setEnabled(false);
-        ui->txtFindingDetails->setEnabled(false);
-        ui->cboBoxSeverity->setEnabled(false);
-    }
-    else
-    {
-        //enable multi-editable fields
-        ui->txtComments->setEnabled(true);
-        ui->txtFindingDetails->setEnabled(true);
-        ui->cboBoxSeverity->setEnabled(true);
-    }
+    const int selectedCount = ui->lstChecks->selectedItems().count();
+    const bool inputEnabled = ui->lstChecks->isEnabled();
+    const bool hasSingleSelection = inputEnabled && selectedCount == 1;
+
+    ui->txtComments->setEnabled(hasSingleSelection);
+    ui->txtFindingDetails->setEnabled(hasSingleSelection);
+    ui->cboBoxSeverity->setEnabled(hasSingleSelection);
+    ui->cboBoxStatus->setEnabled(inputEnabled && selectedCount > 0);
 }
 
 /**
@@ -533,6 +642,7 @@ void AssetView::CheckSelectedChanged()
  */
 void AssetView::DeleteAsset(bool confirm)
 {
+    FlushPendingChanges();
     //prompt user for confirmation of a destructive task
     QMessageBox::StandardButton reply = confirm ? QMessageBox::Yes : QMessageBox::question(this, QStringLiteral("Confirm"), "Are you sure you want to delete " + PrintAsset(_asset) + "?", QMessageBox::Yes|QMessageBox::No);
     if (reply == QMessageBox::Yes)
@@ -555,8 +665,7 @@ void AssetView::DeleteAsset(bool confirm)
  */
 void AssetView::FilterSTIGs(const QString &text)
 {
-    ui->lstSTIGs->blockSignals(true);
-    if (text.length() > 2)
+    if (!text.isEmpty())
     {
         _isFiltered = true;
         SelectSTIGs(text);
@@ -566,7 +675,6 @@ void AssetView::FilterSTIGs(const QString &text)
         _isFiltered = false;
         SelectSTIGs();
     }
-    ui->lstSTIGs->blockSignals(false);
 }
 
 /**
@@ -732,6 +840,44 @@ void AssetView::KeyShortcutCtrlX()
     KeyShortcut(Status::NotApplicable);
 }
 
+void AssetView::NextNotReviewed()
+{
+    int currentId = -1;
+    if (ui->lstChecks->currentItem())
+        currentId = ui->lstChecks->currentItem()->data(Qt::UserRole).value<CKLCheck>().id;
+
+    {
+        const QSignalBlocker searchGuard(ui->txtCheckSearch);
+        const QSignalBlocker statusGuard(ui->cboBoxFilterStatus);
+        const QSignalBlocker severityGuard(ui->cboBoxFilterSeverity);
+        ui->txtCheckSearch->clear();
+        ui->cboBoxFilterStatus->setCurrentIndex(0);
+        ui->cboBoxFilterSeverity->setCurrentIndex(0);
+    }
+    ShowChecks();
+
+    int startRow = -1;
+    for (int row = 0; row < ui->lstChecks->count(); ++row)
+    {
+        if (ui->lstChecks->item(row)->data(Qt::UserRole).value<CKLCheck>().id == currentId)
+        {
+            startRow = row;
+            break;
+        }
+    }
+    for (int offset = 1; offset <= ui->lstChecks->count(); ++offset)
+    {
+        const int row = (startRow + offset) % ui->lstChecks->count();
+        QListWidgetItem *item = ui->lstChecks->item(row);
+        if (item->data(Qt::UserRole).value<CKLCheck>().status == Status::NotReviewed)
+        {
+            ui->lstChecks->setCurrentItem(item, QItemSelectionModel::ClearAndSelect);
+            ui->lstChecks->scrollToItem(item, QAbstractItemView::PositionAtCenter);
+            break;
+        }
+    }
+}
+
 /**
  * @brief AssetView::RenameAsset
  * @param name
@@ -763,6 +909,7 @@ void AssetView::RenameAsset(const QString &name)
  */
 void AssetView::SaveCKL(const QString &name)
 {
+    FlushPendingChanges();
     DbManager db;
     QString fileName = name;
     if (fileName.isEmpty())
@@ -800,6 +947,7 @@ void AssetView::SaveCKL(const QString &name)
  */
 void AssetView::SaveCKLs(const QString &dir)
 {
+    FlushPendingChanges();
     DbManager db;
 
     // When called from tests a dir is pre-supplied; otherwise ask the user for
@@ -842,6 +990,7 @@ void AssetView::SaveCKLs(const QString &dir)
  */
 void AssetView::UpdateChecks()
 {
+    FlushPendingChanges();
     ShowChecks();
 }
 
@@ -881,38 +1030,28 @@ void AssetView::KeyShortcut(Status action)
  */
 void AssetView::UpdateCKLHelper()
 {
-    QList<QListWidgetItem*> selectedItems = ui->lstChecks->selectedItems();
-    int count = selectedItems.count();
-
-    //make sure that something is selected
-    if (count > 0)
+    bool saveSucceeded = true;
+    if (!_pendingChecks.isEmpty())
     {
         DbManager db;
         db.DelayCommit(true);
-        for (QListWidgetItem *i : selectedItems)
+        const QMap<int, CKLCheck> pendingChecks = _pendingChecks;
+        for (const CKLCheck &cc : pendingChecks)
         {
-            auto cc = i->data(Qt::UserRole).value<CKLCheck>();
-            //if multiple checks are selected, only update their status
-            if (count < 2)
+            saveSucceeded = db.UpdateCKLCheck(cc) && saveSucceeded;
+            const CKLCheck savedCheck = db.GetCKLCheck(cc);
+            for (int row = 0; row < ui->lstChecks->count(); ++row)
             {
-                cc.comments = ui->txtComments->toPlainText();
-                cc.findingDetails = ui->txtFindingDetails->toPlainText();
-                Severity tmpSeverity = GetSeverity(ui->cboBoxSeverity->currentText());
-                cc.severityOverride = (tmpSeverity == cc.GetSTIGCheck().severity) ? Severity::none : tmpSeverity;
-                cc.severityJustification = _justification;
-                cc.status = GetStatus(ui->cboBoxStatus->currentText());
-            }
-            else {
-                if (_updateStatus)
+                QListWidgetItem *item = ui->lstChecks->item(row);
+                if (item->data(Qt::UserRole).value<CKLCheck>().id == cc.id)
                 {
-                    cc.status = GetStatus(ui->cboBoxStatus->currentText());
+                    UpdateCheckItem(item, savedCheck);
+                    break;
                 }
             }
-            db.UpdateCKLCheck(cc);
-            i->setData(Qt::UserRole, QVariant::fromValue<CKLCheck>(db.GetCKLCheck(cc)));
         }
         db.DelayCommit(false);
-        _updateStatus = false;
+        _pendingChecks.clear();
 
         _timerChecks.start(1000);
     }
@@ -924,11 +1063,16 @@ void AssetView::UpdateCKLHelper()
         _asset.hostMAC = ui->txtMAC->text();
         _asset.hostFQDN = ui->txtFQDN->text();
         _asset.marking = ui->txtMarking->text();
-        db.UpdateAsset(_asset);
+        saveSucceeded = db.UpdateAsset(_asset) && saveSucceeded;
         //the system marking auto-escalates to the highest asset marking
         if (_parent)
             _parent->RefreshClassificationBanner();
     }
+    ui->lblSaveState->setText(saveSucceeded ? QStringLiteral("All changes saved")
+                                            : QStringLiteral("Unable to save changes"));
+    ui->lblSaveState->setStyleSheet(saveSucceeded
+        ? QStringLiteral("QLabel { color: #007A33; }")
+        : QStringLiteral("QLabel { color: #C8102E; font-weight: bold; }"));
 }
 
 /**
@@ -938,8 +1082,38 @@ void AssetView::UpdateCKLHelper()
  */
 void AssetView::UpdateCKL()
 {
+    const QList<QListWidgetItem*> selectedItems = ui->lstChecks->selectedItems();
+    const int count = selectedItems.count();
+    for (QListWidgetItem *item : selectedItems)
+    {
+        CKLCheck cc = item->data(Qt::UserRole).value<CKLCheck>();
+        if (count == 1)
+        {
+            cc.comments = ui->txtComments->toPlainText();
+            cc.findingDetails = ui->txtFindingDetails->toPlainText();
+            const Severity severity = GetSeverity(ui->cboBoxSeverity->currentText());
+            cc.severityOverride = (severity == cc.GetSTIGCheck().severity) ? Severity::none : severity;
+            cc.severityJustification = _justification;
+            cc.status = GetStatus(ui->cboBoxStatus->currentText());
+        }
+        else if (_updateStatus)
+        {
+            cc.status = GetStatus(ui->cboBoxStatus->currentText());
+        }
+        else
+        {
+            continue;
+        }
+
+        _pendingChecks.insert(cc.id, cc);
+        UpdateCheckItem(item, cc);
+    }
+    _updateStatus = false;
+
     //avoid updating the database for every keypress. Wait for 9/50 of a second before saving
     //https://forum.qt.io/topic/97857/qplaintextedit-autosave-to-database
+    ui->lblSaveState->setText(QStringLiteral("Saving…"));
+    ui->lblSaveState->setStyleSheet(QStringLiteral("QLabel { color: #6B7280; }"));
     _timer.start(180);
 }
 
@@ -959,8 +1133,7 @@ void AssetView::UpdateCKLStatus(const QString &val)
         for (QListWidgetItem *i : selectedItems)
         {
             auto cc = i->data(Qt::UserRole).value<CKLCheck>();
-            STIGCheck sc = cc.GetSTIGCheck();
-            SetItemColor(i, stat, (cc.severityOverride == Severity::none) ? sc.severity : cc.severityOverride);
+            SetItemColor(i, stat, cc.GetSeverity());
         }
         _updateStatus = true;
         UpdateCKL();
@@ -983,6 +1156,7 @@ void AssetView::UpdateCKLSeverity(const QString &val)
         QListWidgetItem *i = selectedItems.first();
         auto cc = i->data(Qt::UserRole).value<CKLCheck>();
         STIGCheck sc = cc.GetSTIGCheck();
+        const Severity previousSeverity = cc.GetSeverity();
         Severity tmpSeverity = GetSeverity(val);
         if (sc.severity != tmpSeverity)
         {
@@ -997,20 +1171,30 @@ void AssetView::UpdateCKLSeverity(const QString &val)
             else
             {
                 bool ok(false);
+                QString prompt = tr("Justification:");
+                if (!sc.severityOverrideGuidance.trimmed().isEmpty())
+                    prompt += tr("\n\nSTIG guidance:\n") + sc.severityOverrideGuidance;
                 QString justification = QInputDialog::getMultiLineText(this, tr("Severity Override Justification"),
-                                        tr("Justification:"), _justification, &ok);
-                if (ok)
+                                        prompt, _justification, &ok);
+                if (ok && !justification.trimmed().isEmpty())
                 {
                     _justification = justification;
                 }
                 else
                 {
+                    if (ok)
+                        Warning(QStringLiteral("Severity Override Requires Justification"),
+                                QStringLiteral("Enter a justification before changing the severity."));
                     ui->cboBoxSeverity->blockSignals(true);
-                    ui->cboBoxSeverity->setCurrentText(GetSeverity(sc.severity));
+                    ui->cboBoxSeverity->setCurrentText(GetSeverity(previousSeverity));
                     ui->cboBoxSeverity->blockSignals(false);
                     return;
                 }
             }
+        }
+        else
+        {
+            _justification.clear();
         }
         SetItemColor(i, GetStatus(ui->cboBoxStatus->currentText()), GetSeverity(ui->cboBoxSeverity->currentText()));
         UpdateCKL();
@@ -1025,6 +1209,7 @@ void AssetView::UpdateCKLSeverity(const QString &val)
  */
 void AssetView::UpdateSTIGs()
 {
+    FlushPendingChanges();
     DbManager db;
     QVector<STIG> stigs = _asset.GetSTIGs();
     for (int i = 0; i < ui->lstSTIGs->count(); i++)
@@ -1064,6 +1249,7 @@ void AssetView::UpdateSTIGs()
  */
 void AssetView::UpgradeCKL()
 {
+    FlushPendingChanges();
     DisableInput();
     QListWidgetItem *i = ui->lstChecks->selectedItems().first();
     DbManager db;
@@ -1139,7 +1325,23 @@ void AssetView::CheckSelected(QListWidgetItem *current, QListWidgetItem *previou
     if (current)
     {
         auto cc = current->data(Qt::UserRole).value<CKLCheck>();
-        DbManager db;
-        UpdateCKLCheck(db.GetCKLCheck(cc));
+        if (_pendingChecks.contains(cc.id))
+        {
+            UpdateCKLCheck(_pendingChecks.value(cc.id));
+        }
+        else
+        {
+            DbManager db;
+            UpdateCKLCheck(db.GetCKLCheck(cc));
+        }
     }
+}
+
+void AssetView::FlushPendingChanges()
+{
+    const bool needsFlush = _timer.isActive() || !_pendingChecks.isEmpty();
+    if (_timer.isActive())
+        _timer.stop();
+    if (needsFlush)
+        UpdateCKLHelper();
 }

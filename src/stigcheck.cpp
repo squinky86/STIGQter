@@ -180,14 +180,29 @@ QVector<CCI> STIGCheck::GetCCIs() const
  */
 Severity GetSeverity(const QString &severity)
 {
-    QString toCheck = severity;
-    if (toCheck.startsWith(QStringLiteral("I")))
-        toCheck = QStringLiteral("CAT ") + toCheck;
-    if (toCheck.isEmpty() || toCheck.endsWith(QStringLiteral(" IV")))
+    QString toCheck = severity.trimmed();
+    if (toCheck.isEmpty() ||
+        toCheck.startsWith(QStringLiteral("all"), Qt::CaseInsensitive) ||
+        toCheck.startsWith(QStringLiteral("none"), Qt::CaseInsensitive) ||
+        toCheck.startsWith(QStringLiteral("info"), Qt::CaseInsensitive) ||
+        toCheck.startsWith(QStringLiteral("unknown"), Qt::CaseInsensitive))
+    {
         return Severity::none;
-    if (toCheck.startsWith(QStringLiteral("medium"), Qt::CaseInsensitive) || toCheck.endsWith(QStringLiteral(" II")))
+    }
+    if (toCheck == QStringLiteral("I") || toCheck == QStringLiteral("II") ||
+        toCheck == QStringLiteral("III") || toCheck == QStringLiteral("IV"))
+    {
+        toCheck = QStringLiteral("CAT ") + toCheck;
+    }
+    if (toCheck.startsWith(QStringLiteral("CAT IV"), Qt::CaseInsensitive) || toCheck.endsWith(QStringLiteral(" IV")))
+        return Severity::none;
+    if (toCheck.startsWith(QStringLiteral("CAT III"), Qt::CaseInsensitive))
+        return Severity::low;
+    if (toCheck.startsWith(QStringLiteral("CAT II"), Qt::CaseInsensitive) ||
+        toCheck.startsWith(QStringLiteral("medium"), Qt::CaseInsensitive) || toCheck.endsWith(QStringLiteral(" II")))
         return Severity::medium;
-    if (toCheck.startsWith(QStringLiteral("high"), Qt::CaseInsensitive) || toCheck.endsWith(QStringLiteral(" I")))
+    if (toCheck.startsWith(QStringLiteral("CAT I"), Qt::CaseInsensitive) ||
+        toCheck.startsWith(QStringLiteral("high"), Qt::CaseInsensitive) || toCheck.endsWith(QStringLiteral(" I")))
         return Severity::high;
     return Severity::low;
 }
