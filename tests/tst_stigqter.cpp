@@ -36,6 +36,7 @@
 #include <QMessageBox>
 #include <QPlainTextEdit>
 #include <QPushButton>
+#include <QStandardPaths>
 #include <QTemporaryFile>
 #include <QTextEdit>
 #include <QThread>
@@ -60,20 +61,25 @@ void TestSTIGQter::initTestCase()
 {
     IgnoreWarnings = true;
 
-    w = new STIGQter();
-    w->show();
-    w->resize(800, 600);
-
-    {
-        DbManager db;
-        db.DeleteDB();
-    }
+    // Keep test data out of the user's normal application-data directory and
+    // remove it before DbManager opens a connection. Constructing STIGQter
+    // first starts CCI indexing immediately; truncating the live SQLite file
+    // after that races the worker and intermittently leaves the database empty.
+    QStandardPaths::setTestModeEnabled(true);
+    const QString testDatabase = QStandardPaths::writableLocation(QStandardPaths::AppDataLocation)
+                                 + QStringLiteral("/STIGQter.db");
+    QVERIFY2(!QFile::exists(testDatabase) || QFile::remove(testDatabase),
+             qPrintable(QStringLiteral("Unable to remove test database: ") + testDatabase));
 
     {
         DbManager db;
         db.UpdateVariable(QStringLiteral("loglevel"), QStringLiteral("99"));
         db.UpdateVariable(QStringLiteral("indexSupplements"), QStringLiteral("y"));
     }
+
+    w = new STIGQter();
+    w->show();
+    w->resize(800, 600);
 
     QApplication::processEvents();
     QCOMPARE(w->size(), QSize(800, 600));
@@ -155,11 +161,81 @@ void TestSTIGQter::test03_IndexSTIGs()
     QMetaObject::invokeMethod(w, "SupplementsChanged", Qt::DirectConnection, Q_ARG(int, Qt::Checked));
     procEvents();
 
+    // Build a small quarterly archive from repository fixtures. The live DISA
+    // archive is hundreds of megabytes and changes independently of the code,
+    // making this regression suite slow and nondeterministic.
+    const auto readFixture = [](const QString &path) {
+        QFile file(path);
+        if (!file.open(QIODevice::ReadOnly))
+            return QByteArray();
+        return file.readAll();
+    };
+
+    const QMap<QString, QByteArray> sourceVariantFiles = GetFilesFromZip(QStringLiteral("tests/U_ASD_V5R1_STIG.zip"));
+    QString xccdfPath;
+    for (const QString &path : sourceVariantFiles.keys())
+    {
+        if (path.endsWith(QStringLiteral("-xccdf.xml"), Qt::CaseInsensitive))
+        {
+            xccdfPath = path;
+            break;
+        }
+    }
+    QVERIFY(!xccdfPath.isEmpty());
+    const QByteArray originalTitle = QByteArrayLiteral("<title>Application Security and Development Security Technical Implementation Guide</title>");
+    QMap<QString, QByteArray> quarterlyFiles;
+    quarterlyFiles.insert(QStringLiteral("U_ASD_V5R1_STIG.zip"),
+                          readFixture(QStringLiteral("tests/U_ASD_V5R1_STIG.zip")));
+    quarterlyFiles.insert(QStringLiteral("U_ASD_V5R2_STIG.zip"),
+                          readFixture(QStringLiteral("tests/U_ASD_V5R2_STIG.zip")));
+
+    // The assessment-field test needs three attached guides while the V5R2
+    // fixture must remain unattached for the upgrade test. Add two distinct,
+    // lightweight variants of V5R1 to satisfy both conditions.
+    for (int variant = 1; variant <= 2; ++variant)
+    {
+        QByteArray variantXccdf = sourceVariantFiles.value(xccdfPath);
+        QVERIFY(variantXccdf.contains(originalTitle));
+        variantXccdf.replace(
+            originalTitle,
+            QStringLiteral("<title>Application Security and Development Test Variant %1</title>")
+                .arg(variant).toUtf8());
+
+        QMap<QString, QByteArray> variantFiles;
+        variantFiles.insert(QStringLiteral("U_ASD_TEST_%1_Manual-xccdf.xml").arg(variant),
+                            variantXccdf);
+
+        QTemporaryFile variantArchive;
+        QVERIFY(variantArchive.open());
+        const QString variantArchivePath = variantArchive.fileName();
+        variantArchive.close();
+        QVERIFY(CreateZip(variantArchivePath, variantFiles));
+
+        const QByteArray variantContents = readFixture(variantArchivePath);
+        QVERIFY(!variantContents.isEmpty());
+        quarterlyFiles.insert(QStringLiteral("U_ASD_TEST_%1_STIG.zip").arg(variant),
+                              variantContents);
+    }
+    for (const QByteArray &contents : quarterlyFiles)
+        QVERIFY(!contents.isEmpty());
+
+    QTemporaryFile quarterlyArchive;
+    QVERIFY(quarterlyArchive.open());
+    const QString quarterlyArchivePath = quarterlyArchive.fileName();
+    quarterlyArchive.close();
+    QVERIFY(CreateZip(quarterlyArchivePath, quarterlyFiles));
+
+    {
+        DbManager db;
+        QVERIFY(db.UpdateVariable(QStringLiteral("quarterly"),
+                                  QUrl::fromLocalFile(quarterlyArchivePath).toString()));
+    }
+
     QMetaObject::invokeMethod(w, "DownloadSTIGs", Qt::DirectConnection);
     procEvents();
 
     DbManager db;
-    QVERIFY(db.GetSTIGs().count() > 0);
+    QCOMPARE(db.GetSTIGs().count(), 4);
 }
 
 // STIGQter::RunTests() is split into five phases so that each gets its own

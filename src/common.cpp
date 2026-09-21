@@ -95,6 +95,29 @@ bool DownloadFile(const QUrl &url, QFile *file)
             return false;
         close = true;
     }
+
+    // Local URLs are useful for offline imports and deterministic tests. They
+    // have no host name, so the network-only path below would reject them.
+    if (url.isLocalFile())
+    {
+        QFile source(url.toLocalFile());
+        if (!source.open(QIODevice::ReadOnly))
+        {
+            if (close)
+                file->close();
+            return false;
+        }
+
+        const QByteArray contents = source.readAll();
+        const bool written = file->write(contents) == contents.size();
+        file->flush();
+        if (close)
+            file->close();
+        else
+            file->seek(0);
+        return written;
+    }
+
     QNetworkAccessManager manager;
     QNetworkRequest req = QNetworkRequest(url);
     req.setAttribute(QNetworkRequest::RedirectPolicyAttribute, QNetworkRequest::NoLessSafeRedirectPolicy);
