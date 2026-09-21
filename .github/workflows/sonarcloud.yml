@@ -82,8 +82,8 @@ jobs:
         run: |
           cd tests
           qmake6 tests.pro
-          # Match the coverage flags used for the main build so test-driven
-          # exercise of src/*.cpp produces .gcda alongside the existing .gcno.
+          # Match the coverage flags used for the main build. The resulting
+          # .gcno and test-driven .gcda files are written under tests/.
           sed -i \
             -e 's:-O2:-O0 -fprofile-arcs -ftest-coverage -fno-exceptions -fno-inline:g' \
             -e 's:-Wl,-O1:-Wl,-O1 -lgcov --coverage:g' \
@@ -94,7 +94,12 @@ jobs:
         run: ./tests/tst_stigqter
 
       - name: Generate gcov reports
-        run: for x in src/*.cpp; do gcov --branch-probabilities --branch-counts "${x}" -o .; done
+        run: |
+          cd tests
+          for x in ../src/*.cpp; do
+            [ -f "$(basename "${x%.cpp}").gcno" ] || continue
+            gcov --branch-probabilities --branch-counts "${x}" -o .
+          done
 
       - name: SonarQube Scan
         uses: SonarSource/sonarqube-scan-action@22918119ff8e1ca75a623e15c8296b6ea4fbe28f # v8.2.1
@@ -109,7 +114,7 @@ jobs:
             -Dsonar.sources=./src/
             -Dsonar.cfamily.compile-commands=${{ env.BUILD_WRAPPER_OUT_DIR }}/compile_commands.json
             -Dsonar.cfamily.threads=2
-            -Dsonar.cfamily.gcov.reportsPath=.
+            -Dsonar.cfamily.gcov.reportsPath=tests
 
       - name: Build LCOV report
         run: |
