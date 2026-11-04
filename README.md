@@ -18,11 +18,11 @@ The source has the following dependencies (with minimum version numbers):
 
 Build with `qmake6 STIGQter.pro` and `make`, or use `bash scripts/ci/build-linux.sh` for separate build directories. On Ubuntu 26.04, `bash scripts/ci/setup.sh linux` installs development dependencies. Build the tests through the same script, then run `bash scripts/ci/test.sh`; it provides disposable fixture/output directories and isolated settings. Do not run tests beside a portable `STIGQter.db`.
 
-Update checks read `https://squinky86.github.io/stigqter.com/metadata/v1/releases.json`. Only a newer published stable release produces an update prompt. Quarterly downloads and automatic missing-STIG lookup use the versioned catalog at the same Pages site. Failed checks do not prevent offline work; manual ZIP imports and custom quarterly URLs remain supported. Automatic downloads verify the archive size and SHA-256. Update checks can still be disabled in Options. The Pages endpoint must be published and verified before distributing this compatible release.
+Update checks read `https://squinky86.github.io/stigqter.com/metadata/v1/releases.json`. Only a newer published stable release produces an update prompt. Quarterly downloads and automatic missing-STIG lookup use the versioned catalog at the same Pages site. Failed checks do not prevent offline work; manual ZIP imports and custom quarterly URLs remain supported. Automatic downloads verify the archive size and SHA-256. Update checks can still be disabled in Options. The [Pages preview](https://squinky86.github.io/stigqter.com/) and metadata are live; stable metadata still advertises the published 1.2.7 release.
 
 The working database remains in the existing application-data directory, or beside the executable when using a portable database. No data-location or schema-version change is part of this overhaul. Back up `.stigqter` snapshots before upgrading.
 
-See [the overhaul plan](plan-overhaul.md), [validation evidence](doc/overhaul-validation.md), and [the maintenance runbook](doc/maintenance.md) for local review status, release checks, and the separate website handoff.
+See [the overhaul plan](plan-overhaul.md), [validation evidence](doc/overhaul-validation.md), and [the maintenance runbook](doc/maintenance.md) for publication status, release checks, and the separate website handoff.
 
 ## Authors
 
