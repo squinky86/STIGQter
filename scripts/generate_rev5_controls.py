@@ -40,6 +40,7 @@ writes src/800-53-rev5-controls.xml relative to the repository root.
 """
 
 import argparse
+import hashlib
 import json
 import os
 import re
@@ -48,9 +49,10 @@ import urllib.request
 from xml.sax.saxutils import escape
 
 DEFAULT_SOURCE = (
-    "https://raw.githubusercontent.com/usnistgov/oscal-content/main/"
+    "https://raw.githubusercontent.com/usnistgov/oscal-content/78650f02ad9321bb7b817846f8fbd4f2bcd620de/"
     "nist.gov/SP800-53/rev5/json/NIST_SP-800-53_rev5_catalog.json"
 )
+DEFAULT_SHA256 = "01f37cf90ea99d92242c936cbfbdebcc338eef1f71454e2acac36cc56e9bc062"
 
 REPO_ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 DEFAULT_OUTPUT = os.path.join(REPO_ROOT, "src", "800-53-rev5-controls.xml")
@@ -61,7 +63,7 @@ _INSERT_RE = re.compile(r"\{\{\s*insert:\s*param,\s*([^\s}]+)\s*\}\}")
 _WS_RE = re.compile(r"\s+")
 
 
-def load_catalog(source):
+def load_catalog(source, expected_sha256=None):
     """Load the OSCAL catalog from a URL or a local file path."""
     if source.startswith("http://") or source.startswith("https://"):
         req = urllib.request.Request(source, headers={"User-Agent": "STIGQter"})
@@ -70,6 +72,10 @@ def load_catalog(source):
     else:
         with open(source, "rb") as fh:
             data = fh.read()
+    actual = hashlib.sha256(data).hexdigest()
+    if expected_sha256 and actual != expected_sha256:
+        raise ValueError("OSCAL input SHA-256 does not match the reviewed input")
+    sys.stderr.write("OSCAL input SHA-256: %s\n" % actual)
     return json.loads(data)
 
 
@@ -235,10 +241,14 @@ def main():
                         help="OSCAL Rev 5 catalog URL or local JSON path")
     parser.add_argument("--output", default=DEFAULT_OUTPUT,
                         help="destination XML path")
+    parser.add_argument("--sha256", help="expected input digest; required for a different remote source")
     args = parser.parse_args()
 
     sys.stderr.write("Loading OSCAL catalog from %s\n" % args.source)
-    catalog = load_catalog(args.source)["catalog"]
+    digest = args.sha256 or (DEFAULT_SHA256 if args.source == DEFAULT_SOURCE else None)
+    if args.source.startswith(("http://", "https://")) and not digest:
+        parser.error("Supply --sha256 when reviewing a different remote OSCAL input")
+    catalog = load_catalog(args.source, digest)["catalog"]
 
     global PARAM_MAP
     PARAM_MAP = build_param_map(catalog)

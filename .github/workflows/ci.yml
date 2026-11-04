@@ -1,0 +1,134 @@
+name: CI
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+  workflow_dispatch:
+  workflow_call:
+    inputs:
+      ref:
+        type: string
+        required: true
+  schedule:
+    - cron: '23 4 * * 1'
+
+permissions:
+  contents: read
+
+concurrency:
+  group: ci-${{ github.event_name }}-${{ github.ref }}
+  cancel-in-progress: ${{ github.event_name == 'pull_request' }}
+
+env:
+  TZ: America/Chicago
+
+jobs:
+  linux:
+    name: Linux build, tests and package
+    runs-on: ubuntu-26.04
+    timeout-minutes: 30
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          ref: ${{ inputs.ref || github.sha }}
+      - run: bash scripts/ci/setup.sh linux
+      - run: bash scripts/ci/build-linux.sh
+      - run: bash scripts/ci/test.sh
+      - run: bash scripts/ci/package-linux.sh
+      - uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7.0.1
+        with:
+          name: linux-package
+          path: .build/dist/
+          if-no-files-found: error
+      - uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7.0.1
+        if: always()
+        with:
+          name: test-results
+          path: .build/results/
+
+  windows:
+    name: Static Windows Qt 6.12
+    runs-on: ubuntu-26.04
+    timeout-minutes: 180
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          ref: ${{ inputs.ref || github.sha }}
+      - run: bash scripts/ci/setup.sh windows
+      - name: Compiler identity
+        id: compiler
+        run: echo "version=$(x86_64-w64-mingw32-g++ -dumpfullversion)" >> "$GITHUB_OUTPUT"
+      - uses: actions/cache@55cc8345863c7cc4c66a329aec7e433d2d1c52a9 # v6.1.0
+        with:
+          path: .build/toolchain/
+          key: windows-ubuntu26.04-x64-${{ steps.compiler.outputs.version }}-${{ hashFiles('scripts/ci/sources.json', 'scripts/ci/build-windows.sh', 'scripts/ci/setup.sh', 'scripts/ci/fetch-sources.py') }}
+      - run: bash scripts/ci/build-windows.sh
+      - uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7.0.1
+        with:
+          name: windows-package
+          path: .build/dist/
+          if-no-files-found: error
+
+  codeql:
+    name: CodeQL
+    if: ${{ !inputs.ref && !startsWith(github.ref, 'refs/tags/') }}
+    runs-on: ubuntu-26.04
+    timeout-minutes: 30
+    permissions:
+      contents: read
+      security-events: write
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+      - run: bash scripts/ci/setup.sh linux
+      - uses: github/codeql-action/init@9e3211c9a3b9311dfe05da2ed48eea3386f042dd # v4.37.6
+        with:
+          languages: cpp
+          build-mode: manual
+          queries: +security-and-quality
+      - run: bash scripts/ci/build-linux.sh --app-only
+      - uses: github/codeql-action/analyze@9e3211c9a3b9311dfe05da2ed48eea3386f042dd # v4.37.6
+
+  coverage:
+    name: Coverage
+    if: ${{ !inputs.ref && (github.event_name == 'schedule' || github.event_name == 'workflow_dispatch') }}
+    runs-on: ubuntu-26.04
+    timeout-minutes: 40
+    env:
+      SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
+      COVERAGE: '1'
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          fetch-depth: 0
+      - run: bash scripts/ci/setup.sh linux
+      - uses: SonarSource/sonarqube-scan-action/install-build-wrapper@22918119ff8e1ca75a623e15c8296b6ea4fbe28f # v8.2.1
+      - run: bash scripts/ci/build-linux.sh
+        env:
+          BUILD_WRAPPER: build-wrapper-linux-x86-64
+      - run: bash scripts/ci/test.sh
+      - name: Coverage reports from the same test execution
+        run: |
+          mkdir -p .build/coverage
+          gcovr --root . --filter src/ --object-directory .build/linux/tests --lcov .build/coverage/lcov.info --sonarqube .build/coverage/sonar.xml
+      - uses: SonarSource/sonarqube-scan-action@22918119ff8e1ca75a623e15c8296b6ea4fbe28f # v8.2.1
+        if: env.SONAR_TOKEN != ''
+        with:
+          args: >
+            -Dsonar.organization=squinky86
+            -Dsonar.projectKey=squinky86_STIGQter
+            -Dsonar.sources=src
+            -Dsonar.cfamily.compile-commands=.build/bw-output/compile_commands.json
+            -Dsonar.coverageReportPaths=.build/coverage/sonar.xml
+      - uses: coverallsapp/github-action@8d6379e14d29928660c4ba802d8e85393440b329 # v2.3.8
+        with:
+          github-token: ${{ secrets.GITHUB_TOKEN }}
+          path-to-lcov: .build/coverage/lcov.info
+      - uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7.0.1
+        if: always()
+        with:
+          name: coverage
+          path: |
+            .build/coverage/
+            .build/results/

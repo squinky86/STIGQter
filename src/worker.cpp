@@ -59,7 +59,17 @@ void Worker::process()
     QThread *thread = new QThread();
     this->moveToThread(thread);
     connect(thread, SIGNAL(started()), this, SLOT(process()));
-    connect(this, SIGNAL(finished()), thread, SLOT(quit()));
+    connect(this, &Worker::finished, thread, &QThread::quit, Qt::DirectConnection);
+    // Release the connection in its owning thread, after process() locals are gone.
+    connect(thread, &QThread::finished, this, [this] {
+        const QString name = GetThreadId();
+        if (!name.isEmpty() && QSqlDatabase::contains(name)) {
+            { auto database = QSqlDatabase::database(name, false); database.close(); }
+            QSqlDatabase::removeDatabase(name);
+        }
+    }, Qt::DirectConnection);
+    connect(thread, &QThread::finished, this, &QObject::deleteLater);
+    thread->setProperty("blockingOperation", blocking);
     if (sq)
     {
         //check if this is a blocking thread

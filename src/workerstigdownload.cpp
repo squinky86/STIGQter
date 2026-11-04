@@ -18,6 +18,7 @@
  */
 
 #include "common.h"
+#include "contentcatalog.h"
 #include "dbmanager.h"
 #include "stig.h"
 #include "stigcheck.h"
@@ -76,36 +77,58 @@ void WorkerSTIGDownload::process()
     Q_EMIT updateStatus(QStringLiteral("Downloading quarterly…"));
 
     QTemporaryFile tmpFile;
+    QString error;
+    DbManager db;
+    const QUrl configured(db.GetVariable(QStringLiteral("quarterly")));
+    bool downloaded = false;
     if (tmpFile.open())
     {
-        DbManager db;
-        QUrl stigs(db.GetVariable(QStringLiteral("quarterly")));
-        DownloadFile(stigs, &tmpFile);
-        //get all zip files within the master zip file
-        Q_EMIT updateStatus(QStringLiteral("Extracting and adding STIGs…"));
-        auto stigFiles = GetFilesFromZip(tmpFile.fileName(), QStringLiteral(".zip"));
-        Q_EMIT initialize(stigFiles.count() + 2, 2);
-        //assume that each zip file within the archive is its own STIG and try to process it
-        QMap<QString, QByteArray>::iterator i;
-        for (i = stigFiles.begin(); i != stigFiles.end(); ++i)
+        if (ContentCatalog::isDefaultQuarterly(configured))
         {
-            Q_EMIT updateStatus("Parsing " + i.key() + "…");
-            WorkerSTIGAdd tmpWorker;
-            tmpWorker.SetEnableSupplements(_enableSupplements);
-            QTemporaryFile tmpFile2;
-            if (tmpFile2.open())
+            ContentCatalog catalog;
+            if (catalog.load(error))
             {
-                tmpFile2.write(i.value());
+                Q_EMIT updateStatus(catalog.sourceDescription());
+                downloaded = catalog.download(catalog.quarterly(), &tmpFile, error);
             }
-            tmpFile2.close();
-            QStringList tmpList;
-            tmpList.push_back(tmpFile2.fileName());
-            tmpWorker.AddSTIGs(tmpList);
-            tmpWorker.process();
-            Q_EMIT progress(-1);
         }
-        tmpFile.close();
+        else
+        {
+            downloaded = DownloadFile(configured, &tmpFile);
+            if (!downloaded) error = QStringLiteral("Unable to download the configured STIG library.");
+        }
     }
-    Q_EMIT updateStatus(QStringLiteral("Done!"));
+    else error = QStringLiteral("Unable to create a temporary download file.");
+    if (!downloaded)
+    {
+        Q_EMIT ThrowWarning(QStringLiteral("STIG download failed"), error);
+        Q_EMIT finished();
+        return;
+    }
+    const auto stigFiles = GetFilesFromZip(tmpFile.fileName(), QStringLiteral(".zip"));
+    if (stigFiles.isEmpty())
+    {
+        Q_EMIT ThrowWarning(QStringLiteral("Invalid STIG library"), QStringLiteral("The download contains no STIG ZIP archives. Import a STIG ZIP manually or check the configured URL."));
+        Q_EMIT finished();
+        return;
+    }
+    Q_EMIT initialize(stigFiles.count() + 2, 2);
+    for (auto i = stigFiles.constBegin(); i != stigFiles.constEnd(); ++i)
+    {
+        if (QThread::currentThread()->isInterruptionRequested()) break;
+        Q_EMIT updateStatus(QStringLiteral("Parsing %1…").arg(i.key()));
+        QTemporaryFile source;
+        if (!source.open() || source.write(i.value()) != i.value().size() || !source.flush())
+        {
+            Q_EMIT ThrowWarning(QStringLiteral("STIG import failed"), QStringLiteral("Unable to stage %1.").arg(i.key()));
+            continue;
+        }
+        WorkerSTIGAdd importer;
+        connect(&importer, &Worker::ThrowWarning, this, &Worker::ThrowWarning, Qt::DirectConnection);
+        importer.SetEnableSupplements(_enableSupplements);
+        importer.AddSTIGs({source.fileName()});
+        importer.process();
+        Q_EMIT progress(-1);
+    }
     Q_EMIT finished();
 }

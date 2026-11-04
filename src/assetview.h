@@ -42,6 +42,7 @@ class AssetView;
 class AssetView : public TabViewWidget
 {
     Q_OBJECT
+    friend class UiScenarios; // Scenario orchestration is implemented only in tests/.
 
 public:
     AssetView() = delete;
@@ -57,7 +58,6 @@ public:
     void ShowChecks(bool countOnly = false);
     void UpdateCKLCheck(const CKLCheck &cklCheck);
     void UpdateSTIGCheck(const STIGCheck &stigCheck);
-    void RunTests() override;
 
 private Q_SLOTS:
     void CheckSelected(QListWidgetItem *current, QListWidgetItem *previous);

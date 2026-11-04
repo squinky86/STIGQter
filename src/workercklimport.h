@@ -25,13 +25,15 @@
 
 #include <QObject>
 
+class ContentCatalog;
+
 class WorkerCKLImport : public Worker
 {
     Q_OBJECT
 
 private:
     QStringList _fileNames;
-    void ParseCKL(const QString &fileName);
+    void ParseCKL(const QString &fileName, ContentCatalog &catalog);
     void ParseCKLB(const QString &fileName);
     Asset CheckAsset(Asset &a);
 

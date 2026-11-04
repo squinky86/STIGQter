@@ -40,8 +40,6 @@ public:
     virtual TabType GetTabType();
     virtual void DisableInput();
     virtual void EnableInput();
-    void ProcEvents();
-    virtual void RunTests();
 
 protected:
     int _tabIndex;

@@ -192,7 +192,7 @@ Status GetStatus(const QString &status)
         return Status::Open;
     if (status.startsWith(QStringLiteral("not_applicable"), Qt::CaseInsensitive) || status.startsWith(QStringLiteral("not applicable"), Qt::CaseInsensitive) || status.startsWith(QStringLiteral("na"), Qt::CaseInsensitive))
         return Status::NotApplicable;
-    if (status.startsWith(QStringLiteral("notafinding"), Qt::CaseInsensitive) || status.startsWith(QStringLiteral("not a finding"), Qt::CaseInsensitive) || status.startsWith(QStringLiteral("nf"), Qt::CaseInsensitive))
+    if (status.startsWith(QStringLiteral("notafinding"), Qt::CaseInsensitive) || status.startsWith(QStringLiteral("not_a_finding"), Qt::CaseInsensitive) || status.startsWith(QStringLiteral("not a finding"), Qt::CaseInsensitive) || status.startsWith(QStringLiteral("nf"), Qt::CaseInsensitive))
         return Status::NotAFinding;
     return Status::NotReviewed;
 }

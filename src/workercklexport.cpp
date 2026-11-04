@@ -127,16 +127,27 @@ void WorkerCKLExport::process()
         assets.append(db.GetAsset(_assetName));
     }
 
-    //build a new thread for each CKL file to generate
+    // Generate each checklist in this worker thread.
     Q_EMIT initialize(assets.count(), 0);
 
     QDir outputDir(_dirName);
-    if (!outputDir.exists())
-        outputDir.mkpath(_dirName);
+    if (!outputDir.exists() && !QDir().mkpath(outputDir.absolutePath())) {
+        Q_EMIT ThrowWarning(QStringLiteral("Checklist export failed"),
+                            QStringLiteral("Unable to create export directory: %1").arg(_dirName));
+        Q_EMIT finished();
+        return;
+    }
+    bool failed = false;
+    const auto forwardWarning = [this, &failed](const QString &title, const QString &message) {
+        failed = true;
+        Q_EMIT ThrowWarning(title, message);
+    };
 
     QString cleanExportDir = outputDir.absolutePath();
-    if (!cleanExportDir.endsWith(QDir::separator()))
-        cleanExportDir += QDir::separator();
+    // QDir returns normalized forward-slash paths on every platform. Using
+    // the native Windows separator here makes every containment check fail.
+    if (!cleanExportDir.endsWith(QLatin1Char('/')))
+        cleanExportDir += QLatin1Char('/');
 
     for (Asset a : assets)
     {
@@ -153,6 +164,7 @@ void WorkerCKLExport::process()
                 if (_cklb)
                 {
                     WorkerCKLB wc;
+                    connect(&wc, &Worker::ThrowWarning, this, forwardWarning);
                     wc.AddFilename(fullPath);
                     wc.AddAsset(a);
                     wc.process();
@@ -160,6 +172,7 @@ void WorkerCKLExport::process()
                 else
                 {
                     WorkerCKL wc;
+                    connect(&wc, &Worker::ThrowWarning, this, forwardWarning);
                     wc.AddFilename(fullPath);
                     wc.AddAsset(a);
                     wc.process();
@@ -178,6 +191,7 @@ void WorkerCKLExport::process()
                     if (_cklb)
                     {
                         WorkerCKLB wc;
+                        connect(&wc, &Worker::ThrowWarning, this, forwardWarning);
                         wc.AddFilename(fullPath);
                         wc.AddAsset(a, {s});
                         wc.process();
@@ -185,6 +199,7 @@ void WorkerCKLExport::process()
                     else
                     {
                         WorkerCKL wc;
+                        connect(&wc, &Worker::ThrowWarning, this, forwardWarning);
                         wc.AddFilename(fullPath);
                         wc.AddAsset(a, {s});
                         wc.process();
@@ -195,6 +210,6 @@ void WorkerCKLExport::process()
         Q_EMIT progress(-1);
     }
 
-    Q_EMIT updateStatus(QStringLiteral("Done!"));
+    Q_EMIT updateStatus(failed ? QStringLiteral("Completed with warnings") : QStringLiteral("Done!"));
     Q_EMIT finished();
 }

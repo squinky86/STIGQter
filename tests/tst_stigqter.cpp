@@ -18,9 +18,13 @@
  */
 
 #include "tst_stigqter.h"
+#include "uiscenarios.h"
 
 #include "assetview.h"
 #include "common.h"
+#include "download.h"
+#include "releasemetadata.h"
+#include "workercheckversion.h"
 #include "dbmanager.h"
 #include "stigqter.h"
 #include "workerassetdelete.h"
@@ -28,6 +32,13 @@
 #include "workerstigdelete.h"
 
 #include <QDirIterator>
+#include <QSignalSpy>
+#include <QTcpServer>
+#include <QTcpSocket>
+#include <QUuid>
+#include <QJsonDocument>
+#include <QJsonObject>
+#include <QSettings>
 #include <QCheckBox>
 #include <QComboBox>
 #include <QInputDialog>
@@ -49,11 +60,7 @@ TestSTIGQter::TestSTIGQter(QObject *parent) : QObject(parent)
 
 void TestSTIGQter::procEvents()
 {
-    while (!w->isProcessingEnabled())
-    {
-        QThread::sleep(1);
-        QApplication::processEvents();
-    }
+    QTRY_VERIFY_WITH_TIMEOUT(w->isProcessingEnabled(), 120000);
     QApplication::processEvents();
 }
 
@@ -61,18 +68,18 @@ void TestSTIGQter::initTestCase()
 {
     IgnoreWarnings = true;
 
-    // Keep test data out of the user's normal application-data directory and
-    // remove it before DbManager opens a connection. Constructing STIGQter
-    // first starts CCI indexing immediately; truncating the live SQLite file
-    // after that races the worker and intermittently leaves the database empty.
+    // A unique test identity isolates Qt's test-mode directory too. A portable
+    // DB takes precedence, so explicitly refuse to touch one beside the binary.
+    QVERIFY2(!QFile::exists(QCoreApplication::applicationDirPath() + QStringLiteral("/STIGQter.db")),
+             "Refusing to run tests beside a portable STIGQter.db");
+    QCoreApplication::setApplicationName(QStringLiteral("STIGQter-test-") + QUuid::createUuid().toString(QUuid::WithoutBraces));
     QStandardPaths::setTestModeEnabled(true);
-    const QString testDatabase = QStandardPaths::writableLocation(QStandardPaths::AppDataLocation)
-                                 + QStringLiteral("/STIGQter.db");
-    QVERIFY2(!QFile::exists(testDatabase) || QFile::remove(testDatabase),
-             qPrintable(QStringLiteral("Unable to remove test database: ") + testDatabase));
+    _testDataPath = QStandardPaths::writableLocation(QStandardPaths::AppDataLocation);
+    QSettings::setPath(QSettings::NativeFormat, QSettings::UserScope, _testDataPath + QStringLiteral("/settings"));
 
     {
         DbManager db;
+        db.UpdateVariable(QStringLiteral("checkVersion"), QStringLiteral("false"));
         db.UpdateVariable(QStringLiteral("loglevel"), QStringLiteral("99"));
         db.UpdateVariable(QStringLiteral("indexSupplements"), QStringLiteral("y"));
     }
@@ -274,7 +281,7 @@ void TestSTIGQter::test03_IndexSTIGs()
     QCOMPARE(db.GetSTIGs().count(), 4);
 }
 
-// STIGQter::RunTests() is split into five phases so that each gets its own
+// UI scenarios are split into five phases so that each gets its own
 // Qt Test per-function watchdog budget (default 300 s). Running the whole
 // sequence as a single test function under the SonarCloud coverage build
 // (-O0 with gcov instrumentation) exceeded that budget and aborted.
@@ -285,7 +292,7 @@ void TestSTIGQter::test04a_RunInterface()
         db.UpdateVariable(QStringLiteral("loglevel"), QStringLiteral("0"));
     }
 
-    w->RunTests1();
+    UiScenarios::phase1(w);
     procEvents();
     QVERIFY(w->isProcessingEnabled());
 
@@ -298,7 +305,7 @@ void TestSTIGQter::test04a_RunInterface()
 
 void TestSTIGQter::test04b_RunInterface()
 {
-    w->RunTests2();
+    UiScenarios::phase2(w);
     procEvents();
     QVERIFY(w->isProcessingEnabled());
 
@@ -324,7 +331,7 @@ void TestSTIGQter::test04b_RunInterface()
 
 void TestSTIGQter::test04c_RunInterface()
 {
-    w->RunTests3();
+    UiScenarios::phase3(w);
     procEvents();
     QVERIFY(w->isProcessingEnabled());
 
@@ -758,14 +765,14 @@ void TestSTIGQter::test04c_AssessmentFieldsAndOptions()
 
 void TestSTIGQter::test04d_RunInterface()
 {
-    w->RunTests4();
+    UiScenarios::phase4(w);
     procEvents();
     QVERIFY(w->isProcessingEnabled());
 }
 
 void TestSTIGQter::test04e_RunInterface()
 {
-    w->RunTests5();
+    UiScenarios::phase5(w);
     procEvents();
     QVERIFY(w->isProcessingEnabled());
 }
@@ -883,6 +890,143 @@ void TestSTIGQter::cleanupTestCase()
     w->close();
     delete w;
     w = nullptr;
+    for (const QString &name : QSqlDatabase::connectionNames()) {
+        { auto connection = QSqlDatabase::database(name); connection.close(); }
+        QSqlDatabase::removeDatabase(name);
+    }
+    QVERIFY(QDir(_testDataPath).removeRecursively());
 }
 
 QTEST_MAIN(TestSTIGQter)
+
+namespace {
+QByteArray stableReleaseJson(const QString &version)
+{
+    return QJsonDocument(QJsonObject{
+        {QStringLiteral("schema_version"), 1},
+        {QStringLiteral("stable"), QJsonObject{
+            {QStringLiteral("version"), version},
+            {QStringLiteral("prerelease"), false},
+            {QStringLiteral("url"), QStringLiteral("https://github.com/squinky86/STIGQter/releases/tag/") + version}
+        }}
+    }).toJson();
+}
+
+class HttpFixture : public QTcpServer {
+public:
+    QByteArray metadata = stableReleaseJson(QStringLiteral("9.0.0"));
+    QByteArray lastRequest;
+    HttpFixture()
+    {
+        connect(this, &QTcpServer::newConnection, this, [this] {
+            while (hasPendingConnections()) {
+                auto *socket = nextPendingConnection();
+                connect(socket, &QTcpSocket::disconnected, socket, &QObject::deleteLater);
+                connect(socket, &QTcpSocket::readyRead, socket, [this, socket] {
+                    QByteArray request = socket->property("request").toByteArray() + socket->readAll();
+                    socket->setProperty("request", request);
+                    if (!request.contains("\r\n\r\n") || socket->property("served").toBool()) return;
+                    socket->setProperty("served", true);
+                    lastRequest = request;
+                    const QByteArray path = request.split(' ').value(1);
+                    if (path == "/slow") return;
+                    if (path == "/redirect") {
+                        socket->write("HTTP/1.1 302 Found\r\nLocation: /ok\r\nContent-Length: 8\r\n\r\nredirect");
+                    } else if (path == "/loop") {
+                        socket->write("HTTP/1.1 302 Found\r\nLocation: /loop\r\nContent-Length: 0\r\n\r\n");
+                    } else if (path == "/disconnect") {
+                        socket->write("HTTP/1.1 200 OK\r\nContent-Length: 100\r\n\r\nx");
+                    } else {
+                        const QByteArray body = path == "/release" ? metadata : QByteArray("download fixture");
+                        const QByteArray status = path == "/missing" ? "404 Not Found" : (path == "/error" ? "500 Internal Server Error" : "200 OK");
+                        socket->write("HTTP/1.1 " + status + "\r\nContent-Type: application/json\r\nContent-Length: " +
+                                      QByteArray::number(body.size()) + "\r\n\r\n" + body);
+                    }
+                    socket->disconnectFromHost();
+                });
+            }
+        });
+    }
+    QUrl url(const QString &path) const
+    {
+        return QUrl(QStringLiteral("http://127.0.0.1:%1%2").arg(serverPort()).arg(path));
+    }
+};
+}
+
+void TestSTIGQter::test00_StableRelease()
+{
+    QCOMPARE(ReleaseMetadata::latestUrl(), QUrl(QStringLiteral("https://squinky86.github.io/stigqter.com/metadata/v1/releases.json")));
+    ReleaseMetadata::StableRelease release;
+    QString error;
+    QVERIFY(ReleaseMetadata::parse(stableReleaseJson(QStringLiteral("2.0.10")), release, error));
+    QVERIFY(ReleaseMetadata::isNewer(release, QStringLiteral("2.0.9")));
+    QVERIFY(!ReleaseMetadata::isNewer(release, QStringLiteral("2.0.10")));
+    QVERIFY(!ReleaseMetadata::isNewer(release, QStringLiteral("3.0.0")));
+    QVERIFY(!ReleaseMetadata::parse(stableReleaseJson(QStringLiteral("2.1.0-rc1")), release, error));
+    QVERIFY(!ReleaseMetadata::parse(QByteArrayLiteral("<html>404</html>"), release, error));
+    auto doc = QJsonDocument::fromJson(stableReleaseJson(QStringLiteral("2.1.0"))).object();
+    doc.insert(QStringLiteral("schema_version"), 2);
+    QVERIFY(!ReleaseMetadata::parse(QJsonDocument(doc).toJson(), release, error));
+    doc.insert(QStringLiteral("schema_version"), 1);
+    auto stable = doc.value(QStringLiteral("stable")).toObject();
+    stable.insert(QStringLiteral("prerelease"), true);
+    doc.insert(QStringLiteral("stable"), stable);
+    QVERIFY(!ReleaseMetadata::parse(QJsonDocument(doc).toJson(), release, error));
+    stable.insert(QStringLiteral("prerelease"), false);
+    stable.insert(QStringLiteral("url"), QStringLiteral("https://example.org/download"));
+    doc.insert(QStringLiteral("stable"), stable);
+    QVERIFY(!ReleaseMetadata::parse(QJsonDocument(doc).toJson(), release, error));
+
+    HttpFixture server;
+    QVERIFY(server.listen(QHostAddress::LocalHost));
+    WorkerCheckVersion worker;
+    worker.SetMetadataUrl(server.url(QStringLiteral("/release")));
+    QSignalSpy warnings(&worker, &Worker::ThrowWarning);
+    QSignalSpy statuses(&worker, &Worker::updateStatus);
+    QSignalSpy finished(&worker, &Worker::finished);
+    DbManager db;
+    db.UpdateVariable(QStringLiteral("checkVersion"), QStringLiteral("true"));
+    worker.process();
+    QCOMPARE(warnings.size(), 1);
+    QCOMPARE(finished.size(), 1);
+    QVERIFY(warnings.first().at(1).toString().contains(QStringLiteral("releases/tag/9.0.0")));
+    QVERIFY(server.lastRequest.contains("User-Agent: STIGQter/"));
+    warnings.clear();
+    server.metadata = stableReleaseJson(QStringLiteral("1.2.7"));
+    worker.process();
+    QVERIFY(warnings.isEmpty());
+    QVERIFY(statuses.last().first().toString().contains(QStringLiteral("No newer stable")));
+    server.metadata = "not JSON";
+    worker.process();
+    QVERIFY(warnings.isEmpty());
+    QVERIFY(statuses.last().first().toString().contains(QStringLiteral("Unable to check")));
+    db.UpdateVariable(QStringLiteral("checkVersion"), QStringLiteral("false"));
+}
+
+void TestSTIGQter::test00_HttpDownloads()
+{
+    HttpFixture server;
+    QVERIFY(server.listen(QHostAddress::LocalHost));
+    const auto response = Downloads::fetch(server.url(QStringLiteral("/redirect")));
+    QVERIFY2(response.ok, qPrintable(response.error));
+    QCOMPARE(response.data, QByteArrayLiteral("download fixture"));
+    QCOMPARE(response.finalUrl.path(), QStringLiteral("/ok"));
+    QVERIFY(!Downloads::fetch(server.url(QStringLiteral("/missing"))).ok);
+    QVERIFY(!Downloads::fetch(server.url(QStringLiteral("/error"))).ok);
+    QVERIFY(!Downloads::fetch(server.url(QStringLiteral("/loop"))).ok);
+    QVERIFY(!Downloads::fetch(server.url(QStringLiteral("/ok")), nullptr, 3).ok);
+    QVERIFY(!Downloads::fetch(server.url(QStringLiteral("/slow")), nullptr, 1024, 50).ok);
+    QVERIFY(!Downloads::fetch(server.url(QStringLiteral("/disconnect"))).ok);
+    QTemporaryFile destination;
+    QVERIFY(destination.open());
+    destination.write("original");
+    QVERIFY(!DownloadFile(server.url(QStringLiteral("/missing")), &destination));
+    QVERIFY(destination.isOpen());
+    destination.seek(0);
+    QCOMPARE(destination.readAll(), QByteArrayLiteral("original"));
+    QVERIFY(DownloadFile(server.url(QStringLiteral("/ok")), &destination));
+    QVERIFY(destination.isOpen());
+    QCOMPARE(destination.pos(), 0);
+    QCOMPARE(destination.readAll(), QByteArrayLiteral("download fixture"));
+}

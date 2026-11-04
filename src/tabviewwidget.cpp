@@ -73,17 +73,3 @@ void TabViewWidget::DisableInput()
 void TabViewWidget::EnableInput()
 {
 }
-
-void TabViewWidget::ProcEvents()
-{
-    while (!_parent->isProcessingEnabled())
-    {
-        QThread::sleep(1);
-        QApplication::processEvents();
-    }
-    QApplication::processEvents();
-}
-
-void TabViewWidget::RunTests()
-{
-}

@@ -34,6 +34,7 @@ namespace Ui {
 class STIGQter : public QMainWindow
 {
     Q_OBJECT
+    friend class UiScenarios; // Scenario orchestration is implemented only in tests/.
 
 public:
     explicit STIGQter(QWidget *parent = nullptr);
@@ -43,13 +44,6 @@ public:
     void Display();
     void RefreshClassificationBanner();
     void UpdateSTIGs();
-    void ProcEvents();
-    void RunTests();
-    void RunTests1();
-    void RunTests2();
-    void RunTests3();
-    void RunTests4();
-    void RunTests5();
 
 private Q_SLOTS:
 
@@ -101,11 +95,11 @@ private Q_SLOTS:
 private:
     Ui::STIGQter *ui;
     QList<QThread *> threads;
-    QList<Worker *> workers;
     bool _updatedAssets;
     bool _updatedCCIs;
     bool _updatedSTIGs;
     bool _busy;
+    bool _operationWarnings = false;
     QString lastSaveLocation;
     void closeEvent(QCloseEvent *event);
     void CleanThreads();
@@ -119,7 +113,6 @@ private:
     void UpdateProjectStatus();
     void UpdateRemapButton();
     bool _isFiltered;
-    int _testStep = 0;
 };
 
 #endif // STIGQTER_H

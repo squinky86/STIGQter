@@ -32,12 +32,20 @@ public:
 
 private:
     STIGQter *w = nullptr;
+    QString _testDataPath;
     void procEvents();
 
 private Q_SLOTS:
     void initTestCase();
     void test00_Classification();
     void test00_LocalFileDownload();
+    void test00_StableRelease();
+    void test00_HttpDownloads();
+    void test00_UntrustedTls();
+    void test00_ContentCatalog();
+    void test00_ArchiveFailures();
+    void test00_XccdfParser();
+    void test00_WorkerCleanup();
     void test01_IndexCCIs();
     void test02_UpdateCCI();
     void test03_IndexSTIGs();
@@ -45,6 +53,10 @@ private Q_SLOTS:
     void test04b_RunInterface();
     void test04c_RunInterface();
     void test04c_ProjectLoadSafety();
+    void test04c_ProjectUpgrade();
+    void test04c_ChecklistFormats();
+    void test04c_UpgradePreservation();
+    void test04c_XccdfTransaction();
     void test04c_ChecklistAutosave();
     void test04c_AssessmentFieldsAndOptions();
     void test04d_RunInterface();

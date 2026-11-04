@@ -20,14 +20,16 @@
 #include "workercheckversion.h"
 #include "common.h"
 #include "dbmanager.h"
+#include "download.h"
+#include "releasemetadata.h"
 
 /**
  * @class WorkerCheckVersion
  * @brief Verify that the current version of the application is the
  * latest.
  *
- * This class pings the STIGQter server for the latest version of the
- * software.
+ * Reads the public GitHub Pages stable-release manifest. No assessment
+ * content or desktop GitHub credentials are sent.
  */
 
 /**
@@ -36,15 +38,14 @@
  *
  * Default constructor.
  */
-WorkerCheckVersion::WorkerCheckVersion(QObject *parent) : Worker(parent)
+WorkerCheckVersion::WorkerCheckVersion(QObject *parent) : Worker(parent), _metadataUrl(ReleaseMetadata::latestUrl())
 {
 }
 
 /**
  * @brief WorkerCheckVersion::process
  *
- * Download the page that displays the version number if an update is
- * needed. If the version is the latest, it displays "OK".
+ * Compare validated stable metadata with the running application version.
  */
 void WorkerCheckVersion::process()
 {
@@ -58,17 +59,30 @@ void WorkerCheckVersion::process()
 
     if (db.GetVariable("checkVersion").compare("true", Qt::CaseInsensitive) == 0)
     {
-        //get the latest version
-        QString ret = DownloadPage(QStringLiteral("https://www.stigqter.com/update.php"));
-        if (!ret.isNull() && !ret.isEmpty() && !ret.startsWith(QStringLiteral("OK")))
+        const auto response = Downloads::fetch(_metadataUrl);
+        ReleaseMetadata::StableRelease release;
+        QString error;
+        if (!response.ok || !ReleaseMetadata::parse(response.data, release, error))
         {
-            Q_EMIT ThrowWarning(QStringLiteral("Please update to the latest version of STIGQter."), "Please visit <a href=\"https://www.stigqter.com/\">www.stigqter.com</a> to download version " + ret + ".");
+            Q_EMIT updateStatus(QStringLiteral("Unable to check for updates. You can continue working offline."));
+            Warning(QStringLiteral("Version check unavailable"), response.ok ? error : response.error, true);
+        }
+        else if (ReleaseMetadata::isNewer(release, VERSION))
+        {
+            Q_EMIT ThrowWarning(QStringLiteral("A new stable version of STIGQter is available."),
+                                QStringLiteral("Download STIGQter %1 from <a href=\"%2\">GitHub Releases</a>.")
+                                .arg(release.version.toString().toHtmlEscaped(), release.page.toString().toHtmlEscaped()));
         }
         else
         {
-            Q_EMIT updateStatus("STIGQter version is up-to-date.");
+            Q_EMIT updateStatus(QStringLiteral("No newer stable STIGQter release is available."));
         }
     }
 
     Q_EMIT finished();
+}
+
+void WorkerCheckVersion::SetMetadataUrl(const QUrl &url)
+{
+    _metadataUrl = url;
 }

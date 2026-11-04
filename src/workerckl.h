@@ -35,7 +35,6 @@ private:
     QString _fileName;
     Asset _asset;
     QList<STIG> _stigs;
-    void WriteXMLEntry(QXmlStreamWriter &stream, const QString &name, const QString &value);
     void AddSTIGs(const QVector<STIG> &stigs);
 
 public:

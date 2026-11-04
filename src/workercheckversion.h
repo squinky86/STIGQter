@@ -23,6 +23,7 @@
 #include "worker.h"
 
 #include <QObject>
+#include <QUrl>
 
 class WorkerCheckVersion : public Worker
 {
@@ -30,6 +31,10 @@ class WorkerCheckVersion : public Worker
 
 public:
     explicit WorkerCheckVersion(QObject *parent = nullptr);
+    void SetMetadataUrl(const QUrl &url);
+
+private:
+    QUrl _metadataUrl;
 
 public Q_SLOTS:
     void process() override;

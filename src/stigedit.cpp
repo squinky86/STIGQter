@@ -139,64 +139,6 @@ TabType STIGEdit::GetTabType()
     return TabType::stig;
 }
 
-void STIGEdit::RunTests()
-{
-    int onTest = 0;
-
-    for (int i = 0; (i < ui->lstChecks->count()) && (i < 10); ++i)
-    {
-        qDebug("STIGEdit test %d: Select STIGCheck %d", onTest++, i);
-        ui->lstChecks->item(i)->setSelected(true);
-        ProcEvents();
-
-        qDebug("STIGEdit test %d: Change STIGCheck", onTest++);
-        ui->txtFix->setText(QStringLiteral("FIX IT"));
-        ui->txtCheckTitle->setText(ui->txtCheckTitle->text() + QStringLiteral(" (edited)"));
-        UpdateCheck();
-        ProcEvents();
-
-        qDebug("STIGEdit test %d: Change severity/documentable", onTest++);
-        ui->cboBoxSeverity->setCurrentIndex((ui->cboBoxSeverity->currentIndex() + 1) % ui->cboBoxSeverity->count());
-        ui->cbDocumentable->setChecked(!ui->cbDocumentable->isChecked());
-        ProcEvents();
-
-        qDebug("STIGEdit test %d: Add and remove a CCI (net-zero)", onTest++);
-        int cciCount = ui->lstCCIs->count();
-        AddCCI();
-        ProcEvents();
-        if (ui->lstCCIs->count() > cciCount)
-        {
-            //remove the CCI just added so the check's mapping is left intact
-            ui->lstCCIs->item(ui->lstCCIs->count() - 1)->setSelected(true);
-            DeleteCCI();
-            ProcEvents();
-        }
-    }
-
-    qDebug("STIGEdit test %d: Add a new check", onTest++);
-    int checkCount = ui->lstChecks->count();
-    AddCheck();
-    ProcEvents();
-
-    qDebug("STIGEdit test %d: Delete the new check", onTest++);
-    if (ui->lstChecks->count() > checkCount)
-    {
-        ui->lstChecks->setCurrentRow(ui->lstChecks->count() - 1);
-        ProcEvents();
-        DeleteCheck();
-        ProcEvents();
-    }
-
-    qDebug("STIGEdit test %d: Edit STIG title", onTest++);
-    ui->txtTitle->setText(ui->txtTitle->text() + QStringLiteral(" (edited)"));
-    ProcEvents();
-
-    qDebug("STIGEdit test %d: Export STIG to zip", onTest++);
-    SaveSTIG(QStringLiteral("tests/exported_stig.zip"));
-    ProcEvents();
-
-    Q_EMIT CloseTab(_tabIndex);
-}
 
 /**
  * @brief STIGEdit::UpdateChecks

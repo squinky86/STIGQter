@@ -32,6 +32,7 @@ class STIGEdit;
 class STIGEdit : public TabViewWidget
 {
     Q_OBJECT
+    friend class UiScenarios; // Scenario orchestration is implemented only in tests/.
 
 public:
     STIGEdit() = delete;
@@ -40,7 +41,6 @@ public:
     void DisableInput() override;
     void EnableInput() override;
     TabType GetTabType() override;
-    void RunTests() override;
 
 private:
     Ui::STIGEdit *ui;

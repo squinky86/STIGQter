@@ -1,4 +1,14 @@
 ## 2.0.0
+-   Read stable-release and STIG metadata from GitHub Pages, preserve offline/manual imports, and verify automatic archive downloads
+-   Add bounded HTTP downloads and validated catalog caching; report failed checks without suggesting a downgrade
+-   Share qmake build definitions and move UI test scenarios out of the application
+-   Separate persistence, classification, archives, and checklist parsers behind existing interfaces
+-   Import XCCDF results in a worker with per-file rollback; save remapped checks in a transaction
+-   Clean up workers and their thread-local database connections; save project snapshots atomically
+-   Preserve checklist fields during upgrades with indexed vulnerability matching, and write CKL/CKLB exports atomically through dedicated serializers
+-   Preserve CKLB `not_a_finding` results when importing exported checklists
+-   Use normalized paths for Windows bulk checklist exports and surface nested writer failures
+-   Consolidate GitHub Actions on Ubuntu 26.04 and build static Windows packages with pinned Qt 6.12 sources
 -   Migrate NIST 800-53 controls to Revision 5 (RMF)
 -   Add support for cklb files
 -   Complete the STIG editor: edit, add, and delete checks and CCI mappings, and export a STIG to a re-importable XCCDF zip

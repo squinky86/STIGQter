@@ -18,6 +18,8 @@
  */
 
 #include "common.h"
+#include "checklistwriter.h"
+#include <QSaveFile>
 #include "dbmanager.h"
 #include "workercklb.h"
 
@@ -37,21 +39,6 @@
  * format but uses a JSON envelope understood by STIG Viewer 3 and newer
  * eMASS integrations.
  */
-
-namespace {
-
-QString cklbStatus(Status s)
-{
-    switch (s)
-    {
-    case Status::Open:         return QStringLiteral("open");
-    case Status::NotApplicable: return QStringLiteral("not_applicable");
-    case Status::NotAFinding:  return QStringLiteral("not_a_finding");
-    default:                   return QStringLiteral("not_reviewed");
-    }
-}
-
-} // namespace
 
 WorkerCKLB::WorkerCKLB(QObject *parent) : Worker(parent)
 {
@@ -76,140 +63,19 @@ void WorkerCKLB::AddFilename(const QString &name)
 void WorkerCKLB::process()
 {
     Worker::process();
-
-    Q_EMIT updateStatus(QStringLiteral("Writing CKLB file…"));
     Q_EMIT initialize(_stigs.count() + 1, 0);
-
-    QFile file(_fileName);
-    if (!file.open(QIODevice::WriteOnly))
-    {
+    Q_EMIT updateStatus(QStringLiteral("Writing CKLB file…"));
+    QSaveFile file(_fileName);
+    const auto notify = [this](int step, const QString &status) {
+        if (!status.isEmpty()) Q_EMIT updateStatus(status);
+        if (step) Q_EMIT progress(step);
+    };
+    if (!file.open(QIODevice::WriteOnly) || !WriteCklb(&file, _asset, _stigs, notify) || !file.commit()) {
+        Q_EMIT ThrowWarning(QStringLiteral("Checklist export failed"), QStringLiteral("Unable to write %1: %2").arg(_fileName, file.errorString()));
+    } else {
+        DbManager db;
+        db.UpdateVariable(QStringLiteral("lastdir"), QFileInfo(_fileName).absolutePath());
         Q_EMIT updateStatus(QStringLiteral("Done!"));
-        Q_EMIT finished();
-        return;
     }
-
-    DbManager db;
-    db.UpdateVariable(QStringLiteral("lastdir"), QFileInfo(_fileName).absolutePath());
-
-    // target_data object
-    QJsonObject targetData;
-    targetData[QStringLiteral("target_type")]     = _asset.assetType;
-    targetData[QStringLiteral("host_name")]       = _asset.hostName;
-    targetData[QStringLiteral("ip_address")]      = _asset.hostIP;
-    targetData[QStringLiteral("mac_address")]     = _asset.hostMAC;
-    targetData[QStringLiteral("fqdn")]            = _asset.hostFQDN;
-    targetData[QStringLiteral("comments")]        = _asset.targetComment;
-    targetData[QStringLiteral("role")]            = QStringLiteral("None");
-    targetData[QStringLiteral("is_web_database")] = _asset.webOrDB;
-    targetData[QStringLiteral("technology_area")] = _asset.techArea;
-    targetData[QStringLiteral("web_db_site")]     = _asset.webDbSite;
-    targetData[QStringLiteral("web_db_instance")] = _asset.webDbInstance;
-    targetData[QStringLiteral("marking")]         = _asset.marking;
-
-    Q_EMIT progress(-1);
-
-    QJsonArray stigsArray;
-
-    for (const STIG &s : _stigs)
-    {
-        Q_EMIT updateStatus(QStringLiteral("Adding ") + PrintSTIG(s) + QStringLiteral("…"));
-
-        QString stigUuid = QUuid::createUuid().toString(QUuid::WithoutBraces);
-        QVector<CKLCheck> checks = _asset.GetCKLChecks(&s);
-
-        QJsonArray rulesArray;
-        for (const CKLCheck &cc : checks)
-        {
-            const STIGCheck sc = cc.GetSTIGCheck();
-
-            // CCI list
-            QJsonArray ccis;
-            for (const CCI &cci : sc.GetCCIs())
-                ccis.append(PrintCCI(cci));
-
-            // check_content_ref — split "name :: href" that XCCDF stores in
-            // checkContentRef; fall back to the raw string as the name.
-            QJsonObject checkRef;
-            const int sep = sc.checkContentRef.indexOf(QStringLiteral(" :: "));
-            if (sep >= 0)
-            {
-                checkRef[QStringLiteral("name")] = sc.checkContentRef.left(sep);
-                checkRef[QStringLiteral("href")] = sc.checkContentRef.mid(sep + 4);
-            }
-            else
-            {
-                checkRef[QStringLiteral("name")] = sc.checkContentRef;
-                checkRef[QStringLiteral("href")] = QString();
-            }
-
-            QString sevOverride = (cc.severityOverride == Severity::none)
-                ? QString()
-                : GetSeverity(cc.severityOverride, false);
-
-            QJsonObject rule;
-            rule[QStringLiteral("uuid")]                      = QUuid::createUuid().toString(QUuid::WithoutBraces);
-            rule[QStringLiteral("stig_uuid")]                 = stigUuid;
-            rule[QStringLiteral("status")]                    = cklbStatus(cc.status);
-            rule[QStringLiteral("override_guidance")]         = cc.severityJustification;
-            rule[QStringLiteral("finding_details")]           = cc.findingDetails;
-            rule[QStringLiteral("comments")]                  = cc.comments;
-            rule[QStringLiteral("severity_override")]         = sevOverride;
-            rule[QStringLiteral("severity_justification")]    = cc.severityJustification;
-            rule[QStringLiteral("group_id")]                  = sc.vulnNum;
-            rule[QStringLiteral("rule_id")]                   = sc.rule;
-            rule[QStringLiteral("rule_id_src")]               = sc.rule;
-            rule[QStringLiteral("weight")]                    = QString::number(sc.weight, 'f', 1);
-            rule[QStringLiteral("classification")]            = _asset.marking.isEmpty() ? QStringLiteral("UNCLASSIFIED") : GetClassificationString(GetClassification(_asset.marking));
-            rule[QStringLiteral("severity")]                  = GetSeverity(cc.GetSeverity(), false);
-            rule[QStringLiteral("rule_fix_txt")]              = sc.fix;
-            rule[QStringLiteral("false_positives")]           = sc.falsePositives;
-            rule[QStringLiteral("false_negatives")]           = sc.falseNegatives;
-            rule[QStringLiteral("documentable")]              = sc.documentable;
-            rule[QStringLiteral("mitigations")]               = sc.mitigations;
-            rule[QStringLiteral("potential_impact")]          = sc.potentialImpact;
-            rule[QStringLiteral("third_party_tools")]         = sc.thirdPartyTools;
-            rule[QStringLiteral("mitigation_control")]        = sc.mitigationControl;
-            rule[QStringLiteral("responsibility")]            = sc.responsibility;
-            rule[QStringLiteral("security_override_guidance")] = sc.severityOverrideGuidance;
-            rule[QStringLiteral("ia_controls")]               = sc.iaControls;
-            rule[QStringLiteral("check_content_ref")]         = checkRef;
-            rule[QStringLiteral("check_content")]             = sc.check;
-            rule[QStringLiteral("fix_id")]                    = QString();
-            rule[QStringLiteral("ccis")]                      = ccis;
-            rule[QStringLiteral("group_title")]               = sc.groupTitle;
-            rule[QStringLiteral("rule_title")]                = sc.title;
-            rule[QStringLiteral("discussion")]                = sc.vulnDiscussion;
-            rule[QStringLiteral("check_system")]              = QString();
-            rule[QStringLiteral("legacy_ids")]                = QJsonArray::fromStringList(sc.legacyIds);
-
-            rulesArray.append(rule);
-        }
-
-        QJsonObject stigObj;
-        stigObj[QStringLiteral("stig_name")]           = s.title;
-        stigObj[QStringLiteral("display_name")]        = s.title;
-        stigObj[QStringLiteral("stig_id")]             = s.benchmarkId;
-        stigObj[QStringLiteral("release_info")]        = s.release;
-        stigObj[QStringLiteral("uuid")]                = stigUuid;
-        stigObj[QStringLiteral("reference_identifier")] = s.benchmarkId;
-        stigObj[QStringLiteral("size")]                = rulesArray.count();
-        stigObj[QStringLiteral("rules")]               = rulesArray;
-
-        stigsArray.append(stigObj);
-        Q_EMIT progress(-1);
-    }
-
-    QJsonObject root;
-    root[QStringLiteral("title")]       = _asset.hostName;
-    root[QStringLiteral("id")]          = QUuid::createUuid().toString(QUuid::WithoutBraces);
-    root[QStringLiteral("active")]      = true;
-    root[QStringLiteral("mode")]        = 1;
-    root[QStringLiteral("has_path")]    = true;
-    root[QStringLiteral("target_data")] = targetData;
-    root[QStringLiteral("stigs")]       = stigsArray;
-
-    file.write(QJsonDocument(root).toJson(QJsonDocument::Indented));
-
-    Q_EMIT updateStatus(QStringLiteral("Done!"));
     Q_EMIT finished();
 }

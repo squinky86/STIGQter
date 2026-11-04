@@ -70,6 +70,7 @@ void WorkerMapUnmapped::process()
         remapCCIIds.append(c.id);
     }
 
+    QVector<STIGCheck> updates;
     for (STIGCheck check : stigchecks)
     {
         bool updateCheck = false;
@@ -107,11 +108,15 @@ void WorkerMapUnmapped::process()
         if (updateCheck)
         {
             Q_EMIT updateStatus(QStringLiteral("Updating mapping for ") + PrintSTIGCheck(check) + QStringLiteral("…"));
-            db.UpdateSTIGCheck(check);
+            updates.append(check);
         }
         Q_EMIT progress(-1);
     }
 
-    Q_EMIT updateStatus(QStringLiteral("Done!"));
+    Q_EMIT updateStatus(QStringLiteral("Saving remapped checks…"));
+    if (!db.UpdateSTIGChecks(updates))
+        Q_EMIT ThrowWarning(QStringLiteral("Remapping failed"), QStringLiteral("The mapping changes could not be saved and were rolled back."));
+    else
+        Q_EMIT updateStatus(QStringLiteral("Done!"));
     Q_EMIT finished();
 }

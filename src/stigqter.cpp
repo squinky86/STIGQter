@@ -155,6 +155,8 @@ STIGQter::STIGQter(QWidget *parent) :
  */
 STIGQter::~STIGQter()
 {
+    for (auto *thread : threads) thread->requestInterruption();
+    for (auto *thread : threads) thread->wait();
     CleanThreads();
     QSettings settings(QSettings::NativeFormat, QSettings::UserScope,
                        QStringLiteral("STIGQter"), QStringLiteral("STIGQter"));
@@ -182,332 +184,19 @@ bool STIGQter::isProcessingEnabled()
  */
 QThread* STIGQter::ConnectThreads(Worker *worker, bool blocking)
 {
-    if (blocking)
+    if (blocking) {
+        if (!_busy) _operationWarnings = false;
         DisableInput();
+    }
 
     auto *t = worker->ConnectThreads(this, blocking);
 
     threads.append(t);
-    workers.append(worker);
+    connect(worker, &Worker::ThrowWarning, this, [this, blocking] {
+        if (blocking) _operationWarnings = true;
+    });
 
     return t;
-}
-
-void STIGQter::ProcEvents()
-{
-    while (!isProcessingEnabled())
-    {
-        QThread::sleep(1);
-        QApplication::processEvents();
-    }
-    QApplication::processEvents();
-}
-
-/**
- * @brief STIGQter::RunTests
- *
- * Executes an end-to-end smoke/regression sequence against the current
- * STIGQter data set and UI workflow.
- *
- * This routine intentionally performs a long series of state-changing
- * operations (for example: refresh, selective deletes/adds/imports/exports)
- * to validate that the main processing paths complete without runtime errors.
- * Each phase emits a step-indexed debug message for traceability.
- *
- * Because many actions are asynchronous and run on worker threads, the test
- * flow repeatedly calls ProcEvents() between phases to allow the UI event loop
- * and background workers to complete before proceeding to the next assertion-
- * by-action step.
- *
- * @note This function mutates application data and UI selections; run only in
- * controlled test scenarios where those side effects are expected.
- */
-void STIGQter::RunTests()
-{
-    // Run every phase back-to-back. The Qt Test harness instead invokes the
-    // individual RunTestsN() phases as separate test functions so that each
-    // gets its own per-test-function watchdog budget (see tst_stigqter.cpp).
-    RunTests1();
-    RunTests2();
-    RunTests3();
-    RunTests4();
-    RunTests5();
-}
-
-/**
- * @brief STIGQter::RunTests1
- *
- * Phase 1 of @a RunTests: refresh the STIG catalog, prune it down, re-add the
- * bundled ASD STIGs, exercise filtering/message handling/eMASS import, and
- * create the @c TEST asset used by the remaining phases.
- */
-void STIGQter::RunTests1()
-{
-    _testStep = 0;
-
-    // Phase 1: refresh STIG catalog before performing mutation tests.
-    qDebug("STIGQter test %d: Refresh STIGs", _testStep++);
-    UpdateSTIGs();
-    ProcEvents();
-
-    // Phase 2: deterministically keep the first 5 STIGs and delete the remainder.
-    qDebug("STIGQter test %d: Deleting Some STIGs", _testStep++);
-    {
-        int size = ui->lstSTIGs->count();
-        if (size > 5)
-        {
-            ui->lstSTIGs->selectAll();
-            ProcEvents();
-            auto stigs = ui->lstSTIGs->selectedItems();
-            for (int i = 0; i < 5; i++)
-            {
-                stigs.at(i)->setSelected(false);
-            }
-            ProcEvents();
-            DeleteSTIGs();
-            ProcEvents();
-        }
-    }
-
-    qDebug("STIGQter test %d: Old ASD STIG", _testStep++);
-    {
-        WorkerSTIGAdd s;
-        s.AddSTIGs({QStringLiteral("tests/U_ASD_V5R1_STIG.zip"), QStringLiteral("tests/U_ASD_V5R2_STIG.zip")});
-        s.SetEnableSupplements(false);
-        s.process();
-    }
-
-    qDebug("STIGQter test %d: Filter", _testStep++);
-    ui->txtSTIGSearch->setText(QStringLiteral("Windows"));
-    ProcEvents();
-
-    qDebug("STIGQter test %d: Clear Filter", _testStep++);
-    ui->txtSTIGSearch->setText(QString());
-    ProcEvents();
-
-    qDebug("STIGQter test %d: System Classification Marking", _testStep++);
-    ui->txtSystemMarking->setText(QStringLiteral("CUI"));
-    SaveMarking();
-    ProcEvents();
-
-    qDebug("STIGQter test %d: Message Handling", _testStep++);
-    QMessageLogContext c("test.cpp", 1, "TestFunc", "TestCat");
-    MessageHandler(QtMsgType::QtDebugMsg, c, QStringLiteral("Test Message"));
-    MessageHandler(QtMsgType::QtInfoMsg, c, QStringLiteral("Test Message"));
-    MessageHandler(QtMsgType::QtWarningMsg, c, QStringLiteral("Test Message"));
-    MessageHandler(QtMsgType::QtCriticalMsg, c, QStringLiteral("Test Message"));
-    MessageHandler(QtMsgType::QtFatalMsg, c, QStringLiteral("Test Message"));
-    ProcEvents();
-
-    qDebug("STIGQter test %d: Import eMASS Results", _testStep++);
-    ImportEMASS(QStringLiteral("tests/emassTRImport.xlsx"));
-    ProcEvents();
-
-    qDebug("STIGQter test %d: Remapping Unmapped to CM-6", _testStep++);
-    ui->cbRemapCM6->setChecked(true);
-    ProcEvents();
-    MapUnmapped(true);
-    ProcEvents();
-
-    qDebug("STIGQter test %d: Creating Asset \"TEST\"", _testStep++);
-    ui->lstSTIGs->clearSelection();
-    for (int j = 0; j < ui->lstSTIGs->count(); j++)
-    {
-        auto *li = ui->lstSTIGs->item(j);
-        if (li->data(Qt::UserRole).value<STIG>().fileName.compare(QStringLiteral("U_ASD_STIG_V5R1_Manual-xccdf.xml")) == 0)
-        {
-            li->setSelected(true);
-        }
-    }
-    AddAsset(QStringLiteral("TEST"));
-    ProcEvents();
-}
-
-/**
- * @brief STIGQter::RunTests2
- *
- * Phase 2 of @a RunTests: open the selected STIG(s) for editing and drive the
- * per-tab STIG editing tests.
- */
-void STIGQter::RunTests2()
-{
-    qDebug("STIGQter test %d: Opening STIGs", _testStep++);
-    EditSTIG();
-    ProcEvents();
-
-    for (int j = 1; j < ui->tabDB->count(); j++)
-    {
-        auto *tmpTabView = dynamic_cast<TabViewWidget*>(ui->tabDB->widget(j));
-
-        if (tmpTabView)
-            tmpTabView->SetTabIndex(j);
-
-        ProcEvents();
-
-        qDebug("STIGQter test %d: Running STIG Editing", _testStep++);
-        if (tmpTabView)
-        {
-            tmpTabView->RunTests();
-        }
-        ProcEvents();
-    }
-}
-
-/**
- * @brief STIGQter::RunTests3
- *
- * Phase 3 of @a RunTests: apply deterministic status/severity changes, then exercise
- * the CKL/monolithic export and .stigqter save/load round-trip.
- */
-void STIGQter::RunTests3()
-{
-    DbManager db;
-
-    qDebug("STIGQter test %d: Severity Override", _testStep++);
-    {
-        int checkIndex = 0;
-        const QVector<Status> statuses = {
-            Status::Open, Status::NotAFinding, Status::NotReviewed, Status::NotApplicable
-        };
-        const QVector<Severity> severities = {
-            Severity::high, Severity::medium, Severity::low
-        };
-        for (auto cklCheck : db.GetCKLChecks())
-        {
-            cklCheck.status = statuses.at(checkIndex % statuses.count());
-            if (checkIndex % 4 == 0)
-            {
-                cklCheck.severityOverride = Severity::none;
-                cklCheck.severityJustification.clear();
-            }
-            else
-            {
-                Severity overrideSeverity = severities.at(checkIndex % severities.count());
-                if (overrideSeverity == cklCheck.GetSTIGCheck().severity)
-                    overrideSeverity = severities.at((checkIndex + 1) % severities.count());
-                cklCheck.severityOverride = overrideSeverity;
-                cklCheck.severityJustification = QStringLiteral("Deterministic test override to %1.")
-                                                     .arg(GetSeverity(overrideSeverity));
-            }
-            db.UpdateCKLCheck(cklCheck);
-            ++checkIndex;
-        }
-        ProcEvents();
-    }
-
-    qDebug("STIGQter test %d: Selecting Asset \"TEST\"", _testStep++);
-    ui->lstAssets->selectAll();
-    ProcEvents();
-
-    qDebug("STIGQter test %d: Exporting CKL files", _testStep++);
-    ExportCKLs(QStringLiteral("tests"));
-    while (!isProcessingEnabled())
-    {
-        QThread::sleep(1);
-        ProcEvents();
-    }
-
-    qDebug("STIGQter test %d: Exporting Monolithic CKL files", _testStep++);
-    ExportCKLsMonolithic(QStringLiteral("tests"));
-    while (!isProcessingEnabled())
-    {
-        QThread::sleep(1);
-        ProcEvents();
-    }
-
-    qDebug("STIGQter test %d: Saving .stigqter file", _testStep++);
-    SaveAs(QStringLiteral("tests/test.stigqter"));
-    ProcEvents();
-
-    qDebug("STIGQter test %d: Loading .stigqter file", _testStep++);
-    Load(QStringLiteral("tests/test.stigqter"));
-    ProcEvents();
-}
-
-/**
- * @brief STIGQter::RunTests4
- *
- * Phase 4 of @a RunTests: open every asset and drive the per-asset view tests.
- */
-void STIGQter::RunTests4()
-{
-    qDebug("STIGQter test %d: Opening Assets", _testStep++);
-    {
-        ui->lstAssets->clearSelection();
-        ProcEvents();
-        ui->lstAssets->selectAll();
-        ProcEvents();
-
-        for (int i = 0; i < ui->lstAssets->count(); i++)
-        {
-            auto a = ui->lstAssets->item(i);
-            if (!a->isSelected())
-                a->setSelected(true);
-        }
-
-        ProcEvents();
-
-        OpenCKL();
-        ProcEvents();
-
-        for (int j = 1; j < ui->tabDB->count(); j++)
-        {
-            auto *tmpTabView = dynamic_cast<TabViewWidget*>(ui->tabDB->widget(j));
-
-            if (tmpTabView)
-                tmpTabView->SetTabIndex(j);
-
-            ProcEvents();
-
-            qDebug("STIGQter test %d: Running Tab Tests", _testStep++);
-            if (tmpTabView)
-            {
-                tmpTabView->RunTests();
-            }
-            ProcEvents();
-        }
-    }
-}
-
-/**
- * @brief STIGQter::RunTests5
- *
- * Phase 5 of @a RunTests: re-import a monolithic CKL and emit every report
- * (findings, POA&M, HTML, CMRS, eMASS) before exercising the help screen.
- */
-void STIGQter::RunTests5()
-{
-    qDebug("STIGQter test %d: Reopen Asset", _testStep++);
-    ImportCKLs({QStringLiteral("tests/monolithic.ckl")});
-    ProcEvents();
-
-    qDebug("STIGQter test %d: Findings Report", _testStep++);
-    FindingsReport(QStringLiteral("tests/DFR.xlsx"));
-    ProcEvents();
-
-    qDebug("STIGQter test %d: POAM Report", _testStep++);
-    POAMTemplate(QStringLiteral("tests/POAM.xlsx"));
-    ProcEvents();
-
-    qDebug("STIGQter test %d: HTML Checklists", _testStep++);
-    ExportHTML(QStringLiteral("tests"));
-    ProcEvents();
-
-    qDebug("STIGQter test %d: Export CMRS", _testStep++);
-    ExportCMRS(QStringLiteral("tests/cmrs.xml"));
-    ProcEvents();
-
-    qDebug("STIGQter test %d: Export eMASS TR", _testStep++);
-    ExportEMASS(QStringLiteral("tests/emass.xlsx"));
-    ProcEvents();
-
-    qDebug("STIGQter test %d: Help Screen", _testStep++);
-    {
-        auto a = About();
-        ProcEvents();
-        a->close();
-        ProcEvents();
-    }
 }
 
 /**
@@ -835,26 +524,13 @@ void STIGQter::closeEvent(QCloseEvent *event)
  */
 void STIGQter::CleanThreads()
 {
-    for (auto *o : workers)
+    for (qsizetype index = threads.size(); index > 0; --index)
     {
-        auto *t = o->thread();
-
-        if (t->isRunning())
-            continue;
-
-        t->wait();
-
-        QString connName = o->GetThreadId();
-        if (!connName.isNull() && !connName.isEmpty())
-        {
-            if (QSqlDatabase::connectionNames().contains(connName))
-                QSqlDatabase::removeDatabase(connName);
-        }
-
-        workers.removeOne(o);
-        threads.removeOne(t);
-        delete o;
-        delete t;
+        QThread *thread = threads.at(index - 1);
+        if (thread->isRunning()) continue;
+        thread->wait();
+        threads.removeAt(index - 1);
+        delete thread;
     }
 }
 
@@ -866,8 +542,10 @@ void STIGQter::CleanThreads()
  */
 void STIGQter::CompletedThread()
 {
-    EnableInput();
     CleanThreads();
+    for (const auto *thread : threads)
+        if (thread->property("blockingOperation").toBool()) return;
+    EnableInput();
     if (_updatedCCIs)
     {
         DisplayCCIs();
@@ -889,8 +567,9 @@ void STIGQter::CompletedThread()
     if (ui->progressBar->maximum() <= 0)
         ui->progressBar->setMaximum(1);
     ui->progressBar->setValue(ui->progressBar->maximum());
-    ui->progressBar->setFormat(QStringLiteral("Completed"));
-    ui->lblStatus->setText(QStringLiteral("Ready — operation completed"));
+    ui->progressBar->setFormat(_operationWarnings ? QStringLiteral("Completed with warnings") : QStringLiteral("Completed"));
+    ui->lblStatus->setText(_operationWarnings ? QStringLiteral("Operation ended with warnings — review the messages")
+                                            : QStringLiteral("Ready — operation completed"));
 }
 
 /**

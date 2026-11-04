@@ -29,6 +29,7 @@
 #include "workercklb.h"
 #include "workercklexport.h"
 #include "workercklupgrade.h"
+#include "workerxccdf.h"
 
 #include <QFileDialog>
 #include <QFont>
@@ -541,81 +542,6 @@ void AssetView::UpdateSTIGCheck(const STIGCheck &stigCheck)
     ui->lblCcis->setPlainText(ccis);
 }
 
-void AssetView::RunTests()
-{
-    int onTest = 0;
-    qDebug("AssetView test %d: Filter", onTest++);
-    ui->txtSTIGFilter->setText(QStringLiteral("Windows"));
-
-    qDebug("AssetView test %d: Clear Filter", onTest++);
-    ui->txtSTIGFilter->setText(QString());
-
-    qDebug("AssetView test %d: View CKLs", onTest++);
-    {
-        DbManager db;
-        for (const CKLCheck &cklCheck : db.GetCKLChecks())
-        {
-            UpdateCKLCheck(cklCheck);
-        }
-    }
-
-    qDebug("AssetView test %d: Change Check Selection", onTest++);
-    ui->lstChecks->selectAll();
-
-    qDebug("AssetView test %d: Change Findings Status", onTest++);
-    KeyShortcutCtrlN();
-    ProcEvents();
-    KeyShortcutCtrlO();
-    ProcEvents();
-    KeyShortcutCtrlR();
-    ProcEvents();
-    KeyShortcutCtrlX();
-    ProcEvents();
-
-    qDebug("AssetView test %d: Change Asset", onTest++);
-    ui->txtFQDN->setText(QStringLiteral("test.example.org"));
-    ui->txtIP->setText(QStringLiteral("127.0.0.1"));
-    ui->txtMAC->setText(QStringLiteral("00:00:00:00:00:00"));
-    ui->txtMarking->setText(QStringLiteral("PUBLIC RELEASE"));
-
-    qDebug("AssetView test %d: Save Monolithic CKL", onTest++);
-    SaveCKL(QStringLiteral("tests/monolithic.ckl"));
-    ProcEvents();
-
-    qDebug("AssetView test %d: Save Individual CKLs", onTest++);
-    SaveCKLs(QStringLiteral("tests/"));
-    ProcEvents();
-
-    qDebug("AssetView test %d: Count Checks", onTest++);
-    UpdateChecks();
-
-    qDebug("AssetView test %d: Import XCCDF", onTest++);
-    ImportXCCDF(QStringLiteral("tests/xccdf_lol.xml"));
-    ProcEvents();
-
-    qDebug("AssetView test %d: Rename Asset", onTest++);
-    RenameAsset(QStringLiteral("TEST2"));
-    RenameAsset(QStringLiteral("TEST"));
-
-    qDebug("AssetView test %d: Upgrade ASD STIG", onTest++);
-    ui->lstChecks->clearSelection();
-    ProcEvents();
-    for (int j = 0; j < ui->lstChecks->count(); j++)
-    {
-        CKLCheck cc = ui->lstChecks->item(j)->data(Qt::UserRole).value<CKLCheck>();
-        if (cc.GetSTIGCheck().GetSTIG().fileName.compare(QStringLiteral("U_ASD_STIG_V5R1_Manual-xccdf.xml")) == 0)
-        {
-            ui->lstChecks->item(j)->setSelected(true);
-            ProcEvents();
-            break;
-        }
-    }
-    UpgradeCKL();
-    ProcEvents();
-
-    qDebug("AssetView test %d: Delete Asset", onTest++);
-    DeleteAsset(true);
-}
 
 /**
  * @brief AssetView::CheckSelectedChanged
@@ -684,140 +610,24 @@ void AssetView::FilterSTIGs(const QString &text)
  */
 void AssetView::ImportXCCDF(const QString &filename)
 {
+    FlushPendingChanges();
     DbManager db;
-    db.DelayCommit(true);
-
-    QStringList fileNames;
-
-    if (filename.isEmpty())
-    {
-        fileNames = QFileDialog::getOpenFileNames(this,
-            QStringLiteral("Open XCCDF"), db.GetVariable(QStringLiteral("lastdir")), QStringLiteral("XCCDF (*.xml)"));
-    }
-    else
-    {
-        fileNames.append(filename);
-    }
-
-    bool updates = false;
-
-    //Allow multiple XCCDF files to be selected
-    for (const QString &fileName : fileNames)
-    {
-        QFile f(fileName);
-        db.UpdateVariable(QStringLiteral("lastdir"), QFileInfo(fileName).absolutePath());
-        if (!f.open(QFile::ReadOnly | QFile::Text))
-        {
-            QMessageBox::warning(nullptr, QStringLiteral("Unable to Open XCCDF"), "The XCCDF file " + fileName + " cannot be opened.");
-            continue;
-        }
-        QXmlStreamReader *xml = new QXmlStreamReader(f.readAll());
-        QStringView onCheck;
-        QStringList warnings;
-        while (!xml->atEnd() && !xml->hasError())
-        {
-            xml->readNext();
-            if (xml->isStartElement())
-            {
-                if (xml->name() == QStringLiteral("fact"))
-                {
-                    /*
-                     * iterate through elements that can fill out .ckl checklist
-                     * Elements include:
-                     * ipv4
-                     * mac
-                     * fqdn
-                     * We already have the Asset named, so don't overwrite it.
-                     */
-                    if (xml->attributes().hasAttribute(QStringLiteral("name")))
-                    {
-                        QStringView name = xml->attributes().value(QStringLiteral("name"));
-                        if (name.endsWith(QStringLiteral("ipv4"), Qt::CaseInsensitive))
-                        {
-                            QString tmpStr = xml->readElementText();
-                            if (!tmpStr.isNull() && !tmpStr.isEmpty())
-                            {
-                                ui->txtIP->setText(tmpStr);
-                            }
-                        }
-                        else if (name.endsWith(QStringLiteral("mac"), Qt::CaseInsensitive))
-                        {
-                            QString tmpStr = xml->readElementText();
-                            if (!tmpStr.isNull() && !tmpStr.isEmpty())
-                            {
-                                ui->txtMAC->setText(tmpStr);
-                            }
-                        }
-                        else if (name.endsWith(QStringLiteral("fqdn"), Qt::CaseInsensitive))
-                        {
-                            QString tmpStr = xml->readElementText();
-                            if (!tmpStr.isNull() && !tmpStr.isEmpty())
-                            {
-                                ui->txtFQDN->setText(tmpStr);
-                            }
-                        }
-                    }
-                }
-                //Iterate through each rule and pull the status
-                else if (xml->name() == QStringLiteral("rule-result"))
-                {
-                    if (xml->attributes().hasAttribute(QStringLiteral("idref")))
-                    {
-                        onCheck = xml->attributes().value(QStringLiteral("idref"));
-                    }
-                }
-                else if (xml->name().compare(QStringLiteral("result")) == 0)
-                {
-                    if (!onCheck.startsWith(QStringLiteral("SV")) && onCheck.toString().contains(QStringLiteral("SV"))) //trim off XCCDF perfunctory information for benchmark files
-                    {
-                        onCheck = onCheck.right(onCheck.length() - onCheck.toString().indexOf(QStringLiteral("SV")));
-                    }
-                    CKLCheck ckl = db.GetCKLCheckByDISAId(_asset.id, onCheck.toString());
-                    if (ckl.id < 0)
-                    {
-                        warnings.push_back(onCheck.toString());
-                    }
-                    else
-                    {
-                        QString result = xml->readElementText();
-                        bool update = false;
-                        if (result.startsWith(QStringLiteral("pass"), Qt::CaseInsensitive))
-                        {
-                            update = true;
-                            ckl.status = Status::NotAFinding;
-                        }
-                        else if (result.startsWith(QStringLiteral("notapplicable"), Qt::CaseInsensitive))
-                        {
-                            update = true;
-                            ckl.status = Status::NotApplicable;
-                        }
-                        else if (result.startsWith(QStringLiteral("fail"), Qt::CaseInsensitive))
-                        {
-                            update = true;
-                            ckl.status = Status::Open;
-                        }
-                        if (update)
-                        {
-                            updates = true;
-                            QFileInfo fi(f);
-                            ckl.findingDetails += "This finding information was set by XCCDF file " + fi.fileName();
-                            db.UpdateCKLCheck(ckl);
-                        }
-                    }
-                }
-            }
-        }
-        delete xml;
-        auto tmpCount = warnings.count();
-        //save a warning if the result can't be mapped to a check
-        if (tmpCount > 0)
-        {
-            Warning(QStringLiteral("Unable to Find Check") + Pluralize(tmpCount), QStringLiteral("The CKLCheck") + Pluralize(tmpCount) + QStringLiteral(" ") + warnings.join(QStringLiteral(", ")) + QStringLiteral(" w") + Pluralize(tmpCount, QStringLiteral("ere"), QStringLiteral("as")) + QStringLiteral(" not found in this STIG."));
-        }
-    }
-    db.DelayCommit(false);
-    if (updates) //only update the checks if something changed
+    const QStringList files = filename.isEmpty() ? QFileDialog::getOpenFileNames(this,
+        QStringLiteral("Open XCCDF"), db.GetVariable(QStringLiteral("lastdir")), QStringLiteral("XCCDF (*.xml)")) : QStringList{filename};
+    if (files.isEmpty()) return;
+    db.UpdateVariable(QStringLiteral("lastdir"), QFileInfo(files.last()).absolutePath());
+    auto *worker = new WorkerXccdf(_asset.id, files);
+    connect(worker, &WorkerXccdf::assetUpdated, this, [this] {
+        DbManager db;
+        _asset = db.GetAsset(_asset.id);
+        const QSignalBlocker ip(ui->txtIP), mac(ui->txtMAC), fqdn(ui->txtFQDN), marking(ui->txtMarking);
+        ui->txtIP->setText(_asset.hostIP);
+        ui->txtMAC->setText(_asset.hostMAC);
+        ui->txtFQDN->setText(_asset.hostFQDN);
+        ui->txtMarking->setText(_asset.marking);
         ShowChecks();
+    });
+    _parent->ConnectThreads(worker)->start();
 }
 
 void AssetView::KeyShortcutCtrlN()

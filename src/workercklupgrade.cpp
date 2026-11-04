@@ -25,6 +25,7 @@
 #include "workerstigadd.h"
 
 #include <QFile>
+#include <QHash>
 #include <QTemporaryFile>
 #include <QUrlQuery>
 #include <QXmlStreamReader>
@@ -82,28 +83,39 @@ void WorkerCKLUpgrade::process()
 
     if (replacement.id >= 0)
     {
-        db.AddSTIGToAsset(replacement, _asset);
+        if (!db.AddSTIGToAsset(replacement, _asset)) {
+            Q_EMIT ThrowWarning(QStringLiteral("Checklist upgrade failed"), QStringLiteral("The replacement STIG could not be attached. The original checklist is unchanged."));
+            Q_EMIT finished();
+            return;
+        }
         db.DelayCommit(true);
-        QVector<CKLCheck> oldChecks = _asset.GetCKLChecks(&_stig);
+        QHash<int, QString> vulnerabilities;
+        for (const STIGCheck &check : db.GetSTIGChecks(_stig)) vulnerabilities.insert(check.id, check.vulnNum);
+        for (const STIGCheck &check : db.GetSTIGChecks(replacement)) vulnerabilities.insert(check.id, check.vulnNum);
+        QHash<QString, CKLCheck> oldByVulnerability;
+        for (const CKLCheck &check : _asset.GetCKLChecks(&_stig)) {
+            const QString vulnerability = vulnerabilities.value(check.stigCheckId);
+            // Preserve the former loop's first-match behavior for duplicate IDs.
+            if (!oldByVulnerability.contains(vulnerability)) oldByVulnerability.insert(vulnerability, check);
+        }
+        bool saved = true;
         for (CKLCheck ckl : _asset.GetCKLChecks(&replacement))
         {
             Q_EMIT updateStatus("Updating " + PrintCKLCheck(ckl) + "...");
-            for (const CKLCheck &cklOld : oldChecks)
+            const auto old = oldByVulnerability.constFind(vulnerabilities.value(ckl.stigCheckId));
+            if (old != oldByVulnerability.constEnd())
             {
-                if (cklOld.GetSTIGCheck().vulnNum == ckl.GetSTIGCheck().vulnNum)
-                {
-                    ckl.status = cklOld.status;
-                    ckl.findingDetails = cklOld.findingDetails;
-                    ckl.comments = cklOld.comments;
-                    ckl.severityOverride = cklOld.severityOverride;
-                    ckl.severityJustification = cklOld.severityJustification;
-                    db.UpdateCKLCheck(ckl);
-                    Q_EMIT progress(-1);
-                    break;
-                }
+                ckl.status = old->status;
+                ckl.findingDetails = old->findingDetails;
+                ckl.comments = old->comments;
+                ckl.severityOverride = old->severityOverride;
+                ckl.severityJustification = old->severityJustification;
+                saved = db.UpdateCKLCheck(ckl) && saved;
+                Q_EMIT progress(-1);
             }
         }
         db.DelayCommit(false);
+        if (!saved) Q_EMIT ThrowWarning(QStringLiteral("Checklist upgrade incomplete"), QStringLiteral("Some assessment results could not be copied. Keep the original checklist and retry the upgrade."));
     }
     Q_EMIT updateStatus(QStringLiteral("Done!"));
     Q_EMIT finished();

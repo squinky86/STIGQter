@@ -20,6 +20,8 @@
 #ifndef DBMANAGER_H
 #define DBMANAGER_H
 
+struct XccdfResults;
+
 #include <QSqlDatabase>
 #include <QString>
 #include <QVector>
@@ -38,6 +40,8 @@
 class DbManager
 {
 public:
+    bool ApplyXccdfResults(int assetId, const XccdfResults &results, const QString &source,
+                          QStringList &missing, QString &error);
     explicit DbManager();
     explicit DbManager(const QString& connectionName);
     explicit DbManager(const QString& path, const QString& connectionName);
@@ -123,6 +127,7 @@ public:
     bool UpdateControl(const Control &control);
     bool UpdateSTIG(const STIG &stig);
     bool UpdateSTIGCheck(const STIGCheck &check);
+    bool UpdateSTIGChecks(const QVector<STIGCheck> &checks);
     bool UpdateVariable(const QString &name, const QString &value);
 
 private:

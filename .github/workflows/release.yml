@@ -1,0 +1,73 @@
+name: Release candidate
+
+on:
+  push:
+    tags: ['[0-9]*']
+  workflow_dispatch:
+    inputs:
+      tag:
+        description: Existing version tag to build as a draft release
+        required: true
+        type: string
+
+permissions:
+  contents: read
+
+concurrency:
+  group: release-${{ inputs.tag || github.ref_name }}
+  cancel-in-progress: false
+
+jobs:
+  validate:
+    runs-on: ubuntu-26.04
+    timeout-minutes: 5
+    outputs:
+      revision: ${{ steps.version.outputs.revision }}
+      tag: ${{ steps.version.outputs.tag }}
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          fetch-depth: 0
+      - id: version
+        env:
+          RELEASE_TAG: ${{ inputs.tag || github.ref_name }}
+        run: |
+          [[ "$RELEASE_TAG" =~ ^[0-9]+\.[0-9]+\.[0-9]+$ ]]
+          revision=$(git rev-parse "refs/tags/$RELEASE_TAG^{commit}")
+          [[ $(git show "$revision:VERSION") == "$RELEASE_TAG" ]]
+          echo "revision=$revision" >> "$GITHUB_OUTPUT"
+          echo "tag=$RELEASE_TAG" >> "$GITHUB_OUTPUT"
+
+  build:
+    needs: validate
+    uses: ./.github/workflows/ci.yml
+    permissions:
+      contents: read
+      security-events: write
+    with:
+      ref: ${{ needs.validate.outputs.revision }}
+
+  draft:
+    needs: [validate, build]
+    runs-on: ubuntu-26.04
+    timeout-minutes: 10
+    permissions:
+      contents: write
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          ref: ${{ needs.validate.outputs.revision }}
+      - uses: actions/download-artifact@9000827ccba6bdab643e8b6fd33ac0654aef8333 # v8.0.2
+        with:
+          pattern: '*-package'
+          path: .build/dist
+          merge-multiple: true
+      - name: Create a draft for package review
+        env:
+          GH_TOKEN: ${{ github.token }}
+          RELEASE_TAG: ${{ needs.validate.outputs.tag }}
+        run: |
+          cd .build/dist
+          sha256sum --check SHA256SUMS-linux.txt
+          sha256sum --check SHA256SUMS-windows.txt
+          gh release create "$RELEASE_TAG" ./* --draft --verify-tag --title "STIGQter $RELEASE_TAG" --notes-file ../../CHANGES.md
