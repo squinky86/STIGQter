@@ -1,0 +1,75 @@
+<!doctype html><html lang="en"><head><meta charset="utf-8"><title>STIGQter: STIG Check Details: SV-223716r958480_rule: IBM z/OS must properly protect MCS console userid(s).</title><link rel="icon" type="image/svg+xml" href="STIGQter.svg" /><script async src="https://www.googletagmanager.com/gtag/js?id=UA-31381839-2"></script><script src="include.js"></script><script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-4110907817782130" crossorigin="anonymous"></script></head><body><div><img src="STIGQter.svg" alt="STIGQter" style="height:1em;" /> <a href="https://www.stigqter.com/">STIGQter</a>: <a href="main.html">STIG Summary</a>: <a href="U_IBM_zOS_RACF_STIG_V9R9_Manual-xccdf.html">IBM z/OS RACF Security Technical Implementation Guide Version: 9 Release: 9 Benchmark Date: 01 Jul 2026</a>:</div> <h1>IBM z/OS must properly protect MCS console userid(s).</h1><h2>DISA Rule</h2><p>SV-223716r958480_rule</p><h2>Vulnerability Number</h2><p>V-223716</p><h2>Group Title</h2><p>SRG-OS-000096-GPOS-00050</p><h2>Rule Version</h2><p>RACF-ES-000690</p><h2>Severity</h2><p>CAT II</p><h2>CCI(s)</h2><ul><li>CCI-000382 - Configure the system to prohibit or restrict the use of organization-defined prohibited or restricted functions, system ports, protocols, software, and/or services.</li></ul><h2>Weight</h2><p>10</p><h2>Fix Recommendation</h2><p>Define all consoles identified in the currently active CONSOLxx parmlib member in EXAM.RPT(PARMLIB) to be defined to RACF.<br />
+<br />
+Review the MCS console resources defined to z/OS and RACF, and ensure they conform to those outlined below.<br />
+<br />
+Each console defined in the currently active CONSOLxx parmlib member in EXAM.RPT(PARMLIB) is associated with a valid RACF userid.<br />
+<br />
+Each console userid has no special privileges and/or attributes (e.g., SPECIAL, OPERATIONS, etc.).<br />
+<br />
+Each console userid has no accesses to interactive on-line facilities (e.g., TSO, CICS, etc.; excluding VTAM SMCS consoles).<br />
+<br />
+Each console userid will be restricted from accessing all data sets and resources except MVS.MCSOPER.consolename in the OPERCMDS resource class and consolename in the CONSOLE resource class.<br />
+<br />
+Each console userid has the RACF default group that is an appropriate console group profile.<br />
+<br />
+NOTE: If LOGON(AUTO) is specified in the currently active CONSOLxx parmlib member, additional access may be required. Permissions for the console userids and/or console group may be given with access READ to MVS.CONTROL, MVS.DISPLAY, MVS.MONITOR, and MVS.STOPMN OPERCMDS resource.<br />
+<br />
+NOTE: Execute the JCL in CNTL(IRRUT100) using the RACF console userids as SYSIN input. This report lists all occurrences of these userids within the RACF database, including data set and resource access lists.<br />
+<br />
+Examples: <br />
+AG consautolog SUPGROUP(&lt;syspsmpl&gt;) OWNER(&lt;syspsmpl&gt;) -<br />
+DATA(' group for console userids for autolog processing ')<br />
+<br />
+AG consnoautolog SUPGROUP(&lt;syspsmpl&gt;) OWNER(&lt;syspsmpl&gt;) -<br />
+DATA('group for console userids for no autolog processing')<br />
+<br />
+AU consname NAME('CONSOLE USERID FOR consname') NOPASSWORD NOOIDCARD -<br />
+DFLTGRP(consautolog) OWNER(consautolog) -<br />
+DATA('ADDED TO SUPPORT THE CHANGE TO LOGON(AUTO) IN CONSOLXX')<br />
+<br />
+PERMIT MVS.CONTROL.** CL(OPERCMDS) ID(consautolog) ACCESS(READ)<br />
+PERMIT MVS.DISPLAY.** CL(OPERCMDS) ID(consautolog) ACCESS(READ)<br />
+PERMIT MVS.MONITOR.** CL(OPERCMDS) ID(consautolog) ACCESS(READ)<br />
+PERMIT MVS.STOPMN.** CL(OPERCMDS) ID(consautolog) ACCESS(READ)<br />
+<br />
+PERMIT consname CL(CONSOLE) ID(consname)</p><h2>Check Contents</h2><p>Refer to IEASYS00 to determine correct CONSOLxx member. <br />
+<br />
+Examine the CONSOLxx member.<br />
+<br />
+Verify that the MCS console userids are properly restricted. <br />
+<br />
+If the following guidance is true, this is not a finding.<br />
+<br />
+Each console defined in the currently active CONSOLxx parmlib member in EXAM.RPT(PARMLIB) is associated with a valid RACF userid.<br />
+<br />
+Each console userid has no special privileges and/or attributes (e.g., SPECIAL, OPERATIONS, etc.).<br />
+Each console userid has no accesses to interactive on-line facilities (e.g., TSO, CICS, etc.; excluding VTAM SMCS consoles).<br />
+<br />
+Each console userid will be restricted from accessing all data sets and resources except MVS.MCSOPER.consolename in the OPERCMDS resource class and console name in the CONSOLE resource class.<br />
+<br />
+Each console userid has the RACF default group that is an appropriate console group profile.<br />
+<br />
+<br />
+NOTE:	If LOGON(AUTO) is specified in the currently active CONSOLxx parmlib member, additional access may be required. Permissions for the console userids and/or console group may be given with access READ to MVS.CONTROL, MVS.DISPLAY, MVS.MONITOR, and MVS.STOPMN OPERCMDS resource.<br />
+<br />
+NOTE:	Execute the JCL in CNTL(IRRUT100) using the RACF console userids as SYSIN input. This report lists all occurrences of these userids within the RACF database, including data set and resource access lists.</p><h2>Vulnerability Number</h2><p>V-223716</p><h2>Documentable</h2><p>False</p><h2>Rule Version</h2><p>RACF-ES-000690</p><h2>Severity Override Guidance</h2><p>Refer to IEASYS00 to determine correct CONSOLxx member. <br />
+<br />
+Examine the CONSOLxx member.<br />
+<br />
+Verify that the MCS console userids are properly restricted. <br />
+<br />
+If the following guidance is true, this is not a finding.<br />
+<br />
+Each console defined in the currently active CONSOLxx parmlib member in EXAM.RPT(PARMLIB) is associated with a valid RACF userid.<br />
+<br />
+Each console userid has no special privileges and/or attributes (e.g., SPECIAL, OPERATIONS, etc.).<br />
+Each console userid has no accesses to interactive on-line facilities (e.g., TSO, CICS, etc.; excluding VTAM SMCS consoles).<br />
+<br />
+Each console userid will be restricted from accessing all data sets and resources except MVS.MCSOPER.consolename in the OPERCMDS resource class and console name in the CONSOLE resource class.<br />
+<br />
+Each console userid has the RACF default group that is an appropriate console group profile.<br />
+<br />
+<br />
+NOTE:	If LOGON(AUTO) is specified in the currently active CONSOLxx parmlib member, additional access may be required. Permissions for the console userids and/or console group may be given with access READ to MVS.CONTROL, MVS.DISPLAY, MVS.MONITOR, and MVS.STOPMN OPERCMDS resource.<br />
+<br />
+NOTE:	Execute the JCL in CNTL(IRRUT100) using the RACF console userids as SYSIN input. This report lists all occurrences of these userids within the RACF database, including data set and resource access lists.</p><h2>Check Content Reference</h2><p>M</p><h2>Target Key</h2><p>4101</p></body></html>

@@ -1,0 +1,53 @@
+<!doctype html><html lang="en"><head><meta charset="utf-8"><title>STIGQter: STIG Check Details: SV-224730r1145844_rule: Sensitive CICS transactions are not protected in accordance with security requirements.</title><link rel="icon" type="image/svg+xml" href="STIGQter.svg" /><script async src="https://www.googletagmanager.com/gtag/js?id=UA-31381839-2"></script><script src="include.js"></script><script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-4110907817782130" crossorigin="anonymous"></script></head><body><div><img src="STIGQter.svg" alt="STIGQter" style="height:1em;" /> <a href="https://www.stigqter.com/">STIGQter</a>: <a href="main.html">STIG Summary</a>: <a href="U_zOS_IBM_CICS_Transaction_Server_TSS_STIG_V7R2_Manual-xccdf.html">z/OS IBM CICS Transaction Server for TSS Security Technical Implementation Guide Version: 7 Release: 2 Benchmark Date: 01 Oct 2025</a>:</div> <h1>Sensitive CICS transactions are not protected in accordance with security requirements.</h1><h2>DISA Rule</h2><p>SV-224730r1145844_rule</p><h2>Vulnerability Number</h2><p>V-224730</p><h2>Group Title</h2><p>SRG-OS-000080</p><h2>Rule Version</h2><p>ZCIC0020</p><h2>Severity</h2><p>CAT II</p><h2>CCI(s)</h2><ul><li>CCI-000213 - Enforce approved authorizations for logical access to information and system resources in accordance with applicable access control policies.</li></ul><h2>Weight</h2><p>10</p><h2>Fix Recommendation</h2><p>Develop a plan to implement the required changes.<br />
+<br />
+Most transactions are protected by profiles. An example would be &quot;L2TRANS&quot; which would be permitted all Category 2 transactions. L2TRANS is defined to CA-TSS as a profile and is permitted to all the Category 2 transactions. An example of how to implement this within CA-TSS is shown here:<br />
+<br />
+TSS CRE(L2TRANS) TYPE(PROF) DEPT(&lt;dept acid&gt;) NAME('L2 TRANS')  INSTDATA('PROFILE GRANTING ACCESS TO ALL CATEGORY 2 TRANS')    <br />
+<br />
+TSS ADD(&lt;owning acid&gt;) OTRAN(CADP CBAM CDBC)<br />
+<br />
+TSS PER(L2TRANS) OTRAN(CADP CBAM CDBC)<br />
+<br />
+Permission to the transaction group can be accomplished with a sample command:<br />
+<br />
+TSS PER(USERID)OTRAN(TRANSACTION)<br />
+<br />
+Permission to the transactions can be accomplished by adding the L2TRANS profile to a user's ACID.<br />
+<br />
+Example:<br />
+<br />
+TSS ADD(&lt;user's acid&gt;) PROF(L2TRANS)<br />
+<br />
+Transactions groups should be defined and permitted in accordance with the CICS Transaction tables listed in the zOS STIG Addendum.</p><h2>Check Contents</h2><p>Refer to the following reports produced by the TSS Data Collection and Data Set and Resource Data Collection:<br />
+<br />
+- TSSCMDS.RPT(WHOOOTRA).<br />
+- SENSITVE.RPT(WHOHOTRA).<br />
+<br />
+Refer to the CICS Systems Programmer Worksheets filled out from previous vulnerability ZCIC0010.<br />
+<br />
+If the following items are in effect for all CICS regions, this is not a finding.<br />
+<br />
+Note: Authorized personnel include systems programming and security staffs. Additional guidance regarding authorized personnel for specific transactions is included in this z/OS STIG Addendum. For example, CEMT SPI provides a broader use of this sensitive transaction by restricting execution to inquiries.<br />
+<br />
+Transactions listed in tables CICS CATEGORY 2 CICS AND OTHER PRODUCT TRANSACTIONS and CICS CATEGORY 4 COTS-SUPPLIED SENSITIVE TRANSACTIONS, in the z/OS STIG Addendum, are restricted to authorized personnel.<br />
+<br />
+Note: The exception to this is the CEOT and CSGM transactions, which can be made available to all users.<br />
+Note: The exception to this is the CWBA transaction, can be made available to the CICS Default user.<br />
+Note: The transactions beginning with &quot;CK&quot; apply to regions running WebSphere MQ.<br />
+Note: Category 1 transactions are internally restricted to CICS region userids.</p><h2>Vulnerability Number</h2><p>V-224730</p><h2>Documentable</h2><p>False</p><h2>Rule Version</h2><p>ZCIC0020</p><h2>Severity Override Guidance</h2><p>Refer to the following reports produced by the TSS Data Collection and Data Set and Resource Data Collection:<br />
+<br />
+- TSSCMDS.RPT(WHOOOTRA).<br />
+- SENSITVE.RPT(WHOHOTRA).<br />
+<br />
+Refer to the CICS Systems Programmer Worksheets filled out from previous vulnerability ZCIC0010.<br />
+<br />
+If the following items are in effect for all CICS regions, this is not a finding.<br />
+<br />
+Note: Authorized personnel include systems programming and security staffs. Additional guidance regarding authorized personnel for specific transactions is included in this z/OS STIG Addendum. For example, CEMT SPI provides a broader use of this sensitive transaction by restricting execution to inquiries.<br />
+<br />
+Transactions listed in tables CICS CATEGORY 2 CICS AND OTHER PRODUCT TRANSACTIONS and CICS CATEGORY 4 COTS-SUPPLIED SENSITIVE TRANSACTIONS, in the z/OS STIG Addendum, are restricted to authorized personnel.<br />
+<br />
+Note: The exception to this is the CEOT and CSGM transactions, which can be made available to all users.<br />
+Note: The exception to this is the CWBA transaction, can be made available to the CICS Default user.<br />
+Note: The transactions beginning with &quot;CK&quot; apply to regions running WebSphere MQ.<br />
+Note: Category 1 transactions are internally restricted to CICS region userids.</p><h2>Check Content Reference</h2><p>M</p><h2>Target Key</h2><p>4195</p></body></html>

@@ -1,0 +1,56 @@
+<!doctype html><html lang="en"><head><meta charset="utf-8"><title>STIGQter: STIG Check Details: SV-251654r1028319_rule: CA IDMS must use pervasive encryption to cryptographically protect the confidentiality and integrity of all information at rest in accordance with data owner requirements.</title><link rel="icon" type="image/svg+xml" href="STIGQter.svg" /><script async src="https://www.googletagmanager.com/gtag/js?id=UA-31381839-2"></script><script src="include.js"></script><script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-4110907817782130" crossorigin="anonymous"></script></head><body><div><img src="STIGQter.svg" alt="STIGQter" style="height:1em;" /> <a href="https://www.stigqter.com/">STIGQter</a>: <a href="main.html">STIG Summary</a>: <a href="U_CA_IDMS_STIG_V2R2_Manual-xccdf.html">CA IDMS Security Technical Implementation Guide Version: 2 Release: 2 Benchmark Date: 01 Jul 2026</a>:</div> <h1>CA IDMS must use pervasive encryption to cryptographically protect the confidentiality and integrity of all information at rest in accordance with data owner requirements.</h1><h2>DISA Rule</h2><p>SV-251654r1028319_rule</p><h2>Vulnerability Number</h2><p>V-251654</p><h2>Group Title</h2><p>SRG-APP-000428-DB-000386</p><h2>Rule Version</h2><p>IDMS-DB-000930</p><h2>Severity</h2><p>CAT I</p><h2>CCI(s)</h2><ul><li>CCI-000119 - Review and update the current audit and accountability policy on an organization-defined frequency.</li><li>CCI-002476 - Implement cryptographic mechanisms to prevent unauthorized disclosure of organization-defined information at rest on organization-defined system components.</li></ul><h2>Weight</h2><p>10</p><h2>Fix Recommendation</h2><p>Enable pervasive encryption to protect data at rest:<br />
+<br />
+1. Query system programmers, DBAs, and security team members as needed to determine SMS data and storage classes and data set key labels to use<br />
+2. Convert the desired database to a VSAM cluster.  <br />
+   a. If necessary, expand the page size of the area(s) current files. The optimal page size is eight bytes less than the VSAM control interval size.<br />
+   b. Alter the file definition to change its access method and then generate, punch, and link all DMCLs in which the file's segment is included. Optionally, specify a new database name or other location <br />
+       information<br />
+   c. Allocate the new database file(s).<br />
+<br />
+3. Modify the CV and batch JCL to reference the new VSAM data set(s).<br />
+<br />
+4. Using the appropriate OS utility, copy the original database file(s) to the new, VSAM database file(s). <br />
+<br />
+Note that the actual data encryption takes place when the database is written to or read from.</p><h2>Check Contents</h2><p>If this CA IDMS has no requirement for confidentiality and integrity of all information at rest in accordance with the data owners requirements, this not applicable.<br />
+<br />
+If required files are not defined as a VSAM dataset this is a finding.<br />
+<br />
+Perform the following for the VSAM dataset<br />
+<br />
+1. LISTC ENT('dsn') ALL&quot;  <br />
+<br />
+Where &quot;dsn&quot; is the DSNAME of the cluster; review the ATTRIBUTES section of the output to ensure that the database is defined as NONINEXED (the cluster is an ESDS). If not, this is a finding.<br />
+<br />
+2. In the IDCAMS LISTC output, look for the SMSDATA section. If none is found this is a finding.  <br />
+Otherwise, find the &quot;DATACLASS&quot; name and query the systems programmer to ensure that the SMS data class specifies &quot;Extended Format&quot; but does not specify &quot;Extended Addressing&quot;. If not, this is a finding.<br />
+<br />
+3.  In the IDCAMS LISTC output: <br />
+Find the &quot;STORAGECLASS&quot; and query the systems programmer to ensure it supports extended format VSAM dataset. If not, this is a finding.<br />
+<br />
+4. Confirm that the database(s) have a data set key label. Places to check for a data set key label:<br />
+  a. In the SMS data class definition by reviewing the entry for the appropriate data class in ISMF<br />
+  b. In the output of an IDCAMS LISTC in the ENCRYPTIONDATA section.  If &quot;DATA SET ENCRYPTION&quot; is &quot;YES&quot;, then the label will be displayed after &quot;DATA SET KEY LABEL&quot;.  <br />
+  c. The key label may be assigned through the ESM. Query the security team to determine if this is the case. <br />
+<br />
+5. The database(s) must be defined in the DMCL as &quot;VSAM&quot;.  Run &quot;IDMSLOOK&quot; to print the contents of the DMCL and look for the desired database(s). If the TYPE column is not &quot;VSAM&quot;, this is a finding.</p><h2>Vulnerability Number</h2><p>V-251654</p><h2>Documentable</h2><p>False</p><h2>Rule Version</h2><p>IDMS-DB-000930</p><h2>Severity Override Guidance</h2><p>If this CA IDMS has no requirement for confidentiality and integrity of all information at rest in accordance with the data owners requirements, this not applicable.<br />
+<br />
+If required files are not defined as a VSAM dataset this is a finding.<br />
+<br />
+Perform the following for the VSAM dataset<br />
+<br />
+1. LISTC ENT('dsn') ALL&quot;  <br />
+<br />
+Where &quot;dsn&quot; is the DSNAME of the cluster; review the ATTRIBUTES section of the output to ensure that the database is defined as NONINEXED (the cluster is an ESDS). If not, this is a finding.<br />
+<br />
+2. In the IDCAMS LISTC output, look for the SMSDATA section. If none is found this is a finding.  <br />
+Otherwise, find the &quot;DATACLASS&quot; name and query the systems programmer to ensure that the SMS data class specifies &quot;Extended Format&quot; but does not specify &quot;Extended Addressing&quot;. If not, this is a finding.<br />
+<br />
+3.  In the IDCAMS LISTC output: <br />
+Find the &quot;STORAGECLASS&quot; and query the systems programmer to ensure it supports extended format VSAM dataset. If not, this is a finding.<br />
+<br />
+4. Confirm that the database(s) have a data set key label. Places to check for a data set key label:<br />
+  a. In the SMS data class definition by reviewing the entry for the appropriate data class in ISMF<br />
+  b. In the output of an IDCAMS LISTC in the ENCRYPTIONDATA section.  If &quot;DATA SET ENCRYPTION&quot; is &quot;YES&quot;, then the label will be displayed after &quot;DATA SET KEY LABEL&quot;.  <br />
+  c. The key label may be assigned through the ESM. Query the security team to determine if this is the case. <br />
+<br />
+5. The database(s) must be defined in the DMCL as &quot;VSAM&quot;.  Run &quot;IDMSLOOK&quot; to print the contents of the DMCL and look for the desired database(s). If the TYPE column is not &quot;VSAM&quot;, this is a finding.</p><h2>Check Content Reference</h2><p>M</p><h2>Target Key</h2><p>5418</p></body></html>

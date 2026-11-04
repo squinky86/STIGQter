@@ -1,0 +1,53 @@
+<!doctype html><html lang="en"><head><meta charset="utf-8"><title>STIGQter: STIG Check Details: SV-234969r971542_rule: The SUSE operating system auditd service must notify the System Administrator (SA) and Information System Security Officer (ISSO) immediately when audit storage capacity is 75 percent full.</title><link rel="icon" type="image/svg+xml" href="STIGQter.svg" /><script async src="https://www.googletagmanager.com/gtag/js?id=UA-31381839-2"></script><script src="include.js"></script><script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-4110907817782130" crossorigin="anonymous"></script></head><body><div><img src="STIGQter.svg" alt="STIGQter" style="height:1em;" /> <a href="https://www.stigqter.com/">STIGQter</a>: <a href="main.html">STIG Summary</a>: <a href="U_SLES_15_STIG_V2R8_Manual-xccdf.html">SUSE Linux Enterprise Server 15 Security Technical Implementation Guide Version: 2 Release: 8 Benchmark Date: 01 Jul 2026</a>:</div> <h1>The SUSE operating system auditd service must notify the System Administrator (SA) and Information System Security Officer (ISSO) immediately when audit storage capacity is 75 percent full.</h1><h2>DISA Rule</h2><p>SV-234969r971542_rule</p><h2>Vulnerability Number</h2><p>V-234969</p><h2>Group Title</h2><p>SRG-OS-000343-GPOS-00134</p><h2>Rule Version</h2><p>SLES-15-030700</p><h2>Severity</h2><p>CAT II</p><h2>CCI(s)</h2><ul><li>CCI-001855 - Provide a warning to organization-defined personnel, roles, and/or locations within an organization-defined time period when allocated audit log storage volume reaches an organization-defined percentage of repository maximum audit log storage capacity.</li></ul><h2>Weight</h2><p>10</p><h2>Fix Recommendation</h2><p>Check the system configuration to determine the partition to which the audit records are written: <br />
+<br />
+&gt; sudo grep -iw log_file /etc/audit/auditd.conf<br />
+<br />
+Determine the size of the partition to which audit records are written (e.g., &quot;/var/log/audit/&quot;):<br />
+<br />
+&gt; df -h /var/log/audit/<br />
+<br />
+Set the value of the &quot;space_left&quot; keyword in &quot;/etc/audit/auditd.conf&quot; to 25 percent of the partition size.</p><h2>Check Contents</h2><p>Determine if the SUSE operating system auditd is configured to notify the SA and ISSO when the audit record storage volume reaches 75 percent of the storage capacity.<br />
+<br />
+Check the system configuration to determine the partition to which audit records are written using the following command:<br />
+<br />
+&gt; sudo grep -iw log_file /etc/audit/auditd.conf<br />
+log_file = /var/log/audit/audit.log<br />
+<br />
+Check the size of the partition to which audit records are written (e.g., &quot;/var/log/audit/&quot;):<br />
+<br />
+&gt; df -h /var/log/audit/<br />
+/dev/sda2 24G 10.4G 13.6G 43% /var<br />
+<br />
+If the audit records are not being written to a partition specifically created for audit records (in this example &quot;/var/log/audit&quot; is a separate partition), use the following command to determine the amount of space other files in the partition currently occupy:<br />
+<br />
+&gt; sudo du -sh &lt;partition&gt;<br />
+1.8G /var/log/audit<br />
+<br />
+Determine the threshold for the system to take action when 75 percent of the repository maximum audit record storage capacity is reached:<br />
+<br />
+&gt; sudo grep -iw space_left /etc/audit/auditd.conf<br />
+space_left = 225 <br />
+<br />
+If the value of the &quot;space_left&quot; keyword is not set to 25 percent of the total partition size, this is a finding.</p><h2>Vulnerability Number</h2><p>V-234969</p><h2>Documentable</h2><p>False</p><h2>Rule Version</h2><p>SLES-15-030700</p><h2>Severity Override Guidance</h2><p>Determine if the SUSE operating system auditd is configured to notify the SA and ISSO when the audit record storage volume reaches 75 percent of the storage capacity.<br />
+<br />
+Check the system configuration to determine the partition to which audit records are written using the following command:<br />
+<br />
+&gt; sudo grep -iw log_file /etc/audit/auditd.conf<br />
+log_file = /var/log/audit/audit.log<br />
+<br />
+Check the size of the partition to which audit records are written (e.g., &quot;/var/log/audit/&quot;):<br />
+<br />
+&gt; df -h /var/log/audit/<br />
+/dev/sda2 24G 10.4G 13.6G 43% /var<br />
+<br />
+If the audit records are not being written to a partition specifically created for audit records (in this example &quot;/var/log/audit&quot; is a separate partition), use the following command to determine the amount of space other files in the partition currently occupy:<br />
+<br />
+&gt; sudo du -sh &lt;partition&gt;<br />
+1.8G /var/log/audit<br />
+<br />
+Determine the threshold for the system to take action when 75 percent of the repository maximum audit record storage capacity is reached:<br />
+<br />
+&gt; sudo grep -iw space_left /etc/audit/auditd.conf<br />
+space_left = 225 <br />
+<br />
+If the value of the &quot;space_left&quot; keyword is not set to 25 percent of the total partition size, this is a finding.</p><h2>Check Content Reference</h2><p>M</p><h2>Target Key</h2><p>5274</p></body></html>

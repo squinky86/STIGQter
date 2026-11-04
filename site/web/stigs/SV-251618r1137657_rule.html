@@ -1,0 +1,60 @@
+<!doctype html><html lang="en"><head><meta charset="utf-8"><title>STIGQter: STIG Check Details: SV-251618r1137657_rule: IDMS must prevent unauthorized and unintended information transfer via database buffers.</title><link rel="icon" type="image/svg+xml" href="STIGQter.svg" /><script async src="https://www.googletagmanager.com/gtag/js?id=UA-31381839-2"></script><script src="include.js"></script><script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-4110907817782130" crossorigin="anonymous"></script></head><body><div><img src="STIGQter.svg" alt="STIGQter" style="height:1em;" /> <a href="https://www.stigqter.com/">STIGQter</a>: <a href="main.html">STIG Summary</a>: <a href="U_CA_IDMS_STIG_V2R2_Manual-xccdf.html">CA IDMS Security Technical Implementation Guide Version: 2 Release: 2 Benchmark Date: 01 Jul 2026</a>:</div> <h1>IDMS must prevent unauthorized and unintended information transfer via database buffers.</h1><h2>DISA Rule</h2><p>SV-251618r1137657_rule</p><h2>Vulnerability Number</h2><p>V-251618</p><h2>Group Title</h2><p>SRG-APP-000243-DB-000373</p><h2>Rule Version</h2><p>IDMS-DB-000470</p><h2>Severity</h2><p>CAT II</p><h2>CCI(s)</h2><ul><li>CCI-001090 - Prevent unauthorized and unintended information transfer via shared system resources.</li></ul><h2>Weight</h2><p>10</p><h2>Fix Recommendation</h2><p>Do the following to place buffers into storage acquired from the operating system rather than from IDMS. Use the following system generation parameters to enable the use of OPSYS storage for the buffers: <br />
+Set STORAGE KEY parameter of the SYSGEN SYSTEM statement to a value different from the ALTERNATE STORAGE KEY.<br />
+<br />
+Set PROTECT/NOPROTECT parameter of the SYSGEN SYSTEM statement to PROTECT.<br />
+<br />
+Set PROTECT/NOPROTECT parameter of the SYSGEN PROGRAM statement to PROTECT for user programs.<br />
+<br />
+Using the #CTABGEN macro, secure DCMT commands:<br />
+- VARY BUFFER (code N010)<br />
+- VARY DYNAMIC PROGRAM (code N046001)<br />
+- VARY PROGRAM (code N025)<br />
+Here is an example where all three commands are assigned task code 3:<br />
+         #CTABGEN (A,3),                                               X<br />
+               (N010,A,N025,N046001,A)<br />
+Using the above example, and assuming the SYSTEM ID of this IDMS system specified in SYSGEN is TEST001 the SRTT entry could be:<br />
+<br />
+#SECRTT TYPE=ENTRY,RESTYPE=ACTI,       -<br />
+        SECBY=EXTERNAL,                                     -<br />
+        EXTCLS='CA@IDMS',                                 -<br />
+        EXTNAME=(SYST,ACTI)             <br />
+<br />
+The DCMT commands could be assigned to users in Top Secret:<br />
+TSS PER(user_id) CA@IDMS(TEST001.DCMT003) ACCESS(READ)<br />
+<br />
+Reassemble the SRTT and/or module IDMSCTAB and issue commands:<br />
+DCMT VARY NUC MODULE IDMSCTAB NEW COPY -for IDMSCTAB<br />
+DCMT VARY NUC MODULE RHDCSRTT NEW COPY - for RHDCSRTT<br />
+then for either or both:<br />
+DCMT VARY NUCLEUS RELOAD <br />
+<br />
+To set buffers to OPSYS storage:<br />
+Access OCF or BCF and connect to the applicable dictionary.<br />
+<br />
+Enter &quot;DISPLAY BUFFER nnnnnnnn AS SYNTAX VERB ALTER&quot; where [nnnnnnnn] is the name of the buffer.<br />
+<br />
+Change the DC STORAGE parameter to &quot;OPSYS STORAGE&quot;.<br />
+<br />
+After changing all needed buffers, GENERATE the DMCL.<br />
+<br />
+Punch and link the DMCL module. <br />
+<br />
+Cycle the CV or issue &quot;DCMT VARY DMCL NEW COPY&quot;.<br />
+<br />
+Note: If specifying OPSYS storage for buffers, IDMS will attempt to allocate the buffer storage in operating system storage rather than in IDMS storage. Should the allocation attempt fail, IDMS will attempt to allocate the buffer in IDMS storage, and messages DC205032 and DC205029 will be issued indicating this.</p><h2>Check Contents</h2><p>Log on to IDMS DC system and issue &quot;DCPROFIL&quot;.<br />
+<br />
+If PRIMARY STORAGE PROTECT KEY is the same as the ALTERNATE STORAGE KEY, this is a finding.<br />
+<br />
+If SYSTEM STORAGE PROTECTED is &quot;NO&quot;, this is a finding.<br />
+<br />
+Issue command &quot;DCMT DISP PROG xxxxxxxx&quot; and &quot;DCMT DISP DYN PROG xxxxxxxx&quot; replacing [xxxxxxxx] with the names of user programs and look for Storage Prot. If any are &quot;NO&quot;, then this is a finding.<br />
+<br />
+Issue command &quot;DCMT DISP BUFFER&quot;. If any of the buffers do not have OPSYS in the Getstg column, this is a finding.</p><h2>Vulnerability Number</h2><p>V-251618</p><h2>Documentable</h2><p>False</p><h2>Rule Version</h2><p>IDMS-DB-000470</p><h2>Severity Override Guidance</h2><p>Log on to IDMS DC system and issue &quot;DCPROFIL&quot;.<br />
+<br />
+If PRIMARY STORAGE PROTECT KEY is the same as the ALTERNATE STORAGE KEY, this is a finding.<br />
+<br />
+If SYSTEM STORAGE PROTECTED is &quot;NO&quot;, this is a finding.<br />
+<br />
+Issue command &quot;DCMT DISP PROG xxxxxxxx&quot; and &quot;DCMT DISP DYN PROG xxxxxxxx&quot; replacing [xxxxxxxx] with the names of user programs and look for Storage Prot. If any are &quot;NO&quot;, then this is a finding.<br />
+<br />
+Issue command &quot;DCMT DISP BUFFER&quot;. If any of the buffers do not have OPSYS in the Getstg column, this is a finding.</p><h2>Check Content Reference</h2><p>M</p><h2>Target Key</h2><p>5418</p></body></html>

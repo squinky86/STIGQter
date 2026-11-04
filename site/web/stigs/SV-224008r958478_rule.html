@@ -1,0 +1,57 @@
+<!doctype html><html lang="en"><head><meta charset="utf-8"><title>STIGQter: STIG Check Details: SV-224008r958478_rule: IBM z/OS inapplicable PPT entries must be invalidated.</title><link rel="icon" type="image/svg+xml" href="STIGQter.svg" /><script async src="https://www.googletagmanager.com/gtag/js?id=UA-31381839-2"></script><script src="include.js"></script><script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-4110907817782130" crossorigin="anonymous"></script></head><body><div><img src="STIGQter.svg" alt="STIGQter" style="height:1em;" /> <a href="https://www.stigqter.com/">STIGQter</a>: <a href="main.html">STIG Summary</a>: <a href="U_IBM_zOS_TSS_STIG_V9R9_Manual-xccdf.html">IBM z/OS TSS Security Technical Implementation Guide Version: 9 Release: 9 Benchmark Date: 01 Jul 2026</a>:</div> <h1>IBM z/OS inapplicable PPT entries must be invalidated.</h1><h2>DISA Rule</h2><p>SV-224008r958478_rule</p><h2>Vulnerability Number</h2><p>V-224008</p><h2>Group Title</h2><p>SRG-OS-000095-GPOS-00049</p><h2>Rule Version</h2><p>TSS0-OS-000120</p><h2>Severity</h2><p>CAT II</p><h2>CCI(s)</h2><ul><li>CCI-000381 - Configure the system to provide only organization-defined mission essential capabilities.</li></ul><h2>Weight</h2><p>10</p><h2>Fix Recommendation</h2><p>Review the PPT and define all entries associated with nonexistent or inapplicable modules as invalidated. Nullify the invalid IEFSDPPT entry by ensuring that there is a corresponding SCHED entry, which confers no special attributes. <br />
+<br />
+Use the following recommendations and techniques to provide protection for the PPT:<br />
+<br />
+Review the IEFSDPPT module and all programs that IBM has, by default, placed in the PPT to validate their applicability to the execution system. Refer to the IBM z/OS MVS Initialization and Tuning Reference documentation for the version and release of z/OS installed at the individual site for the actual contents of the default IEFSDPPT. <br />
+<br />
+Modules for products not in use on the system will have their special privileges explicitly revoked. Do this by placing a PPT entry for each module in the SYS1.PARMLIB(SCHEDxx) member, specifying no special privileges. The PPT entry for each overridden program will be in the following format, accepting the default (unprivileged) values for the sub parameters:<br />
+<br />
+PPT PGMNAME(&lt;program name&gt;)<br />
+<br />
+Assemble documentation regarding these PPT entries, and the ISSO will keep it on file. Include the following in the documentation:<br />
+<br />
+-The product and release for which the PPT entry was made<br />
+-The last date this entry was reviewed to authenticate status<br />
+-The reason the module's privileges are being revoked</p><h2>Check Contents</h2><p>Review program entries in the IBM Program Properties Table (PPT). You may use a third-party product to examine these entries; however, to determine program entries, issue the following command from an ISPF command line:<br />
+TSO ISRDDN LOAD IEFSDPPT<br />
+Press Enter.<br />
+<br />
+Interpret the display as follows:<br />
+Examine contents at offset 8 <br />
+ Hex 'x2' - Bypass Password Protection <br />
+Hex 'x3' - Bypass Password Protection<br />
+Hex 'x4' - No data set Integrity<br />
+ Hex 'x5' - No data set Integrity<br />
+ Hex 'x6' - Both<br />
+ Hex 'x7' - Both <br />
+Determine Privilege Key at offset 9. A value of hex '70' or less indicates an elevated privilege.<br />
+<br />
+For each module identified in the &quot;eyecatcher&quot; that has BYPASS Password Protection, No data set Integrity, an elevated Privilege Key, or any combination thereof, determine if there is a valid loaded module. Again, you may use a third-party product; otherwise, execute the following steps:<br />
+ From an ISPF command line<br />
+ TSO ISRDDN LOAD &lt;privileged module&gt;<br />
+ Press Enter.<br />
+<br />
+ If the return message is &quot;Load Failed&quot;, make sure there is an entry in PARMLIB member SCHEDxx that revokes the excessive privilege. <br />
+<br />
+If this is not true, this is a finding.</p><h2>Vulnerability Number</h2><p>V-224008</p><h2>Documentable</h2><p>False</p><h2>Rule Version</h2><p>TSS0-OS-000120</p><h2>Severity Override Guidance</h2><p>Review program entries in the IBM Program Properties Table (PPT). You may use a third-party product to examine these entries; however, to determine program entries, issue the following command from an ISPF command line:<br />
+TSO ISRDDN LOAD IEFSDPPT<br />
+Press Enter.<br />
+<br />
+Interpret the display as follows:<br />
+Examine contents at offset 8 <br />
+ Hex 'x2' - Bypass Password Protection <br />
+Hex 'x3' - Bypass Password Protection<br />
+Hex 'x4' - No data set Integrity<br />
+ Hex 'x5' - No data set Integrity<br />
+ Hex 'x6' - Both<br />
+ Hex 'x7' - Both <br />
+Determine Privilege Key at offset 9. A value of hex '70' or less indicates an elevated privilege.<br />
+<br />
+For each module identified in the &quot;eyecatcher&quot; that has BYPASS Password Protection, No data set Integrity, an elevated Privilege Key, or any combination thereof, determine if there is a valid loaded module. Again, you may use a third-party product; otherwise, execute the following steps:<br />
+ From an ISPF command line<br />
+ TSO ISRDDN LOAD &lt;privileged module&gt;<br />
+ Press Enter.<br />
+<br />
+ If the return message is &quot;Load Failed&quot;, make sure there is an entry in PARMLIB member SCHEDxx that revokes the excessive privilege. <br />
+<br />
+If this is not true, this is a finding.</p><h2>Check Content Reference</h2><p>M</p><h2>Target Key</h2><p>4102</p></body></html>

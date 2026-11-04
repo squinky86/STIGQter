@@ -1,0 +1,57 @@
+<!doctype html><html lang="en"><head><meta charset="utf-8"><title>STIGQter: STIG Check Details: SV-266986r1040894_rule: AOS, when used as a VPN Gateway, must use an approved Commercial Solution for Classified (CSfC) when transporting classified traffic across an unclassified network.</title><link rel="icon" type="image/svg+xml" href="STIGQter.svg" /><script async src="https://www.googletagmanager.com/gtag/js?id=UA-31381839-2"></script><script src="include.js"></script><script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-4110907817782130" crossorigin="anonymous"></script></head><body><div><img src="STIGQter.svg" alt="STIGQter" style="height:1em;" /> <a href="https://www.stigqter.com/">STIGQter</a>: <a href="main.html">STIG Summary</a>: <a href="U_HPE_Aruba_Networking_AOS_VPN_STIG_V1R1_Manual-xccdf.html">HPE Aruba Networking AOS VPN Security Technical Implementation Guide Version: 1 Release: 1 Benchmark Date: 22 Oct 2024</a>:</div> <h1>AOS, when used as a VPN Gateway, must use an approved Commercial Solution for Classified (CSfC) when transporting classified traffic across an unclassified network.</h1><h2>DISA Rule</h2><p>SV-266986r1040894_rule</p><h2>Vulnerability Number</h2><p>V-266986</p><h2>Group Title</h2><p>SRG-NET-000352-VPN-001460</p><h2>Rule Version</h2><p>ARBA-VN-001460</p><h2>Severity</h2><p>CAT II</p><h2>CCI(s)</h2><ul><li>CCI-002450 - Implement organization-defined types of cryptography for each specified cryptography use.</li></ul><h2>Weight</h2><p>10</p><h2>Fix Recommendation</h2><p>Configure AOS with the following commands:<br />
+<br />
+1. crypto pki csr ec curve_name secp384r1 common_name &lt;common_name&gt; country &lt;US&gt; state_or_province &lt;state&gt; city &lt;city&gt; organization &lt;org&gt; unit &lt;unit&gt; email &lt;email&gt;<br />
+show crypto pki csr<br />
+2. Use DOD PKI to generate a public certificate based on the CSR.<br />
+3. Using the web GUI, navigate to Configuration &gt;&gt; System &gt;&gt; Certificates &gt;&gt; Import Certificates.<br />
+4. Click the plus sign (+) and enter &quot;Certificate name:&quot;, browse to the public certificate file, choose the appropriate format, &quot;ServerCert&quot; type, and click &quot;Submit&quot;. <br />
+5. Navigate to Configuration &gt;&gt; System &gt;&gt; Admin and choose the imported certificate under &quot;Server Certificate&quot; and click &quot;Submit&quot;. <br />
+6. Click Pending Changes &gt;&gt; Deploy Changes. <br />
+<br />
+configure terminal<br />
+crypto ipsec transform-set &lt;name&gt; esp-aes256-gcm<br />
+crypto isakmp policy &lt;#&gt;<br />
+authentication ecdsa-384<br />
+encryption aes256<br />
+group 20<br />
+hash sha2-384-192<br />
+prf prf-hmac-sha384<br />
+version v2<br />
+exit<br />
+crypto-local ipsec-map &lt;name&gt; &lt;priority&gt;<br />
+set transform-set &lt;set created earlier name&gt;<br />
+&lt;configure VPN settings as needed&gt;<br />
+exit<br />
+write memory</p><h2>Check Contents</h2><p>If AOS is not being used for CSFC, this requirement is not applicable.<br />
+ <br />
+1. Verify the AOS configuration with the following command:<br />
+show crypto-local ipsec-map<br />
+ <br />
+Note the IKEv2 Policy number for each configured map.<br />
+ <br />
+2. For each configured policy number, run the following command:<br />
+show crypto isakmp policy &lt;IKEv2 Policy #&gt;<br />
+ <br />
+3. Verify each configured transform-set by running the following command:<br />
+show crypto ipsec transform-set<br />
+ <br />
+If the configured IPsec map, ISAKMP policy, and transform-set do not contain the following, this is a finding:<br />
+ECDCA 384 certificate<br />
+IKEv2 policy with AES256, SHA-384, ECDSA-384, Group 20<br />
+Transform set with AES-256-GCM</p><h2>Vulnerability Number</h2><p>V-266986</p><h2>Documentable</h2><p>False</p><h2>Rule Version</h2><p>ARBA-VN-001460</p><h2>Severity Override Guidance</h2><p>If AOS is not being used for CSFC, this requirement is not applicable.<br />
+ <br />
+1. Verify the AOS configuration with the following command:<br />
+show crypto-local ipsec-map<br />
+ <br />
+Note the IKEv2 Policy number for each configured map.<br />
+ <br />
+2. For each configured policy number, run the following command:<br />
+show crypto isakmp policy &lt;IKEv2 Policy #&gt;<br />
+ <br />
+3. Verify each configured transform-set by running the following command:<br />
+show crypto ipsec transform-set<br />
+ <br />
+If the configured IPsec map, ISAKMP policy, and transform-set do not contain the following, this is a finding:<br />
+ECDCA 384 certificate<br />
+IKEv2 policy with AES256, SHA-384, ECDSA-384, Group 20<br />
+Transform set with AES-256-GCM</p><h2>Check Content Reference</h2><p>M</p><h2>Target Key</h2><p>5645</p></body></html>

@@ -1,0 +1,52 @@
+<!doctype html><html lang="en"><head><meta charset="utf-8"><title>STIGQter: STIG Check Details: SV-269873r1052004_rule: The Dell OS10 Router must be configured to drop all fragmented Internet Control Message Protocol (ICMP) packets destined to itself.</title><link rel="icon" type="image/svg+xml" href="STIGQter.svg" /><script async src="https://www.googletagmanager.com/gtag/js?id=UA-31381839-2"></script><script src="include.js"></script><script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-4110907817782130" crossorigin="anonymous"></script></head><body><div><img src="STIGQter.svg" alt="STIGQter" style="height:1em;" /> <a href="https://www.stigqter.com/">STIGQter</a>: <a href="main.html">STIG Summary</a>: <a href="U_Dell_OS10_Switch_RTR_STIG_V1R2_Manual-xccdf.html">Dell OS10 Switch Router Security Technical Implementation Guide Version: 1 Release: 2 Benchmark Date: 01 Apr 2026</a>:</div> <h1>The Dell OS10 Router must be configured to drop all fragmented Internet Control Message Protocol (ICMP) packets destined to itself.</h1><h2>DISA Rule</h2><p>SV-269873r1052004_rule</p><h2>Vulnerability Number</h2><p>V-269873</p><h2>Group Title</h2><p>SRG-NET-000205-RTR-000002</p><h2>Rule Version</h2><p>OS10-RTR-000390</p><h2>Severity</h2><p>CAT II</p><h2>CCI(s)</h2><ul><li>CCI-001097 - Monitor and control communications at the external managed interfaces to the system and at key managed interfaces within the system.</li></ul><h2>Weight</h2><p>10</p><h2>Fix Recommendation</h2><p>Ensure all routers have their receive path filter configured to drop all fragmented ICMP packets.<br />
+<br />
+Step 1: Configure a control-plane ACL that drops fragmented ICMP packets.<br />
+<br />
+OS10(config)# ip access-list FILTER_FRAGMENTED_ICMP<br />
+OS10(config-ipv4-acl)# seq 10 deny icmp any any log fragment<br />
+OS10(config-ipv4-acl)# seq 20 permit ip any any<br />
+<br />
+Step 2: Apply the ACL above to the control-plane.<br />
+<br />
+OS10(config)# control-plane<br />
+OS10(config-control-plane)# ip access-group FILTER_FRAGMENTED_ICMP data in</p><h2>Check Contents</h2><p>Review the access control list (ACL) for the control plane receive path.<br />
+<br />
+Verify that it will drop all fragmented ICMP packets destined to itself.<br />
+<br />
+Step 1: Review the router configuration to verify that an ACL is configured that drops fragmented ICMP packets.<br />
+<br />
+!<br />
+ip access-list FILTER_FRAGMENTED_ICMP<br />
+ seq 10 deny icmp any any log fragment<br />
+ ...<br />
+ seq 20 permit ip any any<br />
+<br />
+Step 2: Examine the configuration to verify the ACL above is applied to packets destined to the control plane.<br />
+<br />
+!<br />
+control-plane<br />
+ ip access-group FILTER_FRAGMENTED_ICMP data in<br />
+<br />
+Note: As shown above, OS10 can filter fragmented packets that arrive on the front panel data ports. OS10 does not support filtering fragmented packets arriving on the OOBM management ethernet interface.<br />
+  <br />
+If the router is not configured with a receive-path filter to drop all fragmented ICMP packets, this is a finding.</p><h2>Vulnerability Number</h2><p>V-269873</p><h2>Documentable</h2><p>False</p><h2>Rule Version</h2><p>OS10-RTR-000390</p><h2>Severity Override Guidance</h2><p>Review the access control list (ACL) for the control plane receive path.<br />
+<br />
+Verify that it will drop all fragmented ICMP packets destined to itself.<br />
+<br />
+Step 1: Review the router configuration to verify that an ACL is configured that drops fragmented ICMP packets.<br />
+<br />
+!<br />
+ip access-list FILTER_FRAGMENTED_ICMP<br />
+ seq 10 deny icmp any any log fragment<br />
+ ...<br />
+ seq 20 permit ip any any<br />
+<br />
+Step 2: Examine the configuration to verify the ACL above is applied to packets destined to the control plane.<br />
+<br />
+!<br />
+control-plane<br />
+ ip access-group FILTER_FRAGMENTED_ICMP data in<br />
+<br />
+Note: As shown above, OS10 can filter fragmented packets that arrive on the front panel data ports. OS10 does not support filtering fragmented packets arriving on the OOBM management ethernet interface.<br />
+  <br />
+If the router is not configured with a receive-path filter to drop all fragmented ICMP packets, this is a finding.</p><h2>Check Content Reference</h2><p>M</p><h2>Target Key</h2><p>5668</p></body></html>

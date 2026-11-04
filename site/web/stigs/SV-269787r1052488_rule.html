@@ -1,0 +1,37 @@
+<!doctype html><html lang="en"><head><meta charset="utf-8"><title>STIGQter: STIG Check Details: SV-269787r1052488_rule: The Dell OS10 Switch, for PKI-based authentication, must be configured to map validated certificates to unique user accounts.</title><link rel="icon" type="image/svg+xml" href="STIGQter.svg" /><script async src="https://www.googletagmanager.com/gtag/js?id=UA-31381839-2"></script><script src="include.js"></script><script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-4110907817782130" crossorigin="anonymous"></script></head><body><div><img src="STIGQter.svg" alt="STIGQter" style="height:1em;" /> <a href="https://www.stigqter.com/">STIGQter</a>: <a href="main.html">STIG Summary</a>: <a href="U_Dell_OS10_Switch_NDM_STIG_V1R1_Manual-xccdf.html">Dell OS10 Switch NDM Security Technical Implementation Guide Version: 1 Release: 1 Benchmark Date: 10 Dec 2024</a>:</div> <h1>The Dell OS10 Switch, for PKI-based authentication, must be configured to map validated certificates to unique user accounts.</h1><h2>DISA Rule</h2><p>SV-269787r1052488_rule</p><h2>Vulnerability Number</h2><p>V-269787</p><h2>Group Title</h2><p>SRG-APP-000177-NDM-000263</p><h2>Rule Version</h2><p>OS10-NDM-000490</p><h2>Severity</h2><p>CAT I</p><h2>CCI(s)</h2><ul><li>CCI-000187 - For public key-based authentication, map the authenticated identity to the account of the individual or group.</li><li>CCI-000764 - Uniquely identify and authenticate organizational users and associate that unique identification with processes acting on behalf of those users.</li><li>CCI-000166 - Provide irrefutable evidence that an individual (or process acting on behalf of an individual) falsely denying having performed organization-defined actions to be covered by non-repudiation.</li></ul><h2>Weight</h2><p>10</p><h2>Fix Recommendation</h2><p>Configure the OS10 Switch to use DOD PKI as MFA for interactive logins. Configure a named security profile to use for MFA. Configure the SSH server to enable authentication by PKI certificate.<br />
+<br />
+OS10(config)#<br />
+OS10(config)# crypto security-profile &lt;profile-name&gt;<br />
+OS10(config-sec-profile)# certificate &lt;host-certificate-name&gt;<br />
+OS10(config-sec-profile)# peer-name-check<br />
+OS10(config-sec-profile)# ocsp-check &lt;ocsp-url&gt;<br />
+OS10(config-sec-profile)# exit<br />
+OS10(config)#<br />
+OS10(config)# ip ssh server x509v3-authentication security-profile &lt;profile-name&gt;<br />
+OS10(config)#</p><h2>Check Contents</h2><p>If PKI-based authentication is not used as the MFA solution for interactive logins, this requirement is not applicable.<br />
+<br />
+OS10 maps certificates to valid usernames by comparing the common name and user principal name in the certificate to the unique user account name. This check is applied by default unless name checking has been disabled in the security profile with the &quot;no peer-name-check&quot; setting. <br />
+<br />
+Review the running-configuration to verify that X.509v3 authentication is enabled for SSH. Verify the PKI authenticated user is mapped to the effective local user account by ensuring that peer-name-check has not been disabled in the associated security profile (&quot;no peer-name-check&quot; is not present).<br />
+<br />
+ip ssh server x509v3-authentication security-profile cacpiv-prof<br />
+...<br />
+crypto security-profile &lt;profile-name&gt;<br />
+  certificate &lt;host-certificate-name&gt;<br />
+  ocsp-check &lt;ocsp-url&gt;<br />
+...<br />
+<br />
+If peer-name-check has been disabled in the security profile this is a finding.</p><h2>Vulnerability Number</h2><p>V-269787</p><h2>Documentable</h2><p>False</p><h2>Rule Version</h2><p>OS10-NDM-000490</p><h2>Severity Override Guidance</h2><p>If PKI-based authentication is not used as the MFA solution for interactive logins, this requirement is not applicable.<br />
+<br />
+OS10 maps certificates to valid usernames by comparing the common name and user principal name in the certificate to the unique user account name. This check is applied by default unless name checking has been disabled in the security profile with the &quot;no peer-name-check&quot; setting. <br />
+<br />
+Review the running-configuration to verify that X.509v3 authentication is enabled for SSH. Verify the PKI authenticated user is mapped to the effective local user account by ensuring that peer-name-check has not been disabled in the associated security profile (&quot;no peer-name-check&quot; is not present).<br />
+<br />
+ip ssh server x509v3-authentication security-profile cacpiv-prof<br />
+...<br />
+crypto security-profile &lt;profile-name&gt;<br />
+  certificate &lt;host-certificate-name&gt;<br />
+  ocsp-check &lt;ocsp-url&gt;<br />
+...<br />
+<br />
+If peer-name-check has been disabled in the security profile this is a finding.</p><h2>Check Content Reference</h2><p>M</p><h2>Target Key</h2><p>5666</p></body></html>

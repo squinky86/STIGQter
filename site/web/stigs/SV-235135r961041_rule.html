@@ -1,0 +1,125 @@
+<!doctype html><html lang="en"><head><meta charset="utf-8"><title>STIGQter: STIG Check Details: SV-235135r961041_rule: The MySQL Database Server 8.0 must enforce authorized access to all PKI private keys stored/utilized by the MySQL Database Server 8.0.</title><link rel="icon" type="image/svg+xml" href="STIGQter.svg" /><script async src="https://www.googletagmanager.com/gtag/js?id=UA-31381839-2"></script><script src="include.js"></script><script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-4110907817782130" crossorigin="anonymous"></script></head><body><div><img src="STIGQter.svg" alt="STIGQter" style="height:1em;" /> <a href="https://www.stigqter.com/">STIGQter</a>: <a href="main.html">STIG Summary</a>: <a href="U_Oracle_MySQL_8-0_STIG_V2R2_Manual-xccdf.html">Oracle MySQL 8.0 Security Technical Implementation Guide Version: 2 Release: 2 Benchmark Date: 24 Oct 2024</a>:</div> <h1>The MySQL Database Server 8.0 must enforce authorized access to all PKI private keys stored/utilized by the MySQL Database Server 8.0.</h1><h2>DISA Rule</h2><p>SV-235135r961041_rule</p><h2>Vulnerability Number</h2><p>V-235135</p><h2>Group Title</h2><p>SRG-APP-000176-DB-000068</p><h2>Rule Version</h2><p>MYS8-00-004800</p><h2>Severity</h2><p>CAT I</p><h2>CCI(s)</h2><ul><li>CCI-000186 - For public key-based authentication, enforce authorized access to the corresponding private key.</li></ul><h2>Weight</h2><p>10</p><h2>Fix Recommendation</h2><p>Implement strong access and authentication controls to protect the database’s private key.<br />
+<br />
+Configure the database to support Transport Layer Security (TLS) protocols and the put in place file systems permissions on authentication and signing credentials, including private keys.<br />
+<br />
+Put keys in place in the datadir, or define their locations using ssl_capath and ssl_crlpath.<br />
+<br />
+Ensure proper permissions are set to protect the private keys and certificates.<br />
+<br />
+Change directory ssl_capath, ssl_crlpath, or the default datadir path.<br />
+<br />
+To determine the file paths:<br />
+select @@ssl_capath, @@ssl_crlpath, @@ssl_key, @@datadir;<br />
+<br />
+Ensure OS account mysql owns all the pem and key files.<br />
+$ chown mysql *.pem<br />
+$ chgrp mysql *.key<br />
+$ chmod 600 *.key&quot;<br />
+$ chmod 600 *.pem<br />
+<br />
+Optionally, allow access to public keys.<br />
+$ chmod 644 client-cert.pem client-key.pem<br />
+$chmod 644 public_key.pem server-cert.pem<br />
+<br />
+If the server-key.pem has a password, provide this password when prompted during a console startup. The server will not start without this password if the server key is password protected.<br />
+<br />
+Edit the mysql configuration file.<br />
+<br />
+[mysqld]<br />
+ssl-fips-mode=ON<br />
+<br />
+If the OpenSSL FIPS Object Module is not available, ssl_fips_mode to ON or STRICT at startup causes the server to produce an error message and exit.</p><h2>Check Contents</h2><p>Review DBMS configuration to determine whether appropriate access controls exist to protect the DBMS’s private key. <br />
+<br />
+If strong access controls do not exist to enforce authorized access to the private key, this is a finding.<br />
+<br />
+MySQL stores certificates in PEM formatted files.<br />
+<br />
+Verify User ownership, Group ownership, and permissions on the ssl_files.<br />
+<br />
+select @@ssl_ca, @@ssl_capath, @@ssl_cert, @@ssl_cipher, @@ssl_crl, @@ssl_crlpath, @@ssl_fips_mode, @@ssl_key;<br />
+If ssl_path or ssl_crlpath are not defined the locations default to the datadir.  <br />
+To determine the datadir <br />
+select @@datadir;<br />
+<br />
+Example if path is  &lt;directory where audit log files are located&gt;/<br />
+<br />
+sudo sh -c 'ls -l  &lt;directory where data files are located&gt;/*.pem'<br />
+For example if the value returned by &quot;select @@datadir;' is  /usr/local/mysql/data/<br />
+sudo sh -c 'ls -l   /usr/local/mysql/data/*.pem'<br />
+<br />
+Password:<br />
+-rw-------  1 _mysql  _mysql  1676 Feb 25 11:09  &lt;directory where audit log files are located&gt;/ca-key.pem<br />
+-rw-r--r--  1 _mysql  _mysql  1112 Feb 25 11:09  &lt;directory where audit log files are located&gt;/ca.pem<br />
+-rw-r--r--  1 _mysql  _mysql  1112 Feb 25 11:09  &lt;directory where audit log files are located&gt;/client-cert.pem<br />
+-rw-------  1 _mysql  _mysql  1680 Feb 25 11:09  &lt;directory where audit log files are located&gt;/client-key.pem<br />
+-rw-------  1 _mysql  _mysql  1676 Feb 25 11:09  &lt;directory where audit log files are located&gt;/private_key.pem<br />
+-rw-r--r--  1 _mysql  _mysql   452 Feb 25 11:09  &lt;directory where audit log files are located&gt;/public_key.pem<br />
+-rw-r--r--  1 _mysql  _mysql  1112 Feb 25 11:09  &lt;directory where audit log files are located&gt;/server-cert.pem<br />
+-rw-------  1 _mysql  _mysql  1680 Feb 25 11:09  &lt;directory where audit log files are located&gt;/server-key.pem<br />
+<br />
+If the User owner is not &quot;mysql&quot;, this is a finding. <br />
+<br />
+If the Group owner is not &quot;mysql&quot;, this is a finding.<br />
+<br />
+For public certs and keys, permissions should be &quot;rw&quot; for mysql and &quot;readonly&quot; for mysql group and world. These files by default are named &quot;ca.pem&quot;, &quot;client-cert.pem&quot;, &quot;public_key.pem&quot;, and &quot;server-cert.pem&quot;. If not, this is a finding.<br />
+<br />
+For private certs and keys, permissions should be &quot;rw&quot; for mysql and &quot;no rights&quot; for mysql group or world. These files by default are named &quot;ca-key.pem&quot;, &quot;client-key.pem&quot;, &quot;private_key.pem&quot;, and &quot;server-key.pem&quot;. If not, this is a finding.<br />
+<br />
+Review system configuration to determine whether FIPS mode has been enabled. <br />
+<br />
+select @@ssl_fips_mode;<br />
+<br />
+- OFF: Disable FIPS mode.<br />
+- ON: Enable FIPS mode.<br />
+- STRICT: Enable “strict” FIPS mode.<br />
+<br />
+If FIPS mode is not &quot;ON&quot; or &quot;STRICT&quot;, this is a finding.<br />
+<br />
+If the server-key.pem has a password, verify when starting mysqld in a console there is prompt requiring the passphrase for the server-key.</p><h2>Vulnerability Number</h2><p>V-235135</p><h2>Documentable</h2><p>False</p><h2>Rule Version</h2><p>MYS8-00-004800</p><h2>Severity Override Guidance</h2><p>Review DBMS configuration to determine whether appropriate access controls exist to protect the DBMS’s private key. <br />
+<br />
+If strong access controls do not exist to enforce authorized access to the private key, this is a finding.<br />
+<br />
+MySQL stores certificates in PEM formatted files.<br />
+<br />
+Verify User ownership, Group ownership, and permissions on the ssl_files.<br />
+<br />
+select @@ssl_ca, @@ssl_capath, @@ssl_cert, @@ssl_cipher, @@ssl_crl, @@ssl_crlpath, @@ssl_fips_mode, @@ssl_key;<br />
+If ssl_path or ssl_crlpath are not defined the locations default to the datadir.  <br />
+To determine the datadir <br />
+select @@datadir;<br />
+<br />
+Example if path is  &lt;directory where audit log files are located&gt;/<br />
+<br />
+sudo sh -c 'ls -l  &lt;directory where data files are located&gt;/*.pem'<br />
+For example if the value returned by &quot;select @@datadir;' is  /usr/local/mysql/data/<br />
+sudo sh -c 'ls -l   /usr/local/mysql/data/*.pem'<br />
+<br />
+Password:<br />
+-rw-------  1 _mysql  _mysql  1676 Feb 25 11:09  &lt;directory where audit log files are located&gt;/ca-key.pem<br />
+-rw-r--r--  1 _mysql  _mysql  1112 Feb 25 11:09  &lt;directory where audit log files are located&gt;/ca.pem<br />
+-rw-r--r--  1 _mysql  _mysql  1112 Feb 25 11:09  &lt;directory where audit log files are located&gt;/client-cert.pem<br />
+-rw-------  1 _mysql  _mysql  1680 Feb 25 11:09  &lt;directory where audit log files are located&gt;/client-key.pem<br />
+-rw-------  1 _mysql  _mysql  1676 Feb 25 11:09  &lt;directory where audit log files are located&gt;/private_key.pem<br />
+-rw-r--r--  1 _mysql  _mysql   452 Feb 25 11:09  &lt;directory where audit log files are located&gt;/public_key.pem<br />
+-rw-r--r--  1 _mysql  _mysql  1112 Feb 25 11:09  &lt;directory where audit log files are located&gt;/server-cert.pem<br />
+-rw-------  1 _mysql  _mysql  1680 Feb 25 11:09  &lt;directory where audit log files are located&gt;/server-key.pem<br />
+<br />
+If the User owner is not &quot;mysql&quot;, this is a finding. <br />
+<br />
+If the Group owner is not &quot;mysql&quot;, this is a finding.<br />
+<br />
+For public certs and keys, permissions should be &quot;rw&quot; for mysql and &quot;readonly&quot; for mysql group and world. These files by default are named &quot;ca.pem&quot;, &quot;client-cert.pem&quot;, &quot;public_key.pem&quot;, and &quot;server-cert.pem&quot;. If not, this is a finding.<br />
+<br />
+For private certs and keys, permissions should be &quot;rw&quot; for mysql and &quot;no rights&quot; for mysql group or world. These files by default are named &quot;ca-key.pem&quot;, &quot;client-key.pem&quot;, &quot;private_key.pem&quot;, and &quot;server-key.pem&quot;. If not, this is a finding.<br />
+<br />
+Review system configuration to determine whether FIPS mode has been enabled. <br />
+<br />
+select @@ssl_fips_mode;<br />
+<br />
+- OFF: Disable FIPS mode.<br />
+- ON: Enable FIPS mode.<br />
+- STRICT: Enable “strict” FIPS mode.<br />
+<br />
+If FIPS mode is not &quot;ON&quot; or &quot;STRICT&quot;, this is a finding.<br />
+<br />
+If the server-key.pem has a password, verify when starting mysqld in a console there is prompt requiring the passphrase for the server-key.</p><h2>Check Content Reference</h2><p>M</p><h2>Target Key</h2><p>5277</p></body></html>

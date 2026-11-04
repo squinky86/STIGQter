@@ -1,0 +1,43 @@
+<!doctype html><html lang="en"><head><meta charset="utf-8"><title>STIGQter: STIG Check Details: SV-223814r1196251_rule: The IBM z/OS Syslog daemon must be properly defined and secured.</title><link rel="icon" type="image/svg+xml" href="STIGQter.svg" /><script async src="https://www.googletagmanager.com/gtag/js?id=UA-31381839-2"></script><script src="include.js"></script><script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-4110907817782130" crossorigin="anonymous"></script></head><body><div><img src="STIGQter.svg" alt="STIGQter" style="height:1em;" /> <a href="https://www.stigqter.com/">STIGQter</a>: <a href="main.html">STIG Summary</a>: <a href="U_IBM_zOS_RACF_STIG_V9R9_Manual-xccdf.html">IBM z/OS RACF Security Technical Implementation Guide Version: 9 Release: 9 Benchmark Date: 01 Jul 2026</a>:</div> <h1>The IBM z/OS Syslog daemon must be properly defined and secured.</h1><h2>DISA Rule</h2><p>SV-223814r1196251_rule</p><h2>Vulnerability Number</h2><p>V-223814</p><h2>Group Title</h2><p>SRG-OS-000104-GPOS-00051</p><h2>Rule Version</h2><p>RACF-SL-000030</p><h2>Severity</h2><p>CAT II</p><h2>CCI(s)</h2><ul><li>CCI-000764 - Uniquely identify and authenticate organizational users and associate that unique identification with processes acting on behalf of those users.</li></ul><h2>Weight</h2><p>10</p><h2>Fix Recommendation</h2><p>The Syslog daemon userid is SYSLOGD.<br />
+Define the SYSLOGD userid as a PROTECTED userid.<br />
+Define the SYSLOGD userid has UID(0), HOME('/'), and PROGRAM('/bin/sh') specified in the OMVS segment.<br />
+<br />
+To set up and use as an MVS Started Proc, the following sample commands are provided:<br />
+<br />
+AU SYSLOGD NAME('stc, tcpip') NOPASSWORD NOOIDCARD DFLTGRP(STC) -<br />
+OWNER(STC) DATA('Reference ISLG0020 for proper setup ')<br />
+ALU SYSLOGD DFLTGRP(stctcpx) <br />
+ALU SYSLOGD OMVS(UID(0) HOME('/') PROGRAM('/bin/sh')) <br />
+CO SYSLOGD GROUP(stctcpx) OWNER(stctcpx)<br />
+<br />
+A matching entry mapping the SYSLOGD started proc to the SYSLOGD userid is in the STARTED resource class.<br />
+<br />
+RDEF STARTED SYSLOGD.** UACC(NONE) OWNER(ADMIN) AUDIT(ALL(READ)) STDATA(USER(SYSLOGD) GROUP(STC)) <br />
+<br />
+If /etc/rc is used to start the Syslog daemon, ensure that the _BPX_JOBNAME and _BPX_ USERID environment variables are assigned a value of SYSLOGD.</p><h2>Check Contents</h2><p>From z/OS command screen enter: <br />
+ListUser SYSLOGD OMVS (SYSLOGD is usual name of the SYSLOG daemon)<br />
+<br />
+If all of the following are true, this is not a finding.<br />
+<br />
+If either of the following is untrue, this is a finding.<br />
+<br />
+-The SYSLOGD userid is defined as a PROTECTED userid.<br />
+-The SYSLOGD userid has the following z/OS Unix attributes: UID(0), HOME directory '/', shell program /bin/sh.<br />
+<br />
+From z/OS command screen enter:<br />
+RList STARTED SYSLOGD<br />
+<br />
+If a matching entry in the STARTED resource class exists enabling the use of the standard userid and appropriate group, this is not a finding.</p><h2>Vulnerability Number</h2><p>V-223814</p><h2>Documentable</h2><p>False</p><h2>Rule Version</h2><p>RACF-SL-000030</p><h2>Severity Override Guidance</h2><p>From z/OS command screen enter: <br />
+ListUser SYSLOGD OMVS (SYSLOGD is usual name of the SYSLOG daemon)<br />
+<br />
+If all of the following are true, this is not a finding.<br />
+<br />
+If either of the following is untrue, this is a finding.<br />
+<br />
+-The SYSLOGD userid is defined as a PROTECTED userid.<br />
+-The SYSLOGD userid has the following z/OS Unix attributes: UID(0), HOME directory '/', shell program /bin/sh.<br />
+<br />
+From z/OS command screen enter:<br />
+RList STARTED SYSLOGD<br />
+<br />
+If a matching entry in the STARTED resource class exists enabling the use of the standard userid and appropriate group, this is not a finding.</p><h2>Check Content Reference</h2><p>M</p><h2>Target Key</h2><p>4101</p></body></html>

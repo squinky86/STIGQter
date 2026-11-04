@@ -1,0 +1,139 @@
+<!doctype html><html lang="en"><head><meta charset="utf-8"><title>STIGQter: STIG Check Details: SV-270510r1068294_rule: The audit information produced by the Oracle Database must be protected from unauthorized access, modification, or deletion.</title><link rel="icon" type="image/svg+xml" href="STIGQter.svg" /><script async src="https://www.googletagmanager.com/gtag/js?id=UA-31381839-2"></script><script src="include.js"></script><script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-4110907817782130" crossorigin="anonymous"></script></head><body><div><img src="STIGQter.svg" alt="STIGQter" style="height:1em;" /> <a href="https://www.stigqter.com/">STIGQter</a>: <a href="main.html">STIG Summary</a>: <a href="U_Oracle_Database_19c_STIG_V1R5_Manual-xccdf.html">Oracle Database 19c Security Technical Implementation Guide Version: 1 Release: 5 Benchmark Date: 01 Apr 2026</a>:</div> <h1>The audit information produced by the Oracle Database must be protected from unauthorized access, modification, or deletion.</h1><h2>DISA Rule</h2><p>SV-270510r1068294_rule</p><h2>Vulnerability Number</h2><p>V-270510</p><h2>Group Title</h2><p>SRG-APP-000118-DB-000059</p><h2>Rule Version</h2><p>O19C-00-006600</p><h2>Severity</h2><p>CAT II</p><h2>CCI(s)</h2><ul><li>CCI-000162 - Protect audit information from unauthorized access.</li><li>CCI-000163 - Protect audit information from unauthorized modification.</li><li>CCI-000164 - Protect audit information from unauthorized deletion.</li></ul><h2>Weight</h2><p>10</p><h2>Fix Recommendation</h2><p>Add controls and modify permissions to protect database audit log data from unauthorized modification, whether stored in the database itself or at the OS level.<br />
+<br />
+Logs are stored in the database:<br />
+For Standard Auditing, Revoke access to the AUD$ table to anyone who should not have access to it.<br />
+For Unified Auditing, Revoke access to the tables with AUDSYS as the owner.<br />
+<br />
+Use the REVOKE statement to remove permissions from a specific user or from all users to perform actions on database objects.<br />
+<br />
+REVOKE privilege-type ON [ TABLE ] { table-Name | view-Name } FROM grantees<br />
+<br />
+Use the ALL PRIVILEGES privilege type to revoke all of the permissions from the user for the specified table. Can also revoke one or more table privileges by specifying a privilege-list.<br />
+<br />
+Use the DELETE privilege type to revoke permission to delete rows from the specified table.<br />
+<br />
+Use the INSERT privilege type to revoke permission to insert rows into the specified table.<br />
+<br />
+Use the REFERENCES privilege type to revoke permission to create a foreign key reference to the specified table. If a column list is specified with the REFERENCES privilege, the permission is revoked on only the foreign key reference to the specified columns.<br />
+<br />
+Use the SELECT privilege type to revoke permission to perform SELECT statements on a table or view. If a column list is specified with the SELECT privilege, the permission is revoked on only those columns. If no column list is specified, then the privilege is valid on all of the columns in the table.<br />
+<br />
+Use the TRIGGER privilege type to revoke permission to create a trigger on the specified table.<br />
+<br />
+Use the UPDATE privilege type to revoke permission to use the UPDATE statement on the specified table. If a column list is specified, the permission is revoked only on the specified columns.<br />
+<br />
+For file-based/OS level auditing, establish an audit file directory separate from the Oracle Home.<br />
+<br />
+Alter host system permissions to the AUDIT_FILE_DEST directory to the Oracle process and software owner accounts, DBAs, backup accounts, SAs (if required), and auditors.<br />
+<br />
+Authorize and document user access requirements to the directory outside of the Oracle, DBA, and SA account list in the system documentation.</p><h2>Check Contents</h2><p>Review locations of audit logs, both internal to the database and database audit logs located at the operating system level. Verify there are appropriate controls and permissions to protect the audit information from unauthorized access.<br />
+<br />
+If appropriate controls and permissions do not exist, this is a finding.<br />
+<br />
+- - - - -<br />
+From SQL*Plus or SQL Developer:<br />
+<br />
+select value from v$parameter where name = 'audit_trail';<br />
+select value from v$parameter where name = 'audit_file_dest';<br />
+<br />
+If audit_trail is set to OS, XML or XML EXTENDED, this means logs are stored at the operating system level.<br />
+<br />
+If audit_trail is set to OS, but the audit records are routed directly to a separate log server without writing to the local file system, this is not a finding.<br />
+<br />
+If audit_trail is set to DB or &quot;DB, EXTENDED&quot; this means logs are stored in the database.<br />
+<br />
+If any logs are written to the database, DBA_TAB_PRIVS describes all object grants in the database. <br />
+<br />
+If standard auditing is in use, follow the below, check permissions on the AUD$ table. <br />
+<br />
+sqlplus connect as sysdba;<br />
+<br />
+SQL&gt; SELECT GRANTEE, TABLE_NAME, PRIVILEGE<br />
+FROM DBA_TAB_PRIVS where table_name = 'AUD$';<br />
+<br />
+If Unified Auditing is used, check permissions on the AUDSYS tables.<br />
+<br />
+sqlplus connect as sysdba;<br />
+<br />
+SQL&gt; SELECT GRANTEE, TABLE_NAME, PRIVILEGE<br />
+FROM DBA_TAB_PRIVS where owner='AUDSYS';<br />
+<br />
+If appropriate controls and permissions are not implemented, this is a finding.<br />
+<br />
+If audit logs located at the operating system level:<br />
+On Unix Systems:<br />
+<br />
+  ls -ld [pathname]<br />
+<br />
+Substitute [pathname] with the directory paths listed from the above SQL statements for audit_file_dest.<br />
+<br />
+If permissions are granted for world access, this is a finding.<br />
+<br />
+If any groups that include members other than software owner accounts, DBAs, auditors, oracle processes, or any account not listed as authorized, this is a finding.<br />
+<br />
+On Windows Systems (from Windows Explorer):<br />
+<br />
+Browse to the directory specified. Select and right-click on the directory &gt;&gt; Properties &gt;&gt; Security tab. On Windows hosts, records are also written to the Windows application event log. The location of the application event log is listed under Properties for the log under the Windows console. The default location is C:\WINDOWS\system32\config\EventLogs\AppEvent.Evt.<br />
+<br />
+Select and right-click on the directory &gt;&gt; Properties &gt;&gt; Security tab.<br />
+<br />
+If permissions are granted to everyone, this is a finding.<br />
+<br />
+If any accounts other than the administrators, software owner accounts, DBAs, auditors, Oracle processes, or any account not listed as authorized, this is a finding.<br />
+<br />
+Compare path to %ORACLE_HOME%. If audit_file_dest is a subdirectory of %ORACLE_HOME%, this is a finding.</p><h2>Vulnerability Number</h2><p>V-270510</p><h2>Documentable</h2><p>False</p><h2>Rule Version</h2><p>O19C-00-006600</p><h2>Severity Override Guidance</h2><p>Review locations of audit logs, both internal to the database and database audit logs located at the operating system level. Verify there are appropriate controls and permissions to protect the audit information from unauthorized access.<br />
+<br />
+If appropriate controls and permissions do not exist, this is a finding.<br />
+<br />
+- - - - -<br />
+From SQL*Plus or SQL Developer:<br />
+<br />
+select value from v$parameter where name = 'audit_trail';<br />
+select value from v$parameter where name = 'audit_file_dest';<br />
+<br />
+If audit_trail is set to OS, XML or XML EXTENDED, this means logs are stored at the operating system level.<br />
+<br />
+If audit_trail is set to OS, but the audit records are routed directly to a separate log server without writing to the local file system, this is not a finding.<br />
+<br />
+If audit_trail is set to DB or &quot;DB, EXTENDED&quot; this means logs are stored in the database.<br />
+<br />
+If any logs are written to the database, DBA_TAB_PRIVS describes all object grants in the database. <br />
+<br />
+If standard auditing is in use, follow the below, check permissions on the AUD$ table. <br />
+<br />
+sqlplus connect as sysdba;<br />
+<br />
+SQL&gt; SELECT GRANTEE, TABLE_NAME, PRIVILEGE<br />
+FROM DBA_TAB_PRIVS where table_name = 'AUD$';<br />
+<br />
+If Unified Auditing is used, check permissions on the AUDSYS tables.<br />
+<br />
+sqlplus connect as sysdba;<br />
+<br />
+SQL&gt; SELECT GRANTEE, TABLE_NAME, PRIVILEGE<br />
+FROM DBA_TAB_PRIVS where owner='AUDSYS';<br />
+<br />
+If appropriate controls and permissions are not implemented, this is a finding.<br />
+<br />
+If audit logs located at the operating system level:<br />
+On Unix Systems:<br />
+<br />
+  ls -ld [pathname]<br />
+<br />
+Substitute [pathname] with the directory paths listed from the above SQL statements for audit_file_dest.<br />
+<br />
+If permissions are granted for world access, this is a finding.<br />
+<br />
+If any groups that include members other than software owner accounts, DBAs, auditors, oracle processes, or any account not listed as authorized, this is a finding.<br />
+<br />
+On Windows Systems (from Windows Explorer):<br />
+<br />
+Browse to the directory specified. Select and right-click on the directory &gt;&gt; Properties &gt;&gt; Security tab. On Windows hosts, records are also written to the Windows application event log. The location of the application event log is listed under Properties for the log under the Windows console. The default location is C:\WINDOWS\system32\config\EventLogs\AppEvent.Evt.<br />
+<br />
+Select and right-click on the directory &gt;&gt; Properties &gt;&gt; Security tab.<br />
+<br />
+If permissions are granted to everyone, this is a finding.<br />
+<br />
+If any accounts other than the administrators, software owner accounts, DBAs, auditors, Oracle processes, or any account not listed as authorized, this is a finding.<br />
+<br />
+Compare path to %ORACLE_HOME%. If audit_file_dest is a subdirectory of %ORACLE_HOME%, this is a finding.</p><h2>Check Content Reference</h2><p>M</p><h2>Target Key</h2><p>5672</p></body></html>

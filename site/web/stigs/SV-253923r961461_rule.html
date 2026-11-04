@@ -1,0 +1,85 @@
+<!doctype html><html lang="en"><head><meta charset="utf-8"><title>STIGQter: STIG Check Details: SV-253923r961461_rule: The Juniper EX switch must be configured to enforce access restrictions associated with changes to device configuration.</title><link rel="icon" type="image/svg+xml" href="STIGQter.svg" /><script async src="https://www.googletagmanager.com/gtag/js?id=UA-31381839-2"></script><script src="include.js"></script><script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-4110907817782130" crossorigin="anonymous"></script></head><body><div><img src="STIGQter.svg" alt="STIGQter" style="height:1em;" /> <a href="https://www.stigqter.com/">STIGQter</a>: <a href="main.html">STIG Summary</a>: <a href="U_Juniper_EX_Switches_NDM_STIG_V2R5_Manual-xccdf.html">Juniper EX Series Switches Network Device Management Security Technical Implementation Guide Version: 2 Release: 5 Benchmark Date: 01 Jul 2026</a>:</div> <h1>The Juniper EX switch must be configured to enforce access restrictions associated with changes to device configuration.</h1><h2>DISA Rule</h2><p>SV-253923r961461_rule</p><h2>Vulnerability Number</h2><p>V-253923</p><h2>Group Title</h2><p>SRG-APP-000380-NDM-000304</p><h2>Rule Version</h2><p>JUEX-NM-000460</p><h2>Severity</h2><p>CAT II</p><h2>CCI(s)</h2><ul><li>CCI-001813 - Enforce access restrictions using organization-defined mechanisms.</li></ul><h2>Weight</h2><p>10</p><h2>Fix Recommendation</h2><p>Configure the network device to enforce access restrictions associated with changes to device configuration.<br />
+<br />
+set system login class &lt;name&gt; permissions &lt;permission sets or 'all'&gt;<br />
+set system login class &lt;name&gt; deny-commands &lt;appropriate commands to deny&gt;<br />
+set system login class &lt;name&gt; deny-configuration-regexps &lt;appropriate configuration hierarchy to deny&gt;<br />
+<br />
+set system login user &lt;account name&gt; class &lt;name&gt;</p><h2>Check Contents</h2><p>Determine if the network device enforces access restrictions associated with changes to device configuration.<br />
+<br />
+Juniper switches use role-based access controls (RBAC) to assign privilege levels. Account definitions in Junos are either &quot;local&quot; or &quot;template&quot;, discriminated by the presence of an authentication stanza. Local accounts have an authentication stanza and support both external and local authentication. Template accounts do not have an authentication stanza and only support external authentication. Every account (local and template) must be assigned a login class by an authorized administrator.<br />
+<br />
+Configuration changes require permissions sets appropriate for each stanza. For example, the &quot;system&quot; bit permits one to view [edit system] and the &quot;system-control&quot; bit permits editing (add, delete, modify).<br />
+<br />
+Verify each account is assigned a login class with appropriate permissions based upon organizational requirements. Login classes support optional allow- and deny- directives as shown in the examples. Organizational requirements may require different allow- and deny- directives or no directives at all.<br />
+<br />
+[edit system login]<br />
+class &lt;name&gt; {<br />
+	idle-timeout 10;<br />
+	permissions all;<br />
+	deny-commands &quot;^clear (log|security log)|^(clear|show) security alarms alarm-type idp|^request (security|system set-encryption-key|system firmware upgrade re|system decrypt)|^rollback&quot;;<br />
+	deny-configuration-regexps [ &quot;security alarms potential-violation idp&quot; &quot;security (ike|ipsec) (policy|proposal)&quot; &quot;security ipsec ^vpn$ .* manual (authentication|encryption|protocol|spi)&quot; &quot;security log&quot; &quot;system fips self-test after-key-generation&quot; &quot;system (archival|syslog|root-authentication|authentication-order|master-password)&quot; &quot;system services ssh (protocol-version|root-login)&quot; &quot;system login password&quot; &quot;system login user [a-zA-Z0-9_-]+ (authentication|class)&quot; &quot;system login class [a-zA-Z0-9_-]+ (permissions|deny-|allow-)&quot; ];<br />
+}<br />
+class &lt;name-1&gt; {<br />
+	idle-timeout 10;<br />
+	permissions [ configure maintenance security system-control trace view-configuration ];<br />
+	allow-commands &quot;^clear (log|security log)|^show cli authorization&quot;;<br />
+	deny-commands &quot;^clear (security alarms|system login lockout)|^file (copy|delete|list|rename|show)|^request (security|system set-encryption-key|system firmware upgrade re)|^rollback|^set date|^show security (alarms|dynamic-policies|match-policies|policies)|^start shell|^request system (decrypt|halt|reboot|software|zeroize)&quot;;<br />
+	deny-configuration-regexps [ &quot;system (login|internet-options|scripts|services|time-zone|^[a-r]+)&quot; &quot;security services event-options&quot; ];<br />
+	security-role audit-administrator;<br />
+}<br />
+<br />
+Example local and template accounts:<br />
+<br />
+user &lt;account of last resort&gt; {<br />
+	uid 2000;<br />
+	class &lt;name&gt;;<br />
+	authentication {<br />
+		encrypted-password &quot;$6$HEQnJP/W$/QD...&lt;snip&gt;...5r./&quot;; ## SECRET-DATA<br />
+	}<br />
+}<br />
+user &lt;account name&gt; {<br />
+	uid 2015;<br />
+	class &lt;name-1&gt;;<br />
+}<br />
+Note: Accounts without an authentication stanza are template accounts, must be externally authenticated, and cannot log in locally.<br />
+<br />
+If the network device does not enforce such access restrictions, this is a finding.</p><h2>Vulnerability Number</h2><p>V-253923</p><h2>Documentable</h2><p>False</p><h2>Rule Version</h2><p>JUEX-NM-000460</p><h2>Severity Override Guidance</h2><p>Determine if the network device enforces access restrictions associated with changes to device configuration.<br />
+<br />
+Juniper switches use role-based access controls (RBAC) to assign privilege levels. Account definitions in Junos are either &quot;local&quot; or &quot;template&quot;, discriminated by the presence of an authentication stanza. Local accounts have an authentication stanza and support both external and local authentication. Template accounts do not have an authentication stanza and only support external authentication. Every account (local and template) must be assigned a login class by an authorized administrator.<br />
+<br />
+Configuration changes require permissions sets appropriate for each stanza. For example, the &quot;system&quot; bit permits one to view [edit system] and the &quot;system-control&quot; bit permits editing (add, delete, modify).<br />
+<br />
+Verify each account is assigned a login class with appropriate permissions based upon organizational requirements. Login classes support optional allow- and deny- directives as shown in the examples. Organizational requirements may require different allow- and deny- directives or no directives at all.<br />
+<br />
+[edit system login]<br />
+class &lt;name&gt; {<br />
+	idle-timeout 10;<br />
+	permissions all;<br />
+	deny-commands &quot;^clear (log|security log)|^(clear|show) security alarms alarm-type idp|^request (security|system set-encryption-key|system firmware upgrade re|system decrypt)|^rollback&quot;;<br />
+	deny-configuration-regexps [ &quot;security alarms potential-violation idp&quot; &quot;security (ike|ipsec) (policy|proposal)&quot; &quot;security ipsec ^vpn$ .* manual (authentication|encryption|protocol|spi)&quot; &quot;security log&quot; &quot;system fips self-test after-key-generation&quot; &quot;system (archival|syslog|root-authentication|authentication-order|master-password)&quot; &quot;system services ssh (protocol-version|root-login)&quot; &quot;system login password&quot; &quot;system login user [a-zA-Z0-9_-]+ (authentication|class)&quot; &quot;system login class [a-zA-Z0-9_-]+ (permissions|deny-|allow-)&quot; ];<br />
+}<br />
+class &lt;name-1&gt; {<br />
+	idle-timeout 10;<br />
+	permissions [ configure maintenance security system-control trace view-configuration ];<br />
+	allow-commands &quot;^clear (log|security log)|^show cli authorization&quot;;<br />
+	deny-commands &quot;^clear (security alarms|system login lockout)|^file (copy|delete|list|rename|show)|^request (security|system set-encryption-key|system firmware upgrade re)|^rollback|^set date|^show security (alarms|dynamic-policies|match-policies|policies)|^start shell|^request system (decrypt|halt|reboot|software|zeroize)&quot;;<br />
+	deny-configuration-regexps [ &quot;system (login|internet-options|scripts|services|time-zone|^[a-r]+)&quot; &quot;security services event-options&quot; ];<br />
+	security-role audit-administrator;<br />
+}<br />
+<br />
+Example local and template accounts:<br />
+<br />
+user &lt;account of last resort&gt; {<br />
+	uid 2000;<br />
+	class &lt;name&gt;;<br />
+	authentication {<br />
+		encrypted-password &quot;$6$HEQnJP/W$/QD...&lt;snip&gt;...5r./&quot;; ## SECRET-DATA<br />
+	}<br />
+}<br />
+user &lt;account name&gt; {<br />
+	uid 2015;<br />
+	class &lt;name-1&gt;;<br />
+}<br />
+Note: Accounts without an authentication stanza are template accounts, must be externally authenticated, and cannot log in locally.<br />
+<br />
+If the network device does not enforce such access restrictions, this is a finding.</p><h2>Check Content Reference</h2><p>M</p><h2>Target Key</h2><p>5477</p></body></html>

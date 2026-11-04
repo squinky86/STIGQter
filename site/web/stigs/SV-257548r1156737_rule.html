@@ -1,0 +1,77 @@
+<!doctype html><html lang="en"><head><meta charset="utf-8"><title>STIGQter: STIG Check Details: SV-257548r1156737_rule: OpenShift must prevent unauthorized and unintended information transfer via shared system resources and enable page poisoning.</title><link rel="icon" type="image/svg+xml" href="STIGQter.svg" /><script async src="https://www.googletagmanager.com/gtag/js?id=UA-31381839-2"></script><script src="include.js"></script><script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-4110907817782130" crossorigin="anonymous"></script></head><body><div><img src="STIGQter.svg" alt="STIGQter" style="height:1em;" /> <a href="https://www.stigqter.com/">STIGQter</a>: <a href="main.html">STIG Summary</a>: <a href="U_RH_OpenShift_Container_Platform_4-x_STIG_V2R6_Manual-xccdf.html">Red Hat OpenShift Container Platform 4.x Security Technical Implementation Guide Version: 2 Release: 6 Benchmark Date: 01 Jul 2026</a>:</div> <h1>OpenShift must prevent unauthorized and unintended information transfer via shared system resources and enable page poisoning.</h1><h2>DISA Rule</h2><p>SV-257548r1156737_rule</p><h2>Vulnerability Number</h2><p>V-257548</p><h2>Group Title</h2><p>SRG-APP-000243-CTR-000600</p><h2>Rule Version</h2><p>CNTR-OS-000560</p><h2>Severity</h2><p>CAT II</p><h2>CCI(s)</h2><ul><li>CCI-001090 - Prevent unauthorized and unintended information transfer via shared system resources.</li></ul><h2>Weight</h2><p>10</p><h2>Fix Recommendation</h2><p>Apply the machine config to enable page poisoning by executing the following: <br />
+<br />
+ for mcpool in $(oc get mcp -oname | sed &amp;#039;s:.*/::&amp;#039; ); do<br />
+echo &amp;#039;apiVersion: machineconfiguration.openshift.io/v1<br />
+kind: MachineConfig<br />
+metadata:<br />
+ name: 05-kernelarg-page-poison-$mcpool<br />
+ labels:<br />
+ machineconfiguration.openshift.io/role: $mcpool<br />
+spec:<br />
+ config:<br />
+ ignition:<br />
+ version: 3.1.0<br />
+ kernelArguments:<br />
+ - page_poison=1<br />
+&amp;#039; | oc apply -f -<br />
+done <br />
+<br />
+Where OpenShift Virtualization is enabled and Windows SCF is not in use execute the following:<br />
+$ oc patch hyperconverged kubevirt-hyperconverged -n openshift-cnv<br />
+--type='json' -p='[<br />
+{&quot;op&quot;: &quot;replace&quot;, &quot;path&quot;:<br />
+&quot;/spec/featureGates/persistentReservation&quot;, &quot;value&quot;: false },<br />
+]'<br />
+<br />
+Where OpenShift Virtualization is enabled:<br />
+Edit the object and set the field to false: <br />
+'oc edit hyperconverged kubevirt-hyperconverged -n openshift-cnv'<br />
+<br />
+To set a shareable flag to false on every disk, this (experimental) command can be used:<br />
+$ oc get vm &lt;vm-name&gt; -o json | jq<br />
+'.spec.template.spec.domain.devices.disks[] += {&quot;shareable&quot;:false}' |<br />
+oc apply -f -</p><h2>Check Contents</h2><p>1. Check the current CoreOS boot loader configuration has page poisoning enabled by executing the following:<br />
+ for node in $(oc get node -oname); do oc debug $node -- chroot /host /bin/bash -c 'echo -n &quot;$HOSTNAME &quot;;  grep page_poison /boot/loader/entries/*.conf|| echo &quot;not found&quot;' 2&gt;/dev/null; done<br />
+<br />
+If &quot;page_poison&quot; is not set to &quot;1&quot; or returns &quot;not found&quot;, this is a finding.<br />
+<br />
+2. Where OpenShift Virtualization is enabled, execute the following:<br />
+$ oc get hyperconvergeds kubevirt-hyperconverged -n openshift-cnv<br />
+-ojsonpath='{.spec.ksmConfiguration}'<br />
+<br />
+If this is set to anything other than &quot;false&quot;, this is a finding.<br />
+<br />
+3. Where OpenShift Virtualization is enabled, execute the following:<br />
+$ oc get vm -ojson -A | jq '.items[] |<br />
+select(.spec.template.spec.domain.devices.disks[].shareable == true)|<br />
+.metadata.namespace + &quot;/&quot; + .metadata.name'<br />
+<br />
+If these results show disks flagged the shareable, this is a finding.<br />
+<br />
+4. Where OpenShift Virtualization is enabled, and Windows SCF is not in use:<br />
+$ oc get hyperconverged kubevirt-hyperconverged -n openshift-cnv<br />
+-ojsonpath='{.spec.featureGates.persistentReservation}'<br />
+<br />
+If this is set to anything other than &quot;false&quot;, this is a finding.</p><h2>Vulnerability Number</h2><p>V-257548</p><h2>Documentable</h2><p>False</p><h2>Rule Version</h2><p>CNTR-OS-000560</p><h2>Severity Override Guidance</h2><p>1. Check the current CoreOS boot loader configuration has page poisoning enabled by executing the following:<br />
+ for node in $(oc get node -oname); do oc debug $node -- chroot /host /bin/bash -c 'echo -n &quot;$HOSTNAME &quot;;  grep page_poison /boot/loader/entries/*.conf|| echo &quot;not found&quot;' 2&gt;/dev/null; done<br />
+<br />
+If &quot;page_poison&quot; is not set to &quot;1&quot; or returns &quot;not found&quot;, this is a finding.<br />
+<br />
+2. Where OpenShift Virtualization is enabled, execute the following:<br />
+$ oc get hyperconvergeds kubevirt-hyperconverged -n openshift-cnv<br />
+-ojsonpath='{.spec.ksmConfiguration}'<br />
+<br />
+If this is set to anything other than &quot;false&quot;, this is a finding.<br />
+<br />
+3. Where OpenShift Virtualization is enabled, execute the following:<br />
+$ oc get vm -ojson -A | jq '.items[] |<br />
+select(.spec.template.spec.domain.devices.disks[].shareable == true)|<br />
+.metadata.namespace + &quot;/&quot; + .metadata.name'<br />
+<br />
+If these results show disks flagged the shareable, this is a finding.<br />
+<br />
+4. Where OpenShift Virtualization is enabled, and Windows SCF is not in use:<br />
+$ oc get hyperconverged kubevirt-hyperconverged -n openshift-cnv<br />
+-ojsonpath='{.spec.featureGates.persistentReservation}'<br />
+<br />
+If this is set to anything other than &quot;false&quot;, this is a finding.</p><h2>Check Content Reference</h2><p>M</p><h2>Target Key</h2><p>5547</p></body></html>

@@ -1,0 +1,93 @@
+<!doctype html><html lang="en"><head><meta charset="utf-8"><title>STIGQter: STIG Check Details: SV-224355r1144155_rule: WebSphere MQ channel security is not implemented in accordance with security requirements.</title><link rel="icon" type="image/svg+xml" href="STIGQter.svg" /><script async src="https://www.googletagmanager.com/gtag/js?id=UA-31381839-2"></script><script src="include.js"></script><script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-4110907817782130" crossorigin="anonymous"></script></head><body><div><img src="STIGQter.svg" alt="STIGQter" style="height:1em;" /> <a href="https://www.stigqter.com/">STIGQter</a>: <a href="main.html">STIG Summary</a>: <a href="U_zOS_WebSphere_MQ_for_ACF2_STIG_V7R3_Manual-xccdf.html">zOS WebSphere MQ for ACF2 Security Technical Implementation Guide Version: 7 Release: 3 Benchmark Date: 01 Jul 2026</a>:</div> <h1>WebSphere MQ channel security is not implemented in accordance with security requirements.</h1><h2>DISA Rule</h2><p>SV-224355r1144155_rule</p><h2>Vulnerability Number</h2><p>V-224355</p><h2>Group Title</h2><p>SRG-OS-000403</p><h2>Rule Version</h2><p>ZWMQ0012</p><h2>Severity</h2><p>CAT II</p><h2>CCI(s)</h2><ul><li>CCI-002470 - Only allow the use of organization-defined certificate authorities for verification of the establishment of protected sessions.</li></ul><h2>Weight</h2><p>10</p><h2>Fix Recommendation</h2><p>Refer to the following report produced by the z/OS Data Collection:<br />
+<br />
+- MQSRPT(ssid)<br />
+<br />
+Note: ssid is the queue manager name (a.k.a., subsystem identifier). <br />
+<br />
+Find the DISPLAY QMGR SSLKEYR command to locate the start of the Queue Manager definitions.<br />
+Verify that each WebSphere MQ queue manager is using a digital certificate by reviewing the SSLKEYR parameter to ensure that a keyring is identified. i.e. SSLKEYR(sslkeyring-id)<br />
+Issue the following ACF2 command, where ssidCHIN is the lid for the WebSphere MQ Channel Initiator's userid and sslkeyring-id is obtained from the above action:<br />
+<br />
+LIST ssidCHIN PROFILE(CERTDATA, KEYRING)<br />
+<br />
+The output will contain information on the CERTDATA and KEYRING records for the user. Find the CERTDATA entry that has a Key ring name field with sslkeyring-id. Review the ISSUERDN field for this CERTDATA record for the following:<br />
+<br />
+OU=PKI.OU=DoD.O=U.S. Government.C=US<br />
+OU=ECA.O=U.S. Government.C=US<br />
+<br />
+Note: The Certificate Label Name is case sensitive.<br />
+<br />
+Review the Issuer's Name field in the resulting output for information of any of the following:<br />
+<br />
+OU=PKI.OU=DoD.O=U.S. Government.C=US<br />
+OU=ECA.O=U.S. Government.C=US<br />
+<br />
+Repeat these steps for each queue manager ssid identified.<br />
+<br />
+To implement the requirements stated above, the following two items are provided which attempt to assist with (1) Technical &quot;how to&quot; information and (2) A DISA Point of contact for obtaining SSL certificates for CSD WebSphere MQ channels:<br />
+<br />
+Review the information available on setting up SSL, Keyrings, and Digital Certificates in the CA-ACF2 Security for z/OS Administrators Guide as well as the WebSphere MQ Security manual. Also review the information contained in the documentation provided as part of the install package from the DISA SSO Resource Management Factory (formerly Software Factory).<br />
+<br />
+For information on obtaining an SSL certificate in the DISA CSD environment, send email inquiry to disaraoperations@disa.mil.</p><h2>Check Contents</h2><p>Refer to the following report produced by the z/OS Data Collection:<br />
+<br />
+- MQSRPT(ssid).<br />
+<br />
+Note: ssid is the queue manager name (a.k.a., subsystem identifier).<br />
+<br />
+To determine which Release of WebSphere MQ, review ssid reports for message CSQU000I. Collect the following Information for each WebSphere MQ queue manager. <br />
+<br />
+- If a WebSphere MQ queue manager communicates with another WebSphere MQ queue manager, provide the WebSphere MQ queue manager and channel names used to connect these queue managers.<br />
+- If any WebSphere MQ channels are used to communicate within the enclave, provide a list of channels and provide documentation regarding the sensitivity of the information on the channel.<br />
+<br />
+Review the ssid report(s) and perform the following steps. If the following guidance for each queue manager ssid is true, this is not a finding.<br />
+<br />
+Find the DISPLAY QMGR DEADQ, SSLKEYR, SCYCASE command to locate the start of the Queue Manager definitions.<br />
+<br />
+Verify that each WebSphere MQ 5.3 queue manager is using a digital certificate by reviewing the SSLKEYR parameter to verify that a keyring is identified, i.e., SSLKEYR(sslkeyring-id).<br />
+SSLKEYR(sslkeyring-id).<br />
+Issue the following ACF2 command, where ssidCHIN is the lid for the WebSphere MQ Channel Initiator's userid and sslkeyring-id is obtained from the above action:<br />
+<br />
+LIST ssidCHIN PROFILE(KEYRING)<br />
+<br />
+In the output of the above LIST command, obtain the keyring-default from the DEFAULT entry for KEYRING entry with RINGNAME of sslkeyring-id. Use this keyring-default in the following command:<br />
+<br />
+SET PROFILE(USER) DIV(CERTDATA)<br />
+LIST keyring-default<br />
+<br />
+Review the ISSUERDN field for the CERTDATA record for the following.<br />
+<br />
+OU=PKI.OU=DoD.O=U.S. Government.C=US<br />
+OU=ECA.O=U.S. Government.C=US<br />
+<br />
+Repeat these steps for each queue manager ssid identified.</p><h2>Vulnerability Number</h2><p>V-224355</p><h2>Documentable</h2><p>False</p><h2>Rule Version</h2><p>ZWMQ0012</p><h2>Severity Override Guidance</h2><p>Refer to the following report produced by the z/OS Data Collection:<br />
+<br />
+- MQSRPT(ssid).<br />
+<br />
+Note: ssid is the queue manager name (a.k.a., subsystem identifier).<br />
+<br />
+To determine which Release of WebSphere MQ, review ssid reports for message CSQU000I. Collect the following Information for each WebSphere MQ queue manager. <br />
+<br />
+- If a WebSphere MQ queue manager communicates with another WebSphere MQ queue manager, provide the WebSphere MQ queue manager and channel names used to connect these queue managers.<br />
+- If any WebSphere MQ channels are used to communicate within the enclave, provide a list of channels and provide documentation regarding the sensitivity of the information on the channel.<br />
+<br />
+Review the ssid report(s) and perform the following steps. If the following guidance for each queue manager ssid is true, this is not a finding.<br />
+<br />
+Find the DISPLAY QMGR DEADQ, SSLKEYR, SCYCASE command to locate the start of the Queue Manager definitions.<br />
+<br />
+Verify that each WebSphere MQ 5.3 queue manager is using a digital certificate by reviewing the SSLKEYR parameter to verify that a keyring is identified, i.e., SSLKEYR(sslkeyring-id).<br />
+SSLKEYR(sslkeyring-id).<br />
+Issue the following ACF2 command, where ssidCHIN is the lid for the WebSphere MQ Channel Initiator's userid and sslkeyring-id is obtained from the above action:<br />
+<br />
+LIST ssidCHIN PROFILE(KEYRING)<br />
+<br />
+In the output of the above LIST command, obtain the keyring-default from the DEFAULT entry for KEYRING entry with RINGNAME of sslkeyring-id. Use this keyring-default in the following command:<br />
+<br />
+SET PROFILE(USER) DIV(CERTDATA)<br />
+LIST keyring-default<br />
+<br />
+Review the ISSUERDN field for the CERTDATA record for the following.<br />
+<br />
+OU=PKI.OU=DoD.O=U.S. Government.C=US<br />
+OU=ECA.O=U.S. Government.C=US<br />
+<br />
+Repeat these steps for each queue manager ssid identified.</p><h2>Check Content Reference</h2><p>M</p><h2>Target Key</h2><p>4133</p></body></html>

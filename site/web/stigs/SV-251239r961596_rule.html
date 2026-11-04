@@ -1,0 +1,75 @@
+<!doctype html><html lang="en"><head><meta charset="utf-8"><title>STIGQter: STIG Check Details: SV-251239r961596_rule: Redis Enterprise DBMS must only accept end entity certificates issued by DoD PKI or DoD-approved PKI Certification Authorities (CAs) for the establishment of all encrypted sessions.</title><link rel="icon" type="image/svg+xml" href="STIGQter.svg" /><script async src="https://www.googletagmanager.com/gtag/js?id=UA-31381839-2"></script><script src="include.js"></script><script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-4110907817782130" crossorigin="anonymous"></script></head><body><div><img src="STIGQter.svg" alt="STIGQter" style="height:1em;" /> <a href="https://www.stigqter.com/">STIGQter</a>: <a href="main.html">STIG Summary</a>: <a href="U_Redis_Enterprise_6-x_STIG_V2R2_Manual-xccdf.html">Redis Enterprise 6.x Security Technical Implementation Guide Version: 2 Release: 2 Benchmark Date: 24 Oct 2024</a>:</div> <h1>Redis Enterprise DBMS must only accept end entity certificates issued by DoD PKI or DoD-approved PKI Certification Authorities (CAs) for the establishment of all encrypted sessions.</h1><h2>DISA Rule</h2><p>SV-251239r961596_rule</p><h2>Vulnerability Number</h2><p>V-251239</p><h2>Group Title</h2><p>SRG-APP-000427-DB-000385</p><h2>Rule Version</h2><p>RD6X-00-010500</p><h2>Severity</h2><p>CAT II</p><h2>CCI(s)</h2><ul><li>CCI-002470 - Only allow the use of organization-defined certificate authorities for verification of the establishment of protected sessions.</li></ul><h2>Weight</h2><p>10</p><h2>Fix Recommendation</h2><p>rladmin CLI or the REST API may be used to update the certificates.<br />
+<br />
+Using the CLI: <br />
+To replace certificates using the rladmin CLI, run:<br />
+ rladmin cluster certificate set &lt;cert-name&gt; certificate_file &lt;cert-file-name&gt;.pem key_file &lt;key-file-name&gt;.pem<br />
+Where:<br />
+cert-name - The name of certificate to be replaced:<br />
+For management UI: cm<br />
+For REST API: api<br />
+For database endpoint: proxy<br />
+For syncer: syncer<br />
+For metrics exporter: metrics_exporter<br />
+cert-file-name - The name of the certificate file<br />
+key-file-name - The name of the key file<br />
+<br />
+For example, to replace the cm certificate with the private key &quot;key.pem&quot; and the certificate file &quot;cluster.pem&quot;:<br />
+rladmin cluster certificate set cm certificate_file cluster.pem key_file key.pem<br />
+<br />
+To replace a certificate using the REST API, run:<br />
+curl -k -X PUT -u &quot;&lt;username&gt;:&lt;password&gt;&quot; -H &quot;Content-Type: application/json&quot; -d '{ &quot;name&quot;: &quot;&lt;cert_name&gt;&quot;, &quot;key&quot;: &quot;&lt;key&gt;&quot;, &quot;certificate&quot;: &quot;&lt;cert&gt;&quot; }' https://&lt;cluster_address&gt;:9443/v1/cluster/update_cert<br />
+Where:<br />
+cert_name - The name of the certificate to replace:<br />
+For management UI: cm<br />
+For REST API: api<br />
+For database endpoint: proxy<br />
+For syncer: syncer<br />
+For metrics exporter: metrics_exporter<br />
+key - The contents of the *_key.pem file<br />
+cert - The contents of the *_cert.pem file<br />
+<br />
+When upgrading RS, the upgrade process copies the certificates on the first upgraded node to all of the nodes in the cluster.<br />
+<br />
+Tip: The key file contains \n end of line characters (EOL) that cannot be pasted into the API call. Use sed -z 's/\n/\\\n/g' to escape the EOL characters.</p><h2>Check Contents</h2><p>Redis Enterprise Software (RS) can use industry-standard encryption to protect data in transit between a Redis client and RS. For this purpose, RS uses transport layer security (TLS) protocol.<br />
+<br />
+Run the following commands and verify certificates are present:<br />
+# cd /etc/opt/redislabs<br />
+# ls <br />
+<br />
+Verify that all present certificates are issued by DoD PKI or DoD-approved PKI Certification Authorities (CAs).<br />
+<br />
+If non DoD-approved PKI certificates are found, this is a finding.<br />
+<br />
+Verify TLS is configured to be used. To check this:<br />
+1. Log in to the Redis Enterprise web UI as an admin user.<br />
+2. Navigate to the Databases tab and select the database and then configuration.<br />
+3. Review the configuration and verify that TLS is enabled for all communications.<br />
+<br />
+If TLS is not configured to be used, this is a finding.<br />
+<br />
+To check the current TLS version, run the following commands on one of the servers that is hosting Redis Enterprise as a privileged user:<br />
+# ccs-cli<br />
+# hgetall min_control_tls_version<br />
+<br />
+If TLS is not FIPS compliant, this is a finding.</p><h2>Vulnerability Number</h2><p>V-251239</p><h2>Documentable</h2><p>False</p><h2>Rule Version</h2><p>RD6X-00-010500</p><h2>Severity Override Guidance</h2><p>Redis Enterprise Software (RS) can use industry-standard encryption to protect data in transit between a Redis client and RS. For this purpose, RS uses transport layer security (TLS) protocol.<br />
+<br />
+Run the following commands and verify certificates are present:<br />
+# cd /etc/opt/redislabs<br />
+# ls <br />
+<br />
+Verify that all present certificates are issued by DoD PKI or DoD-approved PKI Certification Authorities (CAs).<br />
+<br />
+If non DoD-approved PKI certificates are found, this is a finding.<br />
+<br />
+Verify TLS is configured to be used. To check this:<br />
+1. Log in to the Redis Enterprise web UI as an admin user.<br />
+2. Navigate to the Databases tab and select the database and then configuration.<br />
+3. Review the configuration and verify that TLS is enabled for all communications.<br />
+<br />
+If TLS is not configured to be used, this is a finding.<br />
+<br />
+To check the current TLS version, run the following commands on one of the servers that is hosting Redis Enterprise as a privileged user:<br />
+# ccs-cli<br />
+# hgetall min_control_tls_version<br />
+<br />
+If TLS is not FIPS compliant, this is a finding.</p><h2>Check Content Reference</h2><p>M</p><h2>Target Key</h2><p>5443</p></body></html>

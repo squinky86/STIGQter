@@ -1,0 +1,83 @@
+<!doctype html><html lang="en"><head><meta charset="utf-8"><title>STIGQter: STIG Check Details: SV-278411r1172756_rule: NGINX must revoke access tokens in accordance with organization-defined identification and authentication policy.</title><link rel="icon" type="image/svg+xml" href="STIGQter.svg" /><script async src="https://www.googletagmanager.com/gtag/js?id=UA-31381839-2"></script><script src="include.js"></script><script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-4110907817782130" crossorigin="anonymous"></script></head><body><div><img src="STIGQter.svg" alt="STIGQter" style="height:1em;" /> <a href="https://www.stigqter.com/">STIGQter</a>: <a href="main.html">STIG Summary</a>: <a href="U_F5_NGINX_STIG_V1R1_Manual-xccdf.html">F5 NGINX Security Technical Implementation Guide Version: 1 Release: 1 Benchmark Date: 25 Nov 2025</a>:</div> <h1>NGINX must revoke access tokens in accordance with organization-defined identification and authentication policy.</h1><h2>DISA Rule</h2><p>SV-278411r1172756_rule</p><h2>Vulnerability Number</h2><p>V-278411</p><h2>Group Title</h2><p>SRG-APP-001020</p><h2>Rule Version</h2><p>NGNX-APP-003330</p><h2>Severity</h2><p>CAT II</p><h2>CCI(s)</h2><ul><li>CCI-000366 - Implement the security configuration settings.</li></ul><h2>Weight</h2><p>10</p><h2>Fix Recommendation</h2><p>Configure NGINX Plus to enforce access token revocation mechanisms.<br />
+<br />
+Enable token revocation via introspection endpoint (OIDC/OAuth2):<br />
+<br />
+location = /token/introspect {<br />
+    internal;<br />
+    proxy_pass https://auth.example.mil/oauth2/introspect;<br />
+    proxy_set_header Content-Type &quot;application/x-www-form-urlencoded&quot;;<br />
+    proxy_pass_request_body on;<br />
+    proxy_set_body &quot;token=$http_authorization&quot;;<br />
+}<br />
+<br />
+Fail-closed on invalid or revoked token:<br />
+<br />
+location /secure/ {<br />
+    auth_request /token/introspect;<br />
+    error_page 401 = @error_revoke;<br />
+}<br />
+<br />
+location @error_revoke {<br />
+    return 401 &quot;Access token revoked or invalid.&quot;;<br />
+}<br />
+<br />
+Revoke tokens during logout flows:<br />
+<br />
+Redirect logout requests to IdP to invalidate tokens:<br />
+<br />
+location = /logout {<br />
+    return 302 https://auth.example.mil/logout?token=$http_authorization;<br />
+}<br />
+<br />
+Log all token revocation events:<br />
+<br />
+log_format token_revocation '$remote_addr - $remote_user [$time_local] '<br />
+                            '&quot;$request&quot; status=$status '<br />
+                            'token_id=&quot;$jwt_jti&quot; revoked=&quot;true&quot; ';<br />
+access_log /var/log/nginx/token_revocation.log token_revocation;</p><h2>Check Contents</h2><p>Verify NGINX Plus revokes or invalidates access tokens:<br />
+<br />
+Check support for token revocation enforcement:<br />
+<br />
+# grep -i &quot;introspect\|revok\|blacklist\|logout&quot; /etc/nginx/conf.d/*.conf<br />
+<br />
+Confirm token validation includes checking revocation status using:<br />
+- OAuth2 introspection endpoint.<br />
+- Token revocation list.<br />
+- Allowlist or deny-list implementation.<br />
+- Explicit session logout propagation.<br />
+<br />
+Inspect logout and session termination handling:<br />
+<br />
+# grep -i &quot;session_timeout\|logout\|revoke&quot; /etc/nginx/conf.d/*.conf<br />
+<br />
+Ensure sessions are invalidated upon:<br />
+- User logout.<br />
+- Token expiration.<br />
+- Authentication source change (e.g., password reset).<br />
+<br />
+Token revocation events (manual or automatic) must be logged with user ID, reason, and timestamp.<br />
+<br />
+If NGINX Plus does not support access token revocation or fails to enforce revocation upon compromise or logout, this is a finding.</p><h2>Vulnerability Number</h2><p>V-278411</p><h2>Documentable</h2><p>False</p><h2>Rule Version</h2><p>NGNX-APP-003330</p><h2>Severity Override Guidance</h2><p>Verify NGINX Plus revokes or invalidates access tokens:<br />
+<br />
+Check support for token revocation enforcement:<br />
+<br />
+# grep -i &quot;introspect\|revok\|blacklist\|logout&quot; /etc/nginx/conf.d/*.conf<br />
+<br />
+Confirm token validation includes checking revocation status using:<br />
+- OAuth2 introspection endpoint.<br />
+- Token revocation list.<br />
+- Allowlist or deny-list implementation.<br />
+- Explicit session logout propagation.<br />
+<br />
+Inspect logout and session termination handling:<br />
+<br />
+# grep -i &quot;session_timeout\|logout\|revoke&quot; /etc/nginx/conf.d/*.conf<br />
+<br />
+Ensure sessions are invalidated upon:<br />
+- User logout.<br />
+- Token expiration.<br />
+- Authentication source change (e.g., password reset).<br />
+<br />
+Token revocation events (manual or automatic) must be logged with user ID, reason, and timestamp.<br />
+<br />
+If NGINX Plus does not support access token revocation or fails to enforce revocation upon compromise or logout, this is a finding.</p><h2>Check Content Reference</h2><p>M</p><h2>Target Key</h2><p>5720</p></body></html>

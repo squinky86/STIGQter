@@ -1,0 +1,68 @@
+<!doctype html><html lang="en"><head><meta charset="utf-8"><title>STIGQter: STIG Check Details: SV-234138r611414_rule: The FortiGate firewall must generate traffic log entries containing information to establish the source of the events, such as the source IP address at a minimum.</title><link rel="icon" type="image/svg+xml" href="STIGQter.svg" /><script async src="https://www.googletagmanager.com/gtag/js?id=UA-31381839-2"></script><script src="include.js"></script><script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-4110907817782130" crossorigin="anonymous"></script></head><body><div><img src="STIGQter.svg" alt="STIGQter" style="height:1em;" /> <a href="https://www.stigqter.com/">STIGQter</a>: <a href="main.html">STIG Summary</a>: <a href="U_FN_FortiGate_Firewall_STIG_V1R4_Manual-xccdf.html">Fortinet FortiGate Firewall Security Technical Implementation Guide Version: 1 Release: 4 Benchmark Date: 05 Jan 2026</a>:</div> <h1>The FortiGate firewall must generate traffic log entries containing information to establish the source of the events, such as the source IP address at a minimum.</h1><h2>DISA Rule</h2><p>SV-234138r611414_rule</p><h2>Vulnerability Number</h2><p>V-234138</p><h2>Group Title</h2><p>SRG-NET-000077-FW-000012</p><h2>Rule Version</h2><p>FNFG-FW-000035</p><h2>Severity</h2><p>CAT III</p><h2>CCI(s)</h2><ul><li>CCI-000133 - Ensure that audit records containing information that establishes the source of the event.</li></ul><h2>Weight</h2><p>10</p><h2>Fix Recommendation</h2><p>This fix can be performed on the FortiGate GUI or on the CLI. <br />
+Log in to the FortiGate GUI with Super- or Log-and-Report-Admin privilege.<br />
+<br />
+1. Click Log and Report.<br />
+2. Click Log Settings.<br />
+3. Click All for the Event Logging and Local Traffic Log options (for most verbose logging), or Click Customize and choose granular logging options to meet organization needs.<br />
+4. Scroll to UUIDs in Traffic Log and toggle Policy and Address buttons to enable.<br />
+5. Click Apply.<br />
+<br />
+In addition to these log settings, configure individual firewall policies with the most suitable Logging Options.<br />
+<br />
+1. Click Policy and Objects.<br />
+2. Click IPv4 or IPv6 Policy.<br />
+3. For each policy, configure Logging Options to log All Sessions (for most verbose logging).<br />
+4. Confirm each created Policy is Enabled.<br />
+5. Click OK.<br />
+<br />
+or<br />
+<br />
+1. Open a CLI console, via SSH or available from the GUI.<br />
+2. Run the following command:<br />
+     # config log eventfilter<br />
+     #    set event enable<br />
+     #    set system enable<br />
+     #    set endpoint enable<br />
+     #    set user enable<br />
+     #    set security-rating enable<br />
+     # end<br />
+     # config firewall policy<br />
+     #   edit 0<br />
+     #        set srcintf {interface_name_1}<br />
+     #        set dstintf {interface_name_2}<br />
+     #        set srcaddr {address_a}<br />
+     #        set dstaddr {address_b}<br />
+     #        set schedule {always}<br />
+     #        set service {services required by site policy}<br />
+     #        set action {accept}<br />
+     #        set logtraffic enable<br />
+     #    next<br />
+     # end<br />
+<br />
+The {} indicate the object is defined by the organization policy.</p><h2>Check Contents</h2><p>Log in to the FortiGate GUI with Super-Admin privilege.<br />
+<br />
+1. Click Log and Report.<br />
+2. Click Forward Traffic or Local Traffic.<br />
+3. Double-click on an Event to view Log Details.<br />
+4. Verify traffic log events contain source and destination IP addresses, and interfaces.<br />
+<br />
+In addition to System log settings, verify that individual IPv4 policies are configured with most suitable Logging Options.<br />
+<br />
+1. Click Policy and Objects.<br />
+2. Click IPv4 or IPv6 Policy.<br />
+3. Verify all Policy rules are configured with Logging Options set to log All Sessions (for most verbose logging).<br />
+<br />
+If the log events do not contain IP address of source devices, this is a finding.</p><h2>Vulnerability Number</h2><p>V-234138</p><h2>Documentable</h2><p>False</p><h2>Rule Version</h2><p>FNFG-FW-000035</p><h2>Severity Override Guidance</h2><p>Log in to the FortiGate GUI with Super-Admin privilege.<br />
+<br />
+1. Click Log and Report.<br />
+2. Click Forward Traffic or Local Traffic.<br />
+3. Double-click on an Event to view Log Details.<br />
+4. Verify traffic log events contain source and destination IP addresses, and interfaces.<br />
+<br />
+In addition to System log settings, verify that individual IPv4 policies are configured with most suitable Logging Options.<br />
+<br />
+1. Click Policy and Objects.<br />
+2. Click IPv4 or IPv6 Policy.<br />
+3. Verify all Policy rules are configured with Logging Options set to log All Sessions (for most verbose logging).<br />
+<br />
+If the log events do not contain IP address of source devices, this is a finding.</p><h2>Check Content Reference</h2><p>M</p><h2>Target Key</h2><p>5258</p></body></html>

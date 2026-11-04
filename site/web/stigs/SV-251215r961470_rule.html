@@ -1,0 +1,43 @@
+<!doctype html><html lang="en"><head><meta charset="utf-8"><title>STIGQter: STIG Check Details: SV-251215r961470_rule: Redis Enterprise DBMS must disable network functions, ports, protocols, and services deemed by the organization to be nonsecure, in accord with the Ports, Protocols, and Services Management (PPSM) guidance.</title><link rel="icon" type="image/svg+xml" href="STIGQter.svg" /><script async src="https://www.googletagmanager.com/gtag/js?id=UA-31381839-2"></script><script src="include.js"></script><script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-4110907817782130" crossorigin="anonymous"></script></head><body><div><img src="STIGQter.svg" alt="STIGQter" style="height:1em;" /> <a href="https://www.stigqter.com/">STIGQter</a>: <a href="main.html">STIG Summary</a>: <a href="U_Redis_Enterprise_6-x_STIG_V2R2_Manual-xccdf.html">Redis Enterprise 6.x Security Technical Implementation Guide Version: 2 Release: 2 Benchmark Date: 24 Oct 2024</a>:</div> <h1>Redis Enterprise DBMS must disable network functions, ports, protocols, and services deemed by the organization to be nonsecure, in accord with the Ports, Protocols, and Services Management (PPSM) guidance.</h1><h2>DISA Rule</h2><p>SV-251215r961470_rule</p><h2>Vulnerability Number</h2><p>V-251215</p><h2>Group Title</h2><p>SRG-APP-000383-DB-000364</p><h2>Rule Version</h2><p>RD6X-00-007900</p><h2>Severity</h2><p>CAT II</p><h2>CCI(s)</h2><ul><li>CCI-001762 - Disable or remove organization-defined functions, ports, protocols, software, and services within the system deemed to be unnecessary and/or nonsecure.</li></ul><h2>Weight</h2><p>10</p><h2>Fix Recommendation</h2><p>Use firewalld commands to remove any unnecessary ports from the appropriate zone. To do this, enter the following commands as root.<br />
+<br />
+This command will immediately remove a port from the configuration:<br />
+$ firewall-cmd --zone=&lt;zone&gt; --remove-port=&lt;port&gt;/&lt;protocol&gt;<br />
+<br />
+This command will persistently remove a port from a configuration:<br />
+$ firewall-cmd --permanent --zone=&lt;zone&gt; --remove-port=&lt;port&gt;/&lt;protocol&gt;<br />
+<br />
+Repeat the previous commands for any port that is unauthorized for use or is not used.</p><h2>Check Contents</h2><p>To check this control, investigate the application documentation and understand what services and ports are in use within the application. Inspect the ports running on the server using the following command:<br />
+sudo ss -tulw<br />
+<br />
+If any ports or services that are not approved are present in the output of this command, this is a finding.<br />
+<br />
+Redis Enterprise makes use of the following ports:<br />
+1. TCP 1968, Internal, Proxy traffic<br />
+2. TCP 3333, 3334, 3335, 3336, 3337, 3338, 3339, 36379, 36380, Internal, Cluster traffic<br />
+3. TCP 8001, Internal, External, Sentinel Traffic<br />
+4. TCP 8002, 8004, Internal, System health monitoring<br />
+5. TCP 8443 Internal, External, User Interface<br />
+6. TCP 8444, 9080, Internal, Proxy Traffic<br />
+7. TCP 9081. Internal, Active-Active        <br />
+8. TCP 8070, 8071, Internal &amp; External, Metrics Exporter<br />
+9. TCP 9443 (Recommended), 8080 (Recommended to be removed), REST API traffic<br />
+10. TCP  10000-19999, Internal, External, Active-Active Database traffic<br />
+11. TCP  20000-29999, Internal<br />
+12. UDP 53, 5353, Internal, External        DNS/mDNS traffic</p><h2>Vulnerability Number</h2><p>V-251215</p><h2>Documentable</h2><p>False</p><h2>Rule Version</h2><p>RD6X-00-007900</p><h2>Severity Override Guidance</h2><p>To check this control, investigate the application documentation and understand what services and ports are in use within the application. Inspect the ports running on the server using the following command:<br />
+sudo ss -tulw<br />
+<br />
+If any ports or services that are not approved are present in the output of this command, this is a finding.<br />
+<br />
+Redis Enterprise makes use of the following ports:<br />
+1. TCP 1968, Internal, Proxy traffic<br />
+2. TCP 3333, 3334, 3335, 3336, 3337, 3338, 3339, 36379, 36380, Internal, Cluster traffic<br />
+3. TCP 8001, Internal, External, Sentinel Traffic<br />
+4. TCP 8002, 8004, Internal, System health monitoring<br />
+5. TCP 8443 Internal, External, User Interface<br />
+6. TCP 8444, 9080, Internal, Proxy Traffic<br />
+7. TCP 9081. Internal, Active-Active        <br />
+8. TCP 8070, 8071, Internal &amp; External, Metrics Exporter<br />
+9. TCP 9443 (Recommended), 8080 (Recommended to be removed), REST API traffic<br />
+10. TCP  10000-19999, Internal, External, Active-Active Database traffic<br />
+11. TCP  20000-29999, Internal<br />
+12. UDP 53, 5353, Internal, External        DNS/mDNS traffic</p><h2>Check Content Reference</h2><p>M</p><h2>Target Key</h2><p>5443</p></body></html>

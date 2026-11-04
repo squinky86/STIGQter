@@ -1,0 +1,155 @@
+<!doctype html><html lang="en"><head><meta charset="utf-8"><title>STIGQter: STIG Check Details: SV-235095r960768_rule: MySQL Database Server 8.0 must integrate with an organization-level authentication/access mechanism providing account management and automation for all users, groups, roles, and any other principals.</title><link rel="icon" type="image/svg+xml" href="STIGQter.svg" /><script async src="https://www.googletagmanager.com/gtag/js?id=UA-31381839-2"></script><script src="include.js"></script><script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-4110907817782130" crossorigin="anonymous"></script></head><body><div><img src="STIGQter.svg" alt="STIGQter" style="height:1em;" /> <a href="https://www.stigqter.com/">STIGQter</a>: <a href="main.html">STIG Summary</a>: <a href="U_Oracle_MySQL_8-0_STIG_V2R2_Manual-xccdf.html">Oracle MySQL 8.0 Security Technical Implementation Guide Version: 2 Release: 2 Benchmark Date: 24 Oct 2024</a>:</div> <h1>MySQL Database Server 8.0 must integrate with an organization-level authentication/access mechanism providing account management and automation for all users, groups, roles, and any other principals.</h1><h2>DISA Rule</h2><p>SV-235095r960768_rule</p><h2>Vulnerability Number</h2><p>V-235095</p><h2>Group Title</h2><p>SRG-APP-000023-DB-000001</p><h2>Rule Version</h2><p>MYS8-00-000100</p><h2>Severity</h2><p>CAT I</p><h2>CCI(s)</h2><ul><li>CCI-000015 - Support the management of system accounts using (organization-defined automated mechanisms).</li></ul><h2>Weight</h2><p>10</p><h2>Fix Recommendation</h2><p>Integrate MySQL database server 8.0 security with an organization-level authentication/access mechanism using MySQL external authentication for Microsoft AD or LDAP, or Linux PAMs thus providing account management for all users, groups, roles, and any other principals.<br />
+<br />
+If native mysql users are required, document the need and justification; describe the measures taken to ensure the use of MySQL Server authentication is kept to a minimum; describe the measures taken to safeguard passwords; list or describe the MySQL logins used.<br />
+<br />
+For each MySQL database server 8.0 managed account that is not documented and approved, either transfer it to management by the external mechanism, or document the need for it and obtain approval, as appropriate. <br />
+<br />
+Install appropriate external authentication plugin, for example to install LDAP.     <br />
+INSTALL PLUGIN authentication_ldap_sasl<br />
+  SONAME 'authentication_ldap_sasl.so';<br />
+INSTALL PLUGIN authentication_ldap_simple<br />
+  SONAME 'authentication_ldap_simple.so';<br />
+<br />
+Configure the plugin, for example:<br />
+SET PERSIST authentication_ldap_sasl_server_host='127.0.0.1';<br />
+SET PERSIST authentication_ldap_sasl_bind_base_dn='dc=example,dc=com';<br />
+SET PERSIST authentication_ldap_simple_server_host='127.0.0.1';<br />
+SET PERSIST authentication_ldap_simple_bind_base_dn='dc=example,dc=com';<br />
+<br />
+Create users with proper organizational mapping, for example:<br />
+CREATE USER 'betsy'@'localhost'<br />
+  IDENTIFIED WITH authentication_ldap_simple<br />
+  BY 'uid=betsy_ldap,ou=People,dc=example,dc=com';<br />
+<br />
+Assign appropriate permissions via grants on objects or to roles, etc. See  https://dev.mysql.com/doc/refman/8.0/en/grant.html.<br />
+For example:<br />
+GRANT ALL ON db1.* TO 'betsy'@'localhost';<br />
+GRANT 'role1', 'role2' TO 'user1'@'localhost', 'user2'@'localhost';<br />
+GRANT SELECT ON world.* TO 'role3';<br />
+<br />
+For accounts not required in the MySQL Server:<br />
+DROP USER &lt;user_name&gt;;</p><h2>Check Contents</h2><p>Determine if an organization-level authentication/access mechanism providing account management and automation for all users, groups, roles, and any other principals has been configured.<br />
+<br />
+To determine if a MySQL Server has any external authentication plugins, connect as a mysql administrator (root) and run the following query: <br />
+SELECT PLUGIN_NAME, PLUGIN_STATUS<br />
+       FROM INFORMATION_SCHEMA.PLUGINS<br />
+       WHERE PLUGIN_NAME LIKE '%ldap%' OR PLUGIN_NAME LIKE '%pam%' OR PLUGIN_NAME LIKE '%authentication_windows %';<br />
+<br />
+One or more of the following plugins must be installed and in the listed results:<br />
+authentication_ldap_simple<br />
+authentication_ldap_sasl<br />
+authentication_pam<br />
+authentication_windows<br />
+<br />
+If at least one of the above plugins is not installed, then no organization-level authentication/access is in place, and this is a finding.<br />
+<br />
+Depending on the plugin in use, review its configuration.  <br />
+<br />
+For a list of global variables, run the following query:<br />
+SELECT VARIABLE_NAME, VARIABLE_VALUE<br />
+FROM performance_schema.global_variables<br />
+WHERE VARIABLE_NAME LIKE 'auth%' ;  <br />
+<br />
+If the LDAP plugin is installed, check the ldap_host and mapping. <br />
+<br />
+For the LDAP plugin, global variables showing the configuration for authentication to ldap hosts and binding to organizational users should look similar to the following:<br />
+authentication_ldap_simple_server_host=127.0.0.1<br />
+authentication_ldap_simple_bind_base_dn=&quot;dc=example,dc=com&quot;<br />
+authentication_ldap_sasl_server_host=127.0.0.1<br />
+authentication_ldap_sasl_bind_base_dn=&quot;dc=example,dc=com&quot;<br />
+<br />
+If the ldap_host is not a valid authentication host or the mapping to the base_dn maps is not correct, this is a finding.<br />
+<br />
+Determine the accounts (SQL Logins) managed by PAM. Run the statement: <br />
+SELECT `user`.`Host`,<br />
+    `user`.`user`,<br />
+    `user`.`plugin`,<br />
+    `user`.`authentication_string`<br />
+    from mysql.user where plugin like 'authentication_pam';<br />
+<br />
+For PAM, the string consists of a PAM service name, optionally followed by a PAM group mapping list consisting of one or more keyword/value pairs each specifying a PAM group name and a MySQL user name. <br />
+<br />
+If not defined, this is a finding.<br />
+<br />
+If the windows plugin is installed, the organization mapping details will be defined within the user &quot;authentication string&quot;. <br />
+<br />
+Determine the accounts (SQL logins) managed by Windows. Run the statement: <br />
+Review the accounts<br />
+SELECT `user`.`Host`,<br />
+    `user`.`user`,<br />
+    `user`.`plugin`,<br />
+    `user`.`authentication_string`<br />
+    from mysql.user where plugin like 'authentication_windows;<br />
+<br />
+Verify that the Windows user, group, and windows role in the authentication_string map to proper organizational users. If not, this is a finding.<br />
+<br />
+To determine the accounts (MySQL accounts) actually managed by MySQL Server. Run the statement: <br />
+SELECT `user`.`Host`,<br />
+    `user`.`User`,<br />
+    `user`.`plugin`,<br />
+    `user`.`authentication_string`<br />
+    from mysql.user where plugin not like 'auth%' and `user`.`User` not like 'mysql.%';<br />
+<br />
+If any accounts listed by the query are not listed in the documentation and authorized, this is a finding.</p><h2>Vulnerability Number</h2><p>V-235095</p><h2>Documentable</h2><p>False</p><h2>Rule Version</h2><p>MYS8-00-000100</p><h2>Severity Override Guidance</h2><p>Determine if an organization-level authentication/access mechanism providing account management and automation for all users, groups, roles, and any other principals has been configured.<br />
+<br />
+To determine if a MySQL Server has any external authentication plugins, connect as a mysql administrator (root) and run the following query: <br />
+SELECT PLUGIN_NAME, PLUGIN_STATUS<br />
+       FROM INFORMATION_SCHEMA.PLUGINS<br />
+       WHERE PLUGIN_NAME LIKE '%ldap%' OR PLUGIN_NAME LIKE '%pam%' OR PLUGIN_NAME LIKE '%authentication_windows %';<br />
+<br />
+One or more of the following plugins must be installed and in the listed results:<br />
+authentication_ldap_simple<br />
+authentication_ldap_sasl<br />
+authentication_pam<br />
+authentication_windows<br />
+<br />
+If at least one of the above plugins is not installed, then no organization-level authentication/access is in place, and this is a finding.<br />
+<br />
+Depending on the plugin in use, review its configuration.  <br />
+<br />
+For a list of global variables, run the following query:<br />
+SELECT VARIABLE_NAME, VARIABLE_VALUE<br />
+FROM performance_schema.global_variables<br />
+WHERE VARIABLE_NAME LIKE 'auth%' ;  <br />
+<br />
+If the LDAP plugin is installed, check the ldap_host and mapping. <br />
+<br />
+For the LDAP plugin, global variables showing the configuration for authentication to ldap hosts and binding to organizational users should look similar to the following:<br />
+authentication_ldap_simple_server_host=127.0.0.1<br />
+authentication_ldap_simple_bind_base_dn=&quot;dc=example,dc=com&quot;<br />
+authentication_ldap_sasl_server_host=127.0.0.1<br />
+authentication_ldap_sasl_bind_base_dn=&quot;dc=example,dc=com&quot;<br />
+<br />
+If the ldap_host is not a valid authentication host or the mapping to the base_dn maps is not correct, this is a finding.<br />
+<br />
+Determine the accounts (SQL Logins) managed by PAM. Run the statement: <br />
+SELECT `user`.`Host`,<br />
+    `user`.`user`,<br />
+    `user`.`plugin`,<br />
+    `user`.`authentication_string`<br />
+    from mysql.user where plugin like 'authentication_pam';<br />
+<br />
+For PAM, the string consists of a PAM service name, optionally followed by a PAM group mapping list consisting of one or more keyword/value pairs each specifying a PAM group name and a MySQL user name. <br />
+<br />
+If not defined, this is a finding.<br />
+<br />
+If the windows plugin is installed, the organization mapping details will be defined within the user &quot;authentication string&quot;. <br />
+<br />
+Determine the accounts (SQL logins) managed by Windows. Run the statement: <br />
+Review the accounts<br />
+SELECT `user`.`Host`,<br />
+    `user`.`user`,<br />
+    `user`.`plugin`,<br />
+    `user`.`authentication_string`<br />
+    from mysql.user where plugin like 'authentication_windows;<br />
+<br />
+Verify that the Windows user, group, and windows role in the authentication_string map to proper organizational users. If not, this is a finding.<br />
+<br />
+To determine the accounts (MySQL accounts) actually managed by MySQL Server. Run the statement: <br />
+SELECT `user`.`Host`,<br />
+    `user`.`User`,<br />
+    `user`.`plugin`,<br />
+    `user`.`authentication_string`<br />
+    from mysql.user where plugin not like 'auth%' and `user`.`User` not like 'mysql.%';<br />
+<br />
+If any accounts listed by the query are not listed in the documentation and authorized, this is a finding.</p><h2>Check Content Reference</h2><p>M</p><h2>Target Key</h2><p>5277</p></body></html>

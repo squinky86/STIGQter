@@ -1,0 +1,103 @@
+<!doctype html><html lang="en"><head><meta charset="utf-8"><title>STIGQter: STIG Check Details: SV-254058r844207_rule: The Juniper perimeter router must be configured to drop IPv6 packets containing the NSAP address option within Destination Option header.</title><link rel="icon" type="image/svg+xml" href="STIGQter.svg" /><script async src="https://www.googletagmanager.com/gtag/js?id=UA-31381839-2"></script><script src="include.js"></script><script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-4110907817782130" crossorigin="anonymous"></script></head><body><div><img src="STIGQter.svg" alt="STIGQter" style="height:1em;" /> <a href="https://www.stigqter.com/">STIGQter</a>: <a href="main.html">STIG Summary</a>: <a href="U_Juniper_EX_Switches_RTR_STIG_V2R1_Manual-xccdf.html">Juniper EX Series Switches Router Security Technical Implementation Guide Version: 2 Release: 1 Benchmark Date: 24 Jul 2024</a>:</div> <h1>The Juniper perimeter router must be configured to drop IPv6 packets containing the NSAP address option within Destination Option header.</h1><h2>DISA Rule</h2><p>SV-254058r844207_rule</p><h2>Vulnerability Number</h2><p>V-254058</p><h2>Group Title</h2><p>SRG-NET-000364-RTR-000205</p><h2>Rule Version</h2><p>JUEX-RT-000860</p><h2>Severity</h2><p>CAT II</p><h2>CCI(s)</h2><ul><li>CCI-002403 - Only allow incoming communications from organization-defined authorized sources routed to organization-defined authorized destinations.</li></ul><h2>Weight</h2><p>10</p><h2>Fix Recommendation</h2><p>Configure the router to drop IPv6 packets containing a Destination Option header with option type value of 0xC3 (NSAP address).<br />
+<br />
+set firewall family inet6 filter &lt;name&gt; term 1 from next-header dstopts<br />
+set firewall family inet6 filter &lt;name&gt; term 1 then log<br />
+set firewall family inet6 filter &lt;name&gt; term 1 then syslog<br />
+set firewall family inet6 filter &lt;name&gt; term 1 then discard<br />
+&lt;additional terms&gt;<br />
+set firewall family inet6 filter &lt;name&gt; term default then log<br />
+set firewall family inet6 filter &lt;name&gt; term default then syslog<br />
+set firewall family inet6 filter &lt;name&gt; term default then discard<br />
+<br />
+set interfaces &lt;interface name&gt; unit &lt;number&gt; family inet6 filter input &lt;filter name&gt;<br />
+set interfaces &lt;interface name&gt; unit &lt;number&gt; family inet6 address &lt;IPv6 address&gt;.&lt;prefix&gt;</p><h2>Check Contents</h2><p>This requirement is not applicable for the DODIN Backbone. <br />
+<br />
+Review the router configuration and determine if filters are bound to the applicable interfaces to drop IPv6 packets containing a Destination Option header with option type value of 0xC3 (NSAP address). <br />
+<br />
+Verify the router drops all destination-options extension headers.<br />
+[edit firewall family inet6]<br />
+filter &lt;name&gt; {<br />
+    term 1 {<br />
+        from {<br />
+            next-header dstopts;<br />
+        }<br />
+        then {<br />
+            log;<br />
+            syslog;<br />
+            discard;<br />
+        }<br />
+    }<br />
+    &lt;additional terms&gt;<br />
+    term default {<br />
+        then {<br />
+            log;<br />
+            syslog;<br />
+            discard;<br />
+        }<br />
+    }<br />
+}<br />
+<br />
+Note: Juniper routers do not support configuring option types for Destination Options extension headers. Therefore, all packets with the Destination Options extension header are dropped.<br />
+<br />
+Verify the filter is applied to applicable interfaces.<br />
+[edit interfaces]<br />
+&lt;interface name&gt; {<br />
+    unit &lt;number&gt; {<br />
+        family inet6 {<br />
+            filter {<br />
+                input &lt;filter name&gt;;<br />
+            }<br />
+            address &lt;IPv6 address&gt;.&lt;prefix&gt;;<br />
+        }<br />
+    }<br />
+}<br />
+Note: Some Juniper devices support both monolithic filters and filter lists. Filter lists separate each term, or set of terms, into a separate filter that is applied sequentially to an interface. If using filter lists, the keywords &quot;input&quot; or &quot;output&quot; change to &quot;input-list&quot; or &quot;output-list&quot;. Verify the final list item is a deny-all filter. The deny-all filter is created once per family and can be reused across multiple lists. For example:<br />
+<br />
+input-list [ permit_mgt permit_routing_protocols default-deny ];<br />
+<br />
+If the router is not configured to drop IPv6 packets containing the NSAP address option within Destination Option header, this is a finding.</p><h2>Vulnerability Number</h2><p>V-254058</p><h2>Documentable</h2><p>False</p><h2>Rule Version</h2><p>JUEX-RT-000860</p><h2>Severity Override Guidance</h2><p>This requirement is not applicable for the DODIN Backbone. <br />
+<br />
+Review the router configuration and determine if filters are bound to the applicable interfaces to drop IPv6 packets containing a Destination Option header with option type value of 0xC3 (NSAP address). <br />
+<br />
+Verify the router drops all destination-options extension headers.<br />
+[edit firewall family inet6]<br />
+filter &lt;name&gt; {<br />
+    term 1 {<br />
+        from {<br />
+            next-header dstopts;<br />
+        }<br />
+        then {<br />
+            log;<br />
+            syslog;<br />
+            discard;<br />
+        }<br />
+    }<br />
+    &lt;additional terms&gt;<br />
+    term default {<br />
+        then {<br />
+            log;<br />
+            syslog;<br />
+            discard;<br />
+        }<br />
+    }<br />
+}<br />
+<br />
+Note: Juniper routers do not support configuring option types for Destination Options extension headers. Therefore, all packets with the Destination Options extension header are dropped.<br />
+<br />
+Verify the filter is applied to applicable interfaces.<br />
+[edit interfaces]<br />
+&lt;interface name&gt; {<br />
+    unit &lt;number&gt; {<br />
+        family inet6 {<br />
+            filter {<br />
+                input &lt;filter name&gt;;<br />
+            }<br />
+            address &lt;IPv6 address&gt;.&lt;prefix&gt;;<br />
+        }<br />
+    }<br />
+}<br />
+Note: Some Juniper devices support both monolithic filters and filter lists. Filter lists separate each term, or set of terms, into a separate filter that is applied sequentially to an interface. If using filter lists, the keywords &quot;input&quot; or &quot;output&quot; change to &quot;input-list&quot; or &quot;output-list&quot;. Verify the final list item is a deny-all filter. The deny-all filter is created once per family and can be reused across multiple lists. For example:<br />
+<br />
+input-list [ permit_mgt permit_routing_protocols default-deny ];<br />
+<br />
+If the router is not configured to drop IPv6 packets containing the NSAP address option within Destination Option header, this is a finding.</p><h2>Check Content Reference</h2><p>M</p><h2>Target Key</h2><p>5479</p></body></html>

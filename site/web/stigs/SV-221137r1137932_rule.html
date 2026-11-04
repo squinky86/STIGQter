@@ -1,0 +1,45 @@
+<!doctype html><html lang="en"><head><meta charset="utf-8"><title>STIGQter: STIG Check Details: SV-221137r1137932_rule: The Cisco multicast Rendezvous Point (RP) switch must be configured to filter Protocol Independent Multicast (PIM) Join messages received from the Designated Cisco switch (DR) for any undesirable multicast groups.</title><link rel="icon" type="image/svg+xml" href="STIGQter.svg" /><script async src="https://www.googletagmanager.com/gtag/js?id=UA-31381839-2"></script><script src="include.js"></script><script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-4110907817782130" crossorigin="anonymous"></script></head><body><div><img src="STIGQter.svg" alt="STIGQter" style="height:1em;" /> <a href="https://www.stigqter.com/">STIGQter</a>: <a href="main.html">STIG Summary</a>: <a href="U_Cisco_NX-OS_Switch_RTR_STIG_V3R4_Manual-xccdf.html">Cisco NX OS Switch RTR Security Technical Implementation Guide Version: 3 Release: 4 Benchmark Date: 01 Apr 2026</a>:</div> <h1>The Cisco multicast Rendezvous Point (RP) switch must be configured to filter Protocol Independent Multicast (PIM) Join messages received from the Designated Cisco switch (DR) for any undesirable multicast groups.</h1><h2>DISA Rule</h2><p>SV-221137r1137932_rule</p><h2>Vulnerability Number</h2><p>V-221137</p><h2>Group Title</h2><p>SRG-NET-000019-RTR-000014</p><h2>Rule Version</h2><p>CISC-RT-000840</p><h2>Severity</h2><p>CAT III</p><h2>CCI(s)</h2><ul><li>CCI-001414 - Enforce approved authorizations for controlling the flow of information between connected systems based on organization-defined information flow control policies.</li></ul><h2>Weight</h2><p>10</p><h2>Fix Recommendation</h2><p>Configure the RP to filter PIM join messages for any undesirable multicast groups as shown in the example below:<br />
+<br />
+Step 1: Configure a PIM Join filter as shown in the example below:<br />
+<br />
+SW1(config)# route-map PIM_JOIN_FILTER deny <br />
+SW1(config-route-map)# match ip multicast group 239.8.0.0/8<br />
+SW1(config-route-map)# route-map PIM_JOIN_FILTER permit 20<br />
+SW1(config-route-map)# match ip multicast group 224.0.0.0/4<br />
+SW1(config-route-map)# exit<br />
+<br />
+Step 2: Apply the PIM Join filter to the appropriate interfaces.<br />
+<br />
+SW1(config)# int e2/1<br />
+SW1(config-if)# ip pim jp-policy PIM_JOIN_FILTER in<br />
+SW1(config-if)# end</p><h2>Check Contents</h2><p>Verify that the RP switch is configured to filter PIM join messages for any undesirable multicast groups. In the example below, groups from 239.8.0.0/16 are not allowed.<br />
+<br />
+route-map PIM_JOIN_FILTER deny 10<br />
+ match ip multicast group 239.0.0.0/8 <br />
+route-map PIM_JOIN_FILTER permit 20<br />
+ match ip multicast group 224.0.0.0/4 <br />
+…<br />
+…<br />
+…<br />
+interface Ethernet2/1<br />
+ no switchport<br />
+ ip address 10.1.12.1/24<br />
+ ip pim sparse-mode<br />
+ ip pim jp-policy PIM_JOIN_FILTER in<br />
+<br />
+If the RP is not configured to filter join messages received from the DR for any undesirable multicast groups, this is a finding.</p><h2>Vulnerability Number</h2><p>V-221137</p><h2>Documentable</h2><p>False</p><h2>Rule Version</h2><p>CISC-RT-000840</p><h2>Severity Override Guidance</h2><p>Verify that the RP switch is configured to filter PIM join messages for any undesirable multicast groups. In the example below, groups from 239.8.0.0/16 are not allowed.<br />
+<br />
+route-map PIM_JOIN_FILTER deny 10<br />
+ match ip multicast group 239.0.0.0/8 <br />
+route-map PIM_JOIN_FILTER permit 20<br />
+ match ip multicast group 224.0.0.0/4 <br />
+…<br />
+…<br />
+…<br />
+interface Ethernet2/1<br />
+ no switchport<br />
+ ip address 10.1.12.1/24<br />
+ ip pim sparse-mode<br />
+ ip pim jp-policy PIM_JOIN_FILTER in<br />
+<br />
+If the RP is not configured to filter join messages received from the DR for any undesirable multicast groups, this is a finding.</p><h2>Check Content Reference</h2><p>M</p><h2>Target Key</h2><p>4075</p></body></html>

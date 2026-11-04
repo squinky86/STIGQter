@@ -1,0 +1,33 @@
+<!doctype html><html lang="en"><head><meta charset="utf-8"><title>STIGQter: STIG Check Details: SV-216731r1117236_rule: The Cisco Multicast Source Discovery Protocol (MSDP) router must be configured to filter source-active multicast advertisements to external MSDP peers to avoid global visibility of local-only multicast sources and groups.</title><link rel="icon" type="image/svg+xml" href="STIGQter.svg" /><script async src="https://www.googletagmanager.com/gtag/js?id=UA-31381839-2"></script><script src="include.js"></script><script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-4110907817782130" crossorigin="anonymous"></script></head><body><div><img src="STIGQter.svg" alt="STIGQter" style="height:1em;" /> <a href="https://www.stigqter.com/">STIGQter</a>: <a href="main.html">STIG Summary</a>: <a href="U_Cisco_IOS-XE_Router_RTR_STIG_V3R5_Manual-xccdf.html">Cisco IOS XE Router RTR Security Technical Implementation Guide Version: 3 Release: 5 Benchmark Date: 01 Oct 2025</a>:</div> <h1>The Cisco Multicast Source Discovery Protocol (MSDP) router must be configured to filter source-active multicast advertisements to external MSDP peers to avoid global visibility of local-only multicast sources and groups.</h1><h2>DISA Rule</h2><p>SV-216731r1117236_rule</p><h2>Vulnerability Number</h2><p>V-216731</p><h2>Group Title</h2><p>SRG-NET-000018-RTR-000008</p><h2>Rule Version</h2><p>CISC-RT-000930</p><h2>Severity</h2><p>CAT III</p><h2>CCI(s)</h2><ul><li>CCI-001368 - Enforce approved authorizations for controlling the flow of information within the system based on organization-defined information flow control policies.</li></ul><h2>Weight</h2><p>10</p><h2>Fix Recommendation</h2><p>Configure the router with an export policy avoid global visibility of local multicast (S, G) states. The example below will prevent exporting multicast active sources belonging to the private network.<br />
+<br />
+R8(config)#ip access-list extended OUTBOUND_MSDP_SA_FILTER<br />
+R8(config-ext-nacl)#deny ip 10.0.0.0 0.255.255.255 any<br />
+R8(config-ext-nacl)#permit ip any any<br />
+R8(config-ext-nacl)#exit<br />
+R8(config)#ip msdp sa-filter in x.1.28.2 list OUTBOUND_MSDP_SA_FILTER</p><h2>Check Contents</h2><p>Review the router configuration to determine if there is export policy to block local source-active multicast advertisements.<br />
+<br />
+Step 1: Verify that an outbound source-active filter is bound to each MSDP peer as shown in the example below:<br />
+<br />
+ip msdp peer 10.1.28.8 remote-as 8<br />
+ip msdp sa-filter out 10.1.28.8 list OUTBOUND_MSDP_SA_FILTER<br />
+<br />
+Step 2: Review the access lists referenced by the source-active filters and verify that MSDP source-active messages being sent to MSDP peers do not leak advertisements that are local.<br />
+<br />
+ip access-list extended OUTBOUND_MSDP_SA_FILTER<br />
+ deny   ip 10.0.0.0 0.255.255.255 any<br />
+ permit ip any any<br />
+<br />
+If the router is not configured with an export policy to filter local source-active multicast advertisements, this is a finding.</p><h2>Vulnerability Number</h2><p>V-216731</p><h2>Documentable</h2><p>False</p><h2>Rule Version</h2><p>CISC-RT-000930</p><h2>Severity Override Guidance</h2><p>Review the router configuration to determine if there is export policy to block local source-active multicast advertisements.<br />
+<br />
+Step 1: Verify that an outbound source-active filter is bound to each MSDP peer as shown in the example below:<br />
+<br />
+ip msdp peer 10.1.28.8 remote-as 8<br />
+ip msdp sa-filter out 10.1.28.8 list OUTBOUND_MSDP_SA_FILTER<br />
+<br />
+Step 2: Review the access lists referenced by the source-active filters and verify that MSDP source-active messages being sent to MSDP peers do not leak advertisements that are local.<br />
+<br />
+ip access-list extended OUTBOUND_MSDP_SA_FILTER<br />
+ deny   ip 10.0.0.0 0.255.255.255 any<br />
+ permit ip any any<br />
+<br />
+If the router is not configured with an export policy to filter local source-active multicast advertisements, this is a finding.</p><h2>Check Content Reference</h2><p>M</p><h2>Target Key</h2><p>4028</p></body></html>

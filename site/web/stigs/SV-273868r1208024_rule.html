@@ -1,0 +1,43 @@
+<!doctype html><html lang="en"><head><meta charset="utf-8"><title>STIGQter: STIG Check Details: SV-273868r1208024_rule: Microsoft Intune service must be configured to transfer Intune logs to another server for storage, analysis, and reporting at least every seven days.</title><link rel="icon" type="image/svg+xml" href="STIGQter.svg" /><script async src="https://www.googletagmanager.com/gtag/js?id=UA-31381839-2"></script><script src="include.js"></script><script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-4110907817782130" crossorigin="anonymous"></script></head><body><div><img src="STIGQter.svg" alt="STIGQter" style="height:1em;" /> <a href="https://www.stigqter.com/">STIGQter</a>: <a href="main.html">STIG Summary</a>: <a href="U_MS_Intune_MDM_Service_Desktop_Mobile_V1R2_Manual-xccdf.html">Microsoft Intune MDM Service Desktop &amp; Mobile Security Technical Implementation Guide Version: 1 Release: 2 Benchmark Date: 01 Jul 2026</a>:</div> <h1>Microsoft Intune service must be configured to transfer Intune logs to another server for storage, analysis, and reporting at least every seven days.</h1><h2>DISA Rule</h2><p>SV-273868r1208024_rule</p><h2>Vulnerability Number</h2><p>V-273868</p><h2>Group Title</h2><p>SRG-APP-000125-UEM-000074</p><h2>Rule Version</h2><p>MSIN-25-000370</p><h2>Severity</h2><p>CAT II</p><h2>CCI(s)</h2><ul><li>CCI-001348 - Store audit records on an organization-defined frequency in a repository that is part of a physically different system or system component that the system or component being audited.</li><li>CCI-001294 - Alert organization-defined personnel or roles of failed security verification tests.</li><li>CCI-001851 - Transfer audit logs per organization-defined frequency to a different system, system component, or media than the system or system component conducting the logging.</li></ul><h2>Weight</h2><p>10</p><h2>Fix Recommendation</h2><p>There are many methods for off-loading Intune logs, including downloading to a third-party log management server and sending logs to Azure Storage, Event Hubs, or Log Analytics, which are all part of Diagnostics Settings in Intune. Procedures will vary depending on which log management process is used at the site.<br />
+<br />
+If the site is sending logs to Azure Monitor, follow the setup procedures found here: https://learn.microsoft.com/en-us/mem/intune-service/fundamentals/review-logs-using-azure-monitor <br />
+<br />
+1. Sign in to the Microsoft Intune admin center.<br />
+2. Select Reports &gt;&gt; Diagnostics settings. The first time opening it, turn it on. Otherwise, add a setting.<br />
+If the Azure subscription is not shown, navigate to the top right corner, select the signed in account, and choose &quot;Switch directory&quot;. Enter the Azure subscription account, if necessary.<br />
+3. Enter the following properties:<br />
+- Name: Enter a name for the diagnostic settings. This setting includes all the properties entered. For example, enter Route audit logs to storage account.<br />
+- Archive to a storage account: Saves the log data to an Azure Storage account. To save or archive the data, choose this option, then select &quot;Configure&quot;. Choose an existing storage account from the list, then click &quot;OK&quot;.<br />
+- Stream to an event hub: Streams the logs to Azure Event Hubs. To have analytics on log data using SIEM tools such as Splunk and QRadar, choose this option, then select &quot;Configure&quot;. Choose an existing Event Hubs namespace and policy from the list, then click &quot;OK&quot;.<br />
+- Send to Log Analytics: Sends the data to Azure Log Analytics. To use visualizations, monitoring and alerting for logs, choose this option, then select &quot;Configure&quot;. Create a new workspace and enter the workspace details or choose an existing workspace from the list, then click &quot;OK&quot;.<br />
+- LOG &gt; AuditLogs: Choose this option to send the Intune audit logs to the storage account, Event Hubs, or Log Analytics. The audit logs show the history of every task that generates a change in Intune, including who did it and when. For more information, go to IntuneAuditLogs.<br />
+Note: If using a storage account, enter how many days to keep the data (retention). To keep data forever, set Retention (days) to &quot;0&quot;.<br />
+- LOG &gt; OperationalLogs: Operational logs show the success or failure of users and devices that enroll in Intune, and details on noncompliant devices. Choose this option to send the enrollment logs to the storage account, Event Hubs, or Log Analytics. For more information, go to IntuneOperationalLogs.<br />
+To use a storage account, enter how many days to keep the data (retention). To keep data forever, set Retention (days) to &quot;0&quot;.<br />
+- LOG &gt; DeviceComplianceOrg: Device compliance organizational logs show the organizational report for Device Compliance in Intune and details of noncompliant devices. Choose this option to send the compliance logs to the storage account, Event Hubs, or Log Analytics. For more information, go to IntuneDeviceComplianceOrg.<br />
+To use a storage account, enter how many days to keep the data (retention). To keep data forever, set Retention (days) to &quot;0&quot;.<br />
+- LOG &gt; IntuneDevices: The Intune Device log shows device inventory and status information for Intune enrolled and managed devices. Choose this option to send the IntuneDevices logs to your storage account, Event Hubs, or Log Analytics. For more reference information, go to IntuneDevices.<br />
+Note: To use a storage account, enter how many days to keep the data (retention). To keep data forever, set Retention (days) to &quot;0&quot;.<br />
+4. Save the changes. The setting is shown in the list. Once the settings are created, settings can be changed by selecting Edit setting &gt;&gt; Save.</p><h2>Check Contents</h2><p>Verify the site has configured Intune to off-load Intune logs to a third-party log management server or to an Azure log storage and monitoring service like Azure monitor. Verification procedures are determined by the method used at the site. Ask the site Intune Administrator how logs are managed by the site and demonstrate that Intune logs are being off-loaded.<br />
+<br />
+If site is off-loading Intune logs to the Azure monitor, do the following (refer to https://learn.microsoft.com/en-us/mem/intune-service/fundamentals/review-logs-using-azure-monitor):<br />
+<br />
+1. Sign in to the Microsoft Intune admin center.<br />
+2. Select Reports &gt;&gt; Diagnostics settings.<br />
+3. Verify logs are being sent to the Azure monitor:<br />
+a. A storage account has been configured.<br />
+b. A Stream has been configured to stream logs to the Azure Event Hubs.<br />
+c. Intune logs have been configured to be sent to Log Analytics.<br />
+<br />
+If the site is not transferring Intune audit logs to a third-party audit log management server or to an Azure audit log storage and monitoring service, this is a finding.</p><h2>Vulnerability Number</h2><p>V-273868</p><h2>Documentable</h2><p>False</p><h2>Rule Version</h2><p>MSIN-25-000370</p><h2>Severity Override Guidance</h2><p>Verify the site has configured Intune to off-load Intune logs to a third-party log management server or to an Azure log storage and monitoring service like Azure monitor. Verification procedures are determined by the method used at the site. Ask the site Intune Administrator how logs are managed by the site and demonstrate that Intune logs are being off-loaded.<br />
+<br />
+If site is off-loading Intune logs to the Azure monitor, do the following (refer to https://learn.microsoft.com/en-us/mem/intune-service/fundamentals/review-logs-using-azure-monitor):<br />
+<br />
+1. Sign in to the Microsoft Intune admin center.<br />
+2. Select Reports &gt;&gt; Diagnostics settings.<br />
+3. Verify logs are being sent to the Azure monitor:<br />
+a. A storage account has been configured.<br />
+b. A Stream has been configured to stream logs to the Azure Event Hubs.<br />
+c. Intune logs have been configured to be sent to Log Analytics.<br />
+<br />
+If the site is not transferring Intune audit logs to a third-party audit log management server or to an Azure audit log storage and monitoring service, this is a finding.</p><h2>Check Content Reference</h2><p>M</p><h2>Target Key</h2><p>5699</p></body></html>

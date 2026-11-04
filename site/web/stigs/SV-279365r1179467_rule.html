@@ -1,0 +1,27 @@
+<!doctype html><html lang="en"><head><meta charset="utf-8"><title>STIGQter: STIG Check Details: SV-279365r1179467_rule: MongoDB must check the validity of all data inputs except those specifically identified by the organization.</title><link rel="icon" type="image/svg+xml" href="STIGQter.svg" /><script async src="https://www.googletagmanager.com/gtag/js?id=UA-31381839-2"></script><script src="include.js"></script><script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-4110907817782130" crossorigin="anonymous"></script></head><body><div><img src="STIGQter.svg" alt="STIGQter" style="height:1em;" /> <a href="https://www.stigqter.com/">STIGQter</a>: <a href="main.html">STIG Summary</a>: <a href="U_MDB_Enterprise_Advanced_8-x_STIG_V1R1_Manual-xccdf.html">MongoDB Enterprise Advanced 8.x Security Technical Implementation Guide Version: 1 Release: 1 Benchmark Date: 26 Jan 2026</a>:</div> <h1>MongoDB must check the validity of all data inputs except those specifically identified by the organization.</h1><h2>DISA Rule</h2><p>SV-279365r1179467_rule</p><h2>Vulnerability Number</h2><p>V-279365</p><h2>Group Title</h2><p>SRG-APP-000251-DB-000160</p><h2>Rule Version</h2><p>MD8X-00-005500</p><h2>Severity</h2><p>CAT II</p><h2>CCI(s)</h2><ul><li>CCI-001310 - Checks the validity of organization-defined information inputs to the system.</li></ul><h2>Weight</h2><p>10</p><h2>Fix Recommendation</h2><p>Disable the javascriptEnabled option in the MongoDB configuration file (default location /etc/mongod.conf) to include the following:<br />
+<br />
+security:<br />
+   javascriptEnabled: false<br />
+<br />
+If document validation is needed, it must be configured according to the documentation page at: <br />
+https://www.mongodb.com/docs/v8.0/core/schema-validation/</p><h2>Check Contents</h2><p>As a client program assembles a query in MongoDB, it builds a BSON object, not a string. Thus, traditional SQL injection attacks are not a problem. However, MongoDB operations permit arbitrary JavaScript expressions to be run directly on the server. <br />
+<br />
+To check, run the following command from the MongoDB shell: <br />
+<br />
+&gt; db.col.find({ $where: &quot;return true;&quot;} ) <br />
+<br />
+If the response does not return an error, this is a finding.<br />
+<br />
+If javascript has been correctly disabled, the correct error would indicate that the javascript global engine has been disabled. For example:<br />
+<br />
+MongoServerError: no globalScriptEngine in $where parsing}</p><h2>Vulnerability Number</h2><p>V-279365</p><h2>Documentable</h2><p>False</p><h2>Rule Version</h2><p>MD8X-00-005500</p><h2>Severity Override Guidance</h2><p>As a client program assembles a query in MongoDB, it builds a BSON object, not a string. Thus, traditional SQL injection attacks are not a problem. However, MongoDB operations permit arbitrary JavaScript expressions to be run directly on the server. <br />
+<br />
+To check, run the following command from the MongoDB shell: <br />
+<br />
+&gt; db.col.find({ $where: &quot;return true;&quot;} ) <br />
+<br />
+If the response does not return an error, this is a finding.<br />
+<br />
+If javascript has been correctly disabled, the correct error would indicate that the javascript global engine has been disabled. For example:<br />
+<br />
+MongoServerError: no globalScriptEngine in $where parsing}</p><h2>Check Content Reference</h2><p>M</p><h2>Target Key</h2><p>5728</p></body></html>

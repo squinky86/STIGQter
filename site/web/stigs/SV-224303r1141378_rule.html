@@ -1,0 +1,53 @@
+<!doctype html><html lang="en"><head><meta charset="utf-8"><title>STIGQter: STIG Check Details: SV-224303r1141378_rule: Sensitive CICS transactions are not protected in accordance with security requirements.</title><link rel="icon" type="image/svg+xml" href="STIGQter.svg" /><script async src="https://www.googletagmanager.com/gtag/js?id=UA-31381839-2"></script><script src="include.js"></script><script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-4110907817782130" crossorigin="anonymous"></script></head><body><div><img src="STIGQter.svg" alt="STIGQter" style="height:1em;" /> <a href="https://www.stigqter.com/">STIGQter</a>: <a href="main.html">STIG Summary</a>: <a href="U_zOS_IBM_CICS_Transaction_Server_for_ACF2_STIG_V7R2_Manual-xccdf.html">z/OS IBM CICS Transaction Server for ACF2 Security Technical Implementation Guide Version: 7 Release: 2 Benchmark Date: 01 Oct 2025</a>:</div> <h1>Sensitive CICS transactions are not protected in accordance with security requirements.</h1><h2>DISA Rule</h2><p>SV-224303r1141378_rule</p><h2>Vulnerability Number</h2><p>V-224303</p><h2>Group Title</h2><p>SRG-OS-000080</p><h2>Rule Version</h2><p>ZCIC0020</p><h2>Severity</h2><p>CAT II</p><h2>CCI(s)</h2><ul><li>CCI-000213 - Enforce approved authorizations for logical access to information and system resources in accordance with applicable access control policies.</li></ul><h2>Weight</h2><p>10</p><h2>Fix Recommendation</h2><p>The ISSO will ensure that each CICS region is associated with a unique userid and that userid is properly defined.<br />
+<br />
+Develop a plan to implement the required changes.<br />
+<br />
+Most transactions are protected in groups. An example would be &quot;KT2&quot;, which would contain all Category 2 transactions. KT2 is defined to ACF2 as a resource and contains all the Category 2 transactions.<br />
+<br />
+An example of how to implement this within ACF2 is shown here:<br />
+<br />
+$KEY(CEMT) TYPE(KT2)          <br />
+UID(syspaudt) ALLOW     <br />
+UID(*) PREVENT              <br />
+<br />
+Transactions groups should be defined and permitted in accordance with the CICS Transaction tables listed in the z/OS STIG Addendum.</p><h2>Check Contents</h2><p>Refer to the following report produced by the ACF2 Data Collection and dataset and Resource Data Collection:<br />
+<br />
+- SENSITVE.RPT(TRANS).<br />
+- ACF2CMDS.RPT(RESOURCE) - Alternate report.<br />
+<br />
+Refer to the CICS Systems Programmer Worksheets filled out from previous vulnerability ZCIC0010.<br />
+<br />
+Browse the dataset allocated by the ACF2PARM DD statement in each CICS startup procedure. Determine the resource type for transactions. Example:<br />
+<br />
+CICSKEY OPTION=VALIDATE,TYPE=resource type, RESOURCE=TRANS<br />
+<br />
+Verify the following items are in effect for all CICS transactions for each resource type. If the following guidance is true, this is not a finding.<br />
+<br />
+Note: Authorized personnel include systems programming and security staffs. Additional guidance regarding authorized personnel for specific transactions is included in this z/OS STIG Addendum. For example, CEMT SPI provides a broader use of this sensitive transaction by restricting execution to inquiries.<br />
+<br />
+Transactions, listed in tables CICS CATEGORY 2 CICS AND OTHER PRODUCT TRANSACTIONS and CICS CATEGORY 4 COTS-SUPPLIED SENSITIVE TRANSACTIONS, in the z/OS STIG Addendum, are restricted to authorized personnel.<br />
+<br />
+Note: The exception to this is the CEOT and CSGM transactions, which can be made available to all users.<br />
+Note: The exception to this is the CWBA transaction, which can be made available to the CICS Default user.<br />
+Note: The transactions beginning with &quot;CK&quot; apply to regions running WebSphere MQ.<br />
+Note: Category 1 transactions are internally restricted to CICS region userids.</p><h2>Vulnerability Number</h2><p>V-224303</p><h2>Documentable</h2><p>False</p><h2>Rule Version</h2><p>ZCIC0020</p><h2>Severity Override Guidance</h2><p>Refer to the following report produced by the ACF2 Data Collection and dataset and Resource Data Collection:<br />
+<br />
+- SENSITVE.RPT(TRANS).<br />
+- ACF2CMDS.RPT(RESOURCE) - Alternate report.<br />
+<br />
+Refer to the CICS Systems Programmer Worksheets filled out from previous vulnerability ZCIC0010.<br />
+<br />
+Browse the dataset allocated by the ACF2PARM DD statement in each CICS startup procedure. Determine the resource type for transactions. Example:<br />
+<br />
+CICSKEY OPTION=VALIDATE,TYPE=resource type, RESOURCE=TRANS<br />
+<br />
+Verify the following items are in effect for all CICS transactions for each resource type. If the following guidance is true, this is not a finding.<br />
+<br />
+Note: Authorized personnel include systems programming and security staffs. Additional guidance regarding authorized personnel for specific transactions is included in this z/OS STIG Addendum. For example, CEMT SPI provides a broader use of this sensitive transaction by restricting execution to inquiries.<br />
+<br />
+Transactions, listed in tables CICS CATEGORY 2 CICS AND OTHER PRODUCT TRANSACTIONS and CICS CATEGORY 4 COTS-SUPPLIED SENSITIVE TRANSACTIONS, in the z/OS STIG Addendum, are restricted to authorized personnel.<br />
+<br />
+Note: The exception to this is the CEOT and CSGM transactions, which can be made available to all users.<br />
+Note: The exception to this is the CWBA transaction, which can be made available to the CICS Default user.<br />
+Note: The transactions beginning with &quot;CK&quot; apply to regions running WebSphere MQ.<br />
+Note: Category 1 transactions are internally restricted to CICS region userids.</p><h2>Check Content Reference</h2><p>M</p><h2>Target Key</h2><p>4122</p></body></html>

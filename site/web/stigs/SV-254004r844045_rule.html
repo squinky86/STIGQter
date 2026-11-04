@@ -1,0 +1,79 @@
+<!doctype html><html lang="en"><head><meta charset="utf-8"><title>STIGQter: STIG Check Details: SV-254004r844045_rule: The Juniper MPLS router with RSVP-TE enabled must be configured to enable refresh reduction features.</title><link rel="icon" type="image/svg+xml" href="STIGQter.svg" /><script async src="https://www.googletagmanager.com/gtag/js?id=UA-31381839-2"></script><script src="include.js"></script><script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-4110907817782130" crossorigin="anonymous"></script></head><body><div><img src="STIGQter.svg" alt="STIGQter" style="height:1em;" /> <a href="https://www.stigqter.com/">STIGQter</a>: <a href="main.html">STIG Summary</a>: <a href="U_Juniper_EX_Switches_RTR_STIG_V2R1_Manual-xccdf.html">Juniper EX Series Switches Router Security Technical Implementation Guide Version: 2 Release: 1 Benchmark Date: 24 Jul 2024</a>:</div> <h1>The Juniper MPLS router with RSVP-TE enabled must be configured to enable refresh reduction features.</h1><h2>DISA Rule</h2><p>SV-254004r844045_rule</p><h2>Vulnerability Number</h2><p>V-254004</p><h2>Group Title</h2><p>SRG-NET-000193-RTR-000001</p><h2>Rule Version</h2><p>JUEX-RT-000320</p><h2>Severity</h2><p>CAT III</p><h2>CCI(s)</h2><ul><li>CCI-001095 - Manage capacity, bandwidth, or other redundancy to limit the effects of information flooding types of denial of service attacks.</li></ul><h2>Weight</h2><p>10</p><h2>Fix Recommendation</h2><p>Configure RSVP-TE enabled routers with refresh reduction features.<br />
+<br />
+Junos earlier than 15.2:<br />
+set protocols rsvp interface &lt;interface name&gt;.&lt;logical unit&gt; aggregate<br />
+set protocols rsvp interface &lt;interface name&gt;.&lt;logical unit&gt; reliable<br />
+<br />
+Junos 15.2 but pre 16.1R1:<br />
+set protocols rsvp interface &lt;interface name&gt;.&lt;logical unit&gt; reliable<br />
+<br />
+Junos 16.1R1 and later:<br />
+set protocols rsvp interface &lt;interface name&gt;.&lt;logical unit&gt; &lt;other configuration&gt;</p><h2>Check Contents</h2><p>Review the router configuration to verify that the router has been configured to enable refresh reduction features. Junos OS controls RSVP refresh reduction features using two commands:<br />
+<br />
+aggregate: RSVP message bundling and summary refresh.<br />
+reliable: RSVP message ID, reliable message delivery, and summary refresh.<br />
+<br />
+Starting in Junos 15.2, refresh reduction is enabled by default and the &quot;aggregate&quot; command is deprecated. Configuring the &quot;aggregate&quot; command generates a warning message in the configuration file (## Warning: &quot;aggregate&quot; is deprecated). On Junos earlier than 15.2, verify the &quot;aggregate&quot; command is enabled. On Junos 15.2 and later, no command is required.<br />
+<br />
+Junos earlier than 15.2:<br />
+[edit protocols]<br />
+rsvp {<br />
+    interface &lt;interface name&gt;.&lt;logical unit&gt; {<br />
+        aggregate;<br />
+        reliable; &lt;&lt; If RSVP message ID and reliable message delivery are required.<br />
+    }<br />
+}<br />
+<br />
+Junos 15.2 but pre-16.1R1:<br />
+[edit protocols]<br />
+rsvp {<br />
+    interface &lt;interface name&gt;.&lt;logical unit&gt; {<br />
+        reliable; &lt;&lt; If RSVP message ID and reliable message delivery are required.<br />
+    }<br />
+}<br />
+<br />
+Starting in Junos 16.1R1, all refresh reduction features are enabled by default. Verify the 'no-reliable' command is configured only if RSVP message ID and reliable message delivery are not required. To enable all refresh reduction features, no commands are necessary.<br />
+<br />
+Junos 16.1R1 and later:<br />
+[edit protocols]<br />
+rsvp {<br />
+    interface &lt;interface name&gt;.&lt;logical unit&gt; {<br />
+        &lt;other configuration&gt;<br />
+    }<br />
+}<br />
+<br />
+If the router with RSVP-TE enabled does not have message pacing configured based on the link speed and input queue size of adjacent core routers, this is a finding.</p><h2>Vulnerability Number</h2><p>V-254004</p><h2>Documentable</h2><p>False</p><h2>Rule Version</h2><p>JUEX-RT-000320</p><h2>Severity Override Guidance</h2><p>Review the router configuration to verify that the router has been configured to enable refresh reduction features. Junos OS controls RSVP refresh reduction features using two commands:<br />
+<br />
+aggregate: RSVP message bundling and summary refresh.<br />
+reliable: RSVP message ID, reliable message delivery, and summary refresh.<br />
+<br />
+Starting in Junos 15.2, refresh reduction is enabled by default and the &quot;aggregate&quot; command is deprecated. Configuring the &quot;aggregate&quot; command generates a warning message in the configuration file (## Warning: &quot;aggregate&quot; is deprecated). On Junos earlier than 15.2, verify the &quot;aggregate&quot; command is enabled. On Junos 15.2 and later, no command is required.<br />
+<br />
+Junos earlier than 15.2:<br />
+[edit protocols]<br />
+rsvp {<br />
+    interface &lt;interface name&gt;.&lt;logical unit&gt; {<br />
+        aggregate;<br />
+        reliable; &lt;&lt; If RSVP message ID and reliable message delivery are required.<br />
+    }<br />
+}<br />
+<br />
+Junos 15.2 but pre-16.1R1:<br />
+[edit protocols]<br />
+rsvp {<br />
+    interface &lt;interface name&gt;.&lt;logical unit&gt; {<br />
+        reliable; &lt;&lt; If RSVP message ID and reliable message delivery are required.<br />
+    }<br />
+}<br />
+<br />
+Starting in Junos 16.1R1, all refresh reduction features are enabled by default. Verify the 'no-reliable' command is configured only if RSVP message ID and reliable message delivery are not required. To enable all refresh reduction features, no commands are necessary.<br />
+<br />
+Junos 16.1R1 and later:<br />
+[edit protocols]<br />
+rsvp {<br />
+    interface &lt;interface name&gt;.&lt;logical unit&gt; {<br />
+        &lt;other configuration&gt;<br />
+    }<br />
+}<br />
+<br />
+If the router with RSVP-TE enabled does not have message pacing configured based on the link speed and input queue size of adjacent core routers, this is a finding.</p><h2>Check Content Reference</h2><p>M</p><h2>Target Key</h2><p>5479</p></body></html>

@@ -1,0 +1,41 @@
+<!doctype html><html lang="en"><head><meta charset="utf-8"><title>STIGQter: STIG Check Details: SV-251600r960879_rule: IDMS must use the ESM to generate auditable records for commands and utilities when DoD-defined auditable events occur.</title><link rel="icon" type="image/svg+xml" href="STIGQter.svg" /><script async src="https://www.googletagmanager.com/gtag/js?id=UA-31381839-2"></script><script src="include.js"></script><script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-4110907817782130" crossorigin="anonymous"></script></head><body><div><img src="STIGQter.svg" alt="STIGQter" style="height:1em;" /> <a href="https://www.stigqter.com/">STIGQter</a>: <a href="main.html">STIG Summary</a>: <a href="U_CA_IDMS_STIG_V2R2_Manual-xccdf.html">CA IDMS Security Technical Implementation Guide Version: 2 Release: 2 Benchmark Date: 01 Jul 2026</a>:</div> <h1>IDMS must use the ESM to generate auditable records for commands and utilities when DoD-defined auditable events occur.</h1><h2>DISA Rule</h2><p>SV-251600r960879_rule</p><h2>Vulnerability Number</h2><p>V-251600</p><h2>Group Title</h2><p>SRG-APP-000089-DB-000064</p><h2>Rule Version</h2><p>IDMS-DB-000200</p><h2>Severity</h2><p>CAT I</p><h2>CCI(s)</h2><ul><li>CCI-000169 - Provide audit record generation capability for the event types the system is capable of auditing as defined in AU-2 a. on organization-defined information system components.</li></ul><h2>Weight</h2><p>10</p><h2>Fix Recommendation</h2><p>If the IDMSUTAB load module needs to be updated to secure and audit the OCF/BCF commands, re-run the #UTABGEN macro to create an updated version. Here is an example of the syntax:<br />
+#UTABGEN (FORMAT,14,PRINTPAGE,14)<br />
+<br />
+This syntax assigns the FORMAT and PRINTPAGE commands to activity 14, which can now be secured by the RHDCSRTT module.<br />
+<br />
+If the IDMSCTAB load module needs updated to secure and audit the DCMT commands, update the #CTABGEN macro to create an updated version. Here is an example of the syntax:<br />
+#CTABGEN (B,2),(N022,B,N050,B)<br />
+<br />
+This syntax assigns security label B to activity #2, then it assigns the tasks DCMT VARY MEMORY and DCMT VARY LOADLIB to security label B. With this definition, secure activity #2 appropriately in the RHDCSRTT module.</p><h2>Check Contents</h2><p>Examine load module IDMSCTAB by executing CA IDMS utility IDMSCTAD, or by issuing command &quot;DCMT DISPLAY CTAB&quot; while signed onto the CV and reviewing the output.<br />
+<br />
+Note: This requires PTF SO08199. <br />
+<br />
+If there is execution of certain OCF/BCF commands that have not defined in the IDMSCTAB module using the #CTABGEN macro, this is a finding.<br />
+<br />
+If these task codes are defined to the IDMSCTAB module but have not been defined for the related activities to the RHDCSRTT module, this is a finding.<br />
+<br />
+If the execution of DCMT utility command codes is not defined in the IDMSUTAB module using the #UTABGEN macro, this is a finding.<br />
+<br />
+Examine load module IDMSUTAB using CA IDMS utility IDMSUTAD, or by issuing command 'DCMT DISPLAY UTAB' while signed onto the CV, and reviewing the output.<br />
+<br />
+Note: This requires PTF SO08527. <br />
+<br />
+If IDMSUTAB load module defined commands but has not defined the related activities to the RHDCSRTT module, this is a finding.<br />
+<br />
+If any of the above tasks are completed from local mode, utilize a custom EXIT 14 to trigger a security check that will go through the ESM. If an EXIT 14 is not configured for each situation, this is a finding.</p><h2>Vulnerability Number</h2><p>V-251600</p><h2>Documentable</h2><p>False</p><h2>Rule Version</h2><p>IDMS-DB-000200</p><h2>Severity Override Guidance</h2><p>Examine load module IDMSCTAB by executing CA IDMS utility IDMSCTAD, or by issuing command &quot;DCMT DISPLAY CTAB&quot; while signed onto the CV and reviewing the output.<br />
+<br />
+Note: This requires PTF SO08199. <br />
+<br />
+If there is execution of certain OCF/BCF commands that have not defined in the IDMSCTAB module using the #CTABGEN macro, this is a finding.<br />
+<br />
+If these task codes are defined to the IDMSCTAB module but have not been defined for the related activities to the RHDCSRTT module, this is a finding.<br />
+<br />
+If the execution of DCMT utility command codes is not defined in the IDMSUTAB module using the #UTABGEN macro, this is a finding.<br />
+<br />
+Examine load module IDMSUTAB using CA IDMS utility IDMSUTAD, or by issuing command 'DCMT DISPLAY UTAB' while signed onto the CV, and reviewing the output.<br />
+<br />
+Note: This requires PTF SO08527. <br />
+<br />
+If IDMSUTAB load module defined commands but has not defined the related activities to the RHDCSRTT module, this is a finding.<br />
+<br />
+If any of the above tasks are completed from local mode, utilize a custom EXIT 14 to trigger a security check that will go through the ESM. If an EXIT 14 is not configured for each situation, this is a finding.</p><h2>Check Content Reference</h2><p>M</p><h2>Target Key</h2><p>5418</p></body></html>

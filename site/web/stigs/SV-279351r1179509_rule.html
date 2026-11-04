@@ -1,0 +1,48 @@
+<!doctype html><html lang="en"><head><meta charset="utf-8"><title>STIGQter: STIG Check Details: SV-279351r1179509_rule: MongoDB must enforce authorized access to all PKI private keys stored/used by the DBMS.</title><link rel="icon" type="image/svg+xml" href="STIGQter.svg" /><script async src="https://www.googletagmanager.com/gtag/js?id=UA-31381839-2"></script><script src="include.js"></script><script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-4110907817782130" crossorigin="anonymous"></script></head><body><div><img src="STIGQter.svg" alt="STIGQter" style="height:1em;" /> <a href="https://www.stigqter.com/">STIGQter</a>: <a href="main.html">STIG Summary</a>: <a href="U_MDB_Enterprise_Advanced_8-x_STIG_V1R1_Manual-xccdf.html">MongoDB Enterprise Advanced 8.x Security Technical Implementation Guide Version: 1 Release: 1 Benchmark Date: 26 Jan 2026</a>:</div> <h1>MongoDB must enforce authorized access to all PKI private keys stored/used by the DBMS.</h1><h2>DISA Rule</h2><p>SV-279351r1179509_rule</p><h2>Vulnerability Number</h2><p>V-279351</p><h2>Group Title</h2><p>SRG-APP-000176-DB-000068</p><h2>Rule Version</h2><p>MD8X-00-003900</p><h2>Severity</h2><p>CAT I</p><h2>CCI(s)</h2><ul><li>CCI-000186 - For public key-based authentication, enforce authorized access to the corresponding private key.</li></ul><h2>Weight</h2><p>10</p><h2>Fix Recommendation</h2><p>Run these commands:<br />
+<br />
+chown mongod:mongodb /etc/ssl/mongodb.pem<br />
+chmod 600 /etc/ssl/mongodb.pem<br />
+chown mongod:mongod /etc/ssl/mongodbca.pem<br />
+chmod 600 /etc/ssl/mongodbca.pem</p><h2>Check Contents</h2><p>In the MongoDB database configuration file (default location /etc/mongod.conf), review the following parameters:<br />
+<br />
+net:<br />
+   tls:<br />
+      mode: requireTLS<br />
+      certificateKeyFile: /etc/ssl/mongodb.pem<br />
+      CAFile: /etc/ssl/mongodbca.pem<br />
+<br />
+Verify ownership, group ownership, and permissions for the MongoDB config file (default /etc/mongod.conf), the certificateKeyFile (default /etc/ssl/mongodb.pem), and the CAFile (default /etc/ssl/mongodbca.pem).<br />
+<br />
+For each file, run following command and review its output:<br />
+<br />
+ls -al &lt;filepath&gt;<br />
+<br />
+Example output:<br />
+-rw------- 1 mongod mongod 566 Apr 26 20:20 &lt;filepath&gt;<br />
+<br />
+If the user owner is not &quot;mongod&quot;, this is a finding.<br />
+<br />
+If the group owner is not &quot;mongod&quot;, this is a finding.<br />
+<br />
+If the file is more permissive than &quot;600&quot;, this is a finding.</p><h2>Vulnerability Number</h2><p>V-279351</p><h2>Documentable</h2><p>False</p><h2>Rule Version</h2><p>MD8X-00-003900</p><h2>Severity Override Guidance</h2><p>In the MongoDB database configuration file (default location /etc/mongod.conf), review the following parameters:<br />
+<br />
+net:<br />
+   tls:<br />
+      mode: requireTLS<br />
+      certificateKeyFile: /etc/ssl/mongodb.pem<br />
+      CAFile: /etc/ssl/mongodbca.pem<br />
+<br />
+Verify ownership, group ownership, and permissions for the MongoDB config file (default /etc/mongod.conf), the certificateKeyFile (default /etc/ssl/mongodb.pem), and the CAFile (default /etc/ssl/mongodbca.pem).<br />
+<br />
+For each file, run following command and review its output:<br />
+<br />
+ls -al &lt;filepath&gt;<br />
+<br />
+Example output:<br />
+-rw------- 1 mongod mongod 566 Apr 26 20:20 &lt;filepath&gt;<br />
+<br />
+If the user owner is not &quot;mongod&quot;, this is a finding.<br />
+<br />
+If the group owner is not &quot;mongod&quot;, this is a finding.<br />
+<br />
+If the file is more permissive than &quot;600&quot;, this is a finding.</p><h2>Check Content Reference</h2><p>M</p><h2>Target Key</h2><p>5728</p></body></html>

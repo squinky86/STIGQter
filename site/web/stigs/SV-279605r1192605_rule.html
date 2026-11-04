@@ -1,0 +1,45 @@
+<!doctype html><html lang="en"><head><meta charset="utf-8"><title>STIGQter: STIG Check Details: SV-279605r1192605_rule: Nutanix OS must enforce password complexity by requiring that at least one uppercase character be used.</title><link rel="icon" type="image/svg+xml" href="STIGQter.svg" /><script async src="https://www.googletagmanager.com/gtag/js?id=UA-31381839-2"></script><script src="include.js"></script><script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-4110907817782130" crossorigin="anonymous"></script></head><body><div><img src="STIGQter.svg" alt="STIGQter" style="height:1em;" /> <a href="https://www.stigqter.com/">STIGQter</a>: <a href="main.html">STIG Summary</a>: <a href="U_NTX_Acropolis_OS_STIG_V1R1_Manual-xccdf.html">Nutanix Acropolis GPOS Security Technical Implementation Guide Version: 1 Release: 1 Benchmark Date: 26 Jan 2026</a>:</div> <h1>Nutanix OS must enforce password complexity by requiring that at least one uppercase character be used.</h1><h2>DISA Rule</h2><p>SV-279605r1192605_rule</p><h2>Vulnerability Number</h2><p>V-279605</p><h2>Group Title</h2><p>SRG-OS-000069-GPOS-00037</p><h2>Rule Version</h2><p>NXAC-OS-000162</p><h2>Severity</h2><p>CAT II</p><h2>CCI(s)</h2><ul><li>CCI-004066 - For password-based authentication, enforce organization-defined composition and complexity rules.</li></ul><h2>Weight</h2><p>10</p><h2>Fix Recommendation</h2><p>Configure Nutanix OS to use complex passwords.<br />
+<br />
+1. For AOS, enter the following command.<br />
+<br />
+$ sudo salt-call state.sls security/CVM/pamCVM.sls<br />
+<br />
+2. For Prism Central, enter the following command.<br />
+<br />
+$ sudo salt-call state.sls security/PCVM/pamPCVM.sls<br />
+<br />
+3. For Files, enter the following command.<br />
+<br />
+$ sudo salt-call state.sls security/AFS/pamAFS.sls<br />
+<br />
+4. For AHV OS CVM, enter the following command.<br />
+<br />
+$ ncli cluster edit-hypervisor-security-params enable-high-strength-password=true</p><h2>Check Contents</h2><p>1. Verify Nutanix OS uses &quot;pwquality&quot; to enforce password complexity rules using the following command.<br />
+<br />
+$ sudo cat /etc/pam.d/password-auth | grep pam_pwquality<br />
+password    requisite     pam_pwquality.so try_first_pass …<br />
+<br />
+If the command does not return a line containing the value &quot;pam_pwquality.so&quot; as shown, or the line is commented out, this is a finding.<br />
+<br />
+2. Verify Nutanix AOS is configured to require complex passwords. Note: The value to require a number of uppercase characters to be set is expressed as a negative number in &quot;/etc/security/pwquality.conf&quot;.<br />
+<br />
+3. Check the value for &quot;ucredit&quot; in &quot;/etc/security/pwquality.conf&quot; using the following command.<br />
+<br />
+$ sudo grep ucredit /etc/security/pwquality.conf <br />
+ucredit = -1<br />
+<br />
+If the value of &quot;ucredit&quot; is not set to a negative value, this is a finding.</p><h2>Vulnerability Number</h2><p>V-279605</p><h2>Documentable</h2><p>False</p><h2>Rule Version</h2><p>NXAC-OS-000162</p><h2>Severity Override Guidance</h2><p>1. Verify Nutanix OS uses &quot;pwquality&quot; to enforce password complexity rules using the following command.<br />
+<br />
+$ sudo cat /etc/pam.d/password-auth | grep pam_pwquality<br />
+password    requisite     pam_pwquality.so try_first_pass …<br />
+<br />
+If the command does not return a line containing the value &quot;pam_pwquality.so&quot; as shown, or the line is commented out, this is a finding.<br />
+<br />
+2. Verify Nutanix AOS is configured to require complex passwords. Note: The value to require a number of uppercase characters to be set is expressed as a negative number in &quot;/etc/security/pwquality.conf&quot;.<br />
+<br />
+3. Check the value for &quot;ucredit&quot; in &quot;/etc/security/pwquality.conf&quot; using the following command.<br />
+<br />
+$ sudo grep ucredit /etc/security/pwquality.conf <br />
+ucredit = -1<br />
+<br />
+If the value of &quot;ucredit&quot; is not set to a negative value, this is a finding.</p><h2>Check Content Reference</h2><p>M</p><h2>Target Key</h2><p>5730</p></body></html>

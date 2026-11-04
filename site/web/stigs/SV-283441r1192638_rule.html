@@ -1,0 +1,36 @@
+<!doctype html><html lang="en"><head><meta charset="utf-8"><title>STIGQter: STIG Check Details: SV-283441r1192638_rule: Amazon Linux 2023 must enable FIPS mode.</title><link rel="icon" type="image/svg+xml" href="STIGQter.svg" /><script async src="https://www.googletagmanager.com/gtag/js?id=UA-31381839-2"></script><script src="include.js"></script><script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-4110907817782130" crossorigin="anonymous"></script></head><body><div><img src="STIGQter.svg" alt="STIGQter" style="height:1em;" /> <a href="https://www.stigqter.com/">STIGQter</a>: <a href="main.html">STIG Summary</a>: <a href="U_Amazon_Linux_2023_STIG_V1R4_Manual-xccdf.html">Amazon Linux 2023 Security Technical Implementation Guide Version: 1 Release: 4 Benchmark Date: 01 Jul 2026</a>:</div> <h1>Amazon Linux 2023 must enable FIPS mode.</h1><h2>DISA Rule</h2><p>SV-283441r1192638_rule</p><h2>Vulnerability Number</h2><p>V-283441</p><h2>Group Title</h2><p>SRG-OS-000033-GPOS-00014</p><h2>Rule Version</h2><p>AZLX-23-000050</p><h2>Severity</h2><p>CAT I</p><h2>CCI(s)</h2><ul><li>CCI-000068 - Implement cryptographic mechanisms to protect the confidentiality of remote access sessions.</li></ul><h2>Weight</h2><p>10</p><h2>Fix Recommendation</h2><p>Configure the Amazon Linux 2023 to implement FIPS mode with the following command:<br />
+<br />
+$ sudo fips-mode-setup --enable<br />
+<br />
+To ensure the kernel enables FIPS mode for early boot, &quot;fips=1&quot; must be added to the grub config:<br />
+$ sudo grubby --update-kernel=ALL --args=&quot;fips=1&quot;<br />
+<br />
+Verify the setting with the following command:<br />
+$ cat /proc/cmdline<br />
+BOOT_IMAGE=(hd0,gpt2)/vmlinuz-5.14.0-570.21.1.el9_6.x86_64 root=/dev/mapper/rhel-root ro resume=/dev/mapper/rhel-swap rd.luks.uuid=luks-cd37eb8d-a2c3-4671-96ee-1e6a3a681561 rd.lvm.lv=rhel/root rd.lvm.lv=rhel/swap rhgb quiet fips=1 boot=UUID=acbbb4ee-adc0-4cb2-9546-afab857b8849 audit_backlog_limit=8192 crashkernel=1G-4G:192M,4G-64G:256M,64G-:512M<br />
+<br />
+Reboot the system for the changes to take effect.</p><h2>Check Contents</h2><p>Verify Amazon Linux 2023 is in FIPS mode with the following command:<br />
+<br />
+$ sudo fips-mode-setup --check<br />
+FIPS mode is enabled.<br />
+<br />
+If FIPS mode is not enabled, this is a finding.<br />
+<br />
+If any other lines are returned by the above command, run the following command to see the currently applied crypto-policy:<br />
+<br />
+$ update-crypto-policies --show<br />
+FIPS<br />
+<br />
+If the policy is not &quot;FIPS&quot; or a FIPS policy authorized by and documented with the ISSO, this is a finding.</p><h2>Vulnerability Number</h2><p>V-283441</p><h2>Documentable</h2><p>False</p><h2>Rule Version</h2><p>AZLX-23-000050</p><h2>Severity Override Guidance</h2><p>Verify Amazon Linux 2023 is in FIPS mode with the following command:<br />
+<br />
+$ sudo fips-mode-setup --check<br />
+FIPS mode is enabled.<br />
+<br />
+If FIPS mode is not enabled, this is a finding.<br />
+<br />
+If any other lines are returned by the above command, run the following command to see the currently applied crypto-policy:<br />
+<br />
+$ update-crypto-policies --show<br />
+FIPS<br />
+<br />
+If the policy is not &quot;FIPS&quot; or a FIPS policy authorized by and documented with the ISSO, this is a finding.</p><h2>Check Content Reference</h2><p>M</p><h2>Target Key</h2><p>5700</p></body></html>

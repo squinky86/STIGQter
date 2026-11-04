@@ -1,0 +1,75 @@
+<!doctype html><html lang="en"><head><meta charset="utf-8"><title>STIGQter: STIG Check Details: SV-223491r1225721_rule: IBM z/OS must properly protect MCS console userid(s).</title><link rel="icon" type="image/svg+xml" href="STIGQter.svg" /><script async src="https://www.googletagmanager.com/gtag/js?id=UA-31381839-2"></script><script src="include.js"></script><script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-4110907817782130" crossorigin="anonymous"></script></head><body><div><img src="STIGQter.svg" alt="STIGQter" style="height:1em;" /> <a href="https://www.stigqter.com/">STIGQter</a>: <a href="main.html">STIG Summary</a>: <a href="U_IBM_zOS_ACF2_STIG_V9R9_Manual-xccdf.html">IBM z/OS ACF2 Security Technical Implementation Guide Version: 9 Release: 9 Benchmark Date: 01 Jul 2026</a>:</div> <h1>IBM z/OS must properly protect MCS console userid(s).</h1><h2>DISA Rule</h2><p>SV-223491r1225721_rule</p><h2>Vulnerability Number</h2><p>V-223491</p><h2>Group Title</h2><p>SRG-OS-000096-GPOS-00050</p><h2>Rule Version</h2><p>ACF2-ES-000730</p><h2>Severity</h2><p>CAT II</p><h2>CCI(s)</h2><ul><li>CCI-000382 - Configure the system to prohibit or restrict the use of organization-defined prohibited or restricted functions, system ports, protocols, software, and/or services.</li></ul><h2>Weight</h2><p>10</p><h2>Fix Recommendation</h2><p>Define all consoles identified in the currently active CONSOLxx parmlib member in EXAM.RPT(PARMLIB) to be defined to the ESM.<br />
+<br />
+Review the MCS console resources defined to z/OS and the ESM and ensure they conform to those outlined below.<br />
+<br />
+Each console defined in the currently active CONSOLxx parmlib member is associated with a valid ACF2 logonid.<br />
+<br />
+Each console logonid has no special privileges and/or attributes (e.g., ACCOUNT, SECURITY, etc.,  excluding VTAM SMCS consoles).<br />
+<br />
+Each console logonid has no accesses to interactive online facilities (e.g., TSO, CICS, etc.).<br />
+<br />
+Each console logonid will be restricted from accessing all data sets and resources except MVS.MCSOPER.consolename in the OPERCMDS resource class and consolename in the CONSOLE resource class.<br />
+<br />
+NOTE: If LOGON(AUTO) is specified in the currently active CONSOLxx parmlib member, additional access may be required. Permissions for the console logonids may be given with SERVICE(READ) to MVS.CONTROL, MVS.DISPLAY, MVS.MONITOR, and MVS.STOPMN OPERCMDS resources.<br />
+<br />
+NOTE: If LOGON(AUTO) is specified in the currently active CONSOLxx parmlib member, additional access may be required. Permissions for the console logonids may be given with SERVICE(READ) to MVS.CONTROL, MVS.DISPLAY, MVS.MONITOR, and MVS.STOPMN OPERCMDS resources.<br />
+<br />
+Example:<br />
+INSERT MVAC20 NAME(MVA CONSOLE C20) PASSWORD(xxxxxxxx)<br />
+<br />
+$KEY(MVS) TYPE(OPR)<br />
+MCSOPER.- UID(MVAC20) SERVICE(READ) ALLOW<br />
+CONTROL.- UID(MVAC20) SERVICE(READ) ALLOW DATA(FOR LOGON(AUTO))<br />
+MONITOR.- UID(MVAC20) SERVICE(READ) ALLOW DATA(FOR LOGON(AUTO))<br />
+STOPMN.- UID(MVAC20) SERVICE(READ) ALLOW DATA(FOR LOGON(AUTO))<br />
+DISPLAY.- UID(*) SERVICE(READ) ALLOW<br />
+- UID(*) PREVENT<br />
+<br />
+SET R(OPR)<br />
+COMPILE ' ACF2.MVA.OPR(MVS)' STORE<br />
+<br />
+F ACF2,REBUILD(OPR)<br />
+<br />
+$KEY(consname) TYPE(CON)<br />
+UID(MVAC20) SERVICE(READ) ALLOW<br />
+<br />
+SET R(CON)<br />
+COMPILE ' ACF2.MVA.CON(consname)' STORE<br />
+<br />
+F ACF2,REBUILD(CON)</p><h2>Check Contents</h2><p>Refer to IEASYS00 to determine the correct CONSOLxx member. <br />
+<br />
+Examine the CONSOLxx member.<br />
+<br />
+Verify that the MCS console logonids are properly restricted. <br />
+<br />
+If the following guidance is true, this is not a finding.<br />
+<br />
+Each console defined in the currently active CONSOLxx parmlib member is associated with a valid ACF2 logonid.<br />
+<br />
+Each console logonid has no special privileges and/or attributes (e.g., ACCOUNT, SECURITY, etc.).<br />
+<br />
+Each console logonid has no accesses to interactive online facilities (e.g., TSO, CICS, etc., excluding VTAM SMCS consoles).<br />
+<br />
+Each console logonid will be restricted from accessing all data sets and resources except MVS.MCSOPER.consolename in the OPERCMDS resource class and consolename in the CONSOLE resource class.<br />
+<br />
+NOTE: If LOGON(AUTO) is specified in the currently active CONSOLxx parmlib member, additional access may be required. Permissions for the console logonids may be given with SERVICE(READ) to MVS.CONTROL, MVS.DISPLAY, MVS.MONITOR, and MVS.STOPMN OPERCMDS resources.<br />
+<br />
+NOTE: Execute the JCL in CNTL(ACFRPTRX) using the ACF2 console userids in the LID statements in the SYSIN input. This report lists all occurrences of these userids within the ACF2 database, including data set and resource access lists.</p><h2>Vulnerability Number</h2><p>V-223491</p><h2>Documentable</h2><p>False</p><h2>Rule Version</h2><p>ACF2-ES-000730</p><h2>Severity Override Guidance</h2><p>Refer to IEASYS00 to determine the correct CONSOLxx member. <br />
+<br />
+Examine the CONSOLxx member.<br />
+<br />
+Verify that the MCS console logonids are properly restricted. <br />
+<br />
+If the following guidance is true, this is not a finding.<br />
+<br />
+Each console defined in the currently active CONSOLxx parmlib member is associated with a valid ACF2 logonid.<br />
+<br />
+Each console logonid has no special privileges and/or attributes (e.g., ACCOUNT, SECURITY, etc.).<br />
+<br />
+Each console logonid has no accesses to interactive online facilities (e.g., TSO, CICS, etc., excluding VTAM SMCS consoles).<br />
+<br />
+Each console logonid will be restricted from accessing all data sets and resources except MVS.MCSOPER.consolename in the OPERCMDS resource class and consolename in the CONSOLE resource class.<br />
+<br />
+NOTE: If LOGON(AUTO) is specified in the currently active CONSOLxx parmlib member, additional access may be required. Permissions for the console logonids may be given with SERVICE(READ) to MVS.CONTROL, MVS.DISPLAY, MVS.MONITOR, and MVS.STOPMN OPERCMDS resources.<br />
+<br />
+NOTE: Execute the JCL in CNTL(ACFRPTRX) using the ACF2 console userids in the LID statements in the SYSIN input. This report lists all occurrences of these userids within the ACF2 database, including data set and resource access lists.</p><h2>Check Content Reference</h2><p>M</p><h2>Target Key</h2><p>4100</p></body></html>

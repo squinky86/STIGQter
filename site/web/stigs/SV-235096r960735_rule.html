@@ -1,0 +1,50 @@
+<!doctype html><html lang="en"><head><meta charset="utf-8"><title>STIGQter: STIG Check Details: SV-235096r960735_rule: MySQL Database Server 8.0  must limit the number of concurrent sessions to an organization-defined number per user for all accounts and/or account types.</title><link rel="icon" type="image/svg+xml" href="STIGQter.svg" /><script async src="https://www.googletagmanager.com/gtag/js?id=UA-31381839-2"></script><script src="include.js"></script><script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-4110907817782130" crossorigin="anonymous"></script></head><body><div><img src="STIGQter.svg" alt="STIGQter" style="height:1em;" /> <a href="https://www.stigqter.com/">STIGQter</a>: <a href="main.html">STIG Summary</a>: <a href="U_Oracle_MySQL_8-0_STIG_V2R2_Manual-xccdf.html">Oracle MySQL 8.0 Security Technical Implementation Guide Version: 2 Release: 2 Benchmark Date: 24 Oct 2024</a>:</div> <h1>MySQL Database Server 8.0  must limit the number of concurrent sessions to an organization-defined number per user for all accounts and/or account types.</h1><h2>DISA Rule</h2><p>SV-235096r960735_rule</p><h2>Vulnerability Number</h2><p>V-235096</p><h2>Group Title</h2><p>SRG-APP-000001-DB-000031</p><h2>Rule Version</h2><p>MYS8-00-000200</p><h2>Severity</h2><p>CAT II</p><h2>CCI(s)</h2><ul><li>CCI-000054 - Limit the number of concurrent sessions for each organization-defined account and/or account type to an organization-defined number.</li></ul><h2>Weight</h2><p>10</p><h2>Fix Recommendation</h2><p>The MySQL Database Server 8.0 is capable of enforcing this restriction. If not configured to do so, configure it to do so.<br />
+<br />
+Connect to the MySQL Database as an administrator.<br />
+To set the global default to 50: <br />
+SET PERSIST max_user_connections=50;<br />
+<br />
+Additionally, max user connections can be set per user as well as for a given period of time.<br />
+GRANT ALL ON customer.* TO 'francis'@'localhost'<br />
+WITH MAX_CONNECTIONS_PER_HOUR 5;<br />
+MAX_USER_CONNECTIONS 2;</p><h2>Check Contents</h2><p>Determine whether the system documentation specifies limits on the number of concurrent MySQL database server 8.0 sessions.<br />
+<br />
+Review the concurrent-sessions settings in the MySQL database server and/or the applications using it, and/or the system software supporting it. <br />
+<br />
+MySQL global variable max_user_connections  limits the number of simultaneous connections that can be made by any given account.<br />
+<br />
+To check global (default) concurrent-sessions settings in the MySQL database server, run the following query:<br />
+SELECT VARIABLE_NAME, VARIABLE_VALUE<br />
+FROM performance_schema.global_variables<br />
+WHERE VARIABLE_NAME LIKE 'max_user_connections' ;<br />
+<br />
+If the value of MAX_USER_CONNECTIONS is 0 (unlimited) or greater than the site-specific maximum number of sessions, this is a finding.<br />
+ <br />
+Retrieve the settings for concurrent sessions for each user with the query: <br />
+SELECT user, host, max_user_connections <br />
+FROM mysql.user <br />
+WHERE user not like 'mysql.%' and user not like 'root';<br />
+<br />
+If the user account has a nonzero MAX_USER_CONNECTIONS resource limit, the session MAX_USER_CONNECTIONS value is set to that limit. Otherwise, the session max_user_connections value is set to the global value.<br />
+<br />
+If the DBMS settings for concurrent sessions for each user is greater than the site-specific maximum number of sessions and nonzero, this is a finding.</p><h2>Vulnerability Number</h2><p>V-235096</p><h2>Documentable</h2><p>False</p><h2>Rule Version</h2><p>MYS8-00-000200</p><h2>Severity Override Guidance</h2><p>Determine whether the system documentation specifies limits on the number of concurrent MySQL database server 8.0 sessions.<br />
+<br />
+Review the concurrent-sessions settings in the MySQL database server and/or the applications using it, and/or the system software supporting it. <br />
+<br />
+MySQL global variable max_user_connections  limits the number of simultaneous connections that can be made by any given account.<br />
+<br />
+To check global (default) concurrent-sessions settings in the MySQL database server, run the following query:<br />
+SELECT VARIABLE_NAME, VARIABLE_VALUE<br />
+FROM performance_schema.global_variables<br />
+WHERE VARIABLE_NAME LIKE 'max_user_connections' ;<br />
+<br />
+If the value of MAX_USER_CONNECTIONS is 0 (unlimited) or greater than the site-specific maximum number of sessions, this is a finding.<br />
+ <br />
+Retrieve the settings for concurrent sessions for each user with the query: <br />
+SELECT user, host, max_user_connections <br />
+FROM mysql.user <br />
+WHERE user not like 'mysql.%' and user not like 'root';<br />
+<br />
+If the user account has a nonzero MAX_USER_CONNECTIONS resource limit, the session MAX_USER_CONNECTIONS value is set to that limit. Otherwise, the session max_user_connections value is set to the global value.<br />
+<br />
+If the DBMS settings for concurrent sessions for each user is greater than the site-specific maximum number of sessions and nonzero, this is a finding.</p><h2>Check Content Reference</h2><p>M</p><h2>Target Key</h2><p>5277</p></body></html>

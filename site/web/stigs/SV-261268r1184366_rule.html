@@ -1,0 +1,35 @@
+<!doctype html><html lang="en"><head><meta charset="utf-8"><title>STIGQter: STIG Check Details: SV-261268r1184366_rule: SLEM 5 with Unified Extensible Firmware Interface (UEFI) implemented must require authentication upon booting into single-user mode and maintenance.</title><link rel="icon" type="image/svg+xml" href="STIGQter.svg" /><script async src="https://www.googletagmanager.com/gtag/js?id=UA-31381839-2"></script><script src="include.js"></script><script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-4110907817782130" crossorigin="anonymous"></script></head><body><div><img src="STIGQter.svg" alt="STIGQter" style="height:1em;" /> <a href="https://www.stigqter.com/">STIGQter</a>: <a href="main.html">STIG Summary</a>: <a href="U_SLEM_5_STIG_V1R4_Manual-xccdf.html">SUSE Linux Enterprise Micro (SLEM) 5 Security Technical Implementation Guide Version: 1 Release: 4 Benchmark Date: 01 Apr 2026</a>:</div> <h1>SLEM 5 with Unified Extensible Firmware Interface (UEFI) implemented must require authentication upon booting into single-user mode and maintenance.</h1><h2>DISA Rule</h2><p>SV-261268r1184366_rule</p><h2>Vulnerability Number</h2><p>V-261268</p><h2>Group Title</h2><p>SRG-OS-000080-GPOS-00048</p><h2>Rule Version</h2><p>SLEM-05-212015</p><h2>Severity</h2><p>CAT I</p><h2>CCI(s)</h2><ul><li>CCI-000213 - Enforce approved authorizations for logical access to information and system resources in accordance with applicable access control policies.</li></ul><h2>Weight</h2><p>10</p><h2>Fix Recommendation</h2><p>Note: If the system does not use UEFI, this requirement is not applicable.<br />
+<br />
+Configure SLEM 5 to encrypt the GRUB bootloader password.<br />
+<br />
+Generate an encrypted GRUB bootloader password for root with the following command:<br />
+<br />
+     &gt; grub2-mkpasswd-pbkdf2<br />
+     Enter Password:<br />
+     Reenter Password:<br />
+     PBKDF2 hash of your password is grub.pbkdf2.sha512.10000.03255F190F0E2F7B4F0D1C3216012309162F022A7A636771<br />
+<br />
+Using the hash from the output, modify the &quot;/etc/grub.d/40_custom&quot; file and add the following two lines to add a boot password for the root entry:<br />
+<br />
+     set superusers=&quot;root&quot;<br />
+     password_pbkdf2 root grub.pbkdf2.sha512.03255F190F0E2F7B4F0D1C3216012309162F022A7A636771<br />
+<br />
+Generate an updated &quot;grub.conf&quot; file with the new password using the following commands:<br />
+<br />
+     &gt; sudo grub2-mkconfig --output=/tmp/grub2.cfg<br />
+<br />
+     &gt; sudo mv /tmp/grub2.cfg /boot/efi/EFI/BOOT/grub.cfg</p><h2>Check Contents</h2><p>Note: If the system does not use UEFI, this requirement is not applicable.<br />
+<br />
+Verify that SLEM 5 has set an encrypted GRUB bootloader password with the following command:<br />
+<br />
+     &gt; sudo cat /boot/efi/EFI/BOOT/grub.cfg | grep -i password <br />
+     password_pbkdf2 root grub.pbkdf2.sha512.10000.03255F190F0E2F7B4F0D1C3216012309162F022A7A636771<br />
+<br />
+If the GRUB bootloader password entry does not begin with &quot;password_pbkdf2&quot;, this is a finding.</p><h2>Vulnerability Number</h2><p>V-261268</p><h2>Documentable</h2><p>False</p><h2>Rule Version</h2><p>SLEM-05-212015</p><h2>Severity Override Guidance</h2><p>Note: If the system does not use UEFI, this requirement is not applicable.<br />
+<br />
+Verify that SLEM 5 has set an encrypted GRUB bootloader password with the following command:<br />
+<br />
+     &gt; sudo cat /boot/efi/EFI/BOOT/grub.cfg | grep -i password <br />
+     password_pbkdf2 root grub.pbkdf2.sha512.10000.03255F190F0E2F7B4F0D1C3216012309162F022A7A636771<br />
+<br />
+If the GRUB bootloader password entry does not begin with &quot;password_pbkdf2&quot;, this is a finding.</p><h2>Check Content Reference</h2><p>M</p><h2>Target Key</h2><p>5596</p></body></html>

@@ -1,0 +1,49 @@
+<!doctype html><html lang="en"><head><meta charset="utf-8"><title>STIGQter: STIG Check Details: SV-270818r1066943_rule: Ubuntu 24.04 LTS must immediately notify the system administrator (SA) and information system security officer (ISSO) (at a minimum) when allocated audit record storage volume reaches 75 percent of the repository maximum audit record storage capacity.</title><link rel="icon" type="image/svg+xml" href="STIGQter.svg" /><script async src="https://www.googletagmanager.com/gtag/js?id=UA-31381839-2"></script><script src="include.js"></script><script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-4110907817782130" crossorigin="anonymous"></script></head><body><div><img src="STIGQter.svg" alt="STIGQter" style="height:1em;" /> <a href="https://www.stigqter.com/">STIGQter</a>: <a href="main.html">STIG Summary</a>: <a href="U_CAN_Ubuntu_24-04_LTS_STIG_V1R6_Manual-xccdf.html">Canonical Ubuntu 24.04 LTS Security Technical Implementation Guide Version: 1 Release: 6 Benchmark Date: 01 Jul 2026</a>:</div> <h1>Ubuntu 24.04 LTS must immediately notify the system administrator (SA) and information system security officer (ISSO) (at a minimum) when allocated audit record storage volume reaches 75 percent of the repository maximum audit record storage capacity.</h1><h2>DISA Rule</h2><p>SV-270818r1066943_rule</p><h2>Vulnerability Number</h2><p>V-270818</p><h2>Group Title</h2><p>SRG-OS-000343-GPOS-00134</p><h2>Rule Version</h2><p>UBTU-24-900960</p><h2>Severity</h2><p>CAT III</p><h2>CCI(s)</h2><ul><li>CCI-001855 - Provide a warning to organization-defined personnel, roles, and/or locations within an organization-defined time period when allocated audit log storage volume reaches an organization-defined percentage of repository maximum audit log storage capacity.</li></ul><h2>Weight</h2><p>10</p><h2>Fix Recommendation</h2><p>Edit &quot;/etc/audit/auditd.conf&quot; and set the &quot;space_left_action&quot; parameter to &quot;exec&quot; or &quot;email&quot;.  <br />
+ <br />
+If the &quot;space_left_action&quot; parameter is set to &quot;email&quot;, set the &quot;action_mail_acct&quot; parameter to an email address for the SA and ISSO. <br />
+ <br />
+If the &quot;space_left_action&quot; parameter is set to &quot;exec&quot;, ensure the command being executed notifies the SA and ISSO. <br />
+ <br />
+Edit &quot;/etc/audit/auditd.conf&quot; and set the &quot;space_left&quot; parameter to be at least 25 percent of the repository maximum audit record storage capacity.</p><h2>Check Contents</h2><p>Verify Ubuntu 24.04 LTS notifies the SA and ISSO (at a minimum) when allocated audit record storage volume reaches 75 percent of the repository maximum audit record storage capacity with the following command: <br />
+ <br />
+Note: If the space_left_action is set to &quot;email&quot;, an email package must be available.<br />
+<br />
+$ sudo grep ^space_left_action /etc/audit/auditd.conf<br />
+space_left_action email <br />
+ <br />
+$ sudo grep ^space_left /etc/audit/auditd.conf<br />
+space_left 250000 <br />
+ <br />
+If the &quot;space_left&quot; parameter is set to &quot;syslog&quot;, is missing, set to blanks, or set to a value less than 25 percent of the space free in the allocated audit record storage, this is a finding. <br />
+ <br />
+If the &quot;space_left_action&quot; parameter is missing or set to blanks, this is a finding. <br />
+<br />
+If the &quot;space_left_action&quot; is set to &quot;email&quot;, check the value of the &quot;action_mail_acct&quot; parameter with the following command: <br />
+ <br />
+$ sudo grep ^action_mail_acct /etc/audit/auditd.conf<br />
+action_mail_acct root@localhost <br />
+ <br />
+The &quot;action_mail_acct&quot; parameter, if missing, defaults to &quot;root&quot;. If the &quot;action_mail_acct parameter&quot; is not set to the email address of the SA(s) and/or ISSO, this is a finding.   <br />
+ <br />
+If the &quot;space_left_action&quot; is set to &quot;exec&quot;, the system executes a designated script. If this script informs the SA of the event, this is not a finding.</p><h2>Vulnerability Number</h2><p>V-270818</p><h2>Documentable</h2><p>False</p><h2>Rule Version</h2><p>UBTU-24-900960</p><h2>Severity Override Guidance</h2><p>Verify Ubuntu 24.04 LTS notifies the SA and ISSO (at a minimum) when allocated audit record storage volume reaches 75 percent of the repository maximum audit record storage capacity with the following command: <br />
+ <br />
+Note: If the space_left_action is set to &quot;email&quot;, an email package must be available.<br />
+<br />
+$ sudo grep ^space_left_action /etc/audit/auditd.conf<br />
+space_left_action email <br />
+ <br />
+$ sudo grep ^space_left /etc/audit/auditd.conf<br />
+space_left 250000 <br />
+ <br />
+If the &quot;space_left&quot; parameter is set to &quot;syslog&quot;, is missing, set to blanks, or set to a value less than 25 percent of the space free in the allocated audit record storage, this is a finding. <br />
+ <br />
+If the &quot;space_left_action&quot; parameter is missing or set to blanks, this is a finding. <br />
+<br />
+If the &quot;space_left_action&quot; is set to &quot;email&quot;, check the value of the &quot;action_mail_acct&quot; parameter with the following command: <br />
+ <br />
+$ sudo grep ^action_mail_acct /etc/audit/auditd.conf<br />
+action_mail_acct root@localhost <br />
+ <br />
+The &quot;action_mail_acct&quot; parameter, if missing, defaults to &quot;root&quot;. If the &quot;action_mail_acct parameter&quot; is not set to the email address of the SA(s) and/or ISSO, this is a finding.   <br />
+ <br />
+If the &quot;space_left_action&quot; is set to &quot;exec&quot;, the system executes a designated script. If this script informs the SA of the event, this is not a finding.</p><h2>Check Content Reference</h2><p>M</p><h2>Target Key</h2><p>5673</p></body></html>

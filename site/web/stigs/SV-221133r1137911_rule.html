@@ -1,0 +1,40 @@
+<!doctype html><html lang="en"><head><meta charset="utf-8"><title>STIGQter: STIG Check Details: SV-221133r1137911_rule: The Cisco multicast switch must be configured to bind a Protocol Independent Multicast (PIM) neighbor filter to interfaces that have PIM enabled.</title><link rel="icon" type="image/svg+xml" href="STIGQter.svg" /><script async src="https://www.googletagmanager.com/gtag/js?id=UA-31381839-2"></script><script src="include.js"></script><script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-4110907817782130" crossorigin="anonymous"></script></head><body><div><img src="STIGQter.svg" alt="STIGQter" style="height:1em;" /> <a href="https://www.stigqter.com/">STIGQter</a>: <a href="main.html">STIG Summary</a>: <a href="U_Cisco_NX-OS_Switch_RTR_STIG_V3R4_Manual-xccdf.html">Cisco NX OS Switch RTR Security Technical Implementation Guide Version: 3 Release: 4 Benchmark Date: 01 Apr 2026</a>:</div> <h1>The Cisco multicast switch must be configured to bind a Protocol Independent Multicast (PIM) neighbor filter to interfaces that have PIM enabled.</h1><h2>DISA Rule</h2><p>SV-221133r1137911_rule</p><h2>Vulnerability Number</h2><p>V-221133</p><h2>Group Title</h2><p>SRG-NET-000019-RTR-000004</p><h2>Rule Version</h2><p>CISC-RT-000800</p><h2>Severity</h2><p>CAT II</p><h2>CCI(s)</h2><ul><li>CCI-001414 - Enforce approved authorizations for controlling the flow of information between connected systems based on organization-defined information flow control policies.</li></ul><h2>Weight</h2><p>10</p><h2>Fix Recommendation</h2><p>Configure neighbor prefix lists to only accept PIM control plane traffic from documented PIM neighbors. <br />
+<br />
+Step 1: Configure prefix list for each PIM neighbor.<br />
+<br />
+SW1(config)# ip prefix-list PIM_NEIGHBOR seq 5 permit 10.1.12.2/32<br />
+SW1(config)# ip prefix-list PIM_NEIGHBOR deny 0.0.0.0/0 le 32<br />
+<br />
+Step 2: Apply a prefix to all interfaces enabled for PIM.<br />
+<br />
+SW1(config)# int e2/1<br />
+SW1(config-if)# ip pim neighbor-policy prefix-list PIM_NEIGHBOR <br />
+SW1(config-if)# end</p><h2>Check Contents</h2><p>Step 1: Verify all interfaces enabled for PIM have a neighbor policy bound to the interface as shown in the example below:<br />
+<br />
+interface Ethernet2/1<br />
+ no switchport<br />
+ ip address 10.1.12.1/24<br />
+ ip pim sparse-mode<br />
+ ip pim neighbor-policy prefix-list PIM_NEIGHBOR<br />
+ no shutdown<br />
+<br />
+Step 2: Review the configured prefix list for filtering PIM neighbors as shown in the example below:<br />
+<br />
+ip prefix-list PIM_NEIGHBOR seq 5 permit 10.1.12.2/32<br />
+ip prefix-list PIM_NEIGHBOR seq 10 deny 0.0.0.0/0 le 32<br />
+<br />
+If PIM neighbor ACLs are not bound to all interfaces that have PIM enabled, this is a finding.</p><h2>Vulnerability Number</h2><p>V-221133</p><h2>Documentable</h2><p>False</p><h2>Rule Version</h2><p>CISC-RT-000800</p><h2>Severity Override Guidance</h2><p>Step 1: Verify all interfaces enabled for PIM have a neighbor policy bound to the interface as shown in the example below:<br />
+<br />
+interface Ethernet2/1<br />
+ no switchport<br />
+ ip address 10.1.12.1/24<br />
+ ip pim sparse-mode<br />
+ ip pim neighbor-policy prefix-list PIM_NEIGHBOR<br />
+ no shutdown<br />
+<br />
+Step 2: Review the configured prefix list for filtering PIM neighbors as shown in the example below:<br />
+<br />
+ip prefix-list PIM_NEIGHBOR seq 5 permit 10.1.12.2/32<br />
+ip prefix-list PIM_NEIGHBOR seq 10 deny 0.0.0.0/0 le 32<br />
+<br />
+If PIM neighbor ACLs are not bound to all interfaces that have PIM enabled, this is a finding.</p><h2>Check Content Reference</h2><p>M</p><h2>Target Key</h2><p>4075</p></body></html>

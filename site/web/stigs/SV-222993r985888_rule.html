@@ -1,0 +1,21 @@
+<!doctype html><html lang="en"><head><meta charset="utf-8"><title>STIGQter: STIG Check Details: SV-222993r985888_rule: Multifactor certificate-based tokens (CAC) must be used when accessing the management interface.</title><link rel="icon" type="image/svg+xml" href="STIGQter.svg" /><script async src="https://www.googletagmanager.com/gtag/js?id=UA-31381839-2"></script><script src="include.js"></script><script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-4110907817782130" crossorigin="anonymous"></script></head><body><div><img src="STIGQter.svg" alt="STIGQter" style="height:1em;" /> <a href="https://www.stigqter.com/">STIGQter</a>: <a href="main.html">STIG Summary</a>: <a href="U_Apache_Tomcat_Application_Server_9_STIG_V3R4_Manual-xccdf.html">Apache Tomcat Application Server 9 Security Technical Implementation Guide Version: 3 Release: 4 Benchmark Date: 01 Apr 2026</a>:</div> <h1>Multifactor certificate-based tokens (CAC) must be used when accessing the management interface.</h1><h2>DISA Rule</h2><p>SV-222993r985888_rule</p><h2>Vulnerability Number</h2><p>V-222993</p><h2>Group Title</h2><p>SRG-APP-000391-AS-000239</p><h2>Rule Version</h2><p>TCAT-AS-001320</p><h2>Severity</h2><p>CAT II</p><h2>CCI(s)</h2><ul><li>CCI-001953 - Accepts Personal Identity Verification-compliant credentials.</li><li>CCI-001954 - Electronically verifies Personal Identity Verification-compliant credentials.</li><li>CCI-002009 - Accept Personal Identity Verification-compliant credentials from other federal agencies.</li><li>CCI-002010 - Electronically verify Personal Identity Verification-compliant credentials from other federal agencies.</li><li>CCI-004046 - Implement multi-factor authentication for local; network; and/or remote access to privileged accounts; and/or non-privileged accounts such that one of the factors is provided by a device separate from the system gaining access.</li><li>CCI-004047 - Implement multi-factor authentication for local; network; and/or remote access to privileged accounts; and/or non-privileged accounts such that the device meets organization-defined strength of mechanism requirements.</li></ul><h2>Weight</h2><p>10</p><h2>Fix Recommendation</h2><p>From the Tomcat server as a privileged user, edit the $CATALINA_BASE/webapps/manager/WEB-INF/web.xml file and modify the auth-method for the manager application security constraint.<br />
+<br />
+sudo nano $CATALINA_BASE/webapps/manager/WEB-INF/web.xml<br />
+<br />
+Locate &lt;auth-method&gt; contained within the &lt;login-config&gt; section, modify &lt;auth-method&gt; to specify CLIENT-CERT. <br />
+<br />
+EXAMPLE:<br />
+&lt;auth-method&gt;CLIENT-CERT&lt;/auth-method&gt;<br />
+<br />
+In addition, the connector used for accessing the manager application must be configured to require client authentication by setting clientAuth=&quot;true&quot; and the manager application roles must be configured in the LDAP server.<br />
+<br />
+Restart the Tomcat server:<br />
+sudo systemctl restart tomcat</p><h2>Check Contents</h2><p>If the manager application has been deleted from the Tomcat server, this is not a finding. From the Tomcat server as a privileged user, issue the following command:<br />
+<br />
+sudo grep -i auth-method $CATALINA_BASE/webapps/manager/WEB-INF/web.xml<br />
+<br />
+If the &lt;Auth-Method&gt; for the web manager application is not set to CLIENT-CERT, this is a finding.</p><h2>Vulnerability Number</h2><p>V-222993</p><h2>Documentable</h2><p>False</p><h2>Rule Version</h2><p>TCAT-AS-001320</p><h2>Severity Override Guidance</h2><p>If the manager application has been deleted from the Tomcat server, this is not a finding. From the Tomcat server as a privileged user, issue the following command:<br />
+<br />
+sudo grep -i auth-method $CATALINA_BASE/webapps/manager/WEB-INF/web.xml<br />
+<br />
+If the &lt;Auth-Method&gt; for the web manager application is not set to CLIENT-CERT, this is a finding.</p><h2>Check Content Reference</h2><p>M</p><h2>Target Key</h2><p>4094</p></body></html>

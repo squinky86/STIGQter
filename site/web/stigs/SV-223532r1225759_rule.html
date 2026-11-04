@@ -1,0 +1,97 @@
+<!doctype html><html lang="en"><head><meta charset="utf-8"><title>STIGQter: STIG Check Details: SV-223532r1225759_rule: IBM z/OS JES2 spool resources must be controlled in accordance with security requirements.</title><link rel="icon" type="image/svg+xml" href="STIGQter.svg" /><script async src="https://www.googletagmanager.com/gtag/js?id=UA-31381839-2"></script><script src="include.js"></script><script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-4110907817782130" crossorigin="anonymous"></script></head><body><div><img src="STIGQter.svg" alt="STIGQter" style="height:1em;" /> <a href="https://www.stigqter.com/">STIGQter</a>: <a href="main.html">STIG Summary</a>: <a href="U_IBM_zOS_ACF2_STIG_V9R9_Manual-xccdf.html">IBM z/OS ACF2 Security Technical Implementation Guide Version: 9 Release: 9 Benchmark Date: 01 Jul 2026</a>:</div> <h1>IBM z/OS JES2 spool resources must be controlled in accordance with security requirements.</h1><h2>DISA Rule</h2><p>SV-223532r1225759_rule</p><h2>Vulnerability Number</h2><p>V-223532</p><h2>Group Title</h2><p>SRG-OS-000080-GPOS-00048</p><h2>Rule Version</h2><p>ACF2-JS-000050</p><h2>Severity</h2><p>CAT II</p><h2>CCI(s)</h2><ul><li>CCI-000213 - Enforce approved authorizations for logical access to information and system resources in accordance with applicable access control policies.</li></ul><h2>Weight</h2><p>10</p><h2>Fix Recommendation</h2><p>Configure JESSPOOL resources as defined below.<br />
+<br />
+The JESSPOOL resources may be fully qualified, be specified as generic, or be specified with masking as indicated below:<br />
+<br />
+localnodeid.userid.jobname.jobid.dsnumber.name<br />
+<br />
+localnodeid - The name of the node on which the SYSIN or SYSOUT data set currently resides.<br />
+userid - The userid associated with the job. This is the userid used for validation purposes when the job runs.<br />
+jobname - The name that appears in the name field of the JOB statement.<br />
+jobid - The job number JES2 assigned to the job.<br />
+dsnumber - The unique data set number JES2 assigned to the spool data set. A D is the first character of this qualifier.<br />
+name - The name of the data set specified in the DSN= parameter of the DD statement. If the JCL did not specify DSN= on the DD statement that creates the spool data set, JES2 uses a question mark (?).<br />
+<br />
+The CLASMAP defines JESSPOOL as TYPE(SPL).<br />
+<br />
+Example:<br />
+SHOW CLASMAP<br />
+<br />
+By default a user has access only to that user's own JESSPOOL resources. However, situations exist where a user legitimately requires access to jobs that run under another user's userid. In particular, if a user routes SYSOUT to an external writer, the external writer should have access to that user's SYSOUT. <br />
+<br />
+The localnodeid. resource will be restricted to only system programmers, operators, and automated operations personnel with access to allow all SERVICEs or any combination of SERVICE(READ, UPDATE, DELETE, ADD). All access will be logged. (localnodeid. resource includes all generic and/or masked permissions, example: localnodeid.-.-, localnodeid.-, etc)<br />
+<br />
+Example:<br />
+SET R(SPL)<br />
+$KEY(localnode) TYPE(SPL)<br />
+- UID(sysprgmr) SERVICE(UPDATE,READ) LOG<br />
+- UID(*) PREVENT<br />
+<br />
+The JESSPOOL localnodeid.userid.jobname.jobid.dsnumber.name, whether generic and/or masked, can be made available to users, when approved by the ISSO. Access will be identified at the minimum access for the user to accomplish the users function, SERVICE(READ, UPDATE, DELETE, ADD). All access will be logged. An example is team members within a team, providing the capability to view, help, and/or debug other team member jobs/processes. If frequent situations occur where users working on a common project require selective access to each other's jobs, then the installation may delegate to the individual users the authority to grant access, but only with the approval of the ISSO.<br />
+<br />
+Example:<br />
+SET R(SPL)<br />
+$KEY(localnode) TYPE(SPL)<br />
+UMO- UID(UML03IGUSRZSS***UMO) SERVICE(UPDATE,READ) LOG<br />
+- UID(*) PREVENT<br />
+<br />
+If IBM's SDSF product is installed on the system, resources defined to the JESSPOOL resource class control functions related to jobs, output groups, and SYSIN/SYSOUT data sets on various SDSF panels.<br />
+<br />
+CSSMTP will not be granted to the JESSPOOL resource of the high level &quot;node.&quot; or &quot;localnodeid.&quot;. CSSMTP can have access to the specific approved JESSPOOL resources, minimally qualified to the node.userid. and all access will be logged. This will ensure system records who (userid) sent traffic to CSSMTP, when and what job/process.<br />
+<br />
+Spooling products users (CA-SPOOL, CA View, etc) will be restricted to localnodeid.userid.jobname.jobid.dsnumber.name, whether generic and/or masked when approved by the ISSO. Logging of access is not required.<br />
+<br />
+The ISSO will review JESSPOOL resource rules. If a rule has been determined not to have been used within the last two years, the rule must be removed.</p><h2>Check Contents</h2><p>From there ACF Command screen enter:<br />
+SET RESOURCE(SPL)<br />
+LIST LIKE(localnodeid-)<br />
+<br />
+If the accesses to the JESSPOOL resources are properly restricted using the following guidance, this is not a finding.<br />
+<br />
+NOTE: If CLASMAP defines JESSPOOL as anything other than TYPE(SPL), replace SPL below with the appropriate three letters.<br />
+<br />
+Review the JESSPOOL report for resource rules with the following naming convention. These rules may be fully qualified, be specified as generic, or be specified with masking as indicated below:<br />
+<br />
+localnodeid.logonid.jobname.jobid.dsnumber.name<br />
+<br />
+localnodeid - The name of the node on which the SYSIN or SYSOUT data set currently resides.<br />
+logonid - The logonid associated with the job. This is the logonid ACF2 uses for validation purposes when the job runs.<br />
+jobname - The name that appears in the name field of the JOB statement.<br />
+jobid - The job number JES2 assigned to the job.<br />
+dsnumber - The unique data set number JES2 assigned to the spool data set. A D is the first character of this qualifier.<br />
+name -The name of the data set specified in the DSN= parameter of the DD statement. If the JCL did not specify DSN= on the DD statement that creates the spool data set, JES2 uses a question mark (?).<br />
+<br />
+All users have access to their own JESSPOOL resources.<br />
+<br />
+The localnodeid. resource will be restricted to only system programmers, operators, and automated operations personnel, with access to allow all SERVICEs or any combination of SERVICE(...). All access will be logged. (localnodeid. resource includes all generic and/or masked permissions, example: localnodeid.-.-, localnodeid.-, etc)<br />
+<br />
+The JESSPOOL localnodeid.userid.jobname.jobid.dsnumber.name, whether generic and/or masked, can be made available to users, when approved by the ISSO. Access will be identified at the minimum access for the user to accomplish the users function, SERVICE(READ, UPDATE, DELETE, ADD). All access will be logged. An example is team members within a team, providing the capability to view, help, and/or debug other team member jobs/processes.<br />
+<br />
+CSSMTP will be restricted to localnodeid.userid.jobname.jobid.dsnumber.name, whether generic and/or masked when approved by the ISSO. All access will be logged.<br />
+<br />
+Spooling products users (CA-SPOOL, CA View, etc) will be restricted to localnodeid.userid.jobname.jobid.dsnumber.name, whether generic and/or masked when approved by the ISSO. Logging of access is not required.</p><h2>Vulnerability Number</h2><p>V-223532</p><h2>Documentable</h2><p>False</p><h2>Rule Version</h2><p>ACF2-JS-000050</p><h2>Severity Override Guidance</h2><p>From there ACF Command screen enter:<br />
+SET RESOURCE(SPL)<br />
+LIST LIKE(localnodeid-)<br />
+<br />
+If the accesses to the JESSPOOL resources are properly restricted using the following guidance, this is not a finding.<br />
+<br />
+NOTE: If CLASMAP defines JESSPOOL as anything other than TYPE(SPL), replace SPL below with the appropriate three letters.<br />
+<br />
+Review the JESSPOOL report for resource rules with the following naming convention. These rules may be fully qualified, be specified as generic, or be specified with masking as indicated below:<br />
+<br />
+localnodeid.logonid.jobname.jobid.dsnumber.name<br />
+<br />
+localnodeid - The name of the node on which the SYSIN or SYSOUT data set currently resides.<br />
+logonid - The logonid associated with the job. This is the logonid ACF2 uses for validation purposes when the job runs.<br />
+jobname - The name that appears in the name field of the JOB statement.<br />
+jobid - The job number JES2 assigned to the job.<br />
+dsnumber - The unique data set number JES2 assigned to the spool data set. A D is the first character of this qualifier.<br />
+name -The name of the data set specified in the DSN= parameter of the DD statement. If the JCL did not specify DSN= on the DD statement that creates the spool data set, JES2 uses a question mark (?).<br />
+<br />
+All users have access to their own JESSPOOL resources.<br />
+<br />
+The localnodeid. resource will be restricted to only system programmers, operators, and automated operations personnel, with access to allow all SERVICEs or any combination of SERVICE(...). All access will be logged. (localnodeid. resource includes all generic and/or masked permissions, example: localnodeid.-.-, localnodeid.-, etc)<br />
+<br />
+The JESSPOOL localnodeid.userid.jobname.jobid.dsnumber.name, whether generic and/or masked, can be made available to users, when approved by the ISSO. Access will be identified at the minimum access for the user to accomplish the users function, SERVICE(READ, UPDATE, DELETE, ADD). All access will be logged. An example is team members within a team, providing the capability to view, help, and/or debug other team member jobs/processes.<br />
+<br />
+CSSMTP will be restricted to localnodeid.userid.jobname.jobid.dsnumber.name, whether generic and/or masked when approved by the ISSO. All access will be logged.<br />
+<br />
+Spooling products users (CA-SPOOL, CA View, etc) will be restricted to localnodeid.userid.jobname.jobid.dsnumber.name, whether generic and/or masked when approved by the ISSO. Logging of access is not required.</p><h2>Check Content Reference</h2><p>M</p><h2>Target Key</h2><p>4100</p></body></html>

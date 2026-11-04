@@ -1,0 +1,41 @@
+<!doctype html><html lang="en"><head><meta charset="utf-8"><title>STIGQter: STIG Check Details: SV-256007r882363_rule: The multicast Rendezvous Point (RP) Arista router must be configured to filter Protocol Independent Multicast (PIM) Register and Join messages received from the Designated Router (DR) for any undesirable multicast groups and sources.</title><link rel="icon" type="image/svg+xml" href="STIGQter.svg" /><script async src="https://www.googletagmanager.com/gtag/js?id=UA-31381839-2"></script><script src="include.js"></script><script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-4110907817782130" crossorigin="anonymous"></script></head><body><div><img src="STIGQter.svg" alt="STIGQter" style="height:1em;" /> <a href="https://www.stigqter.com/">STIGQter</a>: <a href="main.html">STIG Summary</a>: <a href="U_Arista_MLS_EOS_4-X_Router_STIG_V2R2_Manual-xccdf.html">Arista MLS EOS 4.X Router Security Technical Implementation Guide Version: 2 Release: 2 Benchmark Date: 02 Apr 2025</a>:</div> <h1>The multicast Rendezvous Point (RP) Arista router must be configured to filter Protocol Independent Multicast (PIM) Register and Join messages received from the Designated Router (DR) for any undesirable multicast groups and sources.</h1><h2>DISA Rule</h2><p>SV-256007r882363_rule</p><h2>Vulnerability Number</h2><p>V-256007</p><h2>Group Title</h2><p>SRG-NET-000019-RTR-000013</p><h2>Rule Version</h2><p>ARST-RT-000210</p><h2>Severity</h2><p>CAT III</p><h2>CCI(s)</h2><ul><li>CCI-001414 - Enforce approved authorizations for controlling the flow of information between connected systems based on organization-defined information flow control policies.</li></ul><h2>Weight</h2><p>10</p><h2>Fix Recommendation</h2><p>Configure the RP router to filter PIM register and join messages received from a multicast DR for any undesirable multicast groups or sources.<br />
+<br />
+Step 1: Configure an ACL to filter the multicast groups.<br />
+<br />
+LEAF-1A(config)#ip access-list standard ALLOWED_MULTICAST_GROUP<br />
+LEAF-1A(config-std-acl-ALLOWED_MULTICAST_GROUP)#10 permit 224.0.0.0/8<br />
+LEAF-1A(config-std-acl-ALLOWED_MULTICAST_GROUP)#20 deny any<br />
+<br />
+Step 2: Apply the ACL in the PIM process globally.<br />
+<br />
+LEAF-1A(config)#router pim sparse-mode<br />
+LEAF-1A(config-router-pim-sparse)#ipv4<br />
+LEAF-1A(config-router-pim-sparse-ipv4)#rp address 100.2.1.6 access-list ALLOWED_MULTICAST_GROUP</p><h2>Check Contents</h2><p>Verify that the RP router is configured to filter PIM register and join messages. <br />
+<br />
+Step 1: To verify the ACL is configured to filter the multicast groups, execute the command &quot;show ip access-lists&quot;.<br />
+<br />
+ip access-list standard ALLOWED_MULTICAST_GROUP<br />
+   10 permit 224.0.0.0/8<br />
+   20 deny any<br />
+<br />
+Step 2: To verify the ACL is applied to the PIM process, execute the command &quot;show run section router pim&quot;.<br />
+<br />
+router pim sparse-mode<br />
+   ipv4<br />
+      rp address 100.2.1.6 access-list ALLOWED_MULTICAST_GROUP<br />
+<br />
+If the RP router peering with PIM-SM routers is not configured with a PIM import policy to block registration messages for any undesirable multicast groups and sources, this is a finding.</p><h2>Vulnerability Number</h2><p>V-256007</p><h2>Documentable</h2><p>False</p><h2>Rule Version</h2><p>ARST-RT-000210</p><h2>Severity Override Guidance</h2><p>Verify that the RP router is configured to filter PIM register and join messages. <br />
+<br />
+Step 1: To verify the ACL is configured to filter the multicast groups, execute the command &quot;show ip access-lists&quot;.<br />
+<br />
+ip access-list standard ALLOWED_MULTICAST_GROUP<br />
+   10 permit 224.0.0.0/8<br />
+   20 deny any<br />
+<br />
+Step 2: To verify the ACL is applied to the PIM process, execute the command &quot;show run section router pim&quot;.<br />
+<br />
+router pim sparse-mode<br />
+   ipv4<br />
+      rp address 100.2.1.6 access-list ALLOWED_MULTICAST_GROUP<br />
+<br />
+If the RP router peering with PIM-SM routers is not configured with a PIM import policy to block registration messages for any undesirable multicast groups and sources, this is a finding.</p><h2>Check Content Reference</h2><p>M</p><h2>Target Key</h2><p>5513</p></body></html>

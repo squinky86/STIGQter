@@ -1,0 +1,33 @@
+<!doctype html><html lang="en"><head><meta charset="utf-8"><title>STIGQter: STIG Check Details: SV-213723r981956_rule: DB2 must prohibit user installation of logic modules (stored procedures, functions, triggers, views, etc.) without explicit privileged status.</title><link rel="icon" type="image/svg+xml" href="STIGQter.svg" /><script async src="https://www.googletagmanager.com/gtag/js?id=UA-31381839-2"></script><script src="include.js"></script><script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-4110907817782130" crossorigin="anonymous"></script></head><body><div><img src="STIGQter.svg" alt="STIGQter" style="height:1em;" /> <a href="https://www.stigqter.com/">STIGQter</a>: <a href="main.html">STIG Summary</a>: <a href="U_IBM_DB2_V10-5_LUW_STIG_V2R2_Manual-xccdf.html">IBM DB2 V10.5 LUW Security Technical Implementation Guide Version: 2 Release: 2 Benchmark Date: 01 Jul 2026</a>:</div> <h1>DB2 must prohibit user installation of logic modules (stored procedures, functions, triggers, views, etc.) without explicit privileged status.</h1><h2>DISA Rule</h2><p>SV-213723r981956_rule</p><h2>Vulnerability Number</h2><p>V-213723</p><h2>Group Title</h2><p>SRG-APP-000378-DB-000365</p><h2>Rule Version</h2><p>DB2X-00-008000</p><h2>Severity</h2><p>CAT II</p><h2>CCI(s)</h2><ul><li>CCI-000366 - Implement the security configuration settings.</li></ul><h2>Weight</h2><p>10</p><h2>Fix Recommendation</h2><p>Run the REVOKE command to revoke database authorities and schema privileges from user: <br />
+DB2&gt; REVOKE CREATEIN ON SCHEMA&lt;schema_name&gt; FROM &lt;user&gt; <br />
+DB2&gt; REVOKE &lt;db authority&gt; ON DATABASE FROM &lt;USER&gt;<br />
+<br />
+Note: Select the following knowledgebase link for information regarding revoking database authorities: <br />
+http://www.ibm.com/support/knowledgecenter/SSEPGG_10.5.0/com.ibm.db2.luw.sql.ref.doc/doc/r0000981.html?cp=SSEPGG_10.5.0%2F2-12-7-181&amp;lang=en<br />
+<br />
+Select the following knowledgebase link for information regarding revoking schema privileges: <br />
+http://www.ibm.com/support/knowledgecenter/SSEPGG_10.5.0/com.ibm.db2.luw.sql.ref.doc/doc/r0000988.html?cp=SSEPGG_10.5.0%2F2-12-7-189&amp;lang=en</p><h2>Check Contents</h2><p>The user needs CREATEINAUTH privileges for the schema to create objects in an existing schema.<br />
+<br />
+Run the following Query to find which user has privilege to create objects in schemas:<br />
+DB2&gt; SELECT GRANTEE, SCHEMANAME, CREATEINAUTH, ALTERINAUTH <br />
+           FROM SYSCAT.SCHEMAAUTH<br />
+<br />
+If a non-authorized user has privilege, this is a finding.<br />
+<br />
+Run the following query to which user has privilege to create new schema and other objects:<br />
+DB2&gt; SELECT GRANTEE, CREATETABAUTH, EXTERNALROUTINEAUTH, DBADMAUTH, IMPLSCHEMAAUTH <br />
+           FROM SYSCAT.DBAUTH<br />
+<br />
+If a non-authorized user has privilege, this is a finding.</p><h2>Vulnerability Number</h2><p>V-213723</p><h2>Documentable</h2><p>False</p><h2>Rule Version</h2><p>DB2X-00-008000</p><h2>Severity Override Guidance</h2><p>The user needs CREATEINAUTH privileges for the schema to create objects in an existing schema.<br />
+<br />
+Run the following Query to find which user has privilege to create objects in schemas:<br />
+DB2&gt; SELECT GRANTEE, SCHEMANAME, CREATEINAUTH, ALTERINAUTH <br />
+           FROM SYSCAT.SCHEMAAUTH<br />
+<br />
+If a non-authorized user has privilege, this is a finding.<br />
+<br />
+Run the following query to which user has privilege to create new schema and other objects:<br />
+DB2&gt; SELECT GRANTEE, CREATETABAUTH, EXTERNALROUTINEAUTH, DBADMAUTH, IMPLSCHEMAAUTH <br />
+           FROM SYSCAT.DBAUTH<br />
+<br />
+If a non-authorized user has privilege, this is a finding.</p><h2>Check Content Reference</h2><p>M</p><h2>Target Key</h2><p>3989</p></body></html>

@@ -1,0 +1,40 @@
+<!doctype html><html lang="en"><head><meta charset="utf-8"><title>STIGQter: STIG Check Details: SV-261462r996793_rule: SLEM 5 must generate audit records for all uses of privileged functions.</title><link rel="icon" type="image/svg+xml" href="STIGQter.svg" /><script async src="https://www.googletagmanager.com/gtag/js?id=UA-31381839-2"></script><script src="include.js"></script><script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-4110907817782130" crossorigin="anonymous"></script></head><body><div><img src="STIGQter.svg" alt="STIGQter" style="height:1em;" /> <a href="https://www.stigqter.com/">STIGQter</a>: <a href="main.html">STIG Summary</a>: <a href="U_SLEM_5_STIG_V1R4_Manual-xccdf.html">SUSE Linux Enterprise Micro (SLEM) 5 Security Technical Implementation Guide Version: 1 Release: 4 Benchmark Date: 01 Apr 2026</a>:</div> <h1>SLEM 5 must generate audit records for all uses of privileged functions.</h1><h2>DISA Rule</h2><p>SV-261462r996793_rule</p><h2>Vulnerability Number</h2><p>V-261462</p><h2>Group Title</h2><p>SRG-OS-000327-GPOS-00127</p><h2>Rule Version</h2><p>SLEM-05-654195</p><h2>Severity</h2><p>CAT II</p><h2>CCI(s)</h2><ul><li>CCI-002234 - Log the execution of privileged functions.</li><li>CCI-001914 - Provide the capability for organization-defined individuals or roles to change the logging to be performed on organization-defined system components based on organization-defined selectable event criteria within organization-defined time thresholds.</li><li>CCI-001875 - Provide an audit reduction capability that supports on-demand audit review and analysis.</li><li>CCI-001877 - Provide an audit reduction capability that supports after-the-fact investigations of incidents.</li><li>CCI-001878 - Provide a report generation capability that supports on-demand audit review and analysis.</li><li>CCI-001879 - Provide a report generation capability that supports on-demand reporting requirements.</li><li>CCI-001880 - Provide a report generation capability that supports after-the-fact investigations of security incidents.</li><li>CCI-001881 - Provide an audit reduction capability that does not alter original content or time ordering of audit records.</li><li>CCI-001882 - Provide a report generation capability that does not alter original content or time ordering of audit records.</li><li>CCI-001889 - Record time stamps for audit records that meet organization-defined granularity of time measurement.</li><li>CCI-001890 - Record time stamps for audit records that use Coordinated Universal Time, have a fixed local time offset from Coordinated Universal Time, or that include the local time offset as part of the time stamp.</li></ul><h2>Weight</h2><p>10</p><h2>Fix Recommendation</h2><p>Configure SLEM 5 to generate an audit record for any privileged use of the &quot;execve&quot; system call.<br />
+<br />
+Add or modify the following lines in &quot;/etc/audit/rules.d/audit.rules&quot; file:<br />
+<br />
+-a always,exit -F arch=b32 -S execve -C uid!=euid -F euid=0 -k setuid<br />
+-a always,exit -F arch=b64 -S execve -C uid!=euid -F euid=0 -k setuid<br />
+-a always,exit -F arch=b32 -S execve -C gid!=egid -F egid=0 -k setgid<br />
+-a always,exit -F arch=b64 -S execve -C gid!=egid -F egid=0 -k setgid<br />
+<br />
+To reload the rules file, restart the audit daemon:<br />
+<br />
+     &gt; sudo systemctl restart auditd.service<br />
+<br />
+or issue the following command:<br />
+<br />
+     &gt; sudo augenrules --load</p><h2>Check Contents</h2><p>Verify SLEM 5 generates an audit record for any privileged use of the &quot;execve&quot; system call with the following command:<br />
+<br />
+     &gt; sudo auditctl -l | grep -w 'execve'<br />
+     -a always,exit -F arch=b32 -S execve -C uid!=euid -F euid=0 -F key=setuid<br />
+     -a always,exit -F arch=b64 -S execve -C uid!=euid -F euid=0 -F key=setuid<br />
+     -a always,exit -F arch=b32 -S execve -C gid!=egid -F egid=0 -F key=setgid<br />
+     -a always,exit -F arch=b64 -S execve -C gid!=egid -F egid=0 -F key=setgid<br />
+<br />
+If both the &quot;b32&quot; and &quot;b64&quot; audit rules for &quot;SUID&quot; files are not defined, this is a finding.<br />
+<br />
+If both the &quot;b32&quot; and &quot;b64&quot; audit rules for &quot;SGID&quot; files are not defined, this is a finding.<br />
+<br />
+Note: The &quot;key=&quot; value is arbitrary and can be different from the example output above.</p><h2>Vulnerability Number</h2><p>V-261462</p><h2>Documentable</h2><p>False</p><h2>Rule Version</h2><p>SLEM-05-654195</p><h2>Severity Override Guidance</h2><p>Verify SLEM 5 generates an audit record for any privileged use of the &quot;execve&quot; system call with the following command:<br />
+<br />
+     &gt; sudo auditctl -l | grep -w 'execve'<br />
+     -a always,exit -F arch=b32 -S execve -C uid!=euid -F euid=0 -F key=setuid<br />
+     -a always,exit -F arch=b64 -S execve -C uid!=euid -F euid=0 -F key=setuid<br />
+     -a always,exit -F arch=b32 -S execve -C gid!=egid -F egid=0 -F key=setgid<br />
+     -a always,exit -F arch=b64 -S execve -C gid!=egid -F egid=0 -F key=setgid<br />
+<br />
+If both the &quot;b32&quot; and &quot;b64&quot; audit rules for &quot;SUID&quot; files are not defined, this is a finding.<br />
+<br />
+If both the &quot;b32&quot; and &quot;b64&quot; audit rules for &quot;SGID&quot; files are not defined, this is a finding.<br />
+<br />
+Note: The &quot;key=&quot; value is arbitrary and can be different from the example output above.</p><h2>Check Content Reference</h2><p>M</p><h2>Target Key</h2><p>5596</p></body></html>

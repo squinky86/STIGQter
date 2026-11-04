@@ -1,0 +1,58 @@
+<!doctype html><html lang="en"><head><meta charset="utf-8"><title>STIGQter: STIG Check Details: SV-283912r1203985_rule: The Nokia router must be configured to implement message authentication for all control plane protocols.</title><link rel="icon" type="image/svg+xml" href="STIGQter.svg" /><script async src="https://www.googletagmanager.com/gtag/js?id=UA-31381839-2"></script><script src="include.js"></script><script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-4110907817782130" crossorigin="anonymous"></script></head><body><div><img src="STIGQter.svg" alt="STIGQter" style="height:1em;" /> <a href="https://www.stigqter.com/">STIGQter</a>: <a href="main.html">STIG Summary</a>: <a href="U_Nokia_SR_OS_25-x_RTR_V1R1_STIG_Manual-xccdf.html">Nokia Service Router OS 25.x Router Security Technical Implementation Guide Version: 1 Release: 1 Benchmark Date: 28 Apr 2026</a>:</div> <h1>The Nokia router must be configured to implement message authentication for all control plane protocols.</h1><h2>DISA Rule</h2><p>SV-283912r1203985_rule</p><h2>Vulnerability Number</h2><p>V-283912</p><h2>Group Title</h2><p>SRG-NET-000230-RTR-000001</p><h2>Rule Version</h2><p>NOKI-RT-001010</p><h2>Severity</h2><p>CAT II</p><h2>CCI(s)</h2><ul><li>CCI-001184 - Protect the authenticity of communications sessions.</li><li>CCI-000803 - Implement mechanisms for authentication to a cryptographic module that meet the requirements of applicable laws, Executive Orders, directives, policies, regulations, standards, and guidance for such authentication.</li></ul><h2>Weight</h2><p>10</p><h2>Fix Recommendation</h2><p>Configure authentication to be enabled for every protocol that affects the routing or forwarding tables using the example below: <br />
+<br />
+Configure key chain:<br />
+<br />
+- configure system security keychain &quot;test&quot; tcp-option-number send tcp-ao<br />
+- configure system security keychain &quot;test&quot; tcp-option-number receive tcp-ao<br />
+- configure system security keychain &quot;test&quot; direction bi entry 1 key 12345678901 algorithm aes-128-cmac-96 begin-time 2025/12/28 UTC 00:00:00<br />
+- configure system security keychain &quot;test&quot; direction bi entry 2 key 12345678901 algorithm aes-128-cmac-96 begin-time 2026/06/28 UTC 00:00:00<br />
+<br />
+Apply the key chain to the BGP neighbor:<br />
+<br />
+- configure router bgp group &quot;eBGP&quot; auth-keychain &quot;test&quot;</p><h2>Check Contents</h2><p>Review the router configuration.<br />
+<br />
+For every protocol that affects the routing or forwarding tables (where information is exchanged between neighbors), verify neighbor router authentication is enabled using the command below: <br />
+<br />
+- show system security keychain &quot;test&quot; detail<br />
+<br />
+Key chain:test<br />
+<br />
+Description                : (Not Specified)<br />
+TCP-Option number send     : tcp-ao                 Admin state   : Up<br />
+TCP-Option number receive  : tcp-ao                 Oper state    : Up<br />
+Used by                    : BGP<br />
+Expired                    : No<br />
+<br />
+Key entries for key chain: test<br />
+<br />
+Id               : 1                    Direction        : send-receive<br />
+Algorithm        : aes-128-cmac-96      Option           : none<br />
+Admin State      : Up                   RX Valid         : Yes<br />
+TX Active        : Yes                  Tolerance        : 300<br />
+Begin Time       : 2025/12/28 00:00:00  Begin Time (UTC) : 2025/12/28 00:00:00<br />
+End Time         : 2026/06/28 00:00:00  End Time (UTC)   : 2026/06/28 00:00:00<br />
+<br />
+If authentication is not enabled, this is a finding.</p><h2>Vulnerability Number</h2><p>V-283912</p><h2>Documentable</h2><p>False</p><h2>Rule Version</h2><p>NOKI-RT-001010</p><h2>Severity Override Guidance</h2><p>Review the router configuration.<br />
+<br />
+For every protocol that affects the routing or forwarding tables (where information is exchanged between neighbors), verify neighbor router authentication is enabled using the command below: <br />
+<br />
+- show system security keychain &quot;test&quot; detail<br />
+<br />
+Key chain:test<br />
+<br />
+Description                : (Not Specified)<br />
+TCP-Option number send     : tcp-ao                 Admin state   : Up<br />
+TCP-Option number receive  : tcp-ao                 Oper state    : Up<br />
+Used by                    : BGP<br />
+Expired                    : No<br />
+<br />
+Key entries for key chain: test<br />
+<br />
+Id               : 1                    Direction        : send-receive<br />
+Algorithm        : aes-128-cmac-96      Option           : none<br />
+Admin State      : Up                   RX Valid         : Yes<br />
+TX Active        : Yes                  Tolerance        : 300<br />
+Begin Time       : 2025/12/28 00:00:00  Begin Time (UTC) : 2025/12/28 00:00:00<br />
+End Time         : 2026/06/28 00:00:00  End Time (UTC)   : 2026/06/28 00:00:00<br />
+<br />
+If authentication is not enabled, this is a finding.</p><h2>Check Content Reference</h2><p>M</p><h2>Target Key</h2><p>5746</p></body></html>

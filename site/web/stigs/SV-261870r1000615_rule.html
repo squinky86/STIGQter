@@ -1,0 +1,108 @@
+<!doctype html><html lang="en"><head><meta charset="utf-8"><title>STIGQter: STIG Check Details: SV-261870r1000615_rule: PostgreSQL must produce audit records containing sufficient information to establish the outcome (success or failure) of the events.</title><link rel="icon" type="image/svg+xml" href="STIGQter.svg" /><script async src="https://www.googletagmanager.com/gtag/js?id=UA-31381839-2"></script><script src="include.js"></script><script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-4110907817782130" crossorigin="anonymous"></script></head><body><div><img src="STIGQter.svg" alt="STIGQter" style="height:1em;" /> <a href="https://www.stigqter.com/">STIGQter</a>: <a href="main.html">STIG Summary</a>: <a href="U_CD_Postgres_16_STIG_V1R3_Manual-xccdf.html">Crunchy Data Postgres 16 Security Technical Implementation Guide Version: 1 Release: 3 Benchmark Date: 01 Jul 2026</a>:</div> <h1>PostgreSQL must produce audit records containing sufficient information to establish the outcome (success or failure) of the events.</h1><h2>DISA Rule</h2><p>SV-261870r1000615_rule</p><h2>Vulnerability Number</h2><p>V-261870</p><h2>Group Title</h2><p>SRG-APP-000099-DB-000043</p><h2>Rule Version</h2><p>CD16-00-001400</p><h2>Severity</h2><p>CAT II</p><h2>CCI(s)</h2><ul><li>CCI-000134 - Ensure that audit records containing information that establishes the outcome of the event.</li></ul><h2>Weight</h2><p>10</p><h2>Fix Recommendation</h2><p>Using pgaudit, PostgreSQL can be configured to audit various facets of PostgreSQL. Refer to supplementary content APPENDIX-B for documentation on installing pgaudit. <br />
+<br />
+All errors, denials, and unsuccessful requests are logged if logging is enabled. Refer to supplementary content APPENDIX-C for documentation on enabling logging.<br />
+<br />
+Note: The following instructions use the PGDATA and PGVER environment variables. Refer to APPENDIX-F for instructions on configuring PGDATA and APPENDIX-H for PGVER.<br />
+<br />
+With pgaudit and logging enabled, set the configuration settings in postgresql.conf, as the database administrator (shown here as &quot;postgres&quot;), to the following: <br />
+<br />
+$ sudo su - postgres<br />
+$ vi ${PGDATA?}/postgresql.conf <br />
+pgaudit.log_catalog='on' <br />
+pgaudit.log_level='log' <br />
+pgaudit.log_parameter='on' <br />
+pgaudit.log_statement_once='off' <br />
+pgaudit.log='ddl, role, read, write' <br />
+<br />
+Tune the following logging configurations in postgresql.conf: <br />
+<br />
+$ sudo su - postgres<br />
+$ vi ${PGDATA?}/postgresql.conf <br />
+log_line_prefix = '&lt; %m %u %d %e: &gt;' <br />
+log_error_verbosity = default <br />
+<br />
+As the system administrator, restart PostgreSQL: <br />
+<br />
+$ sudo systemctl reload postgresql-${PGVER?}</p><h2>Check Contents</h2><p>Note: The following instructions use the PGLOG environment variables. Refer to supplementary content APPENDIX-I for instructions on configuring them.<br />
+<br />
+As a database administrator (shown here as &quot;postgres&quot;), create a table, insert a value, alter the table and update the table by running the following SQL:<br />
+<br />
+CREATE TABLE stig_test(id INT);<br />
+INSERT INTO stig_test(id) VALUES (0);<br />
+ALTER TABLE stig_test ADD COLUMN name text;<br />
+UPDATE stig_test SET id = 1 WHERE id = 0;<br />
+<br />
+As a user without access to the stig_test table, run the following SQL:<br />
+<br />
+INSERT INTO stig_test(id) VALUES (1);<br />
+ALTER TABLE stig_test DROP COLUMN name;<br />
+UPDATE stig_test SET id = 0 WHERE id = 1;<br />
+<br />
+The prior SQL should generate errors:<br />
+<br />
+ERROR: permission denied for relation stig_test<br />
+ERROR: must be owner of relation stig_test<br />
+ERROR: permission denied for relation stig_test<br />
+<br />
+As the database administrator, drop the test table by running the following SQL:<br />
+<br />
+DROP TABLE stig_test;<br />
+<br />
+Verify the errors were logged:<br />
+<br />
+$ sudo su - postgres<br />
+$ cat ${PGLOG?}/&lt;latest_logfile&gt;<br />
+&lt; 2024-02-23 14:51:31.103 UTC psql postgres postgres 570bf22a.3af2 2024-04-11 14:51:22 EDT [local] &gt;LOG: AUDIT: SESSION,1,1,DDL,CREATE TABLE,,,CREATE TABLE stig_test(id INT);,&lt;none&gt;<br />
+&lt; 2024-02-23 14:51:44.835 UTC psql postgres postgres 570bf22a.3af2 2024-04-11 14:51:22 EDT [local] &gt;LOG: AUDIT: SESSION,2,1,WRITE,INSERT,,,INSERT INTO stig_test(id) VALUES (0);,&lt;none&gt;<br />
+&lt; 2024-02-23 14:53:25.805 UTC psql postgres postgres 570bf22a.3af2 2024-04-11 14:51:22 EDT [local] &gt;LOG: AUDIT: SESSION,3,1,DDL,ALTER TABLE,,,ALTER TABLE stig_test ADD COLUMN name text;,&lt;none&gt;<br />
+&lt; 2024-02-23 14:53:54.381 UTC psql postgres postgres 570bf22a.3af2 2024-04-11 14:51:22 EDT [local] &gt;LOG: AUDIT: SESSION,4,1,WRITE,UPDATE,,,UPDATE stig_test SET id = 1 WHERE id = 0;,&lt;none&gt;<br />
+&lt; 2024-02-23 14:54:20.832 UTC psql postgres postgres 570bf22a.3af2 2024-04-11 14:51:22 EDT [local] &gt;ERROR: permission denied for relation stig_test<br />
+&lt; 2024-02-23 14:54:20.832 UTC psql postgres postgres 570bf22a.3af2 2024-04-11 14:51:22 EDT [local] &gt;STATEMENT: INSERT INTO stig_test(id) VALUES (1);<br />
+&lt; 2024-02-23 14:54:41.032 UTC psql postgres postgres 570bf22a.3af2 2024-04-11 14:51:22 EDT [local] &gt;ERROR: must be owner of relation stig_test<br />
+&lt; 2024-02-23 14:54:41.032 UTC psql postgres postgres 570bf22a.3af2 2024-04-11 14:51:22 EDT [local] &gt;STATEMENT: ALTER TABLE stig_test DROP COLUMN name;<br />
+&lt; 2024-02-23 14:54:54.378 UTC psql postgres postgres 570bf22a.3af2 2024-04-11 14:51:22 EDT [local] &gt;ERROR: permission denied for relation stig_test<br />
+&lt; 2024-02-23 14:54:54.378 UTC psql postgres postgres 570bf22a.3af2 2024-04-11 14:51:22 EDT [local] &gt;STATEMENT: UPDATE stig_test SET id = 0 WHERE id = 1;<br />
+&lt; 2024-02-23 14:55:23.723 UTC psql postgres postgres 570bf307.3b0a 2024-04-11 14:55:03 EDT [local] &gt;LOG: AUDIT: SESSION,1,1,DDL,DROP TABLE,,,DROP TABLE stig_test;,&lt;none&gt;<br />
+<br />
+If audit records exist without the outcome of the event that occurred, this is a finding.</p><h2>Vulnerability Number</h2><p>V-261870</p><h2>Documentable</h2><p>False</p><h2>Rule Version</h2><p>CD16-00-001400</p><h2>Severity Override Guidance</h2><p>Note: The following instructions use the PGLOG environment variables. Refer to supplementary content APPENDIX-I for instructions on configuring them.<br />
+<br />
+As a database administrator (shown here as &quot;postgres&quot;), create a table, insert a value, alter the table and update the table by running the following SQL:<br />
+<br />
+CREATE TABLE stig_test(id INT);<br />
+INSERT INTO stig_test(id) VALUES (0);<br />
+ALTER TABLE stig_test ADD COLUMN name text;<br />
+UPDATE stig_test SET id = 1 WHERE id = 0;<br />
+<br />
+As a user without access to the stig_test table, run the following SQL:<br />
+<br />
+INSERT INTO stig_test(id) VALUES (1);<br />
+ALTER TABLE stig_test DROP COLUMN name;<br />
+UPDATE stig_test SET id = 0 WHERE id = 1;<br />
+<br />
+The prior SQL should generate errors:<br />
+<br />
+ERROR: permission denied for relation stig_test<br />
+ERROR: must be owner of relation stig_test<br />
+ERROR: permission denied for relation stig_test<br />
+<br />
+As the database administrator, drop the test table by running the following SQL:<br />
+<br />
+DROP TABLE stig_test;<br />
+<br />
+Verify the errors were logged:<br />
+<br />
+$ sudo su - postgres<br />
+$ cat ${PGLOG?}/&lt;latest_logfile&gt;<br />
+&lt; 2024-02-23 14:51:31.103 UTC psql postgres postgres 570bf22a.3af2 2024-04-11 14:51:22 EDT [local] &gt;LOG: AUDIT: SESSION,1,1,DDL,CREATE TABLE,,,CREATE TABLE stig_test(id INT);,&lt;none&gt;<br />
+&lt; 2024-02-23 14:51:44.835 UTC psql postgres postgres 570bf22a.3af2 2024-04-11 14:51:22 EDT [local] &gt;LOG: AUDIT: SESSION,2,1,WRITE,INSERT,,,INSERT INTO stig_test(id) VALUES (0);,&lt;none&gt;<br />
+&lt; 2024-02-23 14:53:25.805 UTC psql postgres postgres 570bf22a.3af2 2024-04-11 14:51:22 EDT [local] &gt;LOG: AUDIT: SESSION,3,1,DDL,ALTER TABLE,,,ALTER TABLE stig_test ADD COLUMN name text;,&lt;none&gt;<br />
+&lt; 2024-02-23 14:53:54.381 UTC psql postgres postgres 570bf22a.3af2 2024-04-11 14:51:22 EDT [local] &gt;LOG: AUDIT: SESSION,4,1,WRITE,UPDATE,,,UPDATE stig_test SET id = 1 WHERE id = 0;,&lt;none&gt;<br />
+&lt; 2024-02-23 14:54:20.832 UTC psql postgres postgres 570bf22a.3af2 2024-04-11 14:51:22 EDT [local] &gt;ERROR: permission denied for relation stig_test<br />
+&lt; 2024-02-23 14:54:20.832 UTC psql postgres postgres 570bf22a.3af2 2024-04-11 14:51:22 EDT [local] &gt;STATEMENT: INSERT INTO stig_test(id) VALUES (1);<br />
+&lt; 2024-02-23 14:54:41.032 UTC psql postgres postgres 570bf22a.3af2 2024-04-11 14:51:22 EDT [local] &gt;ERROR: must be owner of relation stig_test<br />
+&lt; 2024-02-23 14:54:41.032 UTC psql postgres postgres 570bf22a.3af2 2024-04-11 14:51:22 EDT [local] &gt;STATEMENT: ALTER TABLE stig_test DROP COLUMN name;<br />
+&lt; 2024-02-23 14:54:54.378 UTC psql postgres postgres 570bf22a.3af2 2024-04-11 14:51:22 EDT [local] &gt;ERROR: permission denied for relation stig_test<br />
+&lt; 2024-02-23 14:54:54.378 UTC psql postgres postgres 570bf22a.3af2 2024-04-11 14:51:22 EDT [local] &gt;STATEMENT: UPDATE stig_test SET id = 0 WHERE id = 1;<br />
+&lt; 2024-02-23 14:55:23.723 UTC psql postgres postgres 570bf307.3b0a 2024-04-11 14:55:03 EDT [local] &gt;LOG: AUDIT: SESSION,1,1,DDL,DROP TABLE,,,DROP TABLE stig_test;,&lt;none&gt;<br />
+<br />
+If audit records exist without the outcome of the event that occurred, this is a finding.</p><h2>Check Content Reference</h2><p>M</p><h2>Target Key</h2><p>5598</p></body></html>

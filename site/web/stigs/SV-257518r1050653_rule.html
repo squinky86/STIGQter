@@ -1,0 +1,207 @@
+<!doctype html><html lang="en"><head><meta charset="utf-8"><title>STIGQter: STIG Check Details: SV-257518r1050653_rule: OpenShift must generate audit records when successful/unsuccessful attempts to access privileges occur.</title><link rel="icon" type="image/svg+xml" href="STIGQter.svg" /><script async src="https://www.googletagmanager.com/gtag/js?id=UA-31381839-2"></script><script src="include.js"></script><script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-4110907817782130" crossorigin="anonymous"></script></head><body><div><img src="STIGQter.svg" alt="STIGQter" style="height:1em;" /> <a href="https://www.stigqter.com/">STIGQter</a>: <a href="main.html">STIG Summary</a>: <a href="U_RH_OpenShift_Container_Platform_4-x_STIG_V2R6_Manual-xccdf.html">Red Hat OpenShift Container Platform 4.x Security Technical Implementation Guide Version: 2 Release: 6 Benchmark Date: 01 Jul 2026</a>:</div> <h1>OpenShift must generate audit records when successful/unsuccessful attempts to access privileges occur.</h1><h2>DISA Rule</h2><p>SV-257518r1050653_rule</p><h2>Vulnerability Number</h2><p>V-257518</p><h2>Group Title</h2><p>SRG-APP-000091-CTR-000160</p><h2>Rule Version</h2><p>CNTR-OS-000160</p><h2>Severity</h2><p>CAT II</p><h2>CCI(s)</h2><ul><li>CCI-000172 - Generate audit records for the event types defined in AU-2 c that include the audit record content defined in AU-3.</li></ul><h2>Weight</h2><p>10</p><h2>Fix Recommendation</h2><p>Apply the following machine config and generate audit records by executing following:<br />
+<br />
+ for mcpool in $(oc get mcp -oname | sed &quot;s:.*/::&quot; ); do<br />
+echo &quot;apiVersion: machineconfiguration.openshift.io/v1<br />
+kind: MachineConfig<br />
+metadata:<br />
+  name: 75-access-privileges-rules-$mcpool<br />
+  labels:<br />
+    machineconfiguration.openshift.io/role: $mcpool<br />
+spec:<br />
+  config:<br />
+    ignition:<br />
+      version: 3.1.0<br />
+    storage:<br />
+      files:<br />
+      - contents:<br />
+          source: data:,-a%20always%2Cexit%20-F%20arch%3Db32%20-S%20chmod%20-F%20auid%3E%3D1000%20-F%20auid%21%3Dunset%20-F%20key%3Dperm_mod%0A-a%20always%2Cexit%20-F%20arch%3Db64%20-S%20chmod%20-F%20auid%3E%3D1000%20-F%20auid%21%3Dunset%20-F%20key%3Dperm_mod%0A<br />
+        mode: 0644<br />
+        path: /etc/audit/rules.d/75-chmod_dac_modification.rules<br />
+        overwrite: true<br />
+      - contents:<br />
+          source: data:,-a%20always%2Cexit%20-F%20arch%3Db32%20-S%20chown%20-F%20auid%3E%3D1000%20-F%20auid%21%3Dunset%20-F%20key%3Dperm_mod%0A-a%20always%2Cexit%20-F%20arch%3Db64%20-S%20chown%20-F%20auid%3E%3D1000%20-F%20auid%21%3Dunset%20-F%20key%3Dperm_mod%0A<br />
+        mode: 0644<br />
+        path: /etc/audit/rules.d/75-chown_dac_modification.rules<br />
+        overwrite: true<br />
+      - contents:<br />
+          source: data:,-a%20always%2Cexit%20-F%20arch%3Db32%20-S%20fchmod%20-F%20auid%3E%3D1000%20-F%20auid%21%3Dunset%20-F%20key%3Dperm_mod%0A-a%20always%2Cexit%20-F%20arch%3Db64%20-S%20fchmod%20-F%20auid%3E%3D1000%20-F%20auid%21%3Dunset%20-F%20key%3Dperm_mod%0A<br />
+        mode: 0644<br />
+        path: /etc/audit/rules.d/75-fchmod_dac_modification.rules<br />
+        overwrite: true<br />
+      - contents:<br />
+          source: data:,-a%20always%2Cexit%20-F%20arch%3Db32%20-S%20fchmodat%20-F%20auid%3E%3D1000%20-F%20auid%21%3Dunset%20-F%20key%3Dperm_mod%0A-a%20always%2Cexit%20-F%20arch%3Db64%20-S%20fchmodat%20-F%20auid%3E%3D1000%20-F%20auid%21%3Dunset%20-F%20key%3Dperm_mod%0A<br />
+        mode: 0644<br />
+        path: /etc/audit/rules.d/75-fchmodat_dac_modification.rules<br />
+        overwrite: true<br />
+      - contents:<br />
+          source: data:,-a%20always%2Cexit%20-F%20arch%3Db32%20-S%20fchown%20-F%20auid%3E%3D1000%20-F%20auid%21%3Dunset%20-F%20key%3Dperm_mod%0A-a%20always%2Cexit%20-F%20arch%3Db64%20-S%20fchown%20-F%20auid%3E%3D1000%20-F%20auid%21%3Dunset%20-F%20key%3Dperm_mod%0A<br />
+        mode: 0644<br />
+        path: /etc/audit/rules.d/75-fchown_dac_modification.rules<br />
+        overwrite: true<br />
+      - contents:<br />
+          source: data:,-a%20always%2Cexit%20-F%20arch%3Db32%20-S%20fchownat%20-F%20auid%3E%3D1000%20-F%20auid%21%3Dunset%20-F%20key%3Dperm_mod%0A-a%20always%2Cexit%20-F%20arch%3Db64%20-S%20fchownat%20-F%20auid%3E%3D1000%20-F%20auid%21%3Dunset%20-F%20key%3Dperm_mod%0A<br />
+        mode: 0644<br />
+        path: /etc/audit/rules.d/75-fchownat_dac_modification.rules<br />
+        overwrite: true<br />
+      - contents:<br />
+          source: data:,-a%20always%2Cexit%20-F%20arch%3Db32%20-S%20fremovexattr%20-F%20auid%3E%3D1000%20-F%20auid%21%3Dunset%20-F%20key%3Dperm_mod%0A-a%20always%2Cexit%20-F%20arch%3Db64%20-S%20fremovexattr%20-F%20auid%3E%3D1000%20-F%20auid%21%3Dunset%20-F%20key%3Dperm_mod%0A<br />
+        mode: 0644<br />
+        path: /etc/audit/rules.d/75-fremovexattr_dac_modification.rules<br />
+        overwrite: true<br />
+      - contents:<br />
+          source: data:,-a%20always%2Cexit%20-F%20arch%3Db32%20-S%20fsetxattr%20-F%20auid%3E%3D1000%20-F%20auid%21%3Dunset%20-F%20key%3Dperm_mod%0A-a%20always%2Cexit%20-F%20arch%3Db64%20-S%20fsetxattr%20-F%20auid%3E%3D1000%20-F%20auid%21%3Dunset%20-F%20key%3Dperm_mod%0A<br />
+        mode: 0644<br />
+        path: /etc/audit/rules.d/75-fsetxattr_dac_modification.rules<br />
+        overwrite: true<br />
+      - contents:<br />
+          source: data:,-a%20always%2Cexit%20-F%20arch%3Db32%20-S%20lchown%20-F%20auid%3E%3D1000%20-F%20auid%21%3Dunset%20-F%20key%3Dperm_mod%0A-a%20always%2Cexit%20-F%20arch%3Db64%20-S%20lchown%20-F%20auid%3E%3D1000%20-F%20auid%21%3Dunset%20-F%20key%3Dperm_mod%0A<br />
+        mode: 0644<br />
+        path: /etc/audit/rules.d/75-lchown_dac_modification.rules<br />
+        overwrite: true<br />
+      - contents:<br />
+          source: data:,-a%20always%2Cexit%20-F%20arch%3Db32%20-S%20lremovexattr%20-F%20auid%3E%3D1000%20-F%20auid%21%3Dunset%20-F%20key%3Dperm_mod%0A-a%20always%2Cexit%20-F%20arch%3Db64%20-S%20lremovexattr%20-F%20auid%3E%3D1000%20-F%20auid%21%3Dunset%20-F%20key%3Dperm_mod%0A<br />
+        mode: 0644<br />
+        path: /etc/audit/rules.d/75-lremovexattr_dac_modification.rules<br />
+        overwrite: true<br />
+      - contents:<br />
+          source: data:,-a%20always%2Cexit%20-F%20arch%3Db32%20-S%20lsetxattr%20-F%20auid%3E%3D1000%20-F%20auid%21%3Dunset%20-F%20key%3Dperm_mod%0A-a%20always%2Cexit%20-F%20arch%3Db64%20-S%20lsetxattr%20-F%20auid%3E%3D1000%20-F%20auid%21%3Dunset%20-F%20key%3Dperm_mod%0A<br />
+        mode: 0644<br />
+        path: /etc/audit/rules.d/75-lsetxattr_dac_modification.rules<br />
+        overwrite: true<br />
+      - contents:<br />
+          source: data:,-a%20always%2Cexit%20-F%20arch%3Db32%20-S%20removexattr%20-F%20auid%3E%3D1000%20-F%20auid%21%3Dunset%20-F%20key%3Dperm_mod%0A-a%20always%2Cexit%20-F%20arch%3Db64%20-S%20removexattr%20-F%20auid%3E%3D1000%20-F%20auid%21%3Dunset%20-F%20key%3Dperm_mod%0A<br />
+        mode: 0644<br />
+        path: /etc/audit/rules.d/75-removexattr_dac_modification.rules<br />
+        overwrite: true<br />
+      - contents:<br />
+          source: data:,-a%20always%2Cexit%20-F%20arch%3Db32%20-S%20setxattr%20-F%20auid%3E%3D1000%20-F%20auid%21%3Dunset%20-F%20key%3Dperm_mod%0A-a%20always%2Cexit%20-F%20arch%3Db64%20-S%20setxattr%20-F%20auid%3E%3D1000%20-F%20auid%21%3Dunset%20-F%20key%3Dperm_mod%0A<br />
+        mode: 0644<br />
+        path: /etc/audit/rules.d/75-setxattr_dac_modification.rules<br />
+        overwrite: true<br />
+      - contents:<br />
+          source: data:,%23%23%20This%20content%20is%20a%20section%20of%20an%20Audit%20config%20snapshot%20recommended%20for%20Red%2520Hat%2520Enterprise%2520Linux%2520CoreOS%25204%20systems%20that%20target%20OSPP%20compliance.%0A%23%23%20The%20following%20content%20has%20been%20retreived%20on%202019-03-11%20from%3A%20https%3A//github.com/linux-audit/audit-userspace/blob/master/rules/30-ospp-v42.rules%0A%0A%23%23%20The%20purpose%20of%20these%20rules%20is%20to%20meet%20the%20requirements%20for%20Operating%0A%23%23%20System%20Protection%20Profile%20%28OSPP%29v4.2.%20These%20rules%20depends%20on%20having%0A%23%23%2010-base-config.rules%2C%2011-loginuid.rules%2C%20and%2043-module-load.rules%20installed.%0A%0A%23%23%20Unsuccessful%20file%20creation%20%28open%20with%20O_CREAT%29%0A-a%20always%2Cexit%20-F%20arch%3Db32%20-S%20openat%2Copen_by_handle_at%20-F%20a2%260100%20-F%20exit%3D-EACCES%20-F%20auid%3E%3D1000%20-F%20auid%21%3Dunset%20-F%20key%3Dunsuccessful-create%0A-a%20always%2Cexit%20-F%20arch%3Db64%20-S%20openat%2Copen_by_handle_at%20-F%20a2%260100%20-F%20exit%3D-EACCES%20-F%20auid%3E%3D1000%20-F%20auid%21%3Dunset%20-F%20key%3Dunsuccessful-create%0A-a%20always%2Cexit%20-F%20arch%3Db32%20-S%20open%20-F%20a1%260100%20-F%20exit%3D-EACCES%20-F%20auid%3E%3D1000%20-F%20auid%21%3Dunset%20-F%20key%3Dunsuccessful-create%0A-a%20always%2Cexit%20-F%20arch%3Db64%20-S%20open%20-F%20a1%260100%20-F%20exit%3D-EACCES%20-F%20auid%3E%3D1000%20-F%20auid%21%3Dunset%20-F%20key%3Dunsuccessful-create%0A-a%20always%2Cexit%20-F%20arch%3Db32%20-S%20openat%2Copen_by_handle_at%20-F%20a2%260100%20-F%20exit%3D-EPERM%20-F%20auid%3E%3D1000%20-F%20auid%21%3Dunset%20-F%20key%3Dunsuccessful-create%0A-a%20always%2Cexit%20-F%20arch%3Db64%20-S%20openat%2Copen_by_handle_at%20-F%20a2%260100%20-F%20exit%3D-EPERM%20-F%20auid%3E%3D1000%20-F%20auid%21%3Dunset%20-F%20key%3Dunsuccessful-create%0A-a%20always%2Cexit%20-F%20arch%3Db32%20-S%20open%20-F%20a1%260100%20-F%20exit%3D-EPERM%20-F%20auid%3E%3D1000%20-F%20auid%21%3Dunset%20-F%20key%3Dunsuccessful-create%0A-a%20always%2Cexit%20-F%20arch%3Db64%20-S%20open%20-F%20a1%260100%20-F%20exit%3D-EPERM%20-F%20auid%3E%3D1000%20-F%20auid%21%3Dunset%20-F%20key%3Dunsuccessful-create%0A-a%20always%2Cexit%20-F%20arch%3Db32%20-S%20creat%20-F%20exit%3D-EACCES%20-F%20auid%3E%3D1000%20-F%20auid%21%3Dunset%20-F%20key%3Dunsuccessful-create%0A-a%20always%2Cexit%20-F%20arch%3Db64%20-S%20creat%20-F%20exit%3D-EACCES%20-F%20auid%3E%3D1000%20-F%20auid%21%3Dunset%20-F%20key%3Dunsuccessful-create%0A-a%20always%2Cexit%20-F%20arch%3Db32%20-S%20creat%20-F%20exit%3D-EPERM%20-F%20auid%3E%3D1000%20-F%20auid%21%3Dunset%20-F%20key%3Dunsuccessful-create%0A-a%20always%2Cexit%20-F%20arch%3Db64%20-S%20creat%20-F%20exit%3D-EPERM%20-F%20auid%3E%3D1000%20-F%20auid%21%3Dunset%20-F%20key%3Dunsuccessful-create%0A%0A%23%23%20Unsuccessful%20file%20modifications%20%28open%20for%20write%20or%20truncate%29%0A-a%20always%2Cexit%20-F%20arch%3Db32%20-S%20openat%2Copen_by_handle_at%20-F%20a2%2601003%20-F%20exit%3D-EACCES%20-F%20auid%3E%3D1000%20-F%20auid%21%3Dunset%20-F%20key%3Dunsuccessful-modification%0A-a%20always%2Cexit%20-F%20arch%3Db64%20-S%20openat%2Copen_by_handle_at%20-F%20a2%2601003%20-F%20exit%3D-EACCES%20-F%20auid%3E%3D1000%20-F%20auid%21%3Dunset%20-F%20key%3Dunsuccessful-modification%0A-a%20always%2Cexit%20-F%20arch%3Db32%20-S%20open%20-F%20a1%2601003%20-F%20exit%3D-EACCES%20-F%20auid%3E%3D1000%20-F%20auid%21%3Dunset%20-F%20key%3Dunsuccessful-modification%0A-a%20always%2Cexit%20-F%20arch%3Db64%20-S%20open%20-F%20a1%2601003%20-F%20exit%3D-EACCES%20-F%20auid%3E%3D1000%20-F%20auid%21%3Dunset%20-F%20key%3Dunsuccessful-modification%0A-a%20always%2Cexit%20-F%20arch%3Db32%20-S%20openat%2Copen_by_handle_at%20-F%20a2%2601003%20-F%20exit%3D-EPERM%20-F%20auid%3E%3D1000%20-F%20auid%21%3Dunset%20-F%20key%3Dunsuccessful-modification%0A-a%20always%2Cexit%20-F%20arch%3Db64%20-S%20openat%2Copen_by_handle_at%20-F%20a2%2601003%20-F%20exit%3D-EPERM%20-F%20auid%3E%3D1000%20-F%20auid%21%3Dunset%20-F%20key%3Dunsuccessful-modification%0A-a%20always%2Cexit%20-F%20arch%3Db32%20-S%20open%20-F%20a1%2601003%20-F%20exit%3D-EPERM%20-F%20auid%3E%3D1000%20-F%20auid%21%3Dunset%20-F%20key%3Dunsuccessful-modification%0A-a%20always%2Cexit%20-F%20arch%3Db64%20-S%20open%20-F%20a1%2601003%20-F%20exit%3D-EPERM%20-F%20auid%3E%3D1000%20-F%20auid%21%3Dunset%20-F%20key%3Dunsuccessful-modification%0A-a%20always%2Cexit%20-F%20arch%3Db32%20-S%20truncate%2Cftruncate%20-F%20exit%3D-EACCES%20-F%20auid%3E%3D1000%20-F%20auid%21%3Dunset%20-F%20key%3Dunsuccessful-modification%0A-a%20always%2Cexit%20-F%20arch%3Db64%20-S%20truncate%2Cftruncate%20-F%20exit%3D-EACCES%20-F%20auid%3E%3D1000%20-F%20auid%21%3Dunset%20-F%20key%3Dunsuccessful-modification%0A-a%20always%2Cexit%20-F%20arch%3Db32%20-S%20truncate%2Cftruncate%20-F%20exit%3D-EPERM%20-F%20auid%3E%3D1000%20-F%20auid%21%3Dunset%20-F%20key%3Dunsuccessful-modification%0A-a%20always%2Cexit%20-F%20arch%3Db64%20-S%20truncate%2Cftruncate%20-F%20exit%3D-EPERM%20-F%20auid%3E%3D1000%20-F%20auid%21%3Dunset%20-F%20key%3Dunsuccessful-modification%0A%0A%23%23%20Unsuccessful%20file%20access%20%28any%20other%20opens%29%20This%20has%20to%20go%20last.%0A-a%20always%2Cexit%20-F%20arch%3Db32%20-S%20open%2Ccreat%2Ctruncate%2Cftruncate%2Copenat%2Copen_by_handle_at%20-F%20exit%3D-EACCES%20-F%20auid%3E%3D1000%20-F%20auid%21%3Dunset%20-F%20key%3Dunsuccessful-access%0A-a%20always%2Cexit%20-F%20arch%3Db64%20-S%20open%2Ccreat%2Ctruncate%2Cftruncate%2Copenat%2Copen_by_handle_at%20-F%20exit%3D-EACCES%20-F%20auid%3E%3D1000%20-F%20auid%21%3Dunset%20-F%20key%3Dunsuccessful-access%0A-a%20always%2Cexit%20-F%20arch%3Db32%20-S%20open%2Ccreat%2Ctruncate%2Cftruncate%2Copenat%2Copen_by_handle_at%20-F%20exit%3D-EPERM%20-F%20auid%3E%3D1000%20-F%20auid%21%3Dunset%20-F%20key%3Dunsuccessful-access%0A-a%20always%2Cexit%20-F%20arch%3Db64%20-S%20open%2Ccreat%2Ctruncate%2Cftruncate%2Copenat%2Copen_by_handle_at%20-F%20exit%3D-EPERM%20-F%20auid%3E%3D1000%20-F%20auid%21%3Dunset%20-F%20key%3Dunsuccessful-access%0A<br />
+        mode: 0644<br />
+        path: /etc/audit/rules.d/30-ospp-v42-remediation.rules<br />
+        overwrite: true<br />
+&quot; | oc apply -f -<br />
+done</p><h2>Check Contents</h2><p>Verify OpenShift is configured to generate audit records when successful/unsuccessful attempts to access or delete security objects, security levels, and privileges occur by executing the following:<br />
+ <br />
+for node in $(oc get node -oname); do oc debug $node -- chroot /host /bin/bash -c 'echo -n &quot;$HOSTNAME &quot;; grep -e &quot;key=perm_mod&quot; -e &quot;key=unsuccessful-create&quot;  -e &quot;key=unsuccessful-modification&quot; -e &quot;key=unsuccessful-access&quot; /etc/audit/audit.rules|| echo &quot;not found&quot;' 2&gt;/dev/null; done<br />
+<br />
+Confirm the following rules exist on each node:<br />
+-a always,exit -F arch=b32 -S chmod -F auid&gt;=1000 -F auid!=unset -F key=perm_mod<br />
+-a always,exit -F arch=b32 -S chown -F auid&gt;=1000 -F auid!=unset -F key=perm_mod<br />
+-a always,exit -F arch=b32 -S fchmod -F auid&gt;=1000 -F auid!=unset -F key=perm_mod<br />
+-a always,exit -F arch=b32 -S fchmodat -F auid&gt;=1000 -F auid!=unset -F key=perm_mod<br />
+-a always,exit -F arch=b32 -S fchown -F auid&gt;=1000 -F auid!=unset -F key=perm_mod<br />
+-a always,exit -F arch=b32 -S fchownat -F auid&gt;=1000 -F auid!=unset -F key=perm_mod<br />
+-a always,exit -F arch=b32 -S fremovexattr -F auid&gt;=1000 -F auid!=unset -F key=perm_mod<br />
+-a always,exit -F arch=b32 -S fsetxattr -F auid&gt;=1000 -F auid!=unset -F key=perm_mod<br />
+-a always,exit -F arch=b32 -S lchown -F auid&gt;=1000 -F auid!=unset -F key=perm_mod<br />
+-a always,exit -F arch=b32 -S lremovexattr -F auid&gt;=1000 -F auid!=unset -F key=perm_mod<br />
+-a always,exit -F arch=b32 -S lsetxattr -F auid&gt;=1000 -F auid!=unset -F key=perm_mod<br />
+-a always,exit -F arch=b32 -S removexattr -F auid&gt;=1000 -F auid!=unset -F key=perm_mod<br />
+-a always,exit -F arch=b32 -S setxattr -F auid&gt;=1000 -F auid!=unset -F key=perm_mod<br />
+-a always,exit -F arch=b64 -S chmod -F auid&gt;=1000 -F auid!=unset -F key=perm_mod<br />
+-a always,exit -F arch=b64 -S chown -F auid&gt;=1000 -F auid!=unset -F key=perm_mod<br />
+-a always,exit -F arch=b64 -S fchmod -F auid&gt;=1000 -F auid!=unset -F key=perm_mod<br />
+-a always,exit -F arch=b64 -S fchmodat -F auid&gt;=1000 -F auid!=unset -F key=perm_mod<br />
+-a always,exit -F arch=b64 -S fchown -F auid&gt;=1000 -F auid!=unset -F key=perm_mod<br />
+-a always,exit -F arch=b64 -S fchownat -F auid&gt;=1000 -F auid!=unset -F key=perm_mod<br />
+-a always,exit -F arch=b64 -S fremovexattr -F auid&gt;=1000 -F auid!=unset -F key=perm_mod<br />
+-a always,exit -F arch=b64 -S fsetxattr -F auid&gt;=1000 -F auid!=unset -F key=perm_mod<br />
+-a always,exit -F arch=b64 -S lchown -F auid&gt;=1000 -F auid!=unset -F key=perm_mod<br />
+-a always,exit -F arch=b64 -S lremovexattr -F auid&gt;=1000 -F auid!=unset -F key=perm_mod<br />
+-a always,exit -F arch=b64 -S lsetxattr -F auid&gt;=1000 -F auid!=unset -F key=perm_mod<br />
+-a always,exit -F arch=b64 -S removexattr -F auid&gt;=1000 -F auid!=unset -F key=perm_mod<br />
+-a always,exit -F arch=b64 -S setxattr -F auid&gt;=1000 -F auid!=unset -F key=perm_mod<br />
+-a always,exit -F arch=b32 -S open -F a1&amp;0x40 -F exit=-EACCES -F auid&gt;=1000 -F auid!=unset -F key=unsuccessful-create<br />
+-a always,exit -F arch=b32 -S open -F a1&amp;0x40 -F exit=-EPERM -F auid&gt;=1000 -F auid!=unset -F key=unsuccessful-create<br />
+-a always,exit -F arch=b32 -S openat,open_by_handle_at -F a2&amp;0x40 -F exit=-EACCES -F auid&gt;=1000 -F auid!=unset -F key=unsuccessful-create<br />
+-a always,exit -F arch=b32 -S openat,open_by_handle_at -F a2&amp;0x40 -F exit=-EPERM -F auid&gt;=1000 -F auid!=unset -F key=unsuccessful-create<br />
+-a always,exit -F arch=b64 -S open -F a1&amp;0x40 -F exit=-EACCES -F auid&gt;=1000 -F auid!=unset -F key=unsuccessful-create<br />
+-a always,exit -F arch=b64 -S open -F a1&amp;0x40 -F exit=-EPERM -F auid&gt;=1000 -F auid!=unset -F key=unsuccessful-create<br />
+-a always,exit -F arch=b64 -S openat,open_by_handle_at -F a2&amp;0x40 -F exit=-EACCES -F auid&gt;=1000 -F auid!=unset -F key=unsuccessful-create<br />
+-a always,exit -F arch=b64 -S openat,open_by_handle_at -F a2&amp;0x40 -F exit=-EPERM -F auid&gt;=1000 -F auid!=unset -F key=unsuccessful-create<br />
+-a always,exit -F arch=b32 -S open -F a1&amp;0x203 -F exit=-EACCES -F auid&gt;=1000 -F auid!=unset -F key=unsuccessful-modification<br />
+-a always,exit -F arch=b32 -S open -F a1&amp;0x203 -F exit=-EPERM -F auid&gt;=1000 -F auid!=unset -F key=unsuccessful-modification<br />
+-a always,exit -F arch=b32 -S openat,open_by_handle_at -F a2&amp;0x203 -F exit=-EACCES -F auid&gt;=1000 -F auid!=unset -F key=unsuccessful-modification<br />
+-a always,exit -F arch=b32 -S openat,open_by_handle_at -F a2&amp;0x203 -F exit=-EPERM -F auid&gt;=1000 -F auid!=unset -F key=unsuccessful-modification<br />
+-a always,exit -F arch=b64 -S open -F a1&amp;0x203 -F exit=-EACCES -F auid&gt;=1000 -F auid!=unset -F key=unsuccessful-modification<br />
+-a always,exit -F arch=b64 -S open -F a1&amp;0x203 -F exit=-EPERM -F auid&gt;=1000 -F auid!=unset -F key=unsuccessful-modification<br />
+-a always,exit -F arch=b64 -S openat,open_by_handle_at -F a2&amp;0x203 -F exit=-EACCES -F auid&gt;=1000 -F auid!=unset -F key=unsuccessful-modification<br />
+-a always,exit -F arch=b64 -S openat,open_by_handle_at -F a2&amp;0x203 -F exit=-EPERM -F auid&gt;=1000 -F auid!=unset -F key=unsuccessful-modification<br />
+-a always,exit -F arch=b32 -S open,creat,truncate,ftruncate,openat,open_by_handle_at -F exit=-EACCES -F auid&gt;=1000 -F auid!=unset -F key=unsuccessful-access<br />
+-a always,exit -F arch=b32 -S open,creat,truncate,ftruncate,openat,open_by_handle_at -F exit=-EPERM -F auid&gt;=1000 -F auid!=unset -F key=unsuccessful-access<br />
+-a always,exit -F arch=b64 -S open,truncate,ftruncate,creat,openat,open_by_handle_at -F exit=-EACCES -F auid&gt;=1000 -F auid!=unset -F key=unsuccessful-access<br />
+-a always,exit -F arch=b64 -S open,truncate,ftruncate,creat,openat,open_by_handle_at -F exit=-EPERM -F auid&gt;=1000 -F auid!=unset -F key=unsuccessful-access<br />
+-a always,exit -F arch=b32 -S creat -F exit=-EACCES -F auid&gt;=1000 -F auid!=unset -F key=unsuccessful-create<br />
+-a always,exit -F arch=b32 -S creat -F exit=-EPERM -F auid&gt;=1000 -F auid!=unset -F key=unsuccessful-create<br />
+-a always,exit -F arch=b64 -S creat -F exit=-EACCES -F auid&gt;=1000 -F auid!=unset -F key=unsuccessful-create<br />
+-a always,exit -F arch=b64 -S creat -F exit=-EPERM -F auid&gt;=1000 -F auid!=unset -F key=unsuccessful-create<br />
+-a always,exit -F arch=b32 -S truncate,ftruncate -F exit=-EACCES -F auid&gt;=1000 -F auid!=unset -F key=unsuccessful-modification<br />
+-a always,exit -F arch=b32 -S truncate,ftruncate -F exit=-EPERM -F auid&gt;=1000 -F auid!=unset -F key=unsuccessful-modification<br />
+-a always,exit -F arch=b64 -S truncate,ftruncate -F exit=-EACCES -F auid&gt;=1000 -F auid!=unset -F key=unsuccessful-modification<br />
+-a always,exit -F arch=b64 -S truncate,ftruncate -F exit=-EPERM -F auid&gt;=1000 -F auid!=unset -F key=unsuccessful-modification<br />
+<br />
+On each node, if the above rules are not listed, or the return is &quot;not found&quot;, this is a finding.</p><h2>Vulnerability Number</h2><p>V-257518</p><h2>Documentable</h2><p>False</p><h2>Rule Version</h2><p>CNTR-OS-000160</p><h2>Severity Override Guidance</h2><p>Verify OpenShift is configured to generate audit records when successful/unsuccessful attempts to access or delete security objects, security levels, and privileges occur by executing the following:<br />
+ <br />
+for node in $(oc get node -oname); do oc debug $node -- chroot /host /bin/bash -c 'echo -n &quot;$HOSTNAME &quot;; grep -e &quot;key=perm_mod&quot; -e &quot;key=unsuccessful-create&quot;  -e &quot;key=unsuccessful-modification&quot; -e &quot;key=unsuccessful-access&quot; /etc/audit/audit.rules|| echo &quot;not found&quot;' 2&gt;/dev/null; done<br />
+<br />
+Confirm the following rules exist on each node:<br />
+-a always,exit -F arch=b32 -S chmod -F auid&gt;=1000 -F auid!=unset -F key=perm_mod<br />
+-a always,exit -F arch=b32 -S chown -F auid&gt;=1000 -F auid!=unset -F key=perm_mod<br />
+-a always,exit -F arch=b32 -S fchmod -F auid&gt;=1000 -F auid!=unset -F key=perm_mod<br />
+-a always,exit -F arch=b32 -S fchmodat -F auid&gt;=1000 -F auid!=unset -F key=perm_mod<br />
+-a always,exit -F arch=b32 -S fchown -F auid&gt;=1000 -F auid!=unset -F key=perm_mod<br />
+-a always,exit -F arch=b32 -S fchownat -F auid&gt;=1000 -F auid!=unset -F key=perm_mod<br />
+-a always,exit -F arch=b32 -S fremovexattr -F auid&gt;=1000 -F auid!=unset -F key=perm_mod<br />
+-a always,exit -F arch=b32 -S fsetxattr -F auid&gt;=1000 -F auid!=unset -F key=perm_mod<br />
+-a always,exit -F arch=b32 -S lchown -F auid&gt;=1000 -F auid!=unset -F key=perm_mod<br />
+-a always,exit -F arch=b32 -S lremovexattr -F auid&gt;=1000 -F auid!=unset -F key=perm_mod<br />
+-a always,exit -F arch=b32 -S lsetxattr -F auid&gt;=1000 -F auid!=unset -F key=perm_mod<br />
+-a always,exit -F arch=b32 -S removexattr -F auid&gt;=1000 -F auid!=unset -F key=perm_mod<br />
+-a always,exit -F arch=b32 -S setxattr -F auid&gt;=1000 -F auid!=unset -F key=perm_mod<br />
+-a always,exit -F arch=b64 -S chmod -F auid&gt;=1000 -F auid!=unset -F key=perm_mod<br />
+-a always,exit -F arch=b64 -S chown -F auid&gt;=1000 -F auid!=unset -F key=perm_mod<br />
+-a always,exit -F arch=b64 -S fchmod -F auid&gt;=1000 -F auid!=unset -F key=perm_mod<br />
+-a always,exit -F arch=b64 -S fchmodat -F auid&gt;=1000 -F auid!=unset -F key=perm_mod<br />
+-a always,exit -F arch=b64 -S fchown -F auid&gt;=1000 -F auid!=unset -F key=perm_mod<br />
+-a always,exit -F arch=b64 -S fchownat -F auid&gt;=1000 -F auid!=unset -F key=perm_mod<br />
+-a always,exit -F arch=b64 -S fremovexattr -F auid&gt;=1000 -F auid!=unset -F key=perm_mod<br />
+-a always,exit -F arch=b64 -S fsetxattr -F auid&gt;=1000 -F auid!=unset -F key=perm_mod<br />
+-a always,exit -F arch=b64 -S lchown -F auid&gt;=1000 -F auid!=unset -F key=perm_mod<br />
+-a always,exit -F arch=b64 -S lremovexattr -F auid&gt;=1000 -F auid!=unset -F key=perm_mod<br />
+-a always,exit -F arch=b64 -S lsetxattr -F auid&gt;=1000 -F auid!=unset -F key=perm_mod<br />
+-a always,exit -F arch=b64 -S removexattr -F auid&gt;=1000 -F auid!=unset -F key=perm_mod<br />
+-a always,exit -F arch=b64 -S setxattr -F auid&gt;=1000 -F auid!=unset -F key=perm_mod<br />
+-a always,exit -F arch=b32 -S open -F a1&amp;0x40 -F exit=-EACCES -F auid&gt;=1000 -F auid!=unset -F key=unsuccessful-create<br />
+-a always,exit -F arch=b32 -S open -F a1&amp;0x40 -F exit=-EPERM -F auid&gt;=1000 -F auid!=unset -F key=unsuccessful-create<br />
+-a always,exit -F arch=b32 -S openat,open_by_handle_at -F a2&amp;0x40 -F exit=-EACCES -F auid&gt;=1000 -F auid!=unset -F key=unsuccessful-create<br />
+-a always,exit -F arch=b32 -S openat,open_by_handle_at -F a2&amp;0x40 -F exit=-EPERM -F auid&gt;=1000 -F auid!=unset -F key=unsuccessful-create<br />
+-a always,exit -F arch=b64 -S open -F a1&amp;0x40 -F exit=-EACCES -F auid&gt;=1000 -F auid!=unset -F key=unsuccessful-create<br />
+-a always,exit -F arch=b64 -S open -F a1&amp;0x40 -F exit=-EPERM -F auid&gt;=1000 -F auid!=unset -F key=unsuccessful-create<br />
+-a always,exit -F arch=b64 -S openat,open_by_handle_at -F a2&amp;0x40 -F exit=-EACCES -F auid&gt;=1000 -F auid!=unset -F key=unsuccessful-create<br />
+-a always,exit -F arch=b64 -S openat,open_by_handle_at -F a2&amp;0x40 -F exit=-EPERM -F auid&gt;=1000 -F auid!=unset -F key=unsuccessful-create<br />
+-a always,exit -F arch=b32 -S open -F a1&amp;0x203 -F exit=-EACCES -F auid&gt;=1000 -F auid!=unset -F key=unsuccessful-modification<br />
+-a always,exit -F arch=b32 -S open -F a1&amp;0x203 -F exit=-EPERM -F auid&gt;=1000 -F auid!=unset -F key=unsuccessful-modification<br />
+-a always,exit -F arch=b32 -S openat,open_by_handle_at -F a2&amp;0x203 -F exit=-EACCES -F auid&gt;=1000 -F auid!=unset -F key=unsuccessful-modification<br />
+-a always,exit -F arch=b32 -S openat,open_by_handle_at -F a2&amp;0x203 -F exit=-EPERM -F auid&gt;=1000 -F auid!=unset -F key=unsuccessful-modification<br />
+-a always,exit -F arch=b64 -S open -F a1&amp;0x203 -F exit=-EACCES -F auid&gt;=1000 -F auid!=unset -F key=unsuccessful-modification<br />
+-a always,exit -F arch=b64 -S open -F a1&amp;0x203 -F exit=-EPERM -F auid&gt;=1000 -F auid!=unset -F key=unsuccessful-modification<br />
+-a always,exit -F arch=b64 -S openat,open_by_handle_at -F a2&amp;0x203 -F exit=-EACCES -F auid&gt;=1000 -F auid!=unset -F key=unsuccessful-modification<br />
+-a always,exit -F arch=b64 -S openat,open_by_handle_at -F a2&amp;0x203 -F exit=-EPERM -F auid&gt;=1000 -F auid!=unset -F key=unsuccessful-modification<br />
+-a always,exit -F arch=b32 -S open,creat,truncate,ftruncate,openat,open_by_handle_at -F exit=-EACCES -F auid&gt;=1000 -F auid!=unset -F key=unsuccessful-access<br />
+-a always,exit -F arch=b32 -S open,creat,truncate,ftruncate,openat,open_by_handle_at -F exit=-EPERM -F auid&gt;=1000 -F auid!=unset -F key=unsuccessful-access<br />
+-a always,exit -F arch=b64 -S open,truncate,ftruncate,creat,openat,open_by_handle_at -F exit=-EACCES -F auid&gt;=1000 -F auid!=unset -F key=unsuccessful-access<br />
+-a always,exit -F arch=b64 -S open,truncate,ftruncate,creat,openat,open_by_handle_at -F exit=-EPERM -F auid&gt;=1000 -F auid!=unset -F key=unsuccessful-access<br />
+-a always,exit -F arch=b32 -S creat -F exit=-EACCES -F auid&gt;=1000 -F auid!=unset -F key=unsuccessful-create<br />
+-a always,exit -F arch=b32 -S creat -F exit=-EPERM -F auid&gt;=1000 -F auid!=unset -F key=unsuccessful-create<br />
+-a always,exit -F arch=b64 -S creat -F exit=-EACCES -F auid&gt;=1000 -F auid!=unset -F key=unsuccessful-create<br />
+-a always,exit -F arch=b64 -S creat -F exit=-EPERM -F auid&gt;=1000 -F auid!=unset -F key=unsuccessful-create<br />
+-a always,exit -F arch=b32 -S truncate,ftruncate -F exit=-EACCES -F auid&gt;=1000 -F auid!=unset -F key=unsuccessful-modification<br />
+-a always,exit -F arch=b32 -S truncate,ftruncate -F exit=-EPERM -F auid&gt;=1000 -F auid!=unset -F key=unsuccessful-modification<br />
+-a always,exit -F arch=b64 -S truncate,ftruncate -F exit=-EACCES -F auid&gt;=1000 -F auid!=unset -F key=unsuccessful-modification<br />
+-a always,exit -F arch=b64 -S truncate,ftruncate -F exit=-EPERM -F auid&gt;=1000 -F auid!=unset -F key=unsuccessful-modification<br />
+<br />
+On each node, if the above rules are not listed, or the return is &quot;not found&quot;, this is a finding.</p><h2>Check Content Reference</h2><p>M</p><h2>Target Key</h2><p>5547</p></body></html>

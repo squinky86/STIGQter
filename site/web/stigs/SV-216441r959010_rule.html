@@ -1,0 +1,37 @@
+<!doctype html><html lang="en"><head><meta charset="utf-8"><title>STIGQter: STIG Check Details: SV-216441r959010_rule: The operator must document all file system objects that have non-standard access control list settings.</title><link rel="icon" type="image/svg+xml" href="STIGQter.svg" /><script async src="https://www.googletagmanager.com/gtag/js?id=UA-31381839-2"></script><script src="include.js"></script><script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-4110907817782130" crossorigin="anonymous"></script></head><body><div><img src="STIGQter.svg" alt="STIGQter" style="height:1em;" /> <a href="https://www.stigqter.com/">STIGQter</a>: <a href="main.html">STIG Summary</a>: <a href="U_SOL_11_SPARC_STIG_V3R6_Manual-xccdf.html">Solaris 11 SPARC Security Technical Implementation Guide Version: 3 Release: 6 Benchmark Date: 01 Jul 2026</a>:</div> <h1>The operator must document all file system objects that have non-standard access control list settings.</h1><h2>DISA Rule</h2><p>SV-216441r959010_rule</p><h2>Vulnerability Number</h2><p>V-216441</p><h2>Group Title</h2><p>SRG-OS-000480</p><h2>Rule Version</h2><p>SOL-11.1-070260</p><h2>Severity</h2><p>CAT II</p><h2>CCI(s)</h2><ul><li>CCI-000366 - Implement the security configuration settings.</li></ul><h2>Weight</h2><p>10</p><h2>Fix Recommendation</h2><p>The root role is required.<br />
+<br />
+Remove ACLs that are not approved in the security policy.<br />
+<br />
+For ZFS file systems, remove all extended ACLs with the following command:<br />
+<br />
+# chmod A- [filename]<br />
+<br />
+For UFS file systems<br />
+<br />
+Determine the ACLs that are set on a file:<br />
+<br />
+# getfacl [filename]<br />
+<br />
+Remove any ACL configurations that are set:<br />
+<br />
+# setfacl -d [ACL] [filename]</p><h2>Check Contents</h2><p>The root role is required.<br />
+<br />
+Identify all file system objects that have non-standard access control lists enabled.<br />
+<br />
+# find / \( -fstype nfs -o -fstype cachefs -o -fstype autofs \<br />
+-o -fstype ctfs -o -fstype mntfs -o -fstype objfs \<br />
+-o -fstype proc \) -prune -o -acl -ls<br />
+<br />
+This command should return no output. If output is created, this is a finding.<br />
+<br />
+If the files are approved to have ACLs by organizational security policy, document the files and the reason that ACLs are required.</p><h2>Vulnerability Number</h2><p>V-216441</p><h2>Documentable</h2><p>False</p><h2>Rule Version</h2><p>SOL-11.1-070260</p><h2>Severity Override Guidance</h2><p>The root role is required.<br />
+<br />
+Identify all file system objects that have non-standard access control lists enabled.<br />
+<br />
+# find / \( -fstype nfs -o -fstype cachefs -o -fstype autofs \<br />
+-o -fstype ctfs -o -fstype mntfs -o -fstype objfs \<br />
+-o -fstype proc \) -prune -o -acl -ls<br />
+<br />
+This command should return no output. If output is created, this is a finding.<br />
+<br />
+If the files are approved to have ACLs by organizational security policy, document the files and the reason that ACLs are required.</p><h2>Check Content Reference</h2><p>M</p><h2>Target Key</h2><p>4022</p></body></html>

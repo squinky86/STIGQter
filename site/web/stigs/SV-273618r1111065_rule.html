@@ -1,0 +1,94 @@
+<!doctype html><html lang="en"><head><meta charset="utf-8"><title>STIGQter: STIG Check Details: SV-273618r1111065_rule: The RUCKUS ICX perimeter router must be configured to restrict it from accepting outbound IP packets that contain an illegitimate address in the source address field via egress filter or by enabling Unicast Reverse Path Forwarding (uRPF).</title><link rel="icon" type="image/svg+xml" href="STIGQter.svg" /><script async src="https://www.googletagmanager.com/gtag/js?id=UA-31381839-2"></script><script src="include.js"></script><script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-4110907817782130" crossorigin="anonymous"></script></head><body><div><img src="STIGQter.svg" alt="STIGQter" style="height:1em;" /> <a href="https://www.stigqter.com/">STIGQter</a>: <a href="main.html">STIG Summary</a>: <a href="U_RUCKUS_ICX_RTR_STIG_V1R1_Manual-xccdf.html">RUCKUS ICX Router Security Technical Implementation Guide Version: 1 Release: 1 Benchmark Date: 27 May 2025</a>:</div> <h1>The RUCKUS ICX perimeter router must be configured to restrict it from accepting outbound IP packets that contain an illegitimate address in the source address field via egress filter or by enabling Unicast Reverse Path Forwarding (uRPF).</h1><h2>DISA Rule</h2><p>SV-273618r1111065_rule</p><h2>Vulnerability Number</h2><p>V-273618</p><h2>Group Title</h2><p>SRG-NET-000205-RTR-000014</p><h2>Rule Version</h2><p>RCKS-RTR-000510</p><h2>Severity</h2><p>CAT I</p><h2>CCI(s)</h2><ul><li>CCI-001097 - Monitor and control communications at the external managed interfaces to the system and at key managed interfaces within the system.</li></ul><h2>Weight</h2><p>10</p><h2>Fix Recommendation</h2><p>This requirement is not applicable for the DODIN Backbone.<br />
+<br />
+Configure the router to ensure an egress ACL or uRPF is configured on internal interfaces to restrict the router from accepting any outbound IP packet that contains an illegitimate address in the source field.<br />
+<br />
+uRPF:<br />
+<br />
+ICX(config)#reverse-path-check<br />
+ICX(config)#interface ethernet 1/2/2<br />
+ICX(config-if-e10000-1/2/2)#rpf-mode loose<br />
+<br />
+ACL:<br />
+<br />
+ICX(config)#ip access ext EGRESS_FILTER<br />
+ICX(config-ext-ipacl-EGRESS_FILTER)#permit udp 10.1.15.0/24 any eq dns<br />
+ICX(config-ext-ipacl-EGRESS_FILTER)#permit tcp 10.1.15.0/24 any eq ftp<br />
+ICX(config-ext-ipacl-EGRESS_FILTER)#permit tcp 10.1.15.0/24 any eq ftp-data<br />
+ICX(config-ext-ipacl-EGRESS_FILTER)#permit tcp 10.1.15.0/24 any eq http<br />
+ICX(config-ext-ipacl-EGRESS_FILTER)#permit tcp 10.1.15.0/24 any eq http<br />
+ICX(config-ext-ipacl-EGRESS_FILTER)#permit tcp 10.1.15.0/24 any eq ssl<br />
+ICX(config-ext-ipacl-EGRESS_FILTER)#permit icmp 10.1.15.0/24 any<br />
+ICX(config-ext-ipacl-EGRESS_FILTER)#permit icmp 10.1.15.0/24 any echo<br />
+ICX(config-ext-ipacl-EGRESS_FILTER)#deny ip any any<br />
+ICX(config)#interface ethernet 1/2/2<br />
+ICX(config-if-e10000-1/2/2)#port-name downstream_link_to_LAN<br />
+ICX(config-if-e10000-1/2/2)#ip addr 10.1.25.5/24<br />
+ICX(config-if-e10000-1/2/2)#ip access-group EGRESS_FILTER in logging enable</p><h2>Check Contents</h2><p>This requirement is not applicable for the DODIN Backbone.<br />
+<br />
+Review the router configuration to verify uRPF or an egress ACL has been configured on all internal interfaces to restrict the router from accepting outbound IP packets that contain an illegitimate address in the source address field.<br />
+<br />
+uRPF example:<br />
+<br />
+reverse-path-check<br />
+!<br />
+interface ethernet 1/1/1<br />
+ port-name downstream_link_to_LAN<br />
+ ip address 10.1.25.5 255.255.255.0<br />
+ rpf-mode loose<br />
+<br />
+Egress ACL example:<br />
+<br />
+interface ethernet 1/2/2<br />
+ port-name downstream_link_to_LAN<br />
+ ip address 10.1.25.5 255.255.255.0<br />
+ ip access-group EGRESS_FILTER in logging enable<br />
+!<br />
+…<br />
+…<br />
+…<br />
+ip access-list extended EGRESS_FILTER<br />
+ sequence 10 permit udp 10.1.15.0 0.0.0.255 any eq dns<br />
+ sequence 20 permit tcp 10.1.15.0 0.0.0.255 any eq ftp<br />
+ sequence 30 permit tcp 10.1.15.0 0.0.0.255 any eq ftp-data<br />
+ sequence 40 permit tcp 10.1.15.0 0.0.0.255 any eq http<br />
+ sequence 50 permit tcp 10.1.15.0 0.0.0.255 any eq ssl<br />
+ sequence 60 permit icmp 10.1.15.0 0.0.0.255 any<br />
+ sequence 70 permit icmp 10.1.15.0 0.0.0.255 any echo<br />
+ sequence 80 deny ip any any<br />
+!<br />
+<br />
+If uRPF or an egress ACL to restrict the router from accepting outbound IP packets that contain an illegitimate address in the source address field has not been configured on all internal interfaces in an enclave, this is a finding.</p><h2>Vulnerability Number</h2><p>V-273618</p><h2>Documentable</h2><p>False</p><h2>Rule Version</h2><p>RCKS-RTR-000510</p><h2>Severity Override Guidance</h2><p>This requirement is not applicable for the DODIN Backbone.<br />
+<br />
+Review the router configuration to verify uRPF or an egress ACL has been configured on all internal interfaces to restrict the router from accepting outbound IP packets that contain an illegitimate address in the source address field.<br />
+<br />
+uRPF example:<br />
+<br />
+reverse-path-check<br />
+!<br />
+interface ethernet 1/1/1<br />
+ port-name downstream_link_to_LAN<br />
+ ip address 10.1.25.5 255.255.255.0<br />
+ rpf-mode loose<br />
+<br />
+Egress ACL example:<br />
+<br />
+interface ethernet 1/2/2<br />
+ port-name downstream_link_to_LAN<br />
+ ip address 10.1.25.5 255.255.255.0<br />
+ ip access-group EGRESS_FILTER in logging enable<br />
+!<br />
+…<br />
+…<br />
+…<br />
+ip access-list extended EGRESS_FILTER<br />
+ sequence 10 permit udp 10.1.15.0 0.0.0.255 any eq dns<br />
+ sequence 20 permit tcp 10.1.15.0 0.0.0.255 any eq ftp<br />
+ sequence 30 permit tcp 10.1.15.0 0.0.0.255 any eq ftp-data<br />
+ sequence 40 permit tcp 10.1.15.0 0.0.0.255 any eq http<br />
+ sequence 50 permit tcp 10.1.15.0 0.0.0.255 any eq ssl<br />
+ sequence 60 permit icmp 10.1.15.0 0.0.0.255 any<br />
+ sequence 70 permit icmp 10.1.15.0 0.0.0.255 any echo<br />
+ sequence 80 deny ip any any<br />
+!<br />
+<br />
+If uRPF or an egress ACL to restrict the router from accepting outbound IP packets that contain an illegitimate address in the source address field has not been configured on all internal interfaces in an enclave, this is a finding.</p><h2>Check Content Reference</h2><p>M</p><h2>Target Key</h2><p>5696</p></body></html>

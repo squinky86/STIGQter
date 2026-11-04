@@ -1,0 +1,95 @@
+<!doctype html><html lang="en"><head><meta charset="utf-8"><title>STIGQter: STIG Check Details: SV-225622r1146196_rule: The WebSphere Application Server plug-in is not specified in accordance with the proper security requirements.</title><link rel="icon" type="image/svg+xml" href="STIGQter.svg" /><script async src="https://www.googletagmanager.com/gtag/js?id=UA-31381839-2"></script><script src="include.js"></script><script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-4110907817782130" crossorigin="anonymous"></script></head><body><div><img src="STIGQter.svg" alt="STIGQter" style="height:1em;" /> <a href="https://www.stigqter.com/">STIGQter</a>: <a href="main.html">STIG Summary</a>: <a href="U_zOS_Websphere_Application_Server_for_TSS_STIG_V7R2_Manual-xccdf.html">zOS WebSphere Application Server for TSS Security Technical Implementation Guide Version: 7 Release: 2 Benchmark Date: 01 Oct 2025</a>:</div> <h1>The WebSphere Application Server plug-in is not specified in accordance with the proper security requirements.</h1><h2>DISA Rule</h2><p>SV-225622r1146196_rule</p><h2>Vulnerability Number</h2><p>V-225622</p><h2>Group Title</h2><p>SRG-OS-000033</p><h2>Rule Version</h2><p>ZWAS0050</p><h2>Severity</h2><p>CAT II</p><h2>CCI(s)</h2><ul><li>CCI-000382 - Configure the system to prohibit or restrict the use of organization-defined prohibited or restricted functions, system ports, protocols, software, and/or services.</li><li>CCI-001762 - Disable or remove organization-defined functions, ports, protocols, software, and services within the system deemed to be unnecessary and/or nonsecure.</li><li>CCI-000068 - Implement cryptographic mechanisms to protect the confidentiality of remote access sessions.</li></ul><h2>Weight</h2><p>10</p><h2>Fix Recommendation</h2><p>The ISSO will ensure that the WebSphere Application Server directives in the httpd.conf file are configured as outlined below.<br />
+<br />
+Ensure that all WAS-related directives are configured using the ServerInit, Service, and ServerTerm statements as outlined below.<br />
+<br />
+The following path entries were added to the /etc/httpd.conf file for WebSphere 3.5:<br />
+ServerInit /usr/lpp/WebSphere/AppServer/bin/was350plugin.so:init_exit /usr/lpp/WebSphere/etc/WebSphere/AppServer/properties/was.conf <br />
+Service /webapp/examples/* /usr/lpp/WebSphere/AppServer/bin/was350plugin.so:service_exit <br />
+Service /*.jhtml /usr/lpp/WebSphere/AppServer/bin/was350plugin.so:service_exit<br />
+Service /*.shtml /usr/lpp/WebSphere/AppServer/bin/was350plugin.so:service_exit <br />
+Service /servlet/* /usr/lpp/WebSphere/AppServer/bin/was350plugin.so:service_exit <br />
+Service /*.jsp /usr/lpp/WebSphere/AppServer/bin/was350plugin.so:service_exit ServerTerm /usr/lpp/WebSphere/AppServer/bin/was350plugin.so:term_exit <br />
+<br />
+The following path entries are added to the /etc/httpd.conf file for WebSphere 4.0.1:<br />
+ <br />
+ServerInit -/usr/lpp/WebSphere401/WebServerPlugIn/bin/was400plugin.so:init_exit<br />
+Service - /usr/lpp/WebSphere401/WebServerPlugIn/bin/was400plugin.so:service_exit <br />
+ServerTerm - /usr/lpp/WebSphere401/WebServerPlugIn/bin/was400plugin.so:term_exit<br />
+<br />
+Note: The /etc/WebSphere clause for ServerInit matches the directory name above where the site customization was.conf file was established. Specific items to review include proper path, was.conf, and plug-in settings.</p><h2>Check Contents</h2><p>Refer to the following report produced by the z/OS Data Collection:<br />
+<br />
+- USSCMDS.RPT(AHTTPD).<br />
+<br />
+Collect the following information for each IBM HTTP server:<br />
+<br />
+- The JCL procedure library and member name used to start each IBM HTTP server. DOC(IHSPROCS).<br />
+<br />
+For each IBM HTTP server, supply the following information: <br />
+<br />
+- Web server ID defined to the ACP.<br />
+- Web server administration group defined to the ACP.<br />
+- Web server standard HFS directory.<br />
+<br />
+Review the HTTP server JCL procedure to determine the httpd.conf file to review.<br />
+<br />
+Ensure that all WAS-related directives are configured using the ServerInit, Service, and ServerTerm statements as outlined below.<br />
+<br />
+The following path entries were added to the /etc/httpd.conf file for WebSphere 3.5:<br />
+<br />
+ServerInit	/usr/lpp/WebSphere/AppServer/bin/was350plugin.so:init_exit /usr/lpp/WebSphere/etc/WebSphere/AppServer/properties/was.conf<br />
+Service	/webapp/examples/* /usr/lpp/WebSphere/AppServer/bin/was350plugin.so:service_exit<br />
+Service	/*.jhtml /usr/lpp/WebSphere/AppServer/bin/was350plugin.so:service_exit<br />
+Service	/*.shtml /usr/lpp/WebSphere/AppServer/bin/was350plugin.so:service_exit<br />
+Service	/servlet/* /usr/lpp/WebSphere/AppServer/bin/was350plugin.so:service_exit<br />
+Service	/*.jsp /usr/lpp/WebSphere/AppServer/bin/was350plugin.so:service_exit<br />
+ServerTerm	/usr/lpp/WebSphere/AppServer/bin/was350plugin.so:term_exit<br />
+<br />
+The following path entries are added to the /etc/httpd.conf file for WebSphere 4.0.1:<br />
+<br />
+ServerInit -	 /usr/lpp/WebSphere401/WebServerPlugIn/bin/was400plugin.so:init_exit<br />
+Service - 	/usr/lpp/WebSphere401/WebServerPlugIn/bin/was400plugin.so:service_exit<br />
+ServerTerm - 	/usr/lpp/WebSphere401/WebServerPlugIn/bin/was400plugin.so:term_exit<br />
+<br />
+Note: The /etc/WebSphere clause for ServerInit matches the directory name above where the site customization was.conf file was established.<br />
+<br />
+Specific items to review include proper path, was.conf, and plug-in settings.<br />
+<br />
+If all WAS-related directives are configured properly, this is not a finding.</p><h2>Vulnerability Number</h2><p>V-225622</p><h2>Documentable</h2><p>False</p><h2>Rule Version</h2><p>ZWAS0050</p><h2>Severity Override Guidance</h2><p>Refer to the following report produced by the z/OS Data Collection:<br />
+<br />
+- USSCMDS.RPT(AHTTPD).<br />
+<br />
+Collect the following information for each IBM HTTP server:<br />
+<br />
+- The JCL procedure library and member name used to start each IBM HTTP server. DOC(IHSPROCS).<br />
+<br />
+For each IBM HTTP server, supply the following information: <br />
+<br />
+- Web server ID defined to the ACP.<br />
+- Web server administration group defined to the ACP.<br />
+- Web server standard HFS directory.<br />
+<br />
+Review the HTTP server JCL procedure to determine the httpd.conf file to review.<br />
+<br />
+Ensure that all WAS-related directives are configured using the ServerInit, Service, and ServerTerm statements as outlined below.<br />
+<br />
+The following path entries were added to the /etc/httpd.conf file for WebSphere 3.5:<br />
+<br />
+ServerInit	/usr/lpp/WebSphere/AppServer/bin/was350plugin.so:init_exit /usr/lpp/WebSphere/etc/WebSphere/AppServer/properties/was.conf<br />
+Service	/webapp/examples/* /usr/lpp/WebSphere/AppServer/bin/was350plugin.so:service_exit<br />
+Service	/*.jhtml /usr/lpp/WebSphere/AppServer/bin/was350plugin.so:service_exit<br />
+Service	/*.shtml /usr/lpp/WebSphere/AppServer/bin/was350plugin.so:service_exit<br />
+Service	/servlet/* /usr/lpp/WebSphere/AppServer/bin/was350plugin.so:service_exit<br />
+Service	/*.jsp /usr/lpp/WebSphere/AppServer/bin/was350plugin.so:service_exit<br />
+ServerTerm	/usr/lpp/WebSphere/AppServer/bin/was350plugin.so:term_exit<br />
+<br />
+The following path entries are added to the /etc/httpd.conf file for WebSphere 4.0.1:<br />
+<br />
+ServerInit -	 /usr/lpp/WebSphere401/WebServerPlugIn/bin/was400plugin.so:init_exit<br />
+Service - 	/usr/lpp/WebSphere401/WebServerPlugIn/bin/was400plugin.so:service_exit<br />
+ServerTerm - 	/usr/lpp/WebSphere401/WebServerPlugIn/bin/was400plugin.so:term_exit<br />
+<br />
+Note: The /etc/WebSphere clause for ServerInit matches the directory name above where the site customization was.conf file was established.<br />
+<br />
+Specific items to review include proper path, was.conf, and plug-in settings.<br />
+<br />
+If all WAS-related directives are configured properly, this is not a finding.</p><h2>Check Content Reference</h2><p>M</p><h2>Target Key</h2><p>4210</p></body></html>

@@ -1,0 +1,62 @@
+<!doctype html><html lang="en"><head><meta charset="utf-8"><title>STIGQter: STIG Check Details: SV-253919r961401_rule: The Juniper EX switch must be configured to generate an immediate real-time alert of all audit failure events requiring real-time alerts.</title><link rel="icon" type="image/svg+xml" href="STIGQter.svg" /><script async src="https://www.googletagmanager.com/gtag/js?id=UA-31381839-2"></script><script src="include.js"></script><script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-4110907817782130" crossorigin="anonymous"></script></head><body><div><img src="STIGQter.svg" alt="STIGQter" style="height:1em;" /> <a href="https://www.stigqter.com/">STIGQter</a>: <a href="main.html">STIG Summary</a>: <a href="U_Juniper_EX_Switches_NDM_STIG_V2R5_Manual-xccdf.html">Juniper EX Series Switches Network Device Management Security Technical Implementation Guide Version: 2 Release: 5 Benchmark Date: 01 Jul 2026</a>:</div> <h1>The Juniper EX switch must be configured to generate an immediate real-time alert of all audit failure events requiring real-time alerts.</h1><h2>DISA Rule</h2><p>SV-253919r961401_rule</p><h2>Vulnerability Number</h2><p>V-253919</p><h2>Group Title</h2><p>SRG-APP-000360-NDM-000295</p><h2>Rule Version</h2><p>JUEX-NM-000420</p><h2>Severity</h2><p>CAT II</p><h2>CCI(s)</h2><ul><li>CCI-001858 - Provide an alert in an organization-defined real-time-period to organization-defined personnel, roles, and/or locations when organization-defined audit failure events requiring real-time alerts occur.</li></ul><h2>Weight</h2><p>10</p><h2>Fix Recommendation</h2><p>Configure the network device to generate an immediate real-time alert of all audit failure events requiring real-time alerts.<br />
+<br />
+set chassis disk-partition /var level full free-space &lt;0..100&gt;<br />
+set chassis disk-partition /var level full free-space percent<br />
+set chassis disk-partition /var level high free-space &lt;0..100&gt;<br />
+set chassis disk-partition /var level high free-space percent<br />
+Note: &quot;High&quot; disk free-space value must be equal to or greater than &quot;full&quot; free-space value.<br />
+<br />
+set snmp health-monitor interval &lt;1..2147483647 seconds&gt;<br />
+set snmp health-monitor rising-threshold &lt;1..100 percent&gt;<br />
+set snmp health-monitor falling-threshold &lt;0..100 percent&gt;<br />
+Note: Falling threshold value must be less than the rising-threshold value or commit fails.</p><h2>Check Contents</h2><p>Determine if the network device generates an immediate alert of all audit failure events requiring real-time alerts.<br />
+<br />
+Juniper network devices support monitoring the audit log storage partition (/var), monitoring the SNMP health status, or both. On devices supporting disk partition monitoring, verify the audit log partition (/var) free space is configured appropriately for the environment. For example, to generate &quot;high disk usage&quot; alerts at 80 percent capacity (20 percent free), and &quot;full disk usage&quot; at 90 percent capacity (10 percent free):<br />
+[edit chassis]<br />
+disk-partition /var {<br />
+    level full {<br />
+        free-space 10 percent;<br />
+    }<br />
+    level high {<br />
+        free-space 20 percent;<br />
+    }<br />
+}<br />
+Note: The configurable parameter is a percentage of free space remaining, not percentage used. &quot;High&quot; usage percent of remaining free space must be equal to, or greater than, the &quot;full&quot; usage percent of remaining free space.<br />
+<br />
+For network devices supporting SNMP health monitoring, verify the rising and falling threshold values for monitored objects (e.g., CPU, memory, and disk storage usage). In the example below, any monitored object exceeding 75 percent usage will generate an alert. Another alert is generated when the usage falls below 74 percent. As configured in the example, Junos samples every 300 seconds. The falling threshold value must be less than the rising threshold value. Verify the thresholds are appropriate for the target environment.<br />
+[edit snmp]<br />
+health-monitor {<br />
+    interval 300;<br />
+    rising-threshold 75;<br />
+    falling-threshold 74;<br />
+}<br />
+Note: Monitored objects generate an event the first time they cross a threshold, not at every sample interval.<br />
+<br />
+This requirement may be verified by configuration review or validated test results.<br />
+<br />
+If an immediate alert of all audit failure events requiring real-time alerts is not generated, this is a finding.</p><h2>Vulnerability Number</h2><p>V-253919</p><h2>Documentable</h2><p>False</p><h2>Rule Version</h2><p>JUEX-NM-000420</p><h2>Severity Override Guidance</h2><p>Determine if the network device generates an immediate alert of all audit failure events requiring real-time alerts.<br />
+<br />
+Juniper network devices support monitoring the audit log storage partition (/var), monitoring the SNMP health status, or both. On devices supporting disk partition monitoring, verify the audit log partition (/var) free space is configured appropriately for the environment. For example, to generate &quot;high disk usage&quot; alerts at 80 percent capacity (20 percent free), and &quot;full disk usage&quot; at 90 percent capacity (10 percent free):<br />
+[edit chassis]<br />
+disk-partition /var {<br />
+    level full {<br />
+        free-space 10 percent;<br />
+    }<br />
+    level high {<br />
+        free-space 20 percent;<br />
+    }<br />
+}<br />
+Note: The configurable parameter is a percentage of free space remaining, not percentage used. &quot;High&quot; usage percent of remaining free space must be equal to, or greater than, the &quot;full&quot; usage percent of remaining free space.<br />
+<br />
+For network devices supporting SNMP health monitoring, verify the rising and falling threshold values for monitored objects (e.g., CPU, memory, and disk storage usage). In the example below, any monitored object exceeding 75 percent usage will generate an alert. Another alert is generated when the usage falls below 74 percent. As configured in the example, Junos samples every 300 seconds. The falling threshold value must be less than the rising threshold value. Verify the thresholds are appropriate for the target environment.<br />
+[edit snmp]<br />
+health-monitor {<br />
+    interval 300;<br />
+    rising-threshold 75;<br />
+    falling-threshold 74;<br />
+}<br />
+Note: Monitored objects generate an event the first time they cross a threshold, not at every sample interval.<br />
+<br />
+This requirement may be verified by configuration review or validated test results.<br />
+<br />
+If an immediate alert of all audit failure events requiring real-time alerts is not generated, this is a finding.</p><h2>Check Content Reference</h2><p>M</p><h2>Target Key</h2><p>5477</p></body></html>

@@ -1,0 +1,53 @@
+<!doctype html><html lang="en"><head><meta charset="utf-8"><title>STIGQter: STIG Check Details: SV-256037r882453_rule: The multicast Rendezvous Point (RP) Arista router must be configured to limit the multicast forwarding cache so that its resources are not saturated by managing an overwhelming number of Protocol Independent Multicast (PIM) and Multicast Source Discovery Protocol (MSDP) source-active entries.</title><link rel="icon" type="image/svg+xml" href="STIGQter.svg" /><script async src="https://www.googletagmanager.com/gtag/js?id=UA-31381839-2"></script><script src="include.js"></script><script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-4110907817782130" crossorigin="anonymous"></script></head><body><div><img src="STIGQter.svg" alt="STIGQter" style="height:1em;" /> <a href="https://www.stigqter.com/">STIGQter</a>: <a href="main.html">STIG Summary</a>: <a href="U_Arista_MLS_EOS_4-X_Router_STIG_V2R2_Manual-xccdf.html">Arista MLS EOS 4.X Router Security Technical Implementation Guide Version: 2 Release: 2 Benchmark Date: 02 Apr 2025</a>:</div> <h1>The multicast Rendezvous Point (RP) Arista router must be configured to limit the multicast forwarding cache so that its resources are not saturated by managing an overwhelming number of Protocol Independent Multicast (PIM) and Multicast Source Discovery Protocol (MSDP) source-active entries.</h1><h2>DISA Rule</h2><p>SV-256037r882453_rule</p><h2>Vulnerability Number</h2><p>V-256037</p><h2>Group Title</h2><p>SRG-NET-000362-RTR-000120</p><h2>Rule Version</h2><p>ARST-RT-000580</p><h2>Severity</h2><p>CAT III</p><h2>CCI(s)</h2><ul><li>CCI-002385 - Protect against or limit the effects of organization-defined types of denial of service events.</li></ul><h2>Weight</h2><p>10</p><h2>Fix Recommendation</h2><p>Configure the Arista MSDP-enabled RP routers to limit the multicast forwarding cache for source-active entries.<br />
+<br />
+Step 1: Configure the ACL.<br />
+<br />
+ip access-list PIM_NEIGHBOR_SA_FILTER<br />
+   10 deny ip any 224.1.1.0/24<br />
+   20 deny ip any 224.1.2.0/24<br />
+   30 deny ip any 224.1.3.0/24<br />
+   40 deny ip any 224.1.4.0/24<br />
+   100 permit ip any any<br />
+   <br />
+Step 2: Apply the ACL in MSDP peer and define the multicast forwarding cache for source-active entries.<br />
+<br />
+router msdp <br />
+ peer 10.1.12.2<br />
+  sa-filter in PIM_NEIGHBOR_SA_FILTER<br />
+  sa-limit 500</p><h2>Check Contents</h2><p>Review the Arista router configuration to determine if forwarding cache thresholds are defined.<br />
+<br />
+Step 1: To verify the ACL is configured to match the prefixes, execute the command &quot;sh ip access-list&quot;.<br />
+<br />
+ip access-list PIM_NEIGHBOR_SA_FILTER<br />
+   10 deny ip any 224.1.1.0/24<br />
+   20 deny ip any 224.1.2.0/24<br />
+   30 deny ip any 224.1.3.0/24<br />
+   40 deny ip any 224.1.4.0/24<br />
+   100 permit ip any any<br />
+<br />
+Step 2: To verify the thresholds are defined for multicast forwarding cache for source-active entries, execute the command &quot;sh run sec router msdp&quot;.<br />
+<br />
+router msdp <br />
+ peer 10.1.12.2<br />
+  sa-filter in PIM_NEIGHBOR_SA_FILTER<br />
+  sa-limit 500<br />
+<br />
+If the Arista RP router is not configured to limit the multicast forwarding cache to ensure its resources are not saturated, this is a finding.</p><h2>Vulnerability Number</h2><p>V-256037</p><h2>Documentable</h2><p>False</p><h2>Rule Version</h2><p>ARST-RT-000580</p><h2>Severity Override Guidance</h2><p>Review the Arista router configuration to determine if forwarding cache thresholds are defined.<br />
+<br />
+Step 1: To verify the ACL is configured to match the prefixes, execute the command &quot;sh ip access-list&quot;.<br />
+<br />
+ip access-list PIM_NEIGHBOR_SA_FILTER<br />
+   10 deny ip any 224.1.1.0/24<br />
+   20 deny ip any 224.1.2.0/24<br />
+   30 deny ip any 224.1.3.0/24<br />
+   40 deny ip any 224.1.4.0/24<br />
+   100 permit ip any any<br />
+<br />
+Step 2: To verify the thresholds are defined for multicast forwarding cache for source-active entries, execute the command &quot;sh run sec router msdp&quot;.<br />
+<br />
+router msdp <br />
+ peer 10.1.12.2<br />
+  sa-filter in PIM_NEIGHBOR_SA_FILTER<br />
+  sa-limit 500<br />
+<br />
+If the Arista RP router is not configured to limit the multicast forwarding cache to ensure its resources are not saturated, this is a finding.</p><h2>Check Content Reference</h2><p>M</p><h2>Target Key</h2><p>5513</p></body></html>

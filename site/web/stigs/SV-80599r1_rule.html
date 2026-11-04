@@ -1,0 +1,63 @@
+<!doctype html><html lang="en"><head><meta charset="utf-8"><title>STIGQter: STIG Check Details: SV-80599r1_rule: The HP FlexFabric Switch must enable neighbor authentication for all control plane protocols.</title><link rel="icon" type="image/svg+xml" href="STIGQter.svg" /><script async src="https://www.googletagmanager.com/gtag/js?id=UA-31381839-2"></script><script src="include.js"></script><script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-4110907817782130" crossorigin="anonymous"></script></head><body><div><img src="STIGQter.svg" alt="STIGQter" style="height:1em;" /> <a href="https://www.stigqter.com/">STIGQter</a>: <a href="main.html">STIG Summary</a>: <a href="U_HP_FlexFabric_Switch_RTR_STIG_V1R2_Manual-xccdf.html">HP FlexFabric Switch RTR Security Technical Implementation Guide Version: 1 Release: 2 Benchmark Date: 24 Jul 2020</a>:</div> <h1>The HP FlexFabric Switch must enable neighbor authentication for all control plane protocols.</h1><h2>DISA Rule</h2><p>SV-80599r1_rule</p><h2>Vulnerability Number</h2><p>V-66109</p><h2>Group Title</h2><p>SRG-NET-000025-RTR-000020</p><h2>Rule Version</h2><p>HFFS-RT-000010</p><h2>Severity</h2><p>CAT II</p><h2>CCI(s)</h2><ul><li>CCI-000366 - Implement the security configuration settings.</li><li>CCI-002205 - Uniquely identify and authenticate source by organization, system, application, service, and/or individual for information transfer.</li></ul><h2>Weight</h2><p>10</p><h2>Fix Recommendation</h2><p>The following example shows how to configure the network device to authenticate OSPF and OSPFv3 packets with its peers.<br />
+<br />
+OSPF configuration:<br />
+[HP] ospf 200<br />
+[HP-ospf-200] area 0.0.0.0<br />
+[HP-ospf-200-area-0.0.0.0] authentication-mode md5 1 cipher *************<br />
+[HP-ospf-200-area-0.0.0.0] network 201.6.1.60 0.0.0.3<br />
+<br />
+OSPFv3 Configuration<br />
+[HP] ospfv3 200<br />
+[HP-ospf-200] area 0.0.0.0<br />
+<br />
+IPsec profile configuration for OSPFv3<br />
+[HP] ipsec profile jitc manual<br />
+[HP--ipsec-profile-manual-jitc] transform-set jitcipsecprop<br />
+[HP--ipsec-profile-manual-jitc] sa spi inbound esp 256<br />
+[HP--ipsec-profile-manual-jitc] sa string-key inbound esp simple 2!HPAdmin123123<br />
+[HP--ipsec-profile-manual-jitc] sa spi outbound esp 256<br />
+[HP--ipsec-profile-manual-jitc] sa string-key outbound esp simple 2!HPAdmin123123<br />
+<br />
+Interface configuration<br />
+<br />
+interface GigabitEthernet0/0<br />
+ port link-mode route<br />
+ description R1 ACTIVE<br />
+ combo enable copper<br />
+ ip address 201.6.1.62 255.255.255.252<br />
+ ospf authentication-mode md5 1 cipher $c$3$6v1tbSQA2aWAzrgzm36LZrBbmS+jUeg=<br />
+ ospfv3 200 area 0.0.0.0<br />
+ ospfv3 ipsec-profile jitc<br />
+ ipv6 address 2115:B:1::3E/126</p><h2>Check Contents</h2><p>Review the HP FlexFabric Switch configuration; for every protocol that affects the routing or forwarding tables (where information is exchanged between neighbors), verify that neighbor HP FlexFabric Switch authentication is enabled.<br />
+<br />
+If neighbor authentication for all router control plane protocols is not configured, this is a finding.<br />
+<br />
+The information below shows OSPF and OSPFv3 authentication is enabled on interface gigabit ethernet 0/0<br />
+<br />
+[HP] display current-configuration interface GigabitEthernet 0/0<br />
+#<br />
+interface GigabitEthernet0/0<br />
+ port link-mode route<br />
+ description R1 ACTIVE<br />
+ combo enable copper<br />
+ ip address 201.6.1.62 255.255.255.252<br />
+ ospf authentication-mode md5 1 cipher **********<br />
+ ospfv3 200 area 0.0.0.0<br />
+ ospfv3 ipsec-profile jitc<br />
+ ipv6 address 2115:B:1::3E/126</p><h2>Vulnerability Number</h2><p>V-66109</p><h2>Documentable</h2><p>False</p><h2>Rule Version</h2><p>HFFS-RT-000010</p><h2>Severity Override Guidance</h2><p>Review the HP FlexFabric Switch configuration; for every protocol that affects the routing or forwarding tables (where information is exchanged between neighbors), verify that neighbor HP FlexFabric Switch authentication is enabled.<br />
+<br />
+If neighbor authentication for all router control plane protocols is not configured, this is a finding.<br />
+<br />
+The information below shows OSPF and OSPFv3 authentication is enabled on interface gigabit ethernet 0/0<br />
+<br />
+[HP] display current-configuration interface GigabitEthernet 0/0<br />
+#<br />
+interface GigabitEthernet0/0<br />
+ port link-mode route<br />
+ description R1 ACTIVE<br />
+ combo enable copper<br />
+ ip address 201.6.1.62 255.255.255.252<br />
+ ospf authentication-mode md5 1 cipher **********<br />
+ ospfv3 200 area 0.0.0.0<br />
+ ospfv3 ipsec-profile jitc<br />
+ ipv6 address 2115:B:1::3E/126</p><h2>Check Content Reference</h2><p>M</p><h2>Target Key</h2><p>2979</p></body></html>

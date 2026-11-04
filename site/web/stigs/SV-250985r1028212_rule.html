@@ -1,0 +1,79 @@
+<!doctype html><html lang="en"><head><meta charset="utf-8"><title>STIGQter: STIG Check Details: SV-250985r1028212_rule: Sentry must enforce approved authorizations for controlling the flow of management information within the network device based on information flow control policies.</title><link rel="icon" type="image/svg+xml" href="STIGQter.svg" /><script async src="https://www.googletagmanager.com/gtag/js?id=UA-31381839-2"></script><script src="include.js"></script><script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-4110907817782130" crossorigin="anonymous"></script></head><body><div><img src="STIGQter.svg" alt="STIGQter" style="height:1em;" /> <a href="https://www.stigqter.com/">STIGQter</a>: <a href="main.html">STIG Summary</a>: <a href="U_Ivanti_Sentry_9-x_NDM_STIG_V3R1_Manual-xccdf.html">Ivanti Sentry 9.x NDM Security Technical Implementation Guide Version: 3 Release: 1 Benchmark Date: 24 Oct 2024</a>:</div> <h1>Sentry must enforce approved authorizations for controlling the flow of management information within the network device based on information flow control policies.</h1><h2>DISA Rule</h2><p>SV-250985r1028212_rule</p><h2>Vulnerability Number</h2><p>V-250985</p><h2>Group Title</h2><p>SRG-APP-000038-NDM-000213</p><h2>Rule Version</h2><p>MOIS-ND-000130</p><h2>Severity</h2><p>CAT III</p><h2>CCI(s)</h2><ul><li>CCI-001368 - Enforce approved authorizations for controlling the flow of information within the system based on organization-defined information flow control policies.</li></ul><h2>Weight</h2><p>10</p><h2>Fix Recommendation</h2><p>Configure Sentry to enforce approved authorizations for controlling the flow of management information within the network device. <br />
+<br />
+Sentry receives a request from MobileIron Core and enforces verification before handling the request to validate that it is from a trusted MobileIron Core.<br />
+<br />
+Therefore, if the deployment uses MobileIron Core, to ensure that Sentry trusts MobileIron Core in the deployment, run the following commands in Sentry CLI:<br />
+<br />
+1. sentry emm-source-verify true<br />
+<br />
+2. sentry emm-ips &lt;subnet_list&gt;&gt;<br />
+<br />
+3. This can further be mitigated by creating ACLs for Sentry System Manager.<br />
+<br />
+Then:<br />
+1. In the Standalone Sentry System Manager, go to Security &gt;&gt; Access Control Lists.<br />
+2. Click &quot;Add&quot;.<br />
+3. In the &quot;Name&quot; field, enter a name to identify the ACL.<br />
+4. In the &quot;Description&quot; field, enter text to clarify the purpose of the ACL.<br />
+5. Click &quot;Save&quot;.<br />
+6. Select the new ACL that was created and click it, which should open a Modify ACL dialog box.<br />
+7. Click &quot;Add&quot; to add an access control entry (ACE) to the ACL.<br />
+Each ACE consists of a combination of the network hosts and services that were configured for use in ACLs.<br />
+8. Use the following guidelines to complete the form:<br />
+Source Network <br />
+Destination Network<br />
+Service<br />
+Action - Select Permit or Deny from the dropdown list.<br />
+Connections Per Minute<br />
+9. Click &quot;Save&quot;.<br />
+10. Configure Sentry with specified backend services such as Exchange Active Sync or App Tunnels. Refer to section &quot;Configuring Standalone Sentry for ActiveSync&quot; and &quot;Configuring Standalone Sentry for AppTunnel&quot; in &quot;Sentry 9.8 Guide for MobileIron Core&quot; to ensure these services are configured in Sentry settings in Core where applicable.</p><h2>Check Contents</h2><p>Review Sentry configuration to determine if it enforces approved authorizations for controlling the flow of management information within the network.<br />
+<br />
+Sentry receives a request from MobileIron Core and enforces verification before handling the request to validate that it is from a trusted MobileIron Core.<br />
+<br />
+Therefore, if the deployment uses MobileIron Core, to verify that Sentry trusts MobileIron Core in the deployment:<br />
+<br />
+1. Run the following command in Sentry CLI:<br />
+show sentry EMM-source-verify <br />
+<br />
+If this is set to &quot;false&quot;, this is a finding.<br />
+<br />
+2. Run the following command in Sentry CLI:<br />
+show sentry emm-ips <br />
+<br />
+If the Core IP is not specified, this is a finding.<br />
+<br />
+3. Verify Sentry has an ACL for Core in Sentry System Manager.<br />
+<br />
+Then:<br />
+1. In the Standalone Sentry System Manager, go to Security &gt;&gt; Access Control Lists.<br />
+2. Verify that an ACL is created for Core. If it is not, this is a finding.<br />
+3. Determine if Sentry is configured with specified backend services such as Exchange Active Sync or App Tunnels.<br />
+<br />
+If the backend service is not specified, this is a finding. <br />
+<br />
+Refer to section &quot;Configuring Standalone Sentry for ActiveSync&quot; and &quot;Configuring Standalone Sentry for AppTunnel&quot; in &quot;Sentry 9.8 Guide for MobileIron Core&quot; to ensure these services are configured in Sentry settings in Core where applicable.</p><h2>Vulnerability Number</h2><p>V-250985</p><h2>Documentable</h2><p>False</p><h2>Rule Version</h2><p>MOIS-ND-000130</p><h2>Severity Override Guidance</h2><p>Review Sentry configuration to determine if it enforces approved authorizations for controlling the flow of management information within the network.<br />
+<br />
+Sentry receives a request from MobileIron Core and enforces verification before handling the request to validate that it is from a trusted MobileIron Core.<br />
+<br />
+Therefore, if the deployment uses MobileIron Core, to verify that Sentry trusts MobileIron Core in the deployment:<br />
+<br />
+1. Run the following command in Sentry CLI:<br />
+show sentry EMM-source-verify <br />
+<br />
+If this is set to &quot;false&quot;, this is a finding.<br />
+<br />
+2. Run the following command in Sentry CLI:<br />
+show sentry emm-ips <br />
+<br />
+If the Core IP is not specified, this is a finding.<br />
+<br />
+3. Verify Sentry has an ACL for Core in Sentry System Manager.<br />
+<br />
+Then:<br />
+1. In the Standalone Sentry System Manager, go to Security &gt;&gt; Access Control Lists.<br />
+2. Verify that an ACL is created for Core. If it is not, this is a finding.<br />
+3. Determine if Sentry is configured with specified backend services such as Exchange Active Sync or App Tunnels.<br />
+<br />
+If the backend service is not specified, this is a finding. <br />
+<br />
+Refer to section &quot;Configuring Standalone Sentry for ActiveSync&quot; and &quot;Configuring Standalone Sentry for AppTunnel&quot; in &quot;Sentry 9.8 Guide for MobileIron Core&quot; to ensure these services are configured in Sentry settings in Core where applicable.</p><h2>Check Content Reference</h2><p>M</p><h2>Target Key</h2><p>5438</p></body></html>

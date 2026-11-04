@@ -1,0 +1,116 @@
+<!doctype html><html lang="en"><head><meta charset="utf-8"><title>STIGQter: STIG Check Details: SV-265908r1028718_rule: The audit information produced by MongoDB must be protected from unauthorized access.</title><link rel="icon" type="image/svg+xml" href="STIGQter.svg" /><script async src="https://www.googletagmanager.com/gtag/js?id=UA-31381839-2"></script><script src="include.js"></script><script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-4110907817782130" crossorigin="anonymous"></script></head><body><div><img src="STIGQter.svg" alt="STIGQter" style="height:1em;" /> <a href="https://www.stigqter.com/">STIGQter</a>: <a href="main.html">STIG Summary</a>: <a href="U_MongoDB_Enterprise_Advanced_7-x_STIG_V1R2_Manual-xccdf.html">MongoDB Enterprise Advanced 7.x Security Technical Implementation Guide Version: 1 Release: 2 Benchmark Date: 01 Jul 2026</a>:</div> <h1>The audit information produced by MongoDB must be protected from unauthorized access.</h1><h2>DISA Rule</h2><p>SV-265908r1028718_rule</p><h2>Vulnerability Number</h2><p>V-265908</p><h2>Group Title</h2><p>SRG-APP-000118-DB-000059</p><h2>Rule Version</h2><p>MD7X-00-002000</p><h2>Severity</h2><p>CAT II</p><h2>CCI(s)</h2><ul><li>CCI-000162 - Protect audit information from unauthorized access.</li><li>CCI-000163 - Protect audit information from unauthorized modification.</li><li>CCI-000164 - Protect audit information from unauthorized deletion.</li></ul><h2>Weight</h2><p>10</p><h2>Fix Recommendation</h2><p>It is recommended to use the official installation packages provided by MongoDB. In the event the software was installed manually and permissions need to be restricted, consider a clean reinstallation. <br />
+<br />
+To correct finding where auditLog.destination is set to &quot;file&quot;, run these commands: <br />
+<br />
+$ chown mongod &lt;MongoDB auditLog directory&gt; <br />
+$ chgrp mongod   &lt;MongoDB auditLog directory&gt; <br />
+$ chmod 700         &lt;MongoDB auditLog directory&gt;<br />
+<br />
+(The path for the MongoDB auditLog directory will vary according to local circumstances. The auditLog directory will be found in the MongoDB configuration file whose default location is /etc/mongod.conf.) <br />
+<br />
+To find the auditLog directory name, view and search for the entry in the MongoDB configuration file for the auditLog.path:<br />
+<br />
+Example:<br />
+<br />
+auditLog:<br />
+   destination: file<br />
+   format: BSON<br />
+   path: /var/log/mongodb/audit/auditLog.bson<br />
+<br />
+Given the example above, the &quot;MongoDB auditLog directory&quot; is &quot;/var/log/mongodb/audit&quot;.</p><h2>Check Contents</h2><p>MongoDB must not permit access to its audit logs by unprivileged users. The official installation packages restrict which operating system users and groups may read or modify files. The audit log destination is not configured or created at installation time and must be manually done with appropriate ownership and permissions applied with the MongoDB user and MongoDB group.<br />
+<br />
+Check the MongoDB configuration file (default location: /etc/mongod.conf) for a key named &quot;auditLog:&quot; with &quot;destination&quot; set to &quot;file&quot;. <br />
+<br />
+Example shown below:<br />
+<br />
+auditLog:<br />
+   destination: file<br />
+   format: BSON<br />
+   path: &lt;MongoDB auditLog directory&gt;/auditLog.bson<br />
+<br />
+If &quot;auditLog&quot; does not exist this is a finding.<br />
+<br />
+If the auditLog.destination is &quot;file&quot; in the MongoDB configuration file (default location /etc/mongod.conf) then the following will check ownership and permissions of the MongoDB auditLog directory:<br />
+<br />
+Verify User ownership, Group ownership, and permissions on the &quot;&lt;MongoDB auditLog directory&gt;&quot;:<br />
+<br />
+$ stat &lt;MongoDB auditLog directory&gt;<br />
+<br />
+If the User owner is not &quot;mongod&quot;, this is a finding.<br />
+<br />
+If the Group owner is not &quot;mongod&quot;, this is a finding.<br />
+<br />
+If the directory is more permissive than &quot;700&quot;, this is a finding.<br />
+<br />
+To find the auditLog directory name, view and search for the entry in the MongoDB configuration file (default location /etc/mongod.conf) for auditLog.destination. If this parameters value is &quot;file&quot; then use the directory portion of the auditLog.path setting as the MongoDB auditLog directory location.<br />
+<br />
+Example:<br />
+<br />
+auditLog:<br />
+   destination: file<br />
+   format: BSON<br />
+   path: /var/log/mongodb/audit/auditLog.bson<br />
+<br />
+Given the example above, to find the auditLog directory ownership and permissions run the following command:<br />
+<br />
+&gt; stat /var/log/mongodb/audit<br />
+<br />
+The output will look similar to the following:<br />
+<br />
+  File: '/var/log/mongodb/audit'<br />
+  Size: 48                Blocks: 0          IO Block: 4096   directory<br />
+Device: 808h/2056d        Inode: 245178      Links: 2<br />
+Access: (0700/drwx------)  Uid: (  997/  mongod)   Gid: (  996/  mongod)<br />
+Context: unconfined_u:object_r:mongod_log_t:s0<br />
+Access: 2020-03-16 12:51:16.816000000 -0400<br />
+Modify: 2020-03-16 12:50:48.722000000 -0400<br />
+Change: 2020-03-16 12:50:48.722000000 -0400<br />
+ Birth: -</p><h2>Vulnerability Number</h2><p>V-265908</p><h2>Documentable</h2><p>False</p><h2>Rule Version</h2><p>MD7X-00-002000</p><h2>Severity Override Guidance</h2><p>MongoDB must not permit access to its audit logs by unprivileged users. The official installation packages restrict which operating system users and groups may read or modify files. The audit log destination is not configured or created at installation time and must be manually done with appropriate ownership and permissions applied with the MongoDB user and MongoDB group.<br />
+<br />
+Check the MongoDB configuration file (default location: /etc/mongod.conf) for a key named &quot;auditLog:&quot; with &quot;destination&quot; set to &quot;file&quot;. <br />
+<br />
+Example shown below:<br />
+<br />
+auditLog:<br />
+   destination: file<br />
+   format: BSON<br />
+   path: &lt;MongoDB auditLog directory&gt;/auditLog.bson<br />
+<br />
+If &quot;auditLog&quot; does not exist this is a finding.<br />
+<br />
+If the auditLog.destination is &quot;file&quot; in the MongoDB configuration file (default location /etc/mongod.conf) then the following will check ownership and permissions of the MongoDB auditLog directory:<br />
+<br />
+Verify User ownership, Group ownership, and permissions on the &quot;&lt;MongoDB auditLog directory&gt;&quot;:<br />
+<br />
+$ stat &lt;MongoDB auditLog directory&gt;<br />
+<br />
+If the User owner is not &quot;mongod&quot;, this is a finding.<br />
+<br />
+If the Group owner is not &quot;mongod&quot;, this is a finding.<br />
+<br />
+If the directory is more permissive than &quot;700&quot;, this is a finding.<br />
+<br />
+To find the auditLog directory name, view and search for the entry in the MongoDB configuration file (default location /etc/mongod.conf) for auditLog.destination. If this parameters value is &quot;file&quot; then use the directory portion of the auditLog.path setting as the MongoDB auditLog directory location.<br />
+<br />
+Example:<br />
+<br />
+auditLog:<br />
+   destination: file<br />
+   format: BSON<br />
+   path: /var/log/mongodb/audit/auditLog.bson<br />
+<br />
+Given the example above, to find the auditLog directory ownership and permissions run the following command:<br />
+<br />
+&gt; stat /var/log/mongodb/audit<br />
+<br />
+The output will look similar to the following:<br />
+<br />
+  File: '/var/log/mongodb/audit'<br />
+  Size: 48                Blocks: 0          IO Block: 4096   directory<br />
+Device: 808h/2056d        Inode: 245178      Links: 2<br />
+Access: (0700/drwx------)  Uid: (  997/  mongod)   Gid: (  996/  mongod)<br />
+Context: unconfined_u:object_r:mongod_log_t:s0<br />
+Access: 2020-03-16 12:51:16.816000000 -0400<br />
+Modify: 2020-03-16 12:50:48.722000000 -0400<br />
+Change: 2020-03-16 12:50:48.722000000 -0400<br />
+ Birth: -</p><h2>Check Content Reference</h2><p>M</p><h2>Target Key</h2><p>5637</p></body></html>

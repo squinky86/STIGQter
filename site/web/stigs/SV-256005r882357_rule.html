@@ -1,0 +1,117 @@
+<!doctype html><html lang="en"><head><meta charset="utf-8"><title>STIGQter: STIG Check Details: SV-256005r882357_rule: The out-of-band management (OOBM) Arista gateway router must be configured to have separate IGP instances for the managed network and management network.</title><link rel="icon" type="image/svg+xml" href="STIGQter.svg" /><script async src="https://www.googletagmanager.com/gtag/js?id=UA-31381839-2"></script><script src="include.js"></script><script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-4110907817782130" crossorigin="anonymous"></script></head><body><div><img src="STIGQter.svg" alt="STIGQter" style="height:1em;" /> <a href="https://www.stigqter.com/">STIGQter</a>: <a href="main.html">STIG Summary</a>: <a href="U_Arista_MLS_EOS_4-X_Router_STIG_V2R2_Manual-xccdf.html">Arista MLS EOS 4.X Router Security Technical Implementation Guide Version: 2 Release: 2 Benchmark Date: 02 Apr 2025</a>:</div> <h1>The out-of-band management (OOBM) Arista gateway router must be configured to have separate IGP instances for the managed network and management network.</h1><h2>DISA Rule</h2><p>SV-256005r882357_rule</p><h2>Vulnerability Number</h2><p>V-256005</p><h2>Group Title</h2><p>SRG-NET-000019-RTR-000011</p><h2>Rule Version</h2><p>ARST-RT-000190</p><h2>Severity</h2><p>CAT II</p><h2>CCI(s)</h2><ul><li>CCI-001414 - Enforce approved authorizations for controlling the flow of information between connected systems based on organization-defined information flow control policies.</li></ul><h2>Weight</h2><p>10</p><h2>Fix Recommendation</h2><p>This requirement is not applicable for the DODIN backbone.<br />
+<br />
+Configure the Arista router to enforce that Interior Gateway Protocol instances configured on the OOBM gateway router peer only with their own routing domain.<br />
+<br />
+Configuring OSPF:<br />
+<br />
+Step 1: Configure the interface and OOBM vrf instance.<br />
+<br />
+vrf instance OOBM<br />
+ip routing vrf OOBM <br />
+<br />
+LEAF-1A(config)#interface Vlan 2<br />
+LEAF-1A(config-if-Vl2)#description Connection to OOBM-LAN-Ethernet4<br />
+LEAF-1A(config-if-Vl2)#vrf OOBM<br />
+LEAF-1A(config-if-Vl2)#mtu 9214<br />
+LEAF-1A(config-if-Vl2)#no routerport<br />
+LEAF-1A(config-if-Vl2)#ip address 10.1.12.7/31<br />
+<br />
+Step 2: Advertise the subnet in OSPF process 100.<br />
+<br />
+LEAF-1A(config-router-rip)#router ospf 100 vrf OOBM<br />
+LEAF-1A(config-router-ospf)#network 10.1.12.0/24 area 0.0.0.0<br />
+<br />
+Step 3: Configure the interface and LAN vrf instance.<br />
+<br />
+vrf instance LAN<br />
+ip routing vrf LAN <br />
+<br />
+LEAF-1A(config)#interface Ethernet8<br />
+LEAF-1A(config-if-Et8)#description Connection to Private-LAN-Ethernet4<br />
+LEAF-1A(config-if-Et8)#vrf LAN<br />
+LEAF-1A(config-if-Et8)#mtu 9214<br />
+LEAF-1A(config-if-Et8)#no routerport<br />
+LEAF-1A(config-if-Et8)#ip address 172.16.35.135/31<br />
+<br />
+Step 4: Advertise the subnet in OSPF process 200.<br />
+<br />
+LEAF-1A(config-router-ospf)#router ospf 200 vrf LAN<br />
+LEAF-1A(config-router-rip)#network 172.16.35.0/24 area 0.0.0.0</p><h2>Check Contents</h2><p>This requirement is not applicable for the DODIN backbone.<br />
+<br />
+Verify the OOBM interface is an adjacency in the Interior Gateway Protocol routing domain for the management network.<br />
+<br />
+Verify interface configuration that the OOBM management network subnet is configured.<br />
+<br />
+Step 1: To verify ospf process 100 interface is configured, execute the command &quot;show run int YY&quot;. To verify vrf instance, execute &quot;show vrf&quot;. Verify the OOBM vrf instance is configured.<br />
+<br />
+vrf instance OOBM<br />
+ip routing vrf OOBM <br />
+interface Vlan 2<br />
+   description Connection to OOBM-LAN-Ethernet4<br />
+   vrf OOBM<br />
+   mtu 9214<br />
+   no routerport<br />
+   ip address 10.1.12.7/31<br />
+<br />
+Step 2: To verify OSPF process is configured as OOBM management network, execute the command &quot;show run section router ospf 100&quot;.<br />
+<br />
+router ospf 100 vrf OOBM<br />
+ network 10.1.12.0/24 area 0.0.0.0<br />
+<br />
+Step 3: To verify OSPF process 200 is enabled on a private network without any connectivity with the OSPF process in management network, execute the command &quot;show run int YY&quot;. Verify the LAN vrf instance is configured.<br />
+<br />
+vrf instance LAN<br />
+ip routing vrf LAN<br />
+<br />
+interface Ethernet8<br />
+   vrf LAN<br />
+   description Connection to Private-LAN-Ethernet4<br />
+   mtu 9214<br />
+   no routerport<br />
+   ip address 172.16.35.135/31<br />
+<br />
+Step 4: To verify OSPF process 200 is configured as Private-LAN network, execute the command &quot;show run section router ospf 200&quot;.<br />
+<br />
+router ospf 200 vrf LAN<br />
+ network 172.16.35.0/24 area 0.0.0.0<br />
+<br />
+If the router does not enforce that Interior Gateway Protocol instances configured on the OOBM gateway router peer only with their own routing domain, this is a finding.</p><h2>Vulnerability Number</h2><p>V-256005</p><h2>Documentable</h2><p>False</p><h2>Rule Version</h2><p>ARST-RT-000190</p><h2>Severity Override Guidance</h2><p>This requirement is not applicable for the DODIN backbone.<br />
+<br />
+Verify the OOBM interface is an adjacency in the Interior Gateway Protocol routing domain for the management network.<br />
+<br />
+Verify interface configuration that the OOBM management network subnet is configured.<br />
+<br />
+Step 1: To verify ospf process 100 interface is configured, execute the command &quot;show run int YY&quot;. To verify vrf instance, execute &quot;show vrf&quot;. Verify the OOBM vrf instance is configured.<br />
+<br />
+vrf instance OOBM<br />
+ip routing vrf OOBM <br />
+interface Vlan 2<br />
+   description Connection to OOBM-LAN-Ethernet4<br />
+   vrf OOBM<br />
+   mtu 9214<br />
+   no routerport<br />
+   ip address 10.1.12.7/31<br />
+<br />
+Step 2: To verify OSPF process is configured as OOBM management network, execute the command &quot;show run section router ospf 100&quot;.<br />
+<br />
+router ospf 100 vrf OOBM<br />
+ network 10.1.12.0/24 area 0.0.0.0<br />
+<br />
+Step 3: To verify OSPF process 200 is enabled on a private network without any connectivity with the OSPF process in management network, execute the command &quot;show run int YY&quot;. Verify the LAN vrf instance is configured.<br />
+<br />
+vrf instance LAN<br />
+ip routing vrf LAN<br />
+<br />
+interface Ethernet8<br />
+   vrf LAN<br />
+   description Connection to Private-LAN-Ethernet4<br />
+   mtu 9214<br />
+   no routerport<br />
+   ip address 172.16.35.135/31<br />
+<br />
+Step 4: To verify OSPF process 200 is configured as Private-LAN network, execute the command &quot;show run section router ospf 200&quot;.<br />
+<br />
+router ospf 200 vrf LAN<br />
+ network 172.16.35.0/24 area 0.0.0.0<br />
+<br />
+If the router does not enforce that Interior Gateway Protocol instances configured on the OOBM gateway router peer only with their own routing domain, this is a finding.</p><h2>Check Content Reference</h2><p>M</p><h2>Target Key</h2><p>5513</p></body></html>

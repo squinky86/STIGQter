@@ -1,0 +1,88 @@
+<!doctype html><html lang="en"><head><meta charset="utf-8"><title>STIGQter: STIG Check Details: SV-258745r933296_rule: The ESXi host must synchronize internal information system clocks to an authoritative time source.</title><link rel="icon" type="image/svg+xml" href="STIGQter.svg" /><script async src="https://www.googletagmanager.com/gtag/js?id=UA-31381839-2"></script><script src="include.js"></script><script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-4110907817782130" crossorigin="anonymous"></script></head><body><div><img src="STIGQter.svg" alt="STIGQter" style="height:1em;" /> <a href="https://www.stigqter.com/">STIGQter</a>: <a href="main.html">STIG Summary</a>: <a href="U_VMW_vSphere_8-0-ESXi_STIG_V1R1_Manual-xccdf.html">VMware vSphere 8.0 ESXi Security Technical Implementation Guide Version: 1 Release: 1 Benchmark Date: 31 Oct 2023</a>:</div> <h1>The ESXi host must synchronize internal information system clocks to an authoritative time source.</h1><h2>DISA Rule</h2><p>SV-258745r933296_rule</p><h2>Vulnerability Number</h2><p>V-258745</p><h2>Group Title</h2><p>SRG-OS-000355-VMM-001330</p><h2>Rule Version</h2><p>ESXI-80-000124</p><h2>Severity</h2><p>CAT II</p><h2>CCI(s)</h2><ul><li>CCI-000366 - Implement the security configuration settings.</li></ul><h2>Weight</h2><p>10</p><h2>Fix Recommendation</h2><p>To configure NTP, perform the following:<br />
+<br />
+From the vSphere Client, go to Hosts and Clusters.<br />
+<br />
+Select the ESXi Host &gt;&gt; Configure &gt;&gt; System &gt;&gt; Time Configuration.<br />
+<br />
+Click &quot;Add Service&quot; and select &quot;Network Time Protocol&quot;.<br />
+<br />
+Enter or update the NTP servers listed with a comma-separated list of authoritative time servers. Click &quot;OK&quot;.<br />
+<br />
+From the vSphere Client, go to Hosts and Clusters.<br />
+<br />
+Select the ESXi Host &gt;&gt; Configure &gt;&gt; System &gt;&gt; Services.<br />
+<br />
+Select the &quot;NTP Daemon&quot; service and click &quot;Edit Startup Policy&quot;.<br />
+<br />
+Select &quot;Start and stop with host&quot;. Click &quot;OK&quot;.<br />
+<br />
+or<br />
+<br />
+From a PowerCLI command prompt while connected to the ESXi host, run the following commands:<br />
+<br />
+$NTPServers = &quot;ntpserver1&quot;,&quot;ntpserver2&quot;<br />
+Get-VMHost | Add-VMHostNTPServer $NTPServers<br />
+Get-VMHost | Get-VMHostService | Where {$_.Label -eq &quot;NTP Daemon&quot;} | Set-VMHostService -Policy On<br />
+Get-VMHost | Get-VMHostService | Where {$_.Label -eq &quot;NTP Daemon&quot;} | Start-VMHostService<br />
+<br />
+To configure PTP, perform the following:<br />
+<br />
+From the vSphere Client, go to Hosts and Clusters.<br />
+<br />
+Select the ESXi Host &gt;&gt; Configure &gt;&gt; System &gt;&gt; Time Configuration.<br />
+<br />
+Click &quot;Add Service&quot; and select &quot;Precision Time Protocol&quot;.<br />
+<br />
+Select the network adapter that can receive the PTP traffic.<br />
+<br />
+If NTP servers are available, select &quot;Enable fallback&quot; and enter or update the NTP servers listed with a comma separate list of authoritative time servers. Click &quot;OK&quot;.<br />
+<br />
+From the vSphere Client, go to Hosts and Clusters.<br />
+<br />
+Select the ESXi Host &gt;&gt; Configure &gt;&gt; System &gt;&gt; Services.<br />
+<br />
+Select the &quot;PTP Daemon&quot; service and click &quot;Edit Startup Policy&quot;.<br />
+<br />
+Select &quot;Start and stop with host&quot;. Click &quot;OK&quot;.</p><h2>Check Contents</h2><p>From the vSphere Client, go to Hosts and Clusters.<br />
+<br />
+Select the ESXi Host &gt;&gt; Configure &gt;&gt; System &gt;&gt; Time Configuration.<br />
+<br />
+Verify NTP or PTP are configured, and one or more authoritative time sources are listed.<br />
+<br />
+From the vSphere Client, go to Hosts and Clusters.<br />
+<br />
+Select the ESXi Host &gt;&gt; Configure &gt;&gt; System &gt;&gt; Services.<br />
+<br />
+Verify the NTP or PTP service is running and configured to start and stop with the host.<br />
+<br />
+or<br />
+<br />
+From a PowerCLI command prompt while connected to the ESXi host, run the following commands:<br />
+<br />
+Get-VMHost | Get-VMHostNTPServer<br />
+Get-VMHost | Get-VMHostService | Where {$_.Label -eq &quot;NTP Daemon&quot; -or $_.Label -eq &quot;PTP Daemon&quot;}<br />
+<br />
+If the NTP service is not configured with authoritative DOD time sources or the service is not configured to start and stop with the host (&quot;Policy&quot; of &quot;on&quot; in PowerCLI) or is stopped, this is a finding.<br />
+<br />
+If PTP is used instead of NTP, this is not a finding.</p><h2>Vulnerability Number</h2><p>V-258745</p><h2>Documentable</h2><p>False</p><h2>Rule Version</h2><p>ESXI-80-000124</p><h2>Severity Override Guidance</h2><p>From the vSphere Client, go to Hosts and Clusters.<br />
+<br />
+Select the ESXi Host &gt;&gt; Configure &gt;&gt; System &gt;&gt; Time Configuration.<br />
+<br />
+Verify NTP or PTP are configured, and one or more authoritative time sources are listed.<br />
+<br />
+From the vSphere Client, go to Hosts and Clusters.<br />
+<br />
+Select the ESXi Host &gt;&gt; Configure &gt;&gt; System &gt;&gt; Services.<br />
+<br />
+Verify the NTP or PTP service is running and configured to start and stop with the host.<br />
+<br />
+or<br />
+<br />
+From a PowerCLI command prompt while connected to the ESXi host, run the following commands:<br />
+<br />
+Get-VMHost | Get-VMHostNTPServer<br />
+Get-VMHost | Get-VMHostService | Where {$_.Label -eq &quot;NTP Daemon&quot; -or $_.Label -eq &quot;PTP Daemon&quot;}<br />
+<br />
+If the NTP service is not configured with authoritative DOD time sources or the service is not configured to start and stop with the host (&quot;Policy&quot; of &quot;on&quot; in PowerCLI) or is stopped, this is a finding.<br />
+<br />
+If PTP is used instead of NTP, this is not a finding.</p><h2>Check Content Reference</h2><p>M</p><h2>Target Key</h2><p>5562</p></body></html>

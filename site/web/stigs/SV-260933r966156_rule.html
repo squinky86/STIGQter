@@ -1,0 +1,41 @@
+<!doctype html><html lang="en"><head><meta charset="utf-8"><title>STIGQter: STIG Check Details: SV-260933r966156_rule: MKE must enable kernel protection.</title><link rel="icon" type="image/svg+xml" href="STIGQter.svg" /><script async src="https://www.googletagmanager.com/gtag/js?id=UA-31381839-2"></script><script src="include.js"></script><script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-4110907817782130" crossorigin="anonymous"></script></head><body><div><img src="STIGQter.svg" alt="STIGQter" style="height:1em;" /> <a href="https://www.stigqter.com/">STIGQter</a>: <a href="main.html">STIG Summary</a>: <a href="U_Mirantis_Kubernetes_Engine_STIG_V2R1_Manual-xccdf.html">Mirantis Kubernetes Engine Security Technical Implementation Guide Version: 2 Release: 1 Benchmark Date: 24 Jul 2024</a>:</div> <h1>MKE must enable kernel protection.</h1><h2>DISA Rule</h2><p>SV-260933r966156_rule</p><h2>Vulnerability Number</h2><p>V-260933</p><h2>Group Title</h2><p>SRG-APP-000233-CTR-000585</p><h2>Rule Version</h2><p>CNTR-MK-000990</p><h2>Severity</h2><p>CAT II</p><h2>CCI(s)</h2><ul><li>CCI-001084 - Isolate security functions from nonsecurity functions.</li></ul><h2>Weight</h2><p>10</p><h2>Fix Recommendation</h2><p>When using Kubernetes orchestration, edit the Kubernetes Kubelet file in the /etc/sysconfig directory on the Kubernetes Control Plane. Set the argument &quot;--protect-kernel-defaults&quot; to &quot;true&quot;.<br />
+<br />
+Reset Kubelet service using the following command:<br />
+<br />
+service kubelet restart<br />
+<br />
+When using Swarm orchestration, review and remove nonsystem containers previously created by these users that allowed capabilities to be added or must be removed using:<br />
+<br />
+docker container rm [container]</p><h2>Check Contents</h2><p>Verify kernel protection. <br />
+<br />
+When using Kubernetes orchestration, change to the /etc/sysconfig/ directory on the Kubernetes Control Plane using the command:<br />
+<br />
+grep -i protect-kernel-defaults kubelet<br />
+<br />
+If the setting &quot;protect-kernel-defaults&quot; is set to false or not set in the Kubernetes Kubelet, this is a finding.<br />
+<br />
+When using Swarm orchestration:<br />
+<br />
+Linux: Execute the following command as a trusted user on the host operating system:<br />
+<br />
+docker ps --quiet --all | xargs docker inspect --format '{{ .Name }}: CapAdd={{ .HostConfig.CapAdd }} CapDrop={{ .HostConfig.CapDrop }}'<br />
+<br />
+The command will output all Linux Kernel Capabilities.<br />
+<br />
+If Linux Kernel Capabilities exceed what is defined in the System Security Plan (SSP), this is a finding.</p><h2>Vulnerability Number</h2><p>V-260933</p><h2>Documentable</h2><p>False</p><h2>Rule Version</h2><p>CNTR-MK-000990</p><h2>Severity Override Guidance</h2><p>Verify kernel protection. <br />
+<br />
+When using Kubernetes orchestration, change to the /etc/sysconfig/ directory on the Kubernetes Control Plane using the command:<br />
+<br />
+grep -i protect-kernel-defaults kubelet<br />
+<br />
+If the setting &quot;protect-kernel-defaults&quot; is set to false or not set in the Kubernetes Kubelet, this is a finding.<br />
+<br />
+When using Swarm orchestration:<br />
+<br />
+Linux: Execute the following command as a trusted user on the host operating system:<br />
+<br />
+docker ps --quiet --all | xargs docker inspect --format '{{ .Name }}: CapAdd={{ .HostConfig.CapAdd }} CapDrop={{ .HostConfig.CapDrop }}'<br />
+<br />
+The command will output all Linux Kernel Capabilities.<br />
+<br />
+If Linux Kernel Capabilities exceed what is defined in the System Security Plan (SSP), this is a finding.</p><h2>Check Content Reference</h2><p>M</p><h2>Target Key</h2><p>5595</p></body></html>

@@ -1,0 +1,36 @@
+<!doctype html><html lang="en"><head><meta charset="utf-8"><title>STIGQter: STIG Check Details: SV-214518r997541_rule: For User Role Firewalls, the Juniper SRX Services Gateway Firewall must employ user attribute-based security policies to enforce approved authorizations for logical access to information and system resources.</title><link rel="icon" type="image/svg+xml" href="STIGQter.svg" /><script async src="https://www.googletagmanager.com/gtag/js?id=UA-31381839-2"></script><script src="include.js"></script><script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-4110907817782130" crossorigin="anonymous"></script></head><body><div><img src="STIGQter.svg" alt="STIGQter" style="height:1em;" /> <a href="https://www.stigqter.com/">STIGQter</a>: <a href="main.html">STIG Summary</a>: <a href="U_Juniper_SRX_SG_ALG_STIG_V3R3_Manual-xccdf.html">Juniper SRX Services Gateway ALG Security Technical Implementation Guide Version: 3 Release: 3 Benchmark Date: 30 Jan 2025</a>:</div> <h1>For User Role Firewalls, the Juniper SRX Services Gateway Firewall must employ user attribute-based security policies to enforce approved authorizations for logical access to information and system resources.</h1><h2>DISA Rule</h2><p>SV-214518r997541_rule</p><h2>Vulnerability Number</h2><p>V-214518</p><h2>Group Title</h2><p>SRG-NET-000015-ALG-000016</p><h2>Rule Version</h2><p>JUSX-AG-000019</p><h2>Severity</h2><p>CAT II</p><h2>CCI(s)</h2><ul><li>CCI-000213 - Enforce approved authorizations for logical access to information and system resources in accordance with applicable access control policies.</li><li>CCI-004891 - Implement physically or logically separate subnetworks to isolate organization-defined critical system components and functions.</li></ul><h2>Weight</h2><p>10</p><h2>Fix Recommendation</h2><p>Configure attribute-based security policies to enforce approved authorizations for logical access to information and system resources using the following commands.<br />
+<br />
+To configure redirection from the SRX Series device to the Access Control Service, from configuration mode, configure the UAC profile for the captive portal &lt;acs-device&gt;.<br />
+<br />
+[edit]<br />
+set services unified-access-control captive-portal &lt;acs-device-name&gt; redirect-traffic unauthenticated<br />
+<br />
+Configure the redirection URL for the Access Control Service or a default URL for the captive portal.<br />
+<br />
+[edit]<br />
+set services unified-access-control captive-portal acs-device redirect-url https://%ic-url%/?target=%dest-url%&amp;enforcer=%enforcer-id%<br />
+<br />
+This policy specifies the default target and enforcer variables to be used by the Access Control Service to direct the user back after authentication. This ensures that changes to system specifications will not affect configuration results.<br />
+<br />
+Configure a user role firewall policy that redirects HTTP traffic from zone trust to zone untrust if the source-identity is unauthenticated-user. The captive portal profile name is specified as the action to be taken for traffic matching this policy. The following is an example only since there the actual policy is dependent on the architecture of the organization's network.<br />
+<br />
+[edit]<br />
+set security policies from-zone trust to-zone untrust policy user-role-fw1 match source-address any<br />
+set security policies from-zone trust to-zone untrust policy user-role-fw1 match destination-address any<br />
+set security policies from-zone trust to-zone untrust policy user-role-fw1 match application http<br />
+set security policies from-zone trust to-zone untrust policy user-role-fw1 match source-identity unauthenticated-user<br />
+set security policies from-zone trust to-zone untrust policy user-role-fw1 then permit app</p><h2>Check Contents</h2><p>If user-based firewall policies are not used, this is Not Applicable.<br />
+<br />
+To verify the existence of user-based firewall policies, view a summary of all policies configured on the firewall.<br />
+<br />
+[edit]<br />
+show security policies<br />
+<br />
+If the source identity is not specified in any policy for a particular zone pair, this is a finding.</p><h2>Vulnerability Number</h2><p>V-214518</p><h2>Documentable</h2><p>False</p><h2>Rule Version</h2><p>JUSX-AG-000019</p><h2>Severity Override Guidance</h2><p>If user-based firewall policies are not used, this is Not Applicable.<br />
+<br />
+To verify the existence of user-based firewall policies, view a summary of all policies configured on the firewall.<br />
+<br />
+[edit]<br />
+show security policies<br />
+<br />
+If the source identity is not specified in any policy for a particular zone pair, this is a finding.</p><h2>Check Content Reference</h2><p>M</p><h2>Target Key</h2><p>4004</p></body></html>

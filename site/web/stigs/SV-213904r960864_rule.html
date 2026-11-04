@@ -1,0 +1,55 @@
+<!doctype html><html lang="en"><head><meta charset="utf-8"><title>STIGQter: STIG Check Details: SV-213904r960864_rule: SQL Server must protect against a user falsely repudiating by ensuring databases are not in a trust relationship.</title><link rel="icon" type="image/svg+xml" href="STIGQter.svg" /><script async src="https://www.googletagmanager.com/gtag/js?id=UA-31381839-2"></script><script src="include.js"></script><script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-4110907817782130" crossorigin="anonymous"></script></head><body><div><img src="STIGQter.svg" alt="STIGQter" style="height:1em;" /> <a href="https://www.stigqter.com/">STIGQter</a>: <a href="main.html">STIG Summary</a>: <a href="U_MS_SQL_Server_2016_Database_STIG_V3R5_Manual-xccdf.html">MS SQL Server 2016 Database Security Technical Implementation Guide Version: 3 Release: 5 Benchmark Date: 01 Apr 2026</a>:</div> <h1>SQL Server must protect against a user falsely repudiating by ensuring databases are not in a trust relationship.</h1><h2>DISA Rule</h2><p>SV-213904r960864_rule</p><h2>Vulnerability Number</h2><p>V-213904</p><h2>Group Title</h2><p>SRG-APP-000080-DB-000063</p><h2>Rule Version</h2><p>SQL6-D0-000600</p><h2>Severity</h2><p>CAT II</p><h2>CCI(s)</h2><ul><li>CCI-000166 - Provide irrefutable evidence that an individual (or process acting on behalf of an individual) falsely denying having performed organization-defined actions to be covered by non-repudiation.</li></ul><h2>Weight</h2><p>10</p><h2>Fix Recommendation</h2><p>Disable trustworthy on the database.<br />
+<br />
+ALTER DATABASE [&lt;database name&gt;] SET TRUSTWORTHY OFF</p><h2>Check Contents</h2><p>If the database being reviewed is MSDB, trustworthy is required to be enabled, and therefore this is not a finding.<br />
+<br />
+Execute the following query:<br />
+<br />
+SELECT SUSER_SNAME(d.owner_sid) AS DatabaseOwner,<br />
+CASE<br />
+WHEN d.is_trustworthy_on = 0 THEN 'No'<br />
+WHEN d.is_trustworthy_on = 1 THEN 'Yes'<br />
+END AS IsTrustworthy,<br />
+CASE<br />
+WHEN role.name IN ('sysadmin','securityadmin')<br />
+OR permission.permission_name = 'CONTROL SERVER'<br />
+THEN 'YES'<br />
+ELSE 'No'<br />
+END AS 'IsOwnerPrivileged'<br />
+FROM sys.databases d<br />
+LEFT JOIN sys.server_principals login ON d.owner_sid = login.sid<br />
+LEFT JOIN sys.server_role_members rm ON login.principal_id = rm.member_principal_id<br />
+LEFT JOIN sys.server_principals role ON rm.role_principal_id = role.principal_id<br />
+LEFT JOIN sys.server_permissions permission ON login.principal_id = permission.grantee_principal_id<br />
+WHERE d.name = DB_NAME()<br />
+<br />
+If trustworthy is not enabled, this is not a finding.<br />
+<br />
+If trustworthy is enabled and the database owner is not a privileged account, this is not a finding.<br />
+<br />
+If trustworthy is enabled and the database owner is a privileged account, review the system documentation to determine if the trustworthy property is required and authorized. If this is not documented, this is a finding.</p><h2>Vulnerability Number</h2><p>V-213904</p><h2>Documentable</h2><p>False</p><h2>Rule Version</h2><p>SQL6-D0-000600</p><h2>Severity Override Guidance</h2><p>If the database being reviewed is MSDB, trustworthy is required to be enabled, and therefore this is not a finding.<br />
+<br />
+Execute the following query:<br />
+<br />
+SELECT SUSER_SNAME(d.owner_sid) AS DatabaseOwner,<br />
+CASE<br />
+WHEN d.is_trustworthy_on = 0 THEN 'No'<br />
+WHEN d.is_trustworthy_on = 1 THEN 'Yes'<br />
+END AS IsTrustworthy,<br />
+CASE<br />
+WHEN role.name IN ('sysadmin','securityadmin')<br />
+OR permission.permission_name = 'CONTROL SERVER'<br />
+THEN 'YES'<br />
+ELSE 'No'<br />
+END AS 'IsOwnerPrivileged'<br />
+FROM sys.databases d<br />
+LEFT JOIN sys.server_principals login ON d.owner_sid = login.sid<br />
+LEFT JOIN sys.server_role_members rm ON login.principal_id = rm.member_principal_id<br />
+LEFT JOIN sys.server_principals role ON rm.role_principal_id = role.principal_id<br />
+LEFT JOIN sys.server_permissions permission ON login.principal_id = permission.grantee_principal_id<br />
+WHERE d.name = DB_NAME()<br />
+<br />
+If trustworthy is not enabled, this is not a finding.<br />
+<br />
+If trustworthy is enabled and the database owner is not a privileged account, this is not a finding.<br />
+<br />
+If trustworthy is enabled and the database owner is a privileged account, review the system documentation to determine if the trustworthy property is required and authorized. If this is not documented, this is a finding.</p><h2>Check Content Reference</h2><p>M</p><h2>Target Key</h2><p>3992</p></body></html>

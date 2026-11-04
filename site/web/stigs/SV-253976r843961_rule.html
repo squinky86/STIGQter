@@ -1,0 +1,104 @@
+<!doctype html><html lang="en"><head><meta charset="utf-8"><title>STIGQter: STIG Check Details: SV-253976r843961_rule: The Juniper BGP router must be configured to reject inbound route advertisements from a customer edge (CE) router for prefixes that are not allocated to that customer.</title><link rel="icon" type="image/svg+xml" href="STIGQter.svg" /><script async src="https://www.googletagmanager.com/gtag/js?id=UA-31381839-2"></script><script src="include.js"></script><script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-4110907817782130" crossorigin="anonymous"></script></head><body><div><img src="STIGQter.svg" alt="STIGQter" style="height:1em;" /> <a href="https://www.stigqter.com/">STIGQter</a>: <a href="main.html">STIG Summary</a>: <a href="U_Juniper_EX_Switches_RTR_STIG_V2R1_Manual-xccdf.html">Juniper EX Series Switches Router Security Technical Implementation Guide Version: 2 Release: 1 Benchmark Date: 24 Jul 2024</a>:</div> <h1>The Juniper BGP router must be configured to reject inbound route advertisements from a customer edge (CE) router for prefixes that are not allocated to that customer.</h1><h2>DISA Rule</h2><p>SV-253976r843961_rule</p><h2>Vulnerability Number</h2><p>V-253976</p><h2>Group Title</h2><p>SRG-NET-000018-RTR-000004</p><h2>Rule Version</h2><p>JUEX-RT-000040</p><h2>Severity</h2><p>CAT II</p><h2>CCI(s)</h2><ul><li>CCI-001368 - Enforce approved authorizations for controlling the flow of information within the system based on organization-defined information flow control policies.</li></ul><h2>Weight</h2><p>10</p><h2>Fix Recommendation</h2><p>Configure all eBGP routers to reject inbound route advertisements from a CE router for prefixes that are not allocated to that customer.<br />
+<br />
+set policy-options route-filter-list customer1-routes &lt;customer route 1/mask&gt; orlonger<br />
+set policy-options route-filter-list customer1-routes &lt;customer route 2/mask&gt; orlonger<br />
+set policy-options route-filter-list customer1-routes-ipv6 &lt;customer route 1/prefix&gt; orlonger<br />
+set policy-options route-filter-list customer1-routes-ipv6 &lt;customer route 2/prefix&gt; orlonger<br />
+&lt;additional route-filter-list for other customers&gt;<br />
+<br />
+set policy-options policy-statement bgp-accept-cust1-routes term 1 from route-filter-list customer-routes<br />
+set policy-options policy-statement bgp-accept-cust1-routes term 1 from route-filter-list customer-routes-ipv6<br />
+set policy-options policy-statement bgp-accept-cust1-routes term 1 then accept<br />
+set policy-options policy-statement bgp-accept-cust1-routes term 2 then reject<br />
+&lt;additional policies for other customers&gt;<br />
+<br />
+set protocols bgp group customer1 import bgp-accept-cust1-routes<br />
+set protocols bgp group customer1 neighbor &lt;address&gt; import bgp-accept-cust1-routes<br />
+<br />
+Note: An import filter is only required at the group, or the neighbor, level but not both unless the specific neighbor requires a different import filter than the group.</p><h2>Check Contents</h2><p>Review the BGP router configuration to verify there are filters defined to only accept routes for prefixes that belong to specific customers. <br />
+<br />
+Example route-filter-list of customer addresses with corresponding policy-statement referencing the list:<br />
+[edit policy-options]<br />
+route-filter-list customer1-routes {<br />
+    &lt;customer route 1/mask&gt; orlonger;<br />
+    &lt;customer route 2/mask&gt; orlonger;<br />
+}<br />
+route-filter-list customer1-routes-ipv6 {<br />
+    &lt;customer route 1/prefix&gt; orlonger;<br />
+    &lt;customer route 1/prefix&gt; orlonger;<br />
+}<br />
+&lt;additional route-filter-list for other customers&gt;<br />
+policy-statement bgp-accept-cust1-routes {<br />
+    term 1 {<br />
+        from {<br />
+            route-filter-list customer1-routes;<br />
+            route-filter-list customer1-routes-ipv6;<br />
+        }<br />
+        then accept;<br />
+    }<br />
+    term 2 {<br />
+        then reject;<br />
+    }<br />
+}<br />
+&lt;additional policies for other customers&gt;<br />
+Note: The example shows using route-filter-lists to ease management. The policy-statement also supports the route directly in the match condition. For example, &quot;route-filter &lt;customer route 1/mask&gt; orlonger&quot; (in place of route-filter-list customer-routes).<br />
+<br />
+Verify the eBGP import statement prevents Junos from importing routes into the route table. Junos accepts import statements at three hierarchy levels: Global protocol, group, and neighbor (peer). Global is the most general, followed by group, and neighbor is the most restrictive. Junos applies only the most restrictive policy so if a policy is configured at the protocol, group, and neighbor level, only the neighbor policy is applied.<br />
+[edit protocols bgp]<br />
+group customer1 {<br />
+    &lt;other group configuration&gt;<br />
+    import bgp-accept-cust1-routes;<br />
+    neighbor &lt;address&gt; {<br />
+        &lt;other neighbor configuration&gt;<br />
+        import bgp-accept-cust1-routes;<br />
+    }<br />
+}<br />
+import &lt;import policy name&gt;;<br />
+&lt;other BGP configuration&gt;<br />
+<br />
+If the router is not configured to reject inbound route advertisements from each CE router for prefixes that are not allocated to that customer, this is a finding.<br />
+<br />
+Note: Routes to PE-CE links within a VPN are needed for troubleshooting end-to-end connectivity across the MPLS/IP backbone. Hence, these prefixes are an exception to this requirement.</p><h2>Vulnerability Number</h2><p>V-253976</p><h2>Documentable</h2><p>False</p><h2>Rule Version</h2><p>JUEX-RT-000040</p><h2>Severity Override Guidance</h2><p>Review the BGP router configuration to verify there are filters defined to only accept routes for prefixes that belong to specific customers. <br />
+<br />
+Example route-filter-list of customer addresses with corresponding policy-statement referencing the list:<br />
+[edit policy-options]<br />
+route-filter-list customer1-routes {<br />
+    &lt;customer route 1/mask&gt; orlonger;<br />
+    &lt;customer route 2/mask&gt; orlonger;<br />
+}<br />
+route-filter-list customer1-routes-ipv6 {<br />
+    &lt;customer route 1/prefix&gt; orlonger;<br />
+    &lt;customer route 1/prefix&gt; orlonger;<br />
+}<br />
+&lt;additional route-filter-list for other customers&gt;<br />
+policy-statement bgp-accept-cust1-routes {<br />
+    term 1 {<br />
+        from {<br />
+            route-filter-list customer1-routes;<br />
+            route-filter-list customer1-routes-ipv6;<br />
+        }<br />
+        then accept;<br />
+    }<br />
+    term 2 {<br />
+        then reject;<br />
+    }<br />
+}<br />
+&lt;additional policies for other customers&gt;<br />
+Note: The example shows using route-filter-lists to ease management. The policy-statement also supports the route directly in the match condition. For example, &quot;route-filter &lt;customer route 1/mask&gt; orlonger&quot; (in place of route-filter-list customer-routes).<br />
+<br />
+Verify the eBGP import statement prevents Junos from importing routes into the route table. Junos accepts import statements at three hierarchy levels: Global protocol, group, and neighbor (peer). Global is the most general, followed by group, and neighbor is the most restrictive. Junos applies only the most restrictive policy so if a policy is configured at the protocol, group, and neighbor level, only the neighbor policy is applied.<br />
+[edit protocols bgp]<br />
+group customer1 {<br />
+    &lt;other group configuration&gt;<br />
+    import bgp-accept-cust1-routes;<br />
+    neighbor &lt;address&gt; {<br />
+        &lt;other neighbor configuration&gt;<br />
+        import bgp-accept-cust1-routes;<br />
+    }<br />
+}<br />
+import &lt;import policy name&gt;;<br />
+&lt;other BGP configuration&gt;<br />
+<br />
+If the router is not configured to reject inbound route advertisements from each CE router for prefixes that are not allocated to that customer, this is a finding.<br />
+<br />
+Note: Routes to PE-CE links within a VPN are needed for troubleshooting end-to-end connectivity across the MPLS/IP backbone. Hence, these prefixes are an exception to this requirement.</p><h2>Check Content Reference</h2><p>M</p><h2>Target Key</h2><p>5479</p></body></html>

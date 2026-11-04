@@ -1,0 +1,44 @@
+<!doctype html><html lang="en"><head><meta charset="utf-8"><title>STIGQter: STIG Check Details: SV-234141r835165_rule: The FortiGate firewall must protect traffic log records from unauthorized access while in transit to the central audit server.</title><link rel="icon" type="image/svg+xml" href="STIGQter.svg" /><script async src="https://www.googletagmanager.com/gtag/js?id=UA-31381839-2"></script><script src="include.js"></script><script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-4110907817782130" crossorigin="anonymous"></script></head><body><div><img src="STIGQter.svg" alt="STIGQter" style="height:1em;" /> <a href="https://www.stigqter.com/">STIGQter</a>: <a href="main.html">STIG Summary</a>: <a href="U_FN_FortiGate_Firewall_STIG_V1R4_Manual-xccdf.html">Fortinet FortiGate Firewall Security Technical Implementation Guide Version: 1 Release: 4 Benchmark Date: 05 Jan 2026</a>:</div> <h1>The FortiGate firewall must protect traffic log records from unauthorized access while in transit to the central audit server.</h1><h2>DISA Rule</h2><p>SV-234141r835165_rule</p><h2>Vulnerability Number</h2><p>V-234141</p><h2>Group Title</h2><p>SRG-NET-000098-FW-000021</p><h2>Rule Version</h2><p>FNFG-FW-000050</p><h2>Severity</h2><p>CAT II</p><h2>CCI(s)</h2><ul><li>CCI-000162 - Protect audit information from unauthorized access.</li></ul><h2>Weight</h2><p>10</p><h2>Fix Recommendation</h2><p>Log in to the FortiGate GUI with Super-Admin privilege.<br />
+<br />
+First, upload the CA certificate that issued the Syslog server certificate.<br />
+1. Click System.<br />
+2. Click Certificates.<br />
+3. Click Import, then CA Certificate.<br />
+4. Specify File, and click + Upload.<br />
+5. Choose the CA Certificate to upload from the local hard drive.<br />
+6. Click OK.<br />
+<br />
+Then, configure a TLS-enabled syslog connection:<br />
+1. Open a CLI console, via SSH or available from the GUI.<br />
+2. Run the following command:<br />
+     # config log syslogd setting<br />
+     #    set status enable<br />
+     #    set server {SYSLOG SERVER IP ADDRESS} <br />
+     #    set mode reliable<br />
+     #    set enc-algorithm {HIGH-MEDIUM | HIGH}<br />
+     #    set certificate (Optional - Select local certificate if Syslog server is challenging client [FortiGate] for authentication)<br />
+     # end<br />
+<br />
+Note: The server IP address must be on the site's management network.</p><h2>Check Contents</h2><p>Log in to the FortiGate GUI with Super-Admin privileges.<br />
+<br />
+1. Open a CLI console via SSH or from the GUI widget.<br />
+2. Run the following command:<br />
+     # show full-configuration log syslogd setting<br />
+The output should include:<br />
+     set server {123.123.123.123}<br />
+     set mode reliable<br />
+     set enc-algorithm {medium-high | high}<br />
+<br />
+If the syslogd mode is not set to reliable, this is a finding.<br />
+If the set enc-algorithm is not set to high or medium-high, this is a finding.</p><h2>Vulnerability Number</h2><p>V-234141</p><h2>Documentable</h2><p>False</p><h2>Rule Version</h2><p>FNFG-FW-000050</p><h2>Severity Override Guidance</h2><p>Log in to the FortiGate GUI with Super-Admin privileges.<br />
+<br />
+1. Open a CLI console via SSH or from the GUI widget.<br />
+2. Run the following command:<br />
+     # show full-configuration log syslogd setting<br />
+The output should include:<br />
+     set server {123.123.123.123}<br />
+     set mode reliable<br />
+     set enc-algorithm {medium-high | high}<br />
+<br />
+If the syslogd mode is not set to reliable, this is a finding.<br />
+If the set enc-algorithm is not set to high or medium-high, this is a finding.</p><h2>Check Content Reference</h2><p>M</p><h2>Target Key</h2><p>5258</p></body></html>

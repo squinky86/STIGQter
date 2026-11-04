@@ -1,0 +1,38 @@
+<!doctype html><html lang="en"><head><meta charset="utf-8"><title>STIGQter: STIG Check Details: SV-213975r1137657_rule: SQL Server must prevent unauthorized and unintended information transfer via shared system resources.</title><link rel="icon" type="image/svg+xml" href="STIGQter.svg" /><script async src="https://www.googletagmanager.com/gtag/js?id=UA-31381839-2"></script><script src="include.js"></script><script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-4110907817782130" crossorigin="anonymous"></script></head><body><div><img src="STIGQter.svg" alt="STIGQter" style="height:1em;" /> <a href="https://www.stigqter.com/">STIGQter</a>: <a href="main.html">STIG Summary</a>: <a href="U_MS_SQL_Server_2016_Instance_STIG_V3R6_Manual-xccdf.html">MS SQL Server 2016 Instance Security Technical Implementation Guide Version: 3 Release: 6 Benchmark Date: 05 Jan 2026</a>:</div> <h1>SQL Server must prevent unauthorized and unintended information transfer via shared system resources.</h1><h2>DISA Rule</h2><p>SV-213975r1137657_rule</p><h2>Vulnerability Number</h2><p>V-213975</p><h2>Group Title</h2><p>SRG-APP-000243-DB-000373</p><h2>Rule Version</h2><p>SQL6-D0-009800</p><h2>Severity</h2><p>CAT II</p><h2>CCI(s)</h2><ul><li>CCI-001090 - Prevent unauthorized and unintended information transfer via shared system resources.</li></ul><h2>Weight</h2><p>10</p><h2>Fix Recommendation</h2><p>Configure SQL Server to effectively protect the private resources of one process or user from unauthorized access by another user or process. <br />
+ <br />
+sp_configure 'show advanced options', 1;   <br />
+GO   <br />
+RECONFIGURE;   <br />
+GO   <br />
+sp_configure 'common criteria compliance enabled', 1;   <br />
+GO   <br />
+RECONFIGURE   <br />
+GO</p><h2>Check Contents</h2><p>Review system documentation to determine if Common Criteria Compliance is not required due to potential impact on system performance. <br />
+<br />
+SQL Server Residual Information Protection (RIP) requires a memory allocation to be overwritten with a known pattern of bits before memory is reallocated to a new resource. Meeting the RIP standard can contribute to improved security; however, overwriting the memory allocation can slow performance. After the common criteria compliance enabled option is enabled, the overwriting occurs. <br />
+<br />
+Review the Instance configuration: <br />
+<br />
+<br />
+SELECT value_in_use<br />
+FROM sys.configurations<br />
+WHERE name = 'common criteria compliance enabled'<br />
+<br />
+If &quot;value_in_use&quot; is set to &quot;1&quot; this is not a finding.<br />
+If &quot;value_in_use&quot; is set to &quot;0&quot; this is a finding. <br />
+<br />
+NOTE: Enabling this feature may impact performance on highly active SQL Server instances. If an exception justifying setting SQL Server Residual Information Protection (RIP) to disabled (value_in_use set to &quot;0&quot;) has been documented and approved, then this may be downgraded to a CAT III finding.</p><h2>Vulnerability Number</h2><p>V-213975</p><h2>Documentable</h2><p>False</p><h2>Rule Version</h2><p>SQL6-D0-009800</p><h2>Severity Override Guidance</h2><p>Review system documentation to determine if Common Criteria Compliance is not required due to potential impact on system performance. <br />
+<br />
+SQL Server Residual Information Protection (RIP) requires a memory allocation to be overwritten with a known pattern of bits before memory is reallocated to a new resource. Meeting the RIP standard can contribute to improved security; however, overwriting the memory allocation can slow performance. After the common criteria compliance enabled option is enabled, the overwriting occurs. <br />
+<br />
+Review the Instance configuration: <br />
+<br />
+<br />
+SELECT value_in_use<br />
+FROM sys.configurations<br />
+WHERE name = 'common criteria compliance enabled'<br />
+<br />
+If &quot;value_in_use&quot; is set to &quot;1&quot; this is not a finding.<br />
+If &quot;value_in_use&quot; is set to &quot;0&quot; this is a finding. <br />
+<br />
+NOTE: Enabling this feature may impact performance on highly active SQL Server instances. If an exception justifying setting SQL Server Residual Information Protection (RIP) to disabled (value_in_use set to &quot;0&quot;) has been documented and approved, then this may be downgraded to a CAT III finding.</p><h2>Check Content Reference</h2><p>M</p><h2>Target Key</h2><p>3993</p></body></html>

@@ -1,0 +1,79 @@
+<!doctype html><html lang="en"><head><meta charset="utf-8"><title>STIGQter: STIG Check Details: SV-255319r961461_rule: Azure SQL Database must enforce access restrictions associated with changes to the configuration of the Azure SQL Database server or database(s).</title><link rel="icon" type="image/svg+xml" href="STIGQter.svg" /><script async src="https://www.googletagmanager.com/gtag/js?id=UA-31381839-2"></script><script src="include.js"></script><script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-4110907817782130" crossorigin="anonymous"></script></head><body><div><img src="STIGQter.svg" alt="STIGQter" style="height:1em;" /> <a href="https://www.stigqter.com/">STIGQter</a>: <a href="main.html">STIG Summary</a>: <a href="U_MS_Azure_SQL_DB_STIG_V2R3_Manual-xccdf.html">Microsoft Azure SQL Database Security Technical Implementation Guide Version: 2 Release: 3 Benchmark Date: 02 Jul 2025</a>:</div> <h1>Azure SQL Database must enforce access restrictions associated with changes to the configuration of the Azure SQL Database server or database(s).</h1><h2>DISA Rule</h2><p>SV-255319r961461_rule</p><h2>Vulnerability Number</h2><p>V-255319</p><h2>Group Title</h2><p>SRG-APP-000380-DB-000360</p><h2>Rule Version</h2><p>ASQL-00-003100</p><h2>Severity</h2><p>CAT II</p><h2>CCI(s)</h2><ul><li>CCI-001813 - Enforce access restrictions using organization-defined mechanisms.</li></ul><h2>Weight</h2><p>10</p><h2>Fix Recommendation</h2><p>Document and obtain approval for logins with privileged permissions and role memberships.<br />
+<br />
+If necessary, use the ALTER ROLE and/or REVOKE commands to remove unauthorized privileged permissions and/or role memberships. Example provided below.<br />
+<br />
+ALTER ROLE ddladmin DROP MEMBER UnauthorizedUser;  <br />
+<br />
+REVOKE SELECT ON OBJECT::test.table FROM UnauthorizedUser;<br />
+<br />
+https://docs.microsoft.com/en-us/sql/t-sql/statements/alter-role-transact-sql<br />
+<br />
+https://docs.microsoft.com/en-us/sql/t-sql/statements/revoke-transact-sql<br />
+<br />
+If necessary, in the Azure Portal, navigate to the Access Control pane for the Azure SQL Database to review and remove unauthorized privileged permissions and/or role memberships. Refer to link to documentation below.<br />
+<br />
+https://docs.microsoft.com/en-us/azure/role-based-access-control/role-definitions-list<br />
+<br />
+https://docs.microsoft.com/en-us/azure/role-based-access-control/role-assignments-remove</p><h2>Check Contents</h2><p>Obtain a list of logins who have privileged permissions and role memberships in the data and control planes of Azure SQL Database.<br />
+<br />
+For Database Permissions:<br />
+<br />
+SELECT P.type_desc AS principal_type, P.name AS principal_name,<br />
+O.type_desc,<br />
+CASE class<br />
+WHEN 0 THEN DB_NAME()<br />
+WHEN 1 THEN OBJECT_SCHEMA_NAME(major_id) + '.' + OBJECT_NAME(major_id)<br />
+WHEN 3 THEN SCHEMA_NAME(major_id)<br />
+ELSE class_desc + '(' + CAST(major_id AS nvarchar) + ')'<br />
+END AS securable_name, DP.state_desc, DP.permission_name<br />
+FROM sys.database_permissions DP<br />
+JOIN sys.database_principals P ON DP.grantee_principal_id = P.principal_id<br />
+LEFT OUTER JOIN sys.all_objects O ON O.object_id = DP.major_id AND O.type IN ('TR','TA','P','X','RF','PC','IF','FN','TF','U')<br />
+WHERE DP.type IN ('AL','ALTG') AND DP.class IN (0, 1, 53)<br />
+<br />
+For Database Role Memberships:<br />
+<br />
+SELECT R.name AS role_name, M.type_desc AS principal_type, M.name AS principal_name<br />
+FROM sys.database_principals R<br />
+JOIN sys.database_role_members DRM ON R.principal_id = DRM.role_principal_id<br />
+JOIN sys.database_principals M ON DRM.member_principal_id = M.principal_id<br />
+AND M.name != 'dbo'<br />
+<br />
+For Control Plane Role Memberships, run in PowerShell:<br />
+<br />
+$AzureSqlDbName = '&lt;Azure SQL Database Name&gt;'<br />
+$AzureSqlDbResourceID = Get-AzResource -Name $AzureSqlDbName<br />
+Get-AzRoleAssignment -Scope $AzureSqlDbResourceID.ResourceId -IncludeClassicAdministrators | Format-Table DisplayName,RoleDefinitionName <br />
+<br />
+Check the documentation to verify the logins and roles returned are authorized. If the logins and/or roles are not documented and authorized, this is a finding.</p><h2>Vulnerability Number</h2><p>V-255319</p><h2>Documentable</h2><p>False</p><h2>Rule Version</h2><p>ASQL-00-003100</p><h2>Severity Override Guidance</h2><p>Obtain a list of logins who have privileged permissions and role memberships in the data and control planes of Azure SQL Database.<br />
+<br />
+For Database Permissions:<br />
+<br />
+SELECT P.type_desc AS principal_type, P.name AS principal_name,<br />
+O.type_desc,<br />
+CASE class<br />
+WHEN 0 THEN DB_NAME()<br />
+WHEN 1 THEN OBJECT_SCHEMA_NAME(major_id) + '.' + OBJECT_NAME(major_id)<br />
+WHEN 3 THEN SCHEMA_NAME(major_id)<br />
+ELSE class_desc + '(' + CAST(major_id AS nvarchar) + ')'<br />
+END AS securable_name, DP.state_desc, DP.permission_name<br />
+FROM sys.database_permissions DP<br />
+JOIN sys.database_principals P ON DP.grantee_principal_id = P.principal_id<br />
+LEFT OUTER JOIN sys.all_objects O ON O.object_id = DP.major_id AND O.type IN ('TR','TA','P','X','RF','PC','IF','FN','TF','U')<br />
+WHERE DP.type IN ('AL','ALTG') AND DP.class IN (0, 1, 53)<br />
+<br />
+For Database Role Memberships:<br />
+<br />
+SELECT R.name AS role_name, M.type_desc AS principal_type, M.name AS principal_name<br />
+FROM sys.database_principals R<br />
+JOIN sys.database_role_members DRM ON R.principal_id = DRM.role_principal_id<br />
+JOIN sys.database_principals M ON DRM.member_principal_id = M.principal_id<br />
+AND M.name != 'dbo'<br />
+<br />
+For Control Plane Role Memberships, run in PowerShell:<br />
+<br />
+$AzureSqlDbName = '&lt;Azure SQL Database Name&gt;'<br />
+$AzureSqlDbResourceID = Get-AzResource -Name $AzureSqlDbName<br />
+Get-AzRoleAssignment -Scope $AzureSqlDbResourceID.ResourceId -IncludeClassicAdministrators | Format-Table DisplayName,RoleDefinitionName <br />
+<br />
+Check the documentation to verify the logins and roles returned are authorized. If the logins and/or roles are not documented and authorized, this is a finding.</p><h2>Check Content Reference</h2><p>M</p><h2>Target Key</h2><p>5500</p></body></html>

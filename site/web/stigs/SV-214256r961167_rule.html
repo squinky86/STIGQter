@@ -1,0 +1,45 @@
+<!doctype html><html lang="en"><head><meta charset="utf-8"><title>STIGQter: STIG Check Details: SV-214256r961167_rule: Warning and error messages displayed to clients must be modified to minimize the identity of the Apache web server, patches, loaded modules, and directory paths.</title><link rel="icon" type="image/svg+xml" href="STIGQter.svg" /><script async src="https://www.googletagmanager.com/gtag/js?id=UA-31381839-2"></script><script src="include.js"></script><script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-4110907817782130" crossorigin="anonymous"></script></head><body><div><img src="STIGQter.svg" alt="STIGQter" style="height:1em;" /> <a href="https://www.stigqter.com/">STIGQter</a>: <a href="main.html">STIG Summary</a>: <a href="U_Apache_Server_2-4_UNIX_Server_STIG_V3R3_Manual-xccdf.html">Apache Server 2.4 UNIX Server Security Technical Implementation Guide Version: 3 Release: 3 Benchmark Date: 01 Jul 2026</a>:</div> <h1>Warning and error messages displayed to clients must be modified to minimize the identity of the Apache web server, patches, loaded modules, and directory paths.</h1><h2>DISA Rule</h2><p>SV-214256r961167_rule</p><h2>Vulnerability Number</h2><p>V-214256</p><h2>Group Title</h2><p>SRG-APP-000266-WSR-000159</p><h2>Rule Version</h2><p>AS24-U1-000620</p><h2>Severity</h2><p>CAT II</p><h2>CCI(s)</h2><ul><li>CCI-001312 - Generates error messages that provide information necessary for corrective actions without revealing information that could be exploited.</li></ul><h2>Weight</h2><p>10</p><h2>Fix Recommendation</h2><p>Determine the location of the &quot;HTTPD_ROOT&quot; directory and the &quot;httpd.conf&quot; file:<br />
+<br />
+# apachectl -V | egrep -i 'httpd_root|server_config_file'<br />
+-D HTTPD_ROOT=&quot;/etc/httpd&quot;<br />
+-D SERVER_CONFIG_FILE=&quot;conf/httpd.conf&quot;<br />
+<br />
+Use the &quot;ErrorDocument&quot; directive to enable custom error pages for 4xx or 5xx HTTP status codes.<br />
+<br />
+ErrorDocument 500 &quot;Sorry, our script crashed. Oh dear&quot;<br />
+ErrorDocument 500 /cgi-bin/crash-recover<br />
+ErrorDocument 500 http://error.example.com/server_error.html<br />
+ErrorDocument 404 /errors/not_found.html<br />
+ErrorDocument 401 /subscription/how_to_subscribe.html<br />
+<br />
+The syntax of the ErrorDocument directive is:<br />
+<br />
+ErrorDocument &lt;3-digit-code&gt; &lt;action&gt;<br />
+<br />
+Additional information: <br />
+<br />
+https://httpd.apache.org/docs/2.4/custom-error.html</p><h2>Check Contents</h2><p>Determine the location of the &quot;HTTPD_ROOT&quot; directory and the &quot;httpd.conf&quot; file:<br />
+<br />
+# apachectl -V | egrep -i 'httpd_root|server_config_file'<br />
+-D HTTPD_ROOT=&quot;/etc/httpd&quot;<br />
+-D SERVER_CONFIG_FILE=&quot;conf/httpd.conf&quot;<br />
+<br />
+Note: The apachectl front end is the preferred method for locating the Apache httpd file. For some Linux distributions, &quot;apache2ctl -V&quot; or &quot;httpd -V&quot; can also be used. <br />
+<br />
+# cat /&lt;path_to_file&gt;/httpd.conf | grep -i &quot;ErrorDocument&quot;<br />
+<br />
+If the &quot;ErrorDocument&quot; directive is not being used for custom error pages for &quot;4xx&quot; or &quot;5xx&quot; HTTP status codes, this is a finding.<br />
+<br />
+Note: Using a &quot;sites-available&quot; method for error messages is also acceptable; this would involve the use of /etc/apache2/sites-available and /etc/apache2/sites-enabled. As long as warning and error messages have been sanitized, this is not a finding.</p><h2>Vulnerability Number</h2><p>V-214256</p><h2>Documentable</h2><p>False</p><h2>Rule Version</h2><p>AS24-U1-000620</p><h2>Severity Override Guidance</h2><p>Determine the location of the &quot;HTTPD_ROOT&quot; directory and the &quot;httpd.conf&quot; file:<br />
+<br />
+# apachectl -V | egrep -i 'httpd_root|server_config_file'<br />
+-D HTTPD_ROOT=&quot;/etc/httpd&quot;<br />
+-D SERVER_CONFIG_FILE=&quot;conf/httpd.conf&quot;<br />
+<br />
+Note: The apachectl front end is the preferred method for locating the Apache httpd file. For some Linux distributions, &quot;apache2ctl -V&quot; or &quot;httpd -V&quot; can also be used. <br />
+<br />
+# cat /&lt;path_to_file&gt;/httpd.conf | grep -i &quot;ErrorDocument&quot;<br />
+<br />
+If the &quot;ErrorDocument&quot; directive is not being used for custom error pages for &quot;4xx&quot; or &quot;5xx&quot; HTTP status codes, this is a finding.<br />
+<br />
+Note: Using a &quot;sites-available&quot; method for error messages is also acceptable; this would involve the use of /etc/apache2/sites-available and /etc/apache2/sites-enabled. As long as warning and error messages have been sanitized, this is not a finding.</p><h2>Check Content Reference</h2><p>M</p><h2>Target Key</h2><p>3996</p></body></html>

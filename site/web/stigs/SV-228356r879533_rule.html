@@ -1,0 +1,57 @@
+<!doctype html><html lang="en"><head><meta charset="utf-8"><title>STIGQter: STIG Check Details: SV-228356r879533_rule: Exchange auto-forwarding email to remote domains must be disabled or restricted.</title><link rel="icon" type="image/svg+xml" href="STIGQter.svg" /><script async src="https://www.googletagmanager.com/gtag/js?id=UA-31381839-2"></script><script src="include.js"></script><script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-4110907817782130" crossorigin="anonymous"></script></head><body><div><img src="STIGQter.svg" alt="STIGQter" style="height:1em;" /> <a href="https://www.stigqter.com/">STIGQter</a>: <a href="main.html">STIG Summary</a>: <a href="U_MS_Exchange_2016_Mailbox_Server_STIG_V2R6_Manual-xccdf.html">Microsoft Exchange 2016 Mailbox Server Security Technical Implementation Guide Version: 2 Release: 6 Benchmark Date: 24 Jan 2024</a>:</div> <h1>Exchange auto-forwarding email to remote domains must be disabled or restricted.</h1><h2>DISA Rule</h2><p>SV-228356r879533_rule</p><h2>Vulnerability Number</h2><p>V-228356</p><h2>Group Title</h2><p>SRG-APP-000038</p><h2>Rule Version</h2><p>EX16-MB-000030</p><h2>Severity</h2><p>CAT II</p><h2>CCI(s)</h2><ul><li>CCI-001368 - Enforce approved authorizations for controlling the flow of information within the system based on organization-defined information flow control policies.</li></ul><h2>Weight</h2><p>10</p><h2>Fix Recommendation</h2><p>Non-Enterprise Mail Fix Text:<br />
+<br />
+Open the Exchange Management Shell and enter the following command:<br />
+<br />
+Set-RemoteDomain -Identity &lt;'IdentityName'&gt; -AutoForwardEnabled $false <br />
+<br />
+Note: The &lt;IdentityName&gt; value must be in single quotes.<br />
+<br />
+Enterprise Mail Fix Text:<br />
+<br />
+New-RemoteDomain -Name &lt;NewRemoteDomainName&gt; -DomainName &lt;SMTP Address&gt;<br />
+<br />
+Note: &lt;NewRemoteDomainName&gt; must either be a .mil or .gov domain.<br />
+<br />
+Set-RemoteDomain -Identity &lt;'RemoteDomainIdentity'&gt; -AutoForwardEnabled $true<br />
+<br />
+Note: The &lt;RemoteDomainIdentity&gt; value must be in single quotes.</p><h2>Check Contents</h2><p>Note: Requirement is not applicable on classified or completely closed networks.<br />
+<br />
+Non-Enterprise Mail Check Content: <br />
+<br />
+Open the Exchange Management Shell and enter the following command:<br />
+<br />
+Get-RemoteDomain | Select Identity, AutoForwardEnabled<br />
+<br />
+If the value of AutoForwardEnabled is not set to &quot;False&quot;, this is a finding.<br />
+<br />
+Enterprise Mail Check Content:<br />
+<br />
+If the value of &quot;AutoForwardEnabled&quot; is set to &quot;True&quot;, this is not a finding.<br />
+<br />
+and <br />
+<br />
+In the Exchange Management Shell, enter the following command:<br />
+<br />
+Get-RemoteDomain<br />
+<br />
+If the value of &quot;RemoteDomain&quot; is not set to &quot;.mil&quot; and/or &quot;.gov&quot; domain(s), this is a finding.</p><h2>Vulnerability Number</h2><p>V-228356</p><h2>Documentable</h2><p>False</p><h2>Rule Version</h2><p>EX16-MB-000030</p><h2>Severity Override Guidance</h2><p>Note: Requirement is not applicable on classified or completely closed networks.<br />
+<br />
+Non-Enterprise Mail Check Content: <br />
+<br />
+Open the Exchange Management Shell and enter the following command:<br />
+<br />
+Get-RemoteDomain | Select Identity, AutoForwardEnabled<br />
+<br />
+If the value of AutoForwardEnabled is not set to &quot;False&quot;, this is a finding.<br />
+<br />
+Enterprise Mail Check Content:<br />
+<br />
+If the value of &quot;AutoForwardEnabled&quot; is set to &quot;True&quot;, this is not a finding.<br />
+<br />
+and <br />
+<br />
+In the Exchange Management Shell, enter the following command:<br />
+<br />
+Get-RemoteDomain<br />
+<br />
+If the value of &quot;RemoteDomain&quot; is not set to &quot;.mil&quot; and/or &quot;.gov&quot; domain(s), this is a finding.</p><h2>Check Content Reference</h2><p>M</p><h2>Target Key</h2><p>4223</p></body></html>

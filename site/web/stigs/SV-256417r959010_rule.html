@@ -1,0 +1,58 @@
+<!doctype html><html lang="en"><head><meta charset="utf-8"><title>STIGQter: STIG Check Details: SV-256417r959010_rule: The ESXi host must configure the firewall to restrict access to services running on the host.</title><link rel="icon" type="image/svg+xml" href="STIGQter.svg" /><script async src="https://www.googletagmanager.com/gtag/js?id=UA-31381839-2"></script><script src="include.js"></script><script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-4110907817782130" crossorigin="anonymous"></script></head><body><div><img src="STIGQter.svg" alt="STIGQter" style="height:1em;" /> <a href="https://www.stigqter.com/">STIGQter</a>: <a href="main.html">STIG Summary</a>: <a href="U_VMW_vSphere_7-0_ESXi_STIG_V1R4_Manual-xccdf.html">VMware vSphere 7.0 ESXi Security Technical Implementation Guide Version: 1 Release: 4 Benchmark Date: 02 Apr 2025</a>:</div> <h1>The ESXi host must configure the firewall to restrict access to services running on the host.</h1><h2>DISA Rule</h2><p>SV-256417r959010_rule</p><h2>Vulnerability Number</h2><p>V-256417</p><h2>Group Title</h2><p>SRG-OS-000480-VMM-002000</p><h2>Rule Version</h2><p>ESXI-70-000056</p><h2>Severity</h2><p>CAT II</p><h2>CCI(s)</h2><ul><li>CCI-000366 - Implement the security configuration settings.</li></ul><h2>Weight</h2><p>10</p><h2>Fix Recommendation</h2><p>From the vSphere Client, go to Hosts and Clusters. <br />
+<br />
+Select the ESXi Host &gt;&gt; Configure &gt;&gt; System &gt;&gt; Firewall.<br />
+<br />
+Click &quot;Edit...&quot;. For each enabled service, uncheck the check box to &quot;Allow connections from any IP address&quot; and input the site-specific network(s) required.<br />
+<br />
+The following example formats are acceptable:<br />
+<br />
+192.168.0.0/24<br />
+192.168.1.2, 2001::1/64<br />
+fd3e:29a6:0a81:e478::/64<br />
+<br />
+or<br />
+<br />
+From a PowerCLI command prompt while connected to the ESXi host, run the following commands:<br />
+<br />
+$esxcli = Get-EsxCli -v2<br />
+#This disables the allow all rule for the target service. We are targeting the sshServer service in this example.<br />
+$arguments = $esxcli.network.firewall.ruleset.set.CreateArgs()<br />
+$arguments.rulesetid = &quot;sshServer&quot;<br />
+$arguments.allowedall = $false<br />
+$esxcli.network.firewall.ruleset.set.Invoke($arguments)<br />
+<br />
+#Next add the allowed IPs for the service. Note doing the &quot;vSphere Web Client&quot; service this way may disable access but may be done through vCenter or through the console.<br />
+$arguments = $esxcli.network.firewall.ruleset.allowedip.add.CreateArgs()<br />
+$arguments.rulesetid = &quot;sshServer&quot;<br />
+$arguments.ipaddress = &quot;10.0.0.0/8&quot;<br />
+$esxcli.network.firewall.ruleset.allowedip.add.Invoke($arguments)<br />
+<br />
+This must be done for each enabled service.</p><h2>Check Contents</h2><p>From the vSphere Client, go to Hosts and Clusters.<br />
+<br />
+Select the ESXi Host &gt;&gt; Configure &gt;&gt; System &gt;&gt; Firewall.<br />
+<br />
+Under the &quot;Allowed IP addresses&quot; column, review the allowed IPs for each service.<br />
+<br />
+Check this for &quot;Incoming&quot; and &quot;Outgoing&quot; sections.<br />
+<br />
+or<br />
+<br />
+From a PowerCLI command prompt while connected to the ESXi host, run the following command:<br />
+<br />
+Get-VMHost | Get-VMHostFirewallException | Where {$_.Enabled -eq $true} | Select Name,Enabled,@{N=&quot;AllIPEnabled&quot;;E={$_.ExtensionData.AllowedHosts.AllIP}}<br />
+<br />
+If for an enabled service &quot;Allow connections from any IP address&quot; is selected, this is a finding.</p><h2>Vulnerability Number</h2><p>V-256417</p><h2>Documentable</h2><p>False</p><h2>Rule Version</h2><p>ESXI-70-000056</p><h2>Severity Override Guidance</h2><p>From the vSphere Client, go to Hosts and Clusters.<br />
+<br />
+Select the ESXi Host &gt;&gt; Configure &gt;&gt; System &gt;&gt; Firewall.<br />
+<br />
+Under the &quot;Allowed IP addresses&quot; column, review the allowed IPs for each service.<br />
+<br />
+Check this for &quot;Incoming&quot; and &quot;Outgoing&quot; sections.<br />
+<br />
+or<br />
+<br />
+From a PowerCLI command prompt while connected to the ESXi host, run the following command:<br />
+<br />
+Get-VMHost | Get-VMHostFirewallException | Where {$_.Enabled -eq $true} | Select Name,Enabled,@{N=&quot;AllIPEnabled&quot;;E={$_.ExtensionData.AllowedHosts.AllIP}}<br />
+<br />
+If for an enabled service &quot;Allow connections from any IP address&quot; is selected, this is a finding.</p><h2>Check Content Reference</h2><p>M</p><h2>Target Key</h2><p>5518</p></body></html>

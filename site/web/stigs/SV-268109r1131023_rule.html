@@ -1,0 +1,54 @@
+<!doctype html><html lang="en"><head><meta charset="utf-8"><title>STIGQter: STIG Check Details: SV-268109r1131023_rule: NixOS must authenticate the remote logging server for off-loading audit logs.</title><link rel="icon" type="image/svg+xml" href="STIGQter.svg" /><script async src="https://www.googletagmanager.com/gtag/js?id=UA-31381839-2"></script><script src="include.js"></script><script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-4110907817782130" crossorigin="anonymous"></script></head><body><div><img src="STIGQter.svg" alt="STIGQter" style="height:1em;" /> <a href="https://www.stigqter.com/">STIGQter</a>: <a href="main.html">STIG Summary</a>: <a href="U_Anduril_NixOS_STIG_V1R2_Manual-xccdf.html">Anduril NixOS Security Technical Implementation Guide Version: 1 Release: 2 Benchmark Date: 01 Oct 2025</a>:</div> <h1>NixOS must authenticate the remote logging server for off-loading audit logs.</h1><h2>DISA Rule</h2><p>SV-268109r1131023_rule</p><h2>Vulnerability Number</h2><p>V-268109</p><h2>Group Title</h2><p>SRG-OS-000051-GPOS-00024</p><h2>Rule Version</h2><p>ANIX-00-000490</p><h2>Severity</h2><p>CAT II</p><h2>CCI(s)</h2><ul><li>CCI-000154 - Provide the capability to centrally review and analyze audit records from multiple components within the system.</li><li>CCI-001851 - Transfer audit logs per organization-defined frequency to a different system, system component, or media than the system or system component conducting the logging.</li></ul><h2>Weight</h2><p>10</p><h2>Fix Recommendation</h2><p>Configure the operating system to authenticate the remote logging server for off-loading audit logs.<br />
+<br />
+Add the following Nix code to the NixOS Configuration, usually located in /etc/nixos/configuration.nix or /etc/nixos/flake.nix:<br />
+<br />
+  destination d_network {<br />
+   syslog(<br />
+    &quot;&lt;remote-logging-server&gt;&quot; port(&lt;port&gt;)<br />
+    transport(tls)<br />
+    tls(<br />
+     cert-file(&quot;/var/syslog-ng/certs.d/certificate.crt&quot;)<br />
+     key-file(&quot;/var/syslog-ng/certs.d/certificate.key&quot;)<br />
+     ca-file(&quot;/var/syslog-ng/certs.d/cert-bundle.crt&quot;)<br />
+     peer-verify(yes)<br />
+    )<br />
+   );<br />
+  };<br />
+<br />
+  log { source(s_local); destination(d_local); destination(d_network); };<br />
+<br />
+For example, an updated configuration of 'services.rsyslogd.extraConfig' would look like the following in /etc/nixos/configuration.nix ('...' denoting that the 'services.rsyslogd.extraConfig' configuration may have other options configured):<br />
+<br />
+ services.rsyslogd.extraConfig = ''<br />
+   ...<br />
+   destination d_network {<br />
+    syslog(<br />
+     &quot;&lt;remote-logging-server&gt;&quot; port(&lt;port&gt;)<br />
+     transport(tls)<br />
+     tls(<br />
+      cert-file(&quot;/var/syslog-ng/certs.d/certificate.crt&quot;)<br />
+      key-file(&quot;/var/syslog-ng/certs.d/certificate.key&quot;)<br />
+      ca-file(&quot;/var/syslog-ng/certs.d/cert-bundle.crt&quot;)<br />
+      peer-verify(yes)<br />
+     )<br />
+    );<br />
+   };<br />
+<br />
+   log { source(s_local); destination(d_local); destination(d_network); };<br />
+   ...<br />
+  '';<br />
+<br />
+Rebuild and switch to the new NixOS configuration:<br />
+$ sudo nixos-rebuild switch</p><h2>Check Contents</h2><p>Verify the operating system authenticates the remote logging server for off-loading audit logs.<br />
+<br />
+List the configured destinations with the following command:<br />
+<br />
+$ grep -i &quot;TrustedCertificateFile&quot; /etc/systemd/journal-upload.conf&quot;<br />
+<br />
+If no TrustedCertificateFile is configured or is set to &quot;all&quot;, this is a finding.</p><h2>Vulnerability Number</h2><p>V-268109</p><h2>Documentable</h2><p>False</p><h2>Rule Version</h2><p>ANIX-00-000490</p><h2>Severity Override Guidance</h2><p>Verify the operating system authenticates the remote logging server for off-loading audit logs.<br />
+<br />
+List the configured destinations with the following command:<br />
+<br />
+$ grep -i &quot;TrustedCertificateFile&quot; /etc/systemd/journal-upload.conf&quot;<br />
+<br />
+If no TrustedCertificateFile is configured or is set to &quot;all&quot;, this is a finding.</p><h2>Check Content Reference</h2><p>M</p><h2>Target Key</h2><p>5658</p></body></html>

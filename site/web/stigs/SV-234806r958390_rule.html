@@ -1,0 +1,56 @@
+<!doctype html><html lang="en"><head><meta charset="utf-8"><title>STIGQter: STIG Check Details: SV-234806r958390_rule: The SUSE operating system must display the Standard Mandatory DoD Notice and Consent Banner until users acknowledge the usage conditions and take explicit actions to log on for further access to the local graphical user interface (GUI).</title><link rel="icon" type="image/svg+xml" href="STIGQter.svg" /><script async src="https://www.googletagmanager.com/gtag/js?id=UA-31381839-2"></script><script src="include.js"></script><script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-4110907817782130" crossorigin="anonymous"></script></head><body><div><img src="STIGQter.svg" alt="STIGQter" style="height:1em;" /> <a href="https://www.stigqter.com/">STIGQter</a>: <a href="main.html">STIG Summary</a>: <a href="U_SLES_15_STIG_V2R8_Manual-xccdf.html">SUSE Linux Enterprise Server 15 Security Technical Implementation Guide Version: 2 Release: 8 Benchmark Date: 01 Jul 2026</a>:</div> <h1>The SUSE operating system must display the Standard Mandatory DoD Notice and Consent Banner until users acknowledge the usage conditions and take explicit actions to log on for further access to the local graphical user interface (GUI).</h1><h2>DISA Rule</h2><p>SV-234806r958390_rule</p><h2>Vulnerability Number</h2><p>V-234806</p><h2>Group Title</h2><p>SRG-OS-000023-GPOS-00006</p><h2>Rule Version</h2><p>SLES-15-010050</p><h2>Severity</h2><p>CAT II</p><h2>CCI(s)</h2><ul><li>CCI-000048 - Display an organization-defined system use notification message or banner to users before granting access to the system that provides privacy and security notices consistent with applicable federal laws, Executive Orders, directives, policies, regulations, standards, and guidelines.</li><li>CCI-000050 - Retain the notification message or banner on the screen until users acknowledge the usage conditions and take explicit actions to log on to or further access the system.</li></ul><h2>Weight</h2><p>10</p><h2>Fix Recommendation</h2><p>Configure the SUSE operating system to display the Standard Mandatory DoD Notice and Consent Banner until users acknowledge the usage conditions and take explicit actions to log on for further access.<br />
+<br />
+Note: If a graphical user interface is not installed, this requirement is Not Applicable.<br />
+<br />
+Edit the file &quot;/etc/gdm/Xsession&quot;.<br />
+<br />
+Add the following content to the file &quot;/etc/gdm/Xsession&quot; below the line #!/bin/sh:<br />
+<br />
+if ! zenity --text-info \<br />
+--title &quot;Consent&quot; \<br />
+--filename=/etc/gdm/banner \<br />
+--no-markup \<br />
+--checkbox=&quot;Accept.&quot; 10 10; then<br />
+sleep 1;<br />
+exit 1;<br />
+fi<br />
+<br />
+Save the file &quot;/etc/gdm/Xsession&quot;.</p><h2>Check Contents</h2><p>Verify the SUSE operating system displays the Standard Mandatory DoD Notice and Consent Banner until users acknowledge the usage conditions and take explicit actions to log on via the local GUI. <br />
+<br />
+Note: If a graphical user interface is not installed, this requirement is Not Applicable.<br />
+<br />
+Check the configuration by running the following command:<br />
+<br />
+&gt; more /etc/gdm/Xsession<br />
+<br />
+The beginning of the file must contain the following text immediately after (#!/bin/sh):<br />
+<br />
+if ! zenity --text-info \<br />
+--title &quot;Consent&quot; \<br />
+--filename=/etc/gdm/banner \<br />
+--no-markup \<br />
+--checkbox=&quot;Accept.&quot; 10 10; then<br />
+sleep 1;<br />
+exit 1;<br />
+fi<br />
+<br />
+If the beginning of the file does not contain the above text immediately after the line (#!/bin/sh), this is a finding.</p><h2>Vulnerability Number</h2><p>V-234806</p><h2>Documentable</h2><p>False</p><h2>Rule Version</h2><p>SLES-15-010050</p><h2>Severity Override Guidance</h2><p>Verify the SUSE operating system displays the Standard Mandatory DoD Notice and Consent Banner until users acknowledge the usage conditions and take explicit actions to log on via the local GUI. <br />
+<br />
+Note: If a graphical user interface is not installed, this requirement is Not Applicable.<br />
+<br />
+Check the configuration by running the following command:<br />
+<br />
+&gt; more /etc/gdm/Xsession<br />
+<br />
+The beginning of the file must contain the following text immediately after (#!/bin/sh):<br />
+<br />
+if ! zenity --text-info \<br />
+--title &quot;Consent&quot; \<br />
+--filename=/etc/gdm/banner \<br />
+--no-markup \<br />
+--checkbox=&quot;Accept.&quot; 10 10; then<br />
+sleep 1;<br />
+exit 1;<br />
+fi<br />
+<br />
+If the beginning of the file does not contain the above text immediately after the line (#!/bin/sh), this is a finding.</p><h2>Check Content Reference</h2><p>M</p><h2>Target Key</h2><p>5274</p></body></html>

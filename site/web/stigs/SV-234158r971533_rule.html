@@ -1,0 +1,45 @@
+<!doctype html><html lang="en"><head><meta charset="utf-8"><title>STIGQter: STIG Check Details: SV-234158r971533_rule: The FortiGate firewall must generate an alert that can be forwarded to, at a minimum, the Information System Security Officer (ISSO) and Information System Security Manager (ISSM) when denial-of-service (DoS) incidents are detected.</title><link rel="icon" type="image/svg+xml" href="STIGQter.svg" /><script async src="https://www.googletagmanager.com/gtag/js?id=UA-31381839-2"></script><script src="include.js"></script><script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-4110907817782130" crossorigin="anonymous"></script></head><body><div><img src="STIGQter.svg" alt="STIGQter" style="height:1em;" /> <a href="https://www.stigqter.com/">STIGQter</a>: <a href="main.html">STIG Summary</a>: <a href="U_FN_FortiGate_Firewall_STIG_V1R4_Manual-xccdf.html">Fortinet FortiGate Firewall Security Technical Implementation Guide Version: 1 Release: 4 Benchmark Date: 05 Jan 2026</a>:</div> <h1>The FortiGate firewall must generate an alert that can be forwarded to, at a minimum, the Information System Security Officer (ISSO) and Information System Security Manager (ISSM) when denial-of-service (DoS) incidents are detected.</h1><h2>DISA Rule</h2><p>SV-234158r971533_rule</p><h2>Vulnerability Number</h2><p>V-234158</p><h2>Group Title</h2><p>SRG-NET-000392-FW-000042</p><h2>Rule Version</h2><p>FNFG-FW-000150</p><h2>Severity</h2><p>CAT III</p><h2>CCI(s)</h2><ul><li>CCI-002664 - Alert organization-defined personnel or roles when organization-defined compromise indicators generate the occurrence of a compromise or a potential compromise.</li></ul><h2>Weight</h2><p>10</p><h2>Fix Recommendation</h2><p>Syslog server is used to send alerts for DoS incidents. To enable syslog, log in to the FortiGate GUI with Super-Admin privileges.<br />
+<br />
+1. Open a CLI console, via SSH or available from the GUI.<br />
+2. Run the following command:<br />
+     # config log syslogd setting<br />
+     #    set status enable<br />
+     #    set server {IP address of site syslog server}<br />
+     #    set mode {reliable}<br />
+     #    set enc-algorithm {high-medium | high}<br />
+     #    set port {server listen port}<br />
+     #    set facility syslog<br />
+     #    set source-ip {source IP address}<br />
+     #    set max-log-rate {value between 1 and 100000}<br />
+     #    set certificate {certificate string}<br />
+     # end</p><h2>Check Contents</h2><p>The firewall must be configured to send events to a syslog server. Anomaly events, such as a DoS attack are sent with a severity of critical. The syslog server will notify the ISSO and ISSM. To verify the syslog configuration, log in to the FortiGate GUI with Super-Admin privileges.<br />
+<br />
+1. Open a CLI console, via SSH or available from the GUI.<br />
+2. Run the following command:<br />
+     # show full-configuration log syslogd setting | grep -i  'mode\|server' <br />
+The output should be:     <br />
+     set server {123.123.123.123}<br />
+     set mode reliable<br />
+<br />
+To ensure a secure connection, a certificate must be loaded, encryption enabled, and the SSL version set. To verify, while still in the CLI, run the following command:<br />
+     # get log syslogd setting<br />
+Check for the following:<br />
+     set enc-algorithm {MEDIUM-HIGH | HIGH}<br />
+     set certificate<br />
+<br />
+If the syslogd is not configured to send logs to a central syslog server, this is a finding.</p><h2>Vulnerability Number</h2><p>V-234158</p><h2>Documentable</h2><p>False</p><h2>Rule Version</h2><p>FNFG-FW-000150</p><h2>Severity Override Guidance</h2><p>The firewall must be configured to send events to a syslog server. Anomaly events, such as a DoS attack are sent with a severity of critical. The syslog server will notify the ISSO and ISSM. To verify the syslog configuration, log in to the FortiGate GUI with Super-Admin privileges.<br />
+<br />
+1. Open a CLI console, via SSH or available from the GUI.<br />
+2. Run the following command:<br />
+     # show full-configuration log syslogd setting | grep -i  'mode\|server' <br />
+The output should be:     <br />
+     set server {123.123.123.123}<br />
+     set mode reliable<br />
+<br />
+To ensure a secure connection, a certificate must be loaded, encryption enabled, and the SSL version set. To verify, while still in the CLI, run the following command:<br />
+     # get log syslogd setting<br />
+Check for the following:<br />
+     set enc-algorithm {MEDIUM-HIGH | HIGH}<br />
+     set certificate<br />
+<br />
+If the syslogd is not configured to send logs to a central syslog server, this is a finding.</p><h2>Check Content Reference</h2><p>M</p><h2>Target Key</h2><p>5258</p></body></html>

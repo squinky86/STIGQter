@@ -1,0 +1,30 @@
+<!doctype html><html lang="en"><head><meta charset="utf-8"><title>STIGQter: STIG Check Details: SV-257533r960933_rule: OpenShift must protect audit information from unauthorized modification.</title><link rel="icon" type="image/svg+xml" href="STIGQter.svg" /><script async src="https://www.googletagmanager.com/gtag/js?id=UA-31381839-2"></script><script src="include.js"></script><script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-4110907817782130" crossorigin="anonymous"></script></head><body><div><img src="STIGQter.svg" alt="STIGQter" style="height:1em;" /> <a href="https://www.stigqter.com/">STIGQter</a>: <a href="main.html">STIG Summary</a>: <a href="U_RH_OpenShift_Container_Platform_4-x_STIG_V2R6_Manual-xccdf.html">Red Hat OpenShift Container Platform 4.x Security Technical Implementation Guide Version: 2 Release: 6 Benchmark Date: 01 Jul 2026</a>:</div> <h1>OpenShift must protect audit information from unauthorized modification.</h1><h2>DISA Rule</h2><p>SV-257533r960933_rule</p><h2>Vulnerability Number</h2><p>V-257533</p><h2>Group Title</h2><p>SRG-APP-000119-CTR-000245</p><h2>Rule Version</h2><p>CNTR-OS-000310</p><h2>Severity</h2><p>CAT II</p><h2>CCI(s)</h2><ul><li>CCI-000163 - Protect audit information from unauthorized modification.</li><li>CCI-000164 - Protect audit information from unauthorized deletion.</li></ul><h2>Weight</h2><p>10</p><h2>Fix Recommendation</h2><p>Apply the machine config to prevent unauthorized changes by executing the following:<br />
+<br />
+for mcpool in $(oc get mcp -oname | sed &quot;s:.*/::&quot; ); do<br />
+echo &quot;apiVersion: machineconfiguration.openshift.io/v1<br />
+kind: MachineConfig<br />
+metadata:<br />
+  name: 90-immutable-rules-$mcpool<br />
+  labels:<br />
+    machineconfiguration.openshift.io/role: $mcpool<br />
+spec:<br />
+  config:<br />
+    ignition:<br />
+      version: 3.1.0<br />
+    storage:<br />
+      files:<br />
+      - contents:<br />
+          source: data:,-e%202%0A<br />
+        mode: 0600<br />
+        path: /etc/audit/rules.d/90-immutable.rules<br />
+        overwrite: true<br />
+&quot; | oc apply -f -<br />
+done</p><h2>Check Contents</h2><p>Verify the audit system prevents unauthorized changes by executing the following command:<br />
+<br />
+for node in $(oc get node -oname); do oc debug $node -- chroot /host /bin/bash -c 'echo -n &quot;&quot;$HOSTNAME &quot;&quot;; grep &quot;^\-e\s2\s*$&quot; /etc/audit/audit.rules /etc/audit/rules.d/*  || echo &quot;not found&quot;' 2&gt;/dev/null; done<br />
+<br />
+If the check returns &quot;not found&quot;, the audit system is not set to be immutable by adding the &quot;&quot;-e 2&quot;&quot; option to the &quot;&quot;/etc/audit/audit.rules&quot;&quot;, this is a finding.</p><h2>Vulnerability Number</h2><p>V-257533</p><h2>Documentable</h2><p>False</p><h2>Rule Version</h2><p>CNTR-OS-000310</p><h2>Severity Override Guidance</h2><p>Verify the audit system prevents unauthorized changes by executing the following command:<br />
+<br />
+for node in $(oc get node -oname); do oc debug $node -- chroot /host /bin/bash -c 'echo -n &quot;&quot;$HOSTNAME &quot;&quot;; grep &quot;^\-e\s2\s*$&quot; /etc/audit/audit.rules /etc/audit/rules.d/*  || echo &quot;not found&quot;' 2&gt;/dev/null; done<br />
+<br />
+If the check returns &quot;not found&quot;, the audit system is not set to be immutable by adding the &quot;&quot;-e 2&quot;&quot; option to the &quot;&quot;/etc/audit/audit.rules&quot;&quot;, this is a finding.</p><h2>Check Content Reference</h2><p>M</p><h2>Target Key</h2><p>5547</p></body></html>

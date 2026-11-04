@@ -1,0 +1,24 @@
+<!doctype html><html lang="en"><head><meta charset="utf-8"><title>STIGQter: STIG Check Details: SV-273626r1110933_rule: The RUCKUS Multicast Source Discovery Protocol (MSDP) router must be configured to authenticate all received MSDP packets.</title><link rel="icon" type="image/svg+xml" href="STIGQter.svg" /><script async src="https://www.googletagmanager.com/gtag/js?id=UA-31381839-2"></script><script src="include.js"></script><script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-4110907817782130" crossorigin="anonymous"></script></head><body><div><img src="STIGQter.svg" alt="STIGQter" style="height:1em;" /> <a href="https://www.stigqter.com/">STIGQter</a>: <a href="main.html">STIG Summary</a>: <a href="U_RUCKUS_ICX_RTR_STIG_V1R1_Manual-xccdf.html">RUCKUS ICX Router Security Technical Implementation Guide Version: 1 Release: 1 Benchmark Date: 27 May 2025</a>:</div> <h1>The RUCKUS Multicast Source Discovery Protocol (MSDP) router must be configured to authenticate all received MSDP packets.</h1><h2>DISA Rule</h2><p>SV-273626r1110933_rule</p><h2>Vulnerability Number</h2><p>V-273626</p><h2>Group Title</h2><p>SRG-NET-000343-RTR-000002</p><h2>Rule Version</h2><p>RCKS-RTR-000590</p><h2>Severity</h2><p>CAT II</p><h2>CCI(s)</h2><ul><li>CCI-001958 - Authenticate organization-defined devices and/or types of devices before establishing a local, remote, and/or network connection.</li></ul><h2>Weight</h2><p>10</p><h2>Fix Recommendation</h2><p>Configure TCP keychain and apply it to MSDP peer(s):<br />
+<br />
+ICX(config)# keychain mykeychain<br />
+ICX(config-keychain-mykeychain)# key 1<br />
+ICX(config-keychain-mykeychain-key-1)# authentication-algorithm hmac-sha-256<br />
+ICX(config-keychain-mykeychain-key-1)# password pw_for_mykeychain<br />
+ICX(config-keychain-mykeychain-key-1)# send-id 1<br />
+ICX(config-keychain-mykeychain-key-1)# recv-id 1<br />
+ICX(config-keychain-mykeychain-key-1)# accept-lifetime start 03-05-24 10:10:10 end 15552000<br />
+ICX(config-keychain-mykeychain-key-1)# send-lifetime start xx-xx-xx xx:xx:xx end xx-xx-xx xx:xx:xx<br />
+<br />
+ICX(config-keychain-mykeychain-key-1)# router msdp<br />
+<br />
+ICX(config-msdp-router)# msdp-peer x.x.x.x connect-source loopback 1 ao mykeychain</p><h2>Check Contents</h2><p>Review the running configuration to determine whether MSDP peers are configured for authentication.<br />
+<br />
+ICX(config-msdp-router)# msdp-peer x.x.x.x connect-source loopback 1<br />
+ICX(config-msdp-router)# msdp-peer x.x.x.x connect-source loopback 1 ao chain1<br />
+<br />
+If MSDP peers are not configured for authentication, this is a finding.</p><h2>Vulnerability Number</h2><p>V-273626</p><h2>Documentable</h2><p>False</p><h2>Rule Version</h2><p>RCKS-RTR-000590</p><h2>Severity Override Guidance</h2><p>Review the running configuration to determine whether MSDP peers are configured for authentication.<br />
+<br />
+ICX(config-msdp-router)# msdp-peer x.x.x.x connect-source loopback 1<br />
+ICX(config-msdp-router)# msdp-peer x.x.x.x connect-source loopback 1 ao chain1<br />
+<br />
+If MSDP peers are not configured for authentication, this is a finding.</p><h2>Check Content Reference</h2><p>M</p><h2>Target Key</h2><p>5696</p></body></html>

@@ -1,0 +1,28 @@
+<!doctype html><html lang="en"><head><meta charset="utf-8"><title>STIGQter: STIG Check Details: SV-260926r966135_rule: MKE must use a non-AUFS storage driver.</title><link rel="icon" type="image/svg+xml" href="STIGQter.svg" /><script async src="https://www.googletagmanager.com/gtag/js?id=UA-31381839-2"></script><script src="include.js"></script><script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-4110907817782130" crossorigin="anonymous"></script></head><body><div><img src="STIGQter.svg" alt="STIGQter" style="height:1em;" /> <a href="https://www.stigqter.com/">STIGQter</a>: <a href="main.html">STIG Summary</a>: <a href="U_Mirantis_Kubernetes_Engine_STIG_V2R1_Manual-xccdf.html">Mirantis Kubernetes Engine Security Technical Implementation Guide Version: 2 Release: 1 Benchmark Date: 24 Jul 2024</a>:</div> <h1>MKE must use a non-AUFS storage driver.</h1><h2>DISA Rule</h2><p>SV-260926r966135_rule</p><h2>Vulnerability Number</h2><p>V-260926</p><h2>Group Title</h2><p>SRG-APP-000141-CTR-000315</p><h2>Rule Version</h2><p>CNTR-MK-000600</p><h2>Severity</h2><p>CAT II</p><h2>CCI(s)</h2><ul><li>CCI-000382 - Configure the system to prohibit or restrict the use of organization-defined prohibited or restricted functions, system ports, protocols, software, and/or services.</li></ul><h2>Weight</h2><p>10</p><h2>Fix Recommendation</h2><p>Modify Storage Driver setting.<br />
+<br />
+Via CLI as a trusted user on the underlying host operating system:<br />
+<br />
+If the daemon.json file does not exist, it must be created.<br />
+<br />
+&quot;/etc/docker/daemon.json&quot;<br />
+<br />
+Edit the &quot;/etc/docker/daemon.json&quot; file and set the &quot;storage-driver&quot; property to a value that is not &quot;aufs&quot; or &quot;btrfs&quot;.<br />
+{<br />
+  &quot;storage-driver&quot;: &quot;overlay2&quot;<br />
+}<br />
+<br />
+Restart the Docker daemon by executing the following:<br />
+<br />
+sudo systemctl restart docker</p><h2>Check Contents</h2><p>The default storage driver for MCR is overlay2. To confirm this has not been changed via CLI: <br />
+<br />
+As a trusted user on the underlying host operating system, execute the following command:<br />
+<br />
+docker info | grep -e &quot;Storage Driver:&quot;<br />
+<br />
+If the Storage Driver setting contains *aufs or *btrfs, then this is a finding. If the above command returns no values, this is not a finding.</p><h2>Vulnerability Number</h2><p>V-260926</p><h2>Documentable</h2><p>False</p><h2>Rule Version</h2><p>CNTR-MK-000600</p><h2>Severity Override Guidance</h2><p>The default storage driver for MCR is overlay2. To confirm this has not been changed via CLI: <br />
+<br />
+As a trusted user on the underlying host operating system, execute the following command:<br />
+<br />
+docker info | grep -e &quot;Storage Driver:&quot;<br />
+<br />
+If the Storage Driver setting contains *aufs or *btrfs, then this is a finding. If the above command returns no values, this is not a finding.</p><h2>Check Content Reference</h2><p>M</p><h2>Target Key</h2><p>5595</p></body></html>

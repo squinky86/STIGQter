@@ -1,0 +1,27 @@
+<!doctype html><html lang="en"><head><meta charset="utf-8"><title>STIGQter: STIG Check Details: SV-256950r960963_rule: All Automation Controller NGINX web servers must have Web Distributed Authoring (WebDAV) disabled.</title><link rel="icon" type="image/svg+xml" href="STIGQter.svg" /><script async src="https://www.googletagmanager.com/gtag/js?id=UA-31381839-2"></script><script src="include.js"></script><script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-4110907817782130" crossorigin="anonymous"></script></head><body><div><img src="STIGQter.svg" alt="STIGQter" style="height:1em;" /> <a href="https://www.stigqter.com/">STIGQter</a>: <a href="main.html">STIG Summary</a>: <a href="U_RH_Ansible_Automation_Controller_WS_STIG_V2R3_Manual-xccdf.html">Red Hat Ansible Automation Controller Web Server Security Technical Implementation Guide Version: 2 Release: 3 Benchmark Date: 05 Jan 2026</a>:</div> <h1>All Automation Controller NGINX web servers must have Web Distributed Authoring (WebDAV) disabled.</h1><h2>DISA Rule</h2><p>SV-256950r960963_rule</p><h2>Vulnerability Number</h2><p>V-256950</p><h2>Group Title</h2><p>SRG-APP-000141-WSR-000085</p><h2>Rule Version</h2><p>APWS-AT-000340</p><h2>Severity</h2><p>CAT II</p><h2>CCI(s)</h2><ul><li>CCI-000381 - Configure the system to provide only organization-defined mission essential capabilities.</li></ul><h2>Weight</h2><p>10</p><h2>Fix Recommendation</h2><p>As a system administrator, for each Automation Controller nginx web server host, remove all WebDAV modules from the NGINX configuration file (nominally /etc/nginx/nginx.conf).<br />
+<br />
+Reload the NGINX server configurations for all NGINX processes:<br />
+<br />
+$ pkill -HUP nginx</p><h2>Check Contents</h2><p>As a system administrator, for each Automation Controller NGINX web server host, check the Automation Controller NGINX web server configuration for WebDAV modules:<br />
+<br />
+disallowed_modules=(nginx-dav-ext-module headers-more-nginx-module) ; echo &quot;${disallowed_modules[*]}&quot; | tr ' ' '\n' &gt;tempfile ; nginx -V 2&gt;&amp;1 | grep module | tr ' ' '\n' | grep module | grep -v modules-path | grep -Ff tempfile &amp;&amp; echo &quot;FAILED&quot;; rm -f tempfile<br />
+<br />
+If &quot;FAILED&quot; is displayed, this is a finding.<br />
+<br />
+Check the Automation Controller NGINX web server configuration for WebDAV modules for disallowed WebDAV verbs, COPY, MOVE, MKCOL, PROPFIND, PROPPATCH, LOCK, UNLOCK:<br />
+<br />
+NGINXCONF=`nginx -V 2&gt;&amp;1 | tr ' ' '\n' | sed -ne '/conf-path/{s/.*conf-path=\(.*\)/\1/;p}' ` ;<br />
+grep dev_(.*)methods $NGINXCONF | grep  'COPY|MOVE|MKCO|PROPFIND|PROPPATCH|LOCK|UNLOCK' &amp;&amp; echo 'FAILED'<br />
+<br />
+If &quot;FAILED&quot; is displayed, this is a finding.</p><h2>Vulnerability Number</h2><p>V-256950</p><h2>Documentable</h2><p>False</p><h2>Rule Version</h2><p>APWS-AT-000340</p><h2>Severity Override Guidance</h2><p>As a system administrator, for each Automation Controller NGINX web server host, check the Automation Controller NGINX web server configuration for WebDAV modules:<br />
+<br />
+disallowed_modules=(nginx-dav-ext-module headers-more-nginx-module) ; echo &quot;${disallowed_modules[*]}&quot; | tr ' ' '\n' &gt;tempfile ; nginx -V 2&gt;&amp;1 | grep module | tr ' ' '\n' | grep module | grep -v modules-path | grep -Ff tempfile &amp;&amp; echo &quot;FAILED&quot;; rm -f tempfile<br />
+<br />
+If &quot;FAILED&quot; is displayed, this is a finding.<br />
+<br />
+Check the Automation Controller NGINX web server configuration for WebDAV modules for disallowed WebDAV verbs, COPY, MOVE, MKCOL, PROPFIND, PROPPATCH, LOCK, UNLOCK:<br />
+<br />
+NGINXCONF=`nginx -V 2&gt;&amp;1 | tr ' ' '\n' | sed -ne '/conf-path/{s/.*conf-path=\(.*\)/\1/;p}' ` ;<br />
+grep dev_(.*)methods $NGINXCONF | grep  'COPY|MOVE|MKCO|PROPFIND|PROPPATCH|LOCK|UNLOCK' &amp;&amp; echo 'FAILED'<br />
+<br />
+If &quot;FAILED&quot; is displayed, this is a finding.</p><h2>Check Content Reference</h2><p>M</p><h2>Target Key</h2><p>5535</p></body></html>

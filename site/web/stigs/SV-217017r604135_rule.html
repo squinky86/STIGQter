@@ -1,0 +1,74 @@
+<!doctype html><html lang="en"><head><meta charset="utf-8"><title>STIGQter: STIG Check Details: SV-217017r604135_rule: The Juniper router must be configured to have all non-essential capabilities disabled.</title><link rel="icon" type="image/svg+xml" href="STIGQter.svg" /><script async src="https://www.googletagmanager.com/gtag/js?id=UA-31381839-2"></script><script src="include.js"></script><script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-4110907817782130" crossorigin="anonymous"></script></head><body><div><img src="STIGQter.svg" alt="STIGQter" style="height:1em;" /> <a href="https://www.stigqter.com/">STIGQter</a>: <a href="main.html">STIG Summary</a>: <a href="U_Juniper_Router_RTR_STIG_V3R2_Manual-xccdf.html">Juniper Router RTR Security Technical Implementation Guide Version: 3 Release: 2 Benchmark Date: 30 Jan 2025</a>:</div> <h1>The Juniper router must be configured to have all non-essential capabilities disabled.</h1><h2>DISA Rule</h2><p>SV-217017r604135_rule</p><h2>Vulnerability Number</h2><p>V-217017</p><h2>Group Title</h2><p>SRG-NET-000131-RTR-000035</p><h2>Rule Version</h2><p>JUNI-RT-000070</p><h2>Severity</h2><p>CAT III</p><h2>CCI(s)</h2><ul><li>CCI-000381 - Configure the system to provide only organization-defined mission essential capabilities.</li></ul><h2>Weight</h2><p>10</p><h2>Fix Recommendation</h2><p>Remove unneeded services and functions from the router as shown below.<br />
+<br />
+[edit system services]<br />
+delete telnet<br />
+[edit system services]<br />
+delete finger<br />
+[edit system services]<br />
+delete ftp</p><h2>Check Contents</h2><p>Review the router configuration to determine if services not required for operation are enabled. Services such as finger, ftp, telnet must never be enabled; hence, they should not be shown under the system services hierarchy.<br />
+<br />
+If J-web is not used for administrative access, the web-management services must not be configured as shown below.<br />
+<br />
+If DHCP server is not being deployed on the router, the command dhcp-local-server must not be configured as shown below.<br />
+<br />
+system {<br />
+    …<br />
+    …<br />
+    …<br />
+    services {<br />
+        web-management {<br />
+           https {<br />
+            interface ge-0/0/0.0;<br />
+           }<br />
+        }<br />
+        finger;<br />
+        ftp;<br />
+        ssh {<br />
+            protocol-version v2;<br />
+            macs [ hmac-sha1-96 hmac-sha2-256 hmac-sha2-512 ];<br />
+        }<br />
+        telnet;<br />
+        netconf {<br />
+            ssh;<br />
+        }<br />
+        dhcp-local-server {<br />
+            group DHCP_GROUP {<br />
+                interface ge-0/1/0.0;<br />
+            }<br />
+        }<br />
+    }<br />
+<br />
+If unnecessary services and functions are enabled on the router, this is a finding.</p><h2>Vulnerability Number</h2><p>V-217017</p><h2>Documentable</h2><p>False</p><h2>Rule Version</h2><p>JUNI-RT-000070</p><h2>Severity Override Guidance</h2><p>Review the router configuration to determine if services not required for operation are enabled. Services such as finger, ftp, telnet must never be enabled; hence, they should not be shown under the system services hierarchy.<br />
+<br />
+If J-web is not used for administrative access, the web-management services must not be configured as shown below.<br />
+<br />
+If DHCP server is not being deployed on the router, the command dhcp-local-server must not be configured as shown below.<br />
+<br />
+system {<br />
+    …<br />
+    …<br />
+    …<br />
+    services {<br />
+        web-management {<br />
+           https {<br />
+            interface ge-0/0/0.0;<br />
+           }<br />
+        }<br />
+        finger;<br />
+        ftp;<br />
+        ssh {<br />
+            protocol-version v2;<br />
+            macs [ hmac-sha1-96 hmac-sha2-256 hmac-sha2-512 ];<br />
+        }<br />
+        telnet;<br />
+        netconf {<br />
+            ssh;<br />
+        }<br />
+        dhcp-local-server {<br />
+            group DHCP_GROUP {<br />
+                interface ge-0/1/0.0;<br />
+            }<br />
+        }<br />
+    }<br />
+<br />
+If unnecessary services and functions are enabled on the router, this is a finding.</p><h2>Check Content Reference</h2><p>M</p><h2>Target Key</h2><p>4032</p></body></html>

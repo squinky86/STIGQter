@@ -1,0 +1,28 @@
+<!doctype html><html lang="en"><head><meta charset="utf-8"><title>STIGQter: STIG Check Details: SV-282470r1201601_rule: TOSS 5 must require a unique superuser name upon booting into single-user and maintenance modes.</title><link rel="icon" type="image/svg+xml" href="STIGQter.svg" /><script async src="https://www.googletagmanager.com/gtag/js?id=UA-31381839-2"></script><script src="include.js"></script><script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-4110907817782130" crossorigin="anonymous"></script></head><body><div><img src="STIGQter.svg" alt="STIGQter" style="height:1em;" /> <a href="https://www.stigqter.com/">STIGQter</a>: <a href="main.html">STIG Summary</a>: <a href="U_TOSS_5 _STIG_V1R1_Manual-xccdf.html">Tri-Lab Operating System Stack (TOSS) 5 Security Technical Implementation Guide Version: 1 Release: 1 Benchmark Date: 26 Mar 2026</a>:</div> <h1>TOSS 5 must require a unique superuser name upon booting into single-user and maintenance modes.</h1><h2>DISA Rule</h2><p>SV-282470r1201601_rule</p><h2>Vulnerability Number</h2><p>V-282470</p><h2>Group Title</h2><p>SRG-OS-000080-GPOS-00048</p><h2>Rule Version</h2><p>TOSS-05-000094</p><h2>Severity</h2><p>CAT I</p><h2>CCI(s)</h2><ul><li>CCI-000213 - Enforce approved authorizations for logical access to information and system resources in accordance with applicable access control policies.</li></ul><h2>Weight</h2><p>10</p><h2>Fix Recommendation</h2><p>Configure TOSS 5 to have a unique username for the grub superuser account.<br />
+<br />
+Edit the &quot;/etc/grub.d/01_users&quot; file and add or modify the following lines in the &quot;### BEGIN /etc/grub.d/01_users ###&quot; section:<br />
+<br />
+set superusers=&quot;superusers-account&quot;<br />
+export superusers<br />
+<br />
+Once the superuser account has been added, update the grub.cfg file using the following command:<br />
+<br />
+$ sudo grubby --update-kernel=ALL</p><h2>Check Contents</h2><p>Verify the boot loader superuser account has been set using the following command:<br />
+<br />
+$ sudo grep -A1 &quot;superusers&quot; /etc/grub2.cfg <br />
+<br />
+set superusers=&quot;&lt;superusers-account&gt;&quot;<br />
+export superusers<br />
+ <br />
+The &lt;superusers-account&gt; is the actual account name, which is different from common names like &quot;root&quot;, &quot;admin&quot;, or &quot;administrator&quot;.<br />
+<br />
+If superusers contains easily guessable usernames, this is a finding.</p><h2>Vulnerability Number</h2><p>V-282470</p><h2>Documentable</h2><p>False</p><h2>Rule Version</h2><p>TOSS-05-000094</p><h2>Severity Override Guidance</h2><p>Verify the boot loader superuser account has been set using the following command:<br />
+<br />
+$ sudo grep -A1 &quot;superusers&quot; /etc/grub2.cfg <br />
+<br />
+set superusers=&quot;&lt;superusers-account&gt;&quot;<br />
+export superusers<br />
+ <br />
+The &lt;superusers-account&gt; is the actual account name, which is different from common names like &quot;root&quot;, &quot;admin&quot;, or &quot;administrator&quot;.<br />
+<br />
+If superusers contains easily guessable usernames, this is a finding.</p><h2>Check Content Reference</h2><p>M</p><h2>Target Key</h2><p>5738</p></body></html>

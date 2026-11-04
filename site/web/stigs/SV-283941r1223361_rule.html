@@ -1,0 +1,41 @@
+<!doctype html><html lang="en"><head><meta charset="utf-8"><title>STIGQter: STIG Check Details: SV-283941r1223361_rule: Fly Server must only allow the use of DoW PKI established certificate authorities for verification of the establishment of protected sessions.</title><link rel="icon" type="image/svg+xml" href="STIGQter.svg" /><script async src="https://www.googletagmanager.com/gtag/js?id=UA-31381839-2"></script><script src="include.js"></script><script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-4110907817782130" crossorigin="anonymous"></script></head><body><div><img src="STIGQter.svg" alt="STIGQter" style="height:1em;" /> <a href="https://www.stigqter.com/">STIGQter</a>: <a href="main.html">STIG Summary</a>: <a href="U_AP_Fly_Server_V1R1_Manual-xccdf.html">AvePoint Fly Server Security Technical Implementation Guide Version: 1 Release: 1 Benchmark Date: 28 Apr 2026</a>:</div> <h1>Fly Server must only allow the use of DoW PKI established certificate authorities for verification of the establishment of protected sessions.</h1><h2>DISA Rule</h2><p>SV-283941r1223361_rule</p><h2>Vulnerability Number</h2><p>V-283941</p><h2>Group Title</h2><p>SRG-APP-000427</p><h2>Rule Version</h2><p>FLYS-00-000140</p><h2>Severity</h2><p>CAT II</p><h2>CCI(s)</h2><ul><li>CCI-002470 - Only allow the use of organization-defined certificate authorities for verification of the establishment of protected sessions.</li><li>CCI-000185 - For public key-based authentication, validate certificates by constructing and verifying a certification path to an accepted trust anchor including checking certificate status information.</li></ul><h2>Weight</h2><p>10</p><h2>Fix Recommendation</h2><p>To replace the web certificate:<br />
+1. Prepare trusted certificate (pfx file).<br />
+2. Install the pfx certificate on the FLY Manager server.<br />
+3. Run the following command to replace the sslcert binding:<br />
+    netsh http delete sslcert ipport=0.0.0.0:&lt;FLY Manager Port default:20100&gt;<br />
+    netsh http add sslcert ipport=0.0.0.0:&lt;FLY Manager Port default:20100&gt; certhash=&lt;THUMBPRINT&gt; appid={b8a60d7f-c976-4416-b5af-f9e36cae4dae}<br />
+4. Update the value of the node &quot;WebCertThumbprint&quot; in the file …\FLY\Manager\Control\bin\TimerService.exe.config.<br />
+5. Restart &quot;FLY Timer Service&quot;.<br />
+<br />
+To replace the communication certificate:<br />
+1. Prepare trusted communication certificate (pfx file).<br />
+2. Install the pfx certificate on all FLY servers (agent and manager servers).<br />
+3. On the FLY Manager server, update the value of &quot;CertThumbprint&quot; in the file &quot;…\FLY\Manager\Control\bin\TimerService.exe.config&quot;.<br />
+4. Restart &quot;FLY Timer Service&quot;.<br />
+5. Log in to the agent servers.<br />
+6. Run the following command to replace the sslcert binding:<br />
+    netsh http delete sslcert ipport=0.0.0.0:&lt;FLY Agent Port Default:20101&gt;<br />
+    netsh http add sslcert ipport=0.0.0.0:&lt;FLY Agent Port Default:20101&gt; certhash=&lt;THUMBPRINT&gt; appid={b8a60d7f-c976-4416-b5af-f9e36cae4dae}<br />
+7. Update the thumbprint in the following config file:<br />
+    &quot;agentSSLThumbprint&quot; in  …\APElements\FLY\Agent\bin\AgentCommonVCEnv.config <br />
+    &quot;clientCertificate&quot; and &quot;serviceCertificate&quot; in …\APElements\FLY\Agent\bin\AgentCommonWCFBehaviors.config<br />
+    &quot;clientCertificate&quot; and &quot;serviceCertificate&quot; in …\APElements\FLY\Agent\bin\CommonDataTransfer.config<br />
+8. Restart &quot;FLY Agent Service&quot;.</p><h2>Check Contents</h2><p>To validate the web certificate:<br />
+1. Run the following command to check sslcert:<br />
+    curl.exe -vI https://&lt;FLY host&gt;:&lt;port&gt;/<br />
+2. If there is &quot;The certificate chain was issued by an authority that is not trusted.&quot; in the output, this is a finding.<br />
+<br />
+To validate the communication certificate:<br />
+1. Log in to the agent server.<br />
+2. Open the file &quot;…\APElements\FLY\Agent\bin\AgentCommonVCEnv.config&quot; and find the value of &quot;agentSSLThumbprint&quot;.<br />
+3. Open the certmgr and find the certificate. <br />
+4. If the certificate is not a DoW PKI (or other AO-approved) certificate, this is a finding.</p><h2>Vulnerability Number</h2><p>V-283941</p><h2>Documentable</h2><p>False</p><h2>Rule Version</h2><p>FLYS-00-000140</p><h2>Severity Override Guidance</h2><p>To validate the web certificate:<br />
+1. Run the following command to check sslcert:<br />
+    curl.exe -vI https://&lt;FLY host&gt;:&lt;port&gt;/<br />
+2. If there is &quot;The certificate chain was issued by an authority that is not trusted.&quot; in the output, this is a finding.<br />
+<br />
+To validate the communication certificate:<br />
+1. Log in to the agent server.<br />
+2. Open the file &quot;…\APElements\FLY\Agent\bin\AgentCommonVCEnv.config&quot; and find the value of &quot;agentSSLThumbprint&quot;.<br />
+3. Open the certmgr and find the certificate. <br />
+4. If the certificate is not a DoW PKI (or other AO-approved) certificate, this is a finding.</p><h2>Check Content Reference</h2><p>M</p><h2>Target Key</h2><p>5747</p></body></html>

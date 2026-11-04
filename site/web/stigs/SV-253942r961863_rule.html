@@ -1,0 +1,57 @@
+<!doctype html><html lang="en"><head><meta charset="utf-8"><title>STIGQter: STIG Check Details: SV-253942r961863_rule: The Juniper EX switch must be configured to conduct backups of system level information contained in the information system when changes occur.</title><link rel="icon" type="image/svg+xml" href="STIGQter.svg" /><script async src="https://www.googletagmanager.com/gtag/js?id=UA-31381839-2"></script><script src="include.js"></script><script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-4110907817782130" crossorigin="anonymous"></script></head><body><div><img src="STIGQter.svg" alt="STIGQter" style="height:1em;" /> <a href="https://www.stigqter.com/">STIGQter</a>: <a href="main.html">STIG Summary</a>: <a href="U_Juniper_EX_Switches_NDM_STIG_V2R5_Manual-xccdf.html">Juniper EX Series Switches Network Device Management Security Technical Implementation Guide Version: 2 Release: 5 Benchmark Date: 01 Jul 2026</a>:</div> <h1>The Juniper EX switch must be configured to conduct backups of system level information contained in the information system when changes occur.</h1><h2>DISA Rule</h2><p>SV-253942r961863_rule</p><h2>Vulnerability Number</h2><p>V-253942</p><h2>Group Title</h2><p>SRG-APP-000516-NDM-000340</p><h2>Rule Version</h2><p>JUEX-NM-000650</p><h2>Severity</h2><p>CAT II</p><h2>CCI(s)</h2><ul><li>CCI-000366 - Implement the security configuration settings.</li><li>CCI-000537 - Conduct backups of system-level information contained in the system per organization-defined frequency that is consistent with recovery time and recovery point objectives.</li></ul><h2>Weight</h2><p>10</p><h2>Fix Recommendation</h2><p>Configure the network device to conduct backups of system-level information contained in the information system when changes occur.<br />
+<br />
+For NETCONF connections:<br />
+set system services netconf ssh<br />
+set system services netconf rfc-compliant<br />
+<br />
+Note: The rfc command is recommended for compatibility in large enterprise but can be omitted if there are overriding operational considerations.<br />
+<br />
+For device automated configuration offload:<br />
+set system archival configuration transfer-on-commit<br />
+set system archival configuration archive-sites &quot;&lt;scp|sftp&gt;://&lt;username&gt;@&lt;address&gt;/&lt;path without trailing slash (/)&gt;&quot; password &quot;&lt;PSK&gt;&quot;</p><h2>Check Contents</h2><p>Review the network device configuration to determine if the device is configured to conduct backups of system-level information contained in the information system when changes occur. <br />
+<br />
+Verify the preferred centralized backup system is configured to retrieve the configuration file. There is no provision for backing up system binaries because Juniper provides the signed installation packages rather than individual files. Therefore, verify the centralized backup solution has the appropriate installation packages for the deployed platforms. <br />
+<br />
+When the configuration file is pulled from the centralized server, an example retrieval method is authenticated connections over NETCONF or manual retrieval using SSH. Junos supports authenticating external services via RADIUS or TACACS+, or via a local account.<br />
+<br />
+[edit system services netconf]<br />
+ssh;<br />
+rfc-compliant;<br />
+<br />
+Note: The rfc command is recommended for compatibility in large enterprises, but can be omitted if there are overriding operational considerations.<br />
+<br />
+If the network device will be saving system files to a centralized repository, verify the configuration file is automatically saved at each commit.<br />
+<br />
+[edit system archival]<br />
+configuration {<br />
+    transfer-on-commit;<br />
+    archive-sites {<br />
+        &quot;sftp://user@host/configuration_files&quot; password &quot;$9$w52...&lt;snip&gt;...mfzn/&quot;; ## SECRET-DATA<br />
+    }<br />
+}<br />
+Note: The URL uses &lt;scp|sftp&gt;://&lt;username&gt;@&lt;repository address&gt;/&lt;path without trailing slash (/)&gt; format because Junos appends the slash with the system-generated filename. Junos supports file transfer either on commit, or at configured intervals.<br />
+<br />
+If the network device is not configured to conduct backups of system-level data when changes occur, this is a finding.</p><h2>Vulnerability Number</h2><p>V-253942</p><h2>Documentable</h2><p>False</p><h2>Rule Version</h2><p>JUEX-NM-000650</p><h2>Severity Override Guidance</h2><p>Review the network device configuration to determine if the device is configured to conduct backups of system-level information contained in the information system when changes occur. <br />
+<br />
+Verify the preferred centralized backup system is configured to retrieve the configuration file. There is no provision for backing up system binaries because Juniper provides the signed installation packages rather than individual files. Therefore, verify the centralized backup solution has the appropriate installation packages for the deployed platforms. <br />
+<br />
+When the configuration file is pulled from the centralized server, an example retrieval method is authenticated connections over NETCONF or manual retrieval using SSH. Junos supports authenticating external services via RADIUS or TACACS+, or via a local account.<br />
+<br />
+[edit system services netconf]<br />
+ssh;<br />
+rfc-compliant;<br />
+<br />
+Note: The rfc command is recommended for compatibility in large enterprises, but can be omitted if there are overriding operational considerations.<br />
+<br />
+If the network device will be saving system files to a centralized repository, verify the configuration file is automatically saved at each commit.<br />
+<br />
+[edit system archival]<br />
+configuration {<br />
+    transfer-on-commit;<br />
+    archive-sites {<br />
+        &quot;sftp://user@host/configuration_files&quot; password &quot;$9$w52...&lt;snip&gt;...mfzn/&quot;; ## SECRET-DATA<br />
+    }<br />
+}<br />
+Note: The URL uses &lt;scp|sftp&gt;://&lt;username&gt;@&lt;repository address&gt;/&lt;path without trailing slash (/)&gt; format because Junos appends the slash with the system-generated filename. Junos supports file transfer either on commit, or at configured intervals.<br />
+<br />
+If the network device is not configured to conduct backups of system-level data when changes occur, this is a finding.</p><h2>Check Content Reference</h2><p>M</p><h2>Target Key</h2><p>5477</p></body></html>

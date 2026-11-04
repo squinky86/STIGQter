@@ -1,0 +1,180 @@
+<!doctype html><html lang="en"><head><meta charset="utf-8"><title>STIGQter: STIG Check Details: SV-253984r843985_rule: The Juniper router must be configured to enforce approved authorizations for controlling the flow of information between interconnected networks in accordance with applicable policy.</title><link rel="icon" type="image/svg+xml" href="STIGQter.svg" /><script async src="https://www.googletagmanager.com/gtag/js?id=UA-31381839-2"></script><script src="include.js"></script><script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-4110907817782130" crossorigin="anonymous"></script></head><body><div><img src="STIGQter.svg" alt="STIGQter" style="height:1em;" /> <a href="https://www.stigqter.com/">STIGQter</a>: <a href="main.html">STIG Summary</a>: <a href="U_Juniper_EX_Switches_RTR_STIG_V2R1_Manual-xccdf.html">Juniper EX Series Switches Router Security Technical Implementation Guide Version: 2 Release: 1 Benchmark Date: 24 Jul 2024</a>:</div> <h1>The Juniper router must be configured to enforce approved authorizations for controlling the flow of information between interconnected networks in accordance with applicable policy.</h1><h2>DISA Rule</h2><p>SV-253984r843985_rule</p><h2>Vulnerability Number</h2><p>V-253984</p><h2>Group Title</h2><p>SRG-NET-000019-RTR-000002</p><h2>Rule Version</h2><p>JUEX-RT-000120</p><h2>Severity</h2><p>CAT II</p><h2>CCI(s)</h2><ul><li>CCI-001414 - Enforce approved authorizations for controlling the flow of information between connected systems based on organization-defined information flow control policies.</li></ul><h2>Weight</h2><p>10</p><h2>Fix Recommendation</h2><p>Configure the router to enforce approved authorizations for controlling the flow of information between interconnected networks in accordance with applicable policy.<br />
+<br />
+set interfaces &lt;interface name&gt; unit &lt;logical unit&gt; family inet rpf-check<br />
+set interfaces &lt;interface name&gt; unit &lt;logical unit&gt; family inet filter input deny-prod-to-mgt<br />
+set interfaces &lt;interface name&gt; unit &lt;logical unit&gt; family inet6 rpf-check<br />
+set interfaces &lt;interface name&gt; unit &lt;logical unit&gt; family inet6 filter input deny-prod-to-mgt-v6<br />
+<br />
+set firewall family inet filter deny-prod-to-mgt term 1 from source-address &lt;production IPv4 subnet/mask&gt;<br />
+set firewall family inet filter deny-prod-to-mgt term 1 from destination-address &lt;MGT IPv4 subnet/mask&gt;<br />
+set firewall family inet filter deny-prod-to-mgt term 1 then log<br />
+set firewall family inet filter deny-prod-to-mgt term 1 then syslog<br />
+set firewall family inet filter deny-prod-to-mgt term 1 then discard<br />
+set firewall family inet filter deny-prod-to-mgt term 2 from source-address &lt;production IPv4 subnet/mask&gt;<br />
+set firewall family inet filter deny-prod-to-mgt term 2 then accept<br />
+<br />
+set firewall family inet6 filter deny-prod-to-mgt-v6 term 1 from source-address &lt;production IPv6 subnet/prefix&gt;<br />
+set firewall family inet6 filter deny-prod-to-mgt-v6 term 1 from destination-address &lt;MGT IPv6 subnet/prefix&gt;<br />
+set firewall family inet6 filter deny-prod-to-mgt-v6 term 1 then log<br />
+set firewall family inet6 filter deny-prod-to-mgt-v6 term 1 then syslog<br />
+set firewall family inet6 filter deny-prod-to-mgt-v6 term 1 then discard<br />
+set firewall family inet6 filter deny-prod-to-mgt-v6 term 2 from source-address &lt;production IPv6 subnet/prefix&gt;<br />
+set firewall family inet6 filter deny-prod-to-mgt-v6 term 2 then accept</p><h2>Check Contents</h2><p>Verify each router enforces approved authorizations for controlling the flow of information between interconnected networks in accordance with applicable policy.<br />
+<br />
+Junos enforces information flow via stateless firewall filters and unicast Reverse Path Forwarding (uRPF). uRPF performs a forwarding table lookup to validate the incoming packet's source address is appropriate for the arriving interface. Verify uRPF is enabled on applicable interfaces. The example shows uRPF and the stateless firewall filter applied. Verify the interface and assigned addresses are appropriate for the target environment.<br />
+<br />
+[edit interfaces]<br />
+&lt;interface name&gt; {<br />
+    unit &lt;logical unit number&gt; {<br />
+        family inet {<br />
+            rpf-check;<br />
+           filter {<br />
+              input deny-prod-to-mgt;<br />
+           }<br />
+        }<br />
+        family inet6 {<br />
+           rpf-check;<br />
+           filter {<br />
+              input deny-prod-to-mgt-v6;<br />
+           }<br />
+        }<br />
+    }<br />
+}<br />
+Note: Some Juniper devices support both monolithic filters and filter lists. Filter lists separate each term, or set of terms, into a separate filter that is applied sequentially to an interface. If using filter lists, the keywords &quot;input&quot; or &quot;output&quot; change to &quot;input-list&quot; or &quot;output-list&quot;. Verify the final list item is a deny-all filter. <br />
+<br />
+[edit firewall]<br />
+family inet {<br />
+    filter deny-prod-to-mgt {<br />
+        term 1 {<br />
+            from {<br />
+                source-address {<br />
+                    &lt;production IPv4 subnet/mask&gt;;<br />
+                }<br />
+                destination-address {<br />
+                    &lt;MGT IPv4 subnet/mask&gt;;<br />
+                }<br />
+            }<br />
+            then {<br />
+                log;<br />
+                syslog;<br />
+                discard;<br />
+            }<br />
+        }<br />
+        term 2 {<br />
+            from {<br />
+                source-address {<br />
+                    &lt;production IPv4 subnet/mask&gt;;<br />
+                }<br />
+            }<br />
+            then accept;<br />
+        }<br />
+    }<br />
+}<br />
+family inet6 {<br />
+    filter deny-prod-to-mgt-v6 {<br />
+        term 1 {                        <br />
+            from {<br />
+                source-address {<br />
+                     &lt;production IPv6 subnet/prefix&gt;;<br />
+                }<br />
+                destination-address {<br />
+                    &lt;MGT IPv6 subnet/prefix&gt;;<br />
+                }<br />
+            }<br />
+            then {<br />
+                log;<br />
+                syslog;<br />
+                discard;<br />
+            }<br />
+        }<br />
+        term 2 {<br />
+            from {<br />
+                source-address {<br />
+                    &lt;production IPv6 subnet/prefix&gt;;<br />
+                }<br />
+            }<br />
+            then accept;<br />
+        }<br />
+    }<br />
+}<br />
+<br />
+If the router does not enforce approved authorizations for controlling the flow of information between interconnected networks in accordance with applicable policy, this is a finding.</p><h2>Vulnerability Number</h2><p>V-253984</p><h2>Documentable</h2><p>False</p><h2>Rule Version</h2><p>JUEX-RT-000120</p><h2>Severity Override Guidance</h2><p>Verify each router enforces approved authorizations for controlling the flow of information between interconnected networks in accordance with applicable policy.<br />
+<br />
+Junos enforces information flow via stateless firewall filters and unicast Reverse Path Forwarding (uRPF). uRPF performs a forwarding table lookup to validate the incoming packet's source address is appropriate for the arriving interface. Verify uRPF is enabled on applicable interfaces. The example shows uRPF and the stateless firewall filter applied. Verify the interface and assigned addresses are appropriate for the target environment.<br />
+<br />
+[edit interfaces]<br />
+&lt;interface name&gt; {<br />
+    unit &lt;logical unit number&gt; {<br />
+        family inet {<br />
+            rpf-check;<br />
+           filter {<br />
+              input deny-prod-to-mgt;<br />
+           }<br />
+        }<br />
+        family inet6 {<br />
+           rpf-check;<br />
+           filter {<br />
+              input deny-prod-to-mgt-v6;<br />
+           }<br />
+        }<br />
+    }<br />
+}<br />
+Note: Some Juniper devices support both monolithic filters and filter lists. Filter lists separate each term, or set of terms, into a separate filter that is applied sequentially to an interface. If using filter lists, the keywords &quot;input&quot; or &quot;output&quot; change to &quot;input-list&quot; or &quot;output-list&quot;. Verify the final list item is a deny-all filter. <br />
+<br />
+[edit firewall]<br />
+family inet {<br />
+    filter deny-prod-to-mgt {<br />
+        term 1 {<br />
+            from {<br />
+                source-address {<br />
+                    &lt;production IPv4 subnet/mask&gt;;<br />
+                }<br />
+                destination-address {<br />
+                    &lt;MGT IPv4 subnet/mask&gt;;<br />
+                }<br />
+            }<br />
+            then {<br />
+                log;<br />
+                syslog;<br />
+                discard;<br />
+            }<br />
+        }<br />
+        term 2 {<br />
+            from {<br />
+                source-address {<br />
+                    &lt;production IPv4 subnet/mask&gt;;<br />
+                }<br />
+            }<br />
+            then accept;<br />
+        }<br />
+    }<br />
+}<br />
+family inet6 {<br />
+    filter deny-prod-to-mgt-v6 {<br />
+        term 1 {                        <br />
+            from {<br />
+                source-address {<br />
+                     &lt;production IPv6 subnet/prefix&gt;;<br />
+                }<br />
+                destination-address {<br />
+                    &lt;MGT IPv6 subnet/prefix&gt;;<br />
+                }<br />
+            }<br />
+            then {<br />
+                log;<br />
+                syslog;<br />
+                discard;<br />
+            }<br />
+        }<br />
+        term 2 {<br />
+            from {<br />
+                source-address {<br />
+                    &lt;production IPv6 subnet/prefix&gt;;<br />
+                }<br />
+            }<br />
+            then accept;<br />
+        }<br />
+    }<br />
+}<br />
+<br />
+If the router does not enforce approved authorizations for controlling the flow of information between interconnected networks in accordance with applicable policy, this is a finding.</p><h2>Check Content Reference</h2><p>M</p><h2>Target Key</h2><p>5479</p></body></html>

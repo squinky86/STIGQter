@@ -1,0 +1,45 @@
+<!doctype html><html lang="en"><head><meta charset="utf-8"><title>STIGQter: STIG Check Details: SV-259646r960759_rule: Exchange must use encryption for Outlook Web App (OWA) access.</title><link rel="icon" type="image/svg+xml" href="STIGQter.svg" /><script async src="https://www.googletagmanager.com/gtag/js?id=UA-31381839-2"></script><script src="include.js"></script><script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-4110907817782130" crossorigin="anonymous"></script></head><body><div><img src="STIGQter.svg" alt="STIGQter" style="height:1em;" /> <a href="https://www.stigqter.com/">STIGQter</a>: <a href="main.html">STIG Summary</a>: <a href="U_MS_Exchange_2019_Mailbox_Server_STIG_V2R3_Manual-xccdf.html">Microsoft Exchange 2019 Mailbox Server Security Technical Implementation Guide Version: 2 Release: 3 Benchmark Date: 02 Jul 2025</a>:</div> <h1>Exchange must use encryption for Outlook Web App (OWA) access.</h1><h2>DISA Rule</h2><p>SV-259646r960759_rule</p><h2>Vulnerability Number</h2><p>V-259646</p><h2>Group Title</h2><p>SRG-APP-000014</p><h2>Rule Version</h2><p>EX19-MB-000007</p><h2>Severity</h2><p>CAT II</p><h2>CCI(s)</h2><ul><li>CCI-000068 - Implement cryptographic mechanisms to protect the confidentiality of remote access sessions.</li></ul><h2>Weight</h2><p>10</p><h2>Fix Recommendation</h2><p>Ensure a trusted public certificate is installed for the Exchange server with the correct FQDNs that will service the domain. This will allow secure communications between clients and the server. This should be done before the server is put into production.<br />
+<br />
+Once installed, in an elevated Exchange Management Shell, run the following cmdlet to associate the certificate with the IIS service:<br />
+<br />
+Enable-ExchangeCertificate -Thumbprint &lt;thumbprint of public cert&gt; -Services IIS<br />
+<br />
+Set the OWA URL to use HTTPS instead of HTTP by updating the URLs to HTTPS. <br />
+<br />
+If the website is &quot;http://mail.contoso.com&quot; for both internal and external (for example), run the following cmdlet to set it to HTTPS:<br />
+<br />
+Set-OwaVirtualDirectory -Identity &quot;&lt;Server&gt;\owa (Default Web Site) -InternalUrl &quot;https://mail.contoso.com/owa&quot; -ExternalUrl &quot;https://mail.contoso.com/owa&quot;<br />
+<br />
+Note: If this change is made, it must be done for the ECP virtual directory as well. A warning notifies users that this must be done.<br />
+<br />
+Open IIS Manager and locate the Exchange Server. In the navigation pane on the left, navigate to Sites &gt;&gt; Default Web Site &gt;&gt; owa. In the pane on the right, under /owa Home, in the IIS section, double-click &quot;SSL Settings&quot;.<br />
+<br />
+Check the box for &quot;Require SSL&quot;.</p><h2>Check Contents</h2><p>Open an Exchange Management Shell and enter the following command:<br />
+<br />
+Get-ExchangeCertificate |Select-Object -Property Subject,Services,Thumbprint<br />
+<br />
+If the certificate associated with the IIS service is not a trusted public certificate, this is a finding.<br />
+<br />
+In the same Exchange Management Shell, run the following cmdlets:<br />
+<br />
+Get-OwaVirtualDirectory | Select-Object -Property internalurl, externalurl<br />
+<br />
+If the value returned is not https://, this is a finding.<br />
+<br />
+Open IIS Manager and locate the Exchange Server. In the navigation pane on the left, navigate to Sites &gt;&gt; Default Web Site &gt;&gt; owa. In the pane on the right, under /owa Home, in the IIS section, double-click &quot;SSL Settings&quot;.<br />
+<br />
+If the box &quot;Require SSL&quot; is not checked, this is a finding.</p><h2>Vulnerability Number</h2><p>V-259646</p><h2>Documentable</h2><p>False</p><h2>Rule Version</h2><p>EX19-MB-000007</p><h2>Severity Override Guidance</h2><p>Open an Exchange Management Shell and enter the following command:<br />
+<br />
+Get-ExchangeCertificate |Select-Object -Property Subject,Services,Thumbprint<br />
+<br />
+If the certificate associated with the IIS service is not a trusted public certificate, this is a finding.<br />
+<br />
+In the same Exchange Management Shell, run the following cmdlets:<br />
+<br />
+Get-OwaVirtualDirectory | Select-Object -Property internalurl, externalurl<br />
+<br />
+If the value returned is not https://, this is a finding.<br />
+<br />
+Open IIS Manager and locate the Exchange Server. In the navigation pane on the left, navigate to Sites &gt;&gt; Default Web Site &gt;&gt; owa. In the pane on the right, under /owa Home, in the IIS section, double-click &quot;SSL Settings&quot;.<br />
+<br />
+If the box &quot;Require SSL&quot; is not checked, this is a finding.</p><h2>Check Content Reference</h2><p>M</p><h2>Target Key</h2><p>5580</p></body></html>

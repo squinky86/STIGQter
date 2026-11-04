@@ -1,0 +1,57 @@
+<!doctype html><html lang="en"><head><meta charset="utf-8"><title>STIGQter: STIG Check Details: SV-255307r960960_rule: The role(s)/group(s) used to modify database structure (including but not necessarily limited to tables, indexes, storage, etc.) and logic modules (stored procedures, functions, triggers, links to software external to Azure SQL Database, etc.) must be restricted to authorized users.</title><link rel="icon" type="image/svg+xml" href="STIGQter.svg" /><script async src="https://www.googletagmanager.com/gtag/js?id=UA-31381839-2"></script><script src="include.js"></script><script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-4110907817782130" crossorigin="anonymous"></script></head><body><div><img src="STIGQter.svg" alt="STIGQter" style="height:1em;" /> <a href="https://www.stigqter.com/">STIGQter</a>: <a href="main.html">STIG Summary</a>: <a href="U_MS_Azure_SQL_DB_STIG_V2R3_Manual-xccdf.html">Microsoft Azure SQL Database Security Technical Implementation Guide Version: 2 Release: 3 Benchmark Date: 02 Jul 2025</a>:</div> <h1>The role(s)/group(s) used to modify database structure (including but not necessarily limited to tables, indexes, storage, etc.) and logic modules (stored procedures, functions, triggers, links to software external to Azure SQL Database, etc.) must be restricted to authorized users.</h1><h2>DISA Rule</h2><p>SV-255307r960960_rule</p><h2>Vulnerability Number</h2><p>V-255307</p><h2>Group Title</h2><p>SRG-APP-000133-DB-000362</p><h2>Rule Version</h2><p>ASQL-00-001400</p><h2>Severity</h2><p>CAT II</p><h2>CCI(s)</h2><ul><li>CCI-001499 - Limit privileges to change software resident within software libraries.</li></ul><h2>Weight</h2><p>10</p><h2>Fix Recommendation</h2><p>Document and obtain approval for any nonadministrative user(s) who require the ability to modify database structure and logic modules.<br />
+<br />
+If necessary, use the ALTER ROLE and/or REVOKE commands to remove unauthorized users access to modify database structure. Examples provided below.<br />
+<br />
+ALTER ROLE ddladmin DROP MEMBER UnauthorizedUser;  <br />
+<br />
+REVOKE SELECT ON OBJECT::test.table FROM UnauthorizedUser;<br />
+<br />
+https://docs.microsoft.com/en-us/sql/t-sql/statements/alter-role-transact-sql<br />
+<br />
+https://docs.microsoft.com/en-us/sql/t-sql/statements/revoke-transact-sql</p><h2>Check Contents</h2><p>Obtain a listing of users and roles who are authorized to modify database structure and logic modules from the server documentation.<br />
+<br />
+Execute the following query to obtain a list of database principals:<br />
+SELECT P.type_desc AS principal_type, P.name AS principal_name, O.type_desc,<br />
+CASE class<br />
+WHEN 0 THEN DB_NAME()<br />
+WHEN 1 THEN OBJECT_SCHEMA_NAME(major_id) + '.' + OBJECT_NAME(major_id)<br />
+WHEN 3 THEN SCHEMA_NAME(major_id)<br />
+ELSE class_desc + '(' + CAST(major_id AS nvarchar) + ')'<br />
+END AS securable_name, DP.state_desc, DP.permission_name<br />
+FROM sys.database_permissions DP<br />
+JOIN sys.database_principals P ON DP.grantee_principal_id = P.principal_id<br />
+LEFT OUTER JOIN sys.all_objects O ON O.object_id = DP.major_id AND O.type IN ('TR','TA','P','X','RF','PC','IF','FN','TF','U')<br />
+WHERE DP.type IN ('AL','ALTG') AND DP.class IN (0, 1, 53)<br />
+<br />
+Execute the following query to obtain a list of role memberships:<br />
+SELECT R.name AS role_name, M.type_desc AS principal_type, M.name AS principal_name<br />
+FROM sys.database_principals R<br />
+JOIN sys.database_role_members DRM ON R.principal_id = DRM.role_principal_id<br />
+JOIN sys.database_principals M ON DRM.member_principal_id = M.principal_id<br />
+WHERE R.name IN ('db_ddladmin','db_owner')<br />
+AND M.name != 'dbo'<br />
+<br />
+If unauthorized access to the principal(s)/role(s) has been granted, this is a finding.</p><h2>Vulnerability Number</h2><p>V-255307</p><h2>Documentable</h2><p>False</p><h2>Rule Version</h2><p>ASQL-00-001400</p><h2>Severity Override Guidance</h2><p>Obtain a listing of users and roles who are authorized to modify database structure and logic modules from the server documentation.<br />
+<br />
+Execute the following query to obtain a list of database principals:<br />
+SELECT P.type_desc AS principal_type, P.name AS principal_name, O.type_desc,<br />
+CASE class<br />
+WHEN 0 THEN DB_NAME()<br />
+WHEN 1 THEN OBJECT_SCHEMA_NAME(major_id) + '.' + OBJECT_NAME(major_id)<br />
+WHEN 3 THEN SCHEMA_NAME(major_id)<br />
+ELSE class_desc + '(' + CAST(major_id AS nvarchar) + ')'<br />
+END AS securable_name, DP.state_desc, DP.permission_name<br />
+FROM sys.database_permissions DP<br />
+JOIN sys.database_principals P ON DP.grantee_principal_id = P.principal_id<br />
+LEFT OUTER JOIN sys.all_objects O ON O.object_id = DP.major_id AND O.type IN ('TR','TA','P','X','RF','PC','IF','FN','TF','U')<br />
+WHERE DP.type IN ('AL','ALTG') AND DP.class IN (0, 1, 53)<br />
+<br />
+Execute the following query to obtain a list of role memberships:<br />
+SELECT R.name AS role_name, M.type_desc AS principal_type, M.name AS principal_name<br />
+FROM sys.database_principals R<br />
+JOIN sys.database_role_members DRM ON R.principal_id = DRM.role_principal_id<br />
+JOIN sys.database_principals M ON DRM.member_principal_id = M.principal_id<br />
+WHERE R.name IN ('db_ddladmin','db_owner')<br />
+AND M.name != 'dbo'<br />
+<br />
+If unauthorized access to the principal(s)/role(s) has been granted, this is a finding.</p><h2>Check Content Reference</h2><p>M</p><h2>Target Key</h2><p>5500</p></body></html>

@@ -1,0 +1,58 @@
+<!doctype html><html lang="en"><head><meta charset="utf-8"><title>STIGQter: STIG Check Details: SV-271935r1114172_rule: The Cisco ACI must allocate audit record storage capacity in accordance with organization-defined audit record storage requirements.</title><link rel="icon" type="image/svg+xml" href="STIGQter.svg" /><script async src="https://www.googletagmanager.com/gtag/js?id=UA-31381839-2"></script><script src="include.js"></script><script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-4110907817782130" crossorigin="anonymous"></script></head><body><div><img src="STIGQter.svg" alt="STIGQter" style="height:1em;" /> <a href="https://www.stigqter.com/">STIGQter</a>: <a href="main.html">STIG Summary</a>: <a href="U_Cisco_ACI_NDM_V1R2_STIG_Manual-xccdf.html">Cisco ACI NDM Security Technical Implementation Guide Version: 1 Release: 2 Benchmark Date: 05 Jan 2026</a>:</div> <h1>The Cisco ACI must allocate audit record storage capacity in accordance with organization-defined audit record storage requirements.</h1><h2>DISA Rule</h2><p>SV-271935r1114172_rule</p><h2>Vulnerability Number</h2><p>V-271935</p><h2>Group Title</h2><p>SRG-APP-000357-NDM-000293</p><h2>Rule Version</h2><p>CACI-ND-000020</p><h2>Severity</h2><p>CAT II</p><h2>CCI(s)</h2><ul><li>CCI-001849 - Allocate audit log storage capacity to accommodate organization-defined audit record retention requirements.</li></ul><h2>Weight</h2><p>10</p><h2>Fix Recommendation</h2><p>Configuring the ACI Fabric to send messages to redundant external syslog servers.<br />
+<br />
+Create Syslog Remote Location:<br />
+1. Navigate to Admin &gt;&gt; External Data Collectors &gt;&gt; Monitoring Destinations &gt;&gt; Syslog.<br />
+2. From the Actions Menu, select &quot;Create Syslog Monitoring Destination Group&quot;.<br />
+3. Provide a name for the Syslog Group (e.g., syslog servers).<br />
+4. Leave all other options default and click &quot;Next&quot;.<br />
+5. Under Create Remote Destinations, click the &quot;+&quot; icon.<br />
+a. Enter hostname or IP address.<br />
+b. Set the Severity level to &quot;Information&quot;.<br />
+c. Set the Management EPG as default (Out-of-band).<br />
+d. Click &quot;OK&quot;.<br />
+6. If necessary, add additional Remove Destinations.<br />
+7. Click &quot;Finish&quot;.<br />
+<br />
+Create Fabric Level Syslog Source:<br />
+The fabric Syslog policy will export alerts for monitoring details including physical ports, switch components (fans, memory, PSUs, etc.) and linecards.<br />
+1. Navigate to Fabric &gt;&gt; Fabric Policies submenu &gt;&gt; Policies &gt;&gt; Monitoring &gt;&gt; Common Policy &gt;&gt; Callhome/Smart Callhome/SNMP/Syslog/TACACs.<br />
+2. From the Actions Menu, select &quot;Create Syslog Source&quot;.<br />
+a. Provide a name for the source (e.g., fabric_common_syslog).<br />
+b. Set the Severity level to &quot;Information&quot;. <br />
+c. Check all Log types.<br />
+d. Set the Dest Group to the Syslog Destination Group previously created.<br />
+e. Click &quot;Submit&quot;.<br />
+<br />
+Creating Access Level Syslog Policy:<br />
+The Access Syslog policy will export alerts for monitoring details including VLAN Pools, Domains, Interface Policy Groups, and Interface &amp; Switch Selectors Policies.<br />
+1. Navigate to Fabric &gt;&gt; Access Policies submenu &gt;&gt; Policies &gt;&gt; Monitoring &gt;&gt; default &gt;&gt; Callhome/Smart Callhome/SNMP/Syslog/TACACs.<br />
+2. In the Work pane, set the Source Type to &quot;Syslog&quot;.<br />
+3. Click the &quot;+&quot; icon to add a Syslog Source.<br />
+a. Provide a name for the source (e.g., access_default_syslog).<br />
+b. Set severity level to &quot;Information&quot; unless desired to increase logging details.<br />
+c. Check any additional Log types such as Audit Logs (optional).<br />
+d. Set the Dest Group to the Syslog Destination Group previously created.<br />
+e. Click &quot;Submit&quot;.<br />
+<br />
+Creating Tenant Level Syslog Policies:<br />
+Tenant-level logging includes all tenant-related policies, including Application Profiles, EPGs, Bridge domains, VRFs, external networking, etc. To simplify the syslog configuration across multiple tenants, leverage Common Tenant syslog configuration and share that across other tenants. This would provide a consistent level of logging for all tenants. Alternately, the site may create the respective Syslog policy within each tenant. The following configures a single consistent syslog policy using the Common Tenant.<br />
+1. Navigate to Tenants &gt;&gt; common &gt;&gt; Policies &gt;&gt; Mentoring &gt;&gt; default &gt;&gt; Callhome/Smart Callhome/SNMP/Syslog/TACACs.<br />
+2. In the Work pane, set the Source Type to &quot;Syslog&quot;.<br />
+3. Click the &quot;+&quot; icon to add a Syslog Source.<br />
+a. Provide a name for the source (e.g., tenant_default_syslog).<br />
+b. Set the severity level as &quot;Information&quot;.<br />
+c. Check all log types.<br />
+d. Set the Dest Group to the Syslog Destination Group previously created.<br />
+e. Click &quot;Submit&quot;.<br />
+4. Navigate to Tenants &gt;&gt; Your_Tenant &gt;&gt; Policy tab.<br />
+5. Set the Monitoring Policy drop-down box to be the default policy from the common tenant.</p><h2>Check Contents</h2><p>Verify the ACI Fabric is configured to send event messages to redundant syslog servers:<br />
+1. Navigate to Admin &gt;&gt; External Data Collectors &gt;&gt; Monitoring Destinations &gt;&gt; Syslog.<br />
+2. Verify one or more Syslog Monitoring Destinations have been configured.<br />
+3. Verify redundant syslog servers are configured.<br />
+<br />
+If the ACI is not configured to send audit records to redundant central syslog server that are separate from the ACI, this is a finding.</p><h2>Vulnerability Number</h2><p>V-271935</p><h2>Documentable</h2><p>False</p><h2>Rule Version</h2><p>CACI-ND-000020</p><h2>Severity Override Guidance</h2><p>Verify the ACI Fabric is configured to send event messages to redundant syslog servers:<br />
+1. Navigate to Admin &gt;&gt; External Data Collectors &gt;&gt; Monitoring Destinations &gt;&gt; Syslog.<br />
+2. Verify one or more Syslog Monitoring Destinations have been configured.<br />
+3. Verify redundant syslog servers are configured.<br />
+<br />
+If the ACI is not configured to send audit records to redundant central syslog server that are separate from the ACI, this is a finding.</p><h2>Check Content Reference</h2><p>M</p><h2>Target Key</h2><p>5682</p></body></html>

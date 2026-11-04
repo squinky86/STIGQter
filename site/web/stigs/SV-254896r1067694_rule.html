@@ -1,0 +1,69 @@
+<!doctype html><html lang="en"><head><meta charset="utf-8"><title>STIGQter: STIG Check Details: SV-254896r1067694_rule: The publicly accessible Tanium application must retain the Standard Mandatory DOD Notice and Consent Banner on the screen until users acknowledge the usage conditions and take explicit actions to log on for further access.</title><link rel="icon" type="image/svg+xml" href="STIGQter.svg" /><script async src="https://www.googletagmanager.com/gtag/js?id=UA-31381839-2"></script><script src="include.js"></script><script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-4110907817782130" crossorigin="anonymous"></script></head><body><div><img src="STIGQter.svg" alt="STIGQter" style="height:1em;" /> <a href="https://www.stigqter.com/">STIGQter</a>: <a href="main.html">STIG Summary</a>: <a href="U_Tanium_7-x_App_TanOS_STIG_V2R2_Manual-xccdf.html">Tanium 7.x Application on TanOS Security Technical Implementation Guide Version: 2 Release: 2 Benchmark Date: 02 Apr 2025</a>:</div> <h1>The publicly accessible Tanium application must retain the Standard Mandatory DOD Notice and Consent Banner on the screen until users acknowledge the usage conditions and take explicit actions to log on for further access.</h1><h2>DISA Rule</h2><p>SV-254896r1067694_rule</p><h2>Vulnerability Number</h2><p>V-254896</p><h2>Group Title</h2><p>SRG-APP-000069</p><h2>Rule Version</h2><p>TANS-AP-000180</p><h2>Severity</h2><p>CAT II</p><h2>CCI(s)</h2><ul><li>CCI-000050 - Retain the notification message or banner on the screen until users acknowledge the usage conditions and take explicit actions to log on to or further access the system.</li></ul><h2>Weight</h2><p>10</p><h2>Fix Recommendation</h2><p>For Tanium Server versions greater than or equal to 7.5.6.1108:<br />
+<br />
+1. Using a web browser on a system that has connectivity to the Tanium Application, access the Tanium Application web user interface (UI) and log on with multifactor authentication. <br />
+<br />
+2. Click &quot;Administration&quot; on the top navigation banner.<br />
+<br />
+3. Under Configuration, select &quot;Settings&quot;.<br />
+<br />
+4. Click &quot;Advanced Settings&quot;.<br />
+<br />
+5. In the Filter Items box on the top right, search for &quot;console_PreLoginBannerHTMLText&quot; and select it.<br />
+<br />
+6. In the &quot;Value&quot; field enter the statement below:<br />
+<br />
+&quot;You are accessing a U.S. Government (USG) Information System (IS) that is provided for USG-authorized use only. By using this IS (which includes any device attached to this IS), you consent to the following conditions: The USG routinely intercepts and monitors communications on this IS for purposes including, but not limited to, penetration testing, COMSEC monitoring, network operations and defense, personnel misconduct (PM), law enforcement (LE), and counterintelligence (CI) investigations. At any time, the USG may inspect and seize data stored on this IS. Communications using, or data stored on, this IS are not private, are subject to routine monitoring, interception, and search, and may be disclosed or used for any USG-authorized purpose. This IS includes security measures (e.g., authentication and access controls) to protect USG interests--not for your personal benefit or privacy. Notwithstanding the above, using this IS does not constitute consent to PM, LE or CI investigative searching or monitoring of the content of privileged communications, or work product, related to personal representation or services by attorneys, psychotherapists, or clergy, and their assistants. Such communications and work product are private and confidential. See User Agreement for details.&quot;<br />
+<br />
+9. Click &quot;Save&quot;.<br />
+<br />
+Note: An html file can be uploaded in place of the above, similar to previous versions of Tanium as seen below.<br />
+<br />
+Tanium Server versions below 7.5.6.1108:<br />
+<br />
+1. Create an .html file composed of the DOD-authorized warning banner verbiage.<br />
+<br />
+&quot;&lt;html&gt;You are accessing a U.S. Government (USG) Information System (IS) that is provided for USG-authorized use only. By using this IS (which includes any device attached to this IS), you consent to the following conditions: The USG routinely intercepts and monitors communications on this IS for purposes including, but not limited to, penetration testing, COMSEC monitoring, network operations and defense, personnel misconduct (PM), law enforcement (LE), and counterintelligence (CI) investigations. At any time, the USG may inspect and seize data stored on this IS. Communications using, or data stored on, this IS are not private, are subject to routine monitoring, interception, and search, and may be disclosed or used for any USG-authorized purpose. This IS includes security measures (e.g., authentication and access controls) to protect USG interests--not for your personal benefit or privacy. Notwithstanding the above, using this IS does not constitute consent to PM, LE or CI investigative searching or monitoring of the content of privileged communications, or work product, related to personal representation or services by attorneys, psychotherapists, or clergy, and their assistants. Such communications and work product are private and confidential. See User Agreement for details.&lt;/html&gt;&quot;<br />
+<br />
+2. Name the file &quot;banner.html&quot;.<br />
+<br />
+3. Use SFTP to upload the HTML banner file to the /incoming folder.<br />
+ <br />
+4. Log on to the TanOS server with the tanadmin user role.<br />
+<br />
+5. Enter 2: Tanium Operations &gt;&gt; X: Advanced Operations &gt;&gt; 4: Manage HTML Banner and follow the prompts to copy the HTML banner file to the appropriate location.<br />
+<br />
+6. Using a web browser on a system that has connectivity to the Tanium Application, access the Tanium Application web user interface (UI) and log on with multifactor authentication. <br />
+<br />
+7. Click &quot;Administration&quot; on the top navigation banner.<br />
+<br />
+8. Under Configuration, select &quot;Settings&quot;.<br />
+<br />
+9. Select &quot;Advanced Settings&quot;.<br />
+<br />
+10. Search for &quot;console_PreLoginBannerHTML&quot;.<br />
+<br />
+11. Confirm &quot;console_PreLoginBannerHTML&quot; a value of &quot;banner.html&quot;.<br />
+<br />
+Note: If the above setting is not present, create it using the following steps.<br />
+<br />
+1. Click &quot;Add Setting&quot;.<br />
+<br />
+2. Select &quot;Server&quot; for &quot;Setting Type&quot;.<br />
+<br />
+3. In &quot;Create Platform Setting&quot; dialog box, enter &quot;console_PreLoginBannerHTML&quot; for &quot;Platform Setting Name&quot;. <br />
+<br />
+4. Select &quot;Text&quot; radio button from &quot;Value Type&quot;.<br />
+<br />
+5. Enter &quot;banner.html&quot; for &quot;Value:&quot;. <br />
+<br />
+6. Click &quot;Save&quot;.</p><h2>Check Contents</h2><p>1. Using a web browser on a system that has connectivity to the Tanium Application, access the Tanium Application web user interface (UI) and log on with multifactor authentication.<br />
+<br />
+2. Verify DOD use notification is displayed prior to login. <br />
+&quot;You are accessing a U.S. Government (USG) Information System (IS) that is provided for USG-authorized use only. By using this IS (which includes any device attached to this IS), you consent to the following conditions: The USG routinely intercepts and monitors communications on this IS for purposes including, but not limited to, penetration testing, COMSEC monitoring, network operations and defense, personnel misconduct (PM), law enforcement (LE), and counterintelligence (CI) investigations. At any time, the USG may inspect and seize data stored on this IS. Communications using, or data stored on, this IS are not private, are subject to routine monitoring, interception, and search, and may be disclosed or used for any USG-authorized purpose. This IS includes security measures (e.g., authentication and access controls) to protect USG interests--not for your personal benefit or privacy. Notwithstanding the above, using this IS does not constitute consent to PM, LE or CI investigative searching or monitoring of the content of privileged communications, or work product, related to personal representation or services by attorneys, psychotherapists, or clergy, and their assistants. Such communications and work product are private and confidential. See User Agreement for details.<br />
+<br />
+If a DOD-approved use notification banner does not display prior to logon, this is a finding.</p><h2>Vulnerability Number</h2><p>V-254896</p><h2>Documentable</h2><p>False</p><h2>Rule Version</h2><p>TANS-AP-000180</p><h2>Severity Override Guidance</h2><p>1. Using a web browser on a system that has connectivity to the Tanium Application, access the Tanium Application web user interface (UI) and log on with multifactor authentication.<br />
+<br />
+2. Verify DOD use notification is displayed prior to login. <br />
+&quot;You are accessing a U.S. Government (USG) Information System (IS) that is provided for USG-authorized use only. By using this IS (which includes any device attached to this IS), you consent to the following conditions: The USG routinely intercepts and monitors communications on this IS for purposes including, but not limited to, penetration testing, COMSEC monitoring, network operations and defense, personnel misconduct (PM), law enforcement (LE), and counterintelligence (CI) investigations. At any time, the USG may inspect and seize data stored on this IS. Communications using, or data stored on, this IS are not private, are subject to routine monitoring, interception, and search, and may be disclosed or used for any USG-authorized purpose. This IS includes security measures (e.g., authentication and access controls) to protect USG interests--not for your personal benefit or privacy. Notwithstanding the above, using this IS does not constitute consent to PM, LE or CI investigative searching or monitoring of the content of privileged communications, or work product, related to personal representation or services by attorneys, psychotherapists, or clergy, and their assistants. Such communications and work product are private and confidential. See User Agreement for details.<br />
+<br />
+If a DOD-approved use notification banner does not display prior to logon, this is a finding.</p><h2>Check Content Reference</h2><p>M</p><h2>Target Key</h2><p>5492</p></body></html>

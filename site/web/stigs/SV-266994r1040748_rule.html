@@ -1,0 +1,101 @@
+<!doctype html><html lang="en"><head><meta charset="utf-8"><title>STIGQter: STIG Check Details: SV-266994r1040748_rule: The Remote Access VPN Gateway must use a separate authentication server (e.g., Lightweight Directory Access Protocol [LDAP], Remote Authentication Dial-In User Service [RADIUS], Terminal Access Controller Access-Control System+ [TACACS+] to perform user authentication.</title><link rel="icon" type="image/svg+xml" href="STIGQter.svg" /><script async src="https://www.googletagmanager.com/gtag/js?id=UA-31381839-2"></script><script src="include.js"></script><script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-4110907817782130" crossorigin="anonymous"></script></head><body><div><img src="STIGQter.svg" alt="STIGQter" style="height:1em;" /> <a href="https://www.stigqter.com/">STIGQter</a>: <a href="main.html">STIG Summary</a>: <a href="U_HPE_Aruba_Networking_AOS_VPN_STIG_V1R1_Manual-xccdf.html">HPE Aruba Networking AOS VPN Security Technical Implementation Guide Version: 1 Release: 1 Benchmark Date: 22 Oct 2024</a>:</div> <h1>The Remote Access VPN Gateway must use a separate authentication server (e.g., Lightweight Directory Access Protocol [LDAP], Remote Authentication Dial-In User Service [RADIUS], Terminal Access Controller Access-Control System+ [TACACS+] to perform user authentication.</h1><h2>DISA Rule</h2><p>SV-266994r1040748_rule</p><h2>Vulnerability Number</h2><p>V-266994</p><h2>Group Title</h2><p>SRG-NET-000166-VPN-000580</p><h2>Rule Version</h2><p>ARBA-VN-000580</p><h2>Severity</h2><p>CAT II</p><h2>CCI(s)</h2><ul><li>CCI-000187 - For public key-based authentication, map the authenticated identity to the account of the individual or group.</li></ul><h2>Weight</h2><p>10</p><h2>Fix Recommendation</h2><p>Configure AOS with the following commands:<br />
+<br />
+1. crypto pki csr ec curve_name secp384r1 common_name &lt;common_name&gt; country &lt;US&gt; state_or_province &lt;state&gt; city &lt;city&gt; organization &lt;org&gt; unit &lt;unit&gt; email &lt;email&gt;<br />
+show crypto pki csr<br />
+2. Use DOD PKI to generate a public certificate based on the CSR.<br />
+3. Using the web GUI, navigate to Configuration &gt;&gt; System &gt;&gt; Certificates &gt;&gt; Import Certificates. <br />
+4. Click the plus sign (+) and enter &quot;Certificate name:&quot;, browse to the public certificate file, choose the appropriate format, select Certificate type: &quot;ServerCert&quot;, and click &quot;Submit&quot;.<br />
+5. Click Pending Changes &gt;&gt; Deploy Changes.<br />
+<br />
+Continue configuring with the CLI:<br />
+configure terminal<br />
+crypto-local isakmp ca-certificate &lt;CA certificate name&gt;<br />
+crypto-local isakmp certificate-group server-certificate &lt;EC certificate name&gt; ca-certificate &lt;CA certificate name&gt;<br />
+write memory<br />
+<br />
+crypto dynamic-map &lt;name&gt; &lt;priority&gt;<br />
+version v2<br />
+set pfs group20<br />
+set transform-set default-gcm256<br />
+set security-association lifetime seconds 28800<br />
+exit<br />
+write memory<br />
+<br />
+aaa authentication-server radius &lt;name&gt;<br />
+host &lt;A.B.C.D or X:X:X:X::X or hostname&gt;<br />
+key &lt;preshared key&gt;<br />
+enable<br />
+exit<br />
+write memory<br />
+<br />
+aaa server-group &lt;name&gt;<br />
+auth-server &lt;name&gt;<br />
+exit<br />
+write memory<br />
+<br />
+ip access-list session &lt;name&gt;<br />
+any any any permit <br />
+ipv6 any any any permit<br />
+exit<br />
+write memory<br />
+<br />
+user-role &lt;name&gt;<br />
+access-list session &lt;name&gt;<br />
+exit<br />
+write memory<br />
+<br />
+aaa authentication via auth-profile &lt;name&gt;<br />
+default-role &lt;name&gt;<br />
+client-cert-enable<br />
+server-group &lt;name&gt;<br />
+exit<br />
+write memory<br />
+<br />
+aaa authentication via connection-profile &lt;name&gt;<br />
+auth-profile &lt;name&gt;<br />
+enable-fips<br />
+ikev2-policy 10009<br />
+ikev2-proto<br />
+ikev2auth eap-tls<br />
+ipsecv2-cryptomap map &lt;name&gt; number &lt;priority&gt;<br />
+max-timeout value &lt;0-65535&gt;<br />
+suiteb-crypto<br />
+validate-server-cert<br />
+exit<br />
+write memory<br />
+<br />
+aaa authentication via web-auth default<br />
+auth-profile &lt;name&gt;<br />
+exit<br />
+write memory<br />
+<br />
+user-role &lt;name&gt;<br />
+via &lt;name&gt;<br />
+exit<br />
+write memory</p><h2>Check Contents</h2><p>Verify the AOS configuration with the following commands:<br />
+show aaa authentication via auth-profile<br />
+<br />
+Note each referenced VIA authentication profile. <br />
+<br />
+For each referenced VIA authentication profile:<br />
+show aaa authentication via auth-profile &lt;name&gt;<br />
+<br />
+Note the server-group. <br />
+<br />
+For each server-group:<br />
+show aaa server-group &lt;name&gt;<br />
+<br />
+If the remote access authentication profile is not set to use a separate authentication server, this is a finding.</p><h2>Vulnerability Number</h2><p>V-266994</p><h2>Documentable</h2><p>False</p><h2>Rule Version</h2><p>ARBA-VN-000580</p><h2>Severity Override Guidance</h2><p>Verify the AOS configuration with the following commands:<br />
+show aaa authentication via auth-profile<br />
+<br />
+Note each referenced VIA authentication profile. <br />
+<br />
+For each referenced VIA authentication profile:<br />
+show aaa authentication via auth-profile &lt;name&gt;<br />
+<br />
+Note the server-group. <br />
+<br />
+For each server-group:<br />
+show aaa server-group &lt;name&gt;<br />
+<br />
+If the remote access authentication profile is not set to use a separate authentication server, this is a finding.</p><h2>Check Content Reference</h2><p>M</p><h2>Target Key</h2><p>5645</p></body></html>

@@ -1,0 +1,58 @@
+<!doctype html><html lang="en"><head><meta charset="utf-8"><title>STIGQter: STIG Check Details: SV-239854r665848_rule: The Cisco ASA must be configured to restrict VPN traffic according to organization-defined filtering rules.</title><link rel="icon" type="image/svg+xml" href="STIGQter.svg" /><script async src="https://www.googletagmanager.com/gtag/js?id=UA-31381839-2"></script><script src="include.js"></script><script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-4110907817782130" crossorigin="anonymous"></script></head><body><div><img src="STIGQter.svg" alt="STIGQter" style="height:1em;" /> <a href="https://www.stigqter.com/">STIGQter</a>: <a href="main.html">STIG Summary</a>: <a href="U_Cisco_ASA_Firewall_STIG_V2R1_Manual-xccdf.html">Cisco ASA Firewall Security Technical Implementation Guide Version: 2 Release: 1 Benchmark Date: 24 Jul 2024</a>:</div> <h1>The Cisco ASA must be configured to restrict VPN traffic according to organization-defined filtering rules.</h1><h2>DISA Rule</h2><p>SV-239854r665848_rule</p><h2>Vulnerability Number</h2><p>V-239854</p><h2>Group Title</h2><p>SRG-NET-000061-FW-000001</p><h2>Rule Version</h2><p>CASA-FW-000030</p><h2>Severity</h2><p>CAT II</p><h2>CCI(s)</h2><ul><li>CCI-000067 - Employ automated mechanisms to monitor remote access methods.</li></ul><h2>Weight</h2><p>10</p><h2>Fix Recommendation</h2><p>Step 1: Configure the ACL to restrict VPN traffic.<br />
+<br />
+ASA(config)# access-list RESTRICT_VPN extended permit tcp 10.0.0.0 255.255.255. host 192.168.1.12 eq http<br />
+ASA(config)# access-list RESTRICT_VPN extended permit tcp 10.0.0.0 255.255.255. host 192.168.1.13 eq smtp<br />
+ASA(config)# access-list RESTRICT_VPN extended permit tcp 10.0.0.0 255.255.255. host 192.168.1.14 eq ftp<br />
+ASA(config)# access-list RESTRICT_VPN extended permit tcp 10.0.0.0 255.255.255. host 192.168.1.14 eq ftp-data<br />
+ASA(config)# access-list RESTRICT_VPN extended permit tcp 10.0.0.0 255.255.255.y host 192.168.1.15 eq domain<br />
+ASA(config)# access-list RESTRICT_VPN extended permit tcp 10.0.0.0 255.255.255. host 192.168.1.16 eq sqlnet<br />
+ASA(config)# access-list RESTRICT_VPN extended deny ip any any log<br />
+ASA(config)# exit <br />
+<br />
+Step 2: Apply the VPN filter to the applicable group policy as shown in the example below.<br />
+<br />
+ASA(config)# group-policy VPN_POLICY attributes <br />
+ASA(config-group-policy)# vpn-filter value RESTRICT_VPN <br />
+ASA(config-group-policy)# end</p><h2>Check Contents</h2><p>Step 1: Verify that an ACL has been applied to the applicable VPN group policy via the vpn-filter attribute as shown in the example below.<br />
+<br />
+group-policy VPN_POLICY internal<br />
+group-policy VPN_POLICY attributes<br />
+ …<br />
+ …<br />
+ …<br />
+ vpn-filter value RESTRICT_VPN<br />
+<br />
+Step 2: Verify that the filter restricts traffic according to organization-defined filtering rules as shown in the example below.<br />
+<br />
+access-list RESTRICT_VPN extended permit tcp 10.0.0.0 255.255.255.0 host 192.168.1.12 eq http <br />
+access-list RESTRICT_VPN extended permit tcp 10.0.0.0 255.255.255.0  host 192.168.1.13 eq smtp <br />
+access-list RESTRICT_VPN extended permit tcp 10.0.0.0 255.255.255.0  host 192.168.1.14 eq ftp <br />
+access-list RESTRICT_VPN extended permit tcp 10.0.0.0 255.255.255.0 host 192.168.1.14 eq ftp-data <br />
+access-list RESTRICT_VPN extended permit tcp 10.0.0.0 255.255.255.0  host 192.168.1.15 eq domain<br />
+access-list RESTRICT_VPN extended permit tcp 10.0.0.0 255.255.255.0  host 192.168.1.16 eq sqlnet<br />
+access-list RESTRICT_VPN extended deny ip any any log<br />
+<br />
+Note: In the example above, assume that the client-assigned IP address pool is 10.10.10.0/24 and the local private network is 192.168.1.0/24.<br />
+<br />
+If the ASA is not configured to restrict VPN traffic according to organization-defined filtering rules, this is a finding.</p><h2>Vulnerability Number</h2><p>V-239854</p><h2>Documentable</h2><p>False</p><h2>Rule Version</h2><p>CASA-FW-000030</p><h2>Severity Override Guidance</h2><p>Step 1: Verify that an ACL has been applied to the applicable VPN group policy via the vpn-filter attribute as shown in the example below.<br />
+<br />
+group-policy VPN_POLICY internal<br />
+group-policy VPN_POLICY attributes<br />
+ …<br />
+ …<br />
+ …<br />
+ vpn-filter value RESTRICT_VPN<br />
+<br />
+Step 2: Verify that the filter restricts traffic according to organization-defined filtering rules as shown in the example below.<br />
+<br />
+access-list RESTRICT_VPN extended permit tcp 10.0.0.0 255.255.255.0 host 192.168.1.12 eq http <br />
+access-list RESTRICT_VPN extended permit tcp 10.0.0.0 255.255.255.0  host 192.168.1.13 eq smtp <br />
+access-list RESTRICT_VPN extended permit tcp 10.0.0.0 255.255.255.0  host 192.168.1.14 eq ftp <br />
+access-list RESTRICT_VPN extended permit tcp 10.0.0.0 255.255.255.0 host 192.168.1.14 eq ftp-data <br />
+access-list RESTRICT_VPN extended permit tcp 10.0.0.0 255.255.255.0  host 192.168.1.15 eq domain<br />
+access-list RESTRICT_VPN extended permit tcp 10.0.0.0 255.255.255.0  host 192.168.1.16 eq sqlnet<br />
+access-list RESTRICT_VPN extended deny ip any any log<br />
+<br />
+Note: In the example above, assume that the client-assigned IP address pool is 10.10.10.0/24 and the local private network is 192.168.1.0/24.<br />
+<br />
+If the ASA is not configured to restrict VPN traffic according to organization-defined filtering rules, this is a finding.</p><h2>Check Content Reference</h2><p>M</p><h2>Target Key</h2><p>5339</p></body></html>

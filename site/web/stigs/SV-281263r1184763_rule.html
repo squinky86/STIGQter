@@ -1,0 +1,33 @@
+<!doctype html><html lang="en"><head><meta charset="utf-8"><title>STIGQter: STIG Check Details: SV-281263r1184763_rule: RHEL 10 must be configured so that SSHD accepts public key authentication.</title><link rel="icon" type="image/svg+xml" href="STIGQter.svg" /><script async src="https://www.googletagmanager.com/gtag/js?id=UA-31381839-2"></script><script src="include.js"></script><script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-4110907817782130" crossorigin="anonymous"></script></head><body><div><img src="STIGQter.svg" alt="STIGQter" style="height:1em;" /> <a href="https://www.stigqter.com/">STIGQter</a>: <a href="main.html">STIG Summary</a>: <a href="U_RHEL_10_STIG_V1R2_Manual-xccdf.html">Red Hat Enterprise Linux 10 Security Technical Implementation Guide Version: 1 Release: 2 Benchmark Date: 01 Jul 2026</a>:</div> <h1>RHEL 10 must be configured so that SSHD accepts public key authentication.</h1><h2>DISA Rule</h2><p>SV-281263r1184763_rule</p><h2>Vulnerability Number</h2><p>V-281263</p><h2>Group Title</h2><p>SRG-OS-000105-GPOS-00052</p><h2>Rule Version</h2><p>RHEL-10-700600</p><h2>Severity</h2><p>CAT II</p><h2>CCI(s)</h2><ul><li>CCI-000765 - Implement multifactor authentication for network access to privileged accounts.</li><li>CCI-000766 - Implement multifactor authentication for network access to non-privileged accounts.</li></ul><h2>Weight</h2><p>10</p><h2>Fix Recommendation</h2><p>Configure RHEL 10 to accept public key authentication.<br />
+<br />
+In &quot;/etc/ssh/sshd_config.d&quot;, create a drop file that will lexicographically precede 50-redhat.conf and add the following line:<br />
+<br />
+PubkeyAuthentication yes<br />
+<br />
+Restart the SSH daemon with the following command for the settings to take effect:<br />
+<br />
+$ sudo systemctl restart sshd.service</p><h2>Check Contents</h2><p>Note: If the system administrator demonstrates the use of an approved alternate multifactor authentication method, this requirement is not applicable.<br />
+<br />
+Verify RHEL 10 SSH daemons accept public key encryption with the following command:<br />
+<br />
+$ sudo /usr/sbin/sshd -dd 2&gt;&amp;1 | awk '/filename/ {print $4}' | tr -d '\r' | tr '\n' ' ' | xargs sudo grep -iH '^\s*pubkeyauthentication'<br />
+/etc/ssh/sshd_config.d/10-stig.conf:PubkeyAuthentication yes<br />
+<br />
+Verify the runtime setting with the following command:<br />
+<br />
+$ sudo sshd -T | grep -i pubkeyauthentication<br />
+pubkeyauthentication yes<br />
+<br />
+If the &quot;PubkeyAuthentication&quot; keyword is not set to &quot;yes&quot; in a drop-in that lexicographically precedes 50-redhat.conf, or if no output is returned, this is a finding.</p><h2>Vulnerability Number</h2><p>V-281263</p><h2>Documentable</h2><p>False</p><h2>Rule Version</h2><p>RHEL-10-700600</p><h2>Severity Override Guidance</h2><p>Note: If the system administrator demonstrates the use of an approved alternate multifactor authentication method, this requirement is not applicable.<br />
+<br />
+Verify RHEL 10 SSH daemons accept public key encryption with the following command:<br />
+<br />
+$ sudo /usr/sbin/sshd -dd 2&gt;&amp;1 | awk '/filename/ {print $4}' | tr -d '\r' | tr '\n' ' ' | xargs sudo grep -iH '^\s*pubkeyauthentication'<br />
+/etc/ssh/sshd_config.d/10-stig.conf:PubkeyAuthentication yes<br />
+<br />
+Verify the runtime setting with the following command:<br />
+<br />
+$ sudo sshd -T | grep -i pubkeyauthentication<br />
+pubkeyauthentication yes<br />
+<br />
+If the &quot;PubkeyAuthentication&quot; keyword is not set to &quot;yes&quot; in a drop-in that lexicographically precedes 50-redhat.conf, or if no output is returned, this is a finding.</p><h2>Check Content Reference</h2><p>M</p><h2>Target Key</h2><p>5733</p></body></html>

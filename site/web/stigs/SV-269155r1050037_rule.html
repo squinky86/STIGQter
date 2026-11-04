@@ -1,0 +1,41 @@
+<!doctype html><html lang="en"><head><meta charset="utf-8"><title>STIGQter: STIG Check Details: SV-269155r1050037_rule: AlmaLinux OS 9 must configure the appropriate SELinux context on the nondefault faillock tally directory.</title><link rel="icon" type="image/svg+xml" href="STIGQter.svg" /><script async src="https://www.googletagmanager.com/gtag/js?id=UA-31381839-2"></script><script src="include.js"></script><script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-4110907817782130" crossorigin="anonymous"></script></head><body><div><img src="STIGQter.svg" alt="STIGQter" style="height:1em;" /> <a href="https://www.stigqter.com/">STIGQter</a>: <a href="main.html">STIG Summary</a>: <a href="U_CL_AlmaLinux_OS_9_STIG_V1R7_Manual-xccdf.html">Cloud Linux AlmaLinux OS 9 Security Technical Implementation Guide Version: 1 Release: 7 Benchmark Date: 01 Jul 2026</a>:</div> <h1>AlmaLinux OS 9 must configure the appropriate SELinux context on the nondefault faillock tally directory.</h1><h2>DISA Rule</h2><p>SV-269155r1050037_rule</p><h2>Vulnerability Number</h2><p>V-269155</p><h2>Group Title</h2><p>SRG-OS-000329-GPOS-00128</p><h2>Rule Version</h2><p>ALMA-09-008380</p><h2>Severity</h2><p>CAT II</p><h2>CCI(s)</h2><ul><li>CCI-002238 - Automatically lock the account or node for either an organization-defined time period, until the locked account or node is released by an administrator, or delays the next logon prompt according to the organization-defined delay algorithm when the maximum number of unsuccessful logon attempts is exceeded.</li></ul><h2>Weight</h2><p>10</p><h2>Fix Recommendation</h2><p>Configure AlmaLinux OS 9 to allow the use of a nondefault faillock tally directory while SELinux enforces a targeted policy.<br />
+<br />
+Create a nondefault faillock tally directory (if it does not already exist) using the following command:<br />
+<br />
+$ mkdir /var/log/faillock<br />
+<br />
+Update the /etc/selinux/targeted/contexts/files/file_contexts.local file with the &quot;faillog_t&quot; context type for the nondefault faillock tally directory using the following command:<br />
+<br />
+$ semanage fcontext -a -t faillog_t &quot;/var/log/faillock(/.*)?&quot;<br />
+<br />
+Update the context type of the nondefault faillock directory and files within using the following command:<br />
+<br />
+$ restorecon -RFv /var/log/faillock</p><h2>Check Contents</h2><p>Note: If the system does not have SELinux enabled and enforcing, a targeted policy, or if the pam_faillock module is not configured for use, this requirement is Not Applicable.<br />
+<br />
+Verify the location of the nondefault tally directory for the pam_faillock module with the following command:<br />
+<br />
+$ grep &quot;dir =&quot; /etc/security/faillock.conf<br />
+<br />
+dir = /var/log/faillock<br />
+<br />
+Check the security context type of the nondefault tally directory with the following command:<br />
+<br />
+$ ls -Zd /var/log/faillock<br />
+<br />
+system_u:object_r:faillog_t:s0 /var/log/faillock<br />
+<br />
+If the security context type of the nondefault tally directory is not &quot;faillog_t&quot;, this is a finding.</p><h2>Vulnerability Number</h2><p>V-269155</p><h2>Documentable</h2><p>False</p><h2>Rule Version</h2><p>ALMA-09-008380</p><h2>Severity Override Guidance</h2><p>Note: If the system does not have SELinux enabled and enforcing, a targeted policy, or if the pam_faillock module is not configured for use, this requirement is Not Applicable.<br />
+<br />
+Verify the location of the nondefault tally directory for the pam_faillock module with the following command:<br />
+<br />
+$ grep &quot;dir =&quot; /etc/security/faillock.conf<br />
+<br />
+dir = /var/log/faillock<br />
+<br />
+Check the security context type of the nondefault tally directory with the following command:<br />
+<br />
+$ ls -Zd /var/log/faillock<br />
+<br />
+system_u:object_r:faillog_t:s0 /var/log/faillock<br />
+<br />
+If the security context type of the nondefault tally directory is not &quot;faillog_t&quot;, this is a finding.</p><h2>Check Content Reference</h2><p>M</p><h2>Target Key</h2><p>5664</p></body></html>

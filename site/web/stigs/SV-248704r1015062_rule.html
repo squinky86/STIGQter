@@ -1,0 +1,29 @@
+<!doctype html><html lang="en"><head><meta charset="utf-8"><title>STIGQter: STIG Check Details: SV-248704r1015062_rule: The OL 8 password-auth file must disable access to the system for account identifiers (individuals, groups, roles, and devices) with 35 days of inactivity.</title><link rel="icon" type="image/svg+xml" href="STIGQter.svg" /><script async src="https://www.googletagmanager.com/gtag/js?id=UA-31381839-2"></script><script src="include.js"></script><script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-4110907817782130" crossorigin="anonymous"></script></head><body><div><img src="STIGQter.svg" alt="STIGQter" style="height:1em;" /> <a href="https://www.stigqter.com/">STIGQter</a>: <a href="main.html">STIG Summary</a>: <a href="U_Oracle_Linux_8_STIG_V2R9_Manual-xccdf.html">Oracle Linux 8 Security Technical Implementation Guide Version: 2 Release: 9 Benchmark Date: 01 Jul 2026</a>:</div> <h1>The OL 8 password-auth file must disable access to the system for account identifiers (individuals, groups, roles, and devices) with 35 days of inactivity.</h1><h2>DISA Rule</h2><p>SV-248704r1015062_rule</p><h2>Vulnerability Number</h2><p>V-248704</p><h2>Group Title</h2><p>SRG-OS-000118-GPOS-00060</p><h2>Rule Version</h2><p>OL08-00-020261</p><h2>Severity</h2><p>CAT II</p><h2>CCI(s)</h2><ul><li>CCI-003627 - Disable accounts when the accounts have expired.</li><li>CCI-003628 - Disable accounts when the accounts are no longer associated to a user.</li></ul><h2>Weight</h2><p>10</p><h2>Fix Recommendation</h2><p>Configure OL 8 to disable access to the system for account identifiers with 35 days of inactivity.  <br />
+ <br />
+Add/Modify the following line to &quot;/etc/pam.d/password-auth&quot; above the &quot;pam_unix.so&quot; statement: <br />
+<br />
+auth      required      pam_lastlog.so inactive=35<br />
+<br />
+Note: The DOD recommendation is 35 days, but a lower value is acceptable.</p><h2>Check Contents</h2><p>Verify the account identifiers (individuals, groups, roles, and devices) are disabled after 35 days of inactivity by checking the account inactivity value with the following command: <br />
+ <br />
+$ sudo grep 'inactive\|pam_unix' /etc/pam.d/password-auth | grep -w auth<br />
+ <br />
+auth      required      pam_lastlog.so inactive=35<br />
+auth      sufficient     pam_unix.so <br />
+<br />
+If the pam_lastlog.so module is listed below the pam_unix.so module in the &quot;password-auth&quot; file, this is a finding.<br />
+<br />
+If the value of &quot;inactive&quot; is set to zero, a negative number, or is greater than 35, this is a finding.<br />
+<br />
+If the line is commented out or missing, ask the administrator to indicate how the system disables access for account identifiers. If there is no evidence that the system is disabling access for account identifiers after 35 days of inactivity, this is a finding.</p><h2>Vulnerability Number</h2><p>V-248704</p><h2>Documentable</h2><p>False</p><h2>Rule Version</h2><p>OL08-00-020261</p><h2>Severity Override Guidance</h2><p>Verify the account identifiers (individuals, groups, roles, and devices) are disabled after 35 days of inactivity by checking the account inactivity value with the following command: <br />
+ <br />
+$ sudo grep 'inactive\|pam_unix' /etc/pam.d/password-auth | grep -w auth<br />
+ <br />
+auth      required      pam_lastlog.so inactive=35<br />
+auth      sufficient     pam_unix.so <br />
+<br />
+If the pam_lastlog.so module is listed below the pam_unix.so module in the &quot;password-auth&quot; file, this is a finding.<br />
+<br />
+If the value of &quot;inactive&quot; is set to zero, a negative number, or is greater than 35, this is a finding.<br />
+<br />
+If the line is commented out or missing, ask the administrator to indicate how the system disables access for account identifiers. If there is no evidence that the system is disabling access for account identifiers after 35 days of inactivity, this is a finding.</p><h2>Check Content Reference</h2><p>M</p><h2>Target Key</h2><p>5416</p></body></html>

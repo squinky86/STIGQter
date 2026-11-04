@@ -1,0 +1,101 @@
+<!doctype html><html lang="en"><head><meta charset="utf-8"><title>STIGQter: STIG Check Details: SV-215246r1013689_rule: AIX must provide audit record generation functionality for DoD-defined auditable events.</title><link rel="icon" type="image/svg+xml" href="STIGQter.svg" /><script async src="https://www.googletagmanager.com/gtag/js?id=UA-31381839-2"></script><script src="include.js"></script><script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-4110907817782130" crossorigin="anonymous"></script></head><body><div><img src="STIGQter.svg" alt="STIGQter" style="height:1em;" /> <a href="https://www.stigqter.com/">STIGQter</a>: <a href="main.html">STIG Summary</a>: <a href="U_IBM_AIX_7-x_STIG_V3R3_Manual-xccdf.html">IBM AIX 7.x Security Technical Implementation Guide Version: 3 Release: 3 Benchmark Date: 01 Jul 2026</a>:</div> <h1>AIX must provide audit record generation functionality for DoD-defined auditable events.</h1><h2>DISA Rule</h2><p>SV-215246r1013689_rule</p><h2>Vulnerability Number</h2><p>V-215246</p><h2>Group Title</h2><p>SRG-OS-000062-GPOS-00031</p><h2>Rule Version</h2><p>AIX7-00-002016</p><h2>Severity</h2><p>CAT II</p><h2>CCI(s)</h2><ul><li>CCI-000018 - Automatically audit account creation actions.</li><li>CCI-000154 - Provide the capability to centrally review and analyze audit records from multiple components within the system.</li><li>CCI-000169 - Provide audit record generation capability for the event types the system is capable of auditing as defined in AU-2 a. on organization-defined information system components.</li><li>CCI-000172 - Generate audit records for the event types defined in AU-2 c that include the audit record content defined in AU-3.</li><li>CCI-001403 - Automatically audit account modification actions.</li><li>CCI-001404 - Automatically audit account disabling actions.</li><li>CCI-001405 - Automatically audit account removal actions.</li><li>CCI-000015 - Support the management of system accounts using (organization-defined automated mechanisms).</li><li>CCI-001813 - Enforce access restrictions using organization-defined mechanisms.</li><li>CCI-002130 - Automatically audit account enabling actions.</li><li>CCI-002234 - Log the execution of privileged functions.</li><li>CCI-002884 - Log organization-defined audit events for nonlocal maintenance and diagnostic sessions.</li></ul><h2>Weight</h2><p>10</p><h2>Fix Recommendation</h2><p>Use the &quot;stig_audit_config.txt&quot; file to configure the AIX audit process.<br />
+<br />
+Edit the /etc/security/audit/objects file and add or update the following lines to the listed values:<br />
+<br />
+/etc/security/environ:<br />
+    w = &quot;S_ENVIRON_WRITE&quot;<br />
+<br />
+/etc/security/group:<br />
+    w = &quot;S_GROUP_WRITE&quot;<br />
+<br />
+/etc/group: <br />
+    w = &quot;S_GROUP_WRITE&quot;<br />
+<br />
+/etc/security/limits:<br />
+    w = &quot;S_LIMITS_WRITE&quot;<br />
+<br />
+/etc/security/login.cfg:<br />
+    w = &quot;S_LOGIN_WRITE&quot;<br />
+<br />
+/etc/security/passwd:<br />
+    r = &quot;S_PASSWD_READ&quot;<br />
+    w = &quot;S_PASSWD_WRITE&quot;<br />
+<br />
+/etc/security/user:<br />
+    w = &quot;S_USER_WRITE&quot;<br />
+<br />
+/etc/security/audit/config:<br />
+    w = &quot;AUD_CONFIG_WR&quot;<br />
+<br />
+<br />
+Restart the audit process:<br />
+# /usr/sbin/audit shutdown<br />
+# /usr/sbin/audit start<br />
+<br />
+Note: There are multiple default &quot;classes&quot; defined in the &quot;/etc/security/audit/config&quot; file. The only audit class that is required by this document is the &quot;stig_aud_class&quot;. All other defined classes can be removed at the discretion of the organization.</p><h2>Check Contents</h2><p>Ensure that auditing is properly configured.<br />
+<br />
+Run the &quot;stig_audit_check.sh&quot; script.<br />
+<br />
+If any results are returned from the script, this is a finding.<br />
+<br />
+Verify that the file &quot;/etc/security/audit/objects&quot; includes the following objects:<br />
+<br />
+/etc/security/environ:<br />
+w = &quot;S_ENVIRON_WRITE&quot;<br />
+<br />
+/etc/security/group:<br />
+w = &quot;S_GROUP_WRITE&quot;<br />
+<br />
+/etc/group: <br />
+w = &quot;S_GROUP_WRITE&quot;<br />
+<br />
+/etc/security/limits:<br />
+w = &quot;S_LIMITS_WRITE&quot;<br />
+<br />
+/etc/security/login.cfg:<br />
+w = &quot;S_LOGIN_WRITE&quot;<br />
+<br />
+/etc/security/passwd:<br />
+r = &quot;S_PASSWD_READ&quot;<br />
+w = &quot;S_PASSWD_WRITE&quot;<br />
+<br />
+/etc/security/user:<br />
+w = &quot;S_USER_WRITE&quot;<br />
+<br />
+/etc/security/audit/config:<br />
+w = &quot;AUD_CONFIG_WR&quot;<br />
+<br />
+If any of the objects listed above are missing from &quot;/etc/security/audit/objects&quot;, this is a finding.</p><h2>Vulnerability Number</h2><p>V-215246</p><h2>Documentable</h2><p>False</p><h2>Rule Version</h2><p>AIX7-00-002016</p><h2>Severity Override Guidance</h2><p>Ensure that auditing is properly configured.<br />
+<br />
+Run the &quot;stig_audit_check.sh&quot; script.<br />
+<br />
+If any results are returned from the script, this is a finding.<br />
+<br />
+Verify that the file &quot;/etc/security/audit/objects&quot; includes the following objects:<br />
+<br />
+/etc/security/environ:<br />
+w = &quot;S_ENVIRON_WRITE&quot;<br />
+<br />
+/etc/security/group:<br />
+w = &quot;S_GROUP_WRITE&quot;<br />
+<br />
+/etc/group: <br />
+w = &quot;S_GROUP_WRITE&quot;<br />
+<br />
+/etc/security/limits:<br />
+w = &quot;S_LIMITS_WRITE&quot;<br />
+<br />
+/etc/security/login.cfg:<br />
+w = &quot;S_LOGIN_WRITE&quot;<br />
+<br />
+/etc/security/passwd:<br />
+r = &quot;S_PASSWD_READ&quot;<br />
+w = &quot;S_PASSWD_WRITE&quot;<br />
+<br />
+/etc/security/user:<br />
+w = &quot;S_USER_WRITE&quot;<br />
+<br />
+/etc/security/audit/config:<br />
+w = &quot;AUD_CONFIG_WR&quot;<br />
+<br />
+If any of the objects listed above are missing from &quot;/etc/security/audit/objects&quot;, this is a finding.</p><h2>Check Content Reference</h2><p>M</p><h2>Target Key</h2><p>4012</p></body></html>

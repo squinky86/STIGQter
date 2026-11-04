@@ -1,0 +1,61 @@
+<!doctype html><html lang="en"><head><meta charset="utf-8"><title>STIGQter: STIG Check Details: SV-258917r934409_rule: The vCenter Server must enable FIPS-validated cryptography.</title><link rel="icon" type="image/svg+xml" href="STIGQter.svg" /><script async src="https://www.googletagmanager.com/gtag/js?id=UA-31381839-2"></script><script src="include.js"></script><script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-4110907817782130" crossorigin="anonymous"></script></head><body><div><img src="STIGQter.svg" alt="STIGQter" style="height:1em;" /> <a href="https://www.stigqter.com/">STIGQter</a>: <a href="main.html">STIG Summary</a>: <a href="U_VMW_vSphere_8-0_vCenter_STIG_V1R1_Manual-xccdf.html">VMware vSphere 8.0 vCenter Security Technical Implementation Guide Version: 1 Release: 1 Benchmark Date: 31 Oct 2023</a>:</div> <h1>The vCenter Server must enable FIPS-validated cryptography.</h1><h2>DISA Rule</h2><p>SV-258917r934409_rule</p><h2>Vulnerability Number</h2><p>V-258917</p><h2>Group Title</h2><p>SRG-APP-000172</p><h2>Rule Version</h2><p>VCSA-80-000077</p><h2>Severity</h2><p>CAT I</p><h2>CCI(s)</h2><ul><li>CCI-000197 - For password-based authentication, transmit passwords only cryptographically-protected channels.</li><li>CCI-000803 - Implement mechanisms for authentication to a cryptographic module that meet the requirements of applicable laws, Executive Orders, directives, policies, regulations, standards, and guidance for such authentication.</li><li>CCI-001188 - Generate a unique session identifier for each session with organization-defined randomness requirements.</li><li>CCI-001199 - Protects the confidentiality and/or integrity of organization-defined information at rest.</li><li>CCI-001967 - Authenticate organization-defined devices and/or types of devices before establishing a local, remote, and/or network connection using bidirectional authentication that is cryptographically based.</li><li>CCI-002450 - Implement organization-defined types of cryptography for each specified cryptography use.</li><li>CCI-003123 - Implement organization-defined cryptographic mechanisms to protect the confidentiality of nonlocal maintenance and diagnostic communications.</li></ul><h2>Weight</h2><p>10</p><h2>Fix Recommendation</h2><p>From the vSphere Web Client go to Developer Center &gt;&gt; API Explorer.<br />
+<br />
+From the &quot;Select API&quot; drop-down menu, select appliance.<br />
+<br />
+Expand system/security/global_fips &gt;&gt; PUT.<br />
+<br />
+In the response body under &quot;Try it out&quot; paste the following:<br />
+<br />
+{<br />
+    &quot;enabled&quot;: true<br />
+}<br />
+<br />
+Click &quot;Execute&quot;.<br />
+<br />
+or<br />
+<br />
+From a PowerCLI command prompt while connected to the vCenter server, run the following command:<br />
+<br />
+$spec = Initialize-SystemSecurityGlobalFipsUpdateSpec -Enabled $true; Invoke-SetSystemGlobalFips -SystemSecurityGlobalFipsUpdateSpec $spec<br />
+<br />
+Note: The vCenter server reboots after FIPS is enabled or disabled.</p><h2>Check Contents</h2><p>From the vSphere Web Client, go to Developer Center &gt;&gt; API Explorer.<br />
+<br />
+From the &quot;Select API&quot; drop-down menu, select appliance.<br />
+<br />
+Expand system/security/global_fips &gt;&gt; GET.<br />
+<br />
+Click &quot;Execute&quot; and then &quot;Copy Response&quot; to view the results.<br />
+<br />
+Example response:<br />
+<br />
+{<br />
+    &quot;enabled&quot;: true<br />
+}<br />
+<br />
+or<br />
+<br />
+From a PowerCLI command prompt while connected to the vCenter server, run the following command:<br />
+<br />
+Invoke-GetSystemGlobalFips<br />
+<br />
+If global FIPS mode is not enabled, this is a finding.</p><h2>Vulnerability Number</h2><p>V-258917</p><h2>Documentable</h2><p>False</p><h2>Rule Version</h2><p>VCSA-80-000077</p><h2>Severity Override Guidance</h2><p>From the vSphere Web Client, go to Developer Center &gt;&gt; API Explorer.<br />
+<br />
+From the &quot;Select API&quot; drop-down menu, select appliance.<br />
+<br />
+Expand system/security/global_fips &gt;&gt; GET.<br />
+<br />
+Click &quot;Execute&quot; and then &quot;Copy Response&quot; to view the results.<br />
+<br />
+Example response:<br />
+<br />
+{<br />
+    &quot;enabled&quot;: true<br />
+}<br />
+<br />
+or<br />
+<br />
+From a PowerCLI command prompt while connected to the vCenter server, run the following command:<br />
+<br />
+Invoke-GetSystemGlobalFips<br />
+<br />
+If global FIPS mode is not enabled, this is a finding.</p><h2>Check Content Reference</h2><p>M</p><h2>Target Key</h2><p>5573</p></body></html>

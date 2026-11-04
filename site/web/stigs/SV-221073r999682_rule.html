@@ -1,0 +1,40 @@
+<!doctype html><html lang="en"><head><meta charset="utf-8"><title>STIGQter: STIG Check Details: SV-221073r999682_rule: The Cisco switch must be configured to use keys with a duration not exceeding 180 days for authenticating routing protocol messages.</title><link rel="icon" type="image/svg+xml" href="STIGQter.svg" /><script async src="https://www.googletagmanager.com/gtag/js?id=UA-31381839-2"></script><script src="include.js"></script><script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-4110907817782130" crossorigin="anonymous"></script></head><body><div><img src="STIGQter.svg" alt="STIGQter" style="height:1em;" /> <a href="https://www.stigqter.com/">STIGQter</a>: <a href="main.html">STIG Summary</a>: <a href="U_Cisco_NX-OS_Switch_RTR_STIG_V3R4_Manual-xccdf.html">Cisco NX OS Switch RTR Security Technical Implementation Guide Version: 3 Release: 4 Benchmark Date: 01 Apr 2026</a>:</div> <h1>The Cisco switch must be configured to use keys with a duration not exceeding 180 days for authenticating routing protocol messages.</h1><h2>DISA Rule</h2><p>SV-221073r999682_rule</p><h2>Vulnerability Number</h2><p>V-221073</p><h2>Group Title</h2><p>SRG-NET-000230-RTR-000003</p><h2>Rule Version</h2><p>CISC-RT-000030</p><h2>Severity</h2><p>CAT II</p><h2>CCI(s)</h2><ul><li>CCI-000366 - Implement the security configuration settings.</li><li>CCI-002205 - Uniquely identify and authenticate source by organization, system, application, service, and/or individual for information transfer.</li></ul><h2>Weight</h2><p>10</p><h2>Fix Recommendation</h2><p>Configure each key used for routing protocol authentication to have a lifetime of no more than 180 days as shown in the example below:<br />
+<br />
+SW1(config)# key chain OSPF_KEY<br />
+SW1(config-keychain)# key 1<br />
+SW1(config-keychain-key)# key-string xxxxxxxxxxxx<br />
+SW1(config-keychain-key)# send-lifetime 00:00:00 Oct 1 2019 23:59:59 Dec 31 2019<br />
+SW1(config-keychain-key)# accept-lifetime 00:00:00 Oct 1 2019 01:05:00 Jan 1 2020<br />
+SW1(config-keychain-key)# key 2<br />
+SW1(config-keychain-key)# key-string kxxxxxxxxxxxxx<br />
+SW1(config-keychain-key)# send-lifetime 00:00:00 Jan 1 2020 23:59:59 Mar 31 2020 <br />
+SW1(config-keychain-key)# accept-lifetime 23:55:00 Dec 31 2019 01:05:00 Apr 1 2020<br />
+SW1(config-keychain-key)# end</p><h2>Check Contents</h2><p>Review the start times for each key within the configured key chains used for routing protocol authentication as shown in the example below:<br />
+<br />
+key chain OSPF_KEY<br />
+ key 1<br />
+ key-string 7 070d2e4e4c10<br />
+ accept-lifetime 00:00:00 Oct 01 2019 01:05:00 Jan 01 2020<br />
+ send-lifetime 00:00:00 Oct 01 2019 23:59:59 Dec 31 2019<br />
+ key 2<br />
+ key-string 7 0704205e4b07<br />
+ accept-lifetime 23:55:00 Dec 31 2019 01:05:00 Apr 01 2020<br />
+ send-lifetime 00:00:00 Jan 01 2020 23:59:59 Mar 31 2020<br />
+<br />
+Note: Key chains must be configured to authenticate routing protocol messages as it is the only way to set an expiration.<br />
+<br />
+If any key has a lifetime of more than 180 days, this is a finding.</p><h2>Vulnerability Number</h2><p>V-221073</p><h2>Documentable</h2><p>False</p><h2>Rule Version</h2><p>CISC-RT-000030</p><h2>Severity Override Guidance</h2><p>Review the start times for each key within the configured key chains used for routing protocol authentication as shown in the example below:<br />
+<br />
+key chain OSPF_KEY<br />
+ key 1<br />
+ key-string 7 070d2e4e4c10<br />
+ accept-lifetime 00:00:00 Oct 01 2019 01:05:00 Jan 01 2020<br />
+ send-lifetime 00:00:00 Oct 01 2019 23:59:59 Dec 31 2019<br />
+ key 2<br />
+ key-string 7 0704205e4b07<br />
+ accept-lifetime 23:55:00 Dec 31 2019 01:05:00 Apr 01 2020<br />
+ send-lifetime 00:00:00 Jan 01 2020 23:59:59 Mar 31 2020<br />
+<br />
+Note: Key chains must be configured to authenticate routing protocol messages as it is the only way to set an expiration.<br />
+<br />
+If any key has a lifetime of more than 180 days, this is a finding.</p><h2>Check Content Reference</h2><p>M</p><h2>Target Key</h2><p>4075</p></body></html>

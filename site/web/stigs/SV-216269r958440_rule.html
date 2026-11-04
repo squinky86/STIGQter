@@ -1,0 +1,119 @@
+<!doctype html><html lang="en"><head><meta charset="utf-8"><title>STIGQter: STIG Check Details: SV-216269r958440_rule: The operating system must protect against an individual falsely denying having performed a particular action. In order to do so the system must be configured to send audit records to a remote audit server.</title><link rel="icon" type="image/svg+xml" href="STIGQter.svg" /><script async src="https://www.googletagmanager.com/gtag/js?id=UA-31381839-2"></script><script src="include.js"></script><script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-4110907817782130" crossorigin="anonymous"></script></head><body><div><img src="STIGQter.svg" alt="STIGQter" style="height:1em;" /> <a href="https://www.stigqter.com/">STIGQter</a>: <a href="main.html">STIG Summary</a>: <a href="U_SOL_11_SPARC_STIG_V3R6_Manual-xccdf.html">Solaris 11 SPARC Security Technical Implementation Guide Version: 3 Release: 6 Benchmark Date: 01 Jul 2026</a>:</div> <h1>The operating system must protect against an individual falsely denying having performed a particular action. In order to do so the system must be configured to send audit records to a remote audit server.</h1><h2>DISA Rule</h2><p>SV-216269r958440_rule</p><h2>Vulnerability Number</h2><p>V-216269</p><h2>Group Title</h2><p>SRG-OS-000061</p><h2>Rule Version</h2><p>SOL-11.1-010350</p><h2>Severity</h2><p>CAT III</p><h2>CCI(s)</h2><ul><li>CCI-000166 - Provide irrefutable evidence that an individual (or process acting on behalf of an individual) falsely denying having performed organization-defined actions to be covered by non-repudiation.</li></ul><h2>Weight</h2><p>10</p><h2>Fix Recommendation</h2><p>Service Management, Audit Configuration and Audit Control rights profile is required.<br />
+<br />
+This action applies to the global zone only. Determine the zone that you are currently securing.<br />
+<br />
+# zonename<br />
+<br />
+If the command output is &quot;global&quot;, this action applies.<br />
+<br />
+Configure Solaris 11 to use the syslog audit plugin<br />
+<br />
+# pfexec auditconfig -setplugin audit_syslog active <br />
+<br />
+Determine which system-log service instance is online.<br />
+<br />
+# pfexec svcs system-log<br />
+<br />
+If the default system-log service is online:<br />
+<br />
+# pfedit /etc/syslog.conf <br />
+<br />
+Add the line:<br />
+<br />
+audit.notice @[remotesystemname]<br />
+or<br />
+audit.notice ![remotesystemname]<br />
+<br />
+Replacing the remote system name with the correct hostname.<br />
+<br />
+If the rsyslog service is online, modify the /etc/rsyslog.conf file.<br />
+<br />
+# pfedit /etc/rsyslog.conf<br />
+<br />
+Add the line:<br />
+<br />
+*.* @@[remotesystemname]<br />
+Or <br />
+*.* :omrelp:[remotesystemname]:[designatedportnumber]<br />
+<br />
+Replacing the remote system name with the correct hostname.<br />
+<br />
+Create the log file on the remote system<br />
+<br />
+# touch /var/adm/auditlog<br />
+<br />
+Refresh the syslog service<br />
+<br />
+# pfexec svcadm refresh system/system-log:default<br />
+<br />
+or<br />
+<br />
+# pfexec svcadm refresh system/system-log:rsyslog<br />
+<br />
+Refresh the audit service<br />
+<br />
+# pfexec audit -s</p><h2>Check Contents</h2><p>Audit Configuration rights profile is required.<br />
+<br />
+This check applies to the global zone only. Determine the zone that you are currently securing.<br />
+<br />
+# zonename<br />
+<br />
+If the command output is &quot;global&quot;, this check applies.<br />
+<br />
+Check that the syslog audit plugin is enabled.<br />
+<br />
+# pfexec auditconfig -getplugin | grep audit_syslog<br />
+<br />
+If &quot;inactive&quot; appears, this is a finding.<br />
+<br />
+Determine which system-log service instance is online.<br />
+<br />
+# pfexec svcs system-log<br />
+<br />
+Check that the /etc/syslog.conf or /etc/rsyslog.conf file is configured properly:<br />
+<br />
+# grep audit.notice /etc/syslog.conf<br />
+or<br />
+# grep @@ /etc/rsyslog.conf<br />
+<br />
+If <br />
+audit.notice @remotesystemname , audit.notice !remotesystemname (syslog configuration)<br />
+or<br />
+*.* @@remotesystemname (rsyslog configuration)<br />
+points to an invalid remote system or is commented out, this is a finding.<br />
+<br />
+If no output is produced, this is a finding.<br />
+<br />
+Check the remote syslog host to ensure that audit records can be found for this host.</p><h2>Vulnerability Number</h2><p>V-216269</p><h2>Documentable</h2><p>False</p><h2>Rule Version</h2><p>SOL-11.1-010350</p><h2>Severity Override Guidance</h2><p>Audit Configuration rights profile is required.<br />
+<br />
+This check applies to the global zone only. Determine the zone that you are currently securing.<br />
+<br />
+# zonename<br />
+<br />
+If the command output is &quot;global&quot;, this check applies.<br />
+<br />
+Check that the syslog audit plugin is enabled.<br />
+<br />
+# pfexec auditconfig -getplugin | grep audit_syslog<br />
+<br />
+If &quot;inactive&quot; appears, this is a finding.<br />
+<br />
+Determine which system-log service instance is online.<br />
+<br />
+# pfexec svcs system-log<br />
+<br />
+Check that the /etc/syslog.conf or /etc/rsyslog.conf file is configured properly:<br />
+<br />
+# grep audit.notice /etc/syslog.conf<br />
+or<br />
+# grep @@ /etc/rsyslog.conf<br />
+<br />
+If <br />
+audit.notice @remotesystemname , audit.notice !remotesystemname (syslog configuration)<br />
+or<br />
+*.* @@remotesystemname (rsyslog configuration)<br />
+points to an invalid remote system or is commented out, this is a finding.<br />
+<br />
+If no output is produced, this is a finding.<br />
+<br />
+Check the remote syslog host to ensure that audit records can be found for this host.</p><h2>Check Content Reference</h2><p>M</p><h2>Target Key</h2><p>4022</p></body></html>

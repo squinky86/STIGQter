@@ -1,0 +1,37 @@
+<!doctype html><html lang="en"><head><meta charset="utf-8"><title>STIGQter: STIG Check Details: SV-275454r1147412_rule: The Riverbed NetIM must be configured to assign appropriate user roles or access levels to authenticated users.</title><link rel="icon" type="image/svg+xml" href="STIGQter.svg" /><script async src="https://www.googletagmanager.com/gtag/js?id=UA-31381839-2"></script><script src="include.js"></script><script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-4110907817782130" crossorigin="anonymous"></script></head><body><div><img src="STIGQter.svg" alt="STIGQter" style="height:1em;" /> <a href="https://www.stigqter.com/">STIGQter</a>: <a href="main.html">STIG Summary</a>: <a href="U_RB_NetIM_NDM_STIG_V1R1_Manual-xccdf.html">Riverbed NetIM NDM Security Technical Implementation Guide Version: 1 Release: 1 Benchmark Date: 11 Sep 2025</a>:</div> <h1>The Riverbed NetIM must be configured to assign appropriate user roles or access levels to authenticated users.</h1><h2>DISA Rule</h2><p>SV-275454r1147412_rule</p><h2>Vulnerability Number</h2><p>V-275454</p><h2>Group Title</h2><p>SRG-APP-000033-NDM-000212</p><h2>Rule Version</h2><p>RIIM-DM-000005</p><h2>Severity</h2><p>CAT I</p><h2>CCI(s)</h2><ul><li>CCI-000213 - Enforce approved authorizations for logical access to information and system resources in accordance with applicable access control policies.</li></ul><h2>Weight</h2><p>10</p><h2>Fix Recommendation</h2><p>Configure AAA services.<br />
+<br />
+Note: This process must be done during initial installation of NetIM when prompted. This minimizes the need for system administrators to later access the Ubuntu bash shell. <br />
+<br />
+Important: All individual admin accounts must be configured on an authentication server, the NetIM must be configured to point to a PKI-based authentication server, and roles must be mapped to the authorization attributes on the authentication server. <br />
+<br />
+Check the system security plan (SSP) to determine which roles are required to be defined for remote users.<br />
+<br />
+Note: Enable TACACS+ Authentication from Ubuntu bash shell during initial installation of the application. Accessing bash commands requires the sysadmin to type &quot;Challenge&quot; at the NetIM shell. Use the site's support email account to send the Challenge code and receive the Response code. DISA requires system admins to immediately log out of NetIMAdmin once the required bash access is no longer needed to mitigate the risk of this superadmin access being inadvertently used. Admins should not leave the bash shell open for long periods without logging out.<br />
+<br />
+1. From the root of the installation directory, enter the following command:<br />
+<br />
+$ bash<br />
+cd &lt;installation directory &gt; <br />
+<br />
+./app.sh /TACACS_STATE enabled<br />
+<br />
+2. In the GUI, navigate to Configure &gt;&gt; All Settings &gt;&gt; Integrate &gt;&gt; TACACS+.<br />
+3. On the TACACS+ Configurations page, fill out all required information. Add the IP address for the authentication server, add a role for the remote user, and check the box for &quot;Require Authentication&quot;.<br />
+4. Select the check box for &quot;Require Authorization&quot; and provide the authorization attributes and role attributes.<br />
+<br />
+To add, modify, or delete a user account or log off a user, follow these steps:<br />
+<br />
+1. In the GUI, navigate to Configure &gt;&gt; All Settings &gt;&gt; Administer &gt;&gt; User Management.<br />
+2. To add a TACACS+ user, click the &quot;+&quot; icon next to &quot;Create TACACS+ user&quot;.<br />
+3. Select a valid TACACS+ username, assign a role from the dropdown list, then click &quot;Save&quot;. <br />
+4. For audit administrator, assign the role of USER_AUDITOR.</p><h2>Check Contents</h2><p>Review the user role assignments on the NetIM.<br />
+<br />
+1. In the GUI, navigate to Configure &gt;&gt; All Settings &gt;&gt; User Management. <br />
+2. In the TACACS+ pane, inspect the Last Login Server column. Verify all users except for the account of last resort are listed and the role assigned for nonprivileged users is &quot;USERS&quot;. Verify the admins are assigned admin roles, and the single audit administrator is assigned the role AUDIT_ADMIN. The audit admin role must be defined for DOD sites.<br />
+<br />
+If NetIM account roles are not configured or if the roles assigned are not compliant, this is a finding.</p><h2>Vulnerability Number</h2><p>V-275454</p><h2>Documentable</h2><p>False</p><h2>Rule Version</h2><p>RIIM-DM-000005</p><h2>Severity Override Guidance</h2><p>Review the user role assignments on the NetIM.<br />
+<br />
+1. In the GUI, navigate to Configure &gt;&gt; All Settings &gt;&gt; User Management. <br />
+2. In the TACACS+ pane, inspect the Last Login Server column. Verify all users except for the account of last resort are listed and the role assigned for nonprivileged users is &quot;USERS&quot;. Verify the admins are assigned admin roles, and the single audit administrator is assigned the role AUDIT_ADMIN. The audit admin role must be defined for DOD sites.<br />
+<br />
+If NetIM account roles are not configured or if the roles assigned are not compliant, this is a finding.</p><h2>Check Content Reference</h2><p>M</p><h2>Target Key</h2><p>5704</p></body></html>

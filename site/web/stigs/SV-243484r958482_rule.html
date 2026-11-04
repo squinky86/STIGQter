@@ -1,0 +1,49 @@
+<!doctype html><html lang="en"><head><meta charset="utf-8"><title>STIGQter: STIG Check Details: SV-243484r958482_rule: Security identifiers (SIDs) must be configured to use only authentication data of directly trusted external or forest trust.</title><link rel="icon" type="image/svg+xml" href="STIGQter.svg" /><script async src="https://www.googletagmanager.com/gtag/js?id=UA-31381839-2"></script><script src="include.js"></script><script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-4110907817782130" crossorigin="anonymous"></script></head><body><div><img src="STIGQter.svg" alt="STIGQter" style="height:1em;" /> <a href="https://www.stigqter.com/">STIGQter</a>: <a href="main.html">STIG Summary</a>: <a href="U_Active_Directory_Domain_STIG_V3R7_Manual-xccdf.html">Active Directory Domain Security Technical Implementation Guide Version: 3 Release: 7 Benchmark Date: 01 Apr 2026</a>:</div> <h1>Security identifiers (SIDs) must be configured to use only authentication data of directly trusted external or forest trust.</h1><h2>DISA Rule</h2><p>SV-243484r958482_rule</p><h2>Vulnerability Number</h2><p>V-243484</p><h2>Group Title</h2><p>SRG-OS-000104</p><h2>Rule Version</h2><p>AD.0190</p><h2>Severity</h2><p>CAT II</p><h2>CCI(s)</h2><ul><li>CCI-000764 - Uniquely identify and authenticate organizational users and associate that unique identification with processes acting on behalf of those users.</li></ul><h2>Weight</h2><p>10</p><h2>Fix Recommendation</h2><p>Ensure SID filtering is enabled on all external trusts.  You can enable SID filtering only from the trusting side of the trust.  Enter the following line from a command line:<br />
+<br />
+netdom trust &lt;TrustingDomainName&gt; /d:&lt;TrustedDomainName&gt; /quarantine:Yes<br />
+/usero:&lt;DomainAdministratorAcct&gt; /passwordo:&lt;DomainAdminPwd&gt;<br />
+<br />
+Ensure SID history is disabled for all forest trusts.  You can disable SID history only from the trusting side of the trust.  Enter the following line from a command line:<br />
+<br />
+netdom trust &lt;TrustingDomainName&gt; /d:&lt;TrustedDomainName&gt; /enablesidhistory:No<br />
+/usero:&lt;DomainAdministratorAcct&gt; /passwordo:&lt;DomainAdminPwd&gt;</p><h2>Check Contents</h2><p>Open &quot;Active Directory Domains and Trusts&quot;. (Available from various menus or run &quot;domain.msc&quot;.)<br />
+<br />
+Right-click the domain in the left pane and select &quot;Properties&quot;.<br />
+<br />
+Select the &quot;Trusts&quot; tab.<br />
+<br />
+Note any existing trusts and the type.<br />
+<br />
+If no trusts exist, this is NA.<br />
+<br />
+Access a command line and run the following command on the trusting domain:<br />
+&quot;netdom trust &lt;trusting domain&gt; /d:&lt;trusted domain&gt; /quarantine&quot;<br />
+<br />
+If the result does not specify the following, this is a finding.<br />
+<br />
+&quot;SID filtering is enabled for this trust. Only SIDs from the trusted domain will be accepted for authorization data returned during authentication. SIDs from other domains will be removed.&quot;<br />
+<br />
+If the trust type is Forest, run the following command on the trusting domain:<br />
+&quot;netdom trust &lt;trusting domain&gt; /d:&lt;trusted domain&gt; /enablesidhistory&quot;<br />
+<br />
+If the result does not specify &quot;SID history is disabled for this trust&quot;, this is a finding.</p><h2>Vulnerability Number</h2><p>V-243484</p><h2>Documentable</h2><p>False</p><h2>Rule Version</h2><p>AD.0190</p><h2>Severity Override Guidance</h2><p>Open &quot;Active Directory Domains and Trusts&quot;. (Available from various menus or run &quot;domain.msc&quot;.)<br />
+<br />
+Right-click the domain in the left pane and select &quot;Properties&quot;.<br />
+<br />
+Select the &quot;Trusts&quot; tab.<br />
+<br />
+Note any existing trusts and the type.<br />
+<br />
+If no trusts exist, this is NA.<br />
+<br />
+Access a command line and run the following command on the trusting domain:<br />
+&quot;netdom trust &lt;trusting domain&gt; /d:&lt;trusted domain&gt; /quarantine&quot;<br />
+<br />
+If the result does not specify the following, this is a finding.<br />
+<br />
+&quot;SID filtering is enabled for this trust. Only SIDs from the trusted domain will be accepted for authorization data returned during authentication. SIDs from other domains will be removed.&quot;<br />
+<br />
+If the trust type is Forest, run the following command on the trusting domain:<br />
+&quot;netdom trust &lt;trusting domain&gt; /d:&lt;trusted domain&gt; /enablesidhistory&quot;<br />
+<br />
+If the result does not specify &quot;SID history is disabled for this trust&quot;, this is a finding.</p><h2>Check Content Reference</h2><p>M</p><h2>Target Key</h2><p>5406</p></body></html>

@@ -1,0 +1,83 @@
+<!doctype html><html lang="en"><head><meta charset="utf-8"><title>STIGQter: STIG Check Details: SV-273622r1110931_rule: The RUCKUS ICX BGP router must be configured to use a unique key for each autonomous system (AS) that it peers with.</title><link rel="icon" type="image/svg+xml" href="STIGQter.svg" /><script async src="https://www.googletagmanager.com/gtag/js?id=UA-31381839-2"></script><script src="include.js"></script><script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-4110907817782130" crossorigin="anonymous"></script></head><body><div><img src="STIGQter.svg" alt="STIGQter" style="height:1em;" /> <a href="https://www.stigqter.com/">STIGQter</a>: <a href="main.html">STIG Summary</a>: <a href="U_RUCKUS_ICX_RTR_STIG_V1R1_Manual-xccdf.html">RUCKUS ICX Router Security Technical Implementation Guide Version: 1 Release: 1 Benchmark Date: 27 May 2025</a>:</div> <h1>The RUCKUS ICX BGP router must be configured to use a unique key for each autonomous system (AS) that it peers with.</h1><h2>DISA Rule</h2><p>SV-273622r1110931_rule</p><h2>Vulnerability Number</h2><p>V-273622</p><h2>Group Title</h2><p>SRG-NET-000230-RTR-000002</p><h2>Rule Version</h2><p>RCKS-RTR-000550</p><h2>Severity</h2><p>CAT II</p><h2>CCI(s)</h2><ul><li>CCI-001184 - Protect the authenticity of communications sessions.</li></ul><h2>Weight</h2><p>10</p><h2>Fix Recommendation</h2><p>Configure the router to use unique keys for each AS it peers with as shown in the example below:<br />
+<br />
+ICX(config)# keychain AS-xxxx<br />
+ICX(config-keychain-tcp-AS-xxxx)# key 1<br />
+ICX(config-keychain-tcp-AS-xxxx-key-1)# authentication-algorithm aes-128-cmac<br />
+ICX(config-keychain-tcp-AS-xxxx-key-1)# password pw_for_AS-xxxx<br />
+ICX(config-keychain-tcp-AS-xxxx-key-1)# no accept-ao-mismatch<br />
+ICX(config-keychain-tcp-AS-xxxx-key-1)# include-tcp-options<br />
+ICX(config-keychain-tcp-AS-xxxx-key-1)# send-id 1<br />
+ICX(config-keychain-tcp-AS-xxxx-key-1)# recv-id 1<br />
+ICX(config-keychain-tcp-AS-xxxx-key-1)# accept-lifetime start 03-05-24 10:10:10 end 15552000<br />
+ICX(config-keychain-tcp-AS-xxxx-key-1)# send-lifetime start 03-05-24 10:10:10 end 09-01-24 10:10:10<br />
+ICX(config)# keychain AS-yyyy<br />
+ICX(config-keychain-tcp-AS-yyyy)# key 1<br />
+ICX(config-keychain-tcp-AS-yyyy-key-1)# authentication-algorithm aes-128-cmac<br />
+ICX(config-keychain-tcp-AS-yyyy-key-1)# password pw_for_AS-yyyy<br />
+ICX(config-keychain-tcp-AS-yyyy-key-1)# no accept-ao-mismatch<br />
+ICX(config-keychain-tcp-AS-yyyy-key-1)# include-tcp-options<br />
+ICX(config-keychain-tcp-AS-yyyy-key-1)# send-id 2<br />
+ICX(config-keychain-tcp-AS-yyyy-key-1)# recv-id 2<br />
+ICX(config-keychain-tcp-AS-yyyy-key-1)# accept-lifetime start 03-05-24 10:10:10 end 15552000<br />
+ICX(config-keychain-tcp-AS-yyyy-key-1)# send-lifetime start 03-05-24 10:10:10 end 09-01-24 10:10:10<br />
+<br />
+ICX(config)# router bgp<br />
+ICX(config-bgp-router)# local-as 1001<br />
+ICX(config-bgp-router)# neighbor x.0.0.1 remote-as 10<br />
+ICX(config-bgp-router)#neighbor x.0.0.1 ao AS-xxxx<br />
+ICX(config-bgp-router)# neighbor y.0.0.1 remote-as 10<br />
+ICX(config-bgp-router)#neighbor y.0.0.1 ao AS-yyyy</p><h2>Check Contents</h2><p>Review the BGP configuration to determine if it is peering with multiple autonomous systems. Interview the information security systems manager (ISSM) and router administrator to determine if unique keys are being used. <br />
+<br />
+keychain AS-xxxx tcp<br />
+ key-id 1<br />
+  password 2 $Uyt9R3NVfURuXH1a<br />
+  authentication-algorithm aes-128-cmac<br />
+  send-lifetime start 03-05-2024 00:00:00 end 09-01-2024 00:00:00<br />
+  no accept-ao-mismatch<br />
+  send-id 1<br />
+  recv-id 1<br />
+<br />
+keychain AS-yyyy tcp<br />
+ key-id 1<br />
+  password 2 $Uyt9R3123URuXH1a<br />
+  authentication-algorithm aes-128-cmac<br />
+  send-lifetime start 03-05-2024 00:00:00 end 09-01-2024 00:00:00<br />
+  no accept-ao-mismatch<br />
+  send-id 2<br />
+  recv-id 2<br />
+<br />
+router bgp<br />
+ local-as xxxx<br />
+ neighbor x.0.0.1 remote-as 10<br />
+ neighbor x.0.0.1 ao AS-xxxx<br />
+ neighbor y.0.0.1 remote-as 11<br />
+ neighbor y.0.0.1 as AS-yyyy<br />
+<br />
+If unique keys are not being used, this is a finding.</p><h2>Vulnerability Number</h2><p>V-273622</p><h2>Documentable</h2><p>False</p><h2>Rule Version</h2><p>RCKS-RTR-000550</p><h2>Severity Override Guidance</h2><p>Review the BGP configuration to determine if it is peering with multiple autonomous systems. Interview the information security systems manager (ISSM) and router administrator to determine if unique keys are being used. <br />
+<br />
+keychain AS-xxxx tcp<br />
+ key-id 1<br />
+  password 2 $Uyt9R3NVfURuXH1a<br />
+  authentication-algorithm aes-128-cmac<br />
+  send-lifetime start 03-05-2024 00:00:00 end 09-01-2024 00:00:00<br />
+  no accept-ao-mismatch<br />
+  send-id 1<br />
+  recv-id 1<br />
+<br />
+keychain AS-yyyy tcp<br />
+ key-id 1<br />
+  password 2 $Uyt9R3123URuXH1a<br />
+  authentication-algorithm aes-128-cmac<br />
+  send-lifetime start 03-05-2024 00:00:00 end 09-01-2024 00:00:00<br />
+  no accept-ao-mismatch<br />
+  send-id 2<br />
+  recv-id 2<br />
+<br />
+router bgp<br />
+ local-as xxxx<br />
+ neighbor x.0.0.1 remote-as 10<br />
+ neighbor x.0.0.1 ao AS-xxxx<br />
+ neighbor y.0.0.1 remote-as 11<br />
+ neighbor y.0.0.1 as AS-yyyy<br />
+<br />
+If unique keys are not being used, this is a finding.</p><h2>Check Content Reference</h2><p>M</p><h2>Target Key</h2><p>5696</p></body></html>

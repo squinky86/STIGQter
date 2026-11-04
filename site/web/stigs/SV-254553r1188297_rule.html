@@ -1,0 +1,52 @@
+<!doctype html><html lang="en"><head><meta charset="utf-8"><title>STIGQter: STIG Check Details: SV-254553r1188297_rule: Rancher RKE2 must protect authenticity of communications sessions with the use of FIPS-validated 140-2 or 140-3 security requirements for cryptographic modules.</title><link rel="icon" type="image/svg+xml" href="STIGQter.svg" /><script async src="https://www.googletagmanager.com/gtag/js?id=UA-31381839-2"></script><script src="include.js"></script><script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-4110907817782130" crossorigin="anonymous"></script></head><body><div><img src="STIGQter.svg" alt="STIGQter" style="height:1em;" /> <a href="https://www.stigqter.com/">STIGQter</a>: <a href="main.html">STIG Summary</a>: <a href="U_RGS_RKE2_STIG_V2R7_Manual-xccdf.html">Rancher Government Solutions RKE2 Security Technical Implementation Guide Version: 2 Release: 7 Benchmark Date: 01 Jul 2026</a>:</div> <h1>Rancher RKE2 must protect authenticity of communications sessions with the use of FIPS-validated 140-2 or 140-3 security requirements for cryptographic modules.</h1><h2>DISA Rule</h2><p>SV-254553r1188297_rule</p><h2>Vulnerability Number</h2><p>V-254553</p><h2>Group Title</h2><p>SRG-APP-000014-CTR-000035</p><h2>Rule Version</h2><p>CNTR-R2-000010</p><h2>Severity</h2><p>CAT I</p><h2>CCI(s)</h2><ul><li>CCI-000068 - Implement cryptographic mechanisms to protect the confidentiality of remote access sessions.</li><li>CCI-000185 - For public key-based authentication, validate certificates by constructing and verifying a certification path to an accepted trust anchor including checking certificate status information.</li><li>CCI-000382 - Configure the system to prohibit or restrict the use of organization-defined prohibited or restricted functions, system ports, protocols, software, and/or services.</li><li>CCI-000803 - Implement mechanisms for authentication to a cryptographic module that meet the requirements of applicable laws, Executive Orders, directives, policies, regulations, standards, and guidance for such authentication.</li><li>CCI-001184 - Protect the authenticity of communications sessions.</li><li>CCI-001453 - Implement cryptographic mechanisms to protect the integrity of remote access sessions.</li><li>CCI-002420 - Maintain the confidentiality and/or integrity of information during preparation for transmission.</li><li>CCI-002422 - Maintain the confidentiality and/or integrity of information during reception.</li><li>CCI-002450 - Implement organization-defined types of cryptography for each specified cryptography use.</li></ul><h2>Weight</h2><p>10</p><h2>Fix Recommendation</h2><p>Configure the use of strong TLS settings.<br />
+<br />
+Edit the RKE2 server configuration file on all RKE2 server hosts, located at &quot;/etc/rancher/rke2/config.yaml&quot;, to contain the following:<br />
+<br />
+kube-controller-manager-arg:<br />
+<br />
+&quot;tls-min-version=VersionTLS12&quot; [or higher]<br />
+&quot;tls-cipher-suites=TLS_ECDHE_ECDSA_WITH_AES_128_GCM_SHA256,TLS_ECDHE_ECDSA_WITH_CHACHA20_POLY1305,TLS_ECDHE_ECDSA_WITH_AES_256_GCM_SHA384&quot; kube-scheduler-arg:<br />
+&quot;tls-min-version=VersionTLS12&quot;<br />
+&quot;tls-cipher-suites=TLS_ECDHE_ECDSA_WITH_AES_128_GCM_SHA256,TLS_ECDHE_ECDSA_WITH_CHACHA20_POLY1305,TLS_ECDHE_ECDSA_WITH_AES_256_GCM_SHA384&quot; kube-apiserver-arg:<br />
+&quot;tls-min-version=VersionTLS12&quot;<br />
+&quot;tls-cipher-suites=TLS_ECDHE_ECDSA_WITH_AES_128_GCM_SHA256,TLS_ECDHE_ECDSA_WITH_CHACHA20_POLY1305,TLS_ECDHE_ECDSA_WITH_AES_256_GCM_SHA384&quot;<br />
+<br />
+Once the configuration file is updated, restart the RKE2 server using the command: <br />
+<br />
+systemctl restart rke2-server</p><h2>Check Contents</h2><p>Use strong TLS settings.<br />
+<br />
+On the RKE2 server, run each command:<br />
+<br />
+/bin/ps -ef | grep kube-apiserver | grep -v grep<br />
+<br />
+/bin/ps -ef | grep kube-controller-manager | grep -v grep<br />
+<br />
+/bin/ps -ef | grep kube-scheduler | grep -v grep<br />
+<br />
+For each, look for the existence of tls-min-version (use this command for an aid &quot;| grep tls-min-version&quot;). <br />
+<br />
+If the setting &quot;tls-min-version&quot; is not configured or it is set to &quot;VersionTLS10&quot; or &quot;VersionTLS11&quot;, this is a finding.<br />
+<br />
+For each, look for the existence of the tls-cipher-suites. <br />
+<br />
+If &quot;tls-cipher-suites&quot; is not set for all servers, or does not contain the following, this is a finding.<br />
+<br />
+--tls-cipher-suites=suites=TLS_ECDHE_ECDSA_WITH_AES_128_GCM_SHA256,TLS_ECDHE_ECDSA_WITH_CHACHA20_POLY1305,TLS_ECDHE_ECDSA_WITH_AES_256_GCM_SHA384</p><h2>Vulnerability Number</h2><p>V-254553</p><h2>Documentable</h2><p>False</p><h2>Rule Version</h2><p>CNTR-R2-000010</p><h2>Severity Override Guidance</h2><p>Use strong TLS settings.<br />
+<br />
+On the RKE2 server, run each command:<br />
+<br />
+/bin/ps -ef | grep kube-apiserver | grep -v grep<br />
+<br />
+/bin/ps -ef | grep kube-controller-manager | grep -v grep<br />
+<br />
+/bin/ps -ef | grep kube-scheduler | grep -v grep<br />
+<br />
+For each, look for the existence of tls-min-version (use this command for an aid &quot;| grep tls-min-version&quot;). <br />
+<br />
+If the setting &quot;tls-min-version&quot; is not configured or it is set to &quot;VersionTLS10&quot; or &quot;VersionTLS11&quot;, this is a finding.<br />
+<br />
+For each, look for the existence of the tls-cipher-suites. <br />
+<br />
+If &quot;tls-cipher-suites&quot; is not set for all servers, or does not contain the following, this is a finding.<br />
+<br />
+--tls-cipher-suites=suites=TLS_ECDHE_ECDSA_WITH_AES_128_GCM_SHA256,TLS_ECDHE_ECDSA_WITH_CHACHA20_POLY1305,TLS_ECDHE_ECDSA_WITH_AES_256_GCM_SHA384</p><h2>Check Content Reference</h2><p>M</p><h2>Target Key</h2><p>5486</p></body></html>

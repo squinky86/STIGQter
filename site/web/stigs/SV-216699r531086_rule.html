@@ -1,0 +1,41 @@
+<!doctype html><html lang="en"><head><meta charset="utf-8"><title>STIGQter: STIG Check Details: SV-216699r531086_rule: The MPLS router with RSVP-TE enabled must be configured with message pacing to adjust maximum burst and maximum number of RSVP messages to an output queue based on the link speed and input queue size of adjacent core routers.</title><link rel="icon" type="image/svg+xml" href="STIGQter.svg" /><script async src="https://www.googletagmanager.com/gtag/js?id=UA-31381839-2"></script><script src="include.js"></script><script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-4110907817782130" crossorigin="anonymous"></script></head><body><div><img src="STIGQter.svg" alt="STIGQter" style="height:1em;" /> <a href="https://www.stigqter.com/">STIGQter</a>: <a href="main.html">STIG Summary</a>: <a href="U_Cisco_IOS-XE_Router_RTR_STIG_V3R5_Manual-xccdf.html">Cisco IOS XE Router RTR Security Technical Implementation Guide Version: 3 Release: 5 Benchmark Date: 01 Oct 2025</a>:</div> <h1>The MPLS router with RSVP-TE enabled must be configured with message pacing to adjust maximum burst and maximum number of RSVP messages to an output queue based on the link speed and input queue size of adjacent core routers.</h1><h2>DISA Rule</h2><p>SV-216699r531086_rule</p><h2>Vulnerability Number</h2><p>V-216699</p><h2>Group Title</h2><p>SRG-NET-000193-RTR-000001</p><h2>Rule Version</h2><p>CISC-RT-000610</p><h2>Severity</h2><p>CAT III</p><h2>CCI(s)</h2><ul><li>CCI-001095 - Manage capacity, bandwidth, or other redundancy to limit the effects of information flooding types of denial of service attacks.</li></ul><h2>Weight</h2><p>10</p><h2>Fix Recommendation</h2><p>Configure the router to rate limit RSVP messages per interface as shown in the example.<br />
+<br />
+R2(config)#ip rsvp signalling rate-limit burst 9  maxsize 2100 period 30 limit 50</p><h2>Check Contents</h2><p>Review the router configuration to determine RSVP messages are rate limited.<br />
+<br />
+Step 1: Determine if MPLS TE is enabled globally and at least one interface as shown in the example below: <br />
+<br />
+mpls traffic-eng tunnels<br />
+…<br />
+…<br />
+…<br />
+interface GigabitEthernet0/2<br />
+ ip address x.x.x.x 255.255.255.0<br />
+ mpls traffic-eng tunnels<br />
+ mpls ip<br />
+<br />
+Step 2: If MPLS TE is enabled, verify that message pacing is enabled.<br />
+<br />
+ip rsvp signalling rate-limit period 30 burst 9 maxsize 2100 limit 50<br />
+<br />
+Note: The command &quot;ip rsvp msg-pacing&quot; has been deprecated by the command &quot;ip rsvp signalling rate-limit&quot; <br />
+<br />
+If the router with RSVP-TE enabled does not rate limit RSVP messages based on the link speed and input queue size of adjacent core routers, this is a finding.</p><h2>Vulnerability Number</h2><p>V-216699</p><h2>Documentable</h2><p>False</p><h2>Rule Version</h2><p>CISC-RT-000610</p><h2>Severity Override Guidance</h2><p>Review the router configuration to determine RSVP messages are rate limited.<br />
+<br />
+Step 1: Determine if MPLS TE is enabled globally and at least one interface as shown in the example below: <br />
+<br />
+mpls traffic-eng tunnels<br />
+…<br />
+…<br />
+…<br />
+interface GigabitEthernet0/2<br />
+ ip address x.x.x.x 255.255.255.0<br />
+ mpls traffic-eng tunnels<br />
+ mpls ip<br />
+<br />
+Step 2: If MPLS TE is enabled, verify that message pacing is enabled.<br />
+<br />
+ip rsvp signalling rate-limit period 30 burst 9 maxsize 2100 limit 50<br />
+<br />
+Note: The command &quot;ip rsvp msg-pacing&quot; has been deprecated by the command &quot;ip rsvp signalling rate-limit&quot; <br />
+<br />
+If the router with RSVP-TE enabled does not rate limit RSVP messages based on the link speed and input queue size of adjacent core routers, this is a finding.</p><h2>Check Content Reference</h2><p>M</p><h2>Target Key</h2><p>4028</p></body></html>

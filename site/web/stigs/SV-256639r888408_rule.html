@@ -1,0 +1,28 @@
+<!doctype html><html lang="en"><head><meta charset="utf-8"><title>STIGQter: STIG Check Details: SV-256639r888408_rule: Performance Charts must properly configure log sizes and rotation.</title><link rel="icon" type="image/svg+xml" href="STIGQter.svg" /><script async src="https://www.googletagmanager.com/gtag/js?id=UA-31381839-2"></script><script src="include.js"></script><script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-4110907817782130" crossorigin="anonymous"></script></head><body><div><img src="STIGQter.svg" alt="STIGQter" style="height:1em;" /> <a href="https://www.stigqter.com/">STIGQter</a>: <a href="main.html">STIG Summary</a>: <a href="U_VMW_vSphere_7-0_vCA_Perfcharts_STIG_V1R1_Manual-xccdf.html">VMware vSphere 7.0 vCenter Appliance Perfcharts Security Technical Implementation Guide Version: 1 Release: 1 Benchmark Date: 07 Mar 2023</a>:</div> <h1>Performance Charts must properly configure log sizes and rotation.</h1><h2>DISA Rule</h2><p>SV-256639r888408_rule</p><h2>Vulnerability Number</h2><p>V-256639</p><h2>Group Title</h2><p>SRG-APP-000357-WSR-000150</p><h2>Rule Version</h2><p>VCPF-70-000029</p><h2>Severity</h2><p>CAT II</p><h2>CCI(s)</h2><ul><li>CCI-001849 - Allocate audit log storage capacity to accommodate organization-defined audit record retention requirements.</li></ul><h2>Weight</h2><p>10</p><h2>Fix Recommendation</h2><p>Navigate to and open:<br />
+<br />
+/etc/vmware-perfcharts/log4j.properties<br />
+<br />
+Ensure the appender.rolling entries are configured as follows:<br />
+<br />
+appender.rolling.type = RollingFile<br />
+appender.rolling.name = FileLog<br />
+appender.rolling.fileName = /var/log/vmware/perfcharts/stats.log<br />
+appender.rolling.filePattern = /var/log/vmware/perfcharts/stats-%i.log<br />
+appender.rolling.policies.type = Policies<br />
+appender.rolling.policies.size.type = SizeBasedTriggeringPolicy<br />
+appender.rolling.policies.size.size = 5MB<br />
+appender.rolling.strategy.type = DefaultRolloverStrategy<br />
+appender.rolling.strategy.max = 10<br />
+appender.rolling.layout.type = PatternLayout<br />
+appender.rolling.layout.pattern = %d{yyyy-MM-dd'T'HH:mm:ss.SSSXXX} [%t %-5p %c] %m%n<br />
+appender.rolling.level = info<br />
+<br />
+Note: This fix is currently only applicable to 7.0 U2+ and is different in older versions.</p><h2>Check Contents</h2><p>At the command prompt, run the following command:<br />
+<br />
+# rpm -V VMware-perfcharts|grep log4j|grep &quot;^..5......&quot;<br />
+<br />
+If the command returns any output, this is a finding.</p><h2>Vulnerability Number</h2><p>V-256639</p><h2>Documentable</h2><p>False</p><h2>Rule Version</h2><p>VCPF-70-000029</p><h2>Severity Override Guidance</h2><p>At the command prompt, run the following command:<br />
+<br />
+# rpm -V VMware-perfcharts|grep log4j|grep &quot;^..5......&quot;<br />
+<br />
+If the command returns any output, this is a finding.</p><h2>Check Content Reference</h2><p>M</p><h2>Target Key</h2><p>5522</p></body></html>

@@ -1,0 +1,117 @@
+<!doctype html><html lang="en"><head><meta charset="utf-8"><title>STIGQter: STIG Check Details: SV-253835r1015848_rule: The Tanium Server installer's account database permissions must be reduced to an appropriate level.</title><link rel="icon" type="image/svg+xml" href="STIGQter.svg" /><script async src="https://www.googletagmanager.com/gtag/js?id=UA-31381839-2"></script><script src="include.js"></script><script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-4110907817782130" crossorigin="anonymous"></script></head><body><div><img src="STIGQter.svg" alt="STIGQter" style="height:1em;" /> <a href="https://www.stigqter.com/">STIGQter</a>: <a href="main.html">STIG Summary</a>: <a href="U_Tanium_7-x_STIG_V2R3_Manual-xccdf.html">Tanium 7.x Security Technical Implementation Guide Version: 2 Release: 3 Benchmark Date: 02 Jul 2025</a>:</div> <h1>The Tanium Server installer's account database permissions must be reduced to an appropriate level.</h1><h2>DISA Rule</h2><p>SV-253835r1015848_rule</p><h2>Vulnerability Number</h2><p>V-253835</p><h2>Group Title</h2><p>SRG-APP-000381</p><h2>Rule Version</h2><p>TANS-DB-000004</p><h2>Severity</h2><p>CAT II</p><h2>CCI(s)</h2><ul><li>CCI-003938 - Automatically generate audit records of the enforcement actions.</li></ul><h2>Weight</h2><p>10</p><h2>Fix Recommendation</h2><p>1. Access the Tanium SQL server interactively.<br />
+<br />
+2. Log on to the server with an account that has administrative privileges.<br />
+<br />
+3. Open SQL Server Management Studio.<br />
+<br />
+4. Connect to Tanium instance of SQL Server.<br />
+<br />
+5. In the left pane, click &quot;Databases&quot;. <br />
+<br />
+6. Select the Tanium database. <br />
+<br />
+7. Click &quot;Security&quot;. <br />
+<br />
+8. Click &quot;Users&quot;. <br />
+<br />
+9. In the &quot;Users&quot; pane, right-click the Tanium Server service user account.<br />
+<br />
+10. On the shortcut menu, click &quot;Properties&quot;.<br />
+<br />
+11. Under Database role membership, change role from &quot;sysadmin&quot; to &quot;db_owner&quot;.<br />
+<br />
+12. Click &quot;OK&quot;.<br />
+<br />
+13. In the left pane, click &quot;Databases&quot;. <br />
+<br />
+14. Select the Tanium_archive database. <br />
+<br />
+15. Click &quot;Security&quot;. <br />
+<br />
+16. Click &quot;Users&quot;. <br />
+<br />
+17. In the &quot;Users&quot; pane, right-click the Tanium Server service user account.<br />
+<br />
+18. On the shortcut menu, click &quot;Properties&quot;.<br />
+<br />
+19. Under Database role membership, change role from &quot;sysadmin&quot; to &quot;db_owner&quot;.<br />
+<br />
+20. Click &quot;OK&quot;<br />
+<br />
+21. If using Postgres:<br />
+<br />
+Configure PostgreSQL to enforce access restrictions associated with changes to the configuration of PostgreSQL or database(s).<br />
+<br />
+Use ALTER ROLE to remove accesses from roles:<br />
+<br />
+$ psql -c &quot;ALTER ROLE &lt;role_name&gt; NOSUPERUSER&quot;</p><h2>Check Contents</h2><p>1. Access the Tanium SQL server interactively.<br />
+<br />
+2. Log on to the server with an account that has administrative privileges.<br />
+<br />
+3. Open SQL Server Management Studio.<br />
+<br />
+4. Connect to Tanium instance of SQL Server.<br />
+<br />
+5. In the left pane, click &quot;Databases&quot;. <br />
+<br />
+6. Select the Tanium database. <br />
+<br />
+7. Click &quot;Security&quot;. <br />
+<br />
+8. Click &quot;Users&quot;.<br />
+<br />
+9. In the &quot;Users&quot; pane, review the role assigned to the Tanium Server service user account.<br />
+<br />
+10. In the left pane, click &quot;Databases&quot;. <br />
+<br />
+11. Select the Tanium_archive database. <br />
+<br />
+12. Click &quot;Security&quot;. <br />
+<br />
+13. Click &quot;Users&quot;.<br />
+<br />
+14. In the &quot;Users&quot; pane, review the role assigned to the Tanium Server service user account.<br />
+<br />
+15. If the role assigned to the Tanium Server service account is not &quot;db_owner&quot;, this is a finding.<br />
+<br />
+16. If using Postgres:<br />
+<br />
+Only owners of objects can change them. To view all functions, triggers, and trigger procedures, and their ownership and source, as the database administrator (shown here as &quot;postgres&quot;), run the following SQL:<br />
+<br />
+$ sudo su - postgres<br />
+$ psql -x -c &quot;\df+&quot;</p><h2>Vulnerability Number</h2><p>V-253835</p><h2>Documentable</h2><p>False</p><h2>Rule Version</h2><p>TANS-DB-000004</p><h2>Severity Override Guidance</h2><p>1. Access the Tanium SQL server interactively.<br />
+<br />
+2. Log on to the server with an account that has administrative privileges.<br />
+<br />
+3. Open SQL Server Management Studio.<br />
+<br />
+4. Connect to Tanium instance of SQL Server.<br />
+<br />
+5. In the left pane, click &quot;Databases&quot;. <br />
+<br />
+6. Select the Tanium database. <br />
+<br />
+7. Click &quot;Security&quot;. <br />
+<br />
+8. Click &quot;Users&quot;.<br />
+<br />
+9. In the &quot;Users&quot; pane, review the role assigned to the Tanium Server service user account.<br />
+<br />
+10. In the left pane, click &quot;Databases&quot;. <br />
+<br />
+11. Select the Tanium_archive database. <br />
+<br />
+12. Click &quot;Security&quot;. <br />
+<br />
+13. Click &quot;Users&quot;.<br />
+<br />
+14. In the &quot;Users&quot; pane, review the role assigned to the Tanium Server service user account.<br />
+<br />
+15. If the role assigned to the Tanium Server service account is not &quot;db_owner&quot;, this is a finding.<br />
+<br />
+16. If using Postgres:<br />
+<br />
+Only owners of objects can change them. To view all functions, triggers, and trigger procedures, and their ownership and source, as the database administrator (shown here as &quot;postgres&quot;), run the following SQL:<br />
+<br />
+$ sudo su - postgres<br />
+$ psql -x -c &quot;\df+&quot;</p><h2>Check Content Reference</h2><p>M</p><h2>Target Key</h2><p>5476</p></body></html>

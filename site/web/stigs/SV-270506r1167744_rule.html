@@ -1,0 +1,76 @@
+<!doctype html><html lang="en"><head><meta charset="utf-8"><title>STIGQter: STIG Check Details: SV-270506r1167744_rule: Oracle Database must allocate audit record storage capacity in accordance with organization-defined audit record storage requirements.</title><link rel="icon" type="image/svg+xml" href="STIGQter.svg" /><script async src="https://www.googletagmanager.com/gtag/js?id=UA-31381839-2"></script><script src="include.js"></script><script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-4110907817782130" crossorigin="anonymous"></script></head><body><div><img src="STIGQter.svg" alt="STIGQter" style="height:1em;" /> <a href="https://www.stigqter.com/">STIGQter</a>: <a href="main.html">STIG Summary</a>: <a href="U_Oracle_Database_19c_STIG_V1R5_Manual-xccdf.html">Oracle Database 19c Security Technical Implementation Guide Version: 1 Release: 5 Benchmark Date: 01 Apr 2026</a>:</div> <h1>Oracle Database must allocate audit record storage capacity in accordance with organization-defined audit record storage requirements.</h1><h2>DISA Rule</h2><p>SV-270506r1167744_rule</p><h2>Vulnerability Number</h2><p>V-270506</p><h2>Group Title</h2><p>SRG-APP-000357-DB-000316</p><h2>Rule Version</h2><p>O19C-00-005700</p><h2>Severity</h2><p>CAT II</p><h2>CCI(s)</h2><ul><li>CCI-001849 - Allocate audit log storage capacity to accommodate organization-defined audit record retention requirements.</li></ul><h2>Weight</h2><p>10</p><h2>Fix Recommendation</h2><p>Allocate sufficient audit file/table space to support peak demand.<br />
+<br />
+If audit records are being written to the table sys.aud$, create a new tablespace dedicated to the AUD$ table and move AUD$ using the statement below:<br />
+<br />
+exec sys.dbms_audit_mgmt.move_dbaudit_tables('&lt;tablespace_name&gt;');<br />
+<br />
+Ensure that audit tables are in their own tablespaces and that the tablespaces have enough room for the volume of log data that will be produced.<br />
+<br />
+Detailed procedures for how to alter the tablespace for audit logs can be found here:<br />
+https://docs.oracle.com/en/database/oracle/oracle-database/19/sqlrf/ALTER-TABLESPACE.html.</p><h2>Check Contents</h2><p>Review the DBMS settings to determine whether audit logging is configured to produce logs consistent with the amount of space allocated for logging. If auditing will generate excessive logs so that they may outgrow the space reserved for logging, this is a finding.<br />
+<br />
+If file-based auditing is in use, check that sufficient space is available to support the file(s). If not, this is a finding.<br />
+<br />
+If standard, table-based auditing is used, the audit logs are written to a table called AUD$; and if a Virtual Private Database is deployed, a table is created called FGA_LOG$. <br />
+<br />
+sqlplus connect as sysdba<br />
+<br />
+SELECT table_name, tablespace_name<br />
+FROM dba_tables<br />
+WHERE table_name IN ('AUD$')<br />
+ORDER BY table_name;<br />
+<br />
+TABLE_NAME                     TABLESPACE_NAME<br />
+-----------------------------  ------------------------------<br />
+AUD$                           SYSTEM<br />
+<br />
+The AUD$ table should be in its own tablespace. If the tablespace name is SYSTEM, this is a finding.<br />
+<br />
+Check the current location of the audit trail tables:<br />
+<br />
+SELECT inst_id, con_id, name, value<br />
+FROM sys.gv_$parameter<br />
+WHERE name IN ('audit_file_dest', 'unified_audit_systemlog');<br />
+<br />
+Verify adequate space is allocated for the audit trail location.<br />
+<br />
+If Unified Auditing is used:<br />
+<br />
+Audit logs are written to tables in the AUDSYS schema. The default tablespace for AUDSYS is USERS, and it should be in its own tablespace.<br />
+ <br />
+If the tablespace name is USERS, this is a finding. <br />
+<br />
+Investigate whether there have been any incidents where the DBMS ran out of audit log space since the last time the space was allocated or other corrective measures were taken. If there have been, this is a finding.</p><h2>Vulnerability Number</h2><p>V-270506</p><h2>Documentable</h2><p>False</p><h2>Rule Version</h2><p>O19C-00-005700</p><h2>Severity Override Guidance</h2><p>Review the DBMS settings to determine whether audit logging is configured to produce logs consistent with the amount of space allocated for logging. If auditing will generate excessive logs so that they may outgrow the space reserved for logging, this is a finding.<br />
+<br />
+If file-based auditing is in use, check that sufficient space is available to support the file(s). If not, this is a finding.<br />
+<br />
+If standard, table-based auditing is used, the audit logs are written to a table called AUD$; and if a Virtual Private Database is deployed, a table is created called FGA_LOG$. <br />
+<br />
+sqlplus connect as sysdba<br />
+<br />
+SELECT table_name, tablespace_name<br />
+FROM dba_tables<br />
+WHERE table_name IN ('AUD$')<br />
+ORDER BY table_name;<br />
+<br />
+TABLE_NAME                     TABLESPACE_NAME<br />
+-----------------------------  ------------------------------<br />
+AUD$                           SYSTEM<br />
+<br />
+The AUD$ table should be in its own tablespace. If the tablespace name is SYSTEM, this is a finding.<br />
+<br />
+Check the current location of the audit trail tables:<br />
+<br />
+SELECT inst_id, con_id, name, value<br />
+FROM sys.gv_$parameter<br />
+WHERE name IN ('audit_file_dest', 'unified_audit_systemlog');<br />
+<br />
+Verify adequate space is allocated for the audit trail location.<br />
+<br />
+If Unified Auditing is used:<br />
+<br />
+Audit logs are written to tables in the AUDSYS schema. The default tablespace for AUDSYS is USERS, and it should be in its own tablespace.<br />
+ <br />
+If the tablespace name is USERS, this is a finding. <br />
+<br />
+Investigate whether there have been any incidents where the DBMS ran out of audit log space since the last time the space was allocated or other corrective measures were taken. If there have been, this is a finding.</p><h2>Check Content Reference</h2><p>M</p><h2>Target Key</h2><p>5672</p></body></html>

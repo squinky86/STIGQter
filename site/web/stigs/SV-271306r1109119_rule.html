@@ -1,0 +1,31 @@
+<!doctype html><html lang="en"><head><meta charset="utf-8"><title>STIGQter: STIG Check Details: SV-271306r1109119_rule: Contained databases must use Windows principals.</title><link rel="icon" type="image/svg+xml" href="STIGQter.svg" /><script async src="https://www.googletagmanager.com/gtag/js?id=UA-31381839-2"></script><script src="include.js"></script><script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-4110907817782130" crossorigin="anonymous"></script></head><body><div><img src="STIGQter.svg" alt="STIGQter" style="height:1em;" /> <a href="https://www.stigqter.com/">STIGQter</a>: <a href="main.html">STIG Summary</a>: <a href="U_MS_SQL_Server_2022_Instance_STIG_V1R4_Manual-xccdf.html">Microsoft SQL Server 2022 Instance Security Technical Implementation Guide Version: 1 Release: 4 Benchmark Date: 01 Apr 2026</a>:</div> <h1>Contained databases must use Windows principals.</h1><h2>DISA Rule</h2><p>SV-271306r1109119_rule</p><h2>Vulnerability Number</h2><p>V-271306</p><h2>Group Title</h2><p>SRG-APP-000164-DB-000401</p><h2>Rule Version</h2><p>SQLI-22-008000</p><h2>Severity</h2><p>CAT I</p><h2>CCI(s)</h2><ul><li>CCI-004066 - For password-based authentication, enforce organization-defined composition and complexity rules.</li></ul><h2>Weight</h2><p>10</p><h2>Fix Recommendation</h2><p>Configure SQL Server contained databases to have users originating from Microsoft Entra (Azure Active Directory) principals. Remove any users not created from Microsoft Entra principals. <br />
+<br />
+Reference Contained Databases: https://learn.microsoft.com/en-us/sql/relational-databases/databases/contained-databases?</p><h2>Check Contents</h2><p>Execute the following query to determine if Contained Databases are used: <br />
+<br />
+SELECT * FROM sys.databases WHERE containment = 1<br />
+<br />
+If any records are returned, check the server documentation for a list of authorized contained database users. <br />
+<br />
+Execute the following query to ensure contained database users are not using SQL Authentication:<br />
+<br />
+EXEC sp_MSforeachdb 'USE [?]; SELECT DB_NAME() AS DatabaseName, *<br />
+FROM sys.database_principals dp<br />
+inner join sys.databases d on d.name = dp.name<br />
+WHERE dp.authentication_type = 2<br />
+and d.containment = 1'<br />
+<br />
+If any records are returned, this is a finding.</p><h2>Vulnerability Number</h2><p>V-271306</p><h2>Documentable</h2><p>False</p><h2>Rule Version</h2><p>SQLI-22-008000</p><h2>Severity Override Guidance</h2><p>Execute the following query to determine if Contained Databases are used: <br />
+<br />
+SELECT * FROM sys.databases WHERE containment = 1<br />
+<br />
+If any records are returned, check the server documentation for a list of authorized contained database users. <br />
+<br />
+Execute the following query to ensure contained database users are not using SQL Authentication:<br />
+<br />
+EXEC sp_MSforeachdb 'USE [?]; SELECT DB_NAME() AS DatabaseName, *<br />
+FROM sys.database_principals dp<br />
+inner join sys.databases d on d.name = dp.name<br />
+WHERE dp.authentication_type = 2<br />
+and d.containment = 1'<br />
+<br />
+If any records are returned, this is a finding.</p><h2>Check Content Reference</h2><p>M</p><h2>Target Key</h2><p>5677</p></body></html>

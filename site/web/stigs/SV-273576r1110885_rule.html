@@ -1,0 +1,29 @@
+<!doctype html><html lang="en"><head><meta charset="utf-8"><title>STIGQter: STIG Check Details: SV-273576r1110885_rule: The RUCKUS ICX Multicast Source Discovery Protocol router must be configured to filter source-active multicast advertisements to external MSDP peers to avoid global visibility of local-only multicast sources and groups.</title><link rel="icon" type="image/svg+xml" href="STIGQter.svg" /><script async src="https://www.googletagmanager.com/gtag/js?id=UA-31381839-2"></script><script src="include.js"></script><script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-4110907817782130" crossorigin="anonymous"></script></head><body><div><img src="STIGQter.svg" alt="STIGQter" style="height:1em;" /> <a href="https://www.stigqter.com/">STIGQter</a>: <a href="main.html">STIG Summary</a>: <a href="U_RUCKUS_ICX_RTR_STIG_V1R1_Manual-xccdf.html">RUCKUS ICX Router Security Technical Implementation Guide Version: 1 Release: 1 Benchmark Date: 27 May 2025</a>:</div> <h1>The RUCKUS ICX Multicast Source Discovery Protocol router must be configured to filter source-active multicast advertisements to external MSDP peers to avoid global visibility of local-only multicast sources and groups.</h1><h2>DISA Rule</h2><p>SV-273576r1110885_rule</p><h2>Vulnerability Number</h2><p>V-273576</p><h2>Group Title</h2><p>SRG-NET-000018-RTR-000008</p><h2>Rule Version</h2><p>RCKS-RTR-000080</p><h2>Severity</h2><p>CAT III</p><h2>CCI(s)</h2><ul><li>CCI-001368 - Enforce approved authorizations for controlling the flow of information within the system based on organization-defined information flow control policies.</li></ul><h2>Weight</h2><p>10</p><h2>Fix Recommendation</h2><p>Create access list to filter source-active multicast advertisements for any undesirable multicast groups and sources:<br />
+<br />
+ip access-list extended out_MSDP_SA_filter<br />
+ sequence 10 deny ip 10.0.0.0/8 any<br />
+ sequence 20 permit ip any any<br />
+<br />
+route-map out_MSDP_SA_filter permit 10<br />
+ match ip address out_MSDP_SA_filter<br />
+<br />
+router msdp<br />
+ msdp-peer x.x.x.x<br />
+ sa-filter originate route-map out_MSDP_SA_filter<br />
+!</p><h2>Check Contents</h2><p>Check for SA filter on MSDP peer:<br />
+<br />
+ICX#  show msdp peer x.x.x.x | include Output <br />
+<br />
+        Output SA Filter:Applicable<br />
+        Output (S,G) route-map:out_MSDP_SA_filter<br />
+        Output RP route-map:None<br />
+<br />
+If any configured MSDP peer is not configured to filter outbound advertisements to avoid local-only multicast sources and groups, this is a finding.</p><h2>Vulnerability Number</h2><p>V-273576</p><h2>Documentable</h2><p>False</p><h2>Rule Version</h2><p>RCKS-RTR-000080</p><h2>Severity Override Guidance</h2><p>Check for SA filter on MSDP peer:<br />
+<br />
+ICX#  show msdp peer x.x.x.x | include Output <br />
+<br />
+        Output SA Filter:Applicable<br />
+        Output (S,G) route-map:out_MSDP_SA_filter<br />
+        Output RP route-map:None<br />
+<br />
+If any configured MSDP peer is not configured to filter outbound advertisements to avoid local-only multicast sources and groups, this is a finding.</p><h2>Check Content Reference</h2><p>M</p><h2>Target Key</h2><p>5696</p></body></html>

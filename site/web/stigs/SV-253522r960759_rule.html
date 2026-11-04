@@ -1,0 +1,61 @@
+<!doctype html><html lang="en"><head><meta charset="utf-8"><title>STIGQter: STIG Check Details: SV-253522r960759_rule: Prisma Cloud Compute Console must use TLS 1.2 for user interface and API access. Communication TCP ports must adhere to the Ports, Protocols, and Services Management Category Assurance Levels (PSSM CAL).</title><link rel="icon" type="image/svg+xml" href="STIGQter.svg" /><script async src="https://www.googletagmanager.com/gtag/js?id=UA-31381839-2"></script><script src="include.js"></script><script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-4110907817782130" crossorigin="anonymous"></script></head><body><div><img src="STIGQter.svg" alt="STIGQter" style="height:1em;" /> <a href="https://www.stigqter.com/">STIGQter</a>: <a href="main.html">STIG Summary</a>: <a href="U_PAN_Prisma_Cloud_Compute_STIG_V2R3_Manual-xccdf.html">Palo Alto Networks Prisma Cloud Compute Security Technical Implementation Guide Version: 2 Release: 3 Benchmark Date: 01 Apr 2026</a>:</div> <h1>Prisma Cloud Compute Console must use TLS 1.2 for user interface and API access. Communication TCP ports must adhere to the Ports, Protocols, and Services Management Category Assurance Levels (PSSM CAL).</h1><h2>DISA Rule</h2><p>SV-253522r960759_rule</p><h2>Vulnerability Number</h2><p>V-253522</p><h2>Group Title</h2><p>SRG-APP-000014-CTR-000040</p><h2>Rule Version</h2><p>CNTR-PC-000020</p><h2>Severity</h2><p>CAT I</p><h2>CCI(s)</h2><ul><li>CCI-000068 - Implement cryptographic mechanisms to protect the confidentiality of remote access sessions.</li><li>CCI-000382 - Configure the system to prohibit or restrict the use of organization-defined prohibited or restricted functions, system ports, protocols, software, and/or services.</li><li>CCI-000877 - Employ strong authentication in the establishment of nonlocal maintenance and diagnostic sessions.</li></ul><h2>Weight</h2><p>10</p><h2>Fix Recommendation</h2><p>For Kubernetes deployment:<br />
+<br />
+Edit the deployment.apps/twistlock-console.<br />
+<br />
+Find the - name: MANAGEMENT_PORT_HTTP setting<br />
+<br />
+Remove the value assignment (e.g., 8081):<br />
+        - name: MANAGEMENT_PORT_HTTP<br />
+          value: &quot;8081&quot; <br />
+<br />
+Save and exit the editing session. The Console will restart automatically.<br />
+<br />
+For Docker deployment:<br />
+<br />
+Modify the twistlock.cfg located in the extracted release tar directory.<br />
+<br />
+Remove the value assignment for the MANAGEMENT_PORT_HTTP= variable.<br />
+<br />
+Redeploy the Console using the twistlock.sh script located in the extracted release tar directory.<br />
+<br />
+$ sudo ./twisltock.sh -sy onebox</p><h2>Check Contents</h2><p>For Kubernetes deployment:<br />
+<br />
+Query the ports used by the twistlock-console service:<br />
+$ kubectl describe svc twistlock-console -n twistlock<br />
+<br />
+If the TargetPort management-port-http exists and has a port assignment, this is a finding.<br />
+Port: management-port-http  8081/TCP<br />
+TargetPort: 8081/TCP<br />
+<br />
+For Docker deployment:<br />
+<br />
+Determine the name of the Console container:<br />
+docker ps|grep console<br />
+<br />
+For example, the Console container is: ad8b41a2fec9 <br />
+   twistlock/private:console_22_01_840<br />
+<br />
+Inspect the container's PortBindings:<br />
+docker inspect ad8b41a2fec9|grep PortBindings -A 20<br />
+<br />
+If port 8081 is listed, this is a finding.</p><h2>Vulnerability Number</h2><p>V-253522</p><h2>Documentable</h2><p>False</p><h2>Rule Version</h2><p>CNTR-PC-000020</p><h2>Severity Override Guidance</h2><p>For Kubernetes deployment:<br />
+<br />
+Query the ports used by the twistlock-console service:<br />
+$ kubectl describe svc twistlock-console -n twistlock<br />
+<br />
+If the TargetPort management-port-http exists and has a port assignment, this is a finding.<br />
+Port: management-port-http  8081/TCP<br />
+TargetPort: 8081/TCP<br />
+<br />
+For Docker deployment:<br />
+<br />
+Determine the name of the Console container:<br />
+docker ps|grep console<br />
+<br />
+For example, the Console container is: ad8b41a2fec9 <br />
+   twistlock/private:console_22_01_840<br />
+<br />
+Inspect the container's PortBindings:<br />
+docker inspect ad8b41a2fec9|grep PortBindings -A 20<br />
+<br />
+If port 8081 is listed, this is a finding.</p><h2>Check Content Reference</h2><p>M</p><h2>Target Key</h2><p>5473</p></body></html>

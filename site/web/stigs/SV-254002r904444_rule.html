@@ -1,0 +1,59 @@
+<!doctype html><html lang="en"><head><meta charset="utf-8"><title>STIGQter: STIG Check Details: SV-254002r904444_rule: The Juniper router must be configured to authenticate all routing protocol messages using NIST-validated FIPS 198-1 message authentication code algorithm.</title><link rel="icon" type="image/svg+xml" href="STIGQter.svg" /><script async src="https://www.googletagmanager.com/gtag/js?id=UA-31381839-2"></script><script src="include.js"></script><script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-4110907817782130" crossorigin="anonymous"></script></head><body><div><img src="STIGQter.svg" alt="STIGQter" style="height:1em;" /> <a href="https://www.stigqter.com/">STIGQter</a>: <a href="main.html">STIG Summary</a>: <a href="U_Juniper_EX_Switches_RTR_STIG_V2R1_Manual-xccdf.html">Juniper EX Series Switches Router Security Technical Implementation Guide Version: 2 Release: 1 Benchmark Date: 24 Jul 2024</a>:</div> <h1>The Juniper router must be configured to authenticate all routing protocol messages using NIST-validated FIPS 198-1 message authentication code algorithm.</h1><h2>DISA Rule</h2><p>SV-254002r904444_rule</p><h2>Vulnerability Number</h2><p>V-254002</p><h2>Group Title</h2><p>SRG-NET-000168-RTR-000078</p><h2>Rule Version</h2><p>JUEX-RT-000300</p><h2>Severity</h2><p>CAT II</p><h2>CCI(s)</h2><ul><li>CCI-000803 - Implement mechanisms for authentication to a cryptographic module that meet the requirements of applicable laws, Executive Orders, directives, policies, regulations, standards, and guidance for such authentication.</li></ul><h2>Weight</h2><p>10</p><h2>Fix Recommendation</h2><p>Configure routing protocol authentication to use a NIST-validated FIPS 198-1 message authentication code algorithm.<br />
+<br />
+Configure the IPsec SA:<br />
+set security ipsec security-association &lt;SA name&gt; mode transport<br />
+set security ipsec security-association &lt;SA name&gt; manual direction bidirectional protocol (ah | esp | bundle)<br />
+set security ipsec security-association &lt;SA name&gt; manual direction bidirectional spi &lt;manually configured SPI (256..16639)&gt;<br />
+set security ipsec security-association &lt;SA name&gt; manual direction bidirectional authentication algorithm (hmac-sha1-96 | hmac-sha-256-128)<br />
+set security ipsec security-association &lt;SA name&gt; manual direction bidirectional authentication key hexadecimal &quot;&lt;appropriate PSK&gt;&quot;<br />
+Note: Encryption keys can also be entered as ASCII with the keyword 'ascii-text' replacing 'hexadecimal'. Regardless of key type, the PSK is hashed in the configuration.<br />
+<br />
+Configure EGP / IGP to use IPsec SA for authentication:<br />
+set protocols bgp group &lt;BGP group name&gt; neighbor &lt;IPv4 neighbor address&gt; ipsec-sa &lt;SA name&gt;<br />
+set protocols bgp group &lt;BGP group name&gt; neighbor &lt;IPv6 neighbor address&gt; ipsec-sa &lt;SA name&gt;<br />
+<br />
+set protocols ospf area &lt;OSPFv2 area number&gt; interface &lt;interface name&gt;.&lt;logical unit&gt; ipsec-sa &lt;SA name&gt;<br />
+<br />
+set protocols ospf3 area &lt;OSPFv3 area number&gt; interface &lt;interface name&gt;.&lt;logical unit&gt; ipsec-sa &lt;SA name&gt;<br />
+<br />
+NOTE: Versions of Junos not supporting RFC5709 must be configured to use MD5 authentication, but this is still a CAT III finding since MD5 is not compliant.</p><h2>Check Contents</h2><p>Verify routing protocol authentication is enabled using a FIPS 198-1 validated hashed message authentication code (HMAC).<br />
+<br />
+For protocols supporting IPsec SA:<br />
+[edit security ipsec]<br />
+security-association &lt;SA name&gt; {<br />
+&lt;snip&gt;<br />
+<br />
+NOTE: Versions of Junos not supporting RFC5709 must be configured to use MD5 authentication, but this is still a CAT III finding since MD5 is not compliant.<br />
+For protocols not supporting IPsec SA (OSPFv2 example shown)<br />
+[edit protocols ospf]<br />
+area &lt;area number&gt; {<br />
+    interface &lt;name&gt; {<br />
+        authentication {<br />
+            &lt;algorithm&gt; &lt;key number&gt; key “&lt;hashed value&gt;”;<br />
+        }<br />
+    }<br />
+}<br />
+<br />
+<br />
+If a NIST-validated FIPS 198-1 message authentication code algorithm is not being used to authenticate routing protocols, this is a finding.<br />
+Routing protocols using authentication with non-NIST-validated FIPS 198-1 algorithms may be downgraded to CAT III.</p><h2>Vulnerability Number</h2><p>V-254002</p><h2>Documentable</h2><p>False</p><h2>Rule Version</h2><p>JUEX-RT-000300</p><h2>Severity Override Guidance</h2><p>Verify routing protocol authentication is enabled using a FIPS 198-1 validated hashed message authentication code (HMAC).<br />
+<br />
+For protocols supporting IPsec SA:<br />
+[edit security ipsec]<br />
+security-association &lt;SA name&gt; {<br />
+&lt;snip&gt;<br />
+<br />
+NOTE: Versions of Junos not supporting RFC5709 must be configured to use MD5 authentication, but this is still a CAT III finding since MD5 is not compliant.<br />
+For protocols not supporting IPsec SA (OSPFv2 example shown)<br />
+[edit protocols ospf]<br />
+area &lt;area number&gt; {<br />
+    interface &lt;name&gt; {<br />
+        authentication {<br />
+            &lt;algorithm&gt; &lt;key number&gt; key “&lt;hashed value&gt;”;<br />
+        }<br />
+    }<br />
+}<br />
+<br />
+<br />
+If a NIST-validated FIPS 198-1 message authentication code algorithm is not being used to authenticate routing protocols, this is a finding.<br />
+Routing protocols using authentication with non-NIST-validated FIPS 198-1 algorithms may be downgraded to CAT III.</p><h2>Check Content Reference</h2><p>M</p><h2>Target Key</h2><p>5479</p></body></html>

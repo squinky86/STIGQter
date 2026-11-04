@@ -1,0 +1,92 @@
+<!doctype html><html lang="en"><head><meta charset="utf-8"><title>STIGQter: STIG Check Details: SV-278390r1172747_rule: NGINX must implement replay-resistant authentication mechanisms for network access.</title><link rel="icon" type="image/svg+xml" href="STIGQter.svg" /><script async src="https://www.googletagmanager.com/gtag/js?id=UA-31381839-2"></script><script src="include.js"></script><script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-4110907817782130" crossorigin="anonymous"></script></head><body><div><img src="STIGQter.svg" alt="STIGQter" style="height:1em;" /> <a href="https://www.stigqter.com/">STIGQter</a>: <a href="main.html">STIG Summary</a>: <a href="U_F5_NGINX_STIG_V1R1_Manual-xccdf.html">F5 NGINX Security Technical Implementation Guide Version: 1 Release: 1 Benchmark Date: 25 Nov 2025</a>:</div> <h1>NGINX must implement replay-resistant authentication mechanisms for network access.</h1><h2>DISA Rule</h2><p>SV-278390r1172747_rule</p><h2>Vulnerability Number</h2><p>V-278390</p><h2>Group Title</h2><p>SRG-APP-000157</p><h2>Rule Version</h2><p>NGNX-APP-000590</p><h2>Severity</h2><p>CAT II</p><h2>CCI(s)</h2><ul><li>CCI-001941 - Implement replay-resistant authentication mechanisms for access to privileged accounts and/or non-privileged accounts.</li></ul><h2>Weight</h2><p>10</p><h2>Fix Recommendation</h2><p>Implement a replay-resistant authentication method for any NGINX Plus resource that allows network access.<br />
+<br />
+Option A: JWT with expiration:<br />
+<br />
+Configure NGINX to use JWT authentication:<br />
+<br />
+auth_jwt &quot;Protected&quot;;<br />
+auth_jwt_key_file /etc/nginx/keys/jwt_key.pub;<br />
+auth_jwt_require exp iat;<br />
+<br />
+Ensure the token issuer includes a short-lived exp (e.g., less than five minutes) and iat claims.<br />
+<br />
+Option B: Mutual TLS:<br />
+<br />
+Enable client certificate authentication:<br />
+<br />
+ssl_verify_client on;<br />
+ssl_client_certificate /etc/nginx/certs/client_ca.pem;</p><h2>Check Contents</h2><p>Determine the path to NGINX config file(s):<br />
+<br />
+nginx -qT | grep &quot;# configuration&quot;<br />
+# configuration file /etc/nginx/nginx.conf:<br />
+<br />
+Note: The default NGINX configuration is &quot;/etc/nginx/nginx.conf&quot;, though various files may also be included.<br />
+<br />
+Identify authentication mechanism in use by checking whether NGINX is configured to protect access to administrative interfaces or APIs:<br />
+<br />
+grep -Ri 'auth_' /etc/nginx/nginx.conf<br />
+grep -Ri 'proxy_pass' /etc/nginx/nginx.conf<br />
+grep -Ri 'ssl_verify_client' /etc/nginx/nginx.conf<br />
+<br />
+Also inspect references to:<br />
+<br />
+auth_jwt<br />
+auth_request<br />
+ssl_client_certificate<br />
+<br />
+If JWT is in use, validate the config:<br />
+<br />
+auth_jwt_key_file /etc/nginx/jwt.pub;<br />
+auth_jwt_require exp iat;<br />
+<br />
+Ensure the token includes expiration (exp) and ideally issued-at (iat) fields.<br />
+<br />
+If using mutual TLS:<br />
+<br />
+ssl_verify_client on;<br />
+ssl_client_certificate /etc/nginx/certs/ca.pem;<br />
+<br />
+Ensure client-side certificate verification is required and the certificate authority (CA) trust is defined.<br />
+<br />
+If using auth_request:<br />
+<br />
+Ensure the upstream authentication server is enforcing replay resistance (such as nonce or short-lived tokens). Validate token behavior and session timeout logic.<br />
+<br />
+If no replay-resistant mechanism is found for network-based access, this is a finding.</p><h2>Vulnerability Number</h2><p>V-278390</p><h2>Documentable</h2><p>False</p><h2>Rule Version</h2><p>NGNX-APP-000590</p><h2>Severity Override Guidance</h2><p>Determine the path to NGINX config file(s):<br />
+<br />
+nginx -qT | grep &quot;# configuration&quot;<br />
+# configuration file /etc/nginx/nginx.conf:<br />
+<br />
+Note: The default NGINX configuration is &quot;/etc/nginx/nginx.conf&quot;, though various files may also be included.<br />
+<br />
+Identify authentication mechanism in use by checking whether NGINX is configured to protect access to administrative interfaces or APIs:<br />
+<br />
+grep -Ri 'auth_' /etc/nginx/nginx.conf<br />
+grep -Ri 'proxy_pass' /etc/nginx/nginx.conf<br />
+grep -Ri 'ssl_verify_client' /etc/nginx/nginx.conf<br />
+<br />
+Also inspect references to:<br />
+<br />
+auth_jwt<br />
+auth_request<br />
+ssl_client_certificate<br />
+<br />
+If JWT is in use, validate the config:<br />
+<br />
+auth_jwt_key_file /etc/nginx/jwt.pub;<br />
+auth_jwt_require exp iat;<br />
+<br />
+Ensure the token includes expiration (exp) and ideally issued-at (iat) fields.<br />
+<br />
+If using mutual TLS:<br />
+<br />
+ssl_verify_client on;<br />
+ssl_client_certificate /etc/nginx/certs/ca.pem;<br />
+<br />
+Ensure client-side certificate verification is required and the certificate authority (CA) trust is defined.<br />
+<br />
+If using auth_request:<br />
+<br />
+Ensure the upstream authentication server is enforcing replay resistance (such as nonce or short-lived tokens). Validate token behavior and session timeout logic.<br />
+<br />
+If no replay-resistant mechanism is found for network-based access, this is a finding.</p><h2>Check Content Reference</h2><p>M</p><h2>Target Key</h2><p>5720</p></body></html>

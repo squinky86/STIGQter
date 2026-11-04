@@ -1,0 +1,42 @@
+<!doctype html><html lang="en"><head><meta charset="utf-8"><title>STIGQter: STIG Check Details: SV-223989r1137691_rule: IBM z/OS JES2 output devices must be controlled in accordance with the proper security requirements.</title><link rel="icon" type="image/svg+xml" href="STIGQter.svg" /><script async src="https://www.googletagmanager.com/gtag/js?id=UA-31381839-2"></script><script src="include.js"></script><script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-4110907817782130" crossorigin="anonymous"></script></head><body><div><img src="STIGQter.svg" alt="STIGQter" style="height:1em;" /> <a href="https://www.stigqter.com/">STIGQter</a>: <a href="main.html">STIG Summary</a>: <a href="U_IBM_zOS_TSS_STIG_V9R9_Manual-xccdf.html">IBM z/OS TSS Security Technical Implementation Guide Version: 9 Release: 9 Benchmark Date: 01 Jul 2026</a>:</div> <h1>IBM z/OS JES2 output devices must be controlled in accordance with the proper security requirements.</h1><h2>DISA Rule</h2><p>SV-223989r1137691_rule</p><h2>Vulnerability Number</h2><p>V-223989</p><h2>Group Title</h2><p>SRG-OS-000080-GPOS-00048</p><h2>Rule Version</h2><p>TSS0-JS-000050</p><h2>Severity</h2><p>CAT II</p><h2>CCI(s)</h2><ul><li>CCI-000213 - Enforce approved authorizations for logical access to information and system resources in accordance with applicable access control policies.</li></ul><h2>Weight</h2><p>10</p><h2>Fix Recommendation</h2><p>Ensure the following items are in effect:<br />
+<br />
+-The JES2. resource is owned in the WRITER resource class.<br />
+<br />
+For Example:<br />
+The following command may be used to establish default protection for resources defined to the WRITER resource class:<br />
+TSS ADDTO(deptacid) WRITER(JES2.)<br />
+<br />
+-The ownership of all WRITER resources is appropriate.<br />
+<br />
+Grant read access to authorized users for each of the following WRITER resource class output destinations:<br />
+<br />
+JES2.LOCAL.devicename<br />
+JES2.LOCAL.OFF*.JT<br />
+JES2.LOCAL.OFF*.ST<br />
+JES2.LOCAL.PRT*<br />
+JES2.LOCAL.PUN*<br />
+JES2.NJE.nodename<br />
+JES2.RJE.devicename<br />
+<br />
+The following is an example of granting operators with a profile ACID of jesopracid permission to off load SYSOUT data sets into any SPOOL off load processor after obtaining permission from the ISSO:<br />
+<br />
+TSS PERMIT(jesopracid) WRITER(JES2.LOCAL.OFF*.ST) -<br />
+ACCESS(READ) ACTION(AUDIT)<br />
+<br />
+The resource definition should be generic if all of the resources of the same type have identical access controls (e.g., if all off load transmitters are equivalent).</p><h2>Check Contents</h2><p>Refer the JES2PARM member of SYS1.PARMLIB<br />
+Review the WRITER resource in the JESINPUT resource class:<br />
+<br />
+NOTE: If the WRITER resource is not defined within the JES2 parameters, the resource in the JESINPUT resource class does not have to be owned.<br />
+<br />
+From the ISPF Command Shell enter:<br />
+TSS WHOOWNS JESINPUT(WRITER)<br />
+<br />
+If the WRITER resource is owned by generic and/or fully qualified entries in the JESINPUT resource class, this is not a finding.</p><h2>Vulnerability Number</h2><p>V-223989</p><h2>Documentable</h2><p>False</p><h2>Rule Version</h2><p>TSS0-JS-000050</p><h2>Severity Override Guidance</h2><p>Refer the JES2PARM member of SYS1.PARMLIB<br />
+Review the WRITER resource in the JESINPUT resource class:<br />
+<br />
+NOTE: If the WRITER resource is not defined within the JES2 parameters, the resource in the JESINPUT resource class does not have to be owned.<br />
+<br />
+From the ISPF Command Shell enter:<br />
+TSS WHOOWNS JESINPUT(WRITER)<br />
+<br />
+If the WRITER resource is owned by generic and/or fully qualified entries in the JESINPUT resource class, this is not a finding.</p><h2>Check Content Reference</h2><p>M</p><h2>Target Key</h2><p>4102</p></body></html>

@@ -1,0 +1,41 @@
+<!doctype html><html lang="en"><head><meta charset="utf-8"><title>STIGQter: STIG Check Details: SV-275672r1148066_rule: Ubuntu OS must be configured so that the script that runs each 30 days or less to check file integrity is the default.</title><link rel="icon" type="image/svg+xml" href="STIGQter.svg" /><script async src="https://www.googletagmanager.com/gtag/js?id=UA-31381839-2"></script><script src="include.js"></script><script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-4110907817782130" crossorigin="anonymous"></script></head><body><div><img src="STIGQter.svg" alt="STIGQter" style="height:1em;" /> <a href="https://www.stigqter.com/">STIGQter</a>: <a href="main.html">STIG Summary</a>: <a href="U_RB_NetIM_OS_STIG_V1R1_Manual-xccdf.html">Riverbed NetIM OS Security Technical Implementation Guide Version: 1 Release: 1 Benchmark Date: 11 Sep 2025</a>:</div> <h1>Ubuntu OS must be configured so that the script that runs each 30 days or less to check file integrity is the default.</h1><h2>DISA Rule</h2><p>SV-275672r1148066_rule</p><h2>Vulnerability Number</h2><p>V-275672</p><h2>Group Title</h2><p>SRG-OS-000446-GPOS-00200</p><h2>Rule Version</h2><p>RIIM-OS-651025</p><h2>Severity</h2><p>CAT II</p><h2>CCI(s)</h2><ul><li>CCI-002699 - Perform verification of the correct operation of organization-defined security functions: when the system is in an organization-defined transitional state; upon command by a user with appropriate privileges; and/or on an organization-defined frequency.</li></ul><h2>Weight</h2><p>10</p><h2>Fix Recommendation</h2><p>The cron file for AIDE is fairly complex as it creates the report. This file is installed with the &quot;aide-common&quot; package, and the default can be restored by copying it from the package:  <br />
+ <br />
+Extract the aide script from the &quot;aide-common&quot; package to its original place:  <br />
+  <br />
+     $ dpkg-deb --fsys-tarfile /tmp/aide-common_*.deb | sudo tar -x ./usr/share/aide/config/cron.daily/aide -C / <br />
+ <br />
+Copy it to the cron.daily directory: <br />
+ <br />
+     $  sudo cp -f /usr/share/aide/config/cron.daily/aide /etc/cron.daily/aide</p><h2>Check Contents</h2><p>Verify that the Advanced Intrusion Detection Environment (AIDE) default script used to check file integrity each 30 days or less is unchanged.  <br />
+  <br />
+Download the original aide-common package in the /tmp directory:  <br />
+  <br />
+     $ cd /tmp; apt download aide-common <br />
+  <br />
+Fetch the SHA1 of the original script file: <br />
+  <br />
+     $ dpkg-deb --fsys-tarfile /tmp/aide-common_*.deb | tar -xO ./usr/share/aide/config/cron.daily/aide | sha1sum <br />
+     b71bb2cafaedf15ec3ac2f566f209d3260a37af0  -  <br />
+  <br />
+Compare with the SHA1 of the file in the daily or monthly cron directory:  <br />
+  <br />
+     $ sha1sum /etc/cron.{daily,monthly}/aide 2&gt;/dev/null <br />
+     b71bb2cafaedf15ec3ac2f566f209d3260a37af0  /etc/cron.daily/aide <br />
+  <br />
+If there is no AIDE script file in the cron directories, or the SHA1 value of at least one file in the daily or monthly cron directory does not match the SHA1 of the original, this is a finding.</p><h2>Vulnerability Number</h2><p>V-275672</p><h2>Documentable</h2><p>False</p><h2>Rule Version</h2><p>RIIM-OS-651025</p><h2>Severity Override Guidance</h2><p>Verify that the Advanced Intrusion Detection Environment (AIDE) default script used to check file integrity each 30 days or less is unchanged.  <br />
+  <br />
+Download the original aide-common package in the /tmp directory:  <br />
+  <br />
+     $ cd /tmp; apt download aide-common <br />
+  <br />
+Fetch the SHA1 of the original script file: <br />
+  <br />
+     $ dpkg-deb --fsys-tarfile /tmp/aide-common_*.deb | tar -xO ./usr/share/aide/config/cron.daily/aide | sha1sum <br />
+     b71bb2cafaedf15ec3ac2f566f209d3260a37af0  -  <br />
+  <br />
+Compare with the SHA1 of the file in the daily or monthly cron directory:  <br />
+  <br />
+     $ sha1sum /etc/cron.{daily,monthly}/aide 2&gt;/dev/null <br />
+     b71bb2cafaedf15ec3ac2f566f209d3260a37af0  /etc/cron.daily/aide <br />
+  <br />
+If there is no AIDE script file in the cron directories, or the SHA1 value of at least one file in the daily or monthly cron directory does not match the SHA1 of the original, this is a finding.</p><h2>Check Content Reference</h2><p>M</p><h2>Target Key</h2><p>5706</p></body></html>

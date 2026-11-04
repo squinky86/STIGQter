@@ -1,0 +1,65 @@
+<!doctype html><html lang="en"><head><meta charset="utf-8"><title>STIGQter: STIG Check Details: SV-270571r1137664_rule: Oracle Database must implement NIST FIPS 140-2/140-3 validated cryptographic modules to protect unclassified information requiring confidentiality and cryptographic protection, in accordance with the data owner's requirements.</title><link rel="icon" type="image/svg+xml" href="STIGQter.svg" /><script async src="https://www.googletagmanager.com/gtag/js?id=UA-31381839-2"></script><script src="include.js"></script><script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-4110907817782130" crossorigin="anonymous"></script></head><body><div><img src="STIGQter.svg" alt="STIGQter" style="height:1em;" /> <a href="https://www.stigqter.com/">STIGQter</a>: <a href="main.html">STIG Summary</a>: <a href="U_Oracle_Database_19c_STIG_V1R5_Manual-xccdf.html">Oracle Database 19c Security Technical Implementation Guide Version: 1 Release: 5 Benchmark Date: 01 Apr 2026</a>:</div> <h1>Oracle Database must implement NIST FIPS 140-2/140-3 validated cryptographic modules to protect unclassified information requiring confidentiality and cryptographic protection, in accordance with the data owner's requirements.</h1><h2>DISA Rule</h2><p>SV-270571r1137664_rule</p><h2>Vulnerability Number</h2><p>V-270571</p><h2>Group Title</h2><p>SRG-APP-000514-DB-000383</p><h2>Rule Version</h2><p>O19C-00-016000</p><h2>Severity</h2><p>CAT I</p><h2>CCI(s)</h2><ul><li>CCI-002450 - Implement organization-defined types of cryptography for each specified cryptography use.</li></ul><h2>Weight</h2><p>10</p><h2>Fix Recommendation</h2><p>Implement required cryptographic protections using cryptographic modules complying with applicable federal laws, Executive Orders, directives, policies, regulations, standards, and guidance.<br />
+<br />
+Open the fips.ora file in an editor. (The default location for fips.ora is $ORACLE_HOME/ldap/admin/ but alternate locations are possible. An alternate location, if it is in use, is specified in the FIPS_HOME environment variable.)<br />
+<br />
+Create or modify fips.ora to include the line &quot;SSLFIPS_140=TRUE&quot;.<br />
+<br />
+The strength requirements are dependent upon data classification.<br />
+<br />
+For unclassified data, where cryptography is required:<br />
+AES 128 for encryption<br />
+SHA 256 for hashing<br />
+<br />
+NSA has established the suite B encryption requirements for protecting National Security Systems (NSS) as follows:<br />
+AES 128 for Secret<br />
+AES 256 for Top Secret<br />
+SHA 256 for Secret<br />
+SHA 384 for Top Secret<br />
+<br />
+NSS is defined as: (OMB Circular A-130) Any telecommunications or information system operated by the United States Government, the function, operation, or use of which (1) involves intelligence activities; (2) involves cryptologic activities related to national security; (3) involves command and control of military forces; (4) involves equipment that is an integral part of a weapon or weapons system; or (5) is critical to the direct fulfillment of military or intelligence missions, but excluding any system that is to be used for routine administrative and business applications (including payroll, finance, logistics, and personnel management applications).<br />
+<br />
+More information on implementing FIPS settings can be found at https://docs.oracle.com/en/database/oracle/oracle-database/19/dbseg/oracle-database-fips-140-settings.html.</p><h2>Check Contents</h2><p>If encryption is not required for the database, this is not a finding.<br />
+<br />
+If the database management system (DBMS) has not implemented federally required cryptographic protections for the level of classification of the data it contains, this is a finding.<br />
+<br />
+Check the following settings to verify FIPS 140-2/140-3 encryption is configured. If encryption is not configured, check with the database administrator (DBA) and system administrator (SA) to verify if other mechanisms or third-party products are deployed to encrypt data during the transmission or storage of data.<br />
+<br />
+For Transparent Data Encryption and DBMS_CRYPTO:<br />
+<br />
+To verify if Oracle is configured for FIPS 140 Transparent Data Encryption and/or DBMS_CRYPTO, enter the following SQL*Plus command:<br />
+SHOW PARAMETER DBFIPS_140<br />
+or the following SQL query:<br />
+SELECT * FROM SYS.V$PARAMETER WHERE NAME = 'DBFIPS_140';<br />
+<br />
+If Oracle returns the value &quot;FALSE&quot;, or returns no rows, this is a finding.<br />
+<br />
+To verify if Oracle is configured for FIPS 140 Secure Sockets Layer (SSL)/Transport Layer Security (TLS) authentication and/or encryption:<br />
+<br />
+Open the fips.ora file in a browser or editor. (The default location for fips.ora is $ORACLE_HOME/ldap/admin/ but alternate locations are possible. An alternate location, if it is in use, is specified in the FIPS_HOME environment variable.)<br />
+<br />
+If the line &quot;SSLFIPS_140=TRUE&quot; is not found in fips.ora, or the file does not exist, this is a finding.<br />
+<br />
+For (Native) Network Data Encryption:<br />
+If the line, SQLNET.FIPS_140=TRUE is not found in $ORACLE_HOME/network/admin/sqlnet.ora, this is a finding. (Note: This assumes that a single sqlnet.ora file, in the default location, is in use).</p><h2>Vulnerability Number</h2><p>V-270571</p><h2>Documentable</h2><p>False</p><h2>Rule Version</h2><p>O19C-00-016000</p><h2>Severity Override Guidance</h2><p>If encryption is not required for the database, this is not a finding.<br />
+<br />
+If the database management system (DBMS) has not implemented federally required cryptographic protections for the level of classification of the data it contains, this is a finding.<br />
+<br />
+Check the following settings to verify FIPS 140-2/140-3 encryption is configured. If encryption is not configured, check with the database administrator (DBA) and system administrator (SA) to verify if other mechanisms or third-party products are deployed to encrypt data during the transmission or storage of data.<br />
+<br />
+For Transparent Data Encryption and DBMS_CRYPTO:<br />
+<br />
+To verify if Oracle is configured for FIPS 140 Transparent Data Encryption and/or DBMS_CRYPTO, enter the following SQL*Plus command:<br />
+SHOW PARAMETER DBFIPS_140<br />
+or the following SQL query:<br />
+SELECT * FROM SYS.V$PARAMETER WHERE NAME = 'DBFIPS_140';<br />
+<br />
+If Oracle returns the value &quot;FALSE&quot;, or returns no rows, this is a finding.<br />
+<br />
+To verify if Oracle is configured for FIPS 140 Secure Sockets Layer (SSL)/Transport Layer Security (TLS) authentication and/or encryption:<br />
+<br />
+Open the fips.ora file in a browser or editor. (The default location for fips.ora is $ORACLE_HOME/ldap/admin/ but alternate locations are possible. An alternate location, if it is in use, is specified in the FIPS_HOME environment variable.)<br />
+<br />
+If the line &quot;SSLFIPS_140=TRUE&quot; is not found in fips.ora, or the file does not exist, this is a finding.<br />
+<br />
+For (Native) Network Data Encryption:<br />
+If the line, SQLNET.FIPS_140=TRUE is not found in $ORACLE_HOME/network/admin/sqlnet.ora, this is a finding. (Note: This assumes that a single sqlnet.ora file, in the default location, is in use).</p><h2>Check Content Reference</h2><p>M</p><h2>Target Key</h2><p>5672</p></body></html>

@@ -1,0 +1,73 @@
+<!doctype html><html lang="en"><head><meta charset="utf-8"><title>STIGQter: STIG Check Details: SV-273673r1110976_rule: The RUCKUS ICX switch must uniquely identify all network-connected endpoint devices before establishing any connection.</title><link rel="icon" type="image/svg+xml" href="STIGQter.svg" /><script async src="https://www.googletagmanager.com/gtag/js?id=UA-31381839-2"></script><script src="include.js"></script><script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-4110907817782130" crossorigin="anonymous"></script></head><body><div><img src="STIGQter.svg" alt="STIGQter" style="height:1em;" /> <a href="https://www.stigqter.com/">STIGQter</a>: <a href="main.html">STIG Summary</a>: <a href="U_RUCKUS_ICX_L2S_STIG_V1R1_Manual-xccdf.html">RUCKUS ICX Layer 2 Switch Security Technical Implementation Guide Version: 1 Release: 1 Benchmark Date: 27 May 2025</a>:</div> <h1>The RUCKUS ICX switch must uniquely identify all network-connected endpoint devices before establishing any connection.</h1><h2>DISA Rule</h2><p>SV-273673r1110976_rule</p><h2>Vulnerability Number</h2><p>V-273673</p><h2>Group Title</h2><p>SRG-NET-000148-L2S-000015</p><h2>Rule Version</h2><p>RCKS-L2S-000020</p><h2>Severity</h2><p>CAT I</p><h2>CCI(s)</h2><ul><li>CCI-000778 - Uniquely identify organization-defined devices and/or types of devices before establishing a local, remote, and/or network connection.</li></ul><h2>Weight</h2><p>10</p><h2>Fix Recommendation</h2><p>Configure 802.1x to authenticate endpoint devices.<br />
+<br />
+1. Configure RADIUS as the authentication method for 802.1x.<br />
+ICX(config)#radius-server host x.x.x.x auth-port 1812 acct-port 1813 default key xxxxx dot1x mac-auth no-login<br />
+<br />
+2. Configure the dot1x authentication.<br />
+ICX(config)#authentication<br />
+ICX(config-authen)# auth-default-vlan 100<br />
+ICX(config-authen)# re-authentication<br />
+ICX(config-authen)# reauth-period 2000<br />
+ICX(config-authen)# dot1x enable<br />
+ICX(config-authen)# dot1x enable ethernet 1/1/14 to 1/1/15<br />
+ICX(config-authen)# dot1x max-req 6<br />
+ICX(config-authen)# dot1x timeout tx-period 60<br />
+ICX(config-authen)# dot1x timeout quiet-period 30</p><h2>Check Contents</h2><p>Review configuration for RADIUS server configuration, FlexAuth configuration, and applicable port configuration (optional).  <br />
+<br />
+aaa authentication dot1x default radius<br />
+radius-server host 192.168.1.24 auth-port 1812 acct-port 1813 default key 2 $UGlkRGktdG5v dot1x mac-auth no-login<br />
+<br />
+authentication<br />
+  auth-order mac-auth dot1x<br />
+  auth-default-vlan 100<br />
+  restricted-vlan 666<br />
+  re-authentication<br />
+  reauth-timeout 60<br />
+  auth-fail-action restricted-vlan<br />
+  dot1x enable<br />
+  dot1x enable ethernet 1/1/14 to 1/1/15<br />
+  dot1x port-control auto ethernet 1/1/14 to 1/1/15<br />
+  mac-authentication enable<br />
+  mac-authentication enable ethernet 1/1/13<br />
+  mac-authentication password-format xxxx.xxxx.xxxx<br />
+  mac-authentication dot1x-override<br />
+  mac-authentication dot1x-disable<br />
+<br />
+interface ethernet 1/1/14<br />
+ port-name dot1x-test<br />
+ use-radius-server 192.168.1.24<br />
+ no inline power<br />
+!<br />
+<br />
+Note: Port configuration is only necessary when specifying which RADIUS server is to be used.  <br />
+<br />
+If user ports are not configured to control LAN access via 802.1X, this is a finding.</p><h2>Vulnerability Number</h2><p>V-273673</p><h2>Documentable</h2><p>False</p><h2>Rule Version</h2><p>RCKS-L2S-000020</p><h2>Severity Override Guidance</h2><p>Review configuration for RADIUS server configuration, FlexAuth configuration, and applicable port configuration (optional).  <br />
+<br />
+aaa authentication dot1x default radius<br />
+radius-server host 192.168.1.24 auth-port 1812 acct-port 1813 default key 2 $UGlkRGktdG5v dot1x mac-auth no-login<br />
+<br />
+authentication<br />
+  auth-order mac-auth dot1x<br />
+  auth-default-vlan 100<br />
+  restricted-vlan 666<br />
+  re-authentication<br />
+  reauth-timeout 60<br />
+  auth-fail-action restricted-vlan<br />
+  dot1x enable<br />
+  dot1x enable ethernet 1/1/14 to 1/1/15<br />
+  dot1x port-control auto ethernet 1/1/14 to 1/1/15<br />
+  mac-authentication enable<br />
+  mac-authentication enable ethernet 1/1/13<br />
+  mac-authentication password-format xxxx.xxxx.xxxx<br />
+  mac-authentication dot1x-override<br />
+  mac-authentication dot1x-disable<br />
+<br />
+interface ethernet 1/1/14<br />
+ port-name dot1x-test<br />
+ use-radius-server 192.168.1.24<br />
+ no inline power<br />
+!<br />
+<br />
+Note: Port configuration is only necessary when specifying which RADIUS server is to be used.  <br />
+<br />
+If user ports are not configured to control LAN access via 802.1X, this is a finding.</p><h2>Check Content Reference</h2><p>M</p><h2>Target Key</h2><p>5697</p></body></html>

@@ -1,0 +1,58 @@
+<!doctype html><html lang="en"><head><meta charset="utf-8"><title>STIGQter: STIG Check Details: SV-230504r958672_rule: A RHEL 8 firewall must employ a deny-all, allow-by-exception policy for allowing connections to other systems.</title><link rel="icon" type="image/svg+xml" href="STIGQter.svg" /><script async src="https://www.googletagmanager.com/gtag/js?id=UA-31381839-2"></script><script src="include.js"></script><script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-4110907817782130" crossorigin="anonymous"></script></head><body><div><img src="STIGQter.svg" alt="STIGQter" style="height:1em;" /> <a href="https://www.stigqter.com/">STIGQter</a>: <a href="main.html">STIG Summary</a>: <a href="U_RHEL_8_STIG_V2R8_Manual-xccdf.html">Red Hat Enterprise Linux 8 Security Technical Implementation Guide Version: 2 Release: 8 Benchmark Date: 01 Jul 2026</a>:</div> <h1>A RHEL 8 firewall must employ a deny-all, allow-by-exception policy for allowing connections to other systems.</h1><h2>DISA Rule</h2><p>SV-230504r958672_rule</p><h2>Vulnerability Number</h2><p>V-230504</p><h2>Group Title</h2><p>SRG-OS-000297-GPOS-00115</p><h2>Rule Version</h2><p>RHEL-08-040090</p><h2>Severity</h2><p>CAT II</p><h2>CCI(s)</h2><ul><li>CCI-002314 - Employ automated mechanisms to control remote access methods.</li></ul><h2>Weight</h2><p>10</p><h2>Fix Recommendation</h2><p>Configure the &quot;firewalld&quot; daemon to employ a deny-all, allow-by-exception with the following commands:<br />
+<br />
+     $ sudo firewall-cmd --permanent --new-zone=[custom]<br />
+<br />
+     $ sudo cp /usr/lib/firewalld/zones/drop.xml /etc/firewalld/zones/[custom].xml<br />
+<br />
+This will provide a clean configuration file to work with that employs a deny-all approach. <br />
+<br />
+Note: Add the exceptions that are required for mission functionality and update the short title in the xml file to match the [custom] zone name.<br />
+<br />
+Reload the firewall rules to make the new [custom] zone available to load:<br />
+     $ sudo firewall-cmd --reload <br />
+<br />
+Set the default zone to the new [custom] zone:<br />
+     $ sudo firewall-cmd --set-default-zone=[custom]<br />
+<br />
+Note: This is a runtime and permanent change.<br />
+Add any interfaces to the new [custom] zone:<br />
+     $ sudo firewall-cmd --permanent --zone=[custom] --change-interface=ens33<br />
+<br />
+Reload the firewall rules for changes to take effect:<br />
+     $ sudo firewall-cmd --reload</p><h2>Check Contents</h2><p>Verify &quot;firewalld&quot; is configured to employ a deny-all, allow-by-exception policy for allowing connections to other systems with the following commands:<br />
+<br />
+     $ sudo  firewall-cmd --state<br />
+     running<br />
+<br />
+     $ sudo firewall-cmd --get-active-zones<br />
+     [custom]<br />
+     interfaces: ens33<br />
+<br />
+     $ sudo firewall-cmd --info-zone=[custom] | grep target<br />
+     target: DROP<br />
+<br />
+If no zones are active on the RHEL 8 interfaces or if the target is set to a different option other than &quot;DROP&quot;, this is a finding.<br />
+<br />
+If the &quot;firewalld&quot; package is not installed, ask the System Administrator if an alternate firewall (such as iptables) is installed and in use, and how is it configured to employ a deny-all, allow-by-exception policy. <br />
+<br />
+If the alternate firewall is not configured to employ a deny-all, allow-by-exception policy, this is a finding.<br />
+<br />
+If no firewall is installed, this is a finding.</p><h2>Vulnerability Number</h2><p>V-230504</p><h2>Documentable</h2><p>False</p><h2>Rule Version</h2><p>RHEL-08-040090</p><h2>Severity Override Guidance</h2><p>Verify &quot;firewalld&quot; is configured to employ a deny-all, allow-by-exception policy for allowing connections to other systems with the following commands:<br />
+<br />
+     $ sudo  firewall-cmd --state<br />
+     running<br />
+<br />
+     $ sudo firewall-cmd --get-active-zones<br />
+     [custom]<br />
+     interfaces: ens33<br />
+<br />
+     $ sudo firewall-cmd --info-zone=[custom] | grep target<br />
+     target: DROP<br />
+<br />
+If no zones are active on the RHEL 8 interfaces or if the target is set to a different option other than &quot;DROP&quot;, this is a finding.<br />
+<br />
+If the &quot;firewalld&quot; package is not installed, ask the System Administrator if an alternate firewall (such as iptables) is installed and in use, and how is it configured to employ a deny-all, allow-by-exception policy. <br />
+<br />
+If the alternate firewall is not configured to employ a deny-all, allow-by-exception policy, this is a finding.<br />
+<br />
+If no firewall is installed, this is a finding.</p><h2>Check Content Reference</h2><p>M</p><h2>Target Key</h2><p>2921</p></body></html>

@@ -1,0 +1,104 @@
+<!doctype html><html lang="en"><head><meta charset="utf-8"><title>STIGQter: STIG Check Details: SV-253429r958448_rule: The DoD Interoperability Root CA cross-certificates must be installed in the Untrusted Certificates Store on unclassified systems.</title><link rel="icon" type="image/svg+xml" href="STIGQter.svg" /><script async src="https://www.googletagmanager.com/gtag/js?id=UA-31381839-2"></script><script src="include.js"></script><script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-4110907817782130" crossorigin="anonymous"></script></head><body><div><img src="STIGQter.svg" alt="STIGQter" style="height:1em;" /> <a href="https://www.stigqter.com/">STIGQter</a>: <a href="main.html">STIG Summary</a>: <a href="U_MS_Windows_11_STIG_V2R8_Manual-xccdf.html">Microsoft Windows 11 Security Technical Implementation Guide Version: 2 Release: 8 Benchmark Date: 01 Jul 2026</a>:</div> <h1>The DoD Interoperability Root CA cross-certificates must be installed in the Untrusted Certificates Store on unclassified systems.</h1><h2>DISA Rule</h2><p>SV-253429r958448_rule</p><h2>Vulnerability Number</h2><p>V-253429</p><h2>Group Title</h2><p>SRG-OS-000066-GPOS-00034</p><h2>Rule Version</h2><p>WN11-PK-000015</p><h2>Severity</h2><p>CAT II</p><h2>CCI(s)</h2><ul><li>CCI-002470 - Only allow the use of organization-defined certificate authorities for verification of the establishment of protected sessions.</li></ul><h2>Weight</h2><p>10</p><h2>Fix Recommendation</h2><p>Install the DoD Interoperability Root CA cross-certificates on unclassified systems.  <br />
+                                           <br />
+Issued To - Issued By - Thumbprint<br />
+DoD Root CA 3 - DoD Interoperability Root CA 2 - 49CBE933151872E17C8EAE7F0ABA97FB610F6477<br />
+<br />
+The certificates can be installed using the InstallRoot tool. The tool and user guide are available on Cyber Exchange at https://cyber.mil/pki-pke/tools-configuration-files. Certificate bundles published by the PKI can be found at https://crl.gds.disa.mil/.</p><h2>Check Contents</h2><p>Verify the DoD Interoperability cross-certificates are installed on unclassified systems as Untrusted Certificates.<br />
+<br />
+Run &quot;PowerShell&quot; as an administrator.<br />
+<br />
+Execute the following command:<br />
+<br />
+Get-ChildItem -Path Cert:Localmachine\disallowed | Where {$_.Issuer -Like &quot;*DoD Interoperability*&quot; -and $_.Subject -Like &quot;*DoD*&quot;} | FL Subject, Issuer, Thumbprint, NotAfter<br />
+<br />
+If the following certificate &quot;Subject&quot;, &quot;Issuer&quot;, and &quot;Thumbprint&quot; information is not displayed, this is a finding.<br />
+<br />
+Subject: CN=DoD Root CA 3, OU=PKI, OU=DoD, O=U.S. Government, C=US<br />
+Issuer: CN=DoD Interoperability Root CA 2, OU=PKI, OU=DoD, O=U.S. Government, C=US<br />
+Thumbprint: 49CBE933151872E17C8EAE7F0ABA97FB610F6477<br />
+NotAfter: 11/16/2024 <br />
+           <br />
+Subject: CN=DoD Root CA 3, OU=PKI, OU=DoD, O=U.S. Government, C=US<br />
+Issuer: CN=DoD Interoperability Root CA 2, OU=PKI, OU=DoD, O=U.S. Government, C=US<br />
+Thumbprint: AC06108CA348CC03B53795C64BF84403C1DBD341<br />
+NotAfter: 1/22/2022 <br />
+<br />
+Alternately, use the Certificates MMC snap-in:<br />
+<br />
+Run &quot;MMC&quot;.<br />
+<br />
+Select &quot;File&quot;, &quot;Add/Remove Snap-in&quot;.<br />
+<br />
+Select &quot;Certificates&quot;, click &quot;Add&quot;.<br />
+<br />
+Select &quot;Computer account&quot;, click &quot;Next&quot;.<br />
+<br />
+Select &quot;Local computer: (the computer this console is running on)&quot;, click &quot;Finish&quot;.<br />
+<br />
+Click &quot;OK&quot;.<br />
+<br />
+Expand &quot;Certificates&quot; and navigate to Untrusted Certificates &gt;&gt; Certificates.<br />
+<br />
+For each certificate with &quot;DoD Root CA....&quot; under &quot;Issued To&quot; and &quot;DoD Interoperability Root CA....&quot; under &quot;Issued By&quot;:<br />
+<br />
+Right-click on the certificate and select &quot;Open&quot;.<br />
+<br />
+Select the &quot;Details&quot; tab.<br />
+<br />
+Scroll to the bottom and select &quot;Thumbprint&quot;.<br />
+<br />
+If the certificates below are not listed or the value for the &quot;Thumbprint&quot; field is not as noted, this is a finding.<br />
+<br />
+Issued To: DoD Root CA 3<br />
+Issued By: Interoperability Root CA 2<br />
+Thumbprint : 49CBE933151872E17C8EAE7F0ABA97FB610F6477<br />
+Valid to: Saturday, November 16, 2024</p><h2>Vulnerability Number</h2><p>V-253429</p><h2>Documentable</h2><p>False</p><h2>Rule Version</h2><p>WN11-PK-000015</p><h2>Severity Override Guidance</h2><p>Verify the DoD Interoperability cross-certificates are installed on unclassified systems as Untrusted Certificates.<br />
+<br />
+Run &quot;PowerShell&quot; as an administrator.<br />
+<br />
+Execute the following command:<br />
+<br />
+Get-ChildItem -Path Cert:Localmachine\disallowed | Where {$_.Issuer -Like &quot;*DoD Interoperability*&quot; -and $_.Subject -Like &quot;*DoD*&quot;} | FL Subject, Issuer, Thumbprint, NotAfter<br />
+<br />
+If the following certificate &quot;Subject&quot;, &quot;Issuer&quot;, and &quot;Thumbprint&quot; information is not displayed, this is a finding.<br />
+<br />
+Subject: CN=DoD Root CA 3, OU=PKI, OU=DoD, O=U.S. Government, C=US<br />
+Issuer: CN=DoD Interoperability Root CA 2, OU=PKI, OU=DoD, O=U.S. Government, C=US<br />
+Thumbprint: 49CBE933151872E17C8EAE7F0ABA97FB610F6477<br />
+NotAfter: 11/16/2024 <br />
+           <br />
+Subject: CN=DoD Root CA 3, OU=PKI, OU=DoD, O=U.S. Government, C=US<br />
+Issuer: CN=DoD Interoperability Root CA 2, OU=PKI, OU=DoD, O=U.S. Government, C=US<br />
+Thumbprint: AC06108CA348CC03B53795C64BF84403C1DBD341<br />
+NotAfter: 1/22/2022 <br />
+<br />
+Alternately, use the Certificates MMC snap-in:<br />
+<br />
+Run &quot;MMC&quot;.<br />
+<br />
+Select &quot;File&quot;, &quot;Add/Remove Snap-in&quot;.<br />
+<br />
+Select &quot;Certificates&quot;, click &quot;Add&quot;.<br />
+<br />
+Select &quot;Computer account&quot;, click &quot;Next&quot;.<br />
+<br />
+Select &quot;Local computer: (the computer this console is running on)&quot;, click &quot;Finish&quot;.<br />
+<br />
+Click &quot;OK&quot;.<br />
+<br />
+Expand &quot;Certificates&quot; and navigate to Untrusted Certificates &gt;&gt; Certificates.<br />
+<br />
+For each certificate with &quot;DoD Root CA....&quot; under &quot;Issued To&quot; and &quot;DoD Interoperability Root CA....&quot; under &quot;Issued By&quot;:<br />
+<br />
+Right-click on the certificate and select &quot;Open&quot;.<br />
+<br />
+Select the &quot;Details&quot; tab.<br />
+<br />
+Scroll to the bottom and select &quot;Thumbprint&quot;.<br />
+<br />
+If the certificates below are not listed or the value for the &quot;Thumbprint&quot; field is not as noted, this is a finding.<br />
+<br />
+Issued To: DoD Root CA 3<br />
+Issued By: Interoperability Root CA 2<br />
+Thumbprint : 49CBE933151872E17C8EAE7F0ABA97FB610F6477<br />
+Valid to: Saturday, November 16, 2024</p><h2>Check Content Reference</h2><p>M</p><h2>Target Key</h2><p>5471</p></body></html>

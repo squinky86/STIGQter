@@ -1,0 +1,43 @@
+<!doctype html><html lang="en"><head><meta charset="utf-8"><title>STIGQter: STIG Check Details: SV-276250r1150065_rule: Azure SQL Managed Instance must separate user functionality (including user interface services) from database management functionality.</title><link rel="icon" type="image/svg+xml" href="STIGQter.svg" /><script async src="https://www.googletagmanager.com/gtag/js?id=UA-31381839-2"></script><script src="include.js"></script><script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-4110907817782130" crossorigin="anonymous"></script></head><body><div><img src="STIGQter.svg" alt="STIGQter" style="height:1em;" /> <a href="https://www.stigqter.com/">STIGQter</a>: <a href="main.html">STIG Summary</a>: <a href="U_MS_Azure_SQL_MI_STIG_V1R1_Manual-xccdf.html">Microsoft Azure SQL Managed Instance Security Technical Implementation Guide Version: 1 Release: 1 Benchmark Date: 23 Sep 2025</a>:</div> <h1>Azure SQL Managed Instance must separate user functionality (including user interface services) from database management functionality.</h1><h2>DISA Rule</h2><p>SV-276250r1150065_rule</p><h2>Vulnerability Number</h2><p>V-276250</p><h2>Group Title</h2><p>SRG-APP-000211-DB-000122</p><h2>Rule Version</h2><p>MSQL-00-008900</p><h2>Severity</h2><p>CAT II</p><h2>CCI(s)</h2><ul><li>CCI-001082 - Separate user functionality, including user interface services, from system management functionality.</li></ul><h2>Weight</h2><p>10</p><h2>Fix Recommendation</h2><p>To remove an Azure RBAC role assignment, use the Remove-AzRoleAssignment PowerShell command. Example command: <br />
+  <br />
+$userPrincipalName =<br />
+'Fourth.Coffee@contoso.onmicrosoft.us' <br />
+$RoleDefinitionName = 'SQL Managed Instance Contributor' <br />
+$ResourceGroupName ='stigtestingrg' <br />
+$ResourceName ='fourthcoffeemi' <br />
+$userObjectId =(Get-AzAdUser -UserPrincipalName $userPrincipalName).Id <br />
+$ResourceID =(Get-AzSqlInstance -ResourceGroupName $ResourceGroupName -Name $ManagedInstanceName).Id <br />
+<br />
+Remove-AzRoleAssignment -Scope $ResourceID -RoleDefinitionName $RoleDefinitionName -ObjectId $userObjectId</p><h2>Check Contents</h2><p>To validate Azure role-based access controls (RBAC) for a specific resource, use the PowerShell script below: <br />
+<br />
+$ManagedInstanceName = '&lt;ManagedInstanceName&gt;'<br />
+$SqlMI = Get-AzSqlInstance -Name $ManagedInstanceName<br />
+Get-AzRoleAssignment -Scope $SqlMI.Id | Select-Object DisplayName,SignInName,RoleDefinitionName,ObjectType<br />
+  <br />
+If a user not assigned information system management responsibilities has membership in any of the following roles, this is a finding: <br />
+<br />
+- SQL Managed Instance.<br />
+- Contributor. <br />
+- SQL Security Manager. <br />
+- SqlMI Migration Role. <br />
+- User Access Administrator. <br />
+- Owner. <br />
+- Reader. <br />
+- Role Based Access Control.<br />
+- Administrator.</p><h2>Vulnerability Number</h2><p>V-276250</p><h2>Documentable</h2><p>False</p><h2>Rule Version</h2><p>MSQL-00-008900</p><h2>Severity Override Guidance</h2><p>To validate Azure role-based access controls (RBAC) for a specific resource, use the PowerShell script below: <br />
+<br />
+$ManagedInstanceName = '&lt;ManagedInstanceName&gt;'<br />
+$SqlMI = Get-AzSqlInstance -Name $ManagedInstanceName<br />
+Get-AzRoleAssignment -Scope $SqlMI.Id | Select-Object DisplayName,SignInName,RoleDefinitionName,ObjectType<br />
+  <br />
+If a user not assigned information system management responsibilities has membership in any of the following roles, this is a finding: <br />
+<br />
+- SQL Managed Instance.<br />
+- Contributor. <br />
+- SQL Security Manager. <br />
+- SqlMI Migration Role. <br />
+- User Access Administrator. <br />
+- Owner. <br />
+- Reader. <br />
+- Role Based Access Control.<br />
+- Administrator.</p><h2>Check Content Reference</h2><p>M</p><h2>Target Key</h2><p>5711</p></body></html>

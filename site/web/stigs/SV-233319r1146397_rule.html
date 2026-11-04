@@ -1,0 +1,44 @@
+<!doctype html><html lang="en"><head><meta charset="utf-8"><title>STIGQter: STIG Check Details: SV-233319r1146397_rule: Forescout must be configured so client machines do not communicate with other network devices in the DMZ or subnet except as needed to perform an access client assessment or to identify themselves. This is required for compliance with C2C Step 2.</title><link rel="icon" type="image/svg+xml" href="STIGQter.svg" /><script async src="https://www.googletagmanager.com/gtag/js?id=UA-31381839-2"></script><script src="include.js"></script><script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-4110907817782130" crossorigin="anonymous"></script></head><body><div><img src="STIGQter.svg" alt="STIGQter" style="height:1em;" /> <a href="https://www.stigqter.com/">STIGQter</a>: <a href="main.html">STIG Summary</a>: <a href="U_FS_NAC_STIG_V2R5_Manual-xccdf.html">Forescout Network Access Control Security Technical Implementation Guide Version: 2 Release: 5 Benchmark Date: 01 Jul 2026</a>:</div> <h1>Forescout must be configured so client machines do not communicate with other network devices in the DMZ or subnet except as needed to perform an access client assessment or to identify themselves. This is required for compliance with C2C Step 2.</h1><h2>DISA Rule</h2><p>SV-233319r1146397_rule</p><h2>Vulnerability Number</h2><p>V-233319</p><h2>Group Title</h2><p>SRG-NET-000015-NAC-000130</p><h2>Rule Version</h2><p>FORE-NC-000110</p><h2>Severity</h2><p>CAT II</p><h2>CCI(s)</h2><ul><li>CCI-000213 - Enforce approved authorizations for logical access to information and system resources in accordance with applicable access control policies.</li></ul><h2>Weight</h2><p>10</p><h2>Fix Recommendation</h2><p>Configure ForeScout so devices being assessed for compliance do not communicate with other devices in the DMZ or other network segments. There are different approaches; however, this typically involves isolating noncompliant devices into a quarantine or assessment zone until they meet compliance requirements.<br />
+<br />
+The following are examples.<br />
+<br />
+Create a Quarantine VLAN:<br />
+1. Set up a dedicated VLAN (e.g., &quot;Quarantine_VLAN&quot;) for devices under assessment.<br />
+2. This VLAN should have restricted access, blocking communication to other devices or production network segments.<br />
+3.  Allow traffic only to specific remediation servers (e.g., patch servers, ForeScout appliance for assessment).<br />
+4. Configure the switches to support dynamic VLAN assignment via CounterACT.<br />
+5. Enforce Network Isolation using a VLAN:<br />
+- Select the &quot;Quarantine_VLAN&quot;.<br />
+- CounterACT will instruct the switch (via SNMP or CLI) to move the device to this VLAN upon detection.<br />
+<br />
+Or<br />
+<br />
+ACL Enforcement Method:<br />
+1.  If VLANs are not feasible, use the **Apply ACL** action.<br />
+2.  Configure an ACL on the switches or routers to block all traffic from the device’s IP or MAC to other network devices, allowing only traffic to remediation servers (e.g., IP of patch server, DNS, or CounterACT appliance).<br />
+ - Example ACL (syntax depends on the switch/router):<br />
+       ```<br />
+       deny ip &lt;device_IP&gt; 0.0.0.0 &lt;network_range&gt; &lt;network_mask&gt;<br />
+       permit ip &lt;device_IP&gt; 0.0.0.0 &lt;remediation_server_IP&gt; 0.0.0.0<br />
+       permit ip &lt;device_IP&gt; 0.0.0.0 &lt;forescout_IP&gt; 0.0.0.0<br />
+       deny ip any any<br />
+       ```<br />
+ Or <br />
+<br />
+Virtual Firewall Method:<br />
+1. Use CounterACT’s Virtual Firewall action to block all traffic from the device except to specific IPs/ports (e.g., remediation servers, CounterACT).<br />
+2. Configure rules in the action settings to allow only necessary outbound traffic.</p><h2>Check Contents</h2><p>If DOD is not at C2C Step 2 or higher, this is not a finding.<br />
+<br />
+Verify ForeScout is configured so endpoints under assessment are isolated from peer communication.<br />
+<br />
+1. Navigate to the Policy tab and examine the Compliance Assessment policy.<br />
+2. Verify either a Quarantine VLAN,  ACL Enforcement Method, or Forescout Virtual Firewall is configured as part of the policy.<br />
+<br />
+If Forescout allows endpoints under assessment to communicate with other endpoints in the DMZ or on other network segments, this is a finding.</p><h2>Vulnerability Number</h2><p>V-233319</p><h2>Documentable</h2><p>False</p><h2>Rule Version</h2><p>FORE-NC-000110</p><h2>Severity Override Guidance</h2><p>If DOD is not at C2C Step 2 or higher, this is not a finding.<br />
+<br />
+Verify ForeScout is configured so endpoints under assessment are isolated from peer communication.<br />
+<br />
+1. Navigate to the Policy tab and examine the Compliance Assessment policy.<br />
+2. Verify either a Quarantine VLAN,  ACL Enforcement Method, or Forescout Virtual Firewall is configured as part of the policy.<br />
+<br />
+If Forescout allows endpoints under assessment to communicate with other endpoints in the DMZ or on other network segments, this is a finding.</p><h2>Check Content Reference</h2><p>M</p><h2>Target Key</h2><p>5250</p></body></html>

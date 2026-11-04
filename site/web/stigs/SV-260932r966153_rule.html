@@ -1,0 +1,177 @@
+<!doctype html><html lang="en"><head><meta charset="utf-8"><title>STIGQter: STIG Check Details: SV-260932r966153_rule: MKE must preserve any information necessary to determine the cause of the disruption or failure.</title><link rel="icon" type="image/svg+xml" href="STIGQter.svg" /><script async src="https://www.googletagmanager.com/gtag/js?id=UA-31381839-2"></script><script src="include.js"></script><script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-4110907817782130" crossorigin="anonymous"></script></head><body><div><img src="STIGQter.svg" alt="STIGQter" style="height:1em;" /> <a href="https://www.stigqter.com/">STIGQter</a>: <a href="main.html">STIG Summary</a>: <a href="U_Mirantis_Kubernetes_Engine_STIG_V2R1_Manual-xccdf.html">Mirantis Kubernetes Engine Security Technical Implementation Guide Version: 2 Release: 1 Benchmark Date: 24 Jul 2024</a>:</div> <h1>MKE must preserve any information necessary to determine the cause of the disruption or failure.</h1><h2>DISA Rule</h2><p>SV-260932r966153_rule</p><h2>Vulnerability Number</h2><p>V-260932</p><h2>Group Title</h2><p>SRG-APP-000226-CTR-000575</p><h2>Rule Version</h2><p>CNTR-MK-000980</p><h2>Severity</h2><p>CAT II</p><h2>CCI(s)</h2><ul><li>CCI-001665 - Preserve organization-defined system state information in the event of a system failure.</li></ul><h2>Weight</h2><p>10</p><h2>Fix Recommendation</h2><p>When using Swarm orchestration, this check is Not Applicable.<br />
+<br />
+This is a catastrophic error, contact Mirantis support.</p><h2>Check Contents</h2><p>When using Swarm orchestration, this check is Not Applicable.<br />
+<br />
+Review the Kubernetes configuration to determine if information necessary to determine the cause of a disruption or failure is preserved.<br />
+<br />
+Notes:<br />
+- The ReadWriteOnce access mode in the PVC means the volume can be mounted as read-write by a single node. Ensure the storage backend supports this mode.<br />
+- Adjust the sleep duration in the writer pod as needed.<br />
+- Ensure that the namespace and PVC names match the setup.<br />
+<br />
+Steps to verify data durability:<br />
+1. Create a namespace to manage the testing:<br />
+<br />
+apiVersion: v1<br />
+kind: Namespace<br />
+metadata:<br />
+  name: stig<br />
+<br />
+2. PersistentVolumeClaim (PVC):<br />
+Ensure a PVC is created. If using a storage class like Longhorn, it would look similar to:<br />
+<br />
+apiVersion: v1<br />
+kind: PersistentVolumeClaim<br />
+metadata:<br />
+  name: stig-pvc<br />
+  namespace: stig<br />
+spec:<br />
+  accessModes:<br />
+    - ReadWriteOnce<br />
+  storageClassName: longhorn  # Replace with your storage class if different, e.g. NFS<br />
+  resources:<br />
+    requests:<br />
+      storage: 5Gi<br />
+<br />
+3. Deploying the Initial Pod:<br />
+Create a pod that writes data to the PVC. This pod will use a simple loop to write data (e.g., timestamps) to a file on the mounted PVC. Example:<br />
+<br />
+apiVersion: v1<br />
+kind: Pod<br />
+metadata:<br />
+  name: write-pod<br />
+  namespace: stig<br />
+spec:<br />
+  volumes:<br />
+    - name: log-storage<br />
+      persistentVolumeClaim:<br />
+        claimName: stig-pvc<br />
+  containers:<br />
+    - name: writer<br />
+      image: busybox<br />
+      command: [&quot;/bin/sh&quot;, &quot;-c&quot;]<br />
+      args: [&quot;while true; do date &gt;&gt; /data/logs.log; sleep 10; done&quot;]<br />
+      volumeMounts:<br />
+        - name: log-storage<br />
+          mountPath: /data<br />
+<br />
+4. Simulate Pod Failure:<br />
+After the pod has been writing data for some time, it can be deleted to simulate a failure by executing the following:<br />
+<br />
+kubectl delete pod write-pod -n stig<br />
+<br />
+5. Deploying a New Pod to Verify Data:<br />
+Deploy another pod that mounts the same PVC to verify that the data is still there.<br />
+<br />
+apiVersion: v1<br />
+kind: Pod<br />
+metadata:<br />
+  name: read-pod<br />
+  namespace: stig<br />
+spec:<br />
+  volumes:<br />
+    - name: log-storage<br />
+      persistentVolumeClaim:<br />
+        claimName: stig-pvc<br />
+  containers:<br />
+    - name: reader<br />
+      image: busybox<br />
+      command: [&quot;/bin/sh&quot;, &quot;-c&quot;]<br />
+      args: [&quot;sleep infinity&quot;]<br />
+      volumeMounts:<br />
+        - name: log-storage<br />
+          mountPath: /data<br />
+<br />
+6. Verify Data Persistence:<br />
+Check the contents of the log file in the new pod to ensure that the data written by the first pod is still there by executing the following:<br />
+<br />
+kubectl exec read-pod -n stig -- cat /data/logs.log<br />
+<br />
+If there is no log data, this is a finding.</p><h2>Vulnerability Number</h2><p>V-260932</p><h2>Documentable</h2><p>False</p><h2>Rule Version</h2><p>CNTR-MK-000980</p><h2>Severity Override Guidance</h2><p>When using Swarm orchestration, this check is Not Applicable.<br />
+<br />
+Review the Kubernetes configuration to determine if information necessary to determine the cause of a disruption or failure is preserved.<br />
+<br />
+Notes:<br />
+- The ReadWriteOnce access mode in the PVC means the volume can be mounted as read-write by a single node. Ensure the storage backend supports this mode.<br />
+- Adjust the sleep duration in the writer pod as needed.<br />
+- Ensure that the namespace and PVC names match the setup.<br />
+<br />
+Steps to verify data durability:<br />
+1. Create a namespace to manage the testing:<br />
+<br />
+apiVersion: v1<br />
+kind: Namespace<br />
+metadata:<br />
+  name: stig<br />
+<br />
+2. PersistentVolumeClaim (PVC):<br />
+Ensure a PVC is created. If using a storage class like Longhorn, it would look similar to:<br />
+<br />
+apiVersion: v1<br />
+kind: PersistentVolumeClaim<br />
+metadata:<br />
+  name: stig-pvc<br />
+  namespace: stig<br />
+spec:<br />
+  accessModes:<br />
+    - ReadWriteOnce<br />
+  storageClassName: longhorn  # Replace with your storage class if different, e.g. NFS<br />
+  resources:<br />
+    requests:<br />
+      storage: 5Gi<br />
+<br />
+3. Deploying the Initial Pod:<br />
+Create a pod that writes data to the PVC. This pod will use a simple loop to write data (e.g., timestamps) to a file on the mounted PVC. Example:<br />
+<br />
+apiVersion: v1<br />
+kind: Pod<br />
+metadata:<br />
+  name: write-pod<br />
+  namespace: stig<br />
+spec:<br />
+  volumes:<br />
+    - name: log-storage<br />
+      persistentVolumeClaim:<br />
+        claimName: stig-pvc<br />
+  containers:<br />
+    - name: writer<br />
+      image: busybox<br />
+      command: [&quot;/bin/sh&quot;, &quot;-c&quot;]<br />
+      args: [&quot;while true; do date &gt;&gt; /data/logs.log; sleep 10; done&quot;]<br />
+      volumeMounts:<br />
+        - name: log-storage<br />
+          mountPath: /data<br />
+<br />
+4. Simulate Pod Failure:<br />
+After the pod has been writing data for some time, it can be deleted to simulate a failure by executing the following:<br />
+<br />
+kubectl delete pod write-pod -n stig<br />
+<br />
+5. Deploying a New Pod to Verify Data:<br />
+Deploy another pod that mounts the same PVC to verify that the data is still there.<br />
+<br />
+apiVersion: v1<br />
+kind: Pod<br />
+metadata:<br />
+  name: read-pod<br />
+  namespace: stig<br />
+spec:<br />
+  volumes:<br />
+    - name: log-storage<br />
+      persistentVolumeClaim:<br />
+        claimName: stig-pvc<br />
+  containers:<br />
+    - name: reader<br />
+      image: busybox<br />
+      command: [&quot;/bin/sh&quot;, &quot;-c&quot;]<br />
+      args: [&quot;sleep infinity&quot;]<br />
+      volumeMounts:<br />
+        - name: log-storage<br />
+          mountPath: /data<br />
+<br />
+6. Verify Data Persistence:<br />
+Check the contents of the log file in the new pod to ensure that the data written by the first pod is still there by executing the following:<br />
+<br />
+kubectl exec read-pod -n stig -- cat /data/logs.log<br />
+<br />
+If there is no log data, this is a finding.</p><h2>Check Content Reference</h2><p>M</p><h2>Target Key</h2><p>5595</p></body></html>

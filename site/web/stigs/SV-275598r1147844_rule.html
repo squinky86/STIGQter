@@ -1,0 +1,33 @@
+<!doctype html><html lang="en"><head><meta charset="utf-8"><title>STIGQter: STIG Check Details: SV-275598r1147844_rule: Ubuntu OS must configure the files used by the system journal to be group-owned by &quot;systemd-journal&quot;.</title><link rel="icon" type="image/svg+xml" href="STIGQter.svg" /><script async src="https://www.googletagmanager.com/gtag/js?id=UA-31381839-2"></script><script src="include.js"></script><script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-4110907817782130" crossorigin="anonymous"></script></head><body><div><img src="STIGQter.svg" alt="STIGQter" style="height:1em;" /> <a href="https://www.stigqter.com/">STIGQter</a>: <a href="main.html">STIG Summary</a>: <a href="U_RB_NetIM_OS_STIG_V1R1_Manual-xccdf.html">Riverbed NetIM OS Security Technical Implementation Guide Version: 1 Release: 1 Benchmark Date: 11 Sep 2025</a>:</div> <h1>Ubuntu OS must configure the files used by the system journal to be group-owned by &quot;systemd-journal&quot;.</h1><h2>DISA Rule</h2><p>SV-275598r1147844_rule</p><h2>Vulnerability Number</h2><p>V-275598</p><h2>Group Title</h2><p>SRG-OS-000206-GPOS-00084</p><h2>Rule Version</h2><p>RIIM-OS-232095</p><h2>Severity</h2><p>CAT II</p><h2>CCI(s)</h2><ul><li>CCI-001319 - Takes system components out of service by transferring component responsibilities to a substitute component no later than an organization-defined fraction or percentage of mean time to failure (MTTF).</li></ul><h2>Weight</h2><p>10</p><h2>Fix Recommendation</h2><p>Configure Ubuntu OS to set the appropriate group-ownership to the files used by the systemd journal: <br />
+ <br />
+Add or modify the following line in the &quot;/usr/lib/tmpfiles.d/systemd.conf&quot; file: <br />
+ <br />
+Z /run/log/journal/%m ~2640 root systemd-journal - - <br />
+z /var/log/journal/%m 2640 root systemd-journal - - <br />
+z /var/log/journal/%m/system.journal 0640 root systemd-journal - - <br />
+ <br />
+Restart the system for the changes to take effect.</p><h2>Check Contents</h2><p>Verify the /run/log/journal and /var/log/journal files are group-owned by &quot;systemd-journal&quot; by using the following command: <br />
+ <br />
+     $ sudo find /run/log/journal /var/log/journal  -type f -exec stat -c &quot;%n %G&quot; {} \; <br />
+     /var/log/journal/3b018e681c904487b11671b9c1987cce/system@99dcc72bb1134aaeae4bf157aa7606f4-0000000000003c7a-0006073f8d1c0fec.journal systemd-journal <br />
+     /var/log/journal/3b018e681c904487b11671b9c1987cce/system.journal systemd-journal <br />
+     /var/log/journal/3b018e681c904487b11671b9c1987cce/user-1000.journal systemd-journal <br />
+     /var/log/journal/3b018e681c904487b11671b9c1987cce/user-1000@bdedf14602ff4081a77dc7a6debc8626-00000000000062a6-00060b4b414b617a.journal systemd-journal <br />
+     /var/log/journal/3b018e681c904487b11671b9c1987cce/system@99dcc72bb1134aaeae4bf157aa7606f4-0000000000005301-000609a409<br />
+593.journal systemd-journal <br />
+     /var/log/journal/3b018e681c904487b11671b9c1987cce/system@99dcc72bb1134aaeae4bf157aa7606f4-0000000000000001-000604dae53225ee.journal systemd-journal <br />
+     /var/log/journal/3b018e681c904487b11671b9c1987cce/user-1000@bdedf14602ff4081a77dc7a6debc8626-000000000000083b-000604dae72c7e3b.journal systemd-journal <br />
+ <br />
+If any output returned is not group-owned by &quot;systemd-journal&quot;, this is a finding.</p><h2>Vulnerability Number</h2><p>V-275598</p><h2>Documentable</h2><p>False</p><h2>Rule Version</h2><p>RIIM-OS-232095</p><h2>Severity Override Guidance</h2><p>Verify the /run/log/journal and /var/log/journal files are group-owned by &quot;systemd-journal&quot; by using the following command: <br />
+ <br />
+     $ sudo find /run/log/journal /var/log/journal  -type f -exec stat -c &quot;%n %G&quot; {} \; <br />
+     /var/log/journal/3b018e681c904487b11671b9c1987cce/system@99dcc72bb1134aaeae4bf157aa7606f4-0000000000003c7a-0006073f8d1c0fec.journal systemd-journal <br />
+     /var/log/journal/3b018e681c904487b11671b9c1987cce/system.journal systemd-journal <br />
+     /var/log/journal/3b018e681c904487b11671b9c1987cce/user-1000.journal systemd-journal <br />
+     /var/log/journal/3b018e681c904487b11671b9c1987cce/user-1000@bdedf14602ff4081a77dc7a6debc8626-00000000000062a6-00060b4b414b617a.journal systemd-journal <br />
+     /var/log/journal/3b018e681c904487b11671b9c1987cce/system@99dcc72bb1134aaeae4bf157aa7606f4-0000000000005301-000609a409<br />
+593.journal systemd-journal <br />
+     /var/log/journal/3b018e681c904487b11671b9c1987cce/system@99dcc72bb1134aaeae4bf157aa7606f4-0000000000000001-000604dae53225ee.journal systemd-journal <br />
+     /var/log/journal/3b018e681c904487b11671b9c1987cce/user-1000@bdedf14602ff4081a77dc7a6debc8626-000000000000083b-000604dae72c7e3b.journal systemd-journal <br />
+ <br />
+If any output returned is not group-owned by &quot;systemd-journal&quot;, this is a finding.</p><h2>Check Content Reference</h2><p>M</p><h2>Target Key</h2><p>5706</p></body></html>

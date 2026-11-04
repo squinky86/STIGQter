@@ -1,0 +1,23 @@
+<!doctype html><html lang="en"><head><meta charset="utf-8"><title>STIGQter: STIG Check Details: SV-253728r961398_rule: MariaDB must provide a warning to appropriate support staff when allocated audit record storage volume reaches 75 percent of maximum audit record storage capacity.</title><link rel="icon" type="image/svg+xml" href="STIGQter.svg" /><script async src="https://www.googletagmanager.com/gtag/js?id=UA-31381839-2"></script><script src="include.js"></script><script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-4110907817782130" crossorigin="anonymous"></script></head><body><div><img src="STIGQter.svg" alt="STIGQter" style="height:1em;" /> <a href="https://www.stigqter.com/">STIGQter</a>: <a href="main.html">STIG Summary</a>: <a href="U_MariaDB_Enterprise_10-x_STIG_V2R5_Manual-xccdf.html">MariaDB Enterprise 10.x Security Technical Implementation Guide Version: 2 Release: 5 Benchmark Date: 01 Apr 2026</a>:</div> <h1>MariaDB must provide a warning to appropriate support staff when allocated audit record storage volume reaches 75 percent of maximum audit record storage capacity.</h1><h2>DISA Rule</h2><p>SV-253728r961398_rule</p><h2>Vulnerability Number</h2><p>V-253728</p><h2>Group Title</h2><p>SRG-APP-000359-DB-000319</p><h2>Rule Version</h2><p>MADB-10-007400</p><h2>Severity</h2><p>CAT II</p><h2>CCI(s)</h2><ul><li>CCI-001855 - Provide a warning to organization-defined personnel, roles, and/or locations within an organization-defined time period when allocated audit log storage volume reaches an organization-defined percentage of repository maximum audit log storage capacity.</li></ul><h2>Weight</h2><p>10</p><h2>Fix Recommendation</h2><p>Configure the system to notify appropriate support staff immediately upon storage volume utilization reaching 75 percent.<br />
+<br />
+MariaDB does not monitor storage, however, it is possible to monitor storage with a script.<br />
+<br />
+##### Example Monitoring Script<br />
+<br />
+#!/bin/bash<br />
+<br />
+DATADIR=/var/lib/psql/mysql<br />
+CURRENT=$(df ${DATADIR?} | grep / | awk '{ print $5}' | sed 's/%//g')<br />
+THRESHOLD=75<br />
+<br />
+if [ &quot;$CURRENT&quot; -gt &quot;$THRESHOLD&quot; ] ; then<br />
+mail -s 'Disk Space Alert' mail@support.com &lt;&lt; EOF<br />
+The data directory volume is almost full. Used: $CURRENT<br />
+%EOF<br />
+fi<br />
+<br />
+Schedule this script in cron to run around the clock.</p><h2>Check Contents</h2><p>Review OS, or third-party logging application settings to determine whether a warning will be provided when 75 percent of DBMS audit log storage capacity is reached.<br />
+<br />
+If no warning will be provided, this is a finding.</p><h2>Vulnerability Number</h2><p>V-253728</p><h2>Documentable</h2><p>False</p><h2>Rule Version</h2><p>MADB-10-007400</p><h2>Severity Override Guidance</h2><p>Review OS, or third-party logging application settings to determine whether a warning will be provided when 75 percent of DBMS audit log storage capacity is reached.<br />
+<br />
+If no warning will be provided, this is a finding.</p><h2>Check Content Reference</h2><p>M</p><h2>Target Key</h2><p>5475</p></body></html>

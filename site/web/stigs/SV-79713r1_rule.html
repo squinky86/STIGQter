@@ -1,0 +1,87 @@
+<!doctype html><html lang="en"><head><meta charset="utf-8"><title>STIGQter: STIG Check Details: SV-79713r1_rule: The DataPower Gateway providing user authentication intermediary services must implement replay-resistant authentication mechanisms for network access to non-privileged accounts.</title><link rel="icon" type="image/svg+xml" href="STIGQter.svg" /><script async src="https://www.googletagmanager.com/gtag/js?id=UA-31381839-2"></script><script src="include.js"></script><script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-4110907817782130" crossorigin="anonymous"></script></head><body><div><img src="STIGQter.svg" alt="STIGQter" style="height:1em;" /> <a href="https://www.stigqter.com/">STIGQter</a>: <a href="main.html">STIG Summary</a>: <a href="U_IBM_DataPower_ALG_STIG_V1R1_Manual-xccdf.html">IBM DataPower ALG Security Technical Implementation Guide Version: 1 Release: 1 Benchmark Date: 25 Jan 2016</a>:</div> <h1>The DataPower Gateway providing user authentication intermediary services must implement replay-resistant authentication mechanisms for network access to non-privileged accounts.</h1><h2>DISA Rule</h2><p>SV-79713r1_rule</p><h2>Vulnerability Number</h2><p>V-65223</p><h2>Group Title</h2><p>SRG-NET-000147-ALG-000095</p><h2>Rule Version</h2><p>WSDP-AG-000041</p><h2>Severity</h2><p>CAT II</p><h2>CCI(s)</h2><ul><li>CCI-000366 - Implement the security configuration settings.</li></ul><h2>Weight</h2><p>10</p><h2>Fix Recommendation</h2><p>To define mutual TLS connections when the DataPower device is the requesting client, use the DataPower WebGUI at Objects &gt;&gt; Crypto Configuration.<br />
+ <br />
+Click SSL Client Profile &gt;&gt; Click Add to create a new one if one does not already exist.<br />
+<br />
+Provide a name &gt;&gt; Deselect all Protocols except TLS version 1.1 and 1.2 &gt;&gt; Deselect Use SNI &gt;&gt; Choose an active Identification Credential from the list. This determines the local keys.<br />
+<br />
+If no ID Creds exist, click “+” to create one. You will need access to the key files you want to use.<br />
+<br />
+Choose an active Validation credentials object from the list.  <br />
+<br />
+If no Val Creds exist, click “+” to create one. You will need access to the server certs you want to validate.<br />
+<br />
+Click Apply &gt;&gt; Click Save Configuration.<br />
+<br />
+Use this new SSL Client Profile when configuring a service, such as a Multi-Protocol Gateway or Web Service Proxy, to connect to other servers. If the remote server will not agree to TLS v1.2 or v1.1 and does not provide a certificate that is validated, the connection will not be established. <br />
+<br />
+To define mutual TLS connections when the DataPower device is the server, use the DataPower WebGUI at Objects &gt;&gt; Crypto Configuration.<br />
+ <br />
+Click SSL Server Profile &gt;&gt; Click Add to create a new one if one does not already exist.<br />
+<br />
+Provide a name &gt;&gt; Deselect all Protocols except TLS version 1.1 and 1.2 &gt;&gt; Choose an active Identification Credential from the list. This determines the local keys.<br />
+<br />
+If no ID Creds exist, click “+” to create one. You will need access to the key files you want to use.<br />
+<br />
+Set Request client authentication to On &gt;&gt; Choose an active Validation credentials object from the list.<br />
+<br />
+If no Val Creds exist, click “+” to create one. You will need access to the server certs you want to validate.<br />
+<br />
+Click Apply &gt;&gt; Click Save Configuration.<br />
+<br />
+Use this new SSL Server Profile when configuring an HTTPS Front Side Handler, which is in turn used by a service, such as a Multi-Protocol Gateway or Web Service Proxy to accept incoming requests. If the remote client will not agree to TLS v1.2 or v1.1 and does not provide a certificate that is validated, the connection will not be established. <br />
+<br />
+Replay filter(s). Use the WebGUI to define a replay filter processing action. From the DataPower WebGUI, click on then add a service type (e.g., Web Service Proxy). Add a policy (in this case, a Multi-Protocol gateway Policy). Create a processing rule. Add a Filter action. Specify &quot;Replay Filter&quot; as the method.<br />
+<br />
+Network interface isolation: By default, the DataPower Gateway provides interface isolation: the appliance refuses to accept a packet on an interface other than the one bound to the destination address of the packet. Use the WebGUI at Network &gt;&gt; Interface &gt;&gt; Network Settings to configure a network interface.</p><h2>Check Contents</h2><p>To verify that DataPower requires mutual authentication when establishing TLS connections to remote hosts, click on the Multi-Protocol Gateway or Web Service Proxy icons on the Control Panel (the initial screen).<br />
+<br />
+Click on the configured available service(s) to view its configuration.<br />
+<br />
+For Multi-Protocol Gateway, scroll down to view User Agent Settings &gt;&gt; Verify that the SSL Configuration is set to Client Profile or Proxy Profile &gt;&gt; Click the ellipses (...) button to view the configuration of the Client Profile or Proxy Profile.<br />
+<br />
+For SSL Client Profile, verify that only TLS v1.1 and v1.2 are enabled.<br />
+<br />
+For SSL Client Profile, verify that a validation credential is configured.<br />
+<br />
+For SSL Proxy Profile, click the ellipses (…) button to view the configuration of the Crypto Profile &gt;&gt; Verify that all Options are disabled except TLS version 1.1 and 1.2 &gt;&gt; Verify that a Validation Credential is configured.<br />
+<br />
+To verify that DataPower requires mutual authentication when accepting TLS connections from remote hosts, click on the Multi-Protocol Gateway or Web Service Proxy icons on the Control Panel (the initial screen) &gt;&gt; Click on the configured available service(s) to view its configuration.<br />
+<br />
+For Multi-Protocol Gateway, scroll down to view the Front Side Protocol settings &gt;&gt; Select the current HTTPS Front Side Handler from the dropdown list &gt;&gt; Click “…” to view configuration of the Handler &gt;&gt; Click “...” to view the configuration of the SSL Server Profile or SSL Proxy Profile.<br />
+<br />
+For SSL Server Profile, verify that only TLS v1.1 and v1.2 are enabled.<br />
+<br />
+For SSL Server Profile, verify that a validation credential is configured.<br />
+<br />
+For SSL Proxy Profile, click “…” to view the configuration of the Crypto Profile &gt;&gt; Verify that the Ciphers are only HIGH &gt;&gt; Verify that all Options are disabled except TLS version 1.1 and 1.2 &gt;&gt; Verify that Always Request Client Authentication is set to On &gt;&gt; Verify that a Validation Credential is configured. If they are not, this is a finding.<br />
+<br />
+Use the WebGUI Control panel to select and open a specific service, then open its processing policy. Confirm that a rule with a filter action exists and that the method is &quot;Replay Filter&quot;. If they are not, this is a finding.<br />
+<br />
+To confirm interface isolation has been correctly maintained, use the WebGUI at Network &gt;&gt; Interface &gt;&gt; Network Settings. Confirm that Relax interface Isolation is Off.<br />
+<br />
+Confirm Disable interface isolation is Off. If they are not, this is a finding.</p><h2>Vulnerability Number</h2><p>V-65223</p><h2>Documentable</h2><p>False</p><h2>Rule Version</h2><p>WSDP-AG-000041</p><h2>Severity Override Guidance</h2><p>To verify that DataPower requires mutual authentication when establishing TLS connections to remote hosts, click on the Multi-Protocol Gateway or Web Service Proxy icons on the Control Panel (the initial screen).<br />
+<br />
+Click on the configured available service(s) to view its configuration.<br />
+<br />
+For Multi-Protocol Gateway, scroll down to view User Agent Settings &gt;&gt; Verify that the SSL Configuration is set to Client Profile or Proxy Profile &gt;&gt; Click the ellipses (...) button to view the configuration of the Client Profile or Proxy Profile.<br />
+<br />
+For SSL Client Profile, verify that only TLS v1.1 and v1.2 are enabled.<br />
+<br />
+For SSL Client Profile, verify that a validation credential is configured.<br />
+<br />
+For SSL Proxy Profile, click the ellipses (…) button to view the configuration of the Crypto Profile &gt;&gt; Verify that all Options are disabled except TLS version 1.1 and 1.2 &gt;&gt; Verify that a Validation Credential is configured.<br />
+<br />
+To verify that DataPower requires mutual authentication when accepting TLS connections from remote hosts, click on the Multi-Protocol Gateway or Web Service Proxy icons on the Control Panel (the initial screen) &gt;&gt; Click on the configured available service(s) to view its configuration.<br />
+<br />
+For Multi-Protocol Gateway, scroll down to view the Front Side Protocol settings &gt;&gt; Select the current HTTPS Front Side Handler from the dropdown list &gt;&gt; Click “…” to view configuration of the Handler &gt;&gt; Click “...” to view the configuration of the SSL Server Profile or SSL Proxy Profile.<br />
+<br />
+For SSL Server Profile, verify that only TLS v1.1 and v1.2 are enabled.<br />
+<br />
+For SSL Server Profile, verify that a validation credential is configured.<br />
+<br />
+For SSL Proxy Profile, click “…” to view the configuration of the Crypto Profile &gt;&gt; Verify that the Ciphers are only HIGH &gt;&gt; Verify that all Options are disabled except TLS version 1.1 and 1.2 &gt;&gt; Verify that Always Request Client Authentication is set to On &gt;&gt; Verify that a Validation Credential is configured. If they are not, this is a finding.<br />
+<br />
+Use the WebGUI Control panel to select and open a specific service, then open its processing policy. Confirm that a rule with a filter action exists and that the method is &quot;Replay Filter&quot;. If they are not, this is a finding.<br />
+<br />
+To confirm interface isolation has been correctly maintained, use the WebGUI at Network &gt;&gt; Interface &gt;&gt; Network Settings. Confirm that Relax interface Isolation is Off.<br />
+<br />
+Confirm Disable interface isolation is Off. If they are not, this is a finding.</p><h2>Check Content Reference</h2><p>M</p><h2>Target Key</h2><p>2859</p></body></html>

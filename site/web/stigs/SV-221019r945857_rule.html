@@ -1,0 +1,60 @@
+<!doctype html><html lang="en"><head><meta charset="utf-8"><title>STIGQter: STIG Check Details: SV-221019r945857_rule: The Cisco perimeter switch must be configured to block all outbound management traffic.</title><link rel="icon" type="image/svg+xml" href="STIGQter.svg" /><script async src="https://www.googletagmanager.com/gtag/js?id=UA-31381839-2"></script><script src="include.js"></script><script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-4110907817782130" crossorigin="anonymous"></script></head><body><div><img src="STIGQter.svg" alt="STIGQter" style="height:1em;" /> <a href="https://www.stigqter.com/">STIGQter</a>: <a href="main.html">STIG Summary</a>: <a href="U_Cisco_IOS-XE_Switch_RTR_STIG_V3R4_Manual-xccdf.html">Cisco IOS XE Switch RTR Security Technical Implementation Guide Version: 3 Release: 4 Benchmark Date: 01 Apr 2026</a>:</div> <h1>The Cisco perimeter switch must be configured to block all outbound management traffic.</h1><h2>DISA Rule</h2><p>SV-221019r945857_rule</p><h2>Vulnerability Number</h2><p>V-221019</p><h2>Group Title</h2><p>SRG-NET-000364-RTR-000113</p><h2>Rule Version</h2><p>CISC-RT-000390</p><h2>Severity</h2><p>CAT II</p><h2>CCI(s)</h2><ul><li>CCI-001097 - Monitor and control communications at the external managed interfaces to the system and at key managed interfaces within the system.</li></ul><h2>Weight</h2><p>10</p><h2>Fix Recommendation</h2><p>Configure the perimeter switch of the managed network with an outbound ACL on the egress interface to block all management traffic.<br />
+<br />
+Step 1: Configure an ACL to block egress management traffic.<br />
+<br />
+SW1(config)#ip access-list extended EXTERNAL_ACL_OUTBOUND<br />
+SW1(config-ext-nacl)#deny tcp any any eq tacacs log-input<br />
+SW1(config-ext-nacl)#deny tcp any any eq 22 log-input<br />
+SW1(config-ext-nacl)#deny udp any any eq snmp log-input<br />
+SW1(config-ext-nacl)#deny udp any any eq snmptrap log-input<br />
+SW1(config-ext-nacl)#deny udp any any eq syslog log-input<br />
+SW1(config-ext-nacl)#permit tcp any any eq www<br />
+SW1(config-ext-nacl)#deny ip any any log-input<br />
+SW1(config-ext-nacl)#exit<br />
+<br />
+Note: Permit commands would be configured to allow applicable outbound traffic. The example above is allowing web traffic.<br />
+<br />
+Step 2: Configure the external interfaces with the outbound ACL.<br />
+<br />
+SW1(config)#int g0/2<br />
+SW1(config-if)#ip access-group EXTERNAL_ACL_OUTBOUND out</p><h2>Check Contents</h2><p>The perimeter switch of the managed network must be configured with an outbound ACL on the egress interface to block all management traffic as shown in the example below:<br />
+<br />
+Step 1: Verify that all external interfaces has been configured with an outbound ACL as shown in the example below:<br />
+<br />
+interface GigabitEthernet0/2<br />
+ description link to DISN<br />
+ ip address x.11.1.2 255.255.255.254<br />
+ ip access-group EXTERNAL_ACL_OUTBOUND out<br />
+<br />
+Step 2: Verify that the outbound ACL discards management traffic as shown in the example below:<br />
+<br />
+ip access-list extended EXTERNAL_ACL_OUTBOUND<br />
+ deny tcp any any eq tacacs log-input<br />
+ deny tcp any any eq 22 log-input<br />
+ deny udp any any eq snmp log-input<br />
+ deny udp any any eq snmptrap log-input<br />
+ deny udp any any eq syslog log-input<br />
+ permit tcp any any eq www log-input<br />
+ deny ip any any log-input<br />
+<br />
+If management traffic is not blocked at the perimeter, this is a finding.</p><h2>Vulnerability Number</h2><p>V-221019</p><h2>Documentable</h2><p>False</p><h2>Rule Version</h2><p>CISC-RT-000390</p><h2>Severity Override Guidance</h2><p>The perimeter switch of the managed network must be configured with an outbound ACL on the egress interface to block all management traffic as shown in the example below:<br />
+<br />
+Step 1: Verify that all external interfaces has been configured with an outbound ACL as shown in the example below:<br />
+<br />
+interface GigabitEthernet0/2<br />
+ description link to DISN<br />
+ ip address x.11.1.2 255.255.255.254<br />
+ ip access-group EXTERNAL_ACL_OUTBOUND out<br />
+<br />
+Step 2: Verify that the outbound ACL discards management traffic as shown in the example below:<br />
+<br />
+ip access-list extended EXTERNAL_ACL_OUTBOUND<br />
+ deny tcp any any eq tacacs log-input<br />
+ deny tcp any any eq 22 log-input<br />
+ deny udp any any eq snmp log-input<br />
+ deny udp any any eq snmptrap log-input<br />
+ deny udp any any eq syslog log-input<br />
+ permit tcp any any eq www log-input<br />
+ deny ip any any log-input<br />
+<br />
+If management traffic is not blocked at the perimeter, this is a finding.</p><h2>Check Content Reference</h2><p>M</p><h2>Target Key</h2><p>4074</p></body></html>

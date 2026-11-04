@@ -1,0 +1,88 @@
+<!doctype html><html lang="en"><head><meta charset="utf-8"><title>STIGQter: STIG Check Details: SV-235147r960969_rule: The MySQL Database Server 8.0 must uniquely identify and authenticate organizational users (or processes acting on behalf of organizational users).</title><link rel="icon" type="image/svg+xml" href="STIGQter.svg" /><script async src="https://www.googletagmanager.com/gtag/js?id=UA-31381839-2"></script><script src="include.js"></script><script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-4110907817782130" crossorigin="anonymous"></script></head><body><div><img src="STIGQter.svg" alt="STIGQter" style="height:1em;" /> <a href="https://www.stigqter.com/">STIGQter</a>: <a href="main.html">STIG Summary</a>: <a href="U_Oracle_MySQL_8-0_STIG_V2R2_Manual-xccdf.html">Oracle MySQL 8.0 Security Technical Implementation Guide Version: 2 Release: 2 Benchmark Date: 24 Oct 2024</a>:</div> <h1>The MySQL Database Server 8.0 must uniquely identify and authenticate organizational users (or processes acting on behalf of organizational users).</h1><h2>DISA Rule</h2><p>SV-235147r960969_rule</p><h2>Vulnerability Number</h2><p>V-235147</p><h2>Group Title</h2><p>SRG-APP-000148-DB-000103</p><h2>Rule Version</h2><p>MYS8-00-006100</p><h2>Severity</h2><p>CAT II</p><h2>CCI(s)</h2><ul><li>CCI-000764 - Uniquely identify and authenticate organizational users and associate that unique identification with processes acting on behalf of those users.</li></ul><h2>Weight</h2><p>10</p><h2>Fix Recommendation</h2><p>Configure MySQL Database Server 8.0 settings to uniquely identify and authenticate all organizational users who log on/connect to the system.<br />
+<br />
+Remove user-accessible shared accounts and use individual user names. <br />
+<br />
+Configure applications to ensure successful individual authentication prior to shared account access. <br />
+<br />
+Ensure each user's identity is received and used in audit data in all relevant circumstances.<br />
+<br />
+Install appropriate auth plugin, for example LDAP.<br />
+INSTALL PLUGIN authentication_ldap_sasl<br />
+  SONAME 'authentication_ldap_sasl.so';<br />
+INSTALL PLUGIN authentication_ldap_simple<br />
+  SONAME 'authentication_ldap_simple.so';<br />
+<br />
+Configure<br />
+SET PERSIST authentication_ldap_sasl_server_host='127.0.0.1';<br />
+SET PERSIST authentication_ldap_sasl_bind_base_dn='dc=example,dc=com';<br />
+SET PERSIST authentication_ldap_simple_server_host='127.0.0.1';<br />
+SET PERSIST authentication_ldap_simple_bind_base_dn='dc=example,dc=com';<br />
+<br />
+Create users with proper organizational mapping, for example:<br />
+CREATE USER 'betsy'@'localhost'<br />
+  IDENTIFIED WITH authentication_ldap_simple<br />
+  BY 'uid=betsy_ldap,ou=People,dc=example,dc=com';<br />
+<br />
+Assign appropriate roles and grants.</p><h2>Check Contents</h2><p>Review MySQL Database Server 8.0 settings to determine whether organizational users are uniquely identified and authenticated when logging on/connecting to the system. <br />
+<br />
+Using SQL, search for external authentication plugins:<br />
+SELECT PLUGIN_NAME, PLUGIN_STATUS<br />
+       FROM INFORMATION_SCHEMA.PLUGINS<br />
+       WHERE PLUGIN_NAME LIKE '%ldap%' OR PLUGIN_NAME LIKE '%ldap%' OR PLUGIN_NAME LIKE '%pam%';<br />
+<br />
+This listing will show what is enabled. <br />
+<br />
+In addition to MySQL password-based internal accounts, there is also support for external accounts:<br />
+Linux PAM (Pluggable Authentication Modules)<br />
+Windows Active Directory (only for Windows MySQL servers)<br />
+Native LDAP <br />
+auth_socket<br />
+<br />
+Review the configuration of the plugin; for link of accounts and permissions to organizational level, run this SQL:<br />
+SELECT VARIABLE_NAME, VARIABLE_VALUE<br />
+FROM performance_schema.global_variables<br />
+WHERE VARIABLE_NAME LIKE 'auth%' ;<br />
+<br />
+This will show external configuration setup for authentication using an organizational authentication source.<br />
+<br />
+Review users using organizational authentication.  Review the &quot;authentication_string&quot; for proper mapping:<br />
+SELECT `user`.`Host`,<br />
+    `user`.`user`,<br />
+    `user`.`plugin`,<br />
+    `user`.`authentication_string`<br />
+    from mysql.user where plugin like 'auth%';<br />
+<br />
+If organizational users are not uniquely identified and authenticated, this is a finding.<br />
+<br />
+If accounts are determined to be shared, determine if they are directly accessible to end users. If so, this is a finding.</p><h2>Vulnerability Number</h2><p>V-235147</p><h2>Documentable</h2><p>False</p><h2>Rule Version</h2><p>MYS8-00-006100</p><h2>Severity Override Guidance</h2><p>Review MySQL Database Server 8.0 settings to determine whether organizational users are uniquely identified and authenticated when logging on/connecting to the system. <br />
+<br />
+Using SQL, search for external authentication plugins:<br />
+SELECT PLUGIN_NAME, PLUGIN_STATUS<br />
+       FROM INFORMATION_SCHEMA.PLUGINS<br />
+       WHERE PLUGIN_NAME LIKE '%ldap%' OR PLUGIN_NAME LIKE '%ldap%' OR PLUGIN_NAME LIKE '%pam%';<br />
+<br />
+This listing will show what is enabled. <br />
+<br />
+In addition to MySQL password-based internal accounts, there is also support for external accounts:<br />
+Linux PAM (Pluggable Authentication Modules)<br />
+Windows Active Directory (only for Windows MySQL servers)<br />
+Native LDAP <br />
+auth_socket<br />
+<br />
+Review the configuration of the plugin; for link of accounts and permissions to organizational level, run this SQL:<br />
+SELECT VARIABLE_NAME, VARIABLE_VALUE<br />
+FROM performance_schema.global_variables<br />
+WHERE VARIABLE_NAME LIKE 'auth%' ;<br />
+<br />
+This will show external configuration setup for authentication using an organizational authentication source.<br />
+<br />
+Review users using organizational authentication.  Review the &quot;authentication_string&quot; for proper mapping:<br />
+SELECT `user`.`Host`,<br />
+    `user`.`user`,<br />
+    `user`.`plugin`,<br />
+    `user`.`authentication_string`<br />
+    from mysql.user where plugin like 'auth%';<br />
+<br />
+If organizational users are not uniquely identified and authenticated, this is a finding.<br />
+<br />
+If accounts are determined to be shared, determine if they are directly accessible to end users. If so, this is a finding.</p><h2>Check Content Reference</h2><p>M</p><h2>Target Key</h2><p>5277</p></body></html>

@@ -1,0 +1,101 @@
+<!doctype html><html lang="en"><head><meta charset="utf-8"><title>STIGQter: STIG Check Details: SV-235141r960792_rule: The MySQL Database Server 8.0 must enforce approved authorizations for logical access to information and system resources in accordance with applicable access control policies.</title><link rel="icon" type="image/svg+xml" href="STIGQter.svg" /><script async src="https://www.googletagmanager.com/gtag/js?id=UA-31381839-2"></script><script src="include.js"></script><script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-4110907817782130" crossorigin="anonymous"></script></head><body><div><img src="STIGQter.svg" alt="STIGQter" style="height:1em;" /> <a href="https://www.stigqter.com/">STIGQter</a>: <a href="main.html">STIG Summary</a>: <a href="U_Oracle_MySQL_8-0_STIG_V2R2_Manual-xccdf.html">Oracle MySQL 8.0 Security Technical Implementation Guide Version: 2 Release: 2 Benchmark Date: 24 Oct 2024</a>:</div> <h1>The MySQL Database Server 8.0 must enforce approved authorizations for logical access to information and system resources in accordance with applicable access control policies.</h1><h2>DISA Rule</h2><p>SV-235141r960792_rule</p><h2>Vulnerability Number</h2><p>V-235141</p><h2>Group Title</h2><p>SRG-APP-000033-DB-000084</p><h2>Rule Version</h2><p>MYS8-00-005400</p><h2>Severity</h2><p>CAT I</p><h2>CCI(s)</h2><ul><li>CCI-000213 - Enforce approved authorizations for logical access to information and system resources in accordance with applicable access control policies.</li></ul><h2>Weight</h2><p>10</p><h2>Fix Recommendation</h2><p>Configure the MySQL Database Server 8.0 settings and access controls to permit user access only to objects and data that the user is authorized to view or interact with, and to prevent access to all other objects and data.<br />
+<br />
+Use GRANT, REVOKE, ALTER statements to add and remove permissions on server-level securables, bringing them into line with the documented requirements.</p><h2>Check Contents</h2><p>Check MySQL settings to determine whether users are restricted from accessing objects and data they are not authorized to access. <br />
+Review the system documentation to determine the required levels of protection for DBMS server securables, by type of login. <br />
+<br />
+Review the permissions actually in place on the server. <br />
+<br />
+If the actual permissions do not match the documented requirements, this is a finding. <br />
+<br />
+The following tables contain access control data. Run these scripts:<br />
+<br />
+For information about database-level privileges:<br />
+The server uses the user and db tables in the mysql database at both the first and second stages of access control.<br />
+SELECT * FROM mysql.db;<br />
+SELECT * FROM mysql.user;<br />
+<br />
+During the second stage of access control, the server performs request verification to ensure each client has sufficient privileges for each request it issues. <br />
+<br />
+These provide finer privilege control at the table and column levels.<br />
+SELECT * FROM mysql.tables_priv;<br />
+SELECT * FROM mysql.columns_priv;<br />
+<br />
+For verification of requests that involve stored routines.<br />
+SELECT * FROM mysql.procs_priv;<br />
+Information about proxy accounts<br />
+SELECT * from mysql.proxies_priv;<br />
+<br />
+Lists current assignments of dynamic global privileges to user accounts.<br />
+SELECT * from mysql.global_grants;<br />
+Lists default user roles<br />
+SELECT * FROM mysql.default_roles;<br />
+<br />
+Lists edges for role subgraphs, showing roles assigned to other roles hierarchy.<br />
+SELECT * FROM mysql.role_edges;<br />
+<br />
+To inspect permissions on specific table(s):<br />
+WITH<br />
+  tableprivs AS (SELECT user, host, 'mysql.tables_priv' as PRIV_SOURCE , DB as _db, Table_Name as _obj , ' ' as _col FROM mysql.tables_priv where Table_name like '%' ),<br />
+  colprivs AS (SELECT User, Host, 'mysql.columns_priv' as PRIV_SOURCE , DB as _db, table_name as _obj , column_name as _col FROM mysql.columns_priv WHERE Table_name like '%' )<br />
+SELECT user,host, PRIV_SOURCE , _db as _db, _obj, _col FROM<br />
+(<br />
+SELECT user,host, PRIV_SOURCE, _db, _obj, _col FROM colprivs UNION<br />
+SELECT user,host, PRIV_SOURCE, _db, _obj, _col FROM tableprivs) as tt group by user, host, PRIV_SOURCE, _db, _obj, _col;<br />
+<br />
+To inspect specific user, role or user using role:<br />
+Example<br />
+User or role<br />
+SHOW GRANTS FOR 'app_developer'@'%';<br />
+User with Role<br />
+SHOW GRANTS FOR 'u1'@'localhost' USING 'r1';<br />
+<br />
+If appropriate access controls are not implemented to restrict access to authorized users and to restrict the access of those users to objects and data they are authorized to see, this is a finding.</p><h2>Vulnerability Number</h2><p>V-235141</p><h2>Documentable</h2><p>False</p><h2>Rule Version</h2><p>MYS8-00-005400</p><h2>Severity Override Guidance</h2><p>Check MySQL settings to determine whether users are restricted from accessing objects and data they are not authorized to access. <br />
+Review the system documentation to determine the required levels of protection for DBMS server securables, by type of login. <br />
+<br />
+Review the permissions actually in place on the server. <br />
+<br />
+If the actual permissions do not match the documented requirements, this is a finding. <br />
+<br />
+The following tables contain access control data. Run these scripts:<br />
+<br />
+For information about database-level privileges:<br />
+The server uses the user and db tables in the mysql database at both the first and second stages of access control.<br />
+SELECT * FROM mysql.db;<br />
+SELECT * FROM mysql.user;<br />
+<br />
+During the second stage of access control, the server performs request verification to ensure each client has sufficient privileges for each request it issues. <br />
+<br />
+These provide finer privilege control at the table and column levels.<br />
+SELECT * FROM mysql.tables_priv;<br />
+SELECT * FROM mysql.columns_priv;<br />
+<br />
+For verification of requests that involve stored routines.<br />
+SELECT * FROM mysql.procs_priv;<br />
+Information about proxy accounts<br />
+SELECT * from mysql.proxies_priv;<br />
+<br />
+Lists current assignments of dynamic global privileges to user accounts.<br />
+SELECT * from mysql.global_grants;<br />
+Lists default user roles<br />
+SELECT * FROM mysql.default_roles;<br />
+<br />
+Lists edges for role subgraphs, showing roles assigned to other roles hierarchy.<br />
+SELECT * FROM mysql.role_edges;<br />
+<br />
+To inspect permissions on specific table(s):<br />
+WITH<br />
+  tableprivs AS (SELECT user, host, 'mysql.tables_priv' as PRIV_SOURCE , DB as _db, Table_Name as _obj , ' ' as _col FROM mysql.tables_priv where Table_name like '%' ),<br />
+  colprivs AS (SELECT User, Host, 'mysql.columns_priv' as PRIV_SOURCE , DB as _db, table_name as _obj , column_name as _col FROM mysql.columns_priv WHERE Table_name like '%' )<br />
+SELECT user,host, PRIV_SOURCE , _db as _db, _obj, _col FROM<br />
+(<br />
+SELECT user,host, PRIV_SOURCE, _db, _obj, _col FROM colprivs UNION<br />
+SELECT user,host, PRIV_SOURCE, _db, _obj, _col FROM tableprivs) as tt group by user, host, PRIV_SOURCE, _db, _obj, _col;<br />
+<br />
+To inspect specific user, role or user using role:<br />
+Example<br />
+User or role<br />
+SHOW GRANTS FOR 'app_developer'@'%';<br />
+User with Role<br />
+SHOW GRANTS FOR 'u1'@'localhost' USING 'r1';<br />
+<br />
+If appropriate access controls are not implemented to restrict access to authorized users and to restrict the access of those users to objects and data they are authorized to see, this is a finding.</p><h2>Check Content Reference</h2><p>M</p><h2>Target Key</h2><p>5277</p></body></html>

@@ -1,0 +1,210 @@
+<!doctype html><html lang="en"><head><meta charset="utf-8"><title>STIGQter: STIG Check Details: SV-217044r1050855_rule: The Juniper out-of-band management (OOBM) gateway router must be configured to transport management traffic to the Network Operations Center (NOC) via dedicated circuit, MPLS/VPN service, or IPsec tunnel.</title><link rel="icon" type="image/svg+xml" href="STIGQter.svg" /><script async src="https://www.googletagmanager.com/gtag/js?id=UA-31381839-2"></script><script src="include.js"></script><script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-4110907817782130" crossorigin="anonymous"></script></head><body><div><img src="STIGQter.svg" alt="STIGQter" style="height:1em;" /> <a href="https://www.stigqter.com/">STIGQter</a>: <a href="main.html">STIG Summary</a>: <a href="U_Juniper_Router_RTR_STIG_V3R2_Manual-xccdf.html">Juniper Router RTR Security Technical Implementation Guide Version: 3 Release: 2 Benchmark Date: 30 Jan 2025</a>:</div> <h1>The Juniper out-of-band management (OOBM) gateway router must be configured to transport management traffic to the Network Operations Center (NOC) via dedicated circuit, MPLS/VPN service, or IPsec tunnel.</h1><h2>DISA Rule</h2><p>SV-217044r1050855_rule</p><h2>Vulnerability Number</h2><p>V-217044</p><h2>Group Title</h2><p>SRG-NET-000205-RTR-000009</p><h2>Rule Version</h2><p>JUNI-RT-000390</p><h2>Severity</h2><p>CAT II</p><h2>CCI(s)</h2><ul><li>CCI-001097 - Monitor and control communications at the external managed interfaces to the system and at key managed interfaces within the system.</li><li>CCI-004891 - Implement physically or logically separate subnetworks to isolate organization-defined critical system components and functions.</li></ul><h2>Weight</h2><p>10</p><h2>Fix Recommendation</h2><p>This requirement is not applicable for the DODIN backbone.<br />
+<br />
+Ensure that a dedicated circuit, MPLS/VPN service, or IPsec tunnel is deployed to transport management traffic between the managed network and the NOC. If an IPsec tunnel is to be used, the steps below can be used as a guideline.<br />
+<br />
+Configure an IPsec tunnel using commands similar to the example below.<br />
+<br />
+[edit security]<br />
+set ike proposal IKE_PHASE1_PROPOSAL authentication-method pre-shared-keys<br />
+set ike proposal IKE_PHASE1_PROPOSAL authentication-algorithm sha-256<br />
+set ike proposal IKE_PHASE1_PROPOSAL dh-group group14<br />
+set ike proposal IKE_PHASE1_PROPOSAL encryption-algorithm aes-256-cbc<br />
+set ike policy 10.1.25.2 proposals IKE_PHASE1_PROPOSAL<br />
+set ike policy 10.1.25.2 mode main<br />
+set ike policy 10.1.25.2 pre-shared-key ascii-text xxxxxxxxx<br />
+set ipsec proposal IPSEC_PHASE2_PROPOSAL protocol esp<br />
+set ipsec proposal IPSEC_PHASE2_PROPOSAL authentication-algorithm hmac-sha1-96<br />
+set ipsec proposal IPSEC_PHASE2_PROPOSAL encryption-algorithm aes-256-cbc<br />
+set ipsec security-association IPSEC_SA_MGMT mode tunnel<br />
+set ipsec security-association IPSEC_SA_MGMT dynamic ipsec-policy IPSEC_POLICY<br />
+<br />
+Configure a filter to define the management traffic to be forwarded into the IPsec tunnel.<br />
+<br />
+[edit firewall family inet]<br />
+set filter MGMT_TRAFFIC term ALLOW_SNMP from protocol udp port [snmp snmptrap]<br />
+set filter MGMT_TRAFFIC term ALLOW_SNMP then ipsec-sa IPSEC_SA_MGMT<br />
+set filter MGMT_TRAFFIC term ALLOW_TACACS from protocol tcp port tacacs<br />
+set filter MGMT_TRAFFIC term ALLOW_TACACS then ipsec-sa IPSEC_SA_MGMT<br />
+set filter MGMT_TRAFFIC term ALLOW_NETFLOW from protocol udp port [2055 9995 9996]<br />
+set filter MGMT_TRAFFIC term ALLOW_NETFLOW then ipsec-sa IPSEC_SA_MGMT<br />
+set filter MGMT_TRAFFIC term OTHER then accept</p><h2>Check Contents</h2><p>This requirement is not applicable for the DODIN backbone.<br />
+<br />
+Review the network topology diagram to determine connectivity between the managed network and the NOC. Review the OOBM gateway router configuration to validate the path and interface that the management traffic traverses. If an IPsec tunnel is used to transport the management traffic between the NOC and the managed network, review the configuration following the steps below.<br />
+<br />
+Review the security association within the IPsec configuration to be used for encapsulating the management traffic and verify that it is in tunnel mode. Also note the security association to be used.<br />
+<br />
+security {<br />
+    ipsec {<br />
+        proposal IPSEC_PHASE2_PROPOSAL {<br />
+            protocol esp;<br />
+            authentication-algorithm hmac-sha1-96;<br />
+            encryption-algorithm aes-128-cbc;<br />
+        }<br />
+        policy IPSEC_POLICY {<br />
+            perfect-forward-secrecy {<br />
+                keys group14;<br />
+            }<br />
+            proposals IPSEC_PHASE2_PROPOSAL;<br />
+        }<br />
+        security-association IPSEC-SA_XYZ {<br />
+            description &quot;For XYZ&quot;;<br />
+            mode transport;<br />
+            manual {<br />
+                direction bidirectional {<br />
+                    protocol ah;<br />
+                    spi 256;<br />
+                    authentication {<br />
+                        algorithm hmac-sha1-96;<br />
+                        key ascii-text &quot;$8$oPJjH.P5F69mSHqPQn6u0RhSreW-dsZGi8XYoZDmP&quot;; ## SECRET-DATA<br />
+                    }<br />
+                }<br />
+            }<br />
+        }<br />
+        security-association IPSEC_SA_MGMT {<br />
+            description &quot;IPsec Tunnel for Mgmt Traffic&quot;;<br />
+            mode tunnel;<br />
+            dynamic {<br />
+                ipsec-policy IPSEC_POLICY;<br />
+            }<br />
+        }<br />
+    }<br />
+    ike {<br />
+        proposal IKE_PHASE1_PROPOSAL {<br />
+            authentication-method pre-shared-keys;<br />
+            dh-group group14;<br />
+            authentication-algorithm sha-256;<br />
+            encryption-algorithm aes-256-cbc;<br />
+        }<br />
+        policy 10.1.25.2 {<br />
+            mode main;<br />
+            proposals IKE_PHASE1_PROPOSAL;<br />
+            pre-shared-key ascii-text &quot;$8$J4UDkCA01IcHqEy&quot;; ## SECRET-DATA<br />
+        }<br />
+    }<br />
+<br />
+Verify there is a filter to direct the management traffic to the IPsec tunnel by verifying the name of the IPsec SA referenced in the then statement as shown in the example below.<br />
+<br />
+firewall {<br />
+    family inet {<br />
+        …<br />
+        …<br />
+        …<br />
+       filter MGMT_TRAFFIC {<br />
+            term ALLOW_SNMP {<br />
+                from {<br />
+                    protocol udp;<br />
+                    port [ snmp snmptrap ];<br />
+                }<br />
+                then ipsec-sa IPSEC_SA_MGMT;<br />
+            }<br />
+            term ALLOW_TACACS {<br />
+                from {<br />
+                    protocol tcp;<br />
+                    port tacacs;<br />
+                }<br />
+                then ipsec-sa IPSEC_SA_MGMT;<br />
+            }<br />
+            term ALLOW_NETFLOW {<br />
+                from {<br />
+                    protocol udp;<br />
+                    port [ 2055 9995 9996 ];<br />
+                }<br />
+                then ipsec-sa IPSEC_SA_MGMT;<br />
+            }<br />
+            term OTHER {<br />
+                then accept;<br />
+            }<br />
+        }<br />
+    }<br />
+<br />
+If management traffic is not transported between the managed network and the NOC via dedicated circuit, MPLS/VPN service, or IPsec tunnel, this is a finding.</p><h2>Vulnerability Number</h2><p>V-217044</p><h2>Documentable</h2><p>False</p><h2>Rule Version</h2><p>JUNI-RT-000390</p><h2>Severity Override Guidance</h2><p>This requirement is not applicable for the DODIN backbone.<br />
+<br />
+Review the network topology diagram to determine connectivity between the managed network and the NOC. Review the OOBM gateway router configuration to validate the path and interface that the management traffic traverses. If an IPsec tunnel is used to transport the management traffic between the NOC and the managed network, review the configuration following the steps below.<br />
+<br />
+Review the security association within the IPsec configuration to be used for encapsulating the management traffic and verify that it is in tunnel mode. Also note the security association to be used.<br />
+<br />
+security {<br />
+    ipsec {<br />
+        proposal IPSEC_PHASE2_PROPOSAL {<br />
+            protocol esp;<br />
+            authentication-algorithm hmac-sha1-96;<br />
+            encryption-algorithm aes-128-cbc;<br />
+        }<br />
+        policy IPSEC_POLICY {<br />
+            perfect-forward-secrecy {<br />
+                keys group14;<br />
+            }<br />
+            proposals IPSEC_PHASE2_PROPOSAL;<br />
+        }<br />
+        security-association IPSEC-SA_XYZ {<br />
+            description &quot;For XYZ&quot;;<br />
+            mode transport;<br />
+            manual {<br />
+                direction bidirectional {<br />
+                    protocol ah;<br />
+                    spi 256;<br />
+                    authentication {<br />
+                        algorithm hmac-sha1-96;<br />
+                        key ascii-text &quot;$8$oPJjH.P5F69mSHqPQn6u0RhSreW-dsZGi8XYoZDmP&quot;; ## SECRET-DATA<br />
+                    }<br />
+                }<br />
+            }<br />
+        }<br />
+        security-association IPSEC_SA_MGMT {<br />
+            description &quot;IPsec Tunnel for Mgmt Traffic&quot;;<br />
+            mode tunnel;<br />
+            dynamic {<br />
+                ipsec-policy IPSEC_POLICY;<br />
+            }<br />
+        }<br />
+    }<br />
+    ike {<br />
+        proposal IKE_PHASE1_PROPOSAL {<br />
+            authentication-method pre-shared-keys;<br />
+            dh-group group14;<br />
+            authentication-algorithm sha-256;<br />
+            encryption-algorithm aes-256-cbc;<br />
+        }<br />
+        policy 10.1.25.2 {<br />
+            mode main;<br />
+            proposals IKE_PHASE1_PROPOSAL;<br />
+            pre-shared-key ascii-text &quot;$8$J4UDkCA01IcHqEy&quot;; ## SECRET-DATA<br />
+        }<br />
+    }<br />
+<br />
+Verify there is a filter to direct the management traffic to the IPsec tunnel by verifying the name of the IPsec SA referenced in the then statement as shown in the example below.<br />
+<br />
+firewall {<br />
+    family inet {<br />
+        …<br />
+        …<br />
+        …<br />
+       filter MGMT_TRAFFIC {<br />
+            term ALLOW_SNMP {<br />
+                from {<br />
+                    protocol udp;<br />
+                    port [ snmp snmptrap ];<br />
+                }<br />
+                then ipsec-sa IPSEC_SA_MGMT;<br />
+            }<br />
+            term ALLOW_TACACS {<br />
+                from {<br />
+                    protocol tcp;<br />
+                    port tacacs;<br />
+                }<br />
+                then ipsec-sa IPSEC_SA_MGMT;<br />
+            }<br />
+            term ALLOW_NETFLOW {<br />
+                from {<br />
+                    protocol udp;<br />
+                    port [ 2055 9995 9996 ];<br />
+                }<br />
+                then ipsec-sa IPSEC_SA_MGMT;<br />
+            }<br />
+            term OTHER {<br />
+                then accept;<br />
+            }<br />
+        }<br />
+    }<br />
+<br />
+If management traffic is not transported between the managed network and the NOC via dedicated circuit, MPLS/VPN service, or IPsec tunnel, this is a finding.</p><h2>Check Content Reference</h2><p>M</p><h2>Target Key</h2><p>4032</p></body></html>

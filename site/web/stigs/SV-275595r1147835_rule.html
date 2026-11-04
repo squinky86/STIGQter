@@ -1,0 +1,22 @@
+<!doctype html><html lang="en"><head><meta charset="utf-8"><title>STIGQter: STIG Check Details: SV-275595r1147835_rule: Ubuntu OS must configure the directories used by the system journal to be owned by &quot;root&quot;.</title><link rel="icon" type="image/svg+xml" href="STIGQter.svg" /><script async src="https://www.googletagmanager.com/gtag/js?id=UA-31381839-2"></script><script src="include.js"></script><script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-4110907817782130" crossorigin="anonymous"></script></head><body><div><img src="STIGQter.svg" alt="STIGQter" style="height:1em;" /> <a href="https://www.stigqter.com/">STIGQter</a>: <a href="main.html">STIG Summary</a>: <a href="U_RB_NetIM_OS_STIG_V1R1_Manual-xccdf.html">Riverbed NetIM OS Security Technical Implementation Guide Version: 1 Release: 1 Benchmark Date: 11 Sep 2025</a>:</div> <h1>Ubuntu OS must configure the directories used by the system journal to be owned by &quot;root&quot;.</h1><h2>DISA Rule</h2><p>SV-275595r1147835_rule</p><h2>Vulnerability Number</h2><p>V-275595</p><h2>Group Title</h2><p>SRG-OS-000206-GPOS-00084</p><h2>Rule Version</h2><p>RIIM-OS-232080</p><h2>Severity</h2><p>CAT II</p><h2>CCI(s)</h2><ul><li>CCI-000366 - Implement the security configuration settings.</li></ul><h2>Weight</h2><p>10</p><h2>Fix Recommendation</h2><p>Configure Ubuntu OS to set the appropriate ownership to the directories used by the systemd journal: <br />
+ <br />
+Add or modify the following lines in the &quot;/usr/lib/tmpfiles.d/systemd.conf&quot; file: <br />
+ <br />
+z /run/log/journal 2640 root systemd-journal - - <br />
+z /var/log/journal 2640 root systemd-journal - - <br />
+ <br />
+Restart the system for the changes to take effect.</p><h2>Check Contents</h2><p>Verify the /run/log/journal and /var/log/journal directories are owned by &quot;root&quot; by using the following command: <br />
+ <br />
+     $ sudo find /run/log/journal /var/log/journal  -type d -exec stat -c &quot;%n %U&quot; {} \; <br />
+     /run/log/journal root <br />
+     /var/log/journal root <br />
+     /var/log/journal/3b018e681c904487b11671b9c1987cce root <br />
+ <br />
+If any output returned is not owned by &quot;root&quot;, this is a finding.</p><h2>Vulnerability Number</h2><p>V-275595</p><h2>Documentable</h2><p>False</p><h2>Rule Version</h2><p>RIIM-OS-232080</p><h2>Severity Override Guidance</h2><p>Verify the /run/log/journal and /var/log/journal directories are owned by &quot;root&quot; by using the following command: <br />
+ <br />
+     $ sudo find /run/log/journal /var/log/journal  -type d -exec stat -c &quot;%n %U&quot; {} \; <br />
+     /run/log/journal root <br />
+     /var/log/journal root <br />
+     /var/log/journal/3b018e681c904487b11671b9c1987cce root <br />
+ <br />
+If any output returned is not owned by &quot;root&quot;, this is a finding.</p><h2>Check Content Reference</h2><p>M</p><h2>Target Key</h2><p>5706</p></body></html>

@@ -1,0 +1,64 @@
+<!doctype html><html lang="en"><head><meta charset="utf-8"><title>STIGQter: STIG Check Details: SV-239861r665904_rule: The Cisco ASA perimeter firewall must be configured to filter traffic destined to the enclave in accordance with the specific traffic that is approved and registered in the Ports, Protocols, and Services Management (PPSM)  Category Assurance List (CAL) and vulnerability assessments.</title><link rel="icon" type="image/svg+xml" href="STIGQter.svg" /><script async src="https://www.googletagmanager.com/gtag/js?id=UA-31381839-2"></script><script src="include.js"></script><script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-4110907817782130" crossorigin="anonymous"></script></head><body><div><img src="STIGQter.svg" alt="STIGQter" style="height:1em;" /> <a href="https://www.stigqter.com/">STIGQter</a>: <a href="main.html">STIG Summary</a>: <a href="U_Cisco_ASA_Firewall_STIG_V2R1_Manual-xccdf.html">Cisco ASA Firewall Security Technical Implementation Guide Version: 2 Release: 1 Benchmark Date: 24 Jul 2024</a>:</div> <h1>The Cisco ASA perimeter firewall must be configured to filter traffic destined to the enclave in accordance with the specific traffic that is approved and registered in the Ports, Protocols, and Services Management (PPSM)  Category Assurance List (CAL) and vulnerability assessments.</h1><h2>DISA Rule</h2><p>SV-239861r665904_rule</p><h2>Vulnerability Number</h2><p>V-239861</p><h2>Group Title</h2><p>SRG-NET-000205-FW-000040</p><h2>Rule Version</h2><p>CASA-FW-000170</p><h2>Severity</h2><p>CAT II</p><h2>CCI(s)</h2><ul><li>CCI-001097 - Monitor and control communications at the external managed interfaces to the system and at key managed interfaces within the system.</li></ul><h2>Weight</h2><p>10</p><h2>Fix Recommendation</h2><p>Step 1: Configure the ingress ACL similar to the example below.<br />
+<br />
+ASA(config)# access-list OUTSIDE_IN extended permit tcp any any eq https<br />
+ASA(config)# access-list OUTSIDE_IN extended permit tcp any any eq http<br />
+ASA(config)# access-list OUTSIDE_IN extended permit tcp any any eq domain<br />
+ASA(config)# access-list OUTSIDE_IN extended permit tcp any any eq ftp   <br />
+ASA(config)# access-list OUTSIDE_IN extended permit tcp any any eq ftp-data<br />
+ASA(config)# access-list OUTSIDE_IN extended permit udp any any eq sip<br />
+ASA(config)# access-list OUTSIDE_IN extended deny ip any any log      <br />
+<br />
+Step 2: Apply the ACL inbound on the external interface as shown in the example below.<br />
+<br />
+ASA(config)# access-group OUTSIDE_IN in interface OUTSIDE <br />
+ASA(config)# end</p><h2>Check Contents</h2><p>Review the inbound ACL to verify the ports and services allowed are in accordance with the PPSM CAL.<br />
+<br />
+Review the ASA configuration to determine if it only permits inbound traffic using authorized ports and services.<br />
+<br />
+Step 1: Verify that an ingress ACL has been applied to the external interface as shown in the example below.<br />
+<br />
+ interface GigabitEthernet0/0<br />
+ nameif OUTSIDE<br />
+ security-level 0<br />
+ ip address x.1.11.1 255.255.255.0<br />
+…<br />
+…<br />
+…<br />
+access-group OUTSIDE_IN in interface OUTSIDE<br />
+<br />
+Step 2: Verify that the ingress ACL only allows inbound traffic in accordance with the PPSM CAL as shown in the example below.<br />
+<br />
+access-list OUTSIDE_IN extended permit tcp any any eq www <br />
+access-list OUTSIDE_IN extended permit tcp any any eq https <br />
+access-list OUTSIDE_IN extended permit tcp any any eq domain <br />
+access-list OUTSIDE_IN extended permit tcp any any eq ftp <br />
+access-list OUTSIDE_IN extended permit tcp any any eq ftp-data <br />
+access-list OUTSIDE_IN extended permit udp any any eq sip <br />
+access-list OUTSIDE_IN extended deny ip any any log<br />
+<br />
+If the ASA is not configured to only allow inbound traffic in accordance with the PPSM CAL, this is a finding.</p><h2>Vulnerability Number</h2><p>V-239861</p><h2>Documentable</h2><p>False</p><h2>Rule Version</h2><p>CASA-FW-000170</p><h2>Severity Override Guidance</h2><p>Review the inbound ACL to verify the ports and services allowed are in accordance with the PPSM CAL.<br />
+<br />
+Review the ASA configuration to determine if it only permits inbound traffic using authorized ports and services.<br />
+<br />
+Step 1: Verify that an ingress ACL has been applied to the external interface as shown in the example below.<br />
+<br />
+ interface GigabitEthernet0/0<br />
+ nameif OUTSIDE<br />
+ security-level 0<br />
+ ip address x.1.11.1 255.255.255.0<br />
+…<br />
+…<br />
+…<br />
+access-group OUTSIDE_IN in interface OUTSIDE<br />
+<br />
+Step 2: Verify that the ingress ACL only allows inbound traffic in accordance with the PPSM CAL as shown in the example below.<br />
+<br />
+access-list OUTSIDE_IN extended permit tcp any any eq www <br />
+access-list OUTSIDE_IN extended permit tcp any any eq https <br />
+access-list OUTSIDE_IN extended permit tcp any any eq domain <br />
+access-list OUTSIDE_IN extended permit tcp any any eq ftp <br />
+access-list OUTSIDE_IN extended permit tcp any any eq ftp-data <br />
+access-list OUTSIDE_IN extended permit udp any any eq sip <br />
+access-list OUTSIDE_IN extended deny ip any any log<br />
+<br />
+If the ASA is not configured to only allow inbound traffic in accordance with the PPSM CAL, this is a finding.</p><h2>Check Content Reference</h2><p>M</p><h2>Target Key</h2><p>5339</p></body></html>

@@ -1,0 +1,102 @@
+<!doctype html><html lang="en"><head><meta charset="utf-8"><title>STIGQter: STIG Check Details: SV-270502r1167738_rule: Oracle Database must provide audit record generation capability for organization-defined auditable events within the database.</title><link rel="icon" type="image/svg+xml" href="STIGQter.svg" /><script async src="https://www.googletagmanager.com/gtag/js?id=UA-31381839-2"></script><script src="include.js"></script><script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-4110907817782130" crossorigin="anonymous"></script></head><body><div><img src="STIGQter.svg" alt="STIGQter" style="height:1em;" /> <a href="https://www.stigqter.com/">STIGQter</a>: <a href="main.html">STIG Summary</a>: <a href="U_Oracle_Database_19c_STIG_V1R5_Manual-xccdf.html">Oracle Database 19c Security Technical Implementation Guide Version: 1 Release: 5 Benchmark Date: 01 Apr 2026</a>:</div> <h1>Oracle Database must provide audit record generation capability for organization-defined auditable events within the database.</h1><h2>DISA Rule</h2><p>SV-270502r1167738_rule</p><h2>Vulnerability Number</h2><p>V-270502</p><h2>Group Title</h2><p>SRG-APP-000089-DB-000064</p><h2>Rule Version</h2><p>O19C-00-001800</p><h2>Severity</h2><p>CAT II</p><h2>CCI(s)</h2><ul><li>CCI-000169 - Provide audit record generation capability for the event types the system is capable of auditing as defined in AU-2 a. on organization-defined information system components.</li></ul><h2>Weight</h2><p>10</p><h2>Fix Recommendation</h2><p>Configure the DBMS's auditing to audit organization-defined auditable events. If preferred, use a third-party tool. The tool must provide the minimum capability to audit the required events.<br />
+<br />
+If using a third-party product, proceed in accordance with the product documentation. If using Oracle's capabilities, proceed as follows.<br />
+<br />
+If Standard Auditing is used:<br />
+Use this process to ensure auditable events are captured:<br />
+<br />
+ALTER SYSTEM SET AUDIT_TRAIL=&lt;audit trail type&gt; SID='*' SCOPE=SPFILE;<br />
+<br />
+Audit trail type can be 'OS', 'DB', 'DB,EXTENDED', 'XML' or 'XML,EXTENDED'.<br />
+<br />
+After executing this statement, it may be necessary to shut down and restart the Oracle database.<br />
+<br />
+If the site-specific audit requirements are not covered by the default audit options, deploy and configure Fine-Grained Auditing. For details, refer to Oracle documentation at the locations below.<br />
+<br />
+If Unified Auditing is used:<br />
+Use this process to ensure auditable events are captured:<br />
+<br />
+Link the oracle binary with uniaud_on, and then restart the database. Oracle Database Upgrade Guide describes how to enable unified auditing.<br />
+For more information on the configuration of auditing, refer to the following documents:<br />
+<br />
+&quot;Auditing Database Activity&quot; in the Oracle Database 2 Day + Security Guide:<br />
+https://docs.oracle.com/en/database/oracle/oracle-database/19/dbseg/index.html<br />
+<br />
+&quot;Monitoring Database Activity with Auditing&quot; in the Oracle Database Security Guide: <br />
+https://docs.oracle.com/en/database/oracle/oracle-database/19/dbseg/index.html<br />
+<br />
+&quot;DBMS_AUDIT_MGMT&quot; in the Oracle Database PL/SQL Packages and Types Reference:<br />
+https://docs.oracle.com/en/database/oracle/oracle-database/19/arpls/<br />
+<br />
+Oracle Database Upgrade Guide:<br />
+https://docs.oracle.com/en/database/oracle/oracle-database/19/upgrd/index.html<br />
+<br />
+If the site-specific audit requirements are not covered by the default audit options, deploy and configure Fine-Grained Auditing. For details, refer to Oracle documentation at the locations above.</p><h2>Check Contents</h2><p>Using vendor and system documentation, if necessary, verify the DBMS is configured to use Oracle's auditing features, or that a third-party product or custom code is deployed and configured to satisfy this requirement.<br />
+<br />
+If a third-party product or custom code is used, compare its current configuration with the audit requirements. If any of the requirements is not covered by the configuration, this is a finding.<br />
+<br />
+The remainder of this Check is applicable specifically where Oracle auditing is in use.<br />
+<br />
+If Standard Auditing is used:<br />
+To verify Oracle is configured to capture audit data, enter the following SQL*Plus command:<br />
+<br />
+SHOW PARAMETER AUDIT_TRAIL<br />
+<br />
+Or the following SQL query:<br />
+<br />
+col display_value format a10<br />
+col default_value format a10<br />
+SELECT inst_id, con_id, display_value, default_value, isdefault<br />
+FROM sys.gv_$parameter WHERE name = 'audit_trail';<br />
+<br />
+If Oracle returns the value &quot;NONE&quot;, this is a finding.<br />
+<br />
+To confirm Oracle audit is capturing information on the required events, review the contents of the SYS.AUD$ table or the audit file, whichever is in use. If auditable events are not listed, this is a finding.<br />
+<br />
+If Unified Auditing is used:<br />
+To verify Oracle is configured to capture audit data, enter the following SQL*Plus command:<br />
+<br />
+col value format a10<br />
+SELECT inst_id, con_id, value<br />
+FROM sys.gv_$option<br />
+WHERE parameter = 'Unified Auditing';<br />
+<br />
+If the query returns something other than &quot;TRUE&quot;, this is a finding.<br />
+<br />
+To confirm Oracle audit is capturing information on the required events, review the contents of the SYS.UNIFIED_AUDIT_TRAIL view.<br />
+<br />
+If auditable events are not listed, this is a finding.</p><h2>Vulnerability Number</h2><p>V-270502</p><h2>Documentable</h2><p>False</p><h2>Rule Version</h2><p>O19C-00-001800</p><h2>Severity Override Guidance</h2><p>Using vendor and system documentation, if necessary, verify the DBMS is configured to use Oracle's auditing features, or that a third-party product or custom code is deployed and configured to satisfy this requirement.<br />
+<br />
+If a third-party product or custom code is used, compare its current configuration with the audit requirements. If any of the requirements is not covered by the configuration, this is a finding.<br />
+<br />
+The remainder of this Check is applicable specifically where Oracle auditing is in use.<br />
+<br />
+If Standard Auditing is used:<br />
+To verify Oracle is configured to capture audit data, enter the following SQL*Plus command:<br />
+<br />
+SHOW PARAMETER AUDIT_TRAIL<br />
+<br />
+Or the following SQL query:<br />
+<br />
+col display_value format a10<br />
+col default_value format a10<br />
+SELECT inst_id, con_id, display_value, default_value, isdefault<br />
+FROM sys.gv_$parameter WHERE name = 'audit_trail';<br />
+<br />
+If Oracle returns the value &quot;NONE&quot;, this is a finding.<br />
+<br />
+To confirm Oracle audit is capturing information on the required events, review the contents of the SYS.AUD$ table or the audit file, whichever is in use. If auditable events are not listed, this is a finding.<br />
+<br />
+If Unified Auditing is used:<br />
+To verify Oracle is configured to capture audit data, enter the following SQL*Plus command:<br />
+<br />
+col value format a10<br />
+SELECT inst_id, con_id, value<br />
+FROM sys.gv_$option<br />
+WHERE parameter = 'Unified Auditing';<br />
+<br />
+If the query returns something other than &quot;TRUE&quot;, this is a finding.<br />
+<br />
+To confirm Oracle audit is capturing information on the required events, review the contents of the SYS.UNIFIED_AUDIT_TRAIL view.<br />
+<br />
+If auditable events are not listed, this is a finding.</p><h2>Check Content Reference</h2><p>M</p><h2>Target Key</h2><p>5672</p></body></html>

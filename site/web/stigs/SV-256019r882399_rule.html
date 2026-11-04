@@ -1,0 +1,57 @@
+<!doctype html><html lang="en"><head><meta charset="utf-8"><title>STIGQter: STIG Check Details: SV-256019r882399_rule: The Arista perimeter router must be configured to filter egress traffic at the internal interface on an inbound direction.</title><link rel="icon" type="image/svg+xml" href="STIGQter.svg" /><script async src="https://www.googletagmanager.com/gtag/js?id=UA-31381839-2"></script><script src="include.js"></script><script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-4110907817782130" crossorigin="anonymous"></script></head><body><div><img src="STIGQter.svg" alt="STIGQter" style="height:1em;" /> <a href="https://www.stigqter.com/">STIGQter</a>: <a href="main.html">STIG Summary</a>: <a href="U_Arista_MLS_EOS_4-X_Router_STIG_V2R2_Manual-xccdf.html">Arista MLS EOS 4.X Router Security Technical Implementation Guide Version: 2 Release: 2 Benchmark Date: 02 Apr 2025</a>:</div> <h1>The Arista perimeter router must be configured to filter egress traffic at the internal interface on an inbound direction.</h1><h2>DISA Rule</h2><p>SV-256019r882399_rule</p><h2>Vulnerability Number</h2><p>V-256019</p><h2>Group Title</h2><p>SRG-NET-000205-RTR-000005</p><h2>Rule Version</h2><p>ARST-RT-000380</p><h2>Severity</h2><p>CAT II</p><h2>CCI(s)</h2><ul><li>CCI-001097 - Monitor and control communications at the external managed interfaces to the system and at key managed interfaces within the system.</li></ul><h2>Weight</h2><p>10</p><h2>Fix Recommendation</h2><p>This requirement is not applicable for the DODIN backbone.<br />
+<br />
+Step 1: Configure an egress ACL bound to the internal interface in an inbound direction to filter traffic leaving the network.<br />
+<br />
+Leaf2(config)#ip access-list WAN_OUT<br />
+Leaf2(config-acl-WAN_OUT)#10 permit tcp any host 180.20.10.1 eq ssh telnet<br />
+Leaf2(config-acl-WAN_OUT)#20 permit ip any 190.16.10.0/24 <br />
+Leaf2(config-acl-WAN_OUT)#30 permit udp any host 67.56.10.2 eq bootps snmp <br />
+Leaf2(config-acl-WAN_OUT)#40 deny tcp any 208.73.210.0 0.0.1.255<br />
+Leaf2(config-acl-WAN_OUT)#50 deny udp any 208.73.210.0 0.0.1.255<br />
+Leaf2(config-acl-WAN_OUT)#60 deny icmp any any<br />
+Leaf2(config-acl-WAN_OUT)#70 permit ip any any<br />
+<br />
+Step 2: Apply the ACL inbound on all external interfaces.<br />
+<br />
+Leaf2(config)#interface ethernet 8<br />
+Leaf2(config-if-Et8)#  ip access-group WAN_OUT in</p><h2>Check Contents</h2><p>This requirement is not applicable for the DODIN backbone. <br />
+<br />
+Review the Arista router configuration to verify the egress ACL is bound to the internal interface in an inbound direction.<br />
+<br />
+Step 1: To verify the egress ACL is bound to the internal interface in an inbound direction, execute the command &quot;sh ip access-list&quot;.<br />
+<br />
+ip access-list WAN_OUT<br />
+   10 permit tcp any host 180.20.10.1 eq ssh telnet<br />
+   20 permit ip any 190.16.10.0/24 <br />
+   30 permit udp any 67.56.10.2 eq bootps snmp<br />
+   40 deny tcp any 208.73.210.0 0.0.1.255<br />
+   50 deny udp any 208.73.210.0 0.0.1.255<br />
+   60 deny icmp any any<br />
+   70 permit ip any any<br />
+<br />
+Step 2: To verify the ACL is applied inbound on all external interfaces, execute the command &quot;sh run int Eth YY&quot;.<br />
+<br />
+interface ethernet 8<br />
+  ip access-group WAN_OUT in<br />
+<br />
+If the Arista router is not configured to filter traffic leaving the network at the internal interface in an inbound direction, this is a finding.</p><h2>Vulnerability Number</h2><p>V-256019</p><h2>Documentable</h2><p>False</p><h2>Rule Version</h2><p>ARST-RT-000380</p><h2>Severity Override Guidance</h2><p>This requirement is not applicable for the DODIN backbone. <br />
+<br />
+Review the Arista router configuration to verify the egress ACL is bound to the internal interface in an inbound direction.<br />
+<br />
+Step 1: To verify the egress ACL is bound to the internal interface in an inbound direction, execute the command &quot;sh ip access-list&quot;.<br />
+<br />
+ip access-list WAN_OUT<br />
+   10 permit tcp any host 180.20.10.1 eq ssh telnet<br />
+   20 permit ip any 190.16.10.0/24 <br />
+   30 permit udp any 67.56.10.2 eq bootps snmp<br />
+   40 deny tcp any 208.73.210.0 0.0.1.255<br />
+   50 deny udp any 208.73.210.0 0.0.1.255<br />
+   60 deny icmp any any<br />
+   70 permit ip any any<br />
+<br />
+Step 2: To verify the ACL is applied inbound on all external interfaces, execute the command &quot;sh run int Eth YY&quot;.<br />
+<br />
+interface ethernet 8<br />
+  ip access-group WAN_OUT in<br />
+<br />
+If the Arista router is not configured to filter traffic leaving the network at the internal interface in an inbound direction, this is a finding.</p><h2>Check Content Reference</h2><p>M</p><h2>Target Key</h2><p>5513</p></body></html>

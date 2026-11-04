@@ -1,0 +1,95 @@
+<!doctype html><html lang="en"><head><meta charset="utf-8"><title>STIGQter: STIG Check Details: SV-235138r1018613_rule: If passwords are used for authentication, the MySQL Database Server 8.0 must store only hashed, salted representations of passwords.</title><link rel="icon" type="image/svg+xml" href="STIGQter.svg" /><script async src="https://www.googletagmanager.com/gtag/js?id=UA-31381839-2"></script><script src="include.js"></script><script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-4110907817782130" crossorigin="anonymous"></script></head><body><div><img src="STIGQter.svg" alt="STIGQter" style="height:1em;" /> <a href="https://www.stigqter.com/">STIGQter</a>: <a href="main.html">STIG Summary</a>: <a href="U_Oracle_MySQL_8-0_STIG_V2R2_Manual-xccdf.html">Oracle MySQL 8.0 Security Technical Implementation Guide Version: 2 Release: 2 Benchmark Date: 24 Oct 2024</a>:</div> <h1>If passwords are used for authentication, the MySQL Database Server 8.0 must store only hashed, salted representations of passwords.</h1><h2>DISA Rule</h2><p>SV-235138r1018613_rule</p><h2>Vulnerability Number</h2><p>V-235138</p><h2>Group Title</h2><p>SRG-APP-000171-DB-000074</p><h2>Rule Version</h2><p>MYS8-00-005100</p><h2>Severity</h2><p>CAT II</p><h2>CCI(s)</h2><ul><li>CCI-004062 - For password-based authentication, store passwords using an approved salted key derivation function, preferably using a keyed hash.</li></ul><h2>Weight</h2><p>10</p><h2>Fix Recommendation</h2><p>Develop, document, and maintain a list of DBMS database objects, database configuration files, associated scripts, and applications defined within or external to the DBMS that access the database, and DBMS/user environment files/settings in the System Security Plan.<br />
+<br />
+Record whether they do or do not contain DBMS passwords. If passwords are present, ensure they are encoded or encrypted and protected by host system security.<br />
+<br />
+Where possible, alter the authentication mode to X509 or LDAP SASL/Kerberos:<br />
+Just X509 certificate - for example<br />
+ALTER USER 'jeffrey'@'localhost' REQUIRE X509;<br />
+<br />
+Specific X509 example:<br />
+ALTER USER 'jeffrey'@'localhost'<br />
+  REQUIRE SUBJECT '/C=SE/ST=Stockholm/L=Stockholm/<br />
+    O=MySQL demo client certificate/<br />
+    CN=client/emailAddress=client@example.com'<br />
+  AND ISSUER '/C=SE/ST=Stockholm/L=Stockholm/<br />
+    O=MySQL/CN=CA/emailAddress=ca@example.com'<br />
+AND CIPHER 'EDH-RSA-DES-CBC3-SHA’;<br />
+<br />
+LDAP SASL example:<br />
+CREATE USER 'boris'@'localhost'<br />
+  IDENTIFIED WITH authentication_ldap_sasl<br />
+  AS 'uid=boris_ldap,ou=People,dc=example,dc=com';<br />
+<br />
+If password authentication is necessary, then for mysql and mysqlsh command lines which cannot be configured not to accept a plain-text password when mixed-mode authentication is enabled, and any other essential tool with the same limitation:<br />
+1) Document the need for it, who uses it, any relevant mitigations, and obtain AO approval.<br />
+2) Train all users of the tool in the importance of not using the plain-text password option and in how to keep the password hidden.</p><h2>Check Contents</h2><p>MySQL stores and displays its user passwords in encrypted form. Nevertheless, this should be verified by reviewing the relevant system views, along with the other items to be checked here.<br />
+<br />
+Ask the database administrator (DBA) to review the list of DBMS database objects, database configuration files, associated scripts, and applications defined within, and external to, the DBMS that accesses the database. The list must also include files, tables, or settings used to configure the operational environment for the DBMS and for interactive DBMS user accounts.<br />
+<br />
+Ask the DBA and/or information system security officer (ISSO) to determine if any DBMS database objects, database configuration files, associated scripts, and applications defined within or external to the DBMS that access the database, and DBMS/user environment files/settings/tables, contain database passwords. If any do, confirm that DBMS passwords stored internally or externally to the DBMS are encoded or encrypted.<br />
+<br />
+If any passwords are stored in clear text, this is a finding.<br />
+<br />
+Ask the DBA/System Administrator (SA)/Application Support staff if they have created an external password store for applications, batch jobs, and scripts to use. Verify that all passwords stored there are encrypted.<br />
+<br />
+If a password store is used and any password is not encrypted, this is a finding.<br />
+<br />
+Run this query to determine which MySQL Server authentication methods are enabled:<br />
+SELECT PLUGIN_NAME, PLUGIN_STATUS<br />
+       FROM INFORMATION_SCHEMA.PLUGINS<br />
+       WHERE PLUGIN_NAME LIKE '%ldap%' OR <br />
+       PLUGIN_NAME LIKE '%ldap%' OR <br />
+       PLUGIN_NAME LIKE '%pam%' OR <br />
+       PLUGIN_NAME like '%password';<br />
+<br />
+If the results return any of the following values:<br />
+'mysql_native_password','ACTIVE'<br />
+'sha256_password','ACTIVE'<br />
+'caching_sha2_password’,’ACTIVE’<br />
+<br />
+Next, determine if any accounts have been created that use passwords.<br />
+SELECT user, host,<br />
+    `user`.`plugin`<br />
+FROM `mysql`.`user` where <br />
+(user.plugin like '%password') <br />
+AND NOT<br />
+(user like 'mysql.%' or user ='root');<br />
+<br />
+For the mysql or mysqlsh command line tools, which can be configured to accept a plain-text password, and any other essential tool with the same limitation, verify that the system documentation explains the need for the tool, who uses it, and any relevant mitigations; and that AO approval has been obtained; if not, this is a finding.<br />
+<br />
+Request evidence that all users of the tool are trained in the importance of not using the plain-text password option; how to keep the password hidden; and adherence to this practice. If they are not, this is a finding.</p><h2>Vulnerability Number</h2><p>V-235138</p><h2>Documentable</h2><p>False</p><h2>Rule Version</h2><p>MYS8-00-005100</p><h2>Severity Override Guidance</h2><p>MySQL stores and displays its user passwords in encrypted form. Nevertheless, this should be verified by reviewing the relevant system views, along with the other items to be checked here.<br />
+<br />
+Ask the database administrator (DBA) to review the list of DBMS database objects, database configuration files, associated scripts, and applications defined within, and external to, the DBMS that accesses the database. The list must also include files, tables, or settings used to configure the operational environment for the DBMS and for interactive DBMS user accounts.<br />
+<br />
+Ask the DBA and/or information system security officer (ISSO) to determine if any DBMS database objects, database configuration files, associated scripts, and applications defined within or external to the DBMS that access the database, and DBMS/user environment files/settings/tables, contain database passwords. If any do, confirm that DBMS passwords stored internally or externally to the DBMS are encoded or encrypted.<br />
+<br />
+If any passwords are stored in clear text, this is a finding.<br />
+<br />
+Ask the DBA/System Administrator (SA)/Application Support staff if they have created an external password store for applications, batch jobs, and scripts to use. Verify that all passwords stored there are encrypted.<br />
+<br />
+If a password store is used and any password is not encrypted, this is a finding.<br />
+<br />
+Run this query to determine which MySQL Server authentication methods are enabled:<br />
+SELECT PLUGIN_NAME, PLUGIN_STATUS<br />
+       FROM INFORMATION_SCHEMA.PLUGINS<br />
+       WHERE PLUGIN_NAME LIKE '%ldap%' OR <br />
+       PLUGIN_NAME LIKE '%ldap%' OR <br />
+       PLUGIN_NAME LIKE '%pam%' OR <br />
+       PLUGIN_NAME like '%password';<br />
+<br />
+If the results return any of the following values:<br />
+'mysql_native_password','ACTIVE'<br />
+'sha256_password','ACTIVE'<br />
+'caching_sha2_password’,’ACTIVE’<br />
+<br />
+Next, determine if any accounts have been created that use passwords.<br />
+SELECT user, host,<br />
+    `user`.`plugin`<br />
+FROM `mysql`.`user` where <br />
+(user.plugin like '%password') <br />
+AND NOT<br />
+(user like 'mysql.%' or user ='root');<br />
+<br />
+For the mysql or mysqlsh command line tools, which can be configured to accept a plain-text password, and any other essential tool with the same limitation, verify that the system documentation explains the need for the tool, who uses it, and any relevant mitigations; and that AO approval has been obtained; if not, this is a finding.<br />
+<br />
+Request evidence that all users of the tool are trained in the importance of not using the plain-text password option; how to keep the password hidden; and adherence to this practice. If they are not, this is a finding.</p><h2>Check Content Reference</h2><p>M</p><h2>Target Key</h2><p>5277</p></body></html>

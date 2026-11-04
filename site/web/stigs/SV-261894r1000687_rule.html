@@ -1,0 +1,33 @@
+<!doctype html><html lang="en"><head><meta charset="utf-8"><title>STIGQter: STIG Check Details: SV-261894r1000687_rule: PostgreSQL must enforce authorized access to all PKI private keys stored/used by PostgreSQL.</title><link rel="icon" type="image/svg+xml" href="STIGQter.svg" /><script async src="https://www.googletagmanager.com/gtag/js?id=UA-31381839-2"></script><script src="include.js"></script><script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-4110907817782130" crossorigin="anonymous"></script></head><body><div><img src="STIGQter.svg" alt="STIGQter" style="height:1em;" /> <a href="https://www.stigqter.com/">STIGQter</a>: <a href="main.html">STIG Summary</a>: <a href="U_CD_Postgres_16_STIG_V1R3_Manual-xccdf.html">Crunchy Data Postgres 16 Security Technical Implementation Guide Version: 1 Release: 3 Benchmark Date: 01 Jul 2026</a>:</div> <h1>PostgreSQL must enforce authorized access to all PKI private keys stored/used by PostgreSQL.</h1><h2>DISA Rule</h2><p>SV-261894r1000687_rule</p><h2>Vulnerability Number</h2><p>V-261894</p><h2>Group Title</h2><p>SRG-APP-000176-DB-000068</p><h2>Rule Version</h2><p>CD16-00-004100</p><h2>Severity</h2><p>CAT I</p><h2>CCI(s)</h2><ul><li>CCI-000186 - For public key-based authentication, enforce authorized access to the corresponding private key.</li></ul><h2>Weight</h2><p>10</p><h2>Fix Recommendation</h2><p>Note: The following instructions use the PGDATA and PGVER environment variables. Refer to APPENDIX-F for instructions on configuring PGDATA and APPENDIX-H for PGVER.<br />
+<br />
+Store all PostgreSQL PKI private keys in a FIPS 140-2-validated cryptographic module.<br />
+<br />
+Ensure access to PostgreSQL PKI private keys is restricted to only authenticated and authorized users.<br />
+<br />
+PostgreSQL private key(s) can be stored in $PGDATA directory, which is only accessible by the database owner (usually postgres, DBA) user. Do not allow access to this system account to unauthorized users.<br />
+<br />
+To put the keys in a different directory, as the database administrator (shown here as &quot;postgres&quot;), set the following settings to a protected directory:<br />
+<br />
+$ sudo su - postgres<br />
+$ vi ${PGDATA?}/postgresql.conf<br />
+ssl_ca_file = &quot;/some/protected/directory/root.crt&quot;<br />
+ssl_crl_file = &quot;/some/protected/directory/root.crl&quot;<br />
+ssl_cert_file = &quot;/some/protected/directory/server.crt&quot;<br />
+ssl_key_file = &quot;/some/protected/directory/server.key&quot;<br />
+<br />
+As the system administrator, restart the server with the new configuration:<br />
+<br />
+# SYSTEMD SERVER ONLY<br />
+$ sudo systemctl restart postgresql-${PGVER?}<br />
+<br />
+For more information on configuring PostgreSQL to use SSL, refer to supplementary content APPENDIX-G.</p><h2>Check Contents</h2><p>As the database administrator (shown here as &quot;postgres&quot;), verify the following settings:<br />
+<br />
+$ sudo su - postgres<br />
+$ psql -c &quot;select name,                                                         case when setting = '' then                                                                            '&lt;undefined&gt;'                                                                                      when substring(setting, 1, 1) = '/' then                                                               setting                                                                                            else (select setting from pg_settings where name = 'data_directory') || '/' || setting               end as setting                                                                                     from pg_settings                                                                                     where name in ('ssl_ca_file', 'ssl_cert_file', 'ssl_crl_file', 'ssl_key_file');&quot;<br />
+<br />
+If the directory in which these files are stored is not protected, this is a finding.</p><h2>Vulnerability Number</h2><p>V-261894</p><h2>Documentable</h2><p>False</p><h2>Rule Version</h2><p>CD16-00-004100</p><h2>Severity Override Guidance</h2><p>As the database administrator (shown here as &quot;postgres&quot;), verify the following settings:<br />
+<br />
+$ sudo su - postgres<br />
+$ psql -c &quot;select name,                                                         case when setting = '' then                                                                            '&lt;undefined&gt;'                                                                                      when substring(setting, 1, 1) = '/' then                                                               setting                                                                                            else (select setting from pg_settings where name = 'data_directory') || '/' || setting               end as setting                                                                                     from pg_settings                                                                                     where name in ('ssl_ca_file', 'ssl_cert_file', 'ssl_crl_file', 'ssl_key_file');&quot;<br />
+<br />
+If the directory in which these files are stored is not protected, this is a finding.</p><h2>Check Content Reference</h2><p>M</p><h2>Target Key</h2><p>5598</p></body></html>

@@ -1,0 +1,39 @@
+<!doctype html><html lang="en"><head><meta charset="utf-8"><title>STIGQter: STIG Check Details: SV-279568r1192085_rule: Nutanix OS must immediately notify the system administrator (SA) and information system security officer (ISSO) (at a minimum) when allocated audit record storage volume reaches 75 percent of the repository maximum audit record storage capacity.</title><link rel="icon" type="image/svg+xml" href="STIGQter.svg" /><script async src="https://www.googletagmanager.com/gtag/js?id=UA-31381839-2"></script><script src="include.js"></script><script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-4110907817782130" crossorigin="anonymous"></script></head><body><div><img src="STIGQter.svg" alt="STIGQter" style="height:1em;" /> <a href="https://www.stigqter.com/">STIGQter</a>: <a href="main.html">STIG Summary</a>: <a href="U_NTX_Acropolis_OS_STIG_V1R1_Manual-xccdf.html">Nutanix Acropolis GPOS Security Technical Implementation Guide Version: 1 Release: 1 Benchmark Date: 26 Jan 2026</a>:</div> <h1>Nutanix OS must immediately notify the system administrator (SA) and information system security officer (ISSO) (at a minimum) when allocated audit record storage volume reaches 75 percent of the repository maximum audit record storage capacity.</h1><h2>DISA Rule</h2><p>SV-279568r1192085_rule</p><h2>Vulnerability Number</h2><p>V-279568</p><h2>Group Title</h2><p>SRG-OS-000343-GPOS-00134</p><h2>Rule Version</h2><p>NXAC-OS-000091</p><h2>Severity</h2><p>CAT III</p><h2>CCI(s)</h2><ul><li>CCI-001855 - Provide a warning to organization-defined personnel, roles, and/or locations within an organization-defined time period when allocated audit log storage volume reaches an organization-defined percentage of repository maximum audit log storage capacity.</li></ul><h2>Weight</h2><p>10</p><h2>Fix Recommendation</h2><p>1. For AOS, configure the audit rules.<br />
+<br />
+$ sudo salt-call state.sls security/CVM/auditCVM<br />
+<br />
+2. For Prism Central, configure the audit rules.<br />
+<br />
+$ sudo salt-call state.sls security/PCVM/auditPCVM<br />
+<br />
+3. For Files, configure the audit rules.<br />
+<br />
+$ sudo salt-call state.sls security/AFS/auditAFS<br />
+<br />
+4. For AHV, configure the audit rules.<br />
+<br />
+$ sudo salt-call state.sls security/KVM/auditKVM</p><h2>Check Contents</h2><p>1. Verify Nutanix OS is configured to act when allocated audit record storage volume reaches 75 percent utilization using the following command.<br />
+<br />
+$ sudo grep -w space_left /etc/audit/auditd.conf<br />
+space_left = 25%<br />
+<br />
+If the value of the &quot;space_left&quot; keyword is not set to &quot;25%&quot;, or is commented out, this is a finding.<br />
+<br />
+2. Run the following command. <br />
+<br />
+$ sudo grep -w space_left_action /etc/audit/auditd.conf<br />
+space_left_action = SYSLOG<br />
+<br />
+If the value of the &quot;space_left_action&quot; is not set to &quot;SYSLOG&quot; or is commented out, this is a finding.</p><h2>Vulnerability Number</h2><p>V-279568</p><h2>Documentable</h2><p>False</p><h2>Rule Version</h2><p>NXAC-OS-000091</p><h2>Severity Override Guidance</h2><p>1. Verify Nutanix OS is configured to act when allocated audit record storage volume reaches 75 percent utilization using the following command.<br />
+<br />
+$ sudo grep -w space_left /etc/audit/auditd.conf<br />
+space_left = 25%<br />
+<br />
+If the value of the &quot;space_left&quot; keyword is not set to &quot;25%&quot;, or is commented out, this is a finding.<br />
+<br />
+2. Run the following command. <br />
+<br />
+$ sudo grep -w space_left_action /etc/audit/auditd.conf<br />
+space_left_action = SYSLOG<br />
+<br />
+If the value of the &quot;space_left_action&quot; is not set to &quot;SYSLOG&quot; or is commented out, this is a finding.</p><h2>Check Content Reference</h2><p>M</p><h2>Target Key</h2><p>5730</p></body></html>

@@ -1,0 +1,98 @@
+<!doctype html><html lang="en"><head><meta charset="utf-8"><title>STIGQter: STIG Check Details: SV-239870r665896_rule: The Cisco ASA must be configured to inspect all inbound and outbound IPv6 traffic for unknown or out-of-order extension headers.</title><link rel="icon" type="image/svg+xml" href="STIGQter.svg" /><script async src="https://www.googletagmanager.com/gtag/js?id=UA-31381839-2"></script><script src="include.js"></script><script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-4110907817782130" crossorigin="anonymous"></script></head><body><div><img src="STIGQter.svg" alt="STIGQter" style="height:1em;" /> <a href="https://www.stigqter.com/">STIGQter</a>: <a href="main.html">STIG Summary</a>: <a href="U_Cisco_ASA_Firewall_STIG_V2R1_Manual-xccdf.html">Cisco ASA Firewall Security Technical Implementation Guide Version: 2 Release: 1 Benchmark Date: 24 Jul 2024</a>:</div> <h1>The Cisco ASA must be configured to inspect all inbound and outbound IPv6 traffic for unknown or out-of-order extension headers.</h1><h2>DISA Rule</h2><p>SV-239870r665896_rule</p><h2>Vulnerability Number</h2><p>V-239870</p><h2>Group Title</h2><p>SRG-NET-000364-FW-000041</p><h2>Rule Version</h2><p>CASA-FW-000280</p><h2>Severity</h2><p>CAT II</p><h2>CCI(s)</h2><ul><li>CCI-000366 - Implement the security configuration settings.</li></ul><h2>Weight</h2><p>10</p><h2>Fix Recommendation</h2><p>Configure the firewall to inspect all inbound and outbound IPv6 traffic for unknown or out-of-order extension headers.<br />
+<br />
+Step 1 (optional): Configure an IPv6 inspect policy map.<br />
+<br />
+ASA(config)# policy-map type inspect  ipv6 IPV6_MAP <br />
+ASA(config-pmap)# parameters<br />
+ASA(config-pmap-p)# verify-header type <br />
+ASA(config-pmap-p)# verify-header order<br />
+ASA(config-pmap-p)# exit<br />
+ASA(config-pmap)# match header hop-by-hop <br />
+ASA(config-pmap-c)# drop log <br />
+ASA(config-pmap-c)# exit <br />
+ASA(config-pmap)# match header routing-type eq 0<br />
+ASA(config-pmap-c)# drop log <br />
+ASA(config-pmap-c)# exit<br />
+ASA(config-pmap)# match header routing-type eq 1<br />
+ASA(config-pmap-c)# drop log <br />
+ASA(config-pmap-c)# exit<br />
+ASA(config-pmap)# match header routing-type range 3 255<br />
+ASA(config-pmap-c)# drop log <br />
+ASA(config-pmap-c)# exit<br />
+<br />
+Note: The verify-header type and verify-header order are enabled by default when the parameters command is configured.<br />
+<br />
+Step 2: Include the inspect ipv6 command in the global policy-map as shown in the example below.<br />
+<br />
+ASA(config)# policy-map global_policy<br />
+ASA(config-pmap)# class inspection_default<br />
+ASA(config-pmap-c)# inspect ipv6<br />
+ASA(config-pmap-c)# end</p><h2>Check Contents</h2><p>Review the firewall configuration to verify that IPv6 inspection is being performed on all interfaces.<br />
+<br />
+Step 1: Verify that the inspect ipv6 command is configured under the global policy map as shown in the example below.<br />
+<br />
+policy-map global_policy<br />
+ class inspection_default<br />
+  …<br />
+  …<br />
+  …<br />
+  inspect ipv6 IPV6_MAP<br />
+<br />
+Step 2: If a policy map is specified for the inspect ipv6 command, verify the parameters command has been configured. Also verify that the “no verify-header order” and “no verify-header type” sub-command are not configured under the parameters command.<br />
+<br />
+policy-map type inspect ipv6 IPV6_MAP<br />
+ parameters<br />
+ match header hop-by-hop<br />
+  drop log<br />
+match header routing-type eq 0<br />
+  drop log<br />
+match header routing-type eq 1<br />
+  drop log<br />
+match header routing-type range 3 255<br />
+  drop log<br />
+ match header destination-option<br />
+  drop log<br />
+<br />
+Note: If policy map is not specified for the inspect ipv6 command, the default IPv6 inspection policy map is used and the following actions are taken:<br />
+<br />
+1. Allows only known IPv6 extension headers. Non-conforming packets are dropped and logged.<br />
+2. Enforces the order of IPv6 extension headers as defined in the RFC 2460 specification. Non-conforming packets are dropped and logged.<br />
+3. Drops any packet with a routing type header.<br />
+<br />
+Note: This requirement is not applicable if IPv6 is not enabled on any interfaces.<br />
+<br />
+If the firewall is not configured to inspect all inbound and outbound IPv6 traffic for unknown or out-of-order extension headers, this is a finding.</p><h2>Vulnerability Number</h2><p>V-239870</p><h2>Documentable</h2><p>False</p><h2>Rule Version</h2><p>CASA-FW-000280</p><h2>Severity Override Guidance</h2><p>Review the firewall configuration to verify that IPv6 inspection is being performed on all interfaces.<br />
+<br />
+Step 1: Verify that the inspect ipv6 command is configured under the global policy map as shown in the example below.<br />
+<br />
+policy-map global_policy<br />
+ class inspection_default<br />
+  …<br />
+  …<br />
+  …<br />
+  inspect ipv6 IPV6_MAP<br />
+<br />
+Step 2: If a policy map is specified for the inspect ipv6 command, verify the parameters command has been configured. Also verify that the “no verify-header order” and “no verify-header type” sub-command are not configured under the parameters command.<br />
+<br />
+policy-map type inspect ipv6 IPV6_MAP<br />
+ parameters<br />
+ match header hop-by-hop<br />
+  drop log<br />
+match header routing-type eq 0<br />
+  drop log<br />
+match header routing-type eq 1<br />
+  drop log<br />
+match header routing-type range 3 255<br />
+  drop log<br />
+ match header destination-option<br />
+  drop log<br />
+<br />
+Note: If policy map is not specified for the inspect ipv6 command, the default IPv6 inspection policy map is used and the following actions are taken:<br />
+<br />
+1. Allows only known IPv6 extension headers. Non-conforming packets are dropped and logged.<br />
+2. Enforces the order of IPv6 extension headers as defined in the RFC 2460 specification. Non-conforming packets are dropped and logged.<br />
+3. Drops any packet with a routing type header.<br />
+<br />
+Note: This requirement is not applicable if IPv6 is not enabled on any interfaces.<br />
+<br />
+If the firewall is not configured to inspect all inbound and outbound IPv6 traffic for unknown or out-of-order extension headers, this is a finding.</p><h2>Check Content Reference</h2><p>M</p><h2>Target Key</h2><p>5339</p></body></html>

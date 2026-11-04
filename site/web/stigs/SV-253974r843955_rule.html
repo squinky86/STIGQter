@@ -1,0 +1,260 @@
+<!doctype html><html lang="en"><head><meta charset="utf-8"><title>STIGQter: STIG Check Details: SV-253974r843955_rule: The Juniper BGP router must be configured to reject inbound route advertisements for any Bogon prefixes.</title><link rel="icon" type="image/svg+xml" href="STIGQter.svg" /><script async src="https://www.googletagmanager.com/gtag/js?id=UA-31381839-2"></script><script src="include.js"></script><script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-4110907817782130" crossorigin="anonymous"></script></head><body><div><img src="STIGQter.svg" alt="STIGQter" style="height:1em;" /> <a href="https://www.stigqter.com/">STIGQter</a>: <a href="main.html">STIG Summary</a>: <a href="U_Juniper_EX_Switches_RTR_STIG_V2R1_Manual-xccdf.html">Juniper EX Series Switches Router Security Technical Implementation Guide Version: 2 Release: 1 Benchmark Date: 24 Jul 2024</a>:</div> <h1>The Juniper BGP router must be configured to reject inbound route advertisements for any Bogon prefixes.</h1><h2>DISA Rule</h2><p>SV-253974r843955_rule</p><h2>Vulnerability Number</h2><p>V-253974</p><h2>Group Title</h2><p>SRG-NET-000018-RTR-000002</p><h2>Rule Version</h2><p>JUEX-RT-000020</p><h2>Severity</h2><p>CAT II</p><h2>CCI(s)</h2><ul><li>CCI-001368 - Enforce approved authorizations for controlling the flow of information within the system based on organization-defined information flow control policies.</li></ul><h2>Weight</h2><p>10</p><h2>Fix Recommendation</h2><p>Ensure all eBGP routers are configured to reject inbound route advertisements for any currently defined Bogon prefixes.<br />
+<br />
+set policy-options route-filter-list bogon 0.0.0.0/8 orlonger<br />
+set policy-options route-filter-list bogon 10.0.0.0/8 orlonger<br />
+set policy-options route-filter-list bogon 100.64.0.0/10 orlonger<br />
+set policy-options route-filter-list bogon 127.0.0.0/8 orlonger<br />
+set policy-options route-filter-list bogon 169.254.0.0/16 orlonger<br />
+set policy-options route-filter-list bogon 172.16.0.0/12 orlonger<br />
+set policy-options route-filter-list bogon 192.0.0.0/24 orlonger<br />
+set policy-options route-filter-list bogon 192.0.2.0/24 orlonger<br />
+set policy-options route-filter-list bogon 192.168.0.0/16 orlonger<br />
+set policy-options route-filter-list bogon 198.18.0.0/15 orlonger<br />
+set policy-options route-filter-list bogon 198.51.100.0/24 orlonger<br />
+set policy-options route-filter-list bogon 203.0.113.0/24 orlonger<br />
+set policy-options route-filter-list bogon 224.0.0.0/4 orlonger<br />
+set policy-options route-filter-list bogon 240.0.0.0/4 orlonger<br />
+<br />
+set policy-options route-filter-list bogon-ipv6 ::/128 exact<br />
+set policy-options route-filter-list bogon-ipv6 ::1/128 exact<br />
+set policy-options route-filter-list bogon-ipv6 ::ffff:0:0/96 orlonger<br />
+set policy-options route-filter-list bogon-ipv6 ::/96 orlonger<br />
+set policy-options route-filter-list bogon-ipv6 100::/64 orlonger<br />
+set policy-options route-filter-list bogon-ipv6 2001:10::/28 orlonger<br />
+set policy-options route-filter-list bogon-ipv6 2001:db8::/32 orlonger<br />
+set policy-options route-filter-list bogon-ipv6 fc00::/7 orlonger<br />
+set policy-options route-filter-list bogon-ipv6 fe80::/10 orlonger<br />
+set policy-options route-filter-list bogon-ipv6 fec0::/10 orlonger<br />
+set policy-options route-filter-list bogon-ipv6 ff00::/8 orlonger<br />
+<br />
+set policy-options policy-statement bgp-discard term 1 from route-filter-list bogon<br />
+set policy-options policy-statement bgp-discard term 1 from route-filter-list bogon-ipv6<br />
+set policy-options policy-statement bgp-discard term 1 then reject<br />
+<br />
+set protocols bgp group eBGP import bgp-discard<br />
+set protocols bgp group eBGP neighbor 192.0.2.2 import bgp-discard<br />
+set protocols bgp import bgp-discard</p><h2>Check Contents</h2><p>Review the BGP router configuration to verify that it will reject routes of any currently defined Bogon prefixes.<br />
+<br />
+Example route-filter-list of Bogon addresses with corresponding policy-statement referencing the list:<br />
+[edit policy-options]<br />
+route-filter-list bogon {<br />
+    /* This host on this network */<br />
+    0.0.0.0/8 orlonger;<br />
+    /* CGN Addresses */<br />
+    100.64.0.0/10 orlonger;<br />
+    /* Loopback */<br />
+    127.0.0.0/8 orlonger;<br />
+    /* IPv4 link-local or APIPA */<br />
+    169.254.0.0/16 orlonger;<br />
+    /* IETF Protocol Assignments (/24) and DS-Lite (/29) */<br />
+    192.0.0.0/24 orlonger;<br />
+    /* IPv4 documentation addresses: TEST-NET-1 */<br />
+    192.0.2.0/24 orlonger;<br />
+    /* 6to4 Relay Anycast descr in RFC3068 */<br />
+    192.88.99.0/24 orlonger;<br />
+    /* Benchmark testing descr in RFC2544 */<br />
+    198.18.0.0/15 orlonger;<br />
+    /* IPv4 documentation addresses: TEST-NET-2 */<br />
+    198.51.100.0/24 orlonger;<br />
+    /* IPv4 documentation addresses: TEST-NET-3 */<br />
+    203.0.113.0/24 orlonger;<br />
+    /* Multicast */<br />
+    224.0.0.0/24 orlonger;<br />
+    /* Reserved */<br />
+    240.0.0.0/4 orlonger;<br />
+    /* RFC1918 Addresses */<br />
+    10.0.0.0/8 orlonger;<br />
+    172.16.0.0/12 orlonger;<br />
+    192.168.0.0/16 orlonger;<br />
+    &lt;add additional routes as needed&gt;<br />
+}<br />
+route-filter-list bogon-ipv6 {<br />
+    /* Includes unspecified (::/128) and loopback (::1/128) */<br />
+    ::/8 orlonger;<br />
+    /* IPv4-mapped */<br />
+    ::ffff:0:0/96 orlonger;<br />
+    /* IPv4 Compatible */<br />
+    ::/96 orlonger;<br />
+    /* 6Bone */<br />
+    3ffe::/16 orlonger;<br />
+    /* IPv4-IPv6 Translate */<br />
+    64:ff9b::/96 orlonger;<br />
+    /* Reserved - 100::/8 includes Discard-Only (100::/64) */<br />
+    100::/8 orlonger;<br />
+    200::/7 orlonger;<br />
+    400::/6 orlonger;<br />
+    800::/5 orlonger;<br />
+    1000::/4 orlonger;<br />
+    4000::/3 orlonger;<br />
+    6000::/3 orlonger;<br />
+    8000::/3 orlonger;<br />
+    a000::/3 orlonger;<br />
+    c000::/3 orlonger;<br />
+    e000::/4 orlonger;<br />
+    f000::/5 orlonger;<br />
+    f800::/6 orlonger;<br />
+    fe00::/9 orlonger;<br />
+    /* IETF Protocol Assignments */<br />
+    2001::/23 orlonger;<br />
+    /* TEREDO */<br />
+    2001::/32 orlonger;<br />
+    /* Benchmarking */<br />
+    2001:2::/48 orlonger;<br />
+    /* Documentation */<br />
+    2001:db8::/32 orlonger;<br />
+    /* ORCHID */<br />
+    2001:10::/28 orlonger;<br />
+    /* 6to4 */<br />
+    2002::/16 orlonger;<br />
+    /* Unique-Local */<br />
+    fc00::/7 orlonger;<br />
+    /* Linked-Scoped Unicast */<br />
+    fe80::/10 orlonger;<br />
+    /* Site local (deprecated) - now reserved */<br />
+    fec0::/10 orlonger;<br />
+    /* Multicast */<br />
+    ff00::/8 orlonger;<br />
+    &lt;add additional routes as needed&gt;<br />
+}<br />
+Note: The comments (/* comment */) are annotations used to easily identify each list item. Annotations are not required. To add annotations, navigate to the appropriate hierarchy level (&quot;edit policy-options route-filter-list &lt;list name&gt;&quot; in this example) and use the &quot;annotate&quot; command (annotate &lt;list item&gt; &quot;desired comment&quot;).<br />
+<br />
+policy-statement bgp-discard {<br />
+    term 1 {<br />
+        from {<br />
+            route-filter-list bogon;<br />
+            route-filter-list bogon-ipv6;<br />
+        }<br />
+        then reject;<br />
+    }<br />
+    &lt;add additional terms as needed&gt;<br />
+}<br />
+Note: Using a route-filter-list permits list reuse as well as easing management because the policy-statement only need reference the list once. Other terms within the same policy-statement can be added without affecting the Bogon list.<br />
+<br />
+The prefix filter must be referenced inbound on the appropriate BGP neighbor statements.<br />
+<br />
+Verify the eBGP import statement prevents Junos from importing routes into the route table. Junos accepts import statements at three hierarchy levels: Global protocol, group, and neighbor (peer). Global is the most general, followed by group, and neighbor is the most restrictive. Junos applies only the most restrictive policy so if a policy is configured at the protocol, group, and neighbor level, only the neighbor policy is applied.<br />
+[edit protocols bgp]<br />
+group eBGP {<br />
+    &lt;other group configuration&gt;<br />
+    import bgp-discard;<br />
+    neighbor 192.0.2.2 {<br />
+        &lt;other neighbor configuration&gt;<br />
+        import bgp-discard;<br />
+    }<br />
+}<br />
+import bgp-discard;<br />
+&lt;other BGP configuration&gt;<br />
+<br />
+If the router is not configured to reject inbound route advertisements for any Bogon prefixes, this is a finding.</p><h2>Vulnerability Number</h2><p>V-253974</p><h2>Documentable</h2><p>False</p><h2>Rule Version</h2><p>JUEX-RT-000020</p><h2>Severity Override Guidance</h2><p>Review the BGP router configuration to verify that it will reject routes of any currently defined Bogon prefixes.<br />
+<br />
+Example route-filter-list of Bogon addresses with corresponding policy-statement referencing the list:<br />
+[edit policy-options]<br />
+route-filter-list bogon {<br />
+    /* This host on this network */<br />
+    0.0.0.0/8 orlonger;<br />
+    /* CGN Addresses */<br />
+    100.64.0.0/10 orlonger;<br />
+    /* Loopback */<br />
+    127.0.0.0/8 orlonger;<br />
+    /* IPv4 link-local or APIPA */<br />
+    169.254.0.0/16 orlonger;<br />
+    /* IETF Protocol Assignments (/24) and DS-Lite (/29) */<br />
+    192.0.0.0/24 orlonger;<br />
+    /* IPv4 documentation addresses: TEST-NET-1 */<br />
+    192.0.2.0/24 orlonger;<br />
+    /* 6to4 Relay Anycast descr in RFC3068 */<br />
+    192.88.99.0/24 orlonger;<br />
+    /* Benchmark testing descr in RFC2544 */<br />
+    198.18.0.0/15 orlonger;<br />
+    /* IPv4 documentation addresses: TEST-NET-2 */<br />
+    198.51.100.0/24 orlonger;<br />
+    /* IPv4 documentation addresses: TEST-NET-3 */<br />
+    203.0.113.0/24 orlonger;<br />
+    /* Multicast */<br />
+    224.0.0.0/24 orlonger;<br />
+    /* Reserved */<br />
+    240.0.0.0/4 orlonger;<br />
+    /* RFC1918 Addresses */<br />
+    10.0.0.0/8 orlonger;<br />
+    172.16.0.0/12 orlonger;<br />
+    192.168.0.0/16 orlonger;<br />
+    &lt;add additional routes as needed&gt;<br />
+}<br />
+route-filter-list bogon-ipv6 {<br />
+    /* Includes unspecified (::/128) and loopback (::1/128) */<br />
+    ::/8 orlonger;<br />
+    /* IPv4-mapped */<br />
+    ::ffff:0:0/96 orlonger;<br />
+    /* IPv4 Compatible */<br />
+    ::/96 orlonger;<br />
+    /* 6Bone */<br />
+    3ffe::/16 orlonger;<br />
+    /* IPv4-IPv6 Translate */<br />
+    64:ff9b::/96 orlonger;<br />
+    /* Reserved - 100::/8 includes Discard-Only (100::/64) */<br />
+    100::/8 orlonger;<br />
+    200::/7 orlonger;<br />
+    400::/6 orlonger;<br />
+    800::/5 orlonger;<br />
+    1000::/4 orlonger;<br />
+    4000::/3 orlonger;<br />
+    6000::/3 orlonger;<br />
+    8000::/3 orlonger;<br />
+    a000::/3 orlonger;<br />
+    c000::/3 orlonger;<br />
+    e000::/4 orlonger;<br />
+    f000::/5 orlonger;<br />
+    f800::/6 orlonger;<br />
+    fe00::/9 orlonger;<br />
+    /* IETF Protocol Assignments */<br />
+    2001::/23 orlonger;<br />
+    /* TEREDO */<br />
+    2001::/32 orlonger;<br />
+    /* Benchmarking */<br />
+    2001:2::/48 orlonger;<br />
+    /* Documentation */<br />
+    2001:db8::/32 orlonger;<br />
+    /* ORCHID */<br />
+    2001:10::/28 orlonger;<br />
+    /* 6to4 */<br />
+    2002::/16 orlonger;<br />
+    /* Unique-Local */<br />
+    fc00::/7 orlonger;<br />
+    /* Linked-Scoped Unicast */<br />
+    fe80::/10 orlonger;<br />
+    /* Site local (deprecated) - now reserved */<br />
+    fec0::/10 orlonger;<br />
+    /* Multicast */<br />
+    ff00::/8 orlonger;<br />
+    &lt;add additional routes as needed&gt;<br />
+}<br />
+Note: The comments (/* comment */) are annotations used to easily identify each list item. Annotations are not required. To add annotations, navigate to the appropriate hierarchy level (&quot;edit policy-options route-filter-list &lt;list name&gt;&quot; in this example) and use the &quot;annotate&quot; command (annotate &lt;list item&gt; &quot;desired comment&quot;).<br />
+<br />
+policy-statement bgp-discard {<br />
+    term 1 {<br />
+        from {<br />
+            route-filter-list bogon;<br />
+            route-filter-list bogon-ipv6;<br />
+        }<br />
+        then reject;<br />
+    }<br />
+    &lt;add additional terms as needed&gt;<br />
+}<br />
+Note: Using a route-filter-list permits list reuse as well as easing management because the policy-statement only need reference the list once. Other terms within the same policy-statement can be added without affecting the Bogon list.<br />
+<br />
+The prefix filter must be referenced inbound on the appropriate BGP neighbor statements.<br />
+<br />
+Verify the eBGP import statement prevents Junos from importing routes into the route table. Junos accepts import statements at three hierarchy levels: Global protocol, group, and neighbor (peer). Global is the most general, followed by group, and neighbor is the most restrictive. Junos applies only the most restrictive policy so if a policy is configured at the protocol, group, and neighbor level, only the neighbor policy is applied.<br />
+[edit protocols bgp]<br />
+group eBGP {<br />
+    &lt;other group configuration&gt;<br />
+    import bgp-discard;<br />
+    neighbor 192.0.2.2 {<br />
+        &lt;other neighbor configuration&gt;<br />
+        import bgp-discard;<br />
+    }<br />
+}<br />
+import bgp-discard;<br />
+&lt;other BGP configuration&gt;<br />
+<br />
+If the router is not configured to reject inbound route advertisements for any Bogon prefixes, this is a finding.</p><h2>Check Content Reference</h2><p>M</p><h2>Target Key</h2><p>5479</p></body></html>

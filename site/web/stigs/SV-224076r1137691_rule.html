@@ -1,0 +1,42 @@
+<!doctype html><html lang="en"><head><meta charset="utf-8"><title>STIGQter: STIG Check Details: SV-224076r1137691_rule: IBM z/OS BPX resource(s) must be protected in accordance with security requirements.</title><link rel="icon" type="image/svg+xml" href="STIGQter.svg" /><script async src="https://www.googletagmanager.com/gtag/js?id=UA-31381839-2"></script><script src="include.js"></script><script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-4110907817782130" crossorigin="anonymous"></script></head><body><div><img src="STIGQter.svg" alt="STIGQter" style="height:1em;" /> <a href="https://www.stigqter.com/">STIGQter</a>: <a href="main.html">STIG Summary</a>: <a href="U_IBM_zOS_TSS_STIG_V9R9_Manual-xccdf.html">IBM z/OS TSS Security Technical Implementation Guide Version: 9 Release: 9 Benchmark Date: 01 Jul 2026</a>:</div> <h1>IBM z/OS BPX resource(s) must be protected in accordance with security requirements.</h1><h2>DISA Rule</h2><p>SV-224076r1137691_rule</p><h2>Vulnerability Number</h2><p>V-224076</p><h2>Group Title</h2><p>SRG-OS-000080-GPOS-00048</p><h2>Rule Version</h2><p>TSS0-US-000030</p><h2>Severity</h2><p>CAT II</p><h2>CCI(s)</h2><ul><li>CCI-000213 - Enforce approved authorizations for logical access to information and system resources in accordance with applicable access control policies.</li></ul><h2>Weight</h2><p>10</p><h2>Fix Recommendation</h2><p>Because they convey especially powerful privileges, the settings for BPX.DAEMON, BPX.SAFFASTPATH, BPX.SERVER, and BPX.SUPERUSER require special attention. <br />
+<br />
+Review the following items for the IBMFAC resource class: <br />
+<br />
+-The TSS owner defined for the BPX resource. <br />
+-There are no TSS rules that allow access to the BPX resource. <br />
+-There are no TSS rules for BPX.SAFFASTPATH defined. <br />
+<br />
+The TSS rules for each of the BPX resources listed in General Facility Class BPX Resources Table, in the z/OS UNIX System Services Planning, Establishing UNIX security restrict access to appropriate system tasks or systems programming personnel. Access can be permitted only to users with a requirement for the resource that is documented to the ISSO. Access to BPX.DAEMON must be restricted to the z/OS UNIX kernel userid, z/OS UNIX daemons (e.g., inetd, syslogd, ftpd), and other system software daemons (e.g., web servers). When BPX.SAFFASTPATH is defined, calls to the ACP are not performed for file accesses and there is no audit trail of access failures. This configuration is unacceptable. Therefore BPX.SAFFASTPATH must not be used on any system. <br />
+<br />
+For Example:<br />
+The following commands can be used to provide the required protection:<br />
+<br />
+TSS ADD(ADMIN) IBMFAC(BPX.)<br />
+TSS PERMIT(ALL) IBMFAC(BPX.SAFFASTPATH) ACCESS(NONE)<br />
+<br />
+NOTE:<br />
+The PERMIT command for BPX.SAFFASTPATH must be executed on TOP SECRET systems. If access to BPX.SAFFSTPATH were allowed, z/OS UNIX would perform permission bit checking internally instead of calling the ACP. On TOP SECRET systems this would bypass any audit trail of violations. In addition, the z/OS UNIX kernel userid (OMVS is the example in this section) must not have the TOP SECRET NORESCHK privilege. Having that privilege would allow access to BPX.SAFFASTPATH even though the access restriction was in place.</p><h2>Check Contents</h2><p>From the ISPF Command Shell enter:<br />
+TSS WHOOWNS IBMFAC(BPX.)<br />
+<br />
+If the BPX. resource is properly owned, this is not a finding.<br />
+<br />
+From the ISPF Command Shell enter:<br />
+TSS WHOHAS (&lt;each BPX resource&gt;)<br />
+<br />
+If any item below are untrue, this is a finding.<br />
+<br />
+-There are no TSS rules that allow access to the BPX resource.<br />
+-There are no TSS rules for BPX.SAFFASTPATH defined.<br />
+-The TSS rules for each of the BPX resources listed in the z/OS UNIX System Services Planning, Establishing UNIX security, restrict access to appropriate system tasks or systems programming personnel.</p><h2>Vulnerability Number</h2><p>V-224076</p><h2>Documentable</h2><p>False</p><h2>Rule Version</h2><p>TSS0-US-000030</p><h2>Severity Override Guidance</h2><p>From the ISPF Command Shell enter:<br />
+TSS WHOOWNS IBMFAC(BPX.)<br />
+<br />
+If the BPX. resource is properly owned, this is not a finding.<br />
+<br />
+From the ISPF Command Shell enter:<br />
+TSS WHOHAS (&lt;each BPX resource&gt;)<br />
+<br />
+If any item below are untrue, this is a finding.<br />
+<br />
+-There are no TSS rules that allow access to the BPX resource.<br />
+-There are no TSS rules for BPX.SAFFASTPATH defined.<br />
+-The TSS rules for each of the BPX resources listed in the z/OS UNIX System Services Planning, Establishing UNIX security, restrict access to appropriate system tasks or systems programming personnel.</p><h2>Check Content Reference</h2><p>M</p><h2>Target Key</h2><p>4102</p></body></html>

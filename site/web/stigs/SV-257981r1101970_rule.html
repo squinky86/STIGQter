@@ -1,0 +1,25 @@
+<!doctype html><html lang="en"><head><meta charset="utf-8"><title>STIGQter: STIG Check Details: SV-257981r1101970_rule: RHEL 9 must display the Standard Mandatory DOD Notice and Consent Banner before granting local or remote access to the system via a SSH logon.</title><link rel="icon" type="image/svg+xml" href="STIGQter.svg" /><script async src="https://www.googletagmanager.com/gtag/js?id=UA-31381839-2"></script><script src="include.js"></script><script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-4110907817782130" crossorigin="anonymous"></script></head><body><div><img src="STIGQter.svg" alt="STIGQter" style="height:1em;" /> <a href="https://www.stigqter.com/">STIGQter</a>: <a href="main.html">STIG Summary</a>: <a href="U_RHEL_9_STIG_V2R9_Manual-xccdf.html">Red Hat Enterprise Linux 9 Security Technical Implementation Guide Version: 2 Release: 9 Benchmark Date: 01 Jul 2026</a>:</div> <h1>RHEL 9 must display the Standard Mandatory DOD Notice and Consent Banner before granting local or remote access to the system via a SSH logon.</h1><h2>DISA Rule</h2><p>SV-257981r1101970_rule</p><h2>Vulnerability Number</h2><p>V-257981</p><h2>Group Title</h2><p>SRG-OS-000023-GPOS-00006</p><h2>Rule Version</h2><p>RHEL-09-255025</p><h2>Severity</h2><p>CAT II</p><h2>CCI(s)</h2><ul><li>CCI-000048 - Display an organization-defined system use notification message or banner to users before granting access to the system that provides privacy and security notices consistent with applicable federal laws, Executive Orders, directives, policies, regulations, standards, and guidelines.</li><li>CCI-001384 - For publicly accessible systems, display system use information with organization-defined conditions before granting further access to the publicly accessible system.</li><li>CCI-001385 - For publicly accessible systems, displays references, if any, to monitoring that are consistent with privacy accommodations for such systems that generally prohibit those activities.</li><li>CCI-001386 - For publicly accessible systems, displays references, if any, to recording that are consistent with privacy accommodations for such systems that generally prohibit those activities.</li><li>CCI-001387 - For publicly accessible systems, displays references, if any, to auditing that are consistent with privacy accommodations for such systems that generally prohibit those activities.</li><li>CCI-001388 - For publicly accessible systems, includes a description of the authorized uses of the system.</li></ul><h2>Weight</h2><p>10</p><h2>Fix Recommendation</h2><p>Configure RHEL 9 to display the Standard Mandatory DOD Notice and Consent Banner before granting access to the system via ssh.<br />
+<br />
+Edit the &quot;etc/ssh/sshd_config&quot; file or a file in &quot;/etc/ssh/sshd_config.d&quot; to uncomment the banner keyword and configure it to point to a file that will contain the logon banner (this file may be named differently or be in a different location if using a version of SSH that is provided by a third-party vendor).<br />
+<br />
+An example configuration line is:<br />
+<br />
+Banner /etc/issue</p><h2>Check Contents</h2><p>Verify any SSH connection to RHEL 9 displays the Standard Mandatory DOD Notice and Consent Banner before granting access to the system.<br />
+<br />
+Check for the location of the banner file being used with the following command:<br />
+<br />
+$ sudo /usr/sbin/sshd -dd 2&gt;&amp;1 | awk '/filename/ {print $4}' | tr -d '\r' | tr '\n' ' ' | xargs sudo grep -iH '^\s*banner'<br />
+/etc/ssh/sshd_config.d/80-bannerPointer.conf:Banner /etc/issue<br />
+<br />
+This command will return the banner keyword and the name of the file that contains the SSH banner (in this case &quot;/etc/issue&quot;).<br />
+<br />
+If the line is commented out, this is a finding.</p><h2>Vulnerability Number</h2><p>V-257981</p><h2>Documentable</h2><p>False</p><h2>Rule Version</h2><p>RHEL-09-255025</p><h2>Severity Override Guidance</h2><p>Verify any SSH connection to RHEL 9 displays the Standard Mandatory DOD Notice and Consent Banner before granting access to the system.<br />
+<br />
+Check for the location of the banner file being used with the following command:<br />
+<br />
+$ sudo /usr/sbin/sshd -dd 2&gt;&amp;1 | awk '/filename/ {print $4}' | tr -d '\r' | tr '\n' ' ' | xargs sudo grep -iH '^\s*banner'<br />
+/etc/ssh/sshd_config.d/80-bannerPointer.conf:Banner /etc/issue<br />
+<br />
+This command will return the banner keyword and the name of the file that contains the SSH banner (in this case &quot;/etc/issue&quot;).<br />
+<br />
+If the line is commented out, this is a finding.</p><h2>Check Content Reference</h2><p>M</p><h2>Target Key</h2><p>5551</p></body></html>

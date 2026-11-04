@@ -1,0 +1,124 @@
+<!doctype html><html lang="en"><head><meta charset="utf-8"><title>STIGQter: STIG Check Details: SV-235111r961800_rule: The MySQL Database Server 8.0 must generate audit records when privileges/permissions are added.</title><link rel="icon" type="image/svg+xml" href="STIGQter.svg" /><script async src="https://www.googletagmanager.com/gtag/js?id=UA-31381839-2"></script><script src="include.js"></script><script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-4110907817782130" crossorigin="anonymous"></script></head><body><div><img src="STIGQter.svg" alt="STIGQter" style="height:1em;" /> <a href="https://www.stigqter.com/">STIGQter</a>: <a href="main.html">STIG Summary</a>: <a href="U_Oracle_MySQL_8-0_STIG_V2R2_Manual-xccdf.html">Oracle MySQL 8.0 Security Technical Implementation Guide Version: 2 Release: 2 Benchmark Date: 24 Oct 2024</a>:</div> <h1>The MySQL Database Server 8.0 must generate audit records when privileges/permissions are added.</h1><h2>DISA Rule</h2><p>SV-235111r961800_rule</p><h2>Vulnerability Number</h2><p>V-235111</p><h2>Group Title</h2><p>SRG-APP-000495-DB-000326</p><h2>Rule Version</h2><p>MYS8-00-002400</p><h2>Severity</h2><p>CAT II</p><h2>CCI(s)</h2><ul><li>CCI-000172 - Generate audit records for the event types defined in AU-2 c that include the audit record content defined in AU-3.</li></ul><h2>Weight</h2><p>10</p><h2>Fix Recommendation</h2><p>Configure the MySQL Database Server to audit when privileges/permissions are added.<br />
+<br />
+Add the following events to the MySQL Server Audit being used for the STIG compliance audit: <br />
+grant<br />
+grant_roles<br />
+revoke<br />
+revoke_all<br />
+revoke_roles<br />
+drop_role<br />
+alter_user_default_role<br />
+create_role<br />
+drop_role<br />
+grant_roles<br />
+revoke_roles<br />
+set_role<br />
+create_user<br />
+alter_user<br />
+drop_user<br />
+alter_user<br />
+alter_user_default_role<br />
+create_user<br />
+drop_user<br />
+rename_user<br />
+show_create_user<br />
+<br />
+See the supplemental file &quot;MySQL80Audit.sql&quot;.</p><h2>Check Contents</h2><p>Check that MySQL Server Audit is being used for the STIG compliant audit.<br />
+<br />
+Check if MySQL audit is configured and enabled. The my.cnf file will set the variable audit_file.<br />
+<br />
+To further check, execute the following query: <br />
+SELECT PLUGIN_NAME, PLUGIN_STATUS<br />
+      FROM INFORMATION_SCHEMA.PLUGINS<br />
+      WHERE PLUGIN_NAME LIKE 'audit%';<br />
+<br />
+The status of the audit_log plugin should be &quot;active&quot;. If it is not &quot;active&quot;, this is a finding.<br />
+<br />
+Review audit filters and associated users by running the following queries:<br />
+SELECT `audit_log_filter`.`NAME`,<br />
+   `audit_log_filter`.`FILTER`<br />
+FROM `mysql`.`audit_log_filter`;<br />
+<br />
+SELECT `audit_log_user`.`USER`,<br />
+   `audit_log_user`.`HOST`,<br />
+   `audit_log_user`.`FILTERNAME`<br />
+FROM `mysql`.`audit_log_user`;<br />
+<br />
+All currently defined audits for the MySQL server instance will be listed. If no audits are returned, this is a finding.<br />
+<br />
+Determine if rules are in place to capture the following types of commands related to permissions by running the command:<br />
+select * from mysql.audit_log_filter;<br />
+<br />
+If the template SQL filter was used, it will have the name log_stig.<br />
+<br />
+Review the filter value. It will show filters for events of the  type field general_sql_command.str for the following SQL statement types:<br />
+grant<br />
+grant_roles<br />
+revoke<br />
+revoke_all<br />
+revoke_roles<br />
+drop_role<br />
+alter_user_default_role<br />
+create_role<br />
+drop_role<br />
+grant_roles<br />
+revoke_roles<br />
+set_role<br />
+create_user<br />
+alter_user<br />
+drop_user<br />
+alter_user<br />
+alter_user_default_role<br />
+create_user<br />
+drop_user<br />
+rename_user<br />
+show_create_user</p><h2>Vulnerability Number</h2><p>V-235111</p><h2>Documentable</h2><p>False</p><h2>Rule Version</h2><p>MYS8-00-002400</p><h2>Severity Override Guidance</h2><p>Check that MySQL Server Audit is being used for the STIG compliant audit.<br />
+<br />
+Check if MySQL audit is configured and enabled. The my.cnf file will set the variable audit_file.<br />
+<br />
+To further check, execute the following query: <br />
+SELECT PLUGIN_NAME, PLUGIN_STATUS<br />
+      FROM INFORMATION_SCHEMA.PLUGINS<br />
+      WHERE PLUGIN_NAME LIKE 'audit%';<br />
+<br />
+The status of the audit_log plugin should be &quot;active&quot;. If it is not &quot;active&quot;, this is a finding.<br />
+<br />
+Review audit filters and associated users by running the following queries:<br />
+SELECT `audit_log_filter`.`NAME`,<br />
+   `audit_log_filter`.`FILTER`<br />
+FROM `mysql`.`audit_log_filter`;<br />
+<br />
+SELECT `audit_log_user`.`USER`,<br />
+   `audit_log_user`.`HOST`,<br />
+   `audit_log_user`.`FILTERNAME`<br />
+FROM `mysql`.`audit_log_user`;<br />
+<br />
+All currently defined audits for the MySQL server instance will be listed. If no audits are returned, this is a finding.<br />
+<br />
+Determine if rules are in place to capture the following types of commands related to permissions by running the command:<br />
+select * from mysql.audit_log_filter;<br />
+<br />
+If the template SQL filter was used, it will have the name log_stig.<br />
+<br />
+Review the filter value. It will show filters for events of the  type field general_sql_command.str for the following SQL statement types:<br />
+grant<br />
+grant_roles<br />
+revoke<br />
+revoke_all<br />
+revoke_roles<br />
+drop_role<br />
+alter_user_default_role<br />
+create_role<br />
+drop_role<br />
+grant_roles<br />
+revoke_roles<br />
+set_role<br />
+create_user<br />
+alter_user<br />
+drop_user<br />
+alter_user<br />
+alter_user_default_role<br />
+create_user<br />
+drop_user<br />
+rename_user<br />
+show_create_user</p><h2>Check Content Reference</h2><p>M</p><h2>Target Key</h2><p>5277</p></body></html>

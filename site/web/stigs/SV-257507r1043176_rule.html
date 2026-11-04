@@ -1,0 +1,96 @@
+<!doctype html><html lang="en"><head><meta charset="utf-8"><title>STIGQter: STIG Check Details: SV-257507r1043176_rule: OpenShift must use a centralized user management solution to support account management functions.</title><link rel="icon" type="image/svg+xml" href="STIGQter.svg" /><script async src="https://www.googletagmanager.com/gtag/js?id=UA-31381839-2"></script><script src="include.js"></script><script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-4110907817782130" crossorigin="anonymous"></script></head><body><div><img src="STIGQter.svg" alt="STIGQter" style="height:1em;" /> <a href="https://www.stigqter.com/">STIGQter</a>: <a href="main.html">STIG Summary</a>: <a href="U_RH_OpenShift_Container_Platform_4-x_STIG_V2R6_Manual-xccdf.html">Red Hat OpenShift Container Platform 4.x Security Technical Implementation Guide Version: 2 Release: 6 Benchmark Date: 01 Jul 2026</a>:</div> <h1>OpenShift must use a centralized user management solution to support account management functions.</h1><h2>DISA Rule</h2><p>SV-257507r1043176_rule</p><h2>Vulnerability Number</h2><p>V-257507</p><h2>Group Title</h2><p>SRG-APP-000023-CTR-000055</p><h2>Rule Version</h2><p>CNTR-OS-000030</p><h2>Severity</h2><p>CAT II</p><h2>CCI(s)</h2><ul><li>CCI-000015 - Support the management of system accounts using (organization-defined automated mechanisms).</li></ul><h2>Weight</h2><p>10</p><h2>Fix Recommendation</h2><p>Configure OpenShift to use an appropriate Identity Provider. Do not use HTPasswd. Use either LDAP(AD), OpenIDConnect, or an approved identity provider.<br />
+<br />
+To configure LDAP provider:<br />
+1. Create Secret for BIND DN password by executing the following:<br />
+<br />
+oc create secret generic ldap-secret --from-literal=bindPassword=&lt;secret&gt; -n openshift-config <br />
+<br />
+2. Create config map for LDAP Trust CA by executing the following:<br />
+ <br />
+oc create configmap ca-config-map --from-file=ca.crt=/path/to/ca -n openshift-config<br />
+<br />
+3. Create LDAP Auth Config Resource YAML:<br />
+Using the preferred text editor, create a file named ldapidp.yaml using the example content. (replacing config values as appropriate):<br />
+ <br />
+apiVersion: config.openshift.io/v1<br />
+kind: OAuth<br />
+metadata:<br />
+  name: cluster<br />
+spec:<br />
+  identityProviders:<br />
+  - name: ldapidp <br />
+    mappingMethod: claim <br />
+    type: LDAP<br />
+    ldap:<br />
+      attributes:<br />
+        id: <br />
+        - dn<br />
+        email: <br />
+        - mail<br />
+        name: <br />
+        - cn<br />
+        preferredUsername: <br />
+        - uid<br />
+      bindDN: &lt;&quot;bindDN&quot;&gt;<br />
+      bindPassword: <br />
+        name: ldap-secret<br />
+      ca: <br />
+        name: ca-config-map<br />
+      insecure: false <br />
+      url: &lt;URL&gt; <br />
+<br />
+4. Apply LDAP config to cluster by executing the following:<br />
+ <br />
+oc apply -f ldapidp.yaml<br />
+ <br />
+Note: For more information on configuring an LDAP provider, refer to https://docs.openshift.com/container-platform/4.8/authentication/identity_providers/configuring-ldap-identity-provider.html.<br />
+ <br />
+To configure OpenID provider:<br />
+1. Create Secret for Client Secret by executing the following:<br />
+ <br />
+oc create secret generic idp-secret --from-literal=clientSecret=&lt;secret&gt; -n openshift-config<br />
+ <br />
+2. Create config map for OpenID Trust CA by executing the following:<br />
+ <br />
+oc create configmap ca-config-map --from-file=ca.crt=/path/to/ca -n openshift-config<br />
+<br />
+3. Create OpenID Auth Config Resource YAML.<br />
+Using the preferred text editor, create a file named oidcidp.yaml using the example content (replacing config values as appropriate).<br />
+<br />
+apiVersion: config.openshift.io/v1<br />
+kind: OAuth<br />
+metadata:<br />
+  name: cluster<br />
+spec:<br />
+  identityProviders:<br />
+  - name: oidcidp<br />
+    mappingMethod: claim<br />
+    type: OpenID<br />
+    openID:<br />
+      clientID: &lt;clientID&gt;<br />
+      clientSecret:<br />
+        name: oidc-idp-secret<br />
+      claims:<br />
+        preferredUsername:<br />
+        - preferred_username<br />
+        name:<br />
+        - name<br />
+        email:<br />
+        - email<br />
+      ca:<br />
+        name: ca-config-map<br />
+      issuer: &lt;URL&gt;<br />
+ <br />
+4. Apply OpenID config to cluster by executing the following:<br />
+ <br />
+oc apply -f ldapidp.yaml<br />
+ <br />
+Note: For more information on configuring an OpenID provider, refer to https://docs.openshift.com/container-platform/4.8/authentication/identity_providers/configuring-oidc-identity-provider.html.</p><h2>Check Contents</h2><p>Verify the authentication operator is configured to use either an LDAP or a OpenIDConnect provider by executing the following:<br />
+<br />
+oc get oauth cluster -o jsonpath=&quot;{.spec.identityProviders[*].type}{'\n'}&quot;<br />
+<br />
+If the output lists any other type besides LDAP or OpenID, this is a finding.</p><h2>Vulnerability Number</h2><p>V-257507</p><h2>Documentable</h2><p>False</p><h2>Rule Version</h2><p>CNTR-OS-000030</p><h2>Severity Override Guidance</h2><p>Verify the authentication operator is configured to use either an LDAP or a OpenIDConnect provider by executing the following:<br />
+<br />
+oc get oauth cluster -o jsonpath=&quot;{.spec.identityProviders[*].type}{'\n'}&quot;<br />
+<br />
+If the output lists any other type besides LDAP or OpenID, this is a finding.</p><h2>Check Content Reference</h2><p>M</p><h2>Target Key</h2><p>5547</p></body></html>

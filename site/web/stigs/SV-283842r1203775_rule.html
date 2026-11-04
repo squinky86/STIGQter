@@ -1,0 +1,78 @@
+<!doctype html><html lang="en"><head><meta charset="utf-8"><title>STIGQter: STIG Check Details: SV-283842r1203775_rule: The Nokia router must be configured to protect against or limit the effects of denial-of-service (DoS) attacks by employing control plane protection.</title><link rel="icon" type="image/svg+xml" href="STIGQter.svg" /><script async src="https://www.googletagmanager.com/gtag/js?id=UA-31381839-2"></script><script src="include.js"></script><script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-4110907817782130" crossorigin="anonymous"></script></head><body><div><img src="STIGQter.svg" alt="STIGQter" style="height:1em;" /> <a href="https://www.stigqter.com/">STIGQter</a>: <a href="main.html">STIG Summary</a>: <a href="U_Nokia_SR_OS_25-x_RTR_V1R1_STIG_Manual-xccdf.html">Nokia Service Router OS 25.x Router Security Technical Implementation Guide Version: 1 Release: 1 Benchmark Date: 28 Apr 2026</a>:</div> <h1>The Nokia router must be configured to protect against or limit the effects of denial-of-service (DoS) attacks by employing control plane protection.</h1><h2>DISA Rule</h2><p>SV-283842r1203775_rule</p><h2>Vulnerability Number</h2><p>V-283842</p><h2>Group Title</h2><p>SRG-NET-000362-RTR-000110</p><h2>Rule Version</h2><p>NOKI-RT-000240</p><h2>Severity</h2><p>CAT II</p><h2>CCI(s)</h2><ul><li>CCI-002385 - Protect against or limit the effects of organization-defined types of denial of service events.</li></ul><h2>Weight</h2><p>10</p><h2>Fix Recommendation</h2><p>Implement control plane protection by classifying traffic types based on importance and configure filters to restrict and rate limit the traffic directed to and processed by the RP according to each class.<br />
+<br />
+Create a CPM filter to drop the traffic to protect the control plane, as shown in the commands below:<br />
+<br />
+- configure system security cpm-filter<br />
+- config&gt;sys&gt;security&gt;cpm-filter# ip-filter<br />
+- config&gt;sys&gt;sec&gt;cpm&gt;ip-filter# entry 10 create<br />
+- cfg&gt;sys&gt;sec&gt;cpm&gt;ip-filter&gt;entry# match src-ip 100.100.100.x/32<br />
+- cfg&gt;sys&gt;sec&gt;cpm&gt;ip-filter&gt;entry# match protocol &quot;icmp&quot;<br />
+- cfg&gt;sys&gt;sec&gt;cpm&gt;ip-filter&gt;entry&gt;match# exit<br />
+- cfg&gt;sys&gt;sec&gt;cpm&gt;ip-filter&gt;entry# action drop<br />
+- cfg&gt;sys&gt;sec&gt;cpm&gt;ip-filter&gt;entry# exit<br />
+- config&gt;sys&gt;sec&gt;cpm&gt;ip-filter# no shutdown<br />
+- config&gt;sys&gt;sec&gt;cpm&gt;ip-filter# exit all<br />
+<br />
+Create a dist-cpu-protection policy to rate-limit traffic before it reaches the CPM, as shown in the commands below:<br />
+<br />
+- configure system security dist-cpu-protection<br />
+- config&gt;sys&gt;security&gt;dist-cpu-protection# policy &quot;protect-cpm&quot; create<br />
+- config&gt;sys&gt;security&gt;dist-cpu-protection&gt;policy# static-policer Rate-Limit-ICMP-Traffic create<br />
+- config&gt;sys&gt;security&gt;dist-cpu-protection&gt;policy&gt;static$ rate packets 1 within 1<br />
+- config&gt;sys&gt;security&gt;dist-cpu-protection&gt;policy&gt;static$ exceed-action discard<br />
+- config&gt;sys&gt;security&gt;dist-cpu-protection&gt;policy&gt;static$ exit<br />
+- config&gt;sys&gt;security&gt;dist-cpu-protection&gt;policy# protocol icmp create<br />
+- config&gt;sys&gt;security&gt;dist-cpu-protection&gt;policy&gt;protocol$ enforcement static &quot;Rate-Limit-ICMP-Traffic&quot;<br />
+-config&gt;sys&gt;security&gt;dist-cpu-protection&gt;policy&gt;protocol$ exit all<br />
+<br />
+Apply a Distributed CPU Protection Policy on the interface:<br />
+ <br />
+- configure router interface &quot;TO-PE2&quot; dist-cpu-protection &quot;protect-cpm&quot;</p><h2>Check Contents</h2><p>Determine whether control plane protection has been implemented on the device by verifying that traffic types have been classified based on importance levels and a policy has been configured to filter and rate limit the traffic according to each class, as shown below:<br />
+<br />
+- show router interface &quot;TO-PE2&quot; dist-cpu-protection detail<br />
+<br />
+Interface &quot;TO-PE2&quot; (Router: Base)<br />
+<br />
+Distributed CPU Protection Policy :  protect-cpm<br />
+<br />
+-------------------------------------------------------------------------------<br />
+Statistics/Policer-State Information<br />
+-------------------------------------------------------------------------------<br />
+Static Policer<br />
+-------------------------------------------------------------------------------<br />
+Policer-Name        : Rate-Limit-ICMP-Traffic<br />
+Card/FP             : 1/1               Policer-State       : Conform<br />
+Protocols Mapped    : icmp<br />
+Exceed-Count        : 0<br />
+Total Exceed-Count  : 0                 Exceed-State-Count  : 0<br />
+Detec. Time Remain  : 0 seconds         Hold-Down Remain.   : none<br />
+Operational (adapted) Rate Parameters:<br />
+ Oper. Packets      : 1 ppi              Oper. Within       : 1 seconds<br />
+ Oper. Initial Delay: none<br />
+ Oper. Depth        : 0 packets<br />
+<br />
+If the router does not have control plane protection implemented, this is a finding.</p><h2>Vulnerability Number</h2><p>V-283842</p><h2>Documentable</h2><p>False</p><h2>Rule Version</h2><p>NOKI-RT-000240</p><h2>Severity Override Guidance</h2><p>Determine whether control plane protection has been implemented on the device by verifying that traffic types have been classified based on importance levels and a policy has been configured to filter and rate limit the traffic according to each class, as shown below:<br />
+<br />
+- show router interface &quot;TO-PE2&quot; dist-cpu-protection detail<br />
+<br />
+Interface &quot;TO-PE2&quot; (Router: Base)<br />
+<br />
+Distributed CPU Protection Policy :  protect-cpm<br />
+<br />
+-------------------------------------------------------------------------------<br />
+Statistics/Policer-State Information<br />
+-------------------------------------------------------------------------------<br />
+Static Policer<br />
+-------------------------------------------------------------------------------<br />
+Policer-Name        : Rate-Limit-ICMP-Traffic<br />
+Card/FP             : 1/1               Policer-State       : Conform<br />
+Protocols Mapped    : icmp<br />
+Exceed-Count        : 0<br />
+Total Exceed-Count  : 0                 Exceed-State-Count  : 0<br />
+Detec. Time Remain  : 0 seconds         Hold-Down Remain.   : none<br />
+Operational (adapted) Rate Parameters:<br />
+ Oper. Packets      : 1 ppi              Oper. Within       : 1 seconds<br />
+ Oper. Initial Delay: none<br />
+ Oper. Depth        : 0 packets<br />
+<br />
+If the router does not have control plane protection implemented, this is a finding.</p><h2>Check Content Reference</h2><p>M</p><h2>Target Key</h2><p>5746</p></body></html>

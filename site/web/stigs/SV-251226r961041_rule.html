@@ -1,0 +1,29 @@
+<!doctype html><html lang="en"><head><meta charset="utf-8"><title>STIGQter: STIG Check Details: SV-251226r961041_rule: Redis Enterprise DBMS must enforce authorized access to all PKI private keys stored/used by Redis Enterprise DBMS.</title><link rel="icon" type="image/svg+xml" href="STIGQter.svg" /><script async src="https://www.googletagmanager.com/gtag/js?id=UA-31381839-2"></script><script src="include.js"></script><script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-4110907817782130" crossorigin="anonymous"></script></head><body><div><img src="STIGQter.svg" alt="STIGQter" style="height:1em;" /> <a href="https://www.stigqter.com/">STIGQter</a>: <a href="main.html">STIG Summary</a>: <a href="U_Redis_Enterprise_6-x_STIG_V2R2_Manual-xccdf.html">Redis Enterprise 6.x Security Technical Implementation Guide Version: 2 Release: 2 Benchmark Date: 24 Oct 2024</a>:</div> <h1>Redis Enterprise DBMS must enforce authorized access to all PKI private keys stored/used by Redis Enterprise DBMS.</h1><h2>DISA Rule</h2><p>SV-251226r961041_rule</p><h2>Vulnerability Number</h2><p>V-251226</p><h2>Group Title</h2><p>SRG-APP-000176-DB-000068</p><h2>Rule Version</h2><p>RD6X-00-009200</p><h2>Severity</h2><p>CAT I</p><h2>CCI(s)</h2><ul><li>CCI-000186 - For public key-based authentication, enforce authorized access to the corresponding private key.</li></ul><h2>Weight</h2><p>10</p><h2>Fix Recommendation</h2><p>Apply or modify access controls and permissions (in the file system/operating system) to tools used to view or modify where the certificates are stored. Tools must be accessible by authorized personnel only.<br />
+<br />
+/etc/opt/redislabs (or wherever the organizationally defined location for certificates are stored) should have an appropriate and documented admin user and group owner and the directory should not have permissions more than 700. <br />
+<br />
+To update these permissions, run the following commands:<br />
+chown redislabs:redislabs /etc/opt/redislabs<br />
+chmod 700 /etc/opt/redislabs/proxy_cert.pem</p><h2>Check Contents</h2><p>All keys must be stored by the host RHEL OS that Redis Enterprise resides on. On the server, look for proxy_cert.pem found in /etc/opt/redislabs. If proxy_cert.pem has file permissions that would allow unauthorized users to access it, this is a finding. <br />
+<br />
+Keys can also be manipulated on the Redis Enterprise UI. RBAC prevents unauthorized users from doing this; to check:<br />
+<br />
+Review organization documentation to determine which users should have administrative privileges. From there:<br />
+1. Log in to Redis Enterprise UI as a user in the administrator role.<br />
+2. Navigate to the Access Control tab.<br />
+3. Compare the documented users to the users found in the user settings on the web UI.<br />
+<br />
+If any users have administrative privileges and are not documented, this is a finding. <br />
+<br />
+If access to the DBMS's private key(s) is not restricted to authenticated and authorized users, this is a finding.</p><h2>Vulnerability Number</h2><p>V-251226</p><h2>Documentable</h2><p>False</p><h2>Rule Version</h2><p>RD6X-00-009200</p><h2>Severity Override Guidance</h2><p>All keys must be stored by the host RHEL OS that Redis Enterprise resides on. On the server, look for proxy_cert.pem found in /etc/opt/redislabs. If proxy_cert.pem has file permissions that would allow unauthorized users to access it, this is a finding. <br />
+<br />
+Keys can also be manipulated on the Redis Enterprise UI. RBAC prevents unauthorized users from doing this; to check:<br />
+<br />
+Review organization documentation to determine which users should have administrative privileges. From there:<br />
+1. Log in to Redis Enterprise UI as a user in the administrator role.<br />
+2. Navigate to the Access Control tab.<br />
+3. Compare the documented users to the users found in the user settings on the web UI.<br />
+<br />
+If any users have administrative privileges and are not documented, this is a finding. <br />
+<br />
+If access to the DBMS's private key(s) is not restricted to authenticated and authorized users, this is a finding.</p><h2>Check Content Reference</h2><p>M</p><h2>Target Key</h2><p>5443</p></body></html>

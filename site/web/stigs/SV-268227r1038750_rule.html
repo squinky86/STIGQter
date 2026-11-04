@@ -1,0 +1,51 @@
+<!doctype html><html lang="en"><head><meta charset="utf-8"><title>STIGQter: STIG Check Details: SV-268227r1038750_rule: The HYCU virtual appliance must be configured to enforce the limit of three consecutive invalid login attempts, after which time it must block any login attempt for 15 minutes.</title><link rel="icon" type="image/svg+xml" href="STIGQter.svg" /><script async src="https://www.googletagmanager.com/gtag/js?id=UA-31381839-2"></script><script src="include.js"></script><script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-4110907817782130" crossorigin="anonymous"></script></head><body><div><img src="STIGQter.svg" alt="STIGQter" style="height:1em;" /> <a href="https://www.stigqter.com/">STIGQter</a>: <a href="main.html">STIG Summary</a>: <a href="U_HYCU_Protege_STIG_V1R3_Manual-xccdf.html">HYCU Protege Security Technical Implementation Guide Version: 1 Release: 3 Benchmark Date: 01 Jul 2026</a>:</div> <h1>The HYCU virtual appliance must be configured to enforce the limit of three consecutive invalid login attempts, after which time it must block any login attempt for 15 minutes.</h1><h2>DISA Rule</h2><p>SV-268227r1038750_rule</p><h2>Vulnerability Number</h2><p>V-268227</p><h2>Group Title</h2><p>SRG-APP-000065-NDM-000214</p><h2>Rule Version</h2><p>HYCU-ND-000090</p><h2>Severity</h2><p>CAT II</p><h2>CCI(s)</h2><ul><li>CCI-000044 - Enforce the organization-defined limit of consecutive invalid logon attempts by a user during the organization-defined time period.</li></ul><h2>Weight</h2><p>10</p><h2>Fix Recommendation</h2><p>Log in to the server virtual console and navigate to the &quot;/etc/pam.d/&quot; folder.<br />
+<br />
+Move the current configuration and make new copies to be edited by executing the following commands:<br />
+<br />
+sudo cp password-auth password-auth-as<br />
+<br />
+sudo cp system-auth system-auth-as<br />
+<br />
+Edit the files &quot;password-auth&quot; and &quot;system-auth&quot;.<br />
+<br />
+Add the lines:<br />
+auth        required                                     pam_faillock.so preauth silent audit deny=3 even_deny_root fail_interval=60 unlock_time=900<br />
+after line <br />
+auth        required                                     pam_env.so<br />
+<br />
+Add:<br />
+auth        required                                     pam_faillock.so authfail audit unlock_time=900<br />
+after<br />
+auth        sufficient                                   pam_unix.so nullok<br />
+<br />
+Add:<br />
+account     required                                     pam_faillock.so<br />
+before <br />
+account     required                                     pam_unix.so<br />
+<br />
+The files &quot;system-auth&quot; and &quot;password-auth&quot; are identical, so the procedure can be done on one of the files and copied to the second one.<br />
+<br />
+Restart sssd service:<br />
+sudo systemctl restart sssd.service</p><h2>Check Contents</h2><p>Log in to the HYCU VM console and go to the &quot;/etc/pam.d/&quot; folder. Verify that &quot;password-auth&quot; and &quot;system-auth&quot; contain the following three lines, and the values for deny and unlock_time are as shown.<br />
+<br />
+Commands:<br />
+sudo grep pam_faillock.so /etc/pam.d/password-auth<br />
+sudo grep pam_faillock.so /etc/pam.d/system-auth<br />
+<br />
+Both should displays the following three lines:<br />
+auth        required                                     pam_faillock.so preauth silent audit deny=3 even_deny_root fail_interval=60 unlock_time=900<br />
+auth        required                                     pam_faillock.so authfail audit unlock_time=900<br />
+account     required                                     pam_faillock.so<br />
+<br />
+If the required content is not present, this is a finding.</p><h2>Vulnerability Number</h2><p>V-268227</p><h2>Documentable</h2><p>False</p><h2>Rule Version</h2><p>HYCU-ND-000090</p><h2>Severity Override Guidance</h2><p>Log in to the HYCU VM console and go to the &quot;/etc/pam.d/&quot; folder. Verify that &quot;password-auth&quot; and &quot;system-auth&quot; contain the following three lines, and the values for deny and unlock_time are as shown.<br />
+<br />
+Commands:<br />
+sudo grep pam_faillock.so /etc/pam.d/password-auth<br />
+sudo grep pam_faillock.so /etc/pam.d/system-auth<br />
+<br />
+Both should displays the following three lines:<br />
+auth        required                                     pam_faillock.so preauth silent audit deny=3 even_deny_root fail_interval=60 unlock_time=900<br />
+auth        required                                     pam_faillock.so authfail audit unlock_time=900<br />
+account     required                                     pam_faillock.so<br />
+<br />
+If the required content is not present, this is a finding.</p><h2>Check Content Reference</h2><p>M</p><h2>Target Key</h2><p>5660</p></body></html>

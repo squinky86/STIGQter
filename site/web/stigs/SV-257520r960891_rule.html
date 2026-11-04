@@ -1,0 +1,27 @@
+<!doctype html><html lang="en"><head><meta charset="utf-8"><title>STIGQter: STIG Check Details: SV-257520r960891_rule: All audit records must identify what type of event has occurred within OpenShift.</title><link rel="icon" type="image/svg+xml" href="STIGQter.svg" /><script async src="https://www.googletagmanager.com/gtag/js?id=UA-31381839-2"></script><script src="include.js"></script><script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-4110907817782130" crossorigin="anonymous"></script></head><body><div><img src="STIGQter.svg" alt="STIGQter" style="height:1em;" /> <a href="https://www.stigqter.com/">STIGQter</a>: <a href="main.html">STIG Summary</a>: <a href="U_RH_OpenShift_Container_Platform_4-x_STIG_V2R6_Manual-xccdf.html">Red Hat OpenShift Container Platform 4.x Security Technical Implementation Guide Version: 2 Release: 6 Benchmark Date: 01 Jul 2026</a>:</div> <h1>All audit records must identify what type of event has occurred within OpenShift.</h1><h2>DISA Rule</h2><p>SV-257520r960891_rule</p><h2>Vulnerability Number</h2><p>V-257520</p><h2>Group Title</h2><p>SRG-APP-000095-CTR-000170</p><h2>Rule Version</h2><p>CNTR-OS-000180</p><h2>Severity</h2><p>CAT II</p><h2>CCI(s)</h2><ul><li>CCI-000130 - Ensure that audit records containing information that establishes what type of event occurred.</li><li>CCI-000172 - Generate audit records for the event types defined in AU-2 c that include the audit record content defined in AU-3.</li><li>CCI-002884 - Log organization-defined audit events for nonlocal maintenance and diagnostic sessions.</li></ul><h2>Weight</h2><p>10</p><h2>Fix Recommendation</h2><p>Apply the machine config setting auditd to active and enabled by executing the following:<br />
+<br />
+for mcpool in $(oc get mcp -oname | sed &quot;s:.*/::&quot; ); do<br />
+echo &quot;apiVersion: machineconfiguration.openshift.io/v1<br />
+kind: MachineConfig<br />
+metadata:<br />
+  name: 80-auditd-service-enable-$mcpool<br />
+  labels:<br />
+    machineconfiguration.openshift.io/role: $mcpool<br />
+spec:<br />
+  config:<br />
+    ignition:<br />
+      version: 3.1.0<br />
+    systemd:<br />
+      units:<br />
+      - name: auditd.service<br />
+        enabled: true<br />
+&quot; | oc apply -f -<br />
+done</p><h2>Check Contents</h2><p>Verify the audit service is enabled and active by executing the following:<br />
+<br />
+for node in $(oc get node -oname); do oc debug $node -- chroot /host /bin/bash -c 'echo -n &quot;$HOSTNAME &quot;; systemctl is-enabled auditd.service; systemctl is-active auditd.service' 2&gt;/dev/null; done<br />
+<br />
+If the auditd service is not &quot;enabled&quot; and &quot;active&quot; this is a finding.</p><h2>Vulnerability Number</h2><p>V-257520</p><h2>Documentable</h2><p>False</p><h2>Rule Version</h2><p>CNTR-OS-000180</p><h2>Severity Override Guidance</h2><p>Verify the audit service is enabled and active by executing the following:<br />
+<br />
+for node in $(oc get node -oname); do oc debug $node -- chroot /host /bin/bash -c 'echo -n &quot;$HOSTNAME &quot;; systemctl is-enabled auditd.service; systemctl is-active auditd.service' 2&gt;/dev/null; done<br />
+<br />
+If the auditd service is not &quot;enabled&quot; and &quot;active&quot; this is a finding.</p><h2>Check Content Reference</h2><p>M</p><h2>Target Key</h2><p>5547</p></body></html>

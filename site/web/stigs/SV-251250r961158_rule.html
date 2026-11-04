@@ -1,0 +1,24 @@
+<!doctype html><html lang="en"><head><meta charset="utf-8"><title>STIGQter: STIG Check Details: SV-251250r961158_rule: Redis Enterprise DBMS and associated applications must reserve the use of dynamic code execution for situations that require it.</title><link rel="icon" type="image/svg+xml" href="STIGQter.svg" /><script async src="https://www.googletagmanager.com/gtag/js?id=UA-31381839-2"></script><script src="include.js"></script><script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-4110907817782130" crossorigin="anonymous"></script></head><body><div><img src="STIGQter.svg" alt="STIGQter" style="height:1em;" /> <a href="https://www.stigqter.com/">STIGQter</a>: <a href="main.html">STIG Summary</a>: <a href="U_Redis_Enterprise_6-x_STIG_V2R2_Manual-xccdf.html">Redis Enterprise 6.x Security Technical Implementation Guide Version: 2 Release: 2 Benchmark Date: 24 Oct 2024</a>:</div> <h1>Redis Enterprise DBMS and associated applications must reserve the use of dynamic code execution for situations that require it.</h1><h2>DISA Rule</h2><p>SV-251250r961158_rule</p><h2>Vulnerability Number</h2><p>V-251250</p><h2>Group Title</h2><p>SRG-APP-000251-DB-000391</p><h2>Rule Version</h2><p>RD6X-00-011900</p><h2>Severity</h2><p>CAT II</p><h2>CCI(s)</h2><ul><li>CCI-001310 - Checks the validity of organization-defined information inputs to the system.</li></ul><h2>Weight</h2><p>10</p><h2>Fix Recommendation</h2><p>Redis does not rely on a query language and there is no known method of SQL injection that would apply to Redis. Redis is a key value store and relies on commands that do not have a unified query language. Redis has an embedded LUA interpreter that is recommended to disable.<br />
+<br />
+To disable the interpreter run the following REST API command:<br />
+curl -v -kL -u &quot;&lt;user&gt;:&lt;password&gt;&quot; --location-trusted -H &quot;Content-type: application/json&quot; -d '{ &quot;disabled_commands&quot;: &quot;EVAL, EVALSHA&quot; }' -X PUT https://&lt;URL&gt;:PORT/v1/bdbs/&lt;DB_ID&gt;</p><h2>Check Contents</h2><p>Redis does not rely on a query language and there is no known method of SQL injection that would apply to Redis. Redis is a key value store and relies on commands that do not have a unified query language. Redis has an embedded LUA interpreter that is recommended to disable.<br />
+<br />
+Interview the system administrator and ask if the practice of disabling LUA scripting is a documented practice or has been completed. To check if LUA scripting is disabled on the desired database:<br />
+1. Connect to one of the nodes/servers in the redis enterprise cluster as an admin (sudo su -).<br />
+2. Type: rladmin status to get the DB ID of the  database on which LUA scripting is to be disabled<br />
+3. Run the following command, substituting in the bdb_id from the previous step: <br />
+ccs-cli hget bdb:&lt;bdb_id&gt; <br />
+<br />
+If the response is NIL or doesn't return EVAL, EVALSHA, this is a finding.<br />
+<br />
+If no documentation exists or if the database otherwise accepts LUA scripts, this is a finding.</p><h2>Vulnerability Number</h2><p>V-251250</p><h2>Documentable</h2><p>False</p><h2>Rule Version</h2><p>RD6X-00-011900</p><h2>Severity Override Guidance</h2><p>Redis does not rely on a query language and there is no known method of SQL injection that would apply to Redis. Redis is a key value store and relies on commands that do not have a unified query language. Redis has an embedded LUA interpreter that is recommended to disable.<br />
+<br />
+Interview the system administrator and ask if the practice of disabling LUA scripting is a documented practice or has been completed. To check if LUA scripting is disabled on the desired database:<br />
+1. Connect to one of the nodes/servers in the redis enterprise cluster as an admin (sudo su -).<br />
+2. Type: rladmin status to get the DB ID of the  database on which LUA scripting is to be disabled<br />
+3. Run the following command, substituting in the bdb_id from the previous step: <br />
+ccs-cli hget bdb:&lt;bdb_id&gt; <br />
+<br />
+If the response is NIL or doesn't return EVAL, EVALSHA, this is a finding.<br />
+<br />
+If no documentation exists or if the database otherwise accepts LUA scripts, this is a finding.</p><h2>Check Content Reference</h2><p>M</p><h2>Target Key</h2><p>5443</p></body></html>

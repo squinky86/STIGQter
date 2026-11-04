@@ -1,0 +1,62 @@
+<!doctype html><html lang="en"><head><meta charset="utf-8"><title>STIGQter: STIG Check Details: SV-265928r1137657_rule: MongoDB must prevent unauthorized and unintended information transfer via shared system resources.</title><link rel="icon" type="image/svg+xml" href="STIGQter.svg" /><script async src="https://www.googletagmanager.com/gtag/js?id=UA-31381839-2"></script><script src="include.js"></script><script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-4110907817782130" crossorigin="anonymous"></script></head><body><div><img src="STIGQter.svg" alt="STIGQter" style="height:1em;" /> <a href="https://www.stigqter.com/">STIGQter</a>: <a href="main.html">STIG Summary</a>: <a href="U_MongoDB_Enterprise_Advanced_7-x_STIG_V1R2_Manual-xccdf.html">MongoDB Enterprise Advanced 7.x Security Technical Implementation Guide Version: 1 Release: 2 Benchmark Date: 01 Jul 2026</a>:</div> <h1>MongoDB must prevent unauthorized and unintended information transfer via shared system resources.</h1><h2>DISA Rule</h2><p>SV-265928r1137657_rule</p><h2>Vulnerability Number</h2><p>V-265928</p><h2>Group Title</h2><p>SRG-APP-000243-DB-000373</p><h2>Rule Version</h2><p>MD7X-00-005500</p><h2>Severity</h2><p>CAT II</p><h2>CCI(s)</h2><ul><li>CCI-001090 - Prevent unauthorized and unintended information transfer via shared system resources.</li></ul><h2>Weight</h2><p>10</p><h2>Fix Recommendation</h2><p>Correct the permission to the files and/or directories that are in violation.<br />
+<br />
+MongoDB Configuration file (default location /etc/mongod.conf): <br />
+<br />
+$  chown mongod:mongod /etc/mongod.conf<br />
+$  chmod 600 /etc/mongod.conf<br />
+<br />
+MongoDB datafiles and directories (default location '/var/lib/mongo'): <br />
+<br />
+$ chown -R mongod:mongod /var/lib/mongo<br />
+$ chmod 755 /var/lib/mongo<br />
+<br />
+$ find /var/lib/mongo/* -type f | xargs  chmod 600<br />
+$ find /var/lib/mongo/* -type d | xargs  chmod 700</p><h2>Check Contents</h2><p>By default, the MongoDB official installation packages restrict user and group ownership and read/write permissions on the underlying data files and critical configuration files from other operating system users.<br />
+<br />
+In addition, process and memory isolation is used by default. System administrators should also consider if whole database encryption would be an effective control on an application basis.<br />
+<br />
+Run the following commands to verify proper permissions for the following database files or directories:<br />
+<br />
+$ stat /etc/mongod.conf<br />
+<br />
+If the owner and group are not both &quot;mongod&quot;, this is a finding.<br />
+<br />
+If the file permissions are more permissive than &quot;600&quot;, this is a finding.<br />
+<br />
+$ stat  /var/lib/mongo<br />
+<br />
+If the owner and group are not both &quot;mongod&quot;, this is a finding.<br />
+<br />
+If the file permissions are more permissive than &quot;755&quot;, this is a finding.<br />
+<br />
+$ ls -l /var/lib/mongo<br />
+<br />
+If the owner and group of any file or sub-directory is not &quot;mongod&quot;, this is a finding.<br />
+<br />
+If the permission of any file in the main directory (/var/lib/mongo) or sub-directory of (/var/lib/mongo) is more permissive than &quot;600&quot;, this is a finding.<br />
+<br />
+If the permission of any sub-directory of (/var/lib/mongo) is more permissive than &quot;700&quot;, this is a finding.</p><h2>Vulnerability Number</h2><p>V-265928</p><h2>Documentable</h2><p>False</p><h2>Rule Version</h2><p>MD7X-00-005500</p><h2>Severity Override Guidance</h2><p>By default, the MongoDB official installation packages restrict user and group ownership and read/write permissions on the underlying data files and critical configuration files from other operating system users.<br />
+<br />
+In addition, process and memory isolation is used by default. System administrators should also consider if whole database encryption would be an effective control on an application basis.<br />
+<br />
+Run the following commands to verify proper permissions for the following database files or directories:<br />
+<br />
+$ stat /etc/mongod.conf<br />
+<br />
+If the owner and group are not both &quot;mongod&quot;, this is a finding.<br />
+<br />
+If the file permissions are more permissive than &quot;600&quot;, this is a finding.<br />
+<br />
+$ stat  /var/lib/mongo<br />
+<br />
+If the owner and group are not both &quot;mongod&quot;, this is a finding.<br />
+<br />
+If the file permissions are more permissive than &quot;755&quot;, this is a finding.<br />
+<br />
+$ ls -l /var/lib/mongo<br />
+<br />
+If the owner and group of any file or sub-directory is not &quot;mongod&quot;, this is a finding.<br />
+<br />
+If the permission of any file in the main directory (/var/lib/mongo) or sub-directory of (/var/lib/mongo) is more permissive than &quot;600&quot;, this is a finding.<br />
+<br />
+If the permission of any sub-directory of (/var/lib/mongo) is more permissive than &quot;700&quot;, this is a finding.</p><h2>Check Content Reference</h2><p>M</p><h2>Target Key</h2><p>5637</p></body></html>

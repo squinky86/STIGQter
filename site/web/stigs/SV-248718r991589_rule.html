@@ -1,0 +1,23 @@
+<!doctype html><html lang="en"><head><meta charset="utf-8"><title>STIGQter: STIG Check Details: SV-248718r991589_rule: OL 8 must display the date and time of the last successful account logon upon an SSH logon.</title><link rel="icon" type="image/svg+xml" href="STIGQter.svg" /><script async src="https://www.googletagmanager.com/gtag/js?id=UA-31381839-2"></script><script src="include.js"></script><script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-4110907817782130" crossorigin="anonymous"></script></head><body><div><img src="STIGQter.svg" alt="STIGQter" style="height:1em;" /> <a href="https://www.stigqter.com/">STIGQter</a>: <a href="main.html">STIG Summary</a>: <a href="U_Oracle_Linux_8_STIG_V2R9_Manual-xccdf.html">Oracle Linux 8 Security Technical Implementation Guide Version: 2 Release: 9 Benchmark Date: 01 Jul 2026</a>:</div> <h1>OL 8 must display the date and time of the last successful account logon upon an SSH logon.</h1><h2>DISA Rule</h2><p>SV-248718r991589_rule</p><h2>Vulnerability Number</h2><p>V-248718</p><h2>Group Title</h2><p>SRG-OS-000480-GPOS-00227</p><h2>Rule Version</h2><p>OL08-00-020350</p><h2>Severity</h2><p>CAT II</p><h2>CCI(s)</h2><ul><li>CCI-000052 - Notify the user, upon successful logon (access) to the system, of the date and time of the last logon (access).</li></ul><h2>Weight</h2><p>10</p><h2>Fix Recommendation</h2><p>Configure SSH to provide users with feedback on when account accesses last occurred by setting the required configuration options in &quot;/etc/pam.d/sshd&quot; or in the &quot;sshd_config&quot; file used by the system (&quot;/etc/ssh/sshd_config&quot; will be used in the example). Note that this file may be named differently or be in a different location if using a version of SSH that is provided by a third-party vendor. <br />
+ <br />
+Modify the &quot;PrintLastLog&quot; line in &quot;/etc/ssh/sshd_config&quot; to match the following: <br />
+ <br />
+PrintLastLog yes <br />
+ <br />
+The SSH service must be restarted for changes to &quot;sshd_config&quot; to take effect.</p><h2>Check Contents</h2><p>Verify SSH provides users with feedback on when account accesses last occurred with the following command:<br />
+<br />
+$ sudo /usr/sbin/sshd -dd 2&gt;&amp;1 | awk '/filename/ {print $4}' | tr -d '\r' | tr '\n' ' ' | xargs sudo grep -iH '^\s*printlastlog'<br />
+<br />
+PrintLastLog yes<br />
+<br />
+If the &quot;PrintLastLog&quot; keyword is set to &quot;no&quot;, is missing, or is commented out, this is a finding.<br />
+<br />
+If conflicting results are returned, this is a finding.</p><h2>Vulnerability Number</h2><p>V-248718</p><h2>Documentable</h2><p>False</p><h2>Rule Version</h2><p>OL08-00-020350</p><h2>Severity Override Guidance</h2><p>Verify SSH provides users with feedback on when account accesses last occurred with the following command:<br />
+<br />
+$ sudo /usr/sbin/sshd -dd 2&gt;&amp;1 | awk '/filename/ {print $4}' | tr -d '\r' | tr '\n' ' ' | xargs sudo grep -iH '^\s*printlastlog'<br />
+<br />
+PrintLastLog yes<br />
+<br />
+If the &quot;PrintLastLog&quot; keyword is set to &quot;no&quot;, is missing, or is commented out, this is a finding.<br />
+<br />
+If conflicting results are returned, this is a finding.</p><h2>Check Content Reference</h2><p>M</p><h2>Target Key</h2><p>5416</p></body></html>

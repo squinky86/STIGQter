@@ -1,0 +1,40 @@
+<!doctype html><html lang="en"><head><meta charset="utf-8"><title>STIGQter: STIG Check Details: SV-213943r1043188_rule: SQL Server must be configurable to overwrite audit log records, oldest first (First-In-First-Out - FIFO), in the event of unavailability of space for more audit log records.</title><link rel="icon" type="image/svg+xml" href="STIGQter.svg" /><script async src="https://www.googletagmanager.com/gtag/js?id=UA-31381839-2"></script><script src="include.js"></script><script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-4110907817782130" crossorigin="anonymous"></script></head><body><div><img src="STIGQter.svg" alt="STIGQter" style="height:1em;" /> <a href="https://www.stigqter.com/">STIGQter</a>: <a href="main.html">STIG Summary</a>: <a href="U_MS_SQL_Server_2016_Instance_STIG_V3R6_Manual-xccdf.html">MS SQL Server 2016 Instance Security Technical Implementation Guide Version: 3 Release: 6 Benchmark Date: 05 Jan 2026</a>:</div> <h1>SQL Server must be configurable to overwrite audit log records, oldest first (First-In-First-Out - FIFO), in the event of unavailability of space for more audit log records.</h1><h2>DISA Rule</h2><p>SV-213943r1043188_rule</p><h2>Vulnerability Number</h2><p>V-213943</p><h2>Group Title</h2><p>SRG-APP-000109-DB-000321</p><h2>Rule Version</h2><p>SQL6-D0-005700</p><h2>Severity</h2><p>CAT II</p><h2>CCI(s)</h2><ul><li>CCI-000140 - Take organization-defined actions upon audit failure include, shutting down the system, overwriting oldest audit records, and stopping the generation of audit records.</li></ul><h2>Weight</h2><p>10</p><h2>Fix Recommendation</h2><p>If SQL Server Audit is in use, configure SQL Server Audit to continue to generate audit records, overwriting the oldest existing records, in the case of an auditing failure. <br />
+ <br />
+Run this T-SQL script for each identified audit:  <br />
+ <br />
+ALTER SERVER AUDIT [AuditName] WITH (STATE = OFF);  <br />
+GO  <br />
+ALTER SERVER AUDIT [AuditName] to file (max_rollover_files = IntegerValue);  <br />
+GO  <br />
+ALTER SERVER AUDIT [AuditName] WITH (STATE = ON);  <br />
+GO</p><h2>Check Contents</h2><p>If the system documentation indicates that availability does not take precedence over audit trail completeness, this is not applicable (NA). <br />
+<br />
+Execute the following query:<br />
+<br />
+SELECT a.name 'audit_name',<br />
+    a.type_desc 'storage_type',<br />
+    f.max_rollover_files<br />
+FROM sys.server_audits a<br />
+LEFT JOIN sys.server_file_audits f ON a.audit_id = f.audit_id<br />
+WHERE a.is_state_enabled = 1<br />
+<br />
+If no records are returned, this is a finding.<br />
+<br />
+If the &quot;storage_type&quot; is &quot;APPLICATION LOG&quot; or &quot;SECURITY LOG&quot;, this is not a finding.<br />
+<br />
+If the &quot;storage_type&quot; is &quot;FILE&quot; and &quot;max_rollover_files&quot; is greater than zero, this is not a finding. Otherwise, this is a finding.</p><h2>Vulnerability Number</h2><p>V-213943</p><h2>Documentable</h2><p>False</p><h2>Rule Version</h2><p>SQL6-D0-005700</p><h2>Severity Override Guidance</h2><p>If the system documentation indicates that availability does not take precedence over audit trail completeness, this is not applicable (NA). <br />
+<br />
+Execute the following query:<br />
+<br />
+SELECT a.name 'audit_name',<br />
+    a.type_desc 'storage_type',<br />
+    f.max_rollover_files<br />
+FROM sys.server_audits a<br />
+LEFT JOIN sys.server_file_audits f ON a.audit_id = f.audit_id<br />
+WHERE a.is_state_enabled = 1<br />
+<br />
+If no records are returned, this is a finding.<br />
+<br />
+If the &quot;storage_type&quot; is &quot;APPLICATION LOG&quot; or &quot;SECURITY LOG&quot;, this is not a finding.<br />
+<br />
+If the &quot;storage_type&quot; is &quot;FILE&quot; and &quot;max_rollover_files&quot; is greater than zero, this is not a finding. Otherwise, this is a finding.</p><h2>Check Content Reference</h2><p>M</p><h2>Target Key</h2><p>3993</p></body></html>

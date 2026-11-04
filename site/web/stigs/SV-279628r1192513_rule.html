@@ -1,0 +1,51 @@
+<!doctype html><html lang="en"><head><meta charset="utf-8"><title>STIGQter: STIG Check Details: SV-279628r1192513_rule: Nutanix OS must install and use SSH for remote access.</title><link rel="icon" type="image/svg+xml" href="STIGQter.svg" /><script async src="https://www.googletagmanager.com/gtag/js?id=UA-31381839-2"></script><script src="include.js"></script><script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-4110907817782130" crossorigin="anonymous"></script></head><body><div><img src="STIGQter.svg" alt="STIGQter" style="height:1em;" /> <a href="https://www.stigqter.com/">STIGQter</a>: <a href="main.html">STIG Summary</a>: <a href="U_NTX_Acropolis_OS_STIG_V1R1_Manual-xccdf.html">Nutanix Acropolis GPOS Security Technical Implementation Guide Version: 1 Release: 1 Benchmark Date: 26 Jan 2026</a>:</div> <h1>Nutanix OS must install and use SSH for remote access.</h1><h2>DISA Rule</h2><p>SV-279628r1192513_rule</p><h2>Vulnerability Number</h2><p>V-279628</p><h2>Group Title</h2><p>SRG-OS-000425-GPOS-00189</p><h2>Rule Version</h2><p>NXAC-OS-000203</p><h2>Severity</h2><p>CAT II</p><h2>CCI(s)</h2><ul><li>CCI-002420 - Maintain the confidentiality and/or integrity of information during preparation for transmission.</li><li>CCI-002422 - Maintain the confidentiality and/or integrity of information during reception.</li><li>CCI-001941 - Implement replay-resistant authentication mechanisms for access to privileged accounts and/or non-privileged accounts.</li><li>CCI-000197 - For password-based authentication, transmit passwords only cryptographically-protected channels.</li></ul><h2>Weight</h2><p>10</p><h2>Fix Recommendation</h2><p>However, Nutanix AOS has the OpenSSH-Server package preinstalled as part of its base package set. If the package is not installed, some corruption has taken place and the CVM must be rebuilt.<br />
+<br />
+Configure SSH to meet DOD standard, if already installed on the OS instance. <br />
+<br />
+1. For AOS, configure SSH, then restart the SSH for the changes to take effect using the following command.<br />
+<br />
+$ sudo salt-call state.sls security/CVM/sshdCVM<br />
+$ sudo systemctl restart sshd<br />
+<br />
+2. For Prism Central, configure SSH, then restart the SSH for the changes to take effect using the following command.<br />
+<br />
+$ sudo salt-call state.sls security/PCVM/sshdPCVM<br />
+$ sudo systemctl restart sshd<br />
+<br />
+3. For Files, configure SSH, then restart the SSH for the changes to take effect using the following command.<br />
+<br />
+$ sudo salt-call state.sls security/AFS/sshdAFS<br />
+$ sudo systemctl restart sshd<br />
+<br />
+4. For AHV configure SSH, then restart the SSH for the changes to take effect using the following command.<br />
+<br />
+$ sudo salt-call state.sls security/KVM/sshdKVM<br />
+$ sudo systemctl restart sshd</p><h2>Check Contents</h2><p>Verify Nutanix OS has SSH loaded and active using the following command.<br />
+<br />
+Note: The default Protocol version of the ssh daemon is 2, which provides the necessary mitigations to prevent replay attacks.<br />
+<br />
+$ sudo systemctl status sshd<br />
+sshd.service - OpenSSH server daemon<br />
+Loaded: loaded (/usr/lib/systemd/system/sshd.service; enabled)<br />
+Active: active (running) since Tue 2015-11-17 15:17:22 EST; 4 weeks 0 days ago<br />
+Main PID: 1348 (sshd)<br />
+CGroup: /system.slice/sshd.service<br />
+1053 /usr/sbin/sshd -D<br />
+<br />
+If &quot;sshd&quot; does not show a status of &quot;active&quot; and &quot;running&quot;, this is a finding.<br />
+<br />
+If the &quot;SSH server&quot; package is not installed, this is a finding.</p><h2>Vulnerability Number</h2><p>V-279628</p><h2>Documentable</h2><p>False</p><h2>Rule Version</h2><p>NXAC-OS-000203</p><h2>Severity Override Guidance</h2><p>Verify Nutanix OS has SSH loaded and active using the following command.<br />
+<br />
+Note: The default Protocol version of the ssh daemon is 2, which provides the necessary mitigations to prevent replay attacks.<br />
+<br />
+$ sudo systemctl status sshd<br />
+sshd.service - OpenSSH server daemon<br />
+Loaded: loaded (/usr/lib/systemd/system/sshd.service; enabled)<br />
+Active: active (running) since Tue 2015-11-17 15:17:22 EST; 4 weeks 0 days ago<br />
+Main PID: 1348 (sshd)<br />
+CGroup: /system.slice/sshd.service<br />
+1053 /usr/sbin/sshd -D<br />
+<br />
+If &quot;sshd&quot; does not show a status of &quot;active&quot; and &quot;running&quot;, this is a finding.<br />
+<br />
+If the &quot;SSH server&quot; package is not installed, this is a finding.</p><h2>Check Content Reference</h2><p>M</p><h2>Target Key</h2><p>5730</p></body></html>

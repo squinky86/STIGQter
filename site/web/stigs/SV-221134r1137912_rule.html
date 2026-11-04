@@ -1,0 +1,80 @@
+<!doctype html><html lang="en"><head><meta charset="utf-8"><title>STIGQter: STIG Check Details: SV-221134r1137912_rule: The Cisco multicast edge switch must be configured to establish boundaries for administratively scoped multicast traffic.</title><link rel="icon" type="image/svg+xml" href="STIGQter.svg" /><script async src="https://www.googletagmanager.com/gtag/js?id=UA-31381839-2"></script><script src="include.js"></script><script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-4110907817782130" crossorigin="anonymous"></script></head><body><div><img src="STIGQter.svg" alt="STIGQter" style="height:1em;" /> <a href="https://www.stigqter.com/">STIGQter</a>: <a href="main.html">STIG Summary</a>: <a href="U_Cisco_NX-OS_Switch_RTR_STIG_V3R4_Manual-xccdf.html">Cisco NX OS Switch RTR Security Technical Implementation Guide Version: 3 Release: 4 Benchmark Date: 01 Apr 2026</a>:</div> <h1>The Cisco multicast edge switch must be configured to establish boundaries for administratively scoped multicast traffic.</h1><h2>DISA Rule</h2><p>SV-221134r1137912_rule</p><h2>Vulnerability Number</h2><p>V-221134</p><h2>Group Title</h2><p>SRG-NET-000019-RTR-000005</p><h2>Rule Version</h2><p>CISC-RT-000810</p><h2>Severity</h2><p>CAT III</p><h2>CCI(s)</h2><ul><li>CCI-001414 - Enforce approved authorizations for controlling the flow of information between connected systems based on organization-defined information flow control policies.</li></ul><h2>Weight</h2><p>10</p><h2>Fix Recommendation</h2><p>Step 1: Configure an ingress and egress ACL to block administratively scoped multicast traffic.<br />
+<br />
+SW1(config)# ip access-list FILTER_TRAFFIC_IN<br />
+SW1(config-acl)# deny 239.0.0.0/8<br />
+SW1(config-acl)# permit tcp any any established<br />
+SW1(config-acl)# …<br />
+SW1(config-acl)# deny ip any any log <br />
+SW1(config-acl)# exit<br />
+SW1(config)# ip access-list FILTER_TRAFFIC_OUT<br />
+SW1(config-acl)# deny 239.0.0.0/8<br />
+SW1(config-acl)# …<br />
+SW1(config-acl)# permit ip any any<br />
+SW1(config-acl)# exit<br />
+<br />
+Step 2: Apply the ingress and egress ACL to the applicable interfaces.<br />
+<br />
+SW1(config)# int e2/1<br />
+SW1(config-if)# ip access-group FILTER_TRAFFIC_IN in<br />
+SW1(config-if)# ip access-group FILTER_TRAFFIC_OUT out<br />
+SW1(config-if)# end</p><h2>Check Contents</h2><p>Multicast boundary for NX-OS can be established via combination of the border command along with an ACL to filter admin-scoped multicast traffic.<br />
+<br />
+Step 1: Verify that the interface at the multicast domain edge has been configured with both an ingress and egress ACL.<br />
+<br />
+interface Ethernet2/1<br />
+ no switchport<br />
+ ip access-group FILTER_TRAFFIC_IN in<br />
+ ip access-group FILTER_TRAFFIC_OUT out<br />
+ ip address 10.1.12.1/24<br />
+ ip pim sparse-mode<br />
+ ip pim border<br />
+<br />
+Note: The command ip pim border enables the interface to be on the border of PIM domain so that no bootstrap, candidate-RP, or Auto-RP messages are sent or received on the interface. <br />
+<br />
+Step 2: Verify that the ingress and egress ACLs block the address range for administratively scoped multicast traffic.<br />
+<br />
+ip access-list FILTER_TRAFFIC_IN<br />
+ 10 deny ip any 239.0.0.0/8<br />
+ 20 permit tcp any any established<br />
+…<br />
+ …<br />
+ …<br />
+90 deny ip any any log <br />
+<br />
+ip access-list FILTER_TRAFFIC_OUT<br />
+ 10 deny ip any 239.0.0.0/8<br />
+ 20 deny ip …<br />
+ …<br />
+80 permit ip any any<br />
+<br />
+If the switch is not configured to establish boundaries for administratively scoped multicast traffic, this is a finding.</p><h2>Vulnerability Number</h2><p>V-221134</p><h2>Documentable</h2><p>False</p><h2>Rule Version</h2><p>CISC-RT-000810</p><h2>Severity Override Guidance</h2><p>Multicast boundary for NX-OS can be established via combination of the border command along with an ACL to filter admin-scoped multicast traffic.<br />
+<br />
+Step 1: Verify that the interface at the multicast domain edge has been configured with both an ingress and egress ACL.<br />
+<br />
+interface Ethernet2/1<br />
+ no switchport<br />
+ ip access-group FILTER_TRAFFIC_IN in<br />
+ ip access-group FILTER_TRAFFIC_OUT out<br />
+ ip address 10.1.12.1/24<br />
+ ip pim sparse-mode<br />
+ ip pim border<br />
+<br />
+Note: The command ip pim border enables the interface to be on the border of PIM domain so that no bootstrap, candidate-RP, or Auto-RP messages are sent or received on the interface. <br />
+<br />
+Step 2: Verify that the ingress and egress ACLs block the address range for administratively scoped multicast traffic.<br />
+<br />
+ip access-list FILTER_TRAFFIC_IN<br />
+ 10 deny ip any 239.0.0.0/8<br />
+ 20 permit tcp any any established<br />
+…<br />
+ …<br />
+ …<br />
+90 deny ip any any log <br />
+<br />
+ip access-list FILTER_TRAFFIC_OUT<br />
+ 10 deny ip any 239.0.0.0/8<br />
+ 20 deny ip …<br />
+ …<br />
+80 permit ip any any<br />
+<br />
+If the switch is not configured to establish boundaries for administratively scoped multicast traffic, this is a finding.</p><h2>Check Content Reference</h2><p>M</p><h2>Target Key</h2><p>4075</p></body></html>

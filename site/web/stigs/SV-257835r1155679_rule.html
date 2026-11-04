@@ -1,0 +1,52 @@
+<!doctype html><html lang="en"><head><meta charset="utf-8"><title>STIGQter: STIG Check Details: SV-257835r1155679_rule: The Trivial File Transfer Protocol (TFTP) server must not be installed unless it is required, and if required, the RHEL 9 TFTP daemon must be configured to operate in secure mode.</title><link rel="icon" type="image/svg+xml" href="STIGQter.svg" /><script async src="https://www.googletagmanager.com/gtag/js?id=UA-31381839-2"></script><script src="include.js"></script><script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-4110907817782130" crossorigin="anonymous"></script></head><body><div><img src="STIGQter.svg" alt="STIGQter" style="height:1em;" /> <a href="https://www.stigqter.com/">STIGQter</a>: <a href="main.html">STIG Summary</a>: <a href="U_RHEL_9_STIG_V2R9_Manual-xccdf.html">Red Hat Enterprise Linux 9 Security Technical Implementation Guide Version: 2 Release: 9 Benchmark Date: 01 Jul 2026</a>:</div> <h1>The Trivial File Transfer Protocol (TFTP) server must not be installed unless it is required, and if required, the RHEL 9 TFTP daemon must be configured to operate in secure mode.</h1><h2>DISA Rule</h2><p>SV-257835r1155679_rule</p><h2>Vulnerability Number</h2><p>V-257835</p><h2>Group Title</h2><p>SRG-OS-000480-GPOS-00227</p><h2>Rule Version</h2><p>RHEL-09-215060</p><h2>Severity</h2><p>CAT I</p><h2>CCI(s)</h2><ul><li>CCI-000366 - Implement the security configuration settings.</li></ul><h2>Weight</h2><p>10</p><h2>Fix Recommendation</h2><p>Configure RHEL 9 so that TFTP operates in secure mode if installed.<br />
+<br />
+If TFTP server is not required, remove it with the following command:<br />
+$ sudo dnf -y remove tftp-server<br />
+<br />
+Configure the TFTP daemon to operate in secure mode with the following command:<br />
+$ sudo systemctl edit tftp.service<br />
+<br />
+In the editor, enter:<br />
+[Service]<br />
+ExecStart=/usr/sbin/in.tftpd -s /var/lib/tftpboot<br />
+<br />
+After making changes, reload the systemd daemon and restart the TFTP service as follows:<br />
+<br />
+$ sudo systemctl daemon-reload<br />
+$ sudo systemctl restart tftp.service<br />
+<br />
+If the &quot;-s&quot; option is not present in the &quot;ExecStart&quot; line or if the line is missing, this is a finding.</p><h2>Check Contents</h2><p>Verify if TFTP is installed, it is configured to operate in secure mode.<br />
+<br />
+Note: If TFTP is not required, it must not be installed. If TFTP is not installed, this rule is not applicable.<br />
+<br />
+Check to see if TFTP server is installed with the following command:<br />
+<br />
+$ sudo dnf list --installed tftp-server<br />
+<br />
+Updating Subscription Management repositories.<br />
+Installed Packages<br />
+tftp-server.x86_64                             5.2-38.el9                              @rhel-9-for-x86_64-appstream-rpms<br />
+<br />
+Verify the TFTP daemon, if tftp.server is installed, is configured to operate in secure mode with the following command:<br />
+<br />
+$ grep -i execstart /usr/lib/systemd/system/tftp.service<br />
+ExecStart=/usr/sbin/in.tftpd -s /var/lib/tftpboot<br />
+<br />
+Note: The &quot;-s&quot; option ensures the TFTP server only serves files from the specified directory, which is a security measure to prevent unauthorized access to other parts of the file system.</p><h2>Vulnerability Number</h2><p>V-257835</p><h2>Documentable</h2><p>False</p><h2>Rule Version</h2><p>RHEL-09-215060</p><h2>Severity Override Guidance</h2><p>Verify if TFTP is installed, it is configured to operate in secure mode.<br />
+<br />
+Note: If TFTP is not required, it must not be installed. If TFTP is not installed, this rule is not applicable.<br />
+<br />
+Check to see if TFTP server is installed with the following command:<br />
+<br />
+$ sudo dnf list --installed tftp-server<br />
+<br />
+Updating Subscription Management repositories.<br />
+Installed Packages<br />
+tftp-server.x86_64                             5.2-38.el9                              @rhel-9-for-x86_64-appstream-rpms<br />
+<br />
+Verify the TFTP daemon, if tftp.server is installed, is configured to operate in secure mode with the following command:<br />
+<br />
+$ grep -i execstart /usr/lib/systemd/system/tftp.service<br />
+ExecStart=/usr/sbin/in.tftpd -s /var/lib/tftpboot<br />
+<br />
+Note: The &quot;-s&quot; option ensures the TFTP server only serves files from the specified directory, which is a security measure to prevent unauthorized access to other parts of the file system.</p><h2>Check Content Reference</h2><p>M</p><h2>Target Key</h2><p>5551</p></body></html>

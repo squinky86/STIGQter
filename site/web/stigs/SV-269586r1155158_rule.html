@@ -1,0 +1,52 @@
+<!doctype html><html lang="en"><head><meta charset="utf-8"><title>STIGQter: STIG Check Details: SV-269586r1155158_rule: Xylok Security Suite must use a central log server for auditing records.</title><link rel="icon" type="image/svg+xml" href="STIGQter.svg" /><script async src="https://www.googletagmanager.com/gtag/js?id=UA-31381839-2"></script><script src="include.js"></script><script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-4110907817782130" crossorigin="anonymous"></script></head><body><div><img src="STIGQter.svg" alt="STIGQter" style="height:1em;" /> <a href="https://www.stigqter.com/">STIGQter</a>: <a href="main.html">STIG Summary</a>: <a href="U_Xylok_Security_Suite_20-x_STIG_V1R2_Manual-xccdf.html">Xylok Security Suite 20.x Security Technical Implementation Guide Version: 1 Release: 2 Benchmark Date: 05 Jan 2026</a>:</div> <h1>Xylok Security Suite must use a central log server for auditing records.</h1><h2>DISA Rule</h2><p>SV-269586r1155158_rule</p><h2>Vulnerability Number</h2><p>V-269586</p><h2>Group Title</h2><p>SRG-APP-000745</p><h2>Rule Version</h2><p>XYLK-20-000291</p><h2>Severity</h2><p>CAT I</p><h2>CCI(s)</h2><ul><li>CCI-003821 - Implement the capability to centrally review and analyze audit records from multiple components within the system.</li><li>CCI-000158 - Provide the capability to process, sort, and search audit records for events of interest based on organization-defined audit fields within audit records.</li><li>CCI-001348 - Store audit records on an organization-defined frequency in a repository that is part of a physically different system or system component that the system or component being audited.</li><li>CCI-001876 - Provide an audit reduction capability that supports on-demand reporting requirements.</li><li>CCI-001851 - Transfer audit logs per organization-defined frequency to a different system, system component, or media than the system or system component conducting the logging.</li><li>CCI-001875 - Provide an audit reduction capability that supports on-demand audit review and analysis.</li><li>CCI-001877 - Provide an audit reduction capability that supports after-the-fact investigations of incidents.</li><li>CCI-001878 - Provide a report generation capability that supports on-demand audit review and analysis.</li><li>CCI-001879 - Provide a report generation capability that supports on-demand reporting requirements.</li><li>CCI-001880 - Provide a report generation capability that supports after-the-fact investigations of security incidents.</li><li>CCI-001881 - Provide an audit reduction capability that does not alter original content or time ordering of audit records.</li><li>CCI-001882 - Provide a report generation capability that does not alter original content or time ordering of audit records.</li><li>CCI-001896 - Enforce dual authorization for movement and/or deletion of organization-defined audit information.</li><li>CCI-003822 - Implement an audit reduction capability that supports on-demand audit review and analysis.</li><li>CCI-003823 - Implement an audit reduction capability that supports on-demand reporting requirements.</li><li>CCI-003824 - Implement an audit reduction capability that supports after-the-fact investigations of incidents.</li><li>CCI-003825 - Implement a report generation capability that supports on-demand audit review and analysis.</li><li>CCI-003826 - Implement a report generation capability that supports on-demand reporting requirements.</li><li>CCI-003827 - Implement a report generation capability that supports after-the-fact investigations of incidents.</li><li>CCI-003828 - Implement an audit reduction capability that does not alter original content or time ordering of audit records.</li><li>CCI-003829 - Implement a report generation capability that does not alter original content or time ordering of audit records.</li><li>CCI-003830 - Implement the capability to process, sort, and search audit records for events of interest based on organization-defined audit fields within audit records.</li><li>CCI-003831 - Alert organization-defined personnel or roles upon detection of unauthorized access, modification, or deletion of audit information.</li><li>CCI-003834 - Implement the capability for organization-defined individuals or roles to change the auditing to be performed on organization-defined system components based on organization-defined selectable event criteria within organization-defined time thresholds.</li><li>CCI-003938 - Automatically generate audit records of the enforcement actions.</li></ul><h2>Weight</h2><p>10</p><h2>Fix Recommendation</h2><p>Edit /etc/systemd/journald.conf to include at least these lines:<br />
+<br />
+[Journal]<br />
+ForwardToSyslog=yes<br />
+<br />
+Edit /etc/rsyslog.conf to include these lines:<br />
+<br />
+module(load=&quot;imuxsock&quot;) # provides support for local system logging<br />
+module(load=&quot;imjournal&quot;) # provides access to the systemd journal<br />
+*.* @@yoursiem:1234<br />
+<br />
+Ensure yoursiem:1234 points to the correct host and port for your network.<br />
+<br />
+Restart journald and rsyslogd:<br />
+<br />
+    # systemctl restar rsyslog systemd-journald</p><h2>Check Contents</h2><p>Verify that journald sends logs to rsyslog:<br />
+<br />
+    # grep ForwardToSyslog /etc/systemd/journald.conf<br />
+    ForwardToSyslog=yes<br />
+<br />
+If ForwardToSyslog is commented out or not set to &quot;yes,&quot; this is a finding.<br />
+<br />
+Verify that rsyslog is set to receive journald logs:<br />
+<br />
+    # grep '\(imuxsock\|imjournal\)' /etc/rsyslog.conf /etc/rsyslog.d/*<br />
+    module(load=&quot;imuxsock&quot;) # provides support for local system logging<br />
+    module(load=&quot;imjournal&quot;) # provides access to the systemd journal<br />
+<br />
+If either module is not present or disabled, this is a finding.<br />
+<br />
+    # grep '[[:space:]]@.*' /etc/rsyslog.conf /etc/rsyslog.d/*<br />
+    *.*   @@yoursiem:1234<br />
+<br />
+If rsyslog is not configured to forward logs to a central SIEM server, this is a finding.</p><h2>Vulnerability Number</h2><p>V-269586</p><h2>Documentable</h2><p>False</p><h2>Rule Version</h2><p>XYLK-20-000291</p><h2>Severity Override Guidance</h2><p>Verify that journald sends logs to rsyslog:<br />
+<br />
+    # grep ForwardToSyslog /etc/systemd/journald.conf<br />
+    ForwardToSyslog=yes<br />
+<br />
+If ForwardToSyslog is commented out or not set to &quot;yes,&quot; this is a finding.<br />
+<br />
+Verify that rsyslog is set to receive journald logs:<br />
+<br />
+    # grep '\(imuxsock\|imjournal\)' /etc/rsyslog.conf /etc/rsyslog.d/*<br />
+    module(load=&quot;imuxsock&quot;) # provides support for local system logging<br />
+    module(load=&quot;imjournal&quot;) # provides access to the systemd journal<br />
+<br />
+If either module is not present or disabled, this is a finding.<br />
+<br />
+    # grep '[[:space:]]@.*' /etc/rsyslog.conf /etc/rsyslog.d/*<br />
+    *.*   @@yoursiem:1234<br />
+<br />
+If rsyslog is not configured to forward logs to a central SIEM server, this is a finding.</p><h2>Check Content Reference</h2><p>M</p><h2>Target Key</h2><p>5665</p></body></html>

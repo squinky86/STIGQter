@@ -1,0 +1,52 @@
+<!doctype html><html lang="en"><head><meta charset="utf-8"><title>STIGQter: STIG Check Details: SV-260931r966150_rule: IPSec network encryption must be configured.</title><link rel="icon" type="image/svg+xml" href="STIGQter.svg" /><script async src="https://www.googletagmanager.com/gtag/js?id=UA-31381839-2"></script><script src="include.js"></script><script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-4110907817782130" crossorigin="anonymous"></script></head><body><div><img src="STIGQter.svg" alt="STIGQter" style="height:1em;" /> <a href="https://www.stigqter.com/">STIGQter</a>: <a href="main.html">STIG Summary</a>: <a href="U_Mirantis_Kubernetes_Engine_STIG_V2R1_Manual-xccdf.html">Mirantis Kubernetes Engine Security Technical Implementation Guide Version: 2 Release: 1 Benchmark Date: 24 Jul 2024</a>:</div> <h1>IPSec network encryption must be configured.</h1><h2>DISA Rule</h2><p>SV-260931r966150_rule</p><h2>Vulnerability Number</h2><p>V-260931</p><h2>Group Title</h2><p>SRG-APP-000158-CTR-000390</p><h2>Rule Version</h2><p>CNTR-MK-000770</p><h2>Severity</h2><p>CAT II</p><h2>CCI(s)</h2><ul><li>CCI-000778 - Uniquely identify organization-defined devices and/or types of devices before establishing a local, remote, and/or network connection.</li></ul><h2>Weight</h2><p>10</p><h2>Fix Recommendation</h2><p>To configure IPSec network encryption in Swarm orchestration, create an overlay network with --opt encrypted flag. <br />
+<br />
+Example:<br />
+docker network create --opt encrypted --driver overlay my-network<br />
+<br />
+To configure IPSec network encryption in Kubernetes orchestration, modify an existing MKE configuration.<br />
+<br />
+Working as an MKE admin, use the config-toml API from within the directory of your client certificate bundle to export the current MKE settings to a TOML file (mke-config.toml).<br />
+<br />
+1. Define the following environment variables:<br />
+<br />
+export MKE_USERNAME=&lt;mke-username&gt;<br />
+export MKE_PASSWORD=&lt;mke-password&gt;<br />
+export MKE_HOST=&lt;mke-fqdm-or-ip-address&gt;<br />
+<br />
+2. Obtain and define an AUTHTOKEN environment variable by executing the following:<br />
+<br />
+AUTHTOKEN=$(curl --silent --insecure --data '{&quot;username&quot;:&quot;'$MKE_USERNAME'&quot;,&quot;password&quot;:&quot;'$MKE_PASSWORD'&quot;}' https://$MKE_HOST/auth/login | jq --raw-output .auth_token)<br />
+<br />
+3. Download the current MKE configuration file by executing the following:<br />
+<br />
+curl --silent --insecure -X GET &quot;https://$MKE_HOST/api/MKE/config-toml&quot; -H &quot;accept: application/toml&quot; -H &quot;Authorization: Bearer $AUTHTOKEN&quot; &gt; mke-config.toml<br />
+<br />
+4. Modify &quot;secure_overlay&quot; settings to &quot;true&quot;.<br />
+<br />
+5. Upload the newly edited MKE configuration file by executing the following:<br />
+<br />
+curl --silent --insecure -X PUT -H &quot;accept: application/toml&quot; -H &quot;Authorization: Bearer $AUTHTOKEN&quot; --upload-file 'mke-config.toml' https://$MKE_HOST/api/MKE/config-toml<br />
+<br />
+Note: Users may need to reacquire AUTHTOKEN, if significant time has passed since it was first attained.</p><h2>Check Contents</h2><p>Verify IPSec network encryption. <br />
+<br />
+For Swarm orchestration log in to the MKE web UI and navigate to Swarm &gt;&gt; Networks.<br />
+<br />
+If the &quot;scope&quot; is not local and the &quot;driver&quot; is not overlay, this is a finding.<br />
+ <br />
+Kubernetes orchestration:<br />
+Note: The path may need to be edited.<br />
+<br />
+cat /etc/mke/config.toml | grep secure_overlay<br />
+ <br />
+If the &quot;secure_overlay&quot; settings is not set to &quot;true&quot;, this is a finding.</p><h2>Vulnerability Number</h2><p>V-260931</p><h2>Documentable</h2><p>False</p><h2>Rule Version</h2><p>CNTR-MK-000770</p><h2>Severity Override Guidance</h2><p>Verify IPSec network encryption. <br />
+<br />
+For Swarm orchestration log in to the MKE web UI and navigate to Swarm &gt;&gt; Networks.<br />
+<br />
+If the &quot;scope&quot; is not local and the &quot;driver&quot; is not overlay, this is a finding.<br />
+ <br />
+Kubernetes orchestration:<br />
+Note: The path may need to be edited.<br />
+<br />
+cat /etc/mke/config.toml | grep secure_overlay<br />
+ <br />
+If the &quot;secure_overlay&quot; settings is not set to &quot;true&quot;, this is a finding.</p><h2>Check Content Reference</h2><p>M</p><h2>Target Key</h2><p>5595</p></body></html>

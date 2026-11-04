@@ -1,0 +1,21 @@
+<!doctype html><html lang="en"><head><meta charset="utf-8"><title>STIGQter: STIG Check Details: SV-257529r960930_rule: OpenShift must protect system journal file from any type of unauthorized access by setting owner permissions.</title><link rel="icon" type="image/svg+xml" href="STIGQter.svg" /><script async src="https://www.googletagmanager.com/gtag/js?id=UA-31381839-2"></script><script src="include.js"></script><script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-4110907817782130" crossorigin="anonymous"></script></head><body><div><img src="STIGQter.svg" alt="STIGQter" style="height:1em;" /> <a href="https://www.stigqter.com/">STIGQter</a>: <a href="main.html">STIG Summary</a>: <a href="U_RH_OpenShift_Container_Platform_4-x_STIG_V2R6_Manual-xccdf.html">Red Hat OpenShift Container Platform 4.x Security Technical Implementation Guide Version: 2 Release: 6 Benchmark Date: 01 Jul 2026</a>:</div> <h1>OpenShift must protect system journal file from any type of unauthorized access by setting owner permissions.</h1><h2>DISA Rule</h2><p>SV-257529r960930_rule</p><h2>Vulnerability Number</h2><p>V-257529</p><h2>Group Title</h2><p>SRG-APP-000118-CTR-000240</p><h2>Rule Version</h2><p>CNTR-OS-000270</p><h2>Severity</h2><p>CAT II</p><h2>CCI(s)</h2><ul><li>CCI-000162 - Protect audit information from unauthorized access.</li></ul><h2>Weight</h2><p>10</p><h2>Fix Recommendation</h2><p>Correct journal file ownership by executing the following:<br />
+<br />
+for node in $(oc get node -oname); do oc debug $node -- chroot /host /bin/bash -c 'echo -n &quot;$HOSTNAME &quot;; machine_id=$(systemd-machine-id-setup --print); chown root:systemd-journal /var/log/journal/$machine_id/system.journal' 2&gt;/dev/null; done</p><h2>Check Contents</h2><p>Verify the &quot;system journal&quot; file is group-owned by systemd-journal and owned by root by executing the following:<br />
+<br />
+for node in $(oc get node -oname); do oc debug $node -- chroot /host /bin/bash -c 'echo -n &quot;$HOSTNAME &quot;; machine_id=$(systemd-machine-id-setup --print); stat -c &quot;%U %G&quot; /var/log/journal/$machine_id/system.journal' 2&gt;/dev/null; done<br />
+<br />
+Example output:<br />
+ip-10-0-150-1 root systemd-journal<br />
+<br />
+If &quot;root&quot; is not returned as the owner, this is a finding.<br />
+<br />
+If &quot;systemd-journald&quot; is not returned as the group owner, this is a finding.</p><h2>Vulnerability Number</h2><p>V-257529</p><h2>Documentable</h2><p>False</p><h2>Rule Version</h2><p>CNTR-OS-000270</p><h2>Severity Override Guidance</h2><p>Verify the &quot;system journal&quot; file is group-owned by systemd-journal and owned by root by executing the following:<br />
+<br />
+for node in $(oc get node -oname); do oc debug $node -- chroot /host /bin/bash -c 'echo -n &quot;$HOSTNAME &quot;; machine_id=$(systemd-machine-id-setup --print); stat -c &quot;%U %G&quot; /var/log/journal/$machine_id/system.journal' 2&gt;/dev/null; done<br />
+<br />
+Example output:<br />
+ip-10-0-150-1 root systemd-journal<br />
+<br />
+If &quot;root&quot; is not returned as the owner, this is a finding.<br />
+<br />
+If &quot;systemd-journald&quot; is not returned as the group owner, this is a finding.</p><h2>Check Content Reference</h2><p>M</p><h2>Target Key</h2><p>5547</p></body></html>

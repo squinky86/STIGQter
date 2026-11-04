@@ -1,0 +1,65 @@
+<!doctype html><html lang="en"><head><meta charset="utf-8"><title>STIGQter: STIG Check Details: SV-251710r958944_rule: The RHEL 8 operating system must use a file integrity tool to verify correct operation of all security functions.</title><link rel="icon" type="image/svg+xml" href="STIGQter.svg" /><script async src="https://www.googletagmanager.com/gtag/js?id=UA-31381839-2"></script><script src="include.js"></script><script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-4110907817782130" crossorigin="anonymous"></script></head><body><div><img src="STIGQter.svg" alt="STIGQter" style="height:1em;" /> <a href="https://www.stigqter.com/">STIGQter</a>: <a href="main.html">STIG Summary</a>: <a href="U_RHEL_8_STIG_V2R8_Manual-xccdf.html">Red Hat Enterprise Linux 8 Security Technical Implementation Guide Version: 2 Release: 8 Benchmark Date: 01 Jul 2026</a>:</div> <h1>The RHEL 8 operating system must use a file integrity tool to verify correct operation of all security functions.</h1><h2>DISA Rule</h2><p>SV-251710r958944_rule</p><h2>Vulnerability Number</h2><p>V-251710</p><h2>Group Title</h2><p>SRG-OS-000445-GPOS-00199</p><h2>Rule Version</h2><p>RHEL-08-010359</p><h2>Severity</h2><p>CAT II</p><h2>CCI(s)</h2><ul><li>CCI-002696 - Verify correct operation of organization-defined security functions.</li></ul><h2>Weight</h2><p>10</p><h2>Fix Recommendation</h2><p>Install AIDE, initialize it, and perform a manual check.<br />
+<br />
+Install AIDE:<br />
+     $ sudo yum install aide<br />
+<br />
+Initialize it:<br />
+     $ sudo /usr/sbin/aide --init<br />
+<br />
+Example output:<br />
+     Number of entries:      48623<br />
+<br />
+     ---------------------------------------------------<br />
+     The attributes of the (uncompressed) database(s):<br />
+     ---------------------------------------------------<br />
+<br />
+     /var/lib/aide/aide.db.new.gz<br />
+       SHA1     : LTAVQ8tFJthsrf4m9gfRpnf1vyc=<br />
+       SHA256   : NJ9+uzRQKSwmLQ8A6IpKNvYjVKGbhSjt<br />
+                  BeJBVcmOVrI=<br />
+       SHA512   : 7d8I/F6A1b07E4ZuGeilZjefRgJJ/F20<br />
+                  eC2xoag1OsOVpctt3Mi7Jjjf3vFW4xoY<br />
+                  5mdS6/ImQpm0xtlTLOPeQQ==<br />
+<br />
+     End timestamp: 2022-10-20 10:50:52 -0700 (run time: 0m 46s)<br />
+<br />
+The new database will need to be renamed to be read by AIDE:<br />
+     $ sudo mv /var/lib/aide/aide.db.new.gz /var/lib/aide/aide.db.gz<br />
+<br />
+Perform a manual check:<br />
+     $ sudo /usr/sbin/aide --check<br />
+<br />
+Example output:<br />
+     Start timestamp: 2022-10-20 11:03:16 -0700 (AIDE 0.16)<br />
+     AIDE found differences between database and filesystem!!<br />
+     ...<br />
+	 <br />
+Done.</p><h2>Check Contents</h2><p>Verify that Advanced Intrusion Detection Environment (AIDE) is installed and verifies the correct operation of all security functions.<br />
+<br />
+Check that the AIDE package is installed with the following command:<br />
+     $ sudo rpm -q aide<br />
+<br />
+     aide-0.16-14.el8_5.1.x86_64<br />
+<br />
+If AIDE is not installed, ask the System Administrator how file integrity checks are performed on the system. <br />
+<br />
+If there is no application installed to perform integrity checks, this is a finding.<br />
+<br />
+If AIDE is installed, check if it has been initialized with the following command:<br />
+     $ sudo /usr/sbin/aide --check<br />
+<br />
+If the output is &quot;Couldn't open file /var/lib/aide/aide.db.gz for reading&quot;, this is a finding.</p><h2>Vulnerability Number</h2><p>V-251710</p><h2>Documentable</h2><p>False</p><h2>Rule Version</h2><p>RHEL-08-010359</p><h2>Severity Override Guidance</h2><p>Verify that Advanced Intrusion Detection Environment (AIDE) is installed and verifies the correct operation of all security functions.<br />
+<br />
+Check that the AIDE package is installed with the following command:<br />
+     $ sudo rpm -q aide<br />
+<br />
+     aide-0.16-14.el8_5.1.x86_64<br />
+<br />
+If AIDE is not installed, ask the System Administrator how file integrity checks are performed on the system. <br />
+<br />
+If there is no application installed to perform integrity checks, this is a finding.<br />
+<br />
+If AIDE is installed, check if it has been initialized with the following command:<br />
+     $ sudo /usr/sbin/aide --check<br />
+<br />
+If the output is &quot;Couldn't open file /var/lib/aide/aide.db.gz for reading&quot;, this is a finding.</p><h2>Check Content Reference</h2><p>M</p><h2>Target Key</h2><p>2921</p></body></html>

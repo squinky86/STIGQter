@@ -1,0 +1,54 @@
+<!doctype html><html lang="en"><head><meta charset="utf-8"><title>STIGQter: STIG Check Details: SV-276227r1149590_rule: Database objects must be owned by Azure SQL Managed Instance principals authorized for ownership.</title><link rel="icon" type="image/svg+xml" href="STIGQter.svg" /><script async src="https://www.googletagmanager.com/gtag/js?id=UA-31381839-2"></script><script src="include.js"></script><script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-4110907817782130" crossorigin="anonymous"></script></head><body><div><img src="STIGQter.svg" alt="STIGQter" style="height:1em;" /> <a href="https://www.stigqter.com/">STIGQter</a>: <a href="main.html">STIG Summary</a>: <a href="U_MS_Azure_SQL_MI_STIG_V1R1_Manual-xccdf.html">Microsoft Azure SQL Managed Instance Security Technical Implementation Guide Version: 1 Release: 1 Benchmark Date: 23 Sep 2025</a>:</div> <h1>Database objects must be owned by Azure SQL Managed Instance principals authorized for ownership.</h1><h2>DISA Rule</h2><p>SV-276227r1149590_rule</p><h2>Vulnerability Number</h2><p>V-276227</p><h2>Group Title</h2><p>SRG-APP-000133-DB-000200</p><h2>Rule Version</h2><p>MSQL-00-001300</p><h2>Severity</h2><p>CAT II</p><h2>CCI(s)</h2><ul><li>CCI-001499 - Limit privileges to change software resident within software libraries.</li></ul><h2>Weight</h2><p>10</p><h2>Fix Recommendation</h2><p>Document and obtain approval for any account(s) authorized for object ownership.<br />
+<br />
+If necessary, use the ALTER AUTHORIZATION command to change object ownership to an authorized account.  <br />
+<br />
+Example provided below.  <br />
+ALTER AUTHORIZATION ON OBJECT::test.table TO AuthorizedUser; <br />
+<br />
+Refer to: https://docs.microsoft.com/en-us/sql/t-sql/statements/alter-authorization-transact-sql</p><h2>Check Contents</h2><p>Review system documentation to identify Azure SQL Managed Instance accounts authorized to own database objects.  <br />
+<br />
+If the Azure SQL Managed Instance ownership list does not exist or needs to be updated, this is a finding.  <br />
+<br />
+The following query can be used to make this determination:<br />
+  <br />
+;with objects_cte as<br />
+(SELECT o.name, o.type_desc,<br />
+CASE<br />
+WHEN o.principal_id is null then s.principal_id<br />
+ELSE o.principal_id<br />
+END as principal_id<br />
+FROM sys.objects o<br />
+INNER JOIN sys.schemas s<br />
+ON o.schema_id = s.schema_id<br />
+WHERE o.is_ms_shipped = 0<br />
+)<br />
+SELECT cte.name, cte.type_desc, dp.name as ObjectOwner <br />
+FROM objects_cte cte<br />
+INNER JOIN sys.database_principals dp<br />
+ON cte.principal_id = dp.principal_id<br />
+ORDER BY dp.name, cte.name <br />
+<br />
+If any of the listed owners is not authorized, this is a finding.</p><h2>Vulnerability Number</h2><p>V-276227</p><h2>Documentable</h2><p>False</p><h2>Rule Version</h2><p>MSQL-00-001300</p><h2>Severity Override Guidance</h2><p>Review system documentation to identify Azure SQL Managed Instance accounts authorized to own database objects.  <br />
+<br />
+If the Azure SQL Managed Instance ownership list does not exist or needs to be updated, this is a finding.  <br />
+<br />
+The following query can be used to make this determination:<br />
+  <br />
+;with objects_cte as<br />
+(SELECT o.name, o.type_desc,<br />
+CASE<br />
+WHEN o.principal_id is null then s.principal_id<br />
+ELSE o.principal_id<br />
+END as principal_id<br />
+FROM sys.objects o<br />
+INNER JOIN sys.schemas s<br />
+ON o.schema_id = s.schema_id<br />
+WHERE o.is_ms_shipped = 0<br />
+)<br />
+SELECT cte.name, cte.type_desc, dp.name as ObjectOwner <br />
+FROM objects_cte cte<br />
+INNER JOIN sys.database_principals dp<br />
+ON cte.principal_id = dp.principal_id<br />
+ORDER BY dp.name, cte.name <br />
+<br />
+If any of the listed owners is not authorized, this is a finding.</p><h2>Check Content Reference</h2><p>M</p><h2>Target Key</h2><p>5711</p></body></html>

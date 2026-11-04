@@ -1,0 +1,27 @@
+<!doctype html><html lang="en"><head><meta charset="utf-8"><title>STIGQter: STIG Check Details: SV-257583r960963_rule: Red Hat Enterprise Linux CoreOS (RHCOS) must disable SSHD service.</title><link rel="icon" type="image/svg+xml" href="STIGQter.svg" /><script async src="https://www.googletagmanager.com/gtag/js?id=UA-31381839-2"></script><script src="include.js"></script><script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-4110907817782130" crossorigin="anonymous"></script></head><body><div><img src="STIGQter.svg" alt="STIGQter" style="height:1em;" /> <a href="https://www.stigqter.com/">STIGQter</a>: <a href="main.html">STIG Summary</a>: <a href="U_RH_OpenShift_Container_Platform_4-x_STIG_V2R6_Manual-xccdf.html">Red Hat OpenShift Container Platform 4.x Security Technical Implementation Guide Version: 2 Release: 6 Benchmark Date: 01 Jul 2026</a>:</div> <h1>Red Hat Enterprise Linux CoreOS (RHCOS) must disable SSHD service.</h1><h2>DISA Rule</h2><p>SV-257583r960963_rule</p><h2>Vulnerability Number</h2><p>V-257583</p><h2>Group Title</h2><p>SRG-APP-000141-CTR-000315</p><h2>Rule Version</h2><p>CNTR-OS-001010</p><h2>Severity</h2><p>CAT I</p><h2>CCI(s)</h2><ul><li>CCI-000381 - Configure the system to provide only organization-defined mission essential capabilities.</li><li>CCI-000877 - Employ strong authentication in the establishment of nonlocal maintenance and diagnostic sessions.</li></ul><h2>Weight</h2><p>10</p><h2>Fix Recommendation</h2><p>Apply the machine config to disable SSHD service by executing following: <br />
+<br />
+for mcpool in $(oc get mcp -oname | sed &quot;s:.*/::&quot; ); do <br />
+echo &quot;apiVersion: machineconfiguration.openshift.io/v1<br />
+kind: MachineConfig<br />
+metadata:<br />
+  name: 80-sshd-service-disable-$mcpool<br />
+  labels:<br />
+    machineconfiguration.openshift.io/role: $mcpool<br />
+spec:<br />
+  config:<br />
+    ignition:<br />
+      version: 3.1.0<br />
+    systemd:<br />
+      units:<br />
+      - name: sshd.service<br />
+        enabled: false<br />
+&quot; | oc apply -f -<br />
+done</p><h2>Check Contents</h2><p>Verify the SSHD service is inactive and disabled by executing the following:<br />
+<br />
+for node in $(oc get node -oname); do oc debug $node -- chroot /host /bin/bash -c 'echo -n &quot;$HOSTNAME &quot;; systemctl is-enabled sshd.service; systemctl is-active sshd.service' 2&gt;/dev/null; done <br />
+<br />
+If the SSHD service is either active or enabled this is a finding.</p><h2>Vulnerability Number</h2><p>V-257583</p><h2>Documentable</h2><p>False</p><h2>Rule Version</h2><p>CNTR-OS-001010</p><h2>Severity Override Guidance</h2><p>Verify the SSHD service is inactive and disabled by executing the following:<br />
+<br />
+for node in $(oc get node -oname); do oc debug $node -- chroot /host /bin/bash -c 'echo -n &quot;$HOSTNAME &quot;; systemctl is-enabled sshd.service; systemctl is-active sshd.service' 2&gt;/dev/null; done <br />
+<br />
+If the SSHD service is either active or enabled this is a finding.</p><h2>Check Content Reference</h2><p>M</p><h2>Target Key</h2><p>5547</p></body></html>

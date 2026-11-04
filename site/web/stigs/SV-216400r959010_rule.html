@@ -1,0 +1,131 @@
+<!doctype html><html lang="en"><head><meta charset="utf-8"><title>STIGQter: STIG Check Details: SV-216400r959010_rule: The operating system must prevent internal users from sending out packets which attempt to manipulate or spoof invalid IP addresses.</title><link rel="icon" type="image/svg+xml" href="STIGQter.svg" /><script async src="https://www.googletagmanager.com/gtag/js?id=UA-31381839-2"></script><script src="include.js"></script><script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-4110907817782130" crossorigin="anonymous"></script></head><body><div><img src="STIGQter.svg" alt="STIGQter" style="height:1em;" /> <a href="https://www.stigqter.com/">STIGQter</a>: <a href="main.html">STIG Summary</a>: <a href="U_SOL_11_SPARC_STIG_V3R6_Manual-xccdf.html">Solaris 11 SPARC Security Technical Implementation Guide Version: 3 Release: 6 Benchmark Date: 01 Jul 2026</a>:</div> <h1>The operating system must prevent internal users from sending out packets which attempt to manipulate or spoof invalid IP addresses.</h1><h2>DISA Rule</h2><p>SV-216400r959010_rule</p><h2>Vulnerability Number</h2><p>V-216400</p><h2>Group Title</h2><p>SRG-OS-000480</p><h2>Rule Version</h2><p>SOL-11.1-050470</p><h2>Severity</h2><p>CAT II</p><h2>CCI(s)</h2><ul><li>CCI-000366 - Implement the security configuration settings.</li></ul><h2>Weight</h2><p>10</p><h2>Fix Recommendation</h2><p>Determine the name of the zone that you are currently securing.<br />
+<br />
+# zonename<br />
+<br />
+If the command output is &quot;global&quot;, then only the &quot;phys&quot; and &quot;SR-IOV&quot; interfaces assigned to the global zone require configuration. If using a non-Global zone, then all &quot;phys&quot; and &quot;SR-IOV&quot; interfaces assigned to the zone require configuration.<br />
+<br />
+The Network Link Security profile is required.<br />
+<br />
+Determine which network interfaces are available and what protection modes are enabled and required.<br />
+<br />
+Enable link protection based on each configured network interface type.<br />
+<br />
+For InfiniBand:<br />
+# pfexec dladm set-linkprop -p protection=restricted,ip-nospoof,dhcp-nospoof [interface name]  <br />
+<br />
+For IP forwarding:<br />
+# pfexec dladm set-linkprop -p protection=mac-nospoof,restricted,dhcp-nospoof [interface name] <br />
+<br />
+For SR-IOV:<br />
+# pfexec dladm set-linkprop -p protection=mac-nospoof,restricted,dhcp-nospoof [interface name] <br />
+<br />
+For Ethernet without IP forwarding:<br />
+# pfexec dladm set-linkprop -p protection=mac-nospoof,restricted,ip-nospoof,dhcp-nospoof [interface name]</p><h2>Check Contents</h2><p>Determine the zone that you are currently securing.<br />
+<br />
+# zonename<br />
+<br />
+If the command output is &quot;global&quot;, then only the &quot;phys&quot; and &quot;SR-IOV&quot; interfaces assigned to the global zone require inspection. If using a non-Global zone, then all &quot;phys&quot; and &quot;SR-IOV&quot; interfaces assigned to the zone require inspection.<br />
+<br />
+Identify if this system has physical interfaces. <br />
+<br />
+# dladm show-link -Z | grep -v vnic <br />
+LINK                ZONE      CLASS     MTU    STATE    OVER<br />
+net0                global    phys      1500   unknown  --<br />
+e1000g0             global    phys      1500   up       --<br />
+e1000g1             global    phys      1500   up       --<br />
+zoneD/net2          zoneD     iptun     65515  up       --<br />
+<br />
+If &quot;phys&quot; appears in the third column, then the interface is physical.   <br />
+<br />
+For each physical interface, determine if the network interface is Ethernet or InfiniBand:<br />
+<br />
+# dladm show-phys [interface name]<br />
+LINK              MEDIA                STATE      SPEED  DUPLEX    DEVICE<br />
+[name]            Ethernet             unknown    0      half      dnet0<br />
+<br />
+The second column indicates either &quot;Ethernet&quot; or &quot;Infiniband&quot;.<br />
+<br />
+For each physical interface, determine if the host is using ip-forwarding:<br />
+<br />
+# ipadm show-ifprop [interface name] | grep forwarding<br />
+[name]      forwarding      ipv4  rw   off        --         off        on,off<br />
+[name]      forwarding      ipv6  rw   off        --         off        on,off<br />
+<br />
+If &quot;on&quot; appears in the fifth column, then the interface is using ip-forwarding.<br />
+<br />
+For each interface, determine if the host is using SR-IOV’s Virtual Function (VF) driver:<br />
+<br />
+# dladm show-phys [interface name] | grep vf<br />
+<br />
+If the sixth column includes 'vf' in its name, it is using SR-IOV (ex: ixgbevf0).<br />
+<br />
+For each physical and SR-IOV interface, determine if network link protection capabilities are enabled.<br />
+<br />
+# dladm show-linkprop -p protection<br />
+LINK    PROPERTY    PERM   VALUE         DEFAULT   POSSIBLE<br />
+net0    protection  rw     mac-nospoof,  --        mac-nospoof,<br />
+                           restricted,             restricted,<br />
+                           ip-nospoof,             ip-nospoof,<br />
+                           dhcp-nospoof            dhcp-nospoof<br />
+<br />
+If the interface uses Infiniband and if restricted, ip-nospoof, and dhcp-nospoof do not appear in the &quot;VALUE&quot; column, this is a finding.<br />
+<br />
+If the interface uses ip-forwarding and if mac-nospoof, restricted, and dhcp-nospoof do not appear in the &quot;VALUE&quot; column, this is a finding.<br />
+<br />
+If the interface uses SR-IOV and if mac-nospoof, restricted, and dhcp-nospoof do not appear in the &quot;VALUE&quot; column, this is a finding.<br />
+<br />
+If the interface uses Ethernet without IP forwarding and if mac-nospoof, restricted, ip-nospoof, and dhcp-nospoof do not appear in the &quot;VALUE&quot; column, this is a finding.</p><h2>Vulnerability Number</h2><p>V-216400</p><h2>Documentable</h2><p>False</p><h2>Rule Version</h2><p>SOL-11.1-050470</p><h2>Severity Override Guidance</h2><p>Determine the zone that you are currently securing.<br />
+<br />
+# zonename<br />
+<br />
+If the command output is &quot;global&quot;, then only the &quot;phys&quot; and &quot;SR-IOV&quot; interfaces assigned to the global zone require inspection. If using a non-Global zone, then all &quot;phys&quot; and &quot;SR-IOV&quot; interfaces assigned to the zone require inspection.<br />
+<br />
+Identify if this system has physical interfaces. <br />
+<br />
+# dladm show-link -Z | grep -v vnic <br />
+LINK                ZONE      CLASS     MTU    STATE    OVER<br />
+net0                global    phys      1500   unknown  --<br />
+e1000g0             global    phys      1500   up       --<br />
+e1000g1             global    phys      1500   up       --<br />
+zoneD/net2          zoneD     iptun     65515  up       --<br />
+<br />
+If &quot;phys&quot; appears in the third column, then the interface is physical.   <br />
+<br />
+For each physical interface, determine if the network interface is Ethernet or InfiniBand:<br />
+<br />
+# dladm show-phys [interface name]<br />
+LINK              MEDIA                STATE      SPEED  DUPLEX    DEVICE<br />
+[name]            Ethernet             unknown    0      half      dnet0<br />
+<br />
+The second column indicates either &quot;Ethernet&quot; or &quot;Infiniband&quot;.<br />
+<br />
+For each physical interface, determine if the host is using ip-forwarding:<br />
+<br />
+# ipadm show-ifprop [interface name] | grep forwarding<br />
+[name]      forwarding      ipv4  rw   off        --         off        on,off<br />
+[name]      forwarding      ipv6  rw   off        --         off        on,off<br />
+<br />
+If &quot;on&quot; appears in the fifth column, then the interface is using ip-forwarding.<br />
+<br />
+For each interface, determine if the host is using SR-IOV’s Virtual Function (VF) driver:<br />
+<br />
+# dladm show-phys [interface name] | grep vf<br />
+<br />
+If the sixth column includes 'vf' in its name, it is using SR-IOV (ex: ixgbevf0).<br />
+<br />
+For each physical and SR-IOV interface, determine if network link protection capabilities are enabled.<br />
+<br />
+# dladm show-linkprop -p protection<br />
+LINK    PROPERTY    PERM   VALUE         DEFAULT   POSSIBLE<br />
+net0    protection  rw     mac-nospoof,  --        mac-nospoof,<br />
+                           restricted,             restricted,<br />
+                           ip-nospoof,             ip-nospoof,<br />
+                           dhcp-nospoof            dhcp-nospoof<br />
+<br />
+If the interface uses Infiniband and if restricted, ip-nospoof, and dhcp-nospoof do not appear in the &quot;VALUE&quot; column, this is a finding.<br />
+<br />
+If the interface uses ip-forwarding and if mac-nospoof, restricted, and dhcp-nospoof do not appear in the &quot;VALUE&quot; column, this is a finding.<br />
+<br />
+If the interface uses SR-IOV and if mac-nospoof, restricted, and dhcp-nospoof do not appear in the &quot;VALUE&quot; column, this is a finding.<br />
+<br />
+If the interface uses Ethernet without IP forwarding and if mac-nospoof, restricted, ip-nospoof, and dhcp-nospoof do not appear in the &quot;VALUE&quot; column, this is a finding.</p><h2>Check Content Reference</h2><p>M</p><h2>Target Key</h2><p>4022</p></body></html>

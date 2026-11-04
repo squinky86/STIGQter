@@ -1,0 +1,43 @@
+<!doctype html><html lang="en"><head><meta charset="utf-8"><title>STIGQter: STIG Check Details: SV-234965r958752_rule: The SUSE operating system must allocate audit record storage capacity to store at least one week of audit records when audit records are not immediately sent to a central audit record storage facility.</title><link rel="icon" type="image/svg+xml" href="STIGQter.svg" /><script async src="https://www.googletagmanager.com/gtag/js?id=UA-31381839-2"></script><script src="include.js"></script><script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-4110907817782130" crossorigin="anonymous"></script></head><body><div><img src="STIGQter.svg" alt="STIGQter" style="height:1em;" /> <a href="https://www.stigqter.com/">STIGQter</a>: <a href="main.html">STIG Summary</a>: <a href="U_SLES_15_STIG_V2R8_Manual-xccdf.html">SUSE Linux Enterprise Server 15 Security Technical Implementation Guide Version: 2 Release: 8 Benchmark Date: 01 Jul 2026</a>:</div> <h1>The SUSE operating system must allocate audit record storage capacity to store at least one week of audit records when audit records are not immediately sent to a central audit record storage facility.</h1><h2>DISA Rule</h2><p>SV-234965r958752_rule</p><h2>Vulnerability Number</h2><p>V-234965</p><h2>Group Title</h2><p>SRG-OS-000341-GPOS-00132</p><h2>Rule Version</h2><p>SLES-15-030660</p><h2>Severity</h2><p>CAT II</p><h2>CCI(s)</h2><ul><li>CCI-001849 - Allocate audit log storage capacity to accommodate organization-defined audit record retention requirements.</li></ul><h2>Weight</h2><p>10</p><h2>Fix Recommendation</h2><p>Allocate enough storage capacity for at least one week of SUSE operating system audit records when audit records are not immediately sent to a central audit record storage facility.<br />
+<br />
+If audit records are stored on a partition made specifically for audit records, use the &quot;YaST2 - Partitioner&quot; program (installation and configuration tool for Linux) to resize the partition with sufficient space to contain one week of audit records.<br />
+<br />
+If audit records are not stored on a partition made specifically for audit records, a new partition with sufficient amount of space will need be to be created. The new partition can be created using the &quot;YaST2 - Partitioner&quot; program on the system.</p><h2>Check Contents</h2><p>Verify the SUSE operating system allocates audit record storage capacity to store at least one week of audit records when audit records are not immediately sent to a central audit record storage facility.<br />
+<br />
+Determine to which partition the audit records are being written with the following command:<br />
+<br />
+&gt; sudo grep -iw log_file /etc/audit/auditd.conf<br />
+log_file = /var/log/audit/audit.log<br />
+<br />
+Check the size of the partition that audit records are written to (with the example being /var/log/audit/) with the following command:<br />
+<br />
+&gt; df -h /var/log/audit/<br />
+/dev/sda2 24G 10.4G 13.6G 43% /var<br />
+<br />
+If the audit records are not written to a partition made specifically for audit records (/var/log/audit is a separate partition), determine the amount of space being used by other files in the partition with the following command:<br />
+<br />
+&gt; sudo du -sh [audit_partition]<br />
+1.8G /var/log/audit<br />
+<br />
+The partition size needed to capture a week of audit records is based on the activity level of the system and the total storage capacity available. In normal circumstances, 10.0 GB of storage space for audit records will be sufficient.<br />
+<br />
+If the audit record partition is not allocated sufficient storage capacity, this is a finding.</p><h2>Vulnerability Number</h2><p>V-234965</p><h2>Documentable</h2><p>False</p><h2>Rule Version</h2><p>SLES-15-030660</p><h2>Severity Override Guidance</h2><p>Verify the SUSE operating system allocates audit record storage capacity to store at least one week of audit records when audit records are not immediately sent to a central audit record storage facility.<br />
+<br />
+Determine to which partition the audit records are being written with the following command:<br />
+<br />
+&gt; sudo grep -iw log_file /etc/audit/auditd.conf<br />
+log_file = /var/log/audit/audit.log<br />
+<br />
+Check the size of the partition that audit records are written to (with the example being /var/log/audit/) with the following command:<br />
+<br />
+&gt; df -h /var/log/audit/<br />
+/dev/sda2 24G 10.4G 13.6G 43% /var<br />
+<br />
+If the audit records are not written to a partition made specifically for audit records (/var/log/audit is a separate partition), determine the amount of space being used by other files in the partition with the following command:<br />
+<br />
+&gt; sudo du -sh [audit_partition]<br />
+1.8G /var/log/audit<br />
+<br />
+The partition size needed to capture a week of audit records is based on the activity level of the system and the total storage capacity available. In normal circumstances, 10.0 GB of storage space for audit records will be sufficient.<br />
+<br />
+If the audit record partition is not allocated sufficient storage capacity, this is a finding.</p><h2>Check Content Reference</h2><p>M</p><h2>Target Key</h2><p>5274</p></body></html>

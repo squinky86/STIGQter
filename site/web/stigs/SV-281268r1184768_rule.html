@@ -1,0 +1,29 @@
+<!doctype html><html lang="en"><head><meta charset="utf-8"><title>STIGQter: STIG Check Details: SV-281268r1184768_rule: RHEL 10 must force a frequent session key renegotiation for Secure Shell (SSH) connections to the server.</title><link rel="icon" type="image/svg+xml" href="STIGQter.svg" /><script async src="https://www.googletagmanager.com/gtag/js?id=UA-31381839-2"></script><script src="include.js"></script><script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-4110907817782130" crossorigin="anonymous"></script></head><body><div><img src="STIGQter.svg" alt="STIGQter" style="height:1em;" /> <a href="https://www.stigqter.com/">STIGQter</a>: <a href="main.html">STIG Summary</a>: <a href="U_RHEL_10_STIG_V1R2_Manual-xccdf.html">Red Hat Enterprise Linux 10 Security Technical Implementation Guide Version: 1 Release: 2 Benchmark Date: 01 Jul 2026</a>:</div> <h1>RHEL 10 must force a frequent session key renegotiation for Secure Shell (SSH) connections to the server.</h1><h2>DISA Rule</h2><p>SV-281268r1184768_rule</p><h2>Vulnerability Number</h2><p>V-281268</p><h2>Group Title</h2><p>SRG-OS-000423-GPOS-00187</p><h2>Rule Version</h2><p>RHEL-10-700650</p><h2>Severity</h2><p>CAT I</p><h2>CCI(s)</h2><ul><li>CCI-002418 - Protect the confidentiality and/or integrity of transmitted information.</li><li>CCI-000068 - Implement cryptographic mechanisms to protect the confidentiality of remote access sessions.</li><li>CCI-002421 - Implement cryptographic mechanisms to prevent unauthorized disclosure of information and/or detect changes to information during transmission.</li></ul><h2>Weight</h2><p>10</p><h2>Fix Recommendation</h2><p>Configure RHEL 10 to force a frequent session key renegotiation for SSH connections to the server.<br />
+<br />
+In &quot;/etc/ssh/sshd_config.d&quot;, create a drop file that will lexicographically precede 50-redhat.conf and add the following line:<br />
+<br />
+RekeyLimit 1G 1h<br />
+<br />
+Restart the SSH daemon with the following command for the settings to take effect:<br />
+<br />
+$ sudo systemctl restart sshd.service</p><h2>Check Contents</h2><p>Verify RHEL 10 SSH servers are configured to force frequent session key renegotiation with the following command:<br />
+<br />
+$ sudo /usr/sbin/sshd -dd 2&gt;&amp;1 | awk '/filename/ {print $4}' | tr -d '\r' | tr '\n' ' ' | xargs sudo grep -iH '^\s*rekeylimit'<br />
+/etc/ssh/sshd_config.d/10-stig.conf:RekeyLimit 1G 1h<br />
+<br />
+Verify the runtime setting with the following command:<br />
+<br />
+$ sudo sshd -T | grep -i rekeylimit<br />
+rekeylimit 1073741824 3600<br />
+<br />
+If the &quot;RekeyLimit&quot; keyword is not set to &quot;1G 1h&quot; in a drop-in that lexicographically precedes 50-redhat.conf, or if no output is returned, this is a finding.</p><h2>Vulnerability Number</h2><p>V-281268</p><h2>Documentable</h2><p>False</p><h2>Rule Version</h2><p>RHEL-10-700650</p><h2>Severity Override Guidance</h2><p>Verify RHEL 10 SSH servers are configured to force frequent session key renegotiation with the following command:<br />
+<br />
+$ sudo /usr/sbin/sshd -dd 2&gt;&amp;1 | awk '/filename/ {print $4}' | tr -d '\r' | tr '\n' ' ' | xargs sudo grep -iH '^\s*rekeylimit'<br />
+/etc/ssh/sshd_config.d/10-stig.conf:RekeyLimit 1G 1h<br />
+<br />
+Verify the runtime setting with the following command:<br />
+<br />
+$ sudo sshd -T | grep -i rekeylimit<br />
+rekeylimit 1073741824 3600<br />
+<br />
+If the &quot;RekeyLimit&quot; keyword is not set to &quot;1G 1h&quot; in a drop-in that lexicographically precedes 50-redhat.conf, or if no output is returned, this is a finding.</p><h2>Check Content Reference</h2><p>M</p><h2>Target Key</h2><p>5733</p></body></html>

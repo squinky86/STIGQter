@@ -1,0 +1,35 @@
+<!doctype html><html lang="en"><head><meta charset="utf-8"><title>STIGQter: STIG Check Details: SV-260503r1184056_rule: Ubuntu 22.04 LTS must configure the files used by the system journal to be owned by &quot;root&quot;.</title><link rel="icon" type="image/svg+xml" href="STIGQter.svg" /><script async src="https://www.googletagmanager.com/gtag/js?id=UA-31381839-2"></script><script src="include.js"></script><script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-4110907817782130" crossorigin="anonymous"></script></head><body><div><img src="STIGQter.svg" alt="STIGQter" style="height:1em;" /> <a href="https://www.stigqter.com/">STIGQter</a>: <a href="main.html">STIG Summary</a>: <a href="U_CAN_Ubuntu_22-04_LTS_STIG_V2R9_Manual-xccdf.html">Canonical Ubuntu 22.04 LTS Security Technical Implementation Guide Version: 2 Release: 9 Benchmark Date: 01 Jul 2026</a>:</div> <h1>Ubuntu 22.04 LTS must configure the files used by the system journal to be owned by &quot;root&quot;.</h1><h2>DISA Rule</h2><p>SV-260503r1184056_rule</p><h2>Vulnerability Number</h2><p>V-260503</p><h2>Group Title</h2><p>SRG-OS-000206-GPOS-00084</p><h2>Rule Version</h2><p>UBTU-22-232090</p><h2>Severity</h2><p>CAT II</p><h2>CCI(s)</h2><ul><li>CCI-001314 - Reveal error messages only to organization-defined personnel or roles.</li></ul><h2>Weight</h2><p>10</p><h2>Fix Recommendation</h2><p>Configure Ubuntu 22.04 LTS to set the appropriate ownership to the files used by the systemd journal.<br />
+ <br />
+Create a drop-in file if it does not already exist with the following command:<br />
+<br />
+$ sudo vi /etc/tmpfiles.d/zzz-systemd-stig.conf<br />
+ <br />
+Add or modify the following lines in the &quot;/etc/tmpfiles.d/zzz-systemd-stig.conf&quot; file: <br />
+ <br />
+z /var/log/journal/%m/system.journal 0640 root systemd-journal - -<br />
+ <br />
+Restart the system for the changes to take effect.</p><h2>Check Contents</h2><p>Verify the /run/log/journal and /var/log/journal files are owned by &quot;root&quot; by using the following command: <br />
+ <br />
+     $ sudo find /run/log/journal /var/log/journal  -type f -exec stat -c &quot;%n %U&quot; {} \; <br />
+     /var/log/journal/3b018e681c904487b11671b9c1987cce/system@99dcc72bb1134aaeae4bf157aa7606f4-0000000000003c7a-0006073f8d1c0fec.journal root <br />
+     /var/log/journal/3b018e681c904487b11671b9c1987cce/system.journal root <br />
+     /var/log/journal/3b018e681c904487b11671b9c1987cce/user-1000.journal root <br />
+     /var/log/journal/3b018e681c904487b11671b9c1987cce/user-1000@bdedf14602ff4081a77dc7a6debc8626-00000000000062a6-00060b4b414b617a.journal root <br />
+     /var/log/journal/3b018e681c904487b11671b9c1987cce/system@99dcc72bb1134aaeae4bf157aa7606f4-0000000000005301-000609a409<br />
+593.journal root <br />
+     /var/log/journal/3b018e681c904487b11671b9c1987cce/system@99dcc72bb1134aaeae4bf157aa7606f4-0000000000000001-000604dae53225ee.journal root <br />
+     /var/log/journal/3b018e681c904487b11671b9c1987cce/user-1000@bdedf14602ff4081a77dc7a6debc8626-000000000000083b-000604dae72c7e3b.journal root <br />
+ <br />
+If any output returned is not owned by &quot;root&quot;, this is a finding.</p><h2>Vulnerability Number</h2><p>V-260503</p><h2>Documentable</h2><p>False</p><h2>Rule Version</h2><p>UBTU-22-232090</p><h2>Severity Override Guidance</h2><p>Verify the /run/log/journal and /var/log/journal files are owned by &quot;root&quot; by using the following command: <br />
+ <br />
+     $ sudo find /run/log/journal /var/log/journal  -type f -exec stat -c &quot;%n %U&quot; {} \; <br />
+     /var/log/journal/3b018e681c904487b11671b9c1987cce/system@99dcc72bb1134aaeae4bf157aa7606f4-0000000000003c7a-0006073f8d1c0fec.journal root <br />
+     /var/log/journal/3b018e681c904487b11671b9c1987cce/system.journal root <br />
+     /var/log/journal/3b018e681c904487b11671b9c1987cce/user-1000.journal root <br />
+     /var/log/journal/3b018e681c904487b11671b9c1987cce/user-1000@bdedf14602ff4081a77dc7a6debc8626-00000000000062a6-00060b4b414b617a.journal root <br />
+     /var/log/journal/3b018e681c904487b11671b9c1987cce/system@99dcc72bb1134aaeae4bf157aa7606f4-0000000000005301-000609a409<br />
+593.journal root <br />
+     /var/log/journal/3b018e681c904487b11671b9c1987cce/system@99dcc72bb1134aaeae4bf157aa7606f4-0000000000000001-000604dae53225ee.journal root <br />
+     /var/log/journal/3b018e681c904487b11671b9c1987cce/user-1000@bdedf14602ff4081a77dc7a6debc8626-000000000000083b-000604dae72c7e3b.journal root <br />
+ <br />
+If any output returned is not owned by &quot;root&quot;, this is a finding.</p><h2>Check Content Reference</h2><p>M</p><h2>Target Key</h2><p>5594</p></body></html>

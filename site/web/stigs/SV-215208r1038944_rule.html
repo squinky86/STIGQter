@@ -1,0 +1,51 @@
+<!doctype html><html lang="en"><head><meta charset="utf-8"><title>STIGQter: STIG Check Details: SV-215208r1038944_rule: AIX must provide time synchronization applications that can synchronize the system clock to external time sources at least every 24 hours.</title><link rel="icon" type="image/svg+xml" href="STIGQter.svg" /><script async src="https://www.googletagmanager.com/gtag/js?id=UA-31381839-2"></script><script src="include.js"></script><script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-4110907817782130" crossorigin="anonymous"></script></head><body><div><img src="STIGQter.svg" alt="STIGQter" style="height:1em;" /> <a href="https://www.stigqter.com/">STIGQter</a>: <a href="main.html">STIG Summary</a>: <a href="U_IBM_AIX_7-x_STIG_V3R3_Manual-xccdf.html">IBM AIX 7.x Security Technical Implementation Guide Version: 3 Release: 3 Benchmark Date: 01 Jul 2026</a>:</div> <h1>AIX must provide time synchronization applications that can synchronize the system clock to external time sources at least every 24 hours.</h1><h2>DISA Rule</h2><p>SV-215208r1038944_rule</p><h2>Vulnerability Number</h2><p>V-215208</p><h2>Group Title</h2><p>SRG-OS-000355-GPOS-00143</p><h2>Rule Version</h2><p>AIX7-00-001053</p><h2>Severity</h2><p>CAT II</p><h2>CCI(s)</h2><ul><li>CCI-004923 - Compare the internal system clocks on an organization-defined frequency with organization-defined authoritative time source.</li><li>CCI-004926 - Synchronize the internal system clocks to the authoritative time source when the time difference is greater than organization-defined time period.</li></ul><h2>Weight</h2><p>10</p><h2>Fix Recommendation</h2><p>Edit /etc/ntp.conf<br />
+<br />
+Configure ntp server by adding the following line:<br />
+server server_ipaddr<br />
+<br />
+Set maxpoll to &lt;value&gt;   &lt;=16 by adding the maxpoll &lt;value&gt;.<br />
+<br />
+Restart the ntp daemon.<br />
+<br />
+# stopsrc -s xntpd<br />
+# startsrc -s xntpd</p><h2>Check Contents</h2><p>Check if time synchronization application &quot;ntpd&quot; is running using the command:<br />
+<br />
+# lssrc -s xntpd<br />
+Subsystem         Group            PID                  Status <br />
+ xntpd                   tcpip          4784536             active<br />
+<br />
+If &quot;ntpd&quot; is showing &quot;inoperative&quot;, this is a finding.<br />
+<br />
+Check that &quot;ntp&quot; server is configured using command: <br />
+<br />
+# grep server /etc/ntp.conf<br />
+server 10.110.20.10<br />
+<br />
+If the command returns no output, this is a finding.<br />
+<br />
+Check the poll interval is less than 24 hours using command:<br />
+<br />
+# grep maxpoll /etc/ntp.conf<br />
+maxpoll=16<br />
+<br />
+If &quot;maxpoll&quot; is set to larger than &quot;16&quot; (2^16 seconds ~= 18hr), this is a finding.</p><h2>Vulnerability Number</h2><p>V-215208</p><h2>Documentable</h2><p>False</p><h2>Rule Version</h2><p>AIX7-00-001053</p><h2>Severity Override Guidance</h2><p>Check if time synchronization application &quot;ntpd&quot; is running using the command:<br />
+<br />
+# lssrc -s xntpd<br />
+Subsystem         Group            PID                  Status <br />
+ xntpd                   tcpip          4784536             active<br />
+<br />
+If &quot;ntpd&quot; is showing &quot;inoperative&quot;, this is a finding.<br />
+<br />
+Check that &quot;ntp&quot; server is configured using command: <br />
+<br />
+# grep server /etc/ntp.conf<br />
+server 10.110.20.10<br />
+<br />
+If the command returns no output, this is a finding.<br />
+<br />
+Check the poll interval is less than 24 hours using command:<br />
+<br />
+# grep maxpoll /etc/ntp.conf<br />
+maxpoll=16<br />
+<br />
+If &quot;maxpoll&quot; is set to larger than &quot;16&quot; (2^16 seconds ~= 18hr), this is a finding.</p><h2>Check Content Reference</h2><p>M</p><h2>Target Key</h2><p>4012</p></body></html>

@@ -1,0 +1,85 @@
+<!doctype html><html lang="en"><head><meta charset="utf-8"><title>STIGQter: STIG Check Details: SV-276232r1149605_rule: Azure SQL Managed Instance must enforce discretionary access control policies, as defined by the data owner, over defined subjects and objects.</title><link rel="icon" type="image/svg+xml" href="STIGQter.svg" /><script async src="https://www.googletagmanager.com/gtag/js?id=UA-31381839-2"></script><script src="include.js"></script><script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-4110907817782130" crossorigin="anonymous"></script></head><body><div><img src="STIGQter.svg" alt="STIGQter" style="height:1em;" /> <a href="https://www.stigqter.com/">STIGQter</a>: <a href="main.html">STIG Summary</a>: <a href="U_MS_Azure_SQL_MI_STIG_V1R1_Manual-xccdf.html">Microsoft Azure SQL Managed Instance Security Technical Implementation Guide Version: 1 Release: 1 Benchmark Date: 23 Sep 2025</a>:</div> <h1>Azure SQL Managed Instance must enforce discretionary access control policies, as defined by the data owner, over defined subjects and objects.</h1><h2>DISA Rule</h2><p>SV-276232r1149605_rule</p><h2>Vulnerability Number</h2><p>V-276232</p><h2>Group Title</h2><p>SRG-APP-000328-DB-000301</p><h2>Rule Version</h2><p>MSQL-00-002800</p><h2>Severity</h2><p>CAT II</p><h2>CCI(s)</h2><ul><li>CCI-002165 - Enforce organization-defined discretionary access control policies over defined subjects and objects.</li></ul><h2>Weight</h2><p>10</p><h2>Fix Recommendation</h2><p>To correct object ownership:<br />
+<br />
+Use the ALTER AUTHORIZATION ON::[Object Name] TO [Database principal] <br />
+<br />
+Full ALTER AUTHORIZATION command syntax is described in this document:<br />
+https://docs.microsoft.com/en-us/sql/t-sql/statements/revoke-transact-sql?view=azuresqldb-current<br />
+<br />
+To remove unauthorized permissions:<br />
+<br />
+Use the REVOKE [Permission name] ON [Object name] TO [Database principal] to remove unauthorized permissions from a database principal on an object. <br />
+<br />
+Full REVOKE command syntax is described in this document: <br />
+https://docs.microsoft.com/en-us/sql/t-sql/statements/alter-authorization-transact-sql?view=azuresqldb-current</p><h2>Check Contents</h2><p>Review system documentation to determine requirements for object ownership and authorization delegation.<br />
+<br />
+Use the following query to discover database object ownership:<br />
+<br />
+Schemas not owned by the schema or dbo:<br />
+<br />
+SELECT name AS schema_name, USER_NAME(principal_id) AS schema_owner<br />
+FROM sys.schemas<br />
+WHERE schema_id != principal_id<br />
+AND principal_id != 1<br />
+<br />
+Objects owned by an individual principal:<br />
+<br />
+SELECT object_id, name AS securable, <br />
+USER_NAME(principal_id) AS object_owner,<br />
+type_desc<br />
+FROM sys.objects<br />
+WHERE is_ms_shipped = 0 AND principal_id IS NOT NULL<br />
+ORDER BY type_desc, securable, object_owner<br />
+<br />
+Use the following query to discover database users who have been delegated the right to assign additional permissions:<br />
+<br />
+SELECT U.type_desc, U.name AS grantee,<br />
+DP.class_desc AS securable_type,<br />
+CASE DP.class<br />
+WHEN 0 THEN DB_NAME()<br />
+WHEN 1 THEN OBJECT_NAME(DP.major_id) <br />
+WHEN 3 THEN SCHEMA_NAME(DP.major_id)<br />
+ELSE CAST(DP.major_id AS nvarchar)<br />
+END AS securable,<br />
+permission_name, state_desc<br />
+FROM sys.database_permissions DP<br />
+JOIN sys.database_principals U ON DP.grantee_principal_id = U.principal_id<br />
+WHERE DP.state = 'W'<br />
+ORDER BY grantee, securable_type, securable<br />
+<br />
+If any of these rights are not documented and authorized, this is a finding.</p><h2>Vulnerability Number</h2><p>V-276232</p><h2>Documentable</h2><p>False</p><h2>Rule Version</h2><p>MSQL-00-002800</p><h2>Severity Override Guidance</h2><p>Review system documentation to determine requirements for object ownership and authorization delegation.<br />
+<br />
+Use the following query to discover database object ownership:<br />
+<br />
+Schemas not owned by the schema or dbo:<br />
+<br />
+SELECT name AS schema_name, USER_NAME(principal_id) AS schema_owner<br />
+FROM sys.schemas<br />
+WHERE schema_id != principal_id<br />
+AND principal_id != 1<br />
+<br />
+Objects owned by an individual principal:<br />
+<br />
+SELECT object_id, name AS securable, <br />
+USER_NAME(principal_id) AS object_owner,<br />
+type_desc<br />
+FROM sys.objects<br />
+WHERE is_ms_shipped = 0 AND principal_id IS NOT NULL<br />
+ORDER BY type_desc, securable, object_owner<br />
+<br />
+Use the following query to discover database users who have been delegated the right to assign additional permissions:<br />
+<br />
+SELECT U.type_desc, U.name AS grantee,<br />
+DP.class_desc AS securable_type,<br />
+CASE DP.class<br />
+WHEN 0 THEN DB_NAME()<br />
+WHEN 1 THEN OBJECT_NAME(DP.major_id) <br />
+WHEN 3 THEN SCHEMA_NAME(DP.major_id)<br />
+ELSE CAST(DP.major_id AS nvarchar)<br />
+END AS securable,<br />
+permission_name, state_desc<br />
+FROM sys.database_permissions DP<br />
+JOIN sys.database_principals U ON DP.grantee_principal_id = U.principal_id<br />
+WHERE DP.state = 'W'<br />
+ORDER BY grantee, securable_type, securable<br />
+<br />
+If any of these rights are not documented and authorized, this is a finding.</p><h2>Check Content Reference</h2><p>M</p><h2>Target Key</h2><p>5711</p></body></html>

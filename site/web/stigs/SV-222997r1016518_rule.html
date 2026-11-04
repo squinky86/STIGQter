@@ -1,0 +1,43 @@
+<!doctype html><html lang="en"><head><meta charset="utf-8"><title>STIGQter: STIG Check Details: SV-222997r1016518_rule: AccessLogValve must be configured for Catalina engine.</title><link rel="icon" type="image/svg+xml" href="STIGQter.svg" /><script async src="https://www.googletagmanager.com/gtag/js?id=UA-31381839-2"></script><script src="include.js"></script><script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-4110907817782130" crossorigin="anonymous"></script></head><body><div><img src="STIGQter.svg" alt="STIGQter" style="height:1em;" /> <a href="https://www.stigqter.com/">STIGQter</a>: <a href="main.html">STIG Summary</a>: <a href="U_Apache_Tomcat_Application_Server_9_STIG_V3R4_Manual-xccdf.html">Apache Tomcat Application Server 9 Security Technical Implementation Guide Version: 3 Release: 4 Benchmark Date: 01 Apr 2026</a>:</div> <h1>AccessLogValve must be configured for Catalina engine.</h1><h2>DISA Rule</h2><p>SV-222997r1016518_rule</p><h2>Vulnerability Number</h2><p>V-222997</p><h2>Group Title</h2><p>SRG-APP-000495-AS-000220</p><h2>Rule Version</h2><p>TCAT-AS-001560</p><h2>Severity</h2><p>CAT II</p><h2>CCI(s)</h2><ul><li>CCI-000172 - Generate audit records for the event types defined in AU-2 c that include the audit record content defined in AU-3.</li><li>CCI-003938 - Automatically generate audit records of the enforcement actions.</li></ul><h2>Weight</h2><p>10</p><h2>Fix Recommendation</h2><p>As a privileged user on the Tomcat server, edit the $CATALINA_BASE/conf/server.xml file.<br />
+<br />
+Create a &lt;Valve&gt; element that is nested beneath the &lt;Host&gt; element containing an AccessLogValve. <br />
+<br />
+EXAMPLE:<br />
+&lt;Host name=&quot;localhost&quot;  appBase=&quot;webapps&quot;<br />
+            unpackWARs=&quot;true&quot; autoDeploy=&quot;false&quot;&gt;<br />
+...<br />
+&lt;Valve className=&quot;org.apache.catalina.valves.AccessLogValve&quot; directory=&quot;logs&quot;<br />
+               prefix=&quot;localhost_access_log&quot; suffix=&quot;.txt&quot;<br />
+               pattern=&quot;%h %l %t %u &amp;quot;%r&amp;quot; %s %b&quot; /&gt;<br />
+  ...<br />
+&lt;/Host&gt;<br />
+<br />
+Restart the Tomcat server:<br />
+sudo systemctl restart tomcat<br />
+sudo systemctl daemon-reload</p><h2>Check Contents</h2><p>As an elevated user on the Tomcat server, edit the $CATALINA_BASE/conf/server.xml file.<br />
+<br />
+Review the &lt;Engine&gt; element. Ensure one AccessLog &lt;Valve&gt; element is nested within the engine element. <br />
+<br />
+If a &lt;Valve className=&quot;org.apache.catalina.valves.AccessLogValve&quot; .../&gt; element is not defined, this is a finding.<br />
+<br />
+EXAMPLE:<br />
+&lt;Engine name=&quot;Standalone&quot; ...&gt;<br />
+  ...<br />
+  &lt;Valve className=&quot;org.apache.catalina.valves.AccessLogValve&quot;<br />
+         prefix=&quot;catalina_access_log&quot; suffix=&quot;.txt&quot;<br />
+         pattern=&quot;common&quot;/&gt;<br />
+  ...<br />
+&lt;/Engine&gt;</p><h2>Vulnerability Number</h2><p>V-222997</p><h2>Documentable</h2><p>False</p><h2>Rule Version</h2><p>TCAT-AS-001560</p><h2>Severity Override Guidance</h2><p>As an elevated user on the Tomcat server, edit the $CATALINA_BASE/conf/server.xml file.<br />
+<br />
+Review the &lt;Engine&gt; element. Ensure one AccessLog &lt;Valve&gt; element is nested within the engine element. <br />
+<br />
+If a &lt;Valve className=&quot;org.apache.catalina.valves.AccessLogValve&quot; .../&gt; element is not defined, this is a finding.<br />
+<br />
+EXAMPLE:<br />
+&lt;Engine name=&quot;Standalone&quot; ...&gt;<br />
+  ...<br />
+  &lt;Valve className=&quot;org.apache.catalina.valves.AccessLogValve&quot;<br />
+         prefix=&quot;catalina_access_log&quot; suffix=&quot;.txt&quot;<br />
+         pattern=&quot;common&quot;/&gt;<br />
+  ...<br />
+&lt;/Engine&gt;</p><h2>Check Content Reference</h2><p>M</p><h2>Target Key</h2><p>4094</p></body></html>

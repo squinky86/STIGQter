@@ -1,0 +1,225 @@
+<!doctype html><html lang="en"><head><meta charset="utf-8"><title>STIGQter: STIG Check Details: SV-235118r961809_rule: The MySQL Database Server 8.0 must generate audit records when unsuccessful attempts to modify categories of information (e.g., classification levels/security levels) occur.</title><link rel="icon" type="image/svg+xml" href="STIGQter.svg" /><script async src="https://www.googletagmanager.com/gtag/js?id=UA-31381839-2"></script><script src="include.js"></script><script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-4110907817782130" crossorigin="anonymous"></script></head><body><div><img src="STIGQter.svg" alt="STIGQter" style="height:1em;" /> <a href="https://www.stigqter.com/">STIGQter</a>: <a href="main.html">STIG Summary</a>: <a href="U_Oracle_MySQL_8-0_STIG_V2R2_Manual-xccdf.html">Oracle MySQL 8.0 Security Technical Implementation Guide Version: 2 Release: 2 Benchmark Date: 24 Oct 2024</a>:</div> <h1>The MySQL Database Server 8.0 must generate audit records when unsuccessful attempts to modify categories of information (e.g., classification levels/security levels) occur.</h1><h2>DISA Rule</h2><p>SV-235118r961809_rule</p><h2>Vulnerability Number</h2><p>V-235118</p><h2>Group Title</h2><p>SRG-APP-000498-DB-000347</p><h2>Rule Version</h2><p>MYS8-00-003100</p><h2>Severity</h2><p>CAT II</p><h2>CCI(s)</h2><ul><li>CCI-000172 - Generate audit records for the event types defined in AU-2 c that include the audit record content defined in AU-3.</li></ul><h2>Weight</h2><p>10</p><h2>Fix Recommendation</h2><p>If currently required, configure the MySQL Database Server with update, insert, and delete triggers that call audit_api_message_emit_udf() function to produce audit records when unsuccessful attempts to modify categories of information occur.<br />
+<br />
+Add security level details in an additional column.<br />
+<br />
+Add the component for adding information to the audit log.<br />
+<br />
+INSTALL COMPONENT &quot;file://component_audit_api_message_emit”;<br />
+create schema test_trigger;<br />
+<br />
+Create a stored procedure to allow the audit_api_message_emit_udf to be called as well as providing the details for the audit event.<br />
+<br />
+DELIMITER $$<br />
+<br />
+CREATE PROCEDURE audit_api_message_emit_delete_sp(name CHAR(20))<br />
+BEGIN<br />
+	DECLARE aud_msg VARCHAR(255);<br />
+	select audit_api_message_emit_udf('sec_level_trigger',<br />
+                                         'TRIGGER audit_change_attempt',<br />
+                                         'Attempt was made to change H level sec data',<br />
+                                         'FOR ', name<br />
+                                         ) into aud_msg;<br />
+END$$<br />
+DELIMITER ;<br />
+<br />
+See the supplemental file &quot;MySQL80Audit.sql&quot;.</p><h2>Check Contents</h2><p>If classification levels/security levels labeling is not required, this is not a finding.<br />
+<br />
+Review the system documentation to determine if MySQL Server is required to audit records when unsuccessful attempts to modify categories of information (e.g., classification levels/security levels) occur.<br />
+<br />
+Check if MySQL audit is configured and enabled. The my.cnf file will set the variable audit_file.<br />
+<br />
+To further check, execute the following query: <br />
+SELECT PLUGIN_NAME, PLUGIN_STATUS<br />
+      FROM INFORMATION_SCHEMA.PLUGINS<br />
+      WHERE PLUGIN_NAME LIKE 'audit%';<br />
+<br />
+The status of the audit_log plugin should be &quot;active&quot;. If it is not &quot;active&quot;, this is a finding.<br />
+<br />
+Review audit filters and associated users by running the following queries:<br />
+SELECT `audit_log_filter`.`NAME`,<br />
+   `audit_log_filter`.`FILTER`<br />
+FROM `mysql`.`audit_log_filter`;<br />
+<br />
+SELECT `audit_log_user`.`USER`,<br />
+   `audit_log_user`.`HOST`,<br />
+   `audit_log_user`.`FILTERNAME`<br />
+FROM `mysql`.`audit_log_user`;<br />
+<br />
+All currently defined audits for the MySQL server instance will be listed. If no audits are returned, this is a finding.<br />
+<br />
+Create MySQL insert, update, and delete triggers that check for changes to categories of information. If the trigger before data indicates an attempt to delete such information, the trigger should be written to prevent the delete as well as optionally write to the MySQL Audit by calling the audit_api_message_emit_udf() function and including the details related to the attempt. Note: To call from a trigger requires a minimal stored procedure as well.<br />
+<br />
+Once the trigger has been created, check if the audit filters that are in place are generating records when categories of information are deleted.<br />
+<br />
+- An Example test -<br />
+<br />
+CREATE TABLE `test_trigger`.`info_cat_test` (<br />
+  `id` INT NOT NULL,<br />
+  `name` VARCHAR(20) NULL,<br />
+  `desc` VARCHAR(20) NULL,<br />
+  `sec_level` CHAR(1) NULL,<br />
+  PRIMARY KEY (`id`));<br />
+<br />
+use test_trigger;<br />
+<br />
+DELIMITER $$<br />
+<br />
+CREATE TRIGGER audit_delete<br />
+    BEFORE DELETE ON `test_trigger`.`info_cat_test`<br />
+    FOR EACH ROW<br />
+BEGIN<br />
+    IF OLD.sec_level = 'H' THEN<br />
+	CALL audit_api_message_emit_sp(OLD.name);<br />
+        SIGNAL SQLSTATE '45000'<br />
+            SET MESSAGE_TEXT = 'ERROR - THIS DATA IS LEVEL H can not delete’;    <br />
+   END IF;<br />
+END$$<br />
+DELIMITER ;<br />
+<br />
+DELIMITER $$<br />
+<br />
+CREATE TRIGGER audit_insert<br />
+    BEFORE INSERT ON `test_trigger`.`info_cat_test`<br />
+    FOR EACH ROW<br />
+BEGIN<br />
+    IF NEW.sec_level = 'H' THEN<br />
+	CALL audit_api_message_emit_sp(NEW.name);<br />
+        SIGNAL SQLSTATE '45000'<br />
+            SET MESSAGE_TEXT = 'ERROR - THIS DATA IS LEVEL H can not insert’;    <br />
+    END IF;<br />
+END$$<br />
+DELIMITER ;<br />
+<br />
+DELIMITER $$<br />
+<br />
+CREATE TRIGGER audit_update<br />
+    BEFORE UPDATE ON `test_trigger`.`info_cat_test`<br />
+    FOR EACH ROW<br />
+BEGIN<br />
+    IF OLD.sec_level = 'H' THEN<br />
+	    CALL audit_api_message_emit_sp(OLD.name);<br />
+    END IF;<br />
+    IF NEW.sec_level = 'H' THEN<br />
+	    CALL audit_api_message_emit_sp(NEW.name);<br />
+    END IF;<br />
+    SIGNAL SQLSTATE '45000'<br />
+            SET MESSAGE_TEXT = 'ERROR - THIS DATA IS LEVEL H can not update';   <br />
+END$$<br />
+DELIMITER ;<br />
+<br />
+INSERT INTO `test_trigger`.`info_cat_test` (`id`, `name`, `desc`, `sec_level`) VALUES ('1', 'fred', 'engineer', 'H');<br />
+INSERT INTO `test_trigger`.`info_cat_test` (`id`, `name`, `desc`, `sec_level`) VALUES ('2', 'jill', 'program manager', 'M');<br />
+INSERT INTO `test_trigger`.`info_cat_test` (`id`, `name`, `desc`, `sec_level`) VALUES ('3', 'joe', 'maintenance', 'L');<br />
+<br />
+delete from `test_trigger`.`info_cat_test` where id=1;<br />
+// this fails as the trigger defines that sec_level of H can not be deleted.<br />
+<br />
+update`test_trigger`.`info_cat_test`  set sec_level=‘H’   where id=2;<br />
+delete from `test_trigger`.`info_cat_test` where id=3;<br />
+<br />
+Review the audit log by running the Linux command:<br />
+sudo cat  &lt;directory where audit log files are located&gt;/audit.log | egrep audit_change_attempt<br />
+For example if the values returned by - &quot;select @@datadir, @@audit_log_file; &quot; are  /usr/local/mysql/data/,  audit.log<br />
+sudo cat  /usr/local/mysql/data/audit.log |egrep audit_change_attempt<br />
+<br />
+If the audit event is not present, this is a finding.</p><h2>Vulnerability Number</h2><p>V-235118</p><h2>Documentable</h2><p>False</p><h2>Rule Version</h2><p>MYS8-00-003100</p><h2>Severity Override Guidance</h2><p>If classification levels/security levels labeling is not required, this is not a finding.<br />
+<br />
+Review the system documentation to determine if MySQL Server is required to audit records when unsuccessful attempts to modify categories of information (e.g., classification levels/security levels) occur.<br />
+<br />
+Check if MySQL audit is configured and enabled. The my.cnf file will set the variable audit_file.<br />
+<br />
+To further check, execute the following query: <br />
+SELECT PLUGIN_NAME, PLUGIN_STATUS<br />
+      FROM INFORMATION_SCHEMA.PLUGINS<br />
+      WHERE PLUGIN_NAME LIKE 'audit%';<br />
+<br />
+The status of the audit_log plugin should be &quot;active&quot;. If it is not &quot;active&quot;, this is a finding.<br />
+<br />
+Review audit filters and associated users by running the following queries:<br />
+SELECT `audit_log_filter`.`NAME`,<br />
+   `audit_log_filter`.`FILTER`<br />
+FROM `mysql`.`audit_log_filter`;<br />
+<br />
+SELECT `audit_log_user`.`USER`,<br />
+   `audit_log_user`.`HOST`,<br />
+   `audit_log_user`.`FILTERNAME`<br />
+FROM `mysql`.`audit_log_user`;<br />
+<br />
+All currently defined audits for the MySQL server instance will be listed. If no audits are returned, this is a finding.<br />
+<br />
+Create MySQL insert, update, and delete triggers that check for changes to categories of information. If the trigger before data indicates an attempt to delete such information, the trigger should be written to prevent the delete as well as optionally write to the MySQL Audit by calling the audit_api_message_emit_udf() function and including the details related to the attempt. Note: To call from a trigger requires a minimal stored procedure as well.<br />
+<br />
+Once the trigger has been created, check if the audit filters that are in place are generating records when categories of information are deleted.<br />
+<br />
+- An Example test -<br />
+<br />
+CREATE TABLE `test_trigger`.`info_cat_test` (<br />
+  `id` INT NOT NULL,<br />
+  `name` VARCHAR(20) NULL,<br />
+  `desc` VARCHAR(20) NULL,<br />
+  `sec_level` CHAR(1) NULL,<br />
+  PRIMARY KEY (`id`));<br />
+<br />
+use test_trigger;<br />
+<br />
+DELIMITER $$<br />
+<br />
+CREATE TRIGGER audit_delete<br />
+    BEFORE DELETE ON `test_trigger`.`info_cat_test`<br />
+    FOR EACH ROW<br />
+BEGIN<br />
+    IF OLD.sec_level = 'H' THEN<br />
+	CALL audit_api_message_emit_sp(OLD.name);<br />
+        SIGNAL SQLSTATE '45000'<br />
+            SET MESSAGE_TEXT = 'ERROR - THIS DATA IS LEVEL H can not delete’;    <br />
+   END IF;<br />
+END$$<br />
+DELIMITER ;<br />
+<br />
+DELIMITER $$<br />
+<br />
+CREATE TRIGGER audit_insert<br />
+    BEFORE INSERT ON `test_trigger`.`info_cat_test`<br />
+    FOR EACH ROW<br />
+BEGIN<br />
+    IF NEW.sec_level = 'H' THEN<br />
+	CALL audit_api_message_emit_sp(NEW.name);<br />
+        SIGNAL SQLSTATE '45000'<br />
+            SET MESSAGE_TEXT = 'ERROR - THIS DATA IS LEVEL H can not insert’;    <br />
+    END IF;<br />
+END$$<br />
+DELIMITER ;<br />
+<br />
+DELIMITER $$<br />
+<br />
+CREATE TRIGGER audit_update<br />
+    BEFORE UPDATE ON `test_trigger`.`info_cat_test`<br />
+    FOR EACH ROW<br />
+BEGIN<br />
+    IF OLD.sec_level = 'H' THEN<br />
+	    CALL audit_api_message_emit_sp(OLD.name);<br />
+    END IF;<br />
+    IF NEW.sec_level = 'H' THEN<br />
+	    CALL audit_api_message_emit_sp(NEW.name);<br />
+    END IF;<br />
+    SIGNAL SQLSTATE '45000'<br />
+            SET MESSAGE_TEXT = 'ERROR - THIS DATA IS LEVEL H can not update';   <br />
+END$$<br />
+DELIMITER ;<br />
+<br />
+INSERT INTO `test_trigger`.`info_cat_test` (`id`, `name`, `desc`, `sec_level`) VALUES ('1', 'fred', 'engineer', 'H');<br />
+INSERT INTO `test_trigger`.`info_cat_test` (`id`, `name`, `desc`, `sec_level`) VALUES ('2', 'jill', 'program manager', 'M');<br />
+INSERT INTO `test_trigger`.`info_cat_test` (`id`, `name`, `desc`, `sec_level`) VALUES ('3', 'joe', 'maintenance', 'L');<br />
+<br />
+delete from `test_trigger`.`info_cat_test` where id=1;<br />
+// this fails as the trigger defines that sec_level of H can not be deleted.<br />
+<br />
+update`test_trigger`.`info_cat_test`  set sec_level=‘H’   where id=2;<br />
+delete from `test_trigger`.`info_cat_test` where id=3;<br />
+<br />
+Review the audit log by running the Linux command:<br />
+sudo cat  &lt;directory where audit log files are located&gt;/audit.log | egrep audit_change_attempt<br />
+For example if the values returned by - &quot;select @@datadir, @@audit_log_file; &quot; are  /usr/local/mysql/data/,  audit.log<br />
+sudo cat  /usr/local/mysql/data/audit.log |egrep audit_change_attempt<br />
+<br />
+If the audit event is not present, this is a finding.</p><h2>Check Content Reference</h2><p>M</p><h2>Target Key</h2><p>5277</p></body></html>

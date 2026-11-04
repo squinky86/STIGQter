@@ -1,0 +1,71 @@
+<!doctype html><html lang="en"><head><meta charset="utf-8"><title>STIGQter: STIG Check Details: SV-270544r1065278_rule: Database administrator (DBA) OS accounts must be granted only those host system privileges necessary for the administration of the Oracle Database.</title><link rel="icon" type="image/svg+xml" href="STIGQter.svg" /><script async src="https://www.googletagmanager.com/gtag/js?id=UA-31381839-2"></script><script src="include.js"></script><script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-4110907817782130" crossorigin="anonymous"></script></head><body><div><img src="STIGQter.svg" alt="STIGQter" style="height:1em;" /> <a href="https://www.stigqter.com/">STIGQter</a>: <a href="main.html">STIG Summary</a>: <a href="U_Oracle_Database_19c_STIG_V1R5_Manual-xccdf.html">Oracle Database 19c Security Technical Implementation Guide Version: 1 Release: 5 Benchmark Date: 01 Apr 2026</a>:</div> <h1>Database administrator (DBA) OS accounts must be granted only those host system privileges necessary for the administration of the Oracle Database.</h1><h2>DISA Rule</h2><p>SV-270544r1065278_rule</p><h2>Vulnerability Number</h2><p>V-270544</p><h2>Group Title</h2><p>SRG-APP-000516-DB-000363</p><h2>Rule Version</h2><p>O19C-00-011800</p><h2>Severity</h2><p>CAT I</p><h2>CCI(s)</h2><ul><li>CCI-000366 - Implement the security configuration settings.</li></ul><h2>Weight</h2><p>10</p><h2>Fix Recommendation</h2><p>Revoke all host system privileges from the DBA group accounts and DBA user accounts not required for database management system (DBMS) administration.<br />
+<br />
+Revoke all OS group memberships that assign excessive privileges to the DBA group accounts and DBA user accounts.<br />
+<br />
+Remove any directly applied permissions or user rights from the DBA group accounts and DBA user accounts.<br />
+<br />
+Document all DBA group accounts and individual DBA account-assigned privileges in the system documentation.</p><h2>Check Contents</h2><p>Review host system privileges assigned to the Oracle DBA group and all individual Oracle DBA accounts.<br />
+<br />
+Note: Do not include the Oracle software installation account in any results for this check.<br />
+<br />
+For Unix systems (as root):<br />
+cat /etc/group | grep -i dba<br />
+groups root<br />
+<br />
+If &quot;root&quot; is returned in the first list, this is a finding.<br />
+<br />
+If any accounts listed in the first list are also listed in the second list, this is a finding.<br />
+<br />
+Investigate any user account group memberships other than DBA or root groups that are returned by the following command (also as root):<br />
+<br />
+groups [dba user account]<br />
+<br />
+Replace [dba user account] with the user account name of each DBA account.<br />
+<br />
+If individual DBA accounts are assigned to groups that grant access or privileges for purposes other than DBA responsibilities, this is a finding.<br />
+<br />
+For Windows systems, click Start &gt;&gt; Settings &gt;&gt; Control Panel &gt;&gt; Administrative Tools &gt;&gt; Computer Management &gt;&gt; Local Users and Groups &gt;&gt; Groups &gt;&gt; ORA_DBA.<br />
+<br />
+Start &gt;&gt; Settings &gt;&gt; Control Panel &gt;&gt; Administrative Tools &gt;&gt; Computer Management &gt;&gt; Local Users and Groups &gt;&gt; Groups &gt;&gt; ORA_[SID]_DBA (if present).<br />
+<br />
+Note: Users assigned DBA privileges on a Windows host are granted membership in the ORA_DBA and/or ORA_[SID]_DBA groups. The ORA_DBA group grants DBA privileges to any database on the system. The ORA_[SID]_DBA groups grant DBA privileges to specific Oracle instances only.<br />
+<br />
+Make a note of each user listed. For each user, click Start &gt;&gt; Settings &gt;&gt; Control Panel &gt;&gt; Administrative Tools &gt;&gt; Computer Management &gt;&gt; Local Users and Groups &gt;&gt; Users &gt;&gt; [DBA username] &gt;&gt; Member of.<br />
+<br />
+If DBA users belong to any groups other than DBA groups and the Windows Users group, this is a finding.<br />
+<br />
+Examine User Rights assigned to DBA groups or group members by clicking Start &gt;&gt; Settings &gt;&gt; Control Panel &gt;&gt; Administrative Tools &gt;&gt; Local Security Policy &gt;&gt; Security Settings &gt;&gt; Local Policies &gt;&gt; User Rights Assignments.<br />
+<br />
+If any User Rights are assigned directly to the DBA group(s) or DBA user accounts, this is a finding.</p><h2>Vulnerability Number</h2><p>V-270544</p><h2>Documentable</h2><p>False</p><h2>Rule Version</h2><p>O19C-00-011800</p><h2>Severity Override Guidance</h2><p>Review host system privileges assigned to the Oracle DBA group and all individual Oracle DBA accounts.<br />
+<br />
+Note: Do not include the Oracle software installation account in any results for this check.<br />
+<br />
+For Unix systems (as root):<br />
+cat /etc/group | grep -i dba<br />
+groups root<br />
+<br />
+If &quot;root&quot; is returned in the first list, this is a finding.<br />
+<br />
+If any accounts listed in the first list are also listed in the second list, this is a finding.<br />
+<br />
+Investigate any user account group memberships other than DBA or root groups that are returned by the following command (also as root):<br />
+<br />
+groups [dba user account]<br />
+<br />
+Replace [dba user account] with the user account name of each DBA account.<br />
+<br />
+If individual DBA accounts are assigned to groups that grant access or privileges for purposes other than DBA responsibilities, this is a finding.<br />
+<br />
+For Windows systems, click Start &gt;&gt; Settings &gt;&gt; Control Panel &gt;&gt; Administrative Tools &gt;&gt; Computer Management &gt;&gt; Local Users and Groups &gt;&gt; Groups &gt;&gt; ORA_DBA.<br />
+<br />
+Start &gt;&gt; Settings &gt;&gt; Control Panel &gt;&gt; Administrative Tools &gt;&gt; Computer Management &gt;&gt; Local Users and Groups &gt;&gt; Groups &gt;&gt; ORA_[SID]_DBA (if present).<br />
+<br />
+Note: Users assigned DBA privileges on a Windows host are granted membership in the ORA_DBA and/or ORA_[SID]_DBA groups. The ORA_DBA group grants DBA privileges to any database on the system. The ORA_[SID]_DBA groups grant DBA privileges to specific Oracle instances only.<br />
+<br />
+Make a note of each user listed. For each user, click Start &gt;&gt; Settings &gt;&gt; Control Panel &gt;&gt; Administrative Tools &gt;&gt; Computer Management &gt;&gt; Local Users and Groups &gt;&gt; Users &gt;&gt; [DBA username] &gt;&gt; Member of.<br />
+<br />
+If DBA users belong to any groups other than DBA groups and the Windows Users group, this is a finding.<br />
+<br />
+Examine User Rights assigned to DBA groups or group members by clicking Start &gt;&gt; Settings &gt;&gt; Control Panel &gt;&gt; Administrative Tools &gt;&gt; Local Security Policy &gt;&gt; Security Settings &gt;&gt; Local Policies &gt;&gt; User Rights Assignments.<br />
+<br />
+If any User Rights are assigned directly to the DBA group(s) or DBA user accounts, this is a finding.</p><h2>Check Content Reference</h2><p>M</p><h2>Target Key</h2><p>5672</p></body></html>

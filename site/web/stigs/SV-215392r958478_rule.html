@@ -1,0 +1,42 @@
+<!doctype html><html lang="en"><head><meta charset="utf-8"><title>STIGQter: STIG Check Details: SV-215392r958478_rule: The Internet Network News (INN) server must be disabled on AIX.</title><link rel="icon" type="image/svg+xml" href="STIGQter.svg" /><script async src="https://www.googletagmanager.com/gtag/js?id=UA-31381839-2"></script><script src="include.js"></script><script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-4110907817782130" crossorigin="anonymous"></script></head><body><div><img src="STIGQter.svg" alt="STIGQter" style="height:1em;" /> <a href="https://www.stigqter.com/">STIGQter</a>: <a href="main.html">STIG Summary</a>: <a href="U_IBM_AIX_7-x_STIG_V3R3_Manual-xccdf.html">IBM AIX 7.x Security Technical Implementation Guide Version: 3 Release: 3 Benchmark Date: 01 Jul 2026</a>:</div> <h1>The Internet Network News (INN) server must be disabled on AIX.</h1><h2>DISA Rule</h2><p>SV-215392r958478_rule</p><h2>Vulnerability Number</h2><p>V-215392</p><h2>Group Title</h2><p>SRG-OS-000095-GPOS-00049</p><h2>Rule Version</h2><p>AIX7-00-003087</p><h2>Severity</h2><p>CAT II</p><h2>CCI(s)</h2><ul><li>CCI-000381 - Configure the system to provide only organization-defined mission essential capabilities.</li></ul><h2>Weight</h2><p>10</p><h2>Fix Recommendation</h2><p>To stop &quot;innd&quot; or &quot;nntpd&quot; from running, use the following commands:<br />
+# stopsrc -s innd<br />
+# stopsrc -s nntpd<br />
+<br />
+Some versions of &quot;innd&quot; and &quot;nntpd&quot; need the following commands to stop them: <br />
+# kill -1 [innd_pid]<br />
+# kill -1 [nntpd_pid]<br />
+<br />
+To remove &quot;innd&quot; and 'nntpd&quot; from SRC, run the following commands:<br />
+# rmssys -s innd<br />
+# rmssys -s nntpd<br />
+<br />
+To stop running &quot;innd&quot; and &quot;nntpd&quot; from &quot;/etc/inetd.conf&quot;, comment out the &quot;innd&quot; and &quot;nntpd&quot; lines in &quot;/etc/inetd.conf&quot;, then refresh the &quot;inetd&quot;:<br />
+# refresh -s inetd</p><h2>Check Contents</h2><p>From the command prompt, run the following command:<br />
+# ps -ef | egrep &quot;innd|nntpd&quot; <br />
+<br />
+If the above command produced any result, this is a finding. <br />
+<br />
+Check if &quot;innd&quot; or &quot;nntpd&quot; is started from &quot;/etc/onetd.conf&quot; using the following command:<br />
+# egrep &quot;innd|nntpd&quot; /etc/inetd.conf | grep -v ^#<br />
+<br />
+If the above command produced any result, this is a finding. <br />
+<br />
+Check if &quot;innd&quot; or &quot;nntpd&quot; is added as a subsystem to the System Resource Controller (SRC):<br />
+# lssrc -s innd<br />
+# lssrc -s nntpd<br />
+<br />
+If the above commands found that &quot;innd&quot; or &quot;nntpd&quot; is defined in SRC, this is a finding.</p><h2>Vulnerability Number</h2><p>V-215392</p><h2>Documentable</h2><p>False</p><h2>Rule Version</h2><p>AIX7-00-003087</p><h2>Severity Override Guidance</h2><p>From the command prompt, run the following command:<br />
+# ps -ef | egrep &quot;innd|nntpd&quot; <br />
+<br />
+If the above command produced any result, this is a finding. <br />
+<br />
+Check if &quot;innd&quot; or &quot;nntpd&quot; is started from &quot;/etc/onetd.conf&quot; using the following command:<br />
+# egrep &quot;innd|nntpd&quot; /etc/inetd.conf | grep -v ^#<br />
+<br />
+If the above command produced any result, this is a finding. <br />
+<br />
+Check if &quot;innd&quot; or &quot;nntpd&quot; is added as a subsystem to the System Resource Controller (SRC):<br />
+# lssrc -s innd<br />
+# lssrc -s nntpd<br />
+<br />
+If the above commands found that &quot;innd&quot; or &quot;nntpd&quot; is defined in SRC, this is a finding.</p><h2>Check Content Reference</h2><p>M</p><h2>Target Key</h2><p>4012</p></body></html>

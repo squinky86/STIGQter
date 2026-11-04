@@ -1,0 +1,52 @@
+<!doctype html><html lang="en"><head><meta charset="utf-8"><title>STIGQter: STIG Check Details: SV-213698r1043177_rule: DB2 must be configured to prohibit or restrict the use of organization-defined functions, ports, protocols, and/or services, as defined in the PPSM CAL and vulnerability assessments.</title><link rel="icon" type="image/svg+xml" href="STIGQter.svg" /><script async src="https://www.googletagmanager.com/gtag/js?id=UA-31381839-2"></script><script src="include.js"></script><script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-4110907817782130" crossorigin="anonymous"></script></head><body><div><img src="STIGQter.svg" alt="STIGQter" style="height:1em;" /> <a href="https://www.stigqter.com/">STIGQter</a>: <a href="main.html">STIG Summary</a>: <a href="U_IBM_DB2_V10-5_LUW_STIG_V2R2_Manual-xccdf.html">IBM DB2 V10.5 LUW Security Technical Implementation Guide Version: 2 Release: 2 Benchmark Date: 01 Jul 2026</a>:</div> <h1>DB2 must be configured to prohibit or restrict the use of organization-defined functions, ports, protocols, and/or services, as defined in the PPSM CAL and vulnerability assessments.</h1><h2>DISA Rule</h2><p>SV-213698r1043177_rule</p><h2>Vulnerability Number</h2><p>V-213698</p><h2>Group Title</h2><p>SRG-APP-000142-DB-000094</p><h2>Rule Version</h2><p>DB2X-00-003800</p><h2>Severity</h2><p>CAT II</p><h2>CCI(s)</h2><ul><li>CCI-000382 - Configure the system to prohibit or restrict the use of organization-defined prohibited or restricted functions, system ports, protocols, software, and/or services.</li></ul><h2>Weight</h2><p>10</p><h2>Fix Recommendation</h2><p>Run the following command to set the value of the DB2COMM parameter to the organization-approved communication protocol:<br />
+<br />
+     $db2set DB2COMM=TCPIP,SSL<br />
+<br />
+Set the SSL version:<br />
+<br />
+     $db2 update DBM CFG using SSL_VERSIONS TLSV12    <br />
+<br />
+The database manager can be set to a service name or an organization-approved port number directly for the SVCENAME parameter.<br />
+<br />
+Use the following command to change the database manager configuration: <br />
+<br />
+     $db2 update dbm cfg using svcename &lt;svcename&gt; <br />
+       Or<br />
+     $db2 update dbm cfg using svcename &lt;port number&gt;<br />
+<br />
+Note: Configuring Secure Sockets Layer (SSL) support in a DB2 instance:<br />
+https://www.ibm.com/support/knowledgecenter/SSEPGG_10.5.0/com.ibm.db2.luw.admin.sec.doc/doc/t0025241.html</p><h2>Check Contents</h2><p>Find out the communication protocol used by running the following command:<br />
+<br />
+$db2set DB2COMM<br />
+<br />
+If DB2 is not set to SSL, this is a finding.<br />
+<br />
+Run the following command to find the service names/port numbers used by the database manager:<br />
+<br />
+$db2 get dbm cfg  <br />
+<br />
+Find the port numbers used by the TCP/IP and SSL services used by database manager (SVCNAME, SSL_SVCENAME) or match the service name in services file to find port numbers.<br />
+<br />
+Default Location for services file<br />
+<br />
+Windows Service File: %SystemRoot%\system32\drivers\etc\services<br />
+UNIX Services File: /etc/services<br />
+<br />
+If ports used by the database manager are nonapproved or deemed unsafe, this is a finding.</p><h2>Vulnerability Number</h2><p>V-213698</p><h2>Documentable</h2><p>False</p><h2>Rule Version</h2><p>DB2X-00-003800</p><h2>Severity Override Guidance</h2><p>Find out the communication protocol used by running the following command:<br />
+<br />
+$db2set DB2COMM<br />
+<br />
+If DB2 is not set to SSL, this is a finding.<br />
+<br />
+Run the following command to find the service names/port numbers used by the database manager:<br />
+<br />
+$db2 get dbm cfg  <br />
+<br />
+Find the port numbers used by the TCP/IP and SSL services used by database manager (SVCNAME, SSL_SVCENAME) or match the service name in services file to find port numbers.<br />
+<br />
+Default Location for services file<br />
+<br />
+Windows Service File: %SystemRoot%\system32\drivers\etc\services<br />
+UNIX Services File: /etc/services<br />
+<br />
+If ports used by the database manager are nonapproved or deemed unsafe, this is a finding.</p><h2>Check Content Reference</h2><p>M</p><h2>Target Key</h2><p>3989</p></body></html>

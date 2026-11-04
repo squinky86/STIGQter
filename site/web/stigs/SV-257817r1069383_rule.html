@@ -1,0 +1,29 @@
+<!doctype html><html lang="en"><head><meta charset="utf-8"><title>STIGQter: STIG Check Details: SV-257817r1069383_rule: RHEL 9 must implement nonexecutable data to protect its memory from unauthorized code execution.</title><link rel="icon" type="image/svg+xml" href="STIGQter.svg" /><script async src="https://www.googletagmanager.com/gtag/js?id=UA-31381839-2"></script><script src="include.js"></script><script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-4110907817782130" crossorigin="anonymous"></script></head><body><div><img src="STIGQter.svg" alt="STIGQter" style="height:1em;" /> <a href="https://www.stigqter.com/">STIGQter</a>: <a href="main.html">STIG Summary</a>: <a href="U_RHEL_9_STIG_V2R9_Manual-xccdf.html">Red Hat Enterprise Linux 9 Security Technical Implementation Guide Version: 2 Release: 9 Benchmark Date: 01 Jul 2026</a>:</div> <h1>RHEL 9 must implement nonexecutable data to protect its memory from unauthorized code execution.</h1><h2>DISA Rule</h2><p>SV-257817r1069383_rule</p><h2>Vulnerability Number</h2><p>V-257817</p><h2>Group Title</h2><p>SRG-OS-000433-GPOS-00192</p><h2>Rule Version</h2><p>RHEL-09-213110</p><h2>Severity</h2><p>CAT II</p><h2>CCI(s)</h2><ul><li>CCI-002824 - Implement organization-defined controls to protect its memory from unauthorized code execution.</li></ul><h2>Weight</h2><p>10</p><h2>Fix Recommendation</h2><p>If /proc/cpuinfo shows that one or more processors do not enable ExecShield (lack the &quot;nx&quot; feature flag), verify that the NX/XD feature is not disabled in the BIOS or UEFI. If it is disabled, enable it.<br />
+<br />
+If the noexec option is present on the kernel command line, update the GRUB 2 bootloader configuration to remove it by running the following command:<br />
+<br />
+$ sudo grubby --update-kernel=ALL --remove-args=noexec</p><h2>Check Contents</h2><p>Verify ExecShield is enabled on 64-bit RHEL 9 systems.<br />
+<br />
+Run the following command:<br />
+<br />
+$ grep ^flags /proc/cpuinfo | grep -Ev '([^[:alnum:]])(nx)([^[:alnum:]]|$)'<br />
+<br />
+If any output is returned, this is a finding.<br />
+<br />
+Next, run the following command:<br />
+<br />
+$ sudo grubby --info=ALL | grep args | grep -E '([^[:alnum:]])(noexec)([^[:alnum:]])'<br />
+<br />
+If any output is returned, this is a finding.</p><h2>Vulnerability Number</h2><p>V-257817</p><h2>Documentable</h2><p>False</p><h2>Rule Version</h2><p>RHEL-09-213110</p><h2>Severity Override Guidance</h2><p>Verify ExecShield is enabled on 64-bit RHEL 9 systems.<br />
+<br />
+Run the following command:<br />
+<br />
+$ grep ^flags /proc/cpuinfo | grep -Ev '([^[:alnum:]])(nx)([^[:alnum:]]|$)'<br />
+<br />
+If any output is returned, this is a finding.<br />
+<br />
+Next, run the following command:<br />
+<br />
+$ sudo grubby --info=ALL | grep args | grep -E '([^[:alnum:]])(noexec)([^[:alnum:]])'<br />
+<br />
+If any output is returned, this is a finding.</p><h2>Check Content Reference</h2><p>M</p><h2>Target Key</h2><p>5551</p></body></html>

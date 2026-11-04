@@ -1,0 +1,60 @@
+<!doctype html><html lang="en"><head><meta charset="utf-8"><title>STIGQter: STIG Check Details: SV-257584r1208209_rule: Red Hat Enterprise Linux CoreOS (RHCOS) must disable USB Storage kernel module.</title><link rel="icon" type="image/svg+xml" href="STIGQter.svg" /><script async src="https://www.googletagmanager.com/gtag/js?id=UA-31381839-2"></script><script src="include.js"></script><script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-4110907817782130" crossorigin="anonymous"></script></head><body><div><img src="STIGQter.svg" alt="STIGQter" style="height:1em;" /> <a href="https://www.stigqter.com/">STIGQter</a>: <a href="main.html">STIG Summary</a>: <a href="U_RH_OpenShift_Container_Platform_4-x_STIG_V2R6_Manual-xccdf.html">Red Hat OpenShift Container Platform 4.x Security Technical Implementation Guide Version: 2 Release: 6 Benchmark Date: 01 Jul 2026</a>:</div> <h1>Red Hat Enterprise Linux CoreOS (RHCOS) must disable USB Storage kernel module.</h1><h2>DISA Rule</h2><p>SV-257584r1208209_rule</p><h2>Vulnerability Number</h2><p>V-257584</p><h2>Group Title</h2><p>SRG-APP-000141-CTR-000315</p><h2>Rule Version</h2><p>CNTR-OS-001020</p><h2>Severity</h2><p>CAT II</p><h2>CCI(s)</h2><ul><li>CCI-000381 - Configure the system to provide only organization-defined mission essential capabilities.</li></ul><h2>Weight</h2><p>10</p><h2>Fix Recommendation</h2><p>Apply the machine config to disable USB Storage to load USB Storage kernel module by executing the following:<br />
+ <br />
+  for mcpool in $(oc get mcp -oname | sed 's:.*/::' ); do<br />
+ echo 'apiVersion: machineconfiguration.openshift.io/v1<br />
+ kind: MachineConfig<br />
+ metadata:<br />
+  name: 80-kernmod-usb-storage-disable-$mcpool<br />
+  labels:<br />
+  machineconfiguration.openshift.io/role: $mcpool<br />
+ spec:<br />
+  config:<br />
+  ignition:<br />
+  version: 3.1.0<br />
+  storage:<br />
+  files:<br />
+  - contents:<br />
+  source: data:,install%20usb-storage%20/bin/true%0A<br />
+  mode: 0644<br />
+  path: /etc/modprobe.d/75-kernel_module_usb-storage_disabled.conf<br />
+  overwrite: true<br />
+ ' | oc apply -f -<br />
+ done<br />
+<br />
+Where OpenShift Virtualization is enabled:<br />
+<br />
+Remove individual devices (e.g. DEVICE_A at index 0):<br />
+$ oc patch hyperconverged kubevirt-hyperconverged -n openshift-cnv<br />
+--type='json' -p='[<br />
+{&quot;op&quot;: &quot;remove&quot;, &quot;path&quot;:<br />
+&quot;/spec/permittedHostDevices/pciHostDevices/0&quot;},<br />
+<br />
+]'<br />
+<br />
+Remove all devices:<br />
+$ oc patch hyperconverged kubevirt-hyperconverged -n openshift-cnv<br />
+--type='json' -p='[<br />
+{&quot;op&quot;: &quot;remove&quot;, &quot;path&quot;: &quot;/spec/permittedHostDevices&quot;},<br />
+]'</p><h2>Check Contents</h2><p>Verify the operating system disables the ability to load the USB Storage kernel module by executing the following:<br />
+  for node in $(oc get node -oname); do oc debug $node -- chroot /host /bin/bash -c 'echo -n '$HOSTNAME '; grep -r usb-storage /etc/modprobe.d/* | grep -i '/bin/true'' 2&gt;/dev/null; done<br />
+ <br />
+ install usb-storage /bin/true<br />
+ <br />
+If the command does not return any output, or the line is commented out, and use of USB Storage is not documented with the information system security officer (ISSO) as an operational requirement, this is a finding.<br />
+<br />
+Where OpenShift Virtualization is enabled:<br />
+$ oc get hyperconverged kubevirt-hyperconverged -n openshift-cnv<br />
+-ojsonpath='{.spec.permittedHostDevices}'<br />
+<br />
+If unapproved devices are listed, this is a finding.</p><h2>Vulnerability Number</h2><p>V-257584</p><h2>Documentable</h2><p>False</p><h2>Rule Version</h2><p>CNTR-OS-001020</p><h2>Severity Override Guidance</h2><p>Verify the operating system disables the ability to load the USB Storage kernel module by executing the following:<br />
+  for node in $(oc get node -oname); do oc debug $node -- chroot /host /bin/bash -c 'echo -n '$HOSTNAME '; grep -r usb-storage /etc/modprobe.d/* | grep -i '/bin/true'' 2&gt;/dev/null; done<br />
+ <br />
+ install usb-storage /bin/true<br />
+ <br />
+If the command does not return any output, or the line is commented out, and use of USB Storage is not documented with the information system security officer (ISSO) as an operational requirement, this is a finding.<br />
+<br />
+Where OpenShift Virtualization is enabled:<br />
+$ oc get hyperconverged kubevirt-hyperconverged -n openshift-cnv<br />
+-ojsonpath='{.spec.permittedHostDevices}'<br />
+<br />
+If unapproved devices are listed, this is a finding.</p><h2>Check Content Reference</h2><p>M</p><h2>Target Key</h2><p>5547</p></body></html>

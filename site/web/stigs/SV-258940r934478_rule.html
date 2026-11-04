@@ -1,0 +1,55 @@
+<!doctype html><html lang="en"><head><meta charset="utf-8"><title>STIGQter: STIG Check Details: SV-258940r934478_rule: The vCenter Server must not configure VLAN Trunking unless Virtual Guest Tagging (VGT) is required and authorized.</title><link rel="icon" type="image/svg+xml" href="STIGQter.svg" /><script async src="https://www.googletagmanager.com/gtag/js?id=UA-31381839-2"></script><script src="include.js"></script><script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-4110907817782130" crossorigin="anonymous"></script></head><body><div><img src="STIGQter.svg" alt="STIGQter" style="height:1em;" /> <a href="https://www.stigqter.com/">STIGQter</a>: <a href="main.html">STIG Summary</a>: <a href="U_VMW_vSphere_8-0_vCenter_STIG_V1R1_Manual-xccdf.html">VMware vSphere 8.0 vCenter Security Technical Implementation Guide Version: 1 Release: 1 Benchmark Date: 31 Oct 2023</a>:</div> <h1>The vCenter Server must not configure VLAN Trunking unless Virtual Guest Tagging (VGT) is required and authorized.</h1><h2>DISA Rule</h2><p>SV-258940r934478_rule</p><h2>Vulnerability Number</h2><p>V-258940</p><h2>Group Title</h2><p>SRG-APP-000516</p><h2>Rule Version</h2><p>VCSA-80-000273</p><h2>Severity</h2><p>CAT II</p><h2>CCI(s)</h2><ul><li>CCI-000366 - Implement the security configuration settings.</li></ul><h2>Weight</h2><p>10</p><h2>Fix Recommendation</h2><p>From the vSphere Client, go to &quot;Networking&quot;.<br />
+<br />
+Select a distributed switch &gt;&gt; Select a distributed port group &gt;&gt; Configure &gt;&gt; Settings &gt;&gt; Policies.<br />
+<br />
+Click &quot;Edit&quot;.<br />
+<br />
+Click the &quot;VLAN&quot; tab.<br />
+<br />
+If &quot;VLAN trunking&quot; is not authorized, remove it by setting &quot;VLAN type&quot; to &quot;VLAN&quot; and configure an appropriate VLAN ID. Click &quot;OK&quot;.<br />
+<br />
+If &quot;VLAN trunking&quot; is authorized but the range is too broad, modify the range in the &quot;VLAN trunk range&quot; field to the minimum necessary and authorized range. An example range would be &quot;1,3-5,8&quot;. Click &quot;OK&quot;.<br />
+<br />
+or<br />
+<br />
+From a PowerCLI command prompt while connected to the vCenter server, run the following command to configure trunking:<br />
+<br />
+Get-VDPortgroup &quot;Portgroup Name&quot; | Set-VDVlanConfiguration -VlanTrunkRange &quot;&lt;VLAN Range(s) comma separated&gt;&quot;<br />
+<br />
+or<br />
+<br />
+Run this command to configure a single VLAN ID:<br />
+<br />
+Get-VDPortgroup &quot;Portgroup Name&quot; | Set-VDVlanConfiguration -VlanId &quot;&lt;New VLAN#&gt;&quot;</p><h2>Check Contents</h2><p>If distributed switches are not used, this is not applicable.<br />
+<br />
+From the vSphere Client, go to &quot;Networking&quot;.<br />
+<br />
+Select a distributed switch &gt;&gt; Select a distributed port group &gt;&gt; Configure &gt;&gt; Settings &gt;&gt; Policies.<br />
+<br />
+Review the port group &quot;VLAN Type&quot; and &quot;VLAN trunk range&quot;, if present.<br />
+<br />
+or<br />
+<br />
+From a PowerCLI command prompt while connected to the vCenter server, run the following command:<br />
+<br />
+Get-VDPortgroup | Where {$_.ExtensionData.Config.Uplink -ne &quot;True&quot;} | Select Name,VlanConfiguration<br />
+<br />
+If any port group is configured with &quot;VLAN trunking&quot; and is not documented as a needed exception (such as NSX appliances), this is a finding.<br />
+<br />
+If any port group is authorized to be configured with &quot;VLAN trunking&quot; but is not configured with the most limited range necessary, this is a finding.</p><h2>Vulnerability Number</h2><p>V-258940</p><h2>Documentable</h2><p>False</p><h2>Rule Version</h2><p>VCSA-80-000273</p><h2>Severity Override Guidance</h2><p>If distributed switches are not used, this is not applicable.<br />
+<br />
+From the vSphere Client, go to &quot;Networking&quot;.<br />
+<br />
+Select a distributed switch &gt;&gt; Select a distributed port group &gt;&gt; Configure &gt;&gt; Settings &gt;&gt; Policies.<br />
+<br />
+Review the port group &quot;VLAN Type&quot; and &quot;VLAN trunk range&quot;, if present.<br />
+<br />
+or<br />
+<br />
+From a PowerCLI command prompt while connected to the vCenter server, run the following command:<br />
+<br />
+Get-VDPortgroup | Where {$_.ExtensionData.Config.Uplink -ne &quot;True&quot;} | Select Name,VlanConfiguration<br />
+<br />
+If any port group is configured with &quot;VLAN trunking&quot; and is not documented as a needed exception (such as NSX appliances), this is a finding.<br />
+<br />
+If any port group is authorized to be configured with &quot;VLAN trunking&quot; but is not configured with the most limited range necessary, this is a finding.</p><h2>Check Content Reference</h2><p>M</p><h2>Target Key</h2><p>5573</p></body></html>

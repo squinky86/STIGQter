@@ -1,0 +1,113 @@
+<!doctype html><html lang="en"><head><meta charset="utf-8"><title>STIGQter: STIG Check Details: SV-216743r531087_rule: The Cisco router must be configured to restrict traffic destined to itself.</title><link rel="icon" type="image/svg+xml" href="STIGQter.svg" /><script async src="https://www.googletagmanager.com/gtag/js?id=UA-31381839-2"></script><script src="include.js"></script><script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-4110907817782130" crossorigin="anonymous"></script></head><body><div><img src="STIGQter.svg" alt="STIGQter" style="height:1em;" /> <a href="https://www.stigqter.com/">STIGQter</a>: <a href="main.html">STIG Summary</a>: <a href="U_Cisco_IOS-XR_Router_RTR_STIG_V3R3_Manual-xccdf.html">Cisco IOS XR Router RTR Security Technical Implementation Guide Version: 3 Release: 3 Benchmark Date: 01 Oct 2025</a>:</div> <h1>The Cisco router must be configured to restrict traffic destined to itself.</h1><h2>DISA Rule</h2><p>SV-216743r531087_rule</p><h2>Vulnerability Number</h2><p>V-216743</p><h2>Group Title</h2><p>SRG-NET-000205-RTR-000001</p><h2>Rule Version</h2><p>CISC-RT-000130</p><h2>Severity</h2><p>CAT I</p><h2>CCI(s)</h2><ul><li>CCI-001097 - Monitor and control communications at the external managed interfaces to the system and at key managed interfaces within the system.</li></ul><h2>Weight</h2><p>10</p><h2>Fix Recommendation</h2><p>Configure the ACL for any external interfaces as shown in the example.<br />
+<br />
+RP/0/0/CPU0:R3(config)#ipv4 access-list EXTERNAL_ACL_INBOUND<br />
+RP/0/0/CPU0:R3(config-ipv4-acl)#permit tcp host x.11.1.1 eq bgp host x.11.1.2<br />
+RP/0/0/CPU0:R3(config-ipv4-acl)#permit tcp host x.11.1.1 host x.11.1.2 eq bgp<br />
+RP/0/0/CPU0:R3(config-ipv4-acl)#permit icmp host x.11.1.1 host x.11.1.2 echo<br />
+RP/0/0/CPU0:R3(config-ipv4-acl)#permit icmp host x.11.1.1 host x.11.1.2 echo-reply<br />
+RP/0/0/CPU0:R3(config-ipv4-acl)#deny ip any host x.11.1.1 log <br />
+RP/0/0/CPU0:R3(config-ipv4-acl)#permit tcp any any established<br />
+…<br />
+…<br />
+…<br />
+RP/0/0/CPU0:R3(config-ipv4-acl)#deny ip any any log <br />
+RP/0/0/CPU0:R3(config-ipv4-acl)#exit<br />
+<br />
+Configure the ACL for any external interfaces as shown in the example.<br />
+<br />
+RP/0/0/CPU0:R3(config)#ipv4 access-list INTERNAL_ACL_INBOUND<br />
+RP/0/0/CPU0:R3(config-ipv4-acl)#permit icmp any any<br />
+RP/0/0/CPU0:R3(config-ipv4-acl)#permit ospf host 10.1.12.1 host 10.1.12.2<br />
+RP/0/0/CPU0:R3(config-ipv4-acl)#permit tcp 10.2.1.0 0.0.0.255 host 10.1.12.2eq 22<br />
+RP/0/0/CPU0:R3(config-ipv4-acl)#permit tcp 10.2.1.0 0.0.0.255 host 10.1.12.2eq tacacs<br />
+RP/0/0/CPU0:R3(config-ipv4-acl)#permit udp 10.2.1.0 0.0.0.255 host 10.1.12.2 eq snmp<br />
+RP/0/0/CPU0:R3(config-ipv4-acl)#permit udp 10.2.1.0 0.0.0.255 host 10.1.12.2 eq ntp<br />
+RP/0/0/CPU0:R3(config-ipv4-acl)#deny  ip any host 10.1.12.2 log <br />
+RP/0/0/CPU0:R3(config-ipv4-acl)#permit ip any any  <br />
+RP/0/0/CPU0:R3(config-ipv4-acl)#exit<br />
+<br />
+Note: best practice is to configure the ACL statements relative to traffic destined to the router first followed by ACL statements for transit traffic.<br />
+<br />
+Step 2: Apply the ACLs to the appropriate interface as shown in the example below.<br />
+<br />
+RP/0/0/CPU0:R3(config)#int g0/0/0/1  <br />
+RP/0/0/CPU0:R3(config-if)#ipv4 access-group EXTERNAL_ACL_INBOUND in<br />
+RP/0/0/CPU0:R3(config-if)#exit<br />
+RP/0/0/CPU0:R3(config)#int g0/0/0/2                     <br />
+RP/0/0/CPU0:R3(config-if)#ipv4 access-group INTERNAL_ACL_INBOUND in</p><h2>Check Contents</h2><p>Review the external and internal ACLs to verify that the router is configured to only allow specific management and control plane traffic from specific sources destined to itself.<br />
+<br />
+Step 1: Verify ACLs has been configured as shown in the example below that matches expected control plane and management plane traffic. With the exception of ICMP, all other traffic destined to the router should be dropped.<br />
+<br />
+ipv4 access-list EXTERNAL_ACL_INBOUND<br />
+ 10 permit tcp host x.11.1.1 eq bgp host x.11.1.2<br />
+ 20 permit tcp host x.11.1.1 host x.11.1.2 eq bgp<br />
+ 30 permit icmp host x.11.1.1 host x.11.1.2 echo<br />
+ 40 permit icmp host x.11.1.1 host x.11.1.2 echo-reply<br />
+ 50 deny ipv4 any host x.11.1.1 log <br />
+ 60 permit tcp any any established<br />
+ …<br />
+ …<br />
+ …<br />
+ 140 deny ipv4 any any log <br />
+!<br />
+ipv4 access-list INTERNAL_ACL_INBOUND<br />
+ 10 permit icmp any any<br />
+ 20 permit ospf host 10.1.12.1 host 10.1.12.2<br />
+ 30 permit tcp 10.2.1.0 0.0.0.255 host 10.1.12.2 eq ssh<br />
+ 40 permit tcp 10.2.1.0 0.0.0.255 host 10.1.12.2 eq tacacs<br />
+ 50 permit udp 10.2.1.0 0.0.0.255 host 10.1.12.2  eq snmp<br />
+ 60 permit udp 10.2.1.0 0.0.0.255 host 10.1.12.2 eq ntp<br />
+ 70 deny ipv4 any host 10.1.12.2 log <br />
+ 80 permit ipv4 any any  <br />
+<br />
+Note: For the internal ACL example, all routers within the hypothetical network (10.1.0.0/16) have been configured to use the loopback address to source all management traffic (not shown); hence, the loopbacks are the only allowable destination address for management traffic. In addition, all management traffic destined to the router must originate from the management network (10.2.1.0/24). With the exception of link-local control plane traffic and ICMP, all other traffic destined to any physical interface address will be dropped.<br />
+<br />
+Step 2: Verify that the ACL has been applied to the appropriate interface as shown in the example below.<br />
+ <br />
+interface GigabitEthernet0/0/0/1<br />
+ ipv4 address x.11.1.2 255.255.255.252<br />
+ ipv4 access-group EXTERNAL_ACL_INBOUND ingress<br />
+!<br />
+interface GigabitEthernet0/0/0/2<br />
+ ipv4 address 10.1.12.2 255.255.255.0<br />
+ ipv4 access-group INTERNAL_ACL_INBOUND ingress<br />
+   <br />
+If the router is not configured to restrict traffic destined to itself, this is a finding.</p><h2>Vulnerability Number</h2><p>V-216743</p><h2>Documentable</h2><p>False</p><h2>Rule Version</h2><p>CISC-RT-000130</p><h2>Severity Override Guidance</h2><p>Review the external and internal ACLs to verify that the router is configured to only allow specific management and control plane traffic from specific sources destined to itself.<br />
+<br />
+Step 1: Verify ACLs has been configured as shown in the example below that matches expected control plane and management plane traffic. With the exception of ICMP, all other traffic destined to the router should be dropped.<br />
+<br />
+ipv4 access-list EXTERNAL_ACL_INBOUND<br />
+ 10 permit tcp host x.11.1.1 eq bgp host x.11.1.2<br />
+ 20 permit tcp host x.11.1.1 host x.11.1.2 eq bgp<br />
+ 30 permit icmp host x.11.1.1 host x.11.1.2 echo<br />
+ 40 permit icmp host x.11.1.1 host x.11.1.2 echo-reply<br />
+ 50 deny ipv4 any host x.11.1.1 log <br />
+ 60 permit tcp any any established<br />
+ …<br />
+ …<br />
+ …<br />
+ 140 deny ipv4 any any log <br />
+!<br />
+ipv4 access-list INTERNAL_ACL_INBOUND<br />
+ 10 permit icmp any any<br />
+ 20 permit ospf host 10.1.12.1 host 10.1.12.2<br />
+ 30 permit tcp 10.2.1.0 0.0.0.255 host 10.1.12.2 eq ssh<br />
+ 40 permit tcp 10.2.1.0 0.0.0.255 host 10.1.12.2 eq tacacs<br />
+ 50 permit udp 10.2.1.0 0.0.0.255 host 10.1.12.2  eq snmp<br />
+ 60 permit udp 10.2.1.0 0.0.0.255 host 10.1.12.2 eq ntp<br />
+ 70 deny ipv4 any host 10.1.12.2 log <br />
+ 80 permit ipv4 any any  <br />
+<br />
+Note: For the internal ACL example, all routers within the hypothetical network (10.1.0.0/16) have been configured to use the loopback address to source all management traffic (not shown); hence, the loopbacks are the only allowable destination address for management traffic. In addition, all management traffic destined to the router must originate from the management network (10.2.1.0/24). With the exception of link-local control plane traffic and ICMP, all other traffic destined to any physical interface address will be dropped.<br />
+<br />
+Step 2: Verify that the ACL has been applied to the appropriate interface as shown in the example below.<br />
+ <br />
+interface GigabitEthernet0/0/0/1<br />
+ ipv4 address x.11.1.2 255.255.255.252<br />
+ ipv4 access-group EXTERNAL_ACL_INBOUND ingress<br />
+!<br />
+interface GigabitEthernet0/0/0/2<br />
+ ipv4 address 10.1.12.2 255.255.255.0<br />
+ ipv4 access-group INTERNAL_ACL_INBOUND ingress<br />
+   <br />
+If the router is not configured to restrict traffic destined to itself, this is a finding.</p><h2>Check Content Reference</h2><p>M</p><h2>Target Key</h2><p>4029</p></body></html>

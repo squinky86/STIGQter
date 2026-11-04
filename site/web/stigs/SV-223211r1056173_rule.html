@@ -1,0 +1,43 @@
+<!doctype html><html lang="en"><head><meta charset="utf-8"><title>STIGQter: STIG Check Details: SV-223211r1056173_rule: The Juniper SRX Services Gateway must use and securely configure SNMPv3 if SNMP is enabled.</title><link rel="icon" type="image/svg+xml" href="STIGQter.svg" /><script async src="https://www.googletagmanager.com/gtag/js?id=UA-31381839-2"></script><script src="include.js"></script><script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-4110907817782130" crossorigin="anonymous"></script></head><body><div><img src="STIGQter.svg" alt="STIGQter" style="height:1em;" /> <a href="https://www.stigqter.com/">STIGQter</a>: <a href="main.html">STIG Summary</a>: <a href="U_Juniper_SRX_SG_NDM_STIG_V3R3_Manual-xccdf.html">Juniper SRX Services Gateway NDM Security Technical Implementation Guide Version: 3 Release: 3 Benchmark Date: 30 Jan 2025</a>:</div> <h1>The Juniper SRX Services Gateway must use and securely configure SNMPv3 if SNMP is enabled.</h1><h2>DISA Rule</h2><p>SV-223211r1056173_rule</p><h2>Vulnerability Number</h2><p>V-223211</p><h2>Group Title</h2><p>SRG-APP-000142-NDM-000245</p><h2>Rule Version</h2><p>JUSX-DM-000111</p><h2>Severity</h2><p>CAT I</p><h2>CCI(s)</h2><ul><li>CCI-000382 - Configure the system to prohibit or restrict the use of organization-defined prohibited or restricted functions, system ports, protocols, software, and/or services.</li><li>CCI-001967 - Authenticate organization-defined devices and/or types of devices before establishing a local, remote, and/or network connection using bidirectional authentication that is cryptographically based.</li></ul><h2>Weight</h2><p>10</p><h2>Fix Recommendation</h2><p>Enable and configure SNMPv3 and configure a trap and community string.<br />
+<br />
+[edit]<br />
+set snmp location &lt;LOCATION-NAME&gt;<br />
+set snmp v3 usm local-engine user &lt;USER-NAME&gt; privacy-AES128 authentication-sha256<br />
+set snmp v3 vacm security-to-group security-model usm security-name &lt;SECURITY-NAME&gt; group &lt;GROUP-NAME&gt;<br />
+set snmp v3 vacm access group &lt;GROUP-NAME&gt; default-context-prefix security-model usm<br />
+security-level privacy read-view all<br />
+set snmp v3 vacm access group &lt;GROUP-NAME&gt; default-context-prefix security-model usm<br />
+security-level privacy notify-view all<br />
+set snmp v3 target-address &lt;target-address-name&gt; tag-list &lt;SNMP-trap-receiver&gt;<br />
+set snmp v3 target-address &lt;TARGER-ADDRESS-NAME&gt; target-parameters &lt;PARMS-NAME&gt;<br />
+set snmp v3 target-parameters &lt;PARMS-NAME&gt; parameters message-processing-model v3<br />
+set snmp v3 target-parameters &lt;PARMS-NAME&gt; parameters security-model usm<br />
+set snmp v3 target-parameters &lt;PARMS-NAME&gt; parameters security-level privacy<br />
+set snmp v3 target-parameters &lt;PARMS-NAME&gt; parameters security-name &lt;SECURITY-NAME&gt;<br />
+set snmp v3 target-parameters &lt;PARMS-NAME&gt; notify-filter device-traps<br />
+set snmp v3 notify &lt;SNMP-TRAPS&gt; type trap<br />
+set snmp v3 notify &lt;SNMP-TRAPS&gt; tag &lt;SNMP-TRAP-RECEIVER&gt;<br />
+set snmp v3 notify-filter device-traps oid jnxChassisTraps include<br />
+set snmp v3 notify-filter device-traps oid jnxChassisOKTraps include<br />
+set snmp v3 notify-filter device-traps oid system include<br />
+set snmp v3 notify-filter device-traps oid .1 include<br />
+set snmp v3 notify-filter device-traps oid snmpMIBObjects include<br />
+set snmp engine-id use-mac-address<br />
+set snmp view all oid .1 include<br />
+set snmp view all oid system include<br />
+set snmp view all oid jnxBoxAnatomy include<br />
+set snmp view all oid snmpMIBObjects include</p><h2>Check Contents</h2><p>If an SNMP stanza does not exist, this is not a finding.<br />
+<br />
+Verify SNMPv3 is enabled and configured.<br />
+<br />
+[edit]<br />
+show snmp<br />
+<br />
+If versions earlier than SNMPv3 are enabled, this is a finding.</p><h2>Vulnerability Number</h2><p>V-223211</p><h2>Documentable</h2><p>False</p><h2>Rule Version</h2><p>JUSX-DM-000111</p><h2>Severity Override Guidance</h2><p>If an SNMP stanza does not exist, this is not a finding.<br />
+<br />
+Verify SNMPv3 is enabled and configured.<br />
+<br />
+[edit]<br />
+show snmp<br />
+<br />
+If versions earlier than SNMPv3 are enabled, this is a finding.</p><h2>Check Content Reference</h2><p>M</p><h2>Target Key</h2><p>4098</p></body></html>

@@ -1,0 +1,44 @@
+<!doctype html><html lang="en"><head><meta charset="utf-8"><title>STIGQter: STIG Check Details: SV-254043r945856_rule: The Juniper multicast Designated Router (DR) must be configured to increase the shortest-path tree (SPT) threshold or set it to infinity to minimalize source-group (S, G) state within the multicast topology where Any Source Multicast (ASM) is deployed.</title><link rel="icon" type="image/svg+xml" href="STIGQter.svg" /><script async src="https://www.googletagmanager.com/gtag/js?id=UA-31381839-2"></script><script src="include.js"></script><script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-4110907817782130" crossorigin="anonymous"></script></head><body><div><img src="STIGQter.svg" alt="STIGQter" style="height:1em;" /> <a href="https://www.stigqter.com/">STIGQter</a>: <a href="main.html">STIG Summary</a>: <a href="U_Juniper_EX_Switches_RTR_STIG_V2R1_Manual-xccdf.html">Juniper EX Series Switches Router Security Technical Implementation Guide Version: 2 Release: 1 Benchmark Date: 24 Jul 2024</a>:</div> <h1>The Juniper multicast Designated Router (DR) must be configured to increase the shortest-path tree (SPT) threshold or set it to infinity to minimalize source-group (S, G) state within the multicast topology where Any Source Multicast (ASM) is deployed.</h1><h2>DISA Rule</h2><p>SV-254043r945856_rule</p><h2>Vulnerability Number</h2><p>V-254043</p><h2>Group Title</h2><p>SRG-NET-000362-RTR-000123</p><h2>Rule Version</h2><p>JUEX-RT-000710</p><h2>Severity</h2><p>CAT II</p><h2>CCI(s)</h2><ul><li>CCI-002385 - Protect against or limit the effects of organization-defined types of denial of service events.</li></ul><h2>Weight</h2><p>10</p><h2>Fix Recommendation</h2><p>Configure the multicast router to increase the SPT threshold or set it to infinity to minimalize (S, G) state within the multicast topology where ASM is deployed.<br />
+<br />
+set policy-options policy-statement &lt;name&gt; term 1 from route-filter 239.0.0.0/8 orlonger<br />
+set policy-options policy-statement &lt;name&gt; term 1 then accept<br />
+<br />
+set protocols pim spt-threshold infinity &lt;policy name&gt;</p><h2>Check Contents</h2><p>Review the multicast last-hop router configuration to verify that the SPT switchover threshold is increased (default is &quot;0&quot;) or set to infinity (never switch over). <br />
+<br />
+Verify the policy statement includes specific multicast groups or all groups (as shown).<br />
+[edit policy-options]<br />
+policy-statement &lt;name&gt; {<br />
+    term 1 {<br />
+        from {<br />
+            route-filter 234.0.0.0/8 orlonger;<br />
+        }<br />
+        then accept;<br />
+    }<br />
+}<br />
+<br />
+Verify the infinity policy is applied.<br />
+[edit protocols pim]<br />
+spt-threshold {<br />
+    infinity &lt;policy name&gt;;<br />
+}<br />
+<br />
+If any multicast router is not configured to increase the SPT threshold or set to infinity to minimalize (S, G) state, this is a finding.</p><h2>Vulnerability Number</h2><p>V-254043</p><h2>Documentable</h2><p>False</p><h2>Rule Version</h2><p>JUEX-RT-000710</p><h2>Severity Override Guidance</h2><p>Review the multicast last-hop router configuration to verify that the SPT switchover threshold is increased (default is &quot;0&quot;) or set to infinity (never switch over). <br />
+<br />
+Verify the policy statement includes specific multicast groups or all groups (as shown).<br />
+[edit policy-options]<br />
+policy-statement &lt;name&gt; {<br />
+    term 1 {<br />
+        from {<br />
+            route-filter 234.0.0.0/8 orlonger;<br />
+        }<br />
+        then accept;<br />
+    }<br />
+}<br />
+<br />
+Verify the infinity policy is applied.<br />
+[edit protocols pim]<br />
+spt-threshold {<br />
+    infinity &lt;policy name&gt;;<br />
+}<br />
+<br />
+If any multicast router is not configured to increase the SPT threshold or set to infinity to minimalize (S, G) state, this is a finding.</p><h2>Check Content Reference</h2><p>M</p><h2>Target Key</h2><p>5479</p></body></html>

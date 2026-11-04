@@ -1,0 +1,86 @@
+<!doctype html><html lang="en"><head><meta charset="utf-8"><title>STIGQter: STIG Check Details: SV-279334r1179504_rule: MongoDB must provide audit record generation for DOD-defined auditable events within all DBMS/database components.</title><link rel="icon" type="image/svg+xml" href="STIGQter.svg" /><script async src="https://www.googletagmanager.com/gtag/js?id=UA-31381839-2"></script><script src="include.js"></script><script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-4110907817782130" crossorigin="anonymous"></script></head><body><div><img src="STIGQter.svg" alt="STIGQter" style="height:1em;" /> <a href="https://www.stigqter.com/">STIGQter</a>: <a href="main.html">STIG Summary</a>: <a href="U_MDB_Enterprise_Advanced_8-x_STIG_V1R1_Manual-xccdf.html">MongoDB Enterprise Advanced 8.x Security Technical Implementation Guide Version: 1 Release: 1 Benchmark Date: 26 Jan 2026</a>:</div> <h1>MongoDB must provide audit record generation for DOD-defined auditable events within all DBMS/database components.</h1><h2>DISA Rule</h2><p>SV-279334r1179504_rule</p><h2>Vulnerability Number</h2><p>V-279334</p><h2>Group Title</h2><p>SRG-APP-000080-DB-000063</p><h2>Rule Version</h2><p>MD8X-00-000400</p><h2>Severity</h2><p>CAT II</p><h2>CCI(s)</h2><ul><li>CCI-000166 - Provide irrefutable evidence that an individual (or process acting on behalf of an individual) falsely denying having performed organization-defined actions to be covered by non-repudiation.</li><li>CCI-000169 - Provide audit record generation capability for the event types the system is capable of auditing as defined in AU-2 a. on organization-defined information system components.</li><li>CCI-000171 - Allow organization-defined personnel or roles to select the event types that are to be logged by specific components of the system.</li><li>CCI-000172 - Generate audit records for the event types defined in AU-2 c that include the audit record content defined in AU-3.</li><li>CCI-001464 - Initiates session audits automatically at system start-up.</li><li>CCI-000130 - Ensure that audit records containing information that establishes what type of event occurred.</li><li>CCI-000131 - Ensure that audit records containing information that establishes when the event occurred.</li><li>CCI-000132 - Ensure that audit records containing information that establishes where the event occurred.</li><li>CCI-000133 - Ensure that audit records containing information that establishes the source of the event.</li><li>CCI-000134 - Ensure that audit records containing information that establishes the outcome of the event.</li><li>CCI-001487 - Ensure that audit records containing information that establishes the identity of any individuals, subjects, or objects/entities associated with the event.</li><li>CCI-000135 - Generate audit records containing the organization-defined additional information that is to be included in the audit records.</li><li>CCI-003938 - Automatically generate audit records of the enforcement actions.</li><li>CCI-003821 - Implement the capability to centrally review and analyze audit records from multiple components within the system.</li><li>CCI-003831 - Alert organization-defined personnel or roles upon detection of unauthorized access, modification, or deletion of audit information.</li></ul><h2>Weight</h2><p>10</p><h2>Fix Recommendation</h2><p>Edit the MongoDB configuration file (default location /etc/mongod.conf) and add a configured &quot;auditLog&quot; setting:<br />
+ <br />
+auditLog:<br />
+   destination: file<br />
+   format: BSON<br />
+   path: &lt;mongodb audit log directory&gt;/auditLog.bson<br />
+ <br />
+-OR-<br />
+<br />
+auditLog:<br />
+   destination: syslog<br />
+ <br />
+Add the following entry to the MongoDB configuration file:<br />
+ <br />
+setParameter: <br />
+    auditAuthorizationSuccess: true<br />
+ <br />
+Restart the MongoDB service from the OS.<br />
+ <br />
+$ sudo systemctl restart mongod<br />
+ <br />
+Setting of auditAuthorizationSuccess enables auditing of authorization success for the authCheck action. The parameter value must be true to audit read and write operations. However, when auditAuthorizationSuccess is false, auditing has less performance impact because the audit system only logs authorization failures.<br />
+ <br />
+If the &quot;auditLog&quot; setting was present and contained a &quot;filter:&quot; parameter, ensure the &quot;filter:&quot; expression does not prevent the auditing of events that should be audited. The filter can be modified accordingly to ensure it complies. Alternatively, remove the &quot;filter:&quot; parameter to enable auditing for all events.<br />
+ <br />
+Refer to the MongoDB documentation for details of audit operations and event configuration:<br />
+<br />
+https://www.mongodb.com/docs/v8.0/core/auditing/ <br />
+<br />
+https://www.mongodb.com/docs/v8.0/tutorial/configure-audit-filters/</p><h2>Check Contents</h2><p>Check the MongoDB configuration file (default location /etc/mongod.conf) for a key named &quot;auditLog:&quot;. <br />
+ <br />
+Examples shown below:<br />
+ <br />
+auditLog:<br />
+   destination: file<br />
+   format: BSON<br />
+   path: &lt;mongodb audit log directory&gt;/auditLog.bson<br />
+   filter: '{ atype: { $in: [ &quot;createCollection&quot;, &quot;dropCollection&quot; ] } }'<br />
+ <br />
+-OR-<br />
+<br />
+auditLog:<br />
+   destination: syslog<br />
+ <br />
+If an &quot;auditLog:&quot; key is not present, this is a finding.<br />
+ <br />
+If the &quot;auditLog:&quot; key is present, ensure the subkey of &quot;destination:&quot; is set to either &quot;file&quot; or &quot;syslog&quot;. If not, this is a finding.<br />
+ <br />
+If the &quot;auditLog:&quot; key is present and contains a subkey of &quot;filter:&quot;, ensure the filter is valid. If the filter is invalid, this is a finding. <br />
+ <br />
+The site auditing policy must be reviewed to determine if the &quot;filter:&quot; being applied meets the site auditing requirements. If not, this is a finding.<br />
+ <br />
+Check the MongoDB configuration file (default location: /etc/mongod.conf) for the following entry:<br />
+<br />
+setParameter: <br />
+    auditAuthorizationSuccess: true<br />
+<br />
+If this setParameter entry does not have &quot;auditAuthorizationSuccess: true&quot;, this is a finding.</p><h2>Vulnerability Number</h2><p>V-279334</p><h2>Documentable</h2><p>False</p><h2>Rule Version</h2><p>MD8X-00-000400</p><h2>Severity Override Guidance</h2><p>Check the MongoDB configuration file (default location /etc/mongod.conf) for a key named &quot;auditLog:&quot;. <br />
+ <br />
+Examples shown below:<br />
+ <br />
+auditLog:<br />
+   destination: file<br />
+   format: BSON<br />
+   path: &lt;mongodb audit log directory&gt;/auditLog.bson<br />
+   filter: '{ atype: { $in: [ &quot;createCollection&quot;, &quot;dropCollection&quot; ] } }'<br />
+ <br />
+-OR-<br />
+<br />
+auditLog:<br />
+   destination: syslog<br />
+ <br />
+If an &quot;auditLog:&quot; key is not present, this is a finding.<br />
+ <br />
+If the &quot;auditLog:&quot; key is present, ensure the subkey of &quot;destination:&quot; is set to either &quot;file&quot; or &quot;syslog&quot;. If not, this is a finding.<br />
+ <br />
+If the &quot;auditLog:&quot; key is present and contains a subkey of &quot;filter:&quot;, ensure the filter is valid. If the filter is invalid, this is a finding. <br />
+ <br />
+The site auditing policy must be reviewed to determine if the &quot;filter:&quot; being applied meets the site auditing requirements. If not, this is a finding.<br />
+ <br />
+Check the MongoDB configuration file (default location: /etc/mongod.conf) for the following entry:<br />
+<br />
+setParameter: <br />
+    auditAuthorizationSuccess: true<br />
+<br />
+If this setParameter entry does not have &quot;auditAuthorizationSuccess: true&quot;, this is a finding.</p><h2>Check Content Reference</h2><p>M</p><h2>Target Key</h2><p>5728</p></body></html>

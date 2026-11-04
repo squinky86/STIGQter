@@ -1,0 +1,24 @@
+<!doctype html><html lang="en"><head><meta charset="utf-8"><title>STIGQter: STIG Check Details: SV-276323r1149878_rule: When using command-line tools with Azure SQL Server Managed Instance, such as SQLCMD, in a mixed-mode authentication environment, users must use a logon method that does not expose the password.</title><link rel="icon" type="image/svg+xml" href="STIGQter.svg" /><script async src="https://www.googletagmanager.com/gtag/js?id=UA-31381839-2"></script><script src="include.js"></script><script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-4110907817782130" crossorigin="anonymous"></script></head><body><div><img src="STIGQter.svg" alt="STIGQter" style="height:1em;" /> <a href="https://www.stigqter.com/">STIGQter</a>: <a href="main.html">STIG Summary</a>: <a href="U_MS_Azure_SQL_MI_STIG_V1R1_Manual-xccdf.html">Microsoft Azure SQL Managed Instance Security Technical Implementation Guide Version: 1 Release: 1 Benchmark Date: 23 Sep 2025</a>:</div> <h1>When using command-line tools with Azure SQL Server Managed Instance, such as SQLCMD, in a mixed-mode authentication environment, users must use a logon method that does not expose the password.</h1><h2>DISA Rule</h2><p>SV-276323r1149878_rule</p><h2>Vulnerability Number</h2><p>V-276323</p><h2>Group Title</h2><p>SRG-APP-000178-DB-000083</p><h2>Rule Version</h2><p>MSQL-D0-018100</p><h2>Severity</h2><p>CAT I</p><h2>CCI(s)</h2><ul><li>CCI-000206 - Obscure feedback of authentication information during the authentication process to protect the information from possible exploitation and use by unauthorized individuals.</li></ul><h2>Weight</h2><p>10</p><h2>Fix Recommendation</h2><p>Where possible, enable Microsoft Entra-only authentication.<br />
+<br />
+Refer to: https://learn.microsoft.com/en-us/azure/azure-sql/database/authentication-azure-ad-only-authentication-tutorial?view=azuresql&amp;amp;tabs=azure-powershell<br />
+ <br />
+If mixed-mode authentication is necessary, then for SQLCMD, which cannot be configured not to accept a plain-text password when mixed-mode authentication is enabled, and any other essential tool with the same limitation, complete the following:<br />
+<br />
+1. Document the need for it, who uses it, and any relevant mitigations, and obtain AO approval.<br />
+2. Train all users of the tool in the importance of not using the plain-text password option and in how to keep the password hidden.</p><h2>Check Contents</h2><p>Run this PowerShell command to determine whether Microsoft Entra-only authentication is enabled:<br />
+<br />
+Get-AzSqlInstanceActiveDirectoryOnlyAuthentication -InstanceName &lt;myinstance&gt; -ResourceGroupName &lt;myresource&gt; <br />
+ <br />
+If &quot;AzureADOnlyAuthentication&quot; value is &quot;True&quot;, this is not a finding.<br />
+ <br />
+For SQLCMD, which cannot be configured not to accept a plain-text password, and any other essential tool with the same limitation, verify the system documentation explains the need for the tool, who uses it, and any relevant mitigations; and that AO approval has been obtained; if not, this is a finding.<br />
+ <br />
+Request evidence that all users of the tool are trained in the importance of not using the plain-text password option and in how to keep the password hidden; and that they adhere to this practice; if not, this is a finding.</p><h2>Vulnerability Number</h2><p>V-276323</p><h2>Documentable</h2><p>False</p><h2>Rule Version</h2><p>MSQL-D0-018100</p><h2>Severity Override Guidance</h2><p>Run this PowerShell command to determine whether Microsoft Entra-only authentication is enabled:<br />
+<br />
+Get-AzSqlInstanceActiveDirectoryOnlyAuthentication -InstanceName &lt;myinstance&gt; -ResourceGroupName &lt;myresource&gt; <br />
+ <br />
+If &quot;AzureADOnlyAuthentication&quot; value is &quot;True&quot;, this is not a finding.<br />
+ <br />
+For SQLCMD, which cannot be configured not to accept a plain-text password, and any other essential tool with the same limitation, verify the system documentation explains the need for the tool, who uses it, and any relevant mitigations; and that AO approval has been obtained; if not, this is a finding.<br />
+ <br />
+Request evidence that all users of the tool are trained in the importance of not using the plain-text password option and in how to keep the password hidden; and that they adhere to this practice; if not, this is a finding.</p><h2>Check Content Reference</h2><p>M</p><h2>Target Key</h2><p>5711</p></body></html>

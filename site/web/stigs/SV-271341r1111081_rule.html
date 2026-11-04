@@ -1,0 +1,135 @@
+<!doctype html><html lang="en"><head><meta charset="utf-8"><title>STIGQter: STIG Check Details: SV-271341r1111081_rule: SQL Server must prevent nonprivileged users from executing privileged functions, to include disabling, circumventing, or altering implemented security safeguards/countermeasures.</title><link rel="icon" type="image/svg+xml" href="STIGQter.svg" /><script async src="https://www.googletagmanager.com/gtag/js?id=UA-31381839-2"></script><script src="include.js"></script><script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-4110907817782130" crossorigin="anonymous"></script></head><body><div><img src="STIGQter.svg" alt="STIGQter" style="height:1em;" /> <a href="https://www.stigqter.com/">STIGQter</a>: <a href="main.html">STIG Summary</a>: <a href="U_MS_SQL_Server_2022_Instance_STIG_V1R4_Manual-xccdf.html">Microsoft SQL Server 2022 Instance Security Technical Implementation Guide Version: 1 Release: 4 Benchmark Date: 01 Apr 2026</a>:</div> <h1>SQL Server must prevent nonprivileged users from executing privileged functions, to include disabling, circumventing, or altering implemented security safeguards/countermeasures.</h1><h2>DISA Rule</h2><p>SV-271341r1111081_rule</p><h2>Vulnerability Number</h2><p>V-271341</p><h2>Group Title</h2><p>SRG-APP-000340-DB-000304</p><h2>Rule Version</h2><p>SQLI-22-010400</p><h2>Severity</h2><p>CAT II</p><h2>CCI(s)</h2><ul><li>CCI-002235 - Prevent non-privileged users from executing privileged functions.</li></ul><h2>Weight</h2><p>10</p><h2>Fix Recommendation</h2><p>Restrict the granting of permissions to server-level securables to only those authorized, most notably: members of sysadmin and securityadmin built-in instance-level roles, CONTROL SERVER permission, and use of the GRANT with GRANT permission.</p><h2>Check Contents</h2><p>Review server-level securables and built-in role membership to ensure only authorized users have privileged access and the ability to create server-level objects and grant permissions to themselves or others. <br />
+ <br />
+Review the system documentation to determine the required levels of protection for DBMS server securables by type of login. <br />
+ <br />
+Review the permissions in place on the server. If the actual permissions do not match the documented requirements, this is a finding. <br />
+ <br />
+Get all permission assignments to logins and roles: <br />
+ <br />
+SELECT DISTINCT <br />
+    CASE <br />
+        WHEN SP.class_desc IS NOT NULL THEN <br />
+            CASE <br />
+                WHEN SP.class_desc = 'SERVER' AND S.is_linked = 0 THEN 'SERVER' <br />
+                WHEN SP.class_desc = 'SERVER' AND S.is_linked = 1 THEN 'SERVER (linked)' <br />
+                ELSE SP.class_desc <br />
+            END <br />
+        WHEN E.name IS NOT NULL THEN 'ENDPOINT' <br />
+        WHEN S.name IS NOT NULL AND S.is_linked = 0 THEN 'SERVER' <br />
+        WHEN S.name IS NOT NULL AND S.is_linked = 1 THEN 'SERVER (linked)' <br />
+        WHEN P.name IS NOT NULL THEN 'SERVER_PRINCIPAL' <br />
+        ELSE '???' <br />
+    END                    AS [Securable Class], <br />
+    CASE <br />
+        WHEN E.name IS NOT NULL THEN E.name <br />
+        WHEN S.name IS NOT NULL THEN S.name <br />
+        WHEN P.name IS NOT NULL THEN P.name <br />
+        ELSE '???' <br />
+    END                    AS [Securable], <br />
+    P1.name                AS [Grantee], <br />
+    P1.type_desc           AS [Grantee Type], <br />
+    sp.permission_name     AS [Permission], <br />
+    sp.state_desc          AS [State], <br />
+    P2.name                AS [Grantor], <br />
+    P2.type_desc           AS [Grantor Type] <br />
+FROM <br />
+    sys.server_permissions SP <br />
+    INNER JOIN sys.server_principals P1 <br />
+        ON P1.principal_id = SP.grantee_principal_id <br />
+    INNER JOIN sys.server_principals P2 <br />
+        ON P2.principal_id = SP.grantor_principal_id <br />
+ <br />
+    FULL OUTER JOIN sys.servers S <br />
+        ON  SP.class_desc = 'SERVER' <br />
+        AND S.server_id = SP.major_id <br />
+ <br />
+    FULL OUTER JOIN sys.endpoints E <br />
+        ON  SP.class_desc = 'ENDPOINT' <br />
+        AND E.endpoint_id = SP.major_id <br />
+ <br />
+    FULL OUTER JOIN sys.server_principals P <br />
+        ON  SP.class_desc = 'SERVER_PRINCIPAL'        <br />
+        AND P.principal_id = SP.major_id <br />
+ <br />
+Get all server role memberships: <br />
+ <br />
+SELECT <br />
+    R.name    AS [Role], <br />
+    M.name    AS [Member] <br />
+FROM <br />
+    sys.server_role_members X <br />
+    INNER JOIN sys.server_principals R ON R.principal_id = X.role_principal_id <br />
+    INNER JOIN sys.server_principals M ON M.principal_id = X.member_principal_id <br />
+ <br />
+The CONTROL SERVER permission is similar but not identical to the sysadmin fixed server role. Permissions do not imply role memberships, and role memberships do not grant permissions (e.g., CONTROL SERVER does not imply membership in the sysadmin fixed server role). <br />
+ <br />
+Ensure only the documented and approved logins have privileged functions in SQL Server. <br />
+ <br />
+If the current configuration does not match the documented baseline, this is a finding.</p><h2>Vulnerability Number</h2><p>V-271341</p><h2>Documentable</h2><p>False</p><h2>Rule Version</h2><p>SQLI-22-010400</p><h2>Severity Override Guidance</h2><p>Review server-level securables and built-in role membership to ensure only authorized users have privileged access and the ability to create server-level objects and grant permissions to themselves or others. <br />
+ <br />
+Review the system documentation to determine the required levels of protection for DBMS server securables by type of login. <br />
+ <br />
+Review the permissions in place on the server. If the actual permissions do not match the documented requirements, this is a finding. <br />
+ <br />
+Get all permission assignments to logins and roles: <br />
+ <br />
+SELECT DISTINCT <br />
+    CASE <br />
+        WHEN SP.class_desc IS NOT NULL THEN <br />
+            CASE <br />
+                WHEN SP.class_desc = 'SERVER' AND S.is_linked = 0 THEN 'SERVER' <br />
+                WHEN SP.class_desc = 'SERVER' AND S.is_linked = 1 THEN 'SERVER (linked)' <br />
+                ELSE SP.class_desc <br />
+            END <br />
+        WHEN E.name IS NOT NULL THEN 'ENDPOINT' <br />
+        WHEN S.name IS NOT NULL AND S.is_linked = 0 THEN 'SERVER' <br />
+        WHEN S.name IS NOT NULL AND S.is_linked = 1 THEN 'SERVER (linked)' <br />
+        WHEN P.name IS NOT NULL THEN 'SERVER_PRINCIPAL' <br />
+        ELSE '???' <br />
+    END                    AS [Securable Class], <br />
+    CASE <br />
+        WHEN E.name IS NOT NULL THEN E.name <br />
+        WHEN S.name IS NOT NULL THEN S.name <br />
+        WHEN P.name IS NOT NULL THEN P.name <br />
+        ELSE '???' <br />
+    END                    AS [Securable], <br />
+    P1.name                AS [Grantee], <br />
+    P1.type_desc           AS [Grantee Type], <br />
+    sp.permission_name     AS [Permission], <br />
+    sp.state_desc          AS [State], <br />
+    P2.name                AS [Grantor], <br />
+    P2.type_desc           AS [Grantor Type] <br />
+FROM <br />
+    sys.server_permissions SP <br />
+    INNER JOIN sys.server_principals P1 <br />
+        ON P1.principal_id = SP.grantee_principal_id <br />
+    INNER JOIN sys.server_principals P2 <br />
+        ON P2.principal_id = SP.grantor_principal_id <br />
+ <br />
+    FULL OUTER JOIN sys.servers S <br />
+        ON  SP.class_desc = 'SERVER' <br />
+        AND S.server_id = SP.major_id <br />
+ <br />
+    FULL OUTER JOIN sys.endpoints E <br />
+        ON  SP.class_desc = 'ENDPOINT' <br />
+        AND E.endpoint_id = SP.major_id <br />
+ <br />
+    FULL OUTER JOIN sys.server_principals P <br />
+        ON  SP.class_desc = 'SERVER_PRINCIPAL'        <br />
+        AND P.principal_id = SP.major_id <br />
+ <br />
+Get all server role memberships: <br />
+ <br />
+SELECT <br />
+    R.name    AS [Role], <br />
+    M.name    AS [Member] <br />
+FROM <br />
+    sys.server_role_members X <br />
+    INNER JOIN sys.server_principals R ON R.principal_id = X.role_principal_id <br />
+    INNER JOIN sys.server_principals M ON M.principal_id = X.member_principal_id <br />
+ <br />
+The CONTROL SERVER permission is similar but not identical to the sysadmin fixed server role. Permissions do not imply role memberships, and role memberships do not grant permissions (e.g., CONTROL SERVER does not imply membership in the sysadmin fixed server role). <br />
+ <br />
+Ensure only the documented and approved logins have privileged functions in SQL Server. <br />
+ <br />
+If the current configuration does not match the documented baseline, this is a finding.</p><h2>Check Content Reference</h2><p>M</p><h2>Target Key</h2><p>5677</p></body></html>

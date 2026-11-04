@@ -1,0 +1,71 @@
+<!doctype html><html lang="en"><head><meta charset="utf-8"><title>STIGQter: STIG Check Details: SV-253939r1207743_rule: The Juniper EX switch must be configured to generate log records for a locally developed list of auditable events.</title><link rel="icon" type="image/svg+xml" href="STIGQter.svg" /><script async src="https://www.googletagmanager.com/gtag/js?id=UA-31381839-2"></script><script src="include.js"></script><script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-4110907817782130" crossorigin="anonymous"></script></head><body><div><img src="STIGQter.svg" alt="STIGQter" style="height:1em;" /> <a href="https://www.stigqter.com/">STIGQter</a>: <a href="main.html">STIG Summary</a>: <a href="U_Juniper_EX_Switches_NDM_STIG_V2R5_Manual-xccdf.html">Juniper EX Series Switches Network Device Management Security Technical Implementation Guide Version: 2 Release: 5 Benchmark Date: 01 Jul 2026</a>:</div> <h1>The Juniper EX switch must be configured to generate log records for a locally developed list of auditable events.</h1><h2>DISA Rule</h2><p>SV-253939r1207743_rule</p><h2>Vulnerability Number</h2><p>V-253939</p><h2>Group Title</h2><p>SRG-APP-000516-NDM-000334</p><h2>Rule Version</h2><p>JUEX-NM-000620</p><h2>Severity</h2><p>CAT II</p><h2>CCI(s)</h2><ul><li>CCI-000169 - Provide audit record generation capability for the event types the system is capable of auditing as defined in AU-2 a. on organization-defined information system components.</li><li>CCI-000366 - Implement the security configuration settings.</li></ul><h2>Weight</h2><p>10</p><h2>Fix Recommendation</h2><p>Configure the network device to generate audit log events for a locally developed list of auditable events.<br />
+<br />
+set system syslog file &lt;file name&gt; messages any info<br />
+set system syslog file &lt;file name&gt; structured-data &lt;&lt; (Optional) Only if structured data format is required<br />
+set system syslog host &lt;external syslog address&gt; any info<br />
+set system syslog host &lt;external syslog address&gt; structured-data &lt;&lt; (Optional) Only if structured data format is required<br />
+set system syslog time-format year<br />
+<br />
+If using REGEX or string match conditions:<br />
+set system syslog file &lt;name&gt; any &lt;info|any&gt;<br />
+set system syslog file &lt;name&gt; match &lt;REGEX&gt;<br />
+-or-<br />
+set system syslog file &lt;name&gt; match-strings [ &quot;string 1&quot; &quot;string 2&quot; ]</p><h2>Check Contents</h2><p>Determine if the network device generates audit log events for a locally developed list of auditable events.<br />
+<br />
+Verify audit logging is enabled.<br />
+[edit system syslog]<br />
+file &lt;file name&gt; {<br />
+    any info;<br />
+}<br />
+host &lt;external syslog address&gt; {<br />
+    any info;<br />
+}<br />
+time-format year;<br />
+<br />
+Note: Without the &quot;structured-data&quot; directive (as shown), syslog outputs in standard format. Add the &quot;structured-data&quot; command to all files and external syslog servers requiring that format. For example:<br />
+[edit system syslog]<br />
+file &lt;file name&gt; {<br />
+    any info;<br />
+    structured-data;<br />
+}<br />
+<br />
+If the logging facility and level is too broad, Junos supports REGEX or string match conditions to filter events. If used, verify the match conditions capture the required events.<br />
+[edit system syslog]<br />
+file &lt;file name&gt; {<br />
+    any info;<br />
+    match &lt;REGEX&gt;;<br />
+    -or-<br />
+    match-strings [ &quot;string 1&quot; &quot;string 2&quot; ];<br />
+}<br />
+Note: When using match conditions, it may be necessary to use the &quot;any&quot; (debug) severity level, but this should not generate overwhelming numbers of messages because the filter will ignore all unmatched events.<br />
+<br />
+If the network device is not configured to generate audit log events for a locally developed list of auditable events, this is a finding.</p><h2>Vulnerability Number</h2><p>V-253939</p><h2>Documentable</h2><p>False</p><h2>Rule Version</h2><p>JUEX-NM-000620</p><h2>Severity Override Guidance</h2><p>Determine if the network device generates audit log events for a locally developed list of auditable events.<br />
+<br />
+Verify audit logging is enabled.<br />
+[edit system syslog]<br />
+file &lt;file name&gt; {<br />
+    any info;<br />
+}<br />
+host &lt;external syslog address&gt; {<br />
+    any info;<br />
+}<br />
+time-format year;<br />
+<br />
+Note: Without the &quot;structured-data&quot; directive (as shown), syslog outputs in standard format. Add the &quot;structured-data&quot; command to all files and external syslog servers requiring that format. For example:<br />
+[edit system syslog]<br />
+file &lt;file name&gt; {<br />
+    any info;<br />
+    structured-data;<br />
+}<br />
+<br />
+If the logging facility and level is too broad, Junos supports REGEX or string match conditions to filter events. If used, verify the match conditions capture the required events.<br />
+[edit system syslog]<br />
+file &lt;file name&gt; {<br />
+    any info;<br />
+    match &lt;REGEX&gt;;<br />
+    -or-<br />
+    match-strings [ &quot;string 1&quot; &quot;string 2&quot; ];<br />
+}<br />
+Note: When using match conditions, it may be necessary to use the &quot;any&quot; (debug) severity level, but this should not generate overwhelming numbers of messages because the filter will ignore all unmatched events.<br />
+<br />
+If the network device is not configured to generate audit log events for a locally developed list of auditable events, this is a finding.</p><h2>Check Content Reference</h2><p>M</p><h2>Target Key</h2><p>5477</p></body></html>

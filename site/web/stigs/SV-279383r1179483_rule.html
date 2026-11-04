@@ -1,0 +1,90 @@
+<!doctype html><html lang="en"><head><meta charset="utf-8"><title>STIGQter: STIG Check Details: SV-279383r1179483_rule: MongoDB must require users to reauthenticate when organization-defined circumstances or situations require reauthentication.</title><link rel="icon" type="image/svg+xml" href="STIGQter.svg" /><script async src="https://www.googletagmanager.com/gtag/js?id=UA-31381839-2"></script><script src="include.js"></script><script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-4110907817782130" crossorigin="anonymous"></script></head><body><div><img src="STIGQter.svg" alt="STIGQter" style="height:1em;" /> <a href="https://www.stigqter.com/">STIGQter</a>: <a href="main.html">STIG Summary</a>: <a href="U_MDB_Enterprise_Advanced_8-x_STIG_V1R1_Manual-xccdf.html">MongoDB Enterprise Advanced 8.x Security Technical Implementation Guide Version: 1 Release: 1 Benchmark Date: 26 Jan 2026</a>:</div> <h1>MongoDB must require users to reauthenticate when organization-defined circumstances or situations require reauthentication.</h1><h2>DISA Rule</h2><p>SV-279383r1179483_rule</p><h2>Vulnerability Number</h2><p>V-279383</p><h2>Group Title</h2><p>SRG-APP-000389-DB-000372</p><h2>Rule Version</h2><p>MD8X-00-007700</p><h2>Severity</h2><p>CAT II</p><h2>CCI(s)</h2><ul><li>CCI-000366 - Implement the security configuration settings.</li></ul><h2>Weight</h2><p>10</p><h2>Fix Recommendation</h2><p>Enable authentication for MongoDB by following the instructions here: https://www.mongodb.com/docs/v8.0/tutorial/enable-authentication/<br />
+<br />
+Create an administrative user in MongoDB:<br />
+<br />
+&gt; use admin<br />
+&gt; db.createUser(<br />
+  {<br />
+    user: &quot;UserAdmin&quot;,<br />
+    pwd:  passwordPrompt(), // or cleartext password<br />
+    roles: [<br />
+      { role: &quot;userAdminAnyDatabase&quot;, db: &quot;admin&quot; },<br />
+      { role: &quot;readWriteAnyDatabase&quot;, db: &quot;admin&quot; }<br />
+    ]<br />
+  }<br />
+)<br />
+<br />
+Enable authorization by adding the following entry to the MongoDB configuration file:<br />
+<br />
+security:<br />
+    authorization: enabled<br />
+<br />
+Restart the MongoDB service from the OS.<br />
+<br />
+$ sudo systemctl restart mongod<br />
+<br />
+The &quot;UserAdmin&quot; user created above can use the &quot;createUser&quot; and &quot;createRole&quot; MongoDB commands to add the required users and roles per organizational or site-specific documentation.<br />
+<br />
+More information can be found here:<br />
+<br />
+https://www.mongodb.com/docs/v8.0/reference/command/createUser/<br />
+<br />
+https://www.mongodb.com/docs/v8.0/reference/command/createRole/</p><h2>Check Contents</h2><p>In MongoDB, a user can reauthenticate by explicitly logging out and then logging back in with the db.logout() and db.auth() commands, respectively. <br />
+<br />
+The steps to accomplish this would typically depend on the environment and interface, for example, shell, driver, or MongoDB Atlas.<br />
+<br />
+Log out of the current session using the db.logout() command.<br />
+<br />
+Run the following command from the database the user has authenticated from (example below uses &quot;test&quot; as the authentication database):<br />
+<br />
+&gt; use test<br />
+&gt; db.logout()<br />
+<br />
+Example output:<br />
+<br />
+{ ok: 1 }<br />
+<br />
+If the above output is not displayed upon logout, this is a finding.<br />
+<br />
+Log back in, using the db.auth() command:<br />
+<br />
+&gt; use test<br />
+&gt; db.auth({<br />
+  user: '&lt;username&gt;',<br />
+  pwd: '&lt;password&gt;'<br />
+})<br />
+<br />
+Example output:<br />
+<br />
+ { ok: 1 }<br />
+<br />
+If the above output is not displayed upon login, this is a finding.</p><h2>Vulnerability Number</h2><p>V-279383</p><h2>Documentable</h2><p>False</p><h2>Rule Version</h2><p>MD8X-00-007700</p><h2>Severity Override Guidance</h2><p>In MongoDB, a user can reauthenticate by explicitly logging out and then logging back in with the db.logout() and db.auth() commands, respectively. <br />
+<br />
+The steps to accomplish this would typically depend on the environment and interface, for example, shell, driver, or MongoDB Atlas.<br />
+<br />
+Log out of the current session using the db.logout() command.<br />
+<br />
+Run the following command from the database the user has authenticated from (example below uses &quot;test&quot; as the authentication database):<br />
+<br />
+&gt; use test<br />
+&gt; db.logout()<br />
+<br />
+Example output:<br />
+<br />
+{ ok: 1 }<br />
+<br />
+If the above output is not displayed upon logout, this is a finding.<br />
+<br />
+Log back in, using the db.auth() command:<br />
+<br />
+&gt; use test<br />
+&gt; db.auth({<br />
+  user: '&lt;username&gt;',<br />
+  pwd: '&lt;password&gt;'<br />
+})<br />
+<br />
+Example output:<br />
+<br />
+ { ok: 1 }<br />
+<br />
+If the above output is not displayed upon login, this is a finding.</p><h2>Check Content Reference</h2><p>M</p><h2>Target Key</h2><p>5728</p></body></html>

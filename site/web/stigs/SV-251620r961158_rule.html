@@ -1,0 +1,40 @@
+<!doctype html><html lang="en"><head><meta charset="utf-8"><title>STIGQter: STIG Check Details: SV-251620r961158_rule: CA IDMS must permit the use of dynamic code execution only in circumstances determined by the organization and limit use of online and batch command facilities from which dynamic statements can be issued.</title><link rel="icon" type="image/svg+xml" href="STIGQter.svg" /><script async src="https://www.googletagmanager.com/gtag/js?id=UA-31381839-2"></script><script src="include.js"></script><script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-4110907817782130" crossorigin="anonymous"></script></head><body><div><img src="STIGQter.svg" alt="STIGQter" style="height:1em;" /> <a href="https://www.stigqter.com/">STIGQter</a>: <a href="main.html">STIG Summary</a>: <a href="U_CA_IDMS_STIG_V2R2_Manual-xccdf.html">CA IDMS Security Technical Implementation Guide Version: 2 Release: 2 Benchmark Date: 01 Jul 2026</a>:</div> <h1>CA IDMS must permit the use of dynamic code execution only in circumstances determined by the organization and limit use of online and batch command facilities from which dynamic statements can be issued.</h1><h2>DISA Rule</h2><p>SV-251620r961158_rule</p><h2>Vulnerability Number</h2><p>V-251620</p><h2>Group Title</h2><p>SRG-APP-000251-DB-000391</p><h2>Rule Version</h2><p>IDMS-DB-000490</p><h2>Severity</h2><p>CAT II</p><h2>CCI(s)</h2><ul><li>CCI-001310 - Checks the validity of organization-defined information inputs to the system.</li></ul><h2>Weight</h2><p>10</p><h2>Fix Recommendation</h2><p>Create, or modify as needed, entries in the SRTT and then reassemble and relink the module RHDCSRTT for the security domain. An example of the external class and external name construction rules to secure OCF is:<br />
+<br />
+#SECRTT TYPE=ENTRY,RESTYPE=TASK,SECBY=OFF,                                    X<br />
+  EXTNAME=(RESTYPE,RESNAME),EXTCLS='CA@IDMS'<br />
+#SECRTT TYPE=OCCUR,RESTYPE=TASK,RESNAME='OCF', SECBY=EXT<br />
+<br />
+Consult with the security department to ensure that the ESM contains the correct rules to secure the entries and permit access to the appropriate users.<br />
+<br />
+After making the above changes, assemble and link RHDCSRTT to create a new SRTT. To implement the new SRTT, either recycle any CVs that use the SRTT or issue these commands:<br />
+ <br />
+   DCMT VARY NUCLEUS MODULE RHDCSRTT NEW COPY <br />
+   DCMT VARY NUCLEUS RELOAD</p><h2>Check Contents</h2><p>Check the SRTT for externally secured resource TASK for command facility task codes (e.g., OCF or organization-defined task codes that invokes program IDMSOCF or IDMSBCF).<br />
+<br />
+Examine load module RHDCSRTT by executing CA IDMS utility &quot;IDMSSRTD&quot;, or by issuing command &quot;DCMT DISPLAY SRTT&quot; while signed onto the CV, and reviewing the output.<br />
+<br />
+Note: This requires PTFs SO07995 and SO09476.<br />
+<br />
+Review the output looking for those statements that secure RESTYPE=TASK and RESNAMEs OCF or any organization-defined task codes that invoke programs IDMSOCF or IDMSBCF. If none are found for OCF, this is a finding.<br />
+<br />
+BCF may not be defined as a task. If it is, this is a finding. <br />
+<br />
+The program invoked by installation-defined task codes can be determined by issuing command &quot;DCMT DISP TASK&quot; task-name.<br />
+<br />
+Issue command &quot;DCMT DISP TASK&quot; and look for organization-defined tasks, then issue the &quot;DCMT DISP TASK&quot; task-name to determine the program being invoked. Review the code to determine if any of these execute dynamic code. If any do, this is a finding. <br />
+                                                                                                                                                                                                                                   <br />
+If command facility tasks are found to be secured externally, ensure the external security manager (ESM) contains the correct definition using the external resource class name and the external resource name construction rules in the #SECRTT. If it is not defined or not defined correctly, this is a finding.</p><h2>Vulnerability Number</h2><p>V-251620</p><h2>Documentable</h2><p>False</p><h2>Rule Version</h2><p>IDMS-DB-000490</p><h2>Severity Override Guidance</h2><p>Check the SRTT for externally secured resource TASK for command facility task codes (e.g., OCF or organization-defined task codes that invokes program IDMSOCF or IDMSBCF).<br />
+<br />
+Examine load module RHDCSRTT by executing CA IDMS utility &quot;IDMSSRTD&quot;, or by issuing command &quot;DCMT DISPLAY SRTT&quot; while signed onto the CV, and reviewing the output.<br />
+<br />
+Note: This requires PTFs SO07995 and SO09476.<br />
+<br />
+Review the output looking for those statements that secure RESTYPE=TASK and RESNAMEs OCF or any organization-defined task codes that invoke programs IDMSOCF or IDMSBCF. If none are found for OCF, this is a finding.<br />
+<br />
+BCF may not be defined as a task. If it is, this is a finding. <br />
+<br />
+The program invoked by installation-defined task codes can be determined by issuing command &quot;DCMT DISP TASK&quot; task-name.<br />
+<br />
+Issue command &quot;DCMT DISP TASK&quot; and look for organization-defined tasks, then issue the &quot;DCMT DISP TASK&quot; task-name to determine the program being invoked. Review the code to determine if any of these execute dynamic code. If any do, this is a finding. <br />
+                                                                                                                                                                                                                                   <br />
+If command facility tasks are found to be secured externally, ensure the external security manager (ESM) contains the correct definition using the external resource class name and the external resource name construction rules in the #SECRTT. If it is not defined or not defined correctly, this is a finding.</p><h2>Check Content Reference</h2><p>M</p><h2>Target Key</h2><p>5418</p></body></html>

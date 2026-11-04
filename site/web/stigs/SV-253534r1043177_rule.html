@@ -1,0 +1,59 @@
+<!doctype html><html lang="en"><head><meta charset="utf-8"><title>STIGQter: STIG Check Details: SV-253534r1043177_rule: Prisma Cloud Compute must use TCP ports above 1024.</title><link rel="icon" type="image/svg+xml" href="STIGQter.svg" /><script async src="https://www.googletagmanager.com/gtag/js?id=UA-31381839-2"></script><script src="include.js"></script><script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-4110907817782130" crossorigin="anonymous"></script></head><body><div><img src="STIGQter.svg" alt="STIGQter" style="height:1em;" /> <a href="https://www.stigqter.com/">STIGQter</a>: <a href="main.html">STIG Summary</a>: <a href="U_PAN_Prisma_Cloud_Compute_STIG_V2R3_Manual-xccdf.html">Palo Alto Networks Prisma Cloud Compute Security Technical Implementation Guide Version: 2 Release: 3 Benchmark Date: 01 Apr 2026</a>:</div> <h1>Prisma Cloud Compute must use TCP ports above 1024.</h1><h2>DISA Rule</h2><p>SV-253534r1043177_rule</p><h2>Vulnerability Number</h2><p>V-253534</p><h2>Group Title</h2><p>SRG-APP-000142-CTR-000330</p><h2>Rule Version</h2><p>CNTR-PC-000500</p><h2>Severity</h2><p>CAT II</p><h2>CCI(s)</h2><ul><li>CCI-000382 - Configure the system to prohibit or restrict the use of organization-defined prohibited or restricted functions, system ports, protocols, software, and/or services.</li></ul><h2>Weight</h2><p>10</p><h2>Fix Recommendation</h2><p>For Kubernetes deployment:<br />
+<br />
+Edit the deployment.apps/twistlock-console.<br />
+<br />
+Find the - name: TargetPorts below 1024.<br />
+<br />
+Change to port number above 1024.<br />
+<br />
+Save and exit the editing session. The Console will restart automatically.<br />
+<br />
+For Docker deployment:<br />
+<br />
+Modify the twistlock.cfg located in the extracted release tar directory.<br />
+<br />
+Change any port assignment below 1024 to above 1024:<br />
+MANAGEMENT_PORT_HTTP=<br />
+MANAGEMENT_PORT_HTTPS=8083<br />
+COMMUNICATION_PORT=8084<br />
+<br />
+Redeploy the Console using the twistlock.sh script in the extracted release tar directory:<br />
+$ sudo ./twisltock.sh -sy onebox</p><h2>Check Contents</h2><p>For Kubernetes deployment:<br />
+<br />
+Query the ports used by the twistlock-console service:<br />
+$ kubectl describe svc twistlock-console -n twistlock<br />
+<br />
+If any port number is below 1024, this is a finding.<br />
+<br />
+For Docker deployment:<br />
+<br />
+Determine the name of the Console container:<br />
+docker ps|grep console<br />
+<br />
+For example, the Console container is: ad8b41a2fec9 <br />
+ad8b41a2fec9<br />
+twistlock/private:console_22_01_840<br />
+<br />
+Inspect the container's PortBindings:<br />
+docker inspect ad8b41a2fec9|grep PortBindings -A 20<br />
+<br />
+If the port is below 1024, this is a finding.</p><h2>Vulnerability Number</h2><p>V-253534</p><h2>Documentable</h2><p>False</p><h2>Rule Version</h2><p>CNTR-PC-000500</p><h2>Severity Override Guidance</h2><p>For Kubernetes deployment:<br />
+<br />
+Query the ports used by the twistlock-console service:<br />
+$ kubectl describe svc twistlock-console -n twistlock<br />
+<br />
+If any port number is below 1024, this is a finding.<br />
+<br />
+For Docker deployment:<br />
+<br />
+Determine the name of the Console container:<br />
+docker ps|grep console<br />
+<br />
+For example, the Console container is: ad8b41a2fec9 <br />
+ad8b41a2fec9<br />
+twistlock/private:console_22_01_840<br />
+<br />
+Inspect the container's PortBindings:<br />
+docker inspect ad8b41a2fec9|grep PortBindings -A 20<br />
+<br />
+If the port is below 1024, this is a finding.</p><h2>Check Content Reference</h2><p>M</p><h2>Target Key</h2><p>5473</p></body></html>

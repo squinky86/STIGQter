@@ -1,0 +1,51 @@
+<!doctype html><html lang="en"><head><meta charset="utf-8"><title>STIGQter: STIG Check Details: SV-253685r960960_rule: MariaDB must limit privileges to change software modules, to include stored procedures, functions and triggers, and links to software external to the DBMS.</title><link rel="icon" type="image/svg+xml" href="STIGQter.svg" /><script async src="https://www.googletagmanager.com/gtag/js?id=UA-31381839-2"></script><script src="include.js"></script><script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-4110907817782130" crossorigin="anonymous"></script></head><body><div><img src="STIGQter.svg" alt="STIGQter" style="height:1em;" /> <a href="https://www.stigqter.com/">STIGQter</a>: <a href="main.html">STIG Summary</a>: <a href="U_MariaDB_Enterprise_10-x_STIG_V2R5_Manual-xccdf.html">MariaDB Enterprise 10.x Security Technical Implementation Guide Version: 2 Release: 5 Benchmark Date: 01 Apr 2026</a>:</div> <h1>MariaDB must limit privileges to change software modules, to include stored procedures, functions and triggers, and links to software external to the DBMS.</h1><h2>DISA Rule</h2><p>SV-253685r960960_rule</p><h2>Vulnerability Number</h2><p>V-253685</p><h2>Group Title</h2><p>SRG-APP-000133-DB-000179</p><h2>Rule Version</h2><p>MADB-10-002600</p><h2>Severity</h2><p>CAT II</p><h2>CCI(s)</h2><ul><li>CCI-001499 - Limit privileges to change software resident within software libraries.</li></ul><h2>Weight</h2><p>10</p><h2>Fix Recommendation</h2><p>Remove privileges from users identified as not authorized to install/uninstall MariaDB Enterprise Server plugins.  <br />
+<br />
+Implement procedures to monitor for unauthorized changes to DBMS software libraries, related software application libraries, and configuration files. If a third-party automated tool is not employed, an automated job that reports file information on the directories and files of interest and compares them to the baseline report for the same will meet the requirement.</p><h2>Check Contents</h2><p>Review documentation to determine which users are authorized to modify the MariaDB Enterprise Server binary files and shared library paths. <br />
+ <br />
+If any unauthorized users are granted modify rights, this is a finding.<br />
+<br />
+Check what users have access to install/uninstall MariaDB Enterprise Server plugins. This privilege can be listed in one of three places: Table level, database level, or global. <br />
+<br />
+Table level:<br />
+<br />
+MariaDB&gt; SELECT user, host FROM mysql.tables_priv WHERE db = 'mysql' and table_name = ' plugin';<br />
+<br />
+Database level:<br />
+<br />
+MariaDB&gt; SELECT user, host FROM mysql.db WHERE db = 'mysql' and (insert_priv = 'y') or (delete_priv = 'y') or (insert_priv = 'y' and delete_priv = 'y');<br />
+<br />
+Global: <br />
+<br />
+SELECT user, host FROM mysql.user WHERE (insert_priv = 'y') or (delete_priv = 'y') or (insert_priv = 'y' and delete_priv = 'y');<br />
+<br />
+If any user identified by the above queries is not authorized to install/uninstall MariaDB Enterprise Server plugins, this is a finding. <br />
+<br />
+Review monitoring procedures and implementation evidence to verify monitoring of changes to database software libraries, related applications, and configuration files is done.<br />
+<br />
+Verify the list of files and directories being monitored is complete.<br />
+<br />
+If monitoring does not occur or is not complete, this is a finding.</p><h2>Vulnerability Number</h2><p>V-253685</p><h2>Documentable</h2><p>False</p><h2>Rule Version</h2><p>MADB-10-002600</p><h2>Severity Override Guidance</h2><p>Review documentation to determine which users are authorized to modify the MariaDB Enterprise Server binary files and shared library paths. <br />
+ <br />
+If any unauthorized users are granted modify rights, this is a finding.<br />
+<br />
+Check what users have access to install/uninstall MariaDB Enterprise Server plugins. This privilege can be listed in one of three places: Table level, database level, or global. <br />
+<br />
+Table level:<br />
+<br />
+MariaDB&gt; SELECT user, host FROM mysql.tables_priv WHERE db = 'mysql' and table_name = ' plugin';<br />
+<br />
+Database level:<br />
+<br />
+MariaDB&gt; SELECT user, host FROM mysql.db WHERE db = 'mysql' and (insert_priv = 'y') or (delete_priv = 'y') or (insert_priv = 'y' and delete_priv = 'y');<br />
+<br />
+Global: <br />
+<br />
+SELECT user, host FROM mysql.user WHERE (insert_priv = 'y') or (delete_priv = 'y') or (insert_priv = 'y' and delete_priv = 'y');<br />
+<br />
+If any user identified by the above queries is not authorized to install/uninstall MariaDB Enterprise Server plugins, this is a finding. <br />
+<br />
+Review monitoring procedures and implementation evidence to verify monitoring of changes to database software libraries, related applications, and configuration files is done.<br />
+<br />
+Verify the list of files and directories being monitored is complete.<br />
+<br />
+If monitoring does not occur or is not complete, this is a finding.</p><h2>Check Content Reference</h2><p>M</p><h2>Target Key</h2><p>5475</p></body></html>

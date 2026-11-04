@@ -1,0 +1,33 @@
+<!doctype html><html lang="en"><head><meta charset="utf-8"><title>STIGQter: STIG Check Details: SV-270518r1064832_rule: Database objects must be owned by accounts authorized for ownership.</title><link rel="icon" type="image/svg+xml" href="STIGQter.svg" /><script async src="https://www.googletagmanager.com/gtag/js?id=UA-31381839-2"></script><script src="include.js"></script><script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-4110907817782130" crossorigin="anonymous"></script></head><body><div><img src="STIGQter.svg" alt="STIGQter" style="height:1em;" /> <a href="https://www.stigqter.com/">STIGQter</a>: <a href="main.html">STIG Summary</a>: <a href="U_Oracle_Database_19c_STIG_V1R5_Manual-xccdf.html">Oracle Database 19c Security Technical Implementation Guide Version: 1 Release: 5 Benchmark Date: 01 Apr 2026</a>:</div> <h1>Database objects must be owned by accounts authorized for ownership.</h1><h2>DISA Rule</h2><p>SV-270518r1064832_rule</p><h2>Vulnerability Number</h2><p>V-270518</p><h2>Group Title</h2><p>SRG-APP-000133-DB-000200</p><h2>Rule Version</h2><p>O19C-00-008200</p><h2>Severity</h2><p>CAT II</p><h2>CCI(s)</h2><ul><li>CCI-001499 - Limit privileges to change software resident within software libraries.</li></ul><h2>Weight</h2><p>10</p><h2>Fix Recommendation</h2><p>Update system documentation to include list of accounts authorized for object ownership.<br />
+<br />
+Reassign ownership of authorized objects to authorized object owner accounts.</p><h2>Check Contents</h2><p>Review system documentation to identify accounts authorized to own database objects. Review accounts in the database management systems (DBMSs) that own objects.<br />
+<br />
+If any database objects are found to be owned by users not authorized to own database objects, this is a finding.<br />
+<br />
+- - - - -<br />
+Query the object DBA_OBJECTS to show the users who own objects in the database. The query below will return all of the users who own objects.<br />
+<br />
+sqlplus connect as sysdba<br />
+<br />
+SQL&gt;select owner, object_type, count(*) from dba_objects<br />
+group by owner, object_type<br />
+order by owner, object_type;<br />
+<br />
+If these owners are not authorized owners, select all of the objects these owners have generated and decide who they should belong to. To make a list of all of the objects, the unauthorized owner has to perform the following query.<br />
+<br />
+SQL&gt;select * from dba_objects where owner =&amp;unauthorized_owner;</p><h2>Vulnerability Number</h2><p>V-270518</p><h2>Documentable</h2><p>False</p><h2>Rule Version</h2><p>O19C-00-008200</p><h2>Severity Override Guidance</h2><p>Review system documentation to identify accounts authorized to own database objects. Review accounts in the database management systems (DBMSs) that own objects.<br />
+<br />
+If any database objects are found to be owned by users not authorized to own database objects, this is a finding.<br />
+<br />
+- - - - -<br />
+Query the object DBA_OBJECTS to show the users who own objects in the database. The query below will return all of the users who own objects.<br />
+<br />
+sqlplus connect as sysdba<br />
+<br />
+SQL&gt;select owner, object_type, count(*) from dba_objects<br />
+group by owner, object_type<br />
+order by owner, object_type;<br />
+<br />
+If these owners are not authorized owners, select all of the objects these owners have generated and decide who they should belong to. To make a list of all of the objects, the unauthorized owner has to perform the following query.<br />
+<br />
+SQL&gt;select * from dba_objects where owner =&amp;unauthorized_owner;</p><h2>Check Content Reference</h2><p>M</p><h2>Target Key</h2><p>5672</p></body></html>

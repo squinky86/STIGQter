@@ -1,0 +1,47 @@
+<!doctype html><html lang="en"><head><meta charset="utf-8"><title>STIGQter: STIG Check Details: SV-223207r997572_rule: The Juniper SRX Services Gateway must use DOD-approved PKI rather than proprietary or self-signed device certificates.</title><link rel="icon" type="image/svg+xml" href="STIGQter.svg" /><script async src="https://www.googletagmanager.com/gtag/js?id=UA-31381839-2"></script><script src="include.js"></script><script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-4110907817782130" crossorigin="anonymous"></script></head><body><div><img src="STIGQter.svg" alt="STIGQter" style="height:1em;" /> <a href="https://www.stigqter.com/">STIGQter</a>: <a href="main.html">STIG Summary</a>: <a href="U_Juniper_SRX_SG_NDM_STIG_V3R3_Manual-xccdf.html">Juniper SRX Services Gateway NDM Security Technical Implementation Guide Version: 3 Release: 3 Benchmark Date: 30 Jan 2025</a>:</div> <h1>The Juniper SRX Services Gateway must use DOD-approved PKI rather than proprietary or self-signed device certificates.</h1><h2>DISA Rule</h2><p>SV-223207r997572_rule</p><h2>Vulnerability Number</h2><p>V-223207</p><h2>Group Title</h2><p>SRG-APP-000516-NDM-000344</p><h2>Rule Version</h2><p>JUSX-DM-000105</p><h2>Severity</h2><p>CAT II</p><h2>CCI(s)</h2><ul><li>CCI-000366 - Implement the security configuration settings.</li><li>CCI-001159 - Issue public key certificates under an organization-defined certificate policy or obtain public key certificates from an approved service provider.</li><li>CCI-004068 - For public key-based authentication, implement a local cache of revocation data to support path discovery and validation.</li></ul><h2>Weight</h2><p>10</p><h2>Fix Recommendation</h2><p>Generate a new key-pair from a DOD-approved certificate issuer. Sites must consult the PKI/PKI pages on the https://cyber.mil/ website for procedures for NIPRNet and SIPRNet.<br />
+<br />
+RSA:<br />
+request security pki generate-key-pair certificate-id &lt;cert name&gt; type rsa size &lt;512 | 1024 | 2048 | 4096&gt;<br />
+<br />
+ECDSA:<br />
+request security pki generate-key-pair certificate-id &lt;cert_name&gt; type ecdsa size &lt;256 | 384&gt;<br />
+<br />
+Generate a CSR from RSA key-pair using the following command and options.<br />
+<br />
+request security generate-certificate-request certificate-id &lt;cert_name_from_key_file&gt; digest &lt;sha1 | sha256&gt; domain &lt;FQDN&gt; email &lt;admin_email&gt; ip-address &lt;ip_address&gt; subject “CN=&lt;hostname&gt;,DC=&lt;domain_part&gt;,DC=&lt;TLD_domain&gt;,O=&lt;organization&gt;,OU=&lt;organization_dept&gt;,<br />
+L=&lt;city&gt;,ST=&lt;state&gt;,C=&lt;us&gt;” filename &lt;path/filename&gt;<br />
+<br />
+Generate a CSR from ECDSA key-pair use the following command and options.<br />
+<br />
+request security generate-certificate-request certificate-id &lt;cert_name_from_key_file&gt; digest &lt;sha256 | sha384&gt; domain &lt;FQDN&gt; email &lt;admin_email&gt; ip-address &lt;ip_address&gt; subject “CN=&lt;hostname&gt;,DC=&lt;domain_part&gt;,DC=&lt;TLD_domain&gt;,O=&lt;organization&gt;,OU=&lt;organization_dept&gt;,<br />
+L=&lt;city&gt;,ST=&lt;state&gt;,C=&lt;us&gt;” filename &lt;path/filename&gt;<br />
+<br />
+If no filename is specified, the CSR is displayed on the standard out (terminal)<br />
+<br />
+After receiving the approved certificate from the CA, enter the following command and options to upload the certificate.<br />
+<br />
+request security pki local-certificate certificate-id &lt;cert_name_from_key_file&gt; filename &lt;path/filename_of_uploaded_certificate&gt;<br />
+<br />
+From the operational mode of the hierarchy:<br />
+<br />
+set security certificates local new load-key-file /var/tmp/new.pem <br />
+<br />
+Type the following command to load the X.509 certificate into the certificate store in operations mode.<br />
+<br />
+&gt;request security pki local-certificate load certificate-id &lt;ID&gt; filename &lt;PATH TO CERTIFICATE FILE&gt;<br />
+<br />
+For this example, assume the transferred the X.509 certificate called &quot;device-cert.crt&quot; to the /var/tmp directory on the SRXD. The following command will load the device-cert.crt certificate file and associate it with the public/private keypair named “device-keypair” generated in a previous step.<br />
+<br />
+&gt;request security pki local-certificate load certificate-id device-keypair filename /var/tmp/device-cert.crt</p><h2>Check Contents</h2><p>To validate that the certificate was loaded, type the following command:<br />
+<br />
+show security pki local-certificate<br />
+<br />
+View the installed device certificates.<br />
+<br />
+If any of the certificates have the name or identifier of a nonapproved source in the Issuer field, this is a finding.</p><h2>Vulnerability Number</h2><p>V-223207</p><h2>Documentable</h2><p>False</p><h2>Rule Version</h2><p>JUSX-DM-000105</p><h2>Severity Override Guidance</h2><p>To validate that the certificate was loaded, type the following command:<br />
+<br />
+show security pki local-certificate<br />
+<br />
+View the installed device certificates.<br />
+<br />
+If any of the certificates have the name or identifier of a nonapproved source in the Issuer field, this is a finding.</p><h2>Check Content Reference</h2><p>M</p><h2>Target Key</h2><p>4098</p></body></html>

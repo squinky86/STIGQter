@@ -1,0 +1,42 @@
+<!doctype html><html lang="en"><head><meta charset="utf-8"><title>STIGQter: STIG Check Details: SV-261891r1000970_rule: If passwords are used for authentication, PostgreSQL must store only hashed, salted representations of passwords.</title><link rel="icon" type="image/svg+xml" href="STIGQter.svg" /><script async src="https://www.googletagmanager.com/gtag/js?id=UA-31381839-2"></script><script src="include.js"></script><script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-4110907817782130" crossorigin="anonymous"></script></head><body><div><img src="STIGQter.svg" alt="STIGQter" style="height:1em;" /> <a href="https://www.stigqter.com/">STIGQter</a>: <a href="main.html">STIG Summary</a>: <a href="U_CD_Postgres_16_STIG_V1R3_Manual-xccdf.html">Crunchy Data Postgres 16 Security Technical Implementation Guide Version: 1 Release: 3 Benchmark Date: 01 Jul 2026</a>:</div> <h1>If passwords are used for authentication, PostgreSQL must store only hashed, salted representations of passwords.</h1><h2>DISA Rule</h2><p>SV-261891r1000970_rule</p><h2>Vulnerability Number</h2><p>V-261891</p><h2>Group Title</h2><p>SRG-APP-000171-DB-000074</p><h2>Rule Version</h2><p>CD16-00-003800</p><h2>Severity</h2><p>CAT I</p><h2>CCI(s)</h2><ul><li>CCI-000366 - Implement the security configuration settings.</li></ul><h2>Weight</h2><p>10</p><h2>Fix Recommendation</h2><p>Note: The following instructions use the PGDATA and PGVER environment variables. Refer to APPENDIX-F for instructions on configuring PGDATA and APPENDIX-H for PGVER.<br />
+<br />
+To enable password_encryption, as the database administrator, edit postgresql.conf:<br />
+<br />
+$ sudo su - postgres<br />
+$ vi ${PGDATA?}/postgresql.conf<br />
+password_encryption = 'scram-sha-256'<br />
+<br />
+Institute a policy of not using the &quot;WITH UNENCRYPTED PASSWORD&quot; option with the CREATE ROLE/USER and ALTER ROLE/USER commands. (This option overrides the setting of the password_encryption configuration parameter.)<br />
+<br />
+As the system administrator, restart the server with the new configuration:<br />
+<br />
+# SYSTEMD SERVER ONLY<br />
+$ sudo systemctl restart postgresql-${PGVER?}</p><h2>Check Contents</h2><p>Note: The following instructions use the PGVER environment variables. Refer to supplementary content APPENDIX-H for PGVER.<br />
+<br />
+To check if password encryption is enabled, as the database administrator (shown here as &quot;postgres&quot;), run the following SQL:<br />
+<br />
+$ sudo su - postgres<br />
+$ psql -c &quot;SHOW password_encryption&quot;<br />
+<br />
+If password_encryption is not &quot;scram-sha-256&quot;, this is a finding.<br />
+<br />
+To identify if any passwords have been stored without being hashed and salted, as the database administrator (shown here as &quot;postgres&quot;), run the following SQL:<br />
+<br />
+$ sudo su - postgres<br />
+$ psql -x -c &quot;SELECT username, passwd FROM pg_shadow WHERE passwd IS NULL OR passwd NOT LIKE 'SCRAM-SHA-256%';&quot;<br />
+<br />
+If any password is in plaintext, this is a finding.</p><h2>Vulnerability Number</h2><p>V-261891</p><h2>Documentable</h2><p>False</p><h2>Rule Version</h2><p>CD16-00-003800</p><h2>Severity Override Guidance</h2><p>Note: The following instructions use the PGVER environment variables. Refer to supplementary content APPENDIX-H for PGVER.<br />
+<br />
+To check if password encryption is enabled, as the database administrator (shown here as &quot;postgres&quot;), run the following SQL:<br />
+<br />
+$ sudo su - postgres<br />
+$ psql -c &quot;SHOW password_encryption&quot;<br />
+<br />
+If password_encryption is not &quot;scram-sha-256&quot;, this is a finding.<br />
+<br />
+To identify if any passwords have been stored without being hashed and salted, as the database administrator (shown here as &quot;postgres&quot;), run the following SQL:<br />
+<br />
+$ sudo su - postgres<br />
+$ psql -x -c &quot;SELECT username, passwd FROM pg_shadow WHERE passwd IS NULL OR passwd NOT LIKE 'SCRAM-SHA-256%';&quot;<br />
+<br />
+If any password is in plaintext, this is a finding.</p><h2>Check Content Reference</h2><p>M</p><h2>Target Key</h2><p>5598</p></body></html>

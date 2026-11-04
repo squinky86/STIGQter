@@ -1,0 +1,53 @@
+<!doctype html><html lang="en"><head><meta charset="utf-8"><title>STIGQter: STIG Check Details: SV-223995r1137691_rule: IBM z/OS JES2 system commands must be protected in accordance with security requirements.</title><link rel="icon" type="image/svg+xml" href="STIGQter.svg" /><script async src="https://www.googletagmanager.com/gtag/js?id=UA-31381839-2"></script><script src="include.js"></script><script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-4110907817782130" crossorigin="anonymous"></script></head><body><div><img src="STIGQter.svg" alt="STIGQter" style="height:1em;" /> <a href="https://www.stigqter.com/">STIGQter</a>: <a href="main.html">STIG Summary</a>: <a href="U_IBM_zOS_TSS_STIG_V9R9_Manual-xccdf.html">IBM z/OS TSS Security Technical Implementation Guide Version: 9 Release: 9 Benchmark Date: 01 Jul 2026</a>:</div> <h1>IBM z/OS JES2 system commands must be protected in accordance with security requirements.</h1><h2>DISA Rule</h2><p>SV-223995r1137691_rule</p><h2>Vulnerability Number</h2><p>V-223995</p><h2>Group Title</h2><p>SRG-OS-000080-GPOS-00048</p><h2>Rule Version</h2><p>TSS0-JS-000110</p><h2>Severity</h2><p>CAT II</p><h2>CCI(s)</h2><ul><li>CCI-000213 - Enforce approved authorizations for logical access to information and system resources in accordance with applicable access control policies.</li></ul><h2>Weight</h2><p>10</p><h2>Fix Recommendation</h2><p>Extended MCS support allows the installation to control the use of JES2 system commands through the ESM. These commands are subject to various types of potential abuse. For this reason, it is necessary to place restrictions on the JES2 system commands that can be entered by particular operators.<br />
+<br />
+Some commands are particularly dangerous and should only be used when less drastic options have been exhausted. Misuse of these commands can create a situation in which the only recovery is an IPL.<br />
+<br />
+To control access to JES2 system commands, apply the following:<br />
+<br />
+Define the JES2.** resource in the OPERCMDS class with an access of NONE and all access is logged.<br />
+<br />
+Define the JES2 system commands as specified in the IBM z/OS JES2 Commands to be restricted to the appropriate personnel (e.g., operations staff, systems programming personnel, general users), as determined in the documented site security plan.<br />
+<br />
+Define the JES2 system commands with proper logging as determined in the documented site security plan.<br />
+<br />
+Note: Display commands and others as deemed by the site IAW site security plan may be allowed for all users with no logging. <br />
+<br />
+Build a command file based on the referenced JES2 Command Table. A sample of the commands in the command file is provided here:<br />
+<br />
+The following is a sample command to allow operators with a profile ACID of opracid to use the $DS command:<br />
+<br />
+TSS PERMIT(opracid) OPRCMDS(JES2.DISPLAY.STC) ACCESS(READ)<br />
+<br />
+The following is a sample command to allow operators with a profile ACID of opracid to use the $DM command:<br />
+<br />
+TSS PERMIT(opracid) OPERCMDS(JES2.SEND.MESSAGE) -<br />
+ACCESS(READ) ACTION(AUDIT)<br />
+<br />
+The following is a sample command to allow operators with a profile ACID of opracid to use the $B command:<br />
+<br />
+TSS PERMIT(opracid) OPERCMDS(JES2.BACKSP.DEV) -<br />
+ACCESS(UPDATE) ACTION(AUDIT)<br />
+<br />
+The following is a sample command to allow operators with a profile ACID of opracid to use the $ZI command:<br />
+      <br />
+TSS PERMIT(opracid) OPERCMDS(JES2.HALT.INITIATOR) -<br />
+ACCESS(CONTROL) ACTION(AUDIT)<br />
+<br />
+The following is a sample command to allow operators with a profile ACID of opracid to use the $ZSPOOL command:<br />
+<br />
+TSS PERMIT(opracid) OPERCMDS(JES2.HALT.SPOOL) -<br />
+ACCESS(CONTROL) ACTION(AUDIT)</p><h2>Check Contents</h2><p>From the ISPF Command Shell, enter:<br />
+TSS WHOHAS OPERCMDS(JES2.)<br />
+<br />
+If the JES2.** resource is defined to the OPERCMDS class with an access of NONE and all access is logged, this is not a finding.<br />
+<br />
+If access to JES2 system commands defined in the IBM z/OS JES2 commands is restricted to the appropriate personnel (e.g., operations staff, systems programming personnel, general users), this is not a finding.<br />
+<br />
+NOTE: Use the GROUP category specified in the table referenced above as a guideline to determine appropriate personnel access to system commands.</p><h2>Vulnerability Number</h2><p>V-223995</p><h2>Documentable</h2><p>False</p><h2>Rule Version</h2><p>TSS0-JS-000110</p><h2>Severity Override Guidance</h2><p>From the ISPF Command Shell, enter:<br />
+TSS WHOHAS OPERCMDS(JES2.)<br />
+<br />
+If the JES2.** resource is defined to the OPERCMDS class with an access of NONE and all access is logged, this is not a finding.<br />
+<br />
+If access to JES2 system commands defined in the IBM z/OS JES2 commands is restricted to the appropriate personnel (e.g., operations staff, systems programming personnel, general users), this is not a finding.<br />
+<br />
+NOTE: Use the GROUP category specified in the table referenced above as a guideline to determine appropriate personnel access to system commands.</p><h2>Check Content Reference</h2><p>M</p><h2>Target Key</h2><p>4102</p></body></html>

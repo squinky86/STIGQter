@@ -1,0 +1,51 @@
+<!doctype html><html lang="en"><head><meta charset="utf-8"><title>STIGQter: STIG Check Details: SV-279533r1192035_rule: Nutanix OS must implement DOD-approved encryption to protect the confidentiality of SSH sessions.</title><link rel="icon" type="image/svg+xml" href="STIGQter.svg" /><script async src="https://www.googletagmanager.com/gtag/js?id=UA-31381839-2"></script><script src="include.js"></script><script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-4110907817782130" crossorigin="anonymous"></script></head><body><div><img src="STIGQter.svg" alt="STIGQter" style="height:1em;" /> <a href="https://www.stigqter.com/">STIGQter</a>: <a href="main.html">STIG Summary</a>: <a href="U_NTX_Acropolis_OS_STIG_V1R1_Manual-xccdf.html">Nutanix Acropolis GPOS Security Technical Implementation Guide Version: 1 Release: 1 Benchmark Date: 26 Jan 2026</a>:</div> <h1>Nutanix OS must implement DOD-approved encryption to protect the confidentiality of SSH sessions.</h1><h2>DISA Rule</h2><p>SV-279533r1192035_rule</p><h2>Vulnerability Number</h2><p>V-279533</p><h2>Group Title</h2><p>SRG-OS-000033-GPOS-00014</p><h2>Rule Version</h2><p>NXAC-OS-000009</p><h2>Severity</h2><p>CAT I</p><h2>CCI(s)</h2><ul><li>CCI-000068 - Implement cryptographic mechanisms to protect the confidentiality of remote access sessions.</li></ul><h2>Weight</h2><p>10</p><h2>Fix Recommendation</h2><p>Configure the system to run in FIPS mode.<br />
+<br />
+1. For AOS, configure FIPS mode.<br />
+<br />
+$ sudo salt-call state.sls security/CVM/fipsCVM<br />
+<br />
+2. For Prism Central, configure FIPS mode.<br />
+<br />
+$ sudo salt-call state.sls security/PCVM/fipsPCVM<br />
+<br />
+3. For Files, configure FIPS mode.<br />
+<br />
+$ sudo salt-call state.sls security/AFS/fipsAFS<br />
+<br />
+4. For AHV, configure FIPS mode.<br />
+<br />
+$ sudo salt-call state.sls security/KVM/fipsKVM</p><h2>Check Contents</h2><p>Verify Nutanix implements DOD-approved encryption to protect the confidentiality of remote access sessions.<br />
+<br />
+1. Verify FIPS mode is enabled using the following command.<br />
+<br />
+$ fips-mode-setup --check<br />
+FIPS mode is enabled.<br />
+<br />
+2. If FIPS mode is &quot;enabled&quot;, check if the kernel boot parameter is configured for FIPS mode using the following command.<br />
+<br />
+$ grub2-editenv list | grep fips<br />
+kernelopts=crashkernel=1G-4G:192M,4G-64G:256M,64G-4096G:512M,4096G-:1G nomodeset biosdevname=0 rhgb quiet intel_iommu=on iommu=pt fips=1 audit=1 split_lock_detect=off audit_backlog_limit=8192 net.ifnames=0 systemd.unified_cgroup_hierarchy=1 boot=/dev/disk/by-label/boot ahv.platform=onprem l1tf=flush,nowarn retbleed=off page_poison=0 slub_debug=- spec_rstack_overflow=microcode<br />
+<br />
+3. If the kernel command line is configured to use FIPS mode, check if the system is in FIPS mode using the following command.<br />
+<br />
+$ sudo cat /proc/sys/crypto/fips_enabled <br />
+1<br />
+<br />
+If FIPS mode is not &quot;enabled&quot;, the kernel boot parameter is not configured for FIPS mode, or the system does not have a value of &quot;1&quot; for &quot;fips_enabled&quot; in &quot;/proc/sys/crypto&quot;, this is a finding.</p><h2>Vulnerability Number</h2><p>V-279533</p><h2>Documentable</h2><p>False</p><h2>Rule Version</h2><p>NXAC-OS-000009</p><h2>Severity Override Guidance</h2><p>Verify Nutanix implements DOD-approved encryption to protect the confidentiality of remote access sessions.<br />
+<br />
+1. Verify FIPS mode is enabled using the following command.<br />
+<br />
+$ fips-mode-setup --check<br />
+FIPS mode is enabled.<br />
+<br />
+2. If FIPS mode is &quot;enabled&quot;, check if the kernel boot parameter is configured for FIPS mode using the following command.<br />
+<br />
+$ grub2-editenv list | grep fips<br />
+kernelopts=crashkernel=1G-4G:192M,4G-64G:256M,64G-4096G:512M,4096G-:1G nomodeset biosdevname=0 rhgb quiet intel_iommu=on iommu=pt fips=1 audit=1 split_lock_detect=off audit_backlog_limit=8192 net.ifnames=0 systemd.unified_cgroup_hierarchy=1 boot=/dev/disk/by-label/boot ahv.platform=onprem l1tf=flush,nowarn retbleed=off page_poison=0 slub_debug=- spec_rstack_overflow=microcode<br />
+<br />
+3. If the kernel command line is configured to use FIPS mode, check if the system is in FIPS mode using the following command.<br />
+<br />
+$ sudo cat /proc/sys/crypto/fips_enabled <br />
+1<br />
+<br />
+If FIPS mode is not &quot;enabled&quot;, the kernel boot parameter is not configured for FIPS mode, or the system does not have a value of &quot;1&quot; for &quot;fips_enabled&quot; in &quot;/proc/sys/crypto&quot;, this is a finding.</p><h2>Check Content Reference</h2><p>M</p><h2>Target Key</h2><p>5730</p></body></html>

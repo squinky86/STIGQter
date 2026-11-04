@@ -1,0 +1,39 @@
+<!doctype html><html lang="en"><head><meta charset="utf-8"><title>STIGQter: STIG Check Details: SV-257546r1043178_rule: OpenShift must protect authenticity of communications sessions with the use of FIPS-validated 140-2 or 140-3 validated cryptography.</title><link rel="icon" type="image/svg+xml" href="STIGQter.svg" /><script async src="https://www.googletagmanager.com/gtag/js?id=UA-31381839-2"></script><script src="include.js"></script><script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-4110907817782130" crossorigin="anonymous"></script></head><body><div><img src="STIGQter.svg" alt="STIGQter" style="height:1em;" /> <a href="https://www.stigqter.com/">STIGQter</a>: <a href="main.html">STIG Summary</a>: <a href="U_RH_OpenShift_Container_Platform_4-x_STIG_V2R6_Manual-xccdf.html">Red Hat OpenShift Container Platform 4.x Security Technical Implementation Guide Version: 2 Release: 6 Benchmark Date: 01 Jul 2026</a>:</div> <h1>OpenShift must protect authenticity of communications sessions with the use of FIPS-validated 140-2 or 140-3 validated cryptography.</h1><h2>DISA Rule</h2><p>SV-257546r1043178_rule</p><h2>Vulnerability Number</h2><p>V-257546</p><h2>Group Title</h2><p>SRG-APP-000219-CTR-000550</p><h2>Rule Version</h2><p>CNTR-OS-000510</p><h2>Severity</h2><p>CAT I</p><h2>CCI(s)</h2><ul><li>CCI-001184 - Protect the authenticity of communications sessions.</li><li>CCI-001350 - Implement cryptographic mechanisms to protect the integrity of audit information.</li><li>CCI-002450 - Implement organization-defined types of cryptography for each specified cryptography use.</li><li>CCI-002890 - Implement organization-defined cryptographic mechanisms to protect the integrity of nonlocal maintenance and diagnostic communications.</li><li>CCI-003123 - Implement organization-defined cryptographic mechanisms to protect the confidentiality of nonlocal maintenance and diagnostic communications.</li></ul><h2>Weight</h2><p>10</p><h2>Fix Recommendation</h2><p>Reinstall the OpenShift cluster in FIPS mode. The file install-config.yaml has a top-level key that enables FIPS mode for all nodes and the cluster platform layer. If the install-config.yaml was not backed up prior to consumption as part of the installation, recreate it. An example install-config.yaml with some sections trimmed out for brevity, and the &quot;fips: true&quot; key applied at the top level is shown below:<br />
+<br />
+apiVersion: v1<br />
+baseDomain: example.com<br />
+controlPlane:<br />
+  name: master<br />
+  platform:<br />
+    aws:<br />
+      [...]<br />
+  replicas: 3<br />
+compute:<br />
+- name: worker<br />
+  platform:<br />
+    aws:<br />
+  replicas: 3<br />
+metadata:<br />
+  name: fips-cluster<br />
+networking:<br />
+  [...]<br />
+platform:<br />
+  aws:<br />
+    [...]<br />
+sshKey: ssh-ed25519 AAAA...<br />
+pullSecret: '{&quot;auths&quot;: ...}'<br />
+fips: true<br />
+<br />
+Once the install-config.yaml is saved with corresponding correct information for the installation infrastructure, run the installer to create a cluster that uses FIPS Validated/Modules in Process cryptographic libraries. The command to install a cluster and consume the install-config.yaml is:<br />
+&gt; ./openshift-install create cluster --dir=&lt;installation_directory&gt; --log-level=info<br />
+Where &lt;installation_directory&gt; is the directory that contains install-config.yaml<br />
+<br />
+Additional details can be found here: https://docs.openshift.com/container-platform/4.8/installing/installing-fips.html</p><h2>Check Contents</h2><p>To validate the OpenShift cluster is running with FIPS enabled on each node by executing the following:<br />
+<br />
+for node in $(oc get node -oname); do oc debug $node -- chroot /host /bin/bash -c 'echo -n &quot;$HOSTNAME &quot;; sysctl crypto.fips_enabled' 2&gt;/dev/null; done<br />
+<br />
+If any lines of output end in anything other than 1, this is a finding.</p><h2>Vulnerability Number</h2><p>V-257546</p><h2>Documentable</h2><p>False</p><h2>Rule Version</h2><p>CNTR-OS-000510</p><h2>Severity Override Guidance</h2><p>To validate the OpenShift cluster is running with FIPS enabled on each node by executing the following:<br />
+<br />
+for node in $(oc get node -oname); do oc debug $node -- chroot /host /bin/bash -c 'echo -n &quot;$HOSTNAME &quot;; sysctl crypto.fips_enabled' 2&gt;/dev/null; done<br />
+<br />
+If any lines of output end in anything other than 1, this is a finding.</p><h2>Check Content Reference</h2><p>M</p><h2>Target Key</h2><p>5547</p></body></html>

@@ -1,0 +1,89 @@
+<!doctype html><html lang="en"><head><meta charset="utf-8"><title>STIGQter: STIG Check Details: SV-253710r961128_rule: MariaDB must protect the confidentiality and integrity of all information at rest.</title><link rel="icon" type="image/svg+xml" href="STIGQter.svg" /><script async src="https://www.googletagmanager.com/gtag/js?id=UA-31381839-2"></script><script src="include.js"></script><script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-4110907817782130" crossorigin="anonymous"></script></head><body><div><img src="STIGQter.svg" alt="STIGQter" style="height:1em;" /> <a href="https://www.stigqter.com/">STIGQter</a>: <a href="main.html">STIG Summary</a>: <a href="U_MariaDB_Enterprise_10-x_STIG_V2R5_Manual-xccdf.html">MariaDB Enterprise 10.x Security Technical Implementation Guide Version: 2 Release: 5 Benchmark Date: 01 Apr 2026</a>:</div> <h1>MariaDB must protect the confidentiality and integrity of all information at rest.</h1><h2>DISA Rule</h2><p>SV-253710r961128_rule</p><h2>Vulnerability Number</h2><p>V-253710</p><h2>Group Title</h2><p>SRG-APP-000231-DB-000154</p><h2>Rule Version</h2><p>MADB-10-005200</p><h2>Severity</h2><p>CAT I</p><h2>CCI(s)</h2><ul><li>CCI-001199 - Protects the confidentiality and/or integrity of organization-defined information at rest.</li></ul><h2>Weight</h2><p>10</p><h2>Fix Recommendation</h2><p>MariaDB's data-at-rest encryption requires the use of a key management and encryption plugin. These plugins are responsible both for the management of encryption keys and for the actual encryption and decryption of data. MariaDB supports the use of multiple encryption keys. Each encryption key uses a 32-bit integer as a key identifier. If the specific plugin supports key rotation, then encryption keys can also be rotated, which creates a new version of the encryption key. <br />
+<br />
+The File Key Management plugin that ships with MariaDB is a key management and encryption plugin that reads encryption keys from a plain-text file. Although the plugin's shared library is distributed with MariaDB by default, the plugin is not installed by MariaDB by default. The plugin can be installed by providing the --plugin-load or the --plugin-load-add options. This can be specified as a command-line argument to mysqld or it can be specified in a relevant server option group in an option file. For example:<br />
+[mariadb]<br />
+...<br />
+plugin_load_add = file_key_management<br />
+<br />
+Creating the Key File: To encrypt tables with encryption keys using the File Key Management plugin, first create the file that contains the encryption keys. The file must contain two pieces of information for each encryption key. First, each encryption key must be identified with a 32-bit integer as the key identifier. Second, the encryption key itself must be provided in hex-encoded form. These two pieces of information must be separated by a semicolon. <br />
+<br />
+For example, the file is formatted in the following way:<br />
+ &lt;encryption_key_id1&gt;;&lt;hex-encoded_encryption_key1&gt;<br />
+ &lt;encryption_key_id2&gt;;&lt;hex-encoded_encryption_key2&gt;<br />
+<br />
+The key file can also be optionally encrypted to make it less accessible from the file system. That is explained further in the section below.<br />
+<br />
+The File Key Management plugin uses Advanced Encryption Standard (AES) to encrypt data, which supports 128-bit, 192-bit, and 256-bit encryption keys. Therefore, the plugin also supports 128-bit, 192-bit, and 256-bit encryption keys.<br />
+<br />
+Random encryption keys can be generated using the openssl rand command. For example, to create a random 256-bit (32-byte) encryption key, run the following command:<br />
+<br />
+$ openssl rand -hex 32<br />
+a7addd9adea9978fda19f21e6be987880e68ac92632ca052e5bb42b1a506939a<br />
+<br />
+Copy this encryption key to the key file using a text editor, or append a series of keys to a new key file. For example, to append three new encryption keys to a new key file, execute the following:<br />
+<br />
+$ sudo openssl rand -hex 32 &gt;&gt; /etc/mysql/encryption/keyfile<br />
+$ sudo openssl rand -hex 32 &gt;&gt; /etc/mysql/encryption/keyfile<br />
+$ sudo openssl rand -hex 32 &gt;&gt; /etc/mysql/encryption/keyfile<br />
+<br />
+The new key file would look something like the following after this step:<br />
+<br />
+a7addd9adea9978fda19f21e6be987880e68ac92632ca052e5bb42b1a506939a<br />
+49c16acc2dffe616710c9ba9a10b94944a737de1beccb52dc1560abfdd67388b<br />
+8db1ee74580e7e93ab8cf157f02656d356c2f437d548d5bf16bf2a56932954a3<br />
+<br />
+The key file still needs to have a key identifier for each encryption key added to the beginning of each line. Key identifiers do not need to be contiguous. Open the new key file in the preferred text editor and add the key identifiers. For example, the key file would look something like the following after this step:<br />
+<br />
+1;a7addd9adea9978fda19f21e6be987880e68ac92632ca052e5bb42b1a506939a<br />
+2;49c16acc2dffe616710c9ba9a10b94944a737de1beccb52dc1560abfdd67388b<br />
+100;8db1ee74580e7e93ab8cf157f02656d356c2f437d548d5bf16bf2a56932954a3<br />
+<br />
+The key identifiers give the user a way to reference the encryption keys from MariaDB. In the example above, encryption keys can be referenced using the key identifiers 1, 2, or 100 with the ENCRYPTION_KEY_ID table option or with system variables such as innodb_default_encryption_key_id. Multiple encryption keys are not always necessary; the encryption key with the key identifier &quot;1&quot; is the only mandatory encryption key.<br />
+<br />
+Once the File Key Management Plugin is enabled, use it by creating an encrypted table:<br />
+<br />
+CREATE TABLE t (i int) ENGINE=InnoDB ENCRYPTED=YES<br />
+<br />
+Now, table t will be encrypted using the encryption key from the key file.</p><h2>Check Contents</h2><p>If the application owner and Authorizing Official have determined that encryption of data at rest is NOT required, this is not a finding.<br />
+ <br />
+One possible way to encrypt data within MariaDB is to use the file key management plugin. To determine if this is installed, check the following variables as the Database administrator:<br />
+<br />
+MariaDB&gt; SHOW PLUGINS; <br />
+<br />
+Confirm the file_key_management.so is listed.<br />
+<br />
+MariaDB&gt; SHOW GLOBAL VARIABLES LIKE 'file_key%';<br />
+MariaDB&gt; SHOW GLOBAL VARIABLES LIKE 'aria_en%';<br />
+MariaDB&gt; SHOW GLOBAL VARIABLES LIKE 'innodb_encrypt_tables';<br />
+MariaDB&gt; SHOW GLOBAL VARIABLES LIKE 'innodb_encrypt_log';<br />
+MariaDB&gt; SHOW GLOBAL VARIABLES LIKE 'innodb_tablespace%';<br />
+MariaDB&gt; SHOW GLOBAL VARIABLES LIKE 'encrypt%';<br />
+<br />
+Confirm these are ON.<br />
+ <br />
+If disk or filesystem requires encryption, ask the system owner, DBA, and SA to demonstrate the use of disk-level encryption. <br />
+<br />
+If this is required and is not found, this is a finding. <br />
+<br />
+If controls do not exist or are not enabled, this is a finding.</p><h2>Vulnerability Number</h2><p>V-253710</p><h2>Documentable</h2><p>False</p><h2>Rule Version</h2><p>MADB-10-005200</p><h2>Severity Override Guidance</h2><p>If the application owner and Authorizing Official have determined that encryption of data at rest is NOT required, this is not a finding.<br />
+ <br />
+One possible way to encrypt data within MariaDB is to use the file key management plugin. To determine if this is installed, check the following variables as the Database administrator:<br />
+<br />
+MariaDB&gt; SHOW PLUGINS; <br />
+<br />
+Confirm the file_key_management.so is listed.<br />
+<br />
+MariaDB&gt; SHOW GLOBAL VARIABLES LIKE 'file_key%';<br />
+MariaDB&gt; SHOW GLOBAL VARIABLES LIKE 'aria_en%';<br />
+MariaDB&gt; SHOW GLOBAL VARIABLES LIKE 'innodb_encrypt_tables';<br />
+MariaDB&gt; SHOW GLOBAL VARIABLES LIKE 'innodb_encrypt_log';<br />
+MariaDB&gt; SHOW GLOBAL VARIABLES LIKE 'innodb_tablespace%';<br />
+MariaDB&gt; SHOW GLOBAL VARIABLES LIKE 'encrypt%';<br />
+<br />
+Confirm these are ON.<br />
+ <br />
+If disk or filesystem requires encryption, ask the system owner, DBA, and SA to demonstrate the use of disk-level encryption. <br />
+<br />
+If this is required and is not found, this is a finding. <br />
+<br />
+If controls do not exist or are not enabled, this is a finding.</p><h2>Check Content Reference</h2><p>M</p><h2>Target Key</h2><p>5475</p></body></html>

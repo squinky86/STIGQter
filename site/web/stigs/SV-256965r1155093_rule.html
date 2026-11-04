@@ -1,0 +1,53 @@
+<!doctype html><html lang="en"><head><meta charset="utf-8"><title>STIGQter: STIG Check Details: SV-256965r1155093_rule: The Automation Controller NGINX web servers must maintain the confidentiality and integrity of information during preparation for transmission.</title><link rel="icon" type="image/svg+xml" href="STIGQter.svg" /><script async src="https://www.googletagmanager.com/gtag/js?id=UA-31381839-2"></script><script src="include.js"></script><script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-4110907817782130" crossorigin="anonymous"></script></head><body><div><img src="STIGQter.svg" alt="STIGQter" style="height:1em;" /> <a href="https://www.stigqter.com/">STIGQter</a>: <a href="main.html">STIG Summary</a>: <a href="U_RH_Ansible_Automation_Controller_WS_STIG_V2R3_Manual-xccdf.html">Red Hat Ansible Automation Controller Web Server Security Technical Implementation Guide Version: 2 Release: 3 Benchmark Date: 05 Jan 2026</a>:</div> <h1>The Automation Controller NGINX web servers must maintain the confidentiality and integrity of information during preparation for transmission.</h1><h2>DISA Rule</h2><p>SV-256965r1155093_rule</p><h2>Vulnerability Number</h2><p>V-256965</p><h2>Group Title</h2><p>SRG-APP-000441-WSR-000181</p><h2>Rule Version</h2><p>APWS-AT-000920</p><h2>Severity</h2><p>CAT II</p><h2>CCI(s)</h2><ul><li>CCI-002420 - Maintain the confidentiality and/or integrity of information during preparation for transmission.</li></ul><h2>Weight</h2><p>10</p><h2>Fix Recommendation</h2><p>As an SA for each Automation Controller NGINX web server host, verify the NGINX web server configuration file in use is located at &quot;/etc/nginx/nginx.conf&quot;:<br />
+<br />
+NGINXCONF=`nginx -V 2&gt;&amp;1 | tr ' ' '\n' | sed -ne '/conf-path/{s/.*conf-path=\(.*\)/\1/;p}' ` ; <br />
+<br />
+Verify the location of the NGINX modules libraries:<br />
+<br />
+pushd `nginx -V 2&gt;&amp;1 | grep module | tr ' ' '\n' | grep module | sed -n 's/.*modules-path.*=\s*\(.*\)/\1/p'`<br />
+<br />
+Remove all modules that violate organizationally defined policy.<br />
+Examine runtime loaded modules:<br />
+<br />
+grep load_module nginx.conf.test | sed -n 's/^\s*load_module\s*\(.*\)/\1/p'<br />
+<br />
+Remove all modules that violate organizationally defined policy.<br />
+Examine the remainder of the modules:<br />
+<br />
+nginx -V 2&gt;&amp;1 | grep module | tr ' ' '\n' | grep module | grep -v modules-path <br />
+<br />
+These modules are compiled into the core NGINX binaries are cannot be removed. Use of any these modules that violate organizationally defined policy must be mitigated.<br />
+<br />
+To apply these changes to the running service immediately, restart the NGINX service with the following command:<br />
+<br />
+sudo systemctl restart nginx<br />
+<br />
+Alternatively, reinstall Automation Controller for each web server host.</p><h2>Check Contents</h2><p>As a system administrator (SA) for each Automation Controller NGINX web server host, verify the NGINX web server configuration file in use is located at &quot;/etc/nginx/nginx.conf&quot;:<br />
+<br />
+NGINXCONF=`nginx -V 2&gt;&amp;1 | tr ' ' '\n' | sed -ne '/conf-path/{s/.*conf-path=\(.*\)/\1/;p}' ` <br />
+<br />
+If the file does not exist, this is a finding.<br />
+<br />
+Verify the use of only dynamic modules witch are allowed by organizational policy:<br />
+<br />
+allowed_modules=(ssl_module http_v2_module http_realip_module http_addition_module http_xslt_module=dynamic http_image_filter_module=dynamic http_sub_module http_dav_module  http_mp4_module http_gunzip_module http_gzip_static_module http_random_index_module http_secure_link_module http_degradation_module http_slice_module http_stub_status_module http_perl_module=dynamic http_auth_request_module mail_ssl_module stream_ssl_preread_module http_flv_module) ; echo &quot;${allowed_modules[*]}&quot; | tr ' ' '\n' &gt;/tmp/allowed_modules ; nginx -V 2&gt;&amp;1 | grep module | tr ' ' '\n' | grep module | grep -v modules-path | grep -v -Ff /tmp/allowed_modules &amp;&amp; echo &quot;FAILED&quot;;<br />
+<br />
+Verify the use of only runtime modules which are allowed by organizational policy:<br />
+<br />
+grep load_module $NGINXCONF  | sed -n 's/^\s*load_module\s*\(.*\)/\1/p' | grep -v -Ff /tmp/allowed_modules &amp;&amp; echo &quot;FAILED&quot; ; rm -f /tmp/allowed_modules<br />
+<br />
+If the output shows &quot;FAILED&quot;, this is a finding.</p><h2>Vulnerability Number</h2><p>V-256965</p><h2>Documentable</h2><p>False</p><h2>Rule Version</h2><p>APWS-AT-000920</p><h2>Severity Override Guidance</h2><p>As a system administrator (SA) for each Automation Controller NGINX web server host, verify the NGINX web server configuration file in use is located at &quot;/etc/nginx/nginx.conf&quot;:<br />
+<br />
+NGINXCONF=`nginx -V 2&gt;&amp;1 | tr ' ' '\n' | sed -ne '/conf-path/{s/.*conf-path=\(.*\)/\1/;p}' ` <br />
+<br />
+If the file does not exist, this is a finding.<br />
+<br />
+Verify the use of only dynamic modules witch are allowed by organizational policy:<br />
+<br />
+allowed_modules=(ssl_module http_v2_module http_realip_module http_addition_module http_xslt_module=dynamic http_image_filter_module=dynamic http_sub_module http_dav_module  http_mp4_module http_gunzip_module http_gzip_static_module http_random_index_module http_secure_link_module http_degradation_module http_slice_module http_stub_status_module http_perl_module=dynamic http_auth_request_module mail_ssl_module stream_ssl_preread_module http_flv_module) ; echo &quot;${allowed_modules[*]}&quot; | tr ' ' '\n' &gt;/tmp/allowed_modules ; nginx -V 2&gt;&amp;1 | grep module | tr ' ' '\n' | grep module | grep -v modules-path | grep -v -Ff /tmp/allowed_modules &amp;&amp; echo &quot;FAILED&quot;;<br />
+<br />
+Verify the use of only runtime modules which are allowed by organizational policy:<br />
+<br />
+grep load_module $NGINXCONF  | sed -n 's/^\s*load_module\s*\(.*\)/\1/p' | grep -v -Ff /tmp/allowed_modules &amp;&amp; echo &quot;FAILED&quot; ; rm -f /tmp/allowed_modules<br />
+<br />
+If the output shows &quot;FAILED&quot;, this is a finding.</p><h2>Check Content Reference</h2><p>M</p><h2>Target Key</h2><p>5535</p></body></html>

@@ -1,0 +1,46 @@
+<!doctype html><html lang="en"><head><meta charset="utf-8"><title>STIGQter: STIG Check Details: SV-235103r960879_rule: The MySQL Database Server 8.0 must be configured to provide audit record generation capability for DoD-defined auditable events within all database components.</title><link rel="icon" type="image/svg+xml" href="STIGQter.svg" /><script async src="https://www.googletagmanager.com/gtag/js?id=UA-31381839-2"></script><script src="include.js"></script><script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-4110907817782130" crossorigin="anonymous"></script></head><body><div><img src="STIGQter.svg" alt="STIGQter" style="height:1em;" /> <a href="https://www.stigqter.com/">STIGQter</a>: <a href="main.html">STIG Summary</a>: <a href="U_Oracle_MySQL_8-0_STIG_V2R2_Manual-xccdf.html">Oracle MySQL 8.0 Security Technical Implementation Guide Version: 2 Release: 2 Benchmark Date: 24 Oct 2024</a>:</div> <h1>The MySQL Database Server 8.0 must be configured to provide audit record generation capability for DoD-defined auditable events within all database components.</h1><h2>DISA Rule</h2><p>SV-235103r960879_rule</p><h2>Vulnerability Number</h2><p>V-235103</p><h2>Group Title</h2><p>SRG-APP-000089-DB-000064</p><h2>Rule Version</h2><p>MYS8-00-001600</p><h2>Severity</h2><p>CAT II</p><h2>CCI(s)</h2><ul><li>CCI-000169 - Provide audit record generation capability for the event types the system is capable of auditing as defined in AU-2 a. on organization-defined information system components.</li></ul><h2>Weight</h2><p>10</p><h2>Fix Recommendation</h2><p>Deploy a MySQL Database Server 8.0 that supports the DoD minimum set of auditable events.<br />
+<br />
+Configure the MySQL Database Server 8.0 to generate audit records for at least the DoD minimum set of events.<br />
+<br />
+sudo vi /etc/my.cnf<br />
+[mysqld]<br />
+audit-log=FORCE_PLUS_PERMANENT<br />
+audit-log-format=JSON<br />
+audit-log-encryption=AES<br />
+<br />
+After changing the my.cnf, restart the server.<br />
+<br />
+SELECT audit_log_encryption_password_set(password);<br />
+<br />
+Create auditing rules - for example:<br />
+Connect to MySQL and Use functions to define audit rules and audited users  audit_log_filter_set,audit_log_filter_set_user<br />
+<br />
+To log all auditable events:<br />
+SELECT audit_log_filter_set_filter('log_all', '{ &quot;filter&quot;: { &quot;log&quot;: true } }');<br />
+<br />
+And to apply this log_all filter to all users:<br />
+SELECT audit_log_filter_set_user('%', 'log_all');</p><h2>Check Contents</h2><p>Check MySQL auditing to determine whether organization-defined auditable events are being audited by the system.<br />
+<br />
+SELECT PLUGIN_NAME, plugin_status FROM INFORMATION_SCHEMA.PLUGINS<br />
+       WHERE PLUGIN_NAME LIKE 'audit_log' ;<br />
+<br />
+If nothing is returned OR if the results are not &quot;audit_log&quot; and &quot;plugin_status='ACTIVE'&quot; , this is a finding.<br />
+<br />
+Next determine if the audit lot is encrypted. <br />
+SELECT VARIABLE_NAME, VARIABLE_VALUE<br />
+FROM performance_schema.global_variables<br />
+WHERE VARIABLE_NAME LIKE 'audit_log_encryption' ;<br />
+<br />
+If nothing is returned OR the value for audit_log_encryption is not &quot;AES&quot;, this is a finding.</p><h2>Vulnerability Number</h2><p>V-235103</p><h2>Documentable</h2><p>False</p><h2>Rule Version</h2><p>MYS8-00-001600</p><h2>Severity Override Guidance</h2><p>Check MySQL auditing to determine whether organization-defined auditable events are being audited by the system.<br />
+<br />
+SELECT PLUGIN_NAME, plugin_status FROM INFORMATION_SCHEMA.PLUGINS<br />
+       WHERE PLUGIN_NAME LIKE 'audit_log' ;<br />
+<br />
+If nothing is returned OR if the results are not &quot;audit_log&quot; and &quot;plugin_status='ACTIVE'&quot; , this is a finding.<br />
+<br />
+Next determine if the audit lot is encrypted. <br />
+SELECT VARIABLE_NAME, VARIABLE_VALUE<br />
+FROM performance_schema.global_variables<br />
+WHERE VARIABLE_NAME LIKE 'audit_log_encryption' ;<br />
+<br />
+If nothing is returned OR the value for audit_log_encryption is not &quot;AES&quot;, this is a finding.</p><h2>Check Content Reference</h2><p>M</p><h2>Target Key</h2><p>5277</p></body></html>

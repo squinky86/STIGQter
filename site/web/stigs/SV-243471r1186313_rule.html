@@ -1,0 +1,40 @@
+<!doctype html><html lang="en"><head><meta charset="utf-8"><title>STIGQter: STIG Check Details: SV-243471r1186313_rule: Local administrator accounts on domain systems must not share the same password.</title><link rel="icon" type="image/svg+xml" href="STIGQter.svg" /><script async src="https://www.googletagmanager.com/gtag/js?id=UA-31381839-2"></script><script src="include.js"></script><script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-4110907817782130" crossorigin="anonymous"></script></head><body><div><img src="STIGQter.svg" alt="STIGQter" style="height:1em;" /> <a href="https://www.stigqter.com/">STIGQter</a>: <a href="main.html">STIG Summary</a>: <a href="U_Active_Directory_Domain_STIG_V3R7_Manual-xccdf.html">Active Directory Domain Security Technical Implementation Guide Version: 3 Release: 7 Benchmark Date: 01 Apr 2026</a>:</div> <h1>Local administrator accounts on domain systems must not share the same password.</h1><h2>DISA Rule</h2><p>SV-243471r1186313_rule</p><h2>Vulnerability Number</h2><p>V-243471</p><h2>Group Title</h2><p>SRG-OS-000112</p><h2>Rule Version</h2><p>AD.0008</p><h2>Severity</h2><p>CAT II</p><h2>CCI(s)</h2><ul><li>CCI-001941 - Implement replay-resistant authentication mechanisms for access to privileged accounts and/or non-privileged accounts.</li></ul><h2>Weight</h2><p>10</p><h2>Fix Recommendation</h2><p>Set unique passwords for all local administrator accounts on domain systems. <br />
+<br />
+It is highly recommended to use Microsoft's LAPS, which provides an automated solution for maintaining and regularly changing a local administrator password for domain-joined systems. If additional local administrator accounts exist across systems, the organization must have a process to require unique passwords on each system for the additional accounts.<br />
+<br />
+The AO may approve other automated solutions that provide this capability.<br />
+<br />
+See Microsoft Security Advisory 3062591 for additional information and download of LAPS.<br />
+https://www.microsoft.com/en-us/download/details.aspx?id=46899</p><h2>Check Contents</h2><p>Verify local administrator accounts on domain systems are using unique passwords. If local administrator accounts on domain systems are sharing a password, this is a finding.<br />
+<br />
+It is recommended to use Microsoft's Local Administrator Password Solution (LAPS), which provides an automated solution for maintaining and regularly changing a local administrator password for domain-joined systems. LAPS can manage a single local administrator account. The default is the built-in administrator account; however, it can be configured to manage an administrator account of a different name. If additional local administrator accounts exist across systems, the organization must have a process to require unique passwords on each system for the additional accounts.<br />
+<br />
+The authorizing official (AO) may approve other automated solutions that provide this capability.<br />
+<br />
+Open &quot;Windows PowerShell&quot;.<br />
+<br />
+Get-ADComputer -Filter * -Properties msLAPS-EncryptedPassword | Where-Object { $_.&quot;msLAPS-EncryptedPassword&quot; -eq $null } | Select-Object Name<br />
+<br />
+The newer &quot;Windows LAPS&quot; function stores the LAPS password in the object attribute &quot;msLAPS-EncryptedPassword&quot; as long as the &quot;encrypted&quot; option was selected when setting up the LAPS GPO settings. This will check that location. If &quot;encrypted&quot; wasn't enabled when setting up LAPS, then adjust the search command to be &quot;msLAPS-Password&quot; instead.<br />
+<br />
+Review the returned list for validity.<br />
+<br />
+If any active/deployed Windows systems that are not managed by another process to ensure unique passwords for local administrator accounts are listed, this is a finding.<br />
+<br />
+If the query fails, the organization must demonstrate that passwords for local administrator accounts are properly managed to ensure unique passwords for each. If not, this is a finding.</p><h2>Vulnerability Number</h2><p>V-243471</p><h2>Documentable</h2><p>False</p><h2>Rule Version</h2><p>AD.0008</p><h2>Severity Override Guidance</h2><p>Verify local administrator accounts on domain systems are using unique passwords. If local administrator accounts on domain systems are sharing a password, this is a finding.<br />
+<br />
+It is recommended to use Microsoft's Local Administrator Password Solution (LAPS), which provides an automated solution for maintaining and regularly changing a local administrator password for domain-joined systems. LAPS can manage a single local administrator account. The default is the built-in administrator account; however, it can be configured to manage an administrator account of a different name. If additional local administrator accounts exist across systems, the organization must have a process to require unique passwords on each system for the additional accounts.<br />
+<br />
+The authorizing official (AO) may approve other automated solutions that provide this capability.<br />
+<br />
+Open &quot;Windows PowerShell&quot;.<br />
+<br />
+Get-ADComputer -Filter * -Properties msLAPS-EncryptedPassword | Where-Object { $_.&quot;msLAPS-EncryptedPassword&quot; -eq $null } | Select-Object Name<br />
+<br />
+The newer &quot;Windows LAPS&quot; function stores the LAPS password in the object attribute &quot;msLAPS-EncryptedPassword&quot; as long as the &quot;encrypted&quot; option was selected when setting up the LAPS GPO settings. This will check that location. If &quot;encrypted&quot; wasn't enabled when setting up LAPS, then adjust the search command to be &quot;msLAPS-Password&quot; instead.<br />
+<br />
+Review the returned list for validity.<br />
+<br />
+If any active/deployed Windows systems that are not managed by another process to ensure unique passwords for local administrator accounts are listed, this is a finding.<br />
+<br />
+If the query fails, the organization must demonstrate that passwords for local administrator accounts are properly managed to ensure unique passwords for each. If not, this is a finding.</p><h2>Check Content Reference</h2><p>M</p><h2>Target Key</h2><p>5406</p></body></html>

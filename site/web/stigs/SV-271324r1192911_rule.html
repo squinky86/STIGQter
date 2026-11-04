@@ -1,0 +1,67 @@
+<!doctype html><html lang="en"><head><meta charset="utf-8"><title>STIGQter: STIG Check Details: SV-271324r1192911_rule: SQL Server must protect the confidentiality and integrity of all information at rest.</title><link rel="icon" type="image/svg+xml" href="STIGQter.svg" /><script async src="https://www.googletagmanager.com/gtag/js?id=UA-31381839-2"></script><script src="include.js"></script><script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-4110907817782130" crossorigin="anonymous"></script></head><body><div><img src="STIGQter.svg" alt="STIGQter" style="height:1em;" /> <a href="https://www.stigqter.com/">STIGQter</a>: <a href="main.html">STIG Summary</a>: <a href="U_MS_SQL_Server_2022_Instance_STIG_V1R4_Manual-xccdf.html">Microsoft SQL Server 2022 Instance Security Technical Implementation Guide Version: 1 Release: 4 Benchmark Date: 01 Apr 2026</a>:</div> <h1>SQL Server must protect the confidentiality and integrity of all information at rest.</h1><h2>DISA Rule</h2><p>SV-271324r1192911_rule</p><h2>Vulnerability Number</h2><p>V-271324</p><h2>Group Title</h2><p>SRG-APP-000231-DB-000154</p><h2>Rule Version</h2><p>SQLI-22-009500</p><h2>Severity</h2><p>CAT I</p><h2>CCI(s)</h2><ul><li>CCI-001199 - Protects the confidentiality and/or integrity of organization-defined information at rest.</li></ul><h2>Weight</h2><p>10</p><h2>Fix Recommendation</h2><p>Apply appropriate controls to protect the confidentiality and integrity of data on a secondary device. Where encryption is required, this can be done by full-disk encryption or by database encryption. <br />
+<br />
+To enable database encryption, create a master key, create a database encryption key, protect it by using mechanisms tied to the master key, and then turn encryption on.<br />
+<br />
+Implement physical security measures, operating system access control lists, and organizational controls appropriate to the sensitivity level of the data in the database(s).</p><h2>Check Contents</h2><p>Review system documentation to determine whether the system handles classified information. If the system does not handle classified information, the severity of this check is downgraded to CAT II. <br />
+ <br />
+If the application owner and authorizing official (AO) have determined that encryption of data at rest is required, verify the data on secondary devices is encrypted. <br />
+ <br />
+If full-disk encryption is being used, this is not a finding. <br />
+ <br />
+If data encryption is required, verify the data is encrypted before being put on the secondary device by executing the following:<br />
+ <br />
+SELECT<br />
+    db.name AS DatabaseName,<br />
+    db.is_encrypted AS IsEncrypted,<br />
+    CASE<br />
+        WHEN dm.encryption_state = 0 THEN 'No database encryption key present, no encryption'<br />
+        WHEN dm.encryption_state = 1 THEN 'Unencrypted'<br />
+        WHEN dm.encryption_state = 2 THEN 'Encryption in progress'<br />
+        WHEN dm.encryption_state = 3 THEN 'Encrypted'<br />
+        WHEN dm.encryption_state = 4 THEN 'Key change in progress'<br />
+        WHEN dm.encryption_state = 5 THEN 'Decryption in progress'<br />
+        WHEN dm.encryption_state = 6 THEN 'Protection change in progress'<br />
+    END AS EncryptionState,<br />
+    dm.encryption_state AS EncryptionState,<br />
+    dm.key_algorithm AS KeyAlgorithm,<br />
+    dm.key_length AS KeyLength<br />
+FROM<br />
+    sys.databases db<br />
+LEFT JOIN sys.dm_database_encryption_keys dm ON db.database_id = dm.database_id<br />
+WHERE db.database_id &gt; 4<br />
+ORDER BY [DatabaseName] ;  <br />
+ <br />
+For each user database where encryption is required, verify encryption is in effect. If it is not, this is a finding. <br />
+ <br />
+Verify there are physical security measures, operating system access control lists, and organizational controls appropriate to the sensitivity level of the data in the database(s); if not, this is a finding.</p><h2>Vulnerability Number</h2><p>V-271324</p><h2>Documentable</h2><p>False</p><h2>Rule Version</h2><p>SQLI-22-009500</p><h2>Severity Override Guidance</h2><p>Review system documentation to determine whether the system handles classified information. If the system does not handle classified information, the severity of this check is downgraded to CAT II. <br />
+ <br />
+If the application owner and authorizing official (AO) have determined that encryption of data at rest is required, verify the data on secondary devices is encrypted. <br />
+ <br />
+If full-disk encryption is being used, this is not a finding. <br />
+ <br />
+If data encryption is required, verify the data is encrypted before being put on the secondary device by executing the following:<br />
+ <br />
+SELECT<br />
+    db.name AS DatabaseName,<br />
+    db.is_encrypted AS IsEncrypted,<br />
+    CASE<br />
+        WHEN dm.encryption_state = 0 THEN 'No database encryption key present, no encryption'<br />
+        WHEN dm.encryption_state = 1 THEN 'Unencrypted'<br />
+        WHEN dm.encryption_state = 2 THEN 'Encryption in progress'<br />
+        WHEN dm.encryption_state = 3 THEN 'Encrypted'<br />
+        WHEN dm.encryption_state = 4 THEN 'Key change in progress'<br />
+        WHEN dm.encryption_state = 5 THEN 'Decryption in progress'<br />
+        WHEN dm.encryption_state = 6 THEN 'Protection change in progress'<br />
+    END AS EncryptionState,<br />
+    dm.encryption_state AS EncryptionState,<br />
+    dm.key_algorithm AS KeyAlgorithm,<br />
+    dm.key_length AS KeyLength<br />
+FROM<br />
+    sys.databases db<br />
+LEFT JOIN sys.dm_database_encryption_keys dm ON db.database_id = dm.database_id<br />
+WHERE db.database_id &gt; 4<br />
+ORDER BY [DatabaseName] ;  <br />
+ <br />
+For each user database where encryption is required, verify encryption is in effect. If it is not, this is a finding. <br />
+ <br />
+Verify there are physical security measures, operating system access control lists, and organizational controls appropriate to the sensitivity level of the data in the database(s); if not, this is a finding.</p><h2>Check Content Reference</h2><p>M</p><h2>Target Key</h2><p>5677</p></body></html>

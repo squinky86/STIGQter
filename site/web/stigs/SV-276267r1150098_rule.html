@@ -1,0 +1,58 @@
+<!doctype html><html lang="en"><head><meta charset="utf-8"><title>STIGQter: STIG Check Details: SV-276267r1150098_rule: Azure SQL Managed Instance must implement the capability to centrally review and analyze audit records from multiple components within the system using a service such as Azure Log Analytics.</title><link rel="icon" type="image/svg+xml" href="STIGQter.svg" /><script async src="https://www.googletagmanager.com/gtag/js?id=UA-31381839-2"></script><script src="include.js"></script><script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-4110907817782130" crossorigin="anonymous"></script></head><body><div><img src="STIGQter.svg" alt="STIGQter" style="height:1em;" /> <a href="https://www.stigqter.com/">STIGQter</a>: <a href="main.html">STIG Summary</a>: <a href="U_MS_Azure_SQL_MI_STIG_V1R1_Manual-xccdf.html">Microsoft Azure SQL Managed Instance Security Technical Implementation Guide Version: 1 Release: 1 Benchmark Date: 23 Sep 2025</a>:</div> <h1>Azure SQL Managed Instance must implement the capability to centrally review and analyze audit records from multiple components within the system using a service such as Azure Log Analytics.</h1><h2>DISA Rule</h2><p>SV-276267r1150098_rule</p><h2>Vulnerability Number</h2><p>V-276267</p><h2>Group Title</h2><p>SRG-APP-000745-DB-000120</p><h2>Rule Version</h2><p>MSQL-00-018600</p><h2>Severity</h2><p>CAT II</p><h2>CCI(s)</h2><ul><li>CCI-003821 - Implement the capability to centrally review and analyze audit records from multiple components within the system.</li></ul><h2>Weight</h2><p>10</p><h2>Fix Recommendation</h2><p>Configure Azure SQL Managed Instance to implement the capability to centrally review and analyze audit records from multiple components within the system.<br />
+<br />
+One option is to use Log Analytics to query data in the Azure Monitor Logs store.<br />
+<br />
+Reference: https://learn.microsoft.com/en-us/azure/azure-sql/managed-instance/auditing-configure?#set-up-auditing-for-your-server-to-event-hubs-or-azure-monitor-logs<br />
+https://learn.microsoft.com/en-us/azure/azure-monitor/logs/log-analytics-overview?tabs=simple</p><h2>Check Contents</h2><p>Review the system documentation to determine whether a centralized repository of audit data is required by the data owner or organization. If this is not required, this finding is Not Applicable.<br />
+<br />
+Run the following query to return a listing of active Server Audits not used for auditing Microsoft Support activities:<br />
+<br />
+SELECT audit_guid, name, type_desc, is_operator_audit, is_state_enabled<br />
+FROM sys.server_audits A<br />
+WHERE type_desc = 'EXTERNAL MONITOR' <br />
+AND is_operator_audit = 0 <br />
+AND is_state_enabled = 1<br />
+<br />
+If no audits are returned, this is a finding.<br />
+<br />
+Determine whether the Azure SQL Managed Instance is configured to forward SQL Security Audit Events to a centralized repository such as Log Analytics.<br />
+<br />
+1. Connect to the Azure portal and navigate to the Azure SQL Managed Instance resource.<br />
+2. In the left navigation pane, expand &quot;Monitoring&quot;.<br />
+3. Click &quot;Diagnostic settings&quot;.<br />
+<br />
+If no diagnostic settings are defined, this is a finding.<br />
+<br />
+Locate the diagnostic setting for SQL Security Audit Events by repeating the following steps for each setting defined:<br />
+<br />
+1. Click &quot;Edit settings&quot; on the right.<br />
+2. Under &quot;Logs&quot;, verify the &quot;SQL Security Audit Event&quot; category is flagged.<br />
+3. Under &quot;Destination details&quot;, verify &quot;Send to Log Analytics workspace&quot; is flagged.<br />
+<br />
+If no Diagnostic setting meets both of these requirements, this is a finding.</p><h2>Vulnerability Number</h2><p>V-276267</p><h2>Documentable</h2><p>False</p><h2>Rule Version</h2><p>MSQL-00-018600</p><h2>Severity Override Guidance</h2><p>Review the system documentation to determine whether a centralized repository of audit data is required by the data owner or organization. If this is not required, this finding is Not Applicable.<br />
+<br />
+Run the following query to return a listing of active Server Audits not used for auditing Microsoft Support activities:<br />
+<br />
+SELECT audit_guid, name, type_desc, is_operator_audit, is_state_enabled<br />
+FROM sys.server_audits A<br />
+WHERE type_desc = 'EXTERNAL MONITOR' <br />
+AND is_operator_audit = 0 <br />
+AND is_state_enabled = 1<br />
+<br />
+If no audits are returned, this is a finding.<br />
+<br />
+Determine whether the Azure SQL Managed Instance is configured to forward SQL Security Audit Events to a centralized repository such as Log Analytics.<br />
+<br />
+1. Connect to the Azure portal and navigate to the Azure SQL Managed Instance resource.<br />
+2. In the left navigation pane, expand &quot;Monitoring&quot;.<br />
+3. Click &quot;Diagnostic settings&quot;.<br />
+<br />
+If no diagnostic settings are defined, this is a finding.<br />
+<br />
+Locate the diagnostic setting for SQL Security Audit Events by repeating the following steps for each setting defined:<br />
+<br />
+1. Click &quot;Edit settings&quot; on the right.<br />
+2. Under &quot;Logs&quot;, verify the &quot;SQL Security Audit Event&quot; category is flagged.<br />
+3. Under &quot;Destination details&quot;, verify &quot;Send to Log Analytics workspace&quot; is flagged.<br />
+<br />
+If no Diagnostic setting meets both of these requirements, this is a finding.</p><h2>Check Content Reference</h2><p>M</p><h2>Target Key</h2><p>5711</p></body></html>

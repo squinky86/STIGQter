@@ -1,0 +1,48 @@
+<!doctype html><html lang="en"><head><meta charset="utf-8"><title>STIGQter: STIG Check Details: SV-261914r1000747_rule: PostgreSQL must enforce discretionary access control policies, as defined by the data owner, over defined subjects and objects.</title><link rel="icon" type="image/svg+xml" href="STIGQter.svg" /><script async src="https://www.googletagmanager.com/gtag/js?id=UA-31381839-2"></script><script src="include.js"></script><script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-4110907817782130" crossorigin="anonymous"></script></head><body><div><img src="STIGQter.svg" alt="STIGQter" style="height:1em;" /> <a href="https://www.stigqter.com/">STIGQter</a>: <a href="main.html">STIG Summary</a>: <a href="U_CD_Postgres_16_STIG_V1R3_Manual-xccdf.html">Crunchy Data Postgres 16 Security Technical Implementation Guide Version: 1 Release: 3 Benchmark Date: 01 Jul 2026</a>:</div> <h1>PostgreSQL must enforce discretionary access control policies, as defined by the data owner, over defined subjects and objects.</h1><h2>DISA Rule</h2><p>SV-261914r1000747_rule</p><h2>Vulnerability Number</h2><p>V-261914</p><h2>Group Title</h2><p>SRG-APP-000328-DB-000301</p><h2>Rule Version</h2><p>CD16-00-006700</p><h2>Severity</h2><p>CAT II</p><h2>CCI(s)</h2><ul><li>CCI-002165 - Enforce organization-defined discretionary access control policies over defined subjects and objects.</li></ul><h2>Weight</h2><p>10</p><h2>Fix Recommendation</h2><p>Implement the organization's DAC policy in the security configuration of the database and PostgreSQL, and, if applicable, the security configuration of the application(s) using the database.<br />
+<br />
+To GRANT privileges to roles, as the database administrator (shown here as &quot;postgres&quot;), run statements like the following examples:<br />
+<br />
+$ sudo su - postgres<br />
+$ psql -c &quot;CREATE SCHEMA test&quot;<br />
+$ psql -c &quot;GRANT CREATE ON SCHEMA test TO bob&quot;<br />
+$ psql -c &quot;CREATE TABLE test.test_table(id INT)&quot;<br />
+$ psql -c &quot;GRANT SELECT ON TABLE test.test_table TO bob&quot;<br />
+<br />
+To REVOKE privileges to roles, as the database administrator (shown here as &quot;postgres&quot;), run statements like the following examples:<br />
+<br />
+$ psql -c &quot;REVOKE SELECT ON TABLE test.test_table FROM bob&quot;<br />
+$ psql -c &quot;REVOKE CREATE ON SCHEMA test FROM bob&quot;</p><h2>Check Contents</h2><p>Review system documentation to identify the required discretionary access control (DAC).<br />
+<br />
+Review the security configuration of the database and PostgreSQL. If applicable, review the security configuration of the application(s) using the database.<br />
+<br />
+If the discretionary access control defined in the documentation is not implemented in the security configuration, this is a finding.<br />
+<br />
+If any database objects are found to be owned by users not authorized to own database objects, this is a finding.<br />
+<br />
+To check the ownership of objects in the database, as the database administrator, run the following:<br />
+<br />
+$ sudo su - postgres<br />
+$ psql -X -c '\dnS'<br />
+$ psql -x -c &quot;\dt *.*&quot;<br />
+$ psql -X -c '\dsS'<br />
+$ psql -x -c &quot;\dv *.*&quot;<br />
+$ psql -x -c &quot;\df+ *.*&quot;<br />
+<br />
+If any role is given privileges to objects it should not have, this is a finding.</p><h2>Vulnerability Number</h2><p>V-261914</p><h2>Documentable</h2><p>False</p><h2>Rule Version</h2><p>CD16-00-006700</p><h2>Severity Override Guidance</h2><p>Review system documentation to identify the required discretionary access control (DAC).<br />
+<br />
+Review the security configuration of the database and PostgreSQL. If applicable, review the security configuration of the application(s) using the database.<br />
+<br />
+If the discretionary access control defined in the documentation is not implemented in the security configuration, this is a finding.<br />
+<br />
+If any database objects are found to be owned by users not authorized to own database objects, this is a finding.<br />
+<br />
+To check the ownership of objects in the database, as the database administrator, run the following:<br />
+<br />
+$ sudo su - postgres<br />
+$ psql -X -c '\dnS'<br />
+$ psql -x -c &quot;\dt *.*&quot;<br />
+$ psql -X -c '\dsS'<br />
+$ psql -x -c &quot;\dv *.*&quot;<br />
+$ psql -x -c &quot;\df+ *.*&quot;<br />
+<br />
+If any role is given privileges to objects it should not have, this is a finding.</p><h2>Check Content Reference</h2><p>M</p><h2>Target Key</h2><p>5598</p></body></html>

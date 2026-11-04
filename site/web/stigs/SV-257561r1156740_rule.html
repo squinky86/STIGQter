@@ -1,0 +1,66 @@
+<!doctype html><html lang="en"><head><meta charset="utf-8"><title>STIGQter: STIG Check Details: SV-257561r1156740_rule: OpenShift must prevent the installation of patches, service packs, device drivers, or operating system components without verification they have been digitally signed using a certificate that is recognized and approved by the organization.</title><link rel="icon" type="image/svg+xml" href="STIGQter.svg" /><script async src="https://www.googletagmanager.com/gtag/js?id=UA-31381839-2"></script><script src="include.js"></script><script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-4110907817782130" crossorigin="anonymous"></script></head><body><div><img src="STIGQter.svg" alt="STIGQter" style="height:1em;" /> <a href="https://www.stigqter.com/">STIGQter</a>: <a href="main.html">STIG Summary</a>: <a href="U_RH_OpenShift_Container_Platform_4-x_STIG_V2R6_Manual-xccdf.html">Red Hat OpenShift Container Platform 4.x Security Technical Implementation Guide Version: 2 Release: 6 Benchmark Date: 01 Jul 2026</a>:</div> <h1>OpenShift must prevent the installation of patches, service packs, device drivers, or operating system components without verification they have been digitally signed using a certificate that is recognized and approved by the organization.</h1><h2>DISA Rule</h2><p>SV-257561r1156740_rule</p><h2>Vulnerability Number</h2><p>V-257561</p><h2>Group Title</h2><p>SRG-APP-000384-CTR-000915</p><h2>Rule Version</h2><p>CNTR-OS-000740</p><h2>Severity</h2><p>CAT II</p><h2>CCI(s)</h2><ul><li>CCI-001764 - Prevent program execution in accordance with organization-defined policies, rules of behavior, and/or access agreements regarding software program usage and restrictions; rules authorizing the terms and conditions of software program usage.</li></ul><h2>Weight</h2><p>10</p><h2>Fix Recommendation</h2><p>By default, the integrity of RH CoreOS is checked by cluster version operator on OpenShift platform. If the integrity is not verified, reinstall of the cluster is necessary.<br />
+ <br />
+Refer to instructions:<br />
+https://docs.openshift.com/container-platform/4.10/installing/index.html<br />
+<br />
+Where OpenShift Virtualization is enabled:<br />
+Annotations must be removed from the Hyperconverged by directly editing the object with oc edit hyperconverged kubevirt-hyperconverged -n openshift-cnv or by removing the annotation with the annotate command.<br />
+<br />
+Example:<br />
+$ oc annotate --overwrite -n openshift-cnv hco<br />
+kubevirt-hyperconverged<br />
+'containerizeddataimporter.kubevirt.io/jsonpatch-'</p><h2>Check Contents</h2><p>To verify integrity of the cluster version, execute the following:<br />
+oc get clusterversion version <br />
+ <br />
+If the Cluster Version Operator is not installed or the AVAILABLE is not set to &quot;True&quot;, this is a finding. <br />
+ <br />
+Run the following command to retrieve the Cluster Version objects in the system: <br />
+oc get clusterversion version -o yaml<br />
+ <br />
+If &amp;#039;verified: true&amp;#039;, under status history for each item is not present, this is a finding.<br />
+<br />
+Where OpenShift Virtualization is enabled:<br />
+$ oc get hyperconverged kubevirt-hyperconverged -n openshift-cnv -o<br />
+jsonpath='{.metadata.annotations}'| jq<br />
+'.|has(&quot;kubevirt.kubevirt.io/jsonpatch&quot;)'<br />
+<br />
+$ oc get hyperconverged kubevirt-hyperconverged -n openshift-cnv -o<br />
+jsonpath='{.metadata.annotations}'| jq<br />
+'.|has(&quot;containerizeddataimporter.kubevirt.io/jsonpatch&quot;)'<br />
+<br />
+$ oc get hyperconverged kubevirt-hyperconverged -n openshift-cnv -o<br />
+jsonpath='{.metadata.annotations}'| jq<br />
+'.|has(&quot;networkaddonsconfigs.kubevirt.io/jsonpatch&quot;)'<br />
+<br />
+$ oc get hyperconverged kubevirt-hyperconverged -n openshift-cnv -o<br />
+jsonpath='{.metadata.annotations}'| jq<br />
+'.|has(&quot;ssp.kubevirt.io/jsonpatch&quot;)'<br />
+<br />
+If any results are returned aside from empty strings, this is a finding.</p><h2>Vulnerability Number</h2><p>V-257561</p><h2>Documentable</h2><p>False</p><h2>Rule Version</h2><p>CNTR-OS-000740</p><h2>Severity Override Guidance</h2><p>To verify integrity of the cluster version, execute the following:<br />
+oc get clusterversion version <br />
+ <br />
+If the Cluster Version Operator is not installed or the AVAILABLE is not set to &quot;True&quot;, this is a finding. <br />
+ <br />
+Run the following command to retrieve the Cluster Version objects in the system: <br />
+oc get clusterversion version -o yaml<br />
+ <br />
+If &amp;#039;verified: true&amp;#039;, under status history for each item is not present, this is a finding.<br />
+<br />
+Where OpenShift Virtualization is enabled:<br />
+$ oc get hyperconverged kubevirt-hyperconverged -n openshift-cnv -o<br />
+jsonpath='{.metadata.annotations}'| jq<br />
+'.|has(&quot;kubevirt.kubevirt.io/jsonpatch&quot;)'<br />
+<br />
+$ oc get hyperconverged kubevirt-hyperconverged -n openshift-cnv -o<br />
+jsonpath='{.metadata.annotations}'| jq<br />
+'.|has(&quot;containerizeddataimporter.kubevirt.io/jsonpatch&quot;)'<br />
+<br />
+$ oc get hyperconverged kubevirt-hyperconverged -n openshift-cnv -o<br />
+jsonpath='{.metadata.annotations}'| jq<br />
+'.|has(&quot;networkaddonsconfigs.kubevirt.io/jsonpatch&quot;)'<br />
+<br />
+$ oc get hyperconverged kubevirt-hyperconverged -n openshift-cnv -o<br />
+jsonpath='{.metadata.annotations}'| jq<br />
+'.|has(&quot;ssp.kubevirt.io/jsonpatch&quot;)'<br />
+<br />
+If any results are returned aside from empty strings, this is a finding.</p><h2>Check Content Reference</h2><p>M</p><h2>Target Key</h2><p>5547</p></body></html>

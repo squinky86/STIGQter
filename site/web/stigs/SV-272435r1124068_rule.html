@@ -1,0 +1,96 @@
+<!doctype html><html lang="en"><head><meta charset="utf-8"><title>STIGQter: STIG Check Details: SV-272435r1124068_rule: The BIND 9.x server implementation must uniquely identify and authenticate the other DNS server before responding to a server-to-server transaction, zone transfer, and/or dynamic update request using cryptographically based bidirectional authentication to protect the integrity of the information in transit.</title><link rel="icon" type="image/svg+xml" href="STIGQter.svg" /><script async src="https://www.googletagmanager.com/gtag/js?id=UA-31381839-2"></script><script src="include.js"></script><script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-4110907817782130" crossorigin="anonymous"></script></head><body><div><img src="STIGQter.svg" alt="STIGQter" style="height:1em;" /> <a href="https://www.stigqter.com/">STIGQter</a>: <a href="main.html">STIG Summary</a>: <a href="U_BIND_9-x_STIG_V3R3_Manual-xccdf.html">BIND 9.x Security Technical Implementation Guide Version: 3 Release: 3 Benchmark Date: 01 Jul 2026</a>:</div> <h1>The BIND 9.x server implementation must uniquely identify and authenticate the other DNS server before responding to a server-to-server transaction, zone transfer, and/or dynamic update request using cryptographically based bidirectional authentication to protect the integrity of the information in transit.</h1><h2>DISA Rule</h2><p>SV-272435r1124068_rule</p><h2>Vulnerability Number</h2><p>V-272435</p><h2>Group Title</h2><p>SRG-APP-000439-DNS-000063</p><h2>Rule Version</h2><p>BIND-9X-002010</p><h2>Severity</h2><p>CAT I</p><h2>CCI(s)</h2><ul><li>CCI-002418 - Protect the confidentiality and/or integrity of transmitted information.</li><li>CCI-001958 - Authenticate organization-defined devices and/or types of devices before establishing a local, remote, and/or network connection.</li><li>CCI-001967 - Authenticate organization-defined devices and/or types of devices before establishing a local, remote, and/or network connection using bidirectional authentication that is cryptographically based.</li><li>CCI-002421 - Implement cryptographic mechanisms to prevent unauthorized disclosure of information and/or detect changes to information during transmission.</li><li>CCI-000778 - Uniquely identify organization-defined devices and/or types of devices before establishing a local, remote, and/or network connection.</li></ul><h2>Weight</h2><p>10</p><h2>Fix Recommendation</h2><p>Configure the BIND 9.x server to use TSIG keys.<br />
+<br />
+Add a key statement to the &quot;named.conf&quot; file for TSIG that is being used:<br />
+<br />
+key tsig_example. {<br />
+algorithm hmac-SHA256;<br />
+include &quot;tsig-example.key&quot;;<br />
+};<br />
+<br />
+Add key statements to the allow-transfer statements on a primary name server:<br />
+<br />
+allow-transfer { key tsig_example.; };<br />
+<br />
+Add key statements to the server statements on a secondary name server:<br />
+<br />
+server &lt;ip_address&gt; {<br />
+keys { tsig_example };<br />
+};<br />
+<br />
+Restart the BIND 9.x process.</p><h2>Check Contents</h2><p>If zone transfers are disabled with the &quot;allow-transfer { none; };&quot; directive, this is not applicable.<br />
+<br />
+Verify that the BIND 9.x server is configured to uniquely identify a name server before responding to a zone transfer.<br />
+<br />
+Inspect the &quot;named.conf&quot; file for the presence of TSIG key statements.<br />
+<br />
+On the primary name server, this is an example of a configured key statement:<br />
+<br />
+key tsig_example. {<br />
+algorithm hmac-SHA256;<br />
+include &quot;tsig-example.key&quot;;<br />
+};<br />
+<br />
+zone &quot;disa.mil&quot; {<br />
+type Primary;<br />
+file &quot;db.disa.mil&quot;;<br />
+allow-transfer { key tsig_example.; };<br />
+};<br />
+<br />
+On the secondary name server, this is an example of a configured key statement:<br />
+<br />
+key tsig_example. {<br />
+algorithm hmac-SHA256;<br />
+include &quot;tsig-example.key&quot;;<br />
+};<br />
+<br />
+server &lt;ip_address&gt; {<br />
+keys { tsig_example };<br />
+};<br />
+<br />
+zone &quot;disa.mil&quot; {<br />
+type Secondary;<br />
+Primarys { &lt;ip_address&gt;; };<br />
+file &quot;db.disa.mil&quot;;<br />
+};<br />
+<br />
+If a primary name server does not have a key defined in the &quot;allow-transfer&quot; block, this is a finding.<br />
+<br />
+If a secondary name server does not have a server statement that contains a &quot;keys&quot; sub-statement, this is a finding.</p><h2>Vulnerability Number</h2><p>V-272435</p><h2>Documentable</h2><p>False</p><h2>Rule Version</h2><p>BIND-9X-002010</p><h2>Severity Override Guidance</h2><p>If zone transfers are disabled with the &quot;allow-transfer { none; };&quot; directive, this is not applicable.<br />
+<br />
+Verify that the BIND 9.x server is configured to uniquely identify a name server before responding to a zone transfer.<br />
+<br />
+Inspect the &quot;named.conf&quot; file for the presence of TSIG key statements.<br />
+<br />
+On the primary name server, this is an example of a configured key statement:<br />
+<br />
+key tsig_example. {<br />
+algorithm hmac-SHA256;<br />
+include &quot;tsig-example.key&quot;;<br />
+};<br />
+<br />
+zone &quot;disa.mil&quot; {<br />
+type Primary;<br />
+file &quot;db.disa.mil&quot;;<br />
+allow-transfer { key tsig_example.; };<br />
+};<br />
+<br />
+On the secondary name server, this is an example of a configured key statement:<br />
+<br />
+key tsig_example. {<br />
+algorithm hmac-SHA256;<br />
+include &quot;tsig-example.key&quot;;<br />
+};<br />
+<br />
+server &lt;ip_address&gt; {<br />
+keys { tsig_example };<br />
+};<br />
+<br />
+zone &quot;disa.mil&quot; {<br />
+type Secondary;<br />
+Primarys { &lt;ip_address&gt;; };<br />
+file &quot;db.disa.mil&quot;;<br />
+};<br />
+<br />
+If a primary name server does not have a key defined in the &quot;allow-transfer&quot; block, this is a finding.<br />
+<br />
+If a secondary name server does not have a server statement that contains a &quot;keys&quot; sub-statement, this is a finding.</p><h2>Check Content Reference</h2><p>M</p><h2>Target Key</h2><p>5687</p></body></html>

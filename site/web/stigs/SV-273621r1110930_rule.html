@@ -1,0 +1,111 @@
+<!doctype html><html lang="en"><head><meta charset="utf-8"><title>STIGQter: STIG Check Details: SV-273621r1110930_rule: The RUCKUS ICX router must be configured to implement message authentication for all control plane protocols.</title><link rel="icon" type="image/svg+xml" href="STIGQter.svg" /><script async src="https://www.googletagmanager.com/gtag/js?id=UA-31381839-2"></script><script src="include.js"></script><script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-4110907817782130" crossorigin="anonymous"></script></head><body><div><img src="STIGQter.svg" alt="STIGQter" style="height:1em;" /> <a href="https://www.stigqter.com/">STIGQter</a>: <a href="main.html">STIG Summary</a>: <a href="U_RUCKUS_ICX_RTR_STIG_V1R1_Manual-xccdf.html">RUCKUS ICX Router Security Technical Implementation Guide Version: 1 Release: 1 Benchmark Date: 27 May 2025</a>:</div> <h1>The RUCKUS ICX router must be configured to implement message authentication for all control plane protocols.</h1><h2>DISA Rule</h2><p>SV-273621r1110930_rule</p><h2>Vulnerability Number</h2><p>V-273621</p><h2>Group Title</h2><p>SRG-NET-000230-RTR-000001</p><h2>Rule Version</h2><p>RCKS-RTR-000540</p><h2>Severity</h2><p>CAT II</p><h2>CCI(s)</h2><ul><li>CCI-001184 - Protect the authenticity of communications sessions.</li></ul><h2>Weight</h2><p>10</p><h2>Fix Recommendation</h2><p>Configure authentication for routing protocols:<br />
+<br />
+OSPF:<br />
+<br />
+ICX(config)# keychain mykeychain<br />
+ICX(config-keychain-mykeychain)# key 1<br />
+ICX(config-keychain-mykeychain-key-1)# authentication-algorithm hmac-sha-256<br />
+ICX(config-keychain-mykeychain-key-1)# password pw_for_mykeychain<br />
+ICX(config-keychain-mykeychain-key-1)# send-id 1<br />
+ICX(config-keychain-mykeychain-key-1)# recv-id 1<br />
+ICX(config-keychain-mykeychain-key-1)# accept-lifetime start 03-05-24 10:10:10 end 15552000<br />
+ICX(config-keychain-mykeychain-key-1)# send-lifetime start 03-05-24 10:10:10 end 09-01-24 10:10:10<br />
+<br />
+ICX(config)#router ospf<br />
+ICX(config-ospf-router)#area 0<br />
+<br />
+ICX(config-ospf-router)#interface ethernet 1/1/1<br />
+ICX(config-if-e1000-1/1/1)#ip ospf area 0<br />
+<br />
+ICX(config-if-e1000-1/1/1)#ip ospf authentication keychain mykeychain<br />
+<br />
+BGP:<br />
+<br />
+ICX(config)# keychain mykeychain<br />
+ICX(config-keychain-tcp-mykeychain)# key 1<br />
+ICX(config-keychain-tcp-mykeychain-key-1)# authentication-algorithm aes-128-cmac<br />
+ICX(config-keychain-tcp-mykeychain-key-1)# password pw_for_mykeychain1<br />
+ICX(config-keychain-tcp-mykeychain-key-1)# no accept-ao-mismatch<br />
+ICX(config-keychain-tcp-mykeychain-key-1)# include-tcp-options<br />
+ICX(config-keychain-tcp-mykeychain-key-1)# send-id 1<br />
+ICX(config-keychain-tcp-mykeychain-key-1)# recv-id 1<br />
+ICX(config-keychain-tcp-mykeychain-key-1)# accept-lifetime start 03-05-24 10:10:10 end 15552000<br />
+  ! above for 180 days (in sec)<br />
+ICX(config-keychain-tcp-mykeychain-key-1)# send-lifetime start 03-05-24 10:10:10 end 09-01-24 10:10:10<br />
+<br />
+ICX(config)# router bgp<br />
+ICX(config-bgp-router)# local-as 1001<br />
+ICX(config-bgp-router)# neighbor x.0.0.1 remote-as 10<br />
+ICX(config-bgp-router)#neighbor x.0.0.1 ao mykeychain</p><h2>Check Contents</h2><p>Review the router configuration. Verify neighbor router authentication is enabled for all routing protocols. The configuration examples below depicts OSPF and BGP authentication.<br />
+<br />
+OSPF:<br />
+<br />
+keychain mykeychain<br />
+ key-id 1<br />
+  password 2 $b2I9LT0tQGk2Mg==<br />
+  authentication-algorithm hmac-sha-256<br />
+  send-lifetime start 03-05-2024 00:00:00 end 09-01-2024 00:00:00<br />
+  accept-lifetime start 03-05-2024 00:00:00 end 09-01-2024 00:00:00<br />
+ !<br />
+<br />
+interface ethernet 1/1/1<br />
+ ip address x.x.x.x x.x.x.x<br />
+ ip ospf area 0<br />
+ ip ospf authentication keychain mykeychain<br />
+!<br />
+<br />
+BGP:<br />
+<br />
+keychain mykeychain tcp<br />
+ key-id 1<br />
+  password 2 $Nlx9UyEtLVNiVSEtbn0ic24tfWJuVW4=<br />
+  authentication-algorithm aes-128-cmac<br />
+  send-lifetime start 03-05-2024 00:00:00 end 09-01-2024 00:00:00<br />
+  accept-lifetime start 03-05-2024 00:00:00 end 09-01-2024 00:00:00<br />
+  no accept-ao-mismatch<br />
+  send-id 1<br />
+  recv-id 1<br />
+ !<br />
+!<br />
+router bgp<br />
+ local-as 1001<br />
+ neighbor x.0.0.1 remote-as 10<br />
+ neighbor x.0.0.1 ao mykeychain<br />
+<br />
+If authentication is not enabled on all routing protocols, this is a finding.</p><h2>Vulnerability Number</h2><p>V-273621</p><h2>Documentable</h2><p>False</p><h2>Rule Version</h2><p>RCKS-RTR-000540</p><h2>Severity Override Guidance</h2><p>Review the router configuration. Verify neighbor router authentication is enabled for all routing protocols. The configuration examples below depicts OSPF and BGP authentication.<br />
+<br />
+OSPF:<br />
+<br />
+keychain mykeychain<br />
+ key-id 1<br />
+  password 2 $b2I9LT0tQGk2Mg==<br />
+  authentication-algorithm hmac-sha-256<br />
+  send-lifetime start 03-05-2024 00:00:00 end 09-01-2024 00:00:00<br />
+  accept-lifetime start 03-05-2024 00:00:00 end 09-01-2024 00:00:00<br />
+ !<br />
+<br />
+interface ethernet 1/1/1<br />
+ ip address x.x.x.x x.x.x.x<br />
+ ip ospf area 0<br />
+ ip ospf authentication keychain mykeychain<br />
+!<br />
+<br />
+BGP:<br />
+<br />
+keychain mykeychain tcp<br />
+ key-id 1<br />
+  password 2 $Nlx9UyEtLVNiVSEtbn0ic24tfWJuVW4=<br />
+  authentication-algorithm aes-128-cmac<br />
+  send-lifetime start 03-05-2024 00:00:00 end 09-01-2024 00:00:00<br />
+  accept-lifetime start 03-05-2024 00:00:00 end 09-01-2024 00:00:00<br />
+  no accept-ao-mismatch<br />
+  send-id 1<br />
+  recv-id 1<br />
+ !<br />
+!<br />
+router bgp<br />
+ local-as 1001<br />
+ neighbor x.0.0.1 remote-as 10<br />
+ neighbor x.0.0.1 ao mykeychain<br />
+<br />
+If authentication is not enabled on all routing protocols, this is a finding.</p><h2>Check Content Reference</h2><p>M</p><h2>Target Key</h2><p>5696</p></body></html>

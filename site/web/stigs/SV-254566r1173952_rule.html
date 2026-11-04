@@ -1,0 +1,72 @@
+<!doctype html><html lang="en"><head><meta charset="utf-8"><title>STIGQter: STIG Check Details: SV-254566r1173952_rule: Rancher RKE2 runtime must enforce ports, protocols, and services that adhere to the PPSM CAL.</title><link rel="icon" type="image/svg+xml" href="STIGQter.svg" /><script async src="https://www.googletagmanager.com/gtag/js?id=UA-31381839-2"></script><script src="include.js"></script><script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-4110907817782130" crossorigin="anonymous"></script></head><body><div><img src="STIGQter.svg" alt="STIGQter" style="height:1em;" /> <a href="https://www.stigqter.com/">STIGQter</a>: <a href="main.html">STIG Summary</a>: <a href="U_RGS_RKE2_STIG_V2R7_Manual-xccdf.html">Rancher Government Solutions RKE2 Security Technical Implementation Guide Version: 2 Release: 7 Benchmark Date: 01 Jul 2026</a>:</div> <h1>Rancher RKE2 runtime must enforce ports, protocols, and services that adhere to the PPSM CAL.</h1><h2>DISA Rule</h2><p>SV-254566r1173952_rule</p><h2>Vulnerability Number</h2><p>V-254566</p><h2>Group Title</h2><p>SRG-APP-000142-CTR-000325</p><h2>Rule Version</h2><p>CNTR-R2-000580</p><h2>Severity</h2><p>CAT II</p><h2>CCI(s)</h2><ul><li>CCI-000382 - Configure the system to prohibit or restrict the use of organization-defined prohibited or restricted functions, system ports, protocols, software, and/or services.</li><li>CCI-001762 - Disable or remove organization-defined functions, ports, protocols, software, and services within the system deemed to be unnecessary and/or nonsecure.</li></ul><h2>Weight</h2><p>10</p><h2>Fix Recommendation</h2><p>Review the documentation covering how to set these PPSs and update this configuration file:<br />
+<br />
+/etc/rancher/rke2/config.yaml<br />
+<br />
+Once the configuration file is updated, restart the RKE2 Server. Run the command:<br />
+systemctl restart rke2-server</p><h2>Check Contents</h2><p>Check Ports, Protocols, and Services (PPS).<br />
+Change to the /var/lib/rancher/rke2/agent/pod-manifests directory on the Kubernetes RKE2 Control Plane. <br />
+Run the command:<br />
+grep kube-apiserver.yaml -I -insecure-port<br />
+grep kube-apiserver.yaml -I -secure-port<br />
+grep kube-apiserver.yaml -I -etcd-servers *<br />
+<br />
+Review findings against the most recent PPSM CAL:<br />
+https://cyber.mil/ppsm/cal/<br />
+<br />
+Any manifest and namespace PPS or services configuration not in compliance with PPSM CAL or otherwise approved by the information system security officer (ISSO) is a finding.<br />
+<br />
+If there are any ports, protocols, and services in the system documentation not in compliance with the CAL PPSM or otherwise been approved by the ISSO, this is a finding. <br />
+<br />
+Any PPS not set in the system documentation or the RKE2 documentation (https://docs.rke2.io/install/requirements?_highlight=ports#networking) is a finding.<br />
+<br />
+Verify API Server network boundary with the PPS associated with the CAL Assurance Categories. Any PPS not in compliance with the CAL Assurance Category requirements or otherwise approved by the ISSO is a finding.<br />
+<br />
+Review findings against the most recent PPSM CAL:<br />
+https://cyber.mil/ppsm/cal/<br />
+<br />
+Running these commands individually will show what ports are currently configured to be used by each of the core components. Inspect this output and verify only proper ports are being utilized. If any ports not defined as the proper ports are being used, this is a finding.<br />
+<br />
+/var/lib/rancher/rke2/bin/kubectl get po -n kube-system -l component=kube-controller-manager -o=jsonpath=&quot;{.items[*].spec.containers[*].args}&quot;<br />
+<br />
+/var/lib/rancher/rke2/bin/kubectl get po -n kube-system -l component=kube-scheduler -o=jsonpath=&quot;{.items[*].spec.containers[*].args}&quot;<br />
+<br />
+/var/lib/rancher/rke2/bin/kubectl get po -n kube-system -l component=kube-apiserver -o=jsonpath=&quot;{.items[*].spec.containers[*].args}&quot; | grep tls-min-version<br />
+<br />
+Verify user pods:<br />
+User pods must be inspected to verify compliance on a case-by-case basis.<br />
+cat /var/lib/rancher/rke2/server/db/etcd/config<br />
+<br />
+If any ports not defined as the proper ports are being used or otherwise approved by the ISSO, this is a finding.</p><h2>Vulnerability Number</h2><p>V-254566</p><h2>Documentable</h2><p>False</p><h2>Rule Version</h2><p>CNTR-R2-000580</p><h2>Severity Override Guidance</h2><p>Check Ports, Protocols, and Services (PPS).<br />
+Change to the /var/lib/rancher/rke2/agent/pod-manifests directory on the Kubernetes RKE2 Control Plane. <br />
+Run the command:<br />
+grep kube-apiserver.yaml -I -insecure-port<br />
+grep kube-apiserver.yaml -I -secure-port<br />
+grep kube-apiserver.yaml -I -etcd-servers *<br />
+<br />
+Review findings against the most recent PPSM CAL:<br />
+https://cyber.mil/ppsm/cal/<br />
+<br />
+Any manifest and namespace PPS or services configuration not in compliance with PPSM CAL or otherwise approved by the information system security officer (ISSO) is a finding.<br />
+<br />
+If there are any ports, protocols, and services in the system documentation not in compliance with the CAL PPSM or otherwise been approved by the ISSO, this is a finding. <br />
+<br />
+Any PPS not set in the system documentation or the RKE2 documentation (https://docs.rke2.io/install/requirements?_highlight=ports#networking) is a finding.<br />
+<br />
+Verify API Server network boundary with the PPS associated with the CAL Assurance Categories. Any PPS not in compliance with the CAL Assurance Category requirements or otherwise approved by the ISSO is a finding.<br />
+<br />
+Review findings against the most recent PPSM CAL:<br />
+https://cyber.mil/ppsm/cal/<br />
+<br />
+Running these commands individually will show what ports are currently configured to be used by each of the core components. Inspect this output and verify only proper ports are being utilized. If any ports not defined as the proper ports are being used, this is a finding.<br />
+<br />
+/var/lib/rancher/rke2/bin/kubectl get po -n kube-system -l component=kube-controller-manager -o=jsonpath=&quot;{.items[*].spec.containers[*].args}&quot;<br />
+<br />
+/var/lib/rancher/rke2/bin/kubectl get po -n kube-system -l component=kube-scheduler -o=jsonpath=&quot;{.items[*].spec.containers[*].args}&quot;<br />
+<br />
+/var/lib/rancher/rke2/bin/kubectl get po -n kube-system -l component=kube-apiserver -o=jsonpath=&quot;{.items[*].spec.containers[*].args}&quot; | grep tls-min-version<br />
+<br />
+Verify user pods:<br />
+User pods must be inspected to verify compliance on a case-by-case basis.<br />
+cat /var/lib/rancher/rke2/server/db/etcd/config<br />
+<br />
+If any ports not defined as the proper ports are being used or otherwise approved by the ISSO, this is a finding.</p><h2>Check Content Reference</h2><p>M</p><h2>Target Key</h2><p>5486</p></body></html>

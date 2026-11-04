@@ -1,0 +1,71 @@
+<!doctype html><html lang="en"><head><meta charset="utf-8"><title>STIGQter: STIG Check Details: SV-284254r1223995_rule: The Omnissa WS1 UEM server must be configured to use a directory service for centralized account management.</title><link rel="icon" type="image/svg+xml" href="STIGQter.svg" /><script async src="https://www.googletagmanager.com/gtag/js?id=UA-31381839-2"></script><script src="include.js"></script><script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-4110907817782130" crossorigin="anonymous"></script></head><body><div><img src="STIGQter.svg" alt="STIGQter" style="height:1em;" /> <a href="https://www.stigqter.com/">STIGQter</a>: <a href="main.html">STIG Summary</a>: <a href="U_Omnissa_WS1_UEM_Server_STIG_V1R1_Manual-xccdf.html">Omnissa WS1 UEM Server Security Technical Implementation Guide Version: 1 Release: 1 Benchmark Date: 26 May 2026</a>:</div> <h1>The Omnissa WS1 UEM server must be configured to use a directory service for centralized account management.</h1><h2>DISA Rule</h2><p>SV-284254r1223995_rule</p><h2>Vulnerability Number</h2><p>V-284254</p><h2>Group Title</h2><p>SRG-APP-000023-UEM-000012</p><h2>Rule Version</h2><p>OMW1-00-000600</p><h2>Severity</h2><p>CAT II</p><h2>CCI(s)</h2><ul><li>CCI-000015 - Support the management of system accounts using (organization-defined automated mechanisms).</li><li>CCI-000017 - Disable accounts when the accounts have been inactive for the organization-defined time-period.</li><li>CCI-000764 - Uniquely identify and authenticate organizational users and associate that unique identification with processes acting on behalf of those users.</li><li>CCI-000765 - Implement multifactor authentication for network access to privileged accounts.</li><li>CCI-002130 - Automatically audit account enabling actions.</li><li>CCI-002238 - Automatically lock the account or node for either an organization-defined time period, until the locked account or node is released by an administrator, or delays the next logon prompt according to the organization-defined delay algorithm when the maximum number of unsuccessful logon attempts is exceeded.</li><li>CCI-002007 - Prohibit the use of cached authenticators after an organization-defined time period.</li><li>CCI-004045 - Require users to be individually authenticated before granting access to the shared accounts or resources.</li><li>CCI-001941 - Implement replay-resistant authentication mechanisms for access to privileged accounts and/or non-privileged accounts.</li><li>CCI-004068 - For public key-based authentication, implement a local cache of revocation data to support path discovery and validation.</li></ul><h2>Weight</h2><p>10</p><h2>Fix Recommendation</h2><p>1. Set up directory service integration. <br />
+a. Authenticate to the Workspace ONE UEM console as an administrator. <br />
+b. Navigate to Groups &amp; Settings &gt;&gt; All Settings &gt;&gt; System &gt;&gt; Enterprise Integration &gt;&gt; Directory Services. Select &quot;Skip wizard and configure manually&quot;. <br />
+c. Under the &quot;Server&quot; tab, complete the directory service connection information. This will be site-specific. Consult Omnissa documentation for &quot;Directory Services Setup&quot; for details. <br />
+d. Click &quot;Save&quot;. <br />
+<br />
+2. Require that device enrollment only uses directory service authentication. <br />
+a. Navigate to Groups &amp; Settings &gt;&gt; All Settings &gt;&gt; Devices and Users &gt;&gt; General &gt;&gt; Enrollment. <br />
+b. Under the &quot;Authentication&quot; tab, find the &quot;Authentication Modes&quot; setting. <br />
+c. Ensure that &quot;Directory&quot; is the one and only checked box. <br />
+d. Click &quot;Save&quot;. <br />
+ <br />
+3. Remove all admin accounts that are not the &quot;break-glass&quot; account. <br />
+a. Navigate to Accounts &gt;&gt; Administrators &gt;&gt; List View. <br />
+b. For each user with an &quot;Admin Type&quot; of &quot;Basic&quot; that is NOT the &quot;break-glass&quot; account, select the three vertical dots next to that user and then select &quot;Delete&quot;. <br />
+c. Click &quot;Delete&quot; when prompted to confirm. <br />
+ <br />
+4. Remove all users that are not centrally managed by a directory service. <br />
+a. Navigate to Accounts &gt;&gt; Users &gt;&gt; List View. <br />
+b. Click &quot;Layout&quot; and select &quot;Custom&quot;. <br />
+c. For each user with a &quot;Security Type&quot; of &quot;Basic&quot;, select the checkbox next to the user. <br />
+d. Click &quot;More Actions&quot;, then click &quot;Delete&quot;. <br />
+e. To confirm, click &quot;Save&quot; when prompted.</p><h2>Check Contents</h2><p>1. Verify directory service integration. <br />
+a. Authenticate to the Workspace ONE UEM console as an administrator. <br />
+b. Navigate to Groups &amp; Settings &gt;&gt; All Settings &gt;&gt; System &gt;&gt; Enterprise Integration &gt;&gt; Directory Services. Select &quot;Skip wizard and configure manually&quot;. <br />
+c. Under the &quot;Server&quot; tab, verify directory service connection information. <br />
+ <br />
+If no valid directory service is configured, this is a finding. <br />
+ <br />
+In the bottom right, click &quot;Test Connection&quot;. <br />
+ <br />
+If the test is not successful, this is a finding. <br />
+ <br />
+2. Validate that device enrollment uses directory service authentication only. <br />
+a. Navigate to Groups &amp; Settings &gt;&gt; All Settings &gt;&gt; Devices and Users &gt;&gt; General &gt;&gt; Enrollment. <br />
+b. Under the &quot;Authentication&quot; tab, find the &quot;Authentication Modes&quot; setting. <br />
+ <br />
+If &quot;Directory&quot; is not the one and only checked box, this is a finding. <br />
+ <br />
+3. Validate there is only one &quot;break-glass&quot; local admin configured. <br />
+a. Navigate to Accounts &gt;&gt; Administrators &gt;&gt; List View. <br />
+b. Review account types under the &quot;Admin Type&quot; column. If any users have an &quot;Admin Type&quot; of &quot;Basic&quot;, outside of a single &quot;break-glass&quot; admin, this is a finding. <br />
+ <br />
+4. Validate that all users are centrally managed by a directory service. <br />
+a. Navigate to Accounts &gt;&gt; Users &gt;&gt; List View. <br />
+b. Click &quot;Layout&quot; and select &quot;Custom&quot;. <br />
+c. Under the &quot;Security Type&quot; column, if any &quot;Basic&quot; accounts are listed, this is a finding.</p><h2>Vulnerability Number</h2><p>V-284254</p><h2>Documentable</h2><p>False</p><h2>Rule Version</h2><p>OMW1-00-000600</p><h2>Severity Override Guidance</h2><p>1. Verify directory service integration. <br />
+a. Authenticate to the Workspace ONE UEM console as an administrator. <br />
+b. Navigate to Groups &amp; Settings &gt;&gt; All Settings &gt;&gt; System &gt;&gt; Enterprise Integration &gt;&gt; Directory Services. Select &quot;Skip wizard and configure manually&quot;. <br />
+c. Under the &quot;Server&quot; tab, verify directory service connection information. <br />
+ <br />
+If no valid directory service is configured, this is a finding. <br />
+ <br />
+In the bottom right, click &quot;Test Connection&quot;. <br />
+ <br />
+If the test is not successful, this is a finding. <br />
+ <br />
+2. Validate that device enrollment uses directory service authentication only. <br />
+a. Navigate to Groups &amp; Settings &gt;&gt; All Settings &gt;&gt; Devices and Users &gt;&gt; General &gt;&gt; Enrollment. <br />
+b. Under the &quot;Authentication&quot; tab, find the &quot;Authentication Modes&quot; setting. <br />
+ <br />
+If &quot;Directory&quot; is not the one and only checked box, this is a finding. <br />
+ <br />
+3. Validate there is only one &quot;break-glass&quot; local admin configured. <br />
+a. Navigate to Accounts &gt;&gt; Administrators &gt;&gt; List View. <br />
+b. Review account types under the &quot;Admin Type&quot; column. If any users have an &quot;Admin Type&quot; of &quot;Basic&quot;, outside of a single &quot;break-glass&quot; admin, this is a finding. <br />
+ <br />
+4. Validate that all users are centrally managed by a directory service. <br />
+a. Navigate to Accounts &gt;&gt; Users &gt;&gt; List View. <br />
+b. Click &quot;Layout&quot; and select &quot;Custom&quot;. <br />
+c. Under the &quot;Security Type&quot; column, if any &quot;Basic&quot; accounts are listed, this is a finding.</p><h2>Check Content Reference</h2><p>M</p><h2>Target Key</h2><p>5751</p></body></html>

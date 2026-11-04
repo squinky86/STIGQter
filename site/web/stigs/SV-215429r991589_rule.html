@@ -1,0 +1,208 @@
+<!doctype html><html lang="en"><head><meta charset="utf-8"><title>STIGQter: STIG Check Details: SV-215429r991589_rule: AIX must not process ICMP timestamp requests.</title><link rel="icon" type="image/svg+xml" href="STIGQter.svg" /><script async src="https://www.googletagmanager.com/gtag/js?id=UA-31381839-2"></script><script src="include.js"></script><script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-4110907817782130" crossorigin="anonymous"></script></head><body><div><img src="STIGQter.svg" alt="STIGQter" style="height:1em;" /> <a href="https://www.stigqter.com/">STIGQter</a>: <a href="main.html">STIG Summary</a>: <a href="U_IBM_AIX_7-x_STIG_V3R3_Manual-xccdf.html">IBM AIX 7.x Security Technical Implementation Guide Version: 3 Release: 3 Benchmark Date: 01 Jul 2026</a>:</div> <h1>AIX must not process ICMP timestamp requests.</h1><h2>DISA Rule</h2><p>SV-215429r991589_rule</p><h2>Vulnerability Number</h2><p>V-215429</p><h2>Group Title</h2><p>SRG-OS-000480-GPOS-00227</p><h2>Rule Version</h2><p>AIX7-00-003134</p><h2>Severity</h2><p>CAT II</p><h2>CCI(s)</h2><ul><li>CCI-000366 - Implement the security configuration settings.</li></ul><h2>Weight</h2><p>10</p><h2>Fix Recommendation</h2><p>From the command prompt, run the following commands to create and activate &quot;ipsec_v4&quot; and &quot;ipsec_v6&quot; devices:<br />
+# mkdev -l ipsec -t 4<br />
+# mkdev -l ipsec -t 6<br />
+<br />
+Run the following commands to create 2 IPsec rules to block the ICMP timestamp request and reply:<br />
+# genfilt -v 4 -a D -s 0 -m 0 -d 0 -M 0 -c icmp -O eq -P 13 -r B -w I -i all<br />
+# genfilt -v 4 -a D -s 0 -m 0 -d 0 -M 0 -c icmp -o eq -p 14 -r B -w O -i all<br />
+<br />
+From the command prompt, run the following command to activate all the filter rules in the rule database:<br />
+# mkfilt -u</p><h2>Check Contents</h2><p>From the command prompt, run the following command to check if &quot;ipsec_v4&quot; and &quot;ipsec_v6&quot; devices are active:<br />
+# lsdev -Cc ipsec<br />
+<br />
+The above command should yield the following output:<br />
+ipsec_v4 Available  IP Version 4 Security Extension<br />
+ipsec_v6 Available  IP Version 6 Security Extension<br />
+<br />
+If &quot;ipsec_v4&quot; or &quot;ipsec_v6&quot; is not displayed, or it is not in &quot;Available&quot; state, this is a finding.<br />
+<br />
+Determine if the system is configured to respond to ICMP Timestamp requests using the following command: <br />
+# lsfilt<br />
+<br />
+Beginning of IPv4 filter rules.<br />
+Rule 1:<br />
+Rule action         : permit<br />
+Source Address      : 0.0.0.0<br />
+Source Mask         : 0.0.0.0<br />
+Destination Address : 0.0.0.0<br />
+Destination Mask    : 0.0.0.0<br />
+Source Routing      : no<br />
+Protocol            : udp<br />
+Source Port         : eq  4001<br />
+Destination Port    : eq  4001<br />
+Scope               : both<br />
+Direction           : both<br />
+Logging control     : no<br />
+Fragment control    : all packets<br />
+Tunnel ID number    : 0<br />
+Interface           : all<br />
+Auto-Generated      : yes<br />
+Expiration Time     : 0<br />
+Description         : Default Rule<br />
+<br />
+Rule 2:<br />
+*** Dynamic filter placement rule for IKE tunnels ***<br />
+Logging control     : no<br />
+<br />
+Rule 3:<br />
+Rule action         : deny<br />
+Source Address      : 0.0.0.0<br />
+Source Mask         : 0.0.0.0<br />
+Destination Address : 0.0.0.0<br />
+Destination Mask    : 0.0.0.0<br />
+Source Routing      : yes<br />
+Protocol            : icmp<br />
+ICMP type           : any 0<br />
+ICMP code           : eq  13<br />
+Scope               : both<br />
+Direction           : inbound<br />
+Logging control     : no<br />
+Fragment control    : all packets<br />
+Tunnel ID number    : 0<br />
+Interface           : all<br />
+Auto-Generated      : no<br />
+Expiration Time     : 0<br />
+Description         : <br />
+<br />
+Rule 4:<br />
+Rule action         : deny<br />
+Source Address      : 0.0.0.0<br />
+Source Mask         : 0.0.0.0<br />
+Destination Address : 0.0.0.0<br />
+Destination Mask    : 0.0.0.0<br />
+Source Routing      : yes<br />
+Protocol            : icmp<br />
+ICMP type           : eq  14<br />
+ICMP code           : any 0<br />
+Scope               : both<br />
+Direction           : outbound<br />
+Logging control     : no<br />
+Fragment control    : all packets<br />
+Tunnel ID number    : 0<br />
+Interface           : all<br />
+Auto-Generated      : no<br />
+Expiration Time     : 0<br />
+Description         : <br />
+<br />
+Rule 0:<br />
+Rule action         : permit<br />
+Source Address      : 0.0.0.0<br />
+Source Mask         : 0.0.0.0<br />
+Destination Address : 0.0.0.0<br />
+Destination Mask    : 0.0.0.0<br />
+Source Routing      : yes<br />
+Protocol            : all<br />
+Source Port         : any 0<br />
+Destination Port    : any 0<br />
+Scope               : both<br />
+Direction           : both<br />
+Logging control     : no<br />
+Fragment control    : all packets<br />
+Tunnel ID number    : 0<br />
+Interface           : all<br />
+Auto-Generated      : no<br />
+Expiration Time     : 0<br />
+Description         : Default Rule<br />
+<br />
+End of IPv4 filter rules.<br />
+<br />
+If there is no rule blocking ICMP packet type of &quot;13&quot; and ICMP packet type of &quot;14&quot; (rule #3 and rule #4 above), this is a finding.</p><h2>Vulnerability Number</h2><p>V-215429</p><h2>Documentable</h2><p>False</p><h2>Rule Version</h2><p>AIX7-00-003134</p><h2>Severity Override Guidance</h2><p>From the command prompt, run the following command to check if &quot;ipsec_v4&quot; and &quot;ipsec_v6&quot; devices are active:<br />
+# lsdev -Cc ipsec<br />
+<br />
+The above command should yield the following output:<br />
+ipsec_v4 Available  IP Version 4 Security Extension<br />
+ipsec_v6 Available  IP Version 6 Security Extension<br />
+<br />
+If &quot;ipsec_v4&quot; or &quot;ipsec_v6&quot; is not displayed, or it is not in &quot;Available&quot; state, this is a finding.<br />
+<br />
+Determine if the system is configured to respond to ICMP Timestamp requests using the following command: <br />
+# lsfilt<br />
+<br />
+Beginning of IPv4 filter rules.<br />
+Rule 1:<br />
+Rule action         : permit<br />
+Source Address      : 0.0.0.0<br />
+Source Mask         : 0.0.0.0<br />
+Destination Address : 0.0.0.0<br />
+Destination Mask    : 0.0.0.0<br />
+Source Routing      : no<br />
+Protocol            : udp<br />
+Source Port         : eq  4001<br />
+Destination Port    : eq  4001<br />
+Scope               : both<br />
+Direction           : both<br />
+Logging control     : no<br />
+Fragment control    : all packets<br />
+Tunnel ID number    : 0<br />
+Interface           : all<br />
+Auto-Generated      : yes<br />
+Expiration Time     : 0<br />
+Description         : Default Rule<br />
+<br />
+Rule 2:<br />
+*** Dynamic filter placement rule for IKE tunnels ***<br />
+Logging control     : no<br />
+<br />
+Rule 3:<br />
+Rule action         : deny<br />
+Source Address      : 0.0.0.0<br />
+Source Mask         : 0.0.0.0<br />
+Destination Address : 0.0.0.0<br />
+Destination Mask    : 0.0.0.0<br />
+Source Routing      : yes<br />
+Protocol            : icmp<br />
+ICMP type           : any 0<br />
+ICMP code           : eq  13<br />
+Scope               : both<br />
+Direction           : inbound<br />
+Logging control     : no<br />
+Fragment control    : all packets<br />
+Tunnel ID number    : 0<br />
+Interface           : all<br />
+Auto-Generated      : no<br />
+Expiration Time     : 0<br />
+Description         : <br />
+<br />
+Rule 4:<br />
+Rule action         : deny<br />
+Source Address      : 0.0.0.0<br />
+Source Mask         : 0.0.0.0<br />
+Destination Address : 0.0.0.0<br />
+Destination Mask    : 0.0.0.0<br />
+Source Routing      : yes<br />
+Protocol            : icmp<br />
+ICMP type           : eq  14<br />
+ICMP code           : any 0<br />
+Scope               : both<br />
+Direction           : outbound<br />
+Logging control     : no<br />
+Fragment control    : all packets<br />
+Tunnel ID number    : 0<br />
+Interface           : all<br />
+Auto-Generated      : no<br />
+Expiration Time     : 0<br />
+Description         : <br />
+<br />
+Rule 0:<br />
+Rule action         : permit<br />
+Source Address      : 0.0.0.0<br />
+Source Mask         : 0.0.0.0<br />
+Destination Address : 0.0.0.0<br />
+Destination Mask    : 0.0.0.0<br />
+Source Routing      : yes<br />
+Protocol            : all<br />
+Source Port         : any 0<br />
+Destination Port    : any 0<br />
+Scope               : both<br />
+Direction           : both<br />
+Logging control     : no<br />
+Fragment control    : all packets<br />
+Tunnel ID number    : 0<br />
+Interface           : all<br />
+Auto-Generated      : no<br />
+Expiration Time     : 0<br />
+Description         : Default Rule<br />
+<br />
+End of IPv4 filter rules.<br />
+<br />
+If there is no rule blocking ICMP packet type of &quot;13&quot; and ICMP packet type of &quot;14&quot; (rule #3 and rule #4 above), this is a finding.</p><h2>Check Content Reference</h2><p>M</p><h2>Target Key</h2><p>4012</p></body></html>

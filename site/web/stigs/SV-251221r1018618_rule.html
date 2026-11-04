@@ -1,0 +1,62 @@
+<!doctype html><html lang="en"><head><meta charset="utf-8"><title>STIGQter: STIG Check Details: SV-251221r1018618_rule: Redis Enterprise DBMS must require users to reauthenticate when organization-defined circumstances or situations require reauthentication.</title><link rel="icon" type="image/svg+xml" href="STIGQter.svg" /><script async src="https://www.googletagmanager.com/gtag/js?id=UA-31381839-2"></script><script src="include.js"></script><script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-4110907817782130" crossorigin="anonymous"></script></head><body><div><img src="STIGQter.svg" alt="STIGQter" style="height:1em;" /> <a href="https://www.stigqter.com/">STIGQter</a>: <a href="main.html">STIG Summary</a>: <a href="U_Redis_Enterprise_6-x_STIG_V2R2_Manual-xccdf.html">Redis Enterprise 6.x Security Technical Implementation Guide Version: 2 Release: 2 Benchmark Date: 24 Oct 2024</a>:</div> <h1>Redis Enterprise DBMS must require users to reauthenticate when organization-defined circumstances or situations require reauthentication.</h1><h2>DISA Rule</h2><p>SV-251221r1018618_rule</p><h2>Vulnerability Number</h2><p>V-251221</p><h2>Group Title</h2><p>SRG-APP-000389-DB-000372</p><h2>Rule Version</h2><p>RD6X-00-008500</p><h2>Severity</h2><p>CAT II</p><h2>CCI(s)</h2><ul><li>CCI-004895 - Permit users to invoke the trusted communications path for communications between the user and the organization-defined security functions, including at a minimum, authentication and re-authentication.</li></ul><h2>Weight</h2><p>10</p><h2>Fix Recommendation</h2><p>Confirm with information owner any circumstances under which a user is required to reauthenticate. If any exist, confirm they are properly documented.<br />
+<br />
+Configure Redis Enterprise settings to meet organizationally defined requirements:<br />
+User account security <br />
+<br />
+To ensure user accounts are secured and not misused, RS supports enforcement of:<br />
+- Password complexity<br />
+- Password expiration<br />
+- Account lock on failed attempts<br />
+- Account inactivity timeout<br />
+<br />
+To enforce a more advanced password policy that meets the desired contractual and compliance requirements and associated organizational policies, it is recommend to use LDAP integration with an external identity provider, such as Active Directory.<br />
+<br />
+Resetting user passwords: <br />
+To reset a user password from the CLI, run:<br />
+rladmin cluster reset_password &lt;username&gt;<br />
+<br />
+The user is asked to enter and confirm the new password.<br />
+<br />
+Setting up local password complexity:<br />
+RS allows for enforcement of a password complexity profile that meets most organizational needs. The password complexity profile is defined by:<br />
+- At least 8 characters<br />
+- At least one uppercase character<br />
+- At least one lowercase character<br />
+- At least one number (not first or last character)<br />
+- At least one special character (not first or last character)<br />
+- Does not contain the User ID or reverse of the User ID<br />
+- No more than three repeating characters<br />
+Note: The password complexity profile applies to when a new user is added or an existing user changes their password.<br />
+<br />
+To enforce the password complexity profile, run:<br />
+curl -k -X PUT -v -H &quot;cache-control: no-cache&quot; -H &quot;content-type: application/json&quot; -u &quot;&lt;administrator-user-email&gt;:&lt;password&gt;&quot; -d '{&quot;password_complexity&quot;:true}' https://&lt;RS_server_address&gt;:9443/v1/cluster<br />
+<br />
+Setting local user password expiration: <br />
+RS allows for enforced password expiration to meet compliance and contractual requirements. To enforce an expiration of a local user password after a specified number of days, run:<br />
+curl -k -X PUT -v -H &quot;cache-control: no-cache&quot; -H &quot;content-type: application/json&quot; -u &quot;&lt;administrator_user&gt;:&lt;password&gt;&quot; -d '{&quot;password_expiration_duration&quot;:&lt;number_of_days&gt;}' https://&lt;RS_server_address&gt;:9443/v1/cluster<br />
+To disable password expiration, set the number of days to 0.<br />
+<br />
+Account lock on failed attempts: <br />
+To prevent unauthorized access to RS, organizations may enforce account lockout after a specified number of failed login attempts.<br />
+<br />
+Session timeout: <br />
+When logging in to the web UI, the account is automatically logged out after 15 minutes of inactivity.<br />
+<br />
+To change the duration of inactivity that causes the timeout:<br />
+From rladmin, run: rladmin cluster config cm_session_timeout_minutes &lt;minutes&gt;<br />
+<br />
+From the REST API, run:<br />
+curl --request PUT \<br />
+  --url https://localhost:9443/v1/cluster \<br />
+  --header 'content-type: application/json' \<br />
+  --data '{<br />
+&quot;cm_session_timeout_minutes&quot;: &lt;minutes&gt;<br />
+}'</p><h2>Check Contents</h2><p>Review the system documentation and the configuration of Redis Enterprise and related applications and tools.<br />
+<br />
+If the information owner has identified additional cases where reauthentication is needed, but there are circumstances where the system does not ask the user to reauthenticate when those cases occur, this is a finding.<br />
+<br />
+Redis Enterprise requires users to reauthenticate after the configured time-out period has been met, but does not require reauthentication when permissions are updated; permissions are automatically updated and applied on both the database and the Redis Enterprise web UI. Only admin users can modify privileges and roles.</p><h2>Vulnerability Number</h2><p>V-251221</p><h2>Documentable</h2><p>False</p><h2>Rule Version</h2><p>RD6X-00-008500</p><h2>Severity Override Guidance</h2><p>Review the system documentation and the configuration of Redis Enterprise and related applications and tools.<br />
+<br />
+If the information owner has identified additional cases where reauthentication is needed, but there are circumstances where the system does not ask the user to reauthenticate when those cases occur, this is a finding.<br />
+<br />
+Redis Enterprise requires users to reauthenticate after the configured time-out period has been met, but does not require reauthentication when permissions are updated; permissions are automatically updated and applied on both the database and the Redis Enterprise web UI. Only admin users can modify privileges and roles.</p><h2>Check Content Reference</h2><p>M</p><h2>Target Key</h2><p>5443</p></body></html>

@@ -1,0 +1,31 @@
+<!doctype html><html lang="en"><head><meta charset="utf-8"><title>STIGQter: STIG Check Details: SV-221102r999711_rule: The Cisco BGP switch must be configured to use a unique key for each autonomous system (AS) that it peers with.</title><link rel="icon" type="image/svg+xml" href="STIGQter.svg" /><script async src="https://www.googletagmanager.com/gtag/js?id=UA-31381839-2"></script><script src="include.js"></script><script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-4110907817782130" crossorigin="anonymous"></script></head><body><div><img src="STIGQter.svg" alt="STIGQter" style="height:1em;" /> <a href="https://www.stigqter.com/">STIGQter</a>: <a href="main.html">STIG Summary</a>: <a href="U_Cisco_NX-OS_Switch_RTR_STIG_V3R4_Manual-xccdf.html">Cisco NX OS Switch RTR Security Technical Implementation Guide Version: 3 Release: 4 Benchmark Date: 01 Apr 2026</a>:</div> <h1>The Cisco BGP switch must be configured to use a unique key for each autonomous system (AS) that it peers with.</h1><h2>DISA Rule</h2><p>SV-221102r999711_rule</p><h2>Vulnerability Number</h2><p>V-221102</p><h2>Group Title</h2><p>SRG-NET-000230-RTR-000002</p><h2>Rule Version</h2><p>CISC-RT-000480</p><h2>Severity</h2><p>CAT II</p><h2>CCI(s)</h2><ul><li>CCI-000366 - Implement the security configuration settings.</li><li>CCI-002205 - Uniquely identify and authenticate source by organization, system, application, service, and/or individual for information transfer.</li></ul><h2>Weight</h2><p>10</p><h2>Fix Recommendation</h2><p>Configure the switch to use unique keys for each AS that it peers with as shown in the example below:<br />
+<br />
+SW1(config)# router bgp xx<br />
+SW1(config-router)# neighbor x.1.12.2<br />
+SW1(config-router-neighbor)# password yyyyyyyyy<br />
+SW1(config-router-neighbor)# exit<br />
+SW1(config-router)# neighbor x.2.44.4<br />
+SW1(config-router-neighbor)# password zzzzzzzzzz<br />
+SW1(config-router-neighbor)# end</p><h2>Check Contents</h2><p>Review the BGP configuration to determine if it is peering with multiple autonomous systems. Interview the ISSM and switch administrator to determine if unique keys are being used. <br />
+<br />
+router bgp xx<br />
+ router-id 10.1.1.1<br />
+ neighbor x.1.12.2 remote-as 2<br />
+ password 3 7b07d1b3023056a9<br />
+ address-family ipv4 unicast<br />
+ neighbor x.2.44.4 remote-as xx<br />
+ password 3 f07a10cb41db8bb6f8f0a340049a9b02<br />
+ address-family ipv4 unicast<br />
+<br />
+If unique keys are not being used, this is a finding.</p><h2>Vulnerability Number</h2><p>V-221102</p><h2>Documentable</h2><p>False</p><h2>Rule Version</h2><p>CISC-RT-000480</p><h2>Severity Override Guidance</h2><p>Review the BGP configuration to determine if it is peering with multiple autonomous systems. Interview the ISSM and switch administrator to determine if unique keys are being used. <br />
+<br />
+router bgp xx<br />
+ router-id 10.1.1.1<br />
+ neighbor x.1.12.2 remote-as 2<br />
+ password 3 7b07d1b3023056a9<br />
+ address-family ipv4 unicast<br />
+ neighbor x.2.44.4 remote-as xx<br />
+ password 3 f07a10cb41db8bb6f8f0a340049a9b02<br />
+ address-family ipv4 unicast<br />
+<br />
+If unique keys are not being used, this is a finding.</p><h2>Check Content Reference</h2><p>M</p><h2>Target Key</h2><p>4075</p></body></html>

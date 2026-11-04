@@ -1,0 +1,51 @@
+<!doctype html><html lang="en"><head><meta charset="utf-8"><title>STIGQter: STIG Check Details: SV-260942r1015772_rule: MKE must only run signed images.</title><link rel="icon" type="image/svg+xml" href="STIGQter.svg" /><script async src="https://www.googletagmanager.com/gtag/js?id=UA-31381839-2"></script><script src="include.js"></script><script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-4110907817782130" crossorigin="anonymous"></script></head><body><div><img src="STIGQter.svg" alt="STIGQter" style="height:1em;" /> <a href="https://www.stigqter.com/">STIGQter</a>: <a href="main.html">STIG Summary</a>: <a href="U_Mirantis_Kubernetes_Engine_STIG_V2R1_Manual-xccdf.html">Mirantis Kubernetes Engine Security Technical Implementation Guide Version: 2 Release: 1 Benchmark Date: 24 Jul 2024</a>:</div> <h1>MKE must only run signed images.</h1><h2>DISA Rule</h2><p>SV-260942r1015772_rule</p><h2>Vulnerability Number</h2><p>V-260942</p><h2>Group Title</h2><p>SRG-APP-000386-CTR-000920</p><h2>Rule Version</h2><p>CNTR-MK-001380</p><h2>Severity</h2><p>CAT II</p><h2>CCI(s)</h2><ul><li>CCI-001774 - Employ a deny-all, permit-by-exception policy to allow the execution of authorized software programs on the system.</li><li>CCI-003992 - Prevent the installation of organization-defined software and firmware components without verification that the component has been digitally signed using a certificate that is recognized and approved by the organization.</li></ul><h2>Weight</h2><p>10</p><h2>Fix Recommendation</h2><p>On each node, enable Content Trust enforcement in MKE.<br />
+<br />
+1. Log in to the MKE web UI and navigate to admin &gt;&gt; Admin Settings &gt;&gt; Docker Content Trust.<br />
+<br />
+Under Content Trust Settings section, enable &quot;Run only signed images&quot;.<br />
+<br />
+2. Log in to the MKE web UI and navigate to admin &gt;&gt; Admin Settings &gt;&gt; Docker Content Trust.<br />
+<br />
+Click &quot;Add Team +&quot; and set the appropriate Orgs and Teams that must sign images. Use the drop-down (&quot;v&quot;) that follows to match the organizational policies.<br />
+<br />
+Remove any unwanted teams by clicking the minus symbol.<br />
+<br />
+Click &quot;Save&quot;.<br />
+<br />
+3. Manually remove any unsigned images sitting on an MKE cluster by executing the following:<br />
+<br />
+docker rmi &lt;IMAGE_ID&gt;</p><h2>Check Contents</h2><p>On each node, check that MKE is configured to only run images signed by applicable Orgs and Teams.<br />
+<br />
+1. Log in to the MKE web UI and navigate to admin &gt;&gt; Admin Settings &gt;&gt; Docker Content Trust.<br />
+<br />
+If Content Trust Settings &quot;Run only signed images&quot; is disabled, this is a finding.<br />
+<br />
+2. Verify that the Orgs and Teams that images must be signed by in the drop-down matches the organizational policies.<br />
+<br />
+If an Org or Team selected does not match organizational policies, this is a finding. <br />
+<br />
+3. Verify that all images sitting on an MKE cluster are signed.<br />
+<br />
+Via CLI:<br />
+Linux: As an MKE Admin, execute the following commands using a client bundle:<br />
+<br />
+docker trust inspect $(docker images | awk '{print $1 &quot;:&quot; $2}')<br />
+<br />
+Verify that all image tags in the output have valid signatures. If the images are not signed, this is a finding.</p><h2>Vulnerability Number</h2><p>V-260942</p><h2>Documentable</h2><p>False</p><h2>Rule Version</h2><p>CNTR-MK-001380</p><h2>Severity Override Guidance</h2><p>On each node, check that MKE is configured to only run images signed by applicable Orgs and Teams.<br />
+<br />
+1. Log in to the MKE web UI and navigate to admin &gt;&gt; Admin Settings &gt;&gt; Docker Content Trust.<br />
+<br />
+If Content Trust Settings &quot;Run only signed images&quot; is disabled, this is a finding.<br />
+<br />
+2. Verify that the Orgs and Teams that images must be signed by in the drop-down matches the organizational policies.<br />
+<br />
+If an Org or Team selected does not match organizational policies, this is a finding. <br />
+<br />
+3. Verify that all images sitting on an MKE cluster are signed.<br />
+<br />
+Via CLI:<br />
+Linux: As an MKE Admin, execute the following commands using a client bundle:<br />
+<br />
+docker trust inspect $(docker images | awk '{print $1 &quot;:&quot; $2}')<br />
+<br />
+Verify that all image tags in the output have valid signatures. If the images are not signed, this is a finding.</p><h2>Check Content Reference</h2><p>M</p><h2>Target Key</h2><p>5595</p></body></html>

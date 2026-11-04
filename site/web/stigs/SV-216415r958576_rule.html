@@ -1,0 +1,73 @@
+<!doctype html><html lang="en"><head><meta charset="utf-8"><title>STIGQter: STIG Check Details: SV-216415r958576_rule: The operating system must use cryptographic mechanisms to protect the integrity of audit information.</title><link rel="icon" type="image/svg+xml" href="STIGQter.svg" /><script async src="https://www.googletagmanager.com/gtag/js?id=UA-31381839-2"></script><script src="include.js"></script><script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-4110907817782130" crossorigin="anonymous"></script></head><body><div><img src="STIGQter.svg" alt="STIGQter" style="height:1em;" /> <a href="https://www.stigqter.com/">STIGQter</a>: <a href="main.html">STIG Summary</a>: <a href="U_SOL_11_SPARC_STIG_V3R6_Manual-xccdf.html">Solaris 11 SPARC Security Technical Implementation Guide Version: 3 Release: 6 Benchmark Date: 01 Jul 2026</a>:</div> <h1>The operating system must use cryptographic mechanisms to protect the integrity of audit information.</h1><h2>DISA Rule</h2><p>SV-216415r958576_rule</p><h2>Vulnerability Number</h2><p>V-216415</p><h2>Group Title</h2><p>SRG-OS-000216</p><h2>Rule Version</h2><p>SOL-11.1-060180</p><h2>Severity</h2><p>CAT III</p><h2>CCI(s)</h2><ul><li>CCI-001350 - Implement cryptographic mechanisms to protect the integrity of audit information.</li></ul><h2>Weight</h2><p>10</p><h2>Fix Recommendation</h2><p>The ZFS File System Management and ZFS Storage Management profiles are required.<br />
+<br />
+This action applies to the global zone only. Determine the zone that you are currently securing.<br />
+<br />
+# zonename<br />
+<br />
+If the command output is &quot;global&quot;, this action applies.<br />
+<br />
+The Audit Configuration and the Audit Control profiles are required.<br />
+<br />
+If necessary, create a new ZFS pool to store the encrypted audit logs.<br />
+<br />
+# pfexec zpool create auditp mirror [device] [device]<br />
+<br />
+Create an encryption key:<br />
+<br />
+# pktool genkey keystore=file outkey=/[filename] keytype=aes keylen=256<br />
+<br />
+Create a new file system to store the audit logs with encryption enabled. Use the file name created in the previous step as the keystore.<br />
+<br />
+# pfexec zfs create -o encryption=aes-256-ccm -o keysource=raw,file:///[filename] -o compression=on -o mountpoint=/audit auditp/auditf<br />
+<br />
+Configure auditing to use this encrypted directory.<br />
+<br />
+# pfexec auditconfig -setplugin audit_binfile p_dir=/audit/<br />
+<br />
+Refresh the audit service for the setting to be applied:<br />
+<br />
+# pfexec audit -s</p><h2>Check Contents</h2><p>The Audit Configuration and the Audit Control profiles are required.<br />
+<br />
+This check applies to the global zone only. Determine the zone that you are currently securing.<br />
+<br />
+# zonename<br />
+<br />
+If the command output is &quot;global&quot;, this check applies.<br />
+<br />
+Determine if audit log encryption is required by your organization. If not required, this check does not apply.<br />
+<br />
+Determine where the audit logs are stored and whether the file system is encrypted.<br />
+<br />
+# pfexec auditconfig -getplugin audit_binfile<br />
+<br />
+The p_dir attribute lists the location of the audit log filesystem. <br />
+<br />
+The default location for Solaris 11.1 is /var/audit. /var/audit is a link to /var/share/audit which, by default, is mounted on rpool/VARSHARE.<br />
+<br />
+Determine if this is encrypted:<br />
+<br />
+# zfs get encryption rpool/VARSHARE<br />
+<br />
+If the file system where audit logs are stored reports &quot;encryption off&quot;, this is a finding.</p><h2>Vulnerability Number</h2><p>V-216415</p><h2>Documentable</h2><p>False</p><h2>Rule Version</h2><p>SOL-11.1-060180</p><h2>Severity Override Guidance</h2><p>The Audit Configuration and the Audit Control profiles are required.<br />
+<br />
+This check applies to the global zone only. Determine the zone that you are currently securing.<br />
+<br />
+# zonename<br />
+<br />
+If the command output is &quot;global&quot;, this check applies.<br />
+<br />
+Determine if audit log encryption is required by your organization. If not required, this check does not apply.<br />
+<br />
+Determine where the audit logs are stored and whether the file system is encrypted.<br />
+<br />
+# pfexec auditconfig -getplugin audit_binfile<br />
+<br />
+The p_dir attribute lists the location of the audit log filesystem. <br />
+<br />
+The default location for Solaris 11.1 is /var/audit. /var/audit is a link to /var/share/audit which, by default, is mounted on rpool/VARSHARE.<br />
+<br />
+Determine if this is encrypted:<br />
+<br />
+# zfs get encryption rpool/VARSHARE<br />
+<br />
+If the file system where audit logs are stored reports &quot;encryption off&quot;, this is a finding.</p><h2>Check Content Reference</h2><p>M</p><h2>Target Key</h2><p>4022</p></body></html>

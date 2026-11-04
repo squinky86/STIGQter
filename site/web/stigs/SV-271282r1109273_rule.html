@@ -1,0 +1,75 @@
+<!doctype html><html lang="en"><head><meta charset="utf-8"><title>STIGQter: STIG Check Details: SV-271282r1109273_rule: The audit information produced by SQL Server must be protected from unauthorized access, modification, and deletion.</title><link rel="icon" type="image/svg+xml" href="STIGQter.svg" /><script async src="https://www.googletagmanager.com/gtag/js?id=UA-31381839-2"></script><script src="include.js"></script><script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-4110907817782130" crossorigin="anonymous"></script></head><body><div><img src="STIGQter.svg" alt="STIGQter" style="height:1em;" /> <a href="https://www.stigqter.com/">STIGQter</a>: <a href="main.html">STIG Summary</a>: <a href="U_MS_SQL_Server_2022_Instance_STIG_V1R4_Manual-xccdf.html">Microsoft SQL Server 2022 Instance Security Technical Implementation Guide Version: 1 Release: 4 Benchmark Date: 01 Apr 2026</a>:</div> <h1>The audit information produced by SQL Server must be protected from unauthorized access, modification, and deletion.</h1><h2>DISA Rule</h2><p>SV-271282r1109273_rule</p><h2>Vulnerability Number</h2><p>V-271282</p><h2>Group Title</h2><p>SRG-APP-000118-DB-000059</p><h2>Rule Version</h2><p>SQLI-22-005900</p><h2>Severity</h2><p>CAT II</p><h2>CCI(s)</h2><ul><li>CCI-000162 - Protect audit information from unauthorized access.</li><li>CCI-000163 - Protect audit information from unauthorized modification.</li><li>CCI-000164 - Protect audit information from unauthorized deletion.</li></ul><h2>Weight</h2><p>10</p><h2>Fix Recommendation</h2><p>Modify audit file permissions to meet the requirement to protect against unauthorized access. <br />
+<br />
+Application event log and security log permissions are covered in the Windows Server STIGs. Reference these depending on the OS in use.<br />
+<br />
+Navigate to audit folder location(s) using a command prompt or Windows Explorer. Right-click the file and click &quot;Properties&quot;. <br />
+<br />
+On the Security tab, modify the security permissions to:  <br />
+<br />
+Administrator (read)  <br />
+Users (none)  <br />
+Audit Administrator(Full Control)  <br />
+Auditors group (Read)  <br />
+SQL Server Service SID OR Service Account (Full Control) [Notes 1, 2]  <br />
+SQL Server SQL Agent Service SID OR Service Account, if SQL Server Agent is in use. (Read, Execute, Write) [Notes 1, 2]  <br />
+<br />
+-----  <br />
+Note 1: It is highly advisable to use a separate account for each service. When installing SQL Server in single-server mode, users can opt to have these provisioned for them. These automatically generated accounts are referred to as virtual accounts. Each virtual account has an equivalent Service SID with the same name. The installer also creates an equivalent SQL Server login, also with the same name. Applying folder and file permissions to Service SIDs rather than to domain accounts or local computer accounts provides tighter control, because these permissions are available only to the specific service when it is running and not in any other context. However, when using failover clustering, a domain account must be specified at installation, rather than a virtual account. For more on this topic, refer to http://msdn.microsoft.com/en-us/library/ms143504(v=sql.130).aspx. <br />
+<br />
+Note 2: Tips for adding a service SID/virtual account to a folder's permission list:<br />
+<br />
+1. In Windows Explorer, right-click the folder and select &quot;Properties&quot;. <br />
+2. Select the &quot;Security&quot; tab. <br />
+3. Click &quot;Edit&quot;. <br />
+4. Click &quot;Add&quot;. <br />
+5. Click &quot;Locations&quot;. <br />
+6. Select the computer name. <br />
+7. Search for the name. <br />
+   7.a. SQL Server Service  <br />
+   7.a.i. Type &quot;NT SERVICE\MSSQL&quot; and click &quot;Check Names&quot;. (This is the first 16 characters of the name. At least one character must follow &quot;NT SERVICE\&quot;; this will present with a list of all matches. If the full, correct name was typed, step 7.a.ii is bypassed.)  <br />
+   7.a.ii. Select the &quot;MSSQL$&quot; user and click &quot;OK&quot;.<br />
+   7.b. SQL Agent Service  <br />
+   7.b.i. Type &quot;NT SERVICE\SQL&quot; and click &quot;Check Names&quot;. <br />
+   7.b.ii. Select the &quot;SQLAgent$&quot; user and click &quot;OK&quot;. <br />
+8. Click &quot;OK&quot;. <br />
+9. Permission like a normal user from here.</p><h2>Check Contents</h2><p>If the database is set up to write audit logs using APPLICATION or SECURITY event logs rather than writing to a file, this is Not Applicable.<br />
+<br />
+Obtain the SQL Server Audit file location(s) by running the following SQL script:  <br />
+<br />
+SELECT log_file_path AS &quot;Audit Path&quot;  <br />
+FROM sys.server_file_audits  <br />
+<br />
+For each audit, the path column will give the location of the file. <br />
+<br />
+Verify that all audit files have the correct permissions by doing the following for each audit file: Navigate to audit folder location(s) using a command prompt or Windows Explorer. <br />
+<br />
+Right-click the file/folder and click &quot;Properties&quot;. On the &quot;Security&quot; tab, verify the following permissions are applied:  <br />
+<br />
+Administrator (read)  <br />
+Users (none)  <br />
+Audit Administrator (Full Control)  <br />
+Auditors group (Read)  <br />
+SQL Server Service SID OR Service Account (Full Control)  <br />
+SQL Server SQL Agent Service SID OR Service Account, if SQL Server Agent is in use. (Read, Execute, Write) <br />
+<br />
+If any less restrictive permissions are present (and not specifically justified and approved), this is a finding.</p><h2>Vulnerability Number</h2><p>V-271282</p><h2>Documentable</h2><p>False</p><h2>Rule Version</h2><p>SQLI-22-005900</p><h2>Severity Override Guidance</h2><p>If the database is set up to write audit logs using APPLICATION or SECURITY event logs rather than writing to a file, this is Not Applicable.<br />
+<br />
+Obtain the SQL Server Audit file location(s) by running the following SQL script:  <br />
+<br />
+SELECT log_file_path AS &quot;Audit Path&quot;  <br />
+FROM sys.server_file_audits  <br />
+<br />
+For each audit, the path column will give the location of the file. <br />
+<br />
+Verify that all audit files have the correct permissions by doing the following for each audit file: Navigate to audit folder location(s) using a command prompt or Windows Explorer. <br />
+<br />
+Right-click the file/folder and click &quot;Properties&quot;. On the &quot;Security&quot; tab, verify the following permissions are applied:  <br />
+<br />
+Administrator (read)  <br />
+Users (none)  <br />
+Audit Administrator (Full Control)  <br />
+Auditors group (Read)  <br />
+SQL Server Service SID OR Service Account (Full Control)  <br />
+SQL Server SQL Agent Service SID OR Service Account, if SQL Server Agent is in use. (Read, Execute, Write) <br />
+<br />
+If any less restrictive permissions are present (and not specifically justified and approved), this is a finding.</p><h2>Check Content Reference</h2><p>M</p><h2>Target Key</h2><p>5677</p></body></html>

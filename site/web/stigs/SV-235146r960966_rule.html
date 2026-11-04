@@ -1,0 +1,68 @@
+<!doctype html><html lang="en"><head><meta charset="utf-8"><title>STIGQter: STIG Check Details: SV-235146r960966_rule: The MySQL Database Server 8.0 must be configured to prohibit or restrict the use of organization-defined functions, ports, protocols, and/or services, as defined in the PPSM CAL and vulnerability assessments.</title><link rel="icon" type="image/svg+xml" href="STIGQter.svg" /><script async src="https://www.googletagmanager.com/gtag/js?id=UA-31381839-2"></script><script src="include.js"></script><script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-4110907817782130" crossorigin="anonymous"></script></head><body><div><img src="STIGQter.svg" alt="STIGQter" style="height:1em;" /> <a href="https://www.stigqter.com/">STIGQter</a>: <a href="main.html">STIG Summary</a>: <a href="U_Oracle_MySQL_8-0_STIG_V2R2_Manual-xccdf.html">Oracle MySQL 8.0 Security Technical Implementation Guide Version: 2 Release: 2 Benchmark Date: 24 Oct 2024</a>:</div> <h1>The MySQL Database Server 8.0 must be configured to prohibit or restrict the use of organization-defined functions, ports, protocols, and/or services, as defined in the PPSM CAL and vulnerability assessments.</h1><h2>DISA Rule</h2><p>SV-235146r960966_rule</p><h2>Vulnerability Number</h2><p>V-235146</p><h2>Group Title</h2><p>SRG-APP-000142-DB-000094</p><h2>Rule Version</h2><p>MYS8-00-006000</p><h2>Severity</h2><p>CAT II</p><h2>CCI(s)</h2><ul><li>CCI-000382 - Configure the system to prohibit or restrict the use of organization-defined prohibited or restricted functions, system ports, protocols, software, and/or services.</li></ul><h2>Weight</h2><p>10</p><h2>Fix Recommendation</h2><p>Disable functions, ports, protocols, and services that are not approved.<br />
+<br />
+Change mysql options related to network, ports, and protocols for the server and additionally consider refining further at user account level.<br />
+<br />
+vi my.cnf<br />
+[mysqld]<br />
+port=&lt;port value&gt;<br />
+admin_address=&lt;addr&gt;<br />
+admin_port=&lt;port value&gt;<br />
+mysqlx_port=&lt;port value&gt;<br />
+socket={file_name|pipe_name}<br />
+<br />
+If admin_address is not defined then access via the admin port is disabled. <br />
+<br />
+Additionally the X Plugin can be disabled at startup by either setting mysqlx=0 in the MySQL configuration file, or by passing in either --mysqlx=0 or --skip-mysqlx when starting the MySQL server.<br />
+Restart mysqld</p><h2>Check Contents</h2><p>Review the MySQL Database Server 8.0 settings and local documentation for functions, ports, protocols, and services that are not approved. If any are found, this is a finding.<br />
+<br />
+Run the following SQL to list ports:<br />
+SELECT VARIABLE_NAME, VARIABLE_VALUE<br />
+FROM performance_schema.global_variables<br />
+WHERE VARIABLE_NAME in ('port', 'mysqlx_port', 'admin_port');<br />
+<br />
+The default ports for MySQL for organizational connects are: <br />
+Classic MySQL - 3306 <br />
+MySQL X - 33060<br />
+MySQL Admin Port - 33062 (disabled by default)<br />
+<br />
+If any these are in conflict with guidance, and not explained and approved in the system documentation, this is a finding.<br />
+<br />
+Run the following to determine if a local socket/pipe are in use:<br />
+SELECT VARIABLE_NAME, VARIABLE_VALUE<br />
+FROM performance_schema.global_variables where <br />
+VARIABLE_NAME like '%pipe%' or  VARIABLE_NAME = 'socket' or  VARIABLE_NAME = 'mysqlx_socket';<br />
+<br />
+Values for classic and xprotocol will be returned.<br />
+For example on Linux:<br />
+'socket','/tmp/mysql.sock'<br />
+'mysqlx_socket','/tmp/mysqlx.sock'<br />
+ Windows<br />
+'named_pipe', 'ON'<br />
+<br />
+If these are in conflict with guidance, and not explained and approved in the system documentation, this is a finding.</p><h2>Vulnerability Number</h2><p>V-235146</p><h2>Documentable</h2><p>False</p><h2>Rule Version</h2><p>MYS8-00-006000</p><h2>Severity Override Guidance</h2><p>Review the MySQL Database Server 8.0 settings and local documentation for functions, ports, protocols, and services that are not approved. If any are found, this is a finding.<br />
+<br />
+Run the following SQL to list ports:<br />
+SELECT VARIABLE_NAME, VARIABLE_VALUE<br />
+FROM performance_schema.global_variables<br />
+WHERE VARIABLE_NAME in ('port', 'mysqlx_port', 'admin_port');<br />
+<br />
+The default ports for MySQL for organizational connects are: <br />
+Classic MySQL - 3306 <br />
+MySQL X - 33060<br />
+MySQL Admin Port - 33062 (disabled by default)<br />
+<br />
+If any these are in conflict with guidance, and not explained and approved in the system documentation, this is a finding.<br />
+<br />
+Run the following to determine if a local socket/pipe are in use:<br />
+SELECT VARIABLE_NAME, VARIABLE_VALUE<br />
+FROM performance_schema.global_variables where <br />
+VARIABLE_NAME like '%pipe%' or  VARIABLE_NAME = 'socket' or  VARIABLE_NAME = 'mysqlx_socket';<br />
+<br />
+Values for classic and xprotocol will be returned.<br />
+For example on Linux:<br />
+'socket','/tmp/mysql.sock'<br />
+'mysqlx_socket','/tmp/mysqlx.sock'<br />
+ Windows<br />
+'named_pipe', 'ON'<br />
+<br />
+If these are in conflict with guidance, and not explained and approved in the system documentation, this is a finding.</p><h2>Check Content Reference</h2><p>M</p><h2>Target Key</h2><p>5277</p></body></html>

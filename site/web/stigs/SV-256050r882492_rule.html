@@ -1,0 +1,60 @@
+<!doctype html><html lang="en"><head><meta charset="utf-8"><title>STIGQter: STIG Check Details: SV-256050r882492_rule: The MPLS router must be configured to synchronize IGP and LDP to minimize packet loss when an IGP adjacency is established prior to LDP peers completing label exchange.</title><link rel="icon" type="image/svg+xml" href="STIGQter.svg" /><script async src="https://www.googletagmanager.com/gtag/js?id=UA-31381839-2"></script><script src="include.js"></script><script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-4110907817782130" crossorigin="anonymous"></script></head><body><div><img src="STIGQter.svg" alt="STIGQter" style="height:1em;" /> <a href="https://www.stigqter.com/">STIGQter</a>: <a href="main.html">STIG Summary</a>: <a href="U_Arista_MLS_EOS_4-X_Router_STIG_V2R2_Manual-xccdf.html">Arista MLS EOS 4.X Router Security Technical Implementation Guide Version: 2 Release: 2 Benchmark Date: 02 Apr 2025</a>:</div> <h1>The MPLS router must be configured to synchronize IGP and LDP to minimize packet loss when an IGP adjacency is established prior to LDP peers completing label exchange.</h1><h2>DISA Rule</h2><p>SV-256050r882492_rule</p><h2>Vulnerability Number</h2><p>V-256050</p><h2>Group Title</h2><p>SRG-NET-000512-RTR-000003</p><h2>Rule Version</h2><p>ARST-RT-000710</p><h2>Severity</h2><p>CAT III</p><h2>CCI(s)</h2><ul><li>CCI-000366 - Implement the security configuration settings.</li></ul><h2>Weight</h2><p>10</p><h2>Fix Recommendation</h2><p>Configure the Arista MPLS router to synchronize IGP and LDP, minimizing packet loss when an IGP adjacency is established prior to LDP peers completing label exchange.<br />
+<br />
+ISIS configuration example:<br />
+<br />
+P-Router-EOS(config)#router isis 1<br />
+P-Router-EOS(config-router-isis)#mpls ldp sync default<br />
+<br />
+OSPF configuration example:<br />
+<br />
+LEAF-1A(config-mpls-ldp)#router ospf 1<br />
+LEAF-1A(config-router-ospf)#mpls ldp sync default<br />
+<br />
+Configure LDP to synchronize with the link-state routing protocol.<br />
+<br />
+LEAF-1A(config)#interface Loopback1<br />
+LEAF-1A(config-if-Lo0)#erface Loopback1<br />
+LEAF-1A(config-if-Lo0)#description MPLS-LDP-Router-ID<br />
+LEAF-1A(config-if-Lo0)#ip address 10.1.129.94/32<br />
+LEAF-1A(config-if-Lo0)#mpls ldp igp sync<br />
+LEAF-1A(config-if-Lo0)#ip ospf area 0.0.0.5</p><h2>Check Contents</h2><p>Review the Arista router OSPF or IS-IS configuration.<br />
+<br />
+ISIS configuration example:<br />
+<br />
+router isis 1<br />
+   mpls ldp sync default<br />
+  <br />
+OSPF configuration example:<br />
+<br />
+router ospf 1<br />
+   mpls ldp sync default<br />
+<br />
+Verify LDP will synchronize with the link-state routing protocol.<br />
+<br />
+interface Loopback1<br />
+   description MPLS-LDP-Router-ID<br />
+   ip address 10.1.129.94/32<br />
+   mpls ldp igp sync<br />
+   ip ospf area 0.0.0.5<br />
+<br />
+If the Arista router is not configured to synchronize IGP and LDP, this is a finding.</p><h2>Vulnerability Number</h2><p>V-256050</p><h2>Documentable</h2><p>False</p><h2>Rule Version</h2><p>ARST-RT-000710</p><h2>Severity Override Guidance</h2><p>Review the Arista router OSPF or IS-IS configuration.<br />
+<br />
+ISIS configuration example:<br />
+<br />
+router isis 1<br />
+   mpls ldp sync default<br />
+  <br />
+OSPF configuration example:<br />
+<br />
+router ospf 1<br />
+   mpls ldp sync default<br />
+<br />
+Verify LDP will synchronize with the link-state routing protocol.<br />
+<br />
+interface Loopback1<br />
+   description MPLS-LDP-Router-ID<br />
+   ip address 10.1.129.94/32<br />
+   mpls ldp igp sync<br />
+   ip ospf area 0.0.0.5<br />
+<br />
+If the Arista router is not configured to synchronize IGP and LDP, this is a finding.</p><h2>Check Content Reference</h2><p>M</p><h2>Target Key</h2><p>5513</p></body></html>

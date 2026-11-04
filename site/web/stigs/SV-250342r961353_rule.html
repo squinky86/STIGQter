@@ -1,0 +1,52 @@
+<!doctype html><html lang="en"><head><meta charset="utf-8"><title>STIGQter: STIG Check Details: SV-250342r961353_rule: Users in a reader-role must be authorized.</title><link rel="icon" type="image/svg+xml" href="STIGQter.svg" /><script async src="https://www.googletagmanager.com/gtag/js?id=UA-31381839-2"></script><script src="include.js"></script><script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-4110907817782130" crossorigin="anonymous"></script></head><body><div><img src="STIGQter.svg" alt="STIGQter" style="height:1em;" /> <a href="https://www.stigqter.com/">STIGQter</a>: <a href="main.html">STIG Summary</a>: <a href="U_IBM_WebSphere_Liberty_Server_STIG_V2R4_Manual-xccdf.html">IBM WebSphere Liberty Server Security Technical Implementation Guide Version: 2 Release: 4 Benchmark Date: 01 Apr 2026</a>:</div> <h1>Users in a reader-role must be authorized.</h1><h2>DISA Rule</h2><p>SV-250342r961353_rule</p><h2>Vulnerability Number</h2><p>V-250342</p><h2>Group Title</h2><p>SRG-APP-000340-AS-000185</p><h2>Rule Version</h2><p>IBMW-LS-000790</p><h2>Severity</h2><p>CAT II</p><h2>CCI(s)</h2><ul><li>CCI-002235 - Prevent non-privileged users from executing privileged functions.</li></ul><h2>Weight</h2><p>10</p><h2>Fix Recommendation</h2><p>Edit the ${server.config.dir}/server.xml file. If unauthorized users have been added to the reader-role, remove those users. <br />
+<br />
+Otherwise, document the users who are granted the reader-role access.<br />
+<br />
+To allow read-only access to select administrative REST APIs, the ${server.config.dir}/server.xml must be configured as follows. Additionally, the users and groups they are a part of must be defined within LDAP.<br />
+<br />
+EXAMPLE:<br />
+&lt;featureManager&gt;<br />
+&lt;feature&gt;appSecurity-2.0&lt;/feature&gt;<br />
+&lt;/featureManager&gt;<br />
+<br />
+&lt;reader-role&gt;<br />
+&lt;group&gt;group&lt;/group&gt;&lt;group-access-id&gt; group:realmName/groupUniqueId&lt;/group-access-id&gt;&lt;user&gt;user&lt;/user&gt;&lt;user-access-id&gt;user:realmName/userUniqueId&lt;/user-access-id&gt;<br />
+&lt;/reader-role&gt;<br />
+<br />
+&lt;ldapRegistry id=&quot;ldap&quot; realm=&quot;SampleLdapRealm&quot; host=&quot;${ldap.server.name}&quot; port=&quot;${ldap.server.port}&quot; ignoreCase=&quot;true&quot;<br />
+baseDN=&quot;${ldap.server.base.dn}&quot;<br />
+ldapType=&quot;${ldap.vendor.type}&quot;<br />
+searchTimeout=&quot;8m&quot;&gt;<br />
+&lt;/ldapRegistry&gt;</p><h2>Check Contents</h2><p>As a user with access to the ${server.config.dir}/server.xml file. Review the contents and identify if users have been granted the reader-role.<br />
+<br />
+grep -i reader-role ${server.config.dir}/server.xml<br />
+<br />
+If the reader-role has been created, users in that role must be documented and approved. <br />
+<br />
+If users in the reader-role are not approved, this is a finding.<br />
+<br />
+EXAMPLE:<br />
+&lt;featureManager&gt;&lt;feature&gt;appSecurity-2.0&lt;/feature&gt;&lt;/featureManager&gt;<br />
+<br />
+&lt;reader-role&gt;<br />
+&lt;group&gt;group&lt;/group&gt;<br />
+&lt;group-access-id&gt;group:realmName/groupUniqueId&lt;/group-access-id&gt;<br />
+&lt;user&gt;user&lt;/user&gt;<br />
+&lt;user-access-id&gt;user:realmName/userUniqueId&lt;/user-access-id&gt;<br />
+&lt;/reader-role&gt;</p><h2>Vulnerability Number</h2><p>V-250342</p><h2>Documentable</h2><p>False</p><h2>Rule Version</h2><p>IBMW-LS-000790</p><h2>Severity Override Guidance</h2><p>As a user with access to the ${server.config.dir}/server.xml file. Review the contents and identify if users have been granted the reader-role.<br />
+<br />
+grep -i reader-role ${server.config.dir}/server.xml<br />
+<br />
+If the reader-role has been created, users in that role must be documented and approved. <br />
+<br />
+If users in the reader-role are not approved, this is a finding.<br />
+<br />
+EXAMPLE:<br />
+&lt;featureManager&gt;&lt;feature&gt;appSecurity-2.0&lt;/feature&gt;&lt;/featureManager&gt;<br />
+<br />
+&lt;reader-role&gt;<br />
+&lt;group&gt;group&lt;/group&gt;<br />
+&lt;group-access-id&gt;group:realmName/groupUniqueId&lt;/group-access-id&gt;<br />
+&lt;user&gt;user&lt;/user&gt;<br />
+&lt;user-access-id&gt;user:realmName/userUniqueId&lt;/user-access-id&gt;<br />
+&lt;/reader-role&gt;</p><h2>Check Content Reference</h2><p>M</p><h2>Target Key</h2><p>5424</p></body></html>

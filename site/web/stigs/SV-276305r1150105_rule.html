@@ -1,0 +1,35 @@
+<!doctype html><html lang="en"><head><meta charset="utf-8"><title>STIGQter: STIG Check Details: SV-276305r1150105_rule: If passwords are used for authentication, Azure SQL Server Managed Instance must transmit only encrypted representations of passwords.</title><link rel="icon" type="image/svg+xml" href="STIGQter.svg" /><script async src="https://www.googletagmanager.com/gtag/js?id=UA-31381839-2"></script><script src="include.js"></script><script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-4110907817782130" crossorigin="anonymous"></script></head><body><div><img src="STIGQter.svg" alt="STIGQter" style="height:1em;" /> <a href="https://www.stigqter.com/">STIGQter</a>: <a href="main.html">STIG Summary</a>: <a href="U_MS_Azure_SQL_MI_STIG_V1R1_Manual-xccdf.html">Microsoft Azure SQL Managed Instance Security Technical Implementation Guide Version: 1 Release: 1 Benchmark Date: 23 Sep 2025</a>:</div> <h1>If passwords are used for authentication, Azure SQL Server Managed Instance must transmit only encrypted representations of passwords.</h1><h2>DISA Rule</h2><p>SV-276305r1150105_rule</p><h2>Vulnerability Number</h2><p>V-276305</p><h2>Group Title</h2><p>SRG-APP-000172-DB-000075</p><h2>Rule Version</h2><p>MSQL-D0-008300</p><h2>Severity</h2><p>CAT I</p><h2>CCI(s)</h2><ul><li>CCI-000197 - For password-based authentication, transmit passwords only cryptographically-protected channels.</li></ul><h2>Weight</h2><p>10</p><h2>Fix Recommendation</h2><p>Run the following PowerShell script to set the Azure SQL Managed Instance MinimalTLSversion to the latest available TLS version: <br />
+<br />
+##This is an example script## <br />
+$ResourceGroup = '&lt;resource group name here&gt;' <br />
+$ManagedInstance = '&lt;Azure SQL Managed Instance name here&gt;'  <br />
+$TLSmax = (Get-Command -Name set-azsqlinstance -ParameterName 'minimaltlsversion').parameters['minimaltlsversion'].attributes.where({$_ -is [ValidateSet] }).ValidValues | Select-Object -Last 1<br />
+Set-AzSqlInstance -ResourceGroupName $ResourceGroup -Name $ManagedInstance -MinimalTlsVersion $TLSmax<br />
+  <br />
+References: https://learn.microsoft.com/en-us/azure/azure-sql/managed-instance/minimal-tls-version-configure?view=azuresql-mi</p><h2>Check Contents</h2><p>Verify the MinimalTLSversion using the following PowerShell script: <br />
+<br />
+$Subscription = 'SubscriptionValueHere'<br />
+$Environment = 'EnvironmentTypeHere'<br />
+Connect-AzAccount -Subscription $Subscription -Environment $Environment<br />
+ <br />
+$ResourceGroup = 'ResourceGroupHere'<br />
+$ManagedInstance = 'ManagedInstanceHere'<br />
+$TLSmax = (Get-Command -Name set-azsqlinstance -ParameterName 'minimaltlsversion').parameters['minimaltlsversion'].attributes.where({$_ -is [ValidateSet] }).ValidValues Select-Object -Last 1<br />
+$TLScur = (Get-AzSqlInstance -ResourceGroupName $ResourceGroup -Name $ManagedInstance).MinimalTlsVersion<br />
+Write-Host &quot;Latest TLS Version  : [$TlSMax]&quot;<br />
+Write-Host &quot;Current TLS Version : [$TLScur]&quot;<br />
+  <br />
+Verify that the minimum TLS version property is set to the latest available TLS version. If a less secure TLS version is set and not documented as required by the supported application, this is a finding.</p><h2>Vulnerability Number</h2><p>V-276305</p><h2>Documentable</h2><p>False</p><h2>Rule Version</h2><p>MSQL-D0-008300</p><h2>Severity Override Guidance</h2><p>Verify the MinimalTLSversion using the following PowerShell script: <br />
+<br />
+$Subscription = 'SubscriptionValueHere'<br />
+$Environment = 'EnvironmentTypeHere'<br />
+Connect-AzAccount -Subscription $Subscription -Environment $Environment<br />
+ <br />
+$ResourceGroup = 'ResourceGroupHere'<br />
+$ManagedInstance = 'ManagedInstanceHere'<br />
+$TLSmax = (Get-Command -Name set-azsqlinstance -ParameterName 'minimaltlsversion').parameters['minimaltlsversion'].attributes.where({$_ -is [ValidateSet] }).ValidValues Select-Object -Last 1<br />
+$TLScur = (Get-AzSqlInstance -ResourceGroupName $ResourceGroup -Name $ManagedInstance).MinimalTlsVersion<br />
+Write-Host &quot;Latest TLS Version  : [$TlSMax]&quot;<br />
+Write-Host &quot;Current TLS Version : [$TLScur]&quot;<br />
+  <br />
+Verify that the minimum TLS version property is set to the latest available TLS version. If a less secure TLS version is set and not documented as required by the supported application, this is a finding.</p><h2>Check Content Reference</h2><p>M</p><h2>Target Key</h2><p>5711</p></body></html>

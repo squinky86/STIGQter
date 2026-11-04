@@ -1,0 +1,32 @@
+<!doctype html><html lang="en"><head><meta charset="utf-8"><title>STIGQter: STIG Check Details: SV-259003r934667_rule: The vCenter ESX Agent Manager service must limit the number of maximum concurrent connections permitted.</title><link rel="icon" type="image/svg+xml" href="STIGQter.svg" /><script async src="https://www.googletagmanager.com/gtag/js?id=UA-31381839-2"></script><script src="include.js"></script><script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-4110907817782130" crossorigin="anonymous"></script></head><body><div><img src="STIGQter.svg" alt="STIGQter" style="height:1em;" /> <a href="https://www.stigqter.com/">STIGQter</a>: <a href="main.html">STIG Summary</a>: <a href="U_VMW_vSphere_8-0_VCSA_EAM_STIG_V1R1_Manual-xccdf.html">VMware vSphere 8.0 vCenter Appliance ESX Agent Manager (EAM) Security Technical Implementation Guide Version: 1 Release: 1 Benchmark Date: 31 Oct 2023</a>:</div> <h1>The vCenter ESX Agent Manager service must limit the number of maximum concurrent connections permitted.</h1><h2>DISA Rule</h2><p>SV-259003r934667_rule</p><h2>Vulnerability Number</h2><p>V-259003</p><h2>Group Title</h2><p>SRG-APP-000001-AS-000001</p><h2>Rule Version</h2><p>VCEM-80-000001</p><h2>Severity</h2><p>CAT II</p><h2>CCI(s)</h2><ul><li>CCI-000054 - Limit the number of concurrent sessions for each organization-defined account and/or account type to an organization-defined number.</li><li>CCI-002385 - Protect against or limit the effects of organization-defined types of denial of service events.</li></ul><h2>Weight</h2><p>10</p><h2>Fix Recommendation</h2><p>Navigate to and open:<br />
+<br />
+/usr/lib/vmware-eam/web/conf/server.xml<br />
+<br />
+Navigate to the &lt;Executor&gt; node with the name of tomcatThreadPool and configure with the value &quot;maxThreads=&quot;300&quot;&quot;.<br />
+<br />
+Note: The &lt;Executor&gt; node should be configured similar to the following:<br />
+<br />
+&lt;Executor maxThreads=&quot;300&quot;<br />
+                minSpareThreads=&quot;50&quot;<br />
+                name=&quot;tomcatThreadPool&quot;<br />
+                namePrefix=&quot;tomcat-http--&quot;/&gt;<br />
+<br />
+Restart the service with the following command:<br />
+<br />
+# vmon-cli --restart eam</p><h2>Check Contents</h2><p>At the command prompt, run the following command:<br />
+<br />
+# xmllint --xpath '/Server/Service/Executor[@name=&quot;tomcatThreadPool&quot;]/@maxThreads' /usr/lib/vmware-eam/web/conf/server.xml<br />
+<br />
+Expected result:<br />
+<br />
+maxThreads=&quot;300&quot;<br />
+<br />
+If the output does not match the expected result, this is a finding.</p><h2>Vulnerability Number</h2><p>V-259003</p><h2>Documentable</h2><p>False</p><h2>Rule Version</h2><p>VCEM-80-000001</p><h2>Severity Override Guidance</h2><p>At the command prompt, run the following command:<br />
+<br />
+# xmllint --xpath '/Server/Service/Executor[@name=&quot;tomcatThreadPool&quot;]/@maxThreads' /usr/lib/vmware-eam/web/conf/server.xml<br />
+<br />
+Expected result:<br />
+<br />
+maxThreads=&quot;300&quot;<br />
+<br />
+If the output does not match the expected result, this is a finding.</p><h2>Check Content Reference</h2><p>M</p><h2>Target Key</h2><p>5564</p></body></html>

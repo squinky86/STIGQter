@@ -1,0 +1,29 @@
+<!doctype html><html lang="en"><head><meta charset="utf-8"><title>STIGQter: STIG Check Details: SV-268556r1131248_rule: The macOS system must enforce FileVault.</title><link rel="icon" type="image/svg+xml" href="STIGQter.svg" /><script async src="https://www.googletagmanager.com/gtag/js?id=UA-31381839-2"></script><script src="include.js"></script><script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-4110907817782130" crossorigin="anonymous"></script></head><body><div><img src="STIGQter.svg" alt="STIGQter" style="height:1em;" /> <a href="https://www.stigqter.com/">STIGQter</a>: <a href="main.html">STIG Summary</a>: <a href="U_Apple_macOS_15_V1R7_STIG_Manual-xccdf.html">Apple macOS 15 (Sequoia) Security Technical Implementation Guide Version: 1 Release: 7 Benchmark Date: 01 Apr 2026</a>:</div> <h1>The macOS system must enforce FileVault.</h1><h2>DISA Rule</h2><p>SV-268556r1131248_rule</p><h2>Vulnerability Number</h2><p>V-268556</p><h2>Group Title</h2><p>SRG-OS-000185-GPOS-00079</p><h2>Rule Version</h2><p>APPL-15-005020</p><h2>Severity</h2><p>CAT I</p><h2>CCI(s)</h2><ul><li>CCI-001199 - Protects the confidentiality and/or integrity of organization-defined information at rest.</li><li>CCI-002475 - Implement cryptographic mechanisms to prevent unauthorized modification of organization-defined information when at rest on organization-defined system components.</li><li>CCI-002476 - Implement cryptographic mechanisms to prevent unauthorized disclosure of organization-defined information at rest on organization-defined system components.</li></ul><h2>Weight</h2><p>10</p><h2>Fix Recommendation</h2><p>Refer to the FileVault supplemental to implement this rule. Configure the macOS system to enforce FileVault by installing the &quot;com.apple.MCX&quot; configuration profile.</p><h2>Check Contents</h2><p>Verify the macOS system is configured to enforce FileVault with the following command:<br />
+<br />
+dontAllowDisable=$(/usr/bin/osascript -l JavaScript &lt;&lt; EOS<br />
+$.NSUserDefaults.alloc.initWithSuiteName('com.apple.MCX')\<br />
+.objectForKey('dontAllowFDEDisable').js<br />
+EOS<br />
+)<br />
+fileVault=$(/usr/bin/fdesetup status | /usr/bin/grep -c &quot;FileVault is On.&quot;)<br />
+if [[ &quot;$dontAllowDisable&quot; == &quot;true&quot; ]] &amp;&amp; [[ &quot;$fileVault&quot; == 1 ]]; then<br />
+  echo &quot;1&quot;<br />
+else<br />
+  echo &quot;0&quot;<br />
+fi<br />
+<br />
+If the result is not &quot;1&quot;, this is a finding.</p><h2>Vulnerability Number</h2><p>V-268556</p><h2>Documentable</h2><p>False</p><h2>Rule Version</h2><p>APPL-15-005020</p><h2>Severity Override Guidance</h2><p>Verify the macOS system is configured to enforce FileVault with the following command:<br />
+<br />
+dontAllowDisable=$(/usr/bin/osascript -l JavaScript &lt;&lt; EOS<br />
+$.NSUserDefaults.alloc.initWithSuiteName('com.apple.MCX')\<br />
+.objectForKey('dontAllowFDEDisable').js<br />
+EOS<br />
+)<br />
+fileVault=$(/usr/bin/fdesetup status | /usr/bin/grep -c &quot;FileVault is On.&quot;)<br />
+if [[ &quot;$dontAllowDisable&quot; == &quot;true&quot; ]] &amp;&amp; [[ &quot;$fileVault&quot; == 1 ]]; then<br />
+  echo &quot;1&quot;<br />
+else<br />
+  echo &quot;0&quot;<br />
+fi<br />
+<br />
+If the result is not &quot;1&quot;, this is a finding.</p><h2>Check Content Reference</h2><p>M</p><h2>Target Key</h2><p>5661</p></body></html>

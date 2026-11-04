@@ -1,0 +1,37 @@
+<!doctype html><html lang="en"><head><meta charset="utf-8"><title>STIGQter: STIG Check Details: SV-251184r960768_rule: Redis Enterprise DBMS must integrate with an organization-level authentication/access mechanism providing account management and automation for all users, groups, roles, and any other principals.</title><link rel="icon" type="image/svg+xml" href="STIGQter.svg" /><script async src="https://www.googletagmanager.com/gtag/js?id=UA-31381839-2"></script><script src="include.js"></script><script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-4110907817782130" crossorigin="anonymous"></script></head><body><div><img src="STIGQter.svg" alt="STIGQter" style="height:1em;" /> <a href="https://www.stigqter.com/">STIGQter</a>: <a href="main.html">STIG Summary</a>: <a href="U_Redis_Enterprise_6-x_STIG_V2R2_Manual-xccdf.html">Redis Enterprise 6.x Security Technical Implementation Guide Version: 2 Release: 2 Benchmark Date: 24 Oct 2024</a>:</div> <h1>Redis Enterprise DBMS must integrate with an organization-level authentication/access mechanism providing account management and automation for all users, groups, roles, and any other principals.</h1><h2>DISA Rule</h2><p>SV-251184r960768_rule</p><h2>Vulnerability Number</h2><p>V-251184</p><h2>Group Title</h2><p>SRG-APP-000023-DB-000001</p><h2>Rule Version</h2><p>RD6X-00-000700</p><h2>Severity</h2><p>CAT I</p><h2>CCI(s)</h2><ul><li>CCI-000015 - Support the management of system accounts using (organization-defined automated mechanisms).</li></ul><h2>Weight</h2><p>10</p><h2>Fix Recommendation</h2><p>Integrate Redis Enterprise with LDAP to provide organization-level authentication/access mechanism and account management for all users, groups, roles, and any other principals.<br />
+<br />
+For each DBMS-managed account that is not documented and approved, either transfer it to management by the external mechanism or document the need for it and obtain approval as appropriate.<br />
+<br />
+To enable LDAP:<br />
+1. Import the saslauthd configuration.<br />
+2. Restart saslauthd service.<br />
+3. Configure LDAP users.<br />
+<br />
+Configuring LDAP:<br />
+To provide the LDAP configuration information:<br />
+1. Edit the configuration file located at /etc/opt/redislabs/saslauthd.conf or the installation directory used during initial configuration.<br />
+<br />
+2. Provide the following information associated with each variable:<br />
+- ldap_servers: the ldap servers that authenticate against and the port to use:<br />
+Port 389 is standardly used for unencrypted LDAP connections<br />
+Port 636 is standardly used for encrypted LDAP connections and is strongly recommended.<br />
+- Ldap_tls_cacert_file (optional): The path to the CA Certificates. This is required for encrypted LDAP connections only.<br />
+- ldap_filter: the filter used to search for users.<br />
+- ldap_bind_dn: The distinguished name for the user that will be used to authenticate to the LDAP server.<br />
+- ldap_password: The password used for the user specified in ldap_bind_dn<br />
+<br />
+3. Import the saslauthd configuration into Redis Enterprise using the command below, which will distribute the configuration to all nodes in the cluster:<br />
+rladmin cluster config saslauthd_ldap_conf &lt;path_to_saslauthd.conf&gt;<br />
+<br />
+Note: For this command to work on a new server installation, a cluster must be set up already.<br />
+<br />
+4. Restart saslauthd:<br />
+sudo supervisorctl restart saslauthd</p><h2>Check Contents</h2><p>Redis Enterprise supports LDAP for access to the Redis Enterprise web UI. If all accounts are authenticated by the organization-level authentication/access mechanism and not by the DBMS, this is not a finding. LDAP can be checked by examining the process used during user login on the Redis web UI.<br />
+<br />
+If any accounts are managed by Redis Enterprise, review the system documentation for justification and approval of these accounts. Compare the documented accounts with those found on the system.<br />
+<br />
+If any Redis Enterprise-managed accounts exist that are not documented and approved, this is a finding.</p><h2>Vulnerability Number</h2><p>V-251184</p><h2>Documentable</h2><p>False</p><h2>Rule Version</h2><p>RD6X-00-000700</p><h2>Severity Override Guidance</h2><p>Redis Enterprise supports LDAP for access to the Redis Enterprise web UI. If all accounts are authenticated by the organization-level authentication/access mechanism and not by the DBMS, this is not a finding. LDAP can be checked by examining the process used during user login on the Redis web UI.<br />
+<br />
+If any accounts are managed by Redis Enterprise, review the system documentation for justification and approval of these accounts. Compare the documented accounts with those found on the system.<br />
+<br />
+If any Redis Enterprise-managed accounts exist that are not documented and approved, this is a finding.</p><h2>Check Content Reference</h2><p>M</p><h2>Target Key</h2><p>5443</p></body></html>

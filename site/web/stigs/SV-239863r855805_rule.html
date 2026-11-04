@@ -1,0 +1,40 @@
+<!doctype html><html lang="en"><head><meta charset="utf-8"><title>STIGQter: STIG Check Details: SV-239863r855805_rule: The Cisco ASA must be configured to generate a real-time alert to organization-defined personnel and/or the firewall administrator in the event communication with the central audit server is lost.</title><link rel="icon" type="image/svg+xml" href="STIGQter.svg" /><script async src="https://www.googletagmanager.com/gtag/js?id=UA-31381839-2"></script><script src="include.js"></script><script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-4110907817782130" crossorigin="anonymous"></script></head><body><div><img src="STIGQter.svg" alt="STIGQter" style="height:1em;" /> <a href="https://www.stigqter.com/">STIGQter</a>: <a href="main.html">STIG Summary</a>: <a href="U_Cisco_ASA_Firewall_STIG_V2R1_Manual-xccdf.html">Cisco ASA Firewall Security Technical Implementation Guide Version: 2 Release: 1 Benchmark Date: 24 Jul 2024</a>:</div> <h1>The Cisco ASA must be configured to generate a real-time alert to organization-defined personnel and/or the firewall administrator in the event communication with the central audit server is lost.</h1><h2>DISA Rule</h2><p>SV-239863r855805_rule</p><h2>Vulnerability Number</h2><p>V-239863</p><h2>Group Title</h2><p>SRG-NET-000335-FW-000017</p><h2>Rule Version</h2><p>CASA-FW-000210</p><h2>Severity</h2><p>CAT II</p><h2>CCI(s)</h2><ul><li>CCI-001858 - Provide an alert in an organization-defined real-time-period to organization-defined personnel, roles, and/or locations when organization-defined audit failure events requiring real-time alerts occur.</li></ul><h2>Weight</h2><p>10</p><h2>Fix Recommendation</h2><p>Configure the ASA to send an email alert to the organization-defined personnel and/or firewall administrator for syslog messages at severity level 3.<br />
+<br />
+ASA(config)# logging mail 3 <br />
+ASA(config)# logging recipient-address OurFWadmin@mail.mil<br />
+ASA(config)# logging recipient-address OurISSO@mail.mil<br />
+ASA(config)# logging from-address firewall@mail.mil<br />
+ASA(config)# smtp-server 10.1.12.33<br />
+ASA(config)# end</p><h2>Check Contents</h2><p>Review the ASA configuration to determine if it will send an email alert to organization-defined personnel and/or the firewall administrator if  communication with the central audit server is lost as shown in the example below.<br />
+<br />
+logging enable<br />
+logging host NDM_INTERFACE 10.1.22.2 6/1514<br />
+logging permit-hostdown<br />
+logging mail errors<br />
+logging from-address firewall@mail.mil<br />
+logging recipient-address OurFWadmin@mail.mil level errors<br />
+logging recipient-address OurISSO@mail.mil level errors<br />
+…<br />
+…<br />
+…<br />
+smtp-server 10.1.12.33<br />
+<br />
+Note: Severity level must be set at 3 (errors) or higher as the following message is seen when an ASA loses communication with the syslog server: %ASA-3-201008 or %ASA-3-414003: Disallowing new connections.<br />
+<br />
+If the ASA is not configured to generate a real-time alert to organization-defined personnel and/or the firewall administrator if communication with the central audit server is lost, this is a finding.</p><h2>Vulnerability Number</h2><p>V-239863</p><h2>Documentable</h2><p>False</p><h2>Rule Version</h2><p>CASA-FW-000210</p><h2>Severity Override Guidance</h2><p>Review the ASA configuration to determine if it will send an email alert to organization-defined personnel and/or the firewall administrator if  communication with the central audit server is lost as shown in the example below.<br />
+<br />
+logging enable<br />
+logging host NDM_INTERFACE 10.1.22.2 6/1514<br />
+logging permit-hostdown<br />
+logging mail errors<br />
+logging from-address firewall@mail.mil<br />
+logging recipient-address OurFWadmin@mail.mil level errors<br />
+logging recipient-address OurISSO@mail.mil level errors<br />
+…<br />
+…<br />
+…<br />
+smtp-server 10.1.12.33<br />
+<br />
+Note: Severity level must be set at 3 (errors) or higher as the following message is seen when an ASA loses communication with the syslog server: %ASA-3-201008 or %ASA-3-414003: Disallowing new connections.<br />
+<br />
+If the ASA is not configured to generate a real-time alert to organization-defined personnel and/or the firewall administrator if communication with the central audit server is lost, this is a finding.</p><h2>Check Content Reference</h2><p>M</p><h2>Target Key</h2><p>5339</p></body></html>

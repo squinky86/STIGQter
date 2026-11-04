@@ -1,0 +1,30 @@
+<!doctype html><html lang="en"><head><meta charset="utf-8"><title>STIGQter: STIG Check Details: SV-283910r1203979_rule: The Nokia Provider Edge (PE) router providing virtual private local area network services (VPLS) must be configured to have traffic broadcast storm thresholds on customer edge-facing interfaces.</title><link rel="icon" type="image/svg+xml" href="STIGQter.svg" /><script async src="https://www.googletagmanager.com/gtag/js?id=UA-31381839-2"></script><script src="include.js"></script><script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-4110907817782130" crossorigin="anonymous"></script></head><body><div><img src="STIGQter.svg" alt="STIGQter" style="height:1em;" /> <a href="https://www.stigqter.com/">STIGQter</a>: <a href="main.html">STIG Summary</a>: <a href="U_Nokia_SR_OS_25-x_RTR_V1R1_STIG_Manual-xccdf.html">Nokia Service Router OS 25.x Router Security Technical Implementation Guide Version: 1 Release: 1 Benchmark Date: 28 Apr 2026</a>:</div> <h1>The Nokia Provider Edge (PE) router providing virtual private local area network services (VPLS) must be configured to have traffic broadcast storm thresholds on customer edge-facing interfaces.</h1><h2>DISA Rule</h2><p>SV-283910r1203979_rule</p><h2>Vulnerability Number</h2><p>V-283910</p><h2>Group Title</h2><p>SRG-NET-000193-RTR-000002</p><h2>Rule Version</h2><p>NOKI-RT-000990</p><h2>Severity</h2><p>CAT II</p><h2>CCI(s)</h2><ul><li>CCI-001095 - Manage capacity, bandwidth, or other redundancy to limit the effects of information flooding types of denial of service attacks.</li></ul><h2>Weight</h2><p>10</p><h2>Fix Recommendation</h2><p>Configure QoS SAP-ingress to control broadcast storm for each VPLS bridge domain. Base the suppression threshold on expected traffic rates plus some additional capacity. <br />
+<br />
+Configure QoS SAP-ingress using the example below:<br />
+<br />
+- configure qos sap-ingress 100 create<br />
+- config&gt;qos&gt;sap-ingress# policer 10 create<br />
+- config&gt;qos&gt;sap-ingress&gt;policer# rate 12000<br />
+- config&gt;qos&gt;sap-ingress&gt;policer# exit<br />
+- config&gt;qos&gt;sap-ingress# fc &quot;be&quot; create<br />
+- config&gt;qos&gt;sap-ingress&gt;fc# broadcast-policer 10<br />
+- config&gt;qos&gt;sap-ingress&gt;fc# exit<br />
+- config&gt;qos&gt;sap-ingress# exit all <br />
+<br />
+Apply the QoS SAP-ingress policy to the SAP using the example below:<br />
+<br />
+- configure service vpls 20 sap 1/1/c7/1 ingress qos 100</p><h2>Check Contents</h2><p>Review the router configuration to verify Quality-of-Service (QoS) SAP-ingress is applied on the service access point (SAP), deploying VPLS to control broadcast storm.<br />
+<br />
+Verify the QoS SAP-ingress policy is applied to the SAP using the configuration below:<br />
+<br />
+- show service id 20 sap 1/1/c7/1 qos | match &quot;Ingress qos-policy&quot;<br />
+Ingress qos-policy : 100                      Egress qos-policy : 1<br />
+<br />
+If the QoS SAP-ingress is not applied to the SAP, this is a finding.</p><h2>Vulnerability Number</h2><p>V-283910</p><h2>Documentable</h2><p>False</p><h2>Rule Version</h2><p>NOKI-RT-000990</p><h2>Severity Override Guidance</h2><p>Review the router configuration to verify Quality-of-Service (QoS) SAP-ingress is applied on the service access point (SAP), deploying VPLS to control broadcast storm.<br />
+<br />
+Verify the QoS SAP-ingress policy is applied to the SAP using the configuration below:<br />
+<br />
+- show service id 20 sap 1/1/c7/1 qos | match &quot;Ingress qos-policy&quot;<br />
+Ingress qos-policy : 100                      Egress qos-policy : 1<br />
+<br />
+If the QoS SAP-ingress is not applied to the SAP, this is a finding.</p><h2>Check Content Reference</h2><p>M</p><h2>Target Key</h2><p>5746</p></body></html>

@@ -1,0 +1,41 @@
+<!doctype html><html lang="en"><head><meta charset="utf-8"><title>STIGQter: STIG Check Details: SV-256036r882450_rule: The Arista BGP router must be configured to limit the prefix size on any inbound route advertisement to /24 or the least significant prefixes issued to the customer.</title><link rel="icon" type="image/svg+xml" href="STIGQter.svg" /><script async src="https://www.googletagmanager.com/gtag/js?id=UA-31381839-2"></script><script src="include.js"></script><script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-4110907817782130" crossorigin="anonymous"></script></head><body><div><img src="STIGQter.svg" alt="STIGQter" style="height:1em;" /> <a href="https://www.stigqter.com/">STIGQter</a>: <a href="main.html">STIG Summary</a>: <a href="U_Arista_MLS_EOS_4-X_Router_STIG_V2R2_Manual-xccdf.html">Arista MLS EOS 4.X Router Security Technical Implementation Guide Version: 2 Release: 2 Benchmark Date: 02 Apr 2025</a>:</div> <h1>The Arista BGP router must be configured to limit the prefix size on any inbound route advertisement to /24 or the least significant prefixes issued to the customer.</h1><h2>DISA Rule</h2><p>SV-256036r882450_rule</p><h2>Vulnerability Number</h2><p>V-256036</p><h2>Group Title</h2><p>SRG-NET-000362-RTR-000118</p><h2>Rule Version</h2><p>ARST-RT-000570</p><h2>Severity</h2><p>CAT III</p><h2>CCI(s)</h2><ul><li>CCI-002385 - Protect against or limit the effects of organization-defined types of denial of service events.</li></ul><h2>Weight</h2><p>10</p><h2>Fix Recommendation</h2><p>This requirement is not applicable for the DODIN backbone. <br />
+<br />
+Ensure all eBGP Arista routers are configured to limit the prefix size on any route advertisement to /24 or the least significant prefixes issued to the customer.<br />
+<br />
+Step 1: Configure the prefix-list.<br />
+<br />
+ip prefix-list ADVERTISE_ROUTES deny 0.0.0.0/0 ge 25<br />
+ip prefix-list ADVERTISE_ROUTES permit 0.0.0.0/0 le 32<br />
+<br />
+Step 2: Apply the prefix-list in the BGP process inbound.<br />
+<br />
+LEAF-1A(config)#router bgp 65000<br />
+LEAF-1A(config)# neighbor 10.1.12.2 prefix-list ADVERTISE_ROUTES in</p><h2>Check Contents</h2><p>This requirement is not applicable for the DODIN backbone. <br />
+<br />
+Review the Arista router configuration to verify there is a filter to reject inbound route advertisements that are greater than /24 or the least significant prefixes issued to the customer, whichever is larger.<br />
+<br />
+Step 1: To verify there is a filter to reject inbound route advertisements that are greater than /24 or the least significant prefixes issued to the customer, whichever is larger, execute the command &quot;sh ip prefix-list&quot;.<br />
+<br />
+ip prefix-list ADVERTISE_ROUTES deny 0.0.0.0/0 ge 25<br />
+ip prefix-list ADVERTISE_ROUTES permit 0.0.0.0/0 le 32<br />
+<br />
+Step 2: Verify the prefix-list is applied in BGP process. Execute the command &quot;sh run section router bgp&quot;.<br />
+<br />
+router bgp 65000<br />
+ neighbor 10.1.12.2 prefix-list ADVERTISE_ROUTES in<br />
+<br />
+If the Arista router is not configured to limit the prefix size on any inbound route advertisement to /24 or the least significant prefixes issued to the customer, this is a finding.</p><h2>Vulnerability Number</h2><p>V-256036</p><h2>Documentable</h2><p>False</p><h2>Rule Version</h2><p>ARST-RT-000570</p><h2>Severity Override Guidance</h2><p>This requirement is not applicable for the DODIN backbone. <br />
+<br />
+Review the Arista router configuration to verify there is a filter to reject inbound route advertisements that are greater than /24 or the least significant prefixes issued to the customer, whichever is larger.<br />
+<br />
+Step 1: To verify there is a filter to reject inbound route advertisements that are greater than /24 or the least significant prefixes issued to the customer, whichever is larger, execute the command &quot;sh ip prefix-list&quot;.<br />
+<br />
+ip prefix-list ADVERTISE_ROUTES deny 0.0.0.0/0 ge 25<br />
+ip prefix-list ADVERTISE_ROUTES permit 0.0.0.0/0 le 32<br />
+<br />
+Step 2: Verify the prefix-list is applied in BGP process. Execute the command &quot;sh run section router bgp&quot;.<br />
+<br />
+router bgp 65000<br />
+ neighbor 10.1.12.2 prefix-list ADVERTISE_ROUTES in<br />
+<br />
+If the Arista router is not configured to limit the prefix size on any inbound route advertisement to /24 or the least significant prefixes issued to the customer, this is a finding.</p><h2>Check Content Reference</h2><p>M</p><h2>Target Key</h2><p>5513</p></body></html>

@@ -1,0 +1,32 @@
+<!doctype html><html lang="en"><head><meta charset="utf-8"><title>STIGQter: STIG Check Details: SV-279536r1192381_rule: Nutanix OS must implement TLS to protect the integrity and confidentiality of remote access and nonlocal maintenance and diagnostic sessions.</title><link rel="icon" type="image/svg+xml" href="STIGQter.svg" /><script async src="https://www.googletagmanager.com/gtag/js?id=UA-31381839-2"></script><script src="include.js"></script><script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-4110907817782130" crossorigin="anonymous"></script></head><body><div><img src="STIGQter.svg" alt="STIGQter" style="height:1em;" /> <a href="https://www.stigqter.com/">STIGQter</a>: <a href="main.html">STIG Summary</a>: <a href="U_NTX_Acropolis_OS_STIG_V1R1_Manual-xccdf.html">Nutanix Acropolis GPOS Security Technical Implementation Guide Version: 1 Release: 1 Benchmark Date: 26 Jan 2026</a>:</div> <h1>Nutanix OS must implement TLS to protect the integrity and confidentiality of remote access and nonlocal maintenance and diagnostic sessions.</h1><h2>DISA Rule</h2><p>SV-279536r1192381_rule</p><h2>Vulnerability Number</h2><p>V-279536</p><h2>Group Title</h2><p>SRG-OS-000250-GPOS-00093</p><h2>Rule Version</h2><p>NXAC-OS-000013</p><h2>Severity</h2><p>CAT I</p><h2>CCI(s)</h2><ul><li>CCI-001453 - Implement cryptographic mechanisms to protect the integrity of remote access sessions.</li></ul><h2>Weight</h2><p>10</p><h2>Fix Recommendation</h2><p>Configure SSH.<br />
+<br />
+1. For AOS, configure SSH, then restart the SSH for the changes to take effect.<br />
+<br />
+$ sudo salt-call state.sls security/CVM/sshdCVM<br />
+$ sudo systemctl restart sshd<br />
+<br />
+2. For Prism Central, configure SSH, then restart the SSH for the changes to take effect.<br />
+<br />
+$ sudo salt-call state.sls security/PCVM/sshdPCVM<br />
+$ sudo systemctl restart sshd<br />
+<br />
+3. For Files, configure SSH, then restart the SSH for the changes to take effect.<br />
+<br />
+$ sudo salt-call state.sls security/AFS/sshdAFS<br />
+$ sudo systemctl restart sshd</p><h2>Check Contents</h2><p>Note: For AHV, this requirement is Not Applicable. <br />
+<br />
+Verify AOS, Prism Central, and Files OS VMs are configured to only use DOD-approved TLS encryption using the following command.<br />
+<br />
+$ sudo grep -i MinProtocol /etc/crypto-policies/back-ends/opensslcnf.config<br />
+TLS.MinProtocol = TLSv1.2<br />
+DTLS.MinProtocol = DTLSv1.2<br />
+<br />
+If the &quot;TLS.MinProtocol&quot; is not set to &quot;TLVSv1.2&quot; (or later) or the &quot;DTLS.Min.Protocol&quot; is not set to &quot;DTLSv1.2&quot;, this is a finding.</p><h2>Vulnerability Number</h2><p>V-279536</p><h2>Documentable</h2><p>False</p><h2>Rule Version</h2><p>NXAC-OS-000013</p><h2>Severity Override Guidance</h2><p>Note: For AHV, this requirement is Not Applicable. <br />
+<br />
+Verify AOS, Prism Central, and Files OS VMs are configured to only use DOD-approved TLS encryption using the following command.<br />
+<br />
+$ sudo grep -i MinProtocol /etc/crypto-policies/back-ends/opensslcnf.config<br />
+TLS.MinProtocol = TLSv1.2<br />
+DTLS.MinProtocol = DTLSv1.2<br />
+<br />
+If the &quot;TLS.MinProtocol&quot; is not set to &quot;TLVSv1.2&quot; (or later) or the &quot;DTLS.Min.Protocol&quot; is not set to &quot;DTLSv1.2&quot;, this is a finding.</p><h2>Check Content Reference</h2><p>M</p><h2>Target Key</h2><p>5730</p></body></html>

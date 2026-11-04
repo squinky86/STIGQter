@@ -1,0 +1,113 @@
+<!doctype html><html lang="en"><head><meta charset="utf-8"><title>STIGQter: STIG Check Details: SV-235153r961149_rule: Access to database files must be limited to relevant processes and to authorized, administrative users.</title><link rel="icon" type="image/svg+xml" href="STIGQter.svg" /><script async src="https://www.googletagmanager.com/gtag/js?id=UA-31381839-2"></script><script src="include.js"></script><script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-4110907817782130" crossorigin="anonymous"></script></head><body><div><img src="STIGQter.svg" alt="STIGQter" style="height:1em;" /> <a href="https://www.stigqter.com/">STIGQter</a>: <a href="main.html">STIG Summary</a>: <a href="U_Oracle_MySQL_8-0_STIG_V2R2_Manual-xccdf.html">Oracle MySQL 8.0 Security Technical Implementation Guide Version: 2 Release: 2 Benchmark Date: 24 Oct 2024</a>:</div> <h1>Access to database files must be limited to relevant processes and to authorized, administrative users.</h1><h2>DISA Rule</h2><p>SV-235153r961149_rule</p><h2>Vulnerability Number</h2><p>V-235153</p><h2>Group Title</h2><p>SRG-APP-000243-DB-000374</p><h2>Rule Version</h2><p>MYS8-00-006800</p><h2>Severity</h2><p>CAT II</p><h2>CCI(s)</h2><ul><li>CCI-001090 - Prevent unauthorized and unintended information transfer via shared system resources.</li></ul><h2>Weight</h2><p>10</p><h2>Fix Recommendation</h2><p>Configure the permissions granted by the operating system/file system on the database files, database log files, and database backup files so that only relevant system accounts and authorized system administrators and database administrators with a need to know are permitted to read/view these files. Remove any unauthorized permission grants from MySQL data, audit, certificate, key, or other directories.</p><h2>Check Contents</h2><p>Review the permissions granted to users via the operating system/file system on the instance files, database files, database redo, undo, archive, bin and audit log files, and database backup files.<br />
+<br />
+If any user/role who is not an authorized system administrator with a need to know or database administrator with a need to know, or a system account for running DBMS processes permitted to read/view any of these files, this is a finding.<br />
+<br />
+Note: When the instance and database directories are created by mysql installations packages, the permissions are secure and should not be changed.<br />
+<br />
+Run ls -l on the various files and directory. Permissions should be limited to the mysql user and mysql group.<br />
+<br />
+Use the following queries/commands to find the locations of instance directory, database directory, transaction logs directory, archive logs directory, audit logs directory, and backup files location.<br />
+<br />
+SELECT VARIABLE_NAME, VARIABLE_VALUE<br />
+FROM performance_schema.global_variables<br />
+WHERE VARIABLE_NAME LIKE '%dir' or VARIABLE_NAME LIKE '%file' order by  VARIABLE_NAME;<br />
+<br />
+Regarding Linux default installation:<br />
+Proper permissions are shown below. If the permissions are more permissive for a Location Type, this is a finding.<br />
+<br />
+The following table shows directory and file permissions for the generic binary distribution installation of MySQL Enterprise Edition for Linux x86-64 on Oracle Linux that is described in this guide.<br />
+<br />
+As indicated previously, most of the MySQL installation can be owned by root. The exceptions are the data directory, the error log file, the mysql-files directory, the pid file, and the socket file, to which the mysql user must have write access. Files and resources to which the mysql user requires read access include configuration files (/etc/my.cnf) and the MySQL binaries (for example /usr/local/mysql/bin).<br />
+<br />
+Desc/Typical Location                   Owner                Directory       File<br />
+                                                                                        Permissions     Permissions<br />
+---------------------                                -----                     -----------           -----------<br />
+Client and utility programs directory<br />
+/usr/local/mysql/bin                      root                    drwxr-xr-x<br />
+mysqld server   <br />
+/usr/local/mysql/bin                      root                   drwxr-xr-x      -rwxr-xr-x<br />
+MySQL configuration file        <br />
+/etc/my.cnf                                      root                  drwxr-xr-x      -rw-r--r--<br />
+Data directory  <br />
+/usr/local/mysql/data                   mysql                drwxr-x---<br />
+Error log file  <br />
+ &lt;directory where audit log files are located&gt;/host_name.err     <br />
+                                                           mysql                drwxr-x---      -rw-------<br />
+secure_file_priv directory      <br />
+/usr/local/mysql/mysql-files        mysql                drwxr-x---<br />
+mysqld systemd service file     <br />
+/usr/lib/systemd/system/mysqld.service  <br />
+                                                           root                   drwxr-xr-x     -rw-r--r--<br />
+systemd tmpfiles configuration file     <br />
+/usr/lib/tmpfiles.d/mysql.conf   root                   drwxr-xr-x      -rw-r--r--<br />
+pid file        <br />
+ &lt;directory where audit log files are located&gt;/mysqld.pid        <br />
+                                                          mysql                 drwxr-x---      -rw-r-----<br />
+socket file     <br />
+/tmp/mysql.sock                           mysql                 drwxrwxrwt srwxrwxrwx<br />
+Unix manual pages directory     <br />
+/usr/local/mysql/man                  root                   drwxr-xr-x<br />
+Include Header files directory  <br />
+/usr/local/mysql/include             root                   drwxr-xr-x<br />
+Libraries directory     <br />
+/usr/local/mysql/lib                      root                   drwxr-xr-x<br />
+Miscellaneous support files directory   <br />
+/usr/local/mysql/support-files   root                   drwxr-xr-x<br />
+Miscellaneous files directory   <br />
+/usr/local/mysql/share                root                   drwxr-xr-x</p><h2>Vulnerability Number</h2><p>V-235153</p><h2>Documentable</h2><p>False</p><h2>Rule Version</h2><p>MYS8-00-006800</p><h2>Severity Override Guidance</h2><p>Review the permissions granted to users via the operating system/file system on the instance files, database files, database redo, undo, archive, bin and audit log files, and database backup files.<br />
+<br />
+If any user/role who is not an authorized system administrator with a need to know or database administrator with a need to know, or a system account for running DBMS processes permitted to read/view any of these files, this is a finding.<br />
+<br />
+Note: When the instance and database directories are created by mysql installations packages, the permissions are secure and should not be changed.<br />
+<br />
+Run ls -l on the various files and directory. Permissions should be limited to the mysql user and mysql group.<br />
+<br />
+Use the following queries/commands to find the locations of instance directory, database directory, transaction logs directory, archive logs directory, audit logs directory, and backup files location.<br />
+<br />
+SELECT VARIABLE_NAME, VARIABLE_VALUE<br />
+FROM performance_schema.global_variables<br />
+WHERE VARIABLE_NAME LIKE '%dir' or VARIABLE_NAME LIKE '%file' order by  VARIABLE_NAME;<br />
+<br />
+Regarding Linux default installation:<br />
+Proper permissions are shown below. If the permissions are more permissive for a Location Type, this is a finding.<br />
+<br />
+The following table shows directory and file permissions for the generic binary distribution installation of MySQL Enterprise Edition for Linux x86-64 on Oracle Linux that is described in this guide.<br />
+<br />
+As indicated previously, most of the MySQL installation can be owned by root. The exceptions are the data directory, the error log file, the mysql-files directory, the pid file, and the socket file, to which the mysql user must have write access. Files and resources to which the mysql user requires read access include configuration files (/etc/my.cnf) and the MySQL binaries (for example /usr/local/mysql/bin).<br />
+<br />
+Desc/Typical Location                   Owner                Directory       File<br />
+                                                                                        Permissions     Permissions<br />
+---------------------                                -----                     -----------           -----------<br />
+Client and utility programs directory<br />
+/usr/local/mysql/bin                      root                    drwxr-xr-x<br />
+mysqld server   <br />
+/usr/local/mysql/bin                      root                   drwxr-xr-x      -rwxr-xr-x<br />
+MySQL configuration file        <br />
+/etc/my.cnf                                      root                  drwxr-xr-x      -rw-r--r--<br />
+Data directory  <br />
+/usr/local/mysql/data                   mysql                drwxr-x---<br />
+Error log file  <br />
+ &lt;directory where audit log files are located&gt;/host_name.err     <br />
+                                                           mysql                drwxr-x---      -rw-------<br />
+secure_file_priv directory      <br />
+/usr/local/mysql/mysql-files        mysql                drwxr-x---<br />
+mysqld systemd service file     <br />
+/usr/lib/systemd/system/mysqld.service  <br />
+                                                           root                   drwxr-xr-x     -rw-r--r--<br />
+systemd tmpfiles configuration file     <br />
+/usr/lib/tmpfiles.d/mysql.conf   root                   drwxr-xr-x      -rw-r--r--<br />
+pid file        <br />
+ &lt;directory where audit log files are located&gt;/mysqld.pid        <br />
+                                                          mysql                 drwxr-x---      -rw-r-----<br />
+socket file     <br />
+/tmp/mysql.sock                           mysql                 drwxrwxrwt srwxrwxrwx<br />
+Unix manual pages directory     <br />
+/usr/local/mysql/man                  root                   drwxr-xr-x<br />
+Include Header files directory  <br />
+/usr/local/mysql/include             root                   drwxr-xr-x<br />
+Libraries directory     <br />
+/usr/local/mysql/lib                      root                   drwxr-xr-x<br />
+Miscellaneous support files directory   <br />
+/usr/local/mysql/support-files   root                   drwxr-xr-x<br />
+Miscellaneous files directory   <br />
+/usr/local/mysql/share                root                   drwxr-xr-x</p><h2>Check Content Reference</h2><p>M</p><h2>Target Key</h2><p>5277</p></body></html>

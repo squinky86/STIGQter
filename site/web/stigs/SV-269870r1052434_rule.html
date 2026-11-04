@@ -1,0 +1,468 @@
+<!doctype html><html lang="en"><head><meta charset="utf-8"><title>STIGQter: STIG Check Details: SV-269870r1052434_rule: The PE router must be configured to enforce a Quality-of-Service (QoS) policy to limit the effects of packet flooding denial-of-service (DoS) attacks.</title><link rel="icon" type="image/svg+xml" href="STIGQter.svg" /><script async src="https://www.googletagmanager.com/gtag/js?id=UA-31381839-2"></script><script src="include.js"></script><script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-4110907817782130" crossorigin="anonymous"></script></head><body><div><img src="STIGQter.svg" alt="STIGQter" style="height:1em;" /> <a href="https://www.stigqter.com/">STIGQter</a>: <a href="main.html">STIG Summary</a>: <a href="U_Dell_OS10_Switch_RTR_STIG_V1R2_Manual-xccdf.html">Dell OS10 Switch Router Security Technical Implementation Guide Version: 1 Release: 2 Benchmark Date: 01 Apr 2026</a>:</div> <h1>The PE router must be configured to enforce a Quality-of-Service (QoS) policy to limit the effects of packet flooding denial-of-service (DoS) attacks.</h1><h2>DISA Rule</h2><p>SV-269870r1052434_rule</p><h2>Vulnerability Number</h2><p>V-269870</p><h2>Group Title</h2><p>SRG-NET-000193-RTR-000112</p><h2>Rule Version</h2><p>OS10-RTR-000340</p><h2>Severity</h2><p>CAT II</p><h2>CCI(s)</h2><ul><li>CCI-001095 - Manage capacity, bandwidth, or other redundancy to limit the effects of information flooding types of denial of service attacks.</li></ul><h2>Weight</h2><p>10</p><h2>Fix Recommendation</h2><p>Implement a mechanism for traffic prioritization and bandwidth reservation. This mechanism must enforce the traffic priorities specified by the Combatant Commands/Services/Agencies.<br />
+<br />
+Step 1: Configure QoS class-maps to match on DSCP values as shown in the configuration example below:<br />
+<br />
+OS10(config)# class-map type qos 6Q_BestEffort_dscp<br />
+OS10(config-cmap-qos)# match ip-any dscp 0<br />
+OS10(config-cmap-qos)# !<br />
+OS10(config-cmap-qos)# class-map type qos 6Q_NetworkControl_dscp<br />
+OS10(config-cmap-qos)# match ip-any dscp 48<br />
+OS10(config-cmap-qos)# !<br />
+OS10(config-cmap-qos)# class-map type qos 6Q_PreferData_dscp<br />
+OS10(config-cmap-qos)# match ip-any dscp 16<br />
+OS10(config-cmap-qos)# !<br />
+OS10(config-cmap-qos)# class-map type qos 6Q_Scavenger_dscp<br />
+OS10(config-cmap-qos)# match ip-any dscp 8<br />
+OS10(config-cmap-qos)# !<br />
+OS10(config-cmap-qos)# class-map type qos 6Q_Video_dscp<br />
+OS10(config-cmap-qos)# match ip-any dscp 38<br />
+OS10(config-cmap-qos)# !<br />
+OS10(config-cmap-qos)# class-map type qos 6Q_Voice_dscp<br />
+OS10(config-cmap-qos)# match ip-any dscp 49<br />
+OS10(config-cmap-qos)# !<br />
+OS10(config-cmap-qos)# class-map type qos 6Q_Voice_dscp_15<br />
+OS10(config-cmap-qos)# match ip-any dscp 15<br />
+OS10(config-cmap-qos)# !<br />
+OS10(config-cmap-qos)# exit<br />
+OS10(config)#<br />
+<br />
+Step 2: Configure policy-maps to map traffic qos classes to qos-groups.<br />
+<br />
+OS10(config)# policy-map type qos 6Q_PolicyMapIn_dscp<br />
+OS10(config-pmap-qos)# !<br />
+OS10(config-pmap-qos)# class 6Q_Scavenger_dscp<br />
+OS10(config-pmap-c-qos)# set qos-group 0<br />
+OS10(config-pmap-c-qos)# !<br />
+OS10(config-pmap-c-qos)# class 6Q_BestEffort_dscp<br />
+OS10(config-pmap-c-qos)# set qos-group 1<br />
+OS10(config-pmap-c-qos)# !<br />
+OS10(config-pmap-c-qos)# class 6Q_PreferData_dscp<br />
+OS10(config-pmap-c-qos)# set qos-group 2<br />
+OS10(config-pmap-c-qos)# !<br />
+OS10(config-pmap-c-qos)# class 6Q_Video_dscp<br />
+OS10(config-pmap-c-qos)# set qos-group 3<br />
+OS10(config-pmap-c-qos)# !<br />
+OS10(config-pmap-c-qos)# class 6Q_Voice_dscp<br />
+OS10(config-pmap-c-qos)# set qos-group 4<br />
+OS10(config-pmap-c-qos)# !<br />
+OS10(config-pmap-c-qos)# class 6Q_Voice_dscp_15<br />
+OS10(config-pmap-c-qos)# set qos-group 4<br />
+OS10(config-pmap-c-qos)# set dscp 45<br />
+OS10(config-pmap-c-qos)# !<br />
+OS10(config-pmap-c-qos)# class 6Q_NetworkControl_dscp<br />
+OS10(config-pmap-c-qos)# set qos-group 5<br />
+OS10(config-pmap-c-qos)# !<br />
+OS10(config-pmap-c-qos)# exit<br />
+OS10(config-pmap-qos)# exit<br />
+<br />
+Step 3: Configure queuing class-maps as shown in the configuration example below:<br />
+<br />
+OS10(config)# class-map type queuing 6Q_Scavenger<br />
+OS10(config-cmap-queuing)# match queue 0<br />
+OS10(config-cmap-queuing)# !<br />
+OS10(config-cmap-queuing)# class-map type queuing 6Q_BestEffort<br />
+OS10(config-cmap-queuing)# match queue 1<br />
+OS10(config-cmap-queuing)# !<br />
+OS10(config-cmap-queuing)# class-map type queuing 6Q_PreferData<br />
+OS10(config-cmap-queuing)# match queue 2<br />
+OS10(config-cmap-queuing)# !<br />
+OS10(config-cmap-queuing)# class-map type queuing 6Q_Video<br />
+OS10(config-cmap-queuing)# match queue 3<br />
+OS10(config-cmap-queuing)# !<br />
+OS10(config-cmap-queuing)# class-map type queuing 6Q_Voice<br />
+OS10(config-cmap-queuing)# match queue 4<br />
+OS10(config-cmap-queuing)# !<br />
+OS10(config-cmap-queuing)# class-map type queuing 6Q_NetworkControl<br />
+OS10(config-cmap-queuing)# match queue 5<br />
+OS10(config-cmap-queuing)# !<br />
+OS10(config-cmap-queuing)# exit<br />
+OS10(config)#<br />
+<br />
+Step 4: Configure policy maps to preserve bandwidth for each queue.<br />
+<br />
+OS10(config-pmap-qos)#<br />
+OS10(config-pmap-qos)# policy-map type queuing 6Q_PolicyMapOut_100G<br />
+OS10(config-pmap-queuing)# !<br />
+OS10(config-pmap-queuing)# class 6Q_Scavenger<br />
+OS10(config-pmap-c-que)# bandwidth percent 10<br />
+OS10(config-pmap-c-que)# shape min mbps 10000 max mbps 10000<br />
+OS10(config-pmap-c-que)# !<br />
+OS10(config-pmap-c-que)# class 6Q_BestEffort<br />
+OS10(config-pmap-c-que)# bandwidth percent 20<br />
+OS10(config-pmap-c-que)# !<br />
+OS10(config-pmap-c-que)# class 6Q_NetworkControl<br />
+OS10(config-pmap-c-que)# bandwidth percent 5<br />
+OS10(config-pmap-c-que)# shape min mbps 5000 max mbps 5000<br />
+OS10(config-pmap-c-que)# !<br />
+OS10(config-pmap-c-que)# class 6Q_PreferData<br />
+OS10(config-pmap-c-que)# bandwidth percent 30<br />
+OS10(config-pmap-c-que)# shape min mbps 30000 max mbps 30000<br />
+OS10(config-pmap-c-que)# !<br />
+OS10(config-pmap-c-que)# class 6Q_Video<br />
+OS10(config-pmap-c-que)# bandwidth percent 15<br />
+OS10(config-pmap-c-que)# shape min mbps 15000 max mbps 15000<br />
+OS10(config-pmap-c-que)# !<br />
+OS10(config-pmap-c-que)# class 6Q_Voice<br />
+OS10(config-pmap-c-que)# bandwidth percent 20<br />
+OS10(config-pmap-c-que)# shape min mbps 20000 max mbps 20000<br />
+OS10(config-pmap-c-que)# !<br />
+<br />
+Step 5: Apply the input and output service policy to all interfaces as shown in the configuration example below:<br />
+<br />
+OS10(config)# interface ethernet 1/1/2<br />
+OS10(conf-if-eth1/1/2)# service-policy input type qos 6Q_PolicyMapIn_dscp<br />
+OS10(conf-if-eth1/1/2)# service-policy output type queuing 6Q_PolicyMapOut_100G</p><h2>Check Contents</h2><p>Review the router configuration and interview the system administrator to verify that a mechanism for traffic prioritization and bandwidth reservation exists.<br />
+<br />
+Verify the class-maps are configured to match on DSCP, protocols, or access control lists (ACLs) that identify traffic types based on ports. <br />
+<br />
+!<br />
+class-map type qos 6Q_BestEffort_dscp<br />
+ match ip-any dscp 0<br />
+!<br />
+class-map type qos 6Q_NetworkControl_dscp<br />
+ match ip-any dscp 48<br />
+!<br />
+class-map type qos 6Q_PreferData_dscp<br />
+ match ip-any dscp 16<br />
+!<br />
+class-map type qos 6Q_Scavenger_dscp<br />
+ match ip-any dscp 8<br />
+!<br />
+class-map type qos 6Q_Video_dscp<br />
+ match ip-any dscp 38<br />
+!<br />
+class-map type qos 6Q_Voice_dscp<br />
+ match ip-any dscp 49<br />
+!<br />
+class-map type qos 6Q_Voice_dscp_15<br />
+ match ip-any dscp 15<br />
+!<br />
+class-map type queuing 6Q_BestEffort<br />
+ match queue 1<br />
+!<br />
+class-map type queuing 6Q_NetworkControl<br />
+ match queue 5<br />
+!<br />
+class-map type queuing 6Q_PreferData<br />
+ match queue 2<br />
+!<br />
+class-map type queuing 6Q_Scavenger<br />
+ match queue 0<br />
+!<br />
+class-map type queuing 6Q_Unused_6<br />
+ match queue 6<br />
+!<br />
+class-map type queuing 6Q_Unused_7<br />
+ match queue 7<br />
+!<br />
+class-map type queuing 6Q_Video<br />
+ match queue 3<br />
+!<br />
+class-map type queuing 6Q_Voice<br />
+ match queue 4<br />
+!<br />
+<br />
+policy-map type qos 6Q_PolicyMapIn_dscp<br />
+ !<br />
+ class 6Q_Scavenger_dscp<br />
+  set qos-group 0<br />
+ !<br />
+ class 6Q_BestEffort_dscp<br />
+  set qos-group 1<br />
+ !<br />
+ class 6Q_PreferData_dscp<br />
+  set qos-group 2<br />
+ !<br />
+ class 6Q_Video_dscp<br />
+  set qos-group 3<br />
+ !<br />
+ class 6Q_Voice_dscp<br />
+  set qos-group 4<br />
+ !<br />
+ class 6Q_Voice_dscp_15<br />
+  set qos-group 4<br />
+  set dscp 45<br />
+ !<br />
+ class 6Q_NetworkControl_dscp<br />
+  set qos-group 5<br />
+!<br />
+policy-map type queuing 6Q_PolicyMapOut_100G<br />
+ !<br />
+ class 6Q_Scavenger<br />
+  bandwidth percent 10<br />
+  shape min mbps 10000 max mbps 10000<br />
+ !<br />
+ class 6Q_BestEffort<br />
+  bandwidth percent 18<br />
+ !<br />
+ class 6Q_NetworkControl<br />
+  bandwidth percent 5<br />
+  shape min mbps 5000 max mbps 5000<br />
+ !<br />
+ class 6Q_PreferData<br />
+  bandwidth percent 30<br />
+  shape min mbps 30000 max mbps 30000<br />
+ !<br />
+ class 6Q_Unused_6<br />
+  bandwidth percent 1<br />
+ !<br />
+ class 6Q_Unused_7<br />
+  bandwidth percent 1<br />
+ !<br />
+ class 6Q_Video<br />
+  bandwidth percent 15<br />
+  shape min mbps 15000 max mbps 15000<br />
+ !<br />
+ class 6Q_Voice<br />
+  bandwidth percent 20<br />
+  shape min mbps 20000 max mbps 20000<br />
+!<br />
+<br />
+Verify the policy-map is configured to set DSCP values for the defined class-maps in accordance with the QoS GIG Technical Profile. <br />
+<br />
+policy-map type qos 6Q_PolicyMapIn_dscp<br />
+ !<br />
+ class 6Q_Scavenger_dscp<br />
+  set qos-group 0<br />
+ !<br />
+ class 6Q_BestEffort_dscp<br />
+  set qos-group 1<br />
+ !<br />
+ class 6Q_PreferData_dscp<br />
+  set qos-group 2<br />
+ !<br />
+ class 6Q_Video_dscp<br />
+  set qos-group 3<br />
+ !<br />
+ class 6Q_Voice_dscp<br />
+  set qos-group 4<br />
+ !<br />
+ class 6Q_Voice_dscp_15<br />
+  set qos-group 4<br />
+  set dscp 45<br />
+ !<br />
+ class 6Q_NetworkControl_dscp<br />
+  set qos-group 5<br />
+!<br />
+policy-map type queuing 6Q_PolicyMapOut_100G<br />
+ !<br />
+ class 6Q_Scavenger<br />
+  bandwidth percent 10<br />
+  shape min mbps 10000 max mbps 10000<br />
+ !<br />
+ class 6Q_BestEffort<br />
+  bandwidth percent 18<br />
+ !<br />
+ class 6Q_NetworkControl<br />
+  bandwidth percent 5<br />
+  shape min mbps 5000 max mbps 5000<br />
+ !<br />
+ class 6Q_PreferData<br />
+  bandwidth percent 30<br />
+  shape min mbps 30000 max mbps 30000<br />
+ !<br />
+ class 6Q_Unused_6<br />
+  bandwidth percent 1<br />
+ !<br />
+ class 6Q_Unused_7<br />
+  bandwidth percent 1<br />
+ !<br />
+ class 6Q_Video<br />
+  bandwidth percent 15<br />
+  shape min mbps 15000 max mbps 15000<br />
+ !<br />
+ class 6Q_Voice<br />
+  bandwidth percent 20<br />
+  shape min mbps 20000 max mbps 20000<br />
+!<br />
+<br />
+Verify that input and output service policies are bound to the appropriate interfaces. <br />
+<br />
+!<br />
+interface ethernet1/1/2<br />
+ service-policy input type qos 6Q_PolicyMapIn_dscp<br />
+ service-policy output type queuing 6Q_PolicyMapOut_100G<br />
+!<br />
+<br />
+Note: The GTP QOS document (GTP-0009) can be downloaded via the following link:<br />
+https://intellipedia.intelink.gov/wiki/Portal:GIG_Technical_Guidance/GTG_GTPs/GTP_Development_List<br />
+<br />
+<br />
+If the router is not configured to implement a QoS policy in accordance with the QoS GIG Technical Profile, this is a finding.</p><h2>Vulnerability Number</h2><p>V-269870</p><h2>Documentable</h2><p>False</p><h2>Rule Version</h2><p>OS10-RTR-000340</p><h2>Severity Override Guidance</h2><p>Review the router configuration and interview the system administrator to verify that a mechanism for traffic prioritization and bandwidth reservation exists.<br />
+<br />
+Verify the class-maps are configured to match on DSCP, protocols, or access control lists (ACLs) that identify traffic types based on ports. <br />
+<br />
+!<br />
+class-map type qos 6Q_BestEffort_dscp<br />
+ match ip-any dscp 0<br />
+!<br />
+class-map type qos 6Q_NetworkControl_dscp<br />
+ match ip-any dscp 48<br />
+!<br />
+class-map type qos 6Q_PreferData_dscp<br />
+ match ip-any dscp 16<br />
+!<br />
+class-map type qos 6Q_Scavenger_dscp<br />
+ match ip-any dscp 8<br />
+!<br />
+class-map type qos 6Q_Video_dscp<br />
+ match ip-any dscp 38<br />
+!<br />
+class-map type qos 6Q_Voice_dscp<br />
+ match ip-any dscp 49<br />
+!<br />
+class-map type qos 6Q_Voice_dscp_15<br />
+ match ip-any dscp 15<br />
+!<br />
+class-map type queuing 6Q_BestEffort<br />
+ match queue 1<br />
+!<br />
+class-map type queuing 6Q_NetworkControl<br />
+ match queue 5<br />
+!<br />
+class-map type queuing 6Q_PreferData<br />
+ match queue 2<br />
+!<br />
+class-map type queuing 6Q_Scavenger<br />
+ match queue 0<br />
+!<br />
+class-map type queuing 6Q_Unused_6<br />
+ match queue 6<br />
+!<br />
+class-map type queuing 6Q_Unused_7<br />
+ match queue 7<br />
+!<br />
+class-map type queuing 6Q_Video<br />
+ match queue 3<br />
+!<br />
+class-map type queuing 6Q_Voice<br />
+ match queue 4<br />
+!<br />
+<br />
+policy-map type qos 6Q_PolicyMapIn_dscp<br />
+ !<br />
+ class 6Q_Scavenger_dscp<br />
+  set qos-group 0<br />
+ !<br />
+ class 6Q_BestEffort_dscp<br />
+  set qos-group 1<br />
+ !<br />
+ class 6Q_PreferData_dscp<br />
+  set qos-group 2<br />
+ !<br />
+ class 6Q_Video_dscp<br />
+  set qos-group 3<br />
+ !<br />
+ class 6Q_Voice_dscp<br />
+  set qos-group 4<br />
+ !<br />
+ class 6Q_Voice_dscp_15<br />
+  set qos-group 4<br />
+  set dscp 45<br />
+ !<br />
+ class 6Q_NetworkControl_dscp<br />
+  set qos-group 5<br />
+!<br />
+policy-map type queuing 6Q_PolicyMapOut_100G<br />
+ !<br />
+ class 6Q_Scavenger<br />
+  bandwidth percent 10<br />
+  shape min mbps 10000 max mbps 10000<br />
+ !<br />
+ class 6Q_BestEffort<br />
+  bandwidth percent 18<br />
+ !<br />
+ class 6Q_NetworkControl<br />
+  bandwidth percent 5<br />
+  shape min mbps 5000 max mbps 5000<br />
+ !<br />
+ class 6Q_PreferData<br />
+  bandwidth percent 30<br />
+  shape min mbps 30000 max mbps 30000<br />
+ !<br />
+ class 6Q_Unused_6<br />
+  bandwidth percent 1<br />
+ !<br />
+ class 6Q_Unused_7<br />
+  bandwidth percent 1<br />
+ !<br />
+ class 6Q_Video<br />
+  bandwidth percent 15<br />
+  shape min mbps 15000 max mbps 15000<br />
+ !<br />
+ class 6Q_Voice<br />
+  bandwidth percent 20<br />
+  shape min mbps 20000 max mbps 20000<br />
+!<br />
+<br />
+Verify the policy-map is configured to set DSCP values for the defined class-maps in accordance with the QoS GIG Technical Profile. <br />
+<br />
+policy-map type qos 6Q_PolicyMapIn_dscp<br />
+ !<br />
+ class 6Q_Scavenger_dscp<br />
+  set qos-group 0<br />
+ !<br />
+ class 6Q_BestEffort_dscp<br />
+  set qos-group 1<br />
+ !<br />
+ class 6Q_PreferData_dscp<br />
+  set qos-group 2<br />
+ !<br />
+ class 6Q_Video_dscp<br />
+  set qos-group 3<br />
+ !<br />
+ class 6Q_Voice_dscp<br />
+  set qos-group 4<br />
+ !<br />
+ class 6Q_Voice_dscp_15<br />
+  set qos-group 4<br />
+  set dscp 45<br />
+ !<br />
+ class 6Q_NetworkControl_dscp<br />
+  set qos-group 5<br />
+!<br />
+policy-map type queuing 6Q_PolicyMapOut_100G<br />
+ !<br />
+ class 6Q_Scavenger<br />
+  bandwidth percent 10<br />
+  shape min mbps 10000 max mbps 10000<br />
+ !<br />
+ class 6Q_BestEffort<br />
+  bandwidth percent 18<br />
+ !<br />
+ class 6Q_NetworkControl<br />
+  bandwidth percent 5<br />
+  shape min mbps 5000 max mbps 5000<br />
+ !<br />
+ class 6Q_PreferData<br />
+  bandwidth percent 30<br />
+  shape min mbps 30000 max mbps 30000<br />
+ !<br />
+ class 6Q_Unused_6<br />
+  bandwidth percent 1<br />
+ !<br />
+ class 6Q_Unused_7<br />
+  bandwidth percent 1<br />
+ !<br />
+ class 6Q_Video<br />
+  bandwidth percent 15<br />
+  shape min mbps 15000 max mbps 15000<br />
+ !<br />
+ class 6Q_Voice<br />
+  bandwidth percent 20<br />
+  shape min mbps 20000 max mbps 20000<br />
+!<br />
+<br />
+Verify that input and output service policies are bound to the appropriate interfaces. <br />
+<br />
+!<br />
+interface ethernet1/1/2<br />
+ service-policy input type qos 6Q_PolicyMapIn_dscp<br />
+ service-policy output type queuing 6Q_PolicyMapOut_100G<br />
+!<br />
+<br />
+Note: The GTP QOS document (GTP-0009) can be downloaded via the following link:<br />
+https://intellipedia.intelink.gov/wiki/Portal:GIG_Technical_Guidance/GTG_GTPs/GTP_Development_List<br />
+<br />
+<br />
+If the router is not configured to implement a QoS policy in accordance with the QoS GIG Technical Profile, this is a finding.</p><h2>Check Content Reference</h2><p>M</p><h2>Target Key</h2><p>5668</p></body></html>

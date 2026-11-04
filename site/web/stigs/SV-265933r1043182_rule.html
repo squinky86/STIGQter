@@ -1,0 +1,28 @@
+<!doctype html><html lang="en"><head><meta charset="utf-8"><title>STIGQter: STIG Check Details: SV-265933r1043182_rule: The DBMS must automatically terminate a user session after organization-defined conditions or trigger events requiring session disconnect.</title><link rel="icon" type="image/svg+xml" href="STIGQter.svg" /><script async src="https://www.googletagmanager.com/gtag/js?id=UA-31381839-2"></script><script src="include.js"></script><script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-4110907817782130" crossorigin="anonymous"></script></head><body><div><img src="STIGQter.svg" alt="STIGQter" style="height:1em;" /> <a href="https://www.stigqter.com/">STIGQter</a>: <a href="main.html">STIG Summary</a>: <a href="U_MongoDB_Enterprise_Advanced_7-x_STIG_V1R2_Manual-xccdf.html">MongoDB Enterprise Advanced 7.x Security Technical Implementation Guide Version: 1 Release: 2 Benchmark Date: 01 Jul 2026</a>:</div> <h1>The DBMS must automatically terminate a user session after organization-defined conditions or trigger events requiring session disconnect.</h1><h2>DISA Rule</h2><p>SV-265933r1043182_rule</p><h2>Vulnerability Number</h2><p>V-265933</p><h2>Group Title</h2><p>SRG-APP-000295-DB-000305</p><h2>Rule Version</h2><p>MD7X-00-006200</p><h2>Severity</h2><p>CAT II</p><h2>CCI(s)</h2><ul><li>CCI-002361 - Automatically terminate a user session after organization-defined conditions or trigger events requiring session disconnect.</li></ul><h2>Weight</h2><p>10</p><h2>Fix Recommendation</h2><p>Determine the situations when a user-initiated database session must be terminated.<br />
+<br />
+Note: The user running the commands shown below must have privileges with listSessions, killAnySession and impersonate action on the cluster.<br />
+<br />
+In the MongoDB shell, as an authenticated user, run the following command to list all user sessions:<br />
+<br />
+&gt; use config<br />
+&gt; db.system.sessions.aggregate( [ { $listSessions: { allUsers: true } }<br />
+<br />
+Reference: https://docs.mongodb.com/v7.0/reference/operator/aggregation/listSessions/<br />
+<br />
+Example output:<br />
+<br />
+{ &quot;_id&quot; : { &quot;id&quot; : UUID(&quot;b3b50641-54c6-4d6d-a96e-a2239fadce3c&quot;), &quot;uid&quot; : BinData(0,&quot;Y5mrDaxi8gv8RmdTsQ+1j7fmkr7JUsabhNmXAheU0fg=&quot;) }, &quot;lastUse&quot; : ISODate(&quot;2021-09-23T23:34:43.951Z&quot;), &quot;user&quot; : { &quot;name&quot; : &quot;jsmith@admin&quot; } }<br />
+<br />
+From the output identify the names of users whose sessions should be terminated. Using the user for each session to be terminated, run the following command (still in MongoDB shell).<br />
+<br />
+&gt; db.runCommand( { killAllSessionsByPattern: [ { users: [ { user: &lt;user&gt;, db: &lt;dbname&gt; }, ... ] }] } )<br />
+<br />
+Example to terminate user &quot;jsmith@admin&quot; sessions from example output:<br />
+<br />
+&gt; db.runCommand( { killAllSessionsByPattern: [ { users: [ { user: &quot;jsmith&quot;, db: &quot;admin&quot; } ] }]} )<br />
+<br />
+To terminate all user sessions running on the database, run the following command (still in MongoDB shell):<br />
+<br />
+&gt; db.runCommand( { killAllSessionsByPattern: [ ] } )<br />
+<br />
+Reference: https://docs.mongodb.com/v7.0/reference/command/killAllSessionsByPattern/</p><h2>Check Contents</h2><p>Review system documentation to obtain the organization's definition of circumstances requiring automatic session termination. If the documentation explicitly states that such termination is not required or is prohibited, this is not a finding. If the system owner, data owner, or organization requires additional assurance, this is a finding.</p><h2>Vulnerability Number</h2><p>V-265933</p><h2>Documentable</h2><p>False</p><h2>Rule Version</h2><p>MD7X-00-006200</p><h2>Severity Override Guidance</h2><p>Review system documentation to obtain the organization's definition of circumstances requiring automatic session termination. If the documentation explicitly states that such termination is not required or is prohibited, this is not a finding. If the system owner, data owner, or organization requires additional assurance, this is a finding.</p><h2>Check Content Reference</h2><p>M</p><h2>Target Key</h2><p>5637</p></body></html>

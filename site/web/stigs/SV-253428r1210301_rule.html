@@ -1,0 +1,100 @@
+<!doctype html><html lang="en"><head><meta charset="utf-8"><title>STIGQter: STIG Check Details: SV-253428r1210301_rule: The External Root CA certificates must be installed in the Trusted Root Store on unclassified systems.</title><link rel="icon" type="image/svg+xml" href="STIGQter.svg" /><script async src="https://www.googletagmanager.com/gtag/js?id=UA-31381839-2"></script><script src="include.js"></script><script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-4110907817782130" crossorigin="anonymous"></script></head><body><div><img src="STIGQter.svg" alt="STIGQter" style="height:1em;" /> <a href="https://www.stigqter.com/">STIGQter</a>: <a href="main.html">STIG Summary</a>: <a href="U_MS_Windows_11_STIG_V2R8_Manual-xccdf.html">Microsoft Windows 11 Security Technical Implementation Guide Version: 2 Release: 8 Benchmark Date: 01 Jul 2026</a>:</div> <h1>The External Root CA certificates must be installed in the Trusted Root Store on unclassified systems.</h1><h2>DISA Rule</h2><p>SV-253428r1210301_rule</p><h2>Vulnerability Number</h2><p>V-253428</p><h2>Group Title</h2><p>SRG-OS-000066-GPOS-00034</p><h2>Rule Version</h2><p>WN11-PK-000010</p><h2>Severity</h2><p>CAT II</p><h2>CCI(s)</h2><ul><li>CCI-000185 - For public key-based authentication, validate certificates by constructing and verifying a certification path to an accepted trust anchor including checking certificate status information.</li></ul><h2>Weight</h2><p>10</p><h2>Fix Recommendation</h2><p>Install a valid (unexpired) ECA Root CA certificate on unclassified systems. The list below is not to be treated as exhaustive. They are valid as of this writing, but the STIG should not be used as a definitive resource for the organizationally approved ECA Root CA certificates for your systems.<br />
+<br />
+ECA Root CA 4<br />
+ECA Root CA 5<br />
+<br />
+The InstallRoot tool is available on Cyber Exchange at https://cyber.mil/pki-pke/tools-configuration-files. PKI can be found at https://crl.gds.disa.mil/.</p><h2>Check Contents</h2><p>Verify the ECA Root CA certificates are installed on unclassified systems as Trusted Root Certification Authorities.<br />
+<br />
+Run &quot;PowerShell&quot; as an administrator.<br />
+<br />
+Execute the following command:<br />
+<br />
+Get-ChildItem -Path Cert:Localmachine\root | Where Subject -Like &quot;*ECA*&quot; | FL Subject, NotAfter<br />
+<br />
+If the following certificate &quot;Subject&quot; information is not displayed, this is a finding. <br />
+<br />
+Note: The Common Name (CN) below is an example. Verify the &quot;CN&quot; displayed (ECA Root CA) is not expired. As of this writing, ECA Root CA 4 and ECA Root 5 are valid (among others).<br />
+<br />
+Subject: CN=ECA Root CA 4, OU=ECA, O=U.S. Government, C=US<br />
+Subject: CN=ECA Root CA 5, OU=ECA, O=U.S. Government, C=US<br />
+<br />
+Alternately, use the Certificates MMC snap-in:<br />
+<br />
+Run &quot;MMC&quot;.<br />
+<br />
+Select &quot;File&quot; and &quot;Add/Remove Snap-in&quot;.<br />
+<br />
+Select &quot;Certificates&quot; and click &quot;Add&quot;.<br />
+<br />
+Select &quot;Computer account&quot; and click &quot;Next&quot;.<br />
+<br />
+Select &quot;Local computer: (the computer this console is running on)&quot; and click &quot;Finish&quot;.<br />
+<br />
+Click &quot;OK&quot;.<br />
+<br />
+Expand &quot;Certificates&quot; and navigate to Trusted Root Certification Authorities &gt;&gt; Certificates.<br />
+<br />
+For each of the ECA Root CA certificates noted below:<br />
+<br />
+Right-click on the certificate and select &quot;Open&quot;.<br />
+<br />
+Select the &quot;Details&quot; tab.<br />
+<br />
+Verify the Expiration Date is a future date.<br />
+<br />
+Scroll to the bottom and select &quot;Subject&quot;.<br />
+<br />
+If the certificates listed do not include &quot;ECA Root CA&quot; in the name or are expired, this is a finding.<br />
+<br />
+Note: This is not a complete list of possible ECA Root CA certificates.<br />
+<br />
+ECA Root CA 4<br />
+<br />
+ECA Root CA 5</p><h2>Vulnerability Number</h2><p>V-253428</p><h2>Documentable</h2><p>False</p><h2>Rule Version</h2><p>WN11-PK-000010</p><h2>Severity Override Guidance</h2><p>Verify the ECA Root CA certificates are installed on unclassified systems as Trusted Root Certification Authorities.<br />
+<br />
+Run &quot;PowerShell&quot; as an administrator.<br />
+<br />
+Execute the following command:<br />
+<br />
+Get-ChildItem -Path Cert:Localmachine\root | Where Subject -Like &quot;*ECA*&quot; | FL Subject, NotAfter<br />
+<br />
+If the following certificate &quot;Subject&quot; information is not displayed, this is a finding. <br />
+<br />
+Note: The Common Name (CN) below is an example. Verify the &quot;CN&quot; displayed (ECA Root CA) is not expired. As of this writing, ECA Root CA 4 and ECA Root 5 are valid (among others).<br />
+<br />
+Subject: CN=ECA Root CA 4, OU=ECA, O=U.S. Government, C=US<br />
+Subject: CN=ECA Root CA 5, OU=ECA, O=U.S. Government, C=US<br />
+<br />
+Alternately, use the Certificates MMC snap-in:<br />
+<br />
+Run &quot;MMC&quot;.<br />
+<br />
+Select &quot;File&quot; and &quot;Add/Remove Snap-in&quot;.<br />
+<br />
+Select &quot;Certificates&quot; and click &quot;Add&quot;.<br />
+<br />
+Select &quot;Computer account&quot; and click &quot;Next&quot;.<br />
+<br />
+Select &quot;Local computer: (the computer this console is running on)&quot; and click &quot;Finish&quot;.<br />
+<br />
+Click &quot;OK&quot;.<br />
+<br />
+Expand &quot;Certificates&quot; and navigate to Trusted Root Certification Authorities &gt;&gt; Certificates.<br />
+<br />
+For each of the ECA Root CA certificates noted below:<br />
+<br />
+Right-click on the certificate and select &quot;Open&quot;.<br />
+<br />
+Select the &quot;Details&quot; tab.<br />
+<br />
+Verify the Expiration Date is a future date.<br />
+<br />
+Scroll to the bottom and select &quot;Subject&quot;.<br />
+<br />
+If the certificates listed do not include &quot;ECA Root CA&quot; in the name or are expired, this is a finding.<br />
+<br />
+Note: This is not a complete list of possible ECA Root CA certificates.<br />
+<br />
+ECA Root CA 4<br />
+<br />
+ECA Root CA 5</p><h2>Check Content Reference</h2><p>M</p><h2>Target Key</h2><p>5471</p></body></html>

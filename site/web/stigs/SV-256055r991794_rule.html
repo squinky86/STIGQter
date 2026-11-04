@@ -1,0 +1,116 @@
+<!doctype html><html lang="en"><head><meta charset="utf-8"><title>STIGQter: STIG Check Details: SV-256055r991794_rule: The PE router providing MPLS Virtual Private Wire Service (VPWS) must be configured to have the appropriate virtual circuit identification (VC ID) for each attachment circuit.</title><link rel="icon" type="image/svg+xml" href="STIGQter.svg" /><script async src="https://www.googletagmanager.com/gtag/js?id=UA-31381839-2"></script><script src="include.js"></script><script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-4110907817782130" crossorigin="anonymous"></script></head><body><div><img src="STIGQter.svg" alt="STIGQter" style="height:1em;" /> <a href="https://www.stigqter.com/">STIGQter</a>: <a href="main.html">STIG Summary</a>: <a href="U_Arista_MLS_EOS_4-X_Router_STIG_V2R2_Manual-xccdf.html">Arista MLS EOS 4.X Router Security Technical Implementation Guide Version: 2 Release: 2 Benchmark Date: 02 Apr 2025</a>:</div> <h1>The PE router providing MPLS Virtual Private Wire Service (VPWS) must be configured to have the appropriate virtual circuit identification (VC ID) for each attachment circuit.</h1><h2>DISA Rule</h2><p>SV-256055r991794_rule</p><h2>Vulnerability Number</h2><p>V-256055</p><h2>Group Title</h2><p>SRG-NET-000512-RTR-000008</p><h2>Rule Version</h2><p>ARST-RT-000760</p><h2>Severity</h2><p>CAT I</p><h2>CCI(s)</h2><ul><li>CCI-004931 - Establish organization-defined alternate communications paths for system operations organizational command and control.</li></ul><h2>Weight</h2><p>10</p><h2>Fix Recommendation</h2><p>Assign globally unique VC IDs for each virtual circuit and configure the attachment circuits with the appropriate VC ID.<br />
+<br />
+Configure the same VC ID on both ends of the VC.<br />
+<br />
+patch panel<br />
+   patch port<br />
+      connector 1 interface Ethernet2<br />
+      connector 2 pseudowire bgp vpws evi-1 pseudowire pw1<br />
+   patch subintf<br />
+      connector 1 interface Ethernet3.1<br />
+      connector 2 pseudowire bgp vpws evi-1 pseudowire pw2<br />
+          <br />
+router bgp 65000<br />
+   neighbor 10.0.0.1 remote-as 1<br />
+   neighbor 10.0.0.1 send-community extended<br />
+   neighbor 10.0.0.1 maximum-routes 12000<br />
+   !<br />
+   vpws evi-1<br />
+      rd 10.2.2.2:2<br />
+      route-target import export evpn 0.0.0.0:1<br />
+      mpls control-word<br />
+      !<br />
+      pseudowire pw1<br />
+         evpn vpws id local 2001 remote 1001<br />
+      !<br />
+      pseudowire pw2<br />
+         evpn vpws id local 2002 remote 1002<br />
+   !<br />
+   address-family evpn<br />
+      neighbor default encapsulation mpls next-hop-self source-interface Loopback0<br />
+      neighbor 10.0.0.1 activate<br />
+                    <br />
+VLAN mode example:<br />
+<br />
+interface Ethernet3<br />
+   no routerport<br />
+!   <br />
+interface Ethernet3.1<br />
+   encapsulation dot1q vlan 1<br />
+      <br />
+Flexible Encapsulation example:<br />
+<br />
+interface Ethernet3<br />
+   no routerport<br />
+!   <br />
+interface Ethernet3.1<br />
+   encapsulation vlan<br />
+      client dot1q 11 network client</p><h2>Check Contents</h2><p>Review the ingress and egress PE router configuration for each virtual circuit that has been provisioned.<br />
+<br />
+Verify the correct and unique VCID has been configured for the appropriate attachment circuit.<br />
+<br />
+Run the command sh run | section patch<br />
+patch panel<br />
+   patch port<br />
+      connector 1 interface Ethernet2<br />
+      connector 2 pseudowire bgp vpws evi-1 pseudowire pw1<br />
+   patch subintf<br />
+      connector 1 interface Ethernet3.1<br />
+      connector 2 pseudowire bgp vpws evi-1 pseudowire pw2<br />
+<br />
+Run the command sh run | section router bgp          <br />
+router bgp 65000<br />
+   neighbor 10.0.0.1 remote-as 1<br />
+   neighbor 10.0.0.1 send-community extended<br />
+   neighbor 10.0.0.1 maximum-routes 12000<br />
+   !<br />
+   vpws evi-1<br />
+      rd 10.2.2.2:2<br />
+      route-target import export evpn 0.0.0.0:1<br />
+      mpls control-word<br />
+      !<br />
+      pseudowire pw1<br />
+         evpn vpws id local 2001 remote 1001<br />
+      !<br />
+      pseudowire pw2<br />
+         evpn vpws id local 2002 remote 1002<br />
+   !<br />
+   address-family evpn<br />
+      neighbor default encapsulation mpls next-hop-self source-interface Loopback0<br />
+      neighbor 10.0.0.1 activate<br />
+<br />
+If the correct VC ID has not been configured on both routers, this is a finding.</p><h2>Vulnerability Number</h2><p>V-256055</p><h2>Documentable</h2><p>False</p><h2>Rule Version</h2><p>ARST-RT-000760</p><h2>Severity Override Guidance</h2><p>Review the ingress and egress PE router configuration for each virtual circuit that has been provisioned.<br />
+<br />
+Verify the correct and unique VCID has been configured for the appropriate attachment circuit.<br />
+<br />
+Run the command sh run | section patch<br />
+patch panel<br />
+   patch port<br />
+      connector 1 interface Ethernet2<br />
+      connector 2 pseudowire bgp vpws evi-1 pseudowire pw1<br />
+   patch subintf<br />
+      connector 1 interface Ethernet3.1<br />
+      connector 2 pseudowire bgp vpws evi-1 pseudowire pw2<br />
+<br />
+Run the command sh run | section router bgp          <br />
+router bgp 65000<br />
+   neighbor 10.0.0.1 remote-as 1<br />
+   neighbor 10.0.0.1 send-community extended<br />
+   neighbor 10.0.0.1 maximum-routes 12000<br />
+   !<br />
+   vpws evi-1<br />
+      rd 10.2.2.2:2<br />
+      route-target import export evpn 0.0.0.0:1<br />
+      mpls control-word<br />
+      !<br />
+      pseudowire pw1<br />
+         evpn vpws id local 2001 remote 1001<br />
+      !<br />
+      pseudowire pw2<br />
+         evpn vpws id local 2002 remote 1002<br />
+   !<br />
+   address-family evpn<br />
+      neighbor default encapsulation mpls next-hop-self source-interface Loopback0<br />
+      neighbor 10.0.0.1 activate<br />
+<br />
+If the correct VC ID has not been configured on both routers, this is a finding.</p><h2>Check Content Reference</h2><p>M</p><h2>Target Key</h2><p>5513</p></body></html>

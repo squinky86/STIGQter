@@ -1,0 +1,33 @@
+<!doctype html><html lang="en"><head><meta charset="utf-8"><title>STIGQter: STIG Check Details: SV-258810r958424_rule: The Photon operating system must alert the ISSO and SA in the event of an audit processing failure.</title><link rel="icon" type="image/svg+xml" href="STIGQter.svg" /><script async src="https://www.googletagmanager.com/gtag/js?id=UA-31381839-2"></script><script src="include.js"></script><script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-4110907817782130" crossorigin="anonymous"></script></head><body><div><img src="STIGQter.svg" alt="STIGQter" style="height:1em;" /> <a href="https://www.stigqter.com/">STIGQter</a>: <a href="main.html">STIG Summary</a>: <a href="U_VMW_vSphere_8-0_VCSA_Photon_OS_4-0_STIG_V2R2_Manual-xccdf.html">VMware vSphere 8.0 vCenter Appliance Photon OS 4.0 Security Technical Implementation Guide Version: 2 Release: 2 Benchmark Date: 01 Jul 2026</a>:</div> <h1>The Photon operating system must alert the ISSO and SA in the event of an audit processing failure.</h1><h2>DISA Rule</h2><p>SV-258810r958424_rule</p><h2>Vulnerability Number</h2><p>V-258810</p><h2>Group Title</h2><p>SRG-OS-000046-GPOS-00022</p><h2>Rule Version</h2><p>PHTN-40-000021</p><h2>Severity</h2><p>CAT II</p><h2>CCI(s)</h2><ul><li>CCI-000139 - Alert organization-defined personnel or roles within an organization-defined time period in the event of an audit logging process failure.</li><li>CCI-001858 - Provide an alert in an organization-defined real-time-period to organization-defined personnel, roles, and/or locations when organization-defined audit failure events requiring real-time alerts occur.</li></ul><h2>Weight</h2><p>10</p><h2>Fix Recommendation</h2><p>Navigate to and open:<br />
+<br />
+/etc/audit/auditd.conf<br />
+<br />
+Ensure the following lines are present, not duplicated, and not commented:<br />
+<br />
+disk_full_action = SYSLOG<br />
+disk_error_action = SYSLOG<br />
+admin_space_left_action = SYSLOG<br />
+<br />
+At the command line, run the following command:<br />
+<br />
+# pkill -SIGHUP auditd</p><h2>Check Contents</h2><p>At the command line, run the following command to verify auditd is configured to send an alert via syslog in the event of an audit processing failure:<br />
+<br />
+# grep -E &quot;^disk_full_action|^disk_error_action|^admin_space_left_action&quot; /etc/audit/auditd.conf<br />
+<br />
+Example result:<br />
+<br />
+admin_space_left_action = SYSLOG<br />
+disk_full_action = SYSLOG<br />
+disk_error_action = SYSLOG<br />
+<br />
+If &quot;disk_full_action&quot;, &quot;disk_error_action&quot;, and &quot;admin_space_left_action&quot; are not set to SYSLOG or are missing, this is a finding.</p><h2>Vulnerability Number</h2><p>V-258810</p><h2>Documentable</h2><p>False</p><h2>Rule Version</h2><p>PHTN-40-000021</p><h2>Severity Override Guidance</h2><p>At the command line, run the following command to verify auditd is configured to send an alert via syslog in the event of an audit processing failure:<br />
+<br />
+# grep -E &quot;^disk_full_action|^disk_error_action|^admin_space_left_action&quot; /etc/audit/auditd.conf<br />
+<br />
+Example result:<br />
+<br />
+admin_space_left_action = SYSLOG<br />
+disk_full_action = SYSLOG<br />
+disk_error_action = SYSLOG<br />
+<br />
+If &quot;disk_full_action&quot;, &quot;disk_error_action&quot;, and &quot;admin_space_left_action&quot; are not set to SYSLOG or are missing, this is a finding.</p><h2>Check Content Reference</h2><p>M</p><h2>Target Key</h2><p>5569</p></body></html>

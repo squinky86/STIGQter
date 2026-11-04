@@ -1,0 +1,29 @@
+<!doctype html><html lang="en"><head><meta charset="utf-8"><title>STIGQter: STIG Check Details: SV-235163r960960_rule: The MySQL Database Server 8.0 must limit privileges to change software modules, to include stored procedures, functions and triggers, and links to software external to the MySQL Database Server 8.0.</title><link rel="icon" type="image/svg+xml" href="STIGQter.svg" /><script async src="https://www.googletagmanager.com/gtag/js?id=UA-31381839-2"></script><script src="include.js"></script><script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-4110907817782130" crossorigin="anonymous"></script></head><body><div><img src="STIGQter.svg" alt="STIGQter" style="height:1em;" /> <a href="https://www.stigqter.com/">STIGQter</a>: <a href="main.html">STIG Summary</a>: <a href="U_Oracle_MySQL_8-0_STIG_V2R2_Manual-xccdf.html">Oracle MySQL 8.0 Security Technical Implementation Guide Version: 2 Release: 2 Benchmark Date: 24 Oct 2024</a>:</div> <h1>The MySQL Database Server 8.0 must limit privileges to change software modules, to include stored procedures, functions and triggers, and links to software external to the MySQL Database Server 8.0.</h1><h2>DISA Rule</h2><p>SV-235163r960960_rule</p><h2>Vulnerability Number</h2><p>V-235163</p><h2>Group Title</h2><p>SRG-APP-000133-DB-000179</p><h2>Rule Version</h2><p>MYS8-00-008300</p><h2>Severity</h2><p>CAT II</p><h2>CCI(s)</h2><ul><li>CCI-001499 - Limit privileges to change software resident within software libraries.</li></ul><h2>Weight</h2><p>10</p><h2>Fix Recommendation</h2><p>Remove permissions from users who should not have insert or update access to the mysql.plugin or mysql.component table.</p><h2>Check Contents</h2><p>Review Server documentation to determine the authorized owner and users or groups with modify rights for this SQL instance's binary files. Additionally check the owner and users or groups with modify rights for shared software library paths on disk. <br />
+<br />
+If any unauthorized users are granted modify rights, this is a finding. <br />
+<br />
+A plugin located in a plugin library file can be loaded at runtime with the INSTALL PLUGIN statement. The statement also registers the plugin in the mysql.plugin table to cause the server to load it on subsequent restarts. For this reason, INSTALL PLUGIN requires the INSERT privilege for the mysql.plugin table, and UNINSTALL requires DELETE.<br />
+<br />
+Run the following statement to check for table specific privileges:<br />
+SELECT * FROM information_schema.TABLE_PRIVILEGES where (table_schema='mysql' and table_name=`plugin`) or (table_schema='mysql' and table_name='component';)<br />
+<br />
+If privilege_type is INSERT or DELETE for an unauthorized user, this is a finding.<br />
+<br />
+Run the following statement to check for global privileges:<br />
+select * from  information_schema.user_privileges where privilege_type='INSERT' or privilege_type='DELETE';<br />
+<br />
+If privilege_type is INSERT or DELETE for an unauthorized user, this is a finding.</p><h2>Vulnerability Number</h2><p>V-235163</p><h2>Documentable</h2><p>False</p><h2>Rule Version</h2><p>MYS8-00-008300</p><h2>Severity Override Guidance</h2><p>Review Server documentation to determine the authorized owner and users or groups with modify rights for this SQL instance's binary files. Additionally check the owner and users or groups with modify rights for shared software library paths on disk. <br />
+<br />
+If any unauthorized users are granted modify rights, this is a finding. <br />
+<br />
+A plugin located in a plugin library file can be loaded at runtime with the INSTALL PLUGIN statement. The statement also registers the plugin in the mysql.plugin table to cause the server to load it on subsequent restarts. For this reason, INSTALL PLUGIN requires the INSERT privilege for the mysql.plugin table, and UNINSTALL requires DELETE.<br />
+<br />
+Run the following statement to check for table specific privileges:<br />
+SELECT * FROM information_schema.TABLE_PRIVILEGES where (table_schema='mysql' and table_name=`plugin`) or (table_schema='mysql' and table_name='component';)<br />
+<br />
+If privilege_type is INSERT or DELETE for an unauthorized user, this is a finding.<br />
+<br />
+Run the following statement to check for global privileges:<br />
+select * from  information_schema.user_privileges where privilege_type='INSERT' or privilege_type='DELETE';<br />
+<br />
+If privilege_type is INSERT or DELETE for an unauthorized user, this is a finding.</p><h2>Check Content Reference</h2><p>M</p><h2>Target Key</h2><p>5277</p></body></html>

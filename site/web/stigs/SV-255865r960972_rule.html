@@ -1,0 +1,63 @@
+<!doctype html><html lang="en"><head><meta charset="utf-8"><title>STIGQter: STIG Check Details: SV-255865r960972_rule: The WebSphere Application Server multifactor authentication for network access to privileged accounts must be used.</title><link rel="icon" type="image/svg+xml" href="STIGQter.svg" /><script async src="https://www.googletagmanager.com/gtag/js?id=UA-31381839-2"></script><script src="include.js"></script><script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-4110907817782130" crossorigin="anonymous"></script></head><body><div><img src="STIGQter.svg" alt="STIGQter" style="height:1em;" /> <a href="https://www.stigqter.com/">STIGQter</a>: <a href="main.html">STIG Summary</a>: <a href="U_IBM_WebSphere_Traditional_V9-x_STIG_V2R1_Manual-xccdf.html">IBM WebSphere Traditional V9.x Security Technical Implementation Guide Version: 2 Release: 1 Benchmark Date: 01 Apr 2026</a>:</div> <h1>The WebSphere Application Server multifactor authentication for network access to privileged accounts must be used.</h1><h2>DISA Rule</h2><p>SV-255865r960972_rule</p><h2>Vulnerability Number</h2><p>V-255865</p><h2>Group Title</h2><p>SRG-APP-000149-AS-000102</p><h2>Rule Version</h2><p>WBSP-AS-001030</p><h2>Severity</h2><p>CAT II</p><h2>CCI(s)</h2><ul><li>CCI-000187 - For public key-based authentication, map the authenticated identity to the account of the individual or group.</li><li>CCI-000765 - Implement multifactor authentication for network access to privileged accounts.</li><li>CCI-001184 - Protect the authenticity of communications sessions.</li><li>CCI-001953 - Accepts Personal Identity Verification-compliant credentials.</li><li>CCI-001954 - Electronically verifies Personal Identity Verification-compliant credentials.</li><li>CCI-002009 - Accept Personal Identity Verification-compliant credentials from other federal agencies.</li><li>CCI-002010 - Electronically verify Personal Identity Verification-compliant credentials from other federal agencies.</li></ul><h2>Weight</h2><p>10</p><h2>Fix Recommendation</h2><p>From the admin console, select System Administration &gt;&gt; Deployment Manager &gt;&gt; Java and Process Management &gt;&gt; Process definition &gt;&gt; Java Virtual Machine &gt;&gt; Custom Properties.<br />
+<br />
+Select &quot;New&quot;.<br />
+<br />
+Insert the following case sensitive value into the &quot;Name&quot; field: &quot;adminconsole.certLogin&quot;.<br />
+<br />
+Select &quot;Value&quot;.<br />
+<br />
+Enter &quot;true&quot;.<br />
+<br />
+Click &quot;Apply&quot;.<br />
+<br />
+Click &quot;Save&quot;.<br />
+<br />
+Select Security &gt;&gt; SSL Certificate and Key management &gt;&gt; SSL Configurations &gt;&gt; Select CellDefaultSSLSettings &gt;&gt; Quality of Protection (QOP) settings.<br />
+<br />
+In the &quot;Client Authentication&quot; drop-box, make sure &quot;Supported&quot; or &quot;Required&quot; is selected. <br />
+<br />
+Click &quot;Apply&quot;.<br />
+<br />
+Click &quot;Save&quot;.<br />
+<br />
+Save a backup copy and edit the &quot;Web.xml&quot; file as follows: &lt;WAS_INSTALL&gt;/profiles/&lt;profileName&gt;/config/cells/&lt;cellName&gt;/applications/isclite.ear/deployments/isclite/isclite.war/WEB-INF/web.xml:<br />
+--- Change: <br />
+&lt; security-constraint&gt;<br />
+&lt;web-resource-collection&gt;<br />
+&lt;web-resource-name&gt;Protected Area&lt;/web-resource-name&gt;<br />
+&lt;url-pattern&gt;/&lt;/url-pattern&gt;<br />
+--- So it becomes:<br />
+&lt; security-constraint&gt;<br />
+&lt;web-resource-collection&gt;<br />
+&lt;web-resource-name&gt;Protected Area&lt;/web-resource-name&gt;<br />
+&lt;url-pattern&gt;/&lt;/url-pattern&gt;<br />
+&lt;url-pattern&gt;/logon.jsp&lt;/url-pattern&gt;<br />
+&lt;url-pattern&gt;/logonError.jsp&lt;/url-pattern&gt;<br />
+--- Add these security constraints if not already present:<br />
+&lt;security-constraint&gt;<br />
+&lt;web-resource-collection&gt;<br />
+&lt;web-resource-name&gt;free pages&lt;/web-resource-name&gt;<br />
+&lt;url-pattern&gt;/*.jsp&lt;/url-pattern&gt;<br />
+&lt;url-pattern&gt;/css/*&lt;/url-pattern&gt;<br />
+&lt;url-pattern&gt;/images/*&lt;/url-pattern&gt;<br />
+&lt;url-pattern&gt;/j_security_check&lt;/url-pattern&gt;<br />
+&lt;/web-resource-collection&gt;<br />
+&lt;/security-constraint&gt; <br />
+--- Change:<br />
+&lt;auth-method&gt;FORM&lt;/auth-method&gt;<br />
+to<br />
+&lt;auth-method&gt;CLIENT-CERT&lt;/auth-method&gt;<br />
+<br />
+Save the &quot;web.xml&quot; file.<br />
+<br />
+Stop and restart the Deployment Manager. <br />
+<br />
+Log on to the admin console using your certificate.</p><h2>Check Contents</h2><p>Check that the admin console is enabled for client certificate logon.<br />
+<br />
+In the Deployment Manager, check the file on: &lt;WAS_INSTALL&gt;/profiles/&lt;profileName&gt;/config/cells/&lt;cellName&gt;/applications/isclite.ear/deployments/isclite/isclite.war/WEB-INF/web.xml.<br />
+<br />
+If the &quot;XML element &lt;auth-method&gt;FORM&lt;/auth-method&gt;&quot; is present, this is a finding.</p><h2>Vulnerability Number</h2><p>V-255865</p><h2>Documentable</h2><p>False</p><h2>Rule Version</h2><p>WBSP-AS-001030</p><h2>Severity Override Guidance</h2><p>Check that the admin console is enabled for client certificate logon.<br />
+<br />
+In the Deployment Manager, check the file on: &lt;WAS_INSTALL&gt;/profiles/&lt;profileName&gt;/config/cells/&lt;cellName&gt;/applications/isclite.ear/deployments/isclite/isclite.war/WEB-INF/web.xml.<br />
+<br />
+If the &quot;XML element &lt;auth-method&gt;FORM&lt;/auth-method&gt;&quot; is present, this is a finding.</p><h2>Check Content Reference</h2><p>M</p><h2>Target Key</h2><p>5510</p></body></html>

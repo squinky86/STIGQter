@@ -1,0 +1,24 @@
+<!doctype html><html lang="en"><head><meta charset="utf-8"><title>STIGQter: STIG Check Details: SV-213679r960903_rule: DB2 must produce audit records containing sufficient information to establish the outcome (success or failure) of the events.</title><link rel="icon" type="image/svg+xml" href="STIGQter.svg" /><script async src="https://www.googletagmanager.com/gtag/js?id=UA-31381839-2"></script><script src="include.js"></script><script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-4110907817782130" crossorigin="anonymous"></script></head><body><div><img src="STIGQter.svg" alt="STIGQter" style="height:1em;" /> <a href="https://www.stigqter.com/">STIGQter</a>: <a href="main.html">STIG Summary</a>: <a href="U_IBM_DB2_V10-5_LUW_STIG_V2R2_Manual-xccdf.html">IBM DB2 V10.5 LUW Security Technical Implementation Guide Version: 2 Release: 2 Benchmark Date: 01 Jul 2026</a>:</div> <h1>DB2 must produce audit records containing sufficient information to establish the outcome (success or failure) of the events.</h1><h2>DISA Rule</h2><p>SV-213679r960903_rule</p><h2>Vulnerability Number</h2><p>V-213679</p><h2>Group Title</h2><p>SRG-APP-000099-DB-000043</p><h2>Rule Version</h2><p>DB2X-00-001600</p><h2>Severity</h2><p>CAT II</p><h2>CCI(s)</h2><ul><li>CCI-000134 - Ensure that audit records containing information that establishes the outcome of the event.</li></ul><h2>Weight</h2><p>10</p><h2>Fix Recommendation</h2><p>Drop and recreate the policy with STATUS set to &quot;&quot;Both&quot;&quot; or use ALTER POLICY to set the STATUS='B'.<br />
+<br />
+To drop and recreate a policy use following statements:<br />
+DB2&gt; DROP AUDIT POLICY &lt;audit1&gt;<br />
+DB2&gt; CREATE AUDIT POLICY &lt;audit1&gt; <br />
+          CATEGORIES &lt; audit categories &gt;  STATUS BOTH ERROR TYPE AUDIT<br />
+<br />
+To alter the audit policy:<br />
+DB2&gt; ALTER AUDIT POLICY &lt;audit1&gt; <br />
+          CATEGORIES &lt; audit categories &gt;  STATUS BOTH ERROR TYPE AUDIT<br />
+<br />
+Notes: Each audit record has an Event Status represented by a SQLCODE where Successful event &gt; = 0 Failed event &lt; 0. To generate a record for both success and failed events, all the audit policies should be created with STATUS 'BOTH'.<br />
+<br />
+CREATE AUDIT POLICY information:<br />
+http://www-01.ibm.com/support/knowledgecenter/SSEPGG_10.5.0/com.ibm.db2.luw.sql.ref.doc/doc/r0050607.html?lang=en<br />
+<br />
+ALTER AUDIT POLICY information:<br />
+http://www-01.ibm.com/support/knowledgecenter/SSEPGG_10.5.0/com.ibm.db2.luw.sql.ref.doc/doc/r0050608.html?cp=SSEPGG_10.5.0%2F2-12-7-7&amp;lang=en&quot;</p><h2>Check Contents</h2><p>Run the following SQL statement to confirm that all audit policies are created with STATUS='B':<br />
+DB2&gt; SELECT * FROM SYSCAT.AUDITPOLICIES<br />
+<br />
+If any audit policy does not have the values for all the audit category columns set to 'B' (Both) and the value in the ERRORTYPE column set to 'A' (Audit), EXECUTEWITHDATA to 'Y' for Execute category audit policies, this is a finding.</p><h2>Vulnerability Number</h2><p>V-213679</p><h2>Documentable</h2><p>False</p><h2>Rule Version</h2><p>DB2X-00-001600</p><h2>Severity Override Guidance</h2><p>Run the following SQL statement to confirm that all audit policies are created with STATUS='B':<br />
+DB2&gt; SELECT * FROM SYSCAT.AUDITPOLICIES<br />
+<br />
+If any audit policy does not have the values for all the audit category columns set to 'B' (Both) and the value in the ERRORTYPE column set to 'A' (Audit), EXECUTEWITHDATA to 'Y' for Execute category audit policies, this is a finding.</p><h2>Check Content Reference</h2><p>M</p><h2>Target Key</h2><p>3989</p></body></html>

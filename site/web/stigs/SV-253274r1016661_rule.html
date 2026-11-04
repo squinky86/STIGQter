@@ -1,0 +1,195 @@
+<!doctype html><html lang="en"><head><meta charset="utf-8"><title>STIGQter: STIG Check Details: SV-253274r1016661_rule: Permissions for system files and directories must conform to minimum requirements.</title><link rel="icon" type="image/svg+xml" href="STIGQter.svg" /><script async src="https://www.googletagmanager.com/gtag/js?id=UA-31381839-2"></script><script src="include.js"></script><script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-4110907817782130" crossorigin="anonymous"></script></head><body><div><img src="STIGQter.svg" alt="STIGQter" style="height:1em;" /> <a href="https://www.stigqter.com/">STIGQter</a>: <a href="main.html">STIG Summary</a>: <a href="U_MS_Windows_11_STIG_V2R8_Manual-xccdf.html">Microsoft Windows 11 Security Technical Implementation Guide Version: 2 Release: 8 Benchmark Date: 01 Jul 2026</a>:</div> <h1>Permissions for system files and directories must conform to minimum requirements.</h1><h2>DISA Rule</h2><p>SV-253274r1016661_rule</p><h2>Vulnerability Number</h2><p>V-253274</p><h2>Group Title</h2><p>SRG-OS-000312-GPOS-00122</p><h2>Rule Version</h2><p>WN11-00-000095</p><h2>Severity</h2><p>CAT II</p><h2>CCI(s)</h2><ul><li>CCI-002165 - Enforce organization-defined discretionary access control policies over defined subjects and objects.</li></ul><h2>Weight</h2><p>10</p><h2>Fix Recommendation</h2><p>Maintain the default file system permissions and configure the Security Option: &quot;Network access: Let everyone permissions apply to anonymous users&quot; to &quot;Disabled&quot; (WN11-SO-000160).</p><h2>Check Contents</h2><p>The default file system permissions are adequate when the Security Option &quot;Network access: Let Everyone permissions apply to anonymous users&quot; is set to &quot;Disabled&quot; (WN11-SO-000160).<br />
+<br />
+If the default file system permissions are maintained and the referenced option is set to &quot;Disabled&quot;, this is not a finding.<br />
+<br />
+Verify the default permissions for the sample directories below. Non-privileged groups such as Users or Authenticated Users must not have greater than read &amp; execute permissions except where noted as defaults. (Individual accounts must not be used to assign permissions.)<br />
+<br />
+Select the &quot;Security&quot; tab, and the &quot;Advanced&quot; button.<br />
+<br />
+C:\<br />
+Type - &quot;Allow&quot; for all<br />
+Inherited from - &quot;None&quot; for all<br />
+Principal - Access - Applies to<br />
+Administrators - Full control - This folder, subfolders, and files<br />
+SYSTEM - Full control - This folder, subfolders, and files<br />
+Users - Read &amp; execute - This folder, subfolders, and files<br />
+Authenticated Users - Modify - Subfolders and files only<br />
+Authenticated Users - Create folders / append data - This folder only<br />
+<br />
+\Program Files<br />
+Type - &quot;Allow&quot; for all<br />
+Inherited from - &quot;None&quot; for all<br />
+Principal - Access - Applies to<br />
+TrustedInstaller - Full control - This folder and subfolders<br />
+SYSTEM - Modify - This folder only<br />
+SYSTEM - Full control - Subfolders and files only<br />
+Administrators - Modify - This folder only<br />
+Administrators - Full control - Subfolders and files only<br />
+Users - Read &amp; execute - This folder, subfolders, and files<br />
+CREATOR OWNER - Full control - Subfolders and files only<br />
+ALL APPLICATION PACKAGES - Read &amp; execute - This folder, subfolders, and files<br />
+ALL RESTRICTED APPLICATION PACKAGES - Read &amp; execute - This folder, subfolders, and files<br />
+<br />
+\Windows<br />
+Type - &quot;Allow&quot; for all<br />
+Inherited from - &quot;None&quot; for all<br />
+Principal - Access - Applies to<br />
+TrustedInstaller - Full control - This folder and subfolders<br />
+SYSTEM - Modify - This folder only<br />
+SYSTEM - Full control - Subfolders and files only<br />
+Administrators - Modify - This folder only<br />
+Administrators - Full control - Subfolders and files only<br />
+Users - Read &amp; execute - This folder, subfolders, and files<br />
+CREATOR OWNER - Full control - Subfolders and files only<br />
+ALL APPLICATION PACKAGES - Read &amp; execute - This folder, subfolders, and files<br />
+ALL RESTRICTED APPLICATION PACKAGES - Read &amp; execute - This folder, subfolders, and files<br />
+<br />
+Alternately use icacls.<br />
+<br />
+Run &quot;CMD&quot; as administrator.<br />
+Enter &quot;icacls&quot; followed by the directory.<br />
+<br />
+icacls c:\<br />
+icacls &quot;c:\program files&quot;<br />
+icacls c:\windows<br />
+<br />
+The following results will be displayed as each is entered:<br />
+<br />
+c:\<br />
+S-1-15-3-65536-1888954469-739942743-1668119174-2468466756-4239452838-1296943325-355587736-700089176 (S,RD,X,RA)<br />
+BUILTIN\Administrators:(OI)(CI)(F)<br />
+NT AUTHORITY\SYSTEM:(OI)(CI)(F)<br />
+BUILTIN\Users:(OI)(CI)(RX)<br />
+NT AUTHORITY\Authenticated Users:(OI)(CI)(IO)(M)<br />
+NT AUTHORITY\Authenticated Users:(AD)<br />
+Mandatory Label\High Mandatory Level:(OI)(NP)(IO)(NW)<br />
+Successfully processed 1 files; Failed processing 0 files<br />
+<br />
+c:\program files <br />
+NT SERVICE\TrustedInstaller:(F)<br />
+NT SERVICE\TrustedInstaller:(CI)(IO)(F)<br />
+NT AUTHORITY\SYSTEM:(M)<br />
+NT AUTHORITY\SYSTEM:(OI)(CI)(IO)(F)<br />
+BUILTIN\Administrators:(M)<br />
+BUILTIN\Administrators:(OI)(CI)(IO)(F)<br />
+BUILTIN\Users:(RX)<br />
+BUILTIN\Users:(OI)(CI)(IO)(GR,GE)<br />
+CREATOR OWNER:(OI)(CI)(IO)(F)<br />
+APPLICATION PACKAGE AUTHORITY\ALL APPLICATION PACKAGES:(RX)<br />
+APPLICATION PACKAGE AUTHORITY\ALL APPLICATION PACKAGES:(OI)(CI)(IO)(GR,GE)<br />
+APPLICATION PACKAGE AUTHORITY\ALL RESTRICTED APPLICATION PACKAGES:(RX)<br />
+APPLICATION PACKAGE AUTHORITY\ALL RESTRICTED APPLICATION PACKAGES:(OI)(CI)(IO)(GR,GE)<br />
+Successfully processed 1 files; Failed processing 0 files<br />
+<br />
+c:\windows<br />
+NT SERVICE\TrustedInstaller:(F)<br />
+NT SERVICE\TrustedInstaller:(CI)(IO)(F)<br />
+NT AUTHORITY\SYSTEM:(M)<br />
+NT AUTHORITY\SYSTEM:(OI)(CI)(IO)(F)<br />
+BUILTIN\Administrators:(M)<br />
+BUILTIN\Administrators:(OI)(CI)(IO)(F)<br />
+BUILTIN\Users:(RX)<br />
+BUILTIN\Users:(OI)(CI)(IO)(GR,GE)<br />
+CREATOR OWNER:(OI)(CI)(IO)(F)<br />
+APPLICATION PACKAGE AUTHORITY\ALL APPLICATION PACKAGES:(RX)<br />
+APPLICATION PACKAGE AUTHORITY\ALL APPLICATION PACKAGES:(OI)(CI)(IO)(GR,GE)<br />
+APPLICATION PACKAGE AUTHORITY\ALL RESTRICTED APPLICATION PACKAGES:(RX)<br />
+APPLICATION PACKAGE AUTHORITY\ALL RESTRICTED APPLICATION PACKAGES:(OI)(CI)(IO)(GR,GE)<br />
+Successfully processed 1 files; Failed processing 0 files</p><h2>Vulnerability Number</h2><p>V-253274</p><h2>Documentable</h2><p>False</p><h2>Rule Version</h2><p>WN11-00-000095</p><h2>Severity Override Guidance</h2><p>The default file system permissions are adequate when the Security Option &quot;Network access: Let Everyone permissions apply to anonymous users&quot; is set to &quot;Disabled&quot; (WN11-SO-000160).<br />
+<br />
+If the default file system permissions are maintained and the referenced option is set to &quot;Disabled&quot;, this is not a finding.<br />
+<br />
+Verify the default permissions for the sample directories below. Non-privileged groups such as Users or Authenticated Users must not have greater than read &amp; execute permissions except where noted as defaults. (Individual accounts must not be used to assign permissions.)<br />
+<br />
+Select the &quot;Security&quot; tab, and the &quot;Advanced&quot; button.<br />
+<br />
+C:\<br />
+Type - &quot;Allow&quot; for all<br />
+Inherited from - &quot;None&quot; for all<br />
+Principal - Access - Applies to<br />
+Administrators - Full control - This folder, subfolders, and files<br />
+SYSTEM - Full control - This folder, subfolders, and files<br />
+Users - Read &amp; execute - This folder, subfolders, and files<br />
+Authenticated Users - Modify - Subfolders and files only<br />
+Authenticated Users - Create folders / append data - This folder only<br />
+<br />
+\Program Files<br />
+Type - &quot;Allow&quot; for all<br />
+Inherited from - &quot;None&quot; for all<br />
+Principal - Access - Applies to<br />
+TrustedInstaller - Full control - This folder and subfolders<br />
+SYSTEM - Modify - This folder only<br />
+SYSTEM - Full control - Subfolders and files only<br />
+Administrators - Modify - This folder only<br />
+Administrators - Full control - Subfolders and files only<br />
+Users - Read &amp; execute - This folder, subfolders, and files<br />
+CREATOR OWNER - Full control - Subfolders and files only<br />
+ALL APPLICATION PACKAGES - Read &amp; execute - This folder, subfolders, and files<br />
+ALL RESTRICTED APPLICATION PACKAGES - Read &amp; execute - This folder, subfolders, and files<br />
+<br />
+\Windows<br />
+Type - &quot;Allow&quot; for all<br />
+Inherited from - &quot;None&quot; for all<br />
+Principal - Access - Applies to<br />
+TrustedInstaller - Full control - This folder and subfolders<br />
+SYSTEM - Modify - This folder only<br />
+SYSTEM - Full control - Subfolders and files only<br />
+Administrators - Modify - This folder only<br />
+Administrators - Full control - Subfolders and files only<br />
+Users - Read &amp; execute - This folder, subfolders, and files<br />
+CREATOR OWNER - Full control - Subfolders and files only<br />
+ALL APPLICATION PACKAGES - Read &amp; execute - This folder, subfolders, and files<br />
+ALL RESTRICTED APPLICATION PACKAGES - Read &amp; execute - This folder, subfolders, and files<br />
+<br />
+Alternately use icacls.<br />
+<br />
+Run &quot;CMD&quot; as administrator.<br />
+Enter &quot;icacls&quot; followed by the directory.<br />
+<br />
+icacls c:\<br />
+icacls &quot;c:\program files&quot;<br />
+icacls c:\windows<br />
+<br />
+The following results will be displayed as each is entered:<br />
+<br />
+c:\<br />
+S-1-15-3-65536-1888954469-739942743-1668119174-2468466756-4239452838-1296943325-355587736-700089176 (S,RD,X,RA)<br />
+BUILTIN\Administrators:(OI)(CI)(F)<br />
+NT AUTHORITY\SYSTEM:(OI)(CI)(F)<br />
+BUILTIN\Users:(OI)(CI)(RX)<br />
+NT AUTHORITY\Authenticated Users:(OI)(CI)(IO)(M)<br />
+NT AUTHORITY\Authenticated Users:(AD)<br />
+Mandatory Label\High Mandatory Level:(OI)(NP)(IO)(NW)<br />
+Successfully processed 1 files; Failed processing 0 files<br />
+<br />
+c:\program files <br />
+NT SERVICE\TrustedInstaller:(F)<br />
+NT SERVICE\TrustedInstaller:(CI)(IO)(F)<br />
+NT AUTHORITY\SYSTEM:(M)<br />
+NT AUTHORITY\SYSTEM:(OI)(CI)(IO)(F)<br />
+BUILTIN\Administrators:(M)<br />
+BUILTIN\Administrators:(OI)(CI)(IO)(F)<br />
+BUILTIN\Users:(RX)<br />
+BUILTIN\Users:(OI)(CI)(IO)(GR,GE)<br />
+CREATOR OWNER:(OI)(CI)(IO)(F)<br />
+APPLICATION PACKAGE AUTHORITY\ALL APPLICATION PACKAGES:(RX)<br />
+APPLICATION PACKAGE AUTHORITY\ALL APPLICATION PACKAGES:(OI)(CI)(IO)(GR,GE)<br />
+APPLICATION PACKAGE AUTHORITY\ALL RESTRICTED APPLICATION PACKAGES:(RX)<br />
+APPLICATION PACKAGE AUTHORITY\ALL RESTRICTED APPLICATION PACKAGES:(OI)(CI)(IO)(GR,GE)<br />
+Successfully processed 1 files; Failed processing 0 files<br />
+<br />
+c:\windows<br />
+NT SERVICE\TrustedInstaller:(F)<br />
+NT SERVICE\TrustedInstaller:(CI)(IO)(F)<br />
+NT AUTHORITY\SYSTEM:(M)<br />
+NT AUTHORITY\SYSTEM:(OI)(CI)(IO)(F)<br />
+BUILTIN\Administrators:(M)<br />
+BUILTIN\Administrators:(OI)(CI)(IO)(F)<br />
+BUILTIN\Users:(RX)<br />
+BUILTIN\Users:(OI)(CI)(IO)(GR,GE)<br />
+CREATOR OWNER:(OI)(CI)(IO)(F)<br />
+APPLICATION PACKAGE AUTHORITY\ALL APPLICATION PACKAGES:(RX)<br />
+APPLICATION PACKAGE AUTHORITY\ALL APPLICATION PACKAGES:(OI)(CI)(IO)(GR,GE)<br />
+APPLICATION PACKAGE AUTHORITY\ALL RESTRICTED APPLICATION PACKAGES:(RX)<br />
+APPLICATION PACKAGE AUTHORITY\ALL RESTRICTED APPLICATION PACKAGES:(OI)(CI)(IO)(GR,GE)<br />
+Successfully processed 1 files; Failed processing 0 files</p><h2>Check Content Reference</h2><p>M</p><h2>Target Key</h2><p>5471</p></body></html>

@@ -1,0 +1,83 @@
+<!doctype html><html lang="en"><head><meta charset="utf-8"><title>STIGQter: STIG Check Details: SV-224560r1145065_rule: WebSphere MQ dead letter and alias dead letter queues are not properly defined.</title><link rel="icon" type="image/svg+xml" href="STIGQter.svg" /><script async src="https://www.googletagmanager.com/gtag/js?id=UA-31381839-2"></script><script src="include.js"></script><script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-4110907817782130" crossorigin="anonymous"></script></head><body><div><img src="STIGQter.svg" alt="STIGQter" style="height:1em;" /> <a href="https://www.stigqter.com/">STIGQter</a>: <a href="main.html">STIG Summary</a>: <a href="U_zOS_WebsphereMQ_for_RACF_STIG_V7R3_Manual-xccdf.html">zOS WebSphere MQ for RACF Security Technical Implementation Guide Version: 7 Release: 3 Benchmark Date: 01 Jul 2026</a>:</div> <h1>WebSphere MQ dead letter and alias dead letter queues are not properly defined.</h1><h2>DISA Rule</h2><p>SV-224560r1145065_rule</p><h2>Vulnerability Number</h2><p>V-224560</p><h2>Group Title</h2><p>SRG-OS-000104</p><h2>Rule Version</h2><p>ZWMQ0053</p><h2>Severity</h2><p>CAT II</p><h2>CCI(s)</h2><ul><li>CCI-000764 - Uniquely identify and authenticate organizational users and associate that unique identification with processes acting on behalf of those users.</li><li>CCI-001762 - Disable or remove organization-defined functions, ports, protocols, software, and services within the system deemed to be unnecessary and/or nonsecure.</li></ul><h2>Weight</h2><p>10</p><h2>Fix Recommendation</h2><p>The systems programmer responsible for supporting WebSphere MQ will ensure that the dead-letter queue and its alias are properly defined.<br />
+<br />
+The following scenario describes how to securely define a dead-letter queue:<br />
+<br />
+Define the real dead-letter queue with attributes PUT(ENABLED) and GET(ENABLED).<br />
+<br />
+Give update authority for the dead-letter queue to CKTI (the WebSphere MQ-supplied CICS task initiator), channel initiators, and any automated application used for dead-letter queue maintenance.<br />
+<br />
+Define an alias queue that resolves to the real dead-letter queue, but give the alias queue the attributes PUT(ENABLED) and GET(DISABLED).<br />
+<br />
+To put a message on the dead-letter queue, an application uses the alias queue. The application does the following:<br />
+<br />
+Retrieve the name of the real dead-letter queue. To do this, it opens the queue manager object using MQOPEN, and then issues an MQINQ to get the dead-letter queue name.<br />
+<br />
+Build the name of the alias queue by appending the characters &quot;.PUT&quot; to this name, in this case, ssid.DEAD.QUEUE.PUT.<br />
+<br />
+Open the alias queue, ssid.DEAD.QUEUE.PUT.<br />
+Put the message on the real dead-letter queue by issuing an MQPUT against the alias queue.<br />
+Give the userid associated with the application update authority to the alias, but no access to the real dead-letter queue.<br />
+<br />
+Note: If an alias queue is not used in place of the dead-letter queue, then the ACP rules for the dead-letter queue will be coded to restrict unauthorized users and systems from reading the messages on the file.<br />
+<br />
+Undeliverable messages can be routed to a dead-letter queue. Two levels of access should be established for these queues. The first level allows applications, as well as some WebSphere MQ objects, to put messages to this queue. The second level restricts the ability to get messages from this queue and protects sensitive data. This will be accomplished by defining an alias queue that resolves to the real dead-letter queue, but defines the alias queue with the attributes PUT(ENABLED) and GET(DISABLED). The ability to get messages from the dead-letter queue will be restricted to message channel agents (MCAs), CKTI (WebSphere MQ-supplied CICS task initiator), channel initiators utility, and any automated application used for dead-letter queue maintenance.</p><h2>Check Contents</h2><p>Refer to the following report produced by the z/OS Data Collection:<br />
+<br />
+- MQSRPT(ssid)<br />
+<br />
+Note: ssid is the queue manager name (a.k.a., subsystem identifier).<br />
+<br />
+Review the ssid report(s) and perform the following steps:<br />
+<br />
+Find the DISPLAY QMGR DEADQ command to locate the start of the dead-letter queue information. Review the DEADQ parameter to obtain the name of the real dead-letter queue.<br />
+<br />
+From the top of the report, find the QUEUE(dead-letter.queue.name) entry to locate the start of the real dead-letter queue definition. Review the GET and PUT parameters to determine their values, and ensure they conform to the specified security requirements. If the following values are set for the dead-letter.queue.name, this is not a finding.<br />
+<br />
+The  standard values are:<br />
+<br />
+GET(ENABLED)<br />
+PUT(ENABLED)<br />
+<br />
+Note: dead-letter.queue.name is the value of the DEADQ parameter determined above.<br />
+ <br />
+From the top of the report, find the QUEUE(dead-letter.queue.name.PUT) entry to locate the start of the alias dead-letter queue definition. Review the GET and PUT parameters to determine their values, and ensure they conform to those specified in the security requirements. If the following values are set for the dead-letter.queue.name.PUT, this is not a finding.<br />
+<br />
+The standard values are:<br />
+<br />
+GET(DISABLED)<br />
+PUT(ENABLED)<br />
+<br />
+Note: Dead-letter.queue.name is the value of the DEADQ parameter determined above.<br />
+<br />
+Note: The TARGQ parameter value for the alias queue will be the real dead letter queue name.<br />
+<br />
+Note: If an alias queue is not used in place of the dead-letter queue, then the ACP rules for the dead-letter queue must be coded to restrict unauthorized users and systems from reading the messages on the file.</p><h2>Vulnerability Number</h2><p>V-224560</p><h2>Documentable</h2><p>False</p><h2>Rule Version</h2><p>ZWMQ0053</p><h2>Severity Override Guidance</h2><p>Refer to the following report produced by the z/OS Data Collection:<br />
+<br />
+- MQSRPT(ssid)<br />
+<br />
+Note: ssid is the queue manager name (a.k.a., subsystem identifier).<br />
+<br />
+Review the ssid report(s) and perform the following steps:<br />
+<br />
+Find the DISPLAY QMGR DEADQ command to locate the start of the dead-letter queue information. Review the DEADQ parameter to obtain the name of the real dead-letter queue.<br />
+<br />
+From the top of the report, find the QUEUE(dead-letter.queue.name) entry to locate the start of the real dead-letter queue definition. Review the GET and PUT parameters to determine their values, and ensure they conform to the specified security requirements. If the following values are set for the dead-letter.queue.name, this is not a finding.<br />
+<br />
+The  standard values are:<br />
+<br />
+GET(ENABLED)<br />
+PUT(ENABLED)<br />
+<br />
+Note: dead-letter.queue.name is the value of the DEADQ parameter determined above.<br />
+ <br />
+From the top of the report, find the QUEUE(dead-letter.queue.name.PUT) entry to locate the start of the alias dead-letter queue definition. Review the GET and PUT parameters to determine their values, and ensure they conform to those specified in the security requirements. If the following values are set for the dead-letter.queue.name.PUT, this is not a finding.<br />
+<br />
+The standard values are:<br />
+<br />
+GET(DISABLED)<br />
+PUT(ENABLED)<br />
+<br />
+Note: Dead-letter.queue.name is the value of the DEADQ parameter determined above.<br />
+<br />
+Note: The TARGQ parameter value for the alias queue will be the real dead letter queue name.<br />
+<br />
+Note: If an alias queue is not used in place of the dead-letter queue, then the ACP rules for the dead-letter queue must be coded to restrict unauthorized users and systems from reading the messages on the file.</p><h2>Check Content Reference</h2><p>M</p><h2>Target Key</h2><p>4167</p></body></html>

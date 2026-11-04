@@ -1,0 +1,48 @@
+<!doctype html><html lang="en"><head><meta charset="utf-8"><title>STIGQter: STIG Check Details: SV-80603r1_rule: The HP FlexFabric Switch must use NIST-validated FIPS 140-2 cryptography to implement authentication encryption mechanisms for routing protocols.</title><link rel="icon" type="image/svg+xml" href="STIGQter.svg" /><script async src="https://www.googletagmanager.com/gtag/js?id=UA-31381839-2"></script><script src="include.js"></script><script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-4110907817782130" crossorigin="anonymous"></script></head><body><div><img src="STIGQter.svg" alt="STIGQter" style="height:1em;" /> <a href="https://www.stigqter.com/">STIGQter</a>: <a href="main.html">STIG Summary</a>: <a href="U_HP_FlexFabric_Switch_RTR_STIG_V1R2_Manual-xccdf.html">HP FlexFabric Switch RTR Security Technical Implementation Guide Version: 1 Release: 2 Benchmark Date: 24 Jul 2020</a>:</div> <h1>The HP FlexFabric Switch must use NIST-validated FIPS 140-2 cryptography to implement authentication encryption mechanisms for routing protocols.</h1><h2>DISA Rule</h2><p>SV-80603r1_rule</p><h2>Vulnerability Number</h2><p>V-66113</p><h2>Group Title</h2><p>SRG-NET-000168-RTR-000078</p><h2>Rule Version</h2><p>HFFS-RT-000012</p><h2>Severity</h2><p>CAT II</p><h2>CCI(s)</h2><ul><li>CCI-000803 - Implement mechanisms for authentication to a cryptographic module that meet the requirements of applicable laws, Executive Orders, directives, policies, regulations, standards, and guidance for such authentication.</li></ul><h2>Weight</h2><p>10</p><h2>Fix Recommendation</h2><p>Configure the HP FlexFabric Switch to authenticate OSPFv3 packets:<br />
+<br />
+[HP]ipsec transform-set jitcipsecprop<br />
+[HP-ipsec-transform-set-jitcipsecprop] <br />
+[HP-ipsec-transform-set-jitcipsecprop] ipsec transform-set jitcipsecprop<br />
+[HP-ipsec-transform-set-jitcipsecprop] encapsulation-mode transport<br />
+[HP-ipsec-transform-set-jitcipsecprop] esp encryption-algorithm aes-cbc-256<br />
+[HP-ipsec-transform-set-jitcipsecprop] esp authentication-algorithm sha1<br />
+[HP-ipsec-transform-set-jitcipsecprop] quit<br />
+[HP] ipsec profile jitc manual<br />
+[HP-ipsec-profile-manual-jitc]<br />
+[HP-ipsec-profile-manual-jitc] ipsec profile jitc manual<br />
+[HP-ipsec-profile-manual-jitc] transform-set jitcipsecprop<br />
+[HP-ipsec-profile-manual-jitc] sa spi inbound esp 256<br />
+[HP-ipsec-profile-manual-jitc] sa string-key inbound esp  simple test123<br />
+[HP-ipsec-profile-manual-jitc] sa spi outbound esp 256<br />
+[HP-ipsec-profile-manual-jitc] sa string-key outbound esp simple test123<br />
+[HP-ipsec-profile-manual-jitc] quit<br />
+[HP] interface gigabitethernet 0/1 <br />
+[HP--GigabitEthernet0/1] ospfv3 ipsec-profile jitc</p><h2>Check Contents</h2><p>Verify the HP FlexFabric Switch configuration to ensure that it is using a NIST validated FIPS 140-2 cryptography encryption mechanism by implementing OSPFv3 with IPsec.<br />
+<br />
+[HP] display current-configuration interface<br />
+<br />
+interface GigabitEthernet0/0<br />
+ port link-mode route<br />
+ description R1 ACTIVE<br />
+ combo enable copper<br />
+ ospfv3 200 area 0.0.0.0<br />
+ ospfv3 ipsec-profile jitc<br />
+ ipv6 address 2115:B:1::3E/126<br />
+<br />
+If the routing protocol authentication mechanism is not a validated FIPS 140-2 cryptography, this is a finding.<br />
+<br />
+Note: OSPFv3 requires IPsec to enable authentication using either the IPv6 Authentication Header (AH) or the Encapsulating Security Payload (ESP) header.</p><h2>Vulnerability Number</h2><p>V-66113</p><h2>Documentable</h2><p>False</p><h2>Rule Version</h2><p>HFFS-RT-000012</p><h2>Severity Override Guidance</h2><p>Verify the HP FlexFabric Switch configuration to ensure that it is using a NIST validated FIPS 140-2 cryptography encryption mechanism by implementing OSPFv3 with IPsec.<br />
+<br />
+[HP] display current-configuration interface<br />
+<br />
+interface GigabitEthernet0/0<br />
+ port link-mode route<br />
+ description R1 ACTIVE<br />
+ combo enable copper<br />
+ ospfv3 200 area 0.0.0.0<br />
+ ospfv3 ipsec-profile jitc<br />
+ ipv6 address 2115:B:1::3E/126<br />
+<br />
+If the routing protocol authentication mechanism is not a validated FIPS 140-2 cryptography, this is a finding.<br />
+<br />
+Note: OSPFv3 requires IPsec to enable authentication using either the IPv6 Authentication Header (AH) or the Encapsulating Security Payload (ESP) header.</p><h2>Check Content Reference</h2><p>M</p><h2>Target Key</h2><p>2979</p></body></html>

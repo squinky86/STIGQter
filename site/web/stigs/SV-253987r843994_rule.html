@@ -1,0 +1,72 @@
+<!doctype html><html lang="en"><head><meta charset="utf-8"><title>STIGQter: STIG Check Details: SV-253987r843994_rule: The Juniper multicast edge router must be configured to establish boundaries for administratively scoped multicast traffic.</title><link rel="icon" type="image/svg+xml" href="STIGQter.svg" /><script async src="https://www.googletagmanager.com/gtag/js?id=UA-31381839-2"></script><script src="include.js"></script><script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-4110907817782130" crossorigin="anonymous"></script></head><body><div><img src="STIGQter.svg" alt="STIGQter" style="height:1em;" /> <a href="https://www.stigqter.com/">STIGQter</a>: <a href="main.html">STIG Summary</a>: <a href="U_Juniper_EX_Switches_RTR_STIG_V2R1_Manual-xccdf.html">Juniper EX Series Switches Router Security Technical Implementation Guide Version: 2 Release: 1 Benchmark Date: 24 Jul 2024</a>:</div> <h1>The Juniper multicast edge router must be configured to establish boundaries for administratively scoped multicast traffic.</h1><h2>DISA Rule</h2><p>SV-253987r843994_rule</p><h2>Vulnerability Number</h2><p>V-253987</p><h2>Group Title</h2><p>SRG-NET-000019-RTR-000005</p><h2>Rule Version</h2><p>JUEX-RT-000150</p><h2>Severity</h2><p>CAT III</p><h2>CCI(s)</h2><ul><li>CCI-001414 - Enforce approved authorizations for controlling the flow of information between connected systems based on organization-defined information flow control policies.</li></ul><h2>Weight</h2><p>10</p><h2>Fix Recommendation</h2><p>Configure the policy to deny packets with multicast administratively scoped destination addresses.<br />
+set routing-options multicast scope &lt;IPv4 scope name&gt; prefix 239.0.0.0/8;<br />
+set routing-options multicast scope &lt;IPv6 scope name&gt; prefix ff08::/16;<br />
+<br />
+-or-<br />
+<br />
+set policy-options policy-statement &lt;policy name&gt; term 1 from route-filter 239.0.0.0/8 orlonger<br />
+set policy-options policy-statement &lt;policy name&gt; term 1 from route-filter ff08::/16 orlonger<br />
+<br />
+Apply the multicast boundary at the appropriate interfaces.<br />
+set routing-options multicast scope &lt;IPv4 scope name&gt; interface [ &lt;external interface 1&gt; &lt;external interface 2&gt; ]<br />
+set routing-options multicast scope &lt;IPv6 scope name&gt; interface [ &lt;external interface 1&gt; &lt;external interface 2&gt; ]<br />
+<br />
+-or-<br />
+<br />
+set routing-options multicast scope-policy &lt;policy name&gt;</p><h2>Check Contents</h2><p>Review the router configuration and verify that admin-scope multicast traffic is blocked at the external edge.<br />
+<br />
+Verify either a scope is defined for specific interfaces or a scope policy is applied.<br />
+[edit routing-options multicast]<br />
+scope &lt;name IPv4&gt; { <br />
+    prefix 239.0.0.0/8;<br />
+    interface [ &lt;external interface 1&gt; &lt;external interface 2&gt; ];<br />
+}<br />
+scope &lt;name IPv6&gt; { <br />
+    prefix ff08::/16;<br />
+    interface [ &lt;external interface 1&gt; &lt;external interface 2&gt; ];<br />
+}<br />
+<br />
+-or-<br />
+<br />
+[edit policy-options]<br />
+policy-statement &lt;name&gt; {<br />
+    term 1 {<br />
+        from {<br />
+            route-filter 239.0.0.0/8 orlonger;<br />
+            route-filter ff08::/16 orlonger;<br />
+        }<br />
+        then reject;<br />
+    }<br />
+}<br />
+[edit routing-options multicast]<br />
+scope-policy &lt;policy name&gt;<br />
+<br />
+If the router is not configured to establish boundaries for administratively scoped multicast traffic, this is a finding.</p><h2>Vulnerability Number</h2><p>V-253987</p><h2>Documentable</h2><p>False</p><h2>Rule Version</h2><p>JUEX-RT-000150</p><h2>Severity Override Guidance</h2><p>Review the router configuration and verify that admin-scope multicast traffic is blocked at the external edge.<br />
+<br />
+Verify either a scope is defined for specific interfaces or a scope policy is applied.<br />
+[edit routing-options multicast]<br />
+scope &lt;name IPv4&gt; { <br />
+    prefix 239.0.0.0/8;<br />
+    interface [ &lt;external interface 1&gt; &lt;external interface 2&gt; ];<br />
+}<br />
+scope &lt;name IPv6&gt; { <br />
+    prefix ff08::/16;<br />
+    interface [ &lt;external interface 1&gt; &lt;external interface 2&gt; ];<br />
+}<br />
+<br />
+-or-<br />
+<br />
+[edit policy-options]<br />
+policy-statement &lt;name&gt; {<br />
+    term 1 {<br />
+        from {<br />
+            route-filter 239.0.0.0/8 orlonger;<br />
+            route-filter ff08::/16 orlonger;<br />
+        }<br />
+        then reject;<br />
+    }<br />
+}<br />
+[edit routing-options multicast]<br />
+scope-policy &lt;policy name&gt;<br />
+<br />
+If the router is not configured to establish boundaries for administratively scoped multicast traffic, this is a finding.</p><h2>Check Content Reference</h2><p>M</p><h2>Target Key</h2><p>5479</p></body></html>

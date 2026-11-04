@@ -1,0 +1,65 @@
+<!doctype html><html lang="en"><head><meta charset="utf-8"><title>STIGQter: STIG Check Details: SV-255990r882312_rule: The Arista BGP router must be configured to reject inbound route advertisements from a customer edge (CE) router for prefixes that are not allocated to that customer.</title><link rel="icon" type="image/svg+xml" href="STIGQter.svg" /><script async src="https://www.googletagmanager.com/gtag/js?id=UA-31381839-2"></script><script src="include.js"></script><script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-4110907817782130" crossorigin="anonymous"></script></head><body><div><img src="STIGQter.svg" alt="STIGQter" style="height:1em;" /> <a href="https://www.stigqter.com/">STIGQter</a>: <a href="main.html">STIG Summary</a>: <a href="U_Arista_MLS_EOS_4-X_Router_STIG_V2R2_Manual-xccdf.html">Arista MLS EOS 4.X Router Security Technical Implementation Guide Version: 2 Release: 2 Benchmark Date: 02 Apr 2025</a>:</div> <h1>The Arista BGP router must be configured to reject inbound route advertisements from a customer edge (CE) router for prefixes that are not allocated to that customer.</h1><h2>DISA Rule</h2><p>SV-255990r882312_rule</p><h2>Vulnerability Number</h2><p>V-255990</p><h2>Group Title</h2><p>SRG-NET-000018-RTR-000004</p><h2>Rule Version</h2><p>ARST-RT-000040</p><h2>Severity</h2><p>CAT II</p><h2>CCI(s)</h2><ul><li>CCI-001368 - Enforce approved authorizations for controlling the flow of information within the system based on organization-defined information flow control policies.</li></ul><h2>Weight</h2><p>10</p><h2>Fix Recommendation</h2><p>Step 1: Configure Arista eBGP routers to reject inbound route advertisements from a CE router for prefixes that are not allocated to that specific customer.<br />
+<br />
+LEAF-1A(config)#ip access-list BGP_Enclave_Gateway_Filter_IN<br />
+LEAF-1A(config-acl-BGP_Enclave_Gateway_Filter_IN)# 10 permit ip 172.16.50.0/30 any <br />
+LEAF-1A(config-acl-BGP_Enclave_Gateway_Filter_IN)# 20 permit ip 10.1.1.0/24 any  <br />
+LEAF-1A(config-acl-BGP_Enclave_Gateway_Filter_IN)# 30 permit  ip 12.15.4.9/32 any<br />
+LEAF-1A(config-acl-BGP_Enclave_Gateway_Filter_IN)# 40 deny ip any any log<br />
+<br />
+Step 2: Configure a route-map to match the ACL.<br />
+<br />
+LEAF-1A(config-ip-pfx)#route-map FILTER_INBOUND permit 10<br />
+LEAF-1A(config-route-map-FILTER_INBOUND)#match ip address access-list BGP_Enclave_Gateway_Filter_IN<br />
+<br />
+Step 3: Configure the route-map to be applied inbound to the appropriate CE customer neighbor.<br />
+<br />
+LEAF-1A(config)#router bgp 65001     <br />
+LEAF-1A(config-router-bgp)#neighbor 100.2.1.1 route-map FILTER_INBOUND in</p><h2>Check Contents</h2><p>Review the Arista router configuration to verify filters are defined to only accept routes for prefixes that belong to specific customers. <br />
+<br />
+The prefix filter must be referenced inbound on the appropriate BGP neighbor statement.<br />
+<br />
+Step 1: Verify the Arista router is configured with ip access-list BGP_Enclave_Gateway_Filter_IN. To verify IP access lists are configured, execute the command &quot;show ip access-lists&quot;.<br />
+<br />
+ip access-list BGP_Enclave_Gateway_Filter_IN<br />
+ 10 permit ip 172.16.50.0/30 any <br />
+ 20 permit ip 10.1.1.0/24 any <br />
+ 30 permit  ip 12.15.4.9/32 any<br />
+ 40 deny ip any any log<br />
+<br />
+Step 2: Review the route-map and verify it matches the ACL. To verify route maps are configured, execute the command &quot;show route-map&quot;.<br />
+<br />
+route-map FILTER_INBOUND permit 10<br />
+   match ip address access-list BGP_Enclave_Gateway_Filter_IN<br />
+<br />
+Step 3: Review the BGP configuration to verify the filter is applied inbound to the appropriate BGP neighbor. To verify the BGP config and verify the route map is applied, execute the command &quot;show run | section router bgp&quot;.<br />
+<br />
+router bgp 65001     <br />
+ neighbor 100.2.1.1 route-map FILTER_INBOUND in<br />
+<br />
+If the Arista router is not configured to reject inbound route advertisements from each CE router for prefixes that are not allocated to that customer, this is a finding.<br />
+<br />
+Note: Routes to PE-CE links within a VPN are needed for troubleshooting end-to-end connectivity across the MPLS/IP backbone. Hence, these prefixes are an exception to this requirement.</p><h2>Vulnerability Number</h2><p>V-255990</p><h2>Documentable</h2><p>False</p><h2>Rule Version</h2><p>ARST-RT-000040</p><h2>Severity Override Guidance</h2><p>Review the Arista router configuration to verify filters are defined to only accept routes for prefixes that belong to specific customers. <br />
+<br />
+The prefix filter must be referenced inbound on the appropriate BGP neighbor statement.<br />
+<br />
+Step 1: Verify the Arista router is configured with ip access-list BGP_Enclave_Gateway_Filter_IN. To verify IP access lists are configured, execute the command &quot;show ip access-lists&quot;.<br />
+<br />
+ip access-list BGP_Enclave_Gateway_Filter_IN<br />
+ 10 permit ip 172.16.50.0/30 any <br />
+ 20 permit ip 10.1.1.0/24 any <br />
+ 30 permit  ip 12.15.4.9/32 any<br />
+ 40 deny ip any any log<br />
+<br />
+Step 2: Review the route-map and verify it matches the ACL. To verify route maps are configured, execute the command &quot;show route-map&quot;.<br />
+<br />
+route-map FILTER_INBOUND permit 10<br />
+   match ip address access-list BGP_Enclave_Gateway_Filter_IN<br />
+<br />
+Step 3: Review the BGP configuration to verify the filter is applied inbound to the appropriate BGP neighbor. To verify the BGP config and verify the route map is applied, execute the command &quot;show run | section router bgp&quot;.<br />
+<br />
+router bgp 65001     <br />
+ neighbor 100.2.1.1 route-map FILTER_INBOUND in<br />
+<br />
+If the Arista router is not configured to reject inbound route advertisements from each CE router for prefixes that are not allocated to that customer, this is a finding.<br />
+<br />
+Note: Routes to PE-CE links within a VPN are needed for troubleshooting end-to-end connectivity across the MPLS/IP backbone. Hence, these prefixes are an exception to this requirement.</p><h2>Check Content Reference</h2><p>M</p><h2>Target Key</h2><p>5513</p></body></html>

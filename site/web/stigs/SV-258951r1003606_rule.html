@@ -1,0 +1,27 @@
+<!doctype html><html lang="en"><head><meta charset="utf-8"><title>STIGQter: STIG Check Details: SV-258951r1003606_rule: The vCenter Server must restrict access to the default roles with cryptographic permissions.</title><link rel="icon" type="image/svg+xml" href="STIGQter.svg" /><script async src="https://www.googletagmanager.com/gtag/js?id=UA-31381839-2"></script><script src="include.js"></script><script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-4110907817782130" crossorigin="anonymous"></script></head><body><div><img src="STIGQter.svg" alt="STIGQter" style="height:1em;" /> <a href="https://www.stigqter.com/">STIGQter</a>: <a href="main.html">STIG Summary</a>: <a href="U_VMW_vSphere_8-0_vCenter_STIG_V2R4_Manual-xccdf.html">VMware vSphere 8.0 vCenter Security Technical Implementation Guide Version: 2 Release: 4 Benchmark Date: 01 Jul 2026</a>:</div> <h1>The vCenter Server must restrict access to the default roles with cryptographic permissions.</h1><h2>DISA Rule</h2><p>SV-258951r1003606_rule</p><h2>Vulnerability Number</h2><p>V-258951</p><h2>Group Title</h2><p>SRG-APP-000516</p><h2>Rule Version</h2><p>VCSA-80-000284</p><h2>Severity</h2><p>CAT II</p><h2>CCI(s)</h2><ul><li>CCI-000366 - Implement the security configuration settings.</li></ul><h2>Weight</h2><p>10</p><h2>Fix Recommendation</h2><p>From the vSphere Client, go to Administration &gt;&gt; Access Control &gt;&gt; Roles.<br />
+<br />
+Move any accounts not explicitly designated for cryptographic operations, other than Solution Users, to other roles such as &quot;No Cryptography Administrator&quot;.</p><h2>Check Contents</h2><p>By default, there are five roles that contain cryptographic related permissions: Administrator, No Trusted Infrastructure Administrator, vCLSAdmin, VMOperator Controller Manager, and vSphere Kubernetes Manager.<br />
+<br />
+From the vSphere Client, go to Administration &gt;&gt; Access Control &gt;&gt; Roles.<br />
+<br />
+or<br />
+<br />
+From a PowerCLI command prompt while connected to the vCenter server, run the following command:<br />
+<br />
+Get-VIPermission | Where {$_.Role -eq &quot;Admin&quot; -or $_.Role -eq &quot;NoTrustedAdmin&quot; -or $_.Role -eq &quot;vCLSAdmin&quot; -or $_.Role -eq &quot;VMOperatorController&quot; -or $_.Role -eq &quot;vSphereKubernetesManager&quot;} | Select Role,Principal,Entity,Propagate,IsGroup | FT -Auto<br />
+<br />
+If there are any users or groups assigned to the default roles with cryptographic permissions and are not explicitly designated to perform cryptographic operations, this is a finding.<br />
+<br />
+The built-in solution users assigned to the administrator role are NOT a finding.</p><h2>Vulnerability Number</h2><p>V-258951</p><h2>Documentable</h2><p>False</p><h2>Rule Version</h2><p>VCSA-80-000284</p><h2>Severity Override Guidance</h2><p>By default, there are five roles that contain cryptographic related permissions: Administrator, No Trusted Infrastructure Administrator, vCLSAdmin, VMOperator Controller Manager, and vSphere Kubernetes Manager.<br />
+<br />
+From the vSphere Client, go to Administration &gt;&gt; Access Control &gt;&gt; Roles.<br />
+<br />
+or<br />
+<br />
+From a PowerCLI command prompt while connected to the vCenter server, run the following command:<br />
+<br />
+Get-VIPermission | Where {$_.Role -eq &quot;Admin&quot; -or $_.Role -eq &quot;NoTrustedAdmin&quot; -or $_.Role -eq &quot;vCLSAdmin&quot; -or $_.Role -eq &quot;VMOperatorController&quot; -or $_.Role -eq &quot;vSphereKubernetesManager&quot;} | Select Role,Principal,Entity,Propagate,IsGroup | FT -Auto<br />
+<br />
+If there are any users or groups assigned to the default roles with cryptographic permissions and are not explicitly designated to perform cryptographic operations, this is a finding.<br />
+<br />
+The built-in solution users assigned to the administrator role are NOT a finding.</p><h2>Check Content Reference</h2><p>M</p><h2>Target Key</h2><p>5573</p></body></html>

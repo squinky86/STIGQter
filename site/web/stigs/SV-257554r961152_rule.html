@@ -1,0 +1,52 @@
+<!doctype html><html lang="en"><head><meta charset="utf-8"><title>STIGQter: STIG Check Details: SV-257554r961152_rule: OpenShift must restrict individuals the ability to launch organizational-defined Denial-of-Service (DOS) attacks against other information systems by setting a default Resource Quota.</title><link rel="icon" type="image/svg+xml" href="STIGQter.svg" /><script async src="https://www.googletagmanager.com/gtag/js?id=UA-31381839-2"></script><script src="include.js"></script><script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-4110907817782130" crossorigin="anonymous"></script></head><body><div><img src="STIGQter.svg" alt="STIGQter" style="height:1em;" /> <a href="https://www.stigqter.com/">STIGQter</a>: <a href="main.html">STIG Summary</a>: <a href="U_RH_OpenShift_Container_Platform_4-x_STIG_V2R6_Manual-xccdf.html">Red Hat OpenShift Container Platform 4.x Security Technical Implementation Guide Version: 2 Release: 6 Benchmark Date: 01 Jul 2026</a>:</div> <h1>OpenShift must restrict individuals the ability to launch organizational-defined Denial-of-Service (DOS) attacks against other information systems by setting a default Resource Quota.</h1><h2>DISA Rule</h2><p>SV-257554r961152_rule</p><h2>Vulnerability Number</h2><p>V-257554</p><h2>Group Title</h2><p>SRG-APP-000246-CTR-000605</p><h2>Rule Version</h2><p>CNTR-OS-000620</p><h2>Severity</h2><p>CAT II</p><h2>CCI(s)</h2><ul><li>CCI-001094 - Restrict the ability of individuals to launch organization-defined denial of service attacks against other systems.</li></ul><h2>Weight</h2><p>10</p><h2>Fix Recommendation</h2><p>Configure a default resource quota to protect resource over utilization by performing the following steps:<br />
+<br />
+1. Create a bootstrap project template (if not already created) by executing the following:<br />
+<br />
+oc adm create-bootstrap-project-template -o yaml &gt; template.yaml<br />
+<br />
+2. Edit the template and add a ResourceQuota object definition before the parameters section.<br />
+<br />
+- apiVersion: v1<br />
+  kind: ResourceQuota<br />
+  metadata:<br />
+    name: example<br />
+  spec:<br />
+    hard:<br />
+      persistentvolumeclaims: &quot;10&quot;<br />
+      requests.storage: &quot;50Gi&quot;<br />
+      ...<br />
+parameters:<br />
+<br />
+3. Apply the project template to the cluster by executing the following:<br />
+<br />
+oc create -f template.yaml -n openshift-config<br />
+<br />
+4. Set the default cluster project request template by executing the following:<br />
+ <br />
+oc patch project.config.openshift.io/cluster --type=merge -p '{&quot;spec&quot;:{&quot;projectRequestTemplate&quot;:{&quot;name&quot;: &quot;&lt;PROJECT_REQUEST_TEMPLATE&gt;&quot;}}}'<br />
+<br />
+Details regarding the configuration of resource quotas can be reviewed at https://docs.openshift.com/container-platform/4.8/applications/quotas/quotas-setting-per-project.html.</p><h2>Check Contents</h2><p>Check for Resource Quota. Verify a default project template is defined by executing the following:<br />
+<br />
+oc get project.config.openshift.io/cluster -o jsonpath=&quot;{.spec.projectRequestTemplate.name}&quot;<br />
+<br />
+If no project request template is in use by the project config, this is a finding.<br />
+<br />
+Verify the project template includes a default resource quota.<br />
+<br />
+oc get templates/&lt;PROJECT-REQUEST-TEMPLATE&gt; -n openshift-config -o jsonpath=&quot;{.objects[?(.kind=='ResourceQuota')]}{'\n'}&quot;<br />
+<br />
+Replace &lt;PROJECT-REQUEST-TEMPLATE&gt; with the name of the project request template returned from the earlier query.<br />
+<br />
+If the project template is not defined, or there are no ResourceQuota definitions in it, this is a finding.</p><h2>Vulnerability Number</h2><p>V-257554</p><h2>Documentable</h2><p>False</p><h2>Rule Version</h2><p>CNTR-OS-000620</p><h2>Severity Override Guidance</h2><p>Check for Resource Quota. Verify a default project template is defined by executing the following:<br />
+<br />
+oc get project.config.openshift.io/cluster -o jsonpath=&quot;{.spec.projectRequestTemplate.name}&quot;<br />
+<br />
+If no project request template is in use by the project config, this is a finding.<br />
+<br />
+Verify the project template includes a default resource quota.<br />
+<br />
+oc get templates/&lt;PROJECT-REQUEST-TEMPLATE&gt; -n openshift-config -o jsonpath=&quot;{.objects[?(.kind=='ResourceQuota')]}{'\n'}&quot;<br />
+<br />
+Replace &lt;PROJECT-REQUEST-TEMPLATE&gt; with the name of the project request template returned from the earlier query.<br />
+<br />
+If the project template is not defined, or there are no ResourceQuota definitions in it, this is a finding.</p><h2>Check Content Reference</h2><p>M</p><h2>Target Key</h2><p>5547</p></body></html>

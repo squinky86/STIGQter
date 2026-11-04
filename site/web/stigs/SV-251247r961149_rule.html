@@ -1,0 +1,41 @@
+<!doctype html><html lang="en"><head><meta charset="utf-8"><title>STIGQter: STIG Check Details: SV-251247r961149_rule: Access to database files must be limited to relevant processes and to authorized, administrative users.</title><link rel="icon" type="image/svg+xml" href="STIGQter.svg" /><script async src="https://www.googletagmanager.com/gtag/js?id=UA-31381839-2"></script><script src="include.js"></script><script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-4110907817782130" crossorigin="anonymous"></script></head><body><div><img src="STIGQter.svg" alt="STIGQter" style="height:1em;" /> <a href="https://www.stigqter.com/">STIGQter</a>: <a href="main.html">STIG Summary</a>: <a href="U_Redis_Enterprise_6-x_STIG_V2R2_Manual-xccdf.html">Redis Enterprise 6.x Security Technical Implementation Guide Version: 2 Release: 2 Benchmark Date: 24 Oct 2024</a>:</div> <h1>Access to database files must be limited to relevant processes and to authorized, administrative users.</h1><h2>DISA Rule</h2><p>SV-251247r961149_rule</p><h2>Vulnerability Number</h2><p>V-251247</p><h2>Group Title</h2><p>SRG-APP-000243-DB-000374</p><h2>Rule Version</h2><p>RD6X-00-011500</p><h2>Severity</h2><p>CAT II</p><h2>CCI(s)</h2><ul><li>CCI-001090 - Prevent unauthorized and unintended information transfer via shared system resources.</li></ul><h2>Weight</h2><p>10</p><h2>Fix Recommendation</h2><p>Configure the operating system to define default permissions for all authenticated users in such a way that the user can only read and modify their own files.<br />
+<br />
+Add or edit the line for the &quot;UMASK&quot; parameter in &quot;/etc/login.defs&quot; file to &quot;077&quot;:<br />
+<br />
+UMASK 077<br />
+<br />
+Set the permissions of the log files (/var/opt/redislabs/log) and persisted files (/var/opt/redislabs/persist/redis/) to an appropriate organizationally defined setting.</p><h2>Check Contents</h2><p>Review the permissions granted to users by the operating system/file system on the database files, database log files, and database backup files. <br />
+<br />
+If any user/role who is not an authorized system administrator with a need to know or database administrator with a need to know, or a system account for running DBMS processes, is permitted to read/view any of these files, this is a finding.<br />
+<br />
+Review the directory contents and files and verify that the appropriate file permissions are set. Verify that the file owner and group is set to Redis Labs or a group defined per site requirements.<br />
+<br />
+To check permissions of log files (Note: This may vary depending on the installation path.):<br />
+# /var/opt/redislabs/log<br />
+<br />
+To check persisted files from memory if they are being used run the following command (Note: This may vary depending on the installation path.)<br />
+# ls -ltr /var/opt/redislabs/persist/redis/  <br />
+<br />
+To check the default file permissions to verify that all authenticated users can only read and modify their own files:<br />
+# cat/etc/login.defs|grep UMASK<br />
+<br />
+Verify the value is set to 077 or an appropriate organizationally defined setting.<br />
+<br />
+Investigate the permissions on these files. If the permissions allow access by other, this is a finding.</p><h2>Vulnerability Number</h2><p>V-251247</p><h2>Documentable</h2><p>False</p><h2>Rule Version</h2><p>RD6X-00-011500</p><h2>Severity Override Guidance</h2><p>Review the permissions granted to users by the operating system/file system on the database files, database log files, and database backup files. <br />
+<br />
+If any user/role who is not an authorized system administrator with a need to know or database administrator with a need to know, or a system account for running DBMS processes, is permitted to read/view any of these files, this is a finding.<br />
+<br />
+Review the directory contents and files and verify that the appropriate file permissions are set. Verify that the file owner and group is set to Redis Labs or a group defined per site requirements.<br />
+<br />
+To check permissions of log files (Note: This may vary depending on the installation path.):<br />
+# /var/opt/redislabs/log<br />
+<br />
+To check persisted files from memory if they are being used run the following command (Note: This may vary depending on the installation path.)<br />
+# ls -ltr /var/opt/redislabs/persist/redis/  <br />
+<br />
+To check the default file permissions to verify that all authenticated users can only read and modify their own files:<br />
+# cat/etc/login.defs|grep UMASK<br />
+<br />
+Verify the value is set to 077 or an appropriate organizationally defined setting.<br />
+<br />
+Investigate the permissions on these files. If the permissions allow access by other, this is a finding.</p><h2>Check Content Reference</h2><p>M</p><h2>Target Key</h2><p>5443</p></body></html>

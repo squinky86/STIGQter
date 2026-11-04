@@ -1,0 +1,66 @@
+<!doctype html><html lang="en"><head><meta charset="utf-8"><title>STIGQter: STIG Check Details: SV-217078r945860_rule: The Juniper PE router must be configured to ignore or block all packets with any IP options.</title><link rel="icon" type="image/svg+xml" href="STIGQter.svg" /><script async src="https://www.googletagmanager.com/gtag/js?id=UA-31381839-2"></script><script src="include.js"></script><script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-4110907817782130" crossorigin="anonymous"></script></head><body><div><img src="STIGQter.svg" alt="STIGQter" style="height:1em;" /> <a href="https://www.stigqter.com/">STIGQter</a>: <a href="main.html">STIG Summary</a>: <a href="U_Juniper_Router_RTR_STIG_V3R2_Manual-xccdf.html">Juniper Router RTR Security Technical Implementation Guide Version: 3 Release: 2 Benchmark Date: 30 Jan 2025</a>:</div> <h1>The Juniper PE router must be configured to ignore or block all packets with any IP options.</h1><h2>DISA Rule</h2><p>SV-217078r945860_rule</p><h2>Vulnerability Number</h2><p>V-217078</p><h2>Group Title</h2><p>SRG-NET-000205-RTR-000016</p><h2>Rule Version</h2><p>JUNI-RT-000730</p><h2>Severity</h2><p>CAT II</p><h2>CCI(s)</h2><ul><li>CCI-002403 - Only allow incoming communications from organization-defined authorized sources routed to organization-defined authorized destinations.</li></ul><h2>Weight</h2><p>10</p><h2>Fix Recommendation</h2><p>Configure the router to drop all packets with IP options.<br />
+<br />
+[edit firewall family inet filter INGRESS_FILTER]<br />
+set term BLOCK_IP_OPTIONS from ip-options any<br />
+set term BLOCK_IP_OPTIONS then discard<br />
+insert term BLOCK_IP_OPTIONS before term ALLOW_TRANSIT_TRAFFIC</p><h2>Check Contents</h2><p>Review the router configuration to determine if it will block all packets with IP options.<br />
+<br />
+firewall {<br />
+    family inet {<br />
+        filter INGRESS_FILTER {<br />
+            term BLOCK_TO_CORE {<br />
+                from {<br />
+                    destination-address {<br />
+                        x.x.x.x/8;<br />
+                    }<br />
+                }<br />
+                then {<br />
+                    log;<br />
+                    discard;<br />
+                }<br />
+            }<br />
+            term BLOCK_IP_OPTIONS {<br />
+                from {<br />
+                    ip-options any;<br />
+                }<br />
+                then {<br />
+                    discard;<br />
+                }<br />
+            }<br />
+            term ALLOW_TRANSIT_TRAFFIC {<br />
+                then accept;<br />
+            }<br />
+        }<br />
+    }<br />
+<br />
+If the router is not configured to drop all packets with IP options, this is a finding.</p><h2>Vulnerability Number</h2><p>V-217078</p><h2>Documentable</h2><p>False</p><h2>Rule Version</h2><p>JUNI-RT-000730</p><h2>Severity Override Guidance</h2><p>Review the router configuration to determine if it will block all packets with IP options.<br />
+<br />
+firewall {<br />
+    family inet {<br />
+        filter INGRESS_FILTER {<br />
+            term BLOCK_TO_CORE {<br />
+                from {<br />
+                    destination-address {<br />
+                        x.x.x.x/8;<br />
+                    }<br />
+                }<br />
+                then {<br />
+                    log;<br />
+                    discard;<br />
+                }<br />
+            }<br />
+            term BLOCK_IP_OPTIONS {<br />
+                from {<br />
+                    ip-options any;<br />
+                }<br />
+                then {<br />
+                    discard;<br />
+                }<br />
+            }<br />
+            term ALLOW_TRANSIT_TRAFFIC {<br />
+                then accept;<br />
+            }<br />
+        }<br />
+    }<br />
+<br />
+If the router is not configured to drop all packets with IP options, this is a finding.</p><h2>Check Content Reference</h2><p>M</p><h2>Target Key</h2><p>4032</p></body></html>

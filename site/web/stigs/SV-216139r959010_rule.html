@@ -1,0 +1,43 @@
+<!doctype html><html lang="en"><head><meta charset="utf-8"><title>STIGQter: STIG Check Details: SV-216139r959010_rule: The system must disable ICMP redirect messages.</title><link rel="icon" type="image/svg+xml" href="STIGQter.svg" /><script async src="https://www.googletagmanager.com/gtag/js?id=UA-31381839-2"></script><script src="include.js"></script><script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-4110907817782130" crossorigin="anonymous"></script></head><body><div><img src="STIGQter.svg" alt="STIGQter" style="height:1em;" /> <a href="https://www.stigqter.com/">STIGQter</a>: <a href="main.html">STIG Summary</a>: <a href="U_SOL_11_x86_STIG_V3R6_Manual-xccdf.html">Solaris 11 X86 Security Technical Implementation Guide Version: 3 Release: 6 Benchmark Date: 01 Jul 2026</a>:</div> <h1>The system must disable ICMP redirect messages.</h1><h2>DISA Rule</h2><p>SV-216139r959010_rule</p><h2>Vulnerability Number</h2><p>V-216139</p><h2>Group Title</h2><p>SRG-OS-000480</p><h2>Rule Version</h2><p>SOL-11.1-050090</p><h2>Severity</h2><p>CAT III</p><h2>CCI(s)</h2><ul><li>CCI-000366 - Implement the security configuration settings.</li></ul><h2>Weight</h2><p>10</p><h2>Fix Recommendation</h2><p>The Network Management profile is required.<br />
+<br />
+If the version of Solaris is earlier than Solaris 11.2, disable send redirects for IPv4 and IPv6.<br />
+<br />
+# pfexec ipadm set-prop -p _send_redirects=0 ipv4<br />
+# pfexec ipadm set-prop -p _send_redirects=0 ipv6 <br />
+<br />
+If the version of Solaris is Solaris 11.2 or later, disable send redirects for IPv4 and IPv6.<br />
+<br />
+# pfexec ipadm set-prop -p send_redirects=off ipv4<br />
+# pfexec ipadm set-prop -p send_redirects=off ipv6</p><h2>Check Contents</h2><p>Determine the version of Solaris 11 in use.<br />
+<br />
+# cat /etc/release<br />
+<br />
+If the version of Solaris is earlier than Solaris 11.2, determine if ICMP redirect messages are disabled.<br />
+<br />
+# ipadm show-prop -p _send_redirects -co current ipv4<br />
+# ipadm show-prop -p _send_redirects -co current ipv6<br />
+<br />
+If the output of all commands is not &quot;0&quot;, this is a finding.<br />
+<br />
+If the version of Solaris is Solaris 11.2 or later, determine if ICMP redirect messages are disabled.<br />
+<br />
+# ipadm show-prop -p send_redirects -co current ipv4<br />
+# ipadm show-prop -p send_redirects -co current ipv6<br />
+<br />
+If the output of all commands is not &quot;off&quot;, this is a finding.</p><h2>Vulnerability Number</h2><p>V-216139</p><h2>Documentable</h2><p>False</p><h2>Rule Version</h2><p>SOL-11.1-050090</p><h2>Severity Override Guidance</h2><p>Determine the version of Solaris 11 in use.<br />
+<br />
+# cat /etc/release<br />
+<br />
+If the version of Solaris is earlier than Solaris 11.2, determine if ICMP redirect messages are disabled.<br />
+<br />
+# ipadm show-prop -p _send_redirects -co current ipv4<br />
+# ipadm show-prop -p _send_redirects -co current ipv6<br />
+<br />
+If the output of all commands is not &quot;0&quot;, this is a finding.<br />
+<br />
+If the version of Solaris is Solaris 11.2 or later, determine if ICMP redirect messages are disabled.<br />
+<br />
+# ipadm show-prop -p send_redirects -co current ipv4<br />
+# ipadm show-prop -p send_redirects -co current ipv6<br />
+<br />
+If the output of all commands is not &quot;off&quot;, this is a finding.</p><h2>Check Content Reference</h2><p>M</p><h2>Target Key</h2><p>4021</p></body></html>

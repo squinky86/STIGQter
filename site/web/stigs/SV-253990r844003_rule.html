@@ -1,0 +1,70 @@
+<!doctype html><html lang="en"><head><meta charset="utf-8"><title>STIGQter: STIG Check Details: SV-253990r844003_rule: The Juniper perimeter router must not be configured to be a Border Gateway Protocol (BGP) peer to an alternate gateway service provider.</title><link rel="icon" type="image/svg+xml" href="STIGQter.svg" /><script async src="https://www.googletagmanager.com/gtag/js?id=UA-31381839-2"></script><script src="include.js"></script><script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-4110907817782130" crossorigin="anonymous"></script></head><body><div><img src="STIGQter.svg" alt="STIGQter" style="height:1em;" /> <a href="https://www.stigqter.com/">STIGQter</a>: <a href="main.html">STIG Summary</a>: <a href="U_Juniper_EX_Switches_RTR_STIG_V2R1_Manual-xccdf.html">Juniper EX Series Switches Router Security Technical Implementation Guide Version: 2 Release: 1 Benchmark Date: 24 Jul 2024</a>:</div> <h1>The Juniper perimeter router must not be configured to be a Border Gateway Protocol (BGP) peer to an alternate gateway service provider.</h1><h2>DISA Rule</h2><p>SV-253990r844003_rule</p><h2>Vulnerability Number</h2><p>V-253990</p><h2>Group Title</h2><p>SRG-NET-000019-RTR-000009</p><h2>Rule Version</h2><p>JUEX-RT-000180</p><h2>Severity</h2><p>CAT I</p><h2>CCI(s)</h2><ul><li>CCI-001414 - Enforce approved authorizations for controlling the flow of information between connected systems based on organization-defined information flow control policies.</li></ul><h2>Weight</h2><p>10</p><h2>Fix Recommendation</h2><p>This requirement is not applicable for the DODIN Backbone.<br />
+<br />
+Remove BGP neighbors belonging to the alternate gateway service provider.<br />
+<br />
+delete protocols bgp group &lt;name&gt; neighbor &lt;peer AS belonging to alternate gateway service provider&gt;<br />
+<br />
+Configure a static route on the perimeter router to reach the AS of a router connecting to an alternate gateway.<br />
+<br />
+set routing-options rib inet6.0 static route &lt;IPv6 subnet&gt;/&lt;prefix&gt; next-hop &lt;peer AS router&gt;<br />
+set routing-options static route &lt;IPv4 subnet&gt;/&lt;mask&gt; next-hop &lt;peer AS router&gt;</p><h2>Check Contents</h2><p>This requirement is not applicable for the DODIN Backbone.<br />
+<br />
+Review the configuration of the router connecting to the alternate gateway.<br />
+<br />
+Review the [edit protocols bgp] hierarchy and verify there are no BGP neighbors configured to the remote AS that belongs to the alternate gateway service provider. For example:<br />
+[edit protocols bgp]<br />
+group eBGP {<br />
+    type external;<br />
+    peer-as 2;<br />
+    neighbor &lt;address-1&gt; {<br />
+        &lt;bgp neighbor configuration&gt;;<br />
+    }<br />
+    neighbor &lt;address-2&gt; {<br />
+        &lt;bgp neighbor configuration&gt;;<br />
+    }<br />
+}<br />
+<br />
+Note: Neither neighbor can belong to a peer AS belonging to the alternate gateway service provider.<br />
+<br />
+Verify static routing to the peer AS belonging to the alternate gateway service provider. For example:<br />
+[edit routing-options]<br />
+rib inet6.0 {<br />
+    static {<br />
+        route &lt;peer AS IPv6 subnet&gt;/&lt;prefix&gt; next-hop &lt;peer AS router&gt;;<br />
+    }<br />
+}<br />
+static {<br />
+    route &lt;peer AS IPv4 subnet&gt;/&lt;mask&gt; next-hop &lt;peer AS router&gt;;<br />
+}<br />
+<br />
+If there are BGP neighbors connecting the remote AS of the alternate gateway service provider, this is a finding.</p><h2>Vulnerability Number</h2><p>V-253990</p><h2>Documentable</h2><p>False</p><h2>Rule Version</h2><p>JUEX-RT-000180</p><h2>Severity Override Guidance</h2><p>This requirement is not applicable for the DODIN Backbone.<br />
+<br />
+Review the configuration of the router connecting to the alternate gateway.<br />
+<br />
+Review the [edit protocols bgp] hierarchy and verify there are no BGP neighbors configured to the remote AS that belongs to the alternate gateway service provider. For example:<br />
+[edit protocols bgp]<br />
+group eBGP {<br />
+    type external;<br />
+    peer-as 2;<br />
+    neighbor &lt;address-1&gt; {<br />
+        &lt;bgp neighbor configuration&gt;;<br />
+    }<br />
+    neighbor &lt;address-2&gt; {<br />
+        &lt;bgp neighbor configuration&gt;;<br />
+    }<br />
+}<br />
+<br />
+Note: Neither neighbor can belong to a peer AS belonging to the alternate gateway service provider.<br />
+<br />
+Verify static routing to the peer AS belonging to the alternate gateway service provider. For example:<br />
+[edit routing-options]<br />
+rib inet6.0 {<br />
+    static {<br />
+        route &lt;peer AS IPv6 subnet&gt;/&lt;prefix&gt; next-hop &lt;peer AS router&gt;;<br />
+    }<br />
+}<br />
+static {<br />
+    route &lt;peer AS IPv4 subnet&gt;/&lt;mask&gt; next-hop &lt;peer AS router&gt;;<br />
+}<br />
+<br />
+If there are BGP neighbors connecting the remote AS of the alternate gateway service provider, this is a finding.</p><h2>Check Content Reference</h2><p>M</p><h2>Target Key</h2><p>5479</p></body></html>

@@ -1,0 +1,59 @@
+<!doctype html><html lang="en"><head><meta charset="utf-8"><title>STIGQter: STIG Check Details: SV-216129r959010_rule: The operating system must prevent remote devices that have established a non-remote connection with the system from communicating outside of the communication path with resources in external networks.</title><link rel="icon" type="image/svg+xml" href="STIGQter.svg" /><script async src="https://www.googletagmanager.com/gtag/js?id=UA-31381839-2"></script><script src="include.js"></script><script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-4110907817782130" crossorigin="anonymous"></script></head><body><div><img src="STIGQter.svg" alt="STIGQter" style="height:1em;" /> <a href="https://www.stigqter.com/">STIGQter</a>: <a href="main.html">STIG Summary</a>: <a href="U_SOL_11_x86_STIG_V3R6_Manual-xccdf.html">Solaris 11 X86 Security Technical Implementation Guide Version: 3 Release: 6 Benchmark Date: 01 Jul 2026</a>:</div> <h1>The operating system must prevent remote devices that have established a non-remote connection with the system from communicating outside of the communication path with resources in external networks.</h1><h2>DISA Rule</h2><p>SV-216129r959010_rule</p><h2>Vulnerability Number</h2><p>V-216129</p><h2>Group Title</h2><p>SRG-OS-000480</p><h2>Rule Version</h2><p>SOL-11.1-040490</p><h2>Severity</h2><p>CAT II</p><h2>CCI(s)</h2><ul><li>CCI-000366 - Implement the security configuration settings.</li></ul><h2>Weight</h2><p>10</p><h2>Fix Recommendation</h2><p>The root Role is required.<br />
+<br />
+Remove net_access privilege from users who may be accessing the systems externally.<br />
+<br />
+1. Create an RBAC Profile with net_access restriction<br />
+<br />
+# profiles -p RestrictOutbound<br />
+profiles:RestrictOutbound&gt; set desc=&quot;Restrict Outbound Connections&quot;<br />
+profiles:RestrictOutbound&gt; set limitpriv=zone,!net_access<br />
+profiles:RestrictOutbound&gt; exit<br />
+<br />
+<br />
+2. Assign the RBAC Profile to a user<br />
+<br />
+# usermod -P +RestrictOutbound [username]<br />
+<br />
+This prevents the user from initiating any outbound network connections.</p><h2>Check Contents</h2><p>Determine if the &quot;RestrictOutbound&quot; profile is configured properly:<br />
+<br />
+# profiles -p RestrictOutbound info<br />
+<br />
+If the output is not:<br />
+name=RestrictOutbound<br />
+desc=Restrict Outbound Connections<br />
+limitpriv=zone,!net_access<br />
+<br />
+this is a finding.<br />
+<br />
+<br />
+For users who are not allowed external network access, determine if a user is configured with the &quot;RestrictOutbound&quot; profile.<br />
+<br />
+# profiles -l [username]<br />
+<br />
+If the output does not include:<br />
+<br />
+[username]:<br />
+RestrictOutbound<br />
+<br />
+this is a finding.</p><h2>Vulnerability Number</h2><p>V-216129</p><h2>Documentable</h2><p>False</p><h2>Rule Version</h2><p>SOL-11.1-040490</p><h2>Severity Override Guidance</h2><p>Determine if the &quot;RestrictOutbound&quot; profile is configured properly:<br />
+<br />
+# profiles -p RestrictOutbound info<br />
+<br />
+If the output is not:<br />
+name=RestrictOutbound<br />
+desc=Restrict Outbound Connections<br />
+limitpriv=zone,!net_access<br />
+<br />
+this is a finding.<br />
+<br />
+<br />
+For users who are not allowed external network access, determine if a user is configured with the &quot;RestrictOutbound&quot; profile.<br />
+<br />
+# profiles -l [username]<br />
+<br />
+If the output does not include:<br />
+<br />
+[username]:<br />
+RestrictOutbound<br />
+<br />
+this is a finding.</p><h2>Check Content Reference</h2><p>M</p><h2>Target Key</h2><p>4021</p></body></html>

@@ -1,0 +1,105 @@
+<!doctype html><html lang="en"><head><meta charset="utf-8"><title>STIGQter: STIG Check Details: SV-273605r1110875_rule: The RUCKUS ICX router must be configured to restrict traffic destined to itself.</title><link rel="icon" type="image/svg+xml" href="STIGQter.svg" /><script async src="https://www.googletagmanager.com/gtag/js?id=UA-31381839-2"></script><script src="include.js"></script><script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-4110907817782130" crossorigin="anonymous"></script></head><body><div><img src="STIGQter.svg" alt="STIGQter" style="height:1em;" /> <a href="https://www.stigqter.com/">STIGQter</a>: <a href="main.html">STIG Summary</a>: <a href="U_RUCKUS_ICX_RTR_STIG_V1R1_Manual-xccdf.html">RUCKUS ICX Router Security Technical Implementation Guide Version: 1 Release: 1 Benchmark Date: 27 May 2025</a>:</div> <h1>The RUCKUS ICX router must be configured to restrict traffic destined to itself.</h1><h2>DISA Rule</h2><p>SV-273605r1110875_rule</p><h2>Vulnerability Number</h2><p>V-273605</p><h2>Group Title</h2><p>SRG-NET-000205-RTR-000001</p><h2>Rule Version</h2><p>RCKS-RTR-000380</p><h2>Severity</h2><p>CAT I</p><h2>CCI(s)</h2><ul><li>CCI-001097 - Monitor and control communications at the external managed interfaces to the system and at key managed interfaces within the system.</li></ul><h2>Weight</h2><p>10</p><h2>Fix Recommendation</h2><p>Configure all routers with receive path filters to restrict traffic destined to the router.<br />
+<br />
+1. Create ACLs for external and internal interfaces in accordance with site security policy (addresses and protocols may vary).<br />
+ICX(config)#ip access-list ext EXT-ACL<br />
+ICX(config-ext-ipacl-EXT-ACL)#permit tcp host x.11.1.1 eq bgp host x.11.1.2<br />
+ICX(config-ext-ipacl-EXT-ACL)#permit tcp host x.11.1.1 host x.11.1.2 eq bgp<br />
+ICX(config-ext-ipacl-EXT-ACL)#permit icmp host x.11.1.1 host x.11.1.2 echo<br />
+ICX(config-ext-ipacl-EXT-ACL)#permit icmp host x.11.1.1 host x.11.1.2 echo-reply<br />
+ICX(config-ext-ipacl-EXT-ACL)#deny ip host x.11.1.1 host x.11.1.2 log<br />
+ICX(config-ext-ipacl-EXT-ACL)#exit<br />
+<br />
+ICX(config)#ip access-list ext INT-ACL<br />
+ICX(config-ext-ipacl-INT-ACL)#permit icmp any any<br />
+ICX(config-ext-ipacl-INT-ACL)#permit ospf host 10.1.12.1 host 10.1.12.2<br />
+ICX(config-ext-ipacl-INT-ACL)#permit tcp 10.2.1.0/24 host 10.1.12.2 eq 22<br />
+ICX(config-ext-ipacl-INT-ACL)#permit tcp 10.2.1.0/24 host 10.1.12.2 eq radius<br />
+ICX(config-ext-ipacl-INT-ACL)#permit udp 10.2.1.0/24 host 10.1.12.2 eq snmp<br />
+ICX(config-ext-ipacl-INT-ACL)#permit udp 10.2.1.0/24 host 10.1.12.2 eq ntp<br />
+ICX(config-ext-ipacl-INT-ACL)#deny ip any host 10.1.12.2 log<br />
+<br />
+2. Apply ACLs to appropriate interfaces.<br />
+ICX(config)# interface ethernet x/x/x<br />
+ICX(config-if-e1000-x/x/x)#ip access-group EXT-ACL in logging enable<br />
+ICX(config-if-e1000-x/x/x)# interface ethernet y/y/y<br />
+ICX(config-if-e1000-y/y/y)#ip access-group INT-ACL in logging enable</p><h2>Check Contents</h2><p>Review the external and internal Access Control Lists (ACLs) to verify the router is configured to only allow specific management and control plane traffic from specific sources destined to itself (addresses and protocols may vary).<br />
+<br />
+1. Review the access lists.<br />
+ip access-list extended EXT-ACL<br />
+ sequence 10 permit tcp host x.11.1.1 eq bgp host x.11.1.2<br />
+ sequence 20 permit tcp host x.11.1.1 host x.11.1.2 eq bgp<br />
+ sequence 30 permit icmp host x.11.1.1 host x.11.1.2 echo<br />
+ sequence 40 permit icmp host x.11.1.1 host x.11.1.2 echo-reply<br />
+ sequence 50 deny ip host x.11.1.1 host x.11.1.2 log<br />
+permit …<br />
+…<br />
+…<br />
+…<br />
+deny ip any any log<br />
+!<br />
+<br />
+ip access-list extended INT-ACL<br />
+ sequence 10 permit icmp any any<br />
+ sequence 20 permit ospf host 10.1.12.1 host 10.1.12.2<br />
+ sequence 30 permit tcp 10.2.1.0 0.0.0.255 host 10.1.12.2 eq ssh<br />
+ sequence 40 permit tcp 10.2.1.0 0.0.0.255 host 10.1.12.2 eq radius<br />
+ sequence 50 permit udp 10.2.1.0 0.0.0.255 host 10.1.12.2 eq snmp<br />
+ sequence 60 permit udp 10.2.1.0 0.0.0.255 host 10.1.12.2 eq ntp<br />
+ sequence 70 deny ip any host 10.1.12.2 log<br />
+permit …<br />
+…<br />
+…<br />
+…<br />
+deny ip any any log<br />
+!<br />
+<br />
+2. Verify ACLs are applied to desired interfaces.<br />
+interface ethernet x/x/x<br />
+  ip address x.11.1.2/31 <br />
+  ip access-group EXT-ACL in logging enable<br />
+!<br />
+interface ethernet x/x/x<br />
+ip address 10.1.12.2 255.255.255.0<br />
+ip access-group INT-ACL in logging enable<br />
+<br />
+If the router is not configured to restrict traffic destined to itself, this is a finding.</p><h2>Vulnerability Number</h2><p>V-273605</p><h2>Documentable</h2><p>False</p><h2>Rule Version</h2><p>RCKS-RTR-000380</p><h2>Severity Override Guidance</h2><p>Review the external and internal Access Control Lists (ACLs) to verify the router is configured to only allow specific management and control plane traffic from specific sources destined to itself (addresses and protocols may vary).<br />
+<br />
+1. Review the access lists.<br />
+ip access-list extended EXT-ACL<br />
+ sequence 10 permit tcp host x.11.1.1 eq bgp host x.11.1.2<br />
+ sequence 20 permit tcp host x.11.1.1 host x.11.1.2 eq bgp<br />
+ sequence 30 permit icmp host x.11.1.1 host x.11.1.2 echo<br />
+ sequence 40 permit icmp host x.11.1.1 host x.11.1.2 echo-reply<br />
+ sequence 50 deny ip host x.11.1.1 host x.11.1.2 log<br />
+permit …<br />
+…<br />
+…<br />
+…<br />
+deny ip any any log<br />
+!<br />
+<br />
+ip access-list extended INT-ACL<br />
+ sequence 10 permit icmp any any<br />
+ sequence 20 permit ospf host 10.1.12.1 host 10.1.12.2<br />
+ sequence 30 permit tcp 10.2.1.0 0.0.0.255 host 10.1.12.2 eq ssh<br />
+ sequence 40 permit tcp 10.2.1.0 0.0.0.255 host 10.1.12.2 eq radius<br />
+ sequence 50 permit udp 10.2.1.0 0.0.0.255 host 10.1.12.2 eq snmp<br />
+ sequence 60 permit udp 10.2.1.0 0.0.0.255 host 10.1.12.2 eq ntp<br />
+ sequence 70 deny ip any host 10.1.12.2 log<br />
+permit …<br />
+…<br />
+…<br />
+…<br />
+deny ip any any log<br />
+!<br />
+<br />
+2. Verify ACLs are applied to desired interfaces.<br />
+interface ethernet x/x/x<br />
+  ip address x.11.1.2/31 <br />
+  ip access-group EXT-ACL in logging enable<br />
+!<br />
+interface ethernet x/x/x<br />
+ip address 10.1.12.2 255.255.255.0<br />
+ip access-group INT-ACL in logging enable<br />
+<br />
+If the router is not configured to restrict traffic destined to itself, this is a finding.</p><h2>Check Content Reference</h2><p>M</p><h2>Target Key</h2><p>5696</p></body></html>

@@ -1,0 +1,53 @@
+<!doctype html><html lang="en"><head><meta charset="utf-8"><title>STIGQter: STIG Check Details: SV-253670r960879_rule: MariaDB must provide audit record generation capability for DoD-defined auditable events within all DBMS/database components.</title><link rel="icon" type="image/svg+xml" href="STIGQter.svg" /><script async src="https://www.googletagmanager.com/gtag/js?id=UA-31381839-2"></script><script src="include.js"></script><script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-4110907817782130" crossorigin="anonymous"></script></head><body><div><img src="STIGQter.svg" alt="STIGQter" style="height:1em;" /> <a href="https://www.stigqter.com/">STIGQter</a>: <a href="main.html">STIG Summary</a>: <a href="U_MariaDB_Enterprise_10-x_STIG_V2R5_Manual-xccdf.html">MariaDB Enterprise 10.x Security Technical Implementation Guide Version: 2 Release: 5 Benchmark Date: 01 Apr 2026</a>:</div> <h1>MariaDB must provide audit record generation capability for DoD-defined auditable events within all DBMS/database components.</h1><h2>DISA Rule</h2><p>SV-253670r960879_rule</p><h2>Vulnerability Number</h2><p>V-253670</p><h2>Group Title</h2><p>SRG-APP-000089-DB-000064</p><h2>Rule Version</h2><p>MADB-10-000500</p><h2>Severity</h2><p>CAT II</p><h2>CCI(s)</h2><ul><li>CCI-000169 - Provide audit record generation capability for the event types the system is capable of auditing as defined in AU-2 a. on organization-defined information system components.</li></ul><h2>Weight</h2><p>10</p><h2>Fix Recommendation</h2><p>Configure MariaDB to generate audit records for at least the DoD minimum set of events.<br />
+<br />
+Edit the mariadb-enterprise.cnf configuration file located in /etc/my.cnf.d/.<br />
+<br />
+Under [mariadb], add the following: <br />
+<br />
+server_audit_logging = ON <br />
+<br />
+Save the configuration file. This change will not take effect until MariaDB Enterprise Server is restarted. <br />
+<br />
+Using the MariaDB Enterprise Audit plugin, MariaDB can be configured to audit these requests. <br />
+<br />
+The MariaDB Enterprise Audit plugin can be configured to audit these changes. <br />
+<br />
+Update necessary audit filters. Ex: <br />
+<br />
+MariaDB&gt; DELETE FROM mysql.server_audit_filters WHERE filtername = 'default';<br />
+<br />
+MariaDB&gt; INSERT INTO mysql.server_audit_filters (filtername, rule)<br />
+   VALUES ('default',<br />
+      JSON_COMPACT(<br />
+         '{<br />
+            &quot;connect_event&quot;: [<br />
+               &quot;CONNECT&quot;,<br />
+               &quot;DISCONNECT&quot;<br />
+            ],<br />
+            &quot;query_event&quot;: [<br />
+                &quot;ALL&quot;<br />
+            ]<br />
+         }'<br />
+      ));<br />
+<br />
+More information about MariaDB auditing can be found here: https://mariadb.com/docs/security/mariadb-enterprise-audit/</p><h2>Check Contents</h2><p>Verify the MariaDB Enterprise Audit plugin is loaded and actively logging:<br />
+<br />
+MariaDB&gt; SHOW GLOBAL STATUS LIKE 'Server_audit_active';<br />
+<br />
+If the MariaDB Enterprise Audit is not active, this is a finding. <br />
+<br />
+Check what filters are in place by running the following as an administrative user: <br />
+<br />
+MariaDB&gt; SELECT * FROM mysql.server_audit_filters;<br />
+<br />
+Verify audit filters match organization-defined auditing requirements. If not, this is a finding.</p><h2>Vulnerability Number</h2><p>V-253670</p><h2>Documentable</h2><p>False</p><h2>Rule Version</h2><p>MADB-10-000500</p><h2>Severity Override Guidance</h2><p>Verify the MariaDB Enterprise Audit plugin is loaded and actively logging:<br />
+<br />
+MariaDB&gt; SHOW GLOBAL STATUS LIKE 'Server_audit_active';<br />
+<br />
+If the MariaDB Enterprise Audit is not active, this is a finding. <br />
+<br />
+Check what filters are in place by running the following as an administrative user: <br />
+<br />
+MariaDB&gt; SELECT * FROM mysql.server_audit_filters;<br />
+<br />
+Verify audit filters match organization-defined auditing requirements. If not, this is a finding.</p><h2>Check Content Reference</h2><p>M</p><h2>Target Key</h2><p>5475</p></body></html>

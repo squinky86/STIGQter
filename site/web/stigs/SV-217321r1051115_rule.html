@@ -1,0 +1,60 @@
+<!doctype html><html lang="en"><head><meta charset="utf-8"><title>STIGQter: STIG Check Details: SV-217321r1051115_rule: The Juniper router must be configured with only one local account to be used as the account of last resort in the event the authentication server is unavailable.</title><link rel="icon" type="image/svg+xml" href="STIGQter.svg" /><script async src="https://www.googletagmanager.com/gtag/js?id=UA-31381839-2"></script><script src="include.js"></script><script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-4110907817782130" crossorigin="anonymous"></script></head><body><div><img src="STIGQter.svg" alt="STIGQter" style="height:1em;" /> <a href="https://www.stigqter.com/">STIGQter</a>: <a href="main.html">STIG Summary</a>: <a href="U_Juniper_Router_NDM_STIG_V3R2_Manual-xccdf.html">Juniper Router NDM Security Technical Implementation Guide Version: 3 Release: 2 Benchmark Date: 30 Jan 2025</a>:</div> <h1>The Juniper router must be configured with only one local account to be used as the account of last resort in the event the authentication server is unavailable.</h1><h2>DISA Rule</h2><p>SV-217321r1051115_rule</p><h2>Vulnerability Number</h2><p>V-217321</p><h2>Group Title</h2><p>SRG-APP-000148-NDM-000346</p><h2>Rule Version</h2><p>JUNI-ND-000490</p><h2>Severity</h2><p>CAT II</p><h2>CCI(s)</h2><ul><li>CCI-001358 - Establish privileged user accounts in accordance with a role-based access scheme; or an attribute-based access scheme.</li></ul><h2>Weight</h2><p>10</p><h2>Fix Recommendation</h2><p>Step 1: Configure a class with the necessary privileges to troubleshoot network outage and restore operations as shown in the following example:<br />
+<br />
+[edit system]<br />
+set login class ENGINEER permissions all <br />
+set login class ENGINEER deny-configuration &quot;(system syslog)&quot;<br />
+set login class ENGINEER deny-commands “(file delete)”<br />
+<br />
+Step 2: Assign the account of last resort to the ENGINEER class.<br />
+<br />
+set user LAST_RESORT class ENGINEER authentication plain-text-password<br />
+New password: xxxxxxxxxxxxx<br />
+<br />
+Step 3: Configure the authentication order to use the local account if the authentication server is not reachable as shown in the example below.<br />
+<br />
+[edit system]<br />
+set authentication-order radius<br />
+<br />
+Note: If there is no response from the authentication server, JUNOS will authenticate using a local account as last resort. It is recommended to not configure password at the end of the authentication order, as JUNOS will attempt to authenticate using a local account upon a rejection from the authentication server if password is in the authentication order. The last resort account is used when the authentication server is down.</p><h2>Check Contents</h2><p>Review the router configuration to verify that a local account for last resort has been configured as shown in the following example:<br />
+<br />
+system {<br />
+    authentication-order radius;<br />
+    }<br />
+    login {<br />
+        class ENGINEER {<br />
+            permissions all;<br />
+            deny-commands &quot;(file delete)&quot;;<br />
+            deny-configuration &quot;(system syslog)&quot;;<br />
+        }<br />
+         user Last_Resort {<br />
+            uid 2000;<br />
+            class ENGINEER;<br />
+            authentication {<br />
+                encrypted-password &quot;$1$CYrhql/I$v2ydLnac9EPdA1F/KvROT1&quot;; ## SECRET-DATA<br />
+            }<br />
+        }<br />
+<br />
+Note: If there is no response from the authentication server, JUNOS will authenticate using a local account as last resort. It is recommended to not configure password at the end of the authentication order, as JUNOS will attempt to authenticate using a local account upon a rejection from the authentication server if password is in the authentication order. The last resort account is used when the authentication server is down.<br />
+<br />
+If the router is not configured with only one local account to be used as the account of last resort in the event the authentication server is unavailable, this is a finding.</p><h2>Vulnerability Number</h2><p>V-217321</p><h2>Documentable</h2><p>False</p><h2>Rule Version</h2><p>JUNI-ND-000490</p><h2>Severity Override Guidance</h2><p>Review the router configuration to verify that a local account for last resort has been configured as shown in the following example:<br />
+<br />
+system {<br />
+    authentication-order radius;<br />
+    }<br />
+    login {<br />
+        class ENGINEER {<br />
+            permissions all;<br />
+            deny-commands &quot;(file delete)&quot;;<br />
+            deny-configuration &quot;(system syslog)&quot;;<br />
+        }<br />
+         user Last_Resort {<br />
+            uid 2000;<br />
+            class ENGINEER;<br />
+            authentication {<br />
+                encrypted-password &quot;$1$CYrhql/I$v2ydLnac9EPdA1F/KvROT1&quot;; ## SECRET-DATA<br />
+            }<br />
+        }<br />
+<br />
+Note: If there is no response from the authentication server, JUNOS will authenticate using a local account as last resort. It is recommended to not configure password at the end of the authentication order, as JUNOS will attempt to authenticate using a local account upon a rejection from the authentication server if password is in the authentication order. The last resort account is used when the authentication server is down.<br />
+<br />
+If the router is not configured with only one local account to be used as the account of last resort in the event the authentication server is unavailable, this is a finding.</p><h2>Check Content Reference</h2><p>M</p><h2>Target Key</h2><p>4034</p></body></html>

@@ -1,0 +1,35 @@
+<!doctype html><html lang="en"><head><meta charset="utf-8"><title>STIGQter: STIG Check Details: SV-222984r961353_rule: Tomcat user account must be a non-privileged user.</title><link rel="icon" type="image/svg+xml" href="STIGQter.svg" /><script async src="https://www.googletagmanager.com/gtag/js?id=UA-31381839-2"></script><script src="include.js"></script><script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-4110907817782130" crossorigin="anonymous"></script></head><body><div><img src="STIGQter.svg" alt="STIGQter" style="height:1em;" /> <a href="https://www.stigqter.com/">STIGQter</a>: <a href="main.html">STIG Summary</a>: <a href="U_Apache_Tomcat_Application_Server_9_STIG_V3R4_Manual-xccdf.html">Apache Tomcat Application Server 9 Security Technical Implementation Guide Version: 3 Release: 4 Benchmark Date: 01 Apr 2026</a>:</div> <h1>Tomcat user account must be a non-privileged user.</h1><h2>DISA Rule</h2><p>SV-222984r961353_rule</p><h2>Vulnerability Number</h2><p>V-222984</p><h2>Group Title</h2><p>SRG-APP-000340-AS-000185</p><h2>Rule Version</h2><p>TCAT-AS-001060</p><h2>Severity</h2><p>CAT II</p><h2>CCI(s)</h2><ul><li>CCI-002235 - Prevent non-privileged users from executing privileged functions.</li></ul><h2>Weight</h2><p>10</p><h2>Fix Recommendation</h2><p>From the Tomcat server, create a tomcat user by adding a new non-privileged user OS account with the following command:<br />
+  <br />
+sudo useradd tomcat<br />
+<br />
+Edit the systemd tomcat.service file or create one if it does not exist. Use the new &quot;tomcat&quot; user account by setting; USER=tomcat<br />
+<br />
+Location of the file should be /etc/systemd/system/tomcat.service.<br />
+<br />
+Enable the Tomcat service:<br />
+sudo restorecon /etc/systemd/system/tomcat.service<br />
+sudo chmod 644 /etc/systemd/system/tomcat.service<br />
+sudo systemctl enable tomcat.service<br />
+<br />
+Start Tomcat:<br />
+sudo systemctl start tomcat</p><h2>Check Contents</h2><p>Run the following command to identify the Tomcat process UID:<br />
+ps -ef | { head -1; grep catalina; } | cut -f1 -d&quot; &quot;<br />
+<br />
+Run the following command to obtain the OS user ID tied to the Tomcat process:<br />
+cat /etc/passwd|grep -i &lt;UID&gt;|cut -f3 -d:<br />
+<br />
+Unless operationally necessary, the Tomcat process should not be tied to a privileged OS user ID. Depending on the operating system, privileged OS user IDs will typically be assigned user ID values &lt;500 or &lt;1000.<br />
+<br />
+If the Tomcat process is running as a privileged user and is not documented and approved, this is a finding.<br />
+<br />
+If the user ID field of the passwd file is set to 0, this is a finding.</p><h2>Vulnerability Number</h2><p>V-222984</p><h2>Documentable</h2><p>False</p><h2>Rule Version</h2><p>TCAT-AS-001060</p><h2>Severity Override Guidance</h2><p>Run the following command to identify the Tomcat process UID:<br />
+ps -ef | { head -1; grep catalina; } | cut -f1 -d&quot; &quot;<br />
+<br />
+Run the following command to obtain the OS user ID tied to the Tomcat process:<br />
+cat /etc/passwd|grep -i &lt;UID&gt;|cut -f3 -d:<br />
+<br />
+Unless operationally necessary, the Tomcat process should not be tied to a privileged OS user ID. Depending on the operating system, privileged OS user IDs will typically be assigned user ID values &lt;500 or &lt;1000.<br />
+<br />
+If the Tomcat process is running as a privileged user and is not documented and approved, this is a finding.<br />
+<br />
+If the user ID field of the passwd file is set to 0, this is a finding.</p><h2>Check Content Reference</h2><p>M</p><h2>Target Key</h2><p>4094</p></body></html>

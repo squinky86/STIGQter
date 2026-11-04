@@ -1,0 +1,101 @@
+<!doctype html><html lang="en"><head><meta charset="utf-8"><title>STIGQter: STIG Check Details: SV-271263r1108405_rule: SQL Server must limit the number of concurrent sessions to an organization-defined number per user for all accounts and/or account types.</title><link rel="icon" type="image/svg+xml" href="STIGQter.svg" /><script async src="https://www.googletagmanager.com/gtag/js?id=UA-31381839-2"></script><script src="include.js"></script><script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-4110907817782130" crossorigin="anonymous"></script></head><body><div><img src="STIGQter.svg" alt="STIGQter" style="height:1em;" /> <a href="https://www.stigqter.com/">STIGQter</a>: <a href="main.html">STIG Summary</a>: <a href="U_MS_SQL_Server_2022_Instance_STIG_V1R4_Manual-xccdf.html">Microsoft SQL Server 2022 Instance Security Technical Implementation Guide Version: 1 Release: 4 Benchmark Date: 01 Apr 2026</a>:</div> <h1>SQL Server must limit the number of concurrent sessions to an organization-defined number per user for all accounts and/or account types.</h1><h2>DISA Rule</h2><p>SV-271263r1108405_rule</p><h2>Vulnerability Number</h2><p>V-271263</p><h2>Group Title</h2><p>SRG-APP-000001-DB-000031</p><h2>Rule Version</h2><p>SQLI-22-003600</p><h2>Severity</h2><p>CAT II</p><h2>CCI(s)</h2><ul><li>CCI-000054 - Limit the number of concurrent sessions for each organization-defined account and/or account type to an organization-defined number.</li></ul><h2>Weight</h2><p>10</p><h2>Fix Recommendation</h2><p>If a trigger consumes too much CPU, an example alternative method for limiting the concurrent users is setting the max connection limit on SQL Server.<br />
+<br />
+In SQL Server Management Studio's Object Explorer tree, right-click on the Server Name &gt;&gt; Properties &gt;&gt; Connections Tab &gt;&gt; Set the Maximum Number of Concurrent Connections to a value other than 0 (0 = unlimited), and document it.<br />
+<br />
+OR<br />
+<br />
+Run the query:<br />
+<br />
+EXEC sys.sp_configure N'user connections','5000' /* this is an example max limit */<br />
+GO<br />
+RECONFIGURE WITH OVERRIDE<br />
+GO<br />
+<br />
+Restart SQL Server for the setting to take effect.<br />
+<br />
+Reference: https://learn.microsoft.com/en-us/sql/database-engine/configure-windows/configure-the-user-connections-server-configuration-option?<br />
+<br />
+Otherwise, establish the limit(s) appropriate to the type(s) of user account accessing the SQL Server instance, and record them in the system documentation. Implement one or more logon triggers to enforce the limit(s), without exposing the dynamic management views to general users. <br />
+<br />
+Example script:<br />
+ <br />
+CREATE TRIGGER SQL_STIG_Connection_Limit <br />
+ON ALL SERVER WITH EXECUTE AS 'renamed_sa' /*Make sure to use the renamed SA account here*/ <br />
+FOR LOGON <br />
+AS <br />
+BEGIN <br />
+If (Select COUNT(1) from sys.dm_exec_sessions WHERE is_user_process = 1 AND original_login_name = ORIGINAL_LOGIN() ) &gt; <br />
+  (CASE ORIGINAL_LOGIN()<br />
+              WHEN 'domain/ima.dba' THEN 150    /*this is a busy DBA's domain account */<br />
+              WHEN 'application1_login' THEN 6  /* this is a SQL login for an application */<br />
+              WHEN 'application2_login' THEN 20 /* this is a SQL login for another application */<br />
+              …<br />
+              ELSE 1 /* All unspecified users are restricted to a single login */<br />
+  END)<br />
+              BEGIN <br />
+                             PRINT 'The login [' + ORIGINAL_LOGIN() + '] has exceeded its concurrent session limit.' <br />
+                             ROLLBACK; <br />
+              END<br />
+END; <br />
+  <br />
+Reference: https://msdn.microsoft.com/en-us/library/ms189799.aspx</p><h2>Check Contents</h2><p>Review the system documentation to determine whether any concurrent session limits have been defined. If it does not, assume a limit of 10 for database administrators and two for all other users. <br />
+ <br />
+If a mechanism other than a logon trigger is used, verify its correct operation by the appropriate means. If it does not work correctly, this is a finding.<br />
+<br />
+Due to excessive CPU consumption when using a logon trigger, an alternative method of limiting concurrent sessions is setting the max connection limit within SQL Server to an appropriate value. This serves to block a distributed denial-of-service (DDOS) attack by limiting the attacker's connections while allowing a database administrator to still force a SQL connection.<br />
+<br />
+In SQL Server Management Studio's Object Explorer tree, right-click on the Server Name &gt;&gt; Properties &gt;&gt; Connections Tab.<br />
+<br />
+OR<br />
+<br />
+Run the query:<br />
+EXEC sys.sp_configure N'user connections'<br />
+<br />
+If the max connection limit is set to 0 (unlimited) or does not match the documented value, this is a finding.<br />
+ <br />
+Otherwise, determine if a logon trigger exists:  <br />
+ <br />
+In SQL Server Management Studio's Object Explorer tree, expand [SQL Server Instance] &gt;&gt; Server Objects &gt;&gt; Triggers.<br />
+ <br />
+OR <br />
+ <br />
+Run the query:  <br />
+SELECT name FROM master.sys.server_triggers;  <br />
+ <br />
+If no triggers are listed, this is a finding. <br />
+ <br />
+If triggers are listed, identify the trigger(s) limiting the number of concurrent sessions per user. If none are found, this is a finding. If they are present but disabled, this is a finding. <br />
+ <br />
+Examine the trigger source code for logical correctness and for compliance with the documented limit(s). If errors or variances exist, this is a finding.<br />
+ <br />
+Verify that the system does execute the trigger(s) each time a user session is established. If it does not operate correctly for all types of user, this is a finding.</p><h2>Vulnerability Number</h2><p>V-271263</p><h2>Documentable</h2><p>False</p><h2>Rule Version</h2><p>SQLI-22-003600</p><h2>Severity Override Guidance</h2><p>Review the system documentation to determine whether any concurrent session limits have been defined. If it does not, assume a limit of 10 for database administrators and two for all other users. <br />
+ <br />
+If a mechanism other than a logon trigger is used, verify its correct operation by the appropriate means. If it does not work correctly, this is a finding.<br />
+<br />
+Due to excessive CPU consumption when using a logon trigger, an alternative method of limiting concurrent sessions is setting the max connection limit within SQL Server to an appropriate value. This serves to block a distributed denial-of-service (DDOS) attack by limiting the attacker's connections while allowing a database administrator to still force a SQL connection.<br />
+<br />
+In SQL Server Management Studio's Object Explorer tree, right-click on the Server Name &gt;&gt; Properties &gt;&gt; Connections Tab.<br />
+<br />
+OR<br />
+<br />
+Run the query:<br />
+EXEC sys.sp_configure N'user connections'<br />
+<br />
+If the max connection limit is set to 0 (unlimited) or does not match the documented value, this is a finding.<br />
+ <br />
+Otherwise, determine if a logon trigger exists:  <br />
+ <br />
+In SQL Server Management Studio's Object Explorer tree, expand [SQL Server Instance] &gt;&gt; Server Objects &gt;&gt; Triggers.<br />
+ <br />
+OR <br />
+ <br />
+Run the query:  <br />
+SELECT name FROM master.sys.server_triggers;  <br />
+ <br />
+If no triggers are listed, this is a finding. <br />
+ <br />
+If triggers are listed, identify the trigger(s) limiting the number of concurrent sessions per user. If none are found, this is a finding. If they are present but disabled, this is a finding. <br />
+ <br />
+Examine the trigger source code for logical correctness and for compliance with the documented limit(s). If errors or variances exist, this is a finding.<br />
+ <br />
+Verify that the system does execute the trigger(s) each time a user session is established. If it does not operate correctly for all types of user, this is a finding.</p><h2>Check Content Reference</h2><p>M</p><h2>Target Key</h2><p>5677</p></body></html>

@@ -1,0 +1,105 @@
+<!doctype html><html lang="en"><head><meta charset="utf-8"><title>STIGQter: STIG Check Details: SV-253703r1136902_rule: MariaDB must use NIST FIPS 140-2/140-3 validated cryptographic modules for cryptographic operations.</title><link rel="icon" type="image/svg+xml" href="STIGQter.svg" /><script async src="https://www.googletagmanager.com/gtag/js?id=UA-31381839-2"></script><script src="include.js"></script><script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-4110907817782130" crossorigin="anonymous"></script></head><body><div><img src="STIGQter.svg" alt="STIGQter" style="height:1em;" /> <a href="https://www.stigqter.com/">STIGQter</a>: <a href="main.html">STIG Summary</a>: <a href="U_MariaDB_Enterprise_10-x_STIG_V2R5_Manual-xccdf.html">MariaDB Enterprise 10.x Security Technical Implementation Guide Version: 2 Release: 5 Benchmark Date: 01 Apr 2026</a>:</div> <h1>MariaDB must use NIST FIPS 140-2/140-3 validated cryptographic modules for cryptographic operations.</h1><h2>DISA Rule</h2><p>SV-253703r1136902_rule</p><h2>Vulnerability Number</h2><p>V-253703</p><h2>Group Title</h2><p>SRG-APP-000179-DB-000114</p><h2>Rule Version</h2><p>MADB-10-004400</p><h2>Severity</h2><p>CAT I</p><h2>CCI(s)</h2><ul><li>CCI-000803 - Implement mechanisms for authentication to a cryptographic module that meet the requirements of applicable laws, Executive Orders, directives, policies, regulations, standards, and guidance for such authentication.</li></ul><h2>Weight</h2><p>10</p><h2>Fix Recommendation</h2><p>If crypto.fips_enabled = 0, for Red Hat Linux, configure the operating system to implement DOD-approved encryption by following the steps below:<br />
+<br />
+To enable strict FIPS compliance, the fips=1 kernel option must be added to the kernel command line during system installation so key generation is done with FIPS-approved algorithms and continuous monitoring tests in place.<br />
+<br />
+Enable FIPS mode with the following command:<br />
+# sudo fips-mode-setup --enable<br />
+<br />
+Modify the kernel command line of the current kernel in the &quot;grub.cfg&quot; file by adding the following option to the GRUB_CMDLINE_LINUX key in the &quot;/etc/default/grub&quot; file and then rebuild the &quot;grub.cfg&quot; file:<br />
+fips=1<br />
+<br />
+Changes to &quot;/etc/default/grub&quot; require rebuilding the &quot;grub.cfg&quot; file as follows:<br />
+On BIOS-based machines, use the following command:<br />
+# sudo grub2-mkconfig -o /boot/grub2/grub.cfg<br />
+<br />
+On UEFI-based machines, use the following command:<br />
+# sudo grub2-mkconfig -o /boot/efi/EFI/redhat/grub.cfg<br />
+<br />
+If /boot or /boot/efi reside on separate partitions, the kernel parameter &quot;boot=&lt;partition of /boot or /boot/efi&gt;&quot; must be added to the kernel command line. Identify a partition by running the df /boot or df /boot/efi command:<br />
+# sudo df /boot<br />
+<br />
+Filesystem 1K-blocks Used Available Use% Mounted on<br />
+/dev/sda1 495844 53780 416464 12% /boot<br />
+<br />
+To ensure the &quot;boot=&quot; configuration option will work even if device naming changes occur between boots, identify the universally unique identifier (UUID) of the partition with the following command:<br />
+# sudo blkid /dev/sda1<br />
+/dev/sda1: UUID=&quot;05c000f1-a213-759e-c7a2-f11b7424c797&quot; TYPE=&quot;ext4&quot;<br />
+<br />
+For the example above, append the following string to the kernel command line:<br />
+boot=UUID=05c000f1-a213-759e-c7a2-f11b7424c797<br />
+<br />
+Reboot the system for the changes to take effect.<br />
+<br />
+More information can be found here:<br />
+RedHat: https://access.redhat.com/documentation/en-us/red_hat_enterprise_linux/7/html/security_guide/chap-federal_standards_and_regulations<br />
+Ubuntu: https://security-certs.docs.ubuntu.com/en/fips</p><h2>Check Contents</h2><p>MariaDB relies on the underlying OS for FIPS compliance. Verify FIPS is enabled for the OS. Following are example Linux commands:<br />
+# sysctl crypto.fips_enabled<br />
+crypto.fips_enabled = 1<br />
+ <br />
+If crypto.fips_enabled = 0, this is a finding. <br />
+OR<br />
+$ sudo fips-mode-setup --check<br />
+FIPS mode is enabled.<br />
+<br />
+If FIPS mode is not enabled, this is a finding.<br />
+<br />
+Verify the server is using OpenSSL:<br />
+ MariaDB&gt; SHOW GLOBAL VARIABLES LIKE '%have_openssl';<br />
+<br />
+If the value of have_openssl is not YES, this is a finding.<br />
+<br />
+MariaDB&gt; SHOW GLOBAL VARIABLES LIKE '%version_ssl_library%';<br />
+Note: FIPS-compliant libraries for OpenSSL 1.x.x contain &quot;fips&quot; in the version.<br />
+<br />
+If the value of version_ssl_library is not FIPS compliant, this is a finding.<br />
+<br />
+If using OpenSSL 3.x , check the providers: <br />
+openssl list -providers<br />
+<br />
+Providers:<br />
+default<br />
+name: OpenSSL Default Provider<br />
+version: 3.2.2<br />
+status: active<br />
+<br />
+fips<br />
+    name: Red Hat Enterprise Linux 9 - OpenSSL FIPS Provider<br />
+    version: 3.2.2-622cc79c634cbbef<br />
+    status: active<br />
+<br />
+If the response does not list a FIPS provider with a status of &quot;active&quot;, this is a finding.</p><h2>Vulnerability Number</h2><p>V-253703</p><h2>Documentable</h2><p>False</p><h2>Rule Version</h2><p>MADB-10-004400</p><h2>Severity Override Guidance</h2><p>MariaDB relies on the underlying OS for FIPS compliance. Verify FIPS is enabled for the OS. Following are example Linux commands:<br />
+# sysctl crypto.fips_enabled<br />
+crypto.fips_enabled = 1<br />
+ <br />
+If crypto.fips_enabled = 0, this is a finding. <br />
+OR<br />
+$ sudo fips-mode-setup --check<br />
+FIPS mode is enabled.<br />
+<br />
+If FIPS mode is not enabled, this is a finding.<br />
+<br />
+Verify the server is using OpenSSL:<br />
+ MariaDB&gt; SHOW GLOBAL VARIABLES LIKE '%have_openssl';<br />
+<br />
+If the value of have_openssl is not YES, this is a finding.<br />
+<br />
+MariaDB&gt; SHOW GLOBAL VARIABLES LIKE '%version_ssl_library%';<br />
+Note: FIPS-compliant libraries for OpenSSL 1.x.x contain &quot;fips&quot; in the version.<br />
+<br />
+If the value of version_ssl_library is not FIPS compliant, this is a finding.<br />
+<br />
+If using OpenSSL 3.x , check the providers: <br />
+openssl list -providers<br />
+<br />
+Providers:<br />
+default<br />
+name: OpenSSL Default Provider<br />
+version: 3.2.2<br />
+status: active<br />
+<br />
+fips<br />
+    name: Red Hat Enterprise Linux 9 - OpenSSL FIPS Provider<br />
+    version: 3.2.2-622cc79c634cbbef<br />
+    status: active<br />
+<br />
+If the response does not list a FIPS provider with a status of &quot;active&quot;, this is a finding.</p><h2>Check Content Reference</h2><p>M</p><h2>Target Key</h2><p>5475</p></body></html>

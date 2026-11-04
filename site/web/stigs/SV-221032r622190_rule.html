@@ -1,0 +1,36 @@
+<!doctype html><html lang="en"><head><meta charset="utf-8"><title>STIGQter: STIG Check Details: SV-221032r622190_rule: The Cisco BGP switch must be configured to use its loopback address as the source address for iBGP peering sessions.</title><link rel="icon" type="image/svg+xml" href="STIGQter.svg" /><script async src="https://www.googletagmanager.com/gtag/js?id=UA-31381839-2"></script><script src="include.js"></script><script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-4110907817782130" crossorigin="anonymous"></script></head><body><div><img src="STIGQter.svg" alt="STIGQter" style="height:1em;" /> <a href="https://www.stigqter.com/">STIGQter</a>: <a href="main.html">STIG Summary</a>: <a href="U_Cisco_IOS-XE_Switch_RTR_STIG_V3R4_Manual-xccdf.html">Cisco IOS XE Switch RTR Security Technical Implementation Guide Version: 3 Release: 4 Benchmark Date: 01 Apr 2026</a>:</div> <h1>The Cisco BGP switch must be configured to use its loopback address as the source address for iBGP peering sessions.</h1><h2>DISA Rule</h2><p>SV-221032r622190_rule</p><h2>Vulnerability Number</h2><p>V-221032</p><h2>Group Title</h2><p>SRG-NET-000512-RTR-000001</p><h2>Rule Version</h2><p>CISC-RT-000580</p><h2>Severity</h2><p>CAT III</p><h2>CCI(s)</h2><ul><li>CCI-000366 - Implement the security configuration settings.</li></ul><h2>Weight</h2><p>10</p><h2>Fix Recommendation</h2><p>Configure the switch to use its loopback address as the source address for all iBGP peering.<br />
+<br />
+SW1(config)#router bgp xx<br />
+SW1(config-switch)#neighbor 10.1.1.1 update-source Loopback0</p><h2>Check Contents</h2><p>Step 1: Review the switch configuration to verify that a loopback address has been configured.<br />
+<br />
+interface Loopback0<br />
+ ip address 10.1.1.1 255.255.255.255<br />
+<br />
+Step 2: Verify that the loopback interface is used as the source address for all iBGP sessions.<br />
+<br />
+router bgp xx<br />
+ no synchronization<br />
+ no bgp enforce-first-as<br />
+ bgp log-neighbor-changes<br />
+ redistribute static<br />
+ neighbor 10.1.1.1 remote-as xx<br />
+ neighbor 10.1.1.1 password xxxxxxxx<br />
+ neighbor 10.1.1.1 update-source Loopback0<br />
+<br />
+If the switch does not use its loopback address as the source address for all iBGP sessions, this is a finding.</p><h2>Vulnerability Number</h2><p>V-221032</p><h2>Documentable</h2><p>False</p><h2>Rule Version</h2><p>CISC-RT-000580</p><h2>Severity Override Guidance</h2><p>Step 1: Review the switch configuration to verify that a loopback address has been configured.<br />
+<br />
+interface Loopback0<br />
+ ip address 10.1.1.1 255.255.255.255<br />
+<br />
+Step 2: Verify that the loopback interface is used as the source address for all iBGP sessions.<br />
+<br />
+router bgp xx<br />
+ no synchronization<br />
+ no bgp enforce-first-as<br />
+ bgp log-neighbor-changes<br />
+ redistribute static<br />
+ neighbor 10.1.1.1 remote-as xx<br />
+ neighbor 10.1.1.1 password xxxxxxxx<br />
+ neighbor 10.1.1.1 update-source Loopback0<br />
+<br />
+If the switch does not use its loopback address as the source address for all iBGP sessions, this is a finding.</p><h2>Check Content Reference</h2><p>M</p><h2>Target Key</h2><p>4074</p></body></html>

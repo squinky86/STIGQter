@@ -1,0 +1,45 @@
+<!doctype html><html lang="en"><head><meta charset="utf-8"><title>STIGQter: STIG Check Details: SV-223526r1225753_rule: IBM z/OS startup parameters for the FTP Server must be defined in the SYSTCPD and SYSFTPD DD statements for configuration files.</title><link rel="icon" type="image/svg+xml" href="STIGQter.svg" /><script async src="https://www.googletagmanager.com/gtag/js?id=UA-31381839-2"></script><script src="include.js"></script><script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-4110907817782130" crossorigin="anonymous"></script></head><body><div><img src="STIGQter.svg" alt="STIGQter" style="height:1em;" /> <a href="https://www.stigqter.com/">STIGQter</a>: <a href="main.html">STIG Summary</a>: <a href="U_IBM_zOS_ACF2_STIG_V9R9_Manual-xccdf.html">IBM z/OS ACF2 Security Technical Implementation Guide Version: 9 Release: 9 Benchmark Date: 01 Jul 2026</a>:</div> <h1>IBM z/OS startup parameters for the FTP Server must be defined in the SYSTCPD and SYSFTPD DD statements for configuration files.</h1><h2>DISA Rule</h2><p>SV-223526r1225753_rule</p><h2>Vulnerability Number</h2><p>V-223526</p><h2>Group Title</h2><p>SRG-OS-000163-GPOS-00072</p><h2>Rule Version</h2><p>ACF2-FT-000100</p><h2>Severity</h2><p>CAT II</p><h2>CCI(s)</h2><ul><li>CCI-001133 - Terminate the network connection associated with a communications session at the end of the session or after an organization-defined time period of inactivity.</li></ul><h2>Weight</h2><p>10</p><h2>Fix Recommendation</h2><p>Review the FTP daemon's started task JCL. Ensure that the ANONYMOUS and INACTIVE startup parameters are not specified and configuration file names are specified on the appropriate DD statements.<br />
+<br />
+The FTP daemon program can accept parameters in the JCL procedure that is used to start the daemon. The ANONYMOUS and ANONYMOUS= keywords are designed to allow anonymous FTP connections. The INACTIVE keyword is designed to set the timeout value for inactive connections. Control of these options is recommended through the configuration file statements rather than the startup parameters.<br />
+<br />
+The systems programmer responsible for supporting ICS will ensure that the startup parameters for the FTP daemon does not include the ANONYMOUS, ANONYMOUS=, or INACTIVE keywords.<br />
+<br />
+During initialization the FTP daemon searches multiple locations for the TCPIP.DATA and FTP.DATA files according to fixed sequences. In the daemon's started task JCL, Data Definition (DD) statements will be used to specify the locations of the files. The SYSTCPD DD statement identifies the TCPIP.DATA file and the SYSFTPD DD statement identifies the FTP.DATA file.<br />
+<br />
+The systems programmer responsible for supporting ICS will ensure that the FTP daemon's started task JCL specifies the SYSTCPD and SYSFTPD DD statements for configuration files.</p><h2>Check Contents</h2><p>Refer to the Profile configuration file specified on the PROFILE DD statement in the TCPIP started task JCL.<br />
+<br />
+If all the items below are true, this is not a finding.<br />
+<br />
+If any of the items below are untrue, this is a finding.<br />
+<br />
+The following items are in effect for the FTP daemon's started task JCL:<br />
+The SYSTCPD and SYSFTPD DD statements specify the TCP/IP Data and FTP Data configuration files respectively.<br />
+The ANONYMOUS keyword is not coded on the PARM parameter on the EXEC statement.<br />
+The ANONYMOUS=logonid combination is not coded on the PARM parameter on the EXEC statement.<br />
+The INACTIVE keyword is not coded on the PARM parameter on the EXEC statement.<br />
+The AUTOLOG statement block can be configured to have TCP/IP start the FTP Server. The FTP entry (e.g., FTPD) can include the PARMSTRING parameter to pass parameters to the FTP procedure when started.<br />
+<br />
+NOTE: Parameters passed on the PARMSTRING parameter override parameters specified in the FTP procedure.<br />
+<br />
+If an FTP entry is configured in the AUTOLOG statement block in the TCP/IP Profile configuration file, ensure the following items are in effect:<br />
+The ANONYMOUS keyword is not coded on the PARMSTRING parameter.<br />
+The ANONYMOUS=logonid combination is not coded on the PARMSTRING parameter.<br />
+The INACTIVE keyword is not coded on PARMSTRING parameter.</p><h2>Vulnerability Number</h2><p>V-223526</p><h2>Documentable</h2><p>False</p><h2>Rule Version</h2><p>ACF2-FT-000100</p><h2>Severity Override Guidance</h2><p>Refer to the Profile configuration file specified on the PROFILE DD statement in the TCPIP started task JCL.<br />
+<br />
+If all the items below are true, this is not a finding.<br />
+<br />
+If any of the items below are untrue, this is a finding.<br />
+<br />
+The following items are in effect for the FTP daemon's started task JCL:<br />
+The SYSTCPD and SYSFTPD DD statements specify the TCP/IP Data and FTP Data configuration files respectively.<br />
+The ANONYMOUS keyword is not coded on the PARM parameter on the EXEC statement.<br />
+The ANONYMOUS=logonid combination is not coded on the PARM parameter on the EXEC statement.<br />
+The INACTIVE keyword is not coded on the PARM parameter on the EXEC statement.<br />
+The AUTOLOG statement block can be configured to have TCP/IP start the FTP Server. The FTP entry (e.g., FTPD) can include the PARMSTRING parameter to pass parameters to the FTP procedure when started.<br />
+<br />
+NOTE: Parameters passed on the PARMSTRING parameter override parameters specified in the FTP procedure.<br />
+<br />
+If an FTP entry is configured in the AUTOLOG statement block in the TCP/IP Profile configuration file, ensure the following items are in effect:<br />
+The ANONYMOUS keyword is not coded on the PARMSTRING parameter.<br />
+The ANONYMOUS=logonid combination is not coded on the PARMSTRING parameter.<br />
+The INACTIVE keyword is not coded on PARMSTRING parameter.</p><h2>Check Content Reference</h2><p>M</p><h2>Target Key</h2><p>4100</p></body></html>

@@ -1,0 +1,47 @@
+<!doctype html><html lang="en"><head><meta charset="utf-8"><title>STIGQter: STIG Check Details: SV-279078r1172827_rule: For PKI-based authentication, ColdFusion must implement a local cache of revocation data to support path discovery and validation in case of the inability to access revocation information via the network.</title><link rel="icon" type="image/svg+xml" href="STIGQter.svg" /><script async src="https://www.googletagmanager.com/gtag/js?id=UA-31381839-2"></script><script src="include.js"></script><script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-4110907817782130" crossorigin="anonymous"></script></head><body><div><img src="STIGQter.svg" alt="STIGQter" style="height:1em;" /> <a href="https://www.stigqter.com/">STIGQter</a>: <a href="main.html">STIG Summary</a>: <a href="U_Adobe_ColdFusion_STIG_V1R2_Manual-xccdf.html">Adobe ColdFusion Security Technical Implementation Guide Version: 1 Release: 2 Benchmark Date: 01 Jul 2026</a>:</div> <h1>For PKI-based authentication, ColdFusion must implement a local cache of revocation data to support path discovery and validation in case of the inability to access revocation information via the network.</h1><h2>DISA Rule</h2><p>SV-279078r1172827_rule</p><h2>Vulnerability Number</h2><p>V-279078</p><h2>Group Title</h2><p>SRG-APP-000401-AS-000243</p><h2>Rule Version</h2><p>APAS-CF-000680</p><h2>Severity</h2><p>CAT II</p><h2>CCI(s)</h2><ul><li>CCI-000366 - Implement the security configuration settings.</li></ul><h2>Weight</h2><p>10</p><h2>Fix Recommendation</h2><p>Configure ColdFusion to use a locally cached CRL for certificate revocation checking.<br />
+<br />
+1. Open the server.xml file located at: &lt;ColdFusion_Installation_Directory&gt;\cfusion\runtime\conf\server.xml<br />
+<br />
+2. Locate each &lt;Connector&gt; element configured for SSL.<br />
+<br />
+3. Ensure an &lt;SSLHostConfig&gt; element is present and includes one of the following attributes:<br />
+certificateRevocationListFile=&quot;&lt;path_to_crl_file&gt;&quot;<br />
+certificateRevocationListPath=&quot;&lt;path_to_crl_directory&gt;&quot;<br />
+<br />
+Example:<br />
+&lt;SSLHostConfig&gt;<br />
+  &lt;Certificate certificateKeystoreFile=&quot;...&quot; type=&quot;RSA&quot; /&gt;<br />
+  &lt;CertificateRevocation certificateRevocationListFile=&quot;/opt/cf/crl/mycrl.pem&quot; /&gt;<br />
+&lt;/SSLHostConfig&gt;<br />
+<br />
+4. Save the file and restart ColdFusion to apply the changes.</p><h2>Check Contents</h2><p>Verify ColdFusion is configured to support certificate revocation checking using locally cached Certificate Revocation Lists (CRLs).<br />
+<br />
+1. For each ColdFusion instance, navigate to: <br />
+&lt;ColdFusion_Installation_Directory&gt;\cfusion\runtime\conf\server.xml.<br />
+<br />
+2. Open the server.xml file in a text editor.<br />
+<br />
+3. Identify all &lt;Connector&gt; elements that are configured for SSL. Within each &lt;Connector&gt;, check for an embedded &lt;SSLHostConfig&gt; element.<br />
+<br />
+4. Review the &lt;SSLHostConfig&gt; element for the presence of one of the following attributes:<br />
+certificateRevocationListFile<br />
+certificateRevocationListPath<br />
+<br />
+(These attributes specify the location of locally cached CRL files that will be used for certificate revocation checking.)<br />
+<br />
+If no &lt;SSLHostConfig&gt; is present, or if neither certificateRevocationListFile nor certificateRevocationListPath is configured, this is a finding.</p><h2>Vulnerability Number</h2><p>V-279078</p><h2>Documentable</h2><p>False</p><h2>Rule Version</h2><p>APAS-CF-000680</p><h2>Severity Override Guidance</h2><p>Verify ColdFusion is configured to support certificate revocation checking using locally cached Certificate Revocation Lists (CRLs).<br />
+<br />
+1. For each ColdFusion instance, navigate to: <br />
+&lt;ColdFusion_Installation_Directory&gt;\cfusion\runtime\conf\server.xml.<br />
+<br />
+2. Open the server.xml file in a text editor.<br />
+<br />
+3. Identify all &lt;Connector&gt; elements that are configured for SSL. Within each &lt;Connector&gt;, check for an embedded &lt;SSLHostConfig&gt; element.<br />
+<br />
+4. Review the &lt;SSLHostConfig&gt; element for the presence of one of the following attributes:<br />
+certificateRevocationListFile<br />
+certificateRevocationListPath<br />
+<br />
+(These attributes specify the location of locally cached CRL files that will be used for certificate revocation checking.)<br />
+<br />
+If no &lt;SSLHostConfig&gt; is present, or if neither certificateRevocationListFile nor certificateRevocationListPath is configured, this is a finding.</p><h2>Check Content Reference</h2><p>M</p><h2>Target Key</h2><p>5724</p></body></html>

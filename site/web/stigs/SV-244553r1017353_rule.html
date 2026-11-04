@@ -1,0 +1,53 @@
+<!doctype html><html lang="en"><head><meta charset="utf-8"><title>STIGQter: STIG Check Details: SV-244553r1017353_rule: RHEL 8 must ignore IPv4 Internet Control Message Protocol (ICMP) redirect messages.</title><link rel="icon" type="image/svg+xml" href="STIGQter.svg" /><script async src="https://www.googletagmanager.com/gtag/js?id=UA-31381839-2"></script><script src="include.js"></script><script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-4110907817782130" crossorigin="anonymous"></script></head><body><div><img src="STIGQter.svg" alt="STIGQter" style="height:1em;" /> <a href="https://www.stigqter.com/">STIGQter</a>: <a href="main.html">STIG Summary</a>: <a href="U_RHEL_8_STIG_V2R8_Manual-xccdf.html">Red Hat Enterprise Linux 8 Security Technical Implementation Guide Version: 2 Release: 8 Benchmark Date: 01 Jul 2026</a>:</div> <h1>RHEL 8 must ignore IPv4 Internet Control Message Protocol (ICMP) redirect messages.</h1><h2>DISA Rule</h2><p>SV-244553r1017353_rule</p><h2>Vulnerability Number</h2><p>V-244553</p><h2>Group Title</h2><p>SRG-OS-000480-GPOS-00227</p><h2>Rule Version</h2><p>RHEL-08-040279</p><h2>Severity</h2><p>CAT II</p><h2>CCI(s)</h2><ul><li>CCI-000366 - Implement the security configuration settings.</li></ul><h2>Weight</h2><p>10</p><h2>Fix Recommendation</h2><p>Configure RHEL 8 to ignore IPv4 ICMP redirect messages.<br />
+<br />
+Add or edit the following line in a system configuration file, in the &quot;/etc/sysctl.d/&quot; directory:<br />
+<br />
+net.ipv4.conf.all.accept_redirects = 0<br />
+<br />
+Remove any configurations that conflict with the above from the following locations: <br />
+/run/sysctl.d/*.conf<br />
+/usr/local/lib/sysctl.d/*.conf<br />
+/usr/lib/sysctl.d/*.conf<br />
+/lib/sysctl.d/*.conf<br />
+/etc/sysctl.conf<br />
+/etc/sysctl.d/*.conf<br />
+<br />
+Load settings from all system configuration files with the following command:<br />
+<br />
+$ sudo sysctl --system</p><h2>Check Contents</h2><p>Verify RHEL 8 ignores IPv4 ICMP redirect messages.<br />
+<br />
+Check the value of the &quot;accept_redirects&quot; variables with the following command:<br />
+<br />
+$ sudo sysctl net.ipv4.conf.all.accept_redirects<br />
+<br />
+net.ipv4.conf.all.accept_redirects = 0<br />
+<br />
+If the returned line does not have a value of &quot;0&quot;, a line is not returned, or the line is commented out, this is a finding.<br />
+<br />
+Check that the configuration files are present to enable this network parameter.<br />
+<br />
+$ sudo grep -r net.ipv4.conf.all.accept_redirects /run/sysctl.d/*.conf /usr/local/lib/sysctl.d/*.conf /usr/lib/sysctl.d/*.conf /lib/sysctl.d/*.conf /etc/sysctl.conf /etc/sysctl.d/*.conf<br />
+<br />
+/etc/sysctl.d/99-sysctl.conf: net.ipv4.conf.all.accept_redirects = 0<br />
+<br />
+If &quot;net.ipv4.conf.all.accept_redirects&quot; is not set to &quot;0&quot;, is missing or commented out, this is a finding.<br />
+<br />
+If conflicting results are returned, this is a finding.</p><h2>Vulnerability Number</h2><p>V-244553</p><h2>Documentable</h2><p>False</p><h2>Rule Version</h2><p>RHEL-08-040279</p><h2>Severity Override Guidance</h2><p>Verify RHEL 8 ignores IPv4 ICMP redirect messages.<br />
+<br />
+Check the value of the &quot;accept_redirects&quot; variables with the following command:<br />
+<br />
+$ sudo sysctl net.ipv4.conf.all.accept_redirects<br />
+<br />
+net.ipv4.conf.all.accept_redirects = 0<br />
+<br />
+If the returned line does not have a value of &quot;0&quot;, a line is not returned, or the line is commented out, this is a finding.<br />
+<br />
+Check that the configuration files are present to enable this network parameter.<br />
+<br />
+$ sudo grep -r net.ipv4.conf.all.accept_redirects /run/sysctl.d/*.conf /usr/local/lib/sysctl.d/*.conf /usr/lib/sysctl.d/*.conf /lib/sysctl.d/*.conf /etc/sysctl.conf /etc/sysctl.d/*.conf<br />
+<br />
+/etc/sysctl.d/99-sysctl.conf: net.ipv4.conf.all.accept_redirects = 0<br />
+<br />
+If &quot;net.ipv4.conf.all.accept_redirects&quot; is not set to &quot;0&quot;, is missing or commented out, this is a finding.<br />
+<br />
+If conflicting results are returned, this is a finding.</p><h2>Check Content Reference</h2><p>M</p><h2>Target Key</h2><p>2921</p></body></html>

@@ -1,0 +1,126 @@
+<!doctype html><html lang="en"><head><meta charset="utf-8"><title>STIGQter: STIG Check Details: SV-221135r999744_rule: The Cisco multicast Rendezvous Point (RP) switch must be configured to limit the multicast forwarding cache so that its resources are not saturated by managing an overwhelming number of Protocol Independent Multicast (PIM) and Multicast Source Discovery Protocol (MSDP) source-active entries.</title><link rel="icon" type="image/svg+xml" href="STIGQter.svg" /><script async src="https://www.googletagmanager.com/gtag/js?id=UA-31381839-2"></script><script src="include.js"></script><script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-4110907817782130" crossorigin="anonymous"></script></head><body><div><img src="STIGQter.svg" alt="STIGQter" style="height:1em;" /> <a href="https://www.stigqter.com/">STIGQter</a>: <a href="main.html">STIG Summary</a>: <a href="U_Cisco_NX-OS_Switch_RTR_STIG_V3R4_Manual-xccdf.html">Cisco NX OS Switch RTR Security Technical Implementation Guide Version: 3 Release: 4 Benchmark Date: 01 Apr 2026</a>:</div> <h1>The Cisco multicast Rendezvous Point (RP) switch must be configured to limit the multicast forwarding cache so that its resources are not saturated by managing an overwhelming number of Protocol Independent Multicast (PIM) and Multicast Source Discovery Protocol (MSDP) source-active entries.</h1><h2>DISA Rule</h2><p>SV-221135r999744_rule</p><h2>Vulnerability Number</h2><p>V-221135</p><h2>Group Title</h2><p>SRG-NET-000362-RTR-000120</p><h2>Rule Version</h2><p>CISC-RT-000820</p><h2>Severity</h2><p>CAT III</p><h2>CCI(s)</h2><ul><li>CCI-002385 - Protect against or limit the effects of organization-defined types of denial of service events.</li></ul><h2>Weight</h2><p>10</p><h2>Fix Recommendation</h2><p>The risk associated with this requirement can be fully mitigated by configuring the switch to filter PIM register messages, rate limiting the number of PIM register messages, and accept MSDP packets only from known MSDP peers. <br />
+<br />
+Step 1: Configure the switch to filter PIM register messages received from a multicast DR for any undesirable multicast groups and sources. The example below will deny any multicast streams for groups 239.5.0.0/16 and allow from only sources x.1.2.6 and x.1.2.7. <br />
+<br />
+Step 1a: Configure a route map to filter multicast groups and sources as shown in the example below:<br />
+<br />
+SW1(config)# route-map PIM_REGISTER_FILTER deny 10 <br />
+SW1(config-route-map)# match ip multicast group 239.5.0.0/16 <br />
+SW1(config-route-map)# route-map PIM_REGISTER_FILTER permit 20<br />
+SW1(config-route-map)# match ip multicast source x.1.2.6/32<br />
+SW1(config-route-map)# route-map PIM_REGISTER_FILTER permit 30<br />
+SW1(config-route-map)# match ip multicast source x.1.2.7/32<br />
+SW1(config-route-map)# route-map PIM_REGISTER_FILTER permit 40<br />
+SW1(config-route-map)# match ip multicast group-range 232.0.0.0 to 233.255.255.255<br />
+SW1(config-route-map)# route-map PIM_REGISTER_FILTER deny 50<br />
+SW1(config-route-map)# match ip multicast source 0.0.0.0/0<br />
+SW1(config-route-map)# exit<br />
+<br />
+Step 1b: Configure a multicast register policy referencing the configured route map.<br />
+<br />
+SW1(config)# ip pim register-policy PIM_REGISTER_FILTER<br />
+SW1(config)# end<br />
+<br />
+Step 2: Configure the receive path or interface ACLs to only accept MSDP packets from known MSDP peers. <br />
+<br />
+SW1(config)# ip access-list EXTERNAL_ACL_INBOUND<br />
+SW1(config-acl) # permit tcp any any established<br />
+SW1(config-acl) # permit tcp host x.1.28.2 host x.1.28.8 eq 639<br />
+SW1(config-acl) # deny tcp any host x1.28.8 eq 639<br />
+SW1(config-acl) # permit tcp host x.1.28.2 host x.1.28.8 eq bgp<br />
+SW1(config-acl) # permit tcp host x.1.28.2 eq bgp host x.1.28.8<br />
+SW1(config-acl) # permit pim host x.1.28.2 host x.1.28.8<br />
+…<br />
+…<br />
+…<br />
+SW1(config-acl)# deny ip any any</p><h2>Check Contents</h2><p>The Cisco switch does not have a mechanism to limit the multicast forwarding cache. However, the risk associated with this requirement can be fully mitigated by configuring the switch to filter PIM register messages and accept MSDP packets only from known MSDP peers. <br />
+<br />
+Step 1: Verify that the RP is configured to filter PIM register messages for any undesirable multicast groups and sources. The example below will deny any multicast streams for groups 239.5.0.0/16 and allow from only sources x.1.2.6 and x.1.2.7. <br />
+<br />
+ip pim register-policy PIM_REGISTER_FILTER<br />
+…<br />
+…<br />
+…<br />
+route-map PIM_REGISTER_FILTER deny 10<br />
+ match ip multicast group 239.5.0.0/16 <br />
+route-map PIM_REGISTER_FILTER permit 20<br />
+ match ip multicast source x.1.2.6/32 <br />
+route-map PIM_REGISTER_FILTER permit 30<br />
+ match ip multicast source x.1.2.7/32 <br />
+route-map PIM_REGISTER_FILTER permit 40<br />
+ match ip multicast group-range 232.0.0.0 to 233.255.255.255 <br />
+route-map PIM_REGISTER_FILTER deny 50<br />
+ match ip multicast source 0.0.0.0/0<br />
+<br />
+Step 2: Review the switch configuration to determine if there is a receive path or interface filter to only accept MSDP packets from known MSDP peers as shown in the example below. <br />
+<br />
+Step 2a: Verify that interfaces used for MSDP peering have an inbound ACL as shown in the example.<br />
+<br />
+interface Ethernet2/3<br />
+ no switchport<br />
+ ip access-group EXTERNAL_ACL_INBOUND in<br />
+ ip address x.1.28.8/24<br />
+ ip pim sparse-mode<br />
+<br />
+Step 2b: Verify that the ACL restricts MSDP peering to only known sources.<br />
+<br />
+ip access-list EXTERNAL_ACL_INBOUND<br />
+ 10 permit tcp any any established <br />
+ 20 permit tcp x.1.28.2/32 x.1.28.8/32 eq 639 <br />
+ 30 deny tcp any x.1.28.8/32 eq 639 log <br />
+ 40 permit tcp x.1.28.2/32 10.x.28.8/32 eq bgp <br />
+ 50 permit tcp x.1.28.2/32 eq bgp x.1.28.8/32 <br />
+ 60 permit pim x.1.28.2/32 x.1.28.8/32 <br />
+…<br />
+ …<br />
+ …<br />
+120 deny ip any any log<br />
+<br />
+Note: MSDP connections is via TCP port 639.<br />
+<br />
+If the RP switch is not configured to filter PIM register messages and accept MSDP packets only from known MSDP peers, this is a finding.</p><h2>Vulnerability Number</h2><p>V-221135</p><h2>Documentable</h2><p>False</p><h2>Rule Version</h2><p>CISC-RT-000820</p><h2>Severity Override Guidance</h2><p>The Cisco switch does not have a mechanism to limit the multicast forwarding cache. However, the risk associated with this requirement can be fully mitigated by configuring the switch to filter PIM register messages and accept MSDP packets only from known MSDP peers. <br />
+<br />
+Step 1: Verify that the RP is configured to filter PIM register messages for any undesirable multicast groups and sources. The example below will deny any multicast streams for groups 239.5.0.0/16 and allow from only sources x.1.2.6 and x.1.2.7. <br />
+<br />
+ip pim register-policy PIM_REGISTER_FILTER<br />
+…<br />
+…<br />
+…<br />
+route-map PIM_REGISTER_FILTER deny 10<br />
+ match ip multicast group 239.5.0.0/16 <br />
+route-map PIM_REGISTER_FILTER permit 20<br />
+ match ip multicast source x.1.2.6/32 <br />
+route-map PIM_REGISTER_FILTER permit 30<br />
+ match ip multicast source x.1.2.7/32 <br />
+route-map PIM_REGISTER_FILTER permit 40<br />
+ match ip multicast group-range 232.0.0.0 to 233.255.255.255 <br />
+route-map PIM_REGISTER_FILTER deny 50<br />
+ match ip multicast source 0.0.0.0/0<br />
+<br />
+Step 2: Review the switch configuration to determine if there is a receive path or interface filter to only accept MSDP packets from known MSDP peers as shown in the example below. <br />
+<br />
+Step 2a: Verify that interfaces used for MSDP peering have an inbound ACL as shown in the example.<br />
+<br />
+interface Ethernet2/3<br />
+ no switchport<br />
+ ip access-group EXTERNAL_ACL_INBOUND in<br />
+ ip address x.1.28.8/24<br />
+ ip pim sparse-mode<br />
+<br />
+Step 2b: Verify that the ACL restricts MSDP peering to only known sources.<br />
+<br />
+ip access-list EXTERNAL_ACL_INBOUND<br />
+ 10 permit tcp any any established <br />
+ 20 permit tcp x.1.28.2/32 x.1.28.8/32 eq 639 <br />
+ 30 deny tcp any x.1.28.8/32 eq 639 log <br />
+ 40 permit tcp x.1.28.2/32 10.x.28.8/32 eq bgp <br />
+ 50 permit tcp x.1.28.2/32 eq bgp x.1.28.8/32 <br />
+ 60 permit pim x.1.28.2/32 x.1.28.8/32 <br />
+…<br />
+ …<br />
+ …<br />
+120 deny ip any any log<br />
+<br />
+Note: MSDP connections is via TCP port 639.<br />
+<br />
+If the RP switch is not configured to filter PIM register messages and accept MSDP packets only from known MSDP peers, this is a finding.</p><h2>Check Content Reference</h2><p>M</p><h2>Target Key</h2><p>4075</p></body></html>

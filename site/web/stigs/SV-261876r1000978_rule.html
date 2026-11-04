@@ -1,0 +1,76 @@
+<!doctype html><html lang="en"><head><meta charset="utf-8"><title>STIGQter: STIG Check Details: SV-261876r1000978_rule: The audit information produced by PostgreSQL must be protected from unauthorized modification.</title><link rel="icon" type="image/svg+xml" href="STIGQter.svg" /><script async src="https://www.googletagmanager.com/gtag/js?id=UA-31381839-2"></script><script src="include.js"></script><script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-4110907817782130" crossorigin="anonymous"></script></head><body><div><img src="STIGQter.svg" alt="STIGQter" style="height:1em;" /> <a href="https://www.stigqter.com/">STIGQter</a>: <a href="main.html">STIG Summary</a>: <a href="U_CD_Postgres_16_STIG_V1R3_Manual-xccdf.html">Crunchy Data Postgres 16 Security Technical Implementation Guide Version: 1 Release: 3 Benchmark Date: 01 Jul 2026</a>:</div> <h1>The audit information produced by PostgreSQL must be protected from unauthorized modification.</h1><h2>DISA Rule</h2><p>SV-261876r1000978_rule</p><h2>Vulnerability Number</h2><p>V-261876</p><h2>Group Title</h2><p>SRG-APP-000119-DB-000060</p><h2>Rule Version</h2><p>CD16-00-002100</p><h2>Severity</h2><p>CAT II</p><h2>CCI(s)</h2><ul><li>CCI-000163 - Protect audit information from unauthorized modification.</li></ul><h2>Weight</h2><p>10</p><h2>Fix Recommendation</h2><p>To ensure logging is enabled, see the instructions in the supplementary content APPENDIX-C.<br />
+<br />
+Note: The following instructions use the PGDATA environment variable. Refer to APPENDIX-F for instructions on configuring PGDATA and APPENDIX-I for instructions on configuring PGLOG.<br />
+<br />
+#### stderr Logging<br />
+<br />
+With stderr logging enabled, as the database owner (shown here as &quot;postgres&quot;), set the following parameter in postgresql.conf:<br />
+<br />
+$ vi ${PGDATA?}/postgresql.conf<br />
+log_file_mode = 0600<br />
+<br />
+To change the owner and permissions of the log files, run the following:<br />
+<br />
+$ chown postgres:postgres ${PGDATA?}/${PGLOG?}<br />
+$ chmod 0700 ${PGDATA?}/${PGLOG?}<br />
+$ chmod 600 ${PGDATA?}/${PGLOG?}/*.log<br />
+<br />
+#### syslog Logging<br />
+<br />
+If PostgreSQL is configured to use syslog for logging, the log files must be configured to be owned by root with 0600 permissions.<br />
+<br />
+$ chown root:root &lt;log directory name&gt;/&lt;log_filename&gt;<br />
+$ chmod 0700 &lt;log directory name&gt;<br />
+$ chmod 0600 &lt;log directory name&gt;/*.log</p><h2>Check Contents</h2><p>Review locations of audit logs, both internal to the database and database audit logs located at the operating system level. <br />
+<br />
+Verify there are appropriate controls and permissions to protect the audit information from unauthorized modification. <br />
+<br />
+Note: The following instructions use the PGLOG environment variable. Refer to supplementary content APPENDIX-I for instructions on configuring PGLOG. <br />
+<br />
+#### stderr Logging <br />
+<br />
+If the PostgreSQL server is configured to use stderr for logging, the logs will be owned by the database owner (usually postgres user) with a default permissions level of 0600. The permissions can be configured in postgresql.conf. <br />
+<br />
+To check the permissions for log files in postgresql.conf, as the database owner (shown here as &quot;postgres&quot;), run the following command: <br />
+<br />
+$ sudo su - postgres <br />
+$ psql -c &quot;show log_file_mode;&quot; <br />
+<br />
+If the permissions are not 0600, this is a finding. <br />
+<br />
+As the database owner (shown here as &quot;postgres&quot;), list the permissions of the logs: <br />
+<br />
+$ sudo su - postgres <br />
+$ ls -la ${PGLOG?} <br />
+<br />
+If logs are not owned by the database owner (shown here as &quot;postgres&quot;) and are not the same permissions as configured in postgresql.conf, this is a finding. <br />
+<br />
+#### syslog Logging <br />
+<br />
+If the PostgreSQL server is configured to use syslog for logging, consult the organization syslog setting for permissions and ownership of logs.</p><h2>Vulnerability Number</h2><p>V-261876</p><h2>Documentable</h2><p>False</p><h2>Rule Version</h2><p>CD16-00-002100</p><h2>Severity Override Guidance</h2><p>Review locations of audit logs, both internal to the database and database audit logs located at the operating system level. <br />
+<br />
+Verify there are appropriate controls and permissions to protect the audit information from unauthorized modification. <br />
+<br />
+Note: The following instructions use the PGLOG environment variable. Refer to supplementary content APPENDIX-I for instructions on configuring PGLOG. <br />
+<br />
+#### stderr Logging <br />
+<br />
+If the PostgreSQL server is configured to use stderr for logging, the logs will be owned by the database owner (usually postgres user) with a default permissions level of 0600. The permissions can be configured in postgresql.conf. <br />
+<br />
+To check the permissions for log files in postgresql.conf, as the database owner (shown here as &quot;postgres&quot;), run the following command: <br />
+<br />
+$ sudo su - postgres <br />
+$ psql -c &quot;show log_file_mode;&quot; <br />
+<br />
+If the permissions are not 0600, this is a finding. <br />
+<br />
+As the database owner (shown here as &quot;postgres&quot;), list the permissions of the logs: <br />
+<br />
+$ sudo su - postgres <br />
+$ ls -la ${PGLOG?} <br />
+<br />
+If logs are not owned by the database owner (shown here as &quot;postgres&quot;) and are not the same permissions as configured in postgresql.conf, this is a finding. <br />
+<br />
+#### syslog Logging <br />
+<br />
+If the PostgreSQL server is configured to use syslog for logging, consult the organization syslog setting for permissions and ownership of logs.</p><h2>Check Content Reference</h2><p>M</p><h2>Target Key</h2><p>5598</p></body></html>

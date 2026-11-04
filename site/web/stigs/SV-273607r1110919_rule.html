@@ -1,0 +1,32 @@
+<!doctype html><html lang="en"><head><meta charset="utf-8"><title>STIGQter: STIG Check Details: SV-273607r1110919_rule: The RUCKUS ICX perimeter router must be configured to filter traffic destined to the enclave in accordance with the guidelines contained in DOD Instruction 8551.1.</title><link rel="icon" type="image/svg+xml" href="STIGQter.svg" /><script async src="https://www.googletagmanager.com/gtag/js?id=UA-31381839-2"></script><script src="include.js"></script><script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-4110907817782130" crossorigin="anonymous"></script></head><body><div><img src="STIGQter.svg" alt="STIGQter" style="height:1em;" /> <a href="https://www.stigqter.com/">STIGQter</a>: <a href="main.html">STIG Summary</a>: <a href="U_RUCKUS_ICX_RTR_STIG_V1R1_Manual-xccdf.html">RUCKUS ICX Router Security Technical Implementation Guide Version: 1 Release: 1 Benchmark Date: 27 May 2025</a>:</div> <h1>The RUCKUS ICX perimeter router must be configured to filter traffic destined to the enclave in accordance with the guidelines contained in DOD Instruction 8551.1.</h1><h2>DISA Rule</h2><p>SV-273607r1110919_rule</p><h2>Vulnerability Number</h2><p>V-273607</p><h2>Group Title</h2><p>SRG-NET-000205-RTR-000003</p><h2>Rule Version</h2><p>RCKS-RTR-000400</p><h2>Severity</h2><p>CAT II</p><h2>CCI(s)</h2><ul><li>CCI-001097 - Monitor and control communications at the external managed interfaces to the system and at key managed interfaces within the system.</li></ul><h2>Weight</h2><p>10</p><h2>Fix Recommendation</h2><p>Configure the router to use ingress ACLs to restrict traffic in accordance with the guidelines contained in DOD Instruction 8551.1 for all services and protocols required for operational commitments.<br />
+<br />
+1. Create ACLs for external and internal interfaces in accordance with site security policy (addresses and protocols may vary).<br />
+ICX(config)#ip access-list ext EXT-ACL<br />
+ICX(config-ext-ipacl-EXT-ACL)#permit tcp host x.11.1.1 eq bgp host x.11.1.2<br />
+ICX(config-ext-ipacl-EXT-ACL)#permit tcp host x.11.1.1 host x.11.1.2 eq bgp<br />
+ICX(config-ext-ipacl-EXT-ACL)#permit icmp host x.11.1.1 host x.11.1.2 echo<br />
+ICX(config-ext-ipacl-EXT-ACL)#permit icmp host x.11.1.1 host x.11.1.2 echo-reply<br />
+...<br />
+(IAW DOD INST 8551.1)<br />
+...<br />
+ICX(config-ext-ipacl-EXT-ACL)#deny ip host x.11.1.1 host x.11.1.2 log<br />
+ICX(config-ext-ipacl-EXT-ACL)#exit<br />
+<br />
+ICX(config)#ip access-list ext INT-ACL<br />
+ICX(config-ext-ipacl-INT-ACL)#permit icmp any any<br />
+ICX(config-ext-ipacl-INT-ACL)#permit ospf host 10.1.12.1 host 10.1.12.2<br />
+ICX(config-ext-ipacl-INT-ACL)#permit tcp 10.2.1.0/24 host 10.1.12.2 eq 22<br />
+ICX(config-ext-ipacl-INT-ACL)#permit tcp 10.2.1.0/24 host 10.1.12.2 eq radius<br />
+ICX(config-ext-ipacl-INT-ACL)#permit udp 10.2.1.0/24 host 10.1.12.2 eq snmp<br />
+ICX(config-ext-ipacl-INT-ACL)#permit udp 10.2.1.0/24 host 10.1.12.2 eq ntp<br />
+ICX(config-ext-ipacl-INT-ACL)#deny ip any host 10.1.12.2 log<br />
+<br />
+2. Apply ACLs to appropriate interfaces.<br />
+ICX(config)# interface ethernet x/x/x<br />
+ICX(config-if-e1000-x/x/x)#ip access-group EXT-ACL in logging enable<br />
+ICX(config-if-e1000-x/x/x)# interface ethernet y/y/y<br />
+ICX(config-if-e1000-y/y/y)#ip access-group INT-ACL in logging enable</p><h2>Check Contents</h2><p>Review the external and internal Access Control Lists (ACLs) to verify the router is configured to filter traffic destined to the enclave in accordance with the guidelines contained in DOD Instruction 8551.1.<br />
+<br />
+If the router does not filter traffic in accordance with the guidelines contained in DOD 8551, this is a finding.</p><h2>Vulnerability Number</h2><p>V-273607</p><h2>Documentable</h2><p>False</p><h2>Rule Version</h2><p>RCKS-RTR-000400</p><h2>Severity Override Guidance</h2><p>Review the external and internal Access Control Lists (ACLs) to verify the router is configured to filter traffic destined to the enclave in accordance with the guidelines contained in DOD Instruction 8551.1.<br />
+<br />
+If the router does not filter traffic in accordance with the guidelines contained in DOD 8551, this is a finding.</p><h2>Check Content Reference</h2><p>M</p><h2>Target Key</h2><p>5696</p></body></html>

@@ -1,0 +1,59 @@
+<!doctype html><html lang="en"><head><meta charset="utf-8"><title>STIGQter: STIG Check Details: SV-213670r960735_rule: DB2 must limit the number of concurrent sessions to an organization-defined number per user for all accounts and/or account types.</title><link rel="icon" type="image/svg+xml" href="STIGQter.svg" /><script async src="https://www.googletagmanager.com/gtag/js?id=UA-31381839-2"></script><script src="include.js"></script><script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-4110907817782130" crossorigin="anonymous"></script></head><body><div><img src="STIGQter.svg" alt="STIGQter" style="height:1em;" /> <a href="https://www.stigqter.com/">STIGQter</a>: <a href="main.html">STIG Summary</a>: <a href="U_IBM_DB2_V10-5_LUW_STIG_V2R2_Manual-xccdf.html">IBM DB2 V10.5 LUW Security Technical Implementation Guide Version: 2 Release: 2 Benchmark Date: 01 Jul 2026</a>:</div> <h1>DB2 must limit the number of concurrent sessions to an organization-defined number per user for all accounts and/or account types.</h1><h2>DISA Rule</h2><p>SV-213670r960735_rule</p><h2>Vulnerability Number</h2><p>V-213670</p><h2>Group Title</h2><p>SRG-APP-000001-DB-000031</p><h2>Rule Version</h2><p>DB2X-00-000200</p><h2>Severity</h2><p>CAT II</p><h2>CCI(s)</h2><ul><li>CCI-000054 - Limit the number of concurrent sessions for each organization-defined account and/or account type to an organization-defined number.</li></ul><h2>Weight</h2><p>10</p><h2>Fix Recommendation</h2><p>Create the stored procedure per organization guidelines to restrict the number of concurrent sessions using the CREATE or REPLACE procedure:<br />
+DB2&gt; CREATE or REPLACE   PROCEDURE &lt;DBINST1.MY_CONNECT&gt; (Example below.)<br />
+<br />
+Update the database CONNECT_PROC parameter to set to the procedure created in previous step:<br />
+<br />
+     $db2 update db cfg using CONNECT_PROC db2inst1.my_connect<br />
+<br />
+Grant execute to the public to connect the procedure.<br />
+DB2&gt; GRANT EXECUTE ON procedure &lt;schema&gt;.MY_CONNECT_MAIN TO PUBLIC<br />
+<br />
+Note:  This is an example. Modify and test to comply with organization policy.<br />
+<br />
+CREATE OR REPLACE PROCEDURE db2inst1.my_connect_main()<br />
+BEGIN<br />
+   DECLARE vcount integer;<br />
+   DECLARE vcount_admin integer;<br />
+ SELECT COUNT(*) INTO vcount FROM table(mon_get_connection(NULL, NULL, 0)) WHERE session_auth_id = session_user and application_handle != mon_get_application_handle();<br />
+ SELECT COUNT(*) INTO vcount_admin FROM table (sysproc.auth_list_authorities_for_authid(session_user,'U')) as t WHERE authority in ('SYSMON','SYSADM','DBADM','SECADM','SYSCTRL','SYSMAINT')and (d_user='Y' OR d_group='Y' OR d_public='Y' OR role_user='Y' or role_group='Y' or role_public='Y' or d_role='Y');<br />
+IF (vcount_admin &gt; 0 AND vcount &gt; 5)<br />
+THEN<br />
+      SIGNAL SQLSTATE '42502' SET MESSAGE_TEXT='Connection refused. More than 5 connections not allowed for admin!';<br />
+ELSEIF (vcount &gt; 3 AND vcount_admin = 0)<br />
+THEN<br />
+      SIGNAL SQLSTATE '42502' SET MESSAGE_TEXT='Connection refused. More than 3 connections not allowed!';<br />
+END IF;<br />
+END<br />
+@ <br />
+<br />
+Note: @ sign in above statement is statement terminator, using db2 –t option, statement terminator can be changed <br />
+<br />
+DB2&gt; GRANT EXECUTE ON PROCEDURE  db2inst1.my_connect_main TO PUBLIC<br />
+<br />
+     $db2 UPDATE DB CFG USING CONNECT_PROC db2inst1. my_connect_main</p><h2>Check Contents</h2><p>Determine whether the system documentation specifies limits on the number of concurrent DBMS sessions per account by type of user. If it does not, assume a limit of 10 for database administrators and 2 for all other users.<br />
+<br />
+The DB2 CONNECT_PROC configuration parameter allows the input of a two-part connect procedure name that will implicitly be executed every time an application connects to the database.<br />
+ <br />
+Find the value of CONNECT_PROC by running the following command:<br />
+<br />
+     $db2 get db cfg<br />
+<br />
+If the value of CONNECT_PROC is null (i.e., not set), this is a finding. <br />
+<br />
+If the value of CONNECT_PROC is set, run the following command to review the DDL for the connect procedure: <br />
+DB2&gt; SELECT text FROM SYSCAT.ROUTINES WHERE ROUTINENAME=&lt;MY_CONNECT&gt;<br />
+<br />
+If the connect procedure does not restrict the user sessions as per organization guidelines, this is a finding.</p><h2>Vulnerability Number</h2><p>V-213670</p><h2>Documentable</h2><p>False</p><h2>Rule Version</h2><p>DB2X-00-000200</p><h2>Severity Override Guidance</h2><p>Determine whether the system documentation specifies limits on the number of concurrent DBMS sessions per account by type of user. If it does not, assume a limit of 10 for database administrators and 2 for all other users.<br />
+<br />
+The DB2 CONNECT_PROC configuration parameter allows the input of a two-part connect procedure name that will implicitly be executed every time an application connects to the database.<br />
+ <br />
+Find the value of CONNECT_PROC by running the following command:<br />
+<br />
+     $db2 get db cfg<br />
+<br />
+If the value of CONNECT_PROC is null (i.e., not set), this is a finding. <br />
+<br />
+If the value of CONNECT_PROC is set, run the following command to review the DDL for the connect procedure: <br />
+DB2&gt; SELECT text FROM SYSCAT.ROUTINES WHERE ROUTINENAME=&lt;MY_CONNECT&gt;<br />
+<br />
+If the connect procedure does not restrict the user sessions as per organization guidelines, this is a finding.</p><h2>Check Content Reference</h2><p>M</p><h2>Target Key</h2><p>3989</p></body></html>

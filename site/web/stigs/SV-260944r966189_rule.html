@@ -1,0 +1,24 @@
+<!doctype html><html lang="en"><head><meta charset="utf-8"><title>STIGQter: STIG Check Details: SV-260944r966189_rule: Older Universal Control Plane (MKE) and Docker Trusted Registry (DTR) images must be removed from all cluster nodes upon upgrading.</title><link rel="icon" type="image/svg+xml" href="STIGQter.svg" /><script async src="https://www.googletagmanager.com/gtag/js?id=UA-31381839-2"></script><script src="include.js"></script><script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-4110907817782130" crossorigin="anonymous"></script></head><body><div><img src="STIGQter.svg" alt="STIGQter" style="height:1em;" /> <a href="https://www.stigqter.com/">STIGQter</a>: <a href="main.html">STIG Summary</a>: <a href="U_Mirantis_Kubernetes_Engine_STIG_V2R1_Manual-xccdf.html">Mirantis Kubernetes Engine Security Technical Implementation Guide Version: 2 Release: 1 Benchmark Date: 24 Jul 2024</a>:</div> <h1>Older Universal Control Plane (MKE) and Docker Trusted Registry (DTR) images must be removed from all cluster nodes upon upgrading.</h1><h2>DISA Rule</h2><p>SV-260944r966189_rule</p><h2>Vulnerability Number</h2><p>V-260944</p><h2>Group Title</h2><p>SRG-APP-000454-CTR-001110</p><h2>Rule Version</h2><p>CNTR-MK-001600</p><h2>Severity</h2><p>CAT II</p><h2>CCI(s)</h2><ul><li>CCI-002617 - Remove previous versions of organization-defined software components after updated versions have been installed.</li></ul><h2>Weight</h2><p>10</p><h2>Fix Recommendation</h2><p>Remove all outdated MKE and DTR container images from all nodes in the cluster:<br />
+<br />
+Via CLI: As an MKE admin, execute the following commands using a client bundle:<br />
+<br />
+docker rmi -f $(docker images --filter reference='mirantis/ucp*:[outdated_tags]' -q)<br />
+docker rmi -f $(docker images --filter reference='registry.mirantis.com/msr/[msr]*:[outdated_tags]' -q)</p><h2>Check Contents</h2><p>Verify all outdated MKE and DTR container images have been removed from all nodes in the cluster.<br />
+<br />
+Via CLI: As an MKE admin, execute the following command using a client bundle:<br />
+<br />
+docker images --filter reference='mirantis/[ucp]*'<br />
+docker images --filter reference='registry.mirantis.com/msr/[msr]*'<br />
+<br />
+Verify there are no tags listed older than the currently installed versions of MKE and DTR.<br />
+<br />
+If any of the tags listed are older than the currently installed versions of MKE and DTR, then this is a finding. If no tags are listed, this is not a finding.</p><h2>Vulnerability Number</h2><p>V-260944</p><h2>Documentable</h2><p>False</p><h2>Rule Version</h2><p>CNTR-MK-001600</p><h2>Severity Override Guidance</h2><p>Verify all outdated MKE and DTR container images have been removed from all nodes in the cluster.<br />
+<br />
+Via CLI: As an MKE admin, execute the following command using a client bundle:<br />
+<br />
+docker images --filter reference='mirantis/[ucp]*'<br />
+docker images --filter reference='registry.mirantis.com/msr/[msr]*'<br />
+<br />
+Verify there are no tags listed older than the currently installed versions of MKE and DTR.<br />
+<br />
+If any of the tags listed are older than the currently installed versions of MKE and DTR, then this is a finding. If no tags are listed, this is not a finding.</p><h2>Check Content Reference</h2><p>M</p><h2>Target Key</h2><p>5595</p></body></html>

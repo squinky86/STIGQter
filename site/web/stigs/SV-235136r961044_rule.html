@@ -1,0 +1,36 @@
+<!doctype html><html lang="en"><head><meta charset="utf-8"><title>STIGQter: STIG Check Details: SV-235136r961044_rule: The MySQL Database Server 8.0 must map the PKI-authenticated identity to an associated user account.</title><link rel="icon" type="image/svg+xml" href="STIGQter.svg" /><script async src="https://www.googletagmanager.com/gtag/js?id=UA-31381839-2"></script><script src="include.js"></script><script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-4110907817782130" crossorigin="anonymous"></script></head><body><div><img src="STIGQter.svg" alt="STIGQter" style="height:1em;" /> <a href="https://www.stigqter.com/">STIGQter</a>: <a href="main.html">STIG Summary</a>: <a href="U_Oracle_MySQL_8-0_STIG_V2R2_Manual-xccdf.html">Oracle MySQL 8.0 Security Technical Implementation Guide Version: 2 Release: 2 Benchmark Date: 24 Oct 2024</a>:</div> <h1>The MySQL Database Server 8.0 must map the PKI-authenticated identity to an associated user account.</h1><h2>DISA Rule</h2><p>SV-235136r961044_rule</p><h2>Vulnerability Number</h2><p>V-235136</p><h2>Group Title</h2><p>SRG-APP-000177-DB-000069</p><h2>Rule Version</h2><p>MYS8-00-004900</p><h2>Severity</h2><p>CAT II</p><h2>CCI(s)</h2><ul><li>CCI-000187 - For public key-based authentication, map the authenticated identity to the account of the individual or group.</li></ul><h2>Weight</h2><p>10</p><h2>Fix Recommendation</h2><p>Configure the MySQL Database Server 8.0 to map the authenticated identity directly to the MySQL Database Server 8.0 user account.<br />
+<br />
+Alter users to require X509 certificates.<br />
+<br />
+Below is an example to add X509 as a requirement.<br />
+<br />
+For a new user:<br />
+CREATE USER 'jeffrey'@'localhost' REQUIRE X509;<br />
+AND SUBJECT '/C=US/ST=Texas/L=Houston/O=SomeCompany/CN=Johan Smith'<br />
+  AND ISSUER '/C=US/ST=Texas/L=Houston/O=SomeCompany/CN=Some CA';<br />
+<br />
+Or to add to an existing user:<br />
+ALTER USER 'johansmith'@'%'<br />
+REQUIRE X509<br />
+  AND SUBJECT '/C=US/ST=Texas/L=Houston/O=SomeCompany/CN=Johan Smith'<br />
+  AND ISSUER '/C=US/ST=Texas/L=Houston/O=SomeCompany/CN=Some CA';</p><h2>Check Contents</h2><p>Review MySQL Database Server 8.0 configuration to verify DBMS user accounts are being mapped directly to unique identifying information within the validated PKI certificate.<br />
+<br />
+Confirm Issuer and Subject map to the username. Run the following script:<br />
+SELECT `user`.`Host`,<br />
+    `user`.`User`,<br />
+    `user`.`ssl_type`,<br />
+    CAST(`user`.`x509_issuer` as CHAR) as Issuer,<br />
+    CAST(`user`.`x509_subject` as CHAR) as Subject<br />
+FROM `mysql`.`user`;<br />
+<br />
+If user accounts are not being mapped to authenticated identities, this is a finding.</p><h2>Vulnerability Number</h2><p>V-235136</p><h2>Documentable</h2><p>False</p><h2>Rule Version</h2><p>MYS8-00-004900</p><h2>Severity Override Guidance</h2><p>Review MySQL Database Server 8.0 configuration to verify DBMS user accounts are being mapped directly to unique identifying information within the validated PKI certificate.<br />
+<br />
+Confirm Issuer and Subject map to the username. Run the following script:<br />
+SELECT `user`.`Host`,<br />
+    `user`.`User`,<br />
+    `user`.`ssl_type`,<br />
+    CAST(`user`.`x509_issuer` as CHAR) as Issuer,<br />
+    CAST(`user`.`x509_subject` as CHAR) as Subject<br />
+FROM `mysql`.`user`;<br />
+<br />
+If user accounts are not being mapped to authenticated identities, this is a finding.</p><h2>Check Content Reference</h2><p>M</p><h2>Target Key</h2><p>5277</p></body></html>

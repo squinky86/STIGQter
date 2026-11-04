@@ -1,0 +1,35 @@
+<!doctype html><html lang="en"><head><meta charset="utf-8"><title>STIGQter: STIG Check Details: SV-259734r1050758_rule: The IBM Security zSecure programs CKFCOLL and CKGRACF, and the APF-authorized version of program CKRCARLA, must be restricted to security administrators, security batch jobs performing External Security Manager (ESM) maintenance, auditors, and systems programmers, and must be audited.</title><link rel="icon" type="image/svg+xml" href="STIGQter.svg" /><script async src="https://www.googletagmanager.com/gtag/js?id=UA-31381839-2"></script><script src="include.js"></script><script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-4110907817782130" crossorigin="anonymous"></script></head><body><div><img src="STIGQter.svg" alt="STIGQter" style="height:1em;" /> <a href="https://www.stigqter.com/">STIGQter</a>: <a href="main.html">STIG Summary</a>: <a href="U_IBM_zSecure_Suite_STIG_V1R3_Manual-xccdf.html">IBM zSecure Suite Security Technical Implementation Guide Version: 1 Release: 3 Benchmark Date: 02 Apr 2025</a>:</div> <h1>The IBM Security zSecure programs CKFCOLL and CKGRACF, and the APF-authorized version of program CKRCARLA, must be restricted to security administrators, security batch jobs performing External Security Manager (ESM) maintenance, auditors, and systems programmers, and must be audited.</h1><h2>DISA Rule</h2><p>SV-259734r1050758_rule</p><h2>Vulnerability Number</h2><p>V-259734</p><h2>Group Title</h2><p>SRG-APP-000342-MFP-000090</p><h2>Rule Version</h2><p>ZSEC-00-000160</p><h2>Severity</h2><p>CAT II</p><h2>CCI(s)</h2><ul><li>CCI-002233 - Prevent the organization-defined software from executing at higher privilege levels than users executing the software.</li><li>CCI-002234 - Log the execution of privileged functions.</li></ul><h2>Weight</h2><p>10</p><h2>Fix Recommendation</h2><p>The following commands are provided as a sample for implementing RACF zSecure user data set controls. Convert these commands for any other ESM:<br />
+<br />
+rdef program CKFCOLL uacc(none) owner(zSecure owner) audit(all(read))<br />
+pe CKFCOLL class(program) id(AUDTAUDT, SECAAUDT, SECBAUDT,<br />
+SECDAUDT, SYSPAUDT) access(READ)<br />
+rdef program CKGRACF uacc(none) owner(zSecure owner) audit(all(read))<br />
+pe CKGRACF class(program) id(AUDTAUDT, SECAAUDT, SECBAUDT,<br />
+SECDAUDT, SYSPAUDT) access(READ)<br />
+rdef program CKRCARLX uacc(none) owner(zSecure owner) audit(all(read))<br />
+pe CKRCARLX class(program) id(AUDTAUDT, SECAAUDT, SECBAUDT,<br />
+SECDAUDT, SYSPAUDT) access(READ)</p><h2>Check Contents</h2><p>If this is not a RACF system, the presence of CKGRACF is not applicable.<br />
+<br />
+Verify the access and log settings of the profiles that protect the use of the CKFCOLL and CKGRACF programs and the APF-authorized version of the CKRCARLA program.<br />
+<br />
+If the CKF.** and CKG.** profiles that protect the use of the CKFCOLL, CKGRACF, and CKRCARLA programs allow general access (UACC, ID(*), WARNING, or global access) or do not log successful READ access, this is a finding.<br />
+<br />
+If READ or higher access to profile(s) protecting CKF.** resources in XFACILIT class is not restricted to security administrators (domain or decentralized), batch jobs performing ESM maintenance, auditors, or systems programmers, this is a finding.<br />
+<br />
+If READ or higher access to profile(s) protecting CKG.** resources in XFACILIT class is not restricted to security administrators (domain or decentralized) or batch jobs performing ESM maintenance, this is a finding.<br />
+<br />
+Review auditing of the profile protecting the CKR.CKRCARLA.APF resource in XFACILIT class. <br />
+<br />
+If successful READs are not audited, this is a finding.</p><h2>Vulnerability Number</h2><p>V-259734</p><h2>Documentable</h2><p>False</p><h2>Rule Version</h2><p>ZSEC-00-000160</p><h2>Severity Override Guidance</h2><p>If this is not a RACF system, the presence of CKGRACF is not applicable.<br />
+<br />
+Verify the access and log settings of the profiles that protect the use of the CKFCOLL and CKGRACF programs and the APF-authorized version of the CKRCARLA program.<br />
+<br />
+If the CKF.** and CKG.** profiles that protect the use of the CKFCOLL, CKGRACF, and CKRCARLA programs allow general access (UACC, ID(*), WARNING, or global access) or do not log successful READ access, this is a finding.<br />
+<br />
+If READ or higher access to profile(s) protecting CKF.** resources in XFACILIT class is not restricted to security administrators (domain or decentralized), batch jobs performing ESM maintenance, auditors, or systems programmers, this is a finding.<br />
+<br />
+If READ or higher access to profile(s) protecting CKG.** resources in XFACILIT class is not restricted to security administrators (domain or decentralized) or batch jobs performing ESM maintenance, this is a finding.<br />
+<br />
+Review auditing of the profile protecting the CKR.CKRCARLA.APF resource in XFACILIT class. <br />
+<br />
+If successful READs are not audited, this is a finding.</p><h2>Check Content Reference</h2><p>M</p><h2>Target Key</h2><p>5574</p></body></html>

@@ -1,0 +1,25 @@
+<!doctype html><html lang="en"><head><meta charset="utf-8"><title>STIGQter: STIG Check Details: SV-270737r1067178_rule: Ubuntu 24.04 LTS, for PKI-based authentication, Privileged Access Management (PAM) must validate certificates by constructing a certification path (which includes status information) to an accepted trust anchor.</title><link rel="icon" type="image/svg+xml" href="STIGQter.svg" /><script async src="https://www.googletagmanager.com/gtag/js?id=UA-31381839-2"></script><script src="include.js"></script><script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-4110907817782130" crossorigin="anonymous"></script></head><body><div><img src="STIGQter.svg" alt="STIGQter" style="height:1em;" /> <a href="https://www.stigqter.com/">STIGQter</a>: <a href="main.html">STIG Summary</a>: <a href="U_CAN_Ubuntu_24-04_LTS_STIG_V1R6_Manual-xccdf.html">Canonical Ubuntu 24.04 LTS Security Technical Implementation Guide Version: 1 Release: 6 Benchmark Date: 01 Jul 2026</a>:</div> <h1>Ubuntu 24.04 LTS, for PKI-based authentication, Privileged Access Management (PAM) must validate certificates by constructing a certification path (which includes status information) to an accepted trust anchor.</h1><h2>DISA Rule</h2><p>SV-270737r1067178_rule</p><h2>Vulnerability Number</h2><p>V-270737</p><h2>Group Title</h2><p>SRG-OS-000066-GPOS-00034</p><h2>Rule Version</h2><p>UBTU-24-400375</p><h2>Severity</h2><p>CAT II</p><h2>CCI(s)</h2><ul><li>CCI-000185 - For public key-based authentication, validate certificates by constructing and verifying a certification path to an accepted trust anchor including checking certificate status information.</li><li>CCI-004909 - Include only approved trust anchors in trust stores or certificate stores managed by the organization.</li></ul><h2>Weight</h2><p>10</p><h2>Fix Recommendation</h2><p>Configure Ubuntu 24.04 LTS, for PKI-based authentication, to validate certificates by constructing a certification path to an accepted trust anchor. <br />
+ <br />
+Determine which pkcs11 module is being used via the &quot;use_pkcs11_module&quot; in &quot;/etc/pam_pkcs11/pam_pkcs11.conf&quot; and ensure &quot;ca&quot; is enabled in &quot;cert_policy&quot;. <br />
+ <br />
+Add or update the &quot;cert_policy&quot; to ensure &quot;ca&quot; is enabled: <br />
+ <br />
+cert_policy = ca,signature,ocsp_on; <br />
+ <br />
+If the system is missing an &quot;/etc/pam_pkcs11/&quot; directory and an &quot;/etc/pam_pkcs11/pam_pkcs11.conf&quot;, find an example to copy into place and modify accordingly at &quot;https://manpages.ubuntu.com/manpages/xenial/man8/pam_pkcs11.8.html&quot;.</p><h2>Check Contents</h2><p>Verify Ubuntu 24.04 LTS, for PKI-based authentication, has valid certificates by constructing a certification path to an accepted trust anchor. <br />
+ <br />
+Determine which pkcs11 module is being used via the &quot;use_pkcs11_module&quot; in &quot;/etc/pam_pkcs11/pam_pkcs11.conf&quot; and then ensure &quot;ca&quot; is enabled in &quot;cert_policy&quot; with the following command: <br />
+  <br />
+$ sudo grep use_pkcs11_module /etc/pam_pkcs11/pam_pkcs11.conf | awk '/pkcs11_module opensc {/,/}/' /etc/pam_pkcs11/pam_pkcs11.conf | grep cert_policy | grep ca  <br />
+ <br />
+cert_policy = ca,signature,ocsp_on; <br />
+ <br />
+If &quot;cert_policy&quot; is not set to &quot;ca&quot; or the line is commented out, this is a finding.</p><h2>Vulnerability Number</h2><p>V-270737</p><h2>Documentable</h2><p>False</p><h2>Rule Version</h2><p>UBTU-24-400375</p><h2>Severity Override Guidance</h2><p>Verify Ubuntu 24.04 LTS, for PKI-based authentication, has valid certificates by constructing a certification path to an accepted trust anchor. <br />
+ <br />
+Determine which pkcs11 module is being used via the &quot;use_pkcs11_module&quot; in &quot;/etc/pam_pkcs11/pam_pkcs11.conf&quot; and then ensure &quot;ca&quot; is enabled in &quot;cert_policy&quot; with the following command: <br />
+  <br />
+$ sudo grep use_pkcs11_module /etc/pam_pkcs11/pam_pkcs11.conf | awk '/pkcs11_module opensc {/,/}/' /etc/pam_pkcs11/pam_pkcs11.conf | grep cert_policy | grep ca  <br />
+ <br />
+cert_policy = ca,signature,ocsp_on; <br />
+ <br />
+If &quot;cert_policy&quot; is not set to &quot;ca&quot; or the line is commented out, this is a finding.</p><h2>Check Content Reference</h2><p>M</p><h2>Target Key</h2><p>5673</p></body></html>

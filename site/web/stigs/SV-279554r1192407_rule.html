@@ -1,0 +1,119 @@
+<!doctype html><html lang="en"><head><meta charset="utf-8"><title>STIGQter: STIG Check Details: SV-279554r1192407_rule: Nutanix OS must generate audit records when successful/unsuccessful attempts to access security objects occur.</title><link rel="icon" type="image/svg+xml" href="STIGQter.svg" /><script async src="https://www.googletagmanager.com/gtag/js?id=UA-31381839-2"></script><script src="include.js"></script><script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-4110907817782130" crossorigin="anonymous"></script></head><body><div><img src="STIGQter.svg" alt="STIGQter" style="height:1em;" /> <a href="https://www.stigqter.com/">STIGQter</a>: <a href="main.html">STIG Summary</a>: <a href="U_NTX_Acropolis_OS_STIG_V1R1_Manual-xccdf.html">Nutanix Acropolis GPOS Security Technical Implementation Guide Version: 1 Release: 1 Benchmark Date: 26 Jan 2026</a>:</div> <h1>Nutanix OS must generate audit records when successful/unsuccessful attempts to access security objects occur.</h1><h2>DISA Rule</h2><p>SV-279554r1192407_rule</p><h2>Vulnerability Number</h2><p>V-279554</p><h2>Group Title</h2><p>SRG-OS-000062-GPOS-00031</p><h2>Rule Version</h2><p>NXAC-OS-000048</p><h2>Severity</h2><p>CAT II</p><h2>CCI(s)</h2><ul><li>CCI-000169 - Provide audit record generation capability for the event types the system is capable of auditing as defined in AU-2 a. on organization-defined information system components.</li><li>CCI-000172 - Generate audit records for the event types defined in AU-2 c that include the audit record content defined in AU-3.</li></ul><h2>Weight</h2><p>10</p><h2>Fix Recommendation</h2><p>1. For AOS, configure the audit rules.<br />
+<br />
+$ sudo salt-call state.sls security/CVM/auditCVM<br />
+<br />
+2. For Prism Central, configure the audit rules.<br />
+<br />
+$ sudo salt-call state.sls security/PCVM/auditPCVM<br />
+<br />
+3. For Files, configure the audit rules.<br />
+<br />
+$ sudo salt-call state.sls security/AFS/auditAFS<br />
+<br />
+4. For AHV, configure the audit rules.<br />
+<br />
+$ sudo salt-call state.sls security/KVM/auditKVM</p><h2>Check Contents</h2><p>Verify Nutanix OS auditing is configured to generate audit records for all successful and unsuccessful system changes using the following commands.<br />
+<br />
+$ sudo grep -iw truncate /etc/audit/audit.rules<br />
+-a always,exit -F arch=b64 -S truncate -F exit=-EACCES -F auid=0 -k access<br />
+-a always,exit -F arch=b64 -S truncate -F exit=-EPERM -F auid=0 -k access<br />
+-a always,exit -F arch=b64 -S truncate -F auid&gt;=1000 -F auid!=4294967295 -k access<br />
+-a always,exit -F arch=b64 -S truncate -F exit=-EPERM -F auid&gt;=1000 -F auid!=4294967295 -k access<br />
+-a always,exit -F arch=b32 -S truncate -F exit=-EACCES -F auid=0 -k access<br />
+-a always,exit -F arch=b32 -S truncate -F exit=-EPERM -F auid=0 -k access<br />
+-a always,exit -F arch=b32 -S truncate -F auid&gt;=1000 -F auid!=4294967295 -k access<br />
+-a always,exit -F arch=b32 -S truncate -F exit=-EPERM -F auid&gt;=1000 -F auid!=4294967295 -k access<br />
+<br />
+$ sudo grep -iw openat /etc/audit/audit.rules<br />
+-a always,exit -F arch=b64 -S openat -F exit=-EACCES -F auid=0 -k access<br />
+-a always,exit -F arch=b64 -S openat-F exit=-EPERM -F auid=0 -k access<br />
+-a always,exit -F arch=b64 -S openat -F auid&gt;=1000 -F auid!=4294967295 -k access<br />
+-a always,exit -F arch=b64 -S openat -F exit=-EPERM -F auid&gt;=1000 -F auid!=4294967295 -k access<br />
+-a always,exit -F arch=b32 -S openat -F exit=-EACCES -F auid=0 -k access<br />
+-a always,exit -F arch=b32 -S openat -F exit=-EPERM -F auid=0 -k access<br />
+-a always,exit -F arch=b32 -S openat -F auid&gt;=1000 -F auid!=4294967295 -k access<br />
+-a always,exit -F arch=b32 -S openat -F exit=-EPERM -F auid&gt;=1000 -F auid!=4294967295 -k access<br />
+<br />
+$ sudo grep -iw open /etc/audit/audit.rules<br />
+-a always,exit -F arch=b64 -S open -F exit=-EACCES -F auid=0 -k access<br />
+-a always,exit -F arch=b64 -S open-F exit=-EPERM -F auid=0 -k access<br />
+-a always,exit -F arch=b64 -S open -F auid&gt;=1000 -F auid!=4294967295 -k access<br />
+-a always,exit -F arch=b64 -S open -F exit=-EPERM -F auid&gt;=1000 -F auid!=4294967295 -k access<br />
+-a always,exit -F arch=b32 -S open -F exit=-EACCES -F auid=0 -k access<br />
+-a always,exit -F arch=b32 -S open -F exit=-EPERM -F auid=0 -k access<br />
+-a always,exit -F arch=b32 -S open -F auid&gt;=1000 -F auid!=4294967295 -k access<br />
+-a always,exit -F arch=b32 -S open -F exit=-EPERM -F auid&gt;=1000 -F auid!=4294967295 -k access<br />
+<br />
+$ sudo grep -iw open_by_handle_at /etc/audit/audit.rules<br />
+-a always,exit -F arch=b64 -S open_by_handle_at -F exit=-EACCES -F auid=0 -k access<br />
+-a always,exit -F arch=b64 -S open_by_handle_at-F exit=-EPERM -F auid=0 -k access<br />
+-a always,exit -F arch=b64 -S open_by_handle_at -F auid&gt;=1000 -F auid!=4294967295 -k access<br />
+-a always,exit -F arch=b64 -S open_by_handle_at -F exit=-EPERM -F auid&gt;=1000 -F auid!=4294967295 -k access<br />
+-a always,exit -F arch=b32 -S open_by_handle_at -F exit=-EACCES -F auid=0 -k access<br />
+-a always,exit -F arch=b32 -S open_by_handle_at -F exit=-EPERM -F auid=0 -k access<br />
+-a always,exit -F arch=b32 -S open_by_handle_at -F auid&gt;=1000 -F auid!=4294967295 -k access<br />
+-a always,exit -F arch=b32 -S open_by_handle_at -F exit=-EPERM -F auid&gt;=1000 -F auid!=4294967295 -k access<br />
+<br />
+$ sudo grep -iw ftruncate /etc/audit/audit.rules<br />
+-a always,exit -F arch=b64 -S ftruncate -F exit=-EACCES -F auid=0 -k access<br />
+-a always,exit -F arch=b64 -S ftruncate -F exit=-EPERM -F auid=0 -k access<br />
+-a always,exit -F arch=b64 -S ftruncate -F auid&gt;=1000 -F auid!=4294967295 -k access<br />
+-a always,exit -F arch=b64 -S ftruncate -F exit=-EPERM -F auid&gt;=1000 -F auid!=4294967295 -k access<br />
+-a always,exit -F arch=b32 -S ftruncate -F exit=-EACCES -F auid=0 -k access<br />
+-a always,exit -F arch=b32 -S ftruncate -F exit=-EPERM -F auid=0 -k access<br />
+-a always,exit -F arch=b32 -S ftruncate -F auid&gt;=1000 -F auid!=4294967295 -k access<br />
+-a always,exit -F arch=b32 -S ftruncate -F exit=-EPERM -F auid&gt;=1000 -F auid!=4294967295 -k access<br />
+<br />
+If the commands do not return the appropriate response line, as indicated above, or if the lines are commented out, this is a finding.</p><h2>Vulnerability Number</h2><p>V-279554</p><h2>Documentable</h2><p>False</p><h2>Rule Version</h2><p>NXAC-OS-000048</p><h2>Severity Override Guidance</h2><p>Verify Nutanix OS auditing is configured to generate audit records for all successful and unsuccessful system changes using the following commands.<br />
+<br />
+$ sudo grep -iw truncate /etc/audit/audit.rules<br />
+-a always,exit -F arch=b64 -S truncate -F exit=-EACCES -F auid=0 -k access<br />
+-a always,exit -F arch=b64 -S truncate -F exit=-EPERM -F auid=0 -k access<br />
+-a always,exit -F arch=b64 -S truncate -F auid&gt;=1000 -F auid!=4294967295 -k access<br />
+-a always,exit -F arch=b64 -S truncate -F exit=-EPERM -F auid&gt;=1000 -F auid!=4294967295 -k access<br />
+-a always,exit -F arch=b32 -S truncate -F exit=-EACCES -F auid=0 -k access<br />
+-a always,exit -F arch=b32 -S truncate -F exit=-EPERM -F auid=0 -k access<br />
+-a always,exit -F arch=b32 -S truncate -F auid&gt;=1000 -F auid!=4294967295 -k access<br />
+-a always,exit -F arch=b32 -S truncate -F exit=-EPERM -F auid&gt;=1000 -F auid!=4294967295 -k access<br />
+<br />
+$ sudo grep -iw openat /etc/audit/audit.rules<br />
+-a always,exit -F arch=b64 -S openat -F exit=-EACCES -F auid=0 -k access<br />
+-a always,exit -F arch=b64 -S openat-F exit=-EPERM -F auid=0 -k access<br />
+-a always,exit -F arch=b64 -S openat -F auid&gt;=1000 -F auid!=4294967295 -k access<br />
+-a always,exit -F arch=b64 -S openat -F exit=-EPERM -F auid&gt;=1000 -F auid!=4294967295 -k access<br />
+-a always,exit -F arch=b32 -S openat -F exit=-EACCES -F auid=0 -k access<br />
+-a always,exit -F arch=b32 -S openat -F exit=-EPERM -F auid=0 -k access<br />
+-a always,exit -F arch=b32 -S openat -F auid&gt;=1000 -F auid!=4294967295 -k access<br />
+-a always,exit -F arch=b32 -S openat -F exit=-EPERM -F auid&gt;=1000 -F auid!=4294967295 -k access<br />
+<br />
+$ sudo grep -iw open /etc/audit/audit.rules<br />
+-a always,exit -F arch=b64 -S open -F exit=-EACCES -F auid=0 -k access<br />
+-a always,exit -F arch=b64 -S open-F exit=-EPERM -F auid=0 -k access<br />
+-a always,exit -F arch=b64 -S open -F auid&gt;=1000 -F auid!=4294967295 -k access<br />
+-a always,exit -F arch=b64 -S open -F exit=-EPERM -F auid&gt;=1000 -F auid!=4294967295 -k access<br />
+-a always,exit -F arch=b32 -S open -F exit=-EACCES -F auid=0 -k access<br />
+-a always,exit -F arch=b32 -S open -F exit=-EPERM -F auid=0 -k access<br />
+-a always,exit -F arch=b32 -S open -F auid&gt;=1000 -F auid!=4294967295 -k access<br />
+-a always,exit -F arch=b32 -S open -F exit=-EPERM -F auid&gt;=1000 -F auid!=4294967295 -k access<br />
+<br />
+$ sudo grep -iw open_by_handle_at /etc/audit/audit.rules<br />
+-a always,exit -F arch=b64 -S open_by_handle_at -F exit=-EACCES -F auid=0 -k access<br />
+-a always,exit -F arch=b64 -S open_by_handle_at-F exit=-EPERM -F auid=0 -k access<br />
+-a always,exit -F arch=b64 -S open_by_handle_at -F auid&gt;=1000 -F auid!=4294967295 -k access<br />
+-a always,exit -F arch=b64 -S open_by_handle_at -F exit=-EPERM -F auid&gt;=1000 -F auid!=4294967295 -k access<br />
+-a always,exit -F arch=b32 -S open_by_handle_at -F exit=-EACCES -F auid=0 -k access<br />
+-a always,exit -F arch=b32 -S open_by_handle_at -F exit=-EPERM -F auid=0 -k access<br />
+-a always,exit -F arch=b32 -S open_by_handle_at -F auid&gt;=1000 -F auid!=4294967295 -k access<br />
+-a always,exit -F arch=b32 -S open_by_handle_at -F exit=-EPERM -F auid&gt;=1000 -F auid!=4294967295 -k access<br />
+<br />
+$ sudo grep -iw ftruncate /etc/audit/audit.rules<br />
+-a always,exit -F arch=b64 -S ftruncate -F exit=-EACCES -F auid=0 -k access<br />
+-a always,exit -F arch=b64 -S ftruncate -F exit=-EPERM -F auid=0 -k access<br />
+-a always,exit -F arch=b64 -S ftruncate -F auid&gt;=1000 -F auid!=4294967295 -k access<br />
+-a always,exit -F arch=b64 -S ftruncate -F exit=-EPERM -F auid&gt;=1000 -F auid!=4294967295 -k access<br />
+-a always,exit -F arch=b32 -S ftruncate -F exit=-EACCES -F auid=0 -k access<br />
+-a always,exit -F arch=b32 -S ftruncate -F exit=-EPERM -F auid=0 -k access<br />
+-a always,exit -F arch=b32 -S ftruncate -F auid&gt;=1000 -F auid!=4294967295 -k access<br />
+-a always,exit -F arch=b32 -S ftruncate -F exit=-EPERM -F auid&gt;=1000 -F auid!=4294967295 -k access<br />
+<br />
+If the commands do not return the appropriate response line, as indicated above, or if the lines are commented out, this is a finding.</p><h2>Check Content Reference</h2><p>M</p><h2>Target Key</h2><p>5730</p></body></html>

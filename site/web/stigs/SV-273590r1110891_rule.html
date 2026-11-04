@@ -1,0 +1,49 @@
+<!doctype html><html lang="en"><head><meta charset="utf-8"><title>STIGQter: STIG Check Details: SV-273590r1110891_rule: The RUCKUS ICX multicast Rendezvous Pointerface (RP) router must be configured to filter Protocol Independent Multicast (PIM) Register messages received from the Designated Router (DR) for any undesirable multicast groups and sources.</title><link rel="icon" type="image/svg+xml" href="STIGQter.svg" /><script async src="https://www.googletagmanager.com/gtag/js?id=UA-31381839-2"></script><script src="include.js"></script><script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-4110907817782130" crossorigin="anonymous"></script></head><body><div><img src="STIGQter.svg" alt="STIGQter" style="height:1em;" /> <a href="https://www.stigqter.com/">STIGQter</a>: <a href="main.html">STIG Summary</a>: <a href="U_RUCKUS_ICX_RTR_STIG_V1R1_Manual-xccdf.html">RUCKUS ICX Router Security Technical Implementation Guide Version: 1 Release: 1 Benchmark Date: 27 May 2025</a>:</div> <h1>The RUCKUS ICX multicast Rendezvous Pointerface (RP) router must be configured to filter Protocol Independent Multicast (PIM) Register messages received from the Designated Router (DR) for any undesirable multicast groups and sources.</h1><h2>DISA Rule</h2><p>SV-273590r1110891_rule</p><h2>Vulnerability Number</h2><p>V-273590</p><h2>Group Title</h2><p>SRG-NET-000019-RTR-000013</p><h2>Rule Version</h2><p>RCKS-RTR-000220</p><h2>Severity</h2><p>CAT III</p><h2>CCI(s)</h2><ul><li>CCI-001414 - Enforce approved authorizations for controlling the flow of information between connected systems based on organization-defined information flow control policies.</li></ul><h2>Weight</h2><p>10</p><h2>Fix Recommendation</h2><p>Configure PIM register filter and apply to PIM configuration:<br />
+<br />
+ICX(config)#ip access ext PIM_REG_FILTER<br />
+ICX(config-ext-ipacl-PIM_REG_FILTER)#deny ip any 239.5.0.0/16<br />
+ICX(config-ext-ipacl-PIM_REG_FILTER)#permit ip host 10.1.2.6 any<br />
+ICX(config-ext-ipacl-PIM_REG_FILTER)#permit ip host x.1.2.7 any<br />
+ICX(config-ext-ipacl-PIM_REG_FILTER)#deny ip any any<br />
+ICX(config-ext-ipacl-PIM_REG_FILTER)#exit<br />
+ICX(config)#router pim<br />
+ICX(config-pim-router)#rp-addres x.1.1.1<br />
+ICX(config-pim-router)#accept-register PIM_REG_FILTER</p><h2>Check Contents</h2><p>Check configuration for presence of accept-register filter for PIM:<br />
+<br />
+ICX# show ip pim sparse<br />
+Global PIM Sparse Mode Settings<br />
+  Maximum Mcache         : 12288       Current Count              : 0<br />
+  Hello interval         : 30          Neighbor timeout           : 105<br />
+  Join/Prune interval    : 60          Inactivity interval        : 180<br />
+  Hardware Drop Enabled  : Yes         Prune Wait Interval        : 3<br />
+  Bootstrap Msg interval : 60          Candidate-RP Msg interval  : 60<br />
+  Register Suppress Time : 60          Register Probe Time        : 10<br />
+  Register Stop Delay    : 10          SPT Threshold              : 1<br />
+  SSM Enabled            : No<br />
+  Register Rate Limit    : 1 pps<br />
+  Register Filter        : PIM_REG_FILTER<br />
+  Route Precedence       : uc-non-default uc-default mc-non-default mc-default<br />
+  Join/Prune Policy      : No<br />
+  Slow Path Disable All  : No          Slow Path Enable SSM      : No<br />
+  Slow Path Filter Acl   : None<br />
+<br />
+If the RP router peering with PIM-SM routers is not configured with a policy to block registration messages for any undesirable multicast groups and sources, this is a finding.</p><h2>Vulnerability Number</h2><p>V-273590</p><h2>Documentable</h2><p>False</p><h2>Rule Version</h2><p>RCKS-RTR-000220</p><h2>Severity Override Guidance</h2><p>Check configuration for presence of accept-register filter for PIM:<br />
+<br />
+ICX# show ip pim sparse<br />
+Global PIM Sparse Mode Settings<br />
+  Maximum Mcache         : 12288       Current Count              : 0<br />
+  Hello interval         : 30          Neighbor timeout           : 105<br />
+  Join/Prune interval    : 60          Inactivity interval        : 180<br />
+  Hardware Drop Enabled  : Yes         Prune Wait Interval        : 3<br />
+  Bootstrap Msg interval : 60          Candidate-RP Msg interval  : 60<br />
+  Register Suppress Time : 60          Register Probe Time        : 10<br />
+  Register Stop Delay    : 10          SPT Threshold              : 1<br />
+  SSM Enabled            : No<br />
+  Register Rate Limit    : 1 pps<br />
+  Register Filter        : PIM_REG_FILTER<br />
+  Route Precedence       : uc-non-default uc-default mc-non-default mc-default<br />
+  Join/Prune Policy      : No<br />
+  Slow Path Disable All  : No          Slow Path Enable SSM      : No<br />
+  Slow Path Filter Acl   : None<br />
+<br />
+If the RP router peering with PIM-SM routers is not configured with a policy to block registration messages for any undesirable multicast groups and sources, this is a finding.</p><h2>Check Content Reference</h2><p>M</p><h2>Target Key</h2><p>5696</p></body></html>

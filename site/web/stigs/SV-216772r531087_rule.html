@@ -1,0 +1,115 @@
+<!doctype html><html lang="en"><head><meta charset="utf-8"><title>STIGQter: STIG Check Details: SV-216772r531087_rule: The Cisco out-of-band management (OOBM) gateway router must be configured to block any traffic destined to itself that is not sourced from the OOBM network or the Network Operations Center (NOC).</title><link rel="icon" type="image/svg+xml" href="STIGQter.svg" /><script async src="https://www.googletagmanager.com/gtag/js?id=UA-31381839-2"></script><script src="include.js"></script><script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-4110907817782130" crossorigin="anonymous"></script></head><body><div><img src="STIGQter.svg" alt="STIGQter" style="height:1em;" /> <a href="https://www.stigqter.com/">STIGQter</a>: <a href="main.html">STIG Summary</a>: <a href="U_Cisco_IOS-XR_Router_RTR_STIG_V3R3_Manual-xccdf.html">Cisco IOS XR Router RTR Security Technical Implementation Guide Version: 3 Release: 3 Benchmark Date: 01 Oct 2025</a>:</div> <h1>The Cisco out-of-band management (OOBM) gateway router must be configured to block any traffic destined to itself that is not sourced from the OOBM network or the Network Operations Center (NOC).</h1><h2>DISA Rule</h2><p>SV-216772r531087_rule</p><h2>Vulnerability Number</h2><p>V-216772</p><h2>Group Title</h2><p>SRG-NET-000205-RTR-000011</p><h2>Rule Version</h2><p>CISC-RT-000440</p><h2>Severity</h2><p>CAT II</p><h2>CCI(s)</h2><ul><li>CCI-001097 - Monitor and control communications at the external managed interfaces to the system and at key managed interfaces within the system.</li></ul><h2>Weight</h2><p>10</p><h2>Fix Recommendation</h2><p>This requirement is not applicable for the DODIN Backbone. It is only applicable if the OOBM gateway router is not a dedicated device to the OOBM backbone.<br />
+<br />
+Step 1: Configure the ACL to only allow traffic to the route processor from the OOBM backbone and the NOC.<br />
+<br />
+RP/0/0/CPU0:R2(config)#ipv4 access-list TRAFFIC_FROM_NOC<br />
+RP/0/0/CPU0:R2(config-ipv4-acl)#permit ip 10.11.1.0 0.255.255.255 host 10.11.$<br />
+RP/0/0/CPU0:R2(config-ipv4-acl)#permit ip 10.12.1.0 0.255.255.255 host 10.11.$<br />
+RP/0/0/CPU0:R2(config-ipv4-acl)#permit ip 10.11.1.0 0.255.255.255 host 10.13.$<br />
+RP/0/0/CPU0:R2(config-ipv4-acl)#permit ip 10.12.1.0 0.255.255.255 host 10.13.$<br />
+RP/0/0/CPU0:R2(config-ipv4-acl)#deny ip any host 10.11.1.8 log-input<br />
+RP/0/0/CPU0:R2(config-ipv4-acl)#deny ip any host 10.13.1.1 log-input<br />
+RP/0/0/CPU0:R2(config-ipv4-acl)#permit ip 10.11.1.0 0.0.0.255 10.13.1.0 0.0.0$<br />
+RP/0/0/CPU0:R2(config-ipv4-acl)#permit ip 10.12.1.0 0.0.0.255 10.13.1.0 0.0.0$<br />
+RP/0/0/CPU0:R2(config-ipv4-acl)#deny ip any any log-input<br />
+RP/0/0/CPU0:R2(config-ipv4-acl)#exit<br />
+<br />
+Step 2: Configure the ACL to only allow traffic to the route processor from the OOBM LAN.<br />
+<br />
+RP/0/0/CPU0:R2(config)#ipv4 access-list TRAFFIC_TO_NOC<br />
+RP/0/0/CPU0:R2(config-ipv4-acl)#permit ip 10.13.1.0 0.255.255.255 host 10.13.$<br />
+RP/0/0/CPU0:R2(config-ipv4-acl)#permit ip 10.13.1.0 0.255.255.255 host 10.11.$<br />
+RP/0/0/CPU0:R2(config-ipv4-acl)#deny ip any host 10.13.1.1 log-input<br />
+RP/0/0/CPU0:R2(config-ipv4-acl)#deny ip any host 10.11.1.8 log-input<br />
+RP/0/0/CPU0:R2(config-ipv4-acl)#permit ip 10.13.1.0 0.255.255.255 10.11.1.0 0$<br />
+RP/0/0/CPU0:R2(config-ipv4-acl)#permit ip 10.13.1.0 0.255.255.255 10.12.1.0 0$<br />
+RP/0/0/CPU0:R2(config-ipv4-acl)#deny ip any any log-input<br />
+RP/0/0/CPU0:R2(config-ipv4-acl)#exit<br />
+<br />
+Step 3: Apply the ACLs configured above to the appropriate OOBM interfaces as shown in the example below.<br />
+<br />
+RP/0/0/CPU0:R2(config)#int g0/0/0/2<br />
+RP/0/0/CPU0:R2(config-if)#ipv4 access-group TRAFFIC_FROM_NOC in<br />
+RP/0/0/CPU0:R2(config)#int g0/0/0/3<br />
+RP/0/0/CPU0:R2(config-if)#access-group TRAFFIC_TO_NOC in<br />
+RP/0/0/CPU0:R2(config-if)#end</p><h2>Check Contents</h2><p>This requirement is not applicable for the DODIN Backbone. It is only applicable if the OOBM gateway router is not a dedicated device to the OOBM backbone.<br />
+<br />
+Verify that traffic destined to itself is only sourced by the OOBM or the NOC. In the example below, the OOBM backbone network is 10.11.1.0/24, the NOC address spaces is 10.12.1.0/24, and the OOBM LAN address space at remote site connecting to the managed network is 10.13.1.0/24.<br />
+<br />
+Step 1: Note the inbound ACL applied to the OOBM interfaces.<br />
+<br />
+interface GigabitEthernet0/0/0/2<br />
+ description OOB link to NOC<br />
+ ip address 10.11.1.8 255.255.255.0<br />
+ ipv4 access-group TRAFFIC_FROM_NOC ingress<br />
+!<br />
+interface Giga GigabitEthernet0/0/0/3<br />
+ description link to OOBM LAN access switch<br />
+ ip address 10.13.1.1 255.255.255.0<br />
+ ipv4 access-group TRAFFIC_TO_NOC ingress<br />
+<br />
+Step 2: Review the inbound ACL bound to any OOB interface connecting to the OOBM backbone and verify traffic destined to itself is only from the OOBM or NOC address space.<br />
+<br />
+ipv4 access-list TRAFFIC_FROM_NOC<br />
+ 10 permit ipv4 10.11.1.0 0.255.255.255 host 10.11.1.8<br />
+ 20 permit ipv4 10.12.1.0 0.255.255.255 host 10.11.1.8<br />
+ 30 permit ipv4 10.11.1.0 0.255.255.255 host 10.13.1.1<br />
+ 40 permit ipv4 10.12.1.0 0.255.255.255 host 10.13.1.1<br />
+ 50 deny ipv4 any host 10.11.1.8 log-input<br />
+ 60 deny ipv4 any host 10.13.1.1 log-input<br />
+ 70 permit ipv4 10.11.1.0 0.0.0.255 10.13.1.0 0.0.0.255<br />
+ 80 permit ipv4 10.12.1.0 0.0.0.255 10.13.1.0 0.0.0.255<br />
+ 90 deny ipv4 any any log-input<br />
+<br />
+Step 3: Review the inbound ACL bound to any OOBM LAN interfaces and verify traffic destined to itself is from the OOBM LAN address space.<br />
+<br />
+ipv4 access-list TRAFFIC_TO_NOC<br />
+ 10 permit ipv4 10.13.1.0 0.255.255.255 host 10.13.1.1<br />
+ 20 permit ipv4 10.13.1.0 0.255.255.255 host 10.11.1.8<br />
+ 30 deny ipv4 any host 10.13.1.1 log-input<br />
+ 40 deny ipv4 any host 10.11.1.8 log-input<br />
+ 50 permit ipv4 10.13.1.0 0.255.255.255 10.11.1.0 0.0.0.255<br />
+ 60 permit ipv4 10.13.1.0 0.255.255.255 10.12.1.0 0.0.0.255<br />
+ 70 deny ipv4 any any log-input<br />
+<br />
+If the router does not block any traffic destined to itself that is not sourced from the OOBM network or the NOC, this is a finding.</p><h2>Vulnerability Number</h2><p>V-216772</p><h2>Documentable</h2><p>False</p><h2>Rule Version</h2><p>CISC-RT-000440</p><h2>Severity Override Guidance</h2><p>This requirement is not applicable for the DODIN Backbone. It is only applicable if the OOBM gateway router is not a dedicated device to the OOBM backbone.<br />
+<br />
+Verify that traffic destined to itself is only sourced by the OOBM or the NOC. In the example below, the OOBM backbone network is 10.11.1.0/24, the NOC address spaces is 10.12.1.0/24, and the OOBM LAN address space at remote site connecting to the managed network is 10.13.1.0/24.<br />
+<br />
+Step 1: Note the inbound ACL applied to the OOBM interfaces.<br />
+<br />
+interface GigabitEthernet0/0/0/2<br />
+ description OOB link to NOC<br />
+ ip address 10.11.1.8 255.255.255.0<br />
+ ipv4 access-group TRAFFIC_FROM_NOC ingress<br />
+!<br />
+interface Giga GigabitEthernet0/0/0/3<br />
+ description link to OOBM LAN access switch<br />
+ ip address 10.13.1.1 255.255.255.0<br />
+ ipv4 access-group TRAFFIC_TO_NOC ingress<br />
+<br />
+Step 2: Review the inbound ACL bound to any OOB interface connecting to the OOBM backbone and verify traffic destined to itself is only from the OOBM or NOC address space.<br />
+<br />
+ipv4 access-list TRAFFIC_FROM_NOC<br />
+ 10 permit ipv4 10.11.1.0 0.255.255.255 host 10.11.1.8<br />
+ 20 permit ipv4 10.12.1.0 0.255.255.255 host 10.11.1.8<br />
+ 30 permit ipv4 10.11.1.0 0.255.255.255 host 10.13.1.1<br />
+ 40 permit ipv4 10.12.1.0 0.255.255.255 host 10.13.1.1<br />
+ 50 deny ipv4 any host 10.11.1.8 log-input<br />
+ 60 deny ipv4 any host 10.13.1.1 log-input<br />
+ 70 permit ipv4 10.11.1.0 0.0.0.255 10.13.1.0 0.0.0.255<br />
+ 80 permit ipv4 10.12.1.0 0.0.0.255 10.13.1.0 0.0.0.255<br />
+ 90 deny ipv4 any any log-input<br />
+<br />
+Step 3: Review the inbound ACL bound to any OOBM LAN interfaces and verify traffic destined to itself is from the OOBM LAN address space.<br />
+<br />
+ipv4 access-list TRAFFIC_TO_NOC<br />
+ 10 permit ipv4 10.13.1.0 0.255.255.255 host 10.13.1.1<br />
+ 20 permit ipv4 10.13.1.0 0.255.255.255 host 10.11.1.8<br />
+ 30 deny ipv4 any host 10.13.1.1 log-input<br />
+ 40 deny ipv4 any host 10.11.1.8 log-input<br />
+ 50 permit ipv4 10.13.1.0 0.255.255.255 10.11.1.0 0.0.0.255<br />
+ 60 permit ipv4 10.13.1.0 0.255.255.255 10.12.1.0 0.0.0.255<br />
+ 70 deny ipv4 any any log-input<br />
+<br />
+If the router does not block any traffic destined to itself that is not sourced from the OOBM network or the NOC, this is a finding.</p><h2>Check Content Reference</h2><p>M</p><h2>Target Key</h2><p>4029</p></body></html>

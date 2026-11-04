@@ -1,0 +1,38 @@
+<!doctype html><html lang="en"><head><meta charset="utf-8"><title>STIGQter: STIG Check Details: SV-242639r961863_rule: The Cisco ISE must use DoD-approved PKI rather than proprietary or self-signed device certificates.</title><link rel="icon" type="image/svg+xml" href="STIGQter.svg" /><script async src="https://www.googletagmanager.com/gtag/js?id=UA-31381839-2"></script><script src="include.js"></script><script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-4110907817782130" crossorigin="anonymous"></script></head><body><div><img src="STIGQter.svg" alt="STIGQter" style="height:1em;" /> <a href="https://www.stigqter.com/">STIGQter</a>: <a href="main.html">STIG Summary</a>: <a href="U_Cisco_ISE_NDM_STIG_V2R4_Manual-xccdf.html">Cisco ISE NDM Security Technical Implementation Guide Version: 2 Release: 4 Benchmark Date: 01 Jul 2026</a>:</div> <h1>The Cisco ISE must use DoD-approved PKI rather than proprietary or self-signed device certificates.</h1><h2>DISA Rule</h2><p>SV-242639r961863_rule</p><h2>Vulnerability Number</h2><p>V-242639</p><h2>Group Title</h2><p>SRG-APP-000516-NDM-000344</p><h2>Rule Version</h2><p>CSCO-NM-000340</p><h2>Severity</h2><p>CAT II</p><h2>CCI(s)</h2><ul><li>CCI-000366 - Implement the security configuration settings.</li><li>CCI-001159 - Issue public key certificates under an organization-defined certificate policy or obtain public key certificates from an approved service provider.</li></ul><h2>Weight</h2><p>10</p><h2>Fix Recommendation</h2><p>Replace the self-signed certificate with a CA-signed certificates for greater security. To obtain a CA-signed certificate:<br />
+<br />
+A. Generate a certificate signing request (CSR) to obtain a CA-signed certificate for the nodes in your deployment.<br />
+1. Choose Administration &gt;&gt; System &gt;&gt; Certificates &gt;&gt; Certificate Signing Requests.<br />
+2. Enter the values for generating a CSR.<br />
+Examples:<br />
+RSA:<br />
+Request security pki generate-key-pair certificate-id &lt;cert name&gt;&gt; type rsa size &lt;512 | 1024 | 2048 | 4096&gt;&gt;<br />
+ECDSA:<br />
+Request security pki generate-key-pair certificate-id &lt;cert_name&gt;&gt; type ecdsa size &lt;256 | 384&gt;&gt;<br />
+3. Click &quot;Generate&quot; to generate the CSR.<br />
+4. Click &quot;Export&quot; to open the CSR in a Notepad.<br />
+5. Copy all the text from &quot;-----BEGIN CERTIFICATE REQUEST-----&quot; through &quot;-----END CERTIFICATE REQUEST-----.&quot;<br />
+6. Paste the contents of the CSR into the certificate request. Generate a new key-pair from a DoD-approved certificate issuer. Sites must consult the PKI/PKI pages on the https://cyber.mil/ website for procedures for NIPRNet and SIPRNet.<br />
+7. Download the signed certificate.<br />
+<br />
+B. Import the Root Certificates to the Trusted Certificate Store:<br />
+Administration &gt;&gt; System &gt;&gt; Certificates &gt;&gt; Trusted Certificates<br />
+<br />
+C. Bind the CA-Signed Certificate to the CSR.<br />
+1. Choose Administration &gt;&gt; System &gt;&gt; Certificates &gt;&gt; Certificate Signing Requests. Check the check box next to the node for which you are binding the CSR with the CA-signed certificate.<br />
+2.  Click &quot;Bind&quot;.<br />
+3.  Click &quot;Browse&quot; to choose the CA-signed certificate.<br />
+4.  Specify a Friendly Name for the certificate.<br />
+5.  Check the &quot;Validate Certificate Extensions&quot; check box if you want Cisco ISE to validate certificate extensions.<br />
+6. Check the service for which this certificate will be used in the Usage area.<br />
+This information is auto populated if you have enabled the Usage option while generating the CSR. If you do not want to specify the usage at the time of binding the certificate, uncheck the Usage option. You can edit the certificate later and specify the usage.<br />
+7. Click &quot;Submit&quot;. If you have chosen to use this certificate for Cisco ISE internode communication, the application server on the Cisco ISE node is restarted.</p><h2>Check Contents</h2><p>Choose Administration &gt;&gt; System &gt;&gt; Certificates &gt;&gt; System Certificates.<br />
+<br />
+1. The System Certificates page appears and provides information for the local certificates.<br />
+2. Select a certificate and choose &quot;View&quot; to display the certificate details.<br />
+<br />
+If the Cisco ISE does not obtain its public key certificates from an appropriate certificate policy through an approved service provider, this is a finding.</p><h2>Vulnerability Number</h2><p>V-242639</p><h2>Documentable</h2><p>False</p><h2>Rule Version</h2><p>CSCO-NM-000340</p><h2>Severity Override Guidance</h2><p>Choose Administration &gt;&gt; System &gt;&gt; Certificates &gt;&gt; System Certificates.<br />
+<br />
+1. The System Certificates page appears and provides information for the local certificates.<br />
+2. Select a certificate and choose &quot;View&quot; to display the certificate details.<br />
+<br />
+If the Cisco ISE does not obtain its public key certificates from an appropriate certificate policy through an approved service provider, this is a finding.</p><h2>Check Content Reference</h2><p>M</p><h2>Target Key</h2><p>5384</p></body></html>

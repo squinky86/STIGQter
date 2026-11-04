@@ -1,0 +1,76 @@
+<!doctype html><html lang="en"><head><meta charset="utf-8"><title>STIGQter: STIG Check Details: SV-242586r1146396_rule: The Cisco ISE must place client machines on the blacklist and terminate the agent connection when critical security issues are found that put the network at risk. This is required for compliance with C2C Step 4.</title><link rel="icon" type="image/svg+xml" href="STIGQter.svg" /><script async src="https://www.googletagmanager.com/gtag/js?id=UA-31381839-2"></script><script src="include.js"></script><script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-4110907817782130" crossorigin="anonymous"></script></head><body><div><img src="STIGQter.svg" alt="STIGQter" style="height:1em;" /> <a href="https://www.stigqter.com/">STIGQter</a>: <a href="main.html">STIG Summary</a>: <a href="U_Cisco_ISE_NAC_STIG_V2R4_Manual-xccdf.html">Cisco ISE NAC Security Technical Implementation Guide Version: 2 Release: 4 Benchmark Date: 01 Jul 2026</a>:</div> <h1>The Cisco ISE must place client machines on the blacklist and terminate the agent connection when critical security issues are found that put the network at risk. This is required for compliance with C2C Step 4.</h1><h2>DISA Rule</h2><p>SV-242586r1146396_rule</p><h2>Vulnerability Number</h2><p>V-242586</p><h2>Group Title</h2><p>SRG-NET-000015-NAC-000120</p><h2>Rule Version</h2><p>CSCO-NC-000120</p><h2>Severity</h2><p>CAT II</p><h2>CCI(s)</h2><ul><li>CCI-000213 - Enforce approved authorizations for logical access to information and system resources in accordance with applicable access control policies.</li></ul><h2>Weight</h2><p>10</p><h2>Fix Recommendation</h2><p>If required by the NAC SSP, configure an Adaptive Network Control (ANC) policy to deny blacklisted devices access or make an authorization policy for the blacklist endpoint identity group.<br />
+<br />
+1. Navigate to Operations &gt;&gt; Adaptive Network Control &gt;&gt; Policy List.<br />
+2. Choose &quot;Add&quot;.<br />
+3. Give the policy a name.<br />
+4. Select the desired ANC Action (QUARANTINE or RE_AUTHENTICATE are the recommended actions for this).<br />
+5. Choose &quot;Submit&quot;.<br />
+6. Configure the authorization policy to enforce the ANC policy.<br />
+Note: If the blacklist Identity group is use vs and ANC policy, then a Change of Authorization (CoA) will need to be triggered.<br />
+7. Navigate to Work Centers &gt;&gt; Network Access &gt;&gt; Policy Sets.<br />
+8. Choose &quot;&gt;&quot; on any policy set.<br />
+9. Expand &quot;Authorization Policy – Global Exceptions&quot;.<br />
+10. Click on Actions Gear below to location the new Authorization Policy will be inserted (If there is not an existing policy, click on the &quot;+&quot; icon and skip the next step.)<br />
+11. Choose &quot;Insert new role above&quot;.<br />
+12. Click on the name of the policy and define a desirable name.<br />
+13. Either click on the &quot;+&quot; icon or click on the existing Conditions to open the Conditions Studio.<br />
+14. Choose &quot;New&quot; under the editor.<br />
+15. Choose &quot;Click to add an attribute&quot;.<br />
+16. Under Dictionary select Session in the drop-down.<br />
+17. Under Attribute select &quot;ANCPolicy&quot;.<br />
+18. Ensure &quot;Equals&quot; is selected as the operator.<br />
+19. Select the desired ANC Policy in the drop-down menu.<br />
+20. Choose &quot;Use&quot;.<br />
+21. Name the rule accordingly.<br />
+22. Select the desired result.<br />
+23. Choose &quot;Save&quot;.<br />
+<br />
+If the Blacklist Endpoint Identity Group will be used, follow these:<br />
+1. Configure the authorization policy to enforce the ANC policy.<br />
+2. Navigate to Work Centers &gt;&gt; Network Access &gt;&gt; Policy Sets.<br />
+3. Choose &quot;&gt;&quot; on any policy set.<br />
+4. Expand &quot;Authorization Policy – Global Exceptions&quot;.<br />
+5. Click on Actions Gear below to location the new Authorization Policy will be inserted (If there is not an existing policy, click on the &quot;+&quot; icon and skip the next step.)<br />
+6. Choose &quot;Insert new role above&quot;.<br />
+7. Click on the name of the policy and define a desirable name.<br />
+8. Either click on the &quot;+&quot; icon or click on the existing Conditions to open the Conditions Studio.<br />
+9. Choose &quot;New&quot; under the editor.<br />
+10. Choose &quot;Click to add an attribute&quot;.<br />
+11. Under Dictionary select &quot;IdentityGroup&quot; in the drop-down menu.<br />
+12. Under Attribute select &quot;Name&quot;.<br />
+13. Ensure &quot;Equals&quot; is selected as the operator. <br />
+14. Select &quot;Endpoint Identity Groups:Blacklist&quot; in the drop-down menu.<br />
+15. Choose &quot;Use&quot;.<br />
+16. Name the rule accordingly.<br />
+17. Select the desired result.<br />
+18. Choose &quot;Save&quot;.<br />
+<br />
+Note: If the blacklist identity group is used versus an ANC policy, then a Change of Authorization (CoA) will need to be triggered.</p><h2>Check Contents</h2><p>If DoD is not at C2C Step 4 or higher, this is not a finding.<br />
+If not required by the NAC SSP, this is not a finding.<br />
+<br />
+Verify that blacklisted devices will be denied access or quarantined. <br />
+<br />
+1. Navigate to Work Centers &gt;&gt; Network Access &gt;&gt; Policy Sets.<br />
+2. Choose &quot;&gt;&quot; on the applicable policy set.<br />
+3. Expand the &quot;Authorization Policy – Global Exceptions&quot;.<br />
+4. Verify that a rule with the condition &quot;Session-ANCPolicy EQUALS &lt;Configured ANC Policy&gt;&quot;, or &quot;IdentityGroup-Name EQUALS Endpoint Identity Group:Blocklist&quot; is present with a result that will deny access or quarantine the endpoint.<br />
+<br />
+If the enforcement is completed in the Authorization Policy versus the Global Exceptions, then each policy set must contain a policy for blacklisted endpoints.<br />
+<br />
+If there is not an authorization policy for Blacklist endpoints, this is a finding.<br />
+<br />
+If the authorization policy does not restrict or deny the access of blacklisted endpoints, this is a finding.</p><h2>Vulnerability Number</h2><p>V-242586</p><h2>Documentable</h2><p>False</p><h2>Rule Version</h2><p>CSCO-NC-000120</p><h2>Severity Override Guidance</h2><p>If DoD is not at C2C Step 4 or higher, this is not a finding.<br />
+If not required by the NAC SSP, this is not a finding.<br />
+<br />
+Verify that blacklisted devices will be denied access or quarantined. <br />
+<br />
+1. Navigate to Work Centers &gt;&gt; Network Access &gt;&gt; Policy Sets.<br />
+2. Choose &quot;&gt;&quot; on the applicable policy set.<br />
+3. Expand the &quot;Authorization Policy – Global Exceptions&quot;.<br />
+4. Verify that a rule with the condition &quot;Session-ANCPolicy EQUALS &lt;Configured ANC Policy&gt;&quot;, or &quot;IdentityGroup-Name EQUALS Endpoint Identity Group:Blocklist&quot; is present with a result that will deny access or quarantine the endpoint.<br />
+<br />
+If the enforcement is completed in the Authorization Policy versus the Global Exceptions, then each policy set must contain a policy for blacklisted endpoints.<br />
+<br />
+If there is not an authorization policy for Blacklist endpoints, this is a finding.<br />
+<br />
+If the authorization policy does not restrict or deny the access of blacklisted endpoints, this is a finding.</p><h2>Check Content Reference</h2><p>M</p><h2>Target Key</h2><p>5383</p></body></html>

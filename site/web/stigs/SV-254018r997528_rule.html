@@ -1,0 +1,150 @@
+<!doctype html><html lang="en"><head><meta charset="utf-8"><title>STIGQter: STIG Check Details: SV-254018r997528_rule: The Juniper out-of-band management (OOBM) gateway must be configured to transport management traffic to the Network Operations Center (NOC) via dedicated circuit, MPLS/VPN service, or IPsec tunnel.</title><link rel="icon" type="image/svg+xml" href="STIGQter.svg" /><script async src="https://www.googletagmanager.com/gtag/js?id=UA-31381839-2"></script><script src="include.js"></script><script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-4110907817782130" crossorigin="anonymous"></script></head><body><div><img src="STIGQter.svg" alt="STIGQter" style="height:1em;" /> <a href="https://www.stigqter.com/">STIGQter</a>: <a href="main.html">STIG Summary</a>: <a href="U_Juniper_EX_Switches_RTR_STIG_V2R1_Manual-xccdf.html">Juniper EX Series Switches Router Security Technical Implementation Guide Version: 2 Release: 1 Benchmark Date: 24 Jul 2024</a>:</div> <h1>The Juniper out-of-band management (OOBM) gateway must be configured to transport management traffic to the Network Operations Center (NOC) via dedicated circuit, MPLS/VPN service, or IPsec tunnel.</h1><h2>DISA Rule</h2><p>SV-254018r997528_rule</p><h2>Vulnerability Number</h2><p>V-254018</p><h2>Group Title</h2><p>SRG-NET-000205-RTR-000009</p><h2>Rule Version</h2><p>JUEX-RT-000460</p><h2>Severity</h2><p>CAT II</p><h2>CCI(s)</h2><ul><li>CCI-001097 - Monitor and control communications at the external managed interfaces to the system and at key managed interfaces within the system.</li><li>CCI-004891 - Implement physically or logically separate subnetworks to isolate organization-defined critical system components and functions.</li></ul><h2>Weight</h2><p>10</p><h2>Fix Recommendation</h2><p>This requirement is not applicable for the DODIN Backbone.<br />
+<br />
+CE peering to CE (L2 VPN):<br />
+set interfaces &lt;exterior interface&gt; unit &lt;number&gt; family inet address &lt;IPv4 address&gt;/&lt;mask&gt;<br />
+set interfaces lo0 unit 0 family inet address &lt;IPv4 address&gt;/32<br />
+set protocols ospf area &lt;number&gt; interface lo0.0<br />
+set protocols ospf area &lt;number&gt; interface &lt;exterior interface&gt;<br />
+<br />
+CE peering to PE (L3 VPN):<br />
+set system host-name ce1<br />
+set interfaces &lt;exterior interface&gt;:&lt;number&gt; description &quot;Link from CE1 to PE1 for L3vpn&quot;<br />
+set interfaces &lt;exterior interface&gt;:&lt;number&gt; unit &lt;number&gt; family inet address &lt;IPv4 address&gt;/&lt;mask&gt;<br />
+set interfaces lo0 unit 0 family inet address &lt;IPv4 address&gt;/32<br />
+set routing-options router-id &lt;ID&gt;<br />
+set routing-options autonomous-system &lt;AS #&gt;<br />
+set protocols bgp group &lt;name&gt; type external<br />
+set protocols bgp group &lt;name&gt; export &lt;policy name&gt;<br />
+set protocols bgp group &lt;name&gt; peer-as &lt;Peer AS #&gt;<br />
+set protocols bgp group &lt;name&gt; neighbor &lt;neighbor address&gt;<br />
+set policy-options policy-statement &lt;policy name&gt; term 1 from protocol &lt;protocol&gt;<br />
+set policy-options policy-statement &lt;policy name&gt; term 1 from route-filter &lt;subnet&gt; &lt;match criterion&gt;<br />
+set policy-options policy-statement &lt;policy name&gt; term 1 then accept<br />
+<br />
+Ensure that a dedicated circuit, MPLS/VPN service, or IPsec tunnel is deployed to transport management traffic between the managed network and the NOC.</p><h2>Check Contents</h2><p>This requirement is not applicable for the DODIN Backbone.<br />
+<br />
+Review the network topology diagram to determine connectivity between the managed network and the NOC.<br />
+<br />
+Review the OOBM gateway router configuration to validate the path and interface that the management traffic traverses. MPLS-based VPN (L2 or L3) must have a working provider MPLS network including routing (for reachability) and Label Switched Paths (LSP). Additionally, the PE router will maintain separation for each CE router in individual routing instances. If using a dedicated circuit, verify the interface transporting NOC traffic is properly connected.<br />
+<br />
+CE routers will not peer with PE routers when using L2 VPN. Verify the CE router peers with the appropriate CE router, generally with an IGP (e.g., OSPF), and not the PE router.<br />
+[edit interfaces]<br />
+&lt;exterior interface&gt; {<br />
+    unit &lt;number&gt; {<br />
+        family inet {<br />
+            address &lt;IPv4 address&gt;/&lt;mask&gt;;<br />
+        }<br />
+    }    <br />
+}<br />
+lo0 {<br />
+    unit 0 {<br />
+        family inet {<br />
+            address &lt;IPv4 address&gt;/32;<br />
+        }<br />
+    }<br />
+}<br />
+[edit protocols ospf]<br />
+area &lt;number&gt; {<br />
+    interface lo0.0;<br />
+    interface &lt;exterior interface&gt;.&lt;number&gt;;<br />
+}<br />
+<br />
+CE routers will peer with PE routers, generally with eBGP, when using L3 VPN. Verify the CE router advertises the appropriate interior networks to the PE.<br />
+[edit interfaces]<br />
+&lt;exterior interface&gt;:0 {<br />
+    unit &lt;number&gt; {<br />
+        family inet {<br />
+            address &lt;IPv4 address&gt;/&lt;mask&gt;;<br />
+        }<br />
+    }<br />
+}<br />
+lo0 {<br />
+    family inet {<br />
+        address &lt;IPv4 address&gt;/&lt;mask&gt;;<br />
+    }<br />
+}<br />
+[edit routing-options]<br />
+router-id &lt;ID&gt;;<br />
+autonomous-system &lt;AS #&gt;;<br />
+[edit protocols bgp]<br />
+group PE1 {<br />
+    type external;<br />
+    export &lt;policy name&gt;;<br />
+    peer-as &lt;peer AS #&gt;;<br />
+    neighbor &lt;neighbor address&gt;; &lt;&lt; Reachable from the exterior interface<br />
+}<br />
+[edit policy-options policy-statement &lt;statement name&gt;]<br />
+term 1 {<br />
+    from {<br />
+        protocol &lt;protocol&gt;; &lt;&lt; Include the appropriate protocol (e.g., 'direct' for directly connected routes)<br />
+        route-filter &lt;subnet&gt;/&lt;mask&gt; &lt;match condition&gt;; &lt;&lt; Include only interior routes that must be advertised to the L3 VPN<br />
+    }<br />
+    then accept;<br />
+}<br />
+<br />
+Note: The policy-statement is applied as an export filter, using a route-filter to limit the exported routes. For example, assume 192.0.2.0/24 is the advertised route, and that it is directly connected. Using &quot;protocol direct&quot; will export all directly-connected routes, but no routes learned via an IGP (e.g., OSPF). Using &quot;route-filter 192.0.2.0/24 orlonger then accept&quot; will accept that /24 (or longer mask) and deny all others. Verify the match condition is appropriate for the desired advertisement.<br />
+<br />
+If management traffic is not transported between the managed network and the NOC via dedicated circuit, MPLS/VPN service, or IPsec tunnel, this is a finding.</p><h2>Vulnerability Number</h2><p>V-254018</p><h2>Documentable</h2><p>False</p><h2>Rule Version</h2><p>JUEX-RT-000460</p><h2>Severity Override Guidance</h2><p>This requirement is not applicable for the DODIN Backbone.<br />
+<br />
+Review the network topology diagram to determine connectivity between the managed network and the NOC.<br />
+<br />
+Review the OOBM gateway router configuration to validate the path and interface that the management traffic traverses. MPLS-based VPN (L2 or L3) must have a working provider MPLS network including routing (for reachability) and Label Switched Paths (LSP). Additionally, the PE router will maintain separation for each CE router in individual routing instances. If using a dedicated circuit, verify the interface transporting NOC traffic is properly connected.<br />
+<br />
+CE routers will not peer with PE routers when using L2 VPN. Verify the CE router peers with the appropriate CE router, generally with an IGP (e.g., OSPF), and not the PE router.<br />
+[edit interfaces]<br />
+&lt;exterior interface&gt; {<br />
+    unit &lt;number&gt; {<br />
+        family inet {<br />
+            address &lt;IPv4 address&gt;/&lt;mask&gt;;<br />
+        }<br />
+    }    <br />
+}<br />
+lo0 {<br />
+    unit 0 {<br />
+        family inet {<br />
+            address &lt;IPv4 address&gt;/32;<br />
+        }<br />
+    }<br />
+}<br />
+[edit protocols ospf]<br />
+area &lt;number&gt; {<br />
+    interface lo0.0;<br />
+    interface &lt;exterior interface&gt;.&lt;number&gt;;<br />
+}<br />
+<br />
+CE routers will peer with PE routers, generally with eBGP, when using L3 VPN. Verify the CE router advertises the appropriate interior networks to the PE.<br />
+[edit interfaces]<br />
+&lt;exterior interface&gt;:0 {<br />
+    unit &lt;number&gt; {<br />
+        family inet {<br />
+            address &lt;IPv4 address&gt;/&lt;mask&gt;;<br />
+        }<br />
+    }<br />
+}<br />
+lo0 {<br />
+    family inet {<br />
+        address &lt;IPv4 address&gt;/&lt;mask&gt;;<br />
+    }<br />
+}<br />
+[edit routing-options]<br />
+router-id &lt;ID&gt;;<br />
+autonomous-system &lt;AS #&gt;;<br />
+[edit protocols bgp]<br />
+group PE1 {<br />
+    type external;<br />
+    export &lt;policy name&gt;;<br />
+    peer-as &lt;peer AS #&gt;;<br />
+    neighbor &lt;neighbor address&gt;; &lt;&lt; Reachable from the exterior interface<br />
+}<br />
+[edit policy-options policy-statement &lt;statement name&gt;]<br />
+term 1 {<br />
+    from {<br />
+        protocol &lt;protocol&gt;; &lt;&lt; Include the appropriate protocol (e.g., 'direct' for directly connected routes)<br />
+        route-filter &lt;subnet&gt;/&lt;mask&gt; &lt;match condition&gt;; &lt;&lt; Include only interior routes that must be advertised to the L3 VPN<br />
+    }<br />
+    then accept;<br />
+}<br />
+<br />
+Note: The policy-statement is applied as an export filter, using a route-filter to limit the exported routes. For example, assume 192.0.2.0/24 is the advertised route, and that it is directly connected. Using &quot;protocol direct&quot; will export all directly-connected routes, but no routes learned via an IGP (e.g., OSPF). Using &quot;route-filter 192.0.2.0/24 orlonger then accept&quot; will accept that /24 (or longer mask) and deny all others. Verify the match condition is appropriate for the desired advertisement.<br />
+<br />
+If management traffic is not transported between the managed network and the NOC via dedicated circuit, MPLS/VPN service, or IPsec tunnel, this is a finding.</p><h2>Check Content Reference</h2><p>M</p><h2>Target Key</h2><p>5479</p></body></html>

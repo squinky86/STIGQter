@@ -1,0 +1,65 @@
+<!doctype html><html lang="en"><head><meta charset="utf-8"><title>STIGQter: STIG Check Details: SV-221138r999747_rule: The Cisco multicast Designated switch (DR) must be configured to filter the Internet Group Management Protocol (IGMP) and Multicast Listener Discovery (MLD) Report messages to allow hosts to join only multicast groups that have been approved by the organization.</title><link rel="icon" type="image/svg+xml" href="STIGQter.svg" /><script async src="https://www.googletagmanager.com/gtag/js?id=UA-31381839-2"></script><script src="include.js"></script><script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-4110907817782130" crossorigin="anonymous"></script></head><body><div><img src="STIGQter.svg" alt="STIGQter" style="height:1em;" /> <a href="https://www.stigqter.com/">STIGQter</a>: <a href="main.html">STIG Summary</a>: <a href="U_Cisco_NX-OS_Switch_RTR_STIG_V3R4_Manual-xccdf.html">Cisco NX OS Switch RTR Security Technical Implementation Guide Version: 3 Release: 4 Benchmark Date: 01 Apr 2026</a>:</div> <h1>The Cisco multicast Designated switch (DR) must be configured to filter the Internet Group Management Protocol (IGMP) and Multicast Listener Discovery (MLD) Report messages to allow hosts to join only multicast groups that have been approved by the organization.</h1><h2>DISA Rule</h2><p>SV-221138r999747_rule</p><h2>Vulnerability Number</h2><p>V-221138</p><h2>Group Title</h2><p>SRG-NET-000364-RTR-000114</p><h2>Rule Version</h2><p>CISC-RT-000860</p><h2>Severity</h2><p>CAT III</p><h2>CCI(s)</h2><ul><li>CCI-002403 - Only allow incoming communications from organization-defined authorized sources routed to organization-defined authorized destinations.</li></ul><h2>Weight</h2><p>10</p><h2>Fix Recommendation</h2><p>Configure the DR to filter the IGMP or MLD Membership Report messages to allow hosts to join only those multicast groups that have been approved.<br />
+<br />
+Step 1: Configure the report policy to filter IGMP Membership Report messages as shown in the example below:<br />
+<br />
+SW1(config)# route-map ALLOWED_GROUPS permit<br />
+SW1(config-route-map)# match ip multicast group 233.1.1.0/24<br />
+SW1(config-route-map)# route-map ALLOWED_GROUPS permit 20<br />
+SW1(config-route-map)# match ip multicast group 233.1.1.0/32<br />
+SW1(config-route-map)# route-map ALLOWED_GROUPS permit 30<br />
+SW1(config-route-map)# match ip multicast group 233.1.1.1/32<br />
+SW1(config-route-map)# route-map ALLOWED_GROUPS deny 40<br />
+SW1(config-route-map)# match ip multicast group 224.0.0.0/4<br />
+SW1(config-route-map)# exit<br />
+<br />
+Step 2: Apply the report policy to all applicable interfaces.<br />
+<br />
+SW1(config)# int e2/4<br />
+SW1(config-if)# ip igmp report-policy ALLOWED_GROUPS <br />
+SW1(config-if)# end</p><h2>Check Contents</h2><p>Review the configuration of the DR to verify that it is filtering IGMP or MLD Membership Report messages, allowing hosts to join only those groups that have been approved.<br />
+<br />
+Step 1: Verify that all host facing interfaces are configured to filter IGMP Membership Report messages (IGMP joins) as shown in the example below:<br />
+<br />
+interface Ethernet2/4<br />
+ no switchport<br />
+ ip address 10.2.22.3/24 ip pim sparse-mode<br />
+ ip igmp version 3<br />
+ ip igmp report-policy ALLOWED_GROUPS<br />
+<br />
+Step 2: Verify that the report policy denies unauthorized groups or permits only authorized groups. <br />
+<br />
+route-map ALLOWED_GROUPS permit 10<br />
+ match ip multicast group 233.1.1.0/24 <br />
+route-map ALLOWED_GROUPS permit 20<br />
+ match ip multicast group 233.1.1.0/32 <br />
+route-map ALLOWED_GROUPS permit 30<br />
+ match ip multicast group 233.1.1.1/32 <br />
+route-map ALLOWED_GROUPS deny 40<br />
+ match ip multicast group 224.0.0.0/4<br />
+<br />
+Note: This requirement is only applicable to Source Specific Multicast (SSM) implementation. This requirement is not applicable to Any Source Multicast (ASM) since the filtering is being performed by the Rendezvous Point.<br />
+<br />
+If the DR is not filtering IGMP or MLD Membership Report messages, this is a finding.</p><h2>Vulnerability Number</h2><p>V-221138</p><h2>Documentable</h2><p>False</p><h2>Rule Version</h2><p>CISC-RT-000860</p><h2>Severity Override Guidance</h2><p>Review the configuration of the DR to verify that it is filtering IGMP or MLD Membership Report messages, allowing hosts to join only those groups that have been approved.<br />
+<br />
+Step 1: Verify that all host facing interfaces are configured to filter IGMP Membership Report messages (IGMP joins) as shown in the example below:<br />
+<br />
+interface Ethernet2/4<br />
+ no switchport<br />
+ ip address 10.2.22.3/24 ip pim sparse-mode<br />
+ ip igmp version 3<br />
+ ip igmp report-policy ALLOWED_GROUPS<br />
+<br />
+Step 2: Verify that the report policy denies unauthorized groups or permits only authorized groups. <br />
+<br />
+route-map ALLOWED_GROUPS permit 10<br />
+ match ip multicast group 233.1.1.0/24 <br />
+route-map ALLOWED_GROUPS permit 20<br />
+ match ip multicast group 233.1.1.0/32 <br />
+route-map ALLOWED_GROUPS permit 30<br />
+ match ip multicast group 233.1.1.1/32 <br />
+route-map ALLOWED_GROUPS deny 40<br />
+ match ip multicast group 224.0.0.0/4<br />
+<br />
+Note: This requirement is only applicable to Source Specific Multicast (SSM) implementation. This requirement is not applicable to Any Source Multicast (ASM) since the filtering is being performed by the Rendezvous Point.<br />
+<br />
+If the DR is not filtering IGMP or MLD Membership Report messages, this is a finding.</p><h2>Check Content Reference</h2><p>M</p><h2>Target Key</h2><p>4075</p></body></html>

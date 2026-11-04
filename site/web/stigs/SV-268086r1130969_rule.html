@@ -1,0 +1,83 @@
+<!doctype html><html lang="en"><head><meta charset="utf-8"><title>STIGQter: STIG Check Details: SV-268086r1130969_rule: NixOS must initiate a session lock after a 10-minute period of inactivity for graphical user logon.</title><link rel="icon" type="image/svg+xml" href="STIGQter.svg" /><script async src="https://www.googletagmanager.com/gtag/js?id=UA-31381839-2"></script><script src="include.js"></script><script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-4110907817782130" crossorigin="anonymous"></script></head><body><div><img src="STIGQter.svg" alt="STIGQter" style="height:1em;" /> <a href="https://www.stigqter.com/">STIGQter</a>: <a href="main.html">STIG Summary</a>: <a href="U_Anduril_NixOS_STIG_V1R2_Manual-xccdf.html">Anduril NixOS Security Technical Implementation Guide Version: 1 Release: 2 Benchmark Date: 01 Oct 2025</a>:</div> <h1>NixOS must initiate a session lock after a 10-minute period of inactivity for graphical user logon.</h1><h2>DISA Rule</h2><p>SV-268086r1130969_rule</p><h2>Vulnerability Number</h2><p>V-268086</p><h2>Group Title</h2><p>SRG-OS-000029-GPOS-00010</p><h2>Rule Version</h2><p>ANIX-00-000110</p><h2>Severity</h2><p>CAT II</p><h2>CCI(s)</h2><ul><li>CCI-000057 - The information system initiates a session lock after the organization-defined time period of inactivity.</li></ul><h2>Weight</h2><p>10</p><h2>Fix Recommendation</h2><p>Configure NixOS to initiate a session lock after a 10-minute period of inactivity for graphical user logon.<br />
+<br />
+Update the NixOS config, typically stored either in /etc/nixos/configuration.nix or /etc/nixos/flake.nix:<br />
+<br />
+  programs.dconf.profiles.user.databases = with lib.gvariant; lib.mkBefore [<br />
+   {<br />
+     settings.&quot;org/gnome/desktop/session&quot;.idle-delay = (mkUint32 600);<br />
+     locks = [ &quot;org/gnome/desktop/session/idle-delay&quot; ];<br />
+   }];<br />
+ services.logind.extraConfig = ''<br />
+   IdleAction = lock<br />
+   IdleActionSec = 600<br />
+ '';<br />
+ services.xserver = {<br />
+   displayManager.gdm.wayland = true;<br />
+   xautolock = {<br />
+     enable = true;<br />
+     time = 10;<br />
+     locker = &quot;${lib.getExe' config.systemd.package &quot;loginctl&quot;} lock-session&quot;;<br />
+   };<br />
+  };<br />
+ };<br />
+<br />
+Rebuild and switch to the new NixOS configuration:<br />
+$ sudo nixos-rebuild switch</p><h2>Check Contents</h2><p>Verify NixOS initiates a session lock after a 10-minute period of inactivity for graphical user logon with the following command: <br />
+<br />
+$ sudo gsettings get org.gnome.desktop.session idle-delay<br />
+<br />
+uint32 600<br />
+<br />
+$ grep &quot;IdleAction&quot; /etc/systemd/logind.conf<br />
+<br />
+ IdleAction = lock<br />
+ IdleActionSec = 600<br />
+<br />
+$ systemctl --user status xautolock.service<br />
+ xautolock.service - xautolock service<br />
+     Loaded: loaded (/etc/systemd/user/xautolock.service; enabled; preset: ignored)<br />
+     Active: active (running) since Wed 2025-03-19 22:56:13 UTC; 6min ago<br />
+ Invocation: 836d5b6b79444c62aa3c5285e3c8d92e<br />
+   Main PID: 3233 (xautolock)<br />
+      Tasks: 1 (limit: 38062)<br />
+     Memory: 712K (peak: 2.4M)<br />
+        CPU: 75ms<br />
+     CGroup: /user.slice/user-1000.slice/user@1000.service/app.slice/xautolock.service<br />
+             +-3233 /nix/store/4chq53fkkiimbx1qzdbxxs44diiqgj54-xautolock-2.2-7-ga23dd5c/bin/xautolock -noclose -time 10 -locker &quot;/nix/store/w9qcpyhjrxsqrps91wkz8r4mqvg9zrxc-systemd-256.10/bin/loginctl lock-session&quot;<br />
+<br />
+Mar 19 22:56:13 gcs-generic-5-3 systemd[3136]: Started xautolock service.<br />
+<br />
+If &quot;idle-delay&quot; is set to &quot;0&quot; or a value greater than &quot;600&quot;, this is a finding.<br />
+<br />
+If &quot;IdleAction&quot; is not &quot;lock&quot; and &quot;IdleActionSec&quot; is not &quot;600&quot;, this is a finding.<br />
+<br />
+If the xautolock service is not present or the process line does not contain &quot;-time 10&quot;, this is a finding.</p><h2>Vulnerability Number</h2><p>V-268086</p><h2>Documentable</h2><p>False</p><h2>Rule Version</h2><p>ANIX-00-000110</p><h2>Severity Override Guidance</h2><p>Verify NixOS initiates a session lock after a 10-minute period of inactivity for graphical user logon with the following command: <br />
+<br />
+$ sudo gsettings get org.gnome.desktop.session idle-delay<br />
+<br />
+uint32 600<br />
+<br />
+$ grep &quot;IdleAction&quot; /etc/systemd/logind.conf<br />
+<br />
+ IdleAction = lock<br />
+ IdleActionSec = 600<br />
+<br />
+$ systemctl --user status xautolock.service<br />
+ xautolock.service - xautolock service<br />
+     Loaded: loaded (/etc/systemd/user/xautolock.service; enabled; preset: ignored)<br />
+     Active: active (running) since Wed 2025-03-19 22:56:13 UTC; 6min ago<br />
+ Invocation: 836d5b6b79444c62aa3c5285e3c8d92e<br />
+   Main PID: 3233 (xautolock)<br />
+      Tasks: 1 (limit: 38062)<br />
+     Memory: 712K (peak: 2.4M)<br />
+        CPU: 75ms<br />
+     CGroup: /user.slice/user-1000.slice/user@1000.service/app.slice/xautolock.service<br />
+             +-3233 /nix/store/4chq53fkkiimbx1qzdbxxs44diiqgj54-xautolock-2.2-7-ga23dd5c/bin/xautolock -noclose -time 10 -locker &quot;/nix/store/w9qcpyhjrxsqrps91wkz8r4mqvg9zrxc-systemd-256.10/bin/loginctl lock-session&quot;<br />
+<br />
+Mar 19 22:56:13 gcs-generic-5-3 systemd[3136]: Started xautolock service.<br />
+<br />
+If &quot;idle-delay&quot; is set to &quot;0&quot; or a value greater than &quot;600&quot;, this is a finding.<br />
+<br />
+If &quot;IdleAction&quot; is not &quot;lock&quot; and &quot;IdleActionSec&quot; is not &quot;600&quot;, this is a finding.<br />
+<br />
+If the xautolock service is not present or the process line does not contain &quot;-time 10&quot;, this is a finding.</p><h2>Check Content Reference</h2><p>M</p><h2>Target Key</h2><p>5658</p></body></html>

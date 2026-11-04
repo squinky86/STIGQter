@@ -1,0 +1,97 @@
+<!doctype html><html lang="en"><head><meta charset="utf-8"><title>STIGQter: STIG Check Details: SV-270496r1167727_rule: Oracle Database must protect against or limit the effects of organization-defined types of denial-of-service (DoS) attacks.</title><link rel="icon" type="image/svg+xml" href="STIGQter.svg" /><script async src="https://www.googletagmanager.com/gtag/js?id=UA-31381839-2"></script><script src="include.js"></script><script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-4110907817782130" crossorigin="anonymous"></script></head><body><div><img src="STIGQter.svg" alt="STIGQter" style="height:1em;" /> <a href="https://www.stigqter.com/">STIGQter</a>: <a href="main.html">STIG Summary</a>: <a href="U_Oracle_Database_19c_STIG_V1R5_Manual-xccdf.html">Oracle Database 19c Security Technical Implementation Guide Version: 1 Release: 5 Benchmark Date: 01 Apr 2026</a>:</div> <h1>Oracle Database must protect against or limit the effects of organization-defined types of denial-of-service (DoS) attacks.</h1><h2>DISA Rule</h2><p>SV-270496r1167727_rule</p><h2>Vulnerability Number</h2><p>V-270496</p><h2>Group Title</h2><p>SRG-APP-000001-DB-000031</p><h2>Rule Version</h2><p>O19C-00-000200</p><h2>Severity</h2><p>CAT II</p><h2>CCI(s)</h2><ul><li>CCI-000054 - Limit the number of concurrent sessions for each organization-defined account and/or account type to an organization-defined number.</li></ul><h2>Weight</h2><p>10</p><h2>Fix Recommendation</h2><p>Implement measures to limit the effects of organization-defined types of DoS attacks.<br />
+<br />
+For each of the three queries in the Check, if there are findings, make the changes required to bring the environment into compliance.<br />
+<br />
+For Listing 1:<br />
+Modify the $ORACLE_HOME/network/admin/listener.ora to establish a Rate Limit.<br />
+Restart the listener for changes to take effect.<br />
+<br />
+For Listing 2:<br />
+Set limits on all profiles for CPU_PER_CALL, IDLE_TIME, and LOGICAL_READS_PER_CALL.<br />
+<br />
+For Listing 3:<br />
+Enforce reasonable limits for tablespace consumption sufficient to prevent a DOS attack from impacting multiple applications or multiple services.</p><h2>Check Contents</h2><p>Review database management system (DBMS) settings to verify the DBMS implements measures to limit the effects of a DoS event.<br />
+<br />
+Rate Limit:<br />
+<br />
+Check the $ORACLE_HOME/network/admin/listener.ora to verify a Rate Limit has been established. A rate limit is used to prevent DoS attacks on a database or to control a logon storm such as may be caused by an application server or pool restart.<br />
+<br />
+If a rate limit has not been set similar to one of the two examples in Listing 1, this is a finding.<br />
+ <br />
+Listing 1<br />
+CONNECTION_RATE_LISTENER=10<br />
+LISTENER= (<br />
+  ADDRESS_LIST=<br />
+    (ADDRESS=(PROTOCOL=tcp)(HOST=)(PORT=1521)(RATE_LIMIT=yes))<br />
+    (ADDRESS=(PROTOCOL=tcp)(HOST=)(PORT=1522)(RATE_LIMIT=yes))<br />
+    (ADDRESS=(PROTOCOL=tcp)(HOST=)(PORT=1526))<br />
+           )<br />
+LISTENER=<br />
+  (ADDRESS_LIST=<br />
+    (ADDRESS=(PROTOCOL=tcp)(HOST=)(PORT=1521)(RATE_LIMIT=8))<br />
+    (ADDRESS=(PROTOCOL=tcp)(HOST=)(PORT=1522)(RATE_LIMIT=12))<br />
+    (ADDRESS=(PROTOCOL=tcp)(HOST=)(PORT=1526))<br />
+           )<br />
+<br />
+Database Profiles:<br />
+If the database profiles, as shown in Listing 2 do not contain resource controls similar to those shown, but appropriate to the target database's infrastructure and utilization, that is a finding.<br />
+<br />
+Listing 2<br />
+SELECT cp.con_id, cp.profile, cp.resource_name, cp.limit<br />
+FROM sys.cdb_profiles cp<br />
+WHERE resource_name IN ('CPU_PER_CALL', 'IDLE_TIME', 'LOGICAL_READS_PER_CALL');<br />
+ORDER BY 1,2,3;<br />
+<br />
+<br />
+Tablespace Quota:<br />
+<br />
+Listing 3<br />
+SELECT ctq.con_id, ctq.tablespace_name, ctq.username, ctq.max_bytes, ctq.max_blocks<br />
+FROM sys.cdb_ts_quotas ctq<br />
+WHERE ((max_bytes = -1) OR (max_blocks = -1))<br />
+AND (ctq.con_id, ctq.tablespace_name) IN (SELECT ct.con_id, ct.tablespace_name FROM sys.cdb_tablespaces ct)<br />
+ORDER BY 1;<br />
+<br />
+If any rows returned have a MAX_BYTES or MAX_BLOCKS equal to minus one (-1) that is a finding.</p><h2>Vulnerability Number</h2><p>V-270496</p><h2>Documentable</h2><p>False</p><h2>Rule Version</h2><p>O19C-00-000200</p><h2>Severity Override Guidance</h2><p>Review database management system (DBMS) settings to verify the DBMS implements measures to limit the effects of a DoS event.<br />
+<br />
+Rate Limit:<br />
+<br />
+Check the $ORACLE_HOME/network/admin/listener.ora to verify a Rate Limit has been established. A rate limit is used to prevent DoS attacks on a database or to control a logon storm such as may be caused by an application server or pool restart.<br />
+<br />
+If a rate limit has not been set similar to one of the two examples in Listing 1, this is a finding.<br />
+ <br />
+Listing 1<br />
+CONNECTION_RATE_LISTENER=10<br />
+LISTENER= (<br />
+  ADDRESS_LIST=<br />
+    (ADDRESS=(PROTOCOL=tcp)(HOST=)(PORT=1521)(RATE_LIMIT=yes))<br />
+    (ADDRESS=(PROTOCOL=tcp)(HOST=)(PORT=1522)(RATE_LIMIT=yes))<br />
+    (ADDRESS=(PROTOCOL=tcp)(HOST=)(PORT=1526))<br />
+           )<br />
+LISTENER=<br />
+  (ADDRESS_LIST=<br />
+    (ADDRESS=(PROTOCOL=tcp)(HOST=)(PORT=1521)(RATE_LIMIT=8))<br />
+    (ADDRESS=(PROTOCOL=tcp)(HOST=)(PORT=1522)(RATE_LIMIT=12))<br />
+    (ADDRESS=(PROTOCOL=tcp)(HOST=)(PORT=1526))<br />
+           )<br />
+<br />
+Database Profiles:<br />
+If the database profiles, as shown in Listing 2 do not contain resource controls similar to those shown, but appropriate to the target database's infrastructure and utilization, that is a finding.<br />
+<br />
+Listing 2<br />
+SELECT cp.con_id, cp.profile, cp.resource_name, cp.limit<br />
+FROM sys.cdb_profiles cp<br />
+WHERE resource_name IN ('CPU_PER_CALL', 'IDLE_TIME', 'LOGICAL_READS_PER_CALL');<br />
+ORDER BY 1,2,3;<br />
+<br />
+<br />
+Tablespace Quota:<br />
+<br />
+Listing 3<br />
+SELECT ctq.con_id, ctq.tablespace_name, ctq.username, ctq.max_bytes, ctq.max_blocks<br />
+FROM sys.cdb_ts_quotas ctq<br />
+WHERE ((max_bytes = -1) OR (max_blocks = -1))<br />
+AND (ctq.con_id, ctq.tablespace_name) IN (SELECT ct.con_id, ct.tablespace_name FROM sys.cdb_tablespaces ct)<br />
+ORDER BY 1;<br />
+<br />
+If any rows returned have a MAX_BYTES or MAX_BLOCKS equal to minus one (-1) that is a finding.</p><h2>Check Content Reference</h2><p>M</p><h2>Target Key</h2><p>5672</p></body></html>

@@ -1,0 +1,52 @@
+<!doctype html><html lang="en"><head><meta charset="utf-8"><title>STIGQter: STIG Check Details: SV-224432r1144649_rule: CA Auditor resources are not properly defined and protected.</title><link rel="icon" type="image/svg+xml" href="STIGQter.svg" /><script async src="https://www.googletagmanager.com/gtag/js?id=UA-31381839-2"></script><script src="include.js"></script><script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-4110907817782130" crossorigin="anonymous"></script></head><body><div><img src="STIGQter.svg" alt="STIGQter" style="height:1em;" /> <a href="https://www.stigqter.com/">STIGQter</a>: <a href="main.html">STIG Summary</a>: <a href="U_zOS_CA_Auditor_for_RACF_STIG_V7R2_Manual-xccdf.html">z/OS CA Auditor for RACF Security Technical Implementation Guide Version: 7 Release: 2 Benchmark Date: 01 Oct 2025</a>:</div> <h1>CA Auditor resources are not properly defined and protected.</h1><h2>DISA Rule</h2><p>SV-224432r1144649_rule</p><h2>Vulnerability Number</h2><p>V-224432</p><h2>Group Title</h2><p>SRG-OS-000018</p><h2>Rule Version</h2><p>ZADTR020</p><h2>Severity</h2><p>CAT II</p><h2>CCI(s)</h2><ul><li>CCI-000213 - Enforce approved authorizations for logical access to information and system resources in accordance with applicable access control policies.</li></ul><h2>Weight</h2><p>10</p><h2>Fix Recommendation</h2><p>The ISSO will verify that the LTDMMAIN resource in the PROGRAM resource class is restricted to system programmers, auditors, and security personnel.<br />
+<br />
+The RACF rules for the LTDMMAIN resource specify a default access of NONE and no RACF rules that allow access to the LTDMMAIN resource.<br />
+<br />
+Example:<br />
+<br />
+rdef program LTDMMAIN uacc(none) owner(admin) audit(failures(read)) -<br />
+data('added per PDI ZADT0020') <br />
+<br />
+The RACF rules for the LTDMMAIN resource is restricted access to systems programmers, auditors, and security personnel with access of READ. All RACF rules are defined with UACC(NONE).<br />
+<br />
+Example:<br />
+<br />
+rdef program ltdmmain -                <br />
+ addmem('SYS2A.EXAMINE.V120SP01.CAILIB'//nopadchk) -  <br />
+ data('Required by SRR PDI ZADTR020') -        <br />
+ audit(failures(read)) uacc(none) owner(admin)       <br />
+pe LTDMMAIN cl(program) id(syspaudt) acc(r)<br />
+pe LTDMMAIN cl(program) id(audtaudt) acc(r)<br />
+pe LTDMMAIN cl(program) id(secaaudt) acc(r)<br />
+<br />
+setr when(program) ref</p><h2>Check Contents</h2><p>Refer to the following report produced by the Data Set and Resource Data Collection:<br />
+<br />
+- SENSITVE.RPT(ZADT0020).<br />
+<br />
+Automated Analysis<br />
+Refer to the following report produced by the Data Set and Resource Data Collection:<br />
+<br />
+- PDI(ZADT0020).<br />
+<br />
+Verify that the access to the LTDMMAIN resource in the PROGRAM resource class is restricted. If the following guidance is true, this is not a finding.<br />
+<br />
+The RACF rules for the resources specify a default access of NONE.<br />
+<br />
+The RACF rules for the resources are restricted access to system programmers, auditors, and security personnel.<br />
+<br />
+All RACF rules are defined with UACC(NONE).</p><h2>Vulnerability Number</h2><p>V-224432</p><h2>Documentable</h2><p>False</p><h2>Rule Version</h2><p>ZADTR020</p><h2>Severity Override Guidance</h2><p>Refer to the following report produced by the Data Set and Resource Data Collection:<br />
+<br />
+- SENSITVE.RPT(ZADT0020).<br />
+<br />
+Automated Analysis<br />
+Refer to the following report produced by the Data Set and Resource Data Collection:<br />
+<br />
+- PDI(ZADT0020).<br />
+<br />
+Verify that the access to the LTDMMAIN resource in the PROGRAM resource class is restricted. If the following guidance is true, this is not a finding.<br />
+<br />
+The RACF rules for the resources specify a default access of NONE.<br />
+<br />
+The RACF rules for the resources are restricted access to system programmers, auditors, and security personnel.<br />
+<br />
+All RACF rules are defined with UACC(NONE).</p><h2>Check Content Reference</h2><p>M</p><h2>Target Key</h2><p>4141</p></body></html>

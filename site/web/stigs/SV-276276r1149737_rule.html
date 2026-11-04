@@ -1,0 +1,45 @@
+<!doctype html><html lang="en"><head><meta charset="utf-8"><title>STIGQter: STIG Check Details: SV-276276r1149737_rule: Azure SQL Server Managed Instance must, for password-based authentication, require immediate selection of a new password upon account recovery.</title><link rel="icon" type="image/svg+xml" href="STIGQter.svg" /><script async src="https://www.googletagmanager.com/gtag/js?id=UA-31381839-2"></script><script src="include.js"></script><script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-4110907817782130" crossorigin="anonymous"></script></head><body><div><img src="STIGQter.svg" alt="STIGQter" style="height:1em;" /> <a href="https://www.stigqter.com/">STIGQter</a>: <a href="main.html">STIG Summary</a>: <a href="U_MS_Azure_SQL_MI_STIG_V1R1_Manual-xccdf.html">Microsoft Azure SQL Managed Instance Security Technical Implementation Guide Version: 1 Release: 1 Benchmark Date: 23 Sep 2025</a>:</div> <h1>Azure SQL Server Managed Instance must, for password-based authentication, require immediate selection of a new password upon account recovery.</h1><h2>DISA Rule</h2><p>SV-276276r1149737_rule</p><h2>Vulnerability Number</h2><p>V-276276</p><h2>Group Title</h2><p>SRG-APP-000855-DB-000240</p><h2>Rule Version</h2><p>MSQL-00-019500</p><h2>Severity</h2><p>CAT II</p><h2>CCI(s)</h2><ul><li>CCI-004063 - For password-based authentication, require immediate selection of a new password upon account recovery.</li></ul><h2>Weight</h2><p>10</p><h2>Fix Recommendation</h2><p>Create documentation to ensure administrators select &quot;User must change password at next login&quot; when a SQL login password is reset.<br />
+OR<br />
+Enable Entra-only Authentication. <br />
+<br />
+Refer to: https://learn.microsoft.com/en-us/azure/azure-sql/database/authentication-azure-ad-only-authentication-tutorial?view=azuresql&amp;tabs=azure-powershell</p><h2>Check Contents</h2><p>Determine whether Azure SQL Managed Instance is configured to use Entra-only authentication.  <br />
+ <br />
+Run this PowerShell command to determine whether Microsoft Entra-only authentication is enabled:<br />
+Get-AzSqlInstanceActiveDirectoryOnlyAuthentication -InstanceName &lt;myinstance&gt; -ResourceGroupName &lt;myresource&gt;<br />
+<br />
+If &quot;AzureADOnlyAuthentication&quot; value is &quot;True&quot;, this is not a finding.<br />
+<br />
+OR <br />
+ <br />
+In a query interface such as the SSMS Transact-SQL editor, run the statement:  <br />
+<br />
+SELECT CASE SERVERPROPERTY('IsExternalAuthenticationOnly')    <br />
+WHEN 1 THEN 'Entra-only Authentication'    <br />
+WHEN 0 THEN 'Entra and SQL Server Authentication'    <br />
+END as [Authentication Mode]  <br />
+<br />
+If &quot;Entra-only Authentication&quot; is returned, this is not a finding.<br />
+<br />
+Otherwise, verify documentation exists requiring administrators to select &quot;User must change password at next login&quot; when a SQL login password has been reset.<br />
+<br />
+If documentation does not exist requiring the selection of a new password upon administrator password reset, this is a finding.</p><h2>Vulnerability Number</h2><p>V-276276</p><h2>Documentable</h2><p>False</p><h2>Rule Version</h2><p>MSQL-00-019500</p><h2>Severity Override Guidance</h2><p>Determine whether Azure SQL Managed Instance is configured to use Entra-only authentication.  <br />
+ <br />
+Run this PowerShell command to determine whether Microsoft Entra-only authentication is enabled:<br />
+Get-AzSqlInstanceActiveDirectoryOnlyAuthentication -InstanceName &lt;myinstance&gt; -ResourceGroupName &lt;myresource&gt;<br />
+<br />
+If &quot;AzureADOnlyAuthentication&quot; value is &quot;True&quot;, this is not a finding.<br />
+<br />
+OR <br />
+ <br />
+In a query interface such as the SSMS Transact-SQL editor, run the statement:  <br />
+<br />
+SELECT CASE SERVERPROPERTY('IsExternalAuthenticationOnly')    <br />
+WHEN 1 THEN 'Entra-only Authentication'    <br />
+WHEN 0 THEN 'Entra and SQL Server Authentication'    <br />
+END as [Authentication Mode]  <br />
+<br />
+If &quot;Entra-only Authentication&quot; is returned, this is not a finding.<br />
+<br />
+Otherwise, verify documentation exists requiring administrators to select &quot;User must change password at next login&quot; when a SQL login password has been reset.<br />
+<br />
+If documentation does not exist requiring the selection of a new password upon administrator password reset, this is a finding.</p><h2>Check Content Reference</h2><p>M</p><h2>Target Key</h2><p>5711</p></body></html>

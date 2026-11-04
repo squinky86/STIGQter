@@ -1,0 +1,28 @@
+<!doctype html><html lang="en"><head><meta charset="utf-8"><title>STIGQter: STIG Check Details: SV-214610r382900_rule: The Juniper Networks SRX Series Gateway IDPS must provide audit record generation capability for detecting events based on implementation of policy filters, rules, and signatures.</title><link rel="icon" type="image/svg+xml" href="STIGQter.svg" /><script async src="https://www.googletagmanager.com/gtag/js?id=UA-31381839-2"></script><script src="include.js"></script><script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-4110907817782130" crossorigin="anonymous"></script></head><body><div><img src="STIGQter.svg" alt="STIGQter" style="height:1em;" /> <a href="https://www.stigqter.com/">STIGQter</a>: <a href="main.html">STIG Summary</a>: <a href="U_Juniper_SRX_SG_IDPS_STIG_V2R1_Manual-xccdf.html">Juniper SRX Services Gateway IDPS Security Technical Implementation Guide Version: 2 Release: 1 Benchmark Date: 24 Jul 2024</a>:</div> <h1>The Juniper Networks SRX Series Gateway IDPS must provide audit record generation capability for detecting events based on implementation of policy filters, rules, and signatures.</h1><h2>DISA Rule</h2><p>SV-214610r382900_rule</p><h2>Vulnerability Number</h2><p>V-214610</p><h2>Group Title</h2><p>SRG-NET-000113-IDPS-00013</p><h2>Rule Version</h2><p>JUSX-IP-000001</p><h2>Severity</h2><p>CAT II</p><h2>CCI(s)</h2><ul><li>CCI-000169 - Provide audit record generation capability for the event types the system is capable of auditing as defined in AU-2 a. on organization-defined information system components.</li></ul><h2>Weight</h2><p>10</p><h2>Fix Recommendation</h2><p>A Routing Engine configuration option allows the enabling and disabling of IDP alarms.<br />
+<br />
+By default, the IDP attack event triggers the current logs without raising any alarms. When the option is set and the system is configured appropriately, the IDP logs on the Packet Forwarding Engine will be forwarded to Routing Engine, which then parses the IDP attack logs and raises IDP alarms as necessary.<br />
+<br />
+To enable an IDP alarm, use the set security alarms potential-violation idp command.<br />
+<br />
+To turn on logging, you must first turn on notification to log attacks:<br />
+set security idp idp-policy recommended rulebase-ips rule-1 then notification log-attacks<br />
+<br />
+Configure Syslog (adding to the firewall stanza).<br />
+syslog {<br />
+ file IDP_Log {<br />
+ any any;<br />
+ match RT_IDP;</p><h2>Check Contents</h2><p>To verify that the configuration is working properly, use the following command:<br />
+<br />
+[edit]<br />
+show security alarms <br />
+<br />
+View the configured alarms to verify at least one option for potential-violation is set to “idp”.<br />
+<br />
+If a potential-violation alarm is not defined for “idp”, this is a finding.</p><h2>Vulnerability Number</h2><p>V-214610</p><h2>Documentable</h2><p>False</p><h2>Rule Version</h2><p>JUSX-IP-000001</p><h2>Severity Override Guidance</h2><p>To verify that the configuration is working properly, use the following command:<br />
+<br />
+[edit]<br />
+show security alarms <br />
+<br />
+View the configured alarms to verify at least one option for potential-violation is set to “idp”.<br />
+<br />
+If a potential-violation alarm is not defined for “idp”, this is a finding.</p><h2>Check Content Reference</h2><p>M</p><h2>Target Key</h2><p>4006</p></body></html>

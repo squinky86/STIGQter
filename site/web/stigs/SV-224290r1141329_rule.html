@@ -1,0 +1,65 @@
+<!doctype html><html lang="en"><head><meta charset="utf-8"><title>STIGQter: STIG Check Details: SV-224290r1141329_rule: Compuware Abend-AID installation datasets will be properly protected.</title><link rel="icon" type="image/svg+xml" href="STIGQter.svg" /><script async src="https://www.googletagmanager.com/gtag/js?id=UA-31381839-2"></script><script src="include.js"></script><script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-4110907817782130" crossorigin="anonymous"></script></head><body><div><img src="STIGQter.svg" alt="STIGQter" style="height:1em;" /> <a href="https://www.stigqter.com/">STIGQter</a>: <a href="main.html">STIG Summary</a>: <a href="U_zOS_Compuware_Abend-AID_for_ACF2_STIG_V7R2_Manual-xccdf.html">z/OS Compuware Abend-AID for ACF2 Security Technical Implementation Guide Version: 7 Release: 2 Benchmark Date: 01 Oct 2025</a>:</div> <h1>Compuware Abend-AID installation datasets will be properly protected.</h1><h2>DISA Rule</h2><p>SV-224290r1141329_rule</p><h2>Vulnerability Number</h2><p>V-224290</p><h2>Group Title</h2><p>SRG-OS-000080</p><h2>Rule Version</h2><p>ZAIDA000</p><h2>Severity</h2><p>CAT II</p><h2>CCI(s)</h2><ul><li>CCI-001499 - Limit privileges to change software resident within software libraries.</li><li>CCI-002234 - Log the execution of privileged functions.</li></ul><h2>Weight</h2><p>10</p><h2>Fix Recommendation</h2><p>The ISSO will ensure that WRITE and/or greater access to Compuware Abend-AID installation datasets is limited to systems programmers only, and all WRITE and/or greater access is logged. READ access can be given to all authorized users.<br />
+<br />
+The installing systems programmer will identify and document the product datasets, categorize them according to who will have WRITE and/or greater access, and if required, ensure that all WRITE and/or greater access is logged. The installing systems programmer will identify if any additional groups have WRITE and/or greater access for specific datasets, and once documented will work with the ISSO to ensure that they are properly  restricted to the ACP (Access Control Program) active on the system.<br />
+<br />
+Datasets to be protected will be:<br />
+SYS2.ABENDAID<br />
+SYS2A.ABENDAID<br />
+SYS3A.ABENDAID<br />
+<br />
+The following commands are provided as a sample for implementing dataset controls:<br />
+<br />
+$KEY(S2A)<br />
+$PREFIX(SYS2)<br />
+ABENDAID.V-.- UID(syspaudt) R(A) W(L) A(L) E(A)<br />
+ABENDAID.V-.- UID(authorized users/*) R(A) E(A)<br />
+<br />
+SET RULE<br />
+COMPILE 'ACF2.MVA.DSNRULES(S2A)' STORE<br />
+<br />
+$KEY(SYS2A0A)<br />
+$MODE(ABORT)<br />
+$PREFIX(SYS2A)<br />
+ABENDAID.V-.- UID(syspaudt) R(A) W(L) A(L) E(A)<br />
+ABENDAID.V-.- UID(authorized users/*) R(A) E(A)<br />
+<br />
+SET RULE<br />
+COMPILE 'ACF2.MVA.DSNRULES(SYS2A0A)' STORE<br />
+<br />
+$KEY(SYS3A0A)<br />
+$PREFIX(SYS3A)<br />
+ABENDAID.V-.- UID(syspaudt) R(A) W(L) A(L) E(A)<br />
+ABENDAID.V-.- UID(authorized users/*) R(A) E(A)<br />
+<br />
+SET RULE<br />
+COMPILE 'ACF2.MVA.DSNRULES(SYS3A0A)' STORE</p><h2>Check Contents</h2><p>Refer to the following report produced by the dataset and Resource Data Collection:<br />
+<br />
+- SENSITVE.RPT(AIDRPT).<br />
+<br />
+Automated Analysis<br />
+Refer to the following report produced by the dataset and Resource Data Collection:<br />
+<br />
+- PDI(ZAID0000).<br />
+<br />
+Verify that the accesses to the Compuware Abend-AID installation datasets are properly restricted. If the following guidance is true, this is not a finding.<br />
+<br />
+The ACF2 dataset rules for the datasets restrict READ access to all authorized users.<br />
+<br />
+The ACF2 dataset rules for the datasets restrict WRITE and/or greater access to systems programming personnel.<br />
+<br />
+The ACF2 dataset rules for the datasets specify that all (i.e., failures and successes) WRITE and/or greater access is logged.</p><h2>Vulnerability Number</h2><p>V-224290</p><h2>Documentable</h2><p>False</p><h2>Rule Version</h2><p>ZAIDA000</p><h2>Severity Override Guidance</h2><p>Refer to the following report produced by the dataset and Resource Data Collection:<br />
+<br />
+- SENSITVE.RPT(AIDRPT).<br />
+<br />
+Automated Analysis<br />
+Refer to the following report produced by the dataset and Resource Data Collection:<br />
+<br />
+- PDI(ZAID0000).<br />
+<br />
+Verify that the accesses to the Compuware Abend-AID installation datasets are properly restricted. If the following guidance is true, this is not a finding.<br />
+<br />
+The ACF2 dataset rules for the datasets restrict READ access to all authorized users.<br />
+<br />
+The ACF2 dataset rules for the datasets restrict WRITE and/or greater access to systems programming personnel.<br />
+<br />
+The ACF2 dataset rules for the datasets specify that all (i.e., failures and successes) WRITE and/or greater access is logged.</p><h2>Check Content Reference</h2><p>M</p><h2>Target Key</h2><p>4118</p></body></html>

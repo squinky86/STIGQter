@@ -1,0 +1,35 @@
+<!doctype html><html lang="en"><head><meta charset="utf-8"><title>STIGQter: STIG Check Details: SV-255312r1112456_rule: The Azure SQL Database and associated applications, when making use of dynamic code execution, must scan input data for invalid values that may indicate a code injection attack.</title><link rel="icon" type="image/svg+xml" href="STIGQter.svg" /><script async src="https://www.googletagmanager.com/gtag/js?id=UA-31381839-2"></script><script src="include.js"></script><script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-4110907817782130" crossorigin="anonymous"></script></head><body><div><img src="STIGQter.svg" alt="STIGQter" style="height:1em;" /> <a href="https://www.stigqter.com/">STIGQter</a>: <a href="main.html">STIG Summary</a>: <a href="U_MS_Azure_SQL_DB_STIG_V2R3_Manual-xccdf.html">Microsoft Azure SQL Database Security Technical Implementation Guide Version: 2 Release: 3 Benchmark Date: 02 Jul 2025</a>:</div> <h1>The Azure SQL Database and associated applications, when making use of dynamic code execution, must scan input data for invalid values that may indicate a code injection attack.</h1><h2>DISA Rule</h2><p>SV-255312r1112456_rule</p><h2>Vulnerability Number</h2><p>V-255312</p><h2>Group Title</h2><p>SRG-APP-000251-DB-000392</p><h2>Rule Version</h2><p>ASQL-00-002300</p><h2>Severity</h2><p>CAT II</p><h2>CCI(s)</h2><ul><li>CCI-001310 - Checks the validity of organization-defined information inputs to the system.</li></ul><h2>Weight</h2><p>10</p><h2>Fix Recommendation</h2><p>Where dynamic code execution is used, modify the code to implement protections against code injection.</p><h2>Check Contents</h2><p>Review the system documentation to obtain a listing of stored procedures and functions that utilize dynamic code execution. Execute the following query:<br />
+<br />
+DECLARE @tblDynamicQuery TABLE (ID INT identity(1,1), ProcToExecuteDynSQL VARCHAR(500))<br />
+INSERT INTO @tblDynamicQuery(ProcToExecuteDynSQL) values('EXEC[ (]@')<br />
+INSERT INTO @tblDynamicQuery(ProcToExecuteDynSQL) values('EXECUTE[ (]@')<br />
+INSERT INTO @tblDynamicQuery(ProcToExecuteDynSQL) values('SP_EXECUTESQL[ (]@')<br />
+<br />
+SELECT <br />
+   QUOTENAME(DB_Name()) DB_Name,<br />
+   QUOTENAME(SCHEMA_NAME([schema_id])) + '.' + QUOTENAME(name) Name, QUOTENAME(type_desc)  ObjectType<br />
+FROM sys.objects o<br />
+WHERE o.is_ms_shipped = 0 and <br />
+o.object_id IN (<br />
+   SELECT m.object_id<br />
+   FROM sys.sql_modules m <br />
+   JOIN @tblDynamicQuery dsql ON REPLACE(REPLACE(REPLACE(m.definition,CHAR(32),'()'),')(',''),'()',CHAR(32)) like '%' + dsql.ProcToExecuteDynSQL + '%')<br />
+<br />
+If any procedures or functions are returned that are not documented, this is a finding.</p><h2>Vulnerability Number</h2><p>V-255312</p><h2>Documentable</h2><p>False</p><h2>Rule Version</h2><p>ASQL-00-002300</p><h2>Severity Override Guidance</h2><p>Review the system documentation to obtain a listing of stored procedures and functions that utilize dynamic code execution. Execute the following query:<br />
+<br />
+DECLARE @tblDynamicQuery TABLE (ID INT identity(1,1), ProcToExecuteDynSQL VARCHAR(500))<br />
+INSERT INTO @tblDynamicQuery(ProcToExecuteDynSQL) values('EXEC[ (]@')<br />
+INSERT INTO @tblDynamicQuery(ProcToExecuteDynSQL) values('EXECUTE[ (]@')<br />
+INSERT INTO @tblDynamicQuery(ProcToExecuteDynSQL) values('SP_EXECUTESQL[ (]@')<br />
+<br />
+SELECT <br />
+   QUOTENAME(DB_Name()) DB_Name,<br />
+   QUOTENAME(SCHEMA_NAME([schema_id])) + '.' + QUOTENAME(name) Name, QUOTENAME(type_desc)  ObjectType<br />
+FROM sys.objects o<br />
+WHERE o.is_ms_shipped = 0 and <br />
+o.object_id IN (<br />
+   SELECT m.object_id<br />
+   FROM sys.sql_modules m <br />
+   JOIN @tblDynamicQuery dsql ON REPLACE(REPLACE(REPLACE(m.definition,CHAR(32),'()'),')(',''),'()',CHAR(32)) like '%' + dsql.ProcToExecuteDynSQL + '%')<br />
+<br />
+If any procedures or functions are returned that are not documented, this is a finding.</p><h2>Check Content Reference</h2><p>M</p><h2>Target Key</h2><p>5500</p></body></html>

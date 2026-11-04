@@ -1,0 +1,126 @@
+<!doctype html><html lang="en"><head><meta charset="utf-8"><title>STIGQter: STIG Check Details: SV-253668r1137654_rule: MariaDB must enforce approved authorizations for logical access to information and system resources in accordance with applicable access control policies.</title><link rel="icon" type="image/svg+xml" href="STIGQter.svg" /><script async src="https://www.googletagmanager.com/gtag/js?id=UA-31381839-2"></script><script src="include.js"></script><script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-4110907817782130" crossorigin="anonymous"></script></head><body><div><img src="STIGQter.svg" alt="STIGQter" style="height:1em;" /> <a href="https://www.stigqter.com/">STIGQter</a>: <a href="main.html">STIG Summary</a>: <a href="U_MariaDB_Enterprise_10-x_STIG_V2R5_Manual-xccdf.html">MariaDB Enterprise 10.x Security Technical Implementation Guide Version: 2 Release: 5 Benchmark Date: 01 Apr 2026</a>:</div> <h1>MariaDB must enforce approved authorizations for logical access to information and system resources in accordance with applicable access control policies.</h1><h2>DISA Rule</h2><p>SV-253668r1137654_rule</p><h2>Vulnerability Number</h2><p>V-253668</p><h2>Group Title</h2><p>SRG-APP-000033-DB-000084</p><h2>Rule Version</h2><p>MADB-10-000300</p><h2>Severity</h2><p>CAT I</p><h2>CCI(s)</h2><ul><li>CCI-000213 - Enforce approved authorizations for logical access to information and system resources in accordance with applicable access control policies.</li></ul><h2>Weight</h2><p>10</p><h2>Fix Recommendation</h2><p>Create and/or maintain documentation on the appropriate permissions on database objects for each kind (group role) of user.<br />
+<br />
+Implement these permissions in the database and remove any permissions that exceed those documented.<br />
+ <br />
+The following are examples of how to use role privileges in MariaDB to enforce access controls. Run these as the database administrator. For a complete list of privileges, refer to the official documentation: https://mariadb.com/kb/en/grant/ <br />
+<br />
+#### Roles Example 1<br />
+The following example demonstrates how to create an admin role with SHUTDOWN privileges.<br />
+<br />
+As the database administrator, run the following SQL:<br />
+<br />
+MariaDB&gt; CREATE ROLE admin;<br />
+MariaDB&gt; GRANT SHUTDOWN ON *.* TO admin;<br />
+<br />
+#### Roles Example 2<br />
+The following example demonstrates how to create a user make the user a member of the admin role.<br />
+<br />
+As the database administrator, run the following SQL:<br />
+<br />
+MariaDB&gt; CREATE USER 'admin_user'@'host' IDENTIFIED VIA PAM;<br />
+MariaDB&gt; GRANT admin TO 'admin_user'@'%';<br />
+<br />
+#### Roles Example 3<br />
+The following demonstrates how to revoke privileges from a role using REVOKE.<br />
+<br />
+As the database administrator, run the following SQL:<br />
+<br />
+MariaDB&gt; REVOKE admin FROM 'admin_user'@'host';<br />
+<br />
+#### Roles Example 4<br />
+The following demonstrates how to modify privileges for a role using GRANT.<br />
+<br />
+As the database administrator, run the following SQL:<br />
+<br />
+MariaDB&gt; GRANT PROCESS ON *.* TO admin;<br />
+<br />
+The following are examples of how to use grant privileges in MariaDB to enforce access controls on objects.<br />
+<br />
+#### Grant Example 1<br />
+The following example demonstrates how to grant INSERT on a table to a role.<br />
+<br />
+As the database administrator, run the following SQL:<br />
+<br />
+MariaDB&gt; GRANT INSERT ON test.t1 TO admin;<br />
+<br />
+#### Grant Example 2<br />
+The following example demonstrates how to grant ALL PRIVILEGES on a table to a role.<br />
+<br />
+As the database administrator, run the following SQL:<br />
+<br />
+MariaDB&gt; GRANT ALL PRIVILEGES ON test.t1 TO admin;<br />
+<br />
+#### Grant Example 3<br />
+The following example demonstrates how to grant a role to a role.<br />
+<br />
+As the database administrator, run the following SQL:<br />
+<br />
+MariaDB&gt; CREATE ROLE admin_master;<br />
+MariaDB&gt; GRANT admin TO admin_master;<br />
+<br />
+#### Revoke Example 1<br />
+The following example demonstrates how to revoke access from a role.<br />
+<br />
+As the database administrator, run the following SQL:<br />
+<br />
+MariaDB&gt; REVOKE PROCESS ON *.* FROM admin;<br />
+<br />
+To change authentication requirements for the database, as the OS administrator, review the configuration file(s) in /etc/pam.conf or /etc/pam.d directory. <br />
+<br />
+After changes to the configuration file(s) /etc/pam.conf or /etc/pam.d, reload the server:<br />
+# SYSTEMD SERVER ONLY<br />
+$ sudo systemctl reload mariadb<br />
+# INITD SERVER ONLY<br />
+$ sudo service mariadb reload</p><h2>Check Contents</h2><p>From the system security plan or equivalent documentation, determine the appropriate permissions on database objects for each kind (group role) of user. If this documentation is missing, this is a finding.<br />
+<br />
+As the database administrator, check the privileges of all users and roles in the database.<br />
+<br />
+Find all users:<br />
+MariaDB&gt; SELECT user, host FROM mysql.user WHERE is_role = 'N';<br />
+<br />
+Find all roles:<br />
+MariaDB&gt; SELECT user FROM mysql.user WHERE is_role = 'Y';<br />
+<br />
+For each user found, check grants:<br />
+MariaDB&gt; SHOW GRANTS FOR 'username'@'host';<br />
+<br />
+For each role found, check grants: <br />
+MariaDB&gt; SHOW GRANTS FOR 'rolename';<br />
+<br />
+Review all users and roles and their associated privileges. If the privileges of any users and/or roles exceed those documented, this is a finding.<br />
+<br />
+As the database administrator, check the configured authentication settings:<br />
+MariaDB&gt; SHOW PLUGINS;<br />
+<br />
+To find users not using PAM plugin for authentication: <br />
+MariaDB&gt; SELECT user, host, plugin FROM mysql.user WHERE plugin != 'pam';<br />
+<br />
+If any users are returned, this is a finding. <br />
+<br />
+Review all entries and their associated authentication methods. If any entries do not have their documented authentication requirements, this is a finding.</p><h2>Vulnerability Number</h2><p>V-253668</p><h2>Documentable</h2><p>False</p><h2>Rule Version</h2><p>MADB-10-000300</p><h2>Severity Override Guidance</h2><p>From the system security plan or equivalent documentation, determine the appropriate permissions on database objects for each kind (group role) of user. If this documentation is missing, this is a finding.<br />
+<br />
+As the database administrator, check the privileges of all users and roles in the database.<br />
+<br />
+Find all users:<br />
+MariaDB&gt; SELECT user, host FROM mysql.user WHERE is_role = 'N';<br />
+<br />
+Find all roles:<br />
+MariaDB&gt; SELECT user FROM mysql.user WHERE is_role = 'Y';<br />
+<br />
+For each user found, check grants:<br />
+MariaDB&gt; SHOW GRANTS FOR 'username'@'host';<br />
+<br />
+For each role found, check grants: <br />
+MariaDB&gt; SHOW GRANTS FOR 'rolename';<br />
+<br />
+Review all users and roles and their associated privileges. If the privileges of any users and/or roles exceed those documented, this is a finding.<br />
+<br />
+As the database administrator, check the configured authentication settings:<br />
+MariaDB&gt; SHOW PLUGINS;<br />
+<br />
+To find users not using PAM plugin for authentication: <br />
+MariaDB&gt; SELECT user, host, plugin FROM mysql.user WHERE plugin != 'pam';<br />
+<br />
+If any users are returned, this is a finding. <br />
+<br />
+Review all entries and their associated authentication methods. If any entries do not have their documented authentication requirements, this is a finding.</p><h2>Check Content Reference</h2><p>M</p><h2>Target Key</h2><p>5475</p></body></html>

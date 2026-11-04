@@ -1,0 +1,51 @@
+<!doctype html><html lang="en"><head><meta charset="utf-8"><title>STIGQter: STIG Check Details: SV-254053r950991_rule: The Juniper perimeter router must be configured to drop fragmented IPv6 packets where the first fragment does not include the entire IPv6 header chain.</title><link rel="icon" type="image/svg+xml" href="STIGQter.svg" /><script async src="https://www.googletagmanager.com/gtag/js?id=UA-31381839-2"></script><script src="include.js"></script><script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-4110907817782130" crossorigin="anonymous"></script></head><body><div><img src="STIGQter.svg" alt="STIGQter" style="height:1em;" /> <a href="https://www.stigqter.com/">STIGQter</a>: <a href="main.html">STIG Summary</a>: <a href="U_Juniper_EX_Switches_RTR_STIG_V2R1_Manual-xccdf.html">Juniper EX Series Switches Router Security Technical Implementation Guide Version: 2 Release: 1 Benchmark Date: 24 Jul 2024</a>:</div> <h1>The Juniper perimeter router must be configured to drop fragmented IPv6 packets where the first fragment does not include the entire IPv6 header chain.</h1><h2>DISA Rule</h2><p>SV-254053r950991_rule</p><h2>Vulnerability Number</h2><p>V-254053</p><h2>Group Title</h2><p>SRG-NET-000364-RTR-000200</p><h2>Rule Version</h2><p>JUEX-RT-000810</p><h2>Severity</h2><p>CAT II</p><h2>CCI(s)</h2><ul><li>CCI-002403 - Only allow incoming communications from organization-defined authorized sources routed to organization-defined authorized destinations.</li></ul><h2>Weight</h2><p>10</p><h2>Fix Recommendation</h2><p>Configure the router to drop first-fragment IPv6 packets without the entire header chain.<br />
+<br />
+There is no configurable CLI option to prevent EX devices from dropping nonconformant fragmented IPv6 packets destined to the device.<br />
+<br />
+Configure the router to drop fragmented transit IPv6 packets.<br />
+<br />
+set firewall family inet6 filter &lt;name&gt; term &lt;name&gt; from next-header fragment<br />
+set firewall family inet6 filter &lt;name&gt; term &lt;name&gt; then syslog<br />
+set firewall family inet6 filter &lt;name&gt; term &lt;name&gt; then discard</p><h2>Check Contents</h2><p>This requirement is not applicable for the DODIN Backbone. <br />
+<br />
+There is no check for dropping RFC 7112 nonconformant fragmented IPv6 packets because Juniper EX switches drop these packets without offering or requiring a configurable option in the CLI.<br />
+<br />
+Review the router configuration to determine if it is configured to drop fragmented transit IPv6 traffic.<br />
+<br />
+[edit firewall family inet6]<br />
+filter &lt;filter name&gt; {<br />
+    term &lt;name&gt; {<br />
+        from {<br />
+            next-header fragment;<br />
+        }<br />
+        then {<br />
+            syslog;<br />
+            discard;<br />
+        }<br />
+    }<br />
+}<br />
+<br />
+Note: Some platforms also support &quot;is-fragment&quot; or &quot;fragment-flags is-fragment&quot; in addition to &quot;next-header fragment&quot; as shown in the example.<br />
+<br />
+If the router is not configured to drop first-fragment IPv6 packets without the entire header chain, this is a finding.</p><h2>Vulnerability Number</h2><p>V-254053</p><h2>Documentable</h2><p>False</p><h2>Rule Version</h2><p>JUEX-RT-000810</p><h2>Severity Override Guidance</h2><p>This requirement is not applicable for the DODIN Backbone. <br />
+<br />
+There is no check for dropping RFC 7112 nonconformant fragmented IPv6 packets because Juniper EX switches drop these packets without offering or requiring a configurable option in the CLI.<br />
+<br />
+Review the router configuration to determine if it is configured to drop fragmented transit IPv6 traffic.<br />
+<br />
+[edit firewall family inet6]<br />
+filter &lt;filter name&gt; {<br />
+    term &lt;name&gt; {<br />
+        from {<br />
+            next-header fragment;<br />
+        }<br />
+        then {<br />
+            syslog;<br />
+            discard;<br />
+        }<br />
+    }<br />
+}<br />
+<br />
+Note: Some platforms also support &quot;is-fragment&quot; or &quot;fragment-flags is-fragment&quot; in addition to &quot;next-header fragment&quot; as shown in the example.<br />
+<br />
+If the router is not configured to drop first-fragment IPv6 packets without the entire header chain, this is a finding.</p><h2>Check Content Reference</h2><p>M</p><h2>Target Key</h2><p>5479</p></body></html>

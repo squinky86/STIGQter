@@ -1,0 +1,31 @@
+<!doctype html><html lang="en"><head><meta charset="utf-8"><title>STIGQter: STIG Check Details: SV-215220r1009538_rule: AIX must require the change of at least 50% of the total number of characters when passwords are changed.</title><link rel="icon" type="image/svg+xml" href="STIGQter.svg" /><script async src="https://www.googletagmanager.com/gtag/js?id=UA-31381839-2"></script><script src="include.js"></script><script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-4110907817782130" crossorigin="anonymous"></script></head><body><div><img src="STIGQter.svg" alt="STIGQter" style="height:1em;" /> <a href="https://www.stigqter.com/">STIGQter</a>: <a href="main.html">STIG Summary</a>: <a href="U_IBM_AIX_7-x_STIG_V3R3_Manual-xccdf.html">IBM AIX 7.x Security Technical Implementation Guide Version: 3 Release: 3 Benchmark Date: 01 Jul 2026</a>:</div> <h1>AIX must require the change of at least 50% of the total number of characters when passwords are changed.</h1><h2>DISA Rule</h2><p>SV-215220r1009538_rule</p><h2>Vulnerability Number</h2><p>V-215220</p><h2>Group Title</h2><p>SRG-OS-000072-GPOS-00040</p><h2>Rule Version</h2><p>AIX7-00-001123</p><h2>Severity</h2><p>CAT I</p><h2>CCI(s)</h2><ul><li>CCI-004066 - For password-based authentication, enforce organization-defined composition and complexity rules.</li></ul><h2>Weight</h2><p>10</p><h2>Fix Recommendation</h2><p>From the command prompt, run the following command to set &quot;mindiff=8&quot; (assume that the password is at least 15-character long) for the default stanza in &quot;/etc/security/user&quot;:<br />
+# chsec -f /etc/security/user -s default -a mindiff=8<br />
+<br />
+For each user who has &quot;mindiff&quot; value less than &quot;8&quot;, set its &quot;mindiff&quot; value to &quot;8&quot; by running the following command from command prompt:<br />
+# chsec -f /etc/security/user -s [user_name] -a mindiff=8</p><h2>Check Contents</h2><p>From the command prompt, run the following command to check the system default &quot;mindiff&quot; attribute value:<br />
+# lssec -f /etc/security/user -s default -a mindiff<br />
+default mindiff=8<br />
+<br />
+If the default &quot;mindiff&quot; value is not set, or its value is less than &quot;8&quot;, this is a finding.<br />
+<br />
+From the command prompt, run the following command to check &quot;mindiff&quot; attribute value for all accounts:<br />
+# lsuser -a mindiff ALL<br />
+root  mindiff=9<br />
+user1 mindiff=8<br />
+user2 mindiff=8<br />
+user3 mindiff=10<br />
+<br />
+If any user's &quot;mindiff&quot; value is less than &quot;8&quot;, this is a finding.</p><h2>Vulnerability Number</h2><p>V-215220</p><h2>Documentable</h2><p>False</p><h2>Rule Version</h2><p>AIX7-00-001123</p><h2>Severity Override Guidance</h2><p>From the command prompt, run the following command to check the system default &quot;mindiff&quot; attribute value:<br />
+# lssec -f /etc/security/user -s default -a mindiff<br />
+default mindiff=8<br />
+<br />
+If the default &quot;mindiff&quot; value is not set, or its value is less than &quot;8&quot;, this is a finding.<br />
+<br />
+From the command prompt, run the following command to check &quot;mindiff&quot; attribute value for all accounts:<br />
+# lsuser -a mindiff ALL<br />
+root  mindiff=9<br />
+user1 mindiff=8<br />
+user2 mindiff=8<br />
+user3 mindiff=10<br />
+<br />
+If any user's &quot;mindiff&quot; value is less than &quot;8&quot;, this is a finding.</p><h2>Check Content Reference</h2><p>M</p><h2>Target Key</h2><p>4012</p></body></html>

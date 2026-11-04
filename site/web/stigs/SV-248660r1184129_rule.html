@@ -1,0 +1,47 @@
+<!doctype html><html lang="en"><head><meta charset="utf-8"><title>STIGQter: STIG Check Details: SV-248660r1184129_rule: OL 8 systems below version 8.2 must prevent system messages from being presented when three unsuccessful logon attempts occur.</title><link rel="icon" type="image/svg+xml" href="STIGQter.svg" /><script async src="https://www.googletagmanager.com/gtag/js?id=UA-31381839-2"></script><script src="include.js"></script><script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-4110907817782130" crossorigin="anonymous"></script></head><body><div><img src="STIGQter.svg" alt="STIGQter" style="height:1em;" /> <a href="https://www.stigqter.com/">STIGQter</a>: <a href="main.html">STIG Summary</a>: <a href="U_Oracle_Linux_8_STIG_V2R9_Manual-xccdf.html">Oracle Linux 8 Security Technical Implementation Guide Version: 2 Release: 9 Benchmark Date: 01 Jul 2026</a>:</div> <h1>OL 8 systems below version 8.2 must prevent system messages from being presented when three unsuccessful logon attempts occur.</h1><h2>DISA Rule</h2><p>SV-248660r1184129_rule</p><h2>Vulnerability Number</h2><p>V-248660</p><h2>Group Title</h2><p>SRG-OS-000021-GPOS-00005</p><h2>Rule Version</h2><p>OL08-00-020018</p><h2>Severity</h2><p>CAT II</p><h2>CCI(s)</h2><ul><li>CCI-000044 - Enforce the organization-defined limit of consecutive invalid logon attempts by a user during the organization-defined time period.</li><li>CCI-002238 - Automatically lock the account or node for either an organization-defined time period, until the locked account or node is released by an administrator, or delays the next logon prompt according to the organization-defined delay algorithm when the maximum number of unsuccessful logon attempts is exceeded.</li></ul><h2>Weight</h2><p>10</p><h2>Fix Recommendation</h2><p>Configure the operating system to prevent informative messages from being presented at logon attempts. <br />
+ <br />
+Add/modify the appropriate sections of the &quot;/etc/pam.d/system-auth&quot; and &quot;/etc/pam.d/password-auth&quot; files to match the following lines: <br />
+ <br />
+auth required pam_faillock.so preauth dir=/var/log/faillock silent audit deny=3 even_deny_root fail_interval=900 unlock_time=0 <br />
+auth required pam_faillock.so authfail dir=/var/log/faillock unlock_time=0 <br />
+account required pam_faillock.so <br />
+ <br />
+The &quot;sssd&quot; service must be restarted for the changes to take effect. To restart the &quot;sssd&quot; service, run the following command: <br />
+ <br />
+$ sudo systemctl restart sssd.service</p><h2>Check Contents</h2><p>Verify the system prevents informative messages from being presented to the user pertaining to logon information with the following commands. <br />
+ <br />
+Note: This check applies to OL versions 8.0 and 8.1. If the system is OL version 8.2 or newer, this check is not applicable. <br />
+ <br />
+$ sudo grep pam_faillock.so /etc/pam.d/password-auth <br />
+ <br />
+auth required pam_faillock.so preauth dir=/var/log/faillock silent audit deny=3 even_deny_root fail_interval=900 unlock_time=0 <br />
+auth required pam_faillock.so authfail dir=/var/log/faillock unlock_time=0 <br />
+account required pam_faillock.so <br />
+ <br />
+If the &quot;silent&quot; option is missing from the &quot;preauth&quot; line with the &quot;pam_faillock.so&quot; module, this is a finding. <br />
+ <br />
+$ sudo grep pam_faillock.so /etc/pam.d/system-auth <br />
+ <br />
+auth required pam_faillock.so preauth dir=/var/log/faillock silent audit deny=3 even_deny_root fail_interval=900 unlock_time=0 <br />
+auth required pam_faillock.so authfail dir=/var/log/faillock unlock_time=0 <br />
+account required pam_faillock.so <br />
+ <br />
+If the &quot;silent&quot; option is missing from the &quot;preauth&quot; line with the &quot;pam_faillock.so&quot; module, this is a finding.</p><h2>Vulnerability Number</h2><p>V-248660</p><h2>Documentable</h2><p>False</p><h2>Rule Version</h2><p>OL08-00-020018</p><h2>Severity Override Guidance</h2><p>Verify the system prevents informative messages from being presented to the user pertaining to logon information with the following commands. <br />
+ <br />
+Note: This check applies to OL versions 8.0 and 8.1. If the system is OL version 8.2 or newer, this check is not applicable. <br />
+ <br />
+$ sudo grep pam_faillock.so /etc/pam.d/password-auth <br />
+ <br />
+auth required pam_faillock.so preauth dir=/var/log/faillock silent audit deny=3 even_deny_root fail_interval=900 unlock_time=0 <br />
+auth required pam_faillock.so authfail dir=/var/log/faillock unlock_time=0 <br />
+account required pam_faillock.so <br />
+ <br />
+If the &quot;silent&quot; option is missing from the &quot;preauth&quot; line with the &quot;pam_faillock.so&quot; module, this is a finding. <br />
+ <br />
+$ sudo grep pam_faillock.so /etc/pam.d/system-auth <br />
+ <br />
+auth required pam_faillock.so preauth dir=/var/log/faillock silent audit deny=3 even_deny_root fail_interval=900 unlock_time=0 <br />
+auth required pam_faillock.so authfail dir=/var/log/faillock unlock_time=0 <br />
+account required pam_faillock.so <br />
+ <br />
+If the &quot;silent&quot; option is missing from the &quot;preauth&quot; line with the &quot;pam_faillock.so&quot; module, this is a finding.</p><h2>Check Content Reference</h2><p>M</p><h2>Target Key</h2><p>5416</p></body></html>

@@ -1,0 +1,38 @@
+<!doctype html><html lang="en"><head><meta charset="utf-8"><title>STIGQter: STIG Check Details: SV-259592r961095_rule: Exchange queue database must reside on a dedicated partition.</title><link rel="icon" type="image/svg+xml" href="STIGQter.svg" /><script async src="https://www.googletagmanager.com/gtag/js?id=UA-31381839-2"></script><script src="include.js"></script><script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-4110907817782130" crossorigin="anonymous"></script></head><body><div><img src="STIGQter.svg" alt="STIGQter" style="height:1em;" /> <a href="https://www.stigqter.com/">STIGQter</a>: <a href="main.html">STIG Summary</a>: <a href="U_MS_Exchange_2019_Edge_Server_STIG_V2R2_Manual-xccdf.html">Microsoft Exchange 2019 Edge Server Security Technical Implementation Guide Version: 2 Release: 2 Benchmark Date: 30 Jan 2025</a>:</div> <h1>Exchange queue database must reside on a dedicated partition.</h1><h2>DISA Rule</h2><p>SV-259592r961095_rule</p><h2>Vulnerability Number</h2><p>V-259592</p><h2>Group Title</h2><p>SRG-APP-000211</p><h2>Rule Version</h2><p>EX19-ED-000094</p><h2>Severity</h2><p>CAT II</p><h2>CCI(s)</h2><ul><li>CCI-001082 - Separate user functionality, including user interface services, from system management functionality.</li></ul><h2>Weight</h2><p>10</p><h2>Fix Recommendation</h2><p>It is recommended to follow the instructions found in the following documentation:<br />
+https://learn.microsoft.com/en-us/exchange/mail-flow/queues/relocate-queue-database?view=exchserver-2019<br />
+<br />
+Set aside time for maintenance before correcting the issue, as this will affect mail flow through the Edge role on that server.<br />
+<br />
+Open an Exchange Management Shell and use the automated script (shipped with Exchange) to move the queue database and its existing files to the new destination.<br />
+<br />
+The following parameters must be answered to successfully complete the move:<br />
+<br />
+-queueDatabasePath #New destination for the Queue Database. If destination does not exist, the script will create it with the appropriate permissions.<br />
+-queueDatabaseLoggingPath #New destination for the Queue Database Logs. If destination does not exist, the script will create it with the appropriate permissions.<br />
+-ipFilterDatabasePath #New destination for the IP filtering Database. If the destination does not exist, the script will create it with the appropriate permissions.<br />
+-ipFilterDatabaseLoggingPath #New destination for the IP filtering Database Logs. If the destination does not exist, the script will create it with the appropriate permissions.<br />
+-temporaryStorage #This will be the path that the script moves the old version of the EdgeTransport.exe.config. The new version will have the updated path.<br />
+<br />
+Note: Always back up the configuration file as CUs will overwrite any added custom configuration.</p><h2>Check Contents</h2><p>Open the Exchange Management Shell and run the following command:<br />
+<br />
+Get-Content $exbin\EdgeTransport.exe.config |Select-String &quot;QueueDatabasePath&quot; -SimpleMatch<br />
+<br />
+Example Output:<br />
+<br />
+&lt;add key=&quot;QueueDatabasePath&quot; value=&quot;F:\Program Files\Microsoft\Exchange<br />
+Server\V15\TransportRoles\data\Queue&quot; /&gt;<br />
+<br />
+If the path of the Queue Database is in the same volume as the installation of Exchange, this is a finding.<br />
+<br />
+If the path of the Queue Database is on the same volume of existing applications, this is a finding.</p><h2>Vulnerability Number</h2><p>V-259592</p><h2>Documentable</h2><p>False</p><h2>Rule Version</h2><p>EX19-ED-000094</p><h2>Severity Override Guidance</h2><p>Open the Exchange Management Shell and run the following command:<br />
+<br />
+Get-Content $exbin\EdgeTransport.exe.config |Select-String &quot;QueueDatabasePath&quot; -SimpleMatch<br />
+<br />
+Example Output:<br />
+<br />
+&lt;add key=&quot;QueueDatabasePath&quot; value=&quot;F:\Program Files\Microsoft\Exchange<br />
+Server\V15\TransportRoles\data\Queue&quot; /&gt;<br />
+<br />
+If the path of the Queue Database is in the same volume as the installation of Exchange, this is a finding.<br />
+<br />
+If the path of the Queue Database is on the same volume of existing applications, this is a finding.</p><h2>Check Content Reference</h2><p>M</p><h2>Target Key</h2><p>5579</p></body></html>

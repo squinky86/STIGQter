@@ -1,0 +1,37 @@
+<!doctype html><html lang="en"><head><meta charset="utf-8"><title>STIGQter: STIG Check Details: SV-213741r961800_rule: DB2 must generate audit records when privileges/permissions are modified.</title><link rel="icon" type="image/svg+xml" href="STIGQter.svg" /><script async src="https://www.googletagmanager.com/gtag/js?id=UA-31381839-2"></script><script src="include.js"></script><script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-4110907817782130" crossorigin="anonymous"></script></head><body><div><img src="STIGQter.svg" alt="STIGQter" style="height:1em;" /> <a href="https://www.stigqter.com/">STIGQter</a>: <a href="main.html">STIG Summary</a>: <a href="U_IBM_DB2_V10-5_LUW_STIG_V2R2_Manual-xccdf.html">IBM DB2 V10.5 LUW Security Technical Implementation Guide Version: 2 Release: 2 Benchmark Date: 01 Jul 2026</a>:</div> <h1>DB2 must generate audit records when privileges/permissions are modified.</h1><h2>DISA Rule</h2><p>SV-213741r961800_rule</p><h2>Vulnerability Number</h2><p>V-213741</p><h2>Group Title</h2><p>SRG-APP-000495-DB-000328</p><h2>Rule Version</h2><p>DB2X-00-010200</p><h2>Severity</h2><p>CAT II</p><h2>CCI(s)</h2><ul><li>CCI-000172 - Generate audit records for the event types defined in AU-2 c that include the audit record content defined in AU-3.</li></ul><h2>Weight</h2><p>10</p><h2>Fix Recommendation</h2><p>If a correct audit policy does not exist, define an audit policy with the needed subset using the CREATE AUDIT POLICY SQL statement: <br />
+DB2&gt; CREATE AUDIT POLICY &lt;DB audit policy name&gt; <br />
+           CATEGORIES SECMAINT STATUS BOTH, CONTEXT STATUS BOTH <br />
+           ERROR TYPE AUDIT<br />
+<br />
+To modify an existing audit policy, replace &quot;CREATE&quot; with &quot;ALTER&quot; in the preceding statement. Only the categories explicitly named in the statement will be affected.  In this case, the changes take effect immediately.<br />
+<br />
+If CREATE was used above, run the following command to apply the policy created above to the database: <br />
+DB2&gt; AUDIT DATABASE USING POLICY &lt;DB audit policy name&gt;</p><h2>Check Contents</h2><p>To verify the database generates audit records when the database privileges/permissions are modified the SECMAINT, CONTEXT category auditing must be implemented at the database level. <br />
+<br />
+Run the following SQL statement to ensure that an audit policy is defined upon the database: <br />
+DB2&gt; SELECT AUDITPOLICYNAME, AUDITPOLICYID <br />
+           FROM SYSCAT.AUDITUSE <br />
+           WHERE OBJECTTYPE IN (' ')<br />
+<br />
+If no rows are returned, this is a finding. <br />
+<br />
+Run the following SQL statement using the AUDITPOLICYID from the query above to find the details of the audit policy: <br />
+DB2&gt; SELECT AUDITPOLICYNAME, CONTEXTSTATUS, SECMAINTSTATUS, ERRORTYPE AS ERRORTYPE <br />
+           FROM SYSCAT.AUDITPOLICIES <br />
+           WHERE AUDITPOLICYID = &lt;audit policy ID&gt;<br />
+<br />
+If the values for CONTEXTSTATUS and SECMAINTSTATUS are not 'B' (Both) or ERRORTYPE is not 'A' (Audit), this is a finding.</p><h2>Vulnerability Number</h2><p>V-213741</p><h2>Documentable</h2><p>False</p><h2>Rule Version</h2><p>DB2X-00-010200</p><h2>Severity Override Guidance</h2><p>To verify the database generates audit records when the database privileges/permissions are modified the SECMAINT, CONTEXT category auditing must be implemented at the database level. <br />
+<br />
+Run the following SQL statement to ensure that an audit policy is defined upon the database: <br />
+DB2&gt; SELECT AUDITPOLICYNAME, AUDITPOLICYID <br />
+           FROM SYSCAT.AUDITUSE <br />
+           WHERE OBJECTTYPE IN (' ')<br />
+<br />
+If no rows are returned, this is a finding. <br />
+<br />
+Run the following SQL statement using the AUDITPOLICYID from the query above to find the details of the audit policy: <br />
+DB2&gt; SELECT AUDITPOLICYNAME, CONTEXTSTATUS, SECMAINTSTATUS, ERRORTYPE AS ERRORTYPE <br />
+           FROM SYSCAT.AUDITPOLICIES <br />
+           WHERE AUDITPOLICYID = &lt;audit policy ID&gt;<br />
+<br />
+If the values for CONTEXTSTATUS and SECMAINTSTATUS are not 'B' (Both) or ERRORTYPE is not 'A' (Audit), this is a finding.</p><h2>Check Content Reference</h2><p>M</p><h2>Target Key</h2><p>3989</p></body></html>

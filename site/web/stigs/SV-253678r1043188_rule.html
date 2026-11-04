@@ -1,0 +1,23 @@
+<!doctype html><html lang="en"><head><meta charset="utf-8"><title>STIGQter: STIG Check Details: SV-253678r1043188_rule: MariaDB must be configurable to overwrite audit log records, oldest first (First-In-First-Out - FIFO), in the event of unavailability of space for more audit log records.</title><link rel="icon" type="image/svg+xml" href="STIGQter.svg" /><script async src="https://www.googletagmanager.com/gtag/js?id=UA-31381839-2"></script><script src="include.js"></script><script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-4110907817782130" crossorigin="anonymous"></script></head><body><div><img src="STIGQter.svg" alt="STIGQter" style="height:1em;" /> <a href="https://www.stigqter.com/">STIGQter</a>: <a href="main.html">STIG Summary</a>: <a href="U_MariaDB_Enterprise_10-x_STIG_V2R5_Manual-xccdf.html">MariaDB Enterprise 10.x Security Technical Implementation Guide Version: 2 Release: 5 Benchmark Date: 01 Apr 2026</a>:</div> <h1>MariaDB must be configurable to overwrite audit log records, oldest first (First-In-First-Out - FIFO), in the event of unavailability of space for more audit log records.</h1><h2>DISA Rule</h2><p>SV-253678r1043188_rule</p><h2>Vulnerability Number</h2><p>V-253678</p><h2>Group Title</h2><p>SRG-APP-000109-DB-000321</p><h2>Rule Version</h2><p>MADB-10-001800</p><h2>Severity</h2><p>CAT II</p><h2>CCI(s)</h2><ul><li>CCI-000140 - Take organization-defined actions upon audit failure include, shutting down the system, overwriting oldest audit records, and stopping the generation of audit records.</li></ul><h2>Weight</h2><p>10</p><h2>Fix Recommendation</h2><p>Establish a process with accompanying tools for monitoring available disk space and ensuring that sufficient disk space is maintained to continue generating audit logs, overwriting the oldest existing records if necessary.<br />
+<br />
+To set up the audit logs to write to sylog:<br />
+<br />
+Edit the mariadb-enterprise.cnf file. Add the following under the [mariadb] section: <br />
+<br />
+server_audit_output_type = 'syslog' <br />
+<br />
+After the .cnf file is updated and saved, the mariadb database service must be restarted.<br />
+<br />
+If not writing to syslog, log rotation and purging should be configured.</p><h2>Check Contents</h2><p>If the application owner has determined that the need for system availability outweighs the need for a complete audit trail, this is not applicable (NA). <br />
+<br />
+If an externally managed and monitored partition or logical volume that can be grown dynamically is being used for logging, this is not a finding. <br />
+<br />
+If MariaDB is auditing to a directory that is not being actively checked for availability of disk space, and if a tool, utility, script, or other mechanism is not being used to ensure sufficient disk space is available for the creation of new audit logs, this is a finding.<br />
+<br />
+If a tool, utility, script, or other mechanism is being used to rotate audit logs, and oldest logs are not being removed to ensure sufficient space for newest logs, or oldest logs are not being replaced by newest logs, this is a finding.</p><h2>Vulnerability Number</h2><p>V-253678</p><h2>Documentable</h2><p>False</p><h2>Rule Version</h2><p>MADB-10-001800</p><h2>Severity Override Guidance</h2><p>If the application owner has determined that the need for system availability outweighs the need for a complete audit trail, this is not applicable (NA). <br />
+<br />
+If an externally managed and monitored partition or logical volume that can be grown dynamically is being used for logging, this is not a finding. <br />
+<br />
+If MariaDB is auditing to a directory that is not being actively checked for availability of disk space, and if a tool, utility, script, or other mechanism is not being used to ensure sufficient disk space is available for the creation of new audit logs, this is a finding.<br />
+<br />
+If a tool, utility, script, or other mechanism is being used to rotate audit logs, and oldest logs are not being removed to ensure sufficient space for newest logs, or oldest logs are not being replaced by newest logs, this is a finding.</p><h2>Check Content Reference</h2><p>M</p><h2>Target Key</h2><p>5475</p></body></html>

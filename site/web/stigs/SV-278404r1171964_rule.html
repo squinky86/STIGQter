@@ -1,0 +1,50 @@
+<!doctype html><html lang="en"><head><meta charset="utf-8"><title>STIGQter: STIG Check Details: SV-278404r1171964_rule: NGINX must protect against denial-of-service (DoS) attacks.</title><link rel="icon" type="image/svg+xml" href="STIGQter.svg" /><script async src="https://www.googletagmanager.com/gtag/js?id=UA-31381839-2"></script><script src="include.js"></script><script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-4110907817782130" crossorigin="anonymous"></script></head><body><div><img src="STIGQter.svg" alt="STIGQter" style="height:1em;" /> <a href="https://www.stigqter.com/">STIGQter</a>: <a href="main.html">STIG Summary</a>: <a href="U_F5_NGINX_STIG_V1R1_Manual-xccdf.html">F5 NGINX Security Technical Implementation Guide Version: 1 Release: 1 Benchmark Date: 25 Nov 2025</a>:</div> <h1>NGINX must protect against denial-of-service (DoS) attacks.</h1><h2>DISA Rule</h2><p>SV-278404r1171964_rule</p><h2>Vulnerability Number</h2><p>V-278404</p><h2>Group Title</h2><p>SRG-APP-000435</p><h2>Rule Version</h2><p>NGNX-APP-001940</p><h2>Severity</h2><p>CAT II</p><h2>CCI(s)</h2><ul><li>CCI-002385 - Protect against or limit the effects of organization-defined types of denial of service events.</li><li>CCI-001095 - Manage capacity, bandwidth, or other redundancy to limit the effects of information flooding types of denial of service attacks.</li></ul><h2>Weight</h2><p>10</p><h2>Fix Recommendation</h2><p>Define a connection limiting zone. <br />
+<br />
+Open the NGINX configuration file in a text editor:<br />
+<br />
+sudo nano /etc/nginx/nginx.conf<br />
+<br />
+Establish a shared memory zone to track and limit connections from each client.<br />
+<br />
+Add this directive above the server block in the nginx.conf:<br />
+<br />
+limit_conn_zone $binary_remote_addr zone=conn_limit_zone:10m;<br />
+<br />
+$binary_remote_addr: Uses the client's IP address for limiting.<br />
+<br />
+zone=conn_limit_zone:10m: Allocates 10MB of memory for tracking connections. Adjust size based on your needs.<br />
+<br />
+Apply connection limiting in the server block. <br />
+<br />
+Now, apply connection limiting to the desired location block. Inside the location block, add the connection limiting directive:<br />
+<br />
+nginx<br />
+Copy code<br />
+server {<br />
+    location / {<br />
+        limit_req zone=one burst=20 nodelay;<br />
+        limit_conn conn_limit_zone 10;<br />
+        proxy_pass http://backend;<br />
+    }<br />
+}<br />
+limit_conn conn_limit_zone 10: Limits the client to 10 concurrent connections.<br />
+<br />
+Save and exit the file. Restart NGINX:<br />
+<br />
+# nginx -s reload</p><h2>Check Contents</h2><p>Check for the &quot;limit_req&quot; or &quot;limit_conn&quot; directives in the NGINX configuration files:<br />
+<br />
+grep -R &quot;limit_req\|limit_conn&quot; /etc/nginx/<br />
+<br />
+Determine if NGINX App Protect is enabled:<br />
+<br />
+grep -R &quot;app_protect_enable on&quot; /etc/nginx/<br />
+<br />
+If the &quot;lmit_req&quot; or &quot;limit connections&quot; are not present, this is a finding.</p><h2>Vulnerability Number</h2><p>V-278404</p><h2>Documentable</h2><p>False</p><h2>Rule Version</h2><p>NGNX-APP-001940</p><h2>Severity Override Guidance</h2><p>Check for the &quot;limit_req&quot; or &quot;limit_conn&quot; directives in the NGINX configuration files:<br />
+<br />
+grep -R &quot;limit_req\|limit_conn&quot; /etc/nginx/<br />
+<br />
+Determine if NGINX App Protect is enabled:<br />
+<br />
+grep -R &quot;app_protect_enable on&quot; /etc/nginx/<br />
+<br />
+If the &quot;lmit_req&quot; or &quot;limit connections&quot; are not present, this is a finding.</p><h2>Check Content Reference</h2><p>M</p><h2>Target Key</h2><p>5720</p></body></html>

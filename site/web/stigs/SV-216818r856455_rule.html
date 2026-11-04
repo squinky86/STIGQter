@@ -1,0 +1,83 @@
+<!doctype html><html lang="en"><head><meta charset="utf-8"><title>STIGQter: STIG Check Details: SV-216818r856455_rule: The Cisco Multicast Source Discovery Protocol (MSDP) router must be configured to only accept MSDP packets from known MSDP peers.</title><link rel="icon" type="image/svg+xml" href="STIGQter.svg" /><script async src="https://www.googletagmanager.com/gtag/js?id=UA-31381839-2"></script><script src="include.js"></script><script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-4110907817782130" crossorigin="anonymous"></script></head><body><div><img src="STIGQter.svg" alt="STIGQter" style="height:1em;" /> <a href="https://www.stigqter.com/">STIGQter</a>: <a href="main.html">STIG Summary</a>: <a href="U_Cisco_IOS-XR_Router_RTR_STIG_V3R3_Manual-xccdf.html">Cisco IOS XR Router RTR Security Technical Implementation Guide Version: 3 Release: 3 Benchmark Date: 01 Oct 2025</a>:</div> <h1>The Cisco Multicast Source Discovery Protocol (MSDP) router must be configured to only accept MSDP packets from known MSDP peers.</h1><h2>DISA Rule</h2><p>SV-216818r856455_rule</p><h2>Vulnerability Number</h2><p>V-216818</p><h2>Group Title</h2><p>SRG-NET-000364-RTR-000116</p><h2>Rule Version</h2><p>CISC-RT-000900</p><h2>Severity</h2><p>CAT II</p><h2>CCI(s)</h2><ul><li>CCI-002403 - Only allow incoming communications from organization-defined authorized sources routed to organization-defined authorized destinations.</li></ul><h2>Weight</h2><p>10</p><h2>Fix Recommendation</h2><p>Configure the interface ACLs to only accept MSDP packets from known MSDP peers.<br />
+<br />
+RP/0/0/CPU0:R2(config)#ipv4 access-list EXTERNAL_ACL_INBOUND<br />
+RP/0/0/CPU0:R2(config-ipv4-acl)#permit tcp host x.1.28.2 host x.1.28.8 eq 639<br />
+RP/0/0/CPU0:R2(config-ipv4-acl)#deny tcp any host x.1.28.8 eq 639 log<br />
+RP/0/0/CPU0:R2(config-ipv4-acl)#permit tcp host x.1.28.2 host x.1.28.8 eq bgp<br />
+RP/0/0/CPU0:R2(config-ipv4-acl)#permit tcp host x.1.28.2 eq bgp host x.1.28.8<br />
+RP/0/0/CPU0:R2(config-ipv4-acl)#permit pim host x.1.28.2 host x.1.28.8<br />
+RP/0/0/CPU0:R2(config-ipv4-acl)#permit tcp any any established<br />
+…<br />
+…<br />
+…<br />
+RP/0/0/CPU0:R2(config-ipv4-acl)#deny ip any any log</p><h2>Check Contents</h2><p>Review the router configuration to determine if there is a receive path or interface filter to only accept MSDP packets from known MSDP peers.<br />
+<br />
+Step 1: Determine which interfaces would be peering MSDP with an external router by the configured peer addresses as shown in the example below.<br />
+<br />
+router msdp<br />
+ peer x.14.2.1<br />
+  remote-as nn<br />
+ !<br />
+ peer x.15.3.5<br />
+  remote-as nn<br />
+ !<br />
+!<br />
+<br />
+Step 2: Verify that interfaces used for MSDP peering have an inbound ACL as shown in the example.<br />
+<br />
+interface GigabitEthernet0/0/0/1<br />
+ ipv4 address x.14.2.2 255.255.255.252<br />
+ ipv4 access-group EXTERNAL_ACL_INBOUND ingress<br />
+<br />
+Step 3: Verify that the ACL restricts MSDP peering to only known sources.<br />
+<br />
+ipv4 access-list EXTERNAL_ACL_INBOUND<br />
+ 10 permit tcp host x.1.28.2 host x.1.28.8 eq 639<br />
+ 20 deny tcp any host x.1.28.8 eq 639 log<br />
+ 30 permit tcp host x.1.28.2 host x.1.28.8 eq bgp<br />
+ 40 permit tcp host x.1.28.2 eq bgp host x.1.28.8<br />
+ 50 permit pim host x.1.28.2 host x.1.28.8<br />
+ 60 permit tcp any any established<br />
+ …<br />
+ …<br />
+ …<br />
+ 140 deny ipv4 any any log <br />
+<br />
+Note: MSDP connections is via TCP port 639<br />
+<br />
+If the router is not configured to only accept MSDP packets from known MSDP peers, this is a finding.</p><h2>Vulnerability Number</h2><p>V-216818</p><h2>Documentable</h2><p>False</p><h2>Rule Version</h2><p>CISC-RT-000900</p><h2>Severity Override Guidance</h2><p>Review the router configuration to determine if there is a receive path or interface filter to only accept MSDP packets from known MSDP peers.<br />
+<br />
+Step 1: Determine which interfaces would be peering MSDP with an external router by the configured peer addresses as shown in the example below.<br />
+<br />
+router msdp<br />
+ peer x.14.2.1<br />
+  remote-as nn<br />
+ !<br />
+ peer x.15.3.5<br />
+  remote-as nn<br />
+ !<br />
+!<br />
+<br />
+Step 2: Verify that interfaces used for MSDP peering have an inbound ACL as shown in the example.<br />
+<br />
+interface GigabitEthernet0/0/0/1<br />
+ ipv4 address x.14.2.2 255.255.255.252<br />
+ ipv4 access-group EXTERNAL_ACL_INBOUND ingress<br />
+<br />
+Step 3: Verify that the ACL restricts MSDP peering to only known sources.<br />
+<br />
+ipv4 access-list EXTERNAL_ACL_INBOUND<br />
+ 10 permit tcp host x.1.28.2 host x.1.28.8 eq 639<br />
+ 20 deny tcp any host x.1.28.8 eq 639 log<br />
+ 30 permit tcp host x.1.28.2 host x.1.28.8 eq bgp<br />
+ 40 permit tcp host x.1.28.2 eq bgp host x.1.28.8<br />
+ 50 permit pim host x.1.28.2 host x.1.28.8<br />
+ 60 permit tcp any any established<br />
+ …<br />
+ …<br />
+ …<br />
+ 140 deny ipv4 any any log <br />
+<br />
+Note: MSDP connections is via TCP port 639<br />
+<br />
+If the router is not configured to only accept MSDP packets from known MSDP peers, this is a finding.</p><h2>Check Content Reference</h2><p>M</p><h2>Target Key</h2><p>4029</p></body></html>

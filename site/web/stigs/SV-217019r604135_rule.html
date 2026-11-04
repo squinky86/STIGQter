@@ -1,0 +1,183 @@
+<!doctype html><html lang="en"><head><meta charset="utf-8"><title>STIGQter: STIG Check Details: SV-217019r604135_rule: The Juniper router must be configured to restrict traffic destined to itself.</title><link rel="icon" type="image/svg+xml" href="STIGQter.svg" /><script async src="https://www.googletagmanager.com/gtag/js?id=UA-31381839-2"></script><script src="include.js"></script><script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-4110907817782130" crossorigin="anonymous"></script></head><body><div><img src="STIGQter.svg" alt="STIGQter" style="height:1em;" /> <a href="https://www.stigqter.com/">STIGQter</a>: <a href="main.html">STIG Summary</a>: <a href="U_Juniper_Router_RTR_STIG_V3R2_Manual-xccdf.html">Juniper Router RTR Security Technical Implementation Guide Version: 3 Release: 2 Benchmark Date: 30 Jan 2025</a>:</div> <h1>The Juniper router must be configured to restrict traffic destined to itself.</h1><h2>DISA Rule</h2><p>SV-217019r604135_rule</p><h2>Vulnerability Number</h2><p>V-217019</p><h2>Group Title</h2><p>SRG-NET-000205-RTR-000001</p><h2>Rule Version</h2><p>JUNI-RT-000130</p><h2>Severity</h2><p>CAT I</p><h2>CCI(s)</h2><ul><li>CCI-001097 - Monitor and control communications at the external managed interfaces to the system and at key managed interfaces within the system.</li></ul><h2>Weight</h2><p>10</p><h2>Fix Recommendation</h2><p>Configure the router’s receive path filters to restrict traffic destined to the router.<br />
+<br />
+Configure a filter to define what traffic should be received by the Routing Engine.<br />
+<br />
+[edit firewall family inet]<br />
+set filter DESTINED_TO_RP term FILTER_TCP from destination-address 11.1.12.0/24  <br />
+set filter DESTINED_TO_RP term FILTER_TCP from protocol tcp destination-port ssh<br />
+set filter DESTINED_TO_RP term FILTER_TCP from protocol tcp destination-port tacacs<br />
+set filter DESTINED_TO_RP term FILTER_TCP then accept<br />
+set filter DESTINED_TO_RP term FILTER_UDP from destination-address 11.1.12.0/24  <br />
+set filter DESTINED_TO_RP term FILTER_UDP from protocol udp destination-port ntp<br />
+set filter DESTINED_TO_RP term FILTER_UDP from protocol udp destination-port snmp<br />
+set filter DESTINED_TO_RP term FILTER_UDP then accept<br />
+set filter DESTINED_TO_RP term ICMP_ANY from protocol icmp <br />
+set filter DESTINED_TO_RP term ICMP_ANY from protocol icmp then accept<br />
+set filter DESTINED_TO_RP term DENY_BY_DEFAULT then log discard<br />
+<br />
+Apply the filter to the loopback interface.<br />
+<br />
+[edit interfaces lo0 unit 0 family inet] <br />
+set filter input-list DESTINED_TO_RP.</p><h2>Check Contents</h2><p>Review the filter for the router’s receive path and verify that it will only allow specific management plane traffic from specific sources.<br />
+<br />
+Verify filter has been configured as shown in the example below.<br />
+<br />
+firewall {<br />
+    family inet {<br />
+         …<br />
+        …<br />
+        …<br />
+        }<br />
+        filter DESTINED_TO_RE {<br />
+            term ALLOW_OSPF {<br />
+                from {<br />
+                    protocol ospf;<br />
+                }<br />
+                then accept;<br />
+            }<br />
+            term ALLOW_BGP {<br />
+                from {<br />
+                    source-address {<br />
+                        11.1.12.1/32;<br />
+                        11.1.23.3/32;<br />
+                        11.1.25.5/32;<br />
+                    }<br />
+                    protocol tcp;<br />
+                    port bgp;<br />
+                }<br />
+            }<br />
+            term FILTER_TCP {<br />
+                from {<br />
+                    destination-address {<br />
+                        11.1.12.0/24;<br />
+                    }<br />
+                    protocol tcp;<br />
+                    destination-port [ ssh tacacs telnet ];<br />
+                }<br />
+                then accept;<br />
+            }<br />
+            term FILTER_UDP {<br />
+                from {<br />
+                    destination-address {<br />
+                        11.1.12.0/24;<br />
+                    }<br />
+                    protocol udp;<br />
+                    destination-port [ntp snmp ];<br />
+                }<br />
+                then accept;<br />
+            }<br />
+            term ICMP_ANY {<br />
+                from {<br />
+                    protocol icmp;<br />
+                }<br />
+                then accept;<br />
+            }<br />
+            term DENY_BY_DEFAULT {<br />
+                then {<br />
+                    log;<br />
+                    discard;<br />
+                }<br />
+            }<br />
+        }<br />
+    }<br />
+<br />
+Verify that the input filter has been applied to loopback interface as shown in the example below.<br />
+    <br />
+interfaces {<br />
+…<br />
+…<br />
+…<br />
+    lo0 {<br />
+        unit 0 {<br />
+            family inet {<br />
+                filter {<br />
+                    input-list [ DESTINED_TO_RE CoPP_Policy ];<br />
+                }<br />
+                address 2.2.2.2/32;<br />
+            }<br />
+         }<br />
+    }<br />
+}<br />
+<br />
+If the router is not configured with a receive-path filter to restrict traffic destined to itself, this is a finding</p><h2>Vulnerability Number</h2><p>V-217019</p><h2>Documentable</h2><p>False</p><h2>Rule Version</h2><p>JUNI-RT-000130</p><h2>Severity Override Guidance</h2><p>Review the filter for the router’s receive path and verify that it will only allow specific management plane traffic from specific sources.<br />
+<br />
+Verify filter has been configured as shown in the example below.<br />
+<br />
+firewall {<br />
+    family inet {<br />
+         …<br />
+        …<br />
+        …<br />
+        }<br />
+        filter DESTINED_TO_RE {<br />
+            term ALLOW_OSPF {<br />
+                from {<br />
+                    protocol ospf;<br />
+                }<br />
+                then accept;<br />
+            }<br />
+            term ALLOW_BGP {<br />
+                from {<br />
+                    source-address {<br />
+                        11.1.12.1/32;<br />
+                        11.1.23.3/32;<br />
+                        11.1.25.5/32;<br />
+                    }<br />
+                    protocol tcp;<br />
+                    port bgp;<br />
+                }<br />
+            }<br />
+            term FILTER_TCP {<br />
+                from {<br />
+                    destination-address {<br />
+                        11.1.12.0/24;<br />
+                    }<br />
+                    protocol tcp;<br />
+                    destination-port [ ssh tacacs telnet ];<br />
+                }<br />
+                then accept;<br />
+            }<br />
+            term FILTER_UDP {<br />
+                from {<br />
+                    destination-address {<br />
+                        11.1.12.0/24;<br />
+                    }<br />
+                    protocol udp;<br />
+                    destination-port [ntp snmp ];<br />
+                }<br />
+                then accept;<br />
+            }<br />
+            term ICMP_ANY {<br />
+                from {<br />
+                    protocol icmp;<br />
+                }<br />
+                then accept;<br />
+            }<br />
+            term DENY_BY_DEFAULT {<br />
+                then {<br />
+                    log;<br />
+                    discard;<br />
+                }<br />
+            }<br />
+        }<br />
+    }<br />
+<br />
+Verify that the input filter has been applied to loopback interface as shown in the example below.<br />
+    <br />
+interfaces {<br />
+…<br />
+…<br />
+…<br />
+    lo0 {<br />
+        unit 0 {<br />
+            family inet {<br />
+                filter {<br />
+                    input-list [ DESTINED_TO_RE CoPP_Policy ];<br />
+                }<br />
+                address 2.2.2.2/32;<br />
+            }<br />
+         }<br />
+    }<br />
+}<br />
+<br />
+If the router is not configured with a receive-path filter to restrict traffic destined to itself, this is a finding</p><h2>Check Content Reference</h2><p>M</p><h2>Target Key</h2><p>4032</p></body></html>

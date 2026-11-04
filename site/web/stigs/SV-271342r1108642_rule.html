@@ -1,0 +1,32 @@
+<!doctype html><html lang="en"><head><meta charset="utf-8"><title>STIGQter: STIG Check Details: SV-271342r1108642_rule: Use of credentials and proxies must be restricted to necessary cases only.</title><link rel="icon" type="image/svg+xml" href="STIGQter.svg" /><script async src="https://www.googletagmanager.com/gtag/js?id=UA-31381839-2"></script><script src="include.js"></script><script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-4110907817782130" crossorigin="anonymous"></script></head><body><div><img src="STIGQter.svg" alt="STIGQter" style="height:1em;" /> <a href="https://www.stigqter.com/">STIGQter</a>: <a href="main.html">STIG Summary</a>: <a href="U_MS_SQL_Server_2022_Instance_STIG_V1R4_Manual-xccdf.html">Microsoft SQL Server 2022 Instance Security Technical Implementation Guide Version: 1 Release: 4 Benchmark Date: 01 Apr 2026</a>:</div> <h1>Use of credentials and proxies must be restricted to necessary cases only.</h1><h2>DISA Rule</h2><p>SV-271342r1108642_rule</p><h2>Vulnerability Number</h2><p>V-271342</p><h2>Group Title</h2><p>SRG-APP-000342-DB-000302</p><h2>Rule Version</h2><p>SQLI-22-010500</p><h2>Severity</h2><p>CAT II</p><h2>CCI(s)</h2><ul><li>CCI-002233 - Prevent the organization-defined software from executing at higher privilege levels than users executing the software.</li></ul><h2>Weight</h2><p>10</p><h2>Fix Recommendation</h2><p>Remove any SQL Agent Proxy accounts and credentials that are not authorized. <br />
+ <br />
+DROP CREDENTIAL &lt;Credential Name&gt; <br />
+GO <br />
+ <br />
+USE [msdb] <br />
+EXEC sp_delete_proxy @proxy_name = '&lt;Proxy Name&gt;' <br />
+GO</p><h2>Check Contents</h2><p>Review the server documentation to obtain a listing of accounts used for executing external processes. Execute the following to obtain a listing of accounts currently configured for use by external processes. <br />
+ <br />
+SELECT C.name AS credential_name, C.credential_identity <br />
+FROM sys.credentials C <br />
+GO <br />
+ <br />
+SELECT P.name AS proxy_name, C.name AS credential_name, C.credential_identity <br />
+FROM sys.credentials C  <br />
+JOIN msdb.dbo.sysproxies P ON C.credential_id = P.credential_id <br />
+WHERE P.enabled = 1 <br />
+GO <br />
+ <br />
+If any Credentials or SQL Agent Proxy accounts are returned that are not documented and authorized, this is a finding.</p><h2>Vulnerability Number</h2><p>V-271342</p><h2>Documentable</h2><p>False</p><h2>Rule Version</h2><p>SQLI-22-010500</p><h2>Severity Override Guidance</h2><p>Review the server documentation to obtain a listing of accounts used for executing external processes. Execute the following to obtain a listing of accounts currently configured for use by external processes. <br />
+ <br />
+SELECT C.name AS credential_name, C.credential_identity <br />
+FROM sys.credentials C <br />
+GO <br />
+ <br />
+SELECT P.name AS proxy_name, C.name AS credential_name, C.credential_identity <br />
+FROM sys.credentials C  <br />
+JOIN msdb.dbo.sysproxies P ON C.credential_id = P.credential_id <br />
+WHERE P.enabled = 1 <br />
+GO <br />
+ <br />
+If any Credentials or SQL Agent Proxy accounts are returned that are not documented and authorized, this is a finding.</p><h2>Check Content Reference</h2><p>M</p><h2>Target Key</h2><p>5677</p></body></html>

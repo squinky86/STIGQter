@@ -1,0 +1,25 @@
+<!doctype html><html lang="en"><head><meta charset="utf-8"><title>STIGQter: STIG Check Details: SV-251645r961638_rule: The system storage used for data collection by the CA IDMS server must be protected.</title><link rel="icon" type="image/svg+xml" href="STIGQter.svg" /><script async src="https://www.googletagmanager.com/gtag/js?id=UA-31381839-2"></script><script src="include.js"></script><script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-4110907817782130" crossorigin="anonymous"></script></head><body><div><img src="STIGQter.svg" alt="STIGQter" style="height:1em;" /> <a href="https://www.stigqter.com/">STIGQter</a>: <a href="main.html">STIG Summary</a>: <a href="U_CA_IDMS_STIG_V2R2_Manual-xccdf.html">CA IDMS Security Technical Implementation Guide Version: 2 Release: 2 Benchmark Date: 01 Jul 2026</a>:</div> <h1>The system storage used for data collection by the CA IDMS server must be protected.</h1><h2>DISA Rule</h2><p>SV-251645r961638_rule</p><h2>Vulnerability Number</h2><p>V-251645</p><h2>Group Title</h2><p>SRG-APP-000441-DB-000378</p><h2>Rule Version</h2><p>IDMS-DB-000810</p><h2>Severity</h2><p>CAT II</p><h2>CCI(s)</h2><ul><li>CCI-002420 - Maintain the confidentiality and/or integrity of information during preparation for transmission.</li><li>CCI-002422 - Maintain the confidentiality and/or integrity of information during reception.</li></ul><h2>Weight</h2><p>10</p><h2>Fix Recommendation</h2><p>Use the following system generation parameters to enable the use of high performance storage protection:<br />
+<br />
+Set STORAGE KEY parameter of the SYSTEM statement to &quot;9&quot;.<br />
+<br />
+Set PROTECT/NOPROTECT parameter of the SYSTEM statement to &quot;PROTECT&quot;.<br />
+<br />
+Set PROTECT/NOPROTECT parameter of the PROGRAM statement to &quot;PROTECT&quot; for PROGRAMS required to run with the alternate protect key (i.e., 9).<br />
+<br />
+DCMT DISPLAY ALL STORAGE POOLS can be used to take note of what pools support any type of user storage; that is, user, user-kept, shared, shared-kept, or ALL, in preparation for the next step.<br />
+<br />
+If necessary, redefine storage pools so all forms of user-oriented storage (user, user-kept, shared, and shared-kept) are segregated from the system storage (database, terminal). For example:<br />
+ADD STORAGE POOL 1<br />
+CONTAINS TYPES ( SHARED SHARED-KEPT USER USER-KEPT )<br />
+ADD XA STORAGE POOL 128<br />
+CONTAINS TYPES ( USER USER-KEPT )<br />
+ADD XA STORAGE POOL 129<br />
+CONTAINS TYPES ( SHARED SHARED-KEPT )<br />
+ADD XA STORAGE POOL 130<br />
+CONTAINS TYPES ( TERMINAL DATABASE )<br />
+<br />
+Generate and start the system. The storage pool definitions have been set up correctly if the message &quot;DC004001 HPSPO HAS BEEN DISABLED DUE TO INCORRECT STORAGE POOL DEFINITIONS&quot; is not issued at startup.</p><h2>Check Contents</h2><p>Log on to IDMS DC system and issue DCPROFIL. <br />
+<br />
+If HPSPO ENABLED: display is &quot;NO&quot;, this is a finding.</p><h2>Vulnerability Number</h2><p>V-251645</p><h2>Documentable</h2><p>False</p><h2>Rule Version</h2><p>IDMS-DB-000810</p><h2>Severity Override Guidance</h2><p>Log on to IDMS DC system and issue DCPROFIL. <br />
+<br />
+If HPSPO ENABLED: display is &quot;NO&quot;, this is a finding.</p><h2>Check Content Reference</h2><p>M</p><h2>Target Key</h2><p>5418</p></body></html>

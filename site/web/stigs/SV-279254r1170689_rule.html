@@ -1,0 +1,89 @@
+<!doctype html><html lang="en"><head><meta charset="utf-8"><title>STIGQter: STIG Check Details: SV-279254r1170689_rule: The Edge SWG must display the Standard Mandatory DOD Notice and Consent Banner before granting access to the device.</title><link rel="icon" type="image/svg+xml" href="STIGQter.svg" /><script async src="https://www.googletagmanager.com/gtag/js?id=UA-31381839-2"></script><script src="include.js"></script><script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-4110907817782130" crossorigin="anonymous"></script></head><body><div><img src="STIGQter.svg" alt="STIGQter" style="height:1em;" /> <a href="https://www.stigqter.com/">STIGQter</a>: <a href="main.html">STIG Summary</a>: <a href="U_SYM_Edge_SWG_NDM_STIG_V1R2_Manual-xccdf.html">Symantec Edge SWG NDM Security Technical Implementation Guide Version: 1 Release: 2 Benchmark Date: 01 Apr 2026</a>:</div> <h1>The Edge SWG must display the Standard Mandatory DOD Notice and Consent Banner before granting access to the device.</h1><h2>DISA Rule</h2><p>SV-279254r1170689_rule</p><h2>Vulnerability Number</h2><p>V-279254</p><h2>Group Title</h2><p>SRG-APP-000068-NDM-000215</p><h2>Rule Version</h2><p>SYME-ND-000510</p><h2>Severity</h2><p>CAT II</p><h2>CCI(s)</h2><ul><li>CCI-000048 - Display an organization-defined system use notification message or banner to users before granting access to the system that provides privacy and security notices consistent with applicable federal laws, Executive Orders, directives, policies, regulations, standards, and guidelines.</li><li>CCI-000050 - Retain the notification message or banner on the screen until users acknowledge the usage conditions and take explicit actions to log on to or further access the system.</li></ul><h2>Weight</h2><p>10</p><h2>Fix Recommendation</h2><p>1. Log in to the Edge SWG SSH CLI.<br />
+2. Enter &quot;enable&quot; and &quot;configure terminal&quot;.<br />
+3. Enter &quot;serial-console&quot;.<br />
+4. Enter &quot;inline pre-authentication-terms ~&quot;, then press enter.<br />
+5. Paste the exact required text below along with the EOF marker of ~:<br />
+<br />
+You are accessing a U.S. Government (USG) Information System (IS)<br />
+that is provided for USG-authorized use only.<br />
+By using this IS (which includes any device attached to this IS),<br />
+you consent to the following conditions:<br />
+-The USG routinely intercepts and monitors communications on this IS for purposes including, but not limited to, penetration testing, COMSEC monitoring, network operations and defense, personnel misconduct (PM), law enforcement (LE), and counterintelligence (CI) investigations.<br />
+-At any time, the USG may inspect and seize data stored on this IS.<br />
+-Communications using, or data stored on, this IS are not private, are subject to routine monitoring, interception and search, and may be disclosed or used for any USG-authorized purpose.<br />
+-This IS includes security measures (e.g., authentication and access controls) to protect USG interests--not for your personal benefit or privacy.<br />
+-Notwithstanding the above, using this IS does not constitute consent to PM, LE, or CI investigative searching or monitoring of the content of privileged communications, or work product, related to personal representation or services by attorneys, psychotherapists, or clergy, and their assistants. Such communication and work product are private and confidential. See User Agreement for details.<br />
+~<br />
+6. Enter &quot;exit&quot;.<br />
+7. Enter &quot;ssh-console&quot;.<br />
+8. Enter &quot;inline pre-authentication-terms ~&quot;.<br />
+9. Paste the exact DOD required text below along with the EOF marker of ~:<br />
+<br />
+You are accessing a U.S. Government (USG) Information System (IS)<br />
+that is provided for USG-authorized use only.<br />
+By using this IS (which includes any device attached to this IS),<br />
+you consent to the following conditions:<br />
+-The USG routinely intercepts and monitors communications on this IS for purposes including, but not limited to, penetration testing, COMSEC monitoring, network operations and defense, personnel misconduct (PM), law enforcement (LE), and counterintelligence (CI) investigations.<br />
+-At any time, the USG may inspect and seize data stored on this IS.<br />
+-Communications using, or data stored on, this IS are not private, are subject to routine monitoring, interception and search, and may be disclosed or used for any USG-authorized purpose.<br />
+-This IS includes security measures (e.g., authentication and access controls) to protect USG interests--not for your personal benefit or privacy.<br />
+-Notwithstanding the above, using this IS does not constitute consent to PM, LE, or CI investigative searching or monitoring of the content of privileged communications, or work product, related to personal representation or services by attorneys, psychotherapists, or clergy, and their assistants. Such communication and work product are private and confidential. See User Agreement for details.<br />
+~<br />
+<br />
+Note: To add the required login banner for the HTTPS-console, the complete required fix detailed in SYME-ND-000190 must first be implemented.</p><h2>Check Contents</h2><p>1. In the Edge SWG Web UI, navigate to the Configuration tab.<br />
+2. Go to &quot;Services&quot; then &quot;Proxy Services&quot;.<br />
+<br />
+If there is no &quot;HTTP Reverse Proxy&quot; service named &quot;CAC-MC-Notify&quot; this is a finding.<br />
+<br />
+1. Log in to the Edge SWG SSH CLI.<br />
+2. Enter &quot;enable&quot; and &quot;configure terminal&quot;.<br />
+3. Enter &quot;show ssh-console pre-authentication-terms&quot;.<br />
+<br />
+If there is no text, or the text is not the following, this is a finding:<br />
+&quot;You are accessing a U.S. Government (USG) Information System (IS) that is provided for USG-authorized use only.<br />
+By using this IS (which includes any device attached to this IS),you consent to the following conditions:<br />
+-The USG routinely intercepts and monitors communications on this IS for purposes including, but not limited to, penetration testing, COMSEC monitoring, network operations and defense, personnel misconduct (PM), law enforcement (LE), and counterintelligence (CI) investigations.<br />
+-At any time, the USG may inspect and seize data stored on this IS.<br />
+-Communications using, or data stored on, this IS are not private, are subject to routine monitoring, interception and search, and may be disclosed or used for any USG-authorized purpose.<br />
+-This IS includes security measures (e.g., authentication and access controls) to protect USG interests--not for your personal benefit or privacy.<br />
+-Notwithstanding the above, using this IS does not constitute consent to PM, LE, or CI investigative searching or monitoring of the content of privileged communications, or work product, related to personal representation or services by attorneys, psychotherapists, or clergy, and their assistants. Such communication and work product are private and confidential. See User Agreement for details&quot;.<br />
+<br />
+4. Enter &quot;serial-console&quot;.<br />
+5. Enter &quot;view pre-authentication-terms&quot;.<br />
+<br />
+If there is no text or the text is not the following, this is a finding:<br />
+&quot;You are accessing a U.S. Government (USG) Information System (IS) that is provided for USG-authorized use only.<br />
+By using this IS (which includes any device attached to this IS),you consent to the following conditions:<br />
+-The USG routinely intercepts and monitors communications on this IS for purposes including, but not limited to, penetration testing, COMSEC monitoring, network operations and defense, personnel misconduct (PM), law enforcement (LE), and counterintelligence (CI) investigations.<br />
+-At any time, the USG may inspect and seize data stored on this IS.<br />
+-Communications using, or data stored on, this IS are not private, are subject to routine monitoring, interception and search, and may be disclosed or used for any USG-authorized purpose.<br />
+-This IS includes security measures (e.g., authentication and access controls) to protect USG interests--not for your personal benefit or privacy.<br />
+-Notwithstanding the above, using this IS does not constitute consent to PM, LE, or CI investigative searching or monitoring of the content of privileged communications, or work product, related to personal representation or services by attorneys, psychotherapists, or clergy, and their assistants. Such communication and work product are private and confidential. See User Agreement for details&quot;.</p><h2>Vulnerability Number</h2><p>V-279254</p><h2>Documentable</h2><p>False</p><h2>Rule Version</h2><p>SYME-ND-000510</p><h2>Severity Override Guidance</h2><p>1. In the Edge SWG Web UI, navigate to the Configuration tab.<br />
+2. Go to &quot;Services&quot; then &quot;Proxy Services&quot;.<br />
+<br />
+If there is no &quot;HTTP Reverse Proxy&quot; service named &quot;CAC-MC-Notify&quot; this is a finding.<br />
+<br />
+1. Log in to the Edge SWG SSH CLI.<br />
+2. Enter &quot;enable&quot; and &quot;configure terminal&quot;.<br />
+3. Enter &quot;show ssh-console pre-authentication-terms&quot;.<br />
+<br />
+If there is no text, or the text is not the following, this is a finding:<br />
+&quot;You are accessing a U.S. Government (USG) Information System (IS) that is provided for USG-authorized use only.<br />
+By using this IS (which includes any device attached to this IS),you consent to the following conditions:<br />
+-The USG routinely intercepts and monitors communications on this IS for purposes including, but not limited to, penetration testing, COMSEC monitoring, network operations and defense, personnel misconduct (PM), law enforcement (LE), and counterintelligence (CI) investigations.<br />
+-At any time, the USG may inspect and seize data stored on this IS.<br />
+-Communications using, or data stored on, this IS are not private, are subject to routine monitoring, interception and search, and may be disclosed or used for any USG-authorized purpose.<br />
+-This IS includes security measures (e.g., authentication and access controls) to protect USG interests--not for your personal benefit or privacy.<br />
+-Notwithstanding the above, using this IS does not constitute consent to PM, LE, or CI investigative searching or monitoring of the content of privileged communications, or work product, related to personal representation or services by attorneys, psychotherapists, or clergy, and their assistants. Such communication and work product are private and confidential. See User Agreement for details&quot;.<br />
+<br />
+4. Enter &quot;serial-console&quot;.<br />
+5. Enter &quot;view pre-authentication-terms&quot;.<br />
+<br />
+If there is no text or the text is not the following, this is a finding:<br />
+&quot;You are accessing a U.S. Government (USG) Information System (IS) that is provided for USG-authorized use only.<br />
+By using this IS (which includes any device attached to this IS),you consent to the following conditions:<br />
+-The USG routinely intercepts and monitors communications on this IS for purposes including, but not limited to, penetration testing, COMSEC monitoring, network operations and defense, personnel misconduct (PM), law enforcement (LE), and counterintelligence (CI) investigations.<br />
+-At any time, the USG may inspect and seize data stored on this IS.<br />
+-Communications using, or data stored on, this IS are not private, are subject to routine monitoring, interception and search, and may be disclosed or used for any USG-authorized purpose.<br />
+-This IS includes security measures (e.g., authentication and access controls) to protect USG interests--not for your personal benefit or privacy.<br />
+-Notwithstanding the above, using this IS does not constitute consent to PM, LE, or CI investigative searching or monitoring of the content of privileged communications, or work product, related to personal representation or services by attorneys, psychotherapists, or clergy, and their assistants. Such communication and work product are private and confidential. See User Agreement for details&quot;.</p><h2>Check Content Reference</h2><p>M</p><h2>Target Key</h2><p>5726</p></body></html>

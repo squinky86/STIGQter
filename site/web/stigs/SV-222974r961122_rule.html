@@ -1,0 +1,51 @@
+<!doctype html><html lang="en"><head><meta charset="utf-8"><title>STIGQter: STIG Check Details: SV-222974r961122_rule: Clusters must operate on a trusted network.</title><link rel="icon" type="image/svg+xml" href="STIGQter.svg" /><script async src="https://www.googletagmanager.com/gtag/js?id=UA-31381839-2"></script><script src="include.js"></script><script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-4110907817782130" crossorigin="anonymous"></script></head><body><div><img src="STIGQter.svg" alt="STIGQter" style="height:1em;" /> <a href="https://www.stigqter.com/">STIGQter</a>: <a href="main.html">STIG Summary</a>: <a href="U_Apache_Tomcat_Application_Server_9_STIG_V3R4_Manual-xccdf.html">Apache Tomcat Application Server 9 Security Technical Implementation Guide Version: 3 Release: 4 Benchmark Date: 01 Apr 2026</a>:</div> <h1>Clusters must operate on a trusted network.</h1><h2>DISA Rule</h2><p>SV-222974r961122_rule</p><h2>Vulnerability Number</h2><p>V-222974</p><h2>Group Title</h2><p>SRG-APP-000225-AS-000154</p><h2>Rule Version</h2><p>TCAT-AS-000860</p><h2>Severity</h2><p>CAT II</p><h2>CCI(s)</h2><ul><li>CCI-001190 - Fail to an organization-defined known-system state for the following failures on the indicated components while preserving organization-defined system state information in failure.</li></ul><h2>Weight</h2><p>10</p><h2>Fix Recommendation</h2><p>Update the System Security Plan (SSP) and document the network interface, their related IP addresses, and which interfaces transport Tomcat cluster traffic. Also document which interface is multi-cast enabled if using the McastService membership class versus Static. <br />
+<br />
+To obtain the information needed for the SSP:<br />
+sudo grep -i -A3 &quot;&lt;Membership className&quot; $CATALINA_BASE/conf.server.xml<br />
+<br />
+Document the address=&quot;&lt;ipAddress&gt;&quot; value.<br />
+<br />
+Review the OS routing tables. Identify and document which interface is configured to route the Tomcat class D IP multicast traffic. <br />
+<br />
+sudo netstat -r <br />
+<br />
+END of Documentation instructions.<br />
+<br />
+From the Tomcat server as a privileged user, edit the $CATALINA_BASE/conf/server.xml file.<br />
+<br />
+sudo nano $CATALINA_BASE/conf/server.xml<br />
+<br />
+Locate the &lt;Interceptor/&gt; element nested within the &lt;Channel/&gt; element.<br />
+<br />
+Add the &lt;Interceptor className=&quot;org.apache.catalina.tribes.group.<br />
+interceptors.EncryptInterceptor&quot;/&gt; to the server.xml and save the file.<br />
+<br />
+Restart the Tomcat server:<br />
+sudo systemctl restart tomcat<br />
+<br />
+NOTE:<br />
+The EncryptInterceptor adds encryption to the channel messages carrying session data between nodes. This feature was added in Tomcat 9.0.13. If using the TcpFailureDetector interceptor, the EncryptInterceptor must be inserted into the interceptor chain BEFORE the TcpFailureDetector. When validating cluster members, TcpFailureDetector writes channel data directly to the other members without using the remainder of the interceptor chain, but on the receiving side, the message still goes through the chain (in reverse). Because of this asymmetry, the EncryptInterceptor must execute before the TcpFailureDetector on the sender and after it on the receiver; otherwise, message corruption will occur.</p><h2>Check Contents</h2><p>Review System Security Plan (SSP) documentation determine if the Tomcat server is part of an application server cluster. Also identify Tomcat network interfaces and the proxy/load balancer that front-ends the cluster.<br />
+<br />
+From the Tomcat server as a privileged user, run the following command:<br />
+<br />
+sudo grep -i -A2 -B2 &quot;Cluster&quot; $CATALINA_BASE/conf/server.xml<br />
+<br />
+If the &lt;Cluster/&gt; element is commented out, or there are no results returned, this requirement is NA.<br />
+<br />
+If a cluster is in use, run the following command as a privileged user:<br />
+<br />
+grep -i EncryptInterceptor $CATALINA_BASE/conf/server.xml file.  <br />
+<br />
+If the Tomcat server is clustered and the EncryptionInterceptor is not in use or if the cluster traffic is not on a private network or VLAN, this is a finding.</p><h2>Vulnerability Number</h2><p>V-222974</p><h2>Documentable</h2><p>False</p><h2>Rule Version</h2><p>TCAT-AS-000860</p><h2>Severity Override Guidance</h2><p>Review System Security Plan (SSP) documentation determine if the Tomcat server is part of an application server cluster. Also identify Tomcat network interfaces and the proxy/load balancer that front-ends the cluster.<br />
+<br />
+From the Tomcat server as a privileged user, run the following command:<br />
+<br />
+sudo grep -i -A2 -B2 &quot;Cluster&quot; $CATALINA_BASE/conf/server.xml<br />
+<br />
+If the &lt;Cluster/&gt; element is commented out, or there are no results returned, this requirement is NA.<br />
+<br />
+If a cluster is in use, run the following command as a privileged user:<br />
+<br />
+grep -i EncryptInterceptor $CATALINA_BASE/conf/server.xml file.  <br />
+<br />
+If the Tomcat server is clustered and the EncryptionInterceptor is not in use or if the cluster traffic is not on a private network or VLAN, this is a finding.</p><h2>Check Content Reference</h2><p>M</p><h2>Target Key</h2><p>4094</p></body></html>

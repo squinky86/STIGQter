@@ -1,0 +1,59 @@
+<!doctype html><html lang="en"><head><meta charset="utf-8"><title>STIGQter: STIG Check Details: SV-278405r1171967_rule: NGINX must be configured to use FIPS-approved algorithms to protect the confidentiality and integrity of transmitted information.</title><link rel="icon" type="image/svg+xml" href="STIGQter.svg" /><script async src="https://www.googletagmanager.com/gtag/js?id=UA-31381839-2"></script><script src="include.js"></script><script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-4110907817782130" crossorigin="anonymous"></script></head><body><div><img src="STIGQter.svg" alt="STIGQter" style="height:1em;" /> <a href="https://www.stigqter.com/">STIGQter</a>: <a href="main.html">STIG Summary</a>: <a href="U_F5_NGINX_STIG_V1R1_Manual-xccdf.html">F5 NGINX Security Technical Implementation Guide Version: 1 Release: 1 Benchmark Date: 25 Nov 2025</a>:</div> <h1>NGINX must be configured to use FIPS-approved algorithms to protect the confidentiality and integrity of transmitted information.</h1><h2>DISA Rule</h2><p>SV-278405r1171967_rule</p><h2>Vulnerability Number</h2><p>V-278405</p><h2>Group Title</h2><p>SRG-APP-000439</p><h2>Rule Version</h2><p>NGNX-APP-001960</p><h2>Severity</h2><p>CAT II</p><h2>CCI(s)</h2><ul><li>CCI-002418 - Protect the confidentiality and/or integrity of transmitted information.</li><li>CCI-001941 - Implement replay-resistant authentication mechanisms for access to privileged accounts and/or non-privileged accounts.</li><li>CCI-001184 - Protect the authenticity of communications sessions.</li><li>CCI-001199 - Protects the confidentiality and/or integrity of organization-defined information at rest.</li><li>CCI-001967 - Authenticate organization-defined devices and/or types of devices before establishing a local, remote, and/or network connection using bidirectional authentication that is cryptographically based.</li><li>CCI-002421 - Implement cryptographic mechanisms to prevent unauthorized disclosure of information and/or detect changes to information during transmission.</li><li>CCI-002420 - Maintain the confidentiality and/or integrity of information during preparation for transmission.</li><li>CCI-002422 - Maintain the confidentiality and/or integrity of information during reception.</li><li>CCI-002450 - Implement organization-defined types of cryptography for each specified cryptography use.</li><li>CCI-003123 - Implement organization-defined cryptographic mechanisms to protect the confidentiality of nonlocal maintenance and diagnostic communications.</li></ul><h2>Weight</h2><p>10</p><h2>Fix Recommendation</h2><p>Restrict TLS versions to FIPS-approved protocols:<br />
+<br />
+ssl_protocols TLSv1.2 TLSv1.3;<br />
+<br />
+Configure only FIPS compliant ciphers:<br />
+<br />
+ssl_ciphers 'TLS_AES_256_GCM_SHA384:TLS_AES_128_GCM_SHA256:ECDHE-ECDSA-AES256-GCM-SHA384:ECDHE-RSA-AES256-GCM-SHA384:ECDHE-ECDSA-AES128-GCM-SHA256:ECDHE-RSA-AES128-GCM-SHA256';<br />
+<br />
+Do not allow clients to select the ciphers:<br />
+<br />
+ssl_prefer_server_ciphers on;<br />
+<br />
+Restart NGINX to apply changes:<br />
+<br />
+sudo nginx -t &amp;&amp; sudo systemctl reload nginx</p><h2>Check Contents</h2><p>Determine the path to NGINX config file(s):<br />
+<br />
+nginx -qT | grep &quot;# configuration&quot;<br />
+# configuration file /etc/nginx/nginx.conf:<br />
+<br />
+Note: The default NGINX configuration is &quot;/etc/nginx/nginx.conf&quot;, though various files may also be included.<br />
+<br />
+Examine the SSL configuration settings:<br />
+<br />
+grep -R 'ssl_' /etc/nginx/nginx.conf<br />
+<br />
+Verify TLS versions:<br />
+<br />
+ssl_protocols TLSv1.2 TLSv1.3;<br />
+<br />
+Verify cipher suites:<br />
+<br />
+ssl_ciphers 'TLS_AES_256_GCM_SHA384:TLS_AES_128_GCM_SHA256:ECDHE-ECDSA-AES256-GCM-SHA384:ECDHE-RSA-AES256-GCM-SHA384:ECDHE-ECDSA-AES128-GCM-SHA256:ECDHE-RSA-AES128-GCM-SHA256';<br />
+ssl_prefer_server_ciphers on;<br />
+<br />
+Note: The cipher list can be more restrictive if defined by the organization.<br />
+<br />
+If non-FIPS ciphers or weak protocols (e.g., TLSv1.0/1.1, RC4, MD5, 3DES) are present, this is a finding.</p><h2>Vulnerability Number</h2><p>V-278405</p><h2>Documentable</h2><p>False</p><h2>Rule Version</h2><p>NGNX-APP-001960</p><h2>Severity Override Guidance</h2><p>Determine the path to NGINX config file(s):<br />
+<br />
+nginx -qT | grep &quot;# configuration&quot;<br />
+# configuration file /etc/nginx/nginx.conf:<br />
+<br />
+Note: The default NGINX configuration is &quot;/etc/nginx/nginx.conf&quot;, though various files may also be included.<br />
+<br />
+Examine the SSL configuration settings:<br />
+<br />
+grep -R 'ssl_' /etc/nginx/nginx.conf<br />
+<br />
+Verify TLS versions:<br />
+<br />
+ssl_protocols TLSv1.2 TLSv1.3;<br />
+<br />
+Verify cipher suites:<br />
+<br />
+ssl_ciphers 'TLS_AES_256_GCM_SHA384:TLS_AES_128_GCM_SHA256:ECDHE-ECDSA-AES256-GCM-SHA384:ECDHE-RSA-AES256-GCM-SHA384:ECDHE-ECDSA-AES128-GCM-SHA256:ECDHE-RSA-AES128-GCM-SHA256';<br />
+ssl_prefer_server_ciphers on;<br />
+<br />
+Note: The cipher list can be more restrictive if defined by the organization.<br />
+<br />
+If non-FIPS ciphers or weak protocols (e.g., TLSv1.0/1.1, RC4, MD5, 3DES) are present, this is a finding.</p><h2>Check Content Reference</h2><p>M</p><h2>Target Key</h2><p>5720</p></body></html>

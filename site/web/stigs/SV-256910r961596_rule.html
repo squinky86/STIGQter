@@ -1,0 +1,66 @@
+<!doctype html><html lang="en"><head><meta charset="utf-8"><title>STIGQter: STIG Check Details: SV-256910r961596_rule: Automation Controller must only allow the use of DOD PKI-established certificate authorities for verification of the establishment of protected sessions.</title><link rel="icon" type="image/svg+xml" href="STIGQter.svg" /><script async src="https://www.googletagmanager.com/gtag/js?id=UA-31381839-2"></script><script src="include.js"></script><script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-4110907817782130" crossorigin="anonymous"></script></head><body><div><img src="STIGQter.svg" alt="STIGQter" style="height:1em;" /> <a href="https://www.stigqter.com/">STIGQter</a>: <a href="main.html">STIG Summary</a>: <a href="U_RH_Ansible_Automation_Controller_AS_STIG_V2R3_Manual-xccdf.html">Red Hat Ansible Automation Controller Application Server Security Technical Implementation Guide Version: 2 Release: 4 Benchmark Date: 05 Jan 2026</a>:</div> <h1>Automation Controller must only allow the use of DOD PKI-established certificate authorities for verification of the establishment of protected sessions.</h1><h2>DISA Rule</h2><p>SV-256910r961596_rule</p><h2>Vulnerability Number</h2><p>V-256910</p><h2>Group Title</h2><p>SRG-APP-000427-AS-000264</p><h2>Rule Version</h2><p>APAS-AT-000110</p><h2>Severity</h2><p>CAT II</p><h2>CCI(s)</h2><ul><li>CCI-002450 - Implement organization-defined types of cryptography for each specified cryptography use.</li><li>CCI-002470 - Only allow the use of organization-defined certificate authorities for verification of the establishment of protected sessions.</li></ul><h2>Weight</h2><p>10</p><h2>Fix Recommendation</h2><p>For each Automation Controller host, the administrator must:<br />
+<br />
+Download the &gt;&gt;&lt;organizationally defined intermediate certificate file in PEM format&gt;&gt;&gt;;<br />
+<br />
+Generate the appropriate /etc/tower/tower.key files, certificates, and CSRs and have the organizationally defined PKI authority issue a certificate signed by the &gt;&gt;&lt;organizationally defined intermediate certificate file in PEM format&gt;&gt;&gt;;<br />
+<br />
+Place the signed certificate in /etc/tower/tower.cert.<br />
+<br />
+Place the &gt;&gt;&lt;organizationally defined intermediate certificate file in PEM format&gt;&gt;&gt; in /etc/pki/ca-trust/source/anchors.<br />
+<br />
+Execute:<br />
+update-ca-trust extract &amp;&amp; update-ca-trust;<br />
+<br />
+Download the latest DOD PKI CA certificate bundle:<br />
+<br />
+curl https://dl.dod.cyber.mil/wp-content/uploads/pki-pke/zip/certificates_pkcs7_DOD.zip &gt; /root/certificates_pkcs7_DOD.z &amp;&amp; gunzip /root/certificates_pkcs7_DOD.z &gt; /etc/pki/ca-trust/source/anchors<br />
+<br />
+Install trusted root and intermediate CA certificates:<br />
+<br />
+update-ca-trust extract &amp;&amp; update-ca-trust;</p><h2>Check Contents</h2><p>The Administrator must check the Automation Controller configuration. <br />
+<br />
+Download the latest DOD PKI CA certificate bundle:<br />
+<br />
+curl https://dl.dod.cyber.mil/wp-content/uploads/pki-pke/zip/certificates_pkcs7_DOD.zip &gt; /root/certificates_pkcs7_DOD.zip &amp;&amp; gunzip /root/certificates_pkcs7_DOD.zip<br />
+<br />
+Check the certificate at /etc/tower/tower.cert:<br />
+<br />
+openssl verify -verbose -x509_strict -CAfile /root/certificates_pkcs7_DOD.pem -CApath nosuchdir &lt;(cat  /etc/tower/tower.cert &gt;&gt;&lt;organizationally defined intermediate certificate file in PEM format&gt;&gt;&gt;)<br />
+<br />
+If the &gt;&gt;&lt;organizationally defined intermediate certificate file in PEM format&gt;&gt;&gt; does not exist, this is a finding.<br />
+<br />
+Check the certificate at /etc/tower/tower.key:<br />
+openssl verify -CAfile /root/certificates_pkcs7_DOD.pem /etc/tower/tower.cert  <br />
+<br />
+If the &gt;&gt;&lt;organizationally defined intermediate certificate file in PEM format&gt;&gt;&gt; does not exist, this is a finding.<br />
+<br />
+Check the trusted ca certificate:<br />
+<br />
+openssl x509 -in /etc/pki/ca-trust/tls-ca-bundle.pam custom_ca_cert<br />
+<br />
+If the &gt;&gt;&lt;organizationally defined intermediate certificate file in PEM format&gt;&gt;&gt; does not exist, this is a finding.<br />
+<br />
+If the &gt;&gt;&lt;organizationally defined intermediate certificate file in PEM format&gt;&gt;&gt; does not exist, this is a finding.</p><h2>Vulnerability Number</h2><p>V-256910</p><h2>Documentable</h2><p>False</p><h2>Rule Version</h2><p>APAS-AT-000110</p><h2>Severity Override Guidance</h2><p>The Administrator must check the Automation Controller configuration. <br />
+<br />
+Download the latest DOD PKI CA certificate bundle:<br />
+<br />
+curl https://dl.dod.cyber.mil/wp-content/uploads/pki-pke/zip/certificates_pkcs7_DOD.zip &gt; /root/certificates_pkcs7_DOD.zip &amp;&amp; gunzip /root/certificates_pkcs7_DOD.zip<br />
+<br />
+Check the certificate at /etc/tower/tower.cert:<br />
+<br />
+openssl verify -verbose -x509_strict -CAfile /root/certificates_pkcs7_DOD.pem -CApath nosuchdir &lt;(cat  /etc/tower/tower.cert &gt;&gt;&lt;organizationally defined intermediate certificate file in PEM format&gt;&gt;&gt;)<br />
+<br />
+If the &gt;&gt;&lt;organizationally defined intermediate certificate file in PEM format&gt;&gt;&gt; does not exist, this is a finding.<br />
+<br />
+Check the certificate at /etc/tower/tower.key:<br />
+openssl verify -CAfile /root/certificates_pkcs7_DOD.pem /etc/tower/tower.cert  <br />
+<br />
+If the &gt;&gt;&lt;organizationally defined intermediate certificate file in PEM format&gt;&gt;&gt; does not exist, this is a finding.<br />
+<br />
+Check the trusted ca certificate:<br />
+<br />
+openssl x509 -in /etc/pki/ca-trust/tls-ca-bundle.pam custom_ca_cert<br />
+<br />
+If the &gt;&gt;&lt;organizationally defined intermediate certificate file in PEM format&gt;&gt;&gt; does not exist, this is a finding.<br />
+<br />
+If the &gt;&gt;&lt;organizationally defined intermediate certificate file in PEM format&gt;&gt;&gt; does not exist, this is a finding.</p><h2>Check Content Reference</h2><p>M</p><h2>Target Key</h2><p>5534</p></body></html>

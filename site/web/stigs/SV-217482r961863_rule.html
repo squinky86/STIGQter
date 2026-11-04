@@ -1,0 +1,189 @@
+<!doctype html><html lang="en"><head><meta charset="utf-8"><title>STIGQter: STIG Check Details: SV-217482r961863_rule: The HP FlexFabric Switch must obtain its public key certificates from an appropriate certificate policy through an approved service provider.</title><link rel="icon" type="image/svg+xml" href="STIGQter.svg" /><script async src="https://www.googletagmanager.com/gtag/js?id=UA-31381839-2"></script><script src="include.js"></script><script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-4110907817782130" crossorigin="anonymous"></script></head><body><div><img src="STIGQter.svg" alt="STIGQter" style="height:1em;" /> <a href="https://www.stigqter.com/">STIGQter</a>: <a href="main.html">STIG Summary</a>: <a href="U_HP_FlexFabric_Switch_NDM_STIG_V1R4_Manual-xccdf.html">HP FlexFabric Switch NDM Security Technical Implementation Guide Version: 1 Release: 4 Benchmark Date: 02 Jul 2025</a>:</div> <h1>The HP FlexFabric Switch must obtain its public key certificates from an appropriate certificate policy through an approved service provider.</h1><h2>DISA Rule</h2><p>SV-217482r961863_rule</p><h2>Vulnerability Number</h2><p>V-217482</p><h2>Group Title</h2><p>SRG-APP-000516-NDM-000344</p><h2>Rule Version</h2><p>HFFS-ND-000139</p><h2>Severity</h2><p>CAT II</p><h2>CCI(s)</h2><ul><li>CCI-001159 - Issue public key certificates under an organization-defined certificate policy or obtain public key certificates from an approved service provider.</li><li>CCI-000366 - Implement the security configuration settings.</li></ul><h2>Weight</h2><p>10</p><h2>Fix Recommendation</h2><p>Configure the HP FlexFabric Switch to obtain its public key certificates in offline mode from an appropriate certificate policy through an approved service provider.<br />
+<br />
+Configure PKI entity:<br />
+[HP] pki entity HP<br />
+[HP-pki-entity-HP] common-name HP<br />
+[HP-pki-entity-HP] country US<br />
+[HP-pki-entity-HP] locality Littleton<br />
+[HP-pki-entity-HP] organization-unit STG<br />
+[HP-pki-entity-HP] organization HP<br />
+[HP-pki-entity-HP] state MA<br />
+[HP-pki-entity-HP] ip 15.252.76.101<br />
+[HP-pki-entity-HP] quit<br />
+<br />
+Configure PKI domain:<br />
+[HP] pki domain HP<br />
+[HP-pki-domain-HP] certificate request entity HP<br />
+[HP-pki-domain-HP] public-key rsa general name hostkey<br />
+[HP-pki-domain-HP] source ip 15.252.76.101<br />
+[HP-pki-domain-HP] undo crl check enable<br />
+[HP-pki-domain-HP] quit<br />
+<br />
+Submit certificate request on the switch:<br />
+[HP] pki request-certificate domain HP pkcs10<br />
+<br />
+Transfer and import downloaded CA and user certificates to the switch:<br />
+[HP] pki import domain jitc pem ca filename rae-root-ca.cer<br />
+[HP] pki import domain jitc pem local filename HP.cer<br />
+<br />
+Note: Configuration required on the server side is not covered here.</p><h2>Check Contents</h2><p>Determine if the HP FlexFabric Switch obtains public key certificates from an appropriate certificate policy through an approved service provider.<br />
+<br />
+[HP] display pki certificate domain HP local<br />
+<br />
+Certificate:<br />
+    Data:<br />
+        Version: 3 (0x2)<br />
+        Serial Number:<br />
+            3e:7b:9b:bb:00:00:00:00:00:28<br />
+        Signature Algorithm: sha1WithRSAEncryption<br />
+        Issuer: DC=local, DC=rae-domain, CN=rae-domain-WIN2008-RAE-CA<br />
+        Validity<br />
+            Not Before: Apr 23 18:19:27 2015 GMT<br />
+            Not After : Apr 22 18:19:27 2016 GMT<br />
+        Subject: unstructuredAddress=15.252.76.101, C=US, ST=MA, L=Littleton, O=HP, OU=STG, CN=12508<br />
+        Subject Public Key Info:<br />
+            Public Key Algorithm: rsaEncryption<br />
+                Public-Key: (2048 bit)<br />
+                Modulus:<br />
+                    00:e1:13:04:10:94:4a:a9:f7:6b:42:bb:64:13:4a:<br />
+                    eb:10:48:60:61:a5:e7:d6:13:95:2d:69:b0:79:ae:<br />
+                    df:be:e3:a2:5d:7d:be:3b:97:b9:2c:99:05:37:ea:<br />
+                    bf:a9:95:49:e7:08:50:14:68:fc:1d:16:83:f9:ea:<br />
+                    66:cc:8a:8f:f9:9c:28:dc:66:7a:80:0c:53:5e:cc:<br />
+                    a2:ee:4a:c3:4f:fb:6f:81:00:6c:4f:5d:72:e7:34:<br />
+                    dc:4c:06:18:97:7d:da:45:b5:f1:2b:7e:71:c7:62:<br />
+                    b3:59:fe:b9:6d:62:19:43:fd:73:93:fc:f5:ed:5e:<br />
+                    08:db:76:e7:66:26:cb:17:fd:69:a5:f5:b9:7e:e9:<br />
+                    9b:b4:91:30:d1:1a:1b:89:a3:ed:07:99:59:33:1e:<br />
+                    de:4d:96:34:67:8c:b2:20:4d:5f:ec:19:49:33:d6:<br />
+                    14:57:03:a5:90:9c:a7:6a:31:3f:37:c3:29:5b:0a:<br />
+                    db:24:2c:83:7d:e9:cb:c3:70:55:24:36:f5:c5:3f:<br />
+                    f5:4e:f5:87:05:99:2d:4a:59:6f:d9:2e:2d:90:c7:<br />
+                    fa:43:59:86:50:ee:e0:fc:2a:f9:bc:52:8c:39:d0:<br />
+                    05:3f:85:5c:5e:6b:5f:95:31:7b:e7:1e:b7:b5:af:<br />
+                    08:0d:34:8f:a0:07:4a:5a:32:eb:e7:39:5f:0e:9a:<br />
+                    f5:01<br />
+                Exponent: 65537 (0x10001)<br />
+        X509v3 extensions:<br />
+            X509v3 Key Usage: critical<br />
+                Digital Signature<br />
+            X509v3 Subject Alternative Name:<br />
+                IP Address:15.252.76.101<br />
+            X509v3 Subject Key Identifier:<br />
+                A7:B8:9F:0D:07:A9:31:91:ED:90:5C:F6:BF:6C:E0:7D:58:74:AB:08<br />
+            X509v3 Authority Key Identifier:<br />
+                keyid:07:8D:A0:CF:CB:47:DB:E3:BE:E9:F6:18:21:F6:19:05:B8:34:26:3E<br />
+<br />
+            X509v3 CRL Distribution Points:<br />
+<br />
+                Full Name:<br />
+                  URI:ldap:///CN=rae-domain-WIN2008-RAE-CA,CN=WIN2008-RAE,CN=CDP,CN=Public%20Key%20Services,CN=Services,CN=Configuration,DC=rae-domain,DC=local?certificateRevocationList?base?objectClass=cRLDistributionPoint<br />
+            Authority Information Access:<br />
+                CA Issuers - URI:ldap:///CN=rae-domain-WIN2008-RAE-CA,CN=AIA,CN=Public%20Key%20Services,CN=Services,CN=Configuration,DC=rae-domain,DC=local?cACertificate?base?objectClass=certificationAuthority<br />
+<br />
+            1.3.6.1.4.1.311.21.7:<br />
+                0,.$+.....7.....E...\...<br />
+...0.............d...<br />
+            X509v3 Extended Key Usage:<br />
+                Code Signing<br />
+            1.3.6.1.4.1.311.21.10:<br />
+                0.0<br />
+..+.......<br />
+    Signature Algorithm: sha1WithRSAEncryption<br />
+        0b:1f:81:59:9d:4b:bf:b7:1c:a9:45:af:9e:2d:ab:0e:d4:a9:<br />
+        20:3b:f7:25:36:59:72:da:c9:80:3d:66:66:ab:4f:bf:d7:b4:<br />
+        55:23:96:24:2e:43:2c:20:79:41:d7:ec:23:18:55:49:d7:42:<br />
+        36:d3:0f:1f:99:50:c7:84:94:0f:6f:b0:b7:e7:6a:e7:e7:e0:<br />
+        d5:b8:09:f7:3d:1e:9b:6e:9e:7a:d8:39:30:66:60:f5:05:fd:<br />
+        d9:68:0d:22:73:7e:91:69:8c:a3:99:2f:24:a3:9b:96:a7:37:<br />
+        1d:a6:42:50:6d:8f:92:bf:90:8f:2b:26:a5:26:5c:59:f1:ef:<br />
+        12:1f:d3:77:8e:59:58:3c:c1:1c:20:74:31:95:2b:f2:71:69:<br />
+        39:fd:9b:06:4e:09:08:55:bc:ce:a7:3c:4e:1a:64:ae:0e:1b:<br />
+        a4:61:89:17:d1:72:31:20:2f:cc:24:97:d1:dd:1c:28:98:84:<br />
+        00:bc:3c:0e:c4:14:dd:26:6f:20:7d:0d:82:f7:71:d2:00:ec:<br />
+        1c:10:2e:35:a8:cc:75:0f:76:1b:7f:f2:d4:d9:df:a5:f8:c2:<br />
+        75:38:4c:7c:7f:42:81:a1:36:23:a8:f3:c1:9e:f2:12:02:6f:<br />
+        db:3c:38:b5:0b:e4:0b:ea:f9:17:81:b2:6e:2c:34:7c:35:dc:<br />
+        9f:e8:b9:0d<br />
+<br />
+If the HP FlexFabric Switch does not obtain its public key certificates from an appropriate certificate policy through an approved service provider, this is a finding.</p><h2>Vulnerability Number</h2><p>V-217482</p><h2>Documentable</h2><p>False</p><h2>Rule Version</h2><p>HFFS-ND-000139</p><h2>Severity Override Guidance</h2><p>Determine if the HP FlexFabric Switch obtains public key certificates from an appropriate certificate policy through an approved service provider.<br />
+<br />
+[HP] display pki certificate domain HP local<br />
+<br />
+Certificate:<br />
+    Data:<br />
+        Version: 3 (0x2)<br />
+        Serial Number:<br />
+            3e:7b:9b:bb:00:00:00:00:00:28<br />
+        Signature Algorithm: sha1WithRSAEncryption<br />
+        Issuer: DC=local, DC=rae-domain, CN=rae-domain-WIN2008-RAE-CA<br />
+        Validity<br />
+            Not Before: Apr 23 18:19:27 2015 GMT<br />
+            Not After : Apr 22 18:19:27 2016 GMT<br />
+        Subject: unstructuredAddress=15.252.76.101, C=US, ST=MA, L=Littleton, O=HP, OU=STG, CN=12508<br />
+        Subject Public Key Info:<br />
+            Public Key Algorithm: rsaEncryption<br />
+                Public-Key: (2048 bit)<br />
+                Modulus:<br />
+                    00:e1:13:04:10:94:4a:a9:f7:6b:42:bb:64:13:4a:<br />
+                    eb:10:48:60:61:a5:e7:d6:13:95:2d:69:b0:79:ae:<br />
+                    df:be:e3:a2:5d:7d:be:3b:97:b9:2c:99:05:37:ea:<br />
+                    bf:a9:95:49:e7:08:50:14:68:fc:1d:16:83:f9:ea:<br />
+                    66:cc:8a:8f:f9:9c:28:dc:66:7a:80:0c:53:5e:cc:<br />
+                    a2:ee:4a:c3:4f:fb:6f:81:00:6c:4f:5d:72:e7:34:<br />
+                    dc:4c:06:18:97:7d:da:45:b5:f1:2b:7e:71:c7:62:<br />
+                    b3:59:fe:b9:6d:62:19:43:fd:73:93:fc:f5:ed:5e:<br />
+                    08:db:76:e7:66:26:cb:17:fd:69:a5:f5:b9:7e:e9:<br />
+                    9b:b4:91:30:d1:1a:1b:89:a3:ed:07:99:59:33:1e:<br />
+                    de:4d:96:34:67:8c:b2:20:4d:5f:ec:19:49:33:d6:<br />
+                    14:57:03:a5:90:9c:a7:6a:31:3f:37:c3:29:5b:0a:<br />
+                    db:24:2c:83:7d:e9:cb:c3:70:55:24:36:f5:c5:3f:<br />
+                    f5:4e:f5:87:05:99:2d:4a:59:6f:d9:2e:2d:90:c7:<br />
+                    fa:43:59:86:50:ee:e0:fc:2a:f9:bc:52:8c:39:d0:<br />
+                    05:3f:85:5c:5e:6b:5f:95:31:7b:e7:1e:b7:b5:af:<br />
+                    08:0d:34:8f:a0:07:4a:5a:32:eb:e7:39:5f:0e:9a:<br />
+                    f5:01<br />
+                Exponent: 65537 (0x10001)<br />
+        X509v3 extensions:<br />
+            X509v3 Key Usage: critical<br />
+                Digital Signature<br />
+            X509v3 Subject Alternative Name:<br />
+                IP Address:15.252.76.101<br />
+            X509v3 Subject Key Identifier:<br />
+                A7:B8:9F:0D:07:A9:31:91:ED:90:5C:F6:BF:6C:E0:7D:58:74:AB:08<br />
+            X509v3 Authority Key Identifier:<br />
+                keyid:07:8D:A0:CF:CB:47:DB:E3:BE:E9:F6:18:21:F6:19:05:B8:34:26:3E<br />
+<br />
+            X509v3 CRL Distribution Points:<br />
+<br />
+                Full Name:<br />
+                  URI:ldap:///CN=rae-domain-WIN2008-RAE-CA,CN=WIN2008-RAE,CN=CDP,CN=Public%20Key%20Services,CN=Services,CN=Configuration,DC=rae-domain,DC=local?certificateRevocationList?base?objectClass=cRLDistributionPoint<br />
+            Authority Information Access:<br />
+                CA Issuers - URI:ldap:///CN=rae-domain-WIN2008-RAE-CA,CN=AIA,CN=Public%20Key%20Services,CN=Services,CN=Configuration,DC=rae-domain,DC=local?cACertificate?base?objectClass=certificationAuthority<br />
+<br />
+            1.3.6.1.4.1.311.21.7:<br />
+                0,.$+.....7.....E...\...<br />
+...0.............d...<br />
+            X509v3 Extended Key Usage:<br />
+                Code Signing<br />
+            1.3.6.1.4.1.311.21.10:<br />
+                0.0<br />
+..+.......<br />
+    Signature Algorithm: sha1WithRSAEncryption<br />
+        0b:1f:81:59:9d:4b:bf:b7:1c:a9:45:af:9e:2d:ab:0e:d4:a9:<br />
+        20:3b:f7:25:36:59:72:da:c9:80:3d:66:66:ab:4f:bf:d7:b4:<br />
+        55:23:96:24:2e:43:2c:20:79:41:d7:ec:23:18:55:49:d7:42:<br />
+        36:d3:0f:1f:99:50:c7:84:94:0f:6f:b0:b7:e7:6a:e7:e7:e0:<br />
+        d5:b8:09:f7:3d:1e:9b:6e:9e:7a:d8:39:30:66:60:f5:05:fd:<br />
+        d9:68:0d:22:73:7e:91:69:8c:a3:99:2f:24:a3:9b:96:a7:37:<br />
+        1d:a6:42:50:6d:8f:92:bf:90:8f:2b:26:a5:26:5c:59:f1:ef:<br />
+        12:1f:d3:77:8e:59:58:3c:c1:1c:20:74:31:95:2b:f2:71:69:<br />
+        39:fd:9b:06:4e:09:08:55:bc:ce:a7:3c:4e:1a:64:ae:0e:1b:<br />
+        a4:61:89:17:d1:72:31:20:2f:cc:24:97:d1:dd:1c:28:98:84:<br />
+        00:bc:3c:0e:c4:14:dd:26:6f:20:7d:0d:82:f7:71:d2:00:ec:<br />
+        1c:10:2e:35:a8:cc:75:0f:76:1b:7f:f2:d4:d9:df:a5:f8:c2:<br />
+        75:38:4c:7c:7f:42:81:a1:36:23:a8:f3:c1:9e:f2:12:02:6f:<br />
+        db:3c:38:b5:0b:e4:0b:ea:f9:17:81:b2:6e:2c:34:7c:35:dc:<br />
+        9f:e8:b9:0d<br />
+<br />
+If the HP FlexFabric Switch does not obtain its public key certificates from an appropriate certificate policy through an approved service provider, this is a finding.</p><h2>Check Content Reference</h2><p>M</p><h2>Target Key</h2><p>4037</p></body></html>

@@ -1,0 +1,57 @@
+<!doctype html><html lang="en"><head><meta charset="utf-8"><title>STIGQter: STIG Check Details: SV-270508r1065201_rule: The Oracle Database, or the logging or alerting mechanism the application uses, must provide a warning when allocated audit record storage volume record storage volume reaches 75 percent of maximum audit record storage capacity.</title><link rel="icon" type="image/svg+xml" href="STIGQter.svg" /><script async src="https://www.googletagmanager.com/gtag/js?id=UA-31381839-2"></script><script src="include.js"></script><script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-4110907817782130" crossorigin="anonymous"></script></head><body><div><img src="STIGQter.svg" alt="STIGQter" style="height:1em;" /> <a href="https://www.stigqter.com/">STIGQter</a>: <a href="main.html">STIG Summary</a>: <a href="U_Oracle_Database_19c_STIG_V1R5_Manual-xccdf.html">Oracle Database 19c Security Technical Implementation Guide Version: 1 Release: 5 Benchmark Date: 01 Apr 2026</a>:</div> <h1>The Oracle Database, or the logging or alerting mechanism the application uses, must provide a warning when allocated audit record storage volume record storage volume reaches 75 percent of maximum audit record storage capacity.</h1><h2>DISA Rule</h2><p>SV-270508r1065201_rule</p><h2>Vulnerability Number</h2><p>V-270508</p><h2>Group Title</h2><p>SRG-APP-000359-DB-000319</p><h2>Rule Version</h2><p>O19C-00-005900</p><h2>Severity</h2><p>CAT II</p><h2>CCI(s)</h2><ul><li>CCI-001855 - Provide a warning to organization-defined personnel, roles, and/or locations within an organization-defined time period when allocated audit log storage volume reaches an organization-defined percentage of repository maximum audit log storage capacity.</li></ul><h2>Weight</h2><p>10</p><h2>Fix Recommendation</h2><p>Modify DBMS, OS, or third-party logging application settings to alert appropriate personnel when 75 percent of log storage capacity is reached.<br />
+<br />
+For ease of management, it is recommended that the audit tables be kept in a dedicated tablespace.<br />
+<br />
+If Oracle Enterprise Manager is in use, the capability to issue such an alert is built in and configurable via the console so an email can be sent to a designated administrator.<br />
+<br />
+If Enterprise Manager is unavailable, the following script can be used to monitor storage space; this can be combined with additional code to email the appropriate administrator so they can take action.<br />
+<br />
+sqlplus connect as sysdba<br />
+<br />
+set pagesize 300<br />
+set linesize 120<br />
+column sumb format 9,999,999,999,999<br />
+column extents format 999999<br />
+column bytes format 9,999,999,999,999<br />
+column largest format 9,999,999,999,999<br />
+column Tot_Size format 9,999,999,999,999<br />
+column Tot_Free format 9,999,999,999,999<br />
+column Pct_Free format 9,999,999,999,999<br />
+column Chunks_Free format 9,999,999,999,999<br />
+column Max_Free format 9,999,999,999,999<br />
+set echo off<br />
+spool TSINFO.txt<br />
+PROMPT SPACE AVAILABLE IN TABLESPACES<br />
+select a.tablespace_name,sum(a.tots) Tot_Size,<br />
+sum(a.sumb) Tot_Free,<br />
+sum(a.sumb)*100/sum(a.tots) Pct_Free, <br />
+sum(a.largest) Max_Free,sum(a.chunks) Chunks_Free<br />
+from<br />
+(<br />
+select tablespace_name,0 tots,sum(bytes) sumb,<br />
+max(bytes) largest,count(*) chunks<br />
+from dba_free_space a<br />
+group by tablespace_name<br />
+union<br />
+select tablespace_name,sum(bytes) tots,0,0,0 from<br />
+dba_data_files<br />
+group by tablespace_name) a<br />
+group by a.tablespace_name;<br />
+<br />
+Sample Output<br />
+<br />
+SPACE AVAILABLE IN TABLESPACES<br />
+<br />
+TABLESPACE_NAME     TOT_SIZE     TOT_FREE     PCT_FREE     MAX_FREE    CHUNKS_FREE<br />
+-----------------------------      --------------     --------------     ---------------    ----------------    --------------------- <br />
+DES2                                   41,943,040      30,935,040             74             30,935,040                   1 <br />
+DES2_I                               31,457,280       23,396,352             74             23,396,352                   1 <br />
+RBS                                     60,817,408       57,085,952             94             52,426,752                16 <br />
+SYSTEM                             94,371,840        5,386,240                6               5,013,504                  3 <br />
+TEMP                                       563,200           561,152            100                  133,120                  5 <br />
+TOOLS                              120,586,240      89,407,488              74             78,190,592                12 <br />
+USERS                                  1,048,576             26,624                 3                   26,624                   1</p><h2>Check Contents</h2><p>Review OS or third-party logging application settings to determine whether a warning will be provided when 75 percent of DBMS audit log storage capacity is reached.<br />
+<br />
+If no warning will be provided, this is a finding.</p><h2>Vulnerability Number</h2><p>V-270508</p><h2>Documentable</h2><p>False</p><h2>Rule Version</h2><p>O19C-00-005900</p><h2>Severity Override Guidance</h2><p>Review OS or third-party logging application settings to determine whether a warning will be provided when 75 percent of DBMS audit log storage capacity is reached.<br />
+<br />
+If no warning will be provided, this is a finding.</p><h2>Check Content Reference</h2><p>M</p><h2>Target Key</h2><p>5672</p></body></html>

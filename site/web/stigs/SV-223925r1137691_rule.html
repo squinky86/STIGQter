@@ -1,0 +1,105 @@
+<!doctype html><html lang="en"><head><meta charset="utf-8"><title>STIGQter: STIG Check Details: SV-223925r1137691_rule: CA-TSS Emergency ACIDs must be properly limited and must audit all resource access.</title><link rel="icon" type="image/svg+xml" href="STIGQter.svg" /><script async src="https://www.googletagmanager.com/gtag/js?id=UA-31381839-2"></script><script src="include.js"></script><script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-4110907817782130" crossorigin="anonymous"></script></head><body><div><img src="STIGQter.svg" alt="STIGQter" style="height:1em;" /> <a href="https://www.stigqter.com/">STIGQter</a>: <a href="main.html">STIG Summary</a>: <a href="U_IBM_zOS_TSS_STIG_V9R9_Manual-xccdf.html">IBM z/OS TSS Security Technical Implementation Guide Version: 9 Release: 9 Benchmark Date: 01 Jul 2026</a>:</div> <h1>CA-TSS Emergency ACIDs must be properly limited and must audit all resource access.</h1><h2>DISA Rule</h2><p>SV-223925r1137691_rule</p><h2>Vulnerability Number</h2><p>V-223925</p><h2>Group Title</h2><p>SRG-OS-000080-GPOS-00048</p><h2>Rule Version</h2><p>TSS0-ES-000510</p><h2>Severity</h2><p>CAT I</p><h2>CCI(s)</h2><ul><li>CCI-000213 - Enforce approved authorizations for logical access to information and system resources in accordance with applicable access control policies.</li></ul><h2>Weight</h2><p>10</p><h2>Fix Recommendation</h2><p>Configure any emergency ACID to have only access to resources required to support the specific functions of the owning department and that access to these resources is audited. Evaluate the impact of correcting the deficiency. Develop a plan of action and implement the changes.<br />
+<br />
+TSS PER(acid) DSN(*****) ACCESS(ALL) ACTION(AUDIT)<br />
+<br />
+Security Bypass Attributes NODSNCHK, NOVOLCHK, and NORESCHK will not be given to the Emergency ACIDs.<br />
+<br />
+All emergency ACID(s) are to be implemented with logging to provide an audit trail of their activities.<br />
+<br />
+All emergency ACID(s) are to be maintained in both the ACP and SYS1.UADS to ensure they are available in the event that the ACP is not functional.<br />
+<br />
+All emergency ACID(s) will have distinct, different passwords in SYS1.UADS and in the ACP, and the site is to establish procedures to ensure that the passwords differ. The password for any ID in SYS1.UADS is never to match the password for the same ID in the ACP.<br />
+<br />
+All emergency ACID(s) will have documented procedures to provide a mechanism for the use of the IDs. Their release for use is to be logged, and the log is to be maintained by the ISSO. When an emergency ACID is released for use, its password is to be reset by the ISSO within 12 hours.   <br />
+<br />
+If no emergency userids are in use on the system, develop and document a procedure to manage emergency access to the system.</p><h2>Check Contents</h2><p>Refer to the SYS1.UADS.<br />
+<br />
+Ask the System Administrator for list of all emergency ACIDs available to the site along with the associated function of each.<br />
+<br />
+If there are no emergency ACIDs defined ask the system administrator for an alternate documented procedure to handle emergencies. <br />
+<br />
+If there are no emergency ACIDs and no documented emergency procedure, this is a finding.<br />
+<br />
+If at a minimum, an emergency ACID exists with the security administration attributes specified in accordance with the following requirements, this is not a finding.<br />
+<br />
+For emergency IDs with security administration privileges, but which cannot access and update system data sets:<br />
+<br />
+ADMIN Authority: <br />
+ACID(ALL)<br />
+DATA(ALL) <br />
+OTRAN(ALL)<br />
+MISC1(INSTDATA,SUSPEND,TSSSIM,NOATS) <br />
+MISC2(TSO,TARGET) <br />
+MISC8(PWMAINT,REMASUSP) <br />
+MISC9(GENERIC) FACILITY(BATCH, TSO, ROSCOE, CICS, xxxx) <br />
+Where 'xxxx' is a facility the application security team grants access into for their application users. <br />
+<br />
+An additional class of userids can exist to perform all operating system functions except ESM administration.<br />
+<br />
+These emergency ACID(s) will have ability to access and update all system data sets but will not have security administration privileges. See the following requirements:<br />
+<br />
+Data set permissions for the emergency ACIDs will be permitted as follows:<br />
+<br />
+TSS PER(acid) DSN(*****) ACCESS(ALL) ACTION(AUDIT)<br />
+<br />
+Security Bypass Attributes NODSNCHK, NOVOLCHK, and NORESCHK will not be given to the Emergency ACIDs.<br />
+<br />
+All emergency ACID(s) are to be implemented with logging to provide an audit trail of their activities.<br />
+<br />
+All emergency ACID(s) are to be maintained in both the ESM and SYS1.UADS to ensure they are available in the event that the ESM is not functional.<br />
+<br />
+All emergency ACID(s) will have distinct, different passwords in SYS1.UADS and in the ACP, and the site is to establish procedures to ensure that the passwords differ. The password for any ID in SYS1.UADS is never to match the password for the same ID in the ACP.<br />
+<br />
+All emergency ACID(s) will have documented procedures to provide a mechanism for the use of the IDs. Their release for use is to be logged, and the log is to be maintained by the ISSO. When an emergency ACID is released for use, its password is to be reset by the ISSO within 12 hours.<br />
+<br />
+1) Review the access authorizations for all emergency ACIDs to ensure that all access permitted to these ACIDs is reviewed and approved by the ISSO.<br />
+2) If emergency ACIDs are utilized, ensure they are restricted to performing only the operating system recovery functions or the ESM administration functions.<br />
+<br />
+If these emergency ACID(s) have ability to ACCESS and UPDATE all system data sets, but do not have security administration privileges, this is not a finding.<br />
+<br />
+Note: If running Quest NC-Pass, validate that the Emergency ACIDS are identified to have the FACILITY of NCPASS and SECURID resource in the ABSTRACT resource class.</p><h2>Vulnerability Number</h2><p>V-223925</p><h2>Documentable</h2><p>False</p><h2>Rule Version</h2><p>TSS0-ES-000510</p><h2>Severity Override Guidance</h2><p>Refer to the SYS1.UADS.<br />
+<br />
+Ask the System Administrator for list of all emergency ACIDs available to the site along with the associated function of each.<br />
+<br />
+If there are no emergency ACIDs defined ask the system administrator for an alternate documented procedure to handle emergencies. <br />
+<br />
+If there are no emergency ACIDs and no documented emergency procedure, this is a finding.<br />
+<br />
+If at a minimum, an emergency ACID exists with the security administration attributes specified in accordance with the following requirements, this is not a finding.<br />
+<br />
+For emergency IDs with security administration privileges, but which cannot access and update system data sets:<br />
+<br />
+ADMIN Authority: <br />
+ACID(ALL)<br />
+DATA(ALL) <br />
+OTRAN(ALL)<br />
+MISC1(INSTDATA,SUSPEND,TSSSIM,NOATS) <br />
+MISC2(TSO,TARGET) <br />
+MISC8(PWMAINT,REMASUSP) <br />
+MISC9(GENERIC) FACILITY(BATCH, TSO, ROSCOE, CICS, xxxx) <br />
+Where 'xxxx' is a facility the application security team grants access into for their application users. <br />
+<br />
+An additional class of userids can exist to perform all operating system functions except ESM administration.<br />
+<br />
+These emergency ACID(s) will have ability to access and update all system data sets but will not have security administration privileges. See the following requirements:<br />
+<br />
+Data set permissions for the emergency ACIDs will be permitted as follows:<br />
+<br />
+TSS PER(acid) DSN(*****) ACCESS(ALL) ACTION(AUDIT)<br />
+<br />
+Security Bypass Attributes NODSNCHK, NOVOLCHK, and NORESCHK will not be given to the Emergency ACIDs.<br />
+<br />
+All emergency ACID(s) are to be implemented with logging to provide an audit trail of their activities.<br />
+<br />
+All emergency ACID(s) are to be maintained in both the ESM and SYS1.UADS to ensure they are available in the event that the ESM is not functional.<br />
+<br />
+All emergency ACID(s) will have distinct, different passwords in SYS1.UADS and in the ACP, and the site is to establish procedures to ensure that the passwords differ. The password for any ID in SYS1.UADS is never to match the password for the same ID in the ACP.<br />
+<br />
+All emergency ACID(s) will have documented procedures to provide a mechanism for the use of the IDs. Their release for use is to be logged, and the log is to be maintained by the ISSO. When an emergency ACID is released for use, its password is to be reset by the ISSO within 12 hours.<br />
+<br />
+1) Review the access authorizations for all emergency ACIDs to ensure that all access permitted to these ACIDs is reviewed and approved by the ISSO.<br />
+2) If emergency ACIDs are utilized, ensure they are restricted to performing only the operating system recovery functions or the ESM administration functions.<br />
+<br />
+If these emergency ACID(s) have ability to ACCESS and UPDATE all system data sets, but do not have security administration privileges, this is not a finding.<br />
+<br />
+Note: If running Quest NC-Pass, validate that the Emergency ACIDS are identified to have the FACILITY of NCPASS and SECURID resource in the ABSTRACT resource class.</p><h2>Check Content Reference</h2><p>M</p><h2>Target Key</h2><p>4102</p></body></html>

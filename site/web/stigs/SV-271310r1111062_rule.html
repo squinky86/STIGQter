@@ -1,0 +1,117 @@
+<!doctype html><html lang="en"><head><meta charset="utf-8"><title>STIGQter: STIG Check Details: SV-271310r1111062_rule: Confidentiality of information during transmission must be controlled through the use of an approved TLS version.</title><link rel="icon" type="image/svg+xml" href="STIGQter.svg" /><script async src="https://www.googletagmanager.com/gtag/js?id=UA-31381839-2"></script><script src="include.js"></script><script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-4110907817782130" crossorigin="anonymous"></script></head><body><div><img src="STIGQter.svg" alt="STIGQter" style="height:1em;" /> <a href="https://www.stigqter.com/">STIGQter</a>: <a href="main.html">STIG Summary</a>: <a href="U_MS_SQL_Server_2022_Instance_STIG_V1R4_Manual-xccdf.html">Microsoft SQL Server 2022 Instance Security Technical Implementation Guide Version: 1 Release: 4 Benchmark Date: 01 Apr 2026</a>:</div> <h1>Confidentiality of information during transmission must be controlled through the use of an approved TLS version.</h1><h2>DISA Rule</h2><p>SV-271310r1111062_rule</p><h2>Vulnerability Number</h2><p>V-271310</p><h2>Group Title</h2><p>SRG-APP-000175-DB-000067</p><h2>Rule Version</h2><p>SQLI-22-008300</p><h2>Severity</h2><p>CAT I</p><h2>CCI(s)</h2><ul><li>CCI-000197 - For password-based authentication, transmit passwords only cryptographically-protected channels.</li></ul><h2>Weight</h2><p>10</p><h2>Fix Recommendation</h2><p>Important Note: Incorrectly modifying the Windows Registry can result in serious system errors. Before making any modifications, ensure there is a recent backup of the system and registry settings.<br />
+<br />
+Access the SQL Server.<br />
+Access an administrator command prompt. <br />
+Type &quot;regedit&quot; to launch the Registry Editor.<br />
+ <br />
+Enable TLS 1.2:<br />
+  <br />
+1. Navigate to the path HKLM\SYSTEM\CurrentControlSet\Control\SecurityProviders\SCHANNEL\Protocols.<br />
+    a. If the &quot;TLS 1.2&quot; key does not exist, right-click &quot;Protocols&quot;.<br />
+    b. Click &quot;New&quot;.<br />
+    c. Click &quot;Key&quot;.<br />
+    d. Type the name &quot;TLS 1.2&quot;.<br />
+<br />
+2. Navigate to the &quot;TLS 1.2&quot; subkey.<br />
+    a. If the subkey &quot;Client&quot; does not exist, right-click &quot;TLS 1.2&quot;.<br />
+    b. Click &quot;New&quot;.<br />
+    c. Click &quot;Key&quot;.<br />
+    d. Type the name &quot;Client&quot;.<br />
+    e. Repeat steps A-D for the &quot;Server&quot; subkey.<br />
+<br />
+3. Navigate to the &quot;Client&quot; subkey.<br />
+    a. If the value &quot;Enabled&quot; does not exist, right-click on &quot;Client&quot;.<br />
+    b. Click &quot;New&quot;.<br />
+    c. Click &quot;DWORD&quot;.<br />
+    d. Enter &quot;Enabled&quot; as the name.<br />
+    e. Repeat steps A-D for the value &quot;DisabledByDefault&quot;.<br />
+<br />
+4. Double-click &quot;Enabled&quot;.<br />
+<br />
+5. In Value Data, enter &quot;1&quot;.<br />
+<br />
+6. Click &quot;OK&quot;.<br />
+<br />
+7. Double-click &quot;DisabledByDefault&quot;.<br />
+<br />
+8. In Value Data, enter &quot;0&quot;.<br />
+<br />
+9. Click &quot;OK&quot;.<br />
+<br />
+10. Repeat steps 3-9 for the &quot;Server&quot; subkey.<br />
+ <br />
+Disable unwanted SSL/TLS protocol versions:<br />
+<br />
+1. Navigate to the path HKLM\SYSTEM\CurrentControlSet\Control\SecurityProviders\SCHANNEL\Protocols.<br />
+    a. If the &quot;TLS 1.0&quot; key does not exist, right-click &quot;Protocols&quot;.<br />
+    b. Click &quot;New&quot;.<br />
+    c. Click &quot;Key&quot;.<br />
+    d. Type the name &quot;TLS 1.0&quot;.<br />
+<br />
+2. Navigate to the &quot;TLS 1.0&quot; subkey.<br />
+    a. If the subkey &quot;Client&quot; does not exist, right-click &quot;TLS 1.0&quot;.<br />
+    b. Click &quot;New&quot;.<br />
+    c. Click &quot;Key&quot;.<br />
+    d. Type the name &quot;Client&quot;.<br />
+    e. Repeat steps A-D for the &quot;Server&quot; subkey.<br />
+<br />
+3. Navigate to the &quot;Client&quot; subkey.<br />
+   a. If the value &quot;Enabled&quot; does not exist, right-click on &quot;Client&quot;.<br />
+   b. Click &quot;New&quot;.<br />
+   c. Click &quot;DWORD&quot;.<br />
+   d. Enter &quot;Enabled&quot; as the name.<br />
+   e. Repeat steps A-D for the value &quot;DisabledByDefault&quot;.<br />
+<br />
+4. Double-click &quot;Enabled&quot;.<br />
+<br />
+5. In Value Data, enter &quot;0&quot;.<br />
+<br />
+6. Click &quot;OK&quot;.<br />
+<br />
+7. Double-click &quot;DisabledByDefault&quot;.<br />
+<br />
+8. In Value Data, enter &quot;1&quot;.<br />
+<br />
+9. Click &quot;OK&quot;.<br />
+<br />
+10. Repeat steps 3-9 for the &quot;Server&quot; subkey.<br />
+<br />
+11. Repeat steps 1-10 for &quot;TLS 1.1&quot;, &quot;SSL 2.0&quot;, and &quot;SSL 3.0&quot;.</p><h2>Check Contents</h2><p>Access the SQL Server.<br />
+Access an administrator command prompt.<br />
+Type &quot;regedit&quot; to launch the Registry Editor.<br />
+ <br />
+Navigate to:<br />
+HKLM\SYSTEM\CurrentControlSet\Control\SecurityProviders\SCHANNEL\Protocols\TLS 1.2<br />
+<br />
+If this key does not exist, this is a finding.<br />
+<br />
+Verify a REG_DWORD value of &quot;0&quot; for &quot;DisabledByDefault&quot; and a value of &quot;1&quot; for &quot;Enabled&quot; for both Client and Server.<br />
+ <br />
+Navigate to:<br />
+HKLM\SYSTEM\CurrentControlSet\Control\SecurityProviders\SCHANNEL\Protocols\TLS 1.0<br />
+HKLM\SYSTEM\CurrentControlSet\Control\SecurityProviders\SCHANNEL\Protocols\TLS 1.1<br />
+HKLM\SYSTEM\CurrentControlSet\Control\SecurityProviders\SCHANNEL\Protocols\SSL 2.0<br />
+HKLM\SYSTEM\CurrentControlSet\Control\SecurityProviders\SCHANNEL\Protocols\SSL 3.0<br />
+<br />
+Under each key, verify a REG_DWORD value of &quot;1&quot; for &quot;DisabledByDefault&quot; and a value of &quot;0&quot; for &quot;Enabled&quot; for both Client and Server subkeys.<br />
+ <br />
+If any of the respective registry paths are non-existent or contain values other than specified above, this is a finding. If Vendor documentation supporting the configuration is provided, reduce this finding to a CAT III.</p><h2>Vulnerability Number</h2><p>V-271310</p><h2>Documentable</h2><p>False</p><h2>Rule Version</h2><p>SQLI-22-008300</p><h2>Severity Override Guidance</h2><p>Access the SQL Server.<br />
+Access an administrator command prompt.<br />
+Type &quot;regedit&quot; to launch the Registry Editor.<br />
+ <br />
+Navigate to:<br />
+HKLM\SYSTEM\CurrentControlSet\Control\SecurityProviders\SCHANNEL\Protocols\TLS 1.2<br />
+<br />
+If this key does not exist, this is a finding.<br />
+<br />
+Verify a REG_DWORD value of &quot;0&quot; for &quot;DisabledByDefault&quot; and a value of &quot;1&quot; for &quot;Enabled&quot; for both Client and Server.<br />
+ <br />
+Navigate to:<br />
+HKLM\SYSTEM\CurrentControlSet\Control\SecurityProviders\SCHANNEL\Protocols\TLS 1.0<br />
+HKLM\SYSTEM\CurrentControlSet\Control\SecurityProviders\SCHANNEL\Protocols\TLS 1.1<br />
+HKLM\SYSTEM\CurrentControlSet\Control\SecurityProviders\SCHANNEL\Protocols\SSL 2.0<br />
+HKLM\SYSTEM\CurrentControlSet\Control\SecurityProviders\SCHANNEL\Protocols\SSL 3.0<br />
+<br />
+Under each key, verify a REG_DWORD value of &quot;1&quot; for &quot;DisabledByDefault&quot; and a value of &quot;0&quot; for &quot;Enabled&quot; for both Client and Server subkeys.<br />
+ <br />
+If any of the respective registry paths are non-existent or contain values other than specified above, this is a finding. If Vendor documentation supporting the configuration is provided, reduce this finding to a CAT III.</p><h2>Check Content Reference</h2><p>M</p><h2>Target Key</h2><p>5677</p></body></html>

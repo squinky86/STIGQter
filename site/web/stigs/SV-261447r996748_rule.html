@@ -1,0 +1,30 @@
+<!doctype html><html lang="en"><head><meta charset="utf-8"><title>STIGQter: STIG Check Details: SV-261447r996748_rule: SLEM 5 must generate audit records for all uses of the &quot;unix_chkpwd&quot; or &quot;unix2_chkpwd&quot; commands.</title><link rel="icon" type="image/svg+xml" href="STIGQter.svg" /><script async src="https://www.googletagmanager.com/gtag/js?id=UA-31381839-2"></script><script src="include.js"></script><script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-4110907817782130" crossorigin="anonymous"></script></head><body><div><img src="STIGQter.svg" alt="STIGQter" style="height:1em;" /> <a href="https://www.stigqter.com/">STIGQter</a>: <a href="main.html">STIG Summary</a>: <a href="U_SLEM_5_STIG_V1R4_Manual-xccdf.html">SUSE Linux Enterprise Micro (SLEM) 5 Security Technical Implementation Guide Version: 1 Release: 4 Benchmark Date: 01 Apr 2026</a>:</div> <h1>SLEM 5 must generate audit records for all uses of the &quot;unix_chkpwd&quot; or &quot;unix2_chkpwd&quot; commands.</h1><h2>DISA Rule</h2><p>SV-261447r996748_rule</p><h2>Vulnerability Number</h2><p>V-261447</p><h2>Group Title</h2><p>SRG-OS-000037-GPOS-00015</p><h2>Rule Version</h2><p>SLEM-05-654120</p><h2>Severity</h2><p>CAT II</p><h2>CCI(s)</h2><ul><li>CCI-000130 - Ensure that audit records containing information that establishes what type of event occurred.</li><li>CCI-000135 - Generate audit records containing the organization-defined additional information that is to be included in the audit records.</li><li>CCI-000169 - Provide audit record generation capability for the event types the system is capable of auditing as defined in AU-2 a. on organization-defined information system components.</li><li>CCI-002884 - Log organization-defined audit events for nonlocal maintenance and diagnostic sessions.</li><li>CCI-000172 - Generate audit records for the event types defined in AU-2 c that include the audit record content defined in AU-3.</li></ul><h2>Weight</h2><p>10</p><h2>Fix Recommendation</h2><p>Configure SLEM 5 to generate an audit record for all uses of the &quot;unix_chkpwd&quot; and &quot;unix2_chkpwd&quot; commands. <br />
+<br />
+Add or modify the following lines in the &quot;/etc/audit/rules.d/audit.rules&quot; file:<br />
+<br />
+-a always,exit -F path=/sbin/unix_chkpwd -F perm=x -F auid&gt;=1000 -F auid!=unset -k privileged-unix-chkpwd<br />
+-a always,exit -F path=/sbin/unix2_chkpwd -F perm=x -F auid&gt;=1000 -F auid!=unset -k privileged-unix2-chkpwd<br />
+<br />
+To reload the rules file, restart the audit daemon:<br />
+<br />
+     &gt; sudo systemctl restart auditd.service<br />
+<br />
+or issue the following command:<br />
+<br />
+     &gt; sudo augenrules --load</p><h2>Check Contents</h2><p>Verify SLEM 5 generates an audit record for any use of the &quot;unix_chkpwd&quot; or &quot;unix2_chkpwd&quot; commands with the following command:<br />
+<br />
+     &gt; sudo auditctl -l | egrep -w &quot;(unix_chkpwd|unix2_chkpwd)&quot;<br />
+     -a always,exit -S all -F path=/sbin/unix_chkpwd -F perm=x -F auid&gt;=1000 -F auid!=-1 -F key=privileged-unix-chkpwd<br />
+     -a always,exit -S all -F path=/sbin/unix2_chkpwd -F perm=x -F auid&gt;=1000 -F auid!=-1 -F key=privileged-unix2-chkpwd<br />
+<br />
+If the command does not return any output, this is a finding.<br />
+<br />
+Note: The &quot;key=&quot; value is arbitrary and can be different from the example output above.</p><h2>Vulnerability Number</h2><p>V-261447</p><h2>Documentable</h2><p>False</p><h2>Rule Version</h2><p>SLEM-05-654120</p><h2>Severity Override Guidance</h2><p>Verify SLEM 5 generates an audit record for any use of the &quot;unix_chkpwd&quot; or &quot;unix2_chkpwd&quot; commands with the following command:<br />
+<br />
+     &gt; sudo auditctl -l | egrep -w &quot;(unix_chkpwd|unix2_chkpwd)&quot;<br />
+     -a always,exit -S all -F path=/sbin/unix_chkpwd -F perm=x -F auid&gt;=1000 -F auid!=-1 -F key=privileged-unix-chkpwd<br />
+     -a always,exit -S all -F path=/sbin/unix2_chkpwd -F perm=x -F auid&gt;=1000 -F auid!=-1 -F key=privileged-unix2-chkpwd<br />
+<br />
+If the command does not return any output, this is a finding.<br />
+<br />
+Note: The &quot;key=&quot; value is arbitrary and can be different from the example output above.</p><h2>Check Content Reference</h2><p>M</p><h2>Target Key</h2><p>5596</p></body></html>

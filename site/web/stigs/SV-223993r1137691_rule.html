@@ -1,0 +1,100 @@
+<!doctype html><html lang="en"><head><meta charset="utf-8"><title>STIGQter: STIG Check Details: SV-223993r1137691_rule: IBM z/OS JESTRACE and/or SYSLOG resources must be protected in accordance with security requirements.</title><link rel="icon" type="image/svg+xml" href="STIGQter.svg" /><script async src="https://www.googletagmanager.com/gtag/js?id=UA-31381839-2"></script><script src="include.js"></script><script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-4110907817782130" crossorigin="anonymous"></script></head><body><div><img src="STIGQter.svg" alt="STIGQter" style="height:1em;" /> <a href="https://www.stigqter.com/">STIGQter</a>: <a href="main.html">STIG Summary</a>: <a href="U_IBM_zOS_TSS_STIG_V9R9_Manual-xccdf.html">IBM z/OS TSS Security Technical Implementation Guide Version: 9 Release: 9 Benchmark Date: 01 Jul 2026</a>:</div> <h1>IBM z/OS JESTRACE and/or SYSLOG resources must be protected in accordance with security requirements.</h1><h2>DISA Rule</h2><p>SV-223993r1137691_rule</p><h2>Vulnerability Number</h2><p>V-223993</p><h2>Group Title</h2><p>SRG-OS-000080-GPOS-00048</p><h2>Rule Version</h2><p>TSS0-JS-000090</p><h2>Severity</h2><p>CAT II</p><h2>CCI(s)</h2><ul><li>CCI-000213 - Enforce approved authorizations for logical access to information and system resources in accordance with applicable access control policies.</li></ul><h2>Weight</h2><p>10</p><h2>Fix Recommendation</h2><p>Configure the access authorization for resources defined to the JESTRACE and SYSLOG resources in the JESSPOOL resource class to be restricted to the appropriate personnel.<br />
+<br />
+Review the following resources defined to the JESSPOOL resource class:<br />
+<br />
+localnodeid.JES2.$TRCLOG.taskid.*.JESTRACE<br />
+localnodeid.+MASTER+.SYSLOG.jobid.*.SYSLOG or<br />
+localnodeid.+BYPASS+.SYSLOG.jobid.*.SYSLOG<br />
+<br />
+NOTE: These resource profiles may be more generic as long as they pertain directly to the JESTRACE and SYSLOG data sets. For example:<br />
+<br />
+localnodeid.JES2.$TRCLOG.<br />
+localnodeid.+MASTER+.SYSLOG. or<br />
+localnodeid.+BYPASS+.SYSLOG.<br />
+<br />
+NOTE: Review the JES2 parameters to determine the localnodeid by searching for OWNNODE in the NJEDEF statement, and then searching for NODE(nnnn) (where nnnn is the value specified by OWNNODE). The NAME parameter value specified on this NODE statement is the localnodeid. Another method is to issue the JES2 command $D NODE,NAME,OWNNODE=YES to obtain the NAME of the OWNNODE.<br />
+<br />
+Ensure that access authorization for the resources mentioned above is restricted to the following:<br />
+<br />
+-ACID(s) associated with external writer(s) can have complete access.<br />
+<br />
+NOTE: An external writer is a STC that removes data sets from the JES spool. In this case, it is responsible for archiving the JESTRACE and SYSLOG data sets. The STC default name is XWTR and the external writer program is called IASXWR00.<br />
+<br />
+-Systems personnel and security administrators responsible for diagnosing JES2 and z/OS problems can have complete access.<br />
+<br />
+-Application Development and Application Support personnel responsible for diagnosing application problems can have READ access to the SYSLOG resource.<br />
+<br />
+For Example:<br />
+<br />
+TSS ADD(dept-acid) JESSPOOL(localnodeid)<br />
+<br />
+TSS PERMIT(&lt;syspsmpl&gt;) JESSPOOL(localnodeid.JES2.$TRCLOG.) ACCESS(ALL)<br />
+TSS PERMIT(&lt;secasmpl&gt;) JESSPOOL(localnodeid.JES2.$TRCLOG.) ACCESS(ALL)<br />
+<br />
+TSS PERMIT(&lt;syspsmpl&gt;) JESSPOOL(localnodeid.+MASTER+.SYSLOG.) ACCESS(ALL)<br />
+TSS PERMIT(&lt;secasmpl&gt;) JESSPOOL(localnodeid.+MASTER+.SYSLOG.) ACCESS(ALL)<br />
+TSS PERMIT(&lt;appdsmpl&gt;) JESSPOOL(localnodeid.+MASTER+.SYSLOG.) ACCESS(READ)<br />
+TSS PERMIT(&lt;appssmpl&gt;) JESSPOOL(localnodeid.+MASTER+.SYSLOG.) ACCESS(READ)<br />
+or<br />
+TSS PERMIT(&lt;syspsmpl&gt;) JESSPOOL(localnodeid.+BYPASS+.SYSLOG.) ACCESS(ALL)<br />
+TSS PERMIT(&lt;secasmpl&gt;) JESSPOOL(localnodeid.+BYPASS+.SYSLOG.) ACCESS(ALL)<br />
+TSS PERMIT(&lt;appdsmpl&gt;) JESSPOOL(localnodeid.+BYPASS+.SYSLOG.) ACCESS(READ)<br />
+TSS PERMIT(&lt;appssmpl&gt;) JESSPOOL(localnodeid.+BYPASS+.SYSLOG.) ACCESS(READ)</p><h2>Check Contents</h2><p>From the ISPF Command Shell enter:<br />
+TSS WHOOWNS JESSPOOL(*)<br />
+<br />
+If JESSPOOL localnodeid resource is not defined, this is a finding.<br />
+<br />
+Enter<br />
+TSS WHOHAS JESSPOOL(localnodeid.)<br />
+Review the following resources defined to the JESSPOOL resource class:<br />
+<br />
+localnodeid.JES2.$TRCLOG.taskid.*.JESTRACE<br />
+localnodeid.+MASTER+.SYSLOG.jobid.*.SYSLOG or<br />
+localnodeid.+BYPASS+.SYSLOG.jobid.-.SYSLOG<br />
+<br />
+NOTE: These resource profiles may be more generic as long as they pertain directly to the JESTRACE and SYSLOG data sets. For example:<br />
+<br />
+localnodeid.JES2.*.*.*.JESTRACE<br />
+localnodeid.+MASTER+.*.*.*.SYSLOG or<br />
+localnodeid.+BYPASS+.*.*.*.SYSLOG<br />
+<br />
+NOTE: Review the JES2 parameters to determine the localnodeid by searching for OWNNODE in the NJEDEF statement, and then searching for NODE(nnnn) (where nnnn is the value specified by OWNNODE). The NAME parameter value specified on this NODE statement is the localnodeid. Another method is to issue the JES2 command $D NODE,NAME,OWNNODE=YES to obtain the NAME of the OWNNODE.<br />
+<br />
+If the access authorization for the resources mentioned above is restricted to the following, this is not a finding.<br />
+<br />
+-ACID(s) associated with external writer(s) can have complete access.<br />
+<br />
+NOTE: An external writer is an STC that removes data sets from the JES spool. In this case, it is responsible for archiving the JESTRACE and SYSLOG data sets. The STC default name is XWTR and the external writer program is called IASXWR00.<br />
+<br />
+-Systems personnel and security administrators responsible for diagnosing JES2 and z/OS problems can have complete access.<br />
+<br />
+-Application Development and Application Support personnel responsible for diagnosing application problems can have READ access to the SYSLOG resource.</p><h2>Vulnerability Number</h2><p>V-223993</p><h2>Documentable</h2><p>False</p><h2>Rule Version</h2><p>TSS0-JS-000090</p><h2>Severity Override Guidance</h2><p>From the ISPF Command Shell enter:<br />
+TSS WHOOWNS JESSPOOL(*)<br />
+<br />
+If JESSPOOL localnodeid resource is not defined, this is a finding.<br />
+<br />
+Enter<br />
+TSS WHOHAS JESSPOOL(localnodeid.)<br />
+Review the following resources defined to the JESSPOOL resource class:<br />
+<br />
+localnodeid.JES2.$TRCLOG.taskid.*.JESTRACE<br />
+localnodeid.+MASTER+.SYSLOG.jobid.*.SYSLOG or<br />
+localnodeid.+BYPASS+.SYSLOG.jobid.-.SYSLOG<br />
+<br />
+NOTE: These resource profiles may be more generic as long as they pertain directly to the JESTRACE and SYSLOG data sets. For example:<br />
+<br />
+localnodeid.JES2.*.*.*.JESTRACE<br />
+localnodeid.+MASTER+.*.*.*.SYSLOG or<br />
+localnodeid.+BYPASS+.*.*.*.SYSLOG<br />
+<br />
+NOTE: Review the JES2 parameters to determine the localnodeid by searching for OWNNODE in the NJEDEF statement, and then searching for NODE(nnnn) (where nnnn is the value specified by OWNNODE). The NAME parameter value specified on this NODE statement is the localnodeid. Another method is to issue the JES2 command $D NODE,NAME,OWNNODE=YES to obtain the NAME of the OWNNODE.<br />
+<br />
+If the access authorization for the resources mentioned above is restricted to the following, this is not a finding.<br />
+<br />
+-ACID(s) associated with external writer(s) can have complete access.<br />
+<br />
+NOTE: An external writer is an STC that removes data sets from the JES spool. In this case, it is responsible for archiving the JESTRACE and SYSLOG data sets. The STC default name is XWTR and the external writer program is called IASXWR00.<br />
+<br />
+-Systems personnel and security administrators responsible for diagnosing JES2 and z/OS problems can have complete access.<br />
+<br />
+-Application Development and Application Support personnel responsible for diagnosing application problems can have READ access to the SYSLOG resource.</p><h2>Check Content Reference</h2><p>M</p><h2>Target Key</h2><p>4102</p></body></html>

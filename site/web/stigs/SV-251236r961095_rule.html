@@ -1,0 +1,48 @@
+<!doctype html><html lang="en"><head><meta charset="utf-8"><title>STIGQter: STIG Check Details: SV-251236r961095_rule: Access to the Redis Enterprise control plane must be restricted.</title><link rel="icon" type="image/svg+xml" href="STIGQter.svg" /><script async src="https://www.googletagmanager.com/gtag/js?id=UA-31381839-2"></script><script src="include.js"></script><script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-4110907817782130" crossorigin="anonymous"></script></head><body><div><img src="STIGQter.svg" alt="STIGQter" style="height:1em;" /> <a href="https://www.stigqter.com/">STIGQter</a>: <a href="main.html">STIG Summary</a>: <a href="U_Redis_Enterprise_6-x_STIG_V2R2_Manual-xccdf.html">Redis Enterprise 6.x Security Technical Implementation Guide Version: 2 Release: 2 Benchmark Date: 24 Oct 2024</a>:</div> <h1>Access to the Redis Enterprise control plane must be restricted.</h1><h2>DISA Rule</h2><p>SV-251236r961095_rule</p><h2>Vulnerability Number</h2><p>V-251236</p><h2>Group Title</h2><p>SRG-APP-000211-DB-000122</p><h2>Rule Version</h2><p>RD6X-00-010150</p><h2>Severity</h2><p>CAT I</p><h2>CCI(s)</h2><ul><li>CCI-001082 - Separate user functionality, including user interface services, from system management functionality.</li></ul><h2>Weight</h2><p>10</p><h2>Fix Recommendation</h2><p>Configure a management network defined through physical or logical means to achieve network separation. Update system documentation (SSP) and identify the documented management networks as well as the documented client networks.<br />
+<br />
+Configure the administrative control plane to only be accessible via the management network.<br />
+<br />
+Alternatively, ensure a firewall rule is enabled on the network layer and the administrative control plane is only available through trusted and approved IPs.<br />
+<br />
+Use firewalld (the host-based firewall service) on the server to set up a whitelist of IPs that it will accept to use the control plane and REST API ports. The default for these are 8443 and 9443. Below is an example:<br />
+firewall-cmd --permanent --add-rich-rule='rule family=&quot;ipv4&quot; source address=&quot;&lt;Trusted IP address&gt;&quot; port protocol=&quot;tcp&quot; port=&quot;8443&quot; accept'<br />
+firewall-cmd --permanent --add-rich-rule='rule family=&quot;ipv4&quot; source address=&quot;&lt;Trusted IP address&gt;&quot; port protocol=&quot;tcp&quot; port=&quot;9443&quot; accept'<br />
+<br />
+Restart the firewall to save the rule:<br />
+systemctl restart firewalld</p><h2>Check Contents</h2><p>Review system documentation (SSP) and identify the documented management networks as well as the documented client networks. A management network can be defined through physical means or logical means to achieve network separation.<br />
+<br />
+Check the network interface to verify the administrative console is on a separate management network interface.<br />
+<br />
+If the control plane is set up to only be accessed via a defined management network, this is not a finding.<br />
+<br />
+If a management network does not exist or network separation is not established, verify the control plane can only be accessed via trusted approved machines.<br />
+<br />
+Review system documentation and obtain a list of approved machines for administrator use.<br />
+<br />
+Check the firewall rules on the server. An example command is:<br />
+firewall-cmd --list-all<br />
+<br />
+Check for rules showing that only the trusted and approved machines have access to the ports for the control plane (default is 8443) and REST API interface (default 9443). Below is an example of the output:<br />
+rich rules:<br />
+rule family=&quot;ipv4&quot; source address=&quot;&lt;trusted ip&gt;&quot; forward-port port=&quot;8443&quot; protocol=&quot;tcp&quot; to-port=&quot;80&quot;<br />
+rule family=&quot;ipv4&quot; source address=&quot;&lt;trusted ip&gt;&quot; forward-port port=&quot;9443&quot; protocol=&quot;tcp&quot; to-port=&quot;80&quot;<br />
+<br />
+If access is not limited using a management network, network separation such as vlans, or a firewall rule, this a finding.</p><h2>Vulnerability Number</h2><p>V-251236</p><h2>Documentable</h2><p>False</p><h2>Rule Version</h2><p>RD6X-00-010150</p><h2>Severity Override Guidance</h2><p>Review system documentation (SSP) and identify the documented management networks as well as the documented client networks. A management network can be defined through physical means or logical means to achieve network separation.<br />
+<br />
+Check the network interface to verify the administrative console is on a separate management network interface.<br />
+<br />
+If the control plane is set up to only be accessed via a defined management network, this is not a finding.<br />
+<br />
+If a management network does not exist or network separation is not established, verify the control plane can only be accessed via trusted approved machines.<br />
+<br />
+Review system documentation and obtain a list of approved machines for administrator use.<br />
+<br />
+Check the firewall rules on the server. An example command is:<br />
+firewall-cmd --list-all<br />
+<br />
+Check for rules showing that only the trusted and approved machines have access to the ports for the control plane (default is 8443) and REST API interface (default 9443). Below is an example of the output:<br />
+rich rules:<br />
+rule family=&quot;ipv4&quot; source address=&quot;&lt;trusted ip&gt;&quot; forward-port port=&quot;8443&quot; protocol=&quot;tcp&quot; to-port=&quot;80&quot;<br />
+rule family=&quot;ipv4&quot; source address=&quot;&lt;trusted ip&gt;&quot; forward-port port=&quot;9443&quot; protocol=&quot;tcp&quot; to-port=&quot;80&quot;<br />
+<br />
+If access is not limited using a management network, network separation such as vlans, or a firewall rule, this a finding.</p><h2>Check Content Reference</h2><p>M</p><h2>Target Key</h2><p>5443</p></body></html>

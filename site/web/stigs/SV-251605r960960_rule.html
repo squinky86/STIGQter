@@ -1,0 +1,39 @@
+<!doctype html><html lang="en"><head><meta charset="utf-8"><title>STIGQter: STIG Check Details: SV-251605r960960_rule: Database utilities must be secured in CA IDMS and permissions given to appropriate role(s)/groups(s) in the external security manager (ESM).</title><link rel="icon" type="image/svg+xml" href="STIGQter.svg" /><script async src="https://www.googletagmanager.com/gtag/js?id=UA-31381839-2"></script><script src="include.js"></script><script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-4110907817782130" crossorigin="anonymous"></script></head><body><div><img src="STIGQter.svg" alt="STIGQter" style="height:1em;" /> <a href="https://www.stigqter.com/">STIGQter</a>: <a href="main.html">STIG Summary</a>: <a href="U_CA_IDMS_STIG_V2R2_Manual-xccdf.html">CA IDMS Security Technical Implementation Guide Version: 2 Release: 2 Benchmark Date: 01 Jul 2026</a>:</div> <h1>Database utilities must be secured in CA IDMS and permissions given to appropriate role(s)/groups(s) in the external security manager (ESM).</h1><h2>DISA Rule</h2><p>SV-251605r960960_rule</p><h2>Vulnerability Number</h2><p>V-251605</p><h2>Group Title</h2><p>SRG-APP-000133-DB-000362</p><h2>Rule Version</h2><p>IDMS-DB-000250</p><h2>Severity</h2><p>CAT II</p><h2>CCI(s)</h2><ul><li>CCI-001499 - Limit privileges to change software resident within software libraries.</li><li>CCI-001813 - Enforce access restrictions using organization-defined mechanisms.</li></ul><h2>Weight</h2><p>10</p><h2>Fix Recommendation</h2><p>Create an entry in the SRTT and compile into the module RHDCSRTT for the security domain that defined the resource type of ACTI. The external class and external name construction rules must be specified. For example:<br />
+<br />
+#SECRTT TYPE=ENTRY,RESTYPE=ACTI, SECBY=EXTERNAL, EXTCLS='CA@IDMS',EXTNAME=(RESNAME,ACTIVITY)                                                                                                                                                                                                                                                                                                                                                      <br />
+<br />
+Compile IDMSUTAB into the custom loadlib, specifying the activity number associated with the utility statement on the #UTABGEN macro. For example, #UTABGEN (A,3),(OCF,EXPANDPAGE,I). The ACTIVITY passed to the ESM will be the first up to five bytes of the application name followed by the three-byte activity number. Using the activity number &quot;3&quot; in the #UTABGEN, the ACTIVITY sent to the ESM would be OCF003.<br />
+<br />
+Create the corresponding entry in the ESM and give appropriate permissions to roles(s)/group(s) for the ACTIVITY (e.g., OCF003 which would secure the EXPANDPAGE utility statement).</p><h2>Check Contents</h2><p>Check the SRTT for externally secured ACTI which can be used to secure utility functions that can impact database structure, e.g., CONVERTCATALOG, CONVERTPAGE, EXPANDPAGE, MAINTAININDEX, REORG, RESTRUCTURE and TUNEINDEX. For a full list, see the UTABGEN UTILITY COMMAND CODES table in the Administrating Security for IDMS manual.<br />
+<br />
+Examine load module IDMSUTAB using CA IDMS utility IDMSUTAD, or by issuing command &quot;DCMT DISPLAY UTAB&quot; while signed onto the CV, and reviewing the output.<br />
+<br />
+Note: This requires PTF SO08527.  <br />
+<br />
+If there is no IDMSUTAB load module into which the #UTABGEN has been generated that specifies the nodes names that correspond to the UTILITY statements, this is a finding.<br />
+<br />
+Examine load module RHDCSRTT by executing CA IDMS utility &quot;IDMSSRTD&quot;, or by issuing command &quot;DCMT DISPLAY SRTT&quot; while signed onto the CV and reviewing the output. <br />
+<br />
+If &quot;ACTI&quot; is not found as the resource type in any of the entries, this is a finding. IF &quot;ACTI&quot; is found to be secured internally, this is a finding.                                                                                                                                                                                                                                        <br />
+<br />
+If &quot;ACTI&quot; is found to be secured externally, ensure that the ESM contains the correct definition using the external resource class name and the external name construction rules. If it is not defined or not defined correctly, this is a finding. <br />
+<br />
+If the ESM definition is correct but the role(s)/groups(s) are not defined correctly to give the appropriate permissions, this is a finding.<br />
+ <br />
+Note: There are alternative ways to secure utilities by using RESTYPE=DB and corresponding ESM definitions can give authorization to appropriate role(s)/group(s).</p><h2>Vulnerability Number</h2><p>V-251605</p><h2>Documentable</h2><p>False</p><h2>Rule Version</h2><p>IDMS-DB-000250</p><h2>Severity Override Guidance</h2><p>Check the SRTT for externally secured ACTI which can be used to secure utility functions that can impact database structure, e.g., CONVERTCATALOG, CONVERTPAGE, EXPANDPAGE, MAINTAININDEX, REORG, RESTRUCTURE and TUNEINDEX. For a full list, see the UTABGEN UTILITY COMMAND CODES table in the Administrating Security for IDMS manual.<br />
+<br />
+Examine load module IDMSUTAB using CA IDMS utility IDMSUTAD, or by issuing command &quot;DCMT DISPLAY UTAB&quot; while signed onto the CV, and reviewing the output.<br />
+<br />
+Note: This requires PTF SO08527.  <br />
+<br />
+If there is no IDMSUTAB load module into which the #UTABGEN has been generated that specifies the nodes names that correspond to the UTILITY statements, this is a finding.<br />
+<br />
+Examine load module RHDCSRTT by executing CA IDMS utility &quot;IDMSSRTD&quot;, or by issuing command &quot;DCMT DISPLAY SRTT&quot; while signed onto the CV and reviewing the output. <br />
+<br />
+If &quot;ACTI&quot; is not found as the resource type in any of the entries, this is a finding. IF &quot;ACTI&quot; is found to be secured internally, this is a finding.                                                                                                                                                                                                                                        <br />
+<br />
+If &quot;ACTI&quot; is found to be secured externally, ensure that the ESM contains the correct definition using the external resource class name and the external name construction rules. If it is not defined or not defined correctly, this is a finding. <br />
+<br />
+If the ESM definition is correct but the role(s)/groups(s) are not defined correctly to give the appropriate permissions, this is a finding.<br />
+ <br />
+Note: There are alternative ways to secure utilities by using RESTYPE=DB and corresponding ESM definitions can give authorization to appropriate role(s)/group(s).</p><h2>Check Content Reference</h2><p>M</p><h2>Target Key</h2><p>5418</p></body></html>

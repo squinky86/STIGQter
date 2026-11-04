@@ -1,0 +1,386 @@
+<!doctype html><html lang="en"><head><meta charset="utf-8"><title>STIGQter: STIG Check Details: SV-217081r604135_rule: The Juniper PE router must be configured to enforce a Quality-of-Service (QoS) policy to limit the effects of packet flooding denial-of-service (DoS) attacks.</title><link rel="icon" type="image/svg+xml" href="STIGQter.svg" /><script async src="https://www.googletagmanager.com/gtag/js?id=UA-31381839-2"></script><script src="include.js"></script><script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-4110907817782130" crossorigin="anonymous"></script></head><body><div><img src="STIGQter.svg" alt="STIGQter" style="height:1em;" /> <a href="https://www.stigqter.com/">STIGQter</a>: <a href="main.html">STIG Summary</a>: <a href="U_Juniper_Router_RTR_STIG_V3R2_Manual-xccdf.html">Juniper Router RTR Security Technical Implementation Guide Version: 3 Release: 2 Benchmark Date: 30 Jan 2025</a>:</div> <h1>The Juniper PE router must be configured to enforce a Quality-of-Service (QoS) policy to limit the effects of packet flooding denial-of-service (DoS) attacks.</h1><h2>DISA Rule</h2><p>SV-217081r604135_rule</p><h2>Vulnerability Number</h2><p>V-217081</p><h2>Group Title</h2><p>SRG-NET-000193-RTR-000112</p><h2>Rule Version</h2><p>JUNI-RT-000770</p><h2>Severity</h2><p>CAT II</p><h2>CCI(s)</h2><ul><li>CCI-001095 - Manage capacity, bandwidth, or other redundancy to limit the effects of information flooding types of denial of service attacks.</li></ul><h2>Weight</h2><p>10</p><h2>Fix Recommendation</h2><p>Configure a forwarding class has been configured for the Scavenger class as shown in the example below.<br />
+<br />
+[edit class-of-service forwarding-classes]<br />
+set class CS1 queue-num 7 priority low <br />
+<br />
+The Scavenger class is marked at the access layer with DSCP CS1. Hence, the router must maintain the marking and assign the packet to the configured forwarding class CS1.<br />
+<br />
+PE Router only – Configure a Multifield (MF) classifier to provision for the Scavenger class as shown in the example below.<br />
+<br />
+[edit firewall family inet filter CLASSIFY_TRAFFIC]<br />
+set term SCAVENGER from dscp cs1<br />
+set term SCAVENGER then forwarding-class CS1 accept<br />
+insert term SCAVENGER before term ACCEPT_OTHER<br />
+<br />
+PE and P Router – Configure a Behavior aggregate (BA) classifier to match on the packets marked with DSCP CS1.<br />
+<br />
+[edit class-of-service classifiers] <br />
+set dscp CLASSIFIER import default forwarding-class CS1 loss-priority high code-points 001000 <br />
+<br />
+P router only – Apply the BA classifier to all interfaces.<br />
+<br />
+[edit class-of-service interfaces]<br />
+set ge-0/0/1 unit 0 classifiers dscp CLASSIFIER<br />
+set ge-0/1/1 unit 0 classifiers dscp CLASSIFIER<br />
+<br />
+Remaining steps are only applicable to the PE router.<br />
+<br />
+Configure a scheduler for the Scavenger class.<br />
+<br />
+[edit class-of-service schedulers]<br />
+set SCAVENGER_SCHED transmit-rate percent 5<br />
+set SCAVENGER_SCHED buffer-size percent 5<br />
+set SCAVENGER_SCHED priority low<br />
+set BEST_EFFORT_SCHED transmit-rate percent 55<br />
+<br />
+Add the Scavenger scheduler to the scheduler map.<br />
+<br />
+[edit class-of-service scheduler-maps QOS_SCHED_MAP]<br />
+set forwarding-class CS1 scheduler SCAVENGER_SCHED<br />
+<br />
+Apply the scheduler map to all core-facing interfaces.<br />
+<br />
+[edit class-of-service interfaces]<br />
+set ge-2/1/1 scheduler-map QOS_SCHED_MAP<br />
+set ge-1/0/1 scheduler-map QOS_SCHED_MAP<br />
+<br />
+Note: The above step should already have been completed.<br />
+<br />
+Configure rewrite rules to ensure egress Scavenger packets will continue to be marked with DSCP CS1.<br />
+<br />
+[edit class-of-service rewrite-rules]<br />
+set dscp REWRITE_DSCP import default forwarding-class CS1 loss-priority high code-point 001000 <br />
+<br />
+Apply the configured rewrite rules to all core-facing interfaces.<br />
+<br />
+[edit class-of-service interfaces]<br />
+set ge-2/1/1 unit 0 rewrite-rules dscp REWRITE_DSCP<br />
+set ge-1/0/1 unit 0 rewrite-rules dscp REWRITE_DSCP</p><h2>Check Contents</h2><p>Verify that a forwarding class has been configured for the Scavenger class. CS1 has been adopted as the forwarding class; hence, the example below will define class CS1 to be used.<br />
+<br />
+class-of-service {<br />
+    …<br />
+    …<br />
+    …<br />
+    }<br />
+    forwarding-classes {<br />
+        class CS1 queue-num 7 priority low;<br />
+    }<br />
+<br />
+The Scavenger class is marked at the access layer with DSCP CS1. Hence, the router must maintain the marking and assign the packet to the configured forwarding class CS1.<br />
+<br />
+PE Router only - Verify that the Multifield (MF) classifier has provisioned for this class as shown in the example below.<br />
+<br />
+firewall {<br />
+    family inet {<br />
+        filter CLASSIFY_TRAFFIC {<br />
+            …<br />
+            …<br />
+            …<br />
+            }<br />
+            term SCAVENGER {<br />
+                from {<br />
+                    dscp cs1;<br />
+                }<br />
+                then {<br />
+                    forwarding-class CS1;<br />
+                    accept;<br />
+                }<br />
+            }<br />
+            term ACCEPT_OTHER {<br />
+                then {<br />
+                    forwarding-class best-effort;<br />
+                    accept;<br />
+                }<br />
+            }<br />
+        }<br />
+    }<br />
+}<br />
+<br />
+PE and P router - Verify that a Behavior aggregate (BA) classifier has been configured to match the Scavenger class (CS1) as shown in the example below.<br />
+<br />
+class-of-service {<br />
+    classifiers {<br />
+        dscp CLASSIFIER {<br />
+            import default;<br />
+            forwarding-class CS1 {<br />
+                loss-priority high code-points 001000;<br />
+            }<br />
+        }<br />
+    }<br />
+<br />
+Note: A proactive approach to mitigating DoS and worm flooding attacks within the base/camp/agency enclaves is to respond immediately to out-of-profile network behavior indicative of a DoS or worm attack via access-Layer policers. Such policers can meter traffic rates received from endpoint devices.  When these traffic flows exceed specified rates, they no longer are considered normal flows and henceforth can be set to the Scavenger class marking (DSCP CS1).<br />
+<br />
+P router – Verify that the BA classifier has been applied to all interfaces as shown in the example below.<br />
+<br />
+class-of-service {<br />
+    …<br />
+    …<br />
+    …<br />
+    }<br />
+    interfaces {<br />
+        ge-0/0/1 {<br />
+            unit 0 {<br />
+                classifiers {<br />
+                    dscp CLASSIFIER;<br />
+                }<br />
+            }<br />
+        }<br />
+        ge-0/1/1 {<br />
+            unit 0 {<br />
+                classifiers {<br />
+                    dscp CLASSIFIER;<br />
+                }<br />
+            }<br />
+        }<br />
+    }<br />
+}<br />
+<br />
+Remaining steps only apply to the PE router.<br />
+<br />
+Verify that a scheduler has been configured for the Scavenger class as shown in the example below.<br />
+<br />
+class-of-service {<br />
+    …<br />
+    …<br />
+    …<br />
+    }<br />
+    schedulers {<br />
+        …<br />
+        …<br />
+        …<br />
+        }<br />
+        SCAVENGER_SCHED {<br />
+            transmit-rate percent 5;<br />
+            buffer-size percent 5;<br />
+            priority low;<br />
+        }<br />
+    }<br />
+}<br />
+<br />
+Verify that the scheduler has been added to the scheduler map.<br />
+<br />
+class-of-service {<br />
+    …<br />
+    …<br />
+    …<br />
+    }<br />
+    scheduler-maps {<br />
+        QOS_SCHED_MAP {<br />
+            forwarding-class expedited-forwarding scheduler VOIP_SCHED;<br />
+            forwarding-class network-control scheduler CONTROL_PLANE_SCHED;<br />
+            forwarding-class assured-forwarding scheduler MGMT_SCHED;<br />
+            forwarding-class best-effort scheduler BEST_EFFORT_SCHED;<br />
+            forwarding-class CS1 scheduler SCAVENGER_SCHED;<br />
+        }<br />
+    }<br />
+<br />
+Verify that rewrite rules have been created to mark DSCP CS1 for those packets assigned to the Scavenger class with the appropriate code points.<br />
+<br />
+class-of-service {<br />
+    …<br />
+    …<br />
+    …<br />
+    }<br />
+    rewrite-rules {<br />
+        dscp REWRITE_DSCP {<br />
+            import default;<br />
+            forwarding-class CS1 {<br />
+                loss-priority high code-point 001000;<br />
+            }<br />
+        }<br />
+    }<br />
+<br />
+Verify that the scheduler map, rewrite rules, and the BA classifier has been applied to all core-facing interfaces.<br />
+<br />
+class-of-service {<br />
+    …<br />
+    …<br />
+    …<br />
+    }<br />
+    interfaces {<br />
+        ge-2/1/1 {<br />
+            scheduler-map QOS_SCHED_MAP;<br />
+            unit 0 {<br />
+                classifiers {<br />
+                    dscp CLASSIFIER;<br />
+                }<br />
+                rewrite-rules {<br />
+                    dscp REWRITE_DSCP;<br />
+                }<br />
+            }<br />
+        }<br />
+        ge-2/0/1 {<br />
+            scheduler-map QOS_SCHED_MAP;<br />
+            unit 0 {<br />
+                rewrite-rules {<br />
+                    dscp REWRITE_DSCP;<br />
+                }<br />
+            }<br />
+        }<br />
+    }<br />
+<br />
+If QoS policy to limit the effects of packet flooding denial-of-service (DoS) attacks has not been configured, this is a finding.</p><h2>Vulnerability Number</h2><p>V-217081</p><h2>Documentable</h2><p>False</p><h2>Rule Version</h2><p>JUNI-RT-000770</p><h2>Severity Override Guidance</h2><p>Verify that a forwarding class has been configured for the Scavenger class. CS1 has been adopted as the forwarding class; hence, the example below will define class CS1 to be used.<br />
+<br />
+class-of-service {<br />
+    …<br />
+    …<br />
+    …<br />
+    }<br />
+    forwarding-classes {<br />
+        class CS1 queue-num 7 priority low;<br />
+    }<br />
+<br />
+The Scavenger class is marked at the access layer with DSCP CS1. Hence, the router must maintain the marking and assign the packet to the configured forwarding class CS1.<br />
+<br />
+PE Router only - Verify that the Multifield (MF) classifier has provisioned for this class as shown in the example below.<br />
+<br />
+firewall {<br />
+    family inet {<br />
+        filter CLASSIFY_TRAFFIC {<br />
+            …<br />
+            …<br />
+            …<br />
+            }<br />
+            term SCAVENGER {<br />
+                from {<br />
+                    dscp cs1;<br />
+                }<br />
+                then {<br />
+                    forwarding-class CS1;<br />
+                    accept;<br />
+                }<br />
+            }<br />
+            term ACCEPT_OTHER {<br />
+                then {<br />
+                    forwarding-class best-effort;<br />
+                    accept;<br />
+                }<br />
+            }<br />
+        }<br />
+    }<br />
+}<br />
+<br />
+PE and P router - Verify that a Behavior aggregate (BA) classifier has been configured to match the Scavenger class (CS1) as shown in the example below.<br />
+<br />
+class-of-service {<br />
+    classifiers {<br />
+        dscp CLASSIFIER {<br />
+            import default;<br />
+            forwarding-class CS1 {<br />
+                loss-priority high code-points 001000;<br />
+            }<br />
+        }<br />
+    }<br />
+<br />
+Note: A proactive approach to mitigating DoS and worm flooding attacks within the base/camp/agency enclaves is to respond immediately to out-of-profile network behavior indicative of a DoS or worm attack via access-Layer policers. Such policers can meter traffic rates received from endpoint devices.  When these traffic flows exceed specified rates, they no longer are considered normal flows and henceforth can be set to the Scavenger class marking (DSCP CS1).<br />
+<br />
+P router – Verify that the BA classifier has been applied to all interfaces as shown in the example below.<br />
+<br />
+class-of-service {<br />
+    …<br />
+    …<br />
+    …<br />
+    }<br />
+    interfaces {<br />
+        ge-0/0/1 {<br />
+            unit 0 {<br />
+                classifiers {<br />
+                    dscp CLASSIFIER;<br />
+                }<br />
+            }<br />
+        }<br />
+        ge-0/1/1 {<br />
+            unit 0 {<br />
+                classifiers {<br />
+                    dscp CLASSIFIER;<br />
+                }<br />
+            }<br />
+        }<br />
+    }<br />
+}<br />
+<br />
+Remaining steps only apply to the PE router.<br />
+<br />
+Verify that a scheduler has been configured for the Scavenger class as shown in the example below.<br />
+<br />
+class-of-service {<br />
+    …<br />
+    …<br />
+    …<br />
+    }<br />
+    schedulers {<br />
+        …<br />
+        …<br />
+        …<br />
+        }<br />
+        SCAVENGER_SCHED {<br />
+            transmit-rate percent 5;<br />
+            buffer-size percent 5;<br />
+            priority low;<br />
+        }<br />
+    }<br />
+}<br />
+<br />
+Verify that the scheduler has been added to the scheduler map.<br />
+<br />
+class-of-service {<br />
+    …<br />
+    …<br />
+    …<br />
+    }<br />
+    scheduler-maps {<br />
+        QOS_SCHED_MAP {<br />
+            forwarding-class expedited-forwarding scheduler VOIP_SCHED;<br />
+            forwarding-class network-control scheduler CONTROL_PLANE_SCHED;<br />
+            forwarding-class assured-forwarding scheduler MGMT_SCHED;<br />
+            forwarding-class best-effort scheduler BEST_EFFORT_SCHED;<br />
+            forwarding-class CS1 scheduler SCAVENGER_SCHED;<br />
+        }<br />
+    }<br />
+<br />
+Verify that rewrite rules have been created to mark DSCP CS1 for those packets assigned to the Scavenger class with the appropriate code points.<br />
+<br />
+class-of-service {<br />
+    …<br />
+    …<br />
+    …<br />
+    }<br />
+    rewrite-rules {<br />
+        dscp REWRITE_DSCP {<br />
+            import default;<br />
+            forwarding-class CS1 {<br />
+                loss-priority high code-point 001000;<br />
+            }<br />
+        }<br />
+    }<br />
+<br />
+Verify that the scheduler map, rewrite rules, and the BA classifier has been applied to all core-facing interfaces.<br />
+<br />
+class-of-service {<br />
+    …<br />
+    …<br />
+    …<br />
+    }<br />
+    interfaces {<br />
+        ge-2/1/1 {<br />
+            scheduler-map QOS_SCHED_MAP;<br />
+            unit 0 {<br />
+                classifiers {<br />
+                    dscp CLASSIFIER;<br />
+                }<br />
+                rewrite-rules {<br />
+                    dscp REWRITE_DSCP;<br />
+                }<br />
+            }<br />
+        }<br />
+        ge-2/0/1 {<br />
+            scheduler-map QOS_SCHED_MAP;<br />
+            unit 0 {<br />
+                rewrite-rules {<br />
+                    dscp REWRITE_DSCP;<br />
+                }<br />
+            }<br />
+        }<br />
+    }<br />
+<br />
+If QoS policy to limit the effects of packet flooding denial-of-service (DoS) attacks has not been configured, this is a finding.</p><h2>Check Content Reference</h2><p>M</p><h2>Target Key</h2><p>4032</p></body></html>

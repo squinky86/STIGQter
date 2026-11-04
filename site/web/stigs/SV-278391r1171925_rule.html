@@ -1,0 +1,132 @@
+<!doctype html><html lang="en"><head><meta charset="utf-8"><title>STIGQter: STIG Check Details: SV-278391r1171925_rule: NGINX must be configured to use a Certificate Revocation List (CRL) for certificate path validation and revocation. (Online Certificate Status Protocol [OCSP] is the preferred configuration.)</title><link rel="icon" type="image/svg+xml" href="STIGQter.svg" /><script async src="https://www.googletagmanager.com/gtag/js?id=UA-31381839-2"></script><script src="include.js"></script><script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-4110907817782130" crossorigin="anonymous"></script></head><body><div><img src="STIGQter.svg" alt="STIGQter" style="height:1em;" /> <a href="https://www.stigqter.com/">STIGQter</a>: <a href="main.html">STIG Summary</a>: <a href="U_F5_NGINX_STIG_V1R1_Manual-xccdf.html">F5 NGINX Security Technical Implementation Guide Version: 1 Release: 1 Benchmark Date: 25 Nov 2025</a>:</div> <h1>NGINX must be configured to use a Certificate Revocation List (CRL) for certificate path validation and revocation. (Online Certificate Status Protocol [OCSP] is the preferred configuration.)</h1><h2>DISA Rule</h2><p>SV-278391r1171925_rule</p><h2>Vulnerability Number</h2><p>V-278391</p><h2>Group Title</h2><p>SRG-APP-000175</p><h2>Rule Version</h2><p>NGNX-APP-000720</p><h2>Severity</h2><p>CAT II</p><h2>CCI(s)</h2><ul><li>CCI-000185 - For public key-based authentication, validate certificates by constructing and verifying a certification path to an accepted trust anchor including checking certificate status information.</li><li>CCI-004068 - For public key-based authentication, implement a local cache of revocation data to support path discovery and validation.</li></ul><h2>Weight</h2><p>10</p><h2>Fix Recommendation</h2><p>If using OCSP for certificate revocation, this requirement is Not Applicable.<br />
+<br />
+Determine path to NGINX config file:<br />
+<br />
+# nginx -qT | grep &quot;# configuration&quot;<br />
+# configuration file /etc/nginx/nginx.conf:<br />
+<br />
+Note: The default NGINX configuration is &quot;/etc/nginx/nginx.conf&quot;, though various files may also be included.<br />
+<br />
+# cat &lt;path to config&gt;<br />
+<br />
+Configure the following lines in the http { blocks using the example below.<br />
+<br />
+Set ssl_verify_client on.<br />
+Set ssl_crl /etc/nginx/ssl/crl.pem to match the CRL file name.<br />
+<br />
+http {<br />
+    server {<br />
+        listen 443 ssl;<br />
+        server_name example.com;<br />
+<br />
+        ssl_certificate /etc/nginx/ssl/server.crt;<br />
+        ssl_certificate_key /etc/nginx/ssl/server.key;<br />
+<br />
+        ssl_client_certificate /etc/nginx/ssl/ca.crt;<br />
+<br />
+        ssl_verify_client on;<br />
+<br />
+        ssl_crl /etc/nginx/ssl/crl.pem;<br />
+<br />
+        ssl_ocsp on;<br />
+        ssl_ocsp_responder http://ocsp.disa.mil;<br />
+<br />
+ssl_stapling on;<br />
+ssl_stapling_verify on;<br />
+ssl_stapling_file /etc/nginx/ssl/ocsp_cache.pem;<br />
+ssl_stapling_responder_timeout 3s;  # Timeout for OCSP responder queries<br />
+ssl_stapling_responder_error_cache_time 300s;  # Cache time for responder errors<br />
+<br />
+        location / {<br />
+            proxy_pass http://backend;<br />
+        }<br />
+    }<br />
+}</p><h2>Check Contents</h2><p>If using OCSP for certificate revocation, this requirement is Not Applicable.<br />
+<br />
+Determine the path to NGINX config file:<br />
+<br />
+# nginx -qT | grep &quot;# configuration&quot;<br />
+# configuration file /etc/nginx/nginx.conf:<br />
+<br />
+Note: The default NGINX configuration is &quot;/etc/nginx/nginx.conf&quot;, though various files may also be included.<br />
+<br />
+# cat &lt;path to config&gt;<br />
+<br />
+Check the http { blocks for the following example:<br />
+<br />
+http {<br />
+    server {<br />
+        listen 443 ssl;<br />
+        server_name example.com;<br />
+<br />
+        ssl_certificate /etc/nginx/ssl/server.crt;<br />
+        ssl_certificate_key /etc/nginx/ssl/server.key;<br />
+<br />
+        ssl_client_certificate /etc/nginx/ssl/ca.crt;<br />
+<br />
+        ssl_verify_client on;<br />
+<br />
+        ssl_crl /etc/nginx/ssl/crl.pem;<br />
+<br />
+        ssl_ocsp on;<br />
+        ssl_ocsp_responder http://ocsp.disa.mil;<br />
+<br />
+ssl_stapling on;<br />
+ssl_stapling_verify on;<br />
+ssl_stapling_file /etc/nginx/ssl/ocsp_cache.pem;<br />
+ssl_stapling_responder_timeout 3s;  # Timeout for OCSP responder queries<br />
+ssl_stapling_responder_error_cache_time 300s;  # Cache time for responder errors<br />
+<br />
+        location / {<br />
+            proxy_pass http://backend;<br />
+        }<br />
+    }<br />
+}             <br />
+<br />
+Check for certificate path validation. If &quot;ssl_verify_client on&quot; is not present in the configuration, this is a finding.<br />
+<br />
+Check if a CRL file is configured. If &quot;ssl_crl &lt;file&gt;&quot; is not present in the configuration, this is a finding.</p><h2>Vulnerability Number</h2><p>V-278391</p><h2>Documentable</h2><p>False</p><h2>Rule Version</h2><p>NGNX-APP-000720</p><h2>Severity Override Guidance</h2><p>If using OCSP for certificate revocation, this requirement is Not Applicable.<br />
+<br />
+Determine the path to NGINX config file:<br />
+<br />
+# nginx -qT | grep &quot;# configuration&quot;<br />
+# configuration file /etc/nginx/nginx.conf:<br />
+<br />
+Note: The default NGINX configuration is &quot;/etc/nginx/nginx.conf&quot;, though various files may also be included.<br />
+<br />
+# cat &lt;path to config&gt;<br />
+<br />
+Check the http { blocks for the following example:<br />
+<br />
+http {<br />
+    server {<br />
+        listen 443 ssl;<br />
+        server_name example.com;<br />
+<br />
+        ssl_certificate /etc/nginx/ssl/server.crt;<br />
+        ssl_certificate_key /etc/nginx/ssl/server.key;<br />
+<br />
+        ssl_client_certificate /etc/nginx/ssl/ca.crt;<br />
+<br />
+        ssl_verify_client on;<br />
+<br />
+        ssl_crl /etc/nginx/ssl/crl.pem;<br />
+<br />
+        ssl_ocsp on;<br />
+        ssl_ocsp_responder http://ocsp.disa.mil;<br />
+<br />
+ssl_stapling on;<br />
+ssl_stapling_verify on;<br />
+ssl_stapling_file /etc/nginx/ssl/ocsp_cache.pem;<br />
+ssl_stapling_responder_timeout 3s;  # Timeout for OCSP responder queries<br />
+ssl_stapling_responder_error_cache_time 300s;  # Cache time for responder errors<br />
+<br />
+        location / {<br />
+            proxy_pass http://backend;<br />
+        }<br />
+    }<br />
+}             <br />
+<br />
+Check for certificate path validation. If &quot;ssl_verify_client on&quot; is not present in the configuration, this is a finding.<br />
+<br />
+Check if a CRL file is configured. If &quot;ssl_crl &lt;file&gt;&quot; is not present in the configuration, this is a finding.</p><h2>Check Content Reference</h2><p>M</p><h2>Target Key</h2><p>5720</p></body></html>

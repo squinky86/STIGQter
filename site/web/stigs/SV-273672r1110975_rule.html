@@ -1,0 +1,59 @@
+<!doctype html><html lang="en"><head><meta charset="utf-8"><title>STIGQter: STIG Check Details: SV-273672r1110975_rule: The RUCKUS ICX switch must be configured to disable nonessential capabilities.</title><link rel="icon" type="image/svg+xml" href="STIGQter.svg" /><script async src="https://www.googletagmanager.com/gtag/js?id=UA-31381839-2"></script><script src="include.js"></script><script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-4110907817782130" crossorigin="anonymous"></script></head><body><div><img src="STIGQter.svg" alt="STIGQter" style="height:1em;" /> <a href="https://www.stigqter.com/">STIGQter</a>: <a href="main.html">STIG Summary</a>: <a href="U_RUCKUS_ICX_L2S_STIG_V1R1_Manual-xccdf.html">RUCKUS ICX Layer 2 Switch Security Technical Implementation Guide Version: 1 Release: 1 Benchmark Date: 27 May 2025</a>:</div> <h1>The RUCKUS ICX switch must be configured to disable nonessential capabilities.</h1><h2>DISA Rule</h2><p>SV-273672r1110975_rule</p><h2>Vulnerability Number</h2><p>V-273672</p><h2>Group Title</h2><p>SRG-NET-000131-L2S-000014</p><h2>Rule Version</h2><p>RCKS-L2S-000010</p><h2>Severity</h2><p>CAT II</p><h2>CCI(s)</h2><ul><li>CCI-000381 - Configure the system to provide only organization-defined mission essential capabilities.</li></ul><h2>Weight</h2><p>10</p><h2>Fix Recommendation</h2><p>Remove unneeded services and functions from the switch.<br />
+<br />
+Router# configure terminal<br />
+<br />
+Router(config)# no telnet server enable vlan 1<br />
+<br />
+Router(config)# no tftp-server<br />
+<br />
+Router(config)#web-management disable<br />
+<br />
+Router(config)# vlan xxx (xxx = vlan ID)<br />
+<br />
+Router(config-vlan-1)#no webauth<br />
+<br />
+Router(config)#write memory</p><h2>Check Contents</h2><p>Review the switch configuration to determine if services or functions not required for operation, or not related to switch functionality, are enabled. <br />
+<br />
+1. Check that web authentication is enabled.<br />
+Router#show webauth<br />
+The result returned will be blank.<br />
+<br />
+2. Check that web services are enabled.<br />
+Router#show web<br />
+HTTP server status: Disabled<br />
+HTTPS server status: Disabled<br />
+No web connection.<br />
+<br />
+3. Check if the telnet service is enabled.<br />
+Router#show telnet<br />
+Telnet server status: Disabled<br />
+Telnet connections:<br />
+<br />
+4. Check if the tftp service is enabled.<br />
+Router#show running-config | include tftp<br />
+no tftp client enable<br />
+tftp disable<br />
+<br />
+If unnecessary services and functions are enabled on the switch, this is a finding.</p><h2>Vulnerability Number</h2><p>V-273672</p><h2>Documentable</h2><p>False</p><h2>Rule Version</h2><p>RCKS-L2S-000010</p><h2>Severity Override Guidance</h2><p>Review the switch configuration to determine if services or functions not required for operation, or not related to switch functionality, are enabled. <br />
+<br />
+1. Check that web authentication is enabled.<br />
+Router#show webauth<br />
+The result returned will be blank.<br />
+<br />
+2. Check that web services are enabled.<br />
+Router#show web<br />
+HTTP server status: Disabled<br />
+HTTPS server status: Disabled<br />
+No web connection.<br />
+<br />
+3. Check if the telnet service is enabled.<br />
+Router#show telnet<br />
+Telnet server status: Disabled<br />
+Telnet connections:<br />
+<br />
+4. Check if the tftp service is enabled.<br />
+Router#show running-config | include tftp<br />
+no tftp client enable<br />
+tftp disable<br />
+<br />
+If unnecessary services and functions are enabled on the switch, this is a finding.</p><h2>Check Content Reference</h2><p>M</p><h2>Target Key</h2><p>5697</p></body></html>

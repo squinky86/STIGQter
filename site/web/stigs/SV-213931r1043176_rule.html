@@ -1,0 +1,144 @@
+<!doctype html><html lang="en"><head><meta charset="utf-8"><title>STIGQter: STIG Check Details: SV-213931r1043176_rule: SQL Server must be configured to utilize the most-secure authentication method available.</title><link rel="icon" type="image/svg+xml" href="STIGQter.svg" /><script async src="https://www.googletagmanager.com/gtag/js?id=UA-31381839-2"></script><script src="include.js"></script><script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-4110907817782130" crossorigin="anonymous"></script></head><body><div><img src="STIGQter.svg" alt="STIGQter" style="height:1em;" /> <a href="https://www.stigqter.com/">STIGQter</a>: <a href="main.html">STIG Summary</a>: <a href="U_MS_SQL_Server_2016_Instance_STIG_V3R6_Manual-xccdf.html">MS SQL Server 2016 Instance Security Technical Implementation Guide Version: 3 Release: 6 Benchmark Date: 05 Jan 2026</a>:</div> <h1>SQL Server must be configured to utilize the most-secure authentication method available.</h1><h2>DISA Rule</h2><p>SV-213931r1043176_rule</p><h2>Vulnerability Number</h2><p>V-213931</p><h2>Group Title</h2><p>SRG-APP-000023-DB-000001</p><h2>Rule Version</h2><p>SQL6-D0-003800</p><h2>Severity</h2><p>CAT II</p><h2>CCI(s)</h2><ul><li>CCI-000015 - Support the management of system accounts using (organization-defined automated mechanisms).</li></ul><h2>Weight</h2><p>10</p><h2>Fix Recommendation</h2><p>Ensure Service Principal Names (SPNs) are properly registered for the SQL Server instance. <br />
+<br />
+Utilize the Microsoft Kerberos Configuration Manager to review Kerberos configuration issues for a given SQL Server instance. <br />
+<br />
+https://www.microsoft.com/en-us/download/details.aspx?id=39046 <br />
+<br />
+Alternatively, SPNs for SQL Server can be manually registered. <br />
+<br />
+For other connections that support Kerberos the SPN is registered in the format MSSQLSvc/&lt;FQDN&gt;/&lt;instancename&gt; for a named instance. The format for registering the default instance is MSSQLSvc/&lt;FQDN&gt;.<br />
+<br />
+Using an account with permissions to register SPNs, issue the following commands from a command-prompt: <br />
+<br />
+setspn -S MSSQLSvc/&lt;Fully Qualified Domain Name&gt; &lt;Service Account&gt; <br />
+setspn -S MSSQLSvc/&lt;Fully Qualified Domain Name&gt;:&lt;TCP Port&gt; &lt;Service Account&gt; <br />
+For a named instance, use:<br />
+setspn -S MSSQLSvc/&lt;FQDN&gt;:&lt;instancename&gt; &lt;Service Account&gt; <br />
+setspn -S MSSQLSvc/&lt;FQDN&gt;:&lt;TCP Port&gt; &lt;Service Account&gt;<br />
+<br />
+Restart the SQL Server instance. <br />
+<br />
+More information regarding this process is available at:  <br />
+https://docs.microsoft.com/en-us/sql/database-engine/configure-windows/register-a-service-principal-name-for-kerberos-connections#Manual</p><h2>Check Contents</h2><p>If the SQL Server is not part of an Active Directory domain, this finding is Not Applicable. <br />
+<br />
+Obtain the fully qualified domain name of the SQL Server instance: <br />
+<br />
+Launch Windows Explorer. <br />
+<br />
+Right-click on &quot;Computer&quot; or &quot;This PC&quot; (Varies by OS level), click &quot;Properties&quot;. <br />
+<br />
+Note the value shown for &quot;Full computer name&quot;. <br />
+<br />
+*** Note: For a cluster, this value must be obtained from the Failover Cluster Manager. *** <br />
+<br />
+Obtain the TCP port that is supporting the SQL Server instance: <br />
+<br />
+Click Start &gt;&gt; Type &quot;SQL Server 2016 Configuration Manager&quot; &gt;&gt; From the search results, click &quot;SQL Server 2016 Configuration Manager&quot;. <br />
+<br />
+From the tree on the left, expand &quot;SQL Server Network Configuration&quot;. <br />
+<br />
+Click &quot;Protocols for &lt;Instance Name&gt;&quot; where &lt;Instance Name&gt; is the name of the instance (MSSQLSERVER is the default name). <br />
+<br />
+In the right pane, right-click on &quot;TCP/IP&quot; and choose &quot;Properties&quot;. <br />
+<br />
+In the window that opens, click the &quot;IP Addresses&quot; tab. <br />
+<br />
+Note the TCP port configured for the instance. <br />
+<br />
+Obtain the service account that is running the SQL Server service: <br />
+<br />
+Click &quot;Start&quot;.  <br />
+Type &quot;SQL Server 2016 Configuration Manager&quot;.  <br />
+From the search results, click &quot;SQL Server 2016 Configuration Manager&quot;. <br />
+<br />
+From the tree on the left, select &quot;SQL Server Services&quot;. <br />
+<br />
+Note the account listed in the &quot;Log On As&quot; column for the SQL Server instance being reviewed. <br />
+<br />
+Launch a command-line or PowerShell window. <br />
+<br />
+Enter the following command where &lt;Service Account&gt; is the identity of the service account. <br />
+<br />
+setspn -L &lt;Service Account&gt; <br />
+<br />
+Example: setspn -L CONTOSO\sql2016svc <br />
+<br />
+Review the Registered Service Principal Names returned.  <br />
+<br />
+If the listing does not contain the following supported service principal names (SPN) formats, this is a finding. <br />
+<br />
+Named instance<br />
+   MSSQLSvc/&lt;FQDN&gt;:[&lt;port&gt; | &lt;instancename&gt;], where:<br />
+   MSSQLSvc is the service that is being registered.<br />
+   &lt;FQDN&gt; is the fully qualified domain name of the server.<br />
+   &lt;port&gt; is the TCP port number.<br />
+   &lt;instancename&gt; is the name of the SQL Server instance.<br />
+<br />
+Default instance<br />
+   MSSQLSvc/&lt;FQDN&gt;:&lt;port&gt; | MSSQLSvc/&lt;FQDN&gt;, where:<br />
+   MSSQLSvc is the service that is being registered.<br />
+   &lt;FQDN&gt; is the fully qualified domain name of the server.<br />
+   &lt;port&gt; is the TCP port number.<br />
+<br />
+If the MSSQLSvc service is registered for any fully qualified domain names that do not match the current server, this may indicate the service account is shared across SQL Server instances. Review server documentation, if the sharing of service accounts across instances is not documented and authorized, this is a finding.</p><h2>Vulnerability Number</h2><p>V-213931</p><h2>Documentable</h2><p>False</p><h2>Rule Version</h2><p>SQL6-D0-003800</p><h2>Severity Override Guidance</h2><p>If the SQL Server is not part of an Active Directory domain, this finding is Not Applicable. <br />
+<br />
+Obtain the fully qualified domain name of the SQL Server instance: <br />
+<br />
+Launch Windows Explorer. <br />
+<br />
+Right-click on &quot;Computer&quot; or &quot;This PC&quot; (Varies by OS level), click &quot;Properties&quot;. <br />
+<br />
+Note the value shown for &quot;Full computer name&quot;. <br />
+<br />
+*** Note: For a cluster, this value must be obtained from the Failover Cluster Manager. *** <br />
+<br />
+Obtain the TCP port that is supporting the SQL Server instance: <br />
+<br />
+Click Start &gt;&gt; Type &quot;SQL Server 2016 Configuration Manager&quot; &gt;&gt; From the search results, click &quot;SQL Server 2016 Configuration Manager&quot;. <br />
+<br />
+From the tree on the left, expand &quot;SQL Server Network Configuration&quot;. <br />
+<br />
+Click &quot;Protocols for &lt;Instance Name&gt;&quot; where &lt;Instance Name&gt; is the name of the instance (MSSQLSERVER is the default name). <br />
+<br />
+In the right pane, right-click on &quot;TCP/IP&quot; and choose &quot;Properties&quot;. <br />
+<br />
+In the window that opens, click the &quot;IP Addresses&quot; tab. <br />
+<br />
+Note the TCP port configured for the instance. <br />
+<br />
+Obtain the service account that is running the SQL Server service: <br />
+<br />
+Click &quot;Start&quot;.  <br />
+Type &quot;SQL Server 2016 Configuration Manager&quot;.  <br />
+From the search results, click &quot;SQL Server 2016 Configuration Manager&quot;. <br />
+<br />
+From the tree on the left, select &quot;SQL Server Services&quot;. <br />
+<br />
+Note the account listed in the &quot;Log On As&quot; column for the SQL Server instance being reviewed. <br />
+<br />
+Launch a command-line or PowerShell window. <br />
+<br />
+Enter the following command where &lt;Service Account&gt; is the identity of the service account. <br />
+<br />
+setspn -L &lt;Service Account&gt; <br />
+<br />
+Example: setspn -L CONTOSO\sql2016svc <br />
+<br />
+Review the Registered Service Principal Names returned.  <br />
+<br />
+If the listing does not contain the following supported service principal names (SPN) formats, this is a finding. <br />
+<br />
+Named instance<br />
+   MSSQLSvc/&lt;FQDN&gt;:[&lt;port&gt; | &lt;instancename&gt;], where:<br />
+   MSSQLSvc is the service that is being registered.<br />
+   &lt;FQDN&gt; is the fully qualified domain name of the server.<br />
+   &lt;port&gt; is the TCP port number.<br />
+   &lt;instancename&gt; is the name of the SQL Server instance.<br />
+<br />
+Default instance<br />
+   MSSQLSvc/&lt;FQDN&gt;:&lt;port&gt; | MSSQLSvc/&lt;FQDN&gt;, where:<br />
+   MSSQLSvc is the service that is being registered.<br />
+   &lt;FQDN&gt; is the fully qualified domain name of the server.<br />
+   &lt;port&gt; is the TCP port number.<br />
+<br />
+If the MSSQLSvc service is registered for any fully qualified domain names that do not match the current server, this may indicate the service account is shared across SQL Server instances. Review server documentation, if the sharing of service accounts across instances is not documented and authorized, this is a finding.</p><h2>Check Content Reference</h2><p>M</p><h2>Target Key</h2><p>3993</p></body></html>

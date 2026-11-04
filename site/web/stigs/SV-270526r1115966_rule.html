@@ -1,0 +1,106 @@
+<!doctype html><html lang="en"><head><meta charset="utf-8"><title>STIGQter: STIG Check Details: SV-270526r1115966_rule: The Oracle password file ownership and permissions should be limited and the REMOTE_LOGIN_PASSWORDFILE parameter must be set to EXCLUSIVE or NONE.</title><link rel="icon" type="image/svg+xml" href="STIGQter.svg" /><script async src="https://www.googletagmanager.com/gtag/js?id=UA-31381839-2"></script><script src="include.js"></script><script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-4110907817782130" crossorigin="anonymous"></script></head><body><div><img src="STIGQter.svg" alt="STIGQter" style="height:1em;" /> <a href="https://www.stigqter.com/">STIGQter</a>: <a href="main.html">STIG Summary</a>: <a href="U_Oracle_Database_19c_STIG_V1R5_Manual-xccdf.html">Oracle Database 19c Security Technical Implementation Guide Version: 1 Release: 5 Benchmark Date: 01 Apr 2026</a>:</div> <h1>The Oracle password file ownership and permissions should be limited and the REMOTE_LOGIN_PASSWORDFILE parameter must be set to EXCLUSIVE or NONE.</h1><h2>DISA Rule</h2><p>SV-270526r1115966_rule</p><h2>Vulnerability Number</h2><p>V-270526</p><h2>Group Title</h2><p>SRG-APP-000516-DB-000363</p><h2>Rule Version</h2><p>O19C-00-009400</p><h2>Severity</h2><p>CAT II</p><h2>CCI(s)</h2><ul><li>CCI-000366 - Implement the security configuration settings.</li></ul><h2>Weight</h2><p>10</p><h2>Fix Recommendation</h2><p>Disable use of the REMOTE_LOGIN_PASSWORDFILE where remote administration is not authorized by specifying a value of NONE.<br />
+<br />
+If authorized, restrict use of a password file to exclusive use by each database by specifying a value of EXCLUSIVE.<br />
+<br />
+From SQL*Plus:<br />
+<br />
+alter system set REMOTE_LOGIN_PASSWORDFILE = 'EXCLUSIVE' scope = spfile;<br />
+<br />
+OR<br />
+<br />
+alter system set REMOTE_LOGIN_PASSWORDFILE = 'NONE' scope = spfile;<br />
+<br />
+The above SQL*Plus command will set the parameter to take effect at next system startup.<br />
+<br />
+Restrict ownership and permissions on the Oracle password file to exclude world (Unix) or everyone (Windows).<br />
+<br />
+More information regarding the ORAPWD file and the REMOTE_LOGIN_PASSWORDFILE parameter can be found here:<br />
+https://docs.oracle.com/en/database/oracle/oracle-database/19/refrn/REMOTE_LOGIN_PASSWORDFILE.html</p><h2>Check Contents</h2><p>To verify the current status of the REMOTE_LOGIN_PASSWORDFILE parameter: <br />
+<br />
+If using a non-CDB database:<br />
+<br />
+From SQL*Plus:<br />
+<br />
+select value from v$parameter where upper(name) = 'REMOTE_LOGIN_PASSWORDFILE';<br />
+<br />
+If the value returned does not equal 'EXCLUSIVE' or 'NONE', this is a finding.<br />
+<br />
+If using a CDB database:<br />
+<br />
+From SQL*Plus:<br />
+<br />
+To verify the current status of the remote_login_passwordfile parameter use the SQL statement:<br />
+<br />
+column name format a25<br />
+column parameter_value format a25<br />
+<br />
+SELECT name, inst_id, con_id, value AS PARAMETER_VALUE <br />
+FROM sys.gv_$parameter <br />
+WHERE name = 'REMOTE_LOGIN_PASSWORDFILE' <br />
+ORDER BY 1;<br />
+<br />
+In any instance or container, if the PARAMETER_VALUE is set to SHARED, or to a value other than EXCLUSIVE or NONE, that is a finding.<br />
+<br />
+Check the security permissions on password file within the OS.<br />
+<br />
+On Unix Systems:<br />
+<br />
+ls -ld $ORACLE_HOME/dbs/orapw${ORACLE_SID}<br />
+<br />
+Substitute ${ORACLE_SID} with the name of the ORACLE_SID for the database.<br />
+<br />
+If permissions are granted for world access, this is a finding.<br />
+<br />
+On Windows Systems (from Windows Explorer), browse to the %ORACLE_HOME%\database\directory.<br />
+<br />
+Select and right-click on the PWD%ORACLE_SID%.ora file, select Properties, then select the Security tab.<br />
+<br />
+Substitute %ORACLE_SID% with the name of the ORACLE_SID for the database.<br />
+<br />
+If permissions are granted to everyone, this is a finding.<br />
+<br />
+If any account other than the database management system (DBMS) software installation account is listed, this is a finding.</p><h2>Vulnerability Number</h2><p>V-270526</p><h2>Documentable</h2><p>False</p><h2>Rule Version</h2><p>O19C-00-009400</p><h2>Severity Override Guidance</h2><p>To verify the current status of the REMOTE_LOGIN_PASSWORDFILE parameter: <br />
+<br />
+If using a non-CDB database:<br />
+<br />
+From SQL*Plus:<br />
+<br />
+select value from v$parameter where upper(name) = 'REMOTE_LOGIN_PASSWORDFILE';<br />
+<br />
+If the value returned does not equal 'EXCLUSIVE' or 'NONE', this is a finding.<br />
+<br />
+If using a CDB database:<br />
+<br />
+From SQL*Plus:<br />
+<br />
+To verify the current status of the remote_login_passwordfile parameter use the SQL statement:<br />
+<br />
+column name format a25<br />
+column parameter_value format a25<br />
+<br />
+SELECT name, inst_id, con_id, value AS PARAMETER_VALUE <br />
+FROM sys.gv_$parameter <br />
+WHERE name = 'REMOTE_LOGIN_PASSWORDFILE' <br />
+ORDER BY 1;<br />
+<br />
+In any instance or container, if the PARAMETER_VALUE is set to SHARED, or to a value other than EXCLUSIVE or NONE, that is a finding.<br />
+<br />
+Check the security permissions on password file within the OS.<br />
+<br />
+On Unix Systems:<br />
+<br />
+ls -ld $ORACLE_HOME/dbs/orapw${ORACLE_SID}<br />
+<br />
+Substitute ${ORACLE_SID} with the name of the ORACLE_SID for the database.<br />
+<br />
+If permissions are granted for world access, this is a finding.<br />
+<br />
+On Windows Systems (from Windows Explorer), browse to the %ORACLE_HOME%\database\directory.<br />
+<br />
+Select and right-click on the PWD%ORACLE_SID%.ora file, select Properties, then select the Security tab.<br />
+<br />
+Substitute %ORACLE_SID% with the name of the ORACLE_SID for the database.<br />
+<br />
+If permissions are granted to everyone, this is a finding.<br />
+<br />
+If any account other than the database management system (DBMS) software installation account is listed, this is a finding.</p><h2>Check Content Reference</h2><p>M</p><h2>Target Key</h2><p>5672</p></body></html>

@@ -1,0 +1,56 @@
+<!doctype html><html lang="en"><head><meta charset="utf-8"><title>STIGQter: STIG Check Details: SV-279349r1179508_rule: MongoDB must, for password-based authentication, store passwords using an approved salted key derivation function, preferably using a keyed hash.</title><link rel="icon" type="image/svg+xml" href="STIGQter.svg" /><script async src="https://www.googletagmanager.com/gtag/js?id=UA-31381839-2"></script><script src="include.js"></script><script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-4110907817782130" crossorigin="anonymous"></script></head><body><div><img src="STIGQter.svg" alt="STIGQter" style="height:1em;" /> <a href="https://www.stigqter.com/">STIGQter</a>: <a href="main.html">STIG Summary</a>: <a href="U_MDB_Enterprise_Advanced_8-x_STIG_V1R1_Manual-xccdf.html">MongoDB Enterprise Advanced 8.x Security Technical Implementation Guide Version: 1 Release: 1 Benchmark Date: 26 Jan 2026</a>:</div> <h1>MongoDB must, for password-based authentication, store passwords using an approved salted key derivation function, preferably using a keyed hash.</h1><h2>DISA Rule</h2><p>SV-279349r1179508_rule</p><h2>Vulnerability Number</h2><p>V-279349</p><h2>Group Title</h2><p>SRG-APP-000171-DB-000074</p><h2>Rule Version</h2><p>MD8X-00-003600</p><h2>Severity</h2><p>CAT I</p><h2>CCI(s)</h2><ul><li>CCI-004062 - For password-based authentication, store passwords using an approved salted key derivation function, preferably using a keyed hash.</li></ul><h2>Weight</h2><p>10</p><h2>Fix Recommendation</h2><p>For each user that does not have SCRAM-SHA-256, run the following command:<br />
+<br />
+use admin<br />
+db.runCommand({'updateUser':'&lt;their username&gt;',pwd: passwordPrompt() , mechanisms:['SCRAM-SHA-256']})</p><h2>Check Contents</h2><p>MongoDB supports the Salted Challenge Response Authentication Mechanism (SCRAM) as the default authentication mechanism for MongoDB.<br />
+<br />
+Run the following script for database in the MongoDB system:<br />
+<br />
+/// Connect to admin database<br />
+db = db.getSiblingDB('admin');<br />
+<br />
+// Get all users without SCRAM-SHA-256<br />
+const allUsers = db.system.users.find().toArray();<br />
+const usersToUpgrade = allUsers.filter(user =&gt; <br />
+  !user.credentials || !user.credentials[&quot;SCRAM-SHA-256&quot;]<br />
+);<br />
+<br />
+print(`Found ${usersToUpgrade.length} users without SCRAM-SHA-256 authentication`);<br />
+<br />
+if (usersToUpgrade.length === 0) {<br />
+  print(&quot;All users already using SCRAM-SHA-256. No action needed.&quot;);<br />
+  quit();<br />
+}<br />
+<br />
+// Display users that need upgrading<br />
+print(&quot;\nUsers needing upgrade to SCRAM-SHA-256:&quot;);<br />
+usersToUpgrade.forEach(user =&gt; {<br />
+  print(`- User: ${user.user}, Database: ${user.db}`);<br />
+});<br />
+<br />
+If any user found in a database using password authentication does not have &quot;Using SCRAM-SHA-256: YES&quot;, this is a finding.</p><h2>Vulnerability Number</h2><p>V-279349</p><h2>Documentable</h2><p>False</p><h2>Rule Version</h2><p>MD8X-00-003600</p><h2>Severity Override Guidance</h2><p>MongoDB supports the Salted Challenge Response Authentication Mechanism (SCRAM) as the default authentication mechanism for MongoDB.<br />
+<br />
+Run the following script for database in the MongoDB system:<br />
+<br />
+/// Connect to admin database<br />
+db = db.getSiblingDB('admin');<br />
+<br />
+// Get all users without SCRAM-SHA-256<br />
+const allUsers = db.system.users.find().toArray();<br />
+const usersToUpgrade = allUsers.filter(user =&gt; <br />
+  !user.credentials || !user.credentials[&quot;SCRAM-SHA-256&quot;]<br />
+);<br />
+<br />
+print(`Found ${usersToUpgrade.length} users without SCRAM-SHA-256 authentication`);<br />
+<br />
+if (usersToUpgrade.length === 0) {<br />
+  print(&quot;All users already using SCRAM-SHA-256. No action needed.&quot;);<br />
+  quit();<br />
+}<br />
+<br />
+// Display users that need upgrading<br />
+print(&quot;\nUsers needing upgrade to SCRAM-SHA-256:&quot;);<br />
+usersToUpgrade.forEach(user =&gt; {<br />
+  print(`- User: ${user.user}, Database: ${user.db}`);<br />
+});<br />
+<br />
+If any user found in a database using password authentication does not have &quot;Using SCRAM-SHA-256: YES&quot;, this is a finding.</p><h2>Check Content Reference</h2><p>M</p><h2>Target Key</h2><p>5728</p></body></html>

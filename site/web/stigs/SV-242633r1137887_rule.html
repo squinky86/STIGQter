@@ -1,0 +1,43 @@
+<!doctype html><html lang="en"><head><meta charset="utf-8"><title>STIGQter: STIG Check Details: SV-242633r1137887_rule: The Cisco ISE must be configured to use an external authentication server to authenticate administrators prior to granting administrative access.</title><link rel="icon" type="image/svg+xml" href="STIGQter.svg" /><script async src="https://www.googletagmanager.com/gtag/js?id=UA-31381839-2"></script><script src="include.js"></script><script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-4110907817782130" crossorigin="anonymous"></script></head><body><div><img src="STIGQter.svg" alt="STIGQter" style="height:1em;" /> <a href="https://www.stigqter.com/">STIGQter</a>: <a href="main.html">STIG Summary</a>: <a href="U_Cisco_ISE_NDM_STIG_V2R4_Manual-xccdf.html">Cisco ISE NDM Security Technical Implementation Guide Version: 2 Release: 4 Benchmark Date: 01 Jul 2026</a>:</div> <h1>The Cisco ISE must be configured to use an external authentication server to authenticate administrators prior to granting administrative access.</h1><h2>DISA Rule</h2><p>SV-242633r1137887_rule</p><h2>Vulnerability Number</h2><p>V-242633</p><h2>Group Title</h2><p>SRG-APP-000516-NDM-000336</p><h2>Rule Version</h2><p>CSCO-NM-000270</p><h2>Severity</h2><p>CAT II</p><h2>CCI(s)</h2><ul><li>CCI-000366 - Implement the security configuration settings.</li><li>CCI-000370 - Manage configuration settings for organization-defined system components using organization-defined automated mechanisms.</li><li>CCI-003627 - Disable accounts when the accounts have expired.</li><li>CCI-003628 - Disable accounts when the accounts are no longer associated to a user.</li><li>CCI-003831 - Alert organization-defined personnel or roles upon detection of unauthorized access, modification, or deletion of audit information.</li><li>CCI-004046 - Implement multi-factor authentication for local; network; and/or remote access to privileged accounts; and/or non-privileged accounts such that one of the factors is provided by a device separate from the system gaining access.</li><li>CCI-004047 - Implement multi-factor authentication for local; network; and/or remote access to privileged accounts; and/or non-privileged accounts such that the device meets organization-defined strength of mechanism requirements.</li><li>CCI-004058 - For password-based authentication, maintain a list of commonly used, expected, or compromised passwords on an organization-defined frequency.</li><li>CCI-004059 - For password-based authentication, update the list of passwords on an organization-defined frequency.</li><li>CCI-004060 - For password-based authentication, update the list of passwords when organizational passwords are suspected to have been compromised directly or indirectly.</li><li>CCI-004061 - For password-based authentication, verify when users create or update passwords, that the passwords are not found on the list of commonly-used, expected, or compromised passwords in IA-5 (1) (a).</li><li>CCI-004063 - For password-based authentication, require immediate selection of a new password upon account recovery.</li><li>CCI-004064 - For password-based authentication, allow user selection of long passwords and passphrases, including spaces and all printable characters.</li><li>CCI-004065 - For password-based authentication, employ automated tools to assist the user in selecting strong password authenticators.</li><li>CCI-004068 - For public key-based authentication, implement a local cache of revocation data to support path discovery and validation.</li></ul><h2>Weight</h2><p>10</p><h2>Fix Recommendation</h2><p>Configure external authentication to a central AAA identity source. <br />
+<br />
+Configure password-based authentication for administrators who authenticate using an external identity store such as Active Directory or LDAP.<br />
+1. Choose Administration &gt;&gt; System &gt;&gt; Admin Access &gt;&gt; Authentication.<br />
+2. On the Authentication Method tab, select Password Based and choose one of the external identity sources that was previously configured (for example, the Active Directory instance that was created).<br />
+3. Configure any other specific password policy settings for administrators who authenticate using an external identity store.<br />
+4. Click &quot;Save&quot;.<br />
+<br />
+Create an external Active Directory or LDAP administrator group. This ensures that Cisco ISE uses the username that is defined in the external Active Directory or LDAP identity store to validate the administrator username and password that was entered upon login.<br />
+<br />
+Cisco ISE imports the Active Directory or LDAP group information from the external resource and stores it as a dictionary attribute. Specify that attribute as one of the policy elements when it is time to configure the RBAC policy for this external administrator authentication method.<br />
+<br />
+1. Choose Administration &gt;&gt; System &gt;&gt; Admin Access &gt;&gt; Administrators &gt;&gt; Admin Groups.<br />
+2. Click &quot;Add&quot;.<br />
+3. Enter a name and optional description.<br />
+4. Choose the &quot;External&quot; radio button.<br />
+5. From the External Groups drop-down list box, choose the Active Directory group to map for this external administrator group. Click the &quot;+&quot; sign to map additional Active Directory groups to this external administrator group.<br />
+6. Click &quot;Save&quot;.<br />
+<br />
+Configure menu access and data access permissions that can be assigned to the external administrator group.<br />
+<br />
+1. Choose Administration &gt;&gt; System &gt;&gt; Admin Access &gt;&gt; Permissions.<br />
+2. Click one of the following:<br />
+- Menu Access - All administrators who belong to the external administrator group can be granted permission at the menu or submenu level. The menu access permission determines the menus or submenus that they can access.<br />
+- Data Access - All administrators who belong to the external administrator group can be granted permission at the data level. The data access permission determines the data that they can access.<br />
+3. Specify menu access or data access permissions for the external administrator group.<br />
+4. Click &quot;Save&quot;.<br />
+<br />
+In order to configure Cisco ISE to authenticate the administrator using an external identity store and to specify custom menu and data access permissions at the same time, configure a new RBAC policy. This policy must have the external administrator group for authentication and the Cisco ISE menu and data access permissions to manage the external authentication and authorization.<br />
+<br />
+1. Choose Administration &gt;&gt; System &gt;&gt; Admin Access &gt;&gt; Authorization &gt;&gt; Policy.<br />
+2. Specify the rule name, external administrator group, and permissions. Remember that the appropriate external administrator group must be assigned to the correct administrator user IDs. Ensure the administrator in question is associated with the correct external administrator group.<br />
+3. Click &quot;Save&quot;.</p><h2>Check Contents</h2><p>Verify an external authentication identity source is configured.<br />
+<br />
+1. Choose Administration &gt;&gt; System &gt;&gt; Admin Access &gt;&gt; Administrators &gt;&gt; Admin Groups.<br />
+2. View the External Group configuration.<br />
+<br />
+If the Cisco ISE is not configured to use an external authentication server to authenticate administrators prior to granting administrative access, this is a finding.</p><h2>Vulnerability Number</h2><p>V-242633</p><h2>Documentable</h2><p>False</p><h2>Rule Version</h2><p>CSCO-NM-000270</p><h2>Severity Override Guidance</h2><p>Verify an external authentication identity source is configured.<br />
+<br />
+1. Choose Administration &gt;&gt; System &gt;&gt; Admin Access &gt;&gt; Administrators &gt;&gt; Admin Groups.<br />
+2. View the External Group configuration.<br />
+<br />
+If the Cisco ISE is not configured to use an external authentication server to authenticate administrators prior to granting administrative access, this is a finding.</p><h2>Check Content Reference</h2><p>M</p><h2>Target Key</h2><p>5384</p></body></html>

@@ -1,0 +1,215 @@
+<!doctype html><html lang="en"><head><meta charset="utf-8"><title>STIGQter: STIG Check Details: SV-253966r1082973_rule: The Juniper EX switch must be configured to assign all explicitly disabled access interfaces to an unused VLAN.</title><link rel="icon" type="image/svg+xml" href="STIGQter.svg" /><script async src="https://www.googletagmanager.com/gtag/js?id=UA-31381839-2"></script><script src="include.js"></script><script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-4110907817782130" crossorigin="anonymous"></script></head><body><div><img src="STIGQter.svg" alt="STIGQter" style="height:1em;" /> <a href="https://www.stigqter.com/">STIGQter</a>: <a href="main.html">STIG Summary</a>: <a href="U_Juniper_EX_Switches_L2S_STIG_V2R5_Manual-xccdf.html">Juniper EX Series Switches Layer 2 Switch Security Technical Implementation Guide Version: 2 Release: 5 Benchmark Date: 01 Jul 2026</a>:</div> <h1>The Juniper EX switch must be configured to assign all explicitly disabled access interfaces to an unused VLAN.</h1><h2>DISA Rule</h2><p>SV-253966r1082973_rule</p><h2>Vulnerability Number</h2><p>V-253966</p><h2>Group Title</h2><p>SRG-NET-000512-L2S-000007</p><h2>Rule Version</h2><p>JUEX-L2-000190</p><h2>Severity</h2><p>CAT II</p><h2>CCI(s)</h2><ul><li>CCI-004891 - Implement physically or logically separate subnetworks to isolate organization-defined critical system components and functions.</li></ul><h2>Weight</h2><p>10</p><h2>Fix Recommendation</h2><p>Disable all configured access interfaces not in use and assign to an inactive VLAN, or remove the interface configuration from the device. Switch ports configured for 802.1x are exempt from this requirement.<br />
+<br />
+1. In this example, &quot;vlan_disabled&quot; is the name given to the VLAN for unused interfaces. This VLAN name can be any legal name.<br />
+Configure a range of interfaces.<br />
+user@host&gt; configure<br />
+user@host# set vlans vlan_disabled vlan-id &lt;VLAN ID&gt;<br />
+<br />
+user@host# set interfaces interface-range &lt;name&gt; member &lt;interface name&gt;<br />
+user@host# set interfaces interface-range &lt;name&gt; member-range &lt;starting interface name&gt; to &lt;ending interface name&gt;<br />
+user@host# set interfaces interface-range &lt;name&gt; disable<br />
+user@host# set interfaces interface-range &lt;name&gt; unit 0 family ethernet-switching vlan members vlan_disabled<br />
+<br />
+2. Configure individual interfaces.<br />
+set interfaces &lt;interface name&gt; disable<br />
+set interfaces &lt;interface name&gt; unit 0 family ethernet-switching vlan members vlan_disabled<br />
+<br />
+3. Delete the unused VLAN from all trunked interfaces.<br />
+user@host# delete interfaces &lt;trunked interface&gt; unit 0 family ethernet-switching vlan members vlan_disabled<br />
+<br />
+4. Remove the access interface configuration from unused interfaces.<br />
+user@host# delete interfaces &lt;interface name&gt;</p><h2>Check Contents</h2><p>If this is an access interface configured for 802.1x, this is not applicable.<br />
+<br />
+1. Review the switch configurations and examine all configured access interfaces. <br />
+2. Verify each configured access interface not in use has membership in an inactive VLAN that is not used for any purpose and is not allowed on any trunk links. Unconfigured interfaces should not be configured &quot;disabled&quot; merely to meet this requirement because unconfigured interfaces are incapable of passing network traffic. Verify a VLAN is configured for unused interfaces. <br />
+<br />
+In the following example, VLAN name is &quot;vlan-disabled&quot;, but that name should match local naming conventions.<br />
+user@host&gt; show configuration vlans<br />
+vlan_disabled {<br />
+    vlan-id &lt;VLAN ID&gt;;<br />
+}<br />
+<br />
+3. Verify configured, but unused, interfaces are assigned to an unused VLAN either individually or via the &quot;interface-range&quot; command. Verify interfaces configured via &quot;interface-range&quot; are not also configured individually. Multiple interfaces simultaneously configured via interface-range.<br />
+user@host&gt; show configuration interfaces<br />
+interface-range &lt;name&gt; {<br />
+    member &lt;interface name&gt;;<br />
+    member-range &lt;starting interface name&gt; to &lt;ending interface name&gt;; &lt;&lt;&lt; Member ranges are contiguous from &lt;start interface&gt; to &lt;end interface&gt; inclusive<br />
+    disable;<br />
+    unit 0 {<br />
+        family ethernet-switching {<br />
+            vlan {<br />
+                members vlan_disabled;<br />
+            }<br />
+        }<br />
+    }<br />
+}<br />
+<br />
+4. Individually configured:<br />
+user@host&gt; show configuration interfaces<br />
+&lt;interface name&gt; {<br />
+    disable;<br />
+    unit 0 {<br />
+        family ethernet-switching {<br />
+            vlan {<br />
+                members vlan_disabled;<br />
+            }<br />
+        }<br />
+    }<br />
+}<br />
+<br />
+5. In the following example, &quot;vlan_disabled&quot; is designated for all configured, but disabled interfaces, and must not be configured on any trunked interface. Verify the unused VLAN is NOT a member of any trunked interface as in the example below.<br />
+user@host&gt; show configuration interfaces<br />
+&lt;interface name&gt; {<br />
+    unit &lt;logical unit&gt; {<br />
+        family {<br />
+            ethernet-switching {<br />
+                interface-mode trunk;<br />
+                vlan {<br />
+                    members [ vlan_name vlan_disabled ];<br />
+                }<br />
+            }<br />
+        }<br />
+    }<br />
+}<br />
+<br />
+6. Verify if there are unconfigured physical interfaces. These interfaces should not be configured merely to set them disabled because they are already incapable of passing network traffic, participating in protocols, and are not members of any user configured VLANS.<br />
+user@host&gt; show interfaces terse<br />
+ge-0/0/0                up    up<br />
+ge-0/0/0.0              up    up   eth-switch<br />
+ge-0/0/1                up    up<br />
+ge-0/0/1.0              up    up   eth-switch<br />
+…&lt;snip&gt;…<br />
+ge-0/0/5                up    down<br />
+ge-0/0/5.16386          up    down<br />
+ge-0/0/6                up    down<br />
+ge-0/0/6.16386          up    down<br />
+ge-0/0/7                up    down<br />
+ge-0/0/7.16386          up    down<br />
+<br />
+7. As shown in the example above, ge-0/0/5 through ge-0/0/7 are unconfigured interfaces. Verify there is no configuration stanza for these interfaces.<br />
+user@host&gt; show configuration interfaces<br />
+ge-0/0/0 {<br />
+    unit 0 {<br />
+        family ethernet-switching {<br />
+            vlan {<br />
+                members &lt;VLAN name&gt;;<br />
+            }<br />
+        }<br />
+    }<br />
+}<br />
+ge-0/0/1 {<br />
+    unit 0 {<br />
+        family ethernet-switching {<br />
+            vlan {<br />
+                members &lt;VLAN name&gt;;<br />
+            }<br />
+        }<br />
+    }<br />
+}<br />
+…&lt;snip&gt;…<br />
+xe-0/1/0 {<br />
+    ether-options {<br />
+        802.3ad ae0;<br />
+    }<br />
+}<br />
+<br />
+8. The example above shows that ge-0/0/1 is the last configured access interface and the next configured interface is a 10GbE Link Aggregation Group (LAG) member. Because Junos lists interface names in ascending order, the example unconfigured interfaces (ge-0/0/5 through ge-0/0/7) would appear between the configured interfaces ge-0/0/1 and xe-0/1/0. Therefore, the subject interfaces, while present on the device, are not configured and are incapable of passing network traffic.<br />
+<br />
+If there are any configured, but disabled access interfaces not in an inactive VLAN, this is a finding.</p><h2>Vulnerability Number</h2><p>V-253966</p><h2>Documentable</h2><p>False</p><h2>Rule Version</h2><p>JUEX-L2-000190</p><h2>Severity Override Guidance</h2><p>If this is an access interface configured for 802.1x, this is not applicable.<br />
+<br />
+1. Review the switch configurations and examine all configured access interfaces. <br />
+2. Verify each configured access interface not in use has membership in an inactive VLAN that is not used for any purpose and is not allowed on any trunk links. Unconfigured interfaces should not be configured &quot;disabled&quot; merely to meet this requirement because unconfigured interfaces are incapable of passing network traffic. Verify a VLAN is configured for unused interfaces. <br />
+<br />
+In the following example, VLAN name is &quot;vlan-disabled&quot;, but that name should match local naming conventions.<br />
+user@host&gt; show configuration vlans<br />
+vlan_disabled {<br />
+    vlan-id &lt;VLAN ID&gt;;<br />
+}<br />
+<br />
+3. Verify configured, but unused, interfaces are assigned to an unused VLAN either individually or via the &quot;interface-range&quot; command. Verify interfaces configured via &quot;interface-range&quot; are not also configured individually. Multiple interfaces simultaneously configured via interface-range.<br />
+user@host&gt; show configuration interfaces<br />
+interface-range &lt;name&gt; {<br />
+    member &lt;interface name&gt;;<br />
+    member-range &lt;starting interface name&gt; to &lt;ending interface name&gt;; &lt;&lt;&lt; Member ranges are contiguous from &lt;start interface&gt; to &lt;end interface&gt; inclusive<br />
+    disable;<br />
+    unit 0 {<br />
+        family ethernet-switching {<br />
+            vlan {<br />
+                members vlan_disabled;<br />
+            }<br />
+        }<br />
+    }<br />
+}<br />
+<br />
+4. Individually configured:<br />
+user@host&gt; show configuration interfaces<br />
+&lt;interface name&gt; {<br />
+    disable;<br />
+    unit 0 {<br />
+        family ethernet-switching {<br />
+            vlan {<br />
+                members vlan_disabled;<br />
+            }<br />
+        }<br />
+    }<br />
+}<br />
+<br />
+5. In the following example, &quot;vlan_disabled&quot; is designated for all configured, but disabled interfaces, and must not be configured on any trunked interface. Verify the unused VLAN is NOT a member of any trunked interface as in the example below.<br />
+user@host&gt; show configuration interfaces<br />
+&lt;interface name&gt; {<br />
+    unit &lt;logical unit&gt; {<br />
+        family {<br />
+            ethernet-switching {<br />
+                interface-mode trunk;<br />
+                vlan {<br />
+                    members [ vlan_name vlan_disabled ];<br />
+                }<br />
+            }<br />
+        }<br />
+    }<br />
+}<br />
+<br />
+6. Verify if there are unconfigured physical interfaces. These interfaces should not be configured merely to set them disabled because they are already incapable of passing network traffic, participating in protocols, and are not members of any user configured VLANS.<br />
+user@host&gt; show interfaces terse<br />
+ge-0/0/0                up    up<br />
+ge-0/0/0.0              up    up   eth-switch<br />
+ge-0/0/1                up    up<br />
+ge-0/0/1.0              up    up   eth-switch<br />
+…&lt;snip&gt;…<br />
+ge-0/0/5                up    down<br />
+ge-0/0/5.16386          up    down<br />
+ge-0/0/6                up    down<br />
+ge-0/0/6.16386          up    down<br />
+ge-0/0/7                up    down<br />
+ge-0/0/7.16386          up    down<br />
+<br />
+7. As shown in the example above, ge-0/0/5 through ge-0/0/7 are unconfigured interfaces. Verify there is no configuration stanza for these interfaces.<br />
+user@host&gt; show configuration interfaces<br />
+ge-0/0/0 {<br />
+    unit 0 {<br />
+        family ethernet-switching {<br />
+            vlan {<br />
+                members &lt;VLAN name&gt;;<br />
+            }<br />
+        }<br />
+    }<br />
+}<br />
+ge-0/0/1 {<br />
+    unit 0 {<br />
+        family ethernet-switching {<br />
+            vlan {<br />
+                members &lt;VLAN name&gt;;<br />
+            }<br />
+        }<br />
+    }<br />
+}<br />
+…&lt;snip&gt;…<br />
+xe-0/1/0 {<br />
+    ether-options {<br />
+        802.3ad ae0;<br />
+    }<br />
+}<br />
+<br />
+8. The example above shows that ge-0/0/1 is the last configured access interface and the next configured interface is a 10GbE Link Aggregation Group (LAG) member. Because Junos lists interface names in ascending order, the example unconfigured interfaces (ge-0/0/5 through ge-0/0/7) would appear between the configured interfaces ge-0/0/1 and xe-0/1/0. Therefore, the subject interfaces, while present on the device, are not configured and are incapable of passing network traffic.<br />
+<br />
+If there are any configured, but disabled access interfaces not in an inactive VLAN, this is a finding.</p><h2>Check Content Reference</h2><p>M</p><h2>Target Key</h2><p>5478</p></body></html>

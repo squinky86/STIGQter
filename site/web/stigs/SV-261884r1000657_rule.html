@@ -1,0 +1,39 @@
+<!doctype html><html lang="en"><head><meta charset="utf-8"><title>STIGQter: STIG Check Details: SV-261884r1000657_rule: Database objects (including but not limited to tables, indexes, storage, stored procedures, functions, triggers, links to software external to the DBMS, etc.) must be owned by database/PostgreSQL principals authorized for ownership.</title><link rel="icon" type="image/svg+xml" href="STIGQter.svg" /><script async src="https://www.googletagmanager.com/gtag/js?id=UA-31381839-2"></script><script src="include.js"></script><script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-4110907817782130" crossorigin="anonymous"></script></head><body><div><img src="STIGQter.svg" alt="STIGQter" style="height:1em;" /> <a href="https://www.stigqter.com/">STIGQter</a>: <a href="main.html">STIG Summary</a>: <a href="U_CD_Postgres_16_STIG_V1R3_Manual-xccdf.html">Crunchy Data Postgres 16 Security Technical Implementation Guide Version: 1 Release: 3 Benchmark Date: 01 Jul 2026</a>:</div> <h1>Database objects (including but not limited to tables, indexes, storage, stored procedures, functions, triggers, links to software external to the DBMS, etc.) must be owned by database/PostgreSQL principals authorized for ownership.</h1><h2>DISA Rule</h2><p>SV-261884r1000657_rule</p><h2>Vulnerability Number</h2><p>V-261884</p><h2>Group Title</h2><p>SRG-APP-000133-DB-000200</p><h2>Rule Version</h2><p>CD16-00-002900</p><h2>Severity</h2><p>CAT II</p><h2>CCI(s)</h2><ul><li>CCI-001499 - Limit privileges to change software resident within software libraries.</li></ul><h2>Weight</h2><p>10</p><h2>Fix Recommendation</h2><p>Assign ownership of authorized objects to authorized object owner accounts.<br />
+<br />
+#### Schema Owner<br />
+<br />
+To create a schema owned by the user &quot;bob&quot;, run the following SQL:<br />
+<br />
+$ sudo su - postgres<br />
+$ psql -c &quot;CREATE SCHEMA test AUTHORIZATION bob&quot; <br />
+<br />
+To alter the ownership of an existing object to be owned by the user &quot;bob&quot;, run the following SQL:<br />
+<br />
+$ sudo su - postgres<br />
+$ psql -c &quot;ALTER SCHEMA test OWNER TO bob&quot;</p><h2>Check Contents</h2><p>Review system documentation to identify accounts authorized to own database objects. Review accounts that own objects in the database(s).<br />
+<br />
+If any database objects are found to be owned by users not authorized to own database objects, this is a finding.<br />
+<br />
+To check the ownership of objects in the database, as the database administrator, run the following SQL:<br />
+<br />
+$ sudo su - postgres<br />
+$ psql -X -c '\dnS'<br />
+$ psql -x -c &quot;\dt *.*&quot;<br />
+$ psql -X -c '\dsS'<br />
+$ psql -x -c &quot;\dv *.*&quot;<br />
+$ psql -x -c &quot;\df+ *.*&quot;<br />
+<br />
+If any object is not owned by an authorized role for ownership, this is a finding.</p><h2>Vulnerability Number</h2><p>V-261884</p><h2>Documentable</h2><p>False</p><h2>Rule Version</h2><p>CD16-00-002900</p><h2>Severity Override Guidance</h2><p>Review system documentation to identify accounts authorized to own database objects. Review accounts that own objects in the database(s).<br />
+<br />
+If any database objects are found to be owned by users not authorized to own database objects, this is a finding.<br />
+<br />
+To check the ownership of objects in the database, as the database administrator, run the following SQL:<br />
+<br />
+$ sudo su - postgres<br />
+$ psql -X -c '\dnS'<br />
+$ psql -x -c &quot;\dt *.*&quot;<br />
+$ psql -X -c '\dsS'<br />
+$ psql -x -c &quot;\dv *.*&quot;<br />
+$ psql -x -c &quot;\df+ *.*&quot;<br />
+<br />
+If any object is not owned by an authorized role for ownership, this is a finding.</p><h2>Check Content Reference</h2><p>M</p><h2>Target Key</h2><p>5598</p></body></html>

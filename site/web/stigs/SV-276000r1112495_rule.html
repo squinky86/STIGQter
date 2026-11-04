@@ -1,0 +1,62 @@
+<!doctype html><html lang="en"><head><meta charset="utf-8"><title>STIGQter: STIG Check Details: SV-276000r1112495_rule: A minimum of three Oracle redo log groups/files must be defined and configured to be stored on separate, archived physical disks or archived directories on a RAID device. In addition, each Oracle redo log group must have a minimum of two Oracle redo log members (files).</title><link rel="icon" type="image/svg+xml" href="STIGQter.svg" /><script async src="https://www.googletagmanager.com/gtag/js?id=UA-31381839-2"></script><script src="include.js"></script><script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-4110907817782130" crossorigin="anonymous"></script></head><body><div><img src="STIGQter.svg" alt="STIGQter" style="height:1em;" /> <a href="https://www.stigqter.com/">STIGQter</a>: <a href="main.html">STIG Summary</a>: <a href="U_Oracle_Database_19c_STIG_V1R5_Manual-xccdf.html">Oracle Database 19c Security Technical Implementation Guide Version: 1 Release: 5 Benchmark Date: 01 Apr 2026</a>:</div> <h1>A minimum of three Oracle redo log groups/files must be defined and configured to be stored on separate, archived physical disks or archived directories on a RAID device. In addition, each Oracle redo log group must have a minimum of two Oracle redo log members (files).</h1><h2>DISA Rule</h2><p>SV-276000r1112495_rule</p><h2>Vulnerability Number</h2><p>V-276000</p><h2>Group Title</h2><p>SRG-APP-000516-DB-000363</p><h2>Rule Version</h2><p>O19C-00-020600</p><h2>Severity</h2><p>CAT II</p><h2>CCI(s)</h2><ul><li>CCI-000366 - Implement the security configuration settings.</li></ul><h2>Weight</h2><p>10</p><h2>Fix Recommendation</h2><p>To define additional redo log file groups:<br />
+<br />
+From SQL*Plus (Example):<br />
+<br />
+  alter database add logfile group 2 <br />
+    ('diska:log2.log' ,<br />
+     'diskb:log2.log') size 50K; <br />
+<br />
+To add additional redo log file [members] to an existing redo log file group:<br />
+<br />
+From SQL*Plus (Example):<br />
+<br />
+  alter database add logfile member 'diskc:log2.log'<br />
+  to group 2;<br />
+<br />
+Replace diska, diskb, diskc with valid, different disk drive specifications.<br />
+<br />
+Replace log#.log file with valid or custom names for the log files.</p><h2>Check Contents</h2><p>From SQL*Plus:<br />
+<br />
+-- Check to see how many Oracle redo log groups there are:<br />
+select group#, bytes, members, status, archived from v$log;<br />
+<br />
+-- Check to see how many Oracle redo log members there are:<br />
+select * from v$logfile;<br />
+<br />
+This is a finding if there are less than three Oracle redo log groups a RAID storage device, or equivalent storage system, is not being used.<br />
+<br />
+If one or more groups (group#) has only a single member this is a finding.<br />
+<br />
+If one or more groups (group#) have more than a single member but one or more of those members are located on the same physical or logical device this is a finding.<br />
+<br />
+select count(*) from V$LOG;<br />
+<br />
+If the value of the count returned is less than 3, this is a finding.<br />
+<br />
+From SQL*Plus:<br />
+<br />
+select count(*) from V$LOG where members &gt; 1;<br />
+<br />
+If the value of the count returned is less than 3 and a RAID storage device is not being used, this is a finding.</p><h2>Vulnerability Number</h2><p>V-276000</p><h2>Documentable</h2><p>False</p><h2>Rule Version</h2><p>O19C-00-020600</p><h2>Severity Override Guidance</h2><p>From SQL*Plus:<br />
+<br />
+-- Check to see how many Oracle redo log groups there are:<br />
+select group#, bytes, members, status, archived from v$log;<br />
+<br />
+-- Check to see how many Oracle redo log members there are:<br />
+select * from v$logfile;<br />
+<br />
+This is a finding if there are less than three Oracle redo log groups a RAID storage device, or equivalent storage system, is not being used.<br />
+<br />
+If one or more groups (group#) has only a single member this is a finding.<br />
+<br />
+If one or more groups (group#) have more than a single member but one or more of those members are located on the same physical or logical device this is a finding.<br />
+<br />
+select count(*) from V$LOG;<br />
+<br />
+If the value of the count returned is less than 3, this is a finding.<br />
+<br />
+From SQL*Plus:<br />
+<br />
+select count(*) from V$LOG where members &gt; 1;<br />
+<br />
+If the value of the count returned is less than 3 and a RAID storage device is not being used, this is a finding.</p><h2>Check Content Reference</h2><p>M</p><h2>Target Key</h2><p>5672</p></body></html>

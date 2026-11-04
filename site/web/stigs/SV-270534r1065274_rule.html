@@ -1,0 +1,63 @@
+<!doctype html><html lang="en"><head><meta charset="utf-8"><title>STIGQter: STIG Check Details: SV-270534r1065274_rule: The directories assigned to the LOG_ARCHIVE_DEST* parameters must be protected from unauthorized access.</title><link rel="icon" type="image/svg+xml" href="STIGQter.svg" /><script async src="https://www.googletagmanager.com/gtag/js?id=UA-31381839-2"></script><script src="include.js"></script><script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-4110907817782130" crossorigin="anonymous"></script></head><body><div><img src="STIGQter.svg" alt="STIGQter" style="height:1em;" /> <a href="https://www.stigqter.com/">STIGQter</a>: <a href="main.html">STIG Summary</a>: <a href="U_Oracle_Database_19c_STIG_V1R5_Manual-xccdf.html">Oracle Database 19c Security Technical Implementation Guide Version: 1 Release: 5 Benchmark Date: 01 Apr 2026</a>:</div> <h1>The directories assigned to the LOG_ARCHIVE_DEST* parameters must be protected from unauthorized access.</h1><h2>DISA Rule</h2><p>SV-270534r1065274_rule</p><h2>Vulnerability Number</h2><p>V-270534</p><h2>Group Title</h2><p>SRG-APP-000516-DB-000363</p><h2>Rule Version</h2><p>O19C-00-010400</p><h2>Severity</h2><p>CAT II</p><h2>CCI(s)</h2><ul><li>CCI-000366 - Implement the security configuration settings.</li></ul><h2>Weight</h2><p>10</p><h2>Fix Recommendation</h2><p>Specify a valid and protected directory for archive log files.<br />
+<br />
+Restrict access to the Oracle process and software owner accounts, DBAs, and backup operator accounts.</p><h2>Check Contents</h2><p>From SQL*Plus:<br />
+<br />
+select log_mode from v$database;<br />
+select value from v$parameter where name = 'log_archive_dest';<br />
+select value from v$parameter where name = 'log_archive_duplex_dest';<br />
+select name, value from v$parameter where name LIKE 'log_archive_dest_%';<br />
+select value from v$parameter where name = 'db_recovery_file_dest';<br />
+<br />
+If the value returned for LOG_MODE is NOARCHIVELOG, this check is not a finding.<br />
+<br />
+If a value is not returned for LOG_ARCHIVE_DEST and no values are returned for any of the LOG_ARCHIVE_DEST_[1-10] parameters, and no value is returned for DB_RECOVERY_FILE_DEST, this is a finding.<br />
+<br />
+Note: LOG_ARCHIVE_DEST and LOG_ARCHIVE_DUPLEX_DEST are incompatible with the LOG_ARCHIVE_DEST_n parameters, and must be defined as the null string (' ') when any LOG_ARCHIVE_DEST_n parameter has a value other than a null string.<br />
+<br />
+On Unix Systems:<br />
+<br />
+ls -ld [pathname]<br />
+<br />
+Substitute [pathname] with the directory paths listed from the above SQL statements for log_archive_dest and log_archive_duplex_dest.<br />
+<br />
+If permissions are granted for world access, this is a finding.<br />
+<br />
+On Windows systems (from Windows Explorer):<br />
+<br />
+Browse to the directory specified.<br />
+<br />
+Select and right-click on the directory &gt;&gt; Properties &gt;&gt; Security tab.<br />
+<br />
+If permissions are granted to everyone, this is a finding.<br />
+<br />
+If any account other than the Oracle process and software owner accounts, administrators, database administrators (DBAs), system group, or developers authorized to write and debug applications on this database are listed, this is a finding.</p><h2>Vulnerability Number</h2><p>V-270534</p><h2>Documentable</h2><p>False</p><h2>Rule Version</h2><p>O19C-00-010400</p><h2>Severity Override Guidance</h2><p>From SQL*Plus:<br />
+<br />
+select log_mode from v$database;<br />
+select value from v$parameter where name = 'log_archive_dest';<br />
+select value from v$parameter where name = 'log_archive_duplex_dest';<br />
+select name, value from v$parameter where name LIKE 'log_archive_dest_%';<br />
+select value from v$parameter where name = 'db_recovery_file_dest';<br />
+<br />
+If the value returned for LOG_MODE is NOARCHIVELOG, this check is not a finding.<br />
+<br />
+If a value is not returned for LOG_ARCHIVE_DEST and no values are returned for any of the LOG_ARCHIVE_DEST_[1-10] parameters, and no value is returned for DB_RECOVERY_FILE_DEST, this is a finding.<br />
+<br />
+Note: LOG_ARCHIVE_DEST and LOG_ARCHIVE_DUPLEX_DEST are incompatible with the LOG_ARCHIVE_DEST_n parameters, and must be defined as the null string (' ') when any LOG_ARCHIVE_DEST_n parameter has a value other than a null string.<br />
+<br />
+On Unix Systems:<br />
+<br />
+ls -ld [pathname]<br />
+<br />
+Substitute [pathname] with the directory paths listed from the above SQL statements for log_archive_dest and log_archive_duplex_dest.<br />
+<br />
+If permissions are granted for world access, this is a finding.<br />
+<br />
+On Windows systems (from Windows Explorer):<br />
+<br />
+Browse to the directory specified.<br />
+<br />
+Select and right-click on the directory &gt;&gt; Properties &gt;&gt; Security tab.<br />
+<br />
+If permissions are granted to everyone, this is a finding.<br />
+<br />
+If any account other than the Oracle process and software owner accounts, administrators, database administrators (DBAs), system group, or developers authorized to write and debug applications on this database are listed, this is a finding.</p><h2>Check Content Reference</h2><p>M</p><h2>Target Key</h2><p>5672</p></body></html>

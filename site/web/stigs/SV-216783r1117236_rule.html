@@ -1,0 +1,123 @@
+<!doctype html><html lang="en"><head><meta charset="utf-8"><title>STIGQter: STIG Check Details: SV-216783r1117236_rule: The Cisco BGP router must be configured to reject route advertisements from CE routers with an originating AS in the AS_PATH attribute that does not belong to that customer.</title><link rel="icon" type="image/svg+xml" href="STIGQter.svg" /><script async src="https://www.googletagmanager.com/gtag/js?id=UA-31381839-2"></script><script src="include.js"></script><script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-4110907817782130" crossorigin="anonymous"></script></head><body><div><img src="STIGQter.svg" alt="STIGQter" style="height:1em;" /> <a href="https://www.stigqter.com/">STIGQter</a>: <a href="main.html">STIG Summary</a>: <a href="U_Cisco_IOS-XR_Router_RTR_STIG_V3R3_Manual-xccdf.html">Cisco IOS XR Router RTR Security Technical Implementation Guide Version: 3 Release: 3 Benchmark Date: 01 Oct 2025</a>:</div> <h1>The Cisco BGP router must be configured to reject route advertisements from CE routers with an originating AS in the AS_PATH attribute that does not belong to that customer.</h1><h2>DISA Rule</h2><p>SV-216783r1117236_rule</p><h2>Vulnerability Number</h2><p>V-216783</p><h2>Group Title</h2><p>SRG-NET-000018-RTR-000010</p><h2>Rule Version</h2><p>CISC-RT-000550</p><h2>Severity</h2><p>CAT III</p><h2>CCI(s)</h2><ul><li>CCI-000032 - Enforce information flow control using organization-defined security policy filters as a basis for flow control decisions for organization-defined information flows.</li></ul><h2>Weight</h2><p>10</p><h2>Fix Recommendation</h2><p>This requirement is not applicable for the DODIN Backbone.<br />
+<br />
+Configure the router to reject updates from CE routers with an originating AS in the AS_PATH attribute that does not belong to that customer.<br />
+<br />
+Step 1: Configure an inbound route policy for each customer to only accept routes with an originating AS that belongs to that customer as shown in the example below.<br />
+<br />
+RP/0/0/CPU0:R2(config)#route-policy FILTER_64514_ROUTES<br />
+RP/0/0/CPU0:R2(config-rpl)#if as-path originates-from '64514' then<br />
+RP/0/0/CPU0:R2(config-rpl-if)#pass<br />
+RP/0/0/CPU0:R2(config-rpl-if)#else<br />
+RP/0/0/CPU0:R2(config-rpl-else)#drop<br />
+RP/0/0/CPU0:R2(config-rpl-else)#endif <br />
+RP/0/0/CPU0:R2(config-rpl)#end-policy <br />
+RP/0/0/CPU0:R2(config)#route-policy FILTER_64516_ROUTES<br />
+RP/0/0/CPU0:R2(config-rpl)#if as-path originates-from '64516' then<br />
+RP/0/0/CPU0:R2(config-rpl-if)#pass<br />
+RP/0/0/CPU0:R2(config-rpl-if)#else<br />
+RP/0/0/CPU0:R2(config-rpl-else)#drop<br />
+RP/0/0/CPU0:R2(config-rpl-else)#endif <br />
+RP/0/0/CPU0:R2(config-rpl)#end-policy <br />
+<br />
+Step 2: Apply the appropriate inbound route policy with each peering CE router as shown in the example below.<br />
+<br />
+RP/0/0/CPU0:R2(config)#router bgp xx<br />
+RP/0/0/CPU0:R2(config-bgp)#neighbor x.12.4.14<br />
+RP/0/0/CPU0:R2(config-bgp-nbr)#address-family ipv4 unicast <br />
+RP/0/0/CPU0:R2(config-bgp-nbr-af)#route-policy route-policy FILTER_64514_ROUTES in<br />
+RP/0/0/CPU0:R2(config-bgp)#neighbor x.12.4.16<br />
+RP/0/0/CPU0:R2(config-bgp-nbr)#address-family ipv4 unicast <br />
+RP/0/0/CPU0:R2(config-bgp-nbr-af)#route-policy FILTER_64516_ROUTES in<br />
+RP/0/0/CPU0:R2(config-bgp-nbr-af)#end</p><h2>Check Contents</h2><p>This requirement is not applicable for the DODIN Backbone.<br />
+<br />
+Review the router configuration to verify the router is configured to deny updates received from CE routers with an originating AS in the AS_PATH attribute that does not belong to that customer.<br />
+<br />
+Step 1: verify that an inbound route policy has been configured for each customer neighbor as shown in the example below.<br />
+<br />
+router bgp xx<br />
+ address-family ipv4 unicast<br />
+ !<br />
+ neighbor x.12.4.14<br />
+  remote-as 64514<br />
+    address-family ipv4 unicast<br />
+     route-policy FILTER _64514_ROUTES in<br />
+  !<br />
+ !<br />
+ neighbor x.12.4.16<br />
+  remote-as 64516<br />
+  address-family ipv4 unicast<br />
+   route-policy FILTER_64516_ROUTES in<br />
+ !<br />
+<br />
+Step 2: Verify that the route policy permits only routes from each CE router with an originating AS that does not belong to that customer.<br />
+<br />
+route-policy FILTER_64514_ROUTES<br />
+  if as-path originates-from 64514'  then<br />
+    pass<br />
+  else<br />
+    drop<br />
+  endif<br />
+end-policy<br />
+!<br />
+route-policy FILTER_64516_ROUTES<br />
+  if as-path originates-from 64516'  then<br />
+    pass<br />
+  else<br />
+    drop<br />
+  endif<br />
+end-policy<br />
+<br />
+Note: The inbound route policy to filter customer prefixes can be nested with the above route policy as shown in the example below.<br />
+<br />
+route-policy CUST1_INBOUND_FILTER<br />
+  apply CUST1_FILTER<br />
+  apply FILTER_64514_ROUTES<br />
+end-policy<br />
+<br />
+If the router is not configured to reject updates from CE routers with an originating AS in the AS_PATH attribute that does not belong to that customer, this is a finding.</p><h2>Vulnerability Number</h2><p>V-216783</p><h2>Documentable</h2><p>False</p><h2>Rule Version</h2><p>CISC-RT-000550</p><h2>Severity Override Guidance</h2><p>This requirement is not applicable for the DODIN Backbone.<br />
+<br />
+Review the router configuration to verify the router is configured to deny updates received from CE routers with an originating AS in the AS_PATH attribute that does not belong to that customer.<br />
+<br />
+Step 1: verify that an inbound route policy has been configured for each customer neighbor as shown in the example below.<br />
+<br />
+router bgp xx<br />
+ address-family ipv4 unicast<br />
+ !<br />
+ neighbor x.12.4.14<br />
+  remote-as 64514<br />
+    address-family ipv4 unicast<br />
+     route-policy FILTER _64514_ROUTES in<br />
+  !<br />
+ !<br />
+ neighbor x.12.4.16<br />
+  remote-as 64516<br />
+  address-family ipv4 unicast<br />
+   route-policy FILTER_64516_ROUTES in<br />
+ !<br />
+<br />
+Step 2: Verify that the route policy permits only routes from each CE router with an originating AS that does not belong to that customer.<br />
+<br />
+route-policy FILTER_64514_ROUTES<br />
+  if as-path originates-from 64514'  then<br />
+    pass<br />
+  else<br />
+    drop<br />
+  endif<br />
+end-policy<br />
+!<br />
+route-policy FILTER_64516_ROUTES<br />
+  if as-path originates-from 64516'  then<br />
+    pass<br />
+  else<br />
+    drop<br />
+  endif<br />
+end-policy<br />
+<br />
+Note: The inbound route policy to filter customer prefixes can be nested with the above route policy as shown in the example below.<br />
+<br />
+route-policy CUST1_INBOUND_FILTER<br />
+  apply CUST1_FILTER<br />
+  apply FILTER_64514_ROUTES<br />
+end-policy<br />
+<br />
+If the router is not configured to reject updates from CE routers with an originating AS in the AS_PATH attribute that does not belong to that customer, this is a finding.</p><h2>Check Content Reference</h2><p>M</p><h2>Target Key</h2><p>4029</p></body></html>

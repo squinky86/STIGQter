@@ -1,0 +1,45 @@
+<!doctype html><html lang="en"><head><meta charset="utf-8"><title>STIGQter: STIG Check Details: SV-271387r1111140_rule: The SQL Server Browser service must be disabled unless specifically required and approved.</title><link rel="icon" type="image/svg+xml" href="STIGQter.svg" /><script async src="https://www.googletagmanager.com/gtag/js?id=UA-31381839-2"></script><script src="include.js"></script><script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-4110907817782130" crossorigin="anonymous"></script></head><body><div><img src="STIGQter.svg" alt="STIGQter" style="height:1em;" /> <a href="https://www.stigqter.com/">STIGQter</a>: <a href="main.html">STIG Summary</a>: <a href="U_MS_SQL_Server_2022_Instance_STIG_V1R4_Manual-xccdf.html">Microsoft SQL Server 2022 Instance Security Technical Implementation Guide Version: 1 Release: 4 Benchmark Date: 01 Apr 2026</a>:</div> <h1>The SQL Server Browser service must be disabled unless specifically required and approved.</h1><h2>DISA Rule</h2><p>SV-271387r1111140_rule</p><h2>Vulnerability Number</h2><p>V-271387</p><h2>Group Title</h2><p>SRG-APP-000516-DB-000363</p><h2>Rule Version</h2><p>SQLI-22-017800</p><h2>Severity</h2><p>CAT II</p><h2>CCI(s)</h2><ul><li>CCI-000366 - Implement the security configuration settings.</li></ul><h2>Weight</h2><p>10</p><h2>Fix Recommendation</h2><p>If SQL Server Browser is needed, document the justification and obtain the appropriate authorization. <br />
+<br />
+Where SQL Server Browser is judged unnecessary, the Service can be disabled. <br />
+<br />
+To disable, in the Services tool, double-click &quot;SQL Server Browser&quot;. Set &quot;Startup Type&quot; to &quot;Disabled&quot;. If &quot;Service Status&quot; is &quot;Running&quot;, click &quot;Stop&quot; and then click &quot;OK&quot;.</p><h2>Check Contents</h2><p>Open SQL Server Configuration Manager. Select SQL Server Services. Review the Start Mode and State of SQL Server Browser.<br />
+<br />
+If its Start Type is shown as &quot;Disabled&quot;, this is not a finding.<br />
+<br />
+If the need for the SQL Server Browser service is documented and authorized, verify the SQL Instances that do not require use of the SQL Browser Service are hidden with the following SQL script:<br />
+DECLARE @HiddenInstance INT <br />
+EXEC master.dbo.Xp_instance_regread <br />
+ N'HKEY_LOCAL_MACHINE', <br />
+ N'Software\Microsoft\MSSQLServer\MSSQLServer\SuperSocketNetLib', <br />
+ N'HideInstance', <br />
+ @HiddenInstance output <br />
+<br />
+SELECT CASE <br />
+        WHEN @HiddenInstance = 0 <br />
+             AND Serverproperty('IsClustered') = 0 THEN 'No' <br />
+        ELSE 'Yes' <br />
+      END AS [Hidden]<br />
+<br />
+If the value of &quot;Hidden&quot; is &quot;Yes&quot;, this is not a finding.<br />
+<br />
+If the value of &quot;Hidden&quot; is &quot;No&quot; and the startup type of the &quot;SQL Server Browser&quot; service is not &quot;Disabled&quot;, this is a finding.</p><h2>Vulnerability Number</h2><p>V-271387</p><h2>Documentable</h2><p>False</p><h2>Rule Version</h2><p>SQLI-22-017800</p><h2>Severity Override Guidance</h2><p>Open SQL Server Configuration Manager. Select SQL Server Services. Review the Start Mode and State of SQL Server Browser.<br />
+<br />
+If its Start Type is shown as &quot;Disabled&quot;, this is not a finding.<br />
+<br />
+If the need for the SQL Server Browser service is documented and authorized, verify the SQL Instances that do not require use of the SQL Browser Service are hidden with the following SQL script:<br />
+DECLARE @HiddenInstance INT <br />
+EXEC master.dbo.Xp_instance_regread <br />
+ N'HKEY_LOCAL_MACHINE', <br />
+ N'Software\Microsoft\MSSQLServer\MSSQLServer\SuperSocketNetLib', <br />
+ N'HideInstance', <br />
+ @HiddenInstance output <br />
+<br />
+SELECT CASE <br />
+        WHEN @HiddenInstance = 0 <br />
+             AND Serverproperty('IsClustered') = 0 THEN 'No' <br />
+        ELSE 'Yes' <br />
+      END AS [Hidden]<br />
+<br />
+If the value of &quot;Hidden&quot; is &quot;Yes&quot;, this is not a finding.<br />
+<br />
+If the value of &quot;Hidden&quot; is &quot;No&quot; and the startup type of the &quot;SQL Server Browser&quot; service is not &quot;Disabled&quot;, this is a finding.</p><h2>Check Content Reference</h2><p>M</p><h2>Target Key</h2><p>5677</p></body></html>

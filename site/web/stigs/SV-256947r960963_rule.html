@@ -1,0 +1,47 @@
+<!doctype html><html lang="en"><head><meta charset="utf-8"><title>STIGQter: STIG Check Details: SV-256947r960963_rule: All Automation Controller NGINX web servers must not be a proxy server for any process other than the Automation Controller application.</title><link rel="icon" type="image/svg+xml" href="STIGQter.svg" /><script async src="https://www.googletagmanager.com/gtag/js?id=UA-31381839-2"></script><script src="include.js"></script><script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-4110907817782130" crossorigin="anonymous"></script></head><body><div><img src="STIGQter.svg" alt="STIGQter" style="height:1em;" /> <a href="https://www.stigqter.com/">STIGQter</a>: <a href="main.html">STIG Summary</a>: <a href="U_RH_Ansible_Automation_Controller_WS_STIG_V2R3_Manual-xccdf.html">Red Hat Ansible Automation Controller Web Server Security Technical Implementation Guide Version: 2 Release: 3 Benchmark Date: 05 Jan 2026</a>:</div> <h1>All Automation Controller NGINX web servers must not be a proxy server for any process other than the Automation Controller application.</h1><h2>DISA Rule</h2><p>SV-256947r960963_rule</p><h2>Vulnerability Number</h2><p>V-256947</p><h2>Group Title</h2><p>SRG-APP-000141-WSR-000076</p><h2>Rule Version</h2><p>APWS-AT-000270</p><h2>Severity</h2><p>CAT II</p><h2>CCI(s)</h2><ul><li>CCI-000381 - Configure the system to provide only organization-defined mission essential capabilities.</li></ul><h2>Weight</h2><p>10</p><h2>Fix Recommendation</h2><p>As a System Administrator, remove any content present and served from the static content location (/var/lib/awx/public/static) that is not acceptable per organizationally defined policy.<br />
+<br />
+Run the setup.sh command in the Ansible Automation Platform installer directory to reconfigure the controller to the default state, which only contains the required configuration:<br />
+<br />
+sudo ./setup.sh</p><h2>Check Contents</h2><p>As a system administrator for each Automation Controller NGINX web server host, ensure that the only upstream servers configured are for the Automation Controller ASGI and WSGI modules:<br />
+<br />
+NGINXCONF=`nginx -V 2&gt;&amp;1 | tr ' ' '\n' | sed -ne '/conf-path/{s/.*conf-path=\(.*\)/\1/;p}' `<br />
+sudo grep -E 'proxy_pass|uwsgi_pass' $NGINXCONF | grep -Pqz '^\s+proxy_pass http://daphne;\n\s+uwsgi_pass uwsgi;\n$' || echo FAILED<br />
+[ &quot;`sudo grep -Pzo 'upstream\s+daphne\s+{[^}]+}' $NGINXCONF | grep -a server | grep -v 'server unix:/var/run/tower/daphne.sock;'`&quot; == '' ] || echo FAILED<br />
+[ &quot;`sudo grep -Pzo 'upstream\s+uwsgi\s+{[^}]+}' $NGINXCONF | grep -a server | grep -v 'server unix:/var/run/tower/uwsgi.sock;'`&quot; == '' ] || echo FAILED<br />
+<br />
+If &quot;FAILED&quot; is displayed, this is a finding.<br />
+<br />
+Ensure all locations are served by either these upstream servers or other well-known content:<br />
+<br />
+[ &quot;`sudo grep location $NGINXCONF | grep -v '^\s*#' | grep -Ev '^\s+location\s+/(favicon.ico|static|websocket)?\s+{'`&quot; == &quot;&quot; ] || echo &quot;FAILED&quot;<br />
+sudo grep -Eq 'location\s+/favicon.ico\s+{\s+alias\s+/var/lib/awx/public/static/media/favicon.ico;\s+}' $NGINXCONF || echo &quot;FAILED&quot;<br />
+sudo grep -Eq 'location\s+/static\s+{\s+alias\s+/var/lib/awx/public/static;\s+}' $NGINXCONF || echo &quot;FAILED&quot;<br />
+sudo grep -Pzo 'location\s+/websocket\s+({([^{}]|(?1))*})' $NGINXCONF | grep -Eq '^\s+proxy_pass\s+http://daphne;' || echo &quot;FAILED&quot;<br />
+sudo grep -Pzo 'location\s+/\s+({([^{}]|(?1))*})' $NGINXCONF | grep -Eq '^\s+uwsgi_pass\s+uwsgi;' || echo &quot;FAILED&quot;<br />
+<br />
+If &quot;FAILED&quot; is displayed, this is a finding.<br />
+<br />
+Verify the content present and served from the static content location (/var/lib/awx/public/static) is acceptable per organizationally defined policy.<br />
+<br />
+If any content present in this location (or its subdirectories) is not acceptable per organizationally defined policy, this is a finding.</p><h2>Vulnerability Number</h2><p>V-256947</p><h2>Documentable</h2><p>False</p><h2>Rule Version</h2><p>APWS-AT-000270</p><h2>Severity Override Guidance</h2><p>As a system administrator for each Automation Controller NGINX web server host, ensure that the only upstream servers configured are for the Automation Controller ASGI and WSGI modules:<br />
+<br />
+NGINXCONF=`nginx -V 2&gt;&amp;1 | tr ' ' '\n' | sed -ne '/conf-path/{s/.*conf-path=\(.*\)/\1/;p}' `<br />
+sudo grep -E 'proxy_pass|uwsgi_pass' $NGINXCONF | grep -Pqz '^\s+proxy_pass http://daphne;\n\s+uwsgi_pass uwsgi;\n$' || echo FAILED<br />
+[ &quot;`sudo grep -Pzo 'upstream\s+daphne\s+{[^}]+}' $NGINXCONF | grep -a server | grep -v 'server unix:/var/run/tower/daphne.sock;'`&quot; == '' ] || echo FAILED<br />
+[ &quot;`sudo grep -Pzo 'upstream\s+uwsgi\s+{[^}]+}' $NGINXCONF | grep -a server | grep -v 'server unix:/var/run/tower/uwsgi.sock;'`&quot; == '' ] || echo FAILED<br />
+<br />
+If &quot;FAILED&quot; is displayed, this is a finding.<br />
+<br />
+Ensure all locations are served by either these upstream servers or other well-known content:<br />
+<br />
+[ &quot;`sudo grep location $NGINXCONF | grep -v '^\s*#' | grep -Ev '^\s+location\s+/(favicon.ico|static|websocket)?\s+{'`&quot; == &quot;&quot; ] || echo &quot;FAILED&quot;<br />
+sudo grep -Eq 'location\s+/favicon.ico\s+{\s+alias\s+/var/lib/awx/public/static/media/favicon.ico;\s+}' $NGINXCONF || echo &quot;FAILED&quot;<br />
+sudo grep -Eq 'location\s+/static\s+{\s+alias\s+/var/lib/awx/public/static;\s+}' $NGINXCONF || echo &quot;FAILED&quot;<br />
+sudo grep -Pzo 'location\s+/websocket\s+({([^{}]|(?1))*})' $NGINXCONF | grep -Eq '^\s+proxy_pass\s+http://daphne;' || echo &quot;FAILED&quot;<br />
+sudo grep -Pzo 'location\s+/\s+({([^{}]|(?1))*})' $NGINXCONF | grep -Eq '^\s+uwsgi_pass\s+uwsgi;' || echo &quot;FAILED&quot;<br />
+<br />
+If &quot;FAILED&quot; is displayed, this is a finding.<br />
+<br />
+Verify the content present and served from the static content location (/var/lib/awx/public/static) is acceptable per organizationally defined policy.<br />
+<br />
+If any content present in this location (or its subdirectories) is not acceptable per organizationally defined policy, this is a finding.</p><h2>Check Content Reference</h2><p>M</p><h2>Target Key</h2><p>5535</p></body></html>

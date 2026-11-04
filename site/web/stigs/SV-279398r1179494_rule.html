@@ -1,0 +1,86 @@
+<!doctype html><html lang="en"><head><meta charset="utf-8"><title>STIGQter: STIG Check Details: SV-279398r1179494_rule: MongoDB must prevent the installation of organization-defined software and firmware components without verification that the component has been digitally signed using a certificate recognized and approved by the organization.</title><link rel="icon" type="image/svg+xml" href="STIGQter.svg" /><script async src="https://www.googletagmanager.com/gtag/js?id=UA-31381839-2"></script><script src="include.js"></script><script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-4110907817782130" crossorigin="anonymous"></script></head><body><div><img src="STIGQter.svg" alt="STIGQter" style="height:1em;" /> <a href="https://www.stigqter.com/">STIGQter</a>: <a href="main.html">STIG Summary</a>: <a href="U_MDB_Enterprise_Advanced_8-x_STIG_V1R1_Manual-xccdf.html">MongoDB Enterprise Advanced 8.x Security Technical Implementation Guide Version: 1 Release: 1 Benchmark Date: 26 Jan 2026</a>:</div> <h1>MongoDB must prevent the installation of organization-defined software and firmware components without verification that the component has been digitally signed using a certificate recognized and approved by the organization.</h1><h2>DISA Rule</h2><p>SV-279398r1179494_rule</p><h2>Vulnerability Number</h2><p>V-279398</p><h2>Group Title</h2><p>SRG-APP-000810-DB-000150</p><h2>Rule Version</h2><p>MD8X-00-012700</p><h2>Severity</h2><p>CAT II</p><h2>CCI(s)</h2><ul><li>CCI-003992 - Prevent the installation of organization-defined software and firmware components without verification that the component has been digitally signed using a certificate that is recognized and approved by the organization.</li></ul><h2>Weight</h2><p>10</p><h2>Fix Recommendation</h2><p>Ensure the MongoDB repository is configured according to the official documentation.<br />
+<br />
+Install any missing or outdated components by running the command: <br />
+<br />
+$ sudo yum update --repo mongodb-enterprise-8.0<br />
+<br />
+Restart the MongoDB service: <br />
+<br />
+$ sudo systemctl restart mongod<br />
+<br />
+The YUM method is the preferred method because it provides automatic dependency management, built-in rollback support, and simplified security updates. These features reduce the risk of misconfiguration and ensure a more stable and secure environment that is easier to maintain and keep compliant.<br />
+<br />
+For additional details, refer to the MongoDB documentation: <br />
+https://www.mongodb.com/docs/v8.0/tutorial/install-mongodb-enterprise-on-red-hat/</p><h2>Check Contents</h2><p>1. Identify that the MongoDB repository is installed and enabled by running the following command: <br />
+<br />
+$ yum repolist enabled | grep &quot;mongodb-enterprise-8.0&quot;.<br />
+  <br />
+2. Review the contents of the repository file (/etc/yum.repos.d/mongodb-enterprise-8.0.repo) and compare them to the standard configuration below:<br />
+<br />
+[mongodb-enterprise-8.0]<br />
+name=MongoDB Enterprise Repository<br />
+baseurl=https://repo.mongodb.com/yum/redhat/9/mongodb-enterprise/8.0/$basearch/<br />
+gpgcheck=1<br />
+enabled=1<br />
+gpgkey=https://pgp.mongodb.com/server-8.0.asc<br />
+<br />
+3. Examine the installed MongoDB components and their versions by running the following command: <br />
+<br />
+$ yum list installed mongodb-*<br />
+ <br />
+4. The output will resemble the following, but with potentially different versions:<br />
+<br />
+Installed Packages<br />
+<br />
+mongodb-database-tools.x86_64                                                     100.12.2-1                                      @mongodb-enterprise-8.0<br />
+mongodb-enterprise.x86_64                                                           8.0.12-1.el9                                      @mongodb-enterprise-8.0<br />
+mongodb-enterprise-cryptd.x86_64                                               8.0.12-1.el9                                       @mongodb-enterprise-8.0<br />
+mongodb-enterprise-database.x86_64                                          8.0.12-1.el9                                       @mongodb-enterprise-8.0<br />
+mongodb-enterprise-database-tools-extra.x86_64                       8.0.12-1.el9                                       @mongodb-enterprise-8.0<br />
+mongodb-enterprise-mongos.x86_64                                            8.0.12-1.el9                                       @mongodb-enterprise-8.0<br />
+mongodb-enterprise-server.x86_64                                               8.0.12-1.el9                                       @mongodb-enterprise-8.0<br />
+mongodb-enterprise-tools.x86_64                                                 8.0.12-1.el9                                       @mongodb-enterprise-8.0<br />
+mongodb-mongosh.x86_64                                                              2.5.6-1.el8                                       @mongodb-enterprise-8.0<br />
+<br />
+5. Check for available updates for the installed MongoDB components by running the following command: <br />
+$ sudo yum check-update --repo mongodb-enterprise-8.0<br />
+<br />
+The output will list any components that need to be updated. <br />
+<br />
+If the MongoDB repository is not enabled, its contents do not match the standard configuration, or if any components are not installed or are not the most current version available, this is a finding.</p><h2>Vulnerability Number</h2><p>V-279398</p><h2>Documentable</h2><p>False</p><h2>Rule Version</h2><p>MD8X-00-012700</p><h2>Severity Override Guidance</h2><p>1. Identify that the MongoDB repository is installed and enabled by running the following command: <br />
+<br />
+$ yum repolist enabled | grep &quot;mongodb-enterprise-8.0&quot;.<br />
+  <br />
+2. Review the contents of the repository file (/etc/yum.repos.d/mongodb-enterprise-8.0.repo) and compare them to the standard configuration below:<br />
+<br />
+[mongodb-enterprise-8.0]<br />
+name=MongoDB Enterprise Repository<br />
+baseurl=https://repo.mongodb.com/yum/redhat/9/mongodb-enterprise/8.0/$basearch/<br />
+gpgcheck=1<br />
+enabled=1<br />
+gpgkey=https://pgp.mongodb.com/server-8.0.asc<br />
+<br />
+3. Examine the installed MongoDB components and their versions by running the following command: <br />
+<br />
+$ yum list installed mongodb-*<br />
+ <br />
+4. The output will resemble the following, but with potentially different versions:<br />
+<br />
+Installed Packages<br />
+<br />
+mongodb-database-tools.x86_64                                                     100.12.2-1                                      @mongodb-enterprise-8.0<br />
+mongodb-enterprise.x86_64                                                           8.0.12-1.el9                                      @mongodb-enterprise-8.0<br />
+mongodb-enterprise-cryptd.x86_64                                               8.0.12-1.el9                                       @mongodb-enterprise-8.0<br />
+mongodb-enterprise-database.x86_64                                          8.0.12-1.el9                                       @mongodb-enterprise-8.0<br />
+mongodb-enterprise-database-tools-extra.x86_64                       8.0.12-1.el9                                       @mongodb-enterprise-8.0<br />
+mongodb-enterprise-mongos.x86_64                                            8.0.12-1.el9                                       @mongodb-enterprise-8.0<br />
+mongodb-enterprise-server.x86_64                                               8.0.12-1.el9                                       @mongodb-enterprise-8.0<br />
+mongodb-enterprise-tools.x86_64                                                 8.0.12-1.el9                                       @mongodb-enterprise-8.0<br />
+mongodb-mongosh.x86_64                                                              2.5.6-1.el8                                       @mongodb-enterprise-8.0<br />
+<br />
+5. Check for available updates for the installed MongoDB components by running the following command: <br />
+$ sudo yum check-update --repo mongodb-enterprise-8.0<br />
+<br />
+The output will list any components that need to be updated. <br />
+<br />
+If the MongoDB repository is not enabled, its contents do not match the standard configuration, or if any components are not installed or are not the most current version available, this is a finding.</p><h2>Check Content Reference</h2><p>M</p><h2>Target Key</h2><p>5728</p></body></html>

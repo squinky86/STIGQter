@@ -1,0 +1,41 @@
+<!doctype html><html lang="en"><head><meta charset="utf-8"><title>STIGQter: STIG Check Details: SV-235165r960960_rule: Database software, including MySQL Database Server 8.0 configuration files, must be stored in dedicated directories, or DASD pools (remove), separate from the host OS and other applications.</title><link rel="icon" type="image/svg+xml" href="STIGQter.svg" /><script async src="https://www.googletagmanager.com/gtag/js?id=UA-31381839-2"></script><script src="include.js"></script><script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-4110907817782130" crossorigin="anonymous"></script></head><body><div><img src="STIGQter.svg" alt="STIGQter" style="height:1em;" /> <a href="https://www.stigqter.com/">STIGQter</a>: <a href="main.html">STIG Summary</a>: <a href="U_Oracle_MySQL_8-0_STIG_V2R2_Manual-xccdf.html">Oracle MySQL 8.0 Security Technical Implementation Guide Version: 2 Release: 2 Benchmark Date: 24 Oct 2024</a>:</div> <h1>Database software, including MySQL Database Server 8.0 configuration files, must be stored in dedicated directories, or DASD pools (remove), separate from the host OS and other applications.</h1><h2>DISA Rule</h2><p>SV-235165r960960_rule</p><h2>Vulnerability Number</h2><p>V-235165</p><h2>Group Title</h2><p>SRG-APP-000133-DB-000199</p><h2>Rule Version</h2><p>MYS8-00-008500</p><h2>Severity</h2><p>CAT II</p><h2>CCI(s)</h2><ul><li>CCI-001499 - Limit privileges to change software resident within software libraries.</li></ul><h2>Weight</h2><p>10</p><h2>Fix Recommendation</h2><p>Install all applications on directories separate from the DBMS software library directory. Relocate any directories or reinstall other application software that currently shares the DBMS software library directory.<br />
+<br />
+If it is determined that configuration (options files) are inappropriately located, take the steps to move and protect these files and reconfigure mysqld startup commands to point to new the file location by setting the &quot;--defaults-file&quot; to point to the new location and filename for the mysql configuration file.</p><h2>Check Contents</h2><p>Review the MySQL Database Server 8.0  software library directory and note other root directories located on the same disk directory or any subdirectories.<br />
+<br />
+To list directory variables run:<br />
+show variables where variable_name like '%dir%';<br />
+<br />
+If any non-MySQL Database Server 8.0 software directories exist on the datadir, basedir, or other non tmpdir directories, examine or investigate their use. <br />
+<br />
+If any of the directories are used by other applications, including third-party applications that use the MySQL Database Server 8.0, this is a finding.<br />
+<br />
+Only applications that are required for the functioning and administration, not use, of the MySQL Database Server 8.0 should be located in the same disk directory as the DBMS software libraries. <br />
+<br />
+If other applications are located in the same directory as the DBMS, this is a finding.<br />
+<br />
+To determine where the mysql configuration file(s) are being stored and which configuration file(s) was used for which variables, run the following command:<br />
+SELECT t1.*, VARIABLE_VALUE <br />
+       FROM performance_schema.variables_info t1 <br />
+       JOIN performance_schema.global_variables t2 <br />
+         ON t2.VARIABLE_NAME=t1.VARIABLE_NAME where length(t1.variable_path) &gt; 0;<br />
+<br />
+If result of VARIABLE_PATH shows that configuration values are not stored in files dedicated directories separate from the host os or other applications, this is a finding.</p><h2>Vulnerability Number</h2><p>V-235165</p><h2>Documentable</h2><p>False</p><h2>Rule Version</h2><p>MYS8-00-008500</p><h2>Severity Override Guidance</h2><p>Review the MySQL Database Server 8.0  software library directory and note other root directories located on the same disk directory or any subdirectories.<br />
+<br />
+To list directory variables run:<br />
+show variables where variable_name like '%dir%';<br />
+<br />
+If any non-MySQL Database Server 8.0 software directories exist on the datadir, basedir, or other non tmpdir directories, examine or investigate their use. <br />
+<br />
+If any of the directories are used by other applications, including third-party applications that use the MySQL Database Server 8.0, this is a finding.<br />
+<br />
+Only applications that are required for the functioning and administration, not use, of the MySQL Database Server 8.0 should be located in the same disk directory as the DBMS software libraries. <br />
+<br />
+If other applications are located in the same directory as the DBMS, this is a finding.<br />
+<br />
+To determine where the mysql configuration file(s) are being stored and which configuration file(s) was used for which variables, run the following command:<br />
+SELECT t1.*, VARIABLE_VALUE <br />
+       FROM performance_schema.variables_info t1 <br />
+       JOIN performance_schema.global_variables t2 <br />
+         ON t2.VARIABLE_NAME=t1.VARIABLE_NAME where length(t1.variable_path) &gt; 0;<br />
+<br />
+If result of VARIABLE_PATH shows that configuration values are not stored in files dedicated directories separate from the host os or other applications, this is a finding.</p><h2>Check Content Reference</h2><p>M</p><h2>Target Key</h2><p>5277</p></body></html>

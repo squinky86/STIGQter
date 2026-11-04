@@ -1,0 +1,61 @@
+<!doctype html><html lang="en"><head><meta charset="utf-8"><title>STIGQter: STIG Check Details: SV-220641r991848_rule: The Cisco switch must have all disabled switch ports assigned to an unused VLAN.</title><link rel="icon" type="image/svg+xml" href="STIGQter.svg" /><script async src="https://www.googletagmanager.com/gtag/js?id=UA-31381839-2"></script><script src="include.js"></script><script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-4110907817782130" crossorigin="anonymous"></script></head><body><div><img src="STIGQter.svg" alt="STIGQter" style="height:1em;" /> <a href="https://www.stigqter.com/">STIGQter</a>: <a href="main.html">STIG Summary</a>: <a href="U_Cisco_IOS_Switch_L2S_STIG_V3R2_Manual-xccdf.html">Cisco IOS Switch L2S Security Technical Implementation Guide Version: 3 Release: 2 Benchmark Date: 01 Jul 2026</a>:</div> <h1>The Cisco switch must have all disabled switch ports assigned to an unused VLAN.</h1><h2>DISA Rule</h2><p>SV-220641r991848_rule</p><h2>Vulnerability Number</h2><p>V-220641</p><h2>Group Title</h2><p>SRG-NET-000512-L2S-000007</p><h2>Rule Version</h2><p>CISC-L2-000210</p><h2>Severity</h2><p>CAT II</p><h2>CCI(s)</h2><ul><li>CCI-004891 - Implement physically or logically separate subnetworks to isolate organization-defined critical system components and functions.</li></ul><h2>Weight</h2><p>10</p><h2>Fix Recommendation</h2><p>Assign all switch ports not in use to an inactive VLAN.<br />
+<br />
+Step 1: Assign the disabled interfaces to an inactive VLAN:<br />
+<br />
+SW3(config)#int range g0/0 – 9<br />
+SW3(config-if-range)# switchport access vlan 999<br />
+<br />
+Step 2: Configure trunk links to not allow traffic from the inactive VLAN:<br />
+<br />
+SW3(config)#int g1/1<br />
+SW3(config-if)#switchport trunk allowed vlan except 999</p><h2>Check Contents</h2><p>Step 1: Review the switch configurations and examine all access switch ports. Each access switch port not in use should have membership to an inactive VLAN. <br />
+<br />
+interface GigabitEthernet0/0<br />
+ switchport access vlan 999<br />
+ shutdown<br />
+!<br />
+interface GigabitEthernet0/1<br />
+ switchport access vlan 999<br />
+ shutdown<br />
+…<br />
+…<br />
+…<br />
+interface GigabitEthernet0/9<br />
+ switchport access vlan 999<br />
+ shutdown<br />
+<br />
+Step 2: Verify that traffic from the inactive VLAN is not allowed on any trunk links as shown in the example below:<br />
+<br />
+interface GigabitEthernet1/1<br />
+ switchport trunk allowed vlan 1-998,1000-4094<br />
+ switchport trunk encapsulation dot1q<br />
+ switchport mode trunk<br />
+<br />
+Note: Switch ports configured for 802.1x are exempt from this requirement.<br />
+<br />
+If any access switch ports are not in use and not in an inactive VLAN, this is a finding.</p><h2>Vulnerability Number</h2><p>V-220641</p><h2>Documentable</h2><p>False</p><h2>Rule Version</h2><p>CISC-L2-000210</p><h2>Severity Override Guidance</h2><p>Step 1: Review the switch configurations and examine all access switch ports. Each access switch port not in use should have membership to an inactive VLAN. <br />
+<br />
+interface GigabitEthernet0/0<br />
+ switchport access vlan 999<br />
+ shutdown<br />
+!<br />
+interface GigabitEthernet0/1<br />
+ switchport access vlan 999<br />
+ shutdown<br />
+…<br />
+…<br />
+…<br />
+interface GigabitEthernet0/9<br />
+ switchport access vlan 999<br />
+ shutdown<br />
+<br />
+Step 2: Verify that traffic from the inactive VLAN is not allowed on any trunk links as shown in the example below:<br />
+<br />
+interface GigabitEthernet1/1<br />
+ switchport trunk allowed vlan 1-998,1000-4094<br />
+ switchport trunk encapsulation dot1q<br />
+ switchport mode trunk<br />
+<br />
+Note: Switch ports configured for 802.1x are exempt from this requirement.<br />
+<br />
+If any access switch ports are not in use and not in an inactive VLAN, this is a finding.</p><h2>Check Content Reference</h2><p>M</p><h2>Target Key</h2><p>4070</p></body></html>

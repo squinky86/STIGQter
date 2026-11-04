@@ -1,0 +1,57 @@
+<!doctype html><html lang="en"><head><meta charset="utf-8"><title>STIGQter: STIG Check Details: SV-257558r961392_rule: Red Hat Enterprise Linux CoreOS (RHCOS) must allocate audit record storage capacity to store at least one weeks' worth of audit records, when audit records are not immediately sent to a central audit record storage facility.</title><link rel="icon" type="image/svg+xml" href="STIGQter.svg" /><script async src="https://www.googletagmanager.com/gtag/js?id=UA-31381839-2"></script><script src="include.js"></script><script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-4110907817782130" crossorigin="anonymous"></script></head><body><div><img src="STIGQter.svg" alt="STIGQter" style="height:1em;" /> <a href="https://www.stigqter.com/">STIGQter</a>: <a href="main.html">STIG Summary</a>: <a href="U_RH_OpenShift_Container_Platform_4-x_STIG_V2R6_Manual-xccdf.html">Red Hat OpenShift Container Platform 4.x Security Technical Implementation Guide Version: 2 Release: 6 Benchmark Date: 01 Jul 2026</a>:</div> <h1>Red Hat Enterprise Linux CoreOS (RHCOS) must allocate audit record storage capacity to store at least one weeks' worth of audit records, when audit records are not immediately sent to a central audit record storage facility.</h1><h2>DISA Rule</h2><p>SV-257558r961392_rule</p><h2>Vulnerability Number</h2><p>V-257558</p><h2>Group Title</h2><p>SRG-APP-000357-CTR-000800</p><h2>Rule Version</h2><p>CNTR-OS-000670</p><h2>Severity</h2><p>CAT III</p><h2>CCI(s)</h2><ul><li>CCI-001849 - Allocate audit log storage capacity to accommodate organization-defined audit record retention requirements.</li></ul><h2>Weight</h2><p>10</p><h2>Fix Recommendation</h2><p>Reinstall the cluster, generating custom ignition configs to allocate audit record storage capacity.<br />
+<br />
+1. Generate manifest files for the cluster by executing the following:<br />
+<br />
+openshift-install create manifests --dir &lt;install_dir&gt;<br />
+<br />
+2. Create a Butane config that configures additional partition by executing the following:<br />
+<br />
+variant: openshift<br />
+version: 4.9.0<br />
+metadata:<br />
+  labels:<br />
+    machineconfiguration.openshift.io/role: worker<br />
+  name: 98-var-partition<br />
+storage:<br />
+  disks:<br />
+  - device: /dev/&lt;device_name&gt; <br />
+    partitions:<br />
+    - label: var<br />
+      start_mib: &lt;partition_start_offset&gt; <br />
+      size_mib: &lt;partition_size&gt; <br />
+  filesystems:<br />
+    - device: /dev/disk/by-partlabel/var<br />
+      path: /var<br />
+      format: xfs<br />
+      mount_options: [rw, nodev, nosuid, noexec,...] <br />
+      with_mount_unit: true<br />
+<br />
+3. Create a manifest from the Butane config by executing the following:<br />
+<br />
+butane &lt;install_dir&gt;/98-var-partition.bu -o &lt;install_dir&gt;/openshift/98-var-partition.yaml<br />
+<br />
+4. Create the ignition config files by executing the following:<br />
+<br />
+openshift-install create ignition-configs --dir &lt;install_dir&gt;</p><h2>Check Contents</h2><p>Verify RHCOS allocates audit record storage capacity to store at least one week of audit records when audit records are not immediately sent to a central audit record storage facility.<br />
+<br />
+Check the size of the partition to which audit records are written (with the example being /var/log/audit/) by executing the following:<br />
+<br />
+for node in $(oc get node -oname); do oc debug $node -- chroot /host /bin/bash -c 'echo -n &quot;$HOSTNAME &quot;;  df -h /var/log/audit/' 2&gt;/dev/null; done<br />
+<br />
+&lt;node&gt; Filesystem      Size  Used Avail Use% Mounted on<br />
+/dev/sdb4       1.0T   27G  998G   3% /var<br />
+<br />
+If the audit record partition is not allocated for sufficient storage capacity, this is a finding.<br />
+<br />
+Note: The partition size needed to capture a week of audit records is based on the activity level of the system and the total storage capacity available. Typically, 10.0 GB of storage space for audit records should be sufficient. If the partition used is not exclusively for audit logs, then determine the amount of additional space needed to support the partition reserving enough space for audit logs.</p><h2>Vulnerability Number</h2><p>V-257558</p><h2>Documentable</h2><p>False</p><h2>Rule Version</h2><p>CNTR-OS-000670</p><h2>Severity Override Guidance</h2><p>Verify RHCOS allocates audit record storage capacity to store at least one week of audit records when audit records are not immediately sent to a central audit record storage facility.<br />
+<br />
+Check the size of the partition to which audit records are written (with the example being /var/log/audit/) by executing the following:<br />
+<br />
+for node in $(oc get node -oname); do oc debug $node -- chroot /host /bin/bash -c 'echo -n &quot;$HOSTNAME &quot;;  df -h /var/log/audit/' 2&gt;/dev/null; done<br />
+<br />
+&lt;node&gt; Filesystem      Size  Used Avail Use% Mounted on<br />
+/dev/sdb4       1.0T   27G  998G   3% /var<br />
+<br />
+If the audit record partition is not allocated for sufficient storage capacity, this is a finding.<br />
+<br />
+Note: The partition size needed to capture a week of audit records is based on the activity level of the system and the total storage capacity available. Typically, 10.0 GB of storage space for audit records should be sufficient. If the partition used is not exclusively for audit logs, then determine the amount of additional space needed to support the partition reserving enough space for audit logs.</p><h2>Check Content Reference</h2><p>M</p><h2>Target Key</h2><p>5547</p></body></html>

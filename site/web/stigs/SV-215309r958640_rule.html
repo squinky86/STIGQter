@@ -1,0 +1,45 @@
+<!doctype html><html lang="en"><head><meta charset="utf-8"><title>STIGQter: STIG Check Details: SV-215309r958640_rule: If bash is used, AIX must display logout messages.</title><link rel="icon" type="image/svg+xml" href="STIGQter.svg" /><script async src="https://www.googletagmanager.com/gtag/js?id=UA-31381839-2"></script><script src="include.js"></script><script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-4110907817782130" crossorigin="anonymous"></script></head><body><div><img src="STIGQter.svg" alt="STIGQter" style="height:1em;" /> <a href="https://www.stigqter.com/">STIGQter</a>: <a href="main.html">STIG Summary</a>: <a href="U_IBM_AIX_7-x_STIG_V3R3_Manual-xccdf.html">IBM AIX 7.x Security Technical Implementation Guide Version: 3 Release: 3 Benchmark Date: 01 Jul 2026</a>:</div> <h1>If bash is used, AIX must display logout messages.</h1><h2>DISA Rule</h2><p>SV-215309r958640_rule</p><h2>Vulnerability Number</h2><p>V-215309</p><h2>Group Title</h2><p>SRG-OS-000281-GPOS-00111</p><h2>Rule Version</h2><p>AIX7-00-002128</p><h2>Severity</h2><p>CAT III</p><h2>CCI(s)</h2><ul><li>CCI-002364 - Display an explicit logout message to users indicating the reliable termination of authenticated communications sessions.</li></ul><h2>Weight</h2><p>10</p><h2>Fix Recommendation</h2><p>Create the &quot;.bash_logout&quot; file if it does not exist.<br />
+<br />
+Add the following two lines to &quot;.bash_logout&quot; to display a logout message and sleep for &quot;5&quot; seconds:<br />
+echo &quot;You are being disconnected.&quot;<br />
+sleep 5</p><h2>Check Contents</h2><p>Identify any users that are using the BASH shell:<br />
+<br />
+# cut -d: -f1,7 /etc/passwd | grep -i bash<br />
+doejohn:/bin/bash<br />
+<br />
+If no users are assigned the BASH shell, this is Not Applicable<br />
+<br />
+Verify that each BASH shell user has a &quot;.bash_logout&quot; file:<br />
+<br />
+# for home in `cut -d: -f6 /etc/passwd`; do ls -alL $home/.bash_logout; done<br />
+-rwxr-----    1 doejohn  staff           297 Jan 29 09:47 /home/doejohn/.bash_logout<br />
+<br />
+If a user does not have their &quot;.bash_logout&quot; file, this is a finding.<br />
+<br />
+Verify that each &quot;.bash_logout&quot; file identified above contains a logout message:<br />
+<br />
+# cat &lt;user_home_directory&gt;/.bash_logout<br />
+echo &quot;You are being disconnected.&quot;<br />
+sleep 5 <br />
+<br />
+If the &quot;.bash_logout&quot; file is not configured to display a logout message, this is a finding.</p><h2>Vulnerability Number</h2><p>V-215309</p><h2>Documentable</h2><p>False</p><h2>Rule Version</h2><p>AIX7-00-002128</p><h2>Severity Override Guidance</h2><p>Identify any users that are using the BASH shell:<br />
+<br />
+# cut -d: -f1,7 /etc/passwd | grep -i bash<br />
+doejohn:/bin/bash<br />
+<br />
+If no users are assigned the BASH shell, this is Not Applicable<br />
+<br />
+Verify that each BASH shell user has a &quot;.bash_logout&quot; file:<br />
+<br />
+# for home in `cut -d: -f6 /etc/passwd`; do ls -alL $home/.bash_logout; done<br />
+-rwxr-----    1 doejohn  staff           297 Jan 29 09:47 /home/doejohn/.bash_logout<br />
+<br />
+If a user does not have their &quot;.bash_logout&quot; file, this is a finding.<br />
+<br />
+Verify that each &quot;.bash_logout&quot; file identified above contains a logout message:<br />
+<br />
+# cat &lt;user_home_directory&gt;/.bash_logout<br />
+echo &quot;You are being disconnected.&quot;<br />
+sleep 5 <br />
+<br />
+If the &quot;.bash_logout&quot; file is not configured to display a logout message, this is a finding.</p><h2>Check Content Reference</h2><p>M</p><h2>Target Key</h2><p>4012</p></body></html>

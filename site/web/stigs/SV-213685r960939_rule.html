@@ -1,0 +1,88 @@
+<!doctype html><html lang="en"><head><meta charset="utf-8"><title>STIGQter: STIG Check Details: SV-213685r960939_rule: DB2 must protect its audit features from unauthorized access.</title><link rel="icon" type="image/svg+xml" href="STIGQter.svg" /><script async src="https://www.googletagmanager.com/gtag/js?id=UA-31381839-2"></script><script src="include.js"></script><script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-4110907817782130" crossorigin="anonymous"></script></head><body><div><img src="STIGQter.svg" alt="STIGQter" style="height:1em;" /> <a href="https://www.stigqter.com/">STIGQter</a>: <a href="main.html">STIG Summary</a>: <a href="U_IBM_DB2_V10-5_LUW_STIG_V2R2_Manual-xccdf.html">IBM DB2 V10.5 LUW Security Technical Implementation Guide Version: 2 Release: 2 Benchmark Date: 01 Jul 2026</a>:</div> <h1>DB2 must protect its audit features from unauthorized access.</h1><h2>DISA Rule</h2><p>SV-213685r960939_rule</p><h2>Vulnerability Number</h2><p>V-213685</p><h2>Group Title</h2><p>SRG-APP-000121-DB-000202</p><h2>Rule Version</h2><p>DB2X-00-002500</p><h2>Severity</h2><p>CAT II</p><h2>CCI(s)</h2><ul><li>CCI-001493 - Protect audit tools from unauthorized access.</li></ul><h2>Weight</h2><p>10</p><h2>Fix Recommendation</h2><p>Update the value SYSADM_GROUP to a group which has only members approved by ISSM using following command: <br />
+<br />
+     $db2 update dbm cfg using SYSADM_GROUP &lt;SYSADMIN GROUP&gt;<br />
+<br />
+Remove unauthorized users from the SYSADM_GROUP using the operating system tools/commands. <br />
+<br />
+Revoke SECADM authority from non-authorized users using the SQL statement below:<br />
+DB2&gt; REVOKE SECADM ON DATABASE FROM USER &lt;user name&gt; <br />
+<br />
+Remove non-authorized members or revoke SECADM from the group or role using this SQL statement:<br />
+DB2&gt; REVOKE SECADM ON DATABASE FROM GROUP &lt;group name&gt; <br />
+DB2&gt; REVOKE SECADM ON DATABASE FROM ROLE &lt;role name&gt; <br />
+<br />
+Revoke execute from non-authorized users if they have execute on SYSPROC.AUDIT_ARCHIVE, SYSPROC.AUDIT_LIST_LOGS, SYSPROC.AUDIT_DELIM_EXTRACT using the appropriate variation of the Revoke (routine privileges) statement.</p><h2>Check Contents</h2><p>Run the following command to find the value of the SYSADM_GROUP parameter:<br />
+<br />
+     $db2 get dbm cfg <br />
+<br />
+Only authorized OS users should be part of this group. If non-authorized users are part of SYSADM_GROUP group, this is a finding.<br />
+<br />
+On Windows systems, if the SYSADM_GROUP database manager configuration parameter is not specified, this is a finding.<br />
+<br />
+Security administrator (who holds SECADM authority within a database) can define audit policies and control the audit requirements for an individual database. The security administrator can use the following audit routines to operate upon the database audit logs:<br />
+<br />
+- The SYSPROC.AUDIT_ARCHIVE stored procedure archives audit logs.<br />
+- The SYSPROC.AUDIT_LIST_LOGS table function allows you to locate logs of interest.<br />
+- The SYSPROC.AUDIT_DELIM_EXTRACT stored procedure extracts data into delimited files for analysis.<br />
+<br />
+The security administrator can also grant EXECUTE privilege on these routines to another user.<br />
+<br />
+Run the following query to find out which users have SECADM authority in database: <br />
+DB2&gt; SELECT CHAR(GRANTOR,35) AS GRANTOR, CHAR(GRANTEE,35) AS GRANTEE, GRANTEETYPE<br />
+           FROM SYSCAT.DBAUTH <br />
+           WHERE SECURITYADMAUTH='Y'<br />
+<br />
+If GRANTEETYPE is 'U' and the authorization ID is not an authorized user, this is a finding.<br />
+<br />
+If the GRANTEETYPE is 'G', then all members of the external group identified by GRANTEE must be authorized users. Otherwise, this is a finding.<br />
+<br />
+If the GRANTEETYPE is 'R', then all members of the database role identified by GRANTEE must be authorized users. Otherwise, this is a finding.<br />
+<br />
+The members of a role can be found using this statement: <br />
+DB2&gt; SELECT CHAR(GRANTOR,35) AS GRANTOR, CHAR(GRANTEE,35) AS GRANTEE, GRANTEETYPE <br />
+           FROM SYSCAT.ROLEAUTH <br />
+           WHERE ROLENAME= &lt;search role name&gt;<br />
+<br />
+Run the following query to find out which users have execute privilege on SYSPROC.AUDIT_ARCHIVE, SYSPROC.AUDIT_LIST_LOGS, SYSPROC.AUDIT_DELIM_EXTRACT:<br />
+DB2&gt; SELECT * <br />
+           FROM SYSCAT.ROUTINEAUTH <br />
+           WHERE SPECIFICNAME LIKE 'AUDIT%' AND SCHEMA='SYSPROC'<br />
+<br />
+If non-authorized users have EXECUTE privilege on any of the above three routines, this is a finding.</p><h2>Vulnerability Number</h2><p>V-213685</p><h2>Documentable</h2><p>False</p><h2>Rule Version</h2><p>DB2X-00-002500</p><h2>Severity Override Guidance</h2><p>Run the following command to find the value of the SYSADM_GROUP parameter:<br />
+<br />
+     $db2 get dbm cfg <br />
+<br />
+Only authorized OS users should be part of this group. If non-authorized users are part of SYSADM_GROUP group, this is a finding.<br />
+<br />
+On Windows systems, if the SYSADM_GROUP database manager configuration parameter is not specified, this is a finding.<br />
+<br />
+Security administrator (who holds SECADM authority within a database) can define audit policies and control the audit requirements for an individual database. The security administrator can use the following audit routines to operate upon the database audit logs:<br />
+<br />
+- The SYSPROC.AUDIT_ARCHIVE stored procedure archives audit logs.<br />
+- The SYSPROC.AUDIT_LIST_LOGS table function allows you to locate logs of interest.<br />
+- The SYSPROC.AUDIT_DELIM_EXTRACT stored procedure extracts data into delimited files for analysis.<br />
+<br />
+The security administrator can also grant EXECUTE privilege on these routines to another user.<br />
+<br />
+Run the following query to find out which users have SECADM authority in database: <br />
+DB2&gt; SELECT CHAR(GRANTOR,35) AS GRANTOR, CHAR(GRANTEE,35) AS GRANTEE, GRANTEETYPE<br />
+           FROM SYSCAT.DBAUTH <br />
+           WHERE SECURITYADMAUTH='Y'<br />
+<br />
+If GRANTEETYPE is 'U' and the authorization ID is not an authorized user, this is a finding.<br />
+<br />
+If the GRANTEETYPE is 'G', then all members of the external group identified by GRANTEE must be authorized users. Otherwise, this is a finding.<br />
+<br />
+If the GRANTEETYPE is 'R', then all members of the database role identified by GRANTEE must be authorized users. Otherwise, this is a finding.<br />
+<br />
+The members of a role can be found using this statement: <br />
+DB2&gt; SELECT CHAR(GRANTOR,35) AS GRANTOR, CHAR(GRANTEE,35) AS GRANTEE, GRANTEETYPE <br />
+           FROM SYSCAT.ROLEAUTH <br />
+           WHERE ROLENAME= &lt;search role name&gt;<br />
+<br />
+Run the following query to find out which users have execute privilege on SYSPROC.AUDIT_ARCHIVE, SYSPROC.AUDIT_LIST_LOGS, SYSPROC.AUDIT_DELIM_EXTRACT:<br />
+DB2&gt; SELECT * <br />
+           FROM SYSCAT.ROUTINEAUTH <br />
+           WHERE SPECIFICNAME LIKE 'AUDIT%' AND SCHEMA='SYSPROC'<br />
+<br />
+If non-authorized users have EXECUTE privilege on any of the above three routines, this is a finding.</p><h2>Check Content Reference</h2><p>M</p><h2>Target Key</h2><p>3989</p></body></html>

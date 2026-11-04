@@ -1,0 +1,59 @@
+<!doctype html><html lang="en"><head><meta charset="utf-8"><title>STIGQter: STIG Check Details: SV-235150r961095_rule: The MySQL Database Server 8.0 must separate user functionality (including user interface services) from database management functionality.</title><link rel="icon" type="image/svg+xml" href="STIGQter.svg" /><script async src="https://www.googletagmanager.com/gtag/js?id=UA-31381839-2"></script><script src="include.js"></script><script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-4110907817782130" crossorigin="anonymous"></script></head><body><div><img src="STIGQter.svg" alt="STIGQter" style="height:1em;" /> <a href="https://www.stigqter.com/">STIGQter</a>: <a href="main.html">STIG Summary</a>: <a href="U_Oracle_MySQL_8-0_STIG_V2R2_Manual-xccdf.html">Oracle MySQL 8.0 Security Technical Implementation Guide Version: 2 Release: 2 Benchmark Date: 24 Oct 2024</a>:</div> <h1>The MySQL Database Server 8.0 must separate user functionality (including user interface services) from database management functionality.</h1><h2>DISA Rule</h2><p>SV-235150r961095_rule</p><h2>Vulnerability Number</h2><p>V-235150</p><h2>Group Title</h2><p>SRG-APP-000211-DB-000122</p><h2>Rule Version</h2><p>MYS8-00-006400</p><h2>Severity</h2><p>CAT II</p><h2>CCI(s)</h2><ul><li>CCI-001082 - Separate user functionality, including user interface services, from system management functionality.</li></ul><h2>Weight</h2><p>10</p><h2>Fix Recommendation</h2><p>Configure MySQL Database Server 8.0 to separate database administration and general user functionality.<br />
+<br />
+Revoke or remove users with admin and user mixed permissions.<br />
+<br />
+Review MySQL documentation related to access controls for users and admins: https://dev.mysql.com/doc/refman/8.0/en/access-control.html.</p><h2>Check Contents</h2><p>Check MySQL settings and documentation to verify that administrative functionality is separate from user functionality.<br />
+<br />
+As Database Administrator (DBA) (“root&quot;), list all roles and permissions for the database:<br />
+<br />
+&gt; mysql -u root -p<br />
+<br />
+SELECT user,host, 'Global Priv', Select_priv, Insert_priv, Update_priv, Delete_priv, Create_priv,<br />
+    Drop_priv, Reload_priv, Shutdown_priv, Process_priv, File_priv,<br />
+    Grant_priv, References_priv, Index_priv, Alter_priv, Show_db_priv,<br />
+    Super_priv, Create_tmp_table_priv, Lock_tables_priv, Execute_priv,<br />
+    Repl_slave_priv, Repl_client_priv, Create_view_priv, Show_view_priv,<br />
+    Create_routine_priv, Alter_routine_priv, Create_user_priv,<br />
+    Event_priv, Trigger_priv, Create_tablespace_priv, Create_role_priv,<br />
+    Drop_role_priv <br />
+  FROM mysql.user WHERE 'Y' IN<br />
+    (Select_priv, Insert_priv, Update_priv, Delete_priv, Create_priv,<br />
+    Drop_priv, Reload_priv, Shutdown_priv, Process_priv, File_priv,<br />
+    Grant_priv, References_priv, Index_priv, Alter_priv, Show_db_priv,<br />
+    Super_priv, Create_tmp_table_priv, Lock_tables_priv, Execute_priv,<br />
+    Repl_slave_priv, Repl_client_priv, Create_view_priv, Show_view_priv,<br />
+    Create_routine_priv, Alter_routine_priv, Create_user_priv,<br />
+    Event_priv, Trigger_priv, Create_tablespace_priv, Create_role_priv,<br />
+    Drop_role_priv)<br />
+AND user not in ('mysql.infoschema', 'mysql.session');<br />
+<br />
+If any non-administrative role has permissions, other than mysql.infoschema and mysql.session, this is a finding.<br />
+<br />
+If administrator and general user functionality are not separated, this is a finding.</p><h2>Vulnerability Number</h2><p>V-235150</p><h2>Documentable</h2><p>False</p><h2>Rule Version</h2><p>MYS8-00-006400</p><h2>Severity Override Guidance</h2><p>Check MySQL settings and documentation to verify that administrative functionality is separate from user functionality.<br />
+<br />
+As Database Administrator (DBA) (“root&quot;), list all roles and permissions for the database:<br />
+<br />
+&gt; mysql -u root -p<br />
+<br />
+SELECT user,host, 'Global Priv', Select_priv, Insert_priv, Update_priv, Delete_priv, Create_priv,<br />
+    Drop_priv, Reload_priv, Shutdown_priv, Process_priv, File_priv,<br />
+    Grant_priv, References_priv, Index_priv, Alter_priv, Show_db_priv,<br />
+    Super_priv, Create_tmp_table_priv, Lock_tables_priv, Execute_priv,<br />
+    Repl_slave_priv, Repl_client_priv, Create_view_priv, Show_view_priv,<br />
+    Create_routine_priv, Alter_routine_priv, Create_user_priv,<br />
+    Event_priv, Trigger_priv, Create_tablespace_priv, Create_role_priv,<br />
+    Drop_role_priv <br />
+  FROM mysql.user WHERE 'Y' IN<br />
+    (Select_priv, Insert_priv, Update_priv, Delete_priv, Create_priv,<br />
+    Drop_priv, Reload_priv, Shutdown_priv, Process_priv, File_priv,<br />
+    Grant_priv, References_priv, Index_priv, Alter_priv, Show_db_priv,<br />
+    Super_priv, Create_tmp_table_priv, Lock_tables_priv, Execute_priv,<br />
+    Repl_slave_priv, Repl_client_priv, Create_view_priv, Show_view_priv,<br />
+    Create_routine_priv, Alter_routine_priv, Create_user_priv,<br />
+    Event_priv, Trigger_priv, Create_tablespace_priv, Create_role_priv,<br />
+    Drop_role_priv)<br />
+AND user not in ('mysql.infoschema', 'mysql.session');<br />
+<br />
+If any non-administrative role has permissions, other than mysql.infoschema and mysql.session, this is a finding.<br />
+<br />
+If administrator and general user functionality are not separated, this is a finding.</p><h2>Check Content Reference</h2><p>M</p><h2>Target Key</h2><p>5277</p></body></html>

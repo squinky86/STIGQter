@@ -1,0 +1,93 @@
+<!doctype html><html lang="en"><head><meta charset="utf-8"><title>STIGQter: STIG Check Details: SV-271478r1190787_rule: OL 9 must implement a FIPS 140-3 compliant systemwide cryptographic policy.</title><link rel="icon" type="image/svg+xml" href="STIGQter.svg" /><script async src="https://www.googletagmanager.com/gtag/js?id=UA-31381839-2"></script><script src="include.js"></script><script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-4110907817782130" crossorigin="anonymous"></script></head><body><div><img src="STIGQter.svg" alt="STIGQter" style="height:1em;" /> <a href="https://www.stigqter.com/">STIGQter</a>: <a href="main.html">STIG Summary</a>: <a href="U_Oracle_Linux_9_STIG_V1R6_Manual-xccdf.html">Oracle Linux 9 Security Technical Implementation Guide Version: 1 Release: 6 Benchmark Date: 01 Jul 2026</a>:</div> <h1>OL 9 must implement a FIPS 140-3 compliant systemwide cryptographic policy.</h1><h2>DISA Rule</h2><p>SV-271478r1190787_rule</p><h2>Vulnerability Number</h2><p>V-271478</p><h2>Group Title</h2><p>SRG-OS-000396-GPOS-00176</p><h2>Rule Version</h2><p>OL09-00-000241</p><h2>Severity</h2><p>CAT I</p><h2>CCI(s)</h2><ul><li>CCI-002450 - Implement organization-defined types of cryptography for each specified cryptography use.</li><li>CCI-002890 - Implement organization-defined cryptographic mechanisms to protect the integrity of nonlocal maintenance and diagnostic communications.</li><li>CCI-003123 - Implement organization-defined cryptographic mechanisms to protect the confidentiality of nonlocal maintenance and diagnostic communications.</li></ul><h2>Weight</h2><p>10</p><h2>Fix Recommendation</h2><p>Configure OL 9 to use a modified FIPS-compliant systemwide crypto-policy.<br />
+ <br />
+Create subpolicies for enhancements to the systemwide crypto-policy with the following commands:<br />
+ <br />
+Create or edit the SCOPES-AND-WILDCARDS policy module in a text editor and insert options that modify the systemwide cryptographic policy as follows:<br />
+<br />
+$ sudo vi /etc/crypto-policies/policies/modules/SCOPES-AND-WILDCARDS.pmod<br />
+ <br />
+Add the following lines to the policy:<br />
+<br />
+# Disable CHACHA20-POLY1305 for the TLS protocol (OpenSSL, GnuTLS, NSS, and OpenJDK)<br />
+cipher@TLS = -CHACHA20-POLY1305<br />
+ <br />
+# Disable all CBC mode ciphers for the SSH protocol (libssh and OpenSSH):<br />
+<br />
+cipher@SSH = -*-CBC<br />
+ <br />
+Create or edit the OPENSSH-SUBPOLICY module in a text editor and insert options that modify the systemwide crypto-policy as follows:<br />
+<br />
+$ sudo vi /etc/crypto-policies/policies/modules/OPENSSH-SUBPOLICY.pmod<br />
+ <br />
+Add the following lines to the policy:<br />
+<br />
+# Define ciphers for OpenSSH<br />
+cipher@SSH=AES-256-GCM AES-128-GCM AES-256-CTR AES-128-CTR<br />
+ <br />
+# Define MACs for OpenSSH<br />
+mac@SSH=HMAC-SHA2-512 HMAC-SHA2-256<br />
+ <br />
+Create or edit the REQUIRE.pmod file and add the following lines to include the subpolicies in the FIPS configuration with the following command:<br />
+<br />
+$ sudo vi /etc/crypto-policies/policies/modules/REQUIRE.pmod<br />
+ <br />
+Add the following lines to REQUIRE.pmod:<br />
+<br />
+@OPENSSH-SUBPOLICY<br />
+@SCOPES-AND-WILDCARDS<br />
+ <br />
+Apply the policy enhancements to the FIPS systemwide cryptographic policy level with the following command:<br />
+ <br />
+$ sudo update-crypto-policies --set FIPS<br />
+<br />
+Note: If additional subpolicies are being employed, they must be added to the REQUIRE.pmod as well. REQUIRE.pmod is included in the systemwide crypto-policy when it is set.<br />
+ <br />
+To make the cryptographic settings effective for already running services and applications, restart the system:<br />
+<br />
+$ sudo reboot</p><h2>Check Contents</h2><p>Verify OL 9 is set to use a modified FIPS compliant systemwide crypto-policy.<br />
+ <br />
+$ update-crypto-policies --show<br />
+FIPS<br />
+ <br />
+If the systemwide crypto-policy is not set to &quot;FIPS&quot;, this is a finding.<br />
+<br />
+Note: If subpolicies have been configured, they will be listed in a colon-separated list starting with FIPS as follows:<br />
+<br />
+FIPS:&lt;SUBPOLICY-NAME&gt;:&lt;SUBPOLICY-NAME&gt;.<br />
+<br />
+Verify the current minimum crypto-policy configuration with the following commands:<br />
+ <br />
+$ grep -E 'rsa_size|hash' /etc/crypto-policies/state/CURRENT.pol<br />
+hash = SHA2-256 SHA2-384 SHA2-512 SHA2-224 SHA3-256 SHA3-384 SHA3-512 SHAKE-256<br />
+min_rsa_size = 2048<br />
+ <br />
+If the &quot;hash&quot; values do not include at least the following FIPS 140-3-compliant algorithms, &quot;SHA2-256 SHA2-384 SHA2-512 SHA2-224 SHA3-256 SHA3-384 SHA3-512 SHAKE-256&quot;, this is a finding.<br />
+<br />
+If there are algorithms that include &quot;SHA1&quot; or a hash value less than &quot;256&quot;, this is a finding.<br />
+<br />
+If the &quot;min_rsa_size&quot; is not set to a value of at least 2048, this is a finding.<br />
+ <br />
+If these commands do not return any output, this is a finding.</p><h2>Vulnerability Number</h2><p>V-271478</p><h2>Documentable</h2><p>False</p><h2>Rule Version</h2><p>OL09-00-000241</p><h2>Severity Override Guidance</h2><p>Verify OL 9 is set to use a modified FIPS compliant systemwide crypto-policy.<br />
+ <br />
+$ update-crypto-policies --show<br />
+FIPS<br />
+ <br />
+If the systemwide crypto-policy is not set to &quot;FIPS&quot;, this is a finding.<br />
+<br />
+Note: If subpolicies have been configured, they will be listed in a colon-separated list starting with FIPS as follows:<br />
+<br />
+FIPS:&lt;SUBPOLICY-NAME&gt;:&lt;SUBPOLICY-NAME&gt;.<br />
+<br />
+Verify the current minimum crypto-policy configuration with the following commands:<br />
+ <br />
+$ grep -E 'rsa_size|hash' /etc/crypto-policies/state/CURRENT.pol<br />
+hash = SHA2-256 SHA2-384 SHA2-512 SHA2-224 SHA3-256 SHA3-384 SHA3-512 SHAKE-256<br />
+min_rsa_size = 2048<br />
+ <br />
+If the &quot;hash&quot; values do not include at least the following FIPS 140-3-compliant algorithms, &quot;SHA2-256 SHA2-384 SHA2-512 SHA2-224 SHA3-256 SHA3-384 SHA3-512 SHAKE-256&quot;, this is a finding.<br />
+<br />
+If there are algorithms that include &quot;SHA1&quot; or a hash value less than &quot;256&quot;, this is a finding.<br />
+<br />
+If the &quot;min_rsa_size&quot; is not set to a value of at least 2048, this is a finding.<br />
+ <br />
+If these commands do not return any output, this is a finding.</p><h2>Check Content Reference</h2><p>M</p><h2>Target Key</h2><p>5680</p></body></html>

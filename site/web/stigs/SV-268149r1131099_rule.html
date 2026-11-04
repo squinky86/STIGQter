@@ -1,0 +1,25 @@
+<!doctype html><html lang="en"><head><meta charset="utf-8"><title>STIGQter: STIG Check Details: SV-268149r1131099_rule: NixOS must, for networked systems, compare internal information system clocks at least every 24 hours with a server which is synchronized to one of the redundant United States Naval Observatory (USNO) time servers, or a time server designated for the appropriate DOD network (NIPRNet/SIPRNet), and/or the Global Positioning System (GPS).</title><link rel="icon" type="image/svg+xml" href="STIGQter.svg" /><script async src="https://www.googletagmanager.com/gtag/js?id=UA-31381839-2"></script><script src="include.js"></script><script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-4110907817782130" crossorigin="anonymous"></script></head><body><div><img src="STIGQter.svg" alt="STIGQter" style="height:1em;" /> <a href="https://www.stigqter.com/">STIGQter</a>: <a href="main.html">STIG Summary</a>: <a href="U_Anduril_NixOS_STIG_V1R2_Manual-xccdf.html">Anduril NixOS Security Technical Implementation Guide Version: 1 Release: 2 Benchmark Date: 01 Oct 2025</a>:</div> <h1>NixOS must, for networked systems, compare internal information system clocks at least every 24 hours with a server which is synchronized to one of the redundant United States Naval Observatory (USNO) time servers, or a time server designated for the appropriate DOD network (NIPRNet/SIPRNet), and/or the Global Positioning System (GPS).</h1><h2>DISA Rule</h2><p>SV-268149r1131099_rule</p><h2>Vulnerability Number</h2><p>V-268149</p><h2>Group Title</h2><p>SRG-OS-000355-GPOS-00143</p><h2>Rule Version</h2><p>ANIX-00-001420</p><h2>Severity</h2><p>CAT II</p><h2>CCI(s)</h2><ul><li>CCI-004923 - Compare the internal system clocks on an organization-defined frequency with organization-defined authoritative time source.</li><li>CCI-001890 - Record time stamps for audit records that use Coordinated Universal Time, have a fixed local time offset from Coordinated Universal Time, or that include the local time offset as part of the time stamp.</li><li>CCI-004922 - Synchronize system clocks within and between systems or system components.</li></ul><h2>Weight</h2><p>10</p><h2>Fix Recommendation</h2><p>Configure NixOS to use approved timeservers.<br />
+<br />
+Add the following Nix code to the NixOS Configuration, usually located in /etc/nixos/configuration.nix or /etc/nixos/flake.nix:<br />
+<br />
+ networking.timeServers = [<br />
+  &quot;tick.usnogps.navy.mil&quot;<br />
+  &quot;tock.usnogps.navy.mil&quot;<br />
+ ];<br />
+<br />
+Rebuild and switch to the new NixOS configuration:<br />
+$ sudo nixos-rebuild switch</p><h2>Check Contents</h2><p>Verify NixOS is configured with an approved time server with the following command:<br />
+<br />
+$ timedatectl show-timesync | grep NTPServers<br />
+<br />
+SystemNTPServers=tick.usnogps.navy.mil<br />
+FallbackNTPServers=tock.usnogps.navy.mil<br />
+<br />
+If the output of the command does not list authorized time servers, this is a finding.</p><h2>Vulnerability Number</h2><p>V-268149</p><h2>Documentable</h2><p>False</p><h2>Rule Version</h2><p>ANIX-00-001420</p><h2>Severity Override Guidance</h2><p>Verify NixOS is configured with an approved time server with the following command:<br />
+<br />
+$ timedatectl show-timesync | grep NTPServers<br />
+<br />
+SystemNTPServers=tick.usnogps.navy.mil<br />
+FallbackNTPServers=tock.usnogps.navy.mil<br />
+<br />
+If the output of the command does not list authorized time servers, this is a finding.</p><h2>Check Content Reference</h2><p>M</p><h2>Target Key</h2><p>5658</p></body></html>

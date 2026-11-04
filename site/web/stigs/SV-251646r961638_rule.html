@@ -1,0 +1,28 @@
+<!doctype html><html lang="en"><head><meta charset="utf-8"><title>STIGQter: STIG Check Details: SV-251646r961638_rule: The cache table procedures and views used for performance enhancements for dynamic SQL must be protected.</title><link rel="icon" type="image/svg+xml" href="STIGQter.svg" /><script async src="https://www.googletagmanager.com/gtag/js?id=UA-31381839-2"></script><script src="include.js"></script><script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-4110907817782130" crossorigin="anonymous"></script></head><body><div><img src="STIGQter.svg" alt="STIGQter" style="height:1em;" /> <a href="https://www.stigqter.com/">STIGQter</a>: <a href="main.html">STIG Summary</a>: <a href="U_CA_IDMS_STIG_V2R2_Manual-xccdf.html">CA IDMS Security Technical Implementation Guide Version: 2 Release: 2 Benchmark Date: 01 Jul 2026</a>:</div> <h1>The cache table procedures and views used for performance enhancements for dynamic SQL must be protected.</h1><h2>DISA Rule</h2><p>SV-251646r961638_rule</p><h2>Vulnerability Number</h2><p>V-251646</p><h2>Group Title</h2><p>SRG-APP-000441-DB-000378</p><h2>Rule Version</h2><p>IDMS-DB-000820</p><h2>Severity</h2><p>CAT II</p><h2>CCI(s)</h2><ul><li>CCI-002420 - Maintain the confidentiality and/or integrity of information during preparation for transmission.</li></ul><h2>Weight</h2><p>10</p><h2>Fix Recommendation</h2><p>Either turn off use of SQL cache or secure SQL cache tables.<br />
+<br />
+Turn off SQL cache use in local using SYSIDMS parameter SQL_CACHE_ENTRIES=0. Turn off SQL cache use in IDMS CV and modify sysgen with statement DELETE SQL CACHE.<br />
+ <br />
+To secure SQL cache tables add RESTYPE DB entry and RESTYPE TABL occurrences for SQL cache tables (table procedures and views) SYSCA.DSCCACHE, SYSCA.DSCCACHEOPT,SYSCA.DSCCACHECTRL, SYSCA.DSCCACHEV) and any other views of SYSCA.DSCCACHE created by the organization.<br />
+<br />
+For example: <br />
+#SECRTT TYPE=ENTRY,RESTYPE=DB,EXTCLS='CA@IDMS',<br />
+  EXTNAME=(RESTYPE,ENVI,RESNAME),SECBY=OFF<br />
+ <br />
+#SECRTT  TYPE=ENTRY,RESTYPE=TABL,EXTCLS='CA@IDMS',<br />
+   EXTNAME=(ENVI,RESTYPE,SCHEMA,RESNAME),SECBY=EXTERNAL<br />
+                ... (other DB-covered ENTRYs e.g., NRU, DACC. etc.)  <br />
+  #SECRTT  TYPE=OCCUR,RESNAME='&lt;db/segment to secure&gt;',RESTYPE=DB,SECBY=EXTERNAL<br />
+<br />
+Secure SQL cache tables in external security manager (ESM) using the corresponding chosen external name (e.g., PROD.TABL.SYSCA.DSCCACHE).</p><h2>Check Contents</h2><p>For CA IDMS CV, issue &quot;SELECT * FROM SYSCA.DSCCACHEOPT&quot;. If rows are returned, caching is on. <br />
+<br />
+For local, if no statement, SQL_CACHE_ENTRIES=0 exists in the SYSIDMS specification, caching is on. <br />
+<br />
+Examine RHDCSRTT in security domain for security on table procedures and views of DSCCACHE table; those supplied at installation (SYSCA.DSCCACHE, SYSCA.DSCCACHEOPT,SYSCA.DSCCACHECTRL, SYSCA.DSCCACHEV) or those created by organization. <br />
+<br />
+If no security is found for these table procedures and views, this is a finding.</p><h2>Vulnerability Number</h2><p>V-251646</p><h2>Documentable</h2><p>False</p><h2>Rule Version</h2><p>IDMS-DB-000820</p><h2>Severity Override Guidance</h2><p>For CA IDMS CV, issue &quot;SELECT * FROM SYSCA.DSCCACHEOPT&quot;. If rows are returned, caching is on. <br />
+<br />
+For local, if no statement, SQL_CACHE_ENTRIES=0 exists in the SYSIDMS specification, caching is on. <br />
+<br />
+Examine RHDCSRTT in security domain for security on table procedures and views of DSCCACHE table; those supplied at installation (SYSCA.DSCCACHE, SYSCA.DSCCACHEOPT,SYSCA.DSCCACHECTRL, SYSCA.DSCCACHEV) or those created by organization. <br />
+<br />
+If no security is found for these table procedures and views, this is a finding.</p><h2>Check Content Reference</h2><p>M</p><h2>Target Key</h2><p>5418</p></body></html>

@@ -1,0 +1,32 @@
+<!doctype html><html lang="en"><head><meta charset="utf-8"><title>STIGQter: STIG Check Details: SV-259669r961095_rule: Exchange Mailbox databases must reside on a dedicated partition.</title><link rel="icon" type="image/svg+xml" href="STIGQter.svg" /><script async src="https://www.googletagmanager.com/gtag/js?id=UA-31381839-2"></script><script src="include.js"></script><script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-4110907817782130" crossorigin="anonymous"></script></head><body><div><img src="STIGQter.svg" alt="STIGQter" style="height:1em;" /> <a href="https://www.stigqter.com/">STIGQter</a>: <a href="main.html">STIG Summary</a>: <a href="U_MS_Exchange_2019_Mailbox_Server_STIG_V2R3_Manual-xccdf.html">Microsoft Exchange 2019 Mailbox Server Security Technical Implementation Guide Version: 2 Release: 3 Benchmark Date: 02 Jul 2025</a>:</div> <h1>Exchange Mailbox databases must reside on a dedicated partition.</h1><h2>DISA Rule</h2><p>SV-259669r961095_rule</p><h2>Vulnerability Number</h2><p>V-259669</p><h2>Group Title</h2><p>SRG-APP-000211</p><h2>Rule Version</h2><p>EX19-MB-000105</p><h2>Severity</h2><p>CAT II</p><h2>CCI(s)</h2><ul><li>CCI-001082 - Separate user functionality, including user interface services, from system management functionality.</li></ul><h2>Weight</h2><p>10</p><h2>Fix Recommendation</h2><p>Update the EDSP to specify the location where the Exchange Mailbox databases reside or verify that this information is documented by the organization.<br />
+<br />
+Configure the mailbox databases on a dedicated partition.<br />
+<br />
+Ensure the drive that its being moved to has enough space for the database and logs (if not moving the logs to their own partition). Consult the EDSP and ensure that this is done within a maintenance window as this will incur downtime for any users connected to this mailbox database. Ensure backups are not running at the time this needs to be done. If this server is in a Database Availability Group, this cannot be done until all replicated copies of that database are removed first. Then the move operation can be performed. Once completed, replicated copies can be recreated appropriately.<br />
+<br />
+In an Exchange Management Shell, run the following (assuming copies of the database is removed if replicated or if it is a single copy database):<br />
+<br />
+Move-DatabasePath -Identity &quot;&lt;name of database&gt;&quot; -EdbFilePath &quot;&lt;drive&gt;:\PathToDatabase\&lt;MailboxDatabase.edb&gt;&quot; -LogFolderPath &quot;&lt;drive&gt;:\LogFolderPath\&quot;<br />
+<br />
+Example:<br />
+Move-DatabasePath -Identity &quot;Database1&quot; -EdbFilePath &quot;D:\MailboxDBs\Database1.edb&quot; -LogFolderPath &quot;D:\MailboxDBLogs\&quot;</p><h2>Check Contents</h2><p>Review the Email Domain Security Plan (EDSP) or document that contains this information.<br />
+<br />
+Determine the location where the Exchange Mailbox databases reside.<br />
+<br />
+Open the Exchange Management Shell and enter the following command:<br />
+<br />
+Get-MailboxDatabase | Select-Object -Property Name, Identity, EdbFilePath<br />
+<br />
+Open Windows Explorer, navigate to the mailbox databases, and verify they are on a dedicated partition.<br />
+<br />
+If the mailbox databases are not on a dedicated partition, this is a finding.</p><h2>Vulnerability Number</h2><p>V-259669</p><h2>Documentable</h2><p>False</p><h2>Rule Version</h2><p>EX19-MB-000105</p><h2>Severity Override Guidance</h2><p>Review the Email Domain Security Plan (EDSP) or document that contains this information.<br />
+<br />
+Determine the location where the Exchange Mailbox databases reside.<br />
+<br />
+Open the Exchange Management Shell and enter the following command:<br />
+<br />
+Get-MailboxDatabase | Select-Object -Property Name, Identity, EdbFilePath<br />
+<br />
+Open Windows Explorer, navigate to the mailbox databases, and verify they are on a dedicated partition.<br />
+<br />
+If the mailbox databases are not on a dedicated partition, this is a finding.</p><h2>Check Content Reference</h2><p>M</p><h2>Target Key</h2><p>5580</p></body></html>

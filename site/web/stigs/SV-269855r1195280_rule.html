@@ -1,0 +1,112 @@
+<!doctype html><html lang="en"><head><meta charset="utf-8"><title>STIGQter: STIG Check Details: SV-269855r1195280_rule: The Dell OS10 BGP router must be configured to reject route advertisements from CE routers with an originating autonomous system (AS) in the AS_PATH attribute that does not belong to that customer.</title><link rel="icon" type="image/svg+xml" href="STIGQter.svg" /><script async src="https://www.googletagmanager.com/gtag/js?id=UA-31381839-2"></script><script src="include.js"></script><script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-4110907817782130" crossorigin="anonymous"></script></head><body><div><img src="STIGQter.svg" alt="STIGQter" style="height:1em;" /> <a href="https://www.stigqter.com/">STIGQter</a>: <a href="main.html">STIG Summary</a>: <a href="U_Dell_OS10_Switch_RTR_STIG_V1R2_Manual-xccdf.html">Dell OS10 Switch Router Security Technical Implementation Guide Version: 1 Release: 2 Benchmark Date: 01 Apr 2026</a>:</div> <h1>The Dell OS10 BGP router must be configured to reject route advertisements from CE routers with an originating autonomous system (AS) in the AS_PATH attribute that does not belong to that customer.</h1><h2>DISA Rule</h2><p>SV-269855r1195280_rule</p><h2>Vulnerability Number</h2><p>V-269855</p><h2>Group Title</h2><p>SRG-NET-000018-RTR-000010</p><h2>Rule Version</h2><p>OS10-RTR-000100</p><h2>Severity</h2><p>CAT III</p><h2>CCI(s)</h2><ul><li>CCI-001368 - Enforce approved authorizations for controlling the flow of information within the system based on organization-defined information flow control policies.</li></ul><h2>Weight</h2><p>10</p><h2>Fix Recommendation</h2><p>Configure the router to reject updates from CE routers with an originating AS in the AS_PATH attribute that does not belong to that customer.<br />
+<br />
+Step 1: Configure an as-path access list for each customer containing prefixes belonging to each.<br />
+<br />
+OS10(config)# ip as-path access-list AS_PATH_FILTER_CUST1 permit 10.*<br />
+OS10(config)# ip as-path access-list AS_PATH_FILTER_CUST1 deny .*<br />
+OS10(config)# ip as-path access-list AS_PATH_FILTER_CUST2 permit 200<br />
+OS10(config)# ip as-path access-list AS_PATH_FILTER_CUST2 deny .*<br />
+<br />
+Step 2: Configure the route map referencing the configured as-path access list.<br />
+<br />
+OS10(config)# route-map AS_PATH_FILTER_CUST1_MAP 50<br />
+OS10(config-route-map)# match ip address prefix-list AS_PATH_FILTER_CUST1<br />
+OS10(config-route-map)# exit<br />
+OS10(config)# route-map AS_PATH_FILTER_CUST2_MAP 50<br />
+OS10(config-route-map)# match ip address prefix-list AS_PATH_FILTER_CUST2<br />
+OS10(config-route-map)# exit<br />
+<br />
+Step 3: Apply the route-map inbound to each external BGP neighbor.<br />
+<br />
+OS10(config)# router bgp 10<br />
+OS10(config-router-bgp-10)# neighbor 50.1.1.1<br />
+OS10(config-router-neighbor)# address-family ipv4 unicast<br />
+OS10(config-router-bgp-neighbor-af)# route-map AS_PATH_FILTER_CUST1_MAP in<br />
+OS10(config-router-bgp-neighbor-af)# exit<br />
+OS10(config-router-neighbor)# exit<br />
+OS10(config-router-bgp-10)# neighbor 60.1.1.1<br />
+OS10(config-router-neighbor)# address-family ipv4 unicast<br />
+OS10(config-router-bgp-neighbor-af)# route-map AS_PATH_FILTER_CUST2_MAP in<br />
+OS10(config-router-bgp-neighbor-af)# exit<br />
+OS10(config-router-neighbor)# exit<br />
+OS10(config-router-bgp-10)# exit</p><h2>Check Contents</h2><p>This requirement is not applicable for the DODIN Backbone. <br />
+<br />
+Review the router configuration to verify the router is configured to deny updates received from CE routers with an originating AS in the AS_PATH attribute that does not belong to that customer.<br />
+<br />
+Step 1: Review router configuration and verify that there is an as-path access-list statement defined to only accept routes from a CE router whose AS did not originate the route. <br />
+<br />
+OS10# show running-configuration as-path<br />
+!<br />
+...<br />
+ip as-path access-list AS_PATH_FILTER_CUST1 permit 10.*<br />
+ip as-path access-list AS_PATH_FILTER_CUST1 deny .*<br />
+ip as-path access-list AS_PATH_FILTER_CUST2 permit 200<br />
+ip as-path access-list AS_PATH_FILTER_CUST2 deny .*<br />
+...<br />
+<br />
+Step 2: Verify the route map applied to the external neighbors references the configured as-path access list shown above.<br />
+<br />
+OS10# show running-configuration route-map<br />
+!<br />
+route-map AS_PATH_FILTER_CUST1_MAP permit 50<br />
+match ip address as-path AS_PATH_FILTER_CUST1<br />
+!<br />
+route-map AS_PATH_FILTER_CUST2_MAP permit 60<br />
+match ip address prefix-list AS_PATH_FILTER_CUST2<br />
+! <br />
+<br />
+Step 3: Verify the route map applied to the external neighbors references the appropriate route maps shown above.<br />
+<br />
+!<br />
+router bgp 10<br />
+!<br />
+neighbor 50.1.1.1<br />
+  !<br />
+  address-family ipv4 unicast<br />
+   route-map AS_PATH_FILTER_CUST1_MAP in<br />
+neighbor 60.1.1.1<br />
+  !<br />
+  address-family ipv4 unicast<br />
+   route-map AS_PATH_FILTER_CUST2_MAP in<br />
+<br />
+If the router is not configured to reject updates from CE routers with an originating AS in the AS_PATH attribute that does not belong to that customer, this is a finding.</p><h2>Vulnerability Number</h2><p>V-269855</p><h2>Documentable</h2><p>False</p><h2>Rule Version</h2><p>OS10-RTR-000100</p><h2>Severity Override Guidance</h2><p>This requirement is not applicable for the DODIN Backbone. <br />
+<br />
+Review the router configuration to verify the router is configured to deny updates received from CE routers with an originating AS in the AS_PATH attribute that does not belong to that customer.<br />
+<br />
+Step 1: Review router configuration and verify that there is an as-path access-list statement defined to only accept routes from a CE router whose AS did not originate the route. <br />
+<br />
+OS10# show running-configuration as-path<br />
+!<br />
+...<br />
+ip as-path access-list AS_PATH_FILTER_CUST1 permit 10.*<br />
+ip as-path access-list AS_PATH_FILTER_CUST1 deny .*<br />
+ip as-path access-list AS_PATH_FILTER_CUST2 permit 200<br />
+ip as-path access-list AS_PATH_FILTER_CUST2 deny .*<br />
+...<br />
+<br />
+Step 2: Verify the route map applied to the external neighbors references the configured as-path access list shown above.<br />
+<br />
+OS10# show running-configuration route-map<br />
+!<br />
+route-map AS_PATH_FILTER_CUST1_MAP permit 50<br />
+match ip address as-path AS_PATH_FILTER_CUST1<br />
+!<br />
+route-map AS_PATH_FILTER_CUST2_MAP permit 60<br />
+match ip address prefix-list AS_PATH_FILTER_CUST2<br />
+! <br />
+<br />
+Step 3: Verify the route map applied to the external neighbors references the appropriate route maps shown above.<br />
+<br />
+!<br />
+router bgp 10<br />
+!<br />
+neighbor 50.1.1.1<br />
+  !<br />
+  address-family ipv4 unicast<br />
+   route-map AS_PATH_FILTER_CUST1_MAP in<br />
+neighbor 60.1.1.1<br />
+  !<br />
+  address-family ipv4 unicast<br />
+   route-map AS_PATH_FILTER_CUST2_MAP in<br />
+<br />
+If the router is not configured to reject updates from CE routers with an originating AS in the AS_PATH attribute that does not belong to that customer, this is a finding.</p><h2>Check Content Reference</h2><p>M</p><h2>Target Key</h2><p>5668</p></body></html>

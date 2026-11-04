@@ -1,0 +1,33 @@
+<!doctype html><html lang="en"><head><meta charset="utf-8"><title>STIGQter: STIG Check Details: SV-271845r1092247_rule: OL 9 system accounts must not have an interactive login shell.</title><link rel="icon" type="image/svg+xml" href="STIGQter.svg" /><script async src="https://www.googletagmanager.com/gtag/js?id=UA-31381839-2"></script><script src="include.js"></script><script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-4110907817782130" crossorigin="anonymous"></script></head><body><div><img src="STIGQter.svg" alt="STIGQter" style="height:1em;" /> <a href="https://www.stigqter.com/">STIGQter</a>: <a href="main.html">STIG Summary</a>: <a href="U_Oracle_Linux_9_STIG_V1R6_Manual-xccdf.html">Oracle Linux 9 Security Technical Implementation Guide Version: 1 Release: 6 Benchmark Date: 01 Jul 2026</a>:</div> <h1>OL 9 system accounts must not have an interactive login shell.</h1><h2>DISA Rule</h2><p>SV-271845r1092247_rule</p><h2>Vulnerability Number</h2><p>V-271845</p><h2>Group Title</h2><p>SRG-OS-000480-GPOS-00227</p><h2>Rule Version</h2><p>OL09-00-003051</p><h2>Severity</h2><p>CAT II</p><h2>CCI(s)</h2><ul><li>CCI-000366 - Implement the security configuration settings.</li></ul><h2>Weight</h2><p>10</p><h2>Fix Recommendation</h2><p>Configure OL 9 so that all noninteractive accounts on the system do not have an interactive shell assigned to them.<br />
+<br />
+If the system account needs a shell assigned for mission operations, document the need with the ISSO.<br />
+<br />
+Run the following command to disable the interactive shell for a specific noninteractive user account:<br />
+<br />
+Replace &lt;user&gt; with the user that has a login shell.<br />
+<br />
+$ sudo usermod --shell /sbin/nologin &lt;user&gt;<br />
+<br />
+Do not perform the steps in this section on the root account. Doing so will cause the system to become inaccessible.</p><h2>Check Contents</h2><p>Verify that OL 9 configures system accounts to not have an interactive login shell with the following command:<br />
+<br />
+$ awk -F: '($3&lt;1000){print $1 &quot;:&quot; $3 &quot;:&quot; $7}' /etc/passwd<br />
+root:0:/bin/bash<br />
+bin:1:/sbin/nologin<br />
+daemon:2:/sbin/nologin<br />
+adm:3:/sbin/nologin<br />
+lp:4:/sbin/nologin<br />
+<br />
+Identify the system accounts from this listing that do not have a nologin shell.<br />
+<br />
+If any system account (other than the root account) has a login shell and it is not documented with the information system security officer (ISSO), this is a finding.</p><h2>Vulnerability Number</h2><p>V-271845</p><h2>Documentable</h2><p>False</p><h2>Rule Version</h2><p>OL09-00-003051</p><h2>Severity Override Guidance</h2><p>Verify that OL 9 configures system accounts to not have an interactive login shell with the following command:<br />
+<br />
+$ awk -F: '($3&lt;1000){print $1 &quot;:&quot; $3 &quot;:&quot; $7}' /etc/passwd<br />
+root:0:/bin/bash<br />
+bin:1:/sbin/nologin<br />
+daemon:2:/sbin/nologin<br />
+adm:3:/sbin/nologin<br />
+lp:4:/sbin/nologin<br />
+<br />
+Identify the system accounts from this listing that do not have a nologin shell.<br />
+<br />
+If any system account (other than the root account) has a login shell and it is not documented with the information system security officer (ISSO), this is a finding.</p><h2>Check Content Reference</h2><p>M</p><h2>Target Key</h2><p>5680</p></body></html>

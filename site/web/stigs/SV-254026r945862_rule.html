@@ -1,0 +1,69 @@
+<!doctype html><html lang="en"><head><meta charset="utf-8"><title>STIGQter: STIG Check Details: SV-254026r945862_rule: The Juniper BGP router must be configured to use a unique key for each autonomous system (AS) that it peers with.</title><link rel="icon" type="image/svg+xml" href="STIGQter.svg" /><script async src="https://www.googletagmanager.com/gtag/js?id=UA-31381839-2"></script><script src="include.js"></script><script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-4110907817782130" crossorigin="anonymous"></script></head><body><div><img src="STIGQter.svg" alt="STIGQter" style="height:1em;" /> <a href="https://www.stigqter.com/">STIGQter</a>: <a href="main.html">STIG Summary</a>: <a href="U_Juniper_EX_Switches_RTR_STIG_V2R1_Manual-xccdf.html">Juniper EX Series Switches Router Security Technical Implementation Guide Version: 2 Release: 1 Benchmark Date: 24 Jul 2024</a>:</div> <h1>The Juniper BGP router must be configured to use a unique key for each autonomous system (AS) that it peers with.</h1><h2>DISA Rule</h2><p>SV-254026r945862_rule</p><h2>Vulnerability Number</h2><p>V-254026</p><h2>Group Title</h2><p>SRG-NET-000230-RTR-000002</p><h2>Rule Version</h2><p>JUEX-RT-000540</p><h2>Severity</h2><p>CAT II</p><h2>CCI(s)</h2><ul><li>CCI-000366 - Implement the security configuration settings.</li><li>CCI-002205 - Uniquely identify and authenticate source by organization, system, application, service, and/or individual for information transfer.</li></ul><h2>Weight</h2><p>10</p><h2>Fix Recommendation</h2><p>Configure all eBGP routers with unique keys for each eBGP neighbor that it peers with.<br />
+<br />
+set security ipsec security-association &lt;sa name&gt; manual direction bidirectional protocol esp<br />
+set security ipsec security-association &lt;sa name&gt; manual direction bidirectional spi &lt;SPI value&gt;<br />
+set security ipsec security-association &lt;sa name&gt; manual direction bidirectional authentication algorithm hmac-sha-256-128<br />
+set security ipsec security-association &lt;sa name&gt; manual direction bidirectional authentication key ascii-text &lt;PSK value&gt;<br />
+<br />
+set protocols bgp group &lt;group name&gt; type external<br />
+set protocols bgp group &lt;group name&gt; local-as &lt;local AS number&gt;<br />
+set protocols bgp group &lt;group name&gt; neighbor &lt;neighbor 1 address&gt; authentication-key &lt;PSK value&gt;<br />
+set protocols bgp group &lt;group name&gt; neighbor &lt;neighbor 2 address&gt; ipsec-sa test</p><h2>Check Contents</h2><p>Interview the ISSM and router administrator to determine if unique keys are being used. <br />
+<br />
+[edit security ipsec]<br />
+security-association &lt;sa name&gt; {<br />
+    manual {<br />
+        direction bidirectional {<br />
+            protocol esp;<br />
+            spi &lt;SPI value&gt;;<br />
+            authentication {<br />
+                algorithm hmac-sha-256-128;<br />
+                key ascii-text &quot;$8$aes256-gcm$hmac-sha2-256$100$SpJ/ERRFEsc$y1Wqf1zM3d3xI+ZVB9WzTw$lgM06LJZN3FcVbTaSkDz4g$bZVi57MkUWg&quot;; ## SECRET-DATA<br />
+            }<br />
+        }<br />
+    }<br />
+}<br />
+[edit protocols bgp]<br />
+group &lt;group name&gt; {<br />
+    type external;<br />
+    local-as &lt;local AS number&gt;;<br />
+    neighbor &lt;neighbor 1 address&gt; {<br />
+        authentication-key &quot;$8$aes256-gcm$hmac-sha2-256$100$cFQ99Gy83Og$SCMVXvnfna7/cZqH9fCECQ$bCVokm+es94xFJONmbKFNA$4561Uc/r&quot;; ## SECRET-DATA<br />
+    }<br />
+    neighbor &lt;neighbor 2 address&gt; {<br />
+        ipsec-sa &lt;sa name&gt;;<br />
+    }<br />
+}<br />
+<br />
+Note: Juniper BGP routers support either an MD5 key, rotating MD5 keys, or an IPsec security association (SA). Verify the PSK for each MD5 and SA is different between all neighbors.<br />
+<br />
+If unique keys are not being used, this is a finding.</p><h2>Vulnerability Number</h2><p>V-254026</p><h2>Documentable</h2><p>False</p><h2>Rule Version</h2><p>JUEX-RT-000540</p><h2>Severity Override Guidance</h2><p>Interview the ISSM and router administrator to determine if unique keys are being used. <br />
+<br />
+[edit security ipsec]<br />
+security-association &lt;sa name&gt; {<br />
+    manual {<br />
+        direction bidirectional {<br />
+            protocol esp;<br />
+            spi &lt;SPI value&gt;;<br />
+            authentication {<br />
+                algorithm hmac-sha-256-128;<br />
+                key ascii-text &quot;$8$aes256-gcm$hmac-sha2-256$100$SpJ/ERRFEsc$y1Wqf1zM3d3xI+ZVB9WzTw$lgM06LJZN3FcVbTaSkDz4g$bZVi57MkUWg&quot;; ## SECRET-DATA<br />
+            }<br />
+        }<br />
+    }<br />
+}<br />
+[edit protocols bgp]<br />
+group &lt;group name&gt; {<br />
+    type external;<br />
+    local-as &lt;local AS number&gt;;<br />
+    neighbor &lt;neighbor 1 address&gt; {<br />
+        authentication-key &quot;$8$aes256-gcm$hmac-sha2-256$100$cFQ99Gy83Og$SCMVXvnfna7/cZqH9fCECQ$bCVokm+es94xFJONmbKFNA$4561Uc/r&quot;; ## SECRET-DATA<br />
+    }<br />
+    neighbor &lt;neighbor 2 address&gt; {<br />
+        ipsec-sa &lt;sa name&gt;;<br />
+    }<br />
+}<br />
+<br />
+Note: Juniper BGP routers support either an MD5 key, rotating MD5 keys, or an IPsec security association (SA). Verify the PSK for each MD5 and SA is different between all neighbors.<br />
+<br />
+If unique keys are not being used, this is a finding.</p><h2>Check Content Reference</h2><p>M</p><h2>Target Key</h2><p>5479</p></body></html>

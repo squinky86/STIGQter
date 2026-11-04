@@ -1,0 +1,67 @@
+<!doctype html><html lang="en"><head><meta charset="utf-8"><title>STIGQter: STIG Check Details: SV-256978r1015073_rule: OL 8 must ensure cryptographic verification of vendor software packages.</title><link rel="icon" type="image/svg+xml" href="STIGQter.svg" /><script async src="https://www.googletagmanager.com/gtag/js?id=UA-31381839-2"></script><script src="include.js"></script><script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-4110907817782130" crossorigin="anonymous"></script></head><body><div><img src="STIGQter.svg" alt="STIGQter" style="height:1em;" /> <a href="https://www.stigqter.com/">STIGQter</a>: <a href="main.html">STIG Summary</a>: <a href="U_Oracle_Linux_8_STIG_V2R9_Manual-xccdf.html">Oracle Linux 8 Security Technical Implementation Guide Version: 2 Release: 9 Benchmark Date: 01 Jul 2026</a>:</div> <h1>OL 8 must ensure cryptographic verification of vendor software packages.</h1><h2>DISA Rule</h2><p>SV-256978r1015073_rule</p><h2>Vulnerability Number</h2><p>V-256978</p><h2>Group Title</h2><p>SRG-OS-000366-GPOS-00153</p><h2>Rule Version</h2><p>OL08-00-010019</p><h2>Severity</h2><p>CAT II</p><h2>CCI(s)</h2><ul><li>CCI-003992 - Prevent the installation of organization-defined software and firmware components without verification that the component has been digitally signed using a certificate that is recognized and approved by the organization.</li></ul><h2>Weight</h2><p>10</p><h2>Fix Recommendation</h2><p>Install Oracle package-signing key on the system and verify its fingerprint matches vendor value.<br />
+<br />
+Insert OL 8 installation disc or attach OL 8 installation image to the system. Mount the disc or image to make the contents accessible inside the system.<br />
+<br />
+Assuming the mounted location is &quot;/media/cdrom&quot;, use the following command to copy Oracle GPG key file onto the system:<br />
+<br />
+     $ sudo cp /media/cdrom/RPM-GPG-KEY-oracle /etc/pki/rpm-gpg/<br />
+	 <br />
+Import Oracle GPG keys from key file into system keyring:<br />
+<br />
+     $ sudo rpm --import /etc/pki/rpm-gpg/RPM-GPG-KEY-oracle<br />
+	 <br />
+Using the steps listed in the Check Text, confirm the newly imported key shows as installed on the system and verify its fingerprint matches vendor value.</p><h2>Check Contents</h2><p>Confirm Oracle package-signing key is installed on the system and verify its fingerprint matches vendor value.<br />
+<br />
+Note: The GPG key is defined in key file &quot;/etc/pki/rpm-gpg/RPM-GPG-KEY-oracle&quot; by default.<br />
+<br />
+List Oracle GPG keys installed on the system:<br />
+<br />
+     $ sudo rpm -q --queryformat &quot;%{SUMMARY}\n&quot; gpg-pubkey | grep -i &quot;oracle&quot;<br />
+<br />
+     gpg(Oracle OSS group (Open Source Software group) &lt;build@oss.oracle.com&gt;)<br />
+<br />
+If Oracle GPG key is not installed, this is a finding.<br />
+<br />
+List key fingerprint of installed Oracle GPG key:<br />
+<br />
+     $ sudo gpg -q --keyid-format short --with-fingerprint /etc/pki/rpm-gpg/RPM-GPG-KEY-oracle<br />
+<br />
+If key file &quot;/etc/pki/rpm-gpg/RPM-GPG-KEY-oracle&quot; is missing, this is a finding.<br />
+<br />
+Example output:<br />
+<br />
+     pub   rsa4096/AD986DA3 2019-04-09 [SC] [expires: 2039-04-04]<br />
+           Key fingerprint = 76FD 3DB1 3AB6 7410 B89D  B10E 8256 2EA9 AD98 6DA3<br />
+     uid                   Oracle OSS group (Open Source Software group) &lt;build@oss.oracle.com&gt;<br />
+     sub   rsa4096/D95DC12B 2019-04-09 [E] [expires: 2039-04-04]<br />
+<br />
+Compare key fingerprint of installed Oracle GPG key with fingerprint listed for OL 8 on Oracle verification webpage at https://linux.oracle.com/security/gpg/#gpg.<br />
+<br />
+If key fingerprint does not match, this is a finding.</p><h2>Vulnerability Number</h2><p>V-256978</p><h2>Documentable</h2><p>False</p><h2>Rule Version</h2><p>OL08-00-010019</p><h2>Severity Override Guidance</h2><p>Confirm Oracle package-signing key is installed on the system and verify its fingerprint matches vendor value.<br />
+<br />
+Note: The GPG key is defined in key file &quot;/etc/pki/rpm-gpg/RPM-GPG-KEY-oracle&quot; by default.<br />
+<br />
+List Oracle GPG keys installed on the system:<br />
+<br />
+     $ sudo rpm -q --queryformat &quot;%{SUMMARY}\n&quot; gpg-pubkey | grep -i &quot;oracle&quot;<br />
+<br />
+     gpg(Oracle OSS group (Open Source Software group) &lt;build@oss.oracle.com&gt;)<br />
+<br />
+If Oracle GPG key is not installed, this is a finding.<br />
+<br />
+List key fingerprint of installed Oracle GPG key:<br />
+<br />
+     $ sudo gpg -q --keyid-format short --with-fingerprint /etc/pki/rpm-gpg/RPM-GPG-KEY-oracle<br />
+<br />
+If key file &quot;/etc/pki/rpm-gpg/RPM-GPG-KEY-oracle&quot; is missing, this is a finding.<br />
+<br />
+Example output:<br />
+<br />
+     pub   rsa4096/AD986DA3 2019-04-09 [SC] [expires: 2039-04-04]<br />
+           Key fingerprint = 76FD 3DB1 3AB6 7410 B89D  B10E 8256 2EA9 AD98 6DA3<br />
+     uid                   Oracle OSS group (Open Source Software group) &lt;build@oss.oracle.com&gt;<br />
+     sub   rsa4096/D95DC12B 2019-04-09 [E] [expires: 2039-04-04]<br />
+<br />
+Compare key fingerprint of installed Oracle GPG key with fingerprint listed for OL 8 on Oracle verification webpage at https://linux.oracle.com/security/gpg/#gpg.<br />
+<br />
+If key fingerprint does not match, this is a finding.</p><h2>Check Content Reference</h2><p>M</p><h2>Target Key</h2><p>5416</p></body></html>

@@ -1,0 +1,65 @@
+<!doctype html><html lang="en"><head><meta charset="utf-8"><title>STIGQter: STIG Check Details: SV-80613r2_rule: The HP FlexFabric Switch must manage excess bandwidth to limit the effects of packet flooding types of denial of service (DoS) attacks.</title><link rel="icon" type="image/svg+xml" href="STIGQter.svg" /><script async src="https://www.googletagmanager.com/gtag/js?id=UA-31381839-2"></script><script src="include.js"></script><script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-4110907817782130" crossorigin="anonymous"></script></head><body><div><img src="STIGQter.svg" alt="STIGQter" style="height:1em;" /> <a href="https://www.stigqter.com/">STIGQter</a>: <a href="main.html">STIG Summary</a>: <a href="U_HP_FlexFabric_Switch_RTR_STIG_V1R2_Manual-xccdf.html">HP FlexFabric Switch RTR Security Technical Implementation Guide Version: 1 Release: 2 Benchmark Date: 24 Jul 2020</a>:</div> <h1>The HP FlexFabric Switch must manage excess bandwidth to limit the effects of packet flooding types of denial of service (DoS) attacks.</h1><h2>DISA Rule</h2><p>SV-80613r2_rule</p><h2>Vulnerability Number</h2><p>V-66123</p><h2>Group Title</h2><p>SRG-NET-000362-RTR-000110</p><h2>Rule Version</h2><p>HFFS-RT-000018</p><h2>Severity</h2><p>CAT II</p><h2>CCI(s)</h2><ul><li>CCI-001095 - Manage capacity, bandwidth, or other redundancy to limit the effects of information flooding types of denial of service attacks.</li></ul><h2>Weight</h2><p>10</p><h2>Fix Recommendation</h2><p>Implement a mechanism for traffic prioritization and bandwidth reservation. This mechanism must enforce the traffic priorities specified by the Combatant Commanders/Services/Agencies.<br />
+<br />
+traffic classifier VOICE operator or<br />
+ if-match dscp 49<br />
+#<br />
+traffic behavior VOICE-2M-SERIAL<br />
+ traffic-policy NEST_EF<br />
+ gts cir 441 cbs 2757 ebs 0 queue-length 50<br />
+ queue ef bandwidth pct 25 cbs-ratio 25<br />
+#<br />
+traffic classifier VIDEO operator or<br />
+ if-matdscp 39<br />
+#<br />
+traffic behavior VIDEO-2M-SERIAL<br />
+ traffic-policy NEST_AF<br />
+ gts cir 301 cbs 1882 ebs 0 queue-length 50<br />
+ queue af bandwidth pct 15<br />
+#<br />
+traffic classifier DATA operator or<br />
+ if-match dscp 11<br />
+#<br />
+traffic behavior DATA-2M-SERIAL<br />
+ traffic-policy NEST_AF<br />
+ gts cir 778 cbs 4863 ebs 0 queue-length 50<br />
+ queue af bandwidth pct 40<br />
+#<br />
+qos policy JITC-2M-SERIAL<br />
+ classifier default-class behavior be-bal<br />
+ classifier VOICE behavior VOICE-2M-SERIAL<br />
+ classifier VIDEO behavior VIDEO-2M-SERIAL<br />
+ classifier DATA behavior DATA-2M-SERIAL<br />
+#<br />
+interface Serial10/0<br />
+ description IUT 2M-SERIAL<br />
+ virtualbaudrate 2048000<br />
+ qos reserved-bandwidth pct 100<br />
+ qos flow-interval 1<br />
+ qos apply policy JITC-2M-SERIAL outbound<br />
+ undo ipv6 nd ra halt</p><h2>Check Contents</h2><p>Interview the system administrator to determine the requirements for bandwidth and traffic prioritization. Display the HP FlexFabric Switch configuration to ensure that the HP FlexFabric Switch is configured with these requirements.<br />
+<br />
+If excess bandwidth is not managed to limit the effects of packet flooding types of denial of service (DoS) attacks, this is a finding <br />
+<br />
+[HP] display current interface serial10/0<br />
+#<br />
+interface Serial10/0<br />
+ description IUT 2M-SERIAL<br />
+ virtualbaudrate 2048000<br />
+ qos reserved-bandwidth pct 100<br />
+ qos flow-interval 1<br />
+ qos apply policy JITC-2M-SERIAL outbound<br />
+ undo ipv6 nd ra halt<br />
+#</p><h2>Vulnerability Number</h2><p>V-66123</p><h2>Documentable</h2><p>False</p><h2>Rule Version</h2><p>HFFS-RT-000018</p><h2>Severity Override Guidance</h2><p>Interview the system administrator to determine the requirements for bandwidth and traffic prioritization. Display the HP FlexFabric Switch configuration to ensure that the HP FlexFabric Switch is configured with these requirements.<br />
+<br />
+If excess bandwidth is not managed to limit the effects of packet flooding types of denial of service (DoS) attacks, this is a finding <br />
+<br />
+[HP] display current interface serial10/0<br />
+#<br />
+interface Serial10/0<br />
+ description IUT 2M-SERIAL<br />
+ virtualbaudrate 2048000<br />
+ qos reserved-bandwidth pct 100<br />
+ qos flow-interval 1<br />
+ qos apply policy JITC-2M-SERIAL outbound<br />
+ undo ipv6 nd ra halt<br />
+#</p><h2>Check Content Reference</h2><p>M</p><h2>Target Key</h2><p>2979</p></body></html>

@@ -1,0 +1,88 @@
+<!doctype html><html lang="en"><head><meta charset="utf-8"><title>STIGQter: STIG Check Details: SV-270580r1068300_rule: Oracle Database must check the validity of data inputs.</title><link rel="icon" type="image/svg+xml" href="STIGQter.svg" /><script async src="https://www.googletagmanager.com/gtag/js?id=UA-31381839-2"></script><script src="include.js"></script><script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-4110907817782130" crossorigin="anonymous"></script></head><body><div><img src="STIGQter.svg" alt="STIGQter" style="height:1em;" /> <a href="https://www.stigqter.com/">STIGQter</a>: <a href="main.html">STIG Summary</a>: <a href="U_Oracle_Database_19c_STIG_V1R5_Manual-xccdf.html">Oracle Database 19c Security Technical Implementation Guide Version: 1 Release: 5 Benchmark Date: 01 Apr 2026</a>:</div> <h1>Oracle Database must check the validity of data inputs.</h1><h2>DISA Rule</h2><p>SV-270580r1068300_rule</p><h2>Vulnerability Number</h2><p>V-270580</p><h2>Group Title</h2><p>SRG-APP-000251-DB-000160</p><h2>Rule Version</h2><p>O19C-00-017900</p><h2>Severity</h2><p>CAT II</p><h2>CCI(s)</h2><ul><li>CCI-001310 - Checks the validity of organization-defined information inputs to the system.</li></ul><h2>Weight</h2><p>10</p><h2>Fix Recommendation</h2><p>Modify database code to properly validate data before it is put into the database or acted upon by the database.<br />
+<br />
+Modify database to contain field definitions for each field in the database.<br />
+<br />
+Modify database to contain constraints on database columns and tables that require them for data validity.<br />
+<br />
+Review the application schemas implemented on the system. Check the DDL for the tables that are created for the applications to verify constraints have been enabled.<br />
+<br />
+Enabling Constraints Upon Definition: The following CREATE TABLE and ALTER TABLE statements both define and enable integrity constraints:<br />
+CREATE TABLE emp (<br />
+empno NUMBER(5) CONSTRAINT emp.pk PRIMARY KEY, . . . ) ;<br />
+ALTER TABLE emp<br />
+ADD CONSTRAINT emp.pk PRIMARY KEY (empno);<br />
+<br />
+An ALTER TABLE statement that defines and attempts to enable an integrity constraint can fail because existing rows of the table violate the integrity constraint. In this case, the statement is rolled back, and the constraint definition is not stored and not enabled.<br />
+<br />
+When enabling a UNIQUE or PRIMARY KEY constraint, an associated index is created.  <br />
+<br />
+For details about the meaning of these states and an understanding of their consequences, refer to the Oracle Database SQL Language Reference. Some of these consequences are discussed here.<br />
+<br />
+Disabling Constraints: To enforce the rules defined by integrity constraints, the constraints should always be enabled. However, consider temporarily disabling the integrity constraints of a table for the following performance reasons:<br />
+<br />
+- When loading large amounts of data into a table;<br />
+<br />
+- When performing batch operations that make massive changes to a table (for example, changing every employee's number by adding 1000 to the existing number); or<br />
+<br />
+- When importing or exporting one table at a time.<br />
+<br />
+In all three cases, temporarily disabling integrity constraints can improve the performance of the operation, especially in data warehouse configurations.<br />
+<br />
+It is possible to enter data that violates a constraint while that constraint is disabled. Thus, always enable the constraint after completing any of the operations listed in the preceding bullet list.<br />
+<br />
+Enabling Constraints: While a constraint is enabled, no row violating the constraint can be inserted into the table. However, while the constraint is disabled, such a row can be inserted. This row is known as an exception to the constraint. If the constraint is in the ENABLE, NOVALIDATE state, violations resulting from data entered while the constraint was disabled remain. The rows that violate the constraint must be either updated or deleted in order for the constraint to be put in the validated state.<br />
+<br />
+Can identify exceptions to a specific integrity constraint while attempting to enable the constraint. Refer to &quot;Reporting Constraint Exceptions&quot;. All rows violating constraints are noted in an EXCEPTIONS table, which can be examined.<br />
+<br />
+ENABLE, NOVALIDATE Constraint State: When a constraint is in the ENABLE, NOVALIDATE state, all subsequent statements are checked for conformity to the constraint. However, any existing data in the table is not checked. A table with ENABLE, NOVALIDATE constraints can contain invalid data, but it is not possible to add new invalid data to it. Constraints in the ENABLE, NOVALIDATE state is most useful in data warehouse configurations that are uploading valid OLTP data.<br />
+<br />
+Enabling a constraint does not require validation. Enabling a constraint NOVALIDATE is much faster than enabling and validating a constraint. Also, validating a constraint that is already enabled does not require any DML locks during validation (unlike validating a previously disabled constraint). Enforcement guarantees that no violations are introduced during the validation. Hence, enabling without validating reduces the downtime typically associated with enabling a constraint.<br />
+<br />
+Efficient Use of Integrity Constraints: A Procedure:<br />
+Using integrity constraint states in the following order can ensure the best benefits:<br />
+- Disable state.<br />
+- Perform the operation (load, export, import).<br />
+- ENABLE, NOVALIDATE state.<br />
+- Enable state.<br />
+<br />
+Some benefits of using constraints in this order are:<br />
+- No locks are held.<br />
+- All constraints can go to enable state concurrently.<br />
+- Constraint enabling is done in parallel.<br />
+- Concurrent activity on table is permitted.<br />
+<br />
+Setting Integrity Constraints Upon Definition: When an integrity constraint is defined in a CREATE TABLE or ALTER TABLE statement, it can be enabled, disabled, or validated or not validated as determined by the specification of the ENABLE/DISABLE clause. If the ENABLE/DISABLE clause is not specified in a constraint definition, the database automatically enables and validates the constraint.<br />
+<br />
+Disabling Constraints Upon Definition: The following CREATE TABLE and ALTER TABLE statements both define and disable integrity constraints:<br />
+<br />
+CREATE TABLE emp (<br />
+empno NUMBER(5) PRIMARY KEY DISABLE, . . . ;<br />
+<br />
+ALTER TABLE emp<br />
+ADD PRIMARY KEY (empno) DISABLE;<br />
+<br />
+An ALTER TABLE statement that defines and disables an integrity constraint never fails because of rows in the table that violate the integrity constraint. The definition of the constraint is allowed because its rule is not enforced.<br />
+<br />
+Enabling Constraints Upon Definition:<br />
+<br />
+The following CREATE TABLE and ALTER TABLE statements both define and enable integrity constraints:<br />
+<br />
+CREATE TABLE emp (<br />
+empno NUMBER(5) CONSTRAINT emp.pk PRIMARY KEY, . . . ;<br />
+<br />
+ALTER TABLE emp<br />
+ADD CONSTRAINT emp.pk PRIMARY KEY (empno);<br />
+<br />
+An ALTER TABLE statement that defines and attempts to enable an integrity constraint can fail because rows of the table violate the integrity constraint. If this case, the statement is rolled back, and the constraint definition is not stored and not enabled.</p><h2>Check Contents</h2><p>Review database management system (DBMS) code, settings, field definitions, constraints, and triggers to determine whether or not data being input into the database is validated.<br />
+<br />
+If code exists that allows invalid data to be acted upon or input into the database, this is a finding.<br />
+<br />
+If field definitions do not exist in the database, this is a finding.<br />
+<br />
+If fields do not contain enabled constraints where required, this is a finding.</p><h2>Vulnerability Number</h2><p>V-270580</p><h2>Documentable</h2><p>False</p><h2>Rule Version</h2><p>O19C-00-017900</p><h2>Severity Override Guidance</h2><p>Review database management system (DBMS) code, settings, field definitions, constraints, and triggers to determine whether or not data being input into the database is validated.<br />
+<br />
+If code exists that allows invalid data to be acted upon or input into the database, this is a finding.<br />
+<br />
+If field definitions do not exist in the database, this is a finding.<br />
+<br />
+If fields do not contain enabled constraints where required, this is a finding.</p><h2>Check Content Reference</h2><p>M</p><h2>Target Key</h2><p>5672</p></body></html>

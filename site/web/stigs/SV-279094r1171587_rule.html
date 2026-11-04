@@ -1,0 +1,79 @@
+<!doctype html><html lang="en"><head><meta charset="utf-8"><title>STIGQter: STIG Check Details: SV-279094r1171587_rule: ColdFusion must remove all export ciphers to protect the confidentiality and integrity of transmitted information.</title><link rel="icon" type="image/svg+xml" href="STIGQter.svg" /><script async src="https://www.googletagmanager.com/gtag/js?id=UA-31381839-2"></script><script src="include.js"></script><script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-4110907817782130" crossorigin="anonymous"></script></head><body><div><img src="STIGQter.svg" alt="STIGQter" style="height:1em;" /> <a href="https://www.stigqter.com/">STIGQter</a>: <a href="main.html">STIG Summary</a>: <a href="U_Adobe_ColdFusion_STIG_V1R2_Manual-xccdf.html">Adobe ColdFusion Security Technical Implementation Guide Version: 1 Release: 2 Benchmark Date: 01 Jul 2026</a>:</div> <h1>ColdFusion must remove all export ciphers to protect the confidentiality and integrity of transmitted information.</h1><h2>DISA Rule</h2><p>SV-279094r1171587_rule</p><h2>Vulnerability Number</h2><p>V-279094</p><h2>Group Title</h2><p>SRG-APP-000439-AS-000274</p><h2>Rule Version</h2><p>APAS-CF-000880</p><h2>Severity</h2><p>CAT I</p><h2>CCI(s)</h2><ul><li>CCI-002418 - Protect the confidentiality and/or integrity of transmitted information.</li><li>CCI-000068 - Implement cryptographic mechanisms to protect the confidentiality of remote access sessions.</li><li>CCI-000803 - Implement mechanisms for authentication to a cryptographic module that meet the requirements of applicable laws, Executive Orders, directives, policies, regulations, standards, and guidance for such authentication.</li></ul><h2>Weight</h2><p>10</p><h2>Fix Recommendation</h2><p>Secure Cipher and Protocol Configuration in server.xml:<br />
+<br />
+1. For each ColdFusion instance, navigate to: <br />
+&lt;ColdFusion_Installation_Directory&gt;\cfusion\runtime\conf\server.xml.<br />
+<br />
+2. Before making changes, back up the file to prevent accidental misconfiguration.<br />
+<br />
+3. Open server.xml in a text editor with administrative privileges.<br />
+<br />
+4. Locate each &lt;Connector&gt; element that handles secure traffic (i.e., has SSLEnabled=&quot;true&quot; and is not just a redirect).<br />
+<br />
+5. If the &lt;Connector&gt; does not contain a ciphers attribute or an &lt;SSLHostConfig&gt; block with ciphers, add one.<br />
+<br />
+6. Specify only ciphers approved by NIST SP 800-52 Revision 2, Section 3.3.1.1.<br />
+<br />
+Example Configuration:<br />
+&lt;Connector port=&quot;8443&quot;<br />
+           maxThreads=&quot;150&quot;<br />
+           SSLEnabled=&quot;true&quot;<br />
+           scheme=&quot;https&quot;<br />
+           SSLEnabled=&quot;true&quot;&gt;<br />
+    &lt;SSLHostConfig protocols=&quot;TLSv1.2,TLSv1.3&quot;<br />
+                   ciphers=&quot;TLS_ECDHE_ECDSA_WITH_AES_256_GCM_SHA384,<br />
+                            TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384,<br />
+                            TLS_ECDHE_ECDSA_WITH_AES_128_GCM_SHA256,<br />
+                            TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256&quot;&gt;<br />
+        &lt;Certificate certificateKeystoreFile=&quot;conf/keystore.jks&quot;<br />
+                     certificateKeystorePassword=&quot;&lt;password&gt;&quot;<br />
+                     type=&quot;RSA&quot;/&gt;<br />
+    &lt;/SSLHostConfig&gt;<br />
+&lt;/Connector&gt;<br />
+<br />
+Note: Replace the example cipher list with the exact approved list relevant to the system and policy.<br />
+<br />
+7. Ensure only secure protocols are used (TLS 1.2 or 1.3).<br />
+<br />
+8. Remove or disable any deprecated protocols such as SSLv3, TLS 1.0, or TLS 1.1.<br />
+<br />
+9. Save and close the file.<br />
+<br />
+10. Restart ColdFusion to apply changes.</p><h2>Check Contents</h2><p>Cipher Validation in server.xml:<br />
+<br />
+1. For each ColdFusion instance, navigate to: <br />
+&lt;ColdFusion_Installation_Directory&gt;\cfusion\runtime\conf\server.xml.<br />
+<br />
+2. Open the server.xml file in a text editor.<br />
+<br />
+3. Identify all &lt;Connector&gt; elements that are actively handling traffic (i.e., not solely configured to redirect to a secure port).<br />
+<br />
+4. Verify each &lt;Connector&gt; element includes either a ciphers attribute or an embedded &lt;SSLHostConfig&gt; element with a ciphers setting.<br />
+<br />
+If the ciphers setting is not present, this is a finding.<br />
+<br />
+5. If the ciphers are present, compare them to the list of approved ciphers found in: NIST SP 800-52 Revision 2, Section 3.3.1.1.<br />
+<br />
+If any unapproved or insecure ciphers are configured, this is a finding.<br />
+<br />
+6. Verify the protocols attribute is configured and using only approved secure protocols (e.g., TLS 1.2 or 1.3).<br />
+<br />
+If the protocols attribute is not configured to use approved secure protocols (e.g., TLS 1.2 or 1.3), this is a finding.</p><h2>Vulnerability Number</h2><p>V-279094</p><h2>Documentable</h2><p>False</p><h2>Rule Version</h2><p>APAS-CF-000880</p><h2>Severity Override Guidance</h2><p>Cipher Validation in server.xml:<br />
+<br />
+1. For each ColdFusion instance, navigate to: <br />
+&lt;ColdFusion_Installation_Directory&gt;\cfusion\runtime\conf\server.xml.<br />
+<br />
+2. Open the server.xml file in a text editor.<br />
+<br />
+3. Identify all &lt;Connector&gt; elements that are actively handling traffic (i.e., not solely configured to redirect to a secure port).<br />
+<br />
+4. Verify each &lt;Connector&gt; element includes either a ciphers attribute or an embedded &lt;SSLHostConfig&gt; element with a ciphers setting.<br />
+<br />
+If the ciphers setting is not present, this is a finding.<br />
+<br />
+5. If the ciphers are present, compare them to the list of approved ciphers found in: NIST SP 800-52 Revision 2, Section 3.3.1.1.<br />
+<br />
+If any unapproved or insecure ciphers are configured, this is a finding.<br />
+<br />
+6. Verify the protocols attribute is configured and using only approved secure protocols (e.g., TLS 1.2 or 1.3).<br />
+<br />
+If the protocols attribute is not configured to use approved secure protocols (e.g., TLS 1.2 or 1.3), this is a finding.</p><h2>Check Content Reference</h2><p>M</p><h2>Target Key</h2><p>5724</p></body></html>

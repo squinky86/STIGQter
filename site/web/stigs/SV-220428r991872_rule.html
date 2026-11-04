@@ -1,0 +1,246 @@
+<!doctype html><html lang="en"><head><meta charset="utf-8"><title>STIGQter: STIG Check Details: SV-220428r991872_rule: The Cisco switch must be configured to protect against or limit the effects of denial-of-service (DoS) attacks by employing control plane protection.</title><link rel="icon" type="image/svg+xml" href="STIGQter.svg" /><script async src="https://www.googletagmanager.com/gtag/js?id=UA-31381839-2"></script><script src="include.js"></script><script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-4110907817782130" crossorigin="anonymous"></script></head><body><div><img src="STIGQter.svg" alt="STIGQter" style="height:1em;" /> <a href="https://www.stigqter.com/">STIGQter</a>: <a href="main.html">STIG Summary</a>: <a href="U_Cisco_IOS_Switch_RTR_STIG_V3R3_Manual-xccdf.html">Cisco IOS Switch RTR Security Technical Implementation Guide Version: 3 Release: 3 Benchmark Date: 01 Apr 2026</a>:</div> <h1>The Cisco switch must be configured to protect against or limit the effects of denial-of-service (DoS) attacks by employing control plane protection.</h1><h2>DISA Rule</h2><p>SV-220428r991872_rule</p><h2>Vulnerability Number</h2><p>V-220428</p><h2>Group Title</h2><p>SRG-NET-000362-RTR-000110</p><h2>Rule Version</h2><p>CISC-RT-000120</p><h2>Severity</h2><p>CAT I</p><h2>CCI(s)</h2><ul><li>CCI-002385 - Protect against or limit the effects of organization-defined types of denial of service events.</li><li>CCI-001097 - Monitor and control communications at the external managed interfaces to the system and at key managed interfaces within the system.</li><li>CCI-004866 - Employ organization-defined controls by type of denial-of-service to achieve the denial-of-service objective.</li></ul><h2>Weight</h2><p>10</p><h2>Fix Recommendation</h2><p>Configure the Cisco switch to protect against known types of DoS attacks on the route processor. Implementing a CoPP policy as shown in the example below is a best practice method: <br />
+<br />
+Step 1: Configure ACL specific traffic types. <br />
+<br />
+SW1(config)#ip access-list extended CoPP_CRITICAL <br />
+SW1(config-ext-nacl)#remark our control plane adjacencies are critical <br />
+SW1(config-ext-nacl)#permit ospf host x.x.x.x any <br />
+SW1(config-ext-nacl)#permit ospf host x.x.x.x any <br />
+SW1(config-ext-nacl)#permit pim host x.x.x.x any <br />
+SW1(config-ext-nacl)#permit pim host x.x.x.x any <br />
+SW1(config-ext-nacl)#permit igmp any 224.0.0.0 15.255.255.255 <br />
+SW1(config-ext-nacl)#deny ip any any <br />
+SW1(config-ext-nacl)#exit <br />
+<br />
+SW1(config)#ip access-list extended CoPP_IMPORTANT <br />
+SW1(config-ext-nacl)#permit tcp host x.x.x.x eq tacacs any <br />
+SW1(config-ext-nacl)#permit tcp x.x.x.x 0.0.0.255 any eq 22 <br />
+SW1(config-ext-nacl)#permit udp host x.x.x.x any eq snmp <br />
+SW1(config-ext-nacl)#permit udp host x.x.x.x eq ntp any <br />
+SW1(config-ext-nacl)#deny ip any any <br />
+SW1(config-ext-nacl)#exit <br />
+<br />
+SW1(config)#ip access-list extended CoPP_NORMAL <br />
+SW1(config-ext-nacl)#remark we will want to rate limit ICMP traffic <br />
+SW1(config-ext-nacl)#deny icmp any host x.x.x.x fragments<br />
+ SW1(config-ext-nacl)#permit icmp any any echo <br />
+SW1(config-ext-nacl)#permit icmp any any echo-reply <br />
+SW1(config-ext-nacl)#permit icmp any any time-exceeded <br />
+SW1(config-ext-nacl)#permit icmp any any unreachable <br />
+SW1(config-ext-nacl)#deny ip any any <br />
+SW1(config-ext-nacl)#exit <br />
+<br />
+SW1(config)#ip access-list extended CoPP_UNDESIRABLE <br />
+SW1(config-ext-nacl)#remark management plane traffic that should not be received <br />
+SW1(config-ext-nacl)#permit udp any any eq ntp <br />
+SW1(config-ext-nacl)#permit udp any any eq snmp <br />
+SW1(config-ext-nacl)#permit tcp any any eq 22 <br />
+SW1(config-ext-nacl)#permit tcp any any eq 23 <br />
+SW1(config-ext-nacl)#remark control plane traffic not configured on switch <br />
+SW1(config-ext-nacl)#permit eigrp any any <br />
+SW1(config-ext-nacl)#permit udp any any eq rip <br />
+SW1(config-ext-nacl)#deny ip any any <br />
+SW1(config-ext-nacl)#exit <br />
+SW1(config)#ip access-list extended CoPP_DEFAULT <br />
+SW1(config-ext-nacl)#permit ip any any <br />
+SW1(config-ext-nacl)#exit <br />
+<br />
+Step 2: Configure class-maps referencing each of the ACLs. <br />
+<br />
+SW1(config)#class-map match-all CoPP_CRITICAL <br />
+SW1(config-cmap)#match access-group name CoPP_CRITICAL <br />
+SW1(config-cmap)#class-map match-any CoPP_IMPORTANT <br />
+SW1(config-cmap)#match access-group name CoPP_IMPORTANT <br />
+SW1(config-cmap)#match protocol arp <br />
+SW1(config-cmap)#class-map match-all CoPP_NORMAL <br />
+SW1(config-cmap)#match access-group name CoPP_NORMAL <br />
+SW1(config-cmap)#class-map match-any CoPP_UNDESIRABLE <br />
+SW1(config-cmap)#match access-group name CoPP_UNDESIRABLE <br />
+SW1(config-cmap)#class-map match-all CoPP_DEFAULT <br />
+SW1(config-cmap)#match access-group name CoPP_DEFAULT <br />
+SW1(config-cmap)#exit <br />
+<br />
+Step 3: Configure a policy-map referencing the configured class-maps and apply appropriate bandwidth allowance and policing attributes. <br />
+<br />
+SW1(config)#policy-map CONTROL_PLANE_POLICY <br />
+SW1(config-pmap)#class CoPP_CRITICAL <br />
+SW1(config-pmap-c)#police 512000 8000 conform-action transmit exceed-action transmit <br />
+SW1(config-pmap-c-police)#class CoPP_IMPORTANT <br />
+SW1(config-pmap-c)#police 256000 4000 conform-action transmit exceed-action drop <br />
+SW1(config-pmap-c-police)#class CoPP_NORMAL <br />
+SW1(config-pmap-c)#police 128000 2000 conform-action transmit exceed-action drop <br />
+SW1(config-pmap-c-police)#class CoPP_UNDESIRABLE <br />
+SW1(config-pmap-c)#police 8000 1000 conform-action drop exceed-action drop <br />
+SW1(config-pmap-c-police)#class CoPP_DEFAULT <br />
+SW1(config-pmap-c)#police 64000 1000 conform-action transmit exceed-action drop <br />
+SW1(config-pmap-c-police)#exit <br />
+SW1(config-pmap-c)#exit <br />
+SW1(config-pmap)#exit <br />
+<br />
+Step 4: Apply the policy-map to the control plane. <br />
+<br />
+SW1(config)#control-plane <br />
+SW1(config-cp)#service-policy input CONTROL_PLANE_POLICY <br />
+SW1(config-cp)#end</p><h2>Check Contents</h2><p>Review the Cisco switch configuration to verify that is protects against known types of DoS attacks by employing organization-defined security safeguards. <br />
+<br />
+Step 1: Verify traffic types have been classified based on importance levels. The following is an example configuration: <br />
+<br />
+class-map match-all CoPP_CRITICAL <br />
+match access-group name CoPP_CRITICAL <br />
+class-map match-any CoPP_IMPORTANT <br />
+match access-group name CoPP_IMPORTANT <br />
+match protocol arp <br />
+class-map match-all CoPP_NORMAL <br />
+match access-group name CoPP_NORMAL <br />
+class-map match-any CoPP_UNDESIRABLE <br />
+match access-group name CoPP_UNDESIRABLE <br />
+class-map match-all CoPP_DEFAULT <br />
+match access-group name CoPP_DEFAULT <br />
+<br />
+Step 2: Review the access control lists (ACLs) referenced by the class maps to determine if the traffic is being classified appropriately. The following is an example configuration: <br />
+<br />
+ip access-list extended CoPP_CRITICAL <br />
+remark our control plane adjacencies are critical <br />
+permit ospf host [OSPF neighbor A] any <br />
+permit ospf host [OSPF neighbor B] any <br />
+permit pim host [PIM neighbor A] any <br />
+permit pim host [PIM neighbor B] any <br />
+permit pim host [RP addr] any <br />
+permit igmp any 224.0.0.0 15.255.255.255 <br />
+deny ip any any <br />
+<br />
+ip access-list extended CoPP_IMPORTANT <br />
+permit tcp host [TACACS server] eq tacacs any <br />
+permit tcp [management subnet] 0.0.0.255 any eq 22 <br />
+permit udp host [SNMP manager] any eq snmp <br />
+permit udp host [NTP server] eq ntp any <br />
+deny ip any any <br />
+<br />
+ip access-list extended CoPP_NORMAL <br />
+remark we will want to rate limit ICMP traffic <br />
+deny icmp any host x.x.x.x fragments<br />
+permit icmp any any echo <br />
+permit icmp any any echo-reply <br />
+permit icmp any any time-exceeded <br />
+permit icmp any any unreachable <br />
+deny ip any any <br />
+<br />
+ip access-list extended CoPP_UNDESIRABLE <br />
+remark other management plane traffic that should not be received <br />
+permit udp any any eq ntp <br />
+permit udp any any eq snmp <br />
+permit tcp any any eq 22 <br />
+permit tcp any any eq 23 <br />
+remark other control plane traffic not configured on switch <br />
+permit eigrp any any <br />
+permit udp any any eq rip <br />
+deny ip any any <br />
+<br />
+ip access-list extended CoPP_DEFAULT <br />
+permit ip any any <br />
+<br />
+Note: Explicitly defining undesirable traffic with ACL entries enables the network operator to collect statistics. Excessive ARP packets can potentially monopolize Route Processor resources, starving other important processes. Currently, ARP is the only Layer 2 protocol that can be specifically classified using the match protocol command. <br />
+<br />
+Step 3: Review the policy-map to determine if the traffic is being policed appropriately for each classification. The following is an example configuration: <br />
+<br />
+policy-map CONTROL_PLANE_POLICY <br />
+class CoPP_CRITICAL <br />
+police 512000 8000 conform-action transmit exceed-action transmit <br />
+class CoPP_IMPORTANT <br />
+police 256000 4000 conform-action transmit exceed-action drop <br />
+class CoPP_NORMAL <br />
+police 128000 2000 conform-action transmit exceed-action drop <br />
+class CoPP_UNDESIRABLE <br />
+police 8000 1000 conform-action drop exceed-action drop <br />
+class CoPP_DEFAULT <br />
+police 64000 1000 conform-action transmit exceed-action drop <br />
+<br />
+Step 4: Verify that the Control Plane Policing (CoPP) policy is enabled. The following is an example configuration: <br />
+<br />
+control-plane <br />
+service-policy input CONTROL_PLANE_POLICY <br />
+<br />
+Note: Control Plane Protection (CPPr) can be used to filter as well as police control plane traffic destined to the RP. CPPr is very similar to CoPP and has the ability to filter and police traffic using finer granularity by dividing the aggregate control plane into three separate categories: 1) host, 2) transit, and 3) CEF-exception. Hence, a separate policy-map could be configured for each traffic category. <br />
+<br />
+If the Cisco switch is not configured to protect against known types of DoS attacks by employing organization-defined security safeguards, this is a finding.</p><h2>Vulnerability Number</h2><p>V-220428</p><h2>Documentable</h2><p>False</p><h2>Rule Version</h2><p>CISC-RT-000120</p><h2>Severity Override Guidance</h2><p>Review the Cisco switch configuration to verify that is protects against known types of DoS attacks by employing organization-defined security safeguards. <br />
+<br />
+Step 1: Verify traffic types have been classified based on importance levels. The following is an example configuration: <br />
+<br />
+class-map match-all CoPP_CRITICAL <br />
+match access-group name CoPP_CRITICAL <br />
+class-map match-any CoPP_IMPORTANT <br />
+match access-group name CoPP_IMPORTANT <br />
+match protocol arp <br />
+class-map match-all CoPP_NORMAL <br />
+match access-group name CoPP_NORMAL <br />
+class-map match-any CoPP_UNDESIRABLE <br />
+match access-group name CoPP_UNDESIRABLE <br />
+class-map match-all CoPP_DEFAULT <br />
+match access-group name CoPP_DEFAULT <br />
+<br />
+Step 2: Review the access control lists (ACLs) referenced by the class maps to determine if the traffic is being classified appropriately. The following is an example configuration: <br />
+<br />
+ip access-list extended CoPP_CRITICAL <br />
+remark our control plane adjacencies are critical <br />
+permit ospf host [OSPF neighbor A] any <br />
+permit ospf host [OSPF neighbor B] any <br />
+permit pim host [PIM neighbor A] any <br />
+permit pim host [PIM neighbor B] any <br />
+permit pim host [RP addr] any <br />
+permit igmp any 224.0.0.0 15.255.255.255 <br />
+deny ip any any <br />
+<br />
+ip access-list extended CoPP_IMPORTANT <br />
+permit tcp host [TACACS server] eq tacacs any <br />
+permit tcp [management subnet] 0.0.0.255 any eq 22 <br />
+permit udp host [SNMP manager] any eq snmp <br />
+permit udp host [NTP server] eq ntp any <br />
+deny ip any any <br />
+<br />
+ip access-list extended CoPP_NORMAL <br />
+remark we will want to rate limit ICMP traffic <br />
+deny icmp any host x.x.x.x fragments<br />
+permit icmp any any echo <br />
+permit icmp any any echo-reply <br />
+permit icmp any any time-exceeded <br />
+permit icmp any any unreachable <br />
+deny ip any any <br />
+<br />
+ip access-list extended CoPP_UNDESIRABLE <br />
+remark other management plane traffic that should not be received <br />
+permit udp any any eq ntp <br />
+permit udp any any eq snmp <br />
+permit tcp any any eq 22 <br />
+permit tcp any any eq 23 <br />
+remark other control plane traffic not configured on switch <br />
+permit eigrp any any <br />
+permit udp any any eq rip <br />
+deny ip any any <br />
+<br />
+ip access-list extended CoPP_DEFAULT <br />
+permit ip any any <br />
+<br />
+Note: Explicitly defining undesirable traffic with ACL entries enables the network operator to collect statistics. Excessive ARP packets can potentially monopolize Route Processor resources, starving other important processes. Currently, ARP is the only Layer 2 protocol that can be specifically classified using the match protocol command. <br />
+<br />
+Step 3: Review the policy-map to determine if the traffic is being policed appropriately for each classification. The following is an example configuration: <br />
+<br />
+policy-map CONTROL_PLANE_POLICY <br />
+class CoPP_CRITICAL <br />
+police 512000 8000 conform-action transmit exceed-action transmit <br />
+class CoPP_IMPORTANT <br />
+police 256000 4000 conform-action transmit exceed-action drop <br />
+class CoPP_NORMAL <br />
+police 128000 2000 conform-action transmit exceed-action drop <br />
+class CoPP_UNDESIRABLE <br />
+police 8000 1000 conform-action drop exceed-action drop <br />
+class CoPP_DEFAULT <br />
+police 64000 1000 conform-action transmit exceed-action drop <br />
+<br />
+Step 4: Verify that the Control Plane Policing (CoPP) policy is enabled. The following is an example configuration: <br />
+<br />
+control-plane <br />
+service-policy input CONTROL_PLANE_POLICY <br />
+<br />
+Note: Control Plane Protection (CPPr) can be used to filter as well as police control plane traffic destined to the RP. CPPr is very similar to CoPP and has the ability to filter and police traffic using finer granularity by dividing the aggregate control plane into three separate categories: 1) host, 2) transit, and 3) CEF-exception. Hence, a separate policy-map could be configured for each traffic category. <br />
+<br />
+If the Cisco switch is not configured to protect against known types of DoS attacks by employing organization-defined security safeguards, this is a finding.</p><h2>Check Content Reference</h2><p>M</p><h2>Target Key</h2><p>4065</p></body></html>

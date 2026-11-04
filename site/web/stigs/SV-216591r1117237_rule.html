@@ -1,0 +1,88 @@
+<!doctype html><html lang="en"><head><meta charset="utf-8"><title>STIGQter: STIG Check Details: SV-216591r1117237_rule: The Cisco out-of-band management (OOBM) gateway router must be configured to not redistribute routes between the management network routing domain and the managed network routing domain.</title><link rel="icon" type="image/svg+xml" href="STIGQter.svg" /><script async src="https://www.googletagmanager.com/gtag/js?id=UA-31381839-2"></script><script src="include.js"></script><script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-4110907817782130" crossorigin="anonymous"></script></head><body><div><img src="STIGQter.svg" alt="STIGQter" style="height:1em;" /> <a href="https://www.stigqter.com/">STIGQter</a>: <a href="main.html">STIG Summary</a>: <a href="U_Cisco_IOS_Router_RTR_STIG_V3R4_Manual-xccdf.html">Cisco IOS Router RTR Security Technical Implementation Guide Version: 3 Release: 4 Benchmark Date: 01 Oct 2025</a>:</div> <h1>The Cisco out-of-band management (OOBM) gateway router must be configured to not redistribute routes between the management network routing domain and the managed network routing domain.</h1><h2>DISA Rule</h2><p>SV-216591r1117237_rule</p><h2>Vulnerability Number</h2><p>V-216591</p><h2>Group Title</h2><p>SRG-NET-000019-RTR-000012</p><h2>Rule Version</h2><p>CISC-RT-000430</p><h2>Severity</h2><p>CAT II</p><h2>CCI(s)</h2><ul><li>CCI-001414 - Enforce approved authorizations for controlling the flow of information between connected systems based on organization-defined information flow control policies.</li></ul><h2>Weight</h2><p>10</p><h2>Fix Recommendation</h2><p>This requirement is not applicable for the DODIN Backbone.<br />
+<br />
+Remove the configuration that imports routes from the managed network into the management network or vice versa as shown in the example below.<br />
+<br />
+R1(config)#ip vrf MGMT<br />
+R1(config-vrf)#no route-target import 8:8</p><h2>Check Contents</h2><p>This requirement is not applicable for the DODIN Backbone.<br />
+<br />
+Verify the Interior Gateway Protocol (IGP) instance used for the managed network does not redistribute routes into the IGP instance used for the management network, and vice versa. The example below imports OSPF routes from the production route table (VRF PROD) into the management route table (VRF MGMT) using BGP.<br />
+<br />
+ip vrf MGMT<br />
+ rd 4:4<br />
+ route-target export 4:4<br />
+ route-target import 4:4<br />
+ route-target import 8:8<br />
+!<br />
+ip vrf PROD<br />
+ rd 8:8<br />
+ route-target import 8:8<br />
+ route-target export 8:8<br />
+…<br />
+…<br />
+…<br />
+router ospf 1 vrf MGMT<br />
+ log-adjacency-changes<br />
+ redistribute bgp 64512 subnets<br />
+ network 0.0.0.0 255.255.255.255 area 0<br />
+!<br />
+router ospf 2 vrf PROD<br />
+ log-adjacency-changes<br />
+ network 0.0.0.0 255.255.255.255 area 0<br />
+!<br />
+router bgp 64512<br />
+ no synchronization<br />
+ bgp log-neighbor-changes<br />
+ no auto-summary<br />
+ !<br />
+ address-family ipv4 vrf MGMT<br />
+  no synchronization<br />
+  redistribute ospf 1 vrf MGMT<br />
+ exit-address-family<br />
+ !<br />
+ address-family ipv4 vrf PROD<br />
+  no synchronization<br />
+  redistribute ospf 2 vrf PROD<br />
+ exit-address-family<br />
+<br />
+If the IGP instance used for the managed network redistributes routes into the IGP instance used for the management network, or vice versa, this is a finding.</p><h2>Vulnerability Number</h2><p>V-216591</p><h2>Documentable</h2><p>False</p><h2>Rule Version</h2><p>CISC-RT-000430</p><h2>Severity Override Guidance</h2><p>This requirement is not applicable for the DODIN Backbone.<br />
+<br />
+Verify the Interior Gateway Protocol (IGP) instance used for the managed network does not redistribute routes into the IGP instance used for the management network, and vice versa. The example below imports OSPF routes from the production route table (VRF PROD) into the management route table (VRF MGMT) using BGP.<br />
+<br />
+ip vrf MGMT<br />
+ rd 4:4<br />
+ route-target export 4:4<br />
+ route-target import 4:4<br />
+ route-target import 8:8<br />
+!<br />
+ip vrf PROD<br />
+ rd 8:8<br />
+ route-target import 8:8<br />
+ route-target export 8:8<br />
+…<br />
+…<br />
+…<br />
+router ospf 1 vrf MGMT<br />
+ log-adjacency-changes<br />
+ redistribute bgp 64512 subnets<br />
+ network 0.0.0.0 255.255.255.255 area 0<br />
+!<br />
+router ospf 2 vrf PROD<br />
+ log-adjacency-changes<br />
+ network 0.0.0.0 255.255.255.255 area 0<br />
+!<br />
+router bgp 64512<br />
+ no synchronization<br />
+ bgp log-neighbor-changes<br />
+ no auto-summary<br />
+ !<br />
+ address-family ipv4 vrf MGMT<br />
+  no synchronization<br />
+  redistribute ospf 1 vrf MGMT<br />
+ exit-address-family<br />
+ !<br />
+ address-family ipv4 vrf PROD<br />
+  no synchronization<br />
+  redistribute ospf 2 vrf PROD<br />
+ exit-address-family<br />
+<br />
+If the IGP instance used for the managed network redistributes routes into the IGP instance used for the management network, or vice versa, this is a finding.</p><h2>Check Content Reference</h2><p>M</p><h2>Target Key</h2><p>4027</p></body></html>

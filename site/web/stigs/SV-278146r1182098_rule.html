@@ -1,0 +1,69 @@
+<!doctype html><html lang="en"><head><meta charset="utf-8"><title>STIGQter: STIG Check Details: SV-278146r1182098_rule: Windows Server 2025 directory data (outside the root DSE) of a nonpublic directory must be configured to prevent anonymous access.</title><link rel="icon" type="image/svg+xml" href="STIGQter.svg" /><script async src="https://www.googletagmanager.com/gtag/js?id=UA-31381839-2"></script><script src="include.js"></script><script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-4110907817782130" crossorigin="anonymous"></script></head><body><div><img src="STIGQter.svg" alt="STIGQter" style="height:1em;" /> <a href="https://www.stigqter.com/">STIGQter</a>: <a href="main.html">STIG Summary</a>: <a href="U_MS_Windows_Server_2025_STIG_V1R2_Manual-xccdf.html">Microsoft Windows Server 2025 Security Technical Implementation Guide Version: 1 Release: 2 Benchmark Date: 01 Jul 2026</a>:</div> <h1>Windows Server 2025 directory data (outside the root DSE) of a nonpublic directory must be configured to prevent anonymous access.</h1><h2>DISA Rule</h2><p>SV-278146r1182098_rule</p><h2>Vulnerability Number</h2><p>V-278146</p><h2>Group Title</h2><p>SRG-OS-000480-GPOS-00227</p><h2>Rule Version</h2><p>WN25-DC-000150</p><h2>Severity</h2><p>CAT I</p><h2>CCI(s)</h2><ul><li>CCI-000366 - Implement the security configuration settings.</li></ul><h2>Weight</h2><p>10</p><h2>Fix Recommendation</h2><p>Configure directory data (outside the root DSE) of a nonpublic directory to prevent anonymous access.<br />
+<br />
+For AD, there are multiple configuration items that could enable anonymous access.<br />
+<br />
+Changing the access permissions on the domain naming context object (from the secure defaults) could enable anonymous access. If the check procedures indicate this is the cause, the process that was used to change the permissions must be reversed. This could have been through the Windows Support Tools ADSI Edit console (adsiedit.msc).<br />
+<br />
+The dsHeuristics option is used. This is addressed in the check for AD.0230 in the AD Forest STIG.</p><h2>Check Contents</h2><p>This applies to domain controllers. It is not applicable for other systems.<br />
+<br />
+Open command prompt (not elevated).<br />
+<br />
+Run &quot;ldp.exe&quot;.<br />
+<br />
+From the &quot;Connection menu&quot;, select &quot;Bind&quot;.<br />
+<br />
+Clear the User, Password, and Domain fields.<br />
+<br />
+Select &quot;Simple bind&quot; for the Bind type, and then click &quot;OK&quot;.<br />
+<br />
+Confirmation of anonymous access will be displayed at the end:<br />
+<br />
+res = ldap_simple_bind_s<br />
+Authenticated as: 'NT AUTHORITY\ANONYMOUS LOGON'<br />
+<br />
+From the &quot;Browse&quot; menu, select &quot;Search&quot;.<br />
+<br />
+In the Search dialog, enter the DN of the domain naming context (e.g., &quot;dc=disaost,dc=mil&quot;) in the Base DN field.<br />
+<br />
+Clear the Attributes field and select &quot;Run&quot;.<br />
+<br />
+Error messages must display related to Bind and user not authenticated.<br />
+<br />
+If attribute data is displayed, anonymous access is enabled to the domain naming context and this is a finding.<br />
+<br />
+The following network controls allow the finding severity to be downgraded to a CAT II since these measures lower the risk associated with anonymous access.<br />
+<br />
+Network hardware ports at the site are subject to 802.1x authentication or MAC address restrictions. <br />
+<br />
+Premise firewall or host restrictions prevent access to ports 389, 636, 3268, and 3269 from client hosts not explicitly identified by domain (.mil) or IP address.</p><h2>Vulnerability Number</h2><p>V-278146</p><h2>Documentable</h2><p>False</p><h2>Rule Version</h2><p>WN25-DC-000150</p><h2>Severity Override Guidance</h2><p>This applies to domain controllers. It is not applicable for other systems.<br />
+<br />
+Open command prompt (not elevated).<br />
+<br />
+Run &quot;ldp.exe&quot;.<br />
+<br />
+From the &quot;Connection menu&quot;, select &quot;Bind&quot;.<br />
+<br />
+Clear the User, Password, and Domain fields.<br />
+<br />
+Select &quot;Simple bind&quot; for the Bind type, and then click &quot;OK&quot;.<br />
+<br />
+Confirmation of anonymous access will be displayed at the end:<br />
+<br />
+res = ldap_simple_bind_s<br />
+Authenticated as: 'NT AUTHORITY\ANONYMOUS LOGON'<br />
+<br />
+From the &quot;Browse&quot; menu, select &quot;Search&quot;.<br />
+<br />
+In the Search dialog, enter the DN of the domain naming context (e.g., &quot;dc=disaost,dc=mil&quot;) in the Base DN field.<br />
+<br />
+Clear the Attributes field and select &quot;Run&quot;.<br />
+<br />
+Error messages must display related to Bind and user not authenticated.<br />
+<br />
+If attribute data is displayed, anonymous access is enabled to the domain naming context and this is a finding.<br />
+<br />
+The following network controls allow the finding severity to be downgraded to a CAT II since these measures lower the risk associated with anonymous access.<br />
+<br />
+Network hardware ports at the site are subject to 802.1x authentication or MAC address restrictions. <br />
+<br />
+Premise firewall or host restrictions prevent access to ports 389, 636, 3268, and 3269 from client hosts not explicitly identified by domain (.mil) or IP address.</p><h2>Check Content Reference</h2><p>M</p><h2>Target Key</h2><p>5719</p></body></html>

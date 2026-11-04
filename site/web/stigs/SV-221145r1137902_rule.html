@@ -1,0 +1,31 @@
+<!doctype html><html lang="en"><head><meta charset="utf-8"><title>STIGQter: STIG Check Details: SV-221145r1137902_rule: The Cisco Multicast Source Discovery Protocol (MSDP) switch must be configured to filter source-active multicast advertisements to external MSDP peers to avoid global visibility of local-only multicast sources and groups.</title><link rel="icon" type="image/svg+xml" href="STIGQter.svg" /><script async src="https://www.googletagmanager.com/gtag/js?id=UA-31381839-2"></script><script src="include.js"></script><script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-4110907817782130" crossorigin="anonymous"></script></head><body><div><img src="STIGQter.svg" alt="STIGQter" style="height:1em;" /> <a href="https://www.stigqter.com/">STIGQter</a>: <a href="main.html">STIG Summary</a>: <a href="U_Cisco_NX-OS_Switch_RTR_STIG_V3R4_Manual-xccdf.html">Cisco NX OS Switch RTR Security Technical Implementation Guide Version: 3 Release: 4 Benchmark Date: 01 Apr 2026</a>:</div> <h1>The Cisco Multicast Source Discovery Protocol (MSDP) switch must be configured to filter source-active multicast advertisements to external MSDP peers to avoid global visibility of local-only multicast sources and groups.</h1><h2>DISA Rule</h2><p>SV-221145r1137902_rule</p><h2>Vulnerability Number</h2><p>V-221145</p><h2>Group Title</h2><p>SRG-NET-000018-RTR-000008</p><h2>Rule Version</h2><p>CISC-RT-000930</p><h2>Severity</h2><p>CAT III</p><h2>CCI(s)</h2><ul><li>CCI-001368 - Enforce approved authorizations for controlling the flow of information within the system based on organization-defined information flow control policies.</li></ul><h2>Weight</h2><p>10</p><h2>Fix Recommendation</h2><p>Configure the switch with an export policy to avoid global visibility of local multicast (S, G) states. The example below will prevent exporting multicast active sources belonging to the private network.<br />
+<br />
+SW1(config)# ip prefix-list OUTBOUND_MSDP_SA_FILTER seq 10 deny 10.0.0.0/8 le 32<br />
+SW1(config)# ip prefix-list OUTBOUND_MSDP_SA_FILTER seq 20 permit 0.0.0.0/0 ge 8<br />
+SW1(config)# exit<br />
+SW1(config)# ip msdp sa-policy x.1.28.2 prefix-list OUTBOUND_MSDP_SA_FILTER out<br />
+SW1(config)# end</p><h2>Check Contents</h2><p>Review the switch configuration to determine if there is export policy to block local source-active multicast advertisements.<br />
+<br />
+Step 1: Verify that an outbound source-active filter is bound to each MSDP peer as shown in the example below:<br />
+<br />
+ip msdp peer x.1.28.2 connect-source Ethernet2/1 remote-as nn<br />
+ip msdp sa-policy x.1.28.2 prefix-list OUTBOUND_MSDP_SA_FILTER out<br />
+<br />
+Step 2: Review the access lists referenced by the source-active filters and verify that MSDP source-active messages being sent to MSDP peers do not leak advertisements that are local.<br />
+<br />
+ip prefix-list OUTBOUND_MSDP_SA_FILTER seq 10 deny 10.0.0.0/8 le 32<br />
+ip prefix-list OUTBOUND_MSDP_SA_FILTER seq 20 permit 0.0.0.0/0 ge 8<br />
+<br />
+If the switch is not configured with an export policy to filter local source-active multicast advertisements, this is a finding.</p><h2>Vulnerability Number</h2><p>V-221145</p><h2>Documentable</h2><p>False</p><h2>Rule Version</h2><p>CISC-RT-000930</p><h2>Severity Override Guidance</h2><p>Review the switch configuration to determine if there is export policy to block local source-active multicast advertisements.<br />
+<br />
+Step 1: Verify that an outbound source-active filter is bound to each MSDP peer as shown in the example below:<br />
+<br />
+ip msdp peer x.1.28.2 connect-source Ethernet2/1 remote-as nn<br />
+ip msdp sa-policy x.1.28.2 prefix-list OUTBOUND_MSDP_SA_FILTER out<br />
+<br />
+Step 2: Review the access lists referenced by the source-active filters and verify that MSDP source-active messages being sent to MSDP peers do not leak advertisements that are local.<br />
+<br />
+ip prefix-list OUTBOUND_MSDP_SA_FILTER seq 10 deny 10.0.0.0/8 le 32<br />
+ip prefix-list OUTBOUND_MSDP_SA_FILTER seq 20 permit 0.0.0.0/0 ge 8<br />
+<br />
+If the switch is not configured with an export policy to filter local source-active multicast advertisements, this is a finding.</p><h2>Check Content Reference</h2><p>M</p><h2>Target Key</h2><p>4075</p></body></html>

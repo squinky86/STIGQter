@@ -1,0 +1,23 @@
+<!doctype html><html lang="en"><head><meta charset="utf-8"><title>STIGQter: STIG Check Details: SV-248868r958408_rule: OL 8 must force a frequent session key renegotiation for SSH connections to the server.</title><link rel="icon" type="image/svg+xml" href="STIGQter.svg" /><script async src="https://www.googletagmanager.com/gtag/js?id=UA-31381839-2"></script><script src="include.js"></script><script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-4110907817782130" crossorigin="anonymous"></script></head><body><div><img src="STIGQter.svg" alt="STIGQter" style="height:1em;" /> <a href="https://www.stigqter.com/">STIGQter</a>: <a href="main.html">STIG Summary</a>: <a href="U_Oracle_Linux_8_STIG_V2R9_Manual-xccdf.html">Oracle Linux 8 Security Technical Implementation Guide Version: 2 Release: 9 Benchmark Date: 01 Jul 2026</a>:</div> <h1>OL 8 must force a frequent session key renegotiation for SSH connections to the server.</h1><h2>DISA Rule</h2><p>SV-248868r958408_rule</p><h2>Vulnerability Number</h2><p>V-248868</p><h2>Group Title</h2><p>SRG-OS-000033-GPOS-00014</p><h2>Rule Version</h2><p>OL08-00-040161</p><h2>Severity</h2><p>CAT II</p><h2>CCI(s)</h2><ul><li>CCI-000068 - Implement cryptographic mechanisms to protect the confidentiality of remote access sessions.</li></ul><h2>Weight</h2><p>10</p><h2>Fix Recommendation</h2><p>Configure the system to force a frequent session key renegotiation for SSH connections to the server by adding or modifying the following line in the &quot;/etc/ssh/sshd_config&quot; file: <br />
+ <br />
+RekeyLimit 1G 1h <br />
+ <br />
+The SSH daemon must be restarted for the settings to take effect. <br />
+ <br />
+$ sudo systemctl restart sshd.service</p><h2>Check Contents</h2><p>Verify the SSH server is configured to force frequent session key renegotiation with the following command:<br />
+<br />
+$ sudo /usr/sbin/sshd -dd 2&gt;&amp;1 | awk '/filename/ {print $4}' | tr -d '\r' | tr '\n' ' ' | xargs sudo grep -iH '^\s*rekeylimit'<br />
+<br />
+RekeyLimit 1G 1h<br />
+<br />
+If &quot;RekeyLimit&quot; does not have a maximum data amount and maximum time defined or is missing or commented out, this is a finding.<br />
+<br />
+If conflicting results are returned, this is a finding.</p><h2>Vulnerability Number</h2><p>V-248868</p><h2>Documentable</h2><p>False</p><h2>Rule Version</h2><p>OL08-00-040161</p><h2>Severity Override Guidance</h2><p>Verify the SSH server is configured to force frequent session key renegotiation with the following command:<br />
+<br />
+$ sudo /usr/sbin/sshd -dd 2&gt;&amp;1 | awk '/filename/ {print $4}' | tr -d '\r' | tr '\n' ' ' | xargs sudo grep -iH '^\s*rekeylimit'<br />
+<br />
+RekeyLimit 1G 1h<br />
+<br />
+If &quot;RekeyLimit&quot; does not have a maximum data amount and maximum time defined or is missing or commented out, this is a finding.<br />
+<br />
+If conflicting results are returned, this is a finding.</p><h2>Check Content Reference</h2><p>M</p><h2>Target Key</h2><p>5416</p></body></html>

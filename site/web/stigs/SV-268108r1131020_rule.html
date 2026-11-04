@@ -1,0 +1,36 @@
+<!doctype html><html lang="en"><head><meta charset="utf-8"><title>STIGQter: STIG Check Details: SV-268108r1131020_rule: The NixOS audit records must be off-loaded onto a different system or storage media from the system being audited.</title><link rel="icon" type="image/svg+xml" href="STIGQter.svg" /><script async src="https://www.googletagmanager.com/gtag/js?id=UA-31381839-2"></script><script src="include.js"></script><script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-4110907817782130" crossorigin="anonymous"></script></head><body><div><img src="STIGQter.svg" alt="STIGQter" style="height:1em;" /> <a href="https://www.stigqter.com/">STIGQter</a>: <a href="main.html">STIG Summary</a>: <a href="U_Anduril_NixOS_STIG_V1R2_Manual-xccdf.html">Anduril NixOS Security Technical Implementation Guide Version: 1 Release: 2 Benchmark Date: 01 Oct 2025</a>:</div> <h1>The NixOS audit records must be off-loaded onto a different system or storage media from the system being audited.</h1><h2>DISA Rule</h2><p>SV-268108r1131020_rule</p><h2>Vulnerability Number</h2><p>V-268108</p><h2>Group Title</h2><p>SRG-OS-000051-GPOS-00024</p><h2>Rule Version</h2><p>ANIX-00-000480</p><h2>Severity</h2><p>CAT II</p><h2>CCI(s)</h2><ul><li>CCI-000154 - Provide the capability to centrally review and analyze audit records from multiple components within the system.</li></ul><h2>Weight</h2><p>10</p><h2>Fix Recommendation</h2><p>Configure the operating system to off-load audit records onto a different system or media from the system being audited by specifying a remote destination in the systemd-journald configuration.<br />
+<br />
+On the client, modify /etc/nixos/configuration.nix or /etc/nixos/flake.nix to include the following lines:<br />
+<br />
+services.journald.upload = {<br />
+  enable = true;<br />
+  Upload = {<br />
+     ServerKeyFile = $PATH_TO_CLIENT_PEM_SSL_KEY;<br />
+     URL = $URL_OF_REMOTE_SERVER;<br />
+     ServerCertificateFile = $PATH_TO_SSL_CERT;<br />
+     TrustedCertificateFile = $PATH_TO_SERVER_CERT;<br />
+   };<br />
+  };<br />
+}<br />
+<br />
+On the server, modify /etc/nixos/configuration.nix or /etc/nixos/flake.nix to include the following lines:<br />
+services.journald.remote = {<br />
+  enable = true;<br />
+  listen = &quot;https&quot;;<br />
+  URL = $URL_OF_REMOTE_SERVER;<br />
+  ServerKeyFile = $PATH_TO_SERVER_PEM_SSL_KEY;<br />
+  ServerCertificateFile = $PATH_TO_SSL_CERT;<br />
+  };<br />
+};</p><h2>Check Contents</h2><p>Verify the audit system off-loads audit records onto a different system or media from the system being audited.<br />
+<br />
+List the configured destinations with the following command:<br />
+<br />
+$ grep -i &quot;Url&quot; /etc/systemd/journal-upload.conf&quot;<br />
+<br />
+If no URL is configured, this is a finding.</p><h2>Vulnerability Number</h2><p>V-268108</p><h2>Documentable</h2><p>False</p><h2>Rule Version</h2><p>ANIX-00-000480</p><h2>Severity Override Guidance</h2><p>Verify the audit system off-loads audit records onto a different system or media from the system being audited.<br />
+<br />
+List the configured destinations with the following command:<br />
+<br />
+$ grep -i &quot;Url&quot; /etc/systemd/journal-upload.conf&quot;<br />
+<br />
+If no URL is configured, this is a finding.</p><h2>Check Content Reference</h2><p>M</p><h2>Target Key</h2><p>5658</p></body></html>

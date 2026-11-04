@@ -1,0 +1,87 @@
+<!doctype html><html lang="en"><head><meta charset="utf-8"><title>STIGQter: STIG Check Details: SV-261875r1000630_rule: The audit information produced by PostgreSQL must be protected from unauthorized read access.</title><link rel="icon" type="image/svg+xml" href="STIGQter.svg" /><script async src="https://www.googletagmanager.com/gtag/js?id=UA-31381839-2"></script><script src="include.js"></script><script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-4110907817782130" crossorigin="anonymous"></script></head><body><div><img src="STIGQter.svg" alt="STIGQter" style="height:1em;" /> <a href="https://www.stigqter.com/">STIGQter</a>: <a href="main.html">STIG Summary</a>: <a href="U_CD_Postgres_16_STIG_V1R3_Manual-xccdf.html">Crunchy Data Postgres 16 Security Technical Implementation Guide Version: 1 Release: 3 Benchmark Date: 01 Jul 2026</a>:</div> <h1>The audit information produced by PostgreSQL must be protected from unauthorized read access.</h1><h2>DISA Rule</h2><p>SV-261875r1000630_rule</p><h2>Vulnerability Number</h2><p>V-261875</p><h2>Group Title</h2><p>SRG-APP-000118-DB-000059</p><h2>Rule Version</h2><p>CD16-00-002000</p><h2>Severity</h2><p>CAT II</p><h2>CCI(s)</h2><ul><li>CCI-000162 - Protect audit information from unauthorized access.</li></ul><h2>Weight</h2><p>10</p><h2>Fix Recommendation</h2><p>Note: The following instructions use the PGDATA and PGVER environment variables. Refer to APPENDIX-F for instructions on configuring PGDATA and APPENDIX-H for PGVER. <br />
+<br />
+To ensure logging is enabled, see the instructions in the supplementary content APPENDIX-C.<br />
+<br />
+#### syslog Logging<br />
+<br />
+If PostgreSQL is configured to use syslog for logging, consult organization location and permissions for syslog log files.<br />
+<br />
+#### stderr Logging<br />
+<br />
+If PostgreSQL is configured to use stderr for logging, permissions of the log files can be set in postgresql.conf.<br />
+<br />
+As the database administrator (shown here as &quot;postgres&quot;), edit the following settings of logs in the postgresql.conf file:<br />
+<br />
+Note: Consult the organization's documentation on acceptable log privileges.<br />
+<br />
+$ sudo su - postgres<br />
+$ vi ${PGDATA?}/postgresql.conf<br />
+log_file_mode = 0600<br />
+<br />
+As the system administrator, reload the server with the new configuration:<br />
+<br />
+$ sudo systemctl reload postgresql-${PGVER?}</p><h2>Check Contents</h2><p>Note: The following instructions use the PGLOG environment variable. Refer to supplementary content APPENDIX-I for instructions on configuring PGLOG.<br />
+<br />
+Review locations of audit logs, both internal to the database and database audit logs located at the operating system level.<br />
+<br />
+Verify appropriate controls and permissions exist to protect the audit information from unauthorized access.<br />
+<br />
+#### syslog Logging<br />
+<br />
+If PostgreSQL is configured to use syslog for logging, consult organization location and permissions for syslog log files.<br />
+<br />
+#### stderr Logging<br />
+<br />
+As the database administrator (shown here as &quot;postgres&quot;), check the current log_file_mode configuration by running the following:<br />
+<br />
+Note: Consult the organization's documentation on acceptable log privileges.<br />
+<br />
+$ sudo su - postgres<br />
+$ psql -c &quot;SHOW log_file_mode&quot;<br />
+<br />
+If log_file_mode is not 600, this is a finding.<br />
+<br />
+Verify the log files have the set permissions in ${PGLOG?}:<br />
+<br />
+$ ls -l ${PGLOG?}/<br />
+total 32<br />
+-rw-------. 1 postgres postgres 0 Apr 8 00:00 postgresql-Fri.log<br />
+-rw-------. 1 postgres postgres 8288 Apr 11 17:36 postgresql-Mon.log<br />
+-rw-------. 1 postgres postgres 0 Apr 9 00:00 postgresql-Sat.log<br />
+-rw-------. 1 postgres postgres 0 Apr 10 00:00 postgresql-Sun.log<br />
+-rw-------. 1 postgres postgres 16212 Apr 7 17:05 postgresql-Thu.log <br />
+-rw-------. 1 postgres postgres 1130 Apr 6 17:56 postgresql-Wed.log <br />
+<br />
+If logs with 600 permissions do not exist in ${PGLOG?}, this is a finding.</p><h2>Vulnerability Number</h2><p>V-261875</p><h2>Documentable</h2><p>False</p><h2>Rule Version</h2><p>CD16-00-002000</p><h2>Severity Override Guidance</h2><p>Note: The following instructions use the PGLOG environment variable. Refer to supplementary content APPENDIX-I for instructions on configuring PGLOG.<br />
+<br />
+Review locations of audit logs, both internal to the database and database audit logs located at the operating system level.<br />
+<br />
+Verify appropriate controls and permissions exist to protect the audit information from unauthorized access.<br />
+<br />
+#### syslog Logging<br />
+<br />
+If PostgreSQL is configured to use syslog for logging, consult organization location and permissions for syslog log files.<br />
+<br />
+#### stderr Logging<br />
+<br />
+As the database administrator (shown here as &quot;postgres&quot;), check the current log_file_mode configuration by running the following:<br />
+<br />
+Note: Consult the organization's documentation on acceptable log privileges.<br />
+<br />
+$ sudo su - postgres<br />
+$ psql -c &quot;SHOW log_file_mode&quot;<br />
+<br />
+If log_file_mode is not 600, this is a finding.<br />
+<br />
+Verify the log files have the set permissions in ${PGLOG?}:<br />
+<br />
+$ ls -l ${PGLOG?}/<br />
+total 32<br />
+-rw-------. 1 postgres postgres 0 Apr 8 00:00 postgresql-Fri.log<br />
+-rw-------. 1 postgres postgres 8288 Apr 11 17:36 postgresql-Mon.log<br />
+-rw-------. 1 postgres postgres 0 Apr 9 00:00 postgresql-Sat.log<br />
+-rw-------. 1 postgres postgres 0 Apr 10 00:00 postgresql-Sun.log<br />
+-rw-------. 1 postgres postgres 16212 Apr 7 17:05 postgresql-Thu.log <br />
+-rw-------. 1 postgres postgres 1130 Apr 6 17:56 postgresql-Wed.log <br />
+<br />
+If logs with 600 permissions do not exist in ${PGLOG?}, this is a finding.</p><h2>Check Content Reference</h2><p>M</p><h2>Target Key</h2><p>5598</p></body></html>

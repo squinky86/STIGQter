@@ -1,0 +1,41 @@
+<!doctype html><html lang="en"><head><meta charset="utf-8"><title>STIGQter: STIG Check Details: SV-251638r961353_rule: IDMS must protect its user catalogs and system dictionaries to prevent unauthorized users from bypassing or updating security settings.</title><link rel="icon" type="image/svg+xml" href="STIGQter.svg" /><script async src="https://www.googletagmanager.com/gtag/js?id=UA-31381839-2"></script><script src="include.js"></script><script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-4110907817782130" crossorigin="anonymous"></script></head><body><div><img src="STIGQter.svg" alt="STIGQter" style="height:1em;" /> <a href="https://www.stigqter.com/">STIGQter</a>: <a href="main.html">STIG Summary</a>: <a href="U_CA_IDMS_STIG_V2R2_Manual-xccdf.html">CA IDMS Security Technical Implementation Guide Version: 2 Release: 2 Benchmark Date: 01 Jul 2026</a>:</div> <h1>IDMS must protect its user catalogs and system dictionaries to prevent unauthorized users from bypassing or updating security settings.</h1><h2>DISA Rule</h2><p>SV-251638r961353_rule</p><h2>Vulnerability Number</h2><p>V-251638</p><h2>Group Title</h2><p>SRG-APP-000340-DB-000304</p><h2>Rule Version</h2><p>IDMS-DB-000670</p><h2>Severity</h2><p>CAT II</p><h2>CCI(s)</h2><ul><li>CCI-002235 - Prevent non-privileged users from executing privileged functions.</li></ul><h2>Weight</h2><p>10</p><h2>Fix Recommendation</h2><p>Secure database object resources not found in SECRTT or found to be secured internally, through the external security manager (ESM) chosen by the organization (e.g., TSS, ACF 2, RACF). Users, groups, roles, etc., are defined to the ESM, and it is here where the authorization for ownership is determined. Once externally secured, create or modify the #SECRTT entries specify TYPE=ENTRY and TYPE=OCCURRENCE for the database resource type with the parameter of SECBY=EXTERNAL. Use the RESTYPE DB which implicitly includes the subtypes AREA, NRU, QSCH, NSCH, TABL, DACC, and SACC. For each subtype, an entry must be added. The restypes for database tables and DMCLs are DBTB and DMCL, respectively.<br />
+<br />
+Update the #SECRTT macro to contain the following entries:<br />
+#SECRTT    TYPE=ENTRY,<br />
+      RESTYPE=UPRF,                                           X<br />
+      SECBY=EXTERNAL,                                         X<br />
+      Additional parameters required<br />
+#SECRTT TYPE=OCCURRENCE,                                      X<br />
+      RESNAME='SYSUSER',                                      X<br />
+      RESTYPE=DB,                                             X<br />
+      SECBY=EXTERNAL,                                         X<br />
+      Additional parameters required<br />
+#SECRTT TYPE=OCCURRENCE,                                      X<br />
+      RESTYPE=DB,                                             X<br />
+      RESNAME='SYSTEM',                                       X<br />
+      SECBY=EXTERNAL,                                         X<br />
+      Additional parameters required<br />
+#SECRTT TYPE=OCCURRENCE,                                      X<br />
+      RESTYPE=DB,                                             X<br />
+      RESNAME='SYSMSG',                                       X<br />
+      SECBY=EXTERNAL,                                         X<br />
+      Additional parameters required<br />
+#SECRTT TYPE=OCCURRENCE,                                      X<br />
+      RESTYPE=DB,                                             X<br />
+      RESNAME='CATSYS',                                       X<br />
+      SECBY=EXTERNAL,                                         X<br />
+      Additional parameters required<br />
+<br />
+For batch jobs that access database objects, use the ESM standard dataset security and/or the user-written exit 14 to secure the database objects.</p><h2>Check Contents</h2><p>Examine load module RHDCSRTT by executing CA IDMS utility IDMSSRTD, or by issuing command &quot;DCMT DISPLAY SRTT&quot; while signed onto the CV, and reviewing the output.<br />
+<br />
+Note: This requires PTFs SO07995 and SO09476.<br />
+<br />
+Confirm that the #SECRTT macro contains entries for the following resource names: UPRF for User Profile, SYSTEM for System Dictionary, SYSMSG for System Messages, and CATSYS for the User Catalog. <br />
+<br />
+If all of these resource names are not defined to external security, this is a finding.</p><h2>Vulnerability Number</h2><p>V-251638</p><h2>Documentable</h2><p>False</p><h2>Rule Version</h2><p>IDMS-DB-000670</p><h2>Severity Override Guidance</h2><p>Examine load module RHDCSRTT by executing CA IDMS utility IDMSSRTD, or by issuing command &quot;DCMT DISPLAY SRTT&quot; while signed onto the CV, and reviewing the output.<br />
+<br />
+Note: This requires PTFs SO07995 and SO09476.<br />
+<br />
+Confirm that the #SECRTT macro contains entries for the following resource names: UPRF for User Profile, SYSTEM for System Dictionary, SYSMSG for System Messages, and CATSYS for the User Catalog. <br />
+<br />
+If all of these resource names are not defined to external security, this is a finding.</p><h2>Check Content Reference</h2><p>M</p><h2>Target Key</h2><p>5418</p></body></html>

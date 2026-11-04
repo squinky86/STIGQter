@@ -1,0 +1,78 @@
+<!doctype html><html lang="en"><head><meta charset="utf-8"><title>STIGQter: STIG Check Details: SV-253991r844006_rule: The Juniper perimeter router must not be configured to redistribute static routes to an alternate gateway service provider into BGP or an IGP peering with the NIPRNet or to other autonomous systems.</title><link rel="icon" type="image/svg+xml" href="STIGQter.svg" /><script async src="https://www.googletagmanager.com/gtag/js?id=UA-31381839-2"></script><script src="include.js"></script><script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-4110907817782130" crossorigin="anonymous"></script></head><body><div><img src="STIGQter.svg" alt="STIGQter" style="height:1em;" /> <a href="https://www.stigqter.com/">STIGQter</a>: <a href="main.html">STIG Summary</a>: <a href="U_Juniper_EX_Switches_RTR_STIG_V2R1_Manual-xccdf.html">Juniper EX Series Switches Router Security Technical Implementation Guide Version: 2 Release: 1 Benchmark Date: 24 Jul 2024</a>:</div> <h1>The Juniper perimeter router must not be configured to redistribute static routes to an alternate gateway service provider into BGP or an IGP peering with the NIPRNet or to other autonomous systems.</h1><h2>DISA Rule</h2><p>SV-253991r844006_rule</p><h2>Vulnerability Number</h2><p>V-253991</p><h2>Group Title</h2><p>SRG-NET-000019-RTR-000010</p><h2>Rule Version</h2><p>JUEX-RT-000190</p><h2>Severity</h2><p>CAT III</p><h2>CCI(s)</h2><ul><li>CCI-001414 - Enforce approved authorizations for controlling the flow of information between connected systems based on organization-defined information flow control policies.</li></ul><h2>Weight</h2><p>10</p><h2>Fix Recommendation</h2><p>This requirement is not applicable for the DODIN Backbone.<br />
+<br />
+Configure the router so that static routes are not redistributed to an alternate gateway into either an Exterior Gateway Protocol or Interior Gateway Protocol to the NIPRNet or to other autonomous systems.<br />
+set policy-options policy-statement &lt;policy name&gt; term 1 from protocol static<br />
+set policy-options policy-statement &lt;policy name&gt; term 1 then reject<br />
+<br />
+set protocols bgp group &lt;group name&gt; export &lt;policy name&gt;<br />
+set protocols bgp group &lt;group name&gt; neighbor &lt;address&gt; export &lt;policy name&gt;<br />
+set protocols bgp export &lt;policy name&gt;<br />
+<br />
+set protocols ospf export &lt;policy name&gt;<br />
+set protocols ospf3 export &lt;policy name&gt;</p><h2>Check Contents</h2><p>This requirement is not applicable for the DODIN Backbone. <br />
+<br />
+Review the configuration of the router connecting to the alternate gateway and verify that redistribution of static routes to the alternate gateway is not occurring. Juniper routers use export policies to limit redistribution of routes. Verify a policy exists to filter route redistribution.<br />
+<br />
+[edit policy-options]<br />
+policy-statement &lt;name&gt; {<br />
+    term 1 {<br />
+        from protocol static;<br />
+        then reject;<br />
+    }<br />
+}<br />
+<br />
+Verify the export policy is applied to the EGP and/or IGP protocol.<br />
+[edit protocols]<br />
+bgp {<br />
+    export &lt;policy-name&gt;;<br />
+    group &lt;group name&gt; {<br />
+        type external;<br />
+        export &lt;policy-name&gt;;<br />
+        neighbor &lt;address&gt; {<br />
+            export &lt;policy-name&gt;;<br />
+        }<br />
+    }<br />
+    ospf {<br />
+        export &lt;policy name&gt;;<br />
+    }<br />
+    ospf3 {<br />
+        export &lt;policy name&gt;;<br />
+    }<br />
+}<br />
+<br />
+Note: BGP supports export statements at the protocol level (global), the group level, and the neighbor level. Only the most specific policy is applied.<br />
+<br />
+If the static routes to the alternate gateway are being redistributed into BGP or any IGP peering with a NIPRNet gateway or another autonomous system, this is a finding.</p><h2>Vulnerability Number</h2><p>V-253991</p><h2>Documentable</h2><p>False</p><h2>Rule Version</h2><p>JUEX-RT-000190</p><h2>Severity Override Guidance</h2><p>This requirement is not applicable for the DODIN Backbone. <br />
+<br />
+Review the configuration of the router connecting to the alternate gateway and verify that redistribution of static routes to the alternate gateway is not occurring. Juniper routers use export policies to limit redistribution of routes. Verify a policy exists to filter route redistribution.<br />
+<br />
+[edit policy-options]<br />
+policy-statement &lt;name&gt; {<br />
+    term 1 {<br />
+        from protocol static;<br />
+        then reject;<br />
+    }<br />
+}<br />
+<br />
+Verify the export policy is applied to the EGP and/or IGP protocol.<br />
+[edit protocols]<br />
+bgp {<br />
+    export &lt;policy-name&gt;;<br />
+    group &lt;group name&gt; {<br />
+        type external;<br />
+        export &lt;policy-name&gt;;<br />
+        neighbor &lt;address&gt; {<br />
+            export &lt;policy-name&gt;;<br />
+        }<br />
+    }<br />
+    ospf {<br />
+        export &lt;policy name&gt;;<br />
+    }<br />
+    ospf3 {<br />
+        export &lt;policy name&gt;;<br />
+    }<br />
+}<br />
+<br />
+Note: BGP supports export statements at the protocol level (global), the group level, and the neighbor level. Only the most specific policy is applied.<br />
+<br />
+If the static routes to the alternate gateway are being redistributed into BGP or any IGP peering with a NIPRNet gateway or another autonomous system, this is a finding.</p><h2>Check Content Reference</h2><p>M</p><h2>Target Key</h2><p>5479</p></body></html>

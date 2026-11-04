@@ -1,0 +1,54 @@
+<!doctype html><html lang="en"><head><meta charset="utf-8"><title>STIGQter: STIG Check Details: SV-224567r1145086_rule: WebSphere MQ RESLEVEL resources in the appropriate ADMIN resource class must be protected in accordance with security requirements.</title><link rel="icon" type="image/svg+xml" href="STIGQter.svg" /><script async src="https://www.googletagmanager.com/gtag/js?id=UA-31381839-2"></script><script src="include.js"></script><script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-4110907817782130" crossorigin="anonymous"></script></head><body><div><img src="STIGQter.svg" alt="STIGQter" style="height:1em;" /> <a href="https://www.stigqter.com/">STIGQter</a>: <a href="main.html">STIG Summary</a>: <a href="U_zOS_WebsphereMQ_for_RACF_STIG_V7R3_Manual-xccdf.html">zOS WebSphere MQ for RACF Security Technical Implementation Guide Version: 7 Release: 3 Benchmark Date: 01 Jul 2026</a>:</div> <h1>WebSphere MQ RESLEVEL resources in the appropriate ADMIN resource class must be protected in accordance with security requirements.</h1><h2>DISA Rule</h2><p>SV-224567r1145086_rule</p><h2>Vulnerability Number</h2><p>V-224567</p><h2>Group Title</h2><p>SRG-OS-000080</p><h2>Rule Version</h2><p>ZWMQ0060</p><h2>Severity</h2><p>CAT II</p><h2>CCI(s)</h2><ul><li>CCI-001762 - Disable or remove organization-defined functions, ports, protocols, software, and services within the system deemed to be unnecessary and/or nonsecure.</li><li>CCI-000213 - Enforce approved authorizations for logical access to information and system resources in accordance with applicable access control policies.</li></ul><h2>Weight</h2><p>10</p><h2>Fix Recommendation</h2><p>RESLEVEL security profiles control the number of userids checked for API-resource security. RESLEVEL security will not be implemented due to the following exposures and limitations:<br />
+RESLEVEL is a powerful option that can cause the bypassing of all security checks.<br />
+Security audit records are not created when the RESLEVEL profile is utilized.<br />
+If the WARNING option is specified on a RESLEVEL profile, no warning messages are produced.<br />
+<br />
+To protect against any profile in the MQADMIN or MXADMIN class, such as ssid.**, resolving to a RESLEVEL profile, a ssid.RESLEVEL profile will be defined for each queue manager with UACC(NONE) specified and no users or groups specified in the access list.<br />
+<br />
+Ensure the following items are in effect:<br />
+<br />
+Note: ssid is the queue manager name (a.k.a., subsystem identifier).<br />
+<br />
+A RESLEVEL resource (i.e., ssid.RESLEVEL) is defined for each queue manager to the MQADMIN  or MXADMIN resource class with a UACC(NONE).<br />
+Access authorization to these RESLEVEL resources restricts all access. No users or groups must be specified in the access list.<br />
+<br />
+A set of sample commands is provided below to implement the profile necessary for proper security. <br />
+<br />
+RDEF MQADMIN &lt;ssid&gt;.RESLEVEL UACC(NONE) OWNER(ADMIN) AUDIT(ALL(READ)) DATA('MQADMIN PROFILE REQUIRED BY ZWMQ0060')<br />
+<br />
+SETR RACL(MQADMIN) REF<br />
+<br />
+Note that an additional WebSphere MQ Refresh may be required for active queue managers. This is done from the CONSOLE:<br />
+<br />
+The example is for a queue manager named QMD1:<br />
+&gt;QMD1 REFRESH SECURITY(*)</p><h2>Check Contents</h2><p>Refer to the following reports produced by the Data Set and Resource Data Collection:<br />
+<br />
+- SENSITVE.RPT(MQADMIN).<br />
+- SENSITVE.RPT(MXADMIN).<br />
+<br />
+Automated Analysis<br />
+Refer to the following report produced by the Data Set and Resource Data Collection:<br />
+<br />
+- PDI(ZWMQ0060).<br />
+<br />
+Review the MQADMIN and GMQADMIN resource classes (or MXADMIN and GMXADMIN resource classes, if SCYCASE is set to MIXED). If the following guidance is true, this is not a finding.<br />
+<br />
+Note: ssid is the queue manager name (a.k.a., subsystem identifier).<br />
+<br />
+A RESLEVEL resource (i.e., ssid.RESLEVEL) is defined for each queue manager with a UACC(NONE).<br />
+Access authorization to these RESLEVEL resources restricts all access. No users or groups must be specified in the access list.</p><h2>Vulnerability Number</h2><p>V-224567</p><h2>Documentable</h2><p>False</p><h2>Rule Version</h2><p>ZWMQ0060</p><h2>Severity Override Guidance</h2><p>Refer to the following reports produced by the Data Set and Resource Data Collection:<br />
+<br />
+- SENSITVE.RPT(MQADMIN).<br />
+- SENSITVE.RPT(MXADMIN).<br />
+<br />
+Automated Analysis<br />
+Refer to the following report produced by the Data Set and Resource Data Collection:<br />
+<br />
+- PDI(ZWMQ0060).<br />
+<br />
+Review the MQADMIN and GMQADMIN resource classes (or MXADMIN and GMXADMIN resource classes, if SCYCASE is set to MIXED). If the following guidance is true, this is not a finding.<br />
+<br />
+Note: ssid is the queue manager name (a.k.a., subsystem identifier).<br />
+<br />
+A RESLEVEL resource (i.e., ssid.RESLEVEL) is defined for each queue manager with a UACC(NONE).<br />
+Access authorization to these RESLEVEL resources restricts all access. No users or groups must be specified in the access list.</p><h2>Check Content Reference</h2><p>M</p><h2>Target Key</h2><p>4167</p></body></html>

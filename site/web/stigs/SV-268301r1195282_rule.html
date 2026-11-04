@@ -1,0 +1,42 @@
+<!doctype html><html lang="en"><head><meta charset="utf-8"><title>STIGQter: STIG Check Details: SV-268301r1195282_rule: The HYCU virtual appliance must terminate all network connections associated with a device management session at the end of the session, or the session must be terminated after five minutes of inactivity except to fulfill documented and validated mission requirements.</title><link rel="icon" type="image/svg+xml" href="STIGQter.svg" /><script async src="https://www.googletagmanager.com/gtag/js?id=UA-31381839-2"></script><script src="include.js"></script><script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-4110907817782130" crossorigin="anonymous"></script></head><body><div><img src="STIGQter.svg" alt="STIGQter" style="height:1em;" /> <a href="https://www.stigqter.com/">STIGQter</a>: <a href="main.html">STIG Summary</a>: <a href="U_HYCU_Protege_STIG_V1R3_Manual-xccdf.html">HYCU Protege Security Technical Implementation Guide Version: 1 Release: 3 Benchmark Date: 01 Jul 2026</a>:</div> <h1>The HYCU virtual appliance must terminate all network connections associated with a device management session at the end of the session, or the session must be terminated after five minutes of inactivity except to fulfill documented and validated mission requirements.</h1><h2>DISA Rule</h2><p>SV-268301r1195282_rule</p><h2>Vulnerability Number</h2><p>V-268301</p><h2>Group Title</h2><p>SRG-APP-000190-NDM-000267</p><h2>Rule Version</h2><p>HYCU-ND-000950</p><h2>Severity</h2><p>CAT I</p><h2>CCI(s)</h2><ul><li>CCI-001133 - Terminate the network connection associated with a communications session at the end of the session or after an organization-defined time period of inactivity.</li></ul><h2>Weight</h2><p>10</p><h2>Fix Recommendation</h2><p>Configure the operating system to enforce timeout settings.<br />
+<br />
+Add the following line to &quot;/home/hycu/.bashrc&quot; (or modify the line to have the required value):<br />
+TMOUT=300<br />
+<br />
+Add the following line to &quot;/etc/ssh/sshd_config&quot; (or modify the line to have the required value):<br />
+ClientAliveInterval 300<br />
+<br />
+Edit the &quot;/opt/grizzly/config.properties&quot; file by running the command:<br />
+sudo vi /opt/grizzly/config.properties<br />
+<br />
+Add the following line or modify the line to have the required value:<br />
+api.session.expiration.minutes=5<br />
+<br />
+Save the file by typing:<br />
+:wq!</p><h2>Check Contents</h2><p>Log in to the HYCU VM console. For console connections, check for the value of the &quot;TMOUT&quot; option in &quot;/home/hycu/.bashrc&quot; with the following command:<br />
+grep TMOUT /home/hycu/.bashrc<br />
+<br />
+If the &quot;TMOUT&quot; value is not set to &quot;300&quot; or less, this is a finding.<br />
+<br />
+For SSH connections, check for the value of the &quot;ClientAliveInterval&quot; option in &quot;/etc/ssh/sshd_config&quot; with the following command:<br />
+grep ClientAliveInterval /etc/ssh/sshd_config<br />
+<br />
+If the &quot;ClientAliveInterval&quot; value is not set to &quot;300&quot; or less, this is a finding.<br />
+<br />
+For UI connections, run the following command to check configured HYCU session timeout:<br />
+cat /opt/grizzly/config.properties | grep api.session.expiration.minutes<br />
+<br />
+If not configured at &quot;5&quot; or less, this is a finding.</p><h2>Vulnerability Number</h2><p>V-268301</p><h2>Documentable</h2><p>False</p><h2>Rule Version</h2><p>HYCU-ND-000950</p><h2>Severity Override Guidance</h2><p>Log in to the HYCU VM console. For console connections, check for the value of the &quot;TMOUT&quot; option in &quot;/home/hycu/.bashrc&quot; with the following command:<br />
+grep TMOUT /home/hycu/.bashrc<br />
+<br />
+If the &quot;TMOUT&quot; value is not set to &quot;300&quot; or less, this is a finding.<br />
+<br />
+For SSH connections, check for the value of the &quot;ClientAliveInterval&quot; option in &quot;/etc/ssh/sshd_config&quot; with the following command:<br />
+grep ClientAliveInterval /etc/ssh/sshd_config<br />
+<br />
+If the &quot;ClientAliveInterval&quot; value is not set to &quot;300&quot; or less, this is a finding.<br />
+<br />
+For UI connections, run the following command to check configured HYCU session timeout:<br />
+cat /opt/grizzly/config.properties | grep api.session.expiration.minutes<br />
+<br />
+If not configured at &quot;5&quot; or less, this is a finding.</p><h2>Check Content Reference</h2><p>M</p><h2>Target Key</h2><p>5660</p></body></html>

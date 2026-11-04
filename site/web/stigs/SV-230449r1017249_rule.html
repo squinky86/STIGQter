@@ -1,0 +1,33 @@
+<!doctype html><html lang="en"><head><meta charset="utf-8"><title>STIGQter: STIG Check Details: SV-230449r1017249_rule: Successful/unsuccessful uses of the truncate, ftruncate, creat, open, openat, and open_by_handle_at system calls in RHEL 8 must generate an audit record.</title><link rel="icon" type="image/svg+xml" href="STIGQter.svg" /><script async src="https://www.googletagmanager.com/gtag/js?id=UA-31381839-2"></script><script src="include.js"></script><script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-4110907817782130" crossorigin="anonymous"></script></head><body><div><img src="STIGQter.svg" alt="STIGQter" style="height:1em;" /> <a href="https://www.stigqter.com/">STIGQter</a>: <a href="main.html">STIG Summary</a>: <a href="U_RHEL_8_STIG_V2R8_Manual-xccdf.html">Red Hat Enterprise Linux 8 Security Technical Implementation Guide Version: 2 Release: 8 Benchmark Date: 01 Jul 2026</a>:</div> <h1>Successful/unsuccessful uses of the truncate, ftruncate, creat, open, openat, and open_by_handle_at system calls in RHEL 8 must generate an audit record.</h1><h2>DISA Rule</h2><p>SV-230449r1017249_rule</p><h2>Vulnerability Number</h2><p>V-230449</p><h2>Group Title</h2><p>SRG-OS-000062-GPOS-00031</p><h2>Rule Version</h2><p>RHEL-08-030420</p><h2>Severity</h2><p>CAT II</p><h2>CCI(s)</h2><ul><li>CCI-000169 - Provide audit record generation capability for the event types the system is capable of auditing as defined in AU-2 a. on organization-defined information system components.</li></ul><h2>Weight</h2><p>10</p><h2>Fix Recommendation</h2><p>Configure the audit system to generate an audit event for any successful/unsuccessful use of the &quot;truncate&quot;, &quot;ftruncate&quot;, &quot;creat&quot;, &quot;open&quot;, &quot;openat&quot;, and &quot;open_by_handle_at&quot; system calls by adding or updating the following rules in the &quot;/etc/audit/rules.d/audit.rules&quot; file:<br />
+<br />
+-a always,exit -F arch=b32 -S truncate,ftruncate,creat,open,openat,open_by_handle_at -F exit=-EPERM -F auid&gt;=1000 -F auid!=unset -k perm_access<br />
+-a always,exit -F arch=b64 -S truncate,ftruncate,creat,open,openat,open_by_handle_at -F exit=-EPERM -F auid&gt;=1000 -F auid!=unset -k perm_access<br />
+<br />
+-a always,exit -F arch=b32 -S truncate,ftruncate,creat,open,openat,open_by_handle_at -F exit=-EACCES -F auid&gt;=1000 -F auid!=unset -k perm_access<br />
+-a always,exit -F arch=b64 -S truncate,ftruncate,creat,open,openat,open_by_handle_at -F exit=-EACCES -F auid&gt;=1000 -F auid!=unset -k perm_access<br />
+<br />
+The audit daemon must be restarted for the changes to take effect.</p><h2>Check Contents</h2><p>Verify RHEL 8 generates an audit record upon successful/unsuccessful attempts to use the &quot;truncate&quot;, &quot;ftruncate&quot;, &quot;creat&quot;, &quot;open&quot;, &quot;openat&quot;, and &quot;open_by_handle_at&quot; system calls by using the following command to check the file system rules in &quot;/etc/audit/audit.rules&quot;:<br />
+<br />
+$ sudo grep 'open\|truncate\|creat' /etc/audit/audit.rules<br />
+<br />
+-a always,exit -F arch=b32 -S truncate,ftruncate,creat,open,openat,open_by_handle_at -F exit=-EPERM -F auid&gt;=1000 -F auid!=unset -k perm_access<br />
+-a always,exit -F arch=b64 -S truncate,ftruncate,creat,open,openat,open_by_handle_at -F exit=-EPERM -F auid&gt;=1000 -F auid!=unset -k perm_access<br />
+<br />
+-a always,exit -F arch=b32 -S truncate,ftruncate,creat,open,openat,open_by_handle_at -F exit=-EACCES -F auid&gt;=1000 -F auid!=unset -k perm_access<br />
+-a always,exit -F arch=b64 -S truncate,ftruncate,creat,open,openat,open_by_handle_at -F exit=-EACCES -F auid&gt;=1000 -F auid!=unset -k perm_access<br />
+<br />
+If the output does not produce rules containing &quot;-F exit=-EPERM&quot;, this is a finding.<br />
+If the output does not produce rules containing &quot;-F exit=-EACCES&quot;, this is a finding.<br />
+If the command does not return an audit rule for &quot;truncate&quot;, &quot;ftruncate&quot;, &quot;creat&quot;, &quot;open&quot;, &quot;openat&quot;, and &quot;open_by_handle_at&quot; or any of the lines returned are commented out, this is a finding.</p><h2>Vulnerability Number</h2><p>V-230449</p><h2>Documentable</h2><p>False</p><h2>Rule Version</h2><p>RHEL-08-030420</p><h2>Severity Override Guidance</h2><p>Verify RHEL 8 generates an audit record upon successful/unsuccessful attempts to use the &quot;truncate&quot;, &quot;ftruncate&quot;, &quot;creat&quot;, &quot;open&quot;, &quot;openat&quot;, and &quot;open_by_handle_at&quot; system calls by using the following command to check the file system rules in &quot;/etc/audit/audit.rules&quot;:<br />
+<br />
+$ sudo grep 'open\|truncate\|creat' /etc/audit/audit.rules<br />
+<br />
+-a always,exit -F arch=b32 -S truncate,ftruncate,creat,open,openat,open_by_handle_at -F exit=-EPERM -F auid&gt;=1000 -F auid!=unset -k perm_access<br />
+-a always,exit -F arch=b64 -S truncate,ftruncate,creat,open,openat,open_by_handle_at -F exit=-EPERM -F auid&gt;=1000 -F auid!=unset -k perm_access<br />
+<br />
+-a always,exit -F arch=b32 -S truncate,ftruncate,creat,open,openat,open_by_handle_at -F exit=-EACCES -F auid&gt;=1000 -F auid!=unset -k perm_access<br />
+-a always,exit -F arch=b64 -S truncate,ftruncate,creat,open,openat,open_by_handle_at -F exit=-EACCES -F auid&gt;=1000 -F auid!=unset -k perm_access<br />
+<br />
+If the output does not produce rules containing &quot;-F exit=-EPERM&quot;, this is a finding.<br />
+If the output does not produce rules containing &quot;-F exit=-EACCES&quot;, this is a finding.<br />
+If the command does not return an audit rule for &quot;truncate&quot;, &quot;ftruncate&quot;, &quot;creat&quot;, &quot;open&quot;, &quot;openat&quot;, and &quot;open_by_handle_at&quot; or any of the lines returned are commented out, this is a finding.</p><h2>Check Content Reference</h2><p>M</p><h2>Target Key</h2><p>2921</p></body></html>

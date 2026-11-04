@@ -1,0 +1,41 @@
+<!doctype html><html lang="en"><head><meta charset="utf-8"><title>STIGQter: STIG Check Details: SV-260941r966180_rule: The network ports on all running containers must be limited to required ports.</title><link rel="icon" type="image/svg+xml" href="STIGQter.svg" /><script async src="https://www.googletagmanager.com/gtag/js?id=UA-31381839-2"></script><script src="include.js"></script><script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-4110907817782130" crossorigin="anonymous"></script></head><body><div><img src="STIGQter.svg" alt="STIGQter" style="height:1em;" /> <a href="https://www.stigqter.com/">STIGQter</a>: <a href="main.html">STIG Summary</a>: <a href="U_Mirantis_Kubernetes_Engine_STIG_V2R1_Manual-xccdf.html">Mirantis Kubernetes Engine Security Technical Implementation Guide Version: 2 Release: 1 Benchmark Date: 24 Jul 2024</a>:</div> <h1>The network ports on all running containers must be limited to required ports.</h1><h2>DISA Rule</h2><p>SV-260941r966180_rule</p><h2>Vulnerability Number</h2><p>V-260941</p><h2>Group Title</h2><p>SRG-APP-000383-CTR-000910</p><h2>Rule Version</h2><p>CNTR-MK-001360</p><h2>Severity</h2><p>CAT II</p><h2>CCI(s)</h2><ul><li>CCI-001762 - Disable or remove organization-defined functions, ports, protocols, software, and services within the system deemed to be unnecessary and/or nonsecure.</li></ul><h2>Weight</h2><p>10</p><h2>Fix Recommendation</h2><p>Configuring an ingress controller is the preferred method to manage external ports. If an ingress controller is not used and unnecessary ports are in use, the container or pod network configurations must be updated.<br />
+<br />
+To update a pod's configuration, log in to the MKE UI as an administrator. <br />
+<br />
+Navigate to Kubernetes &gt;&gt; Pods and click the pod with an open port that is not allowed.<br />
+<br />
+Click the three dots in the upper right corner (edit).<br />
+<br />
+Modify the .yaml file to remove the port. Example:<br />
+<br />
+spec: <br />
+   container:<br />
+   - name: [pod name]<br />
+     ports:<br />
+      - containerPort: 80 [replace with 443]<br />
+<br />
+Click &quot;Save&quot;.<br />
+<br />
+For a Swarm service, navigate to Swarm &gt;&gt; Services and click on the service with unauthorized port.<br />
+<br />
+Click the three dots in the top left corner.<br />
+<br />
+Select &quot;Network&quot; in the pop-up and remove the unauthorized port.<br />
+<br />
+Click &quot;Save&quot;.</p><h2>Check Contents</h2><p>Verify that only needed ports are open on all running containers. If an ingress controller is configured for the cluster, this check is not applicable.<br />
+<br />
+Via CLI: As a remote MKE admin, execute the following command using a client bundle:<br />
+<br />
+docker ps -q | xargs docker inspect --format '{{ .Id }}: Ports={{ .NetworkSettings.Ports }}'<br />
+<br />
+Review the list and ensure that the ports mapped are the ones really needed for the containers per the requirements set forth by the System Security Plan (SSP).<br />
+<br />
+If ports are not documented and approved in the SSP, this is a finding.</p><h2>Vulnerability Number</h2><p>V-260941</p><h2>Documentable</h2><p>False</p><h2>Rule Version</h2><p>CNTR-MK-001360</p><h2>Severity Override Guidance</h2><p>Verify that only needed ports are open on all running containers. If an ingress controller is configured for the cluster, this check is not applicable.<br />
+<br />
+Via CLI: As a remote MKE admin, execute the following command using a client bundle:<br />
+<br />
+docker ps -q | xargs docker inspect --format '{{ .Id }}: Ports={{ .NetworkSettings.Ports }}'<br />
+<br />
+Review the list and ensure that the ports mapped are the ones really needed for the containers per the requirements set forth by the System Security Plan (SSP).<br />
+<br />
+If ports are not documented and approved in the SSP, this is a finding.</p><h2>Check Content Reference</h2><p>M</p><h2>Target Key</h2><p>5595</p></body></html>

@@ -1,0 +1,80 @@
+<!doctype html><html lang="en"><head><meta charset="utf-8"><title>STIGQter: STIG Check Details: SV-253972r843949_rule: The Juniper EX switch must not have any access interfaces assigned to a VLAN configured as native for any trunked interface.</title><link rel="icon" type="image/svg+xml" href="STIGQter.svg" /><script async src="https://www.googletagmanager.com/gtag/js?id=UA-31381839-2"></script><script src="include.js"></script><script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-4110907817782130" crossorigin="anonymous"></script></head><body><div><img src="STIGQter.svg" alt="STIGQter" style="height:1em;" /> <a href="https://www.stigqter.com/">STIGQter</a>: <a href="main.html">STIG Summary</a>: <a href="U_Juniper_EX_Switches_L2S_STIG_V2R5_Manual-xccdf.html">Juniper EX Series Switches Layer 2 Switch Security Technical Implementation Guide Version: 2 Release: 5 Benchmark Date: 01 Jul 2026</a>:</div> <h1>The Juniper EX switch must not have any access interfaces assigned to a VLAN configured as native for any trunked interface.</h1><h2>DISA Rule</h2><p>SV-253972r843949_rule</p><h2>Vulnerability Number</h2><p>V-253972</p><h2>Group Title</h2><p>SRG-NET-000512-L2S-000013</p><h2>Rule Version</h2><p>JUEX-L2-000250</p><h2>Severity</h2><p>CAT III</p><h2>CCI(s)</h2><ul><li>CCI-000366 - Implement the security configuration settings.</li></ul><h2>Weight</h2><p>10</p><h2>Fix Recommendation</h2><p>Configure all access interfaces with a VLAN separate from any VLAN configured as native on any trunked interface.<br />
+<br />
+set interfaces &lt;interface name&gt; unit 0 family ethernet-switching interface-mode access<br />
+set interfaces &lt;interface name&gt; unit 0 family ethernet-switching vlan members vlan_name <br />
+<br />
+set vlans &lt;vlan_name&gt; vlan-id &lt;VLAN ID not assigned as native to any trunked interface&gt;</p><h2>Check Contents</h2><p>Review the switch configurations and examine all access interfaces. Verify that they do not belong to any VLAN configured as native for any trunked interface.<br />
+<br />
+Example trunked interface with native VLAN ID 30 and an access interface configured for vlan_name:<br />
+[edit interfaces]<br />
+&lt;trunk interface name&gt; {<br />
+    native-vlan-id 30;<br />
+    unit 0 {<br />
+        family ethernet-switching {<br />
+            interface-mode trunk;<br />
+            vlan {<br />
+                members [ &lt;vlan name&gt; ... &lt;vlan name&gt; ];<br />
+            }<br />
+        }<br />
+    }<br />
+}<br />
+&lt;access interface name&gt; {<br />
+    unit 0 {<br />
+        family ethernet-switching {<br />
+            interface-mode access;<br />
+            vlan {<br />
+                members vlan_name;<br />
+            }<br />
+        }<br />
+    }<br />
+}<br />
+<br />
+Example VLANs (vlan-id 30 is configured on a trunked interface as native and must not be assigned to access interfaces):<br />
+[edit vlans]<br />
+vlan_30 {<br />
+    vlan-id 30;<br />
+}<br />
+vlan_name {<br />
+    vlan-id &lt;VLAN ID not 30&gt;;<br />
+}<br />
+<br />
+If trunked interfaces are not configured with a native VLAN ID, this is not a finding.<br />
+<br />
+If any trunked interface is configured with a native VLAN ID, and any access interfaces have been assigned to the same VLAN, this is a finding.</p><h2>Vulnerability Number</h2><p>V-253972</p><h2>Documentable</h2><p>False</p><h2>Rule Version</h2><p>JUEX-L2-000250</p><h2>Severity Override Guidance</h2><p>Review the switch configurations and examine all access interfaces. Verify that they do not belong to any VLAN configured as native for any trunked interface.<br />
+<br />
+Example trunked interface with native VLAN ID 30 and an access interface configured for vlan_name:<br />
+[edit interfaces]<br />
+&lt;trunk interface name&gt; {<br />
+    native-vlan-id 30;<br />
+    unit 0 {<br />
+        family ethernet-switching {<br />
+            interface-mode trunk;<br />
+            vlan {<br />
+                members [ &lt;vlan name&gt; ... &lt;vlan name&gt; ];<br />
+            }<br />
+        }<br />
+    }<br />
+}<br />
+&lt;access interface name&gt; {<br />
+    unit 0 {<br />
+        family ethernet-switching {<br />
+            interface-mode access;<br />
+            vlan {<br />
+                members vlan_name;<br />
+            }<br />
+        }<br />
+    }<br />
+}<br />
+<br />
+Example VLANs (vlan-id 30 is configured on a trunked interface as native and must not be assigned to access interfaces):<br />
+[edit vlans]<br />
+vlan_30 {<br />
+    vlan-id 30;<br />
+}<br />
+vlan_name {<br />
+    vlan-id &lt;VLAN ID not 30&gt;;<br />
+}<br />
+<br />
+If trunked interfaces are not configured with a native VLAN ID, this is not a finding.<br />
+<br />
+If any trunked interface is configured with a native VLAN ID, and any access interfaces have been assigned to the same VLAN, this is a finding.</p><h2>Check Content Reference</h2><p>M</p><h2>Target Key</h2><p>5478</p></body></html>

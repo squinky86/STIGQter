@@ -1,0 +1,25 @@
+<!doctype html><html lang="en"><head><meta charset="utf-8"><title>STIGQter: STIG Check Details: SV-253738r1193220_rule: MariaDB must only accept end entity certificates issued by DoD PKI or DoD-approved PKI Certification Authorities (CAs) for the establishment of all encrypted sessions.</title><link rel="icon" type="image/svg+xml" href="STIGQter.svg" /><script async src="https://www.googletagmanager.com/gtag/js?id=UA-31381839-2"></script><script src="include.js"></script><script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-4110907817782130" crossorigin="anonymous"></script></head><body><div><img src="STIGQter.svg" alt="STIGQter" style="height:1em;" /> <a href="https://www.stigqter.com/">STIGQter</a>: <a href="main.html">STIG Summary</a>: <a href="U_MariaDB_Enterprise_10-x_STIG_V2R5_Manual-xccdf.html">MariaDB Enterprise 10.x Security Technical Implementation Guide Version: 2 Release: 5 Benchmark Date: 01 Apr 2026</a>:</div> <h1>MariaDB must only accept end entity certificates issued by DoD PKI or DoD-approved PKI Certification Authorities (CAs) for the establishment of all encrypted sessions.</h1><h2>DISA Rule</h2><p>SV-253738r1193220_rule</p><h2>Vulnerability Number</h2><p>V-253738</p><h2>Group Title</h2><p>SRG-APP-000427-DB-000385</p><h2>Rule Version</h2><p>MADB-10-008500</p><h2>Severity</h2><p>CAT II</p><h2>CCI(s)</h2><ul><li>CCI-002470 - Only allow the use of organization-defined certificate authorities for verification of the establishment of protected sessions.</li></ul><h2>Weight</h2><p>10</p><h2>Fix Recommendation</h2><p>Revoke trust in any certificates not issued by a DoD-approved certificate authority.   <br />
+ <br />
+Configure MariaDB to accept only DoD and DoD-approved PKI end-entity certificates.</p><h2>Check Contents</h2><p>As the database administrator, check the following variables: <br />
+<br />
+MariaDB&gt; SHOW GLOBAL VARIABLES LIKE 'ssl_ca';<br />
+MariaDB&gt; SHOW GLOBAL VARIABLES LIKE 'ssl_cert'; <br />
+<br />
+The Value column will show the fully qualified file name of the ssl_ca and ssl_cert respectively. The issuer can be found by running the following command:<br />
+$ openssl x509 -in  fully-qualified-file-name-of-ssl_ca  -noout -issuer<br />
+$ openssl x509 -in  fully-qualified-file-name-of-ssl_cert  -noout -issuer<br />
+ <br />
+The issuer should be checked against the authoritative list of DoD-approved PKIs, which is published at https://dl.dod.cyber.mil/wp-content/uploads/pki-pke/pdf/unclass-ss_using_commercial_pki_certificates.pdf.<br />
+<br />
+If the DBMS will accept non-DoD approved PKI end-entity certificates, this is a finding.</p><h2>Vulnerability Number</h2><p>V-253738</p><h2>Documentable</h2><p>False</p><h2>Rule Version</h2><p>MADB-10-008500</p><h2>Severity Override Guidance</h2><p>As the database administrator, check the following variables: <br />
+<br />
+MariaDB&gt; SHOW GLOBAL VARIABLES LIKE 'ssl_ca';<br />
+MariaDB&gt; SHOW GLOBAL VARIABLES LIKE 'ssl_cert'; <br />
+<br />
+The Value column will show the fully qualified file name of the ssl_ca and ssl_cert respectively. The issuer can be found by running the following command:<br />
+$ openssl x509 -in  fully-qualified-file-name-of-ssl_ca  -noout -issuer<br />
+$ openssl x509 -in  fully-qualified-file-name-of-ssl_cert  -noout -issuer<br />
+ <br />
+The issuer should be checked against the authoritative list of DoD-approved PKIs, which is published at https://dl.dod.cyber.mil/wp-content/uploads/pki-pke/pdf/unclass-ss_using_commercial_pki_certificates.pdf.<br />
+<br />
+If the DBMS will accept non-DoD approved PKI end-entity certificates, this is a finding.</p><h2>Check Content Reference</h2><p>M</p><h2>Target Key</h2><p>5475</p></body></html>

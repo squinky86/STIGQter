@@ -1,0 +1,111 @@
+<!doctype html><html lang="en"><head><meta charset="utf-8"><title>STIGQter: STIG Check Details: SV-215408r991589_rule: The /etc/shells file must exist on AIX systems.</title><link rel="icon" type="image/svg+xml" href="STIGQter.svg" /><script async src="https://www.googletagmanager.com/gtag/js?id=UA-31381839-2"></script><script src="include.js"></script><script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-4110907817782130" crossorigin="anonymous"></script></head><body><div><img src="STIGQter.svg" alt="STIGQter" style="height:1em;" /> <a href="https://www.stigqter.com/">STIGQter</a>: <a href="main.html">STIG Summary</a>: <a href="U_IBM_AIX_7-x_STIG_V3R3_Manual-xccdf.html">IBM AIX 7.x Security Technical Implementation Guide Version: 3 Release: 3 Benchmark Date: 01 Jul 2026</a>:</div> <h1>The /etc/shells file must exist on AIX systems.</h1><h2>DISA Rule</h2><p>SV-215408r991589_rule</p><h2>Vulnerability Number</h2><p>V-215408</p><h2>Group Title</h2><p>SRG-OS-000480-GPOS-00227</p><h2>Rule Version</h2><p>AIX7-00-003110</p><h2>Severity</h2><p>CAT II</p><h2>CCI(s)</h2><ul><li>CCI-000366 - Implement the security configuration settings.</li></ul><h2>Weight</h2><p>10</p><h2>Fix Recommendation</h2><p>Run the following command to set shells attribute for stanza usw in &quot;/etc/security/login.cfg&quot;: <br />
+# chsec -f /etc/security/login.cfg -s usw -a shells=&lt;list of approved shells separated by comma&gt; <br />
+<br />
+Create the &quot;/etc/shells&quot; file and add all approved shells there, one shell per line: <br />
+# vi /etc/shells<br />
+<br />
+Change the ownership and mode-bit of &quot;/etc/shells&quot;:<br />
+# chown bin.bin /etc/shells<br />
+# chmod 644 /etc/shells</p><h2>Check Contents</h2><p>AIX ships the following shells that should be considered as &quot;approved&quot; shells:<br />
+<br />
+/bin/sh<br />
+/bin/bsh<br />
+/bin/csh<br />
+/bin/ksh<br />
+/bin/tsh<br />
+/bin/ksh93<br />
+/usr/bin/sh<br />
+/usr/bin/bsh<br />
+/usr/bin/csh<br />
+/usr/bin/ksh<br />
+/usr/bin/tsh<br />
+/usr/bin/ksh93<br />
+/usr/bin/rksh<br />
+/usr/bin/rksh93<br />
+/usr/sbin/uucp/uucico<br />
+/usr/sbin/sliplogin<br />
+/usr/sbin/snappd<br />
+<br />
+ISSO/SA may install other shells. Ask ISSO/SA for other approved shells other than the shells shipped by AIX.<br />
+<br />
+Check if file &quot;/etc/shells&quot; exists by running:<br />
+<br />
+# ls -la /etc/shells <br />
+rw-r--r--    1 bin      bin             111 Jun 01 2015  /etc/shells<br />
+<br />
+If &quot;/etc/shells&quot; file does not exist, this is a finding.<br />
+<br />
+Verify that &quot;/etc/shells&quot; only contains approved shells:<br />
+<br />
+# cat /etc/shells<br />
+/bin/csh<br />
+/bin/ksh<br />
+/bin/psh<br />
+/bin/tsh<br />
+/bin/bsh<br />
+/usr/bin/csh<br />
+/usr/bin/ksh<br />
+/usr/bin/tsh<br />
+/usr/bin/bsh<br />
+<br />
+If &quot;/etc/shells&quot; file contains a non-approved shell, this is a finding.<br />
+<br />
+Check &quot;/etc/security/login.cfg&quot; for the shells attribute value of &quot;usw:&quot; stanza:<br />
+<br />
+# lssec -f /etc/security/login.cfg -s usw -a shells<br />
+usw shells=/bin/sh,/bin/bsh,/bin/csh,/bin/ksh,/bin/tsh,/bin/ksh93,/usr/bin/sh,/usr/bin/bsh,/usr/bin/csh,/usr/bin/ksh,/usr/bin/tsh,/usr/bin/ksh93,/usr/bin/rksh,/usr/bin/rksh93,/usr/sbin/uucp/uucico,/usr/sbin/sliplogin,/usr/sbin/snappd<br />
+<br />
+If the shells attribute value does not exist or is empty, this is a finding.<br />
+If the returned shells attribute value contains a shell that is not defined in &quot;/etc/shells&quot; file, this is a finding.<br />
+If the returned shells attribute value contains a non-approved shell, this is a finding.</p><h2>Vulnerability Number</h2><p>V-215408</p><h2>Documentable</h2><p>False</p><h2>Rule Version</h2><p>AIX7-00-003110</p><h2>Severity Override Guidance</h2><p>AIX ships the following shells that should be considered as &quot;approved&quot; shells:<br />
+<br />
+/bin/sh<br />
+/bin/bsh<br />
+/bin/csh<br />
+/bin/ksh<br />
+/bin/tsh<br />
+/bin/ksh93<br />
+/usr/bin/sh<br />
+/usr/bin/bsh<br />
+/usr/bin/csh<br />
+/usr/bin/ksh<br />
+/usr/bin/tsh<br />
+/usr/bin/ksh93<br />
+/usr/bin/rksh<br />
+/usr/bin/rksh93<br />
+/usr/sbin/uucp/uucico<br />
+/usr/sbin/sliplogin<br />
+/usr/sbin/snappd<br />
+<br />
+ISSO/SA may install other shells. Ask ISSO/SA for other approved shells other than the shells shipped by AIX.<br />
+<br />
+Check if file &quot;/etc/shells&quot; exists by running:<br />
+<br />
+# ls -la /etc/shells <br />
+rw-r--r--    1 bin      bin             111 Jun 01 2015  /etc/shells<br />
+<br />
+If &quot;/etc/shells&quot; file does not exist, this is a finding.<br />
+<br />
+Verify that &quot;/etc/shells&quot; only contains approved shells:<br />
+<br />
+# cat /etc/shells<br />
+/bin/csh<br />
+/bin/ksh<br />
+/bin/psh<br />
+/bin/tsh<br />
+/bin/bsh<br />
+/usr/bin/csh<br />
+/usr/bin/ksh<br />
+/usr/bin/tsh<br />
+/usr/bin/bsh<br />
+<br />
+If &quot;/etc/shells&quot; file contains a non-approved shell, this is a finding.<br />
+<br />
+Check &quot;/etc/security/login.cfg&quot; for the shells attribute value of &quot;usw:&quot; stanza:<br />
+<br />
+# lssec -f /etc/security/login.cfg -s usw -a shells<br />
+usw shells=/bin/sh,/bin/bsh,/bin/csh,/bin/ksh,/bin/tsh,/bin/ksh93,/usr/bin/sh,/usr/bin/bsh,/usr/bin/csh,/usr/bin/ksh,/usr/bin/tsh,/usr/bin/ksh93,/usr/bin/rksh,/usr/bin/rksh93,/usr/sbin/uucp/uucico,/usr/sbin/sliplogin,/usr/sbin/snappd<br />
+<br />
+If the shells attribute value does not exist or is empty, this is a finding.<br />
+If the returned shells attribute value contains a shell that is not defined in &quot;/etc/shells&quot; file, this is a finding.<br />
+If the returned shells attribute value contains a non-approved shell, this is a finding.</p><h2>Check Content Reference</h2><p>M</p><h2>Target Key</h2><p>4012</p></body></html>

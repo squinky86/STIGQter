@@ -1,0 +1,38 @@
+<!doctype html><html lang="en"><head><meta charset="utf-8"><title>STIGQter: STIG Check Details: SV-258833r933560_rule: The Photon operating system must audit all account modifications.</title><link rel="icon" type="image/svg+xml" href="STIGQter.svg" /><script async src="https://www.googletagmanager.com/gtag/js?id=UA-31381839-2"></script><script src="include.js"></script><script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-4110907817782130" crossorigin="anonymous"></script></head><body><div><img src="STIGQter.svg" alt="STIGQter" style="height:1em;" /> <a href="https://www.stigqter.com/">STIGQter</a>: <a href="main.html">STIG Summary</a>: <a href="U_VMW_vSphere_8-0_VCSA_Photon_OS_4-0_STIG_V1R1_Manual-xccdf.html">VMware vSphere 8.0 vCenter Appliance Photon OS 4.0 Security Technical Implementation Guide Version: 1 Release: 1 Benchmark Date: 31 Oct 2023</a>:</div> <h1>The Photon operating system must audit all account modifications.</h1><h2>DISA Rule</h2><p>SV-258833r933560_rule</p><h2>Vulnerability Number</h2><p>V-258833</p><h2>Group Title</h2><p>SRG-OS-000239-GPOS-00089</p><h2>Rule Version</h2><p>PHTN-40-000076</p><h2>Severity</h2><p>CAT II</p><h2>CCI(s)</h2><ul><li>CCI-001403 - Automatically audit account modification actions.</li></ul><h2>Weight</h2><p>10</p><h2>Fix Recommendation</h2><p>Navigate to and open:<br />
+<br />
+/etc/audit/rules.d/audit.STIG.rules<br />
+<br />
+Add or update the following lines:<br />
+<br />
+-w /usr/sbin/usermod -p x -k usermod<br />
+-w /usr/sbin/groupmod -p x -k groupmod<br />
+<br />
+At the command line, run the following command to load the new audit rules:<br />
+<br />
+# /sbin/augenrules --load<br />
+<br />
+Note: An &quot;audit.STIG.rules&quot; file is provided with this guidance for placement in &quot;/etc/audit/rules.d&quot; that contains all rules needed for auditd.<br />
+<br />
+Note: An older &quot;audit.STIG.rules&quot; may exist and may reference older &quot;GEN&quot; SRG IDs. This file can be removed and replaced as necessary with an updated one.</p><h2>Check Contents</h2><p>At the command line, run the following command to verify an audit rule exists to audit account modifications:<br />
+<br />
+# auditctl -l | grep -E &quot;(usermod|groupmod)&quot;<br />
+<br />
+Example result:<br />
+<br />
+-w /usr/sbin/usermod -p x -k usermod<br />
+-w /usr/sbin/groupmod -p x -k groupmod<br />
+<br />
+If either &quot;usermod&quot; or &quot;groupmod&quot; are not listed with a permissions filter of at least &quot;x&quot;, this is a finding.<br />
+<br />
+Note: This check depends on the &quot;auditd&quot; service to be in a running state for accurate results. The &quot;auditd&quot; service is enabled in control PHTN-40-000016.</p><h2>Vulnerability Number</h2><p>V-258833</p><h2>Documentable</h2><p>False</p><h2>Rule Version</h2><p>PHTN-40-000076</p><h2>Severity Override Guidance</h2><p>At the command line, run the following command to verify an audit rule exists to audit account modifications:<br />
+<br />
+# auditctl -l | grep -E &quot;(usermod|groupmod)&quot;<br />
+<br />
+Example result:<br />
+<br />
+-w /usr/sbin/usermod -p x -k usermod<br />
+-w /usr/sbin/groupmod -p x -k groupmod<br />
+<br />
+If either &quot;usermod&quot; or &quot;groupmod&quot; are not listed with a permissions filter of at least &quot;x&quot;, this is a finding.<br />
+<br />
+Note: This check depends on the &quot;auditd&quot; service to be in a running state for accurate results. The &quot;auditd&quot; service is enabled in control PHTN-40-000016.</p><h2>Check Content Reference</h2><p>M</p><h2>Target Key</h2><p>5569</p></body></html>

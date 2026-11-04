@@ -1,0 +1,73 @@
+<!doctype html><html lang="en"><head><meta charset="utf-8"><title>STIGQter: STIG Check Details: SV-250335r1015469_rule: Multifactor authentication for network access to privileged accounts must be used.</title><link rel="icon" type="image/svg+xml" href="STIGQter.svg" /><script async src="https://www.googletagmanager.com/gtag/js?id=UA-31381839-2"></script><script src="include.js"></script><script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-4110907817782130" crossorigin="anonymous"></script></head><body><div><img src="STIGQter.svg" alt="STIGQter" style="height:1em;" /> <a href="https://www.stigqter.com/">STIGQter</a>: <a href="main.html">STIG Summary</a>: <a href="U_IBM_WebSphere_Liberty_Server_STIG_V2R4_Manual-xccdf.html">IBM WebSphere Liberty Server Security Technical Implementation Guide Version: 2 Release: 4 Benchmark Date: 01 Apr 2026</a>:</div> <h1>Multifactor authentication for network access to privileged accounts must be used.</h1><h2>DISA Rule</h2><p>SV-250335r1015469_rule</p><h2>Vulnerability Number</h2><p>V-250335</p><h2>Group Title</h2><p>SRG-APP-000149-AS-000102</p><h2>Rule Version</h2><p>IBMW-LS-000390</p><h2>Severity</h2><p>CAT I</p><h2>CCI(s)</h2><ul><li>CCI-000187 - For public key-based authentication, map the authenticated identity to the account of the individual or group.</li><li>CCI-000765 - Implement multifactor authentication for network access to privileged accounts.</li><li>CCI-002009 - Accept Personal Identity Verification-compliant credentials from other federal agencies.</li><li>CCI-002010 - Electronically verify Personal Identity Verification-compliant credentials from other federal agencies.</li></ul><h2>Weight</h2><p>10</p><h2>Fix Recommendation</h2><p>Refer to IBM documentation on how to configure TLS and client based certificate authentication for additional configuration details. The following is a summary list of items needed to configure the system for certificate based authentication. Production systems and installations will vary. <br />
+<br />
+The application’s web.xml file must be configured to use client certs.<br />
+<br />
+EXAMPLE:<br />
+&lt;login-config&gt;<br />
+    &lt;auth-method&gt;CLIENT-CERT&lt;/auth-method&gt;<br />
+&lt;/login-config&gt;<br />
+<br />
+The server.xml features must be configured to use transportSecurity and an ldap configuration. <br />
+<br />
+&lt;featureManager&gt;<br />
+&lt;feature&gt;appSecurity-2.0&lt;/feature&gt;<br />
+&lt;feature&gt;ldapRegistry-3.0&lt;/feature&gt;<br />
+&lt;feature&gt;transportSecurity-1.0&lt;/feature&gt;<br />
+&lt;/featureManager&gt;<br />
+<br />
+The server.xml TLS and LDAP settings must be configured. The following is an EXAMPLE only. &quot;Default&quot; verbiage and keystore information in the below SSL configuration will be different in production systems.<br />
+<br />
+ &lt;!-- default SSL configuration is defaultSSLSettings --&gt;      <br />
+    &lt;sslDefault sslRef=&quot;defaultSSLSettings&quot; /&gt;<br />
+    &lt;ssl id=&quot;defaultSSLSettings&quot; keyStoreRef=&quot;defaultKeyStore&quot; sslProtocol=&quot;SSL_TLSv2&quot; trustStoreRef=&quot;defaultTrustStore&quot;<br />
+clientAuthentication=&quot;true&quot;/&gt;<br />
+<br />
+ &lt;keyStore id=&quot;defaultKeyStore&quot; location=&quot;key.jks&quot; type=&quot;JKS&quot; password=&quot;defaultPWD&quot; /&gt;<br />
+ &lt;keyStore id=&quot;defaultTrustStore&quot; location=&quot;key.jks&quot; type=&quot;JKS&quot; password=&quot;defaultPWD&quot; /&gt;<br />
+<br />
+Configure LDAP certificate filter settings according the certificates being used.<br />
+<br />
+&lt;ldapRegistry id=&quot;ldap&quot; realm=&quot;SampleLdapRealm&quot; host=&quot;${ldap.server.name}&quot; port=&quot;${ldap.server.port}&quot; ignoreCase=&quot;true&quot;<br />
+baseDN=&quot;${ldap.server.base.dn}&quot;<br />
+ldapType=&quot;${ldap.vendor.type}&quot;<br />
+certificateMapMode=&quot;Certificate_Filter&quot; or &quot;Exact_DN&quot;<br />
+certificateFilter=&quot;${your certificate mapping}&quot;<br />
+searchTimeout=&quot;8m&quot;<br />
+sslEnabled=&quot;true&quot;&gt;<br />
+&lt;/ldapRegistry&gt;</p><h2>Check Contents</h2><p>As a user with local file access to ${server.config.dir}/server.xml file, verify the TLS connection used for managing the server is configured to use clientAuthentication.<br />
+<br />
+&lt;featureManager&gt;<br />
+&lt;feature&gt;appSecurity-2.0&lt;/feature&gt;<br />
+&lt;feature&gt;ldapRegistry-3.0&lt;/feature&gt;<br />
+&lt;feature&gt;transportSecurity-1.0&lt;/feature&gt;<br />
+&lt;/featureManager&gt;<br />
+<br />
+Verify the TLS connection used for managing the server is configured to use clientAuthentication. The following is used as an example.<br />
+<br />
+If the clientAuthentication setting for the TLS management application is not set to &quot;true&quot;, this is a finding.<br />
+<br />
+EXAMPLE:<br />
+&lt;!-- default SSL configuration is defaultSSLSettings --&gt;      <br />
+    &lt;sslDefault sslRef=&quot;defaultSSLSettings&quot; /&gt;<br />
+    &lt;ssl id=&quot;defaultSSLSettings&quot; keyStoreRef=&quot;defaultKeyStore&quot; sslProtocol=&quot;SSL_TLSv2&quot; trustStoreRef=&quot;defaultTrustStore&quot;<br />
+clientAuthentication=&quot;true&quot;/&gt;<br />
+<br />
+Access the web management interface via a web browser and verify TLS secured connectivity to the web based management application.</p><h2>Vulnerability Number</h2><p>V-250335</p><h2>Documentable</h2><p>False</p><h2>Rule Version</h2><p>IBMW-LS-000390</p><h2>Severity Override Guidance</h2><p>As a user with local file access to ${server.config.dir}/server.xml file, verify the TLS connection used for managing the server is configured to use clientAuthentication.<br />
+<br />
+&lt;featureManager&gt;<br />
+&lt;feature&gt;appSecurity-2.0&lt;/feature&gt;<br />
+&lt;feature&gt;ldapRegistry-3.0&lt;/feature&gt;<br />
+&lt;feature&gt;transportSecurity-1.0&lt;/feature&gt;<br />
+&lt;/featureManager&gt;<br />
+<br />
+Verify the TLS connection used for managing the server is configured to use clientAuthentication. The following is used as an example.<br />
+<br />
+If the clientAuthentication setting for the TLS management application is not set to &quot;true&quot;, this is a finding.<br />
+<br />
+EXAMPLE:<br />
+&lt;!-- default SSL configuration is defaultSSLSettings --&gt;      <br />
+    &lt;sslDefault sslRef=&quot;defaultSSLSettings&quot; /&gt;<br />
+    &lt;ssl id=&quot;defaultSSLSettings&quot; keyStoreRef=&quot;defaultKeyStore&quot; sslProtocol=&quot;SSL_TLSv2&quot; trustStoreRef=&quot;defaultTrustStore&quot;<br />
+clientAuthentication=&quot;true&quot;/&gt;<br />
+<br />
+Access the web management interface via a web browser and verify TLS secured connectivity to the web based management application.</p><h2>Check Content Reference</h2><p>M</p><h2>Target Key</h2><p>5424</p></body></html>

@@ -1,0 +1,59 @@
+<!doctype html><html lang="en"><head><meta charset="utf-8"><title>STIGQter: STIG Check Details: SV-270525r1112473_rule: The Oracle SQL92_SECURITY parameter must be set to TRUE.</title><link rel="icon" type="image/svg+xml" href="STIGQter.svg" /><script async src="https://www.googletagmanager.com/gtag/js?id=UA-31381839-2"></script><script src="include.js"></script><script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-4110907817782130" crossorigin="anonymous"></script></head><body><div><img src="STIGQter.svg" alt="STIGQter" style="height:1em;" /> <a href="https://www.stigqter.com/">STIGQter</a>: <a href="main.html">STIG Summary</a>: <a href="U_Oracle_Database_19c_STIG_V1R5_Manual-xccdf.html">Oracle Database 19c Security Technical Implementation Guide Version: 1 Release: 5 Benchmark Date: 01 Apr 2026</a>:</div> <h1>The Oracle SQL92_SECURITY parameter must be set to TRUE.</h1><h2>DISA Rule</h2><p>SV-270525r1112473_rule</p><h2>Vulnerability Number</h2><p>V-270525</p><h2>Group Title</h2><p>SRG-APP-000516-DB-000363</p><h2>Rule Version</h2><p>O19C-00-009300</p><h2>Severity</h2><p>CAT II</p><h2>CCI(s)</h2><ul><li>CCI-000366 - Implement the security configuration settings.</li></ul><h2>Weight</h2><p>10</p><h2>Fix Recommendation</h2><p>Enable SQL92 security.<br />
+<br />
+From SQL*Plus:<br />
+<br />
+alter system set sql92_security = TRUE scope = spfile;<br />
+<br />
+The above SQL*Plus command will set the parameter to take effect at next system startup.</p><h2>Check Contents</h2><p>To verify the current status of the SQL92_SECURITY parameter use the SQL statement: <br />
+<br />
+If using a non-CDB database: <br />
+From SQL*Plus:<br />
+<br />
+select value from v$parameter where name = 'sql92_security';<br />
+<br />
+If using a CDB database:<br />
+From SQL*Plus:<br />
+<br />
+column name format a20<br />
+column parameter_value format a20<br />
+<br />
+SELECT name, inst_id, con_id, value AS PARAMETER_VALUE <br />
+FROM sys.gv_$parameter <br />
+WHERE name = 'sql92_security' <br />
+ORDER BY 1;<br />
+<br />
+Check Result:<br />
+<br />
+The CDB database and all PDBs must be checked.<br />
+<br />
+If the value returned is set to FALSE, this is a finding.<br />
+<br />
+If the parameter is set to TRUE or does not exist, this is not a finding.<br />
+<br />
+In any instance or container, if the PARAMETER_VALUE is not TRUE, that is a finding.</p><h2>Vulnerability Number</h2><p>V-270525</p><h2>Documentable</h2><p>False</p><h2>Rule Version</h2><p>O19C-00-009300</p><h2>Severity Override Guidance</h2><p>To verify the current status of the SQL92_SECURITY parameter use the SQL statement: <br />
+<br />
+If using a non-CDB database: <br />
+From SQL*Plus:<br />
+<br />
+select value from v$parameter where name = 'sql92_security';<br />
+<br />
+If using a CDB database:<br />
+From SQL*Plus:<br />
+<br />
+column name format a20<br />
+column parameter_value format a20<br />
+<br />
+SELECT name, inst_id, con_id, value AS PARAMETER_VALUE <br />
+FROM sys.gv_$parameter <br />
+WHERE name = 'sql92_security' <br />
+ORDER BY 1;<br />
+<br />
+Check Result:<br />
+<br />
+The CDB database and all PDBs must be checked.<br />
+<br />
+If the value returned is set to FALSE, this is a finding.<br />
+<br />
+If the parameter is set to TRUE or does not exist, this is not a finding.<br />
+<br />
+In any instance or container, if the PARAMETER_VALUE is not TRUE, that is a finding.</p><h2>Check Content Reference</h2><p>M</p><h2>Target Key</h2><p>5672</p></body></html>

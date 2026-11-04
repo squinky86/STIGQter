@@ -1,0 +1,38 @@
+<!doctype html><html lang="en"><head><meta charset="utf-8"><title>STIGQter: STIG Check Details: SV-251242r961128_rule: Redis Enterprise DBMS must protect the confidentiality and integrity of all information at rest.</title><link rel="icon" type="image/svg+xml" href="STIGQter.svg" /><script async src="https://www.googletagmanager.com/gtag/js?id=UA-31381839-2"></script><script src="include.js"></script><script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-4110907817782130" crossorigin="anonymous"></script></head><body><div><img src="STIGQter.svg" alt="STIGQter" style="height:1em;" /> <a href="https://www.stigqter.com/">STIGQter</a>: <a href="main.html">STIG Summary</a>: <a href="U_Redis_Enterprise_6-x_STIG_V2R2_Manual-xccdf.html">Redis Enterprise 6.x Security Technical Implementation Guide Version: 2 Release: 2 Benchmark Date: 24 Oct 2024</a>:</div> <h1>Redis Enterprise DBMS must protect the confidentiality and integrity of all information at rest.</h1><h2>DISA Rule</h2><p>SV-251242r961128_rule</p><h2>Vulnerability Number</h2><p>V-251242</p><h2>Group Title</h2><p>SRG-APP-000231-DB-000154</p><h2>Rule Version</h2><p>RD6X-00-010800</p><h2>Severity</h2><p>CAT I</p><h2>CCI(s)</h2><ul><li>CCI-001199 - Protects the confidentiality and/or integrity of organization-defined information at rest.</li></ul><h2>Weight</h2><p>10</p><h2>Fix Recommendation</h2><p>Red Hat Enterprise Linux natively supports partition encryption through the Linux Unified Key Setup-on-disk-format (LUKS) technology. The easiest way to encrypt a partition is during installation time.<br />
+<br />
+For manual installations, select the &quot;Encrypt&quot; checkbox during partition creation to encrypt the partition. When this option is selected the system will prompt for a passphrase to use in decrypting the partition. The passphrase will subsequently need to be entered manually every time the system boots.<br />
+<br />
+For automated/unattended installations, it is possible to use Kickstart by adding the &quot;--encrypted&quot; and &quot;--passphrase=&quot; options to the definition of each partition to be encrypted. For example, the following line would encrypt the root partition:<br />
+part / --fstype=ext3 --size=100 --onpart=hda1 --encrypted --passphrase=[PASSPHRASE]<br />
+<br />
+Any [PASSPHRASE] is stored in the Kickstart in plaintext, and the Kickstart must then be protected accordingly. Omitting the &quot;--passphrase=&quot; option from the partition definition will cause the installer to pause and interactively ask for the passphrase during installation.<br />
+<br />
+Detailed information on encrypting partitions using LUKS can be found on the Red Hat Documentation website: https://access.redhat.com/documentation/en-us/red_hat_enterprise_linux/7/html/security_guide/sec-encryption</p><h2>Check Contents</h2><p>If the application owner and Authorizing Official have determined that encryption of data at rest is NOT required, this is not a finding.<br />
+<br />
+Verify the operating system implements encryption to protect the confidentiality and integrity of information at rest.<br />
+<br />
+If a disk or filesystem requires encryption, ask the system owner, DBA, and SA to demonstrate the use of filesystem and/or disk-level encryption. If this is required and is not found, this is a finding.<br />
+<br />
+To check if full disk encryption is enabled, log in to RHEL as an admin user and run the following commands:<br />
+# lsblk<br />
+<br />
+Identify the partition that Redis Enterprise is located on.<br />
+# blkid /dev/[name of partition]<br />
+<br />
+If the output shows TYPE=&quot;crypto_LUKS&quot; then the partition is encrypted.<br />
+<br />
+If encryption must be used and is not employed, this is a finding.</p><h2>Vulnerability Number</h2><p>V-251242</p><h2>Documentable</h2><p>False</p><h2>Rule Version</h2><p>RD6X-00-010800</p><h2>Severity Override Guidance</h2><p>If the application owner and Authorizing Official have determined that encryption of data at rest is NOT required, this is not a finding.<br />
+<br />
+Verify the operating system implements encryption to protect the confidentiality and integrity of information at rest.<br />
+<br />
+If a disk or filesystem requires encryption, ask the system owner, DBA, and SA to demonstrate the use of filesystem and/or disk-level encryption. If this is required and is not found, this is a finding.<br />
+<br />
+To check if full disk encryption is enabled, log in to RHEL as an admin user and run the following commands:<br />
+# lsblk<br />
+<br />
+Identify the partition that Redis Enterprise is located on.<br />
+# blkid /dev/[name of partition]<br />
+<br />
+If the output shows TYPE=&quot;crypto_LUKS&quot; then the partition is encrypted.<br />
+<br />
+If encryption must be used and is not employed, this is a finding.</p><h2>Check Content Reference</h2><p>M</p><h2>Target Key</h2><p>5443</p></body></html>

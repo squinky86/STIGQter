@@ -1,0 +1,55 @@
+<!doctype html><html lang="en"><head><meta charset="utf-8"><title>STIGQter: STIG Check Details: SV-221120r999729_rule: The Cisco PE switch providing MPLS Layer 2 Virtual Private Network (L2VPN) services must be configured to authenticate targeted Label Distribution Protocol (LDP) sessions used to exchange virtual circuit (VC) information using a FIPS-approved message authentication code algorithm.</title><link rel="icon" type="image/svg+xml" href="STIGQter.svg" /><script async src="https://www.googletagmanager.com/gtag/js?id=UA-31381839-2"></script><script src="include.js"></script><script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-4110907817782130" crossorigin="anonymous"></script></head><body><div><img src="STIGQter.svg" alt="STIGQter" style="height:1em;" /> <a href="https://www.stigqter.com/">STIGQter</a>: <a href="main.html">STIG Summary</a>: <a href="U_Cisco_NX-OS_Switch_RTR_STIG_V3R4_Manual-xccdf.html">Cisco NX OS Switch RTR Security Technical Implementation Guide Version: 3 Release: 4 Benchmark Date: 01 Apr 2026</a>:</div> <h1>The Cisco PE switch providing MPLS Layer 2 Virtual Private Network (L2VPN) services must be configured to authenticate targeted Label Distribution Protocol (LDP) sessions used to exchange virtual circuit (VC) information using a FIPS-approved message authentication code algorithm.</h1><h2>DISA Rule</h2><p>SV-221120r999729_rule</p><h2>Vulnerability Number</h2><p>V-221120</p><h2>Group Title</h2><p>SRG-NET-000343-RTR-000001</p><h2>Rule Version</h2><p>CISC-RT-000660</p><h2>Severity</h2><p>CAT II</p><h2>CCI(s)</h2><ul><li>CCI-001958 - Authenticate organization-defined devices and/or types of devices before establishing a local, remote, and/or network connection.</li></ul><h2>Weight</h2><p>10</p><h2>Fix Recommendation</h2><p>The severity level can be downgraded to a category 3 if the switch is configured to authenticate targeted LDP sessions using MD5 as shown in the example below:<br />
+<br />
+Step 1: Configure a key chain for LDP sessions.<br />
+<br />
+ SW1(config)# key chain LDP_KEY<br />
+SW1(config-keychain)# key 1<br />
+SW1(config-keychain-key)# key-string xxxxxxxxxxxx<br />
+SW1(config-keychain-key)# send-lifetime 00:00:00 Oct 1 2019 23:59:59 Dec 31 2019<br />
+SW1(config-keychain-key)# accept-lifetime 00:00:00 Oct 1 2019 01:05:00 Jan 1 2020<br />
+SW1(config-keychain-key)# exit<br />
+SW1(config-keychain)# exit<br />
+<br />
+Step 2: Configure a prefix lists to identify LDP neighbors.<br />
+<br />
+SW1(config)# ip prefix-list LDP_NBR1 permit 10.1.22.2/32<br />
+SW1(config)# ip prefix-list LDP_NBR2 permit 10.1.12.4/32<br />
+<br />
+Step 3: Apply the key chain to the LDP neighbors.<br />
+<br />
+SW1 (config)# mpls ldp configurations<br />
+SW1 (config-ldp)# password required for LDP_NBR1<br />
+SW1 (config-ldp)# password option 1 for LDP_NBR1 key-chain LDP_KEY<br />
+SW1 (config-ldp)# password required for LDP_NBR2<br />
+SW1 (config-ldp)# password option 1 for LDP_NBR2 key-chain LDP_KEY<br />
+SW1 (config-ldp)# end</p><h2>Check Contents</h2><p>The Cisco switch is not compliant with this requirement; hence, it is a finding. However, the severity level can be downgraded to a category 3 if the switch is configured to authenticate targeted LDP sessions using MD5 as shown in the configuration example below:<br />
+<br />
+Step 1: Verify that LDP neighbors are authenticating session, advertisement, and notification messages as shown in the example below:<br />
+<br />
+mpls ldp configurations<br />
+ password required for LDP_NBR1<br />
+ password option 1 for LDP_NBR1 key-chain LDP_KEY<br />
+ password required for LDP_NBR2<br />
+ password option 1 for LDP_NBR2 key-chain LDP_KEY<br />
+<br />
+Step 2: Verify that the neighbors identified in step 1 have the correct prefix.<br />
+<br />
+ip prefix-list LDP_NBR1 permit 10.1.22.2/32<br />
+ip prefix-list LDP_NBR2 permit 10.1.12.4/32<br />
+<br />
+If the switch is not configured to authenticate targeted LDP sessions using MD5, this is a finding. The finding will remain as a CAT II.</p><h2>Vulnerability Number</h2><p>V-221120</p><h2>Documentable</h2><p>False</p><h2>Rule Version</h2><p>CISC-RT-000660</p><h2>Severity Override Guidance</h2><p>The Cisco switch is not compliant with this requirement; hence, it is a finding. However, the severity level can be downgraded to a category 3 if the switch is configured to authenticate targeted LDP sessions using MD5 as shown in the configuration example below:<br />
+<br />
+Step 1: Verify that LDP neighbors are authenticating session, advertisement, and notification messages as shown in the example below:<br />
+<br />
+mpls ldp configurations<br />
+ password required for LDP_NBR1<br />
+ password option 1 for LDP_NBR1 key-chain LDP_KEY<br />
+ password required for LDP_NBR2<br />
+ password option 1 for LDP_NBR2 key-chain LDP_KEY<br />
+<br />
+Step 2: Verify that the neighbors identified in step 1 have the correct prefix.<br />
+<br />
+ip prefix-list LDP_NBR1 permit 10.1.22.2/32<br />
+ip prefix-list LDP_NBR2 permit 10.1.12.4/32<br />
+<br />
+If the switch is not configured to authenticate targeted LDP sessions using MD5, this is a finding. The finding will remain as a CAT II.</p><h2>Check Content Reference</h2><p>M</p><h2>Target Key</h2><p>4075</p></body></html>

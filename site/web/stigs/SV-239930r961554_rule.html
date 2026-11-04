@@ -1,0 +1,55 @@
+<!doctype html><html lang="en"><head><meta charset="utf-8"><title>STIGQter: STIG Check Details: SV-239930r961554_rule: The Cisco ASA must be configured to use FIPS-validated Keyed-Hash Message Authentication Code (HMAC) to protect the integrity of non-local maintenance and diagnostic communications.</title><link rel="icon" type="image/svg+xml" href="STIGQter.svg" /><script async src="https://www.googletagmanager.com/gtag/js?id=UA-31381839-2"></script><script src="include.js"></script><script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-4110907817782130" crossorigin="anonymous"></script></head><body><div><img src="STIGQter.svg" alt="STIGQter" style="height:1em;" /> <a href="https://www.stigqter.com/">STIGQter</a>: <a href="main.html">STIG Summary</a>: <a href="U_Cisco_ASA_NDM_STIG_V2R5_Manual-xccdf.html">Cisco ASA NDM Security Technical Implementation Guide Version: 2 Release: 5 Benchmark Date: 01 Jul 2026</a>:</div> <h1>The Cisco ASA must be configured to use FIPS-validated Keyed-Hash Message Authentication Code (HMAC) to protect the integrity of non-local maintenance and diagnostic communications.</h1><h2>DISA Rule</h2><p>SV-239930r961554_rule</p><h2>Vulnerability Number</h2><p>V-239930</p><h2>Group Title</h2><p>SRG-APP-000411-NDM-000330</p><h2>Rule Version</h2><p>CASA-ND-001140</p><h2>Severity</h2><p>CAT I</p><h2>CCI(s)</h2><ul><li>CCI-002890 - Implement organization-defined cryptographic mechanisms to protect the integrity of nonlocal maintenance and diagnostic communications.</li></ul><h2>Weight</h2><p>10</p><h2>Fix Recommendation</h2><p>SSH Example<br />
+<br />
+Step 1: Enable FIPS mode via the fips enable command.<br />
+<br />
+Step 2: Configure SSH to only use FIPS-compliant ciphers and Diffie-Hellman Group 14 for the key exchange.<br />
+<br />
+ASA(config)# ssh cipher encryption fips <br />
+ASA(config)# ssh key-exchange group dh-group14-sha<br />
+<br />
+SNMP Example<br />
+<br />
+ASA(config)# snmp-server group NETOPS v3 auth<br />
+ASA(config)# snmp-server user FWADMIN NETOPS v3 auth sha xxxxxxxxxxxxxxx<br />
+ASA(config)# snmp-server host NDM_INTERFACE 10.1.48.10  version 3 FWADMIN <br />
+ASA(config)# end</p><h2>Check Contents</h2><p>SSH Example<br />
+<br />
+Step 1: Verify that FIPS mode is enabled as shown in the example below. <br />
+<br />
+fips enable<br />
+<br />
+Step 2: Verify that SSH is configured to only use FIPS-compliant ciphers and that Diffie-Hellman Group 14  is used for the key exchange as shown in the example below.<br />
+<br />
+ssh version 2<br />
+ssh cipher encryption fips<br />
+ssh key-exchange group dh-group14-sha1<br />
+<br />
+Note: The ASA only supports SSHv2.<br />
+<br />
+SNMP Example<br />
+<br />
+snmp-server group NETOPS v3 auth <br />
+snmp-server user FWADMIN NETOPS v3 engineID xxxxxxxxxxxx encrypted auth sha xxxxxxxxxxxxxxxx <br />
+snmp-server host NDM_INTERFACE 10.1.48.10  version 3 FWADMIN<br />
+<br />
+If the ASA is not configured to implement cryptographic mechanisms to protect the integrity of remote maintenance sessions using a FIPS 140-2 approved algorithm, this is a finding.</p><h2>Vulnerability Number</h2><p>V-239930</p><h2>Documentable</h2><p>False</p><h2>Rule Version</h2><p>CASA-ND-001140</p><h2>Severity Override Guidance</h2><p>SSH Example<br />
+<br />
+Step 1: Verify that FIPS mode is enabled as shown in the example below. <br />
+<br />
+fips enable<br />
+<br />
+Step 2: Verify that SSH is configured to only use FIPS-compliant ciphers and that Diffie-Hellman Group 14  is used for the key exchange as shown in the example below.<br />
+<br />
+ssh version 2<br />
+ssh cipher encryption fips<br />
+ssh key-exchange group dh-group14-sha1<br />
+<br />
+Note: The ASA only supports SSHv2.<br />
+<br />
+SNMP Example<br />
+<br />
+snmp-server group NETOPS v3 auth <br />
+snmp-server user FWADMIN NETOPS v3 engineID xxxxxxxxxxxx encrypted auth sha xxxxxxxxxxxxxxxx <br />
+snmp-server host NDM_INTERFACE 10.1.48.10  version 3 FWADMIN<br />
+<br />
+If the ASA is not configured to implement cryptographic mechanisms to protect the integrity of remote maintenance sessions using a FIPS 140-2 approved algorithm, this is a finding.</p><h2>Check Content Reference</h2><p>M</p><h2>Target Key</h2><p>5342</p></body></html>

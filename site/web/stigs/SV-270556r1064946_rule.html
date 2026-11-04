@@ -1,0 +1,109 @@
+<!doctype html><html lang="en"><head><meta charset="utf-8"><title>STIGQter: STIG Check Details: SV-270556r1064946_rule: Use of external executables must be authorized.</title><link rel="icon" type="image/svg+xml" href="STIGQter.svg" /><script async src="https://www.googletagmanager.com/gtag/js?id=UA-31381839-2"></script><script src="include.js"></script><script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-4110907817782130" crossorigin="anonymous"></script></head><body><div><img src="STIGQter.svg" alt="STIGQter" style="height:1em;" /> <a href="https://www.stigqter.com/">STIGQter</a>: <a href="main.html">STIG Summary</a>: <a href="U_Oracle_Database_19c_STIG_V1R5_Manual-xccdf.html">Oracle Database 19c Security Technical Implementation Guide Version: 1 Release: 5 Benchmark Date: 01 Apr 2026</a>:</div> <h1>Use of external executables must be authorized.</h1><h2>DISA Rule</h2><p>SV-270556r1064946_rule</p><h2>Vulnerability Number</h2><p>V-270556</p><h2>Group Title</h2><p>SRG-APP-000141-DB-000093</p><h2>Rule Version</h2><p>O19C-00-013300</p><h2>Severity</h2><p>CAT II</p><h2>CCI(s)</h2><ul><li>CCI-000381 - Configure the system to provide only organization-defined mission essential capabilities.</li></ul><h2>Weight</h2><p>10</p><h2>Fix Recommendation</h2><p>Disable use of or remove any external application executable object definitions that are not authorized.<br />
+<br />
+Revoke privileges granted to users that are not authorized access to external applications.</p><h2>Check Contents</h2><p>Review the database for definitions of application executable objects stored external to the database.<br />
+<br />
+Determine if there are methods to disable use or access, or to remove definitions for external executable objects.<br />
+<br />
+Verify any application executable objects listed are authorized by the information system security officer (ISSO).<br />
+<br />
+To check for external procedures, execute the following query, which will provide the libraries containing external procedures, the owners of those libraries, users that have been granted access to those libraries, and the privileges they have been granted. If there are owners other than the owners Oracle provides, then there might be executable objects stored either in the database or external to the database that are called by objects in the database. <br />
+<br />
+(connect as sysdba)<br />
+set linesize 130<br />
+column library_name format a25<br />
+column name format a15<br />
+column owner format a15<br />
+column grantee format a15<br />
+column privilege format a15<br />
+select library_name,owner, '' grantee, '' privilege<br />
+from dba_libraries <br />
+where file_spec is not null<br />
+and owner not in ('SYS', 'ORDSYS')<br />
+minus<br />
+(<br />
+select library_name,o.name owner, '' grantee, '' privilege<br />
+from dba_libraries l,<br />
+sys.user$ o,<br />
+sys.user$ ge,<br />
+sys.obj$ obj,<br />
+sys.objauth$ oa<br />
+where l.owner=o.name<br />
+and obj.owner#=o.user#<br />
+and obj.name=l.library_name<br />
+and oa.obj#=obj.obj#<br />
+and ge.user#=oa.grantee#<br />
+and l.file_spec is not null<br />
+)<br />
+union all<br />
+select library_name,o.name owner, --obj.obj#,oa.privilege#,<br />
+ge.name grantee,<br />
+tpm.name privilege<br />
+from dba_libraries l,<br />
+sys.user$ o,<br />
+sys.user$ ge,<br />
+sys.obj$ obj,<br />
+sys.objauth$ oa,<br />
+sys.table_privilege_map tpm<br />
+where l.owner=o.name<br />
+and obj.owner#=o.user#<br />
+and obj.name=l.library_name<br />
+and oa.obj#=obj.obj#<br />
+and ge.user#=oa.grantee#<br />
+and tpm.privilege=oa.privilege#<br />
+and l.file_spec is not null<br />
+/<br />
+<br />
+If any owners are returned other than those Oracle provides, ensure those owners are authorized to access those libraries. If there are users that have been granted access to libraries that are not authorized, this is a finding.</p><h2>Vulnerability Number</h2><p>V-270556</p><h2>Documentable</h2><p>False</p><h2>Rule Version</h2><p>O19C-00-013300</p><h2>Severity Override Guidance</h2><p>Review the database for definitions of application executable objects stored external to the database.<br />
+<br />
+Determine if there are methods to disable use or access, or to remove definitions for external executable objects.<br />
+<br />
+Verify any application executable objects listed are authorized by the information system security officer (ISSO).<br />
+<br />
+To check for external procedures, execute the following query, which will provide the libraries containing external procedures, the owners of those libraries, users that have been granted access to those libraries, and the privileges they have been granted. If there are owners other than the owners Oracle provides, then there might be executable objects stored either in the database or external to the database that are called by objects in the database. <br />
+<br />
+(connect as sysdba)<br />
+set linesize 130<br />
+column library_name format a25<br />
+column name format a15<br />
+column owner format a15<br />
+column grantee format a15<br />
+column privilege format a15<br />
+select library_name,owner, '' grantee, '' privilege<br />
+from dba_libraries <br />
+where file_spec is not null<br />
+and owner not in ('SYS', 'ORDSYS')<br />
+minus<br />
+(<br />
+select library_name,o.name owner, '' grantee, '' privilege<br />
+from dba_libraries l,<br />
+sys.user$ o,<br />
+sys.user$ ge,<br />
+sys.obj$ obj,<br />
+sys.objauth$ oa<br />
+where l.owner=o.name<br />
+and obj.owner#=o.user#<br />
+and obj.name=l.library_name<br />
+and oa.obj#=obj.obj#<br />
+and ge.user#=oa.grantee#<br />
+and l.file_spec is not null<br />
+)<br />
+union all<br />
+select library_name,o.name owner, --obj.obj#,oa.privilege#,<br />
+ge.name grantee,<br />
+tpm.name privilege<br />
+from dba_libraries l,<br />
+sys.user$ o,<br />
+sys.user$ ge,<br />
+sys.obj$ obj,<br />
+sys.objauth$ oa,<br />
+sys.table_privilege_map tpm<br />
+where l.owner=o.name<br />
+and obj.owner#=o.user#<br />
+and obj.name=l.library_name<br />
+and oa.obj#=obj.obj#<br />
+and ge.user#=oa.grantee#<br />
+and tpm.privilege=oa.privilege#<br />
+and l.file_spec is not null<br />
+/<br />
+<br />
+If any owners are returned other than those Oracle provides, ensure those owners are authorized to access those libraries. If there are users that have been granted access to libraries that are not authorized, this is a finding.</p><h2>Check Content Reference</h2><p>M</p><h2>Target Key</h2><p>5672</p></body></html>

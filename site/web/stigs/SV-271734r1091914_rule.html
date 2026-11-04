@@ -1,0 +1,31 @@
+<!doctype html><html lang="en"><head><meta charset="utf-8"><title>STIGQter: STIG Check Details: SV-271734r1091914_rule: OL 9 must clear SLUB/SLAB objects to prevent use-after-free attacks.</title><link rel="icon" type="image/svg+xml" href="STIGQter.svg" /><script async src="https://www.googletagmanager.com/gtag/js?id=UA-31381839-2"></script><script src="include.js"></script><script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-4110907817782130" crossorigin="anonymous"></script></head><body><div><img src="STIGQter.svg" alt="STIGQter" style="height:1em;" /> <a href="https://www.stigqter.com/">STIGQter</a>: <a href="main.html">STIG Summary</a>: <a href="U_Oracle_Linux_9_STIG_V1R6_Manual-xccdf.html">Oracle Linux 9 Security Technical Implementation Guide Version: 1 Release: 6 Benchmark Date: 01 Jul 2026</a>:</div> <h1>OL 9 must clear SLUB/SLAB objects to prevent use-after-free attacks.</h1><h2>DISA Rule</h2><p>SV-271734r1091914_rule</p><h2>Vulnerability Number</h2><p>V-271734</p><h2>Group Title</h2><p>SRG-OS-000433-GPOS-00192</p><h2>Rule Version</h2><p>OL09-00-002390</p><h2>Severity</h2><p>CAT II</p><h2>CCI(s)</h2><ul><li>CCI-002824 - Implement organization-defined controls to protect its memory from unauthorized code execution.</li><li>CCI-001084 - Isolate security functions from nonsecurity functions.</li></ul><h2>Weight</h2><p>10</p><h2>Fix Recommendation</h2><p>Configure OL 9 to enable poisoning of SLUB/SLAB objects with the following commands:<br />
+<br />
+$ sudo grubby --update-kernel=ALL --args=&quot;slub_debug=P&quot;<br />
+<br />
+Add or modify the following line in &quot;/etc/default/grub&quot; to ensure the configuration survives kernel updates:<br />
+<br />
+GRUB_CMDLINE_LINUX=&quot;slub_debug=P&quot;</p><h2>Check Contents</h2><p>Verify that OL 9 GRUB 2 is configured to enable poisoning of SLUB/SLAB objects to mitigate use-after-free vulnerabilities with the following commands:<br />
+<br />
+Check that the current GRUB 2 configuration has poisoning of SLUB/SLAB objects enabled:<br />
+<br />
+$ sudo grubby --info=ALL | grep args | grep -v 'slub_debug=P' <br />
+If any output is returned, this is a finding.<br />
+<br />
+Check that poisoning of SLUB/SLAB objects is enabled by default to persist in kernel updates: <br />
+<br />
+$ sudo grep slub_debug /etc/default/grub<br />
+GRUB_CMDLINE_LINUX=&quot;slub_debug=P&quot;<br />
+<br />
+If &quot;slub_debug&quot; is not set to &quot;P&quot;, is missing or commented out, this is a finding.</p><h2>Vulnerability Number</h2><p>V-271734</p><h2>Documentable</h2><p>False</p><h2>Rule Version</h2><p>OL09-00-002390</p><h2>Severity Override Guidance</h2><p>Verify that OL 9 GRUB 2 is configured to enable poisoning of SLUB/SLAB objects to mitigate use-after-free vulnerabilities with the following commands:<br />
+<br />
+Check that the current GRUB 2 configuration has poisoning of SLUB/SLAB objects enabled:<br />
+<br />
+$ sudo grubby --info=ALL | grep args | grep -v 'slub_debug=P' <br />
+If any output is returned, this is a finding.<br />
+<br />
+Check that poisoning of SLUB/SLAB objects is enabled by default to persist in kernel updates: <br />
+<br />
+$ sudo grep slub_debug /etc/default/grub<br />
+GRUB_CMDLINE_LINUX=&quot;slub_debug=P&quot;<br />
+<br />
+If &quot;slub_debug&quot; is not set to &quot;P&quot;, is missing or commented out, this is a finding.</p><h2>Check Content Reference</h2><p>M</p><h2>Target Key</h2><p>5680</p></body></html>

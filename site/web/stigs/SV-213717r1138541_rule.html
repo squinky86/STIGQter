@@ -1,0 +1,52 @@
+<!doctype html><html lang="en"><head><meta charset="utf-8"><title>STIGQter: STIG Check Details: SV-213717r1138541_rule: When supporting applications that require security labeling of data, DB2 must associate organization-defined types of security labels having organization-defined security label values with information in process.</title><link rel="icon" type="image/svg+xml" href="STIGQter.svg" /><script async src="https://www.googletagmanager.com/gtag/js?id=UA-31381839-2"></script><script src="include.js"></script><script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-4110907817782130" crossorigin="anonymous"></script></head><body><div><img src="STIGQter.svg" alt="STIGQter" style="height:1em;" /> <a href="https://www.stigqter.com/">STIGQter</a>: <a href="main.html">STIG Summary</a>: <a href="U_IBM_DB2_V10-5_LUW_STIG_V2R2_Manual-xccdf.html">IBM DB2 V10.5 LUW Security Technical Implementation Guide Version: 2 Release: 2 Benchmark Date: 01 Jul 2026</a>:</div> <h1>When supporting applications that require security labeling of data, DB2 must associate organization-defined types of security labels having organization-defined security label values with information in process.</h1><h2>DISA Rule</h2><p>SV-213717r1138541_rule</p><h2>Vulnerability Number</h2><p>V-213717</p><h2>Group Title</h2><p>SRG-APP-000313-DB-000309</p><h2>Rule Version</h2><p>DB2X-00-006700</p><h2>Severity</h2><p>CAT II</p><h2>CCI(s)</h2><ul><li>CCI-002263 - Provides the means to associate organization-defined types of security attributes having organization-defined security attribute values with information in process.</li></ul><h2>Weight</h2><p>10</p><h2>Fix Recommendation</h2><p>Use Create security Label statement to create the security labels: <br />
+<br />
+See the following example to create the components, policy and then security labels:<br />
+<br />
+Create the components for Security labels:<br />
+DB2&gt; CREATE SECURITY LABEL COMPONENT LEVEL ARRAY ['Top Secret', 'Secret', 'Classified', 'Unclassified'];<br />
+DB2&gt; CREATE SECURITY LABEL COMPONENT COMPARTMENTS SET {'Collection', 'Research', 'Analysis'};<br />
+<br />
+Create the Policy:<br />
+DB2&gt; CREATE SECURITY POLICY DATA_ACCESS COMPONENTS LEVEL, COMPARTMENTS WITH DB2LBACRULES;<br />
+<br />
+Create Security Label:<br />
+DB2&gt; CREATE SECURITY LABEL DATA_ACCESS.EMPLOYEESECLABEL COMPONENT LEVEL 'Top Secret', COMPONENT COMPARTMENTS 'Research', 'Analysis'<br />
+<br />
+After creating the security labels, use one of the following statements to attach the labels to the table:<br />
+DB2&gt;  CREATE TABLE<br />
+  Or<br />
+DB2&gt; ALTER TABLE<br />
+<br />
+For advice and examples, see the tutorial at:<br />
+https://www.ibm.com/developerworks/data/tutorials/dm0605wong/<br />
+https://www.ibm.com/developerworks/data/tutorials/dm0605wong/section2.html<br />
+<br />
+Note: Select the following knowledgebase link for information regarding LBAC Details: <br />
+http://www.ibm.com/support/knowledgecenter/SSEPGG_10.5.0/com.ibm.db2.luw.admin.sec.doc/doc/c0021114.html<br />
+<br />
+Select the following knowledgebase link for information regarding Create Security Label: <br />
+http://www.ibm.com/support/knowledgecenter/SSEPGG_10.5.0/com.ibm.db2.luw.sql.ref.doc/doc/r0020026.html?cp=SSEPGG_10.5.0%2F2-12-7-94</p><h2>Check Contents</h2><p>If security labeling is not required, this is not a finding.<br />
+<br />
+Query the system catalog to find out the existing security labels:<br />
+DB2&gt; SELECT * FROM SYSCAT.SECURITYLABELS<br />
+<br />
+If the required labels are not created in database this is a finding.<br />
+<br />
+Query the following catalog views find details of existing security labels:<br />
+DB2&gt; SELECT * FROM SYSCAT.SECURITYLABELACCESS<br />
+DB2&gt; SELECT * FROM SYSCAT.SECURITYLABELCOMPONENTELEMENTS<br />
+DB2&gt; SELECT * FROM SYSCAT.SECURITYLABELCOMPONENTS<br />
+<br />
+If the security labels are not defined as per organization security policies, this is a finding.</p><h2>Vulnerability Number</h2><p>V-213717</p><h2>Documentable</h2><p>False</p><h2>Rule Version</h2><p>DB2X-00-006700</p><h2>Severity Override Guidance</h2><p>If security labeling is not required, this is not a finding.<br />
+<br />
+Query the system catalog to find out the existing security labels:<br />
+DB2&gt; SELECT * FROM SYSCAT.SECURITYLABELS<br />
+<br />
+If the required labels are not created in database this is a finding.<br />
+<br />
+Query the following catalog views find details of existing security labels:<br />
+DB2&gt; SELECT * FROM SYSCAT.SECURITYLABELACCESS<br />
+DB2&gt; SELECT * FROM SYSCAT.SECURITYLABELCOMPONENTELEMENTS<br />
+DB2&gt; SELECT * FROM SYSCAT.SECURITYLABELCOMPONENTS<br />
+<br />
+If the security labels are not defined as per organization security policies, this is a finding.</p><h2>Check Content Reference</h2><p>M</p><h2>Target Key</h2><p>3989</p></body></html>

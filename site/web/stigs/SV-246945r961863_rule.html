@@ -1,0 +1,29 @@
+<!doctype html><html lang="en"><head><meta charset="utf-8"><title>STIGQter: STIG Check Details: SV-246945r961863_rule: ONTAP must use DoD-approved PKI rather than proprietary or self-signed device certificates.</title><link rel="icon" type="image/svg+xml" href="STIGQter.svg" /><script async src="https://www.googletagmanager.com/gtag/js?id=UA-31381839-2"></script><script src="include.js"></script><script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-4110907817782130" crossorigin="anonymous"></script></head><body><div><img src="STIGQter.svg" alt="STIGQter" style="height:1em;" /> <a href="https://www.stigqter.com/">STIGQter</a>: <a href="main.html">STIG Summary</a>: <a href="U_NetApp_ONTAP_DSC_9-x_STIG_V2R4_Manual-xccdf.html">NetApp ONTAP DSC 9.x Security Technical Implementation Guide Version: 2 Release: 4 Benchmark Date: 01 Jul 2026</a>:</div> <h1>ONTAP must use DoD-approved PKI rather than proprietary or self-signed device certificates.</h1><h2>DISA Rule</h2><p>SV-246945r961863_rule</p><h2>Vulnerability Number</h2><p>V-246945</p><h2>Group Title</h2><p>SRG-APP-000516-NDM-000344</p><h2>Rule Version</h2><p>NAOT-CM-000008</p><h2>Severity</h2><p>CAT II</p><h2>CCI(s)</h2><ul><li>CCI-001159 - Issue public key certificates under an organization-defined certificate policy or obtain public key certificates from an approved service provider.</li></ul><h2>Weight</h2><p>10</p><h2>Fix Recommendation</h2><p>Generate a new key-pair from a DOD-approved certificate issuer. Sites must consult the PKI/PKI pages on the https://cyber.mil website for procedures for NIPRNet and SIPRNet.<br />
+<br />
+RSA:<br />
+request security pki generate-key-pair certificate-id &lt;cert name&gt; type rsa size &lt;512 | 1024 | 2048 | 4096&gt;<br />
+<br />
+ECDSA:<br />
+request security pki generate-key-pair certificate-id &lt;cert_name&gt; type ecdsa size &lt;256 | 384&gt;<br />
+<br />
+Generate a CSR from RSA key-pair using the following command and options.<br />
+<br />
+request security generate-certificate-request certificate-id &lt;cert_name_from_key_file&gt; digest &lt;sha1 | sha256&gt; domain &lt;FQDN&gt; email &lt;admin_email&gt; ip-address &lt;ip_address&gt; subject “CN=&lt;hostname&gt;,DC=&lt;domain_part&gt;,DC=&lt;TLD_domain&gt;,O=&lt;organization&gt;,OU=&lt;organization_dept&gt;,<br />
+L=&lt;city&gt;,ST=&lt;state&gt;,C=&lt;us&gt;” filename &lt;path/filename&gt;<br />
+<br />
+Generate a CSR from ECDSA key-pair using the following command and options.<br />
+<br />
+request security generate-certificate-request certificate-id &lt;cert_name_from_key_file&gt; digest &lt;sha256 | sha384&gt; domain &lt;FQDN&gt; email &lt;admin_email&gt; ip-address &lt;ip_address&gt; subject “CN=&lt;hostname&gt;,DC=&lt;domain_part&gt;,DC=&lt;TLD_domain&gt;,O=&lt;organization&gt;,OU=&lt;organization_dept&gt;,<br />
+L=&lt;city&gt;,ST=&lt;state&gt;,C=&lt;us&gt;” filename &lt;path/filename&gt;<br />
+<br />
+If no filename is specified, the CSR is displayed on the standard out (terminal).<br />
+<br />
+After receiving the approved certificate from the CA, install the certificate with the command &quot;security certificate install -type client-ca -vserver &lt;vserver_name&gt;&quot;.<br />
+<br />
+For SSH accounts, apply the public key from the cert to the user account with the following command.<br />
+ <br />
+security login publickey create -vserver &lt;vserver name&gt; -username &lt;username&gt; -index 0 -publickey &quot;ssh-rsa &lt;cert_text&gt;&quot;</p><h2>Check Contents</h2><p>Use the command &quot;security certificate show -instance -type client-ca&quot; to show information about the ca-certificates that are installed.<br />
+<br />
+If any of the certificates have the name or identifier of a nonapproved source in the Issuer field, this is a finding.</p><h2>Vulnerability Number</h2><p>V-246945</p><h2>Documentable</h2><p>False</p><h2>Rule Version</h2><p>NAOT-CM-000008</p><h2>Severity Override Guidance</h2><p>Use the command &quot;security certificate show -instance -type client-ca&quot; to show information about the ca-certificates that are installed.<br />
+<br />
+If any of the certificates have the name or identifier of a nonapproved source in the Issuer field, this is a finding.</p><h2>Check Content Reference</h2><p>M</p><h2>Target Key</h2><p>5415</p></body></html>

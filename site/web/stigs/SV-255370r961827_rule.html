@@ -1,0 +1,74 @@
+<!doctype html><html lang="en"><head><meta charset="utf-8"><title>STIGQter: STIG Check Details: SV-255370r961827_rule: Azure SQL Database must generate audit records for all privileged activities or other system-level access.</title><link rel="icon" type="image/svg+xml" href="STIGQter.svg" /><script async src="https://www.googletagmanager.com/gtag/js?id=UA-31381839-2"></script><script src="include.js"></script><script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-4110907817782130" crossorigin="anonymous"></script></head><body><div><img src="STIGQter.svg" alt="STIGQter" style="height:1em;" /> <a href="https://www.stigqter.com/">STIGQter</a>: <a href="main.html">STIG Summary</a>: <a href="U_MS_Azure_SQL_DB_STIG_V2R3_Manual-xccdf.html">Microsoft Azure SQL Database Security Technical Implementation Guide Version: 2 Release: 3 Benchmark Date: 02 Jul 2025</a>:</div> <h1>Azure SQL Database must generate audit records for all privileged activities or other system-level access.</h1><h2>DISA Rule</h2><p>SV-255370r961827_rule</p><h2>Vulnerability Number</h2><p>V-255370</p><h2>Group Title</h2><p>SRG-APP-000504-DB-000354</p><h2>Rule Version</h2><p>ASQL-00-014900</p><h2>Severity</h2><p>CAT II</p><h2>CCI(s)</h2><ul><li>CCI-000172 - Generate audit records for the event types defined in AU-2 c that include the audit record content defined in AU-3.</li></ul><h2>Weight</h2><p>10</p><h2>Fix Recommendation</h2><p>Deploy an Azure SQL Database audit.<br />
+<br />
+Refer to the supplemental file &quot;AzureSQLDatabaseAudit.txt&quot; PowerShell script.<br />
+<br />
+Reference: <br />
+https://docs.microsoft.com/en-us/powershell/module/az.sql/set-azsqlserveraudit&quot;&gt;https://docs.microsoft.com/en-us/powershell/module/az.sql/set-azsqlserveraudit</p><h2>Check Contents</h2><p>Review Azure SQL Database configuration to verify that audit records are produced for all privileged activities or other system-level access.<br />
+<br />
+To determine if an audit is configured, execute the following script. <br />
+Run this TSQL command to determine if SQL Auditing AuditActionGroups are configured:<br />
+  SELECT DISTINCT sd.audit_action_name <br />
+  FROM sys.database_audit_specification_details sd<br />
+  JOIN sys.database_audit_specifications s <br />
+  ON s.database_specification_id = sd.database_specification_id<br />
+  WHERE (name = 'SqlDbAuditing_ServerAuditSpec' /*Server Audit*/<br />
+      OR name = 'SqlDbAuditing_AuditSpec') /*Database Audit*/<br />
+  AND s.is_state_enabled = 1<br />
+  ORDER BY sd.audit_action_name<br />
+<br />
+If no values exist for AuditActionGroup, this is a finding.  <br />
+<br />
+Verify the following AuditActionGroup(s) are configured:<br />
+APPLICATION_ROLE_CHANGE_PASSWORD_GROUP <br />
+BACKUP_RESTORE_GROUP <br />
+DATABASE_CHANGE_GROUP<br />
+DATABASE_OBJECT_CHANGE_GROUP <br />
+DATABASE_OBJECT_OWNERSHIP_CHANGE_GROUP <br />
+DATABASE_OBJECT_PERMISSION_CHANGE_GROUP <br />
+DATABASE_OPERATION_GROUP <br />
+DATABASE_OWNERSHIP_CHANGE_GROUP <br />
+DATABASE_PERMISSION_CHANGE_GROUP<br />
+DATABASE_PRINCIPAL_CHANGE_GROUP <br />
+DATABASE_PRINCIPAL_IMPERSONATION_GROUP <br />
+DATABASE_ROLE_MEMBER_CHANGE_GROUP <br />
+DBCC_GROUP <br />
+SCHEMA_OBJECT_CHANGE_GROUP <br />
+SCHEMA_OBJECT_OWNERSHIP_CHANGE_GROUP <br />
+SCHEMA_OBJECT_PERMISSION_CHANGE_GROUP <br />
+USER_CHANGE_PASSWORD_GROUP<br />
+<br />
+If any listed AuditActionGroups do not exist in the configuration, this is a finding.</p><h2>Vulnerability Number</h2><p>V-255370</p><h2>Documentable</h2><p>False</p><h2>Rule Version</h2><p>ASQL-00-014900</p><h2>Severity Override Guidance</h2><p>Review Azure SQL Database configuration to verify that audit records are produced for all privileged activities or other system-level access.<br />
+<br />
+To determine if an audit is configured, execute the following script. <br />
+Run this TSQL command to determine if SQL Auditing AuditActionGroups are configured:<br />
+  SELECT DISTINCT sd.audit_action_name <br />
+  FROM sys.database_audit_specification_details sd<br />
+  JOIN sys.database_audit_specifications s <br />
+  ON s.database_specification_id = sd.database_specification_id<br />
+  WHERE (name = 'SqlDbAuditing_ServerAuditSpec' /*Server Audit*/<br />
+      OR name = 'SqlDbAuditing_AuditSpec') /*Database Audit*/<br />
+  AND s.is_state_enabled = 1<br />
+  ORDER BY sd.audit_action_name<br />
+<br />
+If no values exist for AuditActionGroup, this is a finding.  <br />
+<br />
+Verify the following AuditActionGroup(s) are configured:<br />
+APPLICATION_ROLE_CHANGE_PASSWORD_GROUP <br />
+BACKUP_RESTORE_GROUP <br />
+DATABASE_CHANGE_GROUP<br />
+DATABASE_OBJECT_CHANGE_GROUP <br />
+DATABASE_OBJECT_OWNERSHIP_CHANGE_GROUP <br />
+DATABASE_OBJECT_PERMISSION_CHANGE_GROUP <br />
+DATABASE_OPERATION_GROUP <br />
+DATABASE_OWNERSHIP_CHANGE_GROUP <br />
+DATABASE_PERMISSION_CHANGE_GROUP<br />
+DATABASE_PRINCIPAL_CHANGE_GROUP <br />
+DATABASE_PRINCIPAL_IMPERSONATION_GROUP <br />
+DATABASE_ROLE_MEMBER_CHANGE_GROUP <br />
+DBCC_GROUP <br />
+SCHEMA_OBJECT_CHANGE_GROUP <br />
+SCHEMA_OBJECT_OWNERSHIP_CHANGE_GROUP <br />
+SCHEMA_OBJECT_PERMISSION_CHANGE_GROUP <br />
+USER_CHANGE_PASSWORD_GROUP<br />
+<br />
+If any listed AuditActionGroups do not exist in the configuration, this is a finding.</p><h2>Check Content Reference</h2><p>M</p><h2>Target Key</h2><p>5500</p></body></html>

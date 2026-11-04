@@ -1,0 +1,83 @@
+<!doctype html><html lang="en"><head><meta charset="utf-8"><title>STIGQter: STIG Check Details: SV-213966r1051304_rule: If passwords are used for authentication, SQL Server must transmit only encrypted representations of passwords.</title><link rel="icon" type="image/svg+xml" href="STIGQter.svg" /><script async src="https://www.googletagmanager.com/gtag/js?id=UA-31381839-2"></script><script src="include.js"></script><script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-4110907817782130" crossorigin="anonymous"></script></head><body><div><img src="STIGQter.svg" alt="STIGQter" style="height:1em;" /> <a href="https://www.stigqter.com/">STIGQter</a>: <a href="main.html">STIG Summary</a>: <a href="U_MS_SQL_Server_2016_Instance_STIG_V3R6_Manual-xccdf.html">MS SQL Server 2016 Instance Security Technical Implementation Guide Version: 3 Release: 6 Benchmark Date: 05 Jan 2026</a>:</div> <h1>If passwords are used for authentication, SQL Server must transmit only encrypted representations of passwords.</h1><h2>DISA Rule</h2><p>SV-213966r1051304_rule</p><h2>Vulnerability Number</h2><p>V-213966</p><h2>Group Title</h2><p>SRG-APP-000172-DB-000075</p><h2>Rule Version</h2><p>SQL6-D0-008200</p><h2>Severity</h2><p>CAT I</p><h2>CCI(s)</h2><ul><li>CCI-000197 - For password-based authentication, transmit passwords only cryptographically-protected channels.</li></ul><h2>Weight</h2><p>10</p><h2>Fix Recommendation</h2><p>Configure SQL Server to encrypt authentication data for remote connections using DOD-approved cryptography.<br />
+<br />
+Deploy encryption to the SQL Server Network Connections.<br />
+<br />
+From a command prompt, open SQL Server Configuration Manager by typing &quot;sqlservermanager13.msc&quot; and pressing &quot;ENTER&quot;.<br />
+<br />
+Navigate to SQL Server Configuration Manager &gt;&gt; SQL Server Network Configuration. Right-click on Protocols for, where is a placeholder for the SQL Server instance name, and click on &quot;Properties&quot;.<br />
+<br />
+In the &quot;Protocols for Properties&quot; dialog box, on the &quot;Certificate&quot; tab, select the DOD certificate from the drop-down for the Certificate box and then click &quot;OK&quot;. On the &quot;Flags&quot; tab, in the &quot;ForceEncryption&quot; box, select &quot;Yes&quot; and then click &quot;OK&quot; to close the dialog box. Restart the SQL Server service.<br />
+<br />
+For clustered instances, install the certificate after setting &quot;Force Encryption&quot; to &quot;Yes&quot; in SQL Server Configuration Manager.<br />
+<br />
+1. Navigate to the certificate store where the FQDN certificate is stored by typing &quot;certlm.msc&quot; and pressing &quot;ENTER&quot;.<br />
+<br />
+2. On the &quot;Properties&quot; page for the certificate, go to the &quot;Details&quot; tab and copy the &quot;thumbprint&quot; value of the certificate to a &quot;Notepad&quot; window.<br />
+<br />
+3. Remove the spaces between the hex characters in the &quot;thumbprint&quot; value in Notepad.<br />
+<br />
+4. Start regedit, navigate to the following registry key, and copy the value from step 2: HKLM\SOFTWARE\Microsoft\Microsoft SQL Server\&lt;instance&gt;\MSSQLServer\SuperSocketNetLib\Certificate<br />
+<br />
+5. If the SQL virtual server is currently on this node, failover to another node in the cluster and then reboot the node where the registry change occurred.<br />
+<br />
+6. Repeat this procedure on all the nodes.</p><h2>Check Contents</h2><p>1. Launch SSMS and connect to the SQL Server to be reviewed.<br />
+<br />
+2. Right-click the instance and select &quot;Properties&quot;.<br />
+<br />
+3. Navigate to the &quot;Security&quot; tab.<br />
+<br />
+If the value for &quot;Server authentication&quot; is &quot;Windows Authentication mode&quot;, this requirement is Not Applicable.<br />
+<br />
+From a command prompt, open SQL Server Configuration Manager by typing &quot;sqlservermanager13.msc&quot; and pressing &quot;Enter&quot;.<br />
+<br />
+Navigate to SQL Server Configuration Manager &gt;&gt; SQL Server Network Configuration. Right-click on &quot;Protocols&quot;, where there is a placeholder for the SQL Server instance name, and click on &quot;Properties&quot;. <br />
+<br />
+On the &quot;Flags&quot; tab, if &quot;Force Encryption&quot; is set to “NO&quot;, this is a finding.<br />
+<br />
+On the &quot;Flags&quot; tab, if &quot;Force Encryption&quot; is set to &quot;YES&quot;, examine the certificate used on the &quot;Certificate&quot; tab.<br />
+<br />
+If it is not a DOD approved certificate, or if no certificate is listed, this is a finding.<br />
+<br />
+For clustered instances, the Certificate will NOT be shown in the SQL Server Configuration Manager.<br />
+<br />
+1. From a command prompt, navigate to the certificate store where the Full Qualified Domain Name (FQDN) certificate is stored by typing &quot;certlm.msc&quot; and pressing &quot;Enter&quot;.<br />
+<br />
+2. In the left side of the window, expand the &quot;Personal&quot; folder, and click &quot;Certificates&quot;.<br />
+<br />
+3. Verify that the Certificate with the FQDN name is issued by the DOD. Double-click the certificate, click the &quot;Details&quot; tab, and note the value for the Thumbprint.<br />
+<br />
+4. Verify the value for the &quot;Thumbprint&quot; field matches the value in the registry by running regedit and looking at &quot;HKLM\SOFTWARE\Microsoft\Microsoft SQL Server\&lt;instance&gt;\MSSQLServer\SuperSocketNetLib\Certificate&quot;.<br />
+<br />
+5. Run this on each node of the cluster.<br />
+<br />
+If any nodes have a certificate in use by SQL that is not issued or approved by DOD, this is a finding.</p><h2>Vulnerability Number</h2><p>V-213966</p><h2>Documentable</h2><p>False</p><h2>Rule Version</h2><p>SQL6-D0-008200</p><h2>Severity Override Guidance</h2><p>1. Launch SSMS and connect to the SQL Server to be reviewed.<br />
+<br />
+2. Right-click the instance and select &quot;Properties&quot;.<br />
+<br />
+3. Navigate to the &quot;Security&quot; tab.<br />
+<br />
+If the value for &quot;Server authentication&quot; is &quot;Windows Authentication mode&quot;, this requirement is Not Applicable.<br />
+<br />
+From a command prompt, open SQL Server Configuration Manager by typing &quot;sqlservermanager13.msc&quot; and pressing &quot;Enter&quot;.<br />
+<br />
+Navigate to SQL Server Configuration Manager &gt;&gt; SQL Server Network Configuration. Right-click on &quot;Protocols&quot;, where there is a placeholder for the SQL Server instance name, and click on &quot;Properties&quot;. <br />
+<br />
+On the &quot;Flags&quot; tab, if &quot;Force Encryption&quot; is set to “NO&quot;, this is a finding.<br />
+<br />
+On the &quot;Flags&quot; tab, if &quot;Force Encryption&quot; is set to &quot;YES&quot;, examine the certificate used on the &quot;Certificate&quot; tab.<br />
+<br />
+If it is not a DOD approved certificate, or if no certificate is listed, this is a finding.<br />
+<br />
+For clustered instances, the Certificate will NOT be shown in the SQL Server Configuration Manager.<br />
+<br />
+1. From a command prompt, navigate to the certificate store where the Full Qualified Domain Name (FQDN) certificate is stored by typing &quot;certlm.msc&quot; and pressing &quot;Enter&quot;.<br />
+<br />
+2. In the left side of the window, expand the &quot;Personal&quot; folder, and click &quot;Certificates&quot;.<br />
+<br />
+3. Verify that the Certificate with the FQDN name is issued by the DOD. Double-click the certificate, click the &quot;Details&quot; tab, and note the value for the Thumbprint.<br />
+<br />
+4. Verify the value for the &quot;Thumbprint&quot; field matches the value in the registry by running regedit and looking at &quot;HKLM\SOFTWARE\Microsoft\Microsoft SQL Server\&lt;instance&gt;\MSSQLServer\SuperSocketNetLib\Certificate&quot;.<br />
+<br />
+5. Run this on each node of the cluster.<br />
+<br />
+If any nodes have a certificate in use by SQL that is not issued or approved by DOD, this is a finding.</p><h2>Check Content Reference</h2><p>M</p><h2>Target Key</h2><p>3993</p></body></html>

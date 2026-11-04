@@ -1,0 +1,39 @@
+<!doctype html><html lang="en"><head><meta charset="utf-8"><title>STIGQter: STIG Check Details: SV-271267r1108417_rule: SQL Server must protect against a user falsely repudiating by ensuring only clearly unique Active Directory user accounts can connect to the instance.</title><link rel="icon" type="image/svg+xml" href="STIGQter.svg" /><script async src="https://www.googletagmanager.com/gtag/js?id=UA-31381839-2"></script><script src="include.js"></script><script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-4110907817782130" crossorigin="anonymous"></script></head><body><div><img src="STIGQter.svg" alt="STIGQter" style="height:1em;" /> <a href="https://www.stigqter.com/">STIGQter</a>: <a href="main.html">STIG Summary</a>: <a href="U_MS_SQL_Server_2022_Instance_STIG_V1R4_Manual-xccdf.html">Microsoft SQL Server 2022 Instance Security Technical Implementation Guide Version: 1 Release: 4 Benchmark Date: 01 Apr 2026</a>:</div> <h1>SQL Server must protect against a user falsely repudiating by ensuring only clearly unique Active Directory user accounts can connect to the instance.</h1><h2>DISA Rule</h2><p>SV-271267r1108417_rule</p><h2>Vulnerability Number</h2><p>V-271267</p><h2>Group Title</h2><p>SRG-APP-000080-DB-000063</p><h2>Rule Version</h2><p>SQLI-22-004200</p><h2>Severity</h2><p>CAT II</p><h2>CCI(s)</h2><ul><li>CCI-000166 - Provide irrefutable evidence that an individual (or process acting on behalf of an individual) falsely denying having performed organization-defined actions to be covered by non-repudiation.</li></ul><h2>Weight</h2><p>10</p><h2>Fix Recommendation</h2><p>Remove all logins that were returned in the check content.</p><h2>Check Contents</h2><p>Execute the following:<br />
+<br />
+SELECT name<br />
+FROM sys.server_principals<br />
+WHERE type in ('U','G')<br />
+AND name LIKE '%$'<br />
+<br />
+If no logins are returned, this is not a finding.<br />
+<br />
+If logins are returned, determine whether each login is a computer account.<br />
+<br />
+Launch PowerShell and execute the following code:<br />
+<br />
+Note: &lt;name&gt; represents the username portion of the login. For example, if the login is &quot;CONTOSO\user1$&quot;, the username is &quot;user1&quot;.<br />
+<br />
+([ADSISearcher]&quot;(&amp;(ObjectCategory=Computer)(Name=&lt;name&gt;))&quot;).FindAll()<br />
+<br />
+If no account information is returned, this is not a finding.<br />
+<br />
+If account information is returned, this is a finding.</p><h2>Vulnerability Number</h2><p>V-271267</p><h2>Documentable</h2><p>False</p><h2>Rule Version</h2><p>SQLI-22-004200</p><h2>Severity Override Guidance</h2><p>Execute the following:<br />
+<br />
+SELECT name<br />
+FROM sys.server_principals<br />
+WHERE type in ('U','G')<br />
+AND name LIKE '%$'<br />
+<br />
+If no logins are returned, this is not a finding.<br />
+<br />
+If logins are returned, determine whether each login is a computer account.<br />
+<br />
+Launch PowerShell and execute the following code:<br />
+<br />
+Note: &lt;name&gt; represents the username portion of the login. For example, if the login is &quot;CONTOSO\user1$&quot;, the username is &quot;user1&quot;.<br />
+<br />
+([ADSISearcher]&quot;(&amp;(ObjectCategory=Computer)(Name=&lt;name&gt;))&quot;).FindAll()<br />
+<br />
+If no account information is returned, this is not a finding.<br />
+<br />
+If account information is returned, this is a finding.</p><h2>Check Content Reference</h2><p>M</p><h2>Target Key</h2><p>5677</p></body></html>

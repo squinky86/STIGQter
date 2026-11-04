@@ -1,0 +1,81 @@
+<!doctype html><html lang="en"><head><meta charset="utf-8"><title>STIGQter: STIG Check Details: SV-234847r991568_rule: The SUSE operating system wireless network adapters must be disabled unless approved and documented.</title><link rel="icon" type="image/svg+xml" href="STIGQter.svg" /><script async src="https://www.googletagmanager.com/gtag/js?id=UA-31381839-2"></script><script src="include.js"></script><script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-4110907817782130" crossorigin="anonymous"></script></head><body><div><img src="STIGQter.svg" alt="STIGQter" style="height:1em;" /> <a href="https://www.stigqter.com/">STIGQter</a>: <a href="main.html">STIG Summary</a>: <a href="U_SLES_15_STIG_V2R8_Manual-xccdf.html">SUSE Linux Enterprise Server 15 Security Technical Implementation Guide Version: 2 Release: 8 Benchmark Date: 01 Jul 2026</a>:</div> <h1>The SUSE operating system wireless network adapters must be disabled unless approved and documented.</h1><h2>DISA Rule</h2><p>SV-234847r991568_rule</p><h2>Vulnerability Number</h2><p>V-234847</p><h2>Group Title</h2><p>SRG-OS-000299-GPOS-00117</p><h2>Rule Version</h2><p>SLES-15-010380</p><h2>Severity</h2><p>CAT II</p><h2>CCI(s)</h2><ul><li>CCI-001443 - Protect wireless access to the system using authentication of users and/or devices.</li><li>CCI-001444 - Protect wireless access to the system using encryption.</li><li>CCI-002418 - Protect the confidentiality and/or integrity of transmitted information.</li></ul><h2>Weight</h2><p>10</p><h2>Fix Recommendation</h2><p>Configure the SUSE operating system to disable all wireless network interfaces with the following command:<br />
+<br />
+For each interface of type wireless, bring the interface into &quot;down&quot; state:<br />
+<br />
+&gt; sudo wicked ifdown wlan0<br />
+<br />
+For each interface of type wireless with a configuration type of &quot;compat:suse:&quot;, remove the associated file:<br />
+<br />
+&gt; sudo rm /etc/sysconfig/network/ifcfg-wlan0<br />
+<br />
+For each interface of type wireless, for each configuration of type &quot;wicked:xml:&quot;, remove the associated file or remove the interface configuration from the file.<br />
+<br />
+&gt; sudo rm /etc/wicked/ifconfig/wlan0.xml</p><h2>Check Contents</h2><p>Verify that the SUSE operating system has no wireless network adapters enabled.<br />
+<br />
+Check that there are no wireless interfaces configured on the system with the following command:<br />
+<br />
+&gt; sudo wicked show all<br />
+<br />
+lo up<br />
+link: #1, state up<br />
+type: loopback<br />
+config: compat:suse:/etc/sysconfig/network/ifcfg-lo<br />
+leases: ipv4 static granted<br />
+leases: ipv6 static granted<br />
+addr: ipv4 127.0.0.1/8 [static]<br />
+addr: ipv6 ::1/128 [static]<br />
+<br />
+eth0 up<br />
+link: #2, state up, mtu 1500<br />
+type: ethernet, hwaddr 06:00:00:00:00:01<br />
+config: compat:suse:/etc/sysconfig/network/ifcfg-eth0<br />
+leases: ipv4 dhcp granted<br />
+leases: ipv6 dhcp granted, ipv6 auto granted<br />
+addr: ipv4 10.0.0.100/16 [dhcp]<br />
+route: ipv4 default via 10.0.0.1 proto dhcp<br />
+<br />
+wlan0 up<br />
+link: #3, state up, mtu 1500<br />
+type: wireless, hwaddr 06:00:00:00:00:02<br />
+config: wicked:xml:/etc/wicked/ifconfig/wlan0.xml<br />
+leases: ipv4 dhcp granted<br />
+addr: ipv4 10.0.0.101/16 [dhcp]<br />
+route: ipv4 default via 10.0.0.1 proto dhcp<br />
+<br />
+If a wireless interface is configured, it must be documented and approved by the local AO.<br />
+<br />
+If a wireless interface is configured and has not been documented and approved, this is a finding.</p><h2>Vulnerability Number</h2><p>V-234847</p><h2>Documentable</h2><p>False</p><h2>Rule Version</h2><p>SLES-15-010380</p><h2>Severity Override Guidance</h2><p>Verify that the SUSE operating system has no wireless network adapters enabled.<br />
+<br />
+Check that there are no wireless interfaces configured on the system with the following command:<br />
+<br />
+&gt; sudo wicked show all<br />
+<br />
+lo up<br />
+link: #1, state up<br />
+type: loopback<br />
+config: compat:suse:/etc/sysconfig/network/ifcfg-lo<br />
+leases: ipv4 static granted<br />
+leases: ipv6 static granted<br />
+addr: ipv4 127.0.0.1/8 [static]<br />
+addr: ipv6 ::1/128 [static]<br />
+<br />
+eth0 up<br />
+link: #2, state up, mtu 1500<br />
+type: ethernet, hwaddr 06:00:00:00:00:01<br />
+config: compat:suse:/etc/sysconfig/network/ifcfg-eth0<br />
+leases: ipv4 dhcp granted<br />
+leases: ipv6 dhcp granted, ipv6 auto granted<br />
+addr: ipv4 10.0.0.100/16 [dhcp]<br />
+route: ipv4 default via 10.0.0.1 proto dhcp<br />
+<br />
+wlan0 up<br />
+link: #3, state up, mtu 1500<br />
+type: wireless, hwaddr 06:00:00:00:00:02<br />
+config: wicked:xml:/etc/wicked/ifconfig/wlan0.xml<br />
+leases: ipv4 dhcp granted<br />
+addr: ipv4 10.0.0.101/16 [dhcp]<br />
+route: ipv4 default via 10.0.0.1 proto dhcp<br />
+<br />
+If a wireless interface is configured, it must be documented and approved by the local AO.<br />
+<br />
+If a wireless interface is configured and has not been documented and approved, this is a finding.</p><h2>Check Content Reference</h2><p>M</p><h2>Target Key</h2><p>5274</p></body></html>

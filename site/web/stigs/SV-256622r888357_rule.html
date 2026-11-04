@@ -1,0 +1,31 @@
+<!doctype html><html lang="en"><head><meta charset="utf-8"><title>STIGQter: STIG Check Details: SV-256622r888357_rule: Performance Charts must have Multipurpose Internet Mail Extensions (MIMEs) that invoke operating system shell programs disabled.</title><link rel="icon" type="image/svg+xml" href="STIGQter.svg" /><script async src="https://www.googletagmanager.com/gtag/js?id=UA-31381839-2"></script><script src="include.js"></script><script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-4110907817782130" crossorigin="anonymous"></script></head><body><div><img src="STIGQter.svg" alt="STIGQter" style="height:1em;" /> <a href="https://www.stigqter.com/">STIGQter</a>: <a href="main.html">STIG Summary</a>: <a href="U_VMW_vSphere_7-0_vCA_Perfcharts_STIG_V1R1_Manual-xccdf.html">VMware vSphere 7.0 vCenter Appliance Perfcharts Security Technical Implementation Guide Version: 1 Release: 1 Benchmark Date: 07 Mar 2023</a>:</div> <h1>Performance Charts must have Multipurpose Internet Mail Extensions (MIMEs) that invoke operating system shell programs disabled.</h1><h2>DISA Rule</h2><p>SV-256622r888357_rule</p><h2>Vulnerability Number</h2><p>V-256622</p><h2>Group Title</h2><p>SRG-APP-000141-WSR-000081</p><h2>Rule Version</h2><p>VCPF-70-000012</p><h2>Severity</h2><p>CAT II</p><h2>CCI(s)</h2><ul><li>CCI-000381 - Configure the system to provide only organization-defined mission essential capabilities.</li></ul><h2>Weight</h2><p>10</p><h2>Fix Recommendation</h2><p>Navigate to and open:<br />
+<br />
+/usr/lib/vmware-perfcharts/tc-instance/conf/web.xml<br />
+<br />
+Remove any and all of the following nodes lines:<br />
+<br />
+&lt;mime-type&gt;application/x-csh&lt;/mime-type&gt;<br />
+&lt;mime-type&gt;application/x-shar&lt;/mime-type&gt;<br />
+&lt;mime-type&gt;application/x-sh&lt;/mime-type&gt;<br />
+&lt;mime-type&gt;application/x-ksh&lt;/mime-type&gt;<br />
+<br />
+Restart the service with the following command:<br />
+<br />
+# vmon-cli --restart perfcharts<br />
+<br />
+Note: Delete the entire mime-mapping node for the target mime-type.<br />
+<br />
+Example:<br />
+<br />
+&lt;mime-mapping&gt;<br />
+    &lt;extension&gt;sh&lt;/extension&gt;<br />
+    &lt;mime-type&gt;application/x-sh&lt;/mime-type&gt;<br />
+&lt;/mime-mapping&gt;</p><h2>Check Contents</h2><p>At the command prompt, run the following command:<br />
+<br />
+# grep -En '(x-csh&lt;)|(x-sh&lt;)|(x-shar&lt;)|(x-ksh&lt;)' /usr/lib/vmware-perfcharts/tc-instance/conf/web.xml<br />
+<br />
+If the command produces any output, this is a finding.</p><h2>Vulnerability Number</h2><p>V-256622</p><h2>Documentable</h2><p>False</p><h2>Rule Version</h2><p>VCPF-70-000012</p><h2>Severity Override Guidance</h2><p>At the command prompt, run the following command:<br />
+<br />
+# grep -En '(x-csh&lt;)|(x-sh&lt;)|(x-shar&lt;)|(x-ksh&lt;)' /usr/lib/vmware-perfcharts/tc-instance/conf/web.xml<br />
+<br />
+If the command produces any output, this is a finding.</p><h2>Check Content Reference</h2><p>M</p><h2>Target Key</h2><p>5522</p></body></html>

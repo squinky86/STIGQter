@@ -1,0 +1,29 @@
+<!doctype html><html lang="en"><head><meta charset="utf-8"><title>STIGQter: STIG Check Details: SV-281079r1165592_rule: RHEL 10 must set the umask value to &quot;077&quot; for all local interactive user accounts.</title><link rel="icon" type="image/svg+xml" href="STIGQter.svg" /><script async src="https://www.googletagmanager.com/gtag/js?id=UA-31381839-2"></script><script src="include.js"></script><script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-4110907817782130" crossorigin="anonymous"></script></head><body><div><img src="STIGQter.svg" alt="STIGQter" style="height:1em;" /> <a href="https://www.stigqter.com/">STIGQter</a>: <a href="main.html">STIG Summary</a>: <a href="U_RHEL_10_STIG_V1R2_Manual-xccdf.html">Red Hat Enterprise Linux 10 Security Technical Implementation Guide Version: 1 Release: 2 Benchmark Date: 01 Jul 2026</a>:</div> <h1>RHEL 10 must set the umask value to &quot;077&quot; for all local interactive user accounts.</h1><h2>DISA Rule</h2><p>SV-281079r1165592_rule</p><h2>Vulnerability Number</h2><p>V-281079</p><h2>Group Title</h2><p>SRG-OS-000080-GPOS-00048</p><h2>Rule Version</h2><p>RHEL-10-400310</p><h2>Severity</h2><p>CAT II</p><h2>CCI(s)</h2><ul><li>CCI-000213 - Enforce approved authorizations for logical access to information and system resources in accordance with applicable access control policies.</li></ul><h2>Weight</h2><p>10</p><h2>Fix Recommendation</h2><p>Configure RHEL 10 to set the umask value for all local interactive user accounts to &quot;077&quot;.<br />
+<br />
+Remove the umask statement from all local interactive users' initialization files.<br />
+<br />
+If the account is for an application, the requirement for a umask less restrictive than &quot;077&quot; can be documented with the information system security officer. However, the user agreement for access to the account must specify that the local interactive user must log in to their account first and then switch the user to the application account with the correct option to gain the account's environment variables.</p><h2>Check Contents</h2><p>Verify RHEL 10 sets the default umask for all local interactive users to &quot;077&quot;.<br />
+<br />
+Identify the locations of all local interactive user home directories by looking at the &quot;/etc/passwd&quot; file.<br />
+<br />
+Check all local interactive user initialization files for interactive users with the following command:<br />
+<br />
+Note: The example is for a system that is configured to create users' home directories in the &quot;/home&quot; directory.<br />
+<br />
+$ sudo find /home -maxdepth 2 -type f -name &quot;.[^.]*&quot; -exec grep -iH -d skip --exclude=.bash_history umask {} \;<br />
+/home/disauser/.bash_history:grep -i umask /etc/bashrc /etc/csh.cshrc /etc/profile<br />
+/home/disauser/.bash_history:grep -i umask /etc/login.defs<br />
+<br />
+If any local interactive user initialization files are found to have a umask statement that sets a value less restrictive than &quot;077&quot;, this is a finding.</p><h2>Vulnerability Number</h2><p>V-281079</p><h2>Documentable</h2><p>False</p><h2>Rule Version</h2><p>RHEL-10-400310</p><h2>Severity Override Guidance</h2><p>Verify RHEL 10 sets the default umask for all local interactive users to &quot;077&quot;.<br />
+<br />
+Identify the locations of all local interactive user home directories by looking at the &quot;/etc/passwd&quot; file.<br />
+<br />
+Check all local interactive user initialization files for interactive users with the following command:<br />
+<br />
+Note: The example is for a system that is configured to create users' home directories in the &quot;/home&quot; directory.<br />
+<br />
+$ sudo find /home -maxdepth 2 -type f -name &quot;.[^.]*&quot; -exec grep -iH -d skip --exclude=.bash_history umask {} \;<br />
+/home/disauser/.bash_history:grep -i umask /etc/bashrc /etc/csh.cshrc /etc/profile<br />
+/home/disauser/.bash_history:grep -i umask /etc/login.defs<br />
+<br />
+If any local interactive user initialization files are found to have a umask statement that sets a value less restrictive than &quot;077&quot;, this is a finding.</p><h2>Check Content Reference</h2><p>M</p><h2>Target Key</h2><p>5733</p></body></html>

@@ -1,0 +1,48 @@
+<!doctype html><html lang="en"><head><meta charset="utf-8"><title>STIGQter: STIG Check Details: SV-255986r991780_rule: The Arista MLS layer 2 switch must not have any switch ports assigned to the native VLAN.</title><link rel="icon" type="image/svg+xml" href="STIGQter.svg" /><script async src="https://www.googletagmanager.com/gtag/js?id=UA-31381839-2"></script><script src="include.js"></script><script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-4110907817782130" crossorigin="anonymous"></script></head><body><div><img src="STIGQter.svg" alt="STIGQter" style="height:1em;" /> <a href="https://www.stigqter.com/">STIGQter</a>: <a href="main.html">STIG Summary</a>: <a href="U_Arista_MLS_EOS_4-X_L2S_STIG_V2R3_Manual-xccdf.html">Arista MLS EOS 4.X L2S Security Technical Implementation Guide Version: 2 Release: 3 Benchmark Date: 02 Jul 2025</a>:</div> <h1>The Arista MLS layer 2 switch must not have any switch ports assigned to the native VLAN.</h1><h2>DISA Rule</h2><p>SV-255986r991780_rule</p><h2>Vulnerability Number</h2><p>V-255986</p><h2>Group Title</h2><p>SRG-NET-000512-L2S-000013</p><h2>Rule Version</h2><p>ARST-L2-000230</p><h2>Severity</h2><p>CAT III</p><h2>CCI(s)</h2><ul><li>CCI-004891 - Implement physically or logically separate subnetworks to isolate organization-defined critical system components and functions.</li></ul><h2>Weight</h2><p>10</p><h2>Fix Recommendation</h2><p>Configure the Arista MLS switch to ensure all access switch ports use a VLAN other than the native VLAN.<br />
+<br />
+Configure all access switch ports to a VLAN other than the designated native VLAN by using the following example:<br />
+<br />
+switch(config)#interface Ethernet 21<br />
+switch(config-Eth21)# switchport access vlan xxxx</p><h2>Check Contents</h2><p>Review the configuration for all trunking ports to determine the native VLAN by using the following example (for vlan 1000):<br />
+<br />
+switch(config-if-Et4)#sh run int eth4<br />
+interface Ethernet4<br />
+   description STIG Disable_VLAN 1 and native vlan to 1000<br />
+   switchport trunk native vlan 1000<br />
+   switchport trunk allowed vlan 2-999,1001-4094<br />
+switch(config-if-Et4)#<br />
+<br />
+Review the configuration to ensure no access switch ports are configured in the native VLAN by using the following example (for vlan 1000):<br />
+<br />
+swtich#sh vlan brief<br />
+VLAN  Name                             Status    Ports<br />
+----- -------------------------------- --------- -------------------------------<br />
+1     default                              <br />
+8     VLAN0008                         active    Cpu<br />
+25    VLAN0025                        active    Cpu<br />
+100   VLAN0100                       active    Cpu<br />
+1000  VLAN1000                      active   <br />
+4090  VLAN4090                      active    <br />
+<br />
+If any access switch ports have been assigned to the same VLAN ID as the native VLAN, this is a finding.</p><h2>Vulnerability Number</h2><p>V-255986</p><h2>Documentable</h2><p>False</p><h2>Rule Version</h2><p>ARST-L2-000230</p><h2>Severity Override Guidance</h2><p>Review the configuration for all trunking ports to determine the native VLAN by using the following example (for vlan 1000):<br />
+<br />
+switch(config-if-Et4)#sh run int eth4<br />
+interface Ethernet4<br />
+   description STIG Disable_VLAN 1 and native vlan to 1000<br />
+   switchport trunk native vlan 1000<br />
+   switchport trunk allowed vlan 2-999,1001-4094<br />
+switch(config-if-Et4)#<br />
+<br />
+Review the configuration to ensure no access switch ports are configured in the native VLAN by using the following example (for vlan 1000):<br />
+<br />
+swtich#sh vlan brief<br />
+VLAN  Name                             Status    Ports<br />
+----- -------------------------------- --------- -------------------------------<br />
+1     default                              <br />
+8     VLAN0008                         active    Cpu<br />
+25    VLAN0025                        active    Cpu<br />
+100   VLAN0100                       active    Cpu<br />
+1000  VLAN1000                      active   <br />
+4090  VLAN4090                      active    <br />
+<br />
+If any access switch ports have been assigned to the same VLAN ID as the native VLAN, this is a finding.</p><h2>Check Content Reference</h2><p>M</p><h2>Target Key</h2><p>5512</p></body></html>

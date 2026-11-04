@@ -1,0 +1,60 @@
+<!doctype html><html lang="en"><head><meta charset="utf-8"><title>STIGQter: STIG Check Details: SV-216689r1117236_rule: The Cisco BGP router must be configured to reject inbound route advertisements from a customer edge (CE) router for prefixes that are not allocated to that customer.</title><link rel="icon" type="image/svg+xml" href="STIGQter.svg" /><script async src="https://www.googletagmanager.com/gtag/js?id=UA-31381839-2"></script><script src="include.js"></script><script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-4110907817782130" crossorigin="anonymous"></script></head><body><div><img src="STIGQter.svg" alt="STIGQter" style="height:1em;" /> <a href="https://www.stigqter.com/">STIGQter</a>: <a href="main.html">STIG Summary</a>: <a href="U_Cisco_IOS-XE_Router_RTR_STIG_V3R5_Manual-xccdf.html">Cisco IOS XE Router RTR Security Technical Implementation Guide Version: 3 Release: 5 Benchmark Date: 01 Oct 2025</a>:</div> <h1>The Cisco BGP router must be configured to reject inbound route advertisements from a customer edge (CE) router for prefixes that are not allocated to that customer.</h1><h2>DISA Rule</h2><p>SV-216689r1117236_rule</p><h2>Vulnerability Number</h2><p>V-216689</p><h2>Group Title</h2><p>SRG-NET-000018-RTR-000004</p><h2>Rule Version</h2><p>CISC-RT-000510</p><h2>Severity</h2><p>CAT II</p><h2>CCI(s)</h2><ul><li>CCI-001368 - Enforce approved authorizations for controlling the flow of information within the system based on organization-defined information flow control policies.</li></ul><h2>Weight</h2><p>10</p><h2>Fix Recommendation</h2><p>Configure the router to reject inbound route advertisements from each CE router for prefixes that are not allocated to that customer.<br />
+<br />
+Step 1: Configure a prefix list for each customer containing prefixes belonging to each.<br />
+<br />
+R1(config)#ip prefix-list PREFIX_FILTER_CUST1 permit x.13.1.0/24 le 32<br />
+R1(config)#ip prefix-list PREFIX_FILTER_CUST1 deny 0.0.0.0/0 ge 8<br />
+R1(config)#ip prefix-list PREFIX_FILTER_CUST2 permit x.13.2.0/24 le 32<br />
+R1(config)#ip prefix-list PREFIX_FILTER_CUST2 deny 0.0.0.0/0 ge 8<br />
+<br />
+Step 2: Apply the prefix list filter inbound to each CE neighbor as shown in the example.<br />
+<br />
+R1(config)#router bgp xx<br />
+R1(config-router)#neighbor x.12.4.14 prefix-list FILTER_PREFIXES_CUST1 in<br />
+R1(config-router)#neighbor x.12.4.16 prefix-list FILTER_PREFIXES_CUST2 in</p><h2>Check Contents</h2><p>Review the router configuration to verify that there are ACLs defined to only accept routes for prefixes that belong to specific customers. <br />
+<br />
+Step 1: Verify prefix list has been configured for each customer containing prefixes belonging to each customer as shown in the example below:<br />
+<br />
+ip prefix-list PREFIX_FILTER_CUST1 seq 5 permit x.13.1.0/24 le 32<br />
+ip prefix-list PREFIX_FILTER_CUST1 seq 10 deny 0.0.0.0/0 ge 8<br />
+ip prefix-list PREFIX_FILTER_CUST2 seq 5 permit x.13.2.0/24 le 32<br />
+ip prefix-list PREFIX_FILTER_CUST2 seq 10 deny 0.0.0.0/0 ge 8<br />
+<br />
+Step 2: Verify that the prefix lists has been applied to all to the applicable CE peers as shown in the example below:<br />
+<br />
+router bgp xx<br />
+ no synchronization<br />
+ bgp log-neighbor-changes<br />
+ neighbor x.12.4.14 remote-as 64514<br />
+ neighbor x.12.4.14 prefix-list FILTER_PREFIXES_CUST1 in<br />
+ neighbor x.12.4.16 remote-as 64516<br />
+ neighbor x.12.4.16 prefix-list FILTER_PREFIXES_CUST2 in<br />
+<br />
+Note: Routes to PE-CE links within a VPN are needed for troubleshooting end-to-end connectivity across the MPLS/IP backbone. Hence, these prefixes are an exception to this requirement.<br />
+<br />
+Note: This check is NA for JRSS systems.<br />
+<br />
+If the router is not configured to reject inbound route advertisements from each CE router for prefixes that are not allocated to that customer, this is a finding.</p><h2>Vulnerability Number</h2><p>V-216689</p><h2>Documentable</h2><p>False</p><h2>Rule Version</h2><p>CISC-RT-000510</p><h2>Severity Override Guidance</h2><p>Review the router configuration to verify that there are ACLs defined to only accept routes for prefixes that belong to specific customers. <br />
+<br />
+Step 1: Verify prefix list has been configured for each customer containing prefixes belonging to each customer as shown in the example below:<br />
+<br />
+ip prefix-list PREFIX_FILTER_CUST1 seq 5 permit x.13.1.0/24 le 32<br />
+ip prefix-list PREFIX_FILTER_CUST1 seq 10 deny 0.0.0.0/0 ge 8<br />
+ip prefix-list PREFIX_FILTER_CUST2 seq 5 permit x.13.2.0/24 le 32<br />
+ip prefix-list PREFIX_FILTER_CUST2 seq 10 deny 0.0.0.0/0 ge 8<br />
+<br />
+Step 2: Verify that the prefix lists has been applied to all to the applicable CE peers as shown in the example below:<br />
+<br />
+router bgp xx<br />
+ no synchronization<br />
+ bgp log-neighbor-changes<br />
+ neighbor x.12.4.14 remote-as 64514<br />
+ neighbor x.12.4.14 prefix-list FILTER_PREFIXES_CUST1 in<br />
+ neighbor x.12.4.16 remote-as 64516<br />
+ neighbor x.12.4.16 prefix-list FILTER_PREFIXES_CUST2 in<br />
+<br />
+Note: Routes to PE-CE links within a VPN are needed for troubleshooting end-to-end connectivity across the MPLS/IP backbone. Hence, these prefixes are an exception to this requirement.<br />
+<br />
+Note: This check is NA for JRSS systems.<br />
+<br />
+If the router is not configured to reject inbound route advertisements from each CE router for prefixes that are not allocated to that customer, this is a finding.</p><h2>Check Content Reference</h2><p>M</p><h2>Target Key</h2><p>4028</p></body></html>

@@ -1,0 +1,76 @@
+<!doctype html><html lang="en"><head><meta charset="utf-8"><title>STIGQter: STIG Check Details: SV-258987r1210439_rule: The vCenter STS service must configure the &quot;setCharacterEncodingFilter&quot; filter.</title><link rel="icon" type="image/svg+xml" href="STIGQter.svg" /><script async src="https://www.googletagmanager.com/gtag/js?id=UA-31381839-2"></script><script src="include.js"></script><script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-4110907817782130" crossorigin="anonymous"></script></head><body><div><img src="STIGQter.svg" alt="STIGQter" style="height:1em;" /> <a href="https://www.stigqter.com/">STIGQter</a>: <a href="main.html">STIG Summary</a>: <a href="U_VMW_vSphere_8-0_VCSA_STS_STIG_V2R2_Manual-xccdf.html">VMware vSphere 8.0 vCenter Appliance Secure Token Service (STS) Security Technical Implementation Guide Version: 2 Release: 2 Benchmark Date: 01 Jul 2026</a>:</div> <h1>The vCenter STS service must configure the &quot;setCharacterEncodingFilter&quot; filter.</h1><h2>DISA Rule</h2><p>SV-258987r1210439_rule</p><h2>Vulnerability Number</h2><p>V-258987</p><h2>Group Title</h2><p>SRG-APP-000251-AS-000165</p><h2>Rule Version</h2><p>VCST-80-000127</p><h2>Severity</h2><p>CAT II</p><h2>CCI(s)</h2><ul><li>CCI-001310 - Checks the validity of organization-defined information inputs to the system.</li></ul><h2>Weight</h2><p>10</p><h2>Fix Recommendation</h2><p>Navigate to and open:<br />
+<br />
+/usr/lib/vmware-sso/vmware-sts/conf/web.xml<br />
+<br />
+Configure the &lt;web-app&gt; node with the child nodes listed below:<br />
+<br />
+&lt;filter-mapping&gt;<br />
+  &lt;filter-name&gt;setCharacterEncodingFilter&lt;/filter-name&gt;<br />
+  &lt;url-pattern&gt;/*&lt;/url-pattern&gt;<br />
+&lt;/filter-mapping&gt;<br />
+<br />
+&lt;filter&gt;<br />
+  &lt;filter-name&gt;setCharacterEncodingFilter&lt;/filter-name&gt;<br />
+  &lt;filter-class&gt;org.apache.catalina.filters.SetCharacterEncodingFilter&lt;/filter-class&gt;<br />
+  &lt;async-supported&gt;true&lt;/async-supported&gt;<br />
+  &lt;init-param&gt;<br />
+    &lt;param-name&gt;encoding&lt;/param-name&gt;<br />
+    &lt;param-value&gt;UTF-8&lt;/param-value&gt;<br />
+  &lt;/init-param&gt;<br />
+  &lt;init-param&gt;<br />
+    &lt;param-name&gt;ignore&lt;/param-name&gt;<br />
+    &lt;param-value&gt;true&lt;/param-value&gt;<br />
+  &lt;/init-param&gt;<br />
+&lt;/filter&gt;<br />
+<br />
+Restart the service with the following command:<br />
+<br />
+# vmon-cli --restart sts</p><h2>Check Contents</h2><p>At the command prompt, run the following command:<br />
+<br />
+# xmllint --xpath &quot;//*[contains(text(), 'setCharacterEncodingFilter')]/parent::*&quot; /usr/lib/vmware-sso/vmware-sts/conf/web.xml<br />
+<br />
+Expected result:<br />
+<br />
+&lt;filter-mapping&gt;<br />
+  &lt;filter-name&gt;setCharacterEncodingFilter&lt;/filter-name&gt;<br />
+  &lt;url-pattern&gt;/*&lt;/url-pattern&gt;<br />
+&lt;/filter-mapping&gt;<br />
+&lt;filter&gt;<br />
+  &lt;filter-name&gt;setCharacterEncodingFilter&lt;/filter-name&gt;<br />
+  &lt;filter-class&gt;org.apache.catalina.filters.SetCharacterEncodingFilter&lt;/filter-class&gt;<br />
+  &lt;async-supported&gt;true&lt;/async-supported&gt;<br />
+  &lt;init-param&gt;<br />
+    &lt;param-name&gt;encoding&lt;/param-name&gt;<br />
+    &lt;param-value&gt;UTF-8&lt;/param-value&gt;<br />
+  &lt;/init-param&gt;<br />
+  &lt;init-param&gt;<br />
+    &lt;param-name&gt;ignore&lt;/param-name&gt;<br />
+    &lt;param-value&gt;true&lt;/param-value&gt;<br />
+  &lt;/init-param&gt;<br />
+&lt;/filter&gt;<br />
+<br />
+If the output does not match the expected result, this is a finding.</p><h2>Vulnerability Number</h2><p>V-258987</p><h2>Documentable</h2><p>False</p><h2>Rule Version</h2><p>VCST-80-000127</p><h2>Severity Override Guidance</h2><p>At the command prompt, run the following command:<br />
+<br />
+# xmllint --xpath &quot;//*[contains(text(), 'setCharacterEncodingFilter')]/parent::*&quot; /usr/lib/vmware-sso/vmware-sts/conf/web.xml<br />
+<br />
+Expected result:<br />
+<br />
+&lt;filter-mapping&gt;<br />
+  &lt;filter-name&gt;setCharacterEncodingFilter&lt;/filter-name&gt;<br />
+  &lt;url-pattern&gt;/*&lt;/url-pattern&gt;<br />
+&lt;/filter-mapping&gt;<br />
+&lt;filter&gt;<br />
+  &lt;filter-name&gt;setCharacterEncodingFilter&lt;/filter-name&gt;<br />
+  &lt;filter-class&gt;org.apache.catalina.filters.SetCharacterEncodingFilter&lt;/filter-class&gt;<br />
+  &lt;async-supported&gt;true&lt;/async-supported&gt;<br />
+  &lt;init-param&gt;<br />
+    &lt;param-name&gt;encoding&lt;/param-name&gt;<br />
+    &lt;param-value&gt;UTF-8&lt;/param-value&gt;<br />
+  &lt;/init-param&gt;<br />
+  &lt;init-param&gt;<br />
+    &lt;param-name&gt;ignore&lt;/param-name&gt;<br />
+    &lt;param-value&gt;true&lt;/param-value&gt;<br />
+  &lt;/init-param&gt;<br />
+&lt;/filter&gt;<br />
+<br />
+If the output does not match the expected result, this is a finding.</p><h2>Check Content Reference</h2><p>M</p><h2>Target Key</h2><p>5567</p></body></html>

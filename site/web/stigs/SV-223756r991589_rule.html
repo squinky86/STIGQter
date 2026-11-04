@@ -1,0 +1,61 @@
+<!doctype html><html lang="en"><head><meta charset="utf-8"><title>STIGQter: STIG Check Details: SV-223756r991589_rule: IBM z/OS RJE workstations and NJE nodes must be controlled in accordance with security requirements.</title><link rel="icon" type="image/svg+xml" href="STIGQter.svg" /><script async src="https://www.googletagmanager.com/gtag/js?id=UA-31381839-2"></script><script src="include.js"></script><script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-4110907817782130" crossorigin="anonymous"></script></head><body><div><img src="STIGQter.svg" alt="STIGQter" style="height:1em;" /> <a href="https://www.stigqter.com/">STIGQter</a>: <a href="main.html">STIG Summary</a>: <a href="U_IBM_zOS_RACF_STIG_V9R9_Manual-xccdf.html">IBM z/OS RACF Security Technical Implementation Guide Version: 9 Release: 9 Benchmark Date: 01 Jul 2026</a>:</div> <h1>IBM z/OS RJE workstations and NJE nodes must be controlled in accordance with security requirements.</h1><h2>DISA Rule</h2><p>SV-223756r991589_rule</p><h2>Vulnerability Number</h2><p>V-223756</p><h2>Group Title</h2><p>SRG-OS-000480-GPOS-00227</p><h2>Rule Version</h2><p>RACF-JS-000120</p><h2>Severity</h2><p>CAT II</p><h2>CCI(s)</h2><ul><li>CCI-000366 - Implement the security configuration settings.</li></ul><h2>Weight</h2><p>10</p><h2>Fix Recommendation</h2><p>Note that this guidance addresses RJE Workstations that are &quot;Dedicated&quot;. If an RJE workstation is dedicated, the assumption is that the RJE to host connection is hard-wired between the RJE and host. In this case the RMT definition statement will contain the keyword LINE= which specifies that this RJE is only connected via that one LINE statement. <br />
+<br />
+ Review the JES2 parameters for RJE workstation definitions by searching for RMT( in the report.<br />
+<br />
+ Configure the RJE workstation userids to be defined as follows:<br />
+<br />
+ A userid of RMTnnnn is defined to RACF for each RJE workstation, where nnnn is the number on the RMT statement.<br />
+<br />
+ No userid segments (e.g., TSO, CICS, etc.) are defined.<br />
+<br />
+ Restricted from accessing all data sets and resources with exception of the corresponding JESINPUT-class profile for that remote.<br />
+<br />
+Review Chapter 17 of the RACF Security Admin Guide. The following is an example that show proper implementation:<br />
+<br />
+AG RMTGRP OWNER(ADMIN) SUPGROUP(ADMIN)<br />
+<br />
+AU RMT777 NAME('RMT RJE 777') DFLTGRP(RMTGRP) OWNER(RMTGRP) DATA('COMPLY WITH ZJES0011') NOPASS RESTRICTED<br />
+<br />
+PE RMT777 CL(JESINPUT) ID(RMT777)<br />
+<br />
+ Ensure that a FACILITY-Class profile exists in the format RJE.RMTnnnn where nnn identifies the remote number.<br />
+<br />
+A command example is shown here:<br />
+<br />
+RDEF FACILITY RJE.RMT777 UACC(NONE) OWNER(ADMIN) DATA('COMPLY WITH ZJES0011 FOR RJE 777')</p><h2>Check Contents</h2><p>Note that this guidance addresses RJE Workstations that are &quot;Dedicated&quot;. If an RJE workstation is dedicated, the assumption is that the RJE to host connection is hard-wired between the RJE and host. In this case the RMT definition statement will contain the keyword LINE= which specifies that this RJE is only connected via that one LINE statement. <br />
+<br />
+Refer to the JES2PARM member of PARMLIB.<br />
+<br />
+If all of the statements below are true, this is not a finding.<br />
+<br />
+If any of the statements below are untrue, this is a finding.<br />
+<br />
+Review the JES2 parameters for RJE workstation definitions by searching for RMT( in the report.<br />
+<br />
+A userid of RMTnnnn is defined to RACF for each RJE workstation, where nnnn is the number on the RMT statement.<br />
+<br />
+No userid segments (e.g., TSO, CICS, etc.) are defined.<br />
+<br />
+Restricted from accessing all data sets and resources with exception of the corresponding JESINPUT class profile for that remote.<br />
+<br />
+NOTE: Execute the JCL in CNTL(IRRUT100) using the RACF RMTnnnn userids as SYSIN input. This report lists all occurrences of these userids within the RACF database, including data set and resource access lists.<br />
+<br />
+A FACILITY-Class profile exists in the format RJE.RMTnnnn where nnn identifies the remote number.</p><h2>Vulnerability Number</h2><p>V-223756</p><h2>Documentable</h2><p>False</p><h2>Rule Version</h2><p>RACF-JS-000120</p><h2>Severity Override Guidance</h2><p>Note that this guidance addresses RJE Workstations that are &quot;Dedicated&quot;. If an RJE workstation is dedicated, the assumption is that the RJE to host connection is hard-wired between the RJE and host. In this case the RMT definition statement will contain the keyword LINE= which specifies that this RJE is only connected via that one LINE statement. <br />
+<br />
+Refer to the JES2PARM member of PARMLIB.<br />
+<br />
+If all of the statements below are true, this is not a finding.<br />
+<br />
+If any of the statements below are untrue, this is a finding.<br />
+<br />
+Review the JES2 parameters for RJE workstation definitions by searching for RMT( in the report.<br />
+<br />
+A userid of RMTnnnn is defined to RACF for each RJE workstation, where nnnn is the number on the RMT statement.<br />
+<br />
+No userid segments (e.g., TSO, CICS, etc.) are defined.<br />
+<br />
+Restricted from accessing all data sets and resources with exception of the corresponding JESINPUT class profile for that remote.<br />
+<br />
+NOTE: Execute the JCL in CNTL(IRRUT100) using the RACF RMTnnnn userids as SYSIN input. This report lists all occurrences of these userids within the RACF database, including data set and resource access lists.<br />
+<br />
+A FACILITY-Class profile exists in the format RJE.RMTnnnn where nnn identifies the remote number.</p><h2>Check Content Reference</h2><p>M</p><h2>Target Key</h2><p>4101</p></body></html>

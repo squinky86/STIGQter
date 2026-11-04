@@ -1,0 +1,50 @@
+<!doctype html><html lang="en"><head><meta charset="utf-8"><title>STIGQter: STIG Check Details: SV-224493r1145202_rule: Sensitive CICS transactions are not protected in accordance with security requirements.</title><link rel="icon" type="image/svg+xml" href="STIGQter.svg" /><script async src="https://www.googletagmanager.com/gtag/js?id=UA-31381839-2"></script><script src="include.js"></script><script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-4110907817782130" crossorigin="anonymous"></script></head><body><div><img src="STIGQter.svg" alt="STIGQter" style="height:1em;" /> <a href="https://www.stigqter.com/">STIGQter</a>: <a href="main.html">STIG Summary</a>: <a href="U_zOS_IBM_CICS_Transaction_Server_RACF_STIG_V7R2_Manual-xccdf.html">z/OS IBM CICS Transaction Server for RACF Security Technical Implementation Guide Version: 7 Release: 2 Benchmark Date: 01 Oct 2025</a>:</div> <h1>Sensitive CICS transactions are not protected in accordance with security requirements.</h1><h2>DISA Rule</h2><p>SV-224493r1145202_rule</p><h2>Vulnerability Number</h2><p>V-224493</p><h2>Group Title</h2><p>SRG-OS-000080</p><h2>Rule Version</h2><p>ZCIC0020</p><h2>Severity</h2><p>CAT II</p><h2>CCI(s)</h2><ul><li>CCI-000213 - Enforce approved authorizations for logical access to information and system resources in accordance with applicable access control policies.</li></ul><h2>Weight</h2><p>10</p><h2>Fix Recommendation</h2><p>Develop a plan to implement the required changes.<br />
+<br />
+Most transactions are protected in groups. An example would be &quot;L2TRANS&quot;, which would contain all Category 2 transactions. L2TRANS is defined to RACF as a profile and contains all the Category 2 transactions. An example of how to implement this within RACF is shown here:<br />
+<br />
+RDEF GCICSTRN L2TRANS UACC(NONE) OWNER(ADMIN) AUDIT(ALL(READ))<br />
+<br />
+RALT GCICSTRN L2TRANS ADDMEM(CADP CBAM CDBC)<br />
+<br />
+Permission to the transaction group can be accomplished with a sample command:<br />
+<br />
+PE L2TRANS CL(GCICSTRN) id(&lt;syspaudt&gt;)<br />
+<br />
+Note that a refresh is generally needed to the member class.<br />
+In this case TCICSTRN is the member class for GCICSTRN and a sample refresh command is<br />
+<br />
+SETR RACL(TCICSTRN) REFRESH<br />
+<br />
+Transactions groups should be defined and permitted in accordance with the CICS Transaction tables listed in the zOS STIG Addendum.</p><h2>Check Contents</h2><p>Refer to the following reports produced by the Data Set and Resource Data Collection:<br />
+<br />
+- SENSITVE.RPT(TCICSTRN).<br />
+- SENSITVE.RPT(GCICSTRN).<br />
+<br />
+Note: If a CICS region is using a site-defined transaction resource class pair, execute a RACF RLIST command against these resource classes.<br />
+<br />
+Refer to the CICS Systems Programmer Worksheets filled out from previous vulnerability ZCIC0010.<br />
+<br />
+If the following items are in effect for all CICS regions, this is not a finding.<br />
+<br />
+Transactions listed in tables CICS CATEGORY 2 CICS AND OTHER PRODUCT TRANSACTIONS and CICS CATEGORY 4 COTS-SUPPLIED SENSITIVE TRANSACTIONS, in the z/OS STIG Addendum, are restricted to authorized personnel.<br />
+<br />
+Note: The exception to this is the CEOT and CSGM transactions, which can be made available to all users.<br />
+Note: The exception to this is the CWBA transaction, can be made available to the CICS Default user.<br />
+Note: The transactions beginning with &quot;CK&quot; apply to regions running WebSphere MQ.<br />
+Note: Category 1 transactions are internally restricted to CICS region userids.</p><h2>Vulnerability Number</h2><p>V-224493</p><h2>Documentable</h2><p>False</p><h2>Rule Version</h2><p>ZCIC0020</p><h2>Severity Override Guidance</h2><p>Refer to the following reports produced by the Data Set and Resource Data Collection:<br />
+<br />
+- SENSITVE.RPT(TCICSTRN).<br />
+- SENSITVE.RPT(GCICSTRN).<br />
+<br />
+Note: If a CICS region is using a site-defined transaction resource class pair, execute a RACF RLIST command against these resource classes.<br />
+<br />
+Refer to the CICS Systems Programmer Worksheets filled out from previous vulnerability ZCIC0010.<br />
+<br />
+If the following items are in effect for all CICS regions, this is not a finding.<br />
+<br />
+Transactions listed in tables CICS CATEGORY 2 CICS AND OTHER PRODUCT TRANSACTIONS and CICS CATEGORY 4 COTS-SUPPLIED SENSITIVE TRANSACTIONS, in the z/OS STIG Addendum, are restricted to authorized personnel.<br />
+<br />
+Note: The exception to this is the CEOT and CSGM transactions, which can be made available to all users.<br />
+Note: The exception to this is the CWBA transaction, can be made available to the CICS Default user.<br />
+Note: The transactions beginning with &quot;CK&quot; apply to regions running WebSphere MQ.<br />
+Note: Category 1 transactions are internally restricted to CICS region userids.</p><h2>Check Content Reference</h2><p>M</p><h2>Target Key</h2><p>4154</p></body></html>

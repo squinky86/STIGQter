@@ -1,0 +1,37 @@
+<!doctype html><html lang="en"><head><meta charset="utf-8"><title>STIGQter: STIG Check Details: SV-261888r1000669_rule: Access to external executables must be disabled or restricted.</title><link rel="icon" type="image/svg+xml" href="STIGQter.svg" /><script async src="https://www.googletagmanager.com/gtag/js?id=UA-31381839-2"></script><script src="include.js"></script><script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-4110907817782130" crossorigin="anonymous"></script></head><body><div><img src="STIGQter.svg" alt="STIGQter" style="height:1em;" /> <a href="https://www.stigqter.com/">STIGQter</a>: <a href="main.html">STIG Summary</a>: <a href="U_CD_Postgres_16_STIG_V1R3_Manual-xccdf.html">Crunchy Data Postgres 16 Security Technical Implementation Guide Version: 1 Release: 3 Benchmark Date: 01 Jul 2026</a>:</div> <h1>Access to external executables must be disabled or restricted.</h1><h2>DISA Rule</h2><p>SV-261888r1000669_rule</p><h2>Vulnerability Number</h2><p>V-261888</p><h2>Group Title</h2><p>SRG-APP-000141-DB-000093</p><h2>Rule Version</h2><p>CD16-00-003400</p><h2>Severity</h2><p>CAT II</p><h2>CCI(s)</h2><ul><li>CCI-000381 - Configure the system to provide only organization-defined mission essential capabilities.</li></ul><h2>Weight</h2><p>10</p><h2>Fix Recommendation</h2><p>To remove superuser from a role, as the database administrator (shown here as &quot;postgres&quot;), run the following SQL:<br />
+<br />
+$ sudo su - postgres<br />
+$ psql -c &quot;ALTER ROLE &lt;role-name&gt; WITH NOSUPERUSER&quot;<br />
+<br />
+To remove extensions from PostgreSQL, as the database administrator (shown here as &quot;postgres&quot;), run the following SQL:<br />
+<br />
+$ sudo su - postgres<br />
+$ psql -c &quot;DROP EXTENSION extension_name&quot;</p><h2>Check Contents</h2><p>PostgreSQL's COPY command can interact with the underlying OS. Only superuser has access to this command.<br />
+<br />
+As the database administrator (shown here as &quot;postgres&quot;), run the following SQL to list all roles and their privileges:<br />
+<br />
+$ sudo su - postgres<br />
+$ psql -x -c &quot;\du&quot;<br />
+<br />
+If any role has &quot;superuser&quot; that should not, this is a finding.<br />
+<br />
+It is possible for an extension to contain code that could access external executables via SQL. To list all installed extensions, as the database administrator (shown here as &quot;postgres&quot;), run the following SQL:<br />
+<br />
+$ sudo su - postgres<br />
+$ psql -x -c &quot;SELECT * FROM pg_available_extensions WHERE installed_version IS NOT NULL&quot;<br />
+<br />
+If any installed extensions are not approved, this is a finding.</p><h2>Vulnerability Number</h2><p>V-261888</p><h2>Documentable</h2><p>False</p><h2>Rule Version</h2><p>CD16-00-003400</p><h2>Severity Override Guidance</h2><p>PostgreSQL's COPY command can interact with the underlying OS. Only superuser has access to this command.<br />
+<br />
+As the database administrator (shown here as &quot;postgres&quot;), run the following SQL to list all roles and their privileges:<br />
+<br />
+$ sudo su - postgres<br />
+$ psql -x -c &quot;\du&quot;<br />
+<br />
+If any role has &quot;superuser&quot; that should not, this is a finding.<br />
+<br />
+It is possible for an extension to contain code that could access external executables via SQL. To list all installed extensions, as the database administrator (shown here as &quot;postgres&quot;), run the following SQL:<br />
+<br />
+$ sudo su - postgres<br />
+$ psql -x -c &quot;SELECT * FROM pg_available_extensions WHERE installed_version IS NOT NULL&quot;<br />
+<br />
+If any installed extensions are not approved, this is a finding.</p><h2>Check Content Reference</h2><p>M</p><h2>Target Key</h2><p>5598</p></body></html>

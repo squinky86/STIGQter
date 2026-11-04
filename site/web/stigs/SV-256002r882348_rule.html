@@ -1,0 +1,60 @@
+<!doctype html><html lang="en"><head><meta charset="utf-8"><title>STIGQter: STIG Check Details: SV-256002r882348_rule: The Arista perimeter router must be configured to protect an enclave connected to an alternate gateway by using an inbound filter that only permits packets with destination addresses within the sites address space.</title><link rel="icon" type="image/svg+xml" href="STIGQter.svg" /><script async src="https://www.googletagmanager.com/gtag/js?id=UA-31381839-2"></script><script src="include.js"></script><script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-4110907817782130" crossorigin="anonymous"></script></head><body><div><img src="STIGQter.svg" alt="STIGQter" style="height:1em;" /> <a href="https://www.stigqter.com/">STIGQter</a>: <a href="main.html">STIG Summary</a>: <a href="U_Arista_MLS_EOS_4-X_Router_STIG_V2R2_Manual-xccdf.html">Arista MLS EOS 4.X Router Security Technical Implementation Guide Version: 2 Release: 2 Benchmark Date: 02 Apr 2025</a>:</div> <h1>The Arista perimeter router must be configured to protect an enclave connected to an alternate gateway by using an inbound filter that only permits packets with destination addresses within the sites address space.</h1><h2>DISA Rule</h2><p>SV-256002r882348_rule</p><h2>Vulnerability Number</h2><p>V-256002</p><h2>Group Title</h2><p>SRG-NET-000019-RTR-000008</p><h2>Rule Version</h2><p>ARST-RT-000160</p><h2>Severity</h2><p>CAT I</p><h2>CCI(s)</h2><ul><li>CCI-001414 - Enforce approved authorizations for controlling the flow of information between connected systems based on organization-defined information flow control policies.</li></ul><h2>Weight</h2><p>10</p><h2>Fix Recommendation</h2><p>This requirement is not applicable for the DODIN backbone.<br />
+<br />
+Configure the router for ingress filter of the perimeter router connected to an alternate gateway to only permit packets with destination addresses of the site's NIPRNet address space or a destination address belonging to the address block assigned by the alternate gateway network service provider.<br />
+<br />
+Step 1: Configure an ACL inbound to the interface-facing service provider.<br />
+<br />
+LEAF-1A(config)#ip access-list NIPRNet_ACL<br />
+LEAF-1A(config-acl-NIPRNet_ACL)#permit tcp any host 10.51.12.34 eq www<br />
+LEAF-1A(config-acl-NIPRNet_ACL)#permit icmp host 10.51.12.25 host 10.51.12.65 echo<br />
+LEAF-1A(config-acl-NIPRNet_ACL)#permit icmp host 10.51.12.25 host 10.51.12.65 echo-reply<br />
+LEAF-1A(config-acl-NIPRNet_ACL)#permit 50 any host 10.51.12.28<br />
+LEAF-1A(config-acl-NIPRNet_ACL)#permit gre any host 10.51.12.28<br />
+LEAF-1A(config-acl-NIPRNet_ACL)#deny ip any any log<br />
+<br />
+Step 2: Apply the ACL to the internet service provider-facing interface.<br />
+<br />
+LEAF-1A(config)#interface ethernet 3<br />
+LEAF-1A(config-if-Et3)#ip access-group NIPRNet_ACL in</p><h2>Check Contents</h2><p>This requirement is not applicable for the DODIN backbone.<br />
+<br />
+Review the Arista router configuration of each router interface connecting to an alternate gateway.<br />
+<br />
+Verify each permit statement of the ingress filter only permits packets with destination addresses of the site's NIPRNet address space or a destination address belonging to the address block assigned by the alternate gateway network service provider.<br />
+<br />
+Step 1: Verify an inbound ACL is configured to permit the packets with the destination addresses of the site's NIPRNet address space. Verify IP access lists are configured. Execute the command &quot;show ip access-lists&quot;.<br />
+<br />
+ip access-list NIPRNet_ACL<br />
+ permit tcp any host 10.51.12.34 eq www<br />
+ permit icmp host 10.51.12.25 host 10.51.12.65 echo<br />
+ permit icmp host 10.51.12.25 host 10.51.12.65 echo-reply<br />
+ permit 50 any host 10.51.12.28<br />
+ permit gre any host 10.51.12.28<br />
+ deny ip any any log<br />
+<br />
+Step 2: Verify the ACL is applied inbound to the service provider-facing interface. Verify interfaces are configured. Execute the command &quot;show run int YY&quot;.<br />
+<br />
+interface ethernet 3<br />
+ ip access-group NIPRNet_ACL in<br />
+<br />
+If the ingress filter permits packets with addresses other than those specified, such as destination addresses of the site's NIPRNet address space or a destination address belonging to the address block assigned by the alternate gateway network service provider, this is a finding.</p><h2>Vulnerability Number</h2><p>V-256002</p><h2>Documentable</h2><p>False</p><h2>Rule Version</h2><p>ARST-RT-000160</p><h2>Severity Override Guidance</h2><p>This requirement is not applicable for the DODIN backbone.<br />
+<br />
+Review the Arista router configuration of each router interface connecting to an alternate gateway.<br />
+<br />
+Verify each permit statement of the ingress filter only permits packets with destination addresses of the site's NIPRNet address space or a destination address belonging to the address block assigned by the alternate gateway network service provider.<br />
+<br />
+Step 1: Verify an inbound ACL is configured to permit the packets with the destination addresses of the site's NIPRNet address space. Verify IP access lists are configured. Execute the command &quot;show ip access-lists&quot;.<br />
+<br />
+ip access-list NIPRNet_ACL<br />
+ permit tcp any host 10.51.12.34 eq www<br />
+ permit icmp host 10.51.12.25 host 10.51.12.65 echo<br />
+ permit icmp host 10.51.12.25 host 10.51.12.65 echo-reply<br />
+ permit 50 any host 10.51.12.28<br />
+ permit gre any host 10.51.12.28<br />
+ deny ip any any log<br />
+<br />
+Step 2: Verify the ACL is applied inbound to the service provider-facing interface. Verify interfaces are configured. Execute the command &quot;show run int YY&quot;.<br />
+<br />
+interface ethernet 3<br />
+ ip access-group NIPRNet_ACL in<br />
+<br />
+If the ingress filter permits packets with addresses other than those specified, such as destination addresses of the site's NIPRNet address space or a destination address belonging to the address block assigned by the alternate gateway network service provider, this is a finding.</p><h2>Check Content Reference</h2><p>M</p><h2>Target Key</h2><p>5513</p></body></html>

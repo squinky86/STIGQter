@@ -1,0 +1,33 @@
+<!doctype html><html lang="en"><head><meta charset="utf-8"><title>STIGQter: STIG Check Details: SV-260575r1044770_rule: Ubuntu 22.04 LTS must implement smart card logins for multifactor authentication for local and network access to privileged and nonprivileged accounts.</title><link rel="icon" type="image/svg+xml" href="STIGQter.svg" /><script async src="https://www.googletagmanager.com/gtag/js?id=UA-31381839-2"></script><script src="include.js"></script><script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-4110907817782130" crossorigin="anonymous"></script></head><body><div><img src="STIGQter.svg" alt="STIGQter" style="height:1em;" /> <a href="https://www.stigqter.com/">STIGQter</a>: <a href="main.html">STIG Summary</a>: <a href="U_CAN_Ubuntu_22-04_LTS_STIG_V2R9_Manual-xccdf.html">Canonical Ubuntu 22.04 LTS Security Technical Implementation Guide Version: 2 Release: 9 Benchmark Date: 01 Jul 2026</a>:</div> <h1>Ubuntu 22.04 LTS must implement smart card logins for multifactor authentication for local and network access to privileged and nonprivileged accounts.</h1><h2>DISA Rule</h2><p>SV-260575r1044770_rule</p><h2>Vulnerability Number</h2><p>V-260575</p><h2>Group Title</h2><p>SRG-OS-000105-GPOS-00052</p><h2>Rule Version</h2><p>UBTU-22-612020</p><h2>Severity</h2><p>CAT II</p><h2>CCI(s)</h2><ul><li>CCI-000765 - Implement multifactor authentication for network access to privileged accounts.</li><li>CCI-000766 - Implement multifactor authentication for network access to non-privileged accounts.</li><li>CCI-004047 - Implement multi-factor authentication for local; network; and/or remote access to privileged accounts; and/or non-privileged accounts such that the device meets organization-defined strength of mechanism requirements.</li></ul><h2>Weight</h2><p>10</p><h2>Fix Recommendation</h2><p>Configure Ubuntu 22.04 LTS to use multifactor authentication for access to accounts.  <br />
+  <br />
+Add or modify the following line in the &quot;/etc/pam.d/common-auth&quot; file: <br />
+  <br />
+auth     [success=3 default=ignore]     pam_pkcs11.so  <br />
+  <br />
+Add or modify the following line in the &quot;/etc/ssh/sshd_config&quot; file: <br />
+ <br />
+PubkeyAuthentication yes</p><h2>Check Contents</h2><p>Verify that the &quot;pam_pkcs11.so&quot; module is configured by using the following command: <br />
+ <br />
+     $ grep -i pam_pkcs11.so /etc/pam.d/common-auth <br />
+     auth     [success=3 default=ignore]     pam_pkcs11.so  <br />
+ <br />
+If &quot;pam_pkcs11.so&quot; is commented out or is missing, this is a finding. <br />
+ <br />
+Verify the sshd daemon allows public key authentication by using the following command: <br />
+  <br />
+     $ sudo /usr/sbin/sshd -dd 2&gt;&amp;1 | awk '/filename/ {print $4}' | tr -d '\r' | tr '\n' ' ' | xargs sudo grep -iH 'pubkeyauthentication' <br />
+     /etc/ssh/sshd_config:PubkeyAuthentication yes <br />
+ <br />
+If &quot;PubkeyAuthentication&quot; is not set to &quot;yes&quot; or is commented out or missing, or if conflicting results are returned, this is a finding.</p><h2>Vulnerability Number</h2><p>V-260575</p><h2>Documentable</h2><p>False</p><h2>Rule Version</h2><p>UBTU-22-612020</p><h2>Severity Override Guidance</h2><p>Verify that the &quot;pam_pkcs11.so&quot; module is configured by using the following command: <br />
+ <br />
+     $ grep -i pam_pkcs11.so /etc/pam.d/common-auth <br />
+     auth     [success=3 default=ignore]     pam_pkcs11.so  <br />
+ <br />
+If &quot;pam_pkcs11.so&quot; is commented out or is missing, this is a finding. <br />
+ <br />
+Verify the sshd daemon allows public key authentication by using the following command: <br />
+  <br />
+     $ sudo /usr/sbin/sshd -dd 2&gt;&amp;1 | awk '/filename/ {print $4}' | tr -d '\r' | tr '\n' ' ' | xargs sudo grep -iH 'pubkeyauthentication' <br />
+     /etc/ssh/sshd_config:PubkeyAuthentication yes <br />
+ <br />
+If &quot;PubkeyAuthentication&quot; is not set to &quot;yes&quot; or is commented out or missing, or if conflicting results are returned, this is a finding.</p><h2>Check Content Reference</h2><p>M</p><h2>Target Key</h2><p>5594</p></body></html>

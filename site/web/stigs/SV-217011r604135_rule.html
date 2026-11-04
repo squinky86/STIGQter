@@ -1,0 +1,147 @@
+<!doctype html><html lang="en"><head><meta charset="utf-8"><title>STIGQter: STIG Check Details: SV-217011r604135_rule: The Juniper router must be configured to enforce approved authorizations for controlling the flow of information within the network based on organization-defined information flow control policies.</title><link rel="icon" type="image/svg+xml" href="STIGQter.svg" /><script async src="https://www.googletagmanager.com/gtag/js?id=UA-31381839-2"></script><script src="include.js"></script><script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-4110907817782130" crossorigin="anonymous"></script></head><body><div><img src="STIGQter.svg" alt="STIGQter" style="height:1em;" /> <a href="https://www.stigqter.com/">STIGQter</a>: <a href="main.html">STIG Summary</a>: <a href="U_Juniper_Router_RTR_STIG_V3R2_Manual-xccdf.html">Juniper Router RTR Security Technical Implementation Guide Version: 3 Release: 2 Benchmark Date: 30 Jan 2025</a>:</div> <h1>The Juniper router must be configured to enforce approved authorizations for controlling the flow of information within the network based on organization-defined information flow control policies.</h1><h2>DISA Rule</h2><p>SV-217011r604135_rule</p><h2>Vulnerability Number</h2><p>V-217011</p><h2>Group Title</h2><p>SRG-NET-000018-RTR-000001</p><h2>Rule Version</h2><p>JUNI-RT-000010</p><h2>Severity</h2><p>CAT II</p><h2>CCI(s)</h2><ul><li>CCI-001368 - Enforce approved authorizations for controlling the flow of information within the system based on organization-defined information flow control policies.</li></ul><h2>Weight</h2><p>10</p><h2>Fix Recommendation</h2><p>This requirement is not applicable for the DoDIN Backbone.<br />
+<br />
+Configure firewall filters to allow or deny traffic for specific source and destination addresses as well as ports and protocols between various subnets as required. The commands used below were used to create the configuration as shown in the check content.<br />
+<br />
+[edit firewall family inet]<br />
+set filter FILTER_SERVER_TRAFFIC term PRINT_FILTER from destination-address 11.1.23.0/24<br />
+set filter FILTER_SERVER_TRAFFIC term PRINT_FILTER from protocol tcp destination-port [515 631 9100] <br />
+set filter FILTER_SERVER_TRAFFIC term PRINT_FILTER then accept<br />
+set filter FILTER_SERVER_TRAFFIC term SQL_FILTER from destination-address 11.1.24.0/24<br />
+set filter FILTER_SERVER_TRAFFIC term SQL_FILTER from protocol tcp destination-port [1433 1434 4022]<br />
+set filter FILTER_SERVER_TRAFFIC term SQL_FILTER then accept<br />
+set filter FILTER_SERVER_TRAFFIC term ALLOW_OSPF from protocol ospf<br />
+set filter FILTER_SERVER_TRAFFIC term ALLOW_OSPF then accept<br />
+set filter FILTER_SERVER_TRAFFIC term ALLOW_ICMP from protocol icmp<br />
+set filter FILTER_SERVER_TRAFFIC term ALLOW_ICMP then accept<br />
+set filter FILTER_SERVER_TRAFFIC term DENY_ALL_OTHER then log reject<br />
+<br />
+[edit interfaces ge-0/0/0 unit 0 family inet]<br />
+set filter input FILTER_SERVER_TRAFFIC</p><h2>Check Contents</h2><p>This requirement is not applicable for the DoDIN Backbone.<br />
+<br />
+Review the router configuration to verify that firewall filters are configured to allow or deny traffic for specific source and destination addresses as well as ports and protocols. For example, the configuration below will allow only printer traffic into subnet 11.1.23.0/24 and SQL traffic into subnet 11.1.24.0/24. ICMP is allowed for troubleshooting and OSPF is the routing protocol used within the network.<br />
+<br />
+interfaces {<br />
+    ge-0/0/0 {<br />
+        unit 0 {<br />
+            family inet {<br />
+                filter {<br />
+                    input FILTER_SERVER_TRAFFIC;<br />
+                }<br />
+                address 11.1.12.2/24;<br />
+            }<br />
+        }<br />
+    }<br />
+…<br />
+…<br />
+…<br />
+firewall {<br />
+    family inet {<br />
+        filter FILTER_SERVER_TRAFFIC {<br />
+            term PRINT_FILTER {<br />
+                from {<br />
+                    destination-address {<br />
+                        11.1.23.0/24;<br />
+                    }<br />
+                    protocol tcp;<br />
+                    destination-port [ 515 631 9100 ];<br />
+                }<br />
+                then accept;<br />
+            }<br />
+            term SQL_FILTER {<br />
+                from {<br />
+                    destination-address {<br />
+                        11.1.24.0/24;<br />
+                    }<br />
+                    protocol tcp;<br />
+                    destination-port [ 1433 1434 4022 ];<br />
+                }<br />
+                then accept;<br />
+            }<br />
+            term ALLOW_OSPF {<br />
+                from {<br />
+                    protocol ospf;<br />
+                }<br />
+                then accept;<br />
+            }<br />
+            term ALLOW_ICMP {<br />
+                from {<br />
+                    protocol icmp;<br />
+                }<br />
+                then accept;<br />
+            }<br />
+            term DENY_ALL_OTHER {<br />
+                then {<br />
+                    log;<br />
+                    syslog;<br />
+                    reject;<br />
+                }<br />
+            }<br />
+        }<br />
+<br />
+<br />
+<br />
+If the router is not configured to enforce approved authorizations for controlling the flow of information within the network based on organization-defined information flow control policies, this is a finding.</p><h2>Vulnerability Number</h2><p>V-217011</p><h2>Documentable</h2><p>False</p><h2>Rule Version</h2><p>JUNI-RT-000010</p><h2>Severity Override Guidance</h2><p>This requirement is not applicable for the DoDIN Backbone.<br />
+<br />
+Review the router configuration to verify that firewall filters are configured to allow or deny traffic for specific source and destination addresses as well as ports and protocols. For example, the configuration below will allow only printer traffic into subnet 11.1.23.0/24 and SQL traffic into subnet 11.1.24.0/24. ICMP is allowed for troubleshooting and OSPF is the routing protocol used within the network.<br />
+<br />
+interfaces {<br />
+    ge-0/0/0 {<br />
+        unit 0 {<br />
+            family inet {<br />
+                filter {<br />
+                    input FILTER_SERVER_TRAFFIC;<br />
+                }<br />
+                address 11.1.12.2/24;<br />
+            }<br />
+        }<br />
+    }<br />
+…<br />
+…<br />
+…<br />
+firewall {<br />
+    family inet {<br />
+        filter FILTER_SERVER_TRAFFIC {<br />
+            term PRINT_FILTER {<br />
+                from {<br />
+                    destination-address {<br />
+                        11.1.23.0/24;<br />
+                    }<br />
+                    protocol tcp;<br />
+                    destination-port [ 515 631 9100 ];<br />
+                }<br />
+                then accept;<br />
+            }<br />
+            term SQL_FILTER {<br />
+                from {<br />
+                    destination-address {<br />
+                        11.1.24.0/24;<br />
+                    }<br />
+                    protocol tcp;<br />
+                    destination-port [ 1433 1434 4022 ];<br />
+                }<br />
+                then accept;<br />
+            }<br />
+            term ALLOW_OSPF {<br />
+                from {<br />
+                    protocol ospf;<br />
+                }<br />
+                then accept;<br />
+            }<br />
+            term ALLOW_ICMP {<br />
+                from {<br />
+                    protocol icmp;<br />
+                }<br />
+                then accept;<br />
+            }<br />
+            term DENY_ALL_OTHER {<br />
+                then {<br />
+                    log;<br />
+                    syslog;<br />
+                    reject;<br />
+                }<br />
+            }<br />
+        }<br />
+<br />
+<br />
+<br />
+If the router is not configured to enforce approved authorizations for controlling the flow of information within the network based on organization-defined information flow control policies, this is a finding.</p><h2>Check Content Reference</h2><p>M</p><h2>Target Key</h2><p>4032</p></body></html>

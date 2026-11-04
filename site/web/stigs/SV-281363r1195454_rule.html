@@ -1,0 +1,45 @@
+<!doctype html><html lang="en"><head><meta charset="utf-8"><title>STIGQter: STIG Check Details: SV-281363r1195454_rule: RHEL 10 must be configured to operate in secure mode if the Trivial File Transfer Protocol (TFTP) server service is required.</title><link rel="icon" type="image/svg+xml" href="STIGQter.svg" /><script async src="https://www.googletagmanager.com/gtag/js?id=UA-31381839-2"></script><script src="include.js"></script><script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-4110907817782130" crossorigin="anonymous"></script></head><body><div><img src="STIGQter.svg" alt="STIGQter" style="height:1em;" /> <a href="https://www.stigqter.com/">STIGQter</a>: <a href="main.html">STIG Summary</a>: <a href="U_RHEL_10_STIG_V1R2_Manual-xccdf.html">Red Hat Enterprise Linux 10 Security Technical Implementation Guide Version: 1 Release: 2 Benchmark Date: 01 Jul 2026</a>:</div> <h1>RHEL 10 must be configured to operate in secure mode if the Trivial File Transfer Protocol (TFTP) server service is required.</h1><h2>DISA Rule</h2><p>SV-281363r1195454_rule</p><h2>Vulnerability Number</h2><p>V-281363</p><h2>Group Title</h2><p>SRG-OS-000074-GPOS-00042</p><h2>Rule Version</h2><p>RHEL-10-800310</p><h2>Severity</h2><p>CAT II</p><h2>CCI(s)</h2><ul><li>CCI-000197 - For password-based authentication, transmit passwords only cryptographically-protected channels.</li></ul><h2>Weight</h2><p>10</p><h2>Fix Recommendation</h2><p>Configure RHEL 10 TFTP to operate in secure mode with the following command:<br />
+<br />
+$ sudo systemctl edit tftp.service<br />
+<br />
+In the editor, enter the following:<br />
+<br />
+[Service]<br />
+ExecStart=/usr/sbin/in.tftpd -s /var/lib/tftpboot<br />
+<br />
+After making changes, reload the systemd daemon and restart the TFTP service as follows:<br />
+<br />
+$ sudo systemctl daemon-reload<br />
+$ sudo systemctl restart tftp.service</p><h2>Check Contents</h2><p>Note: If a TFTP server is not installed, this rule is not applicable.<br />
+<br />
+Verify RHEL 10 is configured to operate in secure mode if the TFTP server service is required.<br />
+<br />
+Determine if the TFTP server is installed with the following command:<br />
+<br />
+$ sudo dnf list installed | grep tftp-server<br />
+tftp-server.x86_64                                   5.2-48.el10                     @rhel-10-for-x86_64-appstream-rpms<br />
+<br />
+Verify that the TFTP daemon, if &quot;tftp.server&quot; is installed, is configured to operate in secure mode with the following command:<br />
+<br />
+$ systemctl cat tftp.service | grep -i execstart<br />
+ExecStart=/usr/sbin/in.tftpd -s /var/lib/tftpboot<br />
+<br />
+Note: The &quot;-s&quot; option ensures that the TFTP server serves only files from the specified directory, which is a security measure to prevent unauthorized access to other parts of the file system.<br />
+<br />
+If the TFTP server is installed, but the TFTP daemon is not configured to operate in secure mode, and tftp is not documented as critical to the mission with the information system security officer, this is a finding.</p><h2>Vulnerability Number</h2><p>V-281363</p><h2>Documentable</h2><p>False</p><h2>Rule Version</h2><p>RHEL-10-800310</p><h2>Severity Override Guidance</h2><p>Note: If a TFTP server is not installed, this rule is not applicable.<br />
+<br />
+Verify RHEL 10 is configured to operate in secure mode if the TFTP server service is required.<br />
+<br />
+Determine if the TFTP server is installed with the following command:<br />
+<br />
+$ sudo dnf list installed | grep tftp-server<br />
+tftp-server.x86_64                                   5.2-48.el10                     @rhel-10-for-x86_64-appstream-rpms<br />
+<br />
+Verify that the TFTP daemon, if &quot;tftp.server&quot; is installed, is configured to operate in secure mode with the following command:<br />
+<br />
+$ systemctl cat tftp.service | grep -i execstart<br />
+ExecStart=/usr/sbin/in.tftpd -s /var/lib/tftpboot<br />
+<br />
+Note: The &quot;-s&quot; option ensures that the TFTP server serves only files from the specified directory, which is a security measure to prevent unauthorized access to other parts of the file system.<br />
+<br />
+If the TFTP server is installed, but the TFTP daemon is not configured to operate in secure mode, and tftp is not documented as critical to the mission with the information system security officer, this is a finding.</p><h2>Check Content Reference</h2><p>M</p><h2>Target Key</h2><p>5733</p></body></html>

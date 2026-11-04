@@ -1,0 +1,73 @@
+<!doctype html><html lang="en"><head><meta charset="utf-8"><title>STIGQter: STIG Check Details: SV-270529r1065268_rule: Oracle roles granted using the WITH ADMIN OPTION must not be granted to unauthorized accounts.</title><link rel="icon" type="image/svg+xml" href="STIGQter.svg" /><script async src="https://www.googletagmanager.com/gtag/js?id=UA-31381839-2"></script><script src="include.js"></script><script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-4110907817782130" crossorigin="anonymous"></script></head><body><div><img src="STIGQter.svg" alt="STIGQter" style="height:1em;" /> <a href="https://www.stigqter.com/">STIGQter</a>: <a href="main.html">STIG Summary</a>: <a href="U_Oracle_Database_19c_STIG_V1R5_Manual-xccdf.html">Oracle Database 19c Security Technical Implementation Guide Version: 1 Release: 5 Benchmark Date: 01 Apr 2026</a>:</div> <h1>Oracle roles granted using the WITH ADMIN OPTION must not be granted to unauthorized accounts.</h1><h2>DISA Rule</h2><p>SV-270529r1065268_rule</p><h2>Vulnerability Number</h2><p>V-270529</p><h2>Group Title</h2><p>SRG-APP-000516-DB-000363</p><h2>Rule Version</h2><p>O19C-00-009700</p><h2>Severity</h2><p>CAT II</p><h2>CCI(s)</h2><ul><li>CCI-000366 - Implement the security configuration settings.</li></ul><h2>Weight</h2><p>10</p><h2>Fix Recommendation</h2><p>Revoke assignment of roles with the WITH ADMIN OPTION from unauthorized grantees and regrant them without the option if required.<br />
+<br />
+SQL statements to remove the admin option from an unauthorized grantee:<br />
+revoke &lt;role name&gt; from &lt;grantee&gt;;<br />
+grant &lt;role name&gt; to &lt;grantee&gt;;<br />
+<br />
+Restrict use of the WITH ADMIN OPTION to authorized administrators.<br />
+<br />
+Document authorized role assignments with the WITH ADMIN OPTION in the system documentation.</p><h2>Check Contents</h2><p>A default Oracle Database installation provides a set of predefined administrative accounts and nonadministrative accounts. These are accounts that have special privileges required to administer areas of the database, such as the CREATE ANY TABLE or ALTER SESSION privilege or EXECUTE privileges on packages owned by the SYS schema. The default tablespace for administrative accounts is either SYSTEM or SYSAUX. Nonadministrative user accounts only have the minimum privileges needed to perform their jobs. Their default tablespace is USERS.<br />
+<br />
+To protect these accounts from unauthorized access, the installation process expires and locks most of these accounts, except where noted below. The database administrator is responsible for unlocking and resetting these accounts, as required.<br />
+<br />
+Non-Administrative Accounts - Expired and locked:<br />
+APEX_PUBLIC_USER, DIP, FLOWS_040100*, FLOWS_FILES, MDDATA, SPATIAL_WFS_ADMIN_USR, XS$NULL<br />
+<br />
+Administrative Accounts - Expired and Locked:<br />
+ANONYMOUS, CTXSYS, EXFSYS, LBACSYS, MDSYS, OLAPSYS, ORACLE_OCM, ORDDATA, OWBSYS, ORDPLUGINS, ORDSYS, OUTLN, SI_INFORMTN_SCHEMA, SPATIAL_CSW_ADMIN_USR, WK_TEST, WK_SYS, WKPROXY, WMSYS, XDB<br />
+<br />
+Administrative Accounts - Open:<br />
+DBSNMP, MGMT_VIEW, SYS, SYSMAN, SYSTEM<br />
+<br />
+*Subject to change based on version installed.<br />
+<br />
+Run the SQL statement:<br />
+<br />
+select grantee||': '||granted_role from dba_role_privs<br />
+where grantee not in<br />
+(&lt;list of nonapplicable accounts&gt;)<br />
+and admin_option = 'YES' <br />
+and grantee not in<br />
+(select distinct owner from dba_objects)<br />
+and grantee not in<br />
+(select grantee from dba_role_privs<br />
+where granted_role = 'DBA')<br />
+order by grantee;<br />
+<br />
+(With respect to the list of special accounts that are excluded from this requirement, it is expected that the DBA will maintain the list to suit local circumstances, adding special accounts as necessary and removing any that are not supposed to be in use in the Oracle deployment that is under review.)<br />
+<br />
+Review the system documentation to confirm any grantees listed are information system security officer (ISSO)-authorized DBA accounts or application administration roles.<br />
+<br />
+If any grantees listed are not authorized and documented, this is a finding.</p><h2>Vulnerability Number</h2><p>V-270529</p><h2>Documentable</h2><p>False</p><h2>Rule Version</h2><p>O19C-00-009700</p><h2>Severity Override Guidance</h2><p>A default Oracle Database installation provides a set of predefined administrative accounts and nonadministrative accounts. These are accounts that have special privileges required to administer areas of the database, such as the CREATE ANY TABLE or ALTER SESSION privilege or EXECUTE privileges on packages owned by the SYS schema. The default tablespace for administrative accounts is either SYSTEM or SYSAUX. Nonadministrative user accounts only have the minimum privileges needed to perform their jobs. Their default tablespace is USERS.<br />
+<br />
+To protect these accounts from unauthorized access, the installation process expires and locks most of these accounts, except where noted below. The database administrator is responsible for unlocking and resetting these accounts, as required.<br />
+<br />
+Non-Administrative Accounts - Expired and locked:<br />
+APEX_PUBLIC_USER, DIP, FLOWS_040100*, FLOWS_FILES, MDDATA, SPATIAL_WFS_ADMIN_USR, XS$NULL<br />
+<br />
+Administrative Accounts - Expired and Locked:<br />
+ANONYMOUS, CTXSYS, EXFSYS, LBACSYS, MDSYS, OLAPSYS, ORACLE_OCM, ORDDATA, OWBSYS, ORDPLUGINS, ORDSYS, OUTLN, SI_INFORMTN_SCHEMA, SPATIAL_CSW_ADMIN_USR, WK_TEST, WK_SYS, WKPROXY, WMSYS, XDB<br />
+<br />
+Administrative Accounts - Open:<br />
+DBSNMP, MGMT_VIEW, SYS, SYSMAN, SYSTEM<br />
+<br />
+*Subject to change based on version installed.<br />
+<br />
+Run the SQL statement:<br />
+<br />
+select grantee||': '||granted_role from dba_role_privs<br />
+where grantee not in<br />
+(&lt;list of nonapplicable accounts&gt;)<br />
+and admin_option = 'YES' <br />
+and grantee not in<br />
+(select distinct owner from dba_objects)<br />
+and grantee not in<br />
+(select grantee from dba_role_privs<br />
+where granted_role = 'DBA')<br />
+order by grantee;<br />
+<br />
+(With respect to the list of special accounts that are excluded from this requirement, it is expected that the DBA will maintain the list to suit local circumstances, adding special accounts as necessary and removing any that are not supposed to be in use in the Oracle deployment that is under review.)<br />
+<br />
+Review the system documentation to confirm any grantees listed are information system security officer (ISSO)-authorized DBA accounts or application administration roles.<br />
+<br />
+If any grantees listed are not authorized and documented, this is a finding.</p><h2>Check Content Reference</h2><p>M</p><h2>Target Key</h2><p>5672</p></body></html>

@@ -1,0 +1,35 @@
+<!doctype html><html lang="en"><head><meta charset="utf-8"><title>STIGQter: STIG Check Details: SV-234936r958412_rule: The SUSE operating system must generate audit records for all uses of the ssh-agent command.</title><link rel="icon" type="image/svg+xml" href="STIGQter.svg" /><script async src="https://www.googletagmanager.com/gtag/js?id=UA-31381839-2"></script><script src="include.js"></script><script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-4110907817782130" crossorigin="anonymous"></script></head><body><div><img src="STIGQter.svg" alt="STIGQter" style="height:1em;" /> <a href="https://www.stigqter.com/">STIGQter</a>: <a href="main.html">STIG Summary</a>: <a href="U_SLES_15_STIG_V2R8_Manual-xccdf.html">SUSE Linux Enterprise Server 15 Security Technical Implementation Guide Version: 2 Release: 8 Benchmark Date: 01 Jul 2026</a>:</div> <h1>The SUSE operating system must generate audit records for all uses of the ssh-agent command.</h1><h2>DISA Rule</h2><p>SV-234936r958412_rule</p><h2>Vulnerability Number</h2><p>V-234936</p><h2>Group Title</h2><p>SRG-OS-000037-GPOS-00015</p><h2>Rule Version</h2><p>SLES-15-030370</p><h2>Severity</h2><p>CAT III</p><h2>CCI(s)</h2><ul><li>CCI-000130 - Ensure that audit records containing information that establishes what type of event occurred.</li><li>CCI-000169 - Provide audit record generation capability for the event types the system is capable of auditing as defined in AU-2 a. on organization-defined information system components.</li><li>CCI-000172 - Generate audit records for the event types defined in AU-2 c that include the audit record content defined in AU-3.</li><li>CCI-002884 - Log organization-defined audit events for nonlocal maintenance and diagnostic sessions.</li></ul><h2>Weight</h2><p>10</p><h2>Fix Recommendation</h2><p>Configure the SUSE operating system to generate an audit record for all uses of the &quot;ssh-agent&quot; command.<br />
+<br />
+Add or update the following rules in the &quot;/etc/audit/rules.d/audit.rules&quot; file:<br />
+<br />
+-a always,exit -F path=/usr/bin/ssh-agent -F perm=x -F auid&gt;=1000 -F auid!=4294967295 -k privileged-ssh-agent<br />
+<br />
+To reload the rules file, restart the audit daemon<br />
+<br />
+&gt; sudo systemctl restart auditd.service<br />
+<br />
+or issue the following command:<br />
+<br />
+&gt; sudo augenrules --load</p><h2>Check Contents</h2><p>Verify the SUSE operating system generates an audit record for all uses of the &quot;ssh-agent&quot; command.<br />
+<br />
+Check that the command is being audited by performing the following command:<br />
+<br />
+&gt; sudo auditctl -l | grep -w '/usr/bin/ssh-agent'<br />
+<br />
+-a always,exit -S all -F path=/usr/bin/ssh-agent -F perm=x -F auid&gt;=1000 -F auid!=-1 -k privileged-ssh-agent<br />
+<br />
+If the command does not return any output or the returned line is commented out, this is a finding.<br />
+<br />
+Note:<br />
+The &quot;-k&quot; allows for specifying an arbitrary identifier. The string following &quot;-k&quot; does not need to match the example output above.</p><h2>Vulnerability Number</h2><p>V-234936</p><h2>Documentable</h2><p>False</p><h2>Rule Version</h2><p>SLES-15-030370</p><h2>Severity Override Guidance</h2><p>Verify the SUSE operating system generates an audit record for all uses of the &quot;ssh-agent&quot; command.<br />
+<br />
+Check that the command is being audited by performing the following command:<br />
+<br />
+&gt; sudo auditctl -l | grep -w '/usr/bin/ssh-agent'<br />
+<br />
+-a always,exit -S all -F path=/usr/bin/ssh-agent -F perm=x -F auid&gt;=1000 -F auid!=-1 -k privileged-ssh-agent<br />
+<br />
+If the command does not return any output or the returned line is commented out, this is a finding.<br />
+<br />
+Note:<br />
+The &quot;-k&quot; allows for specifying an arbitrary identifier. The string following &quot;-k&quot; does not need to match the example output above.</p><h2>Check Content Reference</h2><p>M</p><h2>Target Key</h2><p>5274</p></body></html>

@@ -1,0 +1,102 @@
+<!doctype html><html lang="en"><head><meta charset="utf-8"><title>STIGQter: STIG Check Details: SV-260925r966132_rule: CPU priority must be set appropriately on all containers.</title><link rel="icon" type="image/svg+xml" href="STIGQter.svg" /><script async src="https://www.googletagmanager.com/gtag/js?id=UA-31381839-2"></script><script src="include.js"></script><script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-4110907817782130" crossorigin="anonymous"></script></head><body><div><img src="STIGQter.svg" alt="STIGQter" style="height:1em;" /> <a href="https://www.stigqter.com/">STIGQter</a>: <a href="main.html">STIG Summary</a>: <a href="U_Mirantis_Kubernetes_Engine_STIG_V2R1_Manual-xccdf.html">Mirantis Kubernetes Engine Security Technical Implementation Guide Version: 2 Release: 1 Benchmark Date: 24 Jul 2024</a>:</div> <h1>CPU priority must be set appropriately on all containers.</h1><h2>DISA Rule</h2><p>SV-260925r966132_rule</p><h2>Vulnerability Number</h2><p>V-260925</p><h2>Group Title</h2><p>SRG-APP-000141-CTR-000315</p><h2>Rule Version</h2><p>CNTR-MK-000590</p><h2>Severity</h2><p>CAT II</p><h2>CCI(s)</h2><ul><li>CCI-000381 - Configure the system to provide only organization-defined mission essential capabilities.</li><li>CCI-002530 - Maintain a separate execution domain for each executing system process.</li><li>CCI-002824 - Implement organization-defined controls to protect its memory from unauthorized code execution.</li></ul><h2>Weight</h2><p>10</p><h2>Fix Recommendation</h2><p>Set Resource Quotas and CPU priority for each namespace.<br />
+<br />
+When using Kubernetes orchestration:<br />
+<br />
+1. Create a resource quota as follows (quotaexample.yaml):<br />
+<br />
+apiVersion: v1<br />
+kind: ResourceQuota<br />
+metadata:<br />
+  name: mem-cpu-demo<br />
+spec:<br />
+  hard:<br />
+    requests.cpu: &quot;&quot;1&quot;&quot;<br />
+    requests.memory: 1Gi<br />
+    limits.cpu: &quot;&quot;2&quot;&quot;<br />
+    limits.memory: 2Gi<br />
+Where the limits can be set according to the SSP.<br />
+<br />
+Save this file.<br />
+<br />
+2. Apply the quota to a namespace within the cluster by executing:<br />
+<br />
+kubectl apply -f [full path to quotaexample.yaml] --namespace=[name of namespace on cluster]<br />
+<br />
+This must be repeated for all namespaces. Quotas can differ per namespace as required by the site.<br />
+<br />
+When using Swarm orchestration:<br />
+<br />
+1. Set Resource Quotas by executing the following:<br />
+<br />
+docker exec -it [container name] --memory=&quot;&quot;&quot;&quot;2g&quot;&quot;&quot;&quot;<br />
+<br />
+This must be repeated for all containers. Quotas can differ per container as required by the site.<br />
+<br />
+2. Set CPU Priority:<br />
+<br />
+When using Swarm orchestration to manage the CPU shares between containers, start the container using the --cpu-shares argument.<br />
+<br />
+For example, run a container as below:<br />
+<br />
+docker run --interactive --tty --cpu-shares 512 [image] [command]<br />
+<br />
+In the above example, the container is started with CPU shares of 50 percent of what the other containers use. So, if the other container has CPU shares of 80 percent, this container will have CPU shares of 40 percent.<br />
+<br />
+Note: Every new container will have 1024 shares of CPU by default. However, this value is shown as &quot;0&quot; if running the command mentioned in the audit section.<br />
+<br />
+Alternatively:<br />
+1. Navigate to /sys/fs/cgroup/cpu/system.slice/ directory.<br />
+<br />
+2. Check the container instance ID using docker ps.<br />
+<br />
+3. Inside the above directory (in step 1), there will be a directory called docker-&lt;Instance ID&gt;.scope. For example, docker-4acae729e8659c6be696ee35b2237cc1fe4edd2672e9186434c5116e1a6fbed6.scope. Navigate to this directory.<br />
+<br />
+4. Find a file named cpu.shares. Execute cat cpu.shares. This will always show the CPU share value based on the system. Even if there are no CPU shares configured using -c or --cpu-shares argument in the docker run command, this file will have a value of 1024.<br />
+<br />
+By setting one containers CPU shares to 512, it will receive half of the CPU time compared to the other container. Take 1024 as 100 percent and derive the number that set for respective CPU shares. For example, use 512 to set 50 percent and 256 to set 25 percent.</p><h2>Check Contents</h2><p>Ensure Resource Quotas and CPU priority is set for each namespace.<br />
+<br />
+When using Kubernetes orchestration:<br />
+Log in to the MKE web UI, navigate to Kubernetes &gt;&gt; Namespace, and then click on each defined Namespace.<br />
+<br />
+If the Namespace states &quot;Quotas Nothing has been defined for this resource.&quot; or the limits.cpu or the limits.memory settings do not match the System Security Plan (SSP), this is a finding.<br />
+<br />
+When using Swarm orchestration:<br />
+1. Check Resource Quotas:<br />
+<br />
+Linux: As an administrator, execute the following command using a Universal Control Plane (MKE) client bundle:<br />
+<br />
+docker ps --quiet --filter &quot;&quot;&quot;&quot;label=com.docker.ucp.version&quot;&quot;&quot;&quot;  | xargs docker inspect --format '{{ .Name }}: Memory={{ .HostConfig.Memory }}'<br />
+<br />
+If the above command returns &quot;0&quot;, it means the memory limits are not in place, and this is a finding.<br />
+<br />
+2. Check CPU Priority:<br />
+When using Swarm orchestration, to ensure CPU priority is set, use the CLI:<br />
+<br />
+Linux: As an MKE Admin, execute the following command using a Universal Control Plane (MKE) client bundle:<br />
+<br />
+docker ps --quiet --filter &quot;&quot;label=com.docker.ucp.version&quot;&quot; | xargs docker inspect --format '{{ .Name }}: CpuShares={{ .HostConfig.CpuShares }}'<br />
+<br />
+Compare the output against the SSP, if any containers are set to &quot;0&quot; or &quot;1024&quot;, and they are not documented in the System Security Plan (SSP), this is a finding.</p><h2>Vulnerability Number</h2><p>V-260925</p><h2>Documentable</h2><p>False</p><h2>Rule Version</h2><p>CNTR-MK-000590</p><h2>Severity Override Guidance</h2><p>Ensure Resource Quotas and CPU priority is set for each namespace.<br />
+<br />
+When using Kubernetes orchestration:<br />
+Log in to the MKE web UI, navigate to Kubernetes &gt;&gt; Namespace, and then click on each defined Namespace.<br />
+<br />
+If the Namespace states &quot;Quotas Nothing has been defined for this resource.&quot; or the limits.cpu or the limits.memory settings do not match the System Security Plan (SSP), this is a finding.<br />
+<br />
+When using Swarm orchestration:<br />
+1. Check Resource Quotas:<br />
+<br />
+Linux: As an administrator, execute the following command using a Universal Control Plane (MKE) client bundle:<br />
+<br />
+docker ps --quiet --filter &quot;&quot;&quot;&quot;label=com.docker.ucp.version&quot;&quot;&quot;&quot;  | xargs docker inspect --format '{{ .Name }}: Memory={{ .HostConfig.Memory }}'<br />
+<br />
+If the above command returns &quot;0&quot;, it means the memory limits are not in place, and this is a finding.<br />
+<br />
+2. Check CPU Priority:<br />
+When using Swarm orchestration, to ensure CPU priority is set, use the CLI:<br />
+<br />
+Linux: As an MKE Admin, execute the following command using a Universal Control Plane (MKE) client bundle:<br />
+<br />
+docker ps --quiet --filter &quot;&quot;label=com.docker.ucp.version&quot;&quot; | xargs docker inspect --format '{{ .Name }}: CpuShares={{ .HostConfig.CpuShares }}'<br />
+<br />
+Compare the output against the SSP, if any containers are set to &quot;0&quot; or &quot;1024&quot;, and they are not documented in the System Security Plan (SSP), this is a finding.</p><h2>Check Content Reference</h2><p>M</p><h2>Target Key</h2><p>5595</p></body></html>

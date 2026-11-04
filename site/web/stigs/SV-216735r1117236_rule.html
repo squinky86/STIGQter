@@ -1,0 +1,66 @@
+<!doctype html><html lang="en"><head><meta charset="utf-8"><title>STIGQter: STIG Check Details: SV-216735r1117236_rule: The Cisco router must be configured to enforce approved authorizations for controlling the flow of information within the network based on organization-defined information flow control policies.</title><link rel="icon" type="image/svg+xml" href="STIGQter.svg" /><script async src="https://www.googletagmanager.com/gtag/js?id=UA-31381839-2"></script><script src="include.js"></script><script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-4110907817782130" crossorigin="anonymous"></script></head><body><div><img src="STIGQter.svg" alt="STIGQter" style="height:1em;" /> <a href="https://www.stigqter.com/">STIGQter</a>: <a href="main.html">STIG Summary</a>: <a href="U_Cisco_IOS-XR_Router_RTR_STIG_V3R3_Manual-xccdf.html">Cisco IOS XR Router RTR Security Technical Implementation Guide Version: 3 Release: 3 Benchmark Date: 01 Oct 2025</a>:</div> <h1>The Cisco router must be configured to enforce approved authorizations for controlling the flow of information within the network based on organization-defined information flow control policies.</h1><h2>DISA Rule</h2><p>SV-216735r1117236_rule</p><h2>Vulnerability Number</h2><p>V-216735</p><h2>Group Title</h2><p>SRG-NET-000018-RTR-000001</p><h2>Rule Version</h2><p>CISC-RT-000010</p><h2>Severity</h2><p>CAT II</p><h2>CCI(s)</h2><ul><li>CCI-001368 - Enforce approved authorizations for controlling the flow of information within the system based on organization-defined information flow control policies.</li></ul><h2>Weight</h2><p>10</p><h2>Fix Recommendation</h2><p>This requirement is not applicable for the DODIN Backbone.<br />
+<br />
+Configure ACLs to allow or deny traffic for specific source and destination addresses as well as ports and protocols between various subnets as required. The commands used below were used to create the configuration as shown in the check content.<br />
+<br />
+RP/0/0/CPU0:R2(config)#ipv4 access-list FILTER_SERVER_TRAFFIC<br />
+RP/0/0/CPU0:R2(config-ipv4-acl)#permit tcp any 10.1.23.0 0.0.0.255 eq lpd <br />
+RP/0/0/CPU0:R2(config-ipv4-acl)#permit tcp any 10.1.23.0 0.0.0.255 eq 631<br />
+RP/0/0/CPU0:R2(config-ipv4-acl)#permit tcp any 10.1.23.0 0.0.0.255 eq 9100<br />
+RP/0/0/CPU0:R2(config-ipv4-acl)#permit tcp any 10.1.24.0 0.0.0.255 eq 1433  <br />
+RP/0/0/CPU0:R2(config-ipv4-acl)#permit tcp any 10.1.24.0 0.0.0.255 eq 1434  <br />
+RP/0/0/CPU0:R2(config-ipv4-acl)#permit tcp any 10.1.24.0 0.0.0.255 eq 4022<br />
+RP/0/0/CPU0:R2(config-ipv4-acl)#permit icmp any any<br />
+RP/0/0/CPU0:R2(config-ipv4-acl)#permit ospf any any<br />
+RP/0/0/CPU0:R2(config-ipv4-acl)#deny   ip any any<br />
+RP/0/0/CPU0:R2(config-ipv4-acl)#<br />
+RP/0/0/CPU0:R2(config-ipv4-acl)#exit<br />
+RP/0/0/CPU0:R2(config)#int g0/0/0/0<br />
+RP/0/0/CPU0:R2(config-if)#ipv4 access-group FILTER_SERVER_TRAFFIC</p><h2>Check Contents</h2><p>This requirement is not applicable for the DODIN Backbone.<br />
+<br />
+If Virtual Routing and Forwarding (VRF) is used to segment traffic and force traffic to traverse through next generation firewalls with ACLs, this requirement is not applicable.<br />
+<br />
+Review the router configuration to verify that ACLs are configured to allow or deny traffic for specific source and destination addresses as well as ports and protocols. For example, the configuration below will allow only printer traffic into subnet 10.1.23.0/24 and SQL traffic into subnet 10.1.24.0/24. ICMP is allowed for troubleshooting and OSPF is the routing protocol used within the network.<br />
+<br />
+interface GigabitEthernet0/0/0/0<br />
+ description link to core<br />
+ ipv4 address 10.1.12.2 255.255.255.0<br />
+ ipv4 access-group FILTER_SERVER_TRAFFIC ingress<br />
+…<br />
+…<br />
+…<br />
+ipv4 access-list FILTER_SERVER_TRAFFIC<br />
+ 10 permit tcp any 10.1.23.0 0.0.0.255 eq lpd<br />
+ 20 permit tcp any 10.1.23.0 0.0.0.255 eq 631<br />
+ 30 permit tcp any 10.1.23.0 0.0.0.255 eq 9100<br />
+ 40 permit tcp any 10.1.24.0 0.0.0.255 eq 1433<br />
+ 50 permit tcp any 10.1.24.0 0.0.0.255 eq 1434<br />
+ 60 permit tcp any 10.1.24.0 0.0.0.255 eq 4022<br />
+ 70 permit icmp any any<br />
+ 80 permit ospf any any<br />
+ 90 deny ipv4 any any<br />
+<br />
+If the router is not configured to enforce approved authorizations for controlling the flow of information within the network based on organization-defined information flow control policies, this is a finding.</p><h2>Vulnerability Number</h2><p>V-216735</p><h2>Documentable</h2><p>False</p><h2>Rule Version</h2><p>CISC-RT-000010</p><h2>Severity Override Guidance</h2><p>This requirement is not applicable for the DODIN Backbone.<br />
+<br />
+If Virtual Routing and Forwarding (VRF) is used to segment traffic and force traffic to traverse through next generation firewalls with ACLs, this requirement is not applicable.<br />
+<br />
+Review the router configuration to verify that ACLs are configured to allow or deny traffic for specific source and destination addresses as well as ports and protocols. For example, the configuration below will allow only printer traffic into subnet 10.1.23.0/24 and SQL traffic into subnet 10.1.24.0/24. ICMP is allowed for troubleshooting and OSPF is the routing protocol used within the network.<br />
+<br />
+interface GigabitEthernet0/0/0/0<br />
+ description link to core<br />
+ ipv4 address 10.1.12.2 255.255.255.0<br />
+ ipv4 access-group FILTER_SERVER_TRAFFIC ingress<br />
+…<br />
+…<br />
+…<br />
+ipv4 access-list FILTER_SERVER_TRAFFIC<br />
+ 10 permit tcp any 10.1.23.0 0.0.0.255 eq lpd<br />
+ 20 permit tcp any 10.1.23.0 0.0.0.255 eq 631<br />
+ 30 permit tcp any 10.1.23.0 0.0.0.255 eq 9100<br />
+ 40 permit tcp any 10.1.24.0 0.0.0.255 eq 1433<br />
+ 50 permit tcp any 10.1.24.0 0.0.0.255 eq 1434<br />
+ 60 permit tcp any 10.1.24.0 0.0.0.255 eq 4022<br />
+ 70 permit icmp any any<br />
+ 80 permit ospf any any<br />
+ 90 deny ipv4 any any<br />
+<br />
+If the router is not configured to enforce approved authorizations for controlling the flow of information within the network based on organization-defined information flow control policies, this is a finding.</p><h2>Check Content Reference</h2><p>M</p><h2>Target Key</h2><p>4029</p></body></html>

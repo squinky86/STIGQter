@@ -1,0 +1,265 @@
+<!doctype html><html lang="en"><head><meta charset="utf-8"><title>STIGQter: STIG Check Details: SV-283848r1203793_rule: The Nokia out-of-band management (OOBM) gateway router must be configured to forward only authorized management traffic to the Network Operations Center (NOC).</title><link rel="icon" type="image/svg+xml" href="STIGQter.svg" /><script async src="https://www.googletagmanager.com/gtag/js?id=UA-31381839-2"></script><script src="include.js"></script><script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-4110907817782130" crossorigin="anonymous"></script></head><body><div><img src="STIGQter.svg" alt="STIGQter" style="height:1em;" /> <a href="https://www.stigqter.com/">STIGQter</a>: <a href="main.html">STIG Summary</a>: <a href="U_Nokia_SR_OS_25-x_RTR_V1R1_STIG_Manual-xccdf.html">Nokia Service Router OS 25.x Router Security Technical Implementation Guide Version: 1 Release: 1 Benchmark Date: 28 Apr 2026</a>:</div> <h1>The Nokia out-of-band management (OOBM) gateway router must be configured to forward only authorized management traffic to the Network Operations Center (NOC).</h1><h2>DISA Rule</h2><p>SV-283848r1203793_rule</p><h2>Vulnerability Number</h2><p>V-283848</p><h2>Group Title</h2><p>SRG-NET-000205-RTR-000010</p><h2>Rule Version</h2><p>NOKI-RT-000300</p><h2>Severity</h2><p>CAT II</p><h2>CCI(s)</h2><ul><li>CCI-001097 - Monitor and control communications at the external managed interfaces to the system and at key managed interfaces within the system.</li></ul><h2>Weight</h2><p>10</p><h2>Fix Recommendation</h2><p>This requirement is not applicable for the DODIN Backbone.<br />
+<br />
+Configure the management-access-filter, as shown in the example below:<br />
+<br />
+- configure system security management-access-filter<br />
+- config&gt;system&gt;security&gt;mgmt-access-filter# ip-filter<br />
+- config&gt;system&gt;security&gt;mgmt-access-filter&gt;ip-filter# default-action permit<br />
+- config&gt;system&gt;security&gt;mgmt-access-filter&gt;ip-filter# entry 10<br />
+- config&gt;system&gt;security&gt;mgmt-access-filter&gt;ip-filter&gt;entry# description SSH<br />
+- config&gt;system&gt;security&gt;mgmt-access-filter&gt;ip-filter&gt;entry# src-port cpm<br />
+- config&gt;system&gt;security&gt;mgmt-access-filter&gt;ip-filter&gt;entry# src-ip 192.168.100.0/24<br />
+- config&gt;system&gt;security&gt;mgmt-access-filter&gt;ip-filter&gt;entry# protocol &quot;tcp&quot;<br />
+- config&gt;system&gt;security&gt;mgmt-access-filter&gt;ip-filter&gt;entry# dst-port 22<br />
+- config&gt;system&gt;security&gt;mgmt-access-filter&gt;ip-filter&gt;entry# action permit<br />
+- config&gt;system&gt;security&gt;mgmt-access-filter&gt;ip-filter&gt;entry# log<br />
+- config&gt;system&gt;security&gt;mgmt-access-filter&gt;ip-filter&gt;entry# exit+I29<br />
+- config&gt;system&gt;security&gt;mgmt-access-filter&gt;ip-filter# entry 20<br />
+- config&gt;system&gt;security&gt;mgmt-access-filter&gt;ip-filter&gt;entry# description &quot;snmp&quot;<br />
+- config&gt;system&gt;security&gt;mgmt-access-filter&gt;ip-filter&gt;entry# src-port cpm<br />
+- config&gt;system&gt;security&gt;mgmt-access-filter&gt;ip-filter&gt;entry# src-ip 192.168.100.0/24<br />
+- config&gt;system&gt;security&gt;mgmt-access-filter&gt;ip-filter&gt;entry# protocol &quot;udp&quot;<br />
+- config&gt;system&gt;security&gt;mgmt-access-filter&gt;ip-filter&gt;entry# dst-port 161 65535<br />
+- config&gt;system&gt;security&gt;mgmt-access-filter&gt;ip-filter&gt;entry# action permit<br />
+- config&gt;system&gt;security&gt;mgmt-access-filter&gt;ip-filter&gt;entry# log<br />
+- config&gt;system&gt;security&gt;mgmt-access-filter&gt;ip-filter&gt;entry# exit<br />
+- config&gt;system&gt;security&gt;mgmt-access-filter&gt;ip-filter# entry 30<br />
+- config&gt;system&gt;security&gt;mgmt-access-filter&gt;ip-filter&gt;entry# description &quot;tacacs&quot;<br />
+- config&gt;system&gt;security&gt;mgmt-access-filter&gt;ip-filter&gt;entry# src-port cpm<br />
+- config&gt;system&gt;security&gt;mgmt-access-filter&gt;ip-filter&gt;entry# src-ip 192.168.100.0/24<br />
+- config&gt;system&gt;security&gt;mgmt-access-filter&gt;ip-filter&gt;entry# protocol &quot;tcp&quot;<br />
+- config&gt;system&gt;security&gt;mgmt-access-filter&gt;ip-filter&gt;entry# dst-port 49 65535<br />
+- config&gt;system&gt;security&gt;mgmt-access-filter&gt;ip-filter&gt;entry# action permit<br />
+- config&gt;system&gt;security&gt;mgmt-access-filter&gt;ip-filter&gt;entry# log<br />
+- config&gt;system&gt;security&gt;mgmt-access-filter&gt;ip-filter&gt;entry# exit<br />
+- config&gt;system&gt;security&gt;mgmt-access-filter&gt;ip-filter# entry 50<br />
+- config&gt;system&gt;security&gt;mgmt-access-filter&gt;ip-filter&gt;entry# description &quot;snmp-trap&quot;<br />
+- config&gt;system&gt;security&gt;mgmt-access-filter&gt;ip-filter&gt;entry# src-port cpm<br />
+- config&gt;system&gt;security&gt;mgmt-access-filter&gt;ip-filter&gt;entry# src-ip 192.168.100.0/24<br />
+- config&gt;system&gt;security&gt;mgmt-access-filter&gt;ip-filter&gt;entry# protocol &quot;udp&quot;<br />
+- config&gt;system&gt;security&gt;mgmt-access-filter&gt;ip-filter&gt;entry# dst-port 162<br />
+- config&gt;system&gt;security&gt;mgmt-access-filter&gt;ip-filter&gt;entry# action permit<br />
+- config&gt;system&gt;security&gt;mgmt-access-filter&gt;ip-filter&gt;entry# log<br />
+- config&gt;system&gt;security&gt;mgmt-access-filter&gt;ip-filter&gt;entry# exit<br />
+- config&gt;system&gt;security&gt;mgmt-access-filter&gt;ip-filter# entry 60<br />
+- config&gt;system&gt;security&gt;mgmt-access-filter&gt;ip-filter&gt;entry# description &quot;syslog&quot;<br />
+- config&gt;system&gt;security&gt;mgmt-access-filter&gt;ip-filter&gt;entry# src-port cpm<br />
+- config&gt;system&gt;security&gt;mgmt-access-filter&gt;ip-filter&gt;entry# src-ip 192.168.100.0/24<br />
+- config&gt;system&gt;security&gt;mgmt-access-filter&gt;ip-filter&gt;entry# protocol &quot;udp&quot;                                        <br />
+- config&gt;system&gt;security&gt;mgmt-access-filter&gt;ip-filter&gt;entry# action permit<br />
+- config&gt;system&gt;security&gt;mgmt-access-filter&gt;ip-filter&gt;entry# dst-port 514<br />
+- config&gt;system&gt;security&gt;mgmt-access-filter&gt;ip-filter&gt;entry# action permit<br />
+- config&gt;system&gt;security&gt;mgmt-access-filter&gt;ip-filter&gt;entry# log<br />
+- config&gt;system&gt;security&gt;mgmt-access-filter&gt;ip-filter&gt;entry# exit<br />
+- config&gt;system&gt;security&gt;mgmt-access-filter&gt;ip-filter# entry 70<br />
+- config&gt;system&gt;security&gt;mgmt-access-filter&gt;ip-filter&gt;entry#  description &quot;icmp&quot;<br />
+- config&gt;system&gt;security&gt;mgmt-access-filter&gt;ip-filter&gt;entry# src-port cpm<br />
+- config&gt;system&gt;security&gt;mgmt-access-filter&gt;ip-filter&gt;entry# src-ip 192.168.100.0/24<br />
+- config&gt;system&gt;security&gt;mgmt-access-filter&gt;ip-filter&gt;entry# protocol &quot;icmp&quot;<br />
+- config&gt;system&gt;security&gt;mgmt-access-filter&gt;ip-filter&gt;entry# action permit<br />
+- config&gt;system&gt;security&gt;mgmt-access-filter&gt;ip-filter&gt;entry# log<br />
+- config&gt;system&gt;security&gt;mgmt-access-filter&gt;ip-filter&gt;entry# exit<br />
+- config&gt;system&gt;security&gt;mgmt-access-filter&gt;ip-filter# entry 80<br />
+- config&gt;system&gt;security&gt;mgmt-access-filter&gt;ip-filter&gt;entry# description &quot;Deny all&quot;<br />
+- config&gt;system&gt;security&gt;mgmt-access-filter&gt;ip-filter&gt;entry# src-port cpm<br />
+- config&gt;system&gt;security&gt;mgmt-access-filter&gt;ip-filter&gt;entry# action deny<br />
+- config&gt;system&gt;security&gt;mgmt-access-filter&gt;ip-filter&gt;entry# log<br />
+- config&gt;system&gt;security&gt;mgmt-access-filter&gt;ip-filter&gt;entry# exit<br />
+- config&gt;system&gt;security&gt;mgmt-access-filter&gt;ip-filter# exit<br />
+- config&gt;system&gt;security&gt;mgmt-access-filter# exit all</p><h2>Check Contents</h2><p>This requirement is not applicable for the DODIN Backbone.<br />
+<br />
+Review the network topology diagram to determine connectivity between the managed network and the NOC.<br />
+<br />
+Verify the management-access-filter, as shown in the example below: <br />
+<br />
+- show system security management-access-filter ip-filter<br />
+<br />
+IPv4 Management Access Filter<br />
+<br />
+filter type    : ip<br />
+Def. Action    : permit<br />
+Admin Status   : enabled (no shutdown)<br />
+-------------------------------------------------------------------------------<br />
+Entry          : 10<br />
+Description    : SSH<br />
+Src-ip         : 192.168.100.0/24<br />
+Mgmt-port      : cpm<br />
+Protocol       : tcp<br />
+Dst-port       : 22<br />
+Src-port       : undefined<br />
+Router-instance: undefined<br />
+Action         : permit<br />
+Log            : enabled<br />
+Matches        : 0<br />
+-------------------------------------------------------------------------------<br />
+Entry          : 20<br />
+Description    : snmp<br />
+Src-ip         : 192.168.100.0/24<br />
+Mgmt-port      : cpm<br />
+Protocol       : udp<br />
+Dst-port       : 161<br />
+Src-port       : undefined<br />
+Router-instance: undefined<br />
+Action         : permit<br />
+Log            : enabled<br />
+Matches        : 0<br />
+-------------------------------------------------------------------------------<br />
+Entry          : 30<br />
+Description    : tacacs<br />
+Src-ip         : 192.168.100.10/32<br />
+Mgmt-port      : cpm<br />
+Protocol       : tcp<br />
+Dst-port       : 49<br />
+Src-port       : undefined<br />
+Router-instance: undefined<br />
+Action         : permit<br />
+Log            : enabled<br />
+Matches        : 0<br />
+-------------------------------------------------------------------------------<br />
+Entry          : 50<br />
+Description    : snmp-trap<br />
+Src-ip         : 192.168.100.0/24<br />
+Mgmt-port      : cpm<br />
+Protocol       : udp<br />
+Dst-port       : 162<br />
+Src-port       : undefined<br />
+Router-instance: undefined<br />
+Action         : permit<br />
+Log            : enabled<br />
+Matches        : 0<br />
+-------------------------------------------------------------------------------<br />
+Entry          : 60<br />
+Description    : syslog<br />
+Src-ip         : 192.168.100.0/24<br />
+Mgmt-port      : cpm<br />
+Protocol       : udp<br />
+Dst-port       : 514<br />
+Src-port       : undefined<br />
+Router-instance: undefined<br />
+Action         : permit<br />
+Log            : enabled<br />
+Matches        : 0<br />
+-------------------------------------------------------------------------------<br />
+Entry          : 70<br />
+Description    : icmp<br />
+Src-ip         : 192.168.100.0/24<br />
+Mgmt-port      : cpm<br />
+Protocol       : icmp<br />
+Dst-port       : undefined<br />
+Src-port       : undefined<br />
+Router-instance: undefined<br />
+Action         : permit<br />
+Log            : enabled<br />
+Matches        : 0<br />
+-------------------------------------------------------------------------------<br />
+Entry          : 80<br />
+Description    : Deny all<br />
+Src-ip         : undefined<br />
+Mgmt-port      : cpm<br />
+Protocol       : undefined<br />
+Dst-port       : undefined<br />
+Src-port       : undefined<br />
+Router-instance: undefined<br />
+Action         : deny<br />
+Log            : enabled<br />
+Matches        : 0<br />
+<br />
+If traffic other than authorized management traffic is permitted through the OOBM interface or IPsec tunnel, this is a finding.</p><h2>Vulnerability Number</h2><p>V-283848</p><h2>Documentable</h2><p>False</p><h2>Rule Version</h2><p>NOKI-RT-000300</p><h2>Severity Override Guidance</h2><p>This requirement is not applicable for the DODIN Backbone.<br />
+<br />
+Review the network topology diagram to determine connectivity between the managed network and the NOC.<br />
+<br />
+Verify the management-access-filter, as shown in the example below: <br />
+<br />
+- show system security management-access-filter ip-filter<br />
+<br />
+IPv4 Management Access Filter<br />
+<br />
+filter type    : ip<br />
+Def. Action    : permit<br />
+Admin Status   : enabled (no shutdown)<br />
+-------------------------------------------------------------------------------<br />
+Entry          : 10<br />
+Description    : SSH<br />
+Src-ip         : 192.168.100.0/24<br />
+Mgmt-port      : cpm<br />
+Protocol       : tcp<br />
+Dst-port       : 22<br />
+Src-port       : undefined<br />
+Router-instance: undefined<br />
+Action         : permit<br />
+Log            : enabled<br />
+Matches        : 0<br />
+-------------------------------------------------------------------------------<br />
+Entry          : 20<br />
+Description    : snmp<br />
+Src-ip         : 192.168.100.0/24<br />
+Mgmt-port      : cpm<br />
+Protocol       : udp<br />
+Dst-port       : 161<br />
+Src-port       : undefined<br />
+Router-instance: undefined<br />
+Action         : permit<br />
+Log            : enabled<br />
+Matches        : 0<br />
+-------------------------------------------------------------------------------<br />
+Entry          : 30<br />
+Description    : tacacs<br />
+Src-ip         : 192.168.100.10/32<br />
+Mgmt-port      : cpm<br />
+Protocol       : tcp<br />
+Dst-port       : 49<br />
+Src-port       : undefined<br />
+Router-instance: undefined<br />
+Action         : permit<br />
+Log            : enabled<br />
+Matches        : 0<br />
+-------------------------------------------------------------------------------<br />
+Entry          : 50<br />
+Description    : snmp-trap<br />
+Src-ip         : 192.168.100.0/24<br />
+Mgmt-port      : cpm<br />
+Protocol       : udp<br />
+Dst-port       : 162<br />
+Src-port       : undefined<br />
+Router-instance: undefined<br />
+Action         : permit<br />
+Log            : enabled<br />
+Matches        : 0<br />
+-------------------------------------------------------------------------------<br />
+Entry          : 60<br />
+Description    : syslog<br />
+Src-ip         : 192.168.100.0/24<br />
+Mgmt-port      : cpm<br />
+Protocol       : udp<br />
+Dst-port       : 514<br />
+Src-port       : undefined<br />
+Router-instance: undefined<br />
+Action         : permit<br />
+Log            : enabled<br />
+Matches        : 0<br />
+-------------------------------------------------------------------------------<br />
+Entry          : 70<br />
+Description    : icmp<br />
+Src-ip         : 192.168.100.0/24<br />
+Mgmt-port      : cpm<br />
+Protocol       : icmp<br />
+Dst-port       : undefined<br />
+Src-port       : undefined<br />
+Router-instance: undefined<br />
+Action         : permit<br />
+Log            : enabled<br />
+Matches        : 0<br />
+-------------------------------------------------------------------------------<br />
+Entry          : 80<br />
+Description    : Deny all<br />
+Src-ip         : undefined<br />
+Mgmt-port      : cpm<br />
+Protocol       : undefined<br />
+Dst-port       : undefined<br />
+Src-port       : undefined<br />
+Router-instance: undefined<br />
+Action         : deny<br />
+Log            : enabled<br />
+Matches        : 0<br />
+<br />
+If traffic other than authorized management traffic is permitted through the OOBM interface or IPsec tunnel, this is a finding.</p><h2>Check Content Reference</h2><p>M</p><h2>Target Key</h2><p>5746</p></body></html>

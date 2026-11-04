@@ -1,0 +1,57 @@
+<!doctype html><html lang="en"><head><meta charset="utf-8"><title>STIGQter: STIG Check Details: SV-253674r960888_rule: MariaDB must initiate session auditing upon startup.</title><link rel="icon" type="image/svg+xml" href="STIGQter.svg" /><script async src="https://www.googletagmanager.com/gtag/js?id=UA-31381839-2"></script><script src="include.js"></script><script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-4110907817782130" crossorigin="anonymous"></script></head><body><div><img src="STIGQter.svg" alt="STIGQter" style="height:1em;" /> <a href="https://www.stigqter.com/">STIGQter</a>: <a href="main.html">STIG Summary</a>: <a href="U_MariaDB_Enterprise_10-x_STIG_V2R5_Manual-xccdf.html">MariaDB Enterprise 10.x Security Technical Implementation Guide Version: 2 Release: 5 Benchmark Date: 01 Apr 2026</a>:</div> <h1>MariaDB must initiate session auditing upon startup.</h1><h2>DISA Rule</h2><p>SV-253674r960888_rule</p><h2>Vulnerability Number</h2><p>V-253674</p><h2>Group Title</h2><p>SRG-APP-000092-DB-000208</p><h2>Rule Version</h2><p>MADB-10-000900</p><h2>Severity</h2><p>CAT II</p><h2>CCI(s)</h2><ul><li>CCI-001464 - Initiates session audits automatically at system start-up.</li></ul><h2>Weight</h2><p>10</p><h2>Fix Recommendation</h2><p>If not already exists, create a named filter with the required auditing for the user in question. Example: <br />
+<br />
+MariaDB&gt; INSERT INTO mysql.server_audit_filters (filtername, rule)<br />
+   VALUES ('session_auditing',<br />
+      JSON_COMPACT(<br />
+         '{<br />
+            &quot;connect_event&quot;: [<br />
+               &quot;CONNECT&quot;,<br />
+               &quot;DISCONNECT&quot;<br />
+            ],<br />
+            &quot;table_event&quot;:[<br />
+               &quot;WRITE&quot;,<br />
+               &quot;CREATE&quot;,<br />
+               &quot;DROP&quot;,<br />
+               &quot;RENAME&quot;,<br />
+               &quot;ALTER&quot;<br />
+            ]<br />
+         }'<br />
+      ));<br />
+<br />
+Then assign the named filter to the user. Example:<br />
+<br />
+MariaDB&gt; INSERT INTO mysql.server_audit_users (host, user, filtername) VALUES (&quot;%&quot;, &quot;username&quot;, &quot;session_auditing&quot;);<br />
+<br />
+Reload filters. <br />
+<br />
+MariaDB&gt; SET GLOBAL server_audit_reload_filters = ON;</p><h2>Check Contents</h2><p>Verify the MariaDB Enterprise Audit plugin is loaded and actively logging:<br />
+<br />
+MariaDB&gt; SHOW GLOBAL STATUS LIKE 'Server_audit_active';<br />
+<br />
+If the MariaDB Enterprise Audit is not active, this is a finding. <br />
+<br />
+Check what filters are in place for user by running the following as an administrative user: <br />
+<br />
+MariaDB&gt; SELECT sau.host, sau.user, saf.filtername,<br />
+   JSON_DETAILED(saf.rule)<br />
+FROM mysql.server_audit_filters saf<br />
+JOIN mysql.server_audit_users sau<br />
+   ON saf.filtername = sau.filtername<br />
+WHERE saf.filtername != 'default'\G<br />
+<br />
+Verify the corresponding audit filters are in place. If not, this is a finding.</p><h2>Vulnerability Number</h2><p>V-253674</p><h2>Documentable</h2><p>False</p><h2>Rule Version</h2><p>MADB-10-000900</p><h2>Severity Override Guidance</h2><p>Verify the MariaDB Enterprise Audit plugin is loaded and actively logging:<br />
+<br />
+MariaDB&gt; SHOW GLOBAL STATUS LIKE 'Server_audit_active';<br />
+<br />
+If the MariaDB Enterprise Audit is not active, this is a finding. <br />
+<br />
+Check what filters are in place for user by running the following as an administrative user: <br />
+<br />
+MariaDB&gt; SELECT sau.host, sau.user, saf.filtername,<br />
+   JSON_DETAILED(saf.rule)<br />
+FROM mysql.server_audit_filters saf<br />
+JOIN mysql.server_audit_users sau<br />
+   ON saf.filtername = sau.filtername<br />
+WHERE saf.filtername != 'default'\G<br />
+<br />
+Verify the corresponding audit filters are in place. If not, this is a finding.</p><h2>Check Content Reference</h2><p>M</p><h2>Target Key</h2><p>5475</p></body></html>

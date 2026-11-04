@@ -1,0 +1,57 @@
+<!doctype html><html lang="en"><head><meta charset="utf-8"><title>STIGQter: STIG Check Details: SV-255998r882336_rule: The Arista multicast router must be configured to disable Protocol Independent Multicast (PIM) on all interfaces that are not required to support multicast routing.</title><link rel="icon" type="image/svg+xml" href="STIGQter.svg" /><script async src="https://www.googletagmanager.com/gtag/js?id=UA-31381839-2"></script><script src="include.js"></script><script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-4110907817782130" crossorigin="anonymous"></script></head><body><div><img src="STIGQter.svg" alt="STIGQter" style="height:1em;" /> <a href="https://www.stigqter.com/">STIGQter</a>: <a href="main.html">STIG Summary</a>: <a href="U_Arista_MLS_EOS_4-X_Router_STIG_V2R2_Manual-xccdf.html">Arista MLS EOS 4.X Router Security Technical Implementation Guide Version: 2 Release: 2 Benchmark Date: 02 Apr 2025</a>:</div> <h1>The Arista multicast router must be configured to disable Protocol Independent Multicast (PIM) on all interfaces that are not required to support multicast routing.</h1><h2>DISA Rule</h2><p>SV-255998r882336_rule</p><h2>Vulnerability Number</h2><p>V-255998</p><h2>Group Title</h2><p>SRG-NET-000019-RTR-000003</p><h2>Rule Version</h2><p>ARST-RT-000120</p><h2>Severity</h2><p>CAT II</p><h2>CCI(s)</h2><ul><li>CCI-001414 - Enforce approved authorizations for controlling the flow of information between connected systems based on organization-defined information flow control policies.</li></ul><h2>Weight</h2><p>10</p><h2>Fix Recommendation</h2><p>Document all enabled interfaces for PIM in the network's multicast topology diagram. Disable support for PIM on interfaces that are not required to support it.<br />
+<br />
+Step 1: Configure the router in global configuration mode to support multicast routing.<br />
+<br />
+router(config)#router multicast <br />
+router(config-router-multicast)#ipv4<br />
+router(config-router-multicast-ipv4)#routing<br />
+router(config-router-multicast-ipv4)#exit<br />
+router(config-router-multicast)#exit<br />
+<br />
+Step 2: Enable PIM on interfaces required to support multicast.<br />
+<br />
+Interfaces have PIM disabled by default. To enable PIM from an interface active in a multicast network, enter &quot;pim sparse-mode&quot; in the interface configuration mode.<br />
+<br />
+router(config)#interface Ethernet1<br />
+router(config-if-Et1)#pim ipv4 sparse-mode<br />
+router(config-if-Et1)#pim ipv6 sparse-mode<br />
+<br />
+Step 3: Disable support for PIM on interfaces that are not required to support it.<br />
+<br />
+router(config)#interface Ethernet2<br />
+router(config-if-Et2)#no pim ipv4 sparse-mode<br />
+router(config-if-Et2)#no pim ipv6 sparse-mode</p><h2>Check Contents</h2><p>If IPv4 or IPv6 multicast routing is enabled on the Arista router, verify all interfaces enabled for PIM are documented in the network's multicast topology diagram.<br />
+<br />
+Review the Arista router configuration to determine which interfaces are enabled for PIM, identified via the &quot;pim ipv4 sparse-mode&quot; for ipv4 and &quot;pim ipv6 sparse-mode&quot; for ipv6 statement in the interface configuration, and compare to the topology.<br />
+<br />
+sh run | sec pim<br />
+<br />
+interface Ethernet3<br />
+   pim ipv4 sparse-mode<br />
+interface Ethernet8<br />
+   pim ipv4 sparse-mode<br />
+   pim ipv6 sparse-mode<br />
+interface Ethernet9<br />
+   pim ipv4 sparse-mode<br />
+   pim ipv6 sparse-mode<br />
+interface Vlan8<br />
+   pim ipv4 sparse-mode <br />
+<br />
+If an interface is not required to support multicast routing and it is enabled, this is a finding.</p><h2>Vulnerability Number</h2><p>V-255998</p><h2>Documentable</h2><p>False</p><h2>Rule Version</h2><p>ARST-RT-000120</p><h2>Severity Override Guidance</h2><p>If IPv4 or IPv6 multicast routing is enabled on the Arista router, verify all interfaces enabled for PIM are documented in the network's multicast topology diagram.<br />
+<br />
+Review the Arista router configuration to determine which interfaces are enabled for PIM, identified via the &quot;pim ipv4 sparse-mode&quot; for ipv4 and &quot;pim ipv6 sparse-mode&quot; for ipv6 statement in the interface configuration, and compare to the topology.<br />
+<br />
+sh run | sec pim<br />
+<br />
+interface Ethernet3<br />
+   pim ipv4 sparse-mode<br />
+interface Ethernet8<br />
+   pim ipv4 sparse-mode<br />
+   pim ipv6 sparse-mode<br />
+interface Ethernet9<br />
+   pim ipv4 sparse-mode<br />
+   pim ipv6 sparse-mode<br />
+interface Vlan8<br />
+   pim ipv4 sparse-mode <br />
+<br />
+If an interface is not required to support multicast routing and it is enabled, this is a finding.</p><h2>Check Content Reference</h2><p>M</p><h2>Target Key</h2><p>5513</p></body></html>

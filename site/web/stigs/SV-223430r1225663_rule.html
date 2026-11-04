@@ -1,0 +1,58 @@
+<!doctype html><html lang="en"><head><meta charset="utf-8"><title>STIGQter: STIG Check Details: SV-223430r1225663_rule: CA-ACF2 must protect Memory and privileged program dumps in accordance with proper security requirements.</title><link rel="icon" type="image/svg+xml" href="STIGQter.svg" /><script async src="https://www.googletagmanager.com/gtag/js?id=UA-31381839-2"></script><script src="include.js"></script><script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-4110907817782130" crossorigin="anonymous"></script></head><body><div><img src="STIGQter.svg" alt="STIGQter" style="height:1em;" /> <a href="https://www.stigqter.com/">STIGQter</a>: <a href="main.html">STIG Summary</a>: <a href="U_IBM_zOS_ACF2_STIG_V9R9_Manual-xccdf.html">IBM z/OS ACF2 Security Technical Implementation Guide Version: 9 Release: 9 Benchmark Date: 01 Jul 2026</a>:</div> <h1>CA-ACF2 must protect Memory and privileged program dumps in accordance with proper security requirements.</h1><h2>DISA Rule</h2><p>SV-223430r1225663_rule</p><h2>Vulnerability Number</h2><p>V-223430</p><h2>Group Title</h2><p>SRG-OS-000080-GPOS-00048</p><h2>Rule Version</h2><p>ACF2-ES-000090</p><h2>Severity</h2><p>CAT II</p><h2>CCI(s)</h2><ul><li>CCI-000213 - Enforce approved authorizations for logical access to information and system resources in accordance with applicable access control policies.</li></ul><h2>Weight</h2><p>10</p><h2>Fix Recommendation</h2><p>Memory and privileged program dump resources are provided via resources in the FACILITY resource class. Ensure that the following are properly specified in the ACP.<br />
+<br />
+(Note: The resource type, resources, and/or resource prefixes identified below are examples of a possible installation. The actual resource type, resources, and/or resource prefixes are determined when the product is actually installed on a system through the product's installation guide and can be site specific.)<br />
+<br />
+Below is listed the access requirements for memory and privileged program dump resources. Ensure the guidelines for the resource type, resources, and/or generic equivalent are followed. When protecting the facilities for dumps lists via the FACILITY resource class, ensure that the following items are in effect:<br />
+<br />
+IEAABD.<br />
+IEAABD.DMPAUTH.<br />
+IEAABD.DMPAKEY.<br />
+<br />
+The ACF2 resources are defined with a default access of PREVENT.<br />
+<br />
+Ensure that no access is given to IEAABD. resource.<br />
+<br />
+Example:<br />
+$KEY(IEAABD) TYPE(FAC)<br />
+- UID(*) PREVENT<br />
+<br />
+IEAABD.DMPAUTH. READ access is limited to authorized users that have a valid job duties requirement for access. UPDATE access will be restricted to system programming personnel and access will be logged.<br />
+<br />
+Example:<br />
+$KEY(IEAABD) TYPE(FAC)<br />
+DMPAUTH.- UID(sysprgmr) SERVICE(UPDATE) LOG<br />
+DMPAUTH.- UID(authusers) SERVICE(READ)<br />
+DMPAUTH.- UID(*) PREVENT<br />
+<br />
+IEAABD.DMPAKEY. access will be restricted to system programming personnel and access will be logged.<br />
+<br />
+Example:<br />
+$KEY(IEAABD) TYPE(FAC)<br />
+DMPAKEY.- UID(sysprgmr) LOG<br />
+DMPAKEY.- UID(*) PREVENT</p><h2>Check Contents</h2><p>From a command input screen enter:<br />
+<br />
+SET RESOURCE (FAC) <br />
+SET VERBOSE<br />
+LIST LIKE (IEAABD-)<br />
+NOTE: If CLASMAP defines FACILITY as anything other than the default of TYPE(FAC), replace FAC with the appropriate three letters.<br />
+<br />
+If the IEAABD. resource and/or generic equivalent is defined with PREVENT access and that access is not available to any user, this is not a finding.<br />
+<br />
+If the IEAABD.DMPAUTH. resource and/or generic equivalent is defined and access with SERVICE(READ) is limited to authorized users that have a valid job duties requirement for access, this is not a finding.<br />
+<br />
+If the IEAABD.DMPAUTH. resource and/or generic equivalent is defined and access with the SERVICE(UPDATE) or greater is restricted to only systems personnel and that all access is logged, this is not a finding.<br />
+<br />
+If the IEAABD.DMPAKEY. resource and/or generic equivalent is defined and all access is restricted to systems personnel and that all access is logged, this is not a finding.</p><h2>Vulnerability Number</h2><p>V-223430</p><h2>Documentable</h2><p>False</p><h2>Rule Version</h2><p>ACF2-ES-000090</p><h2>Severity Override Guidance</h2><p>From a command input screen enter:<br />
+<br />
+SET RESOURCE (FAC) <br />
+SET VERBOSE<br />
+LIST LIKE (IEAABD-)<br />
+NOTE: If CLASMAP defines FACILITY as anything other than the default of TYPE(FAC), replace FAC with the appropriate three letters.<br />
+<br />
+If the IEAABD. resource and/or generic equivalent is defined with PREVENT access and that access is not available to any user, this is not a finding.<br />
+<br />
+If the IEAABD.DMPAUTH. resource and/or generic equivalent is defined and access with SERVICE(READ) is limited to authorized users that have a valid job duties requirement for access, this is not a finding.<br />
+<br />
+If the IEAABD.DMPAUTH. resource and/or generic equivalent is defined and access with the SERVICE(UPDATE) or greater is restricted to only systems personnel and that all access is logged, this is not a finding.<br />
+<br />
+If the IEAABD.DMPAKEY. resource and/or generic equivalent is defined and all access is restricted to systems personnel and that all access is logged, this is not a finding.</p><h2>Check Content Reference</h2><p>M</p><h2>Target Key</h2><p>4100</p></body></html>

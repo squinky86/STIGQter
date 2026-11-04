@@ -1,0 +1,17 @@
+<!doctype html><html lang="en"><head><meta charset="utf-8"><title>STIGQter: STIG Check Details: SV-282394r1201511_rule: TOSS 5 must audit all uses of the chcon command.</title><link rel="icon" type="image/svg+xml" href="STIGQter.svg" /><script async src="https://www.googletagmanager.com/gtag/js?id=UA-31381839-2"></script><script src="include.js"></script><script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-4110907817782130" crossorigin="anonymous"></script></head><body><div><img src="STIGQter.svg" alt="STIGQter" style="height:1em;" /> <a href="https://www.stigqter.com/">STIGQter</a>: <a href="main.html">STIG Summary</a>: <a href="U_TOSS_5 _STIG_V1R1_Manual-xccdf.html">Tri-Lab Operating System Stack (TOSS) 5 Security Technical Implementation Guide Version: 1 Release: 1 Benchmark Date: 26 Mar 2026</a>:</div> <h1>TOSS 5 must audit all uses of the chcon command.</h1><h2>DISA Rule</h2><p>SV-282394r1201511_rule</p><h2>Vulnerability Number</h2><p>V-282394</p><h2>Group Title</h2><p>SRG-OS-000037-GPOS-00015</p><h2>Rule Version</h2><p>TOSS-05-000418</p><h2>Severity</h2><p>CAT II</p><h2>CCI(s)</h2><ul><li>CCI-000130 - Ensure that audit records containing information that establishes what type of event occurred.</li><li>CCI-000135 - Generate audit records containing the organization-defined additional information that is to be included in the audit records.</li><li>CCI-000169 - Provide audit record generation capability for the event types the system is capable of auditing as defined in AU-2 a. on organization-defined information system components.</li><li>CCI-002884 - Log organization-defined audit events for nonlocal maintenance and diagnostic sessions.</li><li>CCI-000172 - Generate audit records for the event types defined in AU-2 c that include the audit record content defined in AU-3.</li></ul><h2>Weight</h2><p>10</p><h2>Fix Recommendation</h2><p>Configure TOSS 5 to generate audit records upon successful/unsuccessful attempts to use the &quot;chcon&quot; command by adding or updating the following rule in &quot;/etc/audit/rules.d/audit.rules&quot;:<br />
+<br />
+-a always,exit -F path=/usr/bin/chcon -F perm=x -F auid&gt;=1000 -F auid!=unset -k perm_mod<br />
+<br />
+Restart the audit daemon for changes to take effect.</p><h2>Check Contents</h2><p>Verify that TOSS 5 is configured to audit the execution of the &quot;chcon&quot; command with the following command:<br />
+<br />
+$ sudo auditctl -l | grep chcon<br />
+<br />
+-a always,exit -F path=/usr/bin/chcon -F perm=x -F auid&gt;=1000 -F auid!=unset -k perm_mod<br />
+<br />
+If the command does not return a line or the line is commented out, this is a finding.</p><h2>Vulnerability Number</h2><p>V-282394</p><h2>Documentable</h2><p>False</p><h2>Rule Version</h2><p>TOSS-05-000418</p><h2>Severity Override Guidance</h2><p>Verify that TOSS 5 is configured to audit the execution of the &quot;chcon&quot; command with the following command:<br />
+<br />
+$ sudo auditctl -l | grep chcon<br />
+<br />
+-a always,exit -F path=/usr/bin/chcon -F perm=x -F auid&gt;=1000 -F auid!=unset -k perm_mod<br />
+<br />
+If the command does not return a line or the line is commented out, this is a finding.</p><h2>Check Content Reference</h2><p>M</p><h2>Target Key</h2><p>5738</p></body></html>

@@ -1,0 +1,53 @@
+<!doctype html><html lang="en"><head><meta charset="utf-8"><title>STIGQter: STIG Check Details: SV-253268r1051039_rule: Unused accounts must be disabled or removed from the system after 35 days of inactivity.</title><link rel="icon" type="image/svg+xml" href="STIGQter.svg" /><script async src="https://www.googletagmanager.com/gtag/js?id=UA-31381839-2"></script><script src="include.js"></script><script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-4110907817782130" crossorigin="anonymous"></script></head><body><div><img src="STIGQter.svg" alt="STIGQter" style="height:1em;" /> <a href="https://www.stigqter.com/">STIGQter</a>: <a href="main.html">STIG Summary</a>: <a href="U_MS_Windows_11_STIG_V2R8_Manual-xccdf.html">Microsoft Windows 11 Security Technical Implementation Guide Version: 2 Release: 8 Benchmark Date: 01 Jul 2026</a>:</div> <h1>Unused accounts must be disabled or removed from the system after 35 days of inactivity.</h1><h2>DISA Rule</h2><p>SV-253268r1051039_rule</p><h2>Vulnerability Number</h2><p>V-253268</p><h2>Group Title</h2><p>SRG-OS-000468-GPOS-00212</p><h2>Rule Version</h2><p>WN11-00-000065</p><h2>Severity</h2><p>CAT III</p><h2>CCI(s)</h2><ul><li>CCI-000172 - Generate audit records for the event types defined in AU-2 c that include the audit record content defined in AU-3.</li><li>CCI-003627 - Disable accounts when the accounts have expired.</li></ul><h2>Weight</h2><p>10</p><h2>Fix Recommendation</h2><p>Review local accounts and verify their necessity. Disable or delete any active accounts that have not been used in the last 35 days.</p><h2>Check Contents</h2><p>Run &quot;PowerShell&quot;.<br />
+Copy the lines below to the PowerShell window and enter.<br />
+<br />
+&quot;([ADSI]('WinNT://{0}' -f $env:COMPUTERNAME)).Children | Where { $_.SchemaClassName -eq 'user' } | ForEach {<br />
+  $user = ([ADSI]$_.Path)<br />
+  $lastLogin = $user.Properties.LastLogin.Value<br />
+  $enabled = ($user.Properties.UserFlags.Value -band 0x2) -ne 0x2<br />
+  if ($lastLogin -eq $null) {<br />
+   $lastLogin = 'Never'<br />
+  }<br />
+  Write-Host $user.Name $lastLogin $enabled <br />
+}&quot;<br />
+<br />
+This will return a list of local accounts with the account name, last logon, and if the account is enabled (True/False).<br />
+For example: User1 10/31/2015 5:49:56 AM True<br />
+<br />
+Review the list to determine the finding validity for each account reported.<br />
+<br />
+Exclude the following accounts:<br />
+Built-in administrator account (Disabled, SID ending in 500)<br />
+Built-in guest account (Disabled, SID ending in 501)<br />
+Built-in DefaultAccount (Disabled, SID ending in 503)<br />
+Local administrator account<br />
+<br />
+If any enabled accounts have not been logged on to within the past 35 days, this is a finding.<br />
+<br />
+Inactive accounts that have been reviewed and deemed to be required must be documented with the information system security officer (ISSO).</p><h2>Vulnerability Number</h2><p>V-253268</p><h2>Documentable</h2><p>False</p><h2>Rule Version</h2><p>WN11-00-000065</p><h2>Severity Override Guidance</h2><p>Run &quot;PowerShell&quot;.<br />
+Copy the lines below to the PowerShell window and enter.<br />
+<br />
+&quot;([ADSI]('WinNT://{0}' -f $env:COMPUTERNAME)).Children | Where { $_.SchemaClassName -eq 'user' } | ForEach {<br />
+  $user = ([ADSI]$_.Path)<br />
+  $lastLogin = $user.Properties.LastLogin.Value<br />
+  $enabled = ($user.Properties.UserFlags.Value -band 0x2) -ne 0x2<br />
+  if ($lastLogin -eq $null) {<br />
+   $lastLogin = 'Never'<br />
+  }<br />
+  Write-Host $user.Name $lastLogin $enabled <br />
+}&quot;<br />
+<br />
+This will return a list of local accounts with the account name, last logon, and if the account is enabled (True/False).<br />
+For example: User1 10/31/2015 5:49:56 AM True<br />
+<br />
+Review the list to determine the finding validity for each account reported.<br />
+<br />
+Exclude the following accounts:<br />
+Built-in administrator account (Disabled, SID ending in 500)<br />
+Built-in guest account (Disabled, SID ending in 501)<br />
+Built-in DefaultAccount (Disabled, SID ending in 503)<br />
+Local administrator account<br />
+<br />
+If any enabled accounts have not been logged on to within the past 35 days, this is a finding.<br />
+<br />
+Inactive accounts that have been reviewed and deemed to be required must be documented with the information system security officer (ISSO).</p><h2>Check Content Reference</h2><p>M</p><h2>Target Key</h2><p>5471</p></body></html>

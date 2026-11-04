@@ -1,0 +1,188 @@
+<!doctype html><html lang="en"><head><meta charset="utf-8"><title>STIGQter: STIG Check Details: SV-256010r882372_rule: The Arista router must be configured to authenticate all routing protocol messages using NIST-validated FIPS 198-1 message authentication code algorithm.</title><link rel="icon" type="image/svg+xml" href="STIGQter.svg" /><script async src="https://www.googletagmanager.com/gtag/js?id=UA-31381839-2"></script><script src="include.js"></script><script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-4110907817782130" crossorigin="anonymous"></script></head><body><div><img src="STIGQter.svg" alt="STIGQter" style="height:1em;" /> <a href="https://www.stigqter.com/">STIGQter</a>: <a href="main.html">STIG Summary</a>: <a href="U_Arista_MLS_EOS_4-X_Router_STIG_V2R2_Manual-xccdf.html">Arista MLS EOS 4.X Router Security Technical Implementation Guide Version: 2 Release: 2 Benchmark Date: 02 Apr 2025</a>:</div> <h1>The Arista router must be configured to authenticate all routing protocol messages using NIST-validated FIPS 198-1 message authentication code algorithm.</h1><h2>DISA Rule</h2><p>SV-256010r882372_rule</p><h2>Vulnerability Number</h2><p>V-256010</p><h2>Group Title</h2><p>SRG-NET-000168-RTR-000077</p><h2>Rule Version</h2><p>ARST-RT-000280</p><h2>Severity</h2><p>CAT II</p><h2>CCI(s)</h2><ul><li>CCI-000803 - Implement mechanisms for authentication to a cryptographic module that meet the requirements of applicable laws, Executive Orders, directives, policies, regulations, standards, and guidance for such authentication.</li><li>CCI-002205 - Uniquely identify and authenticate source by organization, system, application, service, and/or individual for information transfer.</li></ul><h2>Weight</h2><p>10</p><h2>Fix Recommendation</h2><p>Configure routing protocol authentication to use a NIST-validated FIPS 198-1 message authentication code algorithm.<br />
+<br />
+OSPFv2:<br />
+<br />
+router(config)#interface Eth12<br />
+router(config-int-Eth12)#ip ospf authentication message-digest<br />
+router(config-int-Eth12)#ip ospf message-digest-key 23 sha256 0 arista123<br />
+<br />
+BGP:<br />
+<br />
+Step 1: The Arista router must configure the system clock, which will affect the valid key for a given profile and should be used with caution.<br />
+<br />
+router(config)#clock set hh:mm:ss  Current time<br />
+<br />
+Step 2: The Arista router must be configured for management security profile &lt;profile_name&gt; and keys for BGP neighbor sessions.<br />
+<br />
+router(config)#management security<br />
+router(config-man-sec)#session shared-secret profile BGP-SHA<br />
+router(config-man-sec-sh-sec-profile-BGP-SHA)#secret 5 password1 2022-10-05 14:34:01 2022–12-05 14:34:01<br />
+router(config-man-sec-sh-sec-profile-BGP-SHA)#secret 10 password2 2022-12-05 14:34:01 2023-03-05 14:34:01<br />
+router(config-man-sec-sh-sec-profile-BGP-SHA)#secret 15 password3 2023-10-05 14:34:01 &lt;not to exceed 180 days&gt;<br />
+<br />
+Step 3: The Arista router must configure the BGP Neighbor to select the profile for use in TCP AO.<br />
+<br />
+router(config)#router bgp 65000<br />
+router(config-router-bgp)#neighbor 2.2.2.2 password shared-secret profile BGP-SHA1 algorithm aes-128-cmac-96<br />
+router(config-router-bgp)#exit<br />
+router(config)#write memory</p><h2>Check Contents</h2><p>Review the Arista router configuration to verify it is using a NIST-validated FIPS 198-1 message authentication code algorithm to authenticate routing protocol messages.<br />
+<br />
+OSPFv2 Example:<br />
+<br />
+Verify the Message-Digest authentication configuration on the interface for OSPF with the following command:<br />
+<br />
+sh run int ethernet YY<br />
+<br />
+interface Eth12<br />
+ ip ospf authentication message-digest<br />
+ ip ospf message-digest-key 23 sha256 0 arista123<br />
+<br />
+If MD5 is present in the output, this is a finding.<br />
+<br />
+BGP Example:<br />
+<br />
+Step 1: Arista router must verify the system clock is set to the correct date/time zone and clock source as this will affect the key lifetimes.<br />
+<br />
+router#show clock<br />
+Wed Oct 5 14:25:53 2022<br />
+Timezone: US/Pacific<br />
+Clock source: NTP server (192.168.10.25)<br />
+<br />
+If the clock is incorrect, this is a finding. <br />
+<br />
+Step 2: Arista router must verify the management security profile is configured and the session shared-secrets Lifetime durations are specified for the required rotation order and must not exceed 180 days.<br />
+<br />
+router#sh man sec session shared-secret profile BGP-SHA1<br />
+Profile: BGP-SHA1<br />
+<br />
+Current receive secret: ID: 5, Expires: December 05 2022, 14:34 UTC<br />
+Current transmit secret: ID: 5, Expires: December 05 2022, 14:34 UTC<br />
+<br />
+Receive secret rotation order: 5, 10, 15<br />
+Transmit secret rotation order: 5, 10, 15<br />
+<br />
+Secrets:<br />
+   ID 15<br />
+      Secret: $1c$rcKS3MQ9sre00iXfxDVMEg==<br />
+      Receive lifetime: March 05 2023, 14:34 UTC to infinite<br />
+      Transmit lifetime: March 05 2023, 14:34 UTC to infinite<br />
+   ID 10<br />
+      Secret: $1c$rcKS3MQ9srcBunxwqKkGEw==<br />
+      Receive lifetime: December 05 2022, 14:34 UTC to March 05 2023, 14:34 UTC<br />
+      Transmit lifetime: December 05 2022, 14:34 UTC to March 05 2023, 14:34 UTC<br />
+   ID 5<br />
+      Secret: $1c$rcKS3MQ9srd9RAMH9iKmPQ==<br />
+      Receive lifetime: October 05 2022, 14:34 UTC to December 05 2022, 14:34 UTC<br />
+      Transmit lifetime: October 05 2022, 14:34 UTC to December 05 2022, 14:34 UTC<br />
+<br />
+If the management security profile is not configured, this is a finding.<br />
+<br />
+If the key lifetime exceeds 180 days, this is a finding.<br />
+<br />
+Step 3: Arista router must verify the BGP peer group is configured to use the BGP security profile for the configured BGP neighbor peer. BGP Graceful-restart must be configured in the event the peer restarts to allow TCP resets and prevent clearing of traffic keys. Arista router supports graceful-restart restart-time configuration &lt;1-3600&gt; default [300 seconds].<br />
+<br />
+show running-config | section bgp 65000<br />
+router bgp 65000<br />
+   router-id 10.11.11.11<br />
+   graceful-restart restart-time 300<br />
+   graceful-restart<br />
+   neighbor Peer_Leaf peer group<br />
+   neighbor Peer_Leaf remote-as 65000<br />
+   neighbor Peer_Leaf next-hop-self<br />
+   neighbor Peer_Leaf send-community extended<br />
+   neighbor Peer_Leaf maximum-routes 12000<br />
+   neighbor Peer_Leaf2 peer group<br />
+   neighbor Peer_Leaf2 remote-as 200<br />
+   neighbor Peer_Leaf2 next-hop-self<br />
+   neighbor Peer_Leaf2 send-community extended<br />
+   neighbor Peer_Leaf2 maximum-routes 12000<br />
+   neighbor 1.1.1.1 password 7 kEFkx0nsheXsR5ICROtOfB==<br />
+   neighbor 1.1.1.1 maximum-routes 12000<br />
+   neighbor 2.2.2.2 peer group Peer_Leaf2<br />
+   neighbor 2.2.2.2 password shared-secret profile BGP-SHA1 algorithm aes-128-cmac-96<br />
+   neighbor 2.2.2.2 maximum-routes 12000<br />
+   neighbor 10.11.12.2 peer group Peer_Leaf<br />
+   no neighbor 10.11.12.2 route-map out<br />
+   redistribute connected route-map loopback<br />
+<br />
+If BGP is not configured to use the security profile, this is a finding.</p><h2>Vulnerability Number</h2><p>V-256010</p><h2>Documentable</h2><p>False</p><h2>Rule Version</h2><p>ARST-RT-000280</p><h2>Severity Override Guidance</h2><p>Review the Arista router configuration to verify it is using a NIST-validated FIPS 198-1 message authentication code algorithm to authenticate routing protocol messages.<br />
+<br />
+OSPFv2 Example:<br />
+<br />
+Verify the Message-Digest authentication configuration on the interface for OSPF with the following command:<br />
+<br />
+sh run int ethernet YY<br />
+<br />
+interface Eth12<br />
+ ip ospf authentication message-digest<br />
+ ip ospf message-digest-key 23 sha256 0 arista123<br />
+<br />
+If MD5 is present in the output, this is a finding.<br />
+<br />
+BGP Example:<br />
+<br />
+Step 1: Arista router must verify the system clock is set to the correct date/time zone and clock source as this will affect the key lifetimes.<br />
+<br />
+router#show clock<br />
+Wed Oct 5 14:25:53 2022<br />
+Timezone: US/Pacific<br />
+Clock source: NTP server (192.168.10.25)<br />
+<br />
+If the clock is incorrect, this is a finding. <br />
+<br />
+Step 2: Arista router must verify the management security profile is configured and the session shared-secrets Lifetime durations are specified for the required rotation order and must not exceed 180 days.<br />
+<br />
+router#sh man sec session shared-secret profile BGP-SHA1<br />
+Profile: BGP-SHA1<br />
+<br />
+Current receive secret: ID: 5, Expires: December 05 2022, 14:34 UTC<br />
+Current transmit secret: ID: 5, Expires: December 05 2022, 14:34 UTC<br />
+<br />
+Receive secret rotation order: 5, 10, 15<br />
+Transmit secret rotation order: 5, 10, 15<br />
+<br />
+Secrets:<br />
+   ID 15<br />
+      Secret: $1c$rcKS3MQ9sre00iXfxDVMEg==<br />
+      Receive lifetime: March 05 2023, 14:34 UTC to infinite<br />
+      Transmit lifetime: March 05 2023, 14:34 UTC to infinite<br />
+   ID 10<br />
+      Secret: $1c$rcKS3MQ9srcBunxwqKkGEw==<br />
+      Receive lifetime: December 05 2022, 14:34 UTC to March 05 2023, 14:34 UTC<br />
+      Transmit lifetime: December 05 2022, 14:34 UTC to March 05 2023, 14:34 UTC<br />
+   ID 5<br />
+      Secret: $1c$rcKS3MQ9srd9RAMH9iKmPQ==<br />
+      Receive lifetime: October 05 2022, 14:34 UTC to December 05 2022, 14:34 UTC<br />
+      Transmit lifetime: October 05 2022, 14:34 UTC to December 05 2022, 14:34 UTC<br />
+<br />
+If the management security profile is not configured, this is a finding.<br />
+<br />
+If the key lifetime exceeds 180 days, this is a finding.<br />
+<br />
+Step 3: Arista router must verify the BGP peer group is configured to use the BGP security profile for the configured BGP neighbor peer. BGP Graceful-restart must be configured in the event the peer restarts to allow TCP resets and prevent clearing of traffic keys. Arista router supports graceful-restart restart-time configuration &lt;1-3600&gt; default [300 seconds].<br />
+<br />
+show running-config | section bgp 65000<br />
+router bgp 65000<br />
+   router-id 10.11.11.11<br />
+   graceful-restart restart-time 300<br />
+   graceful-restart<br />
+   neighbor Peer_Leaf peer group<br />
+   neighbor Peer_Leaf remote-as 65000<br />
+   neighbor Peer_Leaf next-hop-self<br />
+   neighbor Peer_Leaf send-community extended<br />
+   neighbor Peer_Leaf maximum-routes 12000<br />
+   neighbor Peer_Leaf2 peer group<br />
+   neighbor Peer_Leaf2 remote-as 200<br />
+   neighbor Peer_Leaf2 next-hop-self<br />
+   neighbor Peer_Leaf2 send-community extended<br />
+   neighbor Peer_Leaf2 maximum-routes 12000<br />
+   neighbor 1.1.1.1 password 7 kEFkx0nsheXsR5ICROtOfB==<br />
+   neighbor 1.1.1.1 maximum-routes 12000<br />
+   neighbor 2.2.2.2 peer group Peer_Leaf2<br />
+   neighbor 2.2.2.2 password shared-secret profile BGP-SHA1 algorithm aes-128-cmac-96<br />
+   neighbor 2.2.2.2 maximum-routes 12000<br />
+   neighbor 10.11.12.2 peer group Peer_Leaf<br />
+   no neighbor 10.11.12.2 route-map out<br />
+   redistribute connected route-map loopback<br />
+<br />
+If BGP is not configured to use the security profile, this is a finding.</p><h2>Check Content Reference</h2><p>M</p><h2>Target Key</h2><p>5513</p></body></html>

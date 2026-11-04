@@ -1,0 +1,77 @@
+<!doctype html><html lang="en"><head><meta charset="utf-8"><title>STIGQter: STIG Check Details: SV-253992r844009_rule: The Juniper out-of-band management (OOBM) gateway router must be configured to have separate IGP instances for the managed network and management network.</title><link rel="icon" type="image/svg+xml" href="STIGQter.svg" /><script async src="https://www.googletagmanager.com/gtag/js?id=UA-31381839-2"></script><script src="include.js"></script><script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-4110907817782130" crossorigin="anonymous"></script></head><body><div><img src="STIGQter.svg" alt="STIGQter" style="height:1em;" /> <a href="https://www.stigqter.com/">STIGQter</a>: <a href="main.html">STIG Summary</a>: <a href="U_Juniper_EX_Switches_RTR_STIG_V2R1_Manual-xccdf.html">Juniper EX Series Switches Router Security Technical Implementation Guide Version: 2 Release: 1 Benchmark Date: 24 Jul 2024</a>:</div> <h1>The Juniper out-of-band management (OOBM) gateway router must be configured to have separate IGP instances for the managed network and management network.</h1><h2>DISA Rule</h2><p>SV-253992r844009_rule</p><h2>Vulnerability Number</h2><p>V-253992</p><h2>Group Title</h2><p>SRG-NET-000019-RTR-000011</p><h2>Rule Version</h2><p>JUEX-RT-000200</p><h2>Severity</h2><p>CAT II</p><h2>CCI(s)</h2><ul><li>CCI-001414 - Enforce approved authorizations for controlling the flow of information between connected systems based on organization-defined information flow control policies.</li></ul><h2>Weight</h2><p>10</p><h2>Fix Recommendation</h2><p>This requirement is not applicable for the DODIN Backbone.<br />
+<br />
+Configure the router to enforce that Interior Gateway Protocol instances configured on the OOBM gateway router peer only with their own routing domain.<br />
+set protocols ospf area &lt;number&gt; interface &lt;interface name&gt;.&lt;logical unit&gt;<br />
+<br />
+set routing-instances &lt;name&gt; instance-type virtual-router<br />
+set routing-instances &lt;name&gt; protocols ospf area &lt;number&gt; interface &lt;interface name&gt;.&lt;logical unit&gt;</p><h2>Check Contents</h2><p>This requirement is not applicable for the DODIN Backbone.<br />
+<br />
+Verify that the OOBM interface is an adjacency in the Interior Gateway Protocol routing domain for the management network. Interfaces can only be assigned to one routing instance. <br />
+<br />
+[edit protocols ospf]<br />
+interface &lt;interface name&gt;.&lt;logical unit&gt;; &lt;&lt; Cannot be assigned to a virtual routing instance.<br />
+<br />
+[edit routing-instances]<br />
+&lt;name&gt; {<br />
+    instance-type virtual-router;<br />
+    protocols {<br />
+        ospf {<br />
+            area &lt;area number&gt; {<br />
+                interface &lt;interface name&gt;.&lt;logical unit&gt;; &lt;&lt; Cannot be assigned to the default routing instance at [edit protocols].<br />
+            }<br />
+        }<br />
+    }<br />
+}<br />
+<br />
+Note: If the same interface is assigned to the default routing instance and to a virtual routing instance, commit fails.<br />
+<br />
+Some platforms support a routing-instance using the reserved name &quot;mgmt_junos&quot;. On these platforms, configure the &quot;mgmt_junos&quot; instance and apply at the [edit system] hierarchy.<br />
+[edit system]<br />
+management-instance;<br />
+<br />
+[edit routing-instances]<br />
+mgmt_junos {<br />
+    routing-options {<br />
+        static {<br />
+            route 0.0.0.0/0 next-hop &lt;next-hop address&gt;;<br />
+        }<br />
+    }<br />
+}<br />
+Note: Not all platforms support routing instances.<br />
+<br />
+If the router does not enforce that Interior Gateway Protocol instances configured on the OOBM gateway router peer only with their own routing domain, this is a finding.</p><h2>Vulnerability Number</h2><p>V-253992</p><h2>Documentable</h2><p>False</p><h2>Rule Version</h2><p>JUEX-RT-000200</p><h2>Severity Override Guidance</h2><p>This requirement is not applicable for the DODIN Backbone.<br />
+<br />
+Verify that the OOBM interface is an adjacency in the Interior Gateway Protocol routing domain for the management network. Interfaces can only be assigned to one routing instance. <br />
+<br />
+[edit protocols ospf]<br />
+interface &lt;interface name&gt;.&lt;logical unit&gt;; &lt;&lt; Cannot be assigned to a virtual routing instance.<br />
+<br />
+[edit routing-instances]<br />
+&lt;name&gt; {<br />
+    instance-type virtual-router;<br />
+    protocols {<br />
+        ospf {<br />
+            area &lt;area number&gt; {<br />
+                interface &lt;interface name&gt;.&lt;logical unit&gt;; &lt;&lt; Cannot be assigned to the default routing instance at [edit protocols].<br />
+            }<br />
+        }<br />
+    }<br />
+}<br />
+<br />
+Note: If the same interface is assigned to the default routing instance and to a virtual routing instance, commit fails.<br />
+<br />
+Some platforms support a routing-instance using the reserved name &quot;mgmt_junos&quot;. On these platforms, configure the &quot;mgmt_junos&quot; instance and apply at the [edit system] hierarchy.<br />
+[edit system]<br />
+management-instance;<br />
+<br />
+[edit routing-instances]<br />
+mgmt_junos {<br />
+    routing-options {<br />
+        static {<br />
+            route 0.0.0.0/0 next-hop &lt;next-hop address&gt;;<br />
+        }<br />
+    }<br />
+}<br />
+Note: Not all platforms support routing instances.<br />
+<br />
+If the router does not enforce that Interior Gateway Protocol instances configured on the OOBM gateway router peer only with their own routing domain, this is a finding.</p><h2>Check Content Reference</h2><p>M</p><h2>Target Key</h2><p>5479</p></body></html>

@@ -1,0 +1,134 @@
+<!doctype html><html lang="en"><head><meta charset="utf-8"><title>STIGQter: STIG Check Details: SV-216150r1045457_rule: The boundary protection system (firewall) must be configured to deny network traffic by default and must allow network traffic by exception (i.e., deny all, permit by exception).</title><link rel="icon" type="image/svg+xml" href="STIGQter.svg" /><script async src="https://www.googletagmanager.com/gtag/js?id=UA-31381839-2"></script><script src="include.js"></script><script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-4110907817782130" crossorigin="anonymous"></script></head><body><div><img src="STIGQter.svg" alt="STIGQter" style="height:1em;" /> <a href="https://www.stigqter.com/">STIGQter</a>: <a href="main.html">STIG Summary</a>: <a href="U_SOL_11_x86_STIG_V3R6_Manual-xccdf.html">Solaris 11 X86 Security Technical Implementation Guide Version: 3 Release: 6 Benchmark Date: 01 Jul 2026</a>:</div> <h1>The boundary protection system (firewall) must be configured to deny network traffic by default and must allow network traffic by exception (i.e., deny all, permit by exception).</h1><h2>DISA Rule</h2><p>SV-216150r1045457_rule</p><h2>Vulnerability Number</h2><p>V-216150</p><h2>Group Title</h2><p>SRG-OS-000480</p><h2>Rule Version</h2><p>SOL-11.1-050240</p><h2>Severity</h2><p>CAT II</p><h2>CCI(s)</h2><ul><li>CCI-000197 - For password-based authentication, transmit passwords only cryptographically-protected channels.</li><li>CCI-000366 - Implement the security configuration settings.</li><li>CCI-000877 - Employ strong authentication in the establishment of nonlocal maintenance and diagnostic sessions.</li><li>CCI-000382 - Configure the system to prohibit or restrict the use of organization-defined prohibited or restricted functions, system ports, protocols, software, and/or services.</li><li>CCI-001453 - Implement cryptographic mechanisms to protect the integrity of remote access sessions.</li><li>CCI-001941 - Implement replay-resistant authentication mechanisms for access to privileged accounts and/or non-privileged accounts.</li><li>CCI-002890 - Implement organization-defined cryptographic mechanisms to protect the integrity of nonlocal maintenance and diagnostic communications.</li></ul><h2>Weight</h2><p>10</p><h2>Fix Recommendation</h2><p>The root role is required.<br />
+<br />
+For Solaris 11, 11.1, 11.2, and 11.3, which use IP Filter, configure and enable the IP Filters policy.<br />
+<br />
+# pfedit /etc/ipf/ipf.conf. <br />
+<br />
+Add the following lines to the file:<br />
+<br />
+# Do not allow all outbound traffic, keep state, and log<br />
+block out log all keep state keep frags<br />
+# Block and log everything else that comes in<br />
+block in log all<br />
+block in log from any to 255.255.255.255<br />
+block in log from any to 127.0.0.1/32<br />
+<br />
+Enable ipfilter.<br />
+<br />
+# svcadm enable ipfilter<br />
+<br />
+Notify ipfilter to use the new configuration file.<br />
+<br />
+# ipf -Fa -f /etc/ipf/ipf.conf<br />
+<br />
+For Solaris 11.3 or newer, which use Packet Filter, configure and enable the Packet Filter’s policy.<br />
+# pfedit /etc/firewall/pf.conf.<br />
+<br />
+Add either of the following lines to the file:<br />
+<br />
+# Block and log all traffic on all interfaces in either direction from anywhere to anywhere<br />
+block log all<br />
+     -or-<br />
+# Drop traffic and log it to a fllog interface for more detailed inspection or analysis using tools like tcpdump<br />
+block drop log (to pflog0) all<br />
+<br />
+Enable Packet Filter.<br />
+# svcadm enable firewall:default<br />
+Enable Packet Filter logging daemon.<br />
+# svcadm enable firewall/pflog:default<br />
+<br />
+Note: Because the default firewall rules block all network access to the system, ensure there is still a method to access the system, such as SSH or console access, prior to activating the firewall rules. Operational requirements may dictate the addition of protocols such as SSH, DNS, NTP, HTTP, and HTTPS to be allowed.</p><h2>Check Contents</h2><p>Ensure that either the IP Filter or Packet Filter Firewall is installed correctly.<br />
+<br />
+Determine the OS version to be secured.<br />
+# uname -v<br />
+<br />
+For Solaris 11, 11.1, 11.2, and 11.3, which use IP Filter, the IP Filter Management profile is required.<br />
+<br />
+Check that the IP Filter firewall is enabled and configured so that only authorized sessions are allowed.<br />
+<br />
+# svcs ipfilter<br />
+<br />
+If &quot;ipfilter&quot; is not listed with a state of &quot;online&quot;, this is a finding.<br />
+<br />
+The IP Filter Management profile is required.<br />
+<br />
+Check that the filters are configured properly.<br />
+<br />
+# ipfstat -io<br />
+<br />
+If the output of this command does not include the following lines, this is a finding.<br />
+<br />
+block out log all keep state keep frags<br />
+block in log all<br />
+block in log from any to 255.255.255.255/32<br />
+block in log from any to 127.0.0.1/32<br />
+<br />
+Even if the lines above are included in the output, it is possible that other lines can contradict the firewall settings. Review the firewall rules and ensure that they conform to organizational and mission requirements. If the firewall rules are not configured to organizational standards, this is a finding.<br />
+<br />
+For Solaris 11.3 or newer, which use Packet Filter, the Network Firewall Management rights profile is required.<br />
+<br />
+Check that the Packet Filter firewall is enabled and configured so that only authorized sessions are allowed.<br />
+# svcs firewall:default<br />
+<br />
+If &quot;firewall&quot; is not listed with a state of &quot;online&quot;, this is a finding.<br />
+<br />
+The Network Firewall Management rights profile is required.<br />
+<br />
+Check that the filters are configured properly.<br />
+# pfctl -s rules<br />
+<br />
+If the output of this command does not include a line to block and log all traffic as in the following line, this is a finding (does not have to be exactly like the example).<br />
+<br />
+block drop log (to pflog0) all<br />
+<br />
+Check that the Packet Filter firewall logging daemon is enabled.<br />
+svcs firewall/pflog:default<br />
+<br />
+If &quot;pflog&quot; is not listed with a state of &quot;online&quot;, this is a finding.</p><h2>Vulnerability Number</h2><p>V-216150</p><h2>Documentable</h2><p>False</p><h2>Rule Version</h2><p>SOL-11.1-050240</p><h2>Severity Override Guidance</h2><p>Ensure that either the IP Filter or Packet Filter Firewall is installed correctly.<br />
+<br />
+Determine the OS version to be secured.<br />
+# uname -v<br />
+<br />
+For Solaris 11, 11.1, 11.2, and 11.3, which use IP Filter, the IP Filter Management profile is required.<br />
+<br />
+Check that the IP Filter firewall is enabled and configured so that only authorized sessions are allowed.<br />
+<br />
+# svcs ipfilter<br />
+<br />
+If &quot;ipfilter&quot; is not listed with a state of &quot;online&quot;, this is a finding.<br />
+<br />
+The IP Filter Management profile is required.<br />
+<br />
+Check that the filters are configured properly.<br />
+<br />
+# ipfstat -io<br />
+<br />
+If the output of this command does not include the following lines, this is a finding.<br />
+<br />
+block out log all keep state keep frags<br />
+block in log all<br />
+block in log from any to 255.255.255.255/32<br />
+block in log from any to 127.0.0.1/32<br />
+<br />
+Even if the lines above are included in the output, it is possible that other lines can contradict the firewall settings. Review the firewall rules and ensure that they conform to organizational and mission requirements. If the firewall rules are not configured to organizational standards, this is a finding.<br />
+<br />
+For Solaris 11.3 or newer, which use Packet Filter, the Network Firewall Management rights profile is required.<br />
+<br />
+Check that the Packet Filter firewall is enabled and configured so that only authorized sessions are allowed.<br />
+# svcs firewall:default<br />
+<br />
+If &quot;firewall&quot; is not listed with a state of &quot;online&quot;, this is a finding.<br />
+<br />
+The Network Firewall Management rights profile is required.<br />
+<br />
+Check that the filters are configured properly.<br />
+# pfctl -s rules<br />
+<br />
+If the output of this command does not include a line to block and log all traffic as in the following line, this is a finding (does not have to be exactly like the example).<br />
+<br />
+block drop log (to pflog0) all<br />
+<br />
+Check that the Packet Filter firewall logging daemon is enabled.<br />
+svcs firewall/pflog:default<br />
+<br />
+If &quot;pflog&quot; is not listed with a state of &quot;online&quot;, this is a finding.</p><h2>Check Content Reference</h2><p>M</p><h2>Target Key</h2><p>4021</p></body></html>

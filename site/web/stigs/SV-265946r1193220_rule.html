@@ -1,0 +1,91 @@
+<!doctype html><html lang="en"><head><meta charset="utf-8"><title>STIGQter: STIG Check Details: SV-265946r1193220_rule: MongoDB must only accept end entity certificates issued by DOD PKI or DOD-approved PKI Certification Authorities (CAs) for the establishment of all encrypted sessions.</title><link rel="icon" type="image/svg+xml" href="STIGQter.svg" /><script async src="https://www.googletagmanager.com/gtag/js?id=UA-31381839-2"></script><script src="include.js"></script><script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-4110907817782130" crossorigin="anonymous"></script></head><body><div><img src="STIGQter.svg" alt="STIGQter" style="height:1em;" /> <a href="https://www.stigqter.com/">STIGQter</a>: <a href="main.html">STIG Summary</a>: <a href="U_MongoDB_Enterprise_Advanced_7-x_STIG_V1R2_Manual-xccdf.html">MongoDB Enterprise Advanced 7.x Security Technical Implementation Guide Version: 1 Release: 2 Benchmark Date: 01 Jul 2026</a>:</div> <h1>MongoDB must only accept end entity certificates issued by DOD PKI or DOD-approved PKI Certification Authorities (CAs) for the establishment of all encrypted sessions.</h1><h2>DISA Rule</h2><p>SV-265946r1193220_rule</p><h2>Vulnerability Number</h2><p>V-265946</p><h2>Group Title</h2><p>SRG-APP-000427-DB-000385</p><h2>Rule Version</h2><p>MD7X-00-008400</p><h2>Severity</h2><p>CAT II</p><h2>CCI(s)</h2><ul><li>CCI-002470 - Only allow the use of organization-defined certificate authorities for verification of the establishment of protected sessions.</li></ul><h2>Weight</h2><p>10</p><h2>Fix Recommendation</h2><p>Remove any certificate referenced that was not issued by an approved DOD certificate authority. <br />
+<br />
+Contact the organization's certificate issuer and request a new certificate that is issued by a valid DOD certificate authorities.</p><h2>Check Contents</h2><p>To run MongoDB in TLS mode, obtain a valid certificate singed by a single CA.<br />
+<br />
+Before starting the MongoDB database in TLS mode, verify the certificate used is issued by a valid DOD CA (openssl x509 -in &lt;path_to_certificate_pem_file&gt; -text | grep -i &quot;issuer&quot;).<br />
+<br />
+The certificates (pem files) used by MongoDB will be in the MongoDB configuration file net.tls section as shown below (default location: /etc/mongod.conf).<br />
+<br />
+Each of these must be inspected, when present, to make sure they comply with a DOD Issuer for the certificate.<br />
+<br />
+net:<br />
+   tls:<br />
+      CAFile: &lt;PEM file&gt;<br />
+      certificateKeyFile: &lt;PEM file&gt;<br />
+      clusterFile: &lt;PEM file&gt;<br />
+      clusterCAFile: &lt;PEM file&gt;<br />
+      CRLFile: &lt;PEM file&gt;<br />
+<br />
+When using MongoDBs native encryption at rest, the following must also be inspected in the security.kmip section of the MongoDB configuration file:<br />
+<br />
+security:<br />
+   kmip:<br />
+      clientCertificateFile: &lt;PEM file&gt;<br />
+      serverCAFile: &lt;PEM file&gt;<br />
+<br />
+net.tls.CAFile<br />
+The .pem file that contains the root certificate chain from the CA. Specify the file name of the .pem file using relative or absolute paths.<br />
+<br />
+net.tls.certificateKeyFile<br />
+The .pem file that contains both the TLS certificate and key.<br />
+<br />
+net.tls.clusterFile<br />
+The .pem file that contains the x.509 certificate-key file for membership authentication for the cluster or replica set.<br />
+<br />
+If there is any issuer present in the certificates being used that is not a DOD approved certificate authority, this is a finding.<br />
+<br />
+net.tls.clusterCAFile<br />
+The .pem file that contains the root certificate chain from the CA used to validate the certificate presented by a client establishing a connection. Specify the file name of the .pem file using relative or absolute paths. net.tls.clusterCAFile requires that net.tls.CAFile is set.<br />
+<br />
+net.tls.CRLFile<br />
+The .pem file that contains the Certificate Revocation List. Specify the file name of the .pem file using relative or absolute paths.<br />
+<br />
+security.kmip.clientCertificateFile<br />
+Path to the .pem file used to authenticate MongoDB to the KMIP server. The specified .pem file must contain both the TLS/SSL certificate and key.<br />
+<br />
+security.kmip.serverCAFile<br />
+Path to CA File. Used for validating secure client connection to KMIP server.</p><h2>Vulnerability Number</h2><p>V-265946</p><h2>Documentable</h2><p>False</p><h2>Rule Version</h2><p>MD7X-00-008400</p><h2>Severity Override Guidance</h2><p>To run MongoDB in TLS mode, obtain a valid certificate singed by a single CA.<br />
+<br />
+Before starting the MongoDB database in TLS mode, verify the certificate used is issued by a valid DOD CA (openssl x509 -in &lt;path_to_certificate_pem_file&gt; -text | grep -i &quot;issuer&quot;).<br />
+<br />
+The certificates (pem files) used by MongoDB will be in the MongoDB configuration file net.tls section as shown below (default location: /etc/mongod.conf).<br />
+<br />
+Each of these must be inspected, when present, to make sure they comply with a DOD Issuer for the certificate.<br />
+<br />
+net:<br />
+   tls:<br />
+      CAFile: &lt;PEM file&gt;<br />
+      certificateKeyFile: &lt;PEM file&gt;<br />
+      clusterFile: &lt;PEM file&gt;<br />
+      clusterCAFile: &lt;PEM file&gt;<br />
+      CRLFile: &lt;PEM file&gt;<br />
+<br />
+When using MongoDBs native encryption at rest, the following must also be inspected in the security.kmip section of the MongoDB configuration file:<br />
+<br />
+security:<br />
+   kmip:<br />
+      clientCertificateFile: &lt;PEM file&gt;<br />
+      serverCAFile: &lt;PEM file&gt;<br />
+<br />
+net.tls.CAFile<br />
+The .pem file that contains the root certificate chain from the CA. Specify the file name of the .pem file using relative or absolute paths.<br />
+<br />
+net.tls.certificateKeyFile<br />
+The .pem file that contains both the TLS certificate and key.<br />
+<br />
+net.tls.clusterFile<br />
+The .pem file that contains the x.509 certificate-key file for membership authentication for the cluster or replica set.<br />
+<br />
+If there is any issuer present in the certificates being used that is not a DOD approved certificate authority, this is a finding.<br />
+<br />
+net.tls.clusterCAFile<br />
+The .pem file that contains the root certificate chain from the CA used to validate the certificate presented by a client establishing a connection. Specify the file name of the .pem file using relative or absolute paths. net.tls.clusterCAFile requires that net.tls.CAFile is set.<br />
+<br />
+net.tls.CRLFile<br />
+The .pem file that contains the Certificate Revocation List. Specify the file name of the .pem file using relative or absolute paths.<br />
+<br />
+security.kmip.clientCertificateFile<br />
+Path to the .pem file used to authenticate MongoDB to the KMIP server. The specified .pem file must contain both the TLS/SSL certificate and key.<br />
+<br />
+security.kmip.serverCAFile<br />
+Path to CA File. Used for validating secure client connection to KMIP server.</p><h2>Check Content Reference</h2><p>M</p><h2>Target Key</h2><p>5637</p></body></html>

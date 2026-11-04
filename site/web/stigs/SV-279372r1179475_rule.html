@@ -1,0 +1,41 @@
+<!doctype html><html lang="en"><head><meta charset="utf-8"><title>STIGQter: STIG Check Details: SV-279372r1179475_rule: MongoDB must enforce Discretionary Access Control (DAC) policies, as defined by the data owner, over defined subjects and objects.</title><link rel="icon" type="image/svg+xml" href="STIGQter.svg" /><script async src="https://www.googletagmanager.com/gtag/js?id=UA-31381839-2"></script><script src="include.js"></script><script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-4110907817782130" crossorigin="anonymous"></script></head><body><div><img src="STIGQter.svg" alt="STIGQter" style="height:1em;" /> <a href="https://www.stigqter.com/">STIGQter</a>: <a href="main.html">STIG Summary</a>: <a href="U_MDB_Enterprise_Advanced_8-x_STIG_V1R1_Manual-xccdf.html">MongoDB Enterprise Advanced 8.x Security Technical Implementation Guide Version: 1 Release: 1 Benchmark Date: 26 Jan 2026</a>:</div> <h1>MongoDB must enforce Discretionary Access Control (DAC) policies, as defined by the data owner, over defined subjects and objects.</h1><h2>DISA Rule</h2><p>SV-279372r1179475_rule</p><h2>Vulnerability Number</h2><p>V-279372</p><h2>Group Title</h2><p>SRG-APP-000328-DB-000301</p><h2>Rule Version</h2><p>MD8X-00-006500</p><h2>Severity</h2><p>CAT II</p><h2>CCI(s)</h2><ul><li>CCI-002165 - Enforce organization-defined discretionary access control policies over defined subjects and objects.</li></ul><h2>Weight</h2><p>10</p><h2>Fix Recommendation</h2><p>Enable authentication for MongoDB by following the instructions here: <br />
+https://www.mongodb.com/docs/v8.0/tutorial/enable-authentication/<br />
+<br />
+Create an administrative user in MongoDB:<br />
+<br />
+use admin<br />
+db.createUser(<br />
+  {<br />
+    user:  &lt; username &gt;,<br />
+    pwd:  &lt; passwordPrompt() &gt;, // or cleartext password<br />
+    roles: [<br />
+      { role: &quot;userAdminAnyDatabase&quot;, db: &quot;admin&quot; },<br />
+      { role: &quot;readWriteAnyDatabase&quot;, db: &quot;admin&quot; }<br />
+    ]<br />
+  }<br />
+)<br />
+<br />
+Enable authorization by adding the following entry to the MongoDB configuration file:<br />
+<br />
+security:<br />
+    authorization: enabled<br />
+<br />
+Restart the MongoDB service from the OS.<br />
+<br />
+$ sudo systemctl restart mongod<br />
+<br />
+The &quot;UserAdmin&quot; user created above can use the &quot;createUser&quot; and &quot;createRole&quot; MongoDB commands to add the required users and roles per organizational or site-specific documentation.<br />
+<br />
+https://www.mongodb.com/docs/v8.0/reference/command/createUser/<br />
+<br />
+https://www.mongodb.com/docs/v8.0/reference/command/createRole/</p><h2>Check Contents</h2><p>Review the MongoDB configuration file (default location /etc/mongod.conf).<br />
+<br />
+If the file does not contain the following entry, this is a finding:<br />
+<br />
+security:<br />
+    authorization: enabled</p><h2>Vulnerability Number</h2><p>V-279372</p><h2>Documentable</h2><p>False</p><h2>Rule Version</h2><p>MD8X-00-006500</p><h2>Severity Override Guidance</h2><p>Review the MongoDB configuration file (default location /etc/mongod.conf).<br />
+<br />
+If the file does not contain the following entry, this is a finding:<br />
+<br />
+security:<br />
+    authorization: enabled</p><h2>Check Content Reference</h2><p>M</p><h2>Target Key</h2><p>5728</p></body></html>

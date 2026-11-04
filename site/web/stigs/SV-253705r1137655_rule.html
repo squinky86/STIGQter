@@ -1,0 +1,65 @@
+<!doctype html><html lang="en"><head><meta charset="utf-8"><title>STIGQter: STIG Check Details: SV-253705r1137655_rule: MariaDB must separate user functionality (including user interface services) from database management functionality.</title><link rel="icon" type="image/svg+xml" href="STIGQter.svg" /><script async src="https://www.googletagmanager.com/gtag/js?id=UA-31381839-2"></script><script src="include.js"></script><script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-4110907817782130" crossorigin="anonymous"></script></head><body><div><img src="STIGQter.svg" alt="STIGQter" style="height:1em;" /> <a href="https://www.stigqter.com/">STIGQter</a>: <a href="main.html">STIG Summary</a>: <a href="U_MariaDB_Enterprise_10-x_STIG_V2R5_Manual-xccdf.html">MariaDB Enterprise 10.x Security Technical Implementation Guide Version: 2 Release: 5 Benchmark Date: 01 Apr 2026</a>:</div> <h1>MariaDB must separate user functionality (including user interface services) from database management functionality.</h1><h2>DISA Rule</h2><p>SV-253705r1137655_rule</p><h2>Vulnerability Number</h2><p>V-253705</p><h2>Group Title</h2><p>SRG-APP-000211-DB-000122</p><h2>Rule Version</h2><p>MADB-10-004600</p><h2>Severity</h2><p>CAT II</p><h2>CCI(s)</h2><ul><li>CCI-001082 - Separate user functionality, including user interface services, from system management functionality.</li></ul><h2>Weight</h2><p>10</p><h2>Fix Recommendation</h2><p>Configure MariaDB Enterprise Server to separate database administration and general user functionality.<br />
+<br />
+Do not grant Create user, Event, Process, Proxy, Reload, Replication client, Replication slave, Show databases, Shutdown, Super, Create tablespace privileges to users and roles that do not require it.<br />
+<br />
+To remove privileges, refer to the following examples:<br />
+ <br />
+1. Revoke privileges from a specific user: <br />
+<br />
+MariaDB&gt; REVOKE SUPER, PROCESS ON *.* FROM 'user'@'host';<br />
+ <br />
+2. Revoke privileges from a role:<br />
+<br />
+MariaDB&gt; REVOKE 'role' FROM 'user'@'host';</p><h2>Check Contents</h2><p>To show the list of system privileges that the MariaDB server supports, run:<br />
+MariaDB&gt; SHOW PRIVILEGES;<br />
+ <br />
+Gather a list of SHOW GRANTS commands. SHOW GRANTS will list the privileges granted to the account.<br />
+<br />
+Run this database query to create the SHOW GRANTS script for each user: <br />
+<br />
+MariaDB&gt; SELECT DISTINCT CONCAT( 'SHOW GRANTS FOR ', user,'@', host,';') AS grantQuery FROM mysql.user WHERE is_role = 'N';<br />
+<br />
+Run each SHOW GRANTS command for each user.<br />
+<br />
+MariaDB&gt; SHOW GRANTS FOR 'user'@'host';<br />
+<br />
+If any nonadministrative role has any one of the following privileges, this is a finding. <br />
+<br />
+Create user <br />
+Event<br />
+Process <br />
+Proxy<br />
+Reload<br />
+Replication client <br />
+Replication slave <br />
+Show databases <br />
+Shutdown <br />
+Super<br />
+<br />
+If administrator and general user functionality are not separated either physically or logically, this is a finding.</p><h2>Vulnerability Number</h2><p>V-253705</p><h2>Documentable</h2><p>False</p><h2>Rule Version</h2><p>MADB-10-004600</p><h2>Severity Override Guidance</h2><p>To show the list of system privileges that the MariaDB server supports, run:<br />
+MariaDB&gt; SHOW PRIVILEGES;<br />
+ <br />
+Gather a list of SHOW GRANTS commands. SHOW GRANTS will list the privileges granted to the account.<br />
+<br />
+Run this database query to create the SHOW GRANTS script for each user: <br />
+<br />
+MariaDB&gt; SELECT DISTINCT CONCAT( 'SHOW GRANTS FOR ', user,'@', host,';') AS grantQuery FROM mysql.user WHERE is_role = 'N';<br />
+<br />
+Run each SHOW GRANTS command for each user.<br />
+<br />
+MariaDB&gt; SHOW GRANTS FOR 'user'@'host';<br />
+<br />
+If any nonadministrative role has any one of the following privileges, this is a finding. <br />
+<br />
+Create user <br />
+Event<br />
+Process <br />
+Proxy<br />
+Reload<br />
+Replication client <br />
+Replication slave <br />
+Show databases <br />
+Shutdown <br />
+Super<br />
+<br />
+If administrator and general user functionality are not separated either physically or logically, this is a finding.</p><h2>Check Content Reference</h2><p>M</p><h2>Target Key</h2><p>5475</p></body></html>

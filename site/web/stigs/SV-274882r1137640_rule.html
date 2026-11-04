@@ -1,0 +1,49 @@
+<!doctype html><html lang="en"><head><meta charset="utf-8"><title>STIGQter: STIG Check Details: SV-274882r1137640_rule: Kubernetes Secrets must be encrypted at rest.</title><link rel="icon" type="image/svg+xml" href="STIGQter.svg" /><script async src="https://www.googletagmanager.com/gtag/js?id=UA-31381839-2"></script><script src="include.js"></script><script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-4110907817782130" crossorigin="anonymous"></script></head><body><div><img src="STIGQter.svg" alt="STIGQter" style="height:1em;" /> <a href="https://www.stigqter.com/">STIGQter</a>: <a href="main.html">STIG Summary</a>: <a href="U_Kubernetes_STIG_V2R6_Manual-xccdf.html">Kubernetes Security Technical Implementation Guide Version: 2 Release: 6 Benchmark Date: 01 Apr 2026</a>:</div> <h1>Kubernetes Secrets must be encrypted at rest.</h1><h2>DISA Rule</h2><p>SV-274882r1137640_rule</p><h2>Vulnerability Number</h2><p>V-274882</p><h2>Group Title</h2><p>SRG-APP-000033-CTR-000100</p><h2>Rule Version</h2><p>CNTR-K8-001162</p><h2>Severity</h2><p>CAT I</p><h2>CCI(s)</h2><ul><li>CCI-000213 - Enforce approved authorizations for logical access to information and system resources in accordance with applicable access control policies.</li></ul><h2>Weight</h2><p>10</p><h2>Fix Recommendation</h2><p>Edit the Kubernetes API Server manifest file in the /etc/kubernetes/manifests directory on the Kubernetes Master Node. <br />
+<br />
+Set the value of &quot;--encryption-provider-config&quot; to the path to the encryption config. <br />
+<br />
+The encryption config must specify the Secret's resource and provider. Below is an example:<br />
+{<br />
+  &quot;kind&quot;: &quot;EncryptionConfiguration&quot;,<br />
+  &quot;apiVersion&quot;: &quot;apiserver.config.k8s.io/v1&quot;,<br />
+  &quot;resources&quot;: [<br />
+    {<br />
+      &quot;resources&quot;: [<br />
+        &quot;secrets&quot;<br />
+      ],<br />
+      &quot;providers&quot;: [<br />
+        {<br />
+          &quot;aescbc&quot;: {<br />
+            &quot;keys&quot;: [<br />
+              {<br />
+                &quot;name&quot;: &quot;aescbckey&quot;,<br />
+                &quot;secret&quot;: &quot;xxxxxxxxxxxxxxxxxxx&quot;<br />
+              }<br />
+            ]<br />
+          }<br />
+        },<br />
+        {<br />
+          &quot;identity&quot;: {}<br />
+        }<br />
+      ]<br />
+    }<br />
+  ]<br />
+}</p><h2>Check Contents</h2><p>Change to the /etc/kubernetes/manifests directory on the Kubernetes Master Node. Run the command:<br />
+grep -i encryption-provider-config *<br />
+<br />
+If the setting &quot;encryption-provider-config&quot; is not configured, this is a finding.<br />
+<br />
+If the setting is configured, check the contents of the file specified by its argument. <br />
+<br />
+If the file does not specify the Secret's resource, this is a finding. <br />
+<br />
+If the identity provider is specified as the first provider for the resource, this is also a finding.</p><h2>Vulnerability Number</h2><p>V-274882</p><h2>Documentable</h2><p>False</p><h2>Rule Version</h2><p>CNTR-K8-001162</p><h2>Severity Override Guidance</h2><p>Change to the /etc/kubernetes/manifests directory on the Kubernetes Master Node. Run the command:<br />
+grep -i encryption-provider-config *<br />
+<br />
+If the setting &quot;encryption-provider-config&quot; is not configured, this is a finding.<br />
+<br />
+If the setting is configured, check the contents of the file specified by its argument. <br />
+<br />
+If the file does not specify the Secret's resource, this is a finding. <br />
+<br />
+If the identity provider is specified as the first provider for the resource, this is also a finding.</p><h2>Check Content Reference</h2><p>M</p><h2>Target Key</h2><p>5376</p></body></html>

@@ -1,0 +1,22 @@
+<!doctype html><html lang="en"><head><meta charset="utf-8"><title>STIGQter: STIG Check Details: SV-215234r1184573_rule: NFS file systems on AIX must be mounted with the nosuid option unless the NFS file systems contain approved setuid or setgid programs.</title><link rel="icon" type="image/svg+xml" href="STIGQter.svg" /><script async src="https://www.googletagmanager.com/gtag/js?id=UA-31381839-2"></script><script src="include.js"></script><script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-4110907817782130" crossorigin="anonymous"></script></head><body><div><img src="STIGQter.svg" alt="STIGQter" style="height:1em;" /> <a href="https://www.stigqter.com/">STIGQter</a>: <a href="main.html">STIG Summary</a>: <a href="U_IBM_AIX_7-x_STIG_V3R3_Manual-xccdf.html">IBM AIX 7.x Security Technical Implementation Guide Version: 3 Release: 3 Benchmark Date: 01 Jul 2026</a>:</div> <h1>NFS file systems on AIX must be mounted with the nosuid option unless the NFS file systems contain approved setuid or setgid programs.</h1><h2>DISA Rule</h2><p>SV-215234r1184573_rule</p><h2>Vulnerability Number</h2><p>V-215234</p><h2>Group Title</h2><p>SRG-OS-000326-GPOS-00126</p><h2>Rule Version</h2><p>AIX7-00-001138</p><h2>Severity</h2><p>CAT II</p><h2>CCI(s)</h2><ul><li>CCI-002233 - Prevent the organization-defined software from executing at higher privilege levels than users executing the software.</li></ul><h2>Weight</h2><p>10</p><h2>Fix Recommendation</h2><p>For each NFS file systems that does not contain approved &quot;setuid&quot; or &quot;setgid&quot; files, add the &quot;nosuid&quot; option, along with other mount options, to the &quot;options&quot; field in &quot;/etc/filesystems&quot; using the following command:<br />
+# chfs -a options=ro,bg,hard,intr,nosuid,sec=sys &lt;NFS_mount_point&gt;<br />
+<br />
+Note that the other mount options (other than the nosuid options) may be different among NFS mounts.</p><h2>Check Contents</h2><p>Obtain a list of NFS file systems that contain approved &quot;setuid&quot; or &quot;setgid&quot; files from the information system security officer (ISSO)/information system security officer (ISSM).<br />
+<br />
+Check the &quot;nosuid&quot; mount option is used on all NFS file systems that do not contain approved &quot;setuid&quot; or &quot;setgid&quot; files: <br />
+# mount | grep -E &quot;options|nfs|---&quot;<br />
+  node       mounted        mounted over    vfs       date        options <br />
+-------- ---------------  ---------------  ------ ------------ --------------- <br />
+nfs.example.com  /path/to/directory1  /mnt_1  nfs3   Nov 05 14:11  ro,bg,hard,intr,nosuid,sec=sys<br />
+nfs.example.com  /path/to/directory2  /mnt_2  nfs3   Nov 05 14:12  ro,bg,hard,intr,sec=sys<br />
+<br />
+If the NFS mounts do not show the &quot;nosuid&quot; setting in their &quot;options&quot; fields, along with other mount options, this is a finding.</p><h2>Vulnerability Number</h2><p>V-215234</p><h2>Documentable</h2><p>False</p><h2>Rule Version</h2><p>AIX7-00-001138</p><h2>Severity Override Guidance</h2><p>Obtain a list of NFS file systems that contain approved &quot;setuid&quot; or &quot;setgid&quot; files from the information system security officer (ISSO)/information system security officer (ISSM).<br />
+<br />
+Check the &quot;nosuid&quot; mount option is used on all NFS file systems that do not contain approved &quot;setuid&quot; or &quot;setgid&quot; files: <br />
+# mount | grep -E &quot;options|nfs|---&quot;<br />
+  node       mounted        mounted over    vfs       date        options <br />
+-------- ---------------  ---------------  ------ ------------ --------------- <br />
+nfs.example.com  /path/to/directory1  /mnt_1  nfs3   Nov 05 14:11  ro,bg,hard,intr,nosuid,sec=sys<br />
+nfs.example.com  /path/to/directory2  /mnt_2  nfs3   Nov 05 14:12  ro,bg,hard,intr,sec=sys<br />
+<br />
+If the NFS mounts do not show the &quot;nosuid&quot; setting in their &quot;options&quot; fields, along with other mount options, this is a finding.</p><h2>Check Content Reference</h2><p>M</p><h2>Target Key</h2><p>4012</p></body></html>

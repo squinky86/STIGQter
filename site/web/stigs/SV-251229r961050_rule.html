@@ -1,0 +1,64 @@
+<!doctype html><html lang="en"><head><meta charset="utf-8"><title>STIGQter: STIG Check Details: SV-251229r961050_rule: Redis Enterprise DBMS must use NIST FIPS 140-2 or 140-3 validated cryptographic modules for cryptographic operations.</title><link rel="icon" type="image/svg+xml" href="STIGQter.svg" /><script async src="https://www.googletagmanager.com/gtag/js?id=UA-31381839-2"></script><script src="include.js"></script><script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-4110907817782130" crossorigin="anonymous"></script></head><body><div><img src="STIGQter.svg" alt="STIGQter" style="height:1em;" /> <a href="https://www.stigqter.com/">STIGQter</a>: <a href="main.html">STIG Summary</a>: <a href="U_Redis_Enterprise_6-x_STIG_V2R2_Manual-xccdf.html">Redis Enterprise 6.x Security Technical Implementation Guide Version: 2 Release: 2 Benchmark Date: 24 Oct 2024</a>:</div> <h1>Redis Enterprise DBMS must use NIST FIPS 140-2 or 140-3 validated cryptographic modules for cryptographic operations.</h1><h2>DISA Rule</h2><p>SV-251229r961050_rule</p><h2>Vulnerability Number</h2><p>V-251229</p><h2>Group Title</h2><p>SRG-APP-000179-DB-000114</p><h2>Rule Version</h2><p>RD6X-00-009500</p><h2>Severity</h2><p>CAT I</p><h2>CCI(s)</h2><ul><li>CCI-000803 - Implement mechanisms for authentication to a cryptographic module that meet the requirements of applicable laws, Executive Orders, directives, policies, regulations, standards, and guidance for such authentication.</li></ul><h2>Weight</h2><p>10</p><h2>Fix Recommendation</h2><p>Configure Redis Enterprise settings to use NIST FIPS 140-2-validated cryptographic modules for cryptographic operations. To set the minimum TLS version that can be used for encrypting the data in transit between a Redis client and a Redis Enterprise cluster, use the REST API or the following rladmin command:<br />
+rladmin&gt; cluster config min_data_TLS_version &lt;version&gt; (e.g., 1.2)<br />
+<br />
+Ensure that openssl is on the latest version as required by organizational policies to be FIPS compliant.</p><h2>Check Contents</h2><p>Review the Redis Enterprise configuration to verify it is using NIST FIPS validated cryptographic modules for cryptographic operations. Redis Enterprise uses TLS 1.2 and has a cyber suite of options that is configurable through the rladmin, REST API, and on the Redis Enterprise web UI.<br />
+<br />
+Verify the host operating system is encrypted. <br />
+<br />
+If the host operating system is not encrypted, this is a finding.<br />
+<br />
+If the host operating system is encrypted, run the following commands and verify that only DoD-approved PKI certificates are present:<br />
+# cd /etc/opt/redislabs<br />
+# ls <br />
+<br />
+Verify the following file is present: proxy_cert.pem<br />
+<br />
+If no certificates are present, this is a finding.<br />
+<br />
+Verify TLS is configured to be used. To check this:<br />
+1. Log in to the Redis Enterprise web UI as an admin user.<br />
+2. Navigate to the Databases tab and select the database and then configuration.<br />
+3. Review the configuration and verify that TLS is enabled for all communications.<br />
+<br />
+If TLS is not configured to be used, this is a finding.<br />
+<br />
+To check the current TLS version, run the following commands on one of the servers that is hosting Redis Enterprise as a privileged user:<br />
+# ccs-cli<br />
+# hgetall min_control_tls_version<br />
+<br />
+If TLS is not FIPS compliant, this is a finding.<br />
+<br />
+To validate the openssl version, run the following command on one of the servers that is hosting Redis Enterprise as a privileged user:<br />
+# openssl version<br />
+<br />
+If NIST FIPS validated modules are not being used for all cryptographic operations, this is a finding.</p><h2>Vulnerability Number</h2><p>V-251229</p><h2>Documentable</h2><p>False</p><h2>Rule Version</h2><p>RD6X-00-009500</p><h2>Severity Override Guidance</h2><p>Review the Redis Enterprise configuration to verify it is using NIST FIPS validated cryptographic modules for cryptographic operations. Redis Enterprise uses TLS 1.2 and has a cyber suite of options that is configurable through the rladmin, REST API, and on the Redis Enterprise web UI.<br />
+<br />
+Verify the host operating system is encrypted. <br />
+<br />
+If the host operating system is not encrypted, this is a finding.<br />
+<br />
+If the host operating system is encrypted, run the following commands and verify that only DoD-approved PKI certificates are present:<br />
+# cd /etc/opt/redislabs<br />
+# ls <br />
+<br />
+Verify the following file is present: proxy_cert.pem<br />
+<br />
+If no certificates are present, this is a finding.<br />
+<br />
+Verify TLS is configured to be used. To check this:<br />
+1. Log in to the Redis Enterprise web UI as an admin user.<br />
+2. Navigate to the Databases tab and select the database and then configuration.<br />
+3. Review the configuration and verify that TLS is enabled for all communications.<br />
+<br />
+If TLS is not configured to be used, this is a finding.<br />
+<br />
+To check the current TLS version, run the following commands on one of the servers that is hosting Redis Enterprise as a privileged user:<br />
+# ccs-cli<br />
+# hgetall min_control_tls_version<br />
+<br />
+If TLS is not FIPS compliant, this is a finding.<br />
+<br />
+To validate the openssl version, run the following command on one of the servers that is hosting Redis Enterprise as a privileged user:<br />
+# openssl version<br />
+<br />
+If NIST FIPS validated modules are not being used for all cryptographic operations, this is a finding.</p><h2>Check Content Reference</h2><p>M</p><h2>Target Key</h2><p>5443</p></body></html>

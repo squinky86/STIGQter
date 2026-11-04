@@ -1,0 +1,45 @@
+<!doctype html><html lang="en"><head><meta charset="utf-8"><title>STIGQter: STIG Check Details: SV-276288r1150072_rule: The database master key (DMK) for Azure SQL Server Managed Instance must be encrypted by the service master key (SMK), where a DMK is required and another encryption method has not been specified.</title><link rel="icon" type="image/svg+xml" href="STIGQter.svg" /><script async src="https://www.googletagmanager.com/gtag/js?id=UA-31381839-2"></script><script src="include.js"></script><script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-4110907817782130" crossorigin="anonymous"></script></head><body><div><img src="STIGQter.svg" alt="STIGQter" style="height:1em;" /> <a href="https://www.stigqter.com/">STIGQter</a>: <a href="main.html">STIG Summary</a>: <a href="U_MS_Azure_SQL_MI_STIG_V1R1_Manual-xccdf.html">Microsoft Azure SQL Managed Instance Security Technical Implementation Guide Version: 1 Release: 1 Benchmark Date: 23 Sep 2025</a>:</div> <h1>The database master key (DMK) for Azure SQL Server Managed Instance must be encrypted by the service master key (SMK), where a DMK is required and another encryption method has not been specified.</h1><h2>DISA Rule</h2><p>SV-276288r1150072_rule</p><h2>Vulnerability Number</h2><p>V-276288</p><h2>Group Title</h2><p>SRG-APP-000231-DB-000154</p><h2>Rule Version</h2><p>MSQL-D0-001700</p><h2>Severity</h2><p>CAT II</p><h2>CCI(s)</h2><ul><li>CCI-001199 - Protects the confidentiality and/or integrity of organization-defined information at rest.</li></ul><h2>Weight</h2><p>10</p><h2>Fix Recommendation</h2><p>Where possible, encrypt the DMK with a password known only to the application administrator.<br />
+<br />
+Where not possible, configure additional audit events or alerts to detect unauthorized access to the DMK by users not authorized to view sensitive data.</p><h2>Check Contents</h2><p>If no databases require encryption, this is not a finding. <br />
+<br />
+From the query prompt: <br />
+ <br />
+SELECT name <br />
+FROM [master].sys.databases <br />
+WHERE is_master_key_encrypted_by_server = 1 <br />
+AND owner_sid &lt;&gt; 1 <br />
+AND state = 0; <br />
+Note: This query assumes that the sa account is not used as the owner of application databases, in keeping with other STIG guidance. If this is not the case, modify the query accordingly. <br />
+<br />
+If no databases are returned by the query, this is not a finding. <br />
+<br />
+For any databases returned, verify in the system security plan (SSP) that encryption of the DMK using the SMK is acceptable and approved by the information owner, and the encrypted data does not require additional protections to deter or detect DBA access. <br />
+<br />
+If not approved, this is a finding.  <br />
+<br />
+If approved and additional protections are required, then verify the additional requirements are in place in accordance with the SSP. <br />
+<br />
+These may include additional auditing on access of the DMK with alerts or other automated monitoring. <br />
+<br />
+If the additional requirements are not in place, this is a finding.</p><h2>Vulnerability Number</h2><p>V-276288</p><h2>Documentable</h2><p>False</p><h2>Rule Version</h2><p>MSQL-D0-001700</p><h2>Severity Override Guidance</h2><p>If no databases require encryption, this is not a finding. <br />
+<br />
+From the query prompt: <br />
+ <br />
+SELECT name <br />
+FROM [master].sys.databases <br />
+WHERE is_master_key_encrypted_by_server = 1 <br />
+AND owner_sid &lt;&gt; 1 <br />
+AND state = 0; <br />
+Note: This query assumes that the sa account is not used as the owner of application databases, in keeping with other STIG guidance. If this is not the case, modify the query accordingly. <br />
+<br />
+If no databases are returned by the query, this is not a finding. <br />
+<br />
+For any databases returned, verify in the system security plan (SSP) that encryption of the DMK using the SMK is acceptable and approved by the information owner, and the encrypted data does not require additional protections to deter or detect DBA access. <br />
+<br />
+If not approved, this is a finding.  <br />
+<br />
+If approved and additional protections are required, then verify the additional requirements are in place in accordance with the SSP. <br />
+<br />
+These may include additional auditing on access of the DMK with alerts or other automated monitoring. <br />
+<br />
+If the additional requirements are not in place, this is a finding.</p><h2>Check Content Reference</h2><p>M</p><h2>Target Key</h2><p>5711</p></body></html>

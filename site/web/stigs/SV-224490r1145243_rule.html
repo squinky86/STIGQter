@@ -1,0 +1,57 @@
+<!doctype html><html lang="en"><head><meta charset="utf-8"><title>STIGQter: STIG Check Details: SV-224490r1145243_rule: IBM Hardware Configuration Definition (HCD) User data sets are not properly protected.</title><link rel="icon" type="image/svg+xml" href="STIGQter.svg" /><script async src="https://www.googletagmanager.com/gtag/js?id=UA-31381839-2"></script><script src="include.js"></script><script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-4110907817782130" crossorigin="anonymous"></script></head><body><div><img src="STIGQter.svg" alt="STIGQter" style="height:1em;" /> <a href="https://www.stigqter.com/">STIGQter</a>: <a href="main.html">STIG Summary</a>: <a href="U_zOS_HCD_for_RACF_STIG_V7R2_Manual-xccdf.html">z/OS HCD for RACF Security Technical Implementation Guide Version: 7 Release: 2 Benchmark Date: 01 Oct 2025</a>:</div> <h1>IBM Hardware Configuration Definition (HCD) User data sets are not properly protected.</h1><h2>DISA Rule</h2><p>SV-224490r1145243_rule</p><h2>Vulnerability Number</h2><p>V-224490</p><h2>Group Title</h2><p>SRG-OS-000259</p><h2>Rule Version</h2><p>ZHCDR002</p><h2>Severity</h2><p>CAT II</p><h2>CCI(s)</h2><ul><li>CCI-001499 - Limit privileges to change software resident within software libraries.</li><li>CCI-002234 - Log the execution of privileged functions.</li></ul><h2>Weight</h2><p>10</p><h2>Fix Recommendation</h2><p>The ISSO will ensure that WRITE and/or greater access to program product user data sets is limited to systems programmers and all WRITE and/or greater access is logged. Ensure that READ access is limited to auditors, Operations personnel, and Automated Operations users.<br />
+<br />
+The installing systems programmer will identify and document the product user data sets and categorize them according to who will have WRITE and/or greater access and if required that all WRITE and/or greater access is logged. The installing systems programmer will identify if any additional groups have UPDATE access for specific data sets, and once documented, will work with the ISSO to ensure they are properly restricted to the Access Control Program (ACP) active on the system.<br />
+<br />
+Data sets to be protected will be:<br />
+<br />
+The production IODF data sets. (i.e., hhhhhhhh.IODFnn)<br />
+The working IODF data sets. (i.e., hhhhhhhh.IODFnn.)<br />
+The activity log for the IODF data sets. (i.e., hhhhhhhh.IODFnn.ACTLOG)<br />
+<br />
+Note: Currently on most CSD systems the prefix for these data sets is SYS3.IODF*.**.<br />
+<br />
+The following commands are provided as a sample for implementing data set controls:<br />
+<br />
+ad 'sys3.iodf*.**' uacc(none) owner(sys3) -<br />
+audit(success(update) failures(read)) -<br />
+data('Vendor DS Profile: IODF for HCD')<br />
+pe 'sys3.iodf*.**' id(syspaudt tstcaudt) acc(a)<br />
+pe 'sys3.iodf*.**' id(audtaudt autoaudt operaudt) acc(r)</p><h2>Check Contents</h2><p>Refer to the following report produced by the Data Set and Resource Data Collection:<br />
+<br />
+- SENSITVE.RPT(HCDUSER).<br />
+<br />
+Automated Analysis<br />
+Refer to the following report produced by the Data Set and Resource Data Collection:<br />
+<br />
+- PDI(ZHCD0002).<br />
+<br />
+Verify that the access to the IBM HCD install data sets is properly restricted. The data sets to be protected are the production and working IODF data sets as well as the activity log for the IODF data sets. If the following guidance is true, this is not a finding.<br />
+<br />
+Note: Currently on most CSD systems the prefix for these data sets is SYS3.IODF*.**.<br />
+<br />
+The RACF data set rules for the data sets restrict WRITE and/or greater access to systems programming personnel.<br />
+<br />
+The RACF data set rules for the data sets restrict READ access to automated operations users and operations personnel.<br />
+<br />
+The RACF data set rules for the data sets specify that all (i.e., failures and successes) WRITE and/or greater access will be logged.<br />
+<br />
+The RACF data set access authorizations specify UACC(NONE) and NOWARNING.</p><h2>Vulnerability Number</h2><p>V-224490</p><h2>Documentable</h2><p>False</p><h2>Rule Version</h2><p>ZHCDR002</p><h2>Severity Override Guidance</h2><p>Refer to the following report produced by the Data Set and Resource Data Collection:<br />
+<br />
+- SENSITVE.RPT(HCDUSER).<br />
+<br />
+Automated Analysis<br />
+Refer to the following report produced by the Data Set and Resource Data Collection:<br />
+<br />
+- PDI(ZHCD0002).<br />
+<br />
+Verify that the access to the IBM HCD install data sets is properly restricted. The data sets to be protected are the production and working IODF data sets as well as the activity log for the IODF data sets. If the following guidance is true, this is not a finding.<br />
+<br />
+Note: Currently on most CSD systems the prefix for these data sets is SYS3.IODF*.**.<br />
+<br />
+The RACF data set rules for the data sets restrict WRITE and/or greater access to systems programming personnel.<br />
+<br />
+The RACF data set rules for the data sets restrict READ access to automated operations users and operations personnel.<br />
+<br />
+The RACF data set rules for the data sets specify that all (i.e., failures and successes) WRITE and/or greater access will be logged.<br />
+<br />
+The RACF data set access authorizations specify UACC(NONE) and NOWARNING.</p><h2>Check Content Reference</h2><p>M</p><h2>Target Key</h2><p>4153</p></body></html>

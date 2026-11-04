@@ -1,0 +1,50 @@
+<!doctype html><html lang="en"><head><meta charset="utf-8"><title>STIGQter: STIG Check Details: SV-220364r1018604_rule: If MarkLogic Server authentication using passwords is employed, MarkLogic Server must enforce the DOD standards for password complexity and lifetime.</title><link rel="icon" type="image/svg+xml" href="STIGQter.svg" /><script async src="https://www.googletagmanager.com/gtag/js?id=UA-31381839-2"></script><script src="include.js"></script><script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-4110907817782130" crossorigin="anonymous"></script></head><body><div><img src="STIGQter.svg" alt="STIGQter" style="height:1em;" /> <a href="https://www.stigqter.com/">STIGQter</a>: <a href="main.html">STIG Summary</a>: <a href="U_MarkLogic_Server_v9_STIG_V3R2_Manual-xccdf.html">MarkLogic Server v9 Security Technical Implementation Guide Version: 3 Release: 2 Benchmark Date: 24 Oct 2024</a>:</div> <h1>If MarkLogic Server authentication using passwords is employed, MarkLogic Server must enforce the DOD standards for password complexity and lifetime.</h1><h2>DISA Rule</h2><p>SV-220364r1018604_rule</p><h2>Vulnerability Number</h2><p>V-220364</p><h2>Group Title</h2><p>SRG-APP-000164-DB-000401</p><h2>Rule Version</h2><p>ML09-00-003600</p><h2>Severity</h2><p>CAT II</p><h2>CCI(s)</h2><ul><li>CCI-004066 - For password-based authentication, enforce organization-defined composition and complexity rules.</li></ul><h2>Weight</h2><p>10</p><h2>Fix Recommendation</h2><p>If the use of passwords is not needed, configure MarkLogic to prevent password use.<br />
+<br />
+If the DBMS can inherit password complexity rules from the operating system or access control program, configure it to do so using one of the following methods: <br />
+1. Configure the MarkLogic server to use Kerberos, SAML, or Certificate based authentication. <br />
+2. Develop plugin to enforce password complexity. Examples can be found in MarkLogic Application Developers Guide.<br />
+<br />
+Plugins must enforce the following rules for passwords:<br />
+<br />
+a. minimum of 15 characters, including at least one of each of the following character sets:<br />
+- Uppercase<br />
+- Lowercase<br />
+- Numeric<br />
+- Special characters (e.g., ~ ! @ # $ % ^ &amp; * ( ) _ + = - ' [ ] / ? &gt; &lt;)<br />
+b. Minimum number of characters changed from previous password: 50 percent of the minimum password length (eight)<br />
+c. Password lifetime limits for interactive accounts: Minimum 24 hours, maximum 60 days<br />
+d. Password lifetime limits for non-interactive accounts: Minimum 24 hours, maximum 365 days<br />
+e. Number of password changes before an old one may be reused: Minimum of five<br />
+<br />
+Develop a custom extension that enforces the password complexity and lifetime.<br />
+See https://docs.marklogic.com/guide/app-dev/plugins#id_91783</p><h2>Check Contents</h2><p>Review MarkLogic settings to see if password authentication is being used, and whether password complexity and lifetime rules are being enforced.<br />
+<br />
+Check for MarkLogic Password Plugin from the MarkLogic Query Console with a user that holds administrative-level privileges.<br />
+1. Select &quot;XQuery&quot; in the Query Type drop down and copy the following code into the window:<br />
+xquery version &quot;1.0-ml&quot;; <br />
+import module namespace plugin = &quot;http://marklogic.com/extension/plugin&quot; at &quot;/MarkLogic/plugin/plugin.xqy&quot;;<br />
+<br />
+plugin:plugins(&quot;http://marklogic.com/xdmp/security/password-check&quot;)<br />
+2. Run the script. If the script returns &quot;your query returned an empty sequence&quot;, then no password plugin is present.<br />
+3. If the script returns a file name or file names (e.g., password-check-minimum-length.xqy), then review the file/s in the &lt;MarkLogic Home&gt;/Plugins directory to verify compliance with DOD minimum password requirements.<br />
+4. Log in to the MarkLogic Server Admin Interface with a user that holds administrative-level privileges.<br />
+5. Click the Groups icon.<br />
+6. Click the group in which the App Server to be checked resides (e.g., Default).<br />
+7. Click the App Servers icon on the left tree menu.<br />
+8. Select each of the App Servers.<br />
+9. Inspect the selected authentication method, if &quot;basic&quot;, &quot;digestbasic&quot;, or &quot;digest&quot; is selected and there is not a custom password plugin, or if the password plugin does not meet DOD minimum requirements, this is a finding.</p><h2>Vulnerability Number</h2><p>V-220364</p><h2>Documentable</h2><p>False</p><h2>Rule Version</h2><p>ML09-00-003600</p><h2>Severity Override Guidance</h2><p>Review MarkLogic settings to see if password authentication is being used, and whether password complexity and lifetime rules are being enforced.<br />
+<br />
+Check for MarkLogic Password Plugin from the MarkLogic Query Console with a user that holds administrative-level privileges.<br />
+1. Select &quot;XQuery&quot; in the Query Type drop down and copy the following code into the window:<br />
+xquery version &quot;1.0-ml&quot;; <br />
+import module namespace plugin = &quot;http://marklogic.com/extension/plugin&quot; at &quot;/MarkLogic/plugin/plugin.xqy&quot;;<br />
+<br />
+plugin:plugins(&quot;http://marklogic.com/xdmp/security/password-check&quot;)<br />
+2. Run the script. If the script returns &quot;your query returned an empty sequence&quot;, then no password plugin is present.<br />
+3. If the script returns a file name or file names (e.g., password-check-minimum-length.xqy), then review the file/s in the &lt;MarkLogic Home&gt;/Plugins directory to verify compliance with DOD minimum password requirements.<br />
+4. Log in to the MarkLogic Server Admin Interface with a user that holds administrative-level privileges.<br />
+5. Click the Groups icon.<br />
+6. Click the group in which the App Server to be checked resides (e.g., Default).<br />
+7. Click the App Servers icon on the left tree menu.<br />
+8. Select each of the App Servers.<br />
+9. Inspect the selected authentication method, if &quot;basic&quot;, &quot;digestbasic&quot;, or &quot;digest&quot; is selected and there is not a custom password plugin, or if the password plugin does not meet DOD minimum requirements, this is a finding.</p><h2>Check Content Reference</h2><p>M</p><h2>Target Key</h2><p>4064</p></body></html>

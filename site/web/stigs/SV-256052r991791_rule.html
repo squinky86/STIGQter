@@ -1,0 +1,63 @@
+<!doctype html><html lang="en"><head><meta charset="utf-8"><title>STIGQter: STIG Check Details: SV-256052r991791_rule: The PE router must be configured to have each Virtual Routing and Forwarding (VRF) instance bound to the appropriate physical or logical interfaces to maintain traffic separation between all MPLS L3VPNs.</title><link rel="icon" type="image/svg+xml" href="STIGQter.svg" /><script async src="https://www.googletagmanager.com/gtag/js?id=UA-31381839-2"></script><script src="include.js"></script><script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-4110907817782130" crossorigin="anonymous"></script></head><body><div><img src="STIGQter.svg" alt="STIGQter" style="height:1em;" /> <a href="https://www.stigqter.com/">STIGQter</a>: <a href="main.html">STIG Summary</a>: <a href="U_Arista_MLS_EOS_4-X_Router_STIG_V2R2_Manual-xccdf.html">Arista MLS EOS 4.X Router Security Technical Implementation Guide Version: 2 Release: 2 Benchmark Date: 02 Apr 2025</a>:</div> <h1>The PE router must be configured to have each Virtual Routing and Forwarding (VRF) instance bound to the appropriate physical or logical interfaces to maintain traffic separation between all MPLS L3VPNs.</h1><h2>DISA Rule</h2><p>SV-256052r991791_rule</p><h2>Vulnerability Number</h2><p>V-256052</p><h2>Group Title</h2><p>SRG-NET-000512-RTR-000005</p><h2>Rule Version</h2><p>ARST-RT-000730</p><h2>Severity</h2><p>CAT I</p><h2>CCI(s)</h2><ul><li>CCI-004931 - Establish organization-defined alternate communications paths for system operations organizational command and control.</li></ul><h2>Weight</h2><p>10</p><h2>Fix Recommendation</h2><p>Configure the Arista PE router to have each VRF bound to the appropriate physical or logical interfaces to maintain traffic separation between all MPLS L3VPNs.<br />
+<br />
+Configure the VRF on the CE facing interfaces.<br />
+<br />
+PE11(config)#vrf instance PROD<br />
+PE11(config)#vrf instance DEVP<br />
+!<br />
+PE11(config)#ip routing vrf PROD<br />
+PE11(config)#ip routing vrf DEVP<br />
+!<br />
+PE11(config)#interface Ethernet3<br />
+PE11(config-if-Et3)#no routerport<br />
+PE11(config-if-Et3)#vrf PROD<br />
+PE11(config-if-Et3)#ip address 10.1.99.11/24<br />
+!<br />
+PE11(config)#interface Ethernet4<br />
+PE11(config-if-Et3)#no routerport<br />
+PE11(config-if-Et3)#vrf DEVP<br />
+PE11(config-if-Et3)#ip address 10.11.5.11/24</p><h2>Check Contents</h2><p>Review the design plan for deploying L3VPN and VRF-lite. <br />
+<br />
+Review all CE-facing interfaces and verify the proper VRF is defined.<br />
+<br />
+To verify the interfaces toward CE facing with proper VRF defined, execute the command &quot;sh run int ethernet YY&quot;.<br />
+<br />
+vrf instance PROD<br />
+vrf instance DEVP<br />
+<br />
+ip routing vrf PROD<br />
+ip routing vrf DEVP<br />
+<br />
+interface Ethernet3<br />
+   no routerport<br />
+   vrf PROD<br />
+   ip address 10.1.99.11/24<br />
+<br />
+interface Ethernet4<br />
+   no routerport<br />
+   vrf DEVP<br />
+   ip address 10.11.5.11/24<br />
+<br />
+If any VRFs are not bound to the appropriate physical or logical interface, this is a finding.</p><h2>Vulnerability Number</h2><p>V-256052</p><h2>Documentable</h2><p>False</p><h2>Rule Version</h2><p>ARST-RT-000730</p><h2>Severity Override Guidance</h2><p>Review the design plan for deploying L3VPN and VRF-lite. <br />
+<br />
+Review all CE-facing interfaces and verify the proper VRF is defined.<br />
+<br />
+To verify the interfaces toward CE facing with proper VRF defined, execute the command &quot;sh run int ethernet YY&quot;.<br />
+<br />
+vrf instance PROD<br />
+vrf instance DEVP<br />
+<br />
+ip routing vrf PROD<br />
+ip routing vrf DEVP<br />
+<br />
+interface Ethernet3<br />
+   no routerport<br />
+   vrf PROD<br />
+   ip address 10.1.99.11/24<br />
+<br />
+interface Ethernet4<br />
+   no routerport<br />
+   vrf DEVP<br />
+   ip address 10.11.5.11/24<br />
+<br />
+If any VRFs are not bound to the appropriate physical or logical interface, this is a finding.</p><h2>Check Content Reference</h2><p>M</p><h2>Target Key</h2><p>5513</p></body></html>

@@ -1,0 +1,54 @@
+<!doctype html><html lang="en"><head><meta charset="utf-8"><title>STIGQter: STIG Check Details: SV-214528r971530_rule: The Juniper SRX Services Gateway Firewall must terminate all communications sessions associated with user traffic after 15 minutes or less of inactivity.</title><link rel="icon" type="image/svg+xml" href="STIGQter.svg" /><script async src="https://www.googletagmanager.com/gtag/js?id=UA-31381839-2"></script><script src="include.js"></script><script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-4110907817782130" crossorigin="anonymous"></script></head><body><div><img src="STIGQter.svg" alt="STIGQter" style="height:1em;" /> <a href="https://www.stigqter.com/">STIGQter</a>: <a href="main.html">STIG Summary</a>: <a href="U_Juniper_SRX_SG_ALG_STIG_V3R3_Manual-xccdf.html">Juniper SRX Services Gateway ALG Security Technical Implementation Guide Version: 3 Release: 3 Benchmark Date: 30 Jan 2025</a>:</div> <h1>The Juniper SRX Services Gateway Firewall must terminate all communications sessions associated with user traffic after 15 minutes or less of inactivity.</h1><h2>DISA Rule</h2><p>SV-214528r971530_rule</p><h2>Vulnerability Number</h2><p>V-214528</p><h2>Group Title</h2><p>SRG-NET-000213-ALG-000107</p><h2>Rule Version</h2><p>JUSX-AG-000105</p><h2>Severity</h2><p>CAT II</p><h2>CCI(s)</h2><ul><li>CCI-001133 - Terminate the network connection associated with a communications session at the end of the session or after an organization-defined time period of inactivity.</li></ul><h2>Weight</h2><p>10</p><h2>Fix Recommendation</h2><p>Add or update the session inactivity timeout for communications sessions to 900 seconds or less.<br />
+<br />
+Examples: <br />
+[edit]<br />
+set applications application &lt;application-name&gt; term 1 protocol udp inactivity-timeout 900<br />
+set applications application junos-http inactivity-timeout 900<br />
+<br />
+Or<br />
+<br />
+Create a service that matches any TCP/UDP:<br />
+[edit]<br />
+set applications application TCP-ALL source-port 1-65535 destination-port 1-65535 protocol tcp inactivity-timeout 900<br />
+<br />
+Note: When pre-defined applications are used in firewall policies, the timeout value must be set in the policy stanza.</p><h2>Check Contents</h2><p>Check both the applications and protocols to ensure session inactivity timeout for communications sessions is set to 900 seconds or less.<br />
+<br />
+First get a list of security policies, then enter the show details command for each policy-name found.<br />
+<br />
+[edit]<br />
+show security policies<br />
+show security policy &lt;policy-name&gt; details<br />
+<br />
+Example:<br />
+Application: any<br />
+ IP protocol: 0, ALG: 0, Inactivity timeout: 0<br />
+<br />
+Verify an activity timeout is configured for either &quot;any&quot; application or, at a minimum, the pre-defined applications (i.e., application names starting with junos-).<br />
+<br />
+To verify locally created applications, first get a list of security policies, then enter the show details command for each policy-name found.<br />
+<br />
+[edit]<br />
+Show applications <br />
+show applications application &lt;application-name&gt;<br />
+<br />
+If an inactivity timeout value of 900 seconds or less is not set for each locally created application and pre-defined applications, this is a finding.</p><h2>Vulnerability Number</h2><p>V-214528</p><h2>Documentable</h2><p>False</p><h2>Rule Version</h2><p>JUSX-AG-000105</p><h2>Severity Override Guidance</h2><p>Check both the applications and protocols to ensure session inactivity timeout for communications sessions is set to 900 seconds or less.<br />
+<br />
+First get a list of security policies, then enter the show details command for each policy-name found.<br />
+<br />
+[edit]<br />
+show security policies<br />
+show security policy &lt;policy-name&gt; details<br />
+<br />
+Example:<br />
+Application: any<br />
+ IP protocol: 0, ALG: 0, Inactivity timeout: 0<br />
+<br />
+Verify an activity timeout is configured for either &quot;any&quot; application or, at a minimum, the pre-defined applications (i.e., application names starting with junos-).<br />
+<br />
+To verify locally created applications, first get a list of security policies, then enter the show details command for each policy-name found.<br />
+<br />
+[edit]<br />
+Show applications <br />
+show applications application &lt;application-name&gt;<br />
+<br />
+If an inactivity timeout value of 900 seconds or less is not set for each locally created application and pre-defined applications, this is a finding.</p><h2>Check Content Reference</h2><p>M</p><h2>Target Key</h2><p>4004</p></body></html>

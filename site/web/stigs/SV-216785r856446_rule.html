@@ -1,0 +1,120 @@
+<!doctype html><html lang="en"><head><meta charset="utf-8"><title>STIGQter: STIG Check Details: SV-216785r856446_rule: The Cisco BGP router must be configured to limit the prefix size on any inbound route advertisement to /24 or the least significant prefixes issued to the customer.</title><link rel="icon" type="image/svg+xml" href="STIGQter.svg" /><script async src="https://www.googletagmanager.com/gtag/js?id=UA-31381839-2"></script><script src="include.js"></script><script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-4110907817782130" crossorigin="anonymous"></script></head><body><div><img src="STIGQter.svg" alt="STIGQter" style="height:1em;" /> <a href="https://www.stigqter.com/">STIGQter</a>: <a href="main.html">STIG Summary</a>: <a href="U_Cisco_IOS-XR_Router_RTR_STIG_V3R3_Manual-xccdf.html">Cisco IOS XR Router RTR Security Technical Implementation Guide Version: 3 Release: 3 Benchmark Date: 01 Oct 2025</a>:</div> <h1>The Cisco BGP router must be configured to limit the prefix size on any inbound route advertisement to /24 or the least significant prefixes issued to the customer.</h1><h2>DISA Rule</h2><p>SV-216785r856446_rule</p><h2>Vulnerability Number</h2><p>V-216785</p><h2>Group Title</h2><p>SRG-NET-000362-RTR-000118</p><h2>Rule Version</h2><p>CISC-RT-000570</p><h2>Severity</h2><p>CAT III</p><h2>CCI(s)</h2><ul><li>CCI-002385 - Protect against or limit the effects of organization-defined types of denial of service events.</li></ul><h2>Weight</h2><p>10</p><h2>Fix Recommendation</h2><p>This requirement is not applicable for the DODIN Backbone.<br />
+<br />
+Configure the router to limit the prefix size on any route advertisement to /24 or the least significant prefixes issued to the customer.<br />
+<br />
+Step 1: Configure a prefix set to not include prefixes are longer than /24.<br />
+<br />
+RP/0/0/CPU0:R2(config)#prefix-set PREFIX_LENGTH<br />
+RP/0/0/CPU0:R2(config-pfx)#0.0.0.0/0 ge 8 le 24<br />
+RP/0/0/CPU0:R2(config-pfx)#end-set<br />
+<br />
+Step 2: Configure a route policy to only accept prefixes that are /24 or shorter as shown in the example below.<br />
+<br />
+RP/0/0/CPU0:R2(config)#route-policy FILTER_LONG_PREFIXES<br />
+RP/0/0/CPU0:R2(config-rpl)#if destination in PREFIX_LENGTH then<br />
+RP/0/0/CPU0:R2(config-rpl-if)#pass<br />
+RP/0/0/CPU0:R2(config-rpl-if)#else<br />
+RP/0/0/CPU0:R2(config-rpl-else)#drop<br />
+RP/0/0/CPU0:R2(config-rpl-else)#endif <br />
+RP/0/0/CPU0:R2(config-rpl)#end-policy<br />
+<br />
+Step 3: Apply the route policy above inbound with each peering CE router as shown in the example below.<br />
+<br />
+RP/0/0/CPU0:R2(config)#router bgp xx<br />
+RP/0/0/CPU0:R2(config-bgp)#neighbor x.12.4.14<br />
+RP/0/0/CPU0:R2(config-bgp-nbr)#address-family ipv4 unicast <br />
+RP/0/0/CPU0:R2(config-bgp-nbr-af)#route-policy route-policy FILTER_LONG_PREFIXES in<br />
+RP/0/0/CPU0:R2(config-bgp)#neighbor x.12.4.16<br />
+RP/0/0/CPU0:R2(config-bgp-nbr)#address-family ipv4 unicast <br />
+RP/0/0/CPU0:R2(config-bgp-nbr-af)#route-policy FILTER_LONG_PREFIXES in<br />
+RP/0/0/CPU0:R2(config-bgp-nbr-af)#end</p><h2>Check Contents</h2><p>This requirement is not applicable for the DODIN Backbone.<br />
+<br />
+Review the router configuration to determine if it is compliant with this requirement.<br />
+<br />
+Step 1: Verify that an inbound route policy has been configured for each CE router as shown in the example below.<br />
+<br />
+router bgp xx<br />
+ address-family ipv4 unicast<br />
+ !<br />
+ neighbor x.12.4.14<br />
+  remote-as 64514<br />
+    address-family ipv4 unicast<br />
+     route-policy FILTER_LONG_PREFIXES in<br />
+  !<br />
+ !<br />
+ neighbor x.12.4.16<br />
+  remote-as 64516<br />
+  address-family ipv4 unicast<br />
+   route-policy FILTER_LONG_PREFIXES in<br />
+ !<br />
+<br />
+Step 2: Verify that the route policy permits only routes from each CE router with a prefix  length of 24 or shorter or the least significant prefixes issued to the customer as shown in the example below.<br />
+<br />
+route-policy FILTER_LONG_PREFIXES<br />
+  if destination in PREFIX_LENGTH then<br />
+    pass<br />
+  else<br />
+    drop<br />
+  endif<br />
+end-policy<br />
+<br />
+Note: The inbound route policy to filter customer prefixes can be nested with the above route policy as shown in the example below.<br />
+<br />
+route-policy CUST1_INBOUND_FILTER<br />
+  apply CUST1_FILTER<br />
+  apply FILTER_64514_ROUTES<br />
+  apply FILTER_LONG_PREFIXES<br />
+end-policy<br />
+<br />
+Step 3: Review the prefix set referenced in the route policy above to determine if it only allows a prefix length 24 or shorter.<br />
+<br />
+prefix-set PREFIX_LENGTH<br />
+ 0.0.0.0/0 ge 8 le 24<br />
+end-set<br />
+<br />
+If the router is not configured to limit the prefix size on any inbound route advertisement to /24 or the least significant prefixes issued to the customer, this is a finding.</p><h2>Vulnerability Number</h2><p>V-216785</p><h2>Documentable</h2><p>False</p><h2>Rule Version</h2><p>CISC-RT-000570</p><h2>Severity Override Guidance</h2><p>This requirement is not applicable for the DODIN Backbone.<br />
+<br />
+Review the router configuration to determine if it is compliant with this requirement.<br />
+<br />
+Step 1: Verify that an inbound route policy has been configured for each CE router as shown in the example below.<br />
+<br />
+router bgp xx<br />
+ address-family ipv4 unicast<br />
+ !<br />
+ neighbor x.12.4.14<br />
+  remote-as 64514<br />
+    address-family ipv4 unicast<br />
+     route-policy FILTER_LONG_PREFIXES in<br />
+  !<br />
+ !<br />
+ neighbor x.12.4.16<br />
+  remote-as 64516<br />
+  address-family ipv4 unicast<br />
+   route-policy FILTER_LONG_PREFIXES in<br />
+ !<br />
+<br />
+Step 2: Verify that the route policy permits only routes from each CE router with a prefix  length of 24 or shorter or the least significant prefixes issued to the customer as shown in the example below.<br />
+<br />
+route-policy FILTER_LONG_PREFIXES<br />
+  if destination in PREFIX_LENGTH then<br />
+    pass<br />
+  else<br />
+    drop<br />
+  endif<br />
+end-policy<br />
+<br />
+Note: The inbound route policy to filter customer prefixes can be nested with the above route policy as shown in the example below.<br />
+<br />
+route-policy CUST1_INBOUND_FILTER<br />
+  apply CUST1_FILTER<br />
+  apply FILTER_64514_ROUTES<br />
+  apply FILTER_LONG_PREFIXES<br />
+end-policy<br />
+<br />
+Step 3: Review the prefix set referenced in the route policy above to determine if it only allows a prefix length 24 or shorter.<br />
+<br />
+prefix-set PREFIX_LENGTH<br />
+ 0.0.0.0/0 ge 8 le 24<br />
+end-set<br />
+<br />
+If the router is not configured to limit the prefix size on any inbound route advertisement to /24 or the least significant prefixes issued to the customer, this is a finding.</p><h2>Check Content Reference</h2><p>M</p><h2>Target Key</h2><p>4029</p></body></html>

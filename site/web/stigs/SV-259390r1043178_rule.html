@@ -1,0 +1,99 @@
+<!doctype html><html lang="en"><head><meta charset="utf-8"><title>STIGQter: STIG Check Details: SV-259390r1043178_rule: The Windows DNS Server must protect the authenticity of dynamic updates via transaction signing.</title><link rel="icon" type="image/svg+xml" href="STIGQter.svg" /><script async src="https://www.googletagmanager.com/gtag/js?id=UA-31381839-2"></script><script src="include.js"></script><script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-4110907817782130" crossorigin="anonymous"></script></head><body><div><img src="STIGQter.svg" alt="STIGQter" style="height:1em;" /> <a href="https://www.stigqter.com/">STIGQter</a>: <a href="main.html">STIG Summary</a>: <a href="U_MS_Windows_Server_DNS_STIG_V2R5_Manual-xccdf.html">Microsoft Windows Server Domain Name System (DNS) Security Technical Implementation Guide Version: 2 Release: 5 Benchmark Date: 01 Jul 2026</a>:</div> <h1>The Windows DNS Server must protect the authenticity of dynamic updates via transaction signing.</h1><h2>DISA Rule</h2><p>SV-259390r1043178_rule</p><h2>Vulnerability Number</h2><p>V-259390</p><h2>Group Title</h2><p>SRG-APP-000219-DNS-000029</p><h2>Rule Version</h2><p>WDNS-22-000062</p><h2>Severity</h2><p>CAT I</p><h2>CCI(s)</h2><ul><li>CCI-001184 - Protect the authenticity of communications sessions.</li></ul><h2>Weight</h2><p>10</p><h2>Fix Recommendation</h2><p>Sign or re-sign the hosted zone(s) on the DNS server being validated.<br />
+<br />
+Log on to the Windows DNS Server using the account designated as Administrator or DNS Administrator.<br />
+<br />
+If not automatically started, initialize the Server Manager window by clicking its icon from the bottom left corner of the screen.<br />
+<br />
+Once the Server Manager window is initialized, from the left pane, click to select the DNS category.<br />
+<br />
+From the right pane, under the &quot;SERVERS&quot; section, right-click the DNS server.<br />
+<br />
+From the context menu that appears, click &quot;DNS Manager&quot;.<br />
+<br />
+In the DNS Manager console tree on the DNS server being validated, navigate to &quot;Forward Lookup Zones&quot;.<br />
+<br />
+Right-click the zone (repeat for each hosted zone), point to DNSSEC, and then click &quot;Sign the Zone&quot; using either approved saved parameters or approved custom parameters.</p><h2>Check Contents</h2><p>Note: This check is not applicable for Windows DNS Servers that host only Active Directory-integrated zones or for Windows DNS Servers on a classified network.<br />
+<br />
+Once resource records are received by a DNS server via a secure dynamic update, the resource records will automatically become signed by DNSSEC if the zone was originally signed by DNSSEC. Authenticity of query responses for resource records dynamically updated can be validated by querying for whether the zone/record is signed by DNSSEC.<br />
+<br />
+Validate this check from the Windows DNS Server being configured/reviewed.<br />
+<br />
+Log on to the Windows DNS Server using the account designated as Administrator or DNS Administrator.<br />
+<br />
+Determine a valid host in the zone.<br />
+<br />
+Open the Windows PowerShell prompt on the Windows DNS Server being configured/reviewed.<br />
+<br />
+Issue the following command:<br />
+(Replace www.zonename.mil with a FQDN of a valid host in the zone being validated. Replace 131.77.60.235 with the FQDN or IP address of the Windows DNS Server hosting the signed zone.)<br />
+<br />
+resolve-dnsname www.zonename.mil -server ###.###.###.### -dnssecok &lt;enter&gt;<br />
+<br />
+Note: It is important to use the -server switch followed by the DNS server name/IP address.<br />
+<br />
+The result should show the &quot;A&quot; record results.<br />
+<br />
+In addition, the results should show QueryType: RRSIG with an Expirations, date signed, signer, and signature, similar to the following:<br />
+<br />
+Name : www.zonename.mil<br />
+QueryType : RRSIG<br />
+TTL : 189<br />
+Section : Answer<br />
+TypeCovered : CNAME<br />
+Algorithm : 8<br />
+LabelCount : 3<br />
+OriginalTtl : 300<br />
+Expiration : 11/21/2014 10:22:28 PM<br />
+Signed : 10/22/2014 10:22:28 PM<br />
+Signer : zonename.mil<br />
+Signature : {87, 232, 34, 134...}<br />
+<br />
+Name : origin-www.zonename.mil<br />
+QueryType : A<br />
+TTL : 201<br />
+Section : Answer<br />
+IP4Address : 156.112.108.76<br />
+<br />
+If the results do not show the RRSIG and signature information, this is a finding.</p><h2>Vulnerability Number</h2><p>V-259390</p><h2>Documentable</h2><p>False</p><h2>Rule Version</h2><p>WDNS-22-000062</p><h2>Severity Override Guidance</h2><p>Note: This check is not applicable for Windows DNS Servers that host only Active Directory-integrated zones or for Windows DNS Servers on a classified network.<br />
+<br />
+Once resource records are received by a DNS server via a secure dynamic update, the resource records will automatically become signed by DNSSEC if the zone was originally signed by DNSSEC. Authenticity of query responses for resource records dynamically updated can be validated by querying for whether the zone/record is signed by DNSSEC.<br />
+<br />
+Validate this check from the Windows DNS Server being configured/reviewed.<br />
+<br />
+Log on to the Windows DNS Server using the account designated as Administrator or DNS Administrator.<br />
+<br />
+Determine a valid host in the zone.<br />
+<br />
+Open the Windows PowerShell prompt on the Windows DNS Server being configured/reviewed.<br />
+<br />
+Issue the following command:<br />
+(Replace www.zonename.mil with a FQDN of a valid host in the zone being validated. Replace 131.77.60.235 with the FQDN or IP address of the Windows DNS Server hosting the signed zone.)<br />
+<br />
+resolve-dnsname www.zonename.mil -server ###.###.###.### -dnssecok &lt;enter&gt;<br />
+<br />
+Note: It is important to use the -server switch followed by the DNS server name/IP address.<br />
+<br />
+The result should show the &quot;A&quot; record results.<br />
+<br />
+In addition, the results should show QueryType: RRSIG with an Expirations, date signed, signer, and signature, similar to the following:<br />
+<br />
+Name : www.zonename.mil<br />
+QueryType : RRSIG<br />
+TTL : 189<br />
+Section : Answer<br />
+TypeCovered : CNAME<br />
+Algorithm : 8<br />
+LabelCount : 3<br />
+OriginalTtl : 300<br />
+Expiration : 11/21/2014 10:22:28 PM<br />
+Signed : 10/22/2014 10:22:28 PM<br />
+Signer : zonename.mil<br />
+Signature : {87, 232, 34, 134...}<br />
+<br />
+Name : origin-www.zonename.mil<br />
+QueryType : A<br />
+TTL : 201<br />
+Section : Answer<br />
+IP4Address : 156.112.108.76<br />
+<br />
+If the results do not show the RRSIG and signature information, this is a finding.</p><h2>Check Content Reference</h2><p>M</p><h2>Target Key</h2><p>5576</p></body></html>

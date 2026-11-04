@@ -1,0 +1,37 @@
+<!doctype html><html lang="en"><head><meta charset="utf-8"><title>STIGQter: STIG Check Details: SV-258869r1210420_rule: The Photon operating system must enforce a delay of at least four seconds between logon prompts following a failed logon attempt.</title><link rel="icon" type="image/svg+xml" href="STIGQter.svg" /><script async src="https://www.googletagmanager.com/gtag/js?id=UA-31381839-2"></script><script src="include.js"></script><script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-4110907817782130" crossorigin="anonymous"></script></head><body><div><img src="STIGQter.svg" alt="STIGQter" style="height:1em;" /> <a href="https://www.stigqter.com/">STIGQter</a>: <a href="main.html">STIG Summary</a>: <a href="U_VMW_vSphere_8-0_VCSA_Photon_OS_4-0_STIG_V2R2_Manual-xccdf.html">VMware vSphere 8.0 vCenter Appliance Photon OS 4.0 Security Technical Implementation Guide Version: 2 Release: 2 Benchmark Date: 01 Jul 2026</a>:</div> <h1>The Photon operating system must enforce a delay of at least four seconds between logon prompts following a failed logon attempt.</h1><h2>DISA Rule</h2><p>SV-258869r1210420_rule</p><h2>Vulnerability Number</h2><p>V-258869</p><h2>Group Title</h2><p>SRG-OS-000480-GPOS-00226</p><h2>Rule Version</h2><p>PHTN-40-000206</p><h2>Severity</h2><p>CAT II</p><h2>CCI(s)</h2><ul><li>CCI-000366 - Implement the security configuration settings.</li></ul><h2>Weight</h2><p>10</p><h2>Fix Recommendation</h2><p>Navigate to and open:<br />
+<br />
+/etc/pam.d/system-auth<br />
+<br />
+Add or update the following line:<br />
+<br />
+auth optional pam_faildelay.so delay=4000000<br />
+<br />
+Note: On vCenter appliances, the equivalent file must be edited under &quot;/etc/applmgmt/appliance&quot;, if one exists, for the changes to persist after a reboot.</p><h2>Check Contents</h2><p>At the command line, run the following command to verify the pam_faildelay.so module is used:<br />
+<br />
+# grep '^auth' /etc/pam.d/system-auth<br />
+<br />
+Example result:<br />
+<br />
+auth    required      pam_faillock.so preauth<br />
+auth    sufficient    pam_unix.so<br />
+auth    required      pam_faillock.so authfail<br />
+auth    optional      pam_faildelay.so delay=4000000<br />
+auth    required      pam_deny.so<br />
+<br />
+If the pam_faildelay.so module is not present with the delay set to at least four seconds, this is a finding.<br />
+<br />
+Note: The delay is configured in microseconds.</p><h2>Vulnerability Number</h2><p>V-258869</p><h2>Documentable</h2><p>False</p><h2>Rule Version</h2><p>PHTN-40-000206</p><h2>Severity Override Guidance</h2><p>At the command line, run the following command to verify the pam_faildelay.so module is used:<br />
+<br />
+# grep '^auth' /etc/pam.d/system-auth<br />
+<br />
+Example result:<br />
+<br />
+auth    required      pam_faillock.so preauth<br />
+auth    sufficient    pam_unix.so<br />
+auth    required      pam_faillock.so authfail<br />
+auth    optional      pam_faildelay.so delay=4000000<br />
+auth    required      pam_deny.so<br />
+<br />
+If the pam_faildelay.so module is not present with the delay set to at least four seconds, this is a finding.<br />
+<br />
+Note: The delay is configured in microseconds.</p><h2>Check Content Reference</h2><p>M</p><h2>Target Key</h2><p>5569</p></body></html>

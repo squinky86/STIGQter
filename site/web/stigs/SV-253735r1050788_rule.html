@@ -1,0 +1,47 @@
+<!doctype html><html lang="en"><head><meta charset="utf-8"><title>STIGQter: STIG Check Details: SV-253735r1050788_rule: MariaDB must require users to reauthenticate when organization-defined circumstances or situations require reauthentication.</title><link rel="icon" type="image/svg+xml" href="STIGQter.svg" /><script async src="https://www.googletagmanager.com/gtag/js?id=UA-31381839-2"></script><script src="include.js"></script><script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-4110907817782130" crossorigin="anonymous"></script></head><body><div><img src="STIGQter.svg" alt="STIGQter" style="height:1em;" /> <a href="https://www.stigqter.com/">STIGQter</a>: <a href="main.html">STIG Summary</a>: <a href="U_MariaDB_Enterprise_10-x_STIG_V2R5_Manual-xccdf.html">MariaDB Enterprise 10.x Security Technical Implementation Guide Version: 2 Release: 5 Benchmark Date: 01 Apr 2026</a>:</div> <h1>MariaDB must require users to reauthenticate when organization-defined circumstances or situations require reauthentication.</h1><h2>DISA Rule</h2><p>SV-253735r1050788_rule</p><h2>Vulnerability Number</h2><p>V-253735</p><h2>Group Title</h2><p>SRG-APP-000389-DB-000372</p><h2>Rule Version</h2><p>MADB-10-008200</p><h2>Severity</h2><p>CAT II</p><h2>CCI(s)</h2><ul><li>CCI-004895 - Permit users to invoke the trusted communications path for communications between the user and the organization-defined security functions, including at a minimum, authentication and re-authentication.</li></ul><h2>Weight</h2><p>10</p><h2>Fix Recommendation</h2><p>To force a single user reauthenticate, the user must be currently authenticated to the database server. <br />
+<br />
+Find the process ID of the user in question:<br />
+<br />
+MariaDB&gt; SELECT id FROM information_schema.processlist WHERE user = 'username'; <br />
+<br />
+Use the id to kill the process, which kills the connection and forces the user to reauthenticate: <br />
+<br />
+MariaDB&gt; KILL id; <br />
+<br />
+To force all users to reauthenticate, run the following as the database administrator:<br />
+<br />
+MariaDB&gt; SELECT concat( KILL  ,id, ; ) FROM information_schema.processlist INTO OUTFILE /tmp/x.txt;<br />
+<br />
+MariaDB&gt; SOURCE /tmp/x.txt;</p><h2>Check Contents</h2><p>Determine all situations where a user must reauthenticate. Check if the mechanisms that handle such situations use the following SQL:<br />
+<br />
+To make a single user reauthenticate, an existing connection must be present:<br />
+<br />
+To search for a specific user:<br />
+MariaDB&gt; SELECT * FROM information_schema.PROCESSLIST where user ='&lt;name&gt;' and host like '%';<br />
+<br />
+To review all  connections:<br />
+MariaDB&gt; SELECT * FROM INFORMATION_SCHEMA.PROCESSLIST;<br />
+<br />
+Note the ID(s) (processlist_id) of the connection(s) for the user that must reauthenticate.<br />
+<br />
+To make a user reauthenticate, run the following for each ID returned above (as they can have multiple connections):<br />
+<br />
+MariaDB&gt; KILL CONNECTION processslist_id;<br />
+<br />
+If the provided SQL does not force reauthentication, this is a finding.</p><h2>Vulnerability Number</h2><p>V-253735</p><h2>Documentable</h2><p>False</p><h2>Rule Version</h2><p>MADB-10-008200</p><h2>Severity Override Guidance</h2><p>Determine all situations where a user must reauthenticate. Check if the mechanisms that handle such situations use the following SQL:<br />
+<br />
+To make a single user reauthenticate, an existing connection must be present:<br />
+<br />
+To search for a specific user:<br />
+MariaDB&gt; SELECT * FROM information_schema.PROCESSLIST where user ='&lt;name&gt;' and host like '%';<br />
+<br />
+To review all  connections:<br />
+MariaDB&gt; SELECT * FROM INFORMATION_SCHEMA.PROCESSLIST;<br />
+<br />
+Note the ID(s) (processlist_id) of the connection(s) for the user that must reauthenticate.<br />
+<br />
+To make a user reauthenticate, run the following for each ID returned above (as they can have multiple connections):<br />
+<br />
+MariaDB&gt; KILL CONNECTION processslist_id;<br />
+<br />
+If the provided SQL does not force reauthentication, this is a finding.</p><h2>Check Content Reference</h2><p>M</p><h2>Target Key</h2><p>5475</p></body></html>

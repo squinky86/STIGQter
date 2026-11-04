@@ -1,0 +1,78 @@
+<!doctype html><html lang="en"><head><meta charset="utf-8"><title>STIGQter: STIG Check Details: SV-253998r844027_rule: The Juniper router must be configured to log all packets that have been dropped.</title><link rel="icon" type="image/svg+xml" href="STIGQter.svg" /><script async src="https://www.googletagmanager.com/gtag/js?id=UA-31381839-2"></script><script src="include.js"></script><script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-4110907817782130" crossorigin="anonymous"></script></head><body><div><img src="STIGQter.svg" alt="STIGQter" style="height:1em;" /> <a href="https://www.stigqter.com/">STIGQter</a>: <a href="main.html">STIG Summary</a>: <a href="U_Juniper_EX_Switches_RTR_STIG_V2R1_Manual-xccdf.html">Juniper EX Series Switches Router Security Technical Implementation Guide Version: 2 Release: 1 Benchmark Date: 24 Jul 2024</a>:</div> <h1>The Juniper router must be configured to log all packets that have been dropped.</h1><h2>DISA Rule</h2><p>SV-253998r844027_rule</p><h2>Vulnerability Number</h2><p>V-253998</p><h2>Group Title</h2><p>SRG-NET-000078-RTR-000001</p><h2>Rule Version</h2><p>JUEX-RT-000260</p><h2>Severity</h2><p>CAT III</p><h2>CCI(s)</h2><ul><li>CCI-000134 - Ensure that audit records containing information that establishes the outcome of the event.</li></ul><h2>Weight</h2><p>10</p><h2>Fix Recommendation</h2><p>Configure interface firewall filters to log all deny statements.<br />
+<br />
+All discarding firewall filter terms:<br />
+&lt;filter terms and match conditions&gt;<br />
+set firewall family inet filter &lt;filter name&gt; term &lt;name&gt; then log<br />
+set firewall family inet filter &lt;filter name&gt; term &lt;name&gt; then syslog &lt;&lt;&lt; Minimally must be configured for all discarding filter terms.<br />
+set firewall family inet filter &lt;filter name&gt; term &lt;name&gt; then discard<br />
+<br />
+&lt;filter terms and match conditions&gt;<br />
+set firewall family inet6 filter &lt;filter name&gt; term &lt;name&gt; then log<br />
+set firewall family inet6 filter &lt;filter name&gt; term &lt;name&gt; then syslog &lt;&lt;&lt; Minimally must be configured for all discarding filter terms.<br />
+set firewall family inet6 filter &lt;filter name&gt; term &lt;name&gt; then discard</p><h2>Check Contents</h2><p>Review the router interface firewall filters to verify all deny statements are logged. At a minimum, all discarding filter terms must have the &quot;syslog&quot; action enabled.<br />
+<br />
+Verify all discarding firewall filter terms are configured with (minimally) the &quot;syslog&quot; action:<br />
+[edit firewall]<br />
+family inet {<br />
+    filter &lt;filter name&gt; {<br />
+        term &lt;name&gt; {<br />
+            from {<br />
+                &lt;match conditions&gt;;<br />
+            }<br />
+            then {<br />
+                log;<br />
+                syslog; &lt;&lt;&lt; Must be enabled for local and external syslog.<br />
+                discard;<br />
+            }<br />
+        }<br />
+    }<br />
+}<br />
+family inet6 {<br />
+    filter &lt;filter name&gt; {<br />
+        term &lt;name&gt; {<br />
+            from {<br />
+                &lt;match conditions&gt;;<br />
+            }<br />
+            then {<br />
+                log;<br />
+                syslog; &lt;&lt;&lt; Must be enabled for local and external syslog.<br />
+                discard;<br />
+            }<br />
+        }<br />
+    }<br />
+}<br />
+<br />
+If packets being dropped are not logged, this is a finding.</p><h2>Vulnerability Number</h2><p>V-253998</p><h2>Documentable</h2><p>False</p><h2>Rule Version</h2><p>JUEX-RT-000260</p><h2>Severity Override Guidance</h2><p>Review the router interface firewall filters to verify all deny statements are logged. At a minimum, all discarding filter terms must have the &quot;syslog&quot; action enabled.<br />
+<br />
+Verify all discarding firewall filter terms are configured with (minimally) the &quot;syslog&quot; action:<br />
+[edit firewall]<br />
+family inet {<br />
+    filter &lt;filter name&gt; {<br />
+        term &lt;name&gt; {<br />
+            from {<br />
+                &lt;match conditions&gt;;<br />
+            }<br />
+            then {<br />
+                log;<br />
+                syslog; &lt;&lt;&lt; Must be enabled for local and external syslog.<br />
+                discard;<br />
+            }<br />
+        }<br />
+    }<br />
+}<br />
+family inet6 {<br />
+    filter &lt;filter name&gt; {<br />
+        term &lt;name&gt; {<br />
+            from {<br />
+                &lt;match conditions&gt;;<br />
+            }<br />
+            then {<br />
+                log;<br />
+                syslog; &lt;&lt;&lt; Must be enabled for local and external syslog.<br />
+                discard;<br />
+            }<br />
+        }<br />
+    }<br />
+}<br />
+<br />
+If packets being dropped are not logged, this is a finding.</p><h2>Check Content Reference</h2><p>M</p><h2>Target Key</h2><p>5479</p></body></html>

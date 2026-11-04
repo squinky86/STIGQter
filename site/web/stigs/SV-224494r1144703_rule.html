@@ -1,0 +1,140 @@
+<!doctype html><html lang="en"><head><meta charset="utf-8"><title>STIGQter: STIG Check Details: SV-224494r1144703_rule: CICS System Initialization Table (SIT) parameter values must be specified in accordance with proper security requirements.</title><link rel="icon" type="image/svg+xml" href="STIGQter.svg" /><script async src="https://www.googletagmanager.com/gtag/js?id=UA-31381839-2"></script><script src="include.js"></script><script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-4110907817782130" crossorigin="anonymous"></script></head><body><div><img src="STIGQter.svg" alt="STIGQter" style="height:1em;" /> <a href="https://www.stigqter.com/">STIGQter</a>: <a href="main.html">STIG Summary</a>: <a href="U_zOS_IBM_CICS_Transaction_Server_RACF_STIG_V7R2_Manual-xccdf.html">z/OS IBM CICS Transaction Server for RACF Security Technical Implementation Guide Version: 7 Release: 2 Benchmark Date: 01 Oct 2025</a>:</div> <h1>CICS System Initialization Table (SIT) parameter values must be specified in accordance with proper security requirements.</h1><h2>DISA Rule</h2><p>SV-224494r1144703_rule</p><h2>Vulnerability Number</h2><p>V-224494</p><h2>Group Title</h2><p>SRG-OS-000480</p><h2>Rule Version</h2><p>ZCIC0030</p><h2>Severity</h2><p>CAT II</p><h2>CCI(s)</h2><ul><li>CCI-000015 - Support the management of system accounts using (organization-defined automated mechanisms).</li><li>CCI-000381 - Configure the system to provide only organization-defined mission essential capabilities.</li></ul><h2>Weight</h2><p>10</p><h2>Fix Recommendation</h2><p>Ensure that CICS System Initialization Table (SIT) parameter values are specified using the following guidance.<br />
+<br />
+The system initialization parameters are processed in the following order, with later system initialization parameter values overriding those specified earlier. CICS system initialization parameters are specified in the following ways:<br />
+<br />
+       In the system initialization table, loaded from a library in the STEPLIB concatenation of the CICS startup procedure.<br />
+       In the PARM parameter of the EXEC PGM=DFHSIP statement of the CICS startup procedure.<br />
+       In the SYSIN data set defined in the startup procedure (but only if SYSIN is coded in the PARM parameter).<br />
+<br />
+SEC=YES - If SEC is not coded in the CICS region startup JCL, go to offset x'117' from the beginning on the SIT dump (record sequence number - 6) for a length of 1. This is the security byte flag. Below are is the hex and bit settings for this flag.<br />
+<br />
+X'80' EQU B'10000000' External Security Requested &lt;&lt;===<br />
+X'40' EQU B'01000000' Resource Prefix Required<br />
+X'10' EQU B'00010000' RACLIST class APPCLU required<br />
+X'08' EQU B'00001000' ESM INSTLN data is required<br />
+X'04' EQU B'00000100' Surrogate User Checking required<br />
+X'02' EQU B'00000010' Always enact resource check<br />
+X'01' EQU B'00000001' Always enact command check<br />
+<br />
+DFLTUSER=&lt;parameter&gt;  - If DFLTUSER is not coded in the CICS region startup JCL, go to offset x'118' from the beginning on the SIT dump (record sequence number - 6) for a length of 8 bytes. The value will be the CICS default userid.<br />
+<br />
+XUSER=YES - If XUSER is not coded in the CICS region startup JCL, go to offset x'117' from the beginning on the SIT dump (record sequence number - 6) for a length of 1. This is the security byte flag. Below is the hex and bit settings for this flag.<br />
+<br />
+X'80' EQU B'10000000' External Security Requested<br />
+X'40' EQU B'01000000' Resource Prefix Required<br />
+X'10' EQU B'00010000' RACLIST class APPCLU required<br />
+X'08' EQU B'00001000' ESM INSTLN data is required<br />
+X'04' EQU B'00000100' Surrogate User Checking required &lt;&lt;===<br />
+X'02' EQU B'00000010' Always enact resource check<br />
+X'01' EQU B'00000001' Always enact command check<br />
+<br />
+SNSCOPE=NONE|CICS|MVSIMAGE|SYSPLEX<br />
+<br />
+If SNSCOPE is not coded in the CICS region startup JCL, go to offset x'124' from the beginning on the SIT dump (record sequence number - 6) for a length of 1. This is the signon scope byte flag. Ensure that users cannot sign on to more than one CICS production region within the scope of a single CICS region, a single z/OS image, or a sysplex. Below are the hex settings for this flag:<br />
+<br />
+X'01' EQU 1 SIGNON SCOPE = NONE<br />
+X'02' EQU 2 SIGNON SCOPE = CICS<br />
+X'03' EQU 3 SIGNON SCOPE = MVSIMAGE<br />
+X'04' EQU 4 SIGNON SCOPE = SYSPLEX<br />
+<br />
+Note: SNSCOPE=NONE is only allowed with test/development regions.<br />
+<br />
+XTRAN=YES|ssrrTRN - If XTRAN is not coded in the CICS region startup JCL, go to offset x'CA' from the beginning on the SIT dump (record sequence number - 6) for a length of 7 bytes. The value will be the resource class name used for that region. If XTRAN=YES is coded, c'CICSTRN' will be present.<br />
+<br />
+SECPRFX=YES - If SECPRFX is not coded in the CICS region startup JCL, go to offset x'117' from the beginning on the SIT dump (record sequence number - 6) for a length of 1. This is the security byte flag. Below are the hex and bit settings for this flag with the resource prefixing setting bolded:<br />
+<br />
+X'80' EQU B'10000000' External Security Requested<br />
+X'40' EQU B'01000000' Resource Prefix Required &lt;&lt;===<br />
+X'10' EQU B'00010000' RACLIST class APPCLU required<br />
+X'08' EQU B'00001000' ESM INSTLN data is required<br />
+X'04' EQU B'00000100' Surrogate User Checking required<br />
+X'02' EQU B'00000010' Always enact resource check<br />
+X'01' EQU B'00000001' Always enact command check<br />
+<br />
+Note: If XTRAN=ssrrTRN is specified, resource prefixing (e.g., SECPRFX=YES) is not required to be enabled. Also, CICS regions cannot share the same resource class if resource prefixing is not active.</p><h2>Check Contents</h2><p>Refer to the following report produced by the z/OS Data Collection:<br />
+<br />
+- EXAM.RPT(CICSPROC).<br />
+<br />
+Refer to the following report produced by the CICS Data Collection:<br />
+<br />
+- CICS.RPT(DFHSITxx).<br />
+<br />
+Refer to the CICS Systems Programmer Worksheets filled out from previous vulnerability ZCIC0010.<br />
+<br />
+Refer to the CICS region SYSLOG - (Alternate source of SIT parameters) be sure to process DFHSIT based on the order specified. The system initialization parameters are processed in the following order, with later system initialization parameter values overriding those specified earlier. CICS system initialization parameters are specified in the following ways:<br />
+<br />
+- In the system initialization table, loaded from a library in the STEPLIB concatenation of the CICS startup procedure.<br />
+- In the PARM parameter of the EXEC PGM=DFHSIP statement of the CICS startup procedure.<br />
+- In the SYSIN data set defined in the startup procedure (but only if SYSIN is coded in the PARM parameter).<br />
+<br />
+Verify the following CICS System Initialization Table (SIT) parameter settings are specified for each CICS region. If the following guidance is true, this is not a finding. <br />
+<br />
+SEC=YES - If SEC is not coded in the CICS region startup JCL, go to offset x'117' from the beginning on the SIT dump (record sequence number - 6) for a length of 1. This is the security byte flag. Below is the hex and bit settings for this flag.<br />
+<br />
+X'80' EQU B'10000000' External Security Requested<br />
+<br />
+DFLTUSER=&lt;parameter&gt; - If DFLTUSER is not coded in the CICS region startup JCL, go to offset x'118' from the beginning on the SIT dump (record sequence number - 6) for a length of 8 bytes. The value will be the CICS default userid. <br />
+<br />
+XUSER=YES - If XUSER is not coded in the CICS region startup JCL, go to offset x'117' from the beginning on the SIT dump (record sequence number - 6) for a length of 1. This is the security byte flag. Below is the hex and bit settings for this flag.<br />
+<br />
+X'04' EQU B'00000100' Surrogate User Checking required<br />
+<br />
+SNSCOPE=NONE|CICS|MVSIMAGE|SYSPLEX - If SNSCOPE is not coded in the CICS region startup JCL, go to offset x'124' from the beginning on the SIT dump (record sequence number - 6) for a length of 1. This is the signon scope byte flag. Verify that users cannot sign on to more than one CICS production region within the scope of a single CICS region, a single z/OS image, or a sysplex. Below are listed the hex and bit settings for this flag:<br />
+<br />
+X'01' EQU 1 SIGNON SCOPE = NONE<br />
+X'02' EQU 2 SIGNON SCOPE = CICS<br />
+X'03' EQU 3 SIGNON SCOPE = MVSIMAGE<br />
+X'04' EQU 4 SIGNON SCOPE = SYSPLEX<br />
+<br />
+Note: SNSCOPE=NONE is only allowed with test/development regions.<br />
+<br />
+XTRAN=YES|ssrrTRN - If XTRAN is not coded in the CICS region startup JCL, go to offset x'CA' from the beginning on the SIT dump (record sequence number - 6) for a length of 7 bytes. The value will be the resource class name used for that region. If XTRAN=YES is coded, c'CICSTRN' will be present.<br />
+<br />
+SECPRFX=YES - If SECPRFX is not coded in the CICS region startup JCL, go to offset x'117' from the beginning on the SIT dump (record sequence number - 6) for a length of 1. This is the security byte flag. Below are the hex and bit settings for this flag.<br />
+<br />
+X'40' EQU B'01000000' Resource Prefix Required<br />
+<br />
+If XTRAN=ssrrTRN is specified, resource prefixing (e.g., SECPRFX=YES) is not required to be enabled. Also, CICS regions cannot share the same resource class if resource prefixing is not active.</p><h2>Vulnerability Number</h2><p>V-224494</p><h2>Documentable</h2><p>False</p><h2>Rule Version</h2><p>ZCIC0030</p><h2>Severity Override Guidance</h2><p>Refer to the following report produced by the z/OS Data Collection:<br />
+<br />
+- EXAM.RPT(CICSPROC).<br />
+<br />
+Refer to the following report produced by the CICS Data Collection:<br />
+<br />
+- CICS.RPT(DFHSITxx).<br />
+<br />
+Refer to the CICS Systems Programmer Worksheets filled out from previous vulnerability ZCIC0010.<br />
+<br />
+Refer to the CICS region SYSLOG - (Alternate source of SIT parameters) be sure to process DFHSIT based on the order specified. The system initialization parameters are processed in the following order, with later system initialization parameter values overriding those specified earlier. CICS system initialization parameters are specified in the following ways:<br />
+<br />
+- In the system initialization table, loaded from a library in the STEPLIB concatenation of the CICS startup procedure.<br />
+- In the PARM parameter of the EXEC PGM=DFHSIP statement of the CICS startup procedure.<br />
+- In the SYSIN data set defined in the startup procedure (but only if SYSIN is coded in the PARM parameter).<br />
+<br />
+Verify the following CICS System Initialization Table (SIT) parameter settings are specified for each CICS region. If the following guidance is true, this is not a finding. <br />
+<br />
+SEC=YES - If SEC is not coded in the CICS region startup JCL, go to offset x'117' from the beginning on the SIT dump (record sequence number - 6) for a length of 1. This is the security byte flag. Below is the hex and bit settings for this flag.<br />
+<br />
+X'80' EQU B'10000000' External Security Requested<br />
+<br />
+DFLTUSER=&lt;parameter&gt; - If DFLTUSER is not coded in the CICS region startup JCL, go to offset x'118' from the beginning on the SIT dump (record sequence number - 6) for a length of 8 bytes. The value will be the CICS default userid. <br />
+<br />
+XUSER=YES - If XUSER is not coded in the CICS region startup JCL, go to offset x'117' from the beginning on the SIT dump (record sequence number - 6) for a length of 1. This is the security byte flag. Below is the hex and bit settings for this flag.<br />
+<br />
+X'04' EQU B'00000100' Surrogate User Checking required<br />
+<br />
+SNSCOPE=NONE|CICS|MVSIMAGE|SYSPLEX - If SNSCOPE is not coded in the CICS region startup JCL, go to offset x'124' from the beginning on the SIT dump (record sequence number - 6) for a length of 1. This is the signon scope byte flag. Verify that users cannot sign on to more than one CICS production region within the scope of a single CICS region, a single z/OS image, or a sysplex. Below are listed the hex and bit settings for this flag:<br />
+<br />
+X'01' EQU 1 SIGNON SCOPE = NONE<br />
+X'02' EQU 2 SIGNON SCOPE = CICS<br />
+X'03' EQU 3 SIGNON SCOPE = MVSIMAGE<br />
+X'04' EQU 4 SIGNON SCOPE = SYSPLEX<br />
+<br />
+Note: SNSCOPE=NONE is only allowed with test/development regions.<br />
+<br />
+XTRAN=YES|ssrrTRN - If XTRAN is not coded in the CICS region startup JCL, go to offset x'CA' from the beginning on the SIT dump (record sequence number - 6) for a length of 7 bytes. The value will be the resource class name used for that region. If XTRAN=YES is coded, c'CICSTRN' will be present.<br />
+<br />
+SECPRFX=YES - If SECPRFX is not coded in the CICS region startup JCL, go to offset x'117' from the beginning on the SIT dump (record sequence number - 6) for a length of 1. This is the security byte flag. Below are the hex and bit settings for this flag.<br />
+<br />
+X'40' EQU B'01000000' Resource Prefix Required<br />
+<br />
+If XTRAN=ssrrTRN is specified, resource prefixing (e.g., SECPRFX=YES) is not required to be enabled. Also, CICS regions cannot share the same resource class if resource prefixing is not active.</p><h2>Check Content Reference</h2><p>M</p><h2>Target Key</h2><p>4154</p></body></html>

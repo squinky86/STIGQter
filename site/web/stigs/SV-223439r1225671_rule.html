@@ -1,0 +1,147 @@
+<!doctype html><html lang="en"><head><meta charset="utf-8"><title>STIGQter: STIG Check Details: SV-223439r1225671_rule: IBM z/OS must protect dynamic lists in accordance with proper security requirements.</title><link rel="icon" type="image/svg+xml" href="STIGQter.svg" /><script async src="https://www.googletagmanager.com/gtag/js?id=UA-31381839-2"></script><script src="include.js"></script><script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-4110907817782130" crossorigin="anonymous"></script></head><body><div><img src="STIGQter.svg" alt="STIGQter" style="height:1em;" /> <a href="https://www.stigqter.com/">STIGQter</a>: <a href="main.html">STIG Summary</a>: <a href="U_IBM_zOS_ACF2_STIG_V9R9_Manual-xccdf.html">IBM z/OS ACF2 Security Technical Implementation Guide Version: 9 Release: 9 Benchmark Date: 01 Jul 2026</a>:</div> <h1>IBM z/OS must protect dynamic lists in accordance with proper security requirements.</h1><h2>DISA Rule</h2><p>SV-223439r1225671_rule</p><h2>Vulnerability Number</h2><p>V-223439</p><h2>Group Title</h2><p>SRG-OS-000080-GPOS-00048</p><h2>Rule Version</h2><p>ACF2-ES-000180</p><h2>Severity</h2><p>CAT I</p><h2>CCI(s)</h2><ul><li>CCI-000213 - Enforce approved authorizations for logical access to information and system resources in accordance with applicable access control policies.</li><li>CCI-002235 - Prevent non-privileged users from executing privileged functions.</li></ul><h2>Weight</h2><p>10</p><h2>Fix Recommendation</h2><p>Configure the Dynamic List resources to be defined to the IBMFAC resource class and protected. Only system programmers and a limited number of authorized users and Approved authorized Started Tasks are able to issue these commands. All access is logged.<br />
+<br />
+Note: The resource class, resources, and/or resource prefixes identified below are examples of a possible installation. The resource class, actual resources, and/or prefixes are determined when the product is actually installed on a system through the product's installation guide and can be site specific.<br />
+<br />
+The required CSV-prefixed Facility Class resources are listed below. These resources and/or generic equivalents should be defined and permitted as required with only z/OS systems programmers and logging enabled. Minimum required list of CSV-prefixed resources:<br />
+<br />
+CSVAPF.-<br />
+CSVAPF.MVS.SETPROG.FORMAT.DYNAMIC<br />
+CSVAPF.MVS.SETPROG.FORMAT.STATIC<br />
+CSVDYLPA.-<br />
+CSVDYLPA.ADD.-<br />
+CSVDYLPA.DELETE.-<br />
+CSVDYNEX.-<br />
+CSVDYNEX.LIST<br />
+CSVDYNL.-<br />
+CSVDYNL.UPDATE.LNKLST<br />
+CSVLLA.-<br />
+<br />
+Limit authority to those resources to z/OS systems programmers. Restrict to the absolute minimum number of personnel with LOG and SERVICE(UPDATE) access.<br />
+<br />
+Sample commands are shown here to accomplish one set of resources:<br />
+<br />
+$KEY(CSVAPF) TYPE(FAC) <br />
+MVS.SETPROG.- UID(sysprgmr) LOG<br />
+MVS.SETPROG.FORMAT.DYNAMIC.- UID(sysprgmr) LOG <br />
+MVS.SETPROG.FORMAT.STATIC.- UID(sysprgmr) LOG<br />
+MVS.SETPROG.FORMAT.- UID(sysprgmr) LOG <br />
+MVS.SETPROG.FORMAT.- UID(*) PREVENT<br />
+- UID(sysprgmr) LOG <br />
+- UID(*) PREVENT<br />
+<br />
+SET R(FAC)<br />
+COMPILE 'ACF2.xxxx.FAC(CSVAPF)' STORE<br />
+<br />
+F ACF2,REBUILD(FAC)<br />
+<br />
+The CSVDYLPA.ADD resource can be permitted to BMC Mainview, CA 1, and CA Common Services STC logonids with LOG and SERVICE(UPDATE) access.<br />
+<br />
+The CSVDYLPA.DELETE resource can be permitted to CA 1 and CA Common Services STC logonids with LOG and SERVICE(UPDATE) access.<br />
+<br />
+Sample commands are shown here to accomplish one set of resources:<br />
+<br />
+$KEY(CSVDYLPA) TYPE(FAC) <br />
+ADD.- UID(sysprgmr) LOG SERVICE(UPDATE)<br />
+ADD.- UID(BMC Mainview STC) LOG SERVICE(UPDATE)<br />
+ADD.- UID(CA 1 STC) LOG SERVICE(UPDATE)<br />
+ADD.- UID(CCS STC) LOG SERVICE(UPDATE)<br />
+DELETE.- UID(sysprgmr) LOG SERVICE(UPDATE)<br />
+DELETE.- UID(CA 1 STC) LOG SERVICE(UPDATE)<br />
+DELETE.- UID(CCS STC) LOG SERVICE(UPDATE)<br />
+- UID(sysprgmr) LOG<br />
+- UID(*) PREVENT<br />
+<br />
+SET R(FAC)<br />
+COMPILE 'ACF2.xxxx.FAC(CSVDYLPA)' STORE<br />
+<br />
+F ACF2,REBUILD(FAC)<br />
+<br />
+The CSVDYNEX.LIST resource and/or generic equivalent will be defined with LOG and SERVICE(UPDATE) access restricted to system programming personnel.<br />
+<br />
+The CSVDYNEX.LIST resource and/or generic equivalent will be defined with SERVICE(READ) access with ALLOW restricted to auditors.<br />
+<br />
+Sample commands are shown here to accomplish this:<br />
+<br />
+$KEY(CSVDYNEX) TYPE(FAC) <br />
+LIST.- UID(sysprgmr) LOG<br />
+LIST.- UID(auditor) SERVICE(READ) ALLOW<br />
+- UID(sysprgmr) LOG <br />
+- UID(*) PREVENT<br />
+<br />
+SET R(FAC)<br />
+COMPILE 'ACF2.xxxx.FAC(CSVDYNEX)' STORE<br />
+<br />
+F ACF2,REBUILD(FAC)<br />
+<br />
+The CSVLLA resource can be permitted to CICS and CONTROL-O STC logonids with LOG and SERVICE(UPDATE) access.<br />
+<br />
+Sample commands are shown here to accomplish one set of resources:<br />
+<br />
+$KEY(CSVLLA) TYPE(FAC) <br />
+- UID(sysprgmr) LOG<br />
+- UID(CICS STC logonids) LOG SERVICE(UPDATE)<br />
+- UID(CONTROL-O STC logonid) LOG SERVICE(UPDATE)<br />
+- UID(*) PREVENT<br />
+<br />
+SET R(FAC)<br />
+COMPILE 'ACF2.xxxx.FAC(CSVLLA)' STORE<br />
+<br />
+F ACF2,REBUILD(FAC)</p><h2>Check Contents</h2><p>From a command input screen enter:<br />
+SET RESOURCE (FAC) <br />
+SET VERBOSE<br />
+LIST LIKE (CSV-)<br />
+<br />
+NOTE: If CLASMAP defines FACILITY as anything other than the default of TYPE(FAC), replace FAC with the appropriate three letters.<br />
+<br />
+If the ACF2 resources and/or generic equivalent are defined with a default access of PREVENT, this is not a finding.<br />
+<br />
+If the ACF2 resources and/or generic equivalent identified below will be defined with LOG and SERVICE(UPDATE) access restricted to system programming personnel, this is not a finding.<br />
+<br />
+CSVAPF.<br />
+CSVAPF.MVS.SETPROG.FORMAT.DYNAMIC<br />
+CSVAPF.MVS.SETPROG.FORMAT.STATIC<br />
+CSVDYLPA.<br />
+CSVDYNEX.<br />
+CSVDYNEX.LIST<br />
+CSVDYNL.<br />
+CSVDYNL.UPDATE.LNKLST<br />
+CSVLLA.<br />
+<br />
+If the ACF2 CSVDYNEX.LIST resource and/or generic equivalent will be defined with LOG and SERVICE(UPDATE) access restricted to system programming personnel, this is not a finding.<br />
+<br />
+If the ACF2 CSVDYNEX.LIST resource and/or generic equivalent will be defined with SERVICE(READ) access restricted to auditors, this is not a finding.<br />
+<br />
+If the products CICS and/or CONTROL-O are on the system, the ACF2 access to the CSVLLA resource and/or generic equivalent will be defined with LOG and SERVICE(UPDATE) access restricted to the CICS and CONTROL-O STC logonids, this is not a finding.<br />
+<br />
+If any software product requires access to dynamic LPA updates on the system, the ACF2 access to the CSVDYLPA resource and/or generic equivalent will be defined with LOG and SERVICE(UPDATE) only after the product has been validated with the appropriate STIG or SRG for compliance AND receives documented and filed authorization that details the need and any accepted risks from the site ISSM or equivalent security authority, this is not a finding.<br />
+<br />
+Note: In the above, SERVICE(UPDATE) can be substituted with ADD, CONTROL, or LOG/ALLOW. Review the rules definitions in the ACF2 documentation when specifying SERVICE(UPDATE).</p><h2>Vulnerability Number</h2><p>V-223439</p><h2>Documentable</h2><p>False</p><h2>Rule Version</h2><p>ACF2-ES-000180</p><h2>Severity Override Guidance</h2><p>From a command input screen enter:<br />
+SET RESOURCE (FAC) <br />
+SET VERBOSE<br />
+LIST LIKE (CSV-)<br />
+<br />
+NOTE: If CLASMAP defines FACILITY as anything other than the default of TYPE(FAC), replace FAC with the appropriate three letters.<br />
+<br />
+If the ACF2 resources and/or generic equivalent are defined with a default access of PREVENT, this is not a finding.<br />
+<br />
+If the ACF2 resources and/or generic equivalent identified below will be defined with LOG and SERVICE(UPDATE) access restricted to system programming personnel, this is not a finding.<br />
+<br />
+CSVAPF.<br />
+CSVAPF.MVS.SETPROG.FORMAT.DYNAMIC<br />
+CSVAPF.MVS.SETPROG.FORMAT.STATIC<br />
+CSVDYLPA.<br />
+CSVDYNEX.<br />
+CSVDYNEX.LIST<br />
+CSVDYNL.<br />
+CSVDYNL.UPDATE.LNKLST<br />
+CSVLLA.<br />
+<br />
+If the ACF2 CSVDYNEX.LIST resource and/or generic equivalent will be defined with LOG and SERVICE(UPDATE) access restricted to system programming personnel, this is not a finding.<br />
+<br />
+If the ACF2 CSVDYNEX.LIST resource and/or generic equivalent will be defined with SERVICE(READ) access restricted to auditors, this is not a finding.<br />
+<br />
+If the products CICS and/or CONTROL-O are on the system, the ACF2 access to the CSVLLA resource and/or generic equivalent will be defined with LOG and SERVICE(UPDATE) access restricted to the CICS and CONTROL-O STC logonids, this is not a finding.<br />
+<br />
+If any software product requires access to dynamic LPA updates on the system, the ACF2 access to the CSVDYLPA resource and/or generic equivalent will be defined with LOG and SERVICE(UPDATE) only after the product has been validated with the appropriate STIG or SRG for compliance AND receives documented and filed authorization that details the need and any accepted risks from the site ISSM or equivalent security authority, this is not a finding.<br />
+<br />
+Note: In the above, SERVICE(UPDATE) can be substituted with ADD, CONTROL, or LOG/ALLOW. Review the rules definitions in the ACF2 documentation when specifying SERVICE(UPDATE).</p><h2>Check Content Reference</h2><p>M</p><h2>Target Key</h2><p>4100</p></body></html>

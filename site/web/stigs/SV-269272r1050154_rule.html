@@ -1,0 +1,43 @@
+<!doctype html><html lang="en"><head><meta charset="utf-8"><title>STIGQter: STIG Check Details: SV-269272r1050154_rule: If the Trivial File Transfer Protocol (TFTP) server is required, the TFTP daemon must be configured to operate in secure mode.</title><link rel="icon" type="image/svg+xml" href="STIGQter.svg" /><script async src="https://www.googletagmanager.com/gtag/js?id=UA-31381839-2"></script><script src="include.js"></script><script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-4110907817782130" crossorigin="anonymous"></script></head><body><div><img src="STIGQter.svg" alt="STIGQter" style="height:1em;" /> <a href="https://www.stigqter.com/">STIGQter</a>: <a href="main.html">STIG Summary</a>: <a href="U_CL_AlmaLinux_OS_9_STIG_V1R7_Manual-xccdf.html">Cloud Linux AlmaLinux OS 9 Security Technical Implementation Guide Version: 1 Release: 7 Benchmark Date: 01 Jul 2026</a>:</div> <h1>If the Trivial File Transfer Protocol (TFTP) server is required, the TFTP daemon must be configured to operate in secure mode.</h1><h2>DISA Rule</h2><p>SV-269272r1050154_rule</p><h2>Vulnerability Number</h2><p>V-269272</p><h2>Group Title</h2><p>SRG-OS-000480-GPOS-00227</p><h2>Rule Version</h2><p>ALMA-09-021690</p><h2>Severity</h2><p>CAT II</p><h2>CCI(s)</h2><ul><li>CCI-000366 - Implement the security configuration settings.</li></ul><h2>Weight</h2><p>10</p><h2>Fix Recommendation</h2><p>Configure the TFTP daemon to operate in secure mode with the following command:<br />
+<br />
+$ systemctl edit tftp.service<br />
+<br />
+Insert the following between the two sets of comments, making sure to add the &quot;-s&quot; option with a nonroot (&quot;/&quot;) directory.<br />
+<br />
+[Service]<br />
+ExecStart=<br />
+ExecStart=/usr/sbin/in.tftpd -s /tftp</p><h2>Check Contents</h2><p>Note: If a TFTP server is not installed, this requirement is Not Applicable.<br />
+<br />
+Verify the TFTP daemon is configured to operate in secure mode.<br />
+<br />
+Check if a TFTP server is installed with the following command:<br />
+<br />
+$ dnf list --installed tftp-server<br />
+<br />
+Installed Packages<br />
+tftp-server.x86_64        5.2-37.el9             @appstream<br />
+<br />
+If a TFTP server is installed, check for the server arguments with the following command: <br />
+<br />
+$ systemctl cat tftp | grep ExecStart=<br />
+<br />
+ExecStart=/usr/sbin/in.tftpd -s /var/lib/tftpboot<br />
+<br />
+If the &quot;ExecStart&quot; line does not have a &quot;-s&quot; option, and a subdirectory is not assigned, this is a finding.</p><h2>Vulnerability Number</h2><p>V-269272</p><h2>Documentable</h2><p>False</p><h2>Rule Version</h2><p>ALMA-09-021690</p><h2>Severity Override Guidance</h2><p>Note: If a TFTP server is not installed, this requirement is Not Applicable.<br />
+<br />
+Verify the TFTP daemon is configured to operate in secure mode.<br />
+<br />
+Check if a TFTP server is installed with the following command:<br />
+<br />
+$ dnf list --installed tftp-server<br />
+<br />
+Installed Packages<br />
+tftp-server.x86_64        5.2-37.el9             @appstream<br />
+<br />
+If a TFTP server is installed, check for the server arguments with the following command: <br />
+<br />
+$ systemctl cat tftp | grep ExecStart=<br />
+<br />
+ExecStart=/usr/sbin/in.tftpd -s /var/lib/tftpboot<br />
+<br />
+If the &quot;ExecStart&quot; line does not have a &quot;-s&quot; option, and a subdirectory is not assigned, this is a finding.</p><h2>Check Content Reference</h2><p>M</p><h2>Target Key</h2><p>5664</p></body></html>

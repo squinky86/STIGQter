@@ -1,0 +1,51 @@
+<!doctype html><html lang="en"><head><meta charset="utf-8"><title>STIGQter: STIG Check Details: SV-239852r665842_rule: The Cisco ASA must be configured to filter outbound traffic, allowing only authorized ports and services.</title><link rel="icon" type="image/svg+xml" href="STIGQter.svg" /><script async src="https://www.googletagmanager.com/gtag/js?id=UA-31381839-2"></script><script src="include.js"></script><script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-4110907817782130" crossorigin="anonymous"></script></head><body><div><img src="STIGQter.svg" alt="STIGQter" style="height:1em;" /> <a href="https://www.stigqter.com/">STIGQter</a>: <a href="main.html">STIG Summary</a>: <a href="U_Cisco_ASA_Firewall_STIG_V2R1_Manual-xccdf.html">Cisco ASA Firewall Security Technical Implementation Guide Version: 2 Release: 1 Benchmark Date: 24 Jul 2024</a>:</div> <h1>The Cisco ASA must be configured to filter outbound traffic, allowing only authorized ports and services.</h1><h2>DISA Rule</h2><p>SV-239852r665842_rule</p><h2>Vulnerability Number</h2><p>V-239852</p><h2>Group Title</h2><p>SRG-NET-000019-FW-000003</p><h2>Rule Version</h2><p>CASA-FW-000010</p><h2>Severity</h2><p>CAT I</p><h2>CCI(s)</h2><ul><li>CCI-001414 - Enforce approved authorizations for controlling the flow of information between connected systems based on organization-defined information flow control policies.</li></ul><h2>Weight</h2><p>10</p><h2>Fix Recommendation</h2><p>Step 1: Configure the ingress ACL similar to the example below.<br />
+<br />
+ASA(config)# access-list INSIDE_INextended permit tcp any any eq https<br />
+ASA(config)# access-list INSIDE_INextended permit tcp any any eq http<br />
+ASA(config)# access-list INSIDE_INextended permit tcp any any eq …<br />
+ASA(config)# access-list INSIDE_INextended deny ip any any log      <br />
+<br />
+Step 2: Apply the ACL inbound on all internal interfaces as shown in the example below.<br />
+<br />
+ASA(config)# access-group INSIDE_IN in interface INSIDE<br />
+ASA(config)# end</p><h2>Check Contents</h2><p>Review the ASA configuration to determine if it only permits outbound traffic using authorized ports and services.<br />
+<br />
+Step 1: Verify that an ingress ACL has been applied to all internal interfaces as shown in the example below.<br />
+<br />
+ interface GigabitEthernet0/0<br />
+ nameif INSIDE<br />
+ security-level 100<br />
+ ip address 10.1.11.1 255.255.255.0<br />
+…<br />
+…<br />
+…<br />
+access-group INSIDE _IN in interface INSIDE <br />
+<br />
+Step 2: Verify that the ingress ACL only allows outbound traffic using authorized ports and services as shown in the example below.<br />
+<br />
+access-list INSIDE _IN extended permit tcp any any eq www <br />
+access-list INSIDE _IN extended permit tcp any any eq https <br />
+access-list INSIDE _IN extended permit tcp any any eq …<br />
+access-list INSIDE _IN extended deny ip any any log<br />
+<br />
+If the ASA is not configured to only allow outbound traffic using authorized ports and services, this is a finding.</p><h2>Vulnerability Number</h2><p>V-239852</p><h2>Documentable</h2><p>False</p><h2>Rule Version</h2><p>CASA-FW-000010</p><h2>Severity Override Guidance</h2><p>Review the ASA configuration to determine if it only permits outbound traffic using authorized ports and services.<br />
+<br />
+Step 1: Verify that an ingress ACL has been applied to all internal interfaces as shown in the example below.<br />
+<br />
+ interface GigabitEthernet0/0<br />
+ nameif INSIDE<br />
+ security-level 100<br />
+ ip address 10.1.11.1 255.255.255.0<br />
+…<br />
+…<br />
+…<br />
+access-group INSIDE _IN in interface INSIDE <br />
+<br />
+Step 2: Verify that the ingress ACL only allows outbound traffic using authorized ports and services as shown in the example below.<br />
+<br />
+access-list INSIDE _IN extended permit tcp any any eq www <br />
+access-list INSIDE _IN extended permit tcp any any eq https <br />
+access-list INSIDE _IN extended permit tcp any any eq …<br />
+access-list INSIDE _IN extended deny ip any any log<br />
+<br />
+If the ASA is not configured to only allow outbound traffic using authorized ports and services, this is a finding.</p><h2>Check Content Reference</h2><p>M</p><h2>Target Key</h2><p>5339</p></body></html>

@@ -1,0 +1,96 @@
+<!doctype html><html lang="en"><head><meta charset="utf-8"><title>STIGQter: STIG Check Details: SV-285312r1211022_rule: MongoDB must be configured to restrict the use of administrator access to authorized IP addresses.</title><link rel="icon" type="image/svg+xml" href="STIGQter.svg" /><script async src="https://www.googletagmanager.com/gtag/js?id=UA-31381839-2"></script><script src="include.js"></script><script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-4110907817782130" crossorigin="anonymous"></script></head><body><div><img src="STIGQter.svg" alt="STIGQter" style="height:1em;" /> <a href="https://www.stigqter.com/">STIGQter</a>: <a href="main.html">STIG Summary</a>: <a href="U_MongoDB_Enterprise_Advanced_7-x_STIG_V1R2_Manual-xccdf.html">MongoDB Enterprise Advanced 7.x Security Technical Implementation Guide Version: 1 Release: 2 Benchmark Date: 01 Jul 2026</a>:</div> <h1>MongoDB must be configured to restrict the use of administrator access to authorized IP addresses.</h1><h2>DISA Rule</h2><p>SV-285312r1211022_rule</p><h2>Vulnerability Number</h2><p>V-285312</p><h2>Group Title</h2><p>SRG-APP-000142-DB-000094</p><h2>Rule Version</h2><p>MD7X-00-003350</p><h2>Severity</h2><p>CAT II</p><h2>CCI(s)</h2><ul><li>CCI-000382 - Configure the system to prohibit or restrict the use of organization-defined prohibited or restricted functions, system ports, protocols, software, and/or services.</li></ul><h2>Weight</h2><p>10</p><h2>Fix Recommendation</h2><p>For all administrative users that do not have network restrictions configured, use the following command:<br />
+ <br />
+use admin<br />
+db.updateUser( &quot;&lt;username&gt;&quot;, { authenticationRestrictions: [ { clientSource: [ &quot;&lt;ip_or_cidr&gt;&quot;, serverAddress: [&quot;&lt;ip_or_cidr&gt;&quot;] } ] })<br />
+<br />
+Run the following command to set to local host:<br />
+<br />
+use admin<br />
+db.updateUser(&quot;&lt;username&gt;&quot;, { authenticationRestrictions: [ { clientSource: [&quot;127.0.0.1&quot;], serverAddress: [&quot;127.0.0.1&quot;] } ] })<br />
+<br />
+More information can be found here: <br />
+https://www.mongodb.com/docs/manual/reference/command/createUser/#authentication-restrictions</p><h2>Check Contents</h2><p>To verify administrative access is logically separated and restricted to authorized management networks:<br />
+<br />
+1. Review the organization-defined administrative roles. These administrative roles include, but are not limited to root, clusterAdmin, dbAdminAnyDatabase, userAdminAnyDatabase, dbAdmin, userAdmin, and dbOwner.<br />
+<br />
+2. Review all users within the admin database to identify those assigned any of the administrative roles defined above. <br />
+<br />
+3. For each identified administrative user, check for the presence of the authenticationRestrictions field. Verify that a clientSource is defined to restrict access to authorized management networks. <br />
+<br />
+Example script:<br />
+<br />
+// Define admin roles<br />
+const adminRoles = new Set([&quot;root&quot;, &quot;clusterAdmin&quot;, &quot;dbAdminAnyDatabase&quot;, &quot;userAdminAnyDatabase&quot;, &quot;dbAdmin&quot;, &quot;userAdmin&quot;, &quot;dbOwner&quot;, &quot;&lt;your_custom_admin_role&gt;&quot;]);<br />
+<br />
+// Check all users under 'admin' and filter for admin roles<br />
+const admins = db.getSiblingDB(&quot;admin&quot;).system.users.find().toArray()<br />
+  .filter(u =&gt; u.roles.some(r =&gt; adminRoles.has(r.role)))<br />
+  .map(u =&gt; {<br />
+    const restr = u.authenticationRestrictions || [];<br />
+    const clientIPs = restr.flatMap(r =&gt; r.clientSource || []);<br />
+    const serverIPs = restr.flatMap(r =&gt; r.serverAddress || []);<br />
+<br />
+    return {<br />
+      &quot;User&quot;: u.user,<br />
+      &quot;DB&quot;: u.db,<br />
+      &quot;Admin Roles&quot;: u.roles.filter(r =&gt; adminRoles.has(r.role)).map(r =&gt; r.role).join(&quot;, &quot;),<br />
+      &quot;Client IPs&quot;: clientIPs.length ? clientIPs.join(&quot;, &quot;) : &quot;ANY (Unrestricted)&quot;,<br />
+      &quot;Server Address&quot;: serverIPs.length ? serverIPs.join(&quot;, &quot;) : &quot;ANY (Unrestricted)&quot;<br />
+    };<br />
+  });<br />
+<br />
+console.table(admins);<br />
+<br />
+If an administrative user does not have an authenticationRestrictions field defined, or if the clientSource is not restricted to a valid, organization-defined management network, this is a finding.  <br />
+<br />
+If the local policy requires interface-specific isolation and the Server Address is not defined or is not restricted to the server's management interface IP, this is a finding.<br />
+<br />
+In the absence of approved documentation, assume localhost (127.0.0.1) is the only approved address.<br />
+<br />
+Example output: (note that user0 is compliant while user1 is not) <br />
+<br />
+(index)   User         DB           Admin Roles        Client IPs                     Server Address<br />
+0            'user0'      'admin'     'root'                     '127.0.0.1'                       '127.0.0.1'<br />
+1            'user1'      'admin'     'root'                     'ANY (Unrestricted)'    'ANY (Unrestricted)'</p><h2>Vulnerability Number</h2><p>V-285312</p><h2>Documentable</h2><p>False</p><h2>Rule Version</h2><p>MD7X-00-003350</p><h2>Severity Override Guidance</h2><p>To verify administrative access is logically separated and restricted to authorized management networks:<br />
+<br />
+1. Review the organization-defined administrative roles. These administrative roles include, but are not limited to root, clusterAdmin, dbAdminAnyDatabase, userAdminAnyDatabase, dbAdmin, userAdmin, and dbOwner.<br />
+<br />
+2. Review all users within the admin database to identify those assigned any of the administrative roles defined above. <br />
+<br />
+3. For each identified administrative user, check for the presence of the authenticationRestrictions field. Verify that a clientSource is defined to restrict access to authorized management networks. <br />
+<br />
+Example script:<br />
+<br />
+// Define admin roles<br />
+const adminRoles = new Set([&quot;root&quot;, &quot;clusterAdmin&quot;, &quot;dbAdminAnyDatabase&quot;, &quot;userAdminAnyDatabase&quot;, &quot;dbAdmin&quot;, &quot;userAdmin&quot;, &quot;dbOwner&quot;, &quot;&lt;your_custom_admin_role&gt;&quot;]);<br />
+<br />
+// Check all users under 'admin' and filter for admin roles<br />
+const admins = db.getSiblingDB(&quot;admin&quot;).system.users.find().toArray()<br />
+  .filter(u =&gt; u.roles.some(r =&gt; adminRoles.has(r.role)))<br />
+  .map(u =&gt; {<br />
+    const restr = u.authenticationRestrictions || [];<br />
+    const clientIPs = restr.flatMap(r =&gt; r.clientSource || []);<br />
+    const serverIPs = restr.flatMap(r =&gt; r.serverAddress || []);<br />
+<br />
+    return {<br />
+      &quot;User&quot;: u.user,<br />
+      &quot;DB&quot;: u.db,<br />
+      &quot;Admin Roles&quot;: u.roles.filter(r =&gt; adminRoles.has(r.role)).map(r =&gt; r.role).join(&quot;, &quot;),<br />
+      &quot;Client IPs&quot;: clientIPs.length ? clientIPs.join(&quot;, &quot;) : &quot;ANY (Unrestricted)&quot;,<br />
+      &quot;Server Address&quot;: serverIPs.length ? serverIPs.join(&quot;, &quot;) : &quot;ANY (Unrestricted)&quot;<br />
+    };<br />
+  });<br />
+<br />
+console.table(admins);<br />
+<br />
+If an administrative user does not have an authenticationRestrictions field defined, or if the clientSource is not restricted to a valid, organization-defined management network, this is a finding.  <br />
+<br />
+If the local policy requires interface-specific isolation and the Server Address is not defined or is not restricted to the server's management interface IP, this is a finding.<br />
+<br />
+In the absence of approved documentation, assume localhost (127.0.0.1) is the only approved address.<br />
+<br />
+Example output: (note that user0 is compliant while user1 is not) <br />
+<br />
+(index)   User         DB           Admin Roles        Client IPs                     Server Address<br />
+0            'user0'      'admin'     'root'                     '127.0.0.1'                       '127.0.0.1'<br />
+1            'user1'      'admin'     'root'                     'ANY (Unrestricted)'    'ANY (Unrestricted)'</p><h2>Check Content Reference</h2><p>M</p><h2>Target Key</h2><p>5637</p></body></html>

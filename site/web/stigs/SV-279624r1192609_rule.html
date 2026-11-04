@@ -1,0 +1,40 @@
+<!doctype html><html lang="en"><head><meta charset="utf-8"><title>STIGQter: STIG Check Details: SV-279624r1192609_rule: Operating systems must prevent unauthorized and unintended information transfer via shared system resources.</title><link rel="icon" type="image/svg+xml" href="STIGQter.svg" /><script async src="https://www.googletagmanager.com/gtag/js?id=UA-31381839-2"></script><script src="include.js"></script><script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-4110907817782130" crossorigin="anonymous"></script></head><body><div><img src="STIGQter.svg" alt="STIGQter" style="height:1em;" /> <a href="https://www.stigqter.com/">STIGQter</a>: <a href="main.html">STIG Summary</a>: <a href="U_NTX_Acropolis_OS_STIG_V1R1_Manual-xccdf.html">Nutanix Acropolis GPOS Security Technical Implementation Guide Version: 1 Release: 1 Benchmark Date: 26 Jan 2026</a>:</div> <h1>Operating systems must prevent unauthorized and unintended information transfer via shared system resources.</h1><h2>DISA Rule</h2><p>SV-279624r1192609_rule</p><h2>Vulnerability Number</h2><p>V-279624</p><h2>Group Title</h2><p>SRG-OS-000138-GPOS-00069</p><h2>Rule Version</h2><p>NXAC-OS-000194</p><h2>Severity</h2><p>CAT II</p><h2>CCI(s)</h2><ul><li>CCI-001090 - Prevent unauthorized and unintended information transfer via shared system resources.</li></ul><h2>Weight</h2><p>10</p><h2>Fix Recommendation</h2><p>1. For AOS, Prism Central, and Files, note that the Nutanix OS is designed and engineered to have all world-writable directories set correctly with the sticky bit set. If the package is missing or not active and running, then some corruption has occurred and the OS must be rebuilt.<br />
+<br />
+2. For AHV, configure all public directories to be owned by root or a system account to prevent unauthorized and unintended information transferred via shared system resources. Set the owner of all public directories as root or a system account by replacing &quot;[Public Directory]&quot; with any directory path not owned by root or a system account.<br />
+<br />
+Set the sticky bit on all world-writable directories by replacing &quot;[World-Writable Directory]&quot; with any directory path missing the sticky bit.<br />
+<br />
+Example command:<br />
+<br />
+$ sudo chown root [Public Directory]<br />
+$ sudo chmod 1777 [World-Writable Directory]</p><h2>Check Contents</h2><p>1. For AOS, Prism Central, and Files, verify Nutanix OS provides that all public directories are owned by root using the following command.<br />
+<br />
+$ sudo find / -type d \( -perm -0002 -a ! -perm -1000 \) -print 2&gt;/dev/null<br />
+drwxrwxrwxt 7 root root 4096 Jul 26 11:19 /tmp<br />
+<br />
+2. Verify AHV is configured so all public directories are owned by root (or a system account) and all world-writable directories have the sticky bit set using the following command.<br />
+<br />
+$ sudo find / -type d -perm -0002 -exec ls -lLd {} \;<br />
+drwxrwxrwt. 2 root root 40 Jun  4 15:21 /dev/mqueue<br />
+drwxrwxrwt. 2 root root 40 Jun  4 15:21 /dev/shm<br />
+drwxrwxrwt. 7 root root 4096 Jul 28 15:37 /tmp<br />
+<br />
+$ sudo find / -type d \( -perm -0002 -a ! -perm -1000 \) -print 2&gt;/dev/null<br />
+drwxrwxrwxt 7 root root 4096 Jul 26 11:19 /tmp<br />
+<br />
+If any of the public directories are not owned by root (or a system account) or are not world-writable and do not have the sticky bit set, this is a finding.</p><h2>Vulnerability Number</h2><p>V-279624</p><h2>Documentable</h2><p>False</p><h2>Rule Version</h2><p>NXAC-OS-000194</p><h2>Severity Override Guidance</h2><p>1. For AOS, Prism Central, and Files, verify Nutanix OS provides that all public directories are owned by root using the following command.<br />
+<br />
+$ sudo find / -type d \( -perm -0002 -a ! -perm -1000 \) -print 2&gt;/dev/null<br />
+drwxrwxrwxt 7 root root 4096 Jul 26 11:19 /tmp<br />
+<br />
+2. Verify AHV is configured so all public directories are owned by root (or a system account) and all world-writable directories have the sticky bit set using the following command.<br />
+<br />
+$ sudo find / -type d -perm -0002 -exec ls -lLd {} \;<br />
+drwxrwxrwt. 2 root root 40 Jun  4 15:21 /dev/mqueue<br />
+drwxrwxrwt. 2 root root 40 Jun  4 15:21 /dev/shm<br />
+drwxrwxrwt. 7 root root 4096 Jul 28 15:37 /tmp<br />
+<br />
+$ sudo find / -type d \( -perm -0002 -a ! -perm -1000 \) -print 2&gt;/dev/null<br />
+drwxrwxrwxt 7 root root 4096 Jul 26 11:19 /tmp<br />
+<br />
+If any of the public directories are not owned by root (or a system account) or are not world-writable and do not have the sticky bit set, this is a finding.</p><h2>Check Content Reference</h2><p>M</p><h2>Target Key</h2><p>5730</p></body></html>

@@ -1,0 +1,29 @@
+<!doctype html><html lang="en"><head><meta charset="utf-8"><title>STIGQter: STIG Check Details: SV-272079r1168423_rule: The Cisco ACI must be configured to drop all fragmented Internet Control Message Protocol (ICMP) packets destined to itself.</title><link rel="icon" type="image/svg+xml" href="STIGQter.svg" /><script async src="https://www.googletagmanager.com/gtag/js?id=UA-31381839-2"></script><script src="include.js"></script><script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-4110907817782130" crossorigin="anonymous"></script></head><body><div><img src="STIGQter.svg" alt="STIGQter" style="height:1em;" /> <a href="https://www.stigqter.com/">STIGQter</a>: <a href="main.html">STIG Summary</a>: <a href="U_Cisco_ACI_RTR_Manual_V1R2_STIG_Manual-xccdf.html">Cisco ACI Router Security Technical Implementation Guide Version: 1 Release: 2 Benchmark Date: 05 Jan 2026</a>:</div> <h1>The Cisco ACI must be configured to drop all fragmented Internet Control Message Protocol (ICMP) packets destined to itself.</h1><h2>DISA Rule</h2><p>SV-272079r1168423_rule</p><h2>Vulnerability Number</h2><p>V-272079</p><h2>Group Title</h2><p>SRG-NET-000205-RTR-000002</p><h2>Rule Version</h2><p>CACI-RT-000019</p><h2>Severity</h2><p>CAT II</p><h2>CCI(s)</h2><ul><li>CCI-001097 - Monitor and control communications at the external managed interfaces to the system and at key managed interfaces within the system.</li></ul><h2>Weight</h2><p>10</p><h2>Fix Recommendation</h2><p>Place the deny rule before any permit rules for ICMP traffic to ensure fragmented ICMP packets are dropped first. When you are creating a contract you would want to create a Deny statement that looks at all the fragmented bits and denies only those packets. There are 2 ways to do this.<br />
+<br />
+Option 1: Create a standard contract (whitelist) with an explicit deny for the fragment bit to counter act any allows. Navigate to the following location and configure settings:<br />
+Tenant &gt;&gt; Contracts &gt;&gt; Standard &gt;&gt; {{your_Contract}} &gt;&gt; {{your_contract_Subject}} &gt;&gt; Policy &gt;&gt; General &gt;&gt; Filters &gt;&gt; create/ add a deny for ICMP traffic. <br />
+The filter entries should include the following: Ethertype set to IP/ipv6, IP Protocol set to ICMP/ICMPv6, and the Match Only Fragments box checked.<br />
+<br />
+Option 2: Create a taboo contract (blacklist) for the fragment bits by navigating to the following location:<br />
+Tenant &gt;&gt; Contracts &gt;&gt; Taboo &gt;&gt; {{your_Contract}} &gt;&gt; Policy &gt;&gt; General &gt;&gt; {{your_contract_Subject}} &gt;&gt; Filters &gt;&gt; create/ add a deny for ICMP traffic. <br />
+The filter entries should include the following: Ethertype set to IP/ipv6, IP Protocol set to ICMP/ICMPv6, and the Match Only Fragments box checked.</p><h2>Check Contents</h2><p>If this review is for the DODIN Backbone, mark as Not Applicable.<br />
+<br />
+When creating a contract, create a Deny statement that looks at all the fragmented bits and denies only those packets. Review the following two locations:<br />
+<br />
+Option 1: Review any standard contract (whitelist) with an explicit deny for the fragment bit to counter act any allows.<br />
+Tenant &gt;&gt; Contracts &gt;&gt; Standard &gt;&gt; {{your_Contract}} &gt;&gt; {{your_contract_Subject}} &gt;&gt; Policy &gt;&gt; General &gt;&gt; Filters &gt;&gt; create/ add a deny for ICMP traffic. The filter entries should include the following: Ethertype set to IP/ipv6, IP Protocol set to ICMP/ICMPv6, and the Match Only Fragments box checked. <br />
+<br />
+Option 2: Review any taboo contract (blacklist) for the fragment bits:<br />
+Tenant &gt;&gt; Contracts &gt;&gt; Taboo &gt;&gt; {{your_Contract}} &gt;&gt; Policy &gt;&gt; General &gt;&gt; {{your_contract_Subject}} &gt;&gt; Filters &gt;&gt; create/ add a deny for ICMP traffic. The filter entries should include the following: Ethertype set to IP/ipv6, IP Protocol set to ICMP/ICMPv6, and the Match Only Fragments box checked3. Verify ICMP and Fragmented are selected to be denied.<br />
+<br />
+If all fragmented ICMP packets destined to Cisco ACI IP addresses are not dropped, this is a finding.</p><h2>Vulnerability Number</h2><p>V-272079</p><h2>Documentable</h2><p>False</p><h2>Rule Version</h2><p>CACI-RT-000019</p><h2>Severity Override Guidance</h2><p>If this review is for the DODIN Backbone, mark as Not Applicable.<br />
+<br />
+When creating a contract, create a Deny statement that looks at all the fragmented bits and denies only those packets. Review the following two locations:<br />
+<br />
+Option 1: Review any standard contract (whitelist) with an explicit deny for the fragment bit to counter act any allows.<br />
+Tenant &gt;&gt; Contracts &gt;&gt; Standard &gt;&gt; {{your_Contract}} &gt;&gt; {{your_contract_Subject}} &gt;&gt; Policy &gt;&gt; General &gt;&gt; Filters &gt;&gt; create/ add a deny for ICMP traffic. The filter entries should include the following: Ethertype set to IP/ipv6, IP Protocol set to ICMP/ICMPv6, and the Match Only Fragments box checked. <br />
+<br />
+Option 2: Review any taboo contract (blacklist) for the fragment bits:<br />
+Tenant &gt;&gt; Contracts &gt;&gt; Taboo &gt;&gt; {{your_Contract}} &gt;&gt; Policy &gt;&gt; General &gt;&gt; {{your_contract_Subject}} &gt;&gt; Filters &gt;&gt; create/ add a deny for ICMP traffic. The filter entries should include the following: Ethertype set to IP/ipv6, IP Protocol set to ICMP/ICMPv6, and the Match Only Fragments box checked3. Verify ICMP and Fragmented are selected to be denied.<br />
+<br />
+If all fragmented ICMP packets destined to Cisco ACI IP addresses are not dropped, this is a finding.</p><h2>Check Content Reference</h2><p>M</p><h2>Target Key</h2><p>5684</p></body></html>

@@ -1,0 +1,41 @@
+<!doctype html><html lang="en"><head><meta charset="utf-8"><title>STIGQter: STIG Check Details: SV-223754r1137691_rule: IBM z/OS JES2 system commands must be protected in accordance with security requirements.</title><link rel="icon" type="image/svg+xml" href="STIGQter.svg" /><script async src="https://www.googletagmanager.com/gtag/js?id=UA-31381839-2"></script><script src="include.js"></script><script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-4110907817782130" crossorigin="anonymous"></script></head><body><div><img src="STIGQter.svg" alt="STIGQter" style="height:1em;" /> <a href="https://www.stigqter.com/">STIGQter</a>: <a href="main.html">STIG Summary</a>: <a href="U_IBM_zOS_RACF_STIG_V9R9_Manual-xccdf.html">IBM z/OS RACF Security Technical Implementation Guide Version: 9 Release: 9 Benchmark Date: 01 Jul 2026</a>:</div> <h1>IBM z/OS JES2 system commands must be protected in accordance with security requirements.</h1><h2>DISA Rule</h2><p>SV-223754r1137691_rule</p><h2>Vulnerability Number</h2><p>V-223754</p><h2>Group Title</h2><p>SRG-OS-000080-GPOS-00048</p><h2>Rule Version</h2><p>RACF-JS-000100</p><h2>Severity</h2><p>CAT II</p><h2>CCI(s)</h2><ul><li>CCI-000213 - Enforce approved authorizations for logical access to information and system resources in accordance with applicable access control policies.</li></ul><h2>Weight</h2><p>10</p><h2>Fix Recommendation</h2><p>Extended MCS support allows the installation to control the use of JES2 system commands through the ESM. These commands are subject to various types of potential abuse. For this reason, it is necessary to place restrictions on the JES2 system commands that can be entered by particular operators.<br />
+<br />
+Some commands are particularly dangerous and should only be used when less drastic options have been exhausted. Misuse of these commands can create a situation in which the only recovery is an IPL.<br />
+<br />
+To control access to JES2 system commands, apply the following:<br />
+implementing security:<br />
+<br />
+Define the JES2.** resource in the OPERCMDS class with an access of NONE and all access is logged.<br />
+<br />
+Define the JES2 system commands as specified in the IBM z/OS JES2 Commands to be restricted to the appropriate personnel (e.g., operations staff, systems programming personnel, general users), as determined in the documented site Security Plan.<br />
+<br />
+Define the JES2 system commands with proper logging as determined in the documented site Security Plan.<br />
+<br />
+Note: Display commands and others as deemed by the site IAW site security plan may be allowed for all users with no logging. <br />
+<br />
+Build a command file based on the referenced JES2 Command Table. A sample of the commands in the command file is provided here:<br />
+<br />
+RDEF OPERCMDS JES2.** UACC(NONE) OWNER(ADMIN) AUDIT(ALL(READ)) DATA('REQUIRED BY SRR PDI ZJES0052')<br />
+<br />
+RDEF OPERCMDS JES2.&lt;command&gt;.** UACC(NONE) OWNER(ADMIN) AUDIT(ALL(READ)) DATA('REQUIRED BY SRR PDI ZJES0052')<br />
+PE JES2.&lt;command&gt;.** CL(OPERCMDS) ID(&lt;syspsmpl&gt;) ACC(U)<br />
+<br />
+SETR RACL(OPERCMDS) REF</p><h2>Check Contents</h2><p>From the ISPF Command Shell enter:<br />
+RList OPERCMDS *<br />
+<br />
+If the JES2.** resource is defined to the OPERCMDS class with an access of NONE and all access is logged, this is not a finding.<br />
+<br />
+If access to JES2 system commands defined in the IBM z/OS JES2 Commands is restricted to the appropriate personnel (e.g., operations staff, systems programming personnel, general users), as determined in the documented site Security Plan, this is not a finding.<br />
+<br />
+If access to specific JES2 system commands is logged as indicated in the documented site Security Plan, this is not a finding.<br />
+<br />
+Note: Display commands and others as deemed by the site IAW site security plan may be allowed for all users with no logging.</p><h2>Vulnerability Number</h2><p>V-223754</p><h2>Documentable</h2><p>False</p><h2>Rule Version</h2><p>RACF-JS-000100</p><h2>Severity Override Guidance</h2><p>From the ISPF Command Shell enter:<br />
+RList OPERCMDS *<br />
+<br />
+If the JES2.** resource is defined to the OPERCMDS class with an access of NONE and all access is logged, this is not a finding.<br />
+<br />
+If access to JES2 system commands defined in the IBM z/OS JES2 Commands is restricted to the appropriate personnel (e.g., operations staff, systems programming personnel, general users), as determined in the documented site Security Plan, this is not a finding.<br />
+<br />
+If access to specific JES2 system commands is logged as indicated in the documented site Security Plan, this is not a finding.<br />
+<br />
+Note: Display commands and others as deemed by the site IAW site security plan may be allowed for all users with no logging.</p><h2>Check Content Reference</h2><p>M</p><h2>Target Key</h2><p>4101</p></body></html>

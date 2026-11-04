@@ -1,0 +1,107 @@
+<!doctype html><html lang="en"><head><meta charset="utf-8"><title>STIGQter: STIG Check Details: SV-225627r1146209_rule: WebSphere MQ started tasks are not defined in accordance with the proper security requirements.</title><link rel="icon" type="image/svg+xml" href="STIGQter.svg" /><script async src="https://www.googletagmanager.com/gtag/js?id=UA-31381839-2"></script><script src="include.js"></script><script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-4110907817782130" crossorigin="anonymous"></script></head><body><div><img src="STIGQter.svg" alt="STIGQter" style="height:1em;" /> <a href="https://www.stigqter.com/">STIGQter</a>: <a href="main.html">STIG Summary</a>: <a href="U_zOS_WebsphereMQ_for_TSS_STIG_V7R3_Manual-xccdf.html">zOS WebSphere MQ for TSS Security Technical Implementation Guide Version: 7 Release: 3 Benchmark Date: 01 Jul 2026</a>:</div> <h1>WebSphere MQ started tasks are not defined in accordance with the proper security requirements.</h1><h2>DISA Rule</h2><p>SV-225627r1146209_rule</p><h2>Vulnerability Number</h2><p>V-225627</p><h2>Group Title</h2><p>SRG-OS-000104</p><h2>Rule Version</h2><p>ZWMQ0030</p><h2>Severity</h2><p>CAT II</p><h2>CCI(s)</h2><ul><li>CCI-000764 - Uniquely identify and authenticate organizational users and associate that unique identification with processes acting on behalf of those users.</li></ul><h2>Weight</h2><p>10</p><h2>Fix Recommendation</h2><p>Review WebSphere MQ started tasks and ensure the following items are in effect:<br />
+<br />
+Note: ssid is the queue manager name (a.k.a., subsystem identifier).<br />
+<br />
+ssidMSTR is the name of a queue manager STC.<br />
+ssidCHIN is the name of a distributed queuing (a.k.a., channel initiator) STC.<br />
+<br />
+Each WebSphere MQ started task is associated with a unique ACID.<br />
+<br />
+Each WebSphere MQ started task is defined to the STC record with a unique ACID.<br />
+<br />
+Each ssidMSTR STC ACID has a corresponding WebSphere MQ MASTFAC as defined in the z/OS.<br />
+<br />
+For example, a Started Task Table entry exists for each queue manager started task procedure xxxxMSTR and distributed queuing started task procedure xxxxCHIN. A corresponding userid for each started task exists. Queue manager and channel initiator started tasks will not be defined with the BYPASS attribute.<br />
+<br />
+WebSphere MQ queue manager facilities are defined using the control options as specified below:<br />
+<br />
+Define each queue manager xxxxMSTR to the TOP SECRET Facility Matrix Table using the following sample commands:<br />
+<br />
+FACILITY(USERxx=NAME=xxxxMSTR)<br />
+FACILITY(xxxxMSTR=MODE=FAIL,PGM=CSQ,ID=xx)<br />
+FACILITY(xxxxMSTR=ACTIVE,SHRPRF,ASUBM,NOABEND)<br />
+FACILITY(xxxxMSTR=MULTUSER,XDEF,LUMSG,STMSG,SIGN(S))<br />
+FACILITY(xxxxMSTR=INSTDATA,NORNDPW,AUTHINIT)<br />
+FACILITY(xxxxMSTR=NOPROMPT,NOAUDIT,RES,WARNPW)<br />
+FACILITY(xxxxMSTR=NOTSOC,LCFTRANS,IJU,MSGLC,NOTRACE)<br />
+FACILITY(xxxxMSTR=NOEODINIT,NODORMPW,NONPWR)<br />
+(INIT,SMF,MSG,SEC9))<br />
+FACILITY(xxxxMSTR=DOWN=GLOBAL,LOCKTIME=00,DEFACID=(*NONE*))</p><h2>Check Contents</h2><p>Refer to the following reports produced by the TSS Data Collection:<br />
+<br />
+- TSSCMDS.RPT(#STC).<br />
+- TSSCMDS.RPT(@ACIDS).<br />
+- TSSCMDS.RPT(FACLIST) - Preferred report containing all control option values in effect including default values.<br />
+- TSSCMDS.RPT(TSSPRMFL) - Alternate report containing only control option values explicitly coded at TSS startup.<br />
+<br />
+Note: The FACLIST report must be created by security personnel. The TSSPRMFL report can be used if security personnel have not executed the required steps documented in the TSS Data Collection.<br />
+<br />
+Note: ssid is the queue manager name (a.k.a., subsystem identifier).<br />
+<br />
+Provide a list of all WebSphere MQ Subsystem Ids (Queue managers) and Release levels.<br />
+<br />
+Review WebSphere MQ started tasks and ensure the following items are in effect, this is not a finding. <br />
+<br />
+For ssidMSTR<br />
+FACILITY(STC, BATCH)<br />
+PASSWORD(xxxxxxxx,0)<br />
+SOURCE(INTRDR)<br />
+NOSUSPEND<br />
+MASTFAC(ssidMSTR)<br />
+<br />
+For ssidCHIN<br />
+FACILITY(STC, BATCH)<br />
+PASSWORD(xxxxxxxx,0)<br />
+SOURCE(INTRDR)<br />
+NOSUSPEND<br />
+<br />
+WebSphere MQ queue manager facilities is defined to the Facility Matrix Table using the following sample commands:<br />
+<br />
+FAC(USERxx=NAME=ssidMSTR,MODE=FAIL,PGM=CSQ,ID=xx,ACTIVE)<br />
+FAC(ssidMSTR=SHRPRF,ASUBM,NOABEND,MULTUSER,XDEF,LUMSG)<br />
+FAC(ssidMSTR=STMSG,SIGN(S),INSTDATA,NORNDPW,AUTHINIT)<br />
+FAC(ssidMSTR=NOPROMPT,NOAUDIT,RES,WARNPW,NOTSOC)<br />
+FAC(ssidMSTR=LCFTRANS,IJU,MSGLC,NOTRACE,NOEODINIT)<br />
+FAC(ssidMSTR=NODORMPW,NONPWR)<br />
+FAC(ssidMSTR=LOG(INIT,SMF,MSG,SEC9))<br />
+FAC(ssidMSTR=DOWN=GLOBAL,LOCKTIME=00,DEFACID=(*NONE*))<br />
+<br />
+Repeat these steps for each queue manager ssid.</p><h2>Vulnerability Number</h2><p>V-225627</p><h2>Documentable</h2><p>False</p><h2>Rule Version</h2><p>ZWMQ0030</p><h2>Severity Override Guidance</h2><p>Refer to the following reports produced by the TSS Data Collection:<br />
+<br />
+- TSSCMDS.RPT(#STC).<br />
+- TSSCMDS.RPT(@ACIDS).<br />
+- TSSCMDS.RPT(FACLIST) - Preferred report containing all control option values in effect including default values.<br />
+- TSSCMDS.RPT(TSSPRMFL) - Alternate report containing only control option values explicitly coded at TSS startup.<br />
+<br />
+Note: The FACLIST report must be created by security personnel. The TSSPRMFL report can be used if security personnel have not executed the required steps documented in the TSS Data Collection.<br />
+<br />
+Note: ssid is the queue manager name (a.k.a., subsystem identifier).<br />
+<br />
+Provide a list of all WebSphere MQ Subsystem Ids (Queue managers) and Release levels.<br />
+<br />
+Review WebSphere MQ started tasks and ensure the following items are in effect, this is not a finding. <br />
+<br />
+For ssidMSTR<br />
+FACILITY(STC, BATCH)<br />
+PASSWORD(xxxxxxxx,0)<br />
+SOURCE(INTRDR)<br />
+NOSUSPEND<br />
+MASTFAC(ssidMSTR)<br />
+<br />
+For ssidCHIN<br />
+FACILITY(STC, BATCH)<br />
+PASSWORD(xxxxxxxx,0)<br />
+SOURCE(INTRDR)<br />
+NOSUSPEND<br />
+<br />
+WebSphere MQ queue manager facilities is defined to the Facility Matrix Table using the following sample commands:<br />
+<br />
+FAC(USERxx=NAME=ssidMSTR,MODE=FAIL,PGM=CSQ,ID=xx,ACTIVE)<br />
+FAC(ssidMSTR=SHRPRF,ASUBM,NOABEND,MULTUSER,XDEF,LUMSG)<br />
+FAC(ssidMSTR=STMSG,SIGN(S),INSTDATA,NORNDPW,AUTHINIT)<br />
+FAC(ssidMSTR=NOPROMPT,NOAUDIT,RES,WARNPW,NOTSOC)<br />
+FAC(ssidMSTR=LCFTRANS,IJU,MSGLC,NOTRACE,NOEODINIT)<br />
+FAC(ssidMSTR=NODORMPW,NONPWR)<br />
+FAC(ssidMSTR=LOG(INIT,SMF,MSG,SEC9))<br />
+FAC(ssidMSTR=DOWN=GLOBAL,LOCKTIME=00,DEFACID=(*NONE*))<br />
+<br />
+Repeat these steps for each queue manager ssid.</p><h2>Check Content Reference</h2><p>M</p><h2>Target Key</h2><p>4211</p></body></html>

@@ -1,0 +1,26 @@
+<!doctype html><html lang="en"><head><meta charset="utf-8"><title>STIGQter: STIG Check Details: SV-255340r1043182_rule: Azure SQL Database must automatically terminate a user session after organization-defined conditions or trigger events requiring session disconnect.</title><link rel="icon" type="image/svg+xml" href="STIGQter.svg" /><script async src="https://www.googletagmanager.com/gtag/js?id=UA-31381839-2"></script><script src="include.js"></script><script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-4110907817782130" crossorigin="anonymous"></script></head><body><div><img src="STIGQter.svg" alt="STIGQter" style="height:1em;" /> <a href="https://www.stigqter.com/">STIGQter</a>: <a href="main.html">STIG Summary</a>: <a href="U_MS_Azure_SQL_DB_STIG_V2R3_Manual-xccdf.html">Microsoft Azure SQL Database Security Technical Implementation Guide Version: 2 Release: 3 Benchmark Date: 02 Jul 2025</a>:</div> <h1>Azure SQL Database must automatically terminate a user session after organization-defined conditions or trigger events requiring session disconnect.</h1><h2>DISA Rule</h2><p>SV-255340r1043182_rule</p><h2>Vulnerability Number</h2><p>V-255340</p><h2>Group Title</h2><p>SRG-APP-000295-DB-000305</p><h2>Rule Version</h2><p>ASQL-00-010200</p><h2>Severity</h2><p>CAT II</p><h2>CCI(s)</h2><ul><li>CCI-002361 - Automatically terminate a user session after organization-defined conditions or trigger events requiring session disconnect.</li></ul><h2>Weight</h2><p>10</p><h2>Fix Recommendation</h2><p>Determine the situations when a user-initiated database session must be terminated.<br />
+<br />
+Note: The user running the commands shown below requires the KILL DATABASE CONNECTION permission. The server-level principal login has the KILL DATABASE CONNECTION.<br />
+<br />
+In the SQL Server Management Studio ,as an authenticated user connected to master database, run the following command to list all user sessions:<br />
+<br />
+SELECT c.session_id,host_name,program_name,nt_domain, login_name, connect_time, last_request_end_time <br />
+FROM sys.dm_exec_sessions AS s<br />
+JOIN sys.dm_exec_connections AS c ON s.session_id= c.session_id;<br />
+<br />
+https://docs.microsoft.com/en-us/sql/relational-databases/system-dynamic-management-views/sys-dm-exec-sessions-transact-sql?view=azuresqldb-current<br />
+<br />
+Example output:<br />
+76        MyComputer    Microsoft SQL Server Management Studio - Transact-SQL IntelliSense NULL            MyLogin           2022-08-26 20:08:38.170         2022-08-26 20:22:39.697<br />
+<br />
+From the output identify the names of users whose session_ids should be terminated. Using the user for each session to be terminated, run the following command (still in SQL Server Management Studio).<br />
+<br />
+Example to terminate user &quot;MyLogin&quot; sessions from example output:<br />
+KILL &lt;SPID&gt; - where &lt;SPID&gt; is the Session_ID of the session you want to terminate.<br />
+<br />
+Reference:<br />
+https://docs.microsoft.com/en-us/sql/t-sql/language-elements/kill-transact-sql?view=azuresqldb-current</p><h2>Check Contents</h2><p>Review system documentation to obtain the organization's definition of circumstances requiring automatic session termination. If the documentation explicitly states that such termination is not required or is prohibited, this is not a finding.<br />
+<br />
+If the system owner, data owner, or organization requires additional assurance, this is a finding.</p><h2>Vulnerability Number</h2><p>V-255340</p><h2>Documentable</h2><p>False</p><h2>Rule Version</h2><p>ASQL-00-010200</p><h2>Severity Override Guidance</h2><p>Review system documentation to obtain the organization's definition of circumstances requiring automatic session termination. If the documentation explicitly states that such termination is not required or is prohibited, this is not a finding.<br />
+<br />
+If the system owner, data owner, or organization requires additional assurance, this is a finding.</p><h2>Check Content Reference</h2><p>M</p><h2>Target Key</h2><p>5500</p></body></html>

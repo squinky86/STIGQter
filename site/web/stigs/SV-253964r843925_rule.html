@@ -1,0 +1,95 @@
+<!doctype html><html lang="en"><head><meta charset="utf-8"><title>STIGQter: STIG Check Details: SV-253964r843925_rule: If STP is used, the Juniper EX switch must be configured to implement Rapid STP, or Multiple STP, where VLANs span multiple switches with redundant links.</title><link rel="icon" type="image/svg+xml" href="STIGQter.svg" /><script async src="https://www.googletagmanager.com/gtag/js?id=UA-31381839-2"></script><script src="include.js"></script><script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-4110907817782130" crossorigin="anonymous"></script></head><body><div><img src="STIGQter.svg" alt="STIGQter" style="height:1em;" /> <a href="https://www.stigqter.com/">STIGQter</a>: <a href="main.html">STIG Summary</a>: <a href="U_Juniper_EX_Switches_L2S_STIG_V2R5_Manual-xccdf.html">Juniper EX Series Switches Layer 2 Switch Security Technical Implementation Guide Version: 2 Release: 5 Benchmark Date: 01 Jul 2026</a>:</div> <h1>If STP is used, the Juniper EX switch must be configured to implement Rapid STP, or Multiple STP, where VLANs span multiple switches with redundant links.</h1><h2>DISA Rule</h2><p>SV-253964r843925_rule</p><h2>Vulnerability Number</h2><p>V-253964</p><h2>Group Title</h2><p>SRG-NET-000512-L2S-000003</p><h2>Rule Version</h2><p>JUEX-L2-000170</p><h2>Severity</h2><p>CAT II</p><h2>CCI(s)</h2><ul><li>CCI-000366 - Implement the security configuration settings.</li></ul><h2>Weight</h2><p>10</p><h2>Fix Recommendation</h2><p>Configure Rapid STP to be implemented at the access and distribution layers where VLANs span multiple switches.<br />
+<br />
+RSTP:<br />
+set protocols rstp bridge-priority (0..61440 in 4k increments) &lt;&lt; e.g. 0, 4k, 8k...60k<br />
+set protocols rstp interface &lt;interface name&gt; edge<br />
+set protocols rstp interface &lt;interface name-1&gt; mode point-to-point<br />
+set protocols rstp bpdu-block-on-edge<br />
+<br />
+MSTP:<br />
+set protocols mstp configuration-name &lt;name&gt;<br />
+set protocols mstp revision-level (0..65535)<br />
+set protocols mstp max-age (6..40 seconds)<br />
+set protocols mstp hello-time (1..10 seconds)<br />
+set protocols mstp forward-delay (4..30 seconds)<br />
+set protocols mstp bridge-priority (0..61440 in 4k increments) &lt;&lt; e.g. 0, 4k, 8k...60k<br />
+set protocols mstp bpdu-block-on-edge<br />
+set protocols mstp interface &lt;interface name&gt; edge<br />
+set protocols mstp interface &lt;interface name-1&gt; mode point-to-point<br />
+set protocols mstp msti 3 bridge-priority (0..61440 in 4k increments) &lt;&lt; e.g. 0, 4k, 8k...60k<br />
+set protocols mstp msti 3 vlan &lt;VLAN ID 1&gt;<br />
+set protocols mstp msti 3 vlan &lt;VLAN ID 2&gt;</p><h2>Check Contents</h2><p>If STP is required, then review the switch configuration to verify that Rapid STP or Multiple STP has been implemented. RSTP and MSTP are similar, except MSTP is more granular, flexible, and scalable. RTSP and MSTP can be enabled simultaneously, but in general only one STP is configured.<br />
+<br />
+RSTP:<br />
+[edit protocols rstp]<br />
+rstp {<br />
+    bridge-priority (0..61440 in 4k increments); &lt;&lt; e.g. 0, 4k, 8k...60k<br />
+    interface &lt;interface name&gt; {<br />
+        edge;<br />
+    }<br />
+    interface &lt;interface name-1&gt; {<br />
+        mode point-to-point;<br />
+    }<br />
+    bpdu-block-on-edge;<br />
+}<br />
+<br />
+-OR-<br />
+<br />
+MSTP:<br />
+[edit protocols mstp]<br />
+configuration-name &lt;name&gt;;<br />
+revision-level (0..65535);<br />
+max-age (6..40 seconds);<br />
+hello-time (1..10 seconds);<br />
+forward-delay (4..30 seconds);<br />
+bridge-priority (0..61440 in 4k increments); &lt;&lt; e.g. 0, 4k, 8k...60k<br />
+bpdu-block-on-edge;<br />
+interface &lt;interface name&gt; {<br />
+    edge;<br />
+}<br />
+interface &lt;interface name-1&gt; {<br />
+    mode point-to-point;<br />
+}<br />
+msti 3 {<br />
+    bridge-priority (0..61440 in 4k increments); &lt;&lt; e.g. 0, 4k, 8k...60k<br />
+    vlan [ vlan-id-1 vlan-id-2 ];<br />
+}<br />
+ <br />
+If Rapid STP or Multiple STP has not been implemented where an STP is required, this is a finding.</p><h2>Vulnerability Number</h2><p>V-253964</p><h2>Documentable</h2><p>False</p><h2>Rule Version</h2><p>JUEX-L2-000170</p><h2>Severity Override Guidance</h2><p>If STP is required, then review the switch configuration to verify that Rapid STP or Multiple STP has been implemented. RSTP and MSTP are similar, except MSTP is more granular, flexible, and scalable. RTSP and MSTP can be enabled simultaneously, but in general only one STP is configured.<br />
+<br />
+RSTP:<br />
+[edit protocols rstp]<br />
+rstp {<br />
+    bridge-priority (0..61440 in 4k increments); &lt;&lt; e.g. 0, 4k, 8k...60k<br />
+    interface &lt;interface name&gt; {<br />
+        edge;<br />
+    }<br />
+    interface &lt;interface name-1&gt; {<br />
+        mode point-to-point;<br />
+    }<br />
+    bpdu-block-on-edge;<br />
+}<br />
+<br />
+-OR-<br />
+<br />
+MSTP:<br />
+[edit protocols mstp]<br />
+configuration-name &lt;name&gt;;<br />
+revision-level (0..65535);<br />
+max-age (6..40 seconds);<br />
+hello-time (1..10 seconds);<br />
+forward-delay (4..30 seconds);<br />
+bridge-priority (0..61440 in 4k increments); &lt;&lt; e.g. 0, 4k, 8k...60k<br />
+bpdu-block-on-edge;<br />
+interface &lt;interface name&gt; {<br />
+    edge;<br />
+}<br />
+interface &lt;interface name-1&gt; {<br />
+    mode point-to-point;<br />
+}<br />
+msti 3 {<br />
+    bridge-priority (0..61440 in 4k increments); &lt;&lt; e.g. 0, 4k, 8k...60k<br />
+    vlan [ vlan-id-1 vlan-id-2 ];<br />
+}<br />
+ <br />
+If Rapid STP or Multiple STP has not been implemented where an STP is required, this is a finding.</p><h2>Check Content Reference</h2><p>M</p><h2>Target Key</h2><p>5478</p></body></html>

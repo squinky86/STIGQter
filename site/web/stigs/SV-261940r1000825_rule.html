@@ -1,0 +1,27 @@
+<!doctype html><html lang="en"><head><meta charset="utf-8"><title>STIGQter: STIG Check Details: SV-261940r1000825_rule: PostgreSQL must generate audit records when categories of information (e.g., classification levels/security levels) are accessed.</title><link rel="icon" type="image/svg+xml" href="STIGQter.svg" /><script async src="https://www.googletagmanager.com/gtag/js?id=UA-31381839-2"></script><script src="include.js"></script><script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-4110907817782130" crossorigin="anonymous"></script></head><body><div><img src="STIGQter.svg" alt="STIGQter" style="height:1em;" /> <a href="https://www.stigqter.com/">STIGQter</a>: <a href="main.html">STIG Summary</a>: <a href="U_CD_Postgres_16_STIG_V1R3_Manual-xccdf.html">Crunchy Data Postgres 16 Security Technical Implementation Guide Version: 1 Release: 3 Benchmark Date: 01 Jul 2026</a>:</div> <h1>PostgreSQL must generate audit records when categories of information (e.g., classification levels/security levels) are accessed.</h1><h2>DISA Rule</h2><p>SV-261940r1000825_rule</p><h2>Vulnerability Number</h2><p>V-261940</p><h2>Group Title</h2><p>SRG-APP-000494-DB-000344</p><h2>Rule Version</h2><p>CD16-00-009600</p><h2>Severity</h2><p>CAT II</p><h2>CCI(s)</h2><ul><li>CCI-000172 - Generate audit records for the event types defined in AU-2 c that include the audit record content defined in AU-3.</li></ul><h2>Weight</h2><p>10</p><h2>Fix Recommendation</h2><p>Note: The following instructions use the PGDATA and PGVER environment variables. Refer to APPENDIX-F for instructions on configuring PGDATA and APPENDIX-H for PGVER. <br />
+<br />
+The DBMS (PostgreSQL) can be configured to audit these requests using pgaudit. Refer to supplementary content APPENDIX-B for documentation on installing pgaudit. <br />
+<br />
+With pgaudit installed the following configurations can be made:<br />
+<br />
+$ sudo su - postgres  <br />
+<br />
+$ vi ${PGDATA?}/postgresql.conf  <br />
+<br />
+Add the following parameters (or edit existing parameters):  <br />
+<br />
+pgaudit.log = 'ddl, write, role'  <br />
+<br />
+As the system administrator, reload the server with the new configuration:  <br />
+<br />
+$ sudo systemctl reload postgresql- ${PGVER?}</p><h2>Check Contents</h2><p>As the database administrator (shown here as &quot;postgres&quot;), run the following SQL:<br />
+<br />
+$ sudo su - postgres<br />
+$ psql -c &quot;SHOW pgaudit.log&quot;<br />
+<br />
+If pgaudit.log does not contain, &quot;ddl, write, role&quot;, this is a finding.</p><h2>Vulnerability Number</h2><p>V-261940</p><h2>Documentable</h2><p>False</p><h2>Rule Version</h2><p>CD16-00-009600</p><h2>Severity Override Guidance</h2><p>As the database administrator (shown here as &quot;postgres&quot;), run the following SQL:<br />
+<br />
+$ sudo su - postgres<br />
+$ psql -c &quot;SHOW pgaudit.log&quot;<br />
+<br />
+If pgaudit.log does not contain, &quot;ddl, write, role&quot;, this is a finding.</p><h2>Check Content Reference</h2><p>M</p><h2>Target Key</h2><p>5598</p></body></html>

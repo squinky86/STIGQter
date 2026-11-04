@@ -1,0 +1,102 @@
+<!doctype html><html lang="en"><head><meta charset="utf-8"><title>STIGQter: STIG Check Details: SV-239882r991802_rule: The Cisco ASA must be configured to block outbound traffic containing denial-of-service (DoS) attacks by ensuring an intrusion prevention policy has been applied to outbound communications traffic.</title><link rel="icon" type="image/svg+xml" href="STIGQter.svg" /><script async src="https://www.googletagmanager.com/gtag/js?id=UA-31381839-2"></script><script src="include.js"></script><script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-4110907817782130" crossorigin="anonymous"></script></head><body><div><img src="STIGQter.svg" alt="STIGQter" style="height:1em;" /> <a href="https://www.stigqter.com/">STIGQter</a>: <a href="main.html">STIG Summary</a>: <a href="U_Cisco_ASA_IPS_STIG_V2R1_Manual-xccdf.html">Cisco ASA IPS Security Technical Implementation Guide Version: 2 Release: 1 Benchmark Date: 24 Jul 2024</a>:</div> <h1>The Cisco ASA must be configured to block outbound traffic containing denial-of-service (DoS) attacks by ensuring an intrusion prevention policy has been applied to outbound communications traffic.</h1><h2>DISA Rule</h2><p>SV-239882r991802_rule</p><h2>Vulnerability Number</h2><p>V-239882</p><h2>Group Title</h2><p>SRG-NET-000192-IDPS-00140</p><h2>Rule Version</h2><p>CASA-IP-000180</p><h2>Severity</h2><p>CAT II</p><h2>CCI(s)</h2><ul><li>CCI-001095 - Manage capacity, bandwidth, or other redundancy to limit the effects of information flooding types of denial of service attacks.</li><li>CCI-004866 - Employ organization-defined controls by type of denial-of-service to achieve the denial-of-service objective.</li></ul><h2>Weight</h2><p>10</p><h2>Fix Recommendation</h2><p>Configure access control rules to block noncompliant traffic.<br />
+<br />
+Step 1: Navigate to  Configuration &gt;&gt; ASA FirePOWER Configuration &gt;&gt; Policies &gt;&gt; Access Control Policy. The Access Control Policy page appears.<br />
+<br />
+Step 2: Click the edit icon next to the access control policy configured for intrusion inspection using access control rules.<br />
+<br />
+Step 3: Click the edit icon next to the rule you want to edit. The access control rule editor appears.<br />
+<br />
+Step 4: Set the rule action Interactive Block or Interactive Block with reset.<br />
+<br />
+Step 5: Select the Inspection tab. The Inspection tab appears.<br />
+<br />
+Step 6: Select a system-provided or custom intrusion policy.<br />
+<br />
+Step 7: Click Save to save the rule.<br />
+---------------------------------------------------<br />
+Configure the ASA to redirect all traffic to the FirePOWER module in inline mode as shown in the example below.<br />
+<br />
+Step 1: Configure access list for all traffic.<br />
+<br />
+ASA1(config)# access-list FIREPOWER_REDIRECT extended permit ip any any<br />
+<br />
+Step 2: Create a class-map in order to match the traffic on an access list.<br />
+<br />
+ASA1(config)# class-map FIREPOWER_SFR <br />
+ASA1(config-cmap)# match access-list FIREPOWER_REDIRECT<br />
+<br />
+Step 3: Configure deployment mode as inline.<br />
+<br />
+ASA1(config)# policy-map global_policy <br />
+ASA1(config-pmap)# class FIREPOWER_SFR<br />
+ASA1(config-pmap-c)# sfr fail-open</p><h2>Check Contents</h2><p>Verify that an intrusion policy has been applied to access control rules.<br />
+<br />
+Step 1: Navigate to  Configuration &gt;&gt; ASA FirePOWER Configuration &gt;&gt; Policies &gt;&gt; Access Control Policy. The Access Control Policy page appears.<br />
+<br />
+Step 2: Click the edit icon next to the access control policy configured for intrusion inspection using access control rules.<br />
+<br />
+Step 3: Click the edit icon next to the rule you want to view. The access control rule editor appears.<br />
+<br />
+Step 4: Verify that the rule action is set to Interactive Block or Interactive Block with reset.<br />
+<br />
+Step 5: Select the Inspection tab. The Inspection tab appears.<br />
+<br />
+Step 6: Verify that a system-provided or custom intrusion policy has been selected.<br />
+<br />
+Note: An access control policy can have multiple access control rules associated with intrusion policies.<br />
+---------------------------------------------------<br />
+Verify that the ASA is configured to redirect all traffic to the FirePOWER service module.<br />
+<br />
+Step 1: Verify that the FirePOWER service module has been deployed in inline mode as shown in the example below.<br />
+<br />
+policy-map global_policy <br />
+ class FIREPOWER_SFR<br />
+  sfr fail-open<br />
+<br />
+Step 2: Verify that all traffic is redirected.<br />
+<br />
+access-list FIREPOWER_REDIRECT extended permit ip any any<br />
+…<br />
+…<br />
+…<br />
+class-map FIREPOWER_SFR <br />
+ match access-list FIREPOWER_REDIRECT<br />
+<br />
+Note: Inbound and outbound traffic that is allowed by the ASA firewall is forwarded to the FirePOWER module. If the Cisco ASA FirePOWER module is configured in inline mode, the packet is inspected and dropped if it does not conform to access control policies. If the packet is compliant with access control policies, it is sent back to the ASA firewall for processing.<br />
+<br />
+If the ASA is not configured to block outbound traffic containing DoS attacks by ensuring an intrusion prevention policy has been applied to outbound communications traffic, this is a finding.</p><h2>Vulnerability Number</h2><p>V-239882</p><h2>Documentable</h2><p>False</p><h2>Rule Version</h2><p>CASA-IP-000180</p><h2>Severity Override Guidance</h2><p>Verify that an intrusion policy has been applied to access control rules.<br />
+<br />
+Step 1: Navigate to  Configuration &gt;&gt; ASA FirePOWER Configuration &gt;&gt; Policies &gt;&gt; Access Control Policy. The Access Control Policy page appears.<br />
+<br />
+Step 2: Click the edit icon next to the access control policy configured for intrusion inspection using access control rules.<br />
+<br />
+Step 3: Click the edit icon next to the rule you want to view. The access control rule editor appears.<br />
+<br />
+Step 4: Verify that the rule action is set to Interactive Block or Interactive Block with reset.<br />
+<br />
+Step 5: Select the Inspection tab. The Inspection tab appears.<br />
+<br />
+Step 6: Verify that a system-provided or custom intrusion policy has been selected.<br />
+<br />
+Note: An access control policy can have multiple access control rules associated with intrusion policies.<br />
+---------------------------------------------------<br />
+Verify that the ASA is configured to redirect all traffic to the FirePOWER service module.<br />
+<br />
+Step 1: Verify that the FirePOWER service module has been deployed in inline mode as shown in the example below.<br />
+<br />
+policy-map global_policy <br />
+ class FIREPOWER_SFR<br />
+  sfr fail-open<br />
+<br />
+Step 2: Verify that all traffic is redirected.<br />
+<br />
+access-list FIREPOWER_REDIRECT extended permit ip any any<br />
+…<br />
+…<br />
+…<br />
+class-map FIREPOWER_SFR <br />
+ match access-list FIREPOWER_REDIRECT<br />
+<br />
+Note: Inbound and outbound traffic that is allowed by the ASA firewall is forwarded to the FirePOWER module. If the Cisco ASA FirePOWER module is configured in inline mode, the packet is inspected and dropped if it does not conform to access control policies. If the packet is compliant with access control policies, it is sent back to the ASA firewall for processing.<br />
+<br />
+If the ASA is not configured to block outbound traffic containing DoS attacks by ensuring an intrusion prevention policy has been applied to outbound communications traffic, this is a finding.</p><h2>Check Content Reference</h2><p>M</p><h2>Target Key</h2><p>5341</p></body></html>

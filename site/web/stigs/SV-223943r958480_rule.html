@@ -1,0 +1,62 @@
+<!doctype html><html lang="en"><head><meta charset="utf-8"><title>STIGQter: STIG Check Details: SV-223943r958480_rule: IBM z/OS must properly protect MCS console userid(s).</title><link rel="icon" type="image/svg+xml" href="STIGQter.svg" /><script async src="https://www.googletagmanager.com/gtag/js?id=UA-31381839-2"></script><script src="include.js"></script><script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-4110907817782130" crossorigin="anonymous"></script></head><body><div><img src="STIGQter.svg" alt="STIGQter" style="height:1em;" /> <a href="https://www.stigqter.com/">STIGQter</a>: <a href="main.html">STIG Summary</a>: <a href="U_IBM_zOS_TSS_STIG_V9R9_Manual-xccdf.html">IBM z/OS TSS Security Technical Implementation Guide Version: 9 Release: 9 Benchmark Date: 01 Jul 2026</a>:</div> <h1>IBM z/OS must properly protect MCS console userid(s).</h1><h2>DISA Rule</h2><p>SV-223943r958480_rule</p><h2>Vulnerability Number</h2><p>V-223943</p><h2>Group Title</h2><p>SRG-OS-000096-GPOS-00050</p><h2>Rule Version</h2><p>TSS0-ES-000700</p><h2>Severity</h2><p>CAT II</p><h2>CCI(s)</h2><ul><li>CCI-000382 - Configure the system to prohibit or restrict the use of organization-defined prohibited or restricted functions, system ports, protocols, software, and/or services.</li></ul><h2>Weight</h2><p>10</p><h2>Fix Recommendation</h2><p>Review the MCS console resources defined to z/OS and the ACP, and ensure they conform to those outlined below.<br />
+<br />
+Each console defined in the currently active CONSOLxx parmlib member in EXAM.RPT(PARMLIB) is associated with a valid TSS ACID.<br />
+<br />
+Each console ACID has no special privileges and/or attributes (e.g., BYPASSING, CONSOLE, etc.).<br />
+<br />
+Each console ACID has no accesses to interactive on-line facilities (e.g., TSO, CICS, etc.; excluding VTAM SMCS consoles). <br />
+<br />
+Each console can have the Facility of CONSOLE.<br />
+<br />
+Each console ACID will be restricted from accessing all data sets and resources except MVS.MCSOPER.consolename in the OPERCMDS resource class and consolename in the CONSOLE resource class.<br />
+<br />
+NOTE: If LOGON(AUTO) is specified in the currently active CONSOLxx parmlib member, additional access may be required. Permissions for the console ACIDs and/or console profile may be given with access READ to MVS.CONTROL, MVS.DISPLAY, MVS.MONITOR, and MVS.STOPMN OPERCMDS resource.<br />
+<br />
+Example: (These are only examples, not requirements.)<br />
+<br />
+TSS CREATE(consnoautolog) TYPE(PROFILE) <br />
+NAME('MCS consoles with no autolog')<br />
+DEPT('SYS1')<br />
+<br />
+TSS CREATE(consautolog) TYPE(PROFILE) -<br />
+NAME('MCS consoles with autolog') -<br />
+DEPT('SYS1')<br />
+<br />
+TSS CREATE(consname) NAME('MCS console name') -<br />
+FACILITY(CONSOLE) PASSWORD(password,0) -<br />
+PROFILE(consgroup)<br />
+<br />
+TSS PER(consautolog) OPERCMDS(MVS.CONTROL) ACCESS(READ)<br />
+TSS PER(consautolog) OPERCMDS(MVS.DISPLAY) ACCESS(READ)<br />
+TSS PER(consautolog) OPERCMDS(MVS.MONITOR) ACCESS(READ)<br />
+TSS PER(consautolog) OPERCMDS(MVS.STOPMN) ACCESS(READ)<br />
+<br />
+TSS PER(consname) SYSCONS(consname) ACCESS(READ)</p><h2>Check Contents</h2><p>Refer to IEASYS00 to determine correct CONSOLxx member.<br />
+<br />
+Examine the CONSOLxx member.<br />
+<br />
+If the following guidance is true, this is not a finding.<br />
+<br />
+Each console defined in the currently active CONSOLxx parmlib member in EXAM.RPT(PARMLIB) is associated with a valid TSS ACID.<br />
+<br />
+Each console ACID has no special privileges and/or attributes (e.g., BYPASSING, CONSOLE, etc.; excluding VTAM SMCS consoles).<br />
+<br />
+Each console ACID has no accesses to interactive on-line facilities (e.g., TSO, CICS, etc.; excluding VTAM SMCS consoles). Each console can have the Facility of CONSOLE.<br />
+<br />
+Each console ACID will be restricted from accessing all data sets and resources except MVS.MCSOPER.consolename in the OPERCMDS resource class and consolename in the CONSOLE resource class.<br />
+<br />
+NOTE: If LOGON(AUTO) is specified in the currently active CONSOLxx parmlib member, additional access may be required. Permissions for the console ACIDs and/or console profile may be given with access READ to MVS.CONTROL, MVS.DISPLAY, MVS.MONITOR, and MVS.STOPMN OPERCMDS resource.</p><h2>Vulnerability Number</h2><p>V-223943</p><h2>Documentable</h2><p>False</p><h2>Rule Version</h2><p>TSS0-ES-000700</p><h2>Severity Override Guidance</h2><p>Refer to IEASYS00 to determine correct CONSOLxx member.<br />
+<br />
+Examine the CONSOLxx member.<br />
+<br />
+If the following guidance is true, this is not a finding.<br />
+<br />
+Each console defined in the currently active CONSOLxx parmlib member in EXAM.RPT(PARMLIB) is associated with a valid TSS ACID.<br />
+<br />
+Each console ACID has no special privileges and/or attributes (e.g., BYPASSING, CONSOLE, etc.; excluding VTAM SMCS consoles).<br />
+<br />
+Each console ACID has no accesses to interactive on-line facilities (e.g., TSO, CICS, etc.; excluding VTAM SMCS consoles). Each console can have the Facility of CONSOLE.<br />
+<br />
+Each console ACID will be restricted from accessing all data sets and resources except MVS.MCSOPER.consolename in the OPERCMDS resource class and consolename in the CONSOLE resource class.<br />
+<br />
+NOTE: If LOGON(AUTO) is specified in the currently active CONSOLxx parmlib member, additional access may be required. Permissions for the console ACIDs and/or console profile may be given with access READ to MVS.CONTROL, MVS.DISPLAY, MVS.MONITOR, and MVS.STOPMN OPERCMDS resource.</p><h2>Check Content Reference</h2><p>M</p><h2>Target Key</h2><p>4102</p></body></html>

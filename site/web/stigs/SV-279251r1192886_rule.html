@@ -1,0 +1,131 @@
+<!doctype html><html lang="en"><head><meta charset="utf-8"><title>STIGQter: STIG Check Details: SV-279251r1192886_rule: The Edge SWG must be configured to use at least two authentication servers for the purpose of authenticating users prior to granting administrative access.</title><link rel="icon" type="image/svg+xml" href="STIGQter.svg" /><script async src="https://www.googletagmanager.com/gtag/js?id=UA-31381839-2"></script><script src="include.js"></script><script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-4110907817782130" crossorigin="anonymous"></script></head><body><div><img src="STIGQter.svg" alt="STIGQter" style="height:1em;" /> <a href="https://www.stigqter.com/">STIGQter</a>: <a href="main.html">STIG Summary</a>: <a href="U_SYM_Edge_SWG_NDM_STIG_V1R2_Manual-xccdf.html">Symantec Edge SWG NDM Security Technical Implementation Guide Version: 1 Release: 2 Benchmark Date: 01 Apr 2026</a>:</div> <h1>The Edge SWG must be configured to use at least two authentication servers for the purpose of authenticating users prior to granting administrative access.</h1><h2>DISA Rule</h2><p>SV-279251r1192886_rule</p><h2>Vulnerability Number</h2><p>V-279251</p><h2>Group Title</h2><p>SRG-APP-000080-NDM-000220</p><h2>Rule Version</h2><p>SYME-ND-000190</p><h2>Severity</h2><p>CAT I</p><h2>CCI(s)</h2><ul><li>CCI-000166 - Provide irrefutable evidence that an individual (or process acting on behalf of an individual) falsely denying having performed organization-defined actions to be covered by non-repudiation.</li><li>CCI-000370 - Manage configuration settings for organization-defined system components using organization-defined automated mechanisms.</li><li>CCI-000163 - Protect audit information from unauthorized modification.</li><li>CCI-000164 - Protect audit information from unauthorized deletion.</li><li>CCI-001493 - Protect audit tools from unauthorized access.</li><li>CCI-001494 - Protect audit tools from unauthorized modification.</li><li>CCI-001495 - Protect audit tools from unauthorized deletion.</li><li>CCI-003992 - Prevent the installation of organization-defined software and firmware components without verification that the component has been digitally signed using a certificate that is recognized and approved by the organization.</li><li>CCI-001499 - Limit privileges to change software resident within software libraries.</li><li>CCI-001941 - Implement replay-resistant authentication mechanisms for access to privileged accounts and/or non-privileged accounts.</li><li>CCI-001199 - Protects the confidentiality and/or integrity of organization-defined information at rest.</li><li>CCI-002169 - Enforce a role-based access control policy over defined subjects and objects based upon organization-defined roles and users authorized to assume such roles.</li><li>CCI-000366 - Implement the security configuration settings.</li><li>CCI-002883 - Restrict the use of maintenance tools to authorized personnel only.</li><li>CCI-000765 - Implement multifactor authentication for network access to privileged accounts.</li><li>CCI-000185 - For public key-based authentication, validate certificates by constructing and verifying a certification path to an accepted trust anchor including checking certificate status information.</li><li>CCI-000187 - For public key-based authentication, map the authenticated identity to the account of the individual or group.</li><li>CCI-000764 - Uniquely identify and authenticate organizational users and associate that unique identification with processes acting on behalf of those users.</li><li>CCI-004046 - Implement multi-factor authentication for local; network; and/or remote access to privileged accounts; and/or non-privileged accounts such that one of the factors is provided by a device separate from the system gaining access.</li><li>CCI-004047 - Implement multi-factor authentication for local; network; and/or remote access to privileged accounts; and/or non-privileged accounts such that the device meets organization-defined strength of mechanism requirements.</li></ul><h2>Weight</h2><p>10</p><h2>Fix Recommendation</h2><p>In the Edge SWG Web UI, navigate to the Configuration tab.<br />
+<br />
+1. Under the &quot;Authentication&quot; section under &quot;Configuration and Realms and Domains&quot;, click &quot;Add Realm and LDAP&quot;.<br />
+2. Add a name.<br />
+3. Under &quot;Primary Server&quot;, enter the fully qualified domain name (FDQN) of the LDAPS primary domain controller (e.g., dc1.dod.mil), then enter the port number, e.g., 636.<br />
+4. Click &quot;Enable SSL&quot;.<br />
+5. Select the SSL device profile created in SYME-ND-000800.<br />
+6. Under &quot;User attribute Type&quot;: userPrincipalName.<br />
+7. Click &quot;Add DN&quot;.<br />
+8. Enter the path of the domain (e.g., dc=dod,dc=mil).<br />
+9. Click &quot;Show&quot; under &quot;Advanced Settings&quot;.<br />
+10. Click &quot;Use the same refresh time for all&quot; and set the refresh time to 10 seconds.<br />
+11. Set the Inactivity Timeout to 600 seconds.<br />
+12. Select &quot;Local&quot; for Group Comparison. <br />
+13. Under Alternate Server, type the secondary LDAPS domain controller (e.g., dc2.dod.mil), then enter the port number, e.g., 636.<br />
+14. Under &quot;Search&quot;, click &quot;only Authorized&quot; and add the search user and password (i.e., the LDAPS service account) in DN format (e.g., CN=broadcom_svc,OU=BROADCOM,DC=dod,DC=mil)<br />
+15. Under &quot;Groups&quot; select &quot;user&quot; for membership type and attribute as member of.<br />
+16. Under &quot;Object Classes&quot; ensure &quot;container&quot; is selected.<br />
+17. Click the &quot;test Configuration&quot; to ensure all configuration has been entered correctly.<br />
+<br />
+In the Edge SWG Web UI, navigate to the Configuration tab.<br />
+<br />
+1. Under the Authentication section under &quot;Configuration and Realms and Domains&quot;, click &quot;Add Realm and Certificate&quot;.<br />
+2. Make the name: &quot;CAC&quot;<br />
+3. Under username enter: $(SubjectAltName.OtherName)<br />
+4. Under full username enter: $(SubjectAltName.OtherName.1)<br />
+5. Ensure &quot;Authorization Realm&quot; is checked and the previous LDAPS realm is selected. <br />
+6. Under &quot;Authorization Username&quot;, select &quot;Determined by Search&quot;.<br />
+7. Ensure the LDAPS search realm is selected.<br />
+8. Enter the following in the search filter: (userPrincipalName=$(cs-username)) and ensure the user attribute &quot;Use FQDN&quot; is selected.<br />
+9. Click &quot;Show&quot; advanced settings.<br />
+10. Ensure &quot;Use persistent cookies&quot; and &quot;Verify the IP address in the cookie&quot; are not checked.<br />
+<br />
+In the Edge SWG Web UI, navigate to the Configuration tab.<br />
+<br />
+1. Under &quot;Services&quot;, click &quot;Proxy Services&quot;.<br />
+2. Click &quot;Add Service&quot;.<br />
+3. Name the service &quot;CAC-MC-Notify&quot;.<br />
+4. Under &quot;Proxy type&quot;, select &quot;HTTPS Reverse Proxy&quot;.<br />
+5. Under &quot;Key Ring and CCL&quot;, use those created under SYME-ND-000800.<br />
+6. Ensure SSL version is TLS 1.2 or 1.3 only.<br />
+7. Under &quot;Listeners&quot;, add the management IPv4 address intercepting on port 444.<br />
+8. Under &quot;Listeners&quot;, add the management IPv6 address intercepting on port 444.<br />
+<br />
+In the Edge SWG Web UI, navigate to the VPM.<br />
+<br />
+1. Go to the Symantec web portal to download the CPL text file called &quot;AdminLoginBanner.txt&quot;, which will be used at https://knowledge.broadcom.com/external/article/388134.<br />
+2. Click &quot;Add Layer&quot;. <br />
+3. Select &quot;CPL&quot;.<br />
+4. Download the exact CPL file hosted on the Symantec website. <br />
+5. Click &quot;Apply Policy&quot; and ensure it loaded correctly.<br />
+<br />
+Go back to the main portion of the VPM.<br />
+<br />
+1. Click &quot;Add Layer&quot;.<br />
+2. Scroll down and select &quot;Admin Access&quot;, then click &quot;Add&quot;.<br />
+3. Locate the Admin Access Layer (1) that was added and click &quot;Add rule&quot;.<br />
+4. Inside of the rule, under &quot;Source&quot;, left-click and select &quot;Set&quot;.<br />
+5. Click &quot;Add new Object&quot;.<br />
+6. Select &quot;Group&quot;.<br />
+7. Under &quot;Group&quot; type in the full LDAPS full Distinguished Name (DN) for the admin group. e.g., CN=broadcom.admins.gsg,OU=BROADCOM,OU=Vendors,DC=dod,DC=local<br />
+8. Under the &quot;Authentication Realm&quot;, select the &quot;CAC Certificate Realm&quot;.<br />
+9. Click &quot;Apply&quot;, then click &quot;Set&quot;.<br />
+10. In the same rule, left-click in the &quot;Service&quot; field and click &quot;Set&quot;.<br />
+11. Select Service Name: HTTPS-console and click &quot;Set&quot;.<br />
+12. In the same rule, left-click in the &quot;Action&quot; field and click &quot;Set&quot;.<br />
+13. Select the action &quot;Allow Read/Write Access&quot; and click &quot;Set&quot;.<br />
+14. Repeat these steps to add various read-only or read-write groups for the HTTPS-console.<br />
+15. For the SSH-Console click &quot;Add rule&quot;.<br />
+16. Inside of the rule, under &quot;Source&quot;, left-click and select &quot;Set&quot;.<br />
+17. Click &quot;Add new Object&quot;.<br />
+18. Select &quot;Group&quot;.<br />
+19. Under the &quot;Group&quot; field type in the full LDAPS full Distinguished Name (DN) for the admin group. e.g., CN=broadcom.admins.gsg,OU=BROADCOM,OU=Vendors,DC=dod,DC=local<br />
+20. Under the &quot;Authentication Realm&quot;, select the &quot;LDAPS&quot; realm; do not select the CAC certificate realm.<br />
+21. Click &quot;Apply&quot;, then click &quot;Set&quot;.<br />
+22. In the same rule, left-click in the &quot;Service&quot; field and click &quot;Set&quot;.<br />
+23. Select &quot;Service Name: SSH-console&quot; and click &quot;Set&quot;.<br />
+24. In the same rule, left-click in the &quot;Action&quot; field and click &quot;Set&quot;.<br />
+25. Select the action &quot;Allow Read/Write Access&quot; and click &quot;Set&quot;.<br />
+26. Repeat these steps to add various read-only or read-write groups for the SSH-console.<br />
+27. Click &quot;Apply Policy&quot; and ensure it loaded correctly.<br />
+<br />
+In the Edge SWG Web UI, navigate to the Configuration tab.<br />
+<br />
+1. Under &quot;Services&quot;, click &quot;Management Services&quot;.<br />
+2. Click to edit the HTTPS-Console.<br />
+3. Ensure the keyring and CCL are those created in SYME-ND-000800.<br />
+4. Check &quot;Verify Client&quot; and select &quot;Apply then save&quot;.<br />
+5. Close, then re-open the browser, then go to the URL associated with the login banner, https://proxy.dod.mil:444.<br />
+6. Once the login banner is presented, click &quot;Accept&quot;.<br />
+7. Select the CAC certificate. Provide the PIN. The user must be authenticated.<br />
+<br />
+Note: If it is unsuccessful, it is possible the LDAPS credential is not valid, the group does not match, or there is an OCSP revocation issue.</p><h2>Check Contents</h2><p>1. In the Edge SWG Web UI, navigate to the Configuration tab.<br />
+2. Go to Services &gt;&gt; Management Services.<br />
+3. Click &quot;Edit&quot; next to HTTPS-console.<br />
+<br />
+Under the &quot;Service Settings&quot;, if &quot;Verify Client&quot; is not checked, this is a finding.<br />
+<br />
+Under the &quot;Authentication&quot; section under &quot;Configuration and Realms and Domains&quot;, if a Certificate Realm is not configured and set with a valid LDAP authorization realm this is a finding.<br />
+<br />
+In the Edge SWG Web UI, navigate to the VPM.<br />
+<br />
+If an Admin Access layer is configured for HTTPS-console, verify the group is derived from the CAC/LDAPS admin group; otherwise, this is a finding.<br />
+<br />
+For the SSH-console, verify the group is derived from the LDAPS admin group; otherwise, this is a finding.<br />
+<br />
+1. Log in to the Edge SWG SSH CLI.<br />
+2. Enter &quot;enable&quot; and &quot;configure terminal&quot;.<br />
+3. Enter &quot;ssh-console&quot; and then &quot;x509-auth&quot;.<br />
+4. Enter &quot;view&quot;. <br />
+<br />
+If &quot;x509 certificate authentication&quot; states &quot;disabled&quot;, this is a finding.</p><h2>Vulnerability Number</h2><p>V-279251</p><h2>Documentable</h2><p>False</p><h2>Rule Version</h2><p>SYME-ND-000190</p><h2>Severity Override Guidance</h2><p>1. In the Edge SWG Web UI, navigate to the Configuration tab.<br />
+2. Go to Services &gt;&gt; Management Services.<br />
+3. Click &quot;Edit&quot; next to HTTPS-console.<br />
+<br />
+Under the &quot;Service Settings&quot;, if &quot;Verify Client&quot; is not checked, this is a finding.<br />
+<br />
+Under the &quot;Authentication&quot; section under &quot;Configuration and Realms and Domains&quot;, if a Certificate Realm is not configured and set with a valid LDAP authorization realm this is a finding.<br />
+<br />
+In the Edge SWG Web UI, navigate to the VPM.<br />
+<br />
+If an Admin Access layer is configured for HTTPS-console, verify the group is derived from the CAC/LDAPS admin group; otherwise, this is a finding.<br />
+<br />
+For the SSH-console, verify the group is derived from the LDAPS admin group; otherwise, this is a finding.<br />
+<br />
+1. Log in to the Edge SWG SSH CLI.<br />
+2. Enter &quot;enable&quot; and &quot;configure terminal&quot;.<br />
+3. Enter &quot;ssh-console&quot; and then &quot;x509-auth&quot;.<br />
+4. Enter &quot;view&quot;. <br />
+<br />
+If &quot;x509 certificate authentication&quot; states &quot;disabled&quot;, this is a finding.</p><h2>Check Content Reference</h2><p>M</p><h2>Target Key</h2><p>5726</p></body></html>

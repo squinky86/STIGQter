@@ -1,0 +1,91 @@
+<!doctype html><html lang="en"><head><meta charset="utf-8"><title>STIGQter: STIG Check Details: SV-215236r958412_rule: AIX must produce audit records containing information to establish what the date, time, and type of events that occurred.</title><link rel="icon" type="image/svg+xml" href="STIGQter.svg" /><script async src="https://www.googletagmanager.com/gtag/js?id=UA-31381839-2"></script><script src="include.js"></script><script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-4110907817782130" crossorigin="anonymous"></script></head><body><div><img src="STIGQter.svg" alt="STIGQter" style="height:1em;" /> <a href="https://www.stigqter.com/">STIGQter</a>: <a href="main.html">STIG Summary</a>: <a href="U_IBM_AIX_7-x_STIG_V3R3_Manual-xccdf.html">IBM AIX 7.x Security Technical Implementation Guide Version: 3 Release: 3 Benchmark Date: 01 Jul 2026</a>:</div> <h1>AIX must produce audit records containing information to establish what the date, time, and type of events that occurred.</h1><h2>DISA Rule</h2><p>SV-215236r958412_rule</p><h2>Vulnerability Number</h2><p>V-215236</p><h2>Group Title</h2><p>SRG-OS-000037-GPOS-00015</p><h2>Rule Version</h2><p>AIX7-00-002001</p><h2>Severity</h2><p>CAT II</p><h2>CCI(s)</h2><ul><li>CCI-000130 - Ensure that audit records containing information that establishes what type of event occurred.</li><li>CCI-000131 - Ensure that audit records containing information that establishes when the event occurred.</li></ul><h2>Weight</h2><p>10</p><h2>Fix Recommendation</h2><p>Reset the audit system with the following command:<br />
+# /usr/sbin/audit shutdown<br />
+<br />
+Start the audit system with the following command:<br />
+# /usr/sbin/audit start</p><h2>Check Contents</h2><p>Check if audit is turned on by running the following command:<br />
+<br />
+# audit query | grep -i auditing<br />
+auditing on<br />
+<br />
+The command should yield the following output:<br />
+auditing on<br />
+<br />
+If the command shows &quot;auditing off&quot;, this is a finding.<br />
+<br />
+The log file can be set by the &quot;trail&quot; variable in /etc/security/audit/config.<br />
+# grep trail /etc/security/audit/config<br />
+        trail = /audit/trail<br />
+<br />
+Note: The default log file is &quot;/audit/trail&quot;.<br />
+<br />
+Use the following command to display the audit events:<br />
+<br />
+# /usr/sbin/auditpr -i &lt;audit log file&gt; -helRtcp <br />
+<br />
+event                     login    status      time                                          command      process  <br />
+--------------- -------- ----------- ------------------------ ------------------------------- -------- <br />
+PROC_Delete     root     OK           Wed Oct 31 23:01:37 2018    audit             9437656  <br />
+FILE_Close           root     OK           Wed Oct 31 23:01:37 2018    auditbin      12255562 <br />
+FILE_Open          root      OK           Wed Oct 31 23:01:37 2018    auditbin      12255562 <br />
+FILE_Read           root      OK           Wed Oct 31 23:01:37 2018    auditbin      12255562 <br />
+FILE_Close          root      OK           Wed Oct 31 23:01:37 2018    auditbin      12255562 <br />
+PROC_Create    root      OK           Wed Oct 31 23:01:44 2018     ksh                12976466 <br />
+FILE_Close          root     OK           Wed Oct 31 23:01:44 2018      ksh                9437658  <br />
+FILE_Open          root     OK           Wed Oct 31 23:01:44 2018     ksh                 9437658  <br />
+FILE_Read           root     OK           Wed Oct 31 23:01:44 2018     ksh                9437658  <br />
+FILE_Close          root     OK           Wed Oct 31 23:01:44 2018     ksh                9437658  <br />
+PROC_Execute  root     OK           Wed Oct 31 23:01:44 2018    ls                    9437658  <br />
+FILE_Open          root     OK           Wed Oct 31 23:01:44 2018    ls                    9437658  <br />
+<br />
+If event type is not displayed, this is a finding. <br />
+<br />
+More information on the command options used above: <br />
+            -e the audit event.<br />
+            -l the login name of the user.<br />
+            -R the audit status.<br />
+            -t the time the record was written.<br />
+            -c the command name.<br />
+            -p the process ID.</p><h2>Vulnerability Number</h2><p>V-215236</p><h2>Documentable</h2><p>False</p><h2>Rule Version</h2><p>AIX7-00-002001</p><h2>Severity Override Guidance</h2><p>Check if audit is turned on by running the following command:<br />
+<br />
+# audit query | grep -i auditing<br />
+auditing on<br />
+<br />
+The command should yield the following output:<br />
+auditing on<br />
+<br />
+If the command shows &quot;auditing off&quot;, this is a finding.<br />
+<br />
+The log file can be set by the &quot;trail&quot; variable in /etc/security/audit/config.<br />
+# grep trail /etc/security/audit/config<br />
+        trail = /audit/trail<br />
+<br />
+Note: The default log file is &quot;/audit/trail&quot;.<br />
+<br />
+Use the following command to display the audit events:<br />
+<br />
+# /usr/sbin/auditpr -i &lt;audit log file&gt; -helRtcp <br />
+<br />
+event                     login    status      time                                          command      process  <br />
+--------------- -------- ----------- ------------------------ ------------------------------- -------- <br />
+PROC_Delete     root     OK           Wed Oct 31 23:01:37 2018    audit             9437656  <br />
+FILE_Close           root     OK           Wed Oct 31 23:01:37 2018    auditbin      12255562 <br />
+FILE_Open          root      OK           Wed Oct 31 23:01:37 2018    auditbin      12255562 <br />
+FILE_Read           root      OK           Wed Oct 31 23:01:37 2018    auditbin      12255562 <br />
+FILE_Close          root      OK           Wed Oct 31 23:01:37 2018    auditbin      12255562 <br />
+PROC_Create    root      OK           Wed Oct 31 23:01:44 2018     ksh                12976466 <br />
+FILE_Close          root     OK           Wed Oct 31 23:01:44 2018      ksh                9437658  <br />
+FILE_Open          root     OK           Wed Oct 31 23:01:44 2018     ksh                 9437658  <br />
+FILE_Read           root     OK           Wed Oct 31 23:01:44 2018     ksh                9437658  <br />
+FILE_Close          root     OK           Wed Oct 31 23:01:44 2018     ksh                9437658  <br />
+PROC_Execute  root     OK           Wed Oct 31 23:01:44 2018    ls                    9437658  <br />
+FILE_Open          root     OK           Wed Oct 31 23:01:44 2018    ls                    9437658  <br />
+<br />
+If event type is not displayed, this is a finding. <br />
+<br />
+More information on the command options used above: <br />
+            -e the audit event.<br />
+            -l the login name of the user.<br />
+            -R the audit status.<br />
+            -t the time the record was written.<br />
+            -c the command name.<br />
+            -p the process ID.</p><h2>Check Content Reference</h2><p>M</p><h2>Target Key</h2><p>4012</p></body></html>

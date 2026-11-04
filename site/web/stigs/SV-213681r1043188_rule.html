@@ -1,0 +1,24 @@
+<!doctype html><html lang="en"><head><meta charset="utf-8"><title>STIGQter: STIG Check Details: SV-213681r1043188_rule: Unless it has been determined that availability is paramount, DB2 must, upon audit failure, cease all auditable activity.</title><link rel="icon" type="image/svg+xml" href="STIGQter.svg" /><script async src="https://www.googletagmanager.com/gtag/js?id=UA-31381839-2"></script><script src="include.js"></script><script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-4110907817782130" crossorigin="anonymous"></script></head><body><div><img src="STIGQter.svg" alt="STIGQter" style="height:1em;" /> <a href="https://www.stigqter.com/">STIGQter</a>: <a href="main.html">STIG Summary</a>: <a href="U_IBM_DB2_V10-5_LUW_STIG_V2R2_Manual-xccdf.html">IBM DB2 V10.5 LUW Security Technical Implementation Guide Version: 2 Release: 2 Benchmark Date: 01 Jul 2026</a>:</div> <h1>Unless it has been determined that availability is paramount, DB2 must, upon audit failure, cease all auditable activity.</h1><h2>DISA Rule</h2><p>SV-213681r1043188_rule</p><h2>Vulnerability Number</h2><p>V-213681</p><h2>Group Title</h2><p>SRG-APP-000109-DB-000049</p><h2>Rule Version</h2><p>DB2X-00-001900</p><h2>Severity</h2><p>CAT II</p><h2>CCI(s)</h2><ul><li>CCI-000140 - Take organization-defined actions upon audit failure include, shutting down the system, overwriting oldest audit records, and stopping the generation of audit records.</li></ul><h2>Weight</h2><p>10</p><h2>Fix Recommendation</h2><p>Drop and recreate the policy with ERROR TYPE as required by the ISSO or run the ALTER AUDIT POLICY command to set the ERROR TYPE as per ISSO requirement. <br />
+<br />
+Run the following command to drop and recreate the policy:<br />
+DB2&gt; DROP AUDIT POLICY &lt;audit2&gt;<br />
+DB2&gt; CREATE AUDIT POLICY &lt;audit2&gt; <br />
+          CATEGORIES EXECUTE WITH DATA STATUS BOTH ERROR TYPE AUDIT<br />
+<br />
+To alter the audit policy:<br />
+DB2&gt; ALTER AUDIT POLICY &lt;audit2&gt; <br />
+          CATEGORIES EXECUTE WITH DATA STATUS BOTH ERROR TYPE AUDIT</p><h2>Check Contents</h2><p>Ask the ISSO whether the system should stay available or stop processing the auditable events.<br />
+<br />
+If the system needs to stay available and the Error Type is set to 'A' for the policies then this is not applicable (NA).<br />
+<br />
+Run the following SQL statement to find the Error type value for all audit policies:<br />
+DB2&gt; SELECT * FROM SYSCAT.AUDITPOLICIES<br />
+<br />
+If the system needs to stop processing the auditable events and Error Type is not set to 'A' then this is a finding.</p><h2>Vulnerability Number</h2><p>V-213681</p><h2>Documentable</h2><p>False</p><h2>Rule Version</h2><p>DB2X-00-001900</p><h2>Severity Override Guidance</h2><p>Ask the ISSO whether the system should stay available or stop processing the auditable events.<br />
+<br />
+If the system needs to stay available and the Error Type is set to 'A' for the policies then this is not applicable (NA).<br />
+<br />
+Run the following SQL statement to find the Error type value for all audit policies:<br />
+DB2&gt; SELECT * FROM SYSCAT.AUDITPOLICIES<br />
+<br />
+If the system needs to stop processing the auditable events and Error Type is not set to 'A' then this is a finding.</p><h2>Check Content Reference</h2><p>M</p><h2>Target Key</h2><p>3989</p></body></html>

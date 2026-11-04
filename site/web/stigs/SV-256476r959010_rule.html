@@ -1,0 +1,37 @@
+<!doctype html><html lang="en"><head><meta charset="utf-8"><title>STIGQter: STIG Check Details: SV-256476r959010_rule: DirectPath I/O must be disabled on the virtual machine (VM) when not required.</title><link rel="icon" type="image/svg+xml" href="STIGQter.svg" /><script async src="https://www.googletagmanager.com/gtag/js?id=UA-31381839-2"></script><script src="include.js"></script><script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-4110907817782130" crossorigin="anonymous"></script></head><body><div><img src="STIGQter.svg" alt="STIGQter" style="height:1em;" /> <a href="https://www.stigqter.com/">STIGQter</a>: <a href="main.html">STIG Summary</a>: <a href="U_VMW_vSphere_7-0_Virtual_Machine_STIG_V1R4_Manual-xccdf.html">VMware vSphere 7.0 Virtual Machine Security Technical Implementation Guide Version: 1 Release: 4 Benchmark Date: 30 Jan 2025</a>:</div> <h1>DirectPath I/O must be disabled on the virtual machine (VM) when not required.</h1><h2>DISA Rule</h2><p>SV-256476r959010_rule</p><h2>Vulnerability Number</h2><p>V-256476</p><h2>Group Title</h2><p>SRG-OS-000480-VMM-002000</p><h2>Rule Version</h2><p>VMCH-70-000028</p><h2>Severity</h2><p>CAT II</p><h2>CCI(s)</h2><ul><li>CCI-000366 - Implement the security configuration settings.</li></ul><h2>Weight</h2><p>10</p><h2>Fix Recommendation</h2><p>From the vSphere Client, select the Virtual Machine, right-click, and go to Edit Settings &gt;&gt; Virtual Hardware tab.<br />
+<br />
+Find the unexpected PCI device returned from the check.<br />
+<br />
+Hover the mouse over the device and click the circled &quot;X&quot; to remove the device. Click &quot;OK&quot;.<br />
+<br />
+or<br />
+<br />
+From a PowerCLI command prompt while connected to the ESXi host or vCenter server, run the following command:<br />
+<br />
+Get-VM &quot;VM Name&quot; | Get-AdvancedSetting -Name pciPassthruX.present | Remove-AdvancedSetting<br />
+<br />
+Note: Change the &quot;X&quot;  value to match the specific setting in the organization's environment.</p><h2>Check Contents</h2><p>From the vSphere Client, select the Virtual Machine, right-click, and go to Edit Settings &gt;&gt; VM Options tab &gt;&gt; Advanced &gt;&gt; Configuration Parameters &gt;&gt; Edit Configuration.<br />
+<br />
+Find any &quot;pciPassthruX.present&quot; value (where &quot;X&quot; is a count starting at 0) and verify it is set to &quot;FALSE&quot; or &quot;&quot;.<br />
+<br />
+or<br />
+<br />
+From a PowerCLI command prompt while connected to the ESXi host or vCenter server, run the following command:<br />
+<br />
+Get-VM &quot;VM Name&quot; | Get-AdvancedSetting -Name &quot;pciPassthru*.present&quot; | Select Entity, Name, Value<br />
+<br />
+If the virtual machine advanced setting &quot;pciPassthruX.present&quot; is present, and the specific device returned is not approved, this is a finding.<br />
+<br />
+If the virtual machine advanced setting &quot;pciPassthruX.present&quot; is not present, this is not a finding.</p><h2>Vulnerability Number</h2><p>V-256476</p><h2>Documentable</h2><p>False</p><h2>Rule Version</h2><p>VMCH-70-000028</p><h2>Severity Override Guidance</h2><p>From the vSphere Client, select the Virtual Machine, right-click, and go to Edit Settings &gt;&gt; VM Options tab &gt;&gt; Advanced &gt;&gt; Configuration Parameters &gt;&gt; Edit Configuration.<br />
+<br />
+Find any &quot;pciPassthruX.present&quot; value (where &quot;X&quot; is a count starting at 0) and verify it is set to &quot;FALSE&quot; or &quot;&quot;.<br />
+<br />
+or<br />
+<br />
+From a PowerCLI command prompt while connected to the ESXi host or vCenter server, run the following command:<br />
+<br />
+Get-VM &quot;VM Name&quot; | Get-AdvancedSetting -Name &quot;pciPassthru*.present&quot; | Select Entity, Name, Value<br />
+<br />
+If the virtual machine advanced setting &quot;pciPassthruX.present&quot; is present, and the specific device returned is not approved, this is a finding.<br />
+<br />
+If the virtual machine advanced setting &quot;pciPassthruX.present&quot; is not present, this is not a finding.</p><h2>Check Content Reference</h2><p>M</p><h2>Target Key</h2><p>5519</p></body></html>

@@ -1,0 +1,70 @@
+<!doctype html><html lang="en"><head><meta charset="utf-8"><title>STIGQter: STIG Check Details: SV-276235r1150008_rule: Azure SQL Managed Instance must enforce access restrictions associated with changes to the configuration of the database(s).</title><link rel="icon" type="image/svg+xml" href="STIGQter.svg" /><script async src="https://www.googletagmanager.com/gtag/js?id=UA-31381839-2"></script><script src="include.js"></script><script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-4110907817782130" crossorigin="anonymous"></script></head><body><div><img src="STIGQter.svg" alt="STIGQter" style="height:1em;" /> <a href="https://www.stigqter.com/">STIGQter</a>: <a href="main.html">STIG Summary</a>: <a href="U_MS_Azure_SQL_MI_STIG_V1R1_Manual-xccdf.html">Microsoft Azure SQL Managed Instance Security Technical Implementation Guide Version: 1 Release: 1 Benchmark Date: 23 Sep 2025</a>:</div> <h1>Azure SQL Managed Instance must enforce access restrictions associated with changes to the configuration of the database(s).</h1><h2>DISA Rule</h2><p>SV-276235r1150008_rule</p><h2>Vulnerability Number</h2><p>V-276235</p><h2>Group Title</h2><p>SRG-APP-000380-DB-000360</p><h2>Rule Version</h2><p>MSQL-00-003100</p><h2>Severity</h2><p>CAT II</p><h2>CCI(s)</h2><ul><li>CCI-001813 - Enforce access restrictions using organization-defined mechanisms.</li></ul><h2>Weight</h2><p>10</p><h2>Fix Recommendation</h2><p>Document and obtain approval for logins with privileged permissions and role memberships.<br />
+ <br />
+If necessary, use the ALTER ROLE and/or REVOKE commands to remove unauthorized privileged permissions and/or role memberships. Example script provided below:<br />
+ <br />
+ALTER ROLE ddladmin DROP MEMBER UnauthorizedUser;  <br />
+ <br />
+REVOKE SELECT ON OBJECT::test.table FROM UnauthorizedUser;<br />
+ <br />
+Refer to: https://docs.microsoft.com/en-us/sql/t-sql/statements/alter-role-transact-sql<br />
+https://docs.microsoft.com/en-us/sql/t-sql/statements/revoke-transact-sql<br />
+ <br />
+If necessary, in the Azure Portal, navigate to the Access Control pane for the Azure SQL Managed Instance to review and remove unauthorized privileged permissions and/or role memberships. <br />
+<br />
+Refer to the documentation linked below: <br />
+https://docs.microsoft.com/en-us/azure/role-based-access-control/role-definitions-list<br />
+https://docs.microsoft.com/en-us/azure/role-based-access-control/role-assignments-remove</p><h2>Check Contents</h2><p>Execute the following query to obtain a listing of user databases whose owner is a member of a fixed server role and the corresponding roles:<br />
+ <br />
+SELECT<br />
+D.name AS database_name, SUSER_SNAME(D.owner_sid) AS owner_name,<br />
+FRM.is_fixed_role_member, B.fixed_role_memberships<br />
+FROM sys.databases D<br />
+OUTER APPLY (<br />
+SELECT MAX(fixed_role_member) AS is_fixed_role_member<br />
+FROM (<br />
+SELECT IS_SRVROLEMEMBER(R.name, SUSER_SNAME(D.owner_sid)) AS fixed_role_member<br />
+FROM sys.server_principals R<br />
+WHERE is_fixed_role = 1<br />
+) A<br />
+) FRM<br />
+OUTER APPLY (<br />
+SELECT STUFF((SELECT ', ' + R.name<br />
+FROM sys.server_principals R<br />
+JOIN sys.server_role_members RM ON R.principal_id = RM.role_principal_id<br />
+WHERE RM.member_principal_id = SUSER_ID(SUSER_SNAME(D.owner_sid))<br />
+AND r.is_fixed_role =1<br />
+FOR XML PATH(''), TYPE).value('text()[1]','nvarchar(max)'), 1, LEN(','), '') AS fixed_role_memberships<br />
+) B<br />
+WHERE D.database_id &gt; 4<br />
+AND (FRM.is_fixed_role_member = 1<br />
+OR FRM.is_fixed_role_member IS NULL)<br />
+ORDER BY database_name<br />
+<br />
+If any server roles are returned, but not documented and authorized, this is a finding.</p><h2>Vulnerability Number</h2><p>V-276235</p><h2>Documentable</h2><p>False</p><h2>Rule Version</h2><p>MSQL-00-003100</p><h2>Severity Override Guidance</h2><p>Execute the following query to obtain a listing of user databases whose owner is a member of a fixed server role and the corresponding roles:<br />
+ <br />
+SELECT<br />
+D.name AS database_name, SUSER_SNAME(D.owner_sid) AS owner_name,<br />
+FRM.is_fixed_role_member, B.fixed_role_memberships<br />
+FROM sys.databases D<br />
+OUTER APPLY (<br />
+SELECT MAX(fixed_role_member) AS is_fixed_role_member<br />
+FROM (<br />
+SELECT IS_SRVROLEMEMBER(R.name, SUSER_SNAME(D.owner_sid)) AS fixed_role_member<br />
+FROM sys.server_principals R<br />
+WHERE is_fixed_role = 1<br />
+) A<br />
+) FRM<br />
+OUTER APPLY (<br />
+SELECT STUFF((SELECT ', ' + R.name<br />
+FROM sys.server_principals R<br />
+JOIN sys.server_role_members RM ON R.principal_id = RM.role_principal_id<br />
+WHERE RM.member_principal_id = SUSER_ID(SUSER_SNAME(D.owner_sid))<br />
+AND r.is_fixed_role =1<br />
+FOR XML PATH(''), TYPE).value('text()[1]','nvarchar(max)'), 1, LEN(','), '') AS fixed_role_memberships<br />
+) B<br />
+WHERE D.database_id &gt; 4<br />
+AND (FRM.is_fixed_role_member = 1<br />
+OR FRM.is_fixed_role_member IS NULL)<br />
+ORDER BY database_name<br />
+<br />
+If any server roles are returned, but not documented and authorized, this is a finding.</p><h2>Check Content Reference</h2><p>M</p><h2>Target Key</h2><p>5711</p></body></html>

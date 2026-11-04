@@ -1,0 +1,66 @@
+<!doctype html><html lang="en"><head><meta charset="utf-8"><title>STIGQter: STIG Check Details: SV-251232r961857_rule: Redis Enterprise DBMS must implement NIST FIPS 140-2 or 140-3 validated cryptographic modules to provision digital signatures.</title><link rel="icon" type="image/svg+xml" href="STIGQter.svg" /><script async src="https://www.googletagmanager.com/gtag/js?id=UA-31381839-2"></script><script src="include.js"></script><script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-4110907817782130" crossorigin="anonymous"></script></head><body><div><img src="STIGQter.svg" alt="STIGQter" style="height:1em;" /> <a href="https://www.stigqter.com/">STIGQter</a>: <a href="main.html">STIG Summary</a>: <a href="U_Redis_Enterprise_6-x_STIG_V2R2_Manual-xccdf.html">Redis Enterprise 6.x Security Technical Implementation Guide Version: 2 Release: 2 Benchmark Date: 24 Oct 2024</a>:</div> <h1>Redis Enterprise DBMS must implement NIST FIPS 140-2 or 140-3 validated cryptographic modules to provision digital signatures.</h1><h2>DISA Rule</h2><p>SV-251232r961857_rule</p><h2>Vulnerability Number</h2><p>V-251232</p><h2>Group Title</h2><p>SRG-APP-000514-DB-000381</p><h2>Rule Version</h2><p>RD6X-00-009800</p><h2>Severity</h2><p>CAT II</p><h2>CCI(s)</h2><ul><li>CCI-002450 - Implement organization-defined types of cryptography for each specified cryptography use.</li></ul><h2>Weight</h2><p>10</p><h2>Fix Recommendation</h2><p>Configure the operating system to implement DoD-approved encryption by following the steps below:<br />
+<br />
+To enable strict FIPS compliance, the fips=1 kernel option needs to be added to the kernel command line during system installation so key generation is done with FIPS-approved algorithms and continuous monitoring tests in place.<br />
+<br />
+Enable FIPS mode with the following command:<br />
+# sudo fips-mode-setup --enable<br />
+<br />
+Modify the kernel command line of the current kernel in the &quot;grub.cfg&quot; file by adding the following option to the GRUB_CMDLINE_LINUX key in the &quot;/etc/default/grub&quot; file and then rebuild the &quot;grub.cfg&quot; file:<br />
+fips=1<br />
+<br />
+Changes to &quot;/etc/default/grub&quot; require rebuilding the &quot;grub.cfg&quot; file as follows:<br />
+<br />
+On BIOS-based machines, use the following command:<br />
+# sudo grub2-mkconfig -o /boot/grub2/grub.cfg<br />
+<br />
+On UEFI-based machines, use the following command:<br />
+# sudo grub2-mkconfig -o /boot/efi/EFI/redhat/grub.cfg<br />
+<br />
+If /boot or /boot/efi reside on separate partitions, the kernel parameter &quot;boot=&lt;partition of /boot or /boot/efi&gt;&quot; must be added to the kernel command line. Identify a partition by running the df /boot or df /boot/efi command:<br />
+# sudo df /boot<br />
+<br />
+Filesystem 1K-blocks Used Available Use% Mounted on<br />
+/dev/sda1 495844 53780 416464 12% /boot<br />
+<br />
+To ensure the &quot;boot=&quot; configuration option will work even if device naming changes occur between boots, identify the universally unique identifier (UUID) of the partition with the following command:<br />
+# sudo blkid /dev/sda1<br />
+/dev/sda1: UUID=&quot;05c000f1-a213-759e-c7a2-f11b7424c797&quot; TYPE=&quot;ext4&quot;<br />
+<br />
+For the example above, append the following string to the kernel command line:<br />
+boot=UUID=05c000f1-a213-759e-c7a2-f11b7424c797<br />
+<br />
+Reboot the system for the changes to take effect.</p><h2>Check Contents</h2><p>The DBMS relies on the underlying operating system's cryptographic modules to provision digital signatures. Verify the operating system implements DoD-approved encryption to protect the confidentiality of remote access sessions.<br />
+<br />
+Determine if FIPS mode is enabled with the following command:<br />
+# sudo fipscheck<br />
+<br />
+usage: fipscheck [-s &lt;hmac-suffix&gt;] &lt;paths-to-files&gt;<br />
+fips mode is on<br />
+<br />
+If FIPS mode is &quot;on&quot;, determine if the kernel command line is configured to use FIPS mode with the following command:<br />
+# sudo grep fips /boot/grub2/grub.cfg<br />
+<br />
+/vmlinuz-3.8.0-0.40.el7.x86_64 root=/dev/mapper/rhel-root ro rd.md=0 rd.dm=0 rd.lvm.lv=rhel/swap crashkernel=auto rd.luks=0 vconsole.keymap=us rd.lvm.lv=rhel/root rhgb fips=1 quiet<br />
+<br />
+If the kernel command line is configured to use FIPS mode, determine if the system is in FIPS mode with the following command:<br />
+# sudo cat /proc/sys/crypto/fips_enabled<br />
+1<br />
+<br />
+If FIPS mode is not &quot;on&quot;, the kernel command line does not have a FIPS entry, or the system has a value of &quot;0&quot; for &quot;fips_enabled&quot; in &quot;/proc/sys/crypto&quot;, this is a finding.</p><h2>Vulnerability Number</h2><p>V-251232</p><h2>Documentable</h2><p>False</p><h2>Rule Version</h2><p>RD6X-00-009800</p><h2>Severity Override Guidance</h2><p>The DBMS relies on the underlying operating system's cryptographic modules to provision digital signatures. Verify the operating system implements DoD-approved encryption to protect the confidentiality of remote access sessions.<br />
+<br />
+Determine if FIPS mode is enabled with the following command:<br />
+# sudo fipscheck<br />
+<br />
+usage: fipscheck [-s &lt;hmac-suffix&gt;] &lt;paths-to-files&gt;<br />
+fips mode is on<br />
+<br />
+If FIPS mode is &quot;on&quot;, determine if the kernel command line is configured to use FIPS mode with the following command:<br />
+# sudo grep fips /boot/grub2/grub.cfg<br />
+<br />
+/vmlinuz-3.8.0-0.40.el7.x86_64 root=/dev/mapper/rhel-root ro rd.md=0 rd.dm=0 rd.lvm.lv=rhel/swap crashkernel=auto rd.luks=0 vconsole.keymap=us rd.lvm.lv=rhel/root rhgb fips=1 quiet<br />
+<br />
+If the kernel command line is configured to use FIPS mode, determine if the system is in FIPS mode with the following command:<br />
+# sudo cat /proc/sys/crypto/fips_enabled<br />
+1<br />
+<br />
+If FIPS mode is not &quot;on&quot;, the kernel command line does not have a FIPS entry, or the system has a value of &quot;0&quot; for &quot;fips_enabled&quot; in &quot;/proc/sys/crypto&quot;, this is a finding.</p><h2>Check Content Reference</h2><p>M</p><h2>Target Key</h2><p>5443</p></body></html>

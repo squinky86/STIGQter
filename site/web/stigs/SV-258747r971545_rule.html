@@ -1,0 +1,49 @@
+<!doctype html><html lang="en"><head><meta charset="utf-8"><title>STIGQter: STIG Check Details: SV-258747r971545_rule: The ESXi host must enable bidirectional Challenge-Handshake Authentication Protocol (CHAP) authentication for Internet Small Computer Systems Interface (iSCSI) traffic.</title><link rel="icon" type="image/svg+xml" href="STIGQter.svg" /><script async src="https://www.googletagmanager.com/gtag/js?id=UA-31381839-2"></script><script src="include.js"></script><script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-4110907817782130" crossorigin="anonymous"></script></head><body><div><img src="STIGQter.svg" alt="STIGQter" style="height:1em;" /> <a href="https://www.stigqter.com/">STIGQter</a>: <a href="main.html">STIG Summary</a>: <a href="U_VMW_vSphere_8-0-ESXi_STIG_V2R4_Manual-xccdf.html">VMware vSphere 8.0 ESXi Security Technical Implementation Guide Version: 2 Release: 4 Benchmark Date: 01 Jul 2026</a>:</div> <h1>The ESXi host must enable bidirectional Challenge-Handshake Authentication Protocol (CHAP) authentication for Internet Small Computer Systems Interface (iSCSI) traffic.</h1><h2>DISA Rule</h2><p>SV-258747r971545_rule</p><h2>Vulnerability Number</h2><p>V-258747</p><h2>Group Title</h2><p>SRG-OS-000379-VMM-001550</p><h2>Rule Version</h2><p>ESXI-80-000145</p><h2>Severity</h2><p>CAT II</p><h2>CCI(s)</h2><ul><li>CCI-001967 - Authenticate organization-defined devices and/or types of devices before establishing a local, remote, and/or network connection using bidirectional authentication that is cryptographically based.</li></ul><h2>Weight</h2><p>10</p><h2>Fix Recommendation</h2><p>From the vSphere Client, go to Hosts and Clusters.<br />
+<br />
+Select the ESXi Host &gt;&gt; Configure &gt;&gt; Storage &gt;&gt; Storage Adapters.<br />
+<br />
+Select the iSCSI adapter &gt;&gt; Properties &gt;&gt; Authentication.<br />
+<br />
+Click &quot;Edit...&quot;. Set &quot;Authentication Method&quot; to &quot;Use bidirectional CHAP&quot; and enter a unique secret for each traffic flow direction.<br />
+<br />
+or<br />
+<br />
+From a PowerCLI command prompt while connected to the ESXi host, run the following command:<br />
+<br />
+Get-VMHost | Get-VMHostHba | Where {$_.Type -eq &quot;iscsi&quot;} | Set-VMHostHba -ChapType Required -ChapName &quot;chapname&quot; -ChapPassword &quot;password&quot; -MutualChapEnabled $true -MutualChapName &quot;mutualchapname&quot; -MutualChapPassword &quot;mutualpassword&quot;</p><h2>Check Contents</h2><p>If iSCSI is not used, this is not applicable.<br />
+<br />
+From the vSphere Client, go to Hosts and Clusters.<br />
+<br />
+Select the ESXi Host &gt;&gt; Configure &gt;&gt; Storage &gt;&gt; Storage Adapters.<br />
+<br />
+Select the iSCSI adapter &gt;&gt; Properties &gt;&gt; Authentication &gt;&gt; Method.<br />
+<br />
+View the CHAP configuration and verify CHAP is required for target and host authentication.<br />
+<br />
+or<br />
+<br />
+From a PowerCLI command prompt while connected to the ESXi host, run the following command:<br />
+<br />
+Get-VMHost | Get-VMHostHba | Where {$_.Type -eq &quot;iscsi&quot;} | Select AuthenticationProperties -ExpandProperty AuthenticationProperties<br />
+<br />
+If iSCSI is used and CHAP is not set to &quot;required&quot; for both the target and host, this is a finding.<br />
+<br />
+If iSCSI is used and unique CHAP secrets are not used for each host, this is a finding.</p><h2>Vulnerability Number</h2><p>V-258747</p><h2>Documentable</h2><p>False</p><h2>Rule Version</h2><p>ESXI-80-000145</p><h2>Severity Override Guidance</h2><p>If iSCSI is not used, this is not applicable.<br />
+<br />
+From the vSphere Client, go to Hosts and Clusters.<br />
+<br />
+Select the ESXi Host &gt;&gt; Configure &gt;&gt; Storage &gt;&gt; Storage Adapters.<br />
+<br />
+Select the iSCSI adapter &gt;&gt; Properties &gt;&gt; Authentication &gt;&gt; Method.<br />
+<br />
+View the CHAP configuration and verify CHAP is required for target and host authentication.<br />
+<br />
+or<br />
+<br />
+From a PowerCLI command prompt while connected to the ESXi host, run the following command:<br />
+<br />
+Get-VMHost | Get-VMHostHba | Where {$_.Type -eq &quot;iscsi&quot;} | Select AuthenticationProperties -ExpandProperty AuthenticationProperties<br />
+<br />
+If iSCSI is used and CHAP is not set to &quot;required&quot; for both the target and host, this is a finding.<br />
+<br />
+If iSCSI is used and unique CHAP secrets are not used for each host, this is a finding.</p><h2>Check Content Reference</h2><p>M</p><h2>Target Key</h2><p>5562</p></body></html>

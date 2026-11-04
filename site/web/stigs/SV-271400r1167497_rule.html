@@ -1,0 +1,47 @@
+<!doctype html><html lang="en"><head><meta charset="utf-8"><title>STIGQter: STIG Check Details: SV-271400r1167497_rule: SQL Server must, for password-based authentication, require immediate selection of a new password upon account recovery.</title><link rel="icon" type="image/svg+xml" href="STIGQter.svg" /><script async src="https://www.googletagmanager.com/gtag/js?id=UA-31381839-2"></script><script src="include.js"></script><script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-4110907817782130" crossorigin="anonymous"></script></head><body><div><img src="STIGQter.svg" alt="STIGQter" style="height:1em;" /> <a href="https://www.stigqter.com/">STIGQter</a>: <a href="main.html">STIG Summary</a>: <a href="U_MS_SQL_Server_2022_Instance_STIG_V1R4_Manual-xccdf.html">Microsoft SQL Server 2022 Instance Security Technical Implementation Guide Version: 1 Release: 4 Benchmark Date: 01 Apr 2026</a>:</div> <h1>SQL Server must, for password-based authentication, require immediate selection of a new password upon account recovery.</h1><h2>DISA Rule</h2><p>SV-271400r1167497_rule</p><h2>Vulnerability Number</h2><p>V-271400</p><h2>Group Title</h2><p>SRG-APP-000855-DB-000240</p><h2>Rule Version</h2><p>SQLI-22-019500</p><h2>Severity</h2><p>CAT II</p><h2>CCI(s)</h2><ul><li>CCI-004063 - For password-based authentication, require immediate selection of a new password upon account recovery.</li></ul><h2>Weight</h2><p>10</p><h2>Fix Recommendation</h2><p>Configure the DBMS to require immediate selection of a new password for accounts using SQL login upon account recovery.<br />
+<br />
+Ensure all scripts, functions, triggers, and stored procedures used to create a user or reset a user's password for SQL logins include a line similar to the following password_option:<br />
+<br />
+MUST_CHANGE<br />
+<br />
+If MUST_CHANGE is specified, CHECK_EXPIRATION and CHECK_POLICY must be set to ON. Otherwise, the statement will fail.<br />
+<br />
+More information can be found at https://learn.microsoft.com/en-us/sql/t-sql/statements/alter-login-transact-sql?view=sql-server-ver16.</p><h2>Check Contents</h2><p>Check for use of SQL Server Authentication:<br />
+<br />
+SELECT CASE SERVERPROPERTY('IsIntegratedSecurityOnly') WHEN 1 THEN 'Windows Authentication' WHEN 0 THEN 'SQL Server Authentication' END as [Authentication Mode]<br />
+<br />
+If the returned value in the &quot;Authentication Mode&quot; column is &quot;Windows Authentication&quot;, this is not a finding.<br />
+<br />
+If the returned value is not &quot;Windows Authentication&quot;, verify SQL Server is configured to require immediate selection of a new password upon account recovery.<br />
+<br />
+All scripts, functions, triggers, and stored procedures used to create a user or reset a user's password for SQL logins should include a line similar to the following password_option:<br />
+<br />
+MUST_CHANGE<br />
+<br />
+Example:<br />
+CREATE LOGIN STIG_test WITH PASSWORD ='Password' MUST_CHANGE, <br />
+     CHECK_EXPIRATION = ON,<br />
+     CHECK_POLICY = ON;<br />
+<br />
+If they do not, this is a finding.<br />
+<br />
+If SQL Server is not configured to require immediate selection of a new password upon account recovery for accounts using SQL login, this is a finding.</p><h2>Vulnerability Number</h2><p>V-271400</p><h2>Documentable</h2><p>False</p><h2>Rule Version</h2><p>SQLI-22-019500</p><h2>Severity Override Guidance</h2><p>Check for use of SQL Server Authentication:<br />
+<br />
+SELECT CASE SERVERPROPERTY('IsIntegratedSecurityOnly') WHEN 1 THEN 'Windows Authentication' WHEN 0 THEN 'SQL Server Authentication' END as [Authentication Mode]<br />
+<br />
+If the returned value in the &quot;Authentication Mode&quot; column is &quot;Windows Authentication&quot;, this is not a finding.<br />
+<br />
+If the returned value is not &quot;Windows Authentication&quot;, verify SQL Server is configured to require immediate selection of a new password upon account recovery.<br />
+<br />
+All scripts, functions, triggers, and stored procedures used to create a user or reset a user's password for SQL logins should include a line similar to the following password_option:<br />
+<br />
+MUST_CHANGE<br />
+<br />
+Example:<br />
+CREATE LOGIN STIG_test WITH PASSWORD ='Password' MUST_CHANGE, <br />
+     CHECK_EXPIRATION = ON,<br />
+     CHECK_POLICY = ON;<br />
+<br />
+If they do not, this is a finding.<br />
+<br />
+If SQL Server is not configured to require immediate selection of a new password upon account recovery for accounts using SQL login, this is a finding.</p><h2>Check Content Reference</h2><p>M</p><h2>Target Key</h2><p>5677</p></body></html>

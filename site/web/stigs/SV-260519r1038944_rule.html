@@ -1,0 +1,41 @@
+<!doctype html><html lang="en"><head><meta charset="utf-8"><title>STIGQter: STIG Check Details: SV-260519r1038944_rule: Ubuntu 22.04 LTS must, for networked systems, compare internal information system clocks at least every 24 hours with a server synchronized to one of the redundant United States Naval Observatory (USNO) time servers, or a time server designated for the appropriate DOD network (NIPRNet/SIPRNet), and/or the Global Positioning System (GPS).</title><link rel="icon" type="image/svg+xml" href="STIGQter.svg" /><script async src="https://www.googletagmanager.com/gtag/js?id=UA-31381839-2"></script><script src="include.js"></script><script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-4110907817782130" crossorigin="anonymous"></script></head><body><div><img src="STIGQter.svg" alt="STIGQter" style="height:1em;" /> <a href="https://www.stigqter.com/">STIGQter</a>: <a href="main.html">STIG Summary</a>: <a href="U_CAN_Ubuntu_22-04_LTS_STIG_V2R9_Manual-xccdf.html">Canonical Ubuntu 22.04 LTS Security Technical Implementation Guide Version: 2 Release: 9 Benchmark Date: 01 Jul 2026</a>:</div> <h1>Ubuntu 22.04 LTS must, for networked systems, compare internal information system clocks at least every 24 hours with a server synchronized to one of the redundant United States Naval Observatory (USNO) time servers, or a time server designated for the appropriate DOD network (NIPRNet/SIPRNet), and/or the Global Positioning System (GPS).</h1><h2>DISA Rule</h2><p>SV-260519r1038944_rule</p><h2>Vulnerability Number</h2><p>V-260519</p><h2>Group Title</h2><p>SRG-OS-000355-GPOS-00143</p><h2>Rule Version</h2><p>UBTU-22-252010</p><h2>Severity</h2><p>CAT III</p><h2>CCI(s)</h2><ul><li>CCI-004923 - Compare the internal system clocks on an organization-defined frequency with organization-defined authoritative time source.</li></ul><h2>Weight</h2><p>10</p><h2>Fix Recommendation</h2><p>Configure Ubuntu 22.04 LTS to compare the system clock at least every 24 hours to the authoritative time source. <br />
+ <br />
+Add or modify the following line in the &quot;/etc/chrony/chrony.conf&quot; file: <br />
+  <br />
+server [source] iburst maxpoll = 16  <br />
+  <br />
+Restart &quot;chrony.service&quot; for the changes to take effect by using the following command:  <br />
+  <br />
+     $ sudo systemctl restart chrony.service</p><h2>Check Contents</h2><p>Verify Ubuntu 22.04 LTS is configured to compare the system clock at least every 24 hours to the authoritative time source by using the following command: <br />
+ <br />
+Note: If the system is not networked, this requirement is not applicable. <br />
+ <br />
+     $ sudo grep maxpoll -ir /etc/chrony* <br />
+     server tick.usno.navy.mil iburst maxpoll 16 <br />
+  <br />
+If the &quot;maxpoll&quot; option is set to a number greater than 16, the line is commented out, or is missing, this is a finding. <br />
+  <br />
+Verify that the &quot;chrony.conf&quot; file is configured to an authoritative DOD time source by using the following command:  <br />
+  <br />
+     $ sudo grep -ir server /etc/chrony* <br />
+     server tick.usno.navy.mil iburst maxpoll 16 <br />
+     server tock.usno.navy.mil iburst maxpoll 16 <br />
+     server ntp2.usno.navy.mil iburst maxpoll 16 <br />
+  <br />
+If &quot;server&quot; is not defined, is not set to an authoritative DOD time source, is commented out, or missing, this is a finding.</p><h2>Vulnerability Number</h2><p>V-260519</p><h2>Documentable</h2><p>False</p><h2>Rule Version</h2><p>UBTU-22-252010</p><h2>Severity Override Guidance</h2><p>Verify Ubuntu 22.04 LTS is configured to compare the system clock at least every 24 hours to the authoritative time source by using the following command: <br />
+ <br />
+Note: If the system is not networked, this requirement is not applicable. <br />
+ <br />
+     $ sudo grep maxpoll -ir /etc/chrony* <br />
+     server tick.usno.navy.mil iburst maxpoll 16 <br />
+  <br />
+If the &quot;maxpoll&quot; option is set to a number greater than 16, the line is commented out, or is missing, this is a finding. <br />
+  <br />
+Verify that the &quot;chrony.conf&quot; file is configured to an authoritative DOD time source by using the following command:  <br />
+  <br />
+     $ sudo grep -ir server /etc/chrony* <br />
+     server tick.usno.navy.mil iburst maxpoll 16 <br />
+     server tock.usno.navy.mil iburst maxpoll 16 <br />
+     server ntp2.usno.navy.mil iburst maxpoll 16 <br />
+  <br />
+If &quot;server&quot; is not defined, is not set to an authoritative DOD time source, is commented out, or missing, this is a finding.</p><h2>Check Content Reference</h2><p>M</p><h2>Target Key</h2><p>5594</p></body></html>

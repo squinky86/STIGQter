@@ -1,0 +1,65 @@
+<!doctype html><html lang="en"><head><meta charset="utf-8"><title>STIGQter: STIG Check Details: SV-273614r1110925_rule: The RUCKUS ICX out-of-band management (OOBM) gateway router must be configured to forward only authorized management traffic to the Network Operations Center (NOC).</title><link rel="icon" type="image/svg+xml" href="STIGQter.svg" /><script async src="https://www.googletagmanager.com/gtag/js?id=UA-31381839-2"></script><script src="include.js"></script><script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-4110907817782130" crossorigin="anonymous"></script></head><body><div><img src="STIGQter.svg" alt="STIGQter" style="height:1em;" /> <a href="https://www.stigqter.com/">STIGQter</a>: <a href="main.html">STIG Summary</a>: <a href="U_RUCKUS_ICX_RTR_STIG_V1R1_Manual-xccdf.html">RUCKUS ICX Router Security Technical Implementation Guide Version: 1 Release: 1 Benchmark Date: 27 May 2025</a>:</div> <h1>The RUCKUS ICX out-of-band management (OOBM) gateway router must be configured to forward only authorized management traffic to the Network Operations Center (NOC).</h1><h2>DISA Rule</h2><p>SV-273614r1110925_rule</p><h2>Vulnerability Number</h2><p>V-273614</p><h2>Group Title</h2><p>SRG-NET-000205-RTR-000010</p><h2>Rule Version</h2><p>RCKS-RTR-000470</p><h2>Severity</h2><p>CAT II</p><h2>CCI(s)</h2><ul><li>CCI-001097 - Monitor and control communications at the external managed interfaces to the system and at key managed interfaces within the system.</li></ul><h2>Weight</h2><p>10</p><h2>Fix Recommendation</h2><p>This requirement is not applicable for the DODIN Backbone.<br />
+<br />
+Configure filters based on port, source IP address, and destination IP address to permit only authorized management traffic into IPsec tunnels or the OOBM interface used for forwarding management data.<br />
+<br />
+1. Configure ACLs.<br />
+ICX(config)#ip access-list ext MGMT_TRAFFIC_ACL<br />
+ICX(config-ext-ipacl-MGMT_TRAFFIC_ACL)#permit tcp x.1.34.0/24 10.22.2.0/24 eq radius<br />
+ICX(config-ext-ipacl-MGMT_TRAFFIC_ACL)#permit tcp x.1.34.0/24 10.22.2.0/24 eq ssh<br />
+ICX(config-ext-ipacl-MGMT_TRAFFIC_ACL)#permit udp x.1.34.0/24 10.22.2.0/24 eq snmp<br />
+ICX(config-ext-ipacl-MGMT_TRAFFIC_ACL)#permit udp x.1.34.0/24 10.22.2.0/24 eq snmp-t<br />
+ICX(config-ext-ipacl-MGMT_TRAFFIC_ACL)#permit udp x.1.34.0/24 10.22.2.0/24 eq syslog<br />
+ICX(config-ext-ipacl-MGMT_TRAFFIC_ACL)#permit icmp x.1.34.0/24 10.22.2.0/24<br />
+ICX(config-ext-ipacl-MGMT_TRAFFIC_ACL)#deny ip any any log<br />
+<br />
+2. Apply the ACL to the appropriate interface(s).<br />
+ICX(config)#interface ethernet 1/1/1<br />
+ICX(config-if-e10000-1/1/1)#ip access-group MGMT_TRAFFIC_ACL out logging enable</p><h2>Check Contents</h2><p>This requirement is not applicable for the DODIN Backbone.<br />
+<br />
+Review the network topology diagram to determine connectivity between the managed network and the NOC. Review the OOBM gateway router configuration to validate the path the management traffic traverses. Verify only management traffic is forwarded through the OOBM interface or IPsec tunnel.<br />
+<br />
+If an OOBM link is used, verify the only authorized management traffic is transported to the NOC by reviewing the outbound ACL applied to the OOBM interface as shown in the example below:<br />
+<br />
+1. Note the outbound ACL applied to the OOBM interface.<br />
+<br />
+interface ethernet 1/1/1<br />
+ port-name OOBM-to-NOC<br />
+ ip access-group MGMT_TRAFFIC_ACL out logging enable<br />
+!<br />
+<br />
+2. Review the outbound ACL and verify only management traffic is forwarded to the NOC.<br />
+<br />
+ip access-list extended MGMT_TRAFFIC_ACL<br />
+ sequence 10 permit tcp x.1.34.0 0.0.0.255 10.22.2.0 0.0.0.255 eq radius<br />
+ sequence 20 permit tcp x.1.34.0 0.0.0.255 10.22.2.0 0.0.0.255 eq ssh<br />
+ sequence 30 permit udp x.1.34.0 0.0.0.255 10.22.2.0 0.0.0.255 eq snmp<br />
+ sequence 40 permit udp x.1.34.0 0.0.0.255 10.22.2.0 0.0.0.255 eq shell<br />
+ sequence 50 permit icmp x.1.34.0 0.0.0.255 10.22.2.0 0.0.0.255<br />
+ sequence 60 deny ip any any log<br />
+!<br />
+<br />
+If traffic other than authorized management traffic is permitted through the OOBM interface, this is a finding.</p><h2>Vulnerability Number</h2><p>V-273614</p><h2>Documentable</h2><p>False</p><h2>Rule Version</h2><p>RCKS-RTR-000470</p><h2>Severity Override Guidance</h2><p>This requirement is not applicable for the DODIN Backbone.<br />
+<br />
+Review the network topology diagram to determine connectivity between the managed network and the NOC. Review the OOBM gateway router configuration to validate the path the management traffic traverses. Verify only management traffic is forwarded through the OOBM interface or IPsec tunnel.<br />
+<br />
+If an OOBM link is used, verify the only authorized management traffic is transported to the NOC by reviewing the outbound ACL applied to the OOBM interface as shown in the example below:<br />
+<br />
+1. Note the outbound ACL applied to the OOBM interface.<br />
+<br />
+interface ethernet 1/1/1<br />
+ port-name OOBM-to-NOC<br />
+ ip access-group MGMT_TRAFFIC_ACL out logging enable<br />
+!<br />
+<br />
+2. Review the outbound ACL and verify only management traffic is forwarded to the NOC.<br />
+<br />
+ip access-list extended MGMT_TRAFFIC_ACL<br />
+ sequence 10 permit tcp x.1.34.0 0.0.0.255 10.22.2.0 0.0.0.255 eq radius<br />
+ sequence 20 permit tcp x.1.34.0 0.0.0.255 10.22.2.0 0.0.0.255 eq ssh<br />
+ sequence 30 permit udp x.1.34.0 0.0.0.255 10.22.2.0 0.0.0.255 eq snmp<br />
+ sequence 40 permit udp x.1.34.0 0.0.0.255 10.22.2.0 0.0.0.255 eq shell<br />
+ sequence 50 permit icmp x.1.34.0 0.0.0.255 10.22.2.0 0.0.0.255<br />
+ sequence 60 deny ip any any log<br />
+!<br />
+<br />
+If traffic other than authorized management traffic is permitted through the OOBM interface, this is a finding.</p><h2>Check Content Reference</h2><p>M</p><h2>Target Key</h2><p>5696</p></body></html>

@@ -1,0 +1,122 @@
+<!doctype html><html lang="en"><head><meta charset="utf-8"><title>STIGQter: STIG Check Details: SV-225629r1146215_rule: WebSphere MQ security class(es) must not be defined improperly.</title><link rel="icon" type="image/svg+xml" href="STIGQter.svg" /><script async src="https://www.googletagmanager.com/gtag/js?id=UA-31381839-2"></script><script src="include.js"></script><script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-4110907817782130" crossorigin="anonymous"></script></head><body><div><img src="STIGQter.svg" alt="STIGQter" style="height:1em;" /> <a href="https://www.stigqter.com/">STIGQter</a>: <a href="main.html">STIG Summary</a>: <a href="U_zOS_WebsphereMQ_for_TSS_STIG_V7R3_Manual-xccdf.html">zOS WebSphere MQ for TSS Security Technical Implementation Guide Version: 7 Release: 3 Benchmark Date: 01 Jul 2026</a>:</div> <h1>WebSphere MQ security class(es) must not be defined improperly.</h1><h2>DISA Rule</h2><p>SV-225629r1146215_rule</p><h2>Vulnerability Number</h2><p>V-225629</p><h2>Group Title</h2><p>SRG-OS-000080</p><h2>Rule Version</h2><p>ZWMQ0049</p><h2>Severity</h2><p>CAT II</p><h2>CCI(s)</h2><ul><li>CCI-000213 - Enforce approved authorizations for logical access to information and system resources in accordance with applicable access control policies.</li><li>CCI-002358 - Implement a reference monitor for organization-defined access control policies that is always invoked.</li></ul><h2>Weight</h2><p>10</p><h2>Fix Recommendation</h2><p>Ensure that all WebSphere MQ resources are defined to TSS.<br />
+<br />
+The following should be defined to the RDT:<br />
+<br />
+MQADMIN<br />
+MQCONN<br />
+MQCMDS<br />
+MQNLIST<br />
+MQPROC<br />
+MQQUEUE<br />
+<br />
+When SCYCASE is set to mixed,  and the following WebSphere MQ resource classes should be defined to the TSS RDT.<br />
+<br />
+MXADMIN<br />
+MXNLIST<br />
+MXPROC<br />
+MXQUEUE<br />
+MXTOPIC<br />
+<br />
+Use the following commands to define (establish ownership of) resources for each WebSphere MQ subsystem to TSS:<br />
+<br />
+TSS ADD(deptname) MQADMIN(ssid.)<br />
+TSS ADD(deptname) MQCMDS(ssid.)<br />
+TSS ADD(deptname) MQCONN(ssid.)<br />
+TSS ADD(deptname) MQNLIST(ssid.)<br />
+TSS ADD(deptname) MQPROC(ssid.)<br />
+TSS ADD(deptname) MQQUEUE(ssid.)<br />
+<br />
+When SCYCASE is set to mixed, CLASMAP Definitions must include the following entries:<br />
+<br />
+TSS ADD(deptname) MXADMIN(ssid.)<br />
+TSS ADD(deptname) MXNLIST(ssid.)<br />
+TSS ADD(deptname) MXPROC(ssid.)<br />
+TSS ADD(deptname) MXQUEUE(ssid.)<br />
+TSS ADD(deptname) MXTOPIC(ssid.)<br />
+<br />
+Note: ssid is the queue manager name (a.k.a., subsystem identifier).<br />
+<br />
+Another method to ensure protection is to assign the DEFPROT attribute to the resource class in the RDT record by using the following command:<br />
+<br />
+TSS REP(RDT) RESCLASS(MQADMIN) ATTR(DEFPROT)<br />
+TSS REP(RDT) RESCLASS(MQCMDS) ATTR(DEFPROT)<br />
+TSS REP(RDT) RESCLASS(MQCONN) ATTR(DEFPROT)<br />
+TSS REP(RDT) RESCLASS(MQNLIST) ATTR(DEFPROT)<br />
+TSS REP(RDT) RESCLASS(MQPROC) ATTR(DEFPROT)<br />
+TSS REP(RDT) RESCLASS(MQQUEUE) ATTR(DEFPROT)<br />
+<br />
+When SCYCASE is set to mixed.<br />
+<br />
+TSS REP(RDT) RESCLASS(MXADMIN) ATTR(DEFPROT)<br />
+TSS REP(RDT) RESCLASS(MXNLIST) ATTR(DEFPROT)<br />
+TSS REP(RDT) RESCLASS(MXPROC) ATTR(DEFPROT)<br />
+TSS REP(RDT) RESCLASS(MXQUEUE) ATTR(DEFPROT)<br />
+TSS REP(RDT) RESCLASS(MXTOPIC) ATTR(DEFPROT)</p><h2>Check Contents</h2><p>Refer to the following reports produced by the TSS Data Collection:<br />
+<br />
+- TSSCMDS.RPT(#RDT).<br />
+- SENSITVE.RPT(WHOOMADM).<br />
+- SENSITVE.RPT(WHOOMCMD).<br />
+- SENSITVE.RPT(WHOOMCON).<br />
+- SENSITVE.RPT(WHOOMNLI).<br />
+- SENSITVE.RPT(WHOOMPRO.)<br />
+- SENSITVE.RPT(WHOOMQUE).<br />
+- SENSITVE.RPT(WHOOXADM).<br />
+- SENSITVE.RPT(WHOOXNLI).<br />
+- SENSITVE.RPT(WHOOXPRO).<br />
+- SENSITVE.RPT(WHOOXQUE).<br />
+- SENSITVE.RPT(WHOOXTOP).<br />
+<br />
+If the following WebSphere MQ Resource Class(es) is (are) defined in the Resource Definition Table (RDT), this is not a finding.<br />
+<br />
+MQADMIN<br />
+MQCMDS<br />
+MQCONN<br />
+MQNLIST<br />
+MQPROC<br />
+MQQUEUE<br />
+<br />
+When SCYCASE is set to MIXED, and the following WebSphere MQ Resource Class(es) is (are) defined in the Resource Definition Table (RDT), this is not a finding.<br />
+<br />
+MXADMIN<br />
+MXNLIST<br />
+MXPROC<br />
+MXQUEUE<br />
+MXTOPIC<br />
+<br />
+Note: ssid is the queue manager name (a.k.a., subsystem identifier).<br />
+<br />
+Note: If both MQADMIN and MXADMIN resource classes are not defined to the RDT record, no security checking is performed.</p><h2>Vulnerability Number</h2><p>V-225629</p><h2>Documentable</h2><p>False</p><h2>Rule Version</h2><p>ZWMQ0049</p><h2>Severity Override Guidance</h2><p>Refer to the following reports produced by the TSS Data Collection:<br />
+<br />
+- TSSCMDS.RPT(#RDT).<br />
+- SENSITVE.RPT(WHOOMADM).<br />
+- SENSITVE.RPT(WHOOMCMD).<br />
+- SENSITVE.RPT(WHOOMCON).<br />
+- SENSITVE.RPT(WHOOMNLI).<br />
+- SENSITVE.RPT(WHOOMPRO.)<br />
+- SENSITVE.RPT(WHOOMQUE).<br />
+- SENSITVE.RPT(WHOOXADM).<br />
+- SENSITVE.RPT(WHOOXNLI).<br />
+- SENSITVE.RPT(WHOOXPRO).<br />
+- SENSITVE.RPT(WHOOXQUE).<br />
+- SENSITVE.RPT(WHOOXTOP).<br />
+<br />
+If the following WebSphere MQ Resource Class(es) is (are) defined in the Resource Definition Table (RDT), this is not a finding.<br />
+<br />
+MQADMIN<br />
+MQCMDS<br />
+MQCONN<br />
+MQNLIST<br />
+MQPROC<br />
+MQQUEUE<br />
+<br />
+When SCYCASE is set to MIXED, and the following WebSphere MQ Resource Class(es) is (are) defined in the Resource Definition Table (RDT), this is not a finding.<br />
+<br />
+MXADMIN<br />
+MXNLIST<br />
+MXPROC<br />
+MXQUEUE<br />
+MXTOPIC<br />
+<br />
+Note: ssid is the queue manager name (a.k.a., subsystem identifier).<br />
+<br />
+Note: If both MQADMIN and MXADMIN resource classes are not defined to the RDT record, no security checking is performed.</p><h2>Check Content Reference</h2><p>M</p><h2>Target Key</h2><p>4211</p></body></html>

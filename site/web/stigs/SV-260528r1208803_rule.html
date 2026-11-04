@@ -1,0 +1,21 @@
+<!doctype html><html lang="en"><head><meta charset="utf-8"><title>STIGQter: STIG Check Details: SV-260528r1208803_rule: Ubuntu 22.04 LTS must be configured so that all network connections associated with SSH traffic are terminated after 10 minutes of becoming unresponsive.</title><link rel="icon" type="image/svg+xml" href="STIGQter.svg" /><script async src="https://www.googletagmanager.com/gtag/js?id=UA-31381839-2"></script><script src="include.js"></script><script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-4110907817782130" crossorigin="anonymous"></script></head><body><div><img src="STIGQter.svg" alt="STIGQter" style="height:1em;" /> <a href="https://www.stigqter.com/">STIGQter</a>: <a href="main.html">STIG Summary</a>: <a href="U_CAN_Ubuntu_22-04_LTS_STIG_V2R9_Manual-xccdf.html">Canonical Ubuntu 22.04 LTS Security Technical Implementation Guide Version: 2 Release: 9 Benchmark Date: 01 Jul 2026</a>:</div> <h1>Ubuntu 22.04 LTS must be configured so that all network connections associated with SSH traffic are terminated after 10 minutes of becoming unresponsive.</h1><h2>DISA Rule</h2><p>SV-260528r1208803_rule</p><h2>Vulnerability Number</h2><p>V-260528</p><h2>Group Title</h2><p>SRG-OS-000163-GPOS-00072</p><h2>Rule Version</h2><p>UBTU-22-255035</p><h2>Severity</h2><p>CAT II</p><h2>CCI(s)</h2><ul><li>CCI-001133 - Terminate the network connection associated with a communications session at the end of the session or after an organization-defined time period of inactivity.</li></ul><h2>Weight</h2><p>10</p><h2>Fix Recommendation</h2><p>Configure the SSH server to terminate a user session automatically after the SSH client has been unresponsive for 10 minutes. <br />
+ <br />
+Note: This setting must be applied in conjunction with UBTU-22-255040 to function correctly. <br />
+ <br />
+Add or modify the following line in the &quot;/etc/ssh/sshd_config&quot; file: <br />
+ <br />
+ClientAliveInterval 600 <br />
+ <br />
+Restart SSH for the changes to take effect: <br />
+<br />
+$ sudo systemctl restart ssh</p><h2>Check Contents</h2><p>Verify the SSH server automatically terminates a user session after the SSH client has been unresponsive for 10 minutes by using the following command: <br />
+ <br />
+     $ sudo /usr/sbin/sshd -dd 2&gt;&amp;1 | awk '/filename/ {print $4}' | tr -d '\r' | tr '\n' ' ' | xargs sudo grep -iH 'clientaliveinterval' <br />
+     /etc/ssh/sshd_config:ClientAliveInterval 600 <br />
+ <br />
+If &quot;ClientAliveInterval&quot; does not exist or is not set to a value of &quot;600&quot; or less, conflicting results are returned, or it is commented out or missing, this is a finding.</p><h2>Vulnerability Number</h2><p>V-260528</p><h2>Documentable</h2><p>False</p><h2>Rule Version</h2><p>UBTU-22-255035</p><h2>Severity Override Guidance</h2><p>Verify the SSH server automatically terminates a user session after the SSH client has been unresponsive for 10 minutes by using the following command: <br />
+ <br />
+     $ sudo /usr/sbin/sshd -dd 2&gt;&amp;1 | awk '/filename/ {print $4}' | tr -d '\r' | tr '\n' ' ' | xargs sudo grep -iH 'clientaliveinterval' <br />
+     /etc/ssh/sshd_config:ClientAliveInterval 600 <br />
+ <br />
+If &quot;ClientAliveInterval&quot; does not exist or is not set to a value of &quot;600&quot; or less, conflicting results are returned, or it is commented out or missing, this is a finding.</p><h2>Check Content Reference</h2><p>M</p><h2>Target Key</h2><p>5594</p></body></html>

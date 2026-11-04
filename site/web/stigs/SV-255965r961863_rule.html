@@ -1,0 +1,184 @@
+<!doctype html><html lang="en"><head><meta charset="utf-8"><title>STIGQter: STIG Check Details: SV-255965r961863_rule: The Arista network device must obtain its public key certificates from an appropriate certificate policy through an approved service provider.</title><link rel="icon" type="image/svg+xml" href="STIGQter.svg" /><script async src="https://www.googletagmanager.com/gtag/js?id=UA-31381839-2"></script><script src="include.js"></script><script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-4110907817782130" crossorigin="anonymous"></script></head><body><div><img src="STIGQter.svg" alt="STIGQter" style="height:1em;" /> <a href="https://www.stigqter.com/">STIGQter</a>: <a href="main.html">STIG Summary</a>: <a href="U_Arista_MLS_EOS_4-X_NDM_STIG_V2R2_Manual-xccdf.html">Arista MLS EOS 4.X NDM Security Technical Implementation Guide Version: 2 Release: 2 Benchmark Date: 02 Apr 2025</a>:</div> <h1>The Arista network device must obtain its public key certificates from an appropriate certificate policy through an approved service provider.</h1><h2>DISA Rule</h2><p>SV-255965r961863_rule</p><h2>Vulnerability Number</h2><p>V-255965</p><h2>Group Title</h2><p>SRG-APP-000516-NDM-000344</p><h2>Rule Version</h2><p>ARST-ND-000840</p><h2>Severity</h2><p>CAT II</p><h2>CCI(s)</h2><ul><li>CCI-001159 - Issue public key certificates under an organization-defined certificate policy or obtain public key certificates from an approved service provider.</li></ul><h2>Weight</h2><p>10</p><h2>Fix Recommendation</h2><p>Configure the Arista network device to obtain its public key certificates from an appropriate certificate policy through an approved service provider.<br />
+<br />
+Step 1: Configure the Arista network device by following the steps outlined in the Arista Military Unique Deployment Guide to generate the DOD PKI certificate signing request [switch.csr] for submission to DOD PKI CA. Example configuration:<br />
+<br />
+switch#security pki certificate generate signing-request key rsa1.key<br />
+Common Name for use in subject: 192.168.25.26<br />
+Two-Letter Country Code for use in subject: US<br />
+State for use in subject: AZ<br />
+Locality Name for use in subject: Ft Huachuca<br />
+Organization Name for use in subject: CONTRACTOR,PKI,DOD<br />
+Organization Unit Name for use in subject: U.S. GOVERNMENT<br />
+Email address for use in subject: <br />
+IP addresses (space separated) for use in subject-alternative-name: 192.168.25.26<br />
+DNS names (space separated) for use in subject-alternative-name: <br />
+Email addresses (space separated) for use in subject-alternative-name: <br />
+-----BEGIN CERTIFICATE REQUEST-----<br />
+MIIC6DCCAdACAQAwgYAxCzAJBgNVBAYTAlVTMQswCQYDVQQIDAJBWjEUMBIGA1UE<br />
+BwwLRnQgSHVhY2h1Y2ExGzAZBgNVBAoMEkNPTlRSQUNUT1IsUEtJLERvRDEYMBYG<br />
+A1UECwwPVS5TLiBHT1ZFUk5NRU5UMRcwFQYDVQQDDA4xOTIuMTY4LjI0MC4yMzCC<br />
+i7TGBvhm5PTbfAzBma8/hSlsBGJ0qnOteb1Zaw== &lt;Abbreviated Output Due to Size&gt;<br />
+-----END CERTIFICATE REQUEST-----<br />
+<br />
+Step 2: Once the DOD PKI signed certificates are received, CA Root Certificate and Intermediate Certificates obtained from CA must be uploaded onto the Arista network device directory of /certificate: The certificate's transfer can be accomplished by SCP or USB. The detail configuration can be found in the Arista Military Unique Deployment Guide in the section &quot;Configuring RSA SecureID with OTP Management&quot;. <br />
+<br />
+The following commands copy the certificates using device USB1: to directory of the certificate:<br />
+<br />
+switch#copy usb1:Arista-23.pem certificate:<br />
+Copy completed successfully.<br />
+switch#copy usb1: CA-60.crt certificate:<br />
+Copy completed successfully.<br />
+switch#copy usb1: DODDISASWCA_60.crt certificate:<br />
+Copy completed successfully.<br />
+!<br />
+The following commands verify all three certificates are correctly copied to the certificate directory: <br />
+<br />
+switch#directory certificate<br />
+switch#dir certificate:<br />
+Directory of certificate:/<br />
+       -rw-        2025           Aug 11 10:52  CA-60.crt<br />
+       -rw-        2110           Aug 11 10:52  ARISTA_SIGNING_CA.crt<br />
+       -rw-        1724            Aug 9 14:35  DODDISASWCA_60.crt<br />
+       -rw-        1722           Aug 12 09:38  arista-b64.cer<br />
+       -rw-        1696           Aug 12 14:35  Arista-23.pem<br />
+       -rw-        1696           Aug 12 14:36  intCert.pem<br />
+!<br />
+<br />
+The following commands configure the SSL-profile using the PKI certificates on the switch with the RSA SecureID server and trust chain:<br />
+<br />
+switch(config)#management security<br />
+switch(config-mgmt-security)#ssl profile RSA01<br />
+switch(config-mgmt-sec-ssl-profile-RSA01)#tls versions 1.2<br />
+switch(config-mgmt-sec-ssl-profile-RSA01)#certificate Arista-23.pem key rsa1.key<br />
+switch(config-mgmt-sec-ssl-profile-RSA01)#trust certificate Arista-23.pem<br />
+switch(config-mgmt-sec-ssl-profile-RSA01)#trust certificate DODDISASWCA_60.crt<br />
+switch(config-mgmt-sec-ssl-profile-RSA01)#chain certificate CA-60.cer<br />
+switch(config-mgmt-sec-ssl-profile-RSA01)#show active<br />
+management security<br />
+   ssl profile RSA01<br />
+      tls versions 1.2<br />
+      certificate Arista-23.pem.pem key rsa1.key<br />
+      trust certificate certificate Arista-23.pem<br />
+      trust certificate CA-60.cer<br />
+      trust certificate DODDISASWCA_60.crt<br />
+      chain certificate CA-60.crt<br />
+radius-server tls ssl-profile RSA01<br />
+!<br />
+<br />
+Step 3: Configure the switch RadSec Proxy server and RSA SecureID server IP address and RADIUS attribute configuration for ssl-profile RSA01.<br />
+<br />
+switch(config)#radius-server tls ssl-profile RSA01<br />
+switch(config)#radius-server host 192.168.16.102 key 7 09595D080D0C1453<br />
+switch(config)#radius-server host 192.168.16.55 key 7 120C161606020F45<br />
+switch(config)#radius-server host 192.168.16.55 tls<br />
+switch(config)#aaa group server radius RADsecProxy<br />
+   server 192.168.16.55 tls<br />
+!<br />
+<br />
+Step 4: Configure the AAA authentication and authorization parameters for SSL-profile and RadSec Proxy Server.<br />
+<br />
+switch(config)#no aaa root<br />
+switch(config)#aaa authorization policy local default-role aristaadmin<br />
+switch(config)#logging level AAA informational<br />
+switch(config)#aaa group server radius RADsecProxy<br />
+   server 192.168.16.55 tls<br />
+switch(config)#aaa group server radius TIC1<br />
+   server 192.168.16.103<br />
+switch(config)#aaa authentication login default local group RADsecProxy<br />
+switch(config)#aaa authentication login console local<br />
+switch(config)#aaa authentication policy on-success log<br />
+switch(config)#aaa authentication policy on-failure log<br />
+switch(config)#aaa authorization exec default local group RADsecProxy<br />
+switch(config)#aaa authorization commands all default local<br />
+switch(config)#aaa accounting commands all default start-stop logging group radius<br />
+switch(config)#write<br />
+!<br />
+<br />
+Step 5: Verify the AAA configuration to ensure all parameters from the previous step are accurate with the following command:<br />
+<br />
+switch(config)#show running-config | section aaa<br />
+no aaa root<br />
+aaa authorization policy local default-role aristaadmin<br />
+logging level AAA informational<br />
+aaa group server radius RADsecProxy<br />
+   server 192.168.16.55 tls<br />
+aaa group server radius TIC1<br />
+   server 192.168.16.103<br />
+aaa authentication login default local group RADsecProxy<br />
+aaa authentication login console local<br />
+aaa authentication policy on-success log<br />
+aaa authentication policy on-failure log<br />
+aaa authorization exec default local group RADsecProxy<br />
+aaa authorization commands all default local<br />
+aaa accounting commands all default start-stop logging group radius<br />
+!<br />
+switch#show aaa methods authentication <br />
+Authentication method lists for LOGIN:<br />
+  name=default methods=local, group RADsecProxy<br />
+  name=login methods=local<br />
+Authentication method list for ENABLE:<br />
+  name=default methods=local<br />
+Authentication method list for DOT1X:<br />
+  name=default methods=<br />
+!<br />
+switch##sh radius<br />
+RADIUS server             : 192.168.16.45, authentication port 1812, accounting port 1813 <br />
+             Messages sent:          10<br />
+         Messages received:      10<br />
+         Requests accepted:      9<br />
+         Requests rejected:        1<br />
+          Requests timeout:       0<br />
+    Requests retransmitted:  0<br />
+             Bad responses:           0<br />
+         Connection errors:        0<br />
+                DNS errors:              0<br />
+      CoA request received:     0<br />
+       DM request received:    0<br />
+              CoA ack sent:            0<br />
+               DM ack sent:           0<br />
+              CoA Nak sent:           0<br />
+               DM Nak sent:          0<br />
+<br />
+RADIUS server-group: RSA1<br />
+     0: 192.168.16.45, authentication port 1812, accounting port 1813 <br />
+<br />
+RADIUS server-group: TIC1<br />
+     0: 192.168.16.103, authentication port 1812, accounting port 1813 <br />
+Last time counters were cleared: never<br />
+!<br />
+trust certificate Arista-23.pem<br />
+switch#(config-mgmt-sec-ssl-profile-RSA1)#Aug 24 15:56:41 switch SuperServer: %SECURITY-3-SSL_PROFILE_VALID: SSL profile 'RSA01' is valid.</p><h2>Check Contents</h2><p>Determine if the Arista network device obtains public key certificates from an appropriate certificate policy through an approved service provider.<br />
+<br />
+Note: This check is Not Applicable if not using any PKI certificates.<br />
+<br />
+Verify the DOD PKI certificates are copied to /certificate directory on the switch as outlined in the Arista Military Deployment Guide and configured as in the section &quot;Configuring RSA SecureID with OTP Management&quot;.<br />
+<br />
+  switch# #dir certificate:<br />
+Directory of certificate:/<br />
+       -rw-        2025           Apr 30 17:34  ARISTA_ROOT_CA.crt<br />
+       -rw-        2110           Apr 30 17:34  ARISTA_SIGNING_CA.crt<br />
+       -rw-        2015           Apr 30 17:35  Arista-CCS-720XP-48Y6.pem<br />
+       -rw-        2020           Apr 30 17:35  DOD_JITC_Root_CA_3__0x01__DOD_JITC_Root_CA_3.cer<br />
+       -rw-        2125           Apr 30 17:35  CA-60.cer<br />
+!<br />
+<br />
+Verify the provider of the certificate is a DOD-approved certificate authority.<br />
+<br />
+If the Arista network device does not obtain its public key certificates from an appropriate certificate policy through an approved service provider, this is a finding.</p><h2>Vulnerability Number</h2><p>V-255965</p><h2>Documentable</h2><p>False</p><h2>Rule Version</h2><p>ARST-ND-000840</p><h2>Severity Override Guidance</h2><p>Determine if the Arista network device obtains public key certificates from an appropriate certificate policy through an approved service provider.<br />
+<br />
+Note: This check is Not Applicable if not using any PKI certificates.<br />
+<br />
+Verify the DOD PKI certificates are copied to /certificate directory on the switch as outlined in the Arista Military Deployment Guide and configured as in the section &quot;Configuring RSA SecureID with OTP Management&quot;.<br />
+<br />
+  switch# #dir certificate:<br />
+Directory of certificate:/<br />
+       -rw-        2025           Apr 30 17:34  ARISTA_ROOT_CA.crt<br />
+       -rw-        2110           Apr 30 17:34  ARISTA_SIGNING_CA.crt<br />
+       -rw-        2015           Apr 30 17:35  Arista-CCS-720XP-48Y6.pem<br />
+       -rw-        2020           Apr 30 17:35  DOD_JITC_Root_CA_3__0x01__DOD_JITC_Root_CA_3.cer<br />
+       -rw-        2125           Apr 30 17:35  CA-60.cer<br />
+!<br />
+<br />
+Verify the provider of the certificate is a DOD-approved certificate authority.<br />
+<br />
+If the Arista network device does not obtain its public key certificates from an appropriate certificate policy through an approved service provider, this is a finding.</p><h2>Check Content Reference</h2><p>M</p><h2>Target Key</h2><p>5511</p></body></html>

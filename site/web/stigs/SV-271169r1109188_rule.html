@@ -1,0 +1,53 @@
+<!doctype html><html lang="en"><head><meta charset="utf-8"><title>STIGQter: STIG Check Details: SV-271169r1109188_rule: The Database Master Key encryption password must meet DOD password complexity requirements.</title><link rel="icon" type="image/svg+xml" href="STIGQter.svg" /><script async src="https://www.googletagmanager.com/gtag/js?id=UA-31381839-2"></script><script src="include.js"></script><script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-4110907817782130" crossorigin="anonymous"></script></head><body><div><img src="STIGQter.svg" alt="STIGQter" style="height:1em;" /> <a href="https://www.stigqter.com/">STIGQter</a>: <a href="main.html">STIG Summary</a>: <a href="U_MS_SQL_Server_2022_Database_STIG_V1R3_Manual-xccdf.html">Microsoft SQL Server 2022 Database Security Technical Implementation Guide Version: 1 Release: 3 Benchmark Date: 01 Apr 2026</a>:</div> <h1>The Database Master Key encryption password must meet DOD password complexity requirements.</h1><h2>DISA Rule</h2><p>SV-271169r1109188_rule</p><h2>Vulnerability Number</h2><p>V-271169</p><h2>Group Title</h2><p>SRG-APP-000231-DB-000154</p><h2>Rule Version</h2><p>SQLD-22-001600</p><h2>Severity</h2><p>CAT II</p><h2>CCI(s)</h2><ul><li>CCI-001199 - Protects the confidentiality and/or integrity of organization-defined information at rest.</li></ul><h2>Weight</h2><p>10</p><h2>Fix Recommendation</h2><p>Assign an encryption password to the Database Master Key that is a minimum of 15 characters with at least one uppercase character, one lowercase character, one special character, one numeric character, and at least eight characters changed from the previous password. To change the Database Master Key encryption password: <br />
+<br />
+USE [database name];<br />
+ALTER MASTER KEY REGENERATE WITH ENCRYPTION BY PASSWORD = 'new password'; <br />
+<br />
+Note: Do not change the Database Master Key encryption method until the effects are thoroughly reviewed. Changing the master key encryption causes all encryption using the Database Master Key to be decrypted and reencrypted. This action should not be taken during a high-demand time. <br />
+<br />
+Refer to the SQL Server documentation found here prior to reencrypting the Database Master Key: <br />
+https://learn.microsoft.com/en-us/sql/relational-databases/security/encryption/create-a-database-master-key?</p><h2>Check Contents</h2><p>From the query prompt: <br />
+<br />
+SELECT name <br />
+FROM [master].sys.databases <br />
+WHERE state = 0 <br />
+<br />
+Repeat for each database: <br />
+From the query prompt: <br />
+<br />
+USE [database name] <br />
+SELECT COUNT(name) <br />
+FROM sys.symmetric_keys s, sys.key_encryptions k <br />
+WHERE s.name = '##MS_DatabaseMasterKey##' <br />
+AND s.symmetric_key_id = k.key_id <br />
+AND k.crypt_type in ('ESKP', 'ESP2', 'ESP3')<br />
+<br />
+If the value returned is zero, this is not applicable.<br />
+<br />
+If the value returned is greater than zero, a Database Master Key exists and is encrypted with a password. <br />
+<br />
+Review procedures and evidence of password requirements used to encrypt Database Master Keys. <br />
+<br />
+If the passwords do not meet DOD password standards, this is a finding.</p><h2>Vulnerability Number</h2><p>V-271169</p><h2>Documentable</h2><p>False</p><h2>Rule Version</h2><p>SQLD-22-001600</p><h2>Severity Override Guidance</h2><p>From the query prompt: <br />
+<br />
+SELECT name <br />
+FROM [master].sys.databases <br />
+WHERE state = 0 <br />
+<br />
+Repeat for each database: <br />
+From the query prompt: <br />
+<br />
+USE [database name] <br />
+SELECT COUNT(name) <br />
+FROM sys.symmetric_keys s, sys.key_encryptions k <br />
+WHERE s.name = '##MS_DatabaseMasterKey##' <br />
+AND s.symmetric_key_id = k.key_id <br />
+AND k.crypt_type in ('ESKP', 'ESP2', 'ESP3')<br />
+<br />
+If the value returned is zero, this is not applicable.<br />
+<br />
+If the value returned is greater than zero, a Database Master Key exists and is encrypted with a password. <br />
+<br />
+Review procedures and evidence of password requirements used to encrypt Database Master Keys. <br />
+<br />
+If the passwords do not meet DOD password standards, this is a finding.</p><h2>Check Content Reference</h2><p>M</p><h2>Target Key</h2><p>5676</p></body></html>

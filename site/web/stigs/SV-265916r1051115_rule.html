@@ -1,0 +1,44 @@
+<!doctype html><html lang="en"><head><meta charset="utf-8"><title>STIGQter: STIG Check Details: SV-265916r1051115_rule: MongoDB must uniquely identify and authenticate organizational users (or processes acting on behalf of organizational users).</title><link rel="icon" type="image/svg+xml" href="STIGQter.svg" /><script async src="https://www.googletagmanager.com/gtag/js?id=UA-31381839-2"></script><script src="include.js"></script><script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-4110907817782130" crossorigin="anonymous"></script></head><body><div><img src="STIGQter.svg" alt="STIGQter" style="height:1em;" /> <a href="https://www.stigqter.com/">STIGQter</a>: <a href="main.html">STIG Summary</a>: <a href="U_MongoDB_Enterprise_Advanced_7-x_STIG_V1R2_Manual-xccdf.html">MongoDB Enterprise Advanced 7.x Security Technical Implementation Guide Version: 1 Release: 2 Benchmark Date: 01 Jul 2026</a>:</div> <h1>MongoDB must uniquely identify and authenticate organizational users (or processes acting on behalf of organizational users).</h1><h2>DISA Rule</h2><p>SV-265916r1051115_rule</p><h2>Vulnerability Number</h2><p>V-265916</p><h2>Group Title</h2><p>SRG-APP-000148-DB-000103</p><h2>Rule Version</h2><p>MD7X-00-003600</p><h2>Severity</h2><p>CAT II</p><h2>CCI(s)</h2><ul><li>CCI-000764 - Uniquely identify and authenticate organizational users and associate that unique identification with processes acting on behalf of those users.</li></ul><h2>Weight</h2><p>10</p><h2>Fix Recommendation</h2><p>For any user not a member of an appropriate organization and has access to a database in the system run the following command:<br />
+<br />
+// Change to the appropriate database<br />
+&gt; use &lt;database&gt;<br />
+&gt; db.dropUser(&quot;&lt;username&gt;&quot;, {w: &quot;majority&quot;, wtimeout: 5000})<br />
+<br />
+The MongoDB configuration file (default location: /etc/mongod.conf) must contain the following:<br />
+<br />
+security: <br />
+  authorization: &quot;enabled&quot;<br />
+<br />
+If not, edit the MongoDB configuration file. Add the parameters and stop/start (restart) any mongod or mongos process using this MongoDB configuration file.</p><h2>Check Contents</h2><p>For each database in the system, run the following command:<br />
+<br />
+&gt; use &lt;database&gt;<br />
+&gt; db.getUsers()<br />
+<br />
+Ensure each user identified is a member of an appropriate organization that can access the database.<br />
+<br />
+Alternatively, if LDAP/AD is being used for authentication/authorization, the mongoldap tool can be used to verify user account access.<br />
+<br />
+If a user is found not be a member of an appropriate organization that can access the database, this is a finding.<br />
+<br />
+Verify that the MongoDB configuration file (default location: /etc/mongod.conf) contains the following:<br />
+<br />
+security:<br />
+  authorization: &quot;enabled&quot;<br />
+ <br />
+If this parameter is not present, this is a finding.</p><h2>Vulnerability Number</h2><p>V-265916</p><h2>Documentable</h2><p>False</p><h2>Rule Version</h2><p>MD7X-00-003600</p><h2>Severity Override Guidance</h2><p>For each database in the system, run the following command:<br />
+<br />
+&gt; use &lt;database&gt;<br />
+&gt; db.getUsers()<br />
+<br />
+Ensure each user identified is a member of an appropriate organization that can access the database.<br />
+<br />
+Alternatively, if LDAP/AD is being used for authentication/authorization, the mongoldap tool can be used to verify user account access.<br />
+<br />
+If a user is found not be a member of an appropriate organization that can access the database, this is a finding.<br />
+<br />
+Verify that the MongoDB configuration file (default location: /etc/mongod.conf) contains the following:<br />
+<br />
+security:<br />
+  authorization: &quot;enabled&quot;<br />
+ <br />
+If this parameter is not present, this is a finding.</p><h2>Check Content Reference</h2><p>M</p><h2>Target Key</h2><p>5637</p></body></html>

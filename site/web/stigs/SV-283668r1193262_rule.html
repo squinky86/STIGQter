@@ -1,0 +1,231 @@
+<!doctype html><html lang="en"><head><meta charset="utf-8"><title>STIGQter: STIG Check Details: SV-283668r1193262_rule: The WebSphere Liberty Server must use FIPS 140-3-approved encryption modules when authenticating users and processes.</title><link rel="icon" type="image/svg+xml" href="STIGQter.svg" /><script async src="https://www.googletagmanager.com/gtag/js?id=UA-31381839-2"></script><script src="include.js"></script><script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-4110907817782130" crossorigin="anonymous"></script></head><body><div><img src="STIGQter.svg" alt="STIGQter" style="height:1em;" /> <a href="https://www.stigqter.com/">STIGQter</a>: <a href="main.html">STIG Summary</a>: <a href="U_IBM_WebSphere_Liberty_Server_STIG_V2R4_Manual-xccdf.html">IBM WebSphere Liberty Server Security Technical Implementation Guide Version: 2 Release: 4 Benchmark Date: 01 Apr 2026</a>:</div> <h1>The WebSphere Liberty Server must use FIPS 140-3-approved encryption modules when authenticating users and processes.</h1><h2>DISA Rule</h2><p>SV-283668r1193262_rule</p><h2>Vulnerability Number</h2><p>V-283668</p><h2>Group Title</h2><p>SRG-APP-000179-AS-000129</p><h2>Rule Version</h2><p>IBMW-LS-001200</p><h2>Severity</h2><p>CAT I</p><h2>CCI(s)</h2><ul><li>CCI-000803 - Implement mechanisms for authentication to a cryptographic module that meet the requirements of applicable laws, Executive Orders, directives, policies, regulations, standards, and guidance for such authentication.</li><li>CCI-001188 - Generate a unique session identifier for each session with organization-defined randomness requirements.</li><li>CCI-002418 - Protect the confidentiality and/or integrity of transmitted information.</li><li>CCI-002422 - Maintain the confidentiality and/or integrity of information during reception.</li><li>CCI-002450 - Implement organization-defined types of cryptography for each specified cryptography use.</li></ul><h2>Weight</h2><p>10</p><h2>Fix Recommendation</h2><p>There are two ways to meet this requirement using FIPS 140-3. Only one method is required.<br />
+<br />
+If IBM JDK 8 version 8.0.8.30 or later is installed and configured to run with WebSphere Liberty version 25.0.0.3 or later, proceed with method (I).<br />
+If IBM Semeru Runtimes version 11.0.29, 17.0.17, 21.0.9, 25.0.1 or higher is installed and configured with WebSphere Liberty version 25.0.0.12 or later, proceed with method (II).<br />
+<br />
+Method (I) IBM JDK 8 (version 8.0.8.30 or later) with WebSphere Liberty (version 25.0.0.3 or later):<br />
+<br />
+1. If Liberty server is running, stop it.<br />
+<br />
+2. Edit/create the ${server.config.dir}/jvm.options file. Edit/add the following three properties:<br />
+<br />
+-Xenablefips140-3<br />
+-Dcom.ibm.jsse2.usefipsprovider=true<br />
+-Dcom.ibm.jsse2.usefipsProviderName=IBMJCEPlusFIPS<br />
+<br />
+3. If there are existing LTPA keys, delete the ltpa.keys file before restarting the server to generate new FIPS 140-3-compliant keys.<br />
+<br />
+Default location: ${server.output.dir}/resources/security/ltpa.keys<br />
+<br />
+A new ltpa.keys file will be automatically created when the Liberty server restarts with FIPS 140-3-compliant keys.<br />
+<br />
+4. Restart the Liberty server to enable FIPS 140-3.<br />
+<br />
+5. Verify TLS protocol is set to TLS 1.2 or TLS 1.3 in the ${server.config.dir}/server.xml file.<br />
+<br />
+&lt;ssl id=&quot;defaultSSLConfig&quot; sslProtocol=&quot;TLSv1.2&quot; /&gt;<br />
+or<br />
+&lt;ssl id=&quot;defaultSSLConfig&quot; sslProtocol=&quot;TLSv1.3&quot; /&gt;<br />
+<br />
+Alternative LTPA Key Creation Method:<br />
+To manually create LTPA keys with FIPS 140-3 approved algorithms using the securityUtility command:<br />
+<br />
+1. Export the required system properties:<br />
+<br />
+export JVM_ARGS=&quot;-Xenablefips140-3 -Dcom.ibm.jsse2.usefipsprovider=true -Dcom.ibm.jsse2.usefipsProviderName=2. Run the securityUtility createLTPAKeys command:<br />
+securityUtility createLTPAKeys --password=mypassword --passwordEncoding=aes<br />
+<br />
+Important: If LTPA validation keys exist, delete these and generate new validation keys after FIPS 140-3 is enabled using the securityUtility createLTPAKeys command as shown above.<br />
+<br />
+Method (II) IBM Semeru Runtimes with WebSphere Liberty (FIPS 140-3):<br />
+<br />
+1. Liberty server is running, stop it.<br />
+<br />
+2. Enable FIPS 140-3 using the securityUtility configureFIPS command. To enable across all servers, clients and tools (Installation level):<br />
+<br />
+securityUtility configureFIPS<br />
+To enable for a specific server:<br />
+securityUtility configureFIPS --server=&lt;server_name&gt;<br />
+To enable for a specific client:<br />
+securityUtility configureFIPS --client=&lt;client_name&gt;<br />
+<br />
+This command configures the FIPS enablement requirements and creates a Java security properties file.<br />
+<br />
+3. (Optional) To create a custom profile in a specific location:<br />
+<br />
+securityUtility configureFIPS --customProfileFile=&lt;file_path&gt;<br />
+<br />
+The default profile locations are:<br />
+<br />
+- Installation level: &lt;Liberty install location&gt;/wlp/etc/FIPS140-3-Liberty-Application.properties<br />
+- Server level: &lt;server root&gt;/resources/security/FIPS140-3-Liberty-Application.properties<br />
+- Client level: &lt;client root&gt;/resources/security/FIPS140-3-Liberty-Application.properties<br />
+<br />
+4. Restart the Liberty server to enable FIPS 140-3.<br />
+<br />
+When the server restarts after FIPS 140-3 is enabled:<br />
+<br />
+- A new ltpa.keys file is automatically created with FIPS-approved algorithms.<br />
+- Existing ltpa.keys files are backed up to ltpa.keys.nofips.<br />
+<br />
+5. Verify TLS protocol is set to TLS 1.2 or TLS 1.3 in the ${server.config.dir}/server.xml file.<br />
+<br />
+&lt;ssl id=&quot;defaultSSLConfig&quot; sslProtocol=&quot;TLSv1.2&quot; /&gt;<br />
+or<br />
+&lt;ssl id=&quot;defaultSSLConfig&quot; sslProtocol=&quot;TLSv1.3&quot; /&gt;<br />
+<br />
+6. SAML Configuration: If SAML is used, configure only FIPS 140-3-approved signature algorithms in the ${server.config.dir}/server.xml file.<br />
+<br />
+Approved algorithms: SHA256, SHA384, SHA512, ECDSAwithSHA256, ECDSAwithSHA384, ECDSAwithSHA512<br />
+<br />
+Example:<br />
+&lt;samlWebSso20 id=&quot;defaultSP&quot; signatureMethodAlgorithm=&quot;SHA256&quot; /&gt;<br />
+<br />
+Alternative LTPA Key Creation Method:<br />
+To manually create LTPA keys with FIPS 140-3-approved algorithms:<br />
+<br />
+1. Configure FIPS 140-3 at the installation level (as shown in step 2 above).<br />
+<br />
+2. Run the securityUtility createLTPAKeys command:<br />
+<br />
+securityUtility createLTPAKeys --password=mypassword --passwordEncoding=aes<br />
+<br />
+Important: If LTPA validation keys exist, delete these and generate new validation keys after FIPS 140-3 is enabled using the securityUtility createLTPAKeys command.</p><h2>Check Contents</h2><p>Note: If FIPS 140-2 is configured in IBMW-LS-000520, this is not applicable. This is allowed until 21 September 2026. If FIPS 140-2 is still in use after this date, this is a finding.<br />
+<br />
+There are two ways to meet this requirement using FIPS 140-3. Only one method is required.<br />
+<br />
+If IBM JDK 8 version 8.0.8.30 or later is installed and configured to run with WebSphere Liberty version 25.0.0.3 or later, proceed with method (I). <br />
+If IBM Semeru Runtimes version 11.0.29, 17.0.17, 21.0.9, 25.0.1 or higher is installed and configured with WebSphere Liberty version 25.0.0.12 or later, proceed with method (II).<br />
+<br />
+Method (I) IBM JDK 8 (version 8.0.8.30 or later) with WebSphere Liberty (version 25.0.0.3 or later):<br />
+<br />
+1. Review the ${server.config.dir}/jvm.options file. Verify FIPS 140-3 is in use by checking the following lines:<br />
+<br />
+-Xenablefips140-3<br />
+-Dcom.ibm.jsse2.usefipsprovider=true<br />
+-Dcom.ibm.jsse2.usefipsProviderName=IBMJCEPlusFIPS<br />
+<br />
+If the properties are not set as shown in the ${server.config.dir}/jvm.options file, this is a finding.<br />
+<br />
+2. Verify TLS protocol is set to TLS 1.2 or TLS 1.3 in the ${server.config.dir}/server.xml file.<br />
+&lt;ssl id=&quot;defaultSSLConfig&quot; sslProtocol=&quot;TLSv1.2&quot; /&gt;<br />
+or<br />
+&lt;ssl id=&quot;defaultSSLConfig&quot; sslProtocol=&quot;TLSv1.3&quot; /&gt;<br />
+<br />
+If TLS 1.2 or TLS 1.3 is not configured, this is a finding.<br />
+<br />
+3. Verify LTPA keys are FIPS 140-3 compliant. Verify the ltpa.keys file was generated after FIPS 140-3 was enabled or verify LTPA keys were created using the securityUtility createLTPAKeys command with FIPS 140-3 enabled.<br />
+<br />
+Default location: ${server.output.dir}/resources/security/ltpa.keys<br />
+<br />
+If LTPA keys were created before FIPS 140-3 was enabled and have not been regenerated, this is a finding.<br />
+<br />
+<br />
+Method (II) IBM Semeru Runtimes with WebSphere Liberty (FIPS 140-3):<br />
+<br />
+1. Verify FIPS 140-3 is configured by checking for the existence of the FIPS 140-3 profile file in one of the following locations:<br />
+<br />
+- Installation level: &lt;Liberty install location&gt;/wlp/etc/FIPS140-3-Liberty-Application.properties<br />
+- Server level: &lt;server root&gt;/resources/security/FIPS140-3-Liberty-Application.properties<br />
+- Client level: &lt;client root&gt;/resources/security/FIPS140-3-Liberty-Application.properties<br />
+<br />
+If the FIPS 140-3 profile file does not exist, this is a finding.<br />
+<br />
+2. Review the FIPS 140-3 profile file and verify it contains the appropriate security provider configurations. The file should contain entries similar to:<br />
+<br />
+RestrictedSecurity.OpenJCEPlusFIPS.FIPS140-3-Liberty-Application.jce.provider.1 = com.ibm.crypto.plus.<br />
+<br />
+If the profile file does not contain valid provider configurations, this is a finding.<br />
+<br />
+3. Verify TLS protocol is set to TLS 1.2 or TLS 1.3 in the ${server.config.dir}/server.xml file.<br />
+<br />
+&lt;ssl id=&quot;defaultSSLConfig&quot; sslProtocol=&quot;TLSv1.2&quot; /&gt;<br />
+or<br />
+&lt;ssl id=&quot;defaultSSLConfig&quot; sslProtocol=&quot;TLSv1.3&quot; /&gt;<br />
+<br />
+If TLS 1.2 or TLS 1.3 is not configured, this is a finding.<br />
+<br />
+4. Verify LTPA keys are FIPS 140-3 compliant. Verify the ltpa.keys file was generated after FIPS 140-3 was enabled. If an ltpa.keys.nofips backup file exists, verify new FIPS 140-3 compliant keys were generated.<br />
+<br />
+Default location: ${server.output.dir}/resources/security/ltpa.keys<br />
+<br />
+If LTPA keys were created before FIPS 140-3 was enabled and have not been regenerated, this is a<br />
+finding.<br />
+<br />
+5. SAML Configuration (FIPS 140-3 specific): If SAML is used, verify that only FIPS 140-3 approved signature algorithms are configured in the ${server.config.dir}/server.xml file:<br />
+<br />
+Approved algorithms: SHA256, SHA384, SHA512, ECDSAwithSHA256, ECDSAwithSHA384, ECDSAwithSHA512<br />
+<br />
+Example:<br />
+&lt;samlWebSso20 id=&quot;defaultSP&quot; signatureMethodAlgorithm=&quot;SHA256&quot; /&gt;<br />
+<br />
+If SHA1 or other nonapproved algorithms are configured, this is a finding.</p><h2>Vulnerability Number</h2><p>V-283668</p><h2>Documentable</h2><p>False</p><h2>Rule Version</h2><p>IBMW-LS-001200</p><h2>Severity Override Guidance</h2><p>Note: If FIPS 140-2 is configured in IBMW-LS-000520, this is not applicable. This is allowed until 21 September 2026. If FIPS 140-2 is still in use after this date, this is a finding.<br />
+<br />
+There are two ways to meet this requirement using FIPS 140-3. Only one method is required.<br />
+<br />
+If IBM JDK 8 version 8.0.8.30 or later is installed and configured to run with WebSphere Liberty version 25.0.0.3 or later, proceed with method (I). <br />
+If IBM Semeru Runtimes version 11.0.29, 17.0.17, 21.0.9, 25.0.1 or higher is installed and configured with WebSphere Liberty version 25.0.0.12 or later, proceed with method (II).<br />
+<br />
+Method (I) IBM JDK 8 (version 8.0.8.30 or later) with WebSphere Liberty (version 25.0.0.3 or later):<br />
+<br />
+1. Review the ${server.config.dir}/jvm.options file. Verify FIPS 140-3 is in use by checking the following lines:<br />
+<br />
+-Xenablefips140-3<br />
+-Dcom.ibm.jsse2.usefipsprovider=true<br />
+-Dcom.ibm.jsse2.usefipsProviderName=IBMJCEPlusFIPS<br />
+<br />
+If the properties are not set as shown in the ${server.config.dir}/jvm.options file, this is a finding.<br />
+<br />
+2. Verify TLS protocol is set to TLS 1.2 or TLS 1.3 in the ${server.config.dir}/server.xml file.<br />
+&lt;ssl id=&quot;defaultSSLConfig&quot; sslProtocol=&quot;TLSv1.2&quot; /&gt;<br />
+or<br />
+&lt;ssl id=&quot;defaultSSLConfig&quot; sslProtocol=&quot;TLSv1.3&quot; /&gt;<br />
+<br />
+If TLS 1.2 or TLS 1.3 is not configured, this is a finding.<br />
+<br />
+3. Verify LTPA keys are FIPS 140-3 compliant. Verify the ltpa.keys file was generated after FIPS 140-3 was enabled or verify LTPA keys were created using the securityUtility createLTPAKeys command with FIPS 140-3 enabled.<br />
+<br />
+Default location: ${server.output.dir}/resources/security/ltpa.keys<br />
+<br />
+If LTPA keys were created before FIPS 140-3 was enabled and have not been regenerated, this is a finding.<br />
+<br />
+<br />
+Method (II) IBM Semeru Runtimes with WebSphere Liberty (FIPS 140-3):<br />
+<br />
+1. Verify FIPS 140-3 is configured by checking for the existence of the FIPS 140-3 profile file in one of the following locations:<br />
+<br />
+- Installation level: &lt;Liberty install location&gt;/wlp/etc/FIPS140-3-Liberty-Application.properties<br />
+- Server level: &lt;server root&gt;/resources/security/FIPS140-3-Liberty-Application.properties<br />
+- Client level: &lt;client root&gt;/resources/security/FIPS140-3-Liberty-Application.properties<br />
+<br />
+If the FIPS 140-3 profile file does not exist, this is a finding.<br />
+<br />
+2. Review the FIPS 140-3 profile file and verify it contains the appropriate security provider configurations. The file should contain entries similar to:<br />
+<br />
+RestrictedSecurity.OpenJCEPlusFIPS.FIPS140-3-Liberty-Application.jce.provider.1 = com.ibm.crypto.plus.<br />
+<br />
+If the profile file does not contain valid provider configurations, this is a finding.<br />
+<br />
+3. Verify TLS protocol is set to TLS 1.2 or TLS 1.3 in the ${server.config.dir}/server.xml file.<br />
+<br />
+&lt;ssl id=&quot;defaultSSLConfig&quot; sslProtocol=&quot;TLSv1.2&quot; /&gt;<br />
+or<br />
+&lt;ssl id=&quot;defaultSSLConfig&quot; sslProtocol=&quot;TLSv1.3&quot; /&gt;<br />
+<br />
+If TLS 1.2 or TLS 1.3 is not configured, this is a finding.<br />
+<br />
+4. Verify LTPA keys are FIPS 140-3 compliant. Verify the ltpa.keys file was generated after FIPS 140-3 was enabled. If an ltpa.keys.nofips backup file exists, verify new FIPS 140-3 compliant keys were generated.<br />
+<br />
+Default location: ${server.output.dir}/resources/security/ltpa.keys<br />
+<br />
+If LTPA keys were created before FIPS 140-3 was enabled and have not been regenerated, this is a<br />
+finding.<br />
+<br />
+5. SAML Configuration (FIPS 140-3 specific): If SAML is used, verify that only FIPS 140-3 approved signature algorithms are configured in the ${server.config.dir}/server.xml file:<br />
+<br />
+Approved algorithms: SHA256, SHA384, SHA512, ECDSAwithSHA256, ECDSAwithSHA384, ECDSAwithSHA512<br />
+<br />
+Example:<br />
+&lt;samlWebSso20 id=&quot;defaultSP&quot; signatureMethodAlgorithm=&quot;SHA256&quot; /&gt;<br />
+<br />
+If SHA1 or other nonapproved algorithms are configured, this is a finding.</p><h2>Check Content Reference</h2><p>M</p><h2>Target Key</h2><p>5424</p></body></html>

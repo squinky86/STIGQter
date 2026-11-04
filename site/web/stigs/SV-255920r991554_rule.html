@@ -1,0 +1,19 @@
+<!doctype html><html lang="en"><head><meta charset="utf-8"><title>STIGQter: STIG Check Details: SV-255920r991554_rule: The SUSE operating system SSH server must be configured to use only FIPS-validated key exchange algorithms.</title><link rel="icon" type="image/svg+xml" href="STIGQter.svg" /><script async src="https://www.googletagmanager.com/gtag/js?id=UA-31381839-2"></script><script src="include.js"></script><script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-4110907817782130" crossorigin="anonymous"></script></head><body><div><img src="STIGQter.svg" alt="STIGQter" style="height:1em;" /> <a href="https://www.stigqter.com/">STIGQter</a>: <a href="main.html">STIG Summary</a>: <a href="U_SLES_15_STIG_V2R8_Manual-xccdf.html">SUSE Linux Enterprise Server 15 Security Technical Implementation Guide Version: 2 Release: 8 Benchmark Date: 01 Jul 2026</a>:</div> <h1>The SUSE operating system SSH server must be configured to use only FIPS-validated key exchange algorithms.</h1><h2>DISA Rule</h2><p>SV-255920r991554_rule</p><h2>Vulnerability Number</h2><p>V-255920</p><h2>Group Title</h2><p>SRG-OS-000250-GPOS-00093</p><h2>Rule Version</h2><p>SLES-15-040450</p><h2>Severity</h2><p>CAT II</p><h2>CCI(s)</h2><ul><li>CCI-001453 - Implement cryptographic mechanisms to protect the integrity of remote access sessions.</li></ul><h2>Weight</h2><p>10</p><h2>Fix Recommendation</h2><p>Configure the SSH server to use only FIPS-validated key exchange algorithms by adding or modifying the following line in &quot;/etc/ssh/sshd_config&quot;:<br />
+<br />
+     KexAlgorithms ecdh-sha2-nistp256,ecdh-sha2-nistp384,ecdh-sha2-nistp521,diffie-hellman-group-exchange-sha256<br />
+<br />
+Restart the &quot;sshd&quot; service for changes to take effect:<br />
+<br />
+     $ sudo systemctl restart sshd</p><h2>Check Contents</h2><p>Verify the SSH server is configured to use only FIPS-validated key exchange algorithms:<br />
+<br />
+&gt; sudo /usr/sbin/sshd -dd 2&gt;&amp;1 | awk '/filename/ {print $4}' | tr -d '\r' | tr '\n' ' ' | xargs sudo grep -iH '^\s*kexalgorithms'<br />
+<br />
+KexAlgorithms ecdh-sha2-nistp256,ecdh-sha2-nistp384,ecdh-sha2-nistp521,diffie-hellman-group-exchange-sha256<br />
+ <br />
+If &quot;KexAlgorithms&quot; is not configured, is commented out, or does not contain only the algorithms &quot;ecdh-sha2-nistp256,ecdh-sha2-nistp384,ecdh-sha2-nistp521,diffie-hellman-group-exchange-sha256&quot; in exact order, this is a finding.</p><h2>Vulnerability Number</h2><p>V-255920</p><h2>Documentable</h2><p>False</p><h2>Rule Version</h2><p>SLES-15-040450</p><h2>Severity Override Guidance</h2><p>Verify the SSH server is configured to use only FIPS-validated key exchange algorithms:<br />
+<br />
+&gt; sudo /usr/sbin/sshd -dd 2&gt;&amp;1 | awk '/filename/ {print $4}' | tr -d '\r' | tr '\n' ' ' | xargs sudo grep -iH '^\s*kexalgorithms'<br />
+<br />
+KexAlgorithms ecdh-sha2-nistp256,ecdh-sha2-nistp384,ecdh-sha2-nistp521,diffie-hellman-group-exchange-sha256<br />
+ <br />
+If &quot;KexAlgorithms&quot; is not configured, is commented out, or does not contain only the algorithms &quot;ecdh-sha2-nistp256,ecdh-sha2-nistp384,ecdh-sha2-nistp521,diffie-hellman-group-exchange-sha256&quot; in exact order, this is a finding.</p><h2>Check Content Reference</h2><p>M</p><h2>Target Key</h2><p>5274</p></body></html>

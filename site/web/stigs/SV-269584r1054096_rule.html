@@ -1,0 +1,172 @@
+<!doctype html><html lang="en"><head><meta charset="utf-8"><title>STIGQter: STIG Check Details: SV-269584r1054096_rule: Xylok Security Suite must only allow the use of DOD Public Key Infrastructure (PKI) established certificate authorities (CAs) for verification of the establishment of protected sessions.</title><link rel="icon" type="image/svg+xml" href="STIGQter.svg" /><script async src="https://www.googletagmanager.com/gtag/js?id=UA-31381839-2"></script><script src="include.js"></script><script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-4110907817782130" crossorigin="anonymous"></script></head><body><div><img src="STIGQter.svg" alt="STIGQter" style="height:1em;" /> <a href="https://www.stigqter.com/">STIGQter</a>: <a href="main.html">STIG Summary</a>: <a href="U_Xylok_Security_Suite_20-x_STIG_V1R2_Manual-xccdf.html">Xylok Security Suite 20.x Security Technical Implementation Guide Version: 1 Release: 2 Benchmark Date: 05 Jan 2026</a>:</div> <h1>Xylok Security Suite must only allow the use of DOD Public Key Infrastructure (PKI) established certificate authorities (CAs) for verification of the establishment of protected sessions.</h1><h2>DISA Rule</h2><p>SV-269584r1054096_rule</p><h2>Vulnerability Number</h2><p>V-269584</p><h2>Group Title</h2><p>SRG-APP-000427</p><h2>Rule Version</h2><p>XYLK-20-000191</p><h2>Severity</h2><p>CAT II</p><h2>CCI(s)</h2><ul><li>CCI-002470 - Only allow the use of organization-defined certificate authorities for verification of the establishment of protected sessions.</li></ul><h2>Weight</h2><p>10</p><h2>Fix Recommendation</h2><p>Generate or acquire certificates from DOD PKI (or other approved source).<br />
+<br />
+Remove all files in /opt/xylok/certs.<br />
+<br />
+Place new certificate in PEM format at /opt/xylok/certs/cert.crt.<br />
+<br />
+Place new private key in PEM format at /opt/xylok/certs/key.key.<br />
+<br />
+Restart Xylok:<br />
+systemctl restart xylok</p><h2>Check Contents</h2><p>Verify that the certificate Xylok uses for SSL is correctly signed with the following command. In this command, replace &quot;xylok.local&quot; with the domain named used to access the Xylok instance.<br />
+<br />
+$ openssl s_client -showcerts -servername xylok.local -connect xylok.local:443 &lt;/dev/null <br />
+CONNECTED(00000003)<br />
+depth=2 C = US, O = Internet Security Research Group, CN = ISRG Root X1<br />
+verify return:1<br />
+depth=1 C = US, O = Let's Encrypt, CN = E5<br />
+verify return:1<br />
+depth=0 CN = xylok.local<br />
+verify return:1<br />
+---<br />
+Certificate chain<br />
+ 0 s:CN = xylok.local<br />
+   i:C = US, O = Let's Encrypt, CN = E5<br />
+   a:PKEY: id-ecPublicKey, 256 (bit); sigalg: ecdsa-with-SHA384<br />
+   v:NotBefore: Jun 12 16:44:03 2024 GMT; NotAfter: Sep 10 16:44:02 2024 GMT<br />
+-----BEGIN CERTIFICATE-----<br />
+...<br />
+-----END CERTIFICATE-----<br />
+ 1 s:C = US, O = Let's Encrypt, CN = E5<br />
+   i:C = US, O = Internet Security Research Group, CN = ISRG Root X1<br />
+   a:PKEY: id-ecPublicKey, 384 (bit); sigalg: RSA-SHA256<br />
+   v:NotBefore: Mar 13 00:00:00 2024 GMT; NotAfter: Mar 12 23:59:59 2027 GMT<br />
+-----BEGIN CERTIFICATE-----<br />
+...<br />
+-----END CERTIFICATE-----<br />
+---<br />
+Server certificate<br />
+subject=CN = xylok.local<br />
+issuer=C = US, O = Let's Encrypt, CN = E5<br />
+---<br />
+No client certificate CA names sent<br />
+Peer signing digest: SHA256<br />
+Peer signature type: ECDSA<br />
+Server Temp Key: X25519, 253 bits<br />
+---<br />
+SSL handshake has read 2367 bytes and written 380 bytes<br />
+Verification: OK<br />
+---<br />
+New, TLSv1.3, Cipher is TLS_AES_128_GCM_SHA256<br />
+Server public key is 256 bit<br />
+This TLS version forbids renegotiation.<br />
+Compression: NONE<br />
+Expansion: NONE<br />
+No ALPN negotiated<br />
+Early data was not sent<br />
+Verify return code: 0 (ok)<br />
+---<br />
+---<br />
+Post-Handshake New Session Ticket arrived:<br />
+SSL-Session:<br />
+    Protocol  : TLSv1.3<br />
+    Cipher    : TLS_AES_128_GCM_SHA256<br />
+    Session-ID: E03F9C6A59BD7375CF86B43387C63F9BBD16EAA2A9970E64F70E20317D403D22<br />
+    Session-ID-ctx: <br />
+    Resumption PSK: 15BFB16AF236A045FE9F5A0F64834A1B3EA76EE4185936D83560BAE940D01FF4<br />
+    PSK identity: None<br />
+    PSK identity hint: None<br />
+    SRP username: None<br />
+    TLS session ticket lifetime hint: 604800 (seconds)<br />
+    TLS session ticket:<br />
+    0000 - d4 7d 77 f4 01 dd ba 65-57 59 76 e0 ab 8a 75 63   .}w....eWYv...uc<br />
+    0010 - 19 6e cf 1b 44 db 35 c5-27 6b d8 b8 39 76 10 47   .n..D.5.'k..9v.G<br />
+    0020 - f1 75 a5 4b 3a fb 2b 82-b9 f7 3c c5 7f 82 41 d0   .u.K:.+...&lt;...A.<br />
+    0030 - 3d 40 f1 f4 0d ef 8e 55-ee 2f 09 4b 96 d9 16 5a   =@.....U./.K...Z<br />
+    0040 - f2 7d cb af bd 55 4b f9-c8 2d 0d 8f 39 16 af 8c   .}...UK..-..9...<br />
+    0050 - 71 df 92 cc d1 1a ed 5d-71 eb a3 7f f0 8b 65 8c   q......]q.....e.<br />
+    0060 - 5b 16 18 0c 61 b2 cc c7-4b                        [...a...K<br />
+<br />
+    Start Time: 1719438481<br />
+    Timeout   : 7200 (sec)<br />
+    Verify return code: 0 (ok)<br />
+    Extended master secret: no<br />
+    Max Early Data: 0<br />
+---<br />
+read R BLOCK<br />
+DONE<br />
+<br />
+<br />
+If the output indicates a &quot;verify error&quot;, Xylok is using a self-signed certificate and this is a finding.<br />
+<br />
+If the first certificate displayed is not a DOD-approved CA or other approved authority, this is a finding.</p><h2>Vulnerability Number</h2><p>V-269584</p><h2>Documentable</h2><p>False</p><h2>Rule Version</h2><p>XYLK-20-000191</p><h2>Severity Override Guidance</h2><p>Verify that the certificate Xylok uses for SSL is correctly signed with the following command. In this command, replace &quot;xylok.local&quot; with the domain named used to access the Xylok instance.<br />
+<br />
+$ openssl s_client -showcerts -servername xylok.local -connect xylok.local:443 &lt;/dev/null <br />
+CONNECTED(00000003)<br />
+depth=2 C = US, O = Internet Security Research Group, CN = ISRG Root X1<br />
+verify return:1<br />
+depth=1 C = US, O = Let's Encrypt, CN = E5<br />
+verify return:1<br />
+depth=0 CN = xylok.local<br />
+verify return:1<br />
+---<br />
+Certificate chain<br />
+ 0 s:CN = xylok.local<br />
+   i:C = US, O = Let's Encrypt, CN = E5<br />
+   a:PKEY: id-ecPublicKey, 256 (bit); sigalg: ecdsa-with-SHA384<br />
+   v:NotBefore: Jun 12 16:44:03 2024 GMT; NotAfter: Sep 10 16:44:02 2024 GMT<br />
+-----BEGIN CERTIFICATE-----<br />
+...<br />
+-----END CERTIFICATE-----<br />
+ 1 s:C = US, O = Let's Encrypt, CN = E5<br />
+   i:C = US, O = Internet Security Research Group, CN = ISRG Root X1<br />
+   a:PKEY: id-ecPublicKey, 384 (bit); sigalg: RSA-SHA256<br />
+   v:NotBefore: Mar 13 00:00:00 2024 GMT; NotAfter: Mar 12 23:59:59 2027 GMT<br />
+-----BEGIN CERTIFICATE-----<br />
+...<br />
+-----END CERTIFICATE-----<br />
+---<br />
+Server certificate<br />
+subject=CN = xylok.local<br />
+issuer=C = US, O = Let's Encrypt, CN = E5<br />
+---<br />
+No client certificate CA names sent<br />
+Peer signing digest: SHA256<br />
+Peer signature type: ECDSA<br />
+Server Temp Key: X25519, 253 bits<br />
+---<br />
+SSL handshake has read 2367 bytes and written 380 bytes<br />
+Verification: OK<br />
+---<br />
+New, TLSv1.3, Cipher is TLS_AES_128_GCM_SHA256<br />
+Server public key is 256 bit<br />
+This TLS version forbids renegotiation.<br />
+Compression: NONE<br />
+Expansion: NONE<br />
+No ALPN negotiated<br />
+Early data was not sent<br />
+Verify return code: 0 (ok)<br />
+---<br />
+---<br />
+Post-Handshake New Session Ticket arrived:<br />
+SSL-Session:<br />
+    Protocol  : TLSv1.3<br />
+    Cipher    : TLS_AES_128_GCM_SHA256<br />
+    Session-ID: E03F9C6A59BD7375CF86B43387C63F9BBD16EAA2A9970E64F70E20317D403D22<br />
+    Session-ID-ctx: <br />
+    Resumption PSK: 15BFB16AF236A045FE9F5A0F64834A1B3EA76EE4185936D83560BAE940D01FF4<br />
+    PSK identity: None<br />
+    PSK identity hint: None<br />
+    SRP username: None<br />
+    TLS session ticket lifetime hint: 604800 (seconds)<br />
+    TLS session ticket:<br />
+    0000 - d4 7d 77 f4 01 dd ba 65-57 59 76 e0 ab 8a 75 63   .}w....eWYv...uc<br />
+    0010 - 19 6e cf 1b 44 db 35 c5-27 6b d8 b8 39 76 10 47   .n..D.5.'k..9v.G<br />
+    0020 - f1 75 a5 4b 3a fb 2b 82-b9 f7 3c c5 7f 82 41 d0   .u.K:.+...&lt;...A.<br />
+    0030 - 3d 40 f1 f4 0d ef 8e 55-ee 2f 09 4b 96 d9 16 5a   =@.....U./.K...Z<br />
+    0040 - f2 7d cb af bd 55 4b f9-c8 2d 0d 8f 39 16 af 8c   .}...UK..-..9...<br />
+    0050 - 71 df 92 cc d1 1a ed 5d-71 eb a3 7f f0 8b 65 8c   q......]q.....e.<br />
+    0060 - 5b 16 18 0c 61 b2 cc c7-4b                        [...a...K<br />
+<br />
+    Start Time: 1719438481<br />
+    Timeout   : 7200 (sec)<br />
+    Verify return code: 0 (ok)<br />
+    Extended master secret: no<br />
+    Max Early Data: 0<br />
+---<br />
+read R BLOCK<br />
+DONE<br />
+<br />
+<br />
+If the output indicates a &quot;verify error&quot;, Xylok is using a self-signed certificate and this is a finding.<br />
+<br />
+If the first certificate displayed is not a DOD-approved CA or other approved authority, this is a finding.</p><h2>Check Content Reference</h2><p>M</p><h2>Target Key</h2><p>5665</p></body></html>

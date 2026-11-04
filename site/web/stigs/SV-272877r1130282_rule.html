@@ -1,0 +1,75 @@
+<!doctype html><html lang="en"><head><meta charset="utf-8"><title>STIGQter: STIG Check Details: SV-272877r1130282_rule: IBM z/OS started tasks for the Base TCP/IP component must be defined in accordance with security requirements.</title><link rel="icon" type="image/svg+xml" href="STIGQter.svg" /><script async src="https://www.googletagmanager.com/gtag/js?id=UA-31381839-2"></script><script src="include.js"></script><script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-4110907817782130" crossorigin="anonymous"></script></head><body><div><img src="STIGQter.svg" alt="STIGQter" style="height:1em;" /> <a href="https://www.stigqter.com/">STIGQter</a>: <a href="main.html">STIG Summary</a>: <a href="U_IBM_zOS_RACF_STIG_V9R9_Manual-xccdf.html">IBM z/OS RACF Security Technical Implementation Guide Version: 9 Release: 9 Benchmark Date: 01 Jul 2026</a>:</div> <h1>IBM z/OS started tasks for the Base TCP/IP component must be defined in accordance with security requirements.</h1><h2>DISA Rule</h2><p>SV-272877r1130282_rule</p><h2>Vulnerability Number</h2><p>V-272877</p><h2>Group Title</h2><p>SRG-OS-000104-GPOS-00051</p><h2>Rule Version</h2><p>RACF-TC-000065</p><h2>Severity</h2><p>CAT II</p><h2>CCI(s)</h2><ul><li>CCI-000764 - Uniquely identify and authenticate organizational users and associate that unique identification with processes acting on behalf of those users.</li></ul><h2>Weight</h2><p>10</p><h2>Fix Recommendation</h2><p>Develop a plan of action to implement the required changes. Ensure the following items are in effect for the ACID(s) assigned to the TCP/IP address space(s): <br />
+<br />
+1) Named TCPIP or, in the case of multiple instances, prefixed with TCPIP.<br />
+<br />
+2) Has the STC facility.<br />
+<br />
+3) z/OS Unix attributes: UID(0), HOME directory '/', shell program /bin/sh.<br />
+<br />
+Ensure the following items are in effect for the USERID assigned to the EZAZSSI started task: <br />
+<br />
+1) Named EZAZSSI.<br />
+<br />
+2) Has the STC facility. <br />
+<br />
+For example:<br />
+<br />
+The following commands can be used to create the user accounts and assign the privileges that are required for the TCP/IP address space and the EZAZSSI started task:<br />
+<br />
+1) Define a userid for the TCPIP Address space. A sample command is shown here:<br />
+<br />
+ADDUSER TCPIP NAME('STC, TCPIP') NOPASS DFLTGRP(STCTCPX) OWNER(STCTCPX) OMVS(UID(0) HOME('/') PROGRAM('/bin/sh'))<br />
+<br />
+2) Define a matching entry in the STARTED Class. A sample command is shown here:<br />
+<br />
+RDEFINE STARTED TCPIP.** UACC(NONE) OWNER(ADMN) AUDIT(ALL(READ)) STDATA(USER(TCPIP) GROUP(STCTCPX) TRACE(YES))<br />
+<br />
+3) Set up the RACF userid for the EZAZSSI Proc. A sample command to accomplish this is shown here:<br />
+<br />
+AU EZAZSSI NAME('STC, EZAZSSI') NOPASS OWNER(STCTCPX) DFLTGRP(STCTCPX) <br />
+<br />
+4) Define a matching entry in the STARTED class for the EZAZSSI proc. A sample command to accomplish this is shown here:<br />
+<br />
+RDEF STARTED EZAZSSI.** UACC(NONE) OWNER(ADMIN) AUDIT(ALL(READ)) STDATA(USER(EZAZSSI) GROUP(STCTCPX) TRACE(YES))</p><h2>Check Contents</h2><p>Refer to system Proclibs to determine the TCPIP address space(s).<br />
+<br />
+From the ISPF Command Shell, enter:<br />
+LISTUSER&lt;TCPIP STCs&gt;  OMVS<br />
+<br />
+For each TCPIP:<br />
+-Named TCPIP or, in the case of multiple instances, prefixed with TCPIP.<br />
+-Has the STC facility. <br />
+<br />
+-z/OS Unix attributes: <br />
+UID(0), HOME directory '/', shell program /bin/sh <br />
+If all of the following items are true, this is not a finding.<br />
+<br />
+If any item is untrue, this is a finding.<br />
+<br />
+From the ISPF Command Shell, enter:<br />
+LISTUSER EZAZSSI OMVS<br />
+If EZAZSSI STC has the STC facility, this is not finding.<br />
+<br />
+Ensure the following items are in effect for the USERID assigned to the EZAZSSI started task: <br />
+-Named EZAZSSI. <br />
+-Has the STC facility.</p><h2>Vulnerability Number</h2><p>V-272877</p><h2>Documentable</h2><p>False</p><h2>Rule Version</h2><p>RACF-TC-000065</p><h2>Severity Override Guidance</h2><p>Refer to system Proclibs to determine the TCPIP address space(s).<br />
+<br />
+From the ISPF Command Shell, enter:<br />
+LISTUSER&lt;TCPIP STCs&gt;  OMVS<br />
+<br />
+For each TCPIP:<br />
+-Named TCPIP or, in the case of multiple instances, prefixed with TCPIP.<br />
+-Has the STC facility. <br />
+<br />
+-z/OS Unix attributes: <br />
+UID(0), HOME directory '/', shell program /bin/sh <br />
+If all of the following items are true, this is not a finding.<br />
+<br />
+If any item is untrue, this is a finding.<br />
+<br />
+From the ISPF Command Shell, enter:<br />
+LISTUSER EZAZSSI OMVS<br />
+If EZAZSSI STC has the STC facility, this is not finding.<br />
+<br />
+Ensure the following items are in effect for the USERID assigned to the EZAZSSI started task: <br />
+-Named EZAZSSI. <br />
+-Has the STC facility.</p><h2>Check Content Reference</h2><p>M</p><h2>Target Key</h2><p>4101</p></body></html>

@@ -1,0 +1,51 @@
+<!doctype html><html lang="en"><head><meta charset="utf-8"><title>STIGQter: STIG Check Details: SV-268426r1034218_rule: The macOS system must automatically remove or disable temporary or emergency user accounts within 72 hours.</title><link rel="icon" type="image/svg+xml" href="STIGQter.svg" /><script async src="https://www.googletagmanager.com/gtag/js?id=UA-31381839-2"></script><script src="include.js"></script><script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-4110907817782130" crossorigin="anonymous"></script></head><body><div><img src="STIGQter.svg" alt="STIGQter" style="height:1em;" /> <a href="https://www.stigqter.com/">STIGQter</a>: <a href="main.html">STIG Summary</a>: <a href="U_Apple_macOS_15_V1R7_STIG_Manual-xccdf.html">Apple macOS 15 (Sequoia) Security Technical Implementation Guide Version: 1 Release: 7 Benchmark Date: 01 Apr 2026</a>:</div> <h1>The macOS system must automatically remove or disable temporary or emergency user accounts within 72 hours.</h1><h2>DISA Rule</h2><p>SV-268426r1034218_rule</p><h2>Vulnerability Number</h2><p>V-268426</p><h2>Group Title</h2><p>SRG-OS-000002-GPOS-00002</p><h2>Rule Version</h2><p>APPL-15-000012</p><h2>Severity</h2><p>CAT II</p><h2>CCI(s)</h2><ul><li>CCI-000016 - Automatically remove or disable temporary and emergency accounts after an organization-defined time-period for each type of account.</li><li>CCI-001682 - Automatically removes or disables emergency accounts after an organization-defined time period for each type of account.</li></ul><h2>Weight</h2><p>10</p><h2>Fix Recommendation</h2><p>This setting may be enforced using local policy or by a directory service.<br />
+<br />
+To set local policy to disable a temporary or emergency user, create a plain text file containing the following:<br />
+<br />
+&lt;dict&gt;<br />
+&lt;key&gt;policyCategoryAuthentication&lt;/key&gt;<br />
+&lt;array&gt;<br />
+&lt;dict&gt;<br />
+&lt;key&gt;policyContent&lt;/key&gt;<br />
+&lt;string&gt;policyAttributeCurrentTime &amp;lt; policyAttributeCreationTime+259299&lt;/string&gt;<br />
+&lt;key&gt;policyIdentifier&lt;/key&gt;<br />
+&lt;string&gt;Disable Tmp Accounts &lt;/string&gt;<br />
+&lt;/dict&gt;<br />
+&lt;/array&gt;<br />
+&lt;/dict&gt;<br />
+<br />
+After saving the file and exiting to the command prompt, run the following command to load the new policy file, substituting the correct user name in place of &quot;username&quot; and the path to the file in place of &quot;/path/to/file&quot;.<br />
+<br />
+/usr/bin/pwpolicy -u username setaccountpolicies /path/to/file</p><h2>Check Contents</h2><p>Verify that a password policy is enforced by a directory service by asking the system administrator (SA) or information system security officer (ISSO).<br />
+<br />
+If no policy is enforced by a directory service, a password policy can be set with the &quot;pwpolicy&quot; utility. The variable names may vary depending on how the policy was set.<br />
+<br />
+If no temporary or emergency accounts are defined on the system, this is not applicable.<br />
+<br />
+To check if the password policy is configured to disable a temporary or emergency account after 72 hours, run the following command to output the password policy to the screen, substituting the correct user name in place of username:<br />
+<br />
+/usr/bin/pwpolicy -u username getaccountpolicies | tail -n +2<br />
+<br />
+If there is no output, and password policy is not controlled by a directory service, this is a finding.<br />
+<br />
+Otherwise, look for the line &quot;&lt;key&gt;policyCategoryAuthentication&lt;/key&gt;&quot;.<br />
+<br />
+In the array that follows, there should be a &lt;dict&gt; section that contains a check &lt;string&gt; that allows users to log in if &quot;policyAttributeCurrentTime&quot; is less than the result of adding &quot;policyAttributeCreationTime&quot; to 72 hours (259299 seconds). The check might use a variable defined in its &quot;policyParameters&quot; section.<br />
+<br />
+If the check does not exist or if the check adds too great an amount of time to &quot;policyAttributeCreationTime&quot;, this is a finding.</p><h2>Vulnerability Number</h2><p>V-268426</p><h2>Documentable</h2><p>False</p><h2>Rule Version</h2><p>APPL-15-000012</p><h2>Severity Override Guidance</h2><p>Verify that a password policy is enforced by a directory service by asking the system administrator (SA) or information system security officer (ISSO).<br />
+<br />
+If no policy is enforced by a directory service, a password policy can be set with the &quot;pwpolicy&quot; utility. The variable names may vary depending on how the policy was set.<br />
+<br />
+If no temporary or emergency accounts are defined on the system, this is not applicable.<br />
+<br />
+To check if the password policy is configured to disable a temporary or emergency account after 72 hours, run the following command to output the password policy to the screen, substituting the correct user name in place of username:<br />
+<br />
+/usr/bin/pwpolicy -u username getaccountpolicies | tail -n +2<br />
+<br />
+If there is no output, and password policy is not controlled by a directory service, this is a finding.<br />
+<br />
+Otherwise, look for the line &quot;&lt;key&gt;policyCategoryAuthentication&lt;/key&gt;&quot;.<br />
+<br />
+In the array that follows, there should be a &lt;dict&gt; section that contains a check &lt;string&gt; that allows users to log in if &quot;policyAttributeCurrentTime&quot; is less than the result of adding &quot;policyAttributeCreationTime&quot; to 72 hours (259299 seconds). The check might use a variable defined in its &quot;policyParameters&quot; section.<br />
+<br />
+If the check does not exist or if the check adds too great an amount of time to &quot;policyAttributeCreationTime&quot;, this is a finding.</p><h2>Check Content Reference</h2><p>M</p><h2>Target Key</h2><p>5661</p></body></html>

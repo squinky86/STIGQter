@@ -1,0 +1,47 @@
+<!doctype html><html lang="en"><head><meta charset="utf-8"><title>STIGQter: STIG Check Details: SV-283843r1203778_rule: The Nokia Provider Edge (PE) router must be configured to have each Virtual Routing and Forwarding (VRF) instance bound to the appropriate physical or logical interfaces to maintain traffic separation between all Multiprotocol Label Switching (MPLS) layer 3 virtual private networks (L3VPNs).</title><link rel="icon" type="image/svg+xml" href="STIGQter.svg" /><script async src="https://www.googletagmanager.com/gtag/js?id=UA-31381839-2"></script><script src="include.js"></script><script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-4110907817782130" crossorigin="anonymous"></script></head><body><div><img src="STIGQter.svg" alt="STIGQter" style="height:1em;" /> <a href="https://www.stigqter.com/">STIGQter</a>: <a href="main.html">STIG Summary</a>: <a href="U_Nokia_SR_OS_25-x_RTR_V1R1_STIG_Manual-xccdf.html">Nokia Service Router OS 25.x Router Security Technical Implementation Guide Version: 1 Release: 1 Benchmark Date: 28 Apr 2026</a>:</div> <h1>The Nokia Provider Edge (PE) router must be configured to have each Virtual Routing and Forwarding (VRF) instance bound to the appropriate physical or logical interfaces to maintain traffic separation between all Multiprotocol Label Switching (MPLS) layer 3 virtual private networks (L3VPNs).</h1><h2>DISA Rule</h2><p>SV-283843r1203778_rule</p><h2>Vulnerability Number</h2><p>V-283843</p><h2>Group Title</h2><p>SRG-NET-000512-RTR-000005</p><h2>Rule Version</h2><p>NOKI-RT-000250</p><h2>Severity</h2><p>CAT I</p><h2>CCI(s)</h2><ul><li>CCI-000366 - Implement the security configuration settings.</li></ul><h2>Weight</h2><p>10</p><h2>Fix Recommendation</h2><p>Configure the PE router to have each VRF bound to the appropriate physical or logical interfaces to maintain traffic separation between all MPLS L3VPNs.<br />
+<br />
+Add appropriate physical and logical interfaces to each MPLS L3VPN service, as shown in the example below: <br />
+<br />
+- configure service vprn 30 customer 1 create<br />
+- config&gt;service&gt;vprn# interface &quot;TO-CE&quot; create<br />
+- config&gt;service&gt;vprn&gt;if# address 172.200.x.x/30<br />
+- config&gt;service&gt;vprn&gt;if# sap 1/1/c3/1 create<br />
+- config&gt;service&gt;vprn&gt;if&gt;sap# exit<br />
+- config&gt;service&gt;vprn&gt;if# exit<br />
+- config&gt;service&gt;vprn#</p><h2>Check Contents</h2><p>Review the design plan for deploying L3VPN and VRF-lite. <br />
+<br />
+Review all CE-facing interfaces and verify the proper VRF is defined.<br />
+<br />
+Use the command below and verify CE-facing interfaces and the physical ports:<br />
+<br />
+- show router 30 interface &quot;TO-CE&quot;<br />
+<br />
+Interface Table (Service: 30)<br />
+<br />
+Interface-Name                   Adm       Opr(v4/v6)  Mode    Port/SapId<br />
+   IP-Address                                                  PfxState<br />
+-------------------------------------------------------------------------------<br />
+TO-CE                         Up        Up/Down     VPRN    1/1/c3/1<br />
+   172.200.200.1/30                                            n/a<br />
+-------------------------------------------------------------------------------<br />
+Interfaces : 1<br />
+<br />
+If any VRFs are not bound to the appropriate physical or logical interface, this is a finding.</p><h2>Vulnerability Number</h2><p>V-283843</p><h2>Documentable</h2><p>False</p><h2>Rule Version</h2><p>NOKI-RT-000250</p><h2>Severity Override Guidance</h2><p>Review the design plan for deploying L3VPN and VRF-lite. <br />
+<br />
+Review all CE-facing interfaces and verify the proper VRF is defined.<br />
+<br />
+Use the command below and verify CE-facing interfaces and the physical ports:<br />
+<br />
+- show router 30 interface &quot;TO-CE&quot;<br />
+<br />
+Interface Table (Service: 30)<br />
+<br />
+Interface-Name                   Adm       Opr(v4/v6)  Mode    Port/SapId<br />
+   IP-Address                                                  PfxState<br />
+-------------------------------------------------------------------------------<br />
+TO-CE                         Up        Up/Down     VPRN    1/1/c3/1<br />
+   172.200.200.1/30                                            n/a<br />
+-------------------------------------------------------------------------------<br />
+Interfaces : 1<br />
+<br />
+If any VRFs are not bound to the appropriate physical or logical interface, this is a finding.</p><h2>Check Content Reference</h2><p>M</p><h2>Target Key</h2><p>5746</p></body></html>

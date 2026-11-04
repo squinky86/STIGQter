@@ -1,0 +1,67 @@
+<!doctype html><html lang="en"><head><meta charset="utf-8"><title>STIGQter: STIG Check Details: SV-279550r1192399_rule: Nutanix OS must configure /etc/audit/audit.rules to generate audit records for account access actions.</title><link rel="icon" type="image/svg+xml" href="STIGQter.svg" /><script async src="https://www.googletagmanager.com/gtag/js?id=UA-31381839-2"></script><script src="include.js"></script><script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-4110907817782130" crossorigin="anonymous"></script></head><body><div><img src="STIGQter.svg" alt="STIGQter" style="height:1em;" /> <a href="https://www.stigqter.com/">STIGQter</a>: <a href="main.html">STIG Summary</a>: <a href="U_NTX_Acropolis_OS_STIG_V1R1_Manual-xccdf.html">Nutanix Acropolis GPOS Security Technical Implementation Guide Version: 1 Release: 1 Benchmark Date: 26 Jan 2026</a>:</div> <h1>Nutanix OS must configure /etc/audit/audit.rules to generate audit records for account access actions.</h1><h2>DISA Rule</h2><p>SV-279550r1192399_rule</p><h2>Vulnerability Number</h2><p>V-279550</p><h2>Group Title</h2><p>SRG-OS-000062-GPOS-00031</p><h2>Rule Version</h2><p>NXAC-OS-000044</p><h2>Severity</h2><p>CAT II</p><h2>CCI(s)</h2><ul><li>CCI-000169 - Provide audit record generation capability for the event types the system is capable of auditing as defined in AU-2 a. on organization-defined information system components.</li></ul><h2>Weight</h2><p>10</p><h2>Fix Recommendation</h2><p>1. For AOS, configure the audit rules.<br />
+<br />
+$ sudo salt-call state.sls security/CVM/auditCVM<br />
+<br />
+2. For Prism Central, configure the audit rules.<br />
+<br />
+$ sudo salt-call state.sls security/PCVM/auditPCVM<br />
+<br />
+3. For Files, configure the audit rules.<br />
+<br />
+$ sudo salt-call state.sls security/AFS/auditAFS<br />
+<br />
+4. For AHV, configure the audit rules.<br />
+<br />
+$ sudo salt-call state.sls security/KVM/auditKVM</p><h2>Check Contents</h2><p>Verify Nutanix OS auditing is configured to generate audit records for all access actions, such as successful and unsuccessful logon attempts, privileged activities or other system-level access, starting and ending time for user access to the system, concurrent logons from different workstations, successful and unsuccessful accesses to objects, all program initiations, and all direct access to the information system.<br />
+<br />
+$ sudo grep -w chcon /etc/audit/audit.rules<br />
+-a always,exit -F path=/usr/bin/chcon -F perm=x -F auid&gt;=1000 -F auid!=4294967295 -k secobjects<br />
+<br />
+$ sudo grep ssh-agent /etc/audit/audit.rules<br />
+-a always,exit -F path=/usr/bin/ssh-agent -F perm=x -F auid&gt;=1000 -F auid!=4294967295 -k privileged<br />
+<br />
+$ sudo grep -w /usr/bin/mount /etc/audit/audit.rules<br />
+-a always,exit -F path=/usr/bin/mount -F perm=x -F auid&gt;=1000 -F auid!=4294967295 -k privileged<br />
+<br />
+$ sudo grep -w /usr/bin/umount /etc/audit/audit.rules<br />
+-a always,exit -F path=/usr/bin/umount -F perm=x -F auid&gt;=1000 -F auid!=4294967295 -k privileged<br />
+<br />
+$ sudo grep ssh-keysign /etc/audit/audit.rules<br />
+-a always,exit -F path=/usr/libexec/openssh/ssh-keysign -F perm=x -F auid&gt;=1000 -F auid!=4294967295 -k privileged<br />
+<br />
+$ sudo grep -w pam_timestamp_check /etc/audit/audit.rules<br />
+-a always,exit -F path=/usr/sbin/pam_timestamp_check -F perm=x -F auid&gt;=1000 -F auid!=4294967295 -k privileged<br />
+<br />
+$ sudo grep -w crontab /etc/audit/audit.rules<br />
+-a always,exit -F path=/usr/bin/crontab -F perm=x -F auid&gt;=1000 -F auid!=4294967295 -k privileged<br />
+<br />
+$ sudo grep -w chsh /etc/audit/audit.rules<br />
+-a always,exit -F path=/usr/bin/chsh -F perm=x -F auid&gt;=1000 -F auid!=4294967295 -k privileged<br />
+<br />
+If the commands do not return the appropriate response line, as indicated above, or if the lines are commented out, this is a finding.</p><h2>Vulnerability Number</h2><p>V-279550</p><h2>Documentable</h2><p>False</p><h2>Rule Version</h2><p>NXAC-OS-000044</p><h2>Severity Override Guidance</h2><p>Verify Nutanix OS auditing is configured to generate audit records for all access actions, such as successful and unsuccessful logon attempts, privileged activities or other system-level access, starting and ending time for user access to the system, concurrent logons from different workstations, successful and unsuccessful accesses to objects, all program initiations, and all direct access to the information system.<br />
+<br />
+$ sudo grep -w chcon /etc/audit/audit.rules<br />
+-a always,exit -F path=/usr/bin/chcon -F perm=x -F auid&gt;=1000 -F auid!=4294967295 -k secobjects<br />
+<br />
+$ sudo grep ssh-agent /etc/audit/audit.rules<br />
+-a always,exit -F path=/usr/bin/ssh-agent -F perm=x -F auid&gt;=1000 -F auid!=4294967295 -k privileged<br />
+<br />
+$ sudo grep -w /usr/bin/mount /etc/audit/audit.rules<br />
+-a always,exit -F path=/usr/bin/mount -F perm=x -F auid&gt;=1000 -F auid!=4294967295 -k privileged<br />
+<br />
+$ sudo grep -w /usr/bin/umount /etc/audit/audit.rules<br />
+-a always,exit -F path=/usr/bin/umount -F perm=x -F auid&gt;=1000 -F auid!=4294967295 -k privileged<br />
+<br />
+$ sudo grep ssh-keysign /etc/audit/audit.rules<br />
+-a always,exit -F path=/usr/libexec/openssh/ssh-keysign -F perm=x -F auid&gt;=1000 -F auid!=4294967295 -k privileged<br />
+<br />
+$ sudo grep -w pam_timestamp_check /etc/audit/audit.rules<br />
+-a always,exit -F path=/usr/sbin/pam_timestamp_check -F perm=x -F auid&gt;=1000 -F auid!=4294967295 -k privileged<br />
+<br />
+$ sudo grep -w crontab /etc/audit/audit.rules<br />
+-a always,exit -F path=/usr/bin/crontab -F perm=x -F auid&gt;=1000 -F auid!=4294967295 -k privileged<br />
+<br />
+$ sudo grep -w chsh /etc/audit/audit.rules<br />
+-a always,exit -F path=/usr/bin/chsh -F perm=x -F auid&gt;=1000 -F auid!=4294967295 -k privileged<br />
+<br />
+If the commands do not return the appropriate response line, as indicated above, or if the lines are commented out, this is a finding.</p><h2>Check Content Reference</h2><p>M</p><h2>Target Key</h2><p>5730</p></body></html>

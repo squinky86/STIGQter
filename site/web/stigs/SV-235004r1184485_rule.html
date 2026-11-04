@@ -1,0 +1,41 @@
+<!doctype html><html lang="en"><head><meta charset="utf-8"><title>STIGQter: STIG Check Details: SV-235004r1184485_rule: A separate file system must be used for SUSE operating system user home directories (such as /home or an equivalent).</title><link rel="icon" type="image/svg+xml" href="STIGQter.svg" /><script async src="https://www.googletagmanager.com/gtag/js?id=UA-31381839-2"></script><script src="include.js"></script><script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-4110907817782130" crossorigin="anonymous"></script></head><body><div><img src="STIGQter.svg" alt="STIGQter" style="height:1em;" /> <a href="https://www.stigqter.com/">STIGQter</a>: <a href="main.html">STIG Summary</a>: <a href="U_SLES_15_STIG_V2R8_Manual-xccdf.html">SUSE Linux Enterprise Server 15 Security Technical Implementation Guide Version: 2 Release: 8 Benchmark Date: 01 Jul 2026</a>:</div> <h1>A separate file system must be used for SUSE operating system user home directories (such as /home or an equivalent).</h1><h2>DISA Rule</h2><p>SV-235004r1184485_rule</p><h2>Vulnerability Number</h2><p>V-235004</p><h2>Group Title</h2><p>SRG-OS-000480-GPOS-00227</p><h2>Rule Version</h2><p>SLES-15-040200</p><h2>Severity</h2><p>CAT III</p><h2>CCI(s)</h2><ul><li>CCI-000366 - Implement the security configuration settings.</li></ul><h2>Weight</h2><p>10</p><h2>Fix Recommendation</h2><p>Create a separate file system/partition for SUSE operating system nonprivileged local interactive user home directories.<br />
+<br />
+Migrate the nonprivileged local interactive user home directories onto the separate file system/partition.</p><h2>Check Contents</h2><p>Verify that a separate file system/partition has been created for SUSE operating system nonprivileged local interactive user home directories.<br />
+<br />
+Check the home directory assignment for all nonprivileged users (those with a UID greater than 1000) on the system with the following command:<br />
+<br />
+&gt; awk -F: '($3&gt;=1000)&amp;&amp;($7 !~ /nologin/){print $1, $3, $6, $7}' /etc/passwd<br />
+<br />
+disauser 1002 /home/disauser /bin/bash<br />
+doduser 1003 /home/doduser /bin/bash<br />
+doduser 1001 /home/doduser /bin/bash<br />
+<br />
+The output of the command will give the directory/partition that contains the home directories for the nonprivileged users on the system (in this example, /home) and user's shell. All accounts with a valid shell (such as /bin/bash) are considered interactive users.<br />
+<br />
+Check that a file system/partition has been created for the nonprivileged interactive users with the following command:<br />
+<br />
+Note: The partition of /home is used in the example.<br />
+<br />
+&gt; grep /home /etc/fstab<br />
+UUID=333ada18 /home ext4 noatime,nobarrier,nodev 1 2<br />
+<br />
+If a separate entry for the file system/partition that contains the nonprivileged interactive users' home directories does not exist, this is a finding.</p><h2>Vulnerability Number</h2><p>V-235004</p><h2>Documentable</h2><p>False</p><h2>Rule Version</h2><p>SLES-15-040200</p><h2>Severity Override Guidance</h2><p>Verify that a separate file system/partition has been created for SUSE operating system nonprivileged local interactive user home directories.<br />
+<br />
+Check the home directory assignment for all nonprivileged users (those with a UID greater than 1000) on the system with the following command:<br />
+<br />
+&gt; awk -F: '($3&gt;=1000)&amp;&amp;($7 !~ /nologin/){print $1, $3, $6, $7}' /etc/passwd<br />
+<br />
+disauser 1002 /home/disauser /bin/bash<br />
+doduser 1003 /home/doduser /bin/bash<br />
+doduser 1001 /home/doduser /bin/bash<br />
+<br />
+The output of the command will give the directory/partition that contains the home directories for the nonprivileged users on the system (in this example, /home) and user's shell. All accounts with a valid shell (such as /bin/bash) are considered interactive users.<br />
+<br />
+Check that a file system/partition has been created for the nonprivileged interactive users with the following command:<br />
+<br />
+Note: The partition of /home is used in the example.<br />
+<br />
+&gt; grep /home /etc/fstab<br />
+UUID=333ada18 /home ext4 noatime,nobarrier,nodev 1 2<br />
+<br />
+If a separate entry for the file system/partition that contains the nonprivileged interactive users' home directories does not exist, this is a finding.</p><h2>Check Content Reference</h2><p>M</p><h2>Target Key</h2><p>5274</p></body></html>

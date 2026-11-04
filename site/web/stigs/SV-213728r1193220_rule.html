@@ -1,0 +1,61 @@
+<!doctype html><html lang="en"><head><meta charset="utf-8"><title>STIGQter: STIG Check Details: SV-213728r1193220_rule: DB2 must only accept end entity certificates issued by DoD PKI or DoD-approved PKI Certification Authorities (CAs) for the establishment of all encrypted sessions.</title><link rel="icon" type="image/svg+xml" href="STIGQter.svg" /><script async src="https://www.googletagmanager.com/gtag/js?id=UA-31381839-2"></script><script src="include.js"></script><script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-4110907817782130" crossorigin="anonymous"></script></head><body><div><img src="STIGQter.svg" alt="STIGQter" style="height:1em;" /> <a href="https://www.stigqter.com/">STIGQter</a>: <a href="main.html">STIG Summary</a>: <a href="U_IBM_DB2_V10-5_LUW_STIG_V2R2_Manual-xccdf.html">IBM DB2 V10.5 LUW Security Technical Implementation Guide Version: 2 Release: 2 Benchmark Date: 01 Jul 2026</a>:</div> <h1>DB2 must only accept end entity certificates issued by DoD PKI or DoD-approved PKI Certification Authorities (CAs) for the establishment of all encrypted sessions.</h1><h2>DISA Rule</h2><p>SV-213728r1193220_rule</p><h2>Vulnerability Number</h2><p>V-213728</p><h2>Group Title</h2><p>SRG-APP-000427-DB-000385</p><h2>Rule Version</h2><p>DB2X-00-008700</p><h2>Severity</h2><p>CAT II</p><h2>CCI(s)</h2><ul><li>CCI-002470 - Only allow the use of organization-defined certificate authorities for verification of the establishment of protected sessions.</li></ul><h2>Weight</h2><p>10</p><h2>Fix Recommendation</h2><p>Create a key database and set up the digital certificates.<br />
+<br />
+The following command creates a key database called mydbserver.kdb and a stash file called mydbserver.sth: <br />
+<br />
+     $gsk8capicmd_64 -keydb -create -db &quot;mydbserver.kdb&quot; -pw &quot;myServerPassw0rdpw0&quot; -stash<br />
+<br />
+When you create a key database, it is automatically populated with signer certificates from a few certificate authorities (CAs), such as Verisign.<br />
+<br />
+Add a certificate for your server to your key database. <br />
+<br />
+To obtain a certificate, you can either use GSKCapiCmd to create a new certificate request and submit it to a CA to be signed, or you can create a self-signed certificate for testing purposes. <br />
+<br />
+Following is an example of command to create a self-signed certificate with a label of myselfsigned, use the GSKCapiCmd command as shown in the following command:<br />
+<br />
+     $gsk8capicmd_64 -cert -create -db &quot;mydbserver.kdb&quot; -pw &quot;myServerPassw0rdpw0&quot; -label &quot;myselfsigned&quot; -dn &quot;CN=myhost.mycompany.com,O=myOrganization, OU=myOrganizationUnit,L=myLocation,ST=ON,C=CA&quot;<br />
+<br />
+Notes:<br />
+<br />
+-- Use the GSKCapiCmd tool to create the key database. It must be a Certificate Management System (CMS) type key database. <br />
+<br />
+The GSKCapiCmd is a non-Java-based command-line tool, and Java does not need to be installed on the system to use this tool. <br />
+<br />
+You invoke GSKCapiCmd using the GSKCAPICMD command, as described in the GSKCapiCmd User's Guide. <br />
+<br />
+The path for the command is sqllib/gskit/bin on Linux and UNIX platforms, and C:\Program Files\IBM\GSK8\bin on both 32-bit and 64-bit Windows platforms. <br />
+<br />
+On 64-bit platforms, the 32-bit GSKit executable files and libraries are also present; in this case, the path for the command is C:\ProgramFiles (x86)\IBM\GSK8\bin. - Ensure PATH (on the Windows platform) includes the proper GSKit library path, and LIBPATH, SHLIB_PATH, or LD_LIBRARY_PATH (on UNIX or Linux platforms) include the proper GSKit library path, such as sqllib/lib64/gskit.<br />
+The -stash option creates a stash file at the same path as the key database, with a file extension of .sth. At instance start-up, GSKit uses the stash file to obtain the password to the key database.<br />
+To extract the certificate you created to a file, so that you can distribute it to computers running clients that will be establishing SSL connections to your DB2 server.<br />
+<br />
+Run the following GSKCapiCmd command extracts the certificate to a file called mydbserver.arm:<br />
+<br />
+     $gsk8capicmd_64 -cert -extract -db &quot;mydbserver.kdb&quot; -pw &quot;myServerPassw0rdpw0&quot; -label &quot;myselfsigned&quot; -target &quot;mydbserver.arm&quot; -format ascii –fips</p><h2>Check Contents</h2><p>Run the following command to find certificate details: <br />
+<br />
+     $gsk8capicmd_64 -cert -details -db &quot;&lt;mydbserver.kdb&gt;&quot; -pw &quot;&lt;PASSWORD&gt;&quot; -label &quot;&lt;myselfsigned&gt;&quot;<br />
+<br />
+The output is displayed in  a form similar to the following: <br />
+<br />
+-- label : myselfsigned key size : 1024 version : X509 V3 serial : 96c2db8fa769a09d<br />
+<br />
+-- issue:CN=myhost.mycompany.com,O=myOrganization,OU=myOrganizationUnit,<br />
+L=myLocation,ST=ON,C=CA <br />
+<br />
+-- subject:CN=myhost.mycompany.com,O=myOrganization,OU=myOrganizationUnit,<br />
+L=myLocation,ST=ON,C=CA not before : Tuesday, 24 February 2009 17:11:50 PM not after : Thursday, 25 February 2010 17:11:50 PM<br />
+<br />
+If the certificate is not issued by DoD PKI or DoD-approved PKI Certification Authorities (CAs), this is a finding.</p><h2>Vulnerability Number</h2><p>V-213728</p><h2>Documentable</h2><p>False</p><h2>Rule Version</h2><p>DB2X-00-008700</p><h2>Severity Override Guidance</h2><p>Run the following command to find certificate details: <br />
+<br />
+     $gsk8capicmd_64 -cert -details -db &quot;&lt;mydbserver.kdb&gt;&quot; -pw &quot;&lt;PASSWORD&gt;&quot; -label &quot;&lt;myselfsigned&gt;&quot;<br />
+<br />
+The output is displayed in  a form similar to the following: <br />
+<br />
+-- label : myselfsigned key size : 1024 version : X509 V3 serial : 96c2db8fa769a09d<br />
+<br />
+-- issue:CN=myhost.mycompany.com,O=myOrganization,OU=myOrganizationUnit,<br />
+L=myLocation,ST=ON,C=CA <br />
+<br />
+-- subject:CN=myhost.mycompany.com,O=myOrganization,OU=myOrganizationUnit,<br />
+L=myLocation,ST=ON,C=CA not before : Tuesday, 24 February 2009 17:11:50 PM not after : Thursday, 25 February 2010 17:11:50 PM<br />
+<br />
+If the certificate is not issued by DoD PKI or DoD-approved PKI Certification Authorities (CAs), this is a finding.</p><h2>Check Content Reference</h2><p>M</p><h2>Target Key</h2><p>3989</p></body></html>

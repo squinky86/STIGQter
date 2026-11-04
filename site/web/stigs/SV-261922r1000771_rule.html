@@ -1,0 +1,52 @@
+<!doctype html><html lang="en"><head><meta charset="utf-8"><title>STIGQter: STIG Check Details: SV-261922r1000771_rule: PostgreSQL must generate time stamps for audit records and application data with a minimum granularity of one second.</title><link rel="icon" type="image/svg+xml" href="STIGQter.svg" /><script async src="https://www.googletagmanager.com/gtag/js?id=UA-31381839-2"></script><script src="include.js"></script><script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-4110907817782130" crossorigin="anonymous"></script></head><body><div><img src="STIGQter.svg" alt="STIGQter" style="height:1em;" /> <a href="https://www.stigqter.com/">STIGQter</a>: <a href="main.html">STIG Summary</a>: <a href="U_CD_Postgres_16_STIG_V1R3_Manual-xccdf.html">Crunchy Data Postgres 16 Security Technical Implementation Guide Version: 1 Release: 3 Benchmark Date: 01 Jul 2026</a>:</div> <h1>PostgreSQL must generate time stamps for audit records and application data with a minimum granularity of one second.</h1><h2>DISA Rule</h2><p>SV-261922r1000771_rule</p><h2>Vulnerability Number</h2><p>V-261922</p><h2>Group Title</h2><p>SRG-APP-000375-DB-000323</p><h2>Rule Version</h2><p>CD16-00-007600</p><h2>Severity</h2><p>CAT II</p><h2>CCI(s)</h2><ul><li>CCI-001889 - Record time stamps for audit records that meet organization-defined granularity of time measurement.</li></ul><h2>Weight</h2><p>10</p><h2>Fix Recommendation</h2><p>Note: The following instructions use the PGDATA and PGVER environment variables. Refer to APPENDIX-F for instructions on configuring PGDATA and APPENDIX-H for PGVER.<br />
+<br />
+PostgreSQL will not log anything if logging is not enabled. To ensure logging is enabled, see the instructions in the supplementary content APPENDIX-C.<br />
+<br />
+If logging is enabled, the following configurations must be made to log events with time stamps:<br />
+<br />
+As the database administrator (shown here as &quot;postgres&quot;), edit postgresql.conf:<br />
+<br />
+$ sudo su - postgres<br />
+$ vi ${PGDATA?}/postgresql.conf<br />
+<br />
+Add %m to log_line_prefix to enable time stamps with milliseconds:<br />
+<br />
+log_line_prefix = '&lt; %m &gt;'<br />
+<br />
+As the system administrator, reload the server with the new configuration:<br />
+<br />
+$ sudo systemctl reload postgresql-${PGVER?}</p><h2>Check Contents</h2><p>Note: The following instructions use the PGDATA environment variable. Refer to APPENDIX-F for instructions on configuring PGDATA and APPENDIX-I for PGLOG.<br />
+<br />
+As the database administrator (shown here as &quot;postgres&quot;), verify the current log_line_prefix setting by running the following SQL:<br />
+<br />
+$ sudo su - postgres<br />
+$ psql -c &quot;SHOW log_line_prefix&quot;<br />
+<br />
+If log_line_prefix does not contain %m, this is a finding.<br />
+<br />
+Check the logs to verify time stamps are being logged:<br />
+<br />
+$ sudo su - postgres<br />
+$ cat ${PGDATA?}/${PGLOG?}/&lt;latest_log&gt;<br />
+&lt; 2024-02-23 12:53:33.947 EDT postgres postgres 570bd68d.3912 &gt;LOG: connection authorized: user=postgres database=postgres<br />
+&lt; 2024-02-23 12:53:41.576 EDT postgres postgres 570bd68d.3912 &gt;LOG: AUDIT: SESSION,1,1,DDL,CREATE TABLE,,,CREATE TABLE test_srg(id INT);,&lt;none&gt;<br />
+&lt; 2024-02-23 12:53:44.372 EDT postgres postgres 570bd68d.3912 &gt;LOG: disconnection: session time: 0:00:10.426 user=postgres database=postgres host=[local]<br />
+<br />
+If time stamps are not being logged, this is a finding.</p><h2>Vulnerability Number</h2><p>V-261922</p><h2>Documentable</h2><p>False</p><h2>Rule Version</h2><p>CD16-00-007600</p><h2>Severity Override Guidance</h2><p>Note: The following instructions use the PGDATA environment variable. Refer to APPENDIX-F for instructions on configuring PGDATA and APPENDIX-I for PGLOG.<br />
+<br />
+As the database administrator (shown here as &quot;postgres&quot;), verify the current log_line_prefix setting by running the following SQL:<br />
+<br />
+$ sudo su - postgres<br />
+$ psql -c &quot;SHOW log_line_prefix&quot;<br />
+<br />
+If log_line_prefix does not contain %m, this is a finding.<br />
+<br />
+Check the logs to verify time stamps are being logged:<br />
+<br />
+$ sudo su - postgres<br />
+$ cat ${PGDATA?}/${PGLOG?}/&lt;latest_log&gt;<br />
+&lt; 2024-02-23 12:53:33.947 EDT postgres postgres 570bd68d.3912 &gt;LOG: connection authorized: user=postgres database=postgres<br />
+&lt; 2024-02-23 12:53:41.576 EDT postgres postgres 570bd68d.3912 &gt;LOG: AUDIT: SESSION,1,1,DDL,CREATE TABLE,,,CREATE TABLE test_srg(id INT);,&lt;none&gt;<br />
+&lt; 2024-02-23 12:53:44.372 EDT postgres postgres 570bd68d.3912 &gt;LOG: disconnection: session time: 0:00:10.426 user=postgres database=postgres host=[local]<br />
+<br />
+If time stamps are not being logged, this is a finding.</p><h2>Check Content Reference</h2><p>M</p><h2>Target Key</h2><p>5598</p></body></html>

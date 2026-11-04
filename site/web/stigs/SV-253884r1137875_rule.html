@@ -1,0 +1,223 @@
+<!doctype html><html lang="en"><head><meta charset="utf-8"><title>STIGQter: STIG Check Details: SV-253884r1137875_rule: The Juniper EX switch must be configured to enforce approved authorizations for controlling the flow of management information within the network device based on information flow control policies.</title><link rel="icon" type="image/svg+xml" href="STIGQter.svg" /><script async src="https://www.googletagmanager.com/gtag/js?id=UA-31381839-2"></script><script src="include.js"></script><script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-4110907817782130" crossorigin="anonymous"></script></head><body><div><img src="STIGQter.svg" alt="STIGQter" style="height:1em;" /> <a href="https://www.stigqter.com/">STIGQter</a>: <a href="main.html">STIG Summary</a>: <a href="U_Juniper_EX_Switches_NDM_STIG_V2R5_Manual-xccdf.html">Juniper EX Series Switches Network Device Management Security Technical Implementation Guide Version: 2 Release: 5 Benchmark Date: 01 Jul 2026</a>:</div> <h1>The Juniper EX switch must be configured to enforce approved authorizations for controlling the flow of management information within the network device based on information flow control policies.</h1><h2>DISA Rule</h2><p>SV-253884r1137875_rule</p><h2>Vulnerability Number</h2><p>V-253884</p><h2>Group Title</h2><p>SRG-APP-000038-NDM-000213</p><h2>Rule Version</h2><p>JUEX-NM-000070</p><h2>Severity</h2><p>CAT II</p><h2>CCI(s)</h2><ul><li>CCI-001368 - Enforce approved authorizations for controlling the flow of information within the system based on organization-defined information flow control policies.</li><li>CCI-004192 - Protect nonlocal maintenance sessions by separating the maintenance session from other network sessions with the system by logically separated communications paths.</li></ul><h2>Weight</h2><p>10</p><h2>Fix Recommendation</h2><p>Configure the network device to enforce approved authorizations for controlling the flow of management information within the network device based on information flow control policies.<br />
+<br />
+Example MGT networks:<br />
+set policy-options prefix-list ipv4-management &lt;IPv4 MGT subnet/mask&gt;<br />
+set policy-options prefix-list ipv6-management &lt;IPv6 MGT subnet/prefix&gt;<br />
+<br />
+Example firewall filters:<br />
+set firewall family inet filter permit-management-ipv4 term 1 from destination-address  &lt;OOBM IPv4 address&gt;<br />
+set firewall family inet filter permit-management-ipv4 term 1 from source-prefix-list ipv4-management<br />
+set firewall family inet filter permit-management-ipv4 term 1 from protocol tcp<br />
+set firewall family inet filter permit-management-ipv4 term 1 from destination-port 22<br />
+set firewall family inet filter permit-management-ipv4 term 1 then syslog<br />
+set firewall family inet filter permit-management-ipv4 term 1 then accept<br />
+set firewall family inet filter permit-management-ipv4 term 2 then syslog<br />
+set firewall family inet filter permit-management-ipv4 term 2 then discard<br />
+set firewall family inet6 filter permit-management-ipv6 term 1 from destination-address  &lt;OOBM IPv6 address&gt;<br />
+set firewall family inet6 filter permit-management-ipv6 term 1 from source-prefix-list ipv6-management<br />
+set firewall family inet6 filter permit-management-ipv6 term 1 from next-header tcp<br />
+set firewall family inet6 filter permit-management-ipv6 term 1 from destination-port 22<br />
+set firewall family inet6 filter permit-management-ipv6 term 1 then syslog<br />
+set firewall family inet6 filter permit-management-ipv6 term 1 then accept<br />
+set firewall family inet6 filter permit-management-ipv6 term 2 then syslog<br />
+set firewall family inet6 filter permit-management-ipv6 term 2 then discard<br />
+<br />
+Example interface configuration:<br />
+set interfaces fxp0 unit 0 family inet filter input permit-management-ipv4<br />
+set interfaces fxp0 unit 0 family inet address  &lt;OOBM IPv4 address&gt;/&lt;mask&gt;<br />
+set interfaces fxp0 unit 0 family inet6 filter input permit-management-ipv6<br />
+set interfaces fxp0 unit 0 family inet6 address  &lt;OOBM IPv6 address&gt;/&lt;prefix&gt;</p><h2>Check Contents</h2><p>Review the network device configuration to determine if it enforces approved authorizations for controlling the flow of management information within the network device based on information flow control policies.<br />
+<br />
+Verify the switch permits administrative access only from the authorized management network(s). Verify filters and terms account for all authorized management traffic.<br />
+<br />
+Example prefix-list defining the management networks. Prefix lists are not required because IP addresses can be directly embedded into terms, but they define a set of IP addresses once that permits use across multiple terms.<br />
+[edit policy-options]<br />
+prefix-list ipv4-management {<br />
+    &lt;IPv4 MGT subnet/mask&gt;;<br />
+}<br />
+prefix-list ipv6-management {<br />
+    &lt;IPv6 MGT subnet/prefix&gt;;<br />
+}<br />
+<br />
+Example firewall filter for SSH traffic:<br />
+[edit firewall]<br />
+family inet {<br />
+    filter permit-management-ipv4 {<br />
+        term 1 {<br />
+            from {<br />
+                destination-address {<br />
+                   &lt;OOBM IPv4 address&gt;;<br />
+                }<br />
+                source-address {  &lt;&lt; Example embedded addresses using the 'source-address' match criterion<br />
+                     &lt;IPv4 MGT subnet/mask&gt;;<br />
+                }<br />
+                --or--<br />
+                source-prefix-list { &lt;&lt; Example inherited addresses using the 'source-prefix-list' match criterion<br />
+                    ipv4-management;<br />
+                }<br />
+                protocol tcp;<br />
+                destination-port 22;<br />
+            }<br />
+            then {<br />
+                syslog;<br />
+                accept;<br />
+            }<br />
+        }<br />
+        term 2 {<br />
+            then {<br />
+                syslog;<br />
+                discard;<br />
+            }<br />
+        }<br />
+    }<br />
+}<br />
+family inet6 {<br />
+    filter permit-management-ipv6 {<br />
+        term 1 {<br />
+            from {<br />
+                destination-address {<br />
+                   &lt;OOBM IPv6 address&gt;;<br />
+                }<br />
+                source-address {  &lt;&lt; Example embedded addresses using the 'source-address' match criterion<br />
+                     &lt;IPv6 MGT subnet/prefix&gt;;<br />
+                }<br />
+                --or--<br />
+                source-prefix-list { &lt;&lt; Example inherited addresses using the 'source-prefix-list' match criterion<br />
+                    ipv6-management;<br />
+                }<br />
+                next-header tcp;<br />
+                destination-port 22;<br />
+            }<br />
+            then {<br />
+                syslog;<br />
+                accept;<br />
+            }<br />
+        }<br />
+        term 2 {<br />
+            then {<br />
+                syslog;<br />
+                discard;<br />
+            }<br />
+        }<br />
+    }<br />
+}<br />
+Note: Additional terms will be required for other services like SNMP, RADIUS, or syslog.<br />
+<br />
+Example firewall filter applied to the OOBM interface. Juniper devices use different OOBM interface names depending upon platform (fxp0 used in the example):<br />
+[edit interfaces]<br />
+fxp0 {<br />
+    unit 0 {<br />
+        family inet {<br />
+            filter {<br />
+                input permit-management-ipv4;<br />
+            }<br />
+            address  &lt;OOBM IPv4 address&gt;/&lt;mask&gt;;<br />
+        }<br />
+        family inet6 {<br />
+            filter {<br />
+                input permit-management-ipv6;<br />
+            }<br />
+            address  &lt;OOBM IPv6 address&gt;/&lt;prefix&gt;;<br />
+        }<br />
+    }<br />
+}<br />
+Note: Although the example filter is shown applied to the management interface, the filter can also be applied to the loopback interface (lo0). If applying to loopback, ensure the filter terms account for all traffic, services, and protocols that must reach the routing engine (e.g., OSPF, BGP, SNMP, etc.).<br />
+<br />
+If the switch does not enforce approved authorizations for controlling the flow of management information within the device based on information control policies, this is a finding.</p><h2>Vulnerability Number</h2><p>V-253884</p><h2>Documentable</h2><p>False</p><h2>Rule Version</h2><p>JUEX-NM-000070</p><h2>Severity Override Guidance</h2><p>Review the network device configuration to determine if it enforces approved authorizations for controlling the flow of management information within the network device based on information flow control policies.<br />
+<br />
+Verify the switch permits administrative access only from the authorized management network(s). Verify filters and terms account for all authorized management traffic.<br />
+<br />
+Example prefix-list defining the management networks. Prefix lists are not required because IP addresses can be directly embedded into terms, but they define a set of IP addresses once that permits use across multiple terms.<br />
+[edit policy-options]<br />
+prefix-list ipv4-management {<br />
+    &lt;IPv4 MGT subnet/mask&gt;;<br />
+}<br />
+prefix-list ipv6-management {<br />
+    &lt;IPv6 MGT subnet/prefix&gt;;<br />
+}<br />
+<br />
+Example firewall filter for SSH traffic:<br />
+[edit firewall]<br />
+family inet {<br />
+    filter permit-management-ipv4 {<br />
+        term 1 {<br />
+            from {<br />
+                destination-address {<br />
+                   &lt;OOBM IPv4 address&gt;;<br />
+                }<br />
+                source-address {  &lt;&lt; Example embedded addresses using the 'source-address' match criterion<br />
+                     &lt;IPv4 MGT subnet/mask&gt;;<br />
+                }<br />
+                --or--<br />
+                source-prefix-list { &lt;&lt; Example inherited addresses using the 'source-prefix-list' match criterion<br />
+                    ipv4-management;<br />
+                }<br />
+                protocol tcp;<br />
+                destination-port 22;<br />
+            }<br />
+            then {<br />
+                syslog;<br />
+                accept;<br />
+            }<br />
+        }<br />
+        term 2 {<br />
+            then {<br />
+                syslog;<br />
+                discard;<br />
+            }<br />
+        }<br />
+    }<br />
+}<br />
+family inet6 {<br />
+    filter permit-management-ipv6 {<br />
+        term 1 {<br />
+            from {<br />
+                destination-address {<br />
+                   &lt;OOBM IPv6 address&gt;;<br />
+                }<br />
+                source-address {  &lt;&lt; Example embedded addresses using the 'source-address' match criterion<br />
+                     &lt;IPv6 MGT subnet/prefix&gt;;<br />
+                }<br />
+                --or--<br />
+                source-prefix-list { &lt;&lt; Example inherited addresses using the 'source-prefix-list' match criterion<br />
+                    ipv6-management;<br />
+                }<br />
+                next-header tcp;<br />
+                destination-port 22;<br />
+            }<br />
+            then {<br />
+                syslog;<br />
+                accept;<br />
+            }<br />
+        }<br />
+        term 2 {<br />
+            then {<br />
+                syslog;<br />
+                discard;<br />
+            }<br />
+        }<br />
+    }<br />
+}<br />
+Note: Additional terms will be required for other services like SNMP, RADIUS, or syslog.<br />
+<br />
+Example firewall filter applied to the OOBM interface. Juniper devices use different OOBM interface names depending upon platform (fxp0 used in the example):<br />
+[edit interfaces]<br />
+fxp0 {<br />
+    unit 0 {<br />
+        family inet {<br />
+            filter {<br />
+                input permit-management-ipv4;<br />
+            }<br />
+            address  &lt;OOBM IPv4 address&gt;/&lt;mask&gt;;<br />
+        }<br />
+        family inet6 {<br />
+            filter {<br />
+                input permit-management-ipv6;<br />
+            }<br />
+            address  &lt;OOBM IPv6 address&gt;/&lt;prefix&gt;;<br />
+        }<br />
+    }<br />
+}<br />
+Note: Although the example filter is shown applied to the management interface, the filter can also be applied to the loopback interface (lo0). If applying to loopback, ensure the filter terms account for all traffic, services, and protocols that must reach the routing engine (e.g., OSPF, BGP, SNMP, etc.).<br />
+<br />
+If the switch does not enforce approved authorizations for controlling the flow of management information within the device based on information control policies, this is a finding.</p><h2>Check Content Reference</h2><p>M</p><h2>Target Key</h2><p>5477</p></body></html>

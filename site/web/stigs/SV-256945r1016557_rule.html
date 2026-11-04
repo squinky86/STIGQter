@@ -1,0 +1,36 @@
+<!doctype html><html lang="en"><head><meta charset="utf-8"><title>STIGQter: STIG Check Details: SV-256945r1016557_rule: Expansion modules must be fully reviewed, tested, and signed before they can exist on a production Automation Controller NGINX front-end web server.</title><link rel="icon" type="image/svg+xml" href="STIGQter.svg" /><script async src="https://www.googletagmanager.com/gtag/js?id=UA-31381839-2"></script><script src="include.js"></script><script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-4110907817782130" crossorigin="anonymous"></script></head><body><div><img src="STIGQter.svg" alt="STIGQter" style="height:1em;" /> <a href="https://www.stigqter.com/">STIGQter</a>: <a href="main.html">STIG Summary</a>: <a href="U_RH_Ansible_Automation_Controller_WS_STIG_V2R3_Manual-xccdf.html">Red Hat Ansible Automation Controller Web Server Security Technical Implementation Guide Version: 2 Release: 3 Benchmark Date: 05 Jan 2026</a>:</div> <h1>Expansion modules must be fully reviewed, tested, and signed before they can exist on a production Automation Controller NGINX front-end web server.</h1><h2>DISA Rule</h2><p>SV-256945r1016557_rule</p><h2>Vulnerability Number</h2><p>V-256945</p><h2>Group Title</h2><p>SRG-APP-000131-WSR-000073</p><h2>Rule Version</h2><p>APWS-AT-000240</p><h2>Severity</h2><p>CAT II</p><h2>CCI(s)</h2><ul><li>CCI-003992 - Prevent the installation of organization-defined software and firmware components without verification that the component has been digitally signed using a certificate that is recognized and approved by the organization.</li></ul><h2>Weight</h2><p>10</p><h2>Fix Recommendation</h2><p>As a system administrator for each Automation Controller NGINX web server host, execute the following:<br />
+<br />
+NGINXCONF=`nginx -V 2&gt;&amp;1 | tr ' ' '\n' | sed -ne '/conf-path/{s/.*conf-path=\(.*\)/\1/;p}' `<br />
+NGINXMODPATH=`nginx -V 2&gt;&amp;1 | tr ' ' '\n' | grep modules-path | sed -ne '/modules-path/{s/.*modules-path=\(.*\)/\1/;p}'`<br />
+NGINXMODINC=`grep include /etc/nginx/nginx.conf | grep modules | awk '{print $2}' | xargs dirname`<br />
+sudo rm -f ${NGINXMODPATH}/*<br />
+sudo rm -f ${NGINXMODINC}/*<br />
+sudo -e ${NGINXCONF}<br />
+<br />
+In the editor, remove any lines that contain &quot;load_module&quot;.<br />
+<br />
+Save the file and exit the text editor. Run the following command to apply the changes:<br />
+<br />
+sudo systemctl restart nginx</p><h2>Check Contents</h2><p>The Automation Controller does not require any nginx dynamic expansion modules to function. Determine if any dynamic modules are specified in the nginx configuration.<br />
+<br />
+As a system administrator for each Automation Controller NGINX web server host, execute the following:<br />
+<br />
+NGINXCONF=`nginx -V 2&gt;&amp;1 | tr ' ' '\n' | sed -ne '/conf-path/{s/.*conf-path=\(.*\)/\1/;p}' `<br />
+NGINXMODPATH=`nginx -V 2&gt;&amp;1 | tr ' ' '\n' | grep modules-path | sed -ne '/modules-path/{s/.*modules-path=\(.*\)/\1/;p}'`<br />
+NGINXMODINC=`grep include /etc/nginx/nginx.conf | grep modules | awk '{print $2}' | xargs dirname`<br />
+grep -q load_module ${NGINXCONF} &amp;&amp; echo FAILED<br />
+[ `ls -1 $NGINXMODPATH | wc -l` == 0 ]  || echo FAILED<br />
+[ `ls -1 $NGINXMODINC | wc -l` == 0 ]  || echo FAILED<br />
+<br />
+If &quot;FAILED&quot; is displayed, this is a finding.</p><h2>Vulnerability Number</h2><p>V-256945</p><h2>Documentable</h2><p>False</p><h2>Rule Version</h2><p>APWS-AT-000240</p><h2>Severity Override Guidance</h2><p>The Automation Controller does not require any nginx dynamic expansion modules to function. Determine if any dynamic modules are specified in the nginx configuration.<br />
+<br />
+As a system administrator for each Automation Controller NGINX web server host, execute the following:<br />
+<br />
+NGINXCONF=`nginx -V 2&gt;&amp;1 | tr ' ' '\n' | sed -ne '/conf-path/{s/.*conf-path=\(.*\)/\1/;p}' `<br />
+NGINXMODPATH=`nginx -V 2&gt;&amp;1 | tr ' ' '\n' | grep modules-path | sed -ne '/modules-path/{s/.*modules-path=\(.*\)/\1/;p}'`<br />
+NGINXMODINC=`grep include /etc/nginx/nginx.conf | grep modules | awk '{print $2}' | xargs dirname`<br />
+grep -q load_module ${NGINXCONF} &amp;&amp; echo FAILED<br />
+[ `ls -1 $NGINXMODPATH | wc -l` == 0 ]  || echo FAILED<br />
+[ `ls -1 $NGINXMODINC | wc -l` == 0 ]  || echo FAILED<br />
+<br />
+If &quot;FAILED&quot; is displayed, this is a finding.</p><h2>Check Content Reference</h2><p>M</p><h2>Target Key</h2><p>5535</p></body></html>

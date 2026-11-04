@@ -1,0 +1,36 @@
+<!doctype html><html lang="en"><head><meta charset="utf-8"><title>STIGQter: STIG Check Details: SV-266086r1024925_rule: The F5 BIG-IP appliance must authenticate Network Time Protocol (NTP) sources using authentication that is cryptographically based.</title><link rel="icon" type="image/svg+xml" href="STIGQter.svg" /><script async src="https://www.googletagmanager.com/gtag/js?id=UA-31381839-2"></script><script src="include.js"></script><script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-4110907817782130" crossorigin="anonymous"></script></head><body><div><img src="STIGQter.svg" alt="STIGQter" style="height:1em;" /> <a href="https://www.stigqter.com/">STIGQter</a>: <a href="main.html">STIG Summary</a>: <a href="U_F5_BIG-IP_TMOS_NDM_STIG_V1R2_Manual-xccdf.html">F5 BIG-IP TMOS NDM Security Technical Implementation Guide Version: 1 Release: 2 Benchmark Date: 02 Jul 2025</a>:</div> <h1>The F5 BIG-IP appliance must authenticate Network Time Protocol (NTP) sources using authentication that is cryptographically based.</h1><h2>DISA Rule</h2><p>SV-266086r1024925_rule</p><h2>Vulnerability Number</h2><p>V-266086</p><h2>Group Title</h2><p>SRG-APP-000395-NDM-000347</p><h2>Rule Version</h2><p>F5BI-DM-300048</p><h2>Severity</h2><p>CAT II</p><h2>CCI(s)</h2><ul><li>CCI-001967 - Authenticate organization-defined devices and/or types of devices before establishing a local, remote, and/or network connection using bidirectional authentication that is cryptographically based.</li></ul><h2>Weight</h2><p>10</p><h2>Fix Recommendation</h2><p>From the BIG-IP console, type the following commands:<br />
+<br />
+echo &quot;1 M &lt;passphrase&gt; #MD5 Key&quot; &gt; /etc/ntp/keys<br />
+<br />
+Note: This command assumes that no other keys have been previously configured in the /etc/ntp/keys file. Running this command will overwrite the file.<br />
+<br />
+#Make sure this key is installed on all the NTP servers and clients participating in the NTP time synchronization.<br />
+<br />
+tmsh edit sys ntp all-properties<br />
+<br />
+#Replace the &quot;include&quot; section with the following (add as many ntp server lines as necessary for the environment, but configure at least 2):<br />
+<br />
+include &quot;server &lt;ntp server&gt; key &lt;trusted key number matched to /etc/ntp/keys&gt; iburst trustedkey &lt;trusted key number matched to /etc/ntp/keys&gt;<br />
+server &lt;ntp server&gt; key &lt;trusted key number matched to /etc/ntp/keys&gt; iburst trustedkey &lt;trusted key number matched to /etc/ntp/keys&gt;&quot;<br />
+<br />
+tmsh save sys config</p><h2>Check Contents</h2><p>From the BIG-IP Console:<br />
+cat /etc/ntp/keys<br />
+<br />
+#Verify this key is installed on all the NTP servers and clients participating in the NTP time synchronization.<br />
+<br />
+tmsh list sys ntp include<br />
+<br />
+#Verify there is a line similar to the following:<br />
+#server &lt;ntp server&gt; key &lt;trusted key number matched to /etc/ntp/keys&gt; iburst trustedkey &lt;trusted key number matched to /etc/ntp/keys&gt;<br />
+<br />
+If the BIG-IP appliance is not configured to authenticate Network Time Protocol sources using authentication that is cryptographically based, this is a finding.</p><h2>Vulnerability Number</h2><p>V-266086</p><h2>Documentable</h2><p>False</p><h2>Rule Version</h2><p>F5BI-DM-300048</p><h2>Severity Override Guidance</h2><p>From the BIG-IP Console:<br />
+cat /etc/ntp/keys<br />
+<br />
+#Verify this key is installed on all the NTP servers and clients participating in the NTP time synchronization.<br />
+<br />
+tmsh list sys ntp include<br />
+<br />
+#Verify there is a line similar to the following:<br />
+#server &lt;ntp server&gt; key &lt;trusted key number matched to /etc/ntp/keys&gt; iburst trustedkey &lt;trusted key number matched to /etc/ntp/keys&gt;<br />
+<br />
+If the BIG-IP appliance is not configured to authenticate Network Time Protocol sources using authentication that is cryptographically based, this is a finding.</p><h2>Check Content Reference</h2><p>M</p><h2>Target Key</h2><p>5639</p></body></html>

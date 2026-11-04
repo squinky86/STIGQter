@@ -1,0 +1,31 @@
+<!doctype html><html lang="en"><head><meta charset="utf-8"><title>STIGQter: STIG Check Details: SV-268158r1131121_rule: NixOS must protect against or limit the effects of denial-of-service (DoS) attacks by ensuring the operating system is implementing rate-limiting measures on impacted network interfaces.</title><link rel="icon" type="image/svg+xml" href="STIGQter.svg" /><script async src="https://www.googletagmanager.com/gtag/js?id=UA-31381839-2"></script><script src="include.js"></script><script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-4110907817782130" crossorigin="anonymous"></script></head><body><div><img src="STIGQter.svg" alt="STIGQter" style="height:1em;" /> <a href="https://www.stigqter.com/">STIGQter</a>: <a href="main.html">STIG Summary</a>: <a href="U_Anduril_NixOS_STIG_V1R2_Manual-xccdf.html">Anduril NixOS Security Technical Implementation Guide Version: 1 Release: 2 Benchmark Date: 01 Oct 2025</a>:</div> <h1>NixOS must protect against or limit the effects of denial-of-service (DoS) attacks by ensuring the operating system is implementing rate-limiting measures on impacted network interfaces.</h1><h2>DISA Rule</h2><p>SV-268158r1131121_rule</p><h2>Vulnerability Number</h2><p>V-268158</p><h2>Group Title</h2><p>SRG-OS-000420-GPOS-00186</p><h2>Rule Version</h2><p>ANIX-00-001610</p><h2>Severity</h2><p>CAT II</p><h2>CCI(s)</h2><ul><li>CCI-002385 - Protect against or limit the effects of organization-defined types of denial of service events.</li></ul><h2>Weight</h2><p>10</p><h2>Fix Recommendation</h2><p>Configure the NixOS firewall to enforce rate limits using the hashlimit module.<br />
+<br />
+For example, to limit SSH to 1 MB/s and to limit HTTP to 1000 connections / minute per IP, add the following Nix code to the NixOS Configuration, usually located in /etc/nixos/configuration.nix or /etc/nixos/flake.nix:<br />
+<br />
+ networking.firewall.enable = true;<br />
+ networking.firewall.extraCommands = ''<br />
+  ip46tables --append INPUT --protocol tcp --dport 22 --match hashlimit --hashlimit-name stig_byte_limit --hashlimit-mode srcip --hashlimit-above 1000000b/second --jump nixos-fw-refuse<br />
+  ip46tables --append INPUT --protocol tcp --dport 80 --match hashlimit --hashlimit-name stig_conn_limit --hashlimit-mode srcip --hashlimit-above 1000/minute --jump nixos-fw-refuse<br />
+  ip46tables --append INPUT --protocol tcp --dport 443 --match hashlimit --hashlimit-name stig_conn_limit --hashlimit-mode srcip --hashlimit-above 1000/minute --jump nixos-fw-refuse<br />
+ '';<br />
+<br />
+Note: NixOS provides the helper script &quot;ip46tables&quot; to add rules using both &quot;iptables&quot; and &quot;ip6tables&quot;.<br />
+<br />
+Rebuild and switch to the new NixOS configuration:<br />
+$ sudo nixos-rebuild switch</p><h2>Check Contents</h2><p>Verify NixOS firewall enforces rate limits using the hashlimit module.<br />
+<br />
+$ sudo iptables -L | grep limit<br />
+<br />
+nixos-fw-refuse tcp -- anywhere   anywhere   tcp dpt:ssh limit: above 1000000b/s mode srcip<br />
+nixos-fw-refuse tcp -- anywhere   anywhere   tcp dpt:http limit: above 1000/min burst 5 mode srcip<br />
+nixos-fw-refuse tcp -- anywhere   anywhere   tcp dpt:https limit: above 1000/min burst 5  mode srcip<br />
+<br />
+If the command does not produce any rate limiting rules, this is a finding.</p><h2>Vulnerability Number</h2><p>V-268158</p><h2>Documentable</h2><p>False</p><h2>Rule Version</h2><p>ANIX-00-001610</p><h2>Severity Override Guidance</h2><p>Verify NixOS firewall enforces rate limits using the hashlimit module.<br />
+<br />
+$ sudo iptables -L | grep limit<br />
+<br />
+nixos-fw-refuse tcp -- anywhere   anywhere   tcp dpt:ssh limit: above 1000000b/s mode srcip<br />
+nixos-fw-refuse tcp -- anywhere   anywhere   tcp dpt:http limit: above 1000/min burst 5 mode srcip<br />
+nixos-fw-refuse tcp -- anywhere   anywhere   tcp dpt:https limit: above 1000/min burst 5  mode srcip<br />
+<br />
+If the command does not produce any rate limiting rules, this is a finding.</p><h2>Check Content Reference</h2><p>M</p><h2>Target Key</h2><p>5658</p></body></html>

@@ -1,0 +1,28 @@
+<!doctype html><html lang="en"><head><meta charset="utf-8"><title>STIGQter: STIG Check Details: SV-222962r1051118_rule: Tomcat management applications must use LDAP realm authentication.</title><link rel="icon" type="image/svg+xml" href="STIGQter.svg" /><script async src="https://www.googletagmanager.com/gtag/js?id=UA-31381839-2"></script><script src="include.js"></script><script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-4110907817782130" crossorigin="anonymous"></script></head><body><div><img src="STIGQter.svg" alt="STIGQter" style="height:1em;" /> <a href="https://www.stigqter.com/">STIGQter</a>: <a href="main.html">STIG Summary</a>: <a href="U_Apache_Tomcat_Application_Server_9_STIG_V3R4_Manual-xccdf.html">Apache Tomcat Application Server 9 Security Technical Implementation Guide Version: 3 Release: 4 Benchmark Date: 01 Apr 2026</a>:</div> <h1>Tomcat management applications must use LDAP realm authentication.</h1><h2>DISA Rule</h2><p>SV-222962r1051118_rule</p><h2>Vulnerability Number</h2><p>V-222962</p><h2>Group Title</h2><p>SRG-APP-000148-AS-000101</p><h2>Rule Version</h2><p>TCAT-AS-000600</p><h2>Severity</h2><p>CAT II</p><h2>CCI(s)</h2><ul><li>CCI-000764 - Uniquely identify and authenticate organizational users and associate that unique identification with processes acting on behalf of those users.</li></ul><h2>Weight</h2><p>10</p><h2>Fix Recommendation</h2><p>Identify the server IP that is providing LDAP services and configure the Tomcat user roles schema within LDAP. Refer to the manager and host-manager web.xml files for application specific role information that can be used for setting up the roles for those applications. The default location for these files is: $CATALINA_BASE/webapps/&lt;AppName&gt;/WEB-INF/web.xml<br />
+<br />
+From the Tomcat server console as a privileged user, edit the $CATALINA_BASE/conf/server.xml file.<br />
+<br />
+Locate the &lt;Realm&gt; element in the server.xml file, add a nested &lt;Realm&gt; element using the JNDIRealm className and configure the associated LDAP settings as per the LDAP server connection requirements.<br />
+<br />
+EXAMPLE:<br />
+This is for illustration purposes only. Modify the LDAP settings on a case-by-case basis as per the individual LDAP server and schema.<br />
+<br />
+&lt;Realm   className=&quot;org.apache.catalina.realm.JNDIRealm&quot;<br />
+     connectionURL=&quot;ldaps://localhost:686&quot;<br />
+       userPattern=&quot;uid={0},ou=people,dc=myunit,dc=mil&quot;<br />
+          roleBase=&quot;ou=groups,dc=myunit,dc=mil&quot;<br />
+          roleName=&quot;cn&quot;<br />
+        roleSearch=&quot;(uniqueMember={0})&quot;<br />
+/&gt;</p><h2>Check Contents</h2><p>If manager and host-manager applications have been deleted from the system, this is not a finding. <br />
+<br />
+From the Tomcat server as a privileged user, run the following commands:<br />
+<br />
+sudo grep -i -A8 JNDIRealm $CATALINA_BASE/conf/server.xml<br />
+<br />
+If the JNDIRealm does not exist or if the JNDIRealm configuration is commented out, this is finding.</p><h2>Vulnerability Number</h2><p>V-222962</p><h2>Documentable</h2><p>False</p><h2>Rule Version</h2><p>TCAT-AS-000600</p><h2>Severity Override Guidance</h2><p>If manager and host-manager applications have been deleted from the system, this is not a finding. <br />
+<br />
+From the Tomcat server as a privileged user, run the following commands:<br />
+<br />
+sudo grep -i -A8 JNDIRealm $CATALINA_BASE/conf/server.xml<br />
+<br />
+If the JNDIRealm does not exist or if the JNDIRealm configuration is commented out, this is finding.</p><h2>Check Content Reference</h2><p>M</p><h2>Target Key</h2><p>4094</p></body></html>

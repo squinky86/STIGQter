@@ -1,0 +1,35 @@
+<!doctype html><html lang="en"><head><meta charset="utf-8"><title>STIGQter: STIG Check Details: SV-268091r1130983_rule: NixOS must generate audit records for all usage of privileged commands.</title><link rel="icon" type="image/svg+xml" href="STIGQter.svg" /><script async src="https://www.googletagmanager.com/gtag/js?id=UA-31381839-2"></script><script src="include.js"></script><script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-4110907817782130" crossorigin="anonymous"></script></head><body><div><img src="STIGQter.svg" alt="STIGQter" style="height:1em;" /> <a href="https://www.stigqter.com/">STIGQter</a>: <a href="main.html">STIG Summary</a>: <a href="U_Anduril_NixOS_STIG_V1R2_Manual-xccdf.html">Anduril NixOS Security Technical Implementation Guide Version: 1 Release: 2 Benchmark Date: 01 Oct 2025</a>:</div> <h1>NixOS must generate audit records for all usage of privileged commands.</h1><h2>DISA Rule</h2><p>SV-268091r1130983_rule</p><h2>Vulnerability Number</h2><p>V-268091</p><h2>Group Title</h2><p>SRG-OS-000042-GPOS-00020</p><h2>Rule Version</h2><p>ANIX-00-000210</p><h2>Severity</h2><p>CAT II</p><h2>CCI(s)</h2><ul><li>CCI-000135 - Generate audit records containing the organization-defined additional information that is to be included in the audit records.</li><li>CCI-000169 - Provide audit record generation capability for the event types the system is capable of auditing as defined in AU-2 a. on organization-defined information system components.</li><li>CCI-000172 - Generate audit records for the event types defined in AU-2 c that include the audit record content defined in AU-3.</li><li>CCI-003938 - Automatically generate audit records of the enforcement actions.</li><li>CCI-002884 - Log organization-defined audit events for nonlocal maintenance and diagnostic sessions.</li><li>CCI-004188 - Monitor the use of maintenance tools that execute with increased privilege.</li></ul><h2>Weight</h2><p>10</p><h2>Fix Recommendation</h2><p>Configure NixOS to generate audit records for all execution of privileged functions.<br />
+<br />
+Add the following Nix code to the NixOS Configuration, usually located in /etc/nixos/configuration.nix or /etc/nixos/flake.nix:<br />
+<br />
+ security.audit.rules = [<br />
+  &quot;-a always,exit -F arch=b64 -S execve -C uid!=euid -F euid=0 -k execpriv&quot;<br />
+  &quot;-a always,exit -F arch=b32 -S execve -C uid!=euid -F euid=0 -k execpriv&quot;<br />
+  &quot;-a always,exit -F arch=b32 -S execve -C gid!=egid -F egid=0 -k execpriv &quot;<br />
+  &quot;-a always,exit -F arch=b64 -S execve -C gid!=egid -F egid=0 -k execpriv &quot;<br />
+ ];<br />
+<br />
+Rebuild and switch to the new NixOS configuration:<br />
+$ sudo nixos-rebuild switch</p><h2>Check Contents</h2><p>Verify NixOS generates audit records for all execution of privileged functions with the following command:<br />
+<br />
+$ sudo auditctl -l | grep execve<br />
+<br />
+-a always,exit -F arch=b64 -S execve -C uid!=euid -F euid=0 -k execpriv<br />
+-a always,exit -F arch=b32 -S execve -C uid!=euid -F euid=0 -k execpriv<br />
+-a always,exit -F arch=b32 -S execve -C gid!=egid -F egid=0 -k execpriv <br />
+-a always,exit -F arch=b64 -S execve -C gid!=egid -F egid=0 -k execpriv <br />
+<br />
+If the command does not return the example output, this is a finding.<br />
+<br />
+Note: The &quot;-k&quot; allows for specifying an arbitrary identifier. The string following &quot;-k&quot; does not need to match the example output above.</p><h2>Vulnerability Number</h2><p>V-268091</p><h2>Documentable</h2><p>False</p><h2>Rule Version</h2><p>ANIX-00-000210</p><h2>Severity Override Guidance</h2><p>Verify NixOS generates audit records for all execution of privileged functions with the following command:<br />
+<br />
+$ sudo auditctl -l | grep execve<br />
+<br />
+-a always,exit -F arch=b64 -S execve -C uid!=euid -F euid=0 -k execpriv<br />
+-a always,exit -F arch=b32 -S execve -C uid!=euid -F euid=0 -k execpriv<br />
+-a always,exit -F arch=b32 -S execve -C gid!=egid -F egid=0 -k execpriv <br />
+-a always,exit -F arch=b64 -S execve -C gid!=egid -F egid=0 -k execpriv <br />
+<br />
+If the command does not return the example output, this is a finding.<br />
+<br />
+Note: The &quot;-k&quot; allows for specifying an arbitrary identifier. The string following &quot;-k&quot; does not need to match the example output above.</p><h2>Check Content Reference</h2><p>M</p><h2>Target Key</h2><p>5658</p></body></html>

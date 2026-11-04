@@ -1,0 +1,29 @@
+<!doctype html><html lang="en"><head><meta charset="utf-8"><title>STIGQter: STIG Check Details: SV-261919r1000762_rule: PostgreSQL must provide a warning to appropriate support staff when allocated audit record storage volume reaches 75 percent of maximum audit record storage capacity.</title><link rel="icon" type="image/svg+xml" href="STIGQter.svg" /><script async src="https://www.googletagmanager.com/gtag/js?id=UA-31381839-2"></script><script src="include.js"></script><script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-4110907817782130" crossorigin="anonymous"></script></head><body><div><img src="STIGQter.svg" alt="STIGQter" style="height:1em;" /> <a href="https://www.stigqter.com/">STIGQter</a>: <a href="main.html">STIG Summary</a>: <a href="U_CD_Postgres_16_STIG_V1R3_Manual-xccdf.html">Crunchy Data Postgres 16 Security Technical Implementation Guide Version: 1 Release: 3 Benchmark Date: 01 Jul 2026</a>:</div> <h1>PostgreSQL must provide a warning to appropriate support staff when allocated audit record storage volume reaches 75 percent of maximum audit record storage capacity.</h1><h2>DISA Rule</h2><p>SV-261919r1000762_rule</p><h2>Vulnerability Number</h2><p>V-261919</p><h2>Group Title</h2><p>SRG-APP-000359-DB-000319</p><h2>Rule Version</h2><p>CD16-00-007300</p><h2>Severity</h2><p>CAT II</p><h2>CCI(s)</h2><ul><li>CCI-001855 - Provide a warning to organization-defined personnel, roles, and/or locations within an organization-defined time period when allocated audit log storage volume reaches an organization-defined percentage of repository maximum audit log storage capacity.</li></ul><h2>Weight</h2><p>10</p><h2>Fix Recommendation</h2><p>Note: The following instructions use the PGDATA and PGVER environment variables. Refer to APPENDIX-F for instructions on configuring PGDATA and APPENDIX-H for PGVER.<br />
+<br />
+Configure the system to notify appropriate support staff immediately upon storage volume utilization reaching 75 percent.<br />
+<br />
+PostgreSQL does not monitor storage; however, it is possible to monitor storage with a script.<br />
+<br />
+##### Example Monitoring Script<br />
+<br />
+#!/bin/bash<br />
+<br />
+PGDATA=/var/lib/pgsql/${PGVER?}/data<br />
+CURRENT=$(df ${PGDATA?} | grep / | awk '{ print $5}' | sed 's/%//g')<br />
+THRESHOLD=75<br />
+<br />
+if [ &quot;$CURRENT&quot; -gt &quot;$THRESHOLD&quot; ] ; then<br />
+mail -s 'Disk Space Alert' mail@support.com &lt;&lt; EOF<br />
+The data directory volume is almost full. Used: $CURRENT<br />
+EOF<br />
+fi<br />
+<br />
+Schedule this script in cron to run around the clock.</p><h2>Check Contents</h2><p>Review system configuration.<br />
+<br />
+If no script or tool is monitoring the partition for the PostgreSQL log directories, this is a finding.<br />
+<br />
+If appropriate support staff are not notified immediately upon storage volume utilization reaching 75 percent, this is a finding.</p><h2>Vulnerability Number</h2><p>V-261919</p><h2>Documentable</h2><p>False</p><h2>Rule Version</h2><p>CD16-00-007300</p><h2>Severity Override Guidance</h2><p>Review system configuration.<br />
+<br />
+If no script or tool is monitoring the partition for the PostgreSQL log directories, this is a finding.<br />
+<br />
+If appropriate support staff are not notified immediately upon storage volume utilization reaching 75 percent, this is a finding.</p><h2>Check Content Reference</h2><p>M</p><h2>Target Key</h2><p>5598</p></body></html>

@@ -1,0 +1,57 @@
+<!doctype html><html lang="en"><head><meta charset="utf-8"><title>STIGQter: STIG Check Details: SV-224400r1145225_rule: BMC CONTROL-M User/Application JCL data sets must be properly protected.</title><link rel="icon" type="image/svg+xml" href="STIGQter.svg" /><script async src="https://www.googletagmanager.com/gtag/js?id=UA-31381839-2"></script><script src="include.js"></script><script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-4110907817782130" crossorigin="anonymous"></script></head><body><div><img src="STIGQter.svg" alt="STIGQter" style="height:1em;" /> <a href="https://www.stigqter.com/">STIGQter</a>: <a href="main.html">STIG Summary</a>: <a href="U_zOS_BMC_CONTROL-M_for_RACF_STIG_V7R2_Manual_xccdf.html">z/OS BMC CONTROL-M for RACF Security Technical Implementation Guide Version: 7 Release: 2 Benchmark Date: 01 Oct 2025</a>:</div> <h1>BMC CONTROL-M User/Application JCL data sets must be properly protected.</h1><h2>DISA Rule</h2><p>SV-224400r1145225_rule</p><h2>Vulnerability Number</h2><p>V-224400</p><h2>Group Title</h2><p>SRG-OS-000018</p><h2>Rule Version</h2><p>ZCTMR003</p><h2>Severity</h2><p>CAT II</p><h2>CCI(s)</h2><ul><li>CCI-001499 - Limit privileges to change software resident within software libraries.</li></ul><h2>Weight</h2><p>10</p><h2>Fix Recommendation</h2><p>Ensure that WRITE and/or greater access to BMC CONTROL-M User/Application JCL data sets are limited to BMC CONTROL-M administrators only. Update access can be given to the Production Control and Scheduling personnel and/or BMC CONTROL-M's STC(s) and/or BMC CONTROL-M's batch user(s). READ access can be given to auditors and automated batch user(s).<br />
+<br />
+The installing systems programmer will identify and document the product data sets and categorize them according to who will have WRITE and/or greater access and if required that all WRITE and/or greater access is logged. <br />
+<br />
+The installing systems programmer will identify if any additional groups have WRITE and/or greater access for specific data sets, and once documented will work with the ISSO to see that they are properly restricted to the ACP (Access Control Program) active on the system.<br />
+<br />
+Data sets to be protected will be: <br />
+IOA.**<br />
+<br />
+The following commands are provided as a sample for implementing data set controls: <br />
+<br />
+ad 'IOA.**' uacc(none) owner(IOA) -<br />
+	data('ControlM User Datasets')<br />
+pe 'IOA.**' id(&lt;syspaudt&gt;) acc(a)<br />
+pe 'IOA.**' id(&lt;audtaudt&gt; &lt;autoaudt&gt;) acc(r)<br />
+pe 'IOA.**' id(&lt;bmcuser&gt; &lt;bmcbatch&gt; &lt;operaudt&gt; &lt;pcspaudt&gt;) acc(r)<br />
+pe 'IOA.**' id(CONTROLM CONTDAY) acc(r)<br />
+<br />
+setr generic(dataset) refresh</p><h2>Check Contents</h2><p>Refer to the following report produced by the Data Set and Resource Data Collection:<br />
+<br />
+- SENSITVE.RPT(CTMJCL).<br />
+<br />
+Automated Analysis<br />
+Refer to the following report produced by the Data Set and Resource Data Collection:<br />
+<br />
+- PDI(ZCTM0003).<br />
+<br />
+Verify that the accesses to the BMC CONTROL-M User/Application JCL data sets are limited to only those who require access to perform their job duties. If the following guidance is true, this is not a finding.<br />
+<br />
+The RACF data set access authorizations restrict READ access to auditors, automated batch user(s), BMC user(s), and operations.<br />
+<br />
+The RACF data set access authorizations restrict WRITE and/or greater access to BMC CONTROL-M administrators and systems programming personnel.<br />
+<br />
+The RACF data set access authorizations restrict UPDATE access to the Production Control and Scheduling personnel (both domain level and Application level) and BMC STCs and/or batch users. Accesses must be reviewed and approved by the ISSO based on a documented need to perform job duties. Application (external users) will not have access to internal/site data sets. <br />
+<br />
+Note: WRITE and/or greater access of the site's DASD Administrator Batch Processing JCL and Procedures must be limited to only the LPAR level DASD Administrators. WRITE and/or greater access of the site's (LPAR Level) IA (Security) administrative batch processing JCL and Procedures must be limited to only the LPAR LEVEL ISSO/ISSM Team. It is recommended that multiple data sets be created, one of which contains JCL and Procedures that are considered restricted, and this data set be authorized to users with justification to maintain and run these restricted JCL and Procedures.<br />
+<br />
+The RACF data set access authorizations specify UACC(NONE) and NOWARNING.</p><h2>Vulnerability Number</h2><p>V-224400</p><h2>Documentable</h2><p>False</p><h2>Rule Version</h2><p>ZCTMR003</p><h2>Severity Override Guidance</h2><p>Refer to the following report produced by the Data Set and Resource Data Collection:<br />
+<br />
+- SENSITVE.RPT(CTMJCL).<br />
+<br />
+Automated Analysis<br />
+Refer to the following report produced by the Data Set and Resource Data Collection:<br />
+<br />
+- PDI(ZCTM0003).<br />
+<br />
+Verify that the accesses to the BMC CONTROL-M User/Application JCL data sets are limited to only those who require access to perform their job duties. If the following guidance is true, this is not a finding.<br />
+<br />
+The RACF data set access authorizations restrict READ access to auditors, automated batch user(s), BMC user(s), and operations.<br />
+<br />
+The RACF data set access authorizations restrict WRITE and/or greater access to BMC CONTROL-M administrators and systems programming personnel.<br />
+<br />
+The RACF data set access authorizations restrict UPDATE access to the Production Control and Scheduling personnel (both domain level and Application level) and BMC STCs and/or batch users. Accesses must be reviewed and approved by the ISSO based on a documented need to perform job duties. Application (external users) will not have access to internal/site data sets. <br />
+<br />
+Note: WRITE and/or greater access of the site's DASD Administrator Batch Processing JCL and Procedures must be limited to only the LPAR level DASD Administrators. WRITE and/or greater access of the site's (LPAR Level) IA (Security) administrative batch processing JCL and Procedures must be limited to only the LPAR LEVEL ISSO/ISSM Team. It is recommended that multiple data sets be created, one of which contains JCL and Procedures that are considered restricted, and this data set be authorized to users with justification to maintain and run these restricted JCL and Procedures.<br />
+<br />
+The RACF data set access authorizations specify UACC(NONE) and NOWARNING.</p><h2>Check Content Reference</h2><p>M</p><h2>Target Key</h2><p>4136</p></body></html>

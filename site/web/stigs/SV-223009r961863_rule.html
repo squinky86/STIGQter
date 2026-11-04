@@ -1,0 +1,38 @@
+<!doctype html><html lang="en"><head><meta charset="utf-8"><title>STIGQter: STIG Check Details: SV-223009r961863_rule: Connector address attribute must be set.</title><link rel="icon" type="image/svg+xml" href="STIGQter.svg" /><script async src="https://www.googletagmanager.com/gtag/js?id=UA-31381839-2"></script><script src="include.js"></script><script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-4110907817782130" crossorigin="anonymous"></script></head><body><div><img src="STIGQter.svg" alt="STIGQter" style="height:1em;" /> <a href="https://www.stigqter.com/">STIGQter</a>: <a href="main.html">STIG Summary</a>: <a href="U_Apache_Tomcat_Application_Server_9_STIG_V3R4_Manual-xccdf.html">Apache Tomcat Application Server 9 Security Technical Implementation Guide Version: 3 Release: 4 Benchmark Date: 01 Apr 2026</a>:</div> <h1>Connector address attribute must be set.</h1><h2>DISA Rule</h2><p>SV-223009r961863_rule</p><h2>Vulnerability Number</h2><p>V-223009</p><h2>Group Title</h2><p>SRG-APP-000516-AS-000237</p><h2>Rule Version</h2><p>TCAT-AS-001730</p><h2>Severity</h2><p>CAT III</p><h2>CCI(s)</h2><ul><li>CCI-000366 - Implement the security configuration settings.</li></ul><h2>Weight</h2><p>10</p><h2>Fix Recommendation</h2><p>Ensure the address attribute for each connector and the network interfaces are specified in the SSP.<br />
+<br />
+Edit the following file From the Tomcat server as a privileged user:<br />
+<br />
+$CATALINA_BASE/conf/server.xml<br />
+<br />
+Locate each Connector element then edit or add the &quot;address=&quot; field for each connector and specify the appropriate network IP address. The following is an example using a random IP address:<br />
+<br />
+EXAMPLE:<br />
+&lt;Connector<br />
+port=&quot;8443&quot;<br />
+address=&quot;192.168.0.145&quot;<br />
+...<br />
+/&gt;<br />
+<br />
+Restart the Tomcat server:<br />
+sudo systemctl restart tomcat<br />
+sudo systemctl daemon-reload</p><h2>Check Contents</h2><p>Review SSP documentation for list of approved connectors and associated TCP/IP ports and interfaces.<br />
+<br />
+Verify the address attribute is specified for each connector and is set to the network interface specified in the SSP.<br />
+<br />
+Execute the following command to find configured Connectors:<br />
+<br />
+sudo grep -i -B1 -A5 connector $CATALINA_BASE/conf/server.xml<br />
+<br />
+Review results and examine the &quot;address=&quot; field for each connector.<br />
+<br />
+If the connector address attribute is not specified as per the SSP, this is a finding.</p><h2>Vulnerability Number</h2><p>V-223009</p><h2>Documentable</h2><p>False</p><h2>Rule Version</h2><p>TCAT-AS-001730</p><h2>Severity Override Guidance</h2><p>Review SSP documentation for list of approved connectors and associated TCP/IP ports and interfaces.<br />
+<br />
+Verify the address attribute is specified for each connector and is set to the network interface specified in the SSP.<br />
+<br />
+Execute the following command to find configured Connectors:<br />
+<br />
+sudo grep -i -B1 -A5 connector $CATALINA_BASE/conf/server.xml<br />
+<br />
+Review results and examine the &quot;address=&quot; field for each connector.<br />
+<br />
+If the connector address attribute is not specified as per the SSP, this is a finding.</p><h2>Check Content Reference</h2><p>M</p><h2>Target Key</h2><p>4094</p></body></html>

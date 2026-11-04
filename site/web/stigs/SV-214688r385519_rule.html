@@ -1,0 +1,49 @@
+<!doctype html><html lang="en"><head><meta charset="utf-8"><title>STIGQter: STIG Check Details: SV-214688r385519_rule: The Juniper SRX Services Gateway VPN must uniquely identify and authenticate non-organizational users (or processes acting on behalf of non-organizational users).</title><link rel="icon" type="image/svg+xml" href="STIGQter.svg" /><script async src="https://www.googletagmanager.com/gtag/js?id=UA-31381839-2"></script><script src="include.js"></script><script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-4110907817782130" crossorigin="anonymous"></script></head><body><div><img src="STIGQter.svg" alt="STIGQter" style="height:1em;" /> <a href="https://www.stigqter.com/">STIGQter</a>: <a href="main.html">STIG Summary</a>: <a href="U_Juniper_SRX_SG_VPN_STIG_V3R2_Manual-xccdf.html">Juniper SRX Services Gateway VPN Security Technical Implementation Guide Version: 3 Release: 2 Benchmark Date: 30 Jan 2025</a>:</div> <h1>The Juniper SRX Services Gateway VPN must uniquely identify and authenticate non-organizational users (or processes acting on behalf of non-organizational users).</h1><h2>DISA Rule</h2><p>SV-214688r385519_rule</p><h2>Vulnerability Number</h2><p>V-214688</p><h2>Group Title</h2><p>SRG-NET-000169</p><h2>Rule Version</h2><p>JUSX-VN-000021</p><h2>Severity</h2><p>CAT II</p><h2>CCI(s)</h2><ul><li>CCI-000804 - Uniquely identify and authenticate non-organizational users or processes acting on behalf of non-organizational users.</li></ul><h2>Weight</h2><p>10</p><h2>Fix Recommendation</h2><p>Configure the LDAP access profile. The LDAP server must use DoD PKI for authentication of users.<br />
+<br />
+[edit]<br />
+set access profile &lt;VPN-LDAP-PROFILE-NAME&gt; authentication-order ldap<br />
+set access profile &lt;VPN-LDAP-PROFILE-NAME&gt; address-assignment pool dyn-vpn-pool<br />
+set access profile &lt;VPN-LDAP-PROFILE-NAME&gt; ldap-options base-distinguished-name CN=Users, DC=firewall, DC=com (Location from where LDAP will start searching for users)<br />
+<br />
+set access profile &lt;VPN-LDAP-PROFILE-NAME&gt; ldap-options search search-filter sAMAccountName= <br />
+set access profile &lt;VPN-LDAP-PROFILE-NAME&gt; ldap-options search admin-search distinguished-name CN=Administrator, CN=Users, DC=firewall, DC=com (User who is authorized to search the ldap tree)<br />
+set access profile &lt;VPN-LDAP-PROFILE-NAME&gt; ldap-options search admin-search password &lt;Administrator Password&gt;<br />
+set access profile &lt;VPN-LDAP-PROFILE-NAME&gt; ldap-server &lt;AD Server IP address&gt; port 389/636 <br />
+set access firewall-authentication pass-through default-profile &lt;VPN-LDAP-PROFILE-NAME&gt;<br />
+set access firewall-authentication web-authentication default-profile &lt;VPN-LDAP-PROFILE-NAME&gt;<br />
+<br />
+Note: To find the user or administrator base DN, use any LDAP browser. On an Internet search engine, search for ldp.exe, which is a very basic LDAP browser.<br />
+<br />
+When using LDAP groups to authenticate a user, or a user belonging to a group in the active directory, include the following statement:<br />
+<br />
+set access profile &lt;VPN-LDAP-PROFILE-NAME&gt; session-options client-group &lt;group-name&gt;<br />
+<br />
+Note: Without the above statement, users are not searched based on the group name or group string.<br />
+<br />
+The IP address pool configuration is as follows (the user will be assigned the IP from this pool):<br />
+<br />
+set access address-assignment pool dyn-vpn-pool family inet network &lt;IP Network for Dynamic-VPN User&gt; (e.g.. 192.168.100.0/24)<br />
+set access address-assignment pool dyn-vpn-pool family inet range dyn-vpn-pool-range low &lt;Starting IP address for Dynamic-VPN User&gt; (e.g.. 192.168.100.1)<br />
+set access address-assignment pool dyn-vpn-pool family inet range dyn-vpn-pool-range high &lt;ending IP address for Dynamic-VPN User&gt; (e.g.. 192.168.100.100)<br />
+<br />
+Note: The IP network used for dynamic VPN users should be different from the IP network of the external interface used in the IKE configuration.<br />
+<br />
+The access profile is linked to the xauth of the gateway for dynamic VPN.<br />
+<br />
+set security ike gateway &lt;VPN-GATEWAY&gt; xauth access-profile &lt;VPN-LDAP-PROFILE-NAME&gt; <br />
+<br />
+Under security &gt;&gt; dynamic-vpn, add all the users that are going to use the dynamic VPN. The command is as follows:<br />
+<br />
+set security dynamic-vpn clients all user<br />
+<br />
+Note: Users who are going to use dynamic VPN. This will be the AD user logon name for each user.</p><h2>Check Contents</h2><p>Verify that groups are not used for authentication.<br />
+<br />
+[edit]<br />
+show security access profile &lt;dynamic-profile-name&gt;<br />
+<br />
+If LDAP is not configured as the first authentication-order, this is a finding.</p><h2>Vulnerability Number</h2><p>V-214688</p><h2>Documentable</h2><p>False</p><h2>Rule Version</h2><p>JUSX-VN-000021</p><h2>Severity Override Guidance</h2><p>Verify that groups are not used for authentication.<br />
+<br />
+[edit]<br />
+show security access profile &lt;dynamic-profile-name&gt;<br />
+<br />
+If LDAP is not configured as the first authentication-order, this is a finding.</p><h2>Check Content Reference</h2><p>M</p><h2>Target Key</h2><p>4009</p></body></html>

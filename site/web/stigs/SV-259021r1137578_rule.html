@@ -1,0 +1,33 @@
+<!doctype html><html lang="en"><head><meta charset="utf-8"><title>STIGQter: STIG Check Details: SV-259021r1137578_rule: The vCenter ESX Agent Manager service cookies must have the &quot;http-only&quot; flag set.</title><link rel="icon" type="image/svg+xml" href="STIGQter.svg" /><script async src="https://www.googletagmanager.com/gtag/js?id=UA-31381839-2"></script><script src="include.js"></script><script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-4110907817782130" crossorigin="anonymous"></script></head><body><div><img src="STIGQter.svg" alt="STIGQter" style="height:1em;" /> <a href="https://www.stigqter.com/">STIGQter</a>: <a href="main.html">STIG Summary</a>: <a href="U_VMW_vSphere_8-0_VCSA_EAM_STIG_V2R3_Manual-xccdf.html">VMware vSphere 8.0 vCenter Appliance ESX Agent Manager (EAM) Security Technical Implementation Guide Version: 2 Release: 3 Benchmark Date: 01 Jul 2026</a>:</div> <h1>The vCenter ESX Agent Manager service cookies must have the &quot;http-only&quot; flag set.</h1><h2>DISA Rule</h2><p>SV-259021r1137578_rule</p><h2>Vulnerability Number</h2><p>V-259021</p><h2>Group Title</h2><p>SRG-APP-000033-AS-000024</p><h2>Rule Version</h2><p>VCEM-80-000129</p><h2>Severity</h2><p>CAT II</p><h2>CCI(s)</h2><ul><li>CCI-000213 - Enforce approved authorizations for logical access to information and system resources in accordance with applicable access control policies.</li></ul><h2>Weight</h2><p>10</p><h2>Fix Recommendation</h2><p>Navigate to and open:<br />
+<br />
+/usr/lib/vmware-eam/web/webapps/eam/WEB-INF/web.xml<br />
+<br />
+Navigate to the &lt;session-config&gt; node and configure the &lt;http-only&gt; as follows:<br />
+<br />
+&lt;session-config&gt;<br />
+  &lt;session-timeout&gt;30&lt;/session-timeout&gt;<br />
+  &lt;cookie-config&gt;<br />
+      &lt;http-only&gt;true&lt;/http-only&gt;<br />
+      &lt;secure&gt;true&lt;/secure&gt;<br />
+  &lt;/cookie-config&gt;<br />
+&lt;/session-config&gt;<br />
+<br />
+Restart the service with the following command:<br />
+<br />
+# vmon-cli --restart eam</p><h2>Check Contents</h2><p>At the command prompt, run the following command:<br />
+<br />
+# xmllint --format /usr/lib/vmware-eam/web/webapps/eam/WEB-INF/web.xml | sed 's/xmlns=&quot;.*&quot;//g' | xmllint --xpath '/web-app/session-config/cookie-config/http-only' -<br />
+<br />
+Expected result:<br />
+<br />
+&lt;http-only&gt;true&lt;/http-only&gt;<br />
+<br />
+If the output does not match the expected result, this is a finding.</p><h2>Vulnerability Number</h2><p>V-259021</p><h2>Documentable</h2><p>False</p><h2>Rule Version</h2><p>VCEM-80-000129</p><h2>Severity Override Guidance</h2><p>At the command prompt, run the following command:<br />
+<br />
+# xmllint --format /usr/lib/vmware-eam/web/webapps/eam/WEB-INF/web.xml | sed 's/xmlns=&quot;.*&quot;//g' | xmllint --xpath '/web-app/session-config/cookie-config/http-only' -<br />
+<br />
+Expected result:<br />
+<br />
+&lt;http-only&gt;true&lt;/http-only&gt;<br />
+<br />
+If the output does not match the expected result, this is a finding.</p><h2>Check Content Reference</h2><p>M</p><h2>Target Key</h2><p>5564</p></body></html>

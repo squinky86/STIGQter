@@ -1,0 +1,308 @@
+<!doctype html><html lang="en"><head><meta charset="utf-8"><title>STIGQter: STIG Check Details: SV-279070r1172833_rule: ColdFusion must be configured to support integration with a third-party Security Information and Event Management (SIEM) to support notifications.</title><link rel="icon" type="image/svg+xml" href="STIGQter.svg" /><script async src="https://www.googletagmanager.com/gtag/js?id=UA-31381839-2"></script><script src="include.js"></script><script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-4110907817782130" crossorigin="anonymous"></script></head><body><div><img src="STIGQter.svg" alt="STIGQter" style="height:1em;" /> <a href="https://www.stigqter.com/">STIGQter</a>: <a href="main.html">STIG Summary</a>: <a href="U_Adobe_ColdFusion_STIG_V1R2_Manual-xccdf.html">Adobe ColdFusion Security Technical Implementation Guide Version: 1 Release: 2 Benchmark Date: 01 Jul 2026</a>:</div> <h1>ColdFusion must be configured to support integration with a third-party Security Information and Event Management (SIEM) to support notifications.</h1><h2>DISA Rule</h2><p>SV-279070r1172833_rule</p><h2>Vulnerability Number</h2><p>V-279070</p><h2>Group Title</h2><p>SRG-APP-000231-AS-000156</p><h2>Rule Version</h2><p>APAS-CF-000490</p><h2>Severity</h2><p>CAT II</p><h2>CCI(s)</h2><ul><li>CCI-001199 - Protects the confidentiality and/or integrity of organization-defined information at rest.</li><li>CCI-000139 - Alert organization-defined personnel or roles within an organization-defined time period in the event of an audit logging process failure.</li><li>CCI-001348 - Store audit records on an organization-defined frequency in a repository that is part of a physically different system or system component that the system or component being audited.</li><li>CCI-001350 - Implement cryptographic mechanisms to protect the integrity of audit information.</li><li>CCI-001876 - Provide an audit reduction capability that supports on-demand reporting requirements.</li><li>CCI-001496 - Implement cryptographic mechanisms to protect the integrity of audit tools.</li><li>CCI-001851 - Transfer audit logs per organization-defined frequency to a different system, system component, or media than the system or system component conducting the logging.</li><li>CCI-001858 - Provide an alert in an organization-defined real-time-period to organization-defined personnel, roles, and/or locations when organization-defined audit failure events requiring real-time alerts occur.</li><li>CCI-003831 - Alert organization-defined personnel or roles upon detection of unauthorized access, modification, or deletion of audit information.</li></ul><h2>Weight</h2><p>10</p><h2>Fix Recommendation</h2><p>Configure SIEM.<br />
+<br />
+1. Create /etc/rsyslog.d/101-&lt;instance name&gt;.conf for each of the configured ColdFusion instances with these contents, ensuring the final line points to a valid syslog server.<br />
+<br />
+Example:<br />
+module(load=&quot;imfile&quot; PollingInterval=&quot;10&quot;) <br />
+cat &gt; /etc/rsyslog.d/101-cfusion.conf &lt;&lt; EOF<br />
+<br />
+module(load=&quot;imfile&quot; PollingInterval=&quot;10&quot;)<br />
+<br />
+input(type=&quot;imfile&quot;<br />
+      File=&quot;/opt/coldfusion2023/cfusion/logs/coldfusion-out.log&quot;<br />
+      Tag=&quot;coldfusion-out&quot;<br />
+      Facility=&quot;cfusion&quot;)<br />
+<br />
+input(type=&quot;imfile&quot;<br />
+      File=&quot;/opt/coldfusion2023/cfusion/logs/coldfusion-error.log&quot;<br />
+      Tag=&quot;coldfusion-error&quot;<br />
+      Facility=&quot;cfusion&quot;)<br />
+<br />
+input(type=&quot;imfile&quot;<br />
+      File=&quot;/opt/coldfusion2023/cfusion/logs/cfpm-audit.log&quot;<br />
+      Tag=&quot;cfpm-audit&quot;<br />
+      Facility=&quot;cfusion&quot;)<br />
+<br />
+input(type=&quot;imfile&quot;<br />
+      File=&quot;/opt/coldfusion2023/cfusion/logs/audit.log&quot;<br />
+      Tag=&quot;audit&quot;<br />
+      Facility=&quot;cfusion&quot;)<br />
+<br />
+input(type=&quot;imfile&quot;<br />
+      File=&quot;/opt/coldfusion2023/cfusion/logs/http.log&quot;<br />
+      Tag=&quot;http&quot;<br />
+      Facility=&quot;cfusion&quot;)<br />
+<br />
+input(type=&quot;imfile&quot;<br />
+      File=&quot;/opt/coldfusion2023/cfusion/logs/mail.log&quot;<br />
+      Tag=&quot;mail&quot;<br />
+      Facility=&quot;cfusion&quot;)<br />
+<br />
+input(type=&quot;imfile&quot;<br />
+      File=&quot;/opt/coldfusion2023/cfusion/logs/monitor.log&quot;<br />
+      Tag=&quot;monitor&quot;<br />
+      Facility=&quot;cfusion&quot;)<br />
+<br />
+input(type=&quot;imfile&quot;<br />
+      File=&quot;/opt/coldfusion2023/cfusion/logs/server.log&quot;<br />
+      Tag=&quot;server&quot;<br />
+      Facility=&quot;cfusion&quot;)<br />
+<br />
+input(type=&quot;imfile&quot;<br />
+      File=&quot;/opt/coldfusion2023/cfusion/logs/usagedata.log&quot;<br />
+      Tag=&quot;usagedata&quot;<br />
+      Facility=&quot;cfusion&quot;)      <br />
+<br />
+input(type=&quot;imfile&quot;<br />
+      File=&quot;/opt/coldfusion2023/cfusion/logs/update.log&quot;<br />
+      Tag=&quot;update&quot;<br />
+      Facility=&quot;cfusion&quot;)      <br />
+<br />
+input(type=&quot;imfile&quot;<br />
+      File=&quot;/opt/coldfusion2023/cfusion/logs/application.log&quot;<br />
+      Tag=&quot;application&quot;<br />
+      Facility=&quot;cfusion&quot;)      <br />
+<br />
+input(type=&quot;imfile&quot;<br />
+      File=&quot;/opt/coldfusion2023/cfusion/logs/exception.log&quot;<br />
+      Tag=&quot;exception&quot;<br />
+      Facility=&quot;cfusion&quot;)      <br />
+<br />
+input(type=&quot;imfile&quot;<br />
+      File=&quot;/opt/coldfusion2023/cfusion/logs/reporting.log&quot;<br />
+      Tag=&quot;reporting&quot;<br />
+      Facility=&quot;cfusion&quot;)<br />
+<br />
+input(type=&quot;imfile&quot;<br />
+      File=&quot;/opt/coldfusion2023/cfusion/logs/axis2.log&quot;<br />
+      Tag=&quot;axis2&quot;<br />
+      Facility=&quot;cfusion&quot;)      <br />
+<br />
+input(type=&quot;imfile&quot;<br />
+      File=&quot;/opt/coldfusion2023/cfusion/logs/eventgateway.log&quot;<br />
+      Tag=&quot;eventgateway&quot;<br />
+      Facility=&quot;cfusion&quot;)      <br />
+<br />
+input(type=&quot;imfile&quot;<br />
+      File=&quot;/opt/coldfusion2023/cfusion/logs/license.log&quot;<br />
+      Tag=&quot;license&quot;<br />
+      Facility=&quot;cfusion&quot;)      <br />
+<br />
+input(type=&quot;imfile&quot;<br />
+      File=&quot;/opt/coldfusion2023/cfusion/logs/security.log&quot;<br />
+      Tag=&quot;security&quot;<br />
+      Facility=&quot;cfusion&quot;)<br />
+      <br />
+input(type=&quot;imfile&quot;<br />
+      File=&quot;/opt/coldfusion2023/cfusion/logs/webservice.log&quot;<br />
+      Tag=&quot;webservice&quot;<br />
+      Facility=&quot;cfusion&quot;) <br />
+<br />
+2. Add the following to /etc/rsyslog.conf:<br />
+*.* action(type=&quot;omfwd&quot; target=&quot;&lt;remote rsyslog IP address&gt;&quot; port=&quot;10514&quot; protocol=&quot;tcp&quot;)<br />
+<br />
+3. Restart rsyslog to apply changes: sudo systemctl restart rsyslog.</p><h2>Check Contents</h2><p>Verify SIEM.<br />
+<br />
+1. On the host server, for each of the ColdFusion instances installed, verify /etc/rsyslog.d/101-&lt;instance name&gt;.conf exists and contains the following contents: <br />
+<br />
+module(load=&quot;imfile&quot; PollingInterval=&quot;10&quot;) <br />
+<br />
+input(type=&quot;imfile&quot;<br />
+      File=&quot;&lt;CF install path&gt;/&lt;instance name&gt;/logs/coldfusion-out.log&quot;<br />
+      Tag=&quot;coldfusion-out&quot;<br />
+      Facility=&quot;&lt;instance name&gt;&quot;)<br />
+<br />
+input(type=&quot;imfile&quot;<br />
+      File=&quot;&lt;CF install path&gt;/&lt;instance name&gt;/logs/coldfusion-error.log&quot;<br />
+      Tag=&quot;coldfusion-error&quot;<br />
+      Facility=&quot;&lt;instance name&gt;&quot;)<br />
+<br />
+input(type=&quot;imfile&quot;<br />
+      File=&quot;&lt;CF install path&gt;/&lt;instance name&gt;/logs/cfpm-audit.log&quot;<br />
+      Tag=&quot;cfpm-audit&quot;<br />
+      Facility=&quot;&lt;instance name&gt;&quot;)<br />
+<br />
+input(type=&quot;imfile&quot;<br />
+      File=&quot;&lt;CF install path&gt;/&lt;instance name&gt;/logs/audit.log&quot;<br />
+      Tag=&quot;audit&quot;<br />
+      Facility=&quot;&lt;instance name&gt;&quot;)<br />
+<br />
+input(type=&quot;imfile&quot;<br />
+      File=&quot;&lt;CF install path&gt;/&lt;instance name&gt;/logs/http.log&quot;<br />
+      Tag=&quot;http&quot;<br />
+      Facility=&quot;&lt;instance name&gt;&quot;)<br />
+<br />
+input(type=&quot;imfile&quot;<br />
+      File=&quot;&lt;CF install path&gt;/&lt;instance name&gt;/logs/mail.log&quot;<br />
+      Tag=&quot;mail&quot;<br />
+      Facility=&quot;&lt;instance name&gt;&quot;)<br />
+<br />
+input(type=&quot;imfile&quot;<br />
+      File=&quot;&lt;CF install path&gt;/&lt;instance name&gt;/logs/monitor.log&quot;<br />
+      Tag=&quot;monitor&quot;<br />
+      Facility=&quot;&lt;instance name&gt;&quot;)<br />
+<br />
+input(type=&quot;imfile&quot;<br />
+      File=&quot;&lt;CF install path&gt;/&lt;instance name&gt;/logs/server.log&quot;<br />
+      Tag=&quot;server&quot;<br />
+      Facility=&quot;&lt;instance name&gt;&quot;)<br />
+  <br />
+input(type=&quot;imfile&quot;<br />
+      File=&quot;&lt;CF install path&gt;/&lt;instance name&gt;/logs/usagedata.log&quot;<br />
+      Tag=&quot;usagedata&quot;<br />
+      Facility=&quot;&lt;instance name&gt;&quot;)<br />
+  <br />
+input(type=&quot;imfile&quot;<br />
+      File=&quot;&lt;CF install path&gt;/&lt;instance name&gt;/logs/update.log&quot;<br />
+      Tag=&quot;update&quot;<br />
+      Facility=&quot;&lt;instance name&gt;&quot;)<br />
+  <br />
+input(type=&quot;imfile&quot;<br />
+      File=&quot;&lt;CF install path&gt;/&lt;instance name&gt;/logs/application.log&quot;<br />
+      Tag=&quot;application&quot;<br />
+      Facility=&quot;&lt;instance name&gt;&quot;)<br />
+  <br />
+input(type=&quot;imfile&quot;<br />
+      File=&quot;&lt;CF install path&gt;/&lt;instance name&gt;/logs/exception.log&quot;<br />
+      Tag=&quot;exception&quot;<br />
+      Facility=&quot;&lt;instance name&gt;&quot;)<br />
+  <br />
+input(type=&quot;imfile&quot;<br />
+      File=&quot;&lt;CF install path&gt;/&lt;instance name&gt;/logs/reporting.log&quot;<br />
+      Tag=&quot;reporting&quot;<br />
+      Facility=&quot;&lt;instance name&gt;&quot;)<br />
+  <br />
+input(type=&quot;imfile&quot;<br />
+      File=&quot;&lt;CF install path&gt;/&lt;instance name&gt;/logs/axis2.log&quot;<br />
+      Tag=&quot;axis2&quot;<br />
+      Facility=&quot;&lt;instance name&gt;&quot;)<br />
+  <br />
+input(type=&quot;imfile&quot;<br />
+      File=&quot;&lt;CF install path&gt;/&lt;instance name&gt;/logs/eventgateway.log&quot;<br />
+      Tag=&quot;eventgateway&quot;<br />
+      Facility=&quot;&lt;instance name&gt;&quot;)<br />
+  <br />
+input(type=&quot;imfile&quot;<br />
+      File=&quot;&lt;CF install path&gt;/&lt;instance name&gt;/logs/license.log&quot;<br />
+      Tag=&quot;license&quot;<br />
+      Facility=&quot;&lt;instance name&gt;&quot;)<br />
+  <br />
+input(type=&quot;imfile&quot;<br />
+      File=&quot;&lt;CF install path&gt;/&lt;instance name&gt;/logs/security.log&quot;<br />
+      Tag=&quot;security&quot;<br />
+      Facility=&quot;&lt;instance name&gt;&quot;)<br />
+  <br />
+input(type=&quot;imfile&quot;<br />
+      File=&quot;&lt;CF install path&gt;/&lt;instance name&gt;/logs/webservice.log&quot;<br />
+      Tag=&quot;webservice&quot;<br />
+      Facility=&quot;&lt;instance name&gt;&quot;)   <br />
+<br />
+If the file contents do not monitor all logs in &lt;CF install path&gt;/&lt;instance name&gt;/logs, this is a finding. <br />
+<br />
+2. Inspect /etc/rsyslog.conf or the files in /etc/rsyslog.d/.<br />
+<br />
+If there is no forwarding action with type=&quot;omfwd&quot;, the rsyslog destination is not configured to send logs to a valid syslog server and this is a finding.<br />
+<br />
+For additional information, refer to https://www.rsyslog.com/sending-messages-to-a-remote-syslog-server/.</p><h2>Vulnerability Number</h2><p>V-279070</p><h2>Documentable</h2><p>False</p><h2>Rule Version</h2><p>APAS-CF-000490</p><h2>Severity Override Guidance</h2><p>Verify SIEM.<br />
+<br />
+1. On the host server, for each of the ColdFusion instances installed, verify /etc/rsyslog.d/101-&lt;instance name&gt;.conf exists and contains the following contents: <br />
+<br />
+module(load=&quot;imfile&quot; PollingInterval=&quot;10&quot;) <br />
+<br />
+input(type=&quot;imfile&quot;<br />
+      File=&quot;&lt;CF install path&gt;/&lt;instance name&gt;/logs/coldfusion-out.log&quot;<br />
+      Tag=&quot;coldfusion-out&quot;<br />
+      Facility=&quot;&lt;instance name&gt;&quot;)<br />
+<br />
+input(type=&quot;imfile&quot;<br />
+      File=&quot;&lt;CF install path&gt;/&lt;instance name&gt;/logs/coldfusion-error.log&quot;<br />
+      Tag=&quot;coldfusion-error&quot;<br />
+      Facility=&quot;&lt;instance name&gt;&quot;)<br />
+<br />
+input(type=&quot;imfile&quot;<br />
+      File=&quot;&lt;CF install path&gt;/&lt;instance name&gt;/logs/cfpm-audit.log&quot;<br />
+      Tag=&quot;cfpm-audit&quot;<br />
+      Facility=&quot;&lt;instance name&gt;&quot;)<br />
+<br />
+input(type=&quot;imfile&quot;<br />
+      File=&quot;&lt;CF install path&gt;/&lt;instance name&gt;/logs/audit.log&quot;<br />
+      Tag=&quot;audit&quot;<br />
+      Facility=&quot;&lt;instance name&gt;&quot;)<br />
+<br />
+input(type=&quot;imfile&quot;<br />
+      File=&quot;&lt;CF install path&gt;/&lt;instance name&gt;/logs/http.log&quot;<br />
+      Tag=&quot;http&quot;<br />
+      Facility=&quot;&lt;instance name&gt;&quot;)<br />
+<br />
+input(type=&quot;imfile&quot;<br />
+      File=&quot;&lt;CF install path&gt;/&lt;instance name&gt;/logs/mail.log&quot;<br />
+      Tag=&quot;mail&quot;<br />
+      Facility=&quot;&lt;instance name&gt;&quot;)<br />
+<br />
+input(type=&quot;imfile&quot;<br />
+      File=&quot;&lt;CF install path&gt;/&lt;instance name&gt;/logs/monitor.log&quot;<br />
+      Tag=&quot;monitor&quot;<br />
+      Facility=&quot;&lt;instance name&gt;&quot;)<br />
+<br />
+input(type=&quot;imfile&quot;<br />
+      File=&quot;&lt;CF install path&gt;/&lt;instance name&gt;/logs/server.log&quot;<br />
+      Tag=&quot;server&quot;<br />
+      Facility=&quot;&lt;instance name&gt;&quot;)<br />
+  <br />
+input(type=&quot;imfile&quot;<br />
+      File=&quot;&lt;CF install path&gt;/&lt;instance name&gt;/logs/usagedata.log&quot;<br />
+      Tag=&quot;usagedata&quot;<br />
+      Facility=&quot;&lt;instance name&gt;&quot;)<br />
+  <br />
+input(type=&quot;imfile&quot;<br />
+      File=&quot;&lt;CF install path&gt;/&lt;instance name&gt;/logs/update.log&quot;<br />
+      Tag=&quot;update&quot;<br />
+      Facility=&quot;&lt;instance name&gt;&quot;)<br />
+  <br />
+input(type=&quot;imfile&quot;<br />
+      File=&quot;&lt;CF install path&gt;/&lt;instance name&gt;/logs/application.log&quot;<br />
+      Tag=&quot;application&quot;<br />
+      Facility=&quot;&lt;instance name&gt;&quot;)<br />
+  <br />
+input(type=&quot;imfile&quot;<br />
+      File=&quot;&lt;CF install path&gt;/&lt;instance name&gt;/logs/exception.log&quot;<br />
+      Tag=&quot;exception&quot;<br />
+      Facility=&quot;&lt;instance name&gt;&quot;)<br />
+  <br />
+input(type=&quot;imfile&quot;<br />
+      File=&quot;&lt;CF install path&gt;/&lt;instance name&gt;/logs/reporting.log&quot;<br />
+      Tag=&quot;reporting&quot;<br />
+      Facility=&quot;&lt;instance name&gt;&quot;)<br />
+  <br />
+input(type=&quot;imfile&quot;<br />
+      File=&quot;&lt;CF install path&gt;/&lt;instance name&gt;/logs/axis2.log&quot;<br />
+      Tag=&quot;axis2&quot;<br />
+      Facility=&quot;&lt;instance name&gt;&quot;)<br />
+  <br />
+input(type=&quot;imfile&quot;<br />
+      File=&quot;&lt;CF install path&gt;/&lt;instance name&gt;/logs/eventgateway.log&quot;<br />
+      Tag=&quot;eventgateway&quot;<br />
+      Facility=&quot;&lt;instance name&gt;&quot;)<br />
+  <br />
+input(type=&quot;imfile&quot;<br />
+      File=&quot;&lt;CF install path&gt;/&lt;instance name&gt;/logs/license.log&quot;<br />
+      Tag=&quot;license&quot;<br />
+      Facility=&quot;&lt;instance name&gt;&quot;)<br />
+  <br />
+input(type=&quot;imfile&quot;<br />
+      File=&quot;&lt;CF install path&gt;/&lt;instance name&gt;/logs/security.log&quot;<br />
+      Tag=&quot;security&quot;<br />
+      Facility=&quot;&lt;instance name&gt;&quot;)<br />
+  <br />
+input(type=&quot;imfile&quot;<br />
+      File=&quot;&lt;CF install path&gt;/&lt;instance name&gt;/logs/webservice.log&quot;<br />
+      Tag=&quot;webservice&quot;<br />
+      Facility=&quot;&lt;instance name&gt;&quot;)   <br />
+<br />
+If the file contents do not monitor all logs in &lt;CF install path&gt;/&lt;instance name&gt;/logs, this is a finding. <br />
+<br />
+2. Inspect /etc/rsyslog.conf or the files in /etc/rsyslog.d/.<br />
+<br />
+If there is no forwarding action with type=&quot;omfwd&quot;, the rsyslog destination is not configured to send logs to a valid syslog server and this is a finding.<br />
+<br />
+For additional information, refer to https://www.rsyslog.com/sending-messages-to-a-remote-syslog-server/.</p><h2>Check Content Reference</h2><p>M</p><h2>Target Key</h2><p>5724</p></body></html>

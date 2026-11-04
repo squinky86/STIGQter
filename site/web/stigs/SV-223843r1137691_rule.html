@@ -1,0 +1,146 @@
+<!doctype html><html lang="en"><head><meta charset="utf-8"><title>STIGQter: STIG Check Details: SV-223843r1137691_rule: IBM z/OS UNIX security parameters in /etc/rc must be properly specified.</title><link rel="icon" type="image/svg+xml" href="STIGQter.svg" /><script async src="https://www.googletagmanager.com/gtag/js?id=UA-31381839-2"></script><script src="include.js"></script><script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-4110907817782130" crossorigin="anonymous"></script></head><body><div><img src="STIGQter.svg" alt="STIGQter" style="height:1em;" /> <a href="https://www.stigqter.com/">STIGQter</a>: <a href="main.html">STIG Summary</a>: <a href="U_IBM_zOS_RACF_STIG_V9R9_Manual-xccdf.html">IBM z/OS RACF Security Technical Implementation Guide Version: 9 Release: 9 Benchmark Date: 01 Jul 2026</a>:</div> <h1>IBM z/OS UNIX security parameters in /etc/rc must be properly specified.</h1><h2>DISA Rule</h2><p>SV-223843r1137691_rule</p><h2>Vulnerability Number</h2><p>V-223843</p><h2>Group Title</h2><p>SRG-OS-000080-GPOS-00048</p><h2>Rule Version</h2><p>RACF-US-000060</p><h2>Severity</h2><p>CAT II</p><h2>CCI(s)</h2><ul><li>CCI-000213 - Enforce approved authorizations for logical access to information and system resources in accordance with applicable access control policies.</li></ul><h2>Weight</h2><p>10</p><h2>Fix Recommendation</h2><p>Review the settings in the /etc/rc. The /etc/rcfile is the system initialization shell script. When z/OS UNIX kernel services start, /etc/rc is executed to set file permissions and ownership for dynamic system files and to perform other system startup functions such as starting daemons. There can be many commands in /etc/rc. There are two specific guidelines that must be followed:<br />
+<br />
+Verify that the CHMOD or CHAUDIT command does not result in less restrictive security than what is specified in the table below.<br />
+Immediately prior to each command that starts a daemon, the _BPX_JOBNAME variable must be set to match the daemon's name (e.g., inetd, syslogd). The use of _BPX_USERID is at the site's discretion, but is recommended.<br />
+<br />
+Directory Permission Bits User Audit Bits Function<br />
+/ [root] 755 faf Root level of all file systems. Holds critical mount points.<br />
+/bin 1755 fff Shell scripts and executables for basic functions<br />
+/dev 1755 fff Character-special files used when logging into the OMVS shell and during C language program compilation. Files are created during system IPL and on a per-demand basis.<br />
+/etc 1755 faf Configuration programs and files (usually with locally customized data) used by z/OS UNIX and other product initialization processes<br />
+/lib 1755 fff System libraries including dynamic link libraries and files for static linking<br />
+/samples 1755 fff Sample configuration and other files<br />
+/tmp 1777 fff Temporary data used by daemons, servers, and users. Note: /tmp must have the sticky bit on to restrict file renames and deletions.<br />
+/u 1755 fff Mount point for user home directories and optionally for third-party software and other local site files<br />
+/usr 1755 fff Shell scripts, executables, help (man) files and other data. Contains sub-directories (e.g., lpp) and mount points used by program products that may be in separate file systems.<br />
+/var 1775 fff Dynamic data used internally by products and by elements and features of z/OS UNIX.</p><h2>Check Contents</h2><p>From the ISPF Command Shell enter:<br />
+ISHELL<br />
+/etc/rc<br />
+<br />
+If all of the CHMOD commands in /etc/rc do not result in less restrictive access than what is specified in the tables below, this is not a finding.<br />
+<br />
+NOTE: The use of CHMOD commands in /etc/rc is required in most environments to comply with the required settings, especially for dynamic objects such as the /dev directory.<br />
+<br />
+The following represents a hierarchy for permission bits from least restrictive to most restrictive:<br />
+<br />
+7 rwx (least restrictive)<br />
+6 rw-<br />
+3 -wx<br />
+2 -w-<br />
+5 r-x<br />
+4 r--<br />
+1 --x<br />
+0 --- (most restrictive)<br />
+<br />
+If all of the CHAUDIT commands in /etc/rc do not result in less auditing than what is specified in the tables below, this is not a finding.<br />
+<br />
+NOTE: The use of CHAUDIT commands in /etc/rc may not be necessary. If none are found, there is not a finding.<br />
+<br />
+The possible audit bits settings are as follows:<br />
+<br />
+f log for failed access attempts<br />
+a log for failed and successful access<br />
+- no auditing<br />
+<br />
+If the _BPX_JOBNAME variable is appropriately set (i.e., to match daemon name) as each daemon (e.g., syslogd, inetd) is started in /etc/rc, this is not a finding.<br />
+<br />
+NOTE: If _BPX_JOBNAME is not specified, the started address space will be named using an inherited value. This could result in reduced security in terms of operator command access.<br />
+<br />
+SYSTEM DIRECTORY SECURITY SETTINGS<br />
+DIRECTORY PERMISSION BITS USER AUDIT BITS FUNCTION<br />
+/ [root] 755 faf Root level of all file systems. Holds critical mount points.<br />
+/bin 1755 fff Shell scripts and executables for basic functions<br />
+/dev 1755 fff Character-special files used when logging into the OMVS shell and during C language program compilation.<br />
+ Files are created during system IPL and on a per-demand basis.<br />
+/etc 1755 faf Configuration programs and files (usually with locally customized data) used by z/OS UNIX and other product initialization processes<br />
+/lib 1755 fff System libraries including dynamic link libraries and files for static linking<br />
+/samples 1755 fff Sample configuration and other files<br />
+/tmp 1777 fff Temporary data used by daemons, servers, and users. Note: /tmp must have the sticky bit on to restrict file renames and deletions.<br />
+/u 1755 fff Mount point for user home directories and optionally for third-party software and other local site files<br />
+/usr 1755 fff Shell scripts, executables, help (man) files and other data. Contains sub-directories (e.g., lpp) and mount points used by program products that may be in separate file systems.<br />
+/var 1775 fff Dynamic data used internally by products and by elements and features of z/OS UNIX.<br />
+<br />
+SYSTEM FILE SECURITY SETTINGS<br />
+FILE PERMISSION BITS USER AUDIT BITS FUNCTION<br />
+/bin/sh 1755 faf z/OS UNIX shell<br />
+ Note: /bin/sh has the sticky bit on to improve performance.<br />
+/dev/console 740 fff The system console file receives messages that may require System Administrator (SA) attention.<br />
+/dev/null 666 fff A null file; data written to it is discarded.<br />
+/etc/auto.master and<br />
+any mapname files 740 faf Configuration files for automount facility<br />
+/etc/inetd.conf 740 faf Configuration file for network services<br />
+/etc/init.options 740 faf Kernel initialization options file for z/OS UNIX environment<br />
+/etc/log 744 fff Kernel initialization output file<br />
+/etc/profile 755 faf Environment setup script executed for each user<br />
+/etc/rc 744 faf Kernel initialization script for z/OS UNIX environment<br />
+/etc/steplib 740 faf List of MVS data sets valid for set user ID and set group ID executables<br />
+/etc/tablename 740 faf List of z/OS userids and group names with corresponding alias names<br />
+/usr/lib/cron/at.allow<br />
+/usr/lib/cron/at.deny 700 faf Configuration files for the at and batch commands<br />
+/usr/lib/cron/cron.allow<br />
+/usr/lib/cron/cron.deny 700 faf Configuration files for the crontab command</p><h2>Vulnerability Number</h2><p>V-223843</p><h2>Documentable</h2><p>False</p><h2>Rule Version</h2><p>RACF-US-000060</p><h2>Severity Override Guidance</h2><p>From the ISPF Command Shell enter:<br />
+ISHELL<br />
+/etc/rc<br />
+<br />
+If all of the CHMOD commands in /etc/rc do not result in less restrictive access than what is specified in the tables below, this is not a finding.<br />
+<br />
+NOTE: The use of CHMOD commands in /etc/rc is required in most environments to comply with the required settings, especially for dynamic objects such as the /dev directory.<br />
+<br />
+The following represents a hierarchy for permission bits from least restrictive to most restrictive:<br />
+<br />
+7 rwx (least restrictive)<br />
+6 rw-<br />
+3 -wx<br />
+2 -w-<br />
+5 r-x<br />
+4 r--<br />
+1 --x<br />
+0 --- (most restrictive)<br />
+<br />
+If all of the CHAUDIT commands in /etc/rc do not result in less auditing than what is specified in the tables below, this is not a finding.<br />
+<br />
+NOTE: The use of CHAUDIT commands in /etc/rc may not be necessary. If none are found, there is not a finding.<br />
+<br />
+The possible audit bits settings are as follows:<br />
+<br />
+f log for failed access attempts<br />
+a log for failed and successful access<br />
+- no auditing<br />
+<br />
+If the _BPX_JOBNAME variable is appropriately set (i.e., to match daemon name) as each daemon (e.g., syslogd, inetd) is started in /etc/rc, this is not a finding.<br />
+<br />
+NOTE: If _BPX_JOBNAME is not specified, the started address space will be named using an inherited value. This could result in reduced security in terms of operator command access.<br />
+<br />
+SYSTEM DIRECTORY SECURITY SETTINGS<br />
+DIRECTORY PERMISSION BITS USER AUDIT BITS FUNCTION<br />
+/ [root] 755 faf Root level of all file systems. Holds critical mount points.<br />
+/bin 1755 fff Shell scripts and executables for basic functions<br />
+/dev 1755 fff Character-special files used when logging into the OMVS shell and during C language program compilation.<br />
+ Files are created during system IPL and on a per-demand basis.<br />
+/etc 1755 faf Configuration programs and files (usually with locally customized data) used by z/OS UNIX and other product initialization processes<br />
+/lib 1755 fff System libraries including dynamic link libraries and files for static linking<br />
+/samples 1755 fff Sample configuration and other files<br />
+/tmp 1777 fff Temporary data used by daemons, servers, and users. Note: /tmp must have the sticky bit on to restrict file renames and deletions.<br />
+/u 1755 fff Mount point for user home directories and optionally for third-party software and other local site files<br />
+/usr 1755 fff Shell scripts, executables, help (man) files and other data. Contains sub-directories (e.g., lpp) and mount points used by program products that may be in separate file systems.<br />
+/var 1775 fff Dynamic data used internally by products and by elements and features of z/OS UNIX.<br />
+<br />
+SYSTEM FILE SECURITY SETTINGS<br />
+FILE PERMISSION BITS USER AUDIT BITS FUNCTION<br />
+/bin/sh 1755 faf z/OS UNIX shell<br />
+ Note: /bin/sh has the sticky bit on to improve performance.<br />
+/dev/console 740 fff The system console file receives messages that may require System Administrator (SA) attention.<br />
+/dev/null 666 fff A null file; data written to it is discarded.<br />
+/etc/auto.master and<br />
+any mapname files 740 faf Configuration files for automount facility<br />
+/etc/inetd.conf 740 faf Configuration file for network services<br />
+/etc/init.options 740 faf Kernel initialization options file for z/OS UNIX environment<br />
+/etc/log 744 fff Kernel initialization output file<br />
+/etc/profile 755 faf Environment setup script executed for each user<br />
+/etc/rc 744 faf Kernel initialization script for z/OS UNIX environment<br />
+/etc/steplib 740 faf List of MVS data sets valid for set user ID and set group ID executables<br />
+/etc/tablename 740 faf List of z/OS userids and group names with corresponding alias names<br />
+/usr/lib/cron/at.allow<br />
+/usr/lib/cron/at.deny 700 faf Configuration files for the at and batch commands<br />
+/usr/lib/cron/cron.allow<br />
+/usr/lib/cron/cron.deny 700 faf Configuration files for the crontab command</p><h2>Check Content Reference</h2><p>M</p><h2>Target Key</h2><p>4101</p></body></html>

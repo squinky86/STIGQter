@@ -1,0 +1,73 @@
+<!doctype html><html lang="en"><head><meta charset="utf-8"><title>STIGQter: STIG Check Details: SV-216760r1007832_rule: The Cisco perimeter router must be configured to filter traffic destined to the enclave in accordance with the guidelines contained in DoD Instruction 8551.1.</title><link rel="icon" type="image/svg+xml" href="STIGQter.svg" /><script async src="https://www.googletagmanager.com/gtag/js?id=UA-31381839-2"></script><script src="include.js"></script><script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-4110907817782130" crossorigin="anonymous"></script></head><body><div><img src="STIGQter.svg" alt="STIGQter" style="height:1em;" /> <a href="https://www.stigqter.com/">STIGQter</a>: <a href="main.html">STIG Summary</a>: <a href="U_Cisco_IOS-XR_Router_RTR_STIG_V3R3_Manual-xccdf.html">Cisco IOS XR Router RTR Security Technical Implementation Guide Version: 3 Release: 3 Benchmark Date: 01 Oct 2025</a>:</div> <h1>The Cisco perimeter router must be configured to filter traffic destined to the enclave in accordance with the guidelines contained in DoD Instruction 8551.1.</h1><h2>DISA Rule</h2><p>SV-216760r1007832_rule</p><h2>Vulnerability Number</h2><p>V-216760</p><h2>Group Title</h2><p>SRG-NET-000205-RTR-000003</p><h2>Rule Version</h2><p>CISC-RT-000320</p><h2>Severity</h2><p>CAT II</p><h2>CCI(s)</h2><ul><li>CCI-001097 - Monitor and control communications at the external managed interfaces to the system and at key managed interfaces within the system.</li></ul><h2>Weight</h2><p>10</p><h2>Fix Recommendation</h2><p>This requirement is not applicable for the DODIN Backbone.<br />
+<br />
+Configure the router to use an inbound ACL on all external interfaces as shown in the example below to restrict traffic in accordance with the guidelines contained in DOD Instruction 8551.1.<br />
+<br />
+RP/0/0/CPU0:R3(config)#ipv4 access-list EXTERNAL_ACL_INBOUND<br />
+RP/0/0/CPU0:R3(config-ipv4-acl)#permit tcp host x.11.1.1 eq bgp host x.11.1.2<br />
+RP/0/0/CPU0:R3(config-ipv4-acl)#permit tcp host x.11.1.1 host x.11.1.2 eq bgp<br />
+RP/0/0/CPU0:R3(config-ipv4-acl)#permit icmp host x.11.1.1 host x.11.1.2 echo<br />
+RP/0/0/CPU0:R3(config-ipv4-acl)#permit icmp host x.11.1.1 host x.11.1.2 echo-reply<br />
+RP/0/0/CPU0:R3(config-ipv4-acl)#deny ip any host x.11.1.1 log-input <br />
+RP/0/0/CPU0:R3(config-ipv4-acl)#permit tcp any host x.12.1.22 eq www<br />
+RP/0/0/CPU0:R3(config-ipv4-acl)#permit tcp any any established<br />
+…<br />
+…    &lt; must be in accordance with DoD Instruction 8551.1&gt;<br />
+…<br />
+RP/0/0/CPU0:R3(config-ipv4-acl)#deny ip any any log-input <br />
+RP/0/0/CPU0:R3(config-ipv4-acl)#exit<br />
+<br />
+Step 2: Apply the ACL inbound on all applicable interfaces.<br />
+<br />
+RP/0/0/CPU0:R3(config)#int g0/0/0/1  <br />
+RP/0/0/CPU0:R3(config-if)#ipv4 access-group EXTERNAL_ACL_INBOUND in<br />
+RP/0/0/CPU0:R3(config-if)#end</p><h2>Check Contents</h2><p>This requirement is not applicable for the DODIN Backbone.<br />
+<br />
+Review the router configuration to verify that the ingress ACL is in accordance with DoD 8551.1.<br />
+<br />
+Step 1: Verify that an inbound ACL is configured on all external interfaces.<br />
+<br />
+interface GigabitEthernet0/0/0/1<br />
+ ipv4 address x.11.1.2 255.255.255.252<br />
+ ipv4 access-group EXTERNAL_ACL_INBOUND ingress<br />
+<br />
+Step 2. Review the inbound ACL to verify that it is filtering traffic in accordance with DoD 8551.1.<br />
+<br />
+ipv4 access-list EXTERNAL_ACL_INBOUND<br />
+ 10 permit tcp host x.11.1.1 eq bgp host x.11.1.2<br />
+ 20 permit tcp host x.11.1.1 host x.11.1.2 eq bgp<br />
+ 30 permit icmp host x.11.1.1 host x.11.1.2 echo<br />
+ 40 permit icmp host x.11.1.1 host x.11.1.2 echo-reply<br />
+ 50 deny ipv4 any host x.11.1.1 log <br />
+ 60 permit tcp any host x.12.1.22 eq www<br />
+ 70 permit tcp any any established<br />
+ …<br />
+ …    &lt; must be in accordance with DoD Instruction 8551.1&gt;<br />
+ …<br />
+160 deny ipv4 any any log-input <br />
+ <br />
+If the router does not filter traffic in accordance with the guidelines contained in DoD 8551.1, this is a finding.</p><h2>Vulnerability Number</h2><p>V-216760</p><h2>Documentable</h2><p>False</p><h2>Rule Version</h2><p>CISC-RT-000320</p><h2>Severity Override Guidance</h2><p>This requirement is not applicable for the DODIN Backbone.<br />
+<br />
+Review the router configuration to verify that the ingress ACL is in accordance with DoD 8551.1.<br />
+<br />
+Step 1: Verify that an inbound ACL is configured on all external interfaces.<br />
+<br />
+interface GigabitEthernet0/0/0/1<br />
+ ipv4 address x.11.1.2 255.255.255.252<br />
+ ipv4 access-group EXTERNAL_ACL_INBOUND ingress<br />
+<br />
+Step 2. Review the inbound ACL to verify that it is filtering traffic in accordance with DoD 8551.1.<br />
+<br />
+ipv4 access-list EXTERNAL_ACL_INBOUND<br />
+ 10 permit tcp host x.11.1.1 eq bgp host x.11.1.2<br />
+ 20 permit tcp host x.11.1.1 host x.11.1.2 eq bgp<br />
+ 30 permit icmp host x.11.1.1 host x.11.1.2 echo<br />
+ 40 permit icmp host x.11.1.1 host x.11.1.2 echo-reply<br />
+ 50 deny ipv4 any host x.11.1.1 log <br />
+ 60 permit tcp any host x.12.1.22 eq www<br />
+ 70 permit tcp any any established<br />
+ …<br />
+ …    &lt; must be in accordance with DoD Instruction 8551.1&gt;<br />
+ …<br />
+160 deny ipv4 any any log-input <br />
+ <br />
+If the router does not filter traffic in accordance with the guidelines contained in DoD 8551.1, this is a finding.</p><h2>Check Content Reference</h2><p>M</p><h2>Target Key</h2><p>4029</p></body></html>

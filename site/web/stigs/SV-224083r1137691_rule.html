@@ -1,0 +1,143 @@
+<!doctype html><html lang="en"><head><meta charset="utf-8"><title>STIGQter: STIG Check Details: SV-224083r1137691_rule: IBM z/OS UNIX system file security settings must be properly protected or specified.</title><link rel="icon" type="image/svg+xml" href="STIGQter.svg" /><script async src="https://www.googletagmanager.com/gtag/js?id=UA-31381839-2"></script><script src="include.js"></script><script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-4110907817782130" crossorigin="anonymous"></script></head><body><div><img src="STIGQter.svg" alt="STIGQter" style="height:1em;" /> <a href="https://www.stigqter.com/">STIGQter</a>: <a href="main.html">STIG Summary</a>: <a href="U_IBM_zOS_TSS_STIG_V9R9_Manual-xccdf.html">IBM z/OS TSS Security Technical Implementation Guide Version: 9 Release: 9 Benchmark Date: 01 Jul 2026</a>:</div> <h1>IBM z/OS UNIX system file security settings must be properly protected or specified.</h1><h2>DISA Rule</h2><p>SV-224083r1137691_rule</p><h2>Vulnerability Number</h2><p>V-224083</p><h2>Group Title</h2><p>SRG-OS-000080-GPOS-00048</p><h2>Rule Version</h2><p>TSS0-US-000100</p><h2>Severity</h2><p>CAT II</p><h2>CCI(s)</h2><ul><li>CCI-000213 - Enforce approved authorizations for logical access to information and system resources in accordance with applicable access control policies.</li><li>CCI-001499 - Limit privileges to change software resident within software libraries.</li></ul><h2>Weight</h2><p>10</p><h2>Fix Recommendation</h2><p>Define the UNIX permission bits and user audit bits on the HFS files as listed in the table below.<br />
+<br />
+SYSTEM FILE SECURITY SETTINGS<br />
+FILE PERMISSION BITS USER AUDIT BITS FUNCTION<br />
+/bin/sh 1755 faf z/OS UNIX shell<br />
+ Note: /bin/sh has the sticky bit on to improve performance.<br />
+/dev/console 740 fff The system console file receives messages that may require System Administrator (SA) attention.<br />
+/dev/null 666 fff A null file; data written to it is discarded.<br />
+/etc/auto.master<br />
+any mapname files 740 faf Configuration files for automount facility<br />
+/etc/inetd.conf 740 faf Configuration file for network services<br />
+/etc/init.options 740 faf Kernel initialization options file for z/OS UNIX environment<br />
+/etc/log 744 fff Kernel initialization output file<br />
+/etc/profile 755 faf Environment setup script executed for each user<br />
+/etc/rc 744 faf Kernel initialization script for z/OS UNIX environment<br />
+/etc/steplib 740 faf List of MVS data sets valid for set user ID and set group ID executables<br />
+/etc/table name 740 faf List of z/OS userids and group names with corresponding alias names<br />
+/usr/lib/cron/at.allow<br />
+/usr/lib/cron/at.deny 700 faf Configuration files for the at and batch commands<br />
+/usr/lib/cron/cron.allow<br />
+/usr/lib/cron/cron.deny 700 faf Configuration files for the crontab command<br />
+<br />
+There are a number of files that must be secured to protect system functions in z/OS UNIX. Where not otherwise specified, these files must receive a permission setting of 744 or 774. The 774 setting may be used at the site's discretion to help to reduce the need for assignment of superuser privileges. The table identifies permission bit and audit bit settings that are required for these specific files. More restrictive permission settings may be used at the site's discretion or as specific environments dictate.<br />
+<br />
+The following represents a hierarchy for permission bits from least restrictive to most restrictive:<br />
+<br />
+7 rwx (least restrictive)<br />
+6 rw-<br />
+3 -wx<br />
+2 -w-<br />
+5 r-x<br />
+4 r--<br />
+1 --x<br />
+0 --- (most restrictive)<br />
+<br />
+The possible audit bits settings are as follows:<br />
+<br />
+f log for failed access attempts<br />
+a log for failed and successful access<br />
+- no auditing<br />
+<br />
+The following commands are a sample of the commands to be used (from a user account with an effective UID(0)) to update the permission bits and audit bits:<br />
+<br />
+chmod 1755 /bin/sh<br />
+chaudit w=sf,rx+f /bin/sh<br />
+chmod 0740 /dev/console<br />
+chaudit rwx=f /dev/console</p><h2>Check Contents</h2><p>From the ISPF Command Shell enter:<br />
+OMVS<br />
+For each file listed in the table below enter:<br />
+ls -alW /&lt;directory name&gt;/&lt;file name&gt;<br />
+<br />
+If the HFS permission bits and user audit bits for each directory and file match or are more restrictive than the specified settings listed in the table, this is not a finding.<br />
+<br />
+NOTE: Some of the files listed are not used in every configuration. Absence of any of the files is not considered a finding.<br />
+<br />
+ SYSTEM FILE SECURITY SETTINGS<br />
+FILE PERMISSION BITS USER AUDIT BITS FUNCTION<br />
+/bin/sh 1755 faf z/OS UNIX shell<br />
+ Note: /bin/sh has the sticky bit on to improve performance.<br />
+/dev/console 740 fff The system console file receives messages that may require System Administrator (SA) attention.<br />
+/dev/null 666 fff A null file; data written to it is discarded.<br />
+/etc/auto.master<br />
+any mapname files 740 faf Configuration files for automount facility<br />
+/etc/inetd.conf 740 faf Configuration file for network services<br />
+/etc/init.options 740 faf Kernel initialization options file for z/OS UNIX environment<br />
+/etc/log 744 fff Kernel initialization output file<br />
+/etc/profile 755 faf Environment setup script executed for each user<br />
+/etc/rc 744 faf Kernel initialization script for z/OS UNIX environment<br />
+/etc/steplib 740 faf List of MVS data sets valid for set user ID and set group ID executables<br />
+/etc/table name 740 faf List of z/OS userids and group names with corresponding alias names<br />
+/usr/lib/cron/at.allow<br />
+/usr/lib/cron/at.deny 700 faf Configuration files for the at and batch commands<br />
+/usr/lib/cron/cron.allow<br />
+/usr/lib/cron/cron.deny 700 faf Configuration files for the crontab command<br />
+<br />
+NOTE: Some of the files listed are not used in every configuration. Absence of any of the files is not considered a finding.<br />
+<br />
+NOTE: The names of the MapName files are site-defined. Refer to the listing in the EAUTOM report.<br />
+<br />
+The following represents a hierarchy for permission bits from least restrictive to most restrictive:<br />
+<br />
+7 rwx (least restrictive)<br />
+6 rw-<br />
+3 -wx<br />
+2 -w-<br />
+5 r-x<br />
+4 r--<br />
+1 --x<br />
+0 --- (most restrictive)<br />
+<br />
+The possible audit bits settings are as follows:<br />
+<br />
+f log for failed access attempts<br />
+a log for failed and successful access<br />
+- no auditing</p><h2>Vulnerability Number</h2><p>V-224083</p><h2>Documentable</h2><p>False</p><h2>Rule Version</h2><p>TSS0-US-000100</p><h2>Severity Override Guidance</h2><p>From the ISPF Command Shell enter:<br />
+OMVS<br />
+For each file listed in the table below enter:<br />
+ls -alW /&lt;directory name&gt;/&lt;file name&gt;<br />
+<br />
+If the HFS permission bits and user audit bits for each directory and file match or are more restrictive than the specified settings listed in the table, this is not a finding.<br />
+<br />
+NOTE: Some of the files listed are not used in every configuration. Absence of any of the files is not considered a finding.<br />
+<br />
+ SYSTEM FILE SECURITY SETTINGS<br />
+FILE PERMISSION BITS USER AUDIT BITS FUNCTION<br />
+/bin/sh 1755 faf z/OS UNIX shell<br />
+ Note: /bin/sh has the sticky bit on to improve performance.<br />
+/dev/console 740 fff The system console file receives messages that may require System Administrator (SA) attention.<br />
+/dev/null 666 fff A null file; data written to it is discarded.<br />
+/etc/auto.master<br />
+any mapname files 740 faf Configuration files for automount facility<br />
+/etc/inetd.conf 740 faf Configuration file for network services<br />
+/etc/init.options 740 faf Kernel initialization options file for z/OS UNIX environment<br />
+/etc/log 744 fff Kernel initialization output file<br />
+/etc/profile 755 faf Environment setup script executed for each user<br />
+/etc/rc 744 faf Kernel initialization script for z/OS UNIX environment<br />
+/etc/steplib 740 faf List of MVS data sets valid for set user ID and set group ID executables<br />
+/etc/table name 740 faf List of z/OS userids and group names with corresponding alias names<br />
+/usr/lib/cron/at.allow<br />
+/usr/lib/cron/at.deny 700 faf Configuration files for the at and batch commands<br />
+/usr/lib/cron/cron.allow<br />
+/usr/lib/cron/cron.deny 700 faf Configuration files for the crontab command<br />
+<br />
+NOTE: Some of the files listed are not used in every configuration. Absence of any of the files is not considered a finding.<br />
+<br />
+NOTE: The names of the MapName files are site-defined. Refer to the listing in the EAUTOM report.<br />
+<br />
+The following represents a hierarchy for permission bits from least restrictive to most restrictive:<br />
+<br />
+7 rwx (least restrictive)<br />
+6 rw-<br />
+3 -wx<br />
+2 -w-<br />
+5 r-x<br />
+4 r--<br />
+1 --x<br />
+0 --- (most restrictive)<br />
+<br />
+The possible audit bits settings are as follows:<br />
+<br />
+f log for failed access attempts<br />
+a log for failed and successful access<br />
+- no auditing</p><h2>Check Content Reference</h2><p>M</p><h2>Target Key</h2><p>4102</p></body></html>

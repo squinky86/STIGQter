@@ -1,0 +1,97 @@
+<!doctype html><html lang="en"><head><meta charset="utf-8"><title>STIGQter: STIG Check Details: SV-251601r960960_rule: Database objects in an IDMS environment must be secured to prevent privileged actions from being performed by unauthorized users.</title><link rel="icon" type="image/svg+xml" href="STIGQter.svg" /><script async src="https://www.googletagmanager.com/gtag/js?id=UA-31381839-2"></script><script src="include.js"></script><script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-4110907817782130" crossorigin="anonymous"></script></head><body><div><img src="STIGQter.svg" alt="STIGQter" style="height:1em;" /> <a href="https://www.stigqter.com/">STIGQter</a>: <a href="main.html">STIG Summary</a>: <a href="U_CA_IDMS_STIG_V2R2_Manual-xccdf.html">CA IDMS Security Technical Implementation Guide Version: 2 Release: 2 Benchmark Date: 01 Jul 2026</a>:</div> <h1>Database objects in an IDMS environment must be secured to prevent privileged actions from being performed by unauthorized users.</h1><h2>DISA Rule</h2><p>SV-251601r960960_rule</p><h2>Vulnerability Number</h2><p>V-251601</p><h2>Group Title</h2><p>SRG-APP-000133-DB-000200</p><h2>Rule Version</h2><p>IDMS-DB-000210</p><h2>Severity</h2><p>CAT II</p><h2>CCI(s)</h2><ul><li>CCI-001499 - Limit privileges to change software resident within software libraries.</li></ul><h2>Weight</h2><p>10</p><h2>Fix Recommendation</h2><p>Before securing a database externally, it is VERY IMPORTANT to weigh the following considerations:<br />
+- If adding an SRTT TYPE=ENTRY that secures the DB resource type externally, it automatically secures a group of database resource types externally for all databases.<br />
+<br />
+- If the SRTT contains one or more TYPE=OCCUR (occurrence overrides) that specify external security for resource type DB, also add an SRTT entry specifying external resource class and external resource name for each of the database resource types that are automatically secured externally for the database being secured in that TYPE=OCCUR statement.<br />
+<br />
+- The only database-related RESTYPE valid with TYPE=OCCUR is DB.<br />
+<br />
+See the IDMS Techdocs for more information on securing database resources.<br />
+<br />
+The SRTT module must have an entry coded to secure one or more database resources. For instance:<br />
+<br />
+ #SECRTT TYPE=INITIAL,                         x<br />
+  ENVNAME=SYS001<br />
+<br />
+ #SECRTT TYPE=ENTRY,                           X<br />
+   RESTYPE=DB,                                           X<br />
+   SECBY=OFF,                                              X<br />
+   EXTNAME=(ENVIR,RESNAME,RESTYPE),     X<br />
+   EXTCLS='CA@IDMS'<br />
+ <br />
+ #SECRTT TYPE=OCCUR,                         X<br />
+   RESTYPE=DB,                                           X<br />
+   SECBY=EXTERNAL ,                                X<br />
+   RESNAME='PROD'<br />
+<br />
+The above example could be used to secure external name of SYS001.PROD.DB.<br />
+<br />
+When securing SQL access, it is necessary to secure both the DBNAME containing the catalog segment (probably SYSSQL in APPLDICT) and the database being accessed.<br />
+<br />
+ #SECRTT  TYPE=OCCUR,SECBY=EXT,RESTYPE=DB,  X<br />
+    RESNAME=APPLDICT'<br />
+#SECRTT  TYPE=OCCUR,SECBY=EXT,RESTYPE=DB,  X<br />
+    RESNAME='USERDB'<br />
+<br />
+Because the above example also secures the DB subtypes, add SRTT entries to allow the ability to grant or deny access to them:<br />
+<br />
+ #SECRTT TYPE=ENTRY,RESTYPE=AREA,    X<br />
+     SECBY=EXT,EXTNAME=(ENVIR,RESTYPE,RESNAME)<br />
+ #SECRTT TYPE=ENTRY,RESTYPE=NRU,     X<br />
+     SECBY=EXT,EXTNAME=(ENVIR,RESTYPE,RESNAME)<br />
+ #SECRTT TYPE=ENTRY,RESTYPE=QSCH,    X<br />
+     SECBY=EXT,EXTNAME=(ENVIR,RESTYPE,RESNAME)<br />
+ #SECRTT TYPE=ENTRY,RESTYPE=NSCH,    X<br />
+     SECBY=EXT,EXTNAME=(ENVIR,RESTYPE,RESNAME)<br />
+ #SECRTT TYPE=ENTRY,RESTYPE=DACC,    X<br />
+     SECBY=EXT,EXTNAME=(ENVIR,RESTYPE,RESNAME)<br />
+ #SECRTT TYPE=ENTRY,RESTYPE=TABL,    X<br />
+     SECBY=EXT,EXTNAME=(ENVIR,RESTYPE,RESNAME)<br />
+<br />
+Note that the TABL resource type represents base tables, functions, procedures, table procedures, and views. <br />
+<br />
+Ensure that the ESM has a corresponding entry to give access to the desired users. For instance, in Top Secret:<br />
+TSS PER(user_id) CA@IDMS(SYS001.PROD.DB) ACCESS(access_level)<br />
+and assuming that the user wants to grant access to the area:<br />
+TSS PER(user_id) CA@IDMS(SYS001.PROD.AREA) ACCESS(access_level)</p><h2>Check Contents</h2><p>Examine load module RHDCSRTT by executing CA IDMS utility IDMSSRTD, or by issuing command &quot;DCMT DISPLAY SRTT&quot; while signed onto the CV, and reviewing the output.<br />
+<br />
+Note: This requires PTFs SO07995 and SO09476. <br />
+ <br />
+Examine the SRTT and verify that entries exist for all desired database resources. The database resources that may be secured are and their respective RESTYPEs are:<br />
+Database                        - DB        <br />
+Area                                - AREA (1)<br />
+Rununit                          - NRU (1)<br />
+SQL Schema                  - QSCH (1)<br />
+Non-SQL Schema         - NSCH (1)<br />
+Access Module             - DACC (1) <br />
+Table                              - TABL (1)<br />
+DMCL                             - DMCL<br />
+Database name table  - DBTB<br />
+<br />
+Note: Securing RESTYPE=DB (Database) also secures for these resource types. SRTT TYPE=ENTRY statements with RESTYPEs of AREA, NRU, QSRCH, NSCH, DACC, and TABL do not turn security on or off for these RESTYPEs, but are used to build the EXTNAME and EXTCLAS to be passed to the external security manager (ESM).<br />
+<br />
+Interrogate the DBA(s) to determine which database objects may need secured.<br />
+<br />
+For SQL access, check that both the catalog and user database are secured in the SRTT. If not, this is a finding.<br />
+<br />
+If batch jobs are allowed to be run with access an IDMS database, check whether the access is covered by standard ESM dataset security and/or the user-written exit 14 (issues a security check when a BIND RUN-UNIT or READY AREA is being done). If not, this is a finding.</p><h2>Vulnerability Number</h2><p>V-251601</p><h2>Documentable</h2><p>False</p><h2>Rule Version</h2><p>IDMS-DB-000210</p><h2>Severity Override Guidance</h2><p>Examine load module RHDCSRTT by executing CA IDMS utility IDMSSRTD, or by issuing command &quot;DCMT DISPLAY SRTT&quot; while signed onto the CV, and reviewing the output.<br />
+<br />
+Note: This requires PTFs SO07995 and SO09476. <br />
+ <br />
+Examine the SRTT and verify that entries exist for all desired database resources. The database resources that may be secured are and their respective RESTYPEs are:<br />
+Database                        - DB        <br />
+Area                                - AREA (1)<br />
+Rununit                          - NRU (1)<br />
+SQL Schema                  - QSCH (1)<br />
+Non-SQL Schema         - NSCH (1)<br />
+Access Module             - DACC (1) <br />
+Table                              - TABL (1)<br />
+DMCL                             - DMCL<br />
+Database name table  - DBTB<br />
+<br />
+Note: Securing RESTYPE=DB (Database) also secures for these resource types. SRTT TYPE=ENTRY statements with RESTYPEs of AREA, NRU, QSRCH, NSCH, DACC, and TABL do not turn security on or off for these RESTYPEs, but are used to build the EXTNAME and EXTCLAS to be passed to the external security manager (ESM).<br />
+<br />
+Interrogate the DBA(s) to determine which database objects may need secured.<br />
+<br />
+For SQL access, check that both the catalog and user database are secured in the SRTT. If not, this is a finding.<br />
+<br />
+If batch jobs are allowed to be run with access an IDMS database, check whether the access is covered by standard ESM dataset security and/or the user-written exit 14 (issues a security check when a BIND RUN-UNIT or READY AREA is being done). If not, this is a finding.</p><h2>Check Content Reference</h2><p>M</p><h2>Target Key</h2><p>5418</p></body></html>

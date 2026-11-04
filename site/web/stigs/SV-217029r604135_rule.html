@@ -1,0 +1,110 @@
+<!doctype html><html lang="en"><head><meta charset="utf-8"><title>STIGQter: STIG Check Details: SV-217029r604135_rule: The Juniper perimeter router must be configured to deny network traffic by default and allow network traffic by exception.</title><link rel="icon" type="image/svg+xml" href="STIGQter.svg" /><script async src="https://www.googletagmanager.com/gtag/js?id=UA-31381839-2"></script><script src="include.js"></script><script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-4110907817782130" crossorigin="anonymous"></script></head><body><div><img src="STIGQter.svg" alt="STIGQter" style="height:1em;" /> <a href="https://www.stigqter.com/">STIGQter</a>: <a href="main.html">STIG Summary</a>: <a href="U_Juniper_Router_RTR_STIG_V3R2_Manual-xccdf.html">Juniper Router RTR Security Technical Implementation Guide Version: 3 Release: 2 Benchmark Date: 30 Jan 2025</a>:</div> <h1>The Juniper perimeter router must be configured to deny network traffic by default and allow network traffic by exception.</h1><h2>DISA Rule</h2><p>SV-217029r604135_rule</p><h2>Vulnerability Number</h2><p>V-217029</p><h2>Group Title</h2><p>SRG-NET-000202-RTR-000001</p><h2>Rule Version</h2><p>JUNI-RT-000240</p><h2>Severity</h2><p>CAT I</p><h2>CCI(s)</h2><ul><li>CCI-001109 - Deny network communications traffic by default and allow network communications traffic by exception at managed interfaces; and/or for organization-defined systems.</li></ul><h2>Weight</h2><p>10</p><h2>Fix Recommendation</h2><p>This requirement is not applicable for the DoDIN Backbone.<br />
+<br />
+Configure a term at the end of the inbound filter to deny all other traffic by default as shown in the example below.<br />
+<br />
+[edit firewall family inet]<br />
+set filter FILTER_INBOUND_TRAFFIC term DENY_ALL_OTHER then syslog discard</p><h2>Check Contents</h2><p>This requirement is not applicable for the DoDIN Backbone.<br />
+<br />
+Review the router configuration to verify that the inbound filter applied to all external interfaces is configured to allow specific ports and protocols and deny all other traffic.<br />
+<br />
+Verify that an inbound filter is applied to all external interfaces as shown in the example below.<br />
+<br />
+interfaces {<br />
+    ge-0/0/0 {<br />
+        unit 0 {<br />
+            family inet {<br />
+                filter {<br />
+                    input FILTER_INBOUND_TRAFFIC;<br />
+                }<br />
+                address 11.1.12.2/24;<br />
+            }<br />
+        }<br />
+    }<br />
+<br />
+Review inbound filters to verify that the ending term is configured to deny all other traffic that is not explicitly allowed.<br />
+<br />
+firewall {<br />
+    family inet {<br />
+        filter FILTER_INBOUND_TRAFFIC {<br />
+            term ALLOW_BGP {<br />
+                from {<br />
+                    destination-address {<br />
+                        11.1.24.0/24;<br />
+                    }<br />
+                    protocol tcp;<br />
+                    destination-port bgp;<br />
+                }<br />
+                then accept;<br />
+            }<br />
+            …<br />
+            …<br />
+            …<br />
+            term ALLOW_XYZ {<br />
+                from {<br />
+                    protocol xyz;<br />
+                }<br />
+                then accept;<br />
+            }<br />
+            term DENY_ALL_OTHER {<br />
+                then {<br />
+                    syslog;<br />
+                    discard;<br />
+                }<br />
+            }<br />
+        }<br />
+<br />
+If the filter is not configured to allow specific ports and protocols and deny all other traffic, this is a finding.<br />
+<br />
+If the filter is not configured inbound on all external interfaces, this is a finding.</p><h2>Vulnerability Number</h2><p>V-217029</p><h2>Documentable</h2><p>False</p><h2>Rule Version</h2><p>JUNI-RT-000240</p><h2>Severity Override Guidance</h2><p>This requirement is not applicable for the DoDIN Backbone.<br />
+<br />
+Review the router configuration to verify that the inbound filter applied to all external interfaces is configured to allow specific ports and protocols and deny all other traffic.<br />
+<br />
+Verify that an inbound filter is applied to all external interfaces as shown in the example below.<br />
+<br />
+interfaces {<br />
+    ge-0/0/0 {<br />
+        unit 0 {<br />
+            family inet {<br />
+                filter {<br />
+                    input FILTER_INBOUND_TRAFFIC;<br />
+                }<br />
+                address 11.1.12.2/24;<br />
+            }<br />
+        }<br />
+    }<br />
+<br />
+Review inbound filters to verify that the ending term is configured to deny all other traffic that is not explicitly allowed.<br />
+<br />
+firewall {<br />
+    family inet {<br />
+        filter FILTER_INBOUND_TRAFFIC {<br />
+            term ALLOW_BGP {<br />
+                from {<br />
+                    destination-address {<br />
+                        11.1.24.0/24;<br />
+                    }<br />
+                    protocol tcp;<br />
+                    destination-port bgp;<br />
+                }<br />
+                then accept;<br />
+            }<br />
+            …<br />
+            …<br />
+            …<br />
+            term ALLOW_XYZ {<br />
+                from {<br />
+                    protocol xyz;<br />
+                }<br />
+                then accept;<br />
+            }<br />
+            term DENY_ALL_OTHER {<br />
+                then {<br />
+                    syslog;<br />
+                    discard;<br />
+                }<br />
+            }<br />
+        }<br />
+<br />
+If the filter is not configured to allow specific ports and protocols and deny all other traffic, this is a finding.<br />
+<br />
+If the filter is not configured inbound on all external interfaces, this is a finding.</p><h2>Check Content Reference</h2><p>M</p><h2>Target Key</h2><p>4032</p></body></html>

@@ -1,0 +1,23 @@
+<!doctype html><html lang="en"><head><meta charset="utf-8"><title>STIGQter: STIG Check Details: SV-214045r961047_rule: When using command-line tools such as SQLCMD in a mixed-mode authentication environment, users must use a logon method that does not expose the password.</title><link rel="icon" type="image/svg+xml" href="STIGQter.svg" /><script async src="https://www.googletagmanager.com/gtag/js?id=UA-31381839-2"></script><script src="include.js"></script><script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-4110907817782130" crossorigin="anonymous"></script></head><body><div><img src="STIGQter.svg" alt="STIGQter" style="height:1em;" /> <a href="https://www.stigqter.com/">STIGQter</a>: <a href="main.html">STIG Summary</a>: <a href="U_MS_SQL_Server_2016_Instance_STIG_V3R6_Manual-xccdf.html">MS SQL Server 2016 Instance Security Technical Implementation Guide Version: 3 Release: 6 Benchmark Date: 05 Jan 2026</a>:</div> <h1>When using command-line tools such as SQLCMD in a mixed-mode authentication environment, users must use a logon method that does not expose the password.</h1><h2>DISA Rule</h2><p>SV-214045r961047_rule</p><h2>Vulnerability Number</h2><p>V-214045</p><h2>Group Title</h2><p>SRG-APP-000178-DB-000083</p><h2>Rule Version</h2><p>SQL6-D0-018100</p><h2>Severity</h2><p>CAT I</p><h2>CCI(s)</h2><ul><li>CCI-000206 - Obscure feedback of authentication information during the authentication process to protect the information from possible exploitation and use by unauthorized individuals.</li></ul><h2>Weight</h2><p>10</p><h2>Fix Recommendation</h2><p>Where possible, change the login mode to Windows-only:<br />
+USE [master]<br />
+GO<br />
+EXEC xp_instance_regwrite N'HKEY_LOCAL_MACHINE', N'Software\Microsoft\MSSQLServer\MSSQLServer', N'LoginMode', REG_DWORD, 1;<br />
+GO<br />
+<br />
+If mixed-mode authentication is necessary, then for SQLCMD, which cannot be configured not to accept a plain-text password when mixed-mode authentication is enabled, and any other essential tool with the same limitation:<br />
+1) Document the need for it, who uses it, and any relevant mitigations, and obtain AO approval.<br />
+2) Train all users of the tool in the importance of not using the plain-text password option and in how to keep the password hidden.</p><h2>Check Contents</h2><p>Run this query to determine whether SQL Server authentication is enabled:<br />
+EXEC master.sys.xp_loginconfig 'login mode'; <br />
+<br />
+If the config_value returned is &quot;Windows NT Authentication&quot;, this is not a finding.<br />
+<br />
+For SQLCMD, which cannot be configured not to accept a plain-text password, and any other essential tool with the same limitation, verify that the system documentation explains the need for the tool, who uses it, and any relevant mitigations; and that AO approval has been obtained; if not, this is a finding.<br />
+<br />
+Request evidence that all users of the tool are trained in the importance of not using the plain-text password option and in how to keep the password hidden; and that they adhere to this practice; if not, this is a finding.</p><h2>Vulnerability Number</h2><p>V-214045</p><h2>Documentable</h2><p>False</p><h2>Rule Version</h2><p>SQL6-D0-018100</p><h2>Severity Override Guidance</h2><p>Run this query to determine whether SQL Server authentication is enabled:<br />
+EXEC master.sys.xp_loginconfig 'login mode'; <br />
+<br />
+If the config_value returned is &quot;Windows NT Authentication&quot;, this is not a finding.<br />
+<br />
+For SQLCMD, which cannot be configured not to accept a plain-text password, and any other essential tool with the same limitation, verify that the system documentation explains the need for the tool, who uses it, and any relevant mitigations; and that AO approval has been obtained; if not, this is a finding.<br />
+<br />
+Request evidence that all users of the tool are trained in the importance of not using the plain-text password option and in how to keep the password hidden; and that they adhere to this practice; if not, this is a finding.</p><h2>Check Content Reference</h2><p>M</p><h2>Target Key</h2><p>3993</p></body></html>

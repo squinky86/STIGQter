@@ -1,0 +1,78 @@
+<!doctype html><html lang="en"><head><meta charset="utf-8"><title>STIGQter: STIG Check Details: SV-256508r958472_rule: The Photon operating system must require authentication upon booting into single-user and maintenance modes.</title><link rel="icon" type="image/svg+xml" href="STIGQter.svg" /><script async src="https://www.googletagmanager.com/gtag/js?id=UA-31381839-2"></script><script src="include.js"></script><script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-4110907817782130" crossorigin="anonymous"></script></head><body><div><img src="STIGQter.svg" alt="STIGQter" style="height:1em;" /> <a href="https://www.stigqter.com/">STIGQter</a>: <a href="main.html">STIG Summary</a>: <a href="U_VMW_vSphere_7-0_vCA_Photon_OS_STIG_V1R4_Manual-xccdf.html">VMware vSphere 7.0 vCenter Appliance Photon OS Security Technical Implementation Guide Version: 1 Release: 4 Benchmark Date: 30 Jan 2025</a>:</div> <h1>The Photon operating system must require authentication upon booting into single-user and maintenance modes.</h1><h2>DISA Rule</h2><p>SV-256508r958472_rule</p><h2>Vulnerability Number</h2><p>V-256508</p><h2>Group Title</h2><p>SRG-OS-000080-GPOS-00048</p><h2>Rule Version</h2><p>PHTN-30-000031</p><h2>Severity</h2><p>CAT I</p><h2>CCI(s)</h2><ul><li>CCI-000213 - Enforce approved authorizations for logical access to information and system resources in accordance with applicable access control policies.</li></ul><h2>Weight</h2><p>10</p><h2>Fix Recommendation</h2><p>At the command line, run the following command:<br />
+<br />
+# grub2-mkpasswd-pbkdf2<br />
+<br />
+Enter a secure password and ensure this password is stored for break-glass situations. The vCenter root account cannot be recovered without knowing this separate password. Copy the resulting encrypted string.<br />
+<br />
+An example string is below:<br />
+<br />
+grub.pbkdf2.sha512.10000.983A13DF3C51BB2B5130F0B86DDBF0DEA1AAF766BD1F16B7840F79CE3E35494C4B99F505C99C150071E563DF1D7FE1F45456D5960C4C79DAB6C49298B02A5558.5B2C49E12D43CC5A876F6738462DE4EFC24939D4BE486CDB72CFBCD87FDE93FBAFCB817E01B90F23E53C2502C3230502BC3113BE4F80B0AFC0EE956E735F7F86<br />
+<br />
+Navigate to and open:<br />
+<br />
+/boot/grub2/grub.cfg<br />
+<br />
+Find the line that begins with &quot;set rootpartition&quot;. Below this line, paste the following on its own line:<br />
+<br />
+set superusers=&quot;root&quot;<br />
+<br />
+Below this, paste the following, substituting the encrypted string from the steps above:<br />
+<br />
+password_pbkdf2 root &lt;YOUR-LONG-STRING-FROM-ABOVE&gt;<br />
+<br />
+Photon ships with one menuentry block by default. Copy that entire block and paste it right below itself. <br />
+<br />
+Example: <br />
+menuentry &quot;Photon&quot; {<br />
+    linux &quot;/&quot;$photon_linux root=$rootpartition net.ifnames=0 $photon_cmdline coredump_filter=0x37 consoleblank=0<br />
+    if [ &quot;$photon_initrd&quot; ]; then<br />
+        initrd &quot;/&quot;$photon_initrd<br />
+    fi<br />
+}<br />
+menuentry &quot;Photon&quot; {<br />
+    linux &quot;/&quot;$photon_linux root=$rootpartition net.ifnames=0 $photon_cmdline coredump_filter=0x37 consoleblank=0<br />
+    if [ &quot;$photon_initrd&quot; ]; then<br />
+        initrd &quot;/&quot;$photon_initrd<br />
+    fi<br />
+}<br />
+<br />
+Modify the first menuentry block to add the &quot;--unrestricted&quot; option as follows:<br />
+<br />
+menuentry &quot;Photon&quot; --unrestricted {<br />
+<br />
+Modify the second menuentry block to add the allowed user as follows:<br />
+<br />
+menuentry &quot;Recover Photon&quot; --users root {<br />
+<br />
+This concludes the fix. To verify, here is an example grub.cfg snippet:<br />
+<br />
+...<br />
+set rootpartition=PARTUUID=326e5b0f-42fb-471a-8209-18964c4a2ed3<br />
+set superusers=&quot;root&quot;<br />
+password_pbkdf2 root grub.pbkdf2.sha512.10000.983A13DF3C51BB2B5130F0B86DDBF0DEA1AAF766BD1F16B7840F79CE3E35494C4B99F505C99C150071E563DF1D7FE1F45456D5960C4C79DAB6C49298B02A5558.5B2C49E12D43CC5A876F6738462DE4EFC24939D4BE486CDB72CFBCD87FDE93FBAFCB817E01B90F23E53C2502C3230502BC3113BE4F80B0AFC0EE956E735F7F86<br />
+<br />
+menuentry &quot;Photon&quot; --unrestricted {<br />
+    linux &quot;/&quot;$photon_linux root=$rootpartition net.ifnames=0 $photon_cmdline coredump_filter=0x37 consoleblank=0<br />
+    if [ &quot;$photon_initrd&quot; ]; then<br />
+        initrd &quot;/&quot;$photon_initrd<br />
+    fi<br />
+}<br />
+<br />
+menuentry &quot;Recover Photon&quot; --users root {<br />
+    linux &quot;/&quot;$photon_linux root=$rootpartition net.ifnames=0 $photon_cmdline coredump_filter=0x37 consoleblank=0<br />
+    if [ &quot;$photon_initrd&quot; ]; then<br />
+        initrd &quot;/&quot;$photon_initrd<br />
+    fi<br />
+}</p><h2>Check Contents</h2><p>At the command line, run the following command:<br />
+<br />
+# grep -i ^password_pbkdf2 /boot/grub2/grub.cfg<br />
+<br />
+If there is not output, this is a finding.<br />
+<br />
+If the output does not begin with &quot;password_pbkdf2 root&quot;, this is a finding.</p><h2>Vulnerability Number</h2><p>V-256508</p><h2>Documentable</h2><p>False</p><h2>Rule Version</h2><p>PHTN-30-000031</p><h2>Severity Override Guidance</h2><p>At the command line, run the following command:<br />
+<br />
+# grep -i ^password_pbkdf2 /boot/grub2/grub.cfg<br />
+<br />
+If there is not output, this is a finding.<br />
+<br />
+If the output does not begin with &quot;password_pbkdf2 root&quot;, this is a finding.</p><h2>Check Content Reference</h2><p>M</p><h2>Target Key</h2><p>5520</p></body></html>

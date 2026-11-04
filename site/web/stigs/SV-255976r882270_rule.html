@@ -1,0 +1,56 @@
+<!doctype html><html lang="en"><head><meta charset="utf-8"><title>STIGQter: STIG Check Details: SV-255976r882270_rule: The Arista MLS layer 2 switch must have IGMP or MLD Snooping configured on all VLANs.</title><link rel="icon" type="image/svg+xml" href="STIGQter.svg" /><script async src="https://www.googletagmanager.com/gtag/js?id=UA-31381839-2"></script><script src="include.js"></script><script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-4110907817782130" crossorigin="anonymous"></script></head><body><div><img src="STIGQter.svg" alt="STIGQter" style="height:1em;" /> <a href="https://www.stigqter.com/">STIGQter</a>: <a href="main.html">STIG Summary</a>: <a href="U_Arista_MLS_EOS_4-X_L2S_STIG_V2R3_Manual-xccdf.html">Arista MLS EOS 4.X L2S Security Technical Implementation Guide Version: 2 Release: 3 Benchmark Date: 02 Jul 2025</a>:</div> <h1>The Arista MLS layer 2 switch must have IGMP or MLD Snooping configured on all VLANs.</h1><h2>DISA Rule</h2><p>SV-255976r882270_rule</p><h2>Vulnerability Number</h2><p>V-255976</p><h2>Group Title</h2><p>SRG-NET-000512-L2S-000002</p><h2>Rule Version</h2><p>ARST-L2-000130</p><h2>Severity</h2><p>CAT III</p><h2>CCI(s)</h2><ul><li>CCI-000366 - Implement the security configuration settings.</li></ul><h2>Weight</h2><p>10</p><h2>Fix Recommendation</h2><p>Configure the Arista MLS switch for IGMP snooping for IPv4 and IPv6 multicast traffic for each VLAN.<br />
+<br />
+Configure the Arista MLS switch for IP PIM, which also enables IGMP on an Arista MLS switch VLAN or interface, by using the following command:<br />
+<br />
+switch(config)#int vlan8<br />
+   ip igmp<br />
+   pim ipv4 sparse-mode<br />
+   pim ipv6 sparse-mode<br />
+switch(config)#exit<br />
+!<br />
+<br />
+Arista MLS switch alternative configuration for MLD snooping on an interface for version 1 and 2. Version 2 is the default MLD version.<br />
+<br />
+switch(config)# mld snooping<br />
+switch(config-mld-snooping)# vlan 200<br />
+!</p><h2>Check Contents</h2><p>Review the Arista MLS switch configuration to verify that IGMP or MLD snooping has been configured.<br />
+<br />
+Determine which snooping feature is used.<br />
+<br />
+For IGMP:<br />
+Verify the PIM that also enables IGMP on an Arista MLS switch VLAN interface by using the &quot;sh run interface vlan8&quot; command:<br />
+<br />
+switch(config)#sh run int vlan8<br />
+interface VLAN8<br />
+   ip igmp<br />
+   pim ipv4 sparse-mode<br />
+switch(config)#exit<br />
+<br />
+For MLD:<br />
+Verify the Arista MLS switch is configured for MLD snooping on an interface for version 1 and 2. Version 2 is the default MLD version.<br />
+<br />
+switch#sh run | section mld<br />
+ mld snooping<br />
+   vlan 200<br />
+<br />
+If the Arista switch is not configured to implement IGMP or MLD snooping for each VLAN, this is a finding.</p><h2>Vulnerability Number</h2><p>V-255976</p><h2>Documentable</h2><p>False</p><h2>Rule Version</h2><p>ARST-L2-000130</p><h2>Severity Override Guidance</h2><p>Review the Arista MLS switch configuration to verify that IGMP or MLD snooping has been configured.<br />
+<br />
+Determine which snooping feature is used.<br />
+<br />
+For IGMP:<br />
+Verify the PIM that also enables IGMP on an Arista MLS switch VLAN interface by using the &quot;sh run interface vlan8&quot; command:<br />
+<br />
+switch(config)#sh run int vlan8<br />
+interface VLAN8<br />
+   ip igmp<br />
+   pim ipv4 sparse-mode<br />
+switch(config)#exit<br />
+<br />
+For MLD:<br />
+Verify the Arista MLS switch is configured for MLD snooping on an interface for version 1 and 2. Version 2 is the default MLD version.<br />
+<br />
+switch#sh run | section mld<br />
+ mld snooping<br />
+   vlan 200<br />
+<br />
+If the Arista switch is not configured to implement IGMP or MLD snooping for each VLAN, this is a finding.</p><h2>Check Content Reference</h2><p>M</p><h2>Target Key</h2><p>5512</p></body></html>

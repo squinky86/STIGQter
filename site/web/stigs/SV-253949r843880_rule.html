@@ -1,0 +1,128 @@
+<!doctype html><html lang="en"><head><meta charset="utf-8"><title>STIGQter: STIG Check Details: SV-253949r843880_rule: The Juniper EX switch must be configured to uniquely identify all network-connected endpoint devices before establishing any connection.</title><link rel="icon" type="image/svg+xml" href="STIGQter.svg" /><script async src="https://www.googletagmanager.com/gtag/js?id=UA-31381839-2"></script><script src="include.js"></script><script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-4110907817782130" crossorigin="anonymous"></script></head><body><div><img src="STIGQter.svg" alt="STIGQter" style="height:1em;" /> <a href="https://www.stigqter.com/">STIGQter</a>: <a href="main.html">STIG Summary</a>: <a href="U_Juniper_EX_Switches_L2S_STIG_V2R5_Manual-xccdf.html">Juniper EX Series Switches Layer 2 Switch Security Technical Implementation Guide Version: 2 Release: 5 Benchmark Date: 01 Jul 2026</a>:</div> <h1>The Juniper EX switch must be configured to uniquely identify all network-connected endpoint devices before establishing any connection.</h1><h2>DISA Rule</h2><p>SV-253949r843880_rule</p><h2>Vulnerability Number</h2><p>V-253949</p><h2>Group Title</h2><p>SRG-NET-000148-L2S-000015</p><h2>Rule Version</h2><p>JUEX-L2-000020</p><h2>Severity</h2><p>CAT I</p><h2>CCI(s)</h2><ul><li>CCI-000778 - Uniquely identify organization-defined devices and/or types of devices before establishing a local, remote, and/or network connection.</li></ul><h2>Weight</h2><p>10</p><h2>Fix Recommendation</h2><p>Configure 802.1 x authentication on all host-facing access interfaces. To authenticate those devices that do not support an 802.1x supplicant, Static MAC Bypass or MAC RADIUS must be configured.<br />
+<br />
+Configure RADIUS if available:<br />
+set access radius-server &lt;RADIUS IPv4 or IPv6 address&gt; secret &quot;&lt;PSK&gt;&quot;<br />
+set access profile dot1x_radius radius authentication-server &lt;RADIUS IPv4 or IPv6 address&gt;<br />
+-or-<br />
+set access profile dot1x_radius radius-server &lt;RADIUS IPv4 or IPv6 address&gt; secret &quot;&lt;PSK&gt;&quot;<br />
+<br />
+set access profile dot1x_radius authentication-order radius<br />
+<br />
+To configure 802.1x on an access interface:<br />
+set protocols dot1x authenticator authentication-profile-name dot1x_radius<br />
+set protocols dot1x authenticator interface &lt;name&gt;.&lt;logical unit&gt; supplicant single-secure<br />
+--or--<br />
+set protocols dot1x authenticator interface &lt;name&gt;.&lt;logical unit&gt; supplicant multiple<br />
+--or--<br />
+set protocols dot1x authenticator interface &lt;name&gt;.&lt;logical unit&gt; supplicant multiple<br />
+set protocols dot1x authenticator interface &lt;name&gt;.&lt;logical unit&gt; mac-radius<br />
+set protocols dot1x authenticator interface &lt;name&gt;.&lt;logical unit&gt; mac-radius restrict<br />
+Note: Configure the &quot;restrict&quot; keyword if the connected device does not support a supplicant. Although a non 802.1x aware client will use MAC RADIUS if configured, without the &quot;restrict&quot; keyword 802.1x authentication is attempted before attempting MAC RADIUS, which increases the time the device must wait before gaining network access.<br />
+<br />
+To configure Static MAC Bypass:<br />
+set protocols dot1x authenticator static &lt;MAC address&gt;/48 vlan-assignment &lt;vlan name&gt;<br />
+set protocols dot1x authenticator static &lt;MAC address&gt;/48 interface &lt;interface name&gt;.&lt;logical unit&gt;</p><h2>Check Contents</h2><p>Verify the switch configuration has 802.1x authentication implemented for all access interfaces connecting to LAN outlets (i.e., RJ-45 wall plates) or devices not located in the telecom room, wiring closets, or equipment rooms. Static MAC Bypass or MAC RADIUS must be configured on  access interfaces connected to devices that do not support an 802.1x supplicant. Junos supports three supplicant types: 'single-secure' (authenticate and permit only a single device), 'multiple' (separately authenticate and permit multiple devices), and 'single' (authenticate the first supplicant and permit all others).<br />
+<br />
+Verify that the RADIUS server(s) are configured. RADIUS servers can be configured globally at [edit access radius-server] or defined for each group.<br />
+[edit access]<br />
+radius-server {<br />
+    &lt;RADIUS IPv4 or IPv6 address&gt; secret &quot;PSK&quot;; ## SECRET-DATA<br />
+}<br />
+profile dot1x_radius {<br />
+    authentication-order radius;<br />
+    radius {<br />
+        authentication-server &lt;RADIUS IPv4 or IPv6 address&gt;;<br />
+    }<br />
+--or--<br />
+    radius-server {<br />
+        &lt;RADIUS IPv4 or IPv6 address&gt; secret &quot;PSK&quot;; ## SECRET-DATA<br />
+    }<br />
+}<br />
+<br />
+Verify 802.1x or MAC RADIUS is configured on all host-facing access interfaces when RADIUS is available as shown in the following example:<br />
+[edit protocols dot1x]<br />
+authenticator {<br />
+    authentication-profile-name dot1x_radius;<br />
+    interface {<br />
+        ge-0/0/0.0 {  &lt;&lt;&lt; Connected device with 802.1x supplicant<br />
+            supplicant single-secure;<br />
+        }<br />
+        ge-0/0/1.0 {  &lt;&lt;&lt; Connected device with 802.1x supplicant and interface support for MAC RADIUS<br />
+            supplicant multiple;<br />
+            mac-radius;<br />
+        }<br />
+        ge-0/0/2.0 {  &lt;&lt;&lt; Connected device without 802.1x supplicant<br />
+            mac-radius {<br />
+                restrict;<br />
+            }<br />
+        }<br />
+    }<br />
+}<br />
+Note: Junos simultaneously supports both 802.1x and MAC RADIUS on the same access interface. To prevent 802.1x and have the interface use only MAC RADIUS, configure the &quot;restrict&quot; qualifier.<br />
+<br />
+If RADIUS is unavailable or not configured:<br />
+[edit protocols]<br />
+dot1x {<br />
+    authenticator {<br />
+        static {<br />
+           &lt;MAC address&gt;/48 {<br />
+                vlan-assignment &lt;vlan name&gt;;<br />
+                interface &lt;interface name&gt;.&lt;logical unit&gt;;<br />
+            }<br />
+        }<br />
+    }<br />
+}<br />
+<br />
+If the switch does not uniquely identify all network-connected endpoint devices before establishing any connection for access interfaces connecting to LAN outlets or devices not located in the telecom room, wiring closets, or equipment rooms, this is a finding.</p><h2>Vulnerability Number</h2><p>V-253949</p><h2>Documentable</h2><p>False</p><h2>Rule Version</h2><p>JUEX-L2-000020</p><h2>Severity Override Guidance</h2><p>Verify the switch configuration has 802.1x authentication implemented for all access interfaces connecting to LAN outlets (i.e., RJ-45 wall plates) or devices not located in the telecom room, wiring closets, or equipment rooms. Static MAC Bypass or MAC RADIUS must be configured on  access interfaces connected to devices that do not support an 802.1x supplicant. Junos supports three supplicant types: 'single-secure' (authenticate and permit only a single device), 'multiple' (separately authenticate and permit multiple devices), and 'single' (authenticate the first supplicant and permit all others).<br />
+<br />
+Verify that the RADIUS server(s) are configured. RADIUS servers can be configured globally at [edit access radius-server] or defined for each group.<br />
+[edit access]<br />
+radius-server {<br />
+    &lt;RADIUS IPv4 or IPv6 address&gt; secret &quot;PSK&quot;; ## SECRET-DATA<br />
+}<br />
+profile dot1x_radius {<br />
+    authentication-order radius;<br />
+    radius {<br />
+        authentication-server &lt;RADIUS IPv4 or IPv6 address&gt;;<br />
+    }<br />
+--or--<br />
+    radius-server {<br />
+        &lt;RADIUS IPv4 or IPv6 address&gt; secret &quot;PSK&quot;; ## SECRET-DATA<br />
+    }<br />
+}<br />
+<br />
+Verify 802.1x or MAC RADIUS is configured on all host-facing access interfaces when RADIUS is available as shown in the following example:<br />
+[edit protocols dot1x]<br />
+authenticator {<br />
+    authentication-profile-name dot1x_radius;<br />
+    interface {<br />
+        ge-0/0/0.0 {  &lt;&lt;&lt; Connected device with 802.1x supplicant<br />
+            supplicant single-secure;<br />
+        }<br />
+        ge-0/0/1.0 {  &lt;&lt;&lt; Connected device with 802.1x supplicant and interface support for MAC RADIUS<br />
+            supplicant multiple;<br />
+            mac-radius;<br />
+        }<br />
+        ge-0/0/2.0 {  &lt;&lt;&lt; Connected device without 802.1x supplicant<br />
+            mac-radius {<br />
+                restrict;<br />
+            }<br />
+        }<br />
+    }<br />
+}<br />
+Note: Junos simultaneously supports both 802.1x and MAC RADIUS on the same access interface. To prevent 802.1x and have the interface use only MAC RADIUS, configure the &quot;restrict&quot; qualifier.<br />
+<br />
+If RADIUS is unavailable or not configured:<br />
+[edit protocols]<br />
+dot1x {<br />
+    authenticator {<br />
+        static {<br />
+           &lt;MAC address&gt;/48 {<br />
+                vlan-assignment &lt;vlan name&gt;;<br />
+                interface &lt;interface name&gt;.&lt;logical unit&gt;;<br />
+            }<br />
+        }<br />
+    }<br />
+}<br />
+<br />
+If the switch does not uniquely identify all network-connected endpoint devices before establishing any connection for access interfaces connecting to LAN outlets or devices not located in the telecom room, wiring closets, or equipment rooms, this is a finding.</p><h2>Check Content Reference</h2><p>M</p><h2>Target Key</h2><p>5478</p></body></html>

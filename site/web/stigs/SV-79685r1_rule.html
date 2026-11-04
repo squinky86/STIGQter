@@ -1,0 +1,83 @@
+<!doctype html><html lang="en"><head><meta charset="utf-8"><title>STIGQter: STIG Check Details: SV-79685r1_rule: The DataPower Gateway providing user access control intermediary services must display the Standard Mandatory DoD-approved Notice and Consent Banner before granting access to the network.</title><link rel="icon" type="image/svg+xml" href="STIGQter.svg" /><script async src="https://www.googletagmanager.com/gtag/js?id=UA-31381839-2"></script><script src="include.js"></script><script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-4110907817782130" crossorigin="anonymous"></script></head><body><div><img src="STIGQter.svg" alt="STIGQter" style="height:1em;" /> <a href="https://www.stigqter.com/">STIGQter</a>: <a href="main.html">STIG Summary</a>: <a href="U_IBM_DataPower_ALG_STIG_V1R1_Manual-xccdf.html">IBM DataPower ALG Security Technical Implementation Guide Version: 1 Release: 1 Benchmark Date: 25 Jan 2016</a>:</div> <h1>The DataPower Gateway providing user access control intermediary services must display the Standard Mandatory DoD-approved Notice and Consent Banner before granting access to the network.</h1><h2>DISA Rule</h2><p>SV-79685r1_rule</p><h2>Vulnerability Number</h2><p>V-65195</p><h2>Group Title</h2><p>SRG-NET-000041-ALG-000022</p><h2>Rule Version</h2><p>WSDP-AG-000011</p><h2>Severity</h2><p>CAT II</p><h2>CCI(s)</h2><ul><li>CCI-000048 - Display an organization-defined system use notification message or banner to users before granting access to the system that provides privacy and security notices consistent with applicable federal laws, Executive Orders, directives, policies, regulations, standards, and guidelines.</li></ul><h2>Weight</h2><p>10</p><h2>Fix Recommendation</h2><p>Copy the User Interface (UI) Configuration Template to a new text file on the local operating system named &quot;ui-customization.xml&quot;. Content: &lt;User-Interface<br />
+xmlns=&quot;http://www.datapower.com/schemas/user-interface/1.0&quot;&gt;<br />
+ <br />
+&lt;!-- Markup for the prompt extension to command line interface &gt;&gt;<br />
+ &lt;CustomPrompt&gt;%s&lt;/CustomPrompt&gt;<br />
+<br />
+&lt;!-- Markup for custom messages for the WebGUI interface &gt;&gt;<br />
+&lt;MarkupBanner type=&quot;pre-login&quot; foreground-color=&quot;red&quot; background-color=&quot;blue&quot;&gt;<br />
+WebGUI pre-login message<br />
+&lt;/MarkupBanner&gt;<br />
+&lt;MarkupBanner type=&quot;post-login&quot; foreground-color=&quot;blue&quot; background-color=&quot;yellow&quot;&gt;<br />
+WebGUI post-login pop up message<br />
+&lt;/MarkupBanner&gt;<br />
+&lt;MarkupBanner type=&quot;system-banner&quot; location=&quot;header&quot; foreground-color=&quot;green&quot;<br />
+background-color=&quot;red&quot;&gt;<br />
+WebGUI system message - header<br />
+&lt;/MarkupBanner&gt;<br />
+&lt;MarkupBanner type=&quot;system-banner&quot; location=&quot;footer&quot; foreground-color=&quot;blue&quot;<br />
+background-color=&quot;yellow&quot;&gt;<br />
+WebGUI system message - footer<br />
+&lt;/MarkupBanner&gt;<br />
+ <br />
+ &lt;!-- If the following markup was outside of comments, the file would not conform to the schema. Cannot define multiple system messages as the header or footer. &gt;&gt;<br />
+&lt;MarkupBanner type=&quot;system-banner&quot;&gt;<br />
+WebGUI system message - header and footer<br />
+&lt;/MarkupBanner&gt;<br />
+<br />
+&lt;!-- Markup for custom messages for the command line interface &gt;&gt;<br />
+&lt;TextBanner type=&quot;pre-login&quot;&gt;<br />
+Command line pre-login message<br />
+&lt;/TextBanner&gt;<br />
+&lt;TextBanner type=&quot;post-login&quot;&gt;<br />
+Command line post-login message<br />
+&lt;/TextBanner&gt;<br />
+&lt;TextBanner type=&quot;system-banner&quot;&gt;<br />
+Command line system message<br />
+&lt;/TextBanner&gt;<br />
+&lt;/User-Interface&gt;<br />
+<br />
+Upload the User Interface Customization Template: Privileged account user log on to default domain &gt;&gt; Control Panel &gt;&gt; File Management &gt;&gt; Click &quot;local:&quot; &gt;&gt; Click &quot;Actions...&quot; link corresponding to &quot;local:&quot; &gt;&gt; Click &quot;Upload Files&quot; &gt;&gt; Click &quot;Browse&quot; button &gt;&gt; Select the previously saved &quot;ui-customization.xml&quot; file from the local operating system &gt;&gt; Click &quot;Open&quot; &gt;&gt; Click the &quot;Upload&quot; button&quot; &gt;&gt; Click the &quot;Continue&quot; button.<br />
+<br />
+Edit the &quot;ui-customization.xml&quot; file: Click &quot;refresh page&quot; &gt;&gt; Click &quot;local:&quot; &gt;&gt; Click the &quot;Edit&quot; link corresponding to &quot;ui-customization.xml&quot; &gt;&gt; Click the &quot;Edit&quot; button &gt;&gt; Locate the XML Stanza named &quot;MarkupBanner&quot; and 'type=&quot;pre-login&quot;' &gt;&gt; Replace the text &quot;WebGUI pre-login message&quot; with the text of the Standard Mandatory DoD Notice and Consent Banner:<br />
+<br />
+&quot;You are accessing a U.S. Government (USG) Information System (IS) that is provided for USG-authorized use only.<br />
+<br />
+By using this IS (which includes any device attached to this IS), you consent to the following conditions:<br />
+-The USG routinely intercepts and monitors communications on this IS for purposes including, but not limited to, penetration testing, COMSEC monitoring, network operations and defense, personnel misconduct (PM), law enforcement (LE), and counterintelligence (CI) investigations.<br />
+-At any time, the USG may inspect and seize data stored on this IS.<br />
+-Communications using, or data stored on, this IS are not private, are subject to routine monitoring, interception, and search, and may be disclosed or used for any USG-authorized purpose.<br />
+-This IS includes security measures (e.g., authentication and access controls) to protect USG interests--not for your personal benefit or privacy.<br />
+-Notwithstanding the above, using this IS does not constitute consent to PM, LE or CI investigative searching or monitoring of the content of privileged communications, or work product, related to personal representation or services by attorneys, psychotherapists, or clergy, and their assistants. Such communications and work product are private and confidential. See User Agreement for details.&quot;<br />
+<br />
+&gt;&gt; Locate the XML Stanza named &quot;TextBanner&quot; and 'type=&quot;pre-login&quot;' &gt;&gt; Replace the text &quot;Command line pre-login message&quot; with the text of the Standard Mandatory DoD Notice and Consent Banner: &quot;I've read &amp; consent to terms in IS user agreem't.&quot; &gt;&gt; Click the &quot;Submit&quot; button.<br />
+<br />
+Configure the IBM DataPower Gateway to use the customized User Interface Customization file: Administration &gt;&gt; Device &gt;&gt; System Settings &gt;&gt; Scroll to &quot;Custom user interface file&quot; section at the bottom of the page and select &quot;ui-customization.xml&quot; from the drop-down list &gt;&gt; Scroll to top of the page &gt;&gt; Click &quot;Apply&quot; &gt;&gt; Click &quot;Save Configuration&quot;.<br />
+<br />
+Log out of the appliance.</p><h2>Check Contents</h2><p>Privileged user opens browser and navigates to the DataPower logon page.<br />
+<br />
+Confirm that the logon page displays the Standard Mandatory DoD Notice and Consent Banner:<br />
+<br />
+&quot;You are accessing a U.S. Government (USG) Information System (IS) that is provided for USG-authorized use only.<br />
+<br />
+By using this IS (which includes any device attached to this IS), you consent to the following conditions:<br />
+-The USG routinely intercepts and monitors communications on this IS for purposes including, but not limited to, penetration testing, COMSEC monitoring, network operations and defense, personnel misconduct (PM), law enforcement (LE), and counterintelligence (CI) investigations.<br />
+-At any time, the USG may inspect and seize data stored on this IS.<br />
+-Communications using, or data stored on, this IS are not private, are subject to routine monitoring, interception, and search, and may be disclosed or used for any USG-authorized purpose.<br />
+-This IS includes security measures (e.g., authentication and access controls) to protect USG interests--not for your personal benefit or privacy.<br />
+-Notwithstanding the above, using this IS does not constitute consent to PM, LE or CI investigative searching or monitoring of the content of privileged communications, or work product, related to personal representation or services by attorneys, psychotherapists, or clergy, and their assistants. Such communications and work product are private and confidential. See User Agreement for details.&quot;<br />
+<br />
+If the standard banner is not displayed, this is a finding.</p><h2>Vulnerability Number</h2><p>V-65195</p><h2>Documentable</h2><p>False</p><h2>Rule Version</h2><p>WSDP-AG-000011</p><h2>Severity Override Guidance</h2><p>Privileged user opens browser and navigates to the DataPower logon page.<br />
+<br />
+Confirm that the logon page displays the Standard Mandatory DoD Notice and Consent Banner:<br />
+<br />
+&quot;You are accessing a U.S. Government (USG) Information System (IS) that is provided for USG-authorized use only.<br />
+<br />
+By using this IS (which includes any device attached to this IS), you consent to the following conditions:<br />
+-The USG routinely intercepts and monitors communications on this IS for purposes including, but not limited to, penetration testing, COMSEC monitoring, network operations and defense, personnel misconduct (PM), law enforcement (LE), and counterintelligence (CI) investigations.<br />
+-At any time, the USG may inspect and seize data stored on this IS.<br />
+-Communications using, or data stored on, this IS are not private, are subject to routine monitoring, interception, and search, and may be disclosed or used for any USG-authorized purpose.<br />
+-This IS includes security measures (e.g., authentication and access controls) to protect USG interests--not for your personal benefit or privacy.<br />
+-Notwithstanding the above, using this IS does not constitute consent to PM, LE or CI investigative searching or monitoring of the content of privileged communications, or work product, related to personal representation or services by attorneys, psychotherapists, or clergy, and their assistants. Such communications and work product are private and confidential. See User Agreement for details.&quot;<br />
+<br />
+If the standard banner is not displayed, this is a finding.</p><h2>Check Content Reference</h2><p>M</p><h2>Target Key</h2><p>2859</p></body></html>

@@ -1,0 +1,17 @@
+<!doctype html><html lang="en"><head><meta charset="utf-8"><title>STIGQter: STIG Check Details: SV-214694r856578_rule: The Juniper SRX Services Gateway VPN must only allow incoming VPN communications from organization-defined authorized sources routed to organization-defined authorized destinations.</title><link rel="icon" type="image/svg+xml" href="STIGQter.svg" /><script async src="https://www.googletagmanager.com/gtag/js?id=UA-31381839-2"></script><script src="include.js"></script><script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-4110907817782130" crossorigin="anonymous"></script></head><body><div><img src="STIGQter.svg" alt="STIGQter" style="height:1em;" /> <a href="https://www.stigqter.com/">STIGQter</a>: <a href="main.html">STIG Summary</a>: <a href="U_Juniper_SRX_SG_VPN_STIG_V3R2_Manual-xccdf.html">Juniper SRX Services Gateway VPN Security Technical Implementation Guide Version: 3 Release: 2 Benchmark Date: 30 Jan 2025</a>:</div> <h1>The Juniper SRX Services Gateway VPN must only allow incoming VPN communications from organization-defined authorized sources routed to organization-defined authorized destinations.</h1><h2>DISA Rule</h2><p>SV-214694r856578_rule</p><h2>Vulnerability Number</h2><p>V-214694</p><h2>Group Title</h2><p>SRG-NET-000364</p><h2>Rule Version</h2><p>JUSX-VN-000027</p><h2>Severity</h2><p>CAT II</p><h2>CCI(s)</h2><ul><li>CCI-002403 - Only allow incoming communications from organization-defined authorized sources routed to organization-defined authorized destinations.</li></ul><h2>Weight</h2><p>10</p><h2>Fix Recommendation</h2><p>The SRX device will route traffic over the IPsec VPN’s secure tunnel interface if there is a route with the next-hop specified as the secure tunnel interface. The following example commands configure an IPv4 and IPv6 static route for their respective secure tunnels.<br />
+<br />
+set routing-options static route &lt;IPv4 network/netmask&gt; next-hop st0.0<br />
+set routing-options rib inet6.0 static route &lt;IPv6 network/mask&gt; next-hop st0.1<br />
+set security policies from-zone untrust to-zone trust policy group-sec-policy then permit tunnel ipsec-vpn groupvpn<br />
+<br />
+Note: For the SRX device to transmit traffic over the IPsec tunnel, you must configure the secure tunnel interface (st0 in this case), associate it with a security zone, and create a static route entry for the remote network’s address space.</p><h2>Check Contents</h2><p>Request documentation of the Juniper SRX configuration drawings to determine which ports are configured for external/outbound traffic. Verify outbound interfaces have been configured with DoS screens.<br />
+<br />
+[edit]<br />
+show security zones &lt;security-zone-name&gt;<br />
+<br />
+If the VPN zone(s) is configured to allow unauthorized/untrusted traffic to unauthorized zones, this is a finding.</p><h2>Vulnerability Number</h2><p>V-214694</p><h2>Documentable</h2><p>False</p><h2>Rule Version</h2><p>JUSX-VN-000027</p><h2>Severity Override Guidance</h2><p>Request documentation of the Juniper SRX configuration drawings to determine which ports are configured for external/outbound traffic. Verify outbound interfaces have been configured with DoS screens.<br />
+<br />
+[edit]<br />
+show security zones &lt;security-zone-name&gt;<br />
+<br />
+If the VPN zone(s) is configured to allow unauthorized/untrusted traffic to unauthorized zones, this is a finding.</p><h2>Check Content Reference</h2><p>M</p><h2>Target Key</h2><p>4009</p></body></html>

@@ -1,0 +1,30 @@
+<!doctype html><html lang="en"><head><meta charset="utf-8"><title>STIGQter: STIG Check Details: SV-213697r960963_rule: Access to external executables must be disabled or restricted.</title><link rel="icon" type="image/svg+xml" href="STIGQter.svg" /><script async src="https://www.googletagmanager.com/gtag/js?id=UA-31381839-2"></script><script src="include.js"></script><script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-4110907817782130" crossorigin="anonymous"></script></head><body><div><img src="STIGQter.svg" alt="STIGQter" style="height:1em;" /> <a href="https://www.stigqter.com/">STIGQter</a>: <a href="main.html">STIG Summary</a>: <a href="U_IBM_DB2_V10-5_LUW_STIG_V2R2_Manual-xccdf.html">IBM DB2 V10.5 LUW Security Technical Implementation Guide Version: 2 Release: 2 Benchmark Date: 01 Jul 2026</a>:</div> <h1>Access to external executables must be disabled or restricted.</h1><h2>DISA Rule</h2><p>SV-213697r960963_rule</p><h2>Vulnerability Number</h2><p>V-213697</p><h2>Group Title</h2><p>SRG-APP-000141-DB-000093</p><h2>Rule Version</h2><p>DB2X-00-003700</p><h2>Severity</h2><p>CAT II</p><h2>CCI(s)</h2><ul><li>CCI-000381 - Configure the system to provide only organization-defined mission essential capabilities.</li></ul><h2>Weight</h2><p>10</p><h2>Fix Recommendation</h2><p>Drop the external routines if these are non-essential for mission objective.<br />
+DB2&gt; DROP FUNCTION &lt;name&gt;<br />
+<br />
+Revoke execute privileges from non-authorized users on external routines. <br />
+DB2&gt; REVOKE EXECUTE ON FUNCTION &lt;FUNCTION1&gt; FROM &lt;USER1&gt;<br />
+<br />
+Note: Select the following link for the knowledgebase information on the DROP statement: <br />
+http://www.ibm.com/support/knowledgecenter/SSEPGG_10.5.0/com.ibm.db2.luw.sql.ref.doc/doc/r0000945.html?cp=SSEPGG_10.5.0%2F2-12-7-129&amp;lang=en</p><h2>Check Contents</h2><p>Use the following SQL Query to find external routines: <br />
+DB2&gt; SELECT ROUTINENAME <br />
+           FROM SYSCAT.ROUTINES <br />
+           WHERE ORIGIN='E' <br />
+<br />
+Use the following command to find out which user has privileges to run the external routines found with last query.<br />
+DB2&gt; SELECT GRANTEE <br />
+           FROM SYSCAT.ROUTINEAUTH <br />
+<br />
+If non-essential routines exist outside the database, this is a finding.<br />
+<br />
+If non-authorized users have privileges on external routines, this is a finding.</p><h2>Vulnerability Number</h2><p>V-213697</p><h2>Documentable</h2><p>False</p><h2>Rule Version</h2><p>DB2X-00-003700</p><h2>Severity Override Guidance</h2><p>Use the following SQL Query to find external routines: <br />
+DB2&gt; SELECT ROUTINENAME <br />
+           FROM SYSCAT.ROUTINES <br />
+           WHERE ORIGIN='E' <br />
+<br />
+Use the following command to find out which user has privileges to run the external routines found with last query.<br />
+DB2&gt; SELECT GRANTEE <br />
+           FROM SYSCAT.ROUTINEAUTH <br />
+<br />
+If non-essential routines exist outside the database, this is a finding.<br />
+<br />
+If non-authorized users have privileges on external routines, this is a finding.</p><h2>Check Content Reference</h2><p>M</p><h2>Target Key</h2><p>3989</p></body></html>

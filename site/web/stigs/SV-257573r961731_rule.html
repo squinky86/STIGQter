@@ -1,0 +1,93 @@
+<!doctype html><html lang="en"><head><meta charset="utf-8"><title>STIGQter: STIG Check Details: SV-257573r961731_rule: The Compliance Operator must be configured.</title><link rel="icon" type="image/svg+xml" href="STIGQter.svg" /><script async src="https://www.googletagmanager.com/gtag/js?id=UA-31381839-2"></script><script src="include.js"></script><script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-4110907817782130" crossorigin="anonymous"></script></head><body><div><img src="STIGQter.svg" alt="STIGQter" style="height:1em;" /> <a href="https://www.stigqter.com/">STIGQter</a>: <a href="main.html">STIG Summary</a>: <a href="U_RH_OpenShift_Container_Platform_4-x_STIG_V2R6_Manual-xccdf.html">Red Hat OpenShift Container Platform 4.x Security Technical Implementation Guide Version: 2 Release: 6 Benchmark Date: 01 Jul 2026</a>:</div> <h1>The Compliance Operator must be configured.</h1><h2>DISA Rule</h2><p>SV-257573r961731_rule</p><h2>Vulnerability Number</h2><p>V-257573</p><h2>Group Title</h2><p>SRG-APP-000472-CTR-001170</p><h2>Rule Version</h2><p>CNTR-OS-000910</p><h2>Severity</h2><p>CAT II</p><h2>CCI(s)</h2><ul><li>CCI-002696 - Verify correct operation of organization-defined security functions.</li></ul><h2>Weight</h2><p>10</p><h2>Fix Recommendation</h2><p>If Red Hat OpenShift Compliance Operator is not used,, this check is Not Applicable.<br />
+<br />
+The compliance operator must be leveraged to ensure that components are configured in alignment with the SSP. Install the Compliance Operator by executing the following:<br />
+<br />
+oc apply -f - &lt;&lt; 'EOF'<br />
+---<br />
+apiVersion: project.openshift.io/v1<br />
+kind: Project<br />
+metadata:<br />
+  labels:<br />
+    kubernetes.io/metadata.name: openshift-compliance<br />
+    openshift.io/cluster-monitoring: &quot;true&quot;<br />
+  name: openshift-compliance<br />
+spec: {}<br />
+...<br />
+---<br />
+apiVersion: operators.coreos.com/v1<br />
+kind: OperatorGroup<br />
+metadata:<br />
+  name: compliance-operator<br />
+  namespace: openshift-compliance<br />
+spec:<br />
+  targetNamespaces:<br />
+  - openshift-compliance<br />
+...<br />
+---<br />
+apiVersion: operators.coreos.com/v1alpha1<br />
+kind: Subscription<br />
+metadata:<br />
+  name: compliance-operator<br />
+  namespace: openshift-compliance<br />
+spec:<br />
+  channel: release-0.1<br />
+  installPlanApproval: Automatic<br />
+  name: compliance-operator<br />
+  source: redhat-operators<br />
+  sourceNamespace: openshift-marketplace<br />
+...<br />
+EOF<br />
+<br />
+Following installation of the Compliance Operator, a ScanSettingBinding object that configures the Compliance Operator to use the desired profile sets must be created. TailoredProfiles enable customization of controls to meet specific organizational controls defined in the SSP and can be based on existing profiles or written from scratch in standard SCAP format. If users have the definition for ScanSettingBinding that aligns profiles with ScanSettings in a YAML file named my-scansettingbinding.yml, users would apply that ScanSettingBinding by executing the following:<br />
+<br />
+oc apply -f my-scansettingbinding.yml -n openshift-compliance<br />
+<br />
+For more information about the compliance operator and its use, including the creation of TailoredProfiles and the ScanSettings available to meet specific security functions or organizational goals defined in the SSP, refer to https://docs.openshift.com/container-platform/4.8/security/compliance_operator/compliance-operator-understanding.html.</p><h2>Check Contents</h2><p>If Red Hat OpenShift Compliance Operator is not used, this check is Not Applicable.<br />
+Note: If Red Hat OpenShift Compliance Operator is not used, run the checks manually.<br />
+<br />
+Review the cluster configuration to validate that all required security functions are being validated with the Compliance Operator.<br />
+<br />
+To determine if any scans have been applied to the cluster and the status of the scans, execute the following:<br />
+<br />
+oc get compliancescan -n openshift-compliance<br />
+<br />
+Example output:<br />
+NAME PHASE RESULT<br />
+ocp4-cis DONE NON-COMPLIANT<br />
+ocp4-cis-manual DONE NON-COMPLIANT<br />
+ocp4-cis-node-master DONE NON-COMPLIANT<br />
+ocp4-cis-node-master-manual DONE NON-COMPLIANT<br />
+ocp4-cis-node-worker DONE NON-COMPLIANT<br />
+ocp4-cis-node-worker-manual DONE NON-COMPLIANT<br />
+ocp4-moderate DONE NON-COMPLIANT<br />
+ocp4-moderate-manual DONE NON-COMPLIANT<br />
+rhcos4-moderate-master DONE NON-COMPLIANT<br />
+rhcos4-moderate-master-manual DONE NON-COMPLIANT<br />
+rhcos4-moderate-worker DONE NON-COMPLIANT<br />
+rhcos4-moderate-worker-manual DONE NON-COMPLIANT<br />
+<br />
+If no ComplianceScan names return, the scans do not align to the organizationally-defined appropriate security functions, the command returns with an error, or any of the results show &quot;NON-COMPLIANT&quot; as their result, then this is a finding.</p><h2>Vulnerability Number</h2><p>V-257573</p><h2>Documentable</h2><p>False</p><h2>Rule Version</h2><p>CNTR-OS-000910</p><h2>Severity Override Guidance</h2><p>If Red Hat OpenShift Compliance Operator is not used, this check is Not Applicable.<br />
+Note: If Red Hat OpenShift Compliance Operator is not used, run the checks manually.<br />
+<br />
+Review the cluster configuration to validate that all required security functions are being validated with the Compliance Operator.<br />
+<br />
+To determine if any scans have been applied to the cluster and the status of the scans, execute the following:<br />
+<br />
+oc get compliancescan -n openshift-compliance<br />
+<br />
+Example output:<br />
+NAME PHASE RESULT<br />
+ocp4-cis DONE NON-COMPLIANT<br />
+ocp4-cis-manual DONE NON-COMPLIANT<br />
+ocp4-cis-node-master DONE NON-COMPLIANT<br />
+ocp4-cis-node-master-manual DONE NON-COMPLIANT<br />
+ocp4-cis-node-worker DONE NON-COMPLIANT<br />
+ocp4-cis-node-worker-manual DONE NON-COMPLIANT<br />
+ocp4-moderate DONE NON-COMPLIANT<br />
+ocp4-moderate-manual DONE NON-COMPLIANT<br />
+rhcos4-moderate-master DONE NON-COMPLIANT<br />
+rhcos4-moderate-master-manual DONE NON-COMPLIANT<br />
+rhcos4-moderate-worker DONE NON-COMPLIANT<br />
+rhcos4-moderate-worker-manual DONE NON-COMPLIANT<br />
+<br />
+If no ComplianceScan names return, the scans do not align to the organizationally-defined appropriate security functions, the command returns with an error, or any of the results show &quot;NON-COMPLIANT&quot; as their result, then this is a finding.</p><h2>Check Content Reference</h2><p>M</p><h2>Target Key</h2><p>5547</p></body></html>

@@ -1,0 +1,54 @@
+<!doctype html><html lang="en"><head><meta charset="utf-8"><title>STIGQter: STIG Check Details: SV-285327r1211999_rule: The Intune service must be configured to implement Multi-Admin Approval (MAA) for wiping managed devices.</title><link rel="icon" type="image/svg+xml" href="STIGQter.svg" /><script async src="https://www.googletagmanager.com/gtag/js?id=UA-31381839-2"></script><script src="include.js"></script><script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-4110907817782130" crossorigin="anonymous"></script></head><body><div><img src="STIGQter.svg" alt="STIGQter" style="height:1em;" /> <a href="https://www.stigqter.com/">STIGQter</a>: <a href="main.html">STIG Summary</a>: <a href="U_MS_Intune_MDM_Service_Desktop_Mobile_V1R2_Manual-xccdf.html">Microsoft Intune MDM Service Desktop &amp; Mobile Security Technical Implementation Guide Version: 1 Release: 2 Benchmark Date: 01 Jul 2026</a>:</div> <h1>The Intune service must be configured to implement Multi-Admin Approval (MAA) for wiping managed devices.</h1><h2>DISA Rule</h2><p>SV-285327r1211999_rule</p><h2>Vulnerability Number</h2><p>V-285327</p><h2>Group Title</h2><p>SRG-APP-000516-UEM-000391</p><h2>Rule Version</h2><p>MSIN-25-002000</p><h2>Severity</h2><p>CAT I</p><h2>CCI(s)</h2><ul><li>CCI-000366 - Implement the security configuration settings.</li></ul><h2>Weight</h2><p>10</p><h2>Fix Recommendation</h2><p>Note: All device-wipe processes and procedures must be compliant with DOD data retention policies for mobile devices.<br />
+<br />
+Note: This procedure requires two separate groups: one group of Administrators that request a managed device be wiped (requestor group) and one Administrator group that approves the request (approver group).<br />
+<br />
+Note: Two administrators are needed to set up MAA for managed device-wipe: one to set up the required approver group and the MAA device-wipe policy and one to approve the new policy.<br />
+<br />
+Implementing dual authorization in Intune for device wipes is achieved using MAA, which enforces a &quot;four-eyes&quot; policy, requiring a second admin to approve wipe requests. This process, found under Tenant Administration &gt;&gt; Multi Admin Approval, requires creating an access policy, assigning an approver group, and justifying the action. <br />
+<br />
+Steps to Implement Multi-Admin Approval for Wipes:<br />
+<br />
+1. Prepare Groups: Create a Microsoft 365 security group containing the administrators allowed to approve requests, excluding the user who initiates the wipe.<br />
+<br />
+2. Create Access Policy:<br />
+   - Sign in to the Microsoft Intune admin center.<br />
+   - Navigate to Tenant administration &gt;&gt; Multi Admin Approval &gt;&gt; Access policies.<br />
+   - Click &quot;Create&quot; and select &quot;Device wipe&quot; as the profile type.<br />
+   - Assign the approver group and complete the wizard.<br />
+<br />
+3. Approve Policy: A second administrator must approve the newly created Access Policy before it becomes active.<br />
+<br />
+4. Execute Wipe: When a device is wiped, the initiating admin provides a justification, and an approver approves it under Tenant administration &gt;&gt; Multi Admin Approval &gt;&gt; All requests. <br />
+<br />
+Key Considerations:<br />
+<br />
+- Approval Workflow: The requester must return to the Multi Admin Approval portal to &quot;Complete request&quot; after the second admin approves it.<br />
+- License: Requires Microsoft Intune Plan 1.<br />
+- Notifications: There is no built-in notification system; reviewers must check the console manually. A workflow should be created for the &quot;requestor&quot; Admin to notify the &quot;approver&quot; Admin that a device wipe request is ready for approval.<br />
+- Limitation: The policy covers managed device wipes and is a best practice for preventing accidental data loss.</p><h2>Check Contents</h2><p>Use the following procedure to verify MAA has been set up for managed device wipe on the Intune service.<br />
+<br />
+1. Verify a Microsoft 365 security group has been set up for device-wipe approval Administrators. <br />
+     - Sign in to Intune Admin Center: Navigate to Tenant administration &gt;&gt; Multi Admin Approval.<br />
+     - Verify the assigned &quot;Approval Group&quot; is in the access policy.<br />
+<br />
+2. Verify an Access Policy has been created for &quot;Device Wipe&quot;.<br />
+     - Verify Access Policies: Click on &quot;Access policies&quot; to view the policies created.<br />
+     - Check Policy Details: Select the policy created for device wipes to verify:<br />
+          - Policy Type: Must be set to Device Wipe.<br />
+          - Approver Group: Verify the correct Microsoft Entra security group is selected as the approver group.<br />
+     - Confirm Active Status: Verify the policy is active and not pending further approval of the policy itself.<br />
+<br />
+If the Intune service is not configured with a Microsoft 365 security group for device-wipe approval Administrators or is not configured with a device-wipe Access Policy, this is a finding.</p><h2>Vulnerability Number</h2><p>V-285327</p><h2>Documentable</h2><p>False</p><h2>Rule Version</h2><p>MSIN-25-002000</p><h2>Severity Override Guidance</h2><p>Use the following procedure to verify MAA has been set up for managed device wipe on the Intune service.<br />
+<br />
+1. Verify a Microsoft 365 security group has been set up for device-wipe approval Administrators. <br />
+     - Sign in to Intune Admin Center: Navigate to Tenant administration &gt;&gt; Multi Admin Approval.<br />
+     - Verify the assigned &quot;Approval Group&quot; is in the access policy.<br />
+<br />
+2. Verify an Access Policy has been created for &quot;Device Wipe&quot;.<br />
+     - Verify Access Policies: Click on &quot;Access policies&quot; to view the policies created.<br />
+     - Check Policy Details: Select the policy created for device wipes to verify:<br />
+          - Policy Type: Must be set to Device Wipe.<br />
+          - Approver Group: Verify the correct Microsoft Entra security group is selected as the approver group.<br />
+     - Confirm Active Status: Verify the policy is active and not pending further approval of the policy itself.<br />
+<br />
+If the Intune service is not configured with a Microsoft 365 security group for device-wipe approval Administrators or is not configured with a device-wipe Access Policy, this is a finding.</p><h2>Check Content Reference</h2><p>M</p><h2>Target Key</h2><p>5699</p></body></html>

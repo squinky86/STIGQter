@@ -1,0 +1,74 @@
+<!doctype html><html lang="en"><head><meta charset="utf-8"><title>STIGQter: STIG Check Details: SV-234192r1137887_rule: The FortiGate device must use LDAP for authentication.</title><link rel="icon" type="image/svg+xml" href="STIGQter.svg" /><script async src="https://www.googletagmanager.com/gtag/js?id=UA-31381839-2"></script><script src="include.js"></script><script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-4110907817782130" crossorigin="anonymous"></script></head><body><div><img src="STIGQter.svg" alt="STIGQter" style="height:1em;" /> <a href="https://www.stigqter.com/">STIGQter</a>: <a href="main.html">STIG Summary</a>: <a href="U_FN_FortiGate_Firewall_NDM_STIG_V1R5_Manual-xccdf.html">Fortinet FortiGate Firewall NDM Security Technical Implementation Guide Version: 1 Release: 5 Benchmark Date: 05 Jan 2026</a>:</div> <h1>The FortiGate device must use LDAP for authentication.</h1><h2>DISA Rule</h2><p>SV-234192r1137887_rule</p><h2>Vulnerability Number</h2><p>V-234192</p><h2>Group Title</h2><p>SRG-APP-000516-NDM-000336</p><h2>Rule Version</h2><p>FGFW-ND-000165</p><h2>Severity</h2><p>CAT II</p><h2>CCI(s)</h2><ul><li>CCI-000366 - Implement the security configuration settings.</li><li>CCI-000370 - Manage configuration settings for organization-defined system components using organization-defined automated mechanisms.</li></ul><h2>Weight</h2><p>10</p><h2>Fix Recommendation</h2><p>Log in to the FortiGate GUI with Super-Admin privilege.<br />
+<br />
+Configure the LDAP server connection.<br />
+<br />
+1. Go to User and Device.<br />
+2. Go to LDAP Servers and select +Create New.<br />
+3. Enter the server Name, Server IP address, or Name.<br />
+4. Enter the Common Name Identifier and Distinguished Name.<br />
+5. Set the Bind Type to Regular and enter the LDAP bind Username and Password.<br />
+6. Ensure the Secure Connection button is toggled to enable.<br />
+7. In Protocol, select LDAPS. Select certificate.<br />
+8. Click OK.<br />
+<br />
+Add the LDAP server to a user group.<br />
+<br />
+1. Go to User and Device.<br />
+2. Under User Groups, select +Create New.<br />
+3. Enter a Name for the group.<br />
+4. In the Remote groups section, select +Add.<br />
+5. Select the Remote Server from the dropdown list.<br />
+6. Click OK.<br />
+<br />
+Then, configure the administrator account.<br />
+<br />
+1. Click System.<br />
+2. Click Administrators.<br />
+3. Click +Create New and choose Administrator.<br />
+4. Specify the Username.<br />
+5. Set Type to Match a user on a remote server group.<br />
+6. In Remote User Group, select the user group that was created.<br />
+<br />
+or <br />
+<br />
+1. Open a CLI console, via SSH or available from the GUI.<br />
+2. Configure the LDAP server in the CLI:<br />
+     # config user ldap<br />
+     #    edit {ldap_server_name}<br />
+     #    set server {server_ip}<br />
+     #    set cnid {cn} <br />
+     #    set dn {dc=XYZ,dc=fortinet,dc=COM} <br />
+     #    set type regular <br />
+     #    set username {cn=Administrator,dc=XYA, dc=COM} <br />
+     #    set password {bind password}<br />
+     #    set secure ldaps<br />
+     #    set ca-cert {CA certificate name}<br />
+     #   next <br />
+     # end<br />
+<br />
+3. Create a user group in the CLI:<br />
+# config user group<br />
+#    edit {Group_name}<br />
+#      set member {ldap_server_name}<br />
+#    next<br />
+# end<br />
+<br />
+4. Create an administrator in the CLI:<br />
+     # config system admin<br />
+     #    edit {admin_name}<br />
+     #    set remote-auth enable<br />
+     #    set accprofile {profile name}<br />
+     #    set remote-group ldap<br />
+     # end</p><h2>Check Contents</h2><p>Log in to the FortiGate GUI with Super-Admin privilege.<br />
+<br />
+1. Click System.<br />
+2. Click Administrators.<br />
+3. Verify all users except admin are assigned to a remote LDAP user group.<br />
+<br />
+If all administrators except admin are not configured to use remote LDAP authentication, this is a finding.</p><h2>Vulnerability Number</h2><p>V-234192</p><h2>Documentable</h2><p>False</p><h2>Rule Version</h2><p>FGFW-ND-000165</p><h2>Severity Override Guidance</h2><p>Log in to the FortiGate GUI with Super-Admin privilege.<br />
+<br />
+1. Click System.<br />
+2. Click Administrators.<br />
+3. Verify all users except admin are assigned to a remote LDAP user group.<br />
+<br />
+If all administrators except admin are not configured to use remote LDAP authentication, this is a finding.</p><h2>Check Content Reference</h2><p>M</p><h2>Target Key</h2><p>5260</p></body></html>

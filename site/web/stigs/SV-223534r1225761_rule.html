@@ -1,0 +1,94 @@
+<!doctype html><html lang="en"><head><meta charset="utf-8"><title>STIGQter: STIG Check Details: SV-223534r1225761_rule: IBM z/OS JES2 output devices must be controlled in accordance with the proper security requirements.</title><link rel="icon" type="image/svg+xml" href="STIGQter.svg" /><script async src="https://www.googletagmanager.com/gtag/js?id=UA-31381839-2"></script><script src="include.js"></script><script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-4110907817782130" crossorigin="anonymous"></script></head><body><div><img src="STIGQter.svg" alt="STIGQter" style="height:1em;" /> <a href="https://www.stigqter.com/">STIGQter</a>: <a href="main.html">STIG Summary</a>: <a href="U_IBM_zOS_ACF2_STIG_V9R9_Manual-xccdf.html">IBM z/OS ACF2 Security Technical Implementation Guide Version: 9 Release: 9 Benchmark Date: 01 Jul 2026</a>:</div> <h1>IBM z/OS JES2 output devices must be controlled in accordance with the proper security requirements.</h1><h2>DISA Rule</h2><p>SV-223534r1225761_rule</p><h2>Vulnerability Number</h2><p>V-223534</p><h2>Group Title</h2><p>SRG-OS-000080-GPOS-00048</p><h2>Rule Version</h2><p>ACF2-JS-000070</p><h2>Severity</h2><p>CAT II</p><h2>CCI(s)</h2><ul><li>CCI-000213 - Enforce approved authorizations for logical access to information and system resources in accordance with applicable access control policies.</li></ul><h2>Weight</h2><p>10</p><h2>Fix Recommendation</h2><p>NOTE: If CLASMAP defines WRITER as anything other than TYPE(WTR), replace WTR below with the appropriate three letters.<br />
+<br />
+Configure the WRITER resource class (i.e., TYPE(WTR)) as follows with:<br />
+<br />
+JES2.- (backstop profile)<br />
+JES2.LOCAL.OFFn.- (spool offload transmitter)<br />
+JES2.LOCAL.OFFn.ST (spool offload SYSOUT transmitter)<br />
+JES2.LOCAL.OFFn.JT (spool offload job transmitter)<br />
+JES2.LOCAL.PRTn (local printer)<br />
+JES2.LOCAL.PUNn (local punch)<br />
+JES2.NJE.nodename (NJE node)<br />
+JES2.RJE.Rnnnn.PRm (remote printer)<br />
+JES2.RJE.Rnnnn.PUm (remote punch)<br />
+<br />
+Ensure the following items are in effect: <br />
+<br />
+The JES2.- resource is defined to the WRITER resource class with a default access of PREVENT.<br />
+<br />
+The other resources mentioned above are protected by generic and/or fully qualified rules defined to the WRITER resource class with a default access of PREVENT.<br />
+<br />
+NOTE: A default access of READ is allowed for output destinations that are permitted to route output for all users. Currently, there is no guidance on which output destinations are appropriate for a default access of READ. However, common sense should prevail during the analysis. For example, a default access of READ would typically be inappropriate for RJE, NJE, and offload output destinations.<br />
+<br />
+Examples:<br />
+$KEY(JES2) TYPE(WTR) <br />
+LOCAL.OFF- UID(*) PREVENT <br />
+LOCAL.OFF-.JT UID(*) PREVENT<br />
+LOCAL.OFF-.ST UID(oper) SERVICE(READ) ALLOW<br />
+LOCAL.OFF-.ST UID(sysprgmr) SERVICE(READ) ALLOW<br />
+LOCAL.OFF-.ST UID(seca) SERVICE(READ) ALLOW<br />
+LOCAL.OFF-.ST UID(*) PREVENT <br />
+LOCAL.PRT- UID(*) SERVICE(READ) ALLOW<br />
+LOCAL.PUN- UID(*) PREVENT <br />
+NJE.- UID(*) SERVICE(READ) ALLOW<br />
+RJE.- UID(sysprgmr) SERVICE(READ) ALLOW <br />
+RJE.- UID(*) PREVENT <br />
+- UID(*) PREVENT</p><h2>Check Contents</h2><p>From the ACF input screen enter:<br />
+SET CONTROL(GSO)<br />
+LIST LIKE(CLASMAP-) [To determine the resource class for WRITER]<br />
+<br />
+NOTE: If CLASMAP defines WRITER as anything other than TYPE(WTR), replace WTR below with the appropriate three letters.<br />
+<br />
+SET RESOURCE(WTR)<br />
+LIST LIKE(-)<br />
+<br />
+If the JES2.- resource is defined to the WRITER resource class with a default access of PREVENT, this is not a finding.<br />
+<br />
+If the other resources mentioned below are protected by generic and/or fully qualified rules defined to the WRITER resource class with a default access of PREVENT, this is not a finding.<br />
+<br />
+If the ACF2 resources and/or generic equivalent identified below are defined with access restricted to the appropriate personnel, this is not a finding.<br />
+<br />
+NOTE: A default access of READ is allowed for output destinations that are permitted to route output for all users. Currently, there is no guidance on which output destinations are appropriate for a default access of READ. However, common sense should prevail during the analysis. For example, a default access of READ would typically be inappropriate for RJE, NJE, and offload output destinations.<br />
+<br />
+JES2 is typically the name of the JES2 subsystem. Refer to the SUBSYS report and locate the entry with the description of PRIMARY JOB ENTRY SUBSYSTEM. The SUBSYSTEM NAME of this entry is the name of the JES2 subsystem.<br />
+<br />
+OFFn, where n is the number of the offload transmitter. Determine the numbers by searching for OFF( in the JES2 parameters.<br />
+<br />
+PRTn, where n is the number of the local printer. Determine the numbers by searching for PRT( in the JES2 parameters.<br />
+<br />
+PUNn, where n is the number of the local card punch. Determine the numbers by searching for PUN( in the JES2 parameters.<br />
+<br />
+Nodename is the NAME parameter value specified on the NODE statement. Review the JES2 parameters for NJE node definitions by searching for NODE( in the report.<br />
+<br />
+Rnnnn.PRm, where nnnn is the number of the remote workstation and m is the number of the printer. Determine the numbers by searching for .PR in the JES2 parameters.<br />
+<br />
+Rnnnn.PUm, where nnnn is the number of the remote workstation and m is the number of the punch. Determine the numbers by searching for .PU in the JES2 parameters.</p><h2>Vulnerability Number</h2><p>V-223534</p><h2>Documentable</h2><p>False</p><h2>Rule Version</h2><p>ACF2-JS-000070</p><h2>Severity Override Guidance</h2><p>From the ACF input screen enter:<br />
+SET CONTROL(GSO)<br />
+LIST LIKE(CLASMAP-) [To determine the resource class for WRITER]<br />
+<br />
+NOTE: If CLASMAP defines WRITER as anything other than TYPE(WTR), replace WTR below with the appropriate three letters.<br />
+<br />
+SET RESOURCE(WTR)<br />
+LIST LIKE(-)<br />
+<br />
+If the JES2.- resource is defined to the WRITER resource class with a default access of PREVENT, this is not a finding.<br />
+<br />
+If the other resources mentioned below are protected by generic and/or fully qualified rules defined to the WRITER resource class with a default access of PREVENT, this is not a finding.<br />
+<br />
+If the ACF2 resources and/or generic equivalent identified below are defined with access restricted to the appropriate personnel, this is not a finding.<br />
+<br />
+NOTE: A default access of READ is allowed for output destinations that are permitted to route output for all users. Currently, there is no guidance on which output destinations are appropriate for a default access of READ. However, common sense should prevail during the analysis. For example, a default access of READ would typically be inappropriate for RJE, NJE, and offload output destinations.<br />
+<br />
+JES2 is typically the name of the JES2 subsystem. Refer to the SUBSYS report and locate the entry with the description of PRIMARY JOB ENTRY SUBSYSTEM. The SUBSYSTEM NAME of this entry is the name of the JES2 subsystem.<br />
+<br />
+OFFn, where n is the number of the offload transmitter. Determine the numbers by searching for OFF( in the JES2 parameters.<br />
+<br />
+PRTn, where n is the number of the local printer. Determine the numbers by searching for PRT( in the JES2 parameters.<br />
+<br />
+PUNn, where n is the number of the local card punch. Determine the numbers by searching for PUN( in the JES2 parameters.<br />
+<br />
+Nodename is the NAME parameter value specified on the NODE statement. Review the JES2 parameters for NJE node definitions by searching for NODE( in the report.<br />
+<br />
+Rnnnn.PRm, where nnnn is the number of the remote workstation and m is the number of the printer. Determine the numbers by searching for .PR in the JES2 parameters.<br />
+<br />
+Rnnnn.PUm, where nnnn is the number of the remote workstation and m is the number of the punch. Determine the numbers by searching for .PU in the JES2 parameters.</p><h2>Check Content Reference</h2><p>M</p><h2>Target Key</h2><p>4100</p></body></html>

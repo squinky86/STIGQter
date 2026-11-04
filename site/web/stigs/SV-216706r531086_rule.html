@@ -1,0 +1,47 @@
+<!doctype html><html lang="en"><head><meta charset="utf-8"><title>STIGQter: STIG Check Details: SV-216706r531086_rule: The Cisco PE router providing Virtual Private LAN Services (VPLS) must be configured to have all attachment circuits defined to the virtual forwarding instance (VFI) with the globally unique VPN ID assigned for each customer VLAN.</title><link rel="icon" type="image/svg+xml" href="STIGQter.svg" /><script async src="https://www.googletagmanager.com/gtag/js?id=UA-31381839-2"></script><script src="include.js"></script><script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-4110907817782130" crossorigin="anonymous"></script></head><body><div><img src="STIGQter.svg" alt="STIGQter" style="height:1em;" /> <a href="https://www.stigqter.com/">STIGQter</a>: <a href="main.html">STIG Summary</a>: <a href="U_Cisco_IOS-XE_Router_RTR_STIG_V3R5_Manual-xccdf.html">Cisco IOS XE Router RTR Security Technical Implementation Guide Version: 3 Release: 5 Benchmark Date: 01 Oct 2025</a>:</div> <h1>The Cisco PE router providing Virtual Private LAN Services (VPLS) must be configured to have all attachment circuits defined to the virtual forwarding instance (VFI) with the globally unique VPN ID assigned for each customer VLAN.</h1><h2>DISA Rule</h2><p>SV-216706r531086_rule</p><h2>Vulnerability Number</h2><p>V-216706</p><h2>Group Title</h2><p>SRG-NET-000512-RTR-000009</p><h2>Rule Version</h2><p>CISC-RT-000680</p><h2>Severity</h2><p>CAT I</p><h2>CCI(s)</h2><ul><li>CCI-000366 - Implement the security configuration settings.</li></ul><h2>Weight</h2><p>10</p><h2>Fix Recommendation</h2><p>Assign globally unique VPN IDs for each customer bridge domain using VPLS for carrier Ethernet services between multiple sites, and configure the attachment circuits to the appropriate VFI.<br />
+<br />
+R1(config)#l2 vfi VPLS_A manual<br />
+R1(config-vfi)#vpn id 110<br />
+R1(config-vfi)#neighbor 10.3.3.3 encapsulation mpls<br />
+R1(config-vfi)#bridge-domain 100<br />
+R1(config-vfi)#exit<br />
+R1(config-if)#service instance 10 ethernet<br />
+R1(config-if-srv)#encapsulation untagged <br />
+R1(config-if-srv)#bridge-domain 100<br />
+R1(config-if-srv)#end</p><h2>Check Contents</h2><p>Review the implementation plan and the VPN IDs assigned to customer VLANs for the VPLS deployment.<br />
+<br />
+Review the PE router configuration to verify that customer attachment circuits are associated to the appropriate VFI. In the example below, the attached circuit at interface GigabitEthernet3 is associated to VPN ID 110.<br />
+<br />
+l2 vfi VPLS_A manual <br />
+ vpn id 110<br />
+ bridge-domain 100<br />
+ neighbor 10.3.3.3 encapsulation mpls<br />
+ neighbor 10.3.3.4 encapsulation mpls<br />
+…<br />
+…<br />
+…<br />
+interface GigabitEthernet3<br />
+ no ip address<br />
+ service instance 10 ethernet<br />
+  encapsulation untagged<br />
+  bridge-domain 100<br />
+<br />
+If the attachment circuits have not been bound to VFI configured with the assigned VPN ID for each VLAN, this is a finding.</p><h2>Vulnerability Number</h2><p>V-216706</p><h2>Documentable</h2><p>False</p><h2>Rule Version</h2><p>CISC-RT-000680</p><h2>Severity Override Guidance</h2><p>Review the implementation plan and the VPN IDs assigned to customer VLANs for the VPLS deployment.<br />
+<br />
+Review the PE router configuration to verify that customer attachment circuits are associated to the appropriate VFI. In the example below, the attached circuit at interface GigabitEthernet3 is associated to VPN ID 110.<br />
+<br />
+l2 vfi VPLS_A manual <br />
+ vpn id 110<br />
+ bridge-domain 100<br />
+ neighbor 10.3.3.3 encapsulation mpls<br />
+ neighbor 10.3.3.4 encapsulation mpls<br />
+…<br />
+…<br />
+…<br />
+interface GigabitEthernet3<br />
+ no ip address<br />
+ service instance 10 ethernet<br />
+  encapsulation untagged<br />
+  bridge-domain 100<br />
+<br />
+If the attachment circuits have not been bound to VFI configured with the assigned VPN ID for each VLAN, this is a finding.</p><h2>Check Content Reference</h2><p>M</p><h2>Target Key</h2><p>4028</p></body></html>

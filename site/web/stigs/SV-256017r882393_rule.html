@@ -1,0 +1,47 @@
+<!doctype html><html lang="en"><head><meta charset="utf-8"><title>STIGQter: STIG Check Details: SV-256017r882393_rule: The Arista router must be configured to drop all fragmented Internet Control Message Protocol (ICMP) packets destined to itself.</title><link rel="icon" type="image/svg+xml" href="STIGQter.svg" /><script async src="https://www.googletagmanager.com/gtag/js?id=UA-31381839-2"></script><script src="include.js"></script><script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-4110907817782130" crossorigin="anonymous"></script></head><body><div><img src="STIGQter.svg" alt="STIGQter" style="height:1em;" /> <a href="https://www.stigqter.com/">STIGQter</a>: <a href="main.html">STIG Summary</a>: <a href="U_Arista_MLS_EOS_4-X_Router_STIG_V2R2_Manual-xccdf.html">Arista MLS EOS 4.X Router Security Technical Implementation Guide Version: 2 Release: 2 Benchmark Date: 02 Apr 2025</a>:</div> <h1>The Arista router must be configured to drop all fragmented Internet Control Message Protocol (ICMP) packets destined to itself.</h1><h2>DISA Rule</h2><p>SV-256017r882393_rule</p><h2>Vulnerability Number</h2><p>V-256017</p><h2>Group Title</h2><p>SRG-NET-000205-RTR-000002</p><h2>Rule Version</h2><p>ARST-RT-000350</p><h2>Severity</h2><p>CAT II</p><h2>CCI(s)</h2><ul><li>CCI-001097 - Monitor and control communications at the external managed interfaces to the system and at key managed interfaces within the system.</li></ul><h2>Weight</h2><p>10</p><h2>Fix Recommendation</h2><p>Ensure all Arista routers have their receive path filter configured to drop all fragmented ICMP packets.<br />
+<br />
+Step 1: Configure the ACL to filter the fragmented ICMP packets destined to itself.<br />
+<br />
+LEAF-1A(config)#ip access-list ICMP_FRAGMENTS<br />
+LEAF-1A(config-acl-ICMP_FRAGMENTS)# 10 deny ip any any fragments<br />
+LEAF-1A(config-acl-ICMP_FRAGMENTS)# 20 permit ip any any <br />
+LEAF-1A(config-acl-ICMP_FRAGMENTS)# exit <br />
+<br />
+Step 2: Apply the ACL to the external interfaces.<br />
+<br />
+LEAF-1A(config)#interface ethernet 5<br />
+LEAF-1A(config-if-Et5)# ip access-group ICMP_FRAGMENTS in</p><h2>Check Contents</h2><p>Review the access control list (ACL) or filter for the Arista router receive path.<br />
+<br />
+Verify it will drop all fragmented ICMP packets destined to itself.<br />
+<br />
+Step 1: To verify the ACL is configured to filter the fragmented ICMP packets destined to itself, execute the command &quot;sh ip access-list&quot;.<br />
+<br />
+ip access-list ICMP_FRAGMENTS<br />
+ 10 deny ip any any fragments<br />
+ 20 permit ip any any <br />
+ <br />
+Step 2: To verify the ACL is applied to the external interfaces, execute the command &quot;sh run int Eth YY&quot;.<br />
+<br />
+interface ethernet 5<br />
+ ip access-group ICMP_FRAGMENTS in<br />
+<br />
+If the Arista router is not configured with a receive-path filter to drop all fragmented ICMP packets, this is a finding.<br />
+<br />
+Note: If the platform does not support the receive path filter, verify all layer 3 interfaces have an ingress ACL to control what packets are allowed to be destined to the router for processing.</p><h2>Vulnerability Number</h2><p>V-256017</p><h2>Documentable</h2><p>False</p><h2>Rule Version</h2><p>ARST-RT-000350</p><h2>Severity Override Guidance</h2><p>Review the access control list (ACL) or filter for the Arista router receive path.<br />
+<br />
+Verify it will drop all fragmented ICMP packets destined to itself.<br />
+<br />
+Step 1: To verify the ACL is configured to filter the fragmented ICMP packets destined to itself, execute the command &quot;sh ip access-list&quot;.<br />
+<br />
+ip access-list ICMP_FRAGMENTS<br />
+ 10 deny ip any any fragments<br />
+ 20 permit ip any any <br />
+ <br />
+Step 2: To verify the ACL is applied to the external interfaces, execute the command &quot;sh run int Eth YY&quot;.<br />
+<br />
+interface ethernet 5<br />
+ ip access-group ICMP_FRAGMENTS in<br />
+<br />
+If the Arista router is not configured with a receive-path filter to drop all fragmented ICMP packets, this is a finding.<br />
+<br />
+Note: If the platform does not support the receive path filter, verify all layer 3 interfaces have an ingress ACL to control what packets are allowed to be destined to the router for processing.</p><h2>Check Content Reference</h2><p>M</p><h2>Target Key</h2><p>5513</p></body></html>

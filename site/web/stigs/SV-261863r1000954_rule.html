@@ -1,0 +1,77 @@
+<!doctype html><html lang="en"><head><meta charset="utf-8"><title>STIGQter: STIG Check Details: SV-261863r1000954_rule: PostgreSQL must be able to generate audit records when privileges/permissions are retrieved.</title><link rel="icon" type="image/svg+xml" href="STIGQter.svg" /><script async src="https://www.googletagmanager.com/gtag/js?id=UA-31381839-2"></script><script src="include.js"></script><script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-4110907817782130" crossorigin="anonymous"></script></head><body><div><img src="STIGQter.svg" alt="STIGQter" style="height:1em;" /> <a href="https://www.stigqter.com/">STIGQter</a>: <a href="main.html">STIG Summary</a>: <a href="U_CD_Postgres_16_STIG_V1R3_Manual-xccdf.html">Crunchy Data Postgres 16 Security Technical Implementation Guide Version: 1 Release: 3 Benchmark Date: 01 Jul 2026</a>:</div> <h1>PostgreSQL must be able to generate audit records when privileges/permissions are retrieved.</h1><h2>DISA Rule</h2><p>SV-261863r1000954_rule</p><h2>Vulnerability Number</h2><p>V-261863</p><h2>Group Title</h2><p>SRG-APP-000091-DB-000066</p><h2>Rule Version</h2><p>CD16-00-000700</p><h2>Severity</h2><p>CAT II</p><h2>CCI(s)</h2><ul><li>CCI-000172 - Generate audit records for the event types defined in AU-2 c that include the audit record content defined in AU-3.</li></ul><h2>Weight</h2><p>10</p><h2>Fix Recommendation</h2><p>Note: The following instructions use the PGDATA and PGVER environment variables. Refer to APPENDIX-F for instructions on configuring PGDATA and APPENDIX-H for PGVER.<br />
+<br />
+PostgreSQL can be configured to audit these requests using pgaudit. Refer to supplementary content APPENDIX-B for documentation on installing pgaudit.<br />
+<br />
+With pgaudit installed the following configurations can be made:<br />
+<br />
+$ sudo su - postgres<br />
+$ vi ${PGDATA?}/postgresql.conf<br />
+<br />
+Add the following parameters (or edit existing parameters): <br />
+<br />
+pgaudit.log_catalog = 'on'<br />
+pgaudit.log = 'read'<br />
+<br />
+Note: For this requirement the pgaudit.log must contain 'read' however APPENDIX-C suggests setting pgaudit.log='ddl, role, read, write' to fulfill all requirements.<br />
+<br />
+As the system administrator, reload the server with the new configuration:<br />
+<br />
+$ sudo systemctl reload postgresql-${PGVER?}</p><h2>Check Contents</h2><p>Note: The following instructions use the PGLOG environment variable. Refer to supplementary content APPENDIX-I for instructions on configuring PGLOG.<br />
+<br />
+As the database administrator (shown here as &quot;postgres&quot;), check if pgaudit is enabled by running the following SQL:<br />
+<br />
+$ sudo su - postgres<br />
+$ psql -c &quot;SHOW shared_preload_libraries&quot;<br />
+<br />
+If pgaudit is not found in the results, this is a finding.<br />
+<br />
+As the database administrator (shown here as &quot;postgres&quot;), list all role memberships for the database:<br />
+<br />
+$ sudo su - postgres<br />
+$ psql -c &quot;\du&quot;<br />
+<br />
+Verify the query was logged:<br />
+<br />
+$ sudo su - postgres<br />
+$ cat ${PGLOG?}/&lt;latest_log&gt;<br />
+<br />
+This should, as an example, return (among other rows):<br />
+&lt; 2024-02-01 19:13:38.276 UTC psql postgres postgres [local] 15639 &gt;LOG:  duration: 29.932 ms  statement: SELECT r.rolname, r.rolsuper, r.rolinherit,<br />
+          r.rolcreaterole, r.rolcreatedb, r.rolcanlogin,<br />
+          r.rolconnlimit, r.rolvaliduntil<br />
+        , r.rolreplication<br />
+        , r.rolbypassrls<br />
+        FROM pg_catalog.pg_roles r<br />
+        WHERE r.rolname !~ '^pg_'<br />
+        ORDER BY 1;<br />
+<br />
+If audit records are not produced, this is a finding.</p><h2>Vulnerability Number</h2><p>V-261863</p><h2>Documentable</h2><p>False</p><h2>Rule Version</h2><p>CD16-00-000700</p><h2>Severity Override Guidance</h2><p>Note: The following instructions use the PGLOG environment variable. Refer to supplementary content APPENDIX-I for instructions on configuring PGLOG.<br />
+<br />
+As the database administrator (shown here as &quot;postgres&quot;), check if pgaudit is enabled by running the following SQL:<br />
+<br />
+$ sudo su - postgres<br />
+$ psql -c &quot;SHOW shared_preload_libraries&quot;<br />
+<br />
+If pgaudit is not found in the results, this is a finding.<br />
+<br />
+As the database administrator (shown here as &quot;postgres&quot;), list all role memberships for the database:<br />
+<br />
+$ sudo su - postgres<br />
+$ psql -c &quot;\du&quot;<br />
+<br />
+Verify the query was logged:<br />
+<br />
+$ sudo su - postgres<br />
+$ cat ${PGLOG?}/&lt;latest_log&gt;<br />
+<br />
+This should, as an example, return (among other rows):<br />
+&lt; 2024-02-01 19:13:38.276 UTC psql postgres postgres [local] 15639 &gt;LOG:  duration: 29.932 ms  statement: SELECT r.rolname, r.rolsuper, r.rolinherit,<br />
+          r.rolcreaterole, r.rolcreatedb, r.rolcanlogin,<br />
+          r.rolconnlimit, r.rolvaliduntil<br />
+        , r.rolreplication<br />
+        , r.rolbypassrls<br />
+        FROM pg_catalog.pg_roles r<br />
+        WHERE r.rolname !~ '^pg_'<br />
+        ORDER BY 1;<br />
+<br />
+If audit records are not produced, this is a finding.</p><h2>Check Content Reference</h2><p>M</p><h2>Target Key</h2><p>5598</p></body></html>

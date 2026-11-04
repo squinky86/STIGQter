@@ -1,6 +1,6 @@
 # Maintenance and release handoff
 
-The overhaul is published on `main`, now the application repository's default branch. The separate [website repository](https://github.com/squinky86/stigqter.com) publishes its `main` branch to the [GitHub Pages preview](https://squinky86.github.io/stigqter.com/). Keep `VERSION` at 2.0.0 until the desktop release decision; published stable metadata remains 1.2.7. Domain cutover, legacy-host changes, and a stable desktop release remain separate acceptance steps.
+The overhaul is published on `main`, now the application repository's default branch. The website lives in `site/` in this same repository; its Pages workflow publishes the [GitHub Pages preview](https://squinky86.github.io/STIGQter/) and generates the documentation from the Markdown sources. Keep `VERSION` at 2.0.0 until the desktop release decision; published stable metadata remains 1.2.7. Domain cutover, legacy-host changes, and a stable desktop release remain separate acceptance steps.
 
 ## Build and verify
 
@@ -24,11 +24,11 @@ After a source/version/configuration change, check a cold toolchain build and a 
 
 ## Release sequence after review
 
-1. Verify the live application URL `https://squinky86.github.io/stigqter.com/metadata/v1/releases.json` anonymously. The website has its own repository and publisher; deploy it from its website workspace. Its manual workflow with `deploy=false` checks the build and current live site without redeploying.
+1. Verify the live application URL `https://squinky86.github.io/STIGQter/metadata/v1/releases.json` anonymously. Publish site and documentation changes through this repository’s `Pages` workflow; see [site/README.md](../site/README.md). Its manual workflow with `deploy=false` checks the build and current live site without redeploying.
 2. Review this checkout, run CI, and update branch protection to the `CI` Linux, Windows, and CodeQL checks after they have run successfully. Old workflow names are removed. Weekly/manual coverage uses one instrumented test run for Sonar and Coveralls; configure `SONAR_TOKEN` for Sonar publishing.
 3. Update `VERSION`, changelog, release notes, and packaging only for the approved release. Push an exact numeric tag or run `Release candidate` for an existing tag. It verifies tag/VERSION agreement, calls the same CI build scripts, checks hashes, and creates a **draft** GitHub release.
 4. Install the `.deb` on Ubuntu 26.04 and run the native Windows checks above. Check compact and large windows, keyboard navigation, both marking banners, warning/busy states, and exports. Record results against the exact tag/artifact hashes.
-5. Publish the reviewed release assets. Then run the website's `release_metadata.py`, review its diff, and publish the stable pointer. Do not copy the source `VERSION` directly into public stable metadata. Drafts/prereleases are rejected; each binary asset must have a SHA-256 digest.
+5. Publish the reviewed release assets. Then run `site/scripts/release_metadata.py`, review its diff, and publish the stable pointer. Do not copy the source `VERSION` directly into public stable metadata. Drafts/prereleases are rejected; each binary asset must have a SHA-256 digest.
 6. The website maintainer handles apex DNS/HTTPS cutover and retains the `www` PHP bridge for supported old clients. Keep rollback DNS, web content, metadata, and binary artifacts available. Do not retire shared hosting services used by other sites.
 
 ## Data and architecture

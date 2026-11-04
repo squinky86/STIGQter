@@ -1,0 +1,94 @@
+<!doctype html><html lang="en"><head><meta charset="utf-8"><title>STIGQter: STIG Check Details: SV-235192r1018560_rule: The MySQL Database Server 8.0 must implement cryptographic mechanisms to prevent unauthorized modification of organization-defined information at rest (to include, at a minimum, PII and classified information) on organization-defined information system components.</title><link rel="icon" type="image/svg+xml" href="STIGQter.svg" /><script async src="https://www.googletagmanager.com/gtag/js?id=UA-31381839-2"></script><script src="include.js"></script><script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-4110907817782130" crossorigin="anonymous"></script></head><body><div><img src="STIGQter.svg" alt="STIGQter" style="height:1em;" /> <a href="https://www.stigqter.com/">STIGQter</a>: <a href="main.html">STIG Summary</a>: <a href="U_Oracle_MySQL_8-0_STIG_V2R2_Manual-xccdf.html">Oracle MySQL 8.0 Security Technical Implementation Guide Version: 2 Release: 2 Benchmark Date: 24 Oct 2024</a>:</div> <h1>The MySQL Database Server 8.0 must implement cryptographic mechanisms to prevent unauthorized modification of organization-defined information at rest (to include, at a minimum, PII and classified information) on organization-defined information system components.</h1><h2>DISA Rule</h2><p>SV-235192r1018560_rule</p><h2>Vulnerability Number</h2><p>V-235192</p><h2>Group Title</h2><p>SRG-APP-000428-DB-000386</p><h2>Rule Version</h2><p>MYS8-00-012000</p><h2>Severity</h2><p>CAT I</p><h2>CCI(s)</h2><ul><li>CCI-002475 - Implement cryptographic mechanisms to prevent unauthorized modification of organization-defined information when at rest on organization-defined system components.</li></ul><h2>Weight</h2><p>10</p><h2>Fix Recommendation</h2><p>Configure the MySQL Database Server 8.0, operating system/file system, and additional software as relevant, to provide the required level of cryptographic protection.<br />
+<br />
+Enable the MySQL Key Ring for securely managing encryption keys with KMIP or other supported protocols.<br />
+<br />
+Change TABLESPACES, TABLES to put in place encryption.<br />
+<br />
+ALTER TABLESPACE &lt;tablespacename&gt; ENCRYPTION = 'Y';<br />
+ALTER TABLE &lt;tablespacename&gt; ENCRYPTION = 'Y';<br />
+<br />
+Require all new tables and tablespaces to be encrypted.<br />
+set persist table_encryption_privilege_check=ON;<br />
+<br />
+Require AUDIT LOG encryption<br />
+sudo vi /etc/my.cnf<br />
+[mysqld]<br />
+audit-log=FORCE_PLUS_PERMANENT<br />
+audit-log-format=JSON<br />
+audit-log-encryption=AES<br />
+<br />
+Require BINLOG encryption<br />
+set persist binlog_encryption=ON;<br />
+<br />
+Require REDO and UNDO log encryption<br />
+set persist innodb_redo_log_encrypt=ON;<br />
+set persist innodb_undo_log_encrypt=ON;<br />
+<br />
+Turn off insecure logging (use the audit log above to track activity).<br />
+SET PERSIST general_log = 'OFF';</p><h2>Check Contents</h2><p>Review the system documentation to determine whether the organization has defined the information at rest that is to be protected from modification, which must include, at a minimum, PII and classified information.<br />
+<br />
+If no information is identified as requiring such protection, this is not a finding.<br />
+<br />
+Review the configuration of the MySQL 8.0 Database Server, operating system/file system, and additional software as relevant.<br />
+<br />
+If any of the information defined as requiring cryptographic protection from modification is not encrypted in a manner that provides the required level of protection, this is a finding.<br />
+<br />
+To check for data encryption at rest settings in MySQL:<br />
+SELECT VARIABLE_NAME, VARIABLE_VALUE<br />
+FROM performance_schema.global_variables where variable_name = 'audit_log_encryption';<br />
+If the value for audit_log_encryption is not AES, this is a finding.<br />
+<br />
+SELECT VARIABLE_NAME, VARIABLE_VALUE<br />
+FROM performance_schema.global_variables where variable_name = 'binlog_encryption'; <br />
+If the value for binlog_encryption is not &quot;ON&quot;, this is a finding.<br />
+<br />
+SELECT VARIABLE_NAME, VARIABLE_VALUE<br />
+FROM performance_schema.global_variables where variable_name = 'innodb_redo_log_encrypt';<br />
+If the value for binlog_innodb_redo_log_encrypt is not &quot;ON&quot;, this is a finding.<br />
+<br />
+SELECT VARIABLE_NAME, VARIABLE_VALUE<br />
+FROM performance_schema.global_variables where variable_name = 'innodb_undo_log_encrypt';<br />
+If the value for innodb_undo_log_encrypt is not &quot;ON&quot;, this is a finding.<br />
+<br />
+SELECT VARIABLE_NAME, VARIABLE_VALUE<br />
+FROM performance_schema.global_variables where variable_name = 'table_encryption_privilege_check';<br />
+If the value for table_encryption_privilege_check is not &quot;ON&quot;, this is a finding.<br />
+<br />
+SELECT<br />
+    `INNODB_TABLESPACES`.`NAME`,<br />
+    `INNODB_TABLESPACES`.`ENCRYPTION`<br />
+FROM `information_schema`.`INNODB_TABLESPACES`;<br />
+If tables or tablespaces are not encrypted and the value is not &quot;Y&quot;, this is a finding.</p><h2>Vulnerability Number</h2><p>V-235192</p><h2>Documentable</h2><p>False</p><h2>Rule Version</h2><p>MYS8-00-012000</p><h2>Severity Override Guidance</h2><p>Review the system documentation to determine whether the organization has defined the information at rest that is to be protected from modification, which must include, at a minimum, PII and classified information.<br />
+<br />
+If no information is identified as requiring such protection, this is not a finding.<br />
+<br />
+Review the configuration of the MySQL 8.0 Database Server, operating system/file system, and additional software as relevant.<br />
+<br />
+If any of the information defined as requiring cryptographic protection from modification is not encrypted in a manner that provides the required level of protection, this is a finding.<br />
+<br />
+To check for data encryption at rest settings in MySQL:<br />
+SELECT VARIABLE_NAME, VARIABLE_VALUE<br />
+FROM performance_schema.global_variables where variable_name = 'audit_log_encryption';<br />
+If the value for audit_log_encryption is not AES, this is a finding.<br />
+<br />
+SELECT VARIABLE_NAME, VARIABLE_VALUE<br />
+FROM performance_schema.global_variables where variable_name = 'binlog_encryption'; <br />
+If the value for binlog_encryption is not &quot;ON&quot;, this is a finding.<br />
+<br />
+SELECT VARIABLE_NAME, VARIABLE_VALUE<br />
+FROM performance_schema.global_variables where variable_name = 'innodb_redo_log_encrypt';<br />
+If the value for binlog_innodb_redo_log_encrypt is not &quot;ON&quot;, this is a finding.<br />
+<br />
+SELECT VARIABLE_NAME, VARIABLE_VALUE<br />
+FROM performance_schema.global_variables where variable_name = 'innodb_undo_log_encrypt';<br />
+If the value for innodb_undo_log_encrypt is not &quot;ON&quot;, this is a finding.<br />
+<br />
+SELECT VARIABLE_NAME, VARIABLE_VALUE<br />
+FROM performance_schema.global_variables where variable_name = 'table_encryption_privilege_check';<br />
+If the value for table_encryption_privilege_check is not &quot;ON&quot;, this is a finding.<br />
+<br />
+SELECT<br />
+    `INNODB_TABLESPACES`.`NAME`,<br />
+    `INNODB_TABLESPACES`.`ENCRYPTION`<br />
+FROM `information_schema`.`INNODB_TABLESPACES`;<br />
+If tables or tablespaces are not encrypted and the value is not &quot;Y&quot;, this is a finding.</p><h2>Check Content Reference</h2><p>M</p><h2>Target Key</h2><p>5277</p></body></html>

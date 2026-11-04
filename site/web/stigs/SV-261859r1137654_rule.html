@@ -1,0 +1,147 @@
+<!doctype html><html lang="en"><head><meta charset="utf-8"><title>STIGQter: STIG Check Details: SV-261859r1137654_rule: PostgreSQL must enforce approved authorizations for logical access to information and system resources in accordance with applicable access control policies.</title><link rel="icon" type="image/svg+xml" href="STIGQter.svg" /><script async src="https://www.googletagmanager.com/gtag/js?id=UA-31381839-2"></script><script src="include.js"></script><script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-4110907817782130" crossorigin="anonymous"></script></head><body><div><img src="STIGQter.svg" alt="STIGQter" style="height:1em;" /> <a href="https://www.stigqter.com/">STIGQter</a>: <a href="main.html">STIG Summary</a>: <a href="U_CD_Postgres_16_STIG_V1R3_Manual-xccdf.html">Crunchy Data Postgres 16 Security Technical Implementation Guide Version: 1 Release: 3 Benchmark Date: 01 Jul 2026</a>:</div> <h1>PostgreSQL must enforce approved authorizations for logical access to information and system resources in accordance with applicable access control policies.</h1><h2>DISA Rule</h2><p>SV-261859r1137654_rule</p><h2>Vulnerability Number</h2><p>V-261859</p><h2>Group Title</h2><p>SRG-APP-000033-DB-000084</p><h2>Rule Version</h2><p>CD16-00-000300</p><h2>Severity</h2><p>CAT I</p><h2>CCI(s)</h2><ul><li>CCI-000213 - Enforce approved authorizations for logical access to information and system resources in accordance with applicable access control policies.</li></ul><h2>Weight</h2><p>10</p><h2>Fix Recommendation</h2><p>Note: The following instructions use the PGDATA environment variable. Refer to APPENDIX-F for instructions on configuring PGDATA.<br />
+<br />
+Create and/or maintain documentation of each group role's appropriate permissions on database objects.<br />
+<br />
+Implement these permissions in the database and remove any permissions that exceed those documented.<br />
+<br />
+The following are examples of how to use role privileges in PostgreSQL to enforce access controls. For a complete list of privileges, refer to the official documentation: https://www.postgresql.org/docs/current/static/sql-createrole.html. <br />
+<br />
+#### Roles Example 1 <br />
+<br />
+The following example demonstrates how to create an admin role with CREATEDB and CREATEROLE privileges. <br />
+<br />
+As the database administrator (shown here as &quot;postgres&quot;), run the following SQL: <br />
+<br />
+$ sudo su - postgres <br />
+<br />
+$ psql -c &quot;CREATE ROLE admin WITH CREATEDB CREATEROLE&quot; <br />
+<br />
+#### Roles Example 2 <br />
+<br />
+The following example demonstrates how to create a role with a password that expires and makes the role a member of the &quot;admin&quot; group. <br />
+<br />
+As the database administrator (shown here as &quot;postgres&quot;), run the following SQL: <br />
+<br />
+$ sudo su - postgres <br />
+<br />
+$ psql -c &quot;CREATE ROLE joe LOGIN ENCRYPTED PASSWORD 'stig_2024' VALID UNTIL '2024-09-20' IN ROLE admin&quot; <br />
+<br />
+#### Roles Example 3 <br />
+<br />
+The following demonstrates how to revoke privileges from a role using REVOKE. <br />
+<br />
+As the database administrator (shown here as &quot;postgres&quot;), run the following SQL: <br />
+<br />
+$ sudo su - postgres <br />
+<br />
+$ psql -c &quot;REVOKE admin FROM joe&quot; <br />
+<br />
+#### Roles Example 4 <br />
+<br />
+The following demonstrates how to alter privileges in a role using ALTER. <br />
+<br />
+As the database administrator (shown here as &quot;postgres&quot;), run the following SQL: <br />
+<br />
+$ sudo su - postgres <br />
+<br />
+$ psql -c &quot;ALTER ROLE joe NOLOGIN&quot; <br />
+<br />
+The following are examples of how to use grant privileges in PostgreSQL to enforce access controls on objects. For a complete list of privileges, refer to the official documentation: https://www.postgresql.org/docs/current/static/sql-grant.html. <br />
+<br />
+#### Grant Example 1 <br />
+<br />
+The following example demonstrates how to grant INSERT on a table to a role. <br />
+<br />
+As the database administrator (shown here as &quot;postgres&quot;), run the following SQL: <br />
+<br />
+$ sudo su - postgres <br />
+<br />
+$ psql -c &quot;GRANT SELECT ON stig_test TO joe&quot; <br />
+<br />
+#### Grant Example 2 <br />
+<br />
+The following example demonstrates how to grant ALL PRIVILEGES on a table to a role. <br />
+<br />
+As the database administrator (shown here as &quot;postgres&quot;), run the following SQL: <br />
+<br />
+$ sudo su - postgres <br />
+<br />
+$ psql -c &quot;GRANT ALL PRIVILEGES ON stig_test TO joe&quot; <br />
+<br />
+#### Grant Example 3 <br />
+<br />
+The following example demonstrates how to grant a role to a role. <br />
+<br />
+As the database administrator (shown here as &quot;postgres&quot;), run the following SQL: <br />
+<br />
+$ sudo su - postgres <br />
+<br />
+$ psql -c &quot;GRANT admin TO joe&quot; <br />
+<br />
+#### Revoke Example 1 <br />
+<br />
+The following example demonstrates how to revoke access from a role. <br />
+<br />
+As the database administrator (shown here as &quot;postgres&quot;), run the following SQL: <br />
+<br />
+$ sudo su - postgres <br />
+<br />
+$ psql -c &quot;REVOKE admin FROM joe&quot; <br />
+<br />
+To change authentication requirements for the database, as the database administrator (shown here as &quot;postgres&quot;), edit pg_hba.conf: <br />
+<br />
+$ sudo su - postgres <br />
+<br />
+$ vi ${PGDATA?}/pg_hba.conf <br />
+<br />
+Edit authentication requirements to the organizational requirements. Refer to the official documentation for the complete list of options for authentication: http://www.postgresql.org/docs/current/static/auth-pg-hba-conf.html. <br />
+<br />
+After changes to pg_hba.conf, reload the server: <br />
+<br />
+$ sudo systemctl reload postgresql-${PGVER?}</p><h2>Check Contents</h2><p>Note: The following instructions use the PGDATA environment variable. Refer to APPENDIX-F for instructions on configuring PGDATA.<br />
+<br />
+From the system security plan or equivalent documentation, determine the appropriate permissions on database objects for each kind (group role) of user. If this documentation is missing, this is a finding.<br />
+<br />
+As the database administrator (shown here as &quot;postgres&quot;), check the privileges of all roles in the database by running the following SQL:<br />
+<br />
+$ sudo su - postgres<br />
+$ psql -c '\du'<br />
+<br />
+Review all roles and their associated privileges. If any roles' privileges exceed those documented, this is a finding.<br />
+<br />
+As the database administrator (shown here as &quot;postgres&quot;), check the configured privileges for tables and columns by running the following SQL:<br />
+<br />
+$ sudo su - postgres<br />
+$ psql -c '\dp'<br />
+<br />
+Review all access privileges and column access privileges list. If any roles' privileges exceed those documented, this is a finding.<br />
+<br />
+As the database administrator (shown here as &quot;postgres&quot;), check the configured authentication settings in pg_hba.conf:<br />
+<br />
+$ sudo su - postgres<br />
+$ cat ${PGDATA?}/pg_hba.conf<br />
+<br />
+Review all entries and their associated authentication methods. If any entries do not have their documented authentication requirements, this is a finding.</p><h2>Vulnerability Number</h2><p>V-261859</p><h2>Documentable</h2><p>False</p><h2>Rule Version</h2><p>CD16-00-000300</p><h2>Severity Override Guidance</h2><p>Note: The following instructions use the PGDATA environment variable. Refer to APPENDIX-F for instructions on configuring PGDATA.<br />
+<br />
+From the system security plan or equivalent documentation, determine the appropriate permissions on database objects for each kind (group role) of user. If this documentation is missing, this is a finding.<br />
+<br />
+As the database administrator (shown here as &quot;postgres&quot;), check the privileges of all roles in the database by running the following SQL:<br />
+<br />
+$ sudo su - postgres<br />
+$ psql -c '\du'<br />
+<br />
+Review all roles and their associated privileges. If any roles' privileges exceed those documented, this is a finding.<br />
+<br />
+As the database administrator (shown here as &quot;postgres&quot;), check the configured privileges for tables and columns by running the following SQL:<br />
+<br />
+$ sudo su - postgres<br />
+$ psql -c '\dp'<br />
+<br />
+Review all access privileges and column access privileges list. If any roles' privileges exceed those documented, this is a finding.<br />
+<br />
+As the database administrator (shown here as &quot;postgres&quot;), check the configured authentication settings in pg_hba.conf:<br />
+<br />
+$ sudo su - postgres<br />
+$ cat ${PGDATA?}/pg_hba.conf<br />
+<br />
+Review all entries and their associated authentication methods. If any entries do not have their documented authentication requirements, this is a finding.</p><h2>Check Content Reference</h2><p>M</p><h2>Target Key</h2><p>5598</p></body></html>

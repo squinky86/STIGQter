@@ -1,0 +1,117 @@
+<!doctype html><html lang="en"><head><meta charset="utf-8"><title>STIGQter: STIG Check Details: SV-223917r1137691_rule: IBM z/OS must protect dynamic lists in accordance with proper security requirements.</title><link rel="icon" type="image/svg+xml" href="STIGQter.svg" /><script async src="https://www.googletagmanager.com/gtag/js?id=UA-31381839-2"></script><script src="include.js"></script><script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-4110907817782130" crossorigin="anonymous"></script></head><body><div><img src="STIGQter.svg" alt="STIGQter" style="height:1em;" /> <a href="https://www.stigqter.com/">STIGQter</a>: <a href="main.html">STIG Summary</a>: <a href="U_IBM_zOS_TSS_STIG_V9R9_Manual-xccdf.html">IBM z/OS TSS Security Technical Implementation Guide Version: 9 Release: 9 Benchmark Date: 01 Jul 2026</a>:</div> <h1>IBM z/OS must protect dynamic lists in accordance with proper security requirements.</h1><h2>DISA Rule</h2><p>SV-223917r1137691_rule</p><h2>Vulnerability Number</h2><p>V-223917</p><h2>Group Title</h2><p>SRG-OS-000080-GPOS-00048</p><h2>Rule Version</h2><p>TSS0-ES-000440</p><h2>Severity</h2><p>CAT I</p><h2>CCI(s)</h2><ul><li>CCI-000213 - Enforce approved authorizations for logical access to information and system resources in accordance with applicable access control policies.</li><li>CCI-002235 - Prevent non-privileged users from executing privileged functions.</li></ul><h2>Weight</h2><p>10</p><h2>Fix Recommendation</h2><p>Configure TSS to ensure that the Dynamic List resources are defined to the IBMFAC resource class and protected. Only system programmers and a limited number of authorized users and Approved authorized Started Tasks are able to issue these commands. All access is logged.<br />
+<br />
+The required CSV-prefixed Facility Class resources are listed below. These resources or generic equivalents should be defined and permitted as required with only z/OS systems programmers and logging enabled. Minimum required list of CSV-prefixed resources:<br />
+<br />
+CSVAPF.<br />
+CSVAPF.MVS.SETPROG.FORMAT.DYNAMIC<br />
+CSVAPF.MVS.SETPROG.FORMAT.STATIC<br />
+CSVDYLPA.<br />
+CSVDYLPA.ADD.<br />
+CSVDYLPA.ADD.<br />
+CSVDYNEX.<br />
+CSVDYNEX.LIST<br />
+CSVDYNL.<br />
+CSVDYNL.UPDATE.LNKLST<br />
+CSVLLA.<br />
+<br />
+If DEFPROT is specified in the IBMFAC RDT the following command examples are not required. To prevent access to these resources, the CSV resources are protected using the following commands.<br />
+<br />
+The following commands are provided for example only:<br />
+<br />
+TSS ADDTO(deptacid) IBMFAC(CSV)<br />
+or<br />
+TSS ADDTO(deptacid) IBMFAC(CSVAPF)<br />
+TSS ADDTO(deptacid) IBMFAC(CSVDYLPA)<br />
+TSS ADDTO(deptacid) IBMFAC(CSVDYNEX)<br />
+TSS ADDTO(deptacid) IBMFAC(CSVDYNL)<br />
+TSS ADDTO(deptacid) IBMFAC(CSVDYLPA)<br />
+TSS ADDTO(deptacid) IBMFAC(CSVLLA)<br />
+<br />
+Limit authority to those resources to z/OS systems programmers. Restrict to the absolute minimum number of personnel with ACTION(AUDIT) and UPDATE access.<br />
+<br />
+Sample commands are shown here to accomplish this:<br />
+<br />
+TSS PERMIT(syspsmpl) IBMFAC(CSVAPF.) ACCESS(UPDATE) ACTION(AUDIT)<br />
+TSS PERMIT(syspsmpl) IBMFAC(CSVAPF.MVS.SETPROG) ACCESS(UPDATE) ACTION(AUDIT)<br />
+TSS PERMIT(syspsmpl) IBMFAC(CSVAPF.MVS.SETPROG.FORMAT) ACCESS(UPDATE) ACTION(AUDIT)<br />
+TSS PERMIT(syspsmpl) IBMFAC(CSVAPF.MVS.SETPROG.SETPROG.FORMAT.DYNAMIC) ACCESS(UPDATE) ACTION(AUDIT)<br />
+TSS PERMIT(syspsmpl) IBMFAC(CSVAPF.MVS.SETPROG.SETPROG.FORMAT.STATIC) ACCESS(UPDATE) ACTION(AUDIT)<br />
+<br />
+The CSVDYLPA.ADD resource will be permitted to BMC Mainview, CA 1, and CA Common Services STC ACIDs with ACTION(AUDIT) and UPDATE access.<br />
+<br />
+The CSVDYLPA resource will be permitted to BMC Mainview, CA 1, and CA Common Services STC ACIDs with ACTION(AUDIT) and UPDATE access.<br />
+<br />
+Sample commands are shown here to accomplish one set of resources:<br />
+<br />
+TSS PERMIT(syspsmpl) IBMFAC(CSVDYLPA.) ACCESS(UPDATE) ACTION(AUDIT)<br />
+TSS PERMIT(BMC Mainview STC ACID) IBMFAC(CSVDYLPA.ADD.) ACCESS(UPDATE) ACTION(AUDIT)<br />
+TSS PERMIT(CA 1 STC ACID) IBMFAC(CSVDYLPA.ADD.) ACCESS(UPDATE) ACTION(AUDIT)<br />
+TSS PERMIT(CCS STC ACID) IBMFAC(CSVDYLPA.ADD.) ACCESS(UPDATE) ACTION(AUDIT)<br />
+TSS PERMIT(CA 1 STC ACID) IBMFAC(CSVDYLPA.DELETE.) ACCESS(UPDATE) ACTION(AUDIT)<br />
+TSS PERMIT(CCS STC ACID) IBMFAC(CSVDYLPA.DELETE.) ACCESS(UPDATE) ACTION(AUDIT)<br />
+<br />
+The CSVDYNEX.LIST resource and/or generic equivalent will be defined with ACTION(AUDIT) and UPDATE access restricted to system programming personnel.<br />
+<br />
+The CSVDYNEX.LIST resource and/or generic equivalent will be defined with READ access restricted to auditors.<br />
+<br />
+Sample commands are shown here to accomplish this:<br />
+<br />
+TSS PERMIT(syspsmpl) IBMFAC(CSVDYNEX.) ACCESS(UPDATE) ACTION(AUDIT)<br />
+TSS PERMIT(syspsmpl) IBMFAC(CSVDYNEX.LIST) ACCESS(UPDATE) ACTION(AUDIT)<br />
+TSS PERMIT(smplsmpl) IBMFAC(CSVDYNEX.LIST) ACCESS(READ) <br />
+<br />
+The CSVLLA resource will be permitted to CICS and CONTROL-O STC ACIDs with ACTION(AUDIT) and UPDATE access.<br />
+<br />
+Sample commands are shown here to accomplish one set of resources:<br />
+<br />
+TSS PERMIT(syspsmpl) IBMFAC(CSVLLA.) ACCESS(UPDATE) ACTION(AUDIT)<br />
+TSS PERMIT(CICS STC ACIDs) IBMFAC(CSVLLA.) ACCESS(UPDATE) ACTION(AUDIT)<br />
+TSS PERMIT(CONTROL-O STC ACID) IBMFAC(CSVLLA.) ACCESS(UPDATE) ACTION(AUDIT)</p><h2>Check Contents</h2><p>Refer to the CSV-prefixed resources defined below:<br />
+<br />
+CSVAPF.<br />
+CSVAPF.MVS.SETPROG.FORMAT.DYNAMIC<br />
+CSVAPF.MVS.SETPROG.FORMAT.STATIC<br />
+CSVDYLPA.<br />
+CSVDYNEX.<br />
+CSVDYNEX.LIST<br />
+CSVDYNL.<br />
+CSVDYNL.UPDATE.LNKLST<br />
+CSVLLA.<br />
+<br />
+If the TSS IBMFAC resource class in the RDT has the DEFPROT attribute specified and/or the CSV resources and/or generic equivalent are owned this is not a finding.<br />
+<br />
+If the TSS resources and/or generic equivalent identified above are defined with ACTION(AUDIT) and UPDATE access restricted to system programming personnel this is not a finding.<br />
+<br />
+If the TSS CSVDYNEX.LIST resource and/or generic equivalent is defined with ACTION(AUDIT) and UPDATE access restricted to system programming personnel this is a finding.<br />
+<br />
+If the TSS CSVDYNEX.LIST resource and/or generic equivalent are defined with READ access restricted to auditors this is not a finding.<br />
+<br />
+If the products CICS and/or CONTROL-O are on the system, and the TSS access to the CSVLLA resource access to the CSVLLA resource and/or generic equivalent are defined with ACTION(AUDIT) and UPDATE access restricted to the CICS and CONTROL-O STC ACIDs this is not a finding.<br />
+<br />
+If any software product requires access to dynamic LPA updates on the system, the TSS access to the CSVDYLPA resource and/or generic equivalent will be defined with ACTION(AUDIT) and UPDATE only after the product has been validated with the appropriate STIG or SRG for compliance AND receives documented and filed authorization that details the need and any accepted risks from the site ISSM or equivalent security authority.<br />
+<br />
+Note: In the above, UPDATE access can be substituted with ALL or CONTROL. Review the permissions in the TSS documentation when specifying UPDATE.</p><h2>Vulnerability Number</h2><p>V-223917</p><h2>Documentable</h2><p>False</p><h2>Rule Version</h2><p>TSS0-ES-000440</p><h2>Severity Override Guidance</h2><p>Refer to the CSV-prefixed resources defined below:<br />
+<br />
+CSVAPF.<br />
+CSVAPF.MVS.SETPROG.FORMAT.DYNAMIC<br />
+CSVAPF.MVS.SETPROG.FORMAT.STATIC<br />
+CSVDYLPA.<br />
+CSVDYNEX.<br />
+CSVDYNEX.LIST<br />
+CSVDYNL.<br />
+CSVDYNL.UPDATE.LNKLST<br />
+CSVLLA.<br />
+<br />
+If the TSS IBMFAC resource class in the RDT has the DEFPROT attribute specified and/or the CSV resources and/or generic equivalent are owned this is not a finding.<br />
+<br />
+If the TSS resources and/or generic equivalent identified above are defined with ACTION(AUDIT) and UPDATE access restricted to system programming personnel this is not a finding.<br />
+<br />
+If the TSS CSVDYNEX.LIST resource and/or generic equivalent is defined with ACTION(AUDIT) and UPDATE access restricted to system programming personnel this is a finding.<br />
+<br />
+If the TSS CSVDYNEX.LIST resource and/or generic equivalent are defined with READ access restricted to auditors this is not a finding.<br />
+<br />
+If the products CICS and/or CONTROL-O are on the system, and the TSS access to the CSVLLA resource access to the CSVLLA resource and/or generic equivalent are defined with ACTION(AUDIT) and UPDATE access restricted to the CICS and CONTROL-O STC ACIDs this is not a finding.<br />
+<br />
+If any software product requires access to dynamic LPA updates on the system, the TSS access to the CSVDYLPA resource and/or generic equivalent will be defined with ACTION(AUDIT) and UPDATE only after the product has been validated with the appropriate STIG or SRG for compliance AND receives documented and filed authorization that details the need and any accepted risks from the site ISSM or equivalent security authority.<br />
+<br />
+Note: In the above, UPDATE access can be substituted with ALL or CONTROL. Review the permissions in the TSS documentation when specifying UPDATE.</p><h2>Check Content Reference</h2><p>M</p><h2>Target Key</h2><p>4102</p></body></html>

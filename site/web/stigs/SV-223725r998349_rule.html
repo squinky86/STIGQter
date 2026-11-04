@@ -1,0 +1,142 @@
+<!doctype html><html lang="en"><head><meta charset="utf-8"><title>STIGQter: STIG Check Details: SV-223725r998349_rule: IBM RACF exit ICHPWX01 must be installed and properly configured.</title><link rel="icon" type="image/svg+xml" href="STIGQter.svg" /><script async src="https://www.googletagmanager.com/gtag/js?id=UA-31381839-2"></script><script src="include.js"></script><script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-4110907817782130" crossorigin="anonymous"></script></head><body><div><img src="STIGQter.svg" alt="STIGQter" style="height:1em;" /> <a href="https://www.stigqter.com/">STIGQter</a>: <a href="main.html">STIG Summary</a>: <a href="U_IBM_zOS_RACF_STIG_V9R9_Manual-xccdf.html">IBM z/OS RACF Security Technical Implementation Guide Version: 9 Release: 9 Benchmark Date: 01 Jul 2026</a>:</div> <h1>IBM RACF exit ICHPWX01 must be installed and properly configured.</h1><h2>DISA Rule</h2><p>SV-223725r998349_rule</p><h2>Vulnerability Number</h2><p>V-223725</p><h2>Group Title</h2><p>SRG-OS-000070-GPOS-00038</p><h2>Rule Version</h2><p>RACF-ES-000780</p><h2>Severity</h2><p>CAT II</p><h2>CCI(s)</h2><ul><li>CCI-004066 - For password-based authentication, enforce organization-defined composition and complexity rules.</li></ul><h2>Weight</h2><p>10</p><h2>Fix Recommendation</h2><p>Evaluate the impact associated with implementation of the control option. Develop a plan of action to implement the control option as specified in the example below:<br />
+<br />
+For z/OS release 1.12 through z/OS release 2.1 APARs OA43998 and OA43999 must be applied.<br />
+<br />
+Install exit IRRPWREX according to the following guidelines:<br />
+REXX Parameter Setting<br />
+STIG_Compliant 'yes' <br />
+Pwd_minlen 8<br />
+numbers '0123456789'<br />
+Lower_letters 'abcdefghijklmnopqrstuvwxyz'<br />
+Upper_letters 'ABCDEFGHIJKLMNOPQRSTUVWXYZ'<br />
+special '$@#.&lt;+|&amp;!*-%_&gt;?:'<br />
+Pwd_allowed_chars numbers||Upper_letters||special<br />
+Pwd_req_types 4<br />
+Pwd_name_allowed 'no'<br />
+Pwd_name_minlen 8<br />
+Pwd_name_chars 4<br />
+Pwd_min_unique 3<br />
+Pwd_min_unique_upper 'yes'<br />
+Pwd_max_unchanged 3<br />
+Pwd_max_unchanged_upper 'yes'<br />
+Pwd_max_unchanged_consecutive 'yes'<br />
+Pwd_all_unique 'no'<br />
+Pwd_no_consecutive 'no'<br />
+Pwd_no_consecutive_upper 'yes'<br />
+Pwd_min_new 4<br />
+Pwd_userID_allowed 'no'<br />
+Pwd_userID_chars 4<br />
+Pwd_repeat_chars 0<br />
+Pwd_repeat_upper 'yes'<br />
+Pwd_dict.0 8 /* Change this as words are added and deleted */<br />
+Pwd_dict.1 'IBM'<br />
+Pwd_dict.2 'RACF'<br />
+Pwd_dict.3 'PASSWORD'<br />
+Pwd_dict.4 'PHRASE'<br />
+Pwd_dict.5 'SECRET'<br />
+Pwd_dict.6 'IBMUSER'<br />
+Pwd_dict.7 'SYS1'<br />
+Pwd_dict.8 '12345678'<br />
+Pwd_dict.9 '99999999'<br />
+Pwd_prefix.0 33 /* Change this as values are added and deleted<br />
+Pwd_prefix.1 'APPL'<br />
+Pwd_prefix.2 'APR'<br />
+Pwd_prefix.3 'AUG'<br />
+Pwd_prefix.4 'ASDF'<br />
+Pwd_prefix.5 'BASIC'<br />
+Pwd_prefix.6 'CADAM'<br />
+Pwd_prefix.7 'DEC'<br />
+Pwd_prefix.8 'DEMO'<br />
+Pwd_prefix.9 'FEB'<br />
+Pwd_prefix.10 'FOCUS'<br />
+Pwd_prefix.11 'GAME'<br />
+Pwd_prefix.12 'IBM'<br />
+Pwd_prefix.13 'JAN'<br />
+Pwd_prefix.14 'JUL'<br />
+Pwd_prefix.15 'JUN'<br />
+Pwd_prefix.16 'LOG'<br />
+Pwd_prefix.17 'MAR'<br />
+Pwd_prefix.18 'MAY'<br />
+Pwd_prefix.19 'NET'<br />
+Pwd_prefix.20 'NEW'<br />
+Pwd_prefix.21 'NOV'<br />
+Pwd_prefix.22 'OCT'<br />
+Pwd_prefix.23 'PASS'<br />
+Pwd_prefix.24 'ROS'<br />
+Pwd_prefix.25 'SEP'<br />
+Pwd_prefix.26 'SIGN'<br />
+Pwd_prefix.27 'SYS'<br />
+Pwd_prefix.28 'TEST'<br />
+Pwd_prefix.29 'TSO'<br />
+Pwd_prefix.30 'VALID'<br />
+Pwd_prefix.31 'VTAM'<br />
+Pwd_prefix.32 'XXX'<br />
+Pwd_prefix.33 '1234'<br />
+<br />
+Note: RACF exit ICHPWX01 is coded to call a System REXX named IRRPWREX, so the name cannot be changed without a corresponding change to ICHPWX01.<br />
+<br />
+System REXX requires that this exec (IRRPWREX) reside in the REXXLIB concatenation.<br />
+<br />
+Update parameters in IRRPWREX according to table Parameters for RACF IRRPWREX as listed above.</p><h2>Check Contents</h2><p>From a system console screen, issue the following modify command:<br />
+F AXR,IRRPWREX LIST<br />
+<br />
+Review the results of the modify command. <br />
+<br />
+If the following options are listed, this is not a finding.<br />
+<br />
+-The number of required character types is 4<br />
+(ensures that at least one uppercase, one lowercase, one number, and one special character is used in password)<br />
+<br />
+-The user's name cannot be contained in the password.<br />
+(Only three consecutive characters of the user's name are allowed)<br />
+<br />
+-The minimum word length checked is eight.<br />
+<br />
+-The user ID cannot be contained in the password.<br />
+(Only three consecutive characters of the user ID are allowed)<br />
+<br />
+-Only three unchanged positions of the current password are allowed.<br />
+(These positions need to be consecutive to cause a failure and this check is not case sensitive)<br />
+<br />
+-No more than zero pairs of repeating characters are allowed.<br />
+(This check is not case sensitive)<br />
+<br />
+-A minimum list of 33 restricted prefix strings is being checked:<br />
+APPL APR AUG ASDF BASIC CADAM DEC DEMO FEB FOCUS GAME IBM JAN JUL<br />
+JUN LOG MAR MAY NET NEW NOV OCT PASS ROS SEP SIGN SYS TEST TSO<br />
+VALID VTAM XXX 1234<br />
+<br />
+If the modify command fails or returns the following message in the system log, this is a finding.<br />
+<br />
+IRX0406E REXX exec load file REXXLIB does not contain exec member IRRPWREX.</p><h2>Vulnerability Number</h2><p>V-223725</p><h2>Documentable</h2><p>False</p><h2>Rule Version</h2><p>RACF-ES-000780</p><h2>Severity Override Guidance</h2><p>From a system console screen, issue the following modify command:<br />
+F AXR,IRRPWREX LIST<br />
+<br />
+Review the results of the modify command. <br />
+<br />
+If the following options are listed, this is not a finding.<br />
+<br />
+-The number of required character types is 4<br />
+(ensures that at least one uppercase, one lowercase, one number, and one special character is used in password)<br />
+<br />
+-The user's name cannot be contained in the password.<br />
+(Only three consecutive characters of the user's name are allowed)<br />
+<br />
+-The minimum word length checked is eight.<br />
+<br />
+-The user ID cannot be contained in the password.<br />
+(Only three consecutive characters of the user ID are allowed)<br />
+<br />
+-Only three unchanged positions of the current password are allowed.<br />
+(These positions need to be consecutive to cause a failure and this check is not case sensitive)<br />
+<br />
+-No more than zero pairs of repeating characters are allowed.<br />
+(This check is not case sensitive)<br />
+<br />
+-A minimum list of 33 restricted prefix strings is being checked:<br />
+APPL APR AUG ASDF BASIC CADAM DEC DEMO FEB FOCUS GAME IBM JAN JUL<br />
+JUN LOG MAR MAY NET NEW NOV OCT PASS ROS SEP SIGN SYS TEST TSO<br />
+VALID VTAM XXX 1234<br />
+<br />
+If the modify command fails or returns the following message in the system log, this is a finding.<br />
+<br />
+IRX0406E REXX exec load file REXXLIB does not contain exec member IRRPWREX.</p><h2>Check Content Reference</h2><p>M</p><h2>Target Key</h2><p>4101</p></body></html>

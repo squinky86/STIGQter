@@ -1,0 +1,65 @@
+<!doctype html><html lang="en"><head><meta charset="utf-8"><title>STIGQter: STIG Check Details: SV-265917r1028796_rule: If passwords are used for authentication, MongoDB must store only hashed, salted representations of passwords.</title><link rel="icon" type="image/svg+xml" href="STIGQter.svg" /><script async src="https://www.googletagmanager.com/gtag/js?id=UA-31381839-2"></script><script src="include.js"></script><script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-4110907817782130" crossorigin="anonymous"></script></head><body><div><img src="STIGQter.svg" alt="STIGQter" style="height:1em;" /> <a href="https://www.stigqter.com/">STIGQter</a>: <a href="main.html">STIG Summary</a>: <a href="U_MongoDB_Enterprise_Advanced_7-x_STIG_V1R2_Manual-xccdf.html">MongoDB Enterprise Advanced 7.x Security Technical Implementation Guide Version: 1 Release: 2 Benchmark Date: 01 Jul 2026</a>:</div> <h1>If passwords are used for authentication, MongoDB must store only hashed, salted representations of passwords.</h1><h2>DISA Rule</h2><p>SV-265917r1028796_rule</p><h2>Vulnerability Number</h2><p>V-265917</p><h2>Group Title</h2><p>SRG-APP-000171-DB-000074</p><h2>Rule Version</h2><p>MD7X-00-003800</p><h2>Severity</h2><p>CAT I</p><h2>CCI(s)</h2><ul><li>CCI-000366 - Implement the security configuration settings.</li></ul><h2>Weight</h2><p>10</p><h2>Fix Recommendation</h2><p>1. Define authenticationMechanisms in the MongoDB Configuration file (default location: /etc/mongod.conf), define one of more authenticationMechanisms, from the subset below:<br />
+<br />
+SCRAM-SHA-256<br />
+MONGODB-X509<br />
+GSSAPI<br />
+PLAIN<br />
+<br />
+Example:<br />
+<br />
+setParameter:<br />
+  authenticationMechanisms: SCRAM-SHA-256<br />
+<br />
+2. authSchemaVersion should be more than 5.<br />
+<br />
+Run the following command:<br />
+<br />
+&gt; db.adminCommand({authSchemaUpgrade: 1})<br />
+<br />
+In the unlikely event that an error is encountered, users may safely rerun the authSchemaUpgrade command.</p><h2>Check Contents</h2><p>MongoDB supports several authentication mechanisms, some of which store credentials on the MongoDB server.<br />
+<br />
+If these mechanisms are in use, MongoDB's authSchemaVersion in the admin.system.version collection must be set to &quot;5&quot;.<br />
+<br />
+1. Validate that authenticationMechanisms is defined in config file (default location /etc/mongod.conf).<br />
+<br />
+The MongoDB Configuration file should contain the similar to the following entry:<br />
+<br />
+setParameter:<br />
+  authenticationMechanisms: SCRAM-SHA-256 <br />
+<br />
+If the config file does not contain an authenticationMechanisms entry, that is a finding.<br />
+<br />
+2. Validate authSchemaVersion is set to &quot;5&quot;.<br />
+<br />
+Using the shell, run the following command:<br />
+<br />
+&gt; db.getSiblingDB(&quot;admin&quot;).system.version.find({ &quot;_id&quot; : &quot;authSchema&quot;}, {_id: 0})<br />
+<br />
+It should return:<br />
+<br />
+    { &quot;currentVersion&quot; : 5 }<br />
+<br />
+If currentVersion is less than 5, this is a finding.</p><h2>Vulnerability Number</h2><p>V-265917</p><h2>Documentable</h2><p>False</p><h2>Rule Version</h2><p>MD7X-00-003800</p><h2>Severity Override Guidance</h2><p>MongoDB supports several authentication mechanisms, some of which store credentials on the MongoDB server.<br />
+<br />
+If these mechanisms are in use, MongoDB's authSchemaVersion in the admin.system.version collection must be set to &quot;5&quot;.<br />
+<br />
+1. Validate that authenticationMechanisms is defined in config file (default location /etc/mongod.conf).<br />
+<br />
+The MongoDB Configuration file should contain the similar to the following entry:<br />
+<br />
+setParameter:<br />
+  authenticationMechanisms: SCRAM-SHA-256 <br />
+<br />
+If the config file does not contain an authenticationMechanisms entry, that is a finding.<br />
+<br />
+2. Validate authSchemaVersion is set to &quot;5&quot;.<br />
+<br />
+Using the shell, run the following command:<br />
+<br />
+&gt; db.getSiblingDB(&quot;admin&quot;).system.version.find({ &quot;_id&quot; : &quot;authSchema&quot;}, {_id: 0})<br />
+<br />
+It should return:<br />
+<br />
+    { &quot;currentVersion&quot; : 5 }<br />
+<br />
+If currentVersion is less than 5, this is a finding.</p><h2>Check Content Reference</h2><p>M</p><h2>Target Key</h2><p>5637</p></body></html>

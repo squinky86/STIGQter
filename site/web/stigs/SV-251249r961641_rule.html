@@ -1,0 +1,135 @@
+<!doctype html><html lang="en"><head><meta charset="utf-8"><title>STIGQter: STIG Check Details: SV-251249r961641_rule: Redis Enterprise DBMS must maintain the confidentiality and integrity of information during reception.</title><link rel="icon" type="image/svg+xml" href="STIGQter.svg" /><script async src="https://www.googletagmanager.com/gtag/js?id=UA-31381839-2"></script><script src="include.js"></script><script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-4110907817782130" crossorigin="anonymous"></script></head><body><div><img src="STIGQter.svg" alt="STIGQter" style="height:1em;" /> <a href="https://www.stigqter.com/">STIGQter</a>: <a href="main.html">STIG Summary</a>: <a href="U_Redis_Enterprise_6-x_STIG_V2R2_Manual-xccdf.html">Redis Enterprise 6.x Security Technical Implementation Guide Version: 2 Release: 2 Benchmark Date: 24 Oct 2024</a>:</div> <h1>Redis Enterprise DBMS must maintain the confidentiality and integrity of information during reception.</h1><h2>DISA Rule</h2><p>SV-251249r961641_rule</p><h2>Vulnerability Number</h2><p>V-251249</p><h2>Group Title</h2><p>SRG-APP-000442-DB-000379</p><h2>Rule Version</h2><p>RD6X-00-011700</p><h2>Severity</h2><p>CAT II</p><h2>CCI(s)</h2><ul><li>CCI-002422 - Maintain the confidentiality and/or integrity of information during reception.</li></ul><h2>Weight</h2><p>10</p><h2>Fix Recommendation</h2><p>To encrypt the connection to the database endpoint with TLS, enter the contents the client certificate to the TLS field.<br />
+<br />
+If configured, Redis Enterprise Software (RS) can use industry-standard encryption to protect the data in transit between a Redis client and RS. For this purpose, RS uses transport layer security (TLS) protocol, which is the more secure successor to SSL.<br />
+<br />
+To enable TLS, the RS cluster nodes, the database, and client must be configured as detailed below.<br />
+<br />
+Configuration of the RS nodes:<br />
+By default, each cluster node has a different set of self-signed certificates. These certificates can be replaced with another certificate, preferably a certificate issued by an intermediate certificate authority (CA).<br />
+<br />
+Configuration of the database:<br />
+To encrypt the connection to the database endpoint with TLS, enter the contents the client certificate to the TLS field.<br />
+Note: Once TLS encryption is enabled for the database endpoint, the database does not accept unsecured connections. TLS encryption can significantly impact database throughput and latency.<br />
+<br />
+Adding TLS CA signed certificates to the proxy:<br />
+The proxy is responsible for terminating the TLS connection.<br />
+Server certificate and key are located on /etc/opt/redislabs:proxy_cert.pem - server certificate thatproxy_key.pem - server certificate key*any update on these requires a proxy restart<br />
+<br />
+Enabling of TLS is done via the &quot;ssl authentication&quot; field in the UI. It is a requirement to add a client-side certificate as a TLS connection via client certificate authentication (not just server-side authentication).<br />
+<br />
+Installing CA signed certificates:<br />
+Replace the RS server certificates and key on all nodes with the CA signed certificate and restart the proxy.<br />
+Note: A certificate for the databases' endpoint should be assigned for the same domain as the cluster name. For example, for a cluster with the name &quot;redislabs.com&quot; the certificate should be for &quot;*.redislabs.com&quot;.<br />
+<br />
+Add the TLS client certificates in the UI including CA certificates and any intermediate certificates by chaining the certificate into one file (use a cat command to chain the certificates).<br />
+On the client side make sure to import and trust the CA and intermediate certificates (chain the CA certificate with intermediate as one file to use and import).<br />
+<br />
+Client configuration:<br />
+To connect to a database configured with TLS encryption, either use one of the Redis clients that inherently support SSL encryption, or use any Redis client and create a secured tunnel between the client machine and the RS nodes.<br />
+<br />
+To create a secure tunnel between the client machine and the RS nodes, use tools that enable this functionality, such as spiped or stunnel. An example of how to use stunnel is detailed below.<br />
+Note: For security reasons, RS supports only the TLS protocol. Therefore, make sure that the Redis client or secured tunnel solution used supports TLS, preferably TLS v1.2.<br />
+<br />
+When using self-signed certificates on the cluster nodes, make sure to copy these certificates to the client machines as well, thereby enabling the client to validate the cluster nodes.<br />
+<br />
+When using a certificate issued by an intermediate certificate authority (CA) on the cluster nodes, make sure that the CA root certificate is installed on the client machines.<br />
+<br />
+Example of how to secure client connection with TLS using stunnel: <br />
+The instructions below explain how to use stunnel for setting up a secure tunnel between a client machine and the RS nodes when the client is running on Ubuntu, using the default RS nodes' self-signed certificates, and a self-signed certificate on the client machine.<br />
+<br />
+1. Install stunnel version 5 or higher on the client machine. Older versions of stunnel do not support the TLS protocol.<br />
+<br />
+2. Create a self-signed certificate on the client machine:<br />
+<br />
+3. Generate a private key by running the following commands:<br />
+sudo su<br />
+openssl genrsa -out /etc/stunnel/keyclient.pem 4096<br />
+<br />
+4. Generate a client certificate by running the following commands:<br />
+openssl req -new -x509 -key /etc/stunnel/keyclient.pem<br />
+-out<br />
+/etc/stunnel/cert.pem -days 1826<br />
+<br />
+5. When prompted, enter the appropriate configuration details for the certificate.<br />
+<br />
+6. Copy the RS node certificates from all nodes to the client machine. The certificates are saved in a file named proxy_cert.pem, which is stored in /etc/opt/redislabs in each node.<br />
+<br />
+7. Rename the certificate files fetched from the RS nodes as certsvr.pem. For example: certsvr1.pem, certsvr2.pem.<br />
+<br />
+8. Create a single file for all of the server certificates on the client machine by running the following command from the OS CLI. For example: cat /etc/stunnel/certsvr1.pem /etc/stunnel/certsvr2.pem &gt; /etc/stunnel/servercerts.pem<br />
+<br />
+9. Configure stunnel for the connection to RS by using the steps below:<br />
+<br />
+10. Create a redislabs.conf file in /etc/stunnel folder.<br />
+<br />
+11. Make sure that the certificates that have been generated exist in the following folder: /etc/stunnel.<br />
+<br />
+12. Edit the redislabs.conf content to look as follows:cert = /etc/stunnel/cert.pem key = /etc/stunnel/keyclient.pem cafile = /etc/stunnel/servercerts.pem verify = 2 delay = yes output = /tmp/stunnel.log pid = /tmp/stunnel.pid[redislabs] client = yes accept = [server IP address]:[configured port] connect = [database endpoint value] Where [database endpoint value] is the database endpoint as can be retrieved from RS.<br />
+<br />
+Note: The value for the accept parameter is the local IP and port that is used for redirecting the traffic through the secure tunnel to the database endpoint configured in the connect parameter.<br />
+<br />
+13. Copy the contents of the client certificate from cert.pem and enter them in the SSL Client Authentication field, in the RS UI, of the database to be secured. When done, be sure to save the change.<br />
+<br />
+14. Start the stunnel service by running the following command: service stunnel restart<br />
+<br />
+Note: Any change made to the stunnel configuration requires restarting the stunnel service.<br />
+<br />
+15. Check the stunnel log file to verify that the connection is working properly. The log file is created under the root folder within the configuration mentioned above.<br />
+<br />
+16. Test the connection to the Redis database from the client machine. Use redis-cli to run commands on the client machine, and the commands are redirected from the local machine's port [configured port] to the RS database endpoint. Note that the connection to the Redis database is done through the local port; do not try to connect directly to the database endpoint.<br />
+<br />
+TLS version information:<br />
+To set the minimum TLS version that can be used for encrypting the data in transit between a Redis client and a Redis Enterprise cluster, use the REST API or the following rladmin command:<br />
+rladmin&gt; cluster config min_data_TLS_version [version, e.g., 1.2]<br />
+<br />
+Note that if a client supports an older TLS version, the communication is not be allowed.</p><h2>Check Contents</h2><p>If the data owner does not have a strict requirement for ensuring data integrity and confidentiality is maintained at every step of the data transfer and handling process, this is not a finding.<br />
+<br />
+If Redis Enterprise DBMS, associated applications, and infrastructure do not employ protective measures against unauthorized disclosure and modification during reception, this is a finding.<br />
+<br />
+Redis Enterprise Software (RS) can use industry-standard encryption to protect data in transit between a Redis client and RS. For this purpose, RS uses transport layer security (TLS) protocol.<br />
+<br />
+Run the following commands and verify certificates are present:<br />
+# cd /etc/opt/redislabs<br />
+# ls <br />
+<br />
+Verify the proxy_cert.pem file is present.<br />
+<br />
+If no certificates are found, this is a finding.<br />
+<br />
+Verify that TLS is configured to be used. To check this:<br />
+1. Log in to the Redis Enterprise web UI as an admin user.<br />
+2. Navigate to the Databases tab and select the database and then configuration.<br />
+3. Review the configuration and verify that TLS is enabled for all communications.<br />
+<br />
+If TLS is not configured to be used, this is a finding.<br />
+<br />
+To check the current TLS version, run the following commands on one of the servers that is hosting Redis Enterprise as a privileged user:<br />
+# ccs-cli<br />
+# hgetall min_control_tls_version<br />
+<br />
+If TLS is not FIPS compliant, this is a finding.</p><h2>Vulnerability Number</h2><p>V-251249</p><h2>Documentable</h2><p>False</p><h2>Rule Version</h2><p>RD6X-00-011700</p><h2>Severity Override Guidance</h2><p>If the data owner does not have a strict requirement for ensuring data integrity and confidentiality is maintained at every step of the data transfer and handling process, this is not a finding.<br />
+<br />
+If Redis Enterprise DBMS, associated applications, and infrastructure do not employ protective measures against unauthorized disclosure and modification during reception, this is a finding.<br />
+<br />
+Redis Enterprise Software (RS) can use industry-standard encryption to protect data in transit between a Redis client and RS. For this purpose, RS uses transport layer security (TLS) protocol.<br />
+<br />
+Run the following commands and verify certificates are present:<br />
+# cd /etc/opt/redislabs<br />
+# ls <br />
+<br />
+Verify the proxy_cert.pem file is present.<br />
+<br />
+If no certificates are found, this is a finding.<br />
+<br />
+Verify that TLS is configured to be used. To check this:<br />
+1. Log in to the Redis Enterprise web UI as an admin user.<br />
+2. Navigate to the Databases tab and select the database and then configuration.<br />
+3. Review the configuration and verify that TLS is enabled for all communications.<br />
+<br />
+If TLS is not configured to be used, this is a finding.<br />
+<br />
+To check the current TLS version, run the following commands on one of the servers that is hosting Redis Enterprise as a privileged user:<br />
+# ccs-cli<br />
+# hgetall min_control_tls_version<br />
+<br />
+If TLS is not FIPS compliant, this is a finding.</p><h2>Check Content Reference</h2><p>M</p><h2>Target Key</h2><p>5443</p></body></html>

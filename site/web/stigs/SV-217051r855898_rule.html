@@ -1,0 +1,100 @@
+<!doctype html><html lang="en"><head><meta charset="utf-8"><title>STIGQter: STIG Check Details: SV-217051r855898_rule: The Juniper BGP router must be configured to enable the Generalized TTL Security Mechanism (GTSM).</title><link rel="icon" type="image/svg+xml" href="STIGQter.svg" /><script async src="https://www.googletagmanager.com/gtag/js?id=UA-31381839-2"></script><script src="include.js"></script><script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-4110907817782130" crossorigin="anonymous"></script></head><body><div><img src="STIGQter.svg" alt="STIGQter" style="height:1em;" /> <a href="https://www.stigqter.com/">STIGQter</a>: <a href="main.html">STIG Summary</a>: <a href="U_Juniper_Router_RTR_STIG_V3R2_Manual-xccdf.html">Juniper Router RTR Security Technical Implementation Guide Version: 3 Release: 2 Benchmark Date: 30 Jan 2025</a>:</div> <h1>The Juniper BGP router must be configured to enable the Generalized TTL Security Mechanism (GTSM).</h1><h2>DISA Rule</h2><p>SV-217051r855898_rule</p><h2>Vulnerability Number</h2><p>V-217051</p><h2>Group Title</h2><p>SRG-NET-000362-RTR-000124</p><h2>Rule Version</h2><p>JUNI-RT-000460</p><h2>Severity</h2><p>CAT III</p><h2>CCI(s)</h2><ul><li>CCI-002385 - Protect against or limit the effects of organization-defined types of denial of service events.</li></ul><h2>Weight</h2><p>10</p><h2>Fix Recommendation</h2><p>Configure a filter to only accept bgp packets with a TTL of 255 as shown in the example below.<br />
+<br />
+[edit firewall]<br />
+set filter GTSM_FILTER term TTL_SECURITY from protocol tcp port bgp ttl-except 255<br />
+set filter GTSM_FILTER term TTL_SECURITY then syslog discard<br />
+set filter GTSM_FILTER term ELSE_ACCEPT then accept<br />
+<br />
+Apply the firewall filter to the inbound interface for all eBGP single-hop peer as shown in the example below.<br />
+<br />
+[edit interfaces   ge-0/0/0  unit 0 family inet] <br />
+set filter input-list INBOUND_FILTER<br />
+set filter input-list GTSM_FILTER</p><h2>Check Contents</h2><p>Verify that a filter has been configured to only allow BGP packets with a TTL of 255 as shown in the example below.<br />
+<br />
+firewall {<br />
+        …<br />
+        …<br />
+        …<br />
+    filter GTSM_FILTER {<br />
+        term TTL_SECURITY {<br />
+            from {<br />
+                protocol tcp;<br />
+                ttl-except 255;<br />
+                port bgp;<br />
+            }<br />
+            then {<br />
+                syslog;<br />
+                discard;<br />
+            }<br />
+        }<br />
+        term ELSE_ACCEPT {<br />
+            then accept;<br />
+        }<br />
+    }<br />
+}<br />
+<br />
+Verify that the filter is applied to all interfaces connecting to eBGP peers.<br />
+<br />
+interfaces {<br />
+…<br />
+…<br />
+…<br />
+  ge-0/0/0  {<br />
+        unit 0 {<br />
+            family inet {<br />
+                filter {<br />
+                    input-list [INBOUND_FILTER GTSM_FILTER];<br />
+                }<br />
+                address x.x.x.x/30;<br />
+            }<br />
+         }<br />
+    }<br />
+}<br />
+<br />
+Configure the router to send all BGP packets with a TTL of 255 as shown in the example below.<br />
+<br />
+If the router is not configured to use GTSM for all Exterior Border Gateway Protocol peering sessions, this is a finding.</p><h2>Vulnerability Number</h2><p>V-217051</p><h2>Documentable</h2><p>False</p><h2>Rule Version</h2><p>JUNI-RT-000460</p><h2>Severity Override Guidance</h2><p>Verify that a filter has been configured to only allow BGP packets with a TTL of 255 as shown in the example below.<br />
+<br />
+firewall {<br />
+        …<br />
+        …<br />
+        …<br />
+    filter GTSM_FILTER {<br />
+        term TTL_SECURITY {<br />
+            from {<br />
+                protocol tcp;<br />
+                ttl-except 255;<br />
+                port bgp;<br />
+            }<br />
+            then {<br />
+                syslog;<br />
+                discard;<br />
+            }<br />
+        }<br />
+        term ELSE_ACCEPT {<br />
+            then accept;<br />
+        }<br />
+    }<br />
+}<br />
+<br />
+Verify that the filter is applied to all interfaces connecting to eBGP peers.<br />
+<br />
+interfaces {<br />
+…<br />
+…<br />
+…<br />
+  ge-0/0/0  {<br />
+        unit 0 {<br />
+            family inet {<br />
+                filter {<br />
+                    input-list [INBOUND_FILTER GTSM_FILTER];<br />
+                }<br />
+                address x.x.x.x/30;<br />
+            }<br />
+         }<br />
+    }<br />
+}<br />
+<br />
+Configure the router to send all BGP packets with a TTL of 255 as shown in the example below.<br />
+<br />
+If the router is not configured to use GTSM for all Exterior Border Gateway Protocol peering sessions, this is a finding.</p><h2>Check Content Reference</h2><p>M</p><h2>Target Key</h2><p>4032</p></body></html>

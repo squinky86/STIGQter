@@ -1,0 +1,56 @@
+<!doctype html><html lang="en"><head><meta charset="utf-8"><title>STIGQter: STIG Check Details: SV-223444r1225676_rule: IBM z/OS MCS consoles access authorization(s) for CONSOLE resource(s) must be properly protected.</title><link rel="icon" type="image/svg+xml" href="STIGQter.svg" /><script async src="https://www.googletagmanager.com/gtag/js?id=UA-31381839-2"></script><script src="include.js"></script><script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-4110907817782130" crossorigin="anonymous"></script></head><body><div><img src="STIGQter.svg" alt="STIGQter" style="height:1em;" /> <a href="https://www.stigqter.com/">STIGQter</a>: <a href="main.html">STIG Summary</a>: <a href="U_IBM_zOS_ACF2_STIG_V9R9_Manual-xccdf.html">IBM z/OS ACF2 Security Technical Implementation Guide Version: 9 Release: 9 Benchmark Date: 01 Jul 2026</a>:</div> <h1>IBM z/OS MCS consoles access authorization(s) for CONSOLE resource(s) must be properly protected.</h1><h2>DISA Rule</h2><p>SV-223444r1225676_rule</p><h2>Vulnerability Number</h2><p>V-223444</p><h2>Group Title</h2><p>SRG-OS-000080-GPOS-00048</p><h2>Rule Version</h2><p>ACF2-ES-000230</p><h2>Severity</h2><p>CAT II</p><h2>CCI(s)</h2><ul><li>CCI-000213 - Enforce approved authorizations for logical access to information and system resources in accordance with applicable access control policies.</li><li>CCI-002235 - Prevent non-privileged users from executing privileged functions.</li></ul><h2>Weight</h2><p>10</p><h2>Fix Recommendation</h2><p>Configuration should ensure that all MCS consoles are defined to the CONSOLE resource class and READ access is limited to operators and system programmers.<br />
+<br />
+Review the MCS console resources defined to z/OS and the ACP, and ensure they conform to those outlined below.<br />
+<br />
+Each console defined in the CONSOLxx parmlib members is defined to ACF2 with a corresponding resource rule for TYPE(CON). <br />
+<br />
+Each TYPE(CON) rule is defined with PREVENT access by default.<br />
+<br />
+The logonid associated with each console has READ access to the corresponding resource defined in the CONSOLE resource class.<br />
+<br />
+Access authorization for CONSOLE resources restricts READ access to operations and system programming personnel or authorized personnel.<br />
+<br />
+Example:<br />
+$KEY(MZNC20) TYPE(CON) <br />
+USERDATA(CONSOLE ID SECURITY) <br />
+UID(sysprgmr) ALLOW<br />
+UID(oper) ALLOW<br />
+UID(MZNC20) ALLOW DATA(MZNC20 CONSOLE LOGONID ACCESS REQUIREMENTS) <br />
+UID(*) PREVENT<br />
+<br />
+SET R(CON)<br />
+COMPILE 'ACF2.MZN.CON(MZNC20)' STORE<br />
+<br />
+F ACF2,REBUILD(CON)</p><h2>Check Contents</h2><p>Refer to the proper CONSOLxx member of SYS1.PARMLIB.<br />
+<br />
+From a ACF Command screen enter:<br />
+ACF<br />
+SET RESOURCE(CON)<br />
+SET VERBOSE<br />
+LIST LIKE(-) <br />
+<br />
+NOTE: If CLASMAP defines CONSOLE as anything other than the default of TYPE(CON), replace CON below with the appropriate three letters.<br />
+<br />
+If each console in the CONSOLxx member is defined to ACF2 with a corresponding resource rule for TYPE(CON), this is not a finding.<br />
+<br />
+If each TYPE(CON) rule is defined with PREVENT access by default, this is not a finding.<br />
+<br />
+If the logonid associated with each console has READ access to the corresponding resource defined in the CONSOLE resource class, this is not a finding.<br />
+<br />
+If access authorization for CONSOLE resources restricts READ access to operations and system programming personnel or authorized personnel, this is not a finding.</p><h2>Vulnerability Number</h2><p>V-223444</p><h2>Documentable</h2><p>False</p><h2>Rule Version</h2><p>ACF2-ES-000230</p><h2>Severity Override Guidance</h2><p>Refer to the proper CONSOLxx member of SYS1.PARMLIB.<br />
+<br />
+From a ACF Command screen enter:<br />
+ACF<br />
+SET RESOURCE(CON)<br />
+SET VERBOSE<br />
+LIST LIKE(-) <br />
+<br />
+NOTE: If CLASMAP defines CONSOLE as anything other than the default of TYPE(CON), replace CON below with the appropriate three letters.<br />
+<br />
+If each console in the CONSOLxx member is defined to ACF2 with a corresponding resource rule for TYPE(CON), this is not a finding.<br />
+<br />
+If each TYPE(CON) rule is defined with PREVENT access by default, this is not a finding.<br />
+<br />
+If the logonid associated with each console has READ access to the corresponding resource defined in the CONSOLE resource class, this is not a finding.<br />
+<br />
+If access authorization for CONSOLE resources restricts READ access to operations and system programming personnel or authorized personnel, this is not a finding.</p><h2>Check Content Reference</h2><p>M</p><h2>Target Key</h2><p>4100</p></body></html>

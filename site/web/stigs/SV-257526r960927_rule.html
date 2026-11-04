@@ -1,0 +1,46 @@
+<!doctype html><html lang="en"><head><meta charset="utf-8"><title>STIGQter: STIG Check Details: SV-257526r960927_rule: The Red Hat Enterprise Linux CoreOS (RHCOS) chrony Daemon must use multiple NTP servers to generate audit record time stamps.</title><link rel="icon" type="image/svg+xml" href="STIGQter.svg" /><script async src="https://www.googletagmanager.com/gtag/js?id=UA-31381839-2"></script><script src="include.js"></script><script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-4110907817782130" crossorigin="anonymous"></script></head><body><div><img src="STIGQter.svg" alt="STIGQter" style="height:1em;" /> <a href="https://www.stigqter.com/">STIGQter</a>: <a href="main.html">STIG Summary</a>: <a href="U_RH_OpenShift_Container_Platform_4-x_STIG_V2R6_Manual-xccdf.html">Red Hat OpenShift Container Platform 4.x Security Technical Implementation Guide Version: 2 Release: 6 Benchmark Date: 01 Jul 2026</a>:</div> <h1>The Red Hat Enterprise Linux CoreOS (RHCOS) chrony Daemon must use multiple NTP servers to generate audit record time stamps.</h1><h2>DISA Rule</h2><p>SV-257526r960927_rule</p><h2>Vulnerability Number</h2><p>V-257526</p><h2>Group Title</h2><p>SRG-APP-000116-CTR-000235</p><h2>Rule Version</h2><p>CNTR-OS-000240</p><h2>Severity</h2><p>CAT II</p><h2>CCI(s)</h2><ul><li>CCI-000159 - Use internal system clocks to generate time stamps for audit records.</li></ul><h2>Weight</h2><p>10</p><h2>Fix Recommendation</h2><p>Apply the machine config by executing the following, replacing the variables in the MachineConfig with organizationally-defined NTP servers.<br />
+<br />
+for mcpool in $(oc get mcp -oname | sed &quot;&quot;s:.*/::&quot;&quot; ); do<br />
+echo &quot;apiVersion: machineconfiguration.openshift.io/v1<br />
+kind: MachineConfig<br />
+metadata:<br />
+  name: 90-chrony-ntp-servers-set-$mcpool<br />
+  labels:<br />
+    machineconfiguration.openshift.io/role: $mcpool<br />
+spec:<br />
+  config:<br />
+    ignition:<br />
+      version: 3.1.0<br />
+      storage:<br />
+        files:<br />
+        - contents:<br />
+            source: data:,%23%20Allow%20for%20extra%20configuration%20files.%20This%20is%20useful%0A%23%20for%20admins%20specifying%20their%20own%20NTP%20servers%0Ainclude%20%2Fetc%2Fchrony.d%2F%2A.conf%0A%0A%23%20Set%20chronyd%20as%20client-only.%0Aport%200%0A%0A%23%20Disable%20chronyc%20from%20the%20network%0Acmdport%200%0A%0A%23%20Record%20the%20rate%20at%20which%20the%20system%20clock%20gains%2Flosses%20time.%0Adriftfile%20%2Fvar%2Flib%2Fchrony%2Fdrift%0A%0A%23%20Allow%20the%20system%20clock%20to%20be%20stepped%20in%20the%20first%20three%20updates%0A%23%20if%20its%20offset%20is%20larger%20than%201%20second.%0Amakestep%201.0%203%0A%0A%23%20Enable%20kernel%20synchronization%20of%20the%20real-time%20clock%20%28RTC%29.%0Artcsync%0A%0A%23%20Enable%20hardware%20timestamping%20on%20all%20interfaces%20that%20support%20it.%0A%23hwtimestamp%20%2A%0A%0A%23%20Increase%20the%20minimum%20number%20of%20selectable%20sources%20required%20to%20adjust%0A%23%20the%20system%20clock.%0A%23minsources%202%0A%0A%23%20Allow%20NTP%20client%20access%20from%20local%20network.%0A%23allow%20192.168.0.0%2F16%0A%0A%23%20Serve%20time%20even%20if%20not%20synchronized%20to%20a%20time%20source.%0A%23local%20stratum%2010%0A%0A%23%20Require%20authentication%20%28nts%20or%20key%20option%29%20for%20all%20NTP%20sources.%0A%23authselectmode%20require%0A%0A%23%20Specify%20file%20containing%20keys%20for%20NTP%20authentication.%0Akeyfile%20%2Fetc%2Fchrony.keys%0A%0A%23%20Insert%2Fdelete%20leap%20seconds%20by%20slewing%20instead%20of%20stepping.%0A%23leapsecmode%20slew%0A%0A%23%20Get%20TAI-UTC%20offset%20and%20leap%20seconds%20from%20the%20system%20tz%20database.%0Aleapsectz%20right%2FUTC%0A%0A%23%20Specify%20directory%20for%20log%20files.%0Alogdir%20%2Fvar%2Flog%2Fchrony%0A%0A%23%20Select%20which%20information%20is%20logged.%0A%23log%20measurements%20statistics%20tracking<br />
+            mode: 420<br />
+            overwrite: true<br />
+            path: /etc/chrony.conf<br />
+        - contents:<br />
+            source: data:,<br />
+          mode: 420<br />
+          overwrite: true<br />
+          path: /etc/chrony.d/.mco-keep<br />
+        - contents:<br />
+             source: data:,%23%0A%23%20This%20file%20controls%20the%20configuration%20of%20the%20ntp%20server%0A%23%200.pool.ntp.org%2C1.pool.ntp.org%2C2.pool.ntp.org%2C3.pool.ntp.org%20we%20have%20to%20put%20variable%20array%20name%20here%20for%20mutilines%20remediation%20%0A%0Aserver%20&lt;SERVER1.EXAMPLE.COM&gt;%20minpoll%204%20maxpoll%2010%0Aserver%20&lt;SERVER2.EXAMPLE.COM&gt;%20minpoll%204%20maxpoll%2010%0Aserver%20&lt;SERVER3.EXAMPLE.COM&gt;%20minpoll%204%20maxpoll%2010%0Aserver%20&lt;SERVER4.EXAMPLE.COM&gt;%20minpoll%204%20maxpoll%2010%0A<br />
+          mode: 420<br />
+          overwrite: true<br />
+          path: /etc/chrony.d/ntp-server.conf<br />
+&quot; | oc apply -f -<br />
+done</p><h2>Check Contents</h2><p>Verify Red Hat Enterprise Linux CoreOS (RHCOS) chrony Daemon is configured to use multiple NTP servers by executing the following:<br />
+<br />
+for node in $(oc get node -oname); do oc debug $node -- chroot /host /bin/bash -c 'echo -n &quot;$HOSTNAME &quot;; grep &quot;server&quot; /etc/chrony.d/*' 2&gt;/dev/null; done<br />
+<br />
+(Sample output: server &lt;SERVER1.EXAMPLE.COM&gt; minpoll 4 maxpoll 10<br />
+server &lt;SERVER2.EXAMPLE.COM&gt; minpoll 4 maxpoll 10)<br />
+<br />
+If multiple NTP servers are not configured, this is a finding.</p><h2>Vulnerability Number</h2><p>V-257526</p><h2>Documentable</h2><p>False</p><h2>Rule Version</h2><p>CNTR-OS-000240</p><h2>Severity Override Guidance</h2><p>Verify Red Hat Enterprise Linux CoreOS (RHCOS) chrony Daemon is configured to use multiple NTP servers by executing the following:<br />
+<br />
+for node in $(oc get node -oname); do oc debug $node -- chroot /host /bin/bash -c 'echo -n &quot;$HOSTNAME &quot;; grep &quot;server&quot; /etc/chrony.d/*' 2&gt;/dev/null; done<br />
+<br />
+(Sample output: server &lt;SERVER1.EXAMPLE.COM&gt; minpoll 4 maxpoll 10<br />
+server &lt;SERVER2.EXAMPLE.COM&gt; minpoll 4 maxpoll 10)<br />
+<br />
+If multiple NTP servers are not configured, this is a finding.</p><h2>Check Content Reference</h2><p>M</p><h2>Target Key</h2><p>5547</p></body></html>

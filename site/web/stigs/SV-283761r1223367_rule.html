@@ -1,0 +1,87 @@
+<!doctype html><html lang="en"><head><meta charset="utf-8"><title>STIGQter: STIG Check Details: SV-283761r1223367_rule: The Nokia router must be configured to assign appropriate user roles or access levels to authenticated users.</title><link rel="icon" type="image/svg+xml" href="STIGQter.svg" /><script async src="https://www.googletagmanager.com/gtag/js?id=UA-31381839-2"></script><script src="include.js"></script><script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-4110907817782130" crossorigin="anonymous"></script></head><body><div><img src="STIGQter.svg" alt="STIGQter" style="height:1em;" /> <a href="https://www.stigqter.com/">STIGQter</a>: <a href="main.html">STIG Summary</a>: <a href="U_Nokia_SR_OS_25-x_NDM_V1R1_STIG_Manual-xccdf.html">Nokia Service Router OS 25.x Network Device Management Security Technical Implementation Guide Version: 1 Release: 1 Benchmark Date: 28 Apr 2026</a>:</div> <h1>The Nokia router must be configured to assign appropriate user roles or access levels to authenticated users.</h1><h2>DISA Rule</h2><p>SV-283761r1223367_rule</p><h2>Vulnerability Number</h2><p>V-283761</p><h2>Group Title</h2><p>SRG-APP-000033-NDM-000212</p><h2>Rule Version</h2><p>NOKI-ND-000100</p><h2>Severity</h2><p>CAT I</p><h2>CCI(s)</h2><ul><li>CCI-000213 - Enforce approved authorizations for logical access to information and system resources in accordance with applicable access control policies.</li><li>CCI-000164 - Protect audit information from unauthorized deletion.</li><li>CCI-001493 - Protect audit tools from unauthorized access.</li><li>CCI-001494 - Protect audit tools from unauthorized modification.</li><li>CCI-001495 - Protect audit tools from unauthorized deletion.</li><li>CCI-001199 - Protects the confidentiality and/or integrity of organization-defined information at rest.</li><li>CCI-002169 - Enforce a role-based access control policy over defined subjects and objects based upon organization-defined roles and users authorized to assume such roles.</li><li>CCI-000366 - Implement the security configuration settings.</li><li>CCI-003980 - Allow user installation of software only with explicit privileged status.</li><li>CCI-001813 - Enforce access restrictions using organization-defined mechanisms.</li><li>CCI-000345 - Enforce logical access restrictions associated with changes to the system.</li></ul><h2>Weight</h2><p>10</p><h2>Fix Recommendation</h2><p>Administrative profiles exist by default. Other profiles should be created based on user roles and access levels.<br />
+<br />
+Create a new profile and add as many entries as needed:<br />
+<br />
+- configure system security profile &lt;profile name&gt;<br />
+- default-action &lt;deny-all or permit-all or none or read-only-all&gt;<br />
+- entry &lt;entry id&gt;<br />
+- match &lt;command string&gt;<br />
+- action &lt; permit or deny or read-only or none&gt;<br />
+<br />
+Apply the correct profile to each user:<br />
+<br />
+- configure system security user &lt;user name&gt; console member &lt;profile name&gt;</p><h2>Check Contents</h2><p>For local accounts, role-based access control is configured through the user profile. <br />
+<br />
+Verify the &quot;profile&quot; assigned to each user using the command below:<br />
+<br />
+- show system security user &lt;user name&gt; detail<br />
+- show system security user &quot;admin&quot; detail | match profile<br />
+profile            : administrative<br />
+<br />
+In this example, user &quot;admin&quot; is configured with user profile &quot;administrative&quot;. <br />
+<br />
+Verify the user-assigned profile matches the user roles and responsibilities: <br />
+<br />
+- show system security profile &lt;profile name&gt; <br />
+- show system security profile &quot;administrative&quot;<br />
+<br />
+User Profile          : administrative<br />
+Def. Action           : permit-all<br />
+LI                    : no<br />
+<br />
+NETCONF RPC<br />
+<br />
+NETCONF Kill RPC Authorization                            : yes<br />
+NETCONF Lock RPC Authorization                            : yes<br />
+NETCONF Close-Session RPC Authorization                   : yes<br />
+NETCONF Get RPC Authorization                             : yes<br />
+NETCONF Get-Config RPC Authorization                      : yes<br />
+NETCONF Get-Data RPC Authorization                        : yes<br />
+NETCONF Edit-Config RPC Authorization                     : yes<br />
+NETCONF Copy-Config RPC Authorization                     : yes<br />
+NETCONF Delete-Config RPC Authorization                   : yes<br />
+NETCONF Discard-Changes RPC Authorization                 : yes<br />
+NETCONF Validate RPC Authorization                        : yes<br />
+NETCONF Commit RPC Authorization                          : yes<br />
+.... <br />
+<br />
+For external AAA servers, access levels are available per command. Nokia routers support TACACS+ and RADIUS authentication servers. <br />
+<br />
+If the Nokia router does not enforce the assigned privilege level for each administrator and authorizations for access to all commands relative to the privilege level, this is a finding.</p><h2>Vulnerability Number</h2><p>V-283761</p><h2>Documentable</h2><p>False</p><h2>Rule Version</h2><p>NOKI-ND-000100</p><h2>Severity Override Guidance</h2><p>For local accounts, role-based access control is configured through the user profile. <br />
+<br />
+Verify the &quot;profile&quot; assigned to each user using the command below:<br />
+<br />
+- show system security user &lt;user name&gt; detail<br />
+- show system security user &quot;admin&quot; detail | match profile<br />
+profile            : administrative<br />
+<br />
+In this example, user &quot;admin&quot; is configured with user profile &quot;administrative&quot;. <br />
+<br />
+Verify the user-assigned profile matches the user roles and responsibilities: <br />
+<br />
+- show system security profile &lt;profile name&gt; <br />
+- show system security profile &quot;administrative&quot;<br />
+<br />
+User Profile          : administrative<br />
+Def. Action           : permit-all<br />
+LI                    : no<br />
+<br />
+NETCONF RPC<br />
+<br />
+NETCONF Kill RPC Authorization                            : yes<br />
+NETCONF Lock RPC Authorization                            : yes<br />
+NETCONF Close-Session RPC Authorization                   : yes<br />
+NETCONF Get RPC Authorization                             : yes<br />
+NETCONF Get-Config RPC Authorization                      : yes<br />
+NETCONF Get-Data RPC Authorization                        : yes<br />
+NETCONF Edit-Config RPC Authorization                     : yes<br />
+NETCONF Copy-Config RPC Authorization                     : yes<br />
+NETCONF Delete-Config RPC Authorization                   : yes<br />
+NETCONF Discard-Changes RPC Authorization                 : yes<br />
+NETCONF Validate RPC Authorization                        : yes<br />
+NETCONF Commit RPC Authorization                          : yes<br />
+.... <br />
+<br />
+For external AAA servers, access levels are available per command. Nokia routers support TACACS+ and RADIUS authentication servers. <br />
+<br />
+If the Nokia router does not enforce the assigned privilege level for each administrator and authorizations for access to all commands relative to the privilege level, this is a finding.</p><h2>Check Content Reference</h2><p>M</p><h2>Target Key</h2><p>5744</p></body></html>

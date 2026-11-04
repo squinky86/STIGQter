@@ -1,0 +1,150 @@
+<!doctype html><html lang="en"><head><meta charset="utf-8"><title>STIGQter: STIG Check Details: SV-254092r845252_rule: Innoslate must generate comprehensive audit records.</title><link rel="icon" type="image/svg+xml" href="STIGQter.svg" /><script async src="https://www.googletagmanager.com/gtag/js?id=UA-31381839-2"></script><script src="include.js"></script><script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-4110907817782130" crossorigin="anonymous"></script></head><body><div><img src="STIGQter.svg" alt="STIGQter" style="height:1em;" /> <a href="https://www.stigqter.com/">STIGQter</a>: <a href="main.html">STIG Summary</a>: <a href="U_SPEC_Innovations_Innoslate_4-x_STIG_V1R1_Manual-xccdf.html">SPEC Innovations Innoslate 4.x Security Technical Implementation Guide Version: 1 Release: 1 Benchmark Date: 08 Sep 2022</a>:</div> <h1>Innoslate must generate comprehensive audit records.</h1><h2>DISA Rule</h2><p>SV-254092r845252_rule</p><h2>Vulnerability Number</h2><p>V-254092</p><h2>Group Title</h2><p>SRG-APP-000091</p><h2>Rule Version</h2><p>SPEC-IN-000140</p><h2>Severity</h2><p>CAT II</p><h2>CCI(s)</h2><ul><li>CCI-000130 - Ensure that audit records containing information that establishes what type of event occurred.</li><li>CCI-000131 - Ensure that audit records containing information that establishes when the event occurred.</li><li>CCI-000132 - Ensure that audit records containing information that establishes where the event occurred.</li><li>CCI-000172 - Generate audit records for the event types defined in AU-2 c that include the audit record content defined in AU-3.</li><li>CCI-001464 - Initiates session audits automatically at system start-up.</li></ul><h2>Weight</h2><p>10</p><h2>Fix Recommendation</h2><p>1. Locate the logging.properties file in the following directory: Innoslate4\apache-tomcat\conf.<br />
+2. Search &quot;level&quot; and modify corresponding lines to be set to FINE or VERBOSE as needed.</p><h2>Check Contents</h2><p>1. Locate the logging.properties file in the following directory: Innoslate\apache-tomcat\conf.<br />
+2. Search &quot;level&quot;, and check corresponding lines for the correct verbosity settings. If they are incorrect after a change, save, and service restart, this is a finding.<br />
+<br />
+Below is an example of the contents of the default logging.properties file.<br />
+<br />
+&quot;# Licensed to the Apache Software Foundation (ASF) under one or more<br />
+# contributor license agreements.  See the NOTICE file distributed with<br />
+# this work for additional information regarding copyright ownership.<br />
+# The ASF licenses this file to You under the Apache License, Version 2.0<br />
+# (the &quot;License&quot;); you may not use this file except in compliance with<br />
+# the License.  You may obtain a copy of the License at<br />
+#<br />
+#     http://www.apache.org/licenses/LICENSE-2.0<br />
+#<br />
+# Unless required by applicable law or agreed to in writing, software<br />
+# distributed under the License is distributed on an &quot;AS IS&quot; BASIS,<br />
+# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.<br />
+# See the License for the specific language governing permissions and<br />
+# limitations under the License.<br />
+<br />
+handlers = 1catalina.org.apache.juli.AsyncFileHandler, 2localhost.org.apache.juli.AsyncFileHandler, 3manager.org.apache.juli.AsyncFileHandler, 4host-manager.org.apache.juli.AsyncFileHandler, java.util.logging.ConsoleHandler<br />
+<br />
+.handlers = 1catalina.org.apache.juli.AsyncFileHandler, java.util.logging.ConsoleHandler<br />
+<br />
+############################################################<br />
+# Handler specific properties.<br />
+# Describes specific configuration info for Handlers.<br />
+############################################################<br />
+<br />
+1catalina.org.apache.juli.AsyncFileHandler.level = FINE<br />
+1catalina.org.apache.juli.AsyncFileHandler.directory = ${catalina.base}/logs<br />
+1catalina.org.apache.juli.AsyncFileHandler.prefix = catalina.<br />
+<br />
+2localhost.org.apache.juli.AsyncFileHandler.level = FINE<br />
+2localhost.org.apache.juli.AsyncFileHandler.directory = ${catalina.base}/logs<br />
+2localhost.org.apache.juli.AsyncFileHandler.prefix = localhost.<br />
+<br />
+3manager.org.apache.juli.AsyncFileHandler.level = FINE<br />
+3manager.org.apache.juli.AsyncFileHandler.directory = ${catalina.base}/logs<br />
+3manager.org.apache.juli.AsyncFileHandler.prefix = manager.<br />
+<br />
+4host-manager.org.apache.juli.AsyncFileHandler.level = FINE<br />
+4host-manager.org.apache.juli.AsyncFileHandler.directory = ${catalina.base}/logs<br />
+4host-manager.org.apache.juli.AsyncFileHandler.prefix = host-manager.<br />
+<br />
+java.util.logging.ConsoleHandler.level = FINE<br />
+java.util.logging.ConsoleHandler.formatter = org.apache.juli.OneLineFormatter<br />
+<br />
+<br />
+############################################################<br />
+# Facility specific properties.<br />
+# Provides extra control for each logger.<br />
+############################################################<br />
+<br />
+org.apache.catalina.core.ContainerBase.[Catalina].[localhost].level = INFO<br />
+org.apache.catalina.core.ContainerBase.[Catalina].[localhost].handlers = 2localhost.org.apache.juli.AsyncFileHandler<br />
+<br />
+org.apache.catalina.core.ContainerBase.[Catalina].[localhost].[/manager].level = INFO<br />
+org.apache.catalina.core.ContainerBase.[Catalina].[localhost].[/manager].handlers = 3manager.org.apache.juli.AsyncFileHandler<br />
+<br />
+org.apache.catalina.core.ContainerBase.[Catalina].[localhost].[/host-manager].level = INFO<br />
+org.apache.catalina.core.ContainerBase.[Catalina].[localhost].[/host-manager].handlers = 4host-manager.org.apache.juli.AsyncFileHandler<br />
+<br />
+# For example, set the org.apache.catalina.util.LifecycleBase logger to log<br />
+# each component that extends LifecycleBase changing state:<br />
+#org.apache.catalina.util.LifecycleBase.level = FINE<br />
+<br />
+# To see FINE messages in TldLocationsCache, uncomment the following line:<br />
+#org.apache.jasper.compiler.TldLocationsCache.level = FINE<br />
+<br />
+# To see FINE messages for HTTP/2 handling, uncomment the following line:<br />
+#org.apache.coyote.http2.level = FINE<br />
+<br />
+# To see FINE messages for WebSocket handling, uncomment the following line:<br />
+#org.apache.tomcat.websocket.level = FINE&quot;</p><h2>Vulnerability Number</h2><p>V-254092</p><h2>Documentable</h2><p>False</p><h2>Rule Version</h2><p>SPEC-IN-000140</p><h2>Severity Override Guidance</h2><p>1. Locate the logging.properties file in the following directory: Innoslate\apache-tomcat\conf.<br />
+2. Search &quot;level&quot;, and check corresponding lines for the correct verbosity settings. If they are incorrect after a change, save, and service restart, this is a finding.<br />
+<br />
+Below is an example of the contents of the default logging.properties file.<br />
+<br />
+&quot;# Licensed to the Apache Software Foundation (ASF) under one or more<br />
+# contributor license agreements.  See the NOTICE file distributed with<br />
+# this work for additional information regarding copyright ownership.<br />
+# The ASF licenses this file to You under the Apache License, Version 2.0<br />
+# (the &quot;License&quot;); you may not use this file except in compliance with<br />
+# the License.  You may obtain a copy of the License at<br />
+#<br />
+#     http://www.apache.org/licenses/LICENSE-2.0<br />
+#<br />
+# Unless required by applicable law or agreed to in writing, software<br />
+# distributed under the License is distributed on an &quot;AS IS&quot; BASIS,<br />
+# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.<br />
+# See the License for the specific language governing permissions and<br />
+# limitations under the License.<br />
+<br />
+handlers = 1catalina.org.apache.juli.AsyncFileHandler, 2localhost.org.apache.juli.AsyncFileHandler, 3manager.org.apache.juli.AsyncFileHandler, 4host-manager.org.apache.juli.AsyncFileHandler, java.util.logging.ConsoleHandler<br />
+<br />
+.handlers = 1catalina.org.apache.juli.AsyncFileHandler, java.util.logging.ConsoleHandler<br />
+<br />
+############################################################<br />
+# Handler specific properties.<br />
+# Describes specific configuration info for Handlers.<br />
+############################################################<br />
+<br />
+1catalina.org.apache.juli.AsyncFileHandler.level = FINE<br />
+1catalina.org.apache.juli.AsyncFileHandler.directory = ${catalina.base}/logs<br />
+1catalina.org.apache.juli.AsyncFileHandler.prefix = catalina.<br />
+<br />
+2localhost.org.apache.juli.AsyncFileHandler.level = FINE<br />
+2localhost.org.apache.juli.AsyncFileHandler.directory = ${catalina.base}/logs<br />
+2localhost.org.apache.juli.AsyncFileHandler.prefix = localhost.<br />
+<br />
+3manager.org.apache.juli.AsyncFileHandler.level = FINE<br />
+3manager.org.apache.juli.AsyncFileHandler.directory = ${catalina.base}/logs<br />
+3manager.org.apache.juli.AsyncFileHandler.prefix = manager.<br />
+<br />
+4host-manager.org.apache.juli.AsyncFileHandler.level = FINE<br />
+4host-manager.org.apache.juli.AsyncFileHandler.directory = ${catalina.base}/logs<br />
+4host-manager.org.apache.juli.AsyncFileHandler.prefix = host-manager.<br />
+<br />
+java.util.logging.ConsoleHandler.level = FINE<br />
+java.util.logging.ConsoleHandler.formatter = org.apache.juli.OneLineFormatter<br />
+<br />
+<br />
+############################################################<br />
+# Facility specific properties.<br />
+# Provides extra control for each logger.<br />
+############################################################<br />
+<br />
+org.apache.catalina.core.ContainerBase.[Catalina].[localhost].level = INFO<br />
+org.apache.catalina.core.ContainerBase.[Catalina].[localhost].handlers = 2localhost.org.apache.juli.AsyncFileHandler<br />
+<br />
+org.apache.catalina.core.ContainerBase.[Catalina].[localhost].[/manager].level = INFO<br />
+org.apache.catalina.core.ContainerBase.[Catalina].[localhost].[/manager].handlers = 3manager.org.apache.juli.AsyncFileHandler<br />
+<br />
+org.apache.catalina.core.ContainerBase.[Catalina].[localhost].[/host-manager].level = INFO<br />
+org.apache.catalina.core.ContainerBase.[Catalina].[localhost].[/host-manager].handlers = 4host-manager.org.apache.juli.AsyncFileHandler<br />
+<br />
+# For example, set the org.apache.catalina.util.LifecycleBase logger to log<br />
+# each component that extends LifecycleBase changing state:<br />
+#org.apache.catalina.util.LifecycleBase.level = FINE<br />
+<br />
+# To see FINE messages in TldLocationsCache, uncomment the following line:<br />
+#org.apache.jasper.compiler.TldLocationsCache.level = FINE<br />
+<br />
+# To see FINE messages for HTTP/2 handling, uncomment the following line:<br />
+#org.apache.coyote.http2.level = FINE<br />
+<br />
+# To see FINE messages for WebSocket handling, uncomment the following line:<br />
+#org.apache.tomcat.websocket.level = FINE&quot;</p><h2>Check Content Reference</h2><p>M</p><h2>Target Key</h2><p>5481</p></body></html>

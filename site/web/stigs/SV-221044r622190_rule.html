@@ -1,0 +1,32 @@
+<!doctype html><html lang="en"><head><meta charset="utf-8"><title>STIGQter: STIG Check Details: SV-221044r622190_rule: The Cisco PE switch providing Virtual Private LAN Services (VPLS) must be configured to have traffic storm control thresholds on CE-facing interfaces.</title><link rel="icon" type="image/svg+xml" href="STIGQter.svg" /><script async src="https://www.googletagmanager.com/gtag/js?id=UA-31381839-2"></script><script src="include.js"></script><script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-4110907817782130" crossorigin="anonymous"></script></head><body><div><img src="STIGQter.svg" alt="STIGQter" style="height:1em;" /> <a href="https://www.stigqter.com/">STIGQter</a>: <a href="main.html">STIG Summary</a>: <a href="U_Cisco_IOS-XE_Switch_RTR_STIG_V3R4_Manual-xccdf.html">Cisco IOS XE Switch RTR Security Technical Implementation Guide Version: 3 Release: 4 Benchmark Date: 01 Apr 2026</a>:</div> <h1>The Cisco PE switch providing Virtual Private LAN Services (VPLS) must be configured to have traffic storm control thresholds on CE-facing interfaces.</h1><h2>DISA Rule</h2><p>SV-221044r622190_rule</p><h2>Vulnerability Number</h2><p>V-221044</p><h2>Group Title</h2><p>SRG-NET-000193-RTR-000002</p><h2>Rule Version</h2><p>CISC-RT-000700</p><h2>Severity</h2><p>CAT II</p><h2>CCI(s)</h2><ul><li>CCI-001095 - Manage capacity, bandwidth, or other redundancy to limit the effects of information flooding types of denial of service attacks.</li></ul><h2>Weight</h2><p>10</p><h2>Fix Recommendation</h2><p>Configure storm control for each CE-facing interface as shown in the example below:<br />
+<br />
+SW1(config)#int g3<br />
+SW1(config-if)#service instance 10 ethernet <br />
+SW1(config-if-srv)#storm-control broadcast cir 12000000<br />
+SW1(config-if-srv)#end<br />
+<br />
+Note: The acceptable range is 10000000 -1000000000 for a gigabit ethernet interface, and 100000000-10000000000 for a ten gigabit interface. Storm control is not supported on most FastEthernet interfaces.</p><h2>Check Contents</h2><p>Review the switch configuration to verify that storm control is enabled on CE-facing interfaces deploying VPLS as shown in the example below:<br />
+<br />
+interface GigabitEthernet3<br />
+ no switchport<br />
+ no ip address<br />
+ service instance 10 ethernet<br />
+ encapsulation untagged<br />
+ bridge-domain 100<br />
+ storm-control broadcast cir 12000000 <br />
+ !<br />
+!<br />
+<br />
+If storm control is not enabled at a minimum for broadcast traffic, this is a finding.</p><h2>Vulnerability Number</h2><p>V-221044</p><h2>Documentable</h2><p>False</p><h2>Rule Version</h2><p>CISC-RT-000700</p><h2>Severity Override Guidance</h2><p>Review the switch configuration to verify that storm control is enabled on CE-facing interfaces deploying VPLS as shown in the example below:<br />
+<br />
+interface GigabitEthernet3<br />
+ no switchport<br />
+ no ip address<br />
+ service instance 10 ethernet<br />
+ encapsulation untagged<br />
+ bridge-domain 100<br />
+ storm-control broadcast cir 12000000 <br />
+ !<br />
+!<br />
+<br />
+If storm control is not enabled at a minimum for broadcast traffic, this is a finding.</p><h2>Check Content Reference</h2><p>M</p><h2>Target Key</h2><p>4074</p></body></html>

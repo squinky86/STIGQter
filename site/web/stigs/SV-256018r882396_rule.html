@@ -1,0 +1,48 @@
+<!doctype html><html lang="en"><head><meta charset="utf-8"><title>STIGQter: STIG Check Details: SV-256018r882396_rule: The Arista perimeter router must be configured to filter ingress traffic at the external interface on an inbound direction.</title><link rel="icon" type="image/svg+xml" href="STIGQter.svg" /><script async src="https://www.googletagmanager.com/gtag/js?id=UA-31381839-2"></script><script src="include.js"></script><script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-4110907817782130" crossorigin="anonymous"></script></head><body><div><img src="STIGQter.svg" alt="STIGQter" style="height:1em;" /> <a href="https://www.stigqter.com/">STIGQter</a>: <a href="main.html">STIG Summary</a>: <a href="U_Arista_MLS_EOS_4-X_Router_STIG_V2R2_Manual-xccdf.html">Arista MLS EOS 4.X Router Security Technical Implementation Guide Version: 2 Release: 2 Benchmark Date: 02 Apr 2025</a>:</div> <h1>The Arista perimeter router must be configured to filter ingress traffic at the external interface on an inbound direction.</h1><h2>DISA Rule</h2><p>SV-256018r882396_rule</p><h2>Vulnerability Number</h2><p>V-256018</p><h2>Group Title</h2><p>SRG-NET-000205-RTR-000003</p><h2>Rule Version</h2><p>ARST-RT-000370</p><h2>Severity</h2><p>CAT II</p><h2>CCI(s)</h2><ul><li>CCI-001097 - Monitor and control communications at the external managed interfaces to the system and at key managed interfaces within the system.</li></ul><h2>Weight</h2><p>10</p><h2>Fix Recommendation</h2><p>This requirement is not applicable for the DODIN backbone.<br />
+<br />
+Bind the ingress ACL to the external interface (inbound).<br />
+<br />
+Step 1: Configure the ACL.<br />
+<br />
+LEAF-1A(config)#ip access-list INBOUND<br />
+LEAF-1A(config-acl-INBOUND)#10 permit tcp 10.10.10.0/24 host 10.20.10.1 eq ssh telnet<br />
+LEAF-1A(config-acl-INBOUND)#20 permit ip 10.10.10.0/24 192.168.10.0/24 <br />
+LEAF-1A(config-acl-INBOUND)#30 permit udp 10.20.20.0/24 any eq bootps snmp<br />
+LEAF-1A(config-acl-INBOUND)#40 deny ip any any log<br />
+<br />
+Step 2: Apply the ACL inbound on all external interfaces.<br />
+<br />
+LEAF-1A(config)#interface ethernet 13<br />
+LEAF-1A(config-if-Et13)#ip access-group INBOUND in</p><h2>Check Contents</h2><p>This requirement is not applicable for the DODIN backbone.<br />
+<br />
+Review the Arista router configuration to verify the ingress ACL is bound to the external interface in an inbound direction.<br />
+<br />
+Step 1: To verify the ingress ACL is bound to the external interface in an inbound direction, execute the command &quot;sh ip access-list&quot;.<br />
+<br />
+ip access-list INBOUND<br />
+   10 permit tcp 10.10.10.0/24 host 10.20.10.1 eq ssh telnet<br />
+   20 permit ip 10.10.10.0/24 192.168.10.0/24 <br />
+   30 permit udp 10.20.20.0/24 any eq bootps snmp<br />
+<br />
+Step 2: To verify the ACL is applied inbound on all external interfaces, execute the command &quot;sh run int Eth YY&quot;.<br />
+<br />
+interface ethernet 13<br />
+  ip access-group INBOUND in<br />
+<br />
+If the Arista router is not configured to filter traffic entering the network at the external interface in an inbound direction, this is a finding.</p><h2>Vulnerability Number</h2><p>V-256018</p><h2>Documentable</h2><p>False</p><h2>Rule Version</h2><p>ARST-RT-000370</p><h2>Severity Override Guidance</h2><p>This requirement is not applicable for the DODIN backbone.<br />
+<br />
+Review the Arista router configuration to verify the ingress ACL is bound to the external interface in an inbound direction.<br />
+<br />
+Step 1: To verify the ingress ACL is bound to the external interface in an inbound direction, execute the command &quot;sh ip access-list&quot;.<br />
+<br />
+ip access-list INBOUND<br />
+   10 permit tcp 10.10.10.0/24 host 10.20.10.1 eq ssh telnet<br />
+   20 permit ip 10.10.10.0/24 192.168.10.0/24 <br />
+   30 permit udp 10.20.20.0/24 any eq bootps snmp<br />
+<br />
+Step 2: To verify the ACL is applied inbound on all external interfaces, execute the command &quot;sh run int Eth YY&quot;.<br />
+<br />
+interface ethernet 13<br />
+  ip access-group INBOUND in<br />
+<br />
+If the Arista router is not configured to filter traffic entering the network at the external interface in an inbound direction, this is a finding.</p><h2>Check Content Reference</h2><p>M</p><h2>Target Key</h2><p>5513</p></body></html>

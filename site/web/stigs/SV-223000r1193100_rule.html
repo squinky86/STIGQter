@@ -1,0 +1,28 @@
+<!doctype html><html lang="en"><head><meta charset="utf-8"><title>STIGQter: STIG Check Details: SV-223000r1193100_rule: Changes to $CATALINA_HOME/lib/ folder must be logged.</title><link rel="icon" type="image/svg+xml" href="STIGQter.svg" /><script async src="https://www.googletagmanager.com/gtag/js?id=UA-31381839-2"></script><script src="include.js"></script><script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-4110907817782130" crossorigin="anonymous"></script></head><body><div><img src="STIGQter.svg" alt="STIGQter" style="height:1em;" /> <a href="https://www.stigqter.com/">STIGQter</a>: <a href="main.html">STIG Summary</a>: <a href="U_Apache_Tomcat_Application_Server_9_STIG_V3R4_Manual-xccdf.html">Apache Tomcat Application Server 9 Security Technical Implementation Guide Version: 3 Release: 4 Benchmark Date: 01 Apr 2026</a>:</div> <h1>Changes to $CATALINA_HOME/lib/ folder must be logged.</h1><h2>DISA Rule</h2><p>SV-223000r1193100_rule</p><h2>Vulnerability Number</h2><p>V-223000</p><h2>Group Title</h2><p>SRG-APP-000504-AS-000229</p><h2>Rule Version</h2><p>TCAT-AS-001592</p><h2>Severity</h2><p>CAT II</p><h2>CCI(s)</h2><ul><li>CCI-000172 - Generate audit records for the event types defined in AU-2 c that include the audit record content defined in AU-3.</li></ul><h2>Weight</h2><p>10</p><h2>Fix Recommendation</h2><p>From the Tomcat server as a privileged user:<br />
+<br />
+1. Identify the home folder for the Tomcat server:<br />
+#grep -i -- 'catalina_home\|catalina_base' /etc/systemd/system/tomcat.service<br />
+<br />
+Lines similar to the following should be returned:<br />
+Environment=&quot;CATALINA_HOME=/opt/tomcat&quot;<br />
+Environment=&quot;CATALINA_BASE=/opt/tomcat&quot;<br />
+where /opt/tomcat in the example will be referred to as &lt;homefolderpath&gt;<br />
+<br />
+2. Add rules to a rules file. These files will typically be /etc/audit/rules.d/audit.rules or stig.rules. Open the rules file &lt;rulesfile&gt; in a text editor.<br />
+<br />
+3. Alter or add the following line to the rules file, replacing &lt;homefolderpath&gt; with the actual path. (e.g., /opt/tomcat):<br />
+-w &lt;homefolderpath&gt;/lib -p wa -k tomcat<br />
+<br />
+4. Load the rules, replacing &lt;rulesfile&gt; with the actual filename (e.g., audit.rules):<br />
+#auditctl -R &lt;rulesfile&gt;<br />
+<br />
+5. Make the rules persistent:<br />
+#augenrules --load</p><h2>Check Contents</h2><p>Check the audit rules for the Tomcat folders. Run the following command from the Tomcat server as a privileged user:<br />
+<br />
+sudo auditctl -l | grep $CATALINA_HOME/lib<br />
+<br />
+If the results do not include &quot;-w $CATALINA_HOME/lib -p wa -k tomcat&quot; or if there are no results, this is a finding.</p><h2>Vulnerability Number</h2><p>V-223000</p><h2>Documentable</h2><p>False</p><h2>Rule Version</h2><p>TCAT-AS-001592</p><h2>Severity Override Guidance</h2><p>Check the audit rules for the Tomcat folders. Run the following command from the Tomcat server as a privileged user:<br />
+<br />
+sudo auditctl -l | grep $CATALINA_HOME/lib<br />
+<br />
+If the results do not include &quot;-w $CATALINA_HOME/lib -p wa -k tomcat&quot; or if there are no results, this is a finding.</p><h2>Check Content Reference</h2><p>M</p><h2>Target Key</h2><p>4094</p></body></html>

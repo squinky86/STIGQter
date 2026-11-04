@@ -1,0 +1,41 @@
+<!doctype html><html lang="en"><head><meta charset="utf-8"><title>STIGQter: STIG Check Details: SV-259124r935276_rule: The vCenter UI service shutdown port must be disabled.</title><link rel="icon" type="image/svg+xml" href="STIGQter.svg" /><script async src="https://www.googletagmanager.com/gtag/js?id=UA-31381839-2"></script><script src="include.js"></script><script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-4110907817782130" crossorigin="anonymous"></script></head><body><div><img src="STIGQter.svg" alt="STIGQter" style="height:1em;" /> <a href="https://www.stigqter.com/">STIGQter</a>: <a href="main.html">STIG Summary</a>: <a href="U_VMW_vSphere_8-0_VCSA_UI_STIG_V1R1_Manual-xccdf.html">VMware vSphere 8.0 vCenter Appliance User Interface (UI) Security Technical Implementation Guide Version: 1 Release: 1 Benchmark Date: 31 Oct 2023</a>:</div> <h1>The vCenter UI service shutdown port must be disabled.</h1><h2>DISA Rule</h2><p>SV-259124r935276_rule</p><h2>Vulnerability Number</h2><p>V-259124</p><h2>Group Title</h2><p>SRG-APP-000141-AS-000095</p><h2>Rule Version</h2><p>VCUI-80-000134</p><h2>Severity</h2><p>CAT II</p><h2>CCI(s)</h2><ul><li>CCI-000381 - Configure the system to provide only organization-defined mission essential capabilities.</li></ul><h2>Weight</h2><p>10</p><h2>Fix Recommendation</h2><p>Navigate to and open:<br />
+<br />
+/usr/lib/vmware-vsphere-ui/server/conf/catalina.properties<br />
+<br />
+Add or modify the setting &quot;shutdown.port=-1&quot; in the &quot;catalina.properties&quot; file.<br />
+<br />
+Navigate to and open:<br />
+<br />
+/usr/lib/vmware-vsphere-ui/server/conf/server.xml<br />
+<br />
+Configure the &lt;Server&gt; node with the value:<br />
+<br />
+port=&quot;${shutdown.port}&quot;<br />
+<br />
+Restart the service with the following command:<br />
+<br />
+# vmon-cli --restart vsphere-ui</p><h2>Check Contents</h2><p>At the command prompt, run the following commands:<br />
+<br />
+# xmllint --xpath &quot;//Server/@port&quot; /usr/lib/vmware-vsphere-ui/server/conf/server.xml<br />
+# grep shutdown.port /etc/vmware/vmware-vmon/svcCfgfiles/vsphere-ui.json<br />
+<br />
+Example results:<br />
+<br />
+port=&quot;${shutdown.port}&quot;<br />
+&quot;-Dshutdown.port=-1&quot;,<br />
+<br />
+If &quot;port&quot; does not equal &quot;${shutdown.port}&quot;, this is a finding.<br />
+<br />
+If &quot;shutdown.port&quot; does not equal &quot;-1&quot;, this is a finding.</p><h2>Vulnerability Number</h2><p>V-259124</p><h2>Documentable</h2><p>False</p><h2>Rule Version</h2><p>VCUI-80-000134</p><h2>Severity Override Guidance</h2><p>At the command prompt, run the following commands:<br />
+<br />
+# xmllint --xpath &quot;//Server/@port&quot; /usr/lib/vmware-vsphere-ui/server/conf/server.xml<br />
+# grep shutdown.port /etc/vmware/vmware-vmon/svcCfgfiles/vsphere-ui.json<br />
+<br />
+Example results:<br />
+<br />
+port=&quot;${shutdown.port}&quot;<br />
+&quot;-Dshutdown.port=-1&quot;,<br />
+<br />
+If &quot;port&quot; does not equal &quot;${shutdown.port}&quot;, this is a finding.<br />
+<br />
+If &quot;shutdown.port&quot; does not equal &quot;-1&quot;, this is a finding.</p><h2>Check Content Reference</h2><p>M</p><h2>Target Key</h2><p>5568</p></body></html>

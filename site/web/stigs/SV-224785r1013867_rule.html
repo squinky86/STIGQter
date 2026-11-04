@@ -1,0 +1,61 @@
+<!doctype html><html lang="en"><head><meta charset="utf-8"><title>STIGQter: STIG Check Details: SV-224785r1013867_rule: The Manager Web app password must be configured as follows: 
+-15 or more characters.
+-at least one lower case letter. 
+-at least one upper case letter. 
+-at least one number.
+-at least one special character.</title><link rel="icon" type="image/svg+xml" href="STIGQter.svg" /><script async src="https://www.googletagmanager.com/gtag/js?id=UA-31381839-2"></script><script src="include.js"></script><script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-4110907817782130" crossorigin="anonymous"></script></head><body><div><img src="STIGQter.svg" alt="STIGQter" style="height:1em;" /> <a href="https://www.stigqter.com/">STIGQter</a>: <a href="main.html">STIG Summary</a>: <a href="U_ISEC7_Sphere_STIG_V3R1_Manual-xccdf.html">ISEC7 Sphere Security Technical Implementation Guide Version: 3 Release: 1 Benchmark Date: 24 Oct 2024</a>:</div> <h1>The Manager Web app password must be configured as follows: 
+-15 or more characters.
+-at least one lower case letter. 
+-at least one upper case letter. 
+-at least one number.
+-at least one special character.</h1><h2>DISA Rule</h2><p>SV-224785r1013867_rule</p><h2>Vulnerability Number</h2><p>V-224785</p><h2>Group Title</h2><p>SRG-APP-000164</p><h2>Rule Version</h2><p>ISEC-06-550700</p><h2>Severity</h2><p>CAT II</p><h2>CCI(s)</h2><ul><li>CCI-004066 - For password-based authentication, enforce organization-defined composition and complexity rules.</li></ul><h2>Weight</h2><p>10</p><h2>Fix Recommendation</h2><p>To set a strong password on the Manager Web app, run the ISEC7 integrated installer or use the following manual procedure:<br />
+<br />
+Log in to the ISEC7 SPHERE server.<br />
+Browse to &lt;Drive&gt;:\Program Files\ISEC7 SPHERE\Tomcat\conf and open Tomcat-Users.xml.<br />
+Open the Command Prompt and CD to &lt;Drive&gt;:\Program Files\ISEC7 SPHERE\Tomcat\bin.<br />
+Execute the following using sha command:<br />
+<br />
+digest –a sha password*<br />
+<br />
+*Where password is the 15 character password designated for the account.<br />
+<br />
+Copy the output, which is the hashed digest password.<br />
+In Tomcat-Users.xml, add in the password for the user with the obfuscated output at &lt;user password=&quot;**&quot;, where ** is the obfuscated password.<br />
+<br />
+example: &lt;user password=&quot;310c55aa3d5b42217e7f0e80ce30467d$100000$529cceb1fbc80f4f461fc1bd56219d79d9c94d4a8fc46abad0646f27e753ff9e&quot; roles=&quot;manager-gui,manager-script&quot; username=&quot;admin&quot;/&gt;<br />
+<br />
+Save the file.<br />
+Open &lt;Drive&gt;:\Program Files\ISEC7 SPHERE\Tomcat\conf\server.xml with Notepad.exe.<br />
+Enter: &lt;Realm className=&quot;org.apache.catalina.realm.UserDatabaseRealm&quot;<br />
+ resourceName=&quot;UserDatabase&quot; digest=”sha”/&gt;<br />
+Save the file.<br />
+Restart the ISEC7 SPHERE Web service using the services.msc.<br />
+<br />
+Note: the password must meet the following complexity requirements:<br />
+-15 or more characters.<br />
+-at least one lower case letter.<br />
+-at least one upper case letter.<br />
+-at least one number.<br />
+-at least one special character.</p><h2>Check Contents</h2><p>Verify the Manager Web app password has been configured as follows:<br />
+-15 or more characters.<br />
+-at least one lower case letter.<br />
+-at least one upper case letter.<br />
+-at least one number.<br />
+-at least one special character.<br />
+<br />
+Log in to the ISEC7 SPHERE server.<br />
+Open a Web browser and go to https://localhost/manager/html.<br />
+Log in with the custom administrator login and password. Verify password entered meets complexity requirements.<br />
+<br />
+If the Manager Web app password has not been configured as required, this is a finding.</p><h2>Vulnerability Number</h2><p>V-224785</p><h2>Documentable</h2><p>False</p><h2>Rule Version</h2><p>ISEC-06-550700</p><h2>Severity Override Guidance</h2><p>Verify the Manager Web app password has been configured as follows:<br />
+-15 or more characters.<br />
+-at least one lower case letter.<br />
+-at least one upper case letter.<br />
+-at least one number.<br />
+-at least one special character.<br />
+<br />
+Log in to the ISEC7 SPHERE server.<br />
+Open a Web browser and go to https://localhost/manager/html.<br />
+Log in with the custom administrator login and password. Verify password entered meets complexity requirements.<br />
+<br />
+If the Manager Web app password has not been configured as required, this is a finding.</p><h2>Check Content Reference</h2><p>M</p><h2>Target Key</h2><p>4200</p></body></html>

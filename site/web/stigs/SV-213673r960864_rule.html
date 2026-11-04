@@ -1,0 +1,49 @@
+<!doctype html><html lang="en"><head><meta charset="utf-8"><title>STIGQter: STIG Check Details: SV-213673r960864_rule: DB2 must protect against a user falsely repudiating having performed organization-defined actions.</title><link rel="icon" type="image/svg+xml" href="STIGQter.svg" /><script async src="https://www.googletagmanager.com/gtag/js?id=UA-31381839-2"></script><script src="include.js"></script><script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-4110907817782130" crossorigin="anonymous"></script></head><body><div><img src="STIGQter.svg" alt="STIGQter" style="height:1em;" /> <a href="https://www.stigqter.com/">STIGQter</a>: <a href="main.html">STIG Summary</a>: <a href="U_IBM_DB2_V10-5_LUW_STIG_V2R2_Manual-xccdf.html">IBM DB2 V10.5 LUW Security Technical Implementation Guide Version: 2 Release: 2 Benchmark Date: 01 Jul 2026</a>:</div> <h1>DB2 must protect against a user falsely repudiating having performed organization-defined actions.</h1><h2>DISA Rule</h2><p>SV-213673r960864_rule</p><h2>Vulnerability Number</h2><p>V-213673</p><h2>Group Title</h2><p>SRG-APP-000080-DB-000063</p><h2>Rule Version</h2><p>DB2X-00-000500</p><h2>Severity</h2><p>CAT II</p><h2>CCI(s)</h2><ul><li>CCI-000166 - Provide irrefutable evidence that an individual (or process acting on behalf of an individual) falsely denying having performed organization-defined actions to be covered by non-repudiation.</li></ul><h2>Weight</h2><p>10</p><h2>Fix Recommendation</h2><p>Define the audit policy using the following Create Audit Policy SQL statement:<br />
+DB2&gt; CREATE AUDIT POLICY &lt;audit policy name&gt; <br />
+                CATEGORIES CONTEXT STATUS BOTH, EXECUTE STATUS BOTH<br />
+                ERROR TYPE AUDIT<br />
+<br />
+Apply such a policy to either the database as a whole or to the specific application tables using one of these two statements: <br />
+DB2&gt; AUDIT DATABASE USING POLICY &lt;audit policy name&gt; <br />
+ Or <br />
+DB2&gt; AUDIT TABLE &lt;table name&gt; USING POLICY &lt;audit policy name&gt; <br />
+<br />
+Note : While DB2 does provide basic audit capabilities, IBM highly recommends investing in and using a dedicated enterprise audit tool such as the IBM Security Guardium Data Activity Monitor in order to provide a comprehensive audit solution.</p><h2>Check Contents</h2><p>Run the following SQL statement to ensure that an audit policy is defined upon all the required application tables and/or the database:<br />
+DB2&gt; SELECT AUDITPOLICYNAME, OBJECTSCHEMA, OBJECTNAME, OBJECTTYPE <br />
+           FROM SYSCAT.AUDITUSE <br />
+           WHERE OBJECTTYPE IN ('T',' ')<br />
+<br />
+If no rows are returned, this is a finding. <br />
+<br />
+If a row with OBJECTTYPE of ' ' (Database; value is a blank) exists in the output, it is a database level policy. <br />
+<br />
+If a row with OBJECTTYPE of 'T' exists in the output, it is a table level policy. <br />
+<br />
+For each audit policy returned in the statement above, run the following SQL statement to confirm that the CONTEXT and EXECUTE categories are part of that policy: <br />
+DB2&gt; SELECT AUDITPOLICYNAME, CONTEXTSTATUS, EXECUTESTATUS, ERRORTYPE AS ERRORTYPE <br />
+           FROM SYSCAT.AUDITPOLICIES<br />
+<br />
+If the database audit policy has the values for the CONTEXTSTATUS and EXECUTESTATUS columns set to 'S' (Success) or 'B' (Both) as well as the value in the ERRORTYPE column set to 'A' (Audit), this is not a finding. <br />
+<br />
+If the database policy does not exist or does not cover CONTEXTSTATUS or EXECUTESTATUS then check if the appropriate policies are defined for all the required application tables. <br />
+<br />
+If all the required application table audit policies do not have the values for the CONTEXTSTATUS and EXECUTESTATUS columns set to 'S' (Success) or 'B' (Both) as well as the value in the ERRORTYPE column set to 'A' (Audit), this is a finding.</p><h2>Vulnerability Number</h2><p>V-213673</p><h2>Documentable</h2><p>False</p><h2>Rule Version</h2><p>DB2X-00-000500</p><h2>Severity Override Guidance</h2><p>Run the following SQL statement to ensure that an audit policy is defined upon all the required application tables and/or the database:<br />
+DB2&gt; SELECT AUDITPOLICYNAME, OBJECTSCHEMA, OBJECTNAME, OBJECTTYPE <br />
+           FROM SYSCAT.AUDITUSE <br />
+           WHERE OBJECTTYPE IN ('T',' ')<br />
+<br />
+If no rows are returned, this is a finding. <br />
+<br />
+If a row with OBJECTTYPE of ' ' (Database; value is a blank) exists in the output, it is a database level policy. <br />
+<br />
+If a row with OBJECTTYPE of 'T' exists in the output, it is a table level policy. <br />
+<br />
+For each audit policy returned in the statement above, run the following SQL statement to confirm that the CONTEXT and EXECUTE categories are part of that policy: <br />
+DB2&gt; SELECT AUDITPOLICYNAME, CONTEXTSTATUS, EXECUTESTATUS, ERRORTYPE AS ERRORTYPE <br />
+           FROM SYSCAT.AUDITPOLICIES<br />
+<br />
+If the database audit policy has the values for the CONTEXTSTATUS and EXECUTESTATUS columns set to 'S' (Success) or 'B' (Both) as well as the value in the ERRORTYPE column set to 'A' (Audit), this is not a finding. <br />
+<br />
+If the database policy does not exist or does not cover CONTEXTSTATUS or EXECUTESTATUS then check if the appropriate policies are defined for all the required application tables. <br />
+<br />
+If all the required application table audit policies do not have the values for the CONTEXTSTATUS and EXECUTESTATUS columns set to 'S' (Success) or 'B' (Both) as well as the value in the ERRORTYPE column set to 'A' (Audit), this is a finding.</p><h2>Check Content Reference</h2><p>M</p><h2>Target Key</h2><p>3989</p></body></html>

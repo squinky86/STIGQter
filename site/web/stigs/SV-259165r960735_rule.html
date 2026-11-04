@@ -1,0 +1,42 @@
+<!doctype html><html lang="en"><head><meta charset="utf-8"><title>STIGQter: STIG Check Details: SV-259165r960735_rule: The vCenter Envoy service must set a limit on remote connections.</title><link rel="icon" type="image/svg+xml" href="STIGQter.svg" /><script async src="https://www.googletagmanager.com/gtag/js?id=UA-31381839-2"></script><script src="include.js"></script><script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-4110907817782130" crossorigin="anonymous"></script></head><body><div><img src="STIGQter.svg" alt="STIGQter" style="height:1em;" /> <a href="https://www.stigqter.com/">STIGQter</a>: <a href="main.html">STIG Summary</a>: <a href="U_VMW_vSphere_8-0_VCSA_Envoy_STIG_V2R2_Manual-xccdf.html">VMware vSphere 8.0 vCenter Appliance Envoy Security Technical Implementation Guide Version: 2 Release: 2 Benchmark Date: 01 Jul 2026</a>:</div> <h1>The vCenter Envoy service must set a limit on remote connections.</h1><h2>DISA Rule</h2><p>SV-259165r960735_rule</p><h2>Vulnerability Number</h2><p>V-259165</p><h2>Group Title</h2><p>SRG-APP-000001-WSR-000001</p><h2>Rule Version</h2><p>VCRP-80-000098</p><h2>Severity</h2><p>CAT II</p><h2>CCI(s)</h2><ul><li>CCI-000054 - Limit the number of concurrent sessions for each organization-defined account and/or account type to an organization-defined number.</li></ul><h2>Weight</h2><p>10</p><h2>Fix Recommendation</h2><p>Navigate to and open:<br />
+<br />
+/etc/vmware-rhttpproxy/config.xml<br />
+<br />
+Locate the &lt;config&gt;/&lt;envoy&gt;/&lt;L4Filter&gt; block and configure it as follows:<br />
+<br />
+&lt;maxRemoteHttpsConnections&gt;2048&lt;/maxRemoteHttpsConnections&gt;<br />
+&lt;maxRemoteHttpConnections&gt;2048&lt;/maxRemoteHttpConnections&gt;<br />
+<br />
+Restart the service for changes to take effect.<br />
+<br />
+# vmon-cli --restart rhttpproxy</p><h2>Check Contents</h2><p>At the command prompt, run the following commands:<br />
+<br />
+# xmllint --xpath '/config/envoy/L4Filter/maxRemoteHttpsConnections/text()' /etc/vmware-rhttpproxy/config.xml<br />
+# xmllint --xpath '/config/envoy/L4Filter/maxRemoteHttpConnections/text()' /etc/vmware-rhttpproxy/config.xml<br />
+<br />
+Example result:<br />
+<br />
+2048<br />
+<br />
+or<br />
+<br />
+XPath set is empty<br />
+<br />
+If the output is not &quot;2048&quot; or &quot;XPath set it empty&quot;, this is a finding.<br />
+<br />
+Note: If &quot;XPath set is empty&quot; is returned the default values are in effect and is 2048.</p><h2>Vulnerability Number</h2><p>V-259165</p><h2>Documentable</h2><p>False</p><h2>Rule Version</h2><p>VCRP-80-000098</p><h2>Severity Override Guidance</h2><p>At the command prompt, run the following commands:<br />
+<br />
+# xmllint --xpath '/config/envoy/L4Filter/maxRemoteHttpsConnections/text()' /etc/vmware-rhttpproxy/config.xml<br />
+# xmllint --xpath '/config/envoy/L4Filter/maxRemoteHttpConnections/text()' /etc/vmware-rhttpproxy/config.xml<br />
+<br />
+Example result:<br />
+<br />
+2048<br />
+<br />
+or<br />
+<br />
+XPath set is empty<br />
+<br />
+If the output is not &quot;2048&quot; or &quot;XPath set it empty&quot;, this is a finding.<br />
+<br />
+Note: If &quot;XPath set is empty&quot; is returned the default values are in effect and is 2048.</p><h2>Check Content Reference</h2><p>M</p><h2>Target Key</h2><p>5572</p></body></html>

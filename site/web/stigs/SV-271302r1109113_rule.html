@@ -1,0 +1,22 @@
+<!doctype html><html lang="en"><head><meta charset="utf-8"><title>STIGQter: STIG Check Details: SV-271302r1109113_rule: Access to xp_cmdshell must be disabled unless specifically required and approved.</title><link rel="icon" type="image/svg+xml" href="STIGQter.svg" /><script async src="https://www.googletagmanager.com/gtag/js?id=UA-31381839-2"></script><script src="include.js"></script><script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-4110907817782130" crossorigin="anonymous"></script></head><body><div><img src="STIGQter.svg" alt="STIGQter" style="height:1em;" /> <a href="https://www.stigqter.com/">STIGQter</a>: <a href="main.html">STIG Summary</a>: <a href="U_MS_SQL_Server_2022_Instance_STIG_V1R4_Manual-xccdf.html">Microsoft SQL Server 2022 Instance Security Technical Implementation Guide Version: 1 Release: 4 Benchmark Date: 01 Apr 2026</a>:</div> <h1>Access to xp_cmdshell must be disabled unless specifically required and approved.</h1><h2>DISA Rule</h2><p>SV-271302r1109113_rule</p><h2>Vulnerability Number</h2><p>V-271302</p><h2>Group Title</h2><p>SRG-APP-000141-DB-000093</p><h2>Rule Version</h2><p>SQLI-22-007200</p><h2>Severity</h2><p>CAT II</p><h2>CCI(s)</h2><ul><li>CCI-000381 - Configure the system to provide only organization-defined mission essential capabilities.</li></ul><h2>Weight</h2><p>10</p><h2>Fix Recommendation</h2><p>Disable use of or remove any external application executable object definitions that are not approved.<br />
+<br />
+To disable the use of xp_cmdshell, from the query prompt: <br />
+<br />
+EXEC SP_CONFIGURE 'show advanced options', 1;  <br />
+RECONFIGURE WITH OVERRIDE;<br />
+EXEC SP_CONFIGURE 'xp_cmdshell', 0;<br />
+RECONFIGURE WITH OVERRIDE;<br />
+EXEC SP_CONFIGURE 'show advanced options', 0;  <br />
+RECONFIGURE WITH OVERRIDE;</p><h2>Check Contents</h2><p>To determine if [xp_cmdshell] is enabled, execute the following command:  <br />
+<br />
+SELECT name, value, value_in_use<br />
+FROM sys.configurations<br />
+WHERE name = 'xp_cmdshell'<br />
+ <br />
+If [value_in_use] is a [1], review the system documentation to determine whether the use of [xp_cmdshell] is approved. If it is not approved, this is a finding.</p><h2>Vulnerability Number</h2><p>V-271302</p><h2>Documentable</h2><p>False</p><h2>Rule Version</h2><p>SQLI-22-007200</p><h2>Severity Override Guidance</h2><p>To determine if [xp_cmdshell] is enabled, execute the following command:  <br />
+<br />
+SELECT name, value, value_in_use<br />
+FROM sys.configurations<br />
+WHERE name = 'xp_cmdshell'<br />
+ <br />
+If [value_in_use] is a [1], review the system documentation to determine whether the use of [xp_cmdshell] is approved. If it is not approved, this is a finding.</p><h2>Check Content Reference</h2><p>M</p><h2>Target Key</h2><p>5677</p></body></html>

@@ -1,0 +1,42 @@
+<!doctype html><html lang="en"><head><meta charset="utf-8"><title>STIGQter: STIG Check Details: SV-235158r961158_rule: The MySQL Database Server 8.0 and associated applications, when making use of dynamic code execution, must scan input data for invalid values that may indicate a code injection attack.</title><link rel="icon" type="image/svg+xml" href="STIGQter.svg" /><script async src="https://www.googletagmanager.com/gtag/js?id=UA-31381839-2"></script><script src="include.js"></script><script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-4110907817782130" crossorigin="anonymous"></script></head><body><div><img src="STIGQter.svg" alt="STIGQter" style="height:1em;" /> <a href="https://www.stigqter.com/">STIGQter</a>: <a href="main.html">STIG Summary</a>: <a href="U_Oracle_MySQL_8-0_STIG_V2R2_Manual-xccdf.html">Oracle MySQL 8.0 Security Technical Implementation Guide Version: 2 Release: 2 Benchmark Date: 24 Oct 2024</a>:</div> <h1>The MySQL Database Server 8.0 and associated applications, when making use of dynamic code execution, must scan input data for invalid values that may indicate a code injection attack.</h1><h2>DISA Rule</h2><p>SV-235158r961158_rule</p><h2>Vulnerability Number</h2><p>V-235158</p><h2>Group Title</h2><p>SRG-APP-000251-DB-000392</p><h2>Rule Version</h2><p>MYS8-00-007500</p><h2>Severity</h2><p>CAT II</p><h2>CCI(s)</h2><ul><li>CCI-001310 - Checks the validity of organization-defined information inputs to the system.</li></ul><h2>Weight</h2><p>10</p><h2>Fix Recommendation</h2><p>Where dynamic code execution is used, modify the code to implement protections against code injection. <br />
+<br />
+Enable the MySQL Enterprise Firewall by running this script, which is located in the mysql home share sub directory.   <br />
+mysql -u root -p mysql &lt; linux_install_firewall.sql<br />
+<br />
+Train the firewall for users where dynamic code injection is possible, for examples applications that allow user input.<br />
+<br />
+CALL mysql.sp_set_firewall_mode('fwuser@localhost', 'RECORDING');<br />
+<br />
+Once the allowlist for the user/host has been captured, the firewall can be placed in PROTECTING (active blocking) or DETECTING(logging) mode.<br />
+CALL mysql.sp_set_firewall_mode('fwuser@localhost', 'PROTECTING');<br />
+CALL mysql.sp_set_firewall_mode('fwuser@localhost', 'DETECTING');</p><h2>Check Contents</h2><p>Review MySQL Database Server 8.0 source code (stored procedures, functions, and triggers) and application source code to identify cases of dynamic code execution.<br />
+<br />
+Determine if the MySQL Enterprise Firewall is installed and trained to recognize normal behavior and block or alert of abnormal requests. Run the following command:<br />
+SHOW GLOBAL VARIABLES LIKE 'mysql_firewall_mode';<br />
+<br />
+Review firewall users and Mode.<br />
+SELECT * FROM INFORMATION_SCHEMA.MYSQL_FIREWALL_USERS;<br />
+If no rows are returned and no firewall allow lists are active, this is a finding.<br />
+<br />
+If LEARNING is returned, the firewall is building an allow list for the userhost user.<br />
+<br />
+If PROTECTING is returned, the firewall will only permit SQL on the allow list for the userhost user to execute.<br />
+<br />
+If DETECTING is returned, the firewall will write to the firewall log SQL not on the allow list for the userhost user to execute.<br />
+ <br />
+If dynamic code execution is employed without protective measures against code injection, this is a finding.</p><h2>Vulnerability Number</h2><p>V-235158</p><h2>Documentable</h2><p>False</p><h2>Rule Version</h2><p>MYS8-00-007500</p><h2>Severity Override Guidance</h2><p>Review MySQL Database Server 8.0 source code (stored procedures, functions, and triggers) and application source code to identify cases of dynamic code execution.<br />
+<br />
+Determine if the MySQL Enterprise Firewall is installed and trained to recognize normal behavior and block or alert of abnormal requests. Run the following command:<br />
+SHOW GLOBAL VARIABLES LIKE 'mysql_firewall_mode';<br />
+<br />
+Review firewall users and Mode.<br />
+SELECT * FROM INFORMATION_SCHEMA.MYSQL_FIREWALL_USERS;<br />
+If no rows are returned and no firewall allow lists are active, this is a finding.<br />
+<br />
+If LEARNING is returned, the firewall is building an allow list for the userhost user.<br />
+<br />
+If PROTECTING is returned, the firewall will only permit SQL on the allow list for the userhost user to execute.<br />
+<br />
+If DETECTING is returned, the firewall will write to the firewall log SQL not on the allow list for the userhost user to execute.<br />
+ <br />
+If dynamic code execution is employed without protective measures against code injection, this is a finding.</p><h2>Check Content Reference</h2><p>M</p><h2>Target Key</h2><p>5277</p></body></html>

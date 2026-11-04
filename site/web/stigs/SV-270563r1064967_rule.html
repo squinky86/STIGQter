@@ -1,0 +1,53 @@
+<!doctype html><html lang="en"><head><meta charset="utf-8"><title>STIGQter: STIG Check Details: SV-270563r1064967_rule: Oracle Database must enforce password maximum lifetime restrictions.</title><link rel="icon" type="image/svg+xml" href="STIGQter.svg" /><script async src="https://www.googletagmanager.com/gtag/js?id=UA-31381839-2"></script><script src="include.js"></script><script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-4110907817782130" crossorigin="anonymous"></script></head><body><div><img src="STIGQter.svg" alt="STIGQter" style="height:1em;" /> <a href="https://www.stigqter.com/">STIGQter</a>: <a href="main.html">STIG Summary</a>: <a href="U_Oracle_Database_19c_STIG_V1R5_Manual-xccdf.html">Oracle Database 19c Security Technical Implementation Guide Version: 1 Release: 5 Benchmark Date: 01 Apr 2026</a>:</div> <h1>Oracle Database must enforce password maximum lifetime restrictions.</h1><h2>DISA Rule</h2><p>SV-270563r1064967_rule</p><h2>Vulnerability Number</h2><p>V-270563</p><h2>Group Title</h2><p>SRG-APP-000164-DB-000401</p><h2>Rule Version</h2><p>O19C-00-014700</p><h2>Severity</h2><p>CAT II</p><h2>CCI(s)</h2><ul><li>CCI-000366 - Implement the security configuration settings.</li></ul><h2>Weight</h2><p>10</p><h2>Fix Recommendation</h2><p>For user accounts managed by Oracle, modify DBMS settings to force users to periodically change their passwords. For example, using &quot;PPPPPP&quot; to stand for a profile name:<br />
+<br />
+ALTER PROFILE PPPPPP LIMIT PASSWORD_LIFE_TIME 35 PASSWORD_GRACE_TIME 0;<br />
+<br />
+Do this for each profile applied to user accounts.<br />
+<br />
+Note: Although the DOD requirement is for a password change every 60 days, using a value of 35 facilitates the use of PASSWORD_LIFE_TIME as a means of locking accounts inactive for 35 days. But if 35 is not a practical or acceptable limit for password lifetime, set it to the standard DOD value of 60.<br />
+<br />
+Where a password lifetime longer than 60 is needed, document the reasons and obtain information system security officer (ISSO) approval.</p><h2>Check Contents</h2><p>If all user accounts are authenticated by the OS or an enterprise-level authentication/access mechanism, and not by Oracle, this is not a finding.<br />
+<br />
+Review database management system (DBMS) settings to determine if passwords must be changed periodically. Run the following script:<br />
+<br />
+SELECT p1.profile,<br />
+CASE DECODE(p1.limit, 'DEFAULT', p3.limit, p1.limit) WHEN 'UNLIMITED' THEN 'UNLIMITED' ELSE<br />
+CASE DECODE(p2.limit, 'DEFAULT', p4.limit, p2.limit) WHEN 'UNLIMITED' THEN 'UNLIMITED' ELSE<br />
+TO_CHAR(DECODE(p1.limit, 'DEFAULT', p3.limit, p1.limit) + DECODE(p2.limit, 'DEFAULT', p4.limit, p2.limit))<br />
+END<br />
+END effective_life_time<br />
+FROM dba_profiles p1, dba_profiles p2, dba_profiles p3, dba_profiles p4<br />
+WHERE p1.profile=p2.profile<br />
+AND p3.profile='DEFAULT'<br />
+AND p4.profile='DEFAULT'<br />
+AND p1.resource_name='PASSWORD_LIFE_TIME'<br />
+AND p2.resource_name='PASSWORD_GRACE_TIME'<br />
+AND p3.resource_name='PASSWORD_LIFE_TIME' -- from DEFAULT profile<br />
+AND p4.resource_name='PASSWORD_GRACE_TIME' -- from DEFAULT profile<br />
+order by 1;<br />
+<br />
+If the EFFECTIVE_LIFE_TIME is greater than 60 for any profile applied to user accounts, and the need for this has not been documented and approved, this is a finding.<br />
+<br />
+If PASSWORD_LIFE_TIME or PASSWORD_GRACE_TIME is set to &quot;UNLIMITED&quot;, this is a finding.</p><h2>Vulnerability Number</h2><p>V-270563</p><h2>Documentable</h2><p>False</p><h2>Rule Version</h2><p>O19C-00-014700</p><h2>Severity Override Guidance</h2><p>If all user accounts are authenticated by the OS or an enterprise-level authentication/access mechanism, and not by Oracle, this is not a finding.<br />
+<br />
+Review database management system (DBMS) settings to determine if passwords must be changed periodically. Run the following script:<br />
+<br />
+SELECT p1.profile,<br />
+CASE DECODE(p1.limit, 'DEFAULT', p3.limit, p1.limit) WHEN 'UNLIMITED' THEN 'UNLIMITED' ELSE<br />
+CASE DECODE(p2.limit, 'DEFAULT', p4.limit, p2.limit) WHEN 'UNLIMITED' THEN 'UNLIMITED' ELSE<br />
+TO_CHAR(DECODE(p1.limit, 'DEFAULT', p3.limit, p1.limit) + DECODE(p2.limit, 'DEFAULT', p4.limit, p2.limit))<br />
+END<br />
+END effective_life_time<br />
+FROM dba_profiles p1, dba_profiles p2, dba_profiles p3, dba_profiles p4<br />
+WHERE p1.profile=p2.profile<br />
+AND p3.profile='DEFAULT'<br />
+AND p4.profile='DEFAULT'<br />
+AND p1.resource_name='PASSWORD_LIFE_TIME'<br />
+AND p2.resource_name='PASSWORD_GRACE_TIME'<br />
+AND p3.resource_name='PASSWORD_LIFE_TIME' -- from DEFAULT profile<br />
+AND p4.resource_name='PASSWORD_GRACE_TIME' -- from DEFAULT profile<br />
+order by 1;<br />
+<br />
+If the EFFECTIVE_LIFE_TIME is greater than 60 for any profile applied to user accounts, and the need for this has not been documented and approved, this is a finding.<br />
+<br />
+If PASSWORD_LIFE_TIME or PASSWORD_GRACE_TIME is set to &quot;UNLIMITED&quot;, this is a finding.</p><h2>Check Content Reference</h2><p>M</p><h2>Target Key</h2><p>5672</p></body></html>

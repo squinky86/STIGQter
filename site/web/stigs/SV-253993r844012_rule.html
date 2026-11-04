@@ -1,0 +1,159 @@
+<!doctype html><html lang="en"><head><meta charset="utf-8"><title>STIGQter: STIG Check Details: SV-253993r844012_rule: The Juniper out-of-band management (OOBM) gateway router must not be configured to redistribute routes between the management network routing domain and the managed network routing domain.</title><link rel="icon" type="image/svg+xml" href="STIGQter.svg" /><script async src="https://www.googletagmanager.com/gtag/js?id=UA-31381839-2"></script><script src="include.js"></script><script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-4110907817782130" crossorigin="anonymous"></script></head><body><div><img src="STIGQter.svg" alt="STIGQter" style="height:1em;" /> <a href="https://www.stigqter.com/">STIGQter</a>: <a href="main.html">STIG Summary</a>: <a href="U_Juniper_EX_Switches_RTR_STIG_V2R1_Manual-xccdf.html">Juniper EX Series Switches Router Security Technical Implementation Guide Version: 2 Release: 1 Benchmark Date: 24 Jul 2024</a>:</div> <h1>The Juniper out-of-band management (OOBM) gateway router must not be configured to redistribute routes between the management network routing domain and the managed network routing domain.</h1><h2>DISA Rule</h2><p>SV-253993r844012_rule</p><h2>Vulnerability Number</h2><p>V-253993</p><h2>Group Title</h2><p>SRG-NET-000019-RTR-000012</p><h2>Rule Version</h2><p>JUEX-RT-000210</p><h2>Severity</h2><p>CAT II</p><h2>CCI(s)</h2><ul><li>CCI-001414 - Enforce approved authorizations for controlling the flow of information between connected systems based on organization-defined information flow control policies.</li></ul><h2>Weight</h2><p>10</p><h2>Fix Recommendation</h2><p>This requirement is not applicable for the DODIN Backbone.<br />
+<br />
+Configure the Interior Gateway Protocol instance used for the managed network to prohibit redistribution of routes into the Interior Gateway Protocol instance used for the management network, and vice versa.<br />
+<br />
+set policy-options policy-statement deny-managed-routes term 1 from route-filter &lt;IPv4 subnet&gt;/&lt;mask&gt; orlonger<br />
+set policy-options policy-statement deny-managed-routes term 1 from route-filter &lt;IPv6 subnet&gt;/&lt;prefix&gt; orlonger<br />
+set policy-options policy-statement deny-managed-routes term 1 then accept<br />
+set policy-options policy-statement deny-managed-routes term 2 then reject<br />
+set policy-options policy-statement deny-mgt-redist term 1 from protocol static<br />
+set policy-options policy-statement deny-mgt-redist term 1 then reject<br />
+set policy-options policy-statement deny-mgt-redist term 2 from protocol ospf<br />
+set policy-options policy-statement deny-mgt-redist term 2 from route-filter &lt;IPv4 subnet&gt;/&lt;mask&gt; orlonger<br />
+set policy-options policy-statement deny-mgt-redist term 2 from route-filter &lt;IPv6 subnet&gt;/&lt;prefix&gt; orlonger<br />
+set policy-options policy-statement deny-mgt-redist term 2 then reject<br />
+&lt;additional terms for permitted redistributable routes&gt;<br />
+<br />
+set routing-instances OOBM instance-type virtual-router<br />
+set routing-instances OOBM protocols ospf area &lt;area number&gt; interface &lt;OOBM interface&gt;.&lt;logical unit&gt;<br />
+set routing-instances OOBM protocols ospf export test<br />
+set routing-instances OOBM protocols ospf3 area &lt;area number&gt; interface &lt;OOBM interface&gt;.&lt;logical unit&gt;<br />
+set routing-instances OOBM protocols ospf3 export test</p><h2>Check Contents</h2><p>This requirement is not applicable for the DODIN Backbone.<br />
+<br />
+Verify the Interior Gateway Protocol instance used for the managed network does not redistribute routes into the Interior Gateway Protocol instance used for the management network, and vice versa.<br />
+<br />
+Juniper routers use export policies to limit redistribution of routes. Verify a policy exists to filter route redistribution. Juniper policy-statements support terms, which provides greater granularity within a single policy. <br />
+<br />
+[edit policy-options]<br />
+policy-statement deny-mgt-redist {<br />
+    term 1 {<br />
+        from protocol static;<br />
+        then reject;<br />
+    }<br />
+    term 2 { <br />
+        from {<br />
+            protocol ospf;<br />
+            route-filter &lt;IPv4 subnet&gt;/&lt;mask&gt; orlonger;<br />
+            route-filter &lt;IPv6 subnet&gt;/&lt;prefix&gt; orlonger;<br />
+        }<br />
+        then reject;<br />
+    }<br />
+    &lt;additional terms permitting authorized routes for redistribution&gt;<br />
+}<br />
+policy-statement deny-managed-routes {<br />
+    term 1 {<br />
+        from {<br />
+            route-filter &lt;IPv4 subnet&gt;/&lt;mask&gt; orlonger;<br />
+            route-filter &lt;IPv6 subnet&gt;/&lt;prefix&gt; orlonger;<br />
+        }<br />
+        then accept;<br />
+    }<br />
+    term 2 {<br />
+        then reject;<br />
+    }<br />
+}<br />
+<br />
+Verify an export policy is applied to the IGP protocol for each routing instance (default and OOBM).<br />
+[edit protocols]<br />
+    ospf {<br />
+        area &lt;area number&gt; {<br />
+            interface &lt;NOT OOBM interface&gt;.&lt;logical unit&gt;;<br />
+        }<br />
+        export deny-mgt-redist;<br />
+    }<br />
+    ospf3 {<br />
+        area &lt;area number&gt; {<br />
+            interface &lt;NOT OOBM interface&gt;.&lt;logical unit&gt;;<br />
+        }<br />
+        export deny-mgt-redist;<br />
+    }<br />
+}<br />
+[edit routing-instances]<br />
+OOBM {<br />
+    instance-type virtual-router;<br />
+    protocols {<br />
+        ospf {<br />
+            area &lt;area number&gt; {<br />
+                interface &lt;OOBM interface&gt;.&lt;logical unit&gt;;<br />
+            }<br />
+            export deny-managed-routes;<br />
+        }<br />
+        ospf3 {<br />
+            area &lt;area number&gt; {<br />
+                interface &lt;OOBM interface&gt;.&lt;logical unit&gt;;<br />
+            }<br />
+            export deny-managed-routes;<br />
+        }<br />
+    }<br />
+}<br />
+<br />
+If the Interior Gateway Protocol instance used for the managed network redistributes routes into the Interior Gateway Protocol instance used for the management network, or vice versa, this is a finding.</p><h2>Vulnerability Number</h2><p>V-253993</p><h2>Documentable</h2><p>False</p><h2>Rule Version</h2><p>JUEX-RT-000210</p><h2>Severity Override Guidance</h2><p>This requirement is not applicable for the DODIN Backbone.<br />
+<br />
+Verify the Interior Gateway Protocol instance used for the managed network does not redistribute routes into the Interior Gateway Protocol instance used for the management network, and vice versa.<br />
+<br />
+Juniper routers use export policies to limit redistribution of routes. Verify a policy exists to filter route redistribution. Juniper policy-statements support terms, which provides greater granularity within a single policy. <br />
+<br />
+[edit policy-options]<br />
+policy-statement deny-mgt-redist {<br />
+    term 1 {<br />
+        from protocol static;<br />
+        then reject;<br />
+    }<br />
+    term 2 { <br />
+        from {<br />
+            protocol ospf;<br />
+            route-filter &lt;IPv4 subnet&gt;/&lt;mask&gt; orlonger;<br />
+            route-filter &lt;IPv6 subnet&gt;/&lt;prefix&gt; orlonger;<br />
+        }<br />
+        then reject;<br />
+    }<br />
+    &lt;additional terms permitting authorized routes for redistribution&gt;<br />
+}<br />
+policy-statement deny-managed-routes {<br />
+    term 1 {<br />
+        from {<br />
+            route-filter &lt;IPv4 subnet&gt;/&lt;mask&gt; orlonger;<br />
+            route-filter &lt;IPv6 subnet&gt;/&lt;prefix&gt; orlonger;<br />
+        }<br />
+        then accept;<br />
+    }<br />
+    term 2 {<br />
+        then reject;<br />
+    }<br />
+}<br />
+<br />
+Verify an export policy is applied to the IGP protocol for each routing instance (default and OOBM).<br />
+[edit protocols]<br />
+    ospf {<br />
+        area &lt;area number&gt; {<br />
+            interface &lt;NOT OOBM interface&gt;.&lt;logical unit&gt;;<br />
+        }<br />
+        export deny-mgt-redist;<br />
+    }<br />
+    ospf3 {<br />
+        area &lt;area number&gt; {<br />
+            interface &lt;NOT OOBM interface&gt;.&lt;logical unit&gt;;<br />
+        }<br />
+        export deny-mgt-redist;<br />
+    }<br />
+}<br />
+[edit routing-instances]<br />
+OOBM {<br />
+    instance-type virtual-router;<br />
+    protocols {<br />
+        ospf {<br />
+            area &lt;area number&gt; {<br />
+                interface &lt;OOBM interface&gt;.&lt;logical unit&gt;;<br />
+            }<br />
+            export deny-managed-routes;<br />
+        }<br />
+        ospf3 {<br />
+            area &lt;area number&gt; {<br />
+                interface &lt;OOBM interface&gt;.&lt;logical unit&gt;;<br />
+            }<br />
+            export deny-managed-routes;<br />
+        }<br />
+    }<br />
+}<br />
+<br />
+If the Interior Gateway Protocol instance used for the managed network redistributes routes into the Interior Gateway Protocol instance used for the management network, or vice versa, this is a finding.</p><h2>Check Content Reference</h2><p>M</p><h2>Target Key</h2><p>5479</p></body></html>

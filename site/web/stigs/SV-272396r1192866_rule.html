@@ -1,0 +1,177 @@
+<!doctype html><html lang="en"><head><meta charset="utf-8"><title>STIGQter: STIG Check Details: SV-272396r1192866_rule: On a BIND 9.x server, all root name servers listed in the local root zone file hosted on a BIND 9.x authoritative name server must be valid for that zone.</title><link rel="icon" type="image/svg+xml" href="STIGQter.svg" /><script async src="https://www.googletagmanager.com/gtag/js?id=UA-31381839-2"></script><script src="include.js"></script><script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-4110907817782130" crossorigin="anonymous"></script></head><body><div><img src="STIGQter.svg" alt="STIGQter" style="height:1em;" /> <a href="https://www.stigqter.com/">STIGQter</a>: <a href="main.html">STIG Summary</a>: <a href="U_BIND_9-x_STIG_V3R3_Manual-xccdf.html">BIND 9.x Security Technical Implementation Guide Version: 3 Release: 3 Benchmark Date: 01 Jul 2026</a>:</div> <h1>On a BIND 9.x server, all root name servers listed in the local root zone file hosted on a BIND 9.x authoritative name server must be valid for that zone.</h1><h2>DISA Rule</h2><p>SV-272396r1192866_rule</p><h2>Vulnerability Number</h2><p>V-272396</p><h2>Group Title</h2><p>SRG-APP-000516-DNS-000102</p><h2>Rule Version</h2><p>BIND-9X-001400</p><h2>Severity</h2><p>CAT II</p><h2>CCI(s)</h2><ul><li>CCI-000366 - Implement the security configuration settings.</li></ul><h2>Weight</h2><p>10</p><h2>Fix Recommendation</h2><p>Edit the local root zone file.<br />
+<br />
+Ensure that the root servers listed match the IANA list.<br />
+<br />
+Ensure that the DNS keys and trust anchors listed match the IANA list.<br />
+<br />
+Restart the BIND 9.x process.</p><h2>Check Contents</h2><p>If this is an authoritative name server, this is not applicable.<br />
+<br />
+Use command dig @&lt;serverip&gt; . ns and examine results.<br />
+<br />
+Answer results<br />
+.                       518400  IN      NS      e.root-servers.net.<br />
+.                       518400  IN      NS      a.root-servers.net.<br />
+.                       518400  IN      NS      g.root-servers.net.<br />
+.                       518400  IN      NS      i.root-servers.net.<br />
+.                       518400  IN      NS      h.root-servers.net.<br />
+.                       518400  IN      NS      d.root-servers.net.<br />
+.                       518400  IN      NS      c.root-servers.net.<br />
+.                       518400  IN      NS      k.root-servers.net.<br />
+.                       518400  IN      NS      f.root-servers.net.<br />
+.                       518400  IN      NS      m.root-servers.net.<br />
+.                       518400  IN      NS      b.root-servers.net.<br />
+.                       518400  IN      NS      j.root-servers.net.<br />
+.                       518400  IN      NS      l.root-servers.net.<br />
+ <br />
+;; ADDITIONAL SECTION:<br />
+m.root-servers.net.     518400  IN      A       202.12.27.33<br />
+l.root-servers.net.     518400  IN      A       199.7.83.42<br />
+k.root-servers.net.     518400  IN      A       193.0.14.129<br />
+j.root-servers.net.     518400  IN      A       192.58.128.30<br />
+i.root-servers.net.     518400  IN      A       192.36.148.17<br />
+h.root-servers.net.     518400  IN      A       198.97.190.53<br />
+g.root-servers.net.     518400  IN      A       192.112.36.4<br />
+f.root-servers.net.     518400  IN      A       192.5.5.241<br />
+e.root-servers.net.     518400  IN      A       192.203.230.10<br />
+d.root-servers.net.     518400  IN      A       199.7.91.13<br />
+c.root-servers.net.     518400  IN      A       192.33.4.12<br />
+b.root-servers.net.     518400  IN      A       170.247.170.2<br />
+a.root-servers.net.     518400  IN      A       198.41.0.4<br />
+m.root-servers.net.     518400  IN      AAAA    2001:dc3::35<br />
+l.root-servers.net.     518400  IN      AAAA    2001:500:9f::42<br />
+k.root-servers.net.     518400  IN      AAAA    2001:7fd::1<br />
+j.root-servers.net.     518400  IN      AAAA    2001:503:c27::2:30<br />
+i.root-servers.net.     518400  IN      AAAA    2001:7fe::53<br />
+h.root-servers.net.     518400  IN      AAAA    2001:500:1::53<br />
+g.root-servers.net.     518400  IN      AAAA    2001:500:12::d0d<br />
+f.root-servers.net.     518400  IN      AAAA    2001:500:2f::f<br />
+e.root-servers.net.     518400  IN      AAAA    2001:500:a8::e<br />
+d.root-servers.net.     518400  IN      AAAA    2001:500:2d::d<br />
+c.root-servers.net.     518400  IN      AAAA    2001:500:2::c<br />
+b.root-servers.net.     518400  IN      AAAA    2801:1b8:10::b<br />
+a.root-servers.net.     518400  IN      AAAA    2001:503:ba3e::2:30<br />
+<br />
+If names and addresses do not match the current IANA list, this is a finding.<br />
+<br />
+Perform command dig @&lt;serverip&gt; . dnskey +multi and examine results.<br />
+<br />
+answer results<br />
+77555 IN DNSKEY 257 3 8 (<br />
+                                AwEAAaz/tAm8yTn4Mfeh5eyI96WSVexTBAvkMgJzkKTO<br />
+                                iW1vkIbzxeF3+/4RgWOq7HrxRixHlFlExOLAJr5emLvN<br />
+                                7SWXgnLh4+B5xQlNVz8Og8kvArMtNROxVQuCaSnIDdD5<br />
+                                LKyWbRd2n9WGe2R8PzgCmr3EgVLrjyBxWezF0jLHwVN8<br />
+                                efS3rCj/EWgvIWgb9tarpVUDK/b58Da+sqqls3eNbuv7<br />
+                                pr+eoZG+SrDK6nWeL3c6H5Apxz7LjVc1uTIdsIXxuOLY<br />
+                                A4/ilBmSVIzuDWfdRUfhHdY6+cn8HFRm+2hM8AnXGXws<br />
+                                9555KrUB5qihylGa8subX2Nn6UwNR1AkUTV74bU=<br />
+                                ) ; KSK; alg = RSASHA256 ; key id = 20326<br />
+.                       77555 IN DNSKEY 256 3 8 (<br />
+                                AwEAAbEbGCpGTDrcZTWqWWE72nphyshpRcILdzCVlBGU<br />
+                                9Ln1Fui9kkseUOP+g5GLUeVFKdTloeRTA9+EYiQdXgWX<br />
+                                mXmuW/nGxZjAikluF/O9NzLVrr5iZnth2xu+F48nrJlA<br />
+                                gWWiMNau54NI5sZ3iVQfhFsq2pZmf43RauRPniYMShOL<br />
+                                O7EBWWXr5glDSgZGS9fSm6xHwwF+g8D4m8oanjvdCBNx<br />
+                                XzSEKS31ibxjLifTfvwCg3y4XXcNW9U6Nu3JmoKUdxqp<br />
+                                PPIkBvVQbIz4UO2FwaR13uXC03ALP1Yx2QNSS4SZlcIM<br />
+                                tAftQR9wtCiuPWQnFv4jkzWqlhp1Lmf7bcoL9yk=<br />
+                                ) ; ZSK; alg = RSASHA256 ; key id = 53148<br />
+.                       77555 IN DNSKEY 257 3 8 (<br />
+                                AwEAAa96jeuknZlaeSrvyAJj6ZHv28hhOKkx3rLGXVaC<br />
+                                6rXTsDc449/cidltpkyGwCJNnOAlFNKF2jBosZBU5eeH<br />
+                                spaQWOmOElZsjICMQMC3aeHbGiShvZsx4wMYSjH8e7Vr<br />
+                                hbu6irwCzVBApESjbUdpWWmEnhathWu1jo+siFUiRAAx<br />
+                                m9qyJNg/wOZqqzL/dL/q8PkcRU5oUKEpUge71M3ej2/7<br />
+                                CPqpdVwuMoTvoB+ZOT4YeGyxMvHmbrxlFzGOHOijtzN+<br />
+                                u1TQNatX2XBuzZNQ1K+s2CXkPIZo7s6JgZyvaBevYtxP<br />
+                                vYLw4z9mR7K2vaF18UYH9Z9GNUUeayffKC73PYc=<br />
+                                ) ; KSK; alg = RSASHA256 ; key id = 38696<br />
+<br />
+Note: May use &quot;nslookup&quot; as an alternative to &quot;dig&quot;.<br />
+<br />
+If the DNSSEC keys and root anchors do not match the IANA list, this is a finding.</p><h2>Vulnerability Number</h2><p>V-272396</p><h2>Documentable</h2><p>False</p><h2>Rule Version</h2><p>BIND-9X-001400</p><h2>Severity Override Guidance</h2><p>If this is an authoritative name server, this is not applicable.<br />
+<br />
+Use command dig @&lt;serverip&gt; . ns and examine results.<br />
+<br />
+Answer results<br />
+.                       518400  IN      NS      e.root-servers.net.<br />
+.                       518400  IN      NS      a.root-servers.net.<br />
+.                       518400  IN      NS      g.root-servers.net.<br />
+.                       518400  IN      NS      i.root-servers.net.<br />
+.                       518400  IN      NS      h.root-servers.net.<br />
+.                       518400  IN      NS      d.root-servers.net.<br />
+.                       518400  IN      NS      c.root-servers.net.<br />
+.                       518400  IN      NS      k.root-servers.net.<br />
+.                       518400  IN      NS      f.root-servers.net.<br />
+.                       518400  IN      NS      m.root-servers.net.<br />
+.                       518400  IN      NS      b.root-servers.net.<br />
+.                       518400  IN      NS      j.root-servers.net.<br />
+.                       518400  IN      NS      l.root-servers.net.<br />
+ <br />
+;; ADDITIONAL SECTION:<br />
+m.root-servers.net.     518400  IN      A       202.12.27.33<br />
+l.root-servers.net.     518400  IN      A       199.7.83.42<br />
+k.root-servers.net.     518400  IN      A       193.0.14.129<br />
+j.root-servers.net.     518400  IN      A       192.58.128.30<br />
+i.root-servers.net.     518400  IN      A       192.36.148.17<br />
+h.root-servers.net.     518400  IN      A       198.97.190.53<br />
+g.root-servers.net.     518400  IN      A       192.112.36.4<br />
+f.root-servers.net.     518400  IN      A       192.5.5.241<br />
+e.root-servers.net.     518400  IN      A       192.203.230.10<br />
+d.root-servers.net.     518400  IN      A       199.7.91.13<br />
+c.root-servers.net.     518400  IN      A       192.33.4.12<br />
+b.root-servers.net.     518400  IN      A       170.247.170.2<br />
+a.root-servers.net.     518400  IN      A       198.41.0.4<br />
+m.root-servers.net.     518400  IN      AAAA    2001:dc3::35<br />
+l.root-servers.net.     518400  IN      AAAA    2001:500:9f::42<br />
+k.root-servers.net.     518400  IN      AAAA    2001:7fd::1<br />
+j.root-servers.net.     518400  IN      AAAA    2001:503:c27::2:30<br />
+i.root-servers.net.     518400  IN      AAAA    2001:7fe::53<br />
+h.root-servers.net.     518400  IN      AAAA    2001:500:1::53<br />
+g.root-servers.net.     518400  IN      AAAA    2001:500:12::d0d<br />
+f.root-servers.net.     518400  IN      AAAA    2001:500:2f::f<br />
+e.root-servers.net.     518400  IN      AAAA    2001:500:a8::e<br />
+d.root-servers.net.     518400  IN      AAAA    2001:500:2d::d<br />
+c.root-servers.net.     518400  IN      AAAA    2001:500:2::c<br />
+b.root-servers.net.     518400  IN      AAAA    2801:1b8:10::b<br />
+a.root-servers.net.     518400  IN      AAAA    2001:503:ba3e::2:30<br />
+<br />
+If names and addresses do not match the current IANA list, this is a finding.<br />
+<br />
+Perform command dig @&lt;serverip&gt; . dnskey +multi and examine results.<br />
+<br />
+answer results<br />
+77555 IN DNSKEY 257 3 8 (<br />
+                                AwEAAaz/tAm8yTn4Mfeh5eyI96WSVexTBAvkMgJzkKTO<br />
+                                iW1vkIbzxeF3+/4RgWOq7HrxRixHlFlExOLAJr5emLvN<br />
+                                7SWXgnLh4+B5xQlNVz8Og8kvArMtNROxVQuCaSnIDdD5<br />
+                                LKyWbRd2n9WGe2R8PzgCmr3EgVLrjyBxWezF0jLHwVN8<br />
+                                efS3rCj/EWgvIWgb9tarpVUDK/b58Da+sqqls3eNbuv7<br />
+                                pr+eoZG+SrDK6nWeL3c6H5Apxz7LjVc1uTIdsIXxuOLY<br />
+                                A4/ilBmSVIzuDWfdRUfhHdY6+cn8HFRm+2hM8AnXGXws<br />
+                                9555KrUB5qihylGa8subX2Nn6UwNR1AkUTV74bU=<br />
+                                ) ; KSK; alg = RSASHA256 ; key id = 20326<br />
+.                       77555 IN DNSKEY 256 3 8 (<br />
+                                AwEAAbEbGCpGTDrcZTWqWWE72nphyshpRcILdzCVlBGU<br />
+                                9Ln1Fui9kkseUOP+g5GLUeVFKdTloeRTA9+EYiQdXgWX<br />
+                                mXmuW/nGxZjAikluF/O9NzLVrr5iZnth2xu+F48nrJlA<br />
+                                gWWiMNau54NI5sZ3iVQfhFsq2pZmf43RauRPniYMShOL<br />
+                                O7EBWWXr5glDSgZGS9fSm6xHwwF+g8D4m8oanjvdCBNx<br />
+                                XzSEKS31ibxjLifTfvwCg3y4XXcNW9U6Nu3JmoKUdxqp<br />
+                                PPIkBvVQbIz4UO2FwaR13uXC03ALP1Yx2QNSS4SZlcIM<br />
+                                tAftQR9wtCiuPWQnFv4jkzWqlhp1Lmf7bcoL9yk=<br />
+                                ) ; ZSK; alg = RSASHA256 ; key id = 53148<br />
+.                       77555 IN DNSKEY 257 3 8 (<br />
+                                AwEAAa96jeuknZlaeSrvyAJj6ZHv28hhOKkx3rLGXVaC<br />
+                                6rXTsDc449/cidltpkyGwCJNnOAlFNKF2jBosZBU5eeH<br />
+                                spaQWOmOElZsjICMQMC3aeHbGiShvZsx4wMYSjH8e7Vr<br />
+                                hbu6irwCzVBApESjbUdpWWmEnhathWu1jo+siFUiRAAx<br />
+                                m9qyJNg/wOZqqzL/dL/q8PkcRU5oUKEpUge71M3ej2/7<br />
+                                CPqpdVwuMoTvoB+ZOT4YeGyxMvHmbrxlFzGOHOijtzN+<br />
+                                u1TQNatX2XBuzZNQ1K+s2CXkPIZo7s6JgZyvaBevYtxP<br />
+                                vYLw4z9mR7K2vaF18UYH9Z9GNUUeayffKC73PYc=<br />
+                                ) ; KSK; alg = RSASHA256 ; key id = 38696<br />
+<br />
+Note: May use &quot;nslookup&quot; as an alternative to &quot;dig&quot;.<br />
+<br />
+If the DNSSEC keys and root anchors do not match the IANA list, this is a finding.</p><h2>Check Content Reference</h2><p>M</p><h2>Target Key</h2><p>5687</p></body></html>

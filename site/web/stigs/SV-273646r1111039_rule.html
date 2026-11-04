@@ -1,0 +1,50 @@
+<!doctype html><html lang="en"><head><meta charset="utf-8"><title>STIGQter: STIG Check Details: SV-273646r1111039_rule: The RUCKUS ICX perimeter router must be configured to block all outbound management traffic.</title><link rel="icon" type="image/svg+xml" href="STIGQter.svg" /><script async src="https://www.googletagmanager.com/gtag/js?id=UA-31381839-2"></script><script src="include.js"></script><script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-4110907817782130" crossorigin="anonymous"></script></head><body><div><img src="STIGQter.svg" alt="STIGQter" style="height:1em;" /> <a href="https://www.stigqter.com/">STIGQter</a>: <a href="main.html">STIG Summary</a>: <a href="U_RUCKUS_ICX_RTR_STIG_V1R1_Manual-xccdf.html">RUCKUS ICX Router Security Technical Implementation Guide Version: 1 Release: 1 Benchmark Date: 27 May 2025</a>:</div> <h1>The RUCKUS ICX perimeter router must be configured to block all outbound management traffic.</h1><h2>DISA Rule</h2><p>SV-273646r1111039_rule</p><h2>Vulnerability Number</h2><p>V-273646</p><h2>Group Title</h2><p>SRG-NET-000364-RTR-000113</p><h2>Rule Version</h2><p>RCKS-RTR-000790</p><h2>Severity</h2><p>CAT II</p><h2>CCI(s)</h2><ul><li>CCI-002403 - Only allow incoming communications from organization-defined authorized sources routed to organization-defined authorized destinations.</li></ul><h2>Weight</h2><p>10</p><h2>Fix Recommendation</h2><p>This requirement is not applicable for the DODIN Backbone.<br />
+<br />
+Configure the perimeter router of the managed network with an ACL or filter on the egress interface to block all outbound management traffic.<br />
+<br />
+Configure an ACL to block egress management traffic, as shown in the example below:<br />
+<br />
+ICX(config)#ip access-list extended EXTERNAL_ACL_OUTBOUND<br />
+ICX(config-ext-ipacl-EXTERNAL_ACL_OUTBOUND)#deny tcp any any eq radius log<br />
+ICX(config-ext-ipacl-EXTERNAL_ACL_OUTBOUND)#deny tcp any any eq sshow log<br />
+ICX(config-ext-ipacl-EXTERNAL_ACL_OUTBOUND)#deny udp any any eq snmp log<br />
+ICX(config-ext-ipacl-EXTERNAL_ACL_OUTBOUND)#deny udp any any eq syslog log<br />
+ICX(config-ext-ipacl-EXTERNAL_ACL_OUTBOUND)#deny ip any any log<br />
+ICX(config-ext-ipacl-EXTERNAL_ACL_OUTBOUND)#exit<br />
+<br />
+Configure the external interfaces with the outbound ACL, as shown in the example below:<br />
+<br />
+ICX(config)#interface ethernet x/x/x<br />
+ICX(Config-if-e10000-x/x/x)#ip access-group EXTERNAL_ACL_OUTBOUND out logging enable</p><h2>Check Contents</h2><p>This requirement is not applicable for the DODIN Backbone.<br />
+<br />
+The perimeter router of the managed network must be configured with an access control list (ACL) or filter on the egress interface to block all management traffic.<br />
+<br />
+Verify all external interfaces have been configured with an outbound ACL as shown in the example below:<br />
+<br />
+EXTERNAL_ACL_OUTBOUND: 5 entries<br />
+10: deny tcp any any eq radius<br />
+20: deny tcp any any eq sshow log<br />
+30: deny tcp any any eq snmp log<br />
+40: deny udp any any eq syslog log<br />
+50: deny ip any any log<br />
+<br />
+interface ethernet x/x/x<br />
+  ip access-group EXTERNAL_ACL_OUTBOUND out logging enable<br />
+<br />
+If management traffic is not blocked at the perimeter, this is a finding.</p><h2>Vulnerability Number</h2><p>V-273646</p><h2>Documentable</h2><p>False</p><h2>Rule Version</h2><p>RCKS-RTR-000790</p><h2>Severity Override Guidance</h2><p>This requirement is not applicable for the DODIN Backbone.<br />
+<br />
+The perimeter router of the managed network must be configured with an access control list (ACL) or filter on the egress interface to block all management traffic.<br />
+<br />
+Verify all external interfaces have been configured with an outbound ACL as shown in the example below:<br />
+<br />
+EXTERNAL_ACL_OUTBOUND: 5 entries<br />
+10: deny tcp any any eq radius<br />
+20: deny tcp any any eq sshow log<br />
+30: deny tcp any any eq snmp log<br />
+40: deny udp any any eq syslog log<br />
+50: deny ip any any log<br />
+<br />
+interface ethernet x/x/x<br />
+  ip access-group EXTERNAL_ACL_OUTBOUND out logging enable<br />
+<br />
+If management traffic is not blocked at the perimeter, this is a finding.</p><h2>Check Content Reference</h2><p>M</p><h2>Target Key</h2><p>5696</p></body></html>

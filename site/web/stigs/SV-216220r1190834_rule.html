@@ -1,0 +1,59 @@
+<!doctype html><html lang="en"><head><meta charset="utf-8"><title>STIGQter: STIG Check Details: SV-216220r1190834_rule: SNMP default community strings and passphrases must be changed from vendor defaults.</title><link rel="icon" type="image/svg+xml" href="STIGQter.svg" /><script async src="https://www.googletagmanager.com/gtag/js?id=UA-31381839-2"></script><script src="include.js"></script><script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-4110907817782130" crossorigin="anonymous"></script></head><body><div><img src="STIGQter.svg" alt="STIGQter" style="height:1em;" /> <a href="https://www.stigqter.com/">STIGQter</a>: <a href="main.html">STIG Summary</a>: <a href="U_SOL_11_x86_STIG_V3R6_Manual-xccdf.html">Solaris 11 X86 Security Technical Implementation Guide Version: 3 Release: 6 Benchmark Date: 01 Jul 2026</a>:</div> <h1>SNMP default community strings and passphrases must be changed from vendor defaults.</h1><h2>DISA Rule</h2><p>SV-216220r1190834_rule</p><h2>Vulnerability Number</h2><p>V-216220</p><h2>Group Title</h2><p>SRG-OS-000480</p><h2>Rule Version</h2><p>SOL-11.1-080160</p><h2>Severity</h2><p>CAT I</p><h2>CCI(s)</h2><ul><li>CCI-000366 - Implement the security configuration settings.</li></ul><h2>Weight</h2><p>10</p><h2>Fix Recommendation</h2><p>The root role is required.<br />
+<br />
+Stop the SNMP service:<br />
+<br />
+# svcadm disable svc: /application/management/net-snmp:default<br />
+<br />
+Open the /etc/snmp/snmpd.conf file and remove any lines containing default values.<br />
+<br />
+# pfedit [/path/filename]<br />
+<br />
+Create a new SNMPv3 user with strong authentication and privacy keys (if the service is required).<br />
+<br />
+Restart the service (if the service is required).<br />
+<br />
+# svcadm enable svc: /application/management/net-snmp:default<br />
+<br />
+Ensure the permissions on the configuration files are restricted:<br />
+<br />
+# chmod 600 /etc/snmp/snmp.conf</p><h2>Check Contents</h2><p>Verify the Solaris 11 system does not use default SNMP community strings or passphrases.<br />
+<br />
+The root role is required.<br />
+<br />
+Find any occurrences of the snmpd.conf file delivered with Solaris packages:<br />
+<br />
+# pkg search -l -Ho path snmpd.conf | awk '{ print &quot;/&quot;$1 }'<br />
+/etc/net-snmp/snmp/snmpd.conf<br />
+<br />
+For each listed file, use the following command to review its contents:<br />
+<br />
+# more [filename]<br />
+<br />
+Review SNMP trap configurations for default community strings:<br />
+<br />
+# grep trap /etc/net-snmp/snmp/snmpd.conf<br />
+<br />
+Identify any community names, trap communities, or user password configurations set to default values. <br />
+Examples: public, private, trap, public@localhost, password<br />
+<br />
+If any default values are present, this is a finding.</p><h2>Vulnerability Number</h2><p>V-216220</p><h2>Documentable</h2><p>False</p><h2>Rule Version</h2><p>SOL-11.1-080160</p><h2>Severity Override Guidance</h2><p>Verify the Solaris 11 system does not use default SNMP community strings or passphrases.<br />
+<br />
+The root role is required.<br />
+<br />
+Find any occurrences of the snmpd.conf file delivered with Solaris packages:<br />
+<br />
+# pkg search -l -Ho path snmpd.conf | awk '{ print &quot;/&quot;$1 }'<br />
+/etc/net-snmp/snmp/snmpd.conf<br />
+<br />
+For each listed file, use the following command to review its contents:<br />
+<br />
+# more [filename]<br />
+<br />
+Review SNMP trap configurations for default community strings:<br />
+<br />
+# grep trap /etc/net-snmp/snmp/snmpd.conf<br />
+<br />
+Identify any community names, trap communities, or user password configurations set to default values. <br />
+Examples: public, private, trap, public@localhost, password<br />
+<br />
+If any default values are present, this is a finding.</p><h2>Check Content Reference</h2><p>M</p><h2>Target Key</h2><p>4021</p></body></html>

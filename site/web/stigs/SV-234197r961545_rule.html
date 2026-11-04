@@ -1,0 +1,117 @@
+<!doctype html><html lang="en"><head><meta charset="utf-8"><title>STIGQter: STIG Check Details: SV-234197r961545_rule: FortiGate devices performing maintenance functions must restrict use of these functions to authorized personnel only.</title><link rel="icon" type="image/svg+xml" href="STIGQter.svg" /><script async src="https://www.googletagmanager.com/gtag/js?id=UA-31381839-2"></script><script src="include.js"></script><script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-4110907817782130" crossorigin="anonymous"></script></head><body><div><img src="STIGQter.svg" alt="STIGQter" style="height:1em;" /> <a href="https://www.stigqter.com/">STIGQter</a>: <a href="main.html">STIG Summary</a>: <a href="U_FN_FortiGate_Firewall_NDM_STIG_V1R5_Manual-xccdf.html">Fortinet FortiGate Firewall NDM Security Technical Implementation Guide Version: 1 Release: 5 Benchmark Date: 05 Jan 2026</a>:</div> <h1>FortiGate devices performing maintenance functions must restrict use of these functions to authorized personnel only.</h1><h2>DISA Rule</h2><p>SV-234197r961545_rule</p><h2>Vulnerability Number</h2><p>V-234197</p><h2>Group Title</h2><p>SRG-APP-000408-NDM-000314</p><h2>Rule Version</h2><p>FGFW-ND-000190</p><h2>Severity</h2><p>CAT II</p><h2>CCI(s)</h2><ul><li>CCI-000366 - Implement the security configuration settings.</li><li>CCI-002883 - Restrict the use of maintenance tools to authorized personnel only.</li></ul><h2>Weight</h2><p>10</p><h2>Fix Recommendation</h2><p>Log in to the FortiGate GUI with Super-Admin privilege.<br />
+<br />
+First, set one admin profile with access to System Maintenance.<br />
+1. Click System.<br />
+2. Click Admin Profiles.<br />
+3. Click +Create New (Admin Profile).<br />
+4. Assign a meaningful name to the Profile.<br />
+5. Set System Access Permissions to Read/Write or Custom with Maintenance set to Read/Write.<br />
+6. Click OK to save this Profile.<br />
+<br />
+Then, <br />
+1. Click System.<br />
+2. Click Administrators.<br />
+3. Click +Create New (Administrator).<br />
+4. Configure Administrator settings with unique Username, Type, and Password.<br />
+5. Assign the Administrator Profile that was configured above.<br />
+6. Click OK to save.<br />
+<br />
+Note: Do not assign this admin profile to any other users other than the authorized administrator.<br />
+<br />
+To limit the System access to existing low-privilege administrators: <br />
+<br />
+1. Click System.<br />
+2. Click Administrators.<br />
+3. Identify the admin role that has unauthorized access to System settings.<br />
+4. Select the admin role and hover over the profile assigned to the role.<br />
+5. Click Edit.<br />
+6. On System access permission, click Read or None.<br />
+7. Click OK to save.<br />
+<br />
+Repeat this process to define all the Administrators needed to meet privilege separation requirements for the organization.<br />
+<br />
+or <br />
+<br />
+1.  Open a CLI console, via SSH or available from the GUI<br />
+2. First edit the admin profile by running the following command:<br />
+<br />
+     # config system accprofile <br />
+     #    edit {PROFILE NAME}<br />
+     #    set sysgrp read or none<br />
+     #    next<br />
+     #    end<br />
+Then, assign this admin profile to the authorized administrator account. <br />
+     # config system admin  <br />
+     #    edit {ADMIN NAME}<br />
+     #    set accprofile  {PROFILE NAME}<br />
+     #    next<br />
+     # end<br />
+Note: Do not assign this admin profile to any other users other than the authorized administrator.</p><h2>Check Contents</h2><p>Log in to the FortiGate GUI with Super-Admin privilege:<br />
+<br />
+1. Click System.<br />
+2. Click Administrators.<br />
+3. Identify the administrator designated to perform maintenance functions and hover over the profile assigned to the role.<br />
+4. Click Edit.<br />
+5. Verify the permission to System is set to Read/Write or Custom with Maintenance set to Read/Write.<br />
+<br />
+If an authorized administrator does not have Read/Write access to System Maintenance Settings, this is a finding.<br />
+<br />
+Then,<br />
+1. Click System.<br />
+2. Click Administrators.<br />
+3. Click all other low-privileged administrators and hover over the profile assigned to the role.<br />
+4. Click Edit.<br />
+5. Verify the permission to System Maintenance is customized set to Read or None.<br />
+<br />
+If any low-privileged administrator has Read/Write access to System Settings, this is a finding.<br />
+<br />
+or <br />
+<br />
+1. Open a CLI console, via SSH or available from the GUI.<br />
+2. Run the following command for all low privileged admin user:<br />
+     # show system admin  {ADMIN NAME}  | grep -i accprofile<br />
+The output should be:  <br />
+           set accprofile {PROFILE NAME}<br />
+<br />
+Use the profile name from the output result of above command. <br />
+     # show system accprofile {PROFILE NAME} | grep -i sysgrp<br />
+The output should be:  <br />
+          set sysgrp read<br />
+or<br />
+         set sysgrp none<br />
+          <br />
+If any low privileged admin user has sysgrp parameter set to value Read/Write, this is a finding.</p><h2>Vulnerability Number</h2><p>V-234197</p><h2>Documentable</h2><p>False</p><h2>Rule Version</h2><p>FGFW-ND-000190</p><h2>Severity Override Guidance</h2><p>Log in to the FortiGate GUI with Super-Admin privilege:<br />
+<br />
+1. Click System.<br />
+2. Click Administrators.<br />
+3. Identify the administrator designated to perform maintenance functions and hover over the profile assigned to the role.<br />
+4. Click Edit.<br />
+5. Verify the permission to System is set to Read/Write or Custom with Maintenance set to Read/Write.<br />
+<br />
+If an authorized administrator does not have Read/Write access to System Maintenance Settings, this is a finding.<br />
+<br />
+Then,<br />
+1. Click System.<br />
+2. Click Administrators.<br />
+3. Click all other low-privileged administrators and hover over the profile assigned to the role.<br />
+4. Click Edit.<br />
+5. Verify the permission to System Maintenance is customized set to Read or None.<br />
+<br />
+If any low-privileged administrator has Read/Write access to System Settings, this is a finding.<br />
+<br />
+or <br />
+<br />
+1. Open a CLI console, via SSH or available from the GUI.<br />
+2. Run the following command for all low privileged admin user:<br />
+     # show system admin  {ADMIN NAME}  | grep -i accprofile<br />
+The output should be:  <br />
+           set accprofile {PROFILE NAME}<br />
+<br />
+Use the profile name from the output result of above command. <br />
+     # show system accprofile {PROFILE NAME} | grep -i sysgrp<br />
+The output should be:  <br />
+          set sysgrp read<br />
+or<br />
+         set sysgrp none<br />
+          <br />
+If any low privileged admin user has sysgrp parameter set to value Read/Write, this is a finding.</p><h2>Check Content Reference</h2><p>M</p><h2>Target Key</h2><p>5260</p></body></html>

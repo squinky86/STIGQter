@@ -1,0 +1,53 @@
+<!doctype html><html lang="en"><head><meta charset="utf-8"><title>STIGQter: STIG Check Details: SV-253981r843976_rule: The Juniper router configured for MSDP must limit the amount of source-active messages it accepts on per-peer basis.</title><link rel="icon" type="image/svg+xml" href="STIGQter.svg" /><script async src="https://www.googletagmanager.com/gtag/js?id=UA-31381839-2"></script><script src="include.js"></script><script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-4110907817782130" crossorigin="anonymous"></script></head><body><div><img src="STIGQter.svg" alt="STIGQter" style="height:1em;" /> <a href="https://www.stigqter.com/">STIGQter</a>: <a href="main.html">STIG Summary</a>: <a href="U_Juniper_EX_Switches_RTR_STIG_V2R1_Manual-xccdf.html">Juniper EX Series Switches Router Security Technical Implementation Guide Version: 2 Release: 1 Benchmark Date: 24 Jul 2024</a>:</div> <h1>The Juniper router configured for MSDP must limit the amount of source-active messages it accepts on per-peer basis.</h1><h2>DISA Rule</h2><p>SV-253981r843976_rule</p><h2>Vulnerability Number</h2><p>V-253981</p><h2>Group Title</h2><p>SRG-NET-000018-RTR-000009</p><h2>Rule Version</h2><p>JUEX-RT-000090</p><h2>Severity</h2><p>CAT III</p><h2>CCI(s)</h2><ul><li>CCI-001368 - Enforce approved authorizations for controlling the flow of information within the system based on organization-defined information flow control policies.</li></ul><h2>Weight</h2><p>10</p><h2>Fix Recommendation</h2><p>Configure the MSDP router to limit the amount of source-active messages it accepts from each peer.<br />
+<br />
+set protocols msdp active-source-limit maximum &lt;1..1000000&gt;<br />
+set protocols msdp active-source-limit threshold &lt;1..1000000&gt;<br />
+set protocols msdp active-source-limit log-warning &lt;percent to log warning&gt;<br />
+&lt;additional configuration&gt;<br />
+set protocols msdp peer &lt;address&gt; active-source-limit maximum &lt;1..1000000&gt;<br />
+set protocols msdp peer &lt;address&gt; active-source-limit threshold &lt;1..1000000&gt;<br />
+set protocols msdp peer &lt;address&gt; active-source-limit log-warning &lt;percent to log warning&gt;</p><h2>Check Contents</h2><p>Review the router configuration to determine if it is configured to limit the amount of source-active messages it accepts on a per-peer basis.<br />
+<br />
+[edit protocols]<br />
+msdp {<br />
+    active-source-limit {<br />
+        maximum &lt;1..1000000&gt;;<br />
+        threshold &lt;1..1000000&gt;;<br />
+        log-warning &lt;percent to log warning&gt;;<br />
+    }<br />
+    local-address &lt;lo0 address&gt;;<br />
+    &lt;additional configuration&gt;<br />
+    peer &lt;address&gt; {<br />
+        active-source-limit {<br />
+            maximum &lt;1..1000000&gt;;<br />
+            threshold &lt;1..1000000&gt;;<br />
+            log-warning &lt;percent to log warning&gt;;<br />
+        }<br />
+        authentication-key &quot;hashed PSK&quot;; ## SECRET-DATA<br />
+    }<br />
+}<br />
+Note: Both the global, and the peer limit, are applied to every MSDP peer, and Junos applies the most restrictive limit. The maximum value sets the upper limit for source-active messages and the threshold value determines when Junos begins Random Early Detection (RED) dropping to alleviate congestion. The log-warning value is a percent where Junos begins generating syslog messages.<br />
+<br />
+If the router is not configured to limit the source-active messages it accepts, this is a finding.</p><h2>Vulnerability Number</h2><p>V-253981</p><h2>Documentable</h2><p>False</p><h2>Rule Version</h2><p>JUEX-RT-000090</p><h2>Severity Override Guidance</h2><p>Review the router configuration to determine if it is configured to limit the amount of source-active messages it accepts on a per-peer basis.<br />
+<br />
+[edit protocols]<br />
+msdp {<br />
+    active-source-limit {<br />
+        maximum &lt;1..1000000&gt;;<br />
+        threshold &lt;1..1000000&gt;;<br />
+        log-warning &lt;percent to log warning&gt;;<br />
+    }<br />
+    local-address &lt;lo0 address&gt;;<br />
+    &lt;additional configuration&gt;<br />
+    peer &lt;address&gt; {<br />
+        active-source-limit {<br />
+            maximum &lt;1..1000000&gt;;<br />
+            threshold &lt;1..1000000&gt;;<br />
+            log-warning &lt;percent to log warning&gt;;<br />
+        }<br />
+        authentication-key &quot;hashed PSK&quot;; ## SECRET-DATA<br />
+    }<br />
+}<br />
+Note: Both the global, and the peer limit, are applied to every MSDP peer, and Junos applies the most restrictive limit. The maximum value sets the upper limit for source-active messages and the threshold value determines when Junos begins Random Early Detection (RED) dropping to alleviate congestion. The log-warning value is a percent where Junos begins generating syslog messages.<br />
+<br />
+If the router is not configured to limit the source-active messages it accepts, this is a finding.</p><h2>Check Content Reference</h2><p>M</p><h2>Target Key</h2><p>5479</p></body></html>

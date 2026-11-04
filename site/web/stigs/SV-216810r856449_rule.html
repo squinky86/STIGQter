@@ -1,0 +1,169 @@
+<!doctype html><html lang="en"><head><meta charset="utf-8"><title>STIGQter: STIG Check Details: SV-216810r856449_rule: The Cisco multicast Rendezvous Point (RP) router must be configured to filter Protocol Independent Multicast (PIM) Join messages received from the Designated Router (DR) for any undesirable multicast groups.</title><link rel="icon" type="image/svg+xml" href="STIGQter.svg" /><script async src="https://www.googletagmanager.com/gtag/js?id=UA-31381839-2"></script><script src="include.js"></script><script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-4110907817782130" crossorigin="anonymous"></script></head><body><div><img src="STIGQter.svg" alt="STIGQter" style="height:1em;" /> <a href="https://www.stigqter.com/">STIGQter</a>: <a href="main.html">STIG Summary</a>: <a href="U_Cisco_IOS-XR_Router_RTR_STIG_V3R3_Manual-xccdf.html">Cisco IOS XR Router RTR Security Technical Implementation Guide Version: 3 Release: 3 Benchmark Date: 01 Oct 2025</a>:</div> <h1>The Cisco multicast Rendezvous Point (RP) router must be configured to filter Protocol Independent Multicast (PIM) Join messages received from the Designated Router (DR) for any undesirable multicast groups.</h1><h2>DISA Rule</h2><p>SV-216810r856449_rule</p><h2>Vulnerability Number</h2><p>V-216810</p><h2>Group Title</h2><p>SRG-NET-000362-RTR-000120</p><h2>Rule Version</h2><p>CISC-RT-000820</p><h2>Severity</h2><p>CAT III</p><h2>CCI(s)</h2><ul><li>CCI-002385 - Protect against or limit the effects of organization-defined types of denial of service events.</li></ul><h2>Weight</h2><p>10</p><h2>Fix Recommendation</h2><p>The risk associated with this requirement can be fully mitigated by configuring the router to filter PIM register messages, rate limiting the number of PIM register messages, and accept MSDP packets only from known MSDP peers.<br />
+<br />
+Step 1: Configure the router to filter PIM register messages received from a multicast DR for any undesirable multicast groups and sources. The example below will deny any multicast streams for groups 239.5.0.0/16 and allow from only sources 10.1.2.6 and 10.1.2.7. <br />
+<br />
+RP/0/0/CPU0:R2(config)#ipv4 access-list PIM_REGISTER_FILTER<br />
+RP/0/0/CPU0:R2(config-ipv4-acl)#deny ipv4 any 239.5.0.0 0.0.255.255<br />
+RP/0/0/CPU0:R2(config-ipv4-acl)#permit ipv4 host 10.1.2.6 any<br />
+RP/0/0/CPU0:R2(config-ipv4-acl)#permit ipv4 host 10.1.2.7 any<br />
+RP/0/0/CPU0:R2(config-ipv4-acl)#deny ipv4 any any<br />
+RP/0/0/CPU0:R2(config-ipv4-acl)#exit<br />
+RP/0/0/CPU0:R2(config)#router pim<br />
+RP/0/0/CPU0:R2(config-pim)#address-family ipv4<br />
+RP/0/0/CPU0:R2(config-pim-default-ipv4)#accept-register PIM_REGISTER_FILTER<br />
+RP/0/0/CPU0:R2(config-pim-default-ipv4)#end  <br />
+<br />
+Step 2: Configure the RP to rate limit the number of multicast register messages.<br />
+<br />
+RP/0/0/CPU0:R2(config)#router pim<br />
+RP/0/0/CPU0:R2(config-pim)#address-family ipv4<br />
+RP/0/0/CPU0:R2(config-pim-default-ipv4)#maximum register-states 250<br />
+RP/0/0/CPU0:R2(config-pim-default-ipv4)#end<br />
+<br />
+Step 3: Configure the receive path or interface ACLs to only accepts MSDP packets from known MSDP peers.<br />
+<br />
+RP/0/0/CPU0:R2(config)#ipv4 access-list EXTERNAL_ACL_INBOUND<br />
+RP/0/0/CPU0:R2(config-ipv4-acl)#permit tcp host x.1.28.2 host x.1.28.8 eq 639<br />
+RP/0/0/CPU0:R2(config-ipv4-acl)#deny tcp any host x.1.28.8 eq 639 log<br />
+RP/0/0/CPU0:R2(config-ipv4-acl)#permit tcp host x.1.28.2 host x.1.28.8 eq bgp<br />
+RP/0/0/CPU0:R2(config-ipv4-acl)#permit tcp host x.1.28.2 eq bgp host x.1.28.8<br />
+RP/0/0/CPU0:R2(config-ipv4-acl)#permit pim host x.1.28.2 host x.1.28.8<br />
+RP/0/0/CPU0:R2(config-ipv4-acl)#permit tcp any any established<br />
+…<br />
+…<br />
+…<br />
+RP/0/0/CPU0:R2(config-ipv4-acl)#deny ip any any log</p><h2>Check Contents</h2><p>The Cisco router does not have a mechanism to limit the multicast forwarding cache. However, the risk associated with this requirement can be fully mitigated by configuring the router to:<br />
+<br />
+1. Filter PIM register messages.<br />
+2. Rate limiting the number of PIM register messages.<br />
+3. Accept MSDP packets only from known MSDP peers.<br />
+<br />
+Step 1:  Verify that the RP router is configured to filter PIM register messages for any undesirable multicast groups and sources. The example below will deny any multicast streams for groups 239.5.0.0/16 and allow from only sources 10.1.2.6 and 10.1.2.7. <br />
+<br />
+ipv4 access-list PIM_REGISTER_FILTER<br />
+ 10 deny ipv4 any 239.5.0.0 0.0.255.255<br />
+ 20 permit ipv4 host 10.1.2.6 any<br />
+ 30 permit ipv4 host 10.1.2.7 any<br />
+ 40 deny ipv4 any any <br />
+…<br />
+…<br />
+…<br />
+router pim<br />
+ address-family ipv4<br />
+  rp-address 2.2.2.2<br />
+  accept-register PIM_REGISTER_FILTER<br />
+<br />
+Step 2: Verify that the router is configured to rate limiting the number of PIM register messages as shown in the example below.<br />
+<br />
+router pim<br />
+ address-family ipv4<br />
+  allow-rp group-list FILTER_PIM_JOINS<br />
+  rp-address 10.2.2.2<br />
+  accept-register PIM_REGISTER_FILTER<br />
+  maximum register-states 250<br />
+<br />
+Note: The maximum register-states command is used to set an upper limit for PIM register states. When the limit is reached, PIM discontinues route creation from PIM register messages. If not configured, the default is 2000 which would be an overage for a small to average size multicast deployment.<br />
+<br />
+Step 3: Review the router configuration to determine if there is a receive path or interface filter to only accept MSDP packets from known MSDP peers as shown in the example below.<br />
+<br />
+Step 3a: Determine which interfaces would be peering MSDP with an external router by the configured peer addresses as shown in the example below.<br />
+<br />
+router msdp<br />
+ peer x.14.2.1<br />
+  remote-as nn<br />
+ !<br />
+ peer x.15.3.5<br />
+  remote-as nn<br />
+ !<br />
+!<br />
+<br />
+Step 3b: Verify that interfaces used for MSDP peering have an inbound ACL as shown in the example.<br />
+<br />
+interface GigabitEthernet0/0/0/1<br />
+ ipv4 address x.14.2.2 255.255.255.252<br />
+ ipv4 access-group EXTERNAL_ACL_INBOUND ingress<br />
+<br />
+Step 3c: Verify that the ACL restricts MSDP peering to only known sources.<br />
+<br />
+ipv4 access-list EXTERNAL_ACL_INBOUND<br />
+ 10 permit tcp host x.1.28.2 host x.1.28.8 eq 639<br />
+ 20 deny tcp any host x.1.28.8 eq 639 log<br />
+ 30 permit tcp host x.1.28.2 host x.1.28.8 eq bgp<br />
+ 40 permit tcp host x.1.28.2 eq bgp host x.1.28.8<br />
+ 50 permit pim host x.1.28.2 host x.1.28.8<br />
+ 60 permit tcp any any established<br />
+ …<br />
+ …<br />
+ …<br />
+ 140 deny ipv4 any any log<br />
+<br />
+Note: MSDP connections is via TCP port 639<br />
+<br />
+If the RP router is not configured to filter PIM register messages, rate limiting the number of PIM register messages, and accept MSDP packets only from known MSDP peers, this is a finding.</p><h2>Vulnerability Number</h2><p>V-216810</p><h2>Documentable</h2><p>False</p><h2>Rule Version</h2><p>CISC-RT-000820</p><h2>Severity Override Guidance</h2><p>The Cisco router does not have a mechanism to limit the multicast forwarding cache. However, the risk associated with this requirement can be fully mitigated by configuring the router to:<br />
+<br />
+1. Filter PIM register messages.<br />
+2. Rate limiting the number of PIM register messages.<br />
+3. Accept MSDP packets only from known MSDP peers.<br />
+<br />
+Step 1:  Verify that the RP router is configured to filter PIM register messages for any undesirable multicast groups and sources. The example below will deny any multicast streams for groups 239.5.0.0/16 and allow from only sources 10.1.2.6 and 10.1.2.7. <br />
+<br />
+ipv4 access-list PIM_REGISTER_FILTER<br />
+ 10 deny ipv4 any 239.5.0.0 0.0.255.255<br />
+ 20 permit ipv4 host 10.1.2.6 any<br />
+ 30 permit ipv4 host 10.1.2.7 any<br />
+ 40 deny ipv4 any any <br />
+…<br />
+…<br />
+…<br />
+router pim<br />
+ address-family ipv4<br />
+  rp-address 2.2.2.2<br />
+  accept-register PIM_REGISTER_FILTER<br />
+<br />
+Step 2: Verify that the router is configured to rate limiting the number of PIM register messages as shown in the example below.<br />
+<br />
+router pim<br />
+ address-family ipv4<br />
+  allow-rp group-list FILTER_PIM_JOINS<br />
+  rp-address 10.2.2.2<br />
+  accept-register PIM_REGISTER_FILTER<br />
+  maximum register-states 250<br />
+<br />
+Note: The maximum register-states command is used to set an upper limit for PIM register states. When the limit is reached, PIM discontinues route creation from PIM register messages. If not configured, the default is 2000 which would be an overage for a small to average size multicast deployment.<br />
+<br />
+Step 3: Review the router configuration to determine if there is a receive path or interface filter to only accept MSDP packets from known MSDP peers as shown in the example below.<br />
+<br />
+Step 3a: Determine which interfaces would be peering MSDP with an external router by the configured peer addresses as shown in the example below.<br />
+<br />
+router msdp<br />
+ peer x.14.2.1<br />
+  remote-as nn<br />
+ !<br />
+ peer x.15.3.5<br />
+  remote-as nn<br />
+ !<br />
+!<br />
+<br />
+Step 3b: Verify that interfaces used for MSDP peering have an inbound ACL as shown in the example.<br />
+<br />
+interface GigabitEthernet0/0/0/1<br />
+ ipv4 address x.14.2.2 255.255.255.252<br />
+ ipv4 access-group EXTERNAL_ACL_INBOUND ingress<br />
+<br />
+Step 3c: Verify that the ACL restricts MSDP peering to only known sources.<br />
+<br />
+ipv4 access-list EXTERNAL_ACL_INBOUND<br />
+ 10 permit tcp host x.1.28.2 host x.1.28.8 eq 639<br />
+ 20 deny tcp any host x.1.28.8 eq 639 log<br />
+ 30 permit tcp host x.1.28.2 host x.1.28.8 eq bgp<br />
+ 40 permit tcp host x.1.28.2 eq bgp host x.1.28.8<br />
+ 50 permit pim host x.1.28.2 host x.1.28.8<br />
+ 60 permit tcp any any established<br />
+ …<br />
+ …<br />
+ …<br />
+ 140 deny ipv4 any any log<br />
+<br />
+Note: MSDP connections is via TCP port 639<br />
+<br />
+If the RP router is not configured to filter PIM register messages, rate limiting the number of PIM register messages, and accept MSDP packets only from known MSDP peers, this is a finding.</p><h2>Check Content Reference</h2><p>M</p><h2>Target Key</h2><p>4029</p></body></html>

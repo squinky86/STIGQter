@@ -1,0 +1,63 @@
+<!doctype html><html lang="en"><head><meta charset="utf-8"><title>STIGQter: STIG Check Details: SV-214260r961281_rule: The Apache web server must be configured to immediately disconnect or disable remote access to the hosted applications.</title><link rel="icon" type="image/svg+xml" href="STIGQter.svg" /><script async src="https://www.googletagmanager.com/gtag/js?id=UA-31381839-2"></script><script src="include.js"></script><script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-4110907817782130" crossorigin="anonymous"></script></head><body><div><img src="STIGQter.svg" alt="STIGQter" style="height:1em;" /> <a href="https://www.stigqter.com/">STIGQter</a>: <a href="main.html">STIG Summary</a>: <a href="U_Apache_Server_2-4_UNIX_Server_STIG_V3R3_Manual-xccdf.html">Apache Server 2.4 UNIX Server Security Technical Implementation Guide Version: 3 Release: 3 Benchmark Date: 01 Jul 2026</a>:</div> <h1>The Apache web server must be configured to immediately disconnect or disable remote access to the hosted applications.</h1><h2>DISA Rule</h2><p>SV-214260r961281_rule</p><h2>Vulnerability Number</h2><p>V-214260</p><h2>Group Title</h2><p>SRG-APP-000316-WSR-000170</p><h2>Rule Version</h2><p>AS24-U1-000680</p><h2>Severity</h2><p>CAT II</p><h2>CCI(s)</h2><ul><li>CCI-002322 - Provide the capability to disconnect or disable remote access to the system within the organization-defined time period.</li></ul><h2>Weight</h2><p>10</p><h2>Fix Recommendation</h2><p>Prepare documented procedures for shutting down an Apache website in the event of an attack.<br />
+<br />
+The procedure should, at a minimum, provide the following steps:<br />
+<br />
+Search for the PidFile runtime directive. (This example uses the combined results of HTTPD_ROOT and SERVER_CONFIG_FILE, above.) If this command returns a result, use this value in the kill command, otherwise, use the DEFAULT_PIDLOG value, above.<br />
+<br />
+In a command line, enter the following command:<br />
+<br />
+# grep -i pidfile /etc/httpd/conf/httpd.conf  <br />
+<br />
+# kill -TERM 'cat &lt;FULLY-QUALIFIED_PIDFILE_FILENAME&gt;'</p><h2>Check Contents</h2><p>Interview the SA and Web Manager.<br />
+<br />
+Ask for documentation for the Apache web server administration.<br />
+<br />
+Verify there are documented procedures for shutting down an Apache website in the event of an attack. <br />
+<br />
+The procedure must, at a minimum, provide the following steps:<br />
+<br />
+1. Determine the respective website for the application at risk of an attack.<br />
+<br />
+2. Determine the location of the &quot;HTTPD_ROOT&quot; directory and the &quot;httpd.conf&quot; file:<br />
+<br />
+# apachectl -V | egrep -i 'httpd_root|server_config_file|pidlog'<br />
+-D HTTPD_ROOT=&quot;/etc/httpd&quot;<br />
+-D SERVER_CONFIG_FILE=&quot;conf/httpd.conf&quot;<br />
+-D DEFAULT_PIDLOG=”/run/httpd/httpd.pid”<br />
+ <br />
+3. Search for the PidFile runtime directive. (This example uses the combined results of HTTPD_ROOT and SERVER_CONFIG_FILE, above.) <br />
+<br />
+# grep -i pidfile /etc/httpd/conf/httpd.conf  <br />
+<br />
+4. If this command returns a result, use this value in the kill command, otherwise, use the DEFAULT_PIDLOG value, above.<br />
+<br />
+# kill -TERM `cat &lt;FULLY-QUALIFIED_PIDFILE_FILENAME&gt;`<br />
+Note: These should be documented steps, validators should not run kill commands while reviewing production systems.<br />
+<br />
+If the web server is not capable of or cannot be configured to disconnect or disable remote access to the hosted applications when necessary, this is a finding.</p><h2>Vulnerability Number</h2><p>V-214260</p><h2>Documentable</h2><p>False</p><h2>Rule Version</h2><p>AS24-U1-000680</p><h2>Severity Override Guidance</h2><p>Interview the SA and Web Manager.<br />
+<br />
+Ask for documentation for the Apache web server administration.<br />
+<br />
+Verify there are documented procedures for shutting down an Apache website in the event of an attack. <br />
+<br />
+The procedure must, at a minimum, provide the following steps:<br />
+<br />
+1. Determine the respective website for the application at risk of an attack.<br />
+<br />
+2. Determine the location of the &quot;HTTPD_ROOT&quot; directory and the &quot;httpd.conf&quot; file:<br />
+<br />
+# apachectl -V | egrep -i 'httpd_root|server_config_file|pidlog'<br />
+-D HTTPD_ROOT=&quot;/etc/httpd&quot;<br />
+-D SERVER_CONFIG_FILE=&quot;conf/httpd.conf&quot;<br />
+-D DEFAULT_PIDLOG=”/run/httpd/httpd.pid”<br />
+ <br />
+3. Search for the PidFile runtime directive. (This example uses the combined results of HTTPD_ROOT and SERVER_CONFIG_FILE, above.) <br />
+<br />
+# grep -i pidfile /etc/httpd/conf/httpd.conf  <br />
+<br />
+4. If this command returns a result, use this value in the kill command, otherwise, use the DEFAULT_PIDLOG value, above.<br />
+<br />
+# kill -TERM `cat &lt;FULLY-QUALIFIED_PIDFILE_FILENAME&gt;`<br />
+Note: These should be documented steps, validators should not run kill commands while reviewing production systems.<br />
+<br />
+If the web server is not capable of or cannot be configured to disconnect or disable remote access to the hosted applications when necessary, this is a finding.</p><h2>Check Content Reference</h2><p>M</p><h2>Target Key</h2><p>3996</p></body></html>

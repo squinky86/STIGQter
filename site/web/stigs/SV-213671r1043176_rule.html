@@ -1,0 +1,138 @@
+<!doctype html><html lang="en"><head><meta charset="utf-8"><title>STIGQter: STIG Check Details: SV-213671r1043176_rule: DB2 must integrate with an organization-level authentication/access mechanism providing account management and automation for all users, groups, roles, and any other principals.</title><link rel="icon" type="image/svg+xml" href="STIGQter.svg" /><script async src="https://www.googletagmanager.com/gtag/js?id=UA-31381839-2"></script><script src="include.js"></script><script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-4110907817782130" crossorigin="anonymous"></script></head><body><div><img src="STIGQter.svg" alt="STIGQter" style="height:1em;" /> <a href="https://www.stigqter.com/">STIGQter</a>: <a href="main.html">STIG Summary</a>: <a href="U_IBM_DB2_V10-5_LUW_STIG_V2R2_Manual-xccdf.html">IBM DB2 V10.5 LUW Security Technical Implementation Guide Version: 2 Release: 2 Benchmark Date: 01 Jul 2026</a>:</div> <h1>DB2 must integrate with an organization-level authentication/access mechanism providing account management and automation for all users, groups, roles, and any other principals.</h1><h2>DISA Rule</h2><p>SV-213671r1043176_rule</p><h2>Vulnerability Number</h2><p>V-213671</p><h2>Group Title</h2><p>SRG-APP-000023-DB-000001</p><h2>Rule Version</h2><p>DB2X-00-000300</p><h2>Severity</h2><p>CAT II</p><h2>CCI(s)</h2><ul><li>CCI-000015 - Support the management of system accounts using (organization-defined automated mechanisms).</li></ul><h2>Weight</h2><p>10</p><h2>Fix Recommendation</h2><p>Create an IBMLDAPSecurity.ini file at the default name and location for the IBM LDAP security plug-in configuration file:<br />
+<br />
+    On UNIX/LINUX:  $INSTHOME/sqllib/cfg/IBMLDAPSecurity.ini<br />
+    On Windows:  %DB2PATH%\cfg\IBMLDAPSecurity.ini<br />
+<br />
+To create the file in a non-default location, set the environment variable DB2LDAPSecurityConfig to the directory name where configuration file IBMLDAPSecurity.ini is located. <br />
+<br />
+Set the value of SRVCON_PW_PLUGIN to IBMLDAPauthserver for instance by running the following command:<br />
+<br />
+     $db2 update dbm cfg using SRVCON_PW_PLUGIN IBMLDAPauthserver immediate<br />
+<br />
+Refer to details below to determine appropriate values in LDAP configuration file.<br />
+<br />
+-- SERVER-RELATED values:<br />
+1) LDAP_HOST - The name of the LDAP server(s) - This is a space separated list of LDAP server host names or IP addresses, with an optional port number for each one. <br />
+<br />
+For example: host1[:port1] [host2:[port2] ... The default port number is 389, or 636 if SSL is enabled.<br />
+<br />
+2) ENABLE_SSL - To enable SSL support, set ENABLE_SSL to TRUE (you must have the GSKit installed). This is an optional parameter; it defaults to FALSE (no SSL support).<br />
+<br />
+3) SSL_KEYFILE - The path for the SSL keyring. A keyfile is only required if your LDAP server is using a certificate that is not automatically trusted by your GSKit installation. <br />
+<br />
+For example: SSL_KEYFILE = /home/db2inst1/IBMLDAPSecurity.kdb<br />
+<br />
+4) SSL_PW - The SSL keyring password. For example: SSL_PW = keyfile-password<br />
+<br />
+5) SECURITY_PROTOCOL - To enable TLS 1.2 support, set SECURITY_PROTOCOL to TLSV12. To enable TLS 1.0, 1.1, and 1.2 support, set SECURITY_PROTOCOL to ALL. <br />
+<br />
+By default, SECURITY_PROTOCOL is not set. This setting means TLS 1.2 is not supported.<br />
+<br />
+-- USER_RELATED values:<br />
+1) USER_OBJECTCLASS - The LDAP object class used for users. <br />
+<br />
+Generally, set USER_OBJECTCLASS to inetOrgPerson (the user for Microsoft Active Directory) <br />
+<br />
+For example: USER_OBJECTCLASS = inetOrgPerson<br />
+<br />
+2) USER_BASEDN -  The LDAP base DN to use when searching for users. If not specified, user searches start at the root of the LDAP directory. Some LDAP servers require that you specify a value for this parameter. <br />
+<br />
+For example: USER_BASEDN = o=ibm<br />
+<br />
+3) USERID_ATTRIBUTE - The LDAP user attribute that represents the user ID. The USERID_ATTRIBUTE attribute is combined with the USER_OBJECTCLASS and USER_BASEDN (if specified) to construct an LDAP search filter when a user issues a DB2 CONNECT statement with an unqualified user ID. <br />
+<br />
+For example, if USERID_ATTRIBUTE = uid, then issuing this statement: db2 connect to MYDB user bob using bobpass results in the following search filter:<br />
+&amp;(objectClass=inetOrgPerson)(uid=bob)<br />
+<br />
+4) AUTHID_ATTRIBUTE - The LDAP user attribute that represents the DB2 authorization ID. Usually this is the same as the USERID_ATTRIBUTE.<br />
+For example: AUTHID_ATTRIBUTE = uid<br />
+<br />
+-- GROUP-RELATED values: <br />
+1) GROUP_OBJECTCLASS - The LDAP object class used for groups. Generally this is groupOfNames or groupOfUniqueNames<br />
+(for Microsoft Active Directory, it is group)<br />
+<br />
+For example: GROUP_OBJECTCLASS = groupOfNames<br />
+<br />
+2) GROUP_BASEDN - The LDAP base DN to use when searching for groups If not specified, group searches start at the root of the LDAP directory. Some LDAP servers require that you specify a value for this parameter.<br />
+<br />
+For example: GROUP_BASEDN = o=ibm<br />
+<br />
+3) GROUPNAME_ATTRIBUTE - The LDAP group attribute that represents the name of the group.<br />
+<br />
+For example: GROUPNAME_ATTRIBUTE = cn<br />
+<br />
+4) GROUP_LOOKUP_ METHOD - Determines the method used to find the group memberships for a user. <br />
+Possible values are:<br />
+SEARCH_BY_DN Indicates to search for groups that list the user as a member. Membership is indicated by the group attribute defined as GROUP_LOOKUP_ATTRIBUTE (typically, member or uniqueMember). <br />
+<br />
+USER_ATTRIBUTE In this case, a user's groups are listed as attributes of the user object itself. This setting indicates to search for the user attribute defined as GROUP_LOOKUP_ATTRIBUTE to get the user's groups (typically memberOf for Microsoft Active Directory or ibm-allGroups for IBM Tivoli Directory Server).<br />
+<br />
+For example: GROUP_LOOKUP_METHOD = SEARCH_BY_DN<br />
+GROUP_LOOKUP_METHOD = USER_ATTRIBUTE<br />
+<br />
+5) GROUP_LOOKUP_ATTRIBUTE - Name of the attribute used to determine group membership, as described for GROUP_LOOKUP_METHOD.<br />
+<br />
+For example:<br />
+GROUP_LOOKUP_ATTRIBUTE = member<br />
+GROUP_LOOKUP_ATTRIBUTE = ibm-allGroups<br />
+NESTED_GROUPS If NESTED_GROUPS is TRUE, the DB2 database manager recursively searches for group membership by attempting to look up the group memberships for every group that is found.<br />
+<br />
+Cycles (such as A belongs to B, and B belongs to A) are handled correctly.<br />
+This parameter is optional, and defaults to FALSE.<br />
+<br />
+-- MISCELLANEOUS  values:<br />
+1) SEARCH_DN, SEARCH_PW If your LDAP server does not support anonymous access, or if anonymous access is not sufficient when searching for users or groups, then you can optionally define a DN and password that will be used to perform searches.<br />
+<br />
+For example:<br />
+SEARCH_DN = cn=root<br />
+SEARCH_PW = rootpassword<br />
+<br />
+2) DEBUG  Set DEBUG to TRUE to write extra information to the db2diag log files to aid in debugging LDAP related issues.<br />
+<br />
+Most of the additional information is logged at<br />
+DIAGLEVEL 4 (INFO).<br />
+DEBUG defaults to false.</p><h2>Check Contents</h2><p>The default name and location for the IBM LDAP security plug-in configuration file is:<br />
+<br />
+On UNIX/LINUX: INSTHOME/sqllib/cfg/IBMLDAPSecurity.ini<br />
+<br />
+On Windows: %DB2PATH%\cfg\IBMLDAPSecurity.ini<br />
+<br />
+If the IBMLDAPSecurity.ini  file does not exist in the default location and environment variable DB2LDAPSecurityConfig  is not set, this is a finding. <br />
+<br />
+If the environment variable DB2LDAPSecurityConfig is set and file does not exist in DB2LDAPSecurityConfig location, this is a finding. <br />
+<br />
+Find the value of SRVCON_PW_PLUGIN by running <br />
+<br />
+     $db2 get dbm cfg<br />
+<br />
+If SRVCON_PW_PLUGIN is not set to IBMLDAPauthserver, this is a finding. <br />
+<br />
+Note:<br />
+In Windows, find the location of base installation directory of DB2 using one of following methods<br />
+1. Find the value of DB2PATH variable using  db2set –all on DB2 CLP <br />
+2. Run db2level command<br />
+3. Go to Registry Editor in Windows<br />
+     Computer &gt;&gt; HKEY_LOCAL_MACHINE &gt;&gt; SOFTWARE &gt;&gt; IBM &gt;&gt; DB2 &gt;&gt; installedCopies &gt;&gt; DB2COPY1<br />
+Then find the value of the DB2 Path Name</p><h2>Vulnerability Number</h2><p>V-213671</p><h2>Documentable</h2><p>False</p><h2>Rule Version</h2><p>DB2X-00-000300</p><h2>Severity Override Guidance</h2><p>The default name and location for the IBM LDAP security plug-in configuration file is:<br />
+<br />
+On UNIX/LINUX: INSTHOME/sqllib/cfg/IBMLDAPSecurity.ini<br />
+<br />
+On Windows: %DB2PATH%\cfg\IBMLDAPSecurity.ini<br />
+<br />
+If the IBMLDAPSecurity.ini  file does not exist in the default location and environment variable DB2LDAPSecurityConfig  is not set, this is a finding. <br />
+<br />
+If the environment variable DB2LDAPSecurityConfig is set and file does not exist in DB2LDAPSecurityConfig location, this is a finding. <br />
+<br />
+Find the value of SRVCON_PW_PLUGIN by running <br />
+<br />
+     $db2 get dbm cfg<br />
+<br />
+If SRVCON_PW_PLUGIN is not set to IBMLDAPauthserver, this is a finding. <br />
+<br />
+Note:<br />
+In Windows, find the location of base installation directory of DB2 using one of following methods<br />
+1. Find the value of DB2PATH variable using  db2set –all on DB2 CLP <br />
+2. Run db2level command<br />
+3. Go to Registry Editor in Windows<br />
+     Computer &gt;&gt; HKEY_LOCAL_MACHINE &gt;&gt; SOFTWARE &gt;&gt; IBM &gt;&gt; DB2 &gt;&gt; installedCopies &gt;&gt; DB2COPY1<br />
+Then find the value of the DB2 Path Name</p><h2>Check Content Reference</h2><p>M</p><h2>Target Key</h2><p>3989</p></body></html>

@@ -1,0 +1,21 @@
+<!doctype html><html lang="en"><head><meta charset="utf-8"><title>STIGQter: STIG Check Details: SV-261329r1186207_rule: SLEM 5 must display the Standard Mandatory DOD Notice and Consent Banner before granting access via SSH.</title><link rel="icon" type="image/svg+xml" href="STIGQter.svg" /><script async src="https://www.googletagmanager.com/gtag/js?id=UA-31381839-2"></script><script src="include.js"></script><script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-4110907817782130" crossorigin="anonymous"></script></head><body><div><img src="STIGQter.svg" alt="STIGQter" style="height:1em;" /> <a href="https://www.stigqter.com/">STIGQter</a>: <a href="main.html">STIG Summary</a>: <a href="U_SLEM_5_STIG_V1R4_Manual-xccdf.html">SUSE Linux Enterprise Micro (SLEM) 5 Security Technical Implementation Guide Version: 1 Release: 4 Benchmark Date: 01 Apr 2026</a>:</div> <h1>SLEM 5 must display the Standard Mandatory DOD Notice and Consent Banner before granting access via SSH.</h1><h2>DISA Rule</h2><p>SV-261329r1186207_rule</p><h2>Vulnerability Number</h2><p>V-261329</p><h2>Group Title</h2><p>SRG-OS-000023-GPOS-00006</p><h2>Rule Version</h2><p>SLEM-05-255020</p><h2>Severity</h2><p>CAT II</p><h2>CCI(s)</h2><ul><li>CCI-000048 - Display an organization-defined system use notification message or banner to users before granting access to the system that provides privacy and security notices consistent with applicable federal laws, Executive Orders, directives, policies, regulations, standards, and guidelines.</li></ul><h2>Weight</h2><p>10</p><h2>Fix Recommendation</h2><p>Add or modify the following line in the &quot;/etc/ssh/sshd_config&quot; file: <br />
+<br />
+Banner /etc/ssh/dod_banner<br />
+<br />
+Restart the &quot;sshd.service&quot; to use the new file location:<br />
+<br />
+     &gt; sudo systemctl restart sshd.service</p><h2>Check Contents</h2><p>Verify SLEM 5 displays the Standard Mandatory DOD Notice and Consent Banner before granting access to the system via SSH with the following command:<br />
+<br />
+     &gt; sudo /usr/sbin/sshd -dd 2&gt;&amp;1 | awk '/filename/ {print $4}' | tr -d '\r' | tr '\n' ' ' | xargs sudo grep -iH '^\s*banner'<br />
+     /etc/ssh/sshd_config:Banner /etc/ssh/dod_banner<br />
+<br />
+If &quot;Banner&quot; is commented out or missing, or if the location returned will be overridden by package updates, this is a finding.<br />
+<br />
+Note: The file /etc/issue is overridden by package updates and will not maintain the banner text as it does in other Linux distributions.</p><h2>Vulnerability Number</h2><p>V-261329</p><h2>Documentable</h2><p>False</p><h2>Rule Version</h2><p>SLEM-05-255020</p><h2>Severity Override Guidance</h2><p>Verify SLEM 5 displays the Standard Mandatory DOD Notice and Consent Banner before granting access to the system via SSH with the following command:<br />
+<br />
+     &gt; sudo /usr/sbin/sshd -dd 2&gt;&amp;1 | awk '/filename/ {print $4}' | tr -d '\r' | tr '\n' ' ' | xargs sudo grep -iH '^\s*banner'<br />
+     /etc/ssh/sshd_config:Banner /etc/ssh/dod_banner<br />
+<br />
+If &quot;Banner&quot; is commented out or missing, or if the location returned will be overridden by package updates, this is a finding.<br />
+<br />
+Note: The file /etc/issue is overridden by package updates and will not maintain the banner text as it does in other Linux distributions.</p><h2>Check Content Reference</h2><p>M</p><h2>Target Key</h2><p>5596</p></body></html>

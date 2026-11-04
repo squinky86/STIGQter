@@ -1,0 +1,36 @@
+<!doctype html><html lang="en"><head><meta charset="utf-8"><title>STIGQter: STIG Check Details: SV-219982r1207682_rule: The operating system must employ cryptographic mechanisms to protect information in storage.</title><link rel="icon" type="image/svg+xml" href="STIGQter.svg" /><script async src="https://www.googletagmanager.com/gtag/js?id=UA-31381839-2"></script><script src="include.js"></script><script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-4110907817782130" crossorigin="anonymous"></script></head><body><div><img src="STIGQter.svg" alt="STIGQter" style="height:1em;" /> <a href="https://www.stigqter.com/">STIGQter</a>: <a href="main.html">STIG Summary</a>: <a href="U_SOL_11_SPARC_STIG_V3R6_Manual-xccdf.html">Solaris 11 SPARC Security Technical Implementation Guide Version: 3 Release: 6 Benchmark Date: 01 Jul 2026</a>:</div> <h1>The operating system must employ cryptographic mechanisms to protect information in storage.</h1><h2>DISA Rule</h2><p>SV-219982r1207682_rule</p><h2>Vulnerability Number</h2><p>V-219982</p><h2>Group Title</h2><p>SRG-OS-000404</p><h2>Rule Version</h2><p>SOL-11.1-060150</p><h2>Severity</h2><p>CAT I</p><h2>CCI(s)</h2><ul><li>CCI-002475 - Implement cryptographic mechanisms to prevent unauthorized modification of organization-defined information when at rest on organization-defined system components.</li></ul><h2>Weight</h2><p>10</p><h2>Fix Recommendation</h2><p>The ZFS file system management profile is required.<br />
+<br />
+ZFS file system encryption may only be enabled on creation of the file system. If a file system must be encrypted and is not, its data should be archived, it must be removed and re-created.<br />
+<br />
+First, stop running applications using the file systems, archive the data, unmount, and then remove the file system.<br />
+<br />
+# umount [file system name]<br />
+# zfs destroy [file system name]<br />
+<br />
+When creating ZFS file systems, ensure that they are created as encrypted file systems.<br />
+<br />
+# pfexec zfs create -o encryption=on [file system name]<br />
+Enter passphrase for '[file system name]': xxxxxxx<br />
+Enter again: xxxxxxx<br />
+<br />
+Store the passphrase in a safe location. The passphrase will be required to mount the file systems upon system reboot. If automated mounting is required, the passphrase must be stored in a file.</p><h2>Check Contents</h2><p>Determine if file system encryption is required by the organization. If not required, this item does not apply.<br />
+<br />
+Determine if file system encryption is enabled for user data sets. This check does not apply to the root, var, share, swap, or dump datasets.<br />
+<br />
+# zfs list <br />
+<br />
+Using the file system name, determine if the file system is encrypted:<br />
+<br />
+# zfs get encryption [filesystem] <br />
+<br />
+If &quot;encryption off&quot; is listed, this is a finding.</p><h2>Vulnerability Number</h2><p>V-219982</p><h2>Documentable</h2><p>False</p><h2>Rule Version</h2><p>SOL-11.1-060150</p><h2>Severity Override Guidance</h2><p>Determine if file system encryption is required by the organization. If not required, this item does not apply.<br />
+<br />
+Determine if file system encryption is enabled for user data sets. This check does not apply to the root, var, share, swap, or dump datasets.<br />
+<br />
+# zfs list <br />
+<br />
+Using the file system name, determine if the file system is encrypted:<br />
+<br />
+# zfs get encryption [filesystem] <br />
+<br />
+If &quot;encryption off&quot; is listed, this is a finding.</p><h2>Check Content Reference</h2><p>M</p><h2>Target Key</h2><p>4022</p></body></html>

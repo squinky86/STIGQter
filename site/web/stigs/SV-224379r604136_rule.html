@@ -1,0 +1,47 @@
+<!doctype html><html lang="en"><head><meta charset="utf-8"><title>STIGQter: STIG Check Details: SV-224379r604136_rule: The BlackBerry UEM server must be configured to leverage the MDM platform user accounts and groups for BlackBerry UEM server user identification and CAC authentication.</title><link rel="icon" type="image/svg+xml" href="STIGQter.svg" /><script async src="https://www.googletagmanager.com/gtag/js?id=UA-31381839-2"></script><script src="include.js"></script><script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-4110907817782130" crossorigin="anonymous"></script></head><body><div><img src="STIGQter.svg" alt="STIGQter" style="height:1em;" /> <a href="https://www.stigqter.com/">STIGQter</a>: <a href="main.html">STIG Summary</a>: <a href="U_BB_UEM_MDM_STIG_V2R1_Manual-xccdf.html">BlackBerry UEM Security Technical Implementation Guide Version: 2 Release: 1 Benchmark Date: 22 Jan 2021</a>:</div> <h1>The BlackBerry UEM server must be configured to leverage the MDM platform user accounts and groups for BlackBerry UEM server user identification and CAC authentication.</h1><h2>DISA Rule</h2><p>SV-224379r604136_rule</p><h2>Vulnerability Number</h2><p>V-224379</p><h2>Group Title</h2><p>PP-MDM-414002</p><h2>Rule Version</h2><p>BUEM-00-000700</p><h2>Severity</h2><p>CAT II</p><h2>CCI(s)</h2><ul><li>CCI-000015 - Support the management of system accounts using (organization-defined automated mechanisms).</li></ul><h2>Weight</h2><p>10</p><h2>Fix Recommendation</h2><p>On the BlackBerry UEM, do the following:<br />
+<br />
+Configure constrained delegation for the Microsoft Active Directory account to support single sign-on:<br />
+<br />
+1. Log in to the BlackBerry UEM host server and use the Windows Server ADSI Edit tool to add the following SPNs for BES12 to the Microsoft Active Directory account:<br />
+- HTTP/&lt;host_FQDN_or_pool_name&gt; (for example, HTTP/domain123.example.com)<br />
+- BASPLUGIN111/&lt;host_FQDN_or_pool_name&gt; (for example, BASPLUGIN111/domain123.example.com)<br />
+ Note:<br />
+- If high availability is configured for the management consoles in a UEM domain, specify the pool name. Otherwise, specify the FQDN of the computer that hosts the management console.<br />
+- Verify that no other accounts in the Microsoft Active Directory forest have the same SPNs.<br />
+2. Open &quot;Microsoft Active Directory Users and Computers&quot;.<br />
+3. In the Microsoft Active Directory account properties, on the &quot;Delegation&quot; tab, select the following options:<br />
+- Trust this user for delegation to specified services only.<br />
+- Use Kerberos only.<br />
+4. Add the SPNs from Step 1 to the list of services.<br />
+<br />
+Configure single sign-on for UEM:<br />
+Note: <br />
+- When configuring single sign-on for UEM, it is configured for the management console and UEM Self-Service.<br />
+- If enabling single sign-on for multiple Microsoft Active Directory connections, verify there are no trust relationships between the Microsoft Active Directory forests.<br />
+1. Log in to the BlackBerry UEM console.<br />
+2. Select the &quot;Settings&quot; tab on the left pane.<br />
+3. Click the &quot;External integration&quot; tab on the left pane.<br />
+4. Click &quot;Company directory&quot;.<br />
+5. In the &quot;Configured directory connections&quot; section, click the name of a Microsoft Active Directory connection.<br />
+6. On the &quot;Authentication&quot; tab, select the checkbox next to &quot;Enable Windows single sign-on&quot;.<br />
+7. Click &quot;Save&quot;.<br />
+8. Click &quot;Save&quot; on the pop-up window.<br />
+Note: UEM validates the information for Microsoft Active Directory authentication. If the information is invalid, UEM prompts to specify the correct information.<br />
+9. Click &quot;Close&quot;.<br />
+10. Restart the UEM services on each server that hosts a UEM instance.</p><h2>Check Contents</h2><p>Review the BlackBerry UEM server configuration settings.<br />
+<br />
+Verify the server is configured to leverage the MDM Platform user accounts and groups for BlackBerry UEM server user identification and authentication.<br />
+<br />
+On the BlackBerry UEM, do the following:<br />
+1. Navigate to the BlackBerry UEM console.<br />
+2. Verify the BlackBerry UEM does not prompt for additional authentication before opening the UEM console.<br />
+<br />
+If the BlackBerry UEM server prompts for additional authentication before opening the UEM console, this is a finding.</p><h2>Vulnerability Number</h2><p>V-224379</p><h2>Documentable</h2><p>False</p><h2>Rule Version</h2><p>BUEM-00-000700</p><h2>Severity Override Guidance</h2><p>Review the BlackBerry UEM server configuration settings.<br />
+<br />
+Verify the server is configured to leverage the MDM Platform user accounts and groups for BlackBerry UEM server user identification and authentication.<br />
+<br />
+On the BlackBerry UEM, do the following:<br />
+1. Navigate to the BlackBerry UEM console.<br />
+2. Verify the BlackBerry UEM does not prompt for additional authentication before opening the UEM console.<br />
+<br />
+If the BlackBerry UEM server prompts for additional authentication before opening the UEM console, this is a finding.</p><h2>Check Content Reference</h2><p>M</p><h2>Target Key</h2><p>4134</p></body></html>

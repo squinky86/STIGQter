@@ -1,0 +1,51 @@
+<!doctype html><html lang="en"><head><meta charset="utf-8"><title>STIGQter: STIG Check Details: SV-257292r961287_rule: Rancher MCM must enforce organization-defined circumstances and/or usage conditions for organization-defined accounts.</title><link rel="icon" type="image/svg+xml" href="STIGQter.svg" /><script async src="https://www.googletagmanager.com/gtag/js?id=UA-31381839-2"></script><script src="include.js"></script><script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-4110907817782130" crossorigin="anonymous"></script></head><body><div><img src="STIGQter.svg" alt="STIGQter" style="height:1em;" /> <a href="https://www.stigqter.com/">STIGQter</a>: <a href="main.html">STIG Summary</a>: <a href="U_RGS_MCM_STIG_V2R2_Manual-xccdf.html">Rancher Government Solutions Multi-Cluster Manager Security Technical Implementation Guide Version: 2 Release: 2 Benchmark Date: 05 Jan 2026</a>:</div> <h1>Rancher MCM must enforce organization-defined circumstances and/or usage conditions for organization-defined accounts.</h1><h2>DISA Rule</h2><p>SV-257292r961287_rule</p><h2>Vulnerability Number</h2><p>V-257292</p><h2>Group Title</h2><p>SRG-APP-000318-CTR-000740</p><h2>Rule Version</h2><p>CNTR-RM-000970</p><h2>Severity</h2><p>CAT II</p><h2>CCI(s)</h2><ul><li>CCI-002145 - Enforce organization-defined circumstances and/or usage conditions for organization-defined system accounts.</li></ul><h2>Weight</h2><p>10</p><h2>Fix Recommendation</h2><p>Update the secrets to contain valid certificates.<br />
+<br />
+Put the correct and valid DOD certificate and key in files called &quot;tls.crt&quot; and &quot;tls.key&quot;, respectively, and then run:<br />
+kubectl -n cattle-system create secret tls tls-rancher-ingress \  --cert=tls.crt \   --key=tls.key                         <br />
+<br />
+Upload the CA required for the certs by creating another file called &quot;cacerts.pem&quot; and running: <br />
+kubectl -n cattle-system create secret generic tls-ca \   --from-file=cacerts.pem=./cacerts.pem <br />
+<br />
+The helm chart values need to be updated to include the check section: <br />
+privateCA: true   <br />
+ingress:            <br />
+tls:                                                                        <br />
+source: secret   <br />
+<br />
+Rerun helm upgrade with the new values for the certs to take effect.</p><h2>Check Contents</h2><p>Verify helm installation contains correct parameters:<br />
+Navigate to Triple Bar Symbol(Global) &gt;&gt;  &lt;local cluster&gt;.<br />
+From the kubectl shell (&gt;_) Execute:<br />
+`helm get values rancher -n cattle-system`<br />
+<br />
+The output must contain:<br />
+```<br />
+privateCA: true<br />
+ingress:<br />
+tls:<br />
+source: secret<br />
+```<br />
+If the output source is not &quot;secret&quot;, this is a finding.<br />
+<br />
+Verify contents of certificates are correct: <br />
+From the console, type:<br />
+kubectl -n cattle-system get secret tls-rancher-ingress -o 'jsonpath={.data.tls\.crt}' | base64 --decode | openssl x509 -noout -text<br />
+<br />
+kubectl -n cattle-system get secret tls-ca -o 'jsonpath={.data.cacerts\.pem}' | base64 --decode | openssl x509 -noout -text</p><h2>Vulnerability Number</h2><p>V-257292</p><h2>Documentable</h2><p>False</p><h2>Rule Version</h2><p>CNTR-RM-000970</p><h2>Severity Override Guidance</h2><p>Verify helm installation contains correct parameters:<br />
+Navigate to Triple Bar Symbol(Global) &gt;&gt;  &lt;local cluster&gt;.<br />
+From the kubectl shell (&gt;_) Execute:<br />
+`helm get values rancher -n cattle-system`<br />
+<br />
+The output must contain:<br />
+```<br />
+privateCA: true<br />
+ingress:<br />
+tls:<br />
+source: secret<br />
+```<br />
+If the output source is not &quot;secret&quot;, this is a finding.<br />
+<br />
+Verify contents of certificates are correct: <br />
+From the console, type:<br />
+kubectl -n cattle-system get secret tls-rancher-ingress -o 'jsonpath={.data.tls\.crt}' | base64 --decode | openssl x509 -noout -text<br />
+<br />
+kubectl -n cattle-system get secret tls-ca -o 'jsonpath={.data.cacerts\.pem}' | base64 --decode | openssl x509 -noout -text</p><h2>Check Content Reference</h2><p>M</p><h2>Target Key</h2><p>5467</p></body></html>

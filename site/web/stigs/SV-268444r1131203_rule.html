@@ -1,0 +1,54 @@
+<!doctype html><html lang="en"><head><meta charset="utf-8"><title>STIGQter: STIG Check Details: SV-268444r1131203_rule: The macOS system must configure the SSH ServerAliveInterval to 900.</title><link rel="icon" type="image/svg+xml" href="STIGQter.svg" /><script async src="https://www.googletagmanager.com/gtag/js?id=UA-31381839-2"></script><script src="include.js"></script><script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-4110907817782130" crossorigin="anonymous"></script></head><body><div><img src="STIGQter.svg" alt="STIGQter" style="height:1em;" /> <a href="https://www.stigqter.com/">STIGQter</a>: <a href="main.html">STIG Summary</a>: <a href="U_Apple_macOS_15_V1R7_STIG_Manual-xccdf.html">Apple macOS 15 (Sequoia) Security Technical Implementation Guide Version: 1 Release: 7 Benchmark Date: 01 Apr 2026</a>:</div> <h1>The macOS system must configure the SSH ServerAliveInterval to 900.</h1><h2>DISA Rule</h2><p>SV-268444r1131203_rule</p><h2>Vulnerability Number</h2><p>V-268444</p><h2>Group Title</h2><p>SRG-OS-000163-GPOS-00072</p><h2>Rule Version</h2><p>APPL-15-000110</p><h2>Severity</h2><p>CAT II</p><h2>CCI(s)</h2><ul><li>CCI-001133 - Terminate the network connection associated with a communications session at the end of the session or after an organization-defined time period of inactivity.</li></ul><h2>Weight</h2><p>10</p><h2>Fix Recommendation</h2><p>Configure the macOS system to set the SSH ServerAliveInterval to 900 with the following command:<br />
+<br />
+include_dir=$(/usr/bin/awk '/^Include/ {print $2}' /etc/ssh/ssh_config | /usr/bin/tr -d '*')<br />
+  <br />
+ssh_config_string=(&quot;ServerAliveInterval 900&quot;)<br />
+for ssh_config in $ssh_config_string; do<br />
+ssh_setting=$(echo $ssh_config | /usr/bin/cut -d &quot; &quot; -f1)<br />
+/usr/bin/grep -qEi &quot;^$ssh_setting&quot; &quot;${include_dir}01-mscp-ssh.conf&quot; &amp;&amp; /usr/bin/sed -i &quot;&quot; &quot;s/^$ssh_setting.*/${ssh_config}/&quot; &quot;${include_dir}01-mscp-ssh.conf&quot; || echo &quot;$ssh_config&quot; &gt;&gt; &quot;${include_dir}01-mscp-ssh.conf&quot;<br />
+for u in $(/usr/bin/dscl . list /users shell | /usr/bin/egrep -v '(^_)|(root)|(/usr/bin/false)' | /usr/bin/awk '{print $1}'); do<br />
+config=$(/usr/bin/sudo -u $u /usr/bin/ssh -Gv . 2&gt;&amp;1)<br />
+configfiles=$(echo &quot;$config&quot; | /usr/bin/awk '/Reading configuration data/ {print $NF}'| /usr/bin/tr -d '\r')<br />
+configarray=( ${(f)configfiles} )<br />
+if ! echo $config | /usr/bin/grep -q -i &quot;$ssh_config&quot; ; then<br />
+for c in $configarray; do<br />
+if [[ &quot;$c&quot; == &quot;/etc/ssh/crypto.conf&quot; ]]; then<br />
+continue<br />
+fi<br />
+          <br />
+/usr/bin/sudo -u $u /usr/bin/grep -qEi &quot;^$ssh_setting&quot; &quot;$c&quot; &amp;&amp; /usr/bin/sed -i &quot;&quot; &quot;s/^$ssh_setting.*/${ssh_config}/I&quot; &quot;$c&quot;<br />
+if [[ &quot;$c&quot; =~ &quot;.ssh/config&quot; ]]; then<br />
+if /usr/bin/grep -qEi &quot;$ssh_setting&quot; &quot;$c&quot; 2&gt; /dev/null; then<br />
+old_file=$(cat ~$u/.ssh/config)<br />
+echo &quot;$ssh_config&quot; &gt; ~$u/.ssh/config<br />
+echo &quot;$old_file&quot; &gt;&gt; ~$u/.ssh/config<br />
+fi<br />
+fi<br />
+done<br />
+fi<br />
+done<br />
+done</p><h2>Check Contents</h2><p>Verify the macOS system is configured to set the SSH ServerAliveInterval to 900 with the following command:<br />
+<br />
+ret=&quot;pass&quot;<br />
+for u in $(/usr/bin/dscl . -list /Users UniqueID | /usr/bin/awk '$2 &gt; 500 {print $1}'); do<br />
+sshCheck=$(/usr/bin/sudo -u $u /usr/bin/ssh -G . | /usr/bin/grep -c &quot;^serveraliveinterval 900&quot;)<br />
+if [[ &quot;$sshCheck&quot; == &quot;0&quot; ]]; then<br />
+ret=&quot;fail&quot;<br />
+break<br />
+fi<br />
+done<br />
+/bin/echo $ret<br />
+<br />
+If the result is not &quot;pass&quot;, this is a finding.</p><h2>Vulnerability Number</h2><p>V-268444</p><h2>Documentable</h2><p>False</p><h2>Rule Version</h2><p>APPL-15-000110</p><h2>Severity Override Guidance</h2><p>Verify the macOS system is configured to set the SSH ServerAliveInterval to 900 with the following command:<br />
+<br />
+ret=&quot;pass&quot;<br />
+for u in $(/usr/bin/dscl . -list /Users UniqueID | /usr/bin/awk '$2 &gt; 500 {print $1}'); do<br />
+sshCheck=$(/usr/bin/sudo -u $u /usr/bin/ssh -G . | /usr/bin/grep -c &quot;^serveraliveinterval 900&quot;)<br />
+if [[ &quot;$sshCheck&quot; == &quot;0&quot; ]]; then<br />
+ret=&quot;fail&quot;<br />
+break<br />
+fi<br />
+done<br />
+/bin/echo $ret<br />
+<br />
+If the result is not &quot;pass&quot;, this is a finding.</p><h2>Check Content Reference</h2><p>M</p><h2>Target Key</h2><p>5661</p></body></html>

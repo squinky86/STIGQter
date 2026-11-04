@@ -1,0 +1,37 @@
+<!doctype html><html lang="en"><head><meta charset="utf-8"><title>STIGQter: STIG Check Details: SV-273587r1111281_rule: The RUCKUS ICX perimeter router must be configured to not redistribute static routes to an alternate gateway service provider into BGP or an IGP peering with the NIPRNet or to other autonomous systems.</title><link rel="icon" type="image/svg+xml" href="STIGQter.svg" /><script async src="https://www.googletagmanager.com/gtag/js?id=UA-31381839-2"></script><script src="include.js"></script><script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-4110907817782130" crossorigin="anonymous"></script></head><body><div><img src="STIGQter.svg" alt="STIGQter" style="height:1em;" /> <a href="https://www.stigqter.com/">STIGQter</a>: <a href="main.html">STIG Summary</a>: <a href="U_RUCKUS_ICX_RTR_STIG_V1R1_Manual-xccdf.html">RUCKUS ICX Router Security Technical Implementation Guide Version: 1 Release: 1 Benchmark Date: 27 May 2025</a>:</div> <h1>The RUCKUS ICX perimeter router must be configured to not redistribute static routes to an alternate gateway service provider into BGP or an IGP peering with the NIPRNet or to other autonomous systems.</h1><h2>DISA Rule</h2><p>SV-273587r1111281_rule</p><h2>Vulnerability Number</h2><p>V-273587</p><h2>Group Title</h2><p>SRG-NET-000019-RTR-000010</p><h2>Rule Version</h2><p>RCKS-RTR-000190</p><h2>Severity</h2><p>CAT III</p><h2>CCI(s)</h2><ul><li>CCI-001414 - Enforce approved authorizations for controlling the flow of information between connected systems based on organization-defined information flow control policies.</li></ul><h2>Weight</h2><p>10</p><h2>Fix Recommendation</h2><p>This requirement is not applicable for the DODIN Backbone. <br />
+<br />
+Create a prefix list to be used by route map to prevent static routes pointing to the alternate gateway service provider from being redistributed:<br />
+ip prefix-list ISP_PREFIX permit 10.12.1.0/24<br />
+<br />
+route-map FILTER_ISP_STATIC deny 10<br />
+ match ip address prefix-list ISP_PREFIX<br />
+route-map FILTER_ISP_STATIC permit 20<br />
+!<br />
+<br />
+router ospf<br />
+ redistribute static route-map FILTER_ISP_STATIC<br />
+!</p><h2>Check Contents</h2><p>This requirement is not applicable for the DODIN Backbone. <br />
+<br />
+Review ICX router configuration for statements redistributing static routes into IGP or BGP:<br />
+router bgp<br />
+ local-as 1001<br />
+ neighbor x.4.4.4 remote-as 1000<br />
+ redistribute static<br />
+!<br />
+router ospf<br />
+ redistribute static<br />
+!<br />
+<br />
+If static routes with the alternate gateway service provider as the next hop exist and static routes are redistributed into an IGP or BGP (without a route-map filter), this is a finding.</p><h2>Vulnerability Number</h2><p>V-273587</p><h2>Documentable</h2><p>False</p><h2>Rule Version</h2><p>RCKS-RTR-000190</p><h2>Severity Override Guidance</h2><p>This requirement is not applicable for the DODIN Backbone. <br />
+<br />
+Review ICX router configuration for statements redistributing static routes into IGP or BGP:<br />
+router bgp<br />
+ local-as 1001<br />
+ neighbor x.4.4.4 remote-as 1000<br />
+ redistribute static<br />
+!<br />
+router ospf<br />
+ redistribute static<br />
+!<br />
+<br />
+If static routes with the alternate gateway service provider as the next hop exist and static routes are redistributed into an IGP or BGP (without a route-map filter), this is a finding.</p><h2>Check Content Reference</h2><p>M</p><h2>Target Key</h2><p>5696</p></body></html>

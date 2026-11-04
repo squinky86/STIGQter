@@ -1,0 +1,37 @@
+<!doctype html><html lang="en"><head><meta charset="utf-8"><title>STIGQter: STIG Check Details: SV-256461r959010_rule: Unauthorized USB devices must be disconnected on the virtual machine (VM).</title><link rel="icon" type="image/svg+xml" href="STIGQter.svg" /><script async src="https://www.googletagmanager.com/gtag/js?id=UA-31381839-2"></script><script src="include.js"></script><script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-4110907817782130" crossorigin="anonymous"></script></head><body><div><img src="STIGQter.svg" alt="STIGQter" style="height:1em;" /> <a href="https://www.stigqter.com/">STIGQter</a>: <a href="main.html">STIG Summary</a>: <a href="U_VMW_vSphere_7-0_Virtual_Machine_STIG_V1R4_Manual-xccdf.html">VMware vSphere 7.0 Virtual Machine Security Technical Implementation Guide Version: 1 Release: 4 Benchmark Date: 30 Jan 2025</a>:</div> <h1>Unauthorized USB devices must be disconnected on the virtual machine (VM).</h1><h2>DISA Rule</h2><p>SV-256461r959010_rule</p><h2>Vulnerability Number</h2><p>V-256461</p><h2>Group Title</h2><p>SRG-OS-000480-VMM-002000</p><h2>Rule Version</h2><p>VMCH-70-000012</p><h2>Severity</h2><p>CAT II</p><h2>CCI(s)</h2><ul><li>CCI-000366 - Implement the security configuration settings.</li></ul><h2>Weight</h2><p>10</p><h2>Fix Recommendation</h2><p>From the vSphere Client, right-click the Virtual Machine and go to &quot;Edit Settings&quot;.<br />
+<br />
+Select the USB controller, click the circled &quot;X&quot; to remove it, and click &quot;OK&quot;.<br />
+<br />
+or<br />
+<br />
+From a PowerCLI command prompt while connected to the ESXi host or vCenter server, run the following command:<br />
+<br />
+Get-VM &quot;VM Name&quot; | Get-USBDevice | Remove-USBDevice<br />
+<br />
+Note: This will not remove the USB controller, just any connected devices.</p><h2>Check Contents</h2><p>From the vSphere Client, right-click the Virtual Machine and go to &quot;Edit Settings&quot;.<br />
+<br />
+Review the VM's hardware and verify no USB devices exist.<br />
+<br />
+or<br />
+<br />
+From a PowerCLI command prompt while connected to the ESXi host or vCenter server, run the following commands:<br />
+<br />
+Get-VM | Where {$_.ExtensionData.Config.Hardware.Device.DeviceInfo.Label -match &quot;usb&quot;}<br />
+Get-VM | Get-UsbDevice<br />
+<br />
+If a virtual machine has any USB devices or USB controllers present, this is a finding.<br />
+<br />
+If USB smart card readers are used to pass smart cards through the VM console to a VM, the use of a USB controller and USB devices for that purpose is not a finding.</p><h2>Vulnerability Number</h2><p>V-256461</p><h2>Documentable</h2><p>False</p><h2>Rule Version</h2><p>VMCH-70-000012</p><h2>Severity Override Guidance</h2><p>From the vSphere Client, right-click the Virtual Machine and go to &quot;Edit Settings&quot;.<br />
+<br />
+Review the VM's hardware and verify no USB devices exist.<br />
+<br />
+or<br />
+<br />
+From a PowerCLI command prompt while connected to the ESXi host or vCenter server, run the following commands:<br />
+<br />
+Get-VM | Where {$_.ExtensionData.Config.Hardware.Device.DeviceInfo.Label -match &quot;usb&quot;}<br />
+Get-VM | Get-UsbDevice<br />
+<br />
+If a virtual machine has any USB devices or USB controllers present, this is a finding.<br />
+<br />
+If USB smart card readers are used to pass smart cards through the VM console to a VM, the use of a USB controller and USB devices for that purpose is not a finding.</p><h2>Check Content Reference</h2><p>M</p><h2>Target Key</h2><p>5519</p></body></html>

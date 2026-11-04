@@ -1,0 +1,49 @@
+<!doctype html><html lang="en"><head><meta charset="utf-8"><title>STIGQter: STIG Check Details: SV-258080r1045162_rule: RHEL 9 must configure SELinux context type to allow the use of a nondefault faillock tally directory.</title><link rel="icon" type="image/svg+xml" href="STIGQter.svg" /><script async src="https://www.googletagmanager.com/gtag/js?id=UA-31381839-2"></script><script src="include.js"></script><script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-4110907817782130" crossorigin="anonymous"></script></head><body><div><img src="STIGQter.svg" alt="STIGQter" style="height:1em;" /> <a href="https://www.stigqter.com/">STIGQter</a>: <a href="main.html">STIG Summary</a>: <a href="U_RHEL_9_STIG_V2R9_Manual-xccdf.html">Red Hat Enterprise Linux 9 Security Technical Implementation Guide Version: 2 Release: 9 Benchmark Date: 01 Jul 2026</a>:</div> <h1>RHEL 9 must configure SELinux context type to allow the use of a nondefault faillock tally directory.</h1><h2>DISA Rule</h2><p>SV-258080r1045162_rule</p><h2>Vulnerability Number</h2><p>V-258080</p><h2>Group Title</h2><p>SRG-OS-000021-GPOS-00005</p><h2>Rule Version</h2><p>RHEL-09-431020</p><h2>Severity</h2><p>CAT II</p><h2>CCI(s)</h2><ul><li>CCI-000044 - Enforce the organization-defined limit of consecutive invalid logon attempts by a user during the organization-defined time period.</li></ul><h2>Weight</h2><p>10</p><h2>Fix Recommendation</h2><p>Configure RHEL 9 to allow the use of a nondefault faillock tally directory while SELinux enforces a targeted policy. <br />
+<br />
+First enable the feature using the following command:<br />
+ <br />
+$ sudo authselect enable-feature with-faillock <br />
+ <br />
+Create a nondefault faillock tally directory (if it does not already exist) with the following example:<br />
+<br />
+$ sudo mkdir /var/log/faillock<br />
+<br />
+Then add/modify the &quot;/etc/security/faillock.conf&quot; file to match the following line:<br />
+ <br />
+dir = /var/log/faillock<br />
+<br />
+Update the /etc/selinux/targeted/contexts/files/file_contexts.local with &quot;faillog_t&quot; context type for the nondefault faillock tally directory with the following command:<br />
+<br />
+$ sudo semanage fcontext -a -t faillog_t &quot;/var/log/faillock(/.*)?&quot;<br />
+<br />
+Next, update the context type of the nondefault faillock directory/subdirectories and files with the following command:<br />
+<br />
+$ sudo restorecon -R -v /var/log/faillock</p><h2>Check Contents</h2><p>Verify the location of the nondefault tally directory for the pam_faillock module with the following command:<br />
+<br />
+Note: If the system does not have SELinux enabled and enforcing a targeted policy, or if the pam_faillock module is not configured for use, this requirement is Not Applicable.<br />
+<br />
+$ sudo grep -w dir /etc/security/faillock.conf<br />
+<br />
+dir = /var/log/faillock<br />
+<br />
+Check the security context type of the nondefault tally directory with the following command:<br />
+<br />
+$ ls -Zd /var/log/faillock<br />
+<br />
+unconfined_u:object_r:faillog_t:s0 /var/log/faillock<br />
+<br />
+If the security context type of the nondefault tally directory is not &quot;faillog_t&quot;, this is a finding.</p><h2>Vulnerability Number</h2><p>V-258080</p><h2>Documentable</h2><p>False</p><h2>Rule Version</h2><p>RHEL-09-431020</p><h2>Severity Override Guidance</h2><p>Verify the location of the nondefault tally directory for the pam_faillock module with the following command:<br />
+<br />
+Note: If the system does not have SELinux enabled and enforcing a targeted policy, or if the pam_faillock module is not configured for use, this requirement is Not Applicable.<br />
+<br />
+$ sudo grep -w dir /etc/security/faillock.conf<br />
+<br />
+dir = /var/log/faillock<br />
+<br />
+Check the security context type of the nondefault tally directory with the following command:<br />
+<br />
+$ ls -Zd /var/log/faillock<br />
+<br />
+unconfined_u:object_r:faillog_t:s0 /var/log/faillock<br />
+<br />
+If the security context type of the nondefault tally directory is not &quot;faillog_t&quot;, this is a finding.</p><h2>Check Content Reference</h2><p>M</p><h2>Target Key</h2><p>5551</p></body></html>

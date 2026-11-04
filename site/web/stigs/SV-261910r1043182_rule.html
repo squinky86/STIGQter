@@ -1,0 +1,24 @@
+<!doctype html><html lang="en"><head><meta charset="utf-8"><title>STIGQter: STIG Check Details: SV-261910r1043182_rule: PostgreSQL must automatically terminate a user session after organization-defined conditions or trigger events requiring session disconnect.</title><link rel="icon" type="image/svg+xml" href="STIGQter.svg" /><script async src="https://www.googletagmanager.com/gtag/js?id=UA-31381839-2"></script><script src="include.js"></script><script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-4110907817782130" crossorigin="anonymous"></script></head><body><div><img src="STIGQter.svg" alt="STIGQter" style="height:1em;" /> <a href="https://www.stigqter.com/">STIGQter</a>: <a href="main.html">STIG Summary</a>: <a href="U_CD_Postgres_16_STIG_V1R3_Manual-xccdf.html">Crunchy Data Postgres 16 Security Technical Implementation Guide Version: 1 Release: 3 Benchmark Date: 01 Jul 2026</a>:</div> <h1>PostgreSQL must automatically terminate a user session after organization-defined conditions or trigger events requiring session disconnect.</h1><h2>DISA Rule</h2><p>SV-261910r1043182_rule</p><h2>Vulnerability Number</h2><p>V-261910</p><h2>Group Title</h2><p>SRG-APP-000295-DB-000305</p><h2>Rule Version</h2><p>CD16-00-006200</p><h2>Severity</h2><p>CAT II</p><h2>CCI(s)</h2><ul><li>CCI-002361 - Automatically terminate a user session after organization-defined conditions or trigger events requiring session disconnect.</li></ul><h2>Weight</h2><p>10</p><h2>Fix Recommendation</h2><p>Configure PostgreSQL to automatically terminate a user session after organization-defined conditions or trigger events requiring session termination.<br />
+<br />
+Examples follow.<br />
+<br />
+### Change a role to nologin and disconnect the user<br />
+<br />
+ALTER ROLE '&lt;username&gt;' NOLOGIN;<br />
+SELECT pg_terminate_backend(pid) FROM pg_stat_activity WHERE usename='&lt;usename&gt;';<br />
+<br />
+### Disconnecting users during a specific time range<br />
+Refer to supplementary content APPENDIX-A for a bash script for this example.<br />
+<br />
+The script found in APPENDIX-A using the -l command can disable all users with rolcanlogin=t from logging in. The script keeps track of who it disables in a .restore_login file. After the specified time is over, the same script can be run with the -r command to restore all login connections.<br />
+<br />
+This script would be added to a cron job:<br />
+<br />
+# lock at 5 am every day of the week, month, year at the 0 minute mark.<br />
+0 5 * * * postgres /var/lib/pgsql/no_login.sh -d postgres -l<br />
+# restore at 5 pm every day of the week, month, year at the 0 minute mark.<br />
+0 17 * * * postgres /var/lib/pgsql/no_login.sh -d postgres -r</p><h2>Check Contents</h2><p>Review system documentation to obtain the organization's definition of circumstances requiring automatic session termination. If the documentation explicitly states that such termination is not required or is prohibited, this is not a finding.<br />
+<br />
+If the documentation requires automatic session termination, but PostgreSQL is not configured accordingly, this is a finding.</p><h2>Vulnerability Number</h2><p>V-261910</p><h2>Documentable</h2><p>False</p><h2>Rule Version</h2><p>CD16-00-006200</p><h2>Severity Override Guidance</h2><p>Review system documentation to obtain the organization's definition of circumstances requiring automatic session termination. If the documentation explicitly states that such termination is not required or is prohibited, this is not a finding.<br />
+<br />
+If the documentation requires automatic session termination, but PostgreSQL is not configured accordingly, this is a finding.</p><h2>Check Content Reference</h2><p>M</p><h2>Target Key</h2><p>5598</p></body></html>

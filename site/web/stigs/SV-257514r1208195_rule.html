@@ -1,0 +1,59 @@
+<!doctype html><html lang="en"><head><meta charset="utf-8"><title>STIGQter: STIG Check Details: SV-257514r1208195_rule: OpenShift must enforce network policy on the namespace for controlling the flow of information within the container platform based on organization-defined information flow control policies.</title><link rel="icon" type="image/svg+xml" href="STIGQter.svg" /><script async src="https://www.googletagmanager.com/gtag/js?id=UA-31381839-2"></script><script src="include.js"></script><script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-4110907817782130" crossorigin="anonymous"></script></head><body><div><img src="STIGQter.svg" alt="STIGQter" style="height:1em;" /> <a href="https://www.stigqter.com/">STIGQter</a>: <a href="main.html">STIG Summary</a>: <a href="U_RH_OpenShift_Container_Platform_4-x_STIG_V2R6_Manual-xccdf.html">Red Hat OpenShift Container Platform 4.x Security Technical Implementation Guide Version: 2 Release: 6 Benchmark Date: 01 Jul 2026</a>:</div> <h1>OpenShift must enforce network policy on the namespace for controlling the flow of information within the container platform based on organization-defined information flow control policies.</h1><h2>DISA Rule</h2><p>SV-257514r1208195_rule</p><h2>Vulnerability Number</h2><p>V-257514</p><h2>Group Title</h2><p>SRG-APP-000038-CTR-000105</p><h2>Rule Version</h2><p>CNTR-OS-000100</p><h2>Severity</h2><p>CAT II</p><h2>CCI(s)</h2><ul><li>CCI-001368 - Enforce approved authorizations for controlling the flow of information within the system based on organization-defined information flow control policies.</li></ul><h2>Weight</h2><p>10</p><h2>Fix Recommendation</h2><p>Add a network policy to an existing project namespace by performing the following steps:<br />
+ <br />
+1. Create &lt;YOURFILE&gt;.yaml and insert the desired resource network policy content. The following is an example resource quota definition:<br />
+  apiVersion: networking.k8s.io/v1<br />
+ kind: NetworkPolicy<br />
+ metadata:<br />
+  name: allow-from-same-namespace<br />
+  namespace: &lt;NAMESPACE&gt;<br />
+ spec:<br />
+  podSelector: {}<br />
+  ingress:<br />
+  - from:<br />
+  - podSelector: {}<br />
+ <br />
+2. Apply the network policy definition to the project namespace by executing the following:<br />
+oc apply -f &lt;YOURFILE&gt;.yaml -n &lt;NAMESPACE&gt;<br />
+ <br />
+Details regarding the configuration of resource network policy can be reviewed at https://docs.openshift.com/container-platform/4.12/networking/network_policy/about-network-policy.html.<br />
+<br />
+Where OpenShift Virtualization is enabled:<br />
+Enable MAC-spoof filtering per the deployed networking provider instructions.<br />
+<br />
+Instructions for Bridge CNI and SR-IOV CNI:<br />
+https://docs.redhat.com/en/documentation/openshift_container_platform/4.18/html/virtualization/networking#virt-creating-linux-bridge-nad-cli_virt-connecting-vm-to-linux-bridge<br />
+https://docs.redhat.com/en/documentation/openshift_container_platform/4.18/html/virtualization/networking#nw-sriov-network-attachment_virt-connecting-vm-to-sriov</p><h2>Check Contents</h2><p>Verify each user namespace has a network policy by executing the following:<br />
+ <br />
+ for ns in $(oc get namespaces -ojson | jq -r '.items[] | select((.metadata.name | startswith('openshift') | not) and (.metadata.name | startswith('kube-') | not) and .metadata.name != 'default') | .metadata.name '); do oc get networkpolicy -n$ns; done<br />
+ <br />
+If the above returns any lines saying &quot;No resources found in &lt;PROJECT&gt; namespace.&quot;, this is a finding. Empty output is not a finding.<br />
+<br />
+Where OpenShift Virtualization is enabled:<br />
+<br />
+For SR-IOV, use the following command:<br />
+$ oc get sriovnetwork -o json | jq &quot;.items[].spec.spoofChk&quot;<br />
+<br />
+If these results show the setting is off for any network, this is a finding.<br />
+<br />
+For Bridge CNI, use the following command:<br />
+$ oc get networkattachmentdefinition -o json | jq<br />
+&quot;.items[].spec.config.macspoofchk&quot;<br />
+<br />
+If these results show the setting is false for any network, this is a finding.</p><h2>Vulnerability Number</h2><p>V-257514</p><h2>Documentable</h2><p>False</p><h2>Rule Version</h2><p>CNTR-OS-000100</p><h2>Severity Override Guidance</h2><p>Verify each user namespace has a network policy by executing the following:<br />
+ <br />
+ for ns in $(oc get namespaces -ojson | jq -r '.items[] | select((.metadata.name | startswith('openshift') | not) and (.metadata.name | startswith('kube-') | not) and .metadata.name != 'default') | .metadata.name '); do oc get networkpolicy -n$ns; done<br />
+ <br />
+If the above returns any lines saying &quot;No resources found in &lt;PROJECT&gt; namespace.&quot;, this is a finding. Empty output is not a finding.<br />
+<br />
+Where OpenShift Virtualization is enabled:<br />
+<br />
+For SR-IOV, use the following command:<br />
+$ oc get sriovnetwork -o json | jq &quot;.items[].spec.spoofChk&quot;<br />
+<br />
+If these results show the setting is off for any network, this is a finding.<br />
+<br />
+For Bridge CNI, use the following command:<br />
+$ oc get networkattachmentdefinition -o json | jq<br />
+&quot;.items[].spec.config.macspoofchk&quot;<br />
+<br />
+If these results show the setting is false for any network, this is a finding.</p><h2>Check Content Reference</h2><p>M</p><h2>Target Key</h2><p>5547</p></body></html>

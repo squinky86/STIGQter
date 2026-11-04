@@ -1,0 +1,56 @@
+<!doctype html><html lang="en"><head><meta charset="utf-8"><title>STIGQter: STIG Check Details: SV-220692r991948_rule: The Cisco switch must have the default VLAN pruned from all trunk ports that do not require it.</title><link rel="icon" type="image/svg+xml" href="STIGQter.svg" /><script async src="https://www.googletagmanager.com/gtag/js?id=UA-31381839-2"></script><script src="include.js"></script><script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-4110907817782130" crossorigin="anonymous"></script></head><body><div><img src="STIGQter.svg" alt="STIGQter" style="height:1em;" /> <a href="https://www.stigqter.com/">STIGQter</a>: <a href="main.html">STIG Summary</a>: <a href="U_Cisco_NX-OS_Switch_L2S_STIG_V3R4_Manual-xccdf.html">Cisco NX OS Switch L2S Security Technical Implementation Guide Version: 3 Release: 4 Benchmark Date: 01 Jul 2026</a>:</div> <h1>The Cisco switch must have the default VLAN pruned from all trunk ports that do not require it.</h1><h2>DISA Rule</h2><p>SV-220692r991948_rule</p><h2>Vulnerability Number</h2><p>V-220692</p><h2>Group Title</h2><p>SRG-NET-000512-L2S-000009</p><h2>Rule Version</h2><p>CISC-L2-000230</p><h2>Severity</h2><p>CAT II</p><h2>CCI(s)</h2><ul><li>CCI-004891 - Implement physically or logically separate subnetworks to isolate organization-defined critical system components and functions.</li></ul><h2>Weight</h2><p>10</p><h2>Fix Recommendation</h2><p>Step 1: Prune VLAN 1 from any trunk links as necessary.<br />
+<br />
+SW1(config)# int e1/2<br />
+SW1(config-if)# switchport trunk allowed vlan except 1, 999<br />
+SW1(config-if)# end<br />
+<br />
+Step 2: Verify VLAN 1 is not allowed on the trunk link.<br />
+<br />
+SW1# show interface trunk<br />
+<br />
+--------------------------------------------------------------------------------<br />
+Port Native Status Port<br />
+ Vlan Channel<br />
+--------------------------------------------------------------------------------<br />
+Eth1/1 1 trunking --<br />
+Eth1/2 1 trunking --<br />
+<br />
+--------------------------------------------------------------------------------<br />
+Port Vlans Allowed on Trunk<br />
+--------------------------------------------------------------------------------<br />
+Eth1/1 1-998,1000-4094<br />
+Eth1/2 2-998,1000-4094</p><h2>Check Contents</h2><p>Review the switch configuration and verify that the default VLAN is pruned from trunk links that do not require it.<br />
+<br />
+SW1# show interface trunk<br />
+<br />
+--------------------------------------------------------------------------------<br />
+Port Native Status Port<br />
+ Vlan Channel<br />
+--------------------------------------------------------------------------------<br />
+Eth1/1 1 trunking --<br />
+Eth1/2 1 trunking --<br />
+<br />
+--------------------------------------------------------------------------------<br />
+Port Vlans Allowed on Trunk<br />
+--------------------------------------------------------------------------------<br />
+Eth1/1 1-998,1000-4094<br />
+Eth1/2 1-998,1000-4094<br />
+<br />
+If the default VLAN is not pruned from trunk links that should not be transporting frames for the VLAN, this is a finding.</p><h2>Vulnerability Number</h2><p>V-220692</p><h2>Documentable</h2><p>False</p><h2>Rule Version</h2><p>CISC-L2-000230</p><h2>Severity Override Guidance</h2><p>Review the switch configuration and verify that the default VLAN is pruned from trunk links that do not require it.<br />
+<br />
+SW1# show interface trunk<br />
+<br />
+--------------------------------------------------------------------------------<br />
+Port Native Status Port<br />
+ Vlan Channel<br />
+--------------------------------------------------------------------------------<br />
+Eth1/1 1 trunking --<br />
+Eth1/2 1 trunking --<br />
+<br />
+--------------------------------------------------------------------------------<br />
+Port Vlans Allowed on Trunk<br />
+--------------------------------------------------------------------------------<br />
+Eth1/1 1-998,1000-4094<br />
+Eth1/2 1-998,1000-4094<br />
+<br />
+If the default VLAN is not pruned from trunk links that should not be transporting frames for the VLAN, this is a finding.</p><h2>Check Content Reference</h2><p>M</p><h2>Target Key</h2><p>4073</p></body></html>

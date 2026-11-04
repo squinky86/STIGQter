@@ -1,0 +1,53 @@
+<!doctype html><html lang="en"><head><meta charset="utf-8"><title>STIGQter: STIG Check Details: SV-213759r961836_rule: DB2 must generate audit records when successful accesses to objects occur.</title><link rel="icon" type="image/svg+xml" href="STIGQter.svg" /><script async src="https://www.googletagmanager.com/gtag/js?id=UA-31381839-2"></script><script src="include.js"></script><script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-4110907817782130" crossorigin="anonymous"></script></head><body><div><img src="STIGQter.svg" alt="STIGQter" style="height:1em;" /> <a href="https://www.stigqter.com/">STIGQter</a>: <a href="main.html">STIG Summary</a>: <a href="U_IBM_DB2_V10-5_LUW_STIG_V2R2_Manual-xccdf.html">IBM DB2 V10.5 LUW Security Technical Implementation Guide Version: 2 Release: 2 Benchmark Date: 01 Jul 2026</a>:</div> <h1>DB2 must generate audit records when successful accesses to objects occur.</h1><h2>DISA Rule</h2><p>SV-213759r961836_rule</p><h2>Vulnerability Number</h2><p>V-213759</p><h2>Group Title</h2><p>SRG-APP-000507-DB-000356</p><h2>Rule Version</h2><p>DB2X-00-012000</p><h2>Severity</h2><p>CAT II</p><h2>CCI(s)</h2><ul><li>CCI-000172 - Generate audit records for the event types defined in AU-2 c that include the audit record content defined in AU-3.</li></ul><h2>Weight</h2><p>10</p><h2>Fix Recommendation</h2><p>Run the following command to define an audit policy with the needed subset using the CREATE AUDIT POLICY SQL statement: <br />
+DB2&gt; CREATE AUDIT POLICY &lt;execdb&gt; <br />
+           CATEGORIES CONTEXT STATUS BOTH, EXECUTE STATUS BOTH <br />
+           ERROR TYPE AUDIT<br />
+<br />
+To modify an existing audit policy, replace &quot;CREATE&quot; with &quot;ALTER&quot; in the preceding statement. Only the categories explicitly named in the statement will be affected.  In this case, the changes take effect immediately.<br />
+<br />
+If CREATE was used above, run one of the following commands to apply the correct policy to either the database as a whole or to the specific application tables: <br />
+DB2&gt; AUDIT DATABASE USING POLICY EXECDB<br />
+  Or <br />
+DB2&gt; AUDIT TABLE &lt;table name&gt; USING POLICY EXECDB</p><h2>Check Contents</h2><p>Run the following SQL statement to ensure that an audit policy is defined upon the all required application tables, routines and/or the database: <br />
+DB2&gt; SELECT AUDITPOLICYNAME, OBJECTSCHEMA, OBJECTNAME, OBJECTTYPE <br />
+           FROM SYSCAT.AUDITUSE <br />
+           WHERE OBJECTTYPE IN ('T',' ')<br />
+<br />
+If no rows are returned, this is a finding. <br />
+<br />
+If a row with OBJECTTYPE of ' ' (Database; value is a blank) exists in the output, it is a database level policy. <br />
+<br />
+If a row with OBJECTTYPE of 'T' exists in the output, it is a table level policy. <br />
+<br />
+For each audit policy returned in the statement above, run the following SQL statement to confirm that the CONTEXT and EXECUTE categories are part of that policy: <br />
+DB2&gt; SELECT AUDITPOLICYNAME, CONTEXTSTATUS, EXECUTESTATUS, ERRORTYPE AS ERRORTYPE <br />
+           FROM SYSCAT.AUDITPOLICIES<br />
+<br />
+If the database audit policy has the values for the CONTEXTSTATUS and EXECUTESTATUS columns set to 'S' (Success) or 'B' (Both) and the value in the ERRORTYPE column set to 'A' (Audit), this is not a finding.<br />
+<br />
+If the database policy does not exist or does not cover CONTEXTSTATUS or EXECUTESTATUS then check if the appropriate policies are defined for all the required application tables. <br />
+<br />
+If any required application table audit policies do not have the values for the CONTEXTSTATUS and EXECUTESTATUS columns set to 'S' (Success) or 'B' (Both) or the value in the ERRORTYPE column set to 'A' (Audit), then this is a finding.<br />
+<br />
+Note: If the routines (stored procedures) execution need to be audited then execute policy has to be defined at database level. In DB2 EXECUTE policy can be created at the Database level or table level. EXECUTE audit policy covers the routine also if defined at database level.  Currently there is no provision to define auditing of individual/specified routines.</p><h2>Vulnerability Number</h2><p>V-213759</p><h2>Documentable</h2><p>False</p><h2>Rule Version</h2><p>DB2X-00-012000</p><h2>Severity Override Guidance</h2><p>Run the following SQL statement to ensure that an audit policy is defined upon the all required application tables, routines and/or the database: <br />
+DB2&gt; SELECT AUDITPOLICYNAME, OBJECTSCHEMA, OBJECTNAME, OBJECTTYPE <br />
+           FROM SYSCAT.AUDITUSE <br />
+           WHERE OBJECTTYPE IN ('T',' ')<br />
+<br />
+If no rows are returned, this is a finding. <br />
+<br />
+If a row with OBJECTTYPE of ' ' (Database; value is a blank) exists in the output, it is a database level policy. <br />
+<br />
+If a row with OBJECTTYPE of 'T' exists in the output, it is a table level policy. <br />
+<br />
+For each audit policy returned in the statement above, run the following SQL statement to confirm that the CONTEXT and EXECUTE categories are part of that policy: <br />
+DB2&gt; SELECT AUDITPOLICYNAME, CONTEXTSTATUS, EXECUTESTATUS, ERRORTYPE AS ERRORTYPE <br />
+           FROM SYSCAT.AUDITPOLICIES<br />
+<br />
+If the database audit policy has the values for the CONTEXTSTATUS and EXECUTESTATUS columns set to 'S' (Success) or 'B' (Both) and the value in the ERRORTYPE column set to 'A' (Audit), this is not a finding.<br />
+<br />
+If the database policy does not exist or does not cover CONTEXTSTATUS or EXECUTESTATUS then check if the appropriate policies are defined for all the required application tables. <br />
+<br />
+If any required application table audit policies do not have the values for the CONTEXTSTATUS and EXECUTESTATUS columns set to 'S' (Success) or 'B' (Both) or the value in the ERRORTYPE column set to 'A' (Audit), then this is a finding.<br />
+<br />
+Note: If the routines (stored procedures) execution need to be audited then execute policy has to be defined at database level. In DB2 EXECUTE policy can be created at the Database level or table level. EXECUTE audit policy covers the routine also if defined at database level.  Currently there is no provision to define auditing of individual/specified routines.</p><h2>Check Content Reference</h2><p>M</p><h2>Target Key</h2><p>3989</p></body></html>

@@ -1,0 +1,63 @@
+<!doctype html><html lang="en"><head><meta charset="utf-8"><title>STIGQter: STIG Check Details: SV-224463r1145207_rule: CL/SuperSession Install data sets must be properly protected.</title><link rel="icon" type="image/svg+xml" href="STIGQter.svg" /><script async src="https://www.googletagmanager.com/gtag/js?id=UA-31381839-2"></script><script src="include.js"></script><script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-4110907817782130" crossorigin="anonymous"></script></head><body><div><img src="STIGQter.svg" alt="STIGQter" style="height:1em;" /> <a href="https://www.stigqter.com/">STIGQter</a>: <a href="main.html">STIG Summary</a>: <a href="U_zOS_CLSuperSession_for_RACF_STIG_V7R2_Manual-xccdf.html">z/OS CL/SuperSession for RACF Security Technical Implementation Guide Version: 7 Release: 2 Benchmark Date: 01 Oct 2025</a>:</div> <h1>CL/SuperSession Install data sets must be properly protected.</h1><h2>DISA Rule</h2><p>SV-224463r1145207_rule</p><h2>Vulnerability Number</h2><p>V-224463</p><h2>Group Title</h2><p>SRG-OS-000080</p><h2>Rule Version</h2><p>ZCLSR000</p><h2>Severity</h2><p>CAT II</p><h2>CCI(s)</h2><ul><li>CCI-001499 - Limit privileges to change software resident within software libraries.</li><li>CCI-002234 - Log the execution of privileged functions.</li></ul><h2>Weight</h2><p>10</p><h2>Fix Recommendation</h2><p>Ensure that WRITE and/or greater access to CL/SuperSession install data sets are limited to systems programmers only and all WRITE and/or greater access is logged. Auditors should be granted READ access.<br />
+<br />
+The installing systems programmer will identify and document the product data sets and categorize them according to who will have WRITE and/or greater access and if required that all WRITE and/or greater access is logged. The installing systems programmer will identify if any additional groups have UPDATE access for specific data sets, and once documented will work with the ISSO to see that they are properly restricted to the ACP (Access Control Program) active on the system.<br />
+<br />
+The following data sets are an example of data sets to be protected: <br />
+sys2.omegamon.** /* product datasets */<br />
+sys2.omegamon.*.tlsload.** <br />
+sys2.omegamon.*.tlvload.** <br />
+sys3.omegamon.**<br />
+sys3.omegamon.rlsload.**<br />
+<br />
+The following commands are provided as an example for implementing data set controls: <br />
+<br />
+ad 'sys2.omegamon.**' uacc(none) owner(sys2) -<br />
+audit(success(update) failures(read) -<br />
+data('vendor DS Profile CL/Supersession') <br />
+pe 'sys2.omegamon.**' id(syspaudt) acc(a) <br />
+pe 'sys2.omegamon.**' id(audtaudt) <br />
+ad 'sys2.omegamon.*.tlsload.**' uacc(none) owner(sys2) -<br />
+audit(success(update) failures(read) -<br />
+data('vendor DS fully qualified apf Profile CL/Supersession') <br />
+pe 'sys2.omegamon.*.tlsload.**' id(syspaudt) acc(a)<br />
+pe 'sys2.omegamon.*.tlsload.**' id(audtaudt) ad 'sys2.omegamon.*.tlvload.**' uacc(none) owner(sys2) -<br />
+audit(success(update) failures(read) - <br />
+data('vendor DS fully qualified apf Profile CL/Supersession') <br />
+pe 'sys2.omegamon.*.tlvload.**' id(syspaudt) acc(a) <br />
+pe 'sys2.omegamon.*.tlvload.**' id(audtaudt) <br />
+ad 'sys3.omegamon.**' uacc(none) owner(sys3) -<br />
+audit(success(update) failures(read) -<br />
+data('vendor DS Profile CL/Supersession') <br />
+pe 'sys3.omegamon.**' id(syspaudt) acc(a) <br />
+pe 'sys3.omegamon.**' id(audtaudt) <br />
+ad 'sys3.omegamon.rlsload.**' uacc(none) owner(sys3) -<br />
+audit(success(update) failures(read) -<br />
+data('site DS fully qualified apf Profile CL/Supersession') <br />
+pe 'sys3.omegamon.rlsload.**' id(syspaudt) acc(a) <br />
+pe 'sys3.omegamon.rlsload.**' id(audtaudt)</p><h2>Check Contents</h2><p>Refer to the following report produced by the Data Set and Resource Data Collection:<br />
+<br />
+- SENSITVE.RPT(KLSRPT).<br />
+<br />
+Automated Analysis:<br />
+Refer to the following report produced by the Data Set and Resource Data Collection:<br />
+<br />
+- PDI(ZCLS0000).<br />
+<br />
+Verify that access to the CL/SuperSession Install data sets are properly restricted. If the following guidance is true, this is not a finding.<br />
+<br />
+The RACF data set rules for the data sets restrict WRITE and/or greater access to systems programming personnel.<br />
+<br />
+The RACF data set rules for the data sets specify that all (i.e., failures and successes) WRITE and/or greater access will be logged.</p><h2>Vulnerability Number</h2><p>V-224463</p><h2>Documentable</h2><p>False</p><h2>Rule Version</h2><p>ZCLSR000</p><h2>Severity Override Guidance</h2><p>Refer to the following report produced by the Data Set and Resource Data Collection:<br />
+<br />
+- SENSITVE.RPT(KLSRPT).<br />
+<br />
+Automated Analysis:<br />
+Refer to the following report produced by the Data Set and Resource Data Collection:<br />
+<br />
+- PDI(ZCLS0000).<br />
+<br />
+Verify that access to the CL/SuperSession Install data sets are properly restricted. If the following guidance is true, this is not a finding.<br />
+<br />
+The RACF data set rules for the data sets restrict WRITE and/or greater access to systems programming personnel.<br />
+<br />
+The RACF data set rules for the data sets specify that all (i.e., failures and successes) WRITE and/or greater access will be logged.</p><h2>Check Content Reference</h2><p>M</p><h2>Target Key</h2><p>4148</p></body></html>

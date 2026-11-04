@@ -1,0 +1,36 @@
+<!doctype html><html lang="en"><head><meta charset="utf-8"><title>STIGQter: STIG Check Details: SV-258123r1134923_rule: RHEL 9 must implement certificate status checking for multifactor authentication.</title><link rel="icon" type="image/svg+xml" href="STIGQter.svg" /><script async src="https://www.googletagmanager.com/gtag/js?id=UA-31381839-2"></script><script src="include.js"></script><script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-4110907817782130" crossorigin="anonymous"></script></head><body><div><img src="STIGQter.svg" alt="STIGQter" style="height:1em;" /> <a href="https://www.stigqter.com/">STIGQter</a>: <a href="main.html">STIG Summary</a>: <a href="U_RHEL_9_STIG_V2R9_Manual-xccdf.html">Red Hat Enterprise Linux 9 Security Technical Implementation Guide Version: 2 Release: 9 Benchmark Date: 01 Jul 2026</a>:</div> <h1>RHEL 9 must implement certificate status checking for multifactor authentication.</h1><h2>DISA Rule</h2><p>SV-258123r1134923_rule</p><h2>Vulnerability Number</h2><p>V-258123</p><h2>Group Title</h2><p>SRG-OS-000375-GPOS-00160</p><h2>Rule Version</h2><p>RHEL-09-611170</p><h2>Severity</h2><p>CAT II</p><h2>CCI(s)</h2><ul><li>CCI-004046 - Implement multi-factor authentication for local; network; and/or remote access to privileged accounts; and/or non-privileged accounts such that one of the factors is provided by a device separate from the system gaining access.</li><li>CCI-001954 - Electronically verifies Personal Identity Verification-compliant credentials.</li></ul><h2>Weight</h2><p>10</p><h2>Fix Recommendation</h2><p>Configure RHEL 9 to implement certificate status checking for multifactor authentication.<br />
+<br />
+Review the &quot;/etc/sssd/conf.d/certificate_verification.conf&quot; file to determine if the system is configured to prevent OCSP or certificate verification.<br />
+<br />
+Add the following line to the &quot;/etc/sssd/conf.d/certificate_verification.conf&quot; file:<br />
+<br />
+certificate_verification = ocsp_dgst=sha512<br />
+<br />
+Set the correct ownership and permissions on the &quot;/etc/sssd/conf.d/certificate_verification.conf&quot; file by running these commands:<br />
+<br />
+$ sudo chown root:root &quot;/etc/sssd/conf.d/certificate_verification.conf&quot;<br />
+$ sudo chmod 600 &quot;/etc/sssd/conf.d/certificate_verification.conf&quot;<br />
+<br />
+The &quot;sssd&quot; service must be restarted for the changes to take effect. To restart the &quot;sssd&quot; service, run the following command:<br />
+<br />
+$ sudo systemctl restart sssd.service</p><h2>Check Contents</h2><p>Note: If the system administrator (SA) demonstrates the use of an approved alternate multifactor authentication method, this requirement is not applicable.<br />
+<br />
+Verify the operating system implements Online Certificate Status Protocol (OCSP) and is using the proper digest value on the system with the following command:<br />
+<br />
+$ sudo grep -sir certificate_verification /etc/sssd/sssd.conf /etc/sssd/conf.d/ | grep -v &quot;^#&quot;<br />
+<br />
+/etc/sssd/conf.d/certificate_verification:certificate_verification = ocsp_dgst=sha512<br />
+<br />
+If the certificate_verification line is missing from the [sssd] section, or is missing &quot;ocsp_dgst=sha512&quot;, ask the administrator to indicate what type of multifactor authentication is being used and how the system implements certificate status checking. <br />
+<br />
+If there is no evidence of certificate status checking being used, this is a finding.</p><h2>Vulnerability Number</h2><p>V-258123</p><h2>Documentable</h2><p>False</p><h2>Rule Version</h2><p>RHEL-09-611170</p><h2>Severity Override Guidance</h2><p>Note: If the system administrator (SA) demonstrates the use of an approved alternate multifactor authentication method, this requirement is not applicable.<br />
+<br />
+Verify the operating system implements Online Certificate Status Protocol (OCSP) and is using the proper digest value on the system with the following command:<br />
+<br />
+$ sudo grep -sir certificate_verification /etc/sssd/sssd.conf /etc/sssd/conf.d/ | grep -v &quot;^#&quot;<br />
+<br />
+/etc/sssd/conf.d/certificate_verification:certificate_verification = ocsp_dgst=sha512<br />
+<br />
+If the certificate_verification line is missing from the [sssd] section, or is missing &quot;ocsp_dgst=sha512&quot;, ask the administrator to indicate what type of multifactor authentication is being used and how the system implements certificate status checking. <br />
+<br />
+If there is no evidence of certificate status checking being used, this is a finding.</p><h2>Check Content Reference</h2><p>M</p><h2>Target Key</h2><p>5551</p></body></html>

@@ -1,0 +1,138 @@
+<!doctype html><html lang="en"><head><meta charset="utf-8"><title>STIGQter: STIG Check Details: SV-223915r958726_rule: CA-TSS must limit all system PROCLIB data sets to system programmers only and appropriate authorized users.</title><link rel="icon" type="image/svg+xml" href="STIGQter.svg" /><script async src="https://www.googletagmanager.com/gtag/js?id=UA-31381839-2"></script><script src="include.js"></script><script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-4110907817782130" crossorigin="anonymous"></script></head><body><div><img src="STIGQter.svg" alt="STIGQter" style="height:1em;" /> <a href="https://www.stigqter.com/">STIGQter</a>: <a href="main.html">STIG Summary</a>: <a href="U_IBM_zOS_TSS_STIG_V9R9_Manual-xccdf.html">IBM z/OS TSS Security Technical Implementation Guide Version: 9 Release: 9 Benchmark Date: 01 Jul 2026</a>:</div> <h1>CA-TSS must limit all system PROCLIB data sets to system programmers only and appropriate authorized users.</h1><h2>DISA Rule</h2><p>SV-223915r958726_rule</p><h2>Vulnerability Number</h2><p>V-223915</p><h2>Group Title</h2><p>SRG-OS-000324-GPOS-00125</p><h2>Rule Version</h2><p>TSS0-ES-000420</p><h2>Severity</h2><p>CAT I</p><h2>CCI(s)</h2><ul><li>CCI-000213 - Enforce approved authorizations for logical access to information and system resources in accordance with applicable access control policies.</li><li>CCI-002235 - Prevent non-privileged users from executing privileged functions.</li></ul><h2>Weight</h2><p>10</p><h2>Fix Recommendation</h2><p>Configure ESM data set rules to restrict all WRITE and/or greater access to all PROCLIBs referenced in the Master JCL and JES2 or JES3 procedure for started tasks (STCs) and TSO logons to systems programming personnel only.<br />
+<br />
+Suggestion on how to update system to be compliant with this vulnerability:<br />
+<br />
+NOTE: All examples are only examples and may not reflect your operating environment.<br />
+<br />
+Obtain only the PROCLIB data sets that contain STC and TSO procedures. The data sets to be reviewed are obtained using the following steps:<br />
+<br />
+-All data sets contained in the MSTJCLxx member in the DD statement concatenation for IEFPDSI and IEFJOBS.<br />
+-The data set in the PROCxx DD statement concatenation that are within the JES2 procedure or identified in the JES2 dynamic PROCLIB definitions. The specific PROCxx DD statement that is used is obtained from the PROCLIB entry for the JOBCLASSes of STC and TSU. The following are the data sets the process will obtain for analysis:<br />
+<br />
+MSTJCL00<br />
+<br />
+//MSTJCL00 JOB MSGLEVEL=(1,1),TIME=1440 <br />
+//EXEC PGM=IEEMB860,DPRTY=(15,15) <br />
+//STCINRDR DD SYSOUT=(A,INTRDR) <br />
+//TSOINRDR DD SYSOUT=(A,INTRDR) <br />
+//IEFPDSI DD DSN=SYS3.PROCLIB,DISP=SHR &lt;&lt;===<br />
+//DD DSN=SYS2.PROCLIB,DISP=SHR &lt;&lt;===<br />
+//DD DSN=SYS1.PROCLIB,DISP=SHR &lt;&lt;===<br />
+//SYSUADS DD DSN=SYS1.UADS,DISP=SHR <br />
+//SYSLBC DD DSN=SYS1.BRODCAST,DISP=SHR<br />
+<br />
+JES2<br />
+<br />
+//JES2 PROC <br />
+//IEFPROC EXEC PGM=HASJES20,PARM=NOREQ, <br />
+//DPRTY=(15,15),TIME=1440,PERFORM=9 <br />
+//ALTPARM DD DISP=SHR, <br />
+//DSN=SYS1.PARMLIB(JES2BKUP) <br />
+//HASPPARM DD DISP=SHR, <br />
+//DSN=SYS1.PARMLIB(JES2PARM) <br />
+//PROC00 DD DSN=SYS3.PROCLIB,DISP=SHR &lt;&lt;===<br />
+//DD DSN=SYS2.PROCLIB,DISP=SHR &lt;&lt;===<br />
+//DD DSN=SYS1.PROCLIB,DISP=SHR &lt;&lt;===<br />
+//PROC01 DD DSN=SYS4.USERPROC,DISP=SHR <br />
+//DD DSN=SYS3.PROCLIB,DISP=SHR <br />
+//DD DSN=SYS2.PROCLIB,DISP=SHR <br />
+//DD DSN=SYS1.PROCLIB,DISP=SHR <br />
+//IEFRDER DD SYSOUT=* <br />
+//HASPLIST DD DDNAME=IEFRDER<br />
+<br />
+JES2 initialization parameter JOBCLASS PROCLIB entries<br />
+<br />
+JOBCLASS(*) ACCT=NO, /* ACCT # NOT REQUIRED (DEF.)*/ <br />
+...<br />
+PROCLIB=01, /* DEFAULT TO //PROC01 DD (DEF.)*/<br />
+...<br />
+JOBCLASS(STC) AUTH=ALL, /* ALLOW ALL COMMANDS (DEF.)*/ <br />
+...<br />
+PROCLIB=00, /* USE //PROC00 DD (DEF.)*/ <br />
+...<br />
+JOBCLASS(TSU) AUTH=ALL, /* ALLOW ALL COMMANDS (DEF.)*/<br />
+...<br />
+PROCLIB=00, /* USE //PROC00 DD (DEF.)*/ <br />
+...<br />
+PROCLIB data set that will be used in the access authorization process:<br />
+<br />
+SYS3.PROCLIB<br />
+SYS2.PROCLIB <br />
+SYS1.PROCLIB <br />
+<br />
+The following PROCLIB data set will NOT be used or evaluated:<br />
+<br />
+SYS4.USERPROC<br />
+<br />
+Recommendation for sites:<br />
+<br />
+The following are recommendations for the sites to ensure only PROCLIB data sets that contain the STC and TSO procedures are protected.<br />
+<br />
+-Remove all application PROCLIB data sets from MSTJCLxx and JES2 procedures. The customer will have all JCL changed to use the JCLLIB JCL statement to refer to the application PROCLIB data sets.<br />
+<br />
+Example:<br />
+<br />
+//USERPROC JCLLIB ORDER=(SYS4.USERPROC)<br />
+<br />
+-Remove all access to the application PROCLIB data sets and only authorize system programming personnel WRITE and/or greater access to these data sets.<br />
+<br />
+-Document the application PROCLIB data set access for the customers that require WRITE and/or greater access. Use this documentation as justification for the inappropriate access created by the scripts.<br />
+<br />
+-Change MSTJCLxx and JES2 procedure to identify STC and TSO PROCLIB data sets separate from application PROCLIB data sets. The following is a list of actions that can be performed to accomplish this recommendation:<br />
+<br />
+a. Ensure that MSTJCLxx contains only PROCLIB data sets that contain STC and TSO procedures.<br />
+b. If an application PROCLIB data set is required for JES2, ensure that the JES2 procedure specifies more than one PROCxx DD statement concatenation or identified in the JES2 dynamic PROCLIB definitions. Identify one PROCxx DD statement data set concatenation that contains the STC and TSO PROCLIB data sets. Identify one or more additional PROCxx DD statements that can contain any other PROCLIB data sets. The concatenation of the additional PROCxx DD statements can contain the same data sets that are identified in the PROCxx DD statement for STC and TSO. The following is an example of the JES2 procedure:<br />
+<br />
+//JES2 PROC <br />
+//IEFPROC EXEC PGM=HASJES20,PARM=NOREQ, <br />
+//DPRTY=(15,15),TIME=1440,PERFORM=9 <br />
+//ALTPARM DD DISP=SHR, <br />
+//DSN=SYS1.PARMLIB(JES2BKUP) <br />
+//HASPPARM DD DISP=SHR, <br />
+//DSN=SYS1.PARMLIB(JES2PARM) <br />
+//PROC00 DD DSN=SYS3.PROCLIB,DISP=SHR <br />
+//DD DSN=SYS2.PROCLIB,DISP=SHR<br />
+//DD DSN=SYS1.PROCLIB,DISP=SHR <br />
+//PROC01 DD DSN=SYS4.USERPROC,DISP=SHR <br />
+//DD DSN=SYS3.PROCLIB,DISP=SHR <br />
+//DD DSN=SYS2.PROCLIB,DISP=SHR <br />
+//DD DSN=SYS1.PROCLIB,DISP=SHR <br />
+//IEFRDER DD SYSOUT=* <br />
+//HASPLIST DD DDNAME=IEFRDER<br />
+<br />
+c. Ensure that the JES2 configuration file is changed to specify that the PROCLIB entry for the STC and TSU JOBCLASSes point to the proper PROCxx entry within the JES2 procedure or JES2 dynamic PROCLIB definitions that contain the STC and/or TSO procedures. All other JOBCLASSes can specify a PROCLIB entry that uses the same PROCxx or any other PROCxx DD statement identified in the JES2 procedure or identified in the JES2 dynamic PROCLIB definitions. The following is an example of the JES2 initialization parameters:<br />
+<br />
+JOBCLASS(*) ACCT=NO, /* ACCT # NOT REQUIRED (DEF.)*/ <br />
+...<br />
+PROCLIB=01, /* DEFAULT TO //PROC01 DD (DEF.)*/<br />
+...<br />
+JOBCLASS(STC) AUTH=ALL, /* ALLOW ALL COMMANDS (DEF.)*/ <br />
+...<br />
+PROCLIB=00, /* USE //PROC00 DD (DEF.)*/ <br />
+...<br />
+JOBCLASS(TSU) AUTH=ALL, /* ALLOW ALL COMMANDS (DEF.)*/<br />
+...<br />
+PROCLIB=00, /* USE //PROC00 DD (DEF.)*/ <br />
+...<br />
+<br />
+d. Ensure that only system programming personnel are authorized WRITE and/or greater access to PROCLIB data sets that contain STC and TSO procedures.</p><h2>Check Contents</h2><p>Refer to the following for the PROCLIB data sets that contain the STCs and TSO logons from the following sources:<br />
+<br />
+-MSTJCLxx member used during an IPL. The PROCLIB data sets are obtained from the IEFPDSI and IEFJOBS DD statements.<br />
+<br />
+-PROCxx DD statements and JES2 Dynamic PROCLIBs. Where 'xx' is the PROCLIB entries for the STC and TSU JOBCLASS configuration definitions. <br />
+<br />
+Verify that the accesses to the above PROCLIB data sets are properly restricted. If the following guidance is true, this is not a finding.<br />
+<br />
+If the ESM data set access authorizations restrict READ access to all authorized users, this is not a finding.<br />
+<br />
+If the ESM data set access authorizations restrict WRITE and/or greater access to systems programming personnel, this is not a finding.</p><h2>Vulnerability Number</h2><p>V-223915</p><h2>Documentable</h2><p>False</p><h2>Rule Version</h2><p>TSS0-ES-000420</p><h2>Severity Override Guidance</h2><p>Refer to the following for the PROCLIB data sets that contain the STCs and TSO logons from the following sources:<br />
+<br />
+-MSTJCLxx member used during an IPL. The PROCLIB data sets are obtained from the IEFPDSI and IEFJOBS DD statements.<br />
+<br />
+-PROCxx DD statements and JES2 Dynamic PROCLIBs. Where 'xx' is the PROCLIB entries for the STC and TSU JOBCLASS configuration definitions. <br />
+<br />
+Verify that the accesses to the above PROCLIB data sets are properly restricted. If the following guidance is true, this is not a finding.<br />
+<br />
+If the ESM data set access authorizations restrict READ access to all authorized users, this is not a finding.<br />
+<br />
+If the ESM data set access authorizations restrict WRITE and/or greater access to systems programming personnel, this is not a finding.</p><h2>Check Content Reference</h2><p>M</p><h2>Target Key</h2><p>4102</p></body></html>

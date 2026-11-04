@@ -1,0 +1,37 @@
+<!doctype html><html lang="en"><head><meta charset="utf-8"><title>STIGQter: STIG Check Details: SV-276299r1149806_rule: Azure SQL Managed Instance must protect its audit configuration from unauthorized access, modification, and deletion.</title><link rel="icon" type="image/svg+xml" href="STIGQter.svg" /><script async src="https://www.googletagmanager.com/gtag/js?id=UA-31381839-2"></script><script src="include.js"></script><script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-4110907817782130" crossorigin="anonymous"></script></head><body><div><img src="STIGQter.svg" alt="STIGQter" style="height:1em;" /> <a href="https://www.stigqter.com/">STIGQter</a>: <a href="main.html">STIG Summary</a>: <a href="U_MS_Azure_SQL_MI_STIG_V1R1_Manual-xccdf.html">Microsoft Azure SQL Managed Instance Security Technical Implementation Guide Version: 1 Release: 1 Benchmark Date: 23 Sep 2025</a>:</div> <h1>Azure SQL Managed Instance must protect its audit configuration from unauthorized access, modification, and deletion.</h1><h2>DISA Rule</h2><p>SV-276299r1149806_rule</p><h2>Vulnerability Number</h2><p>V-276299</p><h2>Group Title</h2><p>SRG-APP-000121-DB-000202</p><h2>Rule Version</h2><p>MSQL-D0-006200</p><h2>Severity</h2><p>CAT II</p><h2>CCI(s)</h2><ul><li>CCI-001493 - Protect audit tools from unauthorized access.</li><li>CCI-001494 - Protect audit tools from unauthorized modification.</li><li>CCI-001495 - Protect audit tools from unauthorized deletion.</li></ul><h2>Weight</h2><p>10</p><h2>Fix Recommendation</h2><p>Apply or modify permissions on tools used to view or modify audit log data (to include traces used for audit purposes), to make them accessible by authorized personnel only.<br />
+ <br />
+Remove audit-related permissions from individuals and roles not authorized to have them: <br />
+<br />
+USE master; <br />
+DENY [ALTER ANY SERVER AUDIT] TO [User];  <br />
+GO</p><h2>Check Contents</h2><p>Check the documentation for a list of approved users with access to Azure SQL Managed Instance Audit files.<br />
+ <br />
+To create, alter, or drop a server audit, principals require the ALTER ANY SERVER AUDIT or the CONTROL SERVER permission.  <br />
+<br />
+Review the SQL Server permissions granted to principals. Look for permissions ALTER ANY SERVER AUDIT, ALTER ANY DATABASE AUDIT, CONTROL SERVER: <br />
+ <br />
+SELECT login.name, perm.permission_name, perm.state_desc <br />
+FROM sys.server_permissions perm <br />
+JOIN sys.server_principals login   <br />
+ON perm.grantee_principal_id = login.principal_id  <br />
+WHERE permission_name in ('ALTER ANY DATABASE AUDIT', 'ALTER ANY SERVER AUDIT', 'CONTROL SERVER')   <br />
+AND login.name not like '##MS_%';  <br />
+<br />
+Modify audit permissions to meet the requirement to protect against unauthorized access to Audit files. To review the roles and users, navigate to the Azure Portal, and review the Azure Storage container that is hosting the Audit files. Remove any undocumented permissions or excessive permissions to audit storage for user and roles.<br />
+  <br />
+If unauthorized accounts have these privileges, this is a finding.</p><h2>Vulnerability Number</h2><p>V-276299</p><h2>Documentable</h2><p>False</p><h2>Rule Version</h2><p>MSQL-D0-006200</p><h2>Severity Override Guidance</h2><p>Check the documentation for a list of approved users with access to Azure SQL Managed Instance Audit files.<br />
+ <br />
+To create, alter, or drop a server audit, principals require the ALTER ANY SERVER AUDIT or the CONTROL SERVER permission.  <br />
+<br />
+Review the SQL Server permissions granted to principals. Look for permissions ALTER ANY SERVER AUDIT, ALTER ANY DATABASE AUDIT, CONTROL SERVER: <br />
+ <br />
+SELECT login.name, perm.permission_name, perm.state_desc <br />
+FROM sys.server_permissions perm <br />
+JOIN sys.server_principals login   <br />
+ON perm.grantee_principal_id = login.principal_id  <br />
+WHERE permission_name in ('ALTER ANY DATABASE AUDIT', 'ALTER ANY SERVER AUDIT', 'CONTROL SERVER')   <br />
+AND login.name not like '##MS_%';  <br />
+<br />
+Modify audit permissions to meet the requirement to protect against unauthorized access to Audit files. To review the roles and users, navigate to the Azure Portal, and review the Azure Storage container that is hosting the Audit files. Remove any undocumented permissions or excessive permissions to audit storage for user and roles.<br />
+  <br />
+If unauthorized accounts have these privileges, this is a finding.</p><h2>Check Content Reference</h2><p>M</p><h2>Target Key</h2><p>5711</p></body></html>

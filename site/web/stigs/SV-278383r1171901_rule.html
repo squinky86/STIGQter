@@ -1,0 +1,55 @@
+<!doctype html><html lang="en"><head><meta charset="utf-8"><title>STIGQter: STIG Check Details: SV-278383r1171901_rule: The NGINX service account must be configured to not have admin group access.</title><link rel="icon" type="image/svg+xml" href="STIGQter.svg" /><script async src="https://www.googletagmanager.com/gtag/js?id=UA-31381839-2"></script><script src="include.js"></script><script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-4110907817782130" crossorigin="anonymous"></script></head><body><div><img src="STIGQter.svg" alt="STIGQter" style="height:1em;" /> <a href="https://www.stigqter.com/">STIGQter</a>: <a href="main.html">STIG Summary</a>: <a href="U_F5_NGINX_STIG_V1R1_Manual-xccdf.html">F5 NGINX Security Technical Implementation Guide Version: 1 Release: 1 Benchmark Date: 25 Nov 2025</a>:</div> <h1>The NGINX service account must be configured to not have admin group access.</h1><h2>DISA Rule</h2><p>SV-278383r1171901_rule</p><h2>Vulnerability Number</h2><p>V-278383</p><h2>Group Title</h2><p>SRG-APP-000038</p><h2>Rule Version</h2><p>NGNX-APP-000150</p><h2>Severity</h2><p>CAT II</p><h2>CCI(s)</h2><ul><li>CCI-001368 - Enforce approved authorizations for controlling the flow of information within the system based on organization-defined information flow control policies.</li></ul><h2>Weight</h2><p>10</p><h2>Fix Recommendation</h2><p>Remove the user from privileged groups:<br />
+<br />
+sudo gpasswd -d nginx sudo<br />
+sudo gpasswd -d nginx wheel<br />
+sudo gpasswd -d nginx admin</p><h2>Check Contents</h2><p>Determine the path to NGINX config file(s):<br />
+<br />
+nginx -qT | grep &quot;# configuration&quot;<br />
+# configuration file /etc/nginx/nginx.conf:<br />
+<br />
+Note: The default NGINX configuration is &quot;/etc/nginx/nginx.conf&quot;, though various files may also be included.<br />
+<br />
+Identify the NGINX runtime user:<br />
+<br />
+grep -E '^\s*user\s+' /etc/nginx/nginx.conf<br />
+<br />
+Expected output (example):<br />
+<br />
+user nginx;<br />
+<br />
+Ensure the user is not in a privileged group:<br />
+<br />
+id nginx<br />
+<br />
+Expected output:<br />
+<br />
+uid=980(nginx) gid=979(nginx) groups=979(nginx)<br />
+<br />
+The user should not be a member of sudo, wheel, admin, or similar elevated groups.<br />
+<br />
+If the NGINX runtime user is a member of an elevated group, this is a finding.</p><h2>Vulnerability Number</h2><p>V-278383</p><h2>Documentable</h2><p>False</p><h2>Rule Version</h2><p>NGNX-APP-000150</p><h2>Severity Override Guidance</h2><p>Determine the path to NGINX config file(s):<br />
+<br />
+nginx -qT | grep &quot;# configuration&quot;<br />
+# configuration file /etc/nginx/nginx.conf:<br />
+<br />
+Note: The default NGINX configuration is &quot;/etc/nginx/nginx.conf&quot;, though various files may also be included.<br />
+<br />
+Identify the NGINX runtime user:<br />
+<br />
+grep -E '^\s*user\s+' /etc/nginx/nginx.conf<br />
+<br />
+Expected output (example):<br />
+<br />
+user nginx;<br />
+<br />
+Ensure the user is not in a privileged group:<br />
+<br />
+id nginx<br />
+<br />
+Expected output:<br />
+<br />
+uid=980(nginx) gid=979(nginx) groups=979(nginx)<br />
+<br />
+The user should not be a member of sudo, wheel, admin, or similar elevated groups.<br />
+<br />
+If the NGINX runtime user is a member of an elevated group, this is a finding.</p><h2>Check Content Reference</h2><p>M</p><h2>Target Key</h2><p>5720</p></body></html>

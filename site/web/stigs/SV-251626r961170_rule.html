@@ -1,0 +1,23 @@
+<!doctype html><html lang="en"><head><meta charset="utf-8"><title>STIGQter: STIG Check Details: SV-251626r961170_rule: IDMS must reveal security-related messages only to authorized users.</title><link rel="icon" type="image/svg+xml" href="STIGQter.svg" /><script async src="https://www.googletagmanager.com/gtag/js?id=UA-31381839-2"></script><script src="include.js"></script><script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-4110907817782130" crossorigin="anonymous"></script></head><body><div><img src="STIGQter.svg" alt="STIGQter" style="height:1em;" /> <a href="https://www.stigqter.com/">STIGQter</a>: <a href="main.html">STIG Summary</a>: <a href="U_CA_IDMS_STIG_V2R2_Manual-xccdf.html">CA IDMS Security Technical Implementation Guide Version: 2 Release: 2 Benchmark Date: 01 Jul 2026</a>:</div> <h1>IDMS must reveal security-related messages only to authorized users.</h1><h2>DISA Rule</h2><p>SV-251626r961170_rule</p><h2>Vulnerability Number</h2><p>V-251626</p><h2>Group Title</h2><p>SRG-APP-000267-DB-000163</p><h2>Rule Version</h2><p>IDMS-DB-000550</p><h2>Severity</h2><p>CAT II</p><h2>CCI(s)</h2><ul><li>CCI-001314 - Reveal error messages only to organization-defined personnel or roles.</li></ul><h2>Weight</h2><p>10</p><h2>Fix Recommendation</h2><p>In the source for RHDCOPTF, add lines: <br />
+<br />
+         #DEFOPT OPT00051              &lt;-for messages sent to user<br />
+         #DEFOPT OPT00226              &lt;-for messages sent to IDMS log<br />
+<br />
+Then, reassemble and relink RHDCOPTF. Reload RHDCOPTF in the CV by issuing the following commands:<br />
+<br />
+DCMT VARY NUCLEUS MODULE RHDCOPTF NEW COPY <br />
+DCMT VARY NUCLEUS RELOAD<br />
+<br />
+Contact the security office to ensure that ADSOBPLG, the ADS print log utility, is secured via the ESM and assigned to the appropriate users, and that the ADS log file is secured from being read by others than ISSO, ISSM, SA, and DBA, also via the ESM.</p><h2>Check Contents</h2><p>Check that security messages from external security managers (ESMs) are sent only to the log which can be secured. Log on to IDMS DC system and issue &quot;DCPROFIL&quot;. Scroll to the &quot;OPTION FLAGS&quot; screen.<br />
+<br />
+If OPT00051 is not listed, this is a finding. <br />
+<br />
+For IDMS LOG messages, if OPT00226 is not listed, this is a finding. <br />
+<br />
+Contact the security office and verify that the user, groups, and roles are defined to the ESM so that DC log can only be viewed by Information System Security Officer (ISSO), Information System Security manager (ISSM), Systems Administrator (SA), and Database Administrator (DBA).</p><h2>Vulnerability Number</h2><p>V-251626</p><h2>Documentable</h2><p>False</p><h2>Rule Version</h2><p>IDMS-DB-000550</p><h2>Severity Override Guidance</h2><p>Check that security messages from external security managers (ESMs) are sent only to the log which can be secured. Log on to IDMS DC system and issue &quot;DCPROFIL&quot;. Scroll to the &quot;OPTION FLAGS&quot; screen.<br />
+<br />
+If OPT00051 is not listed, this is a finding. <br />
+<br />
+For IDMS LOG messages, if OPT00226 is not listed, this is a finding. <br />
+<br />
+Contact the security office and verify that the user, groups, and roles are defined to the ESM so that DC log can only be viewed by Information System Security Officer (ISSO), Information System Security manager (ISSM), Systems Administrator (SA), and Database Administrator (DBA).</p><h2>Check Content Reference</h2><p>M</p><h2>Target Key</h2><p>5418</p></body></html>

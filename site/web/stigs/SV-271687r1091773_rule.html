@@ -1,0 +1,27 @@
+<!doctype html><html lang="en"><head><meta charset="utf-8"><title>STIGQter: STIG Check Details: SV-271687r1091773_rule: OL 9 must prevent a user from overriding the Ctrl-Alt-Del sequence settings for the graphical user interface.</title><link rel="icon" type="image/svg+xml" href="STIGQter.svg" /><script async src="https://www.googletagmanager.com/gtag/js?id=UA-31381839-2"></script><script src="include.js"></script><script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-4110907817782130" crossorigin="anonymous"></script></head><body><div><img src="STIGQter.svg" alt="STIGQter" style="height:1em;" /> <a href="https://www.stigqter.com/">STIGQter</a>: <a href="main.html">STIG Summary</a>: <a href="U_Oracle_Linux_9_STIG_V1R6_Manual-xccdf.html">Oracle Linux 9 Security Technical Implementation Guide Version: 1 Release: 6 Benchmark Date: 01 Jul 2026</a>:</div> <h1>OL 9 must prevent a user from overriding the Ctrl-Alt-Del sequence settings for the graphical user interface.</h1><h2>DISA Rule</h2><p>SV-271687r1091773_rule</p><h2>Vulnerability Number</h2><p>V-271687</p><h2>Group Title</h2><p>SRG-OS-000480-GPOS-00227</p><h2>Rule Version</h2><p>OL09-00-002129</p><h2>Severity</h2><p>CAT II</p><h2>CCI(s)</h2><ul><li>CCI-000366 - Implement the security configuration settings.</li></ul><h2>Weight</h2><p>10</p><h2>Fix Recommendation</h2><p>Configure OL 9 to disallow the user changing the Ctrl-Alt-Del sequence in the GNOME desktop.<br />
+<br />
+Create a database to container system-wide graphical user logon settings (if it does not already exist) with the following command:<br />
+<br />
+$ sudo touch /etc/dconf/db/local.d/locks/session<br />
+<br />
+Add the following line to the session locks file to prevent nonprivileged users from modifying the Ctrl-Alt-Del setting:<br />
+<br />
+/org/gnome/settings-daemon/plugins/media-keys/logout<br />
+<br />
+Run the following command to update the database:<br />
+<br />
+$ sudo dconf update</p><h2>Check Contents</h2><p>This requirement assumes the use of the OL 9 default graphical user interface—the GNOME desktop environment. If the system does not have any graphical user interface installed, this requirement is Not Applicable.<br />
+<br />
+Verify that OL 9 users cannot enable the Ctrl-Alt-Del sequence in the GNOME desktop with the following command:<br />
+<br />
+$ grep logout /etc/dconf/db/local.d/locks/* <br />
+/org/gnome/settings-daemon/plugins/media-keys/logout<br />
+<br />
+If the output is not &quot;/org/gnome/settings-daemon/plugins/media-keys/logout&quot;, the line is commented out, or the line is missing, this is a finding.</p><h2>Vulnerability Number</h2><p>V-271687</p><h2>Documentable</h2><p>False</p><h2>Rule Version</h2><p>OL09-00-002129</p><h2>Severity Override Guidance</h2><p>This requirement assumes the use of the OL 9 default graphical user interface—the GNOME desktop environment. If the system does not have any graphical user interface installed, this requirement is Not Applicable.<br />
+<br />
+Verify that OL 9 users cannot enable the Ctrl-Alt-Del sequence in the GNOME desktop with the following command:<br />
+<br />
+$ grep logout /etc/dconf/db/local.d/locks/* <br />
+/org/gnome/settings-daemon/plugins/media-keys/logout<br />
+<br />
+If the output is not &quot;/org/gnome/settings-daemon/plugins/media-keys/logout&quot;, the line is commented out, or the line is missing, this is a finding.</p><h2>Check Content Reference</h2><p>M</p><h2>Target Key</h2><p>5680</p></body></html>

@@ -1,0 +1,42 @@
+<!doctype html><html lang="en"><head><meta charset="utf-8"><title>STIGQter: STIG Check Details: SV-273577r1110886_rule: The RUCKUS ICX MSDP router must be configured to limit the amount of source-active messages it accepts on a per peer basis.</title><link rel="icon" type="image/svg+xml" href="STIGQter.svg" /><script async src="https://www.googletagmanager.com/gtag/js?id=UA-31381839-2"></script><script src="include.js"></script><script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-4110907817782130" crossorigin="anonymous"></script></head><body><div><img src="STIGQter.svg" alt="STIGQter" style="height:1em;" /> <a href="https://www.stigqter.com/">STIGQter</a>: <a href="main.html">STIG Summary</a>: <a href="U_RUCKUS_ICX_RTR_STIG_V1R1_Manual-xccdf.html">RUCKUS ICX Router Security Technical Implementation Guide Version: 1 Release: 1 Benchmark Date: 27 May 2025</a>:</div> <h1>The RUCKUS ICX MSDP router must be configured to limit the amount of source-active messages it accepts on a per peer basis.</h1><h2>DISA Rule</h2><p>SV-273577r1110886_rule</p><h2>Vulnerability Number</h2><p>V-273577</p><h2>Group Title</h2><p>SRG-NET-000018-RTR-000009</p><h2>Rule Version</h2><p>RCKS-RTR-000090</p><h2>Severity</h2><p>CAT III</p><h2>CCI(s)</h2><ul><li>CCI-001368 - Enforce approved authorizations for controlling the flow of information within the system based on organization-defined information flow control policies.</li></ul><h2>Weight</h2><p>10</p><h2>Fix Recommendation</h2><p>Create access-list to filter source-active multicast advertisements for any undesirable multicast groups and sources:<br />
+<br />
+ip access-list extended in_MSDP_SA_filter<br />
+ sequence 10 deny ip any host 224.0.1.3<br />
+ sequence 20 deny ip any host 224.0.1.24<br />
+ sequence 30 deny ip any host 224.0.1.22<br />
+ sequence 40 deny ip any host 224.0.1.2<br />
+ sequence 50 deny ip any host 224.0.1.35<br />
+ sequence 60 deny ip any host 224.0.1.60<br />
+ sequence 70 deny ip any host 224.0.1.39<br />
+ sequence 80 deny ip any host 224.0.1.40<br />
+ sequence 90 deny ip any 232.0.0.0 0.255.255.255<br />
+ sequence 100 deny ip any 239.0.0.0 0.255.255.255<br />
+ sequence 110 deny ip 10.0.0.0 0.255.255.255 any<br />
+ sequence 120 deny ip 127.0.0.0 0.255.255.255 any<br />
+ sequence 130 deny ip 172.16.0.0 0.15.255.255 any<br />
+ sequence 140 deny ip 192.168.0.0 0.0.255.255 any<br />
+ sequence 150 permit ip any any<br />
+<br />
+route-map MSDP_SA_filter permit 10<br />
+ match ip address in_MSDP_SA_filter<br />
+<br />
+router msdp<br />
+ msdp-peer x.x.x.x<br />
+ sa-filter in x.x.x.x route-map MSDP_SA_filter<br />
+!</p><h2>Check Contents</h2><p>Check for SA filter on MSDP peer:<br />
+<br />
+ICX#  show msdp peer x.x.x.x | include Input<br />
+<br />
+        Input SA Filter:Applicable<br />
+        Input (S,G) route-map:MSDP_SA_filter<br />
+        Input RP route-map:None<br />
+<br />
+If any configured MSDP peer is not configured to limit source-active messages using an inbound filter, this is a finding.</p><h2>Vulnerability Number</h2><p>V-273577</p><h2>Documentable</h2><p>False</p><h2>Rule Version</h2><p>RCKS-RTR-000090</p><h2>Severity Override Guidance</h2><p>Check for SA filter on MSDP peer:<br />
+<br />
+ICX#  show msdp peer x.x.x.x | include Input<br />
+<br />
+        Input SA Filter:Applicable<br />
+        Input (S,G) route-map:MSDP_SA_filter<br />
+        Input RP route-map:None<br />
+<br />
+If any configured MSDP peer is not configured to limit source-active messages using an inbound filter, this is a finding.</p><h2>Check Content Reference</h2><p>M</p><h2>Target Key</h2><p>5696</p></body></html>

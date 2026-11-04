@@ -1,0 +1,113 @@
+<!doctype html><html lang="en"><head><meta charset="utf-8"><title>STIGQter: STIG Check Details: SV-235155r961128_rule: The MySQL Database Server 8.0 must protect the confidentiality and integrity of all information at rest.</title><link rel="icon" type="image/svg+xml" href="STIGQter.svg" /><script async src="https://www.googletagmanager.com/gtag/js?id=UA-31381839-2"></script><script src="include.js"></script><script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-4110907817782130" crossorigin="anonymous"></script></head><body><div><img src="STIGQter.svg" alt="STIGQter" style="height:1em;" /> <a href="https://www.stigqter.com/">STIGQter</a>: <a href="main.html">STIG Summary</a>: <a href="U_Oracle_MySQL_8-0_STIG_V2R2_Manual-xccdf.html">Oracle MySQL 8.0 Security Technical Implementation Guide Version: 2 Release: 2 Benchmark Date: 24 Oct 2024</a>:</div> <h1>The MySQL Database Server 8.0 must protect the confidentiality and integrity of all information at rest.</h1><h2>DISA Rule</h2><p>SV-235155r961128_rule</p><h2>Vulnerability Number</h2><p>V-235155</p><h2>Group Title</h2><p>SRG-APP-000231-DB-000154</p><h2>Rule Version</h2><p>MYS8-00-007200</p><h2>Severity</h2><p>CAT I</p><h2>CCI(s)</h2><ul><li>CCI-001199 - Protects the confidentiality and/or integrity of organization-defined information at rest.</li></ul><h2>Weight</h2><p>10</p><h2>Fix Recommendation</h2><p>Apply appropriate MySQL Database 8.0 controls to protect the confidentiality and integrity of data at rest in the database.<br />
+<br />
+sudo vi /etc/my.cnf<br />
+[mysqld]<br />
+audit-log=FORCE_PLUS_PERMANENT<br />
+audit-log-format=JSON<br />
+audit-log-encryption=AES<br />
+<br />
+Turn on binlog encryption<br />
+set persist binlog_encryption=ON;<br />
+<br />
+Turn on undo and redo log encryption<br />
+set persist innodb_redo_log_encrypt=ON;<br />
+set persist innodb_undo_log_encrypt=ON;<br />
+<br />
+Enable encryption for a new file-per-table tablespace, specify the ENCRYPTION option in a CREATE TABLE statement. <br />
+The following example assumes that innodb_file_per_table is enabled.<br />
+mysql&gt; CREATE TABLE t1 (c1 INT) ENCRYPTION='Y';<br />
+<br />
+To enable encryption for an existing file-per-table tablespace, specify the ENCRYPTION option in an ALTER TABLE statement.<br />
+mysql&gt; ALTER TABLE t1 ENCRYPTION='Y';<br />
+<br />
+To disable encryption for file-per-table tablespace, set ENCRYPTION='N' using ALTER TABLE.<br />
+mysql&gt; ALTER TABLE t1 ENCRYPTION='N';<br />
+<br />
+Disable the general_log<br />
+SET PERSIST general_log = 'OFF';</p><h2>Check Contents</h2><p>If the application owner and Authorizing Official have determined that encryption of data at rest is NOT required, this is not a finding.<br />
+<br />
+Review settings to ensure appropriate controls are applied to protect the confidentiality and integrity of data at rest in the database.<br />
+<br />
+Using SQL determine if all data-at-rest is encrypted.<br />
+<br />
+SELECT VARIABLE_NAME, VARIABLE_VALUE<br />
+FROM performance_schema.global_variables where variable_name = 'audit_log_encryption';<br />
+<br />
+If &quot;audit_log_encryption&quot; is not set to &quot;AES&quot;, this is a finding.<br />
+<br />
+SELECT VARIABLE_NAME, VARIABLE_VALUE<br />
+FROM performance_schema.global_variables where variable_name = 'binlog_encryption';<br />
+<br />
+If &quot;binlog_encrypt&quot; is not set to &quot;ON&quot;, this is a finding.<br />
+<br />
+SELECT VARIABLE_NAME, VARIABLE_VALUE<br />
+FROM performance_schema.global_variables where variable_name = 'innodb_redo_log_encrypt';<br />
+<br />
+If &quot;innodb_redo_log_encrypt&quot; is not set to &quot;ON&quot;, this is a finding.<br />
+<br />
+SELECT VARIABLE_NAME, VARIABLE_VALUE<br />
+FROM performance_schema.global_variables where variable_name = 'innodb_undo_log_encrypt';<br />
+<br />
+If &quot;innodb_undo_log_encrypt&quot; is not set to &quot;ON&quot;, this is a finding.<br />
+<br />
+SELECT VARIABLE_NAME, VARIABLE_VALUE<br />
+FROM performance_schema.global_variables<br />
+WHERE VARIABLE_NAME like 'general_log';<br />
+<br />
+If &quot;general_log&quot;is not &quot;OFF&quot;, this is a finding.<br />
+<br />
+Find encryption status for all mysql table and tablespaces.<br />
+SELECT<br />
+    `INNODB_TABLESPACES`.`NAME`,<br />
+    `INNODB_TABLESPACES`.`ENCRYPTION`<br />
+FROM `information_schema`.`INNODB_TABLESPACES`;<br />
+<br />
+If any tablespace other than innodb_temporary does not have ENCRYPTION set to &quot;Y (yes)&quot;, this is a finding.<br />
+<br />
+SELECT VARIABLE_NAME, VARIABLE_VALUE<br />
+FROM performance_schema.global_variables where variable_name = 'table_encryption_privilege_check';<br />
+<br />
+If &quot;innodb_redo_log_encrypt&quot; is not set to &quot;ON&quot;, this is a finding.</p><h2>Vulnerability Number</h2><p>V-235155</p><h2>Documentable</h2><p>False</p><h2>Rule Version</h2><p>MYS8-00-007200</p><h2>Severity Override Guidance</h2><p>If the application owner and Authorizing Official have determined that encryption of data at rest is NOT required, this is not a finding.<br />
+<br />
+Review settings to ensure appropriate controls are applied to protect the confidentiality and integrity of data at rest in the database.<br />
+<br />
+Using SQL determine if all data-at-rest is encrypted.<br />
+<br />
+SELECT VARIABLE_NAME, VARIABLE_VALUE<br />
+FROM performance_schema.global_variables where variable_name = 'audit_log_encryption';<br />
+<br />
+If &quot;audit_log_encryption&quot; is not set to &quot;AES&quot;, this is a finding.<br />
+<br />
+SELECT VARIABLE_NAME, VARIABLE_VALUE<br />
+FROM performance_schema.global_variables where variable_name = 'binlog_encryption';<br />
+<br />
+If &quot;binlog_encrypt&quot; is not set to &quot;ON&quot;, this is a finding.<br />
+<br />
+SELECT VARIABLE_NAME, VARIABLE_VALUE<br />
+FROM performance_schema.global_variables where variable_name = 'innodb_redo_log_encrypt';<br />
+<br />
+If &quot;innodb_redo_log_encrypt&quot; is not set to &quot;ON&quot;, this is a finding.<br />
+<br />
+SELECT VARIABLE_NAME, VARIABLE_VALUE<br />
+FROM performance_schema.global_variables where variable_name = 'innodb_undo_log_encrypt';<br />
+<br />
+If &quot;innodb_undo_log_encrypt&quot; is not set to &quot;ON&quot;, this is a finding.<br />
+<br />
+SELECT VARIABLE_NAME, VARIABLE_VALUE<br />
+FROM performance_schema.global_variables<br />
+WHERE VARIABLE_NAME like 'general_log';<br />
+<br />
+If &quot;general_log&quot;is not &quot;OFF&quot;, this is a finding.<br />
+<br />
+Find encryption status for all mysql table and tablespaces.<br />
+SELECT<br />
+    `INNODB_TABLESPACES`.`NAME`,<br />
+    `INNODB_TABLESPACES`.`ENCRYPTION`<br />
+FROM `information_schema`.`INNODB_TABLESPACES`;<br />
+<br />
+If any tablespace other than innodb_temporary does not have ENCRYPTION set to &quot;Y (yes)&quot;, this is a finding.<br />
+<br />
+SELECT VARIABLE_NAME, VARIABLE_VALUE<br />
+FROM performance_schema.global_variables where variable_name = 'table_encryption_privilege_check';<br />
+<br />
+If &quot;innodb_redo_log_encrypt&quot; is not set to &quot;ON&quot;, this is a finding.</p><h2>Check Content Reference</h2><p>M</p><h2>Target Key</h2><p>5277</p></body></html>

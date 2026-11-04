@@ -1,0 +1,31 @@
+<!doctype html><html lang="en"><head><meta charset="utf-8"><title>STIGQter: STIG Check Details: SV-259042r960960_rule: The vCenter Lookup service must limit privileges for creating or modifying hosted application shared files.</title><link rel="icon" type="image/svg+xml" href="STIGQter.svg" /><script async src="https://www.googletagmanager.com/gtag/js?id=UA-31381839-2"></script><script src="include.js"></script><script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-4110907817782130" crossorigin="anonymous"></script></head><body><div><img src="STIGQter.svg" alt="STIGQter" style="height:1em;" /> <a href="https://www.stigqter.com/">STIGQter</a>: <a href="main.html">STIG Summary</a>: <a href="U_VMW_vSphere_8-0_VCSA_Lookup_Svc_STIG_V2R2_Manual-xccdf.html">VMware vSphere 8.0 vCenter Appliance Lookup Service Security Technical Implementation Guide Version: 2 Release: 2 Benchmark Date: 01 Jul 2026</a>:</div> <h1>The vCenter Lookup service must limit privileges for creating or modifying hosted application shared files.</h1><h2>DISA Rule</h2><p>SV-259042r960960_rule</p><h2>Vulnerability Number</h2><p>V-259042</p><h2>Group Title</h2><p>SRG-APP-000133-AS-000092</p><h2>Rule Version</h2><p>VCLU-80-000034</p><h2>Severity</h2><p>CAT II</p><h2>CCI(s)</h2><ul><li>CCI-001499 - Limit privileges to change software resident within software libraries.</li></ul><h2>Weight</h2><p>10</p><h2>Fix Recommendation</h2><p>Navigate to and open:<br />
+<br />
+/usr/lib/vmware-lookupsvc/conf/server.xml<br />
+<br />
+Navigate to the &lt;Server&gt; node and add or update the &quot;org.apache.catalina.security.SecurityListener&quot; as follows:<br />
+<br />
+&lt;Listener className=&quot;org.apache.catalina.security.SecurityListener&quot;/&gt;<br />
+<br />
+Restart the service with the following command:<br />
+<br />
+# vmon-cli --restart lookupsvc</p><h2>Check Contents</h2><p>At the command prompt, run the following command:<br />
+<br />
+# xmllint --xpath '/Server/Listener[@className=&quot;org.apache.catalina.security.SecurityListener&quot;]' /usr/lib/vmware-lookupsvc/conf/server.xml<br />
+<br />
+Example result:<br />
+<br />
+&lt;Listener className=&quot;org.apache.catalina.security.SecurityListener&quot;/&gt;<br />
+<br />
+If the &quot;org.apache.catalina.security.SecurityListener&quot; listener is not present, this is a finding.<br />
+<br />
+If the &quot;org.apache.catalina.security.SecurityListener&quot; listener is configured with a &quot;minimumUmask&quot; and is not &quot;0007&quot;, this is a finding.</p><h2>Vulnerability Number</h2><p>V-259042</p><h2>Documentable</h2><p>False</p><h2>Rule Version</h2><p>VCLU-80-000034</p><h2>Severity Override Guidance</h2><p>At the command prompt, run the following command:<br />
+<br />
+# xmllint --xpath '/Server/Listener[@className=&quot;org.apache.catalina.security.SecurityListener&quot;]' /usr/lib/vmware-lookupsvc/conf/server.xml<br />
+<br />
+Example result:<br />
+<br />
+&lt;Listener className=&quot;org.apache.catalina.security.SecurityListener&quot;/&gt;<br />
+<br />
+If the &quot;org.apache.catalina.security.SecurityListener&quot; listener is not present, this is a finding.<br />
+<br />
+If the &quot;org.apache.catalina.security.SecurityListener&quot; listener is configured with a &quot;minimumUmask&quot; and is not &quot;0007&quot;, this is a finding.</p><h2>Check Content Reference</h2><p>M</p><h2>Target Key</h2><p>5565</p></body></html>

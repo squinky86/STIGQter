@@ -1,0 +1,78 @@
+<!doctype html><html lang="en"><head><meta charset="utf-8"><title>STIGQter: STIG Check Details: SV-272082r1168145_rule: The Cisco ACI must be configured to implement message authentication and secure communications for all control plane protocols.</title><link rel="icon" type="image/svg+xml" href="STIGQter.svg" /><script async src="https://www.googletagmanager.com/gtag/js?id=UA-31381839-2"></script><script src="include.js"></script><script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-4110907817782130" crossorigin="anonymous"></script></head><body><div><img src="STIGQter.svg" alt="STIGQter" style="height:1em;" /> <a href="https://www.stigqter.com/">STIGQter</a>: <a href="main.html">STIG Summary</a>: <a href="U_Cisco_ACI_RTR_Manual_V1R2_STIG_Manual-xccdf.html">Cisco ACI Router Security Technical Implementation Guide Version: 1 Release: 2 Benchmark Date: 05 Jan 2026</a>:</div> <h1>The Cisco ACI must be configured to implement message authentication and secure communications for all control plane protocols.</h1><h2>DISA Rule</h2><p>SV-272082r1168145_rule</p><h2>Vulnerability Number</h2><p>V-272082</p><h2>Group Title</h2><p>SRG-NET-000230-RTR-000001</p><h2>Rule Version</h2><p>CACI-RT-000022</p><h2>Severity</h2><p>CAT II</p><h2>CCI(s)</h2><ul><li>CCI-001184 - Protect the authenticity of communications sessions.</li></ul><h2>Weight</h2><p>10</p><h2>Fix Recommendation</h2><p>Configure secure communications and message authentication on all control plane protocols.<br />
+<br />
+1. Verify Secure Communication:<br />
+     - Navigate to Fabric &gt;&gt; Fabric Policies &gt;&gt; Policies &gt;&gt; Pod &gt;&gt; Management Access.<br />
+     - Verify SSH and SSL protocols are enabled for APIC management. Configure the ports used for SSH and SSL connections as needed.<br />
+<br />
+2. Configure Message Authentication:<br />
+     - Navigate to Fabric &gt;&gt; Fabric Policies &gt;&gt; Pod Policies &gt;&gt; Policies &gt;&gt; Interconnect. <br />
+     - Enable IPsec for FI communication to ensure secure communication between the APIC and the switches. <br />
+     - Configure the IPsec parameters, such as the encryption algorithm and authentication method. <br />
+<br />
+3. Configure OpFlex for Southbound Communication to use TLS:<br />
+      Note: OpFlex is a southbound protocol designed to facilitate communications between the SDN Controller and the switches and routers. <br />
+   <br />
+4. Enable Trust Domain:<br />
+     - Navigate to Fabric &gt;&gt; Fabric Policies &gt;&gt; Pod Policies &gt;&gt; Policies &gt;&gt; Trust Domain. <br />
+     - Enable the Trust Domain to ensure that only trusted devices can communicate with the APIC. <br />
+     - Configure the Trust Domain parameters, such as the certificate authority and the trusted devices. <br />
+<br />
+To configure BGP neighbor authentication keys on Cisco ACI border leaf switches using a different authentication key for each AS peer, configure the BGP Peer Connectivity Profile within the L3Out configuration. <br />
+<br />
+1. In the APIC GUI, go to Tenants &gt;&gt; All Tenants &gt;&gt; your_tenant &gt;&gt; Networking &gt;&gt; L3Outs &gt;&gt; your_l3out. <br />
+2. Expand Logical Node Profiles &gt;&gt; node_profile.<br />
+3. Select Logical Interface Profiles &gt;&gt; interface_profile (where the BGP peering is configured). <br />
+4. Within the Logical Interface Profile, locate or create the BGP Peer Connectivity Profile associated with the peer you want to authenticate. Edit or create a profile.<br />
+5. In the BGP Peer Connectivity Profile settings:<br />
+    - Remote Autonomous System Number: Specify the AS number of the peer.<br />
+    - Password: Enter the authentication key/password for this specific peer.<br />
+    - Confirm Password: Re-enter the same password.<br />
+    - Other settings, such as peer controls, address type controls, and route control profiles, can be adjusted as needed for the BGP peering configuration. <br />
+<br />
+6. Repeat the steps for each peer that must be configured. Create separate BGP Peer Connectivity profiles for each individual BGP peer, with different passwords for each. Ensure the peer devices have the matching authentication key/password configured for successful BGP peering.</p><h2>Check Contents</h2><p>Verify secure communications and message authentication on all control plane protocols is configured.<br />
+<br />
+1. Verify Secure Communication:<br />
+    - Navigate to Fabric &gt;&gt; Fabric Policies &gt;&gt; Policies &gt;&gt; Pod &gt;&gt; Management Access.<br />
+    - Verify SSH and SSL protocols are enabled for APIC management.<br />
+<br />
+2. Verify Message Authentication:<br />
+    - Navigate to Fabric &gt;&gt; Fabric Policies &gt;&gt; Pod Policies &gt;&gt; Policies &gt;&gt; Interconnect. <br />
+    - Verify IPsec for FI communication is enabled. <br />
+<br />
+3. Verify OpFlex for Southbound Communication is set to TLS.<br />
+<br />
+4. Navigate to Fabric &gt;&gt; Fabric Policies &gt;&gt; Pod Policies &gt;&gt; Policies &gt;&gt; Trust Domain. <br />
+    - Verify the Trust Domain is enabled and configured.<br />
+<br />
+Verify BGP neighbor authentication keys on Cisco ACI border leaf switches are configured to use a different authentication key for each AS peer. <br />
+<br />
+1. Navigate to Tenants &gt;&gt; All Tenants &gt;&gt; your_tenant &gt;&gt; Networking &gt;&gt; L3Outs &gt;&gt; your_l3out. <br />
+2. Expand Logical Node Profiles &gt;&gt; node_profile.<br />
+3. Select Logical Interface Profiles &gt;&gt; interface_profile (where the BGP peering is configured). <br />
+4. Within the Logical Interface Profile, review each BGP Peer Connectivity profiles for each individual BGP peer.<br />
+5. In the BGP Peer Connectivity Profile settings, review the Password to verify each peer has a unique password.<br />
+<br />
+If message authentication and secure communications is not configured for all control plane protocols, this is a finding.</p><h2>Vulnerability Number</h2><p>V-272082</p><h2>Documentable</h2><p>False</p><h2>Rule Version</h2><p>CACI-RT-000022</p><h2>Severity Override Guidance</h2><p>Verify secure communications and message authentication on all control plane protocols is configured.<br />
+<br />
+1. Verify Secure Communication:<br />
+    - Navigate to Fabric &gt;&gt; Fabric Policies &gt;&gt; Policies &gt;&gt; Pod &gt;&gt; Management Access.<br />
+    - Verify SSH and SSL protocols are enabled for APIC management.<br />
+<br />
+2. Verify Message Authentication:<br />
+    - Navigate to Fabric &gt;&gt; Fabric Policies &gt;&gt; Pod Policies &gt;&gt; Policies &gt;&gt; Interconnect. <br />
+    - Verify IPsec for FI communication is enabled. <br />
+<br />
+3. Verify OpFlex for Southbound Communication is set to TLS.<br />
+<br />
+4. Navigate to Fabric &gt;&gt; Fabric Policies &gt;&gt; Pod Policies &gt;&gt; Policies &gt;&gt; Trust Domain. <br />
+    - Verify the Trust Domain is enabled and configured.<br />
+<br />
+Verify BGP neighbor authentication keys on Cisco ACI border leaf switches are configured to use a different authentication key for each AS peer. <br />
+<br />
+1. Navigate to Tenants &gt;&gt; All Tenants &gt;&gt; your_tenant &gt;&gt; Networking &gt;&gt; L3Outs &gt;&gt; your_l3out. <br />
+2. Expand Logical Node Profiles &gt;&gt; node_profile.<br />
+3. Select Logical Interface Profiles &gt;&gt; interface_profile (where the BGP peering is configured). <br />
+4. Within the Logical Interface Profile, review each BGP Peer Connectivity profiles for each individual BGP peer.<br />
+5. In the BGP Peer Connectivity Profile settings, review the Password to verify each peer has a unique password.<br />
+<br />
+If message authentication and secure communications is not configured for all control plane protocols, this is a finding.</p><h2>Check Content Reference</h2><p>M</p><h2>Target Key</h2><p>5684</p></body></html>

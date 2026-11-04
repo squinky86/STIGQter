@@ -1,0 +1,66 @@
+<!doctype html><html lang="en"><head><meta charset="utf-8"><title>STIGQter: STIG Check Details: SV-256962r961620_rule: The Automation Controller NGINX web server must be protected from being stopped by a nonprivileged user.</title><link rel="icon" type="image/svg+xml" href="STIGQter.svg" /><script async src="https://www.googletagmanager.com/gtag/js?id=UA-31381839-2"></script><script src="include.js"></script><script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-4110907817782130" crossorigin="anonymous"></script></head><body><div><img src="STIGQter.svg" alt="STIGQter" style="height:1em;" /> <a href="https://www.stigqter.com/">STIGQter</a>: <a href="main.html">STIG Summary</a>: <a href="U_RH_Ansible_Automation_Controller_WS_STIG_V2R3_Manual-xccdf.html">Red Hat Ansible Automation Controller Web Server Security Technical Implementation Guide Version: 2 Release: 3 Benchmark Date: 05 Jan 2026</a>:</div> <h1>The Automation Controller NGINX web server must be protected from being stopped by a nonprivileged user.</h1><h2>DISA Rule</h2><p>SV-256962r961620_rule</p><h2>Vulnerability Number</h2><p>V-256962</p><h2>Group Title</h2><p>SRG-APP-000435-WSR-000147</p><h2>Rule Version</h2><p>APWS-AT-000830</p><h2>Severity</h2><p>CAT II</p><h2>CCI(s)</h2><ul><li>CCI-002385 - Protect against or limit the effects of organization-defined types of denial of service events.</li></ul><h2>Weight</h2><p>10</p><h2>Fix Recommendation</h2><p>As a System Administrator for each Automation Controller NGINX web server host, set the permissions correctly on the nginx service file:<br />
+<br />
+sudo chown root:root /usr/lib/systemd/system/nginx.service<br />
+sudo chmod 644 /usr/lib/systemd/system/nginx.service<br />
+<br />
+Reset the Ansible Automation Platform configuration to the defaults, which meet the requirements for the supervisord and automation-controller services.<br />
+<br />
+Locate the inventory file used to install Ansible Automation Platform (usually in the installer directory).<br />
+<br />
+Run the setup.sh command in the installer directory to reconfigure the controller to use the new setting:<br />
+<br />
+sudo ./setup.sh</p><h2>Check Contents</h2><p>As a System Administrator for each Automation Controller NGINX web server host, verify required service definition is protected from unprivileged users:<br />
+<br />
+stat -c &quot;%a %U %G&quot; /usr/lib/systemd/system/automation-controller.service | grep -q &quot;644 root root&quot; || echo &quot;FAILED&quot;<br />
+stat -c &quot;%a %U %G&quot; /usr/lib/systemd/system/supervisord.service | grep -q &quot;644 root root&quot; || echo &quot;FAILED&quot;<br />
+stat -c &quot;%a %U %G&quot;  /usr/lib/systemd/system/nginx.service | grep -q &quot;644 root root&quot; || echo &quot;FAILED&quot;<br />
+<br />
+If &quot;FAILED&quot; is displayed, this is a finding.<br />
+<br />
+Verify the required services are enabled:<br />
+<br />
+systemctl is-enabled automation-controller.service &gt;/dev/null || echo FAILED<br />
+systemctl is-enabled supervisord.service &gt;/dev/null || echo FAILED<br />
+systemctl is-enabled nginx.service &gt;/dev/null || echo FAILED<br />
+<br />
+If &quot;FAILED&quot; is displayed, this is a finding.<br />
+<br />
+Verify application services are correctly managed by supervisord. Verify protection of and capture supervisord configuration.<br />
+<br />
+stat -c &quot;%a %U %G&quot; /etc/supervisord.d/*.ini | grep -q &quot;644 root root&quot; || echo &quot;FAILED&quot;<br />
+cat  /etc/supervisord.d/*.ini | sed -n -E &quot;/^\[.*\]/{s/\[(.*)\]/\1/;h;n;};/^[a-zA-Z]/{s/#.*//;G;s/([^ ]*) *= *(.*)\n(.*)/\3_\1='\2'/;p;}&quot; &gt; /tmp/supervisord.parsed.conf<br />
+<br />
+Verify specific start and restart properties for application services:<br />
+<br />
+application_services=(program:awx-dispatcher_autostart program:awx-dispatcher_autorestart program:awx-wsbroadcast_autostart program:awx-wsbroadcast_autorestart program:awx-uwsgi_autostart program:awx-uwsgi_autorestart program:awx-daphne_autostart program:awx-daphne_autorestart program:awx-rsyslogd_autostart program:awx-rsyslogd_autorestart) <br />
+for SUPERVISOR_CHECK in ${application_services[@]}; do grep $SUPERVISOR_CHECK /tmp/supervisord.parsed.conf | grep -q true || echo &quot;FAILED&quot; ; done<br />
+rm /tmp/supervisord.parsed.conf<br />
+<br />
+If &quot;FAILED&quot; is displayed, this is a finding.</p><h2>Vulnerability Number</h2><p>V-256962</p><h2>Documentable</h2><p>False</p><h2>Rule Version</h2><p>APWS-AT-000830</p><h2>Severity Override Guidance</h2><p>As a System Administrator for each Automation Controller NGINX web server host, verify required service definition is protected from unprivileged users:<br />
+<br />
+stat -c &quot;%a %U %G&quot; /usr/lib/systemd/system/automation-controller.service | grep -q &quot;644 root root&quot; || echo &quot;FAILED&quot;<br />
+stat -c &quot;%a %U %G&quot; /usr/lib/systemd/system/supervisord.service | grep -q &quot;644 root root&quot; || echo &quot;FAILED&quot;<br />
+stat -c &quot;%a %U %G&quot;  /usr/lib/systemd/system/nginx.service | grep -q &quot;644 root root&quot; || echo &quot;FAILED&quot;<br />
+<br />
+If &quot;FAILED&quot; is displayed, this is a finding.<br />
+<br />
+Verify the required services are enabled:<br />
+<br />
+systemctl is-enabled automation-controller.service &gt;/dev/null || echo FAILED<br />
+systemctl is-enabled supervisord.service &gt;/dev/null || echo FAILED<br />
+systemctl is-enabled nginx.service &gt;/dev/null || echo FAILED<br />
+<br />
+If &quot;FAILED&quot; is displayed, this is a finding.<br />
+<br />
+Verify application services are correctly managed by supervisord. Verify protection of and capture supervisord configuration.<br />
+<br />
+stat -c &quot;%a %U %G&quot; /etc/supervisord.d/*.ini | grep -q &quot;644 root root&quot; || echo &quot;FAILED&quot;<br />
+cat  /etc/supervisord.d/*.ini | sed -n -E &quot;/^\[.*\]/{s/\[(.*)\]/\1/;h;n;};/^[a-zA-Z]/{s/#.*//;G;s/([^ ]*) *= *(.*)\n(.*)/\3_\1='\2'/;p;}&quot; &gt; /tmp/supervisord.parsed.conf<br />
+<br />
+Verify specific start and restart properties for application services:<br />
+<br />
+application_services=(program:awx-dispatcher_autostart program:awx-dispatcher_autorestart program:awx-wsbroadcast_autostart program:awx-wsbroadcast_autorestart program:awx-uwsgi_autostart program:awx-uwsgi_autorestart program:awx-daphne_autostart program:awx-daphne_autorestart program:awx-rsyslogd_autostart program:awx-rsyslogd_autorestart) <br />
+for SUPERVISOR_CHECK in ${application_services[@]}; do grep $SUPERVISOR_CHECK /tmp/supervisord.parsed.conf | grep -q true || echo &quot;FAILED&quot; ; done<br />
+rm /tmp/supervisord.parsed.conf<br />
+<br />
+If &quot;FAILED&quot; is displayed, this is a finding.</p><h2>Check Content Reference</h2><p>M</p><h2>Target Key</h2><p>5535</p></body></html>

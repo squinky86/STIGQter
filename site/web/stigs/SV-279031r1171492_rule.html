@@ -1,0 +1,58 @@
+<!doctype html><html lang="en"><head><meta charset="utf-8"><title>STIGQter: STIG Check Details: SV-279031r1171492_rule: The ColdFusion built-in Tomcat Web Server must use FIPS-validated ciphers on secured connectors.</title><link rel="icon" type="image/svg+xml" href="STIGQter.svg" /><script async src="https://www.googletagmanager.com/gtag/js?id=UA-31381839-2"></script><script src="include.js"></script><script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-4110907817782130" crossorigin="anonymous"></script></head><body><div><img src="STIGQter.svg" alt="STIGQter" style="height:1em;" /> <a href="https://www.stigqter.com/">STIGQter</a>: <a href="main.html">STIG Summary</a>: <a href="U_Adobe_ColdFusion_STIG_V1R2_Manual-xccdf.html">Adobe ColdFusion Security Technical Implementation Guide Version: 1 Release: 2 Benchmark Date: 01 Jul 2026</a>:</div> <h1>The ColdFusion built-in Tomcat Web Server must use FIPS-validated ciphers on secured connectors.</h1><h2>DISA Rule</h2><p>SV-279031r1171492_rule</p><h2>Vulnerability Number</h2><p>V-279031</p><h2>Group Title</h2><p>SRG-APP-000015-AS-000010</p><h2>Rule Version</h2><p>APAS-CF-000010</p><h2>Severity</h2><p>CAT II</p><h2>CCI(s)</h2><ul><li>CCI-001453 - Implement cryptographic mechanisms to protect the integrity of remote access sessions.</li></ul><h2>Weight</h2><p>10</p><h2>Fix Recommendation</h2><p>1. Enable FIPS Mode in Tomcat by editing the Tomcat server.xml configuration file.<br />
+<br />
+2. From the Tomcat server, log in as a privileged user, open the server.xml file:<br />
+sudo nano $CATALINA_BASE/conf/server.xml<br />
+<br />
+3. Locate or add the &lt;Listener&gt; element for AprLifecycleListener.<br />
+<br />
+4. Ensure the element includes the FIPSMode=&quot;on&quot; attribute.<br />
+Example configuration:<br />
+&lt;Listener<br />
+    className=&quot;org.apache.catalina.core.AprLifecycleListener&quot;<br />
+    SSLEngine=&quot;on&quot;<br />
+    FIPSMode=&quot;on&quot;<br />
+/&gt;<br />
+<br />
+5. Save and close the file.<br />
+<br />
+6. Restart ColdFusion to apply the changes.<br />
+<br />
+7. Check coldfusion-error.log after startup to confirm there are no errors indicating failure to set FIPSMode.</p><h2>Check Contents</h2><p>Verify FIPS Mode in Configuration. <br />
+<br />
+1. For each ColdFusion instance, locate the server.xml file in the following directory:<br />
+&lt;ColdFusion Install Directory&gt;\runtime\conf<br />
+<br />
+2. Open server.xml.<br />
+<br />
+3. Search for the &lt;Listener&gt; tag for AprLifecycleListener, confirm that it includes the attribute:<br />
+fipsmode=&quot;on&quot;<br />
+<br />
+If the fipsmode=&quot;on&quot; attribute is not present, this is a finding.<br />
+<br />
+4. Verify FIPS Mode at Runtime. After starting ColdFusion, open the coldfusion-error.log file.<br />
+<br />
+5. Search for the term &quot;fipsmode&quot;.<br />
+<br />
+6. Check for the following message:<br />
+failed to set property[FIPSMODE] to [on]<br />
+<br />
+If this error message is present in the log, this is a finding.</p><h2>Vulnerability Number</h2><p>V-279031</p><h2>Documentable</h2><p>False</p><h2>Rule Version</h2><p>APAS-CF-000010</p><h2>Severity Override Guidance</h2><p>Verify FIPS Mode in Configuration. <br />
+<br />
+1. For each ColdFusion instance, locate the server.xml file in the following directory:<br />
+&lt;ColdFusion Install Directory&gt;\runtime\conf<br />
+<br />
+2. Open server.xml.<br />
+<br />
+3. Search for the &lt;Listener&gt; tag for AprLifecycleListener, confirm that it includes the attribute:<br />
+fipsmode=&quot;on&quot;<br />
+<br />
+If the fipsmode=&quot;on&quot; attribute is not present, this is a finding.<br />
+<br />
+4. Verify FIPS Mode at Runtime. After starting ColdFusion, open the coldfusion-error.log file.<br />
+<br />
+5. Search for the term &quot;fipsmode&quot;.<br />
+<br />
+6. Check for the following message:<br />
+failed to set property[FIPSMODE] to [on]<br />
+<br />
+If this error message is present in the log, this is a finding.</p><h2>Check Content Reference</h2><p>M</p><h2>Target Key</h2><p>5724</p></body></html>

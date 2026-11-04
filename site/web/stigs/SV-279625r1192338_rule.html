@@ -1,0 +1,49 @@
+<!doctype html><html lang="en"><head><meta charset="utf-8"><title>STIGQter: STIG Check Details: SV-279625r1192338_rule: Nutanix OS must manage excess capacity, bandwidth, or other redundancy to limit the effects of information flooding types of denial-of-service (DoS) attacks.</title><link rel="icon" type="image/svg+xml" href="STIGQter.svg" /><script async src="https://www.googletagmanager.com/gtag/js?id=UA-31381839-2"></script><script src="include.js"></script><script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-4110907817782130" crossorigin="anonymous"></script></head><body><div><img src="STIGQter.svg" alt="STIGQter" style="height:1em;" /> <a href="https://www.stigqter.com/">STIGQter</a>: <a href="main.html">STIG Summary</a>: <a href="U_NTX_Acropolis_OS_STIG_V1R1_Manual-xccdf.html">Nutanix Acropolis GPOS Security Technical Implementation Guide Version: 1 Release: 1 Benchmark Date: 26 Jan 2026</a>:</div> <h1>Nutanix OS must manage excess capacity, bandwidth, or other redundancy to limit the effects of information flooding types of denial-of-service (DoS) attacks.</h1><h2>DISA Rule</h2><p>SV-279625r1192338_rule</p><h2>Vulnerability Number</h2><p>V-279625</p><h2>Group Title</h2><p>SRG-OS-000142-GPOS-00071</p><h2>Rule Version</h2><p>NXAC-OS-000198</p><h2>Severity</h2><p>CAT II</p><h2>CCI(s)</h2><ul><li>CCI-001095 - Manage capacity, bandwidth, or other redundancy to limit the effects of information flooding types of denial of service attacks.</li></ul><h2>Weight</h2><p>10</p><h2>Fix Recommendation</h2><p>Set the value of syncookies to 1.<br />
+<br />
+1. For AOS, run the following command.<br />
+<br />
+$ sudo salt-call state.sls security/CVM/iptables/init<br />
+<br />
+2. For Prism Central, run the following command.<br />
+<br />
+$ sudo salt-call state.sls security/PCVM/iptables/init<br />
+<br />
+3. For Files, run the following command.<br />
+<br />
+$ sudo salt-call state.sls security/AFS/iptables/init<br />
+<br />
+4. For AHV, configure Nutanix AHV to use TCP syncookies using the following command.<br />
+<br />
+$ sudo sysctl -w net.ipv4.tcp_syncookies=1 <br />
+<br />
+If &quot;1&quot; is not the system's default value, add or update the following line in &quot;/etc/sysctl.conf&quot;: <br />
+<br />
+net.ipv4.tcp_syncookies = 1</p><h2>Check Contents</h2><p>Verify Nutanix OS is configured to use syncookies. <br />
+<br />
+1. For AOS, Prism Central, and Files, verify the saved value of TCP syncookies using the following command.<br />
+<br />
+$ sudo grep -i net.ipv4.tcp_syncookies /etc/sysctl.conf /etc/sysctl.d/* | grep -v '#' <br />
+/etc/sysctl.d/99-salt.conf:net.ipv4.tcp_syncookies = 1<br />
+<br />
+2. Verify AHV is configured to use syncookies using the following command.<br />
+<br />
+$ sysctl net.ipv4.tcp_syncookies <br />
+net.ipv4.tcp_syncookies = 1 <br />
+<br />
+$ sudo grep -i net.ipv4.tcp_syncookies /etc/sysctl.conf /etc/sysctl.d/* | grep -v '#' <br />
+<br />
+If the value of syncookies is not set to &quot;1&quot;, this is a finding.</p><h2>Vulnerability Number</h2><p>V-279625</p><h2>Documentable</h2><p>False</p><h2>Rule Version</h2><p>NXAC-OS-000198</p><h2>Severity Override Guidance</h2><p>Verify Nutanix OS is configured to use syncookies. <br />
+<br />
+1. For AOS, Prism Central, and Files, verify the saved value of TCP syncookies using the following command.<br />
+<br />
+$ sudo grep -i net.ipv4.tcp_syncookies /etc/sysctl.conf /etc/sysctl.d/* | grep -v '#' <br />
+/etc/sysctl.d/99-salt.conf:net.ipv4.tcp_syncookies = 1<br />
+<br />
+2. Verify AHV is configured to use syncookies using the following command.<br />
+<br />
+$ sysctl net.ipv4.tcp_syncookies <br />
+net.ipv4.tcp_syncookies = 1 <br />
+<br />
+$ sudo grep -i net.ipv4.tcp_syncookies /etc/sysctl.conf /etc/sysctl.d/* | grep -v '#' <br />
+<br />
+If the value of syncookies is not set to &quot;1&quot;, this is a finding.</p><h2>Check Content Reference</h2><p>M</p><h2>Target Key</h2><p>5730</p></body></html>

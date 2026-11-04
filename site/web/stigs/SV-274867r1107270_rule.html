@@ -1,0 +1,63 @@
+<!doctype html><html lang="en"><head><meta charset="utf-8"><title>STIGQter: STIG Check Details: SV-274867r1107270_rule: Ubuntu 22.04 LTS must ensure SSSD performs certificate path validation, including revocation checking, against a trusted anchor for PKI-based authentication.</title><link rel="icon" type="image/svg+xml" href="STIGQter.svg" /><script async src="https://www.googletagmanager.com/gtag/js?id=UA-31381839-2"></script><script src="include.js"></script><script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-4110907817782130" crossorigin="anonymous"></script></head><body><div><img src="STIGQter.svg" alt="STIGQter" style="height:1em;" /> <a href="https://www.stigqter.com/">STIGQter</a>: <a href="main.html">STIG Summary</a>: <a href="U_CAN_Ubuntu_22-04_LTS_STIG_V2R9_Manual-xccdf.html">Canonical Ubuntu 22.04 LTS Security Technical Implementation Guide Version: 2 Release: 9 Benchmark Date: 01 Jul 2026</a>:</div> <h1>Ubuntu 22.04 LTS must ensure SSSD performs certificate path validation, including revocation checking, against a trusted anchor for PKI-based authentication.</h1><h2>DISA Rule</h2><p>SV-274867r1107270_rule</p><h2>Vulnerability Number</h2><p>V-274867</p><h2>Group Title</h2><p>SRG-OS-000396-GPOS-00176</p><h2>Rule Version</h2><p>UBTU-22-254020</p><h2>Severity</h2><p>CAT II</p><h2>CCI(s)</h2><ul><li>CCI-000185 - For public key-based authentication, validate certificates by constructing and verifying a certification path to an accepted trust anchor including checking certificate status information.</li><li>CCI-004909 - Include only approved trust anchors in trust stores or certificate stores managed by the organization.</li></ul><h2>Weight</h2><p>10</p><h2>Fix Recommendation</h2><p>Configure Ubuntu 22.04 LTS, for PKI-based authentication, to validate certificates by constructing a certification path to an accepted trust anchor. <br />
+ <br />
+Add or update the /etc/sssd/sssd.conf so that the following entries are in the correct sections of the file: <br />
+ <br />
+$ sudo vi /etc/sssd/sssd.conf<br />
+<br />
+[sssd]<br />
+services = nss,pam,ssh<br />
+config_file_version = 2<br />
+<br />
+[pam]<br />
+pam_cert_auth = True<br />
+<br />
+[domain/example.com]<br />
+ldap_user_certificate = usercertificate;binary<br />
+certificate_verification = ca_cert,ocsp<br />
+ca_cert = /etc/ssl/certs/ca-certificates.crt</p><h2>Check Contents</h2><p>Verify Ubuntu 22.04 LTS, for PKI-based authentication, has valid certificates by constructing a certification path to an accepted trust anchor. <br />
+<br />
+Verify the pam service is listed under [sssd] with the following command:<br />
+<br />
+$ sudo grep -A 1 '^\[sssd\]' /etc/sssd/sssd.conf<br />
+[sssd]<br />
+services = nss,pam,ssh<br />
+<br />
+If &quot;pam&quot; is not listed in services, this is a finding.<br />
+<br />
+Verify the pam service is set to use pam for smart card authentication in the [pam] section of /etc/sssd/sssd.conf with the following command:<br />
+<br />
+$ sudo grep -A 1 '^\[pam]' /etc/sssd/sssd.conf<br />
+[pam]<br />
+pam_cert_auth = True<br />
+<br />
+If &quot;pam_cert_auth = True&quot; is not returned, this is a finding.<br />
+<br />
+Verify &quot;ca&quot; is enabled in &quot;certificate_verification&quot; with the following command: <br />
+  <br />
+$ sudo grep certificate_verification /etc/sssd/sssd.conf<br />
+certificate_verification = ca_cert,ocsp<br />
+ <br />
+If &quot;certificate_verification&quot; is not set to &quot;ca&quot; or the line is commented out, this is a finding.</p><h2>Vulnerability Number</h2><p>V-274867</p><h2>Documentable</h2><p>False</p><h2>Rule Version</h2><p>UBTU-22-254020</p><h2>Severity Override Guidance</h2><p>Verify Ubuntu 22.04 LTS, for PKI-based authentication, has valid certificates by constructing a certification path to an accepted trust anchor. <br />
+<br />
+Verify the pam service is listed under [sssd] with the following command:<br />
+<br />
+$ sudo grep -A 1 '^\[sssd\]' /etc/sssd/sssd.conf<br />
+[sssd]<br />
+services = nss,pam,ssh<br />
+<br />
+If &quot;pam&quot; is not listed in services, this is a finding.<br />
+<br />
+Verify the pam service is set to use pam for smart card authentication in the [pam] section of /etc/sssd/sssd.conf with the following command:<br />
+<br />
+$ sudo grep -A 1 '^\[pam]' /etc/sssd/sssd.conf<br />
+[pam]<br />
+pam_cert_auth = True<br />
+<br />
+If &quot;pam_cert_auth = True&quot; is not returned, this is a finding.<br />
+<br />
+Verify &quot;ca&quot; is enabled in &quot;certificate_verification&quot; with the following command: <br />
+  <br />
+$ sudo grep certificate_verification /etc/sssd/sssd.conf<br />
+certificate_verification = ca_cert,ocsp<br />
+ <br />
+If &quot;certificate_verification&quot; is not set to &quot;ca&quot; or the line is commented out, this is a finding.</p><h2>Check Content Reference</h2><p>M</p><h2>Target Key</h2><p>5594</p></body></html>

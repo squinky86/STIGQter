@@ -1,0 +1,46 @@
+<!doctype html><html lang="en"><head><meta charset="utf-8"><title>STIGQter: STIG Check Details: SV-273573r1111031_rule: The RUCKUS ICX BGP router must be configured to reject outbound route advertisements for any prefixes that do not belong to any customer or the local autonomous system (AS).</title><link rel="icon" type="image/svg+xml" href="STIGQter.svg" /><script async src="https://www.googletagmanager.com/gtag/js?id=UA-31381839-2"></script><script src="include.js"></script><script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-4110907817782130" crossorigin="anonymous"></script></head><body><div><img src="STIGQter.svg" alt="STIGQter" style="height:1em;" /> <a href="https://www.stigqter.com/">STIGQter</a>: <a href="main.html">STIG Summary</a>: <a href="U_RUCKUS_ICX_RTR_STIG_V1R1_Manual-xccdf.html">RUCKUS ICX Router Security Technical Implementation Guide Version: 1 Release: 1 Benchmark Date: 27 May 2025</a>:</div> <h1>The RUCKUS ICX BGP router must be configured to reject outbound route advertisements for any prefixes that do not belong to any customer or the local autonomous system (AS).</h1><h2>DISA Rule</h2><p>SV-273573r1111031_rule</p><h2>Vulnerability Number</h2><p>V-273573</p><h2>Group Title</h2><p>SRG-NET-000018-RTR-000005</p><h2>Rule Version</h2><p>RCKS-RTR-000050</p><h2>Severity</h2><p>CAT II</p><h2>CCI(s)</h2><ul><li>CCI-001368 - Enforce approved authorizations for controlling the flow of information within the system based on organization-defined information flow control policies.</li></ul><h2>Weight</h2><p>10</p><h2>Fix Recommendation</h2><p>Configure a prefix-list representing prefixes that belong to the local-AS and apply them to BGP neighbors similar to what is shown below:<br />
+<br />
+ip prefix-list mylist seq 10 permit x.1.1.0/24<br />
+ip prefix-list mylist seq 10 permit x.1.2.0/24<br />
+ip prefix-list mylist seq 15 deny 0.0.0.0/0 ge 8<br />
+<br />
+router bgp<br />
+ local-as 1000<br />
+ neighbor x.x.x.x remote-as 1001<br />
+ neighbor x.x.x.x prefix-list local-AS out</p><h2>Check Contents</h2><p>Review the router configuration to verify there is a filter defined to only advertise routes for prefixes that belong to any customers or the local AS.<br />
+<br />
+This requirement is not applicable for the DODIN Backbone. <br />
+<br />
+1. Verify a prefix-list is configured for routes belonging to the local AS.<br />
+ICX# show ip prefix-lists<br />
+ip prefix-list local-AS: 2 entries<br />
+     seq 5 permit x.1.1.0/24<br />
+     seq 10 permit x.1.2.0/24<br />
+<br />
+2. Verify the prefix-list is applied to outbound routes to neighbors. <br />
+ICX# show ip bgp config <br />
+Current BGP configuration:<br />
+router bgp<br />
+ local-as 1000<br />
+ neighbor x.x.x.x remote-as 1001<br />
+ neighbor x.x.x.x prefix-list local-AS out <br />
+<br />
+If the router does not filter out prefix advertisements that do not belong on the local AS, this is a finding.</p><h2>Vulnerability Number</h2><p>V-273573</p><h2>Documentable</h2><p>False</p><h2>Rule Version</h2><p>RCKS-RTR-000050</p><h2>Severity Override Guidance</h2><p>Review the router configuration to verify there is a filter defined to only advertise routes for prefixes that belong to any customers or the local AS.<br />
+<br />
+This requirement is not applicable for the DODIN Backbone. <br />
+<br />
+1. Verify a prefix-list is configured for routes belonging to the local AS.<br />
+ICX# show ip prefix-lists<br />
+ip prefix-list local-AS: 2 entries<br />
+     seq 5 permit x.1.1.0/24<br />
+     seq 10 permit x.1.2.0/24<br />
+<br />
+2. Verify the prefix-list is applied to outbound routes to neighbors. <br />
+ICX# show ip bgp config <br />
+Current BGP configuration:<br />
+router bgp<br />
+ local-as 1000<br />
+ neighbor x.x.x.x remote-as 1001<br />
+ neighbor x.x.x.x prefix-list local-AS out <br />
+<br />
+If the router does not filter out prefix advertisements that do not belong on the local AS, this is a finding.</p><h2>Check Content Reference</h2><p>M</p><h2>Target Key</h2><p>5696</p></body></html>

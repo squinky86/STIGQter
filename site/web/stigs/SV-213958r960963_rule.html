@@ -1,0 +1,54 @@
+<!doctype html><html lang="en"><head><meta charset="utf-8"><title>STIGQter: STIG Check Details: SV-213958r960963_rule: Access to CLR code must be disabled or restricted, unless specifically required and approved.</title><link rel="icon" type="image/svg+xml" href="STIGQter.svg" /><script async src="https://www.googletagmanager.com/gtag/js?id=UA-31381839-2"></script><script src="include.js"></script><script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-4110907817782130" crossorigin="anonymous"></script></head><body><div><img src="STIGQter.svg" alt="STIGQter" style="height:1em;" /> <a href="https://www.stigqter.com/">STIGQter</a>: <a href="main.html">STIG Summary</a>: <a href="U_MS_SQL_Server_2016_Instance_STIG_V3R6_Manual-xccdf.html">MS SQL Server 2016 Instance Security Technical Implementation Guide Version: 3 Release: 6 Benchmark Date: 05 Jan 2026</a>:</div> <h1>Access to CLR code must be disabled or restricted, unless specifically required and approved.</h1><h2>DISA Rule</h2><p>SV-213958r960963_rule</p><h2>Vulnerability Number</h2><p>V-213958</p><h2>Group Title</h2><p>SRG-APP-000141-DB-000093</p><h2>Rule Version</h2><p>SQL6-D0-007300</p><h2>Severity</h2><p>CAT II</p><h2>CCI(s)</h2><ul><li>CCI-000381 - Configure the system to provide only organization-defined mission essential capabilities.</li></ul><h2>Weight</h2><p>10</p><h2>Fix Recommendation</h2><p>Disable use of or remove any CLR code that is not authorized. <br />
+ <br />
+To disable the use of CLR, from the query prompt:  <br />
+ <br />
+sp_configure 'show advanced options', 1; <br />
+GO <br />
+RECONFIGURE; <br />
+GO <br />
+sp_configure 'clr enabled', 0; <br />
+GO <br />
+RECONFIGURE; <br />
+GO <br />
+ <br />
+For any approved CLR code with Unsafe or External permissions, use the ALTER ASSEMBLY to change the Permission set for the Assembly and ensure a certificate is configured.</p><h2>Check Contents</h2><p>The common language runtime (CLR) component of the .NET Framework for Microsoft Windows in SQL Server allows you to write stored procedures, triggers, user-defined types, user-defined functions, user-defined aggregates, and streaming table-valued functions, using any .NET Framework language, including Microsoft Visual Basic .NET and Microsoft Visual C#. CLR packing assemblies can access resources protected by .NET Code Access Security when it runs managed code. Specifying UNSAFE enables the code in the assembly complete freedom to perform operations in the SQL Server process space that can potentially compromise the robustness of SQL Server. UNSAFE assemblies can also potentially subvert the security system of either SQL Server or the common language runtime.  <br />
+<br />
+To determine if CLR is enabled, execute the following commands:  <br />
+<br />
+EXEC SP_CONFIGURE 'show advanced options', '1';  <br />
+RECONFIGURE WITH OVERRIDE;  <br />
+EXEC SP_CONFIGURE 'clr enabled';  <br />
+<br />
+If the value of &quot;config_value&quot; is &quot;0&quot;, this is not a finding.  <br />
+<br />
+If the value of &quot;config_value&quot; is &quot;1&quot;, review the system documentation to determine whether the use of CLR code is approved. If it is not approved, this is a finding. <br />
+<br />
+If CLR code is approved, check the database for UNSAFE assembly permission using the following script: <br />
+<br />
+USE [master]<br />
+SELECT *  <br />
+FROM sys.assemblies <br />
+WHERE permission_set_desc != 'SAFE' <br />
+AND is_user_defined = 1;<br />
+<br />
+If any records are returned, review the system documentation to determine if the use of UNSAFE assemblies is approved. If it is not approved, this is a finding.</p><h2>Vulnerability Number</h2><p>V-213958</p><h2>Documentable</h2><p>False</p><h2>Rule Version</h2><p>SQL6-D0-007300</p><h2>Severity Override Guidance</h2><p>The common language runtime (CLR) component of the .NET Framework for Microsoft Windows in SQL Server allows you to write stored procedures, triggers, user-defined types, user-defined functions, user-defined aggregates, and streaming table-valued functions, using any .NET Framework language, including Microsoft Visual Basic .NET and Microsoft Visual C#. CLR packing assemblies can access resources protected by .NET Code Access Security when it runs managed code. Specifying UNSAFE enables the code in the assembly complete freedom to perform operations in the SQL Server process space that can potentially compromise the robustness of SQL Server. UNSAFE assemblies can also potentially subvert the security system of either SQL Server or the common language runtime.  <br />
+<br />
+To determine if CLR is enabled, execute the following commands:  <br />
+<br />
+EXEC SP_CONFIGURE 'show advanced options', '1';  <br />
+RECONFIGURE WITH OVERRIDE;  <br />
+EXEC SP_CONFIGURE 'clr enabled';  <br />
+<br />
+If the value of &quot;config_value&quot; is &quot;0&quot;, this is not a finding.  <br />
+<br />
+If the value of &quot;config_value&quot; is &quot;1&quot;, review the system documentation to determine whether the use of CLR code is approved. If it is not approved, this is a finding. <br />
+<br />
+If CLR code is approved, check the database for UNSAFE assembly permission using the following script: <br />
+<br />
+USE [master]<br />
+SELECT *  <br />
+FROM sys.assemblies <br />
+WHERE permission_set_desc != 'SAFE' <br />
+AND is_user_defined = 1;<br />
+<br />
+If any records are returned, review the system documentation to determine if the use of UNSAFE assemblies is approved. If it is not approved, this is a finding.</p><h2>Check Content Reference</h2><p>M</p><h2>Target Key</h2><p>3993</p></body></html>

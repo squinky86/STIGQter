@@ -1,0 +1,41 @@
+<!doctype html><html lang="en"><head><meta charset="utf-8"><title>STIGQter: STIG Check Details: SV-221115r999724_rule: The MPLS switch with RSVP-TE enabled must be configured with message pacing to adjust maximum burst and maximum number of RSVP messages to an output queue based on the link speed and input queue size of adjacent core switches.</title><link rel="icon" type="image/svg+xml" href="STIGQter.svg" /><script async src="https://www.googletagmanager.com/gtag/js?id=UA-31381839-2"></script><script src="include.js"></script><script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-4110907817782130" crossorigin="anonymous"></script></head><body><div><img src="STIGQter.svg" alt="STIGQter" style="height:1em;" /> <a href="https://www.stigqter.com/">STIGQter</a>: <a href="main.html">STIG Summary</a>: <a href="U_Cisco_NX-OS_Switch_RTR_STIG_V3R4_Manual-xccdf.html">Cisco NX OS Switch RTR Security Technical Implementation Guide Version: 3 Release: 4 Benchmark Date: 01 Apr 2026</a>:</div> <h1>The MPLS switch with RSVP-TE enabled must be configured with message pacing to adjust maximum burst and maximum number of RSVP messages to an output queue based on the link speed and input queue size of adjacent core switches.</h1><h2>DISA Rule</h2><p>SV-221115r999724_rule</p><h2>Vulnerability Number</h2><p>V-221115</p><h2>Group Title</h2><p>SRG-NET-000193-RTR-000001</p><h2>Rule Version</h2><p>CISC-RT-000610</p><h2>Severity</h2><p>CAT III</p><h2>CCI(s)</h2><ul><li>CCI-001095 - Manage capacity, bandwidth, or other redundancy to limit the effects of information flooding types of denial of service attacks.</li></ul><h2>Weight</h2><p>10</p><h2>Fix Recommendation</h2><p>Configure the switch to rate limit RSVP messages per interface as shown in the example below. Configure the MPLS switch to synchronize IGP and LDP, minimizing packet loss when an IGP adjacency is established prior to LDP peers completing label exchange.<br />
+<br />
+OSPF Example<br />
+<br />
+SW1(config)# router ospf 1<br />
+SW1(config-switch)# mpls ldp sync<br />
+<br />
+IS-IS Example<br />
+<br />
+SW1(config)# router isis<br />
+SW1(config-switch)# mpls ldp sync.<br />
+<br />
+SW1(config)# ip rsvp<br />
+SW1(config-ip-rsvp)# signaling refresh reduction <br />
+SW1(config-ip-rsvp)# end</p><h2>Check Contents</h2><p>Review the switch configuration to determine if refresh reduction is enabled.<br />
+<br />
+Step 1: Determine if MPLS TE is enabled on any interface as shown in the example below: <br />
+<br />
+interface Ethernet4/47<br />
+ mpls traffic-eng tunnels<br />
+ mpls ip<br />
+<br />
+Step 2: If MPLS TE is enabled, verify that message pacing is enabled.<br />
+<br />
+ip rsvp <br />
+ signaling refresh reduction bundle-max-size<br />
+<br />
+If the switch with RSVP-TE configured does not have refresh reduction features enabled, this is a finding.</p><h2>Vulnerability Number</h2><p>V-221115</p><h2>Documentable</h2><p>False</p><h2>Rule Version</h2><p>CISC-RT-000610</p><h2>Severity Override Guidance</h2><p>Review the switch configuration to determine if refresh reduction is enabled.<br />
+<br />
+Step 1: Determine if MPLS TE is enabled on any interface as shown in the example below: <br />
+<br />
+interface Ethernet4/47<br />
+ mpls traffic-eng tunnels<br />
+ mpls ip<br />
+<br />
+Step 2: If MPLS TE is enabled, verify that message pacing is enabled.<br />
+<br />
+ip rsvp <br />
+ signaling refresh reduction bundle-max-size<br />
+<br />
+If the switch with RSVP-TE configured does not have refresh reduction features enabled, this is a finding.</p><h2>Check Content Reference</h2><p>M</p><h2>Target Key</h2><p>4075</p></body></html>

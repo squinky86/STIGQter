@@ -1,0 +1,54 @@
+<!doctype html><html lang="en"><head><meta charset="utf-8"><title>STIGQter: STIG Check Details: SV-256898r1107643_rule: Automation Controller must implement cryptography mechanisms to protect the integrity of information.</title><link rel="icon" type="image/svg+xml" href="STIGQter.svg" /><script async src="https://www.googletagmanager.com/gtag/js?id=UA-31381839-2"></script><script src="include.js"></script><script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-4110907817782130" crossorigin="anonymous"></script></head><body><div><img src="STIGQter.svg" alt="STIGQter" style="height:1em;" /> <a href="https://www.stigqter.com/">STIGQter</a>: <a href="main.html">STIG Summary</a>: <a href="U_RH_Ansible_Automation_Controller_AS_STIG_V2R3_Manual-xccdf.html">Red Hat Ansible Automation Controller Application Server Security Technical Implementation Guide Version: 2 Release: 4 Benchmark Date: 05 Jan 2026</a>:</div> <h1>Automation Controller must implement cryptography mechanisms to protect the integrity of information.</h1><h2>DISA Rule</h2><p>SV-256898r1107643_rule</p><h2>Vulnerability Number</h2><p>V-256898</p><h2>Group Title</h2><p>SRG-APP-000015-AS-000010</p><h2>Rule Version</h2><p>APAS-AT-000012</p><h2>Severity</h2><p>CAT I</p><h2>CCI(s)</h2><ul><li>CCI-000803 - Implement mechanisms for authentication to a cryptographic module that meet the requirements of applicable laws, Executive Orders, directives, policies, regulations, standards, and guidance for such authentication.</li><li>CCI-001188 - Generate a unique session identifier for each session with organization-defined randomness requirements.</li><li>CCI-001199 - Protects the confidentiality and/or integrity of organization-defined information at rest.</li><li>CCI-001453 - Implement cryptographic mechanisms to protect the integrity of remote access sessions.</li><li>CCI-002418 - Protect the confidentiality and/or integrity of transmitted information.</li><li>CCI-002421 - Implement cryptographic mechanisms to prevent unauthorized disclosure of information and/or detect changes to information during transmission.</li><li>CCI-002450 - Implement organization-defined types of cryptography for each specified cryptography use.</li><li>CCI-002475 - Implement cryptographic mechanisms to prevent unauthorized modification of organization-defined information when at rest on organization-defined system components.</li><li>CCI-002476 - Implement cryptographic mechanisms to prevent unauthorized disclosure of organization-defined information at rest on organization-defined system components.</li></ul><h2>Weight</h2><p>10</p><h2>Fix Recommendation</h2><p>As an administrator for each Automation Controller host, configure the operating system to be FIPS-enabled with the following command:<br />
+<br />
+sudo fips-mode-setup --enable<br />
+<br />
+Reboot each system.<br />
+<br />
+Configure Ansible Automation Platform installation location to reside on a LUKS encrypted volume:<br />
+<br />
+Add a LUKS volume using default or other encrypted volume in accordance with organizationally defined policy. The '/var/lib/awx' filesystem must reside on this volume.<br />
+<br />
+Reinstall the Ansible Automation Platform. <br />
+<br />
+Note: The phrasing &quot;Reinstall the Ansible Automation Platform.&quot; is applicable here; the installer cannot just be rerun on the same system.<br />
+<br />
+Reinstall the operating system on the Automation Controller server with FIPS mode enabled at install time by following the guidance located here:<br />
+https://access.redhat.com/solutions/5416081<br />
+OR <br />
+Enable FIPS mode without reinstalling the operating system by following the guidance located here:<br />
+https://access.redhat.com/solutions/137833<br />
+<br />
+If the operating system was reinstalled, reinstall Automation Controller by following the guidance located here:<br />
+https://docs.ansible.com/ansible-tower/latest/html/installandreference/index.html</p><h2>Check Contents</h2><p>As a system administrator for each Automation Controller host, check if the operating system is FIPS-enabled:<br />
+<br />
+sysctl crypto.fips_enabled<br />
+<br />
+If &quot;fips_enabled&quot; is not &quot;1&quot;, this is a finding.<br />
+<br />
+Verify the installed volume for Automation Controller is on a LUKS encrypted volume command:<br />
+<br />
+AAPROOT='/var/lib/awx' &amp;&amp; cryptsetup status `df -T ${AAPROOT} | cut -d ' ' -f 1 | tail -n 1 ` | grep type | grep -i luks || echo &quot;FAILED&quot;<br />
+<br />
+If &quot;FAILED&quot; is displayed, this is a finding.<br />
+<br />
+Verify this LUKS encrypted volume is using FIPS-compliant cryptographic functions command:<br />
+<br />
+allowed_FIPS_ciphers=('aes.*\(256\|384\|512\)') ; echo &quot;${allowed_FIPS_ciphers[*]}&quot; | tr ' ' '\n' &gt;tempfile &amp;&amp; cryptsetup status `df -T ${AAPROOT} | cut -d ' ' -f 1 | tail -n 1 ` | grep -e '\(cipher\|keysize\)' | awk '{print $2}' | paste -s -d '-' | grep -f tempfile 1&gt;/dev/null || echo &quot;FAILED&quot; &amp;&amp; rm -f tempfile<br />
+<br />
+If &quot;FAILED&quot; is displayed, this is a finding.</p><h2>Vulnerability Number</h2><p>V-256898</p><h2>Documentable</h2><p>False</p><h2>Rule Version</h2><p>APAS-AT-000012</p><h2>Severity Override Guidance</h2><p>As a system administrator for each Automation Controller host, check if the operating system is FIPS-enabled:<br />
+<br />
+sysctl crypto.fips_enabled<br />
+<br />
+If &quot;fips_enabled&quot; is not &quot;1&quot;, this is a finding.<br />
+<br />
+Verify the installed volume for Automation Controller is on a LUKS encrypted volume command:<br />
+<br />
+AAPROOT='/var/lib/awx' &amp;&amp; cryptsetup status `df -T ${AAPROOT} | cut -d ' ' -f 1 | tail -n 1 ` | grep type | grep -i luks || echo &quot;FAILED&quot;<br />
+<br />
+If &quot;FAILED&quot; is displayed, this is a finding.<br />
+<br />
+Verify this LUKS encrypted volume is using FIPS-compliant cryptographic functions command:<br />
+<br />
+allowed_FIPS_ciphers=('aes.*\(256\|384\|512\)') ; echo &quot;${allowed_FIPS_ciphers[*]}&quot; | tr ' ' '\n' &gt;tempfile &amp;&amp; cryptsetup status `df -T ${AAPROOT} | cut -d ' ' -f 1 | tail -n 1 ` | grep -e '\(cipher\|keysize\)' | awk '{print $2}' | paste -s -d '-' | grep -f tempfile 1&gt;/dev/null || echo &quot;FAILED&quot; &amp;&amp; rm -f tempfile<br />
+<br />
+If &quot;FAILED&quot; is displayed, this is a finding.</p><h2>Check Content Reference</h2><p>M</p><h2>Target Key</h2><p>5534</p></body></html>

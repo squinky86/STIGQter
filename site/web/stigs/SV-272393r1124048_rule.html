@@ -1,0 +1,71 @@
+<!doctype html><html lang="en"><head><meta charset="utf-8"><title>STIGQter: STIG Check Details: SV-272393r1124048_rule: The secondary name servers in a BIND 9.x implementation must be configured to initiate zone update notifications to other authoritative zone name servers.</title><link rel="icon" type="image/svg+xml" href="STIGQter.svg" /><script async src="https://www.googletagmanager.com/gtag/js?id=UA-31381839-2"></script><script src="include.js"></script><script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-4110907817782130" crossorigin="anonymous"></script></head><body><div><img src="STIGQter.svg" alt="STIGQter" style="height:1em;" /> <a href="https://www.stigqter.com/">STIGQter</a>: <a href="main.html">STIG Summary</a>: <a href="U_BIND_9-x_STIG_V3R3_Manual-xccdf.html">BIND 9.x Security Technical Implementation Guide Version: 3 Release: 3 Benchmark Date: 01 Jul 2026</a>:</div> <h1>The secondary name servers in a BIND 9.x implementation must be configured to initiate zone update notifications to other authoritative zone name servers.</h1><h2>DISA Rule</h2><p>SV-272393r1124048_rule</p><h2>Vulnerability Number</h2><p>V-272393</p><h2>Group Title</h2><p>SRG-APP-000516-DNS-000088</p><h2>Rule Version</h2><p>BIND-9X-001370</p><h2>Severity</h2><p>CAT II</p><h2>CCI(s)</h2><ul><li>CCI-000366 - Implement the security configuration settings.</li></ul><h2>Weight</h2><p>10</p><h2>Fix Recommendation</h2><p>Edit the &quot;named.conf&quot; file.<br />
+<br />
+Configure the &quot;notify&quot; sub-statement in the &quot;options&quot; statement block to &quot;no&quot;:<br />
+<br />
+options { <br />
+notify no;<br />
+};<br />
+<br />
+Configure the &quot;notify explicit&quot; and &quot;also-notify&quot; sub-statements in the zone statement block to limit zone transfer notifications to authorized secondary name servers:<br />
+<br />
+zone example.com {<br />
+notify explicit;<br />
+also-notify { &lt;ip_address&gt;; | &lt;address_match_list&gt;; };<br />
+<br />
+Restart the BIND 9.x process.</p><h2>Check Contents</h2><p>If this is a primary name server, this is not applicable.<br />
+<br />
+On a secondary name server, verify that the global notify is disabled. The global entry for the name server is under the &quot;Options&quot; section, and notify must be disabled at this section.<br />
+<br />
+Inspect the &quot;named.conf&quot; file for the following:<br />
+<br />
+options {<br />
+notify no;<br />
+};<br />
+<br />
+If the &quot;notify&quot; statement is missing, this is a finding.<br />
+<br />
+If the &quot;notify&quot; statement is set to &quot;yes&quot;, this is a finding.<br />
+<br />
+Verify that zones for which the secondary server is authoritative are configured to notify other authorized secondary name servers when a zone file update has been received from the primary name server for the zone. Each zone has its own zone section.<br />
+<br />
+Inspect the &quot;named.conf&quot; file for the following:<br />
+<br />
+zone example.com {<br />
+notify explicit;<br />
+also-notify { &lt;ip_address&gt;; | &lt;address_match_list&gt;; };<br />
+<br />
+If an &quot;address match list&quot; is used, verify that each IP address listed is an authorized secondary name server for that zone.<br />
+<br />
+If the &quot;notify explicit&quot; statement is missing, this is a finding.<br />
+<br />
+If the &quot;also-notify&quot; statement is missing, this is a finding.<br />
+<br />
+If the &quot;also-notify&quot; statement is configured to notify name servers that are not authorized for that zone, this is a finding.</p><h2>Vulnerability Number</h2><p>V-272393</p><h2>Documentable</h2><p>False</p><h2>Rule Version</h2><p>BIND-9X-001370</p><h2>Severity Override Guidance</h2><p>If this is a primary name server, this is not applicable.<br />
+<br />
+On a secondary name server, verify that the global notify is disabled. The global entry for the name server is under the &quot;Options&quot; section, and notify must be disabled at this section.<br />
+<br />
+Inspect the &quot;named.conf&quot; file for the following:<br />
+<br />
+options {<br />
+notify no;<br />
+};<br />
+<br />
+If the &quot;notify&quot; statement is missing, this is a finding.<br />
+<br />
+If the &quot;notify&quot; statement is set to &quot;yes&quot;, this is a finding.<br />
+<br />
+Verify that zones for which the secondary server is authoritative are configured to notify other authorized secondary name servers when a zone file update has been received from the primary name server for the zone. Each zone has its own zone section.<br />
+<br />
+Inspect the &quot;named.conf&quot; file for the following:<br />
+<br />
+zone example.com {<br />
+notify explicit;<br />
+also-notify { &lt;ip_address&gt;; | &lt;address_match_list&gt;; };<br />
+<br />
+If an &quot;address match list&quot; is used, verify that each IP address listed is an authorized secondary name server for that zone.<br />
+<br />
+If the &quot;notify explicit&quot; statement is missing, this is a finding.<br />
+<br />
+If the &quot;also-notify&quot; statement is missing, this is a finding.<br />
+<br />
+If the &quot;also-notify&quot; statement is configured to notify name servers that are not authorized for that zone, this is a finding.</p><h2>Check Content Reference</h2><p>M</p><h2>Target Key</h2><p>5687</p></body></html>

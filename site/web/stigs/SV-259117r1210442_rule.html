@@ -1,0 +1,558 @@
+<!doctype html><html lang="en"><head><meta charset="utf-8"><title>STIGQter: STIG Check Details: SV-259117r1210442_rule: The vCenter UI service must off-load log records onto a different system or media from the system being logged.</title><link rel="icon" type="image/svg+xml" href="STIGQter.svg" /><script async src="https://www.googletagmanager.com/gtag/js?id=UA-31381839-2"></script><script src="include.js"></script><script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-4110907817782130" crossorigin="anonymous"></script></head><body><div><img src="STIGQter.svg" alt="STIGQter" style="height:1em;" /> <a href="https://www.stigqter.com/">STIGQter</a>: <a href="main.html">STIG Summary</a>: <a href="U_VMW_vSphere_8-0_VCSA_UI_STIG_V2R2_Manual-xccdf.html">VMware vSphere 8.0 vCenter Appliance User Interface (UI) Security Technical Implementation Guide Version: 2 Release: 2 Benchmark Date: 01 Jul 2026</a>:</div> <h1>The vCenter UI service must off-load log records onto a different system or media from the system being logged.</h1><h2>DISA Rule</h2><p>SV-259117r1210442_rule</p><h2>Vulnerability Number</h2><p>V-259117</p><h2>Group Title</h2><p>SRG-APP-000358-AS-000064</p><h2>Rule Version</h2><p>VCUI-80-000081</p><h2>Severity</h2><p>CAT II</p><h2>CCI(s)</h2><ul><li>CCI-001851 - Transfer audit logs per organization-defined frequency to a different system, system component, or media than the system or system component conducting the logging.</li></ul><h2>Weight</h2><p>10</p><h2>Fix Recommendation</h2><p>Navigate to and open:<br />
+<br />
+vmware-services-vsphere-ui.conf<br />
+<br />
+Create the file if it does not exist.<br />
+<br />
+Set the contents of the file as follows:<br />
+<br />
+#vsphere-ui main log<br />
+input(type=&quot;imfile&quot;<br />
+      File=&quot;/var/log/vmware/vsphere-ui/logs/vsphere_client_virgo.log&quot;<br />
+      Tag=&quot;ui-main&quot;<br />
+      Severity=&quot;info&quot;<br />
+      Facility=&quot;local0&quot;<br />
+      deleteStateOnFileDelete=&quot;on&quot;<br />
+      reopenOnTruncate=&quot;on&quot;)<br />
+#vsphere-ui change log<br />
+input(type=&quot;imfile&quot;<br />
+      File=&quot;/var/log/vmware/vsphere-ui/logs/changelog.log&quot;<br />
+      Tag=&quot;ui-changelog&quot;<br />
+      Severity=&quot;info&quot;<br />
+      Facility=&quot;local0&quot;<br />
+      deleteStateOnFileDelete=&quot;on&quot;<br />
+      reopenOnTruncate=&quot;on&quot;)<br />
+#vsphere-ui dataservice log<br />
+input(type=&quot;imfile&quot;<br />
+      File=&quot;/var/log/vmware/vsphere-ui/logs/dataservice.log&quot;<br />
+      Tag=&quot;ui-dataservice&quot;<br />
+      Severity=&quot;info&quot;<br />
+      Facility=&quot;local0&quot;<br />
+      deleteStateOnFileDelete=&quot;on&quot;<br />
+      reopenOnTruncate=&quot;on&quot;)<br />
+#vsphere-ui apigw log<br />
+input(type=&quot;imfile&quot;<br />
+      File=&quot;/var/log/vmware/vsphere-ui/logs/apigw.log&quot;<br />
+      Tag=&quot;ui-apigw&quot;<br />
+      Severity=&quot;info&quot;<br />
+      Facility=&quot;local0&quot;<br />
+      deleteStateOnFileDelete=&quot;on&quot;<br />
+      reopenOnTruncate=&quot;on&quot;)<br />
+#vsphere-ui equinox log<br />
+input(type=&quot;imfile&quot;<br />
+      File=&quot;/var/log/vmware/vsphere-ui/logs/equinox.log&quot;<br />
+      Tag=&quot;ui-equinox&quot;<br />
+      Severity=&quot;info&quot;<br />
+      Facility=&quot;local0&quot;<br />
+      deleteStateOnFileDelete=&quot;on&quot;<br />
+      reopenOnTruncate=&quot;on&quot;)<br />
+#vsphere-ui event log<br />
+input(type=&quot;imfile&quot;<br />
+      File=&quot;/var/log/vmware/vsphere-ui/logs/eventlog.log&quot;<br />
+      Tag=&quot;ui-eventlog&quot;<br />
+      Severity=&quot;info&quot;<br />
+      Facility=&quot;local0&quot;<br />
+      deleteStateOnFileDelete=&quot;on&quot;<br />
+      reopenOnTruncate=&quot;on&quot;)<br />
+#vsphere-ui op id log<br />
+input(type=&quot;imfile&quot;<br />
+      File=&quot;/var/log/vmware/vsphere-ui/logs/opId.log&quot;<br />
+      Tag=&quot;ui-opid&quot;<br />
+      Severity=&quot;info&quot;<br />
+      Facility=&quot;local0&quot;<br />
+      deleteStateOnFileDelete=&quot;on&quot;<br />
+      reopenOnTruncate=&quot;on&quot;)<br />
+#vsphere-ui performance audit log<br />
+input(type=&quot;imfile&quot;<br />
+      File=&quot;/var/log/vmware/vsphere-ui/logs/performanceAudit.log&quot;<br />
+      Tag=&quot;ui-performanceAudit&quot;<br />
+      Severity=&quot;info&quot;<br />
+      Facility=&quot;local0&quot;<br />
+      deleteStateOnFileDelete=&quot;on&quot;<br />
+      reopenOnTruncate=&quot;on&quot;)<br />
+#vsphere-ui plugin-medic log<br />
+input(type=&quot;imfile&quot;<br />
+      File=&quot;/var/log/vmware/vsphere-ui/logs/plugin-medic.log&quot;<br />
+      Tag=&quot;ui-plugin-medic&quot;<br />
+      Severity=&quot;info&quot;<br />
+      Facility=&quot;local0&quot;<br />
+      deleteStateOnFileDelete=&quot;on&quot;<br />
+      reopenOnTruncate=&quot;on&quot;)<br />
+#vsphere-ui threadmonitor log<br />
+input(type=&quot;imfile&quot;<br />
+      File=&quot;/var/log/vmware/vsphere-ui/logs/threadmonitor.log&quot;<br />
+      Tag=&quot;ui-threadmonitor&quot;<br />
+      Severity=&quot;info&quot;<br />
+      Facility=&quot;local0&quot;<br />
+      deleteStateOnFileDelete=&quot;on&quot;<br />
+      reopenOnTruncate=&quot;on&quot;)<br />
+#vsphere-ui threadpools log<br />
+input(type=&quot;imfile&quot;<br />
+      File=&quot;/var/log/vmware/vsphere-ui/logs/threadpools.log&quot;<br />
+      Tag=&quot;ui-threadpools&quot;<br />
+      Severity=&quot;info&quot;<br />
+      Facility=&quot;local0&quot;<br />
+      deleteStateOnFileDelete=&quot;on&quot;<br />
+      reopenOnTruncate=&quot;on&quot;)<br />
+#vsphere-ui vspheremessaging log<br />
+input(type=&quot;imfile&quot;<br />
+      File=&quot;/var/log/vmware/vsphere-ui/logs/vspheremessaging.log&quot;<br />
+      Tag=&quot;ui-vspheremessaging&quot;<br />
+      Severity=&quot;info&quot;<br />
+      Facility=&quot;local0&quot;<br />
+      deleteStateOnFileDelete=&quot;on&quot;<br />
+      reopenOnTruncate=&quot;on&quot;)<br />
+#vsphere-ui rpm log<br />
+input(type=&quot;imfile&quot;<br />
+      File=&quot;/var/log/vmware/vsphere-ui/logs/vsphere-ui-rpm.log&quot;<br />
+      Tag=&quot;ui-rpm&quot;<br />
+      Severity=&quot;info&quot;<br />
+      Facility=&quot;local0&quot;<br />
+      deleteStateOnFileDelete=&quot;on&quot;<br />
+      reopenOnTruncate=&quot;on&quot;)<br />
+#vsphere-ui runtime log stdout<br />
+input(type=&quot;imfile&quot;<br />
+      File=&quot;/var/log/vmware/vsphere-ui/logs/vsphere-ui-runtime.log.stdout&quot;<br />
+      Tag=&quot;ui-runtime-stdout&quot;<br />
+      Severity=&quot;info&quot;<br />
+      Facility=&quot;local0&quot;<br />
+      deleteStateOnFileDelete=&quot;on&quot;<br />
+      reopenOnTruncate=&quot;on&quot;)<br />
+#vsphere-ui runtime log stderr<br />
+input(type=&quot;imfile&quot;<br />
+      File=&quot;/var/log/vmware/vsphere-ui/logs/vsphere-ui-runtime.log.stderr&quot;<br />
+      Tag=&quot;ui-runtime-stderr&quot;<br />
+      Severity=&quot;info&quot;<br />
+      Facility=&quot;local0&quot;<br />
+      deleteStateOnFileDelete=&quot;on&quot;<br />
+      reopenOnTruncate=&quot;on&quot;)<br />
+#vsphere-ui access log<br />
+input(type=&quot;imfile&quot;<br />
+      File=&quot;/var/log/vmware/vsphere-ui/logs/access/localhost_access_log.txt&quot;<br />
+      Tag=&quot;ui-access&quot;<br />
+      Severity=&quot;info&quot;<br />
+      Facility=&quot;local0&quot;<br />
+      deleteStateOnFileDelete=&quot;on&quot;<br />
+      reopenOnTruncate=&quot;on&quot;)<br />
+#vsphere-ui gc log<br />
+input(type=&quot;imfile&quot;<br />
+      File=&quot;/var/log/vmware/vsphere-ui/vsphere-ui-gc.log&quot;<br />
+      Tag=&quot;ui-gc&quot;<br />
+      Severity=&quot;info&quot;<br />
+      Facility=&quot;local0&quot;<br />
+      deleteStateOnFileDelete=&quot;on&quot;<br />
+      reopenOnTruncate=&quot;on&quot;)<br />
+#vsphere-ui firstboot log<br />
+input(type=&quot;imfile&quot;<br />
+      File=&quot;/var/log/firstboot/vsphere_ui_firstboot*&quot;<br />
+      Tag=&quot;ui-firstboot&quot;<br />
+      Severity=&quot;info&quot;<br />
+      Facility=&quot;local0&quot;<br />
+      deleteStateOnFileDelete=&quot;on&quot;<br />
+      reopenOnTruncate=&quot;on&quot;)<br />
+#vsphere-ui catalina<br />
+input(type=&quot;imfile&quot;<br />
+      File=&quot;/var/log/vmware/vsphere-ui/logs/catalina.*.log&quot;<br />
+      Tag=&quot;ui-runtime-catalina&quot;<br />
+      Severity=&quot;info&quot;<br />
+      Facility=&quot;local0&quot;<br />
+      deleteStateOnFileDelete=&quot;on&quot;<br />
+      reopenOnTruncate=&quot;on&quot;)<br />
+#vsphere-ui endpoint<br />
+input(type=&quot;imfile&quot;<br />
+      File=&quot;/var/log/vmware/vsphere-ui/logs/endpoint.log&quot;<br />
+      Tag=&quot;ui-runtime-endpoint&quot;<br />
+      Severity=&quot;info&quot;<br />
+      Facility=&quot;local0&quot;<br />
+      deleteStateOnFileDelete=&quot;on&quot;<br />
+      reopenOnTruncate=&quot;on&quot;)<br />
+#vsphere-ui localhost<br />
+input(type=&quot;imfile&quot;<br />
+      File=&quot;/var/log/vmware/vsphere-ui/logs/localhost.*.log&quot;<br />
+      Tag=&quot;ui-runtime-localhost&quot;<br />
+      Severity=&quot;info&quot;<br />
+      Facility=&quot;local0&quot;<br />
+      deleteStateOnFileDelete=&quot;on&quot;<br />
+      reopenOnTruncate=&quot;on&quot;)<br />
+#vsphere-ui vsan<br />
+input(type=&quot;imfile&quot;<br />
+      File=&quot;/var/log/vmware/vsphere-ui/logs/vsan-plugin.log&quot;<br />
+      Tag=&quot;ui-runtime-vsan&quot;<br />
+      Severity=&quot;info&quot;<br />
+      Facility=&quot;local0&quot;<br />
+      deleteStateOnFileDelete=&quot;on&quot;<br />
+      reopenOnTruncate=&quot;on&quot;)</p><h2>Check Contents</h2><p>By default, a vmware-services-vsphere-ui.conf rsyslog configuration file includes the service logs when syslog is configured on vCenter, but it must be verified.<br />
+<br />
+At the command prompt, run the following command:<br />
+<br />
+# cat /etc/vmware-syslog/vmware-services-vsphere-ui.conf<br />
+<br />
+Expected result:<br />
+<br />
+#vsphere-ui main log<br />
+input(type=&quot;imfile&quot;<br />
+      File=&quot;/var/log/vmware/vsphere-ui/logs/vsphere_client_virgo.log&quot;<br />
+      Tag=&quot;ui-main&quot;<br />
+      Severity=&quot;info&quot;<br />
+      Facility=&quot;local0&quot;<br />
+      deleteStateOnFileDelete=&quot;on&quot;<br />
+      reopenOnTruncate=&quot;on&quot;)<br />
+#vsphere-ui change log<br />
+input(type=&quot;imfile&quot;<br />
+      File=&quot;/var/log/vmware/vsphere-ui/logs/changelog.log&quot;<br />
+      Tag=&quot;ui-changelog&quot;<br />
+      Severity=&quot;info&quot;<br />
+      Facility=&quot;local0&quot;<br />
+      deleteStateOnFileDelete=&quot;on&quot;<br />
+      reopenOnTruncate=&quot;on&quot;)<br />
+#vsphere-ui dataservice log<br />
+input(type=&quot;imfile&quot;<br />
+      File=&quot;/var/log/vmware/vsphere-ui/logs/dataservice.log&quot;<br />
+      Tag=&quot;ui-dataservice&quot;<br />
+      Severity=&quot;info&quot;<br />
+      Facility=&quot;local0&quot;<br />
+      deleteStateOnFileDelete=&quot;on&quot;<br />
+      reopenOnTruncate=&quot;on&quot;)<br />
+#vsphere-ui apigw log<br />
+input(type=&quot;imfile&quot;<br />
+      File=&quot;/var/log/vmware/vsphere-ui/logs/apigw.log&quot;<br />
+      Tag=&quot;ui-apigw&quot;<br />
+      Severity=&quot;info&quot;<br />
+      Facility=&quot;local0&quot;<br />
+      deleteStateOnFileDelete=&quot;on&quot;<br />
+      reopenOnTruncate=&quot;on&quot;)<br />
+#vsphere-ui equinox log<br />
+input(type=&quot;imfile&quot;<br />
+      File=&quot;/var/log/vmware/vsphere-ui/logs/equinox.log&quot;<br />
+      Tag=&quot;ui-equinox&quot;<br />
+      Severity=&quot;info&quot;<br />
+      Facility=&quot;local0&quot;<br />
+      deleteStateOnFileDelete=&quot;on&quot;<br />
+      reopenOnTruncate=&quot;on&quot;)<br />
+#vsphere-ui event log<br />
+input(type=&quot;imfile&quot;<br />
+      File=&quot;/var/log/vmware/vsphere-ui/logs/eventlog.log&quot;<br />
+      Tag=&quot;ui-eventlog&quot;<br />
+      Severity=&quot;info&quot;<br />
+      Facility=&quot;local0&quot;<br />
+      deleteStateOnFileDelete=&quot;on&quot;<br />
+      reopenOnTruncate=&quot;on&quot;)<br />
+#vsphere-ui op id log<br />
+input(type=&quot;imfile&quot;<br />
+      File=&quot;/var/log/vmware/vsphere-ui/logs/opId.log&quot;<br />
+      Tag=&quot;ui-opid&quot;<br />
+      Severity=&quot;info&quot;<br />
+      Facility=&quot;local0&quot;<br />
+      deleteStateOnFileDelete=&quot;on&quot;<br />
+      reopenOnTruncate=&quot;on&quot;)<br />
+#vsphere-ui performance audit log<br />
+input(type=&quot;imfile&quot;<br />
+      File=&quot;/var/log/vmware/vsphere-ui/logs/performanceAudit.log&quot;<br />
+      Tag=&quot;ui-performanceAudit&quot;<br />
+      Severity=&quot;info&quot;<br />
+      Facility=&quot;local0&quot;<br />
+      deleteStateOnFileDelete=&quot;on&quot;<br />
+      reopenOnTruncate=&quot;on&quot;)<br />
+#vsphere-ui plugin-medic log<br />
+input(type=&quot;imfile&quot;<br />
+      File=&quot;/var/log/vmware/vsphere-ui/logs/plugin-medic.log&quot;<br />
+      Tag=&quot;ui-plugin-medic&quot;<br />
+      Severity=&quot;info&quot;<br />
+      Facility=&quot;local0&quot;<br />
+      deleteStateOnFileDelete=&quot;on&quot;<br />
+      reopenOnTruncate=&quot;on&quot;)<br />
+#vsphere-ui threadmonitor log<br />
+input(type=&quot;imfile&quot;<br />
+      File=&quot;/var/log/vmware/vsphere-ui/logs/threadmonitor.log&quot;<br />
+      Tag=&quot;ui-threadmonitor&quot;<br />
+      Severity=&quot;info&quot;<br />
+      Facility=&quot;local0&quot;<br />
+      deleteStateOnFileDelete=&quot;on&quot;<br />
+      reopenOnTruncate=&quot;on&quot;)<br />
+#vsphere-ui threadpools log<br />
+input(type=&quot;imfile&quot;<br />
+      File=&quot;/var/log/vmware/vsphere-ui/logs/threadpools.log&quot;<br />
+      Tag=&quot;ui-threadpools&quot;<br />
+      Severity=&quot;info&quot;<br />
+      Facility=&quot;local0&quot;<br />
+      deleteStateOnFileDelete=&quot;on&quot;<br />
+      reopenOnTruncate=&quot;on&quot;)<br />
+#vsphere-ui vspheremessaging log<br />
+input(type=&quot;imfile&quot;<br />
+      File=&quot;/var/log/vmware/vsphere-ui/logs/vspheremessaging.log&quot;<br />
+      Tag=&quot;ui-vspheremessaging&quot;<br />
+      Severity=&quot;info&quot;<br />
+      Facility=&quot;local0&quot;<br />
+      deleteStateOnFileDelete=&quot;on&quot;<br />
+      reopenOnTruncate=&quot;on&quot;)<br />
+#vsphere-ui rpm log<br />
+input(type=&quot;imfile&quot;<br />
+      File=&quot;/var/log/vmware/vsphere-ui/logs/vsphere-ui-rpm.log&quot;<br />
+      Tag=&quot;ui-rpm&quot;<br />
+      Severity=&quot;info&quot;<br />
+      Facility=&quot;local0&quot;<br />
+      deleteStateOnFileDelete=&quot;on&quot;<br />
+      reopenOnTruncate=&quot;on&quot;)<br />
+#vsphere-ui runtime log stdout<br />
+input(type=&quot;imfile&quot;<br />
+      File=&quot;/var/log/vmware/vsphere-ui/logs/vsphere-ui-runtime.log.stdout&quot;<br />
+      Tag=&quot;ui-runtime-stdout&quot;<br />
+      Severity=&quot;info&quot;<br />
+      Facility=&quot;local0&quot;<br />
+      deleteStateOnFileDelete=&quot;on&quot;<br />
+      reopenOnTruncate=&quot;on&quot;)<br />
+#vsphere-ui runtime log stderr<br />
+input(type=&quot;imfile&quot;<br />
+      File=&quot;/var/log/vmware/vsphere-ui/logs/vsphere-ui-runtime.log.stderr&quot;<br />
+      Tag=&quot;ui-runtime-stderr&quot;<br />
+      Severity=&quot;info&quot;<br />
+      Facility=&quot;local0&quot;<br />
+      deleteStateOnFileDelete=&quot;on&quot;<br />
+      reopenOnTruncate=&quot;on&quot;)<br />
+#vsphere-ui access log<br />
+input(type=&quot;imfile&quot;<br />
+      File=&quot;/var/log/vmware/vsphere-ui/logs/access/localhost_access_log.txt&quot;<br />
+      Tag=&quot;ui-access&quot;<br />
+      Severity=&quot;info&quot;<br />
+      Facility=&quot;local0&quot;<br />
+      deleteStateOnFileDelete=&quot;on&quot;<br />
+      reopenOnTruncate=&quot;on&quot;)<br />
+#vsphere-ui gc log<br />
+input(type=&quot;imfile&quot;<br />
+      File=&quot;/var/log/vmware/vsphere-ui/vsphere-ui-gc.log&quot;<br />
+      Tag=&quot;ui-gc&quot;<br />
+      Severity=&quot;info&quot;<br />
+      Facility=&quot;local0&quot;<br />
+      deleteStateOnFileDelete=&quot;on&quot;<br />
+      reopenOnTruncate=&quot;on&quot;)<br />
+#vsphere-ui firstboot log<br />
+input(type=&quot;imfile&quot;<br />
+      File=&quot;/var/log/firstboot/vsphere_ui_firstboot*&quot;<br />
+      Tag=&quot;ui-firstboot&quot;<br />
+      Severity=&quot;info&quot;<br />
+      Facility=&quot;local0&quot;<br />
+      deleteStateOnFileDelete=&quot;on&quot;<br />
+      reopenOnTruncate=&quot;on&quot;)<br />
+#vsphere-ui catalina<br />
+input(type=&quot;imfile&quot;<br />
+      File=&quot;/var/log/vmware/vsphere-ui/logs/catalina.*.log&quot;<br />
+      Tag=&quot;ui-runtime-catalina&quot;<br />
+      Severity=&quot;info&quot;<br />
+      Facility=&quot;local0&quot;<br />
+      deleteStateOnFileDelete=&quot;on&quot;<br />
+      reopenOnTruncate=&quot;on&quot;)<br />
+#vsphere-ui endpoint<br />
+input(type=&quot;imfile&quot;<br />
+      File=&quot;/var/log/vmware/vsphere-ui/logs/endpoint.log&quot;<br />
+      Tag=&quot;ui-runtime-endpoint&quot;<br />
+      Severity=&quot;info&quot;<br />
+      Facility=&quot;local0&quot;<br />
+      deleteStateOnFileDelete=&quot;on&quot;<br />
+      reopenOnTruncate=&quot;on&quot;)<br />
+#vsphere-ui localhost<br />
+input(type=&quot;imfile&quot;<br />
+      File=&quot;/var/log/vmware/vsphere-ui/logs/localhost.*.log&quot;<br />
+      Tag=&quot;ui-runtime-localhost&quot;<br />
+      Severity=&quot;info&quot;<br />
+      Facility=&quot;local0&quot;<br />
+      deleteStateOnFileDelete=&quot;on&quot;<br />
+      reopenOnTruncate=&quot;on&quot;)<br />
+#vsphere-ui vsan<br />
+input(type=&quot;imfile&quot;<br />
+      File=&quot;/var/log/vmware/vsphere-ui/logs/vsan-plugin.log&quot;<br />
+      Tag=&quot;ui-runtime-vsan&quot;<br />
+      Severity=&quot;info&quot;<br />
+      Facility=&quot;local0&quot;<br />
+      deleteStateOnFileDelete=&quot;on&quot;<br />
+      reopenOnTruncate=&quot;on&quot;)<br />
+<br />
+Note: If the entries for &quot;deleteStateOnFileDelete&quot; or &quot;reopenOnTruncate&quot; are not present, this is not a finding.<br />
+<br />
+If the output does not match the expected result, this is a finding.</p><h2>Vulnerability Number</h2><p>V-259117</p><h2>Documentable</h2><p>False</p><h2>Rule Version</h2><p>VCUI-80-000081</p><h2>Severity Override Guidance</h2><p>By default, a vmware-services-vsphere-ui.conf rsyslog configuration file includes the service logs when syslog is configured on vCenter, but it must be verified.<br />
+<br />
+At the command prompt, run the following command:<br />
+<br />
+# cat /etc/vmware-syslog/vmware-services-vsphere-ui.conf<br />
+<br />
+Expected result:<br />
+<br />
+#vsphere-ui main log<br />
+input(type=&quot;imfile&quot;<br />
+      File=&quot;/var/log/vmware/vsphere-ui/logs/vsphere_client_virgo.log&quot;<br />
+      Tag=&quot;ui-main&quot;<br />
+      Severity=&quot;info&quot;<br />
+      Facility=&quot;local0&quot;<br />
+      deleteStateOnFileDelete=&quot;on&quot;<br />
+      reopenOnTruncate=&quot;on&quot;)<br />
+#vsphere-ui change log<br />
+input(type=&quot;imfile&quot;<br />
+      File=&quot;/var/log/vmware/vsphere-ui/logs/changelog.log&quot;<br />
+      Tag=&quot;ui-changelog&quot;<br />
+      Severity=&quot;info&quot;<br />
+      Facility=&quot;local0&quot;<br />
+      deleteStateOnFileDelete=&quot;on&quot;<br />
+      reopenOnTruncate=&quot;on&quot;)<br />
+#vsphere-ui dataservice log<br />
+input(type=&quot;imfile&quot;<br />
+      File=&quot;/var/log/vmware/vsphere-ui/logs/dataservice.log&quot;<br />
+      Tag=&quot;ui-dataservice&quot;<br />
+      Severity=&quot;info&quot;<br />
+      Facility=&quot;local0&quot;<br />
+      deleteStateOnFileDelete=&quot;on&quot;<br />
+      reopenOnTruncate=&quot;on&quot;)<br />
+#vsphere-ui apigw log<br />
+input(type=&quot;imfile&quot;<br />
+      File=&quot;/var/log/vmware/vsphere-ui/logs/apigw.log&quot;<br />
+      Tag=&quot;ui-apigw&quot;<br />
+      Severity=&quot;info&quot;<br />
+      Facility=&quot;local0&quot;<br />
+      deleteStateOnFileDelete=&quot;on&quot;<br />
+      reopenOnTruncate=&quot;on&quot;)<br />
+#vsphere-ui equinox log<br />
+input(type=&quot;imfile&quot;<br />
+      File=&quot;/var/log/vmware/vsphere-ui/logs/equinox.log&quot;<br />
+      Tag=&quot;ui-equinox&quot;<br />
+      Severity=&quot;info&quot;<br />
+      Facility=&quot;local0&quot;<br />
+      deleteStateOnFileDelete=&quot;on&quot;<br />
+      reopenOnTruncate=&quot;on&quot;)<br />
+#vsphere-ui event log<br />
+input(type=&quot;imfile&quot;<br />
+      File=&quot;/var/log/vmware/vsphere-ui/logs/eventlog.log&quot;<br />
+      Tag=&quot;ui-eventlog&quot;<br />
+      Severity=&quot;info&quot;<br />
+      Facility=&quot;local0&quot;<br />
+      deleteStateOnFileDelete=&quot;on&quot;<br />
+      reopenOnTruncate=&quot;on&quot;)<br />
+#vsphere-ui op id log<br />
+input(type=&quot;imfile&quot;<br />
+      File=&quot;/var/log/vmware/vsphere-ui/logs/opId.log&quot;<br />
+      Tag=&quot;ui-opid&quot;<br />
+      Severity=&quot;info&quot;<br />
+      Facility=&quot;local0&quot;<br />
+      deleteStateOnFileDelete=&quot;on&quot;<br />
+      reopenOnTruncate=&quot;on&quot;)<br />
+#vsphere-ui performance audit log<br />
+input(type=&quot;imfile&quot;<br />
+      File=&quot;/var/log/vmware/vsphere-ui/logs/performanceAudit.log&quot;<br />
+      Tag=&quot;ui-performanceAudit&quot;<br />
+      Severity=&quot;info&quot;<br />
+      Facility=&quot;local0&quot;<br />
+      deleteStateOnFileDelete=&quot;on&quot;<br />
+      reopenOnTruncate=&quot;on&quot;)<br />
+#vsphere-ui plugin-medic log<br />
+input(type=&quot;imfile&quot;<br />
+      File=&quot;/var/log/vmware/vsphere-ui/logs/plugin-medic.log&quot;<br />
+      Tag=&quot;ui-plugin-medic&quot;<br />
+      Severity=&quot;info&quot;<br />
+      Facility=&quot;local0&quot;<br />
+      deleteStateOnFileDelete=&quot;on&quot;<br />
+      reopenOnTruncate=&quot;on&quot;)<br />
+#vsphere-ui threadmonitor log<br />
+input(type=&quot;imfile&quot;<br />
+      File=&quot;/var/log/vmware/vsphere-ui/logs/threadmonitor.log&quot;<br />
+      Tag=&quot;ui-threadmonitor&quot;<br />
+      Severity=&quot;info&quot;<br />
+      Facility=&quot;local0&quot;<br />
+      deleteStateOnFileDelete=&quot;on&quot;<br />
+      reopenOnTruncate=&quot;on&quot;)<br />
+#vsphere-ui threadpools log<br />
+input(type=&quot;imfile&quot;<br />
+      File=&quot;/var/log/vmware/vsphere-ui/logs/threadpools.log&quot;<br />
+      Tag=&quot;ui-threadpools&quot;<br />
+      Severity=&quot;info&quot;<br />
+      Facility=&quot;local0&quot;<br />
+      deleteStateOnFileDelete=&quot;on&quot;<br />
+      reopenOnTruncate=&quot;on&quot;)<br />
+#vsphere-ui vspheremessaging log<br />
+input(type=&quot;imfile&quot;<br />
+      File=&quot;/var/log/vmware/vsphere-ui/logs/vspheremessaging.log&quot;<br />
+      Tag=&quot;ui-vspheremessaging&quot;<br />
+      Severity=&quot;info&quot;<br />
+      Facility=&quot;local0&quot;<br />
+      deleteStateOnFileDelete=&quot;on&quot;<br />
+      reopenOnTruncate=&quot;on&quot;)<br />
+#vsphere-ui rpm log<br />
+input(type=&quot;imfile&quot;<br />
+      File=&quot;/var/log/vmware/vsphere-ui/logs/vsphere-ui-rpm.log&quot;<br />
+      Tag=&quot;ui-rpm&quot;<br />
+      Severity=&quot;info&quot;<br />
+      Facility=&quot;local0&quot;<br />
+      deleteStateOnFileDelete=&quot;on&quot;<br />
+      reopenOnTruncate=&quot;on&quot;)<br />
+#vsphere-ui runtime log stdout<br />
+input(type=&quot;imfile&quot;<br />
+      File=&quot;/var/log/vmware/vsphere-ui/logs/vsphere-ui-runtime.log.stdout&quot;<br />
+      Tag=&quot;ui-runtime-stdout&quot;<br />
+      Severity=&quot;info&quot;<br />
+      Facility=&quot;local0&quot;<br />
+      deleteStateOnFileDelete=&quot;on&quot;<br />
+      reopenOnTruncate=&quot;on&quot;)<br />
+#vsphere-ui runtime log stderr<br />
+input(type=&quot;imfile&quot;<br />
+      File=&quot;/var/log/vmware/vsphere-ui/logs/vsphere-ui-runtime.log.stderr&quot;<br />
+      Tag=&quot;ui-runtime-stderr&quot;<br />
+      Severity=&quot;info&quot;<br />
+      Facility=&quot;local0&quot;<br />
+      deleteStateOnFileDelete=&quot;on&quot;<br />
+      reopenOnTruncate=&quot;on&quot;)<br />
+#vsphere-ui access log<br />
+input(type=&quot;imfile&quot;<br />
+      File=&quot;/var/log/vmware/vsphere-ui/logs/access/localhost_access_log.txt&quot;<br />
+      Tag=&quot;ui-access&quot;<br />
+      Severity=&quot;info&quot;<br />
+      Facility=&quot;local0&quot;<br />
+      deleteStateOnFileDelete=&quot;on&quot;<br />
+      reopenOnTruncate=&quot;on&quot;)<br />
+#vsphere-ui gc log<br />
+input(type=&quot;imfile&quot;<br />
+      File=&quot;/var/log/vmware/vsphere-ui/vsphere-ui-gc.log&quot;<br />
+      Tag=&quot;ui-gc&quot;<br />
+      Severity=&quot;info&quot;<br />
+      Facility=&quot;local0&quot;<br />
+      deleteStateOnFileDelete=&quot;on&quot;<br />
+      reopenOnTruncate=&quot;on&quot;)<br />
+#vsphere-ui firstboot log<br />
+input(type=&quot;imfile&quot;<br />
+      File=&quot;/var/log/firstboot/vsphere_ui_firstboot*&quot;<br />
+      Tag=&quot;ui-firstboot&quot;<br />
+      Severity=&quot;info&quot;<br />
+      Facility=&quot;local0&quot;<br />
+      deleteStateOnFileDelete=&quot;on&quot;<br />
+      reopenOnTruncate=&quot;on&quot;)<br />
+#vsphere-ui catalina<br />
+input(type=&quot;imfile&quot;<br />
+      File=&quot;/var/log/vmware/vsphere-ui/logs/catalina.*.log&quot;<br />
+      Tag=&quot;ui-runtime-catalina&quot;<br />
+      Severity=&quot;info&quot;<br />
+      Facility=&quot;local0&quot;<br />
+      deleteStateOnFileDelete=&quot;on&quot;<br />
+      reopenOnTruncate=&quot;on&quot;)<br />
+#vsphere-ui endpoint<br />
+input(type=&quot;imfile&quot;<br />
+      File=&quot;/var/log/vmware/vsphere-ui/logs/endpoint.log&quot;<br />
+      Tag=&quot;ui-runtime-endpoint&quot;<br />
+      Severity=&quot;info&quot;<br />
+      Facility=&quot;local0&quot;<br />
+      deleteStateOnFileDelete=&quot;on&quot;<br />
+      reopenOnTruncate=&quot;on&quot;)<br />
+#vsphere-ui localhost<br />
+input(type=&quot;imfile&quot;<br />
+      File=&quot;/var/log/vmware/vsphere-ui/logs/localhost.*.log&quot;<br />
+      Tag=&quot;ui-runtime-localhost&quot;<br />
+      Severity=&quot;info&quot;<br />
+      Facility=&quot;local0&quot;<br />
+      deleteStateOnFileDelete=&quot;on&quot;<br />
+      reopenOnTruncate=&quot;on&quot;)<br />
+#vsphere-ui vsan<br />
+input(type=&quot;imfile&quot;<br />
+      File=&quot;/var/log/vmware/vsphere-ui/logs/vsan-plugin.log&quot;<br />
+      Tag=&quot;ui-runtime-vsan&quot;<br />
+      Severity=&quot;info&quot;<br />
+      Facility=&quot;local0&quot;<br />
+      deleteStateOnFileDelete=&quot;on&quot;<br />
+      reopenOnTruncate=&quot;on&quot;)<br />
+<br />
+Note: If the entries for &quot;deleteStateOnFileDelete&quot; or &quot;reopenOnTruncate&quot; are not present, this is not a finding.<br />
+<br />
+If the output does not match the expected result, this is a finding.</p><h2>Check Content Reference</h2><p>M</p><h2>Target Key</h2><p>5568</p></body></html>

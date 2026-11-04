@@ -1,0 +1,129 @@
+<!doctype html><html lang="en"><head><meta charset="utf-8"><title>STIGQter: STIG Check Details: SV-220651r1107171_rule: The Cisco switch must manage excess bandwidth to limit the effects of packet flooding types of denial-of-service (DoS) attacks.</title><link rel="icon" type="image/svg+xml" href="STIGQter.svg" /><script async src="https://www.googletagmanager.com/gtag/js?id=UA-31381839-2"></script><script src="include.js"></script><script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-4110907817782130" crossorigin="anonymous"></script></head><body><div><img src="STIGQter.svg" alt="STIGQter" style="height:1em;" /> <a href="https://www.stigqter.com/">STIGQter</a>: <a href="main.html">STIG Summary</a>: <a href="U_Cisco_IOS-XE_Switch_L2S_STIG_V3R2_Manual-xccdf.html">Cisco IOS XE Switch L2S Security Technical Implementation Guide Version: 3 Release: 2 Benchmark Date: 02 Jul 2025</a>:</div> <h1>The Cisco switch must manage excess bandwidth to limit the effects of packet flooding types of denial-of-service (DoS) attacks.</h1><h2>DISA Rule</h2><p>SV-220651r1107171_rule</p><h2>Vulnerability Number</h2><p>V-220651</p><h2>Group Title</h2><p>SRG-NET-000193-L2S-000020</p><h2>Rule Version</h2><p>CISC-L2-000040</p><h2>Severity</h2><p>CAT II</p><h2>CCI(s)</h2><ul><li>CCI-001095 - Manage capacity, bandwidth, or other redundancy to limit the effects of information flooding types of denial of service attacks.</li><li>CCI-004866 - Employ organization-defined controls by type of denial-of-service to achieve the denial-of-service objective.</li></ul><h2>Weight</h2><p>10</p><h2>Fix Recommendation</h2><p>Step 1: Configure class-maps to match on DSCP values as shown in the configuration example below:<br />
+<br />
+SW1(config-cmap)#class-map match-all C2_VOICE<br />
+SW1(config-cmap)# match ip dscp 47<br />
+SW1(config-cmap)#class-map match-all VOICE<br />
+SW1(config-cmap)# match ip dscp ef<br />
+SW1(config-cmap)#class-map match-all VIDEO<br />
+SW1(config-cmap)# match ip dscp af41<br />
+SW1(config)#class-map match-all PREFERRED_DATA<br />
+SW1(config-cmap)# match ip dscp af33<br />
+SW1(config-cmap)#exit<br />
+<br />
+Step 2: Configure a policy map to be applied to the core-layer-facing interface that reserves the bandwidth for each traffic type as shown in the example below:<br />
+<br />
+SW1(config)#policy-map QOS_POLICY_SWITCHPORT<br />
+SW1(config-pmap-c)#class C2_VOICE<br />
+SW1(config-pmap-c)# priority level 1 10<br />
+SW1(config-pmap-c)#class VOICE<br />
+SW1(config-pmap-c)# priority level 2 15<br />
+SW1(config-pmap-c)#class VIDEO<br />
+SW1(config-pmap-c)#bandwidth percent 25<br />
+SW1(config-pmap-c)#class PREFERRED_DATA<br />
+SW1(config-pmap-c)#bandwidth percent 25<br />
+SW1(config-pmap-c)#class class-default<br />
+SW1(config-pmap-c)#bandwidth percent 25<br />
+SW1(config-pmap-c)#exit<br />
+SW1(config-pmap)#exit<br />
+<br />
+Step 3: Apply the output service policy to the core-layer-facing interface as shown in the configuration example below:<br />
+<br />
+SW1(config)#int g1/1<br />
+SW1(config-if)#service-policy output QOS_POLICY_SWITCHPORT<br />
+SW1(config-if)#exit<br />
+SW1(config)#int g1/2<br />
+SW1(config-if)#service-policy output QOS_POLICY_SWITCHPORT<br />
+SW1(config-if)#exit<br />
+SW1(config)#int g1/3<br />
+SW1(config-if)#service-policy output QOS_POLICY_SWITCHPORT<br />
+SW1(config-if)#end.</p><h2>Check Contents</h2><p>Step 1: Verify that the class-maps are configured to match on DSCP values as shown in the configuration example below:<br />
+<br />
+class-map match-all C2_VOICE<br />
+ match ip dscp 47<br />
+class-map match-all VOICE<br />
+ match ip dscp ef<br />
+class-map match-all VIDEO<br />
+ match ip dscp af41<br />
+class-map match-all PREFERRED_DATA<br />
+ match ip dscp af33<br />
+<br />
+Step 2: Verify that the policy map reserves the bandwidth for each traffic type as shown in the following example:<br />
+<br />
+policy-map QOS_POLICY_SWITCHPORT<br />
+class C2_VOICE<br />
+ priority level 1 10<br />
+ class VOICE<br />
+ priority level 2 15<br />
+ class VIDEO<br />
+ bandwidth percent 25<br />
+class PREFERRED_DATA<br />
+ bandwidth percent 25<br />
+ class class-default<br />
+ bandwidth percent 25<br />
+verone<br />
+<br />
+interface GigabitEthernet1/1<br />
+ switchport trunk allowed vlan 100,110,200<br />
+switchport mode trunk<br />
+ service-policy output QOS_POLICY_SWITCHPORT<br />
+!<br />
+interface GigabitEthernet1/2<br />
+ switchport access vlan 100<br />
+ switchport mode access<br />
+ switchport voice vlan 200<br />
+ trust device cisco-phone<br />
+ service-policy output QOS_POLICY_SWITCHPORT<br />
+!<br />
+interface GigabitEthernet1/2<br />
+ switchport access vlan 110<br />
+ switchport mode access<br />
+ switchport voice vlan 200<br />
+ trust device cisco-phone<br />
+ service-policy output QOS_POLICY_SWITCHPORT<br />
+<br />
+If quality of service (QoS) has not been enabled, this is a finding.</p><h2>Vulnerability Number</h2><p>V-220651</p><h2>Documentable</h2><p>False</p><h2>Rule Version</h2><p>CISC-L2-000040</p><h2>Severity Override Guidance</h2><p>Step 1: Verify that the class-maps are configured to match on DSCP values as shown in the configuration example below:<br />
+<br />
+class-map match-all C2_VOICE<br />
+ match ip dscp 47<br />
+class-map match-all VOICE<br />
+ match ip dscp ef<br />
+class-map match-all VIDEO<br />
+ match ip dscp af41<br />
+class-map match-all PREFERRED_DATA<br />
+ match ip dscp af33<br />
+<br />
+Step 2: Verify that the policy map reserves the bandwidth for each traffic type as shown in the following example:<br />
+<br />
+policy-map QOS_POLICY_SWITCHPORT<br />
+class C2_VOICE<br />
+ priority level 1 10<br />
+ class VOICE<br />
+ priority level 2 15<br />
+ class VIDEO<br />
+ bandwidth percent 25<br />
+class PREFERRED_DATA<br />
+ bandwidth percent 25<br />
+ class class-default<br />
+ bandwidth percent 25<br />
+verone<br />
+<br />
+interface GigabitEthernet1/1<br />
+ switchport trunk allowed vlan 100,110,200<br />
+switchport mode trunk<br />
+ service-policy output QOS_POLICY_SWITCHPORT<br />
+!<br />
+interface GigabitEthernet1/2<br />
+ switchport access vlan 100<br />
+ switchport mode access<br />
+ switchport voice vlan 200<br />
+ trust device cisco-phone<br />
+ service-policy output QOS_POLICY_SWITCHPORT<br />
+!<br />
+interface GigabitEthernet1/2<br />
+ switchport access vlan 110<br />
+ switchport mode access<br />
+ switchport voice vlan 200<br />
+ trust device cisco-phone<br />
+ service-policy output QOS_POLICY_SWITCHPORT<br />
+<br />
+If quality of service (QoS) has not been enabled, this is a finding.</p><h2>Check Content Reference</h2><p>M</p><h2>Target Key</h2><p>4071</p></body></html>

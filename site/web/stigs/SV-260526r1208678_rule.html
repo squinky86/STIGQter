@@ -1,0 +1,22 @@
+<!doctype html><html lang="en"><head><meta charset="utf-8"><title>STIGQter: STIG Check Details: SV-260526r1208678_rule: Ubuntu 22.04 LTS must not allow unattended or automatic login via SSH.</title><link rel="icon" type="image/svg+xml" href="STIGQter.svg" /><script async src="https://www.googletagmanager.com/gtag/js?id=UA-31381839-2"></script><script src="include.js"></script><script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-4110907817782130" crossorigin="anonymous"></script></head><body><div><img src="STIGQter.svg" alt="STIGQter" style="height:1em;" /> <a href="https://www.stigqter.com/">STIGQter</a>: <a href="main.html">STIG Summary</a>: <a href="U_CAN_Ubuntu_22-04_LTS_STIG_V2R9_Manual-xccdf.html">Canonical Ubuntu 22.04 LTS Security Technical Implementation Guide Version: 2 Release: 9 Benchmark Date: 01 Jul 2026</a>:</div> <h1>Ubuntu 22.04 LTS must not allow unattended or automatic login via SSH.</h1><h2>DISA Rule</h2><p>SV-260526r1208678_rule</p><h2>Vulnerability Number</h2><p>V-260526</p><h2>Group Title</h2><p>SRG-OS-000480-GPOS-00229</p><h2>Rule Version</h2><p>UBTU-22-255025</p><h2>Severity</h2><p>CAT I</p><h2>CCI(s)</h2><ul><li>CCI-000366 - Implement the security configuration settings.</li></ul><h2>Weight</h2><p>10</p><h2>Fix Recommendation</h2><p>Configure the SSH server to not allow unattended or automatic login to the system.  <br />
+  <br />
+Add or modify the following lines in the &quot;/etc/ssh/sshd_config&quot; file:  <br />
+  <br />
+PermitEmptyPasswords no <br />
+PermitUserEnvironment no <br />
+<br />
+Restart SSH for the changes to take effect: <br />
+<br />
+$ sudo systemctl restart ssh</p><h2>Check Contents</h2><p>Verify that unattended or automatic login via SSH is disabled by using the following command: <br />
+ <br />
+     $ sudo /usr/sbin/sshd -dd 2&gt;&amp;1 | awk '/filename/ {print $4}' | tr -d '\r' | tr '\n' ' ' | xargs sudo grep -iEH '(permit(.*?)(passwords|environment))' <br />
+     /etc/ssh/sshd_config:PermitEmptyPasswords no <br />
+     /etc/ssh/sshd_config:PermitUserEnvironment no <br />
+ <br />
+If &quot;PermitEmptyPasswords&quot; and &quot;PermitUserEnvironment&quot; are not set to &quot;no&quot;, are commented out, are missing, or conflicting results are returned, this is a finding.</p><h2>Vulnerability Number</h2><p>V-260526</p><h2>Documentable</h2><p>False</p><h2>Rule Version</h2><p>UBTU-22-255025</p><h2>Severity Override Guidance</h2><p>Verify that unattended or automatic login via SSH is disabled by using the following command: <br />
+ <br />
+     $ sudo /usr/sbin/sshd -dd 2&gt;&amp;1 | awk '/filename/ {print $4}' | tr -d '\r' | tr '\n' ' ' | xargs sudo grep -iEH '(permit(.*?)(passwords|environment))' <br />
+     /etc/ssh/sshd_config:PermitEmptyPasswords no <br />
+     /etc/ssh/sshd_config:PermitUserEnvironment no <br />
+ <br />
+If &quot;PermitEmptyPasswords&quot; and &quot;PermitUserEnvironment&quot; are not set to &quot;no&quot;, are commented out, are missing, or conflicting results are returned, this is a finding.</p><h2>Check Content Reference</h2><p>M</p><h2>Target Key</h2><p>5594</p></body></html>

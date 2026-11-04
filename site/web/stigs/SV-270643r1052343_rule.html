@@ -1,0 +1,41 @@
+<!doctype html><html lang="en"><head><meta charset="utf-8"><title>STIGQter: STIG Check Details: SV-270643r1052343_rule: The Dell OS10 Switch must be configured to use at least two authentication servers for the purpose of authenticating users prior to granting administrative access.</title><link rel="icon" type="image/svg+xml" href="STIGQter.svg" /><script async src="https://www.googletagmanager.com/gtag/js?id=UA-31381839-2"></script><script src="include.js"></script><script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-4110907817782130" crossorigin="anonymous"></script></head><body><div><img src="STIGQter.svg" alt="STIGQter" style="height:1em;" /> <a href="https://www.stigqter.com/">STIGQter</a>: <a href="main.html">STIG Summary</a>: <a href="U_Dell_OS10_Switch_NDM_STIG_V1R1_Manual-xccdf.html">Dell OS10 Switch NDM Security Technical Implementation Guide Version: 1 Release: 1 Benchmark Date: 10 Dec 2024</a>:</div> <h1>The Dell OS10 Switch must be configured to use at least two authentication servers for the purpose of authenticating users prior to granting administrative access.</h1><h2>DISA Rule</h2><p>SV-270643r1052343_rule</p><h2>Vulnerability Number</h2><p>V-270643</p><h2>Group Title</h2><p>SRG-APP-000516</p><h2>Rule Version</h2><p>OS10-NDM-000930</p><h2>Severity</h2><p>CAT I</p><h2>CCI(s)</h2><ul><li>CCI-000370 - Manage configuration settings for organization-defined system components using organization-defined automated mechanisms.</li></ul><h2>Weight</h2><p>10</p><h2>Fix Recommendation</h2><p>Configure the network device to use at least two authentication servers. The authentication order is determined by the order in which the radius-server entries are configured.<br />
+<br />
+OS10(config)#<br />
+OS10(config)# radius-server host 10.120.60.23 tls security-profile PROFILE1 key ******************<br />
+OS10(config)# radius-server host 10.120.80.82 tls security-profile PROFILE1 key ******************<br />
+OS10(config)#<br />
+OS10(config)# aaa authentication login default group radius local<br />
+OS10(config)# aaa authentication login console group radius local<br />
+OS10(config)#<br />
+<br />
+Configure all network connections associated with a device management to use the authentication servers for the purpose of login authentication.<br />
+OS10(config)# aaa authentication login default group radius local<br />
+<br />
+Optionally, configure the local console access to try local authentication before attempting remote authentication servers.<br />
+OS10(config)# aaa authentication login console local group radius</p><h2>Check Contents</h2><p>Review the OS10 switch configuration to verify the device is configured to use at least two authentication servers as primary source for authentication.  Verify that multiple radius servers are configured and that AAA login authentication is configured to use remote authentication.<br />
+<br />
+OS10#<br />
+OS10# show running-configuration radius-server<br />
+radius-server host 10.120.60.23 tls security-profile PROFILE-1 key 9 ****<br />
+radius-server host 10.120.80.82 tls security-profile PROFILE1 key 9 ****<br />
+OS10#<br />
+OS10# show running-configuration aaa<br />
+!<br />
+aaa authentication login default group radius local<br />
+aaa authentication login console local group radius<br />
+OS10#<br />
+<br />
+If the OS10 switch is not configured to use at least two authentication servers for the purpose of authenticating users prior to granting administrative access, this is a finding.</p><h2>Vulnerability Number</h2><p>V-270643</p><h2>Documentable</h2><p>False</p><h2>Rule Version</h2><p>OS10-NDM-000930</p><h2>Severity Override Guidance</h2><p>Review the OS10 switch configuration to verify the device is configured to use at least two authentication servers as primary source for authentication.  Verify that multiple radius servers are configured and that AAA login authentication is configured to use remote authentication.<br />
+<br />
+OS10#<br />
+OS10# show running-configuration radius-server<br />
+radius-server host 10.120.60.23 tls security-profile PROFILE-1 key 9 ****<br />
+radius-server host 10.120.80.82 tls security-profile PROFILE1 key 9 ****<br />
+OS10#<br />
+OS10# show running-configuration aaa<br />
+!<br />
+aaa authentication login default group radius local<br />
+aaa authentication login console local group radius<br />
+OS10#<br />
+<br />
+If the OS10 switch is not configured to use at least two authentication servers for the purpose of authenticating users prior to granting administrative access, this is a finding.</p><h2>Check Content Reference</h2><p>M</p><h2>Target Key</h2><p>5666</p></body></html>

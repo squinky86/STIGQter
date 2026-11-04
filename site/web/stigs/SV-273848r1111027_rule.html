@@ -1,0 +1,127 @@
+<!doctype html><html lang="en"><head><meta charset="utf-8"><title>STIGQter: STIG Check Details: SV-273848r1111027_rule: The RUCKUS ICX device must be configured to include only approved trust anchors in trust stores or certificate stores managed by the organization.</title><link rel="icon" type="image/svg+xml" href="STIGQter.svg" /><script async src="https://www.googletagmanager.com/gtag/js?id=UA-31381839-2"></script><script src="include.js"></script><script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-4110907817782130" crossorigin="anonymous"></script></head><body><div><img src="STIGQter.svg" alt="STIGQter" style="height:1em;" /> <a href="https://www.stigqter.com/">STIGQter</a>: <a href="main.html">STIG Summary</a>: <a href="U_RUCKUS_ICX_NDM_STIG_V1R1_Manual-xccdf.html">RUCKUS ICX NDM Security Technical Implementation Guide Version: 1 Release: 1 Benchmark Date: 27 May 2025</a>:</div> <h1>The RUCKUS ICX device must be configured to include only approved trust anchors in trust stores or certificate stores managed by the organization.</h1><h2>DISA Rule</h2><p>SV-273848r1111027_rule</p><h2>Vulnerability Number</h2><p>V-273848</p><h2>Group Title</h2><p>SRG-APP-000910-NDM-000300</p><h2>Rule Version</h2><p>RCKS-NDM-001120</p><h2>Severity</h2><p>CAT II</p><h2>CCI(s)</h2><ul><li>CCI-004909 - Include only approved trust anchors in trust stores or certificate stores managed by the organization.</li></ul><h2>Weight</h2><p>10</p><h2>Fix Recommendation</h2><p>To allow a client to communicate with another RUCKUS ICX device using an SSL connection, a set of digital certificates and RSA public-private key pairs must be configured on the device. A digital certificate is used to identify the connecting client to the server. The certificate contains information about the issuing Certificate Authority as well as a public key. Digital certificates and private keys can be imported from a server.<br />
+<br />
+Copy the certificates from the server to flash memory and save the configuration.<br />
+Router# copy scp flash 10.1.1.1 client_cert.pem  ssl-client-cert<br />
+Router# copy scp flash 10.1.1.1 client_cert.key.pem  ssl-client-private-key<br />
+Router# copy scp flash 10.1.1.1 root_cert.pem ssl-trust-cert<br />
+Router# write memory</p><h2>Check Contents</h2><p>Verify the network device is configured to include only approved trust anchors in trust stores or certificate stores managed by the organization.<br />
+<br />
+Verify Device Certificate:<br />
+<br />
+device# show ip ssl device-certificate<br />
+Certificate:<br />
+    Data:<br />
+        Version: 3 (0x2)<br />
+        Serial Number: 238779085 (0xe3b7acd)<br />
+    Signature Algorithm: sha256WithRSAEncryption<br />
+        Issuer: C=US, ST=fe044db7a0ec05cf9736bfbcc2e186a76da5a13e49b1f12c8717e5c5bf5c32f2, L=10.176.156.30, O=cc:4e:24:8c:67:e8, OU=JLSAWZOIFZMD, CN=ICX<br />
+        Validity<br />
+            Not Before: Dec  3 22:40:24 2019 GMT<br />
+            Not After : Nov 19 22:40:24 2079 GMT<br />
+        Subject: C=US, ST=fe044db7a0ec05cf9736bfbcc2e186a76da5a13e49b1f12c8717e5c5bf5c32f2, L=10.176.156.30, O=cc:4e:24:8c:67:e8, OU=JLSAWZOIFZMD, CN=ICX<br />
+        Subject Public Key Info:<br />
+            Public Key Algorithm: rsaEncryption<br />
+                Public-Key: (2048 bit)<br />
+                Modulus:<br />
+                    00:9f:87:35:01:dd:c3:63:52:7b:9d:aa:13:b7:39:<br />
+                    a9:0a:12:51:84:6e:57:ed:62:65:b7:79:31:72:35:<br />
+                    08:9a:d8:36:8b:f3:c8:76:47:90:5f:88:37:bc:6b:<br />
+                    1d:1f:5c:fd:0e:94:2d:7b:3a:54:d0:17:3c:96:d7:<br />
+                    be:a5:d8:0a:9c:54:08:08:30:06:84:a3:cb:1c:9f:<br />
+                    e0:ab:25:ac:59:02:7e:7b:cd:c2:bf:58:8d:63:09:<br />
+<br />
+Verify SSL Certificate:<br />
+<br />
+device(config)# show ip ssl certificate<br />
+Trusted Certificates:<br />
+ Dynamic:<br />
+ Index 0:<br />
+  Signature Algorithm: sha256WithRSAEncryption<br />
+  Issuer:<br />
+   CN: 10.25.105.201<br />
+  Validity:<br />
+   Not Before: 2014 Aug 22 05:12:45<br />
+   Not After : 2079 Aug 21 05:12:45<br />
+  Subject:<br />
+   CN: 10.25.105.201<br />
+  X509v3 extensions:<br />
+   X509v3 Subject Alternative Name:<br />
+    IP Address: 10.25.105.201<br />
+  Signature:<br />
+   12:ec:41:d8:01:45:61:ce:cf:7e:80:de:a6:7c:a7:2e:01:7f:<br />
+   42:27:22:1d:ac:a2:47:c5:0d:4f:e3:68:24:de:bf:50:40:65:<br />
+   25:8c:30:bd:ff:a7:d0:21:73:d2:ba:5e:67:42:1f:bb:97:4a:<br />
+   d9:1d:c3:ca:31:c4:59:10:79:d1:42:f4:b6:1a:b0:98:4e:a8:<br />
+   ef:e2:a2:98:c3:14:16:63:50:02:a0:18:9c:7a:e3:17:39:0d:<br />
+   b7:30:ab:23:9f:63:bd:0f:9e:d8:67:b0:fe:ec:3b:fa:4c:f4:<br />
+   3d:34:e2:99:0e:99:24:ec:93:fb:8a:e5:4a:bf:74:d6:ff:91:<br />
+   0a:dc:fb:b9:4f:91:5d:d4:f6:77:23:eb:ec:eb:3a:62:08:e1:<br />
+   a6:ea:a8:52:b6:39:62:db:29:fa:61:1d:fd:d5:02:31:04:73: <br />
+   50:ad:de:41:54:a5:e2:96:2d:9c:f4:68:b2:68:05:bb:39:47:<br />
+   ee:74:89:a2:8c:30:f0:f9:d7:d5:4b:3b:e2:95:6f:82:61:a3:<br />
+   c2:79:4c:f2:11:56:f8:2f:cc:fc:2b:4b:cb:3b:54:59:f0:8b:<br />
+   5b:70:e1:27:c3:57:25:eb:35:c6:07:ea:6d:0b:34:04:95:81:<br />
+   35:e6:64:c6:b8:72:e8:24:18:bd:ca:90:99:74:45:44:85:71:<br />
+   9e:7f:13:96:<br />
+<br />
+If the network device is not configured to include only approved trust anchors in trust stores or certificate stores managed by the organization, this is a finding.</p><h2>Vulnerability Number</h2><p>V-273848</p><h2>Documentable</h2><p>False</p><h2>Rule Version</h2><p>RCKS-NDM-001120</p><h2>Severity Override Guidance</h2><p>Verify the network device is configured to include only approved trust anchors in trust stores or certificate stores managed by the organization.<br />
+<br />
+Verify Device Certificate:<br />
+<br />
+device# show ip ssl device-certificate<br />
+Certificate:<br />
+    Data:<br />
+        Version: 3 (0x2)<br />
+        Serial Number: 238779085 (0xe3b7acd)<br />
+    Signature Algorithm: sha256WithRSAEncryption<br />
+        Issuer: C=US, ST=fe044db7a0ec05cf9736bfbcc2e186a76da5a13e49b1f12c8717e5c5bf5c32f2, L=10.176.156.30, O=cc:4e:24:8c:67:e8, OU=JLSAWZOIFZMD, CN=ICX<br />
+        Validity<br />
+            Not Before: Dec  3 22:40:24 2019 GMT<br />
+            Not After : Nov 19 22:40:24 2079 GMT<br />
+        Subject: C=US, ST=fe044db7a0ec05cf9736bfbcc2e186a76da5a13e49b1f12c8717e5c5bf5c32f2, L=10.176.156.30, O=cc:4e:24:8c:67:e8, OU=JLSAWZOIFZMD, CN=ICX<br />
+        Subject Public Key Info:<br />
+            Public Key Algorithm: rsaEncryption<br />
+                Public-Key: (2048 bit)<br />
+                Modulus:<br />
+                    00:9f:87:35:01:dd:c3:63:52:7b:9d:aa:13:b7:39:<br />
+                    a9:0a:12:51:84:6e:57:ed:62:65:b7:79:31:72:35:<br />
+                    08:9a:d8:36:8b:f3:c8:76:47:90:5f:88:37:bc:6b:<br />
+                    1d:1f:5c:fd:0e:94:2d:7b:3a:54:d0:17:3c:96:d7:<br />
+                    be:a5:d8:0a:9c:54:08:08:30:06:84:a3:cb:1c:9f:<br />
+                    e0:ab:25:ac:59:02:7e:7b:cd:c2:bf:58:8d:63:09:<br />
+<br />
+Verify SSL Certificate:<br />
+<br />
+device(config)# show ip ssl certificate<br />
+Trusted Certificates:<br />
+ Dynamic:<br />
+ Index 0:<br />
+  Signature Algorithm: sha256WithRSAEncryption<br />
+  Issuer:<br />
+   CN: 10.25.105.201<br />
+  Validity:<br />
+   Not Before: 2014 Aug 22 05:12:45<br />
+   Not After : 2079 Aug 21 05:12:45<br />
+  Subject:<br />
+   CN: 10.25.105.201<br />
+  X509v3 extensions:<br />
+   X509v3 Subject Alternative Name:<br />
+    IP Address: 10.25.105.201<br />
+  Signature:<br />
+   12:ec:41:d8:01:45:61:ce:cf:7e:80:de:a6:7c:a7:2e:01:7f:<br />
+   42:27:22:1d:ac:a2:47:c5:0d:4f:e3:68:24:de:bf:50:40:65:<br />
+   25:8c:30:bd:ff:a7:d0:21:73:d2:ba:5e:67:42:1f:bb:97:4a:<br />
+   d9:1d:c3:ca:31:c4:59:10:79:d1:42:f4:b6:1a:b0:98:4e:a8:<br />
+   ef:e2:a2:98:c3:14:16:63:50:02:a0:18:9c:7a:e3:17:39:0d:<br />
+   b7:30:ab:23:9f:63:bd:0f:9e:d8:67:b0:fe:ec:3b:fa:4c:f4:<br />
+   3d:34:e2:99:0e:99:24:ec:93:fb:8a:e5:4a:bf:74:d6:ff:91:<br />
+   0a:dc:fb:b9:4f:91:5d:d4:f6:77:23:eb:ec:eb:3a:62:08:e1:<br />
+   a6:ea:a8:52:b6:39:62:db:29:fa:61:1d:fd:d5:02:31:04:73: <br />
+   50:ad:de:41:54:a5:e2:96:2d:9c:f4:68:b2:68:05:bb:39:47:<br />
+   ee:74:89:a2:8c:30:f0:f9:d7:d5:4b:3b:e2:95:6f:82:61:a3:<br />
+   c2:79:4c:f2:11:56:f8:2f:cc:fc:2b:4b:cb:3b:54:59:f0:8b:<br />
+   5b:70:e1:27:c3:57:25:eb:35:c6:07:ea:6d:0b:34:04:95:81:<br />
+   35:e6:64:c6:b8:72:e8:24:18:bd:ca:90:99:74:45:44:85:71:<br />
+   9e:7f:13:96:<br />
+<br />
+If the network device is not configured to include only approved trust anchors in trust stores or certificate stores managed by the organization, this is a finding.</p><h2>Check Content Reference</h2><p>M</p><h2>Target Key</h2><p>5695</p></body></html>

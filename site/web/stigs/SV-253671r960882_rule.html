@@ -1,0 +1,74 @@
+<!doctype html><html lang="en"><head><meta charset="utf-8"><title>STIGQter: STIG Check Details: SV-253671r960882_rule: MariaDB must allow only the ISSM (or individuals or roles appointed by the ISSM) to select which auditable events are to be audited.</title><link rel="icon" type="image/svg+xml" href="STIGQter.svg" /><script async src="https://www.googletagmanager.com/gtag/js?id=UA-31381839-2"></script><script src="include.js"></script><script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-4110907817782130" crossorigin="anonymous"></script></head><body><div><img src="STIGQter.svg" alt="STIGQter" style="height:1em;" /> <a href="https://www.stigqter.com/">STIGQter</a>: <a href="main.html">STIG Summary</a>: <a href="U_MariaDB_Enterprise_10-x_STIG_V2R5_Manual-xccdf.html">MariaDB Enterprise 10.x Security Technical Implementation Guide Version: 2 Release: 5 Benchmark Date: 01 Apr 2026</a>:</div> <h1>MariaDB must allow only the ISSM (or individuals or roles appointed by the ISSM) to select which auditable events are to be audited.</h1><h2>DISA Rule</h2><p>SV-253671r960882_rule</p><h2>Vulnerability Number</h2><p>V-253671</p><h2>Group Title</h2><p>SRG-APP-000090-DB-000065</p><h2>Rule Version</h2><p>MADB-10-000600</p><h2>Severity</h2><p>CAT II</p><h2>CCI(s)</h2><ul><li>CCI-000171 - Allow organization-defined personnel or roles to select the event types that are to be logged by specific components of the system.</li></ul><h2>Weight</h2><p>10</p><h2>Fix Recommendation</h2><p>Grant the necessary privileges to authorized users. Example: <br />
+<br />
+MariaDB&gt; GRANT ALL PRIVILEGES ON mysql.server_audit_filters TO 'username'@'host';<br />
+MariaDB&gt; GRANT ALL PRIVILEGES ON mysql.server_audit_users TO 'username'@'host';<br />
+<br />
+For users found with access who are not authorized to modify audit filters, review the user's privileges, and update accordingly.</p><h2>Check Contents</h2><p>MariaDB Enterprise Audit plugin stores audit filters in the table mysql.server_audit_filters. Any users with update/delete/insert access to this table can modify the audit filters. <br />
+<br />
+Users with global insert, update, delete, and/or drop privileges can modify audit filters. Find users with global insert, update, delete, and/or drop privileges: <br />
+<br />
+MariaDB&gt; SELECT user, host, insert_priv, update_priv, delete_priv, drop_priv <br />
+FROM mysql.user <br />
+WHERE insert_priv = 'y'<br />
+OR update_priv = 'y'<br />
+OR delete_priv = 'y'<br />
+OR drop_priv = 'y';<br />
+<br />
+Users with insert, update, delete, and/or drop privileges on the mysql database can modify audit filters. Find users with insert, update, delete, and/or drop privileges on the mysql database: <br />
+<br />
+MariaDB&gt; SELECT user, host, insert_priv, update_priv, delete_priv, drop_priv <br />
+FROM mysql.db <br />
+WHERE db = 'mysql'<br />
+AND (insert_priv = 'y' <br />
+  OR update_priv = 'y'<br />
+  OR delete_priv = 'y'<br />
+  OR drop_priv = 'y'<br />
+  );<br />
+<br />
+Users with insert, update, delete, and/or drop privileges on the server_audit_filters and server_audit_users tables can modify audit filters. Find users with insert, update, delete, and/or drop privileges on the mysql database: <br />
+<br />
+MariaDB&gt; SELECT user, host, db, table_name, grantor, table_priv, timestamp, column_priv<br />
+FROM mysql.tables_priv<br />
+WHERE db = 'mysql'<br />
+AND table_name IN ('server_audit_filters','server_audit_users')<br />
+AND (table_priv LIKE '%Insert%'<br />
+  OR table_priv LIKE '%Update%'<br />
+  OR table_priv LIKE '%Delete%'<br />
+  OR table_priv LIKE '%Drop%'<br />
+);<br />
+<br />
+If any users with the above privileges are found which should not have access to modify audit filters, this is a finding.</p><h2>Vulnerability Number</h2><p>V-253671</p><h2>Documentable</h2><p>False</p><h2>Rule Version</h2><p>MADB-10-000600</p><h2>Severity Override Guidance</h2><p>MariaDB Enterprise Audit plugin stores audit filters in the table mysql.server_audit_filters. Any users with update/delete/insert access to this table can modify the audit filters. <br />
+<br />
+Users with global insert, update, delete, and/or drop privileges can modify audit filters. Find users with global insert, update, delete, and/or drop privileges: <br />
+<br />
+MariaDB&gt; SELECT user, host, insert_priv, update_priv, delete_priv, drop_priv <br />
+FROM mysql.user <br />
+WHERE insert_priv = 'y'<br />
+OR update_priv = 'y'<br />
+OR delete_priv = 'y'<br />
+OR drop_priv = 'y';<br />
+<br />
+Users with insert, update, delete, and/or drop privileges on the mysql database can modify audit filters. Find users with insert, update, delete, and/or drop privileges on the mysql database: <br />
+<br />
+MariaDB&gt; SELECT user, host, insert_priv, update_priv, delete_priv, drop_priv <br />
+FROM mysql.db <br />
+WHERE db = 'mysql'<br />
+AND (insert_priv = 'y' <br />
+  OR update_priv = 'y'<br />
+  OR delete_priv = 'y'<br />
+  OR drop_priv = 'y'<br />
+  );<br />
+<br />
+Users with insert, update, delete, and/or drop privileges on the server_audit_filters and server_audit_users tables can modify audit filters. Find users with insert, update, delete, and/or drop privileges on the mysql database: <br />
+<br />
+MariaDB&gt; SELECT user, host, db, table_name, grantor, table_priv, timestamp, column_priv<br />
+FROM mysql.tables_priv<br />
+WHERE db = 'mysql'<br />
+AND table_name IN ('server_audit_filters','server_audit_users')<br />
+AND (table_priv LIKE '%Insert%'<br />
+  OR table_priv LIKE '%Update%'<br />
+  OR table_priv LIKE '%Delete%'<br />
+  OR table_priv LIKE '%Drop%'<br />
+);<br />
+<br />
+If any users with the above privileges are found which should not have access to modify audit filters, this is a finding.</p><h2>Check Content Reference</h2><p>M</p><h2>Target Key</h2><p>5475</p></body></html>

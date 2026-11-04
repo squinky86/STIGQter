@@ -1,0 +1,95 @@
+<!doctype html><html lang="en"><head><meta charset="utf-8"><title>STIGQter: STIG Check Details: SV-254047r844174_rule: The Juniper perimeter router must be configured to have Link Layer Discovery Protocols (LLDPs) disabled on all external interfaces.</title><link rel="icon" type="image/svg+xml" href="STIGQter.svg" /><script async src="https://www.googletagmanager.com/gtag/js?id=UA-31381839-2"></script><script src="include.js"></script><script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-4110907817782130" crossorigin="anonymous"></script></head><body><div><img src="STIGQter.svg" alt="STIGQter" style="height:1em;" /> <a href="https://www.stigqter.com/">STIGQter</a>: <a href="main.html">STIG Summary</a>: <a href="U_Juniper_EX_Switches_RTR_STIG_V2R1_Manual-xccdf.html">Juniper EX Series Switches Router Security Technical Implementation Guide Version: 2 Release: 1 Benchmark Date: 24 Jul 2024</a>:</div> <h1>The Juniper perimeter router must be configured to have Link Layer Discovery Protocols (LLDPs) disabled on all external interfaces.</h1><h2>DISA Rule</h2><p>SV-254047r844174_rule</p><h2>Vulnerability Number</h2><p>V-254047</p><h2>Group Title</h2><p>SRG-NET-000364-RTR-000111</p><h2>Rule Version</h2><p>JUEX-RT-000750</p><h2>Severity</h2><p>CAT III</p><h2>CCI(s)</h2><ul><li>CCI-002403 - Only allow incoming communications from organization-defined authorized sources routed to organization-defined authorized destinations.</li></ul><h2>Weight</h2><p>10</p><h2>Fix Recommendation</h2><p>This requirement is not applicable for the DODIN Backbone.<br />
+<br />
+Disable LLDPs on all external interfaces.<br />
+<br />
+set protocols lldp interface all disable<br />
+set protocols lldp interface &lt;interior interface&gt;<br />
+set protocols lldp interface &lt;exterior interface&gt; disable<br />
+<br />
+set protocols lldp-med interface all disable<br />
+set protocols lldp-med interface &lt;interior interface&gt;<br />
+set protocols lldp-med interface &lt;exterior interface&gt; disable<br />
+<br />
+Note: The &lt;exterior interface&gt; disable command is not required if LLDP and LLDP-MED are globally disabled. However, the configured protocol status may be more apparent if each exterior interface is explicitly disabled.</p><h2>Check Contents</h2><p>This requirement is not applicable for the DODIN Backbone.<br />
+<br />
+Review all router configurations to ensure LLDPs are not included in the global configuration or LLDPs are not included for each active external interface. Examples of LLDPs are Cisco Discovery Protocol (CDP), Link Layer Discovery Protocol (LLDP), and Link Layer Discovery Protocol - Media Endpoint Discovery (LLDP-MED). Junos does not support CDP, but supports both LLDP and LLDP-MED, configured at [edit protocols]. Verify external interfaces are either not configured or explicitly disabled. For example:<br />
+<br />
+To globally disable LLDP and LLDP-MED:<br />
+[edit protocols]<br />
+&lt;no LLDP or LLDP-MED hierarchy&gt;<br />
+-or-<br />
+lldp {<br />
+    interface all {<br />
+        disable;<br />
+    }<br />
+}<br />
+lldp-med {<br />
+    interface all {<br />
+        disable;<br />
+    }<br />
+}<br />
+<br />
+If LLDP or LLDP-MED is authorized, verify external interfaces are not configured or are explicitly disabled. For example:<br />
+[edit protocols]<br />
+lldp {<br />
+    interface all {<br />
+        disable;<br />
+    }<br />
+    interface ge-0/0/0; &lt;&lt;&lt; Verify ge-0/0/0 is not an external interface.<br />
+    interface ge-0/0/1 {<br />
+        disable; &lt;&lt;&lt; Assuming ge-0/0/1 is an external interface, it is disabled globally (interface all disable) or explicitly disabled as shown.<br />
+    }<br />
+}<br />
+lldp-med {<br />
+    interface all {<br />
+        disable;<br />
+    interface ge-0/0/0; &lt;&lt;&lt; Verify ge-0/0/0 is not an external interface.<br />
+    interface ge-0/0/1 {<br />
+        disable; &lt;&lt;&lt; Assuming ge-0/0/1 is an external interface, it is disabled globally (interface all disable) or explicitly disabled as shown.<br />
+    }<br />
+}<br />
+<br />
+Note: Both LLDP and LLDP-MED are globally disabled on all interfaces but Junos will apply the most specific configuration. Therefore, both LLDP and LLDP-MED are enabled only on ge-0/0/0 and disabled on all other interfaces as configured in the example.<br />
+<br />
+If LLDPs are configured globally or on any external interface, this is a finding.</p><h2>Vulnerability Number</h2><p>V-254047</p><h2>Documentable</h2><p>False</p><h2>Rule Version</h2><p>JUEX-RT-000750</p><h2>Severity Override Guidance</h2><p>This requirement is not applicable for the DODIN Backbone.<br />
+<br />
+Review all router configurations to ensure LLDPs are not included in the global configuration or LLDPs are not included for each active external interface. Examples of LLDPs are Cisco Discovery Protocol (CDP), Link Layer Discovery Protocol (LLDP), and Link Layer Discovery Protocol - Media Endpoint Discovery (LLDP-MED). Junos does not support CDP, but supports both LLDP and LLDP-MED, configured at [edit protocols]. Verify external interfaces are either not configured or explicitly disabled. For example:<br />
+<br />
+To globally disable LLDP and LLDP-MED:<br />
+[edit protocols]<br />
+&lt;no LLDP or LLDP-MED hierarchy&gt;<br />
+-or-<br />
+lldp {<br />
+    interface all {<br />
+        disable;<br />
+    }<br />
+}<br />
+lldp-med {<br />
+    interface all {<br />
+        disable;<br />
+    }<br />
+}<br />
+<br />
+If LLDP or LLDP-MED is authorized, verify external interfaces are not configured or are explicitly disabled. For example:<br />
+[edit protocols]<br />
+lldp {<br />
+    interface all {<br />
+        disable;<br />
+    }<br />
+    interface ge-0/0/0; &lt;&lt;&lt; Verify ge-0/0/0 is not an external interface.<br />
+    interface ge-0/0/1 {<br />
+        disable; &lt;&lt;&lt; Assuming ge-0/0/1 is an external interface, it is disabled globally (interface all disable) or explicitly disabled as shown.<br />
+    }<br />
+}<br />
+lldp-med {<br />
+    interface all {<br />
+        disable;<br />
+    interface ge-0/0/0; &lt;&lt;&lt; Verify ge-0/0/0 is not an external interface.<br />
+    interface ge-0/0/1 {<br />
+        disable; &lt;&lt;&lt; Assuming ge-0/0/1 is an external interface, it is disabled globally (interface all disable) or explicitly disabled as shown.<br />
+    }<br />
+}<br />
+<br />
+Note: Both LLDP and LLDP-MED are globally disabled on all interfaces but Junos will apply the most specific configuration. Therefore, both LLDP and LLDP-MED are enabled only on ge-0/0/0 and disabled on all other interfaces as configured in the example.<br />
+<br />
+If LLDPs are configured globally or on any external interface, this is a finding.</p><h2>Check Content Reference</h2><p>M</p><h2>Target Key</h2><p>5479</p></body></html>

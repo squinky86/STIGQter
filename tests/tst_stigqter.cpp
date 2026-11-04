@@ -956,7 +956,7 @@ public:
 
 void TestSTIGQter::test00_StableRelease()
 {
-    QCOMPARE(ReleaseMetadata::latestUrl(), QUrl(QStringLiteral("https://squinky86.github.io/stigqter.com/metadata/v1/releases.json")));
+    QCOMPARE(ReleaseMetadata::latestUrl(), QUrl(QStringLiteral("https://squinky86.github.io/STIGQter/metadata/v1/releases.json")));
     ReleaseMetadata::StableRelease release;
     QString error;
     QVERIFY(ReleaseMetadata::parse(stableReleaseJson(QStringLiteral("2.0.10")), release, error));

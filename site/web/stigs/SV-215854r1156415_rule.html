@@ -1,0 +1,72 @@
+<!doctype html><html lang="en"><head><meta charset="utf-8"><title>STIGQter: STIG Check Details: SV-215854r1156415_rule: The Cisco router must be configured to use at least two authentication servers for the purpose of authenticating users prior to granting administrative access.</title><link rel="icon" type="image/svg+xml" href="STIGQter.svg" /><script async src="https://www.googletagmanager.com/gtag/js?id=UA-31381839-2"></script><script src="include.js"></script><script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-4110907817782130" crossorigin="anonymous"></script></head><body><div><img src="STIGQter.svg" alt="STIGQter" style="height:1em;" /> <a href="https://www.stigqter.com/">STIGQter</a>: <a href="main.html">STIG Summary</a>: <a href="U_Cisco_IOS-XE_Router_NDM_STIG_V3R7_Manual-xccdf.html">Cisco IOS XE Router NDM Security Technical Implementation Guide Version: 3 Release: 7 Benchmark Date: 01 Apr 2026</a>:</div> <h1>The Cisco router must be configured to use at least two authentication servers for the purpose of authenticating users prior to granting administrative access.</h1><h2>DISA Rule</h2><p>SV-215854r1156415_rule</p><h2>Vulnerability Number</h2><p>V-215854</p><h2>Group Title</h2><p>SRG-APP-000516-NDM-000336</p><h2>Rule Version</h2><p>CISC-ND-001370</p><h2>Severity</h2><p>CAT I</p><h2>CCI(s)</h2><ul><li>CCI-000370 - Manage configuration settings for organization-defined system components using organization-defined automated mechanisms.</li></ul><h2>Weight</h2><p>10</p><h2>Fix Recommendation</h2><p>Step 1: Configure the Cisco router to use at least two authentication servers as shown in the following example:<br />
+<br />
+R4(config)#radius host 10.1.48.2 key xxxxxx<br />
+R4(config)#radius host 10.1.48.3 key xxxxxx<br />
+<br />
+Step 2: Configure the authentication order to use the authentication servers as primary source for authentication as shown in the following example:<br />
+<br />
+R4(config)#aaa authentication CONSOLE group radius local<br />
+<br />
+R4(config)#aaa authentication login LOGIN_AUTHENTICATION group radius local<br />
+<br />
+Step 3: Configure all network connections associated with a device management to use the authentication servers for the purpose of login authentication.<br />
+<br />
+R4(config)#line vty 0 1<br />
+R4(config-line)#login authentication LOGIN_AUTHENTICATION<br />
+R4(config-line)#exit<br />
+R4(config)#line con 0<br />
+R4(config-line)#login authentication CONSOLE<br />
+R4(config-line)#exit <br />
+R4(config)#ip http authentication aaa login-authentication LOGIN_AUTHENTICATION</p><h2>Check Contents</h2><p>Review the Cisco router configuration to verify the device is configured to use at least two authentication servers as primary source for authentication as shown in the following example:<br />
+<br />
+aaa new-model<br />
+!<br />
+aaa authentication CONSOLE  group radius local<br />
+aaa authentication login LOGIN_AUTHENTICATION group radius local<br />
+…<br />
+…<br />
+…<br />
+ip http authentication aaa login-authentication LOGIN_AUTHENTICATION<br />
+ip http secure-server<br />
+…<br />
+…<br />
+…<br />
+radius-server host x.x.x.x auth-port 1812 acct-port 1813 key xxxxxx<br />
+radius-server host x.x.x.x auth-port 1812 acct-port 1813 key xxxxxx<br />
+…<br />
+…<br />
+…<br />
+line con 0<br />
+ exec-timeout 5 0<br />
+ login authentication CONSOLE<br />
+line vty 0 1<br />
+ exec-timeout 5 0<br />
+ login authentication LOGIN_AUTHENTICATION<br />
+<br />
+If the Cisco router is not configured to use at least two authentication servers for the purpose of authenticating users prior to granting administrative access, this is a finding.</p><h2>Vulnerability Number</h2><p>V-215854</p><h2>Documentable</h2><p>False</p><h2>Rule Version</h2><p>CISC-ND-001370</p><h2>Severity Override Guidance</h2><p>Review the Cisco router configuration to verify the device is configured to use at least two authentication servers as primary source for authentication as shown in the following example:<br />
+<br />
+aaa new-model<br />
+!<br />
+aaa authentication CONSOLE  group radius local<br />
+aaa authentication login LOGIN_AUTHENTICATION group radius local<br />
+…<br />
+…<br />
+…<br />
+ip http authentication aaa login-authentication LOGIN_AUTHENTICATION<br />
+ip http secure-server<br />
+…<br />
+…<br />
+…<br />
+radius-server host x.x.x.x auth-port 1812 acct-port 1813 key xxxxxx<br />
+radius-server host x.x.x.x auth-port 1812 acct-port 1813 key xxxxxx<br />
+…<br />
+…<br />
+…<br />
+line con 0<br />
+ exec-timeout 5 0<br />
+ login authentication CONSOLE<br />
+line vty 0 1<br />
+ exec-timeout 5 0<br />
+ login authentication LOGIN_AUTHENTICATION<br />
+<br />
+If the Cisco router is not configured to use at least two authentication servers for the purpose of authenticating users prior to granting administrative access, this is a finding.</p><h2>Check Content Reference</h2><p>M</p><h2>Target Key</h2><p>4020</p></body></html>

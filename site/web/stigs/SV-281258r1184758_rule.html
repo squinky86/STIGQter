@@ -1,0 +1,31 @@
+<!doctype html><html lang="en"><head><meta charset="utf-8"><title>STIGQter: STIG Check Details: SV-281258r1184758_rule: RHEL 10 must be configured so that the Secure Shell (SSH) daemon disables remote X connections for interactive users.</title><link rel="icon" type="image/svg+xml" href="STIGQter.svg" /><script async src="https://www.googletagmanager.com/gtag/js?id=UA-31381839-2"></script><script src="include.js"></script><script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-4110907817782130" crossorigin="anonymous"></script></head><body><div><img src="STIGQter.svg" alt="STIGQter" style="height:1em;" /> <a href="https://www.stigqter.com/">STIGQter</a>: <a href="main.html">STIG Summary</a>: <a href="U_RHEL_10_STIG_V1R2_Manual-xccdf.html">Red Hat Enterprise Linux 10 Security Technical Implementation Guide Version: 1 Release: 2 Benchmark Date: 01 Jul 2026</a>:</div> <h1>RHEL 10 must be configured so that the Secure Shell (SSH) daemon disables remote X connections for interactive users.</h1><h2>DISA Rule</h2><p>SV-281258r1184758_rule</p><h2>Vulnerability Number</h2><p>V-281258</p><h2>Group Title</h2><p>SRG-OS-000445-GPOS-00199</p><h2>Rule Version</h2><p>RHEL-10-700550</p><h2>Severity</h2><p>CAT II</p><h2>CCI(s)</h2><ul><li>CCI-002696 - Verify correct operation of organization-defined security functions.</li></ul><h2>Weight</h2><p>10</p><h2>Fix Recommendation</h2><p>Configure RHEL 10 SSH daemons to not allow X11 forwarding.<br />
+<br />
+In &quot;/etc/ssh/sshd_config.d&quot;, create a drop file that will lexicographically precede 50-redhat.conf and add the following line:<br />
+<br />
+X11forwarding no<br />
+<br />
+Restart the SSH service with the following command for the changes to take effect:<br />
+<br />
+$ sudo systemctl restart sshd.service</p><h2>Check Contents</h2><p>Verify RHEL 10 SSH daemons do not allow X11Forwarding with the following command:<br />
+<br />
+$ sudo /usr/sbin/sshd -dd 2&gt;&amp;1 | awk '/filename/ {print $4}' | tr -d '\r' | tr '\n' ' ' | xargs sudo grep -iH '^\s*x11forwarding'<br />
+/etc/ssh/sshd_config.d/10-stig.conf:X11forwarding no<br />
+/etc/ssh/sshd_config.d/50-redhat.conf:X11Forwarding yes<br />
+<br />
+Verify the runtime setting with the following command:<br />
+<br />
+$ sudo sshd -T | grep -i x11forwarding<br />
+x11forwarding no<br />
+<br />
+If the &quot;X11forwarding&quot; keyword is not set to &quot;no&quot; in a drop-in that lexicographically precedes 50-redhat.conf, or if no output is returned, and X11 forwarding is not documented with the information system security officer as an operational requirement, this is a finding.</p><h2>Vulnerability Number</h2><p>V-281258</p><h2>Documentable</h2><p>False</p><h2>Rule Version</h2><p>RHEL-10-700550</p><h2>Severity Override Guidance</h2><p>Verify RHEL 10 SSH daemons do not allow X11Forwarding with the following command:<br />
+<br />
+$ sudo /usr/sbin/sshd -dd 2&gt;&amp;1 | awk '/filename/ {print $4}' | tr -d '\r' | tr '\n' ' ' | xargs sudo grep -iH '^\s*x11forwarding'<br />
+/etc/ssh/sshd_config.d/10-stig.conf:X11forwarding no<br />
+/etc/ssh/sshd_config.d/50-redhat.conf:X11Forwarding yes<br />
+<br />
+Verify the runtime setting with the following command:<br />
+<br />
+$ sudo sshd -T | grep -i x11forwarding<br />
+x11forwarding no<br />
+<br />
+If the &quot;X11forwarding&quot; keyword is not set to &quot;no&quot; in a drop-in that lexicographically precedes 50-redhat.conf, or if no output is returned, and X11 forwarding is not documented with the information system security officer as an operational requirement, this is a finding.</p><h2>Check Content Reference</h2><p>M</p><h2>Target Key</h2><p>5733</p></body></html>

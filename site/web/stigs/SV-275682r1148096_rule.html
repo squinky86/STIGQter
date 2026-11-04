@@ -1,0 +1,32 @@
+<!doctype html><html lang="en"><head><meta charset="utf-8"><title>STIGQter: STIG Check Details: SV-275682r1148096_rule: Ubuntu OS must immediately notify the system administrator (SA) and information system security officer (ISSO) when the audit record storage volume reaches 25 percent remaining of the allocated capacity.</title><link rel="icon" type="image/svg+xml" href="STIGQter.svg" /><script async src="https://www.googletagmanager.com/gtag/js?id=UA-31381839-2"></script><script src="include.js"></script><script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-4110907817782130" crossorigin="anonymous"></script></head><body><div><img src="STIGQter.svg" alt="STIGQter" style="height:1em;" /> <a href="https://www.stigqter.com/">STIGQter</a>: <a href="main.html">STIG Summary</a>: <a href="U_RB_NetIM_OS_STIG_V1R1_Manual-xccdf.html">Riverbed NetIM OS Security Technical Implementation Guide Version: 1 Release: 1 Benchmark Date: 11 Sep 2025</a>:</div> <h1>Ubuntu OS must immediately notify the system administrator (SA) and information system security officer (ISSO) when the audit record storage volume reaches 25 percent remaining of the allocated capacity.</h1><h2>DISA Rule</h2><p>SV-275682r1148096_rule</p><h2>Vulnerability Number</h2><p>V-275682</p><h2>Group Title</h2><p>SRG-OS-000343-GPOS-00134</p><h2>Rule Version</h2><p>RIIM-OS-653040</p><h2>Severity</h2><p>CAT III</p><h2>CCI(s)</h2><ul><li>CCI-001855 - Provide a warning to organization-defined personnel, roles, and/or locations within an organization-defined time period when allocated audit log storage volume reaches an organization-defined percentage of repository maximum audit log storage capacity.</li></ul><h2>Weight</h2><p>10</p><h2>Fix Recommendation</h2><p>Configure Ubuntu OS to notify the SA and ISSO when the audit record storage volume reaches 25 percent remaining of the allocated capacity. <br />
+ <br />
+Add or modify the following lines in the &quot;/etc/audit/auditd.conf &quot; file: <br />
+ <br />
+space_left = 25% <br />
+space_left_action = email <br />
+ <br />
+Restart the &quot;auditd&quot; service for the changes to take effect:  <br />
+  <br />
+     $ sudo systemctl restart auditd.service <br />
+  <br />
+Note: If the &quot;space_left_action&quot; parameter is set to &quot;exec&quot;, ensure the command being executed notifies the SA and ISSO.</p><h2>Check Contents</h2><p>Verify Ubuntu OS is configured to notify the SA and ISSO when the audit record storage volume reaches 25 percent remaining of the allocated capacity by using the following command:  <br />
+ <br />
+     $ sudo grep -i space_left /etc/audit/auditd.conf <br />
+     space_left = 25% <br />
+     space_left_action = email <br />
+  <br />
+If &quot;space_left&quot; is set to a value less than &quot;25%&quot;, is commented out, or is missing, this is a finding.<br />
+<br />
+If &quot;space_left_action&quot; is not set to &quot;email&quot;, is commented out, or is missing, this is a finding. <br />
+  <br />
+Note: If the &quot;space_left_action&quot; is set to &quot;exec&quot;, the system executes a designated script. If this script informs the SA of the event, this is not a finding.</p><h2>Vulnerability Number</h2><p>V-275682</p><h2>Documentable</h2><p>False</p><h2>Rule Version</h2><p>RIIM-OS-653040</p><h2>Severity Override Guidance</h2><p>Verify Ubuntu OS is configured to notify the SA and ISSO when the audit record storage volume reaches 25 percent remaining of the allocated capacity by using the following command:  <br />
+ <br />
+     $ sudo grep -i space_left /etc/audit/auditd.conf <br />
+     space_left = 25% <br />
+     space_left_action = email <br />
+  <br />
+If &quot;space_left&quot; is set to a value less than &quot;25%&quot;, is commented out, or is missing, this is a finding.<br />
+<br />
+If &quot;space_left_action&quot; is not set to &quot;email&quot;, is commented out, or is missing, this is a finding. <br />
+  <br />
+Note: If the &quot;space_left_action&quot; is set to &quot;exec&quot;, the system executes a designated script. If this script informs the SA of the event, this is not a finding.</p><h2>Check Content Reference</h2><p>M</p><h2>Target Key</h2><p>5706</p></body></html>

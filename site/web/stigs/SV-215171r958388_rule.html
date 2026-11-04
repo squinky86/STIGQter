@@ -1,0 +1,35 @@
+<!doctype html><html lang="en"><head><meta charset="utf-8"><title>STIGQter: STIG Check Details: SV-215171r958388_rule: AIX must enforce the limit of three consecutive invalid login attempts by a user before the user account is locked and released by an administrator.</title><link rel="icon" type="image/svg+xml" href="STIGQter.svg" /><script async src="https://www.googletagmanager.com/gtag/js?id=UA-31381839-2"></script><script src="include.js"></script><script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-4110907817782130" crossorigin="anonymous"></script></head><body><div><img src="STIGQter.svg" alt="STIGQter" style="height:1em;" /> <a href="https://www.stigqter.com/">STIGQter</a>: <a href="main.html">STIG Summary</a>: <a href="U_IBM_AIX_7-x_STIG_V3R3_Manual-xccdf.html">IBM AIX 7.x Security Technical Implementation Guide Version: 3 Release: 3 Benchmark Date: 01 Jul 2026</a>:</div> <h1>AIX must enforce the limit of three consecutive invalid login attempts by a user before the user account is locked and released by an administrator.</h1><h2>DISA Rule</h2><p>SV-215171r958388_rule</p><h2>Vulnerability Number</h2><p>V-215171</p><h2>Group Title</h2><p>SRG-OS-000021-GPOS-00005</p><h2>Rule Version</h2><p>AIX7-00-001003</p><h2>Severity</h2><p>CAT II</p><h2>CCI(s)</h2><ul><li>CCI-000044 - Enforce the organization-defined limit of consecutive invalid logon attempts by a user during the organization-defined time period.</li><li>CCI-002238 - Automatically lock the account or node for either an organization-defined time period, until the locked account or node is released by an administrator, or delays the next logon prompt according to the organization-defined delay algorithm when the maximum number of unsuccessful logon attempts is exceeded.</li></ul><h2>Weight</h2><p>10</p><h2>Fix Recommendation</h2><p>From the command prompt, execute the following command to configure the number of unsuccessful logins resulting in account lockout for &quot;default:&quot; stanza in &quot;/etc/security/user&quot; file:<br />
+# chsec -f /etc/security/user -s default -a loginretries=3 <br />
+<br />
+From the command prompt, execute the following command to configure the number of unsuccessful logins resulting in account lockout for all users who have loginretries values that are 0 or greater than 3:<br />
+# chsec -f /etc/security/user -s [user_name] -a loginretries=3</p><h2>Check Contents</h2><p>From the command prompt, execute the following command to check the system default value for the maximum number of tries before the system will lock the account:<br />
+# lssec -f /etc/security/user -s default -a loginretries<br />
+<br />
+The above command should yield the following output:<br />
+default loginretries=0<br />
+<br />
+If the default value is &quot;0&quot; or greater than &quot;3&quot;, this is a finding.<br />
+<br />
+From the command prompt, execute the following command to check all active accounts on the system for the maximum number of tries before the system will lock the account:<br />
+# lsuser -a loginretries ALL | more<br />
+<br />
+The above command should yield the following output:<br />
+root loginretries=3<br />
+user1 loginretries=2<br />
+<br />
+If a user has values set to &quot;0&quot; or greater than &quot;3&quot;, this is a finding.</p><h2>Vulnerability Number</h2><p>V-215171</p><h2>Documentable</h2><p>False</p><h2>Rule Version</h2><p>AIX7-00-001003</p><h2>Severity Override Guidance</h2><p>From the command prompt, execute the following command to check the system default value for the maximum number of tries before the system will lock the account:<br />
+# lssec -f /etc/security/user -s default -a loginretries<br />
+<br />
+The above command should yield the following output:<br />
+default loginretries=0<br />
+<br />
+If the default value is &quot;0&quot; or greater than &quot;3&quot;, this is a finding.<br />
+<br />
+From the command prompt, execute the following command to check all active accounts on the system for the maximum number of tries before the system will lock the account:<br />
+# lsuser -a loginretries ALL | more<br />
+<br />
+The above command should yield the following output:<br />
+root loginretries=3<br />
+user1 loginretries=2<br />
+<br />
+If a user has values set to &quot;0&quot; or greater than &quot;3&quot;, this is a finding.</p><h2>Check Content Reference</h2><p>M</p><h2>Target Key</h2><p>4012</p></body></html>

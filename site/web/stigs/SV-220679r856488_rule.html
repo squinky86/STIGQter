@@ -1,0 +1,102 @@
+<!doctype html><html lang="en"><head><meta charset="utf-8"><title>STIGQter: STIG Check Details: SV-220679r856488_rule: The Cisco switch must authenticate all endpoint devices before establishing any connection.</title><link rel="icon" type="image/svg+xml" href="STIGQter.svg" /><script async src="https://www.googletagmanager.com/gtag/js?id=UA-31381839-2"></script><script src="include.js"></script><script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-4110907817782130" crossorigin="anonymous"></script></head><body><div><img src="STIGQter.svg" alt="STIGQter" style="height:1em;" /> <a href="https://www.stigqter.com/">STIGQter</a>: <a href="main.html">STIG Summary</a>: <a href="U_Cisco_NX-OS_Switch_L2S_STIG_V3R4_Manual-xccdf.html">Cisco NX OS Switch L2S Security Technical Implementation Guide Version: 3 Release: 4 Benchmark Date: 01 Jul 2026</a>:</div> <h1>The Cisco switch must authenticate all endpoint devices before establishing any connection.</h1><h2>DISA Rule</h2><p>SV-220679r856488_rule</p><h2>Vulnerability Number</h2><p>V-220679</p><h2>Group Title</h2><p>SRG-NET-000343-L2S-000016</p><h2>Rule Version</h2><p>CISC-L2-000080</p><h2>Severity</h2><p>CAT II</p><h2>CCI(s)</h2><ul><li>CCI-001958 - Authenticate organization-defined devices and/or types of devices before establishing a local, remote, and/or network connection.</li></ul><h2>Weight</h2><p>10</p><h2>Fix Recommendation</h2><p>Configure 802.1 x authentications on all host-facing access switch ports. To authenticate those devices that do not support 802.1x, MAC Authentication Bypass must be configured.<br />
+<br />
+Step 1: Configure the radius servers as shown in the example below:<br />
+<br />
+SW1(config)# radius-server host 10.1.1.1 key xxxx<br />
+SW1(config)# radius-server host 10.2.1.1 key xxxx<br />
+<br />
+Step 2: Enable 802.1x authentication on the switch.<br />
+<br />
+SW1(config)# aaa group server radius RADIUS_GROUP<br />
+SW1(config-radius)# server 10.1.1.1<br />
+SW1(config-radius)# server 10.2.1.1<br />
+SW1(config-radius)# exit<br />
+SW1(config)# aaa authentication dot1x default group RADIUS_GROUP<br />
+SW1(config)# exit<br />
+<br />
+Step 3: Enable 802.1x on all host-facing interfaces as shown in the example below:<br />
+<br />
+SW1(config)# int e1/1 - 80<br />
+SW1(config-if-range)# dot1x port-control auto<br />
+SW1(config-if-range)# dot1x host-mode single-host <br />
+SW1(config-if-range)# end<br />
+<br />
+Note: Host-mode must be set to single-host, multi-domain (for VoIP phone + PC), or multi-auth (multiple PCs connected to a hub). Host-mode multi-host is not compliant with this requirement.</p><h2>Check Contents</h2><p>Verify if the switch configuration has 802.1x authentication implemented for all access switch ports connecting to LAN outlets (i.e., RJ-45 wall plates) or devices not located in the telecom room, wiring closets, or equipment rooms. MAC Authentication Bypass (MAB) must be configured on those switch ports connected to devices that do not provide an 802.1x supplicant.<br />
+<br />
+Step 1: Verify that 802.1x is configured on all host-facing interfaces as shown in the example below:<br />
+<br />
+interface Ethernet1/1<br />
+ dot1x pae authenticator<br />
+ dot1x port-control auto<br />
+ dot1x host-mode single-host<br />
+ switchport access vlan 10<br />
+<br />
+interface Ethernet1/2<br />
+ dot1x pae authenticator<br />
+ dot1x port-control auto<br />
+ dot1x host-mode single-host<br />
+ switchport access vlan 10<br />
+<br />
+interface Ethernet1/3<br />
+ dot1x pae authenticator<br />
+ dot1x port-control auto<br />
+ dot1x host-mode single-host<br />
+ switchport access vlan 10<br />
+<br />
+Note: Host-mode must be set to single-host, multi-domain (for VoIP phone + PC), or multi-auth (multiple PCs connected to a hub). Host-mode multi-host is not compliant with this requirement.<br />
+<br />
+Step 2: Verify that 802.1x authentication is configured on the switch as shown in the example below:<br />
+<br />
+aaa group server radius RADIUS_GROUP <br />
+ server 1.1.1.1 <br />
+ server 1.2.1.1 <br />
+…<br />
+…<br />
+…<br />
+aaa authentication dot1x default group RADIUS_GROUP<br />
+<br />
+Step 3: Verify that the radius servers have been defined.<br />
+<br />
+radius-server host 10.1.1.1 key 7 &quot;xxxxxxxxxxx&quot; authentication accounting timeout 5 retransmit 1 <br />
+radius-server host 10.2.1.1 key 7 &quot; xxxxxxxxxxx&quot; authentication accounting timeout 5 retransmit 1<br />
+<br />
+If 802.1x authentication or MAB is not on configured on all access switch ports connecting to LAN outlets or devices not located in the telecom room, wiring closets, or equipment rooms, this is a finding.</p><h2>Vulnerability Number</h2><p>V-220679</p><h2>Documentable</h2><p>False</p><h2>Rule Version</h2><p>CISC-L2-000080</p><h2>Severity Override Guidance</h2><p>Verify if the switch configuration has 802.1x authentication implemented for all access switch ports connecting to LAN outlets (i.e., RJ-45 wall plates) or devices not located in the telecom room, wiring closets, or equipment rooms. MAC Authentication Bypass (MAB) must be configured on those switch ports connected to devices that do not provide an 802.1x supplicant.<br />
+<br />
+Step 1: Verify that 802.1x is configured on all host-facing interfaces as shown in the example below:<br />
+<br />
+interface Ethernet1/1<br />
+ dot1x pae authenticator<br />
+ dot1x port-control auto<br />
+ dot1x host-mode single-host<br />
+ switchport access vlan 10<br />
+<br />
+interface Ethernet1/2<br />
+ dot1x pae authenticator<br />
+ dot1x port-control auto<br />
+ dot1x host-mode single-host<br />
+ switchport access vlan 10<br />
+<br />
+interface Ethernet1/3<br />
+ dot1x pae authenticator<br />
+ dot1x port-control auto<br />
+ dot1x host-mode single-host<br />
+ switchport access vlan 10<br />
+<br />
+Note: Host-mode must be set to single-host, multi-domain (for VoIP phone + PC), or multi-auth (multiple PCs connected to a hub). Host-mode multi-host is not compliant with this requirement.<br />
+<br />
+Step 2: Verify that 802.1x authentication is configured on the switch as shown in the example below:<br />
+<br />
+aaa group server radius RADIUS_GROUP <br />
+ server 1.1.1.1 <br />
+ server 1.2.1.1 <br />
+…<br />
+…<br />
+…<br />
+aaa authentication dot1x default group RADIUS_GROUP<br />
+<br />
+Step 3: Verify that the radius servers have been defined.<br />
+<br />
+radius-server host 10.1.1.1 key 7 &quot;xxxxxxxxxxx&quot; authentication accounting timeout 5 retransmit 1 <br />
+radius-server host 10.2.1.1 key 7 &quot; xxxxxxxxxxx&quot; authentication accounting timeout 5 retransmit 1<br />
+<br />
+If 802.1x authentication or MAB is not on configured on all access switch ports connecting to LAN outlets or devices not located in the telecom room, wiring closets, or equipment rooms, this is a finding.</p><h2>Check Content Reference</h2><p>M</p><h2>Target Key</h2><p>4073</p></body></html>

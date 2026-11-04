@@ -1,0 +1,25 @@
+<!doctype html><html lang="en"><head><meta charset="utf-8"><title>STIGQter: STIG Check Details: SV-223991r1137691_rule: IBM z/OS JESSPOOL resources must be protected in accordance with security requirements.</title><link rel="icon" type="image/svg+xml" href="STIGQter.svg" /><script async src="https://www.googletagmanager.com/gtag/js?id=UA-31381839-2"></script><script src="include.js"></script><script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-4110907817782130" crossorigin="anonymous"></script></head><body><div><img src="STIGQter.svg" alt="STIGQter" style="height:1em;" /> <a href="https://www.stigqter.com/">STIGQter</a>: <a href="main.html">STIG Summary</a>: <a href="U_IBM_zOS_TSS_STIG_V9R9_Manual-xccdf.html">IBM z/OS TSS Security Technical Implementation Guide Version: 9 Release: 9 Benchmark Date: 01 Jul 2026</a>:</div> <h1>IBM z/OS JESSPOOL resources must be protected in accordance with security requirements.</h1><h2>DISA Rule</h2><p>SV-223991r1137691_rule</p><h2>Vulnerability Number</h2><p>V-223991</p><h2>Group Title</h2><p>SRG-OS-000080-GPOS-00048</p><h2>Rule Version</h2><p>TSS0-JS-000070</p><h2>Severity</h2><p>CAT II</p><h2>CCI(s)</h2><ul><li>CCI-000213 - Enforce approved authorizations for logical access to information and system resources in accordance with applicable access control policies.</li></ul><h2>Weight</h2><p>10</p><h2>Fix Recommendation</h2><p>Review the JES2 parameters to determine the localnodeid by searching for OWNNODE in the NJEDEF statement, and then searching for NODE(nnnn) (where nnnn is the value specified by OWNNODE). The NAME parameter value specified on this NODE statement is the localnodeid.<br />
+<br />
+The following command may be used to establish default protection for resources defined to the JESSPOOL resource class:<br />
+<br />
+TSS ADDTO(deptacid) JESSPOOL(localnodeid.)<br />
+<br />
+Due to the protection established with the previous command, the following command should be issued to ensure users are able to access their own spool data:<br />
+<br />
+TSS PERMIT(ALL) JESSPOOL(localnodeid.%) ACCESS(ALL)</p><h2>Check Contents</h2><p>Refer the JES2PARM member of SYS1.PARMLIB. Review the JESSPOOL resource in the JESINPUT resource class:<br />
+<br />
+NOTE: If the JESSPOOL resource is not defined within the JES2 parameters, the resource in the JESINPUT resource class does not have to be owned.<br />
+<br />
+From the ISPF Command Shell enter:<br />
+<br />
+TSS WHOOWNS JESINPUT(JESSPOOL)<br />
+<br />
+If the JESSPOOL resource is owned by generic and/or fully qualified entries in the JESINPUT resource class, this is not a finding.</p><h2>Vulnerability Number</h2><p>V-223991</p><h2>Documentable</h2><p>False</p><h2>Rule Version</h2><p>TSS0-JS-000070</p><h2>Severity Override Guidance</h2><p>Refer the JES2PARM member of SYS1.PARMLIB. Review the JESSPOOL resource in the JESINPUT resource class:<br />
+<br />
+NOTE: If the JESSPOOL resource is not defined within the JES2 parameters, the resource in the JESINPUT resource class does not have to be owned.<br />
+<br />
+From the ISPF Command Shell enter:<br />
+<br />
+TSS WHOOWNS JESINPUT(JESSPOOL)<br />
+<br />
+If the JESSPOOL resource is owned by generic and/or fully qualified entries in the JESINPUT resource class, this is not a finding.</p><h2>Check Content Reference</h2><p>M</p><h2>Target Key</h2><p>4102</p></body></html>

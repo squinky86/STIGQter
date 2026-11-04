@@ -1,0 +1,130 @@
+<!doctype html><html lang="en"><head><meta charset="utf-8"><title>STIGQter: STIG Check Details: SV-216778r1117236_rule: The Cisco BGP router must be configured to reject inbound route advertisements for any prefixes belonging to the local autonomous system (AS).</title><link rel="icon" type="image/svg+xml" href="STIGQter.svg" /><script async src="https://www.googletagmanager.com/gtag/js?id=UA-31381839-2"></script><script src="include.js"></script><script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-4110907817782130" crossorigin="anonymous"></script></head><body><div><img src="STIGQter.svg" alt="STIGQter" style="height:1em;" /> <a href="https://www.stigqter.com/">STIGQter</a>: <a href="main.html">STIG Summary</a>: <a href="U_Cisco_IOS-XR_Router_RTR_STIG_V3R3_Manual-xccdf.html">Cisco IOS XR Router RTR Security Technical Implementation Guide Version: 3 Release: 3 Benchmark Date: 01 Oct 2025</a>:</div> <h1>The Cisco BGP router must be configured to reject inbound route advertisements for any prefixes belonging to the local autonomous system (AS).</h1><h2>DISA Rule</h2><p>SV-216778r1117236_rule</p><h2>Vulnerability Number</h2><p>V-216778</p><h2>Group Title</h2><p>SRG-NET-000018-RTR-000003</p><h2>Rule Version</h2><p>CISC-RT-000500</p><h2>Severity</h2><p>CAT II</p><h2>CCI(s)</h2><ul><li>CCI-001368 - Enforce approved authorizations for controlling the flow of information within the system based on organization-defined information flow control policies.</li></ul><h2>Weight</h2><p>10</p><h2>Fix Recommendation</h2><p>Step 1: Configure a prefix set containing the current Bogon prefixes as shown below.<br />
+<br />
+RP/0/0/CPU0:R2(config)#prefix-set Step 1: Configure a prefix set containing the current Bogon prefixes as shown below.<br />
+<br />
+RP/0/0/CPU0:R2(config)#prefix-set LOCAL_PREFIX<br />
+RP/0/0/CPU0:R2(config-pfx)#x.13.1.0/24 le 32<br />
+RP/0/0/CPU0:R2(config-pfx)#end-set<br />
+<br />
+Step 2: Configure the route policy to drop routes with BOGON prefixes as shown in the example below.<br />
+<br />
+RP/0/0/CPU0:R2(config)#route-policy BGP_FILTER_INBOUND<br />
+RP/0/0/CPU0:R2(config-rpl)#if destination in LOCAL_PREFIX then <br />
+RP/0/0/CPU0:R2(config-rpl-if)#drop<br />
+RP/0/0/CPU0:R2(config-rpl-if)#else pass endif<br />
+RRP/0/0/CPU0:R2(config-rpl)#end-policy <br />
+RP/0/0/CPU0:R2(config)#exit<br />
+<br />
+Step 3: Apply the route policy to each external BGP neighbor as shown in the example.<br />
+<br />
+RP/0/0/CPU0:R2(config)#router bgp xx<br />
+RP/0/0/CPU0:R2(config-bgp)#neighbor x.1.23.3<br />
+RP/0/0/CPU0:R2(config-bgp-nbr)#address-family ipv4 unicast <br />
+RP/0/0/CPU0:R2(config-bgp-nbr-af)#route-policy BGP_FILTER_INBOUND in<br />
+RP/0/0/CPU0:R2(config-bgp)#neighbor x.1.24.4<br />
+RP/0/0/CPU0:R2(config-bgp-nbr)#address-family ipv4 unicast <br />
+RP/0/0/CPU0:R2(config-bgp-nbr-af)#route-policy BGP_FILTER_INBOUND in</p><h2>Check Contents</h2><p>Review the router configuration to verify that it will reject routes belonging to the local AS.<br />
+<br />
+Step 1: verify that an inbound route policy has been configured for each external neighbor as shown in the example below.<br />
+<br />
+router bgp xx<br />
+ address-family ipv4 unicast<br />
+ !<br />
+ neighbor x.1.23.3<br />
+  remote-as yy<br />
+  keychain YYY_KEY_CHAIN<br />
+  ttl-security<br />
+  address-family ipv4 unicast<br />
+   route-policy BGP_FILTER_INBOUND in<br />
+  !<br />
+ !<br />
+ neighbor x.1.24.4<br />
+  remote-as zz<br />
+  keychain ZZZ_KEY_CHAIN<br />
+  ttl-security<br />
+  address-family ipv4 unicast<br />
+   route-policy BGP_FILTER_INBOUND in<br />
+ !<br />
+!<br />
+<br />
+Step 2: Review the route policy to determine if it is filtering at a minimum local prefixes as shown in the example below.<br />
+<br />
+route-policy BGP_FILTER_INBOUND<br />
+  if destination in LOCAL_PREFIX then<br />
+    drop<br />
+  else<br />
+    pass<br />
+  endif<br />
+end-policy <br />
+<br />
+Note: If bogons are also filtered per previous requirement, the route policy would look similar to the following example:<br />
+<br />
+route-policy BGP_FILTER_INBOUND<br />
+  if destination in BOGON_PREFIXES then<br />
+    drop<br />
+  elseif destination in LOCAL_PREFIX then<br />
+    drop<br />
+  else<br />
+    pass<br />
+  endif<br />
+end-policy<br />
+<br />
+Step 3: Review the prefix set referenced in the route policy above to determine if it includes the local global prefix as shown in the example below.<br />
+<br />
+prefix-set LOCAL_PREFIX<br />
+ x.13.1.0/24 le 32<br />
+end-set<br />
+<br />
+If the router is not configured to reject inbound route advertisements belonging to the local AS, this is a finding.</p><h2>Vulnerability Number</h2><p>V-216778</p><h2>Documentable</h2><p>False</p><h2>Rule Version</h2><p>CISC-RT-000500</p><h2>Severity Override Guidance</h2><p>Review the router configuration to verify that it will reject routes belonging to the local AS.<br />
+<br />
+Step 1: verify that an inbound route policy has been configured for each external neighbor as shown in the example below.<br />
+<br />
+router bgp xx<br />
+ address-family ipv4 unicast<br />
+ !<br />
+ neighbor x.1.23.3<br />
+  remote-as yy<br />
+  keychain YYY_KEY_CHAIN<br />
+  ttl-security<br />
+  address-family ipv4 unicast<br />
+   route-policy BGP_FILTER_INBOUND in<br />
+  !<br />
+ !<br />
+ neighbor x.1.24.4<br />
+  remote-as zz<br />
+  keychain ZZZ_KEY_CHAIN<br />
+  ttl-security<br />
+  address-family ipv4 unicast<br />
+   route-policy BGP_FILTER_INBOUND in<br />
+ !<br />
+!<br />
+<br />
+Step 2: Review the route policy to determine if it is filtering at a minimum local prefixes as shown in the example below.<br />
+<br />
+route-policy BGP_FILTER_INBOUND<br />
+  if destination in LOCAL_PREFIX then<br />
+    drop<br />
+  else<br />
+    pass<br />
+  endif<br />
+end-policy <br />
+<br />
+Note: If bogons are also filtered per previous requirement, the route policy would look similar to the following example:<br />
+<br />
+route-policy BGP_FILTER_INBOUND<br />
+  if destination in BOGON_PREFIXES then<br />
+    drop<br />
+  elseif destination in LOCAL_PREFIX then<br />
+    drop<br />
+  else<br />
+    pass<br />
+  endif<br />
+end-policy<br />
+<br />
+Step 3: Review the prefix set referenced in the route policy above to determine if it includes the local global prefix as shown in the example below.<br />
+<br />
+prefix-set LOCAL_PREFIX<br />
+ x.13.1.0/24 le 32<br />
+end-set<br />
+<br />
+If the router is not configured to reject inbound route advertisements belonging to the local AS, this is a finding.</p><h2>Check Content Reference</h2><p>M</p><h2>Target Key</h2><p>4029</p></body></html>

@@ -1,0 +1,30 @@
+<!doctype html><html lang="en"><head><meta charset="utf-8"><title>STIGQter: STIG Check Details: SV-222968r961050_rule: Tomcat must use FIPS-validated ciphers on secured connectors.</title><link rel="icon" type="image/svg+xml" href="STIGQter.svg" /><script async src="https://www.googletagmanager.com/gtag/js?id=UA-31381839-2"></script><script src="include.js"></script><script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-4110907817782130" crossorigin="anonymous"></script></head><body><div><img src="STIGQter.svg" alt="STIGQter" style="height:1em;" /> <a href="https://www.stigqter.com/">STIGQter</a>: <a href="main.html">STIG Summary</a>: <a href="U_Apache_Tomcat_Application_Server_9_STIG_V3R4_Manual-xccdf.html">Apache Tomcat Application Server 9 Security Technical Implementation Guide Version: 3 Release: 4 Benchmark Date: 01 Apr 2026</a>:</div> <h1>Tomcat must use FIPS-validated ciphers on secured connectors.</h1><h2>DISA Rule</h2><p>SV-222968r961050_rule</p><h2>Vulnerability Number</h2><p>V-222968</p><h2>Group Title</h2><p>SRG-APP-000179-AS-000129</p><h2>Rule Version</h2><p>TCAT-AS-000750</p><h2>Severity</h2><p>CAT I</p><h2>CCI(s)</h2><ul><li>CCI-000803 - Implement mechanisms for authentication to a cryptographic module that meet the requirements of applicable laws, Executive Orders, directives, policies, regulations, standards, and guidance for such authentication.</li><li>CCI-001188 - Generate a unique session identifier for each session with organization-defined randomness requirements.</li><li>CCI-002418 - Protect the confidentiality and/or integrity of transmitted information.</li><li>CCI-002421 - Implement cryptographic mechanisms to prevent unauthorized disclosure of information and/or detect changes to information during transmission.</li><li>CCI-002475 - Implement cryptographic mechanisms to prevent unauthorized modification of organization-defined information when at rest on organization-defined system components.</li><li>CCI-002476 - Implement cryptographic mechanisms to prevent unauthorized disclosure of organization-defined information at rest on organization-defined system components.</li></ul><h2>Weight</h2><p>10</p><h2>Fix Recommendation</h2><p>In addition to configuring Tomcat, the admin must also configure the underlying OS and Java engine to use FIPS validated encryption modules. This fix instructs how to enable FIPSMode within Tomcat, the OS and Java engine must be configured to use the FIPS validated modules according to the chosen OS and Java engine.<br />
+ <br />
+From the Tomcat server as a privileged user:<br />
+<br />
+sudo nano $CATALINA_BASE/conf/server.xml.<br />
+<br />
+In the &lt;Listener/&gt; element, locate the AprLifecycleListener. Either add or modify the FIPSMode setting and set it to FIPSMode=&quot;on&quot;.<br />
+<br />
+EXAMPLE:<br />
+&lt;Listener<br />
+   className=&quot;org.apache.catalina.core.AprLifecycleListener&quot;<br />
+    SSLEngine=&quot;on&quot;<br />
+    FIPSMode=&quot;on&quot;<br />
+/&gt;<br />
+<br />
+Restart the Tomcat server:<br />
+sudo systemctl restart tomcat<br />
+sudo systemctl daemon-reload</p><h2>Check Contents</h2><p>From the Tomcat server console, run the following two commands to verify Tomcat server is configured to use FIPS:<br />
+<br />
+sudo grep -i fipsmode $CATALINA_BASE/conf/server.xml<br />
+<br />
+sudo grep -i fipsmode $CATALINA_BASE/logs/catalina.out<br />
+<br />
+If server.xml  does not contain FIPSMode=&quot;on&quot;, or if catalina.out contains the error &quot;failed to set property[FIPSMODE] to [on]&quot;, this is a finding.</p><h2>Vulnerability Number</h2><p>V-222968</p><h2>Documentable</h2><p>False</p><h2>Rule Version</h2><p>TCAT-AS-000750</p><h2>Severity Override Guidance</h2><p>From the Tomcat server console, run the following two commands to verify Tomcat server is configured to use FIPS:<br />
+<br />
+sudo grep -i fipsmode $CATALINA_BASE/conf/server.xml<br />
+<br />
+sudo grep -i fipsmode $CATALINA_BASE/logs/catalina.out<br />
+<br />
+If server.xml  does not contain FIPSMode=&quot;on&quot;, or if catalina.out contains the error &quot;failed to set property[FIPSMODE] to [on]&quot;, this is a finding.</p><h2>Check Content Reference</h2><p>M</p><h2>Target Key</h2><p>4094</p></body></html>

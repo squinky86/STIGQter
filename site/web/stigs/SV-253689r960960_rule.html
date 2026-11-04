@@ -1,0 +1,40 @@
+<!doctype html><html lang="en"><head><meta charset="utf-8"><title>STIGQter: STIG Check Details: SV-253689r960960_rule: The role(s)/group(s) used to modify database structure (including but not necessarily limited to tables, indexes, storage, etc.) and logic modules (stored procedures, functions, triggers, links to software external to the MariaDB, etc.) must be restricted to authorized users.</title><link rel="icon" type="image/svg+xml" href="STIGQter.svg" /><script async src="https://www.googletagmanager.com/gtag/js?id=UA-31381839-2"></script><script src="include.js"></script><script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-4110907817782130" crossorigin="anonymous"></script></head><body><div><img src="STIGQter.svg" alt="STIGQter" style="height:1em;" /> <a href="https://www.stigqter.com/">STIGQter</a>: <a href="main.html">STIG Summary</a>: <a href="U_MariaDB_Enterprise_10-x_STIG_V2R5_Manual-xccdf.html">MariaDB Enterprise 10.x Security Technical Implementation Guide Version: 2 Release: 5 Benchmark Date: 01 Apr 2026</a>:</div> <h1>The role(s)/group(s) used to modify database structure (including but not necessarily limited to tables, indexes, storage, etc.) and logic modules (stored procedures, functions, triggers, links to software external to the MariaDB, etc.) must be restricted to authorized users.</h1><h2>DISA Rule</h2><p>SV-253689r960960_rule</p><h2>Vulnerability Number</h2><p>V-253689</p><h2>Group Title</h2><p>SRG-APP-000133-DB-000362</p><h2>Rule Version</h2><p>MADB-10-003000</p><h2>Severity</h2><p>CAT II</p><h2>CCI(s)</h2><ul><li>CCI-001499 - Limit privileges to change software resident within software libraries.</li></ul><h2>Weight</h2><p>10</p><h2>Fix Recommendation</h2><p>As the database administrator, revoke any permissions from a role that are deemed unnecessary by running the following SQL:<br />
+<br />
+MariaDB&gt; REVOKE  PERMISSION FROM ROLE_NAME ;<br />
+<br />
+Revoke any roles from a user if they are deemed unnecessary by running the following SQL:<br />
+<br />
+MariaDB&gt; REVOKE  ROLE_NAME  FROM  test_user ;<br />
+ <br />
+If the revoked role is the default role for the user, the REVOKE command should be followed by a command to set a new default role that has appropriate permissions, or no default role:<br />
+<br />
+MariaDB&gt; SET DEFAULT ROLE NONE FOR  test_user ;<br />
+MariaDB&gt; SET DEFAULT ROLE  ROLE_NAME  for  test_user ;</p><h2>Check Contents</h2><p>Gather a list of SHOW GRANTS commands. This list will include users and roles: <br />
+<br />
+MariaDB&gt; SELECT DISTINCT CONCAT( 'SHOW GRANTS FOR ', user,'@', host,';') AS grantQuery FROM mysql.user;<br />
+<br />
+Run each SHOW GRANTS commands and verify that all objects have the correct privileges, if they do not, this is a finding.<br />
+<br />
+MariaDB&gt; SHOW GRANTS FOR 'user'@'host';<br />
+<br />
+Find the data directory and verify its operating system privileges. <br />
+<br />
+MariaDB&gt; SHOW GLOBAL VARIABLES LIKE '%datadir%';<br />
+<br />
+# ls -al /path/to/datadir<br />
+<br />
+If permissions of the database directory are not limited to an authorized user account, this is a finding.</p><h2>Vulnerability Number</h2><p>V-253689</p><h2>Documentable</h2><p>False</p><h2>Rule Version</h2><p>MADB-10-003000</p><h2>Severity Override Guidance</h2><p>Gather a list of SHOW GRANTS commands. This list will include users and roles: <br />
+<br />
+MariaDB&gt; SELECT DISTINCT CONCAT( 'SHOW GRANTS FOR ', user,'@', host,';') AS grantQuery FROM mysql.user;<br />
+<br />
+Run each SHOW GRANTS commands and verify that all objects have the correct privileges, if they do not, this is a finding.<br />
+<br />
+MariaDB&gt; SHOW GRANTS FOR 'user'@'host';<br />
+<br />
+Find the data directory and verify its operating system privileges. <br />
+<br />
+MariaDB&gt; SHOW GLOBAL VARIABLES LIKE '%datadir%';<br />
+<br />
+# ls -al /path/to/datadir<br />
+<br />
+If permissions of the database directory are not limited to an authorized user account, this is a finding.</p><h2>Check Content Reference</h2><p>M</p><h2>Target Key</h2><p>5475</p></body></html>

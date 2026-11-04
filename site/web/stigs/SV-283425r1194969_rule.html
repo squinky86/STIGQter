@@ -1,0 +1,66 @@
+<!doctype html><html lang="en"><head><meta charset="utf-8"><title>STIGQter: STIG Check Details: SV-283425r1194969_rule: The HPE Alletra Storage ArcusOS device must be configured to use at least two authentication servers for the purpose of authenticating users prior to granting administrative access.</title><link rel="icon" type="image/svg+xml" href="STIGQter.svg" /><script async src="https://www.googletagmanager.com/gtag/js?id=UA-31381839-2"></script><script src="include.js"></script><script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-4110907817782130" crossorigin="anonymous"></script></head><body><div><img src="STIGQter.svg" alt="STIGQter" style="height:1em;" /> <a href="https://www.stigqter.com/">STIGQter</a>: <a href="main.html">STIG Summary</a>: <a href="U_HPE_Alletra_Storage_ArcusOS_NDM_STIG_V1R1_Manual-xccdf.html">HPE Alletra Storage ArcusOS Network Device Management Security Technical Implementation Guide Version: 1 Release: 1 Benchmark Date: 26 Feb 2026</a>:</div> <h1>The HPE Alletra Storage ArcusOS device must be configured to use at least two authentication servers for the purpose of authenticating users prior to granting administrative access.</h1><h2>DISA Rule</h2><p>SV-283425r1194969_rule</p><h2>Vulnerability Number</h2><p>V-283425</p><h2>Group Title</h2><p>SRG-APP-000516-NDM-000336</p><h2>Rule Version</h2><p>ASMP-ND-001060</p><h2>Severity</h2><p>CAT I</p><h2>CCI(s)</h2><ul><li>CCI-000370 - Manage configuration settings for organization-defined system components using organization-defined automated mechanisms.</li><li>CCI-001941 - Implement replay-resistant authentication mechanisms for access to privileged accounts and/or non-privileged accounts.</li><li>CCI-000187 - For public key-based authentication, map the authenticated identity to the account of the individual or group.</li><li>CCI-000764 - Uniquely identify and authenticate organizational users and associate that unique identification with processes acting on behalf of those users.</li><li>CCI-000166 - Provide irrefutable evidence that an individual (or process acting on behalf of an individual) falsely denying having performed organization-defined actions to be covered by non-repudiation.</li></ul><h2>Weight</h2><p>10</p><h2>Fix Recommendation</h2><p>Use the following commands to configure the primary and secondary authentication servers.<br />
+<br />
+cli% setauthparam -f ldap-type &lt;type&gt;  where type is MSAD, RHDS or OPEN.<br />
+cli% setauthparam ldap-server &lt;primary hostname&gt; &lt;secondary hostname&gt;<br />
+cli% setauthparam -f accounts-dn &lt;base of the ad subtree, such as CN=Users,DC=win2k12forest,DC=thisdomain,DC=com&gt;<br />
+cli% setauthparam -f kerberos-realm &lt;Kerberos-realm configuration&gt;<br />
+cli% setauthparam -f ldap-reqcert 1<br />
+<br />
+Set up a super role such as the super role:<br />
+cli% setauthparam -f super-map &lt;customer-assigned name of &quot;super&quot; group&gt;<br />
+<br />
+Enable TLS with:<br />
+cli% setauthparam -f ldap-StartTLS require<br />
+or<br />
+cli% setauthparam -f ldap-ssl 1<br />
+<br />
+Import a TLS certificate:<br />
+cli% importcert ldap -f stdin</p><h2>Check Contents</h2><p>Determine if the system is configured to use a primary and secondary authentication server with the following command:<br />
+<br />
+cli% showauthparam<br />
+ldap-type      MSAD<br />
+accounts-dn          &lt;accounts dn configuration&gt;<br />
+super-map              &lt;super-map configuration&gt;<br />
+edit-map                  &lt;edit-map configuration&gt;<br />
+browse-map           &lt;browse-map configuration&gt;<br />
+service-map           &lt;service-map configuration&gt;<br />
+ldap-StartTLS        require<br />
+kerberos-realm       &lt;Kerberos-realm configuration&gt;<br />
+ldap-2FA-cert-field  subjectAlt:rfc822Name<br />
+ldap-2FA-object-attr mail<br />
+ldap-server          &lt;server hostname&gt;<br />
+ldap-server          &lt;server hostname&gt;<br />
+ldap-ssl-cacert:<br />
+-----BEGIN CERTIFICATE-----<br />
+<br />
+If the command output does not list authparams for ldap-type, kerberos-realm, accounts-dn, ldap-ssl-cacert, and at least one role map (e.g., super-map), this is a finding. <br />
+<br />
+If there are not two ldap-server lines, this is a finding.<br />
+<br />
+ldap-StartTLS must be set to require, if not, this is a finding.<br />
+<br />
+If the ldap-reqcert authparam is not set to &quot;1&quot;, this is a finding.</p><h2>Vulnerability Number</h2><p>V-283425</p><h2>Documentable</h2><p>False</p><h2>Rule Version</h2><p>ASMP-ND-001060</p><h2>Severity Override Guidance</h2><p>Determine if the system is configured to use a primary and secondary authentication server with the following command:<br />
+<br />
+cli% showauthparam<br />
+ldap-type      MSAD<br />
+accounts-dn          &lt;accounts dn configuration&gt;<br />
+super-map              &lt;super-map configuration&gt;<br />
+edit-map                  &lt;edit-map configuration&gt;<br />
+browse-map           &lt;browse-map configuration&gt;<br />
+service-map           &lt;service-map configuration&gt;<br />
+ldap-StartTLS        require<br />
+kerberos-realm       &lt;Kerberos-realm configuration&gt;<br />
+ldap-2FA-cert-field  subjectAlt:rfc822Name<br />
+ldap-2FA-object-attr mail<br />
+ldap-server          &lt;server hostname&gt;<br />
+ldap-server          &lt;server hostname&gt;<br />
+ldap-ssl-cacert:<br />
+-----BEGIN CERTIFICATE-----<br />
+<br />
+If the command output does not list authparams for ldap-type, kerberos-realm, accounts-dn, ldap-ssl-cacert, and at least one role map (e.g., super-map), this is a finding. <br />
+<br />
+If there are not two ldap-server lines, this is a finding.<br />
+<br />
+ldap-StartTLS must be set to require, if not, this is a finding.<br />
+<br />
+If the ldap-reqcert authparam is not set to &quot;1&quot;, this is a finding.</p><h2>Check Content Reference</h2><p>M</p><h2>Target Key</h2><p>5742</p></body></html>

@@ -1,0 +1,51 @@
+<!doctype html><html lang="en"><head><meta charset="utf-8"><title>STIGQter: STIG Check Details: SV-254087r845265_rule: Innoslate must use TLS 1.2, at a minimum, to protect the confidentiality of sensitive data during electronic dissemination using remote access.</title><link rel="icon" type="image/svg+xml" href="STIGQter.svg" /><script async src="https://www.googletagmanager.com/gtag/js?id=UA-31381839-2"></script><script src="include.js"></script><script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-4110907817782130" crossorigin="anonymous"></script></head><body><div><img src="STIGQter.svg" alt="STIGQter" style="height:1em;" /> <a href="https://www.stigqter.com/">STIGQter</a>: <a href="main.html">STIG Summary</a>: <a href="U_SPEC_Innovations_Innoslate_4-x_STIG_V1R1_Manual-xccdf.html">SPEC Innovations Innoslate 4.x Security Technical Implementation Guide Version: 1 Release: 1 Benchmark Date: 08 Sep 2022</a>:</div> <h1>Innoslate must use TLS 1.2, at a minimum, to protect the confidentiality of sensitive data during electronic dissemination using remote access.</h1><h2>DISA Rule</h2><p>SV-254087r845265_rule</p><h2>Vulnerability Number</h2><p>V-254087</p><h2>Group Title</h2><p>SRG-APP-000014</p><h2>Rule Version</h2><p>SPEC-IN-000030</p><h2>Severity</h2><p>CAT I</p><h2>CCI(s)</h2><ul><li>CCI-000068 - Implement cryptographic mechanisms to protect the confidentiality of remote access sessions.</li><li>CCI-000185 - For public key-based authentication, validate certificates by constructing and verifying a certification path to an accepted trust anchor including checking certificate status information.</li><li>CCI-000382 - Configure the system to prohibit or restrict the use of organization-defined prohibited or restricted functions, system ports, protocols, software, and/or services.</li><li>CCI-000803 - Implement mechanisms for authentication to a cryptographic module that meet the requirements of applicable laws, Executive Orders, directives, policies, regulations, standards, and guidance for such authentication.</li><li>CCI-001184 - Protect the authenticity of communications sessions.</li><li>CCI-001453 - Implement cryptographic mechanisms to protect the integrity of remote access sessions.</li><li>CCI-001941 - Implement replay-resistant authentication mechanisms for access to privileged accounts and/or non-privileged accounts.</li><li>CCI-002422 - Maintain the confidentiality and/or integrity of information during reception.</li><li>CCI-002450 - Implement organization-defined types of cryptography for each specified cryptography use.</li></ul><h2>Weight</h2><p>10</p><h2>Fix Recommendation</h2><p>1. Open the server.xml file inside the conf folder of the tomcat installation (IE &quot;C:\Innoslate4\apache-tomcat\conf&quot; or &quot;$CATALINA_BASE/conf/server.xml&quot;). Add a connector tag for HTTPS scheme with PORT 8443 (or other AO-approved port) using the following example:<br />
+<br />
+Connector port=&quot;8443&quot; protocol=&quot;org.apache.coyote.http11.Http11NioProtocol&quot;<br />
+               maxThreads=&quot;150&quot; SSLEnabled=&quot;true&quot; scheme=&quot;https&quot; secure=&quot;true&quot;<br />
+               clientAuth=&quot;false&quot; sslProtocol=&quot;TLSv1.2&quot; <br />
+               keystoreFile=&quot;C:\Innoslate4\apache-tomcat-8.5.30\conf\keystore.jks&quot;<br />
+               keystorePass=&quot;123456&quot;<br />
+               keyAlias=&quot;tomcatssl&quot;<br />
+               /<br />
+<br />
+2. Set &quot;port&quot; to 8443, or other AO-approved port.<br />
+Set &quot;protocol&quot; to &quot;org.apache.coyote.http11.Http11NioProtocol&quot;.<br />
+Set &quot;SSLEnabled&quot; to &quot;true&quot;.<br />
+Set &quot;scheme&quot; to &quot;https&quot;.<br />
+Set &quot;secure&quot; to &quot;true&quot;.<br />
+Set &quot;SSLProtocol&quot; or &quot;SSLEnabledProtocols&quot; to &quot;TLSv1.2&quot;.  The name of this flag varies with Tomcat versions.<br />
+Set &quot;keystoreFile&quot; to the path of the keystore utilized by the system, and set the associated password with &quot;keystorePass&quot;.<br />
+<br />
+3. Save the server.xml file.</p><h2>Check Contents</h2><p>1. Consult the System Administrator if needed to determine the location of the Apache Tomcat server.xml file and the network port that was specified during installation for use with Innoslate. The default is 8443; other AO-approved ports may be used.<br />
+2. Open the server.xml file with a text editor, and locate the &lt;Connector/&gt; element.  The following is an example:<br />
+<br />
+Connector port=&quot;8443&quot; protocol=&quot;org.apache.coyote.http11.Http11NioProtocol&quot;<br />
+               maxThreads=&quot;150&quot; SSLEnabled=&quot;true&quot; scheme=&quot;https&quot; secure=&quot;true&quot;<br />
+               clientAuth=&quot;false&quot; SSLProtocol=&quot;TLSv1.2&quot; <br />
+               keystoreFile=&quot;$keystorepath&quot;<br />
+               keystorePass=&quot;123456&quot;<br />
+               keyAlias=&quot;tomcatssl&quot;<br />
+               /<br />
+<br />
+If &quot;port&quot; is not set to 8443, or other AO-approved port, this is a finding.<br />
+If &quot;protocol&quot; is not set to &quot;org.apache.coyote.http11.Http11NioProtocol&quot;, this is a finding.<br />
+If &quot;SSLEnabled&quot; is not set to &quot;true&quot;, this is a finding.<br />
+If &quot;scheme&quot; is not set to &quot;https&quot;, this is a finding.<br />
+If &quot;secure&quot; is not set to &quot;true&quot;, this is a finding.<br />
+If &quot;SSLProtocol&quot;or &quot;SSLEnabledProtocols&quot; is not set to &quot;TLSv1.2&quot;, this is a finding. The name of this flag varies with Tomcat versions.</p><h2>Vulnerability Number</h2><p>V-254087</p><h2>Documentable</h2><p>False</p><h2>Rule Version</h2><p>SPEC-IN-000030</p><h2>Severity Override Guidance</h2><p>1. Consult the System Administrator if needed to determine the location of the Apache Tomcat server.xml file and the network port that was specified during installation for use with Innoslate. The default is 8443; other AO-approved ports may be used.<br />
+2. Open the server.xml file with a text editor, and locate the &lt;Connector/&gt; element.  The following is an example:<br />
+<br />
+Connector port=&quot;8443&quot; protocol=&quot;org.apache.coyote.http11.Http11NioProtocol&quot;<br />
+               maxThreads=&quot;150&quot; SSLEnabled=&quot;true&quot; scheme=&quot;https&quot; secure=&quot;true&quot;<br />
+               clientAuth=&quot;false&quot; SSLProtocol=&quot;TLSv1.2&quot; <br />
+               keystoreFile=&quot;$keystorepath&quot;<br />
+               keystorePass=&quot;123456&quot;<br />
+               keyAlias=&quot;tomcatssl&quot;<br />
+               /<br />
+<br />
+If &quot;port&quot; is not set to 8443, or other AO-approved port, this is a finding.<br />
+If &quot;protocol&quot; is not set to &quot;org.apache.coyote.http11.Http11NioProtocol&quot;, this is a finding.<br />
+If &quot;SSLEnabled&quot; is not set to &quot;true&quot;, this is a finding.<br />
+If &quot;scheme&quot; is not set to &quot;https&quot;, this is a finding.<br />
+If &quot;secure&quot; is not set to &quot;true&quot;, this is a finding.<br />
+If &quot;SSLProtocol&quot;or &quot;SSLEnabledProtocols&quot; is not set to &quot;TLSv1.2&quot;, this is a finding. The name of this flag varies with Tomcat versions.</p><h2>Check Content Reference</h2><p>M</p><h2>Target Key</h2><p>5481</p></body></html>

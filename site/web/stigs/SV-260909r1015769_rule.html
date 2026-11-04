@@ -1,0 +1,61 @@
+<!doctype html><html lang="en"><head><meta charset="utf-8"><title>STIGQter: STIG Check Details: SV-260909r1015769_rule: MKE must be configured to integrate with an Enterprise Identity Provider.</title><link rel="icon" type="image/svg+xml" href="STIGQter.svg" /><script async src="https://www.googletagmanager.com/gtag/js?id=UA-31381839-2"></script><script src="include.js"></script><script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-4110907817782130" crossorigin="anonymous"></script></head><body><div><img src="STIGQter.svg" alt="STIGQter" style="height:1em;" /> <a href="https://www.stigqter.com/">STIGQter</a>: <a href="main.html">STIG Summary</a>: <a href="U_Mirantis_Kubernetes_Engine_STIG_V2R1_Manual-xccdf.html">Mirantis Kubernetes Engine Security Technical Implementation Guide Version: 2 Release: 1 Benchmark Date: 24 Jul 2024</a>:</div> <h1>MKE must be configured to integrate with an Enterprise Identity Provider.</h1><h2>DISA Rule</h2><p>SV-260909r1015769_rule</p><h2>Vulnerability Number</h2><p>V-260909</p><h2>Group Title</h2><p>SRG-APP-000023-CTR-000055</p><h2>Rule Version</h2><p>CNTR-MK-000030</p><h2>Severity</h2><p>CAT II</p><h2>CCI(s)</h2><ul><li>CCI-000015 - Support the management of system accounts using (organization-defined automated mechanisms).</li><li>CCI-000016 - Automatically remove or disable temporary and emergency accounts after an organization-defined time-period for each type of account.</li><li>CCI-000017 - Disable accounts when the accounts have been inactive for the organization-defined time-period.</li><li>CCI-000044 - Enforce the organization-defined limit of consecutive invalid logon attempts by a user during the organization-defined time period.</li><li>CCI-000765 - Implement multifactor authentication for network access to privileged accounts.</li><li>CCI-000766 - Implement multifactor authentication for network access to non-privileged accounts.</li><li>CCI-004045 - Require users to be individually authenticated before granting access to the shared accounts or resources.</li><li>CCI-001941 - Implement replay-resistant authentication mechanisms for access to privileged accounts and/or non-privileged accounts.</li><li>CCI-003627 - Disable accounts when the accounts have expired.</li><li>CCI-004066 - For password-based authentication, enforce organization-defined composition and complexity rules.</li><li>CCI-004061 - For password-based authentication, verify when users create or update passwords, that the passwords are not found on the list of commonly-used, expected, or compromised passwords in IA-5 (1) (a).</li><li>CCI-000187 - For public key-based authentication, map the authenticated identity to the account of the individual or group.</li><li>CCI-002145 - Enforce organization-defined circumstances and/or usage conditions for organization-defined system accounts.</li><li>CCI-002130 - Automatically audit account enabling actions.</li><li>CCI-002238 - Automatically lock the account or node for either an organization-defined time period, until the locked account or node is released by an administrator, or delays the next logon prompt according to the organization-defined delay algorithm when the maximum number of unsuccessful logon attempts is exceeded.</li><li>CCI-003938 - Automatically generate audit records of the enforcement actions.</li><li>CCI-001953 - Accepts Personal Identity Verification-compliant credentials.</li><li>CCI-002009 - Accept Personal Identity Verification-compliant credentials from other federal agencies.</li><li>CCI-002699 - Perform verification of the correct operation of organization-defined security functions: when the system is in an organization-defined transitional state; upon command by a user with appropriate privileges; and/or on an organization-defined frequency.</li><li>CCI-000172 - Generate audit records for the event types defined in AU-2 c that include the audit record content defined in AU-3.</li></ul><h2>Weight</h2><p>10</p><h2>Fix Recommendation</h2><p>To configure Identity Provider, log in to the MKE web UI and navigate to admin &gt;&gt; Admin Settings &gt;&gt; Authentication &amp; Authorization &gt;&gt; Identity Provider Integration section.<br />
+<br />
+To configure LDAP:<br />
+Click the radial button to set LDAP to &quot;Enabled&quot;.<br />
+<br />
+In the &quot;LDAP Server&quot; subsection set the following: <br />
+- &quot;LDAP Server URL&quot; to the URL for the organization's AD or LDAP server (URL must be https).<br />
+- &quot;Reader DN&quot; with the DN of the account used to search the LDAP entries.<br />
+- &quot;Reader Password&quot; with the password for the Reader account.<br />
+<br />
+Click &quot;Save&quot;.<br />
+<br />
+To configure SAML, click the radial button to set SAML to &quot;Enabled&quot;.<br />
+<br />
+Enter URL in the &quot;Service Provider Metadata URL&quot; field.<br />
+<br />
+Upload the certificate bundle for the IdP provider in &quot;Root Certificates Bundle&quot;.<br />
+<br />
+In the &quot;SAML Service Provider&quot; section, enter the &quot;MKE IP address&quot; in the MKE Host field.<br />
+<br />
+Click &quot;Save&quot;.</p><h2>Check Contents</h2><p>Verify that Enterprise Identity Provider integration is enabled and properly configured in the MKE Admin Settings.<br />
+<br />
+1. Log in to the MKE web UI and navigate to admin &gt;&gt; Admin Settings &gt;&gt; Authentication &amp; Authorization.<br />
+<br />
+If LDAP or SAML are not set to &quot;Enabled&quot;, this is a finding.<br />
+<br />
+2. Identity Provider configurations:<br />
+When using LDAP, ensure the following are set:<br />
+- LDAP/AD server's URL.<br />
+- Reader DN.<br />
+- Reader Password.<br />
+<br />
+When using SAML:<br />
+In the &quot;SAML IdP Server&quot; section, ensure the following: <br />
+- URL for the identity provider exists in the &quot;IdP Metadata URL&quot; field.<br />
+- Skip TLS Verification is unchecked.<br />
+- Root Certificate Bundle is filled.<br />
+<br />
+In the &quot;SAML Service Provider&quot; section, ensure the MKE Host field has the MKE UI IP address.<br />
+<br />
+If the Identity Provider configurations do not match the System Security Plan (SSP), this is a finding.</p><h2>Vulnerability Number</h2><p>V-260909</p><h2>Documentable</h2><p>False</p><h2>Rule Version</h2><p>CNTR-MK-000030</p><h2>Severity Override Guidance</h2><p>Verify that Enterprise Identity Provider integration is enabled and properly configured in the MKE Admin Settings.<br />
+<br />
+1. Log in to the MKE web UI and navigate to admin &gt;&gt; Admin Settings &gt;&gt; Authentication &amp; Authorization.<br />
+<br />
+If LDAP or SAML are not set to &quot;Enabled&quot;, this is a finding.<br />
+<br />
+2. Identity Provider configurations:<br />
+When using LDAP, ensure the following are set:<br />
+- LDAP/AD server's URL.<br />
+- Reader DN.<br />
+- Reader Password.<br />
+<br />
+When using SAML:<br />
+In the &quot;SAML IdP Server&quot; section, ensure the following: <br />
+- URL for the identity provider exists in the &quot;IdP Metadata URL&quot; field.<br />
+- Skip TLS Verification is unchecked.<br />
+- Root Certificate Bundle is filled.<br />
+<br />
+In the &quot;SAML Service Provider&quot; section, ensure the MKE Host field has the MKE UI IP address.<br />
+<br />
+If the Identity Provider configurations do not match the System Security Plan (SSP), this is a finding.</p><h2>Check Content Reference</h2><p>M</p><h2>Target Key</h2><p>5595</p></body></html>

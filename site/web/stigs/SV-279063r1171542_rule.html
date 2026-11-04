@@ -1,0 +1,120 @@
+<!doctype html><html lang="en"><head><meta charset="utf-8"><title>STIGQter: STIG Check Details: SV-279063r1171542_rule: ColdFusion must be configured to use only DOD-approved keystores and truststores containing certificates issued by a DOD Public Key Infrastructure (PKI) Certificate Authority (CA), and all keystore and truststore files must be protected by file system permissions that prevent unauthorized access or modification.</title><link rel="icon" type="image/svg+xml" href="STIGQter.svg" /><script async src="https://www.googletagmanager.com/gtag/js?id=UA-31381839-2"></script><script src="include.js"></script><script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-4110907817782130" crossorigin="anonymous"></script></head><body><div><img src="STIGQter.svg" alt="STIGQter" style="height:1em;" /> <a href="https://www.stigqter.com/">STIGQter</a>: <a href="main.html">STIG Summary</a>: <a href="U_Adobe_ColdFusion_STIG_V1R2_Manual-xccdf.html">Adobe ColdFusion Security Technical Implementation Guide Version: 1 Release: 2 Benchmark Date: 01 Jul 2026</a>:</div> <h1>ColdFusion must be configured to use only DOD-approved keystores and truststores containing certificates issued by a DOD Public Key Infrastructure (PKI) Certificate Authority (CA), and all keystore and truststore files must be protected by file system permissions that prevent unauthorized access or modification.</h1><h2>DISA Rule</h2><p>SV-279063r1171542_rule</p><h2>Vulnerability Number</h2><p>V-279063</p><h2>Group Title</h2><p>SRG-APP-000176-AS-000125</p><h2>Rule Version</h2><p>APAS-CF-000390</p><h2>Severity</h2><p>CAT II</p><h2>CCI(s)</h2><ul><li>CCI-000186 - For public key-based authentication, enforce authorized access to the corresponding private key.</li><li>CCI-000185 - For public key-based authentication, validate certificates by constructing and verifying a certification path to an accepted trust anchor including checking certificate status information.</li><li>CCI-002470 - Only allow the use of organization-defined certificate authorities for verification of the establishment of protected sessions.</li><li>CCI-002450 - Implement organization-defined types of cryptography for each specified cryptography use.</li></ul><h2>Weight</h2><p>10</p><h2>Fix Recommendation</h2><p>Configure Keystore Location and Permission.<br />
+<br />
+1. For all untrusted certificates identified, execute the following command:<br />
+C:\ColdFusion2023\jre\bin\keytool -delete -alias &quot;&lt;certificate alias&gt;&quot; -keystore &lt;keystorefile&gt;<br />
+<br />
+2. Follow the platform-specific steps below to remediate permissions.<br />
+<br />
+ColdFusion Running on Windows:<br />
+a. Right-click the keystore or truststore file and select &quot;Properties&quot;.<br />
+<br />
+b. Click the Security tab and then click &quot;Advanced&quot;.<br />
+<br />
+c. In the Permissions tab, click &quot;Disable&quot; inheritance. Select &quot;Remove all inherited permissions from this object&quot;.<br />
+<br />
+d. Click &quot;Add&quot;.<br />
+<br />
+e. In the Permission Entry dialog, click &quot;Select a principal&quot;. Enter the user account running the ColdFusion service. Assign Read permission and then click &quot;OK&quot;.<br />
+<br />
+f. Click &quot;Add&quot; again. Click &quot;Select a principal&quot;. Enter the Administrators group. Assign Full Control and then click &quot;OK&quot;.<br />
+<br />
+g. Replace all child object permission entries with inheritable permission entries from this object.<br />
+<br />
+h. Click &quot;OK&quot; to apply the changes.<br />
+<br />
+Result: Only the Administrators group (Full Control) and the ColdFusion service account (Read) have access. No other permissions remain.<br />
+<br />
+ColdFusion Running on Linux:<br />
+a. For each keystore or truststore file identified, run the following commands (adjust paths and group names as appropriate):<br />
+chown root:&lt;cfusion_group&gt; /path/to/keystorefile<br />
+chmod 640 /path/to/keystorefile<br />
+<br />
+Example:<br />
+chown root:cfgroup /opt/coldfusion2023/jre/lib/security/cacerts<br />
+chmod 640 /opt/coldfusion2023/jre/lib/security/cacerts<br />
+<br />
+Result: Owner is root.<br />
+Group is the group that includes the ColdFusion runtime user.<br />
+Permissions are 640 (read/write for owner, read for group, none for others).<br />
+<br />
+b. Restart ColdFusion to ensure that it starts without error.<br />
+<br />
+c. Verify secure mail and WebSocket connections continue to function.<br />
+<br />
+d. Recheck the Admin Console settings to confirm no keystore paths were altered unintentionally.</p><h2>Check Contents</h2><p>Verify Keystore Location and Permission.<br />
+<br />
+1. From the Admin Console Landing Screen, navigate to Server Settings &gt;&gt; WebSocket.<br />
+<br />
+2. If the &quot;Use Built-in WebSocket Server&quot; option is selected and the &quot;SSL Port&quot; is checked, make note of the keystore path and filename.<br />
+<br />
+3. From the Admin Console Landing Screen, navigate to Server Settings &gt;&gt; Mail.<br />
+<br />
+4. If &quot;Sign the mail&quot; is checked, record the keystore path and filename.<br />
+<br />
+5. Review JVM truststore settings by navigating to Server Settings &gt;&gt; Java and JVM.<br />
+<br />
+6. Check if JVM Arguments include a truststore setting. For example:<br />
+-Djavax.net.ssl.trustStore=/path/to/truststore<br />
+<br />
+7. If present, record the truststore path and filename.<br />
+<br />
+8. If the &quot;JVM Arguments&quot; does not contain a truststore setting, note the path and file name of the default &quot;cacerts&quot; file (found under the directory &quot;Java Virtual Machine Path&quot; settings' subdirectory \lib\security).<br />
+<br />
+9. In each of the ColdFusion instances &lt;ColdFusion_Installation_Directory&gt;\cfusion\runtime\conf, open the server.xml file. Verify all uncommented connector tags for the word &quot;keystorefile&quot;.<br />
+<br />
+10. Record any keystore path and filename.<br />
+<br />
+11. For the keystore/ truststore used, use the keytool command to display the CA certificates for the defined keystore/truststore:<br />
+keytool -list -keystore &lt;trust/key store location&gt;<br />
+<br />
+If there are no certificates issued by a CA that is part of the DOD PKI/PKE, this is a finding.<br />
+<br />
+12. Verify Permissions on each keystore/truststore file:<br />
+<br />
+a. For Windows:<br />
+The file permissions must grant Full Control only to the Administrators group and the account running the ColdFusion service. No other users or groups should have permissions.<br />
+<br />
+If additional permissions are present, this is a finding.<br />
+<br />
+b. For Linux:<br />
+File permissions must be 640 or more restrictive. The owner must be root, and the group must include the ColdFusion runtime user.<br />
+<br />
+If permissions are more permissive than listed above, this is a finding.</p><h2>Vulnerability Number</h2><p>V-279063</p><h2>Documentable</h2><p>False</p><h2>Rule Version</h2><p>APAS-CF-000390</p><h2>Severity Override Guidance</h2><p>Verify Keystore Location and Permission.<br />
+<br />
+1. From the Admin Console Landing Screen, navigate to Server Settings &gt;&gt; WebSocket.<br />
+<br />
+2. If the &quot;Use Built-in WebSocket Server&quot; option is selected and the &quot;SSL Port&quot; is checked, make note of the keystore path and filename.<br />
+<br />
+3. From the Admin Console Landing Screen, navigate to Server Settings &gt;&gt; Mail.<br />
+<br />
+4. If &quot;Sign the mail&quot; is checked, record the keystore path and filename.<br />
+<br />
+5. Review JVM truststore settings by navigating to Server Settings &gt;&gt; Java and JVM.<br />
+<br />
+6. Check if JVM Arguments include a truststore setting. For example:<br />
+-Djavax.net.ssl.trustStore=/path/to/truststore<br />
+<br />
+7. If present, record the truststore path and filename.<br />
+<br />
+8. If the &quot;JVM Arguments&quot; does not contain a truststore setting, note the path and file name of the default &quot;cacerts&quot; file (found under the directory &quot;Java Virtual Machine Path&quot; settings' subdirectory \lib\security).<br />
+<br />
+9. In each of the ColdFusion instances &lt;ColdFusion_Installation_Directory&gt;\cfusion\runtime\conf, open the server.xml file. Verify all uncommented connector tags for the word &quot;keystorefile&quot;.<br />
+<br />
+10. Record any keystore path and filename.<br />
+<br />
+11. For the keystore/ truststore used, use the keytool command to display the CA certificates for the defined keystore/truststore:<br />
+keytool -list -keystore &lt;trust/key store location&gt;<br />
+<br />
+If there are no certificates issued by a CA that is part of the DOD PKI/PKE, this is a finding.<br />
+<br />
+12. Verify Permissions on each keystore/truststore file:<br />
+<br />
+a. For Windows:<br />
+The file permissions must grant Full Control only to the Administrators group and the account running the ColdFusion service. No other users or groups should have permissions.<br />
+<br />
+If additional permissions are present, this is a finding.<br />
+<br />
+b. For Linux:<br />
+File permissions must be 640 or more restrictive. The owner must be root, and the group must include the ColdFusion runtime user.<br />
+<br />
+If permissions are more permissive than listed above, this is a finding.</p><h2>Check Content Reference</h2><p>M</p><h2>Target Key</h2><p>5724</p></body></html>

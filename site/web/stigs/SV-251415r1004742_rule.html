@@ -1,0 +1,81 @@
+<!doctype html><html lang="en"><head><meta charset="utf-8"><title>STIGQter: STIG Check Details: SV-251415r1004742_rule: The Ivanti EPMM server must be configured to transfer Ivanti EPMM server logs to another server for storage, analysis, and reporting. Note: Ivanti EPMM server logs include logs of UEM events and logs transferred to the Ivanti EPMM server by UEM agents of managed devices.</title><link rel="icon" type="image/svg+xml" href="STIGQter.svg" /><script async src="https://www.googletagmanager.com/gtag/js?id=UA-31381839-2"></script><script src="include.js"></script><script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-4110907817782130" crossorigin="anonymous"></script></head><body><div><img src="STIGQter.svg" alt="STIGQter" style="height:1em;" /> <a href="https://www.stigqter.com/">STIGQter</a>: <a href="main.html">STIG Summary</a>: <a href="U_Ivanti_MI_Core_MDM_Server_STIG_V3R1_Manual-xccdf.html">Ivanti EPMM Server Security Technical Implementation Guide Version: 3 Release: 1 Benchmark Date: 24 Oct 2024</a>:</div> <h1>The Ivanti EPMM server must be configured to transfer Ivanti EPMM server logs to another server for storage, analysis, and reporting. Note: Ivanti EPMM server logs include logs of UEM events and logs transferred to the Ivanti EPMM server by UEM agents of managed devices.</h1><h2>DISA Rule</h2><p>SV-251415r1004742_rule</p><h2>Vulnerability Number</h2><p>V-251415</p><h2>Group Title</h2><p>SRG-APP-000358-UEM-000228</p><h2>Rule Version</h2><p>IMIC-11-008600</p><h2>Severity</h2><p>CAT II</p><h2>CCI(s)</h2><ul><li>CCI-001851 - Transfer audit logs per organization-defined frequency to a different system, system component, or media than the system or system component conducting the logging.</li></ul><h2>Weight</h2><p>10</p><h2>Fix Recommendation</h2><p>Complete the following activities to configure the transfer of MobileIron Core 10 server logs:<br />
+<br />
+Configure Splunk for automated log export:<br />
+<br />
+Step 1: Enable Core to turn on the Splunk Forwarder so it can push data to the Splunk Indexer.<br />
+<br />
+To enable the Splunk Forwarder:<br />
+1. Log in to System Manager.<br />
+2. Go to Settings &gt;&gt; Services.<br />
+3. Select &quot;Enable&quot; next to Splunk Forwarder.<br />
+4. Click Apply &gt;&gt; OK to save the changes.<br />
+<br />
+Step 2: Add a Splunk Indexer to configure which external Splunk Indexer will receive and manipulate the data from the Splunk Forwarder.<br />
+<br />
+To add a Splunk Indexer:<br />
+1. Log in to System Manager.<br />
+2. Go to Settings &gt;&gt; Data Export &gt;&gt; Splunk Indexer.<br />
+3. Click &quot;Add&quot; to open the Add Splunk Indexer window.<br />
+4. Modify the fields, as necessary, in the &quot;Add Splunk Indexer&quot; window. The following fields and descriptions are in the Add Splunk Indexer window:<br />
+- Splunk Indexer - Add the IP address of your Splunk Enterprise Server.<br />
+- Port - Add port of your Splunk Enterprise Server.<br />
+- Enable SSL - Click this check box to enable SSL.<br />
+5. Click Apply &gt;&gt; OK to save the changes.<br />
+<br />
+Step 3: Configure Splunk Data to configure which data Splunk Forwarder sends to the Splunk Indexer.<br />
+<br />
+To configure Splunk Data:<br />
+1. Log in to System Manager.<br />
+2. Go to Settings &gt;&gt; Data Export &gt;&gt; Splunk Data to open the &quot;Data to Index&quot; window.<br />
+3. Modify the fields, as necessary.<br />
+- Click Show/Hide Advanced Options to further customize which data to send to Splunk.<br />
+- Check &quot;Audit Log&quot; at a minimum.<br />
+4. Click Apply &gt;&gt; OK.<br />
+5. Restart the Splunk Forwarder by disabling it, then enabling it again.<br />
+  a. Go to Settings &gt;&gt; Services.<br />
+  b. Select Disable next to Splunk Forwarder.<br />
+  c. Click Apply &gt;&gt; OK.<br />
+  d. Select Enable next to Splunk Forwarder.<br />
+6. Click Apply &gt;&gt; OK to save the changes.<br />
+<br />
+Note: Syslog can be used instead of Splunk.</p><h2>Check Contents</h2><p>Verify that Splunk is configured for automated log export.<br />
+<br />
+Step 1: Verify that the Splunk Forwarder is enabled.<br />
+1. Log in to System Manager.<br />
+2. Go to Settings &gt;&gt; Services.<br />
+3. Verify that the &quot;Enable&quot; toggle is ON and &quot;Running&quot; is displayed.<br />
+If &quot;Enable&quot; toggle is not ON or &quot;Running&quot; is not displayed, this is a finding.<br />
+<br />
+Step 2: Verify that Splunk Indexer is configured.<br />
+1. Log in to System Manager.<br />
+2. Go to Settings &gt;&gt; Data Export &gt;&gt; Splunk Indexer.<br />
+3. Verify that there is an entry and the Status is &quot;Connected&quot;.<br />
+If there is no entry for Splunk Indexer or the Status is &quot;Not Connected&quot;, this is a finding.<br />
+<br />
+Step 3: Verify &quot;Audit Log&quot; is enabled in the Splunk &quot;data to index&quot;.<br />
+1. Log in to System Manager.<br />
+2. Go to Settings &gt;&gt; Data Export &gt;&gt; Splunk Data to open the &quot;Data to Index&quot; window.<br />
+3. Verify &quot;Audit Log&quot; is included in the &quot;Data To Index&quot;.<br />
+If &quot;Audit Log&quot; is not included in the &quot;Data To Index&quot;, this is a finding.<br />
+<br />
+Note: Syslog can be used instead of Splunk.</p><h2>Vulnerability Number</h2><p>V-251415</p><h2>Documentable</h2><p>False</p><h2>Rule Version</h2><p>IMIC-11-008600</p><h2>Severity Override Guidance</h2><p>Verify that Splunk is configured for automated log export.<br />
+<br />
+Step 1: Verify that the Splunk Forwarder is enabled.<br />
+1. Log in to System Manager.<br />
+2. Go to Settings &gt;&gt; Services.<br />
+3. Verify that the &quot;Enable&quot; toggle is ON and &quot;Running&quot; is displayed.<br />
+If &quot;Enable&quot; toggle is not ON or &quot;Running&quot; is not displayed, this is a finding.<br />
+<br />
+Step 2: Verify that Splunk Indexer is configured.<br />
+1. Log in to System Manager.<br />
+2. Go to Settings &gt;&gt; Data Export &gt;&gt; Splunk Indexer.<br />
+3. Verify that there is an entry and the Status is &quot;Connected&quot;.<br />
+If there is no entry for Splunk Indexer or the Status is &quot;Not Connected&quot;, this is a finding.<br />
+<br />
+Step 3: Verify &quot;Audit Log&quot; is enabled in the Splunk &quot;data to index&quot;.<br />
+1. Log in to System Manager.<br />
+2. Go to Settings &gt;&gt; Data Export &gt;&gt; Splunk Data to open the &quot;Data to Index&quot; window.<br />
+3. Verify &quot;Audit Log&quot; is included in the &quot;Data To Index&quot;.<br />
+If &quot;Audit Log&quot; is not included in the &quot;Data To Index&quot;, this is a finding.<br />
+<br />
+Note: Syslog can be used instead of Splunk.</p><h2>Check Content Reference</h2><p>M</p><h2>Target Key</h2><p>5445</p></body></html>

@@ -1,0 +1,68 @@
+<!doctype html><html lang="en"><head><meta charset="utf-8"><title>STIGQter: STIG Check Details: SV-260549r958388_rule: Ubuntu 22.04 LTS must automatically lock an account until the locked account is released by an administrator when three unsuccessful logon attempts have been made.</title><link rel="icon" type="image/svg+xml" href="STIGQter.svg" /><script async src="https://www.googletagmanager.com/gtag/js?id=UA-31381839-2"></script><script src="include.js"></script><script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-4110907817782130" crossorigin="anonymous"></script></head><body><div><img src="STIGQter.svg" alt="STIGQter" style="height:1em;" /> <a href="https://www.stigqter.com/">STIGQter</a>: <a href="main.html">STIG Summary</a>: <a href="U_CAN_Ubuntu_22-04_LTS_STIG_V2R9_Manual-xccdf.html">Canonical Ubuntu 22.04 LTS Security Technical Implementation Guide Version: 2 Release: 9 Benchmark Date: 01 Jul 2026</a>:</div> <h1>Ubuntu 22.04 LTS must automatically lock an account until the locked account is released by an administrator when three unsuccessful logon attempts have been made.</h1><h2>DISA Rule</h2><p>SV-260549r958388_rule</p><h2>Vulnerability Number</h2><p>V-260549</p><h2>Group Title</h2><p>SRG-OS-000021-GPOS-00005</p><h2>Rule Version</h2><p>UBTU-22-411045</p><h2>Severity</h2><p>CAT III</p><h2>CCI(s)</h2><ul><li>CCI-000044 - Enforce the organization-defined limit of consecutive invalid logon attempts by a user during the organization-defined time period.</li><li>CCI-002238 - Automatically lock the account or node for either an organization-defined time period, until the locked account or node is released by an administrator, or delays the next logon prompt according to the organization-defined delay algorithm when the maximum number of unsuccessful logon attempts is exceeded.</li></ul><h2>Weight</h2><p>10</p><h2>Fix Recommendation</h2><p>Configure Ubuntu 22.04 LTS to utilize the &quot;pam_faillock&quot; module.  <br />
+ <br />
+Add or modify the following lines in the &quot;/etc/pam.d/common-auth&quot; file, below the &quot;auth&quot; definition for &quot;pam_unix.so&quot;:  <br />
+ <br />
+auth     [default=die]  pam_faillock.so authfail <br />
+auth     sufficient          pam_faillock.so authsucc <br />
+ <br />
+Configure the &quot;pam_faillock&quot; module to use the following options. <br />
+ <br />
+Add or modify the following lines in the &quot;/etc/security/faillock.conf&quot; file: <br />
+ <br />
+audit <br />
+silent <br />
+deny = 3 <br />
+fail_interval = 900 <br />
+unlock_time = 0</p><h2>Check Contents</h2><p>Verify that Ubuntu 22.04 LTS utilizes the &quot;pam_faillock&quot; module by using the following command: <br />
+ <br />
+     $ grep faillock /etc/pam.d/common-auth <br />
+ <br />
+auth     [default=die]  pam_faillock.so authfail <br />
+auth     sufficient     pam_faillock.so authsucc <br />
+ <br />
+If the &quot;pam_faillock.so&quot; module is not present in the &quot;/etc/pam.d/common-auth&quot; file, this is a finding. <br />
+ <br />
+Verify the &quot;pam_faillock&quot; module is configured to use the following options: <br />
+ <br />
+     $ sudo grep -Ew 'silent|audit|deny|fail_interval|unlock_time' /etc/security/faillock.conf <br />
+     audit <br />
+     silent <br />
+     deny = 3 <br />
+     fail_interval = 900 <br />
+     unlock_time = 0 <br />
+ <br />
+If &quot;audit&quot; is commented out, or is missing, this is a finding.<br />
+<br />
+If &quot;silent&quot; is commented out, or is missing, this is a finding.<br />
+<br />
+If &quot;deny&quot; is set to a value greater than &quot;3&quot;, is commented out, or is missing, this is a finding.<br />
+ <br />
+If &quot;fail_interval&quot; is set to a value greater than &quot;900&quot;, is commented out, or is missing, this is a finding.<br />
+ <br />
+If &quot;unlock_time&quot; is not set to &quot;0&quot;, is commented out, or is missing, this is a finding.</p><h2>Vulnerability Number</h2><p>V-260549</p><h2>Documentable</h2><p>False</p><h2>Rule Version</h2><p>UBTU-22-411045</p><h2>Severity Override Guidance</h2><p>Verify that Ubuntu 22.04 LTS utilizes the &quot;pam_faillock&quot; module by using the following command: <br />
+ <br />
+     $ grep faillock /etc/pam.d/common-auth <br />
+ <br />
+auth     [default=die]  pam_faillock.so authfail <br />
+auth     sufficient     pam_faillock.so authsucc <br />
+ <br />
+If the &quot;pam_faillock.so&quot; module is not present in the &quot;/etc/pam.d/common-auth&quot; file, this is a finding. <br />
+ <br />
+Verify the &quot;pam_faillock&quot; module is configured to use the following options: <br />
+ <br />
+     $ sudo grep -Ew 'silent|audit|deny|fail_interval|unlock_time' /etc/security/faillock.conf <br />
+     audit <br />
+     silent <br />
+     deny = 3 <br />
+     fail_interval = 900 <br />
+     unlock_time = 0 <br />
+ <br />
+If &quot;audit&quot; is commented out, or is missing, this is a finding.<br />
+<br />
+If &quot;silent&quot; is commented out, or is missing, this is a finding.<br />
+<br />
+If &quot;deny&quot; is set to a value greater than &quot;3&quot;, is commented out, or is missing, this is a finding.<br />
+ <br />
+If &quot;fail_interval&quot; is set to a value greater than &quot;900&quot;, is commented out, or is missing, this is a finding.<br />
+ <br />
+If &quot;unlock_time&quot; is not set to &quot;0&quot;, is commented out, or is missing, this is a finding.</p><h2>Check Content Reference</h2><p>M</p><h2>Target Key</h2><p>5594</p></body></html>

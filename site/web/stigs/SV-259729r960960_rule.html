@@ -1,0 +1,49 @@
+<!doctype html><html lang="en"><head><meta charset="utf-8"><title>STIGQter: STIG Check Details: SV-259729r960960_rule: Access to IBM Security zSecure STC data sets must be properly restricted and logged.</title><link rel="icon" type="image/svg+xml" href="STIGQter.svg" /><script async src="https://www.googletagmanager.com/gtag/js?id=UA-31381839-2"></script><script src="include.js"></script><script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-4110907817782130" crossorigin="anonymous"></script></head><body><div><img src="STIGQter.svg" alt="STIGQter" style="height:1em;" /> <a href="https://www.stigqter.com/">STIGQter</a>: <a href="main.html">STIG Summary</a>: <a href="U_IBM_zSecure_Suite_STIG_V1R3_Manual-xccdf.html">IBM zSecure Suite Security Technical Implementation Guide Version: 1 Release: 3 Benchmark Date: 02 Apr 2025</a>:</div> <h1>Access to IBM Security zSecure STC data sets must be properly restricted and logged.</h1><h2>DISA Rule</h2><p>SV-259729r960960_rule</p><h2>Vulnerability Number</h2><p>V-259729</p><h2>Group Title</h2><p>SRG-APP-000133-MFP-000193</p><h2>Rule Version</h2><p>ZSEC-00-000060</p><h2>Severity</h2><p>CAT II</p><h2>CCI(s)</h2><ul><li>CCI-001499 - Limit privileges to change software resident within software libraries.</li></ul><h2>Weight</h2><p>10</p><h2>Fix Recommendation</h2><p>Ensure that READ and higher access to zSecure STC data sets is restricted to authorized users, and all failures and successful UPDATE and higher access is logged. <br />
+Appropriate access can be permitted to auditors, decentralized security administrators, security administrators, automated operation STCs/batch jobs, batch jobs performing ESM maintenance, trusted STC users and systems programmers. <br />
+<br />
+The following commands are provided as a sample for implementing zSecure STC data set controls: <br />
+<br />
+ad 'hlq.zsec.alert.ckfreeze' uacc(none) owner(zSecure owner) -<br />
+audit(success(update) failures(read))<br />
+pe 'hlq.zsec.alert.ckfreeze' id(SYSPAUDT, TSTCAUDT) access(READ) <br />
+ad 'hlq.zsec.access.monitor.dsn' uacc(none) owner(zSecure owner) -<br />
+audit(success(UPDATE) failures(READ))<br />
+pe 'hlq.zsec.access.monitor.dsn' id(AUDTAUDT, SECAAUDT, SECDAUDT, SECBAUDT) access(READ) <br />
+pe 'hlq.zsec.access.monitor.dsn' id(SECBAUDT, <br />
+access(UPDATE)<br />
+pe 'hlq.zsec.access.monitor.dsn' id(SYSPAUDT, TSTCAUDT) access(ALTER) <br />
+rdef logstrm LSName uacc(none) owner(zSecure owner) - audit(success(UPDATE) failures(read))<br />
+pe LSName class(logstrm) id(AUDTAUDT, SECAAUDT, SECDAUDT) access(READ) <br />
+pe LSName class(logstrm) id(CKXLOG, SECBAUDT, AUTOAUDT, SYSPAUDT) access(ALTER) <br />
+rdef facility IXLSTR. &lt;modelstrname&gt; uacc(none) owner(zSecure owner) - audit(success(UPDATE) failures(READ))<br />
+pe IXLSTR.&lt;modelstrname&gt; class(facility) id(SYSPAUDT, TSTCAUDT) access(ALTER)</p><h2>Check Contents</h2><p>Verify that access to the zSecure STC data sets is properly restricted.<br />
+<br />
+If the following guidance is true, this is not a finding.<br />
+<br />
+- The RACF profiles protecting zSecure STC data sets do not allow general access by means of UACC, ID(*), WARNING, or global access.<br />
+- READ and higher access to zAlert CKFREEZE data sets is restricted to trusted STC users and systems programmers.<br />
+- READ access to Access Monitor output data sets is restricted to auditors, decentralized security administrators, security administrators, automated operation STCs/batch jobs, batch jobs performing ESM maintenance, trusted STC users, and systems programmers.<br />
+- UPDATE access to Access Monitor output data sets is restricted to automated operation STCs/batch jobs, batch jobs performing ESM maintenance, trusted STC users, and systems programmers.<br />
+- CONTROL and higher access to Access Monitor output data sets is restricted to trusted STC users and systems programmers.<br />
+- All failures and successful UPDATE and higher access to zSecure STC data sets is logged.<br />
+<br />
+DASD-only CKXLOG log stream resources in the LOGSTRM class:<br />
+- READ is restricted to security administrators, auditors, batch jobs performing ESM maintenance<br />
+- ALTER restricted to CKXLOG task, system programmers, and batch jobs performing ESM maintenance<br />
+* For Coupling-Facility CKXLOG log streams, the above applies in addition to checking the IXLSTR.model_structure_name profiles in the FACILITY class:<br />
+- UPDATE and higher trusted STC users, and systems programmers.</p><h2>Vulnerability Number</h2><p>V-259729</p><h2>Documentable</h2><p>False</p><h2>Rule Version</h2><p>ZSEC-00-000060</p><h2>Severity Override Guidance</h2><p>Verify that access to the zSecure STC data sets is properly restricted.<br />
+<br />
+If the following guidance is true, this is not a finding.<br />
+<br />
+- The RACF profiles protecting zSecure STC data sets do not allow general access by means of UACC, ID(*), WARNING, or global access.<br />
+- READ and higher access to zAlert CKFREEZE data sets is restricted to trusted STC users and systems programmers.<br />
+- READ access to Access Monitor output data sets is restricted to auditors, decentralized security administrators, security administrators, automated operation STCs/batch jobs, batch jobs performing ESM maintenance, trusted STC users, and systems programmers.<br />
+- UPDATE access to Access Monitor output data sets is restricted to automated operation STCs/batch jobs, batch jobs performing ESM maintenance, trusted STC users, and systems programmers.<br />
+- CONTROL and higher access to Access Monitor output data sets is restricted to trusted STC users and systems programmers.<br />
+- All failures and successful UPDATE and higher access to zSecure STC data sets is logged.<br />
+<br />
+DASD-only CKXLOG log stream resources in the LOGSTRM class:<br />
+- READ is restricted to security administrators, auditors, batch jobs performing ESM maintenance<br />
+- ALTER restricted to CKXLOG task, system programmers, and batch jobs performing ESM maintenance<br />
+* For Coupling-Facility CKXLOG log streams, the above applies in addition to checking the IXLSTR.model_structure_name profiles in the FACILITY class:<br />
+- UPDATE and higher trusted STC users, and systems programmers.</p><h2>Check Content Reference</h2><p>M</p><h2>Target Key</h2><p>5574</p></body></html>

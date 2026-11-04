@@ -1,0 +1,68 @@
+<!doctype html><html lang="en"><head><meta charset="utf-8"><title>STIGQter: STIG Check Details: SV-253982r945855_rule: The Juniper router configured for BGP must reject route advertisements from CE routers with an originating AS in the AS_PATH attribute that does not belong to that customer.</title><link rel="icon" type="image/svg+xml" href="STIGQter.svg" /><script async src="https://www.googletagmanager.com/gtag/js?id=UA-31381839-2"></script><script src="include.js"></script><script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-4110907817782130" crossorigin="anonymous"></script></head><body><div><img src="STIGQter.svg" alt="STIGQter" style="height:1em;" /> <a href="https://www.stigqter.com/">STIGQter</a>: <a href="main.html">STIG Summary</a>: <a href="U_Juniper_EX_Switches_RTR_STIG_V2R1_Manual-xccdf.html">Juniper EX Series Switches Router Security Technical Implementation Guide Version: 2 Release: 1 Benchmark Date: 24 Jul 2024</a>:</div> <h1>The Juniper router configured for BGP must reject route advertisements from CE routers with an originating AS in the AS_PATH attribute that does not belong to that customer.</h1><h2>DISA Rule</h2><p>SV-253982r945855_rule</p><h2>Vulnerability Number</h2><p>V-253982</p><h2>Group Title</h2><p>SRG-NET-000018-RTR-000010</p><h2>Rule Version</h2><p>JUEX-RT-000100</p><h2>Severity</h2><p>CAT III</p><h2>CCI(s)</h2><ul><li>CCI-000032 - Enforce information flow control using organization-defined security policy filters as a basis for flow control decisions for organization-defined information flows.</li></ul><h2>Weight</h2><p>10</p><h2>Fix Recommendation</h2><p>Configure the router to reject updates from CE routers with an originating AS in the AS_PATH attribute that does not belong to that customer.<br />
+<br />
+set policy-options policy-statement bgp_originate_65535 term 1 from as-path orig_65535<br />
+set policy-options policy-statement bgp_originate_65535 term 1 then accept<br />
+set policy-options policy-statement bgp_originate_65535 term 2 then reject<br />
+set policy-options as-path orig_65535 &quot;.* 65535&quot;<br />
+<br />
+set protocols bgp group eBGP neighbor &lt;address&gt; import bgp_originate_65535</p><h2>Check Contents</h2><p>This requirement is not applicable for the DODIN Backbone. <br />
+<br />
+Review the router configuration to verify the router is configured to deny updates received from CE routers with an originating AS in the AS_PATH attribute that does not belong to that customer.<br />
+<br />
+Review the router configuration and verify that there is an as-path access-list statement defined. <br />
+<br />
+Each peer requires a regular expression (REGEX) defining the expected AS_PATH attribute. Each neighbor has an import policy applied to filter updates that do not match the expected path attribute. Assuming AS 65535 is an authorized neighbor's originating AS, verify an as-path REGEX is defined ('.* 65535') and a policy-statement configured to accept that REGEX.<br />
+<br />
+[edit policy-options]<br />
+policy-statement bgp_originate_65535 {<br />
+    term 1 {<br />
+        from as-path orig_65535;<br />
+        then accept;<br />
+    }<br />
+    term 2 {<br />
+        then reject;<br />
+    }<br />
+}<br />
+as-path orig_65535 &quot;.* 65535&quot;;<br />
+Note: The REGEX matches zero or more prepended AS in the AS_PATH beginning with the defined AS number (the originator is the right-most AS in the path). The AS_PATH attribute is a space-delimited list, so a space between the leading AS numbers (.*) and the originating AS (65535) is required.<br />
+<br />
+Verify that the as-path access list is referenced by the filter-list inbound for the appropriate BGP neighbors.<br />
+<br />
+[edit protocols bgp]<br />
+group eBGP {<br />
+    neighbor &lt;address&gt; {<br />
+        import bgp_originate_65535;<br />
+    }<br />
+}<br />
+<br />
+If the router is not configured to reject updates from CE routers with an originating AS in the AS_PATH attribute that does not belong to that customer, this is a finding.</p><h2>Vulnerability Number</h2><p>V-253982</p><h2>Documentable</h2><p>False</p><h2>Rule Version</h2><p>JUEX-RT-000100</p><h2>Severity Override Guidance</h2><p>This requirement is not applicable for the DODIN Backbone. <br />
+<br />
+Review the router configuration to verify the router is configured to deny updates received from CE routers with an originating AS in the AS_PATH attribute that does not belong to that customer.<br />
+<br />
+Review the router configuration and verify that there is an as-path access-list statement defined. <br />
+<br />
+Each peer requires a regular expression (REGEX) defining the expected AS_PATH attribute. Each neighbor has an import policy applied to filter updates that do not match the expected path attribute. Assuming AS 65535 is an authorized neighbor's originating AS, verify an as-path REGEX is defined ('.* 65535') and a policy-statement configured to accept that REGEX.<br />
+<br />
+[edit policy-options]<br />
+policy-statement bgp_originate_65535 {<br />
+    term 1 {<br />
+        from as-path orig_65535;<br />
+        then accept;<br />
+    }<br />
+    term 2 {<br />
+        then reject;<br />
+    }<br />
+}<br />
+as-path orig_65535 &quot;.* 65535&quot;;<br />
+Note: The REGEX matches zero or more prepended AS in the AS_PATH beginning with the defined AS number (the originator is the right-most AS in the path). The AS_PATH attribute is a space-delimited list, so a space between the leading AS numbers (.*) and the originating AS (65535) is required.<br />
+<br />
+Verify that the as-path access list is referenced by the filter-list inbound for the appropriate BGP neighbors.<br />
+<br />
+[edit protocols bgp]<br />
+group eBGP {<br />
+    neighbor &lt;address&gt; {<br />
+        import bgp_originate_65535;<br />
+    }<br />
+}<br />
+<br />
+If the router is not configured to reject updates from CE routers with an originating AS in the AS_PATH attribute that does not belong to that customer, this is a finding.</p><h2>Check Content Reference</h2><p>M</p><h2>Target Key</h2><p>5479</p></body></html>

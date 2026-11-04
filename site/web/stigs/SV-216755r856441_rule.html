@@ -1,0 +1,124 @@
+<!doctype html><html lang="en"><head><meta charset="utf-8"><title>STIGQter: STIG Check Details: SV-216755r856441_rule: The Cisco perimeter router must be configured to block inbound packets with source Bogon IP address prefixes.</title><link rel="icon" type="image/svg+xml" href="STIGQter.svg" /><script async src="https://www.googletagmanager.com/gtag/js?id=UA-31381839-2"></script><script src="include.js"></script><script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-4110907817782130" crossorigin="anonymous"></script></head><body><div><img src="STIGQter.svg" alt="STIGQter" style="height:1em;" /> <a href="https://www.stigqter.com/">STIGQter</a>: <a href="main.html">STIG Summary</a>: <a href="U_Cisco_IOS-XR_Router_RTR_STIG_V3R3_Manual-xccdf.html">Cisco IOS XR Router RTR Security Technical Implementation Guide Version: 3 Release: 3 Benchmark Date: 01 Oct 2025</a>:</div> <h1>The Cisco perimeter router must be configured to block inbound packets with source Bogon IP address prefixes.</h1><h2>DISA Rule</h2><p>SV-216755r856441_rule</p><h2>Vulnerability Number</h2><p>V-216755</p><h2>Group Title</h2><p>SRG-NET-000364-RTR-000110</p><h2>Rule Version</h2><p>CISC-RT-000270</p><h2>Severity</h2><p>CAT II</p><h2>CCI(s)</h2><ul><li>CCI-002403 - Only allow incoming communications from organization-defined authorized sources routed to organization-defined authorized destinations.</li></ul><h2>Weight</h2><p>10</p><h2>Fix Recommendation</h2><p>This requirement is not applicable for the DODIN Backbone.<br />
+<br />
+Configure the perimeter to block inbound packets with Bogon source addresses.<br />
+<br />
+Step 1: Configure an ACL containing the current Bogon prefixes as shown below.<br />
+<br />
+RP/0/0/CPU0:R2(config)#ipv4 access-list EXTERNAL_ACL_INBOUND<br />
+RP/0/0/CPU0:R2(config-ipv4-acl)#deny ip 0.0.0.0 0.255.255.255 any log-input<br />
+RP/0/0/CPU0:R2(config-ipv4-acl)#deny ip 10.0.0.0 0.255.255.255 any log-input<br />
+RP/0/0/CPU0:R2(config-ipv4-acl)#deny ip 100.64.0.0 0.63.255.255 any log-input<br />
+RP/0/0/CPU0:R2(config-ipv4-acl)#deny ip 127.0.0.0 0.255.255.255 any log-input<br />
+RP/0/0/CPU0:R2(config-ipv4-acl)#deny ip 169.254.0.0 0.0.255.255 any log-input<br />
+RP/0/0/CPU0:R2(config-ipv4-acl)#deny ip 172.16.0.0 0.15.255.255 any log-input<br />
+RP/0/0/CPU0:R2(config-ipv4-acl)#deny ip 192.0.0.0 0.0.0.255 any log-input<br />
+RP/0/0/CPU0:R2(config-ipv4-acl)#deny ip 192.0.2.0 0.0.0.255 any log-input<br />
+RP/0/0/CPU0:R2(config-ipv4-acl)#deny ip 192.168.0.0 0.0.255.255 any log-input<br />
+RP/0/0/CPU0:R2(config-ipv4-acl)#deny ip 198.18.0.0 0.1.255.255 any log-input<br />
+RP/0/0/CPU0:R2(config-ipv4-acl)#deny ip 198.51.100.0 0.0.0.255 any log-input<br />
+RP/0/0/CPU0:R2(config-ipv4-acl)#deny ip 203.0.113.0 0.0.0.255 any log-input<br />
+RP/0/0/CPU0:R2(config-ipv4-acl)#deny ip 224.0.0.0 31.255.255.255 any log-input<br />
+RP/0/0/CPU0:R2(config-ipv4-acl)#permit tcp any any established<br />
+RP/0/0/CPU0:R2(config-ipv4-acl)#permit tcp host x.12.1.9 host x.12.1.10 eq bgp<br />
+RP/0/0/CPU0:R2(config-ipv4-acl)#permit tcp host x.12.1.9 eq bgp host x.12.1.10<br />
+RP/0/0/CPU0:R2(config-ipv4-acl)#permit icmp host x.12.1.9 host x.12.1.10 echo<br />
+RP/0/0/CPU0:R2(config-ipv4-acl)#permit icmp host x.12.1.9 host x.12.1.10 echo-reply<br />
+…<br />
+…<br />
+…<br />
+RP/0/0/CPU0:R2(config-ipv4-acl)#deny ip any any log-input<br />
+RP/0/0/CPU0:R2(config-ipv4-acl)#end<br />
+<br />
+Step 2: Apply the ACL inbound on all external interfaces.<br />
+<br />
+RP/0/0/CPU0:R3(config)#int g0/0/0/1  <br />
+RP/0/0/CPU0:R3(config-if)#ipv4 access-group EXTERNAL_ACL_INBOUND in<br />
+RP/0/0/CPU0:R3(config-if)#end</p><h2>Check Contents</h2><p>This requirement is not applicable for the DODIN Backbone.<br />
+<br />
+Review the router configuration to verify that an ingress ACL applied to all external interfaces is blocking packets with Bogon source addresses.<br />
+<br />
+Step 1: Verify an ACL has been configured containing the current Bogon prefixes as shown in the example below.<br />
+<br />
+ipv4 access-list EXTERNAL_ACL_INBOUND<br />
+ 10 deny ipv4 0.0.0.0 0.255.255.255 any log-input<br />
+ 20 deny ipv4 10.0.0.0 0.255.255.255 any log-input<br />
+ 30 deny ipv4 100.64.0.0 0.63.255.255 any log-input<br />
+ 40 deny ipv4 127.0.0.0 0.255.255.255 any log-input<br />
+ 50 deny ipv4 169.254.0.0 0.0.255.255 any log-input<br />
+ 60 deny ipv4 172.16.0.0 0.15.255.255 any log-input<br />
+ 70 deny ipv4 192.0.0.0 0.0.0.255 any log-input<br />
+ 80 deny ipv4 192.0.2.0 0.0.0.255 any log-input<br />
+ 90 deny ipv4 192.168.0.0 0.0.255.255 any log-input<br />
+ 100 deny ipv4 198.18.0.0 0.1.255.255 any log-input<br />
+ 110 deny ipv4 198.51.100.0 0.0.0.255 any log-input<br />
+ 120 deny ipv4 203.0.113.0 0.0.0.255 any log-input<br />
+ 130 deny ipv4 224.0.0.0 31.255.255.255 any log-input<br />
+ 140 permit tcp any any established<br />
+ 150 permit tcp host x.12.1.9 host x.12.1.10 eq bgp<br />
+ 160 permit tcp host x.12.1.9 eq bgp host x.12.1.10<br />
+ 170 permit icmp host x.12.1.9 host x.12.1.10 echo<br />
+ 180 permit icmp host x.12.1.9 host x.12.1.10 echo-reply<br />
+ …<br />
+ …<br />
+ …<br />
+ 260 deny ipv4 any any log-input<br />
+<br />
+External Interfaces connected to the NIPRNet or SIPRNet<br />
+<br />
+Review the inbound ACLs on external facing interfaces attached to the NIPRNet or SIPRNet to validate access control lists are configured to block inbound packets with IP sources addresses as documented in RFC5735 and RFC6598. <br />
+<br />
+External Interfaces connected to a commercial ISP or other non-DoD network<br />
+ <br />
+Review the inbound ACLs on external facing interfaces validate access control lists are configured to block inbound packets with IP sources addresses as documented in RFC5735 and RFC6598 as well as address space that has been allocated to the RIRs but not assigned by the RIR to an ISP or other enterprise network. The full list of bogons can be found at the following link: www.team-cymru.org/Services/Bogons/fullbogons-ipv4.txt<br />
+<br />
+Step 2: Verify that the inbound ACL applied to all external interfaces will block all traffic from Bogon source addresses.<br />
+<br />
+interface GigabitEthernet0/0/0/1<br />
+ ipv4 address x.12.1.10 255.255.255.2<br />
+ ipv4 access-group EXTERNAL_ACL_INBOUND ingress<br />
+<br />
+If the router is not configured to block inbound packets with source Bogon IP addresses, this is a finding.</p><h2>Vulnerability Number</h2><p>V-216755</p><h2>Documentable</h2><p>False</p><h2>Rule Version</h2><p>CISC-RT-000270</p><h2>Severity Override Guidance</h2><p>This requirement is not applicable for the DODIN Backbone.<br />
+<br />
+Review the router configuration to verify that an ingress ACL applied to all external interfaces is blocking packets with Bogon source addresses.<br />
+<br />
+Step 1: Verify an ACL has been configured containing the current Bogon prefixes as shown in the example below.<br />
+<br />
+ipv4 access-list EXTERNAL_ACL_INBOUND<br />
+ 10 deny ipv4 0.0.0.0 0.255.255.255 any log-input<br />
+ 20 deny ipv4 10.0.0.0 0.255.255.255 any log-input<br />
+ 30 deny ipv4 100.64.0.0 0.63.255.255 any log-input<br />
+ 40 deny ipv4 127.0.0.0 0.255.255.255 any log-input<br />
+ 50 deny ipv4 169.254.0.0 0.0.255.255 any log-input<br />
+ 60 deny ipv4 172.16.0.0 0.15.255.255 any log-input<br />
+ 70 deny ipv4 192.0.0.0 0.0.0.255 any log-input<br />
+ 80 deny ipv4 192.0.2.0 0.0.0.255 any log-input<br />
+ 90 deny ipv4 192.168.0.0 0.0.255.255 any log-input<br />
+ 100 deny ipv4 198.18.0.0 0.1.255.255 any log-input<br />
+ 110 deny ipv4 198.51.100.0 0.0.0.255 any log-input<br />
+ 120 deny ipv4 203.0.113.0 0.0.0.255 any log-input<br />
+ 130 deny ipv4 224.0.0.0 31.255.255.255 any log-input<br />
+ 140 permit tcp any any established<br />
+ 150 permit tcp host x.12.1.9 host x.12.1.10 eq bgp<br />
+ 160 permit tcp host x.12.1.9 eq bgp host x.12.1.10<br />
+ 170 permit icmp host x.12.1.9 host x.12.1.10 echo<br />
+ 180 permit icmp host x.12.1.9 host x.12.1.10 echo-reply<br />
+ …<br />
+ …<br />
+ …<br />
+ 260 deny ipv4 any any log-input<br />
+<br />
+External Interfaces connected to the NIPRNet or SIPRNet<br />
+<br />
+Review the inbound ACLs on external facing interfaces attached to the NIPRNet or SIPRNet to validate access control lists are configured to block inbound packets with IP sources addresses as documented in RFC5735 and RFC6598. <br />
+<br />
+External Interfaces connected to a commercial ISP or other non-DoD network<br />
+ <br />
+Review the inbound ACLs on external facing interfaces validate access control lists are configured to block inbound packets with IP sources addresses as documented in RFC5735 and RFC6598 as well as address space that has been allocated to the RIRs but not assigned by the RIR to an ISP or other enterprise network. The full list of bogons can be found at the following link: www.team-cymru.org/Services/Bogons/fullbogons-ipv4.txt<br />
+<br />
+Step 2: Verify that the inbound ACL applied to all external interfaces will block all traffic from Bogon source addresses.<br />
+<br />
+interface GigabitEthernet0/0/0/1<br />
+ ipv4 address x.12.1.10 255.255.255.2<br />
+ ipv4 access-group EXTERNAL_ACL_INBOUND ingress<br />
+<br />
+If the router is not configured to block inbound packets with source Bogon IP addresses, this is a finding.</p><h2>Check Content Reference</h2><p>M</p><h2>Target Key</h2><p>4029</p></body></html>

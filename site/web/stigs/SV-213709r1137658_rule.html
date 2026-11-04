@@ -1,0 +1,161 @@
+<!doctype html><html lang="en"><head><meta charset="utf-8"><title>STIGQter: STIG Check Details: SV-213709r1137658_rule: Access to database files must be limited to relevant processes and to authorized, administrative users.</title><link rel="icon" type="image/svg+xml" href="STIGQter.svg" /><script async src="https://www.googletagmanager.com/gtag/js?id=UA-31381839-2"></script><script src="include.js"></script><script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-4110907817782130" crossorigin="anonymous"></script></head><body><div><img src="STIGQter.svg" alt="STIGQter" style="height:1em;" /> <a href="https://www.stigqter.com/">STIGQter</a>: <a href="main.html">STIG Summary</a>: <a href="U_IBM_DB2_V10-5_LUW_STIG_V2R2_Manual-xccdf.html">IBM DB2 V10.5 LUW Security Technical Implementation Guide Version: 2 Release: 2 Benchmark Date: 01 Jul 2026</a>:</div> <h1>Access to database files must be limited to relevant processes and to authorized, administrative users.</h1><h2>DISA Rule</h2><p>SV-213709r1137658_rule</p><h2>Vulnerability Number</h2><p>V-213709</p><h2>Group Title</h2><p>SRG-APP-000243-DB-000374</p><h2>Rule Version</h2><p>DB2X-00-005800</p><h2>Severity</h2><p>CAT II</p><h2>CCI(s)</h2><ul><li>CCI-001090 - Prevent unauthorized and unintended information transfer via shared system resources.</li></ul><h2>Weight</h2><p>10</p><h2>Fix Recommendation</h2><p>Configure the permissions granted by the operating system/file system on the database files, database transaction log files, database audit log files, and database backup files so that only relevant system accounts and authorized system administrators and database administrators with a need to know are permitted to read/view these files.</p><h2>Check Contents</h2><p>Review the permissions granted to users by the operating system/file system on the instance files, database files, database transaction log files, database audit log files, and database backup files.<br />
+<br />
+If any user/role who is not an authorized system administrator with a need to know or database administrator with a need to know, or a system account for running DBMS processes, is permitted to read/view any of these files, this is a finding.<br />
+<br />
+Note: When the instance and database directories are created by the DB2 database manager, the permissions are accurate and should not be changed.<br />
+<br />
+Use the Following queries/commands to find the locations of instance directory, database directory, transaction logs directory, archive logs directory, audit logs directory and backup files location.<br />
+1. Instance Directory<br />
+<br />
+On Linux and UNIX operating systems, the instance directory is located in the $INSTHOME/sqllib directory, where $INSTHOME is the home directory of the instance owner. <br />
+<br />
+For Windows run following command to show the parent directory of the instance directory:<br />
+  <br />
+     $db2set db2instprof <br />
+<br />
+e.g., for db2 instance &quot;DB2&quot;<br />
+C:\&gt;db2set db2instprof<br />
+C:\ProgramData\IBM\DB2\DB2COPY1\DB2<br />
+<br />
+The instance path in this case will be<br />
+C:\ProgramData\IBM\DB2\DB2COPY1\DB2<br />
+<br />
+2. Database Directory <br />
+For LINUX/UNIX Run Command:<br />
+  <br />
+     $db2 list db directory<br />
+<br />
+Go to instance home directory then under this path, there is one or more db2 node directories.<br />
+The naming convention is NODExxxx, where xxxx is numeric<br />
+Identifying the DB2 node number.<br />
+Under the node directory, there are 3 types of subdirectories<br />
+  a) Same as database name.<br />
+  b) Database directories.  The naming convention is SQLxxxxx, where xxxxx is numeric.<br />
+  c) SQLDBDIR, the system database directory.<br />
+ <br />
+For Windows:<br />
+Under this local database directory, the next level is based on the instance name.<br />
+<br />
+For example db2 instance &quot;DB2&quot;, the path will be C:\DB2<br />
+<br />
+Under this path, there is one or more db2 node directories.<br />
+The naming convention is NODExxxx, where xxxx is numeric<br />
+Identifying the DB2 node number.<br />
+Under the node directory, there are 3 types of subdirectories<br />
+  a) Same as database name.<br />
+  b) Database directories.  The naming convention is SQLxxxxx, where xxxxx is numeric.<br />
+  c) SQLDBDIR, the system database directory.<br />
+<br />
+3. Audit Log Directory<br />
+Run following command:<br />
+<br />
+     $db2audit describe<br />
+<br />
+Find value of Audit Data Path and Audit Archive Path<br />
+<br />
+4. Transaction Log Directory and Archive Logs Directory<br />
+Run the command:<br />
+     $db2 get db cfg <br />
+<br />
+Find value of following parameters and determine the directory locations.<br />
+Changed path to log files                  (NEWLOGPATH) <br />
+Path to log files                                       <br />
+Overflow log path                     (OVERFLOWLOGPATH)<br />
+Mirror log path                         (MIRRORLOGPATH) <br />
+Failover log archive path                (FAILARCHPATH)<br />
+First log archive method                 (LOGARCHMETH1)<br />
+Second log archive method                (LOGARCHMETH2)<br />
+<br />
+5. Storage Files <br />
+Run following SQL queries to find the value of tablespace containers and storage paths:<br />
+<br />
+DB2&gt; SELECT varchar(container_name,70) as container_name, varchar(tbsp_name,20) as tbsp_name<br />
+           FROM TABLE(MON_GET_CONTAINER('',-2))<br />
+<br />
+           SELECT VARCHAR(STORAGE_GROUP_NAME, 30) AS STOGROUP, VARCHAR(DB_STORAGE_PATH, 40) AS STORAGE_PATH <br />
+           FROM TABLE(ADMIN_GET_STORAGE_PATHS('',-1))<br />
+<br />
+6.  Backup File Location<br />
+Run the following command and review the result for Location of Backups<br />
+<br />
+     $db2 list history backup all for &lt;database name&gt;</p><h2>Vulnerability Number</h2><p>V-213709</p><h2>Documentable</h2><p>False</p><h2>Rule Version</h2><p>DB2X-00-005800</p><h2>Severity Override Guidance</h2><p>Review the permissions granted to users by the operating system/file system on the instance files, database files, database transaction log files, database audit log files, and database backup files.<br />
+<br />
+If any user/role who is not an authorized system administrator with a need to know or database administrator with a need to know, or a system account for running DBMS processes, is permitted to read/view any of these files, this is a finding.<br />
+<br />
+Note: When the instance and database directories are created by the DB2 database manager, the permissions are accurate and should not be changed.<br />
+<br />
+Use the Following queries/commands to find the locations of instance directory, database directory, transaction logs directory, archive logs directory, audit logs directory and backup files location.<br />
+1. Instance Directory<br />
+<br />
+On Linux and UNIX operating systems, the instance directory is located in the $INSTHOME/sqllib directory, where $INSTHOME is the home directory of the instance owner. <br />
+<br />
+For Windows run following command to show the parent directory of the instance directory:<br />
+  <br />
+     $db2set db2instprof <br />
+<br />
+e.g., for db2 instance &quot;DB2&quot;<br />
+C:\&gt;db2set db2instprof<br />
+C:\ProgramData\IBM\DB2\DB2COPY1\DB2<br />
+<br />
+The instance path in this case will be<br />
+C:\ProgramData\IBM\DB2\DB2COPY1\DB2<br />
+<br />
+2. Database Directory <br />
+For LINUX/UNIX Run Command:<br />
+  <br />
+     $db2 list db directory<br />
+<br />
+Go to instance home directory then under this path, there is one or more db2 node directories.<br />
+The naming convention is NODExxxx, where xxxx is numeric<br />
+Identifying the DB2 node number.<br />
+Under the node directory, there are 3 types of subdirectories<br />
+  a) Same as database name.<br />
+  b) Database directories.  The naming convention is SQLxxxxx, where xxxxx is numeric.<br />
+  c) SQLDBDIR, the system database directory.<br />
+ <br />
+For Windows:<br />
+Under this local database directory, the next level is based on the instance name.<br />
+<br />
+For example db2 instance &quot;DB2&quot;, the path will be C:\DB2<br />
+<br />
+Under this path, there is one or more db2 node directories.<br />
+The naming convention is NODExxxx, where xxxx is numeric<br />
+Identifying the DB2 node number.<br />
+Under the node directory, there are 3 types of subdirectories<br />
+  a) Same as database name.<br />
+  b) Database directories.  The naming convention is SQLxxxxx, where xxxxx is numeric.<br />
+  c) SQLDBDIR, the system database directory.<br />
+<br />
+3. Audit Log Directory<br />
+Run following command:<br />
+<br />
+     $db2audit describe<br />
+<br />
+Find value of Audit Data Path and Audit Archive Path<br />
+<br />
+4. Transaction Log Directory and Archive Logs Directory<br />
+Run the command:<br />
+     $db2 get db cfg <br />
+<br />
+Find value of following parameters and determine the directory locations.<br />
+Changed path to log files                  (NEWLOGPATH) <br />
+Path to log files                                       <br />
+Overflow log path                     (OVERFLOWLOGPATH)<br />
+Mirror log path                         (MIRRORLOGPATH) <br />
+Failover log archive path                (FAILARCHPATH)<br />
+First log archive method                 (LOGARCHMETH1)<br />
+Second log archive method                (LOGARCHMETH2)<br />
+<br />
+5. Storage Files <br />
+Run following SQL queries to find the value of tablespace containers and storage paths:<br />
+<br />
+DB2&gt; SELECT varchar(container_name,70) as container_name, varchar(tbsp_name,20) as tbsp_name<br />
+           FROM TABLE(MON_GET_CONTAINER('',-2))<br />
+<br />
+           SELECT VARCHAR(STORAGE_GROUP_NAME, 30) AS STOGROUP, VARCHAR(DB_STORAGE_PATH, 40) AS STORAGE_PATH <br />
+           FROM TABLE(ADMIN_GET_STORAGE_PATHS('',-1))<br />
+<br />
+6.  Backup File Location<br />
+Run the following command and review the result for Location of Backups<br />
+<br />
+     $db2 list history backup all for &lt;database name&gt;</p><h2>Check Content Reference</h2><p>M</p><h2>Target Key</h2><p>3989</p></body></html>

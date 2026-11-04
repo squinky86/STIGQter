@@ -1,0 +1,38 @@
+<!doctype html><html lang="en"><head><meta charset="utf-8"><title>STIGQter: STIG Check Details: SV-256767r889271_rule: The Security Token Service must not show directory listings.</title><link rel="icon" type="image/svg+xml" href="STIGQter.svg" /><script async src="https://www.googletagmanager.com/gtag/js?id=UA-31381839-2"></script><script src="include.js"></script><script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-4110907817782130" crossorigin="anonymous"></script></head><body><div><img src="STIGQter.svg" alt="STIGQter" style="height:1em;" /> <a href="https://www.stigqter.com/">STIGQter</a>: <a href="main.html">STIG Summary</a>: <a href="U_VMW_vSphere_7-0_vCA_STS_STIG_V1R2_Manual-xccdf.html">VMware vSphere 7.0 vCenter Appliance STS Security Technical Implementation Guide Version: 1 Release: 2 Benchmark Date: 26 Jul 2023</a>:</div> <h1>The Security Token Service must not show directory listings.</h1><h2>DISA Rule</h2><p>SV-256767r889271_rule</p><h2>Vulnerability Number</h2><p>V-256767</p><h2>Group Title</h2><p>SRG-APP-000266-WSR-000142</p><h2>Rule Version</h2><p>VCST-70-000023</p><h2>Severity</h2><p>CAT II</p><h2>CCI(s)</h2><ul><li>CCI-001312 - Generates error messages that provide information necessary for corrective actions without revealing information that could be exploited.</li></ul><h2>Weight</h2><p>10</p><h2>Fix Recommendation</h2><p>Navigate to and open: <br />
+ <br />
+/usr/lib/vmware-sso/vmware-sts/conf/web.xml <br />
+ <br />
+Set the &lt;param-value&gt; to &quot;false&quot; in all &lt;param-name&gt;listing&lt;/param-name&gt; nodes. <br />
+ <br />
+Note: The setting should look like the following: <br />
+ <br />
+&lt;init-param&gt; <br />
+      &lt;param-name&gt;listings&lt;/param-name&gt; <br />
+      &lt;param-value&gt;false&lt;/param-value&gt; <br />
+&lt;/init-param&gt; <br />
+ <br />
+Restart the service with the following command: <br />
+ <br />
+# vmon-cli --restart sts</p><h2>Check Contents</h2><p>At the command prompt, run the following command: <br />
+ <br />
+# xmllint --format /usr/lib/vmware-sso/vmware-sts/conf/web.xml | sed '2 s/xmlns=&quot;.*&quot;//g' | xmllint --xpath '//param-name[text()=&quot;listings&quot;]/parent::init-param' - <br />
+ <br />
+Expected result: <br />
+ <br />
+&lt;init-param&gt; <br />
+      &lt;param-name&gt;listings&lt;/param-name&gt; <br />
+      &lt;param-value&gt;false&lt;/param-value&gt; <br />
+&lt;/init-param&gt; <br />
+ <br />
+If the output of the command does not match the expected result, this is a finding.</p><h2>Vulnerability Number</h2><p>V-256767</p><h2>Documentable</h2><p>False</p><h2>Rule Version</h2><p>VCST-70-000023</p><h2>Severity Override Guidance</h2><p>At the command prompt, run the following command: <br />
+ <br />
+# xmllint --format /usr/lib/vmware-sso/vmware-sts/conf/web.xml | sed '2 s/xmlns=&quot;.*&quot;//g' | xmllint --xpath '//param-name[text()=&quot;listings&quot;]/parent::init-param' - <br />
+ <br />
+Expected result: <br />
+ <br />
+&lt;init-param&gt; <br />
+      &lt;param-name&gt;listings&lt;/param-name&gt; <br />
+      &lt;param-value&gt;false&lt;/param-value&gt; <br />
+&lt;/init-param&gt; <br />
+ <br />
+If the output of the command does not match the expected result, this is a finding.</p><h2>Check Content Reference</h2><p>M</p><h2>Target Key</h2><p>5527</p></body></html>

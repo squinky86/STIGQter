@@ -1,0 +1,67 @@
+<!doctype html><html lang="en"><head><meta charset="utf-8"><title>STIGQter: STIG Check Details: SV-213743r961803_rule: DB2 must generate audit records when security objects are modified.</title><link rel="icon" type="image/svg+xml" href="STIGQter.svg" /><script async src="https://www.googletagmanager.com/gtag/js?id=UA-31381839-2"></script><script src="include.js"></script><script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-4110907817782130" crossorigin="anonymous"></script></head><body><div><img src="STIGQter.svg" alt="STIGQter" style="height:1em;" /> <a href="https://www.stigqter.com/">STIGQter</a>: <a href="main.html">STIG Summary</a>: <a href="U_IBM_DB2_V10-5_LUW_STIG_V2R2_Manual-xccdf.html">IBM DB2 V10.5 LUW Security Technical Implementation Guide Version: 2 Release: 2 Benchmark Date: 01 Jul 2026</a>:</div> <h1>DB2 must generate audit records when security objects are modified.</h1><h2>DISA Rule</h2><p>SV-213743r961803_rule</p><h2>Vulnerability Number</h2><p>V-213743</p><h2>Group Title</h2><p>SRG-APP-000496-DB-000334</p><h2>Rule Version</h2><p>DB2X-00-010400</p><h2>Severity</h2><p>CAT II</p><h2>CCI(s)</h2><ul><li>CCI-000172 - Generate audit records for the event types defined in AU-2 c that include the audit record content defined in AU-3.</li></ul><h2>Weight</h2><p>10</p><h2>Fix Recommendation</h2><p>Run the following command to define an audit policy with the needed subset using the CREATE AUDIT POLICY SQL statement:<br />
+DB2&gt; CREATE AUDIT POLICY &lt;execdb&gt; CATEGORIES OBJMAINT STATUS SUCCESS, SECMAINT STATUS SUCCESS ERROR TYPE AUDIT<br />
+             or<br />
+           CREATE AUDIT POLICY &lt;execdb&gt; CATEGORIES OBJMAINT STATUS SUCCESS, SECMAINT STATUS BOTH ERROR TYPE AUDIT<br />
+<br />
+To modify an existing audit policy, replace &quot;CREATE&quot; with &quot;ALTER&quot; in the preceding statement. Only the categories explicitly named in the statement will be affected.  In this case, the changes take effect immediately.<br />
+<br />
+If CREATE was used above, run the following command to apply the correct policy to local security tables or database level:<br />
+DB2&gt; AUDIT TABLE &lt;table name&gt; USING POLICY EXECDB</p><h2>Check Contents</h2><p>If there are no locally defined security objects this is not applicable (NA).<br />
+<br />
+If there are locally defined security objects get a list of those objects from ISSO/DBA.<br />
+<br />
+If there are only tables in the list then a minimum audit set of OBJMAINT and SECMAINT categories on the locally defined security tables or database is required.<br />
+<br />
+If there are objects like packages and procedures in the list of locally defined security objects then a minimum audit set of OBJMAINT and SECMAINT categories on the database is required.<br />
+<br />
+Run the following SQL statement to ensure that an audit policy is defined in the database:<br />
+DB2&gt; SELECT AUDITPOLICYNAME, OBJECTSCHEMA, OBJECTNAME, OBJECTTYPE <br />
+           FROM SYSCAT.AUDITUSE <br />
+           WHERE OBJECTTYPE IN ('T',' ')<br />
+<br />
+If no rows are returned, this is a finding. <br />
+<br />
+If a row with OBJECTTYPE of ' ' (Database; value is a blank) exists in the output, it is a database level policy. <br />
+<br />
+If a row with OBJECTTYPE of 'T' exists in the output, it is a table level policy. <br />
+<br />
+For each audit policy returned in the statement above, run the following SQL statement to confirm that the OBJMAINT and SECMAINT categories are part of that policy: <br />
+DB2&gt; SELECT AUDITPOLICYNAME, SECMAINTSTATUS, OBJMAINTSTATUS, ERRORTYPE AS ERRORTYPE <br />
+           FROM SYSCAT.AUDITPOLICIES<br />
+<br />
+If the database audit policy has the values for the SECMAINTSTATUS and OBJMAINTSTATUS columns set to 'S' (Success) or 'B' (Both) and the value in the ERRORTYPE column set to 'A' (Audit), this is not a finding. <br />
+<br />
+If there are objects in addition to tables in the list of locally defined security objects and if the database policy does not exist or does not cover SECMAINTSTATUS or OBJMAINTSTATUS, this is a finding. <br />
+<br />
+If there are only tables in the list and if the database policy does not exist or does not cover SECMAINTSTATUS or OBJMAINTSTATUS then check if the appropriate policies are defined for all the required locally defined security tables. <br />
+<br />
+If all the required locally defined security tables' audit policies do not have the values for the SECMAINTSTATUS and OBJMAINTSTATUS columns set to 'S' (Success) or 'B' (Both) or if the value in the ERRORTYPE column is not set to 'A' (Audit), this is a finding.</p><h2>Vulnerability Number</h2><p>V-213743</p><h2>Documentable</h2><p>False</p><h2>Rule Version</h2><p>DB2X-00-010400</p><h2>Severity Override Guidance</h2><p>If there are no locally defined security objects this is not applicable (NA).<br />
+<br />
+If there are locally defined security objects get a list of those objects from ISSO/DBA.<br />
+<br />
+If there are only tables in the list then a minimum audit set of OBJMAINT and SECMAINT categories on the locally defined security tables or database is required.<br />
+<br />
+If there are objects like packages and procedures in the list of locally defined security objects then a minimum audit set of OBJMAINT and SECMAINT categories on the database is required.<br />
+<br />
+Run the following SQL statement to ensure that an audit policy is defined in the database:<br />
+DB2&gt; SELECT AUDITPOLICYNAME, OBJECTSCHEMA, OBJECTNAME, OBJECTTYPE <br />
+           FROM SYSCAT.AUDITUSE <br />
+           WHERE OBJECTTYPE IN ('T',' ')<br />
+<br />
+If no rows are returned, this is a finding. <br />
+<br />
+If a row with OBJECTTYPE of ' ' (Database; value is a blank) exists in the output, it is a database level policy. <br />
+<br />
+If a row with OBJECTTYPE of 'T' exists in the output, it is a table level policy. <br />
+<br />
+For each audit policy returned in the statement above, run the following SQL statement to confirm that the OBJMAINT and SECMAINT categories are part of that policy: <br />
+DB2&gt; SELECT AUDITPOLICYNAME, SECMAINTSTATUS, OBJMAINTSTATUS, ERRORTYPE AS ERRORTYPE <br />
+           FROM SYSCAT.AUDITPOLICIES<br />
+<br />
+If the database audit policy has the values for the SECMAINTSTATUS and OBJMAINTSTATUS columns set to 'S' (Success) or 'B' (Both) and the value in the ERRORTYPE column set to 'A' (Audit), this is not a finding. <br />
+<br />
+If there are objects in addition to tables in the list of locally defined security objects and if the database policy does not exist or does not cover SECMAINTSTATUS or OBJMAINTSTATUS, this is a finding. <br />
+<br />
+If there are only tables in the list and if the database policy does not exist or does not cover SECMAINTSTATUS or OBJMAINTSTATUS then check if the appropriate policies are defined for all the required locally defined security tables. <br />
+<br />
+If all the required locally defined security tables' audit policies do not have the values for the SECMAINTSTATUS and OBJMAINTSTATUS columns set to 'S' (Success) or 'B' (Both) or if the value in the ERRORTYPE column is not set to 'A' (Audit), this is a finding.</p><h2>Check Content Reference</h2><p>M</p><h2>Target Key</h2><p>3989</p></body></html>

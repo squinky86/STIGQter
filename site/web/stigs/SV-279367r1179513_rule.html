@@ -1,0 +1,36 @@
+<!doctype html><html lang="en"><head><meta charset="utf-8"><title>STIGQter: STIG Check Details: SV-279367r1179513_rule: MongoDB must provide nonprivileged users with error messages that provide information necessary for corrective actions without revealing information that could be exploited by adversaries.</title><link rel="icon" type="image/svg+xml" href="STIGQter.svg" /><script async src="https://www.googletagmanager.com/gtag/js?id=UA-31381839-2"></script><script src="include.js"></script><script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-4110907817782130" crossorigin="anonymous"></script></head><body><div><img src="STIGQter.svg" alt="STIGQter" style="height:1em;" /> <a href="https://www.stigqter.com/">STIGQter</a>: <a href="main.html">STIG Summary</a>: <a href="U_MDB_Enterprise_Advanced_8-x_STIG_V1R1_Manual-xccdf.html">MongoDB Enterprise Advanced 8.x Security Technical Implementation Guide Version: 1 Release: 1 Benchmark Date: 26 Jan 2026</a>:</div> <h1>MongoDB must provide nonprivileged users with error messages that provide information necessary for corrective actions without revealing information that could be exploited by adversaries.</h1><h2>DISA Rule</h2><p>SV-279367r1179513_rule</p><h2>Vulnerability Number</h2><p>V-279367</p><h2>Group Title</h2><p>SRG-APP-000266-DB-000162</p><h2>Rule Version</h2><p>MD8X-00-005800</p><h2>Severity</h2><p>CAT II</p><h2>CCI(s)</h2><ul><li>CCI-001312 - Generates error messages that provide information necessary for corrective actions without revealing information that could be exploited.</li></ul><h2>Weight</h2><p>10</p><h2>Fix Recommendation</h2><p>Configure custom application code so as not to divulge sensitive information or information useful for system identification in custom application error messages.<br />
+<br />
+To configure MongoDB to redact client information from its log file, edit the MongoDB configuration file (default location /etc/mongod.conf). <br />
+<br />
+Add the following option to the security section:<br />
+<br />
+security:<br />
+   redactClientLogData: true <br />
+<br />
+Restart the MongoDB server from the operating system:<br />
+<br />
+$ sudo systemctl restart mongod</p><h2>Check Contents</h2><p>Check custom application code to verify error messages do not contain information beyond what is needed for troubleshooting the issue.<br />
+<br />
+If custom application error messages contain PII data, sensitive business data, or information useful for identifying the host system or database structure, this is a finding.<br />
+<br />
+For example, when attempting to log in using the MongoDB shell with incorrect client credentials, the user will receive a generic error message that the authentication failed regardless of whether the user exists.<br />
+<br />
+If a user is attempting to perform an operation using the MongoDB shell for which they do not have privileges, MongoDB will return a generic error message that the operation is not authorized.<br />
+<br />
+To prevent too much information being displayed in the MongoDB logfiles, run the following command:<br />
+<br />
+&gt; db.getSiblingDB(&quot;admin&quot;).runCommand({getCmdLineOpts: 1}).parsed.security.redactClientLogData<br />
+<br />
+If the command does not return true, this is a finding.</p><h2>Vulnerability Number</h2><p>V-279367</p><h2>Documentable</h2><p>False</p><h2>Rule Version</h2><p>MD8X-00-005800</p><h2>Severity Override Guidance</h2><p>Check custom application code to verify error messages do not contain information beyond what is needed for troubleshooting the issue.<br />
+<br />
+If custom application error messages contain PII data, sensitive business data, or information useful for identifying the host system or database structure, this is a finding.<br />
+<br />
+For example, when attempting to log in using the MongoDB shell with incorrect client credentials, the user will receive a generic error message that the authentication failed regardless of whether the user exists.<br />
+<br />
+If a user is attempting to perform an operation using the MongoDB shell for which they do not have privileges, MongoDB will return a generic error message that the operation is not authorized.<br />
+<br />
+To prevent too much information being displayed in the MongoDB logfiles, run the following command:<br />
+<br />
+&gt; db.getSiblingDB(&quot;admin&quot;).runCommand({getCmdLineOpts: 1}).parsed.security.redactClientLogData<br />
+<br />
+If the command does not return true, this is a finding.</p><h2>Check Content Reference</h2><p>M</p><h2>Target Key</h2><p>5728</p></body></html>

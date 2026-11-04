@@ -1,0 +1,19 @@
+<!doctype html><html lang="en"><head><meta charset="utf-8"><title>STIGQter: STIG Check Details: SV-253736r961521_rule: MariaDB must prohibit the use of cached authenticators after an organization-defined time period.</title><link rel="icon" type="image/svg+xml" href="STIGQter.svg" /><script async src="https://www.googletagmanager.com/gtag/js?id=UA-31381839-2"></script><script src="include.js"></script><script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-4110907817782130" crossorigin="anonymous"></script></head><body><div><img src="STIGQter.svg" alt="STIGQter" style="height:1em;" /> <a href="https://www.stigqter.com/">STIGQter</a>: <a href="main.html">STIG Summary</a>: <a href="U_MariaDB_Enterprise_10-x_STIG_V2R5_Manual-xccdf.html">MariaDB Enterprise 10.x Security Technical Implementation Guide Version: 2 Release: 5 Benchmark Date: 01 Apr 2026</a>:</div> <h1>MariaDB must prohibit the use of cached authenticators after an organization-defined time period.</h1><h2>DISA Rule</h2><p>SV-253736r961521_rule</p><h2>Vulnerability Number</h2><p>V-253736</p><h2>Group Title</h2><p>SRG-APP-000400-DB-000367</p><h2>Rule Version</h2><p>MADB-10-008300</p><h2>Severity</h2><p>CAT II</p><h2>CCI(s)</h2><ul><li>CCI-002007 - Prohibit the use of cached authenticators after an organization-defined time period.</li></ul><h2>Weight</h2><p>10</p><h2>Fix Recommendation</h2><p>Verify that the idle_transaction_wait is set to a value greater than 0 or is set to the value needed by the administrator. The value of idle_transaction_wait can be validated by issuing SHOW VARIABLES. Example:<br />
+<br />
+Locate the MariaDB Enterprise Server configuration files in /etc/my.cnf.d/. Add the following: <br />
+<br />
+Under the [mariadb] section: <br />
+<br />
+idle_transaction_timeout = 60<br />
+<br />
+After making changes to the .cnf file, stop and restart the database service.</p><h2>Check Contents</h2><p>The system parameter idle_transaction_timeout specifies in seconds when a connection will be terminated due to inactivity. After a connection is terminated, a new request to the database must be preceded by an authentication, which is not cached within the database.<br />
+<br />
+Run the following SQL:<br />
+MariaDB&gt; SHOW GLOBAL VARIABLES LIKE 'idle_transaction_timeout';<br />
+<br />
+If the value is 0, this is a finding.</p><h2>Vulnerability Number</h2><p>V-253736</p><h2>Documentable</h2><p>False</p><h2>Rule Version</h2><p>MADB-10-008300</p><h2>Severity Override Guidance</h2><p>The system parameter idle_transaction_timeout specifies in seconds when a connection will be terminated due to inactivity. After a connection is terminated, a new request to the database must be preceded by an authentication, which is not cached within the database.<br />
+<br />
+Run the following SQL:<br />
+MariaDB&gt; SHOW GLOBAL VARIABLES LIKE 'idle_transaction_timeout';<br />
+<br />
+If the value is 0, this is a finding.</p><h2>Check Content Reference</h2><p>M</p><h2>Target Key</h2><p>5475</p></body></html>

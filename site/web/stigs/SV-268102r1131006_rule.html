@@ -1,0 +1,65 @@
+<!doctype html><html lang="en"><head><meta charset="utf-8"><title>STIGQter: STIG Check Details: SV-268102r1131006_rule: NixOS must notify the system administrator (SA) and information system security officer (ISSO) (at a minimum) when allocated audit record storage volume reaches 90 percent utilization.</title><link rel="icon" type="image/svg+xml" href="STIGQter.svg" /><script async src="https://www.googletagmanager.com/gtag/js?id=UA-31381839-2"></script><script src="include.js"></script><script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-4110907817782130" crossorigin="anonymous"></script></head><body><div><img src="STIGQter.svg" alt="STIGQter" style="height:1em;" /> <a href="https://www.stigqter.com/">STIGQter</a>: <a href="main.html">STIG Summary</a>: <a href="U_Anduril_NixOS_STIG_V1R2_Manual-xccdf.html">Anduril NixOS Security Technical Implementation Guide Version: 1 Release: 2 Benchmark Date: 01 Oct 2025</a>:</div> <h1>NixOS must notify the system administrator (SA) and information system security officer (ISSO) (at a minimum) when allocated audit record storage volume reaches 90 percent utilization.</h1><h2>DISA Rule</h2><p>SV-268102r1131006_rule</p><h2>Vulnerability Number</h2><p>V-268102</p><h2>Group Title</h2><p>SRG-OS-000046-GPOS-00022</p><h2>Rule Version</h2><p>ANIX-00-000410</p><h2>Severity</h2><p>CAT II</p><h2>CCI(s)</h2><ul><li>CCI-000139 - Alert organization-defined personnel or roles within an organization-defined time period in the event of an audit logging process failure.</li></ul><h2>Weight</h2><p>10</p><h2>Fix Recommendation</h2><p>Configure NixOS to initiate an action to notify the SA and ISSO (at a minimum) when allocated audit record storage volume reaches 90 percent of the repository maximum audit record storage capacity.<br />
+<br />
+If the space_left_action parameter is set to &quot;syslog&quot;, make sure the event being logged generates a notification to the SA and ISSO.<br />
+<br />
+If the space_left_action parameter is set to &quot;exec&quot;, make sure the command being execute notifies the SA and ISSO.<br />
+<br />
+If the space_left_action parameter is set to &quot;email&quot;, set the action_mail_acct parameter to an email address for the SA and ISSO.<br />
+<br />
+Add the following Nix code to the NixOS Configuration, usually located in /etc/nixos/configuration.nix or /etc/nixos/flake.nix:<br />
+<br />
+  admin_space_left_action = syslog<br />
+<br />
+For example, an updated configuration of 'environment.etc.&quot;audit/auditd.conf&quot;.text' would look like the following ('...' denoting that the 'environment.etc.&quot;audit/auditd.conf&quot;.text' configuration may have other options configured):<br />
+<br />
+ environment.etc.&quot;audit/auditd.conf&quot;.text = [<br />
+  ''<br />
+   ...<br />
+   admin_space_left_action = syslog<br />
+   ...<br />
+  <br />
+ ''<br />
+];<br />
+<br />
+Rebuild and switch to the new NixOS configuration:<br />
+$ sudo nixos-rebuild switch</p><h2>Check Contents</h2><p>Verify NixOS notifies the SA and ISSO (at a minimum) when allocated audit record storage volume reaches 90 percent of the repository maximum audit record storage capacity with the following command:<br />
+<br />
+$ sudo grep -w admin_space_left_action /etc/audit/auditd.conf<br />
+<br />
+admin_space_left_action = syslog<br />
+<br />
+If the &quot;admin_space_left_action&quot; parameter is missing, commented out, or set to blanks, this is a finding.<br />
+<br />
+If the &quot;admin_space_left_action&quot; is set to &quot;syslog&quot;, the system logs the event, but does not generate a notification, this is a finding.<br />
+<br />
+If the &quot;admin_space_left_action&quot; is set to &quot;exec&quot;, the system executes a designated script. If this script does not inform the SA of the event, this is a finding.<br />
+<br />
+If the &quot;admin_space_left_action&quot; is set to &quot;email&quot; check the value of the &quot;action_mail_acct&quot; parameter with the following command:<br />
+<br />
+$ sudo grep action_mail_acct /etc/audit/auditd.conf<br />
+<br />
+action_mail_acct root@localhost<br />
+<br />
+The &quot;action_mail_acct&quot; parameter, if missing, defaults to &quot;root&quot;. If the &quot;action_mail_acct&quot; parameter is not set to the email address of the SA and/or ISSO, this is a finding. <br />
+<br />
+Note: If the email address of the SA is on a remote system, a mail package must be available.</p><h2>Vulnerability Number</h2><p>V-268102</p><h2>Documentable</h2><p>False</p><h2>Rule Version</h2><p>ANIX-00-000410</p><h2>Severity Override Guidance</h2><p>Verify NixOS notifies the SA and ISSO (at a minimum) when allocated audit record storage volume reaches 90 percent of the repository maximum audit record storage capacity with the following command:<br />
+<br />
+$ sudo grep -w admin_space_left_action /etc/audit/auditd.conf<br />
+<br />
+admin_space_left_action = syslog<br />
+<br />
+If the &quot;admin_space_left_action&quot; parameter is missing, commented out, or set to blanks, this is a finding.<br />
+<br />
+If the &quot;admin_space_left_action&quot; is set to &quot;syslog&quot;, the system logs the event, but does not generate a notification, this is a finding.<br />
+<br />
+If the &quot;admin_space_left_action&quot; is set to &quot;exec&quot;, the system executes a designated script. If this script does not inform the SA of the event, this is a finding.<br />
+<br />
+If the &quot;admin_space_left_action&quot; is set to &quot;email&quot; check the value of the &quot;action_mail_acct&quot; parameter with the following command:<br />
+<br />
+$ sudo grep action_mail_acct /etc/audit/auditd.conf<br />
+<br />
+action_mail_acct root@localhost<br />
+<br />
+The &quot;action_mail_acct&quot; parameter, if missing, defaults to &quot;root&quot;. If the &quot;action_mail_acct&quot; parameter is not set to the email address of the SA and/or ISSO, this is a finding. <br />
+<br />
+Note: If the email address of the SA is on a remote system, a mail package must be available.</p><h2>Check Content Reference</h2><p>M</p><h2>Target Key</h2><p>5658</p></body></html>

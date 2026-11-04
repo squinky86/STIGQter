@@ -1,0 +1,85 @@
+<!doctype html><html lang="en"><head><meta charset="utf-8"><title>STIGQter: STIG Check Details: SV-235170r1018615_rule: The MySQL Database Server 8.0 must produce audit records of its enforcement of access restrictions associated with changes to the configuration of the MySQL Database Server 8.0 or database(s).</title><link rel="icon" type="image/svg+xml" href="STIGQter.svg" /><script async src="https://www.googletagmanager.com/gtag/js?id=UA-31381839-2"></script><script src="include.js"></script><script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-4110907817782130" crossorigin="anonymous"></script></head><body><div><img src="STIGQter.svg" alt="STIGQter" style="height:1em;" /> <a href="https://www.stigqter.com/">STIGQter</a>: <a href="main.html">STIG Summary</a>: <a href="U_Oracle_MySQL_8-0_STIG_V2R2_Manual-xccdf.html">Oracle MySQL 8.0 Security Technical Implementation Guide Version: 2 Release: 2 Benchmark Date: 24 Oct 2024</a>:</div> <h1>The MySQL Database Server 8.0 must produce audit records of its enforcement of access restrictions associated with changes to the configuration of the MySQL Database Server 8.0 or database(s).</h1><h2>DISA Rule</h2><p>SV-235170r1018615_rule</p><h2>Vulnerability Number</h2><p>V-235170</p><h2>Group Title</h2><p>SRG-APP-000381-DB-000361</p><h2>Rule Version</h2><p>MYS8-00-009300</p><h2>Severity</h2><p>CAT II</p><h2>CCI(s)</h2><ul><li>CCI-003938 - Automatically generate audit records of the enforcement actions.</li></ul><h2>Weight</h2><p>10</p><h2>Fix Recommendation</h2><p>If currently required, configure the MySQL Database Server to produce audit records when enforcement of access restrictions is associated with changes to the configuration of the DBMS or database(s).<br />
+<br />
+Refer to the supplemental file &quot;MySQL80Audit.sql&quot;.</p><h2>Check Contents</h2><p>Determine if an audit is configured to capture denied actions.<br />
+<br />
+Check if MySQL audit is configured and enabled. The my.cnf file will set the variable audit_file.<br />
+<br />
+To further check, execute the following query: <br />
+<br />
+SELECT PLUGIN_NAME, PLUGIN_STATUS<br />
+      FROM INFORMATION_SCHEMA.PLUGINS<br />
+      WHERE PLUGIN_NAME LIKE 'audit%';<br />
+<br />
+The status of the audit_log plugin must be &quot;active&quot;. If it is not &quot;active&quot;, this is a finding.<br />
+<br />
+Review audit filters and associated users by running the following queries:<br />
+SELECT `audit_log_filter`.`NAME`,<br />
+   `audit_log_filter`.`FILTER`<br />
+FROM `mysql`.`audit_log_filter`;<br />
+<br />
+SELECT `audit_log_user`.`USER`,<br />
+   `audit_log_user`.`HOST`,<br />
+   `audit_log_user`.`FILTERNAME`<br />
+FROM `mysql`.`audit_log_user`;<br />
+<br />
+All currently defined audits for the MySQL server instance will be listed. If no audits are returned, this is a finding.<br />
+<br />
+Connect and run commands as a low-privilege user. For example attempt to change system variables, user name, or another user's password, all of which should fail:<br />
+set persist wait_timeout=28000; <br />
+rename user passme to cantchange;<br />
+SET PASSWORD FOR passme = 'sfsdfsdf';<br />
+<br />
+Review the audit log and inspect event data containing identity and user subject details by running the Linux command:<br />
+sudo cat  &lt;directory where audit log files are located&gt;/audit.log<br />
+<br />
+For example, if the values returned by &quot;select @@datadir, @@audit_log_file; &quot; are  /usr/local/mysql/data/,  audit.log <br />
+sudo cat  /usr/local/mysql/data/audit.log<br />
+<br />
+{ &quot;timestamp&quot;: &quot;2020-08-31 20:10:21&quot;, &quot;id&quot;: 1, &quot;class&quot;: &quot;general&quot;, &quot;event&quot;: &quot;status&quot;, &quot;connection_id&quot;: 38, &quot;account&quot;: { &quot;user&quot;: &quot;fewconnects&quot;, &quot;host&quot;: &quot;localhost&quot; }, &quot;login&quot;: { &quot;user&quot;: &quot;fewconnects&quot;, &quot;os&quot;: &quot;&quot;, &quot;ip&quot;: &quot;127.0.0.1&quot;, &quot;proxy&quot;: &quot;&quot; }, &quot;general_data&quot;: { &quot;command&quot;: &quot;Query&quot;, &quot;sql_command&quot;: &quot;set_option&quot;, &quot;query&quot;: &quot;set persist wait_timeout=28000&quot;, &quot;status&quot;: 1227 } },<br />
+{ &quot;timestamp&quot;: &quot;2020-08-31 20:10:48&quot;, &quot;id&quot;: 1, &quot;class&quot;: &quot;general&quot;, &quot;event&quot;: &quot;status&quot;, &quot;connection_id&quot;: 38, &quot;account&quot;: { &quot;user&quot;: &quot;fewconnects&quot;, &quot;host&quot;: &quot;localhost&quot; }, &quot;login&quot;: { &quot;user&quot;: &quot;fewconnects&quot;, &quot;os&quot;: &quot;&quot;, &quot;ip&quot;: &quot;127.0.0.1&quot;, &quot;proxy&quot;: &quot;&quot; }, &quot;general_data&quot;: { &quot;command&quot;: &quot;Query&quot;, &quot;sql_command&quot;: &quot;rename_user&quot;, &quot;query&quot;: &quot;rename user passme to cantchange&quot;, &quot;status&quot;: 1227 } },<br />
+, &quot;host&quot;: &quot;localhost&quot; }, &quot;login&quot;: { &quot;user&quot;: &quot;fewconnects&quot;, &quot;os&quot;: &quot;&quot;, &quot;ip&quot;: &quot;127.0.0.1&quot;, &quot;proxy&quot;: &quot;&quot; }, &quot;general_data&quot;: { &quot;command&quot;: &quot;Query&quot;, &quot;sql_command&quot;: &quot;set_password&quot;, &quot;query&quot;: &quot;SET PASSWORD FOR `passme`@`%`=&lt;secret&gt;&quot;, &quot;status&quot;: 1044 } },<br />
+<br />
+Note each has a non-zero status, 1227, 1227, and 1044 respectively.<br />
+<br />
+If the audit log does not contain records of its enforcement of access restrictions associated with changes to the configuration of the DBMS or database(s), this is a finding.</p><h2>Vulnerability Number</h2><p>V-235170</p><h2>Documentable</h2><p>False</p><h2>Rule Version</h2><p>MYS8-00-009300</p><h2>Severity Override Guidance</h2><p>Determine if an audit is configured to capture denied actions.<br />
+<br />
+Check if MySQL audit is configured and enabled. The my.cnf file will set the variable audit_file.<br />
+<br />
+To further check, execute the following query: <br />
+<br />
+SELECT PLUGIN_NAME, PLUGIN_STATUS<br />
+      FROM INFORMATION_SCHEMA.PLUGINS<br />
+      WHERE PLUGIN_NAME LIKE 'audit%';<br />
+<br />
+The status of the audit_log plugin must be &quot;active&quot;. If it is not &quot;active&quot;, this is a finding.<br />
+<br />
+Review audit filters and associated users by running the following queries:<br />
+SELECT `audit_log_filter`.`NAME`,<br />
+   `audit_log_filter`.`FILTER`<br />
+FROM `mysql`.`audit_log_filter`;<br />
+<br />
+SELECT `audit_log_user`.`USER`,<br />
+   `audit_log_user`.`HOST`,<br />
+   `audit_log_user`.`FILTERNAME`<br />
+FROM `mysql`.`audit_log_user`;<br />
+<br />
+All currently defined audits for the MySQL server instance will be listed. If no audits are returned, this is a finding.<br />
+<br />
+Connect and run commands as a low-privilege user. For example attempt to change system variables, user name, or another user's password, all of which should fail:<br />
+set persist wait_timeout=28000; <br />
+rename user passme to cantchange;<br />
+SET PASSWORD FOR passme = 'sfsdfsdf';<br />
+<br />
+Review the audit log and inspect event data containing identity and user subject details by running the Linux command:<br />
+sudo cat  &lt;directory where audit log files are located&gt;/audit.log<br />
+<br />
+For example, if the values returned by &quot;select @@datadir, @@audit_log_file; &quot; are  /usr/local/mysql/data/,  audit.log <br />
+sudo cat  /usr/local/mysql/data/audit.log<br />
+<br />
+{ &quot;timestamp&quot;: &quot;2020-08-31 20:10:21&quot;, &quot;id&quot;: 1, &quot;class&quot;: &quot;general&quot;, &quot;event&quot;: &quot;status&quot;, &quot;connection_id&quot;: 38, &quot;account&quot;: { &quot;user&quot;: &quot;fewconnects&quot;, &quot;host&quot;: &quot;localhost&quot; }, &quot;login&quot;: { &quot;user&quot;: &quot;fewconnects&quot;, &quot;os&quot;: &quot;&quot;, &quot;ip&quot;: &quot;127.0.0.1&quot;, &quot;proxy&quot;: &quot;&quot; }, &quot;general_data&quot;: { &quot;command&quot;: &quot;Query&quot;, &quot;sql_command&quot;: &quot;set_option&quot;, &quot;query&quot;: &quot;set persist wait_timeout=28000&quot;, &quot;status&quot;: 1227 } },<br />
+{ &quot;timestamp&quot;: &quot;2020-08-31 20:10:48&quot;, &quot;id&quot;: 1, &quot;class&quot;: &quot;general&quot;, &quot;event&quot;: &quot;status&quot;, &quot;connection_id&quot;: 38, &quot;account&quot;: { &quot;user&quot;: &quot;fewconnects&quot;, &quot;host&quot;: &quot;localhost&quot; }, &quot;login&quot;: { &quot;user&quot;: &quot;fewconnects&quot;, &quot;os&quot;: &quot;&quot;, &quot;ip&quot;: &quot;127.0.0.1&quot;, &quot;proxy&quot;: &quot;&quot; }, &quot;general_data&quot;: { &quot;command&quot;: &quot;Query&quot;, &quot;sql_command&quot;: &quot;rename_user&quot;, &quot;query&quot;: &quot;rename user passme to cantchange&quot;, &quot;status&quot;: 1227 } },<br />
+, &quot;host&quot;: &quot;localhost&quot; }, &quot;login&quot;: { &quot;user&quot;: &quot;fewconnects&quot;, &quot;os&quot;: &quot;&quot;, &quot;ip&quot;: &quot;127.0.0.1&quot;, &quot;proxy&quot;: &quot;&quot; }, &quot;general_data&quot;: { &quot;command&quot;: &quot;Query&quot;, &quot;sql_command&quot;: &quot;set_password&quot;, &quot;query&quot;: &quot;SET PASSWORD FOR `passme`@`%`=&lt;secret&gt;&quot;, &quot;status&quot;: 1044 } },<br />
+<br />
+Note each has a non-zero status, 1227, 1227, and 1044 respectively.<br />
+<br />
+If the audit log does not contain records of its enforcement of access restrictions associated with changes to the configuration of the DBMS or database(s), this is a finding.</p><h2>Check Content Reference</h2><p>M</p><h2>Target Key</h2><p>5277</p></body></html>

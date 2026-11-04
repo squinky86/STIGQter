@@ -1,0 +1,41 @@
+<!doctype html><html lang="en"><head><meta charset="utf-8"><title>STIGQter: STIG Check Details: SV-250338r961044_rule: The WebSphere Liberty Server must use DoD-issued/signed certificates.</title><link rel="icon" type="image/svg+xml" href="STIGQter.svg" /><script async src="https://www.googletagmanager.com/gtag/js?id=UA-31381839-2"></script><script src="include.js"></script><script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-4110907817782130" crossorigin="anonymous"></script></head><body><div><img src="STIGQter.svg" alt="STIGQter" style="height:1em;" /> <a href="https://www.stigqter.com/">STIGQter</a>: <a href="main.html">STIG Summary</a>: <a href="U_IBM_WebSphere_Liberty_Server_STIG_V2R4_Manual-xccdf.html">IBM WebSphere Liberty Server Security Technical Implementation Guide Version: 2 Release: 4 Benchmark Date: 01 Apr 2026</a>:</div> <h1>The WebSphere Liberty Server must use DoD-issued/signed certificates.</h1><h2>DISA Rule</h2><p>SV-250338r961044_rule</p><h2>Vulnerability Number</h2><p>V-250338</p><h2>Group Title</h2><p>SRG-APP-000177-AS-000126</p><h2>Rule Version</h2><p>IBMW-LS-000500</p><h2>Severity</h2><p>CAT II</p><h2>CCI(s)</h2><ul><li>CCI-000187 - For public key-based authentication, map the authenticated identity to the account of the individual or group.</li><li>CCI-002450 - Implement organization-defined types of cryptography for each specified cryptography use.</li><li>CCI-002470 - Only allow the use of organization-defined certificate authorities for verification of the establishment of protected sessions.</li></ul><h2>Weight</h2><p>10</p><h2>Fix Recommendation</h2><p>Do not use self-signed certificates in a production environment. Only import certificates signed by an authorized DoD CA or authorized for DoD use. <br />
+<br />
+Obtain the signer certificate either as a Base 64-encoded ASCII file or as binary DER data. <br />
+<br />
+Using the JDK’s ikeyman or keytool utility, open the default trusted keystore specified in the ${server.config.dir}/server.xml. <br />
+<br />
+Click on signer certificates and import the file that contains the DoD signed certificate.</p><h2>Check Contents</h2><p>As a privileged user with access to the ${server.config.dir}/server.xml file; search for SSLDefault in order to identify the default SSL configuration.<br />
+<br />
+grep -i ssldefault server.xml<br />
+<br />
+Identify the default ssl configuration by examining the sslRef flag.<br />
+<br />
+SAMPLE:<br />
+ &lt;sslDefault sslRef=&quot;DefaultTLSSettings&quot; /&gt; <br />
+<br />
+Review the default ssl configuration to identify the default truststore.<br />
+<br />
+SAMPLE:<br />
+ &lt;ssl id=&quot;DefaultTLSSettings&quot; keyStoreRef=&quot;defaultKeyStore&quot; /&gt;<br />
+       &lt;keyStore id=&quot;LDAPTrustStore&quot; location=&quot;${server.config.dir}/liberty.ks&quot; type=&quot;JKS&quot; password=&quot;xxxxxxx&quot; /&gt;<br />
+<br />
+Use the java keytool or ikeyman utilities to open and examine the certificates stored in the truststore.<br />
+<br />
+If the certificates are self signed or not signed by a DoD approved CA, this is a finding.</p><h2>Vulnerability Number</h2><p>V-250338</p><h2>Documentable</h2><p>False</p><h2>Rule Version</h2><p>IBMW-LS-000500</p><h2>Severity Override Guidance</h2><p>As a privileged user with access to the ${server.config.dir}/server.xml file; search for SSLDefault in order to identify the default SSL configuration.<br />
+<br />
+grep -i ssldefault server.xml<br />
+<br />
+Identify the default ssl configuration by examining the sslRef flag.<br />
+<br />
+SAMPLE:<br />
+ &lt;sslDefault sslRef=&quot;DefaultTLSSettings&quot; /&gt; <br />
+<br />
+Review the default ssl configuration to identify the default truststore.<br />
+<br />
+SAMPLE:<br />
+ &lt;ssl id=&quot;DefaultTLSSettings&quot; keyStoreRef=&quot;defaultKeyStore&quot; /&gt;<br />
+       &lt;keyStore id=&quot;LDAPTrustStore&quot; location=&quot;${server.config.dir}/liberty.ks&quot; type=&quot;JKS&quot; password=&quot;xxxxxxx&quot; /&gt;<br />
+<br />
+Use the java keytool or ikeyman utilities to open and examine the certificates stored in the truststore.<br />
+<br />
+If the certificates are self signed or not signed by a DoD approved CA, this is a finding.</p><h2>Check Content Reference</h2><p>M</p><h2>Target Key</h2><p>5424</p></body></html>

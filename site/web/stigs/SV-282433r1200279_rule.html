@@ -1,0 +1,47 @@
+<!doctype html><html lang="en"><head><meta charset="utf-8"><title>STIGQter: STIG Check Details: SV-282433r1200279_rule: TOSS 5 audit logs file must have mode 0600 or less permissive to prevent unauthorized access to the audit log.</title><link rel="icon" type="image/svg+xml" href="STIGQter.svg" /><script async src="https://www.googletagmanager.com/gtag/js?id=UA-31381839-2"></script><script src="include.js"></script><script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-4110907817782130" crossorigin="anonymous"></script></head><body><div><img src="STIGQter.svg" alt="STIGQter" style="height:1em;" /> <a href="https://www.stigqter.com/">STIGQter</a>: <a href="main.html">STIG Summary</a>: <a href="U_TOSS_5 _STIG_V1R1_Manual-xccdf.html">Tri-Lab Operating System Stack (TOSS) 5 Security Technical Implementation Guide Version: 1 Release: 1 Benchmark Date: 26 Mar 2026</a>:</div> <h1>TOSS 5 audit logs file must have mode 0600 or less permissive to prevent unauthorized access to the audit log.</h1><h2>DISA Rule</h2><p>SV-282433r1200279_rule</p><h2>Vulnerability Number</h2><p>V-282433</p><h2>Group Title</h2><p>SRG-OS-000057-GPOS-00027</p><h2>Rule Version</h2><p>TOSS-05-000402</p><h2>Severity</h2><p>CAT II</p><h2>CCI(s)</h2><ul><li>CCI-000162 - Protect audit information from unauthorized access.</li><li>CCI-000163 - Protect audit information from unauthorized modification.</li><li>CCI-000164 - Protect audit information from unauthorized deletion.</li><li>CCI-001314 - Reveal error messages only to organization-defined personnel or roles.</li></ul><h2>Weight</h2><p>10</p><h2>Fix Recommendation</h2><p>Configure the audit logs to have a mode of &quot;0600&quot; using the following command:<br />
+<br />
+Replace &quot;[audit_log_file]&quot; to the correct audit log path, by default this location is &quot;/var/log/audit/audit.log&quot;.<br />
+<br />
+$ sudo chmod 0600 /var/log/audit/[audit_log_file]<br />
+<br />
+Check the group that owns the system audit logs:<br />
+<br />
+$ sudo grep -m 1 -q ^log_group /etc/audit/auditd.conf<br />
+<br />
+If the &quot;log_group&quot; is not defined or it is set to &quot;root&quot;, configure the permissions as follows:<br />
+<br />
+$ sudo chmod 0640 $log_file<br />
+$ sudo chmod 0440 $log_file.*<br />
+<br />
+Otherwise, configure the permissions as follows:<br />
+<br />
+$ sudo chmod 0600 $log_file<br />
+$ sudo chmod 0400 $log_file.*</p><h2>Check Contents</h2><p>Verify the audit logs have a mode of &quot;0600&quot;. <br />
+<br />
+Determine where the audit logs are stored using the following command:<br />
+<br />
+$ sudo grep -iw log_file /etc/audit/auditd.conf<br />
+<br />
+log_file = /var/log/audit/audit.log<br />
+<br />
+Using the location of the audit log file, determine if the audit log files as a mode of &quot;0640&quot; using the following command:<br />
+<br />
+$ sudo ls -la /var/log/audit/*.log<br />
+<br />
+rw-------. 2 root root 237923 Jun 11 11:56 /var/log/audit/audit.log<br />
+<br />
+If the audit logs have a mode more permissive than &quot;0600&quot;, this is a finding.</p><h2>Vulnerability Number</h2><p>V-282433</p><h2>Documentable</h2><p>False</p><h2>Rule Version</h2><p>TOSS-05-000402</p><h2>Severity Override Guidance</h2><p>Verify the audit logs have a mode of &quot;0600&quot;. <br />
+<br />
+Determine where the audit logs are stored using the following command:<br />
+<br />
+$ sudo grep -iw log_file /etc/audit/auditd.conf<br />
+<br />
+log_file = /var/log/audit/audit.log<br />
+<br />
+Using the location of the audit log file, determine if the audit log files as a mode of &quot;0640&quot; using the following command:<br />
+<br />
+$ sudo ls -la /var/log/audit/*.log<br />
+<br />
+rw-------. 2 root root 237923 Jun 11 11:56 /var/log/audit/audit.log<br />
+<br />
+If the audit logs have a mode more permissive than &quot;0600&quot;, this is a finding.</p><h2>Check Content Reference</h2><p>M</p><h2>Target Key</h2><p>5738</p></body></html>

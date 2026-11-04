@@ -1,0 +1,51 @@
+<!doctype html><html lang="en"><head><meta charset="utf-8"><title>STIGQter: STIG Check Details: SV-283826r1203727_rule: The Nokia Provider Edge (PE) router providing virtual private local area network services (VPLS) must be configured to have all attachment circuits defined to the virtual forwarding instance (VFI) with the globally unique VPN ID assigned for each customer VLAN.</title><link rel="icon" type="image/svg+xml" href="STIGQter.svg" /><script async src="https://www.googletagmanager.com/gtag/js?id=UA-31381839-2"></script><script src="include.js"></script><script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-4110907817782130" crossorigin="anonymous"></script></head><body><div><img src="STIGQter.svg" alt="STIGQter" style="height:1em;" /> <a href="https://www.stigqter.com/">STIGQter</a>: <a href="main.html">STIG Summary</a>: <a href="U_Nokia_SR_OS_25-x_RTR_V1R1_STIG_Manual-xccdf.html">Nokia Service Router OS 25.x Router Security Technical Implementation Guide Version: 1 Release: 1 Benchmark Date: 28 Apr 2026</a>:</div> <h1>The Nokia Provider Edge (PE) router providing virtual private local area network services (VPLS) must be configured to have all attachment circuits defined to the virtual forwarding instance (VFI) with the globally unique VPN ID assigned for each customer VLAN.</h1><h2>DISA Rule</h2><p>SV-283826r1203727_rule</p><h2>Vulnerability Number</h2><p>V-283826</p><h2>Group Title</h2><p>SRG-NET-000512-RTR-000009</p><h2>Rule Version</h2><p>NOKI-RT-000080</p><h2>Severity</h2><p>CAT I</p><h2>CCI(s)</h2><ul><li>CCI-000366 - Implement the security configuration settings.</li></ul><h2>Weight</h2><p>10</p><h2>Fix Recommendation</h2><p>Assign globally unique Service IDs for each customer VLAN using VPLS for carrier Ethernet services between multiple sites, and configure the attachment circuits to the appropriate VFI:<br />
+<br />
+- configure service vpls 20 vpn 20 customer 1 create<br />
+- config&gt;service&gt;vpls# mesh-sdp 40:20 create<br />
+- config&gt;service&gt;vpls&gt;mesh-sdp# exit<br />
+- config&gt;service&gt;vpls# sap 1/1/c5/1:100 create<br />
+- config&gt;service&gt;vpls&gt;sap# exit<br />
+- config&gt;service&gt;vpls# no shutdown<br />
+- config&gt;service&gt;vpls# exit all</p><h2>Check Contents</h2><p>Review the implementation plan and the Service IDs assigned to customer VLANs for the VPLS deployment.<br />
+<br />
+Review the PE router configuration to verify customer attachment circuits (i.e., VLANs) are associated to the appropriate VFI. In the example below, the attached circuit at port 1/1/c5/1 is associated to Service ID 20.<br />
+<br />
+Use the following command:<br />
+<br />
+- show service id 20 base<br />
+<br />
+Service Basic Information<br />
+Service Id        : 20                  Vpn Id            : 20<br />
+Service Type      : VPLS<br />
+<br />
+—--- snip —---<br />
+-------------------------------------------------------------------------------<br />
+Service Access &amp; Destination Points<br />
+-------------------------------------------------------------------------------<br />
+Identifier                               Type         AdmMTU  OprMTU  Adm  Opr<br />
+-------------------------------------------------------------------------------<br />
+sap:1/1/c5/1:100                         q-tag        1518    1518    Up   Up<br />
+sdp:30:20 M(3.3.3.3)                     Mesh         0       9190    Up   Up<br />
+<br />
+If the attachment circuits have not been bound to VFI configured with the assigned Service ID for each VLAN, this is a finding.</p><h2>Vulnerability Number</h2><p>V-283826</p><h2>Documentable</h2><p>False</p><h2>Rule Version</h2><p>NOKI-RT-000080</p><h2>Severity Override Guidance</h2><p>Review the implementation plan and the Service IDs assigned to customer VLANs for the VPLS deployment.<br />
+<br />
+Review the PE router configuration to verify customer attachment circuits (i.e., VLANs) are associated to the appropriate VFI. In the example below, the attached circuit at port 1/1/c5/1 is associated to Service ID 20.<br />
+<br />
+Use the following command:<br />
+<br />
+- show service id 20 base<br />
+<br />
+Service Basic Information<br />
+Service Id        : 20                  Vpn Id            : 20<br />
+Service Type      : VPLS<br />
+<br />
+—--- snip —---<br />
+-------------------------------------------------------------------------------<br />
+Service Access &amp; Destination Points<br />
+-------------------------------------------------------------------------------<br />
+Identifier                               Type         AdmMTU  OprMTU  Adm  Opr<br />
+-------------------------------------------------------------------------------<br />
+sap:1/1/c5/1:100                         q-tag        1518    1518    Up   Up<br />
+sdp:30:20 M(3.3.3.3)                     Mesh         0       9190    Up   Up<br />
+<br />
+If the attachment circuits have not been bound to VFI configured with the assigned Service ID for each VLAN, this is a finding.</p><h2>Check Content Reference</h2><p>M</p><h2>Target Key</h2><p>5746</p></body></html>

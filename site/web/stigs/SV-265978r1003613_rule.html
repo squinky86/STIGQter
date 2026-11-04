@@ -1,0 +1,45 @@
+<!doctype html><html lang="en"><head><meta charset="utf-8"><title>STIGQter: STIG Check Details: SV-265978r1003613_rule: The vCenter Server must use DOD-approved encryption to protect the confidentiality of network sessions.</title><link rel="icon" type="image/svg+xml" href="STIGQter.svg" /><script async src="https://www.googletagmanager.com/gtag/js?id=UA-31381839-2"></script><script src="include.js"></script><script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-4110907817782130" crossorigin="anonymous"></script></head><body><div><img src="STIGQter.svg" alt="STIGQter" style="height:1em;" /> <a href="https://www.stigqter.com/">STIGQter</a>: <a href="main.html">STIG Summary</a>: <a href="U_VMW_vSphere_8-0_vCenter_STIG_V2R4_Manual-xccdf.html">VMware vSphere 8.0 vCenter Security Technical Implementation Guide Version: 2 Release: 4 Benchmark Date: 01 Jul 2026</a>:</div> <h1>The vCenter Server must use DOD-approved encryption to protect the confidentiality of network sessions.</h1><h2>DISA Rule</h2><p>SV-265978r1003613_rule</p><h2>Vulnerability Number</h2><p>V-265978</p><h2>Group Title</h2><p>SRG-APP-000014</p><h2>Rule Version</h2><p>VCSA-80-000009</p><h2>Severity</h2><p>CAT II</p><h2>CCI(s)</h2><ul><li>CCI-000068 - Implement cryptographic mechanisms to protect the confidentiality of remote access sessions.</li><li>CCI-000382 - Configure the system to prohibit or restrict the use of organization-defined prohibited or restricted functions, system ports, protocols, software, and/or services.</li><li>CCI-001184 - Protect the authenticity of communications sessions.</li><li>CCI-001453 - Implement cryptographic mechanisms to protect the integrity of remote access sessions.</li><li>CCI-001941 - Implement replay-resistant authentication mechanisms for access to privileged accounts and/or non-privileged accounts.</li><li>CCI-002418 - Protect the confidentiality and/or integrity of transmitted information.</li><li>CCI-002420 - Maintain the confidentiality and/or integrity of information during preparation for transmission.</li><li>CCI-002421 - Implement cryptographic mechanisms to prevent unauthorized disclosure of information and/or detect changes to information during transmission.</li><li>CCI-002422 - Maintain the confidentiality and/or integrity of information during reception.</li><li>CCI-002450 - Implement organization-defined types of cryptography for each specified cryptography use.</li></ul><h2>Weight</h2><p>10</p><h2>Fix Recommendation</h2><p>From the vSphere Client, go to Developer Center &gt;&gt; API Explorer.<br />
+<br />
+Select &quot;appliance&quot; from the &quot;Select API&quot; drop down list then scroll down to the &quot;tls/profiles/global&quot; section.<br />
+<br />
+Expand the PUT call and enter the following in the value box:<br />
+<br />
+{<br />
+    &quot;profile&quot;: &quot;NIST_2024&quot;<br />
+}<br />
+<br />
+Click Execute and Continue to configure a new global TLS profile.<br />
+<br />
+or<br />
+<br />
+From a PowerCLI command prompt while connected to the vCenter server, run the following command:<br />
+<br />
+Invoke-SetProfilesGlobalAsync -TlsProfilesGlobalSetSpec (Initialize-TlsProfilesGlobalSetSpec -VarProfile NIST_2024)<br />
+<br />
+To monitor the status of the operation the task id from the command output can be used with the &quot;Invoke-GetTask&quot; command. For example:<br />
+<br />
+Invoke-GetTask -Task 66b247c2-fe02-4425-9338-1c88eb856138:com.vmware.appliance.tls.profiles.global</p><h2>Check Contents</h2><p>From the vSphere Client, go to Developer Center &gt;&gt; API Explorer.<br />
+<br />
+Select &quot;appliance&quot; from the &quot;Select API&quot; drop down list then scroll down to the &quot;tls/profiles/global&quot; section.<br />
+<br />
+Expand the GET call and click Execute and review the response for the configured global TLS profile.<br />
+<br />
+or<br />
+<br />
+From a PowerCLI command prompt while connected to the vCenter server, run the following command:<br />
+<br />
+Invoke-GetTlsProfilesGlobal<br />
+<br />
+If the global TLS profile is not &quot;NIST_2024&quot;, this is a finding.</p><h2>Vulnerability Number</h2><p>V-265978</p><h2>Documentable</h2><p>False</p><h2>Rule Version</h2><p>VCSA-80-000009</p><h2>Severity Override Guidance</h2><p>From the vSphere Client, go to Developer Center &gt;&gt; API Explorer.<br />
+<br />
+Select &quot;appliance&quot; from the &quot;Select API&quot; drop down list then scroll down to the &quot;tls/profiles/global&quot; section.<br />
+<br />
+Expand the GET call and click Execute and review the response for the configured global TLS profile.<br />
+<br />
+or<br />
+<br />
+From a PowerCLI command prompt while connected to the vCenter server, run the following command:<br />
+<br />
+Invoke-GetTlsProfilesGlobal<br />
+<br />
+If the global TLS profile is not &quot;NIST_2024&quot;, this is a finding.</p><h2>Check Content Reference</h2><p>M</p><h2>Target Key</h2><p>5573</p></body></html>

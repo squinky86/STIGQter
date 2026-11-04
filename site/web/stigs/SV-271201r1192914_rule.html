@@ -1,0 +1,67 @@
+<!doctype html><html lang="en"><head><meta charset="utf-8"><title>STIGQter: STIG Check Details: SV-271201r1192914_rule: SQL Server must implement cryptographic mechanisms to prevent unauthorized modification or disclosure of organization-defined information at rest (to include, at a minimum, PII and classified information) on organization-defined information system components.</title><link rel="icon" type="image/svg+xml" href="STIGQter.svg" /><script async src="https://www.googletagmanager.com/gtag/js?id=UA-31381839-2"></script><script src="include.js"></script><script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-4110907817782130" crossorigin="anonymous"></script></head><body><div><img src="STIGQter.svg" alt="STIGQter" style="height:1em;" /> <a href="https://www.stigqter.com/">STIGQter</a>: <a href="main.html">STIG Summary</a>: <a href="U_MS_SQL_Server_2022_Database_STIG_V1R3_Manual-xccdf.html">Microsoft SQL Server 2022 Database Security Technical Implementation Guide Version: 1 Release: 3 Benchmark Date: 01 Apr 2026</a>:</div> <h1>SQL Server must implement cryptographic mechanisms to prevent unauthorized modification or disclosure of organization-defined information at rest (to include, at a minimum, PII and classified information) on organization-defined information system components.</h1><h2>DISA Rule</h2><p>SV-271201r1192914_rule</p><h2>Vulnerability Number</h2><p>V-271201</p><h2>Group Title</h2><p>SRG-APP-000428-DB-000386</p><h2>Rule Version</h2><p>SQLD-22-003300</p><h2>Severity</h2><p>CAT I</p><h2>CCI(s)</h2><ul><li>CCI-002475 - Implement cryptographic mechanisms to prevent unauthorized modification of organization-defined information when at rest on organization-defined system components.</li><li>CCI-002476 - Implement cryptographic mechanisms to prevent unauthorized disclosure of organization-defined information at rest on organization-defined system components.</li></ul><h2>Weight</h2><p>10</p><h2>Fix Recommendation</h2><p>Where full-disk encryption is required, configure Windows and/or the storage system to provide this. <br />
+<br />
+Where TDE is required, create a master key, obtain a certificate protected by the master key, create a database encryption key and protect it by the certificate, and then set the database to use encryption. For guidance from MSDN on how to do this, refer to: https://msdn.microsoft.com/en-us/library/bb934049.aspx. <br />
+<br />
+Where table/column encryption is required, enable encryption on the tables/columns in question. For guidance from the Microsoft Developer Network on how to do this with Always Encrypted, refer to: https://msdn.microsoft.com/en-us/library/mt163865.aspx.</p><h2>Check Contents</h2><p>Review the system documentation to determine whether the organization has defined the information at rest that is to be protected from disclosure or modification, which must include, at a minimum, PII and classified information.<br />
+<br />
+If no information is identified as requiring such protection, this is not a finding. <br />
+<br />
+Review the configuration of SQL Server, Windows, and additional software as relevant. <br />
+<br />
+If full-disk encryption is required, and Windows or the storage system is not configured for this, this is a finding. <br />
+<br />
+If database transparent data encryption (TDE) is called for, verify it is enabled: <br />
+<br />
+SELECT db.name AS DatabaseName, db.is_encrypted AS IsEncrypted,<br />
+CASE<br />
+WHEN dm.encryption_state = 0 THEN 'No database encryption key present, no encryption'<br />
+WHEN dm.encryption_state = 1 THEN 'Unencrypted'<br />
+WHEN dm.encryption_state = 2 THEN 'Encryption in progress'<br />
+WHEN dm.encryption_state = 3 THEN 'Encrypted'<br />
+WHEN dm.encryption_state = 4 THEN 'Key change in progress'<br />
+WHEN dm.encryption_state = 5 THEN 'Decryption in progress'<br />
+WHEN dm.encryption_state = 6 THEN 'Protection change in progress'<br />
+END AS EncryptionState,<br />
+dm.encryption_state AS EncryptionState,<br />
+dm.key_algorithm AS KeyAlgorithm,<br />
+dm.key_length AS KeyLength<br />
+FROM sys.databases db<br />
+LEFT OUTER JOIN sys.dm_database_encryption_keys dm ON db.database_id = dm.database_id<br />
+WHERE db.database_id NOT IN (1,2,3,4)<br />
+<br />
+For each user database requiring encryption that is marked Unencrypted, this is a finding. <br />
+<br />
+If table/column encryption and/or a separation between those who own the data (and can view it) and those who manage the data (but should have no access) is required for PII or similar types of data, use Always Encrypted. The details for configuring Always Encrypted are located here: https://msdn.microsoft.com/en-us/library/mt163865.aspx.<br />
+<br />
+Review the definitions and contents of the relevant tables/columns for the Always Encrypted settings. If any of the information requiring cryptographic protection that is not encrypted this is a finding.</p><h2>Vulnerability Number</h2><p>V-271201</p><h2>Documentable</h2><p>False</p><h2>Rule Version</h2><p>SQLD-22-003300</p><h2>Severity Override Guidance</h2><p>Review the system documentation to determine whether the organization has defined the information at rest that is to be protected from disclosure or modification, which must include, at a minimum, PII and classified information.<br />
+<br />
+If no information is identified as requiring such protection, this is not a finding. <br />
+<br />
+Review the configuration of SQL Server, Windows, and additional software as relevant. <br />
+<br />
+If full-disk encryption is required, and Windows or the storage system is not configured for this, this is a finding. <br />
+<br />
+If database transparent data encryption (TDE) is called for, verify it is enabled: <br />
+<br />
+SELECT db.name AS DatabaseName, db.is_encrypted AS IsEncrypted,<br />
+CASE<br />
+WHEN dm.encryption_state = 0 THEN 'No database encryption key present, no encryption'<br />
+WHEN dm.encryption_state = 1 THEN 'Unencrypted'<br />
+WHEN dm.encryption_state = 2 THEN 'Encryption in progress'<br />
+WHEN dm.encryption_state = 3 THEN 'Encrypted'<br />
+WHEN dm.encryption_state = 4 THEN 'Key change in progress'<br />
+WHEN dm.encryption_state = 5 THEN 'Decryption in progress'<br />
+WHEN dm.encryption_state = 6 THEN 'Protection change in progress'<br />
+END AS EncryptionState,<br />
+dm.encryption_state AS EncryptionState,<br />
+dm.key_algorithm AS KeyAlgorithm,<br />
+dm.key_length AS KeyLength<br />
+FROM sys.databases db<br />
+LEFT OUTER JOIN sys.dm_database_encryption_keys dm ON db.database_id = dm.database_id<br />
+WHERE db.database_id NOT IN (1,2,3,4)<br />
+<br />
+For each user database requiring encryption that is marked Unencrypted, this is a finding. <br />
+<br />
+If table/column encryption and/or a separation between those who own the data (and can view it) and those who manage the data (but should have no access) is required for PII or similar types of data, use Always Encrypted. The details for configuring Always Encrypted are located here: https://msdn.microsoft.com/en-us/library/mt163865.aspx.<br />
+<br />
+Review the definitions and contents of the relevant tables/columns for the Always Encrypted settings. If any of the information requiring cryptographic protection that is not encrypted this is a finding.</p><h2>Check Content Reference</h2><p>M</p><h2>Target Key</h2><p>5676</p></body></html>

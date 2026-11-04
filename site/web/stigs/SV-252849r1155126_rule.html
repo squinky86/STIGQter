@@ -1,0 +1,94 @@
+<!doctype html><html lang="en"><head><meta charset="utf-8"><title>STIGQter: STIG Check Details: SV-252849r1155126_rule: Rancher MCM must prohibit or restrict the use of protocols that transmit unencrypted authentication information or use flawed cryptographic algorithms for transmission.</title><link rel="icon" type="image/svg+xml" href="STIGQter.svg" /><script async src="https://www.googletagmanager.com/gtag/js?id=UA-31381839-2"></script><script src="include.js"></script><script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-4110907817782130" crossorigin="anonymous"></script></head><body><div><img src="STIGQter.svg" alt="STIGQter" style="height:1em;" /> <a href="https://www.stigqter.com/">STIGQter</a>: <a href="main.html">STIG Summary</a>: <a href="U_RGS_MCM_STIG_V2R2_Manual-xccdf.html">Rancher Government Solutions Multi-Cluster Manager Security Technical Implementation Guide Version: 2 Release: 2 Benchmark Date: 05 Jan 2026</a>:</div> <h1>Rancher MCM must prohibit or restrict the use of protocols that transmit unencrypted authentication information or use flawed cryptographic algorithms for transmission.</h1><h2>DISA Rule</h2><p>SV-252849r1155126_rule</p><h2>Vulnerability Number</h2><p>V-252849</p><h2>Group Title</h2><p>SRG-APP-000645-CTR-001410</p><h2>Rule Version</h2><p>CNTR-RM-001730</p><h2>Severity</h2><p>CAT I</p><h2>CCI(s)</h2><ul><li>CCI-000382 - Configure the system to prohibit or restrict the use of organization-defined prohibited or restricted functions, system ports, protocols, software, and/or services.</li></ul><h2>Weight</h2><p>10</p><h2>Fix Recommendation</h2><p>Gather the current values of the Rancher deployment by running the following:<br />
+<br />
+helm get values -n cattle-system rancher &gt; /tmp/rancher-values.yaml<br />
+<br />
+Create another values file to upgrade Rancher's ingress object for HTTPS. Add the following to &quot;/tmp/rancher-ingress-values.yaml&quot;:<br />
+<br />
+ingress:<br />
+  extraAnnotations:<br />
+    nginx.ingress.kubernetes.io/backend-protocol: &quot;HTTPS&quot; # If using NGINX ingress<br />
+    traefik.ingress.kubernetes.io/router.tls: &quot;true&quot; # If using Traefik ingress<br />
+  servicePort: 443<br />
+<br />
+If using a different ingress controller than NGINX or Traefik, other annotations may need to be added to ensure the controller knows the Rancher backend is HTTPS.<br />
+<br />
+Upgrade Rancher, referencing the two files created:<br />
+<br />
+helm upgrade -n cattle-system -f /tmp/rancher-values.yaml -f /tmp/rancher-ingress-values.yaml rancher rancher-stable/rancher --version=CURRENT_RANCHER_VERSION<br />
+<br />
+Once Rancher ingress has been updated and it has been verified that Rancher is still accessible, run the following command to create NetworkPolicies that will block all traffic to Rancher with the exception of HTTPS:<br />
+<br />
+cat &lt;&lt;EOF | kubectl apply -f -<br />
+kind: NetworkPolicy<br />
+apiVersion: networking.k8s.io/v1<br />
+metadata:<br />
+  name: rancher-allow-https<br />
+  namespace: cattle-system<br />
+spec:<br />
+  podSelector:<br />
+    matchLabels:<br />
+      app: rancher<br />
+  ingress:<br />
+  - ports:<br />
+    - port: 444<br />
+---<br />
+apiVersion: networking.k8s.io/v1<br />
+kind: NetworkPolicy<br />
+metadata:<br />
+  name: rancher-deny-ingress<br />
+  namespace: cattle-system<br />
+spec:<br />
+  podSelector:<br />
+    matchLabels:<br />
+      app: rancher<br />
+  policyTypes:<br />
+  - Ingress<br />
+EOF</p><h2>Check Contents</h2><p>Navigate to Triple Bar Symbol(Global) &gt;&gt; &lt;local cluster&gt;.<br />
+From the kubectl shell (&gt;_), execute:<br />
+kubectl get ingress -n cattle-system rancher -o yaml<br />
+<br />
+Verify the port number for Rancher is using &quot;443&quot;, like the following:<br />
+  spec:<br />
+    rules:<br />
+    - host: rancher.rfed.us<br />
+      http:<br />
+        paths:<br />
+        - backend:<br />
+            service:<br />
+              name: rancher<br />
+              port:<br />
+                number: 443<br />
+<br />
+From the kubectl shell (&gt;_), execute:<br />
+kubectl get networkpolicies -n cattle-system<br />
+<br />
+Verify networkpolicies exist and that they are only allowing traffic to port &quot;444&quot; of the Rancher pods, like the following:<br />
+NAME                               POD-SELECTOR   AGE<br />
+rancher-allow-https      app=rancher        10h<br />
+rancher-deny-ingress    app=rancher        10h<br />
+<br />
+If the ingress output is not using port 443, or there are not network policies in place to only allow traffic to port 444, this is a finding.</p><h2>Vulnerability Number</h2><p>V-252849</p><h2>Documentable</h2><p>False</p><h2>Rule Version</h2><p>CNTR-RM-001730</p><h2>Severity Override Guidance</h2><p>Navigate to Triple Bar Symbol(Global) &gt;&gt; &lt;local cluster&gt;.<br />
+From the kubectl shell (&gt;_), execute:<br />
+kubectl get ingress -n cattle-system rancher -o yaml<br />
+<br />
+Verify the port number for Rancher is using &quot;443&quot;, like the following:<br />
+  spec:<br />
+    rules:<br />
+    - host: rancher.rfed.us<br />
+      http:<br />
+        paths:<br />
+        - backend:<br />
+            service:<br />
+              name: rancher<br />
+              port:<br />
+                number: 443<br />
+<br />
+From the kubectl shell (&gt;_), execute:<br />
+kubectl get networkpolicies -n cattle-system<br />
+<br />
+Verify networkpolicies exist and that they are only allowing traffic to port &quot;444&quot; of the Rancher pods, like the following:<br />
+NAME                               POD-SELECTOR   AGE<br />
+rancher-allow-https      app=rancher        10h<br />
+rancher-deny-ingress    app=rancher        10h<br />
+<br />
+If the ingress output is not using port 443, or there are not network policies in place to only allow traffic to port 444, this is a finding.</p><h2>Check Content Reference</h2><p>M</p><h2>Target Key</h2><p>5467</p></body></html>

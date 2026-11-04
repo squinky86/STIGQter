@@ -1,0 +1,120 @@
+<!doctype html><html lang="en"><head><meta charset="utf-8"><title>STIGQter: STIG Check Details: SV-253997r844024_rule: The Juniper router must be configured to produce audit records containing information to establish the source of the events.</title><link rel="icon" type="image/svg+xml" href="STIGQter.svg" /><script async src="https://www.googletagmanager.com/gtag/js?id=UA-31381839-2"></script><script src="include.js"></script><script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-4110907817782130" crossorigin="anonymous"></script></head><body><div><img src="STIGQter.svg" alt="STIGQter" style="height:1em;" /> <a href="https://www.stigqter.com/">STIGQter</a>: <a href="main.html">STIG Summary</a>: <a href="U_Juniper_EX_Switches_RTR_STIG_V2R1_Manual-xccdf.html">Juniper EX Series Switches Router Security Technical Implementation Guide Version: 2 Release: 1 Benchmark Date: 24 Jul 2024</a>:</div> <h1>The Juniper router must be configured to produce audit records containing information to establish the source of the events.</h1><h2>DISA Rule</h2><p>SV-253997r844024_rule</p><h2>Vulnerability Number</h2><p>V-253997</p><h2>Group Title</h2><p>SRG-NET-000077-RTR-000001</p><h2>Rule Version</h2><p>JUEX-RT-000250</p><h2>Severity</h2><p>CAT II</p><h2>CCI(s)</h2><ul><li>CCI-000133 - Ensure that audit records containing information that establishes the source of the event.</li></ul><h2>Weight</h2><p>10</p><h2>Fix Recommendation</h2><p>Configure the router to record the source address in the log record for packets being dropped.<br />
+<br />
+Example firewall filter with logging enabled:<br />
+set firewall family inet filter &lt;filter name&gt; term 1 from &lt;match conditions&gt;<br />
+set firewall family inet filter &lt;filter name&gt; term 1 then log<br />
+set firewall family inet filter &lt;filter name&gt; term 1 then syslog &lt;&lt;&lt; Must be enabled for all discarding terms<br />
+set firewall family inet filter &lt;filter name&gt; term 1 then discard<br />
+set firewall family inet6 filter &lt;filter name&gt; term 1 from &lt;match conditions&gt;<br />
+set firewall family inet6 filter &lt;filter name&gt; term 1 then log<br />
+set firewall family inet6 filter &lt;filter name&gt; term 1 then syslog &lt;&lt;&lt; Must be enabled for all discarding terms<br />
+set firewall family inet6 filter &lt;filter name&gt; term 1 then discard<br />
+<br />
+set syslog host &lt;external syslog address&gt; any info<br />
+set system syslog file messages any info</p><h2>Check Contents</h2><p>The router must log all packets that have been dropped via the stateless firewall filter. Verify all discarding firewall filter terms are configured to send events to syslog.<br />
+Note: Stateless firewall filters support &quot;log&quot; and &quot;syslog&quot; actions. The &quot;log&quot; action maintains a temporary list of events and the &quot;syslog&quot; action generates events for local storage and/or external syslog servers. Verify at least &quot;syslog&quot; is associated with all discarding terms.<br />
+<br />
+For example:<br />
+[edit firewall]<br />
+family inet {<br />
+    filter &lt;filter name&gt; {<br />
+        term 1 {<br />
+            from {<br />
+                &lt;match conditions&gt;;<br />
+            }<br />
+            then {<br />
+                log;<br />
+                syslog; &lt;&lt;&lt; At a minimum, the 'syslog' action must be enabled for all discarding terms.<br />
+                discard;<br />
+            }<br />
+        }<br />
+    }<br />
+}<br />
+family inet6 {<br />
+    filter &lt;filter name&gt; {<br />
+        term 1 {<br />
+            from {<br />
+                &lt;match conditions&gt;;<br />
+            }<br />
+            then {<br />
+                log;<br />
+                syslog; &lt;&lt;&lt; At a minimum, the 'syslog' action must be enabled for all discarding terms.<br />
+                discard;<br />
+            }<br />
+        }<br />
+    }<br />
+}<br />
+<br />
+If the router fails to log all packets that have been dropped via the firewall filter, this is a finding.<br />
+<br />
+Verify logging is enabled for local and/or external syslog. To meet this requirement, either the &quot;any&quot; or the &quot;firewall&quot; logging facility must be enabled.<br />
+Note: To reduce log sizes and to segregate entries, a separate log file for firewall entries is permissible.<br />
+<br />
+[edit system syslog]<br />
+host &lt;external syslog address&gt; {<br />
+    any info;<br />
+    log-prefix &lt;hostname&gt;;<br />
+    explicit-priority;<br />
+}<br />
+file messages {<br />
+    any info;<br />
+}<br />
+time-format year;<br />
+<br />
+Log output must contain the source IP address and port of the filtered packets.<br />
+Note: Logged firewall events include the source, and destination, addresses and cannot be configured otherwise. There is no provision for changing the log message or for removing the source or destination address. <br />
+<br />
+If the logged output does not contain source IP address and port of the filtered packets, this is a finding.</p><h2>Vulnerability Number</h2><p>V-253997</p><h2>Documentable</h2><p>False</p><h2>Rule Version</h2><p>JUEX-RT-000250</p><h2>Severity Override Guidance</h2><p>The router must log all packets that have been dropped via the stateless firewall filter. Verify all discarding firewall filter terms are configured to send events to syslog.<br />
+Note: Stateless firewall filters support &quot;log&quot; and &quot;syslog&quot; actions. The &quot;log&quot; action maintains a temporary list of events and the &quot;syslog&quot; action generates events for local storage and/or external syslog servers. Verify at least &quot;syslog&quot; is associated with all discarding terms.<br />
+<br />
+For example:<br />
+[edit firewall]<br />
+family inet {<br />
+    filter &lt;filter name&gt; {<br />
+        term 1 {<br />
+            from {<br />
+                &lt;match conditions&gt;;<br />
+            }<br />
+            then {<br />
+                log;<br />
+                syslog; &lt;&lt;&lt; At a minimum, the 'syslog' action must be enabled for all discarding terms.<br />
+                discard;<br />
+            }<br />
+        }<br />
+    }<br />
+}<br />
+family inet6 {<br />
+    filter &lt;filter name&gt; {<br />
+        term 1 {<br />
+            from {<br />
+                &lt;match conditions&gt;;<br />
+            }<br />
+            then {<br />
+                log;<br />
+                syslog; &lt;&lt;&lt; At a minimum, the 'syslog' action must be enabled for all discarding terms.<br />
+                discard;<br />
+            }<br />
+        }<br />
+    }<br />
+}<br />
+<br />
+If the router fails to log all packets that have been dropped via the firewall filter, this is a finding.<br />
+<br />
+Verify logging is enabled for local and/or external syslog. To meet this requirement, either the &quot;any&quot; or the &quot;firewall&quot; logging facility must be enabled.<br />
+Note: To reduce log sizes and to segregate entries, a separate log file for firewall entries is permissible.<br />
+<br />
+[edit system syslog]<br />
+host &lt;external syslog address&gt; {<br />
+    any info;<br />
+    log-prefix &lt;hostname&gt;;<br />
+    explicit-priority;<br />
+}<br />
+file messages {<br />
+    any info;<br />
+}<br />
+time-format year;<br />
+<br />
+Log output must contain the source IP address and port of the filtered packets.<br />
+Note: Logged firewall events include the source, and destination, addresses and cannot be configured otherwise. There is no provision for changing the log message or for removing the source or destination address. <br />
+<br />
+If the logged output does not contain source IP address and port of the filtered packets, this is a finding.</p><h2>Check Content Reference</h2><p>M</p><h2>Target Key</h2><p>5479</p></body></html>

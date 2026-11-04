@@ -1,0 +1,34 @@
+<!doctype html><html lang="en"><head><meta charset="utf-8"><title>STIGQter: STIG Check Details: SV-270553r1064937_rule: Unused database components, database management system (DBMS) software, and database objects must be removed.</title><link rel="icon" type="image/svg+xml" href="STIGQter.svg" /><script async src="https://www.googletagmanager.com/gtag/js?id=UA-31381839-2"></script><script src="include.js"></script><script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-4110907817782130" crossorigin="anonymous"></script></head><body><div><img src="STIGQter.svg" alt="STIGQter" style="height:1em;" /> <a href="https://www.stigqter.com/">STIGQter</a>: <a href="main.html">STIG Summary</a>: <a href="U_Oracle_Database_19c_STIG_V1R5_Manual-xccdf.html">Oracle Database 19c Security Technical Implementation Guide Version: 1 Release: 5 Benchmark Date: 01 Apr 2026</a>:</div> <h1>Unused database components, database management system (DBMS) software, and database objects must be removed.</h1><h2>DISA Rule</h2><p>SV-270553r1064937_rule</p><h2>Vulnerability Number</h2><p>V-270553</p><h2>Group Title</h2><p>SRG-APP-000141-DB-000091</p><h2>Rule Version</h2><p>O19C-00-013000</p><h2>Severity</h2><p>CAT II</p><h2>CCI(s)</h2><ul><li>CCI-000381 - Configure the system to provide only organization-defined mission essential capabilities.</li></ul><h2>Weight</h2><p>10</p><h2>Fix Recommendation</h2><p>If any components are required for operation of applications that will be accessing the DBMS, include them in the system documentation.<br />
+<br />
+Components cannot be removed via Database Configuration Assistant (DBCA) or manually once the database has been created, either from a container or a noncontainer database.<br />
+<br />
+However DBCA can be used to create a noncontainer database and remove components during the creation process before the database is created.<br />
+<br />
+When using DBCA to create a custom noncontainer database, select:<br />
+creation mode = advanced<br />
+Database Template = Custom<br />
+Database Options..Database Component<br />
+<br />
+Components that can be selected or deselected are Oracle JVM, Oracle Text, Oracle Multimedia, Oracle OLAP, Oracle Spatial, Oracle Label Security, Oracle Application Express, and Oracle Database Vault.<br />
+<br />
+For a container database (CDB), the CDB$ROOT must have all possible database components available. When a pluggable database (PDB) is plugged into the CDB, the CDB must have the same components installed as the PDB. Since it is unknown what components the PDBS may have, the CDB must be able to support all possible PDB configurations.<br />
+<br />
+Components installed in the CDB$ROOT do not need to be licensed. Components are only considered to be used if they are installed in the PDB.<br />
+<br />
+To configure a PDB to only use specific components:<br />
+<br />
+1. Create a non-CDB 19.0 database and configure that database with the components desired.<br />
+<br />
+2. Plug the non-CDB database into a CDB database, creating a new PDB. Then if desired, create additional clones from the new PDB.</p><h2>Check Contents</h2><p>Run this query to produce a list of components and features installed with the database:<br />
+<br />
+SELECT comp_id, comp_name, version, status from dba_registry<br />
+WHERE comp_id not in ('CATJAVA','CATALOG','CATPROC','SDO','DV','XDB')<br />
+AND status &lt;&gt; 'OPTION OFF';<br />
+<br />
+Review the list. If unused components are installed and are not documented and authorized, this is a finding.</p><h2>Vulnerability Number</h2><p>V-270553</p><h2>Documentable</h2><p>False</p><h2>Rule Version</h2><p>O19C-00-013000</p><h2>Severity Override Guidance</h2><p>Run this query to produce a list of components and features installed with the database:<br />
+<br />
+SELECT comp_id, comp_name, version, status from dba_registry<br />
+WHERE comp_id not in ('CATJAVA','CATALOG','CATPROC','SDO','DV','XDB')<br />
+AND status &lt;&gt; 'OPTION OFF';<br />
+<br />
+Review the list. If unused components are installed and are not documented and authorized, this is a finding.</p><h2>Check Content Reference</h2><p>M</p><h2>Target Key</h2><p>5672</p></body></html>

@@ -1,0 +1,88 @@
+<!doctype html><html lang="en"><head><meta charset="utf-8"><title>STIGQter: STIG Check Details: SV-270573r1064997_rule: Oracle Database must preserve any organization-defined system state information in the event of a system failure.</title><link rel="icon" type="image/svg+xml" href="STIGQter.svg" /><script async src="https://www.googletagmanager.com/gtag/js?id=UA-31381839-2"></script><script src="include.js"></script><script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-4110907817782130" crossorigin="anonymous"></script></head><body><div><img src="STIGQter.svg" alt="STIGQter" style="height:1em;" /> <a href="https://www.stigqter.com/">STIGQter</a>: <a href="main.html">STIG Summary</a>: <a href="U_Oracle_Database_19c_STIG_V1R5_Manual-xccdf.html">Oracle Database 19c Security Technical Implementation Guide Version: 1 Release: 5 Benchmark Date: 01 Apr 2026</a>:</div> <h1>Oracle Database must preserve any organization-defined system state information in the event of a system failure.</h1><h2>DISA Rule</h2><p>SV-270573r1064997_rule</p><h2>Vulnerability Number</h2><p>V-270573</p><h2>Group Title</h2><p>SRG-APP-000226-DB-000147</p><h2>Rule Version</h2><p>O19C-00-016700</p><h2>Severity</h2><p>CAT II</p><h2>CCI(s)</h2><ul><li>CCI-001665 - Preserve organization-defined system state information in the event of a system failure.</li></ul><h2>Weight</h2><p>10</p><h2>Fix Recommendation</h2><p>Configure DBMS settings to preserve all required system state information in the event of a system failure.<br />
+<br />
+If the database is not in archive log mode, issue the following commands to put the database in archive log mode. The database must be normally shutdown and restarted before it can be placed in archive log mode. <br />
+<br />
+$ sqlplus connect as sysdba -- stop and dismount database and shutdown instance.<br />
+SQL&gt; shutdown immediate;<br />
+<br />
+Database closed.<br />
+Database dismounted.<br />
+ORACLE instance shut down.<br />
+<br />
+SQL&gt; startup mount; -- Restart instance.<br />
+<br />
+ORACLE instance started.<br />
+Total System Global Area 1653518336 bytes<br />
+Fixed Size 2228904 bytes<br />
+Variable Size 1325403480 bytes<br />
+Database Buffers 318767104 bytes<br />
+Redo Buffers 7118848 bytes<br />
+Database mounted.<br />
+<br />
+SQL&gt; alter database archivelog; -- Enable ArchiveLog<br />
+Database altered.<br />
+<br />
+SQL&gt; alter database open; -- Re-open database<br />
+Database altered.<br />
+<br />
+Issue the following command to verify the new status:<br />
+SQL&gt; select log_mode from v$database;<br />
+<br />
+LOG_MODE<br />
+------------<br />
+ARCHIVELOG<br />
+<br />
+SQL&gt; archive log list;<br />
+<br />
+Database log mode Archive Mode<br />
+Automatic archival Enabled<br />
+Archive destination USE_DB_RECOVERY_FILE_DEST<br />
+Oldest online log sequence 294<br />
+Next log sequence to archive 296<br />
+Current log sequence 296<br />
+<br />
+The database is now in archive log mode, and transactions are either being recorded to transport to another database or being reapplied if the database becomes corrupt and needs to be restored from the last backup. Use the redo logs to replay transactions not captured in the backup.</p><h2>Check Contents</h2><p>If the database is used solely for transient data (such as one dedicated to Extract-Transform-Load [ETL]), and a clear plan exists for the recovery of the database by means other than archiving, this is not a finding.<br />
+<br />
+If it has been determined that up-to-the second recovery is not necessary and this fact is recorded in the system documentation, with appropriate approval, this is not a finding.<br />
+<br />
+Check database management system (DBMS) settings to determine whether system state information is being preserved in the event of a system failure.<br />
+<br />
+The necessary state information is defined as &quot;information necessary to determine cause of failure and to return to operations with least disruption to mission/business processes&quot;.<br />
+<br />
+Oracle creates what is known as archive logs. Archive logs contain information required to replay a transaction should something happen. The redo logs are also used to copy transactions or pieces of transactions.<br />
+<br />
+Issue the following commands to check the status of archive log mode:<br />
+<br />
+$ sqlplus connect as sysdba --Check current archivelog mode in database<br />
+<br />
+SQL&gt; archive log list<br />
+Database log mode Archive Mode<br />
+Automatic archival Enabled<br />
+Archive destination /home/oracle/app/oracle/arc2/ORCL<br />
+Oldest online log sequence 433<br />
+Next log sequence to archive 435<br />
+Current log sequence 435<br />
+<br />
+If archive log mode is not enabled, this is a finding.</p><h2>Vulnerability Number</h2><p>V-270573</p><h2>Documentable</h2><p>False</p><h2>Rule Version</h2><p>O19C-00-016700</p><h2>Severity Override Guidance</h2><p>If the database is used solely for transient data (such as one dedicated to Extract-Transform-Load [ETL]), and a clear plan exists for the recovery of the database by means other than archiving, this is not a finding.<br />
+<br />
+If it has been determined that up-to-the second recovery is not necessary and this fact is recorded in the system documentation, with appropriate approval, this is not a finding.<br />
+<br />
+Check database management system (DBMS) settings to determine whether system state information is being preserved in the event of a system failure.<br />
+<br />
+The necessary state information is defined as &quot;information necessary to determine cause of failure and to return to operations with least disruption to mission/business processes&quot;.<br />
+<br />
+Oracle creates what is known as archive logs. Archive logs contain information required to replay a transaction should something happen. The redo logs are also used to copy transactions or pieces of transactions.<br />
+<br />
+Issue the following commands to check the status of archive log mode:<br />
+<br />
+$ sqlplus connect as sysdba --Check current archivelog mode in database<br />
+<br />
+SQL&gt; archive log list<br />
+Database log mode Archive Mode<br />
+Automatic archival Enabled<br />
+Archive destination /home/oracle/app/oracle/arc2/ORCL<br />
+Oldest online log sequence 433<br />
+Next log sequence to archive 435<br />
+Current log sequence 435<br />
+<br />
+If archive log mode is not enabled, this is a finding.</p><h2>Check Content Reference</h2><p>M</p><h2>Target Key</h2><p>5672</p></body></html>

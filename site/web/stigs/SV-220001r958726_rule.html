@@ -1,0 +1,33 @@
+<!doctype html><html lang="en"><head><meta charset="utf-8"><title>STIGQter: STIG Check Details: SV-220001r958726_rule: The system must restrict the ability of users to assume excessive privileges to members of a defined group and prevent unauthorized users from accessing administrative tools.</title><link rel="icon" type="image/svg+xml" href="STIGQter.svg" /><script async src="https://www.googletagmanager.com/gtag/js?id=UA-31381839-2"></script><script src="include.js"></script><script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-4110907817782130" crossorigin="anonymous"></script></head><body><div><img src="STIGQter.svg" alt="STIGQter" style="height:1em;" /> <a href="https://www.stigqter.com/">STIGQter</a>: <a href="main.html">STIG Summary</a>: <a href="U_SOL_11_x86_STIG_V3R6_Manual-xccdf.html">Solaris 11 X86 Security Technical Implementation Guide Version: 3 Release: 6 Benchmark Date: 01 Jul 2026</a>:</div> <h1>The system must restrict the ability of users to assume excessive privileges to members of a defined group and prevent unauthorized users from accessing administrative tools.</h1><h2>DISA Rule</h2><p>SV-220001r958726_rule</p><h2>Vulnerability Number</h2><p>V-220001</p><h2>Group Title</h2><p>SRG-OS-000324</p><h2>Rule Version</h2><p>SOL-11.1-040200</p><h2>Severity</h2><p>CAT II</p><h2>CCI(s)</h2><ul><li>CCI-002235 - Prevent non-privileged users from executing privileged functions.</li></ul><h2>Weight</h2><p>10</p><h2>Fix Recommendation</h2><p>The root role is required.<br />
+<br />
+Convert the root user into a role. <br />
+<br />
+# usermod -K type=role root<br />
+<br />
+Add the root role to authorized users' logins. <br />
+<br />
+# usermod -R +root [username]<br />
+<br />
+Remove the root role from users who should not be authorized to assume it.<br />
+<br />
+# usermod -R -root [username]</p><h2>Check Contents</h2><p>Verify the root user is configured as a role, rather than a normal user. <br />
+<br />
+# userattr type root<br />
+<br />
+If the command does not return the word &quot;role&quot;, this is a finding.<br />
+<br />
+Verify at least one local user has been assigned the root role.<br />
+<br />
+# grep '[:;]roles=root[^;]*' /etc/user_attr<br />
+<br />
+If no lines are returned, or no users are permitted to assume the root role, this is a finding.</p><h2>Vulnerability Number</h2><p>V-220001</p><h2>Documentable</h2><p>False</p><h2>Rule Version</h2><p>SOL-11.1-040200</p><h2>Severity Override Guidance</h2><p>Verify the root user is configured as a role, rather than a normal user. <br />
+<br />
+# userattr type root<br />
+<br />
+If the command does not return the word &quot;role&quot;, this is a finding.<br />
+<br />
+Verify at least one local user has been assigned the root role.<br />
+<br />
+# grep '[:;]roles=root[^;]*' /etc/user_attr<br />
+<br />
+If no lines are returned, or no users are permitted to assume the root role, this is a finding.</p><h2>Check Content Reference</h2><p>M</p><h2>Target Key</h2><p>4021</p></body></html>

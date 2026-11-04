@@ -1,0 +1,163 @@
+<!doctype html><html lang="en"><head><meta charset="utf-8"><title>STIGQter: STIG Check Details: SV-217056r604135_rule: The Juniper BGP router must be configured to reject outbound route advertisements for any prefixes that do not belong to any customers or the local autonomous system (AS).</title><link rel="icon" type="image/svg+xml" href="STIGQter.svg" /><script async src="https://www.googletagmanager.com/gtag/js?id=UA-31381839-2"></script><script src="include.js"></script><script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-4110907817782130" crossorigin="anonymous"></script></head><body><div><img src="STIGQter.svg" alt="STIGQter" style="height:1em;" /> <a href="https://www.stigqter.com/">STIGQter</a>: <a href="main.html">STIG Summary</a>: <a href="U_Juniper_Router_RTR_STIG_V3R2_Manual-xccdf.html">Juniper Router RTR Security Technical Implementation Guide Version: 3 Release: 2 Benchmark Date: 30 Jan 2025</a>:</div> <h1>The Juniper BGP router must be configured to reject outbound route advertisements for any prefixes that do not belong to any customers or the local autonomous system (AS).</h1><h2>DISA Rule</h2><p>SV-217056r604135_rule</p><h2>Vulnerability Number</h2><p>V-217056</p><h2>Group Title</h2><p>SRG-NET-000018-RTR-000005</p><h2>Rule Version</h2><p>JUNI-RT-000510</p><h2>Severity</h2><p>CAT II</p><h2>CCI(s)</h2><ul><li>CCI-001368 - Enforce approved authorizations for controlling the flow of information within the system based on organization-defined information flow control policies.</li></ul><h2>Weight</h2><p>10</p><h2>Fix Recommendation</h2><p>Configure the router to filter outbound route advertisements for prefixes that are not allocated to or belong to any customer or the local autonomous system.<br />
+<br />
+Configure a policy-statement to filter BGP route advertisements that will only include the local and customer prefixes.<br />
+<br />
+[edit policy-options]<br />
+set policy-statement BGP_ADVERTISE_POLICY term INCLUDE_LOCAL from prefix-list OUR_PREFIXES<br />
+set policy-statement BGP_ADVERTISE_POLICY term INCLUDE_LOCAL then accept<br />
+set policy-statement BGP_ADVERTISE_POLICY term INCLUDE_CUST1 from prefix-list CUST1_PREFIXES<br />
+set policy-statement BGP_ADVERTISE_POLICY term INCLUDE_CUST1 then accept <br />
+set policy-statement BGP_ADVERTISE_POLICY term INCLUDE_CUST2 from prefix-list CUST2_PREFIXES<br />
+set policy-statement BGP_ADVERTISE_POLICY term INCLUDE_CUST2 then accept <br />
+set policy-statement BGP_ADVERTISE_POLICY term REJECT_OTHER then reject<br />
+<br />
+Note: The prefix lists should have already been configured per the previous requirements.<br />
+<br />
+Configure an export statement referencing the advertise policy on all external BGP peer groups as shown in the example below.<br />
+<br />
+[edit protocols bgp group GROUP_AS4]<br />
+set export BGP_ADVERTISE_POLICY <br />
+[edit protocols bgp group CUST1]<br />
+set export BGP_ADVERTISE_POLICY <br />
+[edit protocols bgp group CUST2]<br />
+set export BGP_ADVERTISE_POLICY</p><h2>Check Contents</h2><p>This requirement is not applicable for the DODIN Backbone.” <br />
+<br />
+Review the router configuration to verify that there is a filter defined to only advertise routes for prefixes that belong to any customers or the local AS. <br />
+<br />
+Verify that a policy has been configured to filter prefixes for BGP advertisement as shown in the example below.<br />
+<br />
+}<br />
+policy-options {<br />
+    …<br />
+    …<br />
+    …<br />
+    policy-statement BGP_ADVERTISE_POLICY {<br />
+        term INCLUDE_LOCAL {<br />
+            from {<br />
+                prefix-list OUR_PREFIXES;<br />
+            }<br />
+            then accept;<br />
+        }<br />
+        term INCLUDE_CUST1 {<br />
+            from {<br />
+                prefix-list CUST1_PREFIXES;<br />
+            }<br />
+            then accept;<br />
+        }<br />
+        term INCLUDE_CUST2 {<br />
+            from {<br />
+                prefix-list CUST2_PREFIXES;<br />
+            }<br />
+            then accept;<br />
+        }<br />
+        term REJECT_OTHER {<br />
+            then reject;<br />
+        }<br />
+    }<br />
+<br />
+Verify that the export statement as shown below references the advertise policy. <br />
+<br />
+protocols {<br />
+    bgp {<br />
+        group AS4 {<br />
+            type external;<br />
+            import FILTER_ROUTES;<br />
+            export BGP_ADVERTISE_POLICY;<br />
+            peer-as 4;<br />
+            neighbor x.x.x.x;<br />
+        }<br />
+        group CUST1 {<br />
+            type external;<br />
+            import FILTER_CUST1_ROUTES;<br />
+            export BGP_ADVERTISE_POLICY;<br />
+            peer-as 55;<br />
+            neighbor x.x.x.x;<br />
+            neighbor x.x.x.x;<br />
+        }<br />
+        group CUST2 {<br />
+            type external;<br />
+            import FILTER_CUST2_ROUTES;<br />
+            export BGP_ADVERTISE_POLICY;<br />
+            peer-as 44;<br />
+            neighbor x.x.x.x;<br />
+            neighbor x.x.x.x;<br />
+        }<br />
+    }<br />
+    …<br />
+    …<br />
+    …<br />
+}<br />
+<br />
+Note: The prefix lists should have already been configured per the previous requirements.<br />
+<br />
+If the router is not configured to reject outbound route advertisements that do not belong to any customers or the local AS, this is a finding.</p><h2>Vulnerability Number</h2><p>V-217056</p><h2>Documentable</h2><p>False</p><h2>Rule Version</h2><p>JUNI-RT-000510</p><h2>Severity Override Guidance</h2><p>This requirement is not applicable for the DODIN Backbone.” <br />
+<br />
+Review the router configuration to verify that there is a filter defined to only advertise routes for prefixes that belong to any customers or the local AS. <br />
+<br />
+Verify that a policy has been configured to filter prefixes for BGP advertisement as shown in the example below.<br />
+<br />
+}<br />
+policy-options {<br />
+    …<br />
+    …<br />
+    …<br />
+    policy-statement BGP_ADVERTISE_POLICY {<br />
+        term INCLUDE_LOCAL {<br />
+            from {<br />
+                prefix-list OUR_PREFIXES;<br />
+            }<br />
+            then accept;<br />
+        }<br />
+        term INCLUDE_CUST1 {<br />
+            from {<br />
+                prefix-list CUST1_PREFIXES;<br />
+            }<br />
+            then accept;<br />
+        }<br />
+        term INCLUDE_CUST2 {<br />
+            from {<br />
+                prefix-list CUST2_PREFIXES;<br />
+            }<br />
+            then accept;<br />
+        }<br />
+        term REJECT_OTHER {<br />
+            then reject;<br />
+        }<br />
+    }<br />
+<br />
+Verify that the export statement as shown below references the advertise policy. <br />
+<br />
+protocols {<br />
+    bgp {<br />
+        group AS4 {<br />
+            type external;<br />
+            import FILTER_ROUTES;<br />
+            export BGP_ADVERTISE_POLICY;<br />
+            peer-as 4;<br />
+            neighbor x.x.x.x;<br />
+        }<br />
+        group CUST1 {<br />
+            type external;<br />
+            import FILTER_CUST1_ROUTES;<br />
+            export BGP_ADVERTISE_POLICY;<br />
+            peer-as 55;<br />
+            neighbor x.x.x.x;<br />
+            neighbor x.x.x.x;<br />
+        }<br />
+        group CUST2 {<br />
+            type external;<br />
+            import FILTER_CUST2_ROUTES;<br />
+            export BGP_ADVERTISE_POLICY;<br />
+            peer-as 44;<br />
+            neighbor x.x.x.x;<br />
+            neighbor x.x.x.x;<br />
+        }<br />
+    }<br />
+    …<br />
+    …<br />
+    …<br />
+}<br />
+<br />
+Note: The prefix lists should have already been configured per the previous requirements.<br />
+<br />
+If the router is not configured to reject outbound route advertisements that do not belong to any customers or the local AS, this is a finding.</p><h2>Check Content Reference</h2><p>M</p><h2>Target Key</h2><p>4032</p></body></html>

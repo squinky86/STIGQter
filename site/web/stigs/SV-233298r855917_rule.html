@@ -1,0 +1,125 @@
+<!doctype html><html lang="en"><head><meta charset="utf-8"><title>STIGQter: STIG Check Details: SV-233298r855917_rule: The Juniper perimeter router must be configured to drop IPv6 packets containing the NSAP address option within Destination Option header.</title><link rel="icon" type="image/svg+xml" href="STIGQter.svg" /><script async src="https://www.googletagmanager.com/gtag/js?id=UA-31381839-2"></script><script src="include.js"></script><script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-4110907817782130" crossorigin="anonymous"></script></head><body><div><img src="STIGQter.svg" alt="STIGQter" style="height:1em;" /> <a href="https://www.stigqter.com/">STIGQter</a>: <a href="main.html">STIG Summary</a>: <a href="U_Juniper_Router_RTR_STIG_V3R2_Manual-xccdf.html">Juniper Router RTR Security Technical Implementation Guide Version: 3 Release: 2 Benchmark Date: 30 Jan 2025</a>:</div> <h1>The Juniper perimeter router must be configured to drop IPv6 packets containing the NSAP address option within Destination Option header.</h1><h2>DISA Rule</h2><p>SV-233298r855917_rule</p><h2>Vulnerability Number</h2><p>V-233298</p><h2>Group Title</h2><p>SRG-NET-000364-RTR-000205</p><h2>Rule Version</h2><p>JUNI-RT-000386</p><h2>Severity</h2><p>CAT II</p><h2>CCI(s)</h2><ul><li>CCI-002403 - Only allow incoming communications from organization-defined authorized sources routed to organization-defined authorized destinations.</li></ul><h2>Weight</h2><p>10</p><h2>Fix Recommendation</h2><p>Step 1: Configure a filter to block packets with a Destination Option header as shown in the example.<br />
+<br />
+user@R1# edit firewall family inet6<br />
+user@R1# edit filter IPV6-INGRESS-FILTER<br />
+user@R1# set term DEST_ OPT_HEADER from next-header dstops<br />
+user@R1# set term DEST_ OPT_HEADER then discard syslog<br />
+user@R1# top<br />
+<br />
+Step 2: Apply the filter inbound on all external IPv6-enabled interfaces.<br />
+<br />
+user@R1# edit interfaces ge-0/0/0 unit 0 family inet6<br />
+user@R1# set filter input IPV6-INGRESS-FILTER<br />
+user@R1# commit</p><h2>Check Contents</h2><p>This requirement is not applicable for the DODIN Backbone. <br />
+<br />
+Review the router configuration and determine if filters are bound to the applicable interfaces to drop IPv6 packets containing a Destination Option header with option type value of 0xC3 (NSAP address). <br />
+<br />
+The following example will block any inbound IPv6 packet containing a Destination Option header: <br />
+Step 1: Verify that all external IPv6-enabled interfaces have an IPv6 filter as shown in the example below.<br />
+<br />
+interfaces {<br />
+    ge-0/0/0  {<br />
+        unit 0 {<br />
+            family inet6 {<br />
+                filter {<br />
+                    input IPV6-INGRESS-FILTER;<br />
+                }<br />
+                address 2001:1:0:146::1/64;<br />
+            }<br />
+        }<br />
+    }<br />
+}<br />
+<br />
+<br />
+<br />
+Step 2: Verify that the IPV6 filter blocks all packets with a Destination Option header as shown in the example below.<br />
+<br />
+firewall {<br />
+    family inet6 {<br />
+        filter IPV6-INGRESS-FILTER {<br />
+            term DEST_ OPT_HEADER {<br />
+                from {<br />
+                    next-header dstops;<br />
+                }<br />
+                then {<br />
+                    syslog;<br />
+                    discard;<br />
+                }<br />
+            }<br />
+            term ALLOW_TCP_ESTABLISHED {<br />
+                from {<br />
+                    next-header tcp;<br />
+                    tcp-established;<br />
+                }<br />
+                then accept;<br />
+            }<br />
+            term DENY_BY_DEFAULT {<br />
+                then {<br />
+                    syslog;<br />
+                    discard;<br />
+                }<br />
+            }<br />
+        }<br />
+    }<br />
+}<br />
+<br />
+<br />
+Note: Currently JUNOS has no method to filter option type within Destination Option header. Hence, all packets with the Destination Option header must be dropped.<br />
+<br />
+If the router is not configured to drop IPv6 packets containing the NSAP address option within Destination Option header, this is a finding.</p><h2>Vulnerability Number</h2><p>V-233298</p><h2>Documentable</h2><p>False</p><h2>Rule Version</h2><p>JUNI-RT-000386</p><h2>Severity Override Guidance</h2><p>This requirement is not applicable for the DODIN Backbone. <br />
+<br />
+Review the router configuration and determine if filters are bound to the applicable interfaces to drop IPv6 packets containing a Destination Option header with option type value of 0xC3 (NSAP address). <br />
+<br />
+The following example will block any inbound IPv6 packet containing a Destination Option header: <br />
+Step 1: Verify that all external IPv6-enabled interfaces have an IPv6 filter as shown in the example below.<br />
+<br />
+interfaces {<br />
+    ge-0/0/0  {<br />
+        unit 0 {<br />
+            family inet6 {<br />
+                filter {<br />
+                    input IPV6-INGRESS-FILTER;<br />
+                }<br />
+                address 2001:1:0:146::1/64;<br />
+            }<br />
+        }<br />
+    }<br />
+}<br />
+<br />
+<br />
+<br />
+Step 2: Verify that the IPV6 filter blocks all packets with a Destination Option header as shown in the example below.<br />
+<br />
+firewall {<br />
+    family inet6 {<br />
+        filter IPV6-INGRESS-FILTER {<br />
+            term DEST_ OPT_HEADER {<br />
+                from {<br />
+                    next-header dstops;<br />
+                }<br />
+                then {<br />
+                    syslog;<br />
+                    discard;<br />
+                }<br />
+            }<br />
+            term ALLOW_TCP_ESTABLISHED {<br />
+                from {<br />
+                    next-header tcp;<br />
+                    tcp-established;<br />
+                }<br />
+                then accept;<br />
+            }<br />
+            term DENY_BY_DEFAULT {<br />
+                then {<br />
+                    syslog;<br />
+                    discard;<br />
+                }<br />
+            }<br />
+        }<br />
+    }<br />
+}<br />
+<br />
+<br />
+Note: Currently JUNOS has no method to filter option type within Destination Option header. Hence, all packets with the Destination Option header must be dropped.<br />
+<br />
+If the router is not configured to drop IPv6 packets containing the NSAP address option within Destination Option header, this is a finding.</p><h2>Check Content Reference</h2><p>M</p><h2>Target Key</h2><p>4032</p></body></html>

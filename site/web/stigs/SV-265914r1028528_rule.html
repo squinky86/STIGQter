@@ -1,0 +1,44 @@
+<!doctype html><html lang="en"><head><meta charset="utf-8"><title>STIGQter: STIG Check Details: SV-265914r1028528_rule: The role(s)/group(s) used to modify database structure (including but not limited to tables, indexes, storage, etc.) and logic modules (stored procedures, functions, triggers, links to software external to MongoDB, etc.) must be restricted to authorized users.</title><link rel="icon" type="image/svg+xml" href="STIGQter.svg" /><script async src="https://www.googletagmanager.com/gtag/js?id=UA-31381839-2"></script><script src="include.js"></script><script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-4110907817782130" crossorigin="anonymous"></script></head><body><div><img src="STIGQter.svg" alt="STIGQter" style="height:1em;" /> <a href="https://www.stigqter.com/">STIGQter</a>: <a href="main.html">STIG Summary</a>: <a href="U_MongoDB_Enterprise_Advanced_7-x_STIG_V1R2_Manual-xccdf.html">MongoDB Enterprise Advanced 7.x Security Technical Implementation Guide Version: 1 Release: 2 Benchmark Date: 01 Jul 2026</a>:</div> <h1>The role(s)/group(s) used to modify database structure (including but not limited to tables, indexes, storage, etc.) and logic modules (stored procedures, functions, triggers, links to software external to MongoDB, etc.) must be restricted to authorized users.</h1><h2>DISA Rule</h2><p>SV-265914r1028528_rule</p><h2>Vulnerability Number</h2><p>V-265914</p><h2>Group Title</h2><p>SRG-APP-000133-DB-000362</p><h2>Rule Version</h2><p>MD7X-00-003000</p><h2>Severity</h2><p>CAT II</p><h2>CCI(s)</h2><ul><li>CCI-001499 - Limit privileges to change software resident within software libraries.</li></ul><h2>Weight</h2><p>10</p><h2>Fix Recommendation</h2><p>Use the following commands to remove unauthorized access to a MongoDB database:<br />
+ <br />
+db.revokePrivilegesFromRole()<br />
+db.revokeRolesFromUser()<br />
+<br />
+MongoDB commands for role management can be found here:<br />
+<br />
+https://www.mongodb.com/docs/v7.0/reference/method/js-role-management/</p><h2>Check Contents</h2><p>Run the following command to get the roles from a MongoDB database.<br />
+<br />
+For each database in MongoDB:<br />
+<br />
+use &lt;database&gt;<br />
+db.getRoles(<br />
+    {<br />
+      rolesInfo: 1,<br />
+      showPrivileges:true,<br />
+      showBuiltinRoles: true<br />
+    }<br />
+)<br />
+<br />
+Run the following command to the roles assigned to users:<br />
+<br />
+use admin<br />
+db.system.users.find()<br />
+<br />
+Analyze the output and if any roles or users have unauthorized access, this is a finding. This will vary on an application basis.</p><h2>Vulnerability Number</h2><p>V-265914</p><h2>Documentable</h2><p>False</p><h2>Rule Version</h2><p>MD7X-00-003000</p><h2>Severity Override Guidance</h2><p>Run the following command to get the roles from a MongoDB database.<br />
+<br />
+For each database in MongoDB:<br />
+<br />
+use &lt;database&gt;<br />
+db.getRoles(<br />
+    {<br />
+      rolesInfo: 1,<br />
+      showPrivileges:true,<br />
+      showBuiltinRoles: true<br />
+    }<br />
+)<br />
+<br />
+Run the following command to the roles assigned to users:<br />
+<br />
+use admin<br />
+db.system.users.find()<br />
+<br />
+Analyze the output and if any roles or users have unauthorized access, this is a finding. This will vary on an application basis.</p><h2>Check Content Reference</h2><p>M</p><h2>Target Key</h2><p>5637</p></body></html>

@@ -1,0 +1,48 @@
+<!doctype html><html lang="en"><head><meta charset="utf-8"><title>STIGQter: STIG Check Details: SV-213903r960864_rule: SQL Server must protect against a user falsely repudiating by use of system-versioned tables (Temporal Tables).</title><link rel="icon" type="image/svg+xml" href="STIGQter.svg" /><script async src="https://www.googletagmanager.com/gtag/js?id=UA-31381839-2"></script><script src="include.js"></script><script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-4110907817782130" crossorigin="anonymous"></script></head><body><div><img src="STIGQter.svg" alt="STIGQter" style="height:1em;" /> <a href="https://www.stigqter.com/">STIGQter</a>: <a href="main.html">STIG Summary</a>: <a href="U_MS_SQL_Server_2016_Database_STIG_V3R5_Manual-xccdf.html">MS SQL Server 2016 Database Security Technical Implementation Guide Version: 3 Release: 5 Benchmark Date: 01 Apr 2026</a>:</div> <h1>SQL Server must protect against a user falsely repudiating by use of system-versioned tables (Temporal Tables).</h1><h2>DISA Rule</h2><p>SV-213903r960864_rule</p><h2>Vulnerability Number</h2><p>V-213903</p><h2>Group Title</h2><p>SRG-APP-000080-DB-000063</p><h2>Rule Version</h2><p>SQL6-D0-000500</p><h2>Severity</h2><p>CAT III</p><h2>CCI(s)</h2><ul><li>CCI-000166 - Provide irrefutable evidence that an individual (or process acting on behalf of an individual) falsely denying having performed organization-defined actions to be covered by non-repudiation.</li></ul><h2>Weight</h2><p>10</p><h2>Fix Recommendation</h2><p>Alter sensitive tables to utilize system versioning.<br />
+<br />
+Alter non-temporal table to define periods for system versioning .<br />
+<br />
+ALTER TABLE InsurancePolicy <br />
+ADD PERIOD FOR SYSTEM_TIME (SysStartTime, SysEndTime),   <br />
+SysStartTime datetime2 GENERATED ALWAYS AS ROW START HIDDEN NOT NULL DEFAULT GETUTCDATE(),  <br />
+SysEndTime datetime2 GENERATED ALWAYS AS ROW END HIDDEN NOT NULL DEFAULT CONVERT(DATETIME2, '9999-12-31 23:59:59.99999999');  <br />
+ <br />
+ALTER TABLE InsurancePolicy SET (SYSTEM_VERSIONING = ON (HISTORY_TABLE=dbo.InsurancePolicyHistory));<br />
+<br />
+https://docs.microsoft.com/sql/t-sql/statements/alter-table-transact-sql?view=sql-server-2016#system_versionin</p><h2>Check Contents</h2><p>Check the server documentation to determine if collecting and keeping historical versions of a table is required.<br />
+<br />
+If collecting and keeping historical versions of a table is NOT required, this is not a finding.<br />
+<br />
+Find all of the temporal tables in the database using the following query:<br />
+<br />
+SELECT SCHEMA_NAME(T.schema_id) AS schema_name, T.name AS table_name, T.temporal_type_desc, SCHEMA_NAME(H.schema_id) + '.' + H.name AS history_table<br />
+FROM sys.tables T<br />
+JOIN sys.tables H ON T.history_table_id = H.object_id<br />
+WHERE T.temporal_type != 0<br />
+ORDER BY schema_name, table_name<br />
+<br />
+Using the system documentation, determine which tables are required to be temporal tables.<br />
+<br />
+If any tables listed in the documentation are not in the list created by running the above statement, this is a finding.<br />
+<br />
+Ensure a field exists documenting the login and/or user who last modified the record. <br />
+<br />
+If this does not exist, this is a finding.</p><h2>Vulnerability Number</h2><p>V-213903</p><h2>Documentable</h2><p>False</p><h2>Rule Version</h2><p>SQL6-D0-000500</p><h2>Severity Override Guidance</h2><p>Check the server documentation to determine if collecting and keeping historical versions of a table is required.<br />
+<br />
+If collecting and keeping historical versions of a table is NOT required, this is not a finding.<br />
+<br />
+Find all of the temporal tables in the database using the following query:<br />
+<br />
+SELECT SCHEMA_NAME(T.schema_id) AS schema_name, T.name AS table_name, T.temporal_type_desc, SCHEMA_NAME(H.schema_id) + '.' + H.name AS history_table<br />
+FROM sys.tables T<br />
+JOIN sys.tables H ON T.history_table_id = H.object_id<br />
+WHERE T.temporal_type != 0<br />
+ORDER BY schema_name, table_name<br />
+<br />
+Using the system documentation, determine which tables are required to be temporal tables.<br />
+<br />
+If any tables listed in the documentation are not in the list created by running the above statement, this is a finding.<br />
+<br />
+Ensure a field exists documenting the login and/or user who last modified the record. <br />
+<br />
+If this does not exist, this is a finding.</p><h2>Check Content Reference</h2><p>M</p><h2>Target Key</h2><p>3992</p></body></html>

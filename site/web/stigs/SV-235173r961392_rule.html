@@ -1,0 +1,51 @@
+<!doctype html><html lang="en"><head><meta charset="utf-8"><title>STIGQter: STIG Check Details: SV-235173r961392_rule: The MySQL Database Server 8.0 must allocate audit record storage capacity in accordance with organization-defined audit record storage requirements.</title><link rel="icon" type="image/svg+xml" href="STIGQter.svg" /><script async src="https://www.googletagmanager.com/gtag/js?id=UA-31381839-2"></script><script src="include.js"></script><script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-4110907817782130" crossorigin="anonymous"></script></head><body><div><img src="STIGQter.svg" alt="STIGQter" style="height:1em;" /> <a href="https://www.stigqter.com/">STIGQter</a>: <a href="main.html">STIG Summary</a>: <a href="U_Oracle_MySQL_8-0_STIG_V2R2_Manual-xccdf.html">Oracle MySQL 8.0 Security Technical Implementation Guide Version: 2 Release: 2 Benchmark Date: 24 Oct 2024</a>:</div> <h1>The MySQL Database Server 8.0 must allocate audit record storage capacity in accordance with organization-defined audit record storage requirements.</h1><h2>DISA Rule</h2><p>SV-235173r961392_rule</p><h2>Vulnerability Number</h2><p>V-235173</p><h2>Group Title</h2><p>SRG-APP-000357-DB-000316</p><h2>Rule Version</h2><p>MYS8-00-009600</p><h2>Severity</h2><p>CAT II</p><h2>CCI(s)</h2><ul><li>CCI-001849 - Allocate audit log storage capacity to accommodate organization-defined audit record retention requirements.</li></ul><h2>Weight</h2><p>10</p><h2>Fix Recommendation</h2><p>Review the MySQL Audit file location, ensure the destination has enough space available to accommodate the maximum total size of all files that could be written. <br />
+<br />
+Use a script or third-party tool to manage the maximum number of audit log files that are to be stored, staying within the number of logs the system was sized to support. <br />
+<br />
+Use compression and JSON format to reduce file growth.<br />
+<br />
+Update the location for audit_log_file in the MySQL configuration file, for example:<br />
+[mysqld]<br />
+audit-log-file=/var/log/mysql/audit.log<br />
+audit-log-format=JSON<br />
+audit-log-compression=GZIP</p><h2>Check Contents</h2><p>Check the server documentation for the SQL Audit file size configurations. Locate the Audit file path and drive. <br />
+<br />
+SELECT VARIABLE_NAME, VARIABLE_VALUE<br />
+FROM performance_schema.global_variables<br />
+WHERE VARIABLE_NAME = 'audit_log_file'<br />
+ OR VARIABLE_NAME= 'datadir'<br />
+ OR VARIABLE_NAME = 'audit_log_rotate_on_size';<br />
+<br />
+If the value of audit_log_file contains a path, for example:<br />
+/var/log/mysql/audit.log<br />
+This is the location of the audit log, and the location to assess the storage capacity.<br />
+<br />
+If the value of audit_log_file is the filename alone, for example:<br />
+audit.log<br />
+The audit logs are located in the path returned by datadir.<br />
+<br />
+Calculate the space needed based on the audit file size and number of audit files to be stored simultaneously. <br />
+<br />
+Note that MySQL does not delete log files; that requires third-party tools or custom scripts.<br />
+<br />
+If the calculated product of the &quot;audit_log_rotate_on_size&quot; times the number of audit files allowed will exceed the size of the storage location, this is a finding.</p><h2>Vulnerability Number</h2><p>V-235173</p><h2>Documentable</h2><p>False</p><h2>Rule Version</h2><p>MYS8-00-009600</p><h2>Severity Override Guidance</h2><p>Check the server documentation for the SQL Audit file size configurations. Locate the Audit file path and drive. <br />
+<br />
+SELECT VARIABLE_NAME, VARIABLE_VALUE<br />
+FROM performance_schema.global_variables<br />
+WHERE VARIABLE_NAME = 'audit_log_file'<br />
+ OR VARIABLE_NAME= 'datadir'<br />
+ OR VARIABLE_NAME = 'audit_log_rotate_on_size';<br />
+<br />
+If the value of audit_log_file contains a path, for example:<br />
+/var/log/mysql/audit.log<br />
+This is the location of the audit log, and the location to assess the storage capacity.<br />
+<br />
+If the value of audit_log_file is the filename alone, for example:<br />
+audit.log<br />
+The audit logs are located in the path returned by datadir.<br />
+<br />
+Calculate the space needed based on the audit file size and number of audit files to be stored simultaneously. <br />
+<br />
+Note that MySQL does not delete log files; that requires third-party tools or custom scripts.<br />
+<br />
+If the calculated product of the &quot;audit_log_rotate_on_size&quot; times the number of audit files allowed will exceed the size of the storage location, this is a finding.</p><h2>Check Content Reference</h2><p>M</p><h2>Target Key</h2><p>5277</p></body></html>

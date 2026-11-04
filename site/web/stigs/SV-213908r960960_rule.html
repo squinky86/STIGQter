@@ -1,0 +1,56 @@
+<!doctype html><html lang="en"><head><meta charset="utf-8"><title>STIGQter: STIG Check Details: SV-213908r960960_rule: Database objects (including but not limited to tables, indexes, storage, stored procedures, functions, triggers, links to software external to SQL Server, etc.) must be owned by database/DBMS principals authorized for ownership.</title><link rel="icon" type="image/svg+xml" href="STIGQter.svg" /><script async src="https://www.googletagmanager.com/gtag/js?id=UA-31381839-2"></script><script src="include.js"></script><script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-4110907817782130" crossorigin="anonymous"></script></head><body><div><img src="STIGQter.svg" alt="STIGQter" style="height:1em;" /> <a href="https://www.stigqter.com/">STIGQter</a>: <a href="main.html">STIG Summary</a>: <a href="U_MS_SQL_Server_2016_Database_STIG_V3R5_Manual-xccdf.html">MS SQL Server 2016 Database Security Technical Implementation Guide Version: 3 Release: 5 Benchmark Date: 01 Apr 2026</a>:</div> <h1>Database objects (including but not limited to tables, indexes, storage, stored procedures, functions, triggers, links to software external to SQL Server, etc.) must be owned by database/DBMS principals authorized for ownership.</h1><h2>DISA Rule</h2><p>SV-213908r960960_rule</p><h2>Vulnerability Number</h2><p>V-213908</p><h2>Group Title</h2><p>SRG-APP-000133-DB-000200</p><h2>Rule Version</h2><p>SQL6-D0-001300</p><h2>Severity</h2><p>CAT II</p><h2>CCI(s)</h2><ul><li>CCI-001499 - Limit privileges to change software resident within software libraries.</li></ul><h2>Weight</h2><p>10</p><h2>Fix Recommendation</h2><p>Add and/or update system documentation to include any accounts authorized for object ownership and remove any account not authorized. <br />
+<br />
+To change the schema owning a database object in SQL Server, use this code as an example: <br />
+<br />
+USE AdventureWorks2012;  <br />
+GO  <br />
+ALTER SCHEMA HumanResources TRANSFER Person.Address;  <br />
+GO  <br />
+<br />
+Caution: This can break code. This Fix should be implemented in conjunction with corrections to such code. Test before deploying in production. Deploy during a scheduled maintenance window.</p><h2>Check Contents</h2><p>Review system documentation to identify SQL Server accounts authorized to own database objects. <br />
+<br />
+If the SQL Server database ownership list does not exist or needs to be updated, this is a finding. <br />
+<br />
+The following query can be of use in making this determination: <br />
+<br />
+;with objects_cte as<br />
+(SELECT o.name, o.type_desc,<br />
+   CASE<br />
+    WHEN o.principal_id is null then s.principal_id<br />
+     ELSE o.principal_id<br />
+    END as principal_id<br />
+ FROM sys.objects o<br />
+ INNER JOIN sys.schemas s<br />
+ ON o.schema_id = s.schema_id<br />
+ WHERE o.is_ms_shipped = 0<br />
+)<br />
+SELECT cte.name, cte.type_desc, dp.name as ObjectOwner <br />
+FROM objects_cte cte<br />
+INNER JOIN sys.database_principals dp<br />
+ON cte.principal_id = dp.principal_id<br />
+ORDER BY dp.name, cte.name<br />
+<br />
+If any of the listed owners is not authorized, this is a finding.</p><h2>Vulnerability Number</h2><p>V-213908</p><h2>Documentable</h2><p>False</p><h2>Rule Version</h2><p>SQL6-D0-001300</p><h2>Severity Override Guidance</h2><p>Review system documentation to identify SQL Server accounts authorized to own database objects. <br />
+<br />
+If the SQL Server database ownership list does not exist or needs to be updated, this is a finding. <br />
+<br />
+The following query can be of use in making this determination: <br />
+<br />
+;with objects_cte as<br />
+(SELECT o.name, o.type_desc,<br />
+   CASE<br />
+    WHEN o.principal_id is null then s.principal_id<br />
+     ELSE o.principal_id<br />
+    END as principal_id<br />
+ FROM sys.objects o<br />
+ INNER JOIN sys.schemas s<br />
+ ON o.schema_id = s.schema_id<br />
+ WHERE o.is_ms_shipped = 0<br />
+)<br />
+SELECT cte.name, cte.type_desc, dp.name as ObjectOwner <br />
+FROM objects_cte cte<br />
+INNER JOIN sys.database_principals dp<br />
+ON cte.principal_id = dp.principal_id<br />
+ORDER BY dp.name, cte.name<br />
+<br />
+If any of the listed owners is not authorized, this is a finding.</p><h2>Check Content Reference</h2><p>M</p><h2>Target Key</h2><p>3992</p></body></html>

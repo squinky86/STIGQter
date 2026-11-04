@@ -1,0 +1,123 @@
+<!doctype html><html lang="en"><head><meta charset="utf-8"><title>STIGQter: STIG Check Details: SV-216473r958528_rule: The operating system must manage excess capacity, bandwidth, or other redundancy to limit the effects of information flooding types of denial of service attacks.</title><link rel="icon" type="image/svg+xml" href="STIGQter.svg" /><script async src="https://www.googletagmanager.com/gtag/js?id=UA-31381839-2"></script><script src="include.js"></script><script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-4110907817782130" crossorigin="anonymous"></script></head><body><div><img src="STIGQter.svg" alt="STIGQter" style="height:1em;" /> <a href="https://www.stigqter.com/">STIGQter</a>: <a href="main.html">STIG Summary</a>: <a href="U_SOL_11_SPARC_STIG_V3R6_Manual-xccdf.html">Solaris 11 SPARC Security Technical Implementation Guide Version: 3 Release: 6 Benchmark Date: 01 Jul 2026</a>:</div> <h1>The operating system must manage excess capacity, bandwidth, or other redundancy to limit the effects of information flooding types of denial of service attacks.</h1><h2>DISA Rule</h2><p>SV-216473r958528_rule</p><h2>Vulnerability Number</h2><p>V-216473</p><h2>Group Title</h2><p>SRG-OS-000142</p><h2>Rule Version</h2><p>SOL-11.1-090280</p><h2>Severity</h2><p>CAT II</p><h2>CCI(s)</h2><ul><li>CCI-001095 - Manage capacity, bandwidth, or other redundancy to limit the effects of information flooding types of denial of service attacks.</li></ul><h2>Weight</h2><p>10</p><h2>Fix Recommendation</h2><p>The Network Management profile is required.<br />
+<br />
+Set each link's speed-duplex protection to an appropriate value based on each configured network interface's POSSIBLE settings.<br />
+<br />
+Determine the OS version that is being secured:<br />
+<br />
+# uname -a<br />
+<br />
+For Solaris 11, 11.1, 11.2, and 11.3:<br />
+<br />
+# pfexec dladm set-linkprop -p en_1000fdx_cap=1 net0<br />
+<br />
+Verify EFFECTIVE column<br />
+# dladm show-linkprop net0 | egrep &quot;LINK|en_&quot; | sort|uniq<br />
+LINK     PROPERTY        PERM VALUE        EFFECTIVE    DEFAULT   POSSIBLE<br />
+net0     en_1000fdx_cap  rw   1            1            1         1,0<br />
+net0     en_1000hdx_cap  r-   0            0            0         1,0<br />
+net0     en_100fdx_cap   rw   1            1            1         1,0<br />
+net0     en_100hdx_cap   rw   1            1            1         1,0<br />
+net0     en_10fdx_cap    rw   1            1            1         1,0<br />
+net0     en_10gfdx_cap   --   --           --           0         1,0<br />
+net0     en_10hdx_cap    rw   1            1            1         1,0<br />
+<br />
+Do the above for all available/connected network adapters.<br />
+<br />
+For Solaris 11.4.x or newer:<br />
+<br />
+# pfexec dladm set-linkprop -p speed-duplex=1g-f,100m-f net0<br />
+<br />
+Verify EFFECTIVE column<br />
+# dladm show-linkprop -p speed-duplex net0<br />
+LINK     PROPERTY        PERM VALUE        EFFECTIVE    DEFAULT   POSSIBLE<br />
+net0     speed-duplex    rw   1g-f,100m-f  1g-f,100m-f  1g-f,     1g-f,100m-f,<br />
+                                                        100m-f,   100m-h,10m-f,<br />
+                                                        100m-h,   10m-h<br />
+                                                        10m-f,<br />
+                                                        10m-h<br />
+<br />
+Do the above for all available/connected network adapters.</p><h2>Check Contents</h2><p>Verify that you are on the global zone:<br />
+# zoneadm -z global list<br />
+global<br />
+<br />
+Note: If the following message appears, you are not in the global zone:<br />
+&quot;zoneadm: global: No such zone exists&quot;<br />
+<br />
+# dladm show-ether -Z | egrep &quot;LINK|up&quot;<br />
+<br />
+LINK PTYPE STATE AUTO SPEED-DUPLEX PAUSE<br />
+net0 current up yes 1G-f bi<br />
+<br />
+Determine the OS version that is being secured:<br />
+<br />
+# uname -v<br />
+<br />
+For Solaris 11, 11.1, 11.2, and 11.3:<br />
+<br />
+# dladm show-linkprop net0 | egrep &quot;LINK|en_&quot; | sort|uniq<br />
+LINK     PROPERTY        PERM VALUE        EFFECTIVE    DEFAULT   POSSIBLE<br />
+net0     en_1000fdx_cap  rw   1            1            1         1,0<br />
+net0     en_1000hdx_cap  r-   0            0            0         1,0<br />
+net0     en_100fdx_cap   rw   1            1            1         1,0<br />
+net0     en_100hdx_cap   rw   1            1            1         1,0<br />
+net0     en_10fdx_cap    rw   1            1            1         1,0<br />
+net0     en_10gfdx_cap   --   --           --           0         1,0<br />
+net0     en_10hdx_cap    rw   1            1            1         1,0<br />
+<br />
+Do the above for all available/connected network adapters.<br />
+<br />
+For Solaris 11.4.x.x.x or newer:<br />
+<br />
+# dladm show-linkprop -p speed-duplex net0<br />
+LINK     PROPERTY        PERM VALUE        EFFECTIVE    DEFAULT   POSSIBLE<br />
+net0     speed-duplex    rw   1g-f,100m-f, 1g-f,100m-f, 1g-f,     1g-f,100m-f,<br />
+                              100m-h,      100m-h,      100m-f,   100m-h,10m-f,<br />
+                              10m-f,10m-h  10m-f,10m-h  100m-h,   10m-h<br />
+                                                        10m-f,<br />
+                                                        10m-h<br />
+<br />
+Do the above for all available/connected network adapters.<br />
+<br />
+For each link, determine if its current speed-duplex settings VALUE field is appropriate for managing any excess bandwidth capacity based on its POSSIBLE settings field; if not, this is a finding.</p><h2>Vulnerability Number</h2><p>V-216473</p><h2>Documentable</h2><p>False</p><h2>Rule Version</h2><p>SOL-11.1-090280</p><h2>Severity Override Guidance</h2><p>Verify that you are on the global zone:<br />
+# zoneadm -z global list<br />
+global<br />
+<br />
+Note: If the following message appears, you are not in the global zone:<br />
+&quot;zoneadm: global: No such zone exists&quot;<br />
+<br />
+# dladm show-ether -Z | egrep &quot;LINK|up&quot;<br />
+<br />
+LINK PTYPE STATE AUTO SPEED-DUPLEX PAUSE<br />
+net0 current up yes 1G-f bi<br />
+<br />
+Determine the OS version that is being secured:<br />
+<br />
+# uname -v<br />
+<br />
+For Solaris 11, 11.1, 11.2, and 11.3:<br />
+<br />
+# dladm show-linkprop net0 | egrep &quot;LINK|en_&quot; | sort|uniq<br />
+LINK     PROPERTY        PERM VALUE        EFFECTIVE    DEFAULT   POSSIBLE<br />
+net0     en_1000fdx_cap  rw   1            1            1         1,0<br />
+net0     en_1000hdx_cap  r-   0            0            0         1,0<br />
+net0     en_100fdx_cap   rw   1            1            1         1,0<br />
+net0     en_100hdx_cap   rw   1            1            1         1,0<br />
+net0     en_10fdx_cap    rw   1            1            1         1,0<br />
+net0     en_10gfdx_cap   --   --           --           0         1,0<br />
+net0     en_10hdx_cap    rw   1            1            1         1,0<br />
+<br />
+Do the above for all available/connected network adapters.<br />
+<br />
+For Solaris 11.4.x.x.x or newer:<br />
+<br />
+# dladm show-linkprop -p speed-duplex net0<br />
+LINK     PROPERTY        PERM VALUE        EFFECTIVE    DEFAULT   POSSIBLE<br />
+net0     speed-duplex    rw   1g-f,100m-f, 1g-f,100m-f, 1g-f,     1g-f,100m-f,<br />
+                              100m-h,      100m-h,      100m-f,   100m-h,10m-f,<br />
+                              10m-f,10m-h  10m-f,10m-h  100m-h,   10m-h<br />
+                                                        10m-f,<br />
+                                                        10m-h<br />
+<br />
+Do the above for all available/connected network adapters.<br />
+<br />
+For each link, determine if its current speed-duplex settings VALUE field is appropriate for managing any excess bandwidth capacity based on its POSSIBLE settings field; if not, this is a finding.</p><h2>Check Content Reference</h2><p>M</p><h2>Target Key</h2><p>4022</p></body></html>

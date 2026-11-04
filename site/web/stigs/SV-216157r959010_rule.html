@@ -1,0 +1,57 @@
+<!doctype html><html lang="en"><head><meta charset="utf-8"><title>STIGQter: STIG Check Details: SV-216157r959010_rule: The system must prevent local applications from generating source-routed packets.</title><link rel="icon" type="image/svg+xml" href="STIGQter.svg" /><script async src="https://www.googletagmanager.com/gtag/js?id=UA-31381839-2"></script><script src="include.js"></script><script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-4110907817782130" crossorigin="anonymous"></script></head><body><div><img src="STIGQter.svg" alt="STIGQter" style="height:1em;" /> <a href="https://www.stigqter.com/">STIGQter</a>: <a href="main.html">STIG Summary</a>: <a href="U_SOL_11_x86_STIG_V3R6_Manual-xccdf.html">Solaris 11 X86 Security Technical Implementation Guide Version: 3 Release: 6 Benchmark Date: 01 Jul 2026</a>:</div> <h1>The system must prevent local applications from generating source-routed packets.</h1><h2>DISA Rule</h2><p>SV-216157r959010_rule</p><h2>Vulnerability Number</h2><p>V-216157</p><h2>Group Title</h2><p>SRG-OS-000480</p><h2>Rule Version</h2><p>SOL-11.1-050370</p><h2>Severity</h2><p>CAT III</p><h2>CCI(s)</h2><ul><li>CCI-000366 - Implement the security configuration settings.</li></ul><h2>Weight</h2><p>10</p><h2>Fix Recommendation</h2><p>The root role is required.<br />
+<br />
+# pfedit /etc/ipf/ipf.conf <br />
+<br />
+For Solaris 11, 11.1, 11.2, and 11.3 that use IP Filter dd rules to block outgoing source-routed packets, such as:<br />
+<br />
+block out log quick all with opt lsrr <br />
+block out log quick all with opt ssrr<br />
+<br />
+Reload the IPF rules.<br />
+<br />
+# ipf -Fa -A -f /etc/ipf/ipf.conf   <br />
+<br />
+For Solaris 11.3 or newer that use Packet Filter remove or modify any rules that include &quot;allow-opts&quot;.<br />
+<br />
+Reload the Packet Filter rules:<br />
+# svcadm refresh firewall:default</p><h2>Check Contents</h2><p>Determine the OS version you are currently securing.<br />
+# uname –v<br />
+<br />
+Solaris 11, 11.1, 11.2, and 11.3 use IP Filter.  To continue checking IP Filter, the IP Filter Management profile is required.<br />
+<br />
+Check the system for an IPF rule blocking outgoing source-routed packets.<br />
+<br />
+# ipfstat -o<br />
+<br />
+Examine the list for rules such as: <br />
+block out log quick from any to any with opt lsrr<br />
+block out log quick from any to any with opt ssrr<br />
+<br />
+If the listed rules do not block both lsrr and ssrr options, this is a finding.<br />
+<br />
+For Solaris 11.3 or newer that use Packet Filter, the Network Firewall Management rights profile is required.<br />
+<br />
+Ensure that IP Options are not in use:<br />
+# pfctl -s rules | grep allow-opts<br />
+<br />
+If any output is returned, this is a finding.</p><h2>Vulnerability Number</h2><p>V-216157</p><h2>Documentable</h2><p>False</p><h2>Rule Version</h2><p>SOL-11.1-050370</p><h2>Severity Override Guidance</h2><p>Determine the OS version you are currently securing.<br />
+# uname –v<br />
+<br />
+Solaris 11, 11.1, 11.2, and 11.3 use IP Filter.  To continue checking IP Filter, the IP Filter Management profile is required.<br />
+<br />
+Check the system for an IPF rule blocking outgoing source-routed packets.<br />
+<br />
+# ipfstat -o<br />
+<br />
+Examine the list for rules such as: <br />
+block out log quick from any to any with opt lsrr<br />
+block out log quick from any to any with opt ssrr<br />
+<br />
+If the listed rules do not block both lsrr and ssrr options, this is a finding.<br />
+<br />
+For Solaris 11.3 or newer that use Packet Filter, the Network Firewall Management rights profile is required.<br />
+<br />
+Ensure that IP Options are not in use:<br />
+# pfctl -s rules | grep allow-opts<br />
+<br />
+If any output is returned, this is a finding.</p><h2>Check Content Reference</h2><p>M</p><h2>Target Key</h2><p>4021</p></body></html>

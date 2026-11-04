@@ -1,0 +1,47 @@
+<!doctype html><html lang="en"><head><meta charset="utf-8"><title>STIGQter: STIG Check Details: SV-258750r933311_rule: The ESXi host Secure Shell (SSH) daemon must be configured to only use FIPS 140-2 validated ciphers.</title><link rel="icon" type="image/svg+xml" href="STIGQter.svg" /><script async src="https://www.googletagmanager.com/gtag/js?id=UA-31381839-2"></script><script src="include.js"></script><script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-4110907817782130" crossorigin="anonymous"></script></head><body><div><img src="STIGQter.svg" alt="STIGQter" style="height:1em;" /> <a href="https://www.stigqter.com/">STIGQter</a>: <a href="main.html">STIG Summary</a>: <a href="U_VMW_vSphere_8-0-ESXi_STIG_V1R1_Manual-xccdf.html">VMware vSphere 8.0 ESXi Security Technical Implementation Guide Version: 1 Release: 1 Benchmark Date: 31 Oct 2023</a>:</div> <h1>The ESXi host Secure Shell (SSH) daemon must be configured to only use FIPS 140-2 validated ciphers.</h1><h2>DISA Rule</h2><p>SV-258750r933311_rule</p><h2>Vulnerability Number</h2><p>V-258750</p><h2>Group Title</h2><p>SRG-OS-000478-VMM-001980</p><h2>Rule Version</h2><p>ESXI-80-000187</p><h2>Severity</h2><p>CAT II</p><h2>CCI(s)</h2><ul><li>CCI-002450 - Implement organization-defined types of cryptography for each specified cryptography use.</li></ul><h2>Weight</h2><p>10</p><h2>Fix Recommendation</h2><p>From an ESXi shell, run the following command:<br />
+<br />
+# esxcli system ssh server config set -k ciphers -v aes256-gcm@openssh.com,aes128-gcm@openssh.com,aes256-ctr,aes192-ctr,aes128-ctr<br />
+<br />
+or<br />
+<br />
+From a PowerCLI command prompt while connected to the ESXi host, run the following commands:<br />
+<br />
+$esxcli = Get-EsxCli -v2<br />
+$arguments = $esxcli.system.ssh.server.config.set.CreateArgs()<br />
+$arguments.keyword = 'ciphers'<br />
+$arguments.value = 'aes256-gcm@openssh.com,aes128-gcm@openssh.com,aes256-ctr,aes192-ctr,aes128-ctr'<br />
+$esxcli.system.ssh.server.config.set.Invoke($arguments)</p><h2>Check Contents</h2><p>From an ESXi shell, run the following command:<br />
+<br />
+# esxcli system ssh server config list -k ciphers<br />
+<br />
+or<br />
+<br />
+From a PowerCLI command prompt while connected to the ESXi host, run the following commands:<br />
+<br />
+$esxcli = Get-EsxCli -v2<br />
+$esxcli.system.ssh.server.config.list.invoke() | Where-Object {$_.Key -eq 'ciphers'}<br />
+<br />
+Expected result:<br />
+<br />
+ciphers aes256-gcm@openssh.com,aes128-gcm@openssh.com,aes256-ctr,aes192-ctr,aes128-ctr<br />
+<br />
+If the output matches the ciphers in the expected result or a subset thereof, this is not a finding.<br />
+<br />
+If the ciphers in the output contain any ciphers not listed in the expected result, this is a finding.</p><h2>Vulnerability Number</h2><p>V-258750</p><h2>Documentable</h2><p>False</p><h2>Rule Version</h2><p>ESXI-80-000187</p><h2>Severity Override Guidance</h2><p>From an ESXi shell, run the following command:<br />
+<br />
+# esxcli system ssh server config list -k ciphers<br />
+<br />
+or<br />
+<br />
+From a PowerCLI command prompt while connected to the ESXi host, run the following commands:<br />
+<br />
+$esxcli = Get-EsxCli -v2<br />
+$esxcli.system.ssh.server.config.list.invoke() | Where-Object {$_.Key -eq 'ciphers'}<br />
+<br />
+Expected result:<br />
+<br />
+ciphers aes256-gcm@openssh.com,aes128-gcm@openssh.com,aes256-ctr,aes192-ctr,aes128-ctr<br />
+<br />
+If the output matches the ciphers in the expected result or a subset thereof, this is not a finding.<br />
+<br />
+If the ciphers in the output contain any ciphers not listed in the expected result, this is a finding.</p><h2>Check Content Reference</h2><p>M</p><h2>Target Key</h2><p>5562</p></body></html>

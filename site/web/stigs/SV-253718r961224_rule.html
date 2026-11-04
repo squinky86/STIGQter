@@ -1,0 +1,66 @@
+<!doctype html><html lang="en"><head><meta charset="utf-8"><title>STIGQter: STIG Check Details: SV-253718r961224_rule: MariaDB must provide logout functionality to allow the user to manually terminate a session initiated by that user.</title><link rel="icon" type="image/svg+xml" href="STIGQter.svg" /><script async src="https://www.googletagmanager.com/gtag/js?id=UA-31381839-2"></script><script src="include.js"></script><script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-4110907817782130" crossorigin="anonymous"></script></head><body><div><img src="STIGQter.svg" alt="STIGQter" style="height:1em;" /> <a href="https://www.stigqter.com/">STIGQter</a>: <a href="main.html">STIG Summary</a>: <a href="U_MariaDB_Enterprise_10-x_STIG_V2R5_Manual-xccdf.html">MariaDB Enterprise 10.x Security Technical Implementation Guide Version: 2 Release: 5 Benchmark Date: 01 Apr 2026</a>:</div> <h1>MariaDB must provide logout functionality to allow the user to manually terminate a session initiated by that user.</h1><h2>DISA Rule</h2><p>SV-253718r961224_rule</p><h2>Vulnerability Number</h2><p>V-253718</p><h2>Group Title</h2><p>SRG-APP-000296-DB-000306</p><h2>Rule Version</h2><p>MADB-10-006300</p><h2>Severity</h2><p>CAT II</p><h2>CCI(s)</h2><ul><li>CCI-002363 - Provide a logout capability for user-initiated communications sessions whenever authentication is used to gain access to organization-defined information resources.</li></ul><h2>Weight</h2><p>10</p><h2>Fix Recommendation</h2><p>As an authorized user locate the session to be terminated and terminate that session.<br />
+<br />
+To locate a session and terminate the session follow the following steps:<br />
+<br />
+1. Connect to the MariaDB database using an authorized user:<br />
+<br />
+mariadb -u admin_user -p <br />
+<br />
+2. At the MariaDB prompt run either of the following commands:<br />
+<br />
+MariaDB&gt; SHOW PROCESSLIST;<br />
+MariaDB&gt; SELECT id, user, host, db, command, time, state, info, progress FROM information_schema.processlist;<br />
+<br />
+3. Identify the session to be terminated and issue kill process number from display. (**This will kill the session.**) Example: <br />
+<br />
+MariaDB&gt; KILL 192;<br />
+<br />
+4. A kill query process number can be issued from display. (**This will kill the active query but leave the session active for run-away queries. **)<br />
+<br />
+Configure MariaDB to automatically terminate a user session based on security procedures requirements regarding conditions or trigger events that require session termination.<br />
+ <br />
+To change the values of the following timeout variables to conform to organization-defined values for triggering conditions or events requiring session termination, select the appropriate variable to change as the database administrator. <br />
+ <br />
+As the administrator locate the MariaDB Enterprise Server configuration file to change. For Centos, RedHat, and similar distributions this will be in /etc/my.cnf.d/.<br />
+<br />
+In the [mariadb] section add the lines:<br />
+<br />
+interactive_timeout = value<br />
+wait_timeout = value<br />
+idle_transaction_timeout = value<br />
+idle_write_transaction_timeout = value<br />
+idle_readonly_transaction_timeout = value<br />
+<br />
+Where value is in seconds and corresponds to the company defined value. Restart MariaDB Enterprise Server for these changes to take effect.</p><h2>Check Contents</h2><p>MariaDB has five global variables which can be set so that connections will be closed after a certain period of inactivity. Check the values for these variables and verify they correspond to security procedures defined: <br />
+<br />
+MariaDB&gt; SHOW GLOBAL VARIABLES LIKE '%timeout%'; <br />
+ <br />
+interactive_timeout  - Time in seconds that the server waits for an interactive connection (one that connects with the mysql_real_connect() CLIENT_INTERACTIVE option) to become active before closing it. See also wait_timeout.<br />
+<br />
+wait_timeout - Time in seconds that the server waits for a connection to become active before closing it. The session value is initialized when a thread starts up from either the global value, if the connection is noninteractive, or from the interactive_timeout value, if the connection is interactive.<br />
+<br />
+In situations where transactions may be started, but not committed or rolled back, more granular control and a shorter timeout may be desirable so as to avoid locks being held for too long.<br />
+<br />
+idle_transaction_timeout<br />
+idle_write_transaction_timeout<br />
+idle_readonly_transaction_timeout<br />
+<br />
+Review system documentation to obtain the organization's definition of circumstances requiring automatic session termination. If the documentation explicitly states that such termination is not required or is prohibited, this is not a finding.<br />
+<br />
+If the security procedures require server-side session termination within a specified amount of time but MariaDB is not configured accordingly, this is a finding.</p><h2>Vulnerability Number</h2><p>V-253718</p><h2>Documentable</h2><p>False</p><h2>Rule Version</h2><p>MADB-10-006300</p><h2>Severity Override Guidance</h2><p>MariaDB has five global variables which can be set so that connections will be closed after a certain period of inactivity. Check the values for these variables and verify they correspond to security procedures defined: <br />
+<br />
+MariaDB&gt; SHOW GLOBAL VARIABLES LIKE '%timeout%'; <br />
+ <br />
+interactive_timeout  - Time in seconds that the server waits for an interactive connection (one that connects with the mysql_real_connect() CLIENT_INTERACTIVE option) to become active before closing it. See also wait_timeout.<br />
+<br />
+wait_timeout - Time in seconds that the server waits for a connection to become active before closing it. The session value is initialized when a thread starts up from either the global value, if the connection is noninteractive, or from the interactive_timeout value, if the connection is interactive.<br />
+<br />
+In situations where transactions may be started, but not committed or rolled back, more granular control and a shorter timeout may be desirable so as to avoid locks being held for too long.<br />
+<br />
+idle_transaction_timeout<br />
+idle_write_transaction_timeout<br />
+idle_readonly_transaction_timeout<br />
+<br />
+Review system documentation to obtain the organization's definition of circumstances requiring automatic session termination. If the documentation explicitly states that such termination is not required or is prohibited, this is not a finding.<br />
+<br />
+If the security procedures require server-side session termination within a specified amount of time but MariaDB is not configured accordingly, this is a finding.</p><h2>Check Content Reference</h2><p>M</p><h2>Target Key</h2><p>5475</p></body></html>

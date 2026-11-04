@@ -1,0 +1,93 @@
+<!doctype html><html lang="en"><head><meta charset="utf-8"><title>STIGQter: STIG Check Details: SV-253962r843919_rule: The Juniper EX switch must be configured to enable Storm Control on all host-facing access interfaces.</title><link rel="icon" type="image/svg+xml" href="STIGQter.svg" /><script async src="https://www.googletagmanager.com/gtag/js?id=UA-31381839-2"></script><script src="include.js"></script><script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-4110907817782130" crossorigin="anonymous"></script></head><body><div><img src="STIGQter.svg" alt="STIGQter" style="height:1em;" /> <a href="https://www.stigqter.com/">STIGQter</a>: <a href="main.html">STIG Summary</a>: <a href="U_Juniper_EX_Switches_L2S_STIG_V2R5_Manual-xccdf.html">Juniper EX Series Switches Layer 2 Switch Security Technical Implementation Guide Version: 2 Release: 5 Benchmark Date: 01 Jul 2026</a>:</div> <h1>The Juniper EX switch must be configured to enable Storm Control on all host-facing access interfaces.</h1><h2>DISA Rule</h2><p>SV-253962r843919_rule</p><h2>Vulnerability Number</h2><p>V-253962</p><h2>Group Title</h2><p>SRG-NET-000512-L2S-000001</p><h2>Rule Version</h2><p>JUEX-L2-000150</p><h2>Severity</h2><p>CAT III</p><h2>CCI(s)</h2><ul><li>CCI-000366 - Implement the security configuration settings.</li></ul><h2>Weight</h2><p>10</p><h2>Fix Recommendation</h2><p>Configure storm control on each host-facing access interface.<br />
+<br />
+set forwarding-options storm-control-profiles profile-percent all bandwidth-percentage (1..100)<br />
+set forwarding-options storm-control-profiles profile-level all bandwidth-level (100..100000000 kbps)<br />
+<br />
+set interfaces &lt;interface name&gt; unit 0 family ethernet-switching storm-control &lt;profile name&gt;<br />
+set interfaces &lt;interface name&gt; unit 0 family ethernet-switching recovery-timeout (10..3600 seconds)</p><h2>Check Contents</h2><p>Review the switch configuration to verify that storm control is enabled on host-facing access interfaces.<br />
+ <br />
+Verify storm control profiles at [edit forwarding-options storm-control-profiles] with an appropriate bandwidth value (actual bandwidth value or a percentage). By default, ELS versions of Junos enable storm control with an 80 percent of bandwidth value, but permit setting different values as either an absolute level or a percentage of available bandwidth.<br />
+<br />
+Note: Although percentage of bandwidth remains supported, it is deprecated and subject to removal. Therefore, an absolute level should be used. Threshold values must be configured appropriately for the target network.<br />
+<br />
+Verify the default storm control profile or a custom profile with appropriate bandwidth percentage or level.<br />
+<br />
+[edit forwarding-options]<br />
+storm-control-profiles profile-percent {<br />
+    all {<br />
+        bandwidth-percentage (1..100);<br />
+    }<br />
+    action-shutdown;<br />
+}<br />
+storm-control-profiles profile-level {<br />
+    all {<br />
+        bandwidth-level (100..100000000 kbps);<br />
+    }<br />
+    action-shutdown;<br />
+}<br />
+Note: Storm control profiles are created with the hierarchy &quot;all&quot; but support removing specific traffic types using the &quot;no-&lt;traffic type&gt;&quot; keyword. The currently supported exclusions:<br />
+  no-broadcast                                 Disable broadcast storm control<br />
+  no-multicast                                  Disable multicast storm control<br />
+  no-registered-multicast           Disable registered multicast storm control<br />
+  no-unknown-unicast                 Disable unknown unicast storm control<br />
+  no-unregistered-multicast     Disable unregistered multicast storm control<br />
+<br />
+If excluding traffic, verify at least broadcast storm control is enabled.<br />
+<br />
+Verify that storm control profiles are applied to layer 2 host-facing access interfaces.<br />
+<br />
+[edit interfaces]<br />
+&lt;interface name&gt; {<br />
+    unit 0 {<br />
+        family ethernet-switching {<br />
+            storm-control &lt;profile name&gt;;<br />
+            recovery-timeout (10..3600 seconds);<br />
+        }<br />
+    }<br />
+}<br />
+Note: If a recovery-timeout is not specified, and the storm control profile enforces action-shutdown, affected interfaces are disabled until manually enabled by an authorized administrator.<br />
+<br />
+If storm control is not enabled on all host-facing access interfaces, this is a finding.</p><h2>Vulnerability Number</h2><p>V-253962</p><h2>Documentable</h2><p>False</p><h2>Rule Version</h2><p>JUEX-L2-000150</p><h2>Severity Override Guidance</h2><p>Review the switch configuration to verify that storm control is enabled on host-facing access interfaces.<br />
+ <br />
+Verify storm control profiles at [edit forwarding-options storm-control-profiles] with an appropriate bandwidth value (actual bandwidth value or a percentage). By default, ELS versions of Junos enable storm control with an 80 percent of bandwidth value, but permit setting different values as either an absolute level or a percentage of available bandwidth.<br />
+<br />
+Note: Although percentage of bandwidth remains supported, it is deprecated and subject to removal. Therefore, an absolute level should be used. Threshold values must be configured appropriately for the target network.<br />
+<br />
+Verify the default storm control profile or a custom profile with appropriate bandwidth percentage or level.<br />
+<br />
+[edit forwarding-options]<br />
+storm-control-profiles profile-percent {<br />
+    all {<br />
+        bandwidth-percentage (1..100);<br />
+    }<br />
+    action-shutdown;<br />
+}<br />
+storm-control-profiles profile-level {<br />
+    all {<br />
+        bandwidth-level (100..100000000 kbps);<br />
+    }<br />
+    action-shutdown;<br />
+}<br />
+Note: Storm control profiles are created with the hierarchy &quot;all&quot; but support removing specific traffic types using the &quot;no-&lt;traffic type&gt;&quot; keyword. The currently supported exclusions:<br />
+  no-broadcast                                 Disable broadcast storm control<br />
+  no-multicast                                  Disable multicast storm control<br />
+  no-registered-multicast           Disable registered multicast storm control<br />
+  no-unknown-unicast                 Disable unknown unicast storm control<br />
+  no-unregistered-multicast     Disable unregistered multicast storm control<br />
+<br />
+If excluding traffic, verify at least broadcast storm control is enabled.<br />
+<br />
+Verify that storm control profiles are applied to layer 2 host-facing access interfaces.<br />
+<br />
+[edit interfaces]<br />
+&lt;interface name&gt; {<br />
+    unit 0 {<br />
+        family ethernet-switching {<br />
+            storm-control &lt;profile name&gt;;<br />
+            recovery-timeout (10..3600 seconds);<br />
+        }<br />
+    }<br />
+}<br />
+Note: If a recovery-timeout is not specified, and the storm control profile enforces action-shutdown, affected interfaces are disabled until manually enabled by an authorized administrator.<br />
+<br />
+If storm control is not enabled on all host-facing access interfaces, this is a finding.</p><h2>Check Content Reference</h2><p>M</p><h2>Target Key</h2><p>5478</p></body></html>

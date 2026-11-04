@@ -1,0 +1,41 @@
+<!doctype html><html lang="en"><head><meta charset="utf-8"><title>STIGQter: STIG Check Details: SV-283883r1204025_rule: The Nokia perimeter router must be configured to not redistribute static routes to an alternate gateway service provider into Border Gateway Protocol (BGP) or an Interior Gateway Protocol (IGP) peering with the NIPRNet or to other autonomous systems.</title><link rel="icon" type="image/svg+xml" href="STIGQter.svg" /><script async src="https://www.googletagmanager.com/gtag/js?id=UA-31381839-2"></script><script src="include.js"></script><script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-4110907817782130" crossorigin="anonymous"></script></head><body><div><img src="STIGQter.svg" alt="STIGQter" style="height:1em;" /> <a href="https://www.stigqter.com/">STIGQter</a>: <a href="main.html">STIG Summary</a>: <a href="U_Nokia_SR_OS_25-x_RTR_V1R1_STIG_Manual-xccdf.html">Nokia Service Router OS 25.x Router Security Technical Implementation Guide Version: 1 Release: 1 Benchmark Date: 28 Apr 2026</a>:</div> <h1>The Nokia perimeter router must be configured to not redistribute static routes to an alternate gateway service provider into Border Gateway Protocol (BGP) or an Interior Gateway Protocol (IGP) peering with the NIPRNet or to other autonomous systems.</h1><h2>DISA Rule</h2><p>SV-283883r1204025_rule</p><h2>Vulnerability Number</h2><p>V-283883</p><h2>Group Title</h2><p>SRG-NET-000019-RTR-000010</p><h2>Rule Version</h2><p>NOKI-RT-000660</p><h2>Severity</h2><p>CAT III</p><h2>CCI(s)</h2><ul><li>CCI-001414 - Enforce approved authorizations for controlling the flow of information between connected systems based on organization-defined information flow control policies.</li></ul><h2>Weight</h2><p>10</p><h2>Fix Recommendation</h2><p>This requirement is not applicable for the DODIN Backbone.<br />
+<br />
+Configure the router so static routes are not redistributed to an alternate gateway into either an EGP or IGP to the NIPRNet or to other autonomous systems, as shown in the example below: <br />
+<br />
+Create a policy statement:<br />
+<br />
+- configure router policy-options<br />
+- config&gt;router&gt;policy-options# begin<br />
+- config&gt;router&gt;policy-options# policy-statement EXPORT-STATIC<br />
+- config&gt;router&gt;policy-options&gt;policy-statement$ entry 10<br />
+- config&gt;router&gt;policy-options&gt;policy-statement&gt;entry$ from protocol static<br />
+- config&gt;router&gt;policy-options&gt;policy-statement&gt;entry$ to protocol bgp<br />
+- config&gt;router&gt;policy-options&gt;policy-statement&gt;entry$ action drop<br />
+- config&gt;router&gt;policy-options&gt;policy-statement&gt;entry&gt;action$ exit<br />
+- config&gt;router&gt;policy-options&gt;policy-statement&gt;entry$ exit<br />
+- config&gt;router&gt;policy-options&gt;policy-statement$ exit<br />
+- config&gt;router&gt;policy-options# commit<br />
+<br />
+Apply the export policy:<br />
+<br />
+- configure router bgp group eBGP export &quot;EXPORT-STATIC&quot;</p><h2>Check Contents</h2><p>This requirement is not applicable for the DODIN Backbone. <br />
+<br />
+Nokia routers do not automatically distribute static routes to IGP protocols unless a routing policy is applied to distribute these routes. Review the configuration of the router connecting to the alternate gateway and verify redistribution of static routes to the alternate gateway is not occurring. <br />
+<br />
+Use this command for BGP neighbors and verify an &quot;Export Policy&quot; is defined: <br />
+<br />
+- show router bgp neighbor 50.50.50.1 detail | match &quot;Export Policy&quot;<br />
+<br />
+Export Policy        : EXPORT-STATIC<br />
+<br />
+If the static routes to the alternate gateway are being redistributed into BGP or any IGP peering with a NIPRNet gateway or another autonomous system, this is a finding.</p><h2>Vulnerability Number</h2><p>V-283883</p><h2>Documentable</h2><p>False</p><h2>Rule Version</h2><p>NOKI-RT-000660</p><h2>Severity Override Guidance</h2><p>This requirement is not applicable for the DODIN Backbone. <br />
+<br />
+Nokia routers do not automatically distribute static routes to IGP protocols unless a routing policy is applied to distribute these routes. Review the configuration of the router connecting to the alternate gateway and verify redistribution of static routes to the alternate gateway is not occurring. <br />
+<br />
+Use this command for BGP neighbors and verify an &quot;Export Policy&quot; is defined: <br />
+<br />
+- show router bgp neighbor 50.50.50.1 detail | match &quot;Export Policy&quot;<br />
+<br />
+Export Policy        : EXPORT-STATIC<br />
+<br />
+If the static routes to the alternate gateway are being redistributed into BGP or any IGP peering with a NIPRNet gateway or another autonomous system, this is a finding.</p><h2>Check Content Reference</h2><p>M</p><h2>Target Key</h2><p>5746</p></body></html>

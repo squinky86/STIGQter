@@ -1,0 +1,41 @@
+<!doctype html><html lang="en"><head><meta charset="utf-8"><title>STIGQter: STIG Check Details: SV-251583r1043176_rule: IDMS must support the implementation of an external security manager (ESM) to handle account management and user accesses, etc.</title><link rel="icon" type="image/svg+xml" href="STIGQter.svg" /><script async src="https://www.googletagmanager.com/gtag/js?id=UA-31381839-2"></script><script src="include.js"></script><script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-4110907817782130" crossorigin="anonymous"></script></head><body><div><img src="STIGQter.svg" alt="STIGQter" style="height:1em;" /> <a href="https://www.stigqter.com/">STIGQter</a>: <a href="main.html">STIG Summary</a>: <a href="U_CA_IDMS_STIG_V2R2_Manual-xccdf.html">CA IDMS Security Technical Implementation Guide Version: 2 Release: 2 Benchmark Date: 01 Jul 2026</a>:</div> <h1>IDMS must support the implementation of an external security manager (ESM) to handle account management and user accesses, etc.</h1><h2>DISA Rule</h2><p>SV-251583r1043176_rule</p><h2>Vulnerability Number</h2><p>V-251583</p><h2>Group Title</h2><p>SRG-APP-000023-DB-000001</p><h2>Rule Version</h2><p>IDMS-DB-000020</p><h2>Severity</h2><p>CAT II</p><h2>CCI(s)</h2><ul><li>CCI-000015 - Support the management of system accounts using (organization-defined automated mechanisms).</li></ul><h2>Weight</h2><p>10</p><h2>Fix Recommendation</h2><p>The SRTT module must be coded to enable the desired security. When using an ESM, this could be done in the following manner:<br />
+ <br />
+#SECRTT TYPE=ENTRY,                          X<br />
+ RESTYPE=SGON,                                      X<br />
+ SECBY=EXTERNAL ,                               X<br />
+ EXTNAME=(RESNAME),                      X<br />
+ EXTCLS='CA@IDMS'<br />
+<br />
+The RESNAME will be derived from the SYSTEM ID name in SYSGEN.<br />
+<br />
+After making the above changes, ensure the ESM has the appropriate rules defined to give access to the desired users. For example, in a Top Secret environment where the SYSGEN SYSTEM ID is SYSO187:<br />
+TSS PER(user-id) CA@IDMS(SYSO187)<br />
+<br />
+Also assemble and link RHDCSRTT to create a new SRTT. To implement the new SRTT, either recycle any CVs that use the SRTT or issue these commands:<br />
+<br />
+   DCMT VARY NUCLEUS MODULE RHDCSRTT NEW COPY <br />
+   DCMT VARY NUCLEUS RELOAD</p><h2>Check Contents</h2><p>When securing IDMS user IDs with an ESM, some preparation must be done in IDMS itself. Identify CA IDMS security domains (a set of DC systems and local mode applications sharing a single user catalog and SRTT). For a given security domain, logon to one DC system.<br />
+<br />
+Issue DCPROFIL. If there is nothing specified for &quot;Security System&quot; and therefore no external security system being used, this is a finding.<br />
+<br />
+Examine load module RHDCSRTT by executing CA IDMS utility &quot;IDMSSRTD&quot;, or by issuing command &quot;DCMT DISPLAY SRTT&quot; while signed onto the CV, and reviewing the output.<br />
+<br />
+Note: This requires PTFs SO07995 and SO09476. <br />
+<br />
+If no TYPE=ENTRY with RESTYPE=SGON is found, this is a finding. <br />
+<br />
+If RESTYPE=SGON is secured internally, this is a finding.<br />
+<br />
+Interrogate the security office and verify the ESM has the appropriate entries to secure the RESTYPE of SGON. If not, this is a finding.</p><h2>Vulnerability Number</h2><p>V-251583</p><h2>Documentable</h2><p>False</p><h2>Rule Version</h2><p>IDMS-DB-000020</p><h2>Severity Override Guidance</h2><p>When securing IDMS user IDs with an ESM, some preparation must be done in IDMS itself. Identify CA IDMS security domains (a set of DC systems and local mode applications sharing a single user catalog and SRTT). For a given security domain, logon to one DC system.<br />
+<br />
+Issue DCPROFIL. If there is nothing specified for &quot;Security System&quot; and therefore no external security system being used, this is a finding.<br />
+<br />
+Examine load module RHDCSRTT by executing CA IDMS utility &quot;IDMSSRTD&quot;, or by issuing command &quot;DCMT DISPLAY SRTT&quot; while signed onto the CV, and reviewing the output.<br />
+<br />
+Note: This requires PTFs SO07995 and SO09476. <br />
+<br />
+If no TYPE=ENTRY with RESTYPE=SGON is found, this is a finding. <br />
+<br />
+If RESTYPE=SGON is secured internally, this is a finding.<br />
+<br />
+Interrogate the security office and verify the ESM has the appropriate entries to secure the RESTYPE of SGON. If not, this is a finding.</p><h2>Check Content Reference</h2><p>M</p><h2>Target Key</h2><p>5418</p></body></html>

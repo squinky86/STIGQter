@@ -1,0 +1,29 @@
+<!doctype html><html lang="en"><head><meta charset="utf-8"><title>STIGQter: STIG Check Details: SV-268454r1034302_rule: The macOS system must enable security auditing.</title><link rel="icon" type="image/svg+xml" href="STIGQter.svg" /><script async src="https://www.googletagmanager.com/gtag/js?id=UA-31381839-2"></script><script src="include.js"></script><script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-4110907817782130" crossorigin="anonymous"></script></head><body><div><img src="STIGQter.svg" alt="STIGQter" style="height:1em;" /> <a href="https://www.stigqter.com/">STIGQter</a>: <a href="main.html">STIG Summary</a>: <a href="U_Apple_macOS_15_V1R7_STIG_Manual-xccdf.html">Apple macOS 15 (Sequoia) Security Technical Implementation Guide Version: 1 Release: 7 Benchmark Date: 01 Apr 2026</a>:</div> <h1>The macOS system must enable security auditing.</h1><h2>DISA Rule</h2><p>SV-268454r1034302_rule</p><h2>Vulnerability Number</h2><p>V-268454</p><h2>Group Title</h2><p>SRG-OS-000037-GPOS-00015</p><h2>Rule Version</h2><p>APPL-15-001003</p><h2>Severity</h2><p>CAT II</p><h2>CCI(s)</h2><ul><li>CCI-000130 - Ensure that audit records containing information that establishes what type of event occurred.</li><li>CCI-000131 - Ensure that audit records containing information that establishes when the event occurred.</li><li>CCI-000132 - Ensure that audit records containing information that establishes where the event occurred.</li><li>CCI-000133 - Ensure that audit records containing information that establishes the source of the event.</li><li>CCI-000134 - Ensure that audit records containing information that establishes the outcome of the event.</li><li>CCI-000135 - Generate audit records containing the organization-defined additional information that is to be included in the audit records.</li><li>CCI-000159 - Use internal system clocks to generate time stamps for audit records.</li><li>CCI-001464 - Initiates session audits automatically at system start-up.</li><li>CCI-001487 - Ensure that audit records containing information that establishes the identity of any individuals, subjects, or objects/entities associated with the event.</li><li>CCI-001494 - Protect audit tools from unauthorized modification.</li><li>CCI-001495 - Protect audit tools from unauthorized deletion.</li><li>CCI-001914 - Provide the capability for organization-defined individuals or roles to change the logging to be performed on organization-defined system components based on organization-defined selectable event criteria within organization-defined time thresholds.</li><li>CCI-001889 - Record time stamps for audit records that meet organization-defined granularity of time measurement.</li><li>CCI-001890 - Record time stamps for audit records that use Coordinated Universal Time, have a fixed local time offset from Coordinated Universal Time, or that include the local time offset as part of the time stamp.</li><li>CCI-003938 - Automatically generate audit records of the enforcement actions.</li><li>CCI-002884 - Log organization-defined audit events for nonlocal maintenance and diagnostic sessions.</li><li>CCI-000172 - Generate audit records for the event types defined in AU-2 c that include the audit record content defined in AU-3.</li><li>CCI-004188 - Monitor the use of maintenance tools that execute with increased privilege.</li></ul><h2>Weight</h2><p>10</p><h2>Fix Recommendation</h2><p>Configure the macOS system to enable the auditd service with the following command:<br />
+<br />
+if [[ ! -e /etc/security/audit_control ]] &amp;&amp; [[ -e /etc/security/audit_control.example ]];then<br />
+  /bin/cp /etc/security/audit_control.example /etc/security/audit_control<br />
+fi<br />
+<br />
+/bin/launchctl enable system/com.apple.auditd<br />
+/bin/launchctl bootstrap system /System/Library/LaunchDaemons/com.apple.auditd.plist<br />
+/usr/sbin/audit -i</p><h2>Check Contents</h2><p>Verify the macOS system is configured to enable the auditd service with the following command:<br />
+<br />
+LAUNCHD_RUNNING=$(/bin/launchctl list | /usr/bin/grep -c com.apple.auditd)<br />
+AUDITD_RUNNING=$(/usr/sbin/audit -c | /usr/bin/grep -c &quot;AUC_AUDITING&quot;)<br />
+if [[ $LAUNCHD_RUNNING == 1 ]] &amp;&amp; [[ -e /etc/security/audit_control ]] &amp;&amp; [[ $AUDITD_RUNNING == 1 ]]; then<br />
+  echo &quot;pass&quot;<br />
+else<br />
+  echo &quot;fail&quot;<br />
+fi<br />
+<br />
+If the result is not &quot;pass&quot;, this is a finding.</p><h2>Vulnerability Number</h2><p>V-268454</p><h2>Documentable</h2><p>False</p><h2>Rule Version</h2><p>APPL-15-001003</p><h2>Severity Override Guidance</h2><p>Verify the macOS system is configured to enable the auditd service with the following command:<br />
+<br />
+LAUNCHD_RUNNING=$(/bin/launchctl list | /usr/bin/grep -c com.apple.auditd)<br />
+AUDITD_RUNNING=$(/usr/sbin/audit -c | /usr/bin/grep -c &quot;AUC_AUDITING&quot;)<br />
+if [[ $LAUNCHD_RUNNING == 1 ]] &amp;&amp; [[ -e /etc/security/audit_control ]] &amp;&amp; [[ $AUDITD_RUNNING == 1 ]]; then<br />
+  echo &quot;pass&quot;<br />
+else<br />
+  echo &quot;fail&quot;<br />
+fi<br />
+<br />
+If the result is not &quot;pass&quot;, this is a finding.</p><h2>Check Content Reference</h2><p>M</p><h2>Target Key</h2><p>5661</p></body></html>

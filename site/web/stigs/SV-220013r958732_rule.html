@@ -1,0 +1,61 @@
+<!doctype html><html lang="en"><head><meta charset="utf-8"><title>STIGQter: STIG Check Details: SV-220013r958732_rule: The operating system must protect the audit records resulting from non-local accesses to privileged accounts and the execution of privileged functions.</title><link rel="icon" type="image/svg+xml" href="STIGQter.svg" /><script async src="https://www.googletagmanager.com/gtag/js?id=UA-31381839-2"></script><script src="include.js"></script><script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-4110907817782130" crossorigin="anonymous"></script></head><body><div><img src="STIGQter.svg" alt="STIGQter" style="height:1em;" /> <a href="https://www.stigqter.com/">STIGQter</a>: <a href="main.html">STIG Summary</a>: <a href="U_SOL_11_x86_STIG_V3R6_Manual-xccdf.html">Solaris 11 X86 Security Technical Implementation Guide Version: 3 Release: 6 Benchmark Date: 01 Jul 2026</a>:</div> <h1>The operating system must protect the audit records resulting from non-local accesses to privileged accounts and the execution of privileged functions.</h1><h2>DISA Rule</h2><p>SV-220013r958732_rule</p><h2>Vulnerability Number</h2><p>V-220013</p><h2>Group Title</h2><p>SRG-OS-000327</p><h2>Rule Version</h2><p>SOL-11.1-070250</p><h2>Severity</h2><p>CAT II</p><h2>CCI(s)</h2><ul><li>CCI-002234 - Log the execution of privileged functions.</li></ul><h2>Weight</h2><p>10</p><h2>Fix Recommendation</h2><p>The root role is required.<br />
+<br />
+Determine the location of the local audit trail files.<br />
+<br />
+# pfexec auditconfig -getplugin audit_binfile<br />
+Plugin: audit_binfile (active)<br />
+Attributes: p_dir=/var/audit;p_fsize=4M;p_minfree=1<br />
+<br />
+In this example, the audit files can be found in /var/audit.<br />
+<br />
+Change the permissions on the audit trail files and the audit directory.<br />
+<br />
+# chmod 640 /var/share/audit/*<br />
+<br />
+# chmod 750 /var/share/audit<br />
+<br />
+Note:  The default Solaris 11 location for /var/audit is a link to /var/share/audit.</p><h2>Check Contents</h2><p>The audit configuration profile is required. <br />
+<br />
+This check applies to the global zone only. Determine the zone that you are currently securing.<br />
+<br />
+# zonename<br />
+<br />
+If the command output is &quot;global&quot;, this check applies.<br />
+<br />
+Determine the location of the local audit trail files.<br />
+<br />
+# auditconfig -getplugin audit_binfile<br />
+Plugin: audit_binfile (active)<br />
+Attributes: p_dir=/var/audit;p_fsize=4M;p_minfree=1;&quot;<br />
+<br />
+In this example, the audit files can be found in /var/audit. Check that the permissions on the audit files are 640 (rw- r-- --) or less permissive.<br />
+<br />
+# ls -al /var/audit<br />
+<br />
+# ls -l /var/audit/*<br />
+<br />
+If the permissions are more permissive than 640, this is a finding.<br />
+<br />
+Note:  The default Solaris 11 location for /var/audit is a link to /var/share/audit.</p><h2>Vulnerability Number</h2><p>V-220013</p><h2>Documentable</h2><p>False</p><h2>Rule Version</h2><p>SOL-11.1-070250</p><h2>Severity Override Guidance</h2><p>The audit configuration profile is required. <br />
+<br />
+This check applies to the global zone only. Determine the zone that you are currently securing.<br />
+<br />
+# zonename<br />
+<br />
+If the command output is &quot;global&quot;, this check applies.<br />
+<br />
+Determine the location of the local audit trail files.<br />
+<br />
+# auditconfig -getplugin audit_binfile<br />
+Plugin: audit_binfile (active)<br />
+Attributes: p_dir=/var/audit;p_fsize=4M;p_minfree=1;&quot;<br />
+<br />
+In this example, the audit files can be found in /var/audit. Check that the permissions on the audit files are 640 (rw- r-- --) or less permissive.<br />
+<br />
+# ls -al /var/audit<br />
+<br />
+# ls -l /var/audit/*<br />
+<br />
+If the permissions are more permissive than 640, this is a finding.<br />
+<br />
+Note:  The default Solaris 11 location for /var/audit is a link to /var/share/audit.</p><h2>Check Content Reference</h2><p>M</p><h2>Target Key</h2><p>4021</p></body></html>

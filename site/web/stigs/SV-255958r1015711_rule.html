@@ -1,0 +1,46 @@
+<!doctype html><html lang="en"><head><meta charset="utf-8"><title>STIGQter: STIG Check Details: SV-255958r1015711_rule: The Arista network device must be configured to synchronize internal system clocks using redundant authenticated time sources.</title><link rel="icon" type="image/svg+xml" href="STIGQter.svg" /><script async src="https://www.googletagmanager.com/gtag/js?id=UA-31381839-2"></script><script src="include.js"></script><script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-4110907817782130" crossorigin="anonymous"></script></head><body><div><img src="STIGQter.svg" alt="STIGQter" style="height:1em;" /> <a href="https://www.stigqter.com/">STIGQter</a>: <a href="main.html">STIG Summary</a>: <a href="U_Arista_MLS_EOS_4-X_NDM_STIG_V2R2_Manual-xccdf.html">Arista MLS EOS 4.X NDM Security Technical Implementation Guide Version: 2 Release: 2 Benchmark Date: 02 Apr 2025</a>:</div> <h1>The Arista network device must be configured to synchronize internal system clocks using redundant authenticated time sources.</h1><h2>DISA Rule</h2><p>SV-255958r1015711_rule</p><h2>Vulnerability Number</h2><p>V-255958</p><h2>Group Title</h2><p>SRG-APP-000373-NDM-000298</p><h2>Rule Version</h2><p>ARST-ND-000600</p><h2>Severity</h2><p>CAT II</p><h2>CCI(s)</h2><ul><li>CCI-001889 - Record time stamps for audit records that meet organization-defined granularity of time measurement.</li><li>CCI-001890 - Record time stamps for audit records that use Coordinated Universal Time, have a fixed local time offset from Coordinated Universal Time, or that include the local time offset as part of the time stamp.</li><li>CCI-004928 - Identify a secondary authoritative time source that is in a different geographic region than the primary authoritative time source.</li><li>CCI-001967 - Authenticate organization-defined devices and/or types of devices before establishing a local, remote, and/or network connection using bidirectional authentication that is cryptographically based.</li><li>CCI-004922 - Synchronize system clocks within and between systems or system components.</li><li>CCI-004923 - Compare the internal system clocks on an organization-defined frequency with organization-defined authoritative time source.</li></ul><h2>Weight</h2><p>10</p><h2>Fix Recommendation</h2><p>Configure the Arista network device for at least two trusted time sources and to use cryptographic authentication with the following command example:<br />
+<br />
+switch#config<br />
+switch(config)#ntp authentication-key 12 sha1 0 &lt;key&gt;<br />
+switch(config)#ntp trusted-key 12<br />
+switch(config)#ntp authenticate servers<br />
+switch(config)#ntp local-interface Management1<br />
+switch(config)#ntp server 192.168.16.36 prefer key 12<br />
+switch(config)#ntp server 192.168.16.37 key 12<br />
+switch(config)#exit<br />
+<br />
+Configure the local time zone for the device.<br />
+<br />
+switch#config<br />
+switch(config)#clock timezone &lt;timezone&gt;<br />
+switch(config)#exit</p><h2>Check Contents</h2><p>Determine if the network device is configured to synchronize internal information system clocks with authenticated primary and secondary time sources.<br />
+<br />
+Verify the Arista network device configuration with the following example:<br />
+<br />
+switch# show running-config | section ntp<br />
+<br />
+ntp authentication-key 12 sha1 7 06131C2058470A58<br />
+ntp trusted-key 12<br />
+ntp authenticate servers<br />
+ntp local-interface Management1<br />
+ntp server 192.168.16.36 prefer key 12<br />
+ntp server 192.168.16.37 key 12<br />
+<br />
+If the Arista network device is not configured to synchronize internal system clocks with the primary and secondary time sources, this is a finding.<br />
+<br />
+If the Arista network device does not authenticate Network Time Protocol sources using authentication that is cryptographically based, this is a finding.</p><h2>Vulnerability Number</h2><p>V-255958</p><h2>Documentable</h2><p>False</p><h2>Rule Version</h2><p>ARST-ND-000600</p><h2>Severity Override Guidance</h2><p>Determine if the network device is configured to synchronize internal information system clocks with authenticated primary and secondary time sources.<br />
+<br />
+Verify the Arista network device configuration with the following example:<br />
+<br />
+switch# show running-config | section ntp<br />
+<br />
+ntp authentication-key 12 sha1 7 06131C2058470A58<br />
+ntp trusted-key 12<br />
+ntp authenticate servers<br />
+ntp local-interface Management1<br />
+ntp server 192.168.16.36 prefer key 12<br />
+ntp server 192.168.16.37 key 12<br />
+<br />
+If the Arista network device is not configured to synchronize internal system clocks with the primary and secondary time sources, this is a finding.<br />
+<br />
+If the Arista network device does not authenticate Network Time Protocol sources using authentication that is cryptographically based, this is a finding.</p><h2>Check Content Reference</h2><p>M</p><h2>Target Key</h2><p>5511</p></body></html>

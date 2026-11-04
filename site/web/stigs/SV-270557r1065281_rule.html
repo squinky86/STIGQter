@@ -1,0 +1,263 @@
+<!doctype html><html lang="en"><head><meta charset="utf-8"><title>STIGQter: STIG Check Details: SV-270557r1065281_rule: Access to external executables must be disabled or restricted.</title><link rel="icon" type="image/svg+xml" href="STIGQter.svg" /><script async src="https://www.googletagmanager.com/gtag/js?id=UA-31381839-2"></script><script src="include.js"></script><script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-4110907817782130" crossorigin="anonymous"></script></head><body><div><img src="STIGQter.svg" alt="STIGQter" style="height:1em;" /> <a href="https://www.stigqter.com/">STIGQter</a>: <a href="main.html">STIG Summary</a>: <a href="U_Oracle_Database_19c_STIG_V1R5_Manual-xccdf.html">Oracle Database 19c Security Technical Implementation Guide Version: 1 Release: 5 Benchmark Date: 01 Apr 2026</a>:</div> <h1>Access to external executables must be disabled or restricted.</h1><h2>DISA Rule</h2><p>SV-270557r1065281_rule</p><h2>Vulnerability Number</h2><p>V-270557</p><h2>Group Title</h2><p>SRG-APP-000141-DB-000093</p><h2>Rule Version</h2><p>O19C-00-013400</p><h2>Severity</h2><p>CAT II</p><h2>CCI(s)</h2><ul><li>CCI-000381 - Configure the system to provide only organization-defined mission essential capabilities.</li></ul><h2>Weight</h2><p>10</p><h2>Fix Recommendation</h2><p>If use of the external procedure agent is required, then authorize and document the requirement in the system documentation.<br />
+<br />
+If the external procedure agent must be accessible to the Oracle listener, then specify this and authorize it in the system documentation.<br />
+<br />
+If use of the Oracle External Procedure agent is not required:<br />
+<br />
+1. Stop the Oracle Listener process.<br />
+2. Remove all references to extproc in the listener.ora and tnsnames.ora files.<br />
+3. Alter the permissions on the executable files:<br />
+Unix: Remove read/write/execute permissions from owner, group, and world.<br />
+Windows: Remove Groups/Users from the executable (except groups SYSTEM and ADMINISTRATORS) and allow READ [only] for SYSTEM and ADMINISTRATORS groups.<br />
+<br />
+If required:<br />
+<br />
+1. Restrict extproc execution to only authorized applications.<br />
+2. Specify EXTPROC_DLLS=ONLY: [list of authorized DLLS] in the extproc.ora and the listener.ora files.<br />
+3. Create a separate, dedicated listener for use by the external procedure agent.<br />
+<br />
+Refer to the Oracle Net Services Administrators Guides, External Procedures section for detailed configuration information.</p><h2>Check Contents</h2><p>Review the system documentation to determine if the use of the external procedure agent is authorized.<br />
+<br />
+Review the ORACLE_HOME/bin directory or search the ORACLE_BASE path for the executable extproc (Unix) or extproc.exe (Windows).<br />
+<br />
+If external procedure agent is not authorized for use in the system documentation and the executable file does not exist or is restricted, this is not a finding.<br />
+<br />
+If external procedure agent is not authorized for use in the system documentation and the executable file exists and is not restricted, this is a finding.<br />
+<br />
+If use of the external procedure agent is authorized, ensure extproc is restricted to execution of authorized applications.<br />
+<br />
+External jobs are run using the account &quot;nobody&quot; by default.<br />
+<br />
+Review the contents of the file ORACLE_HOME/rdbms/admin/externaljob.ora for the lines run_user= and run_group=.<br />
+<br />
+If the user assigned to these parameters is not &quot;nobody&quot;, this is a finding.<br />
+<br />
+The external procedure agent (extproc executable) is available directly from the database and does not require definition in the listener.ora file for use.<br />
+<br />
+Review the contents of the file ORACLE_HOME/hs/admin/extproc.ora.<br />
+<br />
+If the file does not exist, this is a finding.<br />
+<br />
+If the following entry does not appear in the file, this is a finding:<br />
+<br />
+EXTPROC_DLLS=ONLY:[dll full file name1]:[dll full file name2]:..<br />
+<br />
+[dll full file name] represents a full path and file name.<br />
+<br />
+This list of file names is separated by &quot;:&quot;.<br />
+<br />
+Note: If &quot;ONLY&quot; is specified, then the list is restricted to allow execution of only the DLLs specified in the list and is not a finding. If &quot;ANY&quot; is specified, then there are no restrictions for execution except what is controlled by operating system permissions and is a finding. If no specification is made, any files located in the %ORACLE_HOME%\bin directory on Windows systems or $ORACLE_HOME/lib directory on Unix systems can be executed (the default) and is a finding.<br />
+<br />
+Ensure that EXTPROC is not accessible from the listener.<br />
+<br />
+Review the listener.ora file. If any entries reference &quot;extproc&quot;, this is a finding.<br />
+<br />
+Determine if the external procedure agent is in use per Oracle 10.x conventions.<br />
+<br />
+Review the listener.ora file.<br />
+<br />
+If any entries reference &quot;extproc&quot;, then the agent is in use.<br />
+<br />
+If external procedure agent is not authorized for use in the system documentation and references to &quot;extproc&quot; exist, this is a finding.<br />
+<br />
+Sample listener.ora entries with extproc included:<br />
+<br />
+LISTENER =<br />
+(DESCRIPTION =<br />
+(ADDRESS = (PROTOCOL = TCP)(HOST = 127.0.0.1)(PORT = 1521))<br />
+)<br />
+EXTLSNR =<br />
+(DESCRIPTION =<br />
+(ADDRESS = (PROTOCOL = IPC)(KEY = EXTPROC))<br />
+)<br />
+SID_LIST_LISTENER =<br />
+(SID_LIST =<br />
+(SID_DESC =<br />
+(GLOBAL_DBNAME = ORCL)<br />
+(ORACLE_HOME = /home/oracle/app/oracle/product/19.0/db_1)<br />
+(SID_NAME = ORCL)<br />
+)<br />
+)<br />
+SID_LIST_EXTLSNR =<br />
+(SID_LIST =<br />
+(SID_DESC =<br />
+(PROGRAM = extproc)<br />
+(SID_NAME = PLSExtProc)<br />
+(ORACLE_HOME = /home/oracle/app/oracle/product/19.0/db_1)<br />
+(ENVS=&quot;EXTPROC_DLLS=ONLY:/home/app1/app1lib.so:/home/app2/app2lib.so,<br />
+LD_LIBRARY_PATH=/private/app2/lib:/private/app1,<br />
+MYPATH=/usr/fso:/usr/local/packages&quot;)<br />
+)<br />
+)<br />
+<br />
+Sample tnsnames.ora entries with extproc included:<br />
+<br />
+ORCL =<br />
+(DESCRIPTION =<br />
+(ADDRESS_LIST =<br />
+(ADDRESS = (PROTOCOL = TCP)(HOST = 127.0.0.1)(PORT = 1521))<br />
+)<br />
+(CONNECT_DATA =<br />
+(SERVICE_NAME = ORCL)<br />
+)<br />
+)<br />
+EXTPROC_CONNECTION_DATA =<br />
+(DESCRIPTION =<br />
+(ADDRESS_LIST =<br />
+(ADDRESS = (PROTOCOL = IPC)(KEY = extproc))<br />
+)<br />
+(CONNECT_DATA =<br />
+(SERVER = DEDICATED)<br />
+(SERVICE_NAME = PLSExtProc)<br />
+)<br />
+)<br />
+<br />
+If EXTPROC is in use, confirm that a listener is dedicated to serving the external procedure agent (as shown above).<br />
+<br />
+View the protocols configured for the listener.<br />
+<br />
+For the listener to be dedicated, the only entries will be to specify extproc.<br />
+<br />
+If there is not a dedicated listener in use for the external procedure agent, this is a finding.<br />
+<br />
+If the PROTOCOL= specified is other than IPC, this is a finding.<br />
+<br />
+Verify and ensure extproc is restricted executing authorized external applications only and extproc is restricted to execution of authorized applications.<br />
+<br />
+Review the listener.ora file.<br />
+<br />
+If the following entry does not exist, this is a finding:<br />
+<br />
+EXTPROC_DLLS=ONLY:[dll full file name1]:[dll full file name2]:...<br />
+<br />
+Note: [dll full file name] represents a full path and file name. This list of file names is separated by &quot;:&quot;.<br />
+<br />
+Note: If &quot;ONLY&quot; is specified, then the list is restricted to allow execution of only the DLLs specified in the list and is not a finding. If &quot;ANY&quot; is specified, then there are no restrictions for execution except what is controlled by operating system permissions and is a finding. If no specification is made, any files located in the %ORACLE_HOME%\bin directory on Windows systems or $ORACLE_HOME/lib directory on Unix systems can be executed (the default) and is a finding.<br />
+<br />
+View the listener.ora file (usually in ORACLE_HOME/network/admin or directory specified by the TNS_ADMIN environment variable).<br />
+<br />
+If multiple listener processes are running, then the listener.ora file for each must be viewed.<br />
+<br />
+For each process, determine the directory specified in the ORACLE_HOME or TNS_ADMIN environment variable defined for the process account to locate the listener.ora file.</p><h2>Vulnerability Number</h2><p>V-270557</p><h2>Documentable</h2><p>False</p><h2>Rule Version</h2><p>O19C-00-013400</p><h2>Severity Override Guidance</h2><p>Review the system documentation to determine if the use of the external procedure agent is authorized.<br />
+<br />
+Review the ORACLE_HOME/bin directory or search the ORACLE_BASE path for the executable extproc (Unix) or extproc.exe (Windows).<br />
+<br />
+If external procedure agent is not authorized for use in the system documentation and the executable file does not exist or is restricted, this is not a finding.<br />
+<br />
+If external procedure agent is not authorized for use in the system documentation and the executable file exists and is not restricted, this is a finding.<br />
+<br />
+If use of the external procedure agent is authorized, ensure extproc is restricted to execution of authorized applications.<br />
+<br />
+External jobs are run using the account &quot;nobody&quot; by default.<br />
+<br />
+Review the contents of the file ORACLE_HOME/rdbms/admin/externaljob.ora for the lines run_user= and run_group=.<br />
+<br />
+If the user assigned to these parameters is not &quot;nobody&quot;, this is a finding.<br />
+<br />
+The external procedure agent (extproc executable) is available directly from the database and does not require definition in the listener.ora file for use.<br />
+<br />
+Review the contents of the file ORACLE_HOME/hs/admin/extproc.ora.<br />
+<br />
+If the file does not exist, this is a finding.<br />
+<br />
+If the following entry does not appear in the file, this is a finding:<br />
+<br />
+EXTPROC_DLLS=ONLY:[dll full file name1]:[dll full file name2]:..<br />
+<br />
+[dll full file name] represents a full path and file name.<br />
+<br />
+This list of file names is separated by &quot;:&quot;.<br />
+<br />
+Note: If &quot;ONLY&quot; is specified, then the list is restricted to allow execution of only the DLLs specified in the list and is not a finding. If &quot;ANY&quot; is specified, then there are no restrictions for execution except what is controlled by operating system permissions and is a finding. If no specification is made, any files located in the %ORACLE_HOME%\bin directory on Windows systems or $ORACLE_HOME/lib directory on Unix systems can be executed (the default) and is a finding.<br />
+<br />
+Ensure that EXTPROC is not accessible from the listener.<br />
+<br />
+Review the listener.ora file. If any entries reference &quot;extproc&quot;, this is a finding.<br />
+<br />
+Determine if the external procedure agent is in use per Oracle 10.x conventions.<br />
+<br />
+Review the listener.ora file.<br />
+<br />
+If any entries reference &quot;extproc&quot;, then the agent is in use.<br />
+<br />
+If external procedure agent is not authorized for use in the system documentation and references to &quot;extproc&quot; exist, this is a finding.<br />
+<br />
+Sample listener.ora entries with extproc included:<br />
+<br />
+LISTENER =<br />
+(DESCRIPTION =<br />
+(ADDRESS = (PROTOCOL = TCP)(HOST = 127.0.0.1)(PORT = 1521))<br />
+)<br />
+EXTLSNR =<br />
+(DESCRIPTION =<br />
+(ADDRESS = (PROTOCOL = IPC)(KEY = EXTPROC))<br />
+)<br />
+SID_LIST_LISTENER =<br />
+(SID_LIST =<br />
+(SID_DESC =<br />
+(GLOBAL_DBNAME = ORCL)<br />
+(ORACLE_HOME = /home/oracle/app/oracle/product/19.0/db_1)<br />
+(SID_NAME = ORCL)<br />
+)<br />
+)<br />
+SID_LIST_EXTLSNR =<br />
+(SID_LIST =<br />
+(SID_DESC =<br />
+(PROGRAM = extproc)<br />
+(SID_NAME = PLSExtProc)<br />
+(ORACLE_HOME = /home/oracle/app/oracle/product/19.0/db_1)<br />
+(ENVS=&quot;EXTPROC_DLLS=ONLY:/home/app1/app1lib.so:/home/app2/app2lib.so,<br />
+LD_LIBRARY_PATH=/private/app2/lib:/private/app1,<br />
+MYPATH=/usr/fso:/usr/local/packages&quot;)<br />
+)<br />
+)<br />
+<br />
+Sample tnsnames.ora entries with extproc included:<br />
+<br />
+ORCL =<br />
+(DESCRIPTION =<br />
+(ADDRESS_LIST =<br />
+(ADDRESS = (PROTOCOL = TCP)(HOST = 127.0.0.1)(PORT = 1521))<br />
+)<br />
+(CONNECT_DATA =<br />
+(SERVICE_NAME = ORCL)<br />
+)<br />
+)<br />
+EXTPROC_CONNECTION_DATA =<br />
+(DESCRIPTION =<br />
+(ADDRESS_LIST =<br />
+(ADDRESS = (PROTOCOL = IPC)(KEY = extproc))<br />
+)<br />
+(CONNECT_DATA =<br />
+(SERVER = DEDICATED)<br />
+(SERVICE_NAME = PLSExtProc)<br />
+)<br />
+)<br />
+<br />
+If EXTPROC is in use, confirm that a listener is dedicated to serving the external procedure agent (as shown above).<br />
+<br />
+View the protocols configured for the listener.<br />
+<br />
+For the listener to be dedicated, the only entries will be to specify extproc.<br />
+<br />
+If there is not a dedicated listener in use for the external procedure agent, this is a finding.<br />
+<br />
+If the PROTOCOL= specified is other than IPC, this is a finding.<br />
+<br />
+Verify and ensure extproc is restricted executing authorized external applications only and extproc is restricted to execution of authorized applications.<br />
+<br />
+Review the listener.ora file.<br />
+<br />
+If the following entry does not exist, this is a finding:<br />
+<br />
+EXTPROC_DLLS=ONLY:[dll full file name1]:[dll full file name2]:...<br />
+<br />
+Note: [dll full file name] represents a full path and file name. This list of file names is separated by &quot;:&quot;.<br />
+<br />
+Note: If &quot;ONLY&quot; is specified, then the list is restricted to allow execution of only the DLLs specified in the list and is not a finding. If &quot;ANY&quot; is specified, then there are no restrictions for execution except what is controlled by operating system permissions and is a finding. If no specification is made, any files located in the %ORACLE_HOME%\bin directory on Windows systems or $ORACLE_HOME/lib directory on Unix systems can be executed (the default) and is a finding.<br />
+<br />
+View the listener.ora file (usually in ORACLE_HOME/network/admin or directory specified by the TNS_ADMIN environment variable).<br />
+<br />
+If multiple listener processes are running, then the listener.ora file for each must be viewed.<br />
+<br />
+For each process, determine the directory specified in the ORACLE_HOME or TNS_ADMIN environment variable defined for the process account to locate the listener.ora file.</p><h2>Check Content Reference</h2><p>M</p><h2>Target Key</h2><p>5672</p></body></html>

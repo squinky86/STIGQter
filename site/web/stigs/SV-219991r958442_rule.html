@@ -1,0 +1,71 @@
+<!doctype html><html lang="en"><head><meta charset="utf-8"><title>STIGQter: STIG Check Details: SV-219991r958442_rule: The audit system must be configured to audit all discretionary access control permission modifications.</title><link rel="icon" type="image/svg+xml" href="STIGQter.svg" /><script async src="https://www.googletagmanager.com/gtag/js?id=UA-31381839-2"></script><script src="include.js"></script><script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-4110907817782130" crossorigin="anonymous"></script></head><body><div><img src="STIGQter.svg" alt="STIGQter" style="height:1em;" /> <a href="https://www.stigqter.com/">STIGQter</a>: <a href="main.html">STIG Summary</a>: <a href="U_SOL_11_x86_STIG_V3R6_Manual-xccdf.html">Solaris 11 X86 Security Technical Implementation Guide Version: 3 Release: 6 Benchmark Date: 01 Jul 2026</a>:</div> <h1>The audit system must be configured to audit all discretionary access control permission modifications.</h1><h2>DISA Rule</h2><p>SV-219991r958442_rule</p><h2>Vulnerability Number</h2><p>V-219991</p><h2>Group Title</h2><p>SRG-OS-000062</p><h2>Rule Version</h2><p>SOL-11.1-010320</p><h2>Severity</h2><p>CAT II</p><h2>CCI(s)</h2><ul><li>CCI-000169 - Provide audit record generation capability for the event types the system is capable of auditing as defined in AU-2 a. on organization-defined information system components.</li></ul><h2>Weight</h2><p>10</p><h2>Fix Recommendation</h2><p>The Audit Configuration profile is required. All audit flags must be enabled in a single command.<br />
+<br />
+This action applies to the global zone only. Determine the zone that you are currently securing.<br />
+<br />
+# zonename<br />
+<br />
+If the command output is &quot;global&quot;, this action applies.<br />
+<br />
+For Solaris 11, 11.1, 11.2, and 11.3:<br />
+# pfexec auditconfig -setflags cusa,-ps,fd,-fa,fm<br />
+<br />
+For Solaris 11.4 or newer:<br />
+# pfexec auditconfig -setflags cusa,-fa,-ex,-ps,fd,fm<br />
+<br />
+Enable the audit policy to collect command line arguments.<br />
+<br />
+# pfexec auditconfig -setpolicy +argv<br />
+<br />
+These changes will not affect users that are currently logged in.</p><h2>Check Contents</h2><p>The Audit Configuration profile is required.<br />
+<br />
+Check that the audit flag for auditing file access is enabled.<br />
+<br />
+This check applies to the global zone only. Determine the zone that you are currently securing.<br />
+<br />
+# zonename<br />
+<br />
+If the command output is &quot;global&quot;, this check applies.<br />
+<br />
+Determine the OS version you are currently securing.<br />
+# uname –v<br />
+<br />
+For Solaris 11, 11.1, 11.2, and 11.3:<br />
+# pfexec auditconfig -getflags | grep active | cut -f2 -d=<br />
+If &quot;fm&quot; audit flag is not included in output, this is a finding.<br />
+<br />
+For Solaris 11.4 or newer:<br />
+# pfexec auditconfig -t -getflags | cut -f2 -d=<br />
+<br />
+If &quot;fm&quot; audit flag is not included in output, this is a finding.<br />
+<br />
+Determine if auditing policy is set to collect command line arguments.<br />
+<br />
+# pfexec auditconfig -getpolicy | grep active | grep argv<br />
+<br />
+If the active audit policies line does not appear, this is a finding.</p><h2>Vulnerability Number</h2><p>V-219991</p><h2>Documentable</h2><p>False</p><h2>Rule Version</h2><p>SOL-11.1-010320</p><h2>Severity Override Guidance</h2><p>The Audit Configuration profile is required.<br />
+<br />
+Check that the audit flag for auditing file access is enabled.<br />
+<br />
+This check applies to the global zone only. Determine the zone that you are currently securing.<br />
+<br />
+# zonename<br />
+<br />
+If the command output is &quot;global&quot;, this check applies.<br />
+<br />
+Determine the OS version you are currently securing.<br />
+# uname –v<br />
+<br />
+For Solaris 11, 11.1, 11.2, and 11.3:<br />
+# pfexec auditconfig -getflags | grep active | cut -f2 -d=<br />
+If &quot;fm&quot; audit flag is not included in output, this is a finding.<br />
+<br />
+For Solaris 11.4 or newer:<br />
+# pfexec auditconfig -t -getflags | cut -f2 -d=<br />
+<br />
+If &quot;fm&quot; audit flag is not included in output, this is a finding.<br />
+<br />
+Determine if auditing policy is set to collect command line arguments.<br />
+<br />
+# pfexec auditconfig -getpolicy | grep active | grep argv<br />
+<br />
+If the active audit policies line does not appear, this is a finding.</p><h2>Check Content Reference</h2><p>M</p><h2>Target Key</h2><p>4021</p></body></html>

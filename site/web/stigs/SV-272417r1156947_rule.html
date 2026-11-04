@@ -1,0 +1,45 @@
+<!doctype html><html lang="en"><head><meta charset="utf-8"><title>STIGQter: STIG Check Details: SV-272417r1156947_rule: A BIND 9.x server implementation must maintain the integrity and confidentiality of DNS information while it is being prepared for transmission, in transmission, and in use and must perform integrity verification and data origin verification for all DNS information.</title><link rel="icon" type="image/svg+xml" href="STIGQter.svg" /><script async src="https://www.googletagmanager.com/gtag/js?id=UA-31381839-2"></script><script src="include.js"></script><script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-4110907817782130" crossorigin="anonymous"></script></head><body><div><img src="STIGQter.svg" alt="STIGQter" style="height:1em;" /> <a href="https://www.stigqter.com/">STIGQter</a>: <a href="main.html">STIG Summary</a>: <a href="U_BIND_9-x_STIG_V3R3_Manual-xccdf.html">BIND 9.x Security Technical Implementation Guide Version: 3 Release: 3 Benchmark Date: 01 Jul 2026</a>:</div> <h1>A BIND 9.x server implementation must maintain the integrity and confidentiality of DNS information while it is being prepared for transmission, in transmission, and in use and must perform integrity verification and data origin verification for all DNS information.</h1><h2>DISA Rule</h2><p>SV-272417r1156947_rule</p><h2>Vulnerability Number</h2><p>V-272417</p><h2>Group Title</h2><p>SRG-APP-000348-DNS-000042</p><h2>Rule Version</h2><p>BIND-9X-001650</p><h2>Severity</h2><p>CAT I</p><h2>CCI(s)</h2><ul><li>CCI-000366 - Implement the security configuration settings.</li><li>CCI-001902 - Provide the means for authorized individuals to determine the identity of the producer of the information.</li><li>CCI-002463 - Provide data origin artifacts for internal name/address resolution queries.</li><li>CCI-001178 - Provide additional data origin authentication artifacts along with the authoritative name resolution data the system returns in response to external name/address resolution queries.</li><li>CCI-001184 - Protect the authenticity of communications sessions.</li><li>CCI-001663 - Provide the means to enable verification of a chain of trust among parent and child domains (if the child supports secure resolution services), when operating as part of a distributed, hierarchical namespace.</li><li>CCI-001901 - Bind the identity of the information producer with the information to an organization-defined strength of binding.</li><li>CCI-001904 - Validates the binding of the information producer identity to the information at an organization-defined frequency.</li><li>CCI-002420 - Maintain the confidentiality and/or integrity of information during preparation for transmission.</li><li>CCI-002422 - Maintain the confidentiality and/or integrity of information during reception.</li><li>CCI-002462 - Provide additional data integrity verification artifacts along with the authoritative name resolution data the system returns in response to external name/address resolution queries.</li><li>CCI-002464 - Provide data integrity protection artifacts for internal name/address resolution queries.</li><li>CCI-002465 - Request data origin authentication verification on the name/address resolution responses the system receives from authoritative sources.</li><li>CCI-002466 - Request data integrity verification on the name/address resolution responses the system receives from authoritative sources.</li><li>CCI-002467 - Perform data integrity verification on the name/address resolution responses the system receives from authoritative sources.</li><li>CCI-002468 - Perform data origin verification authentication on the name/address resolution responses the system receives from authoritative sources.</li><li>CCI-001310 - Checks the validity of organization-defined information inputs to the system.</li></ul><h2>Weight</h2><p>10</p><h2>Fix Recommendation</h2><p>Set the &quot;dnssec-validation&quot; option to &quot;yes&quot;.<br />
+<br />
+Sign each zone file for which the name server is responsible.<br />
+<br />
+Configure each zone for which the name server is responsible to use a DNSSEC signed zone.</p><h2>Check Contents</h2><p>For a recursive server, verify that dnssec-validation yes is enabled.<br />
+<br />
+Inspect the &quot;named.conf&quot; file for the following:<br />
+<br />
+dnssec-validation yes;<br />
+<br />
+If &quot;dnssec-validation yes&quot; does not exist or is not set to &quot;yes&quot;, this is a finding.<br />
+<br />
+For an authoritative server, verify that each zone on the name server has been signed.<br />
+<br />
+Identify each zone file for which the name server is responsible and search each file for the &quot;DNSKEY&quot; entries:<br />
+<br />
+# less &lt;signed_zone_file&gt;<br />
+86400 DNSKEY 257 3 8 ( HASHED_KEY ) ; KSK; alg = ECDSAP256SHA256; key id = 31225<br />
+86400 DNSKEY 256 3 8 ( HASHED_KEY ) ; ZSK; alg = ECDSAP256SHA256; key id = 52179<br />
+<br />
+Verify that there are separate &quot;DNSKEY&quot; entries for the &quot;KSK&quot; and the &quot;ZSK&quot;.<br />
+<br />
+If the &quot;DNSKEY&quot; entries are missing, the zone file is not signed.<br />
+<br />
+If the zone files are not signed, this is a finding.</p><h2>Vulnerability Number</h2><p>V-272417</p><h2>Documentable</h2><p>False</p><h2>Rule Version</h2><p>BIND-9X-001650</p><h2>Severity Override Guidance</h2><p>For a recursive server, verify that dnssec-validation yes is enabled.<br />
+<br />
+Inspect the &quot;named.conf&quot; file for the following:<br />
+<br />
+dnssec-validation yes;<br />
+<br />
+If &quot;dnssec-validation yes&quot; does not exist or is not set to &quot;yes&quot;, this is a finding.<br />
+<br />
+For an authoritative server, verify that each zone on the name server has been signed.<br />
+<br />
+Identify each zone file for which the name server is responsible and search each file for the &quot;DNSKEY&quot; entries:<br />
+<br />
+# less &lt;signed_zone_file&gt;<br />
+86400 DNSKEY 257 3 8 ( HASHED_KEY ) ; KSK; alg = ECDSAP256SHA256; key id = 31225<br />
+86400 DNSKEY 256 3 8 ( HASHED_KEY ) ; ZSK; alg = ECDSAP256SHA256; key id = 52179<br />
+<br />
+Verify that there are separate &quot;DNSKEY&quot; entries for the &quot;KSK&quot; and the &quot;ZSK&quot;.<br />
+<br />
+If the &quot;DNSKEY&quot; entries are missing, the zone file is not signed.<br />
+<br />
+If the zone files are not signed, this is a finding.</p><h2>Check Content Reference</h2><p>M</p><h2>Target Key</h2><p>5687</p></body></html>

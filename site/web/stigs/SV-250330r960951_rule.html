@@ -1,0 +1,111 @@
+<!doctype html><html lang="en"><head><meta charset="utf-8"><title>STIGQter: STIG Check Details: SV-250330r960951_rule: The WebSphere Liberty Server must be configured to encrypt log information.</title><link rel="icon" type="image/svg+xml" href="STIGQter.svg" /><script async src="https://www.googletagmanager.com/gtag/js?id=UA-31381839-2"></script><script src="include.js"></script><script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-4110907817782130" crossorigin="anonymous"></script></head><body><div><img src="STIGQter.svg" alt="STIGQter" style="height:1em;" /> <a href="https://www.stigqter.com/">STIGQter</a>: <a href="main.html">STIG Summary</a>: <a href="U_IBM_WebSphere_Liberty_Server_STIG_V2R4_Manual-xccdf.html">IBM WebSphere Liberty Server Security Technical Implementation Guide Version: 2 Release: 4 Benchmark Date: 01 Apr 2026</a>:</div> <h1>The WebSphere Liberty Server must be configured to encrypt log information.</h1><h2>DISA Rule</h2><p>SV-250330r960951_rule</p><h2>Vulnerability Number</h2><p>V-250330</p><h2>Group Title</h2><p>SRG-APP-000126-AS-000085</p><h2>Rule Version</h2><p>IBMW-LS-000320</p><h2>Severity</h2><p>CAT II</p><h2>CCI(s)</h2><ul><li>CCI-000162 - Protect audit information from unauthorized access.</li><li>CCI-001314 - Reveal error messages only to organization-defined personnel or roles.</li><li>CCI-001350 - Implement cryptographic mechanisms to protect the integrity of audit information.</li></ul><h2>Weight</h2><p>10</p><h2>Fix Recommendation</h2><p>If the system is configured to send logs to a remote ELK stack log server, (or other remote logging solution) as per requirement IBMW-LS-000230, this requirement is Not Applicable.<br />
+<br />
+Signing is optional. The encrypted and/or signed audit logs are found under the ${server.config.dir}/logs directory and are named audit.log for the most recent, and audit_&lt;timestamp&gt;.log for any archived logs. Two keystores are recommended but not required when doing both encryption and signing (ikeyman as part of the JDK may be used) and a certificate imported into each. One keystore will contain the certificate used to encrypt the logs; the other keystore will contain the certificate used to sign the logs. The audit configuration must define the location of every keystore, their passwords, and the alias of each certificate used to encrypt and sign the logs.<br />
+<br />
+1. Enable the following features:<br />
+<br />
+&lt;featureManager&gt;<br />
+&lt;feature&gt;appSecurity-2.0&lt;/feature&gt;<br />
+&lt;feature&gt;audit-1.0&lt;/feature&gt;<br />
+&lt;feature&gt;ssl-1.0&lt;/feature&gt;<br />
+&lt;feature&gt;<br />
+&lt;/featureManager&gt;<br />
+<br />
+2. Verify a keystore is configured. The following is a JKS keystore example. PKCS12 is also a viable keystore:<br />
+<br />
+ &lt;keyStore<br />
+         id=&quot;auditEncKeyStore&quot;<br />
+         password=&quot;ENTER THE ENCRYPTION KEYSTORE PASSWORD&quot;<br />
+         location=&quot;${server.config.dir}/resources/security/AuditEncryptionKeyStore.jks&quot;<br />
+         type=&quot;JKS&quot; /&gt;<br />
+<br />
+      &lt;keyStore<br />
+         id=&quot;auditSignKeyStore&quot;<br />
+         password=&quot;ENTER THE SIGNING KEYSTORE PASSWORD&quot;<br />
+         location=&quot;${server.config.dir}/resources/security/AuditSigningKeyStore2.jks&quot;<br />
+         type=&quot;JKS&quot; /&gt;<br />
+<br />
+3. Enable auditFileHandler encryption. Signing the logs is optional.<br />
+<br />
+&lt;auditFileHandler <br />
+encrypt=&quot;true&quot;<br />
+        encryptAlias=&quot;auditencryption&quot;<br />
+        encryptKeyStoreRef=&quot;auditEncKeyStore&quot;<br />
+    sign=&quot;true&quot;<br />
+        signingAlias=&quot;auditsigning2&quot;<br />
+        signingKeyStoreRef=&quot;auditSignKeyStore&quot;&gt;<br />
+&lt;/auditFileHandler&gt;</p><h2>Check Contents</h2><p>If the system is configured to send logs to a remote ELK stack log server, as per requirement IBMW-LS-000230, (or other remote logging solution) this requirement is Not Applicable.<br />
+<br />
+As a user with local file access to ${server.config.dir}/server.xml: <br />
+<br />
+1. Verify the following features are configured.<br />
+<br />
+ &lt;featureManager&gt;<br />
+&lt;feature&gt;appSecurity-2.0&lt;/feature&gt;<br />
+&lt;feature&gt;audit-1.0&lt;/feature&gt;<br />
+&lt;feature&gt;ssl-1.0&lt;/feature&gt;<br />
+&lt;/featureManager&gt;<br />
+<br />
+2. Verify a keystore is configured. The following is an example:<br />
+<br />
+ &lt;keyStore<br />
+         id=&quot;auditEncKeyStore&quot;<br />
+         password=&quot;ENTER THE ENCRYPTION KEYSTORE PASSWORD&quot;<br />
+         location=&quot;${server.config.dir}/resources/security/AuditEncryptionKeyStore.jks&quot;<br />
+         type=&quot;JKS&quot; /&gt;<br />
+<br />
+      &lt;keyStore<br />
+         id=&quot;auditSignKeyStore&quot;<br />
+         password=&quot;ENTER THE SIGNING KEYSTORE PASSWORD&quot;<br />
+         location=&quot;${server.config.dir}/resources/security/AuditSigningKeyStore2.jks&quot;<br />
+         type=&quot;JKS&quot; /&gt;<br />
+<br />
+3. Verify auditFileHandler encryption is enabled. Signing is optional.<br />
+<br />
+&lt;auditFileHandler <br />
+encrypt=&quot;true&quot;<br />
+        encryptAlias=&quot;auditencryption&quot;<br />
+        encryptKeyStoreRef=&quot;auditEncKeyStore&quot;<br />
+    sign=&quot;true&quot;<br />
+        signingAlias=&quot;auditsigning2&quot;<br />
+        signingKeyStoreRef=&quot;auditSignKeyStore&quot;&gt;<br />
+&lt;/auditFileHandler&gt;<br />
+<br />
+If the features and keystore are not configured, and encryption is not enabled, this is a finding.</p><h2>Vulnerability Number</h2><p>V-250330</p><h2>Documentable</h2><p>False</p><h2>Rule Version</h2><p>IBMW-LS-000320</p><h2>Severity Override Guidance</h2><p>If the system is configured to send logs to a remote ELK stack log server, as per requirement IBMW-LS-000230, (or other remote logging solution) this requirement is Not Applicable.<br />
+<br />
+As a user with local file access to ${server.config.dir}/server.xml: <br />
+<br />
+1. Verify the following features are configured.<br />
+<br />
+ &lt;featureManager&gt;<br />
+&lt;feature&gt;appSecurity-2.0&lt;/feature&gt;<br />
+&lt;feature&gt;audit-1.0&lt;/feature&gt;<br />
+&lt;feature&gt;ssl-1.0&lt;/feature&gt;<br />
+&lt;/featureManager&gt;<br />
+<br />
+2. Verify a keystore is configured. The following is an example:<br />
+<br />
+ &lt;keyStore<br />
+         id=&quot;auditEncKeyStore&quot;<br />
+         password=&quot;ENTER THE ENCRYPTION KEYSTORE PASSWORD&quot;<br />
+         location=&quot;${server.config.dir}/resources/security/AuditEncryptionKeyStore.jks&quot;<br />
+         type=&quot;JKS&quot; /&gt;<br />
+<br />
+      &lt;keyStore<br />
+         id=&quot;auditSignKeyStore&quot;<br />
+         password=&quot;ENTER THE SIGNING KEYSTORE PASSWORD&quot;<br />
+         location=&quot;${server.config.dir}/resources/security/AuditSigningKeyStore2.jks&quot;<br />
+         type=&quot;JKS&quot; /&gt;<br />
+<br />
+3. Verify auditFileHandler encryption is enabled. Signing is optional.<br />
+<br />
+&lt;auditFileHandler <br />
+encrypt=&quot;true&quot;<br />
+        encryptAlias=&quot;auditencryption&quot;<br />
+        encryptKeyStoreRef=&quot;auditEncKeyStore&quot;<br />
+    sign=&quot;true&quot;<br />
+        signingAlias=&quot;auditsigning2&quot;<br />
+        signingKeyStoreRef=&quot;auditSignKeyStore&quot;&gt;<br />
+&lt;/auditFileHandler&gt;<br />
+<br />
+If the features and keystore are not configured, and encryption is not enabled, this is a finding.</p><h2>Check Content Reference</h2><p>M</p><h2>Target Key</h2><p>5424</p></body></html>

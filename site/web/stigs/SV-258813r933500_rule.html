@@ -1,0 +1,48 @@
+<!doctype html><html lang="en"><head><meta charset="utf-8"><title>STIGQter: STIG Check Details: SV-258813r933500_rule: The Photon operating system must generate audit records when successful/unsuccessful attempts to access privileges occur.</title><link rel="icon" type="image/svg+xml" href="STIGQter.svg" /><script async src="https://www.googletagmanager.com/gtag/js?id=UA-31381839-2"></script><script src="include.js"></script><script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-4110907817782130" crossorigin="anonymous"></script></head><body><div><img src="STIGQter.svg" alt="STIGQter" style="height:1em;" /> <a href="https://www.stigqter.com/">STIGQter</a>: <a href="main.html">STIG Summary</a>: <a href="U_VMW_vSphere_8-0_VCSA_Photon_OS_4-0_STIG_V1R1_Manual-xccdf.html">VMware vSphere 8.0 vCenter Appliance Photon OS 4.0 Security Technical Implementation Guide Version: 1 Release: 1 Benchmark Date: 31 Oct 2023</a>:</div> <h1>The Photon operating system must generate audit records when successful/unsuccessful attempts to access privileges occur.</h1><h2>DISA Rule</h2><p>SV-258813r933500_rule</p><h2>Vulnerability Number</h2><p>V-258813</p><h2>Group Title</h2><p>SRG-OS-000064-GPOS-00033</p><h2>Rule Version</h2><p>PHTN-40-000031</p><h2>Severity</h2><p>CAT II</p><h2>CCI(s)</h2><ul><li>CCI-000172 - Generate audit records for the event types defined in AU-2 c that include the audit record content defined in AU-3.</li></ul><h2>Weight</h2><p>10</p><h2>Fix Recommendation</h2><p>Navigate to and open:<br />
+<br />
+/etc/audit/rules.d/audit.STIG.rules<br />
+<br />
+Add or update the following lines:<br />
+<br />
+-a always,exit -F arch=b64 -S chmod,fchmod,chown,fchown,lchown,setxattr,lsetxattr,fsetxattr,removexattr,lremovexattr,fremovexattr,fchownat,fchmodat -F auid&gt;=1000 -F auid!=unset -F key=perm_mod<br />
+-a always,exit -F arch=b64 -S chmod,fchmod,chown,fchown,lchown,setxattr,lsetxattr,fsetxattr,removexattr,lremovexattr,fremovexattr,fchownat,fchmodat -F auid=0 -F key=perm_mod<br />
+-a always,exit -F arch=b32 -S chmod,lchown,fchmod,fchown,chown,setxattr,lsetxattr,fsetxattr,removexattr,lremovexattr,fremovexattr,fchownat,fchmodat -F auid&gt;=1000 -F auid!=unset -F key=perm_mod<br />
+-a always,exit -F arch=b32 -S chmod,lchown,fchmod,fchown,chown,setxattr,lsetxattr,fsetxattr,removexattr,lremovexattr,fremovexattr,fchownat,fchmodat -F auid=0 -F key=perm_mod<br />
+<br />
+At the command line, run the following command to load the new audit rules:<br />
+<br />
+# /sbin/augenrules --load<br />
+<br />
+Note: An &quot;audit.STIG.rules&quot; file is provided with this guidance for placement in &quot;/etc/audit/rules.d&quot; that contains all rules needed for auditd.<br />
+<br />
+Note: An older &quot;audit.STIG.rules&quot; may exist and may reference older &quot;GEN&quot; SRG IDs. This file can be removed and replaced as necessary with an updated one.</p><h2>Check Contents</h2><p>At the command line, run the following command to verify an audit rule exists to audit account creations:<br />
+<br />
+# auditctl -l | grep chmod<br />
+<br />
+Expected result:<br />
+<br />
+-a always,exit -F arch=b64 -S chmod,fchmod,chown,fchown,lchown,setxattr,lsetxattr,fsetxattr,removexattr,lremovexattr,fremovexattr,fchownat,fchmodat -F auid&gt;=1000 -F auid!=-1 -F key=perm_mod<br />
+-a always,exit -F arch=b64 -S chmod,fchmod,chown,fchown,lchown,setxattr,lsetxattr,fsetxattr,removexattr,lremovexattr,fremovexattr,fchownat,fchmodat -F auid=0 -F key=perm_mod<br />
+-a always,exit -F arch=b32 -S chmod,lchown,fchmod,fchown,chown,setxattr,lsetxattr,fsetxattr,removexattr,lremovexattr,fremovexattr,fchownat,fchmodat -F auid&gt;=1000 -F auid!=-1 -F key=perm_mod<br />
+-a always,exit -F arch=b32 -S chmod,lchown,fchmod,fchown,chown,setxattr,lsetxattr,fsetxattr,removexattr,lremovexattr,fremovexattr,fchownat,fchmodat -F auid=0 -F key=perm_mod<br />
+<br />
+If the output does not match the expected result, this is a finding.<br />
+<br />
+Note: This check depends on the &quot;auditd&quot; service to be in a running state for accurate results. The &quot;auditd&quot; service is enabled in control PHTN-40-000016.<br />
+<br />
+Note: auid!=-1, auid!=4294967295, auid!=unset are functionally equivalent in this check and the output of the above commands may be displayed in either format.</p><h2>Vulnerability Number</h2><p>V-258813</p><h2>Documentable</h2><p>False</p><h2>Rule Version</h2><p>PHTN-40-000031</p><h2>Severity Override Guidance</h2><p>At the command line, run the following command to verify an audit rule exists to audit account creations:<br />
+<br />
+# auditctl -l | grep chmod<br />
+<br />
+Expected result:<br />
+<br />
+-a always,exit -F arch=b64 -S chmod,fchmod,chown,fchown,lchown,setxattr,lsetxattr,fsetxattr,removexattr,lremovexattr,fremovexattr,fchownat,fchmodat -F auid&gt;=1000 -F auid!=-1 -F key=perm_mod<br />
+-a always,exit -F arch=b64 -S chmod,fchmod,chown,fchown,lchown,setxattr,lsetxattr,fsetxattr,removexattr,lremovexattr,fremovexattr,fchownat,fchmodat -F auid=0 -F key=perm_mod<br />
+-a always,exit -F arch=b32 -S chmod,lchown,fchmod,fchown,chown,setxattr,lsetxattr,fsetxattr,removexattr,lremovexattr,fremovexattr,fchownat,fchmodat -F auid&gt;=1000 -F auid!=-1 -F key=perm_mod<br />
+-a always,exit -F arch=b32 -S chmod,lchown,fchmod,fchown,chown,setxattr,lsetxattr,fsetxattr,removexattr,lremovexattr,fremovexattr,fchownat,fchmodat -F auid=0 -F key=perm_mod<br />
+<br />
+If the output does not match the expected result, this is a finding.<br />
+<br />
+Note: This check depends on the &quot;auditd&quot; service to be in a running state for accurate results. The &quot;auditd&quot; service is enabled in control PHTN-40-000016.<br />
+<br />
+Note: auid!=-1, auid!=4294967295, auid!=unset are functionally equivalent in this check and the output of the above commands may be displayed in either format.</p><h2>Check Content Reference</h2><p>M</p><h2>Target Key</h2><p>5569</p></body></html>

@@ -1,0 +1,47 @@
+<!doctype html><html lang="en"><head><meta charset="utf-8"><title>STIGQter: STIG Check Details: SV-279098r1172830_rule: The ColdFusion administrator must be using HTTPS to maintain the confidentiality and integrity of information during reception.</title><link rel="icon" type="image/svg+xml" href="STIGQter.svg" /><script async src="https://www.googletagmanager.com/gtag/js?id=UA-31381839-2"></script><script src="include.js"></script><script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-4110907817782130" crossorigin="anonymous"></script></head><body><div><img src="STIGQter.svg" alt="STIGQter" style="height:1em;" /> <a href="https://www.stigqter.com/">STIGQter</a>: <a href="main.html">STIG Summary</a>: <a href="U_Adobe_ColdFusion_STIG_V1R2_Manual-xccdf.html">Adobe ColdFusion Security Technical Implementation Guide Version: 1 Release: 2 Benchmark Date: 01 Jul 2026</a>:</div> <h1>The ColdFusion administrator must be using HTTPS to maintain the confidentiality and integrity of information during reception.</h1><h2>DISA Rule</h2><p>SV-279098r1172830_rule</p><h2>Vulnerability Number</h2><p>V-279098</p><h2>Group Title</h2><p>SRG-APP-000442-AS-000259</p><h2>Rule Version</h2><p>APAS-CF-000910</p><h2>Severity</h2><p>CAT II</p><h2>CCI(s)</h2><ul><li>CCI-002422 - Maintain the confidentiality and/or integrity of information during reception.</li></ul><h2>Weight</h2><p>10</p><h2>Fix Recommendation</h2><p>Configure ColdFusion to use HTTPS and disable unsecured HTTP access.<br />
+<br />
+1. Locate the server.xml file for each ColdFusion instance located at: &lt;ColdFusion_Installation_Directory&gt;\cfusion\runtime\conf\<br />
+<br />
+2. Open the server.xml file in a text editor.<br />
+<br />
+3. Locate all &lt;Connector&gt; elements using the HTTP protocol (e.g., protocol=&quot;org.apache.coyote.http11.Http11Protocol&quot; or Http11NioProtocol) without the attribute SSLEnabled=&quot;true&quot;<br />
+<br />
+4. Either delete these unsecured &lt;Connector&gt; tags or comment them out using XML syntax:<br />
+<br />
+&lt;!-- &lt;Connector port=&quot;8500&quot; protocol=&quot;org.apache.coyote.http11.Http11Protocol&quot; ... /&gt; --&gt;<br />
+<br />
+5. Locate a &lt;Connector&gt; tag that includes SSLEnabled=&quot;true&quot; and is configured to support HTTPS communication.<br />
+<br />
+6. If this tag is present but commented out, uncomment it by removing the &lt;!-- and --&gt; markers.<br />
+<br />
+7. If a secure HTTPS connector does not exist, create a new &lt;Connector&gt; tag within the &lt;Service&gt; element of the server.xml file. It should include the following attributes:<br />
+<br />
+&lt;Connector port=&quot;8443&quot; protocol=&quot;org.apache.coyote.http11.Http11NioProtocol&quot;<br />
+           maxThreads=&quot;150&quot; SSLEnabled=&quot;true&quot; scheme=&quot;https&quot; secure=&quot;true&quot;<br />
+           clientAuth=&quot;false&quot; keystoreFile=&quot;/path/to/keystore&quot; keystorePass=&quot;changeit&quot;/&gt;<br />
+<br />
+8. Replace /path/to/keystore with the actual path to the keystore file. <br />
+<br />
+9. Replace &quot;changeit&quot; with the actual password for the keystore.<br />
+<br />
+10. Save the file and restart ColdFusion for the changes to take effect.</p><h2>Check Contents</h2><p>Verify HTTPS.<br />
+<br />
+1. Locate the server.xml file for each ColdFusion instance located at: &lt;ColdFusion_Installation_Directory&gt;\cfusion\runtime\conf\<br />
+<br />
+2. Open the server.xml file in a text editor.<br />
+<br />
+3. Locate all &lt;Connector&gt; elements configured with an HTTP protocol (e.g., protocol=&quot;org.apache.coyote.http11.Http11Protocol&quot; or Http11NioProtocol).<br />
+<br />
+If any HTTP connector exists without SSLEnabled=&quot;true&quot; and is not commented out (&lt;!-- ... --&gt;), this is a finding.<br />
+<br />
+If there is no active (uncommented) &lt;Connector&gt; configured with SSLEnabled=&quot;true&quot;, scheme=&quot;https&quot;, and secure=&quot;true&quot;, this is a finding.</p><h2>Vulnerability Number</h2><p>V-279098</p><h2>Documentable</h2><p>False</p><h2>Rule Version</h2><p>APAS-CF-000910</p><h2>Severity Override Guidance</h2><p>Verify HTTPS.<br />
+<br />
+1. Locate the server.xml file for each ColdFusion instance located at: &lt;ColdFusion_Installation_Directory&gt;\cfusion\runtime\conf\<br />
+<br />
+2. Open the server.xml file in a text editor.<br />
+<br />
+3. Locate all &lt;Connector&gt; elements configured with an HTTP protocol (e.g., protocol=&quot;org.apache.coyote.http11.Http11Protocol&quot; or Http11NioProtocol).<br />
+<br />
+If any HTTP connector exists without SSLEnabled=&quot;true&quot; and is not commented out (&lt;!-- ... --&gt;), this is a finding.<br />
+<br />
+If there is no active (uncommented) &lt;Connector&gt; configured with SSLEnabled=&quot;true&quot;, scheme=&quot;https&quot;, and secure=&quot;true&quot;, this is a finding.</p><h2>Check Content Reference</h2><p>M</p><h2>Target Key</h2><p>5724</p></body></html>

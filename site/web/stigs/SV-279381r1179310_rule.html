@@ -1,0 +1,81 @@
+<!doctype html><html lang="en"><head><meta charset="utf-8"><title>STIGQter: STIG Check Details: SV-279381r1179310_rule: MongoDB must enforce access restrictions associated with changes to the configuration of MongoDB or database(s).</title><link rel="icon" type="image/svg+xml" href="STIGQter.svg" /><script async src="https://www.googletagmanager.com/gtag/js?id=UA-31381839-2"></script><script src="include.js"></script><script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-4110907817782130" crossorigin="anonymous"></script></head><body><div><img src="STIGQter.svg" alt="STIGQter" style="height:1em;" /> <a href="https://www.stigqter.com/">STIGQter</a>: <a href="main.html">STIG Summary</a>: <a href="U_MDB_Enterprise_Advanced_8-x_STIG_V1R1_Manual-xccdf.html">MongoDB Enterprise Advanced 8.x Security Technical Implementation Guide Version: 1 Release: 1 Benchmark Date: 26 Jan 2026</a>:</div> <h1>MongoDB must enforce access restrictions associated with changes to the configuration of MongoDB or database(s).</h1><h2>DISA Rule</h2><p>SV-279381r1179310_rule</p><h2>Vulnerability Number</h2><p>V-279381</p><h2>Group Title</h2><p>SRG-APP-000380-DB-000360</p><h2>Rule Version</h2><p>MD8X-00-007400</p><h2>Severity</h2><p>CAT II</p><h2>CCI(s)</h2><ul><li>CCI-001813 - Enforce access restrictions using organization-defined mechanisms.</li></ul><h2>Weight</h2><p>10</p><h2>Fix Recommendation</h2><p>Locate a machine that can access the MongoDB Security Checklist here: https://www.mongodb.com/docs/v8.0/administration/security-checklist/<br />
+<br />
+Review the MongoDB Security Checklist.<br />
+<br />
+Follow the procedures to enable MongoDB access control here: https://www.mongodb.com/docs/v8.0/tutorial/enable-authentication/#enable-access-control</p><h2>Check Contents</h2><p>To verify that authentication and role-based access controls (RBAC) are configured correctly and restrictions are being enforced, create a test user and a custom role, and then confirm expected operations:<br />
+<br />
+Once authenticated as a database administrator, use db.createUser() to create an additional user.<br />
+<br />
+The following operation adds a user &quot;myTester&quot; to the test database who has read-only access on the test database:<br />
+<br />
+&gt; use test<br />
+&gt; db.createUser(<br />
+   {<br />
+      user: &quot;myTester&quot;, pwd: &lt; password &gt; ,<br />
+      roles: [<br />
+         { role: &quot;read&quot;, db: &quot;test&quot; }<br />
+      ]<br />
+    }<br />
+ )<br />
+<br />
+Log out and then back in as the &quot;test&quot; database user. Issue the following to attempt to write to the test database with a read-only privilege:<br />
+<br />
+&gt; use test<br />
+&gt; db.testCollection.insertOne( { x: 1 } )<br />
+<br />
+This operation will fail with an error similar to the following:<br />
+<br />
+&quot;MongoServerError&quot;:&quot;not authorized on test to execute command&quot;{<br />
+   &quot;insert&quot;:&quot;testCollection&quot;,<br />
+   &quot;documents&quot;:[<br />
+      {<br />
+         &quot;x&quot;:1,<br />
+         &quot;_id&quot;:&quot;ObjectId(&quot;6500b96d1114d3a3ba7dda39&quot;)&quot;<br />
+      }<br />
+   ],<br />
+   &quot;ordered&quot;:true,<br />
+   &quot;lsid&quot;:{<br />
+      &quot;id&quot;:&quot;UUID(&quot;6cb3b9af-1ddc-446c-b0e0-bc9bf22807fa&quot;)&quot;<br />
+   },<br />
+   &quot;$db&quot;:&quot;test&quot;<br />
+}<br />
+<br />
+If the operation does not fail, this is a finding.</p><h2>Vulnerability Number</h2><p>V-279381</p><h2>Documentable</h2><p>False</p><h2>Rule Version</h2><p>MD8X-00-007400</p><h2>Severity Override Guidance</h2><p>To verify that authentication and role-based access controls (RBAC) are configured correctly and restrictions are being enforced, create a test user and a custom role, and then confirm expected operations:<br />
+<br />
+Once authenticated as a database administrator, use db.createUser() to create an additional user.<br />
+<br />
+The following operation adds a user &quot;myTester&quot; to the test database who has read-only access on the test database:<br />
+<br />
+&gt; use test<br />
+&gt; db.createUser(<br />
+   {<br />
+      user: &quot;myTester&quot;, pwd: &lt; password &gt; ,<br />
+      roles: [<br />
+         { role: &quot;read&quot;, db: &quot;test&quot; }<br />
+      ]<br />
+    }<br />
+ )<br />
+<br />
+Log out and then back in as the &quot;test&quot; database user. Issue the following to attempt to write to the test database with a read-only privilege:<br />
+<br />
+&gt; use test<br />
+&gt; db.testCollection.insertOne( { x: 1 } )<br />
+<br />
+This operation will fail with an error similar to the following:<br />
+<br />
+&quot;MongoServerError&quot;:&quot;not authorized on test to execute command&quot;{<br />
+   &quot;insert&quot;:&quot;testCollection&quot;,<br />
+   &quot;documents&quot;:[<br />
+      {<br />
+         &quot;x&quot;:1,<br />
+         &quot;_id&quot;:&quot;ObjectId(&quot;6500b96d1114d3a3ba7dda39&quot;)&quot;<br />
+      }<br />
+   ],<br />
+   &quot;ordered&quot;:true,<br />
+   &quot;lsid&quot;:{<br />
+      &quot;id&quot;:&quot;UUID(&quot;6cb3b9af-1ddc-446c-b0e0-bc9bf22807fa&quot;)&quot;<br />
+   },<br />
+   &quot;$db&quot;:&quot;test&quot;<br />
+}<br />
+<br />
+If the operation does not fail, this is a finding.</p><h2>Check Content Reference</h2><p>M</p><h2>Target Key</h2><p>5728</p></body></html>

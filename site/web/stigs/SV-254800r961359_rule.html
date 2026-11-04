@@ -1,0 +1,43 @@
+<!doctype html><html lang="en"><head><meta charset="utf-8"><title>STIGQter: STIG Check Details: SV-254800r961359_rule: Kubernetes must have a Pod Security Admission control file configured.</title><link rel="icon" type="image/svg+xml" href="STIGQter.svg" /><script async src="https://www.googletagmanager.com/gtag/js?id=UA-31381839-2"></script><script src="include.js"></script><script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-4110907817782130" crossorigin="anonymous"></script></head><body><div><img src="STIGQter.svg" alt="STIGQter" style="height:1em;" /> <a href="https://www.stigqter.com/">STIGQter</a>: <a href="main.html">STIG Summary</a>: <a href="U_Kubernetes_STIG_V2R6_Manual-xccdf.html">Kubernetes Security Technical Implementation Guide Version: 2 Release: 6 Benchmark Date: 01 Apr 2026</a>:</div> <h1>Kubernetes must have a Pod Security Admission control file configured.</h1><h2>DISA Rule</h2><p>SV-254800r961359_rule</p><h2>Vulnerability Number</h2><p>V-254800</p><h2>Group Title</h2><p>SRG-APP-000342-CTR-000775</p><h2>Rule Version</h2><p>CNTR-K8-002011</p><h2>Severity</h2><p>CAT I</p><h2>CCI(s)</h2><ul><li>CCI-002263 - Provides the means to associate organization-defined types of security attributes having organization-defined security attribute values with information in process.</li></ul><h2>Weight</h2><p>10</p><h2>Fix Recommendation</h2><p>Edit the Kubernetes API Server manifest file in the /etc/kubernetes/manifests directory on the Kubernetes Control Plane. <br />
+<br />
+Set the value of &quot;--admission-control-config-file&quot; to a valid path for the file.<br />
+<br />
+Create an admission controller config file:<br />
+Example File:<br />
+```yaml<br />
+apiVersion: apiserver.config.k8s.io/v1<br />
+kind: AdmissionConfiguration<br />
+plugins:<br />
+- name: PodSecurity<br />
+  configuration:<br />
+    apiVersion: pod-security.admission.config.k8s.io/v1beta1<br />
+    kind: PodSecurityConfiguration<br />
+    # Defaults applied when a mode label is not set.<br />
+    defaults:<br />
+      enforce: &quot;privileged&quot;<br />
+      enforce-version: &quot;latest&quot;<br />
+    exemptions:<br />
+      # Don't forget to exempt namespaces or users that are responsible for deploying<br />
+      # cluster components, because they need to run privileged containers<br />
+      usernames: [&quot;admin&quot;] <br />
+      namespaces: [&quot;kube-system&quot;]<br />
+<br />
+See for more details:<br />
+Migrate from PSP to PSA:<br />
+https://kubernetes.io/docs/tasks/configure-pod-container/migrate-from-psp/<br />
+<br />
+Best Practice: https://kubernetes.io/docs/concepts/security/pod-security-policy/#recommended-practice.</p><h2>Check Contents</h2><p>Change to the /etc/kubernetes/manifests directory on the Kubernetes Control Plane. Run the command:<br />
+<br />
+&quot;grep -i admission-control-config-file *&quot;<br />
+<br />
+If the setting &quot;--admission-control-config-file&quot; is not configured in the Kubernetes API Server manifest file, this is a finding.<br />
+<br />
+Inspect the .yaml file defined by the --admission-control-config-file. Verify PodSecurity is properly configured. <br />
+If least privilege is not represented, this is a finding.</p><h2>Vulnerability Number</h2><p>V-254800</p><h2>Documentable</h2><p>False</p><h2>Rule Version</h2><p>CNTR-K8-002011</p><h2>Severity Override Guidance</h2><p>Change to the /etc/kubernetes/manifests directory on the Kubernetes Control Plane. Run the command:<br />
+<br />
+&quot;grep -i admission-control-config-file *&quot;<br />
+<br />
+If the setting &quot;--admission-control-config-file&quot; is not configured in the Kubernetes API Server manifest file, this is a finding.<br />
+<br />
+Inspect the .yaml file defined by the --admission-control-config-file. Verify PodSecurity is properly configured. <br />
+If least privilege is not represented, this is a finding.</p><h2>Check Content Reference</h2><p>M</p><h2>Target Key</h2><p>5376</p></body></html>

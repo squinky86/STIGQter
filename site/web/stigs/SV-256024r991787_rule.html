@@ -1,0 +1,72 @@
+<!doctype html><html lang="en"><head><meta charset="utf-8"><title>STIGQter: STIG Check Details: SV-256024r991787_rule: The out-of-band management (OOBM) Arista gateway router must be configured to block any traffic destined to itself that is not sourced from the OOBM network or the NOC.</title><link rel="icon" type="image/svg+xml" href="STIGQter.svg" /><script async src="https://www.googletagmanager.com/gtag/js?id=UA-31381839-2"></script><script src="include.js"></script><script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-4110907817782130" crossorigin="anonymous"></script></head><body><div><img src="STIGQter.svg" alt="STIGQter" style="height:1em;" /> <a href="https://www.stigqter.com/">STIGQter</a>: <a href="main.html">STIG Summary</a>: <a href="U_Arista_MLS_EOS_4-X_Router_STIG_V2R2_Manual-xccdf.html">Arista MLS EOS 4.X Router Security Technical Implementation Guide Version: 2 Release: 2 Benchmark Date: 02 Apr 2025</a>:</div> <h1>The out-of-band management (OOBM) Arista gateway router must be configured to block any traffic destined to itself that is not sourced from the OOBM network or the NOC.</h1><h2>DISA Rule</h2><p>SV-256024r991787_rule</p><h2>Vulnerability Number</h2><p>V-256024</p><h2>Group Title</h2><p>SRG-NET-000205-RTR-000011</p><h2>Rule Version</h2><p>ARST-RT-000430</p><h2>Severity</h2><p>CAT II</p><h2>CCI(s)</h2><ul><li>CCI-001097 - Monitor and control communications at the external managed interfaces to the system and at key managed interfaces within the system.</li><li>CCI-004931 - Establish organization-defined alternate communications paths for system operations organizational command and control.</li></ul><h2>Weight</h2><p>10</p><h2>Fix Recommendation</h2><p>This requirement is not applicable for the DODIN backbone.<br />
+<br />
+Ensure traffic from the managed network is not able to access the OOBM gateway router using either receive path or interface ingress ACLs.<br />
+<br />
+Step 1: Configure the ACL to restrict all management plane traffic.<br />
+<br />
+ip access-list OOBM_ACL<br />
+   permit tcp 192.168.10.0/24 any eq ssh<br />
+   permit udp host 172.16.12.42 any eq snmp<br />
+   permit udp host 172.16.12.41 any eq ntp<br />
+   permit icmp 172.16.12.0/24 any<br />
+   deny ip any any log<br />
+<br />
+Step 2: Apply the ACL ingress. Execute the command &quot;sh run int Eth YY&quot;.<br />
+<br />
+interface ethernet 1<br />
+  description LAN link<br />
+  ip access-group OOBM_ACL in</p><h2>Check Contents</h2><p>This requirement is not applicable for the DODIN backbone.<br />
+<br />
+Review the access control list (ACL) or filter for the router receive path.<br />
+<br />
+Verify only traffic sourced from the OOBM network or the NOC is allowed to access the router.<br />
+<br />
+Note: If the platform does not support the receive path filter, verify all non-OOBM interfaces have an ingress ACL to restrict access to that interface address or any of the router's loopback addresses to only traffic sourced from the management network. An exception would be to allow packets destined to these interfaces used for troubleshooting, such as ping and traceroute.<br />
+<br />
+Step 1: To verify the ACL is configured, execute &quot;show ip access-list OOBM_ACL&quot;.<br />
+<br />
+Step 2: Determine the NOC management network subnet, which is 172.16.12.0/24.<br />
+<br />
+Step 3: Verify the ACL restricts all management plane traffic.<br />
+<br />
+ip access-list OOBM_ACL<br />
+   permit tcp 192.168.10.0/24 any eq ssh<br />
+   permit udp host 172.16.12.42 any eq snmp<br />
+   permit udp host 172.16.12.41 any eq ntp<br />
+   permit icmp 172.16.12.0/24 any<br />
+   deny ip any any log<br />
+<br />
+Step 4: To verify the ACL is applied ingress on the OOBM interface, execute the command &quot;sh run int Eth YY&quot;.<br />
+<br />
+interface ethernet 1<br />
+  description LAN link<br />
+  ip access-group OOBM_ACL in<br />
+<br />
+If the Arista router does not block any traffic destined to itself that is not sourced from the OOBM network or the NOC, this is a finding.</p><h2>Vulnerability Number</h2><p>V-256024</p><h2>Documentable</h2><p>False</p><h2>Rule Version</h2><p>ARST-RT-000430</p><h2>Severity Override Guidance</h2><p>This requirement is not applicable for the DODIN backbone.<br />
+<br />
+Review the access control list (ACL) or filter for the router receive path.<br />
+<br />
+Verify only traffic sourced from the OOBM network or the NOC is allowed to access the router.<br />
+<br />
+Note: If the platform does not support the receive path filter, verify all non-OOBM interfaces have an ingress ACL to restrict access to that interface address or any of the router's loopback addresses to only traffic sourced from the management network. An exception would be to allow packets destined to these interfaces used for troubleshooting, such as ping and traceroute.<br />
+<br />
+Step 1: To verify the ACL is configured, execute &quot;show ip access-list OOBM_ACL&quot;.<br />
+<br />
+Step 2: Determine the NOC management network subnet, which is 172.16.12.0/24.<br />
+<br />
+Step 3: Verify the ACL restricts all management plane traffic.<br />
+<br />
+ip access-list OOBM_ACL<br />
+   permit tcp 192.168.10.0/24 any eq ssh<br />
+   permit udp host 172.16.12.42 any eq snmp<br />
+   permit udp host 172.16.12.41 any eq ntp<br />
+   permit icmp 172.16.12.0/24 any<br />
+   deny ip any any log<br />
+<br />
+Step 4: To verify the ACL is applied ingress on the OOBM interface, execute the command &quot;sh run int Eth YY&quot;.<br />
+<br />
+interface ethernet 1<br />
+  description LAN link<br />
+  ip access-group OOBM_ACL in<br />
+<br />
+If the Arista router does not block any traffic destined to itself that is not sourced from the OOBM network or the NOC, this is a finding.</p><h2>Check Content Reference</h2><p>M</p><h2>Target Key</h2><p>5513</p></body></html>

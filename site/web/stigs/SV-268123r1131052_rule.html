@@ -1,0 +1,28 @@
+<!doctype html><html lang="en"><head><meta charset="utf-8"><title>STIGQter: STIG Check Details: SV-268123r1131052_rule: NixOS system configuration files and directories must be group-owned by root.</title><link rel="icon" type="image/svg+xml" href="STIGQter.svg" /><script async src="https://www.googletagmanager.com/gtag/js?id=UA-31381839-2"></script><script src="include.js"></script><script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-4110907817782130" crossorigin="anonymous"></script></head><body><div><img src="STIGQter.svg" alt="STIGQter" style="height:1em;" /> <a href="https://www.stigqter.com/">STIGQter</a>: <a href="main.html">STIG Summary</a>: <a href="U_Anduril_NixOS_STIG_V1R2_Manual-xccdf.html">Anduril NixOS Security Technical Implementation Guide Version: 1 Release: 2 Benchmark Date: 01 Oct 2025</a>:</div> <h1>NixOS system configuration files and directories must be group-owned by root.</h1><h2>DISA Rule</h2><p>SV-268123r1131052_rule</p><h2>Vulnerability Number</h2><p>V-268123</p><h2>Group Title</h2><p>SRG-OS-000063-GPOS-00032</p><h2>Rule Version</h2><p>ANIX-00-000690</p><h2>Severity</h2><p>CAT II</p><h2>CCI(s)</h2><ul><li>CCI-000171 - Allow organization-defined personnel or roles to select the event types that are to be logged by specific components of the system.</li></ul><h2>Weight</h2><p>10</p><h2>Fix Recommendation</h2><p>Update the NixOS config, typically stored either in /etc/nixos/configuration.nix or /etc/nixos/flake.nix, to only use the root group for files under /etc/audit.<br />
+<br />
+Rebuild and switch to the new NixOS configuration:<br />
+$ sudo nixos-rebuild switch</p><h2>Check Contents</h2><p>Verify that the NixOS audit configuration files and directories are group-owned by root with the following commands:<br />
+<br />
+$ sudo find /etc/audit -exec stat -L -c &quot;%G %n&quot; {} \;<br />
+$ sudo find /etc/systemd/system -follow -iname &quot;audit*service&quot; -exec stat -c &quot;%G %n&quot; {} \;<br />
+<br />
+root /etc/audit<br />
+root /etc/audit/auditd.conf<br />
+root /etc/systemd/system/audit.service<br />
+root /etc/systemd/system/auditd.service<br />
+root /etc/systemd/system/basic.target.wants/audit.service<br />
+root /etc/systemd/system/sysinit.target.wants/auditd.service<br />
+<br />
+If the system configuration files and directories are not group-owned by root or other privileged group (such as shadow), this is a finding.</p><h2>Vulnerability Number</h2><p>V-268123</p><h2>Documentable</h2><p>False</p><h2>Rule Version</h2><p>ANIX-00-000690</p><h2>Severity Override Guidance</h2><p>Verify that the NixOS audit configuration files and directories are group-owned by root with the following commands:<br />
+<br />
+$ sudo find /etc/audit -exec stat -L -c &quot;%G %n&quot; {} \;<br />
+$ sudo find /etc/systemd/system -follow -iname &quot;audit*service&quot; -exec stat -c &quot;%G %n&quot; {} \;<br />
+<br />
+root /etc/audit<br />
+root /etc/audit/auditd.conf<br />
+root /etc/systemd/system/audit.service<br />
+root /etc/systemd/system/auditd.service<br />
+root /etc/systemd/system/basic.target.wants/audit.service<br />
+root /etc/systemd/system/sysinit.target.wants/auditd.service<br />
+<br />
+If the system configuration files and directories are not group-owned by root or other privileged group (such as shadow), this is a finding.</p><h2>Check Content Reference</h2><p>M</p><h2>Target Key</h2><p>5658</p></body></html>

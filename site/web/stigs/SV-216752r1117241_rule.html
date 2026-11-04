@@ -1,0 +1,70 @@
+<!doctype html><html lang="en"><head><meta charset="utf-8"><title>STIGQter: STIG Check Details: SV-216752r1117241_rule: The Cisco perimeter router must be configured to deny network traffic by default and allow network traffic by exception.</title><link rel="icon" type="image/svg+xml" href="STIGQter.svg" /><script async src="https://www.googletagmanager.com/gtag/js?id=UA-31381839-2"></script><script src="include.js"></script><script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-4110907817782130" crossorigin="anonymous"></script></head><body><div><img src="STIGQter.svg" alt="STIGQter" style="height:1em;" /> <a href="https://www.stigqter.com/">STIGQter</a>: <a href="main.html">STIG Summary</a>: <a href="U_Cisco_IOS-XR_Router_RTR_STIG_V3R3_Manual-xccdf.html">Cisco IOS XR Router RTR Security Technical Implementation Guide Version: 3 Release: 3 Benchmark Date: 01 Oct 2025</a>:</div> <h1>The Cisco perimeter router must be configured to deny network traffic by default and allow network traffic by exception.</h1><h2>DISA Rule</h2><p>SV-216752r1117241_rule</p><h2>Vulnerability Number</h2><p>V-216752</p><h2>Group Title</h2><p>SRG-NET-000202-RTR-000001</p><h2>Rule Version</h2><p>CISC-RT-000240</p><h2>Severity</h2><p>CAT I</p><h2>CCI(s)</h2><ul><li>CCI-001109 - Deny network communications traffic by default and allow network communications traffic by exception at managed interfaces; and/or for organization-defined systems.</li></ul><h2>Weight</h2><p>10</p><h2>Fix Recommendation</h2><p>This requirement is not applicable for the DODIN Backbone.<br />
+<br />
+Step 1: Configure an inbound ACL to deny all other traffic by default as shown in the example below.<br />
+<br />
+RP/0/0/CPU0:R3(config)#ipv4 access-list EXTERNAL_ACL_INBOUND<br />
+RP/0/0/CPU0:R3(config-ipv4-acl)#permit tcp host x.11.1.1 eq bgp host x.11.1.2<br />
+RP/0/0/CPU0:R3(config-ipv4-acl)#permit tcp host x.11.1.1 host x.11.1.2 eq bgp<br />
+RP/0/0/CPU0:R3(config-ipv4-acl)#permit icmp host x.11.1.1 host x.11.1.2 echo<br />
+RP/0/0/CPU0:R3(config-ipv4-acl)#permit icmp host x.11.1.1 host x.11.1.2 echo-reply<br />
+RP/0/0/CPU0:R3(config-ipv4-acl)#deny ip any host x.11.1.1 log-input<br />
+RP/0/0/CPU0:R3(config-ipv4-acl)#permit tcp any any established<br />
+…<br />
+…<br />
+…<br />
+RP/0/0/CPU0:R3(config-ipv4-acl)#deny ip any any log-input <br />
+RP/0/0/CPU0:R3(config-ipv4-acl)#exit<br />
+<br />
+Step 2: Apply the ingress filter to all external interfaces<br />
+<br />
+RP/0/0/CPU0:R3(config)#int g0/0/0/1  <br />
+RP/0/0/CPU0:R3(config-if)#ipv4 access-group EXTERNAL_ACL_INBOUND in<br />
+RP/0/0/CPU0:R3(config-if)#end</p><h2>Check Contents</h2><p>This requirement is not applicable for the DODIN Backbone.<br />
+<br />
+Review the router configuration to verify that the inbound ACL applied to all external interfaces is configured to allow specific ports and protocols and deny all other traffic.<br />
+<br />
+Step 1: Verify that an inbound ACL is applied to all external interfaces as shown in the example below.<br />
+<br />
+interface GigabitEthernet0/0/0/1<br />
+ ipv4 address x.11.1.2 255.255.255.252<br />
+ ipv4 access-group EXTERNAL_ACL_INBOUND ingress<br />
+<br />
+Step 2: Review inbound ACL to verify that it is configured to deny all other traffic that is not explicitly allowed.<br />
+<br />
+ipv4 access-list EXTERNAL_ACL_INBOUND<br />
+ 10 permit tcp host x.11.1.1 eq bgp host x.11.1.2<br />
+ 20 permit tcp host x.11.1.1 host x.11.1.2 eq bgp<br />
+ 30 permit icmp host x.11.1.1 host x.11.1.2 echo<br />
+ 40 permit icmp host x.11.1.1 host x.11.1.2 echo-reply<br />
+ 50 deny ipv4 any host x.11.1.1 log-input <br />
+ 60 permit tcp any any established<br />
+ …<br />
+ …<br />
+ …<br />
+ 140 deny ipv4 any any log-input <br />
+<br />
+If the ACL is not configured to allow specific ports and protocols and deny all other traffic, this is a finding. If the ACL is not configured inbound on all external interfaces, this is a finding.</p><h2>Vulnerability Number</h2><p>V-216752</p><h2>Documentable</h2><p>False</p><h2>Rule Version</h2><p>CISC-RT-000240</p><h2>Severity Override Guidance</h2><p>This requirement is not applicable for the DODIN Backbone.<br />
+<br />
+Review the router configuration to verify that the inbound ACL applied to all external interfaces is configured to allow specific ports and protocols and deny all other traffic.<br />
+<br />
+Step 1: Verify that an inbound ACL is applied to all external interfaces as shown in the example below.<br />
+<br />
+interface GigabitEthernet0/0/0/1<br />
+ ipv4 address x.11.1.2 255.255.255.252<br />
+ ipv4 access-group EXTERNAL_ACL_INBOUND ingress<br />
+<br />
+Step 2: Review inbound ACL to verify that it is configured to deny all other traffic that is not explicitly allowed.<br />
+<br />
+ipv4 access-list EXTERNAL_ACL_INBOUND<br />
+ 10 permit tcp host x.11.1.1 eq bgp host x.11.1.2<br />
+ 20 permit tcp host x.11.1.1 host x.11.1.2 eq bgp<br />
+ 30 permit icmp host x.11.1.1 host x.11.1.2 echo<br />
+ 40 permit icmp host x.11.1.1 host x.11.1.2 echo-reply<br />
+ 50 deny ipv4 any host x.11.1.1 log-input <br />
+ 60 permit tcp any any established<br />
+ …<br />
+ …<br />
+ …<br />
+ 140 deny ipv4 any any log-input <br />
+<br />
+If the ACL is not configured to allow specific ports and protocols and deny all other traffic, this is a finding. If the ACL is not configured inbound on all external interfaces, this is a finding.</p><h2>Check Content Reference</h2><p>M</p><h2>Target Key</h2><p>4029</p></body></html>

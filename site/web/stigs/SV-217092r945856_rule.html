@@ -1,0 +1,78 @@
+<!doctype html><html lang="en"><head><meta charset="utf-8"><title>STIGQter: STIG Check Details: SV-217092r945856_rule: The Juniper multicast Designated Router (DR) must be configured to set the shortest-path tree (SPT) threshold to infinity to minimalize source-group (S, G) state within the multicast topology where Any Source Multicast (ASM) is deployed.</title><link rel="icon" type="image/svg+xml" href="STIGQter.svg" /><script async src="https://www.googletagmanager.com/gtag/js?id=UA-31381839-2"></script><script src="include.js"></script><script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-4110907817782130" crossorigin="anonymous"></script></head><body><div><img src="STIGQter.svg" alt="STIGQter" style="height:1em;" /> <a href="https://www.stigqter.com/">STIGQter</a>: <a href="main.html">STIG Summary</a>: <a href="U_Juniper_Router_RTR_STIG_V3R2_Manual-xccdf.html">Juniper Router RTR Security Technical Implementation Guide Version: 3 Release: 2 Benchmark Date: 30 Jan 2025</a>:</div> <h1>The Juniper multicast Designated Router (DR) must be configured to set the shortest-path tree (SPT) threshold to infinity to minimalize source-group (S, G) state within the multicast topology where Any Source Multicast (ASM) is deployed.</h1><h2>DISA Rule</h2><p>SV-217092r945856_rule</p><h2>Vulnerability Number</h2><p>V-217092</p><h2>Group Title</h2><p>SRG-NET-000362-RTR-000123</p><h2>Rule Version</h2><p>JUNI-RT-000880</p><h2>Severity</h2><p>CAT II</p><h2>CCI(s)</h2><ul><li>CCI-002385 - Protect against or limit the effects of organization-defined types of denial of service events.</li></ul><h2>Weight</h2><p>10</p><h2>Fix Recommendation</h2><p>Configure the multicast router to increase the SPT threshold or set it to infinity to minimalize (S, G) state within the multicast topology where ASM is deployed.<br />
+<br />
+Configure a policy statement to set SPT threshold to infinity for all multicast groups or only specific groups and sources.<br />
+<br />
+[edit policy-options]<br />
+set policy-statement SPT_INFINITY term ALL_GROUPS from route-filter 234.0.0.0/8 orlonger<br />
+set policy-statement SPT_INFINITY term ALL_GROUPS then accept<br />
+<br />
+Apply the SPT infinity policy.<br />
+<br />
+[edit protocols pim]<br />
+set spt-threshold infinity SPT_INFINITY</p><h2>Check Contents</h2><p>Review the multicast last-hop router configuration to verify that the SPT switchover threshold is set to infinity for all or specific multicast groups and sources.<br />
+<br />
+Verify that an infinity policy has been enabled for PIM.<br />
+<br />
+protocols {<br />
+    …<br />
+    …<br />
+    …<br />
+    }<br />
+    pim {<br />
+        spt-threshold {<br />
+            infinity SPT_INFINITY;<br />
+        }<br />
+    }<br />
+}<br />
+<br />
+Verify that the infinity policy defines specific multicast groups and sources or all multicast groups and sources as shown in the example below.<br />
+<br />
+policy-options {<br />
+    …<br />
+    …<br />
+    …<br />
+    }<br />
+    policy-statement SPT_INFINITY {<br />
+        term ALL_GROUPS {<br />
+            from {<br />
+                route-filter 234.0.0.0/8 orlonger;<br />
+            }<br />
+            then accept;<br />
+        }<br />
+    }<br />
+}<br />
+<br />
+If any multicast router is not configured to set the SPT threshold to infinity to minimalize (S, G) state, this is a finding.</p><h2>Vulnerability Number</h2><p>V-217092</p><h2>Documentable</h2><p>False</p><h2>Rule Version</h2><p>JUNI-RT-000880</p><h2>Severity Override Guidance</h2><p>Review the multicast last-hop router configuration to verify that the SPT switchover threshold is set to infinity for all or specific multicast groups and sources.<br />
+<br />
+Verify that an infinity policy has been enabled for PIM.<br />
+<br />
+protocols {<br />
+    …<br />
+    …<br />
+    …<br />
+    }<br />
+    pim {<br />
+        spt-threshold {<br />
+            infinity SPT_INFINITY;<br />
+        }<br />
+    }<br />
+}<br />
+<br />
+Verify that the infinity policy defines specific multicast groups and sources or all multicast groups and sources as shown in the example below.<br />
+<br />
+policy-options {<br />
+    …<br />
+    …<br />
+    …<br />
+    }<br />
+    policy-statement SPT_INFINITY {<br />
+        term ALL_GROUPS {<br />
+            from {<br />
+                route-filter 234.0.0.0/8 orlonger;<br />
+            }<br />
+            then accept;<br />
+        }<br />
+    }<br />
+}<br />
+<br />
+If any multicast router is not configured to set the SPT threshold to infinity to minimalize (S, G) state, this is a finding.</p><h2>Check Content Reference</h2><p>M</p><h2>Target Key</h2><p>4032</p></body></html>

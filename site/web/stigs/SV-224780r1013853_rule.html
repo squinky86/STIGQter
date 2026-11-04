@@ -1,0 +1,57 @@
+<!doctype html><html lang="en"><head><meta charset="utf-8"><title>STIGQter: STIG Check Details: SV-224780r1013853_rule: The Apache Tomcat Manager Web app password must be cryptographically hashed with a DOD-approved algorithm.</title><link rel="icon" type="image/svg+xml" href="STIGQter.svg" /><script async src="https://www.googletagmanager.com/gtag/js?id=UA-31381839-2"></script><script src="include.js"></script><script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-4110907817782130" crossorigin="anonymous"></script></head><body><div><img src="STIGQter.svg" alt="STIGQter" style="height:1em;" /> <a href="https://www.stigqter.com/">STIGQter</a>: <a href="main.html">STIG Summary</a>: <a href="U_ISEC7_Sphere_STIG_V3R1_Manual-xccdf.html">ISEC7 Sphere Security Technical Implementation Guide Version: 3 Release: 1 Benchmark Date: 24 Oct 2024</a>:</div> <h1>The Apache Tomcat Manager Web app password must be cryptographically hashed with a DOD-approved algorithm.</h1><h2>DISA Rule</h2><p>SV-224780r1013853_rule</p><h2>Vulnerability Number</h2><p>V-224780</p><h2>Group Title</h2><p>SRG-APP-000171</p><h2>Rule Version</h2><p>ISEC-06-550150</p><h2>Severity</h2><p>CAT II</p><h2>CCI(s)</h2><ul><li>CCI-004062 - For password-based authentication, store passwords using an approved salted key derivation function, preferably using a keyed hash.</li></ul><h2>Weight</h2><p>10</p><h2>Fix Recommendation</h2><p>To encrypt the Tomcat Manager Web app password, run the ISEC7 integrated installer or use the following manual procedure.<br />
+<br />
+Note: The ISEC7 integrated installer will configure SHA-512 as the hash algorithm, which is not available with the manual procedure. The manual procedure will configure SHA-256. Both are DOD approved.<br />
+<br />
+Log in to the ISEC7 SPHERE server.<br />
+Browse to &lt;Drive&gt;:\Program Files\ISEC7 SPHERE\Tomcat\conf and open Tomcat-Users.xml<br />
+Open the Command Prompt and CD to &lt;Drive&gt;:\Program Files\ISEC7 SPHERE\Tomcat\bin<br />
+Execute the following command:<br />
+<br />
+digest -a SHA-256 -h org.apache.catalina.realm.MessageDigestCredentialHandler *<br />
+<br />
+* Where password is the 15 character password designated for the account.<br />
+<br />
+Copy the output, which is the SHA-256 hashed digest password.<br />
+In Tomcat-Users.xml, add in the password for the user with the obfuscated output.<br />
+<br />
+ex: &lt;user password=&quot;310c55aa3d5b42217e7f0e80ce30467d$100000$529cceb1fbc80f4f461fc1bd56219d79d9c94d4a8fc46abad0646f27e753ff9e&quot; roles=&quot;manager-gui,manager-script&quot; username=&quot;admin&quot;/&gt;<br />
+<br />
+Save the file.<br />
+<br />
+Open &lt;Drive&gt;:\Program Files\ISEC7 SPHERE\Tomcat\conf\server.xml with Notepad.exe.<br />
+Select Edit &gt;&gt; Find and search for CredentialHandler.<br />
+Replace the text with: &lt;CredentialHandler className=&quot;org.apache.catalina.realm.MessageDigestCredentialHandler&quot; algorithm=&quot;SHA-256&quot; /&gt;<br />
+Save the file.<br />
+Restart the ISEC7 SPHERE Web service.</p><h2>Check Contents</h2><p>Verify the Apache Tomcat Manager Web app password is hashed using SHA-256 (or SHA-512).<br />
+<br />
+Log in to the ISEC7 SPHERE server.<br />
+Navigate to &lt;Drive&gt;:\Program Files\ISEC7 SPHERE\Tomcat\conf\<br />
+Open tomcat-users.xml and verify the user password has been hashed with an obfuscated password.<br />
+<br />
+ex: &lt;user password=&quot;310c55aa3d5b42217e7f0e80ce30467d$100000$529cceb1fbc80f4f461fc1bd56219d79d9c94d4a8fc46abad0646f27e753ff9e&quot; roles=&quot;manager-gui,manager-script&quot; username=&quot;admin&quot;/&gt;<br />
+<br />
+Open &lt;Drive&gt;:\Program Files\ISEC7 SPHERE\Tomcat\conf\server.xml with Notepad.exe.<br />
+<br />
+Select Edit &gt;&gt; Find and search for CredentialHandler.<br />
+<br />
+Confirm the text: &lt;CredentialHandler algorithm=&quot;PBKDF2WithHmacSHA512&quot; keyLength=&quot;256&quot; /&gt;<br />
+<br />
+Close the file.<br />
+<br />
+If the Apache Tomcat Manager Web app password is not hashed using SHA-256 (or SHA-512), this is a finding.</p><h2>Vulnerability Number</h2><p>V-224780</p><h2>Documentable</h2><p>False</p><h2>Rule Version</h2><p>ISEC-06-550150</p><h2>Severity Override Guidance</h2><p>Verify the Apache Tomcat Manager Web app password is hashed using SHA-256 (or SHA-512).<br />
+<br />
+Log in to the ISEC7 SPHERE server.<br />
+Navigate to &lt;Drive&gt;:\Program Files\ISEC7 SPHERE\Tomcat\conf\<br />
+Open tomcat-users.xml and verify the user password has been hashed with an obfuscated password.<br />
+<br />
+ex: &lt;user password=&quot;310c55aa3d5b42217e7f0e80ce30467d$100000$529cceb1fbc80f4f461fc1bd56219d79d9c94d4a8fc46abad0646f27e753ff9e&quot; roles=&quot;manager-gui,manager-script&quot; username=&quot;admin&quot;/&gt;<br />
+<br />
+Open &lt;Drive&gt;:\Program Files\ISEC7 SPHERE\Tomcat\conf\server.xml with Notepad.exe.<br />
+<br />
+Select Edit &gt;&gt; Find and search for CredentialHandler.<br />
+<br />
+Confirm the text: &lt;CredentialHandler algorithm=&quot;PBKDF2WithHmacSHA512&quot; keyLength=&quot;256&quot; /&gt;<br />
+<br />
+Close the file.<br />
+<br />
+If the Apache Tomcat Manager Web app password is not hashed using SHA-256 (or SHA-512), this is a finding.</p><h2>Check Content Reference</h2><p>M</p><h2>Target Key</h2><p>4200</p></body></html>

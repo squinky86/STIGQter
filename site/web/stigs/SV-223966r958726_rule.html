@@ -1,0 +1,45 @@
+<!doctype html><html lang="en"><head><meta charset="utf-8"><title>STIGQter: STIG Check Details: SV-223966r958726_rule: CA-TSS Default ACID must be properly defined.</title><link rel="icon" type="image/svg+xml" href="STIGQter.svg" /><script async src="https://www.googletagmanager.com/gtag/js?id=UA-31381839-2"></script><script src="include.js"></script><script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-4110907817782130" crossorigin="anonymous"></script></head><body><div><img src="STIGQter.svg" alt="STIGQter" style="height:1em;" /> <a href="https://www.stigqter.com/">STIGQter</a>: <a href="main.html">STIG Summary</a>: <a href="U_IBM_zOS_TSS_STIG_V9R9_Manual-xccdf.html">IBM z/OS TSS Security Technical Implementation Guide Version: 9 Release: 9 Benchmark Date: 01 Jul 2026</a>:</div> <h1>CA-TSS Default ACID must be properly defined.</h1><h2>DISA Rule</h2><p>SV-223966r958726_rule</p><h2>Vulnerability Number</h2><p>V-223966</p><h2>Group Title</h2><p>SRG-OS-000324-GPOS-00125</p><h2>Rule Version</h2><p>TSS0-ES-000930</p><h2>Severity</h2><p>CAT II</p><h2>CCI(s)</h2><ul><li>CCI-002235 - Prevent non-privileged users from executing privileged functions.</li></ul><h2>Weight</h2><p>10</p><h2>Fix Recommendation</h2><p>Ensure the default STC ACID is defined in accordance with the following restrictions. Evaluate the impact of correcting the deficiency. Develop a plan of action and implement the changes as specified.<br />
+<br />
+All STCs not defined to TSS will fail upon initiation. The following command may be used to associate all undefined STCs with a default action of FAIL:<br />
+<br />
+TSS ADD(STC) PROCNAME(DEFAULT) ACID(FAIL)<br />
+<br />
+If a valid requirement exists to establish a default STC, the following restrictions also apply:<br />
+<br />
+a. The ISSO will maintain the written request, justification, and authorization.<br />
+<br />
+b. The STC's ACID will have no other facilities permitted to it.<br />
+<br />
+c. The STC's ACID will have a permission of DSN(*****) ACCESS(NONE).<br />
+<br />
+TSS PERMIT(stc-acid) DSN(*****) ACCESS(NONE)<br />
+<br />
+d. The STC's ACID will not have any permission to the resources available to TSS.<br />
+<br />
+e. The STC's ACID will be sourced to the internal reader:<br />
+<br />
+ADD(stc-acid) SOURCE(INTRDR)<br />
+<br />
+f. An entry will be made in the STC table identifying the default ACID name as follows (&quot;stc-acid&quot; site defined):<br />
+<br />
+TSS ADD(STC) PROCNAME(DEFAULT) ACID(stc-acid)</p><h2>Check Contents</h2><p>From the ISPF Command Shell enter:<br />
+TSS LIST STC<br />
+<br />
+If *DEF* has action of *FAIL* this is not a finding.<br />
+<br />
+If the default ACID is defined enter:<br />
+TSS List(&lt;defined ACID&gt;)<br />
+<br />
+If the ACID has no access to resources and no facility access and sourced to the internal reader, this is not a finding.<br />
+<br />
+If any of the above is untrue, this is a finding.</p><h2>Vulnerability Number</h2><p>V-223966</p><h2>Documentable</h2><p>False</p><h2>Rule Version</h2><p>TSS0-ES-000930</p><h2>Severity Override Guidance</h2><p>From the ISPF Command Shell enter:<br />
+TSS LIST STC<br />
+<br />
+If *DEF* has action of *FAIL* this is not a finding.<br />
+<br />
+If the default ACID is defined enter:<br />
+TSS List(&lt;defined ACID&gt;)<br />
+<br />
+If the ACID has no access to resources and no facility access and sourced to the internal reader, this is not a finding.<br />
+<br />
+If any of the above is untrue, this is a finding.</p><h2>Check Content Reference</h2><p>M</p><h2>Target Key</h2><p>4102</p></body></html>

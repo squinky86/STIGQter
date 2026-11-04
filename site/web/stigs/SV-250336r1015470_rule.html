@@ -1,0 +1,38 @@
+<!doctype html><html lang="en"><head><meta charset="utf-8"><title>STIGQter: STIG Check Details: SV-250336r1015470_rule: The WebSphere Liberty Server must store only encrypted representations of user passwords.</title><link rel="icon" type="image/svg+xml" href="STIGQter.svg" /><script async src="https://www.googletagmanager.com/gtag/js?id=UA-31381839-2"></script><script src="include.js"></script><script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-4110907817782130" crossorigin="anonymous"></script></head><body><div><img src="STIGQter.svg" alt="STIGQter" style="height:1em;" /> <a href="https://www.stigqter.com/">STIGQter</a>: <a href="main.html">STIG Summary</a>: <a href="U_IBM_WebSphere_Liberty_Server_STIG_V2R4_Manual-xccdf.html">IBM WebSphere Liberty Server Security Technical Implementation Guide Version: 2 Release: 4 Benchmark Date: 01 Apr 2026</a>:</div> <h1>The WebSphere Liberty Server must store only encrypted representations of user passwords.</h1><h2>DISA Rule</h2><p>SV-250336r1015470_rule</p><h2>Vulnerability Number</h2><p>V-250336</p><h2>Group Title</h2><p>SRG-APP-000171-AS-000119</p><h2>Rule Version</h2><p>IBMW-LS-000440</p><h2>Severity</h2><p>CAT I</p><h2>CCI(s)</h2><ul><li>CCI-004062 - For password-based authentication, store passwords using an approved salted key derivation function, preferably using a keyed hash.</li><li>CCI-002475 - Implement cryptographic mechanisms to prevent unauthorized modification of organization-defined information when at rest on organization-defined system components.</li><li>CCI-002476 - Implement cryptographic mechanisms to prevent unauthorized disclosure of organization-defined information at rest on organization-defined system components.</li></ul><h2>Weight</h2><p>10</p><h2>Fix Recommendation</h2><p>For additional information regarding the use of the SecurityUtility command, refer to IBM’s website: <br />
+https://www.ibm.com/docs/en/was-liberty/base?topic=applications-securityutility-command<br />
+<br />
+Create a new xml file with file permissions of 660.<br />
+<br />
+File owner and group membership is the same as the WebSphere Liberty server user.<br />
+<br />
+Add the following line to the new xml file:<br />
+<br />
+&lt;variable name=&quot;wlp.password.encryption.key&quot; value=&quot;mysecret&quot;/&gt;<br />
+<br />
+In the above, &quot;mysecret&quot; is the passphrase selected to create a cryptographic hash that represents the password.<br />
+<br />
+Save the file to a secured location. Note the path and name, as it will be needed when updating server.xml.<br />
+<br />
+Edit the server.xml file and add the following line:<br />
+<br />
+&lt;include location=&quot;/path/&lt;xml file created&gt;&quot; /&gt;<br />
+<br />
+For every unencrypted password in server.xml, run the following SecurityUtility command, which can be found in the Liberty Server install path:<br />
+<br />
+SecurityUtility encode --encoding=aes <br />
+<br />
+This will prompt the user to enter the plain-text password stored within the server.xml file.<br />
+<br />
+The SecurityUtility tool will generate an AES cryptographic hash of the password.<br />
+<br />
+Copy and replace the plain-text password with the hashed value.<br />
+<br />
+This must be done for every plain-text password in server.xml.<br />
+<br />
+Restart the server by entering: <br />
+server stop &lt;server name&gt;<br />
+server start &lt;server name&gt;</p><h2>Check Contents</h2><p>As a privileged user with file access to ${server.config.dir}/server.xml, review and ensure there are no clear-text passwords stored within the server.xml file.<br />
+<br />
+If any passwords appear in plain text, or if any passwords start with {xor}, this is a finding.</p><h2>Vulnerability Number</h2><p>V-250336</p><h2>Documentable</h2><p>False</p><h2>Rule Version</h2><p>IBMW-LS-000440</p><h2>Severity Override Guidance</h2><p>As a privileged user with file access to ${server.config.dir}/server.xml, review and ensure there are no clear-text passwords stored within the server.xml file.<br />
+<br />
+If any passwords appear in plain text, or if any passwords start with {xor}, this is a finding.</p><h2>Check Content Reference</h2><p>M</p><h2>Target Key</h2><p>5424</p></body></html>

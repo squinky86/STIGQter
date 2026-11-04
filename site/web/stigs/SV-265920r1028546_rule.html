@@ -1,0 +1,98 @@
+<!doctype html><html lang="en"><head><meta charset="utf-8"><title>STIGQter: STIG Check Details: SV-265920r1028546_rule: MongoDB must map the PKI-authenticated identity to an associated user account.</title><link rel="icon" type="image/svg+xml" href="STIGQter.svg" /><script async src="https://www.googletagmanager.com/gtag/js?id=UA-31381839-2"></script><script src="include.js"></script><script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-4110907817782130" crossorigin="anonymous"></script></head><body><div><img src="STIGQter.svg" alt="STIGQter" style="height:1em;" /> <a href="https://www.stigqter.com/">STIGQter</a>: <a href="main.html">STIG Summary</a>: <a href="U_MongoDB_Enterprise_Advanced_7-x_STIG_V1R2_Manual-xccdf.html">MongoDB Enterprise Advanced 7.x Security Technical Implementation Guide Version: 1 Release: 2 Benchmark Date: 01 Jul 2026</a>:</div> <h1>MongoDB must map the PKI-authenticated identity to an associated user account.</h1><h2>DISA Rule</h2><p>SV-265920r1028546_rule</p><h2>Vulnerability Number</h2><p>V-265920</p><h2>Group Title</h2><p>SRG-APP-000177-DB-000069</p><h2>Rule Version</h2><p>MD7X-00-004200</p><h2>Severity</h2><p>CAT II</p><h2>CCI(s)</h2><ul><li>CCI-000187 - For public key-based authentication, map the authenticated identity to the account of the individual or group.</li></ul><h2>Weight</h2><p>10</p><h2>Fix Recommendation</h2><p>Add x.509 Certificate subject as an authorized user.<br />
+<br />
+To authenticate with a client certificate, first add the value of the subject from the client certificate as a MongoDB user.<br />
+<br />
+Each unique x.509 client certificate corresponds to a single MongoDB user; meaning a single client certificate cannot authenticate more than one MongoDB user.<br />
+<br />
+Note: The RDNs in the subject string must be compatible with the RFC2253 standard.<br />
+<br />
+Retrieve the RFC2253 formatted subject from the client certificate with the following command:<br />
+<br />
+$ openssl x509 -in &lt;pathToClient PEM&gt; -inform PEM -subject -nameopt RFC2253<br />
+<br />
+The command returns the subject string as well as certificate:<br />
+<br />
+subject= CN=myName,OU=myOrgUnit,O=myOrg,L=myLocality,ST=myState,C=myCountry<br />
+-----BEGIN CERTIFICATE-----<br />
+# ...<br />
+-----END CERTIFICATE-----<br />
+<br />
+Add the RFC2253 compliant value of the subject as a user. Omit spaces as needed.<br />
+<br />
+For example, in the mongo shell, to add the user with both the &quot;readWrite&quot; role in the test database and the &quot;userAdminAnyDatabase&quot; role which is defined only in the admin database:<br />
+<br />
+&gt; db.getSiblingDB(&quot;$external&quot;).runCommand(<br />
+  {<br />
+    createUser: &quot;CN=myName,OU=myOrgUnit,O=myOrg,L=myLocality,ST=myState,C=myCountry&quot;,<br />
+    roles: [<br />
+             { role: 'readWrite', db: 'test' },<br />
+             { role: 'userAdminAnyDatabase', db: 'admin' }<br />
+           ],<br />
+    writeConcern: { w: &quot;majority&quot; , wtimeout: 5000 }<br />
+  }<br />
+)<br />
+<br />
+In the above example, to add the user with the &quot;readWrite&quot; role in the test database, the role specification document specified &quot;test&quot; in the &quot;db&quot; field.<br />
+<br />
+To add &quot;userAdminAnyDatabase&quot; role for the user, the above example specified &quot;admin&quot; in the &quot;db&quot; field.<br />
+<br />
+Note: Some roles are defined only in the admin database, including: clusterAdmin, readAnyDatabase, readWriteAnyDatabase, dbAdminAnyDatabase, and userAdminAnyDatabase. <br />
+<br />
+To add a user with these roles, specify &quot;admin&quot; in the &quot;db&quot; field. Refer to Manage Users and Roles for details on adding a user with roles.<br />
+<br />
+To remove a user that is not authorized run the following command:<br />
+<br />
+&gt; use $external<br />
+&gt; db.dropUser(&quot;&lt;RDN of user&gt;&quot;)</p><h2>Check Contents</h2><p>Note: This is not applicable if using LDAP for authentication.<br />
+<br />
+Each unique x.509 client certificate corresponds to a single MongoDB user; meaning a single client certificate cannot authenticate more than one MongoDB user.<br />
+<br />
+Login to MongoDB and run the following command:<br />
+<br />
+&gt; db.runCommand( {connectionStatus: 1} );<br />
+<br />
+Example output being:<br />
+<br />
+&gt; db.runCommand({connectionStatus:1}).authInfo<br />
+{<br />
+    &quot;authenticatedUsers&quot; : [<br />
+        {<br />
+            &quot;user&quot; : &quot;CN=myName,OU=myOrgUnit,O=myOrg,L=myLocality,ST=myState,C=myCountry&quot;,<br />
+            &quot;db&quot; : &quot;mydb1&quot;<br />
+        }<br />
+    ],<br />
+    &quot;authenticatedUserRoles&quot; : [<br />
+        {<br />
+            &quot;role&quot; : &quot;dbOwner&quot;,<br />
+            &quot;db&quot; : &quot;mydb1&quot;<br />
+        }<br />
+    ]<br />
+}<br />
+<br />
+If the authenticated MongoDB user displayed does not have a user value equal to the x.509 cert's Subject Name, this is a finding.</p><h2>Vulnerability Number</h2><p>V-265920</p><h2>Documentable</h2><p>False</p><h2>Rule Version</h2><p>MD7X-00-004200</p><h2>Severity Override Guidance</h2><p>Note: This is not applicable if using LDAP for authentication.<br />
+<br />
+Each unique x.509 client certificate corresponds to a single MongoDB user; meaning a single client certificate cannot authenticate more than one MongoDB user.<br />
+<br />
+Login to MongoDB and run the following command:<br />
+<br />
+&gt; db.runCommand( {connectionStatus: 1} );<br />
+<br />
+Example output being:<br />
+<br />
+&gt; db.runCommand({connectionStatus:1}).authInfo<br />
+{<br />
+    &quot;authenticatedUsers&quot; : [<br />
+        {<br />
+            &quot;user&quot; : &quot;CN=myName,OU=myOrgUnit,O=myOrg,L=myLocality,ST=myState,C=myCountry&quot;,<br />
+            &quot;db&quot; : &quot;mydb1&quot;<br />
+        }<br />
+    ],<br />
+    &quot;authenticatedUserRoles&quot; : [<br />
+        {<br />
+            &quot;role&quot; : &quot;dbOwner&quot;,<br />
+            &quot;db&quot; : &quot;mydb1&quot;<br />
+        }<br />
+    ]<br />
+}<br />
+<br />
+If the authenticated MongoDB user displayed does not have a user value equal to the x.509 cert's Subject Name, this is a finding.</p><h2>Check Content Reference</h2><p>M</p><h2>Target Key</h2><p>5637</p></body></html>

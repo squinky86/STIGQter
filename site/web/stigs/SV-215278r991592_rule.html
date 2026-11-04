@@ -1,0 +1,106 @@
+<!doctype html><html lang="en"><head><meta charset="utf-8"><title>STIGQter: STIG Check Details: SV-215278r991592_rule: All files and directories contained in users home directories on AIX must be group-owned by a group in which the home directory owner is a member.</title><link rel="icon" type="image/svg+xml" href="STIGQter.svg" /><script async src="https://www.googletagmanager.com/gtag/js?id=UA-31381839-2"></script><script src="include.js"></script><script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-4110907817782130" crossorigin="anonymous"></script></head><body><div><img src="STIGQter.svg" alt="STIGQter" style="height:1em;" /> <a href="https://www.stigqter.com/">STIGQter</a>: <a href="main.html">STIG Summary</a>: <a href="U_IBM_AIX_7-x_STIG_V3R3_Manual-xccdf.html">IBM AIX 7.x Security Technical Implementation Guide Version: 3 Release: 3 Benchmark Date: 01 Jul 2026</a>:</div> <h1>All files and directories contained in users home directories on AIX must be group-owned by a group in which the home directory owner is a member.</h1><h2>DISA Rule</h2><p>SV-215278r991592_rule</p><h2>Vulnerability Number</h2><p>V-215278</p><h2>Group Title</h2><p>SRG-OS-000480-GPOS-00230</p><h2>Rule Version</h2><p>AIX7-00-002087</p><h2>Severity</h2><p>CAT II</p><h2>CCI(s)</h2><ul><li>CCI-000366 - Implement the security configuration settings.</li></ul><h2>Weight</h2><p>10</p><h2>Fix Recommendation</h2><p>Change the group of a file not group-owned by a group where the home directory's owner is a member using command: <br />
+# chgrp [user's primary group] [file with bad group ownership]</p><h2>Check Contents</h2><p>Check the contents of user home directories for files group-owned by a group of which the home directory's owner is not a member. <br />
+<br />
+List the user accounts: <br />
+<br />
+# cut -d : -f 1 /etc/passwd <br />
+root<br />
+daemon<br />
+bin<br />
+sys<br />
+adm<br />
+uucp<br />
+nobody<br />
+invscout<br />
+snapp<br />
+ipsec<br />
+srvproxy<br />
+esaadmin<br />
+sshd<br />
+doejohn<br />
+dirtjoe<br />
+<br />
+For each user account, get a list of group names for files in the user's home directory: <br />
+<br />
+# find &lt; users home directory &gt; -exec ls -lLd {} \;<br />
+<br />
+Obtain the list of group names associated with the user's account:<br />
+<br />
+# lsuser -a groups &lt; user name &gt; <br />
+doejohn groups=staff<br />
+<br />
+Check the group name lists:<br />
+<br />
+# cat /etc/group<br />
+system:!:0:root,srvproxy,esaadmin<br />
+staff:!:1:ipsec,srvproxy,esaadmin,sshd,doejohn<br />
+bin:!:2:root,bin<br />
+sys:!:3:root,bin,sys<br />
+adm:!:4:bin,adm<br />
+mail:!:6:<br />
+security:!:7:root<br />
+cron:!:8:root<br />
+audit:!:10:root<br />
+ecs:!:28:<br />
+nobody:!:4294967294:nobody,lpd<br />
+usr:!:100:dirtjoe<br />
+perf:!:20:<br />
+shutdown:!:21:<br />
+invscout:!:12:invscout<br />
+snapp:!:13:snapp<br />
+ipsec:!:200:<br />
+sshd:!:201:sshd<br />
+<br />
+If there are group names in the file list not present in the user list, this is a finding.</p><h2>Vulnerability Number</h2><p>V-215278</p><h2>Documentable</h2><p>False</p><h2>Rule Version</h2><p>AIX7-00-002087</p><h2>Severity Override Guidance</h2><p>Check the contents of user home directories for files group-owned by a group of which the home directory's owner is not a member. <br />
+<br />
+List the user accounts: <br />
+<br />
+# cut -d : -f 1 /etc/passwd <br />
+root<br />
+daemon<br />
+bin<br />
+sys<br />
+adm<br />
+uucp<br />
+nobody<br />
+invscout<br />
+snapp<br />
+ipsec<br />
+srvproxy<br />
+esaadmin<br />
+sshd<br />
+doejohn<br />
+dirtjoe<br />
+<br />
+For each user account, get a list of group names for files in the user's home directory: <br />
+<br />
+# find &lt; users home directory &gt; -exec ls -lLd {} \;<br />
+<br />
+Obtain the list of group names associated with the user's account:<br />
+<br />
+# lsuser -a groups &lt; user name &gt; <br />
+doejohn groups=staff<br />
+<br />
+Check the group name lists:<br />
+<br />
+# cat /etc/group<br />
+system:!:0:root,srvproxy,esaadmin<br />
+staff:!:1:ipsec,srvproxy,esaadmin,sshd,doejohn<br />
+bin:!:2:root,bin<br />
+sys:!:3:root,bin,sys<br />
+adm:!:4:bin,adm<br />
+mail:!:6:<br />
+security:!:7:root<br />
+cron:!:8:root<br />
+audit:!:10:root<br />
+ecs:!:28:<br />
+nobody:!:4294967294:nobody,lpd<br />
+usr:!:100:dirtjoe<br />
+perf:!:20:<br />
+shutdown:!:21:<br />
+invscout:!:12:invscout<br />
+snapp:!:13:snapp<br />
+ipsec:!:200:<br />
+sshd:!:201:sshd<br />
+<br />
+If there are group names in the file list not present in the user list, this is a finding.</p><h2>Check Content Reference</h2><p>M</p><h2>Target Key</h2><p>4012</p></body></html>

@@ -1,0 +1,121 @@
+<!doctype html><html lang="en"><head><meta charset="utf-8"><title>STIGQter: STIG Check Details: SV-215251r991567_rule: AIX must verify the hash of audit tools.</title><link rel="icon" type="image/svg+xml" href="STIGQter.svg" /><script async src="https://www.googletagmanager.com/gtag/js?id=UA-31381839-2"></script><script src="include.js"></script><script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-4110907817782130" crossorigin="anonymous"></script></head><body><div><img src="STIGQter.svg" alt="STIGQter" style="height:1em;" /> <a href="https://www.stigqter.com/">STIGQter</a>: <a href="main.html">STIG Summary</a>: <a href="U_IBM_AIX_7-x_STIG_V3R3_Manual-xccdf.html">IBM AIX 7.x Security Technical Implementation Guide Version: 3 Release: 3 Benchmark Date: 01 Jul 2026</a>:</div> <h1>AIX must verify the hash of audit tools.</h1><h2>DISA Rule</h2><p>SV-215251r991567_rule</p><h2>Vulnerability Number</h2><p>V-215251</p><h2>Group Title</h2><p>SRG-OS-000278-GPOS-00108</p><h2>Rule Version</h2><p>AIX7-00-002028</p><h2>Severity</h2><p>CAT II</p><h2>CCI(s)</h2><ul><li>CCI-001496 - Implement cryptographic mechanisms to protect the integrity of audit tools.</li></ul><h2>Weight</h2><p>10</p><h2>Fix Recommendation</h2><p>Turn on Trusted Execution and check the integrity of audit tools. <br />
+# /usr/sbin/trustchk -p TE=ON CHKEXEC=ON<br />
+<br />
+If audit tool integrity data is missing from &quot;/etc/security/tsd/tsd.dat&quot;, re-install the &quot;bos.rte.security&quot; fileset from AIX DVD using the installp command (assume the DVD is mounted to /dev/cd0):<br />
+# installp -aXYqg -d /dev/cd0 bos.rte.security</p><h2>Check Contents</h2><p>Verify that Trusted Execution (TE) is &quot;on&quot; and &quot;CHKEXEC&quot; is &quot;on&quot; by running the following command:  <br />
+# trustchk -p                 <br />
+TE=ON<br />
+CHKEXEC=ON<br />
+CHKSHLIB=OFF<br />
+CHKSCRIPT=OFF<br />
+CHKKERNEXT=OFF<br />
+STOP_UNTRUSTD=OFF<br />
+STOP_ON_CHKFAIL=OFF<br />
+LOCK_KERN_POLICIES=OFF<br />
+TSD_FILES_LOCK=OFF<br />
+TSD_LOCK=OFF<br />
+TEP=OFF<br />
+TLP=OFF<br />
+<br />
+If the result show &quot;TE=OFF&quot; or &quot;CHKEXEC=OFF&quot;, this is a finding.<br />
+<br />
+Verify that TSD (Trusted Signature Database) contains all the audit tools and their signatures by running the following command:<br />
+<br />
+# awk '/\/usr\/sbin\/audit/ {print; for(i=1; i&lt;=10; i++) {getline; print}}' /etc/security/tsd/tsd.dat |grep -E &quot;\/usr\/sbin\/audit|cert_tag|signature|hash_value&quot;<br />
+<br />
+/usr/sbin/auditselect:<br />
+        cert_tag = 00d3cbd2922627b209<br />
+        signature = 8f6044a166ad7d1256a2798432dcb06b528eb6c515f4d2d0af90dd17e6ba05665bd8d39ee8f15e8872e90d3b52e0e25c7be9d62c9c5d71cd16b662fb8511f168b6facb4105cc0e9c19c316e37459ad739b75b6037827f3ba60896eeeec62cf47e7514b10d4813c48cacd76b75dc5b0e1a87f7cd10552992021efb5b44eb33a1a<br />
+        hash_value = 002e02eda12663a2c9478e1b5154cc97452c07a68a8b9d5a6ca3408b008d95bb<br />
+/usr/sbin/auditstream:<br />
+        cert_tag = 00d3cbd2922627b209<br />
+        signature = 3d5a678962b684208f3996262a997d8838012c1625d83b7df75d9bb3a83065819ae476a21ada2ec7afd683828d9ce5c9d3eb829ed907d11fc2713d895419cbec5855e96b4a3b36a4f5b3c44a801555727b1ca799026262120b18fe2d93f53da8e95f6560c0cf5ea73dccd7daa9ec3df7e24ede0201b9d632becfb58a8f81fee4<br />
+        hash_value = 5c434a89bf2fb50a2c21734a5ecd3c4e0a92c34d6685633d59a93caf1684e515<br />
+/usr/sbin/auditpr:<br />
+        cert_tag = 00d3cbd2922627b209<br />
+        signature = 8356f57d227a85037620ec6f357204a9dd3ceeb89fab2ea8b4dea5529a37d290e111a46e9deca8ebd86b37c50b8b2d27599d09a02353081db9f7140780ace0d9986c8f7265d3d91eed7a2502050a6342c79cf1fd6c9b2633e353fdc3603de3b6fc341b2b7a0c6eb286155ae9542bdbbcc29eba84a50f1f8c4f6f5924403f6556<br />
+        hash_value = 34bf3b145327d33f810e939d15ae084711dcd0eb7e7f3ebcb135f5ff7b3ba776<br />
+/usr/sbin/auditcat:<br />
+        cert_tag = 00d3cbd2922627b209<br />
+        signature = abf001ee98c5e81ec730552cd26473221ee14694a7fea06d97ae030f1b8603bafdb3f4917cb50c87c90fc8ff03e8762b05c6b21d1907a05288736fa820fd4a05d38f236fec5cfc3813aeb5b0618294effe0356ac26be0e6701398cf181fb38897c5a2496154bba3eab513caaa74a9abb230ad6948190d24907a107d8968a0c27<br />
+        hash_value = 78febbeb1e7e4ca1ed4015fb147d27bd451814ed8c81429b42ee9e2f8301bf58<br />
+/usr/sbin/auditbin:<br />
+        cert_tag = 00d3cbd2922627b209<br />
+        signature = 9bb3fde97a70dd3ee93ecf556cf13e3981d1f0794c7a253701e011956574754eb17922525092f38a3b0f9375aef8fadfe3cb6e47f6aa7424e3449910af6cc6e1754f6fe8c2fb20867af7f9a048485ea2dfcd7b8f718d350d21ec2ffe394423f4c513b22ff9a654f1ef55f6e679424ad0e630404fcfd707ed91d542d64564c601<br />
+        hash_value = 2deb07bbdf5b744168bb9484b25c0e61813b546f0dd0555d9b9ebcb8cf17272d<br />
+/usr/sbin/auditldap:<br />
+        cert_tag = 00d3cbd2922627b209<br />
+        signature = ab3ea5ba592ef8d1576f632c6154e10a172fbdad1c6379954a48d76bd2c365848a208dfa698e828008fa73b60daf0ad0ab9ad08035f9df2d39ac21a67873cfac3eb07103858903c47e5d1e264ace01de9599ff3c966b12d8cbc6c2b6e3c97f8c56b7a5a4fa33f15bbe472319266854f83fad57917d9dd0c09383fd2b5df41e6d<br />
+        hash_value = f929ca078995a6b2a28d1247e9837e03d06fa2c5b12a6c86e679201192694c8c<br />
+/usr/sbin/auditconv:<br />
+        cert_tag = 00d3cbd2922627b209<br />
+        signature = ab7a0e0e5aa62ec741db601cc1609bf7db6006705a3d6b7001b3aa4da5ab6bcfecea569d6891b67088b2033045fdf6532a24433711c74fcffc92744884f0f14211a7625c168f11d4b3de2e7083e57a5063933c0eea5b92c6ab9ea1b131ca8fe85143f616887e4d60cfb534da8b3a920c428279ea8eee04bf57ad70da3c69104c<br />
+        hash_value = 0d2a989fa77df6984348f5c66d20af1e71aebd5a0d9f85551873563ee9d851d7<br />
+/usr/sbin/audit:<br />
+        cert_tag = 00d3cbd2922627b209<br />
+        signature = 2b6ed42788eca469aaaf960d4ea9956793182cdbf6b8570ded724762701354f62d003a3ed99db9b4fbb670c5864c9a641d485083789840c71005bbdcc4659dbbfbec0e8c63c8223be9e54f46240e3a5ebed8647fbd9e0e9f2db0d046e0cd73e72c87977c9dc394b61027c2856a27db0e51afb05e07c2d4f8ea3bc33564f2e7a6<br />
+        hash_value = 0c5d10f7c7cefec133bee45bd0d30933b18041438a7c7b15b8aa7de60ce208af<br />
+/usr/sbin/auditmerge:<br />
+        cert_tag = 00d3cbd2922627b209<br />
+        signature = 64e0f95c1efa90f34b6ddd370fc0a277db2858b01b993a2f32eb9f0c86e6d901675f67f42158015ceafa37507a0bc36bbd58aca6685464f8b43edb099db670aa497db349c51fc0ed6066da43e2eb5529af8bbdd0c30b66b22158261c224213fc406ffee36e4df476107f867d8f7c09c24e4318a13e2b279d200a9fa4a8b515e4<br />
+        hash_value = 6b4a1d1288a1d7e987ad14b395d0067890574a09956171bb32b9a022dc975015<br />
+<br />
+If any of the cert_tag, signature, or hash values is missing or “= VOLATILE&quot;, this is a finding.</p><h2>Vulnerability Number</h2><p>V-215251</p><h2>Documentable</h2><p>False</p><h2>Rule Version</h2><p>AIX7-00-002028</p><h2>Severity Override Guidance</h2><p>Verify that Trusted Execution (TE) is &quot;on&quot; and &quot;CHKEXEC&quot; is &quot;on&quot; by running the following command:  <br />
+# trustchk -p                 <br />
+TE=ON<br />
+CHKEXEC=ON<br />
+CHKSHLIB=OFF<br />
+CHKSCRIPT=OFF<br />
+CHKKERNEXT=OFF<br />
+STOP_UNTRUSTD=OFF<br />
+STOP_ON_CHKFAIL=OFF<br />
+LOCK_KERN_POLICIES=OFF<br />
+TSD_FILES_LOCK=OFF<br />
+TSD_LOCK=OFF<br />
+TEP=OFF<br />
+TLP=OFF<br />
+<br />
+If the result show &quot;TE=OFF&quot; or &quot;CHKEXEC=OFF&quot;, this is a finding.<br />
+<br />
+Verify that TSD (Trusted Signature Database) contains all the audit tools and their signatures by running the following command:<br />
+<br />
+# awk '/\/usr\/sbin\/audit/ {print; for(i=1; i&lt;=10; i++) {getline; print}}' /etc/security/tsd/tsd.dat |grep -E &quot;\/usr\/sbin\/audit|cert_tag|signature|hash_value&quot;<br />
+<br />
+/usr/sbin/auditselect:<br />
+        cert_tag = 00d3cbd2922627b209<br />
+        signature = 8f6044a166ad7d1256a2798432dcb06b528eb6c515f4d2d0af90dd17e6ba05665bd8d39ee8f15e8872e90d3b52e0e25c7be9d62c9c5d71cd16b662fb8511f168b6facb4105cc0e9c19c316e37459ad739b75b6037827f3ba60896eeeec62cf47e7514b10d4813c48cacd76b75dc5b0e1a87f7cd10552992021efb5b44eb33a1a<br />
+        hash_value = 002e02eda12663a2c9478e1b5154cc97452c07a68a8b9d5a6ca3408b008d95bb<br />
+/usr/sbin/auditstream:<br />
+        cert_tag = 00d3cbd2922627b209<br />
+        signature = 3d5a678962b684208f3996262a997d8838012c1625d83b7df75d9bb3a83065819ae476a21ada2ec7afd683828d9ce5c9d3eb829ed907d11fc2713d895419cbec5855e96b4a3b36a4f5b3c44a801555727b1ca799026262120b18fe2d93f53da8e95f6560c0cf5ea73dccd7daa9ec3df7e24ede0201b9d632becfb58a8f81fee4<br />
+        hash_value = 5c434a89bf2fb50a2c21734a5ecd3c4e0a92c34d6685633d59a93caf1684e515<br />
+/usr/sbin/auditpr:<br />
+        cert_tag = 00d3cbd2922627b209<br />
+        signature = 8356f57d227a85037620ec6f357204a9dd3ceeb89fab2ea8b4dea5529a37d290e111a46e9deca8ebd86b37c50b8b2d27599d09a02353081db9f7140780ace0d9986c8f7265d3d91eed7a2502050a6342c79cf1fd6c9b2633e353fdc3603de3b6fc341b2b7a0c6eb286155ae9542bdbbcc29eba84a50f1f8c4f6f5924403f6556<br />
+        hash_value = 34bf3b145327d33f810e939d15ae084711dcd0eb7e7f3ebcb135f5ff7b3ba776<br />
+/usr/sbin/auditcat:<br />
+        cert_tag = 00d3cbd2922627b209<br />
+        signature = abf001ee98c5e81ec730552cd26473221ee14694a7fea06d97ae030f1b8603bafdb3f4917cb50c87c90fc8ff03e8762b05c6b21d1907a05288736fa820fd4a05d38f236fec5cfc3813aeb5b0618294effe0356ac26be0e6701398cf181fb38897c5a2496154bba3eab513caaa74a9abb230ad6948190d24907a107d8968a0c27<br />
+        hash_value = 78febbeb1e7e4ca1ed4015fb147d27bd451814ed8c81429b42ee9e2f8301bf58<br />
+/usr/sbin/auditbin:<br />
+        cert_tag = 00d3cbd2922627b209<br />
+        signature = 9bb3fde97a70dd3ee93ecf556cf13e3981d1f0794c7a253701e011956574754eb17922525092f38a3b0f9375aef8fadfe3cb6e47f6aa7424e3449910af6cc6e1754f6fe8c2fb20867af7f9a048485ea2dfcd7b8f718d350d21ec2ffe394423f4c513b22ff9a654f1ef55f6e679424ad0e630404fcfd707ed91d542d64564c601<br />
+        hash_value = 2deb07bbdf5b744168bb9484b25c0e61813b546f0dd0555d9b9ebcb8cf17272d<br />
+/usr/sbin/auditldap:<br />
+        cert_tag = 00d3cbd2922627b209<br />
+        signature = ab3ea5ba592ef8d1576f632c6154e10a172fbdad1c6379954a48d76bd2c365848a208dfa698e828008fa73b60daf0ad0ab9ad08035f9df2d39ac21a67873cfac3eb07103858903c47e5d1e264ace01de9599ff3c966b12d8cbc6c2b6e3c97f8c56b7a5a4fa33f15bbe472319266854f83fad57917d9dd0c09383fd2b5df41e6d<br />
+        hash_value = f929ca078995a6b2a28d1247e9837e03d06fa2c5b12a6c86e679201192694c8c<br />
+/usr/sbin/auditconv:<br />
+        cert_tag = 00d3cbd2922627b209<br />
+        signature = ab7a0e0e5aa62ec741db601cc1609bf7db6006705a3d6b7001b3aa4da5ab6bcfecea569d6891b67088b2033045fdf6532a24433711c74fcffc92744884f0f14211a7625c168f11d4b3de2e7083e57a5063933c0eea5b92c6ab9ea1b131ca8fe85143f616887e4d60cfb534da8b3a920c428279ea8eee04bf57ad70da3c69104c<br />
+        hash_value = 0d2a989fa77df6984348f5c66d20af1e71aebd5a0d9f85551873563ee9d851d7<br />
+/usr/sbin/audit:<br />
+        cert_tag = 00d3cbd2922627b209<br />
+        signature = 2b6ed42788eca469aaaf960d4ea9956793182cdbf6b8570ded724762701354f62d003a3ed99db9b4fbb670c5864c9a641d485083789840c71005bbdcc4659dbbfbec0e8c63c8223be9e54f46240e3a5ebed8647fbd9e0e9f2db0d046e0cd73e72c87977c9dc394b61027c2856a27db0e51afb05e07c2d4f8ea3bc33564f2e7a6<br />
+        hash_value = 0c5d10f7c7cefec133bee45bd0d30933b18041438a7c7b15b8aa7de60ce208af<br />
+/usr/sbin/auditmerge:<br />
+        cert_tag = 00d3cbd2922627b209<br />
+        signature = 64e0f95c1efa90f34b6ddd370fc0a277db2858b01b993a2f32eb9f0c86e6d901675f67f42158015ceafa37507a0bc36bbd58aca6685464f8b43edb099db670aa497db349c51fc0ed6066da43e2eb5529af8bbdd0c30b66b22158261c224213fc406ffee36e4df476107f867d8f7c09c24e4318a13e2b279d200a9fa4a8b515e4<br />
+        hash_value = 6b4a1d1288a1d7e987ad14b395d0067890574a09956171bb32b9a022dc975015<br />
+<br />
+If any of the cert_tag, signature, or hash values is missing or “= VOLATILE&quot;, this is a finding.</p><h2>Check Content Reference</h2><p>M</p><h2>Target Key</h2><p>4012</p></body></html>

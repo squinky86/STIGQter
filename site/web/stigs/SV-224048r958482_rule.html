@@ -1,0 +1,54 @@
+<!doctype html><html lang="en"><head><meta charset="utf-8"><title>STIGQter: STIG Check Details: SV-224048r958482_rule: The IBM z/OS Syslog daemon must be properly defined and secured.</title><link rel="icon" type="image/svg+xml" href="STIGQter.svg" /><script async src="https://www.googletagmanager.com/gtag/js?id=UA-31381839-2"></script><script src="include.js"></script><script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-4110907817782130" crossorigin="anonymous"></script></head><body><div><img src="STIGQter.svg" alt="STIGQter" style="height:1em;" /> <a href="https://www.stigqter.com/">STIGQter</a>: <a href="main.html">STIG Summary</a>: <a href="U_IBM_zOS_TSS_STIG_V9R9_Manual-xccdf.html">IBM z/OS TSS Security Technical Implementation Guide Version: 9 Release: 9 Benchmark Date: 01 Jul 2026</a>:</div> <h1>The IBM z/OS Syslog daemon must be properly defined and secured.</h1><h2>DISA Rule</h2><p>SV-224048r958482_rule</p><h2>Vulnerability Number</h2><p>V-224048</p><h2>Group Title</h2><p>SRG-OS-000104-GPOS-00051</p><h2>Rule Version</h2><p>TSS0-SL-000030</p><h2>Severity</h2><p>CAT II</p><h2>CCI(s)</h2><ul><li>CCI-000764 - Uniquely identify and authenticate organizational users and associate that unique identification with processes acting on behalf of those users.</li></ul><h2>Weight</h2><p>10</p><h2>Fix Recommendation</h2><p>Configure so that the Syslog daemon runs under its own user account. Specifically, it does not share the account defined for the z/OS UNIX kernel.<br />
+<br />
+The Syslog daemon userid is SYSLOGD.<br />
+The SYSLOGD userid has the STC facility.<br />
+The SYSLOGD userid has UID(0), HOME('/'), and PROGRAM('/bin/sh') specified in the OMVS segment.<br />
+<br />
+To set up and use as an MVS Started Proc, the following sample commands are provided:<br />
+<br />
+TSS CREATE(SYSLOGD) TYPE(USER) NAME(SYSLOGD) -<br />
+DEPT(existing-dept) FACILITY(STC) -<br />
+PASSWORD(password,0)<br />
+TSS ADD(SYSLOGD) DFLTGRP(stctcpx) GROUP(stctcpx)<br />
+TSS ADD(SYSLOGD) SOURCE(INTRDR)<br />
+TSS ADD(SYSLOGD) UID(0) HOME(/) OMVSPGM(/bin/sh)<br />
+<br />
+The SYSLOGD started proc is assigned the SYSLOGD userid is in the Started Task Table.<br />
+<br />
+TSS ADD(STC) PROCNAME(SYSLOGD) ACID(SYSLOGD)<br />
+<br />
+If /etc/rc is used to start the Syslog daemon, ensure that the _BPX_JOBNAME and _BPX_ USERID environment variables are assigned a value of SYSLOGD.</p><h2>Check Contents</h2><p>From the ISPF Command Shell enter:<br />
+TSS LIST(SYSLOGD) SEGMENT(OMVS)<br />
+<br />
+If the following guidance is true, this is not a finding.<br />
+<br />
+-The Syslog daemon userid is SYSLOGD.<br />
+-The SYSLOGD userid has the STC facility.<br />
+-The SYSLOGD userid has UID(0), HOME('/'), and PROGRAM('/bin/sh') specified in the OMVS segment.<br />
+-The SYSLOGD started proc is assigned the SYSLOGD userid is in the Started Task Table.<br />
+<br />
+If Syslog daemon is started from /etc/rc then from the ISPF Command Shell enter:<br />
+OMVS<br />
+cd /etc<br />
+cat rc <br />
+<br />
+If Syslog daemon is started from /etc/rc then ensure that the &quot;_BPX_JOBNAME&quot; and &quot;_BPX_USERID&quot; environment variables are assigned a value of SYSLOGD.<br />
+<br />
+If the Syslog daemon is started from /etc/rc and the &quot;_BPX_JOBNAME&quot; and &quot;_BPX_USERID&quot; environment variables are not assigned a value of SYSLOGD, this is a finding.</p><h2>Vulnerability Number</h2><p>V-224048</p><h2>Documentable</h2><p>False</p><h2>Rule Version</h2><p>TSS0-SL-000030</p><h2>Severity Override Guidance</h2><p>From the ISPF Command Shell enter:<br />
+TSS LIST(SYSLOGD) SEGMENT(OMVS)<br />
+<br />
+If the following guidance is true, this is not a finding.<br />
+<br />
+-The Syslog daemon userid is SYSLOGD.<br />
+-The SYSLOGD userid has the STC facility.<br />
+-The SYSLOGD userid has UID(0), HOME('/'), and PROGRAM('/bin/sh') specified in the OMVS segment.<br />
+-The SYSLOGD started proc is assigned the SYSLOGD userid is in the Started Task Table.<br />
+<br />
+If Syslog daemon is started from /etc/rc then from the ISPF Command Shell enter:<br />
+OMVS<br />
+cd /etc<br />
+cat rc <br />
+<br />
+If Syslog daemon is started from /etc/rc then ensure that the &quot;_BPX_JOBNAME&quot; and &quot;_BPX_USERID&quot; environment variables are assigned a value of SYSLOGD.<br />
+<br />
+If the Syslog daemon is started from /etc/rc and the &quot;_BPX_JOBNAME&quot; and &quot;_BPX_USERID&quot; environment variables are not assigned a value of SYSLOGD, this is a finding.</p><h2>Check Content Reference</h2><p>M</p><h2>Target Key</h2><p>4102</p></body></html>

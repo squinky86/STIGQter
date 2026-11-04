@@ -1,0 +1,24 @@
+<!doctype html><html lang="en"><head><meta charset="utf-8"><title>STIGQter: STIG Check Details: SV-268545r1034575_rule: The macOS system must enforce multifactor authentication for the su command.</title><link rel="icon" type="image/svg+xml" href="STIGQter.svg" /><script async src="https://www.googletagmanager.com/gtag/js?id=UA-31381839-2"></script><script src="include.js"></script><script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-4110907817782130" crossorigin="anonymous"></script></head><body><div><img src="STIGQter.svg" alt="STIGQter" style="height:1em;" /> <a href="https://www.stigqter.com/">STIGQter</a>: <a href="main.html">STIG Summary</a>: <a href="U_Apple_macOS_15_V1R7_STIG_Manual-xccdf.html">Apple macOS 15 (Sequoia) Security Technical Implementation Guide Version: 1 Release: 7 Benchmark Date: 01 Apr 2026</a>:</div> <h1>The macOS system must enforce multifactor authentication for the su command.</h1><h2>DISA Rule</h2><p>SV-268545r1034575_rule</p><h2>Vulnerability Number</h2><p>V-268545</p><h2>Group Title</h2><p>SRG-OS-000105-GPOS-00052</p><h2>Rule Version</h2><p>APPL-15-003051</p><h2>Severity</h2><p>CAT II</p><h2>CCI(s)</h2><ul><li>CCI-000765 - Implement multifactor authentication for network access to privileged accounts.</li><li>CCI-000766 - Implement multifactor authentication for network access to non-privileged accounts.</li><li>CCI-001941 - Implement replay-resistant authentication mechanisms for access to privileged accounts and/or non-privileged accounts.</li><li>CCI-004047 - Implement multi-factor authentication for local; network; and/or remote access to privileged accounts; and/or non-privileged accounts such that the device meets organization-defined strength of mechanism requirements.</li></ul><h2>Weight</h2><p>10</p><h2>Fix Recommendation</h2><p>Configure the macOS system to enforce multifactor authentication for the su command with the following commands:<br />
+<br />
+/bin/cat &gt; /etc/pam.d/su &lt;&lt; SU_END<br />
+# su: auth account password session<br />
+auth        sufficient    pam_smartcard.so<br />
+auth        required      pam_rootok.so<br />
+auth        required      pam_group.so no_warn group=admin,wheel ruser root_only fail_safe<br />
+account     required      pam_permit.so<br />
+account     required      pam_opendirectory.so no_check_shell<br />
+password    required      pam_opendirectory.so<br />
+session     required      pam_launchd.so<br />
+SU_END<br />
+<br />
+# Fix new file ownership and permissions<br />
+/bin/chmod 644 /etc/pam.d/su<br />
+/usr/sbin/chown root:wheel /etc/pam.d/su</p><h2>Check Contents</h2><p>Verify the macOS system is configured to enforce multifactor authentication for the su command with the following command:<br />
+<br />
+/usr/bin/grep -Ec '^(auth\s+sufficient\s+pam_smartcard.so|auth\s+required\s+pam_rootok.so)' /etc/pam.d/su<br />
+<br />
+If the result is not &quot;2&quot;, this is a finding.</p><h2>Vulnerability Number</h2><p>V-268545</p><h2>Documentable</h2><p>False</p><h2>Rule Version</h2><p>APPL-15-003051</p><h2>Severity Override Guidance</h2><p>Verify the macOS system is configured to enforce multifactor authentication for the su command with the following command:<br />
+<br />
+/usr/bin/grep -Ec '^(auth\s+sufficient\s+pam_smartcard.so|auth\s+required\s+pam_rootok.so)' /etc/pam.d/su<br />
+<br />
+If the result is not &quot;2&quot;, this is a finding.</p><h2>Check Content Reference</h2><p>M</p><h2>Target Key</h2><p>5661</p></body></html>

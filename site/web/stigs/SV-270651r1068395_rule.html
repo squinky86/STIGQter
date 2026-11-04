@@ -1,0 +1,71 @@
+<!doctype html><html lang="en"><head><meta charset="utf-8"><title>STIGQter: STIG Check Details: SV-270651r1068395_rule: Ubuntu 24.04 LTS must be configured so that the script which runs each 30 days or less to check file integrity is the default one.</title><link rel="icon" type="image/svg+xml" href="STIGQter.svg" /><script async src="https://www.googletagmanager.com/gtag/js?id=UA-31381839-2"></script><script src="include.js"></script><script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-4110907817782130" crossorigin="anonymous"></script></head><body><div><img src="STIGQter.svg" alt="STIGQter" style="height:1em;" /> <a href="https://www.stigqter.com/">STIGQter</a>: <a href="main.html">STIG Summary</a>: <a href="U_CAN_Ubuntu_24-04_LTS_STIG_V1R6_Manual-xccdf.html">Canonical Ubuntu 24.04 LTS Security Technical Implementation Guide Version: 1 Release: 6 Benchmark Date: 01 Jul 2026</a>:</div> <h1>Ubuntu 24.04 LTS must be configured so that the script which runs each 30 days or less to check file integrity is the default one.</h1><h2>DISA Rule</h2><p>SV-270651r1068395_rule</p><h2>Vulnerability Number</h2><p>V-270651</p><h2>Group Title</h2><p>SRG-OS-000446-GPOS-00200</p><h2>Rule Version</h2><p>UBTU-24-100120</p><h2>Severity</h2><p>CAT II</p><h2>CCI(s)</h2><ul><li>CCI-002699 - Perform verification of the correct operation of organization-defined security functions: when the system is in an organization-defined transitional state; upon command by a user with appropriate privileges; and/or on an organization-defined frequency.</li></ul><h2>Weight</h2><p>10</p><h2>Fix Recommendation</h2><p>The cron file for AIDE is fairly complex as it creates the report. This file is installed with the &quot;aide-common&quot; package, and the default can be restored by copying it from the package: <br />
+ <br />
+Download the original package to the /tmp dir: <br />
+ <br />
+$ cd /tmp; apt download aide-common <br />
+ <br />
+Extract the aide script to its original place: <br />
+<br />
+$ dpkg-deb --fsys-tarfile /tmp/aide-common_*.deb | sudo tar -x --wildcards ./usr/share/aide/config/cron.daily/dailyaidecheck* -C /<br />
+ <br />
+Copy it to the cron.daily directory: <br />
+ <br />
+$  sudo cp -f /usr/share/aide/config/cron.daily/aide /etc/cron.daily/dailyaidecheck*</p><h2>Check Contents</h2><p>Note: If AIDE is not installed, this finding is not applicable.<br />
+<br />
+Check the AIDE configuration file integrity installed on the system (the default configuration file is located at /etc/aide/aide.conf or in /etc/aide/aide.conf.d/) with the following command:<br />
+$ sudo sha256sum /etc/aide/aide.conf<br />
+f3bbea2552f2c5b475627850d8a5fba1659df6466986d5a18948d9821ecbe491  /etc/aide/aide.conf<br />
+<br />
+Download the original aide-common package in the /tmp directory: <br />
+$ cd /tmp; apt download aide-common <br />
+<br />
+Generate the checksum from the aide.conf file in the downloaded .deb package:<br />
+$ sudo dpkg-deb --fsys-tarfile /tmp/aide-common_0.18.6-2build2_all.deb | tar -xO ./usr/share/aide/config/aide/aide.conf | sha256sum<br />
+f3bbea2552f2c5b475627850d8a5fba1659df6466986d5a18948d9821ecbe491  -<br />
+<br />
+If the checksums of the system file (/etc/aide/aide.conf) and the extracted file do not match, this is a finding.<br />
+<br />
+To verify the frequency of the file integrity checks, inspect the contents of the scheduled jobs as follows:<br />
+<br />
+Checking scheduled cron jobs:<br />
+$ grep -r aide /etc/cron* /etc/crontab<br />
+/etc/cron.daily/dailyaidecheck:SCRIPT=&quot;/usr/share/aide/bin/dailyaidecheck&quot;<br />
+<br />
+Checking the systemd timer (this will show when the next scheduled run occurs and the last time the AIDE check was triggered):<br />
+$ sudo systemctl list-timers | grep aide<br />
+Thu 2024-10-31 02:01:58 EDT           10h Wed 2024-10-30 13:47:41 EDT            - dailyaidecheck.timer           dailyaidecheck.service<br />
+<br />
+The contents of these files can be inspected with the following commands:<br />
+$ sudo systemctl cat dailyaidecheck.timer<br />
+$ sudo systemctl cat dailyaidecheck.service<br />
+<br />
+If there is no AIDE script file in the cron directories or in the systemd timer, this is a finding.</p><h2>Vulnerability Number</h2><p>V-270651</p><h2>Documentable</h2><p>False</p><h2>Rule Version</h2><p>UBTU-24-100120</p><h2>Severity Override Guidance</h2><p>Note: If AIDE is not installed, this finding is not applicable.<br />
+<br />
+Check the AIDE configuration file integrity installed on the system (the default configuration file is located at /etc/aide/aide.conf or in /etc/aide/aide.conf.d/) with the following command:<br />
+$ sudo sha256sum /etc/aide/aide.conf<br />
+f3bbea2552f2c5b475627850d8a5fba1659df6466986d5a18948d9821ecbe491  /etc/aide/aide.conf<br />
+<br />
+Download the original aide-common package in the /tmp directory: <br />
+$ cd /tmp; apt download aide-common <br />
+<br />
+Generate the checksum from the aide.conf file in the downloaded .deb package:<br />
+$ sudo dpkg-deb --fsys-tarfile /tmp/aide-common_0.18.6-2build2_all.deb | tar -xO ./usr/share/aide/config/aide/aide.conf | sha256sum<br />
+f3bbea2552f2c5b475627850d8a5fba1659df6466986d5a18948d9821ecbe491  -<br />
+<br />
+If the checksums of the system file (/etc/aide/aide.conf) and the extracted file do not match, this is a finding.<br />
+<br />
+To verify the frequency of the file integrity checks, inspect the contents of the scheduled jobs as follows:<br />
+<br />
+Checking scheduled cron jobs:<br />
+$ grep -r aide /etc/cron* /etc/crontab<br />
+/etc/cron.daily/dailyaidecheck:SCRIPT=&quot;/usr/share/aide/bin/dailyaidecheck&quot;<br />
+<br />
+Checking the systemd timer (this will show when the next scheduled run occurs and the last time the AIDE check was triggered):<br />
+$ sudo systemctl list-timers | grep aide<br />
+Thu 2024-10-31 02:01:58 EDT           10h Wed 2024-10-30 13:47:41 EDT            - dailyaidecheck.timer           dailyaidecheck.service<br />
+<br />
+The contents of these files can be inspected with the following commands:<br />
+$ sudo systemctl cat dailyaidecheck.timer<br />
+$ sudo systemctl cat dailyaidecheck.service<br />
+<br />
+If there is no AIDE script file in the cron directories or in the systemd timer, this is a finding.</p><h2>Check Content Reference</h2><p>M</p><h2>Target Key</h2><p>5673</p></body></html>

@@ -1,0 +1,39 @@
+<!doctype html><html lang="en"><head><meta charset="utf-8"><title>STIGQter: STIG Check Details: SV-279686r1192615_rule: Nutanix AHV must store only encrypted representations of passwords.</title><link rel="icon" type="image/svg+xml" href="STIGQter.svg" /><script async src="https://www.googletagmanager.com/gtag/js?id=UA-31381839-2"></script><script src="include.js"></script><script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-4110907817782130" crossorigin="anonymous"></script></head><body><div><img src="STIGQter.svg" alt="STIGQter" style="height:1em;" /> <a href="https://www.stigqter.com/">STIGQter</a>: <a href="main.html">STIG Summary</a>: <a href="U_NTX_Acropolis_OS_STIG_V1R1_Manual-xccdf.html">Nutanix Acropolis GPOS Security Technical Implementation Guide Version: 1 Release: 1 Benchmark Date: 26 Jan 2026</a>:</div> <h1>Nutanix AHV must store only encrypted representations of passwords.</h1><h2>DISA Rule</h2><p>SV-279686r1192615_rule</p><h2>Vulnerability Number</h2><p>V-279686</p><h2>Group Title</h2><p>SRG-OS-000073-GPOS-00041</p><h2>Rule Version</h2><p>NXAC-OS-000273</p><h2>Severity</h2><p>CAT I</p><h2>CCI(s)</h2><ul><li>CCI-004062 - For password-based authentication, store passwords using an approved salted key derivation function, preferably using a keyed hash.</li></ul><h2>Weight</h2><p>10</p><h2>Fix Recommendation</h2><p>Configure the high-strength password requirements using the following command.<br />
+<br />
+$ ncli cluster edit-hypervisor-security-params enable-high-strength-password=true</p><h2>Check Contents</h2><p>1. Verify Nutanix AHV is configured to store encrypted representation of passwords and that the encryption meets required standards using the following command.<br />
+<br />
+$ sudo grep password /etc/pam.d/system-auth /etc/pam.d/password-auth<br />
+/etc/pam.d/system-auth-ac:password sufficient pam_unix.so sha512 shadow try_first_pass use_authtok<br />
+/etc/pam.d/password-auth:password sufficient pam_unix.so sha512 shadow try_first_pass use_authtok<br />
+<br />
+Output should match the example; if it does not this is a finding.<br />
+<br />
+$ sudo grep -i encrypt /etc/login.defs<br />
+ENCRYPT_METHOD SHA512<br />
+<br />
+If the &quot;/etc/login.defs&quot; file does not contain the required output, this is a finding.<br />
+<br />
+2. Run the command:<br />
+<br />
+$ sudo grep -i sha512 /etc/libuser.conf<br />
+crypt_style = sha512<br />
+<br />
+If the &quot;/etc/libuser.conf&quot; file does not contain the required output, this is a finding.</p><h2>Vulnerability Number</h2><p>V-279686</p><h2>Documentable</h2><p>False</p><h2>Rule Version</h2><p>NXAC-OS-000273</p><h2>Severity Override Guidance</h2><p>1. Verify Nutanix AHV is configured to store encrypted representation of passwords and that the encryption meets required standards using the following command.<br />
+<br />
+$ sudo grep password /etc/pam.d/system-auth /etc/pam.d/password-auth<br />
+/etc/pam.d/system-auth-ac:password sufficient pam_unix.so sha512 shadow try_first_pass use_authtok<br />
+/etc/pam.d/password-auth:password sufficient pam_unix.so sha512 shadow try_first_pass use_authtok<br />
+<br />
+Output should match the example; if it does not this is a finding.<br />
+<br />
+$ sudo grep -i encrypt /etc/login.defs<br />
+ENCRYPT_METHOD SHA512<br />
+<br />
+If the &quot;/etc/login.defs&quot; file does not contain the required output, this is a finding.<br />
+<br />
+2. Run the command:<br />
+<br />
+$ sudo grep -i sha512 /etc/libuser.conf<br />
+crypt_style = sha512<br />
+<br />
+If the &quot;/etc/libuser.conf&quot; file does not contain the required output, this is a finding.</p><h2>Check Content Reference</h2><p>M</p><h2>Target Key</h2><p>5730</p></body></html>

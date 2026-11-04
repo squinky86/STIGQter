@@ -1,0 +1,79 @@
+<!doctype html><html lang="en"><head><meta charset="utf-8"><title>STIGQter: STIG Check Details: SV-224640r1145812_rule: CA 1 Tape Management TMC, AUDIT and optional RDS and VPD data sets will be properly protected.</title><link rel="icon" type="image/svg+xml" href="STIGQter.svg" /><script async src="https://www.googletagmanager.com/gtag/js?id=UA-31381839-2"></script><script src="include.js"></script><script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-4110907817782130" crossorigin="anonymous"></script></head><body><div><img src="STIGQter.svg" alt="STIGQter" style="height:1em;" /> <a href="https://www.stigqter.com/">STIGQter</a>: <a href="main.html">STIG Summary</a>: <a href="U_zOS_CA-1_Tape_Management_for_TSS_STIG_V7R2_Manual-xccdf.html">z/OS CA 1 Tape Management for TSS Security Technical Implementation Guide Version: 7 Release: 2 Benchmark Date: 01 Oct 2025</a>:</div> <h1>CA 1 Tape Management TMC, AUDIT and optional RDS and VPD data sets will be properly protected.</h1><h2>DISA Rule</h2><p>SV-224640r1145812_rule</p><h2>Vulnerability Number</h2><p>V-224640</p><h2>Group Title</h2><p>SRG-OS-000018</p><h2>Rule Version</h2><p>ZCA1T003</p><h2>Severity</h2><p>CAT II</p><h2>CCI(s)</h2><ul><li>CCI-001499 - Limit privileges to change software resident within software libraries.</li><li>CCI-002234 - Log the execution of privileged functions.</li></ul><h2>Weight</h2><p>10</p><h2>Fix Recommendation</h2><p>The ISSO will ensure that WRITE and/or greater access to CA 1 TMC, AUDIT and optional RDS and VPD data sets are limited to only systems programming personnel and tape management personnel. UPDATE access can be given to CA 1 STCs and/or batch users. READ access can be given to application support personnel, production control and scheduling personnel, operations personnel, and auditors. ALL access will be logged.<br />
+<br />
+The installing systems programmer will identify and document the product data sets and categorize them according to who will have WRITE and/or greater access and if required that all WRITE and/or greater access is logged. The installing systems programmer will identify if any additional groups have WRITE and/or greater access for specific data sets, and once documented will work with the ISSO to ensure they are properly restricted to the Access Control Program (ACP) active on the system.<br />
+<br />
+(Note: The data sets and/or data set prefixes identified below are examples of a possible installation. The actual data sets and/or prefixes are determined when the product is actually installed on a system through the product's installation guide and can be site specific.)<br />
+<br />
+Due to the unique file structure of the TMC and Audit data sets, CA 1 uses the YSVC programs to handle all direct I/O activity. Because standard OPEN/CLOSE macros are not used, typical data set security checks are not performed. Even if a user does not have READ access to these data sets, the YSVC programs can enable that user to read and update records within these files. Therefore, control READ access to the TMC and Audit data sets by the YSVCUNCD and YSVCCOND resource names. Typical users should be restricted to conditional READ access.<br />
+<br />
+Restrict CA 1 batch production jobs, and CA 1 started tasks to the following access authority: Unconditional READ and UPDATE access to the TMC, Audit, Retention, and Vault Pattern Description data sets. Note: READ and UPDATE access to the TMC and Audit data sets are controlled by the YSVCUNCD and YSVCCOND resource names, and by standard ACP data set controls, because some CA 1 utilities use conventional OPEN/CLOSE methods.<br />
+<br />
+The following commands are provided as a sample for implementing data set controls:<br />
+<br />
+TSS ADD(SYS3) DSN(SYS3)<br />
+TSS PERMIT(&lt;audtaudt&gt;) DSN(SYS3.CA1.AUDIT) ACCESS(READ)<br />
+TSS PERMIT(&lt;operaudt&gt;) DSN(SYS3.CA1.AUDIT) ACCESS(READ)<br />
+TSS PERMIT(&lt;pcspaudt&gt;) DSN(SYS3.CA1.AUDIT) ACCESS(READ)<br />
+TSS PERMIT(CA1 STCs) DSN(SYS3.CA1.AUDIT) ACCESS(UPDATE)<br />
+TSS PERMIT(&lt;syspaudt&gt;) DSN(SYS3.CA1.AUDIT) ACCESS(ALL) ACTION(AUDIT)<br />
+TSS PERMIT(&lt;syspaudt&gt;) DSN(SYS3.CA1.AUDIT) ACCESS(UPDATE)<br />
+TSS PERMIT(&lt;tapeaudt&gt;) DSN(SYS3.CA1.AUDIT) ACCESS(ALL) ACTION(AUDIT)<br />
+TSS PERMIT(&lt;tapeaudt&gt;) DSN(SYS3.CA1.AUDIT) ACCESS(UPDATE)<br />
+TSS PERMIT(&lt;tstcaudt&gt;) DSN(SYS3.CA1.AUDIT) ACCESS(ALL) ACTION(AUDIT)<br />
+TSS PERMIT(&lt;tstcaudt&gt;) DSN(SYS3.CA1.AUDIT) ACCESS(UPDATE)<br />
+TSS PERMIT(&lt;syspaudt&gt;) DSN(SYS3.CA1.RDS) ACCESS(ALL) ACTION(AUDIT)<br />
+TSS PERMIT(&lt;syspaudt&gt;) DSN(SYS3.CA1.RDS) ACCESS(UPDATE)<br />
+TSS PERMIT(&lt;tapeaudt&gt;) DSN(SYS3.CA1.RDS) ACCESS(ALL) ACTION(AUDIT)<br />
+TSS PERMIT(&lt;tapeaudt&gt;) DSN(SYS3.CA1.RDS) ACCESS(UPDATE)<br />
+TSS PERMIT(&lt;tstcaudt&gt;) DSN(SYS3.CA1.RDS) ACCESS(ALL) ACTION(AUDIT)<br />
+TSS PERMIT(&lt;tstcaudt&gt;) DSN(SYS3.CA1.RDS) ACCESS(UPDATE)<br />
+TSS PERMIT(&lt;audtaudt&gt;) DSN(SYS3.CA1.TMC) ACCESS(READ)<br />
+TSS PERMIT(&lt;operaudt&gt;) DSN(SYS3.CA1.TMC) ACCESS(READ)<br />
+TSS PERMIT(&lt;pcspaudt&gt;) DSN(SYS3.CA1.TMC) ACCESS(READ)<br />
+TSS PERMIT(CA1 STCs) DSN(SYS3.CA1.TMC) ACCESS(UPDATE)<br />
+TSS PERMIT(&lt;syspaudt&gt;) DSN(SYS3.CA1.TMC) ACCESS(ALL) ACTION(AUDIT)<br />
+TSS PERMIT(&lt;syspaudt&gt;) DSN(SYS3.CA1.TMC) ACCESS(UPDATE)<br />
+TSS PERMIT(&lt;tapeaudt&gt;) DSN(SYS3.CA1.TMC) ACCESS(ALL) ACTION(AUDIT)<br />
+TSS PERMIT(&lt;tapeaudt&gt;) DSN(SYS3.CA1.TMC) ACCESS(UPDATE)<br />
+TSS PERMIT(&lt;tstcaudt&gt;) DSN(SYS3.CA1.TMC) ACCESS(ALL) ACTION(AUDIT)<br />
+TSS PERMIT(&lt;tstcaudt&gt;) DSN(SYS3.CA1.TMC) ACCESS(UPDATE)<br />
+TSS PERMIT(&lt;syspaudt&gt;) DSN(SYS3.CA1.VPD) ACCESS(ALL) ACTION(AUDIT)<br />
+TSS PERMIT(&lt;syspaudt&gt;) DSN(SYS3.CA1.VPD) ACCESS(UPDATE)<br />
+TSS PERMIT(&lt;tapeaudt&gt;) DSN(SYS3.CA1.VPD) ACCESS(ALL) ACTION(AUDIT)<br />
+TSS PERMIT(&lt;tapeaudt&gt;) DSN(SYS3.CA1.VPD) ACCESS(UPDATE)<br />
+TSS PERMIT(&lt;tstcaudt&gt;) DSN(SYS3.CA1.VPD) ACCESS(ALL) ACTION(AUDIT)<br />
+TSS PERMIT(&lt;tstcaudt&gt;) DSN(SYS3.CA1.VPD) ACCESS(UPDATE)</p><h2>Check Contents</h2><p>Refer to the following report produced by the Data Set and Resource Data Collection:<br />
+<br />
+- SENSITVE.RPT(CA1RPT).<br />
+<br />
+Automated Analysis<br />
+Refer to the following report produced by the Data Set and Resource Data Collection:<br />
+<br />
+- PDI(ZCA10003).<br />
+<br />
+Ensure that all CA 1 Tape Management TMC, AUDIT and optional RDS and VPD data sets are properly protected. If the following guidance is true, this is not a finding.<br />
+<br />
+The TSS data set access authorizations restrict READ access to application support personnel, production control and scheduling personnel, operations personnel, and auditors.<br />
+<br />
+The TSS data set access authorizations restrict WRITE and/or greater access to only systems programming personnel and tape management personnel.<br />
+<br />
+The TSS data set access authorizations restrict UPDATE access is limited to CA 1 batch production jobs, and CA 1 started tasks.<br />
+<br />
+The TSS data set access authorizations specify that all (i.e., failures and successes) ALL access is logged.</p><h2>Vulnerability Number</h2><p>V-224640</p><h2>Documentable</h2><p>False</p><h2>Rule Version</h2><p>ZCA1T003</p><h2>Severity Override Guidance</h2><p>Refer to the following report produced by the Data Set and Resource Data Collection:<br />
+<br />
+- SENSITVE.RPT(CA1RPT).<br />
+<br />
+Automated Analysis<br />
+Refer to the following report produced by the Data Set and Resource Data Collection:<br />
+<br />
+- PDI(ZCA10003).<br />
+<br />
+Ensure that all CA 1 Tape Management TMC, AUDIT and optional RDS and VPD data sets are properly protected. If the following guidance is true, this is not a finding.<br />
+<br />
+The TSS data set access authorizations restrict READ access to application support personnel, production control and scheduling personnel, operations personnel, and auditors.<br />
+<br />
+The TSS data set access authorizations restrict WRITE and/or greater access to only systems programming personnel and tape management personnel.<br />
+<br />
+The TSS data set access authorizations restrict UPDATE access is limited to CA 1 batch production jobs, and CA 1 started tasks.<br />
+<br />
+The TSS data set access authorizations specify that all (i.e., failures and successes) ALL access is logged.</p><h2>Check Content Reference</h2><p>M</p><h2>Target Key</h2><p>4179</p></body></html>

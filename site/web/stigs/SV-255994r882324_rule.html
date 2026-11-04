@@ -1,0 +1,56 @@
+<!doctype html><html lang="en"><head><meta charset="utf-8"><title>STIGQter: STIG Check Details: SV-255994r882324_rule: The Arista Multicast Source Discovery Protocol (MSDP) router must be configured to filter source-active multicast advertisements to external MSDP peers to avoid global visibility of local-only multicast sources and groups.</title><link rel="icon" type="image/svg+xml" href="STIGQter.svg" /><script async src="https://www.googletagmanager.com/gtag/js?id=UA-31381839-2"></script><script src="include.js"></script><script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-4110907817782130" crossorigin="anonymous"></script></head><body><div><img src="STIGQter.svg" alt="STIGQter" style="height:1em;" /> <a href="https://www.stigqter.com/">STIGQter</a>: <a href="main.html">STIG Summary</a>: <a href="U_Arista_MLS_EOS_4-X_Router_STIG_V2R2_Manual-xccdf.html">Arista MLS EOS 4.X Router Security Technical Implementation Guide Version: 2 Release: 2 Benchmark Date: 02 Apr 2025</a>:</div> <h1>The Arista Multicast Source Discovery Protocol (MSDP) router must be configured to filter source-active multicast advertisements to external MSDP peers to avoid global visibility of local-only multicast sources and groups.</h1><h2>DISA Rule</h2><p>SV-255994r882324_rule</p><h2>Vulnerability Number</h2><p>V-255994</p><h2>Group Title</h2><p>SRG-NET-000018-RTR-000008</p><h2>Rule Version</h2><p>ARST-RT-000080</p><h2>Severity</h2><p>CAT III</p><h2>CCI(s)</h2><ul><li>CCI-001368 - Enforce approved authorizations for controlling the flow of information within the system based on organization-defined information flow control policies.</li></ul><h2>Weight</h2><p>10</p><h2>Fix Recommendation</h2><p>Step 1: Configure Arista router to ensure an export policy is implemented on all MSDP routers to avoid global visibility of local multicast (S,G) states.<br />
+<br />
+router msdp <br />
+ peer 10.1.12.2<br />
+  sa-filter in PIM_NEIGHBOR_SA_FILTER<br />
+<br />
+Step 2: Configure the source active access-list.<br />
+<br />
+ip access-list PIM_NEIGHBOR_SA_FILTER<br />
+   10 deny ip any 224.1.1.0/24<br />
+   20 deny ip any 224.1.2.0/24<br />
+   30 deny ip any 224.1.3.0/24<br />
+   40 deny ip any 224.1.4.0/24<br />
+   100 permit ip any any</p><h2>Check Contents</h2><p>Review the Arista router configuration to determine if there is export policy to block local source-active multicast advertisements.<br />
+<br />
+Step 1: Verify that an outbound source-active filter is bound to each MSDP peer.<br />
+<br />
+To verify the MSDP peer is configured and to verify the source-active filter is configured outbound, execute the command &quot;show ip msdp peer X.1.12.2 and show ip msdp summary&quot;.<br />
+<br />
+router msdp <br />
+ peer 10.1.12.2<br />
+  sa-filter out PIM_NEIGHBOR_SA_FILTER<br />
+<br />
+Step 2: Review the access lists referenced by the source-active filters and verify that MSDP source-active messages being sent to MSDP peers do not leak advertisements that are local.<br />
+<br />
+To verify IP access lists are configured, execute the command &quot;show ip access-lists&quot;.<br />
+<br />
+ip access-list PIM_NEIGHBOR_SA_FILTER<br />
+   10 deny ip any 224.1.1.0/24<br />
+   20 deny ip any 224.1.2.0/24<br />
+   30 deny ip any 224.1.3.0/24<br />
+   40 deny ip any 224.1.4.0/24<br />
+   100 permit ip any any<br />
+<br />
+If the router is not configured with an export policy to block local source-active multicast advertisements, this is a finding.</p><h2>Vulnerability Number</h2><p>V-255994</p><h2>Documentable</h2><p>False</p><h2>Rule Version</h2><p>ARST-RT-000080</p><h2>Severity Override Guidance</h2><p>Review the Arista router configuration to determine if there is export policy to block local source-active multicast advertisements.<br />
+<br />
+Step 1: Verify that an outbound source-active filter is bound to each MSDP peer.<br />
+<br />
+To verify the MSDP peer is configured and to verify the source-active filter is configured outbound, execute the command &quot;show ip msdp peer X.1.12.2 and show ip msdp summary&quot;.<br />
+<br />
+router msdp <br />
+ peer 10.1.12.2<br />
+  sa-filter out PIM_NEIGHBOR_SA_FILTER<br />
+<br />
+Step 2: Review the access lists referenced by the source-active filters and verify that MSDP source-active messages being sent to MSDP peers do not leak advertisements that are local.<br />
+<br />
+To verify IP access lists are configured, execute the command &quot;show ip access-lists&quot;.<br />
+<br />
+ip access-list PIM_NEIGHBOR_SA_FILTER<br />
+   10 deny ip any 224.1.1.0/24<br />
+   20 deny ip any 224.1.2.0/24<br />
+   30 deny ip any 224.1.3.0/24<br />
+   40 deny ip any 224.1.4.0/24<br />
+   100 permit ip any any<br />
+<br />
+If the router is not configured with an export policy to block local source-active multicast advertisements, this is a finding.</p><h2>Check Content Reference</h2><p>M</p><h2>Target Key</h2><p>5513</p></body></html>

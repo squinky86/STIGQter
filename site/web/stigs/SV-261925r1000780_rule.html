@@ -1,0 +1,59 @@
+<!doctype html><html lang="en"><head><meta charset="utf-8"><title>STIGQter: STIG Check Details: SV-261925r1000780_rule: PostgreSQL must produce audit records of its enforcement of access restrictions associated with changes to the configuration of PostgreSQL or database(s).</title><link rel="icon" type="image/svg+xml" href="STIGQter.svg" /><script async src="https://www.googletagmanager.com/gtag/js?id=UA-31381839-2"></script><script src="include.js"></script><script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-4110907817782130" crossorigin="anonymous"></script></head><body><div><img src="STIGQter.svg" alt="STIGQter" style="height:1em;" /> <a href="https://www.stigqter.com/">STIGQter</a>: <a href="main.html">STIG Summary</a>: <a href="U_CD_Postgres_16_STIG_V1R3_Manual-xccdf.html">Crunchy Data Postgres 16 Security Technical Implementation Guide Version: 1 Release: 3 Benchmark Date: 01 Jul 2026</a>:</div> <h1>PostgreSQL must produce audit records of its enforcement of access restrictions associated with changes to the configuration of PostgreSQL or database(s).</h1><h2>DISA Rule</h2><p>SV-261925r1000780_rule</p><h2>Vulnerability Number</h2><p>V-261925</p><h2>Group Title</h2><p>SRG-APP-000381-DB-000361</p><h2>Rule Version</h2><p>CD16-00-007900</p><h2>Severity</h2><p>CAT II</p><h2>CCI(s)</h2><ul><li>CCI-000366 - Implement the security configuration settings.</li></ul><h2>Weight</h2><p>10</p><h2>Fix Recommendation</h2><p>Enable logging.<br />
+<br />
+All denials are logged by default if logging is enabled. To ensure logging is enabled, see the instructions in the supplementary content APPENDIX-C.</p><h2>Check Contents</h2><p>Note: The following instructions use the PGDATA environment variable. Refer to APPENDIX-F for instructions on configuring PGDATA and APPENDIX-I for PGLOG.<br />
+<br />
+To verify that system denies are logged when unprivileged users attempt to change database configuration, as the database administrator (shown here as &quot;postgres&quot;), run the following commands:<br />
+<br />
+$ sudo su - postgres<br />
+$ psql<br />
+<br />
+Create a role with no privileges, change the current role to that user, and attempt to change a configuration by running the following SQL:<br />
+<br />
+CREATE ROLE bob;<br />
+SET ROLE bob;<br />
+SET pgaudit.role='test';<br />
+RESET ROLE;<br />
+DROP ROLE bob;<br />
+<br />
+Check ${PGLOG?} (use the latest log):<br />
+<br />
+$ cat ${PGDATA?}/${PGLOG?}/postgresql-Thu.log<br />
+&lt; 2024-01-28 17:57:34.092 UTC bob postgres: &gt;ERROR: permission denied to set parameter &quot;pgaudit.role&quot;<br />
+&lt; 2024-01-28 17:57:34.092 UTC bob postgres: &gt;STATEMENT: SET pgaudit.role='test';<br />
+<br />
+If the denial is not logged, this is a finding.<br />
+<br />
+By default PostgreSQL configuration files are owned by the Postgres user and cannot be edited by nonprivileged users:<br />
+<br />
+$ ls -la ${PGDATA?} | grep postgresql.conf<br />
+-rw-------. 1 postgres postgres 21758 Jan 22 10:27 postgresql.conf<br />
+<br />
+If postgresql.conf is not owned by the database owner and does not have read and write permissions for the owner, this is a finding.</p><h2>Vulnerability Number</h2><p>V-261925</p><h2>Documentable</h2><p>False</p><h2>Rule Version</h2><p>CD16-00-007900</p><h2>Severity Override Guidance</h2><p>Note: The following instructions use the PGDATA environment variable. Refer to APPENDIX-F for instructions on configuring PGDATA and APPENDIX-I for PGLOG.<br />
+<br />
+To verify that system denies are logged when unprivileged users attempt to change database configuration, as the database administrator (shown here as &quot;postgres&quot;), run the following commands:<br />
+<br />
+$ sudo su - postgres<br />
+$ psql<br />
+<br />
+Create a role with no privileges, change the current role to that user, and attempt to change a configuration by running the following SQL:<br />
+<br />
+CREATE ROLE bob;<br />
+SET ROLE bob;<br />
+SET pgaudit.role='test';<br />
+RESET ROLE;<br />
+DROP ROLE bob;<br />
+<br />
+Check ${PGLOG?} (use the latest log):<br />
+<br />
+$ cat ${PGDATA?}/${PGLOG?}/postgresql-Thu.log<br />
+&lt; 2024-01-28 17:57:34.092 UTC bob postgres: &gt;ERROR: permission denied to set parameter &quot;pgaudit.role&quot;<br />
+&lt; 2024-01-28 17:57:34.092 UTC bob postgres: &gt;STATEMENT: SET pgaudit.role='test';<br />
+<br />
+If the denial is not logged, this is a finding.<br />
+<br />
+By default PostgreSQL configuration files are owned by the Postgres user and cannot be edited by nonprivileged users:<br />
+<br />
+$ ls -la ${PGDATA?} | grep postgresql.conf<br />
+-rw-------. 1 postgres postgres 21758 Jan 22 10:27 postgresql.conf<br />
+<br />
+If postgresql.conf is not owned by the database owner and does not have read and write permissions for the owner, this is a finding.</p><h2>Check Content Reference</h2><p>M</p><h2>Target Key</h2><p>5598</p></body></html>

@@ -1,0 +1,58 @@
+<!doctype html><html lang="en"><head><meta charset="utf-8"><title>STIGQter: STIG Check Details: SV-257587r961896_rule: OpenShift must use FIPS-validated SHA-2 or higher hash function for digital signature generation and verification (nonlegacy use).</title><link rel="icon" type="image/svg+xml" href="STIGQter.svg" /><script async src="https://www.googletagmanager.com/gtag/js?id=UA-31381839-2"></script><script src="include.js"></script><script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-4110907817782130" crossorigin="anonymous"></script></head><body><div><img src="STIGQter.svg" alt="STIGQter" style="height:1em;" /> <a href="https://www.stigqter.com/">STIGQter</a>: <a href="main.html">STIG Summary</a>: <a href="U_RH_OpenShift_Container_Platform_4-x_STIG_V2R6_Manual-xccdf.html">Red Hat OpenShift Container Platform 4.x Security Technical Implementation Guide Version: 2 Release: 6 Benchmark Date: 01 Jul 2026</a>:</div> <h1>OpenShift must use FIPS-validated SHA-2 or higher hash function for digital signature generation and verification (nonlegacy use).</h1><h2>DISA Rule</h2><p>SV-257587r961896_rule</p><h2>Vulnerability Number</h2><p>V-257587</p><h2>Group Title</h2><p>SRG-APP-000610-CTR-001385</p><h2>Rule Version</h2><p>CNTR-OS-001080</p><h2>Severity</h2><p>CAT II</p><h2>CCI(s)</h2><ul><li>CCI-000803 - Implement mechanisms for authentication to a cryptographic module that meet the requirements of applicable laws, Executive Orders, directives, policies, regulations, standards, and guidance for such authentication.</li></ul><h2>Weight</h2><p>10</p><h2>Fix Recommendation</h2><p>Reinstall the OpenShift cluster in FIPS mode. The file install-config.yaml has a top-level key that enables FIPS mode for all nodes and the cluster platform layer. If the install-config.yaml was not backed up prior to consumption as part of the installation, it must be recreated. An example install-config.yaml with some sections trimmed out for brevity, and the &quot;fips: true&quot; key applied at the top level is shown below:<br />
+<br />
+apiVersion: v1<br />
+baseDomain: example.com<br />
+controlPlane:<br />
+  name: master<br />
+  platform:<br />
+    aws:<br />
+      [...]<br />
+  replicas: 3<br />
+compute:<br />
+- name: worker<br />
+  platform:<br />
+    aws:<br />
+  replicas: 3<br />
+metadata:<br />
+  name: fips-cluster<br />
+networking:<br />
+  [...]<br />
+platform:<br />
+  aws:<br />
+    [...]<br />
+sshKey: ssh-ed25519 AAAA...<br />
+pullSecret: '{&quot;auths&quot;: ...}'<br />
+fips: true<br />
+<br />
+After saving the install-config.yaml with the corresponding correct information, run the installer to create a cluster that uses FIPS-validated Modules in Process cryptographic libraries. The command to install a cluster and consume the install-config.yaml is:<br />
+<br />
+&gt; ./openshift-install create cluster --dir=&lt;installation_directory&gt; --log-level=info<br />
+Where &lt;installation_directory&gt; is the directory that contains install-config.yaml<br />
+<br />
+Additional details can be found here: https://docs.openshift.com/container-platform/4.8/installing/installing-fips.html</p><h2>Check Contents</h2><p>Verify the use of a FIPS-compliant hash function for digital signature generation and validation, by executing and reviewing the following commands:<br />
+<br />
+update-crypto-policies --show<br />
+<br />
+If the return is not &quot;FIPS&quot;, this is a finding.<br />
+<br />
+Verify the crypto-policies by executing the following:<br />
+<br />
+openssl x509 -in /etc/kubernetes/kubelet-ca.crt -noout -text | grep Algorithm<br />
+<br />
+openssl x509 -in /etc/kubernetes/ca.crt -noout -text | grep Algorithm<br />
+<br />
+If any of the crypto-policies listed are not FIPS compliant, this is a finding. Details of algorithms can be reviewed at the following knowledge base article:<br />
+https://access.redhat.com/articles/3642912</p><h2>Vulnerability Number</h2><p>V-257587</p><h2>Documentable</h2><p>False</p><h2>Rule Version</h2><p>CNTR-OS-001080</p><h2>Severity Override Guidance</h2><p>Verify the use of a FIPS-compliant hash function for digital signature generation and validation, by executing and reviewing the following commands:<br />
+<br />
+update-crypto-policies --show<br />
+<br />
+If the return is not &quot;FIPS&quot;, this is a finding.<br />
+<br />
+Verify the crypto-policies by executing the following:<br />
+<br />
+openssl x509 -in /etc/kubernetes/kubelet-ca.crt -noout -text | grep Algorithm<br />
+<br />
+openssl x509 -in /etc/kubernetes/ca.crt -noout -text | grep Algorithm<br />
+<br />
+If any of the crypto-policies listed are not FIPS compliant, this is a finding. Details of algorithms can be reviewed at the following knowledge base article:<br />
+https://access.redhat.com/articles/3642912</p><h2>Check Content Reference</h2><p>M</p><h2>Target Key</h2><p>5547</p></body></html>

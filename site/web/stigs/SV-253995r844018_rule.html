@@ -1,0 +1,75 @@
+<!doctype html><html lang="en"><head><meta charset="utf-8"><title>STIGQter: STIG Check Details: SV-253995r844018_rule: The Juniper multicast Rendezvous Point (RP) router must be configured to filter Protocol Independent Multicast (PIM) Join messages received from the Designated Router (DR) for any undesirable multicast groups.</title><link rel="icon" type="image/svg+xml" href="STIGQter.svg" /><script async src="https://www.googletagmanager.com/gtag/js?id=UA-31381839-2"></script><script src="include.js"></script><script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-4110907817782130" crossorigin="anonymous"></script></head><body><div><img src="STIGQter.svg" alt="STIGQter" style="height:1em;" /> <a href="https://www.stigqter.com/">STIGQter</a>: <a href="main.html">STIG Summary</a>: <a href="U_Juniper_EX_Switches_RTR_STIG_V2R1_Manual-xccdf.html">Juniper EX Series Switches Router Security Technical Implementation Guide Version: 2 Release: 1 Benchmark Date: 24 Jul 2024</a>:</div> <h1>The Juniper multicast Rendezvous Point (RP) router must be configured to filter Protocol Independent Multicast (PIM) Join messages received from the Designated Router (DR) for any undesirable multicast groups.</h1><h2>DISA Rule</h2><p>SV-253995r844018_rule</p><h2>Vulnerability Number</h2><p>V-253995</p><h2>Group Title</h2><p>SRG-NET-000019-RTR-000014</p><h2>Rule Version</h2><p>JUEX-RT-000230</p><h2>Severity</h2><p>CAT III</p><h2>CCI(s)</h2><ul><li>CCI-001414 - Enforce approved authorizations for controlling the flow of information between connected systems based on organization-defined information flow control policies.</li></ul><h2>Weight</h2><p>10</p><h2>Fix Recommendation</h2><p>RP routers that are peering with customer PIM-SM routers must implement a PIM import policy to block join messages for reserved and any undesirable multicast groups.<br />
+<br />
+set policy-options policy-statement &lt;name&gt; term filter_groups from route-filter &lt;multicast address&gt;/&lt;mask&gt; &lt;match criterion&gt;<br />
+set policy-options policy-statement &lt;name&gt; term filter_groups from route-filter &lt;additional multicast address&gt;/&lt;mask&gt; &lt;match criterion&gt;<br />
+set policy-options policy-statement &lt;name&gt; term filter_groups then reject<br />
+<br />
+set policy-options policy-statement &lt;name&gt; term filter_source from source-address-filter &lt;source address&gt;/&lt;mask&gt; &lt;match criterion&gt;<br />
+set policy-options policy-statement &lt;name&gt; term filter_source from source-address-filter &lt;additional source address&gt;/&lt;mask&gt; &lt;match criterion&gt;<br />
+set policy-options policy-statement &lt;name&gt; term filter_source then reject<br />
+<br />
+set policy-options policy-statement &lt;name&gt; term accept_others then accept<br />
+<br />
+set protocols pim import &lt;policy name&gt;</p><h2>Check Contents</h2><p>Verify that the RP router is configured to filter PIM register messages.<br />
+[edit policy-options]<br />
+policy-statement &lt;name&gt; {<br />
+    term filter_groups {<br />
+        from {<br />
+            route-filter &lt;multicast address&gt;/&lt;mask&gt; orlonger;<br />
+            route-filter &lt;multicast address&gt;/&lt;mask&gt; exact;<br />
+            &lt;additional groups to filter&gt;<br />
+        }<br />
+        then reject;<br />
+    }<br />
+    term filter_sources {<br />
+        from {<br />
+            source-address-filter &lt;source host address&gt;/32 exact;<br />
+            source-address-filter &lt;source subnet address&gt;/&lt;mask&gt; orlonger;<br />
+            &lt;additional source addresses to filter&gt;<br />
+        }<br />
+        then reject;<br />
+    }<br />
+    term accept_others {<br />
+        then accept;<br />
+    }<br />
+}<br />
+[edit protocols]<br />
+pim {<br />
+    mode sparse;<br />
+    import &lt;policy name&gt;;<br />
+}<br />
+<br />
+Note: Alternative is to verify all designated routers are filtering IGMP Membership Report (a.k.a., join) messages received from hosts.<br />
+<br />
+If the RP router peering with PIM-SM routers is not configured with a PIM import policy to block registration messages for any undesirable multicast groups and Bogon sources, this is a finding.</p><h2>Vulnerability Number</h2><p>V-253995</p><h2>Documentable</h2><p>False</p><h2>Rule Version</h2><p>JUEX-RT-000230</p><h2>Severity Override Guidance</h2><p>Verify that the RP router is configured to filter PIM register messages.<br />
+[edit policy-options]<br />
+policy-statement &lt;name&gt; {<br />
+    term filter_groups {<br />
+        from {<br />
+            route-filter &lt;multicast address&gt;/&lt;mask&gt; orlonger;<br />
+            route-filter &lt;multicast address&gt;/&lt;mask&gt; exact;<br />
+            &lt;additional groups to filter&gt;<br />
+        }<br />
+        then reject;<br />
+    }<br />
+    term filter_sources {<br />
+        from {<br />
+            source-address-filter &lt;source host address&gt;/32 exact;<br />
+            source-address-filter &lt;source subnet address&gt;/&lt;mask&gt; orlonger;<br />
+            &lt;additional source addresses to filter&gt;<br />
+        }<br />
+        then reject;<br />
+    }<br />
+    term accept_others {<br />
+        then accept;<br />
+    }<br />
+}<br />
+[edit protocols]<br />
+pim {<br />
+    mode sparse;<br />
+    import &lt;policy name&gt;;<br />
+}<br />
+<br />
+Note: Alternative is to verify all designated routers are filtering IGMP Membership Report (a.k.a., join) messages received from hosts.<br />
+<br />
+If the RP router peering with PIM-SM routers is not configured with a PIM import policy to block registration messages for any undesirable multicast groups and Bogon sources, this is a finding.</p><h2>Check Content Reference</h2><p>M</p><h2>Target Key</h2><p>5479</p></body></html>

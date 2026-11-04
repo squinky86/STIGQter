@@ -1,0 +1,32 @@
+<!doctype html><html lang="en"><head><meta charset="utf-8"><title>STIGQter: STIG Check Details: SV-216627r1117237_rule: The Cisco multicast Rendezvous Point (RP) router must be configured to filter Protocol Independent Multicast (PIM) Join messages received from the Designated Router (DR) for any undesirable multicast groups.</title><link rel="icon" type="image/svg+xml" href="STIGQter.svg" /><script async src="https://www.googletagmanager.com/gtag/js?id=UA-31381839-2"></script><script src="include.js"></script><script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-4110907817782130" crossorigin="anonymous"></script></head><body><div><img src="STIGQter.svg" alt="STIGQter" style="height:1em;" /> <a href="https://www.stigqter.com/">STIGQter</a>: <a href="main.html">STIG Summary</a>: <a href="U_Cisco_IOS_Router_RTR_STIG_V3R4_Manual-xccdf.html">Cisco IOS Router RTR Security Technical Implementation Guide Version: 3 Release: 4 Benchmark Date: 01 Oct 2025</a>:</div> <h1>The Cisco multicast Rendezvous Point (RP) router must be configured to filter Protocol Independent Multicast (PIM) Join messages received from the Designated Router (DR) for any undesirable multicast groups.</h1><h2>DISA Rule</h2><p>SV-216627r1117237_rule</p><h2>Vulnerability Number</h2><p>V-216627</p><h2>Group Title</h2><p>SRG-NET-000019-RTR-000014</p><h2>Rule Version</h2><p>CISC-RT-000840</p><h2>Severity</h2><p>CAT III</p><h2>CCI(s)</h2><ul><li>CCI-001414 - Enforce approved authorizations for controlling the flow of information between connected systems based on organization-defined information flow control policies.</li></ul><h2>Weight</h2><p>10</p><h2>Fix Recommendation</h2><p>Configure the RP to filter PIM join messages for any undesirable multicast groups as shown in the example below.<br />
+<br />
+R2(config)#ip access-list standard PIM_JOIN_FILTER<br />
+R2(config-std-nacl)#deny 239.8.0.0 0.0.255.255<br />
+R2(config-std-nacl)#permit any<br />
+R2(config-std-nacl)#exit<br />
+R2(config)#ip pim accept-rp 10.2.2.2 PIM_JOIN_FILTER <br />
+R2(config)#end</p><h2>Check Contents</h2><p>Verify that the RP router is configured to filter PIM join messages for any undesirable multicast groups. In the example below, groups from 239.8.0.0/16 are not allowed.<br />
+<br />
+ip pim rp-address 10.2.2.2<br />
+ip pim accept-rp 10.2.2.2 FILTER_PIM_JOINS<br />
+…<br />
+…<br />
+…<br />
+ip access-list standard FILTER_PIM_JOINS<br />
+ deny   239.8.0.0 0.0.255.255<br />
+ permit any<br />
+!<br />
+<br />
+If the RP is not configured to filter join messages received from the DR for any undesirable multicast groups, this is a finding.</p><h2>Vulnerability Number</h2><p>V-216627</p><h2>Documentable</h2><p>False</p><h2>Rule Version</h2><p>CISC-RT-000840</p><h2>Severity Override Guidance</h2><p>Verify that the RP router is configured to filter PIM join messages for any undesirable multicast groups. In the example below, groups from 239.8.0.0/16 are not allowed.<br />
+<br />
+ip pim rp-address 10.2.2.2<br />
+ip pim accept-rp 10.2.2.2 FILTER_PIM_JOINS<br />
+…<br />
+…<br />
+…<br />
+ip access-list standard FILTER_PIM_JOINS<br />
+ deny   239.8.0.0 0.0.255.255<br />
+ permit any<br />
+!<br />
+<br />
+If the RP is not configured to filter join messages received from the DR for any undesirable multicast groups, this is a finding.</p><h2>Check Content Reference</h2><p>M</p><h2>Target Key</h2><p>4027</p></body></html>

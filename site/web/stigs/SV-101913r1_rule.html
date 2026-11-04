@@ -1,0 +1,81 @@
+<!doctype html><html lang="en"><head><meta charset="utf-8"><title>STIGQter: STIG Check Details: SV-101913r1_rule: The MobileIron Core v10 server must be configured to transfer MobileIron Core v10 server logs to another server for storage, analysis, and reporting. Note: MobileIron Core v10 server logs include logs of MDM events and logs transferred to the MobileIron Core v10 server by MDM agents of managed devices.</title><link rel="icon" type="image/svg+xml" href="STIGQter.svg" /><script async src="https://www.googletagmanager.com/gtag/js?id=UA-31381839-2"></script><script src="include.js"></script><script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-4110907817782130" crossorigin="anonymous"></script></head><body><div><img src="STIGQter.svg" alt="STIGQter" style="height:1em;" /> <a href="https://www.stigqter.com/">STIGQter</a>: <a href="main.html">STIG Summary</a>: <a href="U_MobileIron_Core_v10-x_MDM_STIG_V1R1_Manual-xccdf.html">MobileIron Core v10.x MDM Security Technical Implementation Guide Version: 1 Release: 1 Benchmark Date: 15 Feb 2019</a>:</div> <h1>The MobileIron Core v10 server must be configured to transfer MobileIron Core v10 server logs to another server for storage, analysis, and reporting. Note: MobileIron Core v10 server logs include logs of MDM events and logs transferred to the MobileIron Core v10 server by MDM agents of managed devices.</h1><h2>DISA Rule</h2><p>SV-101913r1_rule</p><h2>Vulnerability Number</h2><p>V-91811</p><h2>Group Title</h2><p>PP-MDM-311054</p><h2>Rule Version</h2><p>MICR-10-000510</p><h2>Severity</h2><p>CAT II</p><h2>CCI(s)</h2><ul><li>CCI-001851 - Transfer audit logs per organization-defined frequency to a different system, system component, or media than the system or system component conducting the logging.</li></ul><h2>Weight</h2><p>10</p><h2>Fix Recommendation</h2><p>Complete the following activities to configure the transfer of MobileIron Core v10 server logs.<br />
+<br />
+Configure Splunk for automated log export.<br />
+<br />
+Step 1: Enable Core to turn on the &quot;Splunk Forwarder&quot; so it can push data to the &quot;Splunk Indexer&quot;.<br />
+To enable the &quot;Splunk Forwarder&quot;:<br />
+1. Log onto System Manager.<br />
+2. Go to Settings &gt;&gt; Services.<br />
+3. Select &quot;Enable&quot; next to &quot;Splunk Forwarder&quot;.<br />
+4. Click &quot;Apply&quot;.<br />
+5. Click &quot;OK&quot; to save the changes.<br />
+<br />
+Step 2: Adding a &quot;Splunk Indexer&quot; to configure which external &quot;Splunk Indexer&quot; will receive and manipulate the data from the &quot;Splunk Forwarder&quot;.<br />
+To add a &quot;Splunk Indexer&quot;:<br />
+1. Log onto System Manager.<br />
+2. Go to Settings &gt;&gt; Data Export &gt;&gt; Splunk Indexer.<br />
+3. Click &quot;Add&quot; to open the &quot;Add Splunk Indexer&quot; window.<br />
+4. Modify the fields, as necessary, in the &quot;Add Splunk Indexer&quot; window.<br />
+The following table summarizes fields and descriptions in the Add Splunk Indexer window:<br />
+Fields, Description, Splunk Indexer, add the IP address of your Splunk Enterprise Server, Port, add port of your Splunk Enterprise Server, and enable &quot;SSL&quot;; click this checkbox to enable &quot;SSL&quot;.<br />
+5. Click &quot;Apply&quot;.<br />
+6. Click &quot;OK&quot; to save the changes.<br />
+<br />
+Step 3: Configuring Splunk Data to configure which data &quot;Splunk Forwarder&quot; sends to the &quot;Splunk Indexer&quot;.<br />
+To configure Splunk Data:<br />
+1. Log onto System Manager.<br />
+2. Go to Settings &gt;&gt; Data Export &gt;&gt; Splunk Data to open the &quot;Data to Index&quot; window.<br />
+3. Modify the fields, as necessary.<br />
+Click &quot;Show/Hide&quot; Advanced Options to further customize which data to send to Splunk; check &quot;Audit Log&quot; at a minimum.<br />
+4. Click Apply.<br />
+5. Click &quot;OK&quot;.<br />
+6. Restart the &quot;Splunk Forwarder&quot; by disabling it, then enabling it again.<br />
+a. Go to Settings &gt;&gt; Services.<br />
+b. Select &quot;Disable&quot; next to &quot;Splunk Forwarder&quot;.<br />
+c. Click &quot;Apply&quot;.<br />
+d. Click &quot;OK&quot;.<br />
+e. Select &quot;Enable&quot; next to &quot;Splunk Forwarder&quot;.<br />
+7. Click &quot;Apply&quot;.<br />
+8. Click &quot;OK&quot; to save the changes.</p><h2>Check Contents</h2><p>Verify that Splunk is configured for automated log export.<br />
+<br />
+Step 1: Verify that the &quot;Splunk Forwarder&quot; is &quot;Enabled&quot;.<br />
+1. Log onto System Manager.<br />
+2. Go to Settings &gt;&gt; Services.<br />
+3. Verify that the &quot;Enable&quot; toggle is &quot;ON&quot; and &quot;Running&quot; is displayed.<br />
+<br />
+If &quot;Enable&quot; toggle is not &quot;ON&quot; or &quot;Running&quot; is not displayed, this is a finding.<br />
+<br />
+Step 2: Verify that &quot;Splunk Indexer&quot; is configured.<br />
+1. Log onto System Manager.<br />
+2. Go to Settings &gt;&gt; Data Export &gt;&gt; Splunk Indexer.<br />
+3. Verify that there is an entry and the Status is &quot;Connected&quot;.<br />
+<br />
+If there is no entry for &quot;Splunk Indexer&quot; or the Status is &quot;Not Connected&quot;, this is a finding.<br />
+<br />
+Step 3: Verify &quot;Audit Log&quot; is enabled in the Splunk &quot;Data to Index&quot;.<br />
+1. Log onto System Manager.<br />
+2. Go to Settings &gt;&gt; Data Export &gt;&gt; Splunk Data to open the &quot;Data to Index&quot; window.<br />
+3. Verify &quot;Audit Log&quot; is included in the &quot;Data to Index&quot;.<br />
+<br />
+If &quot;Audit Log&quot; is not included in the &quot;Data to Index&quot;, this is a finding.</p><h2>Vulnerability Number</h2><p>V-91811</p><h2>Documentable</h2><p>False</p><h2>Rule Version</h2><p>MICR-10-000510</p><h2>Severity Override Guidance</h2><p>Verify that Splunk is configured for automated log export.<br />
+<br />
+Step 1: Verify that the &quot;Splunk Forwarder&quot; is &quot;Enabled&quot;.<br />
+1. Log onto System Manager.<br />
+2. Go to Settings &gt;&gt; Services.<br />
+3. Verify that the &quot;Enable&quot; toggle is &quot;ON&quot; and &quot;Running&quot; is displayed.<br />
+<br />
+If &quot;Enable&quot; toggle is not &quot;ON&quot; or &quot;Running&quot; is not displayed, this is a finding.<br />
+<br />
+Step 2: Verify that &quot;Splunk Indexer&quot; is configured.<br />
+1. Log onto System Manager.<br />
+2. Go to Settings &gt;&gt; Data Export &gt;&gt; Splunk Indexer.<br />
+3. Verify that there is an entry and the Status is &quot;Connected&quot;.<br />
+<br />
+If there is no entry for &quot;Splunk Indexer&quot; or the Status is &quot;Not Connected&quot;, this is a finding.<br />
+<br />
+Step 3: Verify &quot;Audit Log&quot; is enabled in the Splunk &quot;Data to Index&quot;.<br />
+1. Log onto System Manager.<br />
+2. Go to Settings &gt;&gt; Data Export &gt;&gt; Splunk Data to open the &quot;Data to Index&quot; window.<br />
+3. Verify &quot;Audit Log&quot; is included in the &quot;Data to Index&quot;.<br />
+<br />
+If &quot;Audit Log&quot; is not included in the &quot;Data to Index&quot;, this is a finding.</p><h2>Check Content Reference</h2><p>M</p><h2>Target Key</h2><p>3433</p></body></html>

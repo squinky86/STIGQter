@@ -1,0 +1,39 @@
+<!doctype html><html lang="en"><head><meta charset="utf-8"><title>STIGQter: STIG Check Details: SV-221262r961632_rule: Exchange internal Send connectors must require encryption.</title><link rel="icon" type="image/svg+xml" href="STIGQter.svg" /><script async src="https://www.googletagmanager.com/gtag/js?id=UA-31381839-2"></script><script src="include.js"></script><script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-4110907817782130" crossorigin="anonymous"></script></head><body><div><img src="STIGQter.svg" alt="STIGQter" style="height:1em;" /> <a href="https://www.stigqter.com/">STIGQter</a>: <a href="main.html">STIG Summary</a>: <a href="U_MS_Exchange_2016_Edge_Transport_Server_STIG_V2R6_Manual-xccdf.html">Microsoft Exchange 2016 Edge Transport Server Security Technical Implementation Guide Version: 2 Release: 6 Benchmark Date: 30 Jan 2025</a>:</div> <h1>Exchange internal Send connectors must require encryption.</h1><h2>DISA Rule</h2><p>SV-221262r961632_rule</p><h2>Vulnerability Number</h2><p>V-221262</p><h2>Group Title</h2><p>SRG-APP-000439</p><h2>Rule Version</h2><p>EX16-ED-000690</p><h2>Severity</h2><p>CAT I</p><h2>CCI(s)</h2><ul><li>CCI-002418 - Protect the confidentiality and/or integrity of transmitted information.</li></ul><h2>Weight</h2><p>10</p><h2>Fix Recommendation</h2><p>Open the Exchange Management Shell and enter the following command:<br />
+<br />
+Set-SendConnector -Identity &lt;'IdentityName'&gt; -TlsDomain &lt;'SMTP Domain'&gt;<br />
+<br />
+Set-SendConnector -Identity &lt;'ReceiveConnector'&gt; -DomainSecureEnabled 'True'<br />
+<br />
+Note: The SMTP Domain is the internal SMTP domain within the organization.<br />
+<br />
+The following commands can be executed if smarthosts are used:<br />
+<br />
+Set-SendConnector &lt;'IdentityName'&gt; -RequireTLS $true -TlsAuthLevel $DomainValidation</p><h2>Check Contents</h2><p>Open the Exchange Management Shell and enter the following command:<br />
+<br />
+Get-SendConnector | Select Name, Identity, TlsDomain<br />
+<br />
+If the value of &quot;TlsDomain&quot; is not set to the value of the internal &lt;'SMTP Domain'&gt;, this is a finding.<br />
+<br />
+Get-SendConnector | Select Name, Identity, DomainSecureEnabled<br />
+<br />
+If the value of &quot;DomainSecureEnabled&quot; is not set to &quot;True&quot; and the SendConnector is not using a smarthost, this is a finding.<br />
+<br />
+If the value of &quot;DomainSecureEnabled&quot; is set to &quot;False&quot; and the send connector is using a smarthost, the value of  “RequireTLS” must be set to “True”, and the value for “TlsAuthLevel” must be set to “DomainValidation”.<br />
+<br />
+If the send connector using a smarthost has a value for “RequireTLS” that is not set to “True”, this is a finding.<br />
+<br />
+If the send connector using a smarthost has a value for “TlsAuthLevel” that is not set to “DomainValidation”, this is a Finding.</p><h2>Vulnerability Number</h2><p>V-221262</p><h2>Documentable</h2><p>False</p><h2>Rule Version</h2><p>EX16-ED-000690</p><h2>Severity Override Guidance</h2><p>Open the Exchange Management Shell and enter the following command:<br />
+<br />
+Get-SendConnector | Select Name, Identity, TlsDomain<br />
+<br />
+If the value of &quot;TlsDomain&quot; is not set to the value of the internal &lt;'SMTP Domain'&gt;, this is a finding.<br />
+<br />
+Get-SendConnector | Select Name, Identity, DomainSecureEnabled<br />
+<br />
+If the value of &quot;DomainSecureEnabled&quot; is not set to &quot;True&quot; and the SendConnector is not using a smarthost, this is a finding.<br />
+<br />
+If the value of &quot;DomainSecureEnabled&quot; is set to &quot;False&quot; and the send connector is using a smarthost, the value of  “RequireTLS” must be set to “True”, and the value for “TlsAuthLevel” must be set to “DomainValidation”.<br />
+<br />
+If the send connector using a smarthost has a value for “RequireTLS” that is not set to “True”, this is a finding.<br />
+<br />
+If the send connector using a smarthost has a value for “TlsAuthLevel” that is not set to “DomainValidation”, this is a Finding.</p><h2>Check Content Reference</h2><p>M</p><h2>Target Key</h2><p>4079</p></body></html>

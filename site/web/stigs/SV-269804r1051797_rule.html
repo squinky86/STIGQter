@@ -1,0 +1,94 @@
+<!doctype html><html lang="en"><head><meta charset="utf-8"><title>STIGQter: STIG Check Details: SV-269804r1051797_rule: The Dell OS10 Switch must be running an operating system release that is currently supported by Dell.</title><link rel="icon" type="image/svg+xml" href="STIGQter.svg" /><script async src="https://www.googletagmanager.com/gtag/js?id=UA-31381839-2"></script><script src="include.js"></script><script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-4110907817782130" crossorigin="anonymous"></script></head><body><div><img src="STIGQter.svg" alt="STIGQter" style="height:1em;" /> <a href="https://www.stigqter.com/">STIGQter</a>: <a href="main.html">STIG Summary</a>: <a href="U_Dell_OS10_Switch_NDM_STIG_V1R1_Manual-xccdf.html">Dell OS10 Switch NDM Security Technical Implementation Guide Version: 1 Release: 1 Benchmark Date: 10 Dec 2024</a>:</div> <h1>The Dell OS10 Switch must be running an operating system release that is currently supported by Dell.</h1><h2>DISA Rule</h2><p>SV-269804r1051797_rule</p><h2>Vulnerability Number</h2><p>V-269804</p><h2>Group Title</h2><p>SRG-APP-000516-NDM-000351</p><h2>Rule Version</h2><p>OS10-NDM-000980</p><h2>Severity</h2><p>CAT I</p><h2>CCI(s)</h2><ul><li>CCI-000366 - Implement the security configuration settings.</li></ul><h2>Weight</h2><p>10</p><h2>Fix Recommendation</h2><p>Upgrade the network device to the latest version of the desired LTS version of OS10 available from Dell support.<br />
+<br />
+Step 1: Download the OS10 image file and GPG signature using secure file transfer from a trusted local server:<br />
+<br />
+OS10# image download https://hostip/filepath/PKGS_OS10-Enterprise-10.5.6.2.110buster-installer-x86_64.bin<br />
+Download started.<br />
+Use 'show image status' for updates<br />
+OS10#<br />
+OS10# show image status<br />
+Image Upgrade State:     idle<br />
+==================================================<br />
+File Transfer State:     transfer-success<br />
+--------------------------------------------------<br />
+  State Detail:          Completed: No error<br />
+  Task Start:            2024-04-26T16:52:54Z<br />
+  Task End:              2024-04-26T16:53:18Z<br />
+  Transfer Progress:     100 %<br />
+  Transfer Bytes:        959310070 bytes<br />
+  File Size:             959310070 bytes<br />
+  Transfer Rate:         44447 kbps<br />
+<br />
+Installation State:      idle<br />
+--------------------------------------------------<br />
+  State Detail:          No install information available<br />
+  Task Start:            0000-00-00T00:00:00Z<br />
+  Task End:              0000-00-00T00:00:00Z<br />
+OS10#<br />
+OS10# image download https://hostip/filepath/PKGS_OS10-Enterprise-10.5.6.2.110buster-installer-x86_64.bin.gpg<br />
+OS10#<br />
+OS10#<br />
+OS10# dir image<br />
+<br />
+Directory contents for folder: image<br />
+Date (modified)        Size (bytes)  Name<br />
+---------------------  ------------  ------------------------------------------<br />
+2024-04-26T16:53:16Z   959310070     PKGS_OS10-Enterprise-10.5.6.2.110buster-installer-x86_64.bin<br />
+2024-04-26T16:57:36Z   566           PKGS_OS10-Enterprise-10.5.6.2.110buster-installer-x86_64.bin.gpg<br />
+OS10#<br />
+<br />
+Step 2: Load the Dell GPG signing key and verify the image GPG signature:<br />
+<br />
+OS10# image gpg-key key-server keyserver.ubuntu.com key-id 7FDA043B<br />
+OS10#<br />
+OS10# image verify image://PKGS_OS10-Enterprise-10.5.6.2.110buster-installer-x86_64.bin gpg signature image://PKGS_OS10-Enterprise-10.5.6.2.110buster-installer-x86_64.bin.gpg<br />
+Image verified successfully.<br />
+OS10#<br />
+<br />
+Step 3: Install the new OS10 image into the backup image partition:<br />
+<br />
+OS10# image install image://PKGS_OS10-Enterprise-10.5.6.2.110buster-installer-x86_64.bin<br />
+Info: Take the Backup of the configs which can be used during downgrade<br />
+Install started.<br />
+Use 'show image status' for updates<br />
+OS10#<br />
+OS10# show image status<br />
+Image Upgrade State:     idle<br />
+==================================================<br />
+File Transfer State:     transfer-success<br />
+--------------------------------------------------<br />
+  State Detail:          Completed: No error<br />
+  Task Start:            2024-04-26T16:58:01Z<br />
+  Task End:              2024-04-26T16:58:01Z<br />
+  Transfer Progress:     100 %<br />
+  Transfer Bytes:        350 bytes<br />
+  File Size:             350 bytes<br />
+  Transfer Rate:         3 kbps<br />
+<br />
+Installation State:      install-success<br />
+--------------------------------------------------<br />
+  State Detail:          Completed: Success<br />
+  Task Start:            2024-04-26T17:04:48Z<br />
+  Task End:              2024-04-26T17:22:03Z<br />
+OS10#<br />
+<br />
+Step 4: Switch the standby image to be the boot image and reboot the switch:<br />
+<br />
+OS10#<br />
+OS10# boot system standby<br />
+OS10#<br />
+OS10# reload<br />
+<br />
+Proceed to reboot the system? [confirm yes/no]:yes</p><h2>Check Contents</h2><p>Verify the OS10 Switch complies with this requirement by entering the following command: <br />
+<br />
+OS10# show version<br />
+<br />
+Verify the release is still supported by Dell. All OS10 releases supported by Dell can be found at https://www.dell.com/support.<br />
+<br />
+If the OS10 Switch is not running an operating system release that is currently supported by Dell, this is a finding.</p><h2>Vulnerability Number</h2><p>V-269804</p><h2>Documentable</h2><p>False</p><h2>Rule Version</h2><p>OS10-NDM-000980</p><h2>Severity Override Guidance</h2><p>Verify the OS10 Switch complies with this requirement by entering the following command: <br />
+<br />
+OS10# show version<br />
+<br />
+Verify the release is still supported by Dell. All OS10 releases supported by Dell can be found at https://www.dell.com/support.<br />
+<br />
+If the OS10 Switch is not running an operating system release that is currently supported by Dell, this is a finding.</p><h2>Check Content Reference</h2><p>M</p><h2>Target Key</h2><p>5666</p></body></html>

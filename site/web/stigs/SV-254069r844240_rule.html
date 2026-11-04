@@ -1,0 +1,35 @@
+<!doctype html><html lang="en"><head><meta charset="utf-8"><title>STIGQter: STIG Check Details: SV-254069r844240_rule: The Juniper PE router must be configured to enforce the split-horizon rule for all pseudowires within a Virtual Private LAN Services (VPLS) bridge domain.</title><link rel="icon" type="image/svg+xml" href="STIGQter.svg" /><script async src="https://www.googletagmanager.com/gtag/js?id=UA-31381839-2"></script><script src="include.js"></script><script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-4110907817782130" crossorigin="anonymous"></script></head><body><div><img src="STIGQter.svg" alt="STIGQter" style="height:1em;" /> <a href="https://www.stigqter.com/">STIGQter</a>: <a href="main.html">STIG Summary</a>: <a href="U_Juniper_EX_Switches_RTR_STIG_V2R1_Manual-xccdf.html">Juniper EX Series Switches Router Security Technical Implementation Guide Version: 2 Release: 1 Benchmark Date: 24 Jul 2024</a>:</div> <h1>The Juniper PE router must be configured to enforce the split-horizon rule for all pseudowires within a Virtual Private LAN Services (VPLS) bridge domain.</h1><h2>DISA Rule</h2><p>SV-254069r844240_rule</p><h2>Vulnerability Number</h2><p>V-254069</p><h2>Group Title</h2><p>SRG-NET-000512-RTR-000010</p><h2>Rule Version</h2><p>JUEX-RT-000970</p><h2>Severity</h2><p>CAT III</p><h2>CCI(s)</h2><ul><li>CCI-000366 - Implement the security configuration settings.</li></ul><h2>Weight</h2><p>10</p><h2>Fix Recommendation</h2><p>Enable split horizon on all PE routers deploying VPLS in a full-mesh configuration.<br />
+There is no fix for full mesh VPLS because Juniper PE devices with VPLS do not support or require a CLI command to enable/disabled split horizon. Split horizon operation cannot be disabled.<br />
+<br />
+For H-VPLS, delete the &quot;local-switching&quot; directive for all inner mesh groups that do not require split horizon be disabled.<br />
+delete routing-instances &lt;name&gt; protocols vpls mesh-group &lt;name&gt; local-switching</p><h2>Check Contents</h2><p>Review the PE router configuration to verify that split horizon is enabled. By default, Juniper devices configured as PE routers and VPLS enforce split horizon operation. Except for H-VPLS, Juniper devices do not support disabling split horizon operation.<br />
+<br />
+LDP signaled VPLS requires a full mesh topology, which can lead to scaling issues. Hierarchical VPLS (H-VPLS) partitions the VPLS domains into mesh groups, reducing the required number of pseudo wires. However, the inner VPLS domain may require split horizon be disabled. Juniper devices support these scenarios with the &quot;local-switching&quot; command. Ensure mesh groups supporting H-VPLS do not have the &quot;local-switching&quot; directive enabled, unless required, as shown in the following example. Generally, only inner mesh groups (that is, a group &quot;nested&quot; within another) may require split horizon be disabled.<br />
+<br />
+[edit routing-instances &lt;name&gt; protocols vpls]<br />
+mesh-group &lt;name&gt; {<br />
+    :<br />
+    local-switching;<br />
+    :<br />
+}<br />
+<br />
+Note: Only EX9200-series devices currently support VPLS.<br />
+<br />
+If split horizon is disabled but not required to be, this is a finding.<br />
+<br />
+Note: In a ring VPLS, split horizon is disabled so that a PE router can forward a packet received from one pseudowire to another pseudowire. To prevent the consequential loop, at least one span in the ring would not have a pseudowire for any given VPLS instance.</p><h2>Vulnerability Number</h2><p>V-254069</p><h2>Documentable</h2><p>False</p><h2>Rule Version</h2><p>JUEX-RT-000970</p><h2>Severity Override Guidance</h2><p>Review the PE router configuration to verify that split horizon is enabled. By default, Juniper devices configured as PE routers and VPLS enforce split horizon operation. Except for H-VPLS, Juniper devices do not support disabling split horizon operation.<br />
+<br />
+LDP signaled VPLS requires a full mesh topology, which can lead to scaling issues. Hierarchical VPLS (H-VPLS) partitions the VPLS domains into mesh groups, reducing the required number of pseudo wires. However, the inner VPLS domain may require split horizon be disabled. Juniper devices support these scenarios with the &quot;local-switching&quot; command. Ensure mesh groups supporting H-VPLS do not have the &quot;local-switching&quot; directive enabled, unless required, as shown in the following example. Generally, only inner mesh groups (that is, a group &quot;nested&quot; within another) may require split horizon be disabled.<br />
+<br />
+[edit routing-instances &lt;name&gt; protocols vpls]<br />
+mesh-group &lt;name&gt; {<br />
+    :<br />
+    local-switching;<br />
+    :<br />
+}<br />
+<br />
+Note: Only EX9200-series devices currently support VPLS.<br />
+<br />
+If split horizon is disabled but not required to be, this is a finding.<br />
+<br />
+Note: In a ring VPLS, split horizon is disabled so that a PE router can forward a packet received from one pseudowire to another pseudowire. To prevent the consequential loop, at least one span in the ring would not have a pseudowire for any given VPLS instance.</p><h2>Check Content Reference</h2><p>M</p><h2>Target Key</h2><p>5479</p></body></html>

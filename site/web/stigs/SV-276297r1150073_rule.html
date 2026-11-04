@@ -1,0 +1,24 @@
+<!doctype html><html lang="en"><head><meta charset="utf-8"><title>STIGQter: STIG Check Details: SV-276297r1150073_rule: Azure SQL Managed Instance must have an audit defined to track Microsoft Support Operations.</title><link rel="icon" type="image/svg+xml" href="STIGQter.svg" /><script async src="https://www.googletagmanager.com/gtag/js?id=UA-31381839-2"></script><script src="include.js"></script><script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-4110907817782130" crossorigin="anonymous"></script></head><body><div><img src="STIGQter.svg" alt="STIGQter" style="height:1em;" /> <a href="https://www.stigqter.com/">STIGQter</a>: <a href="main.html">STIG Summary</a>: <a href="U_MS_Azure_SQL_MI_STIG_V1R1_Manual-xccdf.html">Microsoft Azure SQL Managed Instance Security Technical Implementation Guide Version: 1 Release: 1 Benchmark Date: 23 Sep 2025</a>:</div> <h1>Azure SQL Managed Instance must have an audit defined to track Microsoft Support Operations.</h1><h2>DISA Rule</h2><p>SV-276297r1150073_rule</p><h2>Vulnerability Number</h2><p>V-276297</p><h2>Group Title</h2><p>SRG-APP-000101-DB-000044</p><h2>Rule Version</h2><p>MSQL-D0-005500</p><h2>Severity</h2><p>CAT III</p><h2>CCI(s)</h2><ul><li>CCI-000135 - Generate audit records containing the organization-defined additional information that is to be included in the audit records.</li></ul><h2>Weight</h2><p>10</p><h2>Fix Recommendation</h2><p>Create a new SQL Server Audit with the Microsoft support operations option enabled. <br />
+<br />
+Adjust the following T-SQL Query for the environment and execute: <br />
+<br />
+CREATE SERVER AUDIT [&lt;Enter Name of Audit&gt;] TO URL ( PATH = N'&lt;URL for Blob Container&gt;' ) WITH ( OPERATOR_AUDIT = ON ) GO <br />
+ALTER SERVER AUDIT [&lt;Enter Name of Audit&gt;] WITH (STATE = ON) GO <br />
+<br />
+Alternatively, when using SQL Server Management Studio to create an audit, ensure the Microsoft support operations checkbox is flagged.</p><h2>Check Contents</h2><p>Review the system documentation to determine if the auditing of Microsoft support operations is required. If is documented as not required, this is Not Applicable.  <br />
+<br />
+If the system documentation requires the auditing of Microsoft Support operations, run the following query to determine whether an audit has been defined to capture Microsoft Support operations: <br />
+<br />
+SELECT audit_id, name, is_state_enabled <br />
+FROM sys.server_audits <br />
+WHERE is_operator_audit = 1 <br />
+<br />
+If no audit is returned, this is a finding.</p><h2>Vulnerability Number</h2><p>V-276297</p><h2>Documentable</h2><p>False</p><h2>Rule Version</h2><p>MSQL-D0-005500</p><h2>Severity Override Guidance</h2><p>Review the system documentation to determine if the auditing of Microsoft support operations is required. If is documented as not required, this is Not Applicable.  <br />
+<br />
+If the system documentation requires the auditing of Microsoft Support operations, run the following query to determine whether an audit has been defined to capture Microsoft Support operations: <br />
+<br />
+SELECT audit_id, name, is_state_enabled <br />
+FROM sys.server_audits <br />
+WHERE is_operator_audit = 1 <br />
+<br />
+If no audit is returned, this is a finding.</p><h2>Check Content Reference</h2><p>M</p><h2>Target Key</h2><p>5711</p></body></html>

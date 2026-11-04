@@ -1,0 +1,51 @@
+<!doctype html><html lang="en"><head><meta charset="utf-8"><title>STIGQter: STIG Check Details: SV-260915r966102_rule: MKE must be configured to send audit data to a centralized log server.</title><link rel="icon" type="image/svg+xml" href="STIGQter.svg" /><script async src="https://www.googletagmanager.com/gtag/js?id=UA-31381839-2"></script><script src="include.js"></script><script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-4110907817782130" crossorigin="anonymous"></script></head><body><div><img src="STIGQter.svg" alt="STIGQter" style="height:1em;" /> <a href="https://www.stigqter.com/">STIGQter</a>: <a href="main.html">STIG Summary</a>: <a href="U_Mirantis_Kubernetes_Engine_STIG_V2R1_Manual-xccdf.html">Mirantis Kubernetes Engine Security Technical Implementation Guide Version: 2 Release: 1 Benchmark Date: 24 Jul 2024</a>:</div> <h1>MKE must be configured to send audit data to a centralized log server.</h1><h2>DISA Rule</h2><p>SV-260915r966102_rule</p><h2>Vulnerability Number</h2><p>V-260915</p><h2>Group Title</h2><p>SRG-APP-000109-CTR-000215</p><h2>Rule Version</h2><p>CNTR-MK-000310</p><h2>Severity</h2><p>CAT II</p><h2>CCI(s)</h2><ul><li>CCI-000140 - Take organization-defined actions upon audit failure include, shutting down the system, overwriting oldest audit records, and stopping the generation of audit records.</li><li>CCI-000154 - Provide the capability to centrally review and analyze audit records from multiple components within the system.</li><li>CCI-001851 - Transfer audit logs per organization-defined frequency to a different system, system component, or media than the system or system component conducting the logging.</li><li>CCI-002702 - Shut the system down, restart the system, and/or initiate organization-defined alternative action(s) when anomalies in the operation of the organization-defined security functions are discovered.</li></ul><h2>Weight</h2><p>10</p><h2>Fix Recommendation</h2><p>Configure logging driver by setting the log-driver and log-opts keys to appropriate values in the daemon.json file. Refer to this link for extra assistance: https://docs.docker.com/config/containers/logging/syslog/.<br />
+<br />
+Via CLI:<br />
+Linux:<br />
+1. As a trusted user on the host OS, open the /etc/docker/daemon.json file for editing. If the file does not exist, it must be created.<br />
+<br />
+2. Set the &quot;log-driver&quot; property to one of the following: <br />
+&quot;syslog&quot;, &quot;journald&quot;, or &quot;&lt;plugin&gt;&quot; (where &lt;plugin&gt; is the naming of a third-party MKE logging driver plugin).<br />
+Note: Mirantis recommends the &quot;journald&quot; setting.<br />
+<br />
+The following example sets the log driver to journald:<br />
+<br />
+{<br />
+  &quot;log-driver&quot;: &quot;journald&quot;<br />
+}<br />
+<br />
+<br />
+3. Configure the &quot;log-opts&quot; object as required by the selected &quot;log-driver&quot;.<br />
+<br />
+4. Save the file.<br />
+<br />
+5. Restart the Docker daemon by executing the following:<br />
+<br />
+sudo systemctl restart docker<br />
+<br />
+Configure rsyslog to send logs to the SEIM system.<br />
+<br />
+1. Edit the /etc/rsyslog.conf file and add the IP address of remote server.<br />
+Example: *.* @@loghost.example.com<br />
+<br />
+2. Work with the SIEM administrator to configure an alert when no audit data is received from Mirantis.</p><h2>Check Contents</h2><p>Check centralized log server configuration.<br />
+<br />
+Via CLI, execute the following commands as a trusted user on the host operating system:<br />
+<br />
+cat /etc/docker/daemon.json<br />
+<br />
+Verify that the &quot;log-driver&quot; property is set to one of the following: &quot;syslog&quot;, &quot;journald&quot;, or &quot;&lt;plugin&gt;&quot; (where &lt;plugin&gt; is the naming of a third-party Docker logging driver plugin).<br />
+<br />
+Work with the SIEM administrator to determine if an alert is configured when audit data is no longer received as expected.<br />
+<br />
+If &quot;log-driver&quot; is not set, or if alarms are not configured in the SIEM, then this is a finding.</p><h2>Vulnerability Number</h2><p>V-260915</p><h2>Documentable</h2><p>False</p><h2>Rule Version</h2><p>CNTR-MK-000310</p><h2>Severity Override Guidance</h2><p>Check centralized log server configuration.<br />
+<br />
+Via CLI, execute the following commands as a trusted user on the host operating system:<br />
+<br />
+cat /etc/docker/daemon.json<br />
+<br />
+Verify that the &quot;log-driver&quot; property is set to one of the following: &quot;syslog&quot;, &quot;journald&quot;, or &quot;&lt;plugin&gt;&quot; (where &lt;plugin&gt; is the naming of a third-party Docker logging driver plugin).<br />
+<br />
+Work with the SIEM administrator to determine if an alert is configured when audit data is no longer received as expected.<br />
+<br />
+If &quot;log-driver&quot; is not set, or if alarms are not configured in the SIEM, then this is a finding.</p><h2>Check Content Reference</h2><p>M</p><h2>Target Key</h2><p>5595</p></body></html>

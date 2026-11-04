@@ -1,0 +1,21 @@
+<!doctype html><html lang="en"><head><meta charset="utf-8"><title>STIGQter: STIG Check Details: SV-260577r1069112_rule: Ubuntu 22.04 LTS, for PKI-based authentication, must validate certificates by constructing a certification path (which includes status information) to an accepted trust anchor.</title><link rel="icon" type="image/svg+xml" href="STIGQter.svg" /><script async src="https://www.googletagmanager.com/gtag/js?id=UA-31381839-2"></script><script src="include.js"></script><script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-4110907817782130" crossorigin="anonymous"></script></head><body><div><img src="STIGQter.svg" alt="STIGQter" style="height:1em;" /> <a href="https://www.stigqter.com/">STIGQter</a>: <a href="main.html">STIG Summary</a>: <a href="U_CAN_Ubuntu_22-04_LTS_STIG_V2R9_Manual-xccdf.html">Canonical Ubuntu 22.04 LTS Security Technical Implementation Guide Version: 2 Release: 9 Benchmark Date: 01 Jul 2026</a>:</div> <h1>Ubuntu 22.04 LTS, for PKI-based authentication, must validate certificates by constructing a certification path (which includes status information) to an accepted trust anchor.</h1><h2>DISA Rule</h2><p>SV-260577r1069112_rule</p><h2>Vulnerability Number</h2><p>V-260577</p><h2>Group Title</h2><p>SRG-OS-000066-GPOS-00034</p><h2>Rule Version</h2><p>UBTU-22-612030</p><h2>Severity</h2><p>CAT II</p><h2>CCI(s)</h2><ul><li>CCI-000185 - For public key-based authentication, validate certificates by constructing and verifying a certification path to an accepted trust anchor including checking certificate status information.</li><li>CCI-004909 - Include only approved trust anchors in trust stores or certificate stores managed by the organization.</li></ul><h2>Weight</h2><p>10</p><h2>Fix Recommendation</h2><p>Configure Ubuntu 22.04 LTS, for PKI-based authentication, to validate certificates by constructing a certification path to an accepted trust anchor.  <br />
+  <br />
+Add or modify all &quot;cert_policy&quot; lines in the &quot;/etc/pam_pkcs11/pam_pkcs11.conf&quot; file with the following: <br />
+ <br />
+cert_policy = ca,signature,ocsp_on;  <br />
+  <br />
+Note: If the system is missing an &quot;/etc/pam_pkcs11/&quot; directory and an &quot;/etc/pam_pkcs11/pam_pkcs11.conf&quot;, find an example to copy into place and modify accordingly at &quot;/usr/share/doc/libpam-pkcs11/examples/pam_pkcs11.conf.example.gz&quot;.</p><h2>Check Contents</h2><p>Verify Ubuntu 22.04 LTS, for PKI-based authentication, has valid certificates by constructing a certification path to an accepted trust anchor.  <br />
+  <br />
+Determine which pkcs11 module is being used via the &quot;use_pkcs11_module&quot; in &quot;/etc/pam_pkcs11/pam_pkcs11.conf&quot; and then ensure &quot;ca&quot; is enabled in &quot;cert_policy&quot; by using the following command:  <br />
+   <br />
+     $ sudo grep use_pkcs11_module /etc/pam_pkcs11/pam_pkcs11.conf | sudo awk '/pkcs11_module opensc {/,/}/' /etc/pam_pkcs11/pam_pkcs11.conf | grep cert_policy | grep ca   <br />
+     cert_policy = ca,signature,ocsp_on;  <br />
+  <br />
+If &quot;cert_policy&quot; is not set to &quot;ca&quot;, the line is commented out, or is missing, this is a finding.</p><h2>Vulnerability Number</h2><p>V-260577</p><h2>Documentable</h2><p>False</p><h2>Rule Version</h2><p>UBTU-22-612030</p><h2>Severity Override Guidance</h2><p>Verify Ubuntu 22.04 LTS, for PKI-based authentication, has valid certificates by constructing a certification path to an accepted trust anchor.  <br />
+  <br />
+Determine which pkcs11 module is being used via the &quot;use_pkcs11_module&quot; in &quot;/etc/pam_pkcs11/pam_pkcs11.conf&quot; and then ensure &quot;ca&quot; is enabled in &quot;cert_policy&quot; by using the following command:  <br />
+   <br />
+     $ sudo grep use_pkcs11_module /etc/pam_pkcs11/pam_pkcs11.conf | sudo awk '/pkcs11_module opensc {/,/}/' /etc/pam_pkcs11/pam_pkcs11.conf | grep cert_policy | grep ca   <br />
+     cert_policy = ca,signature,ocsp_on;  <br />
+  <br />
+If &quot;cert_policy&quot; is not set to &quot;ca&quot;, the line is commented out, or is missing, this is a finding.</p><h2>Check Content Reference</h2><p>M</p><h2>Target Key</h2><p>5594</p></body></html>

@@ -1,0 +1,295 @@
+<!doctype html><html lang="en"><head><meta charset="utf-8"><title>STIGQter: STIG Check Details: SV-217342r961620_rule: The Juniper router must be configured to protect against known types of Denial of Service (DoS) attacks by employing organization-defined security safeguards.</title><link rel="icon" type="image/svg+xml" href="STIGQter.svg" /><script async src="https://www.googletagmanager.com/gtag/js?id=UA-31381839-2"></script><script src="include.js"></script><script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-4110907817782130" crossorigin="anonymous"></script></head><body><div><img src="STIGQter.svg" alt="STIGQter" style="height:1em;" /> <a href="https://www.stigqter.com/">STIGQter</a>: <a href="main.html">STIG Summary</a>: <a href="U_Juniper_Router_NDM_STIG_V3R2_Manual-xccdf.html">Juniper Router NDM Security Technical Implementation Guide Version: 3 Release: 2 Benchmark Date: 30 Jan 2025</a>:</div> <h1>The Juniper router must be configured to protect against known types of Denial of Service (DoS) attacks by employing organization-defined security safeguards.</h1><h2>DISA Rule</h2><p>SV-217342r961620_rule</p><h2>Vulnerability Number</h2><p>V-217342</p><h2>Group Title</h2><p>SRG-APP-000435-NDM-000315</p><h2>Rule Version</h2><p>JUNI-ND-001210</p><h2>Severity</h2><p>CAT II</p><h2>CCI(s)</h2><ul><li>CCI-002385 - Protect against or limit the effects of organization-defined types of denial of service events.</li></ul><h2>Weight</h2><p>10</p><h2>Fix Recommendation</h2><p>Configure the router protect against known types of DoS attacks on the route processor. Implementing a CoPP policy as shown in the example below is a best practice method.<br />
+<br />
+Step 1: Configure policers for specific traffic types.<br />
+<br />
+set firewall policer CRITICAL filter-specific<br />
+set firewall policer CRITICAL if-exceeding bandwidth-limit 4000000 burst-size-limit 1500<br />
+set firewall policer CRITICAL then discard<br />
+set firewall policer IMPORTANT filter-specific<br />
+set firewall policer IMPORTANT if-exceeding bandwidth-limit 512000 burst-size-limit 16000<br />
+set firewall policer IMPORTANT then discard<br />
+set firewall policer NORMAL filter-specific<br />
+set firewall policer NORMAL if-exceeding bandwidth-limit 64000 burst-size-limit 2000<br />
+set firewall policer NORMAL then discard<br />
+set firewall policer UNDESIRABLE filter-specific<br />
+set firewall policer UNDESIRABLE if-exceeding bandwidth-limit 32000 burst-size-limit 1500<br />
+set firewall policer UNDESIRABLE then discard<br />
+set firewall policer ALL-OTHER filter-specific<br />
+set firewall policer ALL-OTHER if-exceeding bandwidth-limit 32000 burst-size-limit 1500<br />
+set firewall policer ALL-OTHER then discard<br />
+<br />
+Step 2: Configure the CoPP filter by applying policers to the appropriate traffic types.<br />
+<br />
+set firewall filter CoPP_Policy term CRITICAL from protocol ospf<br />
+set firewall filter CoPP_Policy term CRITICAL from protocol pim<br />
+set firewall filter CoPP_Policy term CRITICAL from protocol tcp destination-port bgp<br />
+set firewall filter CoPP_Policy term CRITICAL from protocol tcp source-port bgp<br />
+set firewall filter CoPP_Policy term CRITICAL then policer CRITICAL<br />
+set firewall filter CoPP_Policy term IMPORTANT from source-address 10.1.1.0/24<br />
+set firewall filter CoPP_Policy term IMPORTANT from protocol tcp destination-port ssh<br />
+set firewall filter CoPP_Policy term IMPORTANT from protocol tcp destination-port snmp<br />
+set firewall filter CoPP_Policy term IMPORTANT from protocol tcp destination-port ntp<br />
+set firewall filter CoPP_Policy term IMPORTANT then policer IMPORTANT<br />
+set firewall filter CoPP_Policy term IMPORTANT from protocol tcp destination-port ssh<br />
+set firewall filter CoPP_Policy term IMPORTANT from protocol tcp destination-port snmp<br />
+set firewall filter CoPP_Policy term IMPORTANT from protocol tcp destination-port ntp<br />
+set firewall filter CoPP_Policy term IMPORTANT then discard<br />
+set firewall filter CoPP_Policy term NORMAL from protocol icmp icmp-code ttl-eq-zero-during-transit<br />
+set firewall filter CoPP_Policy term NORMAL from protocol icmp icmp-code port-unreachable<br />
+set firewall filter CoPP_Policy term NORMAL from protocol icmp icmp-type echo-reply<br />
+set firewall filter CoPP_Policy term NORMAL from protocol icmp icmp-type echo-request<br />
+set firewall filter CoPP_Policy term NORMAL then policer NORMAL<br />
+set firewall filter CoPP_Policy term UNDESIRABLE from protocol udp destination-port 1434<br />
+set firewall filter CoPP_Policy term UNDESIRABLE then policer UNDESIRABLE<br />
+set firewall filter CoPP_Policy term ALL-OTHER from address 0.0.0.0/0<br />
+set firewall filter CoPP_Policy term ALL-OTHER then policer ALL-OTHER<br />
+<br />
+Step 3: Apply the CoPP filter to the loopback interface.<br />
+<br />
+set interface lo0 unit 0 family inet filter input CoPP_Policy</p><h2>Check Contents</h2><p>Review the router configuration to verify that it is compliant with this requirement. <br />
+<br />
+Step 1: Verify that the loopback interfaces has been configured with an input filter. The example below defined a control plane policing (CoPP) filter named CoPP_Policy.<br />
+<br />
+interfaces {<br />
+…<br />
+…<br />
+…<br />
+    lo0 {<br />
+        unit 0 {<br />
+            family inet {<br />
+                filter {<br />
+                    input CoPP_Policy;<br />
+                }<br />
+                address 5.5.5.5/32;<br />
+            }<br />
+        }<br />
+    }<br />
+}<br />
+<br />
+Step 2: Verify that the filter will protect against DoS attacks.<br />
+<br />
+firewall {<br />
+    …<br />
+    …<br />
+    …<br />
+    }<br />
+    filter CoPP_Policy {<br />
+        term CRITICAL {<br />
+            from {<br />
+                protocol [ ospf pim tcp ];<br />
+                source-port bgp;<br />
+                destination-port bgp;<br />
+            }<br />
+            then policer CRITICAL;<br />
+        }<br />
+        term IMPORTANT {<br />
+            from {<br />
+                source-address {<br />
+                    10.1.1.0/24;<br />
+                }<br />
+                protocol tcp;<br />
+                destination-port [ ssh snmp ntp ];<br />
+            }<br />
+            then {<br />
+                policer IMPORTANT;<br />
+                discard;<br />
+            }<br />
+        }<br />
+        term NORMAL {<br />
+            from {<br />
+                protocol icmp;<br />
+                icmp-type [ echo-reply echo-request ];<br />
+                icmp-code [ ttl-eq-zero-during-transit port-unreachable ];<br />
+            }<br />
+            then policer NORMAL;<br />
+        }<br />
+        term UNDESIRABLE {<br />
+            from {<br />
+                protocol udp;<br />
+                destination-port 1434;<br />
+            }<br />
+            then policer UNDESIRABLE;<br />
+        }<br />
+        term ALL-OTHER {<br />
+            from {<br />
+                address {<br />
+                    0.0.0.0/0;<br />
+                }<br />
+            }<br />
+            then policer ALL-OTHER;<br />
+        }<br />
+    }<br />
+}<br />
+<br />
+Step 3: verify that policers configured will restrict bandwidth based on traffic types as shown in the example below.<br />
+<br />
+firewall {<br />
+    …<br />
+    …<br />
+    …<br />
+    }<br />
+    policer CRITICAL {<br />
+        filter-specific;<br />
+        if-exceeding {<br />
+            bandwidth-limit 4m;<br />
+            burst-size-limit 1500;<br />
+        }<br />
+        then discard;<br />
+    }<br />
+    policer IMPORTANT {<br />
+        filter-specific;<br />
+        if-exceeding {<br />
+            bandwidth-limit 512k;<br />
+            burst-size-limit 16k;<br />
+        }<br />
+        then discard;<br />
+    }<br />
+    policer NORMAL {<br />
+        filter-specific;<br />
+        if-exceeding {<br />
+            bandwidth-limit 64k;<br />
+            burst-size-limit 2k;<br />
+        }<br />
+        then discard;<br />
+    }<br />
+    policer UNDESIRABLE {<br />
+        filter-specific;<br />
+        if-exceeding {<br />
+            bandwidth-limit 32k;<br />
+            burst-size-limit 1500;<br />
+        }<br />
+        then discard;<br />
+    }<br />
+    policer ALL-OTHER {<br />
+        filter-specific;<br />
+        if-exceeding {<br />
+            bandwidth-limit 32k;<br />
+            burst-size-limit 1500;<br />
+        }<br />
+        then discard;<br />
+    }<br />
+<br />
+If the router is not configured to protect against known types of DoS attacks by employing organization-defined security safeguards, this is a finding.</p><h2>Vulnerability Number</h2><p>V-217342</p><h2>Documentable</h2><p>False</p><h2>Rule Version</h2><p>JUNI-ND-001210</p><h2>Severity Override Guidance</h2><p>Review the router configuration to verify that it is compliant with this requirement. <br />
+<br />
+Step 1: Verify that the loopback interfaces has been configured with an input filter. The example below defined a control plane policing (CoPP) filter named CoPP_Policy.<br />
+<br />
+interfaces {<br />
+…<br />
+…<br />
+…<br />
+    lo0 {<br />
+        unit 0 {<br />
+            family inet {<br />
+                filter {<br />
+                    input CoPP_Policy;<br />
+                }<br />
+                address 5.5.5.5/32;<br />
+            }<br />
+        }<br />
+    }<br />
+}<br />
+<br />
+Step 2: Verify that the filter will protect against DoS attacks.<br />
+<br />
+firewall {<br />
+    …<br />
+    …<br />
+    …<br />
+    }<br />
+    filter CoPP_Policy {<br />
+        term CRITICAL {<br />
+            from {<br />
+                protocol [ ospf pim tcp ];<br />
+                source-port bgp;<br />
+                destination-port bgp;<br />
+            }<br />
+            then policer CRITICAL;<br />
+        }<br />
+        term IMPORTANT {<br />
+            from {<br />
+                source-address {<br />
+                    10.1.1.0/24;<br />
+                }<br />
+                protocol tcp;<br />
+                destination-port [ ssh snmp ntp ];<br />
+            }<br />
+            then {<br />
+                policer IMPORTANT;<br />
+                discard;<br />
+            }<br />
+        }<br />
+        term NORMAL {<br />
+            from {<br />
+                protocol icmp;<br />
+                icmp-type [ echo-reply echo-request ];<br />
+                icmp-code [ ttl-eq-zero-during-transit port-unreachable ];<br />
+            }<br />
+            then policer NORMAL;<br />
+        }<br />
+        term UNDESIRABLE {<br />
+            from {<br />
+                protocol udp;<br />
+                destination-port 1434;<br />
+            }<br />
+            then policer UNDESIRABLE;<br />
+        }<br />
+        term ALL-OTHER {<br />
+            from {<br />
+                address {<br />
+                    0.0.0.0/0;<br />
+                }<br />
+            }<br />
+            then policer ALL-OTHER;<br />
+        }<br />
+    }<br />
+}<br />
+<br />
+Step 3: verify that policers configured will restrict bandwidth based on traffic types as shown in the example below.<br />
+<br />
+firewall {<br />
+    …<br />
+    …<br />
+    …<br />
+    }<br />
+    policer CRITICAL {<br />
+        filter-specific;<br />
+        if-exceeding {<br />
+            bandwidth-limit 4m;<br />
+            burst-size-limit 1500;<br />
+        }<br />
+        then discard;<br />
+    }<br />
+    policer IMPORTANT {<br />
+        filter-specific;<br />
+        if-exceeding {<br />
+            bandwidth-limit 512k;<br />
+            burst-size-limit 16k;<br />
+        }<br />
+        then discard;<br />
+    }<br />
+    policer NORMAL {<br />
+        filter-specific;<br />
+        if-exceeding {<br />
+            bandwidth-limit 64k;<br />
+            burst-size-limit 2k;<br />
+        }<br />
+        then discard;<br />
+    }<br />
+    policer UNDESIRABLE {<br />
+        filter-specific;<br />
+        if-exceeding {<br />
+            bandwidth-limit 32k;<br />
+            burst-size-limit 1500;<br />
+        }<br />
+        then discard;<br />
+    }<br />
+    policer ALL-OTHER {<br />
+        filter-specific;<br />
+        if-exceeding {<br />
+            bandwidth-limit 32k;<br />
+            burst-size-limit 1500;<br />
+        }<br />
+        then discard;<br />
+    }<br />
+<br />
+If the router is not configured to protect against known types of DoS attacks by employing organization-defined security safeguards, this is a finding.</p><h2>Check Content Reference</h2><p>M</p><h2>Target Key</h2><p>4034</p></body></html>

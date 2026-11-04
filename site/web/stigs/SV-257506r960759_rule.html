@@ -1,0 +1,81 @@
+<!doctype html><html lang="en"><head><meta charset="utf-8"><title>STIGQter: STIG Check Details: SV-257506r960759_rule: OpenShift must use TLS 1.2 or greater for secure communication.</title><link rel="icon" type="image/svg+xml" href="STIGQter.svg" /><script async src="https://www.googletagmanager.com/gtag/js?id=UA-31381839-2"></script><script src="include.js"></script><script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-4110907817782130" crossorigin="anonymous"></script></head><body><div><img src="STIGQter.svg" alt="STIGQter" style="height:1em;" /> <a href="https://www.stigqter.com/">STIGQter</a>: <a href="main.html">STIG Summary</a>: <a href="U_RH_OpenShift_Container_Platform_4-x_STIG_V2R6_Manual-xccdf.html">Red Hat OpenShift Container Platform 4.x Security Technical Implementation Guide Version: 2 Release: 6 Benchmark Date: 01 Jul 2026</a>:</div> <h1>OpenShift must use TLS 1.2 or greater for secure communication.</h1><h2>DISA Rule</h2><p>SV-257506r960759_rule</p><h2>Vulnerability Number</h2><p>V-257506</p><h2>Group Title</h2><p>SRG-APP-000014-CTR-000040</p><h2>Rule Version</h2><p>CNTR-OS-000020</p><h2>Severity</h2><p>CAT II</p><h2>CCI(s)</h2><ul><li>CCI-000068 - Implement cryptographic mechanisms to protect the confidentiality of remote access sessions.</li><li>CCI-001453 - Implement cryptographic mechanisms to protect the integrity of remote access sessions.</li></ul><h2>Weight</h2><p>10</p><h2>Fix Recommendation</h2><p>Edit each resource and set the TLS Security Profile to Intermediate by executing the following:<br />
+<br />
+oc edit ingresscontroller &lt;NAME&gt; -n &lt;NAMESPACE&gt;<br />
+<br />
+Add the following to the file:<br />
+<br />
+apiVersion: config.openshift.io/v1<br />
+kind: IngressController<br />
+ ...<br />
+spec:<br />
+  tlsSecurityProfile:<br />
+    intermediate: {}<br />
+    type: Intermediate<br />
+<br />
+Edit API Server by executing the following:<br />
+<br />
+oc edit APIServer<br />
+<br />
+Add the following to the file:<br />
+<br />
+apiVersion: config.openshift.io/v1<br />
+kind: APIServer<br />
+ ...<br />
+spec:<br />
+  tlsSecurityProfile:<br />
+    intermediate: {}<br />
+    type: Intermediate<br />
+<br />
+Edit Kubelet by executing the following:<br />
+<br />
+oc edit KubeletConfig &lt;NAME&gt;<br />
+<br />
+Set to the following:<br />
+<br />
+apiVersion: config.openshift.io/v1<br />
+kind: KubeletConfig<br />
+ ...<br />
+spec:<br />
+  tlsSecurityProfile:<br />
+    intermediate: {}<br />
+    type: Intermediate</p><h2>Check Contents</h2><p>Verify the TLS Security Profile is not set to a profile that does not enforce TLS 1.2 or above. <br />
+<br />
+View the TLS security profile for the ingress controllers by executing the following:<br />
+<br />
+oc get --all-namespaces ingresscontrollers.operator.openshift.io -ocustom-columns=&quot;NAME&quot;:.metadata.name,&quot;NAMESPACE&quot;:.metadata.namespace,&quot;TLS PROFILE&quot;:.spec.tlsSecurityProfile<br />
+<br />
+View the TLS security profile for the control plane by executing the following:<br />
+<br />
+oc get APIServer cluster -ocustom-columns=&quot;TLS PROFILE&quot;:.spec.tlsSecurityProfile<br />
+<br />
+View the TLS profile for the Kubelet by executing the following:<br />
+<br />
+oc get kubeletconfigs -ocustom-columns=&quot;NAME&quot;:.metadata.name,&quot;TLS PROFILE&quot;:.spec.tlsSecurityProfile<br />
+<br />
+If any of the above returns a TLS profile of &quot;Old&quot;, this is a finding.<br />
+<br />
+If any of the above returns a TLS profile of &quot;Custom&quot; and the minTLSVersion is not set to &quot;VersionTLS12&quot; or greater, this is a finding.<br />
+<br />
+If the above returns &quot;&lt;none&gt;&quot; TLS profile, this is not a finding as the TLS profile defaults to &quot;Intermediate&quot;.<br />
+<br />
+If the kubelet TLS profile check does not return any kubeletconfigs, this is not a finding as the default OCP installation uses defaults only.</p><h2>Vulnerability Number</h2><p>V-257506</p><h2>Documentable</h2><p>False</p><h2>Rule Version</h2><p>CNTR-OS-000020</p><h2>Severity Override Guidance</h2><p>Verify the TLS Security Profile is not set to a profile that does not enforce TLS 1.2 or above. <br />
+<br />
+View the TLS security profile for the ingress controllers by executing the following:<br />
+<br />
+oc get --all-namespaces ingresscontrollers.operator.openshift.io -ocustom-columns=&quot;NAME&quot;:.metadata.name,&quot;NAMESPACE&quot;:.metadata.namespace,&quot;TLS PROFILE&quot;:.spec.tlsSecurityProfile<br />
+<br />
+View the TLS security profile for the control plane by executing the following:<br />
+<br />
+oc get APIServer cluster -ocustom-columns=&quot;TLS PROFILE&quot;:.spec.tlsSecurityProfile<br />
+<br />
+View the TLS profile for the Kubelet by executing the following:<br />
+<br />
+oc get kubeletconfigs -ocustom-columns=&quot;NAME&quot;:.metadata.name,&quot;TLS PROFILE&quot;:.spec.tlsSecurityProfile<br />
+<br />
+If any of the above returns a TLS profile of &quot;Old&quot;, this is a finding.<br />
+<br />
+If any of the above returns a TLS profile of &quot;Custom&quot; and the minTLSVersion is not set to &quot;VersionTLS12&quot; or greater, this is a finding.<br />
+<br />
+If the above returns &quot;&lt;none&gt;&quot; TLS profile, this is not a finding as the TLS profile defaults to &quot;Intermediate&quot;.<br />
+<br />
+If the kubelet TLS profile check does not return any kubeletconfigs, this is not a finding as the default OCP installation uses defaults only.</p><h2>Check Content Reference</h2><p>M</p><h2>Target Key</h2><p>5547</p></body></html>

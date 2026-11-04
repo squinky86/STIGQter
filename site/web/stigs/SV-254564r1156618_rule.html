@@ -1,0 +1,229 @@
+<!doctype html><html lang="en"><head><meta charset="utf-8"><title>STIGQter: STIG Check Details: SV-254564r1156618_rule: Configuration and authentication files for Rancher RKE2 must be protected.</title><link rel="icon" type="image/svg+xml" href="STIGQter.svg" /><script async src="https://www.googletagmanager.com/gtag/js?id=UA-31381839-2"></script><script src="include.js"></script><script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-4110907817782130" crossorigin="anonymous"></script></head><body><div><img src="STIGQter.svg" alt="STIGQter" style="height:1em;" /> <a href="https://www.stigqter.com/">STIGQter</a>: <a href="main.html">STIG Summary</a>: <a href="U_RGS_RKE2_STIG_V2R7_Manual-xccdf.html">Rancher Government Solutions RKE2 Security Technical Implementation Guide Version: 2 Release: 7 Benchmark Date: 01 Jul 2026</a>:</div> <h1>Configuration and authentication files for Rancher RKE2 must be protected.</h1><h2>DISA Rule</h2><p>SV-254564r1156618_rule</p><h2>Vulnerability Number</h2><p>V-254564</p><h2>Group Title</h2><p>SRG-APP-000133-CTR-000300</p><h2>Rule Version</h2><p>CNTR-R2-000520</p><h2>Severity</h2><p>CAT II</p><h2>CCI(s)</h2><ul><li>CCI-001499 - Limit privileges to change software resident within software libraries.</li></ul><h2>Weight</h2><p>10</p><h2>Fix Recommendation</h2><p>File system permissions:<br />
+1. Fix permissions of the files in /etc/rancher/rke2:<br />
+cd /etc/rancher/rke2<br />
+chmod 0600 ./*<br />
+chown root:root ./*<br />
+ls -l<br />
+<br />
+2. Fix permissions of the files in /var/lib/rancher/rke2:<br />
+cd /var/lib/rancher/rke2<br />
+chown root:root ./*<br />
+ls -l<br />
+<br />
+3. Fix permissions of the files and directories in /var/lib/rancher/rke2/agent:<br />
+cd /var/lib/rancher/rke2/agent<br />
+chown root:root ./*<br />
+chmod 0700 pod-manifests<br />
+chmod 0700 etc<br />
+find . -maxdepth 1 -type f -name &quot;*.kubeconfig&quot; -exec chmod 0640 {} \;<br />
+find . -maxdepth 1 -type f -name &quot;*.crt&quot; -exec chmod 0600 {} \;<br />
+find . -maxdepth 1 -type f -name &quot;*.key&quot; -exec chmod 0600 {} \;<br />
+ls -l<br />
+<br />
+4. Fix permissions of the files in /var/lib/rancher/rke2/bin:<br />
+cd /var/lib/rancher/rke2/bin<br />
+chown root:root ./*<br />
+chmod 0750 ./*<br />
+ls -l<br />
+<br />
+5. Fix permissions directory of /var/lib/rancher/rke2/data:<br />
+cd /var/lib/rancher/rke2<br />
+chown root:root data<br />
+chmod 0750 data<br />
+ls -l<br />
+<br />
+6. Fix permissions of files in /var/lib/rancher/rke2/data:<br />
+cd /var/lib/rancher/rke2/data<br />
+chown root:root ./*<br />
+chmod 0750 ./*<br />
+ls -l<br />
+<br />
+7. Fix permissions in /var/lib/rancher/rke2/server:<br />
+cd /var/lib/rancher/rke2/server<br />
+chown root:root ./*<br />
+chmod 0700 cred<br />
+chmod 0700 db<br />
+chmod 0700 tls<br />
+chmod 0750 manifests<br />
+chmod 0750 logs<br />
+chmod 0600 token<br />
+ls -l<br />
+<br />
+Edit the RKE2 Server configuration file on all RKE2 Server hosts, located at /etc/rancher/rke2/config.yaml, to contain the following:<br />
+<br />
+write-kubeconfig-mode: &quot;0600&quot;<br />
+<br />
+Once the configuration file is updated, restart the RKE2 Server. Run the command:<br />
+systemctl restart rke2-server</p><h2>Check Contents</h2><p>File system permissions:<br />
+1. Verify correct permissions of the files in /etc/rancher/rke2.<br />
+cd /etc/rancher/rke2<br />
+ls -l<br />
+<br />
+all owners are root:root<br />
+all permissions are 0600<br />
+<br />
+2. Verify correct permissions of the files in /var/lib/rancher/rke2.<br />
+cd /var/lib/rancher/rke2<br />
+ls -l <br />
+<br />
+all owners are root:root<br />
+<br />
+3. Verify correct permissions of the files and directories in /var/lib/rancher/rke2/agent.<br />
+cd /var/lib/rancher/rke2/agent<br />
+ls -l<br />
+<br />
+owners and group are root:root<br />
+<br />
+File permissions set to at least 0640 for the following:<br />
+rke2controller.kubeconfig<br />
+kubelet.kubeconfig<br />
+kubeproxy.kubeconfig<br />
+<br />
+Certificate file permissions set to 0600:<br />
+client-ca.crt<br />
+client-kubelet.crt<br />
+client-kube-proxy.crt<br />
+client-rke2-controller.crt<br />
+server-ca.crt<br />
+serving-kubelet.crt<br />
+<br />
+Key file permissions set to 0600:<br />
+client-kubelet.key<br />
+serving-kubelet.key<br />
+client-rke2-controller.key<br />
+client-kube-proxy.key<br />
+<br />
+The directory permissions to 0700:<br />
+pod-manifests<br />
+etc <br />
+<br />
+4. Verify correct permissions of the files in /var/lib/rancher/rke2/bin.<br />
+cd /var/lib/rancher/rke2/bin<br />
+ls -l<br />
+<br />
+all owners are root:root<br />
+all files are 0750<br />
+<br />
+5. Verify correct permissions of the directory /var/lib/rancher/rke2/data.<br />
+cd /var/lib/rancher/rke2<br />
+ls -l<br />
+<br />
+owners are root:root<br />
+permissions are 0750<br />
+<br />
+6. Verify correct permissions of each file in /var/lib/rancher/rke2/data.<br />
+cd /var/lib/rancher/rke2/data<br />
+ls -l<br />
+<br />
+all owners are root:root<br />
+all files are 0750<br />
+<br />
+7. Verify correct permissions of /var/lib/rancher/rke2/server.<br />
+cd /var/lib/rancher/rke2/server<br />
+ls -l <br />
+<br />
+all owners are root:root<br />
+<br />
+The following directories are set to 0700:<br />
+cred<br />
+db<br />
+tls <br />
+<br />
+The following directories are set to 0750:<br />
+manifests <br />
+logs <br />
+<br />
+The following file is set to 0600:<br />
+token <br />
+<br />
+8. Verify the RKE2 Server configuration file on all RKE2 Server hosts contain the following:<br />
+(cat /etc/rancher/rke2/config.yaml)<br />
+write-kubeconfig-mode: &quot;0600&quot;<br />
+<br />
+If any of the permissions specified above do not match the required level, this is a finding.</p><h2>Vulnerability Number</h2><p>V-254564</p><h2>Documentable</h2><p>False</p><h2>Rule Version</h2><p>CNTR-R2-000520</p><h2>Severity Override Guidance</h2><p>File system permissions:<br />
+1. Verify correct permissions of the files in /etc/rancher/rke2.<br />
+cd /etc/rancher/rke2<br />
+ls -l<br />
+<br />
+all owners are root:root<br />
+all permissions are 0600<br />
+<br />
+2. Verify correct permissions of the files in /var/lib/rancher/rke2.<br />
+cd /var/lib/rancher/rke2<br />
+ls -l <br />
+<br />
+all owners are root:root<br />
+<br />
+3. Verify correct permissions of the files and directories in /var/lib/rancher/rke2/agent.<br />
+cd /var/lib/rancher/rke2/agent<br />
+ls -l<br />
+<br />
+owners and group are root:root<br />
+<br />
+File permissions set to at least 0640 for the following:<br />
+rke2controller.kubeconfig<br />
+kubelet.kubeconfig<br />
+kubeproxy.kubeconfig<br />
+<br />
+Certificate file permissions set to 0600:<br />
+client-ca.crt<br />
+client-kubelet.crt<br />
+client-kube-proxy.crt<br />
+client-rke2-controller.crt<br />
+server-ca.crt<br />
+serving-kubelet.crt<br />
+<br />
+Key file permissions set to 0600:<br />
+client-kubelet.key<br />
+serving-kubelet.key<br />
+client-rke2-controller.key<br />
+client-kube-proxy.key<br />
+<br />
+The directory permissions to 0700:<br />
+pod-manifests<br />
+etc <br />
+<br />
+4. Verify correct permissions of the files in /var/lib/rancher/rke2/bin.<br />
+cd /var/lib/rancher/rke2/bin<br />
+ls -l<br />
+<br />
+all owners are root:root<br />
+all files are 0750<br />
+<br />
+5. Verify correct permissions of the directory /var/lib/rancher/rke2/data.<br />
+cd /var/lib/rancher/rke2<br />
+ls -l<br />
+<br />
+owners are root:root<br />
+permissions are 0750<br />
+<br />
+6. Verify correct permissions of each file in /var/lib/rancher/rke2/data.<br />
+cd /var/lib/rancher/rke2/data<br />
+ls -l<br />
+<br />
+all owners are root:root<br />
+all files are 0750<br />
+<br />
+7. Verify correct permissions of /var/lib/rancher/rke2/server.<br />
+cd /var/lib/rancher/rke2/server<br />
+ls -l <br />
+<br />
+all owners are root:root<br />
+<br />
+The following directories are set to 0700:<br />
+cred<br />
+db<br />
+tls <br />
+<br />
+The following directories are set to 0750:<br />
+manifests <br />
+logs <br />
+<br />
+The following file is set to 0600:<br />
+token <br />
+<br />
+8. Verify the RKE2 Server configuration file on all RKE2 Server hosts contain the following:<br />
+(cat /etc/rancher/rke2/config.yaml)<br />
+write-kubeconfig-mode: &quot;0600&quot;<br />
+<br />
+If any of the permissions specified above do not match the required level, this is a finding.</p><h2>Check Content Reference</h2><p>M</p><h2>Target Key</h2><p>5486</p></body></html>

@@ -1,0 +1,41 @@
+<!doctype html><html lang="en"><head><meta charset="utf-8"><title>STIGQter: STIG Check Details: SV-260913r966096_rule: MKE host network namespace must not be shared.</title><link rel="icon" type="image/svg+xml" href="STIGQter.svg" /><script async src="https://www.googletagmanager.com/gtag/js?id=UA-31381839-2"></script><script src="include.js"></script><script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-4110907817782130" crossorigin="anonymous"></script></head><body><div><img src="STIGQter.svg" alt="STIGQter" style="height:1em;" /> <a href="https://www.stigqter.com/">STIGQter</a>: <a href="main.html">STIG Summary</a>: <a href="U_Mirantis_Kubernetes_Engine_STIG_V2R1_Manual-xccdf.html">Mirantis Kubernetes Engine Security Technical Implementation Guide Version: 2 Release: 1 Benchmark Date: 24 Jul 2024</a>:</div> <h1>MKE host network namespace must not be shared.</h1><h2>DISA Rule</h2><p>SV-260913r966096_rule</p><h2>Vulnerability Number</h2><p>V-260913</p><h2>Group Title</h2><p>SRG-APP-000039-CTR-000110</p><h2>Rule Version</h2><p>CNTR-MK-000150</p><h2>Severity</h2><p>CAT II</p><h2>CCI(s)</h2><ul><li>CCI-001414 - Enforce approved authorizations for controlling the flow of information between connected systems based on organization-defined information flow control policies.</li></ul><h2>Weight</h2><p>10</p><h2>Fix Recommendation</h2><p>When using Kubernetes orchestration:<br />
+In Kubernetes, the hostNetwork setting is a part of the Pod's specification, and once a Pod is created, its hostNetwork setting cannot be directly modified. However, the desired effect can be achieved by creating a new Pod with the updated hostNetwork setting and then deleting the existing Pod. This process replaces the old Pod with the new one.<br />
+<br />
+When using Swarm orchestration:<br />
+Review and remove nonsystem containers previously created by these users that allowed access to the host network namespace must be removed using:<br />
+<br />
+docker container rm [container]</p><h2>Check Contents</h2><p>When using Kubernetes orchestration, ensure that Pods do not use the host machine's network namespace and uses its own isolated network namespace.<br />
+<br />
+Note: If the hostNetwork field is not explicitly set in the Pod's specification, it will use the default behavior, which is equivalent to hostNetwork: false.<br />
+<br />
+Execute the following for all pods:<br />
+<br />
+kubectl get pods --all-namespaces -o json | jq '.items[] | select(.spec.hostNetwork == true) | .metadata.name'<br />
+<br />
+If the above command returns a namespace then the &quot;hostNetwork&quot; = true, this is a finding unless a documented exception is present in the System Security Plan (SSP).<br />
+<br />
+When using Swarm orchestration, check that the host's network namespace is not shared.<br />
+<br />
+Via CLI: <br />
+Linux: As an administrator, execute the following command using a Universal Control Plane (MKE) client bundle:<br />
+<br />
+docker ps --filter &quot;label=com.docker.ucp.version&quot; | awk '{print $1}' | xargs docker inspect --format '{{ .Name }}: NetworkMode={{ .HostConfig.NetworkMode }}'<br />
+<br />
+If the above command returns NetworkMode=host, this is a finding unless a documented exception is present in the SSP.</p><h2>Vulnerability Number</h2><p>V-260913</p><h2>Documentable</h2><p>False</p><h2>Rule Version</h2><p>CNTR-MK-000150</p><h2>Severity Override Guidance</h2><p>When using Kubernetes orchestration, ensure that Pods do not use the host machine's network namespace and uses its own isolated network namespace.<br />
+<br />
+Note: If the hostNetwork field is not explicitly set in the Pod's specification, it will use the default behavior, which is equivalent to hostNetwork: false.<br />
+<br />
+Execute the following for all pods:<br />
+<br />
+kubectl get pods --all-namespaces -o json | jq '.items[] | select(.spec.hostNetwork == true) | .metadata.name'<br />
+<br />
+If the above command returns a namespace then the &quot;hostNetwork&quot; = true, this is a finding unless a documented exception is present in the System Security Plan (SSP).<br />
+<br />
+When using Swarm orchestration, check that the host's network namespace is not shared.<br />
+<br />
+Via CLI: <br />
+Linux: As an administrator, execute the following command using a Universal Control Plane (MKE) client bundle:<br />
+<br />
+docker ps --filter &quot;label=com.docker.ucp.version&quot; | awk '{print $1}' | xargs docker inspect --format '{{ .Name }}: NetworkMode={{ .HostConfig.NetworkMode }}'<br />
+<br />
+If the above command returns NetworkMode=host, this is a finding unless a documented exception is present in the SSP.</p><h2>Check Content Reference</h2><p>M</p><h2>Target Key</h2><p>5595</p></body></html>

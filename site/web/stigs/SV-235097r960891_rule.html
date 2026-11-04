@@ -1,0 +1,127 @@
+<!doctype html><html lang="en"><head><meta charset="utf-8"><title>STIGQter: STIG Check Details: SV-235097r960891_rule: MySQL Database Server 8.0  must produce audit records containing sufficient information to establish what type of events occurred.</title><link rel="icon" type="image/svg+xml" href="STIGQter.svg" /><script async src="https://www.googletagmanager.com/gtag/js?id=UA-31381839-2"></script><script src="include.js"></script><script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-4110907817782130" crossorigin="anonymous"></script></head><body><div><img src="STIGQter.svg" alt="STIGQter" style="height:1em;" /> <a href="https://www.stigqter.com/">STIGQter</a>: <a href="main.html">STIG Summary</a>: <a href="U_Oracle_MySQL_8-0_STIG_V2R2_Manual-xccdf.html">Oracle MySQL 8.0 Security Technical Implementation Guide Version: 2 Release: 2 Benchmark Date: 24 Oct 2024</a>:</div> <h1>MySQL Database Server 8.0  must produce audit records containing sufficient information to establish what type of events occurred.</h1><h2>DISA Rule</h2><p>SV-235097r960891_rule</p><h2>Vulnerability Number</h2><p>V-235097</p><h2>Group Title</h2><p>SRG-APP-000095-DB-000039</p><h2>Rule Version</h2><p>MYS8-00-000300</p><h2>Severity</h2><p>CAT II</p><h2>CCI(s)</h2><ul><li>CCI-000130 - Ensure that audit records containing information that establishes what type of event occurred.</li></ul><h2>Weight</h2><p>10</p><h2>Fix Recommendation</h2><p>Configure DBMS auditing to audit standard and organization-defined auditable events, with the audit record to include what type of event occurred. <br />
+<br />
+Use this process to ensure auditable events are captured:<br />
+<br />
+Configure MySQL database server 8.0 for auditing and configure audit settings to include required events as part of the audit record.<br />
+<br />
+To install MySQL Enterprise Audit:<br />
+Run the audit_log_filter_linux_install.sql script located in the sharedirectory of your MySQL installation. This can be determined by running – select @@basedir;<br />
+For example if the basedir is /usr/local/mysql <br />
+shell&gt; bin/mysql -u root -p &lt; /usr/local/mysql/share/audit_log_filter_linux_install.sql<br />
+<br />
+Verify the plugin installation by running:<br />
+SELECT PLUGIN_NAME, PLUGIN_STATUS<br />
+       FROM INFORMATION_SCHEMA.PLUGINS<br />
+       WHERE PLUGIN_NAME LIKE 'audit%';<br />
+The value for audit_log should return ACTIVE.<br />
+<br />
+To prevent the plugin from being removed at runtime, add the --audit-log option under the [mysqld] option group in the MySQL configuration file (/etc/my.cnf) with a setting of FORCE_PLUS_PERMANENT.<br />
+<br />
+audit-log=FORCE_PLUS_PERMANENT<br />
+<br />
+Restart the server to apply the configuration change.<br />
+<br />
+By default, rule-based audit log filtering logs no auditable events for any users. To produce log-everything behavior with rule-based filtering, create a filter to enable logging of all events and assign it to the audit all accounts.<br />
+<br />
+Run the following statements to filter all activity for all users:<br />
+SELECT audit_log_filter_set_filter('log_all', '{ &quot;filter&quot;: { &quot;log&quot;: true } }');<br />
+SELECT audit_log_filter_set_user('%', 'log_all');<br />
+SELECT audit_log_filter_set_user('%', 'log_all');</p><h2>Check Contents</h2><p>Verify, using vendor and system documentation if necessary, that the Database Management System (DBMS) is configured to use MySQL auditing features, or that a third-party product or custom code is deployed and configured to satisfy this requirement.<br />
+<br />
+Check MySQL auditing to determine whether organization-defined auditable events are being audited by the system.<br />
+<br />
+SELECT PLUGIN_NAME, plugin_status FROM INFORMATION_SCHEMA.PLUGINS<br />
+      WHERE PLUGIN_NAME LIKE 'audit_log' ;<br />
+<br />
+If the results are not 'audit_log' and plugin_status='ACTIVE' , this is a finding.<br />
+<br />
+Next, determine if the audit log is encrypted: <br />
+SELECT VARIABLE_NAME, VARIABLE_VALUE<br />
+FROM performance_schema.global_variables<br />
+WHERE VARIABLE_NAME LIKE 'audit_log_encryption' ;<br />
+<br />
+If nothing is returned or the value for audit_log_encryption is not AES, this is a finding.<br />
+<br />
+Review the audit files in the file systems.<br />
+<br />
+Run the following command using the audit log location from above and review its output:<br />
+ls -l  &lt;directory where audit log files are located&gt;/audit*log*<br />
+<br />
+For example, if the values returned by - &quot;select @@datadir, @@audit_log_file; &quot; are  /usr/local/mysql/data/,  audit.log<br />
+ls -l  /usr/local/mysql/data/audit.log<br />
+Example output:<br />
+-rw-r-----    1 _mysql  _mysql   3935888 Apr 25 12:34 audit.20190425T173437.log.enc<br />
+-rw-r-----    1 _mysql  _mysql      2336 Apr 25 12:35 audit.20190425T173527.log.enc<br />
+-rw-r-----    1 _mysql  _mysql  13763984 Apr 30 14:04 audit.log.enc<br />
+<br />
+Next, verify the log files have set permissions the log_destination:<br />
+If the user owner is not &quot;mysql&quot;, this is a finding.<br />
+If the group owner is not &quot;mysql&quot;, this is a finding.<br />
+If the file is more permissive than &quot;640&quot;, this is a finding.<br />
+Check that the files end with the &quot;.enc&quot; file extension.  If they do not, this means they are in plaintext, and this is a finding.<br />
+<br />
+Run following command to verify the directory permissions and review its output:<br />
+ls -l /usr/local/mysql/data<br />
+<br />
+Example output:<br />
+drwxr-x---   _mysql  _mysql    1760 Apr 26 09:55 data<br />
+<br />
+Next, verify the log files have set permissions for the log_destination:<br />
+If the user owner is not &quot;mysql&quot;, this is a finding.<br />
+If the group owner is not &quot;mysql&quot;, this is a finding.<br />
+If more permissive than &quot;750&quot;, this is a finding.<br />
+<br />
+If there are no audit log files, then organizational auditable events are not being audited, and this is a finding.<br />
+<br />
+To confirm that MySQL audit is capturing sufficient information to establish the identity of the user/subject or process, perform a successful auditable action and an auditable action that results in an SQL error, and then view the results in the audit file, whichever is in use.<br />
+<br />
+If no audit event is returned for the auditable actions just performed, this is a finding.</p><h2>Vulnerability Number</h2><p>V-235097</p><h2>Documentable</h2><p>False</p><h2>Rule Version</h2><p>MYS8-00-000300</p><h2>Severity Override Guidance</h2><p>Verify, using vendor and system documentation if necessary, that the Database Management System (DBMS) is configured to use MySQL auditing features, or that a third-party product or custom code is deployed and configured to satisfy this requirement.<br />
+<br />
+Check MySQL auditing to determine whether organization-defined auditable events are being audited by the system.<br />
+<br />
+SELECT PLUGIN_NAME, plugin_status FROM INFORMATION_SCHEMA.PLUGINS<br />
+      WHERE PLUGIN_NAME LIKE 'audit_log' ;<br />
+<br />
+If the results are not 'audit_log' and plugin_status='ACTIVE' , this is a finding.<br />
+<br />
+Next, determine if the audit log is encrypted: <br />
+SELECT VARIABLE_NAME, VARIABLE_VALUE<br />
+FROM performance_schema.global_variables<br />
+WHERE VARIABLE_NAME LIKE 'audit_log_encryption' ;<br />
+<br />
+If nothing is returned or the value for audit_log_encryption is not AES, this is a finding.<br />
+<br />
+Review the audit files in the file systems.<br />
+<br />
+Run the following command using the audit log location from above and review its output:<br />
+ls -l  &lt;directory where audit log files are located&gt;/audit*log*<br />
+<br />
+For example, if the values returned by - &quot;select @@datadir, @@audit_log_file; &quot; are  /usr/local/mysql/data/,  audit.log<br />
+ls -l  /usr/local/mysql/data/audit.log<br />
+Example output:<br />
+-rw-r-----    1 _mysql  _mysql   3935888 Apr 25 12:34 audit.20190425T173437.log.enc<br />
+-rw-r-----    1 _mysql  _mysql      2336 Apr 25 12:35 audit.20190425T173527.log.enc<br />
+-rw-r-----    1 _mysql  _mysql  13763984 Apr 30 14:04 audit.log.enc<br />
+<br />
+Next, verify the log files have set permissions the log_destination:<br />
+If the user owner is not &quot;mysql&quot;, this is a finding.<br />
+If the group owner is not &quot;mysql&quot;, this is a finding.<br />
+If the file is more permissive than &quot;640&quot;, this is a finding.<br />
+Check that the files end with the &quot;.enc&quot; file extension.  If they do not, this means they are in plaintext, and this is a finding.<br />
+<br />
+Run following command to verify the directory permissions and review its output:<br />
+ls -l /usr/local/mysql/data<br />
+<br />
+Example output:<br />
+drwxr-x---   _mysql  _mysql    1760 Apr 26 09:55 data<br />
+<br />
+Next, verify the log files have set permissions for the log_destination:<br />
+If the user owner is not &quot;mysql&quot;, this is a finding.<br />
+If the group owner is not &quot;mysql&quot;, this is a finding.<br />
+If more permissive than &quot;750&quot;, this is a finding.<br />
+<br />
+If there are no audit log files, then organizational auditable events are not being audited, and this is a finding.<br />
+<br />
+To confirm that MySQL audit is capturing sufficient information to establish the identity of the user/subject or process, perform a successful auditable action and an auditable action that results in an SQL error, and then view the results in the audit file, whichever is in use.<br />
+<br />
+If no audit event is returned for the auditable actions just performed, this is a finding.</p><h2>Check Content Reference</h2><p>M</p><h2>Target Key</h2><p>5277</p></body></html>

@@ -1,0 +1,154 @@
+<!doctype html><html lang="en"><head><meta charset="utf-8"><title>STIGQter: STIG Check Details: SV-283679r1204137_rule: The Nokia layer 2 switch must manage excess bandwidth to limit the effects of packet flooding types of denial-of-service (DoS) attacks.</title><link rel="icon" type="image/svg+xml" href="STIGQter.svg" /><script async src="https://www.googletagmanager.com/gtag/js?id=UA-31381839-2"></script><script src="include.js"></script><script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-4110907817782130" crossorigin="anonymous"></script></head><body><div><img src="STIGQter.svg" alt="STIGQter" style="height:1em;" /> <a href="https://www.stigqter.com/">STIGQter</a>: <a href="main.html">STIG Summary</a>: <a href="U_Nokia_SR_OS_25.x_L2S_V1R1_STIG_Manual-xccdf.html">Nokia Service Router OS 25.x Layer 2 Switch Security Technical Implementation Guide Version: 1 Release: 1 Benchmark Date: 28 Apr 2026</a>:</div> <h1>The Nokia layer 2 switch must manage excess bandwidth to limit the effects of packet flooding types of denial-of-service (DoS) attacks.</h1><h2>DISA Rule</h2><p>SV-283679r1204137_rule</p><h2>Vulnerability Number</h2><p>V-283679</p><h2>Group Title</h2><p>SRG-NET-000193-L2S-000020</p><h2>Rule Version</h2><p>NOKI-L2-000040</p><h2>Severity</h2><p>CAT II</p><h2>CCI(s)</h2><ul><li>CCI-001095 - Manage capacity, bandwidth, or other redundancy to limit the effects of information flooding types of denial of service attacks.</li></ul><h2>Weight</h2><p>10</p><h2>Fix Recommendation</h2><p>Implement a QoS policy for traffic prioritization and bandwidth reservation. This policy must enforce the traffic priorities specified by the CC/S/As.<br />
+<br />
+Following is one of multiple ways to create a QoS policy. <br />
+<br />
+Configure sap-ingress and/or sap-egress QoS policies:<br />
+<br />
+- configure qos sap-ingress &lt;id&gt; create<br />
+- configure qos sap-egress &lt;id&gt; create<br />
+<br />
+For each sap-ingress and sap-egress QoS policy, create as many policers as needed:<br />
+<br />
+- policer &lt;policer  id&gt; create<br />
+- percent-rate &lt;value&gt; cir &lt;value&gt;<br />
+- mbs &lt;value in kbytes&gt;<br />
+- cbs &lt;value in kbytes&gt;<br />
+- back<br />
+<br />
+Create as many forwarding classes as needed. Forwarding classes can be created using ip-criteria, Differentiated Services Code Point (DSCP) bits in IP header, Precedence bits (IP header), and dot1p bits (Ethernet header). Because this is a layer 2 switch requirement, the example below is using dot1p bits:<br />
+<br />
+- fc &lt;forwarding class&gt; create<br />
+- policer &lt;policer id&gt;<br />
+- back<br />
+- dot1p &lt;dot1p value&gt; fc &lt;forwarding class&gt; priority {low or high} <br />
+- exit<br />
+<br />
+For network policy, copy the default network policy 1 into a new network policy and modify parameters as needed:<br />
+<br />
+- configure qos copy network 1 &lt;network policy id&gt;<br />
+<br />
+To list the entries in the network policy created:<br />
+<br />
+- configure qos network &lt;network policy id&gt;<br />
+- info detail<br />
+<br />
+Modify the parameters as needed, or use the &quot;no&quot; form of the command to remove them from the configuration.<br />
+<br />
+Configure network QoS queues:<br />
+<br />
+- configure qos network-queue &lt;network queue id&gt; create <br />
+- queue &lt;queue id&gt; &lt;queue type&gt; create <br />
+- rate &lt;pir percent&gt; cir &lt;cir percent&gt; fir &lt;fir percent&gt;<br />
+- mbs &lt;percentage&gt;<br />
+- cbs &lt;percentage&gt;<br />
+<br />
+Configure as many queues as needed.<br />
+<br />
+Create as many forwarding classes as needed and assign a queue to them:<br />
+<br />
+- fc &lt;name of forwarding class&gt; create<br />
+- multicast-queue &lt;queue id&gt;<br />
+- queue &lt;queue id&gt; <br />
+<br />
+QoS policies are applied at the ingress or egress of the access and network ports.<br />
+<br />
+For access interfaces:<br />
+<br />
+- configure service &lt;service id&gt; sap &lt;sap id&gt; ingress qos &lt;sap ingress qos policy id&gt;<br />
+- configure service &lt;service id&gt; sap &lt;sap id&gt; egress qos &lt;sap egress  qos policy id&gt;<br />
+<br />
+For network interfaces:<br />
+<br />
+- configure router interface &lt;interface name&gt;  qos &lt;network qos policy id&gt;</p><h2>Check Contents</h2><p>Review the Nokia router configuration to verify QoS has been enabled to ensure sufficient capacity is available for mission-critical traffic such as voice and enforce the traffic priorities specified by the Combatant Commands/Services/Agencies (CC/S/As).<br />
+<br />
+Nokia routers have default QoS policy &quot;1&quot; applied to all ports and service access points (SAPs). Based on the network requirements, another QoS policy should be defined and applied to all ports. <br />
+<br />
+Use the commands below to verify the QoS policies defined and where the policies are applied:<br />
+<br />
+For sap-ingress policies:<br />
+<br />
+- show qos sap-ingress association<br />
+<br />
+Associations<br />
+<br />
+Service-Name   : 10<br />
+Service-Id     : 10 (VPLS)                    Customer-Id  : 1<br />
+ - SAP : 1/1/c3/10<br />
+<br />
+For sap-egress policies:<br />
+<br />
+- show qos sap-egress association<br />
+<br />
+Associations<br />
+<br />
+Service-Name   : 900<br />
+Service-Id     : 900 (VPLS)             Customer-Id        : 1<br />
+ - SAP : lag-4:900<br />
+<br />
+For network policies:<br />
+<br />
+- queue &lt;queue id&gt;<br />
+- show qos network &lt;policy id&gt; detail<br />
+<br />
+Interface Association<br />
+<br />
+Interface      : to-sr-1-24d-a<br />
+IP Addr.         : 192.168.1.2/30         Port Id          : 1/1/c9/1<br />
+IPv6 Addr.     : 2001:400:0:3::2/64<br />
+Interface      : to-sr-1-24d-b<br />
+IP Addr.         : 192.168.2.1/30         Port Id          : 1/1/c10/1<br />
+<br />
+- show qos network-queue association<br />
+<br />
+Port-id : 1/1/c3/1<br />
+Port-id : 1/1/c3/2<br />
+Port-id : 1/1/c3/3<br />
+Port-id : 1/1/c3/4<br />
+<br />
+If the switch is not configured to implement a QoS policy, this is a finding.</p><h2>Vulnerability Number</h2><p>V-283679</p><h2>Documentable</h2><p>False</p><h2>Rule Version</h2><p>NOKI-L2-000040</p><h2>Severity Override Guidance</h2><p>Review the Nokia router configuration to verify QoS has been enabled to ensure sufficient capacity is available for mission-critical traffic such as voice and enforce the traffic priorities specified by the Combatant Commands/Services/Agencies (CC/S/As).<br />
+<br />
+Nokia routers have default QoS policy &quot;1&quot; applied to all ports and service access points (SAPs). Based on the network requirements, another QoS policy should be defined and applied to all ports. <br />
+<br />
+Use the commands below to verify the QoS policies defined and where the policies are applied:<br />
+<br />
+For sap-ingress policies:<br />
+<br />
+- show qos sap-ingress association<br />
+<br />
+Associations<br />
+<br />
+Service-Name   : 10<br />
+Service-Id     : 10 (VPLS)                    Customer-Id  : 1<br />
+ - SAP : 1/1/c3/10<br />
+<br />
+For sap-egress policies:<br />
+<br />
+- show qos sap-egress association<br />
+<br />
+Associations<br />
+<br />
+Service-Name   : 900<br />
+Service-Id     : 900 (VPLS)             Customer-Id        : 1<br />
+ - SAP : lag-4:900<br />
+<br />
+For network policies:<br />
+<br />
+- queue &lt;queue id&gt;<br />
+- show qos network &lt;policy id&gt; detail<br />
+<br />
+Interface Association<br />
+<br />
+Interface      : to-sr-1-24d-a<br />
+IP Addr.         : 192.168.1.2/30         Port Id          : 1/1/c9/1<br />
+IPv6 Addr.     : 2001:400:0:3::2/64<br />
+Interface      : to-sr-1-24d-b<br />
+IP Addr.         : 192.168.2.1/30         Port Id          : 1/1/c10/1<br />
+<br />
+- show qos network-queue association<br />
+<br />
+Port-id : 1/1/c3/1<br />
+Port-id : 1/1/c3/2<br />
+Port-id : 1/1/c3/3<br />
+Port-id : 1/1/c3/4<br />
+<br />
+If the switch is not configured to implement a QoS policy, this is a finding.</p><h2>Check Content Reference</h2><p>M</p><h2>Target Key</h2><p>5743</p></body></html>

@@ -1,0 +1,65 @@
+<!doctype html><html lang="en"><head><meta charset="utf-8"><title>STIGQter: STIG Check Details: SV-273585r1111051_rule: The RUCKUS ICX perimeter router must be configured to protect an enclave connected to an alternate gateway by using an inbound filter that only permits packets with destination addresses within the site's address space.</title><link rel="icon" type="image/svg+xml" href="STIGQter.svg" /><script async src="https://www.googletagmanager.com/gtag/js?id=UA-31381839-2"></script><script src="include.js"></script><script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-4110907817782130" crossorigin="anonymous"></script></head><body><div><img src="STIGQter.svg" alt="STIGQter" style="height:1em;" /> <a href="https://www.stigqter.com/">STIGQter</a>: <a href="main.html">STIG Summary</a>: <a href="U_RUCKUS_ICX_RTR_STIG_V1R1_Manual-xccdf.html">RUCKUS ICX Router Security Technical Implementation Guide Version: 1 Release: 1 Benchmark Date: 27 May 2025</a>:</div> <h1>The RUCKUS ICX perimeter router must be configured to protect an enclave connected to an alternate gateway by using an inbound filter that only permits packets with destination addresses within the site's address space.</h1><h2>DISA Rule</h2><p>SV-273585r1111051_rule</p><h2>Vulnerability Number</h2><p>V-273585</p><h2>Group Title</h2><p>SRG-NET-000019-RTR-000008</p><h2>Rule Version</h2><p>RCKS-RTR-000170</p><h2>Severity</h2><p>CAT I</p><h2>CCI(s)</h2><ul><li>CCI-001414 - Enforce approved authorizations for controlling the flow of information between connected systems based on organization-defined information flow control policies.</li></ul><h2>Weight</h2><p>10</p><h2>Fix Recommendation</h2><p>This requirement is not applicable for the DODIN Backbone. <br />
+<br />
+Configure the ingress filter of the perimeter router connected to an alternate gateway to only permit packets with destination addresses of the site's NIPRNet address space or a destination address belonging to the address block assigned by the alternate gateway network service provider.<br />
+<br />
+1. Configure an ACL that exists to allow only desired traffic (example includes SSL hosts).<br />
+ip access-list extended FILTER_ISP<br />
+ sequence 10 permit tcp any any established<br />
+ sequence 20 permit icmp host x.12.1.16 host x.12.1.17 echo<br />
+ sequence 30 permit icmp host x.12.1.16 host x.12.1.17 echo-reply<br />
+ sequence 40 permit tcp any host x.12.1.22 eq ssl<br />
+ sequence 50 permit tcp any host x.12.1.23 eq ssl<br />
+ sequence 60 permit esp any host x.12.1.24<br />
+ sequence 70 permit ahp any host x.12.1.24<br />
+ sequence 80 deny ip any any log<br />
+!<br />
+<br />
+2. Apply the ACL to alternative gateway interface.<br />
+interface ethernet 1/1/10<br />
+ ip address x.12.1.10 255.255.255.0<br />
+ ip access-group FILTER_ISP in<br />
+!</p><h2>Check Contents</h2><p>This requirement is not applicable for the DODIN Backbone.<br />
+<br />
+Review the configuration of each router interface connecting to an alternate gateway.<br />
+<br />
+1. Verify an ACL exists to allow only desired traffic (example includes SSL hosts).<br />
+ip access-list extended FILTER_ISP<br />
+ sequence 10 permit tcp any any established<br />
+ sequence 20 permit icmp host x.12.1.16 host x.12.1.17 echo<br />
+ sequence 30 permit icmp host x.12.1.16 host x.12.1.17 echo-reply<br />
+ sequence 40 permit tcp any host x.12.1.22 eq ssl<br />
+ sequence 50 permit tcp any host x.12.1.23 eq ssl<br />
+ sequence 60 permit esp any host x.12.1.24<br />
+ sequence 70 permit ahp any host x.12.1.24<br />
+ sequence 80 deny ip any any log<br />
+!<br />
+<br />
+2. Check that ACL is applied to alternative gateway interface.<br />
+interface ethernet 1/1/10<br />
+ ip address x.12.1.10 255.255.255.0<br />
+ ip access-group FILTER_ISP in<br />
+!<br />
+<br />
+If the alternative gateway interface is not configured with an ACL permitting only the destination addresses in the sites address space, this is a finding.</p><h2>Vulnerability Number</h2><p>V-273585</p><h2>Documentable</h2><p>False</p><h2>Rule Version</h2><p>RCKS-RTR-000170</p><h2>Severity Override Guidance</h2><p>This requirement is not applicable for the DODIN Backbone.<br />
+<br />
+Review the configuration of each router interface connecting to an alternate gateway.<br />
+<br />
+1. Verify an ACL exists to allow only desired traffic (example includes SSL hosts).<br />
+ip access-list extended FILTER_ISP<br />
+ sequence 10 permit tcp any any established<br />
+ sequence 20 permit icmp host x.12.1.16 host x.12.1.17 echo<br />
+ sequence 30 permit icmp host x.12.1.16 host x.12.1.17 echo-reply<br />
+ sequence 40 permit tcp any host x.12.1.22 eq ssl<br />
+ sequence 50 permit tcp any host x.12.1.23 eq ssl<br />
+ sequence 60 permit esp any host x.12.1.24<br />
+ sequence 70 permit ahp any host x.12.1.24<br />
+ sequence 80 deny ip any any log<br />
+!<br />
+<br />
+2. Check that ACL is applied to alternative gateway interface.<br />
+interface ethernet 1/1/10<br />
+ ip address x.12.1.10 255.255.255.0<br />
+ ip access-group FILTER_ISP in<br />
+!<br />
+<br />
+If the alternative gateway interface is not configured with an ACL permitting only the destination addresses in the sites address space, this is a finding.</p><h2>Check Content Reference</h2><p>M</p><h2>Target Key</h2><p>5696</p></body></html>

@@ -1,0 +1,190 @@
+<!doctype html><html lang="en"><head><meta charset="utf-8"><title>STIGQter: STIG Check Details: SV-217073r604135_rule: The Juniper PE router providing Virtual Private LAN Services (VPLS) must be configured to have traffic storm control thresholds on CE-facing interfaces.</title><link rel="icon" type="image/svg+xml" href="STIGQter.svg" /><script async src="https://www.googletagmanager.com/gtag/js?id=UA-31381839-2"></script><script src="include.js"></script><script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-4110907817782130" crossorigin="anonymous"></script></head><body><div><img src="STIGQter.svg" alt="STIGQter" style="height:1em;" /> <a href="https://www.stigqter.com/">STIGQter</a>: <a href="main.html">STIG Summary</a>: <a href="U_Juniper_Router_RTR_STIG_V3R2_Manual-xccdf.html">Juniper Router RTR Security Technical Implementation Guide Version: 3 Release: 2 Benchmark Date: 30 Jan 2025</a>:</div> <h1>The Juniper PE router providing Virtual Private LAN Services (VPLS) must be configured to have traffic storm control thresholds on CE-facing interfaces.</h1><h2>DISA Rule</h2><p>SV-217073r604135_rule</p><h2>Vulnerability Number</h2><p>V-217073</p><h2>Group Title</h2><p>SRG-NET-000193-RTR-000002</p><h2>Rule Version</h2><p>JUNI-RT-000680</p><h2>Severity</h2><p>CAT II</p><h2>CCI(s)</h2><ul><li>CCI-001095 - Manage capacity, bandwidth, or other redundancy to limit the effects of information flooding types of denial of service attacks.</li></ul><h2>Weight</h2><p>10</p><h2>Fix Recommendation</h2><p>Configure storm control for each VPLS bridge domain. Base the rate limiting on expected traffic rates plus some additional capacity. <br />
+<br />
+Configure a policer to rate limit traffic to provide storm control for all VPLS implementations as shown in the example.<br />
+<br />
+[edit firewall]<br />
+set policer STORM_POLICER if-exceeding bandwidth-limit 10m burst-size-limit 5m<br />
+set policer STORM_POLICER then discard<br />
+<br />
+Configure the filter to specify traffic types to rate limit broadcast, multicast, and unknown unicast storms as shown in the example.<br />
+<br />
+[edit firewall family vpls filter VPLS_FLOOD_FILTER]<br />
+set term BROADCAST_TRAFFIC from traffic-type broadcast<br />
+set term BROADCAST_TRAFFIC then policer STORM_POLICER accept<br />
+set term MULTICAST_TRAFFIC from traffic-type multicast<br />
+set term MULTICAST_TRAFFIC then policer STORM_POLICER accept<br />
+set term UNKNOWN_UNICAST_TRAFFIC from traffic-type unknown-unicast <br />
+set term UNKNOWN_UNICAST_TRAFFIC then policer STORM_POLICER accept <br />
+<br />
+Apply the storm control filter to all VPLS routing instances as shown in the example.<br />
+<br />
+[edit routing-instances VPLS_CUST2]<br />
+set forwarding-options family vpls flood input VPLS_FLOOD_FILTER</p><h2>Check Contents</h2><p>Review the router configuration to verify that storm control is enabled on CE-facing interfaces deploying VPLS.<br />
+<br />
+Verify that a flood filter has been configured for each VPLS routing instances as shown in the example below.<br />
+<br />
+routing-instances {<br />
+    VPLS_CUST2 {<br />
+        instance-type vpls;<br />
+        interface ge-0/1/0.0;  <br />
+        route-distinguisher 22:22;<br />
+        vrf-target target:22:22;<br />
+        forwarding-options {<br />
+            family vpls {<br />
+                 flood {<br />
+                    input VPLS_FLOOD_FILTER;<br />
+                 }<br />
+            }<br />
+        }<br />
+        protocols {<br />
+            vpls {<br />
+                site-range 9;<br />
+                no-tunnel-services;<br />
+                site R8 {<br />
+                    site-identifier 8;<br />
+                    interface ge-0/1/0.0;<br />
+                }<br />
+                vpls-id 102;<br />
+                neighbor 8.8.8.8;<br />
+            }<br />
+        }<br />
+    }<br />
+}<br />
+<br />
+Review the filter configured for the VPLS routing instances to verify it defines traffic types associated with storm control (i.e. broadcast, multicast, and unknown unicast storms).<br />
+<br />
+firewall {<br />
+    …<br />
+    …<br />
+    …<br />
+    family vpls {<br />
+        filter VPLS_FLOOD_FILTER {<br />
+            term BROADCAST_TRAFFIC {<br />
+                from {<br />
+                    traffic-type broadcast;<br />
+                }<br />
+                then {<br />
+                    policer STORM_POLICER;<br />
+                    accept;<br />
+                }<br />
+            }<br />
+            term MULTICAST_TRAFFIC {<br />
+                from {<br />
+                    traffic-type multicast;<br />
+                }<br />
+                then {<br />
+                    policer STORM_POLICER;<br />
+                    accept;<br />
+                }<br />
+            }<br />
+            term UNKNOWN_UNICAST_TRAFFIC {<br />
+                from {<br />
+                    traffic-type unknown-unicast;<br />
+                }<br />
+                then {<br />
+                    policer STORM_POLICER;<br />
+                    accept;<br />
+                }<br />
+            }<br />
+        }<br />
+    }<br />
+<br />
+Verify that the policer rates limits storm traffic.<br />
+<br />
+firewall {<br />
+    …<br />
+    …<br />
+    …<br />
+    policer STORM_POLICER {<br />
+        if-exceeding {<br />
+            bandwidth-limit 10m;<br />
+            burst-size-limit 5m;<br />
+        }<br />
+        then discard;<br />
+    }<br />
+<br />
+If storm control is not enabled, this is a finding.</p><h2>Vulnerability Number</h2><p>V-217073</p><h2>Documentable</h2><p>False</p><h2>Rule Version</h2><p>JUNI-RT-000680</p><h2>Severity Override Guidance</h2><p>Review the router configuration to verify that storm control is enabled on CE-facing interfaces deploying VPLS.<br />
+<br />
+Verify that a flood filter has been configured for each VPLS routing instances as shown in the example below.<br />
+<br />
+routing-instances {<br />
+    VPLS_CUST2 {<br />
+        instance-type vpls;<br />
+        interface ge-0/1/0.0;  <br />
+        route-distinguisher 22:22;<br />
+        vrf-target target:22:22;<br />
+        forwarding-options {<br />
+            family vpls {<br />
+                 flood {<br />
+                    input VPLS_FLOOD_FILTER;<br />
+                 }<br />
+            }<br />
+        }<br />
+        protocols {<br />
+            vpls {<br />
+                site-range 9;<br />
+                no-tunnel-services;<br />
+                site R8 {<br />
+                    site-identifier 8;<br />
+                    interface ge-0/1/0.0;<br />
+                }<br />
+                vpls-id 102;<br />
+                neighbor 8.8.8.8;<br />
+            }<br />
+        }<br />
+    }<br />
+}<br />
+<br />
+Review the filter configured for the VPLS routing instances to verify it defines traffic types associated with storm control (i.e. broadcast, multicast, and unknown unicast storms).<br />
+<br />
+firewall {<br />
+    …<br />
+    …<br />
+    …<br />
+    family vpls {<br />
+        filter VPLS_FLOOD_FILTER {<br />
+            term BROADCAST_TRAFFIC {<br />
+                from {<br />
+                    traffic-type broadcast;<br />
+                }<br />
+                then {<br />
+                    policer STORM_POLICER;<br />
+                    accept;<br />
+                }<br />
+            }<br />
+            term MULTICAST_TRAFFIC {<br />
+                from {<br />
+                    traffic-type multicast;<br />
+                }<br />
+                then {<br />
+                    policer STORM_POLICER;<br />
+                    accept;<br />
+                }<br />
+            }<br />
+            term UNKNOWN_UNICAST_TRAFFIC {<br />
+                from {<br />
+                    traffic-type unknown-unicast;<br />
+                }<br />
+                then {<br />
+                    policer STORM_POLICER;<br />
+                    accept;<br />
+                }<br />
+            }<br />
+        }<br />
+    }<br />
+<br />
+Verify that the policer rates limits storm traffic.<br />
+<br />
+firewall {<br />
+    …<br />
+    …<br />
+    …<br />
+    policer STORM_POLICER {<br />
+        if-exceeding {<br />
+            bandwidth-limit 10m;<br />
+            burst-size-limit 5m;<br />
+        }<br />
+        then discard;<br />
+    }<br />
+<br />
+If storm control is not enabled, this is a finding.</p><h2>Check Content Reference</h2><p>M</p><h2>Target Key</h2><p>4032</p></body></html>

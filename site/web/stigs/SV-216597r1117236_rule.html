@@ -1,0 +1,135 @@
+<!doctype html><html lang="en"><head><meta charset="utf-8"><title>STIGQter: STIG Check Details: SV-216597r1117236_rule: The Cisco BGP router must be configured to reject inbound route advertisements for any Bogon prefixes.</title><link rel="icon" type="image/svg+xml" href="STIGQter.svg" /><script async src="https://www.googletagmanager.com/gtag/js?id=UA-31381839-2"></script><script src="include.js"></script><script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-4110907817782130" crossorigin="anonymous"></script></head><body><div><img src="STIGQter.svg" alt="STIGQter" style="height:1em;" /> <a href="https://www.stigqter.com/">STIGQter</a>: <a href="main.html">STIG Summary</a>: <a href="U_Cisco_IOS_Router_RTR_STIG_V3R4_Manual-xccdf.html">Cisco IOS Router RTR Security Technical Implementation Guide Version: 3 Release: 4 Benchmark Date: 01 Oct 2025</a>:</div> <h1>The Cisco BGP router must be configured to reject inbound route advertisements for any Bogon prefixes.</h1><h2>DISA Rule</h2><p>SV-216597r1117236_rule</p><h2>Vulnerability Number</h2><p>V-216597</p><h2>Group Title</h2><p>SRG-NET-000018-RTR-000002</p><h2>Rule Version</h2><p>CISC-RT-000490</p><h2>Severity</h2><p>CAT II</p><h2>CCI(s)</h2><ul><li>CCI-001368 - Enforce approved authorizations for controlling the flow of information within the system based on organization-defined information flow control policies.</li></ul><h2>Weight</h2><p>10</p><h2>Fix Recommendation</h2><p>Configure the router to reject inbound route advertisements for any Bogon prefixes.<br />
+<br />
+Step 1: Configure a prefix list containing the current Bogon prefixes as shown below.<br />
+<br />
+R1(config)#ip prefix-list PREFIX_FILTER deny 0.0.0.0/8 le 32<br />
+R1(config)#ip prefix-list PREFIX_FILTER deny 10.0.0.0/8 le 32<br />
+R1(config)#ip prefix-list PREFIX_FILTER deny 100.64.0.0/10 le 32<br />
+R1(config)#ip prefix-list PREFIX_FILTER deny 127.0.0.0/8 le 32<br />
+R1(config)#ip prefix-list PREFIX_FILTER deny 169.254.0.0/16 le 32<br />
+R1(config)#ip prefix-list PREFIX_FILTER deny 172.16.0.0/12 le 32<br />
+R1(config)#ip prefix-list PREFIX_FILTER deny 192.0.2.0/24 le 32<br />
+R1(config)#ip prefix-list PREFIX_FILTER deny 192.88.99.0/24 le 32<br />
+R1(config)#ip prefix-list PREFIX_FILTER deny 192.168.0.0/16 le 32<br />
+R1(config)#ip prefix-list PREFIX_FILTER deny 198.18.0.0/15 le 32<br />
+R1(config)#ip prefix-list PREFIX_FILTER deny 198.51.100.0/24 le 32<br />
+R1(config)#ip prefix-list PREFIX_FILTER deny 203.0.113.0/24 le 32<br />
+R1(config)#ip prefix-list PREFIX_FILTER deny 224.0.0.0/4 le 32<br />
+R1(config)#ip prefix-list PREFIX_FILTER deny 240.0.0.0/4 le 32<br />
+R1(config)#ip prefix-list PREFIX_FILTER deny 240.0.0.0/4 le 32<br />
+R1(config)#ip prefix-list PREFIX_FILTER permit 0.0.0.0/0 ge 8<br />
+<br />
+Step 2: Apply the prefix list filter inbound to each external BGP neighbor as shown in the example.<br />
+<br />
+R1(config)#router bgp xx<br />
+R1(config-router)#neighbor x.1.1.9 prefix-list PREFIX_FILTER in<br />
+R1(config-router)#neighbor x.2.1.7 prefix-list PREFIX_FILTER in<br />
+<br />
+Route Map Alternative <br />
+<br />
+Step 1: Configure the route map referencing the configured prefix list above.<br />
+<br />
+R1(config)#route-map FILTER_PREFIX_MAP 10<br />
+R1(config-route-map)#match ip address prefix-list PREFIX_FILTER<br />
+R1(config-route-map)#exit<br />
+<br />
+Step 2: Apply the route-map inbound to each external BGP neighbor as shown in the example.<br />
+<br />
+R1(config)#router bgp xx<br />
+R1(config-router)#neighbor x.1.1.9 route-map FILTER_PREFIX_MAP in<br />
+R1(config-router)#neighbor x.2.1.7 route-map FILTER_PREFIX_MAP in <br />
+R1(config-router)#end</p><h2>Check Contents</h2><p>This check is Not Applicable for JRSS internal EBGP use.<br />
+<br />
+Review the router configuration to verify that it will reject BGP routes for any Bogon prefixes.<br />
+<br />
+Step 1: Verify a prefix list has been configured containing the current Bogon prefixes as shown in the example below.<br />
+<br />
+ip prefix-list PREFIX_FILTER seq 5 deny 0.0.0.0/8 le 32<br />
+ip prefix-list PREFIX_FILTER seq 10 deny 10.0.0.0/8 le 32<br />
+ip prefix-list PREFIX_FILTER seq 15 deny 100.64.0.0/10 le 32<br />
+ip prefix-list PREFIX_FILTER seq 20 deny 127.0.0.0/8 le 32<br />
+ip prefix-list PREFIX_FILTER seq 25 deny 169.254.0.0/16 le 32<br />
+ip prefix-list PREFIX_FILTER seq 30 deny 172.16.0.0/12 le 32<br />
+ip prefix-list PREFIX_FILTER seq 35 deny 192.0.2.0/24 le 32<br />
+ip prefix-list PREFIX_FILTER seq 40 deny 192.88.99.0/24 le 32<br />
+ip prefix-list PREFIX_FILTER seq 45 deny 192.168.0.0/16 le 32<br />
+ip prefix-list PREFIX_FILTER seq 50 deny 198.18.0.0/15 le 32<br />
+ip prefix-list PREFIX_FILTER seq 55 deny 198.51.100.0/24 le 32<br />
+ip prefix-list PREFIX_FILTER seq 60 deny 203.0.113.0/24 le 32<br />
+ip prefix-list PREFIX_FILTER seq 65 deny 224.0.0.0/4 le 32<br />
+ip prefix-list PREFIX_FILTER seq 70 deny 240.0.0.0/4 le 32<br />
+ip prefix-list PREFIX_FILTER seq 75 permit 0.0.0.0/0 ge 8<br />
+<br />
+Step 2: Verify that the prefix list has been applied to all external BGP peers as shown in the example below.<br />
+<br />
+router bgp xx<br />
+ no synchronization<br />
+ bgp log-neighbor-changes<br />
+ neighbor x.1.1.9 remote-as yy<br />
+ neighbor x.1.1.9 prefix-list PREFIX_FILTER in<br />
+ neighbor x.2.1.7 remote-as zz<br />
+ neighbor x.2.1.7 prefix-list PREFIX_FILTER in<br />
+<br />
+Route Map Alternative <br />
+<br />
+Verify that the route map applied to the external neighbors references the configured Bogon prefix list shown above.<br />
+<br />
+router bgp xx<br />
+ no synchronization<br />
+ bgp log-neighbor-changes<br />
+ neighbor x.1.1.9 remote-as yy<br />
+ neighbor x.1.1.9 route-map FILTER_PREFIX_MAP<br />
+ neighbor x.2.1.7 remote-as zz<br />
+ neighbor x.2.1.7 route-map FILTER_PREFIX_MAP<br />
+…<br />
+route-map FILTER_PREFIX_MAP permit 10<br />
+ match ip address prefix-list PREFIX_FILTER<br />
+<br />
+If the router is not configured to reject inbound route advertisements for any Bogon prefixes, this is a finding.</p><h2>Vulnerability Number</h2><p>V-216597</p><h2>Documentable</h2><p>False</p><h2>Rule Version</h2><p>CISC-RT-000490</p><h2>Severity Override Guidance</h2><p>This check is Not Applicable for JRSS internal EBGP use.<br />
+<br />
+Review the router configuration to verify that it will reject BGP routes for any Bogon prefixes.<br />
+<br />
+Step 1: Verify a prefix list has been configured containing the current Bogon prefixes as shown in the example below.<br />
+<br />
+ip prefix-list PREFIX_FILTER seq 5 deny 0.0.0.0/8 le 32<br />
+ip prefix-list PREFIX_FILTER seq 10 deny 10.0.0.0/8 le 32<br />
+ip prefix-list PREFIX_FILTER seq 15 deny 100.64.0.0/10 le 32<br />
+ip prefix-list PREFIX_FILTER seq 20 deny 127.0.0.0/8 le 32<br />
+ip prefix-list PREFIX_FILTER seq 25 deny 169.254.0.0/16 le 32<br />
+ip prefix-list PREFIX_FILTER seq 30 deny 172.16.0.0/12 le 32<br />
+ip prefix-list PREFIX_FILTER seq 35 deny 192.0.2.0/24 le 32<br />
+ip prefix-list PREFIX_FILTER seq 40 deny 192.88.99.0/24 le 32<br />
+ip prefix-list PREFIX_FILTER seq 45 deny 192.168.0.0/16 le 32<br />
+ip prefix-list PREFIX_FILTER seq 50 deny 198.18.0.0/15 le 32<br />
+ip prefix-list PREFIX_FILTER seq 55 deny 198.51.100.0/24 le 32<br />
+ip prefix-list PREFIX_FILTER seq 60 deny 203.0.113.0/24 le 32<br />
+ip prefix-list PREFIX_FILTER seq 65 deny 224.0.0.0/4 le 32<br />
+ip prefix-list PREFIX_FILTER seq 70 deny 240.0.0.0/4 le 32<br />
+ip prefix-list PREFIX_FILTER seq 75 permit 0.0.0.0/0 ge 8<br />
+<br />
+Step 2: Verify that the prefix list has been applied to all external BGP peers as shown in the example below.<br />
+<br />
+router bgp xx<br />
+ no synchronization<br />
+ bgp log-neighbor-changes<br />
+ neighbor x.1.1.9 remote-as yy<br />
+ neighbor x.1.1.9 prefix-list PREFIX_FILTER in<br />
+ neighbor x.2.1.7 remote-as zz<br />
+ neighbor x.2.1.7 prefix-list PREFIX_FILTER in<br />
+<br />
+Route Map Alternative <br />
+<br />
+Verify that the route map applied to the external neighbors references the configured Bogon prefix list shown above.<br />
+<br />
+router bgp xx<br />
+ no synchronization<br />
+ bgp log-neighbor-changes<br />
+ neighbor x.1.1.9 remote-as yy<br />
+ neighbor x.1.1.9 route-map FILTER_PREFIX_MAP<br />
+ neighbor x.2.1.7 remote-as zz<br />
+ neighbor x.2.1.7 route-map FILTER_PREFIX_MAP<br />
+…<br />
+route-map FILTER_PREFIX_MAP permit 10<br />
+ match ip address prefix-list PREFIX_FILTER<br />
+<br />
+If the router is not configured to reject inbound route advertisements for any Bogon prefixes, this is a finding.</p><h2>Check Content Reference</h2><p>M</p><h2>Target Key</h2><p>4027</p></body></html>

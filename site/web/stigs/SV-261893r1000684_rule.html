@@ -1,0 +1,90 @@
+<!doctype html><html lang="en"><head><meta charset="utf-8"><title>STIGQter: STIG Check Details: SV-261893r1000684_rule: PostgreSQL, when using PKI-based authentication, must validate certificates by performing RFC 5280-compliant certification path validation.</title><link rel="icon" type="image/svg+xml" href="STIGQter.svg" /><script async src="https://www.googletagmanager.com/gtag/js?id=UA-31381839-2"></script><script src="include.js"></script><script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-4110907817782130" crossorigin="anonymous"></script></head><body><div><img src="STIGQter.svg" alt="STIGQter" style="height:1em;" /> <a href="https://www.stigqter.com/">STIGQter</a>: <a href="main.html">STIG Summary</a>: <a href="U_CD_Postgres_16_STIG_V1R3_Manual-xccdf.html">Crunchy Data Postgres 16 Security Technical Implementation Guide Version: 1 Release: 3 Benchmark Date: 01 Jul 2026</a>:</div> <h1>PostgreSQL, when using PKI-based authentication, must validate certificates by performing RFC 5280-compliant certification path validation.</h1><h2>DISA Rule</h2><p>SV-261893r1000684_rule</p><h2>Vulnerability Number</h2><p>V-261893</p><h2>Group Title</h2><p>SRG-APP-000175-DB-000067</p><h2>Rule Version</h2><p>CD16-00-004000</p><h2>Severity</h2><p>CAT II</p><h2>CCI(s)</h2><ul><li>CCI-000185 - For public key-based authentication, validate certificates by constructing and verifying a certification path to an accepted trust anchor including checking certificate status information.</li></ul><h2>Weight</h2><p>10</p><h2>Fix Recommendation</h2><p>Note: The following instructions use the PGDATA and PGVER environment variables. Refer to APPENDIX-F for instructions on configuring PGDATA and APPENDIX-H for PGVER.<br />
+<br />
+To configure PostgreSQL to use SSL, refer to supplementary content APPENDIX-G.<br />
+<br />
+To generate a Certificate Revocation List, refer to the official Red Hat Documentation: https://access.redhat.com/documentation/en-US/Red_Hat_Update_Infrastructure/2.1/html/Administration_Guide/chap-Red_Hat_Update_Infrastructure-Administration_Guide-Certification_Revocation_List_CRL.html.<br />
+<br />
+As the database administrator (shown here as &quot;postgres&quot;), copy the CRL file into the data directory:<br />
+<br />
+As the system administrator, copy the CRL file into the PostgreSQL Data Directory:<br />
+<br />
+$ sudo cp root.crl ${PGDATA?}/root.crl<br />
+<br />
+As the database administrator (shown here as &quot;postgres&quot;), set the ssl_crl_file parameter to the filename of the CRL:<br />
+<br />
+$ sudo su - postgres<br />
+$ vi ${PGDATA?}/postgresql.conf<br />
+ssl_crl_file = 'root.crl'<br />
+<br />
+In pg_hba.conf, require ssl authentication:<br />
+<br />
+$ sudo su - postgres<br />
+$ vi ${PGDATA?}/pg_hba.conf<br />
+hostssl &lt;database&gt; &lt;user&gt; &lt;address&gt; cert clientcert=verify-ca<br />
+<br />
+As the system administrator, reload the server with the new configuration:<br />
+<br />
+# SYSTEMD SERVER ONLY<br />
+$ sudo systemctl reload postgresql-${PGVER?}</p><h2>Check Contents</h2><p>Note: The following instructions use the PGDATA environment variable. Refer to APPENDIX-F for instructions on configuring PGDATA.<br />
+<br />
+To verify that a CRL file exists, as the database administrator (shown here as &quot;postgres&quot;), run the following:<br />
+<br />
+$ sudo su - postgres<br />
+$ psql -c &quot;SELECT CASE WHEN length(setting) &gt; 0 <br />
+THEN CASE WHEN substring(setting, 1, 1) = '/' <br />
+THEN setting <br />
+ELSE (SELECT setting FROM pg_settings WHERE name = 'data_directory') || '/' || setting<br />
+END<br />
+ELSE ''<br />
+END AS ssl_crl_file<br />
+FROM pg_settings<br />
+WHERE name = 'ssl_crl_file';&quot;<br />
+<br />
+If this is not set to a CRL file, this is a finding.<br />
+<br />
+Verify the existence of the CRL file by checking the directory from above:<br />
+<br />
+$ sudo su - postgres<br />
+$ ls -ld &lt;ssl_crl_file&gt;<br />
+<br />
+If the CRL file does not exist, this is a finding.<br />
+<br />
+Verify that hostssl entries in pg_hba.conf have &quot;cert&quot; and &quot;clientcert=verify-ca&quot; enabled:<br />
+<br />
+$ sudo su - postgres<br />
+$ grep '^hostssl.*cert.*clientcert=verify-ca ' ${PGDATA?}/pg_hba.conf<br />
+<br />
+If hostssl entries are not returned, this is a finding.<br />
+<br />
+If certificates are not being validated by performing RFC 5280-compliant certification path validation, this is a finding.</p><h2>Vulnerability Number</h2><p>V-261893</p><h2>Documentable</h2><p>False</p><h2>Rule Version</h2><p>CD16-00-004000</p><h2>Severity Override Guidance</h2><p>Note: The following instructions use the PGDATA environment variable. Refer to APPENDIX-F for instructions on configuring PGDATA.<br />
+<br />
+To verify that a CRL file exists, as the database administrator (shown here as &quot;postgres&quot;), run the following:<br />
+<br />
+$ sudo su - postgres<br />
+$ psql -c &quot;SELECT CASE WHEN length(setting) &gt; 0 <br />
+THEN CASE WHEN substring(setting, 1, 1) = '/' <br />
+THEN setting <br />
+ELSE (SELECT setting FROM pg_settings WHERE name = 'data_directory') || '/' || setting<br />
+END<br />
+ELSE ''<br />
+END AS ssl_crl_file<br />
+FROM pg_settings<br />
+WHERE name = 'ssl_crl_file';&quot;<br />
+<br />
+If this is not set to a CRL file, this is a finding.<br />
+<br />
+Verify the existence of the CRL file by checking the directory from above:<br />
+<br />
+$ sudo su - postgres<br />
+$ ls -ld &lt;ssl_crl_file&gt;<br />
+<br />
+If the CRL file does not exist, this is a finding.<br />
+<br />
+Verify that hostssl entries in pg_hba.conf have &quot;cert&quot; and &quot;clientcert=verify-ca&quot; enabled:<br />
+<br />
+$ sudo su - postgres<br />
+$ grep '^hostssl.*cert.*clientcert=verify-ca ' ${PGDATA?}/pg_hba.conf<br />
+<br />
+If hostssl entries are not returned, this is a finding.<br />
+<br />
+If certificates are not being validated by performing RFC 5280-compliant certification path validation, this is a finding.</p><h2>Check Content Reference</h2><p>M</p><h2>Target Key</h2><p>5598</p></body></html>

@@ -1,0 +1,98 @@
+<!doctype html><html lang="en"><head><meta charset="utf-8"><title>STIGQter: STIG Check Details: SV-213695r960963_rule: Unused database components, DBMS software, and database objects must be removed.</title><link rel="icon" type="image/svg+xml" href="STIGQter.svg" /><script async src="https://www.googletagmanager.com/gtag/js?id=UA-31381839-2"></script><script src="include.js"></script><script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-4110907817782130" crossorigin="anonymous"></script></head><body><div><img src="STIGQter.svg" alt="STIGQter" style="height:1em;" /> <a href="https://www.stigqter.com/">STIGQter</a>: <a href="main.html">STIG Summary</a>: <a href="U_IBM_DB2_V10-5_LUW_STIG_V2R2_Manual-xccdf.html">IBM DB2 V10.5 LUW Security Technical Implementation Guide Version: 2 Release: 2 Benchmark Date: 01 Jul 2026</a>:</div> <h1>Unused database components, DBMS software, and database objects must be removed.</h1><h2>DISA Rule</h2><p>SV-213695r960963_rule</p><h2>Vulnerability Number</h2><p>V-213695</p><h2>Group Title</h2><p>SRG-APP-000141-DB-000091</p><h2>Rule Version</h2><p>DB2X-00-003500</p><h2>Severity</h2><p>CAT II</p><h2>CCI(s)</h2><ul><li>CCI-000381 - Configure the system to provide only organization-defined mission essential capabilities.</li></ul><h2>Weight</h2><p>10</p><h2>Fix Recommendation</h2><p>On UNIX/Linux, run the following db2_deinstall command to remove the non-essential features:<br />
+<br />
+     $db2_deinstall –F &lt;feature&gt;<br />
+<br />
+Note: The db2_deinstall command is located at DB2DIR/install, where DB2DIR is the location where the current version of the DB2 database product is installed. (If uncertain of the value to provide for DB2DIR, find it using the db2level command.<br />
+<br />
+On Windows, run the db2unins command to remove one or more db2 product, feature or languages. <br />
+   <br />
+     &gt;&gt;-db2unins –p product     (to remove db2 product) <br />
+         or <br />
+     &gt;&gt;-db2unins –u response-file     (to remove db2 product, feature or languages.)<br />
+<br />
+Note: <br />
+Use the following URL to access the knowledgebase documentation on the db2_deinstall command: <br />
+http://www.ibm.com/support/knowledgecenter/en/SSEPGG_10.5.0/com.ibm.db2.luw.admin.cmd.doc/doc/r0023670.html<br />
+<br />
+Use the following URL to access the knowledgebase documentation on the db2unins command: <br />
+http://www-01.ibm.com/support/knowledgecenter/SSEPGGman db2__10.5.0/com.ibm.db2.luw.admin.cmd.doc/doc/r0023371.html?lang=en</p><h2>Check Contents</h2><p>On UNIX/LINUX, run the db2ls command to find all install paths of DB2 on the system:<br />
+<br />
+     $db2ls<br />
+<br />
+Run the db2ls command to find installed features of database on install paths:<br />
+<br />
+     $db2ls -q -b &lt;db2 install path&gt;<br />
+<br />
+If there are installed features which are not required by the mission objectives and are non-essential, this is a finding.<br />
+<br />
+On Windows, go to Registry Editor in Windows.<br />
+Then select Computer &gt;&gt; HKEY_LOCAL_MACHINE &gt;&gt; SOFTWARE &gt;&gt; IBM &gt;&gt; DB2 &gt;&gt; COMPONENTS <br />
+If there are installed features which are not required by the mission objectives and are non-essential, this is a finding.<br />
+<br />
+Example: <br />
+     db2ls -q -b /opt/ibm/db2/V10.5<br />
+Install Path : /opt/ibm/db2/V10.5<br />
+<br />
+Feature Response File ID             Level   Fix Pack   Feature Description  <br />
+----------------------------------------------------------------------------------------------------<br />
+BASE_CLIENT                         10.5.0.7          7   Base client support <br />
+JAVA_SUPPORT                        10.5.0.7          7   Java support <br />
+SQL_PROCEDURES                      10.5.0.7          7   SQL procedures <br />
+BASE_DB2_ENGINE                     10.5.0.7          7   Base server support <br />
+CONNECT_SUPPORT                     10.5.0.7          7   Connect support <br />
+DB2_DATA_SOURCE_SUPPORT             10.5.0.7          7   DB2 data source support <br />
+SPATIAL_EXTENDER_SERVER_SUPPORT     10.5.0.7          7   Spatial Extender server support <br />
+JDK                                 10.5.0.7          7   IBM Software Development Kit (SDK) for Java(TM) <br />
+LDAP_EXPLOITATION                   10.5.0.7          7   DB2 LDAP support <br />
+INSTANCE_SETUP_SUPPORT              10.5.0.7          7   DB2 Instance Setup wizard <br />
+ACS                                 10.5.0.7          7   Integrated Flash Copy Support <br />
+SPATIAL_EXTENDER_CLIENT_SUPPORT     10.5.0.7          7   Spatial Extender client <br />
+COMMUNICATION_SUPPORT_TCPIP         10.5.0.7          7   Communication support - TCP/IP <br />
+APPLICATION_DEVELOPMENT_TOOLS       10.5.0.7          7   Base application development tools <br />
+DB2_UPDATE_SERVICE                  10.5.0.7          7   DB2 Update Service <br />
+REPL_CLIENT                         10.5.0.7          7   Replication tools <br />
+TEXT_SEARCH                         10.5.0.7          7   DB2 Text Search <br />
+INFORMIX_DATA_SOURCE_SUPPORT        10.5.0.7          7   Informix data source support <br />
+ORACLE_DATA_SOURCE_SUPPORT          10.5.0.7          7   Oracle data source support <br />
+FIRST_STEPS                         10.5.0.7          7   First Steps <br />
+GUARDIUM_INST_MNGR_CLIENT           10.5.0.7          7   Guardium Installation Manager Client</p><h2>Vulnerability Number</h2><p>V-213695</p><h2>Documentable</h2><p>False</p><h2>Rule Version</h2><p>DB2X-00-003500</p><h2>Severity Override Guidance</h2><p>On UNIX/LINUX, run the db2ls command to find all install paths of DB2 on the system:<br />
+<br />
+     $db2ls<br />
+<br />
+Run the db2ls command to find installed features of database on install paths:<br />
+<br />
+     $db2ls -q -b &lt;db2 install path&gt;<br />
+<br />
+If there are installed features which are not required by the mission objectives and are non-essential, this is a finding.<br />
+<br />
+On Windows, go to Registry Editor in Windows.<br />
+Then select Computer &gt;&gt; HKEY_LOCAL_MACHINE &gt;&gt; SOFTWARE &gt;&gt; IBM &gt;&gt; DB2 &gt;&gt; COMPONENTS <br />
+If there are installed features which are not required by the mission objectives and are non-essential, this is a finding.<br />
+<br />
+Example: <br />
+     db2ls -q -b /opt/ibm/db2/V10.5<br />
+Install Path : /opt/ibm/db2/V10.5<br />
+<br />
+Feature Response File ID             Level   Fix Pack   Feature Description  <br />
+----------------------------------------------------------------------------------------------------<br />
+BASE_CLIENT                         10.5.0.7          7   Base client support <br />
+JAVA_SUPPORT                        10.5.0.7          7   Java support <br />
+SQL_PROCEDURES                      10.5.0.7          7   SQL procedures <br />
+BASE_DB2_ENGINE                     10.5.0.7          7   Base server support <br />
+CONNECT_SUPPORT                     10.5.0.7          7   Connect support <br />
+DB2_DATA_SOURCE_SUPPORT             10.5.0.7          7   DB2 data source support <br />
+SPATIAL_EXTENDER_SERVER_SUPPORT     10.5.0.7          7   Spatial Extender server support <br />
+JDK                                 10.5.0.7          7   IBM Software Development Kit (SDK) for Java(TM) <br />
+LDAP_EXPLOITATION                   10.5.0.7          7   DB2 LDAP support <br />
+INSTANCE_SETUP_SUPPORT              10.5.0.7          7   DB2 Instance Setup wizard <br />
+ACS                                 10.5.0.7          7   Integrated Flash Copy Support <br />
+SPATIAL_EXTENDER_CLIENT_SUPPORT     10.5.0.7          7   Spatial Extender client <br />
+COMMUNICATION_SUPPORT_TCPIP         10.5.0.7          7   Communication support - TCP/IP <br />
+APPLICATION_DEVELOPMENT_TOOLS       10.5.0.7          7   Base application development tools <br />
+DB2_UPDATE_SERVICE                  10.5.0.7          7   DB2 Update Service <br />
+REPL_CLIENT                         10.5.0.7          7   Replication tools <br />
+TEXT_SEARCH                         10.5.0.7          7   DB2 Text Search <br />
+INFORMIX_DATA_SOURCE_SUPPORT        10.5.0.7          7   Informix data source support <br />
+ORACLE_DATA_SOURCE_SUPPORT          10.5.0.7          7   Oracle data source support <br />
+FIRST_STEPS                         10.5.0.7          7   First Steps <br />
+GUARDIUM_INST_MNGR_CLIENT           10.5.0.7          7   Guardium Installation Manager Client</p><h2>Check Content Reference</h2><p>M</p><h2>Target Key</h2><p>3989</p></body></html>

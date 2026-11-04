@@ -1,0 +1,95 @@
+<!doctype html><html lang="en"><head><meta charset="utf-8"><title>STIGQter: STIG Check Details: SV-270568r1136925_rule: When using command-line tools such as Oracle SQL*Plus, which can accept a plain-text password, users must use an alternative logon method that does not expose the password.</title><link rel="icon" type="image/svg+xml" href="STIGQter.svg" /><script async src="https://www.googletagmanager.com/gtag/js?id=UA-31381839-2"></script><script src="include.js"></script><script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-4110907817782130" crossorigin="anonymous"></script></head><body><div><img src="STIGQter.svg" alt="STIGQter" style="height:1em;" /> <a href="https://www.stigqter.com/">STIGQter</a>: <a href="main.html">STIG Summary</a>: <a href="U_Oracle_Database_19c_STIG_V1R5_Manual-xccdf.html">Oracle Database 19c Security Technical Implementation Guide Version: 1 Release: 5 Benchmark Date: 01 Apr 2026</a>:</div> <h1>When using command-line tools such as Oracle SQL*Plus, which can accept a plain-text password, users must use an alternative logon method that does not expose the password.</h1><h2>DISA Rule</h2><p>SV-270568r1136925_rule</p><h2>Vulnerability Number</h2><p>V-270568</p><h2>Group Title</h2><p>SRG-APP-000178-DB-000083</p><h2>Rule Version</h2><p>O19C-00-015400</p><h2>Severity</h2><p>CAT I</p><h2>CCI(s)</h2><ul><li>CCI-000206 - Obscure feedback of authentication information during the authentication process to protect the information from possible exploitation and use by unauthorized individuals.</li></ul><h2>Weight</h2><p>10</p><h2>Fix Recommendation</h2><p>For Oracle SQL*Plus, which cannot be configured not to accept a plain-text password, and any other essential tool with the same limitation:<br />
+<br />
+1. Document the need for it, who uses it, and any relevant mitigations, and obtain AO approval.<br />
+2. Train all users of the tool in the importance of not using the plain-text password option and how to keep the password hidden.<br />
+<br />
+Consider wrapping the startup command with a shell or wrapper and using an Oracle external password store.<br />
+<br />
+Oracle provides the capability to provide for a secure external password facility. Use the Oracle mkstore to create a secure storage area for passwords for applications, batch jobs, and scripts to use or deploy a site-authorized facility to perform this function.<br />
+<br />
+Check to verify what has been stored in the Oracle External Password Store.<br />
+<br />
+To view all contents of a client wallet external password store, check specific credentials by viewing them. Listing the external password store contents provides information used to decide whether to add or delete credentials from the store. To list the contents of the external password store, enter the following command at the command line:<br />
+<br />
+$ mkstore -wrl wallet_location -listCredential<br />
+<br />
+For example:<br />
+<br />
+$ mkstore -wrl c:\oracle\product\19.0.0\db_1\wallets -listCredential<br />
+<br />
+The wallet_location specifies the path to the directory where the wallet, whose external password store contents is to be viewed, is located. This command lists all of the credential database service names (aliases) and the corresponding username (schema) for that database. Passwords are not listed.<br />
+<br />
+Configuring Clients to Use the External Password Store<br />
+<br />
+If the client is already configured to use external authentication, such as Windows native authentication or Transport Layer Security (TLS), then Oracle Database uses that authentication method. The same credentials used for this type of authentication are typically also used to log on to the database.<br />
+<br />
+For clients not using such authentication methods or wanting to override them for database authentication, set the SQLNET.WALLET_OVERRIDE parameter in sqlnet.ora to TRUE. The default value for SQLNET.WALLET_OVERRIDE is FALSE, allowing standard use of authentication credentials as before.<br />
+<br />
+If wanting a client to use the secure external password store feature, perform the following configuration task:<br />
+<br />
+1. Create a wallet on the client by using the following syntax at the command line:<br />
+orapki create -wallet wallet_location -auto_login_local<br />
+<br />
+For example:<br />
+orapki wallet create -wallet c:\oracle\product\19.0.0\db_1\wallets -auto_login_local<br />
+Enter password: password<br />
+<br />
+The wallet_location is the path to the directory where the wallet is to be created and stored. This command creates an Oracle wallet with the autologon feature enabled at the location specified. The autologon feature enables the client to access the wallet contents without supplying a password.<br />
+<br />
+The mkstore utility -create option uses password complexity verification.<br />
+<br />
+2. Create database connection credentials in the wallet by using the following syntax at the command line:<br />
+mkstore -wrl wallet_location -createCredential db_connect_string username<br />
+Enter password: password<br />
+<br />
+For example:<br />
+mkstore -wrl c:\oracle\product\19.0.0\db_1\wallets -createCredential oracle system<br />
+Enter password: password<br />
+<br />
+In this specification:<br />
+The wallet_location is the path to the directory where the wallet was created. The db_connect_string used in the CONNECT /@db_connect_string statement must be identical to the db_connect_string specified in the -createCredential command.<br />
+<br />
+The db_connect_string is the TNS alias used to specify the database in the tnsnames.ora file or any service name used to identify the database on an Oracle network. By default, tnsnames.ora is located in the $ORACLE_HOME/network/admin directory on Unix systems and in ORACLE_HOME\network\admin on Windows.<br />
+<br />
+The username is the database logon credential. When prompted, enter the password for this user.<br />
+<br />
+3. In the client sqlnet.ora file, enter the WALLET_LOCATION parameter and set it to the directory location of the wallet created in Step 1. For example, if the wallet was created in $ORACLE_HOME/network/admin and the Oracle home is set to /private/ora12, enter the following into the client sqlnet.ora file:<br />
+<br />
+WALLET_LOCATION =<br />
+(SOURCE =<br />
+(METHOD = FILE)<br />
+(METHOD_DATA =<br />
+(DIRECTORY = /private/ora19/network/admin)<br />
+)<br />
+)<br />
+<br />
+4. In the client sqlnet.ora file, enter the SQLNET.WALLET_OVERRIDE parameter and set it to TRUE as follows:<br />
+<br />
+SQLNET.WALLET_OVERRIDE = TRUE<br />
+<br />
+This setting causes all CONNECT /@db_connect_string statements to use the information in the wallet at the specified location to authenticate to databases.<br />
+<br />
+When external authentication is in use, an authenticated user with such a wallet can use the CONNECT /@db_connect_string syntax to access the previously specified databases without providing a username and password. However, if a user fails that external authentication, these connect statements also fail.<br />
+<br />
+Below is a sample sqlnet.ora file with the WALLET_LOCATION and the SQLNET.WALLET_OVERRIDE parameters set as described in Steps 3 and 4.<br />
+<br />
+Below is a sample SQLNET.ORA File with wallet parameters set.<br />
+<br />
+WALLET_LOCATION =<br />
+(SOURCE =<br />
+(METHOD = FILE)<br />
+(METHOD_DATA =<br />
+(DIRECTORY = /private/ora19/network/admin)<br />
+)<br />
+)<br />
+<br />
+SQLNET.WALLET_OVERRIDE = TRUE<br />
+SSL_CLIENT_AUTHENTICATION = FALSE<br />
+SSL_VERSION = 1.1 or 1.2<br />
+<br />
+Note: This assumes that a single sqlnet.ora file, in the default location, is in use. Refer to the following link if using a nondefault configuration:<br />
+https://docs.oracle.com/en/database/oracle/oracle-database/19/netrf/parameters-for-the-sqlnet.ora.html.</p><h2>Check Contents</h2><p>For Oracle SQL*Plus, which cannot be configured not to accept a plain-text password, and any other essential tool with the same limitation, verify that the system documentation explains the need for the tool, who uses it, and any relevant mitigations; and that authorizing official (AO) approval has been obtained. If not, this is a finding.<br />
+<br />
+Request evidence that all users of the tool are trained in the importance of not using the plain-text password option and in how to keep the password hidden; and that they adhere to this practice. If not, this is a finding.</p><h2>Vulnerability Number</h2><p>V-270568</p><h2>Documentable</h2><p>False</p><h2>Rule Version</h2><p>O19C-00-015400</p><h2>Severity Override Guidance</h2><p>For Oracle SQL*Plus, which cannot be configured not to accept a plain-text password, and any other essential tool with the same limitation, verify that the system documentation explains the need for the tool, who uses it, and any relevant mitigations; and that authorizing official (AO) approval has been obtained. If not, this is a finding.<br />
+<br />
+Request evidence that all users of the tool are trained in the importance of not using the plain-text password option and in how to keep the password hidden; and that they adhere to this practice. If not, this is a finding.</p><h2>Check Content Reference</h2><p>M</p><h2>Target Key</h2><p>5672</p></body></html>

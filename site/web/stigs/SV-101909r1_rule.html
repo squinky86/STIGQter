@@ -1,0 +1,145 @@
+<!doctype html><html lang="en"><head><meta charset="utf-8"><title>STIGQter: STIG Check Details: SV-101909r1_rule: The MobileIron Core v10 server must be able to limit user enrollment of devices that do not have required OS type and version.</title><link rel="icon" type="image/svg+xml" href="STIGQter.svg" /><script async src="https://www.googletagmanager.com/gtag/js?id=UA-31381839-2"></script><script src="include.js"></script><script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-4110907817782130" crossorigin="anonymous"></script></head><body><div><img src="STIGQter.svg" alt="STIGQter" style="height:1em;" /> <a href="https://www.stigqter.com/">STIGQter</a>: <a href="main.html">STIG Summary</a>: <a href="U_MobileIron_Core_v10-x_MDM_STIG_V1R1_Manual-xccdf.html">MobileIron Core v10.x MDM Security Technical Implementation Guide Version: 1 Release: 1 Benchmark Date: 15 Feb 2019</a>:</div> <h1>The MobileIron Core v10 server must be able to limit user enrollment of devices that do not have required OS type and version.</h1><h2>DISA Rule</h2><p>SV-101909r1_rule</p><h2>Vulnerability Number</h2><p>V-91807</p><h2>Group Title</h2><p>PP-MDM-312001</p><h2>Rule Version</h2><p>MICR-10-000020</p><h2>Severity</h2><p>CAT II</p><h2>CCI(s)</h2><ul><li>CCI-000366 - Implement the security configuration settings.</li></ul><h2>Weight</h2><p>10</p><h2>Fix Recommendation</h2><p>Complete the following actions to limit user enrollment of devices that do not have required OS type and version:<br />
+<br />
+Task 1: Configure Operating Systems allowed to register.<br />
+1. In the Admin Portal, go to Settings &gt;&gt; Users &amp; Devices &gt;&gt; Registration.<br />
+2. Scroll to the &quot;Platforms for Registration&quot; section.<br />
+3. In the &quot;Enabled Platforms&quot; list, select the platforms you want to exclude, selecting from: Android, iOS, OS X, Windows.<br />
+Note: Shift-click platforms to select more than one.<br />
+4. Click the left arrow button to move the selected platforms to the &quot;Disabled Platforms list&quot;.<br />
+5. Click &quot;Save&quot;.<br />
+<br />
+Task 2: Configure OS version alert.<br />
+1. Log on to the &quot;MobileIron Core Admin&quot; Portal.<br />
+2. In the Admin Portal, go to Logs &gt;&gt; Event Settings.<br />
+3. Select Add New &gt;&gt; Policy Violations Event.<br />
+4. Enter a name for the event.<br />
+5. In the &quot;Security Policy Triggers&quot; section, look for the appropriate OS heading.<br />
+6. Confirm that the app control alert “Disallowed {appropriate OS} version found” is selected. Repeat for every managed OS.<br />
+7. Deselect all the other checkboxes. <br />
+8. Repeat steps 5-7 for every managed OS.<br />
+9. In the &quot;Apply to Labels&quot; section, select the appropriate labels in the &quot;Available&quot; column.<br />
+10. Click the right arrow to move them to the &quot;Selected&quot; column.<br />
+11. Click &quot;Save&quot;.<br />
+<br />
+Task 3: Define a custom compliance action. <br />
+1. Go to Policies &amp; Configs &gt;&gt; Compliance Actions.<br />
+2. Click &quot;Add+&quot; to open the &quot;Add Compliance Action&quot; dialog.<br />
+3. Enter a name for the compliance action.<br />
+4. Select &quot;Enforce Compliance Actions Locally on Devices&quot;.<br />
+5. In the &quot;Alert&quot; section, select &quot;Send a compliance notification or alert to the user&quot;.<br />
+6. In the &quot;Block Access&quot; section, select &quot;Block email access and AppConnect apps&quot;.<br />
+7. In the &quot;Quarantine&quot; section, select &quot;Quarantine the device&quot;.<br />
+8. Select &quot;Remove All Configurations&quot;.<br />
+9. Click &quot;Save&quot;.<br />
+<br />
+Task 4: Set up the security policy to trigger the compliance action when the violations occur.<br />
+1. In Admin Portal, go to Policies &amp; Configs &gt;&gt; Policies.<br />
+2. Select the security policy you want to work with.<br />
+3. Click &quot;Edit&quot;.<br />
+4. Scroll down to the &quot;Access Control&quot; section of the &quot;Modifying Security Policy&quot; dialog.<br />
+5. Under appropriate OS type, select the checkbox for &quot;When OS version is less than&quot;.<br />
+6. On the same line, in the dropdown list, select the custom compliance action that you just created.<br />
+7. On the same line, in the dropdown list for appropriate OS versions, select the appropriate OS version.<br />
+8. Click &quot;Save&quot;.<br />
+<br />
+Task 5: Apply the security policy to a label that is also applied to the target devices.<br />
+1. Verify checkbox for the policy you are working with is selected.<br />
+2. Click Actions &gt;&gt; Apply to Label.<br />
+3. Select the appropriate label(s).<br />
+4. Click &quot;Apply&quot;.</p><h2>Check Contents</h2><p>Perform the following actions to verify users cannot enroll devices that do not have required OS type and version.<br />
+<br />
+Task 1: Verify that the appropriate OSs are allowed to register. <br />
+1. In the Admin Portal, go to Settings &gt;&gt; Users &amp; Devices &gt;&gt; Registration.<br />
+2. Scroll to the &quot;Platforms for Registration&quot; section.<br />
+3. In the &quot;Enabled Platforms&quot; list, verify all inappropriate OSs are excluded.<br />
+<br />
+If inappropriate OSs are able to register, this is a finding.<br />
+<br />
+Task 2: Verify the OS version alert is setup.<br />
+1. Log on to the MobileIron Core Admin Portal.<br />
+2. In the Admin Portal, go to Logs &gt;&gt; Event Settings.<br />
+3. Select the appropriate Alert.<br />
+4. Select &quot;Edit&quot;.<br />
+5. Verify “Disallowed {appropriate OS} version found” is selected for every managed OS and all other checkboxes are not selected.<br />
+<br />
+If there is no OS version alert setup or the alert is not set up correctly, this is a finding.<br />
+<br />
+Task 3: Verify a custom compliance action is setup.<br />
+1. Go to Policies &amp; Configs &gt;&gt; Compliance Actions.<br />
+2. Select the desired compliance action.<br />
+3. Select &quot;Actions&quot;.<br />
+4. Select &quot;Edit&quot;.<br />
+5. Verify the following checkboxes are selected:<br />
+- Enforce Compliance Actions Locally on Devices<br />
+- Send a compliance notification or alert to the user<br />
+- Block email access and AppConnect apps<br />
+- Quarantine the device<br />
+- Remove All Configurations<br />
+<br />
+If there is no custom compliance action setup or the custom compliance action is not set up correctly, this is a finding.<br />
+<br />
+Task 4: Verify each appropriate security policy is setup to trigger a compliance action when OS violations occur.<br />
+1. In Admin Portal, go to Policies &amp; Configs &gt;&gt; Policies.<br />
+2. Select the security policy you want to work with.<br />
+3. Click &quot;Edit&quot;.<br />
+4. Scroll down to the &quot;Access Control&quot; section of the Modifying Security Policy dialog.<br />
+5. Under appropriate OS type, verify the checkbox for when &quot;OS version is less than&quot; has been selected.<br />
+6. On the same line, verify in the dropdown list, the appropriate custom compliance action is selected.<br />
+7. On the same line, in the dropdown list for appropriate OS versions, verify the appropriate OS version is selected.<br />
+<br />
+If there is no compliance action setup for OS version in the security policy or the compliance action is not set up correctly, this is a finding.<br />
+<br />
+Task 5: Verify the security policy is assigned to all applicable labels.<br />
+1. Go to Policies and Configs &gt;&gt; Policies.<br />
+2. For the security policy being verified, put cursor over the &quot;Labels&quot; column.<br />
+3. Verify the &quot;Applied Label(s)&quot; includes all desired labels.<br />
+<br />
+If all desired labels are not selected in each appropriate policy, this is a finding.</p><h2>Vulnerability Number</h2><p>V-91807</p><h2>Documentable</h2><p>False</p><h2>Rule Version</h2><p>MICR-10-000020</p><h2>Severity Override Guidance</h2><p>Perform the following actions to verify users cannot enroll devices that do not have required OS type and version.<br />
+<br />
+Task 1: Verify that the appropriate OSs are allowed to register. <br />
+1. In the Admin Portal, go to Settings &gt;&gt; Users &amp; Devices &gt;&gt; Registration.<br />
+2. Scroll to the &quot;Platforms for Registration&quot; section.<br />
+3. In the &quot;Enabled Platforms&quot; list, verify all inappropriate OSs are excluded.<br />
+<br />
+If inappropriate OSs are able to register, this is a finding.<br />
+<br />
+Task 2: Verify the OS version alert is setup.<br />
+1. Log on to the MobileIron Core Admin Portal.<br />
+2. In the Admin Portal, go to Logs &gt;&gt; Event Settings.<br />
+3. Select the appropriate Alert.<br />
+4. Select &quot;Edit&quot;.<br />
+5. Verify “Disallowed {appropriate OS} version found” is selected for every managed OS and all other checkboxes are not selected.<br />
+<br />
+If there is no OS version alert setup or the alert is not set up correctly, this is a finding.<br />
+<br />
+Task 3: Verify a custom compliance action is setup.<br />
+1. Go to Policies &amp; Configs &gt;&gt; Compliance Actions.<br />
+2. Select the desired compliance action.<br />
+3. Select &quot;Actions&quot;.<br />
+4. Select &quot;Edit&quot;.<br />
+5. Verify the following checkboxes are selected:<br />
+- Enforce Compliance Actions Locally on Devices<br />
+- Send a compliance notification or alert to the user<br />
+- Block email access and AppConnect apps<br />
+- Quarantine the device<br />
+- Remove All Configurations<br />
+<br />
+If there is no custom compliance action setup or the custom compliance action is not set up correctly, this is a finding.<br />
+<br />
+Task 4: Verify each appropriate security policy is setup to trigger a compliance action when OS violations occur.<br />
+1. In Admin Portal, go to Policies &amp; Configs &gt;&gt; Policies.<br />
+2. Select the security policy you want to work with.<br />
+3. Click &quot;Edit&quot;.<br />
+4. Scroll down to the &quot;Access Control&quot; section of the Modifying Security Policy dialog.<br />
+5. Under appropriate OS type, verify the checkbox for when &quot;OS version is less than&quot; has been selected.<br />
+6. On the same line, verify in the dropdown list, the appropriate custom compliance action is selected.<br />
+7. On the same line, in the dropdown list for appropriate OS versions, verify the appropriate OS version is selected.<br />
+<br />
+If there is no compliance action setup for OS version in the security policy or the compliance action is not set up correctly, this is a finding.<br />
+<br />
+Task 5: Verify the security policy is assigned to all applicable labels.<br />
+1. Go to Policies and Configs &gt;&gt; Policies.<br />
+2. For the security policy being verified, put cursor over the &quot;Labels&quot; column.<br />
+3. Verify the &quot;Applied Label(s)&quot; includes all desired labels.<br />
+<br />
+If all desired labels are not selected in each appropriate policy, this is a finding.</p><h2>Check Content Reference</h2><p>M</p><h2>Target Key</h2><p>3433</p></body></html>

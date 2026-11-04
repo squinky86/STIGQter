@@ -1,0 +1,93 @@
+<!doctype html><html lang="en"><head><meta charset="utf-8"><title>STIGQter: STIG Check Details: SV-253713r1137658_rule: Access to database files must be limited to relevant processes and to authorized, administrative users.</title><link rel="icon" type="image/svg+xml" href="STIGQter.svg" /><script async src="https://www.googletagmanager.com/gtag/js?id=UA-31381839-2"></script><script src="include.js"></script><script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-4110907817782130" crossorigin="anonymous"></script></head><body><div><img src="STIGQter.svg" alt="STIGQter" style="height:1em;" /> <a href="https://www.stigqter.com/">STIGQter</a>: <a href="main.html">STIG Summary</a>: <a href="U_MariaDB_Enterprise_10-x_STIG_V2R5_Manual-xccdf.html">MariaDB Enterprise 10.x Security Technical Implementation Guide Version: 2 Release: 5 Benchmark Date: 01 Apr 2026</a>:</div> <h1>Access to database files must be limited to relevant processes and to authorized, administrative users.</h1><h2>DISA Rule</h2><p>SV-253713r1137658_rule</p><h2>Vulnerability Number</h2><p>V-253713</p><h2>Group Title</h2><p>SRG-APP-000243-DB-000374</p><h2>Rule Version</h2><p>MADB-10-005600</p><h2>Severity</h2><p>CAT II</p><h2>CCI(s)</h2><ul><li>CCI-001090 - Prevent unauthorized and unintended information transfer via shared system resources.</li></ul><h2>Weight</h2><p>10</p><h2>Fix Recommendation</h2><p>By default all of the MariaDB database files, log files, and backup files are located in the /var/lib/mysql.<br />
+<br />
+To find the location of the datadir run this command:<br />
+<br />
+Mariadb &gt; SHOW GLOBAL VARIABLES LIKE 'datadir';<br />
+<br />
+Check the /etc/my.cnf file for the following variables to determine if any of these files have a nondefault location configured. Only variables that specify a directory different from datadir will be in a different directory. If the variable only specifies a file name that file will still be in the datadir directory.<br />
+<br />
+error_log<br />
+innodb_log_group_home_dir<br />
+innodb_temp_data_file_path<br />
+innodb_tmpdir<br />
+innodb_undo_directory<br />
+innodb_temp_data_file_path<br />
+innodb_tmpdir<br />
+log_bin_basename<br />
+log_error<br />
+relay_log_basename<br />
+relay_log_file_info<br />
+sql_error_log_filename<br />
+tmpdir<br />
+<br />
+Configure the permissions granted by the operating system/file system on the database files, database log files, and database backup files so that only relevant system accounts and authorized system administrators and database administrators with a need to know are permitted to read/view these files.<br />
+<br />
+Any files (e.g., extra configuration files) created in datadir, or a nondefault directory defined by a variable above, must be owned by the database administrator, with only owner permissions to read, write, and execute.</p><h2>Check Contents</h2><p>By default, all of the MariaDB database files, log files, and backup files are located in the /var/lib/mysql.<br />
+<br />
+To find the location of the datadir run this command:<br />
+<br />
+Mariadb &gt; SHOW GLOBAL VARIABLES LIKE 'datadir';<br />
+ <br />
+Check the /etc/my.cnf file for the following variables to determine if any of these files have a nondefault location configured. Only variables that specify a directory different from datadir will be in a different directory. If the variable only specifies a file name, that file will still be in the default directory.<br />
+<br />
+error_log<br />
+innodb_log_group_home_dir<br />
+innodb_temp_data_file_path<br />
+innodb_tmpdir<br />
+innodb_undo_directory<br />
+innodb_temp_data_file_path<br />
+innodb_tmpdir<br />
+log_bin_basename<br />
+log_error<br />
+relay_log_basename<br />
+relay_log_file_info<br />
+sql_error_log_filename<br />
+tmpdir<br />
+<br />
+Review the permissions granted to users by the operating system/file system on the database files, database log files, and database backup files. <br />
+<br />
+To verify that all files are owned by the database administrator and have the correct permissions, run the following as the database administrator: <br />
+<br />
+$ sudo su - root<br />
+$ ls -lR {datadir}<br />
+$ ls -lR  other directories defined by variables above<br />
+<br />
+If using mysqldump or another tool for backups, also run the &quot;ls&quot; command as above on the directory that will be containing the backup file.<br />
+    <br />
+If any files are not owned by the database administrator or allow anyone but the database administrator to read/write/execute, this is a finding. <br />
+<br />
+If any user/role who is not an authorized system administrator with a need-to-know, database administrator with a need-to-know, or system account for running MariaDB processes is permitted to read/view any of these files, this is a finding.</p><h2>Vulnerability Number</h2><p>V-253713</p><h2>Documentable</h2><p>False</p><h2>Rule Version</h2><p>MADB-10-005600</p><h2>Severity Override Guidance</h2><p>By default, all of the MariaDB database files, log files, and backup files are located in the /var/lib/mysql.<br />
+<br />
+To find the location of the datadir run this command:<br />
+<br />
+Mariadb &gt; SHOW GLOBAL VARIABLES LIKE 'datadir';<br />
+ <br />
+Check the /etc/my.cnf file for the following variables to determine if any of these files have a nondefault location configured. Only variables that specify a directory different from datadir will be in a different directory. If the variable only specifies a file name, that file will still be in the default directory.<br />
+<br />
+error_log<br />
+innodb_log_group_home_dir<br />
+innodb_temp_data_file_path<br />
+innodb_tmpdir<br />
+innodb_undo_directory<br />
+innodb_temp_data_file_path<br />
+innodb_tmpdir<br />
+log_bin_basename<br />
+log_error<br />
+relay_log_basename<br />
+relay_log_file_info<br />
+sql_error_log_filename<br />
+tmpdir<br />
+<br />
+Review the permissions granted to users by the operating system/file system on the database files, database log files, and database backup files. <br />
+<br />
+To verify that all files are owned by the database administrator and have the correct permissions, run the following as the database administrator: <br />
+<br />
+$ sudo su - root<br />
+$ ls -lR {datadir}<br />
+$ ls -lR  other directories defined by variables above<br />
+<br />
+If using mysqldump or another tool for backups, also run the &quot;ls&quot; command as above on the directory that will be containing the backup file.<br />
+    <br />
+If any files are not owned by the database administrator or allow anyone but the database administrator to read/write/execute, this is a finding. <br />
+<br />
+If any user/role who is not an authorized system administrator with a need-to-know, database administrator with a need-to-know, or system account for running MariaDB processes is permitted to read/view any of these files, this is a finding.</p><h2>Check Content Reference</h2><p>M</p><h2>Target Key</h2><p>5475</p></body></html>

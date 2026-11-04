@@ -1,0 +1,96 @@
+<!doctype html><html lang="en"><head><meta charset="utf-8"><title>STIGQter: STIG Check Details: SV-271118r1107970_rule: SQL Server must integrate with an organization-level authentication/access mechanism providing account management and automation for all users, groups, roles, and any other principals.</title><link rel="icon" type="image/svg+xml" href="STIGQter.svg" /><script async src="https://www.googletagmanager.com/gtag/js?id=UA-31381839-2"></script><script src="include.js"></script><script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-4110907817782130" crossorigin="anonymous"></script></head><body><div><img src="STIGQter.svg" alt="STIGQter" style="height:1em;" /> <a href="https://www.stigqter.com/">STIGQter</a>: <a href="main.html">STIG Summary</a>: <a href="U_MS_SQL_Server_2022_Database_STIG_V1R3_Manual-xccdf.html">Microsoft SQL Server 2022 Database Security Technical Implementation Guide Version: 1 Release: 3 Benchmark Date: 01 Apr 2026</a>:</div> <h1>SQL Server must integrate with an organization-level authentication/access mechanism providing account management and automation for all users, groups, roles, and any other principals.</h1><h2>DISA Rule</h2><p>SV-271118r1107970_rule</p><h2>Vulnerability Number</h2><p>V-271118</p><h2>Group Title</h2><p>SRG-APP-000023-DB-000001</p><h2>Rule Version</h2><p>SQLD-22-000100</p><h2>Severity</h2><p>CAT I</p><h2>CCI(s)</h2><ul><li>CCI-000015 - Support the management of system accounts using (organization-defined automated mechanisms).</li></ul><h2>Weight</h2><p>10</p><h2>Fix Recommendation</h2><p>If mixed mode is required, document the need and justification; describe the measures taken to ensure the use of SQL Server authentication is kept to a minimum; describe the measures taken to safeguard passwords; list or describe the SQL Logins used; and obtain official approval.<br />
+<br />
+If mixed mode is not required, disable it as follows: <br />
+<br />
+In the SSMS Object Explorer, right-click on the server instance, select Properties &gt;&gt; Security page. Click the radio button for &quot;Windows Authentication Mode&quot;, and then click &quot;OK&quot;.<br />
+<br />
+Restart the SQL Server instance. <br />
+<br />
+OR<br />
+<br />
+Run the statement: <br />
+<br />
+USE [master]<br />
+EXEC xp_instance_regwrite N'HKEY_LOCAL_MACHINE', N'Software\Microsoft\MSSQLServer\MSSQLServer', N'LoginMode', REG_DWORD, 2<br />
+GO<br />
+<br />
+Restart the SQL Server instance. <br />
+<br />
+For each account being managed by SQL Server but not requiring it, drop or disable the SQL Database user. Replace it with an appropriately configured account, as needed.<br />
+<br />
+To drop a User in the SSMS Object Explorer: <br />
+<br />
+Navigate to Databases &gt;&gt; Security Users. Right-click on the username and then click &quot;Delete&quot;.<br />
+<br />
+To drop a User via a query: <br />
+<br />
+USE database_name;<br />
+DROP USER &lt;user_name&gt;;</p><h2>Check Contents</h2><p>Determine if SQL Server is configured to allow the use of contained databases, if it is, take the appropriate precautions to limit their risk.<br />
+<br />
+1. In the Object Explorer in SQL Server Management Studio (SSMS), right-click on the server instance, select &quot;Properties&quot;, and then select the &quot;Advanced&quot; page.<br />
+<br />
+If &quot;Enabled Contained Databases&quot; is &quot;False&quot;, this is not a finding.<br />
+<br />
+2. If &quot;Enabled Contained Databases&quot; is &quot;True&quot;, then in a query interface such as the SSMS Transact-SQL editor, run the statement:<br />
+<br />
+EXEC sp_configure 'contained database authentication'<br />
+<br />
+If the returned value in the &quot;config_value&quot; or &quot;run_value&quot; column is &quot;0&quot;, this is not a finding.<br />
+<br />
+3. Determine whether SQL Server is configured to use only Windows authentication. In a query interface such as the SSMS Transact-SQL editor, run the statement:<br />
+<br />
+SELECT CASE SERVERPROPERTY('IsIntegratedSecurityOnly')  <br />
+ WHEN 1 THEN 'Windows Authentication'  <br />
+ WHEN 0 THEN 'Windows and SQL Server Authentication'  <br />
+END as [Authentication Mode]<br />
+<br />
+If the returned value in the &quot;Authentication Mode&quot; column is &quot;Windows Authentication&quot;, this is not a finding.<br />
+<br />
+If mixed mode (both SQL Server authentication and Windows authentication) is in use, then it must be documented and approved.<br />
+<br />
+From the documentation, obtain the list of accounts authorized to be managed by SQL Server. Determine the accounts (SQL Logins) actually managed by SQL Server.<br />
+<br />
+Run the statement:<br />
+<br />
+SELECT name<br />
+FROM sys.database_principals<br />
+WHERE type_desc = 'SQL_USER'<br />
+AND authentication_type_desc = 'DATABASE';<br />
+<br />
+If any accounts listed by the query are not listed in the documentation, this is a finding.<br />
+<br />
+Documentation must be approved by the information system security officer (ISSO)/information system security manager (ISSM).</p><h2>Vulnerability Number</h2><p>V-271118</p><h2>Documentable</h2><p>False</p><h2>Rule Version</h2><p>SQLD-22-000100</p><h2>Severity Override Guidance</h2><p>Determine if SQL Server is configured to allow the use of contained databases, if it is, take the appropriate precautions to limit their risk.<br />
+<br />
+1. In the Object Explorer in SQL Server Management Studio (SSMS), right-click on the server instance, select &quot;Properties&quot;, and then select the &quot;Advanced&quot; page.<br />
+<br />
+If &quot;Enabled Contained Databases&quot; is &quot;False&quot;, this is not a finding.<br />
+<br />
+2. If &quot;Enabled Contained Databases&quot; is &quot;True&quot;, then in a query interface such as the SSMS Transact-SQL editor, run the statement:<br />
+<br />
+EXEC sp_configure 'contained database authentication'<br />
+<br />
+If the returned value in the &quot;config_value&quot; or &quot;run_value&quot; column is &quot;0&quot;, this is not a finding.<br />
+<br />
+3. Determine whether SQL Server is configured to use only Windows authentication. In a query interface such as the SSMS Transact-SQL editor, run the statement:<br />
+<br />
+SELECT CASE SERVERPROPERTY('IsIntegratedSecurityOnly')  <br />
+ WHEN 1 THEN 'Windows Authentication'  <br />
+ WHEN 0 THEN 'Windows and SQL Server Authentication'  <br />
+END as [Authentication Mode]<br />
+<br />
+If the returned value in the &quot;Authentication Mode&quot; column is &quot;Windows Authentication&quot;, this is not a finding.<br />
+<br />
+If mixed mode (both SQL Server authentication and Windows authentication) is in use, then it must be documented and approved.<br />
+<br />
+From the documentation, obtain the list of accounts authorized to be managed by SQL Server. Determine the accounts (SQL Logins) actually managed by SQL Server.<br />
+<br />
+Run the statement:<br />
+<br />
+SELECT name<br />
+FROM sys.database_principals<br />
+WHERE type_desc = 'SQL_USER'<br />
+AND authentication_type_desc = 'DATABASE';<br />
+<br />
+If any accounts listed by the query are not listed in the documentation, this is a finding.<br />
+<br />
+Documentation must be approved by the information system security officer (ISSO)/information system security manager (ISSM).</p><h2>Check Content Reference</h2><p>M</p><h2>Target Key</h2><p>5676</p></body></html>

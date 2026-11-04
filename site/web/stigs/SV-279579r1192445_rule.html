@@ -1,0 +1,35 @@
+<!doctype html><html lang="en"><head><meta charset="utf-8"><title>STIGQter: STIG Check Details: SV-279579r1192445_rule: Nutanix AHV must not be configured to allow Kerberos authentication.</title><link rel="icon" type="image/svg+xml" href="STIGQter.svg" /><script async src="https://www.googletagmanager.com/gtag/js?id=UA-31381839-2"></script><script src="include.js"></script><script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-4110907817782130" crossorigin="anonymous"></script></head><body><div><img src="STIGQter.svg" alt="STIGQter" style="height:1em;" /> <a href="https://www.stigqter.com/">STIGQter</a>: <a href="main.html">STIG Summary</a>: <a href="U_NTX_Acropolis_OS_STIG_V1R1_Manual-xccdf.html">Nutanix Acropolis GPOS Security Technical Implementation Guide Version: 1 Release: 1 Benchmark Date: 26 Jan 2026</a>:</div> <h1>Nutanix AHV must not be configured to allow Kerberos authentication.</h1><h2>DISA Rule</h2><p>SV-279579r1192445_rule</p><h2>Vulnerability Number</h2><p>V-279579</p><h2>Group Title</h2><p>SRG-OS-000364-GPOS-00151</p><h2>Rule Version</h2><p>NXAC-OS-000125</p><h2>Severity</h2><p>CAT II</p><h2>CCI(s)</h2><ul><li>CCI-001813 - Enforce access restrictions using organization-defined mechanisms.</li></ul><h2>Weight</h2><p>10</p><h2>Fix Recommendation</h2><p>Configure SSH.<br />
+<br />
+1. For AOS, configure SSH, then restart the SSH for the changes to take effect using the following commands.<br />
+<br />
+$ sudo salt-call state.sls security/CVM/sshdCVM<br />
+$ sudo systemctl restart sshd<br />
+<br />
+2. For Prism Central, configure SSH, then restart the SSH for the changes to take effect using the following commands.<br />
+<br />
+$ sudo salt-call state.sls security/PCVM/sshdPCVM<br />
+$ sudo systemctl restart sshd<br />
+<br />
+3. For Files, configure SSH, then restart the SSH for the changes to take effect using the following commands.<br />
+<br />
+$ sudo salt-call state.sls security/AFS/sshdAFS<br />
+$ sudo systemctl restart sshd<br />
+<br />
+4. For AHV configure SSH, then restart the SSH for the changes to take effect using the following commands.<br />
+<br />
+$ sudo salt-call state.sls security/KVM/sshdKVM<br />
+$ sudo systemctl restart sshd</p><h2>Check Contents</h2><p>If this is not AHV OS, this requirement is Not Applicable.<br />
+<br />
+Verify Nutanix AHV enforces access restrictions. Check that the SSH daemon does not permit Kerberos to authenticate passwords using the following command.<br />
+<br />
+$ sudo grep -i kerberosauth /etc/ssh/sshd_config<br />
+KerberosAuthentication no<br />
+<br />
+If the &quot;KerberosAuthentication&quot; keyword is missing or is set to &quot;yes&quot; and is not documented with the information system security officer (ISSO), or the returned line is commented out, this is a finding.</p><h2>Vulnerability Number</h2><p>V-279579</p><h2>Documentable</h2><p>False</p><h2>Rule Version</h2><p>NXAC-OS-000125</p><h2>Severity Override Guidance</h2><p>If this is not AHV OS, this requirement is Not Applicable.<br />
+<br />
+Verify Nutanix AHV enforces access restrictions. Check that the SSH daemon does not permit Kerberos to authenticate passwords using the following command.<br />
+<br />
+$ sudo grep -i kerberosauth /etc/ssh/sshd_config<br />
+KerberosAuthentication no<br />
+<br />
+If the &quot;KerberosAuthentication&quot; keyword is missing or is set to &quot;yes&quot; and is not documented with the information system security officer (ISSO), or the returned line is commented out, this is a finding.</p><h2>Check Content Reference</h2><p>M</p><h2>Target Key</h2><p>5730</p></body></html>

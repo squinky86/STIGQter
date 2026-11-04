@@ -1,0 +1,134 @@
+<!doctype html><html lang="en"><head><meta charset="utf-8"><title>STIGQter: STIG Check Details: SV-221051r917448_rule: The Cisco P switch must be configured to enforce a Quality-of-Service (QoS) policy to provide preferred treatment for mission-critical applications.</title><link rel="icon" type="image/svg+xml" href="STIGQter.svg" /><script async src="https://www.googletagmanager.com/gtag/js?id=UA-31381839-2"></script><script src="include.js"></script><script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-4110907817782130" crossorigin="anonymous"></script></head><body><div><img src="STIGQter.svg" alt="STIGQter" style="height:1em;" /> <a href="https://www.stigqter.com/">STIGQter</a>: <a href="main.html">STIG Summary</a>: <a href="U_Cisco_IOS-XE_Switch_RTR_STIG_V3R4_Manual-xccdf.html">Cisco IOS XE Switch RTR Security Technical Implementation Guide Version: 3 Release: 4 Benchmark Date: 01 Apr 2026</a>:</div> <h1>The Cisco P switch must be configured to enforce a Quality-of-Service (QoS) policy to provide preferred treatment for mission-critical applications.</h1><h2>DISA Rule</h2><p>SV-221051r917448_rule</p><h2>Vulnerability Number</h2><p>V-221051</p><h2>Group Title</h2><p>SRG-NET-000193-RTR-000114</p><h2>Rule Version</h2><p>CISC-RT-000770</p><h2>Severity</h2><p>CAT III</p><h2>CCI(s)</h2><ul><li>CCI-001095 - Manage capacity, bandwidth, or other redundancy to limit the effects of information flooding types of denial of service attacks.</li></ul><h2>Weight</h2><p>10</p><h2>Fix Recommendation</h2><p>Configure to enforce a QoS policy to provide preferred treatment for mission-critical applications.<br />
+<br />
+Step 1: Configure class-maps to match on DSCP values as shown in the configuration example below:<br />
+<br />
+SW1(config)#class-map match-all PREFERRED_DATA<br />
+SW1(config-cmap)#match ip dscp af33<br />
+SW1(config-cmap)#class-map match-all CONTROL_PLANE<br />
+SW1(config-cmap)#match ip dscp cs6<br />
+SW1(config-cmap)#class-map match-all VIDEO<br />
+SW1(config-cmap)#match ip dscp af41<br />
+SW1(config-cmap)#class-map match-all VOICE<br />
+SW1(config-cmap)#match ip dscp ef<br />
+SW1(config-cmap)#class-map match-all C2_VOICE<br />
+SW1(config-cmap)#match ip dscp 47<br />
+SW1(config-cmap)#exit<br />
+<br />
+Step 2: Configure a policy map to be applied to the core-layer-facing interface that reserves the bandwidth for each traffic type as shown in the example below:<br />
+<br />
+SW1(config)#policy-map QOS_POLICY<br />
+SW1(config-pmap)#class CONTROL_PLANE<br />
+SW1(config-pmap-c)#priority percent 10<br />
+SW1(config-pmap-c)#class C2_VOICE<br />
+SW1(config-pmap-c)#priority percent 10<br />
+SW1(config-pmap-c)#class VOICE<br />
+SW1(config-pmap-c)#priority percent 15<br />
+SW1(config-pmap-c)#class VIDEO<br />
+SW1(config-pmap-c)#bandwidth percent 25<br />
+SW1(config-pmap-c)#class PREFERRED_DATA<br />
+SW1(config-pmap-c)#bandwidth percent 25<br />
+SW1(config-pmap-c)#class class-default<br />
+SW1(config-pmap-c)#bandwidth percent 15<br />
+SW1(config-pmap-c)#exit<br />
+SW1(config-pmap)#exit<br />
+<br />
+Step 3: Apply the output service policy to all interfaces as shown in the configuration example below:<br />
+<br />
+SW1(config)#int g1/1<br />
+SW1(config-if)#service-policy output QOS_POLICY<br />
+SW1(config-if)#exit<br />
+SW1(config)#int g1/2<br />
+SW1(config-if)#service-policy output QOS_POLICY<br />
+SW1(config-if)#end</p><h2>Check Contents</h2><p>Review the switch configuration and verify that a QoS policy has been configured to provide preferred treatment for mission-critical applications.<br />
+<br />
+Step 1: Verify that the class-maps are configured to match on DSCP values as shown in the configuration example below:<br />
+<br />
+class-map match-all PREFERRED_DATA<br />
+ match ip dscp af33<br />
+class-map match-all CONTROL_PLANE<br />
+ match ip dscp cs6<br />
+class-map match-all VIDEO<br />
+ match ip dscp af41<br />
+class-map match-all VOICE<br />
+ match ip dscp ef<br />
+class-map match-all C2_VOICE<br />
+ match ip dscp 47<br />
+<br />
+Step 2: Verify that the policy map reserves the bandwidth for each traffic type as shown in the example below:<br />
+<br />
+policy-map QOS_POLICY<br />
+ class CONTROL_PLANE<br />
+ priority percent 10<br />
+ class C2_VOICE<br />
+ priority percent 10<br />
+ class VOICE<br />
+ priority percent 15<br />
+ class VIDEO<br />
+ bandwidth percent 25<br />
+ class PREFERRED_DATA<br />
+ bandwidth percent 25<br />
+ class class-default<br />
+ bandwidth percent 15<br />
+<br />
+Step 3: Verify that an output service policy is bound to all interfaces as shown in the configuration example below:<br />
+<br />
+interface GigabitEthernet1/1<br />
+ no switchport<br />
+ ip address 10.1.15.5 255.255.255.252<br />
+ service-policy output QOS_POLICY<br />
+!<br />
+interface GigabitEthernet1/2<br />
+ no switchport<br />
+ ip address 10.1.15.8 255.255.255.252<br />
+ service-policy output QOS_POLICY<br />
+<br />
+Note: The GTP QOS document (GTP-0009) can be downloaded via the following link: <br />
+https://intellipedia.intelink.gov/wiki/Portal:GIG_Technical_Guidance/GTG_GTPs/GTP_Development_List<br />
+<br />
+If the switch is not configured to enforce a QoS policy in accordance with the QoS GIG Technical Profile, this is a finding.</p><h2>Vulnerability Number</h2><p>V-221051</p><h2>Documentable</h2><p>False</p><h2>Rule Version</h2><p>CISC-RT-000770</p><h2>Severity Override Guidance</h2><p>Review the switch configuration and verify that a QoS policy has been configured to provide preferred treatment for mission-critical applications.<br />
+<br />
+Step 1: Verify that the class-maps are configured to match on DSCP values as shown in the configuration example below:<br />
+<br />
+class-map match-all PREFERRED_DATA<br />
+ match ip dscp af33<br />
+class-map match-all CONTROL_PLANE<br />
+ match ip dscp cs6<br />
+class-map match-all VIDEO<br />
+ match ip dscp af41<br />
+class-map match-all VOICE<br />
+ match ip dscp ef<br />
+class-map match-all C2_VOICE<br />
+ match ip dscp 47<br />
+<br />
+Step 2: Verify that the policy map reserves the bandwidth for each traffic type as shown in the example below:<br />
+<br />
+policy-map QOS_POLICY<br />
+ class CONTROL_PLANE<br />
+ priority percent 10<br />
+ class C2_VOICE<br />
+ priority percent 10<br />
+ class VOICE<br />
+ priority percent 15<br />
+ class VIDEO<br />
+ bandwidth percent 25<br />
+ class PREFERRED_DATA<br />
+ bandwidth percent 25<br />
+ class class-default<br />
+ bandwidth percent 15<br />
+<br />
+Step 3: Verify that an output service policy is bound to all interfaces as shown in the configuration example below:<br />
+<br />
+interface GigabitEthernet1/1<br />
+ no switchport<br />
+ ip address 10.1.15.5 255.255.255.252<br />
+ service-policy output QOS_POLICY<br />
+!<br />
+interface GigabitEthernet1/2<br />
+ no switchport<br />
+ ip address 10.1.15.8 255.255.255.252<br />
+ service-policy output QOS_POLICY<br />
+<br />
+Note: The GTP QOS document (GTP-0009) can be downloaded via the following link: <br />
+https://intellipedia.intelink.gov/wiki/Portal:GIG_Technical_Guidance/GTG_GTPs/GTP_Development_List<br />
+<br />
+If the switch is not configured to enforce a QoS policy in accordance with the QoS GIG Technical Profile, this is a finding.</p><h2>Check Content Reference</h2><p>M</p><h2>Target Key</h2><p>4074</p></body></html>

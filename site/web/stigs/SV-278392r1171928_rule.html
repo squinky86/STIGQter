@@ -1,0 +1,50 @@
+<!doctype html><html lang="en"><head><meta charset="utf-8"><title>STIGQter: STIG Check Details: SV-278392r1171928_rule: NGINX, when using PKI-based authentication, must enforce authorized access to the corresponding private key.</title><link rel="icon" type="image/svg+xml" href="STIGQter.svg" /><script async src="https://www.googletagmanager.com/gtag/js?id=UA-31381839-2"></script><script src="include.js"></script><script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-4110907817782130" crossorigin="anonymous"></script></head><body><div><img src="STIGQter.svg" alt="STIGQter" style="height:1em;" /> <a href="https://www.stigqter.com/">STIGQter</a>: <a href="main.html">STIG Summary</a>: <a href="U_F5_NGINX_STIG_V1R1_Manual-xccdf.html">F5 NGINX Security Technical Implementation Guide Version: 1 Release: 1 Benchmark Date: 25 Nov 2025</a>:</div> <h1>NGINX, when using PKI-based authentication, must enforce authorized access to the corresponding private key.</h1><h2>DISA Rule</h2><p>SV-278392r1171928_rule</p><h2>Vulnerability Number</h2><p>V-278392</p><h2>Group Title</h2><p>SRG-APP-000176</p><h2>Rule Version</h2><p>NGNX-APP-000730</p><h2>Severity</h2><p>CAT II</p><h2>CCI(s)</h2><ul><li>CCI-000186 - For public key-based authentication, enforce authorized access to the corresponding private key.</li></ul><h2>Weight</h2><p>10</p><h2>Fix Recommendation</h2><p>Change permissions on any TLS keys used in NGINX configuration:<br />
+<br />
+nginx -qT | grep certificate_key<br />
+chmod 600 &lt;path to TLS key&gt;<br />
+<br />
+Example:<br />
+<br />
+root@e4a935153ece:/etc/ssl/nginx# nginx -qT | grep certificate_key<br />
+    ssl_certificate_key /etc/ssl/nginx/server.key;<br />
+root@e4a935153ece:/etc/ssl/nginx# chmod 600 /etc/ssl/nginx/server.key<br />
+<br />
+Restart NGINX:<br />
+<br />
+nginx -s reload</p><h2>Check Contents</h2><p>Determine the path to NGINX config file:<br />
+<br />
+nginx -qT | grep &quot;# configuration&quot;<br />
+# configuration file /etc/nginx/nginx.conf:<br />
+<br />
+Note: The default NGINX configuration is &quot;/etc/nginx/nginx.conf&quot;, though various files may also be included.<br />
+<br />
+cat &lt;path to config&gt;<br />
+<br />
+Verify that private key(s) are only readable by the owner.<br />
+<br />
+Example:<br />
+<br />
+root@e4a935153ece:/etc/ssl/nginx# nginx -qT | grep certificate_key<br />
+    ssl_certificate_key /etc/ssl/nginx/server.key;<br />
+root@e4a935153ece:/etc/ssl/nginx# ls -la /etc/ssl/nginx/server.key<br />
+-rw------- 1 root root 1704 Dec  4 18:31 /etc/ssl/nginx/server.key<br />
+<br />
+If the private key(s) are readable anyone other than owner, this is a finding.</p><h2>Vulnerability Number</h2><p>V-278392</p><h2>Documentable</h2><p>False</p><h2>Rule Version</h2><p>NGNX-APP-000730</p><h2>Severity Override Guidance</h2><p>Determine the path to NGINX config file:<br />
+<br />
+nginx -qT | grep &quot;# configuration&quot;<br />
+# configuration file /etc/nginx/nginx.conf:<br />
+<br />
+Note: The default NGINX configuration is &quot;/etc/nginx/nginx.conf&quot;, though various files may also be included.<br />
+<br />
+cat &lt;path to config&gt;<br />
+<br />
+Verify that private key(s) are only readable by the owner.<br />
+<br />
+Example:<br />
+<br />
+root@e4a935153ece:/etc/ssl/nginx# nginx -qT | grep certificate_key<br />
+    ssl_certificate_key /etc/ssl/nginx/server.key;<br />
+root@e4a935153ece:/etc/ssl/nginx# ls -la /etc/ssl/nginx/server.key<br />
+-rw------- 1 root root 1704 Dec  4 18:31 /etc/ssl/nginx/server.key<br />
+<br />
+If the private key(s) are readable anyone other than owner, this is a finding.</p><h2>Check Content Reference</h2><p>M</p><h2>Target Key</h2><p>5720</p></body></html>

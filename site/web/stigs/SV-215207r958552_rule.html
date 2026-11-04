@@ -1,0 +1,52 @@
+<!doctype html><html lang="en"><head><meta charset="utf-8"><title>STIGQter: STIG Check Details: SV-215207r958552_rule: AIX must protect the confidentiality and integrity of all information at rest.</title><link rel="icon" type="image/svg+xml" href="STIGQter.svg" /><script async src="https://www.googletagmanager.com/gtag/js?id=UA-31381839-2"></script><script src="include.js"></script><script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-4110907817782130" crossorigin="anonymous"></script></head><body><div><img src="STIGQter.svg" alt="STIGQter" style="height:1em;" /> <a href="https://www.stigqter.com/">STIGQter</a>: <a href="main.html">STIG Summary</a>: <a href="U_IBM_AIX_7-x_STIG_V3R3_Manual-xccdf.html">IBM AIX 7.x Security Technical Implementation Guide Version: 3 Release: 3 Benchmark Date: 01 Jul 2026</a>:</div> <h1>AIX must protect the confidentiality and integrity of all information at rest.</h1><h2>DISA Rule</h2><p>SV-215207r958552_rule</p><h2>Vulnerability Number</h2><p>V-215207</p><h2>Group Title</h2><p>SRG-OS-000185-GPOS-00079</p><h2>Rule Version</h2><p>AIX7-00-001048</p><h2>Severity</h2><p>CAT II</p><h2>CCI(s)</h2><ul><li>CCI-001199 - Protects the confidentiality and/or integrity of organization-defined information at rest.</li></ul><h2>Weight</h2><p>10</p><h2>Fix Recommendation</h2><p>Install &quot;clic.rte&quot; fileset if it is not installed using command:<br />
+# installp -aXYqg -d /dev/cd0 clic.rte<br />
+<br />
+Run the follow command to initialize and enable EFS on the system:<br />
+# efsenable -a<br />
+<br />
+To create a new EFS-enabled JFS2 file system and mount the file system, using the following commands:<br />
+# crfs -v jfs2 -g rootvg -m /fs2 -a size=100M -a efs=yes<br />
+# mount /fs2<br />
+<br />
+To enable EFS on a JFS2 file system (like, /fs3), run the following command:<br />
+chfs -a efs=yes /fs3</p><h2>Check Contents</h2><p>If the organization does not require to encrypt the data at rest this is Not Applicable.<br />
+<br />
+Check if the &quot;clic.rte&quot; fileset is installed:<br />
+# lslpp -l |grep clic<br />
+<br />
+The above command should yield the following output:<br />
+  clic.rte.kernext          4.10.0.1  COMMITTED  CryptoLite for C Kernel<br />
+  clic.rte.lib                     4.10.0.1  COMMITTED  CryptoLite for C Library<br />
+  clic.rte.kernext          4.10.0.1  COMMITTED  CryptoLite for C Kernel<br />
+<br />
+If the &quot;clic.rte&quot; fileset is not installed, this is a finding.<br />
+<br />
+To check if a JFS2 file system (mounted as /fs2_mnt) is EFS-enabled, use the following command:<br />
+<br />
+# lsfs -q /fs2_mnt<br />
+<br />
+Name            Nodename   Mount Pt               VFS   Size    Options    Auto Accounting<br />
+/dev/fslv00     --         /fs2_mnt                   jfs2  262144  --         no   no <br />
+  (lv size: 262144, fs size: 262144, block size: 4096, sparse files: yes, inline log: no, inline log size: 0, EAformat: v2, Quota: no, DMAPI: no, VIX: yes, EFS: no, ISNAPSHOT: no, MAXEXT: 0, MountGuard: no)<br />
+<br />
+If the above command shows &quot;EFS: no&quot;, this is a finding.</p><h2>Vulnerability Number</h2><p>V-215207</p><h2>Documentable</h2><p>False</p><h2>Rule Version</h2><p>AIX7-00-001048</p><h2>Severity Override Guidance</h2><p>If the organization does not require to encrypt the data at rest this is Not Applicable.<br />
+<br />
+Check if the &quot;clic.rte&quot; fileset is installed:<br />
+# lslpp -l |grep clic<br />
+<br />
+The above command should yield the following output:<br />
+  clic.rte.kernext          4.10.0.1  COMMITTED  CryptoLite for C Kernel<br />
+  clic.rte.lib                     4.10.0.1  COMMITTED  CryptoLite for C Library<br />
+  clic.rte.kernext          4.10.0.1  COMMITTED  CryptoLite for C Kernel<br />
+<br />
+If the &quot;clic.rte&quot; fileset is not installed, this is a finding.<br />
+<br />
+To check if a JFS2 file system (mounted as /fs2_mnt) is EFS-enabled, use the following command:<br />
+<br />
+# lsfs -q /fs2_mnt<br />
+<br />
+Name            Nodename   Mount Pt               VFS   Size    Options    Auto Accounting<br />
+/dev/fslv00     --         /fs2_mnt                   jfs2  262144  --         no   no <br />
+  (lv size: 262144, fs size: 262144, block size: 4096, sparse files: yes, inline log: no, inline log size: 0, EAformat: v2, Quota: no, DMAPI: no, VIX: yes, EFS: no, ISNAPSHOT: no, MAXEXT: 0, MountGuard: no)<br />
+<br />
+If the above command shows &quot;EFS: no&quot;, this is a finding.</p><h2>Check Content Reference</h2><p>M</p><h2>Target Key</h2><p>4012</p></body></html>

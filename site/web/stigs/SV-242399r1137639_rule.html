@@ -1,0 +1,49 @@
+<!doctype html><html lang="en"><head><meta charset="utf-8"><title>STIGQter: STIG Check Details: SV-242399r1137639_rule: Kubernetes DynamicKubeletConfig must not be enabled.</title><link rel="icon" type="image/svg+xml" href="STIGQter.svg" /><script async src="https://www.googletagmanager.com/gtag/js?id=UA-31381839-2"></script><script src="include.js"></script><script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-4110907817782130" crossorigin="anonymous"></script></head><body><div><img src="STIGQter.svg" alt="STIGQter" style="height:1em;" /> <a href="https://www.stigqter.com/">STIGQter</a>: <a href="main.html">STIG Summary</a>: <a href="U_Kubernetes_STIG_V2R6_Manual-xccdf.html">Kubernetes Security Technical Implementation Guide Version: 2 Release: 6 Benchmark Date: 01 Apr 2026</a>:</div> <h1>Kubernetes DynamicKubeletConfig must not be enabled.</h1><h2>DISA Rule</h2><p>SV-242399r1137639_rule</p><h2>Vulnerability Number</h2><p>V-242399</p><h2>Group Title</h2><p>SRG-APP-000033-CTR-000095</p><h2>Rule Version</h2><p>CNTR-K8-000460</p><h2>Severity</h2><p>CAT II</p><h2>CCI(s)</h2><ul><li>CCI-000213 - Enforce approved authorizations for logical access to information and system resources in accordance with applicable access control policies.</li></ul><h2>Weight</h2><p>10</p><h2>Fix Recommendation</h2><p>This fix is only applicable to Kubernetes version 1.25 and older.<br />
+<br />
+On the Control Plane, change to the manifests' directory at /etc/kubernetes/manifests and run the command:<br />
+grep -i feature-gates *<br />
+<br />
+Edit the manifest files so that every manifest has a &quot;--feature-gates&quot; setting with &quot;DynamicKubeletConfig=false&quot;.<br />
+<br />
+On each Control Plane and Worker Node, run the command:<br />
+ps -ef | grep kubelet<br />
+<br />
+Remove the &quot;feature-gates&quot; option if present.<br />
+<br />
+Note the path to the config file (identified by --config).<br />
+<br />
+Edit the config file: <br />
+Add a &quot;featureGates&quot; setting if one does not yet exist. Add the feature gate &quot;DynamicKubeletConfig=false&quot;.<br />
+<br />
+Restart the kubelet service using the following command:<br />
+systemctl daemon-reload &amp;&amp; systemctl restart kubelet</p><h2>Check Contents</h2><p>This check is only applicable for Kubernetes versions 1.25 and older.  <br />
+<br />
+On the Control Plane, change to the manifests' directory at /etc/kubernetes/manifests and run the command:<br />
+grep -i feature-gates *<br />
+<br />
+In each manifest file, if the feature-gates does not exist, or does not contain the &quot;DynamicKubeletConfig&quot; flag, or sets the flag to &quot;true&quot;, this is a finding.<br />
+<br />
+On each Control Plane and Worker node, run the command:<br />
+ps -ef | grep kubelet<br />
+<br />
+Verify the &quot;feature-gates&quot; option is not present.<br />
+<br />
+Note the path to the config file (identified by --config).<br />
+<br />
+Inspect the content of the config file:<br />
+If the &quot;featureGates&quot; setting is not present, or does not contain the &quot;DynamicKubeletConfig&quot;, or sets the flag to &quot;true&quot;, this is a finding.</p><h2>Vulnerability Number</h2><p>V-242399</p><h2>Documentable</h2><p>False</p><h2>Rule Version</h2><p>CNTR-K8-000460</p><h2>Severity Override Guidance</h2><p>This check is only applicable for Kubernetes versions 1.25 and older.  <br />
+<br />
+On the Control Plane, change to the manifests' directory at /etc/kubernetes/manifests and run the command:<br />
+grep -i feature-gates *<br />
+<br />
+In each manifest file, if the feature-gates does not exist, or does not contain the &quot;DynamicKubeletConfig&quot; flag, or sets the flag to &quot;true&quot;, this is a finding.<br />
+<br />
+On each Control Plane and Worker node, run the command:<br />
+ps -ef | grep kubelet<br />
+<br />
+Verify the &quot;feature-gates&quot; option is not present.<br />
+<br />
+Note the path to the config file (identified by --config).<br />
+<br />
+Inspect the content of the config file:<br />
+If the &quot;featureGates&quot; setting is not present, or does not contain the &quot;DynamicKubeletConfig&quot;, or sets the flag to &quot;true&quot;, this is a finding.</p><h2>Check Content Reference</h2><p>M</p><h2>Target Key</h2><p>5376</p></body></html>

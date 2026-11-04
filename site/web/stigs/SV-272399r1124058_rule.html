@@ -1,0 +1,67 @@
+<!doctype html><html lang="en"><head><meta charset="utf-8"><title>STIGQter: STIG Check Details: SV-272399r1124058_rule: The BIND 9.x server implementation must implement internal/external role separation.</title><link rel="icon" type="image/svg+xml" href="STIGQter.svg" /><script async src="https://www.googletagmanager.com/gtag/js?id=UA-31381839-2"></script><script src="include.js"></script><script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-4110907817782130" crossorigin="anonymous"></script></head><body><div><img src="STIGQter.svg" alt="STIGQter" style="height:1em;" /> <a href="https://www.stigqter.com/">STIGQter</a>: <a href="main.html">STIG Summary</a>: <a href="U_BIND_9-x_STIG_V3R3_Manual-xccdf.html">BIND 9.x Security Technical Implementation Guide Version: 3 Release: 3 Benchmark Date: 01 Jul 2026</a>:</div> <h1>The BIND 9.x server implementation must implement internal/external role separation.</h1><h2>DISA Rule</h2><p>SV-272399r1124058_rule</p><h2>Vulnerability Number</h2><p>V-272399</p><h2>Group Title</h2><p>SRG-APP-000516-DNS-000101</p><h2>Rule Version</h2><p>BIND-9X-001430</p><h2>Severity</h2><p>CAT II</p><h2>CCI(s)</h2><ul><li>CCI-000366 - Implement the security configuration settings.</li></ul><h2>Weight</h2><p>10</p><h2>Fix Recommendation</h2><p>Edit the &quot;named.conf&quot; file.<br />
+<br />
+Configure the internal and external view statements to use separate network segments.<br />
+<br />
+Configure all internal view statements to be listed before any external view statement.<br />
+<br />
+Restart the BIND 9.x process.</p><h2>Check Contents</h2><p>Severity override guidance:<br />
+<br />
+If the internal and external views are on separate network segments, this finding may be downgraded to a CAT II.<br />
+<br />
+If the BIND 9.x name server is not configured for split DNS, this is not applicable.<br />
+<br />
+Verify that the BIND 9.x server is configured to use separate views and address space for internal and external DNS operations when operating in a split configuration.<br />
+<br />
+Inspect the &quot;named.conf&quot; file for the following:<br />
+<br />
+view &quot;internal&quot; {<br />
+match-clients { &lt;ip_address&gt; | &lt;address_match_list&gt; };<br />
+zone &quot;example.com&quot; {<br />
+type Primary;<br />
+file &quot;internals.example.com&quot;;<br />
+};<br />
+};<br />
+view &quot;external&quot; {<br />
+match-clients { &lt;ip_address&gt; | &lt;address_match_list&gt; };<br />
+zone &quot;example.com&quot; {<br />
+type Primary;<br />
+file &quot;externals.db.example.com&quot;;<br />
+allow-transfer { Secondarys; };<br />
+};<br />
+};<br />
+<br />
+If an external view is listed before an internal view, this is a finding.<br />
+<br />
+If the internal and external views are on the same network segment, this is a finding.<br />
+<br />
+Note: BIND 9.x reads the &quot;named.conf&quot; file from top to bottom. If a less stringent &quot;match-clients&quot; statement is processed before a more stringent &quot;match-clients&quot; statement, the more stringent statement will be ignored. With this in mind, all internal view statements must be listed before any external view statement in the &quot;named.conf&quot; file.</p><h2>Vulnerability Number</h2><p>V-272399</p><h2>Documentable</h2><p>False</p><h2>Rule Version</h2><p>BIND-9X-001430</p><h2>Severity Override Guidance</h2><p>Severity override guidance:<br />
+<br />
+If the internal and external views are on separate network segments, this finding may be downgraded to a CAT II.<br />
+<br />
+If the BIND 9.x name server is not configured for split DNS, this is not applicable.<br />
+<br />
+Verify that the BIND 9.x server is configured to use separate views and address space for internal and external DNS operations when operating in a split configuration.<br />
+<br />
+Inspect the &quot;named.conf&quot; file for the following:<br />
+<br />
+view &quot;internal&quot; {<br />
+match-clients { &lt;ip_address&gt; | &lt;address_match_list&gt; };<br />
+zone &quot;example.com&quot; {<br />
+type Primary;<br />
+file &quot;internals.example.com&quot;;<br />
+};<br />
+};<br />
+view &quot;external&quot; {<br />
+match-clients { &lt;ip_address&gt; | &lt;address_match_list&gt; };<br />
+zone &quot;example.com&quot; {<br />
+type Primary;<br />
+file &quot;externals.db.example.com&quot;;<br />
+allow-transfer { Secondarys; };<br />
+};<br />
+};<br />
+<br />
+If an external view is listed before an internal view, this is a finding.<br />
+<br />
+If the internal and external views are on the same network segment, this is a finding.<br />
+<br />
+Note: BIND 9.x reads the &quot;named.conf&quot; file from top to bottom. If a less stringent &quot;match-clients&quot; statement is processed before a more stringent &quot;match-clients&quot; statement, the more stringent statement will be ignored. With this in mind, all internal view statements must be listed before any external view statement in the &quot;named.conf&quot; file.</p><h2>Check Content Reference</h2><p>M</p><h2>Target Key</h2><p>5687</p></body></html>

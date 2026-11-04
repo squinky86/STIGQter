@@ -1,0 +1,148 @@
+<!doctype html><html lang="en"><head><meta charset="utf-8"><title>STIGQter: STIG Check Details: SV-270500r1167734_rule: Oracle Database must enforce approved authorizations for logical access to the system in accordance with applicable policy.</title><link rel="icon" type="image/svg+xml" href="STIGQter.svg" /><script async src="https://www.googletagmanager.com/gtag/js?id=UA-31381839-2"></script><script src="include.js"></script><script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-4110907817782130" crossorigin="anonymous"></script></head><body><div><img src="STIGQter.svg" alt="STIGQter" style="height:1em;" /> <a href="https://www.stigqter.com/">STIGQter</a>: <a href="main.html">STIG Summary</a>: <a href="U_Oracle_Database_19c_STIG_V1R5_Manual-xccdf.html">Oracle Database 19c Security Technical Implementation Guide Version: 1 Release: 5 Benchmark Date: 01 Apr 2026</a>:</div> <h1>Oracle Database must enforce approved authorizations for logical access to the system in accordance with applicable policy.</h1><h2>DISA Rule</h2><p>SV-270500r1167734_rule</p><h2>Vulnerability Number</h2><p>V-270500</p><h2>Group Title</h2><p>SRG-APP-000033-DB-000084</p><h2>Rule Version</h2><p>O19C-00-001000</p><h2>Severity</h2><p>CAT I</p><h2>CCI(s)</h2><ul><li>CCI-000213 - Enforce approved authorizations for logical access to information and system resources in accordance with applicable access control policies.</li><li>CCI-002235 - Prevent non-privileged users from executing privileged functions.</li></ul><h2>Weight</h2><p>10</p><h2>Fix Recommendation</h2><p>If Oracle Database Vault is in use, use it to configure the correct access privileges for each type of user.<br />
+<br />
+If Oracle Database Vault is not in use, configure the correct access privileges for each type of user using Roles and Profiles.<br />
+<br />
+Oracle recommends using Database Vault.<br />
+<br />
+For more information on the configuration of Database Vault, refer to the Database Vault Administrator's Guide:<br />
+https://docs.oracle.com/en/database/oracle/oracle-database/19/dvadm/database-vault-administrators-guide.pdf.</p><h2>Check Contents</h2><p>Check DBMS settings to determine whether users are restricted from accessing objects and data they are not authorized to access. If appropriate access controls are not implemented to restrict access to authorized users and to restrict the access of those users to objects and data they are authorized to verify, this is a finding.<br />
+<br />
+One option to isolate access is by using the Oracle Database Vault. To check to verify the Oracle Database Vault is installed, issue the following query:<br />
+<br />
+SQL&gt; SELECT * FROM sys.v_$option WHERE parameter = 'Oracle Database Vault';<br />
+<br />
+If Oracle Database Vault is installed, review its settings for appropriateness and completeness of the access it permits and denies to each type of user. If appropriate and complete, this is not a finding.<br />
+<br />
+If Oracle Database Vault is not installed, review the roles and profiles in the database and the assignment of users to these for appropriateness and completeness of the access permitted and denied each type of user. If appropriate and complete, this is not a finding.<br />
+<br />
+If the access permitted and denied each type of user is inappropriate or incomplete, this is a finding.<br />
+<br />
+Following are code examples for reviewing roles, profiles, etc.<br />
+<br />
+Find out what role the users have:<br />
+<br />
+select * from sys.cdb_role_privs where granted_role = '&lt;role&gt;'<br />
+<br />
+List all roles given to a user:<br />
+<br />
+select * from sys.cba_role_privs where grantee = '&lt;username&gt;';<br />
+<br />
+List all roles for all users:<br />
+<br />
+column grantee format a32<br />
+column granted_role format a32<br />
+break on grantee<br />
+<br />
+SELECT con_id, grantee, granted_role<br />
+FROM sys.cdb_role_privs<br />
+ORDER BY 1,2,3;<br />
+<br />
+Use the following query to list all privileges given to a user:<br />
+<br />
+SELECT LPAD(' ', 2*level) || granted_role &quot;User roles and privileges&quot;<br />
+FROM (<br />
+/* THE USERS */<br />
+SELECT con_id, NULL AS grantee, username granted_role<br />
+FROM sys.cdb_users<br />
+WHERE username LIKE UPPER('&lt;enter_username&gt;')<br />
+/* THE ROLES TO ROLES RELATIONS */<br />
+UNION SELECT con_id, grantee, granted_role<br />
+FROM sys.cdb_role_privs<br />
+/* THE ROLES TO PRIVILEGE RELATIONS */<br />
+UNION<br />
+SELECT con_id, grantee, privilege<br />
+FROM sys.cdb_sys_privs)<br />
+START WITH grantee IS NULL<br />
+CONNECT BY grantee = PRIOR granted_role;<br />
+<br />
+List which tables a certain role gives SELECT and READ access to using the query:<br />
+<br />
+SELECT * FROM sys.role_tab_privs WHERE role = '&lt;role&gt;'<br />
+AND privilege IN ('READ', 'SELECT');<br />
+<br />
+List all tables a user can SELECT and READ from using the query:<br />
+<br />
+SELECT * FROM sys.cdb_tab_privs<br />
+WHERE grantee ='&lt;username&gt;' AND privilege IN ('READ', 'SELECT');<br />
+<br />
+List all users who can SELECT on a particular table (either through being given a relevant role or through a direct grant, e.g., grant select on a table to Joe). The result of this query should also show through which role the user has this access or whether it was a direct grant.<br />
+<br />
+SELECT grantee,'Granted Through Role' as Grant_Type, role, table_name<br />
+FROM CONTAINERS(sys.role_tab_privs) rtp, sys.cdb_role_privs crp<br />
+WHERE rtp.role = crp.granted_role<br />
+AND rtp.con_id = crp.con_id<br />
+AND table_name = '&lt;TABLENAME&gt;'<br />
+UNION<br />
+SELECT grantee, 'Direct Grant' as Grant_Type, NULL AS role, table_name<br />
+FROM sys.cdb_tab_privs<br />
+WHERE table_name = '&lt;TABLENAME&gt;';</p><h2>Vulnerability Number</h2><p>V-270500</p><h2>Documentable</h2><p>False</p><h2>Rule Version</h2><p>O19C-00-001000</p><h2>Severity Override Guidance</h2><p>Check DBMS settings to determine whether users are restricted from accessing objects and data they are not authorized to access. If appropriate access controls are not implemented to restrict access to authorized users and to restrict the access of those users to objects and data they are authorized to verify, this is a finding.<br />
+<br />
+One option to isolate access is by using the Oracle Database Vault. To check to verify the Oracle Database Vault is installed, issue the following query:<br />
+<br />
+SQL&gt; SELECT * FROM sys.v_$option WHERE parameter = 'Oracle Database Vault';<br />
+<br />
+If Oracle Database Vault is installed, review its settings for appropriateness and completeness of the access it permits and denies to each type of user. If appropriate and complete, this is not a finding.<br />
+<br />
+If Oracle Database Vault is not installed, review the roles and profiles in the database and the assignment of users to these for appropriateness and completeness of the access permitted and denied each type of user. If appropriate and complete, this is not a finding.<br />
+<br />
+If the access permitted and denied each type of user is inappropriate or incomplete, this is a finding.<br />
+<br />
+Following are code examples for reviewing roles, profiles, etc.<br />
+<br />
+Find out what role the users have:<br />
+<br />
+select * from sys.cdb_role_privs where granted_role = '&lt;role&gt;'<br />
+<br />
+List all roles given to a user:<br />
+<br />
+select * from sys.cba_role_privs where grantee = '&lt;username&gt;';<br />
+<br />
+List all roles for all users:<br />
+<br />
+column grantee format a32<br />
+column granted_role format a32<br />
+break on grantee<br />
+<br />
+SELECT con_id, grantee, granted_role<br />
+FROM sys.cdb_role_privs<br />
+ORDER BY 1,2,3;<br />
+<br />
+Use the following query to list all privileges given to a user:<br />
+<br />
+SELECT LPAD(' ', 2*level) || granted_role &quot;User roles and privileges&quot;<br />
+FROM (<br />
+/* THE USERS */<br />
+SELECT con_id, NULL AS grantee, username granted_role<br />
+FROM sys.cdb_users<br />
+WHERE username LIKE UPPER('&lt;enter_username&gt;')<br />
+/* THE ROLES TO ROLES RELATIONS */<br />
+UNION SELECT con_id, grantee, granted_role<br />
+FROM sys.cdb_role_privs<br />
+/* THE ROLES TO PRIVILEGE RELATIONS */<br />
+UNION<br />
+SELECT con_id, grantee, privilege<br />
+FROM sys.cdb_sys_privs)<br />
+START WITH grantee IS NULL<br />
+CONNECT BY grantee = PRIOR granted_role;<br />
+<br />
+List which tables a certain role gives SELECT and READ access to using the query:<br />
+<br />
+SELECT * FROM sys.role_tab_privs WHERE role = '&lt;role&gt;'<br />
+AND privilege IN ('READ', 'SELECT');<br />
+<br />
+List all tables a user can SELECT and READ from using the query:<br />
+<br />
+SELECT * FROM sys.cdb_tab_privs<br />
+WHERE grantee ='&lt;username&gt;' AND privilege IN ('READ', 'SELECT');<br />
+<br />
+List all users who can SELECT on a particular table (either through being given a relevant role or through a direct grant, e.g., grant select on a table to Joe). The result of this query should also show through which role the user has this access or whether it was a direct grant.<br />
+<br />
+SELECT grantee,'Granted Through Role' as Grant_Type, role, table_name<br />
+FROM CONTAINERS(sys.role_tab_privs) rtp, sys.cdb_role_privs crp<br />
+WHERE rtp.role = crp.granted_role<br />
+AND rtp.con_id = crp.con_id<br />
+AND table_name = '&lt;TABLENAME&gt;'<br />
+UNION<br />
+SELECT grantee, 'Direct Grant' as Grant_Type, NULL AS role, table_name<br />
+FROM sys.cdb_tab_privs<br />
+WHERE table_name = '&lt;TABLENAME&gt;';</p><h2>Check Content Reference</h2><p>M</p><h2>Target Key</h2><p>5672</p></body></html>

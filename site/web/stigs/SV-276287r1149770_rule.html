@@ -1,0 +1,40 @@
+<!doctype html><html lang="en"><head><meta charset="utf-8"><title>STIGQter: STIG Check Details: SV-276287r1149770_rule: The database master key (DMK) encryption password for Azure SQL Server Managed Instance must meet DOD password complexity requirements.</title><link rel="icon" type="image/svg+xml" href="STIGQter.svg" /><script async src="https://www.googletagmanager.com/gtag/js?id=UA-31381839-2"></script><script src="include.js"></script><script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-4110907817782130" crossorigin="anonymous"></script></head><body><div><img src="STIGQter.svg" alt="STIGQter" style="height:1em;" /> <a href="https://www.stigqter.com/">STIGQter</a>: <a href="main.html">STIG Summary</a>: <a href="U_MS_Azure_SQL_MI_STIG_V1R1_Manual-xccdf.html">Microsoft Azure SQL Managed Instance Security Technical Implementation Guide Version: 1 Release: 1 Benchmark Date: 23 Sep 2025</a>:</div> <h1>The database master key (DMK) encryption password for Azure SQL Server Managed Instance must meet DOD password complexity requirements.</h1><h2>DISA Rule</h2><p>SV-276287r1149770_rule</p><h2>Vulnerability Number</h2><p>V-276287</p><h2>Group Title</h2><p>SRG-APP-000231-DB-000154</p><h2>Rule Version</h2><p>MSQL-D0-001600</p><h2>Severity</h2><p>CAT II</p><h2>CCI(s)</h2><ul><li>CCI-001199 - Protects the confidentiality and/or integrity of organization-defined information at rest.</li></ul><h2>Weight</h2><p>10</p><h2>Fix Recommendation</h2><p>Assign an encryption password to the DMK that is a minimum of 15 characters with at least one uppercase character, one lowercase character, one special character, and one numeric character, and at least eight characters changed from the previous password. <br />
+<br />
+To change the DMK encryption password: <br />
+ <br />
+USE [database name]; <br />
+ALTER MASTER KEY REGENERATE WITH ENCRYPTION BY PASSWORD = 'new password';  <br />
+<br />
+Note: The DMK encryption method must not be changed until the effects are thoroughly reviewed. Changing the master key encryption causes all encryption using the DMK to be decrypted and re-encrypted. This action must not be taken during a high-demand time. <br />
+<br />
+Refer to the Azure SQL Managed Instance documentation found here: <br />
+https://learn.microsoft.com/en-us/sql/relational-databases/security/encryption/create-a-database-master-key?view=azuresqldb-mi-current <br />
+prior to re-encrypting the DMK for detailed information.</p><h2>Check Contents</h2><p>Use the query below to check each database to determine whether a DMK exists and is encrypted with a password: <br />
+<br />
+EXEC sp_MSforeachdb 'USE [?]; <br />
+SELECT DB_NAME() AS DatabaseName,COUNT(name) AS DatabaseMasterKeyExists<br />
+FROM sys.symmetric_keys s, sys.key_encryptions k<br />
+WHERE s.name = ''##MS_DatabaseMasterKey##'' <br />
+AND s.symmetric_key_id = k.key_id AND k.crypt_type in (''ESKP'', ''ESP2'', ''ESP3'')'<br />
+<br />
+If the value returned is zero, this is not applicable. <br />
+<br />
+If the value returned is greater than zero, a DMK exists and is encrypted with a password. <br />
+<br />
+Review procedures and evidence of password requirements used to encrypt DMK.  <br />
+<br />
+If the passwords are not required to meet DOD password standards, currently a minimum of 15 characters with at least one uppercase character, one lowercase character, one special character, and one numeric character, and at least eight characters changed from the previous password, this is a finding.</p><h2>Vulnerability Number</h2><p>V-276287</p><h2>Documentable</h2><p>False</p><h2>Rule Version</h2><p>MSQL-D0-001600</p><h2>Severity Override Guidance</h2><p>Use the query below to check each database to determine whether a DMK exists and is encrypted with a password: <br />
+<br />
+EXEC sp_MSforeachdb 'USE [?]; <br />
+SELECT DB_NAME() AS DatabaseName,COUNT(name) AS DatabaseMasterKeyExists<br />
+FROM sys.symmetric_keys s, sys.key_encryptions k<br />
+WHERE s.name = ''##MS_DatabaseMasterKey##'' <br />
+AND s.symmetric_key_id = k.key_id AND k.crypt_type in (''ESKP'', ''ESP2'', ''ESP3'')'<br />
+<br />
+If the value returned is zero, this is not applicable. <br />
+<br />
+If the value returned is greater than zero, a DMK exists and is encrypted with a password. <br />
+<br />
+Review procedures and evidence of password requirements used to encrypt DMK.  <br />
+<br />
+If the passwords are not required to meet DOD password standards, currently a minimum of 15 characters with at least one uppercase character, one lowercase character, one special character, and one numeric character, and at least eight characters changed from the previous password, this is a finding.</p><h2>Check Content Reference</h2><p>M</p><h2>Target Key</h2><p>5711</p></body></html>

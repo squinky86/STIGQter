@@ -1,0 +1,89 @@
+<!doctype html><html lang="en"><head><meta charset="utf-8"><title>STIGQter: STIG Check Details: SV-271305r1109239_rule: SQL Server must uniquely identify and authenticate users (or processes acting on behalf of organizational users).</title><link rel="icon" type="image/svg+xml" href="STIGQter.svg" /><script async src="https://www.googletagmanager.com/gtag/js?id=UA-31381839-2"></script><script src="include.js"></script><script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-4110907817782130" crossorigin="anonymous"></script></head><body><div><img src="STIGQter.svg" alt="STIGQter" style="height:1em;" /> <a href="https://www.stigqter.com/">STIGQter</a>: <a href="main.html">STIG Summary</a>: <a href="U_MS_SQL_Server_2022_Instance_STIG_V1R4_Manual-xccdf.html">Microsoft SQL Server 2022 Instance Security Technical Implementation Guide Version: 1 Release: 4 Benchmark Date: 01 Apr 2026</a>:</div> <h1>SQL Server must uniquely identify and authenticate users (or processes acting on behalf of organizational users).</h1><h2>DISA Rule</h2><p>SV-271305r1109239_rule</p><h2>Vulnerability Number</h2><p>V-271305</p><h2>Group Title</h2><p>SRG-APP-000148-DB-000103</p><h2>Rule Version</h2><p>SQLI-22-007800</p><h2>Severity</h2><p>CAT II</p><h2>CCI(s)</h2><ul><li>CCI-000764 - Uniquely identify and authenticate organizational users and associate that unique identification with processes acting on behalf of those users.</li><li>CCI-000804 - Uniquely identify and authenticate non-organizational users or processes acting on behalf of non-organizational users.</li></ul><h2>Weight</h2><p>10</p><h2>Fix Recommendation</h2><p>Remove all shared accounts and computer accounts.<br />
+<br />
+To remove users, run the following command for each user:<br />
+<br />
+DROP USER [ IF EXISTS ] &lt;user_name&gt;;</p><h2>Check Contents</h2><p>Obtain the list of authorized SQL Server accounts in the system documentation. <br />
+<br />
+Determine if any accounts are shared. A shared account is defined as a username and password that are used by multiple individuals to log in to SQL Server. Active Directory groups are not shared accounts as the group itself does not have a password. <br />
+<br />
+Run the following query to return all server-level principals:<br />
+<br />
+SELECT name<br />
+FROM sys.server_principals<br />
+WHERE type in ('U','S','E')<br />
+AND name NOT LIKE '%$'<br />
+<br />
+If any of the returned accounts are shared, determine if individuals are first individually authenticated. <br />
+<br />
+If individuals are not individually authenticated before using the shared account (e.g., by the operating system or possibly by an application making calls to the database), this is a finding. <br />
+<br />
+The key is individual accountability. If this can be traced, this is not a finding. <br />
+<br />
+If accounts are shared, determine if they are directly accessible to end users. If so, this is a finding. <br />
+<br />
+Review contents of audit logs and data tables to confirm that the identity of the individual user performing the action is captured. <br />
+<br />
+If shared identifiers are found and not accompanied by individual identifiers, this is a finding.<br />
+<br />
+Execute the following query:<br />
+<br />
+SELECT name<br />
+FROM sys.server_principals<br />
+WHERE type in ('U','S','E')<br />
+AND name LIKE '%$'<br />
+<br />
+If users are returned, determine whether each user is a computer account.<br />
+<br />
+Launch PowerShell.<br />
+<br />
+Execute the following code:<br />
+<br />
+Note: &lt;name&gt; represents the username portion of the user. For example, if the user is &quot;CONTOSO\user1$&quot;, the username is &quot;user1&quot;.<br />
+<br />
+([ADSISearcher]&quot;(&amp;(ObjectCategory=Computer)(Name=&lt;name&gt;))&quot;).FindAll()<br />
+<br />
+If no account information is returned, this is not a finding.<br />
+<br />
+If account information is returned, this is a finding.</p><h2>Vulnerability Number</h2><p>V-271305</p><h2>Documentable</h2><p>False</p><h2>Rule Version</h2><p>SQLI-22-007800</p><h2>Severity Override Guidance</h2><p>Obtain the list of authorized SQL Server accounts in the system documentation. <br />
+<br />
+Determine if any accounts are shared. A shared account is defined as a username and password that are used by multiple individuals to log in to SQL Server. Active Directory groups are not shared accounts as the group itself does not have a password. <br />
+<br />
+Run the following query to return all server-level principals:<br />
+<br />
+SELECT name<br />
+FROM sys.server_principals<br />
+WHERE type in ('U','S','E')<br />
+AND name NOT LIKE '%$'<br />
+<br />
+If any of the returned accounts are shared, determine if individuals are first individually authenticated. <br />
+<br />
+If individuals are not individually authenticated before using the shared account (e.g., by the operating system or possibly by an application making calls to the database), this is a finding. <br />
+<br />
+The key is individual accountability. If this can be traced, this is not a finding. <br />
+<br />
+If accounts are shared, determine if they are directly accessible to end users. If so, this is a finding. <br />
+<br />
+Review contents of audit logs and data tables to confirm that the identity of the individual user performing the action is captured. <br />
+<br />
+If shared identifiers are found and not accompanied by individual identifiers, this is a finding.<br />
+<br />
+Execute the following query:<br />
+<br />
+SELECT name<br />
+FROM sys.server_principals<br />
+WHERE type in ('U','S','E')<br />
+AND name LIKE '%$'<br />
+<br />
+If users are returned, determine whether each user is a computer account.<br />
+<br />
+Launch PowerShell.<br />
+<br />
+Execute the following code:<br />
+<br />
+Note: &lt;name&gt; represents the username portion of the user. For example, if the user is &quot;CONTOSO\user1$&quot;, the username is &quot;user1&quot;.<br />
+<br />
+([ADSISearcher]&quot;(&amp;(ObjectCategory=Computer)(Name=&lt;name&gt;))&quot;).FindAll()<br />
+<br />
+If no account information is returned, this is not a finding.<br />
+<br />
+If account information is returned, this is a finding.</p><h2>Check Content Reference</h2><p>M</p><h2>Target Key</h2><p>5677</p></body></html>

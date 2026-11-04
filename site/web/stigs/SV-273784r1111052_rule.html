@@ -1,0 +1,48 @@
+<!doctype html><html lang="en"><head><meta charset="utf-8"><title>STIGQter: STIG Check Details: SV-273784r1111052_rule: The RUCKUS ICX device must be configured to assign appropriate user roles or access levels to authenticated users.</title><link rel="icon" type="image/svg+xml" href="STIGQter.svg" /><script async src="https://www.googletagmanager.com/gtag/js?id=UA-31381839-2"></script><script src="include.js"></script><script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-4110907817782130" crossorigin="anonymous"></script></head><body><div><img src="STIGQter.svg" alt="STIGQter" style="height:1em;" /> <a href="https://www.stigqter.com/">STIGQter</a>: <a href="main.html">STIG Summary</a>: <a href="U_RUCKUS_ICX_NDM_STIG_V1R1_Manual-xccdf.html">RUCKUS ICX NDM Security Technical Implementation Guide Version: 1 Release: 1 Benchmark Date: 27 May 2025</a>:</div> <h1>The RUCKUS ICX device must be configured to assign appropriate user roles or access levels to authenticated users.</h1><h2>DISA Rule</h2><p>SV-273784r1111052_rule</p><h2>Vulnerability Number</h2><p>V-273784</p><h2>Group Title</h2><p>SRG-APP-000033-NDM-000212</p><h2>Rule Version</h2><p>RCKS-NDM-000100</p><h2>Severity</h2><p>CAT I</p><h2>CCI(s)</h2><ul><li>CCI-000213 - Enforce approved authorizations for logical access to information and system resources in accordance with applicable access control policies.</li></ul><h2>Weight</h2><p>10</p><h2>Fix Recommendation</h2><p>Configure the network device to assign appropriate user roles or access levels to authenticated users.<br />
+<br />
+1. Configure local account:<br />
+username [user] privilege [priv_lvl] password [password]<br />
+<br />
+... where priv_lvl equals:<br />
+0 – Super User level (full read-write access)<br />
+4 – Port Configuration level<br />
+5 – Read Only level<br />
+ <br />
+2. Configure a RADIUS (or TACACS+) server:<br />
+radius-server host x.x.x.x auth-port 1812 acct-port 1813 default key [shared_secret]<br />
+<br />
+3. Configure AAA authentication:<br />
+aaa authentication login default radius local<br />
+aaa authorization exec default radius</p><h2>Check Contents</h2><p>Verify the network device is configured to assign appropriate user roles or access levels to authenticated users.<br />
+<br />
+1. Confirm login authentication is configured for a AAA server followed by local authentication.<br />
+SSH@ICX(config)# show running-config | include (aaa.*login|aaa.*exec)<br />
+aaa authentication login default radius local<br />
+aaa authorization exec default radius<br />
+<br />
+2. Verify local accounts have desired privilege levels.<br />
+<br />
+SSH@ICX# show user<br />
+Username                                        Password                           Encrypt   Priv Status   Expire Time<br />
+======================================================================================================================<br />
+local                                           $1$b6Mn/o0q$/HIqAT.num4n80Pyd0um7  enabled   0    enabled  Never<br />
+<br />
+If using a AAA for authentication and &quot;aaa authorization exec&quot; line is not present, this is a finding.<br />
+<br />
+If the local user account does not have the correct privilege level assigned, this is a finding.</p><h2>Vulnerability Number</h2><p>V-273784</p><h2>Documentable</h2><p>False</p><h2>Rule Version</h2><p>RCKS-NDM-000100</p><h2>Severity Override Guidance</h2><p>Verify the network device is configured to assign appropriate user roles or access levels to authenticated users.<br />
+<br />
+1. Confirm login authentication is configured for a AAA server followed by local authentication.<br />
+SSH@ICX(config)# show running-config | include (aaa.*login|aaa.*exec)<br />
+aaa authentication login default radius local<br />
+aaa authorization exec default radius<br />
+<br />
+2. Verify local accounts have desired privilege levels.<br />
+<br />
+SSH@ICX# show user<br />
+Username                                        Password                           Encrypt   Priv Status   Expire Time<br />
+======================================================================================================================<br />
+local                                           $1$b6Mn/o0q$/HIqAT.num4n80Pyd0um7  enabled   0    enabled  Never<br />
+<br />
+If using a AAA for authentication and &quot;aaa authorization exec&quot; line is not present, this is a finding.<br />
+<br />
+If the local user account does not have the correct privilege level assigned, this is a finding.</p><h2>Check Content Reference</h2><p>M</p><h2>Target Key</h2><p>5695</p></body></html>

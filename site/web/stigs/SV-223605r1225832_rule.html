@@ -1,0 +1,114 @@
+<!doctype html><html lang="en"><head><meta charset="utf-8"><title>STIGQter: STIG Check Details: SV-223605r1225832_rule: IBM z/OS Started tasks for the Base TCP/IP component must be defined in accordance with security requirements.</title><link rel="icon" type="image/svg+xml" href="STIGQter.svg" /><script async src="https://www.googletagmanager.com/gtag/js?id=UA-31381839-2"></script><script src="include.js"></script><script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-4110907817782130" crossorigin="anonymous"></script></head><body><div><img src="STIGQter.svg" alt="STIGQter" style="height:1em;" /> <a href="https://www.stigqter.com/">STIGQter</a>: <a href="main.html">STIG Summary</a>: <a href="U_IBM_zOS_ACF2_STIG_V9R9_Manual-xccdf.html">IBM z/OS ACF2 Security Technical Implementation Guide Version: 9 Release: 9 Benchmark Date: 01 Jul 2026</a>:</div> <h1>IBM z/OS Started tasks for the Base TCP/IP component must be defined in accordance with security requirements.</h1><h2>DISA Rule</h2><p>SV-223605r1225832_rule</p><h2>Vulnerability Number</h2><p>V-223605</p><h2>Group Title</h2><p>SRG-OS-000104-GPOS-00051</p><h2>Rule Version</h2><p>ACF2-TC-000070</p><h2>Severity</h2><p>CAT II</p><h2>CCI(s)</h2><ul><li>CCI-000764 - Uniquely identify and authenticate organizational users and associate that unique identification with processes acting on behalf of those users.</li></ul><h2>Weight</h2><p>10</p><h2>Fix Recommendation</h2><p>Define the Started tasks for the Base TCP/IP component user accounts with the following characteristics:<br />
+<br />
+Named TCPIP or, in the case of multiple instances, prefixed with TCPIP<br />
+Defined with the STC, MUSASS, and NO-SMC attributes<br />
+z/OS UNIX attributes: UID(0), HOME directory '/', shell program /bin/sh<br />
+<br />
+Named EZAZSSI<br />
+Defined with the STC attribute<br />
+z/OS UNIX attributes: UID(non-zero), HOME directory '/', shell program /bin/sh<br />
+<br />
+Review the TCP/IP started task accounts, privileges, and access authorizations defined to the ACP. Ensure they conform to the requirements as outlined below.<br />
+<br />
+The following commands can be used to create the user accounts that are required for the TCP/IP address space and the EZAZSSI started task:<br />
+<br />
+SET LID<br />
+INSERT TCPIP NAME(TCPIP) GROUP(STCTCPX) STC MUSASS NO-SMC<br />
+INSERT EZAZSSI NAME(EZAZSSI) GROUP(STCTCPX) STC<br />
+<br />
+SET PROFILE(USER) DIVISION(OMVS)<br />
+INSERT TCPIP UID(0) HOME(/) OMVSPGM(/bin/sh)<br />
+INSERT EZAZSSI UID(non-zero) HOME(/) OMVSPGM(/bin/sh)<br />
+<br />
+F ACF2,REBUILD(USR),CLASS(P)<br />
+<br />
+NOTE: At eTrust CA-ACF2 6.4 and above, the PROGRAM field in the user profile record has been renamed to OMVSPGM.<br />
+<br />
+The following additions to the indicated rule sets can be used to assign the privileges that are required for the TCP/IP address space:<br />
+<br />
+$KEY(BPX) TYPE(FAC)<br />
+...<br />
+DAEMON UID(TCPIP-uid) SERVICE(READ) ALLOW<br />
+<br />
+If the z/OS host machine has hardware encryption installed and enabled, resources owned by the Integrated Cryptographic Service Facility (ICSF) component have been defined. The following rule set additions are required to allow the TN3270 Telnet Server process to access the ICSF resources. <br />
+<br />
+- $KEY(CSFCKI) TYPE(CSF)<br />
+- UID(TCPIP-uid) SERVICE(READ) ALLOW<br />
+- $KEY(CSFCKM) TYPE(CSF)<br />
+- UID(TCPIP-uid) SERVICE(READ) ALLOW<br />
+- $KEY(CSFDEC) TYPE(CSF)<br />
+- UID(TCPIP-uid) SERVICE(READ) ALLOW<br />
+- $KEY(CSFENC) TYPE(CSF)<br />
+- UID(TCPIP-uid) SERVICE(READ) ALLOW<br />
+- $KEY(CSFOWH) TYPE(CSF)<br />
+- UID(TCPIP-uid) SERVICE(READ) ALLOW<br />
+- $KEY(CSFRNG) TYPE(CSF)<br />
+- UID(TCPIP-uid) SERVICE(READ) ALLOW<br />
+- $KEY(CSFPKB) TYPE(CSF)<br />
+- UID(TCPIP-uid) SERVICE(READ) ALLOW<br />
+- $KEY(CSFPKX) TYPE(CSF)<br />
+- UID(TCPIP-uid) SERVICE(READ) ALLOW<br />
+- $KEY(CSFPKE) TYPE(CSF)<br />
+- UID(TCPIP-uid) SERVICE(READ) ALLOW<br />
+- $KEY(CSFPKD) TYPE(CSF)<br />
+- UID(TCPIP-uid) SERVICE(READ) ALLOW<br />
+- $KEY(CSFPKI) TYPE(CSF)<br />
+- UID(TCPIP-uid) SERVICE(READ) ALLOW<br />
+- $KEY(CSFDSG) TYPE(CSF)<br />
+- UID(TCPIP-uid) SERVICE(READ) ALLOW<br />
+- $KEY(CSFDSV) TYPE(CSF)<br />
+- UID(TCPIP-uid) SERVICE(READ) ALLOW<br />
+<br />
+The following operator commands are required to complete the updates:<br />
+F ACF2,REBUILD(FAC)<br />
+F ACF2,REBUILD(CSF)<br />
+<br />
+These commands and definitions assume that the default type code for CSFSERV resources is CSF.</p><h2>Check Contents</h2><p>Verify Logonid(s) assigned to the TCP/IP address space(s), are named TCPIP or, in the case of multiple instances, are prefixed with TCPIP.<br />
+<br />
+From an ACF Command screen enter:<br />
+SET LID<br />
+LIST LIKE(TCPIP-)<br />
+<br />
+If each TCP/IP logonid its defined with STC, MUSASS, and NO-SMC attributes, this is not a finding.<br />
+<br />
+From the ACF Command screen enter:<br />
+SET LID<br />
+LIST LIKE(TCPIP-) PROFILE(OMVS)<br />
+<br />
+If the z/OS UNIX attributes are UID(0), HOME directory '/', shell program /bin/sh, this is not a finding.<br />
+<br />
+From an ACF Command screen enter:<br />
+SET LID<br />
+LIST EZAZSSI<br />
+<br />
+If THE EZAZSSI logonid is defined with STC attribute, this is not a finding.<br />
+<br />
+From the ACF Command screen enter:<br />
+SET LID<br />
+LIST EZAZSSI PROFILE(OMVS)<br />
+<br />
+If the z/OS UNIX attributes are UID(0), HOME directory '/', shell program /bin/sh, this is not a finding.</p><h2>Vulnerability Number</h2><p>V-223605</p><h2>Documentable</h2><p>False</p><h2>Rule Version</h2><p>ACF2-TC-000070</p><h2>Severity Override Guidance</h2><p>Verify Logonid(s) assigned to the TCP/IP address space(s), are named TCPIP or, in the case of multiple instances, are prefixed with TCPIP.<br />
+<br />
+From an ACF Command screen enter:<br />
+SET LID<br />
+LIST LIKE(TCPIP-)<br />
+<br />
+If each TCP/IP logonid its defined with STC, MUSASS, and NO-SMC attributes, this is not a finding.<br />
+<br />
+From the ACF Command screen enter:<br />
+SET LID<br />
+LIST LIKE(TCPIP-) PROFILE(OMVS)<br />
+<br />
+If the z/OS UNIX attributes are UID(0), HOME directory '/', shell program /bin/sh, this is not a finding.<br />
+<br />
+From an ACF Command screen enter:<br />
+SET LID<br />
+LIST EZAZSSI<br />
+<br />
+If THE EZAZSSI logonid is defined with STC attribute, this is not a finding.<br />
+<br />
+From the ACF Command screen enter:<br />
+SET LID<br />
+LIST EZAZSSI PROFILE(OMVS)<br />
+<br />
+If the z/OS UNIX attributes are UID(0), HOME directory '/', shell program /bin/sh, this is not a finding.</p><h2>Check Content Reference</h2><p>M</p><h2>Target Key</h2><p>4100</p></body></html>

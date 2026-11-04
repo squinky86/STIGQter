@@ -1,0 +1,43 @@
+<!doctype html><html lang="en"><head><meta charset="utf-8"><title>STIGQter: STIG Check Details: SV-271497r1092471_rule: OL 9 must routinely check the baseline configuration for unauthorized changes and notify the system administrator (SA) when anomalies in the operation of any security functions are discovered.</title><link rel="icon" type="image/svg+xml" href="STIGQter.svg" /><script async src="https://www.googletagmanager.com/gtag/js?id=UA-31381839-2"></script><script src="include.js"></script><script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-4110907817782130" crossorigin="anonymous"></script></head><body><div><img src="STIGQter.svg" alt="STIGQter" style="height:1em;" /> <a href="https://www.stigqter.com/">STIGQter</a>: <a href="main.html">STIG Summary</a>: <a href="U_Oracle_Linux_9_STIG_V1R6_Manual-xccdf.html">Oracle Linux 9 Security Technical Implementation Guide Version: 1 Release: 6 Benchmark Date: 01 Jul 2026</a>:</div> <h1>OL 9 must routinely check the baseline configuration for unauthorized changes and notify the system administrator (SA) when anomalies in the operation of any security functions are discovered.</h1><h2>DISA Rule</h2><p>SV-271497r1092471_rule</p><h2>Vulnerability Number</h2><p>V-271497</p><h2>Group Title</h2><p>SRG-OS-000363-GPOS-00150</p><h2>Rule Version</h2><p>OL09-00-000301</p><h2>Severity</h2><p>CAT II</p><h2>CCI(s)</h2><ul><li>CCI-001744 - Implement organization-defined security responses automatically if baseline configurations are changed in an unauthorized manner.</li><li>CCI-002699 - Perform verification of the correct operation of organization-defined security functions: when the system is in an organization-defined transitional state; upon command by a user with appropriate privileges; and/or on an organization-defined frequency.</li><li>CCI-002702 - Shut the system down, restart the system, and/or initiate organization-defined alternative action(s) when anomalies in the operation of the organization-defined security functions are discovered.</li></ul><h2>Weight</h2><p>10</p><h2>Fix Recommendation</h2><p>Configure the file integrity tool to run automatically on the system at least weekly and to notify designated personnel if baseline configurations are changed in an unauthorized manner. The AIDE tool can be configured to email designated personnel with the use of the cron system.<br />
+ <br />
+The following example output is generic. It will set cron to run AIDE daily and to send email at the completion of the analysis.<br />
+<br />
+$ sudo more /etc/cron.daily/aide<br />
+ <br />
+#!/bin/bash<br />
+/usr/sbin/aide --check | /bin/mail -s &quot;$HOSTNAME - Daily aide integrity check run&quot; root@sysname.mil<br />
+<br />
+$ sudo chmod 755  /etc/cron.daily/aide<br />
+<br />
+$ sudo crontab -e <br />
+30 04 * * * root usr/sbin/aide</p><h2>Check Contents</h2><p>Verify that OL 9 routinely executes a file integrity scan for changes to the system baseline. The command used in the example will use a daily occurrence.<br />
+<br />
+Check the cron directories for scripts controlling the execution and notification of results of the file integrity application. For example, if Advanced Intrusion Detection Environment (AIDE) is installed on the system, use the following commands:<br />
+<br />
+$ ls -al /etc/cron.* | grep aide<br />
+-rwxr-xr-x 1 root root 29 Nov 22 2015 aide<br />
+<br />
+$ sudo grep aide /etc/crontab /var/spool/cron/root<br />
+/etc/crontab: 30 04 * * * root usr/sbin/aide<br />
+/var/spool/cron/root: 30 04 * * * root usr/sbin/aide<br />
+<br />
+$ more /etc/cron.daily/aide<br />
+#!/bin/bash<br />
+/usr/sbin/aide --check | /bin/mail -s &quot;$HOSTNAME - Daily aide integrity check run&quot; root@sysname.mil<br />
+<br />
+If the file integrity application does not exist, or a script file controlling the execution of the file integrity application does not exist, or the file integrity application does not notify designated personnel of changes, this is a finding.</p><h2>Vulnerability Number</h2><p>V-271497</p><h2>Documentable</h2><p>False</p><h2>Rule Version</h2><p>OL09-00-000301</p><h2>Severity Override Guidance</h2><p>Verify that OL 9 routinely executes a file integrity scan for changes to the system baseline. The command used in the example will use a daily occurrence.<br />
+<br />
+Check the cron directories for scripts controlling the execution and notification of results of the file integrity application. For example, if Advanced Intrusion Detection Environment (AIDE) is installed on the system, use the following commands:<br />
+<br />
+$ ls -al /etc/cron.* | grep aide<br />
+-rwxr-xr-x 1 root root 29 Nov 22 2015 aide<br />
+<br />
+$ sudo grep aide /etc/crontab /var/spool/cron/root<br />
+/etc/crontab: 30 04 * * * root usr/sbin/aide<br />
+/var/spool/cron/root: 30 04 * * * root usr/sbin/aide<br />
+<br />
+$ more /etc/cron.daily/aide<br />
+#!/bin/bash<br />
+/usr/sbin/aide --check | /bin/mail -s &quot;$HOSTNAME - Daily aide integrity check run&quot; root@sysname.mil<br />
+<br />
+If the file integrity application does not exist, or a script file controlling the execution of the file integrity application does not exist, or the file integrity application does not notify designated personnel of changes, this is a finding.</p><h2>Check Content Reference</h2><p>M</p><h2>Target Key</h2><p>5680</p></body></html>

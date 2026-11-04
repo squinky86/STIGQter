@@ -1,0 +1,136 @@
+<!doctype html><html lang="en"><head><meta charset="utf-8"><title>STIGQter: STIG Check Details: SV-253951r1082966_rule: The Juniper EX switch must be configured to manage excess bandwidth to limit the effects of packet flooding types of denial-of-service (DoS) attacks.</title><link rel="icon" type="image/svg+xml" href="STIGQter.svg" /><script async src="https://www.googletagmanager.com/gtag/js?id=UA-31381839-2"></script><script src="include.js"></script><script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-4110907817782130" crossorigin="anonymous"></script></head><body><div><img src="STIGQter.svg" alt="STIGQter" style="height:1em;" /> <a href="https://www.stigqter.com/">STIGQter</a>: <a href="main.html">STIG Summary</a>: <a href="U_Juniper_EX_Switches_L2S_STIG_V2R5_Manual-xccdf.html">Juniper EX Series Switches Layer 2 Switch Security Technical Implementation Guide Version: 2 Release: 5 Benchmark Date: 01 Jul 2026</a>:</div> <h1>The Juniper EX switch must be configured to manage excess bandwidth to limit the effects of packet flooding types of denial-of-service (DoS) attacks.</h1><h2>DISA Rule</h2><p>SV-253951r1082966_rule</p><h2>Vulnerability Number</h2><p>V-253951</p><h2>Group Title</h2><p>SRG-NET-000193-L2S-000020</p><h2>Rule Version</h2><p>JUEX-L2-000040</p><h2>Severity</h2><p>CAT II</p><h2>CCI(s)</h2><ul><li>CCI-001095 - Manage capacity, bandwidth, or other redundancy to limit the effects of information flooding types of denial of service attacks.</li><li>CCI-004866 - Employ organization-defined controls by type of denial-of-service to achieve the denial-of-service objective.</li></ul><h2>Weight</h2><p>10</p><h2>Fix Recommendation</h2><p>Configure class-of-service (CoS):<br />
+user@host&gt; configure<br />
+user@host# set class-of-service classifiers dscp &lt;classifier name&gt; import default<br />
+user@host# set class-of-service classifiers dscp &lt;classifier name&gt; forwarding-class &lt;req’d forwarding class name&gt; loss-priority &lt;low|high&gt; code-points &lt;DSCP code point&gt;<br />
+user@host# set class-of-service classifiers dscp &lt;classifier name&gt; forwarding-class &lt;req’d forwarding class name&gt; loss-priority &lt;low|high&gt; code-points &lt;DSCP code point&gt; (optional - only if multiple DSCP values are used)<br />
+user@host# set class-of-service interfaces &lt;interface name&gt; scheduler-map &lt;scheduler map name&gt;<br />
+user@host# set class-of-service interfaces &lt;interface name&gt; unit &lt;unit number&gt; classifiers dscp &lt;classifier name&gt;<br />
+user@host# set class-of-service interfaces &lt;uplink interface&gt; scheduler-map &lt;scheduler map name&gt;<br />
+user@host# set class-of-service interfaces &lt;uplink interface&gt; unit &lt;unit number&gt; classifiers dscp &lt;classifier name&gt;<br />
+user@host# set class-of-service scheduler-maps &lt;scheduler map name&gt; forwarding-class best-effort scheduler &lt;scheduler name&gt; (e.g., be-scheduler)<br />
+user@host# set class-of-service scheduler-maps &lt;scheduler map name&gt; forwarding-class &lt;req’d forwarding class&gt; scheduler &lt;scheduler name&gt; (e.g., ef-scheduler)<br />
+user@host# set class-of-service scheduler-maps &lt;scheduler map name&gt; forwarding-class network-control scheduler &lt;scheduler name&gt; (e.g. nc-scheduler)<br />
+user@host# set class-of-service schedulers &lt;be-scheduler name&gt; transmit-rate (exact &lt;value&gt; | percent (0..100) | remainder)<br />
+user@host# set class-of-service schedulers &lt;be-scheduler name&gt; priority (high | low | medium-high | medium-low | strict-high)<br />
+set class-of-service schedulers &lt;ef-scheduler name&gt; shaping-rate percent (0..100)<br />
+user@host# set class-of-service schedulers &lt;ef-scheduler name&gt; priority (high | low | medium-high | medium-low | strict-high)<br />
+user@host# set class-of-service schedulers &lt;nc-scheduler name&gt; shaping-rate percent (0..100)<br />
+user@host# set class-of-service schedulers &lt;nc-scheduler name&gt; priority (high | low | medium-high | medium-low | strict-high)<br />
+<br />
+Note: The classifier method (ToS bit, DSCP marking, etc.) and values, interfaces, priorities, and rates must be appropriate for the target environment.</p><h2>Check Contents</h2><p>Review the switch configuration to verify that Class-of-Service (CoS) has been enabled. Ensure sufficient capacity is available for mission-critical traffic to enforce the traffic priorities specified by the Combatant Commanders/Services/Agencies.<br />
+<br />
+By default, Junos implements a standard CoS (QoS) strategy. Although some devices implement different queues or queue numbers, generally there is at least a four-queue model with two active queues: 95 percent Best Effort (BE) and 5 percent Network Control (NC). Verify additional queues are configured to support the traffic priorities of the Combatant Commanders/Services/Agencies.<br />
+<br />
+The example CoS below adds a queue for one type of prioritized traffic. The example shows the interdependency of the classifiers, the schedulers, and the interfaces but the names, classifier code points, and scheduler rates are only examples. The names, code points, and rates must be appropriate for the target environment. Additional configuration is required for each type of prioritized traffic.<br />
+<br />
+Note: The example CoS names, scheduler rates, and DSCP values must not be considered requirements. The names, rates, and values must be appropriately configured for the target environment.<br />
+<br />
+user@host&gt; show configuration class-of-service<br />
+classifiers {<br />
+    dscp prioritized-traffic-classifier {<br />
+        import default;<br />
+        forwarding-class expedited-forwarding {<br />
+            loss-priority low code-points [ 101110 100100 ];<br />
+        }<br />
+    }<br />
+}<br />
+interfaces {<br />
+    &lt;interface&gt; {<br />
+        scheduler-map prioritized-traffic-map;<br />
+        unit &lt;logical unit&gt; {<br />
+            classifiers {<br />
+                dscp prioritized-traffic-classifier;<br />
+            }<br />
+        }<br />
+    }<br />
+    &lt;uplink interface&gt; {<br />
+        scheduler-map prioritized-traffic-map;<br />
+        unit &lt;logical unit&gt; {<br />
+            classifiers {<br />
+                dscp prioritized-traffic-classifier;<br />
+            }<br />
+    }<br />
+}<br />
+scheduler-maps {<br />
+    prioritized-traffic-map {<br />
+        forwarding-class best-effort scheduler be-scheduler;<br />
+        forwarding-class expedited-forwarding scheduler ef-scheduler;<br />
+        forwarding-class network-control scheduler nc-scheduler;<br />
+    }<br />
+}<br />
+schedulers {<br />
+    be-scheduler {<br />
+        transmit-rate {<br />
+            remainder;<br />
+        }<br />
+        priority low;<br />
+    }<br />
+    ef-scheduler {<br />
+        shaping-rate percent 20;<br />
+        priority strict-high;<br />
+    }<br />
+    nc-scheduler {<br />
+        shaping-rate percent 5;<br />
+        priority strict-high;<br />
+    }<br />
+}<br />
+<br />
+If the switch is not configured to implement a QoS policy, this is a finding.</p><h2>Vulnerability Number</h2><p>V-253951</p><h2>Documentable</h2><p>False</p><h2>Rule Version</h2><p>JUEX-L2-000040</p><h2>Severity Override Guidance</h2><p>Review the switch configuration to verify that Class-of-Service (CoS) has been enabled. Ensure sufficient capacity is available for mission-critical traffic to enforce the traffic priorities specified by the Combatant Commanders/Services/Agencies.<br />
+<br />
+By default, Junos implements a standard CoS (QoS) strategy. Although some devices implement different queues or queue numbers, generally there is at least a four-queue model with two active queues: 95 percent Best Effort (BE) and 5 percent Network Control (NC). Verify additional queues are configured to support the traffic priorities of the Combatant Commanders/Services/Agencies.<br />
+<br />
+The example CoS below adds a queue for one type of prioritized traffic. The example shows the interdependency of the classifiers, the schedulers, and the interfaces but the names, classifier code points, and scheduler rates are only examples. The names, code points, and rates must be appropriate for the target environment. Additional configuration is required for each type of prioritized traffic.<br />
+<br />
+Note: The example CoS names, scheduler rates, and DSCP values must not be considered requirements. The names, rates, and values must be appropriately configured for the target environment.<br />
+<br />
+user@host&gt; show configuration class-of-service<br />
+classifiers {<br />
+    dscp prioritized-traffic-classifier {<br />
+        import default;<br />
+        forwarding-class expedited-forwarding {<br />
+            loss-priority low code-points [ 101110 100100 ];<br />
+        }<br />
+    }<br />
+}<br />
+interfaces {<br />
+    &lt;interface&gt; {<br />
+        scheduler-map prioritized-traffic-map;<br />
+        unit &lt;logical unit&gt; {<br />
+            classifiers {<br />
+                dscp prioritized-traffic-classifier;<br />
+            }<br />
+        }<br />
+    }<br />
+    &lt;uplink interface&gt; {<br />
+        scheduler-map prioritized-traffic-map;<br />
+        unit &lt;logical unit&gt; {<br />
+            classifiers {<br />
+                dscp prioritized-traffic-classifier;<br />
+            }<br />
+    }<br />
+}<br />
+scheduler-maps {<br />
+    prioritized-traffic-map {<br />
+        forwarding-class best-effort scheduler be-scheduler;<br />
+        forwarding-class expedited-forwarding scheduler ef-scheduler;<br />
+        forwarding-class network-control scheduler nc-scheduler;<br />
+    }<br />
+}<br />
+schedulers {<br />
+    be-scheduler {<br />
+        transmit-rate {<br />
+            remainder;<br />
+        }<br />
+        priority low;<br />
+    }<br />
+    ef-scheduler {<br />
+        shaping-rate percent 20;<br />
+        priority strict-high;<br />
+    }<br />
+    nc-scheduler {<br />
+        shaping-rate percent 5;<br />
+        priority strict-high;<br />
+    }<br />
+}<br />
+<br />
+If the switch is not configured to implement a QoS policy, this is a finding.</p><h2>Check Content Reference</h2><p>M</p><h2>Target Key</h2><p>5478</p></body></html>

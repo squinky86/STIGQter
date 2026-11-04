@@ -1,0 +1,102 @@
+<!doctype html><html lang="en"><head><meta charset="utf-8"><title>STIGQter: STIG Check Details: SV-224264r1141366_rule: CA 1 Tape Management external security options must be specified properly.</title><link rel="icon" type="image/svg+xml" href="STIGQter.svg" /><script async src="https://www.googletagmanager.com/gtag/js?id=UA-31381839-2"></script><script src="include.js"></script><script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-4110907817782130" crossorigin="anonymous"></script></head><body><div><img src="STIGQter.svg" alt="STIGQter" style="height:1em;" /> <a href="https://www.stigqter.com/">STIGQter</a>: <a href="main.html">STIG Summary</a>: <a href="U_zOS_CA-1_Tape_Management_for_ACF2_STIG_V7R2_Manual-xccdf.html">z/OS CA 1 Tape Management for ACF2 Security Technical Implementation Guide Version: 7 Release: 2 Benchmark Date: 01 Oct 2025</a>:</div> <h1>CA 1 Tape Management external security options must be specified properly.</h1><h2>DISA Rule</h2><p>SV-224264r1141366_rule</p><h2>Vulnerability Number</h2><p>V-224264</p><h2>Group Title</h2><p>SRG-OS-000018</p><h2>Rule Version</h2><p>ZCA1A040</p><h2>Severity</h2><p>CAT II</p><h2>CCI(s)</h2><ul><li>CCI-000381 - Configure the system to provide only organization-defined mission essential capabilities.</li></ul><h2>Weight</h2><p>10</p><h2>Fix Recommendation</h2><p>The systems programmer/ISSO will ensure that the CA 1 external security options are specified in accordance with the ACP being used. CA 1 Tape Management ACP security interfaces are controlled by options coded in the TMOOPTxx member identified in the TMOSYSxx member of the dataset allocated by the TMSPARM DD statement in the TMSINIT STC. The specific required option settings are dependent on the ACP in use on the system.<br />
+<br />
+CA 1 SECURITY OPTIONS - ACF2<br />
+Option	Value<br />
+BATCH	YES obsolete as of r12.0<br />
+CATSEC	NO obsolete as of r12.0<br />
+CMD	YES<br />
+CREATE	see Note 1<br />
+DSNB	YES<br />
+FUNC	YES see Note 2<br />
+OCEOV	NO see Note 3<br />
+PMASK	Do not specify or change<br />
+PSWD	YES<br />
+SCRTCH	NO<br />
+SECWTO	YES<br />
+UNDEF	FAIL<br />
+UX0AUPD	NO see Note 4<br />
+YSVC	YES<br />
+<br />
+Note 1: The CREATE parameter defines the level of access that is required to create a dataset on tape. The default value is UPDATE. However, the vendor recommends the value be set to CREATE if running CA Top Secret or ACF2 and ALTER if running RACF.<br />
+<br />
+Note 2: The FUNC option provides supplementary security for BLP access. The tape label bypass privilege must still be specified in the ACF2 user LID record to allow access to BLP processing.<br />
+<br />
+Note 3: The CA 1 security option, OCEOV, is set to NO because ACF2 obtains control of dataset OPEN/CLOSE processing before the CA 1 intercept. The vendor recommends that the first security call be used and that this CA 1 control option be turned OFF. Therefore, TAPEDSN must be specified in the OPTS option in the ACF2 GSO record.<br />
+<br />
+Note 4: The UX0AUPD will specify YES only if fields are altered in the TMC and the TMSUXxA (for r11.5 and below) or TMSXITA (for r12.0 and above) is changed.</p><h2>Check Contents</h2><p>Refer to the following report produced by the z/OS Data Collection:<br />
+<br />
+- CA1RPT(TMSSTATS).<br />
+<br />
+Automated Analysis<br />
+Refer to the following report produced by the z/OS Data Collection:<br />
+<br />
+- PDI(ZCA10040).<br />
+<br />
+CA 1 external security utilizing ACF2 is accomplished in the manner described in this section.<br />
+<br />
+Note: The TMOOPTxx member is specified in the TMOSYSxx member in the dataset allocated by the TMSPARM DD statement in the TMSINIT STC. By default, the suffix 00 is used for these members. However, overrides can be specified by PARM value(s) on the EXEC statement in the TMSINIT STC and/or in the TMOSYSxx member.<br />
+<br />
+Review the options and values of the below CA 1 parameters. If the options are set to the specified value, this is not a finding.<br />
+<br />
+CA 1 SECURITY OPTIONS - ACF2<br />
+Option	Value<br />
+BATCH	YES obsolete as of r12.0<br />
+CATSEC	NO obsolete as of r12.0<br />
+CMD	YES<br />
+CREATE	see Note 1<br />
+DSNB	YES<br />
+FUNC	YES see Note 2<br />
+OCEOV	NO see Note 3<br />
+PMASK	Do not specify or change<br />
+PSWD	YES<br />
+SCRTCH	NO<br />
+SECWTO	YES<br />
+UNDEF	FAIL<br />
+UX0AUPD	NO see Note 4<br />
+YSVC	YES<br />
+<br />
+Note 1: The CREATE parameter defines the level of access that is required to create a dataset on tape. The default value is UPDATE. However, the vendor recommends the value be set to CREATE if running CA Top Secret or ACF2 and ALTER if running RACF.<br />
+<br />
+Note 2: The FUNC option provides supplementary security for BLP access. The tape label bypass privilege must still be specified in the ACF2 user LID record to allow access to BLP processing.<br />
+<br />
+Note 3: The CA 1 security option, OCEOV, is set to NO because ACF2 obtains control of dataset OPEN/CLOSE processing before the CA 1 intercept. The vendor recommends that the first security call be used and that this CA 1 control option be turned OFF. Therefore, TAPEDSN must be specified in the OPTS option in the ACF2 GSO record.<br />
+<br />
+Note 4: The UX0AUPD will specify YES only if the fields are altered in the TMC and the TMSUXxA (for r11.5 and below) or TMSXITA (for r12.0 and above) is changed.</p><h2>Vulnerability Number</h2><p>V-224264</p><h2>Documentable</h2><p>False</p><h2>Rule Version</h2><p>ZCA1A040</p><h2>Severity Override Guidance</h2><p>Refer to the following report produced by the z/OS Data Collection:<br />
+<br />
+- CA1RPT(TMSSTATS).<br />
+<br />
+Automated Analysis<br />
+Refer to the following report produced by the z/OS Data Collection:<br />
+<br />
+- PDI(ZCA10040).<br />
+<br />
+CA 1 external security utilizing ACF2 is accomplished in the manner described in this section.<br />
+<br />
+Note: The TMOOPTxx member is specified in the TMOSYSxx member in the dataset allocated by the TMSPARM DD statement in the TMSINIT STC. By default, the suffix 00 is used for these members. However, overrides can be specified by PARM value(s) on the EXEC statement in the TMSINIT STC and/or in the TMOSYSxx member.<br />
+<br />
+Review the options and values of the below CA 1 parameters. If the options are set to the specified value, this is not a finding.<br />
+<br />
+CA 1 SECURITY OPTIONS - ACF2<br />
+Option	Value<br />
+BATCH	YES obsolete as of r12.0<br />
+CATSEC	NO obsolete as of r12.0<br />
+CMD	YES<br />
+CREATE	see Note 1<br />
+DSNB	YES<br />
+FUNC	YES see Note 2<br />
+OCEOV	NO see Note 3<br />
+PMASK	Do not specify or change<br />
+PSWD	YES<br />
+SCRTCH	NO<br />
+SECWTO	YES<br />
+UNDEF	FAIL<br />
+UX0AUPD	NO see Note 4<br />
+YSVC	YES<br />
+<br />
+Note 1: The CREATE parameter defines the level of access that is required to create a dataset on tape. The default value is UPDATE. However, the vendor recommends the value be set to CREATE if running CA Top Secret or ACF2 and ALTER if running RACF.<br />
+<br />
+Note 2: The FUNC option provides supplementary security for BLP access. The tape label bypass privilege must still be specified in the ACF2 user LID record to allow access to BLP processing.<br />
+<br />
+Note 3: The CA 1 security option, OCEOV, is set to NO because ACF2 obtains control of dataset OPEN/CLOSE processing before the CA 1 intercept. The vendor recommends that the first security call be used and that this CA 1 control option be turned OFF. Therefore, TAPEDSN must be specified in the OPTS option in the ACF2 GSO record.<br />
+<br />
+Note 4: The UX0AUPD will specify YES only if the fields are altered in the TMC and the TMSUXxA (for r11.5 and below) or TMSXITA (for r12.0 and above) is changed.</p><h2>Check Content Reference</h2><p>M</p><h2>Target Key</h2><p>4110</p></body></html>

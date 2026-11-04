@@ -1,0 +1,84 @@
+<!doctype html><html lang="en"><head><meta charset="utf-8"><title>STIGQter: STIG Check Details: SV-242254r1018792_rule: The TippingPoint SMS must be configured to use an authentication server for the purpose of authenticating users prior to granting administrative access and to enforce access restrictions.</title><link rel="icon" type="image/svg+xml" href="STIGQter.svg" /><script async src="https://www.googletagmanager.com/gtag/js?id=UA-31381839-2"></script><script src="include.js"></script><script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-4110907817782130" crossorigin="anonymous"></script></head><body><div><img src="STIGQter.svg" alt="STIGQter" style="height:1em;" /> <a href="https://www.stigqter.com/">STIGQter</a>: <a href="main.html">STIG Summary</a>: <a href="U_TM_TippingPoint_NDM_STIG_V2R3_Manual-xccdf.html">Trend Micro TippingPoint NDM Security Technical Implementation Guide Version: 2 Release: 3 Benchmark Date: 02 Apr 2025</a>:</div> <h1>The TippingPoint SMS must be configured to use an authentication server for the purpose of authenticating users prior to granting administrative access and to enforce access restrictions.</h1><h2>DISA Rule</h2><p>SV-242254r1018792_rule</p><h2>Vulnerability Number</h2><p>V-242254</p><h2>Group Title</h2><p>SRG-APP-000516-NDM-000336</p><h2>Rule Version</h2><p>TIPP-NM-000570</p><h2>Severity</h2><p>CAT I</p><h2>CCI(s)</h2><ul><li>CCI-000213 - Enforce approved authorizations for logical access to information and system resources in accordance with applicable access control policies.</li><li>CCI-000345 - Enforce logical access restrictions associated with changes to the system.</li><li>CCI-000366 - Implement the security configuration settings.</li><li>CCI-000370 - Manage configuration settings for organization-defined system components using organization-defined automated mechanisms.</li><li>CCI-004045 - Require users to be individually authenticated before granting access to the shared accounts or resources.</li><li>CCI-001368 - Enforce approved authorizations for controlling the flow of information within the system based on organization-defined information flow control policies.</li><li>CCI-002169 - Enforce a role-based access control policy over defined subjects and objects based upon organization-defined roles and users authorized to assume such roles.</li><li>CCI-001813 - Enforce access restrictions using organization-defined mechanisms.</li><li>CCI-001941 - Implement replay-resistant authentication mechanisms for access to privileged accounts and/or non-privileged accounts.</li><li>CCI-002235 - Prevent non-privileged users from executing privileged functions.</li><li>CCI-002883 - Restrict the use of maintenance tools to authorized personnel only.</li><li>CCI-003627 - Disable accounts when the accounts have expired.</li><li>CCI-003628 - Disable accounts when the accounts are no longer associated to a user.</li><li>CCI-003831 - Alert organization-defined personnel or roles upon detection of unauthorized access, modification, or deletion of audit information.</li><li>CCI-004046 - Implement multi-factor authentication for local; network; and/or remote access to privileged accounts; and/or non-privileged accounts such that one of the factors is provided by a device separate from the system gaining access.</li><li>CCI-004047 - Implement multi-factor authentication for local; network; and/or remote access to privileged accounts; and/or non-privileged accounts such that the device meets organization-defined strength of mechanism requirements.</li><li>CCI-004058 - For password-based authentication, maintain a list of commonly used, expected, or compromised passwords on an organization-defined frequency.</li><li>CCI-004059 - For password-based authentication, update the list of passwords on an organization-defined frequency.</li><li>CCI-004060 - For password-based authentication, update the list of passwords when organizational passwords are suspected to have been compromised directly or indirectly.</li><li>CCI-004061 - For password-based authentication, verify when users create or update passwords, that the passwords are not found on the list of commonly-used, expected, or compromised passwords in IA-5 (1) (a).</li><li>CCI-004063 - For password-based authentication, require immediate selection of a new password upon account recovery.</li><li>CCI-004064 - For password-based authentication, allow user selection of long passwords and passphrases, including spaces and all printable characters.</li><li>CCI-004065 - For password-based authentication, employ automated tools to assist the user in selecting strong password authenticators.</li><li>CCI-004068 - For public key-based authentication, implement a local cache of revocation data to support path discovery and validation.</li></ul><h2>Weight</h2><p>10</p><h2>Fix Recommendation</h2><p>Follow these configuration steps to enable CAC/LDAPS authentication and authorization to the Trend Micro TippingPoint SMS client. The Site's LDAPS/AD environment must be configured to audit all account actions.<br />
+<br />
+I. Certificate Load Steps: <br />
+1. Log in to the SMS client. <br />
+2. Select certificate management. <br />
+3. Click CA certificates. <br />
+4. Select import. <br />
+5. Find the CA signing certificate bundle for the LDAPS servers on your machine. <br />
+6. Enter the name, then select browse to find the CA certificate.<br />
+7. Click OK.<br />
+8. Repeat steps for all other DOD Root and Intermediate CAs being used for the administrator’s admin-token/CACs.<br />
+<br />
+II. LDAP Authorization configuration steps: <br />
+1. Click Authentication and Authorization.<br />
+2. Select Groups. <br />
+3. Click New.<br />
+4. Type the name of the LDAP group exactly as it appears as the CN in the active directory domain. <br />
+5. Add all site-specific details including which role to map superuser, admin, or operator. <br />
+6. Under Active Directory Group Mapping ensure the item &quot;map this group to the same named group in active directory&quot; is selected. <br />
+7. Select OK.<br />
+<br />
+III. LDAPS Server configuration - ensure a DNS resolver has been configured in accordance with the admin guide, and this DNS resolver knows how to resolve the domain the SMS will log into: <br />
+1. Under Admin, click Authentication and CAC.<br />
+2. Click edit. <br />
+3. Enter the Server address: ensure it is the fully qualified domain name as the LDAPS certificate will likely have it.<br />
+4. Enable SSL: must be checked for LDAPS. <br />
+5. Current certificate: must be the intermediate root certificate/issuing CA certificate for the domain controllers - this is the CA certificate loaded in the first section. <br />
+6. Port: 636 (or if your DOD LDAPS port is different add this).<br />
+7. Timeout: 30 seconds is the default.<br />
+8. Admin name: this must be the account that has privileges to access the directory schema – format is username@domain.name.<br />
+9. Admin password: password of previous admin account. <br />
+10. User search base: this is the LDAP directory tree for the accounts that will be allowed. Example: ou=Trend Micro,dc=dod,dc=disa,dc=mil <br />
+11. User search attribute: normally in DOD this is userPrincipalName.<br />
+12. User display attribute: normally in DOD this is sAMAccountName.<br />
+13. Group search base: this is the LDAP directory tree for the groups that will be allowed. Example: ou=Trend Micro,dc=dod,dc=disa,dc=mil <br />
+14. Group name attribute: normally it is cn.<br />
+15. Select the test button to ensure all configurations provided function correctly. <br />
+16. Select OK.<br />
+<br />
+IV. Enable OCSP revocation Checking: <br />
+1. Select Certificate Management and Revocation.<br />
+2. Click New under OCSP Settings.<br />
+3. Select the Certificate Authority. Type the full OCSP URI (e.g. http://ocsp.disa.mil).<br />
+4. Repeat this step for all CA certificates in the CAC trust chain.<br />
+5. Optionally, to add a CRL click New under Certificate Revocation Lists. <br />
+6. Select the Certificate Authority. <br />
+7. Type the full CRL path including to the specific CRL file (e.g. http://crl.disa.mil/certificate.crl).<br />
+<br />
+V. Enable CAC authentication/LDAPS authorization: <br />
+1. Click Admin, click Authentication and Groups.<br />
+2. Select Edit.<br />
+3. Click Use CAC Authentication (ensure the local emergency user account is checked for local access in case of emergency troubleshooting). <br />
+4. Select OK. <br />
+5. Close the SMS client.<br />
+<br />
+VI. Test CAC authentication: <br />
+1. Ensure one other smartcard reader is enabled in the device manager of the computer you are using. <br />
+2. Open the SMS client. <br />
+3. Type the hostname/IP of the SMS server.<br />
+4. Ensuring the CAC/admin token is inserted in the reader, type the PIN of the CAC. <br />
+5. Select the certificate to use to login.<br />
+6. Select OK. <br />
+7. User should be taken to the dashboard and configuration area of the SMS.<br />
+<br />
+VII. Troubleshooting: <br />
+1. If you receive errors logging in with CAC go to the serial console of the SMS server. <br />
+2. Login with the local emergency user account. <br />
+3. Type the command &quot;set cac.disable = yes&quot; - this will give your local admin login access to the SMS client to troubleshoot any configuration errors.<br />
+<br />
+VIII. Ensure the site's LDAP/Active Directory infrastructure is reconfigured to audit account creation, modification, disabling, and removals.</p><h2>Check Contents</h2><p>Configure the Trend Micro TippingPoint system to ensure the SMS client is using CAC authentication and LDAPS authorization.<br />
+<br />
+1. Log in to the SMS client.<br />
+2. Click on Authentication and Authorization.<br />
+3. Click authentication.<br />
+4. Ensure &quot;Use CAC authentication&quot; is currently selected. <br />
+<br />
+If the TippingPoint SMS is not configured to use an authentication server for the purpose of authenticating users prior to granting administrative access, this is a finding.</p><h2>Vulnerability Number</h2><p>V-242254</p><h2>Documentable</h2><p>False</p><h2>Rule Version</h2><p>TIPP-NM-000570</p><h2>Severity Override Guidance</h2><p>Configure the Trend Micro TippingPoint system to ensure the SMS client is using CAC authentication and LDAPS authorization.<br />
+<br />
+1. Log in to the SMS client.<br />
+2. Click on Authentication and Authorization.<br />
+3. Click authentication.<br />
+4. Ensure &quot;Use CAC authentication&quot; is currently selected. <br />
+<br />
+If the TippingPoint SMS is not configured to use an authentication server for the purpose of authenticating users prior to granting administrative access, this is a finding.</p><h2>Check Content Reference</h2><p>M</p><h2>Target Key</h2><p>5369</p></body></html>

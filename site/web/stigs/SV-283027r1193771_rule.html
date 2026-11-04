@@ -1,0 +1,42 @@
+<!doctype html><html lang="en"><head><meta charset="utf-8"><title>STIGQter: STIG Check Details: SV-283027r1193771_rule: The HPE Alletra Storage ArcusOS device must implement cryptographic mechanisms to prevent unauthorized disclosure and modification of all information at rest on all system components.</title><link rel="icon" type="image/svg+xml" href="STIGQter.svg" /><script async src="https://www.googletagmanager.com/gtag/js?id=UA-31381839-2"></script><script src="include.js"></script><script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-4110907817782130" crossorigin="anonymous"></script></head><body><div><img src="STIGQter.svg" alt="STIGQter" style="height:1em;" /> <a href="https://www.stigqter.com/">STIGQter</a>: <a href="main.html">STIG Summary</a>: <a href="U_HPE_Alletra_Storage_ArcusOS_WS_STIG_V1R1_Manual-xccdf.html">HPE Alletra Storage ArcusOS Web Server Security Technical Implementation Guide Version: 1 Release: 1 Benchmark Date: 26 Feb 2026</a>:</div> <h1>The HPE Alletra Storage ArcusOS device must implement cryptographic mechanisms to prevent unauthorized disclosure and modification of all information at rest on all system components.</h1><h2>DISA Rule</h2><p>SV-283027r1193771_rule</p><h2>Vulnerability Number</h2><p>V-283027</p><h2>Group Title</h2><p>SRG-APP-000231-WSR-000144</p><h2>Rule Version</h2><p>ASMP-WS-000630</p><h2>Severity</h2><p>CAT II</p><h2>CCI(s)</h2><ul><li>CCI-001199 - Protects the confidentiality and/or integrity of organization-defined information at rest.</li></ul><h2>Weight</h2><p>10</p><h2>Fix Recommendation</h2><p>Enable data at rest encryption.<br />
+<br />
+If &quot;cli% showlicense&quot; does not show &quot;SED Encryption&quot; under &quot;License features currently enabled:&quot;, then import a SED Encryption license with the &quot;cli% setlicense&quot; command.<br />
+<br />
+Create a CSR for the EKM:<br />
+cli% createcert ekm-client -f -csr -CN ekm_username<br />
+<br />
+Sign the CSR with a CA and import the entire certificate chain with:<br />
+Cli% importcert ekm-client -f stdin<br />
+Paste the ekm-client certificate chain.<br />
+<br />
+Import the EKM Server Certificates:<br />
+Cli% createcert ekm-server -f stdin<br />
+Paste the ekm-server certificate chain.<br />
+<br />
+Set the connection to the EKM with the following command:<br />
+cli% controlencryption setekm -setserver &lt;EKM_IP&gt; -port 5696 -ekmuser ekm_username -kmipprotocols (supported protocols by the ekm) -passwordnoprompt &lt;ekm_user_password&gt;<br />
+<br />
+Enable encryption with the following command:<br />
+cli% controlencryption enable -ekm /common/encryptionBackup<br />
+<br />
+Enter passwords and save the encryption backup file off of the array for disaster recovery.</p><h2>Check Contents</h2><p>Verify HPE Alletra Storage MP is configured to provide backend drive encryption with the following command:<br />
+<br />
+Cli%controlencryption status -d<br />
+Licensed Enabled BackupSaved State  SeqNum Keystore FIPS non-SEDs FailedDisks nodeNonSED<br />
+yes      yes      yes          normal      0 ---      yes        12           0          0<br />
+<br />
+If the output does not show licensed, enabled, BackupSaved, and FIPS as &quot;yes&quot; this is a finding.<br />
+<br />
+If the state is not &quot;normal&quot;, this is a finding.<br />
+<br />
+If Keystore is not &quot;EKM&quot;, this is a finding.</p><h2>Vulnerability Number</h2><p>V-283027</p><h2>Documentable</h2><p>False</p><h2>Rule Version</h2><p>ASMP-WS-000630</p><h2>Severity Override Guidance</h2><p>Verify HPE Alletra Storage MP is configured to provide backend drive encryption with the following command:<br />
+<br />
+Cli%controlencryption status -d<br />
+Licensed Enabled BackupSaved State  SeqNum Keystore FIPS non-SEDs FailedDisks nodeNonSED<br />
+yes      yes      yes          normal      0 ---      yes        12           0          0<br />
+<br />
+If the output does not show licensed, enabled, BackupSaved, and FIPS as &quot;yes&quot; this is a finding.<br />
+<br />
+If the state is not &quot;normal&quot;, this is a finding.<br />
+<br />
+If Keystore is not &quot;EKM&quot;, this is a finding.</p><h2>Check Content Reference</h2><p>M</p><h2>Target Key</h2><p>5741</p></body></html>

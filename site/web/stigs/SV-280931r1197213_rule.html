@@ -1,0 +1,125 @@
+<!doctype html><html lang="en"><head><meta charset="utf-8"><title>STIGQter: STIG Check Details: SV-280931r1197213_rule: RHEL 10 must ensure cryptographic verification of vendor software packages.</title><link rel="icon" type="image/svg+xml" href="STIGQter.svg" /><script async src="https://www.googletagmanager.com/gtag/js?id=UA-31381839-2"></script><script src="include.js"></script><script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-4110907817782130" crossorigin="anonymous"></script></head><body><div><img src="STIGQter.svg" alt="STIGQter" style="height:1em;" /> <a href="https://www.stigqter.com/">STIGQter</a>: <a href="main.html">STIG Summary</a>: <a href="U_RHEL_10_STIG_V1R2_Manual-xccdf.html">Red Hat Enterprise Linux 10 Security Technical Implementation Guide Version: 1 Release: 2 Benchmark Date: 01 Jul 2026</a>:</div> <h1>RHEL 10 must ensure cryptographic verification of vendor software packages.</h1><h2>DISA Rule</h2><p>SV-280931r1197213_rule</p><h2>Vulnerability Number</h2><p>V-280931</p><h2>Group Title</h2><p>SRG-OS-000366-GPOS-00153</p><h2>Rule Version</h2><p>RHEL-10-001020</p><h2>Severity</h2><p>CAT II</p><h2>CCI(s)</h2><ul><li>CCI-003992 - Prevent the installation of organization-defined software and firmware components without verification that the component has been digitally signed using a certificate that is recognized and approved by the organization.</li></ul><h2>Weight</h2><p>10</p><h2>Fix Recommendation</h2><p>Configure RHEL 10 to ensure cryptographic verification of vendor software packages.<br />
+<br />
+Install Red Hat package-signing keys on the system and verify their fingerprints match vendor values.<br />
+<br />
+Insert the RHEL 10 installation disc or attach the RHEL 10 installation image to the system. Mount the disc or image to make the contents accessible inside the system.<br />
+<br />
+Assuming the mounted location is &quot;/media/cdrom&quot;, use the following command to copy the Red Hat GPG key file onto the system:<br />
+<br />
+$ sudo cp /media/cdrom/RPM-GPG-KEY-redhat-release /etc/pki/rpm-gpg/<br />
+<br />
+Import Red Hat GPG keys from the key file into the system keyring:<br />
+<br />
+$ sudo rpm --import /etc/pki/rpm-gpg/RPM-GPG-KEY-redhat-release<br />
+<br />
+Using the steps listed in the Check Text, confirm the newly imported keys show as installed on the system and verify their fingerprints match vendor values.</p><h2>Check Contents</h2><p>Verify RHEL 10 ensures cryptographic verification of vendor software packages.<br />
+<br />
+Confirm Red Hat package-signing keys are installed on the system and verify their fingerprints match vendor values.<br />
+<br />
+Note: For RHEL 10 software packages, Red Hat uses GPG keys labeled &quot;release key 2&quot;, &quot;auxiliary key 3&quot;, and &quot;release key 4&quot;. The keys are defined in key file &quot;/etc/pki/rpm-gpg/RPM-GPG-KEY-redhat-release&quot; by default.<br />
+<br />
+List Red Hat GPG keys installed on the system:<br />
+<br />
+$ sudo rpm -q --queryformat &quot;%{SUMMARY}\n&quot; gpg-pubkey | grep -i &quot;red hat&quot;<br />
+Red Hat, Inc. (release key 2) &lt;security@redhat.com&gt; public key<br />
+Red Hat, Inc. (auxiliary key 3) &lt;security@redhat.com&gt; public key<br />
+Red Hat, Inc. (release key 4) &lt;security@redhat.com&gt; public key<br />
+<br />
+If Red Hat GPG keys &quot;release key 2&quot;, &quot;auxiliary key 3&quot;, and &quot;release key 4&quot; are not installed, or if the key file &quot;/etc/pki/rpm-gpg/RPM-GPG-KEY-redhat-release&quot; is missing, this is a finding.<br />
+<br />
+List key fingerprints of installed Red Hat GPG keys:<br />
+<br />
+$ sq inspect /etc/pki/rpm-gpg/RPM-GPG-KEY-redhat-release<br />
+/etc/pki/rpm-gpg/RPM-GPG-KEY-redhat-release: OpenPGP Certificate.<br />
+<br />
+      Fingerprint: 567E347AD0044ADE55BA8A5F199E2F91FD431D51<br />
+  Public-key algo: RSA<br />
+  Public-key size: 4096 bits<br />
+    Creation time: 2009-10-22 11:59:55 UTC<br />
+        Key flags: certification, signing<br />
+<br />
+           UserID: Red Hat, Inc. (release key 2) &lt;security@redhat.com&gt;<br />
+<br />
+Note: There is another block of armored OpenPGP data.<br />
+Note: This is a non-standard extension to OpenPGP.<br />
+<br />
+/etc/pki/rpm-gpg/RPM-GPG-KEY-redhat-release: OpenPGP Certificate.<br />
+<br />
+      Fingerprint: 7E4624258C406535D56D6F135054E4A45A6340B3<br />
+  Public-key algo: RSA<br />
+  Public-key size: 4096 bits<br />
+    Creation time: 2022-03-09 21:56:46 UTC<br />
+        Key flags: certification, signing<br />
+<br />
+           UserID: Red Hat, Inc. (auxiliary key 3) &lt;security@redhat.com&gt;<br />
+<br />
+Note: There is another block of armored OpenPGP data.<br />
+Note: This is a non-standard extension to OpenPGP.<br />
+<br />
+/etc/pki/rpm-gpg/RPM-GPG-KEY-redhat-release: OpenPGP Certificate.<br />
+<br />
+      Fingerprint: FCD355B305707A62DA143AB6E422397E50FE8467A2A95343D246D6276AFEDF8F<br />
+  Public-key algo: ML-DSA-87+Ed448<br />
+    Creation time: 2025-10-08 17:40:03 UTC<br />
+        Key flags: certification, signing<br />
+<br />
+           UserID: Red Hat, Inc. (release key 4) &lt;security@redhat.com&gt;<br />
+<br />
+Compare key fingerprints of installed Red Hat GPG keys with fingerprints listed for RHEL 10 on the Red Hat &quot;Product Signing Keys&quot; webpage at https://access.redhat.com/security/team/key.<br />
+<br />
+If key fingerprints do not match, this is a finding.</p><h2>Vulnerability Number</h2><p>V-280931</p><h2>Documentable</h2><p>False</p><h2>Rule Version</h2><p>RHEL-10-001020</p><h2>Severity Override Guidance</h2><p>Verify RHEL 10 ensures cryptographic verification of vendor software packages.<br />
+<br />
+Confirm Red Hat package-signing keys are installed on the system and verify their fingerprints match vendor values.<br />
+<br />
+Note: For RHEL 10 software packages, Red Hat uses GPG keys labeled &quot;release key 2&quot;, &quot;auxiliary key 3&quot;, and &quot;release key 4&quot;. The keys are defined in key file &quot;/etc/pki/rpm-gpg/RPM-GPG-KEY-redhat-release&quot; by default.<br />
+<br />
+List Red Hat GPG keys installed on the system:<br />
+<br />
+$ sudo rpm -q --queryformat &quot;%{SUMMARY}\n&quot; gpg-pubkey | grep -i &quot;red hat&quot;<br />
+Red Hat, Inc. (release key 2) &lt;security@redhat.com&gt; public key<br />
+Red Hat, Inc. (auxiliary key 3) &lt;security@redhat.com&gt; public key<br />
+Red Hat, Inc. (release key 4) &lt;security@redhat.com&gt; public key<br />
+<br />
+If Red Hat GPG keys &quot;release key 2&quot;, &quot;auxiliary key 3&quot;, and &quot;release key 4&quot; are not installed, or if the key file &quot;/etc/pki/rpm-gpg/RPM-GPG-KEY-redhat-release&quot; is missing, this is a finding.<br />
+<br />
+List key fingerprints of installed Red Hat GPG keys:<br />
+<br />
+$ sq inspect /etc/pki/rpm-gpg/RPM-GPG-KEY-redhat-release<br />
+/etc/pki/rpm-gpg/RPM-GPG-KEY-redhat-release: OpenPGP Certificate.<br />
+<br />
+      Fingerprint: 567E347AD0044ADE55BA8A5F199E2F91FD431D51<br />
+  Public-key algo: RSA<br />
+  Public-key size: 4096 bits<br />
+    Creation time: 2009-10-22 11:59:55 UTC<br />
+        Key flags: certification, signing<br />
+<br />
+           UserID: Red Hat, Inc. (release key 2) &lt;security@redhat.com&gt;<br />
+<br />
+Note: There is another block of armored OpenPGP data.<br />
+Note: This is a non-standard extension to OpenPGP.<br />
+<br />
+/etc/pki/rpm-gpg/RPM-GPG-KEY-redhat-release: OpenPGP Certificate.<br />
+<br />
+      Fingerprint: 7E4624258C406535D56D6F135054E4A45A6340B3<br />
+  Public-key algo: RSA<br />
+  Public-key size: 4096 bits<br />
+    Creation time: 2022-03-09 21:56:46 UTC<br />
+        Key flags: certification, signing<br />
+<br />
+           UserID: Red Hat, Inc. (auxiliary key 3) &lt;security@redhat.com&gt;<br />
+<br />
+Note: There is another block of armored OpenPGP data.<br />
+Note: This is a non-standard extension to OpenPGP.<br />
+<br />
+/etc/pki/rpm-gpg/RPM-GPG-KEY-redhat-release: OpenPGP Certificate.<br />
+<br />
+      Fingerprint: FCD355B305707A62DA143AB6E422397E50FE8467A2A95343D246D6276AFEDF8F<br />
+  Public-key algo: ML-DSA-87+Ed448<br />
+    Creation time: 2025-10-08 17:40:03 UTC<br />
+        Key flags: certification, signing<br />
+<br />
+           UserID: Red Hat, Inc. (release key 4) &lt;security@redhat.com&gt;<br />
+<br />
+Compare key fingerprints of installed Red Hat GPG keys with fingerprints listed for RHEL 10 on the Red Hat &quot;Product Signing Keys&quot; webpage at https://access.redhat.com/security/team/key.<br />
+<br />
+If key fingerprints do not match, this is a finding.</p><h2>Check Content Reference</h2><p>M</p><h2>Target Key</h2><p>5733</p></body></html>

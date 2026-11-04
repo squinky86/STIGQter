@@ -1,0 +1,63 @@
+<!doctype html><html lang="en"><head><meta charset="utf-8"><title>STIGQter: STIG Check Details: SV-243504r1026204_rule: The Windows Time Service on the forest root PDC Emulator must be configured to acquire its time from an external time source.</title><link rel="icon" type="image/svg+xml" href="STIGQter.svg" /><script async src="https://www.googletagmanager.com/gtag/js?id=UA-31381839-2"></script><script src="include.js"></script><script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-4110907817782130" crossorigin="anonymous"></script></head><body><div><img src="STIGQter.svg" alt="STIGQter" style="height:1em;" /> <a href="https://www.stigqter.com/">STIGQter</a>: <a href="main.html">STIG Summary</a>: <a href="U_Active_Directory_Forest_STIG_V3R2_Manual-xccdf.html">Active Directory Forest Security Technical Implementation Guide Version: 3 Release: 2 Benchmark Date: 02 Jul 2025</a>:</div> <h1>The Windows Time Service on the forest root PDC Emulator must be configured to acquire its time from an external time source.</h1><h2>DISA Rule</h2><p>SV-243504r1026204_rule</p><h2>Vulnerability Number</h2><p>V-243504</p><h2>Group Title</h2><p>SRG-OS-000355</p><h2>Rule Version</h2><p>AD.0295</p><h2>Severity</h2><p>CAT II</p><h2>CCI(s)</h2><ul><li>CCI-004923 - Compare the internal system clocks on an organization-defined frequency with organization-defined authoritative time source.</li></ul><h2>Weight</h2><p>10</p><h2>Fix Recommendation</h2><p>Configure the forest root PDC Emulator to acquire its time from an external time source.<br />
+<br />
+The Windows Time Service can be configured by setting the policy value for Computer Configuration &gt;&gt; Administrative Templates &gt;&gt; System &gt;&gt; Windows Time Service &gt;&gt; Time Providers &gt;&gt; &quot;Configure Windows NTP Client&quot; to &quot;Enabled&quot;, and configuring the &quot;NtpServer&quot; field to point to an authorized time server.</p><h2>Check Contents</h2><p>This applies to the domain controller with the PDC Emulator role in forest root domain; it is NA for other domain controllers in the forest.<br />
+<br />
+Determine the domain controller with the PDC Emulator role in the forest root domain:<br />
+<br />
+Windows 2016 or later: <br />
+<br />
+Open &quot;Windows PowerShell&quot;.<br />
+<br />
+Enter &quot;Get-ADDomain -Identity [Forest Root Domain] | FT PDCEmulator&quot;, where [Forest Root Domain] is the forest root domain name, such as &quot;example.mil&quot;. (This can also be entered without the -Identity parameter if running within the forest root domain.)<br />
+<br />
+Windows 2016:<br />
+<br />
+Open &quot;Active Directory Users and Computers&quot; from a domain controller in or connected to the forest root (available from various menus or run &quot;dsa.msc&quot;).<br />
+<br />
+Select &quot;Action&quot; in the menu, then All Tasks &gt;&gt; Operations Masters.<br />
+<br />
+Select the &quot;PDC&quot; tab.<br />
+<br />
+On the system with the PDC Emulator role, open &quot;Windows PowerShell&quot; or an elevated &quot;Command Prompt&quot; (run as administrator).<br />
+<br />
+Enter &quot;W32tm /query /configuration&quot;.<br />
+<br />
+Under the &quot;NtpClient&quot; section:<br />
+<br />
+If the value for &quot;Type&quot; is not &quot;NTP&quot;, this is a finding.<br />
+<br />
+If the value for &quot;NtpServer&quot; is not an external DOD time source, this is a finding.<br />
+<br />
+If an alternate time synchronization tool is used and is not enabled or not configured to a synchronize with an external DOD time source, this is a finding.<br />
+<br />
+The US Naval Observatory operates stratum 1 time servers, identified at https://www.cnmoc.usff.navy.mil/Our-Commands/United-States-Naval-Observatory/Precise-Time-Department/Network-Time-Protocol-NTP/. Time synchronization will occur through a hierarchy of time servers down to the local level. Clients and lower-level servers will synchronize with an authorized time server in the hierarchy.</p><h2>Vulnerability Number</h2><p>V-243504</p><h2>Documentable</h2><p>False</p><h2>Rule Version</h2><p>AD.0295</p><h2>Severity Override Guidance</h2><p>This applies to the domain controller with the PDC Emulator role in forest root domain; it is NA for other domain controllers in the forest.<br />
+<br />
+Determine the domain controller with the PDC Emulator role in the forest root domain:<br />
+<br />
+Windows 2016 or later: <br />
+<br />
+Open &quot;Windows PowerShell&quot;.<br />
+<br />
+Enter &quot;Get-ADDomain -Identity [Forest Root Domain] | FT PDCEmulator&quot;, where [Forest Root Domain] is the forest root domain name, such as &quot;example.mil&quot;. (This can also be entered without the -Identity parameter if running within the forest root domain.)<br />
+<br />
+Windows 2016:<br />
+<br />
+Open &quot;Active Directory Users and Computers&quot; from a domain controller in or connected to the forest root (available from various menus or run &quot;dsa.msc&quot;).<br />
+<br />
+Select &quot;Action&quot; in the menu, then All Tasks &gt;&gt; Operations Masters.<br />
+<br />
+Select the &quot;PDC&quot; tab.<br />
+<br />
+On the system with the PDC Emulator role, open &quot;Windows PowerShell&quot; or an elevated &quot;Command Prompt&quot; (run as administrator).<br />
+<br />
+Enter &quot;W32tm /query /configuration&quot;.<br />
+<br />
+Under the &quot;NtpClient&quot; section:<br />
+<br />
+If the value for &quot;Type&quot; is not &quot;NTP&quot;, this is a finding.<br />
+<br />
+If the value for &quot;NtpServer&quot; is not an external DOD time source, this is a finding.<br />
+<br />
+If an alternate time synchronization tool is used and is not enabled or not configured to a synchronize with an external DOD time source, this is a finding.<br />
+<br />
+The US Naval Observatory operates stratum 1 time servers, identified at https://www.cnmoc.usff.navy.mil/Our-Commands/United-States-Naval-Observatory/Precise-Time-Department/Network-Time-Protocol-NTP/. Time synchronization will occur through a hierarchy of time servers down to the local level. Clients and lower-level servers will synchronize with an authorized time server in the hierarchy.</p><h2>Check Content Reference</h2><p>M</p><h2>Target Key</h2><p>5407</p></body></html>

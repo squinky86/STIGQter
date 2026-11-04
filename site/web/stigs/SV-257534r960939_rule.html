@@ -1,0 +1,30 @@
+<!doctype html><html lang="en"><head><meta charset="utf-8"><title>STIGQter: STIG Check Details: SV-257534r960939_rule: OpenShift must prevent unauthorized changes to logon UIDs.</title><link rel="icon" type="image/svg+xml" href="STIGQter.svg" /><script async src="https://www.googletagmanager.com/gtag/js?id=UA-31381839-2"></script><script src="include.js"></script><script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-4110907817782130" crossorigin="anonymous"></script></head><body><div><img src="STIGQter.svg" alt="STIGQter" style="height:1em;" /> <a href="https://www.stigqter.com/">STIGQter</a>: <a href="main.html">STIG Summary</a>: <a href="U_RH_OpenShift_Container_Platform_4-x_STIG_V2R6_Manual-xccdf.html">Red Hat OpenShift Container Platform 4.x Security Technical Implementation Guide Version: 2 Release: 6 Benchmark Date: 01 Jul 2026</a>:</div> <h1>OpenShift must prevent unauthorized changes to logon UIDs.</h1><h2>DISA Rule</h2><p>SV-257534r960939_rule</p><h2>Vulnerability Number</h2><p>V-257534</p><h2>Group Title</h2><p>SRG-APP-000121-CTR-000255</p><h2>Rule Version</h2><p>CNTR-OS-000320</p><h2>Severity</h2><p>CAT II</p><h2>CCI(s)</h2><ul><li>CCI-001493 - Protect audit tools from unauthorized access.</li></ul><h2>Weight</h2><p>10</p><h2>Fix Recommendation</h2><p>Apply the machine config to prevent changes to logon UIDs by executing the following:<br />
+<br />
+for mcpool in $(oc get mcp -oname | sed &quot;s:.*/::&quot; ); do<br />
+ echo &quot;apiVersion: machineconfiguration.openshift.io/v1<br />
+kind: MachineConfig<br />
+metadata:<br />
+  name: 11-loginuid-rules-$mcpool<br />
+  labels:<br />
+    machineconfiguration.openshift.io/role: $mcpool<br />
+spec:<br />
+  config:<br />
+    ignition:<br />
+      version: 3.1.0<br />
+    storage:<br />
+      files:<br />
+      - contents:<br />
+          source: data:,%23%23%20Make%20the%20loginuid%20immutable.%20This%20prevents%20tampering%20with%20the%20auid.%0A--loginuid-immutable%0A<br />
+        mode: 0644<br />
+        path: /etc/audit/rules.d/11-loginuid.rules<br />
+        overwrite: true<br />
+&quot; | oc apply -f -<br />
+done</p><h2>Check Contents</h2><p>Verify the audit system prevents unauthorized changes to logon UIDs by executing the following:<br />
+<br />
+for node in $(oc get node -oname); do oc debug $node -- chroot /host /bin/bash -c 'echo -n &quot;$HOSTNAME &quot;; grep -i immutable /etc/audit/audit.rules || echo &quot;not found&quot;' 2&gt;/dev/null; done<br />
+<br />
+If the login UIDs are not set to be immutable by adding the &quot;--loginuid-immutable&quot; option to the &quot;/etc/audit/audit.rules&quot;, this is a finding.</p><h2>Vulnerability Number</h2><p>V-257534</p><h2>Documentable</h2><p>False</p><h2>Rule Version</h2><p>CNTR-OS-000320</p><h2>Severity Override Guidance</h2><p>Verify the audit system prevents unauthorized changes to logon UIDs by executing the following:<br />
+<br />
+for node in $(oc get node -oname); do oc debug $node -- chroot /host /bin/bash -c 'echo -n &quot;$HOSTNAME &quot;; grep -i immutable /etc/audit/audit.rules || echo &quot;not found&quot;' 2&gt;/dev/null; done<br />
+<br />
+If the login UIDs are not set to be immutable by adding the &quot;--loginuid-immutable&quot; option to the &quot;/etc/audit/audit.rules&quot;, this is a finding.</p><h2>Check Content Reference</h2><p>M</p><h2>Target Key</h2><p>5547</p></body></html>

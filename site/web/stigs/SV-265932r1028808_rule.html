@@ -1,0 +1,44 @@
+<!doctype html><html lang="en"><head><meta charset="utf-8"><title>STIGQter: STIG Check Details: SV-265932r1028808_rule: MongoDB must reveal detailed error messages only to the information system security officer (ISSO), information system security manager (ISSM), system administrator (SA), and database administrator (DBA).</title><link rel="icon" type="image/svg+xml" href="STIGQter.svg" /><script async src="https://www.googletagmanager.com/gtag/js?id=UA-31381839-2"></script><script src="include.js"></script><script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-4110907817782130" crossorigin="anonymous"></script></head><body><div><img src="STIGQter.svg" alt="STIGQter" style="height:1em;" /> <a href="https://www.stigqter.com/">STIGQter</a>: <a href="main.html">STIG Summary</a>: <a href="U_MongoDB_Enterprise_Advanced_7-x_STIG_V1R2_Manual-xccdf.html">MongoDB Enterprise Advanced 7.x Security Technical Implementation Guide Version: 1 Release: 2 Benchmark Date: 01 Jul 2026</a>:</div> <h1>MongoDB must reveal detailed error messages only to the information system security officer (ISSO), information system security manager (ISSM), system administrator (SA), and database administrator (DBA).</h1><h2>DISA Rule</h2><p>SV-265932r1028808_rule</p><h2>Vulnerability Number</h2><p>V-265932</p><h2>Group Title</h2><p>SRG-APP-000267-DB-000163</p><h2>Rule Version</h2><p>MD7X-00-006100</p><h2>Severity</h2><p>CAT II</p><h2>CCI(s)</h2><ul><li>CCI-001314 - Reveal error messages only to organization-defined personnel or roles.</li></ul><h2>Weight</h2><p>10</p><h2>Fix Recommendation</h2><p>Edit the MongoDB configuration file (default location: /etc/mongod.conf) and add the following parameter &quot;redactClientLogData&quot; in the security section of that file. Example:<br />
+<br />
+security:<br />
+  redactClientLogData: true<br />
+<br />
+Restart the MongoDB service from the OS.<br />
+<br />
+$ sudo systemctl restart mongod<br />
+<br />
+Identify and remove all unnecessary roles and privileges from application users.</p><h2>Check Contents</h2><p>A mongod or mongos running with &quot;security.redactClientLogData:true&quot; redacts any message accompanying a given log event before logging.<br />
+<br />
+This prevents the mongod or mongos from writing potentially sensitive data stored on the database to the diagnostic log. Metadata such as error or operation codes, line numbers, and source file names are still visible in the logs. <br />
+<br />
+To prevent too much information being displayed in the MongoDB logfiles, run the following command:<br />
+&gt; db.getSiblingDB(&quot;admin&quot;).runCommand({getCmdLineOpts: 1}).parsed.security.redactClientLogData<br />
+<br />
+If the command does not return true, this is a finding.<br />
+<br />
+The MongoDB command &quot;getLog&quot; will return data from the log file, which requires the &quot;getLog&quot; action type on the cluster resource.<br />
+<br />
+Ensure that application users are not authorized to execute this command.<br />
+<br />
+To validate this run the following command on the name of the application user to view actions its permitted to perform on the cluster resource:<br />
+<br />
+&gt; db.runCommand({usersInfo: &quot;&lt;USER NAME&gt;&quot;, showPrivileges: 1}).users[0].inheritedPrivileges.filter(privilege =&gt; privilege.resource.cluster)<br />
+<br />
+If &quot;getLog&quot; appears in the list of actions, this is a finding.</p><h2>Vulnerability Number</h2><p>V-265932</p><h2>Documentable</h2><p>False</p><h2>Rule Version</h2><p>MD7X-00-006100</p><h2>Severity Override Guidance</h2><p>A mongod or mongos running with &quot;security.redactClientLogData:true&quot; redacts any message accompanying a given log event before logging.<br />
+<br />
+This prevents the mongod or mongos from writing potentially sensitive data stored on the database to the diagnostic log. Metadata such as error or operation codes, line numbers, and source file names are still visible in the logs. <br />
+<br />
+To prevent too much information being displayed in the MongoDB logfiles, run the following command:<br />
+&gt; db.getSiblingDB(&quot;admin&quot;).runCommand({getCmdLineOpts: 1}).parsed.security.redactClientLogData<br />
+<br />
+If the command does not return true, this is a finding.<br />
+<br />
+The MongoDB command &quot;getLog&quot; will return data from the log file, which requires the &quot;getLog&quot; action type on the cluster resource.<br />
+<br />
+Ensure that application users are not authorized to execute this command.<br />
+<br />
+To validate this run the following command on the name of the application user to view actions its permitted to perform on the cluster resource:<br />
+<br />
+&gt; db.runCommand({usersInfo: &quot;&lt;USER NAME&gt;&quot;, showPrivileges: 1}).users[0].inheritedPrivileges.filter(privilege =&gt; privilege.resource.cluster)<br />
+<br />
+If &quot;getLog&quot; appears in the list of actions, this is a finding.</p><h2>Check Content Reference</h2><p>M</p><h2>Target Key</h2><p>5637</p></body></html>

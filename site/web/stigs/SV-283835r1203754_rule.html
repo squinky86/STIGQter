@@ -1,0 +1,42 @@
+<!doctype html><html lang="en"><head><meta charset="utf-8"><title>STIGQter: STIG Check Details: SV-283835r1203754_rule: The Nokia Multicast Source Discovery Protocol (MSDP) router must be configured to filter source-active multicast advertisements to external MSDP peers to avoid global visibility of local-only multicast sources and groups.</title><link rel="icon" type="image/svg+xml" href="STIGQter.svg" /><script async src="https://www.googletagmanager.com/gtag/js?id=UA-31381839-2"></script><script src="include.js"></script><script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-4110907817782130" crossorigin="anonymous"></script></head><body><div><img src="STIGQter.svg" alt="STIGQter" style="height:1em;" /> <a href="https://www.stigqter.com/">STIGQter</a>: <a href="main.html">STIG Summary</a>: <a href="U_Nokia_SR_OS_25-x_RTR_V1R1_STIG_Manual-xccdf.html">Nokia Service Router OS 25.x Router Security Technical Implementation Guide Version: 1 Release: 1 Benchmark Date: 28 Apr 2026</a>:</div> <h1>The Nokia Multicast Source Discovery Protocol (MSDP) router must be configured to filter source-active multicast advertisements to external MSDP peers to avoid global visibility of local-only multicast sources and groups.</h1><h2>DISA Rule</h2><p>SV-283835r1203754_rule</p><h2>Vulnerability Number</h2><p>V-283835</p><h2>Group Title</h2><p>SRG-NET-000018-RTR-000008</p><h2>Rule Version</h2><p>NOKI-RT-000170</p><h2>Severity</h2><p>CAT III</p><h2>CCI(s)</h2><ul><li>CCI-001368 - Enforce approved authorizations for controlling the flow of information within the system based on organization-defined information flow control policies.</li></ul><h2>Weight</h2><p>10</p><h2>Fix Recommendation</h2><p>Ensure an export policy is implemented on all MSDP routers to avoid global visibility of local multicast (S, G) states. Create an export policy.<br />
+<br />
+Configure prefix-list, as shown in the example below: <br />
+<br />
+- configure router policy-options<br />
+- config&gt;router&gt;policy-options# begin<br />
+- config&gt;router&gt;policy-options# prefix-list &quot;Multicast-Group-Source&quot;<br />
+- config&gt;router&gt;policy-options&gt;prefix-list# prefix 233.0.0.0/8 exact<br />
+- config&gt;router&gt;policy-options&gt;prefix-list# prefix 172.200.200.2/32 exact<br />
+- config&gt;router&gt;policy-options&gt;prefix-list# exit<br />
+<br />
+Configure policy, as shown in the example below:<br />
+<br />
+- config&gt;router&gt;policy-options# policy-statement &quot;MSDP-EXPORT-SA&quot;<br />
+- config&gt;router&gt;policy-options&gt;policy-statement# entry 10<br />
+- config&gt;router&gt;policy-options&gt;policy-statement&gt;entry# from prefix-list &quot;Multicast-Group-Source&quot;<br />
+- config&gt;router&gt;policy-options&gt;policy-statement&gt;entry# action drop<br />
+- config&gt;router&gt;policy-options&gt;policy-statement&gt;entry&gt;action# exit<br />
+- config&gt;router&gt;policy-options&gt;policy-statement&gt;entry# exit<br />
+- config&gt;router&gt;policy-options&gt;policy-statement# default-action accept<br />
+- config&gt;router&gt;policy-options&gt;policy-statement&gt;default-action# exit <br />
+- config&gt;router&gt;policy-options&gt;policy-statement# exit<br />
+- config&gt;router&gt;policy-options# commit<br />
+- config&gt;router&gt;policy-options# exit all<br />
+<br />
+Apply the export policy to the MSDP peer:<br />
+<br />
+- configure router msdp peer 1.1.1.1 export &quot;MSDP-EXPORT-SA&quot;</p><h2>Check Contents</h2><p>Review the Nokia router configuration to determine if there is export policy to block local source-active multicast advertisements.<br />
+<br />
+Verify the export policy, as shown in the example below: <br />
+<br />
+- show router msdp peer 1.1.1.1 detail | match &quot;Export Policy&quot;<br />
+Export Policy      : MSDP-EXPORT-SA<br />
+<br />
+If the router is not configured with an export policy to filter local source-active multicast advertisements, this is a finding.</p><h2>Vulnerability Number</h2><p>V-283835</p><h2>Documentable</h2><p>False</p><h2>Rule Version</h2><p>NOKI-RT-000170</p><h2>Severity Override Guidance</h2><p>Review the Nokia router configuration to determine if there is export policy to block local source-active multicast advertisements.<br />
+<br />
+Verify the export policy, as shown in the example below: <br />
+<br />
+- show router msdp peer 1.1.1.1 detail | match &quot;Export Policy&quot;<br />
+Export Policy      : MSDP-EXPORT-SA<br />
+<br />
+If the router is not configured with an export policy to filter local source-active multicast advertisements, this is a finding.</p><h2>Check Content Reference</h2><p>M</p><h2>Target Key</h2><p>5746</p></body></html>

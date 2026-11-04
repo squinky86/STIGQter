@@ -1,0 +1,31 @@
+<!doctype html><html lang="en"><head><meta charset="utf-8"><title>STIGQter: STIG Check Details: SV-279544r1192057_rule: Nutanix OS must enable kernel parameters to enforce discretionary access control on symlinks.</title><link rel="icon" type="image/svg+xml" href="STIGQter.svg" /><script async src="https://www.googletagmanager.com/gtag/js?id=UA-31381839-2"></script><script src="include.js"></script><script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-4110907817782130" crossorigin="anonymous"></script></head><body><div><img src="STIGQter.svg" alt="STIGQter" style="height:1em;" /> <a href="https://www.stigqter.com/">STIGQter</a>: <a href="main.html">STIG Summary</a>: <a href="U_NTX_Acropolis_OS_STIG_V1R1_Manual-xccdf.html">Nutanix Acropolis GPOS Security Technical Implementation Guide Version: 1 Release: 1 Benchmark Date: 26 Jan 2026</a>:</div> <h1>Nutanix OS must enable kernel parameters to enforce discretionary access control on symlinks.</h1><h2>DISA Rule</h2><p>SV-279544r1192057_rule</p><h2>Vulnerability Number</h2><p>V-279544</p><h2>Group Title</h2><p>SRG-OS-000312-GPOS-00123</p><h2>Rule Version</h2><p>NXAC-OS-000027</p><h2>Severity</h2><p>CAT II</p><h2>CCI(s)</h2><ul><li>CCI-002165 - Enforce organization-defined discretionary access control policies over defined subjects and objects.</li><li>CCI-002235 - Prevent non-privileged users from executing privileged functions.</li></ul><h2>Weight</h2><p>10</p><h2>Fix Recommendation</h2><p>1. Nutanix AOS, Prism Central, and Files OS VMs are designed and engineered to have DAC-enabled symlinks by default. If the DAC symlinks setting is missing or not active and running, then some corruption has occurred and the OS must be rebuilt.<br />
+<br />
+2. Configure Nutanix AHV to allow operating system admins to pass information to other operating system admins or users adding or modifying the following line in the system configuration file /etc/syscrl.d/:<br />
+<br />
+fs.protected_symlinks = 1<br />
+<br />
+3. After adding the changes, load settings from all system configuration files using the following command.<br />
+<br />
+$ sudo sysctl --system</p><h2>Check Contents</h2><p>1. Verify Nutanix AOS enables DAC on symlinks using the following command.<br />
+<br />
+$ sudo sysctl fs.protected_symlinks<br />
+fs.protected_symlinks = 1 <br />
+<br />
+2. Verify that the configuration files are present to enable this kernel parameter using the following command.<br />
+<br />
+$ sudo grep -r fs.protected_symlinks /run/sysctl.d/*.conf /usr/local/lib/sysctl.d/*.conf /usr/lib/sysctl.d/*.conf /lib/sysctl.d/*.conf /etc.sysctl.conf<br />
+/usr/lib/sysctl.d/50-default.conf:fs.protected_symlinks = 1<br />
+/lib/sysctl.d/50-default.conf:fs.protected_symlinks = 1<br />
+<br />
+If &quot;fs.protected_symlinks&quot; is not set to &quot;1&quot;, is missing or commented out, this is a finding.</p><h2>Vulnerability Number</h2><p>V-279544</p><h2>Documentable</h2><p>False</p><h2>Rule Version</h2><p>NXAC-OS-000027</p><h2>Severity Override Guidance</h2><p>1. Verify Nutanix AOS enables DAC on symlinks using the following command.<br />
+<br />
+$ sudo sysctl fs.protected_symlinks<br />
+fs.protected_symlinks = 1 <br />
+<br />
+2. Verify that the configuration files are present to enable this kernel parameter using the following command.<br />
+<br />
+$ sudo grep -r fs.protected_symlinks /run/sysctl.d/*.conf /usr/local/lib/sysctl.d/*.conf /usr/lib/sysctl.d/*.conf /lib/sysctl.d/*.conf /etc.sysctl.conf<br />
+/usr/lib/sysctl.d/50-default.conf:fs.protected_symlinks = 1<br />
+/lib/sysctl.d/50-default.conf:fs.protected_symlinks = 1<br />
+<br />
+If &quot;fs.protected_symlinks&quot; is not set to &quot;1&quot;, is missing or commented out, this is a finding.</p><h2>Check Content Reference</h2><p>M</p><h2>Target Key</h2><p>5730</p></body></html>

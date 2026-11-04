@@ -1,0 +1,48 @@
+<!doctype html><html lang="en"><head><meta charset="utf-8"><title>STIGQter: STIG Check Details: SV-273995r1119973_rule: Amazon Linux 2023 must ensure cryptographic verification of vendor software packages.</title><link rel="icon" type="image/svg+xml" href="STIGQter.svg" /><script async src="https://www.googletagmanager.com/gtag/js?id=UA-31381839-2"></script><script src="include.js"></script><script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-4110907817782130" crossorigin="anonymous"></script></head><body><div><img src="STIGQter.svg" alt="STIGQter" style="height:1em;" /> <a href="https://www.stigqter.com/">STIGQter</a>: <a href="main.html">STIG Summary</a>: <a href="U_Amazon_Linux_2023_STIG_V1R4_Manual-xccdf.html">Amazon Linux 2023 Security Technical Implementation Guide Version: 1 Release: 4 Benchmark Date: 01 Jul 2026</a>:</div> <h1>Amazon Linux 2023 must ensure cryptographic verification of vendor software packages.</h1><h2>DISA Rule</h2><p>SV-273995r1119973_rule</p><h2>Vulnerability Number</h2><p>V-273995</p><h2>Group Title</h2><p>SRG-OS-000366-GPOS-00153</p><h2>Rule Version</h2><p>AZLX-23-000110</p><h2>Severity</h2><p>CAT II</p><h2>CCI(s)</h2><ul><li>CCI-003992 - Prevent the installation of organization-defined software and firmware components without verification that the component has been digitally signed using a certificate that is recognized and approved by the organization.</li></ul><h2>Weight</h2><p>10</p><h2>Fix Recommendation</h2><p>Configure Amazon Linux 2023 to have the public key for verifying RPM packages to be installed with the &quot;system-release&quot; package. <br />
+<br />
+Install the system-release installation with the following command:<br />
+$ sudo dnf install -y system-release<br />
+<br />
+Ensure cryptographic verification of software packages is enabled by editing /etc/dnf/dnf.conf and under '[main]' in the configuration file add: <br />
+<br />
+gpgcheck=1</p><h2>Check Contents</h2><p>Verify Amazon Linux 2023 package-signing keys are installed on the system and verify their fingerprints match vendor values.<br />
+<br />
+Note: For Amazon Linux 2023 software packages, AWS uses GPG keys defined in key file &quot;/etc/pki/rpm-gpg/RPM-GPG-KEY-amazon-linux-2023&quot; by default.<br />
+<br />
+List Amazon Linux GPG keys installed on the system:<br />
+<br />
+$ sudo rpm -q gpg-pubkey --qf &quot;%{NAME}-%{VERSION}-%{RELEASE} %{SUMMARY}\n&quot;<br />
+gpg-pubkey-d832c631-6515c85e Amazon Linux &lt;amazon-linux@amazon.com&gt; public key<br />
+<br />
+If there is no Amazon Linux GPG key installed, this is a finding.<br />
+<br />
+Extract the fingerprint from the key with this command:<br />
+<br />
+$ sudo gpg -q --keyid-format short --with-fingerprint /etc/pki/rpm-gpg/RPM-GPG-KEY-amazon-linux-2023<br />
+pub  rsa4096/D832C631 2022-12-08 [SC]<br />
+     Key fingerprint = B21C 50FA 44A9 9720 EAA7 2F7F E951 904A D832 C631<br />
+uid           Amazon Linux &lt;amazon-linux@amazon.com&gt;<br />
+<br />
+Compare the Key fingerprint with the key fingerprint from Amazon Documentation and instructions at https://docs.aws.amazon.com/AWSEC2/latest/UserGuide/verify-keys.html<br />
+<br />
+If key fingerprints do not match, or the key file is missing, this is a finding.</p><h2>Vulnerability Number</h2><p>V-273995</p><h2>Documentable</h2><p>False</p><h2>Rule Version</h2><p>AZLX-23-000110</p><h2>Severity Override Guidance</h2><p>Verify Amazon Linux 2023 package-signing keys are installed on the system and verify their fingerprints match vendor values.<br />
+<br />
+Note: For Amazon Linux 2023 software packages, AWS uses GPG keys defined in key file &quot;/etc/pki/rpm-gpg/RPM-GPG-KEY-amazon-linux-2023&quot; by default.<br />
+<br />
+List Amazon Linux GPG keys installed on the system:<br />
+<br />
+$ sudo rpm -q gpg-pubkey --qf &quot;%{NAME}-%{VERSION}-%{RELEASE} %{SUMMARY}\n&quot;<br />
+gpg-pubkey-d832c631-6515c85e Amazon Linux &lt;amazon-linux@amazon.com&gt; public key<br />
+<br />
+If there is no Amazon Linux GPG key installed, this is a finding.<br />
+<br />
+Extract the fingerprint from the key with this command:<br />
+<br />
+$ sudo gpg -q --keyid-format short --with-fingerprint /etc/pki/rpm-gpg/RPM-GPG-KEY-amazon-linux-2023<br />
+pub  rsa4096/D832C631 2022-12-08 [SC]<br />
+     Key fingerprint = B21C 50FA 44A9 9720 EAA7 2F7F E951 904A D832 C631<br />
+uid           Amazon Linux &lt;amazon-linux@amazon.com&gt;<br />
+<br />
+Compare the Key fingerprint with the key fingerprint from Amazon Documentation and instructions at https://docs.aws.amazon.com/AWSEC2/latest/UserGuide/verify-keys.html<br />
+<br />
+If key fingerprints do not match, or the key file is missing, this is a finding.</p><h2>Check Content Reference</h2><p>M</p><h2>Target Key</h2><p>5700</p></body></html>

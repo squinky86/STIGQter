@@ -1,0 +1,52 @@
+<!doctype html><html lang="en"><head><meta charset="utf-8"><title>STIGQter: STIG Check Details: SV-213678r960888_rule: DB2 must initiate session auditing upon startup.</title><link rel="icon" type="image/svg+xml" href="STIGQter.svg" /><script async src="https://www.googletagmanager.com/gtag/js?id=UA-31381839-2"></script><script src="include.js"></script><script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-4110907817782130" crossorigin="anonymous"></script></head><body><div><img src="STIGQter.svg" alt="STIGQter" style="height:1em;" /> <a href="https://www.stigqter.com/">STIGQter</a>: <a href="main.html">STIG Summary</a>: <a href="U_IBM_DB2_V10-5_LUW_STIG_V2R2_Manual-xccdf.html">IBM DB2 V10.5 LUW Security Technical Implementation Guide Version: 2 Release: 2 Benchmark Date: 01 Jul 2026</a>:</div> <h1>DB2 must initiate session auditing upon startup.</h1><h2>DISA Rule</h2><p>SV-213678r960888_rule</p><h2>Vulnerability Number</h2><p>V-213678</p><h2>Group Title</h2><p>SRG-APP-000092-DB-000208</p><h2>Rule Version</h2><p>DB2X-00-001000</p><h2>Severity</h2><p>CAT II</p><h2>CCI(s)</h2><ul><li>CCI-001464 - Initiates session audits automatically at system start-up.</li></ul><h2>Weight</h2><p>10</p><h2>Fix Recommendation</h2><p>Define an audit policy using the CREATE AUDIT POLICY SQL statement: <br />
+DB2&gt; CREATE AUDIT POLICY &lt;user audit policy name&gt;<br />
+CATEGORIES AUDIT STATUS BOTH, CHECKING STATUS BOTH, CONTEXT STATUS BOTH, EXECUTE WITH DATA STATUS BOTH, OBJMAINT STATUS BOTH, SECMAINT STATUS BOTH, SYSADMIN STATUS BOTH, VALIDATE STATUS BOTH ERROR TYPE AUDIT<br />
+<br />
+To modify an existing audit policy, replace &quot;CREATE&quot; with &quot;ALTER&quot; in the preceding statement. Only the categories explicitly named in the statement will be affected.  In this case, the changes take effect immediately.<br />
+<br />
+If CREATE was used above, apply the correct audit policy to either the database as a whole or to the specific user using one of these two statements:<br />
+DB2&gt; AUDIT DATABASE USING POLICY &lt;user audit policy name&gt;<br />
+  Or <br />
+DB2&gt; AUDIT USER &lt;user name&gt; USING POLICY &lt;user audit policy name&gt;<br />
+<br />
+Note: This requirement is to audit suspicious user activity. For a targeted session activity use the AUDIT USER command after the policy has been created. For a general database level use the AUDIT DATABASE command.</p><h2>Check Contents</h2><p>Determine whether there are any individuals for whom the organization requires session auditing.  If there are none, this is not a finding.<br />
+<br />
+Type in the following command to check whether or not the user under investigation  is being audited:<br />
+DB2&gt; SELECT AUDITPOLICYNAME, OBJECTNAME, OBJECTTYPE <br />
+           FROM SYSCAT.AUDITUSE <br />
+           WHERE OBJECTTYPE IN ('i',' ')<br />
+<br />
+If no rows are returned, this is a finding. <br />
+<br />
+If a row with the OBJECTTYPE of ' ' (Database; value is a blank) exists in the output, it is a database level policy. <br />
+<br />
+If a row with the OBJECTTYPE of 'i' exists in the output, it is a user level policy. <br />
+<br />
+For each audit policy returned in the statement above, run the following SQL statement to confirm that all categories are part of that policy:<br />
+DB2&gt; SELECT * FROM SYSCAT.AUDITPOLICIES<br />
+<br />
+If there is an audit policy defined at the database level with the values for the all the audit category columns set to 'B' (Both) and the value in the ERRORTYPE column set to 'A' (Audit), EXECUTEWITHDATA to 'Y' this is not a finding.<br />
+<br />
+If the database policy does not exist or does not cover all the categories with ERRORTYPE column set to 'A' (Audit), EXECUTEWITHDATA to 'Y' then check if the appropriate policies are defined for all the required users. <br />
+<br />
+If the audit policy is defined on the users under investigation and does not have the values for all the audit category columns set to 'B' (Both) and the value in the ERRORTYPE column set to 'A' (Audit), EXECUTEWITHDATA to 'Y', this is a finding.</p><h2>Vulnerability Number</h2><p>V-213678</p><h2>Documentable</h2><p>False</p><h2>Rule Version</h2><p>DB2X-00-001000</p><h2>Severity Override Guidance</h2><p>Determine whether there are any individuals for whom the organization requires session auditing.  If there are none, this is not a finding.<br />
+<br />
+Type in the following command to check whether or not the user under investigation  is being audited:<br />
+DB2&gt; SELECT AUDITPOLICYNAME, OBJECTNAME, OBJECTTYPE <br />
+           FROM SYSCAT.AUDITUSE <br />
+           WHERE OBJECTTYPE IN ('i',' ')<br />
+<br />
+If no rows are returned, this is a finding. <br />
+<br />
+If a row with the OBJECTTYPE of ' ' (Database; value is a blank) exists in the output, it is a database level policy. <br />
+<br />
+If a row with the OBJECTTYPE of 'i' exists in the output, it is a user level policy. <br />
+<br />
+For each audit policy returned in the statement above, run the following SQL statement to confirm that all categories are part of that policy:<br />
+DB2&gt; SELECT * FROM SYSCAT.AUDITPOLICIES<br />
+<br />
+If there is an audit policy defined at the database level with the values for the all the audit category columns set to 'B' (Both) and the value in the ERRORTYPE column set to 'A' (Audit), EXECUTEWITHDATA to 'Y' this is not a finding.<br />
+<br />
+If the database policy does not exist or does not cover all the categories with ERRORTYPE column set to 'A' (Audit), EXECUTEWITHDATA to 'Y' then check if the appropriate policies are defined for all the required users. <br />
+<br />
+If the audit policy is defined on the users under investigation and does not have the values for all the audit category columns set to 'B' (Both) and the value in the ERRORTYPE column set to 'A' (Audit), EXECUTEWITHDATA to 'Y', this is a finding.</p><h2>Check Content Reference</h2><p>M</p><h2>Target Key</h2><p>3989</p></body></html>

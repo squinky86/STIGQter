@@ -1,0 +1,44 @@
+<!doctype html><html lang="en"><head><meta charset="utf-8"><title>STIGQter: STIG Check Details: SV-253941r1137887_rule: The Juniper EX switch must be configured to use an authentication server for the purpose of authenticating users prior to granting administrative access.</title><link rel="icon" type="image/svg+xml" href="STIGQter.svg" /><script async src="https://www.googletagmanager.com/gtag/js?id=UA-31381839-2"></script><script src="include.js"></script><script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-4110907817782130" crossorigin="anonymous"></script></head><body><div><img src="STIGQter.svg" alt="STIGQter" style="height:1em;" /> <a href="https://www.stigqter.com/">STIGQter</a>: <a href="main.html">STIG Summary</a>: <a href="U_Juniper_EX_Switches_NDM_STIG_V2R5_Manual-xccdf.html">Juniper EX Series Switches Network Device Management Security Technical Implementation Guide Version: 2 Release: 5 Benchmark Date: 01 Jul 2026</a>:</div> <h1>The Juniper EX switch must be configured to use an authentication server for the purpose of authenticating users prior to granting administrative access.</h1><h2>DISA Rule</h2><p>SV-253941r1137887_rule</p><h2>Vulnerability Number</h2><p>V-253941</p><h2>Group Title</h2><p>SRG-APP-000516-NDM-000336</p><h2>Rule Version</h2><p>JUEX-NM-000640</p><h2>Severity</h2><p>CAT I</p><h2>CCI(s)</h2><ul><li>CCI-000366 - Implement the security configuration settings.</li><li>CCI-000370 - Manage configuration settings for organization-defined system components using organization-defined automated mechanisms.</li><li>CCI-003627 - Disable accounts when the accounts have expired.</li><li>CCI-003628 - Disable accounts when the accounts are no longer associated to a user.</li><li>CCI-003831 - Alert organization-defined personnel or roles upon detection of unauthorized access, modification, or deletion of audit information.</li><li>CCI-004046 - Implement multi-factor authentication for local; network; and/or remote access to privileged accounts; and/or non-privileged accounts such that one of the factors is provided by a device separate from the system gaining access.</li><li>CCI-004047 - Implement multi-factor authentication for local; network; and/or remote access to privileged accounts; and/or non-privileged accounts such that the device meets organization-defined strength of mechanism requirements.</li><li>CCI-004058 - For password-based authentication, maintain a list of commonly used, expected, or compromised passwords on an organization-defined frequency.</li><li>CCI-004059 - For password-based authentication, update the list of passwords on an organization-defined frequency.</li><li>CCI-004060 - For password-based authentication, update the list of passwords when organizational passwords are suspected to have been compromised directly or indirectly.</li><li>CCI-004061 - For password-based authentication, verify when users create or update passwords, that the passwords are not found on the list of commonly-used, expected, or compromised passwords in IA-5 (1) (a).</li><li>CCI-004063 - For password-based authentication, require immediate selection of a new password upon account recovery.</li><li>CCI-004064 - For password-based authentication, allow user selection of long passwords and passphrases, including spaces and all printable characters.</li><li>CCI-004065 - For password-based authentication, employ automated tools to assist the user in selecting strong password authenticators.</li><li>CCI-004068 - For public key-based authentication, implement a local cache of revocation data to support path discovery and validation.</li></ul><h2>Weight</h2><p>10</p><h2>Fix Recommendation</h2><p>Configure the network device to use an authentication server.<br />
+set system radius-server &lt;RADIUS-1 address&gt; secret &quot;&lt;PSK&gt;&quot;<br />
+set system tacplus-server &lt;TACPLUS-1 address&gt; secret &quot;&lt;PSK&gt;&quot;<br />
+<br />
+Configure the authentication order to use the authentication server as primary source for authentication.<br />
+set system authentication-order radius<br />
+set system authentication-order tacplus<br />
+set system authentication-order password</p><h2>Check Contents</h2><p>Review the network device configuration to verify the device is configured to use an authentication server as the primary source for authentication. Verify the RADIUS and/or TACACS+ server addresses.<br />
+<br />
+[edit system]<br />
+radius-server {<br />
+    &lt;RADIUS-1 address&gt; secret &quot;hashed PSK&quot;; ## SECRET-DATA<br />
+    &lt;RADIUS-2 address&gt; secret &quot;hashed PSK&quot;; ## SECRET-DATA<br />
+}<br />
+tacplus-server {<br />
+    &lt;TACPLUS-1 address&gt; secret &quot;hashed PSK&quot;; ## SECRET-DATA<br />
+    &lt;TACPLUS-2 address&gt; secret &quot;hashed PSK&quot;; ## SECRET-DATA<br />
+}<br />
+<br />
+Verify the authentication order places the external authentication server first.<br />
+[edit system]<br />
+authentication-order [ radius tacplus password ];<br />
+<br />
+Note: Only the global authentication order is required; all administrative access methods will honor the global setting unless configured separately. <br />
+<br />
+If the network device is not configured to use an authentication server to authenticate users prior to granting administrative access, this is a finding.</p><h2>Vulnerability Number</h2><p>V-253941</p><h2>Documentable</h2><p>False</p><h2>Rule Version</h2><p>JUEX-NM-000640</p><h2>Severity Override Guidance</h2><p>Review the network device configuration to verify the device is configured to use an authentication server as the primary source for authentication. Verify the RADIUS and/or TACACS+ server addresses.<br />
+<br />
+[edit system]<br />
+radius-server {<br />
+    &lt;RADIUS-1 address&gt; secret &quot;hashed PSK&quot;; ## SECRET-DATA<br />
+    &lt;RADIUS-2 address&gt; secret &quot;hashed PSK&quot;; ## SECRET-DATA<br />
+}<br />
+tacplus-server {<br />
+    &lt;TACPLUS-1 address&gt; secret &quot;hashed PSK&quot;; ## SECRET-DATA<br />
+    &lt;TACPLUS-2 address&gt; secret &quot;hashed PSK&quot;; ## SECRET-DATA<br />
+}<br />
+<br />
+Verify the authentication order places the external authentication server first.<br />
+[edit system]<br />
+authentication-order [ radius tacplus password ];<br />
+<br />
+Note: Only the global authentication order is required; all administrative access methods will honor the global setting unless configured separately. <br />
+<br />
+If the network device is not configured to use an authentication server to authenticate users prior to granting administrative access, this is a finding.</p><h2>Check Content Reference</h2><p>M</p><h2>Target Key</h2><p>5477</p></body></html>

@@ -1,0 +1,79 @@
+<!doctype html><html lang="en"><head><meta charset="utf-8"><title>STIGQter: STIG Check Details: SV-256025r991788_rule: The Arista router must be configured to only permit management traffic that ingresses and egresses the out-of-band management (OOBM) interface.</title><link rel="icon" type="image/svg+xml" href="STIGQter.svg" /><script async src="https://www.googletagmanager.com/gtag/js?id=UA-31381839-2"></script><script src="include.js"></script><script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-4110907817782130" crossorigin="anonymous"></script></head><body><div><img src="STIGQter.svg" alt="STIGQter" style="height:1em;" /> <a href="https://www.stigqter.com/">STIGQter</a>: <a href="main.html">STIG Summary</a>: <a href="U_Arista_MLS_EOS_4-X_Router_STIG_V2R2_Manual-xccdf.html">Arista MLS EOS 4.X Router Security Technical Implementation Guide Version: 2 Release: 2 Benchmark Date: 02 Apr 2025</a>:</div> <h1>The Arista router must be configured to only permit management traffic that ingresses and egresses the out-of-band management (OOBM) interface.</h1><h2>DISA Rule</h2><p>SV-256025r991788_rule</p><h2>Vulnerability Number</h2><p>V-256025</p><h2>Group Title</h2><p>SRG-NET-000205-RTR-000012</p><h2>Rule Version</h2><p>ARST-RT-000440</p><h2>Severity</h2><p>CAT II</p><h2>CCI(s)</h2><ul><li>CCI-001097 - Monitor and control communications at the external managed interfaces to the system and at key managed interfaces within the system.</li><li>CCI-004931 - Establish organization-defined alternate communications paths for system operations organizational command and control.</li></ul><h2>Weight</h2><p>10</p><h2>Fix Recommendation</h2><p>If the Arista management interface is a routed interface, it must be configured with both an ingress and egress ACL.<br />
+<br />
+Step 1: Configure the ingress filter to only allow management, IGP, and ICMP traffic.<br />
+<br />
+LEAF-1A(config)#ip access-list FILTER_INBOUND<br />
+LEAF-1A(config-acl-FILTER_INBOUND)#permit ospf any any <br />
+LEAF-1A(config-acl-FILTER_INBOUND)#permit icmp any any echo<br />
+LEAF-1A(config-acl-FILTER_INBOUND)#permit icmp any any echo-reply <br />
+LEAF-1A(config-acl-FILTER_INBOUND)#permit ip 10.10.10.0/24 any<br />
+LEAF-1A(config-acl-FILTER_INBOUND)#deny ip any any log<br />
+<br />
+Step 2: Configure the outbound filter to only allow management, IGP, and ICMP traffic.<br />
+<br />
+LEAF-1A(config)#ip access-list FILTER_OUTBOUND<br />
+LEAF-1A(config-acl-FILTER_OUTBOUND)#permit ospf any any <br />
+LEAF-1A(config-acl-FILTER_OUTBOUND)#permit icmp any any echo<br />
+LEAF-1A(config-acl-FILTER_OUTBOUND)#permit icmp any any echo-reply <br />
+LEAF-1A(config-acl-FILTER_OUTBOUND)#permit ip any 10.10.10.0/24<br />
+LEAF-1A(config-acl-FILTER_OUTBOUND)#deny ip any any log<br />
+<br />
+Step 3: Set the managed interface to have an inbound and outbound ACL configured.<br />
+<br />
+LEAF-1A(config)#interface ethernet 3<br />
+LEAF-1A(config-if-Et3)# ip access-group FILTER_INBOUND in<br />
+LEAF-1A(config-if-Et3)# ip access-group FILTER_OUTBOUND out</p><h2>Check Contents</h2><p>Step 1: To verify the Arista router managed interface has an inbound and outbound ACL configured, execute &quot;show run int Eth YY&quot;.<br />
+<br />
+router#show interface Ethernet 3<br />
+interface ethernet 3<br />
+ ip access-group FILTER_INBOUND in<br />
+ ip access-group FILTER_OUTBOUND out<br />
+<br />
+Step 2: To verify the ingress filter only allows management, IGP, and ICMP traffic, execute &quot;show ip access-list&quot;.<br />
+<br />
+router#show ip access-list<br />
+ip access-list FILTER_INBOUND<br />
+   10 permit ospf any any<br />
+   20 permit icmp any any echo<br />
+   30 permit icmp any any echo-reply<br />
+   40 permit ip 10.10.10.0/24 any<br />
+   50 deny ip any any log<br />
+!<br />
+ip access-list FILTER_OUTBOUND<br />
+   10 permit ospf any any<br />
+   20 permit icmp any any echo<br />
+   30 permit icmp any any echo-reply<br />
+   40 permit ip any 10.10.10.0/24<br />
+   50 deny ip any any log<br />
+!<br />
+<br />
+Note: If the management interface is a true OOBM interface, this requirement is not applicable.<br />
+<br />
+If the Arista router does not restrict traffic that ingresses and egresses the management interface, this is a finding.</p><h2>Vulnerability Number</h2><p>V-256025</p><h2>Documentable</h2><p>False</p><h2>Rule Version</h2><p>ARST-RT-000440</p><h2>Severity Override Guidance</h2><p>Step 1: To verify the Arista router managed interface has an inbound and outbound ACL configured, execute &quot;show run int Eth YY&quot;.<br />
+<br />
+router#show interface Ethernet 3<br />
+interface ethernet 3<br />
+ ip access-group FILTER_INBOUND in<br />
+ ip access-group FILTER_OUTBOUND out<br />
+<br />
+Step 2: To verify the ingress filter only allows management, IGP, and ICMP traffic, execute &quot;show ip access-list&quot;.<br />
+<br />
+router#show ip access-list<br />
+ip access-list FILTER_INBOUND<br />
+   10 permit ospf any any<br />
+   20 permit icmp any any echo<br />
+   30 permit icmp any any echo-reply<br />
+   40 permit ip 10.10.10.0/24 any<br />
+   50 deny ip any any log<br />
+!<br />
+ip access-list FILTER_OUTBOUND<br />
+   10 permit ospf any any<br />
+   20 permit icmp any any echo<br />
+   30 permit icmp any any echo-reply<br />
+   40 permit ip any 10.10.10.0/24<br />
+   50 deny ip any any log<br />
+!<br />
+<br />
+Note: If the management interface is a true OOBM interface, this requirement is not applicable.<br />
+<br />
+If the Arista router does not restrict traffic that ingresses and egresses the management interface, this is a finding.</p><h2>Check Content Reference</h2><p>M</p><h2>Target Key</h2><p>5513</p></body></html>

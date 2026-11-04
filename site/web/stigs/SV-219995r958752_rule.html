@@ -1,0 +1,122 @@
+<!doctype html><html lang="en"><head><meta charset="utf-8"><title>STIGQter: STIG Check Details: SV-219995r958752_rule: The operating system must allocate audit record storage capacity.</title><link rel="icon" type="image/svg+xml" href="STIGQter.svg" /><script async src="https://www.googletagmanager.com/gtag/js?id=UA-31381839-2"></script><script src="include.js"></script><script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-4110907817782130" crossorigin="anonymous"></script></head><body><div><img src="STIGQter.svg" alt="STIGQter" style="height:1em;" /> <a href="https://www.stigqter.com/">STIGQter</a>: <a href="main.html">STIG Summary</a>: <a href="U_SOL_11_x86_STIG_V3R6_Manual-xccdf.html">Solaris 11 X86 Security Technical Implementation Guide Version: 3 Release: 6 Benchmark Date: 01 Jul 2026</a>:</div> <h1>The operating system must allocate audit record storage capacity.</h1><h2>DISA Rule</h2><p>SV-219995r958752_rule</p><h2>Vulnerability Number</h2><p>V-219995</p><h2>Group Title</h2><p>SRG-OS-000341</p><h2>Rule Version</h2><p>SOL-11.1-010400</p><h2>Severity</h2><p>CAT II</p><h2>CCI(s)</h2><ul><li>CCI-001849 - Allocate audit log storage capacity to accommodate organization-defined audit record retention requirements.</li></ul><h2>Weight</h2><p>10</p><h2>Fix Recommendation</h2><p>The Audit Configuration, Audit Control and ZFS File System Management profiles are required.<br />
+<br />
+This action applies to the global zone only. Determine the zone that you are currently securing.<br />
+<br />
+# zonename<br />
+<br />
+If the command output is &quot;global&quot;, this action applies.<br />
+<br />
+Determine the audit system directory name:<br />
+<br />
+# pfexec auditconfig -getplugin audit_binfile<br />
+Plugin: audit_binfile (active)<br />
+<br />
+The output of the command will appear in this form:<br />
+<br />
+Attributes: p_dir=/var/audit;p_fsize=4M;p_minfree=1;<br />
+<br />
+p_dir defines the current audit file system.<br />
+<br />
+Note: By default in Solaris 11.1, /var/audit is a link to /var/share/audit which is mounted on rpool/VARSHARE.<br />
+<br />
+Set a minimum percentage of free space on the audit_binfile plugin to 2%.<br />
+<br />
+# pfexec auditconfig -setplugin audit_binfile p_minfree=2<br />
+<br />
+Restart the audit system.<br />
+<br />
+# pfexec audit -s<br />
+<br />
+Enable compression for the audit filesystem.<br />
+<br />
+# pfexec zfs set compression=on [poolname/filesystemname]<br />
+<br />
+Set a ZFS quota on the default /var/share filesystem for audit records to ensure that the root pool is not filled up with audit logs.<br />
+<br />
+# pfexec zfs set quota=XXG [poolname/filesystemname]<br />
+<br />
+This commands sets the quota to XX Gigabytes. This value should be based upon organizational requirements.<br />
+<br />
+Set a ZFS reservation on the default /var/share filesystem for audit records to ensure that the audit file system is guaranteed a fixed amount of storage.<br />
+<br />
+# pfexec zfs set reservation=XXG [poolname/filesystemname]<br />
+<br />
+This commands sets the quota to XX Gigabytes. This value should be based upon organizational requirements.</p><h2>Check Contents</h2><p>The Audit Configuration profile is required.<br />
+<br />
+This check applies to the global zone only. Determine the zone that you are currently securing.<br />
+<br />
+# zonename<br />
+<br />
+If the command output is &quot;global&quot;, this check applies.<br />
+<br />
+Review the current audit file space limitations<br />
+<br />
+# pfexec auditconfig -getplugin audit_binfile<br />
+Plugin: audit_binfile (active)<br />
+<br />
+The output of the command will appear in this form.<br />
+<br />
+Attributes: p_dir=/var/audit;p_fsize=4M;p_minfree=2<br />
+<br />
+If p_minfree is not equal to &quot;2&quot; of greater, this is a finding.<br />
+<br />
+p_dir defines the current audit file system.<br />
+<br />
+Note: By default in Solaris 11.1, /var/audit is a link to /var/share/audit which is mounted on rpool/VARSHARE.<br />
+<br />
+Check that zfs compression is enabled for the audit file system.<br />
+<br />
+# zfs get compression [poolname/filesystemname]<br />
+<br />
+If compression is off, this is a finding.<br />
+<br />
+Check that a ZFS quota is enforced for the audit filesystem.<br />
+<br />
+# zfs get quota [poolname/filesystemname]<br />
+<br />
+If quota is set to &quot;none&quot;, this is a finding.<br />
+<br />
+Ensure that a reservation of space is enforced on /var/share so that other users do not use up audit space.<br />
+<br />
+# zfs get quota,reservation [poolname/filesystemname]<br />
+<br />
+If reservation is set to &quot;none&quot;, this is a finding.</p><h2>Vulnerability Number</h2><p>V-219995</p><h2>Documentable</h2><p>False</p><h2>Rule Version</h2><p>SOL-11.1-010400</p><h2>Severity Override Guidance</h2><p>The Audit Configuration profile is required.<br />
+<br />
+This check applies to the global zone only. Determine the zone that you are currently securing.<br />
+<br />
+# zonename<br />
+<br />
+If the command output is &quot;global&quot;, this check applies.<br />
+<br />
+Review the current audit file space limitations<br />
+<br />
+# pfexec auditconfig -getplugin audit_binfile<br />
+Plugin: audit_binfile (active)<br />
+<br />
+The output of the command will appear in this form.<br />
+<br />
+Attributes: p_dir=/var/audit;p_fsize=4M;p_minfree=2<br />
+<br />
+If p_minfree is not equal to &quot;2&quot; of greater, this is a finding.<br />
+<br />
+p_dir defines the current audit file system.<br />
+<br />
+Note: By default in Solaris 11.1, /var/audit is a link to /var/share/audit which is mounted on rpool/VARSHARE.<br />
+<br />
+Check that zfs compression is enabled for the audit file system.<br />
+<br />
+# zfs get compression [poolname/filesystemname]<br />
+<br />
+If compression is off, this is a finding.<br />
+<br />
+Check that a ZFS quota is enforced for the audit filesystem.<br />
+<br />
+# zfs get quota [poolname/filesystemname]<br />
+<br />
+If quota is set to &quot;none&quot;, this is a finding.<br />
+<br />
+Ensure that a reservation of space is enforced on /var/share so that other users do not use up audit space.<br />
+<br />
+# zfs get quota,reservation [poolname/filesystemname]<br />
+<br />
+If reservation is set to &quot;none&quot;, this is a finding.</p><h2>Check Content Reference</h2><p>M</p><h2>Target Key</h2><p>4021</p></body></html>

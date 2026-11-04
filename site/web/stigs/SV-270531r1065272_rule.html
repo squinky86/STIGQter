@@ -1,0 +1,75 @@
+<!doctype html><html lang="en"><head><meta charset="utf-8"><title>STIGQter: STIG Check Details: SV-270531r1065272_rule: The Oracle Listener must be configured to require administration authentication.</title><link rel="icon" type="image/svg+xml" href="STIGQter.svg" /><script async src="https://www.googletagmanager.com/gtag/js?id=UA-31381839-2"></script><script src="include.js"></script><script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-4110907817782130" crossorigin="anonymous"></script></head><body><div><img src="STIGQter.svg" alt="STIGQter" style="height:1em;" /> <a href="https://www.stigqter.com/">STIGQter</a>: <a href="main.html">STIG Summary</a>: <a href="U_Oracle_Database_19c_STIG_V1R5_Manual-xccdf.html">Oracle Database 19c Security Technical Implementation Guide Version: 1 Release: 5 Benchmark Date: 01 Apr 2026</a>:</div> <h1>The Oracle Listener must be configured to require administration authentication.</h1><h2>DISA Rule</h2><p>SV-270531r1065272_rule</p><h2>Vulnerability Number</h2><p>V-270531</p><h2>Group Title</h2><p>SRG-APP-000516-DB-000363</p><h2>Rule Version</h2><p>O19C-00-009900</p><h2>Severity</h2><p>CAT I</p><h2>CCI(s)</h2><ul><li>CCI-000366 - Implement the security configuration settings.</li></ul><h2>Weight</h2><p>10</p><h2>Fix Recommendation</h2><p>By default, Oracle Net Listener permits only local administration for security reasons. As a policy, the listener can be administered only by the user who started it. <br />
+<br />
+Oracle Listener authentication is enforced through local operating system authentication. For example, if user1 starts the listener, then only user1 can administer it. Any other user trying to administer the listener receives an error. The super user is the only exception.<br />
+<br />
+Remote administration of the listener must not be permitted. If listener administration from a remote system is required, granting secure remote access to the Oracle database management system (DBMS) server and performing local administration is preferred. Authorize and document this requirement in the system documentation.<br />
+<br />
+Refer to Oracle Database Net Services Reference for additional information.</p><h2>Check Contents</h2><p>If a listener is not running on the local database host server, this check is not a finding.<br />
+<br />
+Note: Complete this check only once per host system and once per listener. Multiple listeners may be defined on a single host system. They must all be reviewed, but only once per database home review.<br />
+<br />
+For subsequent database home reviews on the same host system, this check is not a finding.<br />
+<br />
+Determine all listeners running on the host.<br />
+<br />
+For Windows hosts, view all Windows services with TNSListener embedded in the service name:<br />
+<br />
+- The service name format is:<br />
+Oracle[ORACLE_HOME_NAME]TNSListener<br />
+<br />
+For Unix hosts, the Oracle Listener process will indicate the TNSLSNR executable.<br />
+<br />
+At a command prompt, issue the command:<br />
+ps -ef | grep tnslsnr | grep -v grep<br />
+<br />
+The alias for the listener follows tnslsnr in the command output.<br />
+<br />
+Must be logged on the host system using the account that owns the tnslsnr executable (Unix). If the account is denied local logon, have the system administrator (SA) assist in this task by adding &quot;su&quot; to the listener account from the root account. On Windows platforms, log on using an account with administrator privileges to complete the check.<br />
+<br />
+From a system command prompt, execute the listener control utility:<br />
+<br />
+lsnrctl status [LISTENER NAME]<br />
+<br />
+Review the results for the value of Security.<br />
+<br />
+If &quot;Security = OFF&quot; is displayed, this is a finding.<br />
+<br />
+If &quot;Security = ON: Password or Local OS Authentication&quot;, this is a finding (Instead, use Local OS Authentication).<br />
+<br />
+If &quot;Security = ON: Local OS Authentication&quot; is displayed, this is not a finding.<br />
+<br />
+Repeat the execution of the lsnrctl utility for all active listeners.</p><h2>Vulnerability Number</h2><p>V-270531</p><h2>Documentable</h2><p>False</p><h2>Rule Version</h2><p>O19C-00-009900</p><h2>Severity Override Guidance</h2><p>If a listener is not running on the local database host server, this check is not a finding.<br />
+<br />
+Note: Complete this check only once per host system and once per listener. Multiple listeners may be defined on a single host system. They must all be reviewed, but only once per database home review.<br />
+<br />
+For subsequent database home reviews on the same host system, this check is not a finding.<br />
+<br />
+Determine all listeners running on the host.<br />
+<br />
+For Windows hosts, view all Windows services with TNSListener embedded in the service name:<br />
+<br />
+- The service name format is:<br />
+Oracle[ORACLE_HOME_NAME]TNSListener<br />
+<br />
+For Unix hosts, the Oracle Listener process will indicate the TNSLSNR executable.<br />
+<br />
+At a command prompt, issue the command:<br />
+ps -ef | grep tnslsnr | grep -v grep<br />
+<br />
+The alias for the listener follows tnslsnr in the command output.<br />
+<br />
+Must be logged on the host system using the account that owns the tnslsnr executable (Unix). If the account is denied local logon, have the system administrator (SA) assist in this task by adding &quot;su&quot; to the listener account from the root account. On Windows platforms, log on using an account with administrator privileges to complete the check.<br />
+<br />
+From a system command prompt, execute the listener control utility:<br />
+<br />
+lsnrctl status [LISTENER NAME]<br />
+<br />
+Review the results for the value of Security.<br />
+<br />
+If &quot;Security = OFF&quot; is displayed, this is a finding.<br />
+<br />
+If &quot;Security = ON: Password or Local OS Authentication&quot;, this is a finding (Instead, use Local OS Authentication).<br />
+<br />
+If &quot;Security = ON: Local OS Authentication&quot; is displayed, this is not a finding.<br />
+<br />
+Repeat the execution of the lsnrctl utility for all active listeners.</p><h2>Check Content Reference</h2><p>M</p><h2>Target Key</h2><p>5672</p></body></html>

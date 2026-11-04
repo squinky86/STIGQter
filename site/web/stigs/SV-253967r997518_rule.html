@@ -1,0 +1,82 @@
+<!doctype html><html lang="en"><head><meta charset="utf-8"><title>STIGQter: STIG Check Details: SV-253967r997518_rule: The Juniper EX switch must not be configured with VLANs used for L2 control traffic assigned to any host-facing access interface.</title><link rel="icon" type="image/svg+xml" href="STIGQter.svg" /><script async src="https://www.googletagmanager.com/gtag/js?id=UA-31381839-2"></script><script src="include.js"></script><script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-4110907817782130" crossorigin="anonymous"></script></head><body><div><img src="STIGQter.svg" alt="STIGQter" style="height:1em;" /> <a href="https://www.stigqter.com/">STIGQter</a>: <a href="main.html">STIG Summary</a>: <a href="U_Juniper_EX_Switches_L2S_STIG_V2R5_Manual-xccdf.html">Juniper EX Series Switches Layer 2 Switch Security Technical Implementation Guide Version: 2 Release: 5 Benchmark Date: 01 Jul 2026</a>:</div> <h1>The Juniper EX switch must not be configured with VLANs used for L2 control traffic assigned to any host-facing access interface.</h1><h2>DISA Rule</h2><p>SV-253967r997518_rule</p><h2>Vulnerability Number</h2><p>V-253967</p><h2>Group Title</h2><p>SRG-NET-000512-L2S-000008</p><h2>Rule Version</h2><p>JUEX-L2-000200</p><h2>Severity</h2><p>CAT II</p><h2>CCI(s)</h2><ul><li>CCI-004891 - Implement physically or logically separate subnetworks to isolate organization-defined critical system components and functions.</li></ul><h2>Weight</h2><p>10</p><h2>Fix Recommendation</h2><p>Assign all access interfaces to a VLAN not used for L2 control traffic.<br />
+<br />
+Interface range configuration:<br />
+set interfaces interface-range name member &lt;interface name&gt;<br />
+set interfaces interface-range name member-range &lt;starting interface name&gt; to &lt;ending interface name&gt;<br />
+set interfaces interface-range name unit 0 family ethernet-switching vlan members &lt;vlan name&gt;<br />
+<br />
+Individual interface configuration:<br />
+set interfaces &lt;interface name&gt; unit 0 family ethernet-switching vlan members &lt;vlan name&gt;<br />
+<br />
+Configure the VLAN:<br />
+set vlans &lt;vlan name&gt; vlan-id &lt;VLAN ID&gt;</p><h2>Check Contents</h2><p>Review the switch configurations and verify all access interfaces are assigned to a configured VLAN not used for L2 control traffic.<br />
+<br />
+If assigning via interface-range, the configuration will be similar to the example.<br />
+[edit interfaces]<br />
+interface-range &lt;name&gt; {<br />
+    member &lt;interface name&gt;;<br />
+    member-range &lt;starting interface name&gt; to &lt;ending interface name&gt;; &lt;&lt;&lt; Member ranges are contiguous from &lt;start interface&gt; to &lt;end interface&gt; inclusive<br />
+    unit 0 {<br />
+        family ethernet-switching {<br />
+            vlan {<br />
+                members &lt;vlan name&gt;;<br />
+            }<br />
+        }<br />
+    }<br />
+}<br />
+<br />
+If assigning individually, the configuration will be similar to the example.<br />
+[edit interfaces]<br />
+&lt;interface name&gt; {<br />
+    unit 0 {<br />
+        family ethernet-switching {<br />
+            vlan {<br />
+                members &lt;vlan name&gt;;<br />
+            }<br />
+        }<br />
+    }<br />
+}<br />
+<br />
+Verify the assigned VLANs are configured. <br />
+[edit vlans]<br />
+&lt;vlan name&gt; {<br />
+    vlan-id &lt;VLAN ID&gt;;<br />
+}<br />
+Note: Assigning interfaces to a VLAN automatically removes them from the default VLAN.<br />
+<br />
+If there are access interfaces assigned to the VLANs used for L2 control traffic, this is a finding.</p><h2>Vulnerability Number</h2><p>V-253967</p><h2>Documentable</h2><p>False</p><h2>Rule Version</h2><p>JUEX-L2-000200</p><h2>Severity Override Guidance</h2><p>Review the switch configurations and verify all access interfaces are assigned to a configured VLAN not used for L2 control traffic.<br />
+<br />
+If assigning via interface-range, the configuration will be similar to the example.<br />
+[edit interfaces]<br />
+interface-range &lt;name&gt; {<br />
+    member &lt;interface name&gt;;<br />
+    member-range &lt;starting interface name&gt; to &lt;ending interface name&gt;; &lt;&lt;&lt; Member ranges are contiguous from &lt;start interface&gt; to &lt;end interface&gt; inclusive<br />
+    unit 0 {<br />
+        family ethernet-switching {<br />
+            vlan {<br />
+                members &lt;vlan name&gt;;<br />
+            }<br />
+        }<br />
+    }<br />
+}<br />
+<br />
+If assigning individually, the configuration will be similar to the example.<br />
+[edit interfaces]<br />
+&lt;interface name&gt; {<br />
+    unit 0 {<br />
+        family ethernet-switching {<br />
+            vlan {<br />
+                members &lt;vlan name&gt;;<br />
+            }<br />
+        }<br />
+    }<br />
+}<br />
+<br />
+Verify the assigned VLANs are configured. <br />
+[edit vlans]<br />
+&lt;vlan name&gt; {<br />
+    vlan-id &lt;VLAN ID&gt;;<br />
+}<br />
+Note: Assigning interfaces to a VLAN automatically removes them from the default VLAN.<br />
+<br />
+If there are access interfaces assigned to the VLANs used for L2 control traffic, this is a finding.</p><h2>Check Content Reference</h2><p>M</p><h2>Target Key</h2><p>5478</p></body></html>

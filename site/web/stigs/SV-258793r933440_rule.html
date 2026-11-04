@@ -1,0 +1,52 @@
+<!doctype html><html lang="en"><head><meta charset="utf-8"><title>STIGQter: STIG Check Details: SV-258793r933440_rule: The ESXi host must require TPM-based configuration encryption.</title><link rel="icon" type="image/svg+xml" href="STIGQter.svg" /><script async src="https://www.googletagmanager.com/gtag/js?id=UA-31381839-2"></script><script src="include.js"></script><script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-4110907817782130" crossorigin="anonymous"></script></head><body><div><img src="STIGQter.svg" alt="STIGQter" style="height:1em;" /> <a href="https://www.stigqter.com/">STIGQter</a>: <a href="main.html">STIG Summary</a>: <a href="U_VMW_vSphere_8-0-ESXi_STIG_V1R1_Manual-xccdf.html">VMware vSphere 8.0 ESXi Security Technical Implementation Guide Version: 1 Release: 1 Benchmark Date: 31 Oct 2023</a>:</div> <h1>The ESXi host must require TPM-based configuration encryption.</h1><h2>DISA Rule</h2><p>SV-258793r933440_rule</p><h2>Vulnerability Number</h2><p>V-258793</p><h2>Group Title</h2><p>SRG-OS-000480-VMM-002000</p><h2>Rule Version</h2><p>ESXI-80-000238</p><h2>Severity</h2><p>CAT II</p><h2>CCI(s)</h2><ul><li>CCI-000366 - Implement the security configuration settings.</li></ul><h2>Weight</h2><p>10</p><h2>Fix Recommendation</h2><p>Ensure the TPM 2.0 chip is enabled in the BIOS and the ESX UI does not show any errors about a present but unavailable TPM.<br />
+<br />
+This setting cannot be configured until the TPM is properly enabled in firmware.<br />
+<br />
+From an ESXi shell, run the following command:<br />
+<br />
+# esxcli system settings encryption set --mode=TPM<br />
+<br />
+or<br />
+<br />
+From a PowerCLI command prompt while connected to the ESXi host, run the following commands:<br />
+<br />
+$esxcli = Get-EsxCli -v2<br />
+$arguments = $esxcli.system.settings.encryption.set.CreateArgs()<br />
+$arguments.mode = &quot;TPM&quot;<br />
+$esxcli.system.settings.encryption.set.Invoke($arguments)<br />
+<br />
+Enter the host into maintenance mode and reboot for changes to take effect.</p><h2>Check Contents</h2><p>If the ESXi host does not have a compatible TPM, this finding is downgraded to a CAT III.<br />
+<br />
+From an ESXi shell, run the following command:<br />
+<br />
+# esxcli system settings encryption get<br />
+<br />
+or<br />
+<br />
+From a PowerCLI command prompt while connected to the ESXi host, run the following commands:<br />
+<br />
+$esxcli = Get-EsxCli -v2<br />
+$esxcli.system.settings.encryption.get.invoke() | Select Mode<br />
+<br />
+Expected result:<br />
+<br />
+Mode: TPM<br />
+<br />
+If the &quot;Mode&quot; is not set to &quot;TPM&quot;, this is a finding.</p><h2>Vulnerability Number</h2><p>V-258793</p><h2>Documentable</h2><p>False</p><h2>Rule Version</h2><p>ESXI-80-000238</p><h2>Severity Override Guidance</h2><p>If the ESXi host does not have a compatible TPM, this finding is downgraded to a CAT III.<br />
+<br />
+From an ESXi shell, run the following command:<br />
+<br />
+# esxcli system settings encryption get<br />
+<br />
+or<br />
+<br />
+From a PowerCLI command prompt while connected to the ESXi host, run the following commands:<br />
+<br />
+$esxcli = Get-EsxCli -v2<br />
+$esxcli.system.settings.encryption.get.invoke() | Select Mode<br />
+<br />
+Expected result:<br />
+<br />
+Mode: TPM<br />
+<br />
+If the &quot;Mode&quot; is not set to &quot;TPM&quot;, this is a finding.</p><h2>Check Content Reference</h2><p>M</p><h2>Target Key</h2><p>5562</p></body></html>

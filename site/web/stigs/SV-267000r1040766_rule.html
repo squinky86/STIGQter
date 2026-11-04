@@ -1,0 +1,48 @@
+<!doctype html><html lang="en"><head><meta charset="utf-8"><title>STIGQter: STIG Check Details: SV-267000r1040766_rule: AOS, when used as a VPN Gateway, must disable split-tunneling for remote client VPNs.</title><link rel="icon" type="image/svg+xml" href="STIGQter.svg" /><script async src="https://www.googletagmanager.com/gtag/js?id=UA-31381839-2"></script><script src="include.js"></script><script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-4110907817782130" crossorigin="anonymous"></script></head><body><div><img src="STIGQter.svg" alt="STIGQter" style="height:1em;" /> <a href="https://www.stigqter.com/">STIGQter</a>: <a href="main.html">STIG Summary</a>: <a href="U_HPE_Aruba_Networking_AOS_VPN_STIG_V1R1_Manual-xccdf.html">HPE Aruba Networking AOS VPN Security Technical Implementation Guide Version: 1 Release: 1 Benchmark Date: 22 Oct 2024</a>:</div> <h1>AOS, when used as a VPN Gateway, must disable split-tunneling for remote client VPNs.</h1><h2>DISA Rule</h2><p>SV-267000r1040766_rule</p><h2>Vulnerability Number</h2><p>V-267000</p><h2>Group Title</h2><p>SRG-NET-000369-VPN-001620</p><h2>Rule Version</h2><p>ARBA-VN-001620</p><h2>Severity</h2><p>CAT II</p><h2>CCI(s)</h2><ul><li>CCI-002397 - Prevent split tunneling for remote devices connecting to organizational systems unless the split tunnel is securely provisioned using organization-defined safeguards.</li></ul><h2>Weight</h2><p>10</p><h2>Fix Recommendation</h2><p>Configure AOS using the following commands:<br />
+configure terminal<br />
+wlan virtual-ap &lt;profile name&gt;<br />
+forward-mode tunnel<br />
+exit<br />
+write memory<br />
+ap system-profile &lt;profile name&gt;<br />
+double-encrypt<br />
+exit<br />
+write memory<br />
+<br />
+For each VIA connection profile:<br />
+vaaa authentication via connection-profile &lt;name&gt;<br />
+no split-tunneling<br />
+exit<br />
+write memory</p><h2>Check Contents</h2><p>Verify the AOS configuration with the following commands:<br />
+show wlan virtual-ap<br />
+<br />
+For each active WLAN virtual-ap profile:<br />
+show wlan virtual-ap &lt;name&gt; | include &quot;Forward mode&quot;<br />
+ <br />
+show ap system-profile<br />
+<br />
+For each active AP system-profile:<br />
+show ap system-profile &lt;name&gt; | include &quot;Double Encrypt&quot;<br />
+ <br />
+show aaa authentication via connection-profile<br />
+<br />
+For each referenced profile:<br />
+show aaa authentication via connection-profile &lt;name&gt; | include &quot;Enable split tunneling&quot;<br />
+ <br />
+If any instances of remote access or virtual-ap profile forward mode of split-tunnel are found or if double-encrypt is not enabled per active AP system profile, this is a finding.</p><h2>Vulnerability Number</h2><p>V-267000</p><h2>Documentable</h2><p>False</p><h2>Rule Version</h2><p>ARBA-VN-001620</p><h2>Severity Override Guidance</h2><p>Verify the AOS configuration with the following commands:<br />
+show wlan virtual-ap<br />
+<br />
+For each active WLAN virtual-ap profile:<br />
+show wlan virtual-ap &lt;name&gt; | include &quot;Forward mode&quot;<br />
+ <br />
+show ap system-profile<br />
+<br />
+For each active AP system-profile:<br />
+show ap system-profile &lt;name&gt; | include &quot;Double Encrypt&quot;<br />
+ <br />
+show aaa authentication via connection-profile<br />
+<br />
+For each referenced profile:<br />
+show aaa authentication via connection-profile &lt;name&gt; | include &quot;Enable split tunneling&quot;<br />
+ <br />
+If any instances of remote access or virtual-ap profile forward mode of split-tunnel are found or if double-encrypt is not enabled per active AP system profile, this is a finding.</p><h2>Check Content Reference</h2><p>M</p><h2>Target Key</h2><p>5645</p></body></html>

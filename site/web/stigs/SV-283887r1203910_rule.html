@@ -1,0 +1,67 @@
+<!doctype html><html lang="en"><head><meta charset="utf-8"><title>STIGQter: STIG Check Details: SV-283887r1203910_rule: The Nokia out-of-band management (OOBM) gateway router must be configured to block any traffic destined to itself that is not sourced from the OOBM network or the Network Operations Center (NOC).</title><link rel="icon" type="image/svg+xml" href="STIGQter.svg" /><script async src="https://www.googletagmanager.com/gtag/js?id=UA-31381839-2"></script><script src="include.js"></script><script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-4110907817782130" crossorigin="anonymous"></script></head><body><div><img src="STIGQter.svg" alt="STIGQter" style="height:1em;" /> <a href="https://www.stigqter.com/">STIGQter</a>: <a href="main.html">STIG Summary</a>: <a href="U_Nokia_SR_OS_25-x_RTR_V1R1_STIG_Manual-xccdf.html">Nokia Service Router OS 25.x Router Security Technical Implementation Guide Version: 1 Release: 1 Benchmark Date: 28 Apr 2026</a>:</div> <h1>The Nokia out-of-band management (OOBM) gateway router must be configured to block any traffic destined to itself that is not sourced from the OOBM network or the Network Operations Center (NOC).</h1><h2>DISA Rule</h2><p>SV-283887r1203910_rule</p><h2>Vulnerability Number</h2><p>V-283887</p><h2>Group Title</h2><p>SRG-NET-000205-RTR-000011</p><h2>Rule Version</h2><p>NOKI-RT-000710</p><h2>Severity</h2><p>CAT II</p><h2>CCI(s)</h2><ul><li>CCI-001097 - Monitor and control communications at the external managed interfaces to the system and at key managed interfaces within the system.</li></ul><h2>Weight</h2><p>10</p><h2>Fix Recommendation</h2><p>This requirement is not applicable for the DODIN Backbone.<br />
+<br />
+Configure cpm-filter using the example below: <br />
+<br />
+- configure system security cpm-filter<br />
+- config&gt;sys&gt;security&gt;cpm-filter# default-action drop<br />
+- config&gt;sys&gt;security&gt;cpm-filter# ip-filter<br />
+- config&gt;sys&gt;sec&gt;cpm&gt;ip-filter# entry 10 create<br />
+- cfg&gt;sys&gt;sec&gt;cpm&gt;ip-filter&gt;entry# match src-ip 192.168.50.0/24<br />
+- cfg&gt;sys&gt;sec&gt;cpm&gt;ip-filter&gt;entry# action accept<br />
+- cfg&gt;sys&gt;sec&gt;cpm&gt;ip-filter&gt;entry# exit<br />
+- config&gt;sys&gt;sec&gt;cpm&gt;ip-filter# no shutdown<br />
+- config&gt;sys&gt;sec&gt;cpm&gt;ip-filter# exit all</p><h2>Check Contents</h2><p>This requirement is not applicable for the DODIN Backbone.<br />
+<br />
+Review the CPM filter for the router receive path using the example below: <br />
+<br />
+- show system security cpm-filter ip-filter entry 10<br />
+<br />
+CPM IP Filter Entry<br />
+<br />
+Entry Id           : 10<br />
+Description        : (Not Specified)<br />
+-------------------------------------------------------------------------------<br />
+Filter Entry Match Criteria :<br />
+-------------------------------------------------------------------------------<br />
+Log Id             : n/a<br />
+Src. IP            : 192.168.50.0/24<br />
+Src. Port          : n/a<br />
+Dst. IP            : n/a<br />
+Dest. Port         : n/a<br />
+Protocol           : none               Dscp               : Undefined<br />
+ICMP Type          : Undefined          ICMP Code          : Undefined<br />
+Fragment           : Off                Option-present     : Off<br />
+IP-Option          : n/a                Multiple Option    : Off<br />
+TCP-syn            : Off                TCP-ack            : Off<br />
+Action             : Forward<br />
+Match Router ID    : n/a<br />
+Dropped pkts       : 0                  Forwarded pkts     : 0<br />
+<br />
+If the CPM filter is not configured to only allow traffic to the route processor from the OOBM local area network (LAN), this is a finding.</p><h2>Vulnerability Number</h2><p>V-283887</p><h2>Documentable</h2><p>False</p><h2>Rule Version</h2><p>NOKI-RT-000710</p><h2>Severity Override Guidance</h2><p>This requirement is not applicable for the DODIN Backbone.<br />
+<br />
+Review the CPM filter for the router receive path using the example below: <br />
+<br />
+- show system security cpm-filter ip-filter entry 10<br />
+<br />
+CPM IP Filter Entry<br />
+<br />
+Entry Id           : 10<br />
+Description        : (Not Specified)<br />
+-------------------------------------------------------------------------------<br />
+Filter Entry Match Criteria :<br />
+-------------------------------------------------------------------------------<br />
+Log Id             : n/a<br />
+Src. IP            : 192.168.50.0/24<br />
+Src. Port          : n/a<br />
+Dst. IP            : n/a<br />
+Dest. Port         : n/a<br />
+Protocol           : none               Dscp               : Undefined<br />
+ICMP Type          : Undefined          ICMP Code          : Undefined<br />
+Fragment           : Off                Option-present     : Off<br />
+IP-Option          : n/a                Multiple Option    : Off<br />
+TCP-syn            : Off                TCP-ack            : Off<br />
+Action             : Forward<br />
+Match Router ID    : n/a<br />
+Dropped pkts       : 0                  Forwarded pkts     : 0<br />
+<br />
+If the CPM filter is not configured to only allow traffic to the route processor from the OOBM local area network (LAN), this is a finding.</p><h2>Check Content Reference</h2><p>M</p><h2>Target Key</h2><p>5746</p></body></html>

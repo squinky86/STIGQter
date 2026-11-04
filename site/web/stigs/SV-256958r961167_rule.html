@@ -1,0 +1,18 @@
+<!doctype html><html lang="en"><head><meta charset="utf-8"><title>STIGQter: STIG Check Details: SV-256958r961167_rule: The Automation Controller NGINX web server must display a default hosted application web page, not a directory listing, when a requested web page cannot be found.</title><link rel="icon" type="image/svg+xml" href="STIGQter.svg" /><script async src="https://www.googletagmanager.com/gtag/js?id=UA-31381839-2"></script><script src="include.js"></script><script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-4110907817782130" crossorigin="anonymous"></script></head><body><div><img src="STIGQter.svg" alt="STIGQter" style="height:1em;" /> <a href="https://www.stigqter.com/">STIGQter</a>: <a href="main.html">STIG Summary</a>: <a href="U_RH_Ansible_Automation_Controller_WS_STIG_V2R3_Manual-xccdf.html">Red Hat Ansible Automation Controller Web Server Security Technical Implementation Guide Version: 2 Release: 3 Benchmark Date: 05 Jan 2026</a>:</div> <h1>The Automation Controller NGINX web server must display a default hosted application web page, not a directory listing, when a requested web page cannot be found.</h1><h2>DISA Rule</h2><p>SV-256958r961167_rule</p><h2>Vulnerability Number</h2><p>V-256958</p><h2>Group Title</h2><p>SRG-APP-000266-WSR-000142</p><h2>Rule Version</h2><p>APWS-AT-000620</p><h2>Severity</h2><p>CAT II</p><h2>CCI(s)</h2><ul><li>CCI-001312 - Generates error messages that provide information necessary for corrective actions without revealing information that could be exploited.</li></ul><h2>Weight</h2><p>10</p><h2>Fix Recommendation</h2><p>As a System Administrator for each Automation Controller nginx web server host, remove any configuration that turns the autoindexing on:<br />
+<br />
+NGINXCONF=`nginx -V 2&gt;&amp;1 | tr ' ' '\n' | sed -ne '/conf-path/{s/.*conf-path=\(.*\)/\1/;p}' ` ;<br />
+sed -Ei -e '/autoindex\s+on/d;' $NGINXCONF<br />
+<br />
+To apply these changes to the running service immediately, restart the NGINX service with the following command:<br />
+<br />
+sudo systemctl restart nginx</p><h2>Check Contents</h2><p>For each Automation Controller NGINX web server, a system administrator must view to see whether autoindex is turned on or off (autoindex on/autoindex off):<br />
+<br />
+NGINXCONF=`nginx -V 2&gt;&amp;1 | tr ' ' '\n' | sed -ne '/conf-path/{s/.*conf-path=\(.*\)/\1/;p}' ` ; <br />
+grep -E 'autoindex\s+on' $NGINXCONF &amp;&amp; echo &quot;FAILED&quot;<br />
+ <br />
+If &quot;FAILED&quot; is displayed, this is a finding.</p><h2>Vulnerability Number</h2><p>V-256958</p><h2>Documentable</h2><p>False</p><h2>Rule Version</h2><p>APWS-AT-000620</p><h2>Severity Override Guidance</h2><p>For each Automation Controller NGINX web server, a system administrator must view to see whether autoindex is turned on or off (autoindex on/autoindex off):<br />
+<br />
+NGINXCONF=`nginx -V 2&gt;&amp;1 | tr ' ' '\n' | sed -ne '/conf-path/{s/.*conf-path=\(.*\)/\1/;p}' ` ; <br />
+grep -E 'autoindex\s+on' $NGINXCONF &amp;&amp; echo &quot;FAILED&quot;<br />
+ <br />
+If &quot;FAILED&quot; is displayed, this is a finding.</p><h2>Check Content Reference</h2><p>M</p><h2>Target Key</h2><p>5535</p></body></html>

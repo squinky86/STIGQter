@@ -1,0 +1,44 @@
+<!doctype html><html lang="en"><head><meta charset="utf-8"><title>STIGQter: STIG Check Details: SV-275567r1147751_rule: Ubuntu OS must restrict access to the kernel message buffer.</title><link rel="icon" type="image/svg+xml" href="STIGQter.svg" /><script async src="https://www.googletagmanager.com/gtag/js?id=UA-31381839-2"></script><script src="include.js"></script><script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-4110907817782130" crossorigin="anonymous"></script></head><body><div><img src="STIGQter.svg" alt="STIGQter" style="height:1em;" /> <a href="https://www.stigqter.com/">STIGQter</a>: <a href="main.html">STIG Summary</a>: <a href="U_RB_NetIM_OS_STIG_V1R1_Manual-xccdf.html">Riverbed NetIM OS Security Technical Implementation Guide Version: 1 Release: 1 Benchmark Date: 11 Sep 2025</a>:</div> <h1>Ubuntu OS must restrict access to the kernel message buffer.</h1><h2>DISA Rule</h2><p>SV-275567r1147751_rule</p><h2>Vulnerability Number</h2><p>V-275567</p><h2>Group Title</h2><p>SRG-OS-000138-GPOS-00069</p><h2>Rule Version</h2><p>RIIM-OS-213010</p><h2>Severity</h2><p>CAT II</p><h2>CCI(s)</h2><ul><li>CCI-001090 - Prevent unauthorized and unintended information transfer via shared system resources.</li></ul><h2>Weight</h2><p>10</p><h2>Fix Recommendation</h2><p>Configure Ubuntu OS to restrict access to the kernel message buffer. <br />
+ <br />
+Add or modify the following line in the &quot;/etc/sysctl.conf&quot; file: <br />
+ <br />
+kernel.dmesg_restrict = 1 <br />
+ <br />
+Remove any configurations that conflict with the above from the following locations:  <br />
+ <br />
+/run/sysctl.d/ <br />
+/etc/sysctl.d/ <br />
+/usr/local/lib/sysctl.d/ <br />
+/usr/lib/sysctl.d/ <br />
+/lib/sysctl.d/ <br />
+/etc/sysctl.conf <br />
+ <br />
+Reload settings from all system configuration files by using the following command: <br />
+ <br />
+     $ sudo sysctl --system<br />
+<br />
+Note: This is set by default as part of the NetIM Ubuntu baseline.</p><h2>Check Contents</h2><p>Verify Ubuntu OS is configured to restrict access to the kernel message buffer by using the following command: <br />
+ <br />
+     $ sysctl kernel.dmesg_restrict <br />
+     kernel.dmesg_restrict = 1 <br />
+ <br />
+If &quot;kernel.dmesg_restrict&quot; is not set to &quot;1&quot; or is missing, this is a finding. <br />
+ <br />
+Verify there are no configurations that enable the kernel dmesg function: <br />
+ <br />
+     $ sudo grep -ir kernel.dmesg_restrict /run/sysctl.d/* /etc/sysctl.d/* /usr/local/lib/sysctl.d/* /usr/lib/sysctl.d/* /lib/sysctl.d/* /etc/sysctl.conf 2&gt; /dev/null <br />
+     /etc/sysctl.d/10-kernel-hardening.conf:kernel.dmesg_restrict = 1 <br />
+ <br />
+If &quot;kernel.dmesg_restrict&quot; is not set to &quot;1&quot;, is commented out, is missing, or conflicting results are returned, this is a finding.</p><h2>Vulnerability Number</h2><p>V-275567</p><h2>Documentable</h2><p>False</p><h2>Rule Version</h2><p>RIIM-OS-213010</p><h2>Severity Override Guidance</h2><p>Verify Ubuntu OS is configured to restrict access to the kernel message buffer by using the following command: <br />
+ <br />
+     $ sysctl kernel.dmesg_restrict <br />
+     kernel.dmesg_restrict = 1 <br />
+ <br />
+If &quot;kernel.dmesg_restrict&quot; is not set to &quot;1&quot; or is missing, this is a finding. <br />
+ <br />
+Verify there are no configurations that enable the kernel dmesg function: <br />
+ <br />
+     $ sudo grep -ir kernel.dmesg_restrict /run/sysctl.d/* /etc/sysctl.d/* /usr/local/lib/sysctl.d/* /usr/lib/sysctl.d/* /lib/sysctl.d/* /etc/sysctl.conf 2&gt; /dev/null <br />
+     /etc/sysctl.d/10-kernel-hardening.conf:kernel.dmesg_restrict = 1 <br />
+ <br />
+If &quot;kernel.dmesg_restrict&quot; is not set to &quot;1&quot;, is commented out, is missing, or conflicting results are returned, this is a finding.</p><h2>Check Content Reference</h2><p>M</p><h2>Target Key</h2><p>5706</p></body></html>

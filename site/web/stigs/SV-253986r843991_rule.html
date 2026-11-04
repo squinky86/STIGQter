@@ -1,0 +1,103 @@
+<!doctype html><html lang="en"><head><meta charset="utf-8"><title>STIGQter: STIG Check Details: SV-253986r843991_rule: The Juniper router must be configured to bind a Protocol Independent Multicast (PIM) neighbor filter to interfaces that have PIM enabled.</title><link rel="icon" type="image/svg+xml" href="STIGQter.svg" /><script async src="https://www.googletagmanager.com/gtag/js?id=UA-31381839-2"></script><script src="include.js"></script><script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-4110907817782130" crossorigin="anonymous"></script></head><body><div><img src="STIGQter.svg" alt="STIGQter" style="height:1em;" /> <a href="https://www.stigqter.com/">STIGQter</a>: <a href="main.html">STIG Summary</a>: <a href="U_Juniper_EX_Switches_RTR_STIG_V2R1_Manual-xccdf.html">Juniper EX Series Switches Router Security Technical Implementation Guide Version: 2 Release: 1 Benchmark Date: 24 Jul 2024</a>:</div> <h1>The Juniper router must be configured to bind a Protocol Independent Multicast (PIM) neighbor filter to interfaces that have PIM enabled.</h1><h2>DISA Rule</h2><p>SV-253986r843991_rule</p><h2>Vulnerability Number</h2><p>V-253986</p><h2>Group Title</h2><p>SRG-NET-000019-RTR-000004</p><h2>Rule Version</h2><p>JUEX-RT-000140</p><h2>Severity</h2><p>CAT II</p><h2>CCI(s)</h2><ul><li>CCI-001414 - Enforce approved authorizations for controlling the flow of information between connected systems based on organization-defined information flow control policies.</li></ul><h2>Weight</h2><p>10</p><h2>Fix Recommendation</h2><p>This requirement is not applicable for the DODIN Backbone.<br />
+<br />
+Configure neighbor filters to only accept PIM control plane traffic from documented PIM neighbors. Bind neighbor filters to all PIM enabled interfaces.<br />
+<br />
+set policy-options prefix-list PIM-NEIGHBOR-1 &lt;PIM neighbor address&gt;/32<br />
+set policy-options policy-statement PIM-NBR-1 from prefix-list PIM-NEIGHBOR-1<br />
+set policy-options policy-statement PIM-NBR-1 then accept<br />
+<br />
+set protocols pim interface &lt;interface name&gt;.&lt;logical unit&gt; mode sparse<br />
+set protocols pim interface &lt;interface name&gt;.&lt;logical unit&gt; neighbor-policy PIM-NBR-1<br />
+set protocols pim interface all disable</p><h2>Check Contents</h2><p>This requirement is not applicable for the DODIN Backbone.<br />
+<br />
+Review the multicast topology diagram and determine if router interfaces are enabled for IPv4 or IPv6 multicast routing.<br />
+<br />
+By default, PIM is not enabled on any interface. If not a PIM router, verify there is no PIM stanza at [edit protocols], PIM is disabled globally and/or for all interfaces, or that the stanza is inactive.<br />
+[edit protocols]<br />
+inactive: pim { &lt;&lt; Stanza is removed or marked inactive<br />
+    disable; &lt;&lt; If stanza is present and not inactive, verify globally disabled<br />
+    interface all { &lt;&lt; If stanza is present, not inactive, and not globally disabled, disable for all interfaces<br />
+        disable;<br />
+    }<br />
+}<br />
+<br />
+For PIM routers, verify only the required interfaces are configured. For example, the following configuration enables PIM on a specific interface and disables PIM for all others.<br />
+[edit protocols]<br />
+pim {<br />
+    interface &lt;name&gt;.&lt;logical unit&gt;;<br />
+    interface all {<br />
+        disable;<br />
+    }<br />
+}<br />
+<br />
+Note: More specific interface configuration statements are preferred. In the example, the interface configuration is more specific than interface &quot;all&quot;, so PIM is enabled only on that interface.<br />
+<br />
+If the router is enabled for multicast routing, verify all interfaces enabled for PIM have a neighbor filter bound to the interface. The neighbor filter must only accept PIM control plane traffic from the documented PIM neighbors.<br />
+[edit policy-options]<br />
+prefix-list PIM-NEIGHBOR-1 {<br />
+    &lt;PIM neighbor address&gt;/32;<br />
+}<br />
+&lt;additional PIM neighbor lists&gt;<br />
+policy-statement PIM-NBR-1 {<br />
+    from {<br />
+        prefix-list PIM-NEIGHBOR-1;<br />
+    }<br />
+    then accept;<br />
+}<br />
+&lt;additional policies&gt;<br />
+[edit protocols pim]<br />
+interface &lt;interface name&gt;.&lt;logical unit&gt; {<br />
+    mode sparse;<br />
+    neighbor-policy PIM-NBR1;<br />
+}<br />
+interface all {<br />
+    disable;<br />
+}<br />
+<br />
+If PIM neighbor filters are not bound to all interfaces that have PIM enabled, this is a finding.</p><h2>Vulnerability Number</h2><p>V-253986</p><h2>Documentable</h2><p>False</p><h2>Rule Version</h2><p>JUEX-RT-000140</p><h2>Severity Override Guidance</h2><p>This requirement is not applicable for the DODIN Backbone.<br />
+<br />
+Review the multicast topology diagram and determine if router interfaces are enabled for IPv4 or IPv6 multicast routing.<br />
+<br />
+By default, PIM is not enabled on any interface. If not a PIM router, verify there is no PIM stanza at [edit protocols], PIM is disabled globally and/or for all interfaces, or that the stanza is inactive.<br />
+[edit protocols]<br />
+inactive: pim { &lt;&lt; Stanza is removed or marked inactive<br />
+    disable; &lt;&lt; If stanza is present and not inactive, verify globally disabled<br />
+    interface all { &lt;&lt; If stanza is present, not inactive, and not globally disabled, disable for all interfaces<br />
+        disable;<br />
+    }<br />
+}<br />
+<br />
+For PIM routers, verify only the required interfaces are configured. For example, the following configuration enables PIM on a specific interface and disables PIM for all others.<br />
+[edit protocols]<br />
+pim {<br />
+    interface &lt;name&gt;.&lt;logical unit&gt;;<br />
+    interface all {<br />
+        disable;<br />
+    }<br />
+}<br />
+<br />
+Note: More specific interface configuration statements are preferred. In the example, the interface configuration is more specific than interface &quot;all&quot;, so PIM is enabled only on that interface.<br />
+<br />
+If the router is enabled for multicast routing, verify all interfaces enabled for PIM have a neighbor filter bound to the interface. The neighbor filter must only accept PIM control plane traffic from the documented PIM neighbors.<br />
+[edit policy-options]<br />
+prefix-list PIM-NEIGHBOR-1 {<br />
+    &lt;PIM neighbor address&gt;/32;<br />
+}<br />
+&lt;additional PIM neighbor lists&gt;<br />
+policy-statement PIM-NBR-1 {<br />
+    from {<br />
+        prefix-list PIM-NEIGHBOR-1;<br />
+    }<br />
+    then accept;<br />
+}<br />
+&lt;additional policies&gt;<br />
+[edit protocols pim]<br />
+interface &lt;interface name&gt;.&lt;logical unit&gt; {<br />
+    mode sparse;<br />
+    neighbor-policy PIM-NBR1;<br />
+}<br />
+interface all {<br />
+    disable;<br />
+}<br />
+<br />
+If PIM neighbor filters are not bound to all interfaces that have PIM enabled, this is a finding.</p><h2>Check Content Reference</h2><p>M</p><h2>Target Key</h2><p>5479</p></body></html>

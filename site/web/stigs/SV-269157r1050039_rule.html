@@ -1,0 +1,87 @@
+<!doctype html><html lang="en"><head><meta charset="utf-8"><title>STIGQter: STIG Check Details: SV-269157r1050039_rule: AlmaLinux OS 9 must display the Standard Mandatory DOD Notice and Consent Banner before granting local or remote access to the system via a graphical user logon.</title><link rel="icon" type="image/svg+xml" href="STIGQter.svg" /><script async src="https://www.googletagmanager.com/gtag/js?id=UA-31381839-2"></script><script src="include.js"></script><script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-4110907817782130" crossorigin="anonymous"></script></head><body><div><img src="STIGQter.svg" alt="STIGQter" style="height:1em;" /> <a href="https://www.stigqter.com/">STIGQter</a>: <a href="main.html">STIG Summary</a>: <a href="U_CL_AlmaLinux_OS_9_STIG_V1R7_Manual-xccdf.html">Cloud Linux AlmaLinux OS 9 Security Technical Implementation Guide Version: 1 Release: 7 Benchmark Date: 01 Jul 2026</a>:</div> <h1>AlmaLinux OS 9 must display the Standard Mandatory DOD Notice and Consent Banner before granting local or remote access to the system via a graphical user logon.</h1><h2>DISA Rule</h2><p>SV-269157r1050039_rule</p><h2>Vulnerability Number</h2><p>V-269157</p><h2>Group Title</h2><p>SRG-OS-000023-GPOS-00006</p><h2>Rule Version</h2><p>ALMA-09-008600</p><h2>Severity</h2><p>CAT II</p><h2>CCI(s)</h2><ul><li>CCI-000048 - Display an organization-defined system use notification message or banner to users before granting access to the system that provides privacy and security notices consistent with applicable federal laws, Executive Orders, directives, policies, regulations, standards, and guidelines.</li><li>CCI-001384 - For publicly accessible systems, display system use information with organization-defined conditions before granting further access to the publicly accessible system.</li><li>CCI-001385 - For publicly accessible systems, displays references, if any, to monitoring that are consistent with privacy accommodations for such systems that generally prohibit those activities.</li><li>CCI-001386 - For publicly accessible systems, displays references, if any, to recording that are consistent with privacy accommodations for such systems that generally prohibit those activities.</li><li>CCI-001387 - For publicly accessible systems, displays references, if any, to auditing that are consistent with privacy accommodations for such systems that generally prohibit those activities.</li><li>CCI-001388 - For publicly accessible systems, includes a description of the authorized uses of the system.</li></ul><h2>Weight</h2><p>10</p><h2>Fix Recommendation</h2><p>Configure AlmaLinux OS 9 to display the Standard Mandatory DOD Notice and Consent Banner before granting access to the system via a graphical user logon.<br />
+<br />
+Create a database to contain the systemwide graphical user logon settings (if it does not already exist) with the following command:<br />
+<br />
+$ touch /etc/dconf/db/local.d/01-banner-message<br />
+<br />
+Add the following lines to the [org/gnome/login-screen] section of the &quot;/etc/dconf/db/local.d/01-banner-message&quot;:<br />
+<br />
+[org/gnome/login-screen]<br />
+banner-message-enable=true<br />
+banner-message-text='You are accessing a U.S. Government (USG) Information System (IS) that is provided for USG-authorized use only.\nBy using this IS (which includes any device attached to this IS), you consent to the following conditions:\n-The USG routinely intercepts and monitors communications on this IS for purposes including, but not limited to, penetration testing, COMSEC monitoring, network operations and defense, personnel misconduct (PM), law enforcement (LE), and counterintelligence (CI) investigations.\n-At any time, the USG may inspect and seize data stored on this IS.\n-Communications using, or data stored on, this IS are not private, are subject to routine monitoring, interception, and search, and may be disclosed or used for any USG-authorized purpose.\n-This IS includes security measures (e.g., authentication and access controls) to protect USG interests--not for your personal benefit or privacy.\n-Notwithstanding the above, using this IS does not constitute consent to PM, LE or CI investigative searching or monitoring of the content of privileged communications, or work product, related to personal representation or services by attorneys, psychotherapists, or clergy, and their assistants. Such communications and work product are private and confidential. See User Agreement for details.'<br />
+<br />
+Run the following command to update the database:<br />
+<br />
+$ dconf update</p><h2>Check Contents</h2><p>Note: This requirement assumes the use of the default graphical user interface, the GNOME desktop environment. If the system does not have any graphical user interface installed, this requirement is Not Applicable. <br />
+<br />
+Verify AlmaLinux OS 9 displays a banner before granting access to the operating system via a graphical user logon.<br />
+<br />
+First, identify the location of the banner message file with the following command:<br />
+<br />
+$ grep banner-message-text /etc/dconf/db/local.d/*<br />
+<br />
+/etc/dconf/db/local.d/01-banner-message<br />
+<br />
+Determine if the operating system displays a banner at the logon screen with the following command:<br />
+<br />
+$ gsettings get org.gnome.login-screen banner-message-enable<br />
+<br />
+true<br />
+<br />
+Next, check that file contains the correct wording with the following command (substituting the path from above):<br />
+<br />
+$ cat /etc/dconf/db/local.d/01-banner-message<br />
+<br />
+If the banner is set correctly it will return the following text:<br />
+<br />
+&quot;You are accessing a U.S. Government (USG) Information System (IS) that is provided for USG-authorized use only.<br />
+<br />
+By using this IS (which includes any device attached to this IS), you consent to the following conditions:<br />
+<br />
+-The USG routinely intercepts and monitors communications on this IS for purposes including, but not limited to, penetration testing, COMSEC monitoring, network operations and defense, personnel misconduct (PM), law enforcement (LE), and counterintelligence (CI) investigations.<br />
+<br />
+-At any time, the USG may inspect and seize data stored on this IS.<br />
+<br />
+-Communications using, or data stored on, this IS are not private, are subject to routine monitoring, interception, and search, and may be disclosed or used for any USG-authorized purpose.<br />
+<br />
+-This IS includes security measures (e.g., authentication and access controls) to protect USG interests--not for your personal benefit or privacy.<br />
+<br />
+-Notwithstanding the above, using this IS does not constitute consent to PM, LE or CI investigative searching or monitoring of the content of privileged communications, or work product, related to personal representation or services by attorneys, psychotherapists, or clergy, and their assistants. Such communications and work product are private and confidential. See User Agreement for details.&quot;<br />
+<br />
+If the banner text does not match the Standard Mandatory DOD Notice and Consent Banner exactly, or the dconf database does not include the &quot;banner-message-text&quot; setting or if it is not enabled, this is a finding.</p><h2>Vulnerability Number</h2><p>V-269157</p><h2>Documentable</h2><p>False</p><h2>Rule Version</h2><p>ALMA-09-008600</p><h2>Severity Override Guidance</h2><p>Note: This requirement assumes the use of the default graphical user interface, the GNOME desktop environment. If the system does not have any graphical user interface installed, this requirement is Not Applicable. <br />
+<br />
+Verify AlmaLinux OS 9 displays a banner before granting access to the operating system via a graphical user logon.<br />
+<br />
+First, identify the location of the banner message file with the following command:<br />
+<br />
+$ grep banner-message-text /etc/dconf/db/local.d/*<br />
+<br />
+/etc/dconf/db/local.d/01-banner-message<br />
+<br />
+Determine if the operating system displays a banner at the logon screen with the following command:<br />
+<br />
+$ gsettings get org.gnome.login-screen banner-message-enable<br />
+<br />
+true<br />
+<br />
+Next, check that file contains the correct wording with the following command (substituting the path from above):<br />
+<br />
+$ cat /etc/dconf/db/local.d/01-banner-message<br />
+<br />
+If the banner is set correctly it will return the following text:<br />
+<br />
+&quot;You are accessing a U.S. Government (USG) Information System (IS) that is provided for USG-authorized use only.<br />
+<br />
+By using this IS (which includes any device attached to this IS), you consent to the following conditions:<br />
+<br />
+-The USG routinely intercepts and monitors communications on this IS for purposes including, but not limited to, penetration testing, COMSEC monitoring, network operations and defense, personnel misconduct (PM), law enforcement (LE), and counterintelligence (CI) investigations.<br />
+<br />
+-At any time, the USG may inspect and seize data stored on this IS.<br />
+<br />
+-Communications using, or data stored on, this IS are not private, are subject to routine monitoring, interception, and search, and may be disclosed or used for any USG-authorized purpose.<br />
+<br />
+-This IS includes security measures (e.g., authentication and access controls) to protect USG interests--not for your personal benefit or privacy.<br />
+<br />
+-Notwithstanding the above, using this IS does not constitute consent to PM, LE or CI investigative searching or monitoring of the content of privileged communications, or work product, related to personal representation or services by attorneys, psychotherapists, or clergy, and their assistants. Such communications and work product are private and confidential. See User Agreement for details.&quot;<br />
+<br />
+If the banner text does not match the Standard Mandatory DOD Notice and Consent Banner exactly, or the dconf database does not include the &quot;banner-message-text&quot; setting or if it is not enabled, this is a finding.</p><h2>Check Content Reference</h2><p>M</p><h2>Target Key</h2><p>5664</p></body></html>

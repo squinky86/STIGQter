@@ -1,0 +1,65 @@
+<!doctype html><html lang="en"><head><meta charset="utf-8"><title>STIGQter: STIG Check Details: SV-258776r933389_rule: The ESXi host must have all security patches and updates installed.</title><link rel="icon" type="image/svg+xml" href="STIGQter.svg" /><script async src="https://www.googletagmanager.com/gtag/js?id=UA-31381839-2"></script><script src="include.js"></script><script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-4110907817782130" crossorigin="anonymous"></script></head><body><div><img src="STIGQter.svg" alt="STIGQter" style="height:1em;" /> <a href="https://www.stigqter.com/">STIGQter</a>: <a href="main.html">STIG Summary</a>: <a href="U_VMW_vSphere_8-0-ESXi_STIG_V1R1_Manual-xccdf.html">VMware vSphere 8.0 ESXi Security Technical Implementation Guide Version: 1 Release: 1 Benchmark Date: 31 Oct 2023</a>:</div> <h1>The ESXi host must have all security patches and updates installed.</h1><h2>DISA Rule</h2><p>SV-258776r933389_rule</p><h2>Vulnerability Number</h2><p>V-258776</p><h2>Group Title</h2><p>SRG-OS-000480-VMM-002000</p><h2>Rule Version</h2><p>ESXI-80-000221</p><h2>Severity</h2><p>CAT I</p><h2>CCI(s)</h2><ul><li>CCI-000366 - Implement the security configuration settings.</li></ul><h2>Weight</h2><p>10</p><h2>Fix Recommendation</h2><p>ESXi can be patched in multiple ways, and this fix text does not cover all methods.<br />
+<br />
+Manual patching when image profiles are not used:<br />
+<br />
+- Download the latest &quot;offline bundle&quot; .zip update from vmware.com. Verify the hash.<br />
+<br />
+- Transfer the file to a datastore accessible by the ESXi host, local or remote.<br />
+<br />
+- Put the ESXi host into maintenance mode.<br />
+<br />
+- From an ESXi shell, run the following command:<br />
+<br />
+esxcli software vib update -d &lt;path to offline patch bundle.zip&gt;<br />
+<br />
+Manual patching when image profiles are used:<br />
+<br />
+From an ESXi shell, run the following command:<br />
+<br />
+# esxcli software sources profile list -d /vmfs/volumes/&lt;your datastore&gt;/&lt;bundle name.zip&gt;<br />
+<br />
+Note the available profiles. The organization will usually want the one ending in &quot;-standard&quot;.<br />
+<br />
+# esxcli software profile update -p &lt;selected profile&gt; -d /vmfs/volumes/&lt;your datastore&gt;/&lt;bundle name.zip&gt;<br />
+<br />
+There will be little output during the update. Once complete, reboot the host for changes to take effect.</p><h2>Check Contents</h2><p>Determine the current version and build:<br />
+<br />
+From the vSphere Client, go to Hosts and Clusters.<br />
+<br />
+Select the ESXi Host &gt;&gt; Summary. Note the version string next to &quot;Hypervisor:&quot;.<br />
+<br />
+or<br />
+<br />
+From a Secure Shell (SSH) session connected to the ESXi host, or from the ESXi shell, run the following command:<br />
+<br />
+# vmware -v<br />
+<br />
+If the ESXi host does not have the latest patches, this is a finding.<br />
+<br />
+If the ESXi host is not on a supported release, this is a finding.<br />
+<br />
+The latest ESXi versions and their build numbers can be found here: https://kb.vmware.com/s/article/2143832<br />
+<br />
+VMware also publishes advisories on security patches and offers a way to subscribe to email alerts for them.<br />
+<br />
+Go to: https://www.vmware.com/support/policies/security_response</p><h2>Vulnerability Number</h2><p>V-258776</p><h2>Documentable</h2><p>False</p><h2>Rule Version</h2><p>ESXI-80-000221</p><h2>Severity Override Guidance</h2><p>Determine the current version and build:<br />
+<br />
+From the vSphere Client, go to Hosts and Clusters.<br />
+<br />
+Select the ESXi Host &gt;&gt; Summary. Note the version string next to &quot;Hypervisor:&quot;.<br />
+<br />
+or<br />
+<br />
+From a Secure Shell (SSH) session connected to the ESXi host, or from the ESXi shell, run the following command:<br />
+<br />
+# vmware -v<br />
+<br />
+If the ESXi host does not have the latest patches, this is a finding.<br />
+<br />
+If the ESXi host is not on a supported release, this is a finding.<br />
+<br />
+The latest ESXi versions and their build numbers can be found here: https://kb.vmware.com/s/article/2143832<br />
+<br />
+VMware also publishes advisories on security patches and offers a way to subscribe to email alerts for them.<br />
+<br />
+Go to: https://www.vmware.com/support/policies/security_response</p><h2>Check Content Reference</h2><p>M</p><h2>Target Key</h2><p>5562</p></body></html>

@@ -1,0 +1,41 @@
+<!doctype html><html lang="en"><head><meta charset="utf-8"><title>STIGQter: STIG Check Details: SV-279541r1192389_rule: Nutanix OS must audit all account change actions.</title><link rel="icon" type="image/svg+xml" href="STIGQter.svg" /><script async src="https://www.googletagmanager.com/gtag/js?id=UA-31381839-2"></script><script src="include.js"></script><script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-4110907817782130" crossorigin="anonymous"></script></head><body><div><img src="STIGQter.svg" alt="STIGQter" style="height:1em;" /> <a href="https://www.stigqter.com/">STIGQter</a>: <a href="main.html">STIG Summary</a>: <a href="U_NTX_Acropolis_OS_STIG_V1R1_Manual-xccdf.html">Nutanix Acropolis GPOS Security Technical Implementation Guide Version: 1 Release: 1 Benchmark Date: 26 Jan 2026</a>:</div> <h1>Nutanix OS must audit all account change actions.</h1><h2>DISA Rule</h2><p>SV-279541r1192389_rule</p><h2>Vulnerability Number</h2><p>V-279541</p><h2>Group Title</h2><p>SRG-OS-000004-GPOS-00004</p><h2>Rule Version</h2><p>NXAC-OS-000018</p><h2>Severity</h2><p>CAT II</p><h2>CCI(s)</h2><ul><li>CCI-000018 - Automatically audit account creation actions.</li><li>CCI-001403 - Automatically audit account modification actions.</li><li>CCI-001404 - Automatically audit account disabling actions.</li><li>CCI-001405 - Automatically audit account removal actions.</li><li>CCI-002130 - Automatically audit account enabling actions.</li><li>CCI-000015 - Support the management of system accounts using (organization-defined automated mechanisms).</li></ul><h2>Weight</h2><p>10</p><h2>Fix Recommendation</h2><p>Configure Nutanix OS to audit all account change actions.<br />
+<br />
+1. For AOS, configure the audit rules.<br />
+<br />
+$ sudo salt-call state.sls security/CVM/auditCVM<br />
+<br />
+2. For Prism Central, configure the audit rules.<br />
+<br />
+$ sudo salt-call state.sls security/PCVM/auditPCVM<br />
+<br />
+3. For Files, configure the audit rules.<br />
+<br />
+$ sudo salt-call state.sls security/AFS/auditAFS<br />
+<br />
+4. For AHV, configure the audit rules.<br />
+<br />
+$ sudo salt-call state.sls security/KVM/auditKVM</p><h2>Check Contents</h2><p>Verify the OS is configured to audit all account change actions.<br />
+<br />
+Run the following command to verify account creation and modification is audited:<br />
+<br />
+$ sudo auditctl -l | grep &quot;audit_account_changes&quot;<br />
+<br />
+If the command does not return the following output, this is a finding.<br />
+<br />
+-w /etc/group -p wa -k audit_account_changes<br />
+-w /etc/passwd -p wa -k audit_account_changes<br />
+-w /etc/gshadow -p wa -k audit_account_changes<br />
+-w /etc/shadow -p wa -k audit_account_changes<br />
+-w /etc/security/opasswd -p wa -k audit_account_changes</p><h2>Vulnerability Number</h2><p>V-279541</p><h2>Documentable</h2><p>False</p><h2>Rule Version</h2><p>NXAC-OS-000018</p><h2>Severity Override Guidance</h2><p>Verify the OS is configured to audit all account change actions.<br />
+<br />
+Run the following command to verify account creation and modification is audited:<br />
+<br />
+$ sudo auditctl -l | grep &quot;audit_account_changes&quot;<br />
+<br />
+If the command does not return the following output, this is a finding.<br />
+<br />
+-w /etc/group -p wa -k audit_account_changes<br />
+-w /etc/passwd -p wa -k audit_account_changes<br />
+-w /etc/gshadow -p wa -k audit_account_changes<br />
+-w /etc/shadow -p wa -k audit_account_changes<br />
+-w /etc/security/opasswd -p wa -k audit_account_changes</p><h2>Check Content Reference</h2><p>M</p><h2>Target Key</h2><p>5730</p></body></html>

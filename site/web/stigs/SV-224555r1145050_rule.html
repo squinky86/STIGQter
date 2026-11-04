@@ -1,0 +1,49 @@
+<!doctype html><html lang="en"><head><meta charset="utf-8"><title>STIGQter: STIG Check Details: SV-224555r1145050_rule: WebSphere MQ started tasks are not defined in accordance with the proper security requirements.</title><link rel="icon" type="image/svg+xml" href="STIGQter.svg" /><script async src="https://www.googletagmanager.com/gtag/js?id=UA-31381839-2"></script><script src="include.js"></script><script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-4110907817782130" crossorigin="anonymous"></script></head><body><div><img src="STIGQter.svg" alt="STIGQter" style="height:1em;" /> <a href="https://www.stigqter.com/">STIGQter</a>: <a href="main.html">STIG Summary</a>: <a href="U_zOS_WebsphereMQ_for_RACF_STIG_V7R3_Manual-xccdf.html">zOS WebSphere MQ for RACF Security Technical Implementation Guide Version: 7 Release: 3 Benchmark Date: 01 Jul 2026</a>:</div> <h1>WebSphere MQ started tasks are not defined in accordance with the proper security requirements.</h1><h2>DISA Rule</h2><p>SV-224555r1145050_rule</p><h2>Vulnerability Number</h2><p>V-224555</p><h2>Group Title</h2><p>SRG-OS-000104</p><h2>Rule Version</h2><p>ZWMQ0030</p><h2>Severity</h2><p>CAT II</p><h2>CCI(s)</h2><ul><li>CCI-000764 - Uniquely identify and authenticate organizational users and associate that unique identification with processes acting on behalf of those users.</li></ul><h2>Weight</h2><p>10</p><h2>Fix Recommendation</h2><p>Each queue manager started task procedure xxxxMSTR and distributed queuing started task procedure xxxxCHIN will have a matching profile defined to the STARTED resource class. Create a corresponding userid for each started task. The STC userids will be defined as PROTECTED userids. Queue manager and channel initiator started tasks will not be defined with the TRUSTED attribute.<br />
+<br />
+The following sample contains commands to properly define the required Started Procs:<br />
+<br />
+Note that this example uses &quot;qmq1&quot; as the value for ssid.<br />
+<br />
+AU qmq1mstr NAME('STC, MQSERIES') NOPASS DFLTGRP(STC) OWNER(STC) DATA('MQSERIES QUEUE MANAGER PROC')      <br />
+                <br />
+AU qmq1chin NAME('STC, MQSERIES') NOPASSDFLTGRP(STC) OWNER(STC) DATA('MQSERIES DISTRIBUTED QUEUING CHANNEL INIT PROC')   <br />
+<br />
+RDEF STARTED qmq1mstr.** UACC(NONE) OWNER(ADMIN) AUDIT(ALL(READ)) DATA('MAP qmq1mstr PROC TO qmq1mstr USERID') STDATA(USER(=MEMBER) GROUP(STC) TRACE(YES))<br />
+<br />
+RDEF STARTED qmq1chin.** UACC(NONE) OWNER(ADMIN) AUDIT(ALL(READ)) DATA('MAP qmq1mstr PROC TO qmq1chin USERID') STDATA(USER(=MEMBER) GROUP(STC) TRACE(YES))<br />
+<br />
+SETR RACL(STARTED) REFRESH</p><h2>Check Contents</h2><p>Refer to the following reports produced by the RACF Data Collection:<br />
+<br />
+- DSMON.RPT(RACSPT)<br />
+- RACFCMDS.RPT(LISTUSER)<br />
+<br />
+Note: ssid is the queue manager name (a.k.a., subsystem identifier).<br />
+<br />
+Provide a list of all WebSphere MQ Subsystem Ids (Queue managers) and Release levels.<br />
+<br />
+ssidMSTR is the name of a queue manager STC.<br />
+ssidCHIN is the name of a distributed queuing (a.k.a., channel initiator) STC.<br />
+<br />
+Review WebSphere MQ started tasks and ensure the following items are in effect, this is not a finding.<br />
+<br />
+ssidMSTR and ssidCHIN started tasks are associated with a unique userid.<br />
+ssidMSTR and ssidCHIN started tasks userids are defined with the attribute of PROTECTED.<br />
+ssidMSTR and ssidCHIN started tasks are defined to the STARTED resource class.<br />
+Repeat these steps for each queue manager ssid.</p><h2>Vulnerability Number</h2><p>V-224555</p><h2>Documentable</h2><p>False</p><h2>Rule Version</h2><p>ZWMQ0030</p><h2>Severity Override Guidance</h2><p>Refer to the following reports produced by the RACF Data Collection:<br />
+<br />
+- DSMON.RPT(RACSPT)<br />
+- RACFCMDS.RPT(LISTUSER)<br />
+<br />
+Note: ssid is the queue manager name (a.k.a., subsystem identifier).<br />
+<br />
+Provide a list of all WebSphere MQ Subsystem Ids (Queue managers) and Release levels.<br />
+<br />
+ssidMSTR is the name of a queue manager STC.<br />
+ssidCHIN is the name of a distributed queuing (a.k.a., channel initiator) STC.<br />
+<br />
+Review WebSphere MQ started tasks and ensure the following items are in effect, this is not a finding.<br />
+<br />
+ssidMSTR and ssidCHIN started tasks are associated with a unique userid.<br />
+ssidMSTR and ssidCHIN started tasks userids are defined with the attribute of PROTECTED.<br />
+ssidMSTR and ssidCHIN started tasks are defined to the STARTED resource class.<br />
+Repeat these steps for each queue manager ssid.</p><h2>Check Content Reference</h2><p>M</p><h2>Target Key</h2><p>4167</p></body></html>

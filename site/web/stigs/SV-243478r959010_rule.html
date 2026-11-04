@@ -1,0 +1,31 @@
+<!doctype html><html lang="en"><head><meta charset="utf-8"><title>STIGQter: STIG Check Details: SV-243478r959010_rule: Domain-joined systems (excluding domain controllers) must not be configured for unconstrained delegation.</title><link rel="icon" type="image/svg+xml" href="STIGQter.svg" /><script async src="https://www.googletagmanager.com/gtag/js?id=UA-31381839-2"></script><script src="include.js"></script><script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-4110907817782130" crossorigin="anonymous"></script></head><body><div><img src="STIGQter.svg" alt="STIGQter" style="height:1em;" /> <a href="https://www.stigqter.com/">STIGQter</a>: <a href="main.html">STIG Summary</a>: <a href="U_Active_Directory_Domain_STIG_V3R7_Manual-xccdf.html">Active Directory Domain Security Technical Implementation Guide Version: 3 Release: 7 Benchmark Date: 01 Apr 2026</a>:</div> <h1>Domain-joined systems (excluding domain controllers) must not be configured for unconstrained delegation.</h1><h2>DISA Rule</h2><p>SV-243478r959010_rule</p><h2>Vulnerability Number</h2><p>V-243478</p><h2>Group Title</h2><p>SRG-OS-000480</p><h2>Rule Version</h2><p>AD.0018</p><h2>Severity</h2><p>CAT II</p><h2>CCI(s)</h2><ul><li>CCI-000366 - Implement the security configuration settings.</li></ul><h2>Weight</h2><p>10</p><h2>Fix Recommendation</h2><p>Remove unconstrained delegation from computers in the domain. <br />
+<br />
+Select &quot;Properties&quot; for the computer object.<br />
+<br />
+Select the &quot;Delegation&quot; tab.<br />
+<br />
+De-select &quot;Trust this computer for delegation to any service (Kerberos only)&quot;<br />
+<br />
+Configured constrained delegation for specific services where required.</p><h2>Check Contents</h2><p>Open &quot;Windows PowerShell&quot; on a domain controller.<br />
+<br />
+Enter &quot;Get-ADComputer -Filter {(TrustedForDelegation -eq $True) -and (PrimaryGroupID -eq 515)} -Properties TrustedForDelegation, TrustedToAuthForDelegation, ServicePrincipalName, Description, PrimaryGroupID&quot;.<br />
+<br />
+If any computers are returned, this is a finding. <br />
+(TrustedForDelegation equaling True indicates unconstrained delegation.)<br />
+<br />
+PrimaryGroupID 515 = Domain computers (excludes DCs)<br />
+TrustedForDelegation = Unconstrained Delegation<br />
+TrustedToAuthForDelegation = Constrained delegation<br />
+ServicePrincipalName = Service Names<br />
+Description = Computer Description</p><h2>Vulnerability Number</h2><p>V-243478</p><h2>Documentable</h2><p>False</p><h2>Rule Version</h2><p>AD.0018</p><h2>Severity Override Guidance</h2><p>Open &quot;Windows PowerShell&quot; on a domain controller.<br />
+<br />
+Enter &quot;Get-ADComputer -Filter {(TrustedForDelegation -eq $True) -and (PrimaryGroupID -eq 515)} -Properties TrustedForDelegation, TrustedToAuthForDelegation, ServicePrincipalName, Description, PrimaryGroupID&quot;.<br />
+<br />
+If any computers are returned, this is a finding. <br />
+(TrustedForDelegation equaling True indicates unconstrained delegation.)<br />
+<br />
+PrimaryGroupID 515 = Domain computers (excludes DCs)<br />
+TrustedForDelegation = Unconstrained Delegation<br />
+TrustedToAuthForDelegation = Constrained delegation<br />
+ServicePrincipalName = Service Names<br />
+Description = Computer Description</p><h2>Check Content Reference</h2><p>M</p><h2>Target Key</h2><p>5406</p></body></html>

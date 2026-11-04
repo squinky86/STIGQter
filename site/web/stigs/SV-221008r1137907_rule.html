@@ -1,0 +1,52 @@
+<!doctype html><html lang="en"><head><meta charset="utf-8"><title>STIGQter: STIG Check Details: SV-221008r1137907_rule: The Cisco perimeter switch must be configured to enforce approved authorizations for controlling the flow of information between interconnected networks in accordance with applicable policy.</title><link rel="icon" type="image/svg+xml" href="STIGQter.svg" /><script async src="https://www.googletagmanager.com/gtag/js?id=UA-31381839-2"></script><script src="include.js"></script><script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-4110907817782130" crossorigin="anonymous"></script></head><body><div><img src="STIGQter.svg" alt="STIGQter" style="height:1em;" /> <a href="https://www.stigqter.com/">STIGQter</a>: <a href="main.html">STIG Summary</a>: <a href="U_Cisco_IOS-XE_Switch_RTR_STIG_V3R4_Manual-xccdf.html">Cisco IOS XE Switch RTR Security Technical Implementation Guide Version: 3 Release: 4 Benchmark Date: 01 Apr 2026</a>:</div> <h1>The Cisco perimeter switch must be configured to enforce approved authorizations for controlling the flow of information between interconnected networks in accordance with applicable policy.</h1><h2>DISA Rule</h2><p>SV-221008r1137907_rule</p><h2>Vulnerability Number</h2><p>V-221008</p><h2>Group Title</h2><p>SRG-NET-000019-RTR-000002</p><h2>Rule Version</h2><p>CISC-RT-000250</p><h2>Severity</h2><p>CAT II</p><h2>CCI(s)</h2><ul><li>CCI-001414 - Enforce approved authorizations for controlling the flow of information between connected systems based on organization-defined information flow control policies.</li></ul><h2>Weight</h2><p>10</p><h2>Fix Recommendation</h2><p>Step 1: Configure an ACL to allow or deny traffic as shown in the example below:<br />
+<br />
+SW1(config)#ip access-list extended FILTER_PERIMETER<br />
+SW1(config-ext-nacl)#permit tcp any any established<br />
+SW1(config-ext-nacl)#permit tcp host x.12.1.9 host x.12.1.10 eq bgp<br />
+SW1(config-ext-nacl)#permit tcp host x.12.1.9 eq bgp host x.12.1.10<br />
+SW1(config-ext-nacl)#permit icmp host x.12.1.9 host x.12.1.10 echo<br />
+SW1(config-ext-nacl)#permit icmp host x.12.1.9 host x.12.1.10 echo-reply<br />
+SW1(config-ext-nacl)#permit tcp any host x.12.1.22 eq www<br />
+SW1(config-ext-nacl)#deny ip any any log-input<br />
+SW1(config-ext-nacl)#exit<br />
+<br />
+Step 2: Apply the ACL inbound on all external interfaces.<br />
+<br />
+R2(config)#int g0/0<br />
+SW1(config-if)#ip access-group FILTER_PERIMETER in</p><h2>Check Contents</h2><p>Review the switch configuration to verify that ACLs are configured to allow or deny traffic for specific source and destination addresses as well as ports and protocols. In the example below, the switch is peering BGP with DISN. ICMP echo and echo-reply packets are allowed for troubleshooting connectivity. WWW traffic is permitted inbound to the NIPRNet host-facing web server (x.12.1.22).<br />
+<br />
+interface GigabitEthernet0/1<br />
+ description Link to DISN<br />
+ ip address x.12.1.10 255.255.255.0<br />
+ ip access-group FILTER_PERIMETER in<br />
+…<br />
+…<br />
+…<br />
+ip access-list extended FILTER_PERIMETER<br />
+ permit tcp any any established<br />
+ permit tcp host x.12.1.9 host x.12.1.10 eq bgp<br />
+ permit tcp host x.12.1.9 eq bgp host x.12.1.10<br />
+ permit icmp host x.12.1.9 host x.12.1.10 echo<br />
+ permit icmp host x.12.1.9 host x.12.1.10 echo-reply<br />
+ permit tcp any host x.12.1.22 eq www<br />
+ deny ip any any log-input<br />
+<br />
+If the switch is not configured to enforce approved authorizations for controlling the flow of information between interconnected networks, this is a finding.</p><h2>Vulnerability Number</h2><p>V-221008</p><h2>Documentable</h2><p>False</p><h2>Rule Version</h2><p>CISC-RT-000250</p><h2>Severity Override Guidance</h2><p>Review the switch configuration to verify that ACLs are configured to allow or deny traffic for specific source and destination addresses as well as ports and protocols. In the example below, the switch is peering BGP with DISN. ICMP echo and echo-reply packets are allowed for troubleshooting connectivity. WWW traffic is permitted inbound to the NIPRNet host-facing web server (x.12.1.22).<br />
+<br />
+interface GigabitEthernet0/1<br />
+ description Link to DISN<br />
+ ip address x.12.1.10 255.255.255.0<br />
+ ip access-group FILTER_PERIMETER in<br />
+…<br />
+…<br />
+…<br />
+ip access-list extended FILTER_PERIMETER<br />
+ permit tcp any any established<br />
+ permit tcp host x.12.1.9 host x.12.1.10 eq bgp<br />
+ permit tcp host x.12.1.9 eq bgp host x.12.1.10<br />
+ permit icmp host x.12.1.9 host x.12.1.10 echo<br />
+ permit icmp host x.12.1.9 host x.12.1.10 echo-reply<br />
+ permit tcp any host x.12.1.22 eq www<br />
+ deny ip any any log-input<br />
+<br />
+If the switch is not configured to enforce approved authorizations for controlling the flow of information between interconnected networks, this is a finding.</p><h2>Check Content Reference</h2><p>M</p><h2>Target Key</h2><p>4074</p></body></html>

@@ -1,0 +1,30 @@
+<!doctype html><html lang="en"><head><meta charset="utf-8"><title>STIGQter: STIG Check Details: SV-271690r1092634_rule: OL 9 must be able to directly initiate a session lock for all connection types using smart card when the smart card is removed.</title><link rel="icon" type="image/svg+xml" href="STIGQter.svg" /><script async src="https://www.googletagmanager.com/gtag/js?id=UA-31381839-2"></script><script src="include.js"></script><script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-4110907817782130" crossorigin="anonymous"></script></head><body><div><img src="STIGQter.svg" alt="STIGQter" style="height:1em;" /> <a href="https://www.stigqter.com/">STIGQter</a>: <a href="main.html">STIG Summary</a>: <a href="U_Oracle_Linux_9_STIG_V1R6_Manual-xccdf.html">Oracle Linux 9 Security Technical Implementation Guide Version: 1 Release: 6 Benchmark Date: 01 Jul 2026</a>:</div> <h1>OL 9 must be able to directly initiate a session lock for all connection types using smart card when the smart card is removed.</h1><h2>DISA Rule</h2><p>SV-271690r1092634_rule</p><h2>Vulnerability Number</h2><p>V-271690</p><h2>Group Title</h2><p>SRG-OS-000028-GPOS-00009</p><h2>Rule Version</h2><p>OL09-00-002160</p><h2>Severity</h2><p>CAT II</p><h2>CCI(s)</h2><ul><li>CCI-000056 - Retain the device lock until the user reestablishes access using established identification and authentication procedures.</li><li>CCI-000057 - The information system initiates a session lock after the organization-defined time period of inactivity.</li></ul><h2>Weight</h2><p>10</p><h2>Fix Recommendation</h2><p>Configure OL 9 to enable a user's session lock until that user reestablishes access using established identification and authentication procedures.<br />
+<br />
+Select or create an authselect profile and incorporate the &quot;with-smartcard-lock-on-removal&quot; feature with the following example:<br />
+<br />
+$ sudo authselect select sssd with-smartcard with-smartcard-lock-on-removal<br />
+<br />
+Alternatively, the dconf settings can be edited in the /etc/dconf/db/* location.<br />
+<br />
+Add or update the [org/gnome/settings-daemon/peripherals/smartcard] section of the /etc/dconf/db/local.d/00-security-settings&quot; database file and add or update the following lines:<br />
+<br />
+[org/gnome/settings-daemon/peripherals/smartcard]<br />
+removal-action='lock-screen'<br />
+<br />
+Update the dconf system databases:<br />
+<br />
+$ sudo dconf update</p><h2>Check Contents</h2><p>This requirement assumes the use of the OL 9 default graphical user interface—the GNOME desktop environment. If the system does not have any graphical user interface installed, this requirement is Not Applicable.<br />
+<br />
+Verify that OL 9 enables a user's session lock until that user reestablishes access using established identification and authentication procedures with the following command:<br />
+<br />
+$ grep -R removal-action /etc/dconf/db/*<br />
+/etc/dconf/db/distro.d/20-authselect:removal-action='lock-screen'<br />
+<br />
+If the &quot;removal-action='lock-screen'&quot; setting is missing or commented out from the dconf database files, this is a finding.</p><h2>Vulnerability Number</h2><p>V-271690</p><h2>Documentable</h2><p>False</p><h2>Rule Version</h2><p>OL09-00-002160</p><h2>Severity Override Guidance</h2><p>This requirement assumes the use of the OL 9 default graphical user interface—the GNOME desktop environment. If the system does not have any graphical user interface installed, this requirement is Not Applicable.<br />
+<br />
+Verify that OL 9 enables a user's session lock until that user reestablishes access using established identification and authentication procedures with the following command:<br />
+<br />
+$ grep -R removal-action /etc/dconf/db/*<br />
+/etc/dconf/db/distro.d/20-authselect:removal-action='lock-screen'<br />
+<br />
+If the &quot;removal-action='lock-screen'&quot; setting is missing or commented out from the dconf database files, this is a finding.</p><h2>Check Content Reference</h2><p>M</p><h2>Target Key</h2><p>5680</p></body></html>

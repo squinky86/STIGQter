@@ -1,0 +1,21 @@
+<!doctype html><html lang="en"><head><meta charset="utf-8"><title>STIGQter: STIG Check Details: SV-261364r996863_rule: SLEM 5 must lock an account after three consecutive invalid access attempts.</title><link rel="icon" type="image/svg+xml" href="STIGQter.svg" /><script async src="https://www.googletagmanager.com/gtag/js?id=UA-31381839-2"></script><script src="include.js"></script><script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-4110907817782130" crossorigin="anonymous"></script></head><body><div><img src="STIGQter.svg" alt="STIGQter" style="height:1em;" /> <a href="https://www.stigqter.com/">STIGQter</a>: <a href="main.html">STIG Summary</a>: <a href="U_SLEM_5_STIG_V1R4_Manual-xccdf.html">SUSE Linux Enterprise Micro (SLEM) 5 Security Technical Implementation Guide Version: 1 Release: 4 Benchmark Date: 01 Apr 2026</a>:</div> <h1>SLEM 5 must lock an account after three consecutive invalid access attempts.</h1><h2>DISA Rule</h2><p>SV-261364r996863_rule</p><h2>Vulnerability Number</h2><p>V-261364</p><h2>Group Title</h2><p>SRG-OS-000021-GPOS-00005</p><h2>Rule Version</h2><p>SLEM-05-412020</p><h2>Severity</h2><p>CAT II</p><h2>CCI(s)</h2><ul><li>CCI-000044 - Enforce the organization-defined limit of consecutive invalid logon attempts by a user during the organization-defined time period.</li><li>CCI-002238 - Automatically lock the account or node for either an organization-defined time period, until the locked account or node is released by an administrator, or delays the next logon prompt according to the organization-defined delay algorithm when the maximum number of unsuccessful logon attempts is exceeded.</li></ul><h2>Weight</h2><p>10</p><h2>Fix Recommendation</h2><p>Configure SLEM 5 to lock an account when three unsuccessful access attempts occur.<br />
+<br />
+Note: Manual changes to the listed files may be overwritten by the &quot;pam-config&quot; program. The &quot;pam-config&quot; program should not be used to update the configurations listed in this requirement.<br />
+<br />
+Add or modify the first line of the auth section in the &quot;/etc/pam.d/common-auth&quot; file to match the following line:<br />
+<br />
+auth required pam_tally2.so onerr=fail silent audit deny=3<br />
+<br />
+Add or modify the following line in the &quot;/etc/pam.d/common-account&quot; file:<br />
+<br />
+account required pam_tally2.so</p><h2>Check Contents</h2><p>Verify SLEM 5 locks a user account after three consecutive failed access attempts until the locked account is released by an administrator with the following command:<br />
+<br />
+     &gt; grep pam_tally2.so /etc/pam.d/common-auth <br />
+     auth required pam_tally2.so onerr=fail deny=3 <br />
+<br />
+If &quot;deny&quot; set to a value other than &quot;1&quot;, &quot;2&quot;, or &quot;3&quot;, if &quot;onerr=fail&quot; is missing, if the line is commented out, or the line is missing, this is a finding.</p><h2>Vulnerability Number</h2><p>V-261364</p><h2>Documentable</h2><p>False</p><h2>Rule Version</h2><p>SLEM-05-412020</p><h2>Severity Override Guidance</h2><p>Verify SLEM 5 locks a user account after three consecutive failed access attempts until the locked account is released by an administrator with the following command:<br />
+<br />
+     &gt; grep pam_tally2.so /etc/pam.d/common-auth <br />
+     auth required pam_tally2.so onerr=fail deny=3 <br />
+<br />
+If &quot;deny&quot; set to a value other than &quot;1&quot;, &quot;2&quot;, or &quot;3&quot;, if &quot;onerr=fail&quot; is missing, if the line is commented out, or the line is missing, this is a finding.</p><h2>Check Content Reference</h2><p>M</p><h2>Target Key</h2><p>5596</p></body></html>

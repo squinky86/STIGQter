@@ -1,0 +1,96 @@
+<!doctype html><html lang="en"><head><meta charset="utf-8"><title>STIGQter: STIG Check Details: SV-224496r1145204_rule: CICS default logonid(s) must be defined and/or controlled in accordance with the security requirements.</title><link rel="icon" type="image/svg+xml" href="STIGQter.svg" /><script async src="https://www.googletagmanager.com/gtag/js?id=UA-31381839-2"></script><script src="include.js"></script><script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-4110907817782130" crossorigin="anonymous"></script></head><body><div><img src="STIGQter.svg" alt="STIGQter" style="height:1em;" /> <a href="https://www.stigqter.com/">STIGQter</a>: <a href="main.html">STIG Summary</a>: <a href="U_zOS_IBM_CICS_Transaction_Server_RACF_STIG_V7R2_Manual-xccdf.html">z/OS IBM CICS Transaction Server for RACF Security Technical Implementation Guide Version: 7 Release: 2 Benchmark Date: 01 Oct 2025</a>:</div> <h1>CICS default logonid(s) must be defined and/or controlled in accordance with the security requirements.</h1><h2>DISA Rule</h2><p>SV-224496r1145204_rule</p><h2>Vulnerability Number</h2><p>V-224496</p><h2>Group Title</h2><p>SRG-OS-000104</p><h2>Rule Version</h2><p>ZCIC0041</p><h2>Severity</h2><p>CAT II</p><h2>CCI(s)</h2><ul><li>CCI-000764 - Uniquely identify and authenticate organizational users and associate that unique identification with processes acting on behalf of those users.</li></ul><h2>Weight</h2><p>10</p><h2>Fix Recommendation</h2><p>Ensure the following items are in effect for the CICS default userid (i.e., DFLTUSER=default userid). If the following guidance is true, this is not a finding.<br />
+<br />
+Not granted the RACF OPERATIONS attribute.<br />
+<br />
+Issue a RACF LU (Listuser) command on the CICS default userid.<br />
+<br />
+The OPERATIONS attribute can be removed via the RACF command ALU &lt;cicsdefaultuser&gt; NOOPERATIONS<br />
+<br />
+No access to interactive on-line facilities (e.g., TSO) other than CICS.<br />
+<br />
+Use the RACF ALU (Altuser) command to remove attributes such as TSO. Example: ALU &lt;cicsdefaultuser&gt; NOTSO<br />
+<br />
+TIMEOUT parameter in the CICS segment is set to 15 minutes.<br />
+<br />
+A system's default time for terminal lockout or session termination may be lengthened to 30 minutes at the discretion of the ISSM. The ISSM will maintain the documentation for each system with a timeout adjusted beyond the 15-minute recommendation to explain the basis for this decision.<br />
+<br />
+Use the RACF LU (ListUser) command to display the CICS segment. An example is shown here: <br />
+LU &lt;cicsdefaultuser&gt; CICS<br />
+<br />
+Use the RACF ALU command to set the 15 minute timeout value. An example is shown here: <br />
+ALU &lt;cicsdefaultuser&gt; CICS(TIMEOUT(15))<br />
+<br />
+Restricted from accessing all data sets and resources with the following exceptions:<br />
+<br />
+Delete the CICS default user from data set access lists via the command:<br />
+PE '&lt;data set profile name&gt;' ID(&lt;cicsdefaultuser&gt;) DEL<br />
+<br />
+Non-restricted CICS transactions (e.g., CESF, CESN, &quot;good morning&quot; transaction, etc.)<br />
+<br />
+If applicable, resources necessary to operate in an intersystem communication (ISC) environment (i.e., LU6.1, LU6.2, and MRO)<br />
+<br />
+Note: Execute the JCL in CNTL(IRRUT100) using the CICS default userid as SYSIN input. This report lists all occurrences of this userid within the RACF database, including data set and resource access lists.</p><h2>Check Contents</h2><p>Refer to the following report produced by the z/OS Data Collection:<br />
+<br />
+- EXAM.RPT(CICSPROC).<br />
+<br />
+Refer to the following reports produced by the RACF Data Collection:<br />
+<br />
+- RACFCMDS.RPT(LISTUSER).<br />
+- SENSITVE.RPT(TCICSTRN).<br />
+- SENSITVE.RPT(GCICSTRN).<br />
+<br />
+Note: If a CICS region is using a site-defined transaction resource class pair, execute a RACF RLIST command against these resource classes.<br />
+<br />
+Refer to the CICS Systems Programmer Worksheets filled out from previous vulnerability ZCIC0010.<br />
+<br />
+Verify the following items are in effect for the CICS default userid (i.e., DFLTUSER=default userid). If the following guidance is true, this is not a finding.<br />
+<br />
+Not granted the RACF OPERATIONS attribute.<br />
+No access to interactive on-line facilities (e.g., TSO) other than CICS.<br />
+TIMEOUT parameter in the CICS segment is set to 15 minutes.<br />
+<br />
+A system's default time for terminal lockout or session termination may be lengthened to 30 minutes at the discretion of the ISSM. The ISSM will maintain the documentation for each system with a timeout adjusted beyond the 15-minute recommendation to explain the basis for this decision.<br />
+<br />
+Restricted from accessing all data sets and resources with the following exceptions:<br />
+<br />
+Non-restricted CICS transactions (e.g., CESF, CESN, 'good morning' transaction, etc.)<br />
+<br />
+If applicable, resources necessary to operate in an intersystem communication (ISC) environment (i.e., LU6.1, LU6.2, and MRO)<br />
+<br />
+Note: Refer to the IBM CICS Transaction Server Resource Definition Guide for latest and most accurate definition for the Default CICS User. <br />
+<br />
+Note: Any exceptions to these guidelines must be approved by the site ISSO and documented in site security plan.<br />
+<br />
+Note: Execute the JCL in CNTL(IRRUT100) using the CICS default userid as SYSIN input. This report lists all occurrences of this userid within the RACF database, including data set and resource access lists.</p><h2>Vulnerability Number</h2><p>V-224496</p><h2>Documentable</h2><p>False</p><h2>Rule Version</h2><p>ZCIC0041</p><h2>Severity Override Guidance</h2><p>Refer to the following report produced by the z/OS Data Collection:<br />
+<br />
+- EXAM.RPT(CICSPROC).<br />
+<br />
+Refer to the following reports produced by the RACF Data Collection:<br />
+<br />
+- RACFCMDS.RPT(LISTUSER).<br />
+- SENSITVE.RPT(TCICSTRN).<br />
+- SENSITVE.RPT(GCICSTRN).<br />
+<br />
+Note: If a CICS region is using a site-defined transaction resource class pair, execute a RACF RLIST command against these resource classes.<br />
+<br />
+Refer to the CICS Systems Programmer Worksheets filled out from previous vulnerability ZCIC0010.<br />
+<br />
+Verify the following items are in effect for the CICS default userid (i.e., DFLTUSER=default userid). If the following guidance is true, this is not a finding.<br />
+<br />
+Not granted the RACF OPERATIONS attribute.<br />
+No access to interactive on-line facilities (e.g., TSO) other than CICS.<br />
+TIMEOUT parameter in the CICS segment is set to 15 minutes.<br />
+<br />
+A system's default time for terminal lockout or session termination may be lengthened to 30 minutes at the discretion of the ISSM. The ISSM will maintain the documentation for each system with a timeout adjusted beyond the 15-minute recommendation to explain the basis for this decision.<br />
+<br />
+Restricted from accessing all data sets and resources with the following exceptions:<br />
+<br />
+Non-restricted CICS transactions (e.g., CESF, CESN, 'good morning' transaction, etc.)<br />
+<br />
+If applicable, resources necessary to operate in an intersystem communication (ISC) environment (i.e., LU6.1, LU6.2, and MRO)<br />
+<br />
+Note: Refer to the IBM CICS Transaction Server Resource Definition Guide for latest and most accurate definition for the Default CICS User. <br />
+<br />
+Note: Any exceptions to these guidelines must be approved by the site ISSO and documented in site security plan.<br />
+<br />
+Note: Execute the JCL in CNTL(IRRUT100) using the CICS default userid as SYSIN input. This report lists all occurrences of this userid within the RACF database, including data set and resource access lists.</p><h2>Check Content Reference</h2><p>M</p><h2>Target Key</h2><p>4154</p></body></html>

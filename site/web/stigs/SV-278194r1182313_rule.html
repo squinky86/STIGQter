@@ -1,0 +1,119 @@
+<!doctype html><html lang="en"><head><meta charset="utf-8"><title>STIGQter: STIG Check Details: SV-278194r1182313_rule: Windows Server 2025 must have the US DOD CCEB Interoperability Root CA cross-certificates in the Untrusted Certificates Store on unclassified systems.</title><link rel="icon" type="image/svg+xml" href="STIGQter.svg" /><script async src="https://www.googletagmanager.com/gtag/js?id=UA-31381839-2"></script><script src="include.js"></script><script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-4110907817782130" crossorigin="anonymous"></script></head><body><div><img src="STIGQter.svg" alt="STIGQter" style="height:1em;" /> <a href="https://www.stigqter.com/">STIGQter</a>: <a href="main.html">STIG Summary</a>: <a href="U_MS_Windows_Server_2025_STIG_V1R2_Manual-xccdf.html">Microsoft Windows Server 2025 Security Technical Implementation Guide Version: 1 Release: 2 Benchmark Date: 01 Jul 2026</a>:</div> <h1>Windows Server 2025 must have the US DOD CCEB Interoperability Root CA cross-certificates in the Untrusted Certificates Store on unclassified systems.</h1><h2>DISA Rule</h2><p>SV-278194r1182313_rule</p><h2>Vulnerability Number</h2><p>V-278194</p><h2>Group Title</h2><p>SRG-OS-000066-GPOS-00034</p><h2>Rule Version</h2><p>WN25-PK-000030</p><h2>Severity</h2><p>CAT II</p><h2>CCI(s)</h2><ul><li>CCI-000185 - For public key-based authentication, validate certificates by constructing and verifying a certification path to an accepted trust anchor including checking certificate status information.</li><li>CCI-002470 - Only allow the use of organization-defined certificate authorities for verification of the establishment of protected sessions.</li></ul><h2>Weight</h2><p>10</p><h2>Fix Recommendation</h2><p>Install the US DOD CCEB Interoperability Root CA cross-certificate on unclassified systems.<br />
+<br />
+Issued To - Issued By - Thumbprint<br />
+<br />
+DOD Root CA 3 - US DOD CCEB Interoperability Root CA 2 - AF132AC65DE86FC4FB3FE51FD637EBA0FF0B12A9<br />
+<br />
+DOD Root CA 3 - US DOD CCEB Interoperability Root CA 2 - 929BF3196896994C0A201DF4A5B71F603FEFBF2E<br />
+<br />
+Administrators must run the Federal Bridge Certification Authority (FBCA) Cross-Certificate Removal Tool once as an administrator and once as the current user.<br />
+<br />
+The FBCA Cross-Certificate Remover Tool and User Guide are available on Cyber Exchange at https://cyber.mil/pki-pke/tools-configuration-files.</p><h2>Check Contents</h2><p>This is applicable to unclassified systems. It is not applicable for others.<br />
+<br />
+Open PowerShell as an administrator.<br />
+<br />
+Execute the following command:<br />
+<br />
+Get-ChildItem -Path Cert:Localmachine\disallowed | Where Issuer -Like &quot;*CCEB Interoperability*&quot; | FL Subject, Issuer, Thumbprint, NotAfter<br />
+<br />
+If the following certificate &quot;Subject&quot;, &quot;Issuer&quot;, and &quot;Thumbprint&quot; information is not displayed, this is a finding. <br />
+<br />
+Subject: CN=DOD Root CA 3, OU=PKI, OU=DOD, O=U.S. Government, C=US<br />
+Issuer: CN=US DOD CCEB Interoperability Root CA 2, OU=PKI, OU=DOD, O=U.S. Government, C=US<br />
+Thumbprint: AF132AC65DE86FC4FB3FE51FD637EBA0FF0B12A9<br />
+NotAfter: 8/26/2025 9:07:50 AM<br />
+<br />
+Subject: CN=DOD Root CA 3, OU=PKI, OU=DOD, O=U.S. Government, C=US<br />
+Issuer: CN=US DOD CCEB Interoperability Root CA 2, OU=PKI, OU=DOD, O=U.S. Government, C=US<br />
+Thumbprint: 929BF3196896994C0A201DF4A5B71F603FEFBF2E<br />
+NotAfter: 9/27/2025<br />
+<br />
+Alternately, use the Certificates MMC snap-in:<br />
+<br />
+Run &quot;MMC&quot;.<br />
+<br />
+Select &quot;File&quot;, &quot;Add/Remove Snap-in&quot;.<br />
+<br />
+Select &quot;Certificates&quot; and click &quot;Add&quot;.<br />
+<br />
+Select &quot;Computer account&quot; and click &quot;Next&quot;.<br />
+<br />
+Select &quot;Local computer: (the computer this console is running on)&quot; and click &quot;Finish&quot;.<br />
+<br />
+Click &quot;OK&quot;.<br />
+<br />
+Expand &quot;Certificates&quot; and navigate to Untrusted Certificates &gt;&gt; Certificates.<br />
+<br />
+For each certificate with &quot;US DOD CCEB Interoperability Root CA ...&quot; under &quot;Issued By&quot;:<br />
+<br />
+Right-click the certificate and select &quot;Open&quot;.<br />
+<br />
+Select the &quot;Details&quot; tab.<br />
+<br />
+Scroll to the bottom and select &quot;Thumbprint&quot;.<br />
+<br />
+If the certificate below is not listed or the value for the &quot;Thumbprint&quot; field is not as noted, this is a finding:<br />
+<br />
+Issued To: DOD Root CA 3<br />
+Issued By: US DOD CCEB Interoperability Root CA 2<br />
+Thumbprint: AF132AC65DE86FC4FB3FE51FD637EBA0FF0B12A9<br />
+Valid to: Friday, August 26, 2025<br />
+<br />
+Issued To: DOD Root CA 3<br />
+Issued By: US DOD CCEB Interoperability Root CA 2<br />
+Thumbprint: 929BF3196896994C0A201DF4A5B71F603FEFBF2E<br />
+Valid: Friday, September 27, 2025</p><h2>Vulnerability Number</h2><p>V-278194</p><h2>Documentable</h2><p>False</p><h2>Rule Version</h2><p>WN25-PK-000030</p><h2>Severity Override Guidance</h2><p>This is applicable to unclassified systems. It is not applicable for others.<br />
+<br />
+Open PowerShell as an administrator.<br />
+<br />
+Execute the following command:<br />
+<br />
+Get-ChildItem -Path Cert:Localmachine\disallowed | Where Issuer -Like &quot;*CCEB Interoperability*&quot; | FL Subject, Issuer, Thumbprint, NotAfter<br />
+<br />
+If the following certificate &quot;Subject&quot;, &quot;Issuer&quot;, and &quot;Thumbprint&quot; information is not displayed, this is a finding. <br />
+<br />
+Subject: CN=DOD Root CA 3, OU=PKI, OU=DOD, O=U.S. Government, C=US<br />
+Issuer: CN=US DOD CCEB Interoperability Root CA 2, OU=PKI, OU=DOD, O=U.S. Government, C=US<br />
+Thumbprint: AF132AC65DE86FC4FB3FE51FD637EBA0FF0B12A9<br />
+NotAfter: 8/26/2025 9:07:50 AM<br />
+<br />
+Subject: CN=DOD Root CA 3, OU=PKI, OU=DOD, O=U.S. Government, C=US<br />
+Issuer: CN=US DOD CCEB Interoperability Root CA 2, OU=PKI, OU=DOD, O=U.S. Government, C=US<br />
+Thumbprint: 929BF3196896994C0A201DF4A5B71F603FEFBF2E<br />
+NotAfter: 9/27/2025<br />
+<br />
+Alternately, use the Certificates MMC snap-in:<br />
+<br />
+Run &quot;MMC&quot;.<br />
+<br />
+Select &quot;File&quot;, &quot;Add/Remove Snap-in&quot;.<br />
+<br />
+Select &quot;Certificates&quot; and click &quot;Add&quot;.<br />
+<br />
+Select &quot;Computer account&quot; and click &quot;Next&quot;.<br />
+<br />
+Select &quot;Local computer: (the computer this console is running on)&quot; and click &quot;Finish&quot;.<br />
+<br />
+Click &quot;OK&quot;.<br />
+<br />
+Expand &quot;Certificates&quot; and navigate to Untrusted Certificates &gt;&gt; Certificates.<br />
+<br />
+For each certificate with &quot;US DOD CCEB Interoperability Root CA ...&quot; under &quot;Issued By&quot;:<br />
+<br />
+Right-click the certificate and select &quot;Open&quot;.<br />
+<br />
+Select the &quot;Details&quot; tab.<br />
+<br />
+Scroll to the bottom and select &quot;Thumbprint&quot;.<br />
+<br />
+If the certificate below is not listed or the value for the &quot;Thumbprint&quot; field is not as noted, this is a finding:<br />
+<br />
+Issued To: DOD Root CA 3<br />
+Issued By: US DOD CCEB Interoperability Root CA 2<br />
+Thumbprint: AF132AC65DE86FC4FB3FE51FD637EBA0FF0B12A9<br />
+Valid to: Friday, August 26, 2025<br />
+<br />
+Issued To: DOD Root CA 3<br />
+Issued By: US DOD CCEB Interoperability Root CA 2<br />
+Thumbprint: 929BF3196896994C0A201DF4A5B71F603FEFBF2E<br />
+Valid: Friday, September 27, 2025</p><h2>Check Content Reference</h2><p>M</p><h2>Target Key</h2><p>5719</p></body></html>

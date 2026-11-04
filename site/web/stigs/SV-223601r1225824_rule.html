@@ -1,0 +1,71 @@
+<!doctype html><html lang="en"><head><meta charset="utf-8"><title>STIGQter: STIG Check Details: SV-223601r1225824_rule: IBM z/OS TCP/IP resources must be properly protected.</title><link rel="icon" type="image/svg+xml" href="STIGQter.svg" /><script async src="https://www.googletagmanager.com/gtag/js?id=UA-31381839-2"></script><script src="include.js"></script><script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-4110907817782130" crossorigin="anonymous"></script></head><body><div><img src="STIGQter.svg" alt="STIGQter" style="height:1em;" /> <a href="https://www.stigqter.com/">STIGQter</a>: <a href="main.html">STIG Summary</a>: <a href="U_IBM_zOS_ACF2_STIG_V9R9_Manual-xccdf.html">IBM z/OS ACF2 Security Technical Implementation Guide Version: 9 Release: 9 Benchmark Date: 01 Jul 2026</a>:</div> <h1>IBM z/OS TCP/IP resources must be properly protected.</h1><h2>DISA Rule</h2><p>SV-223601r1225824_rule</p><h2>Vulnerability Number</h2><p>V-223601</p><h2>Group Title</h2><p>SRG-OS-000080-GPOS-00048</p><h2>Rule Version</h2><p>ACF2-TC-000030</p><h2>Severity</h2><p>CAT II</p><h2>CCI(s)</h2><ul><li>CCI-000213 - Enforce approved authorizations for logical access to information and system resources in accordance with applicable access control policies.</li></ul><h2>Weight</h2><p>10</p><h2>Fix Recommendation</h2><p>Develop a plan of action to implement the required changes. Ensure the following items are in effect for TCP/IP resources.<br />
+<br />
+(Note: The resource class, resources, and/or resource prefixes identified below are examples of a possible installation. The actual resource class, resources, and/or resource prefixes are determined when the product is actually installed on a system through the product's installation guide and can be site specific.)<br />
+<br />
+The SERVAUTH resource class is mapped to the required resource type SER.<br />
+<br />
+Ensure that the EZA, EZB, and IST resources are defined to the SERVAUTH resource class with a default access of PREVENT.<br />
+<br />
+If the product CSSMTP is on the system, no access is given to EZB.CSSMTP of the SERVAUTH resource class. EZB.CSSMTP.sysname.writername.JESnode will be specified and made available to the CSSMTP started task and authenticated users that require access to use CSSMTP for email services.<br />
+<br />
+Only authenticated users that require access are permitted access to the second level of the resources in the SERVAUTH resource class. Examples are the network (NETACCESS), port (PORTACCESS), stack (STACKACCESS), and FTP resources in the SERVAUTH resource class.<br />
+<br />
+The EZB.STACKACCESS. resource access authorizations restrict access to those started tasks with valid requirements and users with valid FTP access requirements.<br />
+<br />
+The EZB.FTP.*.*.ACCESS.HFS) resource access authorizations restrict access to FTP users with specific written documentation showing a valid requirement exists to access OMVS files and Directories.<br />
+<br />
+The EZB.INITSTACK.sysname.tcpname resource access authorizations restrict access to TCP/IP stack before policies have been installed to users authorized by the system security plan.<br />
+<br />
+The following commands are provided as a sample for implementing resource controls:<br />
+<br />
+$KEY(EZB) TYPE(SER)<br />
+- UID(*) PREVENT<br />
+CSSMTP. - UID(*) PREVENT<br />
+CSSMTP.sysname.writername.JESnode UID(authusers) SERVICE(READ) ALLOW<br />
+FTP.- UID(authusers) SERVICE(READ) ALLOW<br />
+FTP.sysname.ftpstc.ACCESS.HFS UID(ftpprofile) SERVICE(READ) ALLOW<br />
+NETACCESS.- UID(authusers) SERVICE(READ) ALLOW<br />
+PORTACCESS.- UID(authusers) SERVICE(READ) ALLOW<br />
+STACKACCESS.- UID(authusers) SERVICE(READ) ALLOW<br />
+STACKACCESS.sysname.TCPIP UID(ftpprofile) SERVICE(READ) ALLOW<br />
+INITSTACK.- UID(authusers) SERVICE(READ) ALLOW<br />
+<br />
+COMPILE 'ACF2.MVA.SER(EZB)' STORE<br />
+<br />
+F ACF2,REBUILD(SER)</p><h2>Check Contents</h2><p>From the ACF command screen enter:<br />
+SET RESOURCE(SER)<br />
+SET VERBOSE<br />
+The SERVAUTH resource class is mapped to the standard resource type SER.<br />
+LIST LIKE (-)<br />
+<br />
+If no access is given to the EZA, EZB, and IST high level resources of the SERVAUTH resource class, and default access of PREVENT is specified, this is not a finding.<br />
+<br />
+If the product CSSMTP is on the system, no access is given to EZB.CSSMTP of the SERVAUTH resource class, this is not a finding.<br />
+<br />
+If the product CSSMTP is on the system, EZB.CSSMTP.sysname.writername.JESnode will be specified and made available to the CSSMTP started task and authenticated users that require access to use CSSMTP for email services.<br />
+<br />
+Authenticated users that require access will be permitted access to the second level of the resources in the SERVAUTH resource class. Examples are the network (NETACCESS), port (PORTACCESS), stack (STACKACCESS), and FTP resources in the SERVAUTH resource class.<br />
+<br />
+If the EZB.STACKACCESS. resource access authorizations restrict access to those started tasks with valid requirements and users with valid FTP access requirements, this is not a finding.<br />
+<br />
+If the EZB.FTP.*.*.ACCESS.HFS resource access authorizations restrict access to FTP users with specific written documentation showing a valid requirement exists to access OMVS files and Directories, this is not a finding.<br />
+<br />
+If the EZB.INITSTACK.sysname.tcpname resource access authorizations restrict access before policies have been installed, to users authorized by the system security plan requiring access to the TCP/IP stack, this is not a finding.</p><h2>Vulnerability Number</h2><p>V-223601</p><h2>Documentable</h2><p>False</p><h2>Rule Version</h2><p>ACF2-TC-000030</p><h2>Severity Override Guidance</h2><p>From the ACF command screen enter:<br />
+SET RESOURCE(SER)<br />
+SET VERBOSE<br />
+The SERVAUTH resource class is mapped to the standard resource type SER.<br />
+LIST LIKE (-)<br />
+<br />
+If no access is given to the EZA, EZB, and IST high level resources of the SERVAUTH resource class, and default access of PREVENT is specified, this is not a finding.<br />
+<br />
+If the product CSSMTP is on the system, no access is given to EZB.CSSMTP of the SERVAUTH resource class, this is not a finding.<br />
+<br />
+If the product CSSMTP is on the system, EZB.CSSMTP.sysname.writername.JESnode will be specified and made available to the CSSMTP started task and authenticated users that require access to use CSSMTP for email services.<br />
+<br />
+Authenticated users that require access will be permitted access to the second level of the resources in the SERVAUTH resource class. Examples are the network (NETACCESS), port (PORTACCESS), stack (STACKACCESS), and FTP resources in the SERVAUTH resource class.<br />
+<br />
+If the EZB.STACKACCESS. resource access authorizations restrict access to those started tasks with valid requirements and users with valid FTP access requirements, this is not a finding.<br />
+<br />
+If the EZB.FTP.*.*.ACCESS.HFS resource access authorizations restrict access to FTP users with specific written documentation showing a valid requirement exists to access OMVS files and Directories, this is not a finding.<br />
+<br />
+If the EZB.INITSTACK.sysname.tcpname resource access authorizations restrict access before policies have been installed, to users authorized by the system security plan requiring access to the TCP/IP stack, this is not a finding.</p><h2>Check Content Reference</h2><p>M</p><h2>Target Key</h2><p>4100</p></body></html>

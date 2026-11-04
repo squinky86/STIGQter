@@ -1,0 +1,38 @@
+<!doctype html><html lang="en"><head><meta charset="utf-8"><title>STIGQter: STIG Check Details: SV-258886r933719_rule: The Photon operating system must not forward IPv4 or IPv6 source-routed packets.</title><link rel="icon" type="image/svg+xml" href="STIGQter.svg" /><script async src="https://www.googletagmanager.com/gtag/js?id=UA-31381839-2"></script><script src="include.js"></script><script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-4110907817782130" crossorigin="anonymous"></script></head><body><div><img src="STIGQter.svg" alt="STIGQter" style="height:1em;" /> <a href="https://www.stigqter.com/">STIGQter</a>: <a href="main.html">STIG Summary</a>: <a href="U_VMW_vSphere_8-0_VCSA_Photon_OS_4-0_STIG_V1R1_Manual-xccdf.html">VMware vSphere 8.0 vCenter Appliance Photon OS 4.0 Security Technical Implementation Guide Version: 1 Release: 1 Benchmark Date: 31 Oct 2023</a>:</div> <h1>The Photon operating system must not forward IPv4 or IPv6 source-routed packets.</h1><h2>DISA Rule</h2><p>SV-258886r933719_rule</p><h2>Vulnerability Number</h2><p>V-258886</p><h2>Group Title</h2><p>SRG-OS-000480-GPOS-00227</p><h2>Rule Version</h2><p>PHTN-40-000223</p><h2>Severity</h2><p>CAT II</p><h2>CCI(s)</h2><ul><li>CCI-000366 - Implement the security configuration settings.</li></ul><h2>Weight</h2><p>10</p><h2>Fix Recommendation</h2><p>Navigate to and open:<br />
+<br />
+/etc/sysctl.d/zz-stig-hardening.conf<br />
+<br />
+Add or update the following lines:<br />
+<br />
+net.ipv4.conf.all.accept_source_route = 0<br />
+net.ipv4.conf.default.accept_source_route = 0<br />
+net.ipv6.conf.all.accept_source_route = 0<br />
+net.ipv6.conf.default.accept_source_route = 0<br />
+<br />
+At the command line, run the following command to load the new configuration:<br />
+<br />
+# /sbin/sysctl --load /etc/sysctl.d/zz-stig-hardening.conf<br />
+<br />
+Note: If the file zz-stig-hardening.conf does not exist, it must be created.</p><h2>Check Contents</h2><p>At the command line, run the following command to verify source-routed packets are not forwarded:<br />
+<br />
+# /sbin/sysctl -a --pattern &quot;net.ipv[4|6].conf.(all|default).accept_source_route&quot;<br />
+<br />
+Expected result:<br />
+<br />
+net.ipv4.conf.all.accept_source_route = 0<br />
+net.ipv4.conf.default.accept_source_route = 0<br />
+net.ipv6.conf.all.accept_source_route = 0<br />
+net.ipv6.conf.default.accept_source_route = 0<br />
+<br />
+If the &quot;accept_source_route&quot; kernel parameters are not set to &quot;0&quot;, this is a finding.</p><h2>Vulnerability Number</h2><p>V-258886</p><h2>Documentable</h2><p>False</p><h2>Rule Version</h2><p>PHTN-40-000223</p><h2>Severity Override Guidance</h2><p>At the command line, run the following command to verify source-routed packets are not forwarded:<br />
+<br />
+# /sbin/sysctl -a --pattern &quot;net.ipv[4|6].conf.(all|default).accept_source_route&quot;<br />
+<br />
+Expected result:<br />
+<br />
+net.ipv4.conf.all.accept_source_route = 0<br />
+net.ipv4.conf.default.accept_source_route = 0<br />
+net.ipv6.conf.all.accept_source_route = 0<br />
+net.ipv6.conf.default.accept_source_route = 0<br />
+<br />
+If the &quot;accept_source_route&quot; kernel parameters are not set to &quot;0&quot;, this is a finding.</p><h2>Check Content Reference</h2><p>M</p><h2>Target Key</h2><p>5569</p></body></html>

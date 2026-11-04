@@ -1,0 +1,56 @@
+<!doctype html><html lang="en"><head><meta charset="utf-8"><title>STIGQter: STIG Check Details: SV-268148r1131097_rule: NixOS must prevent all software from executing at higher privilege levels than users executing the software.</title><link rel="icon" type="image/svg+xml" href="STIGQter.svg" /><script async src="https://www.googletagmanager.com/gtag/js?id=UA-31381839-2"></script><script src="include.js"></script><script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-4110907817782130" crossorigin="anonymous"></script></head><body><div><img src="STIGQter.svg" alt="STIGQter" style="height:1em;" /> <a href="https://www.stigqter.com/">STIGQter</a>: <a href="main.html">STIG Summary</a>: <a href="U_Anduril_NixOS_STIG_V1R2_Manual-xccdf.html">Anduril NixOS Security Technical Implementation Guide Version: 1 Release: 2 Benchmark Date: 01 Oct 2025</a>:</div> <h1>NixOS must prevent all software from executing at higher privilege levels than users executing the software.</h1><h2>DISA Rule</h2><p>SV-268148r1131097_rule</p><h2>Vulnerability Number</h2><p>V-268148</p><h2>Group Title</h2><p>SRG-OS-000326-GPOS-00126</p><h2>Rule Version</h2><p>ANIX-00-001280</p><h2>Severity</h2><p>CAT II</p><h2>CCI(s)</h2><ul><li>CCI-002233 - Prevent the organization-defined software from executing at higher privilege levels than users executing the software.</li></ul><h2>Weight</h2><p>10</p><h2>Fix Recommendation</h2><p>Configure the audit service to produce audit records.<br />
+<br />
+Add the following Nix code to the NixOS Configuration, usually located in /etc/nixos/configuration.nix or /etc/nixos/flake.nix:<br />
+<br />
+ security.auditd.enable = true;<br />
+ security.audit.enable = true;<br />
+<br />
+Add the following audit rules:<br />
+<br />
+ security.audit.rules = [<br />
+  &quot;-a always,exit -F arch=b32 -S execve -C uid!=euid -F euid=0 -k execpriv&quot;<br />
+  &quot;-a always,exit -F arch=b64 -S execve -C uid!=euid -F euid=0 -k execpriv&quot;<br />
+  &quot;-a always,exit -F arch=b32 -S execve -C gid!=egid -F egid=0 -k execpriv&quot;<br />
+  &quot;-a always,exit -F arch=b64 -S execve -C gid!=egid -F egid=0 -k execpriv&quot;<br />
+ ];<br />
+<br />
+Rebuild and switch to the new NixOS configuration:<br />
+$ sudo nixos-rebuild switch</p><h2>Check Contents</h2><p>Verify NixOS audits and provides alerts of audit failures by running the following command: <br />
+<br />
+$grep A -15 security.auditd /etc/nixos/configuration.nix<br />
+<br />
+ /etc/nixos/configuration.nix: <br />
+<br />
+ security.auditd.enable = true;<br />
+ security.audit.enable = true;<br />
+ security.audit.rules = [<br />
+  ''<br />
+  &lt;audit_rules&gt;<br />
+  ''<br />
+ ]; security.audit.rules = [<br />
+  &quot;-a always,exit -F arch=b32 -S execve -C uid!=euid -F euid=0 -k execpriv&quot;<br />
+  &quot;-a always,exit -F arch=b64 -S execve -C uid!=euid -F euid=0 -k execpriv&quot;<br />
+  &quot;-a always,exit -F arch=b32 -S execve -C gid!=egid -F egid=0 -k execpriv&quot;<br />
+  &quot;-a always,exit -F arch=b64 -S execve -C gid!=egid -F egid=0 -k execpriv&quot;<br />
+ ];<br />
+<br />
+If &quot;security.auditd&quot;, &quot;security.audit&quot; and the additional modifications do not equal true, are missing, or are commented out, this is a finding.</p><h2>Vulnerability Number</h2><p>V-268148</p><h2>Documentable</h2><p>False</p><h2>Rule Version</h2><p>ANIX-00-001280</p><h2>Severity Override Guidance</h2><p>Verify NixOS audits and provides alerts of audit failures by running the following command: <br />
+<br />
+$grep A -15 security.auditd /etc/nixos/configuration.nix<br />
+<br />
+ /etc/nixos/configuration.nix: <br />
+<br />
+ security.auditd.enable = true;<br />
+ security.audit.enable = true;<br />
+ security.audit.rules = [<br />
+  ''<br />
+  &lt;audit_rules&gt;<br />
+  ''<br />
+ ]; security.audit.rules = [<br />
+  &quot;-a always,exit -F arch=b32 -S execve -C uid!=euid -F euid=0 -k execpriv&quot;<br />
+  &quot;-a always,exit -F arch=b64 -S execve -C uid!=euid -F euid=0 -k execpriv&quot;<br />
+  &quot;-a always,exit -F arch=b32 -S execve -C gid!=egid -F egid=0 -k execpriv&quot;<br />
+  &quot;-a always,exit -F arch=b64 -S execve -C gid!=egid -F egid=0 -k execpriv&quot;<br />
+ ];<br />
+<br />
+If &quot;security.auditd&quot;, &quot;security.audit&quot; and the additional modifications do not equal true, are missing, or are commented out, this is a finding.</p><h2>Check Content Reference</h2><p>M</p><h2>Target Key</h2><p>5658</p></body></html>

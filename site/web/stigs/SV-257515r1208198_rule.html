@@ -1,0 +1,72 @@
+<!doctype html><html lang="en"><head><meta charset="utf-8"><title>STIGQter: STIG Check Details: SV-257515r1208198_rule: OpenShift must enforce approved authorizations for controlling the flow of information within the container platform based on organization-defined information flow control policies.</title><link rel="icon" type="image/svg+xml" href="STIGQter.svg" /><script async src="https://www.googletagmanager.com/gtag/js?id=UA-31381839-2"></script><script src="include.js"></script><script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-4110907817782130" crossorigin="anonymous"></script></head><body><div><img src="STIGQter.svg" alt="STIGQter" style="height:1em;" /> <a href="https://www.stigqter.com/">STIGQter</a>: <a href="main.html">STIG Summary</a>: <a href="U_RH_OpenShift_Container_Platform_4-x_STIG_V2R6_Manual-xccdf.html">Red Hat OpenShift Container Platform 4.x Security Technical Implementation Guide Version: 2 Release: 6 Benchmark Date: 01 Jul 2026</a>:</div> <h1>OpenShift must enforce approved authorizations for controlling the flow of information within the container platform based on organization-defined information flow control policies.</h1><h2>DISA Rule</h2><p>SV-257515r1208198_rule</p><h2>Vulnerability Number</h2><p>V-257515</p><h2>Group Title</h2><p>SRG-APP-000039-CTR-000110</p><h2>Rule Version</h2><p>CNTR-OS-000110</p><h2>Severity</h2><p>CAT II</p><h2>CCI(s)</h2><ul><li>CCI-001414 - Enforce approved authorizations for controlling the flow of information between connected systems based on organization-defined information flow control policies.</li></ul><h2>Weight</h2><p>10</p><h2>Fix Recommendation</h2><p>Configure a default network policy as necessary to protect the flow of information by performing the following steps:<br />
+ <br />
+1. Create a bootstrap project template (if not already created) by executing the following:<br />
+ oc adm create-bootstrap-project-template -o yaml &gt; template.yaml<br />
+ <br />
+2. Edit the template and add network policy object definitions before the parameters section. For example, the following section defines two policies: one to allow requests from the same namespace and one to allow from the OpenShift ingress routing service. <br />
+ - apiVersion: networking.k8s.io/v1<br />
+  kind: NetworkPolicy<br />
+  metadata:<br />
+  name: allow-from-same-namespace<br />
+  spec:<br />
+  podSelector:<br />
+  ingress:<br />
+  - from:<br />
+  - podSelector: {}<br />
+ - apiVersion: networking.k8s.io/v1<br />
+  kind: NetworkPolicy<br />
+  metadata:<br />
+  name: allow-from-openshift-ingress<br />
+  spec:<br />
+  ingress:<br />
+  - from:<br />
+  - namespaceSelector:<br />
+  matchLabels:<br />
+  network.openshift.io/policy-group: ingress<br />
+  podSelector: {}<br />
+  policyTypes:<br />
+  - Ingress<br />
+ parameters:<br />
+ <br />
+ 3. Apply the project template to the cluster by executing the following: <br />
+ oc create -f template.yaml -n openshift-config<br />
+ <br />
+ 4. Set the default cluster project request template by executing the following:  <br />
+ oc patch project.config.openshift.io/cluster --type=merge -p '{'spec':{'projectRequestTemplate':{'name': '&lt;PROJECT_REQUEST_TEMPLATE&gt;'}}}'<br />
+ <br />
+For additional information regarding network policies, refer to https://docs.openshift.com/container-platform/4.8/networking/network_policy/about-network-policy.html.<br />
+<br />
+Where OpenShift Virtualization is enabled:<br />
+$ oc patch hyperconverged kubevirt-hyperconverged -n openshift-cnv<br />
+--type='json' -p='[<br />
+{&quot;op&quot;: &quot;replace&quot;, &quot;path&quot;: &quot;/spec/featureGates/downwardMetrics&quot;,<br />
+&quot;value&quot;: false },<br />
+]'</p><h2>Check Contents</h2><p>Check for network policy. Verify a default project template is defined by executing the following:<br />
+oc get project.config.openshift.io/cluster -o jsonpath='{.spec.projectRequestTemplate.name}'<br />
+ <br />
+If no project request template is in use by the project config, this is a finding.<br />
+ <br />
+Verify the project request template creates a network policy: <br />
+oc get templates/&lt;PROJECT-REQUEST-TEMPLATE&gt; -n openshift-config -o jsonpath='{.objects[?(.kind=='NetworkPolicy')]}{'\n'}'<br />
+ <br />
+Replace &lt;PROJECT-REQUEST-TEMPLATE&gt; with the name of the project request template returned from the earlier query. If the project template is not defined, or there are no network policy definitions in it, this is a finding.<br />
+<br />
+Where OpenShift Virtualization is enabled:<br />
+$ oc get hyperconverged kubevirt-hyperconverged -n openshift-cnv<br />
+-ojsonpath='{.spec.featureGates.downwardMetrics}'<br />
+<br />
+If this is set to anything other than &quot;false&quot;, this is a finding.</p><h2>Vulnerability Number</h2><p>V-257515</p><h2>Documentable</h2><p>False</p><h2>Rule Version</h2><p>CNTR-OS-000110</p><h2>Severity Override Guidance</h2><p>Check for network policy. Verify a default project template is defined by executing the following:<br />
+oc get project.config.openshift.io/cluster -o jsonpath='{.spec.projectRequestTemplate.name}'<br />
+ <br />
+If no project request template is in use by the project config, this is a finding.<br />
+ <br />
+Verify the project request template creates a network policy: <br />
+oc get templates/&lt;PROJECT-REQUEST-TEMPLATE&gt; -n openshift-config -o jsonpath='{.objects[?(.kind=='NetworkPolicy')]}{'\n'}'<br />
+ <br />
+Replace &lt;PROJECT-REQUEST-TEMPLATE&gt; with the name of the project request template returned from the earlier query. If the project template is not defined, or there are no network policy definitions in it, this is a finding.<br />
+<br />
+Where OpenShift Virtualization is enabled:<br />
+$ oc get hyperconverged kubevirt-hyperconverged -n openshift-cnv<br />
+-ojsonpath='{.spec.featureGates.downwardMetrics}'<br />
+<br />
+If this is set to anything other than &quot;false&quot;, this is a finding.</p><h2>Check Content Reference</h2><p>M</p><h2>Target Key</h2><p>5547</p></body></html>

@@ -1,0 +1,48 @@
+<!doctype html><html lang="en"><head><meta charset="utf-8"><title>STIGQter: STIG Check Details: SV-217352r991995_rule: The Juniper router must be configured to obtain its public key certificates from an appropriate certificate policy through an approved service provider.</title><link rel="icon" type="image/svg+xml" href="STIGQter.svg" /><script async src="https://www.googletagmanager.com/gtag/js?id=UA-31381839-2"></script><script src="include.js"></script><script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-4110907817782130" crossorigin="anonymous"></script></head><body><div><img src="STIGQter.svg" alt="STIGQter" style="height:1em;" /> <a href="https://www.stigqter.com/">STIGQter</a>: <a href="main.html">STIG Summary</a>: <a href="U_Juniper_Router_NDM_STIG_V3R2_Manual-xccdf.html">Juniper Router NDM Security Technical Implementation Guide Version: 3 Release: 2 Benchmark Date: 30 Jan 2025</a>:</div> <h1>The Juniper router must be configured to obtain its public key certificates from an appropriate certificate policy through an approved service provider.</h1><h2>DISA Rule</h2><p>SV-217352r991995_rule</p><h2>Vulnerability Number</h2><p>V-217352</p><h2>Group Title</h2><p>SRG-APP-000516-NDM-000344</p><h2>Rule Version</h2><p>JUNI-ND-001430</p><h2>Severity</h2><p>CAT II</p><h2>CCI(s)</h2><ul><li>CCI-001159 - Issue public key certificates under an organization-defined certificate policy or obtain public key certificates from an approved service provider.</li><li>CCI-004909 - Include only approved trust anchors in trust stores or certificate stores managed by the organization.</li></ul><h2>Weight</h2><p>10</p><h2>Fix Recommendation</h2><p>Step 1. Create a trusted profile and email address to send certificate request to.<br />
+<br />
+[edit security]<br />
+set pki ca-profile DODXX_CA ca-identity xxxxx.mil<br />
+set pki ca-profile DODXX_CA administrator email-address certadmin@xxxxx.mil<br />
+<br />
+Step 2. Create a revocation check to specify a method for checking certificate revocation.<br />
+<br />
+set pki ca-profile DODXX_CA revocation-check crl url http://server1.example.mil/CertEnroll/example.crl<br />
+set pki ca-profile DODXX_CA revocation-check crl refresh-interval 24</p><h2>Check Contents</h2><p>Review the router configuration to verify that it is compliant with this requirement. The configuration below is an example of a CA profile defining name of the CA, the location of CRL for revocation check and to refresh the CRL every 24 hours, and the email address to send a certificate request.<br />
+<br />
+security {<br />
+    pki {<br />
+        ca-profile DODXX_CA {<br />
+            ca-identity xxxxx.mil;<br />
+            revocation-check {<br />
+                crl {<br />
+                    url http://server1.xxxxx.mil/CertEnroll/example.crl;<br />
+                    refresh-interval 24;<br />
+                }<br />
+            }<br />
+            administrator {<br />
+                email-address &quot;certadmin@xxxxx.mil&quot;;<br />
+            }<br />
+        }<br />
+    }<br />
+}<br />
+<br />
+If the router is not configured to obtain its public key certificates from an appropriate certificate policy through an approved service provider, this is a finding.</p><h2>Vulnerability Number</h2><p>V-217352</p><h2>Documentable</h2><p>False</p><h2>Rule Version</h2><p>JUNI-ND-001430</p><h2>Severity Override Guidance</h2><p>Review the router configuration to verify that it is compliant with this requirement. The configuration below is an example of a CA profile defining name of the CA, the location of CRL for revocation check and to refresh the CRL every 24 hours, and the email address to send a certificate request.<br />
+<br />
+security {<br />
+    pki {<br />
+        ca-profile DODXX_CA {<br />
+            ca-identity xxxxx.mil;<br />
+            revocation-check {<br />
+                crl {<br />
+                    url http://server1.xxxxx.mil/CertEnroll/example.crl;<br />
+                    refresh-interval 24;<br />
+                }<br />
+            }<br />
+            administrator {<br />
+                email-address &quot;certadmin@xxxxx.mil&quot;;<br />
+            }<br />
+        }<br />
+    }<br />
+}<br />
+<br />
+If the router is not configured to obtain its public key certificates from an appropriate certificate policy through an approved service provider, this is a finding.</p><h2>Check Content Reference</h2><p>M</p><h2>Target Key</h2><p>4034</p></body></html>

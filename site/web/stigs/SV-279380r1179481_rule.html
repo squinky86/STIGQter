@@ -1,0 +1,52 @@
+<!doctype html><html lang="en"><head><meta charset="utf-8"><title>STIGQter: STIG Check Details: SV-279380r1179481_rule: MongoDB must prohibit user installation of logic modules (stored procedures, functions, triggers, views, etc.) without explicit privileged status.</title><link rel="icon" type="image/svg+xml" href="STIGQter.svg" /><script async src="https://www.googletagmanager.com/gtag/js?id=UA-31381839-2"></script><script src="include.js"></script><script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-4110907817782130" crossorigin="anonymous"></script></head><body><div><img src="STIGQter.svg" alt="STIGQter" style="height:1em;" /> <a href="https://www.stigqter.com/">STIGQter</a>: <a href="main.html">STIG Summary</a>: <a href="U_MDB_Enterprise_Advanced_8-x_STIG_V1R1_Manual-xccdf.html">MongoDB Enterprise Advanced 8.x Security Technical Implementation Guide Version: 1 Release: 1 Benchmark Date: 26 Jan 2026</a>:</div> <h1>MongoDB must prohibit user installation of logic modules (stored procedures, functions, triggers, views, etc.) without explicit privileged status.</h1><h2>DISA Rule</h2><p>SV-279380r1179481_rule</p><h2>Vulnerability Number</h2><p>V-279380</p><h2>Group Title</h2><p>SRG-APP-000378-DB-000365</p><h2>Rule Version</h2><p>MD8X-00-007300</p><h2>Severity</h2><p>CAT II</p><h2>CCI(s)</h2><ul><li>CCI-003980 - Allow user installation of software only with explicit privileged status.</li></ul><h2>Weight</h2><p>10</p><h2>Fix Recommendation</h2><p>Revoke unapproved roles from nonadministrative users as per the site-specific document by executing db.revokeRolesFromUser for each user and database:<br />
+<br />
+&gt; use &lt;database&gt;<br />
+&gt; db.revokeRolesFromUser( &quot;&lt;username&gt;&quot;, [ &lt;roles&gt; ], { &lt;writeConcern&gt; } )<br />
+<br />
+Reference:<br />
+https://www.mongodb.com/docs/v8.0/reference/method/db.revokeRolesFromUser/<br />
+<br />
+Edit the MongoDB configuration file (default location: /etc/mongod.conf) to include the following:<br />
+<br />
+security:<br />
+  javascriptEnabled: false</p><h2>Check Contents</h2><p>If MongoDB supports only software development, experimentation and/or developer-level testing (that is, excluding production systems, integration testing, stress testing, and user acceptance testing), this is not a finding.<br />
+<br />
+MongoDB can control nonadministrative users' ability to create, alter, or replace logic modules by defining specific roles and permissions. While MongoDB does not directly support stored procedures, functions, triggers, and views in the way relational databases do, similar functionalities can be implemented using various features. <br />
+<br />
+An organizational or site-specific document should exist and be reviewed to determine what built-in MongoDB roles and associated privileges may be considered authorized and what users are administrative users.<br />
+<br />
+For each database, run the following commands in MongoDB as an administrative user to determine what users and roles they are assigned:<br />
+<br />
+&gt; use &lt;database&gt;<br />
+&gt; db.getUsers()<br />
+<br />
+For any nonadministrative user in a database, check if any roles are not compliant with the site-specific documentation for users. If any user in any database is found to have a role that is not allowed, this is a finding.<br />
+<br />
+MongoDB allows users to store JavaScript functions on the server. Javascript should be disabled for all users.<br />
+<br />
+Review the Mongodb configuration file (default location /etc/mongod.conf) and ensure the following is set to disable JavaScript:<br />
+<br />
+security:<br />
+  javascriptEnabled: false<br />
+<br />
+If this is not set in the MongoDB configuration file, this is a finding.</p><h2>Vulnerability Number</h2><p>V-279380</p><h2>Documentable</h2><p>False</p><h2>Rule Version</h2><p>MD8X-00-007300</p><h2>Severity Override Guidance</h2><p>If MongoDB supports only software development, experimentation and/or developer-level testing (that is, excluding production systems, integration testing, stress testing, and user acceptance testing), this is not a finding.<br />
+<br />
+MongoDB can control nonadministrative users' ability to create, alter, or replace logic modules by defining specific roles and permissions. While MongoDB does not directly support stored procedures, functions, triggers, and views in the way relational databases do, similar functionalities can be implemented using various features. <br />
+<br />
+An organizational or site-specific document should exist and be reviewed to determine what built-in MongoDB roles and associated privileges may be considered authorized and what users are administrative users.<br />
+<br />
+For each database, run the following commands in MongoDB as an administrative user to determine what users and roles they are assigned:<br />
+<br />
+&gt; use &lt;database&gt;<br />
+&gt; db.getUsers()<br />
+<br />
+For any nonadministrative user in a database, check if any roles are not compliant with the site-specific documentation for users. If any user in any database is found to have a role that is not allowed, this is a finding.<br />
+<br />
+MongoDB allows users to store JavaScript functions on the server. Javascript should be disabled for all users.<br />
+<br />
+Review the Mongodb configuration file (default location /etc/mongod.conf) and ensure the following is set to disable JavaScript:<br />
+<br />
+security:<br />
+  javascriptEnabled: false<br />
+<br />
+If this is not set in the MongoDB configuration file, this is a finding.</p><h2>Check Content Reference</h2><p>M</p><h2>Target Key</h2><p>5728</p></body></html>

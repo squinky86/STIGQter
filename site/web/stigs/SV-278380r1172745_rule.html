@@ -1,0 +1,38 @@
+<!doctype html><html lang="en"><head><meta charset="utf-8"><title>STIGQter: STIG Check Details: SV-278380r1172745_rule: NGINX must limit the number of concurrent sessions to an organization-defined number for all accounts and/or account types.</title><link rel="icon" type="image/svg+xml" href="STIGQter.svg" /><script async src="https://www.googletagmanager.com/gtag/js?id=UA-31381839-2"></script><script src="include.js"></script><script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-4110907817782130" crossorigin="anonymous"></script></head><body><div><img src="STIGQter.svg" alt="STIGQter" style="height:1em;" /> <a href="https://www.stigqter.com/">STIGQter</a>: <a href="main.html">STIG Summary</a>: <a href="U_F5_NGINX_STIG_V1R1_Manual-xccdf.html">F5 NGINX Security Technical Implementation Guide Version: 1 Release: 1 Benchmark Date: 25 Nov 2025</a>:</div> <h1>NGINX must limit the number of concurrent sessions to an organization-defined number for all accounts and/or account types.</h1><h2>DISA Rule</h2><p>SV-278380r1172745_rule</p><h2>Vulnerability Number</h2><p>V-278380</p><h2>Group Title</h2><p>SRG-APP-000001</p><h2>Rule Version</h2><p>NGNX-APP-000010</p><h2>Severity</h2><p>CAT II</p><h2>CCI(s)</h2><ul><li>CCI-000054 - Limit the number of concurrent sessions for each organization-defined account and/or account type to an organization-defined number.</li></ul><h2>Weight</h2><p>10</p><h2>Fix Recommendation</h2><p>Determine the path to NGINX config file(s):<br />
+<br />
+nginx -qT | grep &quot;# configuration&quot;<br />
+# configuration file /etc/nginx/nginx.conf:<br />
+<br />
+Note: The default NGINX configuration is &quot;/etc/nginx/nginx.conf&quot;, though various files may also be included.<br />
+<br />
+Add or modify the number of &quot;worker_connections&quot; based on the needs of the application.<br />
+<br />
+Note: By default, NGINX limits the number of concurrent connections to 512 per worker process, and the number of worker processes is equal the number of CPUs present. This results in a maximum number of connections equal to &quot;worker_connections&quot; multiplied by the number of &quot;worker_processes&quot;. In a proxy configuration, NGINX will use a connection on both the client side and the server side. This results in two connections for each client side connection. <br />
+<br />
+Restart NGINX:<br />
+<br />
+   systemctl restart nginx</p><h2>Check Contents</h2><p>Determine path to NGINX config file(s):<br />
+<br />
+nginx -qT | grep &quot;# configuration&quot;<br />
+# configuration file /etc/nginx/nginx.conf:<br />
+<br />
+Note: The default NGINX configuration is &quot;/etc/nginx/nginx.conf&quot;, though various files may also be included.<br />
+<br />
+nginx -c &lt;path to nginx config&gt; -qT | grep worker_connections<br />
+    worker_connections 512;<br />
+<br />
+Verify &quot;worker_connections&quot; is set in the configuration to an organization-defined number.<br />
+<br />
+If the &quot;worker_connections&quot; is not set to an organization-defined number, this is a finding.</p><h2>Vulnerability Number</h2><p>V-278380</p><h2>Documentable</h2><p>False</p><h2>Rule Version</h2><p>NGNX-APP-000010</p><h2>Severity Override Guidance</h2><p>Determine path to NGINX config file(s):<br />
+<br />
+nginx -qT | grep &quot;# configuration&quot;<br />
+# configuration file /etc/nginx/nginx.conf:<br />
+<br />
+Note: The default NGINX configuration is &quot;/etc/nginx/nginx.conf&quot;, though various files may also be included.<br />
+<br />
+nginx -c &lt;path to nginx config&gt; -qT | grep worker_connections<br />
+    worker_connections 512;<br />
+<br />
+Verify &quot;worker_connections&quot; is set in the configuration to an organization-defined number.<br />
+<br />
+If the &quot;worker_connections&quot; is not set to an organization-defined number, this is a finding.</p><h2>Check Content Reference</h2><p>M</p><h2>Target Key</h2><p>5720</p></body></html>

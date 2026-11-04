@@ -1,0 +1,33 @@
+<!doctype html><html lang="en"><head><meta charset="utf-8"><title>STIGQter: STIG Check Details: SV-269210r1050092_rule: All AlmaLinux OS 9 local interactive user home directories must be group-owned by the home directory owner's primary group.</title><link rel="icon" type="image/svg+xml" href="STIGQter.svg" /><script async src="https://www.googletagmanager.com/gtag/js?id=UA-31381839-2"></script><script src="include.js"></script><script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-4110907817782130" crossorigin="anonymous"></script></head><body><div><img src="STIGQter.svg" alt="STIGQter" style="height:1em;" /> <a href="https://www.stigqter.com/">STIGQter</a>: <a href="main.html">STIG Summary</a>: <a href="U_CL_AlmaLinux_OS_9_STIG_V1R7_Manual-xccdf.html">Cloud Linux AlmaLinux OS 9 Security Technical Implementation Guide Version: 1 Release: 7 Benchmark Date: 01 Jul 2026</a>:</div> <h1>All AlmaLinux OS 9 local interactive user home directories must be group-owned by the home directory owner's primary group.</h1><h2>DISA Rule</h2><p>SV-269210r1050092_rule</p><h2>Vulnerability Number</h2><p>V-269210</p><h2>Group Title</h2><p>SRG-OS-000480-GPOS-00230</p><h2>Rule Version</h2><p>ALMA-09-014760</p><h2>Severity</h2><p>CAT II</p><h2>CCI(s)</h2><ul><li>CCI-000366 - Implement the security configuration settings.</li></ul><h2>Weight</h2><p>10</p><h2>Fix Recommendation</h2><p>Change the group owner of a local interactive user's home directory to the group found in &quot;/etc/passwd&quot;. To change the group owner of a local interactive user's home directory, use the following command:<br />
+<br />
+Note: The example will be for the user &quot;test&quot;, who has a home directory of &quot;/home/test&quot;, and has a primary group of &quot;test&quot;.<br />
+<br />
+$ chgrp test /home/test</p><h2>Check Contents</h2><p>Verify the assigned home directory of all local interactive users is group-owned by that user's primary GID with the following command:<br />
+<br />
+Note: This may miss local interactive users that have been assigned a privileged UID. Evidence of interactive use may be obtained from a number of log files containing system logon information. The returned directory &quot;/home/test&quot; is used as an example.<br />
+<br />
+$ stat --format=&quot;%n: GID=%g (%G), UID=%u (%U), MODE=%0.4a&quot; $(awk -F: '($3&gt;=1000)&amp;&amp;($7 !~ /nologin/){print $6}' /etc/passwd)<br />
+<br />
+/home/test: GID=1001 (test), UID=1001 (test), MODE=0700<br />
+<br />
+Check the user's primary group with the following command:<br />
+<br />
+$ grep $(grep -E '^test:' /etc/passwd | awk -F: '{print $4}') /etc/group<br />
+<br />
+test:x:1001:<br />
+<br />
+If the user home directory referenced in &quot;/etc/passwd&quot; is not group-owned by that user's primary GID (1001 in the above example) this is a finding.</p><h2>Vulnerability Number</h2><p>V-269210</p><h2>Documentable</h2><p>False</p><h2>Rule Version</h2><p>ALMA-09-014760</p><h2>Severity Override Guidance</h2><p>Verify the assigned home directory of all local interactive users is group-owned by that user's primary GID with the following command:<br />
+<br />
+Note: This may miss local interactive users that have been assigned a privileged UID. Evidence of interactive use may be obtained from a number of log files containing system logon information. The returned directory &quot;/home/test&quot; is used as an example.<br />
+<br />
+$ stat --format=&quot;%n: GID=%g (%G), UID=%u (%U), MODE=%0.4a&quot; $(awk -F: '($3&gt;=1000)&amp;&amp;($7 !~ /nologin/){print $6}' /etc/passwd)<br />
+<br />
+/home/test: GID=1001 (test), UID=1001 (test), MODE=0700<br />
+<br />
+Check the user's primary group with the following command:<br />
+<br />
+$ grep $(grep -E '^test:' /etc/passwd | awk -F: '{print $4}') /etc/group<br />
+<br />
+test:x:1001:<br />
+<br />
+If the user home directory referenced in &quot;/etc/passwd&quot; is not group-owned by that user's primary GID (1001 in the above example) this is a finding.</p><h2>Check Content Reference</h2><p>M</p><h2>Target Key</h2><p>5664</p></body></html>

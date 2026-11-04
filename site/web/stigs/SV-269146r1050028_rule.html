@@ -1,0 +1,30 @@
+<!doctype html><html lang="en"><head><meta charset="utf-8"><title>STIGQter: STIG Check Details: SV-269146r1050028_rule: AlmaLinux OS 9 must audit uses of the &quot;execve&quot; system call.</title><link rel="icon" type="image/svg+xml" href="STIGQter.svg" /><script async src="https://www.googletagmanager.com/gtag/js?id=UA-31381839-2"></script><script src="include.js"></script><script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-4110907817782130" crossorigin="anonymous"></script></head><body><div><img src="STIGQter.svg" alt="STIGQter" style="height:1em;" /> <a href="https://www.stigqter.com/">STIGQter</a>: <a href="main.html">STIG Summary</a>: <a href="U_CL_AlmaLinux_OS_9_STIG_V1R7_Manual-xccdf.html">Cloud Linux AlmaLinux OS 9 Security Technical Implementation Guide Version: 1 Release: 7 Benchmark Date: 01 Jul 2026</a>:</div> <h1>AlmaLinux OS 9 must audit uses of the &quot;execve&quot; system call.</h1><h2>DISA Rule</h2><p>SV-269146r1050028_rule</p><h2>Vulnerability Number</h2><p>V-269146</p><h2>Group Title</h2><p>SRG-OS-000327-GPOS-00127</p><h2>Rule Version</h2><p>ALMA-09-007280</p><h2>Severity</h2><p>CAT II</p><h2>CCI(s)</h2><ul><li>CCI-002234 - Log the execution of privileged functions.</li><li>CCI-002233 - Prevent the organization-defined software from executing at higher privilege levels than users executing the software.</li></ul><h2>Weight</h2><p>10</p><h2>Fix Recommendation</h2><p>Configure AlmaLinux OS 9 to generate audit records upon successful/unsuccessful attempts to use the &quot;sudo&quot; command.<br />
+<br />
+Add the following to the &quot;/etc/audit/rules.d/audit.rules&quot; file:<br />
+<br />
+-a always,exit -F arch=b32 -S execve -C uid!=euid -F euid=0 -k execpriv<br />
+-a always,exit -F arch=b64 -S execve -C uid!=euid -F euid=0 -k execpriv<br />
+-a always,exit -F arch=b32 -S execve -C gid!=egid -F egid=0 -k execpriv<br />
+-a always,exit -F arch=b64 -S execve -C gid!=egid -F egid=0 -k execpriv<br />
+<br />
+Merge the rules into /etc/audit/audit.rules:<br />
+<br />
+$ augenrules --load</p><h2>Check Contents</h2><p>Verify that AlmaLinux OS 9 is configured to audit the execution of the &quot;execve&quot; system call with the following command:<br />
+<br />
+$ auditctl -l | grep execve<br />
+<br />
+-a always,exit -F arch=b32 -S execve -C uid!=euid -F euid=0 -F key=execpriv<br />
+-a always,exit -F arch=b64 -S execve -C uid!=euid -F euid=0 -F key=execpriv<br />
+-a always,exit -F arch=b32 -S execve -C gid!=egid -F egid=0 -F key=execpriv<br />
+-a always,exit -F arch=b64 -S execve -C gid!=egid -F egid=0 -F key=execpriv<br />
+<br />
+If the command does not return all lines, or the lines are commented out, this is a finding.</p><h2>Vulnerability Number</h2><p>V-269146</p><h2>Documentable</h2><p>False</p><h2>Rule Version</h2><p>ALMA-09-007280</p><h2>Severity Override Guidance</h2><p>Verify that AlmaLinux OS 9 is configured to audit the execution of the &quot;execve&quot; system call with the following command:<br />
+<br />
+$ auditctl -l | grep execve<br />
+<br />
+-a always,exit -F arch=b32 -S execve -C uid!=euid -F euid=0 -F key=execpriv<br />
+-a always,exit -F arch=b64 -S execve -C uid!=euid -F euid=0 -F key=execpriv<br />
+-a always,exit -F arch=b32 -S execve -C gid!=egid -F egid=0 -F key=execpriv<br />
+-a always,exit -F arch=b64 -S execve -C gid!=egid -F egid=0 -F key=execpriv<br />
+<br />
+If the command does not return all lines, or the lines are commented out, this is a finding.</p><h2>Check Content Reference</h2><p>M</p><h2>Target Key</h2><p>5664</p></body></html>

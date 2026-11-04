@@ -1,0 +1,53 @@
+<!doctype html><html lang="en"><head><meta charset="utf-8"><title>STIGQter: STIG Check Details: SV-224327r1141608_rule: NetView configuration/parameter values must be specified properly.</title><link rel="icon" type="image/svg+xml" href="STIGQter.svg" /><script async src="https://www.googletagmanager.com/gtag/js?id=UA-31381839-2"></script><script src="include.js"></script><script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-4110907817782130" crossorigin="anonymous"></script></head><body><div><img src="STIGQter.svg" alt="STIGQter" style="height:1em;" /> <a href="https://www.stigqter.com/">STIGQter</a>: <a href="main.html">STIG Summary</a>: <a href="U_zOS_NetView_for_ACF2_STIG_V7R2_Manual-xccdf.html">z/OS NetView for ACF2 Security Technical Implementation Guide Version: 7 Release: 2 Benchmark Date: 01 Oct 2025</a>:</div> <h1>NetView configuration/parameter values must be specified properly.</h1><h2>DISA Rule</h2><p>SV-224327r1141608_rule</p><h2>Vulnerability Number</h2><p>V-224327</p><h2>Group Title</h2><p>SRG-OS-000018</p><h2>Rule Version</h2><p>ZNET0040</p><h2>Severity</h2><p>CAT II</p><h2>CCI(s)</h2><ul><li>CCI-000015 - Support the management of system accounts using (organization-defined automated mechanisms).</li><li>CCI-000381 - Configure the system to provide only organization-defined mission essential capabilities.</li></ul><h2>Weight</h2><p>10</p><h2>Fix Recommendation</h2><p>The systems programmer and ISSO will review NetView configuration parameters and control options for compliance.<br />
+<br />
+To ensure authentication of users to NetView, ensure that CxxSTYLE in the DSIPARM DD statement concatenation of the NetView CNMPROC STC procedure has the following initialization parameter(s) specified:<br />
+<br />
+(Note: The dataset identified above is an example of a possible installation. The dataset is determined when the product is installed on a system through the product's installation guide and can be site specific.)<br />
+<br />
+SECOPTS.OPERSEC=SAFCHECK|SAFDEF<br />
+<br />
+When SECOPTS.OPERSEC=SAFCHECK is used, it specifies that operator identification and password or password phrase checking is performed using an SAF security product. The operator identifier must also be defined in DSIOPF, and other attributes given to the operator at logon are taken from the specified profile for the operator in DSIPRF.<br />
+<br />
+Security access checks are checked against the authority of the operator that occur when an operator tries to access a dataset that is protected in the DATASET class of an SAF product or an MVS system command that is protected in the OPERCMDS class of an SAF product.<br />
+<br />
+When SECOPTS.OPERSEC=SAFDEF is used, it specifies that operator identification and password or password phrase checking is done using an SAF security product. Authority to log on as a NetView operator is controlled through the APPL class. The operator identifier must be authorized to the resource name in the APPL class that represents the NetView program.<br />
+<br />
+The attributes given to the operator at logon are defined in the NETVIEW segment of the user profile for the operator in the SAF product. For more information, refer to IBM Tivoli NetView for z/OS Security Reference.<br />
+<br />
+When SECOPTS.OPERSEC=SAFDEF is specified, any value for SECOPTS.CMDAUTH can be used.<br />
+<br />
+Additional details can be obtained in the IBM Tivoli NetView for z/OS Security Reference.<br />
+<br />
+SECOPTS.CMDAUTH=SAF.FAIL|SAF.table<br />
+<br />
+When SECOPTS.CMDAUTH=SAF.table is used, the table specifies the backup table to be used for immediate commands and when the SAF product cannot make a security decision. This can occur when:<br />
+<br />
+No resource name is defined in the NETCMDS class that protects or authorizes this command.<br />
+The NETCMDS class is not active.<br />
+The security product is not active.<br />
+<br />
+When SECOPTS.CMDAUTH=SAF.FAIL is used, command authority checking will fail if the SAF product can reach no decision.<br />
+<br />
+Additional details can be obtained in the IBM Tivoli NetView for z/OS Administration Reference.</p><h2>Check Contents</h2><p>Review the member CxxSTYLE in the DSIPARM DD statement concatenation of the NetView CNMPROC STC procedure.<br />
+<br />
+Automated Analysis<br />
+Refer to the following report produced by the dataset and Resource Data Collection:<br />
+<br />
+- PDI(ZNET0040).<br />
+<br />
+Verify that all NetView configuration requirements are specified. If the following guidance is true, this is not a finding.<br />
+<br />
+Keyword                                  Value<br />
+SECOPTS.OPERSEC        SAFCHECK|SAFDEF<br />
+SECOPTS.CMDAUTH      SAF.FAIL|SAF.table</p><h2>Vulnerability Number</h2><p>V-224327</p><h2>Documentable</h2><p>False</p><h2>Rule Version</h2><p>ZNET0040</p><h2>Severity Override Guidance</h2><p>Review the member CxxSTYLE in the DSIPARM DD statement concatenation of the NetView CNMPROC STC procedure.<br />
+<br />
+Automated Analysis<br />
+Refer to the following report produced by the dataset and Resource Data Collection:<br />
+<br />
+- PDI(ZNET0040).<br />
+<br />
+Verify that all NetView configuration requirements are specified. If the following guidance is true, this is not a finding.<br />
+<br />
+Keyword                                  Value<br />
+SECOPTS.OPERSEC        SAFCHECK|SAFDEF<br />
+SECOPTS.CMDAUTH      SAF.FAIL|SAF.table</p><h2>Check Content Reference</h2><p>M</p><h2>Target Key</h2><p>4126</p></body></html>

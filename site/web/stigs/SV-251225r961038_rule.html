@@ -1,0 +1,41 @@
+<!doctype html><html lang="en"><head><meta charset="utf-8"><title>STIGQter: STIG Check Details: SV-251225r961038_rule: Redis Enterprise DBMS, when utilizing PKI-based authentication, must validate certificates by performing RFC 5280-compliant certification path validation.</title><link rel="icon" type="image/svg+xml" href="STIGQter.svg" /><script async src="https://www.googletagmanager.com/gtag/js?id=UA-31381839-2"></script><script src="include.js"></script><script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-4110907817782130" crossorigin="anonymous"></script></head><body><div><img src="STIGQter.svg" alt="STIGQter" style="height:1em;" /> <a href="https://www.stigqter.com/">STIGQter</a>: <a href="main.html">STIG Summary</a>: <a href="U_Redis_Enterprise_6-x_STIG_V2R2_Manual-xccdf.html">Redis Enterprise 6.x Security Technical Implementation Guide Version: 2 Release: 2 Benchmark Date: 24 Oct 2024</a>:</div> <h1>Redis Enterprise DBMS, when utilizing PKI-based authentication, must validate certificates by performing RFC 5280-compliant certification path validation.</h1><h2>DISA Rule</h2><p>SV-251225r961038_rule</p><h2>Vulnerability Number</h2><p>V-251225</p><h2>Group Title</h2><p>SRG-APP-000175-DB-000067</p><h2>Rule Version</h2><p>RD6X-00-009100</p><h2>Severity</h2><p>CAT II</p><h2>CCI(s)</h2><ul><li>CCI-000185 - For public key-based authentication, validate certificates by constructing and verifying a certification path to an accepted trust anchor including checking certificate status information.</li></ul><h2>Weight</h2><p>10</p><h2>Fix Recommendation</h2><p>Configure Redis Enterprise settings to meet organizationally defined requirements. <br />
+<br />
+1. Replace the RS server default certificates and key on all nodes with the CA-signed certificate and restart the proxy.<br />
+<br />
+To replace certificates using the rladmin CLI, run:<br />
+rladmin cluster certificate set &lt;cert-name&gt; certificate_file &lt;cert-file-name&gt;.pem key_file &lt;key-file-name&gt;.pem<br />
+Where:<br />
+cert-name - The certificate name to replace:<br />
+For management UI: cm<br />
+For REST API: api<br />
+For database endpoint: proxy<br />
+For syncer: syncer<br />
+For metrics exporter: metrics_exporter<br />
+cert-file-name - The name of the certificate file<br />
+key-file-name - The name of the key file<br />
+<br />
+Note: A certificate for the databases' endpoint should be assigned for the same domain as the cluster name. For example, for a cluster with the name &quot;redislabs.com&quot; the certificate should be for &quot;*.redislabs.com&quot;.<br />
+<br />
+2. Add the TLS client certificates in the UI including CA certificates and any intermediate certificates by chaining the certificate into one file (can use a cat command to chain the certificates).<br />
+<br />
+3. On the client side, make sure to import and trust the CA and intermediate certificates (CA certificates can be chained with intermediate as one file to use and import).</p><h2>Check Contents</h2><p>At this time, Redis Enterprise does not support OSCP and is partially compliant with RFC 5280. Verify that the host operating system is encrypted. <br />
+<br />
+If the host operating system is not encrypted or STIG-compliant, this is a finding.<br />
+<br />
+To test, have the user log in to the database. If certificates are not being validated by performing RFC 5280-compliant certification path validation (i.e., &quot;pop up&quot; certificate validation), this is a finding.<br />
+<br />
+If the host operating system is encrypted, run the following commands and verify that only DoD-approved PKI certificates are present and used for Redis Enterprise:<br />
+# cd /etc/opt/redislabs<br />
+# cat proxy_cert.pem<br />
+<br />
+If no DoD-approved certificates are found, this is a finding.</p><h2>Vulnerability Number</h2><p>V-251225</p><h2>Documentable</h2><p>False</p><h2>Rule Version</h2><p>RD6X-00-009100</p><h2>Severity Override Guidance</h2><p>At this time, Redis Enterprise does not support OSCP and is partially compliant with RFC 5280. Verify that the host operating system is encrypted. <br />
+<br />
+If the host operating system is not encrypted or STIG-compliant, this is a finding.<br />
+<br />
+To test, have the user log in to the database. If certificates are not being validated by performing RFC 5280-compliant certification path validation (i.e., &quot;pop up&quot; certificate validation), this is a finding.<br />
+<br />
+If the host operating system is encrypted, run the following commands and verify that only DoD-approved PKI certificates are present and used for Redis Enterprise:<br />
+# cd /etc/opt/redislabs<br />
+# cat proxy_cert.pem<br />
+<br />
+If no DoD-approved certificates are found, this is a finding.</p><h2>Check Content Reference</h2><p>M</p><h2>Target Key</h2><p>5443</p></body></html>

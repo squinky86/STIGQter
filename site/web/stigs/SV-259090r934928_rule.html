@@ -1,0 +1,42 @@
+<!doctype html><html lang="en"><head><meta charset="utf-8"><title>STIGQter: STIG Check Details: SV-259090r934928_rule: The vCenter Perfcharts service DefaultServlet must be set to &quot;readonly&quot; for &quot;PUT&quot; and &quot;DELETE&quot; commands.</title><link rel="icon" type="image/svg+xml" href="STIGQter.svg" /><script async src="https://www.googletagmanager.com/gtag/js?id=UA-31381839-2"></script><script src="include.js"></script><script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-4110907817782130" crossorigin="anonymous"></script></head><body><div><img src="STIGQter.svg" alt="STIGQter" style="height:1em;" /> <a href="https://www.stigqter.com/">STIGQter</a>: <a href="main.html">STIG Summary</a>: <a href="U_VMW_vSphere_8-0_VCSA_Perfcharts_STIG_V1R1_Manual-xccdf.html">VMware vSphere 8.0 vCenter Appliance Perfcharts Security Technical Implementation Guide Version: 1 Release: 1 Benchmark Date: 31 Oct 2023</a>:</div> <h1>The vCenter Perfcharts service DefaultServlet must be set to &quot;readonly&quot; for &quot;PUT&quot; and &quot;DELETE&quot; commands.</h1><h2>DISA Rule</h2><p>SV-259090r934928_rule</p><h2>Vulnerability Number</h2><p>V-259090</p><h2>Group Title</h2><p>SRG-APP-000033-AS-000024</p><h2>Rule Version</h2><p>VCPF-80-000130</p><h2>Severity</h2><p>CAT II</p><h2>CCI(s)</h2><ul><li>CCI-000213 - Enforce approved authorizations for logical access to information and system resources in accordance with applicable access control policies.</li></ul><h2>Weight</h2><p>10</p><h2>Fix Recommendation</h2><p>Navigate to and open:<br />
+<br />
+/usr/lib/vmware-perfcharts/tc-instance/webapps/statsreport/WEB-INF/web.xml<br />
+<br />
+Navigate to the /&lt;web-apps&gt;/&lt;servlet&gt;/&lt;servlet-class&gt;org.apache.catalina.servlets.DefaultServlet&lt;/servlet-class&gt;/ node and remove the following node:<br />
+<br />
+&lt;init-param&gt;<br />
+      &lt;param-name&gt;readonly&lt;/param-name&gt;<br />
+      &lt;param-value&gt;false&lt;/param-value&gt;<br />
+&lt;/init-param&gt;<br />
+<br />
+Restart the service with the following command:<br />
+<br />
+# vmon-cli --restart perfcharts</p><h2>Check Contents</h2><p>At the command prompt, run the following command:<br />
+<br />
+# xmllint --xpath &quot;//*[contains(text(), 'DefaultServlet')]/parent::*&quot; /usr/lib/vmware-perfcharts/tc-instance/webapps/statsreport/WEB-INF/web.xml<br />
+<br />
+Example output:<br />
+<br />
+&lt;servlet&gt;<br />
+      &lt;description&gt;File servlet&lt;/description&gt;<br />
+      &lt;servlet-name&gt;FileServlet&lt;/servlet-name&gt;<br />
+      &lt;servlet-class&gt;org.apache.catalina.servlets.DefaultServlet&lt;/servlet-class&gt;<br />
+&lt;/servlet&gt;<br />
+<br />
+If the &quot;readOnly&quot; param-value for the &quot;DefaultServlet&quot; servlet class is set to &quot;false&quot;, this is a finding.<br />
+<br />
+If the &quot;readOnly&quot; param-value does not exist, this is not a finding.</p><h2>Vulnerability Number</h2><p>V-259090</p><h2>Documentable</h2><p>False</p><h2>Rule Version</h2><p>VCPF-80-000130</p><h2>Severity Override Guidance</h2><p>At the command prompt, run the following command:<br />
+<br />
+# xmllint --xpath &quot;//*[contains(text(), 'DefaultServlet')]/parent::*&quot; /usr/lib/vmware-perfcharts/tc-instance/webapps/statsreport/WEB-INF/web.xml<br />
+<br />
+Example output:<br />
+<br />
+&lt;servlet&gt;<br />
+      &lt;description&gt;File servlet&lt;/description&gt;<br />
+      &lt;servlet-name&gt;FileServlet&lt;/servlet-name&gt;<br />
+      &lt;servlet-class&gt;org.apache.catalina.servlets.DefaultServlet&lt;/servlet-class&gt;<br />
+&lt;/servlet&gt;<br />
+<br />
+If the &quot;readOnly&quot; param-value for the &quot;DefaultServlet&quot; servlet class is set to &quot;false&quot;, this is a finding.<br />
+<br />
+If the &quot;readOnly&quot; param-value does not exist, this is not a finding.</p><h2>Check Content Reference</h2><p>M</p><h2>Target Key</h2><p>5566</p></body></html>

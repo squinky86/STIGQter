@@ -1,0 +1,37 @@
+<!doctype html><html lang="en"><head><meta charset="utf-8"><title>STIGQter: STIG Check Details: SV-251800r879588_rule: The NSX-T Manager must enable the global FIPS compliance mode for load balancers.</title><link rel="icon" type="image/svg+xml" href="STIGQter.svg" /><script async src="https://www.googletagmanager.com/gtag/js?id=UA-31381839-2"></script><script src="include.js"></script><script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-4110907817782130" crossorigin="anonymous"></script></head><body><div><img src="STIGQter.svg" alt="STIGQter" style="height:1em;" /> <a href="https://www.stigqter.com/">STIGQter</a>: <a href="main.html">STIG Summary</a>: <a href="U_VMW_NSX-T_Manager_NDM_STIG_V1R3_Manual-xccdf.html">VMware NSX-T Manager NDM Security Technical Implementation Guide Version: 1 Release: 3 Benchmark Date: 26 Jul 2023</a>:</div> <h1>The NSX-T Manager must enable the global FIPS compliance mode for load balancers.</h1><h2>DISA Rule</h2><p>SV-251800r879588_rule</p><h2>Vulnerability Number</h2><p>V-251800</p><h2>Group Title</h2><p>SRG-APP-000142-NDM-000245</p><h2>Rule Version</h2><p>TNDM-3X-000103</p><h2>Severity</h2><p>CAT II</p><h2>CCI(s)</h2><ul><li>CCI-000382 - Configure the system to prohibit or restrict the use of organization-defined prohibited or restricted functions, system ports, protocols, software, and/or services.</li></ul><h2>Weight</h2><p>10</p><h2>Fix Recommendation</h2><p>Execute the following API call using curl or another REST API client:<br />
+<br />
+PUT https://&lt;nsx-mgr&gt;/policy/api/v1/infra/global-config<br />
+<br />
+Example request body:<br />
+<br />
+{<br />
+    &quot;fips&quot;: {<br />
+        &quot;lb_fips_enabled&quot;: true<br />
+    },<br />
+    &quot;resource_type&quot;: &quot;GlobalConfig&quot;,<br />
+    &quot;_revision&quot;: 2<br />
+}<br />
+<br />
+The global setting is used when the new load balancer instances are created. Changing the setting does not affect existing load balancer instances.<br />
+<br />
+To update existing load balancers to use this setting, do the following:<br />
+<br />
+From the NSX-T Manager web interface, go to the Networking &gt;&gt; Load Balancing  and then click &quot;Edit&quot; on the target load balancer.<br />
+<br />
+In the attachment field, click the &quot;X&quot; to detach the load balancer from its current Gateway and click &quot;Save&quot;.<br />
+<br />
+Edit the target load balancer again, reattach it to its Gateway, and then click &quot;Save&quot;.<br />
+<br />
+Caution: Detaching a load balancer from the tier-1 gateway results in a traffic interruption for the load balancer instance.</p><h2>Check Contents</h2><p>From the NSX-T Manager web interface, go to the Home &gt;&gt; Monitoring Dashboards &gt;&gt; Compliance Report.<br />
+<br />
+Review the compliance report for code 72024 with description Load balancer FIPS global setting disabled.<br />
+<br />
+Note: This may also be checked via the API call GET https://&lt;nsx-mgr&gt;/policy/api/v1/infra/global-config<br />
+<br />
+If the global FIPS setting is disabled for load balancers, this is a finding.</p><h2>Vulnerability Number</h2><p>V-251800</p><h2>Documentable</h2><p>False</p><h2>Rule Version</h2><p>TNDM-3X-000103</p><h2>Severity Override Guidance</h2><p>From the NSX-T Manager web interface, go to the Home &gt;&gt; Monitoring Dashboards &gt;&gt; Compliance Report.<br />
+<br />
+Review the compliance report for code 72024 with description Load balancer FIPS global setting disabled.<br />
+<br />
+Note: This may also be checked via the API call GET https://&lt;nsx-mgr&gt;/policy/api/v1/infra/global-config<br />
+<br />
+If the global FIPS setting is disabled for load balancers, this is a finding.</p><h2>Check Content Reference</h2><p>M</p><h2>Target Key</h2><p>5449</p></body></html>

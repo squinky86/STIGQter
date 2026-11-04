@@ -1,0 +1,59 @@
+<!doctype html><html lang="en"><head><meta charset="utf-8"><title>STIGQter: STIG Check Details: SV-221007r1137935_rule: The Cisco perimeter switch must be configured to deny network traffic by default and allow network traffic by exception.</title><link rel="icon" type="image/svg+xml" href="STIGQter.svg" /><script async src="https://www.googletagmanager.com/gtag/js?id=UA-31381839-2"></script><script src="include.js"></script><script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-4110907817782130" crossorigin="anonymous"></script></head><body><div><img src="STIGQter.svg" alt="STIGQter" style="height:1em;" /> <a href="https://www.stigqter.com/">STIGQter</a>: <a href="main.html">STIG Summary</a>: <a href="U_Cisco_IOS-XE_Switch_RTR_STIG_V3R4_Manual-xccdf.html">Cisco IOS XE Switch RTR Security Technical Implementation Guide Version: 3 Release: 4 Benchmark Date: 01 Apr 2026</a>:</div> <h1>The Cisco perimeter switch must be configured to deny network traffic by default and allow network traffic by exception.</h1><h2>DISA Rule</h2><p>SV-221007r1137935_rule</p><h2>Vulnerability Number</h2><p>V-221007</p><h2>Group Title</h2><p>SRG-NET-000202-RTR-000001</p><h2>Rule Version</h2><p>CISC-RT-000240</p><h2>Severity</h2><p>CAT I</p><h2>CCI(s)</h2><ul><li>CCI-001109 - Deny network communications traffic by default and allow network communications traffic by exception at managed interfaces; and/or for organization-defined systems.</li></ul><h2>Weight</h2><p>10</p><h2>Fix Recommendation</h2><p>Step 1: Configure an inbound ACL to deny all other traffic by default as shown in the example below:<br />
+<br />
+SW1(config)#ip access-list extended EXTERNAL_ACL<br />
+SW1(config-ext-nacl)#permit tcp any any established<br />
+SW1(config-ext-nacl)#permit tcp host x.11.1.1 eq bgp host x.11.1.2 <br />
+SW1(config-ext-nacl)#permit tcp host x.11.1.1 host x.11.1.2 eq bgp<br />
+SW1(config-ext-nacl)#permit icmp host x.11.1.1 host x.11.1.2 echo<br />
+SW1(config-ext-nacl)#permit icmp host x.11.1.1 host x.11.1.2 echo-reply<br />
+…<br />
+…<br />
+…<br />
+SW1(config-ext-nacl)#deny ip any any log-input<br />
+<br />
+Step 2: Apply the ingress filter to all external interfaces.<br />
+<br />
+SW1(config)#int g0/2<br />
+SW1(config-if)#ip access-group EXTERNAL_ACL in</p><h2>Check Contents</h2><p>Review the switch configuration to verify that the inbound ACL applied to all external interfaces is configured to allow specific ports and protocols and deny all other traffic.<br />
+<br />
+Step 1: Verify that an inbound ACL is applied to all external interfaces as shown in the example below:<br />
+<br />
+interface GigabitEthernet0/2<br />
+ ip address x.11.1.2 255.255.255.254<br />
+ ip access-group EXTERNAL_ACL in<br />
+<br />
+Step 2: Review inbound ACL to verify that it is configured to deny all other traffic that is not explicitly allowed.<br />
+<br />
+ip access-list extended EXTERNAL_ACL<br />
+ permit tcp any any established<br />
+ permit tcp host x.11.1.1 eq bgp host x.11.1.2<br />
+ permit tcp host x.11.1.1 host x.11.1.2 eq bgp<br />
+ permit icmp host x.11.1.1 host x.11.1.2 echo<br />
+ permit icmp host x.11.1.1 host x.11.1.2 echo-reply<br />
+…<br />
+ …<br />
+ …<br />
+deny ip any any log-input<br />
+<br />
+If the ACL is not configured to allow specific ports and protocols and deny all other traffic, this is a finding. If the ACL is not configured inbound on all external interfaces, this is a finding.</p><h2>Vulnerability Number</h2><p>V-221007</p><h2>Documentable</h2><p>False</p><h2>Rule Version</h2><p>CISC-RT-000240</p><h2>Severity Override Guidance</h2><p>Review the switch configuration to verify that the inbound ACL applied to all external interfaces is configured to allow specific ports and protocols and deny all other traffic.<br />
+<br />
+Step 1: Verify that an inbound ACL is applied to all external interfaces as shown in the example below:<br />
+<br />
+interface GigabitEthernet0/2<br />
+ ip address x.11.1.2 255.255.255.254<br />
+ ip access-group EXTERNAL_ACL in<br />
+<br />
+Step 2: Review inbound ACL to verify that it is configured to deny all other traffic that is not explicitly allowed.<br />
+<br />
+ip access-list extended EXTERNAL_ACL<br />
+ permit tcp any any established<br />
+ permit tcp host x.11.1.1 eq bgp host x.11.1.2<br />
+ permit tcp host x.11.1.1 host x.11.1.2 eq bgp<br />
+ permit icmp host x.11.1.1 host x.11.1.2 echo<br />
+ permit icmp host x.11.1.1 host x.11.1.2 echo-reply<br />
+…<br />
+ …<br />
+ …<br />
+deny ip any any log-input<br />
+<br />
+If the ACL is not configured to allow specific ports and protocols and deny all other traffic, this is a finding. If the ACL is not configured inbound on all external interfaces, this is a finding.</p><h2>Check Content Reference</h2><p>M</p><h2>Target Key</h2><p>4074</p></body></html>

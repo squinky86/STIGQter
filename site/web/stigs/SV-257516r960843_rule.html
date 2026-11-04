@@ -1,0 +1,39 @@
+<!doctype html><html lang="en"><head><meta charset="utf-8"><title>STIGQter: STIG Check Details: SV-257516r960843_rule: OpenShift must display the Standard Mandatory DOD Notice and Consent Banner before granting access to platform components.</title><link rel="icon" type="image/svg+xml" href="STIGQter.svg" /><script async src="https://www.googletagmanager.com/gtag/js?id=UA-31381839-2"></script><script src="include.js"></script><script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-4110907817782130" crossorigin="anonymous"></script></head><body><div><img src="STIGQter.svg" alt="STIGQter" style="height:1em;" /> <a href="https://www.stigqter.com/">STIGQter</a>: <a href="main.html">STIG Summary</a>: <a href="U_RH_OpenShift_Container_Platform_4-x_STIG_V2R6_Manual-xccdf.html">Red Hat OpenShift Container Platform 4.x Security Technical Implementation Guide Version: 2 Release: 6 Benchmark Date: 01 Jul 2026</a>:</div> <h1>OpenShift must display the Standard Mandatory DOD Notice and Consent Banner before granting access to platform components.</h1><h2>DISA Rule</h2><p>SV-257516r960843_rule</p><h2>Vulnerability Number</h2><p>V-257516</p><h2>Group Title</h2><p>SRG-APP-000068-CTR-000120</p><h2>Rule Version</h2><p>CNTR-OS-000130</p><h2>Severity</h2><p>CAT III</p><h2>CCI(s)</h2><ul><li>CCI-000048 - Display an organization-defined system use notification message or banner to users before granting access to the system that provides privacy and security notices consistent with applicable federal laws, Executive Orders, directives, policies, regulations, standards, and guidelines.</li></ul><h2>Weight</h2><p>10</p><h2>Fix Recommendation</h2><p>The following command will create a configmap that displays the DOD Notice and Consent Banner when logging in using the OpenShift CLI tool by executing the following:<br />
+<br />
+echo 'apiVersion: v1<br />
+kind: ConfigMap<br />
+metadata:<br />
+  name: motd<br />
+  namespace: openshift<br />
+data:<br />
+  message: &quot;You are accessing a U.S. Government (USG) Information System (IS) that is provided for USG-authorized use only. By using this IS (which includes any device attached to this IS), you consent to the following conditions:\n\n-The USG routinely intercepts and monitors communications on this IS for purposes including, but not limited to, penetration testing, COMSEC monitoring, network operations and defense, personnel misconduct (PM), law enforcement (LE), and counterintelligence (CI) investigations.\n\n-At any time, the USG may inspect and seize data stored on this IS.\n\n-Communications using, or data stored on, this IS are not private, are subject to routine monitoring, interception, and search, and may be disclosed or used for any USG-authorized purpose.\n\n-This IS includes security measures (e.g., authentication and access controls) to protect USG interests--not for your personal benefit or privacy.\n\n-Notwithstanding the above, using this IS does not constitute consent to PM, LE or CI investigative searching or monitoring of the content of privileged communications, or work product, related to personal representation or services by attorneys, psychotherapists, or clergy, and their assistants. Such communications and work product are private and confidential. See User Agreement for details.&quot;' | oc apply -f -</p><h2>Check Contents</h2><p>To verify the OpenShift CLI tool is configured to display the DOD Notice and Consent Banner, do either of the following steps:<br />
+<br />
+Log in to OpenShift using the oc CLI tool.<br />
+<br />
+oc login -u &lt;USER&gt; &lt;OPENSHIFT_URL&gt;<br />
+enter password when prompted<br />
+<br />
+If the DOD Notice and Consent Banner is not displayed, this is a finding.<br />
+<br />
+Or<br />
+<br />
+Verify that motd config map exists and contains the DOD Notice and Consent Banner by executing the following:<br />
+<br />
+oc describe configmap/motd -n openshift<br />
+<br />
+If the configmap does not exist, or it does not contain the DOD Notice and Consent Banner text in the message data attribute, this is a finding.</p><h2>Vulnerability Number</h2><p>V-257516</p><h2>Documentable</h2><p>False</p><h2>Rule Version</h2><p>CNTR-OS-000130</p><h2>Severity Override Guidance</h2><p>To verify the OpenShift CLI tool is configured to display the DOD Notice and Consent Banner, do either of the following steps:<br />
+<br />
+Log in to OpenShift using the oc CLI tool.<br />
+<br />
+oc login -u &lt;USER&gt; &lt;OPENSHIFT_URL&gt;<br />
+enter password when prompted<br />
+<br />
+If the DOD Notice and Consent Banner is not displayed, this is a finding.<br />
+<br />
+Or<br />
+<br />
+Verify that motd config map exists and contains the DOD Notice and Consent Banner by executing the following:<br />
+<br />
+oc describe configmap/motd -n openshift<br />
+<br />
+If the configmap does not exist, or it does not contain the DOD Notice and Consent Banner text in the message data attribute, this is a finding.</p><h2>Check Content Reference</h2><p>M</p><h2>Target Key</h2><p>5547</p></body></html>

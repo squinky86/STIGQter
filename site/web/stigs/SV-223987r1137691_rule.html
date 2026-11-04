@@ -1,0 +1,85 @@
+<!doctype html><html lang="en"><head><meta charset="utf-8"><title>STIGQter: STIG Check Details: SV-223987r1137691_rule: IBM z/OS JES2 input sources must be controlled in accordance with the proper security requirements.</title><link rel="icon" type="image/svg+xml" href="STIGQter.svg" /><script async src="https://www.googletagmanager.com/gtag/js?id=UA-31381839-2"></script><script src="include.js"></script><script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-4110907817782130" crossorigin="anonymous"></script></head><body><div><img src="STIGQter.svg" alt="STIGQter" style="height:1em;" /> <a href="https://www.stigqter.com/">STIGQter</a>: <a href="main.html">STIG Summary</a>: <a href="U_IBM_zOS_TSS_STIG_V9R9_Manual-xccdf.html">IBM z/OS TSS Security Technical Implementation Guide Version: 9 Release: 9 Benchmark Date: 01 Jul 2026</a>:</div> <h1>IBM z/OS JES2 input sources must be controlled in accordance with the proper security requirements.</h1><h2>DISA Rule</h2><p>SV-223987r1137691_rule</p><h2>Vulnerability Number</h2><p>V-223987</p><h2>Group Title</h2><p>SRG-OS-000080-GPOS-00048</p><h2>Rule Version</h2><p>TSS0-JS-000030</p><h2>Severity</h2><p>CAT II</p><h2>CCI(s)</h2><ul><li>CCI-000213 - Enforce approved authorizations for logical access to information and system resources in accordance with applicable access control policies.</li></ul><h2>Weight</h2><p>10</p><h2>Fix Recommendation</h2><p>Review the following resources in the JESINPUT resource class:<br />
+<br />
+INTRDR (internal reader for batch jobs)<br />
+nodename (NJE node)<br />
+OFFn.* (spool offload receiver)<br />
+Rnnnn (RJE workstation)<br />
+RDRnn (local card reader)<br />
+STCINRDR (internal reader for started tasks)<br />
+TSUINRDR (internal reader for TSO logons)<br />
+<br />
+Note: If any of the following are not defined within the JES2 parameters, the resource in the JESINPUT resource class does not have to be defined.<br />
+<br />
+Note 1: Nodename is the NAME parameter in the NODE statement. Review the JES2 parameters for NJE node definitions by searching for &quot;NODE(&quot; in the report.<br />
+<br />
+Note 2: OFFn, where n is the number of the offload receiver. Review the JES2 parameters for spool offload receiver definitions by searching for &quot;OFF(&quot; in the report.<br />
+<br />
+Note 3: Rnnnn, where nnnn is the number of the remote workstation. Review the JES2 parameters for RJE node definitions by searching for &quot;RMT(&quot; in the report.<br />
+<br />
+Note 4: RDRnn, where nn is the number of the reader. Review the JES2 parameters for reader definitions by searching for &quot;RDR(&quot; in the report.<br />
+<br />
+Ensure all of the defined resources above are owned by generic and/or fully qualified entries in the JESINPUT resource class. <br />
+<br />
+For Example:<br />
+<br />
+The following commands may be used to establish default protection for resources defined to the JESINPUT resource class:<br />
+<br />
+TSS ADDTO(deptacid) JESINPUT(OFFn.)<br />
+<br />
+Grant read access to authorized users for each of the resources defined to the JESINPUT resource class.<br />
+<br />
+The following is an example of granting operators with a profile ACID of jesopracid permission to restore jobs into any SPOOL off load processor after obtaining permission from the ISSO:<br />
+<br />
+TSS PERMIT(jesopracid) JESINPUT(OFF*.) ACCESS(READ) ACTION(AUDIT) <br />
+<br />
+The resource definition should be generic if all of the resources of the same type have identical access controls (e.g., if all off load receivers are equivalent).</p><h2>Check Contents</h2><p>Refer the JES2PARM member of SYS1.PARMLIB<br />
+Review the following resources in the JESINPUT resource class:<br />
+<br />
+NOTE: If any of the following are not defined within the JES2 parameters, the resource in the JESINPUT resource class does not have to be owned.<br />
+INTRDR (internal reader for batch jobs)<br />
+nodename (NJE node)<br />
+OFFn.* (spool offload receiver)<br />
+Rnnnn (RJE workstation)<br />
+RDRnn (local card reader)<br />
+STCINRDR (internal reader for started tasks)<br />
+TSUINRDR (internal reader for TSO logons)<br />
+<br />
+Note 1: Nodename is the NAME parameter in the NODE statement. Review the NJE node definitions by searching for &quot;NODE(&quot; in the report.<br />
+<br />
+Note 2: OFFn, where n is the number of the offload receiver. Review the spool offload receiver definitions by searching for &quot;OFF(&quot; in the report.<br />
+<br />
+Note 3: Rnnnn, where nnnn is the number of the remote workstation. Review the RJE node definitions by searching for &quot;RMT(&quot; in the report.<br />
+<br />
+Note 4: RDRnn, where nn is the number of the reader. Review the reader definitions by searching for &quot;RDR(&quot; in the report.<br />
+<br />
+From the ISPF Command Shell enter:<br />
+<br />
+TSS WHOOWNS JESINPUT(*)<br />
+If all of the resources above are owned by generic and/or fully qualified entries in the JESINPUT resource class, this is not a finding.<br />
+<br />
+If any of the above resources are not owned, or are owned inappropriately, in the JESINPUT resource class, this is a finding.</p><h2>Vulnerability Number</h2><p>V-223987</p><h2>Documentable</h2><p>False</p><h2>Rule Version</h2><p>TSS0-JS-000030</p><h2>Severity Override Guidance</h2><p>Refer the JES2PARM member of SYS1.PARMLIB<br />
+Review the following resources in the JESINPUT resource class:<br />
+<br />
+NOTE: If any of the following are not defined within the JES2 parameters, the resource in the JESINPUT resource class does not have to be owned.<br />
+INTRDR (internal reader for batch jobs)<br />
+nodename (NJE node)<br />
+OFFn.* (spool offload receiver)<br />
+Rnnnn (RJE workstation)<br />
+RDRnn (local card reader)<br />
+STCINRDR (internal reader for started tasks)<br />
+TSUINRDR (internal reader for TSO logons)<br />
+<br />
+Note 1: Nodename is the NAME parameter in the NODE statement. Review the NJE node definitions by searching for &quot;NODE(&quot; in the report.<br />
+<br />
+Note 2: OFFn, where n is the number of the offload receiver. Review the spool offload receiver definitions by searching for &quot;OFF(&quot; in the report.<br />
+<br />
+Note 3: Rnnnn, where nnnn is the number of the remote workstation. Review the RJE node definitions by searching for &quot;RMT(&quot; in the report.<br />
+<br />
+Note 4: RDRnn, where nn is the number of the reader. Review the reader definitions by searching for &quot;RDR(&quot; in the report.<br />
+<br />
+From the ISPF Command Shell enter:<br />
+<br />
+TSS WHOOWNS JESINPUT(*)<br />
+If all of the resources above are owned by generic and/or fully qualified entries in the JESINPUT resource class, this is not a finding.<br />
+<br />
+If any of the above resources are not owned, or are owned inappropriately, in the JESINPUT resource class, this is a finding.</p><h2>Check Content Reference</h2><p>M</p><h2>Target Key</h2><p>4102</p></body></html>

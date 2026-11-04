@@ -1,0 +1,54 @@
+<!doctype html><html lang="en"><head><meta charset="utf-8"><title>STIGQter: STIG Check Details: SV-256023r991786_rule: The out-of-band management (OOBM) Arista gateway router must be configured to forward only authorized management traffic to the Network Operations Center (NOC).</title><link rel="icon" type="image/svg+xml" href="STIGQter.svg" /><script async src="https://www.googletagmanager.com/gtag/js?id=UA-31381839-2"></script><script src="include.js"></script><script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-4110907817782130" crossorigin="anonymous"></script></head><body><div><img src="STIGQter.svg" alt="STIGQter" style="height:1em;" /> <a href="https://www.stigqter.com/">STIGQter</a>: <a href="main.html">STIG Summary</a>: <a href="U_Arista_MLS_EOS_4-X_Router_STIG_V2R2_Manual-xccdf.html">Arista MLS EOS 4.X Router Security Technical Implementation Guide Version: 2 Release: 2 Benchmark Date: 02 Apr 2025</a>:</div> <h1>The out-of-band management (OOBM) Arista gateway router must be configured to forward only authorized management traffic to the Network Operations Center (NOC).</h1><h2>DISA Rule</h2><p>SV-256023r991786_rule</p><h2>Vulnerability Number</h2><p>V-256023</p><h2>Group Title</h2><p>SRG-NET-000205-RTR-000010</p><h2>Rule Version</h2><p>ARST-RT-000420</p><h2>Severity</h2><p>CAT II</p><h2>CCI(s)</h2><ul><li>CCI-001097 - Monitor and control communications at the external managed interfaces to the system and at key managed interfaces within the system.</li><li>CCI-004931 - Establish organization-defined alternate communications paths for system operations organizational command and control.</li></ul><h2>Weight</h2><p>10</p><h2>Fix Recommendation</h2><p>This requirement is not applicable for the DODIN backbone.<br />
+<br />
+Configure filters based on port, source IP address, and destination IP address to permit only authorized management traffic into IPsec tunnels or the OOBM interface used for forwarding management data.<br />
+<br />
+Step 1: To configure an ACL to allow only management traffic to be forwarded through the OOBM interface or IPsec tunnel, execute the command &quot;sh ip access-list&quot;.<br />
+<br />
+ip access-list OOBM_to_MGMT<br />
+   10 permit tcp 10.10.10.0/24 host 10.20.10.1 eq ssh<br />
+   20 permit ip 10.10.10.0/24 192.168.10.0/24 <br />
+   30 permit udp 10.20.20.0/24 any eq bootps snmp<br />
+<br />
+Step 2: To apply the ACL outbound on the OOBM interface, execute the command &quot;sh run int Eth YY&quot;.<br />
+<br />
+interface ethernet 1<br />
+  description OOBM to MGMT link<br />
+  ip access-group OOBM_to_MGMT out</p><h2>Check Contents</h2><p>This requirement is not applicable for the DODIN backbone.<br />
+<br />
+Review the network topology diagram to determine connectivity between the managed network and the NOC.<br />
+<br />
+Review the OOBM gateway router configuration to validate the path that the management traffic traverses.<br />
+<br />
+Step 1: To verify only management traffic is forwarded through the OOBM interface or IPsec tunnel, execute the command &quot;sh ip access-list&quot;.<br />
+<br />
+ip access-list OOBM_to_MGMT<br />
+   10 permit tcp 10.10.10.0/24 host 10.20.10.1 eq ssh telnet<br />
+   20 permit ip 10.10.10.0/24 192.168.10.0/24 <br />
+   30 permit udp 10.20.20.0/24 any eq bootps snmp<br />
+<br />
+Step 2: To verify the ACL is applied outbound on the OOBM interface, execute the command &quot;sh run int Eth YY&quot;.<br />
+<br />
+interface ethernet 1<br />
+  description OOBM to MGMT link<br />
+  ip access-group OOBM_to_MGMT out<br />
+<br />
+If traffic other than authorized management traffic is permitted through the OOBM interface or IPsec tunnel, this is a finding.</p><h2>Vulnerability Number</h2><p>V-256023</p><h2>Documentable</h2><p>False</p><h2>Rule Version</h2><p>ARST-RT-000420</p><h2>Severity Override Guidance</h2><p>This requirement is not applicable for the DODIN backbone.<br />
+<br />
+Review the network topology diagram to determine connectivity between the managed network and the NOC.<br />
+<br />
+Review the OOBM gateway router configuration to validate the path that the management traffic traverses.<br />
+<br />
+Step 1: To verify only management traffic is forwarded through the OOBM interface or IPsec tunnel, execute the command &quot;sh ip access-list&quot;.<br />
+<br />
+ip access-list OOBM_to_MGMT<br />
+   10 permit tcp 10.10.10.0/24 host 10.20.10.1 eq ssh telnet<br />
+   20 permit ip 10.10.10.0/24 192.168.10.0/24 <br />
+   30 permit udp 10.20.20.0/24 any eq bootps snmp<br />
+<br />
+Step 2: To verify the ACL is applied outbound on the OOBM interface, execute the command &quot;sh run int Eth YY&quot;.<br />
+<br />
+interface ethernet 1<br />
+  description OOBM to MGMT link<br />
+  ip access-group OOBM_to_MGMT out<br />
+<br />
+If traffic other than authorized management traffic is permitted through the OOBM interface or IPsec tunnel, this is a finding.</p><h2>Check Content Reference</h2><p>M</p><h2>Target Key</h2><p>5513</p></body></html>

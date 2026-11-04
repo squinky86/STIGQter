@@ -1,0 +1,104 @@
+<!doctype html><html lang="en"><head><meta charset="utf-8"><title>STIGQter: STIG Check Details: SV-270564r1136919_rule: Oracle Database must, for password-based authentication, store passwords using an approved salted key derivation function, preferably using a keyed hash.</title><link rel="icon" type="image/svg+xml" href="STIGQter.svg" /><script async src="https://www.googletagmanager.com/gtag/js?id=UA-31381839-2"></script><script src="include.js"></script><script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-4110907817782130" crossorigin="anonymous"></script></head><body><div><img src="STIGQter.svg" alt="STIGQter" style="height:1em;" /> <a href="https://www.stigqter.com/">STIGQter</a>: <a href="main.html">STIG Summary</a>: <a href="U_Oracle_Database_19c_STIG_V1R5_Manual-xccdf.html">Oracle Database 19c Security Technical Implementation Guide Version: 1 Release: 5 Benchmark Date: 01 Apr 2026</a>:</div> <h1>Oracle Database must, for password-based authentication, store passwords using an approved salted key derivation function, preferably using a keyed hash.</h1><h2>DISA Rule</h2><p>SV-270564r1136919_rule</p><h2>Vulnerability Number</h2><p>V-270564</p><h2>Group Title</h2><p>SRG-APP-000171-DB-000074</p><h2>Rule Version</h2><p>O19C-00-014800</p><h2>Severity</h2><p>CAT I</p><h2>CCI(s)</h2><ul><li>CCI-000366 - Implement the security configuration settings.</li></ul><h2>Weight</h2><p>10</p><h2>Fix Recommendation</h2><p>Develop, document, and maintain a list of DBMS database objects, database configuration files, associated scripts, applications defined within or external to the DBMS that access the database, and DBMS/user environment files/settings in the system documentation.<br />
+<br />
+Record whether they do or do not contain DBMS passwords. If passwords are present, ensure they are correctly hashed using one-way, salted hashing functions, and that the hashes are protected by host system security.<br />
+<br />
+The following are notes on implementing a Secure External Password Store using Oracle Wallet.<br />
+<br />
+Oracle provides the capability to provide for a secure external password facility. Use the Oracle mkstore to create a secure storage area for passwords for applications, batch jobs, and scripts to use, or deploy a site-authorized facility to perform this function.<br />
+<br />
+Check to verify what has been stored in the Oracle External Password Store.<br />
+<br />
+To view all contents of a client wallet external password store, check specific credentials by viewing them. Listing the external password store contents provides information that can be used to decide whether to add or delete credentials from the store. To list the contents of the external password store, enter the following command at the command line:<br />
+<br />
+$ mkstore -wrl wallet_location -listCredential<br />
+<br />
+For example: $ mkstore -wrl c:\oracle\product\19.0.0\db_1\wallets -listCredential<br />
+<br />
+The wallet_location specifies the path to the directory where the wallet, whose external password store contents is to be viewed, is located. This command lists all of the credential database service names (aliases) and the corresponding username (schema) for that database. Passwords are not listed.<br />
+<br />
+Configuring Clients to Use the External Password Store:<br />
+<br />
+If the client is already configured to use external authentication, such as Windows built-in authentication or Transport Layer Security (TLS), then Oracle Database uses that authentication method. The same credentials used for this type of authentication are typically also used to log on to the database.<br />
+<br />
+For clients not using such authentication methods or wanting to override them for database authentication, can set the SQLNET.WALLET_OVERRIDE parameter in sqlnet.ora to TRUE. The default value for SQLNET.WALLET_OVERRIDE is FALSE, allowing standard use of authentication credentials as before.<br />
+<br />
+If wanting a client to use the secure external password store feature, then perform the following configuration task:<br />
+<br />
+1. Create a wallet on the client by using the following syntax at the command line:<br />
+<br />
+mkstore -wrl wallet_location -create<br />
+<br />
+For example: mkstore -wrl c:\oracle\product\19.0.0\db_1\wallets -create<br />
+Enter password: password<br />
+<br />
+The wallet_location is the path to the directory where the wallet is to be created and stored. This command creates an Oracle wallet with the autologon feature enabled at the location specified. The autologon feature enables the client to access the wallet contents without supplying a password.<br />
+<br />
+The mkstore utility -create option uses password complexity verification.<br />
+<br />
+2. Create database connection credentials in the wallet by using the following syntax at the command line:<br />
+<br />
+mkstore -wrl wallet_location -createCredential db_connect_string username<br />
+Enter password: password<br />
+<br />
+For example: mkstore -wrl c:\oracle\product\19.0.0\db_1\wallets -createCredential oracle system<br />
+Enter password: password<br />
+<br />
+In this specification, the wallet_location is the path to the directory where the wallet was created. The db_connect_string used in the CONNECT /@db_connect_string statement must be identical to the db_connect_string specified in the -createCredential command. The db_connect_string is the TNS alias used to specify the database in the tnsnames.ora file or any service name used to identify the database on an Oracle network. By default, tnsnames.ora is located in the $ORACLE_HOME/network/admin directory on Unix systems and in ORACLE_HOME\network\admin on Windows. The username is the database logon credential. When prompted, enter the password for this user.<br />
+<br />
+3. In the client sqlnet.ora file, enter the WALLET_LOCATION parameter and set it to the directory location of the wallet created in Step 1. For example, if the wallet was created in $ORACLE_HOME/network/admin and Oracle home is set to /private/ora19, then enter the following into client sqlnet.ora file:<br />
+<br />
+WALLET_LOCATION =<br />
+(SOURCE =<br />
+(METHOD = FILE)<br />
+(METHOD_DATA =<br />
+(DIRECTORY = /private/ora19/network/admin)<br />
+)<br />
+)<br />
+<br />
+4. In the client sqlnet.ora file, enter the SQLNET.WALLET_OVERRIDE parameter and set it to TRUE as follows:<br />
+<br />
+SQLNET.WALLET_OVERRIDE = TRUE<br />
+<br />
+This setting causes all CONNECT /@db_connect_string statements to use the information in the wallet at the specified location to authenticate to databases.<br />
+<br />
+When external authentication is in use, an authenticated user with such a wallet can use the CONNECT /@db_connect_string syntax to access the previously specified databases without providing a username and password. However, if a user fails that external authentication, then these connect statements also fail.<br />
+<br />
+Below is a sample sqlnet.ora file with the WALLET_LOCATION and the SQLNET.WALLET_OVERRIDE parameters set as described in Steps 3 and 4.<br />
+<br />
+WALLET_LOCATION =<br />
+(SOURCE =<br />
+(METHOD = FILE)<br />
+(METHOD_DATA =<br />
+(DIRECTORY = /private/ora19/network/admin)<br />
+)<br />
+)<br />
+SQLNET.WALLET_OVERRIDE = TRUE<br />
+SSL_CLIENT_AUTHENTICATION = FALSE<br />
+SSL_VERSION = 1.1 or 1.2<br />
+<br />
+Note: This assumes that a single sqlnet.ora file, in the default location, is in use. Refer to the following link if using a nondefault configuration:<br />
+https://docs.oracle.com/en/database/oracle/oracle-database/19/netrf/parameters-for-the-sqlnet.ora.html</p><h2>Check Contents</h2><p>Oracle Database stores and displays its passwords in encrypted form. Nevertheless, this should be verified by reviewing the relevant system views, along with the other items to be checked here.<br />
+<br />
+Review the list of DBMS database objects, database configuration files, associated scripts, and applications defined within and external to the DBMS that access the database. The list should also include files, tables, or settings used to configure the operational environment for the DBMS and for interactive DBMS user accounts.<br />
+<br />
+Determine whether any DBMS database objects, database configuration files, associated scripts, applications defined within or external to the DBMS that access the database, and DBMS/user environment files/settings contain database passwords. If any do, confirm that DBMS passwords stored internally or externally to the DBMS are hashed using FIPS-approved cryptographic algorithms and include a salt. <br />
+<br />
+If any passwords are stored in clear text, this is a finding. <br />
+<br />
+If any passwords are stored with reversible encryption, this is a finding. <br />
+<br />
+Determine if an external password store for applications, batch jobs, and scripts is in use. Verify that all passwords stored there are encrypted.<br />
+<br />
+If a password store is used and any password is not encrypted, this is a finding.</p><h2>Vulnerability Number</h2><p>V-270564</p><h2>Documentable</h2><p>False</p><h2>Rule Version</h2><p>O19C-00-014800</p><h2>Severity Override Guidance</h2><p>Oracle Database stores and displays its passwords in encrypted form. Nevertheless, this should be verified by reviewing the relevant system views, along with the other items to be checked here.<br />
+<br />
+Review the list of DBMS database objects, database configuration files, associated scripts, and applications defined within and external to the DBMS that access the database. The list should also include files, tables, or settings used to configure the operational environment for the DBMS and for interactive DBMS user accounts.<br />
+<br />
+Determine whether any DBMS database objects, database configuration files, associated scripts, applications defined within or external to the DBMS that access the database, and DBMS/user environment files/settings contain database passwords. If any do, confirm that DBMS passwords stored internally or externally to the DBMS are hashed using FIPS-approved cryptographic algorithms and include a salt. <br />
+<br />
+If any passwords are stored in clear text, this is a finding. <br />
+<br />
+If any passwords are stored with reversible encryption, this is a finding. <br />
+<br />
+Determine if an external password store for applications, batch jobs, and scripts is in use. Verify that all passwords stored there are encrypted.<br />
+<br />
+If a password store is used and any password is not encrypted, this is a finding.</p><h2>Check Content Reference</h2><p>M</p><h2>Target Key</h2><p>5672</p></body></html>

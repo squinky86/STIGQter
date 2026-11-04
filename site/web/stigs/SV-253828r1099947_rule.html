@@ -1,0 +1,94 @@
+<!doctype html><html lang="en"><head><meta charset="utf-8"><title>STIGQter: STIG Check Details: SV-253828r1099947_rule: Multifactor authentication must be enabled and enforced on the Tanium Server for all access and all accounts.</title><link rel="icon" type="image/svg+xml" href="STIGQter.svg" /><script async src="https://www.googletagmanager.com/gtag/js?id=UA-31381839-2"></script><script src="include.js"></script><script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-4110907817782130" crossorigin="anonymous"></script></head><body><div><img src="STIGQter.svg" alt="STIGQter" style="height:1em;" /> <a href="https://www.stigqter.com/">STIGQter</a>: <a href="main.html">STIG Summary</a>: <a href="U_Tanium_7-x_STIG_V2R3_Manual-xccdf.html">Tanium 7.x Security Technical Implementation Guide Version: 2 Release: 3 Benchmark Date: 02 Jul 2025</a>:</div> <h1>Multifactor authentication must be enabled and enforced on the Tanium Server for all access and all accounts.</h1><h2>DISA Rule</h2><p>SV-253828r1099947_rule</p><h2>Vulnerability Number</h2><p>V-253828</p><h2>Group Title</h2><p>SRG-APP-000148</p><h2>Rule Version</h2><p>TANS-CN-000027</p><h2>Severity</h2><p>CAT II</p><h2>CCI(s)</h2><ul><li>CCI-000764 - Uniquely identify and authenticate organizational users and associate that unique identification with processes acting on behalf of those users.</li><li>CCI-000056 - Retain the device lock until the user reestablishes access using established identification and authentication procedures.</li><li>CCI-000166 - Provide irrefutable evidence that an individual (or process acting on behalf of an individual) falsely denying having performed organization-defined actions to be covered by non-repudiation.</li><li>CCI-000766 - Implement multifactor authentication for network access to non-privileged accounts.</li><li>CCI-001941 - Implement replay-resistant authentication mechanisms for access to privileged accounts and/or non-privileged accounts.</li><li>CCI-002010 - Electronically verify Personal Identity Verification-compliant credentials from other federal agencies.</li><li>CCI-004046 - Implement multi-factor authentication for local; network; and/or remote access to privileged accounts; and/or non-privileged accounts such that one of the factors is provided by a device separate from the system gaining access.</li><li>CCI-004047 - Implement multi-factor authentication for local; network; and/or remote access to privileged accounts; and/or non-privileged accounts such that the device meets organization-defined strength of mechanism requirements.</li></ul><h2>Weight</h2><p>10</p><h2>Fix Recommendation</h2><p>Use the vendor documentation titled &quot;Smart card authentication&quot; to implement correct configuration settings for this requirement.<br />
+<br />
+1. Access the Tanium Server.<br />
+<br />
+2. Log on to the server with an account that has administrative privileges.<br />
+<br />
+3. Run regedit as Administrator.<br />
+<br />
+4. Navigate to HKEY_LOCAL_MACHINE &gt;&gt; SOFTWARE &gt;&gt; WOW6432Node &gt;&gt; Tanium &gt;&gt; Tanium Server.<br />
+<br />
+5. Configure the value for REG_DWORD &quot;ForceSOAPSSLClientCert&quot; to &quot;1&quot;.<br />
+<br />
+6. Navigate to HKEY_LOCAL_MACHINE &gt;&gt; SOFTWARE &gt;&gt; WOW6432Node &gt;&gt; Tanium &gt;&gt; Tanium Server.<br />
+<br />
+7. Configure the following keys:<br />
+<br />
+REG_SZ &quot;ClientCertificateAuthField&quot;<br />
+For example:<br />
+X509v3 Subject Alternative Name<br />
+<br />
+REG_SZ &quot;ClientCertificateAuthRegex&quot;<br />
+For example-DoD:<br />
+.+?Name:\s*?(\S+@[._a-zA-Z0-9]+).*<br />
+Note: This regex may vary.<br />
+<br />
+REG_SZ &quot;ClientCertificateAuth&quot;<br />
+For example:<br />
+E:\Program Files\Tanium\Tanium Server\cac.pem<br />
+<br />
+REG_SZ &quot;TrustedHostList&quot;<br />
+For example:<br />
+Append 127.0.0.1 (for IPv4) and [::1] (for IPv6)</p><h2>Check Contents</h2><p>1. Access the Tanium Server.<br />
+<br />
+2. Log on to the server with an account that has administrative privileges.<br />
+<br />
+3. Run regedit as Administrator.<br />
+<br />
+4. Navigate to HKEY_LOCAL_MACHINE &gt;&gt; SOFTWARE &gt;&gt; WOW6432Node &gt;&gt; Tanium &gt;&gt; Tanium Server.<br />
+<br />
+5. Validate the value for REG_DWORD &quot;ForceSOAPSSLClientCert&quot; is set to &quot;1&quot;.<br />
+<br />
+6. Navigate to HKEY_LOCAL_MACHINE &gt;&gt; SOFTWARE &gt;&gt; WOW6432Node &gt;&gt; Tanium &gt;&gt; Tanium Server.<br />
+<br />
+7. Validate the following keys exist and are configured:<br />
+<br />
+REG_SZ &quot;ClientCertificateAuthField&quot;<br />
+For example:<br />
+X509v3 Subject Alternative Name<br />
+<br />
+REG_SZ &quot;ClientCertificateAuthRegex&quot;<br />
+For example-DoD:<br />
+.+?Name:\s*?(\S+@[._a-zA-Z0-9]+).*<br />
+Note: This regex may vary.<br />
+<br />
+REG_SZ &quot;ClientCertificateAuth&quot;<br />
+For example:<br />
+E:\Program Files\Tanium\Tanium Server\cac.pem<br />
+<br />
+REG_SZ &quot;TrustedHostList&quot;<br />
+For example:<br />
+127.0.0.1 (for IPv4) and [::1] (for IPv6)<br />
+<br />
+If the value for REG_DWORD &quot;ForceSOAPSSLClientCert&quot; is not set to &quot;1&quot; and the remaining required registry values are not configured, this is a finding.</p><h2>Vulnerability Number</h2><p>V-253828</p><h2>Documentable</h2><p>False</p><h2>Rule Version</h2><p>TANS-CN-000027</p><h2>Severity Override Guidance</h2><p>1. Access the Tanium Server.<br />
+<br />
+2. Log on to the server with an account that has administrative privileges.<br />
+<br />
+3. Run regedit as Administrator.<br />
+<br />
+4. Navigate to HKEY_LOCAL_MACHINE &gt;&gt; SOFTWARE &gt;&gt; WOW6432Node &gt;&gt; Tanium &gt;&gt; Tanium Server.<br />
+<br />
+5. Validate the value for REG_DWORD &quot;ForceSOAPSSLClientCert&quot; is set to &quot;1&quot;.<br />
+<br />
+6. Navigate to HKEY_LOCAL_MACHINE &gt;&gt; SOFTWARE &gt;&gt; WOW6432Node &gt;&gt; Tanium &gt;&gt; Tanium Server.<br />
+<br />
+7. Validate the following keys exist and are configured:<br />
+<br />
+REG_SZ &quot;ClientCertificateAuthField&quot;<br />
+For example:<br />
+X509v3 Subject Alternative Name<br />
+<br />
+REG_SZ &quot;ClientCertificateAuthRegex&quot;<br />
+For example-DoD:<br />
+.+?Name:\s*?(\S+@[._a-zA-Z0-9]+).*<br />
+Note: This regex may vary.<br />
+<br />
+REG_SZ &quot;ClientCertificateAuth&quot;<br />
+For example:<br />
+E:\Program Files\Tanium\Tanium Server\cac.pem<br />
+<br />
+REG_SZ &quot;TrustedHostList&quot;<br />
+For example:<br />
+127.0.0.1 (for IPv4) and [::1] (for IPv6)<br />
+<br />
+If the value for REG_DWORD &quot;ForceSOAPSSLClientCert&quot; is not set to &quot;1&quot; and the remaining required registry values are not configured, this is a finding.</p><h2>Check Content Reference</h2><p>M</p><h2>Target Key</h2><p>5476</p></body></html>

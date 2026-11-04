@@ -1,0 +1,63 @@
+<!doctype html><html lang="en"><head><meta charset="utf-8"><title>STIGQter: STIG Check Details: SV-79711r1_rule: The DataPower Gateway providing user authentication intermediary services must use multifactor authentication for network access to non-privileged accounts.</title><link rel="icon" type="image/svg+xml" href="STIGQter.svg" /><script async src="https://www.googletagmanager.com/gtag/js?id=UA-31381839-2"></script><script src="include.js"></script><script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-4110907817782130" crossorigin="anonymous"></script></head><body><div><img src="STIGQter.svg" alt="STIGQter" style="height:1em;" /> <a href="https://www.stigqter.com/">STIGQter</a>: <a href="main.html">STIG Summary</a>: <a href="U_IBM_DataPower_ALG_STIG_V1R1_Manual-xccdf.html">IBM DataPower ALG Security Technical Implementation Guide Version: 1 Release: 1 Benchmark Date: 25 Jan 2016</a>:</div> <h1>The DataPower Gateway providing user authentication intermediary services must use multifactor authentication for network access to non-privileged accounts.</h1><h2>DISA Rule</h2><p>SV-79711r1_rule</p><h2>Vulnerability Number</h2><p>V-65221</p><h2>Group Title</h2><p>SRG-NET-000140-ALG-000094</p><h2>Rule Version</h2><p>WSDP-AG-000040</p><h2>Severity</h2><p>CAT II</p><h2>CCI(s)</h2><ul><li>CCI-000766 - Implement multifactor authentication for network access to non-privileged accounts.</li></ul><h2>Weight</h2><p>10</p><h2>Fix Recommendation</h2><p>This scenarios starts with a user connecting to DataPower over an HTTPS connection in which the user is providing a digital certificate that asserts their identity. This digital certificate could come from a CAC/PIV/Smart Card, or could be a “soft-certificate” embedded into a browser/application on a desktop, laptop, or mobile device.<br />
+<br />
+All configuration tasks take place within the default domain.<br />
+<br />
+DataPower’s WebGUI interface configuration is configured to require a client-supplied digital certificate: Network &gt;&gt; Management &gt;&gt; Web Management Service &gt;&gt; Advanced Tab &gt;&gt; Custom SSL Server Type: “Server Profile” &gt;&gt; Custom SSL Server Profile &gt;&gt; Click “+” &gt;&gt; Provide a name for the profile &gt;&gt; Configure “Identity Credentials” &gt;&gt; Request Client Authentication: “on” &gt;&gt; Configure “validation credentials” (used to validate the client’s digital certificate using Certificate Authority (CA) signer certificates). <br />
+<br />
+When configuring the Validation Credentials, configure Use CRL: “on”; Require CRL: “on”. CRL Retrieval is configured via Objects &gt;&gt; Crypto Configuration &gt;&gt; CRL Retrieval &gt;&gt; Advanced Tab &gt;&gt; Configure CRL retrieval policies.<br />
+<br />
+Once an SSL connection is established to the WebGUI, the user is promoted for an ID and password. Authentication for all DataPower users is configured via the Role Based Management (RBM) feature: Administration &gt;&gt; Access &gt;&gt; RBM Settings. <br />
+<br />
+Configure “Authentication (Authentication Tab) &gt;&gt; Authentication Method &gt;&gt; Custom &gt;&gt; Custom URL (URL referencing an XSL Stylesheet or GatewayScript file on the appliance). <br />
+<br />
+The XSL/GatewayScript will receive an XML node at runtime containing the user’s ID and password, as submitted via the WebGUI logon page. The script will need to authenticate the ID/Password credentials using an LDAP/AD server. Once the user has been authenticated via ID/Password, the LDAP record for the user is retrieved including the Distinguished Name (DN) and DataPower group membership. A given user can only be assigned to single DataPower group. The user’s DN from LDAP is compared to the DN that the XSLT/script extracts from the SSL Client Certificate. If the two DN values match, then the user is considered to have authenticated with two factors.</p><h2>Check Contents</h2><p>Scenario 1:<br />
+Prerequisites:<br />
+<br />
+1. The user’s identity/attributes are stored in LDAP, including Distinguished Name (DN) and DataPower group membership (users can only be a member of one group).<br />
+<br />
+2. The user has a device that has access to their digital certificate (e.g., via a CAC/PIV card reader connected to a laptop/desktop computer). The user opens a browser and navigates to the URL for the DataPower WebGUI. The user provides their assigned ID and password, which are authenticated by DataPower.<br />
+<br />
+If the user does not gain access to the DataPower appliance Control Panel screen, this is a finding.<br />
+<br />
+Scenario 2:<br />
+Prerequisites:<br />
+<br />
+1. The user’s identity/attributes are stored in LDAP, including Distinguished Name (DN) and DataPower group membership (users can only be a member of one group).<br />
+<br />
+2. The user has a device that has access to a different user’s digital certificate (e.g., via a CAC/PIV card reader connected to a laptop/desktop computer). The user opens a browser and navigates to the URL for the DataPower WebGUI. The user provides their assigned ID and password, which are authenticated by DataPower.<br />
+<br />
+If the user gains access to the DataPower appliance Control Panel screen, this is a finding.<br />
+<br />
+Scenario 3:<br />
+Prerequisites:<br />
+<br />
+1. The user’s identity/attributes are stored in LDAP, including Distinguished Name (DN). In this case, the DataPower group membership is either not defined, or a group name is specified for which there is no corresponding group definition on the DataPower appliance.<br />
+<br />
+2. The user has a device that has access to a different user’s digital certificate (e.g., via a CAC/PIV card reader connected to a laptop/desktop computer). The user opens a browser and navigates to the URL for the DataPower WebGUI. The user provides their assigned ID and password, which are authenticated by DataPower.<br />
+<br />
+If the user gains access to the DataPower appliance Control Panel screen, this is a finding.</p><h2>Vulnerability Number</h2><p>V-65221</p><h2>Documentable</h2><p>False</p><h2>Rule Version</h2><p>WSDP-AG-000040</p><h2>Severity Override Guidance</h2><p>Scenario 1:<br />
+Prerequisites:<br />
+<br />
+1. The user’s identity/attributes are stored in LDAP, including Distinguished Name (DN) and DataPower group membership (users can only be a member of one group).<br />
+<br />
+2. The user has a device that has access to their digital certificate (e.g., via a CAC/PIV card reader connected to a laptop/desktop computer). The user opens a browser and navigates to the URL for the DataPower WebGUI. The user provides their assigned ID and password, which are authenticated by DataPower.<br />
+<br />
+If the user does not gain access to the DataPower appliance Control Panel screen, this is a finding.<br />
+<br />
+Scenario 2:<br />
+Prerequisites:<br />
+<br />
+1. The user’s identity/attributes are stored in LDAP, including Distinguished Name (DN) and DataPower group membership (users can only be a member of one group).<br />
+<br />
+2. The user has a device that has access to a different user’s digital certificate (e.g., via a CAC/PIV card reader connected to a laptop/desktop computer). The user opens a browser and navigates to the URL for the DataPower WebGUI. The user provides their assigned ID and password, which are authenticated by DataPower.<br />
+<br />
+If the user gains access to the DataPower appliance Control Panel screen, this is a finding.<br />
+<br />
+Scenario 3:<br />
+Prerequisites:<br />
+<br />
+1. The user’s identity/attributes are stored in LDAP, including Distinguished Name (DN). In this case, the DataPower group membership is either not defined, or a group name is specified for which there is no corresponding group definition on the DataPower appliance.<br />
+<br />
+2. The user has a device that has access to a different user’s digital certificate (e.g., via a CAC/PIV card reader connected to a laptop/desktop computer). The user opens a browser and navigates to the URL for the DataPower WebGUI. The user provides their assigned ID and password, which are authenticated by DataPower.<br />
+<br />
+If the user gains access to the DataPower appliance Control Panel screen, this is a finding.</p><h2>Check Content Reference</h2><p>M</p><h2>Target Key</h2><p>2859</p></body></html>

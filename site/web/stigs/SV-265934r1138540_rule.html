@@ -1,0 +1,166 @@
+<!doctype html><html lang="en"><head><meta charset="utf-8"><title>STIGQter: STIG Check Details: SV-265934r1138540_rule: MongoDB must associate organization-defined types of security labels having organization-defined security label values with information in storage.</title><link rel="icon" type="image/svg+xml" href="STIGQter.svg" /><script async src="https://www.googletagmanager.com/gtag/js?id=UA-31381839-2"></script><script src="include.js"></script><script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-4110907817782130" crossorigin="anonymous"></script></head><body><div><img src="STIGQter.svg" alt="STIGQter" style="height:1em;" /> <a href="https://www.stigqter.com/">STIGQter</a>: <a href="main.html">STIG Summary</a>: <a href="U_MongoDB_Enterprise_Advanced_7-x_STIG_V1R2_Manual-xccdf.html">MongoDB Enterprise Advanced 7.x Security Technical Implementation Guide Version: 1 Release: 2 Benchmark Date: 01 Jul 2026</a>:</div> <h1>MongoDB must associate organization-defined types of security labels having organization-defined security label values with information in storage.</h1><h2>DISA Rule</h2><p>SV-265934r1138540_rule</p><h2>Vulnerability Number</h2><p>V-265934</p><h2>Group Title</h2><p>SRG-APP-000311-DB-000308</p><h2>Rule Version</h2><p>MD7X-00-006400</p><h2>Severity</h2><p>CAT II</p><h2>CCI(s)</h2><ul><li>CCI-002262 - Provides the means to associate organization-defined types of security attributes having organization-defined security attribute values with information in storage.</li><li>CCI-002263 - Provides the means to associate organization-defined types of security attributes having organization-defined security attribute values with information in process.</li><li>CCI-002264 - Provides the means to associate organization-defined types of security attributes having organization-defined security attribute values with information in transmission.</li></ul><h2>Weight</h2><p>10</p><h2>Fix Recommendation</h2><p>To implement security labeling, ensure the following:<br />
+<br />
+1. Organizational or site specific documentation and guidance is available or developed.<br />
+<br />
+2. Ensure security labels are applied to MongoDB collection(s) requiring them in accordance with the organization or site specific documentation.<br />
+<br />
+3. Create a Security Label Tag Viewer role (&quot;SLTagViewer&quot;) with &quot;find&quot; privileges on the specific database and collection that requires security labeling.<br />
+<br />
+In the example below, there are three databases and collections in those databases where security labels are required:<br />
+<br />
+&gt; use admin<br />
+&gt; db.createRole(<br />
+   {<br />
+     role: &quot;SLTagViewer&quot;,<br />
+     privileges: [<br />
+       { resource: { db: &quot;db1&quot;, collection: &quot;coll1&quot; }, actions: [ &quot;find&quot; ] },<br />
+       { resource: { db: &quot;db1&quot;, collection: &quot;coll2&quot; }, actions: [ &quot;find&quot; ] },<br />
+       { resource: { db: &quot;db1&quot;, collection: &quot;coll3&quot; }, actions: [ &quot;find&quot; ] },<br />
+       { resource: { db: &quot;db2&quot;, collection: &quot;coll1&quot; }, actions: [ &quot;find&quot; ] },<br />
+       { resource: { db: &quot;db2&quot;, collection: &quot;coll5&quot; }, actions: [ &quot;find&quot; ] },<br />
+       { resource: { db: &quot;db2&quot;, collection: &quot;coll9&quot; }, actions: [ &quot;find&quot; ] },<br />
+       { resource: { db: &quot;db3&quot;, collection: &quot;coll81&quot; }, actions: [ &quot;find&quot; ] }<br />
+     ],<br />
+     roles: [ ]<br />
+   },<br />
+   { w: &quot;majority&quot; , wtimeout: 5000 }<br />
+) <br />
+<br />
+4. Ensure that any query that targets the databases/collections that have security labeling have the appropriate MongoDB $redact operation applied.<br />
+<br />
+The $redact operator is applied through trusted middleware. This trusted middleware configuration is purpose built (custom) code and integrations and is organizational or site specific. <br />
+Information on the basics of how this is constructed can be found here: https://www.mongodb.com/docs/v7.0/reference/operator/aggregation/redact/</p><h2>Check Contents</h2><p>If security labeling is not required, this is not a finding.<br />
+<br />
+If security labeling is required then there must be an organizational or site specific documentation on what the security labeling policy is and guidance on how and where to apply it.<br />
+<br />
+Review the organization- or site-specific security labeling documentation to understand how documents in specific MongoDB collection(s) must be marked. This marking process should be applied as data is entered into the database.<br />
+<br />
+Upon review of the security labeling documents, the following checks will be required.<br />
+<br />
+1. Check if the role &quot;SLTagViewer&quot; exists. If this role does not exist, this is a finding.<br />
+<br />
+Note: The role name &quot;SLTagViewer&quot; is a user-defined (custom) role and is organizational or site specific. The role name of &quot;SLTagViewer&quot; is used here as an example.<br />
+<br />
+Run the following commands:<br />
+<br />
+&gt; use admin<br />
+&gt; db.getRole( &quot;SLTagViewer&quot;, { showPrivileges: true } )<br />
+<br />
+If the results returned from this command is &quot;null&quot;, this is a finding.<br />
+ <br />
+2. Check that data is appropriately marked in the specific MongoDB collection(s) that require security labeling. This check will be specific to the security labeling policy and guidance.<br />
+<br />
+Log in to MongoDB with a user that has a Security Label Tag Viewer role (&quot;SLTagViewer&quot;, which is a role that has been created and has access to read/view those database/collections that require security labels). Review the data in the MongoDB collections requiring security labels to ensure that the data is appropriately marked according to the security labeling documentation. For example, if documents in a MongoDB collection need to be marked as &quot;TS&quot;, &quot;S&quot;, &quot;C&quot; or &quot;U&quot; (or combination of) at the root level of the document and at each field level of the document, then the security labeling policy and guidance would indicate a document might look like the following and this would not be a finding (&quot;sl&quot; is the security label):<br />
+<br />
+{<br />
+    &quot;_id&quot;: 1,<br />
+    &quot;sl&quot;: [[&quot;TS&quot;], [&quot;S&quot;]],<br />
+    &quot;field1&quot; : { &quot;sl&quot; : [ [&quot;S&quot;] ], &quot;data&quot; : &quot;field1 value&quot; },<br />
+    &quot;field2&quot; : { &quot;sl&quot; : [ [&quot;TS&quot;] ], &quot;data&quot; : &quot;field2 value&quot; },<br />
+    &quot;field3&quot; : { &quot;sl&quot; : [ [&quot;S&quot;] ], &quot;data&quot; : &quot;field3 value&quot; }<br />
+}<br />
+<br />
+The following document would be a finding because at the field level, field2 is missing its security label of &quot;sl&quot;:<br />
+<br />
+{<br />
+    &quot;_id&quot;: 1,<br />
+    &quot;sl&quot;: [[&quot;TS&quot;], [&quot;S&quot;]],<br />
+    &quot;field1&quot; : { &quot;sl&quot; : [ [&quot;S&quot;] ], &quot;data&quot; : &quot;field1 value&quot; },<br />
+    &quot;field2&quot; : { &quot;data&quot; : &quot;field2 value&quot; },<br />
+    &quot;field3&quot; : { &quot;sl&quot; : [ [&quot;S&quot;] ], &quot;data&quot; : &quot;field3 value&quot; }<br />
+}<br />
+<br />
+<br />
+3. Check that queries against that data in those collections use an appropriately constructed MongoDB $redact operation as part of the query pipeline to ensure that only the data appropriate for the query (that meets the security label requirements) is returned.<br />
+<br />
+Ensure that any query that targets the databases/collections that have security labeling have the appropriate MongoDB $redact operation applied.<br />
+<br />
+This is done through trusted middleware. This trusted middleware configuration is purpose built (custom) code and integrations and is organizational or site specific. Information on the basics of this can be found here: https://www.mongodb.com/docs/v7.0/reference/operator/aggregation/redact/ <br />
+<br />
+Any queries that target a MongoDB database/collection that has security labels and pass through the trusted middleware and does not have an appropriately constructed $redact operator that is part of the query aggregation pipeline is a finding.<br />
+<br />
+The following is an example of the $redact operator for the example document:<br />
+<br />
+&gt; db.security_collection.aggregate(<br />
+[{ <br />
+   $redact:<br />
+    { $cond: [{ $anyElementTrue:<br />
+          { $map: { input: &quot;$sl&quot;,<br />
+                      as: &quot;setNeeded&quot;,<br />
+                in: { $setIsSubset: <br />
+                [&quot;$$setNeeded&quot;, [&quot;S&quot;]] }<br />
+               }<br />
+          }<br />
+          },<br />
+          &quot;$$DESCEND&quot;, &quot;$$PRUNE&quot;]<br />
+    }<br />
+}<br />
+]<br />
+)</p><h2>Vulnerability Number</h2><p>V-265934</p><h2>Documentable</h2><p>False</p><h2>Rule Version</h2><p>MD7X-00-006400</p><h2>Severity Override Guidance</h2><p>If security labeling is not required, this is not a finding.<br />
+<br />
+If security labeling is required then there must be an organizational or site specific documentation on what the security labeling policy is and guidance on how and where to apply it.<br />
+<br />
+Review the organization- or site-specific security labeling documentation to understand how documents in specific MongoDB collection(s) must be marked. This marking process should be applied as data is entered into the database.<br />
+<br />
+Upon review of the security labeling documents, the following checks will be required.<br />
+<br />
+1. Check if the role &quot;SLTagViewer&quot; exists. If this role does not exist, this is a finding.<br />
+<br />
+Note: The role name &quot;SLTagViewer&quot; is a user-defined (custom) role and is organizational or site specific. The role name of &quot;SLTagViewer&quot; is used here as an example.<br />
+<br />
+Run the following commands:<br />
+<br />
+&gt; use admin<br />
+&gt; db.getRole( &quot;SLTagViewer&quot;, { showPrivileges: true } )<br />
+<br />
+If the results returned from this command is &quot;null&quot;, this is a finding.<br />
+ <br />
+2. Check that data is appropriately marked in the specific MongoDB collection(s) that require security labeling. This check will be specific to the security labeling policy and guidance.<br />
+<br />
+Log in to MongoDB with a user that has a Security Label Tag Viewer role (&quot;SLTagViewer&quot;, which is a role that has been created and has access to read/view those database/collections that require security labels). Review the data in the MongoDB collections requiring security labels to ensure that the data is appropriately marked according to the security labeling documentation. For example, if documents in a MongoDB collection need to be marked as &quot;TS&quot;, &quot;S&quot;, &quot;C&quot; or &quot;U&quot; (or combination of) at the root level of the document and at each field level of the document, then the security labeling policy and guidance would indicate a document might look like the following and this would not be a finding (&quot;sl&quot; is the security label):<br />
+<br />
+{<br />
+    &quot;_id&quot;: 1,<br />
+    &quot;sl&quot;: [[&quot;TS&quot;], [&quot;S&quot;]],<br />
+    &quot;field1&quot; : { &quot;sl&quot; : [ [&quot;S&quot;] ], &quot;data&quot; : &quot;field1 value&quot; },<br />
+    &quot;field2&quot; : { &quot;sl&quot; : [ [&quot;TS&quot;] ], &quot;data&quot; : &quot;field2 value&quot; },<br />
+    &quot;field3&quot; : { &quot;sl&quot; : [ [&quot;S&quot;] ], &quot;data&quot; : &quot;field3 value&quot; }<br />
+}<br />
+<br />
+The following document would be a finding because at the field level, field2 is missing its security label of &quot;sl&quot;:<br />
+<br />
+{<br />
+    &quot;_id&quot;: 1,<br />
+    &quot;sl&quot;: [[&quot;TS&quot;], [&quot;S&quot;]],<br />
+    &quot;field1&quot; : { &quot;sl&quot; : [ [&quot;S&quot;] ], &quot;data&quot; : &quot;field1 value&quot; },<br />
+    &quot;field2&quot; : { &quot;data&quot; : &quot;field2 value&quot; },<br />
+    &quot;field3&quot; : { &quot;sl&quot; : [ [&quot;S&quot;] ], &quot;data&quot; : &quot;field3 value&quot; }<br />
+}<br />
+<br />
+<br />
+3. Check that queries against that data in those collections use an appropriately constructed MongoDB $redact operation as part of the query pipeline to ensure that only the data appropriate for the query (that meets the security label requirements) is returned.<br />
+<br />
+Ensure that any query that targets the databases/collections that have security labeling have the appropriate MongoDB $redact operation applied.<br />
+<br />
+This is done through trusted middleware. This trusted middleware configuration is purpose built (custom) code and integrations and is organizational or site specific. Information on the basics of this can be found here: https://www.mongodb.com/docs/v7.0/reference/operator/aggregation/redact/ <br />
+<br />
+Any queries that target a MongoDB database/collection that has security labels and pass through the trusted middleware and does not have an appropriately constructed $redact operator that is part of the query aggregation pipeline is a finding.<br />
+<br />
+The following is an example of the $redact operator for the example document:<br />
+<br />
+&gt; db.security_collection.aggregate(<br />
+[{ <br />
+   $redact:<br />
+    { $cond: [{ $anyElementTrue:<br />
+          { $map: { input: &quot;$sl&quot;,<br />
+                      as: &quot;setNeeded&quot;,<br />
+                in: { $setIsSubset: <br />
+                [&quot;$$setNeeded&quot;, [&quot;S&quot;]] }<br />
+               }<br />
+          }<br />
+          },<br />
+          &quot;$$DESCEND&quot;, &quot;$$PRUNE&quot;]<br />
+    }<br />
+}<br />
+]<br />
+)</p><h2>Check Content Reference</h2><p>M</p><h2>Target Key</h2><p>5637</p></body></html>

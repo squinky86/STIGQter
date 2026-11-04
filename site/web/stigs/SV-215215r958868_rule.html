@@ -1,0 +1,91 @@
+<!doctype html><html lang="en"><head><meta charset="utf-8"><title>STIGQter: STIG Check Details: SV-215215r958868_rule: AIX must only allow the use of DoD PKI-established certificate authorities for verification of the establishment of protected sessions.</title><link rel="icon" type="image/svg+xml" href="STIGQter.svg" /><script async src="https://www.googletagmanager.com/gtag/js?id=UA-31381839-2"></script><script src="include.js"></script><script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-4110907817782130" crossorigin="anonymous"></script></head><body><div><img src="STIGQter.svg" alt="STIGQter" style="height:1em;" /> <a href="https://www.stigqter.com/">STIGQter</a>: <a href="main.html">STIG Summary</a>: <a href="U_IBM_AIX_7-x_STIG_V3R3_Manual-xccdf.html">IBM AIX 7.x Security Technical Implementation Guide Version: 3 Release: 3 Benchmark Date: 01 Jul 2026</a>:</div> <h1>AIX must only allow the use of DoD PKI-established certificate authorities for verification of the establishment of protected sessions.</h1><h2>DISA Rule</h2><p>SV-215215r958868_rule</p><h2>Vulnerability Number</h2><p>V-215215</p><h2>Group Title</h2><p>SRG-OS-000403-GPOS-00182</p><h2>Rule Version</h2><p>AIX7-00-001105</p><h2>Severity</h2><p>CAT II</p><h2>CCI(s)</h2><ul><li>CCI-002470 - Only allow the use of organization-defined certificate authorities for verification of the establishment of protected sessions.</li></ul><h2>Weight</h2><p>10</p><h2>Fix Recommendation</h2><p>Note: Depending on which version of GSKit is installed on AIX, the GSK commands that are used to manage the Key Database (KDB) have different names. The possible GSK commands are: gsk8capicmd (used below), gsk8capicmd_64 and gsk7cmd.<br />
+<br />
+Create a key database with DoD PKI or DoD-approved certificate using one of the following commands: <br />
+# gsk8capicmd -keydb -create -db &lt;KDB_FILE&gt; -pw &lt;KDB_PASSWORD&gt; -type cms -stash<br />
+<br />
+Edit &quot;/etc/security/ldap/ldap.cfg&quot; and add or edit the &quot;ldapsslkeyf&quot; setting to reference a KDB file containing a client certificate issued by DoD PKI or a DoD-approved external PKI. <br />
+<br />
+Install a certificate signed by a DoD PKI or a DoD-approved external PKI using the following command: <br />
+# gsk8capicmd -cert -add -db &lt;KDB_FILE&gt; -pw &lt;KDB_PASSWORD&gt; -file &lt;CERT_FILE&gt; -label &lt;CERT_LABEL&gt;<br />
+<br />
+Remove un-needed CA certificates using one of the following commands: <br />
+# gsk8capicmd -cert -delete -db &lt;KDB_FILE&gt; -pw &lt;KDB_PASSWORD&gt; -label &lt;CERT_LABEL&gt;<br />
+<br />
+Restart LDAP client using command:<br />
+# /usr/sbin/restart-secldapclntd</p><h2>Check Contents</h2><p>Note: Depending on which version of GSKit is installed on AIX, the GSK commands that are used to manage the Key Database (KDB) have different names. The possible GSK commands are: gsk8capicmd (used below), gsk8capicmd_64 and gsk7cmd.<br />
+<br />
+Check if the system is using LDAP authentication: <br />
+<br />
+# grep LDAP /etc/security/user <br />
+<br />
+If no lines are returned, this requirement is not applicable. <br />
+<br />
+Check if the useSSL option is enabled: <br />
+<br />
+# grep '^useSSL' /etc/security/ldap/ldap.cfg <br />
+useSSL:yes<br />
+<br />
+If &quot;yes&quot; is not the returned value, this is a finding. <br />
+<br />
+Verify a certificate is used for client authentication to the server: <br />
+<br />
+# grep -i '^ldapsslkeyf' /etc/security/ldap/ldap.cfg <br />
+ldapsslkeyf:/tmp/key.kdb<br />
+<br />
+If no line is found, this is a finding. <br />
+<br />
+Identify the Key Database (KDB), and its password, by asking the ISSO/SA). <br />
+<br />
+If  no Key Database exists on the system, this is a finding.<br />
+<br />
+List the certificate issuer with IBM GSK:<br />
+<br />
+# gsk8capicmd -cert -list CA -db &lt;KDB_FILE&gt; -pw &lt;KDB_PASSWORD&gt; <br />
+<br />
+Make note of the client Key Label: <br />
+<br />
+# gsk8capicmd -cert -details -showOID -db &lt;KDB_FILE&gt; -pw &lt;KDB_PASSWORD&gt; -label &lt;Key Label&gt; <br />
+<br />
+If the certificate is not issued by DoD PKI or a DoD-approved external PKI, this is a finding.<br />
+<br />
+The IBM GSK Database should only have certificates for the client system and for the LDAP server. <br />
+<br />
+If more certificates are in the key database than the LDAP server and the client, this is a finding.</p><h2>Vulnerability Number</h2><p>V-215215</p><h2>Documentable</h2><p>False</p><h2>Rule Version</h2><p>AIX7-00-001105</p><h2>Severity Override Guidance</h2><p>Note: Depending on which version of GSKit is installed on AIX, the GSK commands that are used to manage the Key Database (KDB) have different names. The possible GSK commands are: gsk8capicmd (used below), gsk8capicmd_64 and gsk7cmd.<br />
+<br />
+Check if the system is using LDAP authentication: <br />
+<br />
+# grep LDAP /etc/security/user <br />
+<br />
+If no lines are returned, this requirement is not applicable. <br />
+<br />
+Check if the useSSL option is enabled: <br />
+<br />
+# grep '^useSSL' /etc/security/ldap/ldap.cfg <br />
+useSSL:yes<br />
+<br />
+If &quot;yes&quot; is not the returned value, this is a finding. <br />
+<br />
+Verify a certificate is used for client authentication to the server: <br />
+<br />
+# grep -i '^ldapsslkeyf' /etc/security/ldap/ldap.cfg <br />
+ldapsslkeyf:/tmp/key.kdb<br />
+<br />
+If no line is found, this is a finding. <br />
+<br />
+Identify the Key Database (KDB), and its password, by asking the ISSO/SA). <br />
+<br />
+If  no Key Database exists on the system, this is a finding.<br />
+<br />
+List the certificate issuer with IBM GSK:<br />
+<br />
+# gsk8capicmd -cert -list CA -db &lt;KDB_FILE&gt; -pw &lt;KDB_PASSWORD&gt; <br />
+<br />
+Make note of the client Key Label: <br />
+<br />
+# gsk8capicmd -cert -details -showOID -db &lt;KDB_FILE&gt; -pw &lt;KDB_PASSWORD&gt; -label &lt;Key Label&gt; <br />
+<br />
+If the certificate is not issued by DoD PKI or a DoD-approved external PKI, this is a finding.<br />
+<br />
+The IBM GSK Database should only have certificates for the client system and for the LDAP server. <br />
+<br />
+If more certificates are in the key database than the LDAP server and the client, this is a finding.</p><h2>Check Content Reference</h2><p>M</p><h2>Target Key</h2><p>4012</p></body></html>

@@ -1,0 +1,91 @@
+<!doctype html><html lang="en"><head><meta charset="utf-8"><title>STIGQter: STIG Check Details: SV-251428r1018620_rule: If DBMS authentication using passwords is employed, Redis Enterprise DBMS must enforce the DOD standards for password complexity and lifetime.</title><link rel="icon" type="image/svg+xml" href="STIGQter.svg" /><script async src="https://www.googletagmanager.com/gtag/js?id=UA-31381839-2"></script><script src="include.js"></script><script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-4110907817782130" crossorigin="anonymous"></script></head><body><div><img src="STIGQter.svg" alt="STIGQter" style="height:1em;" /> <a href="https://www.stigqter.com/">STIGQter</a>: <a href="main.html">STIG Summary</a>: <a href="U_Redis_Enterprise_6-x_STIG_V2R2_Manual-xccdf.html">Redis Enterprise 6.x Security Technical Implementation Guide Version: 2 Release: 2 Benchmark Date: 24 Oct 2024</a>:</div> <h1>If DBMS authentication using passwords is employed, Redis Enterprise DBMS must enforce the DOD standards for password complexity and lifetime.</h1><h2>DISA Rule</h2><p>SV-251428r1018620_rule</p><h2>Vulnerability Number</h2><p>V-251428</p><h2>Group Title</h2><p>SRG-APP-000164-DB-000401</p><h2>Rule Version</h2><p>RD6X-00-008750</p><h2>Severity</h2><p>CAT II</p><h2>CCI(s)</h2><ul><li>CCI-004066 - For password-based authentication, enforce organization-defined composition and complexity rules.</li></ul><h2>Weight</h2><p>10</p><h2>Fix Recommendation</h2><p>Configure LDAP/AD to enforce password complexity.<br />
+<br />
+To enable LDAP:<br />
+1. Import the saslauthd configuration.<br />
+2. Restart saslauthd service.<br />
+3. Configure LDAP users.<br />
+<br />
+To provide the LDAP configuration information:<br />
+1. Edit the configuration file located at /etc/opt/redislabs/saslauthd.conf or the installation directory used during initial configuration.<br />
+<br />
+2. Provide the following information associated with each variable:<br />
+ldap_servers: the ldap servers that authenticate against and the port to use<br />
+- Port 389 is standardly used for unencrypted LDAP connections.<br />
+- Port 636 is standardly used for encrypted LDAP connections and is strongly recommended.<br />
+- Ldap_tls_cacert_file: The path to the CA Certificates. This is required for encrypted LDAP connections only.<br />
+- ldap_filter: the filter used to search for users.<br />
+- ldap_bind_dn: The distinguished name for the user that will be used to authenticate to the LDAP server.<br />
+- ldap_password: The password used for the user specified in ldap_bind_dn.<br />
+<br />
+3. Import the saslauthd configuration into Redis Enterprise using the command below, which will distribute the configuration to all nodes in the cluster:<br />
+rladmin cluster config saslauthd_ldap_conf &lt;path_to_saslauthd.conf&gt;<br />
+<br />
+Note: For this command to work on a new server installation, a cluster must be set up already.<br />
+<br />
+4. Restart saslauthd:<br />
+sudo supervisorctl restart saslauthd<br />
+<br />
+An example configuration for reference may be found below:<br />
+ldap_servers: ldaps://ldap1.mydomain.com:636 ldap://ldap2.mydomain.com:636<br />
+ldap_tls_cacert_file: /path/to/the/CARootCert.crt<br />
+ldap_search_base: ou=coolUsers,dc=company,dc=com<br />
+ldap_search_base: ou=coolUsers,dc=company,dc=com<br />
+ldap_filter: (sAMAccountName=%u)<br />
+ldap_bind_dn: cn=admin,dc=company,dc=com<br />
+ldap_password: secretSquirrel<br />
+<br />
+To set up an LDAP user, select an external account type when configuring the user following the procedure to configure users.<br />
+<br />
+If LDAP cannot be configured, configure the password complexity profile. To enable the password complexity profile, run the following curl command against the REST API:<br />
+curl -k -X PUT -v -H &quot;cache-control: no-cache&quot; -H &quot;content-type: application/json&quot; -u &quot;&lt;administrator-user-email&gt;:&lt;password&gt;&quot; -d '{&quot;password_complexity&quot;:true}' https://&lt;RS_server_address&gt;:9443/v1/cluster<br />
+To disable the password complexity requirement, run the same command, but set &quot;password_complexity&quot; to &quot;false&quot;.</p><h2>Check Contents</h2><p>Redis Enterprise Software supports Lightweight Directory Access Protocol (LDAP) admin console users. LDAP must be enabled to enforce password complexity. If LDAP is not in use, a password complexity profile can be configured in Redis Enterprise; however, it currently does not meet the DOD standard.<br />
+<br />
+Review the LDAP settings relating to password complexity. To check the LDAP settings:<br />
+1. Log in to the server housing the Redis Enterprise as an admin user.<br />
+2. CAT /etc/opt/redislabs/saslauthd.conf or the installation choice used during initial configuration.<br />
+3. Verify the following is configured: <br />
+ldap_servers<br />
+Ldap_tls_cacert_file<br />
+ldap_filter<br />
+ldap_bind_dn<br />
+ldap_password<br />
+<br />
+If LDAP cannot be configured, this check can be downgraded if the password complexity profile has been configured:<br />
+- At least eight characters<br />
+- At least one uppercase character<br />
+- At least one lowercase character<br />
+- At least one number (not first or last character)<br />
+- At least one special character (not first or last character)<br />
+<br />
+In addition, the password:<br />
+- Cannot contain the user ID or reverse of the user ID<br />
+- Cannot have more than three repeating characters<br />
+<br />
+To verify this, either attempt a password change or view the password complexity settings in the REST API.<br />
+<br />
+If LDAP or the password complexity profile is not in use, this is a finding.</p><h2>Vulnerability Number</h2><p>V-251428</p><h2>Documentable</h2><p>False</p><h2>Rule Version</h2><p>RD6X-00-008750</p><h2>Severity Override Guidance</h2><p>Redis Enterprise Software supports Lightweight Directory Access Protocol (LDAP) admin console users. LDAP must be enabled to enforce password complexity. If LDAP is not in use, a password complexity profile can be configured in Redis Enterprise; however, it currently does not meet the DOD standard.<br />
+<br />
+Review the LDAP settings relating to password complexity. To check the LDAP settings:<br />
+1. Log in to the server housing the Redis Enterprise as an admin user.<br />
+2. CAT /etc/opt/redislabs/saslauthd.conf or the installation choice used during initial configuration.<br />
+3. Verify the following is configured: <br />
+ldap_servers<br />
+Ldap_tls_cacert_file<br />
+ldap_filter<br />
+ldap_bind_dn<br />
+ldap_password<br />
+<br />
+If LDAP cannot be configured, this check can be downgraded if the password complexity profile has been configured:<br />
+- At least eight characters<br />
+- At least one uppercase character<br />
+- At least one lowercase character<br />
+- At least one number (not first or last character)<br />
+- At least one special character (not first or last character)<br />
+<br />
+In addition, the password:<br />
+- Cannot contain the user ID or reverse of the user ID<br />
+- Cannot have more than three repeating characters<br />
+<br />
+To verify this, either attempt a password change or view the password complexity settings in the REST API.<br />
+<br />
+If LDAP or the password complexity profile is not in use, this is a finding.</p><h2>Check Content Reference</h2><p>M</p><h2>Target Key</h2><p>5443</p></body></html>

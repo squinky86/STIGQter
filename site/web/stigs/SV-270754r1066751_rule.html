@@ -1,0 +1,80 @@
+<!doctype html><html lang="en"><head><meta charset="utf-8"><title>STIGQter: STIG Check Details: SV-270754r1066751_rule: Ubuntu 24.04 LTS must configure the uncomplicated firewall to rate-limit impacted network interfaces.</title><link rel="icon" type="image/svg+xml" href="STIGQter.svg" /><script async src="https://www.googletagmanager.com/gtag/js?id=UA-31381839-2"></script><script src="include.js"></script><script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-4110907817782130" crossorigin="anonymous"></script></head><body><div><img src="STIGQter.svg" alt="STIGQter" style="height:1em;" /> <a href="https://www.stigqter.com/">STIGQter</a>: <a href="main.html">STIG Summary</a>: <a href="U_CAN_Ubuntu_24-04_LTS_STIG_V1R6_Manual-xccdf.html">Canonical Ubuntu 24.04 LTS Security Technical Implementation Guide Version: 1 Release: 6 Benchmark Date: 01 Jul 2026</a>:</div> <h1>Ubuntu 24.04 LTS must configure the uncomplicated firewall to rate-limit impacted network interfaces.</h1><h2>DISA Rule</h2><p>SV-270754r1066751_rule</p><h2>Vulnerability Number</h2><p>V-270754</p><h2>Group Title</h2><p>SRG-OS-000420-GPOS-00186</p><h2>Rule Version</h2><p>UBTU-24-600200</p><h2>Severity</h2><p>CAT II</p><h2>CCI(s)</h2><ul><li>CCI-002385 - Protect against or limit the effects of organization-defined types of denial of service events.</li></ul><h2>Weight</h2><p>10</p><h2>Fix Recommendation</h2><p>Configure the application firewall to protect against or limit the effects of DoS attacks by ensuring Ubuntu 24.04 LTS is implementing rate-limiting measures on impacted network interfaces. <br />
+ <br />
+To change the Status of ufw to &quot;active&quot; use the following command:<br />
+$ sudo ufw enable<br />
+<br />
+Check all the services listening to the ports with the following command: <br />
+ <br />
+$ sudo ss -l46ut <br />
+Netid               State                Recv-Q                Send-Q                               Local Address:Port                               Peer Address:Port               Process                <br />
+tcp                 LISTEN               0                     128                                           [::]:ssh                                        [::]:* <br />
+ <br />
+For each service with a port listening to connections, run the following command, replacing &quot;[service]&quot; with the service that needs to be rate limited. <br />
+ <br />
+$ sudo ufw limit [service] <br />
+ <br />
+Rate-limiting can also be done on an interface. An example of adding a rate-limit on the eth0 interface follows: <br />
+ <br />
+$ sudo ufw limit in on eth0</p><h2>Check Contents</h2><p>Verify an application firewall is configured to rate limit any connection to the system. <br />
+ <br />
+Check all the services listening to the ports with the following command: <br />
+ <br />
+$ ss -l46ut <br />
+Netid               State          Recv-Q          Send-Q                               Local Address:Port            Peer Address:Port               Process                <br />
+tcp                 LISTEN               0                     511                                           *:http                                          *:* <br />
+tcp                 LISTEN               0                     128                                           [::]:ssh                                        [::]:*<br />
+tcp                 LISTEN               0                     128                                           [::]:ipp                                        [::]:* <br />
+tcp                 LISTEN               0                     128                                           [::]:smtp                                    [::]:*<br />
+<br />
+ <br />
+For each entry, verify the Uncomplicated Firewall (ufw) is configured to rate limit the service ports with the following command: <br />
+ <br />
+$ sudo ufw status <br />
+Status: active <br />
+ <br />
+To                           Action     From <br />
+--                             ------         ---- <br />
+80/tcp                    LIMIT       Anywhere<br />
+25/tcp                    LIMIT       Anywhere<br />
+Anywhere            DENY       177.60.7.4<br />
+443                           LIMIT      Anywhere       <br />
+22/tcp                     LIMIT      Anywhere    <br />
+80/tcp (v6)            LIMIT      Anywhere<br />
+25/tcp (v6)            LIMIT      Anywhere               <br />
+22/tcp (v6)            LIMIT      Anywhere (v6) <br />
+<br />
+25                             DENY OUT    Anywhere<br />
+25 (v6)                    DENY OUT    Anywhere (v6)<br />
+<br />
+If any port with a state of &quot;LISTEN&quot; that does not have an action of &quot;DENY&quot;, is not marked with the &quot;LIMIT&quot; action, this is a finding. If the Status is set to anything other than &quot;active&quot; this is a finding.</p><h2>Vulnerability Number</h2><p>V-270754</p><h2>Documentable</h2><p>False</p><h2>Rule Version</h2><p>UBTU-24-600200</p><h2>Severity Override Guidance</h2><p>Verify an application firewall is configured to rate limit any connection to the system. <br />
+ <br />
+Check all the services listening to the ports with the following command: <br />
+ <br />
+$ ss -l46ut <br />
+Netid               State          Recv-Q          Send-Q                               Local Address:Port            Peer Address:Port               Process                <br />
+tcp                 LISTEN               0                     511                                           *:http                                          *:* <br />
+tcp                 LISTEN               0                     128                                           [::]:ssh                                        [::]:*<br />
+tcp                 LISTEN               0                     128                                           [::]:ipp                                        [::]:* <br />
+tcp                 LISTEN               0                     128                                           [::]:smtp                                    [::]:*<br />
+<br />
+ <br />
+For each entry, verify the Uncomplicated Firewall (ufw) is configured to rate limit the service ports with the following command: <br />
+ <br />
+$ sudo ufw status <br />
+Status: active <br />
+ <br />
+To                           Action     From <br />
+--                             ------         ---- <br />
+80/tcp                    LIMIT       Anywhere<br />
+25/tcp                    LIMIT       Anywhere<br />
+Anywhere            DENY       177.60.7.4<br />
+443                           LIMIT      Anywhere       <br />
+22/tcp                     LIMIT      Anywhere    <br />
+80/tcp (v6)            LIMIT      Anywhere<br />
+25/tcp (v6)            LIMIT      Anywhere               <br />
+22/tcp (v6)            LIMIT      Anywhere (v6) <br />
+<br />
+25                             DENY OUT    Anywhere<br />
+25 (v6)                    DENY OUT    Anywhere (v6)<br />
+<br />
+If any port with a state of &quot;LISTEN&quot; that does not have an action of &quot;DENY&quot;, is not marked with the &quot;LIMIT&quot; action, this is a finding. If the Status is set to anything other than &quot;active&quot; this is a finding.</p><h2>Check Content Reference</h2><p>M</p><h2>Target Key</h2><p>5673</p></body></html>

@@ -1,0 +1,44 @@
+<!doctype html><html lang="en"><head><meta charset="utf-8"><title>STIGQter: STIG Check Details: SV-256518r991551_rule: The Photon operating system must audit all account modifications.</title><link rel="icon" type="image/svg+xml" href="STIGQter.svg" /><script async src="https://www.googletagmanager.com/gtag/js?id=UA-31381839-2"></script><script src="include.js"></script><script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-4110907817782130" crossorigin="anonymous"></script></head><body><div><img src="STIGQter.svg" alt="STIGQter" style="height:1em;" /> <a href="https://www.stigqter.com/">STIGQter</a>: <a href="main.html">STIG Summary</a>: <a href="U_VMW_vSphere_7-0_vCA_Photon_OS_STIG_V1R4_Manual-xccdf.html">VMware vSphere 7.0 vCenter Appliance Photon OS Security Technical Implementation Guide Version: 1 Release: 4 Benchmark Date: 30 Jan 2025</a>:</div> <h1>The Photon operating system must audit all account modifications.</h1><h2>DISA Rule</h2><p>SV-256518r991551_rule</p><h2>Vulnerability Number</h2><p>V-256518</p><h2>Group Title</h2><p>SRG-OS-000239-GPOS-00089</p><h2>Rule Version</h2><p>PHTN-30-000043</p><h2>Severity</h2><p>CAT II</p><h2>CCI(s)</h2><ul><li>CCI-001403 - Automatically audit account modification actions.</li><li>CCI-002130 - Automatically audit account enabling actions.</li></ul><h2>Weight</h2><p>10</p><h2>Fix Recommendation</h2><p>Navigate to and open:<br />
+<br />
+/etc/audit/rules.d/audit.STIG.rules<br />
+<br />
+Add the following lines:<br />
+<br />
+-w /etc/passwd -p wa -k passwd<br />
+-w /etc/shadow -p wa -k shadow<br />
+-w /etc/group -p wa -k group<br />
+-w /etc/gshadow -p wa -k gshadow<br />
+<br />
+At the command line, run the following command to load the new audit rules:<br />
+<br />
+# /sbin/augenrules --load<br />
+<br />
+Note: A new &quot;audit.STIG.rules&quot; file is provided for placement in &quot;/etc/audit/rules.d&quot; that contains all rules needed for auditd.<br />
+<br />
+Note: An older &quot;audit.STIG.rules&quot; may exist if the file exists and references older &quot;GEN&quot; SRG IDs. This file can be removed and replaced as necessary with an updated one.</p><h2>Check Contents</h2><p>At the command line, run the following command:<br />
+<br />
+# auditctl -l | grep -E &quot;(/etc/passwd|/etc/shadow|/etc/group|/etc/gshadow)&quot;<br />
+<br />
+Expected result:<br />
+<br />
+-w /etc/passwd -p wa -k passwd<br />
+-w /etc/shadow -p wa -k shadow<br />
+-w /etc/group -p wa -k group<br />
+-w /etc/gshadow -p wa -k gshadow<br />
+<br />
+If the output does not match the expected result, this is a finding.<br />
+<br />
+Note: This check depends on the auditd service to be in a running state for accurate results. The auditd service is enabled in control PHTN-30-000013.</p><h2>Vulnerability Number</h2><p>V-256518</p><h2>Documentable</h2><p>False</p><h2>Rule Version</h2><p>PHTN-30-000043</p><h2>Severity Override Guidance</h2><p>At the command line, run the following command:<br />
+<br />
+# auditctl -l | grep -E &quot;(/etc/passwd|/etc/shadow|/etc/group|/etc/gshadow)&quot;<br />
+<br />
+Expected result:<br />
+<br />
+-w /etc/passwd -p wa -k passwd<br />
+-w /etc/shadow -p wa -k shadow<br />
+-w /etc/group -p wa -k group<br />
+-w /etc/gshadow -p wa -k gshadow<br />
+<br />
+If the output does not match the expected result, this is a finding.<br />
+<br />
+Note: This check depends on the auditd service to be in a running state for accurate results. The auditd service is enabled in control PHTN-30-000013.</p><h2>Check Content Reference</h2><p>M</p><h2>Target Key</h2><p>5520</p></body></html>

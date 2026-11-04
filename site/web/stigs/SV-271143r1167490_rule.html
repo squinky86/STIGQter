@@ -1,0 +1,75 @@
+<!doctype html><html lang="en"><head><meta charset="utf-8"><title>STIGQter: STIG Check Details: SV-271143r1167490_rule: SQL Server must limit privileges to change software modules, to include stored procedures, functions, and triggers, and links to software external to SQL Server.</title><link rel="icon" type="image/svg+xml" href="STIGQter.svg" /><script async src="https://www.googletagmanager.com/gtag/js?id=UA-31381839-2"></script><script src="include.js"></script><script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-4110907817782130" crossorigin="anonymous"></script></head><body><div><img src="STIGQter.svg" alt="STIGQter" style="height:1em;" /> <a href="https://www.stigqter.com/">STIGQter</a>: <a href="main.html">STIG Summary</a>: <a href="U_MS_SQL_Server_2022_Database_STIG_V1R3_Manual-xccdf.html">Microsoft SQL Server 2022 Database Security Technical Implementation Guide Version: 1 Release: 3 Benchmark Date: 01 Apr 2026</a>:</div> <h1>SQL Server must limit privileges to change software modules, to include stored procedures, functions, and triggers, and links to software external to SQL Server.</h1><h2>DISA Rule</h2><p>SV-271143r1167490_rule</p><h2>Vulnerability Number</h2><p>V-271143</p><h2>Group Title</h2><p>SRG-APP-000133-DB-000179</p><h2>Rule Version</h2><p>SQLD-22-001200</p><h2>Severity</h2><p>CAT II</p><h2>CCI(s)</h2><ul><li>CCI-001499 - Limit privileges to change software resident within software libraries.</li></ul><h2>Weight</h2><p>10</p><h2>Fix Recommendation</h2><p>Transfer ownership of database schemas to authorized database principals.<br />
+<br />
+ALTER AUTHORIZATION ON SCHEMA::[&lt;Schema Name&gt;] TO [&lt;Principal Name&gt;]</p><h2>Check Contents</h2><p>Obtain a listing of schema ownership from the server documentation.<br />
+<br />
+Execute the following query to obtain a current listing of schema ownership.<br />
+<br />
+SELECT s.name AS schema_name, p.name AS owning_principal<br />
+  FROM sys.schemas s<br />
+  JOIN sys.database_principals p ON s.principal_id = p.principal_id<br />
+ WHERE p.name != 'dbo'<br />
+   AND (s.name != p.name<br />
+        or p.name not in<br />
+         ( 'db_accessadmin'<br />
+         , 'db_backupoperator'<br />
+         , 'db_datareader'<br />
+         , 'db_datawriter'<br />
+         , 'db_ddladmin'<br />
+         , 'db_denydatareader'<br />
+         , 'db_denydatawriter'<br />
+         , 'db_owner'<br />
+         , 'db_securityadmin'<br />
+         , 'guest'<br />
+         , 'INFORMATION_SCHEMA'<br />
+         , 'sys'<br />
+         , 'TargetServersRole'<br />
+         , 'SQLAgentUserRole'<br />
+         , 'SQLAgentReaderRole'<br />
+         , 'SQLAgentOperatorRole'<br />
+         , 'DatabaseMailUserRole'<br />
+         , 'db_ssisadmin'<br />
+         , 'db_ssisltduser'<br />
+         , 'db_ssisoperator'<br />
+         , 'replmonitor'<br />
+         , '##MS_SSISServerCleanupJobLogin##'<br />
+         )<br />
+       )<br />
+ ORDER BY schema_name<br />
+<br />
+If any schema is owned by an unauthorized database principal, this is a finding.</p><h2>Vulnerability Number</h2><p>V-271143</p><h2>Documentable</h2><p>False</p><h2>Rule Version</h2><p>SQLD-22-001200</p><h2>Severity Override Guidance</h2><p>Obtain a listing of schema ownership from the server documentation.<br />
+<br />
+Execute the following query to obtain a current listing of schema ownership.<br />
+<br />
+SELECT s.name AS schema_name, p.name AS owning_principal<br />
+  FROM sys.schemas s<br />
+  JOIN sys.database_principals p ON s.principal_id = p.principal_id<br />
+ WHERE p.name != 'dbo'<br />
+   AND (s.name != p.name<br />
+        or p.name not in<br />
+         ( 'db_accessadmin'<br />
+         , 'db_backupoperator'<br />
+         , 'db_datareader'<br />
+         , 'db_datawriter'<br />
+         , 'db_ddladmin'<br />
+         , 'db_denydatareader'<br />
+         , 'db_denydatawriter'<br />
+         , 'db_owner'<br />
+         , 'db_securityadmin'<br />
+         , 'guest'<br />
+         , 'INFORMATION_SCHEMA'<br />
+         , 'sys'<br />
+         , 'TargetServersRole'<br />
+         , 'SQLAgentUserRole'<br />
+         , 'SQLAgentReaderRole'<br />
+         , 'SQLAgentOperatorRole'<br />
+         , 'DatabaseMailUserRole'<br />
+         , 'db_ssisadmin'<br />
+         , 'db_ssisltduser'<br />
+         , 'db_ssisoperator'<br />
+         , 'replmonitor'<br />
+         , '##MS_SSISServerCleanupJobLogin##'<br />
+         )<br />
+       )<br />
+ ORDER BY schema_name<br />
+<br />
+If any schema is owned by an unauthorized database principal, this is a finding.</p><h2>Check Content Reference</h2><p>M</p><h2>Target Key</h2><p>5676</p></body></html>

@@ -1,0 +1,42 @@
+<!doctype html><html lang="en"><head><meta charset="utf-8"><title>STIGQter: STIG Check Details: SV-258129r1155628_rule: RHEL 9 must require authentication to access single-user mode.</title><link rel="icon" type="image/svg+xml" href="STIGQter.svg" /><script async src="https://www.googletagmanager.com/gtag/js?id=UA-31381839-2"></script><script src="include.js"></script><script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-4110907817782130" crossorigin="anonymous"></script></head><body><div><img src="STIGQter.svg" alt="STIGQter" style="height:1em;" /> <a href="https://www.stigqter.com/">STIGQter</a>: <a href="main.html">STIG Summary</a>: <a href="U_RHEL_9_STIG_V2R9_Manual-xccdf.html">Red Hat Enterprise Linux 9 Security Technical Implementation Guide Version: 2 Release: 9 Benchmark Date: 01 Jul 2026</a>:</div> <h1>RHEL 9 must require authentication to access single-user mode.</h1><h2>DISA Rule</h2><p>SV-258129r1155628_rule</p><h2>Vulnerability Number</h2><p>V-258129</p><h2>Group Title</h2><p>SRG-OS-000080-GPOS-00048</p><h2>Rule Version</h2><p>RHEL-09-611200</p><h2>Severity</h2><p>CAT II</p><h2>CCI(s)</h2><ul><li>CCI-000213 - Enforce approved authorizations for logical access to information and system resources in accordance with applicable access control policies.</li></ul><h2>Weight</h2><p>10</p><h2>Fix Recommendation</h2><p>Configure RHEL 9 to require authentication for single-user mode.<br />
+<br />
+Create a directory for supplementary configuration files: <br />
+$ sudo mkdir /etc/systemd/system/rescue.service.d/<br />
+<br />
+Copy the original file rescue.service file to the new directory with:<br />
+$ sudo cp  /usr/lib/systemd/system/rescue.service  /etc/systemd/system/rescue.service.d/rescue.service.conf<br />
+<br />
+Open the new file:<br />
+$ sudo vi etc/systemd/system/rescue.service.d/rescue.service.conf<br />
+<br />
+Add this line to the new file:<br />
+ExecStart=-/usr/lib/systemd/systemd-sulogin-shell rescue<br />
+<br />
+Comment out or remove the ExecStart and ExecStartPre lines in /usr/lib/systemd/system/rescue.service as they can only exist in one location.<br />
+<br />
+Apply changes to unit files without rebooting the system:<br />
+$ sudo systemctl daemon-reload</p><h2>Check Contents</h2><p>Verify RHEL 9 requires authentication for single-user mode with the following command:<br />
+<br />
+$ grep sulogin /usr/lib/systemd/system/rescue.service <br />
+<br />
+ExecStart=-/usr/lib/systemd/systemd-sulogin-shell rescue<br />
+<br />
+If the line is not returned from the default systemd file, use the following command to look for modifications to the rescue.service:<br />
+<br />
+$ grep sulogin /etc/systemd/system/rescue.service.d/*.conf <br />
+<br />
+If the line is not returned from either location this is a finding.<br />
+<br />
+Note: The configuration setting can only be in either the default location, or in the drop in file, not both locations.</p><h2>Vulnerability Number</h2><p>V-258129</p><h2>Documentable</h2><p>False</p><h2>Rule Version</h2><p>RHEL-09-611200</p><h2>Severity Override Guidance</h2><p>Verify RHEL 9 requires authentication for single-user mode with the following command:<br />
+<br />
+$ grep sulogin /usr/lib/systemd/system/rescue.service <br />
+<br />
+ExecStart=-/usr/lib/systemd/systemd-sulogin-shell rescue<br />
+<br />
+If the line is not returned from the default systemd file, use the following command to look for modifications to the rescue.service:<br />
+<br />
+$ grep sulogin /etc/systemd/system/rescue.service.d/*.conf <br />
+<br />
+If the line is not returned from either location this is a finding.<br />
+<br />
+Note: The configuration setting can only be in either the default location, or in the drop in file, not both locations.</p><h2>Check Content Reference</h2><p>M</p><h2>Target Key</h2><p>5551</p></body></html>

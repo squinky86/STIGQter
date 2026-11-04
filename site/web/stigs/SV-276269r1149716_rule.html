@@ -1,0 +1,60 @@
+<!doctype html><html lang="en"><head><meta charset="utf-8"><title>STIGQter: STIG Check Details: SV-276269r1149716_rule: Azure SQL Managed Instance must prevent the installation of organization-defined software and firmware components without verification that the component has been digitally signed using a certificate recognized and approved by the organization.</title><link rel="icon" type="image/svg+xml" href="STIGQter.svg" /><script async src="https://www.googletagmanager.com/gtag/js?id=UA-31381839-2"></script><script src="include.js"></script><script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-4110907817782130" crossorigin="anonymous"></script></head><body><div><img src="STIGQter.svg" alt="STIGQter" style="height:1em;" /> <a href="https://www.stigqter.com/">STIGQter</a>: <a href="main.html">STIG Summary</a>: <a href="U_MS_Azure_SQL_MI_STIG_V1R1_Manual-xccdf.html">Microsoft Azure SQL Managed Instance Security Technical Implementation Guide Version: 1 Release: 1 Benchmark Date: 23 Sep 2025</a>:</div> <h1>Azure SQL Managed Instance must prevent the installation of organization-defined software and firmware components without verification that the component has been digitally signed using a certificate recognized and approved by the organization.</h1><h2>DISA Rule</h2><p>SV-276269r1149716_rule</p><h2>Vulnerability Number</h2><p>V-276269</p><h2>Group Title</h2><p>SRG-APP-000810-DB-000150</p><h2>Rule Version</h2><p>MSQL-00-018800</p><h2>Severity</h2><p>CAT II</p><h2>CCI(s)</h2><ul><li>CCI-003992 - Prevent the installation of organization-defined software and firmware components without verification that the component has been digitally signed using a certificate that is recognized and approved by the organization.</li></ul><h2>Weight</h2><p>10</p><h2>Fix Recommendation</h2><p>Configure Azure SQL Managed Instance to prevent the installation of organization-defined software and firmware components without verification that the component has been digitally signed using a certificate that is recognized and approved by the organization.<br />
+<br />
+Disable use of or remove any CLR code that is not authorized. <br />
+ <br />
+To disable the use of CLR, from the query prompt:  <br />
+ <br />
+sp_configure 'show advanced options', 1; <br />
+GO <br />
+RECONFIGURE; <br />
+GO <br />
+sp_configure 'clr enabled', 0; <br />
+GO <br />
+RECONFIGURE; <br />
+GO <br />
+ <br />
+For any approved CLR code with Unsafe or External permissions, use the ALTER ASSEMBLY to change the Permission set for the Assembly and ensure a certificate is configured.</p><h2>Check Contents</h2><p>Verify Azure SQL Managed Instance is configured to prevent the installation of organization-defined software and firmware components without verification that the component has been digitally signed using a certificate recognized and approved by the organization.<br />
+<br />
+If Azure SQL Managed Instance is not configured to prevent the installation of organization-defined software and firmware components without verification that the component has been digitally signed using a certificate that is recognized and approved by the organization, this is a finding.<br />
+<br />
+To determine if CLR is enabled, execute the following commands:  <br />
+<br />
+EXEC SP_CONFIGURE 'show advanced options', '1';  <br />
+RECONFIGURE WITH OVERRIDE;  <br />
+EXEC SP_CONFIGURE 'clr enabled';  <br />
+<br />
+If the value of &quot;config_value&quot; is &quot;0&quot;, this is not a finding.  <br />
+<br />
+If the value of &quot;config_value&quot; is &quot;1&quot;, review the system documentation to determine whether the use of CLR code is approved. If it is not approved, this is a finding. <br />
+<br />
+If CLR code is approved, check the database for UNSAFE assembly permission using the following script: <br />
+<br />
+USE [master]<br />
+SELECT *  <br />
+FROM sys.assemblies <br />
+WHERE permission_set_desc != 'SAFE' <br />
+AND is_user_defined = 1;<br />
+<br />
+If any records are returned, review the system documentation to determine if the use of UNSAFE assemblies is approved. If it is not approved, this is a finding.</p><h2>Vulnerability Number</h2><p>V-276269</p><h2>Documentable</h2><p>False</p><h2>Rule Version</h2><p>MSQL-00-018800</p><h2>Severity Override Guidance</h2><p>Verify Azure SQL Managed Instance is configured to prevent the installation of organization-defined software and firmware components without verification that the component has been digitally signed using a certificate recognized and approved by the organization.<br />
+<br />
+If Azure SQL Managed Instance is not configured to prevent the installation of organization-defined software and firmware components without verification that the component has been digitally signed using a certificate that is recognized and approved by the organization, this is a finding.<br />
+<br />
+To determine if CLR is enabled, execute the following commands:  <br />
+<br />
+EXEC SP_CONFIGURE 'show advanced options', '1';  <br />
+RECONFIGURE WITH OVERRIDE;  <br />
+EXEC SP_CONFIGURE 'clr enabled';  <br />
+<br />
+If the value of &quot;config_value&quot; is &quot;0&quot;, this is not a finding.  <br />
+<br />
+If the value of &quot;config_value&quot; is &quot;1&quot;, review the system documentation to determine whether the use of CLR code is approved. If it is not approved, this is a finding. <br />
+<br />
+If CLR code is approved, check the database for UNSAFE assembly permission using the following script: <br />
+<br />
+USE [master]<br />
+SELECT *  <br />
+FROM sys.assemblies <br />
+WHERE permission_set_desc != 'SAFE' <br />
+AND is_user_defined = 1;<br />
+<br />
+If any records are returned, review the system documentation to determine if the use of UNSAFE assemblies is approved. If it is not approved, this is a finding.</p><h2>Check Content Reference</h2><p>M</p><h2>Target Key</h2><p>5711</p></body></html>

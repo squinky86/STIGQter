@@ -1,0 +1,71 @@
+<!doctype html><html lang="en"><head><meta charset="utf-8"><title>STIGQter: STIG Check Details: SV-251798r879588_rule: The NSX-T Manager must disable TLS 1.1 and enable TLS 1.2.</title><link rel="icon" type="image/svg+xml" href="STIGQter.svg" /><script async src="https://www.googletagmanager.com/gtag/js?id=UA-31381839-2"></script><script src="include.js"></script><script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-4110907817782130" crossorigin="anonymous"></script></head><body><div><img src="STIGQter.svg" alt="STIGQter" style="height:1em;" /> <a href="https://www.stigqter.com/">STIGQter</a>: <a href="main.html">STIG Summary</a>: <a href="U_VMW_NSX-T_Manager_NDM_STIG_V1R3_Manual-xccdf.html">VMware NSX-T Manager NDM Security Technical Implementation Guide Version: 1 Release: 3 Benchmark Date: 26 Jul 2023</a>:</div> <h1>The NSX-T Manager must disable TLS 1.1 and enable TLS 1.2.</h1><h2>DISA Rule</h2><p>SV-251798r879588_rule</p><h2>Vulnerability Number</h2><p>V-251798</p><h2>Group Title</h2><p>SRG-APP-000142-NDM-000245</p><h2>Rule Version</h2><p>TNDM-3X-000101</p><h2>Severity</h2><p>CAT II</p><h2>CCI(s)</h2><ul><li>CCI-000382 - Configure the system to prohibit or restrict the use of organization-defined prohibited or restricted functions, system ports, protocols, software, and/or services.</li></ul><h2>Weight</h2><p>10</p><h2>Fix Recommendation</h2><p>Capture the output from the check GET command and update the TLS 1.1 protocol to false.<br />
+<br />
+Execute the following API call using curl or another REST API client:<br />
+<br />
+PUT https://&lt;nsx-mgr&gt;/api/v1/cluster/api-service<br />
+<br />
+Example request body:<br />
+<br />
+{<br />
+  &quot;global_api_concurrency_limit&quot;: 199,<br />
+  &quot;client_api_rate_limit&quot;: 100,<br />
+  &quot;client_api_concurrency_limit&quot;: 40,<br />
+  &quot;connection_timeout&quot;: 30,<br />
+  &quot;redirect_host&quot;: &quot;&quot;,<br />
+  &quot;cipher_suites&quot;: [<br />
+    {&quot;enabled&quot;: true, &quot;name&quot;: &quot;TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384&quot;},<br />
+    {&quot;enabled&quot;: true, &quot;name&quot;: &quot;TLS_RSA_WITH_AES_256_GCM_SHA384&quot;},<br />
+    {&quot;enabled&quot;: true, &quot;name&quot;: &quot;TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256&quot;},<br />
+    {&quot;enabled&quot;: true, &quot;name&quot;: &quot;TLS_RSA_WITH_AES_128_GCM_SHA256&quot;}<br />
+    {&quot;enabled&quot;: true, &quot;name&quot;: &quot;TLS_ECDHE_RSA_WITH_AES_256_CBC_SHA384}&quot;,<br />
+    {&quot;enabled&quot;: true, &quot;name&quot;: &quot;TLS_RSA_WITH_AES_256_CBC_SHA256&quot;},<br />
+    {&quot;enabled&quot;: true, &quot;name&quot;: &quot;TLS_ECDHE_RSA_WITH_AES_256_CBC_SHA&quot;},<br />
+    {&quot;enabled&quot;: true, &quot;name&quot;: &quot;TLS_RSA_WITH_AES_256_CBC_SHA&quot;},<br />
+    {&quot;enabled&quot;: true, &quot;name&quot;: &quot;TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256&quot;},<br />
+    {&quot;enabled&quot;: true, &quot;name&quot;: &quot;TLS_RSA_WITH_AES_128_CBC_SHA256&quot;},<br />
+    {&quot;enabled&quot;: false, &quot;name&quot;: &quot;TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA&quot;},<br />
+    {&quot;enabled&quot;: false, &quot;name&quot;: &quot;TLS_RSA_WITH_AES_128_CBC_SHA&quot;}<br />
+  ],<br />
+  &quot;protocol_versions&quot;: [<br />
+    {&quot;enabled&quot;: false, &quot;name&quot;: &quot;TLSv1.1&quot;},<br />
+    {&quot;enabled&quot;: true, &quot;name&quot;: &quot;TLSv1.2&quot;}<br />
+  ]<br />
+}<br />
+<br />
+Note: Changes are applied to all nodes in the cluster. The API service on each node will restart after it is updated using this API. There may be a delay of up to a minute or so between the time this API call completes and when the new configuration goes into effect.</p><h2>Check Contents</h2><p>Viewing TLS protocol enablement must be done via the API.<br />
+<br />
+Execute the following API call using curl or another REST API client:<br />
+<br />
+GET https://&lt;nsx-mgr&gt;/api/v1/cluster/api-service<br />
+<br />
+Expected result:<br />
+    &quot;protocol_versions&quot;: [<br />
+        {<br />
+            &quot;name&quot;: &quot;TLSv1.1&quot;,<br />
+            &quot;enabled&quot;: false<br />
+        },<br />
+        {<br />
+            &quot;name&quot;: &quot;TLSv1.2&quot;,<br />
+            &quot;enabled&quot;: true<br />
+        }<br />
+    ],<br />
+<br />
+If TLS 1.1 is enabled, this is a finding.</p><h2>Vulnerability Number</h2><p>V-251798</p><h2>Documentable</h2><p>False</p><h2>Rule Version</h2><p>TNDM-3X-000101</p><h2>Severity Override Guidance</h2><p>Viewing TLS protocol enablement must be done via the API.<br />
+<br />
+Execute the following API call using curl or another REST API client:<br />
+<br />
+GET https://&lt;nsx-mgr&gt;/api/v1/cluster/api-service<br />
+<br />
+Expected result:<br />
+    &quot;protocol_versions&quot;: [<br />
+        {<br />
+            &quot;name&quot;: &quot;TLSv1.1&quot;,<br />
+            &quot;enabled&quot;: false<br />
+        },<br />
+        {<br />
+            &quot;name&quot;: &quot;TLSv1.2&quot;,<br />
+            &quot;enabled&quot;: true<br />
+        }<br />
+    ],<br />
+<br />
+If TLS 1.1 is enabled, this is a finding.</p><h2>Check Content Reference</h2><p>M</p><h2>Target Key</h2><p>5449</p></body></html>

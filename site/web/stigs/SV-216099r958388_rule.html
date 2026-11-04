@@ -1,0 +1,58 @@
+<!doctype html><html lang="en"><head><meta charset="utf-8"><title>STIGQter: STIG Check Details: SV-216099r958388_rule: The system must disable accounts after three consecutive unsuccessful login attempts.</title><link rel="icon" type="image/svg+xml" href="STIGQter.svg" /><script async src="https://www.googletagmanager.com/gtag/js?id=UA-31381839-2"></script><script src="include.js"></script><script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-4110907817782130" crossorigin="anonymous"></script></head><body><div><img src="STIGQter.svg" alt="STIGQter" style="height:1em;" /> <a href="https://www.stigqter.com/">STIGQter</a>: <a href="main.html">STIG Summary</a>: <a href="U_SOL_11_x86_STIG_V3R6_Manual-xccdf.html">Solaris 11 X86 Security Technical Implementation Guide Version: 3 Release: 6 Benchmark Date: 01 Jul 2026</a>:</div> <h1>The system must disable accounts after three consecutive unsuccessful login attempts.</h1><h2>DISA Rule</h2><p>SV-216099r958388_rule</p><h2>Vulnerability Number</h2><p>V-216099</p><h2>Group Title</h2><p>SRG-OS-000021</p><h2>Rule Version</h2><p>SOL-11.1-040140</p><h2>Severity</h2><p>CAT II</p><h2>CCI(s)</h2><ul><li>CCI-000044 - Enforce the organization-defined limit of consecutive invalid logon attempts by a user during the organization-defined time period.</li></ul><h2>Weight</h2><p>10</p><h2>Fix Recommendation</h2><p>The root role is required.<br />
+<br />
+# pfedit /etc/default/login<br />
+<br />
+Change the line:<br />
+<br />
+#RETRIES=5<br />
+<br />
+to read<br />
+<br />
+RETRIES=3 <br />
+<br />
+pfedit /etc/security/policy.conf<br />
+<br />
+Change the line containing<br />
+<br />
+#LOCK_AFTER_RETRIES <br />
+<br />
+to read:<br />
+<br />
+LOCK_AFTER_RETRIES=YES<br />
+<br />
+<br />
+If a user has lock_after_retries set to &quot;no&quot;, update the user's attributes using the command:<br />
+<br />
+# usermod -K lock_after_retries=yes [username]</p><h2>Check Contents</h2><p>Verify RETRIES is set in the login file.<br />
+<br />
+# grep ^RETRIES /etc/default/login<br />
+<br />
+If the output is not RETRIES=3 or fewer, this is a finding.<br />
+<br />
+Verify the account locks after invalid login attempts.<br />
+<br />
+# grep ^LOCK_AFTER_RETRIES /etc/security/policy.conf<br />
+<br />
+If the output is not LOCK_AFTER_RETRIES=YES, this is a finding.<br />
+<br />
+For each user in the system, use the command:<br />
+<br />
+# userattr lock_after_retries [username]<br />
+<br />
+to determine if the user overrides the system value. If the output of this command is &quot;no&quot;, this is a finding.</p><h2>Vulnerability Number</h2><p>V-216099</p><h2>Documentable</h2><p>False</p><h2>Rule Version</h2><p>SOL-11.1-040140</p><h2>Severity Override Guidance</h2><p>Verify RETRIES is set in the login file.<br />
+<br />
+# grep ^RETRIES /etc/default/login<br />
+<br />
+If the output is not RETRIES=3 or fewer, this is a finding.<br />
+<br />
+Verify the account locks after invalid login attempts.<br />
+<br />
+# grep ^LOCK_AFTER_RETRIES /etc/security/policy.conf<br />
+<br />
+If the output is not LOCK_AFTER_RETRIES=YES, this is a finding.<br />
+<br />
+For each user in the system, use the command:<br />
+<br />
+# userattr lock_after_retries [username]<br />
+<br />
+to determine if the user overrides the system value. If the output of this command is &quot;no&quot;, this is a finding.</p><h2>Check Content Reference</h2><p>M</p><h2>Target Key</h2><p>4021</p></body></html>

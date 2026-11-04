@@ -1,0 +1,57 @@
+<!doctype html><html lang="en"><head><meta charset="utf-8"><title>STIGQter: STIG Check Details: SV-213972r961128_rule: SQL Server must protect the confidentiality and integrity of all information at rest.</title><link rel="icon" type="image/svg+xml" href="STIGQter.svg" /><script async src="https://www.googletagmanager.com/gtag/js?id=UA-31381839-2"></script><script src="include.js"></script><script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-4110907817782130" crossorigin="anonymous"></script></head><body><div><img src="STIGQter.svg" alt="STIGQter" style="height:1em;" /> <a href="https://www.stigqter.com/">STIGQter</a>: <a href="main.html">STIG Summary</a>: <a href="U_MS_SQL_Server_2016_Instance_STIG_V3R6_Manual-xccdf.html">MS SQL Server 2016 Instance Security Technical Implementation Guide Version: 3 Release: 6 Benchmark Date: 05 Jan 2026</a>:</div> <h1>SQL Server must protect the confidentiality and integrity of all information at rest.</h1><h2>DISA Rule</h2><p>SV-213972r961128_rule</p><h2>Vulnerability Number</h2><p>V-213972</p><h2>Group Title</h2><p>SRG-APP-000231-DB-000154</p><h2>Rule Version</h2><p>SQL6-D0-009500</p><h2>Severity</h2><p>CAT I</p><h2>CCI(s)</h2><ul><li>CCI-001199 - Protects the confidentiality and/or integrity of organization-defined information at rest.</li></ul><h2>Weight</h2><p>10</p><h2>Fix Recommendation</h2><p>Apply appropriate controls to protect the confidentiality and integrity of data on a secondary device. Where encryption is required, this can be done by full-disk encryption or by database encryption. <br />
+<br />
+To enable database encryption, create a master key, create a database encryption key, and protect it by using mechanisms tied to the master key, and then set encryption on.<br />
+<br />
+Implement physical security measures, operating system access control lists and organizational controls appropriate to the sensitivity level of the data in the database(s).</p><h2>Check Contents</h2><p>Review system documentation to determine whether the system handles classified information. If the system does not handle classified information, the severity of this check should be downgraded to Category II.  <br />
+ <br />
+If the application owner and Authorizing Official have determined that encryption of data at rest is required, ensure the data on secondary devices is encrypted.  <br />
+ <br />
+If full-disk encryption is being used, this is not a finding.  <br />
+ <br />
+If data encryption is required, ensure the data is encrypted before being put on the secondary device by executing:  <br />
+ <br />
+SELECT  <br />
+d.name AS [Database Name],  <br />
+CASE e.encryption_state  <br />
+WHEN 0 THEN 'No database encryption key present, no encryption'  <br />
+WHEN 1 THEN 'Unencrypted'  <br />
+WHEN 2 THEN 'Encryption in progress'  <br />
+WHEN 3 THEN 'Encrypted'  <br />
+WHEN 4 THEN 'Key change in progress'  <br />
+WHEN 5 THEN 'Decryption in progress'  <br />
+WHEN 6 THEN 'Protection change in progress'  <br />
+END AS [Encryption State]  <br />
+FROM sys.dm_database_encryption_keys e  <br />
+RIGHT JOIN sys.databases d ON DB_NAME(e.database_id) = d.name  <br />
+WHERE d.name NOT IN ('master','model','msdb')  <br />
+ORDER BY [Database Name] ;  <br />
+ <br />
+For each user database where encryption is required, verify that encryption is in effect. If not, this is a finding. <br />
+ <br />
+Verify that there are physical security measures, operating system access control lists and organizational controls appropriate to the sensitivity level of the data in the database(s). If not, this is a finding.</p><h2>Vulnerability Number</h2><p>V-213972</p><h2>Documentable</h2><p>False</p><h2>Rule Version</h2><p>SQL6-D0-009500</p><h2>Severity Override Guidance</h2><p>Review system documentation to determine whether the system handles classified information. If the system does not handle classified information, the severity of this check should be downgraded to Category II.  <br />
+ <br />
+If the application owner and Authorizing Official have determined that encryption of data at rest is required, ensure the data on secondary devices is encrypted.  <br />
+ <br />
+If full-disk encryption is being used, this is not a finding.  <br />
+ <br />
+If data encryption is required, ensure the data is encrypted before being put on the secondary device by executing:  <br />
+ <br />
+SELECT  <br />
+d.name AS [Database Name],  <br />
+CASE e.encryption_state  <br />
+WHEN 0 THEN 'No database encryption key present, no encryption'  <br />
+WHEN 1 THEN 'Unencrypted'  <br />
+WHEN 2 THEN 'Encryption in progress'  <br />
+WHEN 3 THEN 'Encrypted'  <br />
+WHEN 4 THEN 'Key change in progress'  <br />
+WHEN 5 THEN 'Decryption in progress'  <br />
+WHEN 6 THEN 'Protection change in progress'  <br />
+END AS [Encryption State]  <br />
+FROM sys.dm_database_encryption_keys e  <br />
+RIGHT JOIN sys.databases d ON DB_NAME(e.database_id) = d.name  <br />
+WHERE d.name NOT IN ('master','model','msdb')  <br />
+ORDER BY [Database Name] ;  <br />
+ <br />
+For each user database where encryption is required, verify that encryption is in effect. If not, this is a finding. <br />
+ <br />
+Verify that there are physical security measures, operating system access control lists and organizational controls appropriate to the sensitivity level of the data in the database(s). If not, this is a finding.</p><h2>Check Content Reference</h2><p>M</p><h2>Target Key</h2><p>3993</p></body></html>

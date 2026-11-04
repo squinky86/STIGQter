@@ -1,0 +1,75 @@
+<!doctype html><html lang="en"><head><meta charset="utf-8"><title>STIGQter: STIG Check Details: SV-251387r806116_rule: A Quality of Service (QoS) policy must be implemented to provide preferred treatment for Command and Control (C2) real-time services and control plane traffic.</title><link rel="icon" type="image/svg+xml" href="STIGQter.svg" /><script async src="https://www.googletagmanager.com/gtag/js?id=UA-31381839-2"></script><script src="include.js"></script><script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-4110907817782130" crossorigin="anonymous"></script></head><body><div><img src="STIGQter.svg" alt="STIGQter" style="height:1em;" /> <a href="https://www.stigqter.com/">STIGQter</a>: <a href="main.html">STIG Summary</a>: <a href="U_Network_Infrastructure_Policy_STIG_V10R7_Manual-xccdf.html">Network Infrastructure Policy Security Technical Implementation Guide Version: 10 Release: 7 Benchmark Date: 24 Oct 2024</a>:</div> <h1>A Quality of Service (QoS) policy must be implemented to provide preferred treatment for Command and Control (C2) real-time services and control plane traffic.</h1><h2>DISA Rule</h2><p>SV-251387r806116_rule</p><h2>Vulnerability Number</h2><p>V-251387</p><h2>Group Title</h2><p>NET2005</p><h2>Rule Version</h2><p>NET2005</p><h2>Severity</h2><p>CAT III</p><h2>CCI(s)</h2><ul><li>CCI-001095 - Manage capacity, bandwidth, or other redundancy to limit the effects of information flooding types of denial of service attacks.</li></ul><h2>Weight</h2><p>10</p><h2>Fix Recommendation</h2><p>Configure a QoS policy on each router to provide assured services for control plane traffic and C2 real-time services.</p><h2>Check Contents</h2><p>Review each router and verify that a QoS policy has been configured to provide preferred treatment for control plane traffic and C2 real-time services.<br />
+<br />
+Step 1: Verify that the class-maps are configured to match on DSCP values that have been set at the edges as shown in the configuration example below:<br />
+<br />
+class-map match-all CONTROL_PLANE<br />
+match ip dscp 48<br />
+class-map match-all C2_VOICE<br />
+match ip dscp 47<br />
+class-map match-all VOICE<br />
+match ip dscp ef<br />
+class-map match-all VIDEO<br />
+match ip dscp af4<br />
+class-map match-all PREFERRED_DATA<br />
+match ip dscp af3<br />
+<br />
+Step 2: Verify that the policy map applied to the core-layer-facing interface reserves the bandwidth for each traffic type as shown in the following example:<br />
+<br />
+policy-map QOS_POLICY<br />
+class CONTROL_PLANE<br />
+priority percent 10<br />
+class C2_VOICE<br />
+priority percent 10<br />
+class VOICE<br />
+priority percent 15<br />
+class VIDEO<br />
+bandwidth percent 25<br />
+class PREFERRED_DATA<br />
+bandwidth percent 25<br />
+class class-default<br />
+bandwidth percent 15<br />
+<br />
+Step 3: Verify that an output service policy is bound to the core-layer-facing interface as shown in the configuration example below:<br />
+<br />
+interface GigabitEthernet1/1<br />
+ ip address 10.2.0.2 255.255.255.252<br />
+ service-policy output QOS_POLICY<br />
+<br />
+If a QoS policy has not been implemented within the JIE WAN infrastructure to provide assured services for control plane traffic and C2 real-time services, this is a finding.</p><h2>Vulnerability Number</h2><p>V-251387</p><h2>Documentable</h2><p>False</p><h2>Rule Version</h2><p>NET2005</p><h2>Severity Override Guidance</h2><p>Review each router and verify that a QoS policy has been configured to provide preferred treatment for control plane traffic and C2 real-time services.<br />
+<br />
+Step 1: Verify that the class-maps are configured to match on DSCP values that have been set at the edges as shown in the configuration example below:<br />
+<br />
+class-map match-all CONTROL_PLANE<br />
+match ip dscp 48<br />
+class-map match-all C2_VOICE<br />
+match ip dscp 47<br />
+class-map match-all VOICE<br />
+match ip dscp ef<br />
+class-map match-all VIDEO<br />
+match ip dscp af4<br />
+class-map match-all PREFERRED_DATA<br />
+match ip dscp af3<br />
+<br />
+Step 2: Verify that the policy map applied to the core-layer-facing interface reserves the bandwidth for each traffic type as shown in the following example:<br />
+<br />
+policy-map QOS_POLICY<br />
+class CONTROL_PLANE<br />
+priority percent 10<br />
+class C2_VOICE<br />
+priority percent 10<br />
+class VOICE<br />
+priority percent 15<br />
+class VIDEO<br />
+bandwidth percent 25<br />
+class PREFERRED_DATA<br />
+bandwidth percent 25<br />
+class class-default<br />
+bandwidth percent 15<br />
+<br />
+Step 3: Verify that an output service policy is bound to the core-layer-facing interface as shown in the configuration example below:<br />
+<br />
+interface GigabitEthernet1/1<br />
+ ip address 10.2.0.2 255.255.255.252<br />
+ service-policy output QOS_POLICY<br />
+<br />
+If a QoS policy has not been implemented within the JIE WAN infrastructure to provide assured services for control plane traffic and C2 real-time services, this is a finding.</p><h2>Check Content Reference</h2><p>M</p><h2>Target Key</h2><p>5444</p></body></html>

@@ -1,0 +1,132 @@
+<!doctype html><html lang="en"><head><meta charset="utf-8"><title>STIGQter: STIG Check Details: SV-235137r1018612_rule: If Database Management System (DBMS) authentication using passwords is employed, the DBMS must enforce the DOD standards for password complexity and lifetime.</title><link rel="icon" type="image/svg+xml" href="STIGQter.svg" /><script async src="https://www.googletagmanager.com/gtag/js?id=UA-31381839-2"></script><script src="include.js"></script><script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-4110907817782130" crossorigin="anonymous"></script></head><body><div><img src="STIGQter.svg" alt="STIGQter" style="height:1em;" /> <a href="https://www.stigqter.com/">STIGQter</a>: <a href="main.html">STIG Summary</a>: <a href="U_Oracle_MySQL_8-0_STIG_V2R2_Manual-xccdf.html">Oracle MySQL 8.0 Security Technical Implementation Guide Version: 2 Release: 2 Benchmark Date: 24 Oct 2024</a>:</div> <h1>If Database Management System (DBMS) authentication using passwords is employed, the DBMS must enforce the DOD standards for password complexity and lifetime.</h1><h2>DISA Rule</h2><p>SV-235137r1018612_rule</p><h2>Vulnerability Number</h2><p>V-235137</p><h2>Group Title</h2><p>SRG-APP-000164-DB-000401</p><h2>Rule Version</h2><p>MYS8-00-005000</p><h2>Severity</h2><p>CAT I</p><h2>CCI(s)</h2><ul><li>CCI-004066 - For password-based authentication, enforce organization-defined composition and complexity rules.</li></ul><h2>Weight</h2><p>10</p><h2>Fix Recommendation</h2><p>If the use of passwords is not needed, configure the MySQL Database Server 8.0 to prevent their use if it is capable of this; if it is not, institute policies and procedures to prohibit their use.<br />
+<br />
+If the MySQL Database Server 8.0 can inherit password complexity rules from the operating system or access control program, configure it to do so.<br />
+<br />
+Otherwise, use MySQL Database Server 8.0 configuration parameters and/or custom code to enforce the following rules for passwords:<br />
+<br />
+a. Minimum of 15 characters, including at least one of each of the following character sets:<br />
+- Uppercase<br />
+- Lowercase<br />
+- Numeric<br />
+- Special characters (e.g., ~ ! @ # $ % ^ &amp; * ( ) _ + = - ' [ ] / ? &gt; &lt;)<br />
+b. Minimum number of characters changed from previous password: 50 percent of the minimum password length; that is, eight.<br />
+c. Password lifetime limits for interactive accounts: Minimum 24 hours, maximum 60 days.<br />
+d. Password lifetime limits for non-interactive accounts: Minimum 24 hours, maximum 365 days.<br />
+e. Number of password changes before an old one may be reused: Minimum of five.<br />
+<br />
+As the database admin:<br />
+<br />
+INSTALL COMPONENT 'file://component_validate_password';<br />
+<br />
+# Set Password Policies example:<br />
+set persist validate_password.check_user_name='ON';<br />
+set persist validate_password.dictionary_file='&lt;FILENAME OF DICTIONARY FILE';<br />
+set persist validate_password.length=15;<br />
+set persist validate_password.mixed_case_count=1;<br />
+set persist validate_password.special_char_count=2;<br />
+set persist validate_password.number_count=2;<br />
+set persist validate_password.policy='STRONG';<br />
+set persist password_history = 5;<br />
+set persist password_reuse_interval = 365;<br />
+SET GLOBAL default_password_lifetime = 180;<br />
+<br />
+Optional<br />
+set persist password_require_current=YES<br />
+<br />
+This can also be set at the account level:<br />
+ALTER USER 'jeffrey'@'localhost'<br />
+  PASSWORD HISTORY 5<br />
+  PASSWORD REUSE INTERVAL 365 DAY;<br />
+ALTER USER 'jeffrey'@'localhost' PASSWORD EXPIRE INTERVAL 90 DAY;</p><h2>Check Contents</h2><p>If DBMS authentication using passwords is not employed, this is not a finding.<br />
+<br />
+If the DBMS is configured to inherit password complexity and lifetime rules from the operating system or access control program, this is not a finding.<br />
+<br />
+Review the MySQL Database Server 8.0 settings relating to password complexity. Determine whether the following rules are enforced. If any are not, this is a finding.<br />
+a. Minimum of 15 characters, including at least one of each of the following character sets:<br />
+- Uppercase<br />
+- Lowercase<br />
+- Numeric<br />
+- Special characters (e.g., ~ ! @ # $ % ^ &amp; * ( ) _ + = - ' [ ] / ? &gt; &lt;)<br />
+b. Minimum number of characters changed from previous password: 50 percent of the minimum password length; that is, eight.<br />
+<br />
+Review the DBMS settings relating to password lifetime. Determine whether the following rules are enforced. If any are not, this is a finding.<br />
+a. Password lifetime limits for interactive accounts: Minimum 24 hours, maximum 60 days.<br />
+b. Password lifetime limits for non-interactive accounts: Minimum 24 hours, maximum 365 days.<br />
+c. Number of password changes before an old one may be reused: Minimum of five.<br />
+<br />
+Connect as an admin. <br />
+<br />
+SELECT component_urn FROM mysql.component<br />
+where component_urn='file://component_validate_password' group by component_urn;<br />
+<br />
+If the &quot;validate password&quot; component is installed the result will be file://component_validate_password.<br />
+<br />
+If &quot;validate password&quot; component is not installed, this is a finding.<br />
+<br />
+If the &quot;component_validate_password&quot; is installed, review the password policies to ensure required password complexity is met. <br />
+<br />
+Run the following to review the password policy:<br />
+<br />
+SELECT VARIABLE_NAME, VARIABLE_VALUE<br />
+FROM performance_schema.global_variables where VARIABLE_NAME like 'valid%password%' or VARIABLE_NAME like 'password_%'  ;<br />
+<br />
+For example the results may look like the following:<br />
+<br />
+'validate_password.check_user_name',’ON’<br />
+'validate_password.dictionary_file',''<br />
+'validate_password.length','8'<br />
+'validate_password.mixed_case_count','1'<br />
+'validate_password.number_count','1'<br />
+'validate_password.policy','MEDIUM'<br />
+'validate_password.special_char_count','1'<br />
+'password_reuse_interval','0'<br />
+'password_require_current','OFF'<br />
+'password_history','0'<br />
+<br />
+If these results do not meet password complexity requirements listed above, this is a finding.</p><h2>Vulnerability Number</h2><p>V-235137</p><h2>Documentable</h2><p>False</p><h2>Rule Version</h2><p>MYS8-00-005000</p><h2>Severity Override Guidance</h2><p>If DBMS authentication using passwords is not employed, this is not a finding.<br />
+<br />
+If the DBMS is configured to inherit password complexity and lifetime rules from the operating system or access control program, this is not a finding.<br />
+<br />
+Review the MySQL Database Server 8.0 settings relating to password complexity. Determine whether the following rules are enforced. If any are not, this is a finding.<br />
+a. Minimum of 15 characters, including at least one of each of the following character sets:<br />
+- Uppercase<br />
+- Lowercase<br />
+- Numeric<br />
+- Special characters (e.g., ~ ! @ # $ % ^ &amp; * ( ) _ + = - ' [ ] / ? &gt; &lt;)<br />
+b. Minimum number of characters changed from previous password: 50 percent of the minimum password length; that is, eight.<br />
+<br />
+Review the DBMS settings relating to password lifetime. Determine whether the following rules are enforced. If any are not, this is a finding.<br />
+a. Password lifetime limits for interactive accounts: Minimum 24 hours, maximum 60 days.<br />
+b. Password lifetime limits for non-interactive accounts: Minimum 24 hours, maximum 365 days.<br />
+c. Number of password changes before an old one may be reused: Minimum of five.<br />
+<br />
+Connect as an admin. <br />
+<br />
+SELECT component_urn FROM mysql.component<br />
+where component_urn='file://component_validate_password' group by component_urn;<br />
+<br />
+If the &quot;validate password&quot; component is installed the result will be file://component_validate_password.<br />
+<br />
+If &quot;validate password&quot; component is not installed, this is a finding.<br />
+<br />
+If the &quot;component_validate_password&quot; is installed, review the password policies to ensure required password complexity is met. <br />
+<br />
+Run the following to review the password policy:<br />
+<br />
+SELECT VARIABLE_NAME, VARIABLE_VALUE<br />
+FROM performance_schema.global_variables where VARIABLE_NAME like 'valid%password%' or VARIABLE_NAME like 'password_%'  ;<br />
+<br />
+For example the results may look like the following:<br />
+<br />
+'validate_password.check_user_name',’ON’<br />
+'validate_password.dictionary_file',''<br />
+'validate_password.length','8'<br />
+'validate_password.mixed_case_count','1'<br />
+'validate_password.number_count','1'<br />
+'validate_password.policy','MEDIUM'<br />
+'validate_password.special_char_count','1'<br />
+'password_reuse_interval','0'<br />
+'password_require_current','OFF'<br />
+'password_history','0'<br />
+<br />
+If these results do not meet password complexity requirements listed above, this is a finding.</p><h2>Check Content Reference</h2><p>M</p><h2>Target Key</h2><p>5277</p></body></html>

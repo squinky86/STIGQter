@@ -1,0 +1,50 @@
+<!doctype html><html lang="en"><head><meta charset="utf-8"><title>STIGQter: STIG Check Details: SV-221109r1137905_rule: The Cisco BGP switch must be configured to reject route advertisements from CE switches with an originating AS in the AS_PATH attribute that does not belong to that customer.</title><link rel="icon" type="image/svg+xml" href="STIGQter.svg" /><script async src="https://www.googletagmanager.com/gtag/js?id=UA-31381839-2"></script><script src="include.js"></script><script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-4110907817782130" crossorigin="anonymous"></script></head><body><div><img src="STIGQter.svg" alt="STIGQter" style="height:1em;" /> <a href="https://www.stigqter.com/">STIGQter</a>: <a href="main.html">STIG Summary</a>: <a href="U_Cisco_NX-OS_Switch_RTR_STIG_V3R4_Manual-xccdf.html">Cisco NX OS Switch RTR Security Technical Implementation Guide Version: 3 Release: 4 Benchmark Date: 01 Apr 2026</a>:</div> <h1>The Cisco BGP switch must be configured to reject route advertisements from CE switches with an originating AS in the AS_PATH attribute that does not belong to that customer.</h1><h2>DISA Rule</h2><p>SV-221109r1137905_rule</p><h2>Vulnerability Number</h2><p>V-221109</p><h2>Group Title</h2><p>SRG-NET-000018-RTR-000010</p><h2>Rule Version</h2><p>CISC-RT-000550</p><h2>Severity</h2><p>CAT III</p><h2>CCI(s)</h2><ul><li>CCI-000032 - Enforce information flow control using organization-defined security policy filters as a basis for flow control decisions for organization-defined information flows.</li></ul><h2>Weight</h2><p>10</p><h2>Fix Recommendation</h2><p>Configure the switch to deny updates received from eBGP peers that do not list their AS number as the first AS in the AS_PATH attribute.<br />
+<br />
+Step 1: Configure the as-path ACL as shown in the example below:<br />
+<br />
+SW1(config)# ip as-path access-list AS_PATH permit ^22$<br />
+SW1(config)# ip as-path access-list AS_PATH deny .*<br />
+<br />
+Step 2: Apply the as-path filter inbound as shown in the example below:<br />
+<br />
+SW1(config)# router bgp xx<br />
+SW1(config-router)# neighbor x.1.12.2<br />
+SW1(config-router-neighbor)# address-family ipv4 unicast <br />
+SW1(config-router-neighbor-af)# filter-list AS_PATH in<br />
+SW1(config-router-neighbor-af)# end</p><h2>Check Contents</h2><p>Review the switch configuration to verify the switch is configured to deny updates received from eBGP peers that do not list their AS number as the first AS in the AS_PATH attribute.<br />
+<br />
+Step 1: Review switch configuration and verify that there is an as-path access-list statement defined to only accept routes from a CE switch whose AS did not originate the route. The configuration should look similar to the following:<br />
+<br />
+ip as-path access-list AS_PATH permit ^yy$<br />
+ip as-path access-list 10 AS_PATH .*<br />
+<br />
+Note: the characters “^” and “$” representing the beginning and the end of the expression respectively are optional and are implicitly defined if omitted.<br />
+<br />
+Step 2: Verify that the as-path access-list is referenced by the filter-list inbound for the appropriate BGP neighbors as shown in the example below:<br />
+<br />
+router bgp xx<br />
+ router-id 10.1.1.1<br />
+ neighbor x.1.12.2 remote-as xx<br />
+ password 3 7b07d1b3023056a9<br />
+ address-family ipv4 unicast<br />
+ filter-list AS_PATH in<br />
+<br />
+If the switch is not configured to reject updates from peers that do not list their AS number as the first AS in the AS_PATH attribute, this is a finding.</p><h2>Vulnerability Number</h2><p>V-221109</p><h2>Documentable</h2><p>False</p><h2>Rule Version</h2><p>CISC-RT-000550</p><h2>Severity Override Guidance</h2><p>Review the switch configuration to verify the switch is configured to deny updates received from eBGP peers that do not list their AS number as the first AS in the AS_PATH attribute.<br />
+<br />
+Step 1: Review switch configuration and verify that there is an as-path access-list statement defined to only accept routes from a CE switch whose AS did not originate the route. The configuration should look similar to the following:<br />
+<br />
+ip as-path access-list AS_PATH permit ^yy$<br />
+ip as-path access-list 10 AS_PATH .*<br />
+<br />
+Note: the characters “^” and “$” representing the beginning and the end of the expression respectively are optional and are implicitly defined if omitted.<br />
+<br />
+Step 2: Verify that the as-path access-list is referenced by the filter-list inbound for the appropriate BGP neighbors as shown in the example below:<br />
+<br />
+router bgp xx<br />
+ router-id 10.1.1.1<br />
+ neighbor x.1.12.2 remote-as xx<br />
+ password 3 7b07d1b3023056a9<br />
+ address-family ipv4 unicast<br />
+ filter-list AS_PATH in<br />
+<br />
+If the switch is not configured to reject updates from peers that do not list their AS number as the first AS in the AS_PATH attribute, this is a finding.</p><h2>Check Content Reference</h2><p>M</p><h2>Target Key</h2><p>4075</p></body></html>

@@ -1,0 +1,58 @@
+<!doctype html><html lang="en"><head><meta charset="utf-8"><title>STIGQter: STIG Check Details: SV-223719r958482_rule: IBM z/OS Started Tasks must be properly identified and defined to RACF.</title><link rel="icon" type="image/svg+xml" href="STIGQter.svg" /><script async src="https://www.googletagmanager.com/gtag/js?id=UA-31381839-2"></script><script src="include.js"></script><script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-4110907817782130" crossorigin="anonymous"></script></head><body><div><img src="STIGQter.svg" alt="STIGQter" style="height:1em;" /> <a href="https://www.stigqter.com/">STIGQter</a>: <a href="main.html">STIG Summary</a>: <a href="U_IBM_zOS_RACF_STIG_V9R9_Manual-xccdf.html">IBM z/OS RACF Security Technical Implementation Guide Version: 9 Release: 9 Benchmark Date: 01 Jul 2026</a>:</div> <h1>IBM z/OS Started Tasks must be properly identified and defined to RACF.</h1><h2>DISA Rule</h2><p>SV-223719r958482_rule</p><h2>Vulnerability Number</h2><p>V-223719</p><h2>Group Title</h2><p>SRG-OS-000104-GPOS-00051</p><h2>Rule Version</h2><p>RACF-ES-000720</p><h2>Severity</h2><p>CAT II</p><h2>CCI(s)</h2><ul><li>CCI-000764 - Uniquely identify and authenticate organizational users and associate that unique identification with processes acting on behalf of those users.</li></ul><h2>Weight</h2><p>10</p><h2>Fix Recommendation</h2><p>Define a RACF STARTED Class profile for each Started Proc that maps the proc to a unique userid, or STC userids will be unique per product and function if supported by vendor documentation. This can be accomplished with the sample command:<br />
+RDEF STARTED &lt;procname&gt;.** UACC(NONE) OWNER(ADMIN) AUDIT(ALL(READ)) STDATA(USER(&lt;userid&gt;) GROUP(&lt;groupname&gt;) TRACE(YES))<br />
+<br />
+A corresponding USERID must be defined with appropriate authority. The &quot;groupname&quot; should be a valid STC group with no interactive users.</p><h2>Check Contents</h2><p>Refer to the site security plan, the system administrator, and system libraries to determine list of stated tasks available on the system.<br />
+<br />
+If each Started task procedure identified has a unique associated userid or STC userid that is unique per product and function, this is not a finding.<br />
+<br />
+If any of the following are untrue, this is a finding.<br />
+<br />
+-All started task userids are connected to a valid STC group ID.<br />
+-Only userids associated with STCs are connected to STC group IDs.<br />
+-All STC userids are defined with the PROTECTED attribute.<br />
+<br />
+From the ISPF Command Shell enter:<br />
+RL STARTED (Alternately execute RACF DSMON utility for the RACSPT report)<br />
+<br />
+If all of the following is true, this is not a finding,<br />
+<br />
+If any of the following is untrue, this is a finding.<br />
+<br />
+-A generic catch all profile of ** is defined to the STARTED resource class.<br />
+-The STC group associated with the ** profile is not granted any explicit data set or resource access authorizations.<br />
+-The STC userid associated with the ** profile is not granted any explicit dataset or resource access authorizations and is defined with the RESTRICTED attribute.<br />
+<br />
+Note: Execute the JCL in CNTL(IRRUT100) using the STC group associated with the ** profile as SYSIN input. This report lists all occurrences of this group within the RACF database, including data set and resource access lists.<br />
+<br />
+Execute RACF utility DSMON RACSPT report.<br />
+<br />
+If the ICHRIN03 started procedures table is not maintained to support recovery efforts in the event the STARTED resource class is deactivated or critical STC profiles are deleted, this is a finding.<br />
+<br />
+If STCs critical to support this recovery effort (e.g., JES2, VTAM, TSO, etc.) are not maintained in ICHRIN03 to reflect the current STARTED resource class profiles, this is a finding.</p><h2>Vulnerability Number</h2><p>V-223719</p><h2>Documentable</h2><p>False</p><h2>Rule Version</h2><p>RACF-ES-000720</p><h2>Severity Override Guidance</h2><p>Refer to the site security plan, the system administrator, and system libraries to determine list of stated tasks available on the system.<br />
+<br />
+If each Started task procedure identified has a unique associated userid or STC userid that is unique per product and function, this is not a finding.<br />
+<br />
+If any of the following are untrue, this is a finding.<br />
+<br />
+-All started task userids are connected to a valid STC group ID.<br />
+-Only userids associated with STCs are connected to STC group IDs.<br />
+-All STC userids are defined with the PROTECTED attribute.<br />
+<br />
+From the ISPF Command Shell enter:<br />
+RL STARTED (Alternately execute RACF DSMON utility for the RACSPT report)<br />
+<br />
+If all of the following is true, this is not a finding,<br />
+<br />
+If any of the following is untrue, this is a finding.<br />
+<br />
+-A generic catch all profile of ** is defined to the STARTED resource class.<br />
+-The STC group associated with the ** profile is not granted any explicit data set or resource access authorizations.<br />
+-The STC userid associated with the ** profile is not granted any explicit dataset or resource access authorizations and is defined with the RESTRICTED attribute.<br />
+<br />
+Note: Execute the JCL in CNTL(IRRUT100) using the STC group associated with the ** profile as SYSIN input. This report lists all occurrences of this group within the RACF database, including data set and resource access lists.<br />
+<br />
+Execute RACF utility DSMON RACSPT report.<br />
+<br />
+If the ICHRIN03 started procedures table is not maintained to support recovery efforts in the event the STARTED resource class is deactivated or critical STC profiles are deleted, this is a finding.<br />
+<br />
+If STCs critical to support this recovery effort (e.g., JES2, VTAM, TSO, etc.) are not maintained in ICHRIN03 to reflect the current STARTED resource class profiles, this is a finding.</p><h2>Check Content Reference</h2><p>M</p><h2>Target Key</h2><p>4101</p></body></html>

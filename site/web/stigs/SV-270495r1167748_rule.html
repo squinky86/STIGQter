@@ -1,0 +1,23 @@
+<!doctype html><html lang="en"><head><meta charset="utf-8"><title>STIGQter: STIG Check Details: SV-270495r1167748_rule: Oracle Database must limit the number of concurrent sessions for each system account to an organization-defined number of sessions.</title><link rel="icon" type="image/svg+xml" href="STIGQter.svg" /><script async src="https://www.googletagmanager.com/gtag/js?id=UA-31381839-2"></script><script src="include.js"></script><script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-4110907817782130" crossorigin="anonymous"></script></head><body><div><img src="STIGQter.svg" alt="STIGQter" style="height:1em;" /> <a href="https://www.stigqter.com/">STIGQter</a>: <a href="main.html">STIG Summary</a>: <a href="U_Oracle_Database_19c_STIG_V1R5_Manual-xccdf.html">Oracle Database 19c Security Technical Implementation Guide Version: 1 Release: 5 Benchmark Date: 01 Apr 2026</a>:</div> <h1>Oracle Database must limit the number of concurrent sessions for each system account to an organization-defined number of sessions.</h1><h2>DISA Rule</h2><p>SV-270495r1167748_rule</p><h2>Vulnerability Number</h2><p>V-270495</p><h2>Group Title</h2><p>SRG-APP-000001-DB-000031</p><h2>Rule Version</h2><p>O19C-00-000100</p><h2>Severity</h2><p>CAT II</p><h2>CCI(s)</h2><ul><li>CCI-000054 - Limit the number of concurrent sessions for each organization-defined account and/or account type to an organization-defined number.</li></ul><h2>Weight</h2><p>10</p><h2>Fix Recommendation</h2><p>Limit concurrent connections for each system account to a number less than or equal to the organization-defined number of sessions using the following SQL. Create profiles that conform to the requirements. Assign users to the appropriate profile.<br />
+<br />
+The user profile, ORA_STIG_PROFILE, has been provided with Oracle 19c to satisfy the STIG requirements pertaining to profile parameters. Oracle recommends that this profile be customized with requirements and assigned to all users through the creation of user type specific profiles such as (Single-Session, Administrators, Application Connection Pool) where applicable. <br />
+<br />
+Note: The ORA_STIG_PROFILE limit for SESSIONS_PER_USER is DEFAULT which is, on installation, not compliant and must be configured for each database and in a container database for CDB$ROOT and, potentially, for each PDB.<br />
+<br />
+Set concurrent sessions for each profile with the following SQL statement, as required.<br />
+<br />
+ALTER PROFILE &lt;profile_name&gt; LIMIT SESSIONS_PER_USER &lt;integer&gt;;</p><h2>Check Contents</h2><p>Retrieve the settings for concurrent sessions for each profile with the query:<br />
+<br />
+SELECT con_id, inherited, limit FROM sys.cdb_profiles WHERE resource_name = 'SESSIONS_PER_USER';<br />
+<br />
+If the DBMS settings for concurrent sessions for each profile are greater than the site-specific maximum number of sessions (or the database maximum number of sessions) for the user type, this is a finding.<br />
+<br />
+The reason for &quot;site-specific&quot; is because two different databases at different &quot;sites&quot; could have very different requirements.<br />
+Also, two different databases at the same &quot;site&quot; (data center) could have very different requirements.</p><h2>Vulnerability Number</h2><p>V-270495</p><h2>Documentable</h2><p>False</p><h2>Rule Version</h2><p>O19C-00-000100</p><h2>Severity Override Guidance</h2><p>Retrieve the settings for concurrent sessions for each profile with the query:<br />
+<br />
+SELECT con_id, inherited, limit FROM sys.cdb_profiles WHERE resource_name = 'SESSIONS_PER_USER';<br />
+<br />
+If the DBMS settings for concurrent sessions for each profile are greater than the site-specific maximum number of sessions (or the database maximum number of sessions) for the user type, this is a finding.<br />
+<br />
+The reason for &quot;site-specific&quot; is because two different databases at different &quot;sites&quot; could have very different requirements.<br />
+Also, two different databases at the same &quot;site&quot; (data center) could have very different requirements.</p><h2>Check Content Reference</h2><p>M</p><h2>Target Key</h2><p>5672</p></body></html>

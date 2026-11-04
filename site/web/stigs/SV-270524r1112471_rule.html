@@ -1,0 +1,63 @@
+<!doctype html><html lang="en"><head><meta charset="utf-8"><title>STIGQter: STIG Check Details: SV-270524r1112471_rule: The Oracle REMOTE_OS_ROLES parameter must be set to FALSE.</title><link rel="icon" type="image/svg+xml" href="STIGQter.svg" /><script async src="https://www.googletagmanager.com/gtag/js?id=UA-31381839-2"></script><script src="include.js"></script><script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-4110907817782130" crossorigin="anonymous"></script></head><body><div><img src="STIGQter.svg" alt="STIGQter" style="height:1em;" /> <a href="https://www.stigqter.com/">STIGQter</a>: <a href="main.html">STIG Summary</a>: <a href="U_Oracle_Database_19c_STIG_V1R5_Manual-xccdf.html">Oracle Database 19c Security Technical Implementation Guide Version: 1 Release: 5 Benchmark Date: 01 Apr 2026</a>:</div> <h1>The Oracle REMOTE_OS_ROLES parameter must be set to FALSE.</h1><h2>DISA Rule</h2><p>SV-270524r1112471_rule</p><h2>Vulnerability Number</h2><p>V-270524</p><h2>Group Title</h2><p>SRG-APP-000516-DB-000363</p><h2>Rule Version</h2><p>O19C-00-009200</p><h2>Severity</h2><p>CAT II</p><h2>CCI(s)</h2><ul><li>CCI-000366 - Implement the security configuration settings.</li></ul><h2>Weight</h2><p>10</p><h2>Fix Recommendation</h2><p>Set the parameter to FALSE for all instances. If using Oracle Multitenant, set the value to FALSE for the container database and all pluggable databases will be set to FALSE as well. <br />
+<br />
+ALTER SYSTEM SET remote_os_roles = FALSE scope=spfile; <br />
+<br />
+sid='container_name' is optional <br />
+<br />
+Restart the database for the change to take effect.</p><h2>Check Contents</h2><p>To verify the current status of the remote_os_roles parameter use the SQL statement: <br />
+<br />
+If using a non-CDB database:<br />
+<br />
+From SQL*Plus:<br />
+ <br />
+COLUMN name format a20 <br />
+COLUMN parameter_value format a20 <br />
+<br />
+SELECT name, con_id, value AS PARAMETER_VALUE <br />
+FROM sys.v_$parameter <br />
+WHERE vp.name = 'remote_os_roles' <br />
+ORDER BY 1; <br />
+<br />
+If the PARAMETER_VALUE is not FALSE, that is a finding.<br />
+<br />
+If using a CDB database:<br />
+<br />
+From SQL*Plus (in the CDB database):<br />
+ <br />
+COLUMN name format a20 <br />
+COLUMN parameter_value format a20 <br />
+<br />
+SELECT name, inst_id, con_id, value AS PARAMETER_VALUE <br />
+FROM sys.gv_$parameter 	<br />
+WHERE vp.name = 'remote_os_roles' <br />
+ORDER BY 1; <br />
+<br />
+In the CDB database, if the PARAMETER_VALUE is not FALSE, that is a finding.</p><h2>Vulnerability Number</h2><p>V-270524</p><h2>Documentable</h2><p>False</p><h2>Rule Version</h2><p>O19C-00-009200</p><h2>Severity Override Guidance</h2><p>To verify the current status of the remote_os_roles parameter use the SQL statement: <br />
+<br />
+If using a non-CDB database:<br />
+<br />
+From SQL*Plus:<br />
+ <br />
+COLUMN name format a20 <br />
+COLUMN parameter_value format a20 <br />
+<br />
+SELECT name, con_id, value AS PARAMETER_VALUE <br />
+FROM sys.v_$parameter <br />
+WHERE vp.name = 'remote_os_roles' <br />
+ORDER BY 1; <br />
+<br />
+If the PARAMETER_VALUE is not FALSE, that is a finding.<br />
+<br />
+If using a CDB database:<br />
+<br />
+From SQL*Plus (in the CDB database):<br />
+ <br />
+COLUMN name format a20 <br />
+COLUMN parameter_value format a20 <br />
+<br />
+SELECT name, inst_id, con_id, value AS PARAMETER_VALUE <br />
+FROM sys.gv_$parameter 	<br />
+WHERE vp.name = 'remote_os_roles' <br />
+ORDER BY 1; <br />
+<br />
+In the CDB database, if the PARAMETER_VALUE is not FALSE, that is a finding.</p><h2>Check Content Reference</h2><p>M</p><h2>Target Key</h2><p>5672</p></body></html>

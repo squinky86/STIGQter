@@ -1,0 +1,103 @@
+<!doctype html><html lang="en"><head><meta charset="utf-8"><title>STIGQter: STIG Check Details: SV-235187r962034_rule: The MySQL Database Server 8.0 must use NSA-approved cryptography to protect classified information in accordance with the data owner's requirements.</title><link rel="icon" type="image/svg+xml" href="STIGQter.svg" /><script async src="https://www.googletagmanager.com/gtag/js?id=UA-31381839-2"></script><script src="include.js"></script><script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-4110907817782130" crossorigin="anonymous"></script></head><body><div><img src="STIGQter.svg" alt="STIGQter" style="height:1em;" /> <a href="https://www.stigqter.com/">STIGQter</a>: <a href="main.html">STIG Summary</a>: <a href="U_Oracle_MySQL_8-0_STIG_V2R2_Manual-xccdf.html">Oracle MySQL 8.0 Security Technical Implementation Guide Version: 2 Release: 2 Benchmark Date: 24 Oct 2024</a>:</div> <h1>The MySQL Database Server 8.0 must use NSA-approved cryptography to protect classified information in accordance with the data owner's requirements.</h1><h2>DISA Rule</h2><p>SV-235187r962034_rule</p><h2>Vulnerability Number</h2><p>V-235187</p><h2>Group Title</h2><p>SRG-APP-000416-DB-000380</p><h2>Rule Version</h2><p>MYS8-00-011500</p><h2>Severity</h2><p>CAT II</p><h2>CCI(s)</h2><ul><li>CCI-002450 - Implement organization-defined types of cryptography for each specified cryptography use.</li></ul><h2>Weight</h2><p>10</p><h2>Fix Recommendation</h2><p>Configure cryptographic functions to use NSA-approved cryptography-compliant algorithms.<br />
+<br />
+Turn on MySQL FIPS mode.<br />
+Edit my.cnf<br />
+[mysqld]<br />
+ssl_fips_mode=ON<br />
+<br />
+or<br />
+[mysqld]<br />
+ssl_fips_mode=STRICT<br />
+<br />
+To restrict TLS versions:<br />
+<br />
+[mysqld]<br />
+tls_version='TLSv1.2,TLSv1.3'<br />
+<br />
+Example to define ciphers for TLSv1.2:<br />
+<br />
+[mysqld]<br />
+ssl_ciphers='ECDHE-ECDSA-AES128-GCM-SHA256:ECDHE-ECDSA-AES256-GCM-SHA384:ECDHE-RSA-AES128-GCM-SHA256:ECDHE-RSA-AES256-GCM-SHA384:DHE-RSA-AES128-GCM-SHA256:DHE-DSS-AES128-GCM-SHA256:DHE-DSS-AES256-GCM-SHA384:DHE-RSA-AES256-GCM-SHA384:ECDHE-ECDSA-CHACHA20-POLY1305:ECDHE-RSA-CHACHA20-POLY1305'<br />
+<br />
+If TLSv1.3 is enabled, the &quot;tls_ciphersuites&quot; setting must contain all or a subset of the following ciphers based on certificates being used by server and client. Enabling FIPS mode will limit the OpenSSL library to operate within the FIPS object module.<br />
+<br />
+Example to define TLS ciphers for TLSv1.3:<br />
+<br />
+[mysqld]<br />
+tls_ciphersuites='TLS_AES_128_GCM_SHA256:TLS_AES_256_GCM_SHA384:TLS_CHACHA20_POLY1305_SHA256:TLS_AES_128_CCM_SHA256:TLS_AES_128_CCM_8_SHA256'<br />
+<br />
+After adding any entries to the my.cnf file, restart mysqld.<br />
+<br />
+Create and use DOD-approved certificates for asymmetric keys used by the database.</p><h2>Check Contents</h2><p>Detailed information on the NIST Cryptographic Module Validation Program (CMVP) is available at the following website: http://csrc.nist.gov/groups/STM/cmvp/index.html.<br />
+<br />
+Review system documentation to determine whether cryptography for classified or sensitive information is required by the information owner.<br />
+<br />
+If the system documentation does not specify the type of information hosted on MySQL: classified, sensitive, and/or unclassified, this is a finding.<br />
+<br />
+If classified or sensitive information does not exist within MySQL Server, this is not a finding.<br />
+<br />
+Verify that the operating system provides the OpenSSL FIPS Object Module, and is configured to require the use of OpenSSL of FIPS compliant algorithms, available at MySQL runtime.<br />
+<br />
+If the Security Setting for FIPS mode option is &quot;Disabled&quot; on the server's OS, this is a finding.<br />
+<br />
+If cryptography is being used by MySQL, verify that the cryptography is NIST FIPS certified by running the following SQL query:<br />
+Determine if MySQL is running in FIPS mode.<br />
+select @@ssl_fips_mode;<br />
+<br />
+If ssl_fips_mode is not &quot;ON&quot; or &quot;STRICT&quot;, this is a finding.<br />
+<br />
+View the versions of TLS, then review the cipher suites in use for the versions returned by statement:<br />
+SELECT VARIABLE_NAME, VARIABLE_VALUE<br />
+FROM performance_schema.global_variables WHERE VARIABLE_NAME = 'tls_version';<br />
+<br />
+If the results include less than version TLS 1.2, for example TLS 1.0 or 1.1, this is a finding. <br />
+<br />
+If the results include TLS 1.2 view the supported ciphers on the MySQL Server, run<br />
+select * from performance_schema.global_status where variable_name= 'Ssl_cipher_list';<br />
+<br />
+If the results include TLS 1.3 view the supported ciphers on the MySQL Server, run<br />
+SELECT VARIABLE_NAME, VARIABLE_VALUE<br />
+FROM performance_schema.global_variables WHERE VARIABLE_NAME = 'tls_ciphersuites';<br />
+<br />
+If any results list show an uncertified NIST FIPS 140-2 algorithm type, this is a finding.<br />
+<br />
+Check MySQL certificate PEM file(s) for compliance with DoD requirements by running this command: <br />
+openssl x509 -in server-cert.pem -text -noout<br />
+<br />
+If any PEM file is not in compliance, this is a finding.</p><h2>Vulnerability Number</h2><p>V-235187</p><h2>Documentable</h2><p>False</p><h2>Rule Version</h2><p>MYS8-00-011500</p><h2>Severity Override Guidance</h2><p>Detailed information on the NIST Cryptographic Module Validation Program (CMVP) is available at the following website: http://csrc.nist.gov/groups/STM/cmvp/index.html.<br />
+<br />
+Review system documentation to determine whether cryptography for classified or sensitive information is required by the information owner.<br />
+<br />
+If the system documentation does not specify the type of information hosted on MySQL: classified, sensitive, and/or unclassified, this is a finding.<br />
+<br />
+If classified or sensitive information does not exist within MySQL Server, this is not a finding.<br />
+<br />
+Verify that the operating system provides the OpenSSL FIPS Object Module, and is configured to require the use of OpenSSL of FIPS compliant algorithms, available at MySQL runtime.<br />
+<br />
+If the Security Setting for FIPS mode option is &quot;Disabled&quot; on the server's OS, this is a finding.<br />
+<br />
+If cryptography is being used by MySQL, verify that the cryptography is NIST FIPS certified by running the following SQL query:<br />
+Determine if MySQL is running in FIPS mode.<br />
+select @@ssl_fips_mode;<br />
+<br />
+If ssl_fips_mode is not &quot;ON&quot; or &quot;STRICT&quot;, this is a finding.<br />
+<br />
+View the versions of TLS, then review the cipher suites in use for the versions returned by statement:<br />
+SELECT VARIABLE_NAME, VARIABLE_VALUE<br />
+FROM performance_schema.global_variables WHERE VARIABLE_NAME = 'tls_version';<br />
+<br />
+If the results include less than version TLS 1.2, for example TLS 1.0 or 1.1, this is a finding. <br />
+<br />
+If the results include TLS 1.2 view the supported ciphers on the MySQL Server, run<br />
+select * from performance_schema.global_status where variable_name= 'Ssl_cipher_list';<br />
+<br />
+If the results include TLS 1.3 view the supported ciphers on the MySQL Server, run<br />
+SELECT VARIABLE_NAME, VARIABLE_VALUE<br />
+FROM performance_schema.global_variables WHERE VARIABLE_NAME = 'tls_ciphersuites';<br />
+<br />
+If any results list show an uncertified NIST FIPS 140-2 algorithm type, this is a finding.<br />
+<br />
+Check MySQL certificate PEM file(s) for compliance with DoD requirements by running this command: <br />
+openssl x509 -in server-cert.pem -text -noout<br />
+<br />
+If any PEM file is not in compliance, this is a finding.</p><h2>Check Content Reference</h2><p>M</p><h2>Target Key</h2><p>5277</p></body></html>

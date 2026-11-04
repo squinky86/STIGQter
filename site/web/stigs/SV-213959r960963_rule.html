@@ -1,0 +1,47 @@
+<!doctype html><html lang="en"><head><meta charset="utf-8"><title>STIGQter: STIG Check Details: SV-213959r960963_rule: Access to Non-Standard extended stored procedures must be disabled or restricted, unless specifically required and approved.</title><link rel="icon" type="image/svg+xml" href="STIGQter.svg" /><script async src="https://www.googletagmanager.com/gtag/js?id=UA-31381839-2"></script><script src="include.js"></script><script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-4110907817782130" crossorigin="anonymous"></script></head><body><div><img src="STIGQter.svg" alt="STIGQter" style="height:1em;" /> <a href="https://www.stigqter.com/">STIGQter</a>: <a href="main.html">STIG Summary</a>: <a href="U_MS_SQL_Server_2016_Instance_STIG_V3R6_Manual-xccdf.html">MS SQL Server 2016 Instance Security Technical Implementation Guide Version: 3 Release: 6 Benchmark Date: 05 Jan 2026</a>:</div> <h1>Access to Non-Standard extended stored procedures must be disabled or restricted, unless specifically required and approved.</h1><h2>DISA Rule</h2><p>SV-213959r960963_rule</p><h2>Vulnerability Number</h2><p>V-213959</p><h2>Group Title</h2><p>SRG-APP-000141-DB-000093</p><h2>Rule Version</h2><p>SQL6-D0-007400</p><h2>Severity</h2><p>CAT II</p><h2>CCI(s)</h2><ul><li>CCI-000381 - Configure the system to provide only organization-defined mission essential capabilities.</li></ul><h2>Weight</h2><p>10</p><h2>Fix Recommendation</h2><p>Remove any Non-Standard extended stored procedures that are not documented and approved. <br />
+ <br />
+sp_dropextendedproc 'proc name'</p><h2>Check Contents</h2><p>Extended stored procedures are DLLs that an instance of SQL Server can dynamically load and run. Extended stored procedures run directly in the address space of an instance of SQL Server and are programmed by using the SQL Server Extended Stored Procedure API.   <br />
+ <br />
+Non-Standard extended stored procedures can compromise the integrity of the SQL Server process.  This feature will be removed in a future version of Microsoft SQL Server. Do not use this feature in new development work, and modify applications that currently use this feature as soon as possible.  <br />
+ <br />
+To determine if non-standard extended stored procedures exist, run the following:<br />
+<br />
+------------------------------------------------------------------------<br />
+USE [master]<br />
+GO<br />
+DECLARE @xplist AS TABLE<br />
+(<br />
+       xp_name sysname,<br />
+       source_dll nvarchar(255)<br />
+)<br />
+INSERT INTO @xplist<br />
+EXEC sp_helpextendedproc<br />
+<br />
+SELECT X.xp_name, X.source_dll, O.is_ms_shipped FROM @xplist X JOIN sys.all_objects O ON X.xp_name = O.name WHERE O.is_ms_shipped = 0 ORDER BY X.xp_name<br />
+------------------------------------------------------------------------<br />
+ <br />
+If any records are returned, review the system documentation to determine whether the use of Non-Standard extended stored procedures are required and approved.<br />
+<br />
+If it is not approved, this is a finding.</p><h2>Vulnerability Number</h2><p>V-213959</p><h2>Documentable</h2><p>False</p><h2>Rule Version</h2><p>SQL6-D0-007400</p><h2>Severity Override Guidance</h2><p>Extended stored procedures are DLLs that an instance of SQL Server can dynamically load and run. Extended stored procedures run directly in the address space of an instance of SQL Server and are programmed by using the SQL Server Extended Stored Procedure API.   <br />
+ <br />
+Non-Standard extended stored procedures can compromise the integrity of the SQL Server process.  This feature will be removed in a future version of Microsoft SQL Server. Do not use this feature in new development work, and modify applications that currently use this feature as soon as possible.  <br />
+ <br />
+To determine if non-standard extended stored procedures exist, run the following:<br />
+<br />
+------------------------------------------------------------------------<br />
+USE [master]<br />
+GO<br />
+DECLARE @xplist AS TABLE<br />
+(<br />
+       xp_name sysname,<br />
+       source_dll nvarchar(255)<br />
+)<br />
+INSERT INTO @xplist<br />
+EXEC sp_helpextendedproc<br />
+<br />
+SELECT X.xp_name, X.source_dll, O.is_ms_shipped FROM @xplist X JOIN sys.all_objects O ON X.xp_name = O.name WHERE O.is_ms_shipped = 0 ORDER BY X.xp_name<br />
+------------------------------------------------------------------------<br />
+ <br />
+If any records are returned, review the system documentation to determine whether the use of Non-Standard extended stored procedures are required and approved.<br />
+<br />
+If it is not approved, this is a finding.</p><h2>Check Content Reference</h2><p>M</p><h2>Target Key</h2><p>3993</p></body></html>

@@ -1,0 +1,43 @@
+<!doctype html><html lang="en"><head><meta charset="utf-8"><title>STIGQter: STIG Check Details: SV-261895r1000690_rule: PostgreSQL must map the PKI-authenticated identity to an associated user account.</title><link rel="icon" type="image/svg+xml" href="STIGQter.svg" /><script async src="https://www.googletagmanager.com/gtag/js?id=UA-31381839-2"></script><script src="include.js"></script><script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-4110907817782130" crossorigin="anonymous"></script></head><body><div><img src="STIGQter.svg" alt="STIGQter" style="height:1em;" /> <a href="https://www.stigqter.com/">STIGQter</a>: <a href="main.html">STIG Summary</a>: <a href="U_CD_Postgres_16_STIG_V1R3_Manual-xccdf.html">Crunchy Data Postgres 16 Security Technical Implementation Guide Version: 1 Release: 3 Benchmark Date: 01 Jul 2026</a>:</div> <h1>PostgreSQL must map the PKI-authenticated identity to an associated user account.</h1><h2>DISA Rule</h2><p>SV-261895r1000690_rule</p><h2>Vulnerability Number</h2><p>V-261895</p><h2>Group Title</h2><p>SRG-APP-000177-DB-000069</p><h2>Rule Version</h2><p>CD16-00-004200</p><h2>Severity</h2><p>CAT II</p><h2>CCI(s)</h2><ul><li>CCI-000187 - For public key-based authentication, map the authenticated identity to the account of the individual or group.</li></ul><h2>Weight</h2><p>10</p><h2>Fix Recommendation</h2><p>Configure PostgreSQL to map authenticated identities directly to PostgreSQL user accounts.<br />
+<br />
+For information on configuring PostgreSQL to use SSL, refer to supplementary content APPENDIX-G.</p><h2>Check Contents</h2><p>The Common Name (cn) attribute of the certificate will be compared to the requested database username and, if they match, the login will be allowed.<br />
+<br />
+To check the cn of the certificate, using openssl, do the following:<br />
+<br />
+$ openssl x509 -noout -subject -in /path/to/your/client_cert.file<br />
+<br />
+If the cn does not match the users listed in PostgreSQL and no user mapping is used, this is a finding.<br />
+<br />
+User name mapping can be used to allow cn to be different from the database username. If User Name Maps are used, run the following as the database administrator (shown here as &quot;postgres&quot;), to get a list of maps used for authentication:<br />
+<br />
+$ sudo su - postgres<br />
+$ grep &quot;map&quot; ${PGDATA?}/pg_hba.conf<br />
+<br />
+With the names of the maps used, check those maps against the username mappings in pg_ident.conf:<br />
+<br />
+$ sudo su - postgres<br />
+$ cat ${PGDATA?}/pg_ident.conf<br />
+<br />
+If user accounts are not being mapped to authenticated identities, this is a finding.<br />
+<br />
+If the cn and the username mapping do not match, this is a finding.</p><h2>Vulnerability Number</h2><p>V-261895</p><h2>Documentable</h2><p>False</p><h2>Rule Version</h2><p>CD16-00-004200</p><h2>Severity Override Guidance</h2><p>The Common Name (cn) attribute of the certificate will be compared to the requested database username and, if they match, the login will be allowed.<br />
+<br />
+To check the cn of the certificate, using openssl, do the following:<br />
+<br />
+$ openssl x509 -noout -subject -in /path/to/your/client_cert.file<br />
+<br />
+If the cn does not match the users listed in PostgreSQL and no user mapping is used, this is a finding.<br />
+<br />
+User name mapping can be used to allow cn to be different from the database username. If User Name Maps are used, run the following as the database administrator (shown here as &quot;postgres&quot;), to get a list of maps used for authentication:<br />
+<br />
+$ sudo su - postgres<br />
+$ grep &quot;map&quot; ${PGDATA?}/pg_hba.conf<br />
+<br />
+With the names of the maps used, check those maps against the username mappings in pg_ident.conf:<br />
+<br />
+$ sudo su - postgres<br />
+$ cat ${PGDATA?}/pg_ident.conf<br />
+<br />
+If user accounts are not being mapped to authenticated identities, this is a finding.<br />
+<br />
+If the cn and the username mapping do not match, this is a finding.</p><h2>Check Content Reference</h2><p>M</p><h2>Target Key</h2><p>5598</p></body></html>

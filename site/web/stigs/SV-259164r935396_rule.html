@@ -1,0 +1,98 @@
+<!doctype html><html lang="en"><head><meta charset="utf-8"><title>STIGQter: STIG Check Details: SV-259164r935396_rule: The vCenter Envoy service log files must be sent to a central log server.</title><link rel="icon" type="image/svg+xml" href="STIGQter.svg" /><script async src="https://www.googletagmanager.com/gtag/js?id=UA-31381839-2"></script><script src="include.js"></script><script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-4110907817782130" crossorigin="anonymous"></script></head><body><div><img src="STIGQter.svg" alt="STIGQter" style="height:1em;" /> <a href="https://www.stigqter.com/">STIGQter</a>: <a href="main.html">STIG Summary</a>: <a href="U_VMW_vSphere_8-0_VCSA_Envoy_STIG_V1R1_Manual-xccdf.html">VMware vSphere 8.0 vCenter Appliance Envoy Security Technical Implementation Guide Version: 1 Release: 1 Benchmark Date: 31 Oct 2023</a>:</div> <h1>The vCenter Envoy service log files must be sent to a central log server.</h1><h2>DISA Rule</h2><p>SV-259164r935396_rule</p><h2>Vulnerability Number</h2><p>V-259164</p><h2>Group Title</h2><p>SRG-APP-000358-WSR-000063</p><h2>Rule Version</h2><p>VCRP-80-000097</p><h2>Severity</h2><p>CAT II</p><h2>CCI(s)</h2><ul><li>CCI-001851 - Transfer audit logs per organization-defined frequency to a different system, system component, or media than the system or system component conducting the logging.</li></ul><h2>Weight</h2><p>10</p><h2>Fix Recommendation</h2><p>Navigate to and open:<br />
+<br />
+/etc/vmware-syslog/vmware-services-envoy.conf<br />
+<br />
+Create the file if it does not exist.<br />
+<br />
+Set the contents of the file as follows:<br />
+<br />
+#envoy service log<br />
+input(type=&quot;imfile&quot;<br />
+      File=&quot;/var/log/vmware/envoy/envoy.log&quot;<br />
+      Tag=&quot;envoy-main&quot;<br />
+      Severity=&quot;info&quot;<br />
+      Facility=&quot;local0&quot;)<br />
+#envoy access log<br />
+input(type=&quot;imfile&quot;<br />
+      File=&quot;/var/log/vmware/envoy/envoy-access.log&quot;<br />
+      Tag=&quot;envoy-access&quot;<br />
+      Severity=&quot;info&quot;<br />
+      Facility=&quot;local0&quot;)<br />
+#envoy init stdout<br />
+input(type=&quot;imfile&quot;<br />
+      File=&quot;/var/log/vmware/envoy/envoy_init.log.stdout&quot;<br />
+      Tag=&quot;envoy-stdout&quot;<br />
+      Severity=&quot;info&quot;<br />
+      Facility=&quot;local0&quot;)<br />
+#envoy init stderr<br />
+input(type=&quot;imfile&quot;<br />
+      File=&quot;/var/log/vmware/envoy/envoy_init.log.stderr&quot;<br />
+      Tag=&quot;envoy-stderr&quot;<br />
+      Severity=&quot;info&quot;<br />
+      Facility=&quot;local0&quot;)</p><h2>Check Contents</h2><p>By default, there is a vmware-services-envoy.conf rsyslog configuration file that includes the service logs when syslog is configured on vCenter, but it must be verified.<br />
+<br />
+At the command prompt, run the following command:<br />
+<br />
+# cat /etc/vmware-syslog/vmware-services-envoy.conf<br />
+<br />
+Expected result:<br />
+<br />
+#envoy service log<br />
+input(type=&quot;imfile&quot;<br />
+      File=&quot;/var/log/vmware/envoy/envoy.log&quot;<br />
+      Tag=&quot;envoy-main&quot;<br />
+      Severity=&quot;info&quot;<br />
+      Facility=&quot;local0&quot;)<br />
+#envoy access log<br />
+input(type=&quot;imfile&quot;<br />
+      File=&quot;/var/log/vmware/envoy/envoy-access.log&quot;<br />
+      Tag=&quot;envoy-access&quot;<br />
+      Severity=&quot;info&quot;<br />
+      Facility=&quot;local0&quot;)<br />
+#envoy init stdout<br />
+input(type=&quot;imfile&quot;<br />
+      File=&quot;/var/log/vmware/envoy/envoy_init.log.stdout&quot;<br />
+      Tag=&quot;envoy-stdout&quot;<br />
+      Severity=&quot;info&quot;<br />
+      Facility=&quot;local0&quot;)<br />
+#envoy init stderr<br />
+input(type=&quot;imfile&quot;<br />
+      File=&quot;/var/log/vmware/envoy/envoy_init.log.stderr&quot;<br />
+      Tag=&quot;envoy-stderr&quot;<br />
+      Severity=&quot;info&quot;<br />
+      Facility=&quot;local0&quot;)<br />
+<br />
+If the output does not match the expected result, this is a finding.</p><h2>Vulnerability Number</h2><p>V-259164</p><h2>Documentable</h2><p>False</p><h2>Rule Version</h2><p>VCRP-80-000097</p><h2>Severity Override Guidance</h2><p>By default, there is a vmware-services-envoy.conf rsyslog configuration file that includes the service logs when syslog is configured on vCenter, but it must be verified.<br />
+<br />
+At the command prompt, run the following command:<br />
+<br />
+# cat /etc/vmware-syslog/vmware-services-envoy.conf<br />
+<br />
+Expected result:<br />
+<br />
+#envoy service log<br />
+input(type=&quot;imfile&quot;<br />
+      File=&quot;/var/log/vmware/envoy/envoy.log&quot;<br />
+      Tag=&quot;envoy-main&quot;<br />
+      Severity=&quot;info&quot;<br />
+      Facility=&quot;local0&quot;)<br />
+#envoy access log<br />
+input(type=&quot;imfile&quot;<br />
+      File=&quot;/var/log/vmware/envoy/envoy-access.log&quot;<br />
+      Tag=&quot;envoy-access&quot;<br />
+      Severity=&quot;info&quot;<br />
+      Facility=&quot;local0&quot;)<br />
+#envoy init stdout<br />
+input(type=&quot;imfile&quot;<br />
+      File=&quot;/var/log/vmware/envoy/envoy_init.log.stdout&quot;<br />
+      Tag=&quot;envoy-stdout&quot;<br />
+      Severity=&quot;info&quot;<br />
+      Facility=&quot;local0&quot;)<br />
+#envoy init stderr<br />
+input(type=&quot;imfile&quot;<br />
+      File=&quot;/var/log/vmware/envoy/envoy_init.log.stderr&quot;<br />
+      Tag=&quot;envoy-stderr&quot;<br />
+      Severity=&quot;info&quot;<br />
+      Facility=&quot;local0&quot;)<br />
+<br />
+If the output does not match the expected result, this is a finding.</p><h2>Check Content Reference</h2><p>M</p><h2>Target Key</h2><p>5572</p></body></html>

@@ -1,0 +1,23 @@
+<!doctype html><html lang="en"><head><meta charset="utf-8"><title>STIGQter: STIG Check Details: SV-256964r961632_rule: Automation Controller NGINX web servers must maintain the confidentiality of controlled information during transmission through the use of an approved TLS version.</title><link rel="icon" type="image/svg+xml" href="STIGQter.svg" /><script async src="https://www.googletagmanager.com/gtag/js?id=UA-31381839-2"></script><script src="include.js"></script><script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-4110907817782130" crossorigin="anonymous"></script></head><body><div><img src="STIGQter.svg" alt="STIGQter" style="height:1em;" /> <a href="https://www.stigqter.com/">STIGQter</a>: <a href="main.html">STIG Summary</a>: <a href="U_RH_Ansible_Automation_Controller_WS_STIG_V2R3_Manual-xccdf.html">Red Hat Ansible Automation Controller Web Server Security Technical Implementation Guide Version: 2 Release: 3 Benchmark Date: 05 Jan 2026</a>:</div> <h1>Automation Controller NGINX web servers must maintain the confidentiality of controlled information during transmission through the use of an approved TLS version.</h1><h2>DISA Rule</h2><p>SV-256964r961632_rule</p><h2>Vulnerability Number</h2><p>V-256964</p><h2>Group Title</h2><p>SRG-APP-000439-WSR-000156</p><h2>Rule Version</h2><p>APWS-AT-000900</p><h2>Severity</h2><p>CAT II</p><h2>CCI(s)</h2><ul><li>CCI-002418 - Protect the confidentiality and/or integrity of transmitted information.</li></ul><h2>Weight</h2><p>10</p><h2>Fix Recommendation</h2><p>As a System Administrator for each Automation Controller Web Server, reconfigure the TLS versions or ciphers used in Automation Controller's web server:<br />
+<br />
+NGINXCONF=`nginx -V 2&gt;&amp;1 | tr ' ' '\n' | sed -ne '/conf-path/{s/.*conf-path=\(.*\)/\1/;p}' `<br />
+sudo -e ${NGINXCONF}<br />
+<br />
+Replace the line beginning with &quot;ssl_protocols&quot; to match (note the leading spaces):<br />
+&quot;        ssl_protocols TLSv1.2;&quot;<br />
+<br />
+If the &quot;ssl_protocols&quot; variable does not exist, add it after the line beginning with &quot;ssl_ciphers&quot;.<br />
+<br />
+Save the file and exit the text editor. To apply these changes to the running service immediately, restart the NGINX service with the following command:<br />
+<br />
+sudo systemctl restart nginx</p><h2>Check Contents</h2><p>As a System Administrator, for each Automation Controller NGINX web server, a TLS Configuration Check validates the TLS version used by the server:<br />
+<br />
+NGINXCONF=`nginx -V 2&gt;&amp;1 | tr ' ' '\n' | sed -ne '/conf-path/{s/.*conf-path=\(.*\)/\1/;p}' `<br />
+sudo grep ssl_protocols ${NGINXCONF} | grep -E 'ssl_protocols\s+TLSv1.2;' || echo &quot;FAILED&quot;<br />
+<br />
+If &quot;FAILED&quot; is displayed, this is a finding.</p><h2>Vulnerability Number</h2><p>V-256964</p><h2>Documentable</h2><p>False</p><h2>Rule Version</h2><p>APWS-AT-000900</p><h2>Severity Override Guidance</h2><p>As a System Administrator, for each Automation Controller NGINX web server, a TLS Configuration Check validates the TLS version used by the server:<br />
+<br />
+NGINXCONF=`nginx -V 2&gt;&amp;1 | tr ' ' '\n' | sed -ne '/conf-path/{s/.*conf-path=\(.*\)/\1/;p}' `<br />
+sudo grep ssl_protocols ${NGINXCONF} | grep -E 'ssl_protocols\s+TLSv1.2;' || echo &quot;FAILED&quot;<br />
+<br />
+If &quot;FAILED&quot; is displayed, this is a finding.</p><h2>Check Content Reference</h2><p>M</p><h2>Target Key</h2><p>5535</p></body></html>

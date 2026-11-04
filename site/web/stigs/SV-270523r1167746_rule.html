@@ -1,0 +1,27 @@
+<!doctype html><html lang="en"><head><meta charset="utf-8"><title>STIGQter: STIG Check Details: SV-270523r1167746_rule: The Oracle WITH GRANT OPTION privilege must be limited when granted to nondatabase administrator (DBA) or nonapplication administrator user accounts.</title><link rel="icon" type="image/svg+xml" href="STIGQter.svg" /><script async src="https://www.googletagmanager.com/gtag/js?id=UA-31381839-2"></script><script src="include.js"></script><script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-4110907817782130" crossorigin="anonymous"></script></head><body><div><img src="STIGQter.svg" alt="STIGQter" style="height:1em;" /> <a href="https://www.stigqter.com/">STIGQter</a>: <a href="main.html">STIG Summary</a>: <a href="U_Oracle_Database_19c_STIG_V1R5_Manual-xccdf.html">Oracle Database 19c Security Technical Implementation Guide Version: 1 Release: 5 Benchmark Date: 01 Apr 2026</a>:</div> <h1>The Oracle WITH GRANT OPTION privilege must be limited when granted to nondatabase administrator (DBA) or nonapplication administrator user accounts.</h1><h2>DISA Rule</h2><p>SV-270523r1167746_rule</p><h2>Vulnerability Number</h2><p>V-270523</p><h2>Group Title</h2><p>SRG-APP-000516-DB-000363</p><h2>Rule Version</h2><p>O19C-00-009000</p><h2>Severity</h2><p>CAT II</p><h2>CCI(s)</h2><ul><li>CCI-000366 - Implement the security configuration settings.</li></ul><h2>Weight</h2><p>10</p><h2>Fix Recommendation</h2><p>Revoke privileges granted the WITH GRANT OPTION from non-DBA and accounts that do not own application objects or document the need for WITH GRANT OPTION and get approval.<br />
+<br />
+Re-grant privileges without specifying WITH GRANT OPTION.<br />
+<br />
+Note: Do not revoke the system-generated grants such as those found on SYS_PLSQL_% objects. They are system generated object types (aka ShadowTypes), created internally by Oracle when using the Pipelined Table Functions. This can result in (incorrect) compilation failures and/or invalidations when the users who are supposed to have access to the shadow types find themselves without access.</p><h2>Check Contents</h2><p>Execute the query:<br />
+<br />
+select grantee||': '||owner||'.'||table_name<br />
+from dba_tab_privs <br />
+where grantable = 'YES' <br />
+and grantee not in (select distinct owner from dba_objects)<br />
+and grantee not in (select grantee from dba_role_privs where granted_role = 'DBA')<br />
+and table_name not like 'SYS_PLSQL_%'<br />
+order by grantee;<br />
+<br />
+If any accounts are listed, verify accounts are documented and approved for the WITH GRANT option.<br />
+If non-DBA interactive user or application accounts have WITH GRANT without being documented and approved, this is a finding.</p><h2>Vulnerability Number</h2><p>V-270523</p><h2>Documentable</h2><p>False</p><h2>Rule Version</h2><p>O19C-00-009000</p><h2>Severity Override Guidance</h2><p>Execute the query:<br />
+<br />
+select grantee||': '||owner||'.'||table_name<br />
+from dba_tab_privs <br />
+where grantable = 'YES' <br />
+and grantee not in (select distinct owner from dba_objects)<br />
+and grantee not in (select grantee from dba_role_privs where granted_role = 'DBA')<br />
+and table_name not like 'SYS_PLSQL_%'<br />
+order by grantee;<br />
+<br />
+If any accounts are listed, verify accounts are documented and approved for the WITH GRANT option.<br />
+If non-DBA interactive user or application accounts have WITH GRANT without being documented and approved, this is a finding.</p><h2>Check Content Reference</h2><p>M</p><h2>Target Key</h2><p>5672</p></body></html>

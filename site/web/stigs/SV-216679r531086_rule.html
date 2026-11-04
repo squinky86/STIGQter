@@ -1,0 +1,131 @@
+<!doctype html><html lang="en"><head><meta charset="utf-8"><title>STIGQter: STIG Check Details: SV-216679r531086_rule: The Cisco out-of-band management (OOBM) gateway router must be configured to forward only authorized management traffic to the Network Operations Center (NOC).</title><link rel="icon" type="image/svg+xml" href="STIGQter.svg" /><script async src="https://www.googletagmanager.com/gtag/js?id=UA-31381839-2"></script><script src="include.js"></script><script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-4110907817782130" crossorigin="anonymous"></script></head><body><div><img src="STIGQter.svg" alt="STIGQter" style="height:1em;" /> <a href="https://www.stigqter.com/">STIGQter</a>: <a href="main.html">STIG Summary</a>: <a href="U_Cisco_IOS-XE_Router_RTR_STIG_V3R5_Manual-xccdf.html">Cisco IOS XE Router RTR Security Technical Implementation Guide Version: 3 Release: 5 Benchmark Date: 01 Oct 2025</a>:</div> <h1>The Cisco out-of-band management (OOBM) gateway router must be configured to forward only authorized management traffic to the Network Operations Center (NOC).</h1><h2>DISA Rule</h2><p>SV-216679r531086_rule</p><h2>Vulnerability Number</h2><p>V-216679</p><h2>Group Title</h2><p>SRG-NET-000205-RTR-000010</p><h2>Rule Version</h2><p>CISC-RT-000410</p><h2>Severity</h2><p>CAT II</p><h2>CCI(s)</h2><ul><li>CCI-001097 - Monitor and control communications at the external managed interfaces to the system and at key managed interfaces within the system.</li></ul><h2>Weight</h2><p>10</p><h2>Fix Recommendation</h2><p>This requirement is not applicable for the DODIN Backbone.<br />
+<br />
+Configure ACLs to permit only authorized management traffic into IPsec tunnels or the OOBM interface used for forwarding management data as shown in the examples below:<br />
+<br />
+OOBM Link:<br />
+<br />
+R4(config)#ip access-list extended MGMT_TRAFFIC_ACL<br />
+R4(config-ext-nacl)#permit tcp 10.1.34.0 0.0.0.255 10.22.2.0 0.0.0.255 eq tacacs<br />
+R4(config-ext-nacl)#permit tcp 10.1.34.0 0.0.0.255 10.22.2.0 0.0.0.255 eq 22<br />
+R4(config-ext-nacl)#permit udp 10.1.34.0 0.0.0.255 10.22.2.0 0.0.0.255 eq snmp<br />
+R4(config-ext-nacl)#permit udp 10.1.34.0 0.0.0.255 10.22.2.0 0.0.0.255 eq snmp-trap<br />
+R4(config-ext-nacl)#permit udp 10.1.34.0 0.0.0.255 10.22.2.0 0.0.0.255 eq syslog<br />
+R4(config-ext-nacl)#permit icmp 10.1.34.0 0.0.0.255 10.22.22.0 0.0.0.255 echo<br />
+R4(config-ext-nacl)#permit icmp 10.1.34.0 0.0.0.255 10.22.22.0 0.0.0.255 echo-reply<br />
+R4(config-ext-nacl)#deny   ip any any log-input<br />
+R4(config-ext-nacl)#exit<br />
+<br />
+IPsec Tunnel:<br />
+<br />
+R4(config)#ip access-list extended MGMT_TRAFFIC_ACL<br />
+R4(config-ext-nacl)#permit tcp 10.1.34.0 0.0.0.255 10.22.2.0 0.0.0.255 eq tacacs<br />
+R4(config-ext-nacl)#permit tcp 10.1.34.0 0.0.0.255 10.22.2.0 0.0.0.255 eq 22<br />
+R4(config-ext-nacl)#permit udp 10.1.34.0 0.0.0.255 10.22.2.0 0.0.0.255 eq snmp<br />
+R4(config-ext-nacl)#permit udp 10.1.34.0 0.0.0.255 10.22.2.0 0.0.0.255 eq snmp-trap<br />
+R4(config-ext-nacl)#permit udp 10.1.34.0 0.0.0.255 10.22.2.0 0.0.0.255 eq syslog<br />
+R4(config-ext-nacl)#permit icmp 10.1.34.0 0.0.0.255 22.22.22.0 0.0.0.255<br />
+R4(config-ext-nacl)#exit</p><h2>Check Contents</h2><p>This requirement is not applicable for the DODIN Backbone.<br />
+<br />
+Review the network topology diagram to determine connectivity between the managed network and the NOC. Review the OOBM gateway router configuration to validate the path that the management traffic traverses. Verify that only management traffic is forwarded through the OOBM interface or IPsec tunnel.<br />
+<br />
+If an OOBM link is used, verify that the only authorized management traffic is transported to the NOC by reviewing the outbound ACL applied to the OOBM interface as shown in the example below:<br />
+<br />
+Step 1: Note the outbound ACL applied to the OOBM interface.<br />
+<br />
+interface GigabitEthernet0/2<br />
+ description OOB link to NOC<br />
+ ip address 10.11.1.8 255.255.255.0<br />
+ ip access-group MGMT_TRAFFIC_ACL out<br />
+<br />
+Step 2: Review the outbound ACL and verify only management traffic is forwarded to the NOC.<br />
+<br />
+ip access-list extended MGMT_TRAFFIC_ACL<br />
+ permit tcp 10.1.34.0 0.0.0.255 10.22.2.0 0.0.0.255 eq tacacs<br />
+ permit tcp 10.1.34.0 0.0.0.255 10.22.2.0 0.0.0.255 eq 22<br />
+ permit udp 10.1.34.0 0.0.0.255 10.22.2.0 0.0.0.255 eq snmp<br />
+ permit udp 10.1.34.0 0.0.0.255 10.22.2.0 0.0.0.255 eq snmp-trap<br />
+ permit udp 10.1.34.0 0.0.0.255 10.22.2.0 0.0.0.255 eq syslog<br />
+ permit icmp 10.1.34.0 0.0.0.255 10.22.22.0 0.0.0.255 <br />
+ deny   ip any any log-input<br />
+<br />
+If an IPSec tunnel is used, verify that the only authorized management traffic is transported to the NOC.<br />
+<br />
+Step 1: Note the crypto map applied to the external interface.<br />
+<br />
+ interface interface GigabitEthernet0/2<br />
+ description link to DISN<br />
+ ip address x.1.24.4 255.255.255.0<br />
+ crypto map IPSEC_MGMT_MAP<br />
+<br />
+Step 2: Review the crypto map that was bound to the external interface and note the ACL defined that identifies the interesting traffic for the IPsec tunnel.<br />
+<br />
+crypto map IPSEC_MGMT_MAP 10 ipsec-isakmp<br />
+ set peer x.1.12.1<br />
+ set transform-set TRANS_SET<br />
+ match address MGMT_TRAFFIC_ACL<br />
+<br />
+Step 3: Review the ACL defined in the crypto map and verify only management traffic is forwarded to the NOC.<br />
+<br />
+ip access-list extended MGMT_TRAFFIC_ACL<br />
+ permit tcp 10.1.34.0 0.0.0.255 10.22.2.0 0.0.0.255 eq tacacs<br />
+ permit tcp 10.1.34.0 0.0.0.255 10.22.2.0 0.0.0.255 eq 22<br />
+ permit udp 10.1.34.0 0.0.0.255 10.22.2.0 0.0.0.255 eq snmp<br />
+ permit udp 10.1.34.0 0.0.0.255 10.22.2.0 0.0.0.255 eq snmp-trap<br />
+ permit udp 10.1.34.0 0.0.0.255 10.22.2.0 0.0.0.255 eq syslog<br />
+ permit icmp 10.1.34.0 0.0.0.255 10.22.22.0 0.0.0.255<br />
+<br />
+Note: ICMP is permitted for troubleshooting purposes. The IPSec SA can only identify interesting traffic via address, protocol, and port; hence, the ICMP traffic cannot be qualified via type attribute.<br />
+<br />
+If traffic other than authorized management traffic is permitted through the OOBM interface or IPsec tunnel, this is a finding.</p><h2>Vulnerability Number</h2><p>V-216679</p><h2>Documentable</h2><p>False</p><h2>Rule Version</h2><p>CISC-RT-000410</p><h2>Severity Override Guidance</h2><p>This requirement is not applicable for the DODIN Backbone.<br />
+<br />
+Review the network topology diagram to determine connectivity between the managed network and the NOC. Review the OOBM gateway router configuration to validate the path that the management traffic traverses. Verify that only management traffic is forwarded through the OOBM interface or IPsec tunnel.<br />
+<br />
+If an OOBM link is used, verify that the only authorized management traffic is transported to the NOC by reviewing the outbound ACL applied to the OOBM interface as shown in the example below:<br />
+<br />
+Step 1: Note the outbound ACL applied to the OOBM interface.<br />
+<br />
+interface GigabitEthernet0/2<br />
+ description OOB link to NOC<br />
+ ip address 10.11.1.8 255.255.255.0<br />
+ ip access-group MGMT_TRAFFIC_ACL out<br />
+<br />
+Step 2: Review the outbound ACL and verify only management traffic is forwarded to the NOC.<br />
+<br />
+ip access-list extended MGMT_TRAFFIC_ACL<br />
+ permit tcp 10.1.34.0 0.0.0.255 10.22.2.0 0.0.0.255 eq tacacs<br />
+ permit tcp 10.1.34.0 0.0.0.255 10.22.2.0 0.0.0.255 eq 22<br />
+ permit udp 10.1.34.0 0.0.0.255 10.22.2.0 0.0.0.255 eq snmp<br />
+ permit udp 10.1.34.0 0.0.0.255 10.22.2.0 0.0.0.255 eq snmp-trap<br />
+ permit udp 10.1.34.0 0.0.0.255 10.22.2.0 0.0.0.255 eq syslog<br />
+ permit icmp 10.1.34.0 0.0.0.255 10.22.22.0 0.0.0.255 <br />
+ deny   ip any any log-input<br />
+<br />
+If an IPSec tunnel is used, verify that the only authorized management traffic is transported to the NOC.<br />
+<br />
+Step 1: Note the crypto map applied to the external interface.<br />
+<br />
+ interface interface GigabitEthernet0/2<br />
+ description link to DISN<br />
+ ip address x.1.24.4 255.255.255.0<br />
+ crypto map IPSEC_MGMT_MAP<br />
+<br />
+Step 2: Review the crypto map that was bound to the external interface and note the ACL defined that identifies the interesting traffic for the IPsec tunnel.<br />
+<br />
+crypto map IPSEC_MGMT_MAP 10 ipsec-isakmp<br />
+ set peer x.1.12.1<br />
+ set transform-set TRANS_SET<br />
+ match address MGMT_TRAFFIC_ACL<br />
+<br />
+Step 3: Review the ACL defined in the crypto map and verify only management traffic is forwarded to the NOC.<br />
+<br />
+ip access-list extended MGMT_TRAFFIC_ACL<br />
+ permit tcp 10.1.34.0 0.0.0.255 10.22.2.0 0.0.0.255 eq tacacs<br />
+ permit tcp 10.1.34.0 0.0.0.255 10.22.2.0 0.0.0.255 eq 22<br />
+ permit udp 10.1.34.0 0.0.0.255 10.22.2.0 0.0.0.255 eq snmp<br />
+ permit udp 10.1.34.0 0.0.0.255 10.22.2.0 0.0.0.255 eq snmp-trap<br />
+ permit udp 10.1.34.0 0.0.0.255 10.22.2.0 0.0.0.255 eq syslog<br />
+ permit icmp 10.1.34.0 0.0.0.255 10.22.22.0 0.0.0.255<br />
+<br />
+Note: ICMP is permitted for troubleshooting purposes. The IPSec SA can only identify interesting traffic via address, protocol, and port; hence, the ICMP traffic cannot be qualified via type attribute.<br />
+<br />
+If traffic other than authorized management traffic is permitted through the OOBM interface or IPsec tunnel, this is a finding.</p><h2>Check Content Reference</h2><p>M</p><h2>Target Key</h2><p>4028</p></body></html>

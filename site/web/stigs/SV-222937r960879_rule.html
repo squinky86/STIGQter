@@ -1,0 +1,44 @@
+<!doctype html><html lang="en"><head><meta charset="utf-8"><title>STIGQter: STIG Check Details: SV-222937r960879_rule: Tomcat servers behind a proxy or load balancer must log client IP.</title><link rel="icon" type="image/svg+xml" href="STIGQter.svg" /><script async src="https://www.googletagmanager.com/gtag/js?id=UA-31381839-2"></script><script src="include.js"></script><script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-4110907817782130" crossorigin="anonymous"></script></head><body><div><img src="STIGQter.svg" alt="STIGQter" style="height:1em;" /> <a href="https://www.stigqter.com/">STIGQter</a>: <a href="main.html">STIG Summary</a>: <a href="U_Apache_Tomcat_Application_Server_9_STIG_V3R4_Manual-xccdf.html">Apache Tomcat Application Server 9 Security Technical Implementation Guide Version: 3 Release: 4 Benchmark Date: 01 Apr 2026</a>:</div> <h1>Tomcat servers behind a proxy or load balancer must log client IP.</h1><h2>DISA Rule</h2><p>SV-222937r960879_rule</p><h2>Vulnerability Number</h2><p>V-222937</p><h2>Group Title</h2><p>SRG-APP-000089-AS-000050</p><h2>Rule Version</h2><p>TCAT-AS-000170</p><h2>Severity</h2><p>CAT II</p><h2>CCI(s)</h2><ul><li>CCI-000169 - Provide audit record generation capability for the event types the system is capable of auditing as defined in AU-2 a. on organization-defined information system components.</li></ul><h2>Weight</h2><p>10</p><h2>Fix Recommendation</h2><p>From the Tomcat server as a privileged user: <br />
+<br />
+Edit the $CATALINA_BASE/conf/server.xml file.<br />
+<br />
+Only execute this first step if the proxy server is using a routable IP address or an RFC 1918 Class B address space: Add or edit the RemoteIpValve and configure the internalProxies setting to reflect the proxy addresses.<br />
+<br />
+Modify the AccessLogValve and configure the requestAttributesEnabled setting = &quot;True&quot;.<br />
+<br />
+EXAMPLE:<br />
+<br />
+&lt;Valve className=&quot;org.apache.catalina.valves.RemoteIpValve&quot; internalProxies=&quot;172.16.0.10|172.16.0.11&quot; /&gt;<br />
+<br />
+&lt;Valve className=&quot;org.apache.catalina.valves.AccessLogValve&quot;<br />
+  directory=&quot;logs&quot;<br />
+  prefix=&quot;access&quot;<br />
+  suffix=&quot;.log&quot;<br />
+  pattern=&quot;combined&quot;<br />
+  renameOnRotate=&quot;true&quot;<br />
+  requestAttributesEnabled=&quot;true&quot;<br />
+/&gt;<br />
+<br />
+Restart Tomcat:<br />
+sudo systemctl restart tomcat<br />
+sudo systemctl tomcat daemon-reload</p><h2>Check Contents</h2><p>Review the System Security Plan and determine if the Tomcat server resides behind a proxy server or load balancer. If the Tomcat server is not behind a proxy server or load balancer, this requirement is NA. <br />
+<br />
+From the Tomcat server run the following command:<br />
+<br />
+sudo grep -i RemoteIpValve $CATALINA_BASE/conf/server.xml file.<br />
+<br />
+If the results are empty or if the requestAttributesEnabled setting is not configured as &quot;True&quot;, this is a finding.<br />
+<br />
+sudo grep -i AccessLogValve $CATALINA_BASE/conf/server.xml file.<br />
+<br />
+If the requestAttributesEnabled setting is not configured as &quot;True&quot;, this is a finding.</p><h2>Vulnerability Number</h2><p>V-222937</p><h2>Documentable</h2><p>False</p><h2>Rule Version</h2><p>TCAT-AS-000170</p><h2>Severity Override Guidance</h2><p>Review the System Security Plan and determine if the Tomcat server resides behind a proxy server or load balancer. If the Tomcat server is not behind a proxy server or load balancer, this requirement is NA. <br />
+<br />
+From the Tomcat server run the following command:<br />
+<br />
+sudo grep -i RemoteIpValve $CATALINA_BASE/conf/server.xml file.<br />
+<br />
+If the results are empty or if the requestAttributesEnabled setting is not configured as &quot;True&quot;, this is a finding.<br />
+<br />
+sudo grep -i AccessLogValve $CATALINA_BASE/conf/server.xml file.<br />
+<br />
+If the requestAttributesEnabled setting is not configured as &quot;True&quot;, this is a finding.</p><h2>Check Content Reference</h2><p>M</p><h2>Target Key</h2><p>4094</p></body></html>

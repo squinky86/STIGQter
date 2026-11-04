@@ -1,0 +1,84 @@
+<!doctype html><html lang="en"><head><meta charset="utf-8"><title>STIGQter: STIG Check Details: SV-224556r1145053_rule: WebSphere MQ all update and alter access to MQSeries/WebSphere MQ product and system data sets are not properly restricted.</title><link rel="icon" type="image/svg+xml" href="STIGQter.svg" /><script async src="https://www.googletagmanager.com/gtag/js?id=UA-31381839-2"></script><script src="include.js"></script><script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-4110907817782130" crossorigin="anonymous"></script></head><body><div><img src="STIGQter.svg" alt="STIGQter" style="height:1em;" /> <a href="https://www.stigqter.com/">STIGQter</a>: <a href="main.html">STIG Summary</a>: <a href="U_zOS_WebsphereMQ_for_RACF_STIG_V7R3_Manual-xccdf.html">zOS WebSphere MQ for RACF Security Technical Implementation Guide Version: 7 Release: 3 Benchmark Date: 01 Jul 2026</a>:</div> <h1>WebSphere MQ all update and alter access to MQSeries/WebSphere MQ product and system data sets are not properly restricted.</h1><h2>DISA Rule</h2><p>SV-224556r1145053_rule</p><h2>Vulnerability Number</h2><p>V-224556</p><h2>Group Title</h2><p>SRG-OS-000080</p><h2>Rule Version</h2><p>ZWMQ0040</p><h2>Severity</h2><p>CAT II</p><h2>CCI(s)</h2><ul><li>CCI-001499 - Limit privileges to change software resident within software libraries.</li><li>CCI-002234 - Log the execution of privileged functions.</li></ul><h2>Weight</h2><p>10</p><h2>Fix Recommendation</h2><p>The systems programmer will have the ISSO ensure that all WRITE and/or greater access to WebSphere MQ product and system data sets is restricted to WebSphere MQ administrators, systems programmers, and WebSphere MQ started tasks.<br />
+<br />
+The installation requires that the following data sets be APF authorized. <br />
+<br />
+hlqual.SCSQAUTH<br />
+hlqual.SCSQLINK<br />
+hlqual.SCSQANLx<br />
+hlqual.SCSQSNL<br />
+hlqual.SCSQMVR1<br />
+hlqual.SCSQMVR2<br />
+<br />
+READ access to data sets referenced by the CSQINP1, CSQINP2, and CSQXLIB DDs in the queue manager's procedure will be restricted to the queue manager userid, WebSphere MQ administrator, and systems programming personnel. Log all access to these data sets.<br />
+<br />
+WRITE and/or greater access to data set profiles protecting all page sets, logs, bootstrap data sets (BSDS), and data sets referenced by the CSQOUTX and CSQSNAP DDs in the queue manager's procedure will be restricted to the queue manager userid, WebSphere MQ administrator, and systems programming personnel. Log all WRITE and/or greater access to these data sets.<br />
+<br />
+ALTER access to all archive data sets in the queue manager's procedure will be restricted to the queue manager userid, WebSphere MQ administrator, and systems programming personnel. Log all ALTER access to these data sets.</p><h2>Check Contents</h2><p>Refer to the following report produced by the ACP Data Collection:<br />
+<br />
+- SENSITVE.RPT(MQSRPT)<br />
+<br />
+Verify ACP data sets rules for WebSphere MQ system data sets (e.g., SYS2.MQM.) restrict access as follows. If the following guidance is true, this is not a finding.<br />
+<br />
+Note: ssid is the queue manager name (a.k.a., subsystem identifier).<br />
+<br />
+If the following guidance is true, this is not a finding.<br />
+<br />
+The ACP data set rules for the data sets restricts READ access to data sets referenced by the following DDnames is restricted to WebSphere MQ STCs, WebSphere MQ administrators, and systems programming personnel. All access to these data sets is logged.<br />
+<br />
+DDname	Procedure	Description<br />
+CSQINP1	ssidMSTR	Input parameters<br />
+CSQINP2	ssidMSTR	Input parameters<br />
+CSQXLIB	ssidCHIN	User exit library<br />
+<br />
+The ACP data set rules for the data sets restricts WRITE and/or greater access to the above data sets is restricted to WebSphere MQ administrators and systems programming personnel.<br />
+<br />
+The ACP data set rules for the data sets restricts WRITE and/or greater access to data sets referenced by the following DDnames, restricted to WebSphere MQ STCs, WebSphere MQ administrators, and systems programming personnel. All WRITE and/or greater access to these data sets is logged.<br />
+<br />
+DDname	Procedure	Description<br />
+CSQPxxxx	ssidMSTR	Page data sets<br />
+BSDSx	ssidMSTR	Bootstrap data sets<br />
+CSQOUTx	ssidMSTR	SYSOUT data sets<br />
+CSQSNAP	ssidMSTR	DUMP data set<br />
+(See note)	ssidMSTR	Log data sets<br />
+<br />
+Note: To determine the log data set names, review the JESMSGLG file of the ssidMSTR active task(s). Find CSQJ001I messages to obtain data set names.<br />
+ <br />
+The ACP data set rules for the data sets restricts ALTER access to archive data sets is restricted to WebSphere MQ STCs, WebSphere MQ administrator, and systems programming personnel. All ALTER access to these data sets is logged.<br />
+<br />
+Note: To determine the archive data sets names, review the JESMSGLG file of the ssidMSTR active task(s). Find the CSQY122I message to obtain the ARCPRFX1 and ARCPRFX2 data set high level qualifiers.<br />
+<br />
+Except for the specific data set requirements just mentioned, WRITE and/or greater access to all other WebSphere MQ system data sets is restricted to the WebSphere MQ administrator and systems programming personnel.</p><h2>Vulnerability Number</h2><p>V-224556</p><h2>Documentable</h2><p>False</p><h2>Rule Version</h2><p>ZWMQ0040</p><h2>Severity Override Guidance</h2><p>Refer to the following report produced by the ACP Data Collection:<br />
+<br />
+- SENSITVE.RPT(MQSRPT)<br />
+<br />
+Verify ACP data sets rules for WebSphere MQ system data sets (e.g., SYS2.MQM.) restrict access as follows. If the following guidance is true, this is not a finding.<br />
+<br />
+Note: ssid is the queue manager name (a.k.a., subsystem identifier).<br />
+<br />
+If the following guidance is true, this is not a finding.<br />
+<br />
+The ACP data set rules for the data sets restricts READ access to data sets referenced by the following DDnames is restricted to WebSphere MQ STCs, WebSphere MQ administrators, and systems programming personnel. All access to these data sets is logged.<br />
+<br />
+DDname	Procedure	Description<br />
+CSQINP1	ssidMSTR	Input parameters<br />
+CSQINP2	ssidMSTR	Input parameters<br />
+CSQXLIB	ssidCHIN	User exit library<br />
+<br />
+The ACP data set rules for the data sets restricts WRITE and/or greater access to the above data sets is restricted to WebSphere MQ administrators and systems programming personnel.<br />
+<br />
+The ACP data set rules for the data sets restricts WRITE and/or greater access to data sets referenced by the following DDnames, restricted to WebSphere MQ STCs, WebSphere MQ administrators, and systems programming personnel. All WRITE and/or greater access to these data sets is logged.<br />
+<br />
+DDname	Procedure	Description<br />
+CSQPxxxx	ssidMSTR	Page data sets<br />
+BSDSx	ssidMSTR	Bootstrap data sets<br />
+CSQOUTx	ssidMSTR	SYSOUT data sets<br />
+CSQSNAP	ssidMSTR	DUMP data set<br />
+(See note)	ssidMSTR	Log data sets<br />
+<br />
+Note: To determine the log data set names, review the JESMSGLG file of the ssidMSTR active task(s). Find CSQJ001I messages to obtain data set names.<br />
+ <br />
+The ACP data set rules for the data sets restricts ALTER access to archive data sets is restricted to WebSphere MQ STCs, WebSphere MQ administrator, and systems programming personnel. All ALTER access to these data sets is logged.<br />
+<br />
+Note: To determine the archive data sets names, review the JESMSGLG file of the ssidMSTR active task(s). Find the CSQY122I message to obtain the ARCPRFX1 and ARCPRFX2 data set high level qualifiers.<br />
+<br />
+Except for the specific data set requirements just mentioned, WRITE and/or greater access to all other WebSphere MQ system data sets is restricted to the WebSphere MQ administrator and systems programming personnel.</p><h2>Check Content Reference</h2><p>M</p><h2>Target Key</h2><p>4167</p></body></html>

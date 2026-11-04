@@ -1,0 +1,139 @@
+<!doctype html><html lang="en"><head><meta charset="utf-8"><title>STIGQter: STIG Check Details: SV-223734r1137691_rule: IBM RACF permission bits and user audit bits for HFS objects that are part of the FTP server component must be properly configured.</title><link rel="icon" type="image/svg+xml" href="STIGQter.svg" /><script async src="https://www.googletagmanager.com/gtag/js?id=UA-31381839-2"></script><script src="include.js"></script><script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-4110907817782130" crossorigin="anonymous"></script></head><body><div><img src="STIGQter.svg" alt="STIGQter" style="height:1em;" /> <a href="https://www.stigqter.com/">STIGQter</a>: <a href="main.html">STIG Summary</a>: <a href="U_IBM_zOS_RACF_STIG_V9R9_Manual-xccdf.html">IBM z/OS RACF Security Technical Implementation Guide Version: 9 Release: 9 Benchmark Date: 01 Jul 2026</a>:</div> <h1>IBM RACF permission bits and user audit bits for HFS objects that are part of the FTP server component must be properly configured.</h1><h2>DISA Rule</h2><p>SV-223734r1137691_rule</p><h2>Vulnerability Number</h2><p>V-223734</p><h2>Group Title</h2><p>SRG-OS-000080-GPOS-00048</p><h2>Rule Version</h2><p>RACF-FT-000020</p><h2>Severity</h2><p>CAT II</p><h2>CCI(s)</h2><ul><li>CCI-000213 - Enforce approved authorizations for logical access to information and system resources in accordance with applicable access control policies.</li></ul><h2>Weight</h2><p>10</p><h2>Fix Recommendation</h2><p>With the assistance of a systems programmer with UID(0) and/or SUPERUSER access, configure the UNIX permission bits and user audit bits on the HFS directories and files for the FTP Server to conform to the specifications in the table below:<br />
+<br />
+FTP Server HFS Object Security Settings<br />
+File Permission Bits User Audit Bits<br />
+/usr/sbin/ftpd 1740 fff<br />
+/usr/sbin/ftpdns 1755 fff<br />
+/usr/sbin/tftpd 0644 faf<br />
+/etc/ftp.data 0744 faf<br />
+/etc/ftp.banner 0744 faf<br />
+<br />
+The /usr/sbin/ftpd and /usr/sbin/ftpdns objects are symbolic links to /usr/lpp/tcpip/sbin/ftpd and /usr/lpp/tcpip/sbin/ftpdns respectively. The permission and user audit bits on the targets of the symbolic links must have the required settings.<br />
+<br />
+The TFTP Server does not perform any user identification or authentication, allowing any client to connect to the TFTP Server. Due to this lack of security, the TFTP Server will not be used. The TFTP Client is not secured from use.<br />
+<br />
+The /etc/ftp.data file may not be the configuration file the server uses. It is necessary to check the SYSFTPD DD statement in the FTP started task JCL to determine the actual file.<br />
+<br />
+The /etc/ftp.banner file may not be the banner file the server uses. It is necessary to check the BANNER statement in the FTP Data configuration file to determine the actual file.<br />
+<br />
+The following represents a hierarchy for permission bits from least restrictive to most restrictive:<br />
+<br />
+7 rwx (least restrictive)<br />
+6 rw-<br />
+3 -wx<br />
+2 -w-<br />
+5 r-x<br />
+4 r--<br />
+1 --x<br />
+0 --- (most restrictive)<br />
+<br />
+The possible audit bits settings are as follows:<br />
+<br />
+f log for failed access attempts<br />
+a log for failed and successful access<br />
+- no auditing<br />
+<br />
+Some of the files listed above (e.g., /etc/ftp.data) are not used in every configuration. While the absence of a file is generally not a security issue, the existence of a file that has not been properly secured can often be an issue. Therefore, all files that do exist should have the specified permission and audit bit settings.<br />
+<br />
+The following commands can be used (from a user account with an effective UID(0)) to update the permission bits and audit bits:<br />
+<br />
+chmod 1740 /usr/lpp/tcpip/sbin/ftpd<br />
+chaudit rwx=f /usr/lpp/tcpip/sbin/ftpd<br />
+chmod 1755 /usr/lpp/tcpip/sbin/ftpdns<br />
+chaudit rwx=f /usr/lpp/tcpip/sbin/ftpdns<br />
+chmod 0744 /etc/ftp.data<br />
+chaudit w=sf,rx+f /etc/ftp.data<br />
+chmod 0744 /etc/ftp.banner<br />
+chaudit w=sf,rx+f /etc/ftp.banner</p><h2>Check Contents</h2><p>From the ISPF Command Shell enter:<br />
+omvs<br />
+<br />
+At the input line enter:<br />
+cd /usr/sbin/<br />
+enter<br />
+ls -alW<br />
+<br />
+If the following File permission and user Audit Bits are true, this is not a finding.<br />
+<br />
+/usr/sbin/ftpd 1740 fff<br />
+/usr/sbin/ftpdns 1755 fff<br />
+/usr/sbin/tftpd 0644 faf<br />
+cd <br />
+ls -alW<br />
+<br />
+If the following file permission and user Audit Bits are true, this is not a finding.<br />
+<br />
+/etc/ftp.data 0744 faf<br />
+/etc/ftp.banner 0744 faf<br />
+<br />
+NOTES: Some of the files listed above are not used in every configuration. The absence of a file is not considered a finding.<br />
+<br />
+The /usr/sbin/ftpd and /usr/sbin/ftpdns objects are symbolic links to /usr/lpp/tcpip/sbin/ftpd and /usr/lpp/tcpip/sbin/ftpdns respectively. The permission and user audit bits on the targets of the symbolic links must have the required settings.<br />
+<br />
+The /etc/ftp.data file may not be the configuration file the server uses. It is necessary to check the SYSFTPD DD statement in the FTP started task JCL to determine the actual file.<br />
+<br />
+The TFTP Server does not perform any user identification or authentication, allowing any client to connect to the TFTP Server. Due to this lack of security, the TFTP Server will not be used. The TFTP Client is not secured from use. The permission bits for /usr/sbin/tftpd should be set to 644.<br />
+<br />
+The /etc/ftp.banner file may not be the banner file the server uses. It is necessary to check the BANNER statement in the FTP Data configuration file to determine the actual file. Also, the permission bit setting for this file must be set as indicated in the table above. A more restrictive set of permissions is not permitted.<br />
+<br />
+The following represents a hierarchy for permission bits from least restrictive to most restrictive:<br />
+<br />
+7 rwx (least restrictive)<br />
+6 rw-<br />
+3 -wx<br />
+2 -w-<br />
+5 r-x<br />
+4 r--<br />
+1 --x<br />
+0 --- (most restrictive)<br />
+<br />
+The possible audit bits settings are as follows:<br />
+<br />
+f log for failed access attempts<br />
+a log for failed and successful access<br />
+- no auditing</p><h2>Vulnerability Number</h2><p>V-223734</p><h2>Documentable</h2><p>False</p><h2>Rule Version</h2><p>RACF-FT-000020</p><h2>Severity Override Guidance</h2><p>From the ISPF Command Shell enter:<br />
+omvs<br />
+<br />
+At the input line enter:<br />
+cd /usr/sbin/<br />
+enter<br />
+ls -alW<br />
+<br />
+If the following File permission and user Audit Bits are true, this is not a finding.<br />
+<br />
+/usr/sbin/ftpd 1740 fff<br />
+/usr/sbin/ftpdns 1755 fff<br />
+/usr/sbin/tftpd 0644 faf<br />
+cd <br />
+ls -alW<br />
+<br />
+If the following file permission and user Audit Bits are true, this is not a finding.<br />
+<br />
+/etc/ftp.data 0744 faf<br />
+/etc/ftp.banner 0744 faf<br />
+<br />
+NOTES: Some of the files listed above are not used in every configuration. The absence of a file is not considered a finding.<br />
+<br />
+The /usr/sbin/ftpd and /usr/sbin/ftpdns objects are symbolic links to /usr/lpp/tcpip/sbin/ftpd and /usr/lpp/tcpip/sbin/ftpdns respectively. The permission and user audit bits on the targets of the symbolic links must have the required settings.<br />
+<br />
+The /etc/ftp.data file may not be the configuration file the server uses. It is necessary to check the SYSFTPD DD statement in the FTP started task JCL to determine the actual file.<br />
+<br />
+The TFTP Server does not perform any user identification or authentication, allowing any client to connect to the TFTP Server. Due to this lack of security, the TFTP Server will not be used. The TFTP Client is not secured from use. The permission bits for /usr/sbin/tftpd should be set to 644.<br />
+<br />
+The /etc/ftp.banner file may not be the banner file the server uses. It is necessary to check the BANNER statement in the FTP Data configuration file to determine the actual file. Also, the permission bit setting for this file must be set as indicated in the table above. A more restrictive set of permissions is not permitted.<br />
+<br />
+The following represents a hierarchy for permission bits from least restrictive to most restrictive:<br />
+<br />
+7 rwx (least restrictive)<br />
+6 rw-<br />
+3 -wx<br />
+2 -w-<br />
+5 r-x<br />
+4 r--<br />
+1 --x<br />
+0 --- (most restrictive)<br />
+<br />
+The possible audit bits settings are as follows:<br />
+<br />
+f log for failed access attempts<br />
+a log for failed and successful access<br />
+- no auditing</p><h2>Check Content Reference</h2><p>M</p><h2>Target Key</h2><p>4101</p></body></html>

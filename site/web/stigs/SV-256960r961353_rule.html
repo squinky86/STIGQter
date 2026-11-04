@@ -1,0 +1,64 @@
+<!doctype html><html lang="en"><head><meta charset="utf-8"><title>STIGQter: STIG Check Details: SV-256960r961353_rule: Nonprivileged accounts on the hosting system must only access Automation Controller NGINX web server security-relevant information and functions through a distinct administrative account.</title><link rel="icon" type="image/svg+xml" href="STIGQter.svg" /><script async src="https://www.googletagmanager.com/gtag/js?id=UA-31381839-2"></script><script src="include.js"></script><script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-4110907817782130" crossorigin="anonymous"></script></head><body><div><img src="STIGQter.svg" alt="STIGQter" style="height:1em;" /> <a href="https://www.stigqter.com/">STIGQter</a>: <a href="main.html">STIG Summary</a>: <a href="U_RH_Ansible_Automation_Controller_WS_STIG_V2R3_Manual-xccdf.html">Red Hat Ansible Automation Controller Web Server Security Technical Implementation Guide Version: 2 Release: 3 Benchmark Date: 05 Jan 2026</a>:</div> <h1>Nonprivileged accounts on the hosting system must only access Automation Controller NGINX web server security-relevant information and functions through a distinct administrative account.</h1><h2>DISA Rule</h2><p>SV-256960r961353_rule</p><h2>Vulnerability Number</h2><p>V-256960</p><h2>Group Title</h2><p>SRG-APP-000340-WSR-000029</p><h2>Rule Version</h2><p>APWS-AT-000700</p><h2>Severity</h2><p>CAT II</p><h2>CCI(s)</h2><ul><li>CCI-001082 - Separate user functionality, including user interface services, from system management functionality.</li><li>CCI-002235 - Prevent non-privileged users from executing privileged functions.</li></ul><h2>Weight</h2><p>10</p><h2>Fix Recommendation</h2><p>As a system administrator, for each Automation Controller NGINX web server host, set the permissions and owner of Automation Controller web server program configuration directory:<br />
+<br />
+sudo chown -R root:root /etc/nginx/<br />
+sudo chmod 755 /etc/nginx /etc/nginx<br />
+sudo chmod 755 /etc/nginx /etc/nginx/conf.d<br />
+sudo chmod 644 /etc/nginx/nginx.conf<br />
+ <br />
+As a system administrator, for each Automation Controller NGINX web server program configuration files.<br />
+<br />
+sudo chown root:root /usr/lib/systemd/system/nginx.service<br />
+sudo chmod 644 /usr/lib/systemd/system/nginx.service<br />
+ <br />
+Set the permissions and owner of Automation Controller application content directory:<br />
+<br />
+sudo chmod 755 /var/lib/awx/public/static<br />
+sudo chown root:awx /var/lib/awx/public/static</p><h2>Check Contents</h2><p>As a system administrator, for each Automation Controller NGINX web server host, inspect the current permissions and owner of Tower's web server configuration directory:<br />
+<br />
+stat -c &quot;%a %U %G&quot; /etc/nginx | grep -q &quot;755 root root&quot; || echo &quot;FAILED&quot;<br />
+stat -c &quot;%a %U %G&quot; /etc/nginx/conf.d | grep -q &quot;755 root root&quot; || echo &quot;FAILED&quot;<br />
+stat -c &quot;%a %U %G&quot; /etc/nginx/nginx.conf | grep -q &quot;644 root root&quot; || echo &quot;FAILED&quot;<br />
+ <br />
+If &quot;FAILED&quot; is displayed, this is a finding.<br />
+<br />
+Inspect the current permissions and owner of Automation Controller web server program configuration files:<br />
+<br />
+stat -c &quot;%a %U %G&quot; /usr/lib/systemd/system/nginx.service | grep -q &quot;644 root root&quot; || echo &quot;FAILED&quot;<br />
+ <br />
+If &quot;FAILED&quot; is displayed, this is a finding.<br />
+ <br />
+Inspect the current permissions and owner of Automation Controller application content directory:<br />
+<br />
+stat -c &quot;%a %U %G&quot; /var/lib/awx/public/static | grep -q &quot;755 root awx&quot; || echo &quot;FAILED&quot;<br />
+ <br />
+If &quot;FAILED&quot; is displayed, this is a finding.<br />
+ <br />
+Inspect the current permissions and owner of Automation Controller web server log directory:<br />
+<br />
+stat -c &quot;%a %U %G&quot; /var/log/nginx| grep -q &quot;770 nginx root&quot; || echo &quot;FAILED&quot;<br />
+ <br />
+If &quot;FAILED&quot; is displayed, this is a finding.</p><h2>Vulnerability Number</h2><p>V-256960</p><h2>Documentable</h2><p>False</p><h2>Rule Version</h2><p>APWS-AT-000700</p><h2>Severity Override Guidance</h2><p>As a system administrator, for each Automation Controller NGINX web server host, inspect the current permissions and owner of Tower's web server configuration directory:<br />
+<br />
+stat -c &quot;%a %U %G&quot; /etc/nginx | grep -q &quot;755 root root&quot; || echo &quot;FAILED&quot;<br />
+stat -c &quot;%a %U %G&quot; /etc/nginx/conf.d | grep -q &quot;755 root root&quot; || echo &quot;FAILED&quot;<br />
+stat -c &quot;%a %U %G&quot; /etc/nginx/nginx.conf | grep -q &quot;644 root root&quot; || echo &quot;FAILED&quot;<br />
+ <br />
+If &quot;FAILED&quot; is displayed, this is a finding.<br />
+<br />
+Inspect the current permissions and owner of Automation Controller web server program configuration files:<br />
+<br />
+stat -c &quot;%a %U %G&quot; /usr/lib/systemd/system/nginx.service | grep -q &quot;644 root root&quot; || echo &quot;FAILED&quot;<br />
+ <br />
+If &quot;FAILED&quot; is displayed, this is a finding.<br />
+ <br />
+Inspect the current permissions and owner of Automation Controller application content directory:<br />
+<br />
+stat -c &quot;%a %U %G&quot; /var/lib/awx/public/static | grep -q &quot;755 root awx&quot; || echo &quot;FAILED&quot;<br />
+ <br />
+If &quot;FAILED&quot; is displayed, this is a finding.<br />
+ <br />
+Inspect the current permissions and owner of Automation Controller web server log directory:<br />
+<br />
+stat -c &quot;%a %U %G&quot; /var/log/nginx| grep -q &quot;770 nginx root&quot; || echo &quot;FAILED&quot;<br />
+ <br />
+If &quot;FAILED&quot; is displayed, this is a finding.</p><h2>Check Content Reference</h2><p>M</p><h2>Target Key</h2><p>5535</p></body></html>

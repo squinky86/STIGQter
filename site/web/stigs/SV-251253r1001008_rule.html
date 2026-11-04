@@ -1,0 +1,106 @@
+<!doctype html><html lang="en"><head><meta charset="utf-8"><title>STIGQter: STIG Check Details: SV-251253r1001008_rule: Security-relevant software updates to Redis Enterprise DBMS must be installed within the time period directed by an authoritative source (e.g., IAVM, CTOs, DTMs, and STIGs).</title><link rel="icon" type="image/svg+xml" href="STIGQter.svg" /><script async src="https://www.googletagmanager.com/gtag/js?id=UA-31381839-2"></script><script src="include.js"></script><script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-4110907817782130" crossorigin="anonymous"></script></head><body><div><img src="STIGQter.svg" alt="STIGQter" style="height:1em;" /> <a href="https://www.stigqter.com/">STIGQter</a>: <a href="main.html">STIG Summary</a>: <a href="U_Redis_Enterprise_6-x_STIG_V2R2_Manual-xccdf.html">Redis Enterprise 6.x Security Technical Implementation Guide Version: 2 Release: 2 Benchmark Date: 24 Oct 2024</a>:</div> <h1>Security-relevant software updates to Redis Enterprise DBMS must be installed within the time period directed by an authoritative source (e.g., IAVM, CTOs, DTMs, and STIGs).</h1><h2>DISA Rule</h2><p>SV-251253r1001008_rule</p><h2>Vulnerability Number</h2><p>V-251253</p><h2>Group Title</h2><p>SRG-APP-000456-DB-000390</p><h2>Rule Version</h2><p>RD6X-00-012500</p><h2>Severity</h2><p>CAT II</p><h2>CCI(s)</h2><ul><li>CCI-002605 - Install security-relevant software updates within an organization-defined time period of the release of the updates.</li></ul><h2>Weight</h2><p>10</p><h2>Fix Recommendation</h2><p>To update to the current version of the software, perform the following steps listed from the Redis Labs Enterprise site. To upgrade the Redis Enterprise Software (RS) software on a cluster, upgrade each of the nodes and then upgrade each of the databases in the cluster.<br />
+<br />
+- To upgrade the cluster to v6.0, the cluster must first be on 5.4.0 or above and the databases must be running Redis 5.<br />
+- To upgrade the cluster to v5.6, the cluster must first be on 5.0.2-30 or above.<br />
+- To upgrade the cluster to v5.4, the cluster must first be on 5.0 or above.<br />
+- To upgrade the cluster to v5.2, the cluster must first be on 4.5 or above.<br />
+<br />
+The upgrade process for a Redis Enterprise Software cluster is &quot;ongoing&quot; when the nodes in the cluster have mixed versions. The upgrade is only considered complete when all of the nodes are upgraded to the new version.<br />
+<br />
+WARNING Using features from the newer version before all nodes are upgraded can produce unexpected results or cause failures in the cluster.<br />
+<br />
+Upgrading a node: <br />
+Upgrading the software on a node requires installing the RS installation package on all of the machines on which RS is installed.<br />
+<br />
+WARNING: The master node must be upgraded before upgrading the other nodes. It is recommended to keep all nodes up until the upgrade is completed on all nodes. The node role is shown in the output of the rladmin status nodes command. The installation path and user cannot be changed during upgrade. Node upgrade fails if the SSL certificates were configured in version 5.0.2 or above by manually updating the certificates on the disk instead of updating them through the API. For assistance with this issue, contact Support.<br />
+<br />
+Run install.sh from the directory where the media was untarred just like what is done for a new installation. The software recognizes this is an upgrade and proceeds accordingly.<br />
+<br />
+As with a new installation, user must sudo or be root to do the upgrade.<br />
+<br />
+To upgrade a node, run:<br />
+sudo ./install.sh<br />
+<br />
+The node upgrade process restarts the services running RS, which causes a short interruption to connections to the proxy, node, and databases.<br />
+<br />
+WARNING: To ensure cluster and databases' availability, it is important to upgrade the nodes one by one, and not attempt to upgrade more than one node at a time. To make sure that the node is functioning properly, run rlcheck and rladmin status extra all on the node both before and after the upgrade.<br />
+<br />
+If the RS management UI is open in the browser while upgrading the nodes, make sure to refresh the browser before trying to work with the UI again.<br />
+<br />
+Upgrading a database <br />
+Some RS upgrades add support for new Redis versions. In these cases, Redis Labs recommends upgrading the databases to the new Redis version, although this is not mandatory because RS upgrades are backward compatible. RS also supports a mix of Redis database versions.<br />
+<br />
+RS always supports two Redis versions. By default, new Redis databases are created with the latest version, and existing databases get upgraded to the latest version according to the instructions detailed below. If there is a desire to change the default Redis version to the previous version supported, it is recommended to use the tune cluster default_redis_version command in the rladmin CLI and set it to the previous Redis version supported.<br />
+<br />
+To determine whether the Redis database versions match the latest Redis version supported by RS:<br />
+In the rladmin CLI, run the status command. If the Redis version is not the latest supported, an indication appears in the command output next to the database's status.<br />
+<br />
+In the Management UI, Navigate to the Cluster &gt;&gt; Configuration page. The page lists the latest Redis version supported.<br />
+<br />
+If the Redis database versions are older than the version supported by RS, Redis Labs recommends upgrading the Redis databases.<br />
+<br />
+To upgrade the database:<br />
+- Ensure that all of the nodes in the RS cluster are upgraded. Databases cannot be upgraded before all of the nodes in the cluster are upgraded.<br />
+- In the rladmin CLI on any node in the cluster, run this command for each database: <br />
+rladmin upgrade db &lt;database_name | database_ID&gt;<br />
+<br />
+During the database upgrade process, the database is restarted. As a result:<br />
+For databases that have replication enabled, a failover is done before the master database restarts to make sure that there is no downtime.<br />
+<br />
+For databases without replication but with persistence enabled, the database is unavailable during the restart because data is restored from the persistence file. The length of the downtime is different for each persistence option. For example, AOF usually takes longer than an RDB file.<br />
+<br />
+For databases that have neither replication nor persistence enabled, the database loses all its data after it is restarted.<br />
+<br />
+Upgrading Active-Active databases <br />
+When upgrading an Active-Active (CRDB) database, the following may also be upgraded:<br />
+<br />
+Protocol version - RS 5.4.2 and higher include a new CRDB protocol version to support new Active-Active features. The CRDB protocol is backward-compatible so that RS 5.4.2 CRDB instances can understand write-operations that come from instances with the older CRDB protocol, but CRDB instances with the older protocol cannot understand write-operations of instances with the newer protocol version. As a result, after upgrading the CRDB protocol on one instance, instances that were not upgraded yet cannot receive write updates from the upgraded instance. The upgraded instance receives updates from upgraded and non-upgraded instances.<br />
+<br />
+Note: Upgrade all instances of a specific CRDB within a reasonable time frame to avoid temporary inconsistencies between the instances. Make sure that  all instances of a specific CRDB are upgraded before performing global operations on the CRDB, such as removing instances and adding new instances.<br />
+<br />
+After upgrading an instance to use the new protocol version, it automatically receives any missing write-operations.<br />
+<br />
+Feature set version: RS 5.6.0 and higher include a new feature set version to support new Active-Active features. When updating the feature set version for an Active-Active database, the feature set version is updated for all of the database instances.<br />
+<br />
+To upgrade a CRDB instance:<br />
+Upgrade RS on each node in the clusters where the CRDB instances are located.<br />
+<br />
+To confirm the status of the CRDB instances, run: rladmin status<br />
+<br />
+The statuses of the CRDB instances on the node can indicate:<br />
+OLD REDIS VERSION<br />
+OLD CRDB PROTOCOL VERSION<br />
+OLD CRDB FEATURESET VERSION<br />
+crdb-upgrade-node<br />
+<br />
+To upgrade each CRDB instance including the Redis version and CRDB protocol version, run:<br />
+rladmin upgrade db &lt;database_name | database_ID&gt;<br />
+<br />
+If the protocol version is old, read the warning message carefully and confirm. crdb-upgrade-protocol<br />
+<br />
+The CRDB instance uses the new Redis version and CRDB protocol version.<br />
+<br />
+To upgrade the CRDB instance without upgrading the protocol version:<br />
+If the feature set version is old, all of the CRDB instances must be upgraded. Then, to update the feature set for each active-active database, run:<br />
+crdb-cli crdb update --crdb-guid &lt;CRDB-GUID&gt; --featureset-version yes<br />
+<br />
+Retrieve the &lt;CRDB-GUID&gt; with the following command:<br />
+crdb-cli crdb list<br />
+<br />
+Look for the fully qualified domain name (CLUSTER-FDQN) of the cluster and use the associated GUID.</p><h2>Check Contents</h2><p>To determine the current version of the software, perform the steps below:<br />
+<br />
+1. Log in to the Redis Enterprise UI as an Admin user.<br />
+2. Navigate to the Cluster tab in the red banner.<br />
+3. Click on the Configuration option.<br />
+4. Find the Version number of the Cluster, Latest Redis version supported, and Latest Memcached version supported.<br />
+5. Compare to current Redis Enterprise version available.<br />
+<br />
+If the organization is not following their own defined time periods to apply updates, this is a finding.</p><h2>Vulnerability Number</h2><p>V-251253</p><h2>Documentable</h2><p>False</p><h2>Rule Version</h2><p>RD6X-00-012500</p><h2>Severity Override Guidance</h2><p>To determine the current version of the software, perform the steps below:<br />
+<br />
+1. Log in to the Redis Enterprise UI as an Admin user.<br />
+2. Navigate to the Cluster tab in the red banner.<br />
+3. Click on the Configuration option.<br />
+4. Find the Version number of the Cluster, Latest Redis version supported, and Latest Memcached version supported.<br />
+5. Compare to current Redis Enterprise version available.<br />
+<br />
+If the organization is not following their own defined time periods to apply updates, this is a finding.</p><h2>Check Content Reference</h2><p>M</p><h2>Target Key</h2><p>5443</p></body></html>

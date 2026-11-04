@@ -1,0 +1,45 @@
+<!doctype html><html lang="en"><head><meta charset="utf-8"><title>STIGQter: STIG Check Details: SV-268153r1131108_rule: NixOS must notify designated personnel if baseline configurations are changed in an unauthorized manner.</title><link rel="icon" type="image/svg+xml" href="STIGQter.svg" /><script async src="https://www.googletagmanager.com/gtag/js?id=UA-31381839-2"></script><script src="include.js"></script><script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-4110907817782130" crossorigin="anonymous"></script></head><body><div><img src="STIGQter.svg" alt="STIGQter" style="height:1em;" /> <a href="https://www.stigqter.com/">STIGQter</a>: <a href="main.html">STIG Summary</a>: <a href="U_Anduril_NixOS_STIG_V1R2_Manual-xccdf.html">Anduril NixOS Security Technical Implementation Guide Version: 1 Release: 2 Benchmark Date: 01 Oct 2025</a>:</div> <h1>NixOS must notify designated personnel if baseline configurations are changed in an unauthorized manner.</h1><h2>DISA Rule</h2><p>SV-268153r1131108_rule</p><h2>Vulnerability Number</h2><p>V-268153</p><h2>Group Title</h2><p>SRG-OS-000363-GPOS-00150</p><h2>Rule Version</h2><p>ANIX-00-001460</p><h2>Severity</h2><p>CAT II</p><h2>CCI(s)</h2><ul><li>CCI-001744 - Implement organization-defined security responses automatically if baseline configurations are changed in an unauthorized manner.</li><li>CCI-002696 - Verify correct operation of organization-defined security functions.</li><li>CCI-002699 - Perform verification of the correct operation of organization-defined security functions: when the system is in an organization-defined transitional state; upon command by a user with appropriate privileges; and/or on an organization-defined frequency.</li><li>CCI-002702 - Shut the system down, restart the system, and/or initiate organization-defined alternative action(s) when anomalies in the operation of the organization-defined security functions are discovered.</li></ul><h2>Weight</h2><p>10</p><h2>Fix Recommendation</h2><p>Configure NixOS to notify when baseline configuration changes.<br />
+<br />
+Add the following Nix code to the NixOS Configuration, usually located in /etc/nixos/configuration.nix or /etc/nixos/flake.nix:<br />
+<br />
+nixpkgs.overlays = [<br />
+  (final: prev: {<br />
+    aide = prev.aide.overrideAttrs (old: {<br />
+      configureFlags = (old.configureFlags or [ ]) ++ [ &quot;--sysconfdir=/etc&quot; ];<br />
+     });<br />
+  })<br />
+];<br />
+<br />
+environment.systemPackages = [<br />
+  pkgs.aide<br />
+ ];<br />
+environment.etc = {<br />
+    # Creates /etc/aide.conf<br />
+    &quot;aide.conf&quot; = {<br />
+      text = ''<br />
+      &lt;CONFIG_TEXT&gt;<br />
+      '';<br />
+      mode = &quot;0444&quot;;<br />
+    };<br />
+};<br />
+services.cron = {<br />
+  enable = true;<br />
+  systemCronJobs = [<br />
+   &quot;00 0 * * 0\troot\taide -c /etc/aide.conf --check | /bin/mail -s &quot;aide integrity check run for ${config.networking.hostName}&quot; root@notareal.email&quot;<br />
+  ];<br />
+};<br />
+<br />
+Rebuild and switch to the new NixOS configuration:<br />
+$ sudo nixos-rebuild switch</p><h2>Check Contents</h2><p>Verify NixOS notifies if baseline configurations are changed with Advanced Intrusion Detection Environment with the following commands:<br />
+<br />
+$ systemctl is-active aide.service<br />
+<br />
+active<br />
+<br />
+If aide is not active and is not configured to alert on file system changes, this is a finding.</p><h2>Vulnerability Number</h2><p>V-268153</p><h2>Documentable</h2><p>False</p><h2>Rule Version</h2><p>ANIX-00-001460</p><h2>Severity Override Guidance</h2><p>Verify NixOS notifies if baseline configurations are changed with Advanced Intrusion Detection Environment with the following commands:<br />
+<br />
+$ systemctl is-active aide.service<br />
+<br />
+active<br />
+<br />
+If aide is not active and is not configured to alert on file system changes, this is a finding.</p><h2>Check Content Reference</h2><p>M</p><h2>Target Key</h2><p>5658</p></body></html>

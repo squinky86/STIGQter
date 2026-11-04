@@ -1,0 +1,93 @@
+<!doctype html><html lang="en"><head><meta charset="utf-8"><title>STIGQter: STIG Check Details: SV-270501r1167736_rule: Oracle Database must protect against an individual who uses a shared account falsely denying having performed a particular action.</title><link rel="icon" type="image/svg+xml" href="STIGQter.svg" /><script async src="https://www.googletagmanager.com/gtag/js?id=UA-31381839-2"></script><script src="include.js"></script><script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-4110907817782130" crossorigin="anonymous"></script></head><body><div><img src="STIGQter.svg" alt="STIGQter" style="height:1em;" /> <a href="https://www.stigqter.com/">STIGQter</a>: <a href="main.html">STIG Summary</a>: <a href="U_Oracle_Database_19c_STIG_V1R5_Manual-xccdf.html">Oracle Database 19c Security Technical Implementation Guide Version: 1 Release: 5 Benchmark Date: 01 Apr 2026</a>:</div> <h1>Oracle Database must protect against an individual who uses a shared account falsely denying having performed a particular action.</h1><h2>DISA Rule</h2><p>SV-270501r1167736_rule</p><h2>Vulnerability Number</h2><p>V-270501</p><h2>Group Title</h2><p>SRG-APP-000080-DB-000063</p><h2>Rule Version</h2><p>O19C-00-001700</p><h2>Severity</h2><p>CAT III</p><h2>CCI(s)</h2><ul><li>CCI-000166 - Provide irrefutable evidence that an individual (or process acting on behalf of an individual) falsely denying having performed organization-defined actions to be covered by non-repudiation.</li><li>CCI-004045 - Require users to be individually authenticated before granting access to the shared accounts or resources.</li></ul><h2>Weight</h2><p>10</p><h2>Fix Recommendation</h2><p>Use accounts assigned to individual users. Configure DBMS to provide individual accountability at the DBMS level, and in audit logs, for actions performed under a shared database account.<br />
+<br />
+Modify applications and data tables that are not capturing individual user identity to do so.<br />
+<br />
+Create and enforce the use of individual user IDs for logging on to Oracle tools and third-party products.<br />
+<br />
+If Oracle auditing is not already enabled, enable it.<br />
+<br />
+If Standard Auditing is used:<br />
+If Oracle (or third-party) auditing is not already enabled, enable it. For Oracle auditing, use this query:<br />
+<br />
+ALTER SYSTEM SET AUDIT_TRAIL=&lt;audit trail type&gt; SID='*' SCOPE=SPFILE;<br />
+<br />
+Audit trail type can be 'OS', 'DB', 'DB,EXTENDED', 'XML' or 'XML,EXTENDED'.<br />
+<br />
+After executing this statement, it may be necessary to shut down and restart the Oracle database.<br />
+<br />
+If Unified Auditing is used:<br />
+Link the oracle binary with uniaud_on, and then restart the database. Oracle Database Upgrade Guide describes how to enable unified auditing.<br />
+<br />
+For more information on the configuration of auditing, refer to the following documents:<br />
+<br />
+&quot;Auditing Database Activity&quot; in the Oracle Database 19c Security Guide:<br />
+https://docs.oracle.com/en/database/oracle/oracle-database/19/dbseg/index.html<br />
+<br />
+&quot;Monitoring Database Activity with Auditing&quot; in the Oracle Database Security Guide:<br />
+https://docs.oracle.com/en/database/oracle/oracle-database/19/dbseg/index.html<br />
+<br />
+&quot;DBMS_AUDIT_MGMT&quot; in the Oracle Database PL/SQL Packages and Types Reference:<br />
+https://docs.oracle.com/en/database/oracle/oracle-database/19/arpls/<br />
+<br />
+Oracle Database Upgrade Guide:<br />
+https://docs.oracle.com/en/database/oracle/oracle-database/19/upgrd/index.html<br />
+<br />
+If the site-specific audit requirements are not covered by the default audit options, deploy and configure Fine-Grained Auditing. For details, refer to Oracle documentation at the locations above.<br />
+<br />
+If this level of auditing does not meet site-specific requirements, consider deploying the Oracle Audit Vault. The Audit Vault is a highly configurable option from Oracle made specifically for performing the audit functions. It has reporting capabilities as well as user-defined rules that provide additional flexibility for complex auditing requirements.</p><h2>Check Contents</h2><p>If there are no shared accounts available to more than one user, this is not a finding.<br />
+<br />
+Review database, application, and/or OS settings to determine whether users can be identified as individuals when using shared accounts. <br />
+<br />
+If the individual user of a shared account cannot be identified, this is a finding.<br />
+<br />
+If Standard Auditing is used:<br />
+To ensure user activities other than SELECT, INSERT, UPDATE, and DELETE are also monitored and attributed to individuals, verify that Oracle auditing is enabled. To verify Oracle is configured to capture audit data, enter the following SQL*Plus command:<br />
+<br />
+SHOW PARAMETER AUDIT_TRAIL<br />
+<br />
+Or run the following SQL query:<br />
+<br />
+col display_value format a10<br />
+col default_value format a10<br />
+SELECT inst_id, con_id, display_value, default_value, isdefault<br />
+FROM sys.gv_$parameter WHERE name = 'audit_trail';<br />
+<br />
+If the query returns the display_value &quot;NONE&quot;, for any instance or container, this is a finding.<br />
+<br />
+If Unified Auditing is used:<br />
+To ensure that user activities other than SELECT, INSERT, UPDATE, and DELETE are also monitored and attributed to individuals, verify that Oracle auditing is enabled. To verify Oracle is configured to capture audit data, enter the following SQL*Plus query:<br />
+<br />
+col value format a10<br />
+SELECT inst_id, con_id, value<br />
+FROM sys.gv_$option<br />
+WHERE parameter = 'Unified Auditing';<br />
+<br />
+If the query returns something other than &quot;TRUE&quot;, for any instance or container, this is a finding.</p><h2>Vulnerability Number</h2><p>V-270501</p><h2>Documentable</h2><p>False</p><h2>Rule Version</h2><p>O19C-00-001700</p><h2>Severity Override Guidance</h2><p>If there are no shared accounts available to more than one user, this is not a finding.<br />
+<br />
+Review database, application, and/or OS settings to determine whether users can be identified as individuals when using shared accounts. <br />
+<br />
+If the individual user of a shared account cannot be identified, this is a finding.<br />
+<br />
+If Standard Auditing is used:<br />
+To ensure user activities other than SELECT, INSERT, UPDATE, and DELETE are also monitored and attributed to individuals, verify that Oracle auditing is enabled. To verify Oracle is configured to capture audit data, enter the following SQL*Plus command:<br />
+<br />
+SHOW PARAMETER AUDIT_TRAIL<br />
+<br />
+Or run the following SQL query:<br />
+<br />
+col display_value format a10<br />
+col default_value format a10<br />
+SELECT inst_id, con_id, display_value, default_value, isdefault<br />
+FROM sys.gv_$parameter WHERE name = 'audit_trail';<br />
+<br />
+If the query returns the display_value &quot;NONE&quot;, for any instance or container, this is a finding.<br />
+<br />
+If Unified Auditing is used:<br />
+To ensure that user activities other than SELECT, INSERT, UPDATE, and DELETE are also monitored and attributed to individuals, verify that Oracle auditing is enabled. To verify Oracle is configured to capture audit data, enter the following SQL*Plus query:<br />
+<br />
+col value format a10<br />
+SELECT inst_id, con_id, value<br />
+FROM sys.gv_$option<br />
+WHERE parameter = 'Unified Auditing';<br />
+<br />
+If the query returns something other than &quot;TRUE&quot;, for any instance or container, this is a finding.</p><h2>Check Content Reference</h2><p>M</p><h2>Target Key</h2><p>5672</p></body></html>

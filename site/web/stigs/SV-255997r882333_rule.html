@@ -1,0 +1,70 @@
+<!doctype html><html lang="en"><head><meta charset="utf-8"><title>STIGQter: STIG Check Details: SV-255997r882333_rule: The Arista perimeter router must be configured to enforce approved authorizations for controlling the flow of information between interconnected networks in accordance with applicable policy.</title><link rel="icon" type="image/svg+xml" href="STIGQter.svg" /><script async src="https://www.googletagmanager.com/gtag/js?id=UA-31381839-2"></script><script src="include.js"></script><script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-4110907817782130" crossorigin="anonymous"></script></head><body><div><img src="STIGQter.svg" alt="STIGQter" style="height:1em;" /> <a href="https://www.stigqter.com/">STIGQter</a>: <a href="main.html">STIG Summary</a>: <a href="U_Arista_MLS_EOS_4-X_Router_STIG_V2R2_Manual-xccdf.html">Arista MLS EOS 4.X Router Security Technical Implementation Guide Version: 2 Release: 2 Benchmark Date: 02 Apr 2025</a>:</div> <h1>The Arista perimeter router must be configured to enforce approved authorizations for controlling the flow of information between interconnected networks in accordance with applicable policy.</h1><h2>DISA Rule</h2><p>SV-255997r882333_rule</p><h2>Vulnerability Number</h2><p>V-255997</p><h2>Group Title</h2><p>SRG-NET-000019-RTR-000002</p><h2>Rule Version</h2><p>ARST-RT-000110</p><h2>Severity</h2><p>CAT II</p><h2>CCI(s)</h2><ul><li>CCI-001414 - Enforce approved authorizations for controlling the flow of information between connected systems based on organization-defined information flow control policies.</li></ul><h2>Weight</h2><p>10</p><h2>Fix Recommendation</h2><p>Configure the router to enforce approved authorizations for controlling the flow of information between interconnected networks in accordance with applicable policy.<br />
+<br />
+To use an IP access list to fulfill this function, enter the following commands, substituting organizational values for the bracketed variables.<br />
+<br />
+ip access-list [name]<br />
+[permit/deny] [protocol] [source address] [source port] [destination address] [destination port]<br />
+exit<br />
+<br />
+interface [type] [number]<br />
+ip access-group [name] [direction]</p><h2>Check Contents</h2><p>Verify each Arista router enforces approved authorizations for controlling the flow of information between interconnected networks in accordance with applicable policy.<br />
+<br />
+This requirement may be met through the use of IP access control lists. <br />
+<br />
+Step 1: To verify on the Arista router that IP access lists are configured, execute the &quot;show ip access-lists summary&quot; command and check that the list is configured and is active on applicable interfaces.<br />
+<br />
+router:#show ip access-lists summary<br />
+IPV4 ACL $$bgp-ttlSec-ip-vrf-default$$ [dynamic]<br />
+        Total rules configured: 1<br />
+        Configured on Ingress: bgp(default VRF)<br />
+        Active on     Ingress: bgp(default VRF)<br />
+<br />
+IPV4 ACL ACL<br />
+        Total rules configured: 1<br />
+<br />
+Standard IPV4 ACL ALLOWED_SOURCES<br />
+        Total rules configured: 2<br />
+<br />
+IPV4 ACL AUTHORIZED_SOURCES<br />
+        Total rules configured: 3<br />
+<br />
+Step 2: To verify the Arista router lists that control the flow of information in accordance with organizational policy, enter the &quot;show ip access-list [name]&quot; command and review the associated permit and deny statements.<br />
+<br />
+IP Access List ACL.<br />
+router#show ip access-list AUTHORIZED_SOURCES<br />
+  IP Access List AUTHORIZED_SOURCES<br />
+        10 permit ip 10.1.12.0/24 any<br />
+        20 deny ip 1.2.3.0/24 any log<br />
+        30 deny ip host 10.11.12.2 any log<br />
+<br />
+If the Arista router does not enforce approved authorizations for controlling the flow of information between interconnected networks in accordance with applicable policy, this is a finding.</p><h2>Vulnerability Number</h2><p>V-255997</p><h2>Documentable</h2><p>False</p><h2>Rule Version</h2><p>ARST-RT-000110</p><h2>Severity Override Guidance</h2><p>Verify each Arista router enforces approved authorizations for controlling the flow of information between interconnected networks in accordance with applicable policy.<br />
+<br />
+This requirement may be met through the use of IP access control lists. <br />
+<br />
+Step 1: To verify on the Arista router that IP access lists are configured, execute the &quot;show ip access-lists summary&quot; command and check that the list is configured and is active on applicable interfaces.<br />
+<br />
+router:#show ip access-lists summary<br />
+IPV4 ACL $$bgp-ttlSec-ip-vrf-default$$ [dynamic]<br />
+        Total rules configured: 1<br />
+        Configured on Ingress: bgp(default VRF)<br />
+        Active on     Ingress: bgp(default VRF)<br />
+<br />
+IPV4 ACL ACL<br />
+        Total rules configured: 1<br />
+<br />
+Standard IPV4 ACL ALLOWED_SOURCES<br />
+        Total rules configured: 2<br />
+<br />
+IPV4 ACL AUTHORIZED_SOURCES<br />
+        Total rules configured: 3<br />
+<br />
+Step 2: To verify the Arista router lists that control the flow of information in accordance with organizational policy, enter the &quot;show ip access-list [name]&quot; command and review the associated permit and deny statements.<br />
+<br />
+IP Access List ACL.<br />
+router#show ip access-list AUTHORIZED_SOURCES<br />
+  IP Access List AUTHORIZED_SOURCES<br />
+        10 permit ip 10.1.12.0/24 any<br />
+        20 deny ip 1.2.3.0/24 any log<br />
+        30 deny ip host 10.11.12.2 any log<br />
+<br />
+If the Arista router does not enforce approved authorizations for controlling the flow of information between interconnected networks in accordance with applicable policy, this is a finding.</p><h2>Check Content Reference</h2><p>M</p><h2>Target Key</h2><p>5513</p></body></html>

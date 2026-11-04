@@ -1,0 +1,58 @@
+<!doctype html><html lang="en"><head><meta charset="utf-8"><title>STIGQter: STIG Check Details: SV-257522r960903_rule: All audit records must generate the event results within OpenShift.</title><link rel="icon" type="image/svg+xml" href="STIGQter.svg" /><script async src="https://www.googletagmanager.com/gtag/js?id=UA-31381839-2"></script><script src="include.js"></script><script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-4110907817782130" crossorigin="anonymous"></script></head><body><div><img src="STIGQter.svg" alt="STIGQter" style="height:1em;" /> <a href="https://www.stigqter.com/">STIGQter</a>: <a href="main.html">STIG Summary</a>: <a href="U_RH_OpenShift_Container_Platform_4-x_STIG_V2R6_Manual-xccdf.html">Red Hat OpenShift Container Platform 4.x Security Technical Implementation Guide Version: 2 Release: 6 Benchmark Date: 01 Jul 2026</a>:</div> <h1>All audit records must generate the event results within OpenShift.</h1><h2>DISA Rule</h2><p>SV-257522r960903_rule</p><h2>Vulnerability Number</h2><p>V-257522</p><h2>Group Title</h2><p>SRG-APP-000099-CTR-000190</p><h2>Rule Version</h2><p>CNTR-OS-000200</p><h2>Severity</h2><p>CAT II</p><h2>CCI(s)</h2><ul><li>CCI-000132 - Ensure that audit records containing information that establishes where the event occurred.</li><li>CCI-000133 - Ensure that audit records containing information that establishes the source of the event.</li><li>CCI-000134 - Ensure that audit records containing information that establishes the outcome of the event.</li><li>CCI-000140 - Take organization-defined actions upon audit failure include, shutting down the system, overwriting oldest audit records, and stopping the generation of audit records.</li><li>CCI-001487 - Ensure that audit records containing information that establishes the identity of any individuals, subjects, or objects/entities associated with the event.</li><li>CCI-001496 - Implement cryptographic mechanisms to protect the integrity of audit tools.</li><li>CCI-001849 - Allocate audit log storage capacity to accommodate organization-defined audit record retention requirements.</li></ul><h2>Weight</h2><p>10</p><h2>Fix Recommendation</h2><p>Apply the machine config by executing the following:<br />
+<br />
+for mcpool in $(oc get mcp -oname | sed &quot;s:.*/::&quot; ); do<br />
+echo &quot;apiVersion: machineconfiguration.openshift.io/v1<br />
+kind: MachineConfig<br />
+metadata:<br />
+  name: 70-auditd-conf-$mcpool<br />
+  labels:<br />
+    machineconfiguration.openshift.io/role: $mcpool<br />
+spec:<br />
+  config:<br />
+    ignition:<br />
+      version: 3.1.0<br />
+    storage:<br />
+      files:<br />
+      - contents:<br />
+          source: data:,%23%0A%23%20This%20file%20controls%20the%20configuration%20of%20the%20audit%20daemon%0A%23%0A%0Alocal_events%20%3D%20yes%0Awrite_logs%20%3D%20yes%0Alog_file%20%3D%20%2Fvar%2Flog%2Faudit%2Faudit.log%0Alog_group%20%3D%20root%0Alog_format%20%3D%20ENRICHED%0Aflush%20%3D%20incremental_async%0Afreq%20%3D%2050%0Amax_log_file%20%3D%206%0Anum_logs%20%3D%205%0Apriority_boost%20%3D%204%0Aname_format%20%3D%20hostname%0A%23%23name%20%3D%20mydomain%0Amax_log_file_action%20%3D%20syslog%0Aspace_left%20%3D%2025%25%0Aspace_left_action%20%3D%20syslog%0Averify_email%20%3D%20yes%0Aaction_mail_acct%20%3D%20root%0Aadmin_space_left%20%3D%2050%0Aadmin_space_left_action%20%3D%20syslog%0Adisk_full_action%20%3D%20HALT%0Adisk_error_action%20%3D%20HALT%0Ause_libwrap%20%3D%20yes%0A%23%23tcp_listen_port%20%3D%2060%0Atcp_listen_queue%20%3D%205%0Atcp_max_per_addr%20%3D%201%0A%23%23tcp_client_ports%20%3D%201024-65535%0Atcp_client_max_idle%20%3D%200%0Atransport%20%3D%20TCP%0Akrb5_principal%20%3D%20auditd%0A%23%23krb5_key_file%20%3D%20%2Fetc%2Faudit%2Faudit.key%0Adistribute_network%20%3D%20no%0Aq_depth%20%3D%20400%0Aoverflow_action%20%3D%20syslog%0Amax_restarts%20%3D%2010%0Aplugin_dir%20%3D%20%2Fetc%2Faudit%2Fplugins.d%0A<br />
+        mode: 0640<br />
+        path: /etc/audit/auditd.conf<br />
+        overwrite: true<br />
+&quot; | oc apply -f -<br />
+done</p><h2>Check Contents</h2><p>1. Verify Red Hat Enterprise Linux CoreOS (RHCOS) Audit Daemon is configured to resolve audit information before writing to disk, by executing the following command:<br />
+<br />
+for node in $(oc get node -oname); do oc debug $node -- chroot /host /bin/bash -c 'echo -n &quot;$HOSTNAME &quot;; grep &quot;log_format&quot; /etc/audit/auditd.conf' 2&gt;/dev/null; done<br />
+<br />
+If the &quot;log_format&quot; option is not &quot;ENRICHED&quot;, or the line is missing or commented out, this is a finding.<br />
+<br />
+2. Verify RHCOS takes the appropriate action when an audit processing failure occurs by executing following command:<br />
+<br />
+for node in $(oc get node -oname); do oc debug $node -- chroot /host /bin/bash -c 'echo -n &quot;$HOSTNAME &quot;; grep disk_error_action /etc/audit/auditd.conf' 2&gt;/dev/null; done<br />
+<br />
+If the value of the &quot;disk_error_action&quot; option is not &quot;SYSLOG&quot;, &quot;SINGLE&quot;, or &quot;HALT&quot;, or the line is missing, or commented out, ask the system administrator to indicate how the system takes appropriate action when an audit process failure occurs. If there is no evidence of appropriate action, this is a finding.<br />
+<br />
+3. Verify the SA and ISSO (at a minimum) are notified when the audit storage volume is full.<br />
+<br />
+Check which action RHEL takes when the audit storage volume is full by executing the following command:<br />
+<br />
+for node in $(oc get node -oname); do oc debug $node -- chroot /host /bin/bash -c 'echo -n &quot;$HOSTNAME &quot;; grep max_log_file_action /etc/audit/auditd.conf' 2&gt;/dev/null; done<br />
+<br />
+If the value of the &quot;max_log_file_action&quot; option is set to &quot;ignore&quot;, &quot;rotate&quot;, or &quot;suspend&quot;, or the line is missing or commented out, ask the system administrator to indicate how the system takes appropriate action when an audit storage volume is full. If there is no evidence of appropriate action, this is a finding.</p><h2>Vulnerability Number</h2><p>V-257522</p><h2>Documentable</h2><p>False</p><h2>Rule Version</h2><p>CNTR-OS-000200</p><h2>Severity Override Guidance</h2><p>1. Verify Red Hat Enterprise Linux CoreOS (RHCOS) Audit Daemon is configured to resolve audit information before writing to disk, by executing the following command:<br />
+<br />
+for node in $(oc get node -oname); do oc debug $node -- chroot /host /bin/bash -c 'echo -n &quot;$HOSTNAME &quot;; grep &quot;log_format&quot; /etc/audit/auditd.conf' 2&gt;/dev/null; done<br />
+<br />
+If the &quot;log_format&quot; option is not &quot;ENRICHED&quot;, or the line is missing or commented out, this is a finding.<br />
+<br />
+2. Verify RHCOS takes the appropriate action when an audit processing failure occurs by executing following command:<br />
+<br />
+for node in $(oc get node -oname); do oc debug $node -- chroot /host /bin/bash -c 'echo -n &quot;$HOSTNAME &quot;; grep disk_error_action /etc/audit/auditd.conf' 2&gt;/dev/null; done<br />
+<br />
+If the value of the &quot;disk_error_action&quot; option is not &quot;SYSLOG&quot;, &quot;SINGLE&quot;, or &quot;HALT&quot;, or the line is missing, or commented out, ask the system administrator to indicate how the system takes appropriate action when an audit process failure occurs. If there is no evidence of appropriate action, this is a finding.<br />
+<br />
+3. Verify the SA and ISSO (at a minimum) are notified when the audit storage volume is full.<br />
+<br />
+Check which action RHEL takes when the audit storage volume is full by executing the following command:<br />
+<br />
+for node in $(oc get node -oname); do oc debug $node -- chroot /host /bin/bash -c 'echo -n &quot;$HOSTNAME &quot;; grep max_log_file_action /etc/audit/auditd.conf' 2&gt;/dev/null; done<br />
+<br />
+If the value of the &quot;max_log_file_action&quot; option is set to &quot;ignore&quot;, &quot;rotate&quot;, or &quot;suspend&quot;, or the line is missing or commented out, ask the system administrator to indicate how the system takes appropriate action when an audit storage volume is full. If there is no evidence of appropriate action, this is a finding.</p><h2>Check Content Reference</h2><p>M</p><h2>Target Key</h2><p>5547</p></body></html>

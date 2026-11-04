@@ -1,0 +1,71 @@
+<!doctype html><html lang="en"><head><meta charset="utf-8"><title>STIGQter: STIG Check Details: SV-223652r958508_rule: IBM RACF emergency USERIDs must be properly defined.</title><link rel="icon" type="image/svg+xml" href="STIGQter.svg" /><script async src="https://www.googletagmanager.com/gtag/js?id=UA-31381839-2"></script><script src="include.js"></script><script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-4110907817782130" crossorigin="anonymous"></script></head><body><div><img src="STIGQter.svg" alt="STIGQter" style="height:1em;" /> <a href="https://www.stigqter.com/">STIGQter</a>: <a href="main.html">STIG Summary</a>: <a href="U_IBM_zOS_RACF_STIG_V9R9_Manual-xccdf.html">IBM z/OS RACF Security Technical Implementation Guide Version: 9 Release: 9 Benchmark Date: 01 Jul 2026</a>:</div> <h1>IBM RACF emergency USERIDs must be properly defined.</h1><h2>DISA Rule</h2><p>SV-223652r958508_rule</p><h2>Vulnerability Number</h2><p>V-223652</p><h2>Group Title</h2><p>SRG-OS-000123-GPOS-00064</p><h2>Rule Version</h2><p>RACF-ES-000040</p><h2>Severity</h2><p>CAT II</p><h2>CCI(s)</h2><ul><li>CCI-001682 - Automatically removes or disables emergency accounts after an organization-defined time period for each type of account.</li></ul><h2>Weight</h2><p>10</p><h2>Fix Recommendation</h2><p>Configure emergency USERIDs to have access granted only authorizes those resources required to support the specific functions of either DASD Recovery or System Administration. <br />
+<br />
+Ensure the following items are in effect regarding emergency userids:<br />
+<br />
+At a minimum an emergency userids will exists with the security administration attributes specified in accordance with the following requirements:<br />
+<br />
+- Userids exist to perform RACF security administration only. These userids are defined to RACF with the system-SPECIAL attribute. They must not have the OPERATIONS attribute. Emergency userids will have either SPECIAL or OPERATIONS but not both.<br />
+<br />
+- Userids can be defined to perform operating system functions. Such userids must be defined without any RACF security administration privileges. These userids are defined to RACF with the system-OPERATIONS attribute, FULL access to all DASD volumes resources as well as the FACILITY Class STGADMN profiles. They must not have the SPECIAL attribute.<br />
+<br />
+NOTE: A user who has the system-OPERATIONS attribute has FULL access authorization to all RACF-protected resources in the DASDVOL/GDASDVOL resource classes. However, if their userid or any associated group (i.e., default or connect) is in the access list of a resource profile, they will only have the access specified in the access list since access lists override OPERATIONS.<br />
+<br />
+- Userids exist to perform RACF security administration only. These userids are defined to RACF with the system-SPECIAL attribute. They must not have the OPERATIONS attribute. Emergency userids will have either SPECIAL or OPERATIONS but not both.<br />
+<br />
+- All emergency userids are defined to RACF and SYS1.UADS. See TSO Command Ref for info on adding users to UADS.<br />
+<br />
+- All emergency userids are to be implemented with logging to provide an audit trail of their activities. This is accomplished with the UAUDIT attribute via the command:<br />
+<br />
+ALU &lt;uid&gt; UAUDIT<br />
+<br />
+- All emergency userids will have distinct, different passwords in SYS1.UADS and in RACF, and the site is to establish procedures to ensure that the passwords differ. The password for any ID in SYS1.UADS is never to match the password for the same ID in RACF.<br />
+<br />
+- All emergency userids will have documented procedures - such as a COOP Plan - to provide a mechanism for the use of the IDs. Their release for use is to be logged, and the log is to be maintained by the ISSO. When an emergency userids is released for use, its password is to be reset by the ISSO within 12 hours.   <br />
+<br />
+If no emergency userids are in use on the system develop and document a procedure to manage emergencies access to the system.</p><h2>Check Contents</h2><p>Ask the system administrator for a list of all emergency userids available to the site along with the associated function of each userid.<br />
+If there are no emergency logonids defined ask the system administrator for an alternate documented procedure to handle emergencies. <br />
+<br />
+If there are no emergency logonids and no documented emergency procedure this is a finding.<br />
+<br />
+Execute an access list for each emergency userid.<br />
+<br />
+If emergency userids exist at a minimum an emergency logonid will exist with the security administration attributes specified in accordance with the following requirements. <br />
+<br />
+If the following guidance is not true, this is a finding.<br />
+<br />
+At least one userid exists to perform RACF security administration. These userids are defined to RACF with the system-SPECIAL attribute. They must not have the OPERATIONS attribute.<br />
+<br />
+If any userids exist to perform operating system functions, they are defined without any RACF security administration privileges. These userids are defined to RACF with the system-OPERATIONS attribute, and FULL access to all DASD volumes. They must not have the SPECIAL attribute.<br />
+<br />
+NOTE: A user who has the system-OPERATIONS attribute has FULL access authorization to all RACF-protected resources in the DASDVOL/GDASDVOL resource classes. However, if their userid or any associated group (i.e., default or connect) is in the access list of a resource profile, they will only have the access specified in the access list.<br />
+<br />
+All emergency userids are defined to RACF and SYS1.UADS.<br />
+<br />
+All emergency logonid/logonid(s) are to be implemented with logging to provide an audit trail of their activities. This is accomplished with the UAUDIT attribute.<br />
+<br />
+All emergency logonid/logonid(s) will have distinct, different passwords in SYS1.UADS and in RACF, and the site is to establish procedures to ensure that the passwords differ. The password for any ID in SYS1.UADS is never to match the password for the same ID in RACF.<br />
+<br />
+All emergency logonid/logonid(s) will have documented procedures to provide a mechanism for the use of the IDs. Their release for use is to be logged, and the log is to be maintained by the ISSO. When an emergency logonid is released for use, its password is to be reset by the ISSO within 12 hours.</p><h2>Vulnerability Number</h2><p>V-223652</p><h2>Documentable</h2><p>False</p><h2>Rule Version</h2><p>RACF-ES-000040</p><h2>Severity Override Guidance</h2><p>Ask the system administrator for a list of all emergency userids available to the site along with the associated function of each userid.<br />
+If there are no emergency logonids defined ask the system administrator for an alternate documented procedure to handle emergencies. <br />
+<br />
+If there are no emergency logonids and no documented emergency procedure this is a finding.<br />
+<br />
+Execute an access list for each emergency userid.<br />
+<br />
+If emergency userids exist at a minimum an emergency logonid will exist with the security administration attributes specified in accordance with the following requirements. <br />
+<br />
+If the following guidance is not true, this is a finding.<br />
+<br />
+At least one userid exists to perform RACF security administration. These userids are defined to RACF with the system-SPECIAL attribute. They must not have the OPERATIONS attribute.<br />
+<br />
+If any userids exist to perform operating system functions, they are defined without any RACF security administration privileges. These userids are defined to RACF with the system-OPERATIONS attribute, and FULL access to all DASD volumes. They must not have the SPECIAL attribute.<br />
+<br />
+NOTE: A user who has the system-OPERATIONS attribute has FULL access authorization to all RACF-protected resources in the DASDVOL/GDASDVOL resource classes. However, if their userid or any associated group (i.e., default or connect) is in the access list of a resource profile, they will only have the access specified in the access list.<br />
+<br />
+All emergency userids are defined to RACF and SYS1.UADS.<br />
+<br />
+All emergency logonid/logonid(s) are to be implemented with logging to provide an audit trail of their activities. This is accomplished with the UAUDIT attribute.<br />
+<br />
+All emergency logonid/logonid(s) will have distinct, different passwords in SYS1.UADS and in RACF, and the site is to establish procedures to ensure that the passwords differ. The password for any ID in SYS1.UADS is never to match the password for the same ID in RACF.<br />
+<br />
+All emergency logonid/logonid(s) will have documented procedures to provide a mechanism for the use of the IDs. Their release for use is to be logged, and the log is to be maintained by the ISSO. When an emergency logonid is released for use, its password is to be reset by the ISSO within 12 hours.</p><h2>Check Content Reference</h2><p>M</p><h2>Target Key</h2><p>4101</p></body></html>

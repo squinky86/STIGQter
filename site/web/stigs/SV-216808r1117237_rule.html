@@ -1,0 +1,72 @@
+<!doctype html><html lang="en"><head><meta charset="utf-8"><title>STIGQter: STIG Check Details: SV-216808r1117237_rule: The Cisco multicast router must be configured to bind a Protocol Independent Multicast (PIM) neighbor filter to interfaces that have PIM enabled.</title><link rel="icon" type="image/svg+xml" href="STIGQter.svg" /><script async src="https://www.googletagmanager.com/gtag/js?id=UA-31381839-2"></script><script src="include.js"></script><script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-4110907817782130" crossorigin="anonymous"></script></head><body><div><img src="STIGQter.svg" alt="STIGQter" style="height:1em;" /> <a href="https://www.stigqter.com/">STIGQter</a>: <a href="main.html">STIG Summary</a>: <a href="U_Cisco_IOS-XR_Router_RTR_STIG_V3R3_Manual-xccdf.html">Cisco IOS XR Router RTR Security Technical Implementation Guide Version: 3 Release: 3 Benchmark Date: 01 Oct 2025</a>:</div> <h1>The Cisco multicast router must be configured to bind a Protocol Independent Multicast (PIM) neighbor filter to interfaces that have PIM enabled.</h1><h2>DISA Rule</h2><p>SV-216808r1117237_rule</p><h2>Vulnerability Number</h2><p>V-216808</p><h2>Group Title</h2><p>SRG-NET-000019-RTR-000004</p><h2>Rule Version</h2><p>CISC-RT-000800</p><h2>Severity</h2><p>CAT II</p><h2>CCI(s)</h2><ul><li>CCI-001414 - Enforce approved authorizations for controlling the flow of information between connected systems based on organization-defined information flow control policies.</li></ul><h2>Weight</h2><p>10</p><h2>Fix Recommendation</h2><p>This requirement is not applicable for the DODIN Backbone.<br />
+<br />
+Configure neighbor ACLs to only accept PIM control plane traffic from documented PIM neighbors. Bind neighbor ACLs to all PIM enabled interfaces.<br />
+<br />
+Step 1: Configure ACL for PIM neighbors.<br />
+<br />
+RP/0/0/CPU0:R2(config)#ipv4 access-list PIM_NEIGHBOR_1<br />
+RP/0/0/CPU0:R2(config-ipv4-acl)#permit ipv4 host 10.1.1.2 any<br />
+RP/0/0/CPU0:R2(config-ipv4-acl)#exit<br />
+<br />
+Step 2: Apply the ACL to all interfaces enabled for PIM.<br />
+<br />
+RP/0/0/CPU0:R2(config)#router pim<br />
+RP/0/0/CPU0:R2(config-pim)#address-family ipv4<br />
+RP/0/0/CPU0:R2(config-pim-default-ipv4)#int g0/0/0/1<br />
+RP/0/0/CPU0:R2(config-pim-ipv4-if)#neighbor-filter PIM_NEIGHBOR_1<br />
+RP/0/0/CPU0:R2(config-pim-ipv4-if)#exit<br />
+RP/0/0/CPU0:R2(config-pim-default-ipv4)#int g0/0/0/2                  <br />
+RP/0/0/CPU0:R2(config-pim-ipv4-if)#neighbor-filter PIM_NEIGHBOR_2<br />
+RP/0/0/CPU0:R2(config-pim-ipv4-if)#end</p><h2>Check Contents</h2><p>This requirement is not applicable for the DODIN Backbone.<br />
+<br />
+Step 1: Verify all interfaces enabled for PIM have a neighbor ACL bound to the interface as shown in the example below.<br />
+<br />
+router pim<br />
+ address-family ipv4<br />
+  interface GigabitEthernet0/0/0/1<br />
+   enable<br />
+   neighbor-filter PIM_NEIGHBOR_1<br />
+  !<br />
+  interface GigabitEthernet0/0/0/2<br />
+   enable<br />
+   neighbor-filter PIM_NEIGHBOR_2<br />
+  !<br />
+ !<br />
+!<br />
+<br />
+Step 2: Review the configured ACL for filtering PIM neighbors as shown in the example below.<br />
+<br />
+ipv4 access-list PIM_NEIGHBOR_1<br />
+ 10 permit ipv4 host 10.1.1.2 any<br />
+!<br />
+ipv4 access-list PIM_NEIGHBOR_2<br />
+ 10 permit ipv4 host 10.1.2.8 any<br />
+!<br />
+<br />
+If PIM neighbor ACLs are not bound to all interfaces that have PIM enabled, this is a finding.</p><h2>Vulnerability Number</h2><p>V-216808</p><h2>Documentable</h2><p>False</p><h2>Rule Version</h2><p>CISC-RT-000800</p><h2>Severity Override Guidance</h2><p>This requirement is not applicable for the DODIN Backbone.<br />
+<br />
+Step 1: Verify all interfaces enabled for PIM have a neighbor ACL bound to the interface as shown in the example below.<br />
+<br />
+router pim<br />
+ address-family ipv4<br />
+  interface GigabitEthernet0/0/0/1<br />
+   enable<br />
+   neighbor-filter PIM_NEIGHBOR_1<br />
+  !<br />
+  interface GigabitEthernet0/0/0/2<br />
+   enable<br />
+   neighbor-filter PIM_NEIGHBOR_2<br />
+  !<br />
+ !<br />
+!<br />
+<br />
+Step 2: Review the configured ACL for filtering PIM neighbors as shown in the example below.<br />
+<br />
+ipv4 access-list PIM_NEIGHBOR_1<br />
+ 10 permit ipv4 host 10.1.1.2 any<br />
+!<br />
+ipv4 access-list PIM_NEIGHBOR_2<br />
+ 10 permit ipv4 host 10.1.2.8 any<br />
+!<br />
+<br />
+If PIM neighbor ACLs are not bound to all interfaces that have PIM enabled, this is a finding.</p><h2>Check Content Reference</h2><p>M</p><h2>Target Key</h2><p>4029</p></body></html>

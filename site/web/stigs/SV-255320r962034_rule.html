@@ -1,0 +1,23 @@
+<!doctype html><html lang="en"><head><meta charset="utf-8"><title>STIGQter: STIG Check Details: SV-255320r962034_rule: Azure SQL Database must use NSA-approved cryptography to protect classified information in accordance with the data owners requirements.</title><link rel="icon" type="image/svg+xml" href="STIGQter.svg" /><script async src="https://www.googletagmanager.com/gtag/js?id=UA-31381839-2"></script><script src="include.js"></script><script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-4110907817782130" crossorigin="anonymous"></script></head><body><div><img src="STIGQter.svg" alt="STIGQter" style="height:1em;" /> <a href="https://www.stigqter.com/">STIGQter</a>: <a href="main.html">STIG Summary</a>: <a href="U_MS_Azure_SQL_DB_STIG_V2R3_Manual-xccdf.html">Microsoft Azure SQL Database Security Technical Implementation Guide Version: 2 Release: 3 Benchmark Date: 02 Jul 2025</a>:</div> <h1>Azure SQL Database must use NSA-approved cryptography to protect classified information in accordance with the data owners requirements.</h1><h2>DISA Rule</h2><p>SV-255320r962034_rule</p><h2>Vulnerability Number</h2><p>V-255320</p><h2>Group Title</h2><p>SRG-APP-000416-DB-000380</p><h2>Rule Version</h2><p>ASQL-00-003200</p><h2>Severity</h2><p>CAT I</p><h2>CCI(s)</h2><ul><li>CCI-002450 - Implement organization-defined types of cryptography for each specified cryptography use.</li></ul><h2>Weight</h2><p>10</p><h2>Fix Recommendation</h2><p>Use the ALTER DATABASE command to enable encryption on the database.<br />
+<br />
+ALTER DATABASE [Database Name Between Brackets] SET ENCRYPTION ON</p><h2>Check Contents</h2><p>Use the TSQL query below to determine database encryption state:<br />
+<br />
+SELECT DB_NAME(database_id) AS DatabaseName, <br />
+encryption_state_desc AS EncryptionState,<br />
+key_algorithm+CAST(key_length AS nvarchar(128)) AS EncryptionAlgorithm,<br />
+encryptor_type<br />
+FROM sys.dm_database_encryption_keys<br />
+<br />
+Validate that for each database the [EncryptionState] is &quot;ENCRYPTED&quot; and the [EncryptionAlgorithm] returns one of the following values: [AES128], [AES192], or [AES256]. <br />
+<br />
+If any other value is returned for either the [EncryptionState] or [EncryptionAlgorithm], this is a finding.</p><h2>Vulnerability Number</h2><p>V-255320</p><h2>Documentable</h2><p>False</p><h2>Rule Version</h2><p>ASQL-00-003200</p><h2>Severity Override Guidance</h2><p>Use the TSQL query below to determine database encryption state:<br />
+<br />
+SELECT DB_NAME(database_id) AS DatabaseName, <br />
+encryption_state_desc AS EncryptionState,<br />
+key_algorithm+CAST(key_length AS nvarchar(128)) AS EncryptionAlgorithm,<br />
+encryptor_type<br />
+FROM sys.dm_database_encryption_keys<br />
+<br />
+Validate that for each database the [EncryptionState] is &quot;ENCRYPTED&quot; and the [EncryptionAlgorithm] returns one of the following values: [AES128], [AES192], or [AES256]. <br />
+<br />
+If any other value is returned for either the [EncryptionState] or [EncryptionAlgorithm], this is a finding.</p><h2>Check Content Reference</h2><p>M</p><h2>Target Key</h2><p>5500</p></body></html>

@@ -1,0 +1,57 @@
+<!doctype html><html lang="en"><head><meta charset="utf-8"><title>STIGQter: STIG Check Details: SV-237774r1135080_rule: The Cisco perimeter switch must be configured to drop IPv6 packets containing an extension header with the Endpoint Identification option.</title><link rel="icon" type="image/svg+xml" href="STIGQter.svg" /><script async src="https://www.googletagmanager.com/gtag/js?id=UA-31381839-2"></script><script src="include.js"></script><script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-4110907817782130" crossorigin="anonymous"></script></head><body><div><img src="STIGQter.svg" alt="STIGQter" style="height:1em;" /> <a href="https://www.stigqter.com/">STIGQter</a>: <a href="main.html">STIG Summary</a>: <a href="U_Cisco_IOS-XE_Switch_RTR_STIG_V3R4_Manual-xccdf.html">Cisco IOS XE Switch RTR Security Technical Implementation Guide Version: 3 Release: 4 Benchmark Date: 01 Apr 2026</a>:</div> <h1>The Cisco perimeter switch must be configured to drop IPv6 packets containing an extension header with the Endpoint Identification option.</h1><h2>DISA Rule</h2><p>SV-237774r1135080_rule</p><h2>Vulnerability Number</h2><p>V-237774</p><h2>Group Title</h2><p>SRG-NET-000364-RTR-000204</p><h2>Rule Version</h2><p>CISC-RT-000396</p><h2>Severity</h2><p>CAT II</p><h2>CCI(s)</h2><ul><li>CCI-002403 - Only allow incoming communications from organization-defined authorized sources routed to organization-defined authorized destinations.</li></ul><h2>Weight</h2><p>10</p><h2>Fix Recommendation</h2><p>Configure the switch to drop IPv6 packets containing an option type value of 0x8A (Endpoint Identification) regardless of whether it appears in a Hop-by-Hop or Destination Option header as shown in the example below.<br />
+<br />
+SW1(config)#ipv6 access-list FILTER_IPV6<br />
+SW1(config-ipv6-acl)#deny 60 any any dest-option log<br />
+SW1(config-ipv6-acl)#permit …<br />
+…<br />
+…<br />
+…<br />
+SW1(config-ipv6-acl)#deny ipv6 any any log<br />
+SW1(config-ipv6-acl)#exit<br />
+SW1(config)#int g1/0<br />
+SW1(config-if)#ipv6 traffic-filter FILTER_IPV6<br />
+SW1(config-if)#end</p><h2>Check Contents</h2><p>This requirement is not applicable for the DODIN Backbone. <br />
+<br />
+Review the switch configuration to determine if it is compliant with this requirement.  <br />
+<br />
+Step 1: Verify that an inbound IPv6 ACL has been configured on the external interface.<br />
+<br />
+interface gigabitethernet1/0<br />
+ ipv6 address 2001::1:0:22/64<br />
+ ipv6 traffic-filter FILTER_IPV6 in<br />
+<br />
+Step 2: Verify that the ACL drops IPv6 packets containing a Destination Option header as shown in the example below.<br />
+<br />
+ipv6 access-list FILTER_IPV6<br />
+ deny 60 any any dest-option log<br />
+ permit ipv6 …<br />
+ …<br />
+ …<br />
+ …<br />
+ deny ipv6 any any log<br />
+<br />
+Note: Cisco has deprecated the dest-option-type command used to filter by option type within the Destination Option header. Therefore, all packets with the Destination Option header must be dropped.<br />
+<br />
+If the switch is not configured to drop IPv6 packets containing a Destination Option header, this is a finding.</p><h2>Vulnerability Number</h2><p>V-237774</p><h2>Documentable</h2><p>False</p><h2>Rule Version</h2><p>CISC-RT-000396</p><h2>Severity Override Guidance</h2><p>This requirement is not applicable for the DODIN Backbone. <br />
+<br />
+Review the switch configuration to determine if it is compliant with this requirement.  <br />
+<br />
+Step 1: Verify that an inbound IPv6 ACL has been configured on the external interface.<br />
+<br />
+interface gigabitethernet1/0<br />
+ ipv6 address 2001::1:0:22/64<br />
+ ipv6 traffic-filter FILTER_IPV6 in<br />
+<br />
+Step 2: Verify that the ACL drops IPv6 packets containing a Destination Option header as shown in the example below.<br />
+<br />
+ipv6 access-list FILTER_IPV6<br />
+ deny 60 any any dest-option log<br />
+ permit ipv6 …<br />
+ …<br />
+ …<br />
+ …<br />
+ deny ipv6 any any log<br />
+<br />
+Note: Cisco has deprecated the dest-option-type command used to filter by option type within the Destination Option header. Therefore, all packets with the Destination Option header must be dropped.<br />
+<br />
+If the switch is not configured to drop IPv6 packets containing a Destination Option header, this is a finding.</p><h2>Check Content Reference</h2><p>M</p><h2>Target Key</h2><p>4074</p></body></html>

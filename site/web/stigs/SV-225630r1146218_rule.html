@@ -1,0 +1,73 @@
+<!doctype html><html lang="en"><head><meta charset="utf-8"><title>STIGQter: STIG Check Details: SV-225630r1146218_rule: WebSphere MQ switch profiles must be properly defined to the appropriate ADMIN class.</title><link rel="icon" type="image/svg+xml" href="STIGQter.svg" /><script async src="https://www.googletagmanager.com/gtag/js?id=UA-31381839-2"></script><script src="include.js"></script><script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-4110907817782130" crossorigin="anonymous"></script></head><body><div><img src="STIGQter.svg" alt="STIGQter" style="height:1em;" /> <a href="https://www.stigqter.com/">STIGQter</a>: <a href="main.html">STIG Summary</a>: <a href="U_zOS_WebsphereMQ_for_TSS_STIG_V7R3_Manual-xccdf.html">zOS WebSphere MQ for TSS Security Technical Implementation Guide Version: 7 Release: 3 Benchmark Date: 01 Jul 2026</a>:</div> <h1>WebSphere MQ switch profiles must be properly defined to the appropriate ADMIN class.</h1><h2>DISA Rule</h2><p>SV-225630r1146218_rule</p><h2>Vulnerability Number</h2><p>V-225630</p><h2>Group Title</h2><p>SRG-OS-000080</p><h2>Rule Version</h2><p>ZWMQ0051</p><h2>Severity</h2><p>CAT I</p><h2>CCI(s)</h2><ul><li>CCI-000213 - Enforce approved authorizations for logical access to information and system resources in accordance with applicable access control policies.</li></ul><h2>Weight</h2><p>10</p><h2>Fix Recommendation</h2><p>Switch profiles are special WebSphere MQ profiles that are used to turn on/off security checking for a type of resource. Due to the security exposure this creates, no profiles with the first two qualifiers of ssid.NO will be defined to the MQADMIN or MXADMIN class, with one exception. Due to the fact that (1) all sensitive WebSphere MQ commands are restricted to queue managers, channel initiators, and designated systems personnel, and (2) no command resource checking is performed on DISPLAY commands, at the discretion of the ISSO a ssid.NO.CMD.RESC.CHECKS switch profile may be defined to the MQADMIN or MXADMIN class. <br />
+<br />
+Identify if any switch profile permissions exist using the sample TSS command: <br />
+ <br />
+TSS WHOHAS MQADMIN(ssid.NO.)<br />
+<br />
+Use the &quot;TSS REVOKE(acid) MQADMIN(&lt;SwitchProfileName&gt;)&quot; to remove the profile.<br />
+<br />
+An additional refresh to an active WebSphere MQ queue manager may be required. A sample is shown below using the value QMD1 as the queue manager name.<br />
+<br />
+From the Console:<br />
+<br />
+&gt;QMD1 REFRESH SECURITY(*)</p><h2>Check Contents</h2><p>Refer to the following report produced by the z/OS Data Collection:<br />
+<br />
+- MQSRPT(ssid).<br />
+<br />
+Automated Analysis requires Additional Analysis.<br />
+Refer to the following report produced by the z/OS Data Collection:<br />
+<br />
+- PDI(ZWMQ0051).<br />
+<br />
+Note: ssid is the queue manager name (a.k.a., subsystem identifier).<br />
+<br />
+Review the Security switches identified in response to the DISPLAY SECURITY command in each ssid report(s). If all of the following switches specify ON, this is not a finding.<br />
+<br />
+SUBSYSTEM<br />
+CONNECTION<br />
+COMMAND<br />
+CONTEXT<br />
+ALTERNATE USER<br />
+PROCESS<br />
+NAMELIST<br />
+QUEUE<br />
+TOPIC<br />
+COMMAND RESOURCES<br />
+<br />
+If SUBSYSTEM specifies OFF, this is a finding with a severity of Category I.<br />
+<br />
+If any of the other above switches specify OFF (other than the exception mentioned below), this is a finding and downgrade the severity to a Category II.<br />
+<br />
+If COMMAND RESOURCE Security switch specifies OFF, this is not a finding.<br />
+<br />
+Note: At the discretion of the ISSO, COMMAND RESOURCE Security switch may specify OFF by defining ssid.NO.CMD.RESC.CHECKS in the MQADMIN (or MXADMIN if SCYCASE is set to MIXED) resource class.</p><h2>Vulnerability Number</h2><p>V-225630</p><h2>Documentable</h2><p>False</p><h2>Rule Version</h2><p>ZWMQ0051</p><h2>Severity Override Guidance</h2><p>Refer to the following report produced by the z/OS Data Collection:<br />
+<br />
+- MQSRPT(ssid).<br />
+<br />
+Automated Analysis requires Additional Analysis.<br />
+Refer to the following report produced by the z/OS Data Collection:<br />
+<br />
+- PDI(ZWMQ0051).<br />
+<br />
+Note: ssid is the queue manager name (a.k.a., subsystem identifier).<br />
+<br />
+Review the Security switches identified in response to the DISPLAY SECURITY command in each ssid report(s). If all of the following switches specify ON, this is not a finding.<br />
+<br />
+SUBSYSTEM<br />
+CONNECTION<br />
+COMMAND<br />
+CONTEXT<br />
+ALTERNATE USER<br />
+PROCESS<br />
+NAMELIST<br />
+QUEUE<br />
+TOPIC<br />
+COMMAND RESOURCES<br />
+<br />
+If SUBSYSTEM specifies OFF, this is a finding with a severity of Category I.<br />
+<br />
+If any of the other above switches specify OFF (other than the exception mentioned below), this is a finding and downgrade the severity to a Category II.<br />
+<br />
+If COMMAND RESOURCE Security switch specifies OFF, this is not a finding.<br />
+<br />
+Note: At the discretion of the ISSO, COMMAND RESOURCE Security switch may specify OFF by defining ssid.NO.CMD.RESC.CHECKS in the MQADMIN (or MXADMIN if SCYCASE is set to MIXED) resource class.</p><h2>Check Content Reference</h2><p>M</p><h2>Target Key</h2><p>4211</p></body></html>

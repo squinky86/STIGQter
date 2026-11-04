@@ -1,0 +1,54 @@
+<!doctype html><html lang="en"><head><meta charset="utf-8"><title>STIGQter: STIG Check Details: SV-253891r960897_rule: The Juniper EX switch must be configured to produce audit records containing information to establish where the events occurred.</title><link rel="icon" type="image/svg+xml" href="STIGQter.svg" /><script async src="https://www.googletagmanager.com/gtag/js?id=UA-31381839-2"></script><script src="include.js"></script><script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-4110907817782130" crossorigin="anonymous"></script></head><body><div><img src="STIGQter.svg" alt="STIGQter" style="height:1em;" /> <a href="https://www.stigqter.com/">STIGQter</a>: <a href="main.html">STIG Summary</a>: <a href="U_Juniper_EX_Switches_NDM_STIG_V2R5_Manual-xccdf.html">Juniper EX Series Switches Network Device Management Security Technical Implementation Guide Version: 2 Release: 5 Benchmark Date: 01 Jul 2026</a>:</div> <h1>The Juniper EX switch must be configured to produce audit records containing information to establish where the events occurred.</h1><h2>DISA Rule</h2><p>SV-253891r960897_rule</p><h2>Vulnerability Number</h2><p>V-253891</p><h2>Group Title</h2><p>SRG-APP-000097-NDM-000227</p><h2>Rule Version</h2><p>JUEX-NM-000140</p><h2>Severity</h2><p>CAT II</p><h2>CCI(s)</h2><ul><li>CCI-000132 - Ensure that audit records containing information that establishes where the event occurred.</li></ul><h2>Weight</h2><p>10</p><h2>Fix Recommendation</h2><p>Configure the network device to produce audit records containing information to establish where the events occurred.<br />
+<br />
+set system syslog host &lt;syslog IPv4 or IPv6 address&gt; any info<br />
+set system syslog host &lt;syslog IPv4 or IPv6 address&gt; structured-data &lt;&lt;&lt; Includes the 'explicit-priority' and 'time-format year millisecond' directives<br />
+set system syslog file &lt;file name&gt; any info<br />
+set system syslog file &lt;file name&gt; structured-data &lt;&lt;&lt; Includes the 'explicit-priority' and 'time-format year millisecond' directives<br />
+-or-<br />
+set system syslog host &lt;syslog IPv4 or IPv6 address&gt; any info<br />
+set system syslog host &lt;syslog IPv4 or IPv6 address&gt; explicit-priority &lt;&lt;&lt; Only if log level and severity are required<br />
+set system syslog file &lt;file name&gt; any info<br />
+set system syslog file &lt;file name&gt; explicit-priority &lt;&lt;&lt; Only if log level and severity are required<br />
+set system syslog time-format year</p><h2>Check Contents</h2><p>Determine if the network device is configured to produce audit records containing information to establish where the events occurred. <br />
+<br />
+Junos standard event log messages are configurable for time format, inclusion of logging facility and severity levels, and format. Setting &quot;structured-data&quot; automatically includes &quot;explicit-priority&quot; and &quot;time-format year millisecond&quot;. Verify logging is enabled.<br />
+<br />
+[edit system]<br />
+syslog {<br />
+    host &lt;syslog IPv4 or IPv6 address&gt; {<br />
+        any info;<br />
+        structured-data; &lt;&lt;&lt; Includes 'explicit-priority' and 'time-format'<br />
+    }<br />
+    host &lt;syslog IPv4 or IPv6 address&gt; {<br />
+        any info;<br />
+        explicit-priority; &lt;&lt;&lt; Includes logging facility and severity in standard format<br />
+    }<br />
+    file &lt;file name&gt; {<br />
+        any info; &lt;&lt;&lt; Uses only standard format<br />
+    }<br />
+    time-format year; &lt;&lt;&lt; Applied only to standard format<br />
+}<br />
+Note: In the example, events sent to the first external syslog server include the year and time is expressed in milliseconds. The second syslog server and the file both include the year, but time is expressed in seconds.<br />
+<br />
+If the network device does not produce audit records containing information to establish where the events occurred, this is a finding.</p><h2>Vulnerability Number</h2><p>V-253891</p><h2>Documentable</h2><p>False</p><h2>Rule Version</h2><p>JUEX-NM-000140</p><h2>Severity Override Guidance</h2><p>Determine if the network device is configured to produce audit records containing information to establish where the events occurred. <br />
+<br />
+Junos standard event log messages are configurable for time format, inclusion of logging facility and severity levels, and format. Setting &quot;structured-data&quot; automatically includes &quot;explicit-priority&quot; and &quot;time-format year millisecond&quot;. Verify logging is enabled.<br />
+<br />
+[edit system]<br />
+syslog {<br />
+    host &lt;syslog IPv4 or IPv6 address&gt; {<br />
+        any info;<br />
+        structured-data; &lt;&lt;&lt; Includes 'explicit-priority' and 'time-format'<br />
+    }<br />
+    host &lt;syslog IPv4 or IPv6 address&gt; {<br />
+        any info;<br />
+        explicit-priority; &lt;&lt;&lt; Includes logging facility and severity in standard format<br />
+    }<br />
+    file &lt;file name&gt; {<br />
+        any info; &lt;&lt;&lt; Uses only standard format<br />
+    }<br />
+    time-format year; &lt;&lt;&lt; Applied only to standard format<br />
+}<br />
+Note: In the example, events sent to the first external syslog server include the year and time is expressed in milliseconds. The second syslog server and the file both include the year, but time is expressed in seconds.<br />
+<br />
+If the network device does not produce audit records containing information to establish where the events occurred, this is a finding.</p><h2>Check Content Reference</h2><p>M</p><h2>Target Key</h2><p>5477</p></body></html>

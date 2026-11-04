@@ -1,0 +1,37 @@
+<!doctype html><html lang="en"><head><meta charset="utf-8"><title>STIGQter: STIG Check Details: SV-80591r1_rule: The HP FlexFabric Switch must protect an enclave connected to an Alternate Gateway by using an inbound filter that only permits packets with destination addresses within the sites address space.</title><link rel="icon" type="image/svg+xml" href="STIGQter.svg" /><script async src="https://www.googletagmanager.com/gtag/js?id=UA-31381839-2"></script><script src="include.js"></script><script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-4110907817782130" crossorigin="anonymous"></script></head><body><div><img src="STIGQter.svg" alt="STIGQter" style="height:1em;" /> <a href="https://www.stigqter.com/">STIGQter</a>: <a href="main.html">STIG Summary</a>: <a href="U_HP_FlexFabric_Switch_RTR_STIG_V1R2_Manual-xccdf.html">HP FlexFabric Switch RTR Security Technical Implementation Guide Version: 1 Release: 2 Benchmark Date: 24 Jul 2020</a>:</div> <h1>The HP FlexFabric Switch must protect an enclave connected to an Alternate Gateway by using an inbound filter that only permits packets with destination addresses within the sites address space.</h1><h2>DISA Rule</h2><p>SV-80591r1_rule</p><h2>Vulnerability Number</h2><p>V-66101</p><h2>Group Title</h2><p>SRG-NET-000019-RTR-000009</p><h2>Rule Version</h2><p>HFFS-RT-000003</p><h2>Severity</h2><p>CAT I</p><h2>CCI(s)</h2><ul><li>CCI-001414 - Enforce approved authorizations for controlling the flow of information between connected systems based on organization-defined information flow control policies.</li></ul><h2>Weight</h2><p>10</p><h2>Fix Recommendation</h2><p>Configure the ingress filter of the perimeter HP FlexFabric Switch connected to an Alternate Gateway to only permit packets with destination addresses of the site's NIPRNet address space or a destination address belonging to the address block assigned by the Alternate Gateway network service provider.<br />
+<br />
+[HP] acl advanced 3010<br />
+[HP-acl-ipv4-adv-3010] rule 1 permit ip destination 192.168.1.0 0.0.0.255<br />
+[HP-acl-ipv4-adv-3010] rule 2 permit ip destination 192.168.2.0 0.0.0.255<br />
+[HP-acl-ipv4-adv-3010] rule 3 permit ip destination 192.168.3.0 0.0.0.255<br />
+[HP-acl-ipv4-adv-3010] rule 4 permit ip destination 192.168.4.0 0.0.0.255<br />
+[HP-acl-ipv4-adv-3010] rule 5 deny    ip destination any<br />
+<br />
+[HP] interface gig0/1<br />
+[HP-GigabitEthernet0/1] packet-filter 3010 inbound</p><h2>Check Contents</h2><p>Review the configuration of each HP FlexFabric Switch interface connecting to an Alternate Gateway.<br />
+<br />
+Verify that the ACL configured to block unauthorized networks are configured on the interface.<br />
+<br />
+Verify each permit statement of the ingress filter only permits packets with destination addresses of the site's NIPRNet address space or a destination address belonging to the address block assigned by the Alternate Gateway network service provider. <br />
+<br />
+If the ACL is not configured to only permit packets with destination addresses within the sites address space, this is a finding.<br />
+<br />
+[HP]display interface gig0/1<br />
+<br />
+interface GigabitEthernet0/1<br />
+ port link-mode route<br />
+ ip address 192.168.10.1 255.255.255.0<br />
+ packet-filter 3010 inbound</p><h2>Vulnerability Number</h2><p>V-66101</p><h2>Documentable</h2><p>False</p><h2>Rule Version</h2><p>HFFS-RT-000003</p><h2>Severity Override Guidance</h2><p>Review the configuration of each HP FlexFabric Switch interface connecting to an Alternate Gateway.<br />
+<br />
+Verify that the ACL configured to block unauthorized networks are configured on the interface.<br />
+<br />
+Verify each permit statement of the ingress filter only permits packets with destination addresses of the site's NIPRNet address space or a destination address belonging to the address block assigned by the Alternate Gateway network service provider. <br />
+<br />
+If the ACL is not configured to only permit packets with destination addresses within the sites address space, this is a finding.<br />
+<br />
+[HP]display interface gig0/1<br />
+<br />
+interface GigabitEthernet0/1<br />
+ port link-mode route<br />
+ ip address 192.168.10.1 255.255.255.0<br />
+ packet-filter 3010 inbound</p><h2>Check Content Reference</h2><p>M</p><h2>Target Key</h2><p>2979</p></body></html>

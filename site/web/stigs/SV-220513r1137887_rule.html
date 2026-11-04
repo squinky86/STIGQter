@@ -1,0 +1,49 @@
+<!doctype html><html lang="en"><head><meta charset="utf-8"><title>STIGQter: STIG Check Details: SV-220513r1137887_rule: The Cisco switch must be configured to use at least two authentication servers for the purpose of authenticating users prior to granting administrative access.</title><link rel="icon" type="image/svg+xml" href="STIGQter.svg" /><script async src="https://www.googletagmanager.com/gtag/js?id=UA-31381839-2"></script><script src="include.js"></script><script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-4110907817782130" crossorigin="anonymous"></script></head><body><div><img src="STIGQter.svg" alt="STIGQter" style="height:1em;" /> <a href="https://www.stigqter.com/">STIGQter</a>: <a href="main.html">STIG Summary</a>: <a href="U_Cisco_NX-OS_Switch_NDM_STIG_V3R6_Manual-xccdf.html">Cisco NX OS Switch NDM Security Technical Implementation Guide Version: 3 Release: 6 Benchmark Date: 05 Jan 2026</a>:</div> <h1>The Cisco switch must be configured to use at least two authentication servers for the purpose of authenticating users prior to granting administrative access.</h1><h2>DISA Rule</h2><p>SV-220513r1137887_rule</p><h2>Vulnerability Number</h2><p>V-220513</p><h2>Group Title</h2><p>SRG-APP-000516-NDM-000336</p><h2>Rule Version</h2><p>CISC-ND-001370</p><h2>Severity</h2><p>CAT I</p><h2>CCI(s)</h2><ul><li>CCI-000370 - Manage configuration settings for organization-defined system components using organization-defined automated mechanisms.</li></ul><h2>Weight</h2><p>10</p><h2>Fix Recommendation</h2><p>Configure the Cisco switch to use at least two authentication servers as shown in the following example:<br />
+<br />
+Step 1: Define the authentication servers. <br />
+<br />
+SW1(config)# radius-server host 10.1.48.10 key xxxxxx<br />
+SW1(config)# radius-server host 10.1.48.11 key xxxxxx<br />
+<br />
+Step 2: Configure the AAA group.<br />
+<br />
+SW1(config)# aaa group server radius RADIUS_SERVERS<br />
+SW1(config-radius)# server 10.1.48.10<br />
+SW1(config-radius)# server 10.1.48.11<br />
+<br />
+Step 3: Use the AAA servers for login authentication for both in-band and console access methods.<br />
+<br />
+SW1(config)# aaa authentication login default group RADIUS_SERVERS <br />
+SW1(config)# aaa authentication login console group RADIUS_SERVERS</p><h2>Check Contents</h2><p>Review the Cisco switch configuration to verify that the device is configured to use at least two authentication servers as primary source for authentication.<br />
+<br />
+Step 1: Verify that an AAA server group is configured for login authentication for both in-band and console access methods.<br />
+<br />
+aaa authentication login default group RADIUS_SERVERS <br />
+aaa authentication login console group RADIUS_SERVERS<br />
+<br />
+Step 2: Verify that at least two AAA servers have been defined for the server group as shown in the example below:<br />
+<br />
+radius-server host 10.1.48.10 key 7 &quot;xxxxxx&quot; <br />
+radius-server host 10.1.48.11 key 7 &quot;xxxxxx&quot; <br />
+authentication accounting <br />
+aaa group server radius RADIUS_SERVERS <br />
+ server 10.1.48.10<br />
+ server 10.1.48.11<br />
+<br />
+If the Cisco switch is not configured to use at least two authentication servers for the purpose of authenticating users prior to granting administrative access, this is a finding.</p><h2>Vulnerability Number</h2><p>V-220513</p><h2>Documentable</h2><p>False</p><h2>Rule Version</h2><p>CISC-ND-001370</p><h2>Severity Override Guidance</h2><p>Review the Cisco switch configuration to verify that the device is configured to use at least two authentication servers as primary source for authentication.<br />
+<br />
+Step 1: Verify that an AAA server group is configured for login authentication for both in-band and console access methods.<br />
+<br />
+aaa authentication login default group RADIUS_SERVERS <br />
+aaa authentication login console group RADIUS_SERVERS<br />
+<br />
+Step 2: Verify that at least two AAA servers have been defined for the server group as shown in the example below:<br />
+<br />
+radius-server host 10.1.48.10 key 7 &quot;xxxxxx&quot; <br />
+radius-server host 10.1.48.11 key 7 &quot;xxxxxx&quot; <br />
+authentication accounting <br />
+aaa group server radius RADIUS_SERVERS <br />
+ server 10.1.48.10<br />
+ server 10.1.48.11<br />
+<br />
+If the Cisco switch is not configured to use at least two authentication servers for the purpose of authenticating users prior to granting administrative access, this is a finding.</p><h2>Check Content Reference</h2><p>M</p><h2>Target Key</h2><p>4066</p></body></html>

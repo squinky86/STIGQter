@@ -1,0 +1,78 @@
+<!doctype html><html lang="en"><head><meta charset="utf-8"><title>STIGQter: STIG Check Details: SV-278139r1182083_rule: Windows Server 2025 Active Directory SYSVOL directory must have the proper access control permissions.</title><link rel="icon" type="image/svg+xml" href="STIGQter.svg" /><script async src="https://www.googletagmanager.com/gtag/js?id=UA-31381839-2"></script><script src="include.js"></script><script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-4110907817782130" crossorigin="anonymous"></script></head><body><div><img src="STIGQter.svg" alt="STIGQter" style="height:1em;" /> <a href="https://www.stigqter.com/">STIGQter</a>: <a href="main.html">STIG Summary</a>: <a href="U_MS_Windows_Server_2025_STIG_V1R2_Manual-xccdf.html">Microsoft Windows Server 2025 Security Technical Implementation Guide Version: 1 Release: 2 Benchmark Date: 01 Jul 2026</a>:</div> <h1>Windows Server 2025 Active Directory SYSVOL directory must have the proper access control permissions.</h1><h2>DISA Rule</h2><p>SV-278139r1182083_rule</p><h2>Vulnerability Number</h2><p>V-278139</p><h2>Group Title</h2><p>SRG-OS-000324-GPOS-00125</p><h2>Rule Version</h2><p>WN25-DC-000080</p><h2>Severity</h2><p>CAT I</p><h2>CCI(s)</h2><ul><li>CCI-002235 - Prevent non-privileged users from executing privileged functions.</li></ul><h2>Weight</h2><p>10</p><h2>Fix Recommendation</h2><p>Maintain the permissions on the SYSVOL directory. Do not allow greater than &quot;Read &amp; execute&quot; permissions for standard user accounts or groups. The defaults below meet this requirement:<br />
+<br />
+C:\Windows\SYSVOL<br />
+Type - &quot;Allow&quot; for all<br />
+Inherited from - &quot;None&quot; for all<br />
+<br />
+Principal - Access - Applies to<br />
+<br />
+Authenticated Users - Read &amp; execute - This folder, subfolder, and files<br />
+Server Operators - Read &amp; execute- This folder, subfolder, and files<br />
+Administrators - Special - This folder only (Special = Basic Permissions: all selected except Full control)<br />
+CREATOR OWNER - Full control - Subfolders and files only<br />
+Administrators - Full control - Subfolders and files only<br />
+SYSTEM - Full control - This folder, subfolders, and files</p><h2>Check Contents</h2><p>This applies to domain controllers. It is not applicable for other systems.<br />
+<br />
+Open a command prompt.<br />
+<br />
+Run &quot;net share&quot;.<br />
+<br />
+Make note of the directory location of the SYSVOL share.<br />
+<br />
+By default, this will be \Windows\SYSVOL\sysvol. For this requirement, permissions will be verified at the first SYSVOL directory level.<br />
+<br />
+If any standard user accounts or groups have greater than &quot;Read &amp; execute&quot; permissions, this is a finding. <br />
+<br />
+The default permissions noted below meet this requirement:<br />
+<br />
+Open command prompt.<br />
+<br />
+Run &quot;icacls c:\Windows\SYSVOL&quot;.<br />
+<br />
+The following results must be displayed:<br />
+<br />
+NT AUTHORITY\Authenticated Users:(RX)<br />
+NT AUTHORITY\Authenticated Users:(OI)(CI)(IO)(GR,GE)<br />
+BUILTIN\Server Operators:(RX)<br />
+BUILTIN\Server Operators:(OI)(CI)(IO)(GR,GE)<br />
+BUILTIN\Administrators:(M,WDAC,WO)<br />
+BUILTIN\Administrators:(OI)(CI)(IO)(F)<br />
+NT AUTHORITY\SYSTEM:(F)<br />
+NT AUTHORITY\SYSTEM:(OI)(CI)(IO)(F)<br />
+CREATOR OWNER:(OI)(CI)(IO)(F)<br />
+<br />
+(RX) - Read &amp; execute <br />
+<br />
+Run &quot;icacls /help&quot; to view definitions of other permission codes.</p><h2>Vulnerability Number</h2><p>V-278139</p><h2>Documentable</h2><p>False</p><h2>Rule Version</h2><p>WN25-DC-000080</p><h2>Severity Override Guidance</h2><p>This applies to domain controllers. It is not applicable for other systems.<br />
+<br />
+Open a command prompt.<br />
+<br />
+Run &quot;net share&quot;.<br />
+<br />
+Make note of the directory location of the SYSVOL share.<br />
+<br />
+By default, this will be \Windows\SYSVOL\sysvol. For this requirement, permissions will be verified at the first SYSVOL directory level.<br />
+<br />
+If any standard user accounts or groups have greater than &quot;Read &amp; execute&quot; permissions, this is a finding. <br />
+<br />
+The default permissions noted below meet this requirement:<br />
+<br />
+Open command prompt.<br />
+<br />
+Run &quot;icacls c:\Windows\SYSVOL&quot;.<br />
+<br />
+The following results must be displayed:<br />
+<br />
+NT AUTHORITY\Authenticated Users:(RX)<br />
+NT AUTHORITY\Authenticated Users:(OI)(CI)(IO)(GR,GE)<br />
+BUILTIN\Server Operators:(RX)<br />
+BUILTIN\Server Operators:(OI)(CI)(IO)(GR,GE)<br />
+BUILTIN\Administrators:(M,WDAC,WO)<br />
+BUILTIN\Administrators:(OI)(CI)(IO)(F)<br />
+NT AUTHORITY\SYSTEM:(F)<br />
+NT AUTHORITY\SYSTEM:(OI)(CI)(IO)(F)<br />
+CREATOR OWNER:(OI)(CI)(IO)(F)<br />
+<br />
+(RX) - Read &amp; execute <br />
+<br />
+Run &quot;icacls /help&quot; to view definitions of other permission codes.</p><h2>Check Content Reference</h2><p>M</p><h2>Target Key</h2><p>5719</p></body></html>

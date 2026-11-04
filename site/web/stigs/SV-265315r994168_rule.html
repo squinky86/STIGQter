@@ -1,0 +1,156 @@
+<!doctype html><html lang="en"><head><meta charset="utf-8"><title>STIGQter: STIG Check Details: SV-265315r994168_rule: The NSX Manager must only enable TLS 1.2 or greater.</title><link rel="icon" type="image/svg+xml" href="STIGQter.svg" /><script async src="https://www.googletagmanager.com/gtag/js?id=UA-31381839-2"></script><script src="include.js"></script><script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-4110907817782130" crossorigin="anonymous"></script></head><body><div><img src="STIGQter.svg" alt="STIGQter" style="height:1em;" /> <a href="https://www.stigqter.com/">STIGQter</a>: <a href="main.html">STIG Summary</a>: <a href="U_VMW_NSX_4-x_Manager_NDM_STIG_V1R2_Manual-xccdf.html">VMware NSX 4.x Manager NDM Security Technical Implementation Guide Version: 1 Release: 2 Benchmark Date: 30 Jan 2025</a>:</div> <h1>The NSX Manager must only enable TLS 1.2 or greater.</h1><h2>DISA Rule</h2><p>SV-265315r994168_rule</p><h2>Vulnerability Number</h2><p>V-265315</p><h2>Group Title</h2><p>SRG-APP-000156-NDM-000250</p><h2>Rule Version</h2><p>NMGR-4X-000038</p><h2>Severity</h2><p>CAT I</p><h2>CCI(s)</h2><ul><li>CCI-001941 - Implement replay-resistant authentication mechanisms for access to privileged accounts and/or non-privileged accounts.</li><li>CCI-000197 - For password-based authentication, transmit passwords only cryptographically-protected channels.</li></ul><h2>Weight</h2><p>10</p><h2>Fix Recommendation</h2><p>Capture the output from the check GET command and update the TLS 1.1 protocol to false.<br />
+<br />
+Run the following API call using curl or another REST API client:<br />
+<br />
+PUT https://&lt;nsx-mgr&gt;/api/v1/cluster/api-service<br />
+<br />
+Example request body:<br />
+<br />
+{<br />
+    &quot;session_timeout&quot;: 1800,<br />
+    &quot;connection_timeout&quot;: 30,<br />
+    &quot;protocol_versions&quot;: [<br />
+        {<br />
+            &quot;name&quot;: &quot;TLSv1.1&quot;,<br />
+            &quot;enabled&quot;: false<br />
+        },<br />
+        {<br />
+            &quot;name&quot;: &quot;TLSv1.2&quot;,<br />
+            &quot;enabled&quot;: true<br />
+        },<br />
+        {<br />
+            &quot;name&quot;: &quot;TLSv1.3&quot;,<br />
+            &quot;enabled&quot;: true<br />
+        }<br />
+    ],<br />
+    &quot;cipher_suites&quot;: [<br />
+        {<br />
+            &quot;name&quot;: &quot;TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA&quot;,<br />
+            &quot;enabled&quot;: true<br />
+        },<br />
+        {<br />
+            &quot;name&quot;: &quot;TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256&quot;,<br />
+            &quot;enabled&quot;: true<br />
+        },<br />
+        {<br />
+            &quot;name&quot;: &quot;TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256&quot;,<br />
+            &quot;enabled&quot;: true<br />
+        },<br />
+        {<br />
+            &quot;name&quot;: &quot;TLS_ECDHE_RSA_WITH_AES_256_CBC_SHA&quot;,<br />
+            &quot;enabled&quot;: true<br />
+        },<br />
+        {<br />
+            &quot;name&quot;: &quot;TLS_ECDHE_RSA_WITH_AES_256_CBC_SHA384&quot;,<br />
+            &quot;enabled&quot;: true<br />
+        },<br />
+        {<br />
+            &quot;name&quot;: &quot;TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384&quot;,<br />
+            &quot;enabled&quot;: true<br />
+        },<br />
+        {<br />
+            &quot;name&quot;: &quot;TLS_RSA_WITH_AES_128_CBC_SHA&quot;,<br />
+            &quot;enabled&quot;: true<br />
+        },<br />
+        {<br />
+            &quot;name&quot;: &quot;TLS_RSA_WITH_AES_128_CBC_SHA256&quot;,<br />
+            &quot;enabled&quot;: true<br />
+        },<br />
+        {<br />
+            &quot;name&quot;: &quot;TLS_RSA_WITH_AES_128_GCM_SHA256&quot;,<br />
+            &quot;enabled&quot;: true<br />
+        },<br />
+        {<br />
+            &quot;name&quot;: &quot;TLS_RSA_WITH_AES_256_CBC_SHA&quot;,<br />
+            &quot;enabled&quot;: true<br />
+        },<br />
+        {<br />
+            &quot;name&quot;: &quot;TLS_RSA_WITH_AES_256_CBC_SHA256&quot;,<br />
+            &quot;enabled&quot;: true<br />
+        },<br />
+        {<br />
+            &quot;name&quot;: &quot;TLS_RSA_WITH_AES_256_GCM_SHA384&quot;,<br />
+            &quot;enabled&quot;: true<br />
+        },<br />
+        {<br />
+            &quot;name&quot;: &quot;TLS_ECDHE_ECDSA_WITH_AES_256_GCM_SHA384&quot;,<br />
+            &quot;enabled&quot;: true<br />
+        },<br />
+        {<br />
+            &quot;name&quot;: &quot;TLS_AES_128_GCM_SHA256&quot;,<br />
+            &quot;enabled&quot;: true<br />
+        },<br />
+        {<br />
+            &quot;name&quot;: &quot;TLS_AES_256_GCM_SHA384&quot;,<br />
+            &quot;enabled&quot;: true<br />
+        },<br />
+        {<br />
+            &quot;name&quot;: &quot;TLS_CHACHA20_POLY1305_SHA256&quot;,<br />
+            &quot;enabled&quot;: true<br />
+        }<br />
+    ],<br />
+    &quot;redirect_host&quot;: &quot;&quot;,<br />
+    &quot;client_api_rate_limit&quot;: 100,<br />
+    &quot;global_api_concurrency_limit&quot;: 199,<br />
+    &quot;client_api_concurrency_limit&quot;: 40,<br />
+    &quot;basic_authentication_enabled&quot;: true,<br />
+    &quot;cookie_based_authentication_enabled&quot;: true,<br />
+    &quot;resource_type&quot;: &quot;ApiServiceConfig&quot;,<br />
+    &quot;id&quot;: &quot;reverse_proxy_config&quot;,<br />
+    &quot;display_name&quot;: &quot;reverse_proxy_config&quot;,<br />
+    &quot;_create_time&quot;: 1703175890703,<br />
+    &quot;_create_user&quot;: &quot;system&quot;,<br />
+    &quot;_last_modified_time&quot;: 1703175890703,<br />
+    &quot;_last_modified_user&quot;: &quot;system&quot;,<br />
+    &quot;_system_owned&quot;: false,<br />
+    &quot;_protection&quot;: &quot;NOT_PROTECTED&quot;,<br />
+    &quot;_revision&quot;: 0<br />
+}<br />
+<br />
+Note: Changes are applied to all nodes in the cluster. The API service on each node will restart after it is updated using this API. There may be a delay of up to a minute or so between the time this API call completes and when the new configuration goes into effect.</p><h2>Check Contents</h2><p>Viewing TLS protocol enablement must be done via the API.<br />
+<br />
+Execute the following API call using curl or another REST API client:<br />
+<br />
+GET https://&lt;nsx-mgr&gt;/api/v1/cluster/api-service<br />
+<br />
+Example result:<br />
+<br />
+&quot;protocol_versions&quot;: [<br />
+{<br />
+&quot;name&quot;: &quot;TLSv1.1&quot;,<br />
+&quot;enabled&quot;: false<br />
+},<br />
+{<br />
+&quot;name&quot;: &quot;TLSv1.2&quot;,<br />
+&quot;enabled&quot;: true<br />
+},<br />
+{<br />
+&quot;name&quot;: &quot;TLSv1.3&quot;,<br />
+&quot;enabled&quot;: true<br />
+}<br />
+]<br />
+<br />
+If TLS 1.1 is enabled, this is a finding.</p><h2>Vulnerability Number</h2><p>V-265315</p><h2>Documentable</h2><p>False</p><h2>Rule Version</h2><p>NMGR-4X-000038</p><h2>Severity Override Guidance</h2><p>Viewing TLS protocol enablement must be done via the API.<br />
+<br />
+Execute the following API call using curl or another REST API client:<br />
+<br />
+GET https://&lt;nsx-mgr&gt;/api/v1/cluster/api-service<br />
+<br />
+Example result:<br />
+<br />
+&quot;protocol_versions&quot;: [<br />
+{<br />
+&quot;name&quot;: &quot;TLSv1.1&quot;,<br />
+&quot;enabled&quot;: false<br />
+},<br />
+{<br />
+&quot;name&quot;: &quot;TLSv1.2&quot;,<br />
+&quot;enabled&quot;: true<br />
+},<br />
+{<br />
+&quot;name&quot;: &quot;TLSv1.3&quot;,<br />
+&quot;enabled&quot;: true<br />
+}<br />
+]<br />
+<br />
+If TLS 1.1 is enabled, this is a finding.</p><h2>Check Content Reference</h2><p>M</p><h2>Target Key</h2><p>5633</p></body></html>

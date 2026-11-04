@@ -1,0 +1,48 @@
+<!doctype html><html lang="en"><head><meta charset="utf-8"><title>STIGQter: STIG Check Details: SV-257571r1137649_rule: OpenShift must contain the latest images with most recent updates and execute within the container platform runtime as authorized by IAVM, CTOs, DTMs, and STIGs.</title><link rel="icon" type="image/svg+xml" href="STIGQter.svg" /><script async src="https://www.googletagmanager.com/gtag/js?id=UA-31381839-2"></script><script src="include.js"></script><script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-4110907817782130" crossorigin="anonymous"></script></head><body><div><img src="STIGQter.svg" alt="STIGQter" style="height:1em;" /> <a href="https://www.stigqter.com/">STIGQter</a>: <a href="main.html">STIG Summary</a>: <a href="U_RH_OpenShift_Container_Platform_4-x_STIG_V2R6_Manual-xccdf.html">Red Hat OpenShift Container Platform 4.x Security Technical Implementation Guide Version: 2 Release: 6 Benchmark Date: 01 Jul 2026</a>:</div> <h1>OpenShift must contain the latest images with most recent updates and execute within the container platform runtime as authorized by IAVM, CTOs, DTMs, and STIGs.</h1><h2>DISA Rule</h2><p>SV-257571r1137649_rule</p><h2>Vulnerability Number</h2><p>V-257571</p><h2>Group Title</h2><p>SRG-APP-000456-CTR-001125</p><h2>Rule Version</h2><p>CNTR-OS-000890</p><h2>Severity</h2><p>CAT II</p><h2>CCI(s)</h2><ul><li>CCI-002605 - Install security-relevant software updates within an organization-defined time period of the release of the updates.</li></ul><h2>Weight</h2><p>10</p><h2>Fix Recommendation</h2><p>Edit the cluster image config resource to define the allowed registries by executing the following:<br />
+<br />
+oc edit image.config.openshift.io/cluster<br />
+<br />
+The following is an example configuration. For a detailed explanation of the configuration properties, refer to https://docs.openshift.com/container-platform/4.8/openshift_images/image-configuration.html.<br />
+<br />
+----------------------------------------------------------------------<br />
+apiVersion: config.openshift.io/v1<br />
+kind: Image <br />
+metadata:<br />
+  annotations:<br />
+    release.openshift.io/create-only: &quot;true&quot;<br />
+  creationTimestamp: &quot;2019-05-17T13:44:26Z&quot;<br />
+  generation: 1<br />
+  name: cluster<br />
+  resourceVersion: &quot;8302&quot;<br />
+  selfLink: /apis/config.openshift.io/v1/images/cluster<br />
+  uid: e34555da-78a9-11e9-b92b-06d6c7da38dc<br />
+spec:<br />
+  allowedRegistriesForImport: <br />
+    - domainName: quay.io<br />
+      insecure: false<br />
+  additionalTrustedCA: <br />
+    name: myconfigmap<br />
+  registrySources: <br />
+    allowedRegistries:<br />
+    - example.com<br />
+    - quay.io<br />
+    - registry.redhat.io<br />
+    - image-registry.openshift-image-registry.svc:5000<br />
+    - reg1.io/myrepo/myapp:latest<br />
+    insecureRegistries:<br />
+    - insecure.com<br />
+status:<br />
+  internalRegistryHostname: image-registry.openshift-image-registry.svc:5000<br />
+----------------------------------------------------------------------</p><h2>Check Contents</h2><p>Verify the image source policy is configured by executing the following:<br />
+<br />
+ oc get image.config.openshift.io/cluster -o jsonpath='{.spec.registrySources}{&quot;\nAllowedRegistriesForImport: &quot;}{.spec.allowedRegistriesForImport}{&quot;\n&quot;}'<br />
+<br />
+If nothing is returned, this is a finding. <br />
+<br />
+If the registries listed under allowedRegistries, insecureRegistries, or AllowedRegistriesForImport are not from trusted sources as defined by the organization, this is a finding.</p><h2>Vulnerability Number</h2><p>V-257571</p><h2>Documentable</h2><p>False</p><h2>Rule Version</h2><p>CNTR-OS-000890</p><h2>Severity Override Guidance</h2><p>Verify the image source policy is configured by executing the following:<br />
+<br />
+ oc get image.config.openshift.io/cluster -o jsonpath='{.spec.registrySources}{&quot;\nAllowedRegistriesForImport: &quot;}{.spec.allowedRegistriesForImport}{&quot;\n&quot;}'<br />
+<br />
+If nothing is returned, this is a finding. <br />
+<br />
+If the registries listed under allowedRegistries, insecureRegistries, or AllowedRegistriesForImport are not from trusted sources as defined by the organization, this is a finding.</p><h2>Check Content Reference</h2><p>M</p><h2>Target Key</h2><p>5547</p></body></html>

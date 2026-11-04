@@ -1,0 +1,69 @@
+<!doctype html><html lang="en"><head><meta charset="utf-8"><title>STIGQter: STIG Check Details: SV-223931r991591_rule: IBM z/OS Started tasks must be properly defined to CA-TSS.</title><link rel="icon" type="image/svg+xml" href="STIGQter.svg" /><script async src="https://www.googletagmanager.com/gtag/js?id=UA-31381839-2"></script><script src="include.js"></script><script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-4110907817782130" crossorigin="anonymous"></script></head><body><div><img src="STIGQter.svg" alt="STIGQter" style="height:1em;" /> <a href="https://www.stigqter.com/">STIGQter</a>: <a href="main.html">STIG Summary</a>: <a href="U_IBM_zOS_TSS_STIG_V9R9_Manual-xccdf.html">IBM z/OS TSS Security Technical Implementation Guide Version: 9 Release: 9 Benchmark Date: 01 Jul 2026</a>:</div> <h1>IBM z/OS Started tasks must be properly defined to CA-TSS.</h1><h2>DISA Rule</h2><p>SV-223931r991591_rule</p><h2>Vulnerability Number</h2><p>V-223931</p><h2>Group Title</h2><p>SRG-OS-000480-GPOS-00229</p><h2>Rule Version</h2><p>TSS0-ES-000580</p><h2>Severity</h2><p>CAT II</p><h2>CCI(s)</h2><ul><li>CCI-000366 - Implement the security configuration settings.</li></ul><h2>Weight</h2><p>10</p><h2>Fix Recommendation</h2><p>Review the STC record and all associated ACIDs. Ensure STCs and associated ACIDs are defined to the STC record. Restrict access to required resources only. Evaluate the impact of correcting the deficiency. Ensure TSS started task table record contains an entry for each Started Proc that maps the proc to a unique userid, or STC ACIDs will be unique per product and function if supported by vendor documentation. Develop a plan of action and implement the changes as specified:<br />
+<br />
+All STC ACIDs will have the STC facility. An STC also may be granted the FAC(BATCH) if it requires the capability to submit batch jobs to the internal reader. It should be noted, however, that this also will allow the STC itself to be executed as a batch job.<br />
+<br />
+TSS ADD(stc-acid) FACILITY(STC BATCH)<br />
+<br />
+Each STC ACID will be defined with a password following the password requirement guidelines. The only exception is that these passwords will be defined as non-expiring. In addition, each STC will have its own unique password. Defining a password for started tasks prevents a user from logging onto a system with the STC ACID.<br />
+<br />
+TSS REP(stc-acid) PASSWORD(xxxxxxxx,0)<br />
+<br />
+Ensure the OPTIONS control option specifies a value of 4 to disable password checking for STCs. Otherwise operators will be forced to supply a password when STCs are started. <br />
+<br />
+All STC ACIDs will be sourced to the internal reader. This control will further protect the unauthorized use of STC ACIDs.<br />
+<br />
+TSS ADD(stc-acid) SOURCE(INTRDR)<br />
+<br />
+Every STC will be defined to the STC table, associated with a specific procedure, and granted minimum access.<br />
+<br />
+TSS ADD(STC) PROCNAME(stc-proc) ACID(stc-acid)<br />
+<br />
+Note: The STC ACIDs may have the NOSUSPEND attribute to exempt an STC ACID from suspension for excessive violations. Review the STC record and all associated ACIDs. Ensure STCs and associated ACIDs are defined to the STC record. Restrict access to required resources only. Evaluate the impact of correcting the deficiency. Ensure TSS started task table record contains an entry for each Started Proc that maps the proc to a unique userid, or STC ACIDs will be unique per product and function if supported by vendor documentation. Develop a plan of action and implement the changes as specified:<br />
+<br />
+All STC ACIDs will have the STC facility. An STC also may be granted the FAC(BATCH) if it requires the capability to submit batch jobs to the internal reader. It should be noted, however, that this also will allow the STC itself to be executed as a batch job.<br />
+<br />
+TSS ADD(stc-acid) FACILITY(STC BATCH)<br />
+<br />
+Each STC ACID will be defined with a password following the password requirement guidelines. The only exception is that these passwords will be defined as non-expiring. In addition, each STC will have its own unique password. Defining a password for started tasks prevents a user from logging onto a system with the STC ACID.<br />
+<br />
+TSS REP(stc-acid) PASSWORD(xxxxxxxx,0)<br />
+<br />
+Ensure the OPTIONS control option specifies a value of 4 to disable password checking for STCs. Otherwise operators will be forced to supply a password when STCs are started. <br />
+<br />
+All STC ACIDs will be sourced to the internal reader. This control will further protect the unauthorized use of STC ACIDs.<br />
+<br />
+TSS ADD(stc-acid) SOURCE(INTRDR)<br />
+<br />
+Every STC will be defined to the STC table, associated with a specific procedure, and granted minimum access.<br />
+<br />
+TSS ADD(STC) PROCNAME(stc-proc) ACID(stc-acid)<br />
+<br />
+Note: The STC ACIDs may have the NOSUSPEND attribute to exempt an STC ACID from suspension for excessive violations.</p><h2>Check Contents</h2><p>Refer to the site security plan, the system administrator, and system libraries to determine list of stated tasks available on the system.<br />
+<br />
+If the following guidance is true, this is not a finding.<br />
+<br />
+ -All started tasks are assigned a unique user ACID or STC ACIDs that will be unique per product and function if supported by vendor documentation.<br />
+<br />
+ -Every ACID with the STC Facility has a corresponding entry defined in the STC record.<br />
+<br />
+ -Every ACID defined in the STC record has a corresponding user ACID defined to TSS with the STC Facility.<br />
+<br />
+ -All STC ACIDs will have a password generated in accordance with STIG requirements.<br />
+<br />
+ -All STC ACIDs will be sourced to the internal reader (e.g., ADD(stc-acid) SOURCE(INTRDR).<br />
+<br />
+ -The STC ACIDs may have the NOSUSPEND attribute.</p><h2>Vulnerability Number</h2><p>V-223931</p><h2>Documentable</h2><p>False</p><h2>Rule Version</h2><p>TSS0-ES-000580</p><h2>Severity Override Guidance</h2><p>Refer to the site security plan, the system administrator, and system libraries to determine list of stated tasks available on the system.<br />
+<br />
+If the following guidance is true, this is not a finding.<br />
+<br />
+ -All started tasks are assigned a unique user ACID or STC ACIDs that will be unique per product and function if supported by vendor documentation.<br />
+<br />
+ -Every ACID with the STC Facility has a corresponding entry defined in the STC record.<br />
+<br />
+ -Every ACID defined in the STC record has a corresponding user ACID defined to TSS with the STC Facility.<br />
+<br />
+ -All STC ACIDs will have a password generated in accordance with STIG requirements.<br />
+<br />
+ -All STC ACIDs will be sourced to the internal reader (e.g., ADD(stc-acid) SOURCE(INTRDR).<br />
+<br />
+ -The STC ACIDs may have the NOSUSPEND attribute.</p><h2>Check Content Reference</h2><p>M</p><h2>Target Key</h2><p>4102</p></body></html>

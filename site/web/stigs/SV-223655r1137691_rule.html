@@ -1,0 +1,43 @@
+<!doctype html><html lang="en"><head><meta charset="utf-8"><title>STIGQter: STIG Check Details: SV-223655r1137691_rule: IBM z/OS system commands must be properly protected.</title><link rel="icon" type="image/svg+xml" href="STIGQter.svg" /><script async src="https://www.googletagmanager.com/gtag/js?id=UA-31381839-2"></script><script src="include.js"></script><script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-4110907817782130" crossorigin="anonymous"></script></head><body><div><img src="STIGQter.svg" alt="STIGQter" style="height:1em;" /> <a href="https://www.stigqter.com/">STIGQter</a>: <a href="main.html">STIG Summary</a>: <a href="U_IBM_zOS_RACF_STIG_V9R9_Manual-xccdf.html">IBM z/OS RACF Security Technical Implementation Guide Version: 9 Release: 9 Benchmark Date: 01 Jul 2026</a>:</div> <h1>IBM z/OS system commands must be properly protected.</h1><h2>DISA Rule</h2><p>SV-223655r1137691_rule</p><h2>Vulnerability Number</h2><p>V-223655</p><h2>Group Title</h2><p>SRG-OS-000080-GPOS-00048</p><h2>Rule Version</h2><p>RACF-ES-000070</p><h2>Severity</h2><p>CAT II</p><h2>CCI(s)</h2><ul><li>CCI-000213 - Enforce approved authorizations for logical access to information and system resources in accordance with applicable access control policies.</li></ul><h2>Weight</h2><p>10</p><h2>Fix Recommendation</h2><p>z/OS system commands provide control over z/OS functions and can compromise security if misused. These commands are subject to various types of potential abuse. For this reason, it is necessary to place restrictions on the z/OS system commands that can be entered by particular operators.<br />
+<br />
+Some commands are particularly dangerous and should only be used when all less drastic options have been exhausted. Misuse of these commands can create a situation in which the only recovery is an IPL.<br />
+<br />
+Apply the following recommendations when implementing security:<br />
+<br />
+The MVS.** resource is defined to the OPERCMDS class with an access of NONE and all (i.e., failures and successes) access logged.<br />
+<br />
+Access to z/OS system commands defined in the entitled MVS commands, RACF access authorities, and resource names, in the IBM z/OS MVS System Commands manual is restricted to the appropriate personnel (e.g., operations staff, systems programming personnel, general users).<br />
+<br />
+The (MVS.SEND) Command will not be a finding if used by all.<br />
+<br />
+Display commands and others as deemed by the site IAW site security plan may be allowed for all users with no logging. The (MVS.SEND) Command will not be a finding if used by all.<br />
+<br />
+All elevated access (i.e., failures and successes) to specific z/OS system commands is logged.<br />
+<br />
+A sample set of commands to define and permit access to system command resources is shown here:<br />
+<br />
+RDEF OPERCMDS MVS.** UACC(NONE) OWNER(&lt;syspsmpl&gt;) AUDIT(ALL(READ)) DATA(&quot;set up deny-by-default profile')<br />
+<br />
+Then, in accordance with the referenced table, use the following template to define profiles for each command:<br />
+<br />
+RDEF OPERCMDS &lt;system command profile&gt; UACC(NONE) OWNER(&lt;syspsmpl&gt;) AUDIT(ALL(READ))<br />
+<br />
+PERMIT &lt;system command profile&gt; CLASS(OPERCMDS) ID(&lt;groupname&gt;) ACCESS(&lt;accesslevel&gt;)</p><h2>Check Contents</h2><p>From the ISPF Command Shell enter:<br />
+RList OPERCMDS *<br />
+<br />
+If the MVS.** resource is defined to the OPERCMDS class with an access of NONE and all (i.e., failures and successes) access logged, this is not a finding.<br />
+<br />
+If the access to z/OS system commands defined in the table entitled MVS commands, RACF access authorities, and resource names, in the IBM z/OS MVS System Commands manual, is restricted to the appropriate personnel (e.g., operations staff, systems programming personnel, general users) as determined in the Documented site Security Plan, this is not a finding.<br />
+<br />
+Note: Display commands and others as deemed by the site IAW site security plan may be allowed for all users with no logging. The (MVS.SEND) Command will not be a finding if used by all.<br />
+<br />
+If all access (i.e., failures and successes) to specific z/OS system commands is logged as indicated in the table entitled MVS commands, RACF access authorities, and resource names, in the z/OS MVS System Commands, this is not a finding.</p><h2>Vulnerability Number</h2><p>V-223655</p><h2>Documentable</h2><p>False</p><h2>Rule Version</h2><p>RACF-ES-000070</p><h2>Severity Override Guidance</h2><p>From the ISPF Command Shell enter:<br />
+RList OPERCMDS *<br />
+<br />
+If the MVS.** resource is defined to the OPERCMDS class with an access of NONE and all (i.e., failures and successes) access logged, this is not a finding.<br />
+<br />
+If the access to z/OS system commands defined in the table entitled MVS commands, RACF access authorities, and resource names, in the IBM z/OS MVS System Commands manual, is restricted to the appropriate personnel (e.g., operations staff, systems programming personnel, general users) as determined in the Documented site Security Plan, this is not a finding.<br />
+<br />
+Note: Display commands and others as deemed by the site IAW site security plan may be allowed for all users with no logging. The (MVS.SEND) Command will not be a finding if used by all.<br />
+<br />
+If all access (i.e., failures and successes) to specific z/OS system commands is logged as indicated in the table entitled MVS commands, RACF access authorities, and resource names, in the z/OS MVS System Commands, this is not a finding.</p><h2>Check Content Reference</h2><p>M</p><h2>Target Key</h2><p>4101</p></body></html>

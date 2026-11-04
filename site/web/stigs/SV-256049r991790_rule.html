@@ -1,0 +1,38 @@
+<!doctype html><html lang="en"><head><meta charset="utf-8"><title>STIGQter: STIG Check Details: SV-256049r991790_rule: The MPLS router must be configured to use its loopback address as the source address for LDP peering sessions.</title><link rel="icon" type="image/svg+xml" href="STIGQter.svg" /><script async src="https://www.googletagmanager.com/gtag/js?id=UA-31381839-2"></script><script src="include.js"></script><script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-4110907817782130" crossorigin="anonymous"></script></head><body><div><img src="STIGQter.svg" alt="STIGQter" style="height:1em;" /> <a href="https://www.stigqter.com/">STIGQter</a>: <a href="main.html">STIG Summary</a>: <a href="U_Arista_MLS_EOS_4-X_Router_STIG_V2R2_Manual-xccdf.html">Arista MLS EOS 4.X Router Security Technical Implementation Guide Version: 2 Release: 2 Benchmark Date: 02 Apr 2025</a>:</div> <h1>The MPLS router must be configured to use its loopback address as the source address for LDP peering sessions.</h1><h2>DISA Rule</h2><p>SV-256049r991790_rule</p><h2>Vulnerability Number</h2><p>V-256049</p><h2>Group Title</h2><p>SRG-NET-000512-RTR-000002</p><h2>Rule Version</h2><p>ARST-RT-000700</p><h2>Severity</h2><p>CAT III</p><h2>CCI(s)</h2><ul><li>CCI-004931 - Establish organization-defined alternate communications paths for system operations organizational command and control.</li></ul><h2>Weight</h2><p>10</p><h2>Fix Recommendation</h2><p>Configure the Arista MPLS routers to use their loopback address as the source address for LDP peering sessions.<br />
+<br />
+Step 1: Configure the loopback interface.<br />
+<br />
+LEAF-1A(config)#interface Loopback0<br />
+LEAF-1A(config-if-Lo0)#ip address 10.1.1.1/32<br />
+<br />
+Step 2: Configure the loopback interface as LDP router-id.<br />
+<br />
+LEAF-1A(config)#mpls ldp<br />
+LEAF-1A(config-mpls-ldp)#router-id interface Loopback0<br />
+LEAF-1A(config-mpls-ldp)#no shutdown</p><h2>Check Contents</h2><p>Review the Arista router configuration to determine if it uses its loopback address as the source address for LDP peering sessions.<br />
+<br />
+To verify a loopback address has been configured as shown in the following example, execute the command &quot;sh run int loopback YY&quot;.<br />
+<br />
+interface loopback 0<br />
+  ip address 10.1.1.1/32<br />
+<br />
+An MPLS router will use the LDP router ID as the source address for LDP hellos and when establishing TCP sessions with LDP peers; hence, it is necessary to verify the LDP router ID is the same as the loopback address. By default, routers will assign the LDP router ID using the highest IP address on the router, with preference given to loopback addresses. If the router-id command is specified that overrides this default behavior, verify it is the IP address of the designated loopback interface.<br />
+<br />
+mpls ldp<br />
+   router-id interface Loopback0<br />
+   no shutdown<br />
+<br />
+If the Arista router is not configured to use its loopback address for LDP peering, this is a finding.</p><h2>Vulnerability Number</h2><p>V-256049</p><h2>Documentable</h2><p>False</p><h2>Rule Version</h2><p>ARST-RT-000700</p><h2>Severity Override Guidance</h2><p>Review the Arista router configuration to determine if it uses its loopback address as the source address for LDP peering sessions.<br />
+<br />
+To verify a loopback address has been configured as shown in the following example, execute the command &quot;sh run int loopback YY&quot;.<br />
+<br />
+interface loopback 0<br />
+  ip address 10.1.1.1/32<br />
+<br />
+An MPLS router will use the LDP router ID as the source address for LDP hellos and when establishing TCP sessions with LDP peers; hence, it is necessary to verify the LDP router ID is the same as the loopback address. By default, routers will assign the LDP router ID using the highest IP address on the router, with preference given to loopback addresses. If the router-id command is specified that overrides this default behavior, verify it is the IP address of the designated loopback interface.<br />
+<br />
+mpls ldp<br />
+   router-id interface Loopback0<br />
+   no shutdown<br />
+<br />
+If the Arista router is not configured to use its loopback address for LDP peering, this is a finding.</p><h2>Check Content Reference</h2><p>M</p><h2>Target Key</h2><p>5513</p></body></html>

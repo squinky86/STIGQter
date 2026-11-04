@@ -1,0 +1,42 @@
+<!doctype html><html lang="en"><head><meta charset="utf-8"><title>STIGQter: STIG Check Details: SV-214686r954210_rule: The Juniper SRX Services Gateway VPN must use multifactor authentication (e.g., DoD PKI) for network access to non-privileged accounts.</title><link rel="icon" type="image/svg+xml" href="STIGQter.svg" /><script async src="https://www.googletagmanager.com/gtag/js?id=UA-31381839-2"></script><script src="include.js"></script><script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-4110907817782130" crossorigin="anonymous"></script></head><body><div><img src="STIGQter.svg" alt="STIGQter" style="height:1em;" /> <a href="https://www.stigqter.com/">STIGQter</a>: <a href="main.html">STIG Summary</a>: <a href="U_Juniper_SRX_SG_VPN_STIG_V3R2_Manual-xccdf.html">Juniper SRX Services Gateway VPN Security Technical Implementation Guide Version: 3 Release: 2 Benchmark Date: 30 Jan 2025</a>:</div> <h1>The Juniper SRX Services Gateway VPN must use multifactor authentication (e.g., DoD PKI) for network access to non-privileged accounts.</h1><h2>DISA Rule</h2><p>SV-214686r954210_rule</p><h2>Vulnerability Number</h2><p>V-214686</p><h2>Group Title</h2><p>SRG-NET-000140</p><h2>Rule Version</h2><p>JUSX-VN-000019</p><h2>Severity</h2><p>CAT I</p><h2>CCI(s)</h2><ul><li>CCI-000766 - Implement multifactor authentication for network access to non-privileged accounts.</li></ul><h2>Weight</h2><p>10</p><h2>Fix Recommendation</h2><p>Configure multifactor authentication by configuring an access profile for an authentication server or services to authenticate VPN users upon logon using DoD PKI.<br />
+<br />
+Example:<br />
+[edit]<br />
+set access profile dyn-vpn-ldap-xauth authentication-order ldap<br />
+set access profile dyn-vpn-ldap-xauth address-assignment pool dyn-vpn-pool<br />
+set access profile dyn-vpn-ldap-xauth ldap-options base-distinguished-name CN=Users, DC=firewall, DC=com (Location from where LDAP will start searching for users)<br />
+<br />
+set access profile dyn-vpn-ldap-xauth ldap-options search search-filter sAMAccountName= <br />
+set access profile dyn-vpn-ldap-xauth ldap-options search admin-search distinguished-name CN=Administrator, CN=Users, DC=firewall, DC=com (User who is authorized to search the ldap tree)<br />
+set access profile dyn-vpn-ldap-xauth ldap-options search admin-search password &lt;Administrator Password&gt;<br />
+set access profile dyn-vpn-ldap-xauth ldap-server &lt;AD Server IP address&gt; port 389/636 <br />
+set access firewall-authentication pass-through default-profile dyn-vpn-ldap-xauth<br />
+set access firewall-authentication web-authentication default-profile dyn-vpn-ldap-xauth<br />
+<br />
+The access profile is linked to the xauth of the gateway for dynamic VPN.<br />
+<br />
+set security ike gateway dyn-vpn-local-gw xauth access-profile dyn-vpn-ldap-xauth <br />
+ <br />
+Note: Under security &gt;&gt; dynamic-vpn, add all the users that are going to use the dynamic VPN. The command is as follows:<br />
+<br />
+set security dynamic-vpn clients all user<br />
+<br />
+Note: For users who are going to use dynamic VPN, this will be the AD user logon name for each user.</p><h2>Check Contents</h2><p>Ask the site to identify the VPN access profile. Verify the access profile uses LDAP, not password configuration, for user remote access to the network. Ask the site if the LDAP server used authenticates users through PKI authentication.<br />
+<br />
+[edit]<br />
+show security access profile &lt;dynamic-profile-name&gt;<br />
+<br />
+If an access profile that uses LDAP is not configured as the first option in the authentication order, this is a finding.<br />
+<br />
+If password access is configured for VPN user access, this is a finding.<br />
+<br />
+If the LDAP server used does not use PKI authentication, this is a finding.</p><h2>Vulnerability Number</h2><p>V-214686</p><h2>Documentable</h2><p>False</p><h2>Rule Version</h2><p>JUSX-VN-000019</p><h2>Severity Override Guidance</h2><p>Ask the site to identify the VPN access profile. Verify the access profile uses LDAP, not password configuration, for user remote access to the network. Ask the site if the LDAP server used authenticates users through PKI authentication.<br />
+<br />
+[edit]<br />
+show security access profile &lt;dynamic-profile-name&gt;<br />
+<br />
+If an access profile that uses LDAP is not configured as the first option in the authentication order, this is a finding.<br />
+<br />
+If password access is configured for VPN user access, this is a finding.<br />
+<br />
+If the LDAP server used does not use PKI authentication, this is a finding.</p><h2>Check Content Reference</h2><p>M</p><h2>Target Key</h2><p>4009</p></body></html>

@@ -1,0 +1,103 @@
+<!doctype html><html lang="en"><head><meta charset="utf-8"><title>STIGQter: STIG Check Details: SV-219057r991589_rule: AIX must employ a deny-all, allow-by-exception firewall policy for allowing connections to other systems.</title><link rel="icon" type="image/svg+xml" href="STIGQter.svg" /><script async src="https://www.googletagmanager.com/gtag/js?id=UA-31381839-2"></script><script src="include.js"></script><script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-4110907817782130" crossorigin="anonymous"></script></head><body><div><img src="STIGQter.svg" alt="STIGQter" style="height:1em;" /> <a href="https://www.stigqter.com/">STIGQter</a>: <a href="main.html">STIG Summary</a>: <a href="U_IBM_AIX_7-x_STIG_V3R3_Manual-xccdf.html">IBM AIX 7.x Security Technical Implementation Guide Version: 3 Release: 3 Benchmark Date: 01 Jul 2026</a>:</div> <h1>AIX must employ a deny-all, allow-by-exception firewall policy for allowing connections to other systems.</h1><h2>DISA Rule</h2><p>SV-219057r991589_rule</p><h2>Vulnerability Number</h2><p>V-219057</p><h2>Group Title</h2><p>SRG-OS-000480-GPOS-00227</p><h2>Rule Version</h2><p>AIX7-00-003143</p><h2>Severity</h2><p>CAT II</p><h2>CCI(s)</h2><ul><li>CCI-000366 - Implement the security configuration settings.</li></ul><h2>Weight</h2><p>10</p><h2>Fix Recommendation</h2><p>From the command prompt, run the following commands to create and activate &quot;ipsec_v4&quot; and &quot;ipsec_v6&quot; devices:<br />
+# mkdev -l ipsec -t 4<br />
+# mkdev -l ipsec -t 6<br />
+<br />
+From the command prompt, run the following commands to change the &quot;all traffic&quot; rules to block all packages:<br />
+# chfilt -a D -v 4 -n 0<br />
+# chfilt -a D -v 6 -n 0<br />
+<br />
+Assume that the local host has IP address 10.10.10.10 and the remote host has IP address 11.11.11.11, run the following command to generate a user-defined filter rule that allow all IPv4 traffic between these 2 hosts:<br />
+# genfilt -w B -v 4 -s 10.10.10.10 -p 0 -P 0 -o any -O any -m 255.255.255.255 -M 255.255.255.255 -i all -g Y -d 11.11.11.11 -c all -a P<br />
+<br />
+From the command prompt, run the following command to activate all the filter rules in the rule database:<br />
+# mkfilt -u</p><h2>Check Contents</h2><p>From the command prompt, run the following commands to check if the &quot;all traffic&quot; filter rules, the predefined rule with Rule-ID 0, are defined to deny all packages:<br />
+<br />
+# lsfilt -v4 -n0<br />
+# lsfilt -v6 -n0 <br />
+<br />
+Rule 0:<br />
+Rule action         : deny<br />
+Source Address      : 0.0.0.0<br />
+Source Mask         : 0.0.0.0<br />
+Destination Address : 0.0.0.0<br />
+Destination Mask    : 0.0.0.0<br />
+Source Routing      : yes<br />
+Protocol            : all<br />
+Source Port         : any 0<br />
+Destination Port    : any 0<br />
+Scope               : both<br />
+Direction           : both<br />
+Logging control     : no<br />
+Fragment control    : all packets<br />
+Tunnel ID number    : 0<br />
+Interface           : all<br />
+Auto-Generated      : no<br />
+Expiration Time     : 0<br />
+Description         : Default Rule<br />
+<br />
+Rule 0:<br />
+Rule action         : deny<br />
+Source Address      : ::<br />
+Source Mask         : 0<br />
+Destination Address : ::<br />
+Destination Mask    : 0<br />
+Source Routing      : yes<br />
+Protocol            : all<br />
+Source Port         : any 0<br />
+Destination Port    : any 0<br />
+Scope               : both<br />
+Direction           : both<br />
+Logging control     : no<br />
+Fragment control    : all packets<br />
+Tunnel ID number    : 0<br />
+Interface           : all<br />
+Auto-Generated      : no<br />
+Expiration Time     : 0<br />
+Description         : Default Rule<br />
+<br />
+If any of the &quot;all traffic&quot; rules has &quot;Rule action : permit&quot;, this is a finding.</p><h2>Vulnerability Number</h2><p>V-219057</p><h2>Documentable</h2><p>False</p><h2>Rule Version</h2><p>AIX7-00-003143</p><h2>Severity Override Guidance</h2><p>From the command prompt, run the following commands to check if the &quot;all traffic&quot; filter rules, the predefined rule with Rule-ID 0, are defined to deny all packages:<br />
+<br />
+# lsfilt -v4 -n0<br />
+# lsfilt -v6 -n0 <br />
+<br />
+Rule 0:<br />
+Rule action         : deny<br />
+Source Address      : 0.0.0.0<br />
+Source Mask         : 0.0.0.0<br />
+Destination Address : 0.0.0.0<br />
+Destination Mask    : 0.0.0.0<br />
+Source Routing      : yes<br />
+Protocol            : all<br />
+Source Port         : any 0<br />
+Destination Port    : any 0<br />
+Scope               : both<br />
+Direction           : both<br />
+Logging control     : no<br />
+Fragment control    : all packets<br />
+Tunnel ID number    : 0<br />
+Interface           : all<br />
+Auto-Generated      : no<br />
+Expiration Time     : 0<br />
+Description         : Default Rule<br />
+<br />
+Rule 0:<br />
+Rule action         : deny<br />
+Source Address      : ::<br />
+Source Mask         : 0<br />
+Destination Address : ::<br />
+Destination Mask    : 0<br />
+Source Routing      : yes<br />
+Protocol            : all<br />
+Source Port         : any 0<br />
+Destination Port    : any 0<br />
+Scope               : both<br />
+Direction           : both<br />
+Logging control     : no<br />
+Fragment control    : all packets<br />
+Tunnel ID number    : 0<br />
+Interface           : all<br />
+Auto-Generated      : no<br />
+Expiration Time     : 0<br />
+Description         : Default Rule<br />
+<br />
+If any of the &quot;all traffic&quot; rules has &quot;Rule action : permit&quot;, this is a finding.</p><h2>Check Content Reference</h2><p>M</p><h2>Target Key</h2><p>4012</p></body></html>

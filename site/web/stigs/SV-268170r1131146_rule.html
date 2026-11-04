@@ -1,0 +1,26 @@
+<!doctype html><html lang="en"><head><meta charset="utf-8"><title>STIGQter: STIG Check Details: SV-268170r1131146_rule: NixOS must enable the use of pwquality.</title><link rel="icon" type="image/svg+xml" href="STIGQter.svg" /><script async src="https://www.googletagmanager.com/gtag/js?id=UA-31381839-2"></script><script src="include.js"></script><script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-4110907817782130" crossorigin="anonymous"></script></head><body><div><img src="STIGQter.svg" alt="STIGQter" style="height:1em;" /> <a href="https://www.stigqter.com/">STIGQter</a>: <a href="main.html">STIG Summary</a>: <a href="U_Anduril_NixOS_STIG_V1R2_Manual-xccdf.html">Anduril NixOS Security Technical Implementation Guide Version: 1 Release: 2 Benchmark Date: 01 Oct 2025</a>:</div> <h1>NixOS must enable the use of pwquality.</h1><h2>DISA Rule</h2><p>SV-268170r1131146_rule</p><h2>Vulnerability Number</h2><p>V-268170</p><h2>Group Title</h2><p>SRG-OS-000480-GPOS-00227</p><h2>Rule Version</h2><p>ANIX-00-001861</p><h2>Severity</h2><p>CAT II</p><h2>CCI(s)</h2><ul><li>CCI-000366 - Implement the security configuration settings.</li></ul><h2>Weight</h2><p>10</p><h2>Fix Recommendation</h2><p>Configure NixOS to check password change attempts against a dictionary.<br />
+<br />
+Add the following Nix code to the NixOS Configuration, usually located in /etc/nixos/configuration.nix or /etc/nixos/flake.nix:<br />
+<br />
+security.pam.services.passwd.text = pkgs.lib.mkDefault (pkgs.lib.mkBefore &quot;password requisite ${pkgs.libpwquality.lib}/lib/security/pam_pwquality.so&quot;);<br />
+security.pam.services.chpasswd.text = pkgs.lib.mkDefault (pkgs.lib.mkBefore &quot;password requisite ${pkgs.libpwquality.lib}/lib/security/pam_pwquality.so&quot;);<br />
+security.pam.services.sudo.text = pkgs.lib.mkDefault (pkgs.lib.mkBefore &quot;password requisite ${pkgs.libpwquality.lib}/lib/security/pam_pwquality.so&quot;);<br />
+<br />
+Rebuild and switch to the new NixOS configuration:<br />
+$ sudo nixos-rebuild switch</p><h2>Check Contents</h2><p>Verify NixOS prevents the use of dictionary words for passwords with the following command:<br />
+<br />
+$ grep -i pam_pwquality /etc/pam.d/passwd /etc/pam.d/chpasswd /etc/pam.d/sudo<br />
+<br />
+/etc/pam.d/passwd:password requisite /nix/store/db96zr26w71dzx0bzf47d88kw19fr0l7-libpwquality-1.4.5.-lib/lib/security/pam_pwquality.so<br />
+/etc/pam.d/chpasswd:password requisite /nix/store/db96zr26w71dzx0bzf47d88kw19fr0l7-libpwquality-1.4.5.-lib/lib/security/pam_pwquality.so<br />
+/etc/pam.d/sudo:password requisite /nix/store/db96zr26w71dzx0bzf47d88kw19fr0l7-libpwquality-1.4.5.-lib/lib/security/pam_pwquality.so<br />
+<br />
+If the pam_pwquality.so module is not present in the passwd, chpasswd, and sudo pam files, this is a finding.</p><h2>Vulnerability Number</h2><p>V-268170</p><h2>Documentable</h2><p>False</p><h2>Rule Version</h2><p>ANIX-00-001861</p><h2>Severity Override Guidance</h2><p>Verify NixOS prevents the use of dictionary words for passwords with the following command:<br />
+<br />
+$ grep -i pam_pwquality /etc/pam.d/passwd /etc/pam.d/chpasswd /etc/pam.d/sudo<br />
+<br />
+/etc/pam.d/passwd:password requisite /nix/store/db96zr26w71dzx0bzf47d88kw19fr0l7-libpwquality-1.4.5.-lib/lib/security/pam_pwquality.so<br />
+/etc/pam.d/chpasswd:password requisite /nix/store/db96zr26w71dzx0bzf47d88kw19fr0l7-libpwquality-1.4.5.-lib/lib/security/pam_pwquality.so<br />
+/etc/pam.d/sudo:password requisite /nix/store/db96zr26w71dzx0bzf47d88kw19fr0l7-libpwquality-1.4.5.-lib/lib/security/pam_pwquality.so<br />
+<br />
+If the pam_pwquality.so module is not present in the passwd, chpasswd, and sudo pam files, this is a finding.</p><h2>Check Content Reference</h2><p>M</p><h2>Target Key</h2><p>5658</p></body></html>

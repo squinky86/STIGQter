@@ -1,0 +1,133 @@
+<!doctype html><html lang="en"><head><meta charset="utf-8"><title>STIGQter: STIG Check Details: SV-217310r991980_rule: The Juniper router must be configured to enforce approved authorizations for controlling the flow of management information within the device based on control policies.</title><link rel="icon" type="image/svg+xml" href="STIGQter.svg" /><script async src="https://www.googletagmanager.com/gtag/js?id=UA-31381839-2"></script><script src="include.js"></script><script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-4110907817782130" crossorigin="anonymous"></script></head><body><div><img src="STIGQter.svg" alt="STIGQter" style="height:1em;" /> <a href="https://www.stigqter.com/">STIGQter</a>: <a href="main.html">STIG Summary</a>: <a href="U_Juniper_Router_NDM_STIG_V3R2_Manual-xccdf.html">Juniper Router NDM Security Technical Implementation Guide Version: 3 Release: 2 Benchmark Date: 30 Jan 2025</a>:</div> <h1>The Juniper router must be configured to enforce approved authorizations for controlling the flow of management information within the device based on control policies.</h1><h2>DISA Rule</h2><p>SV-217310r991980_rule</p><h2>Vulnerability Number</h2><p>V-217310</p><h2>Group Title</h2><p>SRG-APP-000038-NDM-000213</p><h2>Rule Version</h2><p>JUNI-ND-000140</p><h2>Severity</h2><p>CAT II</p><h2>CCI(s)</h2><ul><li>CCI-001368 - Enforce approved authorizations for controlling the flow of information within the system based on organization-defined information flow control policies.</li><li>CCI-004192 - Protect nonlocal maintenance sessions by separating the maintenance session from other network sessions with the system by logically separated communications paths.</li></ul><h2>Weight</h2><p>10</p><h2>Fix Recommendation</h2><p>Step 1: Configure the router to restrict management access to specific IP addresses via SSH as shown in the example below.<br />
+<br />
+[edit firewall family inet]<br />
+set filter RESTRICT_MGMT_ACCESS term ALLOW_SSH from source-address x.x.x.x/24<br />
+set filter RESTRICT_MGMT_ACCESS term ALLOW_SSH from protocol tcp<br />
+set filter RESTRICT_MGMT_ACCESS term ALLOW_SSH from port ssh<br />
+set filter RESTRICT_MGMT_ACCESS term ALLOW_SSH then accept<br />
+set filter RESTRICT_MGMT_ACCESS term DENY_SSH from protocol tcp<br />
+set filter RESTRICT_MGMT_ACCESS term DENY_SSH from port ssh<br />
+set filter RESTRICT_MGMT_ACCESS term DENY_SSH then log<br />
+set filter RESTRICT_MGMT_ACCESS term DENY_SSH then discard<br />
+<br />
+Step 2:  Apply the filter to the loopback interface.<br />
+<br />
+[edit interfaces lo0 unit 0 family inet]<br />
+set filter input RESTRICT_MGMT_ACCESS<br />
+<br />
+Note: Management and control plane traffic destined to the router is punted to the routing engine. Hence, applying the filter to the loopback ensures that this traffic can be monitored regardless of the ingress physical interface. <br />
+<br />
+Step 1: Configure the router to restrict management access to specific IP addresses via SSH as shown in the example below.<br />
+<br />
+[edit firewall family inet]<br />
+set filter RESTRICT_MGMT_ACCESS term ALLOW_SSH from source-address x.x.x.x/24<br />
+set filter RESTRICT_MGMT_ACCESS term ALLOW_SSH from protocol tcp<br />
+set filter RESTRICT_MGMT_ACCESS term ALLOW_SSH from port ssh<br />
+set filter RESTRICT_MGMT_ACCESS term ALLOW_SSH then accept<br />
+set filter RESTRICT_MGMT_ACCESS term DENY_SSH from protocol tcp<br />
+set filter RESTRICT_MGMT_ACCESS term DENY_SSH from port ssh<br />
+set filter RESTRICT_MGMT_ACCESS term DENY_SSH then log<br />
+set filter RESTRICT_MGMT_ACCESS term DENY_SSH then discard<br />
+<br />
+Step 2:  Apply the filter to the loopback interface.<br />
+<br />
+[edit interfaces lo0 unit 0 family inet]<br />
+set filter input RESTRICT_MGMT_ACCESS<br />
+<br />
+Note: Management and control plane traffic destined to the router is punted to the routing engine. Hence, applying the filter to the loopback ensures that this traffic can be monitored regardless of the ingress physical interface.</p><h2>Check Contents</h2><p>Review the router configuration to verify that it is compliant with this requirement. <br />
+<br />
+Step 1: Verify that an input filter has been configured for the loopback interfaces as shown in the example below.<br />
+<br />
+interfaces {<br />
+    …<br />
+    …<br />
+    …<br />
+    }<br />
+    lo0 {<br />
+        unit 0 {<br />
+            family inet {<br />
+                filter {<br />
+                    input RESTRICT_MGMT_ACCESS;<br />
+                }<br />
+                address 2.2.2.2/32;<br />
+            }<br />
+         }<br />
+    }<br />
+}<br />
+<br />
+Step 2: Verify that the filter restricts management traffic. The configuration example below restricts management access to specific IP addresses via SSH. <br />
+<br />
+filter RESTRICT_MGMT_ACCESS {<br />
+    term ALLOW_SSH {<br />
+        from {<br />
+            source-address {<br />
+                x.x.x.x/24;<br />
+            }<br />
+            protocol tcp;<br />
+            port ssh;<br />
+        }<br />
+        then accept;<br />
+    }<br />
+    term DENY_SSH {<br />
+        from {<br />
+            protocol tcp;<br />
+            port ssh;<br />
+        }<br />
+        then {<br />
+            log;<br />
+            discard;<br />
+        }<br />
+    }<br />
+} <br />
+<br />
+Note: Management and control plane traffic destined to the router is punted to the routing engine. Hence, applying the filter to the loopback ensures that this traffic can be monitored regardless of the ingress physical interface. <br />
+<br />
+If the Juniper router is not configured to enforce approved authorizations for controlling the flow of management information within the device based on control policies, this is a finding.</p><h2>Vulnerability Number</h2><p>V-217310</p><h2>Documentable</h2><p>False</p><h2>Rule Version</h2><p>JUNI-ND-000140</p><h2>Severity Override Guidance</h2><p>Review the router configuration to verify that it is compliant with this requirement. <br />
+<br />
+Step 1: Verify that an input filter has been configured for the loopback interfaces as shown in the example below.<br />
+<br />
+interfaces {<br />
+    …<br />
+    …<br />
+    …<br />
+    }<br />
+    lo0 {<br />
+        unit 0 {<br />
+            family inet {<br />
+                filter {<br />
+                    input RESTRICT_MGMT_ACCESS;<br />
+                }<br />
+                address 2.2.2.2/32;<br />
+            }<br />
+         }<br />
+    }<br />
+}<br />
+<br />
+Step 2: Verify that the filter restricts management traffic. The configuration example below restricts management access to specific IP addresses via SSH. <br />
+<br />
+filter RESTRICT_MGMT_ACCESS {<br />
+    term ALLOW_SSH {<br />
+        from {<br />
+            source-address {<br />
+                x.x.x.x/24;<br />
+            }<br />
+            protocol tcp;<br />
+            port ssh;<br />
+        }<br />
+        then accept;<br />
+    }<br />
+    term DENY_SSH {<br />
+        from {<br />
+            protocol tcp;<br />
+            port ssh;<br />
+        }<br />
+        then {<br />
+            log;<br />
+            discard;<br />
+        }<br />
+    }<br />
+} <br />
+<br />
+Note: Management and control plane traffic destined to the router is punted to the routing engine. Hence, applying the filter to the loopback ensures that this traffic can be monitored regardless of the ingress physical interface. <br />
+<br />
+If the Juniper router is not configured to enforce approved authorizations for controlling the flow of management information within the device based on control policies, this is a finding.</p><h2>Check Content Reference</h2><p>M</p><h2>Target Key</h2><p>4034</p></body></html>

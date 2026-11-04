@@ -1,0 +1,49 @@
+<!doctype html><html lang="en"><head><meta charset="utf-8"><title>STIGQter: STIG Check Details: SV-256408r958752_rule: The ESXi host must enable a persistent log location for all locally stored logs.</title><link rel="icon" type="image/svg+xml" href="STIGQter.svg" /><script async src="https://www.googletagmanager.com/gtag/js?id=UA-31381839-2"></script><script src="include.js"></script><script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-4110907817782130" crossorigin="anonymous"></script></head><body><div><img src="STIGQter.svg" alt="STIGQter" style="height:1em;" /> <a href="https://www.stigqter.com/">STIGQter</a>: <a href="main.html">STIG Summary</a>: <a href="U_VMW_vSphere_7-0_ESXi_STIG_V1R4_Manual-xccdf.html">VMware vSphere 7.0 ESXi Security Technical Implementation Guide Version: 1 Release: 4 Benchmark Date: 02 Apr 2025</a>:</div> <h1>The ESXi host must enable a persistent log location for all locally stored logs.</h1><h2>DISA Rule</h2><p>SV-256408r958752_rule</p><h2>Vulnerability Number</h2><p>V-256408</p><h2>Group Title</h2><p>SRG-OS-000341-VMM-001220</p><h2>Rule Version</h2><p>ESXI-70-000045</p><h2>Severity</h2><p>CAT II</p><h2>CCI(s)</h2><ul><li>CCI-001849 - Allocate audit log storage capacity to accommodate organization-defined audit record retention requirements.</li></ul><h2>Weight</h2><p>10</p><h2>Fix Recommendation</h2><p>From the vSphere Client, go to Hosts and Clusters.<br />
+<br />
+Select the ESXi Host &gt;&gt; Configure &gt;&gt; System &gt;&gt; Advanced System Settings.<br />
+<br />
+Click &quot;Edit&quot;. Select the &quot;Syslog.global.logDir&quot; value and set it to a known persistent location. <br />
+<br />
+An example is shown below, where 51dda02d-fade5016-8a08-005056171889 is the UUID of the target datastore:<br />
+<br />
+/vmfs/volumes/51dda02d-fade5016-8a08-005056171889<br />
+<br />
+or<br />
+<br />
+From a PowerCLI command prompt while connected to the ESXi host, run the following command:<br />
+<br />
+Get-VMHost | Get-AdvancedSetting -Name Syslog.global.logDir | Set-AdvancedSetting -Value &quot;New Log Location&quot;</p><h2>Check Contents</h2><p>From the vSphere Client, go to Hosts and Clusters.<br />
+<br />
+Select the ESXi Host &gt;&gt; Configure &gt;&gt; System &gt;&gt; Advanced System Settings.<br />
+<br />
+Select the &quot;Syslog.global.logDir&quot; value and verify it is set to a persistent location.<br />
+<br />
+If the value of the setting is &quot;[] /scratch/logs&quot;, verify the advanced setting &quot;ScratchConfig.CurrentScratchLocation&quot; is not set to &quot;/tmp/scratch&quot;. This is a nonpersistent location.<br />
+<br />
+If &quot;Syslog.global.logDir&quot; is not configured to a persistent location, this is a finding.<br />
+<br />
+or<br />
+<br />
+From a PowerCLI command prompt while connected to the ESXi host, run the following commands:<br />
+<br />
+$esxcli = Get-EsxCli -v2<br />
+$esxcli.system.syslog.config.get.Invoke() | Select LocalLogOutput,LocalLogOutputIsPersistent<br />
+<br />
+If the &quot;LocalLogOutputIsPersistent&quot; value is not true, this is a finding.</p><h2>Vulnerability Number</h2><p>V-256408</p><h2>Documentable</h2><p>False</p><h2>Rule Version</h2><p>ESXI-70-000045</p><h2>Severity Override Guidance</h2><p>From the vSphere Client, go to Hosts and Clusters.<br />
+<br />
+Select the ESXi Host &gt;&gt; Configure &gt;&gt; System &gt;&gt; Advanced System Settings.<br />
+<br />
+Select the &quot;Syslog.global.logDir&quot; value and verify it is set to a persistent location.<br />
+<br />
+If the value of the setting is &quot;[] /scratch/logs&quot;, verify the advanced setting &quot;ScratchConfig.CurrentScratchLocation&quot; is not set to &quot;/tmp/scratch&quot;. This is a nonpersistent location.<br />
+<br />
+If &quot;Syslog.global.logDir&quot; is not configured to a persistent location, this is a finding.<br />
+<br />
+or<br />
+<br />
+From a PowerCLI command prompt while connected to the ESXi host, run the following commands:<br />
+<br />
+$esxcli = Get-EsxCli -v2<br />
+$esxcli.system.syslog.config.get.Invoke() | Select LocalLogOutput,LocalLogOutputIsPersistent<br />
+<br />
+If the &quot;LocalLogOutputIsPersistent&quot; value is not true, this is a finding.</p><h2>Check Content Reference</h2><p>M</p><h2>Target Key</h2><p>5518</p></body></html>

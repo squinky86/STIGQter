@@ -1,0 +1,31 @@
+<!doctype html><html lang="en"><head><meta charset="utf-8"><title>STIGQter: STIG Check Details: SV-251766r863248_rule: The NSX-T Tier-1 Gateway Firewall must be configured to send traffic log entries to a central audit server for management and configuration of the traffic log entries.</title><link rel="icon" type="image/svg+xml" href="STIGQter.svg" /><script async src="https://www.googletagmanager.com/gtag/js?id=UA-31381839-2"></script><script src="include.js"></script><script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-4110907817782130" crossorigin="anonymous"></script></head><body><div><img src="STIGQter.svg" alt="STIGQter" style="height:1em;" /> <a href="https://www.stigqter.com/">STIGQter</a>: <a href="main.html">STIG Summary</a>: <a href="U_VMW_NSX-T_T-1_Gateway_FW_STIG_V1R3_Manual-xccdf.html">VMware NSX-T Tier 1 Gateway Firewall Security Technical Implementation Guide Version: 1 Release: 3 Benchmark Date: 26 Jul 2023</a>:</div> <h1>The NSX-T Tier-1 Gateway Firewall must be configured to send traffic log entries to a central audit server for management and configuration of the traffic log entries.</h1><h2>DISA Rule</h2><p>SV-251766r863248_rule</p><h2>Vulnerability Number</h2><p>V-251766</p><h2>Group Title</h2><p>SRG-NET-000333-FW-000014</p><h2>Rule Version</h2><p>T1FW-3X-000026</p><h2>Severity</h2><p>CAT II</p><h2>CCI(s)</h2><ul><li>CCI-000366 - Implement the security configuration settings.</li></ul><h2>Weight</h2><p>10</p><h2>Fix Recommendation</h2><p>(Optional) From an NSX-T Edge Gateway shell, run the following command(s) to clear any existing incorrect logging-servers:<br />
+<br />
+&gt; clear logging-servers<br />
+<br />
+From an NSX-T Edge Node shell, run the following command(s) to configure a tls syslog server:<br />
+<br />
+&gt; set logging-server &lt;server-ip or server-name&gt; proto tls level info serverca ca.pem clientca ca.pem certificate cert.pem key key.pem<br />
+<br />
+From an NSX-T Edge Node shell, run the following command(s) to configure a li-tls syslog server:<br />
+<br />
+&gt; set logging-server &lt;server-ip or server-name&gt; proto li-tls level info serverca root-ca.crt<br />
+<br />
+Note: Configure the syslog or SNMP server to send an alert if the events server is unable to receive events from the NSX-T and also if DoS incidents are detected. This is true if the events server is STIG compliant.<br />
+<br />
+Note: If using the protocols TLS or LI-TLS to configure a secure connection to a log server, the server and client certificates must be stored in /var/vmware/nsx/file-store/ on each NSX-T Edge Gateway appliance.</p><h2>Check Contents</h2><p>Note: This check must be run from each NSX-T Edge Node hosting the Tier-1 Gateway, as they are configured individually.<br />
+<br />
+From an NSX-T Edge Node shell hosting the Tier-1 Gateway, run the following command(s):<br />
+<br />
+&gt; get logging-servers<br />
+<br />
+If any configured logging-servers are not configured with protocol of &quot;li-tls&quot; or &quot;tls&quot; and level of &quot;info&quot;, this is a finding.<br />
+<br />
+If no logging-servers are configured, this is a finding.</p><h2>Vulnerability Number</h2><p>V-251766</p><h2>Documentable</h2><p>False</p><h2>Rule Version</h2><p>T1FW-3X-000026</p><h2>Severity Override Guidance</h2><p>Note: This check must be run from each NSX-T Edge Node hosting the Tier-1 Gateway, as they are configured individually.<br />
+<br />
+From an NSX-T Edge Node shell hosting the Tier-1 Gateway, run the following command(s):<br />
+<br />
+&gt; get logging-servers<br />
+<br />
+If any configured logging-servers are not configured with protocol of &quot;li-tls&quot; or &quot;tls&quot; and level of &quot;info&quot;, this is a finding.<br />
+<br />
+If no logging-servers are configured, this is a finding.</p><h2>Check Content Reference</h2><p>M</p><h2>Target Key</h2><p>5453</p></body></html>

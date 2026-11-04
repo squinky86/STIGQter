@@ -1,0 +1,94 @@
+<!doctype html><html lang="en"><head><meta charset="utf-8"><title>STIGQter: STIG Check Details: SV-257537r1015794_rule: OpenShift must verify container images.</title><link rel="icon" type="image/svg+xml" href="STIGQter.svg" /><script async src="https://www.googletagmanager.com/gtag/js?id=UA-31381839-2"></script><script src="include.js"></script><script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-4110907817782130" crossorigin="anonymous"></script></head><body><div><img src="STIGQter.svg" alt="STIGQter" style="height:1em;" /> <a href="https://www.stigqter.com/">STIGQter</a>: <a href="main.html">STIG Summary</a>: <a href="U_RH_OpenShift_Container_Platform_4-x_STIG_V2R6_Manual-xccdf.html">Red Hat OpenShift Container Platform 4.x Security Technical Implementation Guide Version: 2 Release: 6 Benchmark Date: 01 Jul 2026</a>:</div> <h1>OpenShift must verify container images.</h1><h2>DISA Rule</h2><p>SV-257537r1015794_rule</p><h2>Vulnerability Number</h2><p>V-257537</p><h2>Group Title</h2><p>SRG-APP-000131-CTR-000285</p><h2>Rule Version</h2><p>CNTR-OS-000360</p><h2>Severity</h2><p>CAT II</p><h2>CCI(s)</h2><ul><li>CCI-003992 - Prevent the installation of organization-defined software and firmware components without verification that the component has been digitally signed using a certificate that is recognized and approved by the organization.</li></ul><h2>Weight</h2><p>10</p><h2>Fix Recommendation</h2><p>Configure the OpenShift Container policy to validate that image signatures are verified and enforced by executing the following:<br />
+Note: This can be configured manually or through the use of the MachineConfig Operator published by Red Hat.<br />
+<br />
+for mcpool in $(oc get mcp -oname | sed &quot;s:.*/::&quot; ); do<br />
+echo &quot;apiVersion: machineconfiguration.openshift.io/v1<br />
+kind: MachineConfig<br />
+metadata:<br />
+  labels:<br />
+    machineconfiguration.openshift.io/role: $mcpool<br />
+  name: 51-rh-registry-trust-$mcpool<br />
+spec:<br />
+  config:<br />
+    ignition:<br />
+      version: 3.2.0<br />
+    storage:<br />
+      files:<br />
+      - contents:<br />
+          source: data:text/plain;charset=utf-8;base64,LS0tCmRvY2tlcjoKICByZWdpc3RyeS5hY2Nlc3MucmVkaGF0LmNvbToKICAgIHNpZ3N0b3JlOiBodHRwczovL2FjY2Vzcy5yZWRoYXQuY29tL3dlYmFzc2V0cy9kb2NrZXIvY29udGVudC9zaWdzdG9yZQo=<br />
+          verification: {}<br />
+        filesystem: root<br />
+        mode: 420<br />
+        path: /etc/containers/registries.d/registry.access.redhat.com.yaml<br />
+      - contents:<br />
+          source: data:text/plain;charset=utf-8;base64,LS0tCmRvY2tlcjoKICByZWdpc3RyeS5yZWRoYXQuaW86CiAgICBzaWdzdG9yZTogaHR0cHM6Ly9yZWdpc3RyeS5yZWRoYXQuaW8vY29udGFpbmVycy9zaWdzdG9yZQo=<br />
+          verification: {}<br />
+        filesystem: root<br />
+        mode: 420<br />
+        path: /etc/containers/registries.d/registry.redhat.io.yaml<br />
+      - contents:<br />
+          source: data:text/plain;charset=utf-8;base64,ewogICJkZWZhdWx0IjogW3sidHlwZSI6ICJyZWplY3QifV0sCiAgInRyYW5zcG9ydHMiOiB7CiAgICAiZG9ja2VyIjogewogICAgICAicmVnaXN0cnkuYWNjZXNzLnJlZGhhdC5jb20iOiBbCiAgICAgICAgewogICAgICAgICAgInR5cGUiOiAic2lnbmVkQnkiLAogICAgICAgICAgImtleVR5cGUiOiAiR1BHS2V5cyIsCiAgICAgICAgICAia2V5UGF0aCI6ICIvZXRjL3BraS9ycG0tZ3BnL1JQTS1HUEctS0VZLXJlZGhhdC1yZWxlYXNlIgogICAgICAgIH0KICAgICAgXSwKICAgICAgInJlZ2lzdHJ5LnJlZGhhdC5pbyI6IFsKICAgICAgICB7CiAgICAgICAgICAidHlwZSI6ICJzaWduZWRCeSIsCiAgICAgICAgICAia2V5VHlwZSI6ICJHUEdLZXlzIiwKICAgICAgICAgICJrZXlQYXRoIjogIi9ldGMvcGtpL3JwbS1ncGcvUlBNLUdQRy1LRVktcmVkaGF0LXJlbGVhc2UiCiAgICAgICAgfQogICAgICBdLAogICAgICAiaW1hZ2UtcmVnaXN0cnkub3BlbnNoaWZ0LWltYWdlLXJlZ2lzdHJ5LnN2Yzo1MDAwIjogW3sidHlwZSI6ICJpbnNlY3VyZUFjY2VwdEFueXRoaW5nIn1dLAogICAgICAicXVheS5pby9jb21wbGlhbmNlYXNjb2RlIjogW3sidHlwZSI6ICJpbnNlY3VyZUFjY2VwdEFueXRoaW5nIn1dLAogICAgICAicXVheS5pby9jb21wbGlhbmNlLW9wZXJhdG9yIjogW3sidHlwZSI6ICJpbnNlY3VyZUFjY2VwdEFueXRoaW5nIn1dLAogICAgICAicXVheS5pby9rZXljbG9hayI6IFt7InR5cGUiOiAiaW5zZWN1cmVBY2NlcHRBbnl0aGluZyJ9XSwKICAgICAgInF1YXkuaW8vb3BlbnNoaWZ0LXJlbGVhc2UtZGV2IjogW3sidHlwZSI6ICJpbnNlY3VyZUFjY2VwdEFueXRoaW5nIn1dLAogICAgICAicmVnaXN0cnkuYnVpbGQwMi5jaS5vcGVuc2hpZnQub3JnIjogW3sidHlwZSI6ICJpbnNlY3VyZUFjY2VwdEFueXRoaW5nIn1dLAogICAgICAicmVnaXN0cnkuYnVpbGQwMS5jaS5vcGVuc2hpZnQub3JnIjogW3sidHlwZSI6ICJpbnNlY3VyZUFjY2VwdEFueXRoaW5nIn1dCiAgICB9CiAgfQp9Cg==<br />
+          verification: {}<br />
+        filesystem: root<br />
+        mode: 420<br />
+        path: /etc/containers/policy.json<br />
+&quot; | oc apply -f -<br />
+done</p><h2>Check Contents</h2><p>Determine if a policy has been put in place by running the following command:<br />
+<br />
+for node in $(oc get node -oname); do oc debug $node -- chroot /host /bin/bash -c 'echo -n &quot;$HOSTNAME &quot;; cat /etc/containers/policy.json' 2&gt;/dev/null; done<br />
+<br />
+If the policy is not set to &quot;reject&quot; by default, or the signature keys are not configure appropriately on the registries, this is a finding.<br />
+<br />
+The following is an example of how this will look on a system using Red Hat's public registries:<br />
+<br />
+  &lt;pre&gt;<br />
+    {<br />
+  &quot;default&quot;: [{&quot;type&quot;: &quot;reject&quot;}],<br />
+  &quot;transports&quot;: {<br />
+    &quot;docker&quot;: {<br />
+      &quot;registry.access.redhat.com&quot;: [<br />
+        {<br />
+          &quot;type&quot;: &quot;signedBy&quot;,<br />
+          &quot;keyType&quot;: &quot;GPGKeys&quot;,<br />
+          &quot;keyPath&quot;: &quot;/etc/pki/rpm-gpg/RPM-GPG-KEY-redhat-release&quot;<br />
+        }<br />
+      ],<br />
+      &quot;registry.redhat.io&quot;: [<br />
+        {<br />
+          &quot;type&quot;: &quot;signedBy&quot;,<br />
+          &quot;keyType&quot;: &quot;GPGKeys&quot;,<br />
+          &quot;keyPath&quot;: &quot;/etc/pki/rpm-gpg/RPM-GPG-KEY-redhat-release&quot;<br />
+        }<br />
+      ],<br />
+<br />
+      ...<br />
+    }</p><h2>Vulnerability Number</h2><p>V-257537</p><h2>Documentable</h2><p>False</p><h2>Rule Version</h2><p>CNTR-OS-000360</p><h2>Severity Override Guidance</h2><p>Determine if a policy has been put in place by running the following command:<br />
+<br />
+for node in $(oc get node -oname); do oc debug $node -- chroot /host /bin/bash -c 'echo -n &quot;$HOSTNAME &quot;; cat /etc/containers/policy.json' 2&gt;/dev/null; done<br />
+<br />
+If the policy is not set to &quot;reject&quot; by default, or the signature keys are not configure appropriately on the registries, this is a finding.<br />
+<br />
+The following is an example of how this will look on a system using Red Hat's public registries:<br />
+<br />
+  &lt;pre&gt;<br />
+    {<br />
+  &quot;default&quot;: [{&quot;type&quot;: &quot;reject&quot;}],<br />
+  &quot;transports&quot;: {<br />
+    &quot;docker&quot;: {<br />
+      &quot;registry.access.redhat.com&quot;: [<br />
+        {<br />
+          &quot;type&quot;: &quot;signedBy&quot;,<br />
+          &quot;keyType&quot;: &quot;GPGKeys&quot;,<br />
+          &quot;keyPath&quot;: &quot;/etc/pki/rpm-gpg/RPM-GPG-KEY-redhat-release&quot;<br />
+        }<br />
+      ],<br />
+      &quot;registry.redhat.io&quot;: [<br />
+        {<br />
+          &quot;type&quot;: &quot;signedBy&quot;,<br />
+          &quot;keyType&quot;: &quot;GPGKeys&quot;,<br />
+          &quot;keyPath&quot;: &quot;/etc/pki/rpm-gpg/RPM-GPG-KEY-redhat-release&quot;<br />
+        }<br />
+      ],<br />
+<br />
+      ...<br />
+    }</p><h2>Check Content Reference</h2><p>M</p><h2>Target Key</h2><p>5547</p></body></html>

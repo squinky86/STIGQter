@@ -1,0 +1,66 @@
+<!doctype html><html lang="en"><head><meta charset="utf-8"><title>STIGQter: STIG Check Details: SV-221104r1137895_rule: The Cisco BGP switch must be configured to reject inbound route advertisements for any prefixes belonging to the local autonomous system (AS).</title><link rel="icon" type="image/svg+xml" href="STIGQter.svg" /><script async src="https://www.googletagmanager.com/gtag/js?id=UA-31381839-2"></script><script src="include.js"></script><script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-4110907817782130" crossorigin="anonymous"></script></head><body><div><img src="STIGQter.svg" alt="STIGQter" style="height:1em;" /> <a href="https://www.stigqter.com/">STIGQter</a>: <a href="main.html">STIG Summary</a>: <a href="U_Cisco_NX-OS_Switch_RTR_STIG_V3R4_Manual-xccdf.html">Cisco NX OS Switch RTR Security Technical Implementation Guide Version: 3 Release: 4 Benchmark Date: 01 Apr 2026</a>:</div> <h1>The Cisco BGP switch must be configured to reject inbound route advertisements for any prefixes belonging to the local autonomous system (AS).</h1><h2>DISA Rule</h2><p>SV-221104r1137895_rule</p><h2>Vulnerability Number</h2><p>V-221104</p><h2>Group Title</h2><p>SRG-NET-000018-RTR-000003</p><h2>Rule Version</h2><p>CISC-RT-000500</p><h2>Severity</h2><p>CAT II</p><h2>CCI(s)</h2><ul><li>CCI-001368 - Enforce approved authorizations for controlling the flow of information within the system based on organization-defined information flow control policies.</li></ul><h2>Weight</h2><p>10</p><h2>Fix Recommendation</h2><p>Configure the switch to reject inbound route advertisements for any prefixes belonging to the local AS.<br />
+<br />
+Step 1: Add to the prefix filter list those prefixes belonging to the local autonomous system.<br />
+<br />
+SW1(config)# ip prefix-list PREFIX_FILTER seq 74 deny x.13.1.0/24 le 32<br />
+<br />
+Step 2: If not already completed to be compliant with previous requirement, apply the prefix list filter inbound to each external BGP neighbor as shown in the example below:<br />
+<br />
+SW1(config)# router bgp xx<br />
+SW1(config-router)# neighbor x.1.12.2<br />
+SW1(config-router-neighbor)# address-family ipv4 unicast<br />
+SW1(config-router-neighbor-af)# prefix-list PREFIX_FILTER in<br />
+SW1(config-router-neighbor-af)# exit<br />
+SW1(config-router-neighbor)# exit<br />
+SW1(config-router)# neighbor x.2.44.4<br />
+SW1(config-router-neighbor)# address-family ipv4 unicast<br />
+SW1(config-router-neighbor-af)# prefix-list PREFIX_FILTER in<br />
+SW1(config-router-neighbor-af)# end</p><h2>Check Contents</h2><p>Review the switch configuration to verify that it will reject routes belonging to the local AS.<br />
+<br />
+Step 1: Verify a prefix list has been configured containing prefixes belonging to the local AS. In the example below x.13.1.0/24 is the global address space allocated to the local AS.<br />
+<br />
+ip prefix-list PREFIX_FILTER seq 5 deny 0.0.0.0/8 le 32<br />
+…<br />
+…<br />
+…<br />
+ip prefix-list PREFIX_FILTER seq 74 deny x.13.1.0/24 le 32<br />
+ip prefix-list PREFIX_FILTER seq 75 permit 0.0.0.0/0 ge 8<br />
+<br />
+Step 2: Verify that the prefix list has been applied to all external BGP peers as shown in the example below:<br />
+<br />
+router bgp xx<br />
+ router-id 10.1.1.1<br />
+ neighbor x.1.12.2 remote-as xx<br />
+ password 3 7b07d1b3023056a9<br />
+ address-family ipv4 unicast<br />
+ prefix-list PREFIX_FILTER in<br />
+ neighbor x.2.44.4 remote-as xx<br />
+ password 3 f07a10cb41db8bb6f8f0a340049a9b02<br />
+ address-family ipv4 unicast<br />
+ prefix-list PREFIX_FILTER in<br />
+<br />
+If the switch is not configured to reject inbound route advertisements belonging to the local AS, this is a finding.</p><h2>Vulnerability Number</h2><p>V-221104</p><h2>Documentable</h2><p>False</p><h2>Rule Version</h2><p>CISC-RT-000500</p><h2>Severity Override Guidance</h2><p>Review the switch configuration to verify that it will reject routes belonging to the local AS.<br />
+<br />
+Step 1: Verify a prefix list has been configured containing prefixes belonging to the local AS. In the example below x.13.1.0/24 is the global address space allocated to the local AS.<br />
+<br />
+ip prefix-list PREFIX_FILTER seq 5 deny 0.0.0.0/8 le 32<br />
+…<br />
+…<br />
+…<br />
+ip prefix-list PREFIX_FILTER seq 74 deny x.13.1.0/24 le 32<br />
+ip prefix-list PREFIX_FILTER seq 75 permit 0.0.0.0/0 ge 8<br />
+<br />
+Step 2: Verify that the prefix list has been applied to all external BGP peers as shown in the example below:<br />
+<br />
+router bgp xx<br />
+ router-id 10.1.1.1<br />
+ neighbor x.1.12.2 remote-as xx<br />
+ password 3 7b07d1b3023056a9<br />
+ address-family ipv4 unicast<br />
+ prefix-list PREFIX_FILTER in<br />
+ neighbor x.2.44.4 remote-as xx<br />
+ password 3 f07a10cb41db8bb6f8f0a340049a9b02<br />
+ address-family ipv4 unicast<br />
+ prefix-list PREFIX_FILTER in<br />
+<br />
+If the switch is not configured to reject inbound route advertisements belonging to the local AS, this is a finding.</p><h2>Check Content Reference</h2><p>M</p><h2>Target Key</h2><p>4075</p></body></html>

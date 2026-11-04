@@ -1,0 +1,25 @@
+<!doctype html><html lang="en"><head><meta charset="utf-8"><title>STIGQter: STIG Check Details: SV-276248r1150096_rule: Azure SQL Managed Instance must map the PKI-authenticated identity to an associated user account.</title><link rel="icon" type="image/svg+xml" href="STIGQter.svg" /><script async src="https://www.googletagmanager.com/gtag/js?id=UA-31381839-2"></script><script src="include.js"></script><script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-4110907817782130" crossorigin="anonymous"></script></head><body><div><img src="STIGQter.svg" alt="STIGQter" style="height:1em;" /> <a href="https://www.stigqter.com/">STIGQter</a>: <a href="main.html">STIG Summary</a>: <a href="U_MS_Azure_SQL_MI_STIG_V1R1_Manual-xccdf.html">Microsoft Azure SQL Managed Instance Security Technical Implementation Guide Version: 1 Release: 1 Benchmark Date: 23 Sep 2025</a>:</div> <h1>Azure SQL Managed Instance must map the PKI-authenticated identity to an associated user account.</h1><h2>DISA Rule</h2><p>SV-276248r1150096_rule</p><h2>Vulnerability Number</h2><p>V-276248</p><h2>Group Title</h2><p>SRG-APP-000177-DB-000069</p><h2>Rule Version</h2><p>MSQL-00-008500</p><h2>Severity</h2><p>CAT II</p><h2>CCI(s)</h2><ul><li>CCI-000187 - For public key-based authentication, map the authenticated identity to the account of the individual or group.</li></ul><h2>Weight</h2><p>10</p><h2>Fix Recommendation</h2><p>To set the Entra ID Administrator, use the following PowerShell command: <br />
+  <br />
+Get-AzSqlInstance -Name '&lt;Azure SQL Managed Instance Name&gt;' | Set-AzSqlInstanceActiveDirectoryAdministrator -DisplayName '&lt;Entra Admin User/Group Name&gt;'<br />
+ <br />
+To enable Entra ID only authentication, use the following PowerShell command: <br />
+<br />
+Get-AzSqlInstance -Name '&lt;Azure SQL Managed Instance Name&gt;' | Enable-AzSqlInstanceActiveDirectoryOnlyAuthentication <br />
+ <br />
+Reference: https://learn.microsoft.com/en-us/azure/azure-sql/database/authentication-aad-configure?view=azuresql-mi&amp;amp;tabs=azure-powershell</p><h2>Check Contents</h2><p>Determine if Azure SQL Managed Instance is configured to use Microsoft Entra ID authentication only. <br />
+ <br />
+To verify Azure Active Directory is configured as the authentication type, use the following PowerShell commands:<br />
+<br />
+Get-AzSqlInstance -Name '&lt;Azure SQL Managed Instance Name&gt;' | Get-AzSqlInstanceActiveDirectoryOnlyAuthentication <br />
+ <br />
+If AzureADOnlyAuthentication returns &quot;True&quot;, this is not a finding. <br />
+<br />
+If AzureADOnlyAuthentication returns &quot;False&quot; and the need for mixed mode authentication has not been documented and approved, this is a finding.</p><h2>Vulnerability Number</h2><p>V-276248</p><h2>Documentable</h2><p>False</p><h2>Rule Version</h2><p>MSQL-00-008500</p><h2>Severity Override Guidance</h2><p>Determine if Azure SQL Managed Instance is configured to use Microsoft Entra ID authentication only. <br />
+ <br />
+To verify Azure Active Directory is configured as the authentication type, use the following PowerShell commands:<br />
+<br />
+Get-AzSqlInstance -Name '&lt;Azure SQL Managed Instance Name&gt;' | Get-AzSqlInstanceActiveDirectoryOnlyAuthentication <br />
+ <br />
+If AzureADOnlyAuthentication returns &quot;True&quot;, this is not a finding. <br />
+<br />
+If AzureADOnlyAuthentication returns &quot;False&quot; and the need for mixed mode authentication has not been documented and approved, this is a finding.</p><h2>Check Content Reference</h2><p>M</p><h2>Target Key</h2><p>5711</p></body></html>

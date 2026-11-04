@@ -1,0 +1,52 @@
+<!doctype html><html lang="en"><head><meta charset="utf-8"><title>STIGQter: STIG Check Details: SV-256733r888790_rule: Lookup Service log files must be offloaded to a central log server in real time.</title><link rel="icon" type="image/svg+xml" href="STIGQter.svg" /><script async src="https://www.googletagmanager.com/gtag/js?id=UA-31381839-2"></script><script src="include.js"></script><script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-4110907817782130" crossorigin="anonymous"></script></head><body><div><img src="STIGQter.svg" alt="STIGQter" style="height:1em;" /> <a href="https://www.stigqter.com/">STIGQter</a>: <a href="main.html">STIG Summary</a>: <a href="U_VMW_vSphere_7-0_vCA_Lookup_Svc_STIG_V1R2_Manual-xccdf.html">VMware vSphere 7.0 vCenter Appliance Lookup Service Security Technical Implementation Guide Version: 1 Release: 2 Benchmark Date: 26 Jul 2023</a>:</div> <h1>Lookup Service log files must be offloaded to a central log server in real time.</h1><h2>DISA Rule</h2><p>SV-256733r888790_rule</p><h2>Vulnerability Number</h2><p>V-256733</p><h2>Group Title</h2><p>SRG-APP-000358-WSR-000163</p><h2>Rule Version</h2><p>VCLU-70-000028</p><h2>Severity</h2><p>CAT II</p><h2>CCI(s)</h2><ul><li>CCI-000139 - Alert organization-defined personnel or roles within an organization-defined time period in the event of an audit logging process failure.</li><li>CCI-001348 - Store audit records on an organization-defined frequency in a repository that is part of a physically different system or system component that the system or component being audited.</li><li>CCI-001851 - Transfer audit logs per organization-defined frequency to a different system, system component, or media than the system or system component conducting the logging.</li></ul><h2>Weight</h2><p>10</p><h2>Fix Recommendation</h2><p>Navigate to and open:<br />
+<br />
+/etc/vmware-syslog/vmware-services-lookupsvc.conf<br />
+<br />
+Create the file if it does not exist.<br />
+<br />
+Set the contents of the file as follows:<br />
+<br />
+#localhost_access_log<br />
+input(type=&quot;imfile&quot;<br />
+      File=&quot;/var/log/vmware/lookupsvc/tomcat/localhost_access.log&quot;<br />
+      Tag=&quot;lookupsvc-localhost_access&quot;<br />
+      Severity=&quot;info&quot;<br />
+      Facility=&quot;local0&quot;)<br />
+#lookupsvc_stream.log.std<br />
+input(type=&quot;imfile&quot;<br />
+      File=&quot;/var/log/vmware/lookupsvc/lookupsvc_stream.log.std*&quot;<br />
+      Tag=&quot;lookupsvc-std&quot;<br />
+      Severity=&quot;info&quot;<br />
+      Facility=&quot;local0&quot;)<br />
+#lookupserver-default<br />
+input(type=&quot;imfile&quot;<br />
+      File=&quot;/var/log/vmware/lookupsvc/lookupserver-default.log&quot;<br />
+      Tag=&quot;lookupsvc-lookupserver-default&quot;<br />
+      Severity=&quot;info&quot;<br />
+      Facility=&quot;local0&quot;)<br />
+#lookupServer<br />
+input(type=&quot;imfile&quot;<br />
+      File=&quot;/var/log/vmware/lookupsvc/lookupServer.log&quot;<br />
+      Tag=&quot;lookupsvc-lookupServer&quot;<br />
+      Severity=&quot;info&quot;<br />
+      Facility=&quot;local0&quot;)<br />
+#ls-perflogs<br />
+input(type=&quot;imfile&quot;<br />
+      File=&quot;/var/log/vmware/lookupsvc/vmware-lookupservice-perf.log&quot;<br />
+      Tag=&quot;lookupsvc-perf&quot;<br />
+      Severity=&quot;info&quot;<br />
+      Facility=&quot;local0&quot;)<br />
+#ls-gc<br />
+input(type=&quot;imfile&quot;<br />
+      File=&quot;/var/log/vmware/lookupsvc/vmware-lookupsvc-gc.log.*.current&quot;<br />
+      Tag=&quot;lookupsvc-gc&quot;<br />
+      Severity=&quot;info&quot;<br />
+      Facility=&quot;local0&quot;)</p><h2>Check Contents</h2><p>At the command prompt, run the following command:<br />
+<br />
+# rpm -V VMware-visl-integration|grep vmware-services-lookupsvc.conf<br />
+<br />
+If the above command returns any output, this is a finding.</p><h2>Vulnerability Number</h2><p>V-256733</p><h2>Documentable</h2><p>False</p><h2>Rule Version</h2><p>VCLU-70-000028</p><h2>Severity Override Guidance</h2><p>At the command prompt, run the following command:<br />
+<br />
+# rpm -V VMware-visl-integration|grep vmware-services-lookupsvc.conf<br />
+<br />
+If the above command returns any output, this is a finding.</p><h2>Check Content Reference</h2><p>M</p><h2>Target Key</h2><p>5525</p></body></html>

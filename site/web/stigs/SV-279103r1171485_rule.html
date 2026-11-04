@@ -1,0 +1,128 @@
+<!doctype html><html lang="en"><head><meta charset="utf-8"><title>STIGQter: STIG Check Details: SV-279103r1171485_rule: ColdFusion must execute as a nonprivileged user.</title><link rel="icon" type="image/svg+xml" href="STIGQter.svg" /><script async src="https://www.googletagmanager.com/gtag/js?id=UA-31381839-2"></script><script src="include.js"></script><script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-4110907817782130" crossorigin="anonymous"></script></head><body><div><img src="STIGQter.svg" alt="STIGQter" style="height:1em;" /> <a href="https://www.stigqter.com/">STIGQter</a>: <a href="main.html">STIG Summary</a>: <a href="U_Adobe_ColdFusion_STIG_V1R2_Manual-xccdf.html">Adobe ColdFusion Security Technical Implementation Guide Version: 1 Release: 2 Benchmark Date: 01 Jul 2026</a>:</div> <h1>ColdFusion must execute as a nonprivileged user.</h1><h2>DISA Rule</h2><p>SV-279103r1171485_rule</p><h2>Vulnerability Number</h2><p>V-279103</p><h2>Group Title</h2><p>SRG-APP-000516-AS-000237</p><h2>Rule Version</h2><p>APAS-CF-001010</p><h2>Severity</h2><p>CAT II</p><h2>CCI(s)</h2><ul><li>CCI-000366 - Implement the security configuration settings.</li></ul><h2>Weight</h2><p>10</p><h2>Fix Recommendation</h2><p>For ColdFusion running on Windows:<br />
+<br />
+1. Create a user for the ColdFusion services locally by running the snap-in compmgmt.msc or on the domain controller.<br />
+<br />
+2. Follow any organization specific policies in place and Windows STIGs for password complexity, usernames, etc. Remove all groups and ensure the user account does not have permission to connect via Remote Desktop.<br />
+<br />
+3. Run the snap-in services.msc.<br />
+<br />
+4. Locate the ColdFusion services.<br />
+<br />
+5. Right-click on a ColdFusion service and select &quot;Properties&quot;.<br />
+<br />
+6. Select the &quot;Log On&quot; tab.<br />
+<br />
+7. Click on the &quot;This account:&quot; radio button.<br />
+<br />
+8. Enter the username and password for the user account that was just created.<br />
+<br />
+9. Select &quot;Ok&quot; to save the changes.<br />
+<br />
+10. Repeat steps 3 through 9 for each ColdFusion service.<br />
+<br />
+ColdFusion running on Linux:<br />
+1. Create a group for the user account that will run the ColdFusion service by executing the command groupadd. For example, if the group being created is webusers, the command would be &quot;groupadd webusers&quot;.<br />
+<br />
+2. Create the user account for the service by executing the command useradd. For example, if the user being created is cfuser without creating a home directory, the command would be &quot;useradd -M cfuser&quot;.<br />
+<br />
+3. Lock the user account so that it cannot be used to log in by executing the command usermod. For example, to lock user cfuser, the command would be &quot;usermod -L cfuser&quot;.<br />
+<br />
+4. Add the user account to the group by executing the command usermod. For example, to add cfuser to the group webusers, the command would be &quot;usermod -G webusers cfuser&quot;.<br />
+<br />
+5. Change to the bin directory in the ColdFusion instance directory.<br />
+<br />
+6. Edit the sysinit file.<br />
+<br />
+7. Locate the text &quot;RUNTIME_USER= within sysinit&quot;.<br />
+<br />
+8. Update the user account being used to run the ColdFusion service.</p><h2>Check Contents</h2><p>1. For ColdFusion running on Windows, run the snap-in services.msc.<br />
+<br />
+a. Locate the ColdFusion section of services.<br />
+<br />
+b. Right-click on each ColdFusion service and select &quot;Properties&quot;.<br />
+<br />
+c. Select the &quot;Log On&quot; tab.<br />
+<br />
+If any service has &quot;Local System account&quot; selected, this is a finding.<br />
+<br />
+2. For each user account of the services that is a local account run the snap-in compmgmt.msc.<br />
+<br />
+a. Expand the &quot;Local Users and Groups&quot; in the left pane under &quot;System Tools&quot; to view the &quot;Users&quot; and &quot;Groups&quot; folders.<br />
+<br />
+b. Select the &quot;Users&quot; folder and the users will be listed in the right pane.<br />
+<br />
+c. Right-click a user that runs a ColdFusion service.<br />
+<br />
+d. Select &quot;Properties&quot; on the menu.<br />
+<br />
+e. Select the &quot;Member Of&quot; tab.<br />
+<br />
+If any groups are listed, this is a finding.<br />
+<br />
+3. Click on the &quot;Remote Desktop Services Profile&quot; tab.<br />
+<br />
+If the &quot;Deny this user permissions to log on to Remote Desktop Session Host server&quot; is not checked, this is a finding.<br />
+<br />
+4. For each user account of the services that is a domain account, review the groups for each user account on the domain controller.<br />
+<br />
+If any groups are listed, this is a finding.<br />
+<br />
+5. For ColdFusion running on Linux:<br />
+<br />
+a. Change to the bin directory in the ColdFusion instance directory.<br />
+<br />
+b. Execute the command: <br />
+grep -i -m 1 runtime_user sysinit<br />
+<br />
+c. The user being used to execute ColdFusion will be listed. <br />
+<br />
+d. View the user within the /etc/passwd file.<br />
+<br />
+e. Make note of the user id and group id. For example, if the line in the passwd file is cfuser:x:500:501:ColdFusion:/home/cfuser:/sbin/nologin, the user id is 500 and the group id is 501.<br />
+<br />
+If the user id or the group id is set to 0, this is a finding.</p><h2>Vulnerability Number</h2><p>V-279103</p><h2>Documentable</h2><p>False</p><h2>Rule Version</h2><p>APAS-CF-001010</p><h2>Severity Override Guidance</h2><p>1. For ColdFusion running on Windows, run the snap-in services.msc.<br />
+<br />
+a. Locate the ColdFusion section of services.<br />
+<br />
+b. Right-click on each ColdFusion service and select &quot;Properties&quot;.<br />
+<br />
+c. Select the &quot;Log On&quot; tab.<br />
+<br />
+If any service has &quot;Local System account&quot; selected, this is a finding.<br />
+<br />
+2. For each user account of the services that is a local account run the snap-in compmgmt.msc.<br />
+<br />
+a. Expand the &quot;Local Users and Groups&quot; in the left pane under &quot;System Tools&quot; to view the &quot;Users&quot; and &quot;Groups&quot; folders.<br />
+<br />
+b. Select the &quot;Users&quot; folder and the users will be listed in the right pane.<br />
+<br />
+c. Right-click a user that runs a ColdFusion service.<br />
+<br />
+d. Select &quot;Properties&quot; on the menu.<br />
+<br />
+e. Select the &quot;Member Of&quot; tab.<br />
+<br />
+If any groups are listed, this is a finding.<br />
+<br />
+3. Click on the &quot;Remote Desktop Services Profile&quot; tab.<br />
+<br />
+If the &quot;Deny this user permissions to log on to Remote Desktop Session Host server&quot; is not checked, this is a finding.<br />
+<br />
+4. For each user account of the services that is a domain account, review the groups for each user account on the domain controller.<br />
+<br />
+If any groups are listed, this is a finding.<br />
+<br />
+5. For ColdFusion running on Linux:<br />
+<br />
+a. Change to the bin directory in the ColdFusion instance directory.<br />
+<br />
+b. Execute the command: <br />
+grep -i -m 1 runtime_user sysinit<br />
+<br />
+c. The user being used to execute ColdFusion will be listed. <br />
+<br />
+d. View the user within the /etc/passwd file.<br />
+<br />
+e. Make note of the user id and group id. For example, if the line in the passwd file is cfuser:x:500:501:ColdFusion:/home/cfuser:/sbin/nologin, the user id is 500 and the group id is 501.<br />
+<br />
+If the user id or the group id is set to 0, this is a finding.</p><h2>Check Content Reference</h2><p>M</p><h2>Target Key</h2><p>5724</p></body></html>

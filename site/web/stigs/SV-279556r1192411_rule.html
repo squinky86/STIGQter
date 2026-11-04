@@ -1,0 +1,31 @@
+<!doctype html><html lang="en"><head><meta charset="utf-8"><title>STIGQter: STIG Check Details: SV-279556r1192411_rule: Nutanix OS must provide audit record generation capability for DOD-defined auditable events for all kernel module load, unload, and restart actions.</title><link rel="icon" type="image/svg+xml" href="STIGQter.svg" /><script async src="https://www.googletagmanager.com/gtag/js?id=UA-31381839-2"></script><script src="include.js"></script><script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-4110907817782130" crossorigin="anonymous"></script></head><body><div><img src="STIGQter.svg" alt="STIGQter" style="height:1em;" /> <a href="https://www.stigqter.com/">STIGQter</a>: <a href="main.html">STIG Summary</a>: <a href="U_NTX_Acropolis_OS_STIG_V1R1_Manual-xccdf.html">Nutanix Acropolis GPOS Security Technical Implementation Guide Version: 1 Release: 1 Benchmark Date: 26 Jan 2026</a>:</div> <h1>Nutanix OS must provide audit record generation capability for DOD-defined auditable events for all kernel module load, unload, and restart actions.</h1><h2>DISA Rule</h2><p>SV-279556r1192411_rule</p><h2>Vulnerability Number</h2><p>V-279556</p><h2>Group Title</h2><p>SRG-OS-000062-GPOS-00031</p><h2>Rule Version</h2><p>NXAC-OS-000050</p><h2>Severity</h2><p>CAT II</p><h2>CCI(s)</h2><ul><li>CCI-000169 - Provide audit record generation capability for the event types the system is capable of auditing as defined in AU-2 a. on organization-defined information system components.</li></ul><h2>Weight</h2><p>10</p><h2>Fix Recommendation</h2><p>1. For AOS, configure the audit rules.<br />
+<br />
+$ sudo salt-call state.sls security/CVM/auditCVM<br />
+<br />
+2. For Prism Central, configure the audit rules.<br />
+<br />
+$ sudo salt-call state.sls security/PCVM/auditPCVM<br />
+<br />
+3. For Files, configure the audit rules.<br />
+<br />
+$ sudo salt-call state.sls security/AFS/auditAFS<br />
+<br />
+4. For AHV, configure the audit rules.<br />
+<br />
+$ sudo salt-call state.sls security/KVM/auditKVM</p><h2>Check Contents</h2><p>Verify Nutanix OS is configured to generate audit records on all kernel module load, unload, and restart actions using the following command.<br />
+<br />
+$ sudo grep &quot;/usr/bin/kmod&quot; /etc/audit/audit.rules<br />
+-w /usr/bin/kmod -p x -F auid!=unset -k module-change<br />
+<br />
+$ sudo cat /boot/grub/grub.conf | grep audit<br />
+kernel /boot/vmlinuz-3.10.0-1160.24.1.el7.nutanix.20210425.cvm.x86_64 ro root=UUID=71a1fe8c-812f-4403-80ed-894f554b061c rd_NO_LUKS rd_NO_LVM rd_NO_MD rd_NO_DM LANG=en_US.UTF-8 SYSFONT=latarcyrheb-sun16 rhgb crashkernel=auto KEYBOARDTYPE=pc KEYTABLE=us audit=1 audit_backlog_limit=8192 nousb fips=1 nomodeset biosdevname=0 net.ifnames=0 scsi_mod.use_blk_mq=y panic=30 console=ttyS0,115200n8 console=tty0 clocksource=tsc kvm_nopvspin=1 xen_nopvspin=1 hv_netvsc.ring_size=512 mds=off mitigations=off<br />
+<br />
+If the commands do not return the appropriate response line, as indicated above, or if the lines are commented out, this is a finding.</p><h2>Vulnerability Number</h2><p>V-279556</p><h2>Documentable</h2><p>False</p><h2>Rule Version</h2><p>NXAC-OS-000050</p><h2>Severity Override Guidance</h2><p>Verify Nutanix OS is configured to generate audit records on all kernel module load, unload, and restart actions using the following command.<br />
+<br />
+$ sudo grep &quot;/usr/bin/kmod&quot; /etc/audit/audit.rules<br />
+-w /usr/bin/kmod -p x -F auid!=unset -k module-change<br />
+<br />
+$ sudo cat /boot/grub/grub.conf | grep audit<br />
+kernel /boot/vmlinuz-3.10.0-1160.24.1.el7.nutanix.20210425.cvm.x86_64 ro root=UUID=71a1fe8c-812f-4403-80ed-894f554b061c rd_NO_LUKS rd_NO_LVM rd_NO_MD rd_NO_DM LANG=en_US.UTF-8 SYSFONT=latarcyrheb-sun16 rhgb crashkernel=auto KEYBOARDTYPE=pc KEYTABLE=us audit=1 audit_backlog_limit=8192 nousb fips=1 nomodeset biosdevname=0 net.ifnames=0 scsi_mod.use_blk_mq=y panic=30 console=ttyS0,115200n8 console=tty0 clocksource=tsc kvm_nopvspin=1 xen_nopvspin=1 hv_netvsc.ring_size=512 mds=off mitigations=off<br />
+<br />
+If the commands do not return the appropriate response line, as indicated above, or if the lines are commented out, this is a finding.</p><h2>Check Content Reference</h2><p>M</p><h2>Target Key</h2><p>5730</p></body></html>

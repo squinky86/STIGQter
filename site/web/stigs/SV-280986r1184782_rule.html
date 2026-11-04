@@ -1,0 +1,53 @@
+<!doctype html><html lang="en"><head><meta charset="utf-8"><title>STIGQter: STIG Check Details: SV-280986r1184782_rule: RHEL 10 must be configured so that the rsyslog daemon does not accept log messages from other servers unless the server is being used for log aggregation.</title><link rel="icon" type="image/svg+xml" href="STIGQter.svg" /><script async src="https://www.googletagmanager.com/gtag/js?id=UA-31381839-2"></script><script src="include.js"></script><script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-4110907817782130" crossorigin="anonymous"></script></head><body><div><img src="STIGQter.svg" alt="STIGQter" style="height:1em;" /> <a href="https://www.stigqter.com/">STIGQter</a>: <a href="main.html">STIG Summary</a>: <a href="U_RHEL_10_STIG_V1R2_Manual-xccdf.html">Red Hat Enterprise Linux 10 Security Technical Implementation Guide Version: 1 Release: 2 Benchmark Date: 01 Jul 2026</a>:</div> <h1>RHEL 10 must be configured so that the rsyslog daemon does not accept log messages from other servers unless the server is being used for log aggregation.</h1><h2>DISA Rule</h2><p>SV-280986r1184782_rule</p><h2>Vulnerability Number</h2><p>V-280986</p><h2>Group Title</h2><p>SRG-OS-000420-GPOS-00186</p><h2>Rule Version</h2><p>RHEL-10-200643</p><h2>Severity</h2><p>CAT II</p><h2>CCI(s)</h2><ul><li>CCI-002385 - Protect against or limit the effects of organization-defined types of denial of service events.</li></ul><h2>Weight</h2><p>10</p><h2>Fix Recommendation</h2><p>Configure RHEL 10 to not receive remote logs using rsyslog.<br />
+<br />
+Remove the lines in &quot;/etc/rsyslog.conf&quot; and any files in the &quot;/etc/rsyslog.d&quot; directory that match any of the following:<br />
+<br />
+InputTCPServerRun<br />
+UDPServerRun<br />
+RELPServerRun<br />
+module(load=&quot;imtcp&quot;)<br />
+module(load=&quot;imudp&quot;)<br />
+module(load=&quot;imrelp&quot;)<br />
+input(type=&quot;imudp&quot; port=&quot;514&quot;)<br />
+input(type=&quot;imtcp&quot; port=&quot;514&quot;)<br />
+input(type=&quot;imrelp&quot; port=&quot;514&quot;)<br />
+<br />
+Restart the rsyslog daemon with the following command for the changes to take effect:<br />
+<br />
+$ sudo systemctl restart rsyslog.service</p><h2>Check Contents</h2><p>Note: If the SA can demonstrate that another tool (e.g., SPLUNK) is being used to manage log off-load and aggregation in lieu of rsyslog, this check is not applicable.<br />
+<br />
+Verify RHEL 10 is not configured to receive remote logs using rsyslog.<br />
+<br />
+Verify the setting with the following commands:<br />
+<br />
+$ ss -tulnp | grep rsyslog<br />
+<br />
+If no output is returned, rsyslog is not listening for remote logs.<br />
+<br />
+If output appears, check for configured ports (514 is the default for syslog).<br />
+<br />
+Check for remote logging configuration in rsyslog by examining the rsyslog configuration files:<br />
+<br />
+$ sudo grep -E 'InputTCPServerRun|UDPServerRun|RELPServerRun|imtcp|imudp|imrelp' /etc/rsyslog.conf /etc/rsyslog.d/*<br />
+<br />
+If this command returns uncommented lines enabling network listeners, the system is accepting remote logs. If this system is not documented and authorized as a log aggregation server, this is a finding.<br />
+<br />
+Note: An error about no files or directories from the above commands may be returned. This is not a finding. Additionally, if a port option used together with a target and protocol is returned from inside an action block, this is not a finding.</p><h2>Vulnerability Number</h2><p>V-280986</p><h2>Documentable</h2><p>False</p><h2>Rule Version</h2><p>RHEL-10-200643</p><h2>Severity Override Guidance</h2><p>Note: If the SA can demonstrate that another tool (e.g., SPLUNK) is being used to manage log off-load and aggregation in lieu of rsyslog, this check is not applicable.<br />
+<br />
+Verify RHEL 10 is not configured to receive remote logs using rsyslog.<br />
+<br />
+Verify the setting with the following commands:<br />
+<br />
+$ ss -tulnp | grep rsyslog<br />
+<br />
+If no output is returned, rsyslog is not listening for remote logs.<br />
+<br />
+If output appears, check for configured ports (514 is the default for syslog).<br />
+<br />
+Check for remote logging configuration in rsyslog by examining the rsyslog configuration files:<br />
+<br />
+$ sudo grep -E 'InputTCPServerRun|UDPServerRun|RELPServerRun|imtcp|imudp|imrelp' /etc/rsyslog.conf /etc/rsyslog.d/*<br />
+<br />
+If this command returns uncommented lines enabling network listeners, the system is accepting remote logs. If this system is not documented and authorized as a log aggregation server, this is a finding.<br />
+<br />
+Note: An error about no files or directories from the above commands may be returned. This is not a finding. Additionally, if a port option used together with a target and protocol is returned from inside an action block, this is not a finding.</p><h2>Check Content Reference</h2><p>M</p><h2>Target Key</h2><p>5733</p></body></html>

@@ -1,0 +1,102 @@
+<!doctype html><html lang="en"><head><meta charset="utf-8"><title>STIGQter: STIG Check Details: SV-283768r1203574_rule: The Nokia router must be configured to prohibit the use of all unnecessary and/or nonsecure functions, ports, protocols, and/or services.</title><link rel="icon" type="image/svg+xml" href="STIGQter.svg" /><script async src="https://www.googletagmanager.com/gtag/js?id=UA-31381839-2"></script><script src="include.js"></script><script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-4110907817782130" crossorigin="anonymous"></script></head><body><div><img src="STIGQter.svg" alt="STIGQter" style="height:1em;" /> <a href="https://www.stigqter.com/">STIGQter</a>: <a href="main.html">STIG Summary</a>: <a href="U_Nokia_SR_OS_25-x_NDM_V1R1_STIG_Manual-xccdf.html">Nokia Service Router OS 25.x Network Device Management Security Technical Implementation Guide Version: 1 Release: 1 Benchmark Date: 28 Apr 2026</a>:</div> <h1>The Nokia router must be configured to prohibit the use of all unnecessary and/or nonsecure functions, ports, protocols, and/or services.</h1><h2>DISA Rule</h2><p>SV-283768r1203574_rule</p><h2>Vulnerability Number</h2><p>V-283768</p><h2>Group Title</h2><p>SRG-APP-000142-NDM-000245</p><h2>Rule Version</h2><p>NOKI-ND-000330</p><h2>Severity</h2><p>CAT I</p><h2>CCI(s)</h2><ul><li>CCI-000382 - Configure the system to prohibit or restrict the use of organization-defined prohibited or restricted functions, system ports, protocols, software, and/or services.</li></ul><h2>Weight</h2><p>10</p><h2>Fix Recommendation</h2><p>Configure the Nokia router to prohibit the use of all unnecessary and/or nonsecure functions, ports, protocols, and/or services.<br />
+<br />
+Disable FTP:<br />
+<br />
+- configure system security no ftp-server<br />
+- configure system security no allow-ftp<br />
+<br />
+Disable telnet:<br />
+<br />
+- configure system security no telnet-server<br />
+- configure system security no allow-telnet<br />
+- configure system security no telnet6-server<br />
+- configure system security no allow-telnet6<br />
+<br />
+Disable any other port/protocol using the management access filter:<br />
+<br />
+- configure system security management-access-filter ip-filter<br />
+- default-action &lt;permit | deny| deny-host-unreachable&gt;<br />
+- entry &lt;entry id&gt;<br />
+- &lt;match criteria&gt; &lt;match value&gt;<br />
+- action &lt;permit | deny| deny-host-unreachable&gt;<br />
+<br />
+Enable the management access ip filter: <br />
+<br />
+- configure system security management-access-filter ip-filter no shutdown<br />
+<br />
+Example of management-access-filter ipv6 filter configuration:<br />
+<br />
+- configure system security management-access-filter ipv6-filter<br />
+- default-action &lt;permit | deny| deny-host-unreachable&gt;<br />
+- entry &lt;entry id&gt;<br />
+- &lt;match criteria&gt; &lt;match value&gt;<br />
+- action &lt;permit | deny| deny-host-unreachable&gt;<br />
+<br />
+Enable the management access ipv6 filter:<br />
+ <br />
+- configure system security management-access-filter ipv6-filter no shutdown<br />
+<br />
+Disable any other port/protocol using the CPM filter:<br />
+<br />
+Example of cpm ipv6 filter configuration:<br />
+<br />
+- configure system security cpm-filter ipv6-filter<br />
+- entry &lt;id&gt; create<br />
+- match &lt;match criteria&gt; &lt;match value&gt;<br />
+- action &lt;action&gt;<br />
+<br />
+Enable the cpm ipv6 filter:<br />
+<br />
+- configure system security cpm-filter ipv6-filter no shutdown<br />
+<br />
+Example of cpm ipv4 filter configuration:<br />
+<br />
+- configure system security cpm-filter ip-filter<br />
+- entry &lt;id&gt; create<br />
+- match &lt;match criteria&gt; &lt;match value&gt;<br />
+- action &lt;action&gt;<br />
+<br />
+Enable the cpm ipv4 filter:<br />
+<br />
+- configure system security cpm-filter ip-filter no shutdown<br />
+<br />
+Example of ipv4 cpm filter to block HTTP:<br />
+<br />
+- configure system security cpm-filter ip-filter<br />
+- entry 1 create<br />
+- match protocol tcp port 80<br />
+- action drop</p><h2>Check Contents</h2><p>Verify the router does not have any unnecessary or nonsecure functions, ports, protocols, and services enabled. <br />
+<br />
+For example, verify that Telnet and FTP are disabled:<br />
+<br />
+- show system information | match Tel<br />
+Tel/Tel6/SSH/FTP Admin : Disabled/Disabled/Enabled/Disabled<br />
+Tel/Tel6/SSH/FTP Oper  : Down/Down/Up/Down<br />
+<br />
+Any other TCP/UDP port can be disallowed using CPM and/or management filters.<br />
+<br />
+Verify nonsecure functions and services are disabled by using the command below: <br />
+<br />
+- show system security management-access-filter ip-filter<br />
+- show system security management-access-filter ipv6-filter<br />
+- show system security cpm-filter ip-filter<br />
+- show system security cpm-filter ipv6-filter<br />
+<br />
+If any unnecessary or nonsecure functions, ports, protocols, or services are permitted, this is a finding.</p><h2>Vulnerability Number</h2><p>V-283768</p><h2>Documentable</h2><p>False</p><h2>Rule Version</h2><p>NOKI-ND-000330</p><h2>Severity Override Guidance</h2><p>Verify the router does not have any unnecessary or nonsecure functions, ports, protocols, and services enabled. <br />
+<br />
+For example, verify that Telnet and FTP are disabled:<br />
+<br />
+- show system information | match Tel<br />
+Tel/Tel6/SSH/FTP Admin : Disabled/Disabled/Enabled/Disabled<br />
+Tel/Tel6/SSH/FTP Oper  : Down/Down/Up/Down<br />
+<br />
+Any other TCP/UDP port can be disallowed using CPM and/or management filters.<br />
+<br />
+Verify nonsecure functions and services are disabled by using the command below: <br />
+<br />
+- show system security management-access-filter ip-filter<br />
+- show system security management-access-filter ipv6-filter<br />
+- show system security cpm-filter ip-filter<br />
+- show system security cpm-filter ipv6-filter<br />
+<br />
+If any unnecessary or nonsecure functions, ports, protocols, or services are permitted, this is a finding.</p><h2>Check Content Reference</h2><p>M</p><h2>Target Key</h2><p>5744</p></body></html>

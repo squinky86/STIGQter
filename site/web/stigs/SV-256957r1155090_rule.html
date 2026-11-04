@@ -1,0 +1,19 @@
+<!doctype html><html lang="en"><head><meta charset="utf-8"><title>STIGQter: STIG Check Details: SV-256957r1155090_rule: The Automation Controller NGINX web server must limit the character set used for data entry.</title><link rel="icon" type="image/svg+xml" href="STIGQter.svg" /><script async src="https://www.googletagmanager.com/gtag/js?id=UA-31381839-2"></script><script src="include.js"></script><script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-4110907817782130" crossorigin="anonymous"></script></head><body><div><img src="STIGQter.svg" alt="STIGQter" style="height:1em;" /> <a href="https://www.stigqter.com/">STIGQter</a>: <a href="main.html">STIG Summary</a>: <a href="U_RH_Ansible_Automation_Controller_WS_STIG_V2R3_Manual-xccdf.html">Red Hat Ansible Automation Controller Web Server Security Technical Implementation Guide Version: 2 Release: 3 Benchmark Date: 05 Jan 2026</a>:</div> <h1>The Automation Controller NGINX web server must limit the character set used for data entry.</h1><h2>DISA Rule</h2><p>SV-256957r1155090_rule</p><h2>Vulnerability Number</h2><p>V-256957</p><h2>Group Title</h2><p>SRG-APP-000251-WSR-000157</p><h2>Rule Version</h2><p>APWS-AT-000610</p><h2>Severity</h2><p>CAT II</p><h2>CCI(s)</h2><ul><li>CCI-001310 - Checks the validity of organization-defined information inputs to the system.</li></ul><h2>Weight</h2><p>10</p><h2>Fix Recommendation</h2><p>As an SA for each Automation Controller NGINX web server, verify the NGINX web server configuration file in use is located at '/etc/nginx/nginx.conf'<br />
+<br />
+NGINXCONF=`nginx -V 2&gt;&amp;1 | tr ' ' '\n' | sed -ne '/conf-path/{s/.*conf-path=\(.*\)/\1/;p}' ` ; <br />
+<br />
+Add the directive to the NGINX configuration to force a required charset.<br />
+<br />
+sed -i  '/location/i charset_required; ' $NGINXCONF<br />
+<br />
+Reload the NGINX server configurations for all NGINX processes.<br />
+<br />
+$ pkill -HUP nginx</p><h2>Check Contents</h2><p>As a system administrator (SA) for each Automation Controller NGINX web server, verify the configuration requires a charset is mandatory.<br />
+<br />
+grep 'charset_required' &quot;$(nginx -V 2&gt;&amp;1 | tr ' ' '\n' | sed -ne '/conf-path/{s/.*conf-path=\(.*\)/\1/;p}')&quot; || echo &quot;FAILED&quot;<br />
+<br />
+If &quot;FAILED&quot; is displayed, this is a finding.</p><h2>Vulnerability Number</h2><p>V-256957</p><h2>Documentable</h2><p>False</p><h2>Rule Version</h2><p>APWS-AT-000610</p><h2>Severity Override Guidance</h2><p>As a system administrator (SA) for each Automation Controller NGINX web server, verify the configuration requires a charset is mandatory.<br />
+<br />
+grep 'charset_required' &quot;$(nginx -V 2&gt;&amp;1 | tr ' ' '\n' | sed -ne '/conf-path/{s/.*conf-path=\(.*\)/\1/;p}')&quot; || echo &quot;FAILED&quot;<br />
+<br />
+If &quot;FAILED&quot; is displayed, this is a finding.</p><h2>Check Content Reference</h2><p>M</p><h2>Target Key</h2><p>5535</p></body></html>

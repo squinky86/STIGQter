@@ -1,0 +1,27 @@
+<!doctype html><html lang="en"><head><meta charset="utf-8"><title>STIGQter: STIG Check Details: SV-260502r1184054_rule: Ubuntu 22.04 LTS must configure the directories used by the system journal to be group-owned by &quot;systemd-journal&quot;.</title><link rel="icon" type="image/svg+xml" href="STIGQter.svg" /><script async src="https://www.googletagmanager.com/gtag/js?id=UA-31381839-2"></script><script src="include.js"></script><script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-4110907817782130" crossorigin="anonymous"></script></head><body><div><img src="STIGQter.svg" alt="STIGQter" style="height:1em;" /> <a href="https://www.stigqter.com/">STIGQter</a>: <a href="main.html">STIG Summary</a>: <a href="U_CAN_Ubuntu_22-04_LTS_STIG_V2R9_Manual-xccdf.html">Canonical Ubuntu 22.04 LTS Security Technical Implementation Guide Version: 2 Release: 9 Benchmark Date: 01 Jul 2026</a>:</div> <h1>Ubuntu 22.04 LTS must configure the directories used by the system journal to be group-owned by &quot;systemd-journal&quot;.</h1><h2>DISA Rule</h2><p>SV-260502r1184054_rule</p><h2>Vulnerability Number</h2><p>V-260502</p><h2>Group Title</h2><p>SRG-OS-000206-GPOS-00084</p><h2>Rule Version</h2><p>UBTU-22-232085</p><h2>Severity</h2><p>CAT II</p><h2>CCI(s)</h2><ul><li>CCI-001314 - Reveal error messages only to organization-defined personnel or roles.</li></ul><h2>Weight</h2><p>10</p><h2>Fix Recommendation</h2><p>Configure Ubuntu 22.04 LTS to set the appropriate group-ownership to the directories used by the systemd journal.<br />
+ <br />
+Create a drop-in file if it does not already exist with the following command:<br />
+<br />
+$ sudo vi /etc/tmpfiles.d/zzz-systemd-stig.conf<br />
+ <br />
+Add or modify the following lines in the &quot;/etc/tmpfiles.d/zzz-systemd-stig.conf&quot; file: <br />
+ <br />
+z /run/log/journal 2750 root systemd-journal - -<br />
+z /var/log/journal 2750 root systemd-journal - - <br />
+z /var/log/journal/%m 2750 root systemd-journal - -<br />
+ <br />
+Restart the system for the changes to take effect.</p><h2>Check Contents</h2><p>Verify the /run/log/journal and /var/log/journal directories are group-owned by &quot;systemd-journal&quot; by using the following command: <br />
+ <br />
+     $ sudo find /run/log/journal /var/log/journal  -type d -exec stat -c &quot;%n %G&quot; {} \; <br />
+     /run/log/journal systemd-journal <br />
+     /var/log/journal systemd-journal <br />
+     /var/log/journal/3b018e681c904487b11671b9c1987cce systemd-journal <br />
+ <br />
+If any output returned is not group-owned by &quot;systemd-journal&quot;, this is a finding.</p><h2>Vulnerability Number</h2><p>V-260502</p><h2>Documentable</h2><p>False</p><h2>Rule Version</h2><p>UBTU-22-232085</p><h2>Severity Override Guidance</h2><p>Verify the /run/log/journal and /var/log/journal directories are group-owned by &quot;systemd-journal&quot; by using the following command: <br />
+ <br />
+     $ sudo find /run/log/journal /var/log/journal  -type d -exec stat -c &quot;%n %G&quot; {} \; <br />
+     /run/log/journal systemd-journal <br />
+     /var/log/journal systemd-journal <br />
+     /var/log/journal/3b018e681c904487b11671b9c1987cce systemd-journal <br />
+ <br />
+If any output returned is not group-owned by &quot;systemd-journal&quot;, this is a finding.</p><h2>Check Content Reference</h2><p>M</p><h2>Target Key</h2><p>5594</p></body></html>

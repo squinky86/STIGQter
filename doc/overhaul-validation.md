@@ -1,14 +1,14 @@
 # Overhaul validation and publication
 
-This is the review record for the local overhaul, based on application commit `8d575ca`. At the original local handoff, no commits, pushes, remote releases, website deployments, DNS changes, or production-server changes had been made. The maintainer has since authorized publishing `main`, running the hosted checks, and deploying the Pages preview. The measurements below record the local validation; current hosted results are available in GitHub Actions. The plan is in `plan-overhaul.md`; ongoing commands and release gates are in `doc/maintenance.md` and the separate website workspace's `README.md`.
+This is the review record for the local overhaul, based on application commit `8d575ca`. At the original local handoff, no commits, pushes, remote releases, website deployments, DNS changes, or production-server changes had been made. The maintainer has since authorized publishing `main`, running the hosted checks, and deploying the Pages preview. The measurements below record the local validation; current hosted results are available in GitHub Actions. The plan is in `plan-overhaul.md`; ongoing commands and release gates are in `doc/maintenance.md` and `site/README.md`.
 
 ## Implemented scope
 
 - Shared qmake source/resource configuration; production UI scenario code moved to tests; persistence, classification, archive handling, and checklist parsing/writing split behind their existing interfaces.
 - Bounded, TLS-verified downloads; static stable-release and exact STIG catalog contracts; verified catalog cache and temporary quarterly-archive reuse within each import batch; explicit failure reporting and manual import fallback.
-- Latest-stable checks use `https://squinky86.github.io/stigqter.com/metadata/v1/releases.json`. This Pages endpoint is now live and verified anonymously. Metadata still advertises the actually published stable 1.2.7; source version 2.0.0 remains unreleased. Older published versions never trigger a downgrade prompt.
+- Latest-stable checks use `https://squinky86.github.io/STIGQter/metadata/v1/releases.json`. This is the corrected endpoint in the existing STIGQter repository. Metadata still advertises the actually published stable 1.2.7; source version 2.0.0 remains unreleased. Older published versions never trigger a downgrade prompt.
 - Worker/thread/SQL cleanup; XCCDF imports moved off the GUI thread with transactional updates and selection preservation; remapping transactions; atomic project/checklist writes; indexed checklist upgrades.
-- Two application workflows (CI and draft release), shared build scripts, explicit Ubuntu 26.04 runners, pinned static Qt 6.12 Windows sources, and separate Pages build/deployment/monitoring in the website workspace.
+- Two application workflows (CI and draft release), shared build scripts, explicit Ubuntu 26.04 runners, pinned static Qt 6.12 Windows sources, and Pages build/deployment/monitoring alongside them in the same repository.
 - Static historical website, immutable metadata/catalog generation, current public DISA content inventory, repaired legacy PHP contracts, rollback snapshots, and operator handoff.
 
 Application name, absence of a Qt organization name, default/portable data locations, schema version 10, UI forms/object names, embedded control catalogs, and version 2.0.0 are unchanged. No maintainer assessment database was used. Source validation used shadow builds, and the root application was also rebuilt for local review. Generated Makefiles/objects/resources/binaries remain ignored and were not manually edited or staged. Review artifacts are ignored under `.build/`.
@@ -45,7 +45,7 @@ Temporary Qt precompiled headers and source/build scratch directories were remov
 
 ## Website and content evidence
 
-Website changes were prepared in `/mnt/win/projects/websites/stigqter.com`; this directory was not a Git repository at the start. It now publishes to `squinky86/stigqter.com`. Original changed/removed PHP and shell files were backed up under `/tmp/stigqter-overhaul/website-before/`. The built `_site` directory, private `.cache`, backups, and local server configuration are excluded from source commits.
+Website changes were prepared in `/mnt/win/projects/websites/stigqter.com`; this directory was not a Git repository at the start. The source has since moved into `site/` in the STIGQter repository at the maintainer’s request. Original changed/removed PHP and shell files were backed up under `/tmp/stigqter-overhaul/website-before/`. The built `_site` directory, private `.cache`, backups, and local server configuration are excluded from source commits.
 
 - Five Python/PHP integration tests pass, covering invalid/corrupt/ambiguous/reduced catalogs without manifest replacement, stable-release validation, and real local HTTP legacy contracts including exact nested ZIP retrieval and 404/503 failures.
 - PHP syntax checks pass for the three compatibility endpoints and shared metadata helper. Python compilation and shell/workflow syntax checks pass.
@@ -62,10 +62,18 @@ Published on 3 November 2026 (America/Chicago), after the maintainer authorized 
 - [Full hosted CI](https://github.com/squinky86/STIGQter/actions/runs/41772281141) exercises all four jobs on Ubuntu 26.04. Linux build/test/package and CodeQL pass. The ordinary integration run passes all 30 tests in 63.985 seconds; the instrumented run passes all 30 in 69.097 seconds. Downloaded Ubuntu package/source artifacts pass their SHA-256 checks.
 - The static Windows Qt 6.12.0 job passes from an empty cache in **46 minutes 1 second**, including dependency/host/target builds, application compilation, portable packaging, and cache upload. The downloaded EXE/ZIP pass their SHA-256 checks; hosted PE validation confirms only Windows system imports, ASLR/DEP/high-entropy VA, and a zero build timestamp. The installed toolchain cache is saved successfully under `main` (61,315,474 compressed bytes). No manual build resume or local storage workaround was needed on the hosted runner.
 - Coverage generation and both publishers pass. LCOV contains 66 source files and 5,914 covered lines out of 7,176. [Sonar analysis](https://sonarcloud.io/dashboard?id=squinky86_STIGQter&branch=main) reports execution success, and [Coveralls](https://coveralls.io/jobs/190871505) accepts the report from that same test execution.
-- The separate website repository publishes commit `cbd2b90b` to [the Pages preview](https://squinky86.github.io/stigqter.com/). [Build/deployment](https://github.com/squinky86/stigqter.com/actions/runs/41772881122) and [manual build/health checks](https://github.com/squinky86/stigqter.com/actions/runs/41772881033) pass. The manual check uses `deploy=false`; the scheduled monitor can now be exercised manually too.
+- The initial website deployment used a separate repository by mistake. The maintainer corrected that layout on 4 November; the replacement uses the existing STIGQter repository’s Pages workflow and preserves the local site source. The old repository is not required.
 - Anonymous GETs return HTTP 200 for the homepage, logo, historical rule pages, and both metadata manifests. The immutable catalog's SHA-256 matches its manifest and contains 399 entries. The hosted monitor reports `Healthy: stable 1.2.7, 399 STIGs, metadata age 0 days` and checks release/download targets.
 
 Pages uses its project URL with HTTPS and no custom domain yet. No stable desktop release/tag, DNS cutover, or production legacy-host deployment was performed. The draft-release workflow was syntax-checked but deliberately not dispatched without a release candidate tag. Native platform acceptance remains a release gate.
+
+## Website repository correction — 4 November 2026
+
+The site is now maintained under `site/` in this repository. Its Pages workflow builds the historical public library and renders the user guide, README, release notes, security policy, and maintenance documentation from their Markdown sources. The link crawl handles the `/STIGQter/` project prefix and the custom-domain root. Desktop release/content checks target `https://squinky86.github.io/STIGQter/metadata/v1/`.
+
+The separate-repository deployment described in the original publication was an incorrect interpretation of the intended layout. The local source was preserved before the maintainer proposed deleting that repository. No separate checkout or repository is needed to build or maintain the replacement site. Domain/DNS and stable-release gates below still apply.
+
+Local consolidation checks pass: eight website tests, the full link crawl over 20,184 HTML pages, and generated documentation previews at 390×844 and 1440×1000. The public artifact contains 20,207 files and remains about 74 MiB. PHP, caches, backups, server configuration, and assessment files remain excluded. The Pages workflow uses Ubuntu 26.04 and runs the live site/metadata monitor after deployment. The application and test targets rebuild successfully, and the isolated desktop suite passes all 30 tests with no failures or skips in 181.805 seconds. The successful standalone test run followed an interrupted combined build/test invocation.
 
 ## Remaining release and domain gates
 

@@ -1,0 +1,61 @@
+<!doctype html><html lang="en"><head><meta charset="utf-8"><title>STIGQter: STIG Check Details: SV-269899r1052082_rule: The Dell OS10 multicast Designated Router (DR) must be configured to filter the Internet Group Management Protocol (IGMP) and Multicast Listener Discovery (MLD) Report messages to allow hosts to join a multicast group only from sources that have been approved by the organization.</title><link rel="icon" type="image/svg+xml" href="STIGQter.svg" /><script async src="https://www.googletagmanager.com/gtag/js?id=UA-31381839-2"></script><script src="include.js"></script><script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-4110907817782130" crossorigin="anonymous"></script></head><body><div><img src="STIGQter.svg" alt="STIGQter" style="height:1em;" /> <a href="https://www.stigqter.com/">STIGQter</a>: <a href="main.html">STIG Summary</a>: <a href="U_Dell_OS10_Switch_RTR_STIG_V1R2_Manual-xccdf.html">Dell OS10 Switch Router Security Technical Implementation Guide Version: 1 Release: 2 Benchmark Date: 01 Apr 2026</a>:</div> <h1>The Dell OS10 multicast Designated Router (DR) must be configured to filter the Internet Group Management Protocol (IGMP) and Multicast Listener Discovery (MLD) Report messages to allow hosts to join a multicast group only from sources that have been approved by the organization.</h1><h2>DISA Rule</h2><p>SV-269899r1052082_rule</p><h2>Vulnerability Number</h2><p>V-269899</p><h2>Group Title</h2><p>SRG-NET-000364-RTR-000115</p><h2>Rule Version</h2><p>OS10-RTR-000810</p><h2>Severity</h2><p>CAT II</p><h2>CCI(s)</h2><ul><li>CCI-002403 - Only allow incoming communications from organization-defined authorized sources routed to organization-defined authorized destinations.</li></ul><h2>Weight</h2><p>10</p><h2>Fix Recommendation</h2><p>Configure the DR to filter the IGMP and MLD report messages to allow hosts to join only those multicast groups from sources that have been approved.<br />
+<br />
+OS10(config)# ip access-list IGMP_FILTER<br />
+OS10(config-ipv4-acl)# deny 2 224.0.0.22 239.8.0.0/16 ttl eq 1<br />
+OS10(config-ipv4-acl)# permit 2 224.0.0.0/24 238.5.0.0/16<br />
+OS10(config-ipv4-acl)# permit ip any any<br />
+<br />
+OS10(config)# interface vlan 100<br />
+OS10(conf-if-vl-100)# ip access-group IGMP_FILTER in</p><h2>Check Contents</h2><p>Review the configuration of the DR to verify that it is filtering IGMP or MLD report messages, allowing hosts to only join multicast groups from sources that have been approved.<br />
+<br />
+Note: This requirement is only applicable to Source Specific Multicast (SSM) implementation.<br />
+<br />
+Step 1: Verify that SSM is in use. If not, this requirement is not applicable.<br />
+<br />
+!<br />
+ip access-list ssm-1<br />
+ seq 10 permit ip any 236.0.0.0/8<br />
+ <br />
+!<br />
+ip pim ssm-range ssm-1<br />
+<br />
+Step 2: Verify that each interface applies an appropriate inbound IGMP filter that permits or denies IGMP messages.<br />
+<br />
+!<br />
+interface vlan100<br />
+ no shutdown<br />
+ ip access-group IGMP_FILTER in<br />
+ <br />
+!<br />
+ip access-list IGMP_FILTER<br />
+ seq 10 deny 2 224.0.0.22  239.8.0.0/16 ttl eq 1<br />
+ seq 20 permit 2 224.0.0.0/24 238.5.0.0/16<br />
+ seq 30 permit ip any any<br />
+<br />
+If the DR is not filtering IGMP or MLD report messages, this is a finding.</p><h2>Vulnerability Number</h2><p>V-269899</p><h2>Documentable</h2><p>False</p><h2>Rule Version</h2><p>OS10-RTR-000810</p><h2>Severity Override Guidance</h2><p>Review the configuration of the DR to verify that it is filtering IGMP or MLD report messages, allowing hosts to only join multicast groups from sources that have been approved.<br />
+<br />
+Note: This requirement is only applicable to Source Specific Multicast (SSM) implementation.<br />
+<br />
+Step 1: Verify that SSM is in use. If not, this requirement is not applicable.<br />
+<br />
+!<br />
+ip access-list ssm-1<br />
+ seq 10 permit ip any 236.0.0.0/8<br />
+ <br />
+!<br />
+ip pim ssm-range ssm-1<br />
+<br />
+Step 2: Verify that each interface applies an appropriate inbound IGMP filter that permits or denies IGMP messages.<br />
+<br />
+!<br />
+interface vlan100<br />
+ no shutdown<br />
+ ip access-group IGMP_FILTER in<br />
+ <br />
+!<br />
+ip access-list IGMP_FILTER<br />
+ seq 10 deny 2 224.0.0.22  239.8.0.0/16 ttl eq 1<br />
+ seq 20 permit 2 224.0.0.0/24 238.5.0.0/16<br />
+ seq 30 permit ip any any<br />
+<br />
+If the DR is not filtering IGMP or MLD report messages, this is a finding.</p><h2>Check Content Reference</h2><p>M</p><h2>Target Key</h2><p>5668</p></body></html>

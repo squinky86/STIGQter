@@ -1,0 +1,46 @@
+<!doctype html><html lang="en"><head><meta charset="utf-8"><title>STIGQter: STIG Check Details: SV-254061r844216_rule: The Juniper MPLS router must be configured to use its loopback address as the source address for LDP peering sessions.</title><link rel="icon" type="image/svg+xml" href="STIGQter.svg" /><script async src="https://www.googletagmanager.com/gtag/js?id=UA-31381839-2"></script><script src="include.js"></script><script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-4110907817782130" crossorigin="anonymous"></script></head><body><div><img src="STIGQter.svg" alt="STIGQter" style="height:1em;" /> <a href="https://www.stigqter.com/">STIGQter</a>: <a href="main.html">STIG Summary</a>: <a href="U_Juniper_EX_Switches_RTR_STIG_V2R1_Manual-xccdf.html">Juniper EX Series Switches Router Security Technical Implementation Guide Version: 2 Release: 1 Benchmark Date: 24 Jul 2024</a>:</div> <h1>The Juniper MPLS router must be configured to use its loopback address as the source address for LDP peering sessions.</h1><h2>DISA Rule</h2><p>SV-254061r844216_rule</p><h2>Vulnerability Number</h2><p>V-254061</p><h2>Group Title</h2><p>SRG-NET-000512-RTR-000002</p><h2>Rule Version</h2><p>JUEX-RT-000890</p><h2>Severity</h2><p>CAT III</p><h2>CCI(s)</h2><ul><li>CCI-000366 - Implement the security configuration settings.</li></ul><h2>Weight</h2><p>10</p><h2>Fix Recommendation</h2><p>Configure MPLS routers to use their loopback address as the source address for LDP peering sessions.<br />
+<br />
+set interfaces lo0 unit 0 family inet &lt;IPv4 address&gt;/32<br />
+set interfaces lo0 unit 0 family inet6 &lt;IPv6 address&gt;/128<br />
+<br />
+set routing-options router-id &lt;lo0 address&gt;</p><h2>Check Contents</h2><p>Review the router configuration to determine if it uses its loopback address as the source address for LDP peering sessions.<br />
+<br />
+Verify that a loopback address has been configured as shown in the following example:<br />
+[edit interfaces]<br />
+lo0 {<br />
+    unit 0 {<br />
+        family inet {<br />
+            address &lt;IPv4 address&gt;/32;<br />
+        }<br />
+        family inet6 {<br />
+            address &lt;IPv6 address&gt;/128;<br />
+        }<br />
+    }<br />
+}<br />
+<br />
+An MPLS router will use the LDP router ID as the source address for LDP hellos and when establishing TCP sessions with LDP peers; hence, it is necessary to verify that the LDP router ID is the same as the loopback address. By default, routers will assign the LDP router ID using the highest IP address on the router, with preference given to loopback addresses. If the router-id command is specified that overrides this default behavior, verify that it is the IP address of the designated loopback interface.<br />
+<br />
+[edit routing-options]<br />
+router-id &lt;lo0 address&gt;;<br />
+<br />
+If the router is not configured do use its loopback address for LDP peering, this is a finding.</p><h2>Vulnerability Number</h2><p>V-254061</p><h2>Documentable</h2><p>False</p><h2>Rule Version</h2><p>JUEX-RT-000890</p><h2>Severity Override Guidance</h2><p>Review the router configuration to determine if it uses its loopback address as the source address for LDP peering sessions.<br />
+<br />
+Verify that a loopback address has been configured as shown in the following example:<br />
+[edit interfaces]<br />
+lo0 {<br />
+    unit 0 {<br />
+        family inet {<br />
+            address &lt;IPv4 address&gt;/32;<br />
+        }<br />
+        family inet6 {<br />
+            address &lt;IPv6 address&gt;/128;<br />
+        }<br />
+    }<br />
+}<br />
+<br />
+An MPLS router will use the LDP router ID as the source address for LDP hellos and when establishing TCP sessions with LDP peers; hence, it is necessary to verify that the LDP router ID is the same as the loopback address. By default, routers will assign the LDP router ID using the highest IP address on the router, with preference given to loopback addresses. If the router-id command is specified that overrides this default behavior, verify that it is the IP address of the designated loopback interface.<br />
+<br />
+[edit routing-options]<br />
+router-id &lt;lo0 address&gt;;<br />
+<br />
+If the router is not configured do use its loopback address for LDP peering, this is a finding.</p><h2>Check Content Reference</h2><p>M</p><h2>Target Key</h2><p>5479</p></body></html>

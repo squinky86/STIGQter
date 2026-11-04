@@ -1,0 +1,29 @@
+<!doctype html><html lang="en"><head><meta charset="utf-8"><title>STIGQter: STIG Check Details: SV-266992r1040904_rule: AOS, when used as a VPN Gateway, must ensure inbound and outbound traffic is configured with a security policy in compliance with information flow control policies.</title><link rel="icon" type="image/svg+xml" href="STIGQter.svg" /><script async src="https://www.googletagmanager.com/gtag/js?id=UA-31381839-2"></script><script src="include.js"></script><script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-4110907817782130" crossorigin="anonymous"></script></head><body><div><img src="STIGQter.svg" alt="STIGQter" style="height:1em;" /> <a href="https://www.stigqter.com/">STIGQter</a>: <a href="main.html">STIG Summary</a>: <a href="U_HPE_Aruba_Networking_AOS_VPN_STIG_V1R1_Manual-xccdf.html">HPE Aruba Networking AOS VPN Security Technical Implementation Guide Version: 1 Release: 1 Benchmark Date: 22 Oct 2024</a>:</div> <h1>AOS, when used as a VPN Gateway, must ensure inbound and outbound traffic is configured with a security policy in compliance with information flow control policies.</h1><h2>DISA Rule</h2><p>SV-266992r1040904_rule</p><h2>Vulnerability Number</h2><p>V-266992</p><h2>Group Title</h2><p>SRG-NET-000019-VPN-000040</p><h2>Rule Version</h2><p>ARBA-VN-000040</p><h2>Severity</h2><p>CAT II</p><h2>CCI(s)</h2><ul><li>CCI-001414 - Enforce approved authorizations for controlling the flow of information between connected systems based on organization-defined information flow control policies.</li></ul><h2>Weight</h2><p>10</p><h2>Fix Recommendation</h2><p>Configure AOS with the following commands: <br />
+configure terminal<br />
+ip access-list session &lt;name&gt;<br />
+network &lt;A.B.C.D&gt; &lt;netmask A.B.C.D&gt; any any permit<br />
+any any any deny log<br />
+ipv6 network &lt;X:X:X:X::X/&lt;0-128&gt; any any permit<br />
+ipv6 any any any deny log<br />
+exit<br />
+write memory<br />
+interface gigabit &lt;#/#/#&gt;<br />
+ip access-group session &lt;ACL name&gt;<br />
+exit<br />
+write mem</p><h2>Check Contents</h2><p>Verify the AOS configuration with the following command:<br />
+show running-config | begin &quot;interface gigabit&quot;<br />
+<br />
+Note the configured IP access-group session ACL for each active interface. <br />
+<br />
+For each configured ACL:<br />
+show ip access-list &lt;ACL name&gt;<br />
+<br />
+If each ACL does not end in an &quot;any any deny log&quot; for both IPv4 and IPv6, this is a finding.</p><h2>Vulnerability Number</h2><p>V-266992</p><h2>Documentable</h2><p>False</p><h2>Rule Version</h2><p>ARBA-VN-000040</p><h2>Severity Override Guidance</h2><p>Verify the AOS configuration with the following command:<br />
+show running-config | begin &quot;interface gigabit&quot;<br />
+<br />
+Note the configured IP access-group session ACL for each active interface. <br />
+<br />
+For each configured ACL:<br />
+show ip access-list &lt;ACL name&gt;<br />
+<br />
+If each ACL does not end in an &quot;any any deny log&quot; for both IPv4 and IPv6, this is a finding.</p><h2>Check Content Reference</h2><p>M</p><h2>Target Key</h2><p>5645</p></body></html>

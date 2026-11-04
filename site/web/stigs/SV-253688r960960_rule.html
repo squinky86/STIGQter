@@ -1,0 +1,51 @@
+<!doctype html><html lang="en"><head><meta charset="utf-8"><title>STIGQter: STIG Check Details: SV-253688r960960_rule: Database objects (including but not limited to tables, indexes, storage, stored procedures, functions, triggers, links to software external to MariaDB, etc.) must be owned by database/MariaDB principals authorized for ownership.</title><link rel="icon" type="image/svg+xml" href="STIGQter.svg" /><script async src="https://www.googletagmanager.com/gtag/js?id=UA-31381839-2"></script><script src="include.js"></script><script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-4110907817782130" crossorigin="anonymous"></script></head><body><div><img src="STIGQter.svg" alt="STIGQter" style="height:1em;" /> <a href="https://www.stigqter.com/">STIGQter</a>: <a href="main.html">STIG Summary</a>: <a href="U_MariaDB_Enterprise_10-x_STIG_V2R5_Manual-xccdf.html">MariaDB Enterprise 10.x Security Technical Implementation Guide Version: 2 Release: 5 Benchmark Date: 01 Apr 2026</a>:</div> <h1>Database objects (including but not limited to tables, indexes, storage, stored procedures, functions, triggers, links to software external to MariaDB, etc.) must be owned by database/MariaDB principals authorized for ownership.</h1><h2>DISA Rule</h2><p>SV-253688r960960_rule</p><h2>Vulnerability Number</h2><p>V-253688</p><h2>Group Title</h2><p>SRG-APP-000133-DB-000200</p><h2>Rule Version</h2><p>MADB-10-002900</p><h2>Severity</h2><p>CAT II</p><h2>CCI(s)</h2><ul><li>CCI-001499 - Limit privileges to change software resident within software libraries.</li></ul><h2>Weight</h2><p>10</p><h2>Fix Recommendation</h2><p>Assign ownership of authorized objects to authorized object owner accounts.</p><h2>Check Contents</h2><p>Review system documentation to identify accounts authorized to have privileges against database objects. Review account privileges on objects in the database(s).<br />
+ <br />
+To show the list of system privileges that the MariaDB server supports, run:<br />
+MariaDB&gt; SHOW PRIVILEGES;<br />
+ <br />
+Gather a list of SHOW GRANTS commands. SHOW GRANTS will list the privileges granted to the account.<br />
+<br />
+Run this database query to create the SHOW GRANTS script for each user: <br />
+<br />
+MariaDB&gt; SELECT DISTINCT CONCAT( 'SHOW GRANTS FOR ', user,'@', host,';') AS grantQuery FROM mysql.user WHERE is_role = 'N';<br />
+<br />
+Run each SHOW GRANTS command for each user.<br />
+<br />
+MariaDB&gt; SHOW GRANTS FOR 'user'@'host';<br />
+<br />
+Verify that all users have the correct privileges, if they do not, this is a finding.<br />
+<br />
+Only DEFINERS of routines (functions and procedures) can change routines. To view the DEFINERS of all functions and procedures, as database administrator run the following SQL:<br />
+ <br />
+MariaDB&gt;  SELECT * FROM mysql.proc \G<br />
+ <br />
+Only DEFINERS of triggers can change triggers. To view all triggers and their DEFINERS, as database administrator run the following SQL: <br />
+<br />
+MariaDB&gt;  SELECT * FROM information_schema.triggers \G<br />
+ <br />
+If any database users are found to have unauthorized privileges on database objects, this is a finding.</p><h2>Vulnerability Number</h2><p>V-253688</p><h2>Documentable</h2><p>False</p><h2>Rule Version</h2><p>MADB-10-002900</p><h2>Severity Override Guidance</h2><p>Review system documentation to identify accounts authorized to have privileges against database objects. Review account privileges on objects in the database(s).<br />
+ <br />
+To show the list of system privileges that the MariaDB server supports, run:<br />
+MariaDB&gt; SHOW PRIVILEGES;<br />
+ <br />
+Gather a list of SHOW GRANTS commands. SHOW GRANTS will list the privileges granted to the account.<br />
+<br />
+Run this database query to create the SHOW GRANTS script for each user: <br />
+<br />
+MariaDB&gt; SELECT DISTINCT CONCAT( 'SHOW GRANTS FOR ', user,'@', host,';') AS grantQuery FROM mysql.user WHERE is_role = 'N';<br />
+<br />
+Run each SHOW GRANTS command for each user.<br />
+<br />
+MariaDB&gt; SHOW GRANTS FOR 'user'@'host';<br />
+<br />
+Verify that all users have the correct privileges, if they do not, this is a finding.<br />
+<br />
+Only DEFINERS of routines (functions and procedures) can change routines. To view the DEFINERS of all functions and procedures, as database administrator run the following SQL:<br />
+ <br />
+MariaDB&gt;  SELECT * FROM mysql.proc \G<br />
+ <br />
+Only DEFINERS of triggers can change triggers. To view all triggers and their DEFINERS, as database administrator run the following SQL: <br />
+<br />
+MariaDB&gt;  SELECT * FROM information_schema.triggers \G<br />
+ <br />
+If any database users are found to have unauthorized privileges on database objects, this is a finding.</p><h2>Check Content Reference</h2><p>M</p><h2>Target Key</h2><p>5475</p></body></html>

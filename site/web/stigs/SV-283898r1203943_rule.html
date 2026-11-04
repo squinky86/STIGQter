@@ -1,0 +1,74 @@
+<!doctype html><html lang="en"><head><meta charset="utf-8"><title>STIGQter: STIG Check Details: SV-283898r1203943_rule: The Nokia router must be configured to log all packets that have been dropped.</title><link rel="icon" type="image/svg+xml" href="STIGQter.svg" /><script async src="https://www.googletagmanager.com/gtag/js?id=UA-31381839-2"></script><script src="include.js"></script><script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-4110907817782130" crossorigin="anonymous"></script></head><body><div><img src="STIGQter.svg" alt="STIGQter" style="height:1em;" /> <a href="https://www.stigqter.com/">STIGQter</a>: <a href="main.html">STIG Summary</a>: <a href="U_Nokia_SR_OS_25-x_RTR_V1R1_STIG_Manual-xccdf.html">Nokia Service Router OS 25.x Router Security Technical Implementation Guide Version: 1 Release: 1 Benchmark Date: 28 Apr 2026</a>:</div> <h1>The Nokia router must be configured to log all packets that have been dropped.</h1><h2>DISA Rule</h2><p>SV-283898r1203943_rule</p><h2>Vulnerability Number</h2><p>V-283898</p><h2>Group Title</h2><p>SRG-NET-000078-RTR-000001</p><h2>Rule Version</h2><p>NOKI-RT-000870</p><h2>Severity</h2><p>CAT III</p><h2>CCI(s)</h2><ul><li>CCI-000134 - Ensure that audit records containing information that establishes the outcome of the event.</li></ul><h2>Weight</h2><p>10</p><h2>Fix Recommendation</h2><p>Configure an IP filter to log all deny statements using the example below: <br />
+<br />
+Create an IP filter:<br />
+<br />
+- configure filter ip-filter 60 create<br />
+- config&gt;filter&gt;ip-filter$ entry 10 create<br />
+- config&gt;filter&gt;ip-filter&gt;entry$ action drop<br />
+- config&gt;filter&gt;ip-filter&gt;entry$ log 101<br />
+- config&gt;filter&gt;ip-filter&gt;entry$ exit<br />
+- config&gt;filter&gt;ip-filter$ exit all<br />
+<br />
+Apply the IP filter on the interface:<br />
+<br />
+- configure router interface &quot;TO-PE2&quot; ingress filter ip 10</p><h2>Check Contents</h2><p>Review the IP filter to verify all deny statements are logged.<br />
+<br />
+Use the commands below to verify the filter is logged and applied on the interface. <br />
+<br />
+- show filter ip 60<br />
+<br />
+Entry               : 10<br />
+Description         : (Not Specified)<br />
+Log Id              : 101<br />
+Src. IP             : 0.0.0.0/0<br />
+Src. Port           : n/a<br />
+Dest. IP            : 0.0.0.0/0<br />
+Dest. Port          : n/a<br />
+Protocol            : Undefined<br />
+Dscp                : Undefined<br />
+ICMP Type           : Undefined                    ICMP Code      : Undefined<br />
+Fragment            : Off                          Src Route Opt  : Off<br />
+Sampling            : Off                          Int. Sampling  : On<br />
+IP-Option           : 0/0                          Multiple Option: Off<br />
+Tcp-flag            : (Not Specified)<br />
+Option-pres         : Off<br />
+Egress PBR          : Disabled<br />
+Primary Action      : Drop<br />
+Ing. Matches        : 0 pkts<br />
+Egr. Matches        : 0 pkts<br />
+<br />
+- show router interface &quot;TO-PE2&quot; detail | match &quot;Ingress Filter&quot;<br />
+<br />
+Egress Filter    : 10                   Ingress Filter    : 10<br />
+<br />
+If packets being dropped are not logged and a filter is not applied, this is a finding.</p><h2>Vulnerability Number</h2><p>V-283898</p><h2>Documentable</h2><p>False</p><h2>Rule Version</h2><p>NOKI-RT-000870</p><h2>Severity Override Guidance</h2><p>Review the IP filter to verify all deny statements are logged.<br />
+<br />
+Use the commands below to verify the filter is logged and applied on the interface. <br />
+<br />
+- show filter ip 60<br />
+<br />
+Entry               : 10<br />
+Description         : (Not Specified)<br />
+Log Id              : 101<br />
+Src. IP             : 0.0.0.0/0<br />
+Src. Port           : n/a<br />
+Dest. IP            : 0.0.0.0/0<br />
+Dest. Port          : n/a<br />
+Protocol            : Undefined<br />
+Dscp                : Undefined<br />
+ICMP Type           : Undefined                    ICMP Code      : Undefined<br />
+Fragment            : Off                          Src Route Opt  : Off<br />
+Sampling            : Off                          Int. Sampling  : On<br />
+IP-Option           : 0/0                          Multiple Option: Off<br />
+Tcp-flag            : (Not Specified)<br />
+Option-pres         : Off<br />
+Egress PBR          : Disabled<br />
+Primary Action      : Drop<br />
+Ing. Matches        : 0 pkts<br />
+Egr. Matches        : 0 pkts<br />
+<br />
+- show router interface &quot;TO-PE2&quot; detail | match &quot;Ingress Filter&quot;<br />
+<br />
+Egress Filter    : 10                   Ingress Filter    : 10<br />
+<br />
+If packets being dropped are not logged and a filter is not applied, this is a finding.</p><h2>Check Content Reference</h2><p>M</p><h2>Target Key</h2><p>5746</p></body></html>

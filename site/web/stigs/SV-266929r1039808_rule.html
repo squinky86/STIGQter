@@ -1,0 +1,47 @@
+<!doctype html><html lang="en"><head><meta charset="utf-8"><title>STIGQter: STIG Check Details: SV-266929r1039808_rule: AOS must be configured to use DOD public key infrastructure (PKI) as multifactor authentication (MFA) for interactive logins.</title><link rel="icon" type="image/svg+xml" href="STIGQter.svg" /><script async src="https://www.googletagmanager.com/gtag/js?id=UA-31381839-2"></script><script src="include.js"></script><script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-4110907817782130" crossorigin="anonymous"></script></head><body><div><img src="STIGQter.svg" alt="STIGQter" style="height:1em;" /> <a href="https://www.stigqter.com/">STIGQter</a>: <a href="main.html">STIG Summary</a>: <a href="U_HPE_Aruba_Networking_AOS_NDM_STIG_V1R1_Manual-xccdf.html">HPE Aruba Networking AOS NDM Security Technical Implementation Guide Version: 1 Release: 1 Benchmark Date: 22 Oct 2024</a>:</div> <h1>AOS must be configured to use DOD public key infrastructure (PKI) as multifactor authentication (MFA) for interactive logins.</h1><h2>DISA Rule</h2><p>SV-266929r1039808_rule</p><h2>Vulnerability Number</h2><p>V-266929</p><h2>Group Title</h2><p>SRG-APP-000149-NDM-000247</p><h2>Rule Version</h2><p>ARBA-ND-000247</p><h2>Severity</h2><p>CAT I</p><h2>CCI(s)</h2><ul><li>CCI-000765 - Implement multifactor authentication for network access to privileged accounts.</li><li>CCI-000166 - Provide irrefutable evidence that an individual (or process acting on behalf of an individual) falsely denying having performed organization-defined actions to be covered by non-repudiation.</li><li>CCI-000187 - For public key-based authentication, map the authenticated identity to the account of the individual or group.</li><li>CCI-000764 - Uniquely identify and authenticate organizational users and associate that unique identification with processes acting on behalf of those users.</li></ul><h2>Weight</h2><p>10</p><h2>Fix Recommendation</h2><p>Configure AOS using the web interface:  <br />
+ <br />
+1. Navigate to Configuration &gt;&gt; System &gt;&gt; Admin and expand &quot;Admin Authentication Servers&quot;.  <br />
+2. Click on the plus sign (+) under &quot;All Servers&quot; and configure the type of authentication server. Provide the Name, Type, and IP address. Click &quot;Submit&quot;.  <br />
+3. Select the created authentication server and configure the required attributes for LDAP: <br />
+ <br />
+Admin-dn &lt;username&gt; <br />
+Admin-passwd &lt;password&gt; <br />
+Re-type admin-passwd &lt;password&gt; <br />
+Auth port: 636 <br />
+Base-dn: cn/ou=&lt;container&gt;,dc=&lt;level&gt;,dc=&lt;mil&gt; <br />
+Key-attribute: userPrincipalName <br />
+ <br />
+4. Click &quot;Submit.&quot;  <br />
+5. Repeat this process and configure a second authentication server.  <br />
+6. Click &quot;Pending Changes&quot; and then &quot;Deploy changes&quot;.  <br />
+7. Click on the plus sign (+) under &quot;Server Groups&quot; and add a server group.  <br />
+8. Click &quot;Submit&quot;.  <br />
+9. Select the created server group and click the plus sign (+) in the Server Group &lt;server group name&gt; box.  <br />
+10. Add the first configured authentication server.  <br />
+11. Reselect the created server group and click the plus sign (+) in the Server Group &lt;server group name&gt; box.  <br />
+12. Click Submit &gt;&gt; Pending Changes &gt;&gt; Deploy Changes. <br />
+13. Navigate to Management User. <br />
+14. Click on &quot;Show users with certificate authentication&quot;. Click on the plus sign (+).  <br />
+15. Configure each Trusted CA certificate name for any DOD Root CA that provides trust for admin users.  <br />
+16. Select External server for the Authentication server.  <br />
+17. Click Submit &gt;&gt; Pending Changes &gt;&gt; Deploy Changes.  <br />
+18. Expand &quot;Admin Authentication Options&quot;. Check &quot;Enable&quot; and &quot;Client certificate&quot;. Select the Server group created earlier.  <br />
+19. Click Submit &gt;&gt; Pending Changes &gt;&gt; Deploy Changes.</p><h2>Check Contents</h2><p>Verify the AOS configuration using the web interface: <br />
+ <br />
+1. Navigate to Configuration &gt;&gt; System &gt;&gt; Admin and expand &quot;Admin Authentication Options&quot;.  <br />
+2. Verify what &quot;Server group&quot; is handling admin authentication.  <br />
+3. Verify that Client certificate is enabled.  <br />
+4. Expand &quot;Admin Authentication Servers&quot;.  <br />
+5. Select the Server Group identified from the &quot;Options&quot; section.  <br />
+6. Verify that each authentication server configured in Server Group &lt;server group name&gt; is configured with the Key attribute: of userPrincipalName. <br />
+ <br />
+If Client certificate is not enabled and the management authentication servers are not configured with userPrincipalName, this is a finding.</p><h2>Vulnerability Number</h2><p>V-266929</p><h2>Documentable</h2><p>False</p><h2>Rule Version</h2><p>ARBA-ND-000247</p><h2>Severity Override Guidance</h2><p>Verify the AOS configuration using the web interface: <br />
+ <br />
+1. Navigate to Configuration &gt;&gt; System &gt;&gt; Admin and expand &quot;Admin Authentication Options&quot;.  <br />
+2. Verify what &quot;Server group&quot; is handling admin authentication.  <br />
+3. Verify that Client certificate is enabled.  <br />
+4. Expand &quot;Admin Authentication Servers&quot;.  <br />
+5. Select the Server Group identified from the &quot;Options&quot; section.  <br />
+6. Verify that each authentication server configured in Server Group &lt;server group name&gt; is configured with the Key attribute: of userPrincipalName. <br />
+ <br />
+If Client certificate is not enabled and the management authentication servers are not configured with userPrincipalName, this is a finding.</p><h2>Check Content Reference</h2><p>M</p><h2>Target Key</h2><p>5648</p></body></html>

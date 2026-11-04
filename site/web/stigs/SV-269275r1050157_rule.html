@@ -1,0 +1,33 @@
+<!doctype html><html lang="en"><head><meta charset="utf-8"><title>STIGQter: STIG Check Details: SV-269275r1050157_rule: AlmaLinux OS 9 must be configured so that all system device files are correctly labeled to prevent unauthorized modification.</title><link rel="icon" type="image/svg+xml" href="STIGQter.svg" /><script async src="https://www.googletagmanager.com/gtag/js?id=UA-31381839-2"></script><script src="include.js"></script><script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-4110907817782130" crossorigin="anonymous"></script></head><body><div><img src="STIGQter.svg" alt="STIGQter" style="height:1em;" /> <a href="https://www.stigqter.com/">STIGQter</a>: <a href="main.html">STIG Summary</a>: <a href="U_CL_AlmaLinux_OS_9_STIG_V1R7_Manual-xccdf.html">Cloud Linux AlmaLinux OS 9 Security Technical Implementation Guide Version: 1 Release: 7 Benchmark Date: 01 Jul 2026</a>:</div> <h1>AlmaLinux OS 9 must be configured so that all system device files are correctly labeled to prevent unauthorized modification.</h1><h2>DISA Rule</h2><p>SV-269275r1050157_rule</p><h2>Vulnerability Number</h2><p>V-269275</p><h2>Group Title</h2><p>SRG-OS-000480-GPOS-00227</p><h2>Rule Version</h2><p>ALMA-09-022020</p><h2>Severity</h2><p>CAT II</p><h2>CCI(s)</h2><ul><li>CCI-000366 - Implement the security configuration settings.</li></ul><h2>Weight</h2><p>10</p><h2>Fix Recommendation</h2><p>Restore the SELinux policy for the affected device file from the system policy database using the following command:<br />
+<br />
+$ restorecon -v &lt;device_path&gt;<br />
+<br />
+Substituting &quot;&lt;device_path&gt;&quot; with the path to the affected device file (from the output of the previous commands). An example device file path would be &quot;/dev/ttyUSB0&quot;. If the output of the above command does not indicate that the device was relabeled to a more specific SELinux type label, then the SELinux policy of the system must be updated with more specific policy for the device class specified. If a package was used to install support for a device class, that package could be reinstalled using the following command:<br />
+<br />
+$ dnf reinstall &lt;package_name&gt;<br />
+<br />
+If a package was not used to install the SELinux policy for a given device class, then it must be generated manually and provide specific type labels.</p><h2>Check Contents</h2><p>Verify that all system device files are correctly labeled to prevent unauthorized modification.<br />
+<br />
+List all device files on the system that are incorrectly labeled with the following commands:<br />
+<br />
+Note: Device files are normally found under &quot;/dev&quot;, but applications may place device files in other directories and may necessitate a search of the entire system.<br />
+<br />
+# find /dev -context *:device_t:* \( -type c -o -type b \) -printf &quot;%p %Z\n&quot;<br />
+<br />
+# find /dev -context *:unlabeled_t:* \( -type c -o -type b \) -printf &quot;%p %Z\n&quot;<br />
+<br />
+Note: There are device files, such as &quot;/dev/vmci&quot;, that are used when the operating system is a host virtual machine. They will not be owned by a user on the system and require the &quot;device_t&quot; label to operate. These device files are not a finding.<br />
+<br />
+If there is output from either of these commands, other than already noted, this is a finding.</p><h2>Vulnerability Number</h2><p>V-269275</p><h2>Documentable</h2><p>False</p><h2>Rule Version</h2><p>ALMA-09-022020</p><h2>Severity Override Guidance</h2><p>Verify that all system device files are correctly labeled to prevent unauthorized modification.<br />
+<br />
+List all device files on the system that are incorrectly labeled with the following commands:<br />
+<br />
+Note: Device files are normally found under &quot;/dev&quot;, but applications may place device files in other directories and may necessitate a search of the entire system.<br />
+<br />
+# find /dev -context *:device_t:* \( -type c -o -type b \) -printf &quot;%p %Z\n&quot;<br />
+<br />
+# find /dev -context *:unlabeled_t:* \( -type c -o -type b \) -printf &quot;%p %Z\n&quot;<br />
+<br />
+Note: There are device files, such as &quot;/dev/vmci&quot;, that are used when the operating system is a host virtual machine. They will not be owned by a user on the system and require the &quot;device_t&quot; label to operate. These device files are not a finding.<br />
+<br />
+If there is output from either of these commands, other than already noted, this is a finding.</p><h2>Check Content Reference</h2><p>M</p><h2>Target Key</h2><p>5664</p></body></html>

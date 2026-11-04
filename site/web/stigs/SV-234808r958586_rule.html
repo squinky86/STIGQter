@@ -1,0 +1,53 @@
+<!doctype html><html lang="en"><head><meta charset="utf-8"><title>STIGQter: STIG Check Details: SV-234808r958586_rule: The SUSE operating system must display a banner before granting local or remote access to the system via a graphical user logon.</title><link rel="icon" type="image/svg+xml" href="STIGQter.svg" /><script async src="https://www.googletagmanager.com/gtag/js?id=UA-31381839-2"></script><script src="include.js"></script><script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-4110907817782130" crossorigin="anonymous"></script></head><body><div><img src="STIGQter.svg" alt="STIGQter" style="height:1em;" /> <a href="https://www.stigqter.com/">STIGQter</a>: <a href="main.html">STIG Summary</a>: <a href="U_SLES_15_STIG_V2R8_Manual-xccdf.html">SUSE Linux Enterprise Server 15 Security Technical Implementation Guide Version: 2 Release: 8 Benchmark Date: 01 Jul 2026</a>:</div> <h1>The SUSE operating system must display a banner before granting local or remote access to the system via a graphical user logon.</h1><h2>DISA Rule</h2><p>SV-234808r958586_rule</p><h2>Vulnerability Number</h2><p>V-234808</p><h2>Group Title</h2><p>SRG-OS-000228-GPOS-00088</p><h2>Rule Version</h2><p>SLES-15-010080</p><h2>Severity</h2><p>CAT II</p><h2>CCI(s)</h2><ul><li>CCI-001384 - For publicly accessible systems, display system use information with organization-defined conditions before granting further access to the publicly accessible system.</li><li>CCI-001385 - For publicly accessible systems, displays references, if any, to monitoring that are consistent with privacy accommodations for such systems that generally prohibit those activities.</li><li>CCI-001386 - For publicly accessible systems, displays references, if any, to recording that are consistent with privacy accommodations for such systems that generally prohibit those activities.</li><li>CCI-001387 - For publicly accessible systems, displays references, if any, to auditing that are consistent with privacy accommodations for such systems that generally prohibit those activities.</li><li>CCI-001388 - For publicly accessible systems, includes a description of the authorized uses of the system.</li></ul><h2>Weight</h2><p>10</p><h2>Fix Recommendation</h2><p>Note: If the system does not have a graphical user interface installed, this requirement is Not Applicable.<br />
+<br />
+Configure the SUSE operating system to display a banner before local or remote access to the system via a graphical user logon.<br />
+<br />
+Create a database that will contain the system-wide graphical user logon settings (if it does not already exist) with the following command:<br />
+<br />
+&gt; sudo mkdir -p /etc/dconf/db/gdm.d<br />
+&gt; sudo touch /etc/dconf/db/gdm.d/01-banner-message<br />
+<br />
+Add the following content into /etc/dconf/profile/gdm:<br />
+<br />
+user-db:user<br />
+system-db:gdm<br />
+file-db:/usr/share/gdm/greeter-dconf-defaults<br />
+<br />
+Add the following line to the &quot;[org/gnome/login-screen]&quot; section of the &quot;/etc/dconf/db/gdm.d/01-banner-message&quot; file:<br />
+<br />
+[org/gnome/login-screen]<br />
+banner-message-enable=true<br />
+<br />
+Update the system databases:<br />
+<br />
+&gt; sudo dconf update<br />
+<br />
+Users must log out and back in again before the system-wide settings take effect.</p><h2>Check Contents</h2><p>Note: If the system does not have a graphical user interface installed, this requirement is Not Applicable.<br />
+<br />
+Verify the SUSE operating system displays a banner before local or remote access to the system via a graphical user logon.<br />
+<br />
+Check that the SUSE operating system displays a banner at the logon screen by performing the following command:<br />
+<br />
+&gt; grep banner-message-enable /etc/dconf/db/gdm.d/*<br />
+banner-message-enable=true<br />
+<br />
+&gt; cat /etc/dconf/profile/gdm<br />
+user-db:user<br />
+system-db:gdm<br />
+file-db:/usr/share/gdm/greeter-dconf-defaults<br />
+<br />
+If &quot;banner-message-enable&quot; is set to &quot;false&quot; or is missing completely, this is a finding.</p><h2>Vulnerability Number</h2><p>V-234808</p><h2>Documentable</h2><p>False</p><h2>Rule Version</h2><p>SLES-15-010080</p><h2>Severity Override Guidance</h2><p>Note: If the system does not have a graphical user interface installed, this requirement is Not Applicable.<br />
+<br />
+Verify the SUSE operating system displays a banner before local or remote access to the system via a graphical user logon.<br />
+<br />
+Check that the SUSE operating system displays a banner at the logon screen by performing the following command:<br />
+<br />
+&gt; grep banner-message-enable /etc/dconf/db/gdm.d/*<br />
+banner-message-enable=true<br />
+<br />
+&gt; cat /etc/dconf/profile/gdm<br />
+user-db:user<br />
+system-db:gdm<br />
+file-db:/usr/share/gdm/greeter-dconf-defaults<br />
+<br />
+If &quot;banner-message-enable&quot; is set to &quot;false&quot; or is missing completely, this is a finding.</p><h2>Check Content Reference</h2><p>M</p><h2>Target Key</h2><p>5274</p></body></html>

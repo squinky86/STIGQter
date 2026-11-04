@@ -1,0 +1,254 @@
+<!doctype html><html lang="en"><head><meta charset="utf-8"><title>STIGQter: STIG Check Details: SV-215181r958362_rule: The shipped /etc/security/mkuser.sys file on AIX must not be customized directly.</title><link rel="icon" type="image/svg+xml" href="STIGQter.svg" /><script async src="https://www.googletagmanager.com/gtag/js?id=UA-31381839-2"></script><script src="include.js"></script><script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-4110907817782130" crossorigin="anonymous"></script></head><body><div><img src="STIGQter.svg" alt="STIGQter" style="height:1em;" /> <a href="https://www.stigqter.com/">STIGQter</a>: <a href="main.html">STIG Summary</a>: <a href="U_IBM_AIX_7-x_STIG_V3R3_Manual-xccdf.html">IBM AIX 7.x Security Technical Implementation Guide Version: 3 Release: 3 Benchmark Date: 01 Jul 2026</a>:</div> <h1>The shipped /etc/security/mkuser.sys file on AIX must not be customized directly.</h1><h2>DISA Rule</h2><p>SV-215181r958362_rule</p><h2>Vulnerability Number</h2><p>V-215181</p><h2>Group Title</h2><p>SRG-OS-000001-GPOS-00001</p><h2>Rule Version</h2><p>AIX7-00-001015</p><h2>Severity</h2><p>CAT II</p><h2>CCI(s)</h2><ul><li>CCI-000015 - Support the management of system accounts using (organization-defined automated mechanisms).</li></ul><h2>Weight</h2><p>10</p><h2>Fix Recommendation</h2><p>Edit the script /etc/security/mkuser.sys to contain the following:<br />
+#   This file is no longer user customizable.  To have a customized mkuser.sys script<br />
+#   create a file /etc/security/mkuser.sys.custom and the /etc/security/mkuser.sys<br />
+#   will run this script instead of the original mkuser.sys script.<br />
+<br />
+export PATH=/usr/bin:/usr/sbin:$PATH<br />
+<br />
+#<br />
+# Check the number of arguments first<br />
+#<br />
+if [ $# -ne 4 ] <br />
+then<br />
+ exit 1<br />
+fi<br />
+<br />
+#<br />
+# If a customer mkuser.sys.custom script exists<br />
+# then execute it instead and exit passing all arguments<br />
+# and returning the return code from mkuser.sys.custom<br />
+#<br />
+if [ -x /etc/security/mkuser.sys.custom ]<br />
+then<br />
+ /etc/security/mkuser.sys.custom $*<br />
+ exit $?<br />
+fi<br />
+<br />
+#<br />
+# Create the named directory if it does not already exist<br />
+# and set the file ownership and permission<br />
+#<br />
+if [ ! -d $1 ]<br />
+then<br />
+ last=$1<br />
+ <br />
+ while [ 1 ]<br />
+ do<br />
+  dir=`dirname $last`<br />
+  <br />
+  if [ -d $last ]<br />
+  then<br />
+   break<br />
+  elif [ -d $dir ]<br />
+  then<br />
+   mkdir -p $1<br />
+   chown -R bin:bin $last<br />
+   chmod -R 755 $last<br />
+   break<br />
+  else<br />
+   last=$dir<br />
+  fi<br />
+ done<br />
+ <br />
+ chgrp &quot;$3&quot; $1<br />
+ chown $2 $1<br />
+fi<br />
+<br />
+#<br />
+# Copy the user's default .profile if it does not already<br />
+# exist and change the file ownership, etc.<br />
+#<br />
+if [ `basename $4` != &quot;csh&quot; ] &amp;&amp; [ ! -f $1/.profile ]<br />
+then<br />
+ cp /etc/security/.profile $1/.profile<br />
+ chmod u+rwx,go-w $1/.profile<br />
+ chgrp &quot;$3&quot; $1/.profile<br />
+ chown $2 $1/.profile<br />
+<br />
+else<br />
+   if [ `basename $4` = &quot;csh&quot; ] &amp;&amp; [ ! -f $1/.login ] <br />
+   then<br />
+ echo &quot;#!/bin/csh&quot; &gt; &quot;$1&quot;/.login<br />
+ echo &quot;set path = ( /usr/bin /etc /usr/sbin /usr/ucb \$HOME/bin /usr/bin/X11 /sbin . )&quot; &gt;&gt; &quot;$1&quot;/.login<br />
+ echo &quot;setenv MAIL \&quot;/var/spool/mail/\$LOGNAME\&quot;&quot; &gt;&gt; &quot;$1&quot;/.login<br />
+ echo &quot;setenv MAILMSG \&quot;[YOU HAVE NEW MAIL]\&quot;&quot; &gt;&gt; &quot;$1&quot;/.login<br />
+ echo &quot;if ( -f \&quot;\$MAIL\&quot; &amp;&amp; ! -z \&quot;\$MAIL\&quot;) then&quot; &gt;&gt; &quot;$1&quot;/.login<br />
+        echo &quot; echo \&quot;\$MAILMSG\&quot;&quot; &gt;&gt; &quot;$1&quot;/.login<br />
+ echo &quot;endif&quot; &gt;&gt; &quot;$1&quot;/.login<br />
+ chmod u+rwx,go-w $1/.login<br />
+ chgrp &quot;$3&quot; $1/.login<br />
+ chown $2 $1/.login<br />
+   fi<br />
+fi</p><h2>Check Contents</h2><p>Use the &quot;cat&quot; command to show the content of &quot;/etc/security/mkuser.sys&quot; script:<br />
+# cat /etc/security/mkuser.sys<br />
+<br />
+The cat command should display the following:<br />
+#   This file is no longer user customizable.  To have a customized mkuser.sys script<br />
+#   create a file /etc/security/mkuser.sys.custom and the /etc/security/mkuser.sys<br />
+#   will run this script instead of the original mkuser.sys script.<br />
+<br />
+export PATH=/usr/bin:/usr/sbin:$PATH<br />
+<br />
+#<br />
+# Check the number of arguments first<br />
+#<br />
+if [ $# -ne 4 ] <br />
+then<br />
+ exit 1<br />
+fi<br />
+<br />
+#<br />
+# If a customer mkuser.sys.custom script exists<br />
+# then execute it instead and exit passing all arguments<br />
+# and returning the return code from mkuser.sys.custom<br />
+#<br />
+if [ -x /etc/security/mkuser.sys.custom ]<br />
+then<br />
+ /etc/security/mkuser.sys.custom $*<br />
+ exit $?<br />
+fi<br />
+<br />
+#<br />
+# Create the named directory if it does not already exist<br />
+# and set the file ownership and permission<br />
+#<br />
+if [ ! -d $1 ]<br />
+then<br />
+ last=$1<br />
+ <br />
+ while [ 1 ]<br />
+ do<br />
+  dir=`dirname $last`<br />
+  <br />
+  if [ -d $last ]<br />
+  then<br />
+   break<br />
+  elif [ -d $dir ]<br />
+  then<br />
+   mkdir -p $1<br />
+   chown -R bin:bin $last<br />
+   chmod -R 755 $last<br />
+   break<br />
+  else<br />
+   last=$dir<br />
+  fi<br />
+ done<br />
+ <br />
+ chgrp &quot;$3&quot; $1<br />
+ chown $2 $1<br />
+fi<br />
+<br />
+#<br />
+# Copy the user's default .profile if it does not already<br />
+# exist and change the file ownership, etc.<br />
+#<br />
+if [ `basename $4` != &quot;csh&quot; ] &amp;&amp; [ ! -f $1/.profile ]<br />
+then<br />
+ cp /etc/security/.profile $1/.profile<br />
+ chmod u+rwx,go-w $1/.profile<br />
+ chgrp &quot;$3&quot; $1/.profile<br />
+ chown $2 $1/.profile<br />
+<br />
+else<br />
+   if [ `basename $4` = &quot;csh&quot; ] &amp;&amp; [ ! -f $1/.login ] <br />
+   then<br />
+ echo &quot;#!/bin/csh&quot; &gt; &quot;$1&quot;/.login<br />
+ echo &quot;set path = ( /usr/bin /etc /usr/sbin /usr/ucb \$HOME/bin /usr/bin/X11 /sbin . )&quot; &gt;&gt; &quot;$1&quot;/.login<br />
+ echo &quot;setenv MAIL \&quot;/var/spool/mail/\$LOGNAME\&quot;&quot; &gt;&gt; &quot;$1&quot;/.login<br />
+ echo &quot;setenv MAILMSG \&quot;[YOU HAVE NEW MAIL]\&quot;&quot; &gt;&gt; &quot;$1&quot;/.login<br />
+ echo &quot;if ( -f \&quot;\$MAIL\&quot; &amp;&amp; ! -z \&quot;\$MAIL\&quot;) then&quot; &gt;&gt; &quot;$1&quot;/.login<br />
+        echo &quot; echo \&quot;\$MAILMSG\&quot;&quot; &gt;&gt; &quot;$1&quot;/.login<br />
+ echo &quot;endif&quot; &gt;&gt; &quot;$1&quot;/.login<br />
+ chmod u+rwx,go-w $1/.login<br />
+ chgrp &quot;$3&quot; $1/.login<br />
+ chown $2 $1/.login<br />
+   fi<br />
+fi<br />
+<br />
+If the &quot;cat&quot; command shows the script as different than the content listed above, this is a finding.</p><h2>Vulnerability Number</h2><p>V-215181</p><h2>Documentable</h2><p>False</p><h2>Rule Version</h2><p>AIX7-00-001015</p><h2>Severity Override Guidance</h2><p>Use the &quot;cat&quot; command to show the content of &quot;/etc/security/mkuser.sys&quot; script:<br />
+# cat /etc/security/mkuser.sys<br />
+<br />
+The cat command should display the following:<br />
+#   This file is no longer user customizable.  To have a customized mkuser.sys script<br />
+#   create a file /etc/security/mkuser.sys.custom and the /etc/security/mkuser.sys<br />
+#   will run this script instead of the original mkuser.sys script.<br />
+<br />
+export PATH=/usr/bin:/usr/sbin:$PATH<br />
+<br />
+#<br />
+# Check the number of arguments first<br />
+#<br />
+if [ $# -ne 4 ] <br />
+then<br />
+ exit 1<br />
+fi<br />
+<br />
+#<br />
+# If a customer mkuser.sys.custom script exists<br />
+# then execute it instead and exit passing all arguments<br />
+# and returning the return code from mkuser.sys.custom<br />
+#<br />
+if [ -x /etc/security/mkuser.sys.custom ]<br />
+then<br />
+ /etc/security/mkuser.sys.custom $*<br />
+ exit $?<br />
+fi<br />
+<br />
+#<br />
+# Create the named directory if it does not already exist<br />
+# and set the file ownership and permission<br />
+#<br />
+if [ ! -d $1 ]<br />
+then<br />
+ last=$1<br />
+ <br />
+ while [ 1 ]<br />
+ do<br />
+  dir=`dirname $last`<br />
+  <br />
+  if [ -d $last ]<br />
+  then<br />
+   break<br />
+  elif [ -d $dir ]<br />
+  then<br />
+   mkdir -p $1<br />
+   chown -R bin:bin $last<br />
+   chmod -R 755 $last<br />
+   break<br />
+  else<br />
+   last=$dir<br />
+  fi<br />
+ done<br />
+ <br />
+ chgrp &quot;$3&quot; $1<br />
+ chown $2 $1<br />
+fi<br />
+<br />
+#<br />
+# Copy the user's default .profile if it does not already<br />
+# exist and change the file ownership, etc.<br />
+#<br />
+if [ `basename $4` != &quot;csh&quot; ] &amp;&amp; [ ! -f $1/.profile ]<br />
+then<br />
+ cp /etc/security/.profile $1/.profile<br />
+ chmod u+rwx,go-w $1/.profile<br />
+ chgrp &quot;$3&quot; $1/.profile<br />
+ chown $2 $1/.profile<br />
+<br />
+else<br />
+   if [ `basename $4` = &quot;csh&quot; ] &amp;&amp; [ ! -f $1/.login ] <br />
+   then<br />
+ echo &quot;#!/bin/csh&quot; &gt; &quot;$1&quot;/.login<br />
+ echo &quot;set path = ( /usr/bin /etc /usr/sbin /usr/ucb \$HOME/bin /usr/bin/X11 /sbin . )&quot; &gt;&gt; &quot;$1&quot;/.login<br />
+ echo &quot;setenv MAIL \&quot;/var/spool/mail/\$LOGNAME\&quot;&quot; &gt;&gt; &quot;$1&quot;/.login<br />
+ echo &quot;setenv MAILMSG \&quot;[YOU HAVE NEW MAIL]\&quot;&quot; &gt;&gt; &quot;$1&quot;/.login<br />
+ echo &quot;if ( -f \&quot;\$MAIL\&quot; &amp;&amp; ! -z \&quot;\$MAIL\&quot;) then&quot; &gt;&gt; &quot;$1&quot;/.login<br />
+        echo &quot; echo \&quot;\$MAILMSG\&quot;&quot; &gt;&gt; &quot;$1&quot;/.login<br />
+ echo &quot;endif&quot; &gt;&gt; &quot;$1&quot;/.login<br />
+ chmod u+rwx,go-w $1/.login<br />
+ chgrp &quot;$3&quot; $1/.login<br />
+ chown $2 $1/.login<br />
+   fi<br />
+fi<br />
+<br />
+If the &quot;cat&quot; command shows the script as different than the content listed above, this is a finding.</p><h2>Check Content Reference</h2><p>M</p><h2>Target Key</h2><p>4012</p></body></html>

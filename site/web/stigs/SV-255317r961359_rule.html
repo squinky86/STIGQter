@@ -1,0 +1,27 @@
+<!doctype html><html lang="en"><head><meta charset="utf-8"><title>STIGQter: STIG Check Details: SV-255317r961359_rule: Azure SQL Database must restrict execution of stored procedures and functions that utilize [execute as] to necessary cases only.</title><link rel="icon" type="image/svg+xml" href="STIGQter.svg" /><script async src="https://www.googletagmanager.com/gtag/js?id=UA-31381839-2"></script><script src="include.js"></script><script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-4110907817782130" crossorigin="anonymous"></script></head><body><div><img src="STIGQter.svg" alt="STIGQter" style="height:1em;" /> <a href="https://www.stigqter.com/">STIGQter</a>: <a href="main.html">STIG Summary</a>: <a href="U_MS_Azure_SQL_DB_STIG_V2R3_Manual-xccdf.html">Microsoft Azure SQL Database Security Technical Implementation Guide Version: 2 Release: 3 Benchmark Date: 02 Jul 2025</a>:</div> <h1>Azure SQL Database must restrict execution of stored procedures and functions that utilize [execute as] to necessary cases only.</h1><h2>DISA Rule</h2><p>SV-255317r961359_rule</p><h2>Vulnerability Number</h2><p>V-255317</p><h2>Group Title</h2><p>SRG-APP-000342-DB-000302</p><h2>Rule Version</h2><p>ASQL-00-002900</p><h2>Severity</h2><p>CAT II</p><h2>CCI(s)</h2><ul><li>CCI-002233 - Prevent the organization-defined software from executing at higher privilege levels than users executing the software.</li></ul><h2>Weight</h2><p>10</p><h2>Fix Recommendation</h2><p>Alter stored procedures and functions to remove the &quot;EXECUTE AS&quot; statement.</p><h2>Check Contents</h2><p>Review the system documentation to obtain a listing of stored procedures and functions that utilize impersonation. Execute the following query:<br />
+<br />
+SELECT S.name AS schema_name, O.name AS module_name,<br />
+USER_NAME(CASE M.execute_as_principal_id <br />
+               WHEN -2 THEN COALESCE(O.principal_id, S.principal_id)<br />
+               ELSE M.execute_as_principal_id<br />
+          END) AS execute_as<br />
+FROM sys.sql_modules M<br />
+    JOIN sys.objects O ON M.object_id = O.object_id<br />
+    JOIN sys.schemas S ON O.schema_id = S.schema_id<br />
+WHERE execute_as_principal_id IS NOT NULL<br />
+ORDER BY schema_name, module_name<br />
+<br />
+If any procedures or functions are returned that are not documented, this is a finding.</p><h2>Vulnerability Number</h2><p>V-255317</p><h2>Documentable</h2><p>False</p><h2>Rule Version</h2><p>ASQL-00-002900</p><h2>Severity Override Guidance</h2><p>Review the system documentation to obtain a listing of stored procedures and functions that utilize impersonation. Execute the following query:<br />
+<br />
+SELECT S.name AS schema_name, O.name AS module_name,<br />
+USER_NAME(CASE M.execute_as_principal_id <br />
+               WHEN -2 THEN COALESCE(O.principal_id, S.principal_id)<br />
+               ELSE M.execute_as_principal_id<br />
+          END) AS execute_as<br />
+FROM sys.sql_modules M<br />
+    JOIN sys.objects O ON M.object_id = O.object_id<br />
+    JOIN sys.schemas S ON O.schema_id = S.schema_id<br />
+WHERE execute_as_principal_id IS NOT NULL<br />
+ORDER BY schema_name, module_name<br />
+<br />
+If any procedures or functions are returned that are not documented, this is a finding.</p><h2>Check Content Reference</h2><p>M</p><h2>Target Key</h2><p>5500</p></body></html>

@@ -1,0 +1,26 @@
+<!doctype html><html lang="en"><head><meta charset="utf-8"><title>STIGQter: STIG Check Details: SV-223853r991589_rule: IBM z/OS default profiles must be defined in the corresponding FACILITY Class Profile for classified systems.</title><link rel="icon" type="image/svg+xml" href="STIGQter.svg" /><script async src="https://www.googletagmanager.com/gtag/js?id=UA-31381839-2"></script><script src="include.js"></script><script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-4110907817782130" crossorigin="anonymous"></script></head><body><div><img src="STIGQter.svg" alt="STIGQter" style="height:1em;" /> <a href="https://www.stigqter.com/">STIGQter</a>: <a href="main.html">STIG Summary</a>: <a href="U_IBM_zOS_RACF_STIG_V9R9_Manual-xccdf.html">IBM z/OS RACF Security Technical Implementation Guide Version: 9 Release: 9 Benchmark Date: 01 Jul 2026</a>:</div> <h1>IBM z/OS default profiles must be defined in the corresponding FACILITY Class Profile for classified systems.</h1><h2>DISA Rule</h2><p>SV-223853r991589_rule</p><h2>Vulnerability Number</h2><p>V-223853</p><h2>Group Title</h2><p>SRG-OS-000480-GPOS-00227</p><h2>Rule Version</h2><p>RACF-US-000160</p><h2>Severity</h2><p>CAT II</p><h2>CCI(s)</h2><ul><li>CCI-000366 - Implement the security configuration settings.</li></ul><h2>Weight</h2><p>10</p><h2>Fix Recommendation</h2><p>If system is classified a userid should not be defined in the application data field of the FACILITY report.<br />
+<br />
+The sample commands below show the required security parameters required for the default user:<br />
+<br />
+AU OEDFLTU DFLTGRP(OEDFLTG) NAME('OE DEFAULT USER') NOPASS -<br />
+OMVS(UID(99999) HOME('/u/oeflt') PROGRAM('/bin/echo')) - <br />
+DATA('DEFAULT OMVSUSERID ADDED WITH SOER5') <br />
+<br />
+RDEF FACILITY BPX. UNIQUE.USER APPLDATA() - <br />
+DATA('ADDED TO SUPPORT THE DEFAULT USER') UACC(NONE) OWNER(ADMIN) <br />
+<br />
+SETR RACLIST(FACILITY) REFRESH</p><h2>Check Contents</h2><p>If the system is not classified, this is Not Applicable.<br />
+<br />
+From a command input screen enter:<br />
+<br />
+RLIST FACILITY (BPX.UNIQUE.USER) ALL<br />
+Examine APPLICATION DATA for userid<br />
+<br />
+If system is classified and a userid is are not defined in the Application Data field in the BPX.UNIQUE.USER resource in the FACILITY report, this is not a finding.</p><h2>Vulnerability Number</h2><p>V-223853</p><h2>Documentable</h2><p>False</p><h2>Rule Version</h2><p>RACF-US-000160</p><h2>Severity Override Guidance</h2><p>If the system is not classified, this is Not Applicable.<br />
+<br />
+From a command input screen enter:<br />
+<br />
+RLIST FACILITY (BPX.UNIQUE.USER) ALL<br />
+Examine APPLICATION DATA for userid<br />
+<br />
+If system is classified and a userid is are not defined in the Application Data field in the BPX.UNIQUE.USER resource in the FACILITY report, this is not a finding.</p><h2>Check Content Reference</h2><p>M</p><h2>Target Key</h2><p>4101</p></body></html>

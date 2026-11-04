@@ -1,0 +1,115 @@
+<!doctype html><html lang="en"><head><meta charset="utf-8"><title>STIGQter: STIG Check Details: SV-274025r1192649_rule: Amazon Linux 2023 must routinely check the baseline configuration for unauthorized changes and notify the system administrator (SA) when anomalies in the operation of any security functions are discovered.</title><link rel="icon" type="image/svg+xml" href="STIGQter.svg" /><script async src="https://www.googletagmanager.com/gtag/js?id=UA-31381839-2"></script><script src="include.js"></script><script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-4110907817782130" crossorigin="anonymous"></script></head><body><div><img src="STIGQter.svg" alt="STIGQter" style="height:1em;" /> <a href="https://www.stigqter.com/">STIGQter</a>: <a href="main.html">STIG Summary</a>: <a href="U_Amazon_Linux_2023_STIG_V1R4_Manual-xccdf.html">Amazon Linux 2023 Security Technical Implementation Guide Version: 1 Release: 4 Benchmark Date: 01 Jul 2026</a>:</div> <h1>Amazon Linux 2023 must routinely check the baseline configuration for unauthorized changes and notify the system administrator (SA) when anomalies in the operation of any security functions are discovered.</h1><h2>DISA Rule</h2><p>SV-274025r1192649_rule</p><h2>Vulnerability Number</h2><p>V-274025</p><h2>Group Title</h2><p>SRG-OS-000363-GPOS-00150</p><h2>Rule Version</h2><p>AZLX-23-001065</p><h2>Severity</h2><p>CAT II</p><h2>CCI(s)</h2><ul><li>CCI-001744 - Implement organization-defined security responses automatically if baseline configurations are changed in an unauthorized manner.</li><li>CCI-002699 - Perform verification of the correct operation of organization-defined security functions: when the system is in an organization-defined transitional state; upon command by a user with appropriate privileges; and/or on an organization-defined frequency.</li><li>CCI-002702 - Shut the system down, restart the system, and/or initiate organization-defined alternative action(s) when anomalies in the operation of the organization-defined security functions are discovered.</li></ul><h2>Weight</h2><p>10</p><h2>Fix Recommendation</h2><p>Configure Amazon Linux 2023 so the file integrity tool runs automatically on the system at least weekly and notifies designated personnel if baseline configurations are changed in an unauthorized manner. The AIDE tool can be configured to email designated personnel using either the crond service or systemd timers.<br />
+<br />
+If using cron, ensure the cronie package is installed and enabled:<br />
+<br />
+$ sudo dnf install cronie<br />
+$ sudo systemctl enable crond<br />
+$ sudo systemctl start crond<br />
+<br />
+The following example output is generic. It will set cron to run AIDE daily and to send an email upon completion of the analysis:<br />
+<br />
+$ sudo more /etc/cron.daily/aide<br />
+#!/bin/bash<br />
+/usr/sbin/aide --check | /bin/mail -s &quot;$HOSTNAME - Daily aide integrity check run&quot; root@sysname.mil<br />
+<br />
+If using systemd timers, create the file &quot;/etc/systemd/system/aid.service&quot; to run the &quot;aide --check&quot; command:<br />
+<br />
+[Unit]<br />
+Description=Aide Check<br />
+[Service]<br />
+Type=simple<br />
+ExecStart=/usr/sbin/aide --check | /bin/mail -s &quot;$HOSTNAME - Daily aide integrity check run&quot;<br />
+[Install]<br />
+WantedBy=multi-user.target<br />
+<br />
+Create the file &quot;/etc/systemd/system/aide.timer&quot; to run the AIDE check service at a specified time. The example below runs &quot;aide --check&quot; at 1:00 a.m. every day:<br />
+<br />
+[Unit]<br />
+Description=Aide check every day at 1AM<br />
+[Timer]<br />
+OnCalendar=*-*-* 01:00:00<br />
+Unit=aide.service<br />
+[Install]<br />
+WantedBy=timers.target<br />
+<br />
+Reload systemd:<br />
+<br />
+$ sudo systemctl daemon-reload<br />
+<br />
+Enabling the service will ensure the &quot;aide --check&quot; service will also start at boot time:<br />
+<br />
+$ sudo systemctl enable aide.service<br />
+<br />
+Start the timer:<br />
+<br />
+$ sudo systemctl --now enable aide.timer</p><h2>Check Contents</h2><p>Verify Amazon Linux 2023 routinely executes a file integrity scan for changes to the system baseline. The commands used in the example will use a daily occurrence.<br />
+<br />
+If using cron, check that the cronie service is running:<br />
+<br />
+$ systemctl status crond<br />
+o crond.service - Command Scheduler<br />
+Loaded: loaded (/usr/lib/systemd/system/crond.service; enabled; preset: enabled)<br />
+Active: active (running) since Wed 2025-11-12 20:37:42 UTC; 7s ago<br />
+<br />
+Check the cron directories for scripts controlling the execution and notification of results of the file integrity application. For example, if Advanced Intrusion Detection Environment (AIDE) is installed on the system, use the following commands:<br />
+<br />
+$ ls -al /etc/cron.daily | grep aide<br />
+-rwxr-xr-x 1 root root 29 Nov 22 2015 aide<br />
+<br />
+$ sudo grep aide /etc/crontab /var/spool/cron/root<br />
+/etc/crontab: 30 04 * * * root usr/sbin/aide<br />
+/var/spool/cron/root: 30 04 * * * root usr/sbin/aide<br />
+<br />
+$ sudo more /etc/cron.daily/aide<br />
+#!/bin/bash<br />
+/usr/sbin/aide --check | /bin/mail -s &quot;$HOSTNAME - Daily aide integrity check run&quot; root@sysname.mil<br />
+<br />
+If using systemd timers, ensure the aide timer is enabled:<br />
+<br />
+$ systemctl status aide.timer<br />
+o aide.timer - Aide check every day at 1AM<br />
+     Loaded: loaded (/etc/systemd/system/aide.timer; enabled; preset: disabled)<br />
+     Active: active (waiting) since Thu 2025-11-20 15:23:24 UTC; 37s ago<br />
+    Trigger: Fri 2025-11-21 01:00:00 UTC; 9h left<br />
+   Triggers: o aide.service<br />
+<br />
+If the timer unit file has a different name, list all available timers with the following command:<br />
+<br />
+$ systemctl list-timers<br />
+<br />
+If the file integrity application does not exist, or a script file controlling the execution of the file integrity application does not exist, or the file integrity application does not notify designated personnel of changes, this is a finding.</p><h2>Vulnerability Number</h2><p>V-274025</p><h2>Documentable</h2><p>False</p><h2>Rule Version</h2><p>AZLX-23-001065</p><h2>Severity Override Guidance</h2><p>Verify Amazon Linux 2023 routinely executes a file integrity scan for changes to the system baseline. The commands used in the example will use a daily occurrence.<br />
+<br />
+If using cron, check that the cronie service is running:<br />
+<br />
+$ systemctl status crond<br />
+o crond.service - Command Scheduler<br />
+Loaded: loaded (/usr/lib/systemd/system/crond.service; enabled; preset: enabled)<br />
+Active: active (running) since Wed 2025-11-12 20:37:42 UTC; 7s ago<br />
+<br />
+Check the cron directories for scripts controlling the execution and notification of results of the file integrity application. For example, if Advanced Intrusion Detection Environment (AIDE) is installed on the system, use the following commands:<br />
+<br />
+$ ls -al /etc/cron.daily | grep aide<br />
+-rwxr-xr-x 1 root root 29 Nov 22 2015 aide<br />
+<br />
+$ sudo grep aide /etc/crontab /var/spool/cron/root<br />
+/etc/crontab: 30 04 * * * root usr/sbin/aide<br />
+/var/spool/cron/root: 30 04 * * * root usr/sbin/aide<br />
+<br />
+$ sudo more /etc/cron.daily/aide<br />
+#!/bin/bash<br />
+/usr/sbin/aide --check | /bin/mail -s &quot;$HOSTNAME - Daily aide integrity check run&quot; root@sysname.mil<br />
+<br />
+If using systemd timers, ensure the aide timer is enabled:<br />
+<br />
+$ systemctl status aide.timer<br />
+o aide.timer - Aide check every day at 1AM<br />
+     Loaded: loaded (/etc/systemd/system/aide.timer; enabled; preset: disabled)<br />
+     Active: active (waiting) since Thu 2025-11-20 15:23:24 UTC; 37s ago<br />
+    Trigger: Fri 2025-11-21 01:00:00 UTC; 9h left<br />
+   Triggers: o aide.service<br />
+<br />
+If the timer unit file has a different name, list all available timers with the following command:<br />
+<br />
+$ systemctl list-timers<br />
+<br />
+If the file integrity application does not exist, or a script file controlling the execution of the file integrity application does not exist, or the file integrity application does not notify designated personnel of changes, this is a finding.</p><h2>Check Content Reference</h2><p>M</p><h2>Target Key</h2><p>5700</p></body></html>

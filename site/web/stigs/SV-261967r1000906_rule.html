@@ -1,0 +1,49 @@
+<!doctype html><html lang="en"><head><meta charset="utf-8"><title>STIGQter: STIG Check Details: SV-261967r1000906_rule: PostgreSQL must offload audit data to a separate log management facility; this must be continuous and in near real time for systems with a network connection to the storage facility and weekly or more often for standalone systems.</title><link rel="icon" type="image/svg+xml" href="STIGQter.svg" /><script async src="https://www.googletagmanager.com/gtag/js?id=UA-31381839-2"></script><script src="include.js"></script><script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-4110907817782130" crossorigin="anonymous"></script></head><body><div><img src="STIGQter.svg" alt="STIGQter" style="height:1em;" /> <a href="https://www.stigqter.com/">STIGQter</a>: <a href="main.html">STIG Summary</a>: <a href="U_CD_Postgres_16_STIG_V1R3_Manual-xccdf.html">Crunchy Data Postgres 16 Security Technical Implementation Guide Version: 1 Release: 3 Benchmark Date: 01 Jul 2026</a>:</div> <h1>PostgreSQL must offload audit data to a separate log management facility; this must be continuous and in near real time for systems with a network connection to the storage facility and weekly or more often for standalone systems.</h1><h2>DISA Rule</h2><p>SV-261967r1000906_rule</p><h2>Vulnerability Number</h2><p>V-261967</p><h2>Group Title</h2><p>SRG-APP-000515-DB-000318</p><h2>Rule Version</h2><p>CD16-00-012400</p><h2>Severity</h2><p>CAT II</p><h2>CCI(s)</h2><ul><li>CCI-001851 - Transfer audit logs per organization-defined frequency to a different system, system component, or media than the system or system component conducting the logging.</li></ul><h2>Weight</h2><p>10</p><h2>Fix Recommendation</h2><p>Note: The following instructions use the PGDATA and PGVER environment variables. Refer to APPENDIX-F for instructions on configuring PGDATA and APPENDIX-H for PGVER.<br />
+<br />
+Configure PostgreSQL or deploy and configure software tools to transfer audit records to a centralized log management system, continuously and in near real time where a continuous network connection to the log management system exists, or at least weekly in the absence of such a connection.<br />
+<br />
+To ensure logging is enabled, review supplementary content APPENDIX-C for instructions on enabling logging.<br />
+<br />
+With logging enabled, as the database administrator (shown here as &quot;postgres&quot;), configure the following parameters in postgresql.conf (the example uses the default values - tailor for environment):<br />
+<br />
+Note: Consult the organization on how syslog facilities are defined in the syslog daemon configuration.<br />
+<br />
+$ sudo su - postgres<br />
+$ vi ${PGDATA?}/postgresql.conf<br />
+log_destination = 'syslog'<br />
+syslog_facility = 'LOCAL0'<br />
+syslog_ident = 'postgres'<br />
+<br />
+As the system administrator, reload the server with the new configuration:<br />
+<br />
+$ sudo systemctl reload postgresql-${PGVER?}</p><h2>Check Contents</h2><p>As the database administrator (shown here as &quot;postgres&quot;), ensure PostgreSQL uses syslog by running the following SQL:<br />
+<br />
+$ sudo su - postgres<br />
+$ psql -c &quot;SHOW log_destination&quot;<br />
+<br />
+If log_destination is not syslog, this is a finding.<br />
+<br />
+As the database administrator, check which log facility is configured by running the following SQL:<br />
+<br />
+$ psql -c &quot;SHOW syslog_facility&quot; <br />
+<br />
+Check with the organization to refer to how syslog facilities are defined in their organization.<br />
+<br />
+If the wrong facility is configured, this is a finding.<br />
+<br />
+If PostgreSQL does not have a continuous network connection to the centralized log management system, and PostgreSQL audit records are not transferred to the centralized log management system weekly or more often, this is a finding.</p><h2>Vulnerability Number</h2><p>V-261967</p><h2>Documentable</h2><p>False</p><h2>Rule Version</h2><p>CD16-00-012400</p><h2>Severity Override Guidance</h2><p>As the database administrator (shown here as &quot;postgres&quot;), ensure PostgreSQL uses syslog by running the following SQL:<br />
+<br />
+$ sudo su - postgres<br />
+$ psql -c &quot;SHOW log_destination&quot;<br />
+<br />
+If log_destination is not syslog, this is a finding.<br />
+<br />
+As the database administrator, check which log facility is configured by running the following SQL:<br />
+<br />
+$ psql -c &quot;SHOW syslog_facility&quot; <br />
+<br />
+Check with the organization to refer to how syslog facilities are defined in their organization.<br />
+<br />
+If the wrong facility is configured, this is a finding.<br />
+<br />
+If PostgreSQL does not have a continuous network connection to the centralized log management system, and PostgreSQL audit records are not transferred to the centralized log management system weekly or more often, this is a finding.</p><h2>Check Content Reference</h2><p>M</p><h2>Target Key</h2><p>5598</p></body></html>

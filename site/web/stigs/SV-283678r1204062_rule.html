@@ -1,0 +1,84 @@
+<!doctype html><html lang="en"><head><meta charset="utf-8"><title>STIGQter: STIG Check Details: SV-283678r1204062_rule: The Nokia layer 2 switch must uniquely identify all network-connected endpoint devices before establishing any connection.</title><link rel="icon" type="image/svg+xml" href="STIGQter.svg" /><script async src="https://www.googletagmanager.com/gtag/js?id=UA-31381839-2"></script><script src="include.js"></script><script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-4110907817782130" crossorigin="anonymous"></script></head><body><div><img src="STIGQter.svg" alt="STIGQter" style="height:1em;" /> <a href="https://www.stigqter.com/">STIGQter</a>: <a href="main.html">STIG Summary</a>: <a href="U_Nokia_SR_OS_25.x_L2S_V1R1_STIG_Manual-xccdf.html">Nokia Service Router OS 25.x Layer 2 Switch Security Technical Implementation Guide Version: 1 Release: 1 Benchmark Date: 28 Apr 2026</a>:</div> <h1>The Nokia layer 2 switch must uniquely identify all network-connected endpoint devices before establishing any connection.</h1><h2>DISA Rule</h2><p>SV-283678r1204062_rule</p><h2>Vulnerability Number</h2><p>V-283678</p><h2>Group Title</h2><p>SRG-NET-000148-L2S-000015</p><h2>Rule Version</h2><p>NOKI-L2-000020</p><h2>Severity</h2><p>CAT I</p><h2>CCI(s)</h2><ul><li>CCI-000778 - Uniquely identify organization-defined devices and/or types of devices before establishing a local, remote, and/or network connection.</li><li>CCI-001958 - Authenticate organization-defined devices and/or types of devices before establishing a local, remote, and/or network connection.</li></ul><h2>Weight</h2><p>10</p><h2>Fix Recommendation</h2><p>Configure 802.1 x authentications on all host-facing access switch ports. To authenticate devices that do not support 802.1x, Media Access Control (MAC) Authentication Bypass must be configured.<br />
+<br />
+Configure dot1x radius policy:<br />
+<br />
+- exit all<br />
+- configure system security dot1x radius-plcy &lt;policy name&gt; create<br />
+- server &lt;server index&gt; address &lt;server ip address&gt; secret &lt;secret key&gt;<br />
+- source-address &lt;source address of the radius packet&gt;<br />
+- no shutdown<br />
+<br />
+Configure port dot1x authentication parameters:<br />
+<br />
+- configure port &lt;port id&gt; ethernet dot1x <br />
+- radius-plcy &lt;policy name&gt;<br />
+- port-control auto<br />
+- per-host-authentication <br />
+- allowed-source-macs &lt;mac address&gt;<br />
+- no shutdown</p><h2>Check Contents</h2><p>Verify Nokia router configuration has 802.1x authentication implemented for all access switch ports connecting to LAN outlets (i.e., RJ-45 wall plates) or devices not located in the telecom room, wiring closets, or equipment rooms. The 802.1x authentication is not required for switch ports connected to devices that do not support an 802.1x supplicant.<br />
+<br />
+For 7750 nodes, use the command below to verify dot1x &quot;Authentication&quot; status and list of &quot;Allowed hosts&quot; and &quot;Disallowed hosts&quot; is correct:<br />
+<br />
+- show system security dot1x<br />
+<br />
+Verify dot1x is enabled and configured for each port:<br />
+<br />
+- show port 1/1/c3/10 dot1x<br />
+<br />
+802.1x Port Status<br />
+<br />
+Port control            : auto<br />
+Port status             : authorized<br />
+Authenticator PAE state : authenticated<br />
+Backend state           : idle<br />
+Reauth enabled          : no           Reauth period         : N/A<br />
+Max auth requests       : 2            Transmit period       : 30<br />
+Supplicant timeout      : 30           Server timeout        : 30<br />
+Quiet period            : 60<br />
+Radius policy           : test<br />
+Radius server plcy auth : N/A<br />
+Radius server plcy acct : N/A<br />
+Untagged tunneling      : false<br />
+Dot1q tunneling         : true<br />
+Qinq tunneling          : true<br />
+Per-host authentication : enabled<br />
+MAC-based authentication: disabled<br />
+Authenticator Initiation: true<br />
+Allowed hosts           : 1 (max 100)<br />
+Disallowed hosts        : 1<br />
+Admin-state             : enabled<br />
+<br />
+If 802.1x authentication is not configured on all access switch ports connecting to LAN outlets or devices not located in the telecom room, wiring closets, or equipment rooms, this is a finding.</p><h2>Vulnerability Number</h2><p>V-283678</p><h2>Documentable</h2><p>False</p><h2>Rule Version</h2><p>NOKI-L2-000020</p><h2>Severity Override Guidance</h2><p>Verify Nokia router configuration has 802.1x authentication implemented for all access switch ports connecting to LAN outlets (i.e., RJ-45 wall plates) or devices not located in the telecom room, wiring closets, or equipment rooms. The 802.1x authentication is not required for switch ports connected to devices that do not support an 802.1x supplicant.<br />
+<br />
+For 7750 nodes, use the command below to verify dot1x &quot;Authentication&quot; status and list of &quot;Allowed hosts&quot; and &quot;Disallowed hosts&quot; is correct:<br />
+<br />
+- show system security dot1x<br />
+<br />
+Verify dot1x is enabled and configured for each port:<br />
+<br />
+- show port 1/1/c3/10 dot1x<br />
+<br />
+802.1x Port Status<br />
+<br />
+Port control            : auto<br />
+Port status             : authorized<br />
+Authenticator PAE state : authenticated<br />
+Backend state           : idle<br />
+Reauth enabled          : no           Reauth period         : N/A<br />
+Max auth requests       : 2            Transmit period       : 30<br />
+Supplicant timeout      : 30           Server timeout        : 30<br />
+Quiet period            : 60<br />
+Radius policy           : test<br />
+Radius server plcy auth : N/A<br />
+Radius server plcy acct : N/A<br />
+Untagged tunneling      : false<br />
+Dot1q tunneling         : true<br />
+Qinq tunneling          : true<br />
+Per-host authentication : enabled<br />
+MAC-based authentication: disabled<br />
+Authenticator Initiation: true<br />
+Allowed hosts           : 1 (max 100)<br />
+Disallowed hosts        : 1<br />
+Admin-state             : enabled<br />
+<br />
+If 802.1x authentication is not configured on all access switch ports connecting to LAN outlets or devices not located in the telecom room, wiring closets, or equipment rooms, this is a finding.</p><h2>Check Content Reference</h2><p>M</p><h2>Target Key</h2><p>5743</p></body></html>

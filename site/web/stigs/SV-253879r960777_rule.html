@@ -1,0 +1,67 @@
+<!doctype html><html lang="en"><head><meta charset="utf-8"><title>STIGQter: STIG Check Details: SV-253879r960777_rule: The Juniper EX switch must be configured to automatically audit account creation.</title><link rel="icon" type="image/svg+xml" href="STIGQter.svg" /><script async src="https://www.googletagmanager.com/gtag/js?id=UA-31381839-2"></script><script src="include.js"></script><script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-4110907817782130" crossorigin="anonymous"></script></head><body><div><img src="STIGQter.svg" alt="STIGQter" style="height:1em;" /> <a href="https://www.stigqter.com/">STIGQter</a>: <a href="main.html">STIG Summary</a>: <a href="U_Juniper_EX_Switches_NDM_STIG_V2R5_Manual-xccdf.html">Juniper EX Series Switches Network Device Management Security Technical Implementation Guide Version: 2 Release: 5 Benchmark Date: 01 Jul 2026</a>:</div> <h1>The Juniper EX switch must be configured to automatically audit account creation.</h1><h2>DISA Rule</h2><p>SV-253879r960777_rule</p><h2>Vulnerability Number</h2><p>V-253879</p><h2>Group Title</h2><p>SRG-APP-000026-NDM-000208</p><h2>Rule Version</h2><p>JUEX-NM-000020</p><h2>Severity</h2><p>CAT II</p><h2>CCI(s)</h2><ul><li>CCI-000018 - Automatically audit account creation actions.</li></ul><h2>Weight</h2><p>10</p><h2>Fix Recommendation</h2><p>Configure the network device or its associated authentication server to automatically audit the creation of accounts.<br />
+<br />
+set system syslog host &lt;IPv4 or IPv6 syslog address&gt; change-log info<br />
+set system syslog host &lt;IPv4 or IPv6 syslog address&gt; interactive-commands info<br />
+-or-<br />
+set system syslog host &lt;IPv4 or IPv6 syslog address&gt; any info<br />
+<br />
+Also set the syslog file configuration as follows:<br />
+<br />
+set system syslog file &lt;file name&gt; change-log info<br />
+set system syslog file &lt;file name&gt; interactive-commands info<br />
+-or-<br />
+set system syslog file &lt;file name&gt; any info</p><h2>Check Contents</h2><p>Review the network device configuration to determine if it automatically audits account creation or is configured to use an authentication server that would perform this function.<br />
+<br />
+Verify the system logs the facility &quot;any&quot;, or minimally &quot;change-log&quot; and &quot;interactive-commands&quot;, and the logging level is appropriate. Generally, the &quot;all&quot; (debug) logging level should be avoided because the number of logged messages is significant.<br />
+<br />
+[edit system syslog]<br />
+host &lt;IPv4 or IPv6 syslog address&gt; {<br />
+    any info;<br />
+}<br />
+file &lt;file name&gt; {<br />
+    change-log info;<br />
+    interactive-commands info;<br />
+}<br />
+Note: If minimally logging only configuration changes, there will be other files receiving the events from the other logging facilities (e.g., &quot;authorizations&quot; or &quot;firewall&quot;).<br />
+<br />
+Syslog outputs in standard format unless the &quot;structured-data&quot; directive is configured. Verify the &quot;structured-data&quot; command for all files and external syslog servers requiring that format. For example:<br />
+<br />
+[edit system syslog]<br />
+host &lt;IPv4 or IPv6 syslog address&gt; {<br />
+    change-log info;<br />
+    interactive-commands info;<br />
+    structured-data;<br />
+}<br />
+file &lt;file name&gt; {<br />
+    any info;<br />
+    structured-data;<br />
+}<br />
+<br />
+If account creation is not automatically audited, this is a finding.</p><h2>Vulnerability Number</h2><p>V-253879</p><h2>Documentable</h2><p>False</p><h2>Rule Version</h2><p>JUEX-NM-000020</p><h2>Severity Override Guidance</h2><p>Review the network device configuration to determine if it automatically audits account creation or is configured to use an authentication server that would perform this function.<br />
+<br />
+Verify the system logs the facility &quot;any&quot;, or minimally &quot;change-log&quot; and &quot;interactive-commands&quot;, and the logging level is appropriate. Generally, the &quot;all&quot; (debug) logging level should be avoided because the number of logged messages is significant.<br />
+<br />
+[edit system syslog]<br />
+host &lt;IPv4 or IPv6 syslog address&gt; {<br />
+    any info;<br />
+}<br />
+file &lt;file name&gt; {<br />
+    change-log info;<br />
+    interactive-commands info;<br />
+}<br />
+Note: If minimally logging only configuration changes, there will be other files receiving the events from the other logging facilities (e.g., &quot;authorizations&quot; or &quot;firewall&quot;).<br />
+<br />
+Syslog outputs in standard format unless the &quot;structured-data&quot; directive is configured. Verify the &quot;structured-data&quot; command for all files and external syslog servers requiring that format. For example:<br />
+<br />
+[edit system syslog]<br />
+host &lt;IPv4 or IPv6 syslog address&gt; {<br />
+    change-log info;<br />
+    interactive-commands info;<br />
+    structured-data;<br />
+}<br />
+file &lt;file name&gt; {<br />
+    any info;<br />
+    structured-data;<br />
+}<br />
+<br />
+If account creation is not automatically audited, this is a finding.</p><h2>Check Content Reference</h2><p>M</p><h2>Target Key</h2><p>5477</p></body></html>

@@ -1,0 +1,64 @@
+<!doctype html><html lang="en"><head><meta charset="utf-8"><title>STIGQter: STIG Check Details: SV-221131r999740_rule: The Cisco switch must be configured to enforce a Quality-of-Service (QoS) policy to limit the effects of packet flooding denial-of-service (DoS) attacks.</title><link rel="icon" type="image/svg+xml" href="STIGQter.svg" /><script async src="https://www.googletagmanager.com/gtag/js?id=UA-31381839-2"></script><script src="include.js"></script><script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-4110907817782130" crossorigin="anonymous"></script></head><body><div><img src="STIGQter.svg" alt="STIGQter" style="height:1em;" /> <a href="https://www.stigqter.com/">STIGQter</a>: <a href="main.html">STIG Summary</a>: <a href="U_Cisco_NX-OS_Switch_RTR_STIG_V3R4_Manual-xccdf.html">Cisco NX OS Switch RTR Security Technical Implementation Guide Version: 3 Release: 4 Benchmark Date: 01 Apr 2026</a>:</div> <h1>The Cisco switch must be configured to enforce a Quality-of-Service (QoS) policy to limit the effects of packet flooding denial-of-service (DoS) attacks.</h1><h2>DISA Rule</h2><p>SV-221131r999740_rule</p><h2>Vulnerability Number</h2><p>V-221131</p><h2>Group Title</h2><p>SRG-NET-000193-RTR-000112</p><h2>Rule Version</h2><p>CISC-RT-000780</p><h2>Severity</h2><p>CAT II</p><h2>CCI(s)</h2><ul><li>CCI-001095 - Manage capacity, bandwidth, or other redundancy to limit the effects of information flooding types of denial of service attacks.</li></ul><h2>Weight</h2><p>10</p><h2>Fix Recommendation</h2><p>Step 1: Configure a class map for the SCAVENGER class.<br />
+<br />
+SW1(config)# class-map match-all SCAVENGER<br />
+SW1(config-cmap)# match ip dscp cs1<br />
+<br />
+Step 2: Add the SCAVENGER class to the policy map as shown in the example below:<br />
+<br />
+SW1(config)# policy-map QOS_POLICY<br />
+SW1(config-pmap-c)# no class class-default<br />
+SW1(config-pmap)# class SCAVENGER<br />
+SW1(config-pmap-c)# bandwidth percent 5<br />
+SW1(config-pmap-c)# class class-default<br />
+SW1(config-pmap-c)# bandwidth percent 10<br />
+SW1(config-pmap-c)# end</p><h2>Check Contents</h2><p>Step 1: Verify that a class map has been configured for the Scavenger class as shown in the example below:<br />
+<br />
+class-map match-all SCAVENGER<br />
+ match ip dscp cs1<br />
+<br />
+Step 2: Verify that the policy map includes the SCAVENGER class with low priority as shown in the following example below:<br />
+<br />
+policy-map QOS_POLICY<br />
+ class CONTROL_PLANE<br />
+ priority percent 10<br />
+ class C2_VOICE<br />
+ priority percent 10<br />
+ class VOICE<br />
+ priority percent 15<br />
+ class VIDEO<br />
+ bandwidth percent 25<br />
+ class PREFERRED_DATA<br />
+ bandwidth percent 25<br />
+class SCAVENGER<br />
+ bandwidth percent 5<br />
+ class class-default<br />
+ bandwidth percent 10<br />
+<br />
+Note: Traffic out of profile must be marked at the customer access layer or CE egress edge.<br />
+<br />
+If the switch is not configured to enforce a QoS policy to limit the effects of packet flooding DoS attacks, this is a finding.</p><h2>Vulnerability Number</h2><p>V-221131</p><h2>Documentable</h2><p>False</p><h2>Rule Version</h2><p>CISC-RT-000780</p><h2>Severity Override Guidance</h2><p>Step 1: Verify that a class map has been configured for the Scavenger class as shown in the example below:<br />
+<br />
+class-map match-all SCAVENGER<br />
+ match ip dscp cs1<br />
+<br />
+Step 2: Verify that the policy map includes the SCAVENGER class with low priority as shown in the following example below:<br />
+<br />
+policy-map QOS_POLICY<br />
+ class CONTROL_PLANE<br />
+ priority percent 10<br />
+ class C2_VOICE<br />
+ priority percent 10<br />
+ class VOICE<br />
+ priority percent 15<br />
+ class VIDEO<br />
+ bandwidth percent 25<br />
+ class PREFERRED_DATA<br />
+ bandwidth percent 25<br />
+class SCAVENGER<br />
+ bandwidth percent 5<br />
+ class class-default<br />
+ bandwidth percent 10<br />
+<br />
+Note: Traffic out of profile must be marked at the customer access layer or CE egress edge.<br />
+<br />
+If the switch is not configured to enforce a QoS policy to limit the effects of packet flooding DoS attacks, this is a finding.</p><h2>Check Content Reference</h2><p>M</p><h2>Target Key</h2><p>4075</p></body></html>

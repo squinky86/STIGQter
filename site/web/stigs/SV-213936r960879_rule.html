@@ -1,0 +1,45 @@
+<!doctype html><html lang="en"><head><meta charset="utf-8"><title>STIGQter: STIG Check Details: SV-213936r960879_rule: SQL Server must be configured to generate audit records for DoD-defined auditable events within all DBMS/database components.</title><link rel="icon" type="image/svg+xml" href="STIGQter.svg" /><script async src="https://www.googletagmanager.com/gtag/js?id=UA-31381839-2"></script><script src="include.js"></script><script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-4110907817782130" crossorigin="anonymous"></script></head><body><div><img src="STIGQter.svg" alt="STIGQter" style="height:1em;" /> <a href="https://www.stigqter.com/">STIGQter</a>: <a href="main.html">STIG Summary</a>: <a href="U_MS_SQL_Server_2016_Instance_STIG_V3R6_Manual-xccdf.html">MS SQL Server 2016 Instance Security Technical Implementation Guide Version: 3 Release: 6 Benchmark Date: 05 Jan 2026</a>:</div> <h1>SQL Server must be configured to generate audit records for DoD-defined auditable events within all DBMS/database components.</h1><h2>DISA Rule</h2><p>SV-213936r960879_rule</p><h2>Vulnerability Number</h2><p>V-213936</p><h2>Group Title</h2><p>SRG-APP-000089-DB-000064</p><h2>Rule Version</h2><p>SQL6-D0-004300</p><h2>Severity</h2><p>CAT II</p><h2>CCI(s)</h2><ul><li>CCI-000169 - Provide audit record generation capability for the event types the system is capable of auditing as defined in AU-2 a. on organization-defined information system components.</li></ul><h2>Weight</h2><p>10</p><h2>Fix Recommendation</h2><p>Add all required audit events to the STIG Compliant audit specification server documentation.</p><h2>Check Contents</h2><p>Review the server documentation to determine if any additional events are required to be audited. If no additional events are required, this is not a finding. <br />
+ <br />
+Execute the following query to get all of the installed audits: <br />
+ <br />
+SELECT name AS 'Audit Name', <br />
+status_desc AS 'Audit Status', <br />
+audit_file_path AS 'Current Audit File' <br />
+FROM sys.dm_server_audit_status <br />
+ <br />
+All currently defined audits for the SQL server instance will be listed. If no audits are returned, this is a finding.  <br />
+ <br />
+To view the actions being audited by the audits, execute the following query: <br />
+ <br />
+SELECT a.name AS 'AuditName', <br />
+s.name AS 'SpecName', <br />
+d.audit_action_name AS 'ActionName', <br />
+d.audited_result AS 'Result' <br />
+FROM sys.server_audit_specifications s <br />
+JOIN sys.server_audits a ON s.audit_guid = a.audit_guid <br />
+JOIN sys.server_audit_specification_details d ON s.server_specification_id = d.server_specification_id <br />
+WHERE a.is_state_enabled = 1 <br />
+ <br />
+Compare the documentation to the list of generated audit events. If there are any missing events, this is a finding.</p><h2>Vulnerability Number</h2><p>V-213936</p><h2>Documentable</h2><p>False</p><h2>Rule Version</h2><p>SQL6-D0-004300</p><h2>Severity Override Guidance</h2><p>Review the server documentation to determine if any additional events are required to be audited. If no additional events are required, this is not a finding. <br />
+ <br />
+Execute the following query to get all of the installed audits: <br />
+ <br />
+SELECT name AS 'Audit Name', <br />
+status_desc AS 'Audit Status', <br />
+audit_file_path AS 'Current Audit File' <br />
+FROM sys.dm_server_audit_status <br />
+ <br />
+All currently defined audits for the SQL server instance will be listed. If no audits are returned, this is a finding.  <br />
+ <br />
+To view the actions being audited by the audits, execute the following query: <br />
+ <br />
+SELECT a.name AS 'AuditName', <br />
+s.name AS 'SpecName', <br />
+d.audit_action_name AS 'ActionName', <br />
+d.audited_result AS 'Result' <br />
+FROM sys.server_audit_specifications s <br />
+JOIN sys.server_audits a ON s.audit_guid = a.audit_guid <br />
+JOIN sys.server_audit_specification_details d ON s.server_specification_id = d.server_specification_id <br />
+WHERE a.is_state_enabled = 1 <br />
+ <br />
+Compare the documentation to the list of generated audit events. If there are any missing events, this is a finding.</p><h2>Check Content Reference</h2><p>M</p><h2>Target Key</h2><p>3993</p></body></html>

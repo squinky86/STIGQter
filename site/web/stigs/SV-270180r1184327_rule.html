@@ -1,0 +1,51 @@
+<!doctype html><html lang="en"><head><meta charset="utf-8"><title>STIGQter: STIG Check Details: SV-270180r1184327_rule: The RHEL 9 fapolicy module must be configured to employ a deny-all, permit-by-exception policy to allow the execution of authorized software programs.</title><link rel="icon" type="image/svg+xml" href="STIGQter.svg" /><script async src="https://www.googletagmanager.com/gtag/js?id=UA-31381839-2"></script><script src="include.js"></script><script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-4110907817782130" crossorigin="anonymous"></script></head><body><div><img src="STIGQter.svg" alt="STIGQter" style="height:1em;" /> <a href="https://www.stigqter.com/">STIGQter</a>: <a href="main.html">STIG Summary</a>: <a href="U_RHEL_9_STIG_V2R9_Manual-xccdf.html">Red Hat Enterprise Linux 9 Security Technical Implementation Guide Version: 2 Release: 9 Benchmark Date: 01 Jul 2026</a>:</div> <h1>The RHEL 9 fapolicy module must be configured to employ a deny-all, permit-by-exception policy to allow the execution of authorized software programs.</h1><h2>DISA Rule</h2><p>SV-270180r1184327_rule</p><h2>Vulnerability Number</h2><p>V-270180</p><h2>Group Title</h2><p>SRG-OS-000368-GPOS-00154</p><h2>Rule Version</h2><p>RHEL-09-433016</p><h2>Severity</h2><p>CAT II</p><h2>CCI(s)</h2><ul><li>CCI-001764 - Prevent program execution in accordance with organization-defined policies, rules of behavior, and/or access agreements regarding software program usage and restrictions; rules authorizing the terms and conditions of software program usage.</li></ul><h2>Weight</h2><p>10</p><h2>Fix Recommendation</h2><p>Configure RHEL 9 to employ a deny-all, permit-by-exception application allow listing policy with &quot;fapolicyd&quot;.<br />
+<br />
+With the &quot;fapolicyd&quot; installed and enabled, configure the daemon to function in permissive mode until the allow list is built correctly to avoid system lockout. Do this by editing the &quot;/etc/fapolicyd/fapolicyd.conf&quot; file with the following line:<br />
+<br />
+permissive = 1<br />
+<br />
+Build the allow list in a file within the &quot;/etc/fapolicyd/rules.d&quot; directory, ensuring the last rule implements a deny-all policy, such as &quot;deny perm=any all : all&quot;.<br />
+<br />
+Once it is determined the allow list is built correctly, set the &quot;fapolicyd&quot; to enforcing mode by editing the &quot;permissive&quot; line in the /etc/fapolicyd/fapolicyd.conf file.<br />
+<br />
+permissive = 0</p><h2>Check Contents</h2><p>Verify the RHEL 9 &quot;fapolicyd&quot; employs a deny-all, permit-by-exception policy.<br />
+<br />
+Verify &quot;fapolicyd&quot; is in enforcement mode with the following command:<br />
+<br />
+$ sudo grep permissive /etc/fapolicyd/fapolicyd.conf<br />
+<br />
+permissive = 0<br />
+<br />
+If &quot;fapolicyd&quot; is not running in enforcement mode, this is a finding.<br />
+<br />
+Check that &quot;fapolicyd&quot; employs a deny-all policy on system mounts with the following commands:<br />
+<br />
+$ sudo tail /etc/fapolicyd/compiled.rules<br />
+<br />
+allow exe=/usr/bin/python3.7 : ftype=text/x-python<br />
+deny_audit perm=any pattern=ld_so : all<br />
+deny perm=any all : all<br />
+<br />
+If &quot;fapolicyd&quot; is not running with a deny-all, permit-by-exception policy, this is a finding.<br />
+<br />
+Note: &quot;deny_log&quot; or &quot;deny_audit&quot; options meet the security requirements.  These options will generate higher volumes of logs.</p><h2>Vulnerability Number</h2><p>V-270180</p><h2>Documentable</h2><p>False</p><h2>Rule Version</h2><p>RHEL-09-433016</p><h2>Severity Override Guidance</h2><p>Verify the RHEL 9 &quot;fapolicyd&quot; employs a deny-all, permit-by-exception policy.<br />
+<br />
+Verify &quot;fapolicyd&quot; is in enforcement mode with the following command:<br />
+<br />
+$ sudo grep permissive /etc/fapolicyd/fapolicyd.conf<br />
+<br />
+permissive = 0<br />
+<br />
+If &quot;fapolicyd&quot; is not running in enforcement mode, this is a finding.<br />
+<br />
+Check that &quot;fapolicyd&quot; employs a deny-all policy on system mounts with the following commands:<br />
+<br />
+$ sudo tail /etc/fapolicyd/compiled.rules<br />
+<br />
+allow exe=/usr/bin/python3.7 : ftype=text/x-python<br />
+deny_audit perm=any pattern=ld_so : all<br />
+deny perm=any all : all<br />
+<br />
+If &quot;fapolicyd&quot; is not running with a deny-all, permit-by-exception policy, this is a finding.<br />
+<br />
+Note: &quot;deny_log&quot; or &quot;deny_audit&quot; options meet the security requirements.  These options will generate higher volumes of logs.</p><h2>Check Content Reference</h2><p>M</p><h2>Target Key</h2><p>5551</p></body></html>

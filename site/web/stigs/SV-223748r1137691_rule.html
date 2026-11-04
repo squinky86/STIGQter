@@ -1,0 +1,102 @@
+<!doctype html><html lang="en"><head><meta charset="utf-8"><title>STIGQter: STIG Check Details: SV-223748r1137691_rule: IBM z/OS JES2 output devices must be controlled in accordance with the proper security requirements.</title><link rel="icon" type="image/svg+xml" href="STIGQter.svg" /><script async src="https://www.googletagmanager.com/gtag/js?id=UA-31381839-2"></script><script src="include.js"></script><script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-4110907817782130" crossorigin="anonymous"></script></head><body><div><img src="STIGQter.svg" alt="STIGQter" style="height:1em;" /> <a href="https://www.stigqter.com/">STIGQter</a>: <a href="main.html">STIG Summary</a>: <a href="U_IBM_zOS_RACF_STIG_V9R9_Manual-xccdf.html">IBM z/OS RACF Security Technical Implementation Guide Version: 9 Release: 9 Benchmark Date: 01 Jul 2026</a>:</div> <h1>IBM z/OS JES2 output devices must be controlled in accordance with the proper security requirements.</h1><h2>DISA Rule</h2><p>SV-223748r1137691_rule</p><h2>Vulnerability Number</h2><p>V-223748</p><h2>Group Title</h2><p>SRG-OS-000080-GPOS-00048</p><h2>Rule Version</h2><p>RACF-JS-000040</p><h2>Severity</h2><p>CAT II</p><h2>CCI(s)</h2><ul><li>CCI-000213 - Enforce approved authorizations for logical access to information and system resources in accordance with applicable access control policies.</li></ul><h2>Weight</h2><p>10</p><h2>Fix Recommendation</h2><p>Review the following resources in the WRITER resource class:<br />
+<br />
+JES2.** (backstop profile)<br />
+JES2.LOCAL.OFFn.* (spool offload transmitter)<br />
+JES2.LOCAL.OFFn.ST (spool offload SYSOUT transmitter)<br />
+JES2.LOCAL.OFFn.JT (spool offload job transmitter)<br />
+JES2.LOCAL.PRTn (local printer)<br />
+JES2.LOCAL.PUNn (local punch)<br />
+JES2.NJE.nodename (NJE node)<br />
+JES2.RJE.Rnnnn.PRm (remote printer)<br />
+JES2.RJE.Rnnnn.PUm (remote punch)<br />
+<br />
+-JES2 is typically the name of the JES2 subsystem. Refer to the SUBSYS report and locate the entry with the description of PRIMARY JOB ENTRY SUBSYSTEM. The SUBSYSTEM NAME of this entry is the name of the JES2 subsystem.<br />
+-OFFn, where n is the number of the offload transmitter. Determine the numbers by searching for OFF( in the JES2 parameters.<br />
+-PRTn, where n is the number of the local printer. Determine the numbers by searching for PRT( in the JES2 parameters.<br />
+-PUNn, where n is the number of the local card punch. Determine the numbers by searching for PUN( in the JES2 parameters.<br />
+-Nodename is the NAME parameter value specified on the NODE statement. Review the JES2 parameters for NJE node definitions by searching for NODE( in the report.<br />
+-Rnnnn.PRm, where nnnn is the number of the remote workstation and m is the number of the printer. Determine the numbers by searching for .PR in the JES2 parameters.<br />
+-Rnnnn.PUm, where nnnn is the number of the remote workstation and m is the number of the punch. Determine the numbers by searching for .PU in the JES2 parameters.<br />
+<br />
+Define the WRITER resource class to the ACTIVE CLASSES in RACF SETROPTS.<br />
+<br />
+Configure the profile JES2.** to have no access in the WRITER resource class.<br />
+<br />
+Configure the resources detailed above to be protected by generic and/or fully qualified profiles defined to the WRITER resource class. <br />
+<br />
+Examples:<br />
+setr classact(writer) <br />
+setr gencmd(writer) generic(writer) <br />
+setr raclist(writer) <br />
+RDEF WRITER JES2.** owner(admin) AUDIT(ALL) UACC(NONE) - <br />
+data('Reference SRR PDI ZJES0031') <br />
+RDEF WRITER JES2.LOCAL.** owner(admin) AUDIT(ALL) UACC(NONE) - <br />
+data('Reference SRR PDI ZJES0031') <br />
+RDEF WRITER JES2.LOCAL.OFF*.JT owner(admin) audit(ALL) UACC(NONE) -<br />
+data('Reference SRR PDI ZJES0031') <br />
+RDEF WRITER JES2.LOCAL.OFF*.ST owner(admin) audit(ALL) UACC(NONE) -<br />
+data('Reference SRR PDI ZJES0031') <br />
+RDEF WRITER JES2.LOCAL.PRT* owner(admin) audit(ALL) UACC(NONE) - <br />
+data('Reference SRR PDI ZJES0031') <br />
+RDEF WRITER JES2.LOCAL.PUN* owner(admin) audit(ALL) UACC(NONE) - <br />
+data('Reference SRR PDI ZJES0031') <br />
+RDEF WRITER JES2.NJE.** owner(admin) audit(ALL) UACC(NONE) - <br />
+data('Reference SRR PDI ZJES0031') <br />
+RDEF WRITER JES2.RJE.** owner(admin) audit(ALL) UACC(NONE) - <br />
+data('Reference SRR PDI ZJES0031') <br />
+<br />
+pe JES2.** cl(writer) id(&lt;syspsmpl&gt;) <br />
+pe JES2.LOCAL.** cl(writer) id(&lt;syspsmpl&gt;) <br />
+pe JES2.LOCAL.OFF*.JT cl(writer) id(&lt;syspsmpl&gt;) <br />
+pe JES2.LOCAL.OFF*.ST cl(writer) id(&lt;syspsmpl&gt;) <br />
+pe JES2.LOCAL.PRT* cl(writer) id(&lt;syspsmpl&gt;) <br />
+pe JES2.LOCAL.PUN* cl(writer) id(&lt;syspsmpl&gt;) <br />
+pe JES2.NJE.** cl(writer) id(&lt;syspsmpl&gt;) <br />
+pe JES2.RJE.** cl(writer) id(&lt;syspsmpl&gt;) <br />
+setr racl(writer) Ref</p><h2>Check Contents</h2><p>Refer the JES2PARM member of SYS1.PARMLIB.<br />
+<br />
+Review the following resources in the RACF WRITER resource class:<br />
+JES2.** (backstop profile)<br />
+JES2.LOCAL.OFFn.* (spool offload transmitter)<br />
+JES2.LOCAL.OFFn.ST (spool offload SYSOUT transmitter)<br />
+JES2.LOCAL.OFFn.JT (spool offload job transmitter)<br />
+JES2.LOCAL.PRTn (local printer)<br />
+JES2.LOCAL.PUNn (local punch)<br />
+JES2.NJE.nodename (NJE node)<br />
+JES2.RJE.Rnnnn.PRm (remote printer)<br />
+JES2.RJE.Rnnnn.PUm (remote punch)<br />
+<br />
+-JES2 is typically the name of the JES2 subsystem. Refer to the SUBSYS report and locate the entry with the description of PRIMARY JOB ENTRY SUBSYSTEM. The SUBSYSTEM NAME of this entry is the name of the JES2 subsystem.<br />
+-OFFn, where n is the number of the offload transmitter. Determine the numbers by searching for OFF( in the JES2 parameters.<br />
+-PRTn, where n is the number of the local printer. Determine the numbers by searching for PRT( in the JES2 parameters.<br />
+-PUNn, where n is the number of the local card punch. Determine the numbers by searching for PUN( in the JES2 parameters.<br />
+-Nodename is the NAME parameter value specified on the NODE statement. Review the JES2 parameters for NJE node definitions by searching for NODE( in the report.<br />
+-Rnnnn.PRm, where nnnn is the number of the remote workstation and m is the number of the printer. Determine the numbers by searching for .PR in the JES2 parameters.<br />
+-Rnnnn.PUm, where nnnn is the number of the remote workstation and m is the number of the punch. Determine the numbers by searching for .PU in the JES2 parameters.<br />
+<br />
+If the WRITER resource class is active, this is not a finding.<br />
+<br />
+If the other resources detailed above are protected by generic and/or fully qualified profiles defined to the WRITER resource class with UACC(NONE), this is not a finding.</p><h2>Vulnerability Number</h2><p>V-223748</p><h2>Documentable</h2><p>False</p><h2>Rule Version</h2><p>RACF-JS-000040</p><h2>Severity Override Guidance</h2><p>Refer the JES2PARM member of SYS1.PARMLIB.<br />
+<br />
+Review the following resources in the RACF WRITER resource class:<br />
+JES2.** (backstop profile)<br />
+JES2.LOCAL.OFFn.* (spool offload transmitter)<br />
+JES2.LOCAL.OFFn.ST (spool offload SYSOUT transmitter)<br />
+JES2.LOCAL.OFFn.JT (spool offload job transmitter)<br />
+JES2.LOCAL.PRTn (local printer)<br />
+JES2.LOCAL.PUNn (local punch)<br />
+JES2.NJE.nodename (NJE node)<br />
+JES2.RJE.Rnnnn.PRm (remote printer)<br />
+JES2.RJE.Rnnnn.PUm (remote punch)<br />
+<br />
+-JES2 is typically the name of the JES2 subsystem. Refer to the SUBSYS report and locate the entry with the description of PRIMARY JOB ENTRY SUBSYSTEM. The SUBSYSTEM NAME of this entry is the name of the JES2 subsystem.<br />
+-OFFn, where n is the number of the offload transmitter. Determine the numbers by searching for OFF( in the JES2 parameters.<br />
+-PRTn, where n is the number of the local printer. Determine the numbers by searching for PRT( in the JES2 parameters.<br />
+-PUNn, where n is the number of the local card punch. Determine the numbers by searching for PUN( in the JES2 parameters.<br />
+-Nodename is the NAME parameter value specified on the NODE statement. Review the JES2 parameters for NJE node definitions by searching for NODE( in the report.<br />
+-Rnnnn.PRm, where nnnn is the number of the remote workstation and m is the number of the printer. Determine the numbers by searching for .PR in the JES2 parameters.<br />
+-Rnnnn.PUm, where nnnn is the number of the remote workstation and m is the number of the punch. Determine the numbers by searching for .PU in the JES2 parameters.<br />
+<br />
+If the WRITER resource class is active, this is not a finding.<br />
+<br />
+If the other resources detailed above are protected by generic and/or fully qualified profiles defined to the WRITER resource class with UACC(NONE), this is not a finding.</p><h2>Check Content Reference</h2><p>M</p><h2>Target Key</h2><p>4101</p></body></html>

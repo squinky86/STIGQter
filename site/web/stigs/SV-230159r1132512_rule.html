@@ -1,0 +1,60 @@
+<!doctype html><html lang="en"><head><meta charset="utf-8"><title>STIGQter: STIG Check Details: SV-230159r1132512_rule: The Cisco perimeter router must be configured to drop IPv6 packets containing a Hop-by-Hop or Destination Option extension header with an undefined option type.</title><link rel="icon" type="image/svg+xml" href="STIGQter.svg" /><script async src="https://www.googletagmanager.com/gtag/js?id=UA-31381839-2"></script><script src="include.js"></script><script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-4110907817782130" crossorigin="anonymous"></script></head><body><div><img src="STIGQter.svg" alt="STIGQter" style="height:1em;" /> <a href="https://www.stigqter.com/">STIGQter</a>: <a href="main.html">STIG Summary</a>: <a href="U_Cisco_IOS-XE_Router_RTR_STIG_V3R5_Manual-xccdf.html">Cisco IOS XE Router RTR Security Technical Implementation Guide Version: 3 Release: 5 Benchmark Date: 01 Oct 2025</a>:</div> <h1>The Cisco perimeter router must be configured to drop IPv6 packets containing a Hop-by-Hop or Destination Option extension header with an undefined option type.</h1><h2>DISA Rule</h2><p>SV-230159r1132512_rule</p><h2>Vulnerability Number</h2><p>V-230159</p><h2>Group Title</h2><p>SRG-NET-000364-RTR-000206</p><h2>Rule Version</h2><p>CISC-RT-000398</p><h2>Severity</h2><p>CAT II</p><h2>CCI(s)</h2><ul><li>CCI-002403 - Only allow incoming communications from organization-defined authorized sources routed to organization-defined authorized destinations.</li></ul><h2>Weight</h2><p>10</p><h2>Fix Recommendation</h2><p>Configure the router to drop all inbound IPv6 packets containing destination option type values regardless of whether they appear in a Hop-by-Hop or Destination Option header as shown in the example below.<br />
+<br />
+R1(config)#ipv6 access-list FILTER_IPV6<br />
+R1(config-ipv6-acl)#deny 60 any any dest-option log<br />
+R1(config-ipv6-acl)#deny hbh any any dest-option log<br />
+R1(config-ipv6-acl)#permit …<br />
+…<br />
+…<br />
+…<br />
+R1(config-ipv6-acl)#deny ipv6 any any log<br />
+R1(config-ipv6-acl)#exit<br />
+R1(config)#int g1/0<br />
+R1(config-if)#ipv6 traffic-filter FILTER_IPV6<br />
+R1(config-if)#end</p><h2>Check Contents</h2><p>This requirement is not applicable for the DODIN Backbone. <br />
+<br />
+Review the router configuration to determine if it is compliant with this requirement.  <br />
+<br />
+Step 1: Verify that an inbound IPv6 ACL has been configured on the external interface.<br />
+<br />
+interface gigabitethernet1/0<br />
+ ipv6 address 2001::1:0:22/64<br />
+ ipv6 traffic-filter FILTER_IPV6 in<br />
+<br />
+Step 2: Verify that the ACL drops IPv6 packets containing a Destination Option header as shown in the example below.<br />
+<br />
+ipv6 access-list FILTER_IPV6<br />
+ deny 60 any any dest-option log<br />
+ deny hbh any any dest-option log<br />
+ permit ipv6 …<br />
+ …<br />
+ …<br />
+ …<br />
+ deny ipv6 any any log<br />
+<br />
+Note: Cisco has deprecated the dest-option-type command used to filter by option type within the Destination Option and Hop-by-Hop header. Therefore, all packets with the Destination Option header and Hop-by-Hop options must be dropped.<br />
+<br />
+If the router is not configured to drop IPv6 packets containing a Destination Option header, this is a finding.</p><h2>Vulnerability Number</h2><p>V-230159</p><h2>Documentable</h2><p>False</p><h2>Rule Version</h2><p>CISC-RT-000398</p><h2>Severity Override Guidance</h2><p>This requirement is not applicable for the DODIN Backbone. <br />
+<br />
+Review the router configuration to determine if it is compliant with this requirement.  <br />
+<br />
+Step 1: Verify that an inbound IPv6 ACL has been configured on the external interface.<br />
+<br />
+interface gigabitethernet1/0<br />
+ ipv6 address 2001::1:0:22/64<br />
+ ipv6 traffic-filter FILTER_IPV6 in<br />
+<br />
+Step 2: Verify that the ACL drops IPv6 packets containing a Destination Option header as shown in the example below.<br />
+<br />
+ipv6 access-list FILTER_IPV6<br />
+ deny 60 any any dest-option log<br />
+ deny hbh any any dest-option log<br />
+ permit ipv6 …<br />
+ …<br />
+ …<br />
+ …<br />
+ deny ipv6 any any log<br />
+<br />
+Note: Cisco has deprecated the dest-option-type command used to filter by option type within the Destination Option and Hop-by-Hop header. Therefore, all packets with the Destination Option header and Hop-by-Hop options must be dropped.<br />
+<br />
+If the router is not configured to drop IPv6 packets containing a Destination Option header, this is a finding.</p><h2>Check Content Reference</h2><p>M</p><h2>Target Key</h2><p>4028</p></body></html>

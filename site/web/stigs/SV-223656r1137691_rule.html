@@ -1,0 +1,27 @@
+<!doctype html><html lang="en"><head><meta charset="utf-8"><title>STIGQter: STIG Check Details: SV-223656r1137691_rule: IBM RACF must properly define users that have access to the CONSOLE resource in the TSOAUTH resource class.</title><link rel="icon" type="image/svg+xml" href="STIGQter.svg" /><script async src="https://www.googletagmanager.com/gtag/js?id=UA-31381839-2"></script><script src="include.js"></script><script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-4110907817782130" crossorigin="anonymous"></script></head><body><div><img src="STIGQter.svg" alt="STIGQter" style="height:1em;" /> <a href="https://www.stigqter.com/">STIGQter</a>: <a href="main.html">STIG Summary</a>: <a href="U_IBM_zOS_RACF_STIG_V9R9_Manual-xccdf.html">IBM z/OS RACF Security Technical Implementation Guide Version: 9 Release: 9 Benchmark Date: 01 Jul 2026</a>:</div> <h1>IBM RACF must properly define users that have access to the CONSOLE resource in the TSOAUTH resource class.</h1><h2>DISA Rule</h2><p>SV-223656r1137691_rule</p><h2>Vulnerability Number</h2><p>V-223656</p><h2>Group Title</h2><p>SRG-OS-000080-GPOS-00048</p><h2>Rule Version</h2><p>RACF-ES-000080</p><h2>Severity</h2><p>CAT II</p><h2>CCI(s)</h2><ul><li>CCI-000213 - Enforce approved authorizations for logical access to information and system resources in accordance with applicable access control policies.</li></ul><h2>Weight</h2><p>10</p><h2>Fix Recommendation</h2><p>Evaluate the impact of correcting any deficiencies. Develop a plan of action and implement the required changes. <br />
+Ensure the following items are in effect for all MCS consoles:<br />
+<br />
+Define a profile protecting the use of the CONSOLE command within TSO. A sample command to accomplish this is shown here: RDEF TSOAUTH CONSOLE UACC(NONE) OWNER(ADMIN) AUDIT(ALL(READ)) <br />
+<br />
+Permit only authorized users. A sample command to accomplish this is shown here: PE CONSOLE CL(TSOAUTH) ID(&lt;syspsmpl&gt;)<br />
+<br />
+Set up the OPERPARM segment in corresponding user-class entry. A sample command to accomplish this is shown here: ALU &lt;authorized user&gt; OPERPARM(AUTH(INFO))<br />
+<br />
+Userids are restricted to READ access to the MVS.MCSOPER.userid resource defined in the OPERCMDS resource class. A sample command to accomplish this is shown here using the GLOBAL class: <br />
+RDEF GLOBAL OPERCMDS ADDMEM(MVS.MCSOPER.&amp;RACUID/READ) OWNER(ADMIN)</p><h2>Check Contents</h2><p>If the CONSOLE privilege is not defined to the TSOAUTH resource class, this is not a finding.<br />
+<br />
+At the discretion of the site, users may be allowed to issue z/OS system commands from a TSO session. With this in mind, review the following items for users granted the CONSOLE resource in the TSOAUTH resource class:<br />
+<br />
+If Userids are restricted to the INFO level on the AUTH parameter specified in the OPERPARM segment of their userid, this is not a finding.<br />
+<br />
+If Userids are restricted to READ access to the MVS.MCSOPER.userid resource defined in the OPERCMDS resource class, this is not a finding.<br />
+<br />
+If Userids and/or group IDs are restricted to READ access to the CONSOLE resource defined in the TSOAUTH resource class, this is not a finding.</p><h2>Vulnerability Number</h2><p>V-223656</p><h2>Documentable</h2><p>False</p><h2>Rule Version</h2><p>RACF-ES-000080</p><h2>Severity Override Guidance</h2><p>If the CONSOLE privilege is not defined to the TSOAUTH resource class, this is not a finding.<br />
+<br />
+At the discretion of the site, users may be allowed to issue z/OS system commands from a TSO session. With this in mind, review the following items for users granted the CONSOLE resource in the TSOAUTH resource class:<br />
+<br />
+If Userids are restricted to the INFO level on the AUTH parameter specified in the OPERPARM segment of their userid, this is not a finding.<br />
+<br />
+If Userids are restricted to READ access to the MVS.MCSOPER.userid resource defined in the OPERCMDS resource class, this is not a finding.<br />
+<br />
+If Userids and/or group IDs are restricted to READ access to the CONSOLE resource defined in the TSOAUTH resource class, this is not a finding.</p><h2>Check Content Reference</h2><p>M</p><h2>Target Key</h2><p>4101</p></body></html>

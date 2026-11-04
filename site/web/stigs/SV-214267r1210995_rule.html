@@ -1,0 +1,62 @@
+<!doctype html><html lang="en"><head><meta charset="utf-8"><title>STIGQter: STIG Check Details: SV-214267r1210995_rule: The Apache web server must be protected from being stopped by a nonprivileged user.</title><link rel="icon" type="image/svg+xml" href="STIGQter.svg" /><script async src="https://www.googletagmanager.com/gtag/js?id=UA-31381839-2"></script><script src="include.js"></script><script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-4110907817782130" crossorigin="anonymous"></script></head><body><div><img src="STIGQter.svg" alt="STIGQter" style="height:1em;" /> <a href="https://www.stigqter.com/">STIGQter</a>: <a href="main.html">STIG Summary</a>: <a href="U_Apache_Server_2-4_UNIX_Server_STIG_V3R3_Manual-xccdf.html">Apache Server 2.4 UNIX Server Security Technical Implementation Guide Version: 3 Release: 3 Benchmark Date: 01 Jul 2026</a>:</div> <h1>The Apache web server must be protected from being stopped by a nonprivileged user.</h1><h2>DISA Rule</h2><p>SV-214267r1210995_rule</p><h2>Vulnerability Number</h2><p>V-214267</p><h2>Group Title</h2><p>SRG-APP-000435-WSR-000147</p><h2>Rule Version</h2><p>AS24-U1-000820</p><h2>Severity</h2><p>CAT II</p><h2>CCI(s)</h2><ul><li>CCI-002385 - Protect against or limit the effects of organization-defined types of denial of service events.</li></ul><h2>Weight</h2><p>10</p><h2>Fix Recommendation</h2><p>Review the web server documentation and deployed configuration to determine where the process ID is stored and which utilities are used to start/stop the web server.<br />
+<br />
+Determine where the &quot;httpd.pid&quot; file is located by running the following command:<br />
+<br />
+find / -name &quot;httpd.pid&quot;<br />
+<br />
+Run the following commands:<br />
+ <br />
+# cd &lt;'httpd.pid location'&gt;/<br />
+# chown &lt;'service account'&gt; httpd.pid <br />
+# chmod 644 httpd.pid <br />
+# cd /usr/sbin <br />
+# chown &lt;'service account'&gt; service apachectl <br />
+# chmod 755 service apachectl</p><h2>Check Contents</h2><p>Review the web server documentation and deployed configuration to determine where the process ID is stored and which utilities are used to start/stop the web server.<br />
+<br />
+Locate the httpd.pid file and list its permission set and owner/group<br />
+<br />
+# find / -name “httpd.pid<br />
+Output should be similar to: /run/httpd/httpd.pid <br />
+<br />
+# ls -laH /run/httpd/httpd.pid<br />
+Output should be similar -rw-r--r--. 1 root root 5 Jun 13 03:18 /run/httpd/httpd.pid<br />
+<br />
+If the file owner/group is not an administrative service account, this is a finding.<br />
+<br />
+If permission set is not 644 or more restrictive, this is a finding.<br />
+ <br />
+Verify the Apache service utilities have the correct permission set and are user/group owned by an administrator account<br />
+<br />
+# ls -laH /usr/sbin/service<br />
+Output should be similar: -rwxr-xr-x. 1 root root 3.2K Aug 19, 2019 /usr/sbin/service<br />
+<br />
+# ls -laH /usr/sbin/apachectl<br />
+Output should be similar: -rwxr-xr-x. 1 root root 4.2K Oct 8, 2019 /usr/sbin/apachectl<br />
+ <br />
+If the service utilities owner/group is not an administrative service account, this is a finding.<br />
+ <br />
+If permission set is not 755 or more restrictive, this is a finding.</p><h2>Vulnerability Number</h2><p>V-214267</p><h2>Documentable</h2><p>False</p><h2>Rule Version</h2><p>AS24-U1-000820</p><h2>Severity Override Guidance</h2><p>Review the web server documentation and deployed configuration to determine where the process ID is stored and which utilities are used to start/stop the web server.<br />
+<br />
+Locate the httpd.pid file and list its permission set and owner/group<br />
+<br />
+# find / -name “httpd.pid<br />
+Output should be similar to: /run/httpd/httpd.pid <br />
+<br />
+# ls -laH /run/httpd/httpd.pid<br />
+Output should be similar -rw-r--r--. 1 root root 5 Jun 13 03:18 /run/httpd/httpd.pid<br />
+<br />
+If the file owner/group is not an administrative service account, this is a finding.<br />
+<br />
+If permission set is not 644 or more restrictive, this is a finding.<br />
+ <br />
+Verify the Apache service utilities have the correct permission set and are user/group owned by an administrator account<br />
+<br />
+# ls -laH /usr/sbin/service<br />
+Output should be similar: -rwxr-xr-x. 1 root root 3.2K Aug 19, 2019 /usr/sbin/service<br />
+<br />
+# ls -laH /usr/sbin/apachectl<br />
+Output should be similar: -rwxr-xr-x. 1 root root 4.2K Oct 8, 2019 /usr/sbin/apachectl<br />
+ <br />
+If the service utilities owner/group is not an administrative service account, this is a finding.<br />
+ <br />
+If permission set is not 755 or more restrictive, this is a finding.</p><h2>Check Content Reference</h2><p>M</p><h2>Target Key</h2><p>3996</p></body></html>

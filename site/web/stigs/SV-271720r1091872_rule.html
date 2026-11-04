@@ -1,0 +1,23 @@
+<!doctype html><html lang="en"><head><meta charset="utf-8"><title>STIGQter: STIG Check Details: SV-271720r1091872_rule: OL 9 must not allow users to override SSH environment variables.</title><link rel="icon" type="image/svg+xml" href="STIGQter.svg" /><script async src="https://www.googletagmanager.com/gtag/js?id=UA-31381839-2"></script><script src="include.js"></script><script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-4110907817782130" crossorigin="anonymous"></script></head><body><div><img src="STIGQter.svg" alt="STIGQter" style="height:1em;" /> <a href="https://www.stigqter.com/">STIGQter</a>: <a href="main.html">STIG Summary</a>: <a href="U_Oracle_Linux_9_STIG_V1R6_Manual-xccdf.html">Oracle Linux 9 Security Technical Implementation Guide Version: 1 Release: 6 Benchmark Date: 01 Jul 2026</a>:</div> <h1>OL 9 must not allow users to override SSH environment variables.</h1><h2>DISA Rule</h2><p>SV-271720r1091872_rule</p><h2>Vulnerability Number</h2><p>V-271720</p><h2>Group Title</h2><p>SRG-OS-000480-GPOS-00229</p><h2>Rule Version</h2><p>OL09-00-002358</p><h2>Severity</h2><p>CAT II</p><h2>CCI(s)</h2><ul><li>CCI-000366 - Implement the security configuration settings.</li></ul><h2>Weight</h2><p>10</p><h2>Fix Recommendation</h2><p>Configure the OL 9 SSH daemon to not allow unattended or automatic logon to the system.<br />
+<br />
+Add or edit the following line in the &quot;/etc/ssh/sshd_config&quot; or in a file in &quot;/etc/ssh/sshd_config.d&quot;:<br />
+<br />
+PermitUserEnvironment no<br />
+<br />
+Restart the SSH daemon for the setting to take effect:<br />
+<br />
+$ sudo systemctl restart sshd.service</p><h2>Check Contents</h2><p>Verify that OL 9 does not allow users to override SSH environment variables.<br />
+<br />
+Verify that unattended or automatic logon via SSH is disabled with the following command:<br />
+<br />
+$ sudo /usr/sbin/sshd -dd 2&gt;&amp;1 | awk '/filename/ {print $4}' | tr -d '\r' | tr '\n' ' ' | xargs sudo grep -iH '^\s*permituserenvironment'<br />
+PermitUserEnvironment no<br />
+<br />
+If &quot;PermitUserEnvironment&quot; is set to &quot;yes&quot;, is missing completely, or is commented out, this is a finding.</p><h2>Vulnerability Number</h2><p>V-271720</p><h2>Documentable</h2><p>False</p><h2>Rule Version</h2><p>OL09-00-002358</p><h2>Severity Override Guidance</h2><p>Verify that OL 9 does not allow users to override SSH environment variables.<br />
+<br />
+Verify that unattended or automatic logon via SSH is disabled with the following command:<br />
+<br />
+$ sudo /usr/sbin/sshd -dd 2&gt;&amp;1 | awk '/filename/ {print $4}' | tr -d '\r' | tr '\n' ' ' | xargs sudo grep -iH '^\s*permituserenvironment'<br />
+PermitUserEnvironment no<br />
+<br />
+If &quot;PermitUserEnvironment&quot; is set to &quot;yes&quot;, is missing completely, or is commented out, this is a finding.</p><h2>Check Content Reference</h2><p>M</p><h2>Target Key</h2><p>5680</p></body></html>

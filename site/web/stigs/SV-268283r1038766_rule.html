@@ -1,0 +1,42 @@
+<!doctype html><html lang="en"><head><meta charset="utf-8"><title>STIGQter: STIG Check Details: SV-268283r1038766_rule: The HYCU virtual appliance must prevent the installation of patches, service packs, or application components without verification the software component has been digitally signed using a certificate that is recognized and approved by the organization.</title><link rel="icon" type="image/svg+xml" href="STIGQter.svg" /><script async src="https://www.googletagmanager.com/gtag/js?id=UA-31381839-2"></script><script src="include.js"></script><script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-4110907817782130" crossorigin="anonymous"></script></head><body><div><img src="STIGQter.svg" alt="STIGQter" style="height:1em;" /> <a href="https://www.stigqter.com/">STIGQter</a>: <a href="main.html">STIG Summary</a>: <a href="U_HYCU_Protege_STIG_V1R3_Manual-xccdf.html">HYCU Protege Security Technical Implementation Guide Version: 1 Release: 3 Benchmark Date: 01 Jul 2026</a>:</div> <h1>The HYCU virtual appliance must prevent the installation of patches, service packs, or application components without verification the software component has been digitally signed using a certificate that is recognized and approved by the organization.</h1><h2>DISA Rule</h2><p>SV-268283r1038766_rule</p><h2>Vulnerability Number</h2><p>V-268283</p><h2>Group Title</h2><p>SRG-APP-000131-NDM-000243</p><h2>Rule Version</h2><p>HYCU-ND-000760</p><h2>Severity</h2><p>CAT II</p><h2>CCI(s)</h2><ul><li>CCI-003992 - Prevent the installation of organization-defined software and firmware components without verification that the component has been digitally signed using a certificate that is recognized and approved by the organization.</li></ul><h2>Weight</h2><p>10</p><h2>Fix Recommendation</h2><p>Configure the operating system to verify the signature of packages from a repository prior to install by setting the following option in every repo file in /etc/yum.repos.d/:<br />
+gpgcheck=1<br />
+<br />
+Check the output of &quot;sudo /opt/grizzly/bin/hycu-selftest.sh&quot;.<br />
+<br />
+Investigate each file listed in the error output to determine a fix.</p><h2>Check Contents</h2><p>Verify the operating system prevents the installation of patches, service packs, device drivers, or operating system components from a repository without verification that they have been digitally signed using a certificate that is recognized and approved by the organization.<br />
+<br />
+Check that YUM verifies the signature of packages from a repository prior to install with the following command:<br />
+<br />
+$ sudo grep -E '^\[.*\]|gpgcheck' /etc/yum.repos.d/*.repo<br />
+<br />
+/etc/yum.repos.d/appstream.repo:[appstream]<br />
+/etc/yum.repos.d/appstream.repo:gpgcheck=1<br />
+/etc/yum.repos.d/baseos.repo:[baseos]<br />
+/etc/yum.repos.d/baseos.repo:gpgcheck=1<br />
+<br />
+If &quot;gpgcheck&quot; is not set to &quot;1&quot;, or if options are missing or commented out, this is a finding.<br />
+<br />
+Execute the following command to check the kernel and cryptographic libraries, as well as the SHA256 checksums of the application files:<br />
+$ sudo /opt/grizzly/bin/hycu-selftest.sh<br />
+<br />
+If the output is not OK for the OS, this is a finding.<br />
+<br />
+If the output reports an error for any other file than /etc/issue for the App section, this is a finding.</p><h2>Vulnerability Number</h2><p>V-268283</p><h2>Documentable</h2><p>False</p><h2>Rule Version</h2><p>HYCU-ND-000760</p><h2>Severity Override Guidance</h2><p>Verify the operating system prevents the installation of patches, service packs, device drivers, or operating system components from a repository without verification that they have been digitally signed using a certificate that is recognized and approved by the organization.<br />
+<br />
+Check that YUM verifies the signature of packages from a repository prior to install with the following command:<br />
+<br />
+$ sudo grep -E '^\[.*\]|gpgcheck' /etc/yum.repos.d/*.repo<br />
+<br />
+/etc/yum.repos.d/appstream.repo:[appstream]<br />
+/etc/yum.repos.d/appstream.repo:gpgcheck=1<br />
+/etc/yum.repos.d/baseos.repo:[baseos]<br />
+/etc/yum.repos.d/baseos.repo:gpgcheck=1<br />
+<br />
+If &quot;gpgcheck&quot; is not set to &quot;1&quot;, or if options are missing or commented out, this is a finding.<br />
+<br />
+Execute the following command to check the kernel and cryptographic libraries, as well as the SHA256 checksums of the application files:<br />
+$ sudo /opt/grizzly/bin/hycu-selftest.sh<br />
+<br />
+If the output is not OK for the OS, this is a finding.<br />
+<br />
+If the output reports an error for any other file than /etc/issue for the App section, this is a finding.</p><h2>Check Content Reference</h2><p>M</p><h2>Target Key</h2><p>5660</p></body></html>

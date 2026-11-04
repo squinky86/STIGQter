@@ -1,0 +1,194 @@
+<!doctype html><html lang="en"><head><meta charset="utf-8"><title>STIGQter: STIG Check Details: SV-257513r1156752_rule: OpenShift role-based access controls (RBAC) must be enforced.</title><link rel="icon" type="image/svg+xml" href="STIGQter.svg" /><script async src="https://www.googletagmanager.com/gtag/js?id=UA-31381839-2"></script><script src="include.js"></script><script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-4110907817782130" crossorigin="anonymous"></script></head><body><div><img src="STIGQter.svg" alt="STIGQter" style="height:1em;" /> <a href="https://www.stigqter.com/">STIGQter</a>: <a href="main.html">STIG Summary</a>: <a href="U_RH_OpenShift_Container_Platform_4-x_STIG_V2R6_Manual-xccdf.html">Red Hat OpenShift Container Platform 4.x Security Technical Implementation Guide Version: 2 Release: 6 Benchmark Date: 01 Jul 2026</a>:</div> <h1>OpenShift role-based access controls (RBAC) must be enforced.</h1><h2>DISA Rule</h2><p>SV-257513r1156752_rule</p><h2>Vulnerability Number</h2><p>V-257513</p><h2>Group Title</h2><p>SRG-APP-000033-CTR-000090</p><h2>Rule Version</h2><p>CNTR-OS-000090</p><h2>Severity</h2><p>CAT I</p><h2>CCI(s)</h2><ul><li>CCI-000213 - Enforce approved authorizations for logical access to information and system resources in accordance with applicable access control policies.</li><li>CCI-000764 - Uniquely identify and authenticate organizational users and associate that unique identification with processes acting on behalf of those users.</li><li>CCI-004045 - Require users to be individually authenticated before granting access to the shared accounts or resources.</li><li>CCI-001499 - Limit privileges to change software resident within software libraries.</li><li>CCI-001774 - Employ a deny-all, permit-by-exception policy to allow the execution of authorized software programs on the system.</li><li>CCI-003980 - Allow user installation of software only with explicit privileged status.</li><li>CCI-001813 - Enforce access restrictions using organization-defined mechanisms.</li><li>CCI-002235 - Prevent non-privileged users from executing privileged functions.</li></ul><h2>Weight</h2><p>10</p><h2>Fix Recommendation</h2><p>If users or groups exist that are bound to roles they must not have, modify the user or group permissions using the following cluster and local role binding commands:<br />
+ <br />
+Remove a user from a Cluster RBAC role by executing the following:<br />
+oc adm policy remove-cluster-role-from-user &amp;lt;role&amp;gt; &amp;lt;username&amp;gt;<br />
+ <br />
+Remove a group from a Cluster RBAC role by executing the following:<br />
+oc adm policy remove-cluster-role-from-group &amp;lt;role&amp;gt; &amp;lt;groupname&amp;gt;<br />
+ <br />
+Remove a user from a Local RBAC role by executing the following:<br />
+oc adm policy remove-role-from-user &amp;lt;role&amp;gt; &amp;lt;username&amp;gt;<br />
+ <br />
+Remove a group from a Local RBAC role by executing the following:<br />
+oc adm policy remove-role-from-group &amp;lt;role&amp;gt; &amp;lt;groupname&amp;gt;<br />
+  <br />
+Note: For additional information, refer to https://docs.openshift.com/container-platform/4.8/authentication/using-rbac.html.<br />
+<br />
+Where OpenShift Virtualization is enabled:<br />
+<br />
+1. Ensure kubevirt seccomp profile file permission is set to &quot;700&quot; or more restrictive:<br />
+$ oc exec &lt;virt-handler-pod&gt; -ti -n openshift-cnv -- chmod 700<br />
+/proc/1/root/var/lib/kubelet/seccomp/kubevirt/kubevirt.json<br />
+<br />
+Ensure kubevirt cache directory permission is set to &quot;755&quot; or more restrictive:<br />
+$ oc exec &lt;virt-handler-pod&gt; -ti -n openshift-cnv -- chmod 755<br />
+/var/run/kubevirt-private<br />
+<br />
+2. Remove create access to virtualmachineinstancemigration and migrationpolicy objects in the cluster.<br />
+<br />
+Example: Remove create access given by the clusterRoleBinding for the migrationpolicy for the test user.<br />
+<br />
+# Get all the users and service accounts who can create<br />
+migrationpolicies<br />
+$ oc adm policy who-can create migrationpolicy<br />
+Users: system:admin<br />
+..<br />
+<br />
+Test<br />
+<br />
+# Verify that the test user can create the migrationpolicy<br />
+$ oc auth can-i create migrationpolicies --as test<br />
+Warning: resource 'migrationpolicies' is not namespace scoped in group<br />
+'migrations.kubevirt.io'<br />
+yes<br />
+# Find out which rolebinding or clusterrolbinding associated to the<br />
+test user<br />
+$ oc get rolebindings,clusterrolebindings --all-namespaces -o<br />
+custom-columns='KIND:kind,NAMESPACE:metadata.namespace,NAME:metadata.n<br />
+ame,SERVICE_ACCOUNTS:subjects[?(@.kind==&quot;User&quot;)].name' |grep test<br />
+ClusterRoleBinding &lt;none&gt;<br />
+migration-creator<br />
+test<br />
+# Inspect the cluster role binding<br />
+$ oc get clusterrolebindings migration-creator -oyaml<br />
+apiVersion: rbac.authorization.k8s.io/v1<br />
+kind: ClusterRoleBinding<br />
+metadata:<br />
+annotations:<br />
+kubectl.kubernetes.io/last-applied-configuration: |<br />
+{&quot;apiVersion&quot;:&quot;rbac.authorization.k8s.io/v1&quot;,&quot;kind&quot;:&quot;ClusterRoleBindin<br />
+g&quot;,&quot;metadata&quot;:{&quot;annotations&quot;:{},&quot;name&quot;:&quot;migration-creator&quot;},&quot;roleRef&quot;:<br />
+{&quot;apiGroup&quot;:&quot;rbac.authorization.k8s.io&quot;,&quot;kind&quot;:&quot;ClusterRole&quot;,&quot;name&quot;:&quot;m<br />
+igration-creator&quot;},&quot;subjects&quot;:[{&quot;apiGroup&quot;:&quot;rbac.authorization.k8s.io&quot;<br />
+,&quot;kind&quot;:&quot;User&quot;,&quot;name&quot;:&quot;test&quot;},{&quot;kind&quot;:&quot;ServiceAccount&quot;,&quot;name&quot;:&quot;test&quot;,&quot;<br />
+namespace&quot;:&quot;default&quot;}]}<br />
+creationTimestamp: &quot;2025-03-06T14:05:04Z&quot;<br />
+name: migration-creator<br />
+resourceVersion: &quot;1093678&quot;<br />
+uid: 96be5dc2-2b30-4734-b5ef-16d9342bbdbf<br />
+roleRef:<br />
+apiGroup: rbac.authorization.k8s.io<br />
+kind: ClusterRole<br />
+name: migration-creator<br />
+subjects:<br />
+- apiGroup: rbac.authorization.k8s.io<br />
+kind: User<br />
+name: test<br />
+- kind: ServiceAccount<br />
+name: test<br />
+namespace: default<br />
+# Remove the cluster role binding<br />
+$ oc delete clusterrolebindings migration-creator<br />
+clusterrolebinding.rbac.authorization.k8s.io &quot;migration-creator&quot;<br />
+deleted<br />
+# Re-verify that the test user cannot create the migrationpolicy<br />
+$ oc auth can-i create migrationpolicies --as test<br />
+Warning: resource 'migrationpolicies' is not namespace scoped in group<br />
+'migrations.kubevirt.io'<br />
+no<br />
+<br />
+3. Add the appropriate kernel arguments to the MachineConfigPools of the workers nodes and reboot them. <br />
+<br />
+Refer to https://docs.redhat.com/en/documentation/openshift_container_platform/4.18/html/installation_configuration/installing-customizing#installation-special-config-kargs_installing-customizing<br />
+<br />
+Default Value: OpenShift does not enable nested virtualization by default.</p><h2>Check Contents</h2><p>The administrator must verify OpenShift is configured with the necessary RBAC access controls.<br />
+ <br />
+Review the RBAC configuration. <br />
+As the cluster-admin, view the cluster roles and their associated rule sets by executing the following:<br />
+oc describe clusterrole.rbac<br />
+ <br />
+View the current set of cluster role bindings, which shows the users and groups that are bound to various roles, by executing the following:<br />
+oc describe clusterrolebinding.rbac<br />
+ <br />
+Determine local roles and bindings by executing the following:<br />
+oc describe rolebinding.rbac <br />
+<br />
+If these results show users with privileged access that do not require that access, this is a finding.<br />
+<br />
+Where OpenShift Virtualization is enabled:<br />
+<br />
+1. Execute the following:<br />
+$ for pod in $(oc get pod -n openshift-cnv -l<br />
+kubevirt.io=virt-handler --no-headers -o<br />
+custom-columns=&quot;&quot;:metadata.name&quot;&quot;); do<br />
+oc exec -ti -n openshift-cnv $pod -c virt-handler -- stat -c %a<br />
+/proc/1/root/var/lib/kubelet/seccomp/kubevirt/kubevirt.json<br />
+done<br />
+<br />
+If the permissions are set to anything less restrictive than &quot;700&quot;, this is a finding.<br />
+<br />
+2. Execute the following:<br />
+$ for pod in $(oc get po -n openshift-cnv -l kubevirt.io=virt-handler<br />
+--no-headers -o custom-columns=&quot;&quot;:metadata.name&quot;&quot;); do oc exec $pod<br />
+-ti -n openshift-cnv -- stat -c %a /var/run/kubevirt-private ;done<br />
+<br />
+If the permissions are set to anything less restrictive than &quot;755&quot;, this is a finding.<br />
+<br />
+3. Execute the following:<br />
+$oc adm policy who-can create vmim<br />
+<br />
+$ oc adm policy who-can create migrationpolicy<br />
+<br />
+If these results show users with privileged access that do not require that access, this is a finding.<br />
+<br />
+4. Use the following command to find users, service accounts, and groups who are allowed to create VirtualMachineInterfaceMigration and MigrationPolicy resources:<br />
+$ oc adm policy who-can create vmim<br />
+<br />
+$ oc adm policy who-can create migrationpolicy<br />
+<br />
+If these list users not authorized to perform namespace admin migration functions, this is a finding.<br />
+<br />
+5. Execute the following:<br />
+cat /sys/module/kvm_intel/parameters/nested <br />
+<br />
+If the result is &quot;1&quot;, this is a finding.</p><h2>Vulnerability Number</h2><p>V-257513</p><h2>Documentable</h2><p>False</p><h2>Rule Version</h2><p>CNTR-OS-000090</p><h2>Severity Override Guidance</h2><p>The administrator must verify OpenShift is configured with the necessary RBAC access controls.<br />
+ <br />
+Review the RBAC configuration. <br />
+As the cluster-admin, view the cluster roles and their associated rule sets by executing the following:<br />
+oc describe clusterrole.rbac<br />
+ <br />
+View the current set of cluster role bindings, which shows the users and groups that are bound to various roles, by executing the following:<br />
+oc describe clusterrolebinding.rbac<br />
+ <br />
+Determine local roles and bindings by executing the following:<br />
+oc describe rolebinding.rbac <br />
+<br />
+If these results show users with privileged access that do not require that access, this is a finding.<br />
+<br />
+Where OpenShift Virtualization is enabled:<br />
+<br />
+1. Execute the following:<br />
+$ for pod in $(oc get pod -n openshift-cnv -l<br />
+kubevirt.io=virt-handler --no-headers -o<br />
+custom-columns=&quot;&quot;:metadata.name&quot;&quot;); do<br />
+oc exec -ti -n openshift-cnv $pod -c virt-handler -- stat -c %a<br />
+/proc/1/root/var/lib/kubelet/seccomp/kubevirt/kubevirt.json<br />
+done<br />
+<br />
+If the permissions are set to anything less restrictive than &quot;700&quot;, this is a finding.<br />
+<br />
+2. Execute the following:<br />
+$ for pod in $(oc get po -n openshift-cnv -l kubevirt.io=virt-handler<br />
+--no-headers -o custom-columns=&quot;&quot;:metadata.name&quot;&quot;); do oc exec $pod<br />
+-ti -n openshift-cnv -- stat -c %a /var/run/kubevirt-private ;done<br />
+<br />
+If the permissions are set to anything less restrictive than &quot;755&quot;, this is a finding.<br />
+<br />
+3. Execute the following:<br />
+$oc adm policy who-can create vmim<br />
+<br />
+$ oc adm policy who-can create migrationpolicy<br />
+<br />
+If these results show users with privileged access that do not require that access, this is a finding.<br />
+<br />
+4. Use the following command to find users, service accounts, and groups who are allowed to create VirtualMachineInterfaceMigration and MigrationPolicy resources:<br />
+$ oc adm policy who-can create vmim<br />
+<br />
+$ oc adm policy who-can create migrationpolicy<br />
+<br />
+If these list users not authorized to perform namespace admin migration functions, this is a finding.<br />
+<br />
+5. Execute the following:<br />
+cat /sys/module/kvm_intel/parameters/nested <br />
+<br />
+If the result is &quot;1&quot;, this is a finding.</p><h2>Check Content Reference</h2><p>M</p><h2>Target Key</h2><p>5547</p></body></html>

@@ -1,0 +1,70 @@
+<!doctype html><html lang="en"><head><meta charset="utf-8"><title>STIGQter: STIG Check Details: SV-234150r1153453_rule: If communication with the central audit server is lost, the FortiGate firewall must generate a real-time alert to, at a minimum, the SA and ISSO.</title><link rel="icon" type="image/svg+xml" href="STIGQter.svg" /><script async src="https://www.googletagmanager.com/gtag/js?id=UA-31381839-2"></script><script src="include.js"></script><script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-4110907817782130" crossorigin="anonymous"></script></head><body><div><img src="STIGQter.svg" alt="STIGQter" style="height:1em;" /> <a href="https://www.stigqter.com/">STIGQter</a>: <a href="main.html">STIG Summary</a>: <a href="U_FN_FortiGate_Firewall_STIG_V1R4_Manual-xccdf.html">Fortinet FortiGate Firewall Security Technical Implementation Guide Version: 1 Release: 4 Benchmark Date: 05 Jan 2026</a>:</div> <h1>If communication with the central audit server is lost, the FortiGate firewall must generate a real-time alert to, at a minimum, the SA and ISSO.</h1><h2>DISA Rule</h2><p>SV-234150r1153453_rule</p><h2>Vulnerability Number</h2><p>V-234150</p><h2>Group Title</h2><p>SRG-NET-000335-FW-000017</p><h2>Rule Version</h2><p>FNFG-FW-000105</p><h2>Severity</h2><p>CAT II</p><h2>CCI(s)</h2><ul><li>CCI-001858 - Provide an alert in an organization-defined real-time-period to organization-defined personnel, roles, and/or locations when organization-defined audit failure events requiring real-time alerts occur.</li></ul><h2>Weight</h2><p>10</p><h2>Fix Recommendation</h2><p>To create real-time alerts when FortiAnalyzer is the central audit server, log in to the FortiGate GUI with Super-Admin privilege. If not using FortiAnalyzer, skip ahead to the central log server steps. <br />
+<br />
+1. Click Security Fabric.<br />
+2. Click Automation.<br />
+3. Click +Create New (Automation Stitch).<br />
+4. For Trigger, select FortiOS Event Log.<br />
+5. For Event field, Click + (and choose a specific event type).<br />
+6. For Action, select Email, specify recipients, and Email subject.<br />
+7. Click OK.<br />
+<br />
+The following are all relevant Event Log entries for loss of communication with the central audit server. For most complete coverage, configure an Automation Stitch for each of the Event Log entries below:<br />
+<br />
+-FortiAnalyzer connection down<br />
+-FortiAnalyzer connection failed<br />
+-FortiAnalyzer log access failed<br />
+-Log Upload Error<br />
+<br />
+To create real-time alerts when using a syslog server as the central audit server, log in to the FortiGate GUI with Super-Admin privilege.<br />
+<br />
+To ensure Feature visibility: <br />
+1. Click System.<br />
+2. Click Feature Visibility.<br />
+3. Under Additional Features, toggle the switch to enable Load Balance.<br />
+4. Click Apply.<br />
+<br />
+To configure the alert: <br />
+1. Click Policies &amp; Objects.<br />
+2. Click Health Check.<br />
+3. Click +Create New.<br />
+4. Name the Health Check.<br />
+5. For Type, select TCP.<br />
+6. For Interval, type {5}.<br />
+7. For Timeout, type {1}.<br />
+8. For Retry, type {1}.<br />
+9. For Port, type {514}.<br />
+10. Click OK.<br />
+11. Click Virtual Servers.<br />
+12. Click +Create New.<br />
+13. Name the Virtual Server.<br />
+14. For Type, select TCP.<br />
+15. For Interface, select any unused internal interface.<br />
+16. For Virtual Server IP, type any unused IP.<br />
+17. For Virtual Server Port, type {514}.<br />
+18. For Health Check, select the Health Check that was created in steps 1-10.<br />
+19. In Real Servers, click +Create New.<br />
+20. In New Real Server IP Address, type the IP address of the syslog server.<br />
+21. For port, type {514}.<br />
+22. Click OK to close New Real Server window.<br />
+23. Click OK to close Edit Virtual Server.<br />
+24. Click Security Fabric.<br />
+25. Click Automation.<br />
+26. Click +Create New (Automation Stitch).<br />
+27. For Trigger, select FortiOS Event Log.<br />
+28. For Event field, click + and choose &quot;VIP real server down&quot;.<br />
+29. For Action, select Email, specify recipients, and Email subject.<br />
+30. Click OK.</p><h2>Check Contents</h2><p>Log in to the FortiGate GUI with Super-Admin privilege.<br />
+<br />
+1. Click Security Fabric.<br />
+2. Click Automation.<br />
+3. Verify Automation Stitches are configured to send alerts related to loss of communication with the central audit server.<br />
+4. For each Automation Stitch, verify a valid Action Email has been configured.<br />
+<br />
+If there are no organization-specific Automation Stitches defined to trigger on loss of communication with the central audit server, this is a finding.</p><h2>Vulnerability Number</h2><p>V-234150</p><h2>Documentable</h2><p>False</p><h2>Rule Version</h2><p>FNFG-FW-000105</p><h2>Severity Override Guidance</h2><p>Log in to the FortiGate GUI with Super-Admin privilege.<br />
+<br />
+1. Click Security Fabric.<br />
+2. Click Automation.<br />
+3. Verify Automation Stitches are configured to send alerts related to loss of communication with the central audit server.<br />
+4. For each Automation Stitch, verify a valid Action Email has been configured.<br />
+<br />
+If there are no organization-specific Automation Stitches defined to trigger on loss of communication with the central audit server, this is a finding.</p><h2>Check Content Reference</h2><p>M</p><h2>Target Key</h2><p>5258</p></body></html>

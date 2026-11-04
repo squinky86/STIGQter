@@ -1,0 +1,198 @@
+<!doctype html><html lang="en"><head><meta charset="utf-8"><title>STIGQter: STIG Check Details: SV-217032r855894_rule: The Juniper perimeter router must be configured to block inbound packets with source Bogon IP address prefixes.</title><link rel="icon" type="image/svg+xml" href="STIGQter.svg" /><script async src="https://www.googletagmanager.com/gtag/js?id=UA-31381839-2"></script><script src="include.js"></script><script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-4110907817782130" crossorigin="anonymous"></script></head><body><div><img src="STIGQter.svg" alt="STIGQter" style="height:1em;" /> <a href="https://www.stigqter.com/">STIGQter</a>: <a href="main.html">STIG Summary</a>: <a href="U_Juniper_Router_RTR_STIG_V3R2_Manual-xccdf.html">Juniper Router RTR Security Technical Implementation Guide Version: 3 Release: 2 Benchmark Date: 30 Jan 2025</a>:</div> <h1>The Juniper perimeter router must be configured to block inbound packets with source Bogon IP address prefixes.</h1><h2>DISA Rule</h2><p>SV-217032r855894_rule</p><h2>Vulnerability Number</h2><p>V-217032</p><h2>Group Title</h2><p>SRG-NET-000364-RTR-000110</p><h2>Rule Version</h2><p>JUNI-RT-000270</p><h2>Severity</h2><p>CAT II</p><h2>CCI(s)</h2><ul><li>CCI-002403 - Only allow incoming communications from organization-defined authorized sources routed to organization-defined authorized destinations.</li></ul><h2>Weight</h2><p>10</p><h2>Fix Recommendation</h2><p>This requirement is not applicable for the DoDIN Backbone.<br />
+<br />
+Configure the perimeter to block inbound packets with Bogon source addresses.<br />
+<br />
+Configure a prefix list containing the current Bogon prefixes as shown below.<br />
+<br />
+[edit policy-options]<br />
+set prefix-list BOGON_PREFIXES 0.0.0.0/8<br />
+set prefix-list BOGON_PREFIXES 10.0.0.0/8<br />
+set prefix-list BOGON_PREFIXES 100.64.0.0/10<br />
+set prefix-list BOGON_PREFIXES 127.0.0.0/8<br />
+set prefix-list BOGON_PREFIXES 169.254.0.0/16<br />
+set prefix-list BOGON_PREFIXES 172.16.0.0/12<br />
+set prefix-list BOGON_PREFIXES 192.0.0.0/24<br />
+set prefix-list BOGON_PREFIXES 192.0.2.0/24<br />
+set prefix-list BOGON_PREFIXES 192.168.0.0/16<br />
+set prefix-list BOGON_PREFIXES 198.18.0.0/15<br />
+set prefix-list BOGON_PREFIXES 198.51.100.0/24<br />
+set prefix-list BOGON_PREFIXES 203.0.113.0/24<br />
+set prefix-list BOGON_PREFIXES 224.0.0.0/4<br />
+set prefix-list BOGON_PREFIXES 240.0.0.0/4<br />
+<br />
+Add a term to the inbound filter to block the Bogon prefixes.<br />
+<br />
+[edit firewall family inet filter INBOUND_FILTER]<br />
+set term BLOCK_BOGONS from source-prefix-list BOGON_PREFIXES<br />
+set term BLOCK_BOGONS then syslog discard<br />
+insert term BLOCK_BOGONS before term ALLOW_BGP</p><h2>Check Contents</h2><p>This requirement is not applicable for the DoDIN Backbone.<br />
+<br />
+Review the router configuration to verify that an ingress filter applied to all external interfaces is blocking packets with Bogon source addresses.<br />
+<br />
+Verify a prefix list has been configured containing the current Bogon prefixes as shown in the example below.<br />
+<br />
+policy-options {<br />
+    prefix-list BOGON_PREFIXES {<br />
+        0.0.0.0/8;<br />
+        10.0.0.0/8;<br />
+        100.64.0.0/10;<br />
+        127.0.0.0/8;<br />
+        169.254.0.0/16;<br />
+        172.16.0.0/12;<br />
+        192.0.0.0/24;<br />
+        192.0.2.0/24;<br />
+        192.168.0.0/16;<br />
+        198.18.0.0/15;<br />
+        198.51.100.0/24;<br />
+        203.0.113.0/24;<br />
+        224.0.0.0/4;<br />
+        240.0.0.0/4;<br />
+    }<br />
+}<br />
+<br />
+Verify that the inbound filter applied to all external interfaces will block all traffic from Bogon source addresses.<br />
+<br />
+interfaces {<br />
+    ge-0/0/0 {<br />
+        unit 0 {<br />
+            family inet {<br />
+                filter {<br />
+                    input INBOUND_FILTER;<br />
+                }<br />
+                address 11.1.12.2/24;<br />
+            }<br />
+        }<br />
+    }<br />
+…<br />
+…<br />
+…<br />
+firewall {<br />
+    family inet {<br />
+        filter INBOUND_FILTER {<br />
+            term BLOCK_BOGONS {<br />
+                from {<br />
+                    source-prefix-list {<br />
+                        BOGON_PREFIXES;<br />
+                    }<br />
+                }<br />
+                then {<br />
+                    syslog;<br />
+                    discard;<br />
+                }<br />
+            }<br />
+            term ALLOW_BGP {<br />
+                from {<br />
+                    protocol tcp;<br />
+                    destination-port bgp;<br />
+                }<br />
+                then accept;<br />
+            }<br />
+            term ALLOW_XYZ {<br />
+                from {<br />
+                    protocol xyz;<br />
+                }<br />
+                then accept;<br />
+            }<br />
+            term DENY_ALL_OTHER {<br />
+                then {<br />
+                    syslog;<br />
+                    reject;<br />
+                }<br />
+            }<br />
+        }<br />
+}<br />
+<br />
+External Interfaces connected to the NIPRNet or SIPRNet<br />
+<br />
+Review the inbound ACLs on external facing interfaces attached to the NIPRnet or SIPRnet to validate access control lists are configured to block inbound packets with IP sources addresses as documented in RFC5735 and RFC6598. <br />
+<br />
+<br />
+External Interfaces connected to a commercial ISP or other non-DoD network<br />
+Review the inbound ACLs on external facing interfaces validate access control lists are configured to block inbound packets with IP sources addresses as documented in RFC5735 and RFC6598, as well as address space that has been allocated to the RIRs but not assigned by the RIR to an ISP or other enterprise network. The full list of bogons can be found at the following link: https://www.team-cymru.org/Services/Bogons/fullbogons-ipv4.txt<br />
+<br />
+If the router is not configured to block inbound packets with source Bogon IP address prefixes, this is a finding.</p><h2>Vulnerability Number</h2><p>V-217032</p><h2>Documentable</h2><p>False</p><h2>Rule Version</h2><p>JUNI-RT-000270</p><h2>Severity Override Guidance</h2><p>This requirement is not applicable for the DoDIN Backbone.<br />
+<br />
+Review the router configuration to verify that an ingress filter applied to all external interfaces is blocking packets with Bogon source addresses.<br />
+<br />
+Verify a prefix list has been configured containing the current Bogon prefixes as shown in the example below.<br />
+<br />
+policy-options {<br />
+    prefix-list BOGON_PREFIXES {<br />
+        0.0.0.0/8;<br />
+        10.0.0.0/8;<br />
+        100.64.0.0/10;<br />
+        127.0.0.0/8;<br />
+        169.254.0.0/16;<br />
+        172.16.0.0/12;<br />
+        192.0.0.0/24;<br />
+        192.0.2.0/24;<br />
+        192.168.0.0/16;<br />
+        198.18.0.0/15;<br />
+        198.51.100.0/24;<br />
+        203.0.113.0/24;<br />
+        224.0.0.0/4;<br />
+        240.0.0.0/4;<br />
+    }<br />
+}<br />
+<br />
+Verify that the inbound filter applied to all external interfaces will block all traffic from Bogon source addresses.<br />
+<br />
+interfaces {<br />
+    ge-0/0/0 {<br />
+        unit 0 {<br />
+            family inet {<br />
+                filter {<br />
+                    input INBOUND_FILTER;<br />
+                }<br />
+                address 11.1.12.2/24;<br />
+            }<br />
+        }<br />
+    }<br />
+…<br />
+…<br />
+…<br />
+firewall {<br />
+    family inet {<br />
+        filter INBOUND_FILTER {<br />
+            term BLOCK_BOGONS {<br />
+                from {<br />
+                    source-prefix-list {<br />
+                        BOGON_PREFIXES;<br />
+                    }<br />
+                }<br />
+                then {<br />
+                    syslog;<br />
+                    discard;<br />
+                }<br />
+            }<br />
+            term ALLOW_BGP {<br />
+                from {<br />
+                    protocol tcp;<br />
+                    destination-port bgp;<br />
+                }<br />
+                then accept;<br />
+            }<br />
+            term ALLOW_XYZ {<br />
+                from {<br />
+                    protocol xyz;<br />
+                }<br />
+                then accept;<br />
+            }<br />
+            term DENY_ALL_OTHER {<br />
+                then {<br />
+                    syslog;<br />
+                    reject;<br />
+                }<br />
+            }<br />
+        }<br />
+}<br />
+<br />
+External Interfaces connected to the NIPRNet or SIPRNet<br />
+<br />
+Review the inbound ACLs on external facing interfaces attached to the NIPRnet or SIPRnet to validate access control lists are configured to block inbound packets with IP sources addresses as documented in RFC5735 and RFC6598. <br />
+<br />
+<br />
+External Interfaces connected to a commercial ISP or other non-DoD network<br />
+Review the inbound ACLs on external facing interfaces validate access control lists are configured to block inbound packets with IP sources addresses as documented in RFC5735 and RFC6598, as well as address space that has been allocated to the RIRs but not assigned by the RIR to an ISP or other enterprise network. The full list of bogons can be found at the following link: https://www.team-cymru.org/Services/Bogons/fullbogons-ipv4.txt<br />
+<br />
+If the router is not configured to block inbound packets with source Bogon IP address prefixes, this is a finding.</p><h2>Check Content Reference</h2><p>M</p><h2>Target Key</h2><p>4032</p></body></html>

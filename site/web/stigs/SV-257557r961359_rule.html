@@ -1,0 +1,106 @@
+<!doctype html><html lang="en"><head><meta charset="utf-8"><title>STIGQter: STIG Check Details: SV-257557r961359_rule: Container images instantiated by OpenShift must execute using least privileges.</title><link rel="icon" type="image/svg+xml" href="STIGQter.svg" /><script async src="https://www.googletagmanager.com/gtag/js?id=UA-31381839-2"></script><script src="include.js"></script><script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-4110907817782130" crossorigin="anonymous"></script></head><body><div><img src="STIGQter.svg" alt="STIGQter" style="height:1em;" /> <a href="https://www.stigqter.com/">STIGQter</a>: <a href="main.html">STIG Summary</a>: <a href="U_RH_OpenShift_Container_Platform_4-x_STIG_V2R6_Manual-xccdf.html">Red Hat OpenShift Container Platform 4.x Security Technical Implementation Guide Version: 2 Release: 6 Benchmark Date: 01 Jul 2026</a>:</div> <h1>Container images instantiated by OpenShift must execute using least privileges.</h1><h2>DISA Rule</h2><p>SV-257557r961359_rule</p><h2>Vulnerability Number</h2><p>V-257557</p><h2>Group Title</h2><p>SRG-APP-000342-CTR-000775</p><h2>Rule Version</h2><p>CNTR-OS-000660</p><h2>Severity</h2><p>CAT I</p><h2>CCI(s)</h2><ul><li>CCI-000382 - Configure the system to prohibit or restrict the use of organization-defined prohibited or restricted functions, system ports, protocols, software, and/or services.</li><li>CCI-001090 - Prevent unauthorized and unintended information transfer via shared system resources.</li><li>CCI-002233 - Prevent the organization-defined software from executing at higher privilege levels than users executing the software.</li></ul><h2>Weight</h2><p>10</p><h2>Fix Recommendation</h2><p>For users and groups that are defined in the SCC policy, execute the following to remove the users or groups by editing the corresponding SCC policy.<br />
+<br />
+oc edit scc &lt;SCC&gt;<br />
+<br />
+The following instructions will remove the user or group from the cluster role binding for the SCC policy.<br />
+<br />
+Remove user from the SCC policy binding by executing the following:<br />
+<br />
+oc adm policy remove-scc-from-user &lt;SCC&gt; &lt;USER&gt;<br />
+<br />
+Remove a group from the SCC policy binding by executing the following:<br />
+<br />
+oc adm policy remove-scc-from-group &lt;SCC&gt; &lt;GROUP&gt;<br />
+<br />
+Remove service account from the SCC policy binding by executing the following:<br />
+<br />
+oc project &lt;SERVICE_ACC_PROJECT&gt;<br />
+oc adm policy remove-scc-from-user &lt;SCC&gt; -z &lt;SERVICE_ACC&gt;<br />
+<br />
+Remove any roles that allows use of nonpermitted SCC policies (excluding platform-defined roles) by executing the following:<br />
+<br />
+oc delete clusterrole.rbac &lt;ROLE&gt;<br />
+or<br />
+oc delete role.rbac &lt;ROLE&gt; -n &lt;NAMESPACE&gt;</p><h2>Check Contents</h2><p>Check SCC:<br />
+<br />
+1. Identify any SCC policy that allows containers to access the host network or filesystem resources, or allows privileged containers or where runAsUser is not MustRunAsRange by executing the following:<br />
+<br />
+oc get scc -ojson | jq '.items[]|select(.allowHostIPC or .allowHostPID or .allowHostPorts or .allowHostNetwork or .allowHostDirVolumePlugin or .allowPrivilegedContainer or .runAsUser.type != &quot;MustRunAsRange&quot; )|.metadata.name,{&quot;Group:&quot;:.groups},{&quot;User&quot;:.users}'<br />
+<br />
+For each SCC listed, if any of those users or groups are anything other than the following, this is a finding:<br />
+<br />
+  * system:cluster-admins<br />
+  * system:nodes<br />
+  * system:masters<br />
+  * system:admin<br />
+  * system:serviceaccount:openshift-infra:build-controller<br />
+  * system:serviceaccount:openshift-infra:pv-recycler-controller<br />
+  * system:serviceaccount:openshift-machine-api:machine-api-termination-handler<br />
+<br />
+The group &quot;system:authenticated&quot; is the default group for any authenticated user, this group should only be associated with the restricted profile. If this group is listed under any other SCC Policy, or the restricted SCC policy has been altered to allow any of the nonpermitted actions, this is a finding.<br />
+<br />
+2. Determine if there are any cluster roles or local roles that allow the use of use of nonpermitted SCC policies. The following commands will print the role's name and namespace, followed by a list of resource names and if that resource is an SCC.<br />
+<br />
+oc get clusterrole.rbac -ojson | jq -r '.items[]|select(.rules[]?|select( (.apiGroups[]? == (&quot;security.openshift.io&quot;)) and (.resources[]? == (&quot;securitycontextconstraints&quot;)) and (.verbs[]? == (&quot;use&quot;))))|.metadata.name,{&quot;scc&quot;:(.rules[]?|select((.resources[]? == (&quot;securitycontextconstraints&quot;))).resourceNames[]?)}'<br />
+<br />
+oc get role.rbac --all-namespaces -ojson | jq -r '.items[]|select(.rules[]?|select( (.apiGroups[]? == (&quot;security.openshift.io&quot;)) and (.resources[]? == (&quot;securitycontextconstraints&quot;)) and (.verbs[]? == (&quot;use&quot;))))|.metadata.name,{&quot;scc&quot;:(.rules[]?|select((.resources[]? == (&quot;securitycontextconstraints&quot;))).resourceNames[]?)}'<br />
+<br />
+Excluding platform specific roles, identify any roles that allow use of nonpermitted SCC policies. For example, the follow output shows that the role 'examplePrivilegedRole' allows use of the 'privileged' SCC.<br />
+<br />
+examplePrivilegedRole<br />
+{<br />
+  &quot;scc&quot;: &quot;privileged&quot;<br />
+}<br />
+<br />
+3. Determine if there are any role bindings to cluster or local roles that allow use of nonpermitted SCCs by executing the following:<br />
+<br />
+oc get clusterrolebinding.rbac -ojson | jq -r '.items[]|select(.roleRef.kind == (&quot;ClusterRole&quot;,&quot;Role&quot;) and .roleRef.name == (&lt;CLUSTER_ROLE_LIST&gt;))|{ &quot;crb&quot;: .metadata.name, &quot;roleRef&quot;: .roleRef, &quot;subjects&quot;: .subjects}'<br />
+<br />
+oc get rolebinding.rbac --all-namespaces -ojson | jq -r '.items[]|select(.roleRef.kind == (&quot;ClusterRole&quot;,&quot;Role&quot;) and .roleRef.name == (&lt;LOCAL_ROLE_LIST&gt;))|{ &quot;crb&quot;: .metadata.name, &quot;roleRef&quot;: .roleRef, &quot;subjects&quot;: .subjects}'<br />
+<br />
+Where &lt;CLUSTER_ROLE_LIST&gt; and &lt;LOCAL_ROLE_LIST&gt; are comma-separated lists of the roles allowing use of nonpermitted SCC policies as identified above. For example:<br />
+<br />
+... .roleRef.name == (&quot;system:openshift:scc:privileged&quot;,&quot;system:openshift:scc:hostnetwork&quot;,&quot;system:openshift:scc:hostaccess&quot;) ...<br />
+<br />
+Excluding any platform namespaces (kube-*,openshift-*), if there are any rolebindings to roles that are not permitted, this is a finding.</p><h2>Vulnerability Number</h2><p>V-257557</p><h2>Documentable</h2><p>False</p><h2>Rule Version</h2><p>CNTR-OS-000660</p><h2>Severity Override Guidance</h2><p>Check SCC:<br />
+<br />
+1. Identify any SCC policy that allows containers to access the host network or filesystem resources, or allows privileged containers or where runAsUser is not MustRunAsRange by executing the following:<br />
+<br />
+oc get scc -ojson | jq '.items[]|select(.allowHostIPC or .allowHostPID or .allowHostPorts or .allowHostNetwork or .allowHostDirVolumePlugin or .allowPrivilegedContainer or .runAsUser.type != &quot;MustRunAsRange&quot; )|.metadata.name,{&quot;Group:&quot;:.groups},{&quot;User&quot;:.users}'<br />
+<br />
+For each SCC listed, if any of those users or groups are anything other than the following, this is a finding:<br />
+<br />
+  * system:cluster-admins<br />
+  * system:nodes<br />
+  * system:masters<br />
+  * system:admin<br />
+  * system:serviceaccount:openshift-infra:build-controller<br />
+  * system:serviceaccount:openshift-infra:pv-recycler-controller<br />
+  * system:serviceaccount:openshift-machine-api:machine-api-termination-handler<br />
+<br />
+The group &quot;system:authenticated&quot; is the default group for any authenticated user, this group should only be associated with the restricted profile. If this group is listed under any other SCC Policy, or the restricted SCC policy has been altered to allow any of the nonpermitted actions, this is a finding.<br />
+<br />
+2. Determine if there are any cluster roles or local roles that allow the use of use of nonpermitted SCC policies. The following commands will print the role's name and namespace, followed by a list of resource names and if that resource is an SCC.<br />
+<br />
+oc get clusterrole.rbac -ojson | jq -r '.items[]|select(.rules[]?|select( (.apiGroups[]? == (&quot;security.openshift.io&quot;)) and (.resources[]? == (&quot;securitycontextconstraints&quot;)) and (.verbs[]? == (&quot;use&quot;))))|.metadata.name,{&quot;scc&quot;:(.rules[]?|select((.resources[]? == (&quot;securitycontextconstraints&quot;))).resourceNames[]?)}'<br />
+<br />
+oc get role.rbac --all-namespaces -ojson | jq -r '.items[]|select(.rules[]?|select( (.apiGroups[]? == (&quot;security.openshift.io&quot;)) and (.resources[]? == (&quot;securitycontextconstraints&quot;)) and (.verbs[]? == (&quot;use&quot;))))|.metadata.name,{&quot;scc&quot;:(.rules[]?|select((.resources[]? == (&quot;securitycontextconstraints&quot;))).resourceNames[]?)}'<br />
+<br />
+Excluding platform specific roles, identify any roles that allow use of nonpermitted SCC policies. For example, the follow output shows that the role 'examplePrivilegedRole' allows use of the 'privileged' SCC.<br />
+<br />
+examplePrivilegedRole<br />
+{<br />
+  &quot;scc&quot;: &quot;privileged&quot;<br />
+}<br />
+<br />
+3. Determine if there are any role bindings to cluster or local roles that allow use of nonpermitted SCCs by executing the following:<br />
+<br />
+oc get clusterrolebinding.rbac -ojson | jq -r '.items[]|select(.roleRef.kind == (&quot;ClusterRole&quot;,&quot;Role&quot;) and .roleRef.name == (&lt;CLUSTER_ROLE_LIST&gt;))|{ &quot;crb&quot;: .metadata.name, &quot;roleRef&quot;: .roleRef, &quot;subjects&quot;: .subjects}'<br />
+<br />
+oc get rolebinding.rbac --all-namespaces -ojson | jq -r '.items[]|select(.roleRef.kind == (&quot;ClusterRole&quot;,&quot;Role&quot;) and .roleRef.name == (&lt;LOCAL_ROLE_LIST&gt;))|{ &quot;crb&quot;: .metadata.name, &quot;roleRef&quot;: .roleRef, &quot;subjects&quot;: .subjects}'<br />
+<br />
+Where &lt;CLUSTER_ROLE_LIST&gt; and &lt;LOCAL_ROLE_LIST&gt; are comma-separated lists of the roles allowing use of nonpermitted SCC policies as identified above. For example:<br />
+<br />
+... .roleRef.name == (&quot;system:openshift:scc:privileged&quot;,&quot;system:openshift:scc:hostnetwork&quot;,&quot;system:openshift:scc:hostaccess&quot;) ...<br />
+<br />
+Excluding any platform namespaces (kube-*,openshift-*), if there are any rolebindings to roles that are not permitted, this is a finding.</p><h2>Check Content Reference</h2><p>M</p><h2>Target Key</h2><p>5547</p></body></html>

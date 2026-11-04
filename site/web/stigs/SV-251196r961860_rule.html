@@ -1,0 +1,61 @@
+<!doctype html><html lang="en"><head><meta charset="utf-8"><title>STIGQter: STIG Check Details: SV-251196r961860_rule: Redis Enterprise DBMS must offload audit data to a separate log management facility; this must be continuous and in near real time for systems with a network connection to the storage facility, and weekly or more often for stand-alone systems.</title><link rel="icon" type="image/svg+xml" href="STIGQter.svg" /><script async src="https://www.googletagmanager.com/gtag/js?id=UA-31381839-2"></script><script src="include.js"></script><script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-4110907817782130" crossorigin="anonymous"></script></head><body><div><img src="STIGQter.svg" alt="STIGQter" style="height:1em;" /> <a href="https://www.stigqter.com/">STIGQter</a>: <a href="main.html">STIG Summary</a>: <a href="U_Redis_Enterprise_6-x_STIG_V2R2_Manual-xccdf.html">Redis Enterprise 6.x Security Technical Implementation Guide Version: 2 Release: 2 Benchmark Date: 24 Oct 2024</a>:</div> <h1>Redis Enterprise DBMS must offload audit data to a separate log management facility; this must be continuous and in near real time for systems with a network connection to the storage facility, and weekly or more often for stand-alone systems.</h1><h2>DISA Rule</h2><p>SV-251196r961860_rule</p><h2>Vulnerability Number</h2><p>V-251196</p><h2>Group Title</h2><p>SRG-APP-000515-DB-000318</p><h2>Rule Version</h2><p>RD6X-00-005600</p><h2>Severity</h2><p>CAT II</p><h2>CCI(s)</h2><ul><li>CCI-001851 - Transfer audit logs per organization-defined frequency to a different system, system component, or media than the system or system component conducting the logging.</li></ul><h2>Weight</h2><p>10</p><h2>Fix Recommendation</h2><p>Configure Redis Enterprise to offload log entries onto a separate log server by configuring the redislabs.conf and ensuring that all server logs from syslog are offloaded to a centralized backup server.<br />
+<br />
+To configure Redis Enterprise to use syslog for all logs generated, ensure that redislabs.conf exists and is configured.<br />
+<br />
+Create the file as shown here:<br />
+/etc/rsyslog.d/redislabs.conf<br />
+<br />
+The log entries can be categorized into events and alerts. Events are only logged, while alerts have a state attached to them. RS log entries include information about the specific event that occurred. In addition, rsyslog can be configured to add other information, such as the event severity, for example.<br />
+<br />
+Since rsyslog entries do not include the severity information by default, use the following instructions to log that information (in Ubuntu): <br />
+Add the following line to /etc/rsyslog.conf $template TraditionalFormatWithPRI,&quot;%pri-text%:%timegenerated%:%HOSTNAME%:%syslogtag%:%msg:::drop-last-lf%\n&quot;<br />
+<br />
+And modify $ActionFileDefaultTemplate to use the new template: $ActionFileDefaultTemplateTraditionalFormatWithPRI <br />
+<br />
+Save the changes and restart rsyslog for the changes to take effect. Alerts and events can be viewed under /var/log in messages log file.<br />
+<br />
+Command components:<br />
+%pri­text% ­adds the severity.<br />
+%timegenerated% ­adds the timestamp.<br />
+%HOSTNAME% ­adds the machine name.<br />
+%syslogtag% ­the RS message as detailed below in the Log entry structure section below.<br />
+%msg:::drop­last­lf%n ­ removes duplicated log entries.<br />
+<br />
+Example configuration:<br />
+template(name=&quot;RedisLabsEventTemplate&quot; type=&quot;string&quot; string=&quot;%syslogseverity-text%:%pri-text%:%timegenerated%:%HOSTNAME%:%syslogtag%:%msg:::drop-last-lf% -- %syslogtag%  -- %programname% \n&quot;)<br />
+<br />
+if $programname startswith 'event_log' then {<br />
+  action(type=&quot;omfile&quot; file=&quot;/var/log/redislabs.log&quot; template=&quot;RedisLabsEventTemplate&quot; )<br />
+}<br />
+<br />
+With this configuration, the syslog service will:<br />
+Load a new template named RedisLabsEventTemplate that logs the message with the priority (syslogseverity-text) that will be info, crit, warning, etc.<br />
+<br />
+Use this template to write into the file /var/log/redislabs.log when the program is &quot;event_log&quot; (the Redis Enterprise log manager). Learn more about the template syntax in the syslog documentation. <br />
+<br />
+Restart syslog: systemctl restart rsyslog<br />
+<br />
+Testing the new configuration:<br />
+Navigate to the Redis Enterprise web console and create a new database (or edit an existing database). There should be a new /var/log/redislabs.log file and the event that was generated.</p><h2>Check Contents</h2><p>Review the system documentation for a description of how audit records are offloaded. By default, all log entries shown on the log page in the Redis Enterprise UI are also written to syslog. Then, rsyslog can be configured to monitor the syslog. All alerts are logged to syslog if the alerts are configured to be enabled, in addition to other log entries. These logs can be configured to be offloaded to a centralized log management system.<br />
+<br />
+Verify that Redis Enterprise is configured on the server to send all logs to a centralized log management system by examining the redislabs.conf file found in /etc/rsyslog.d.<br />
+<br />
+The file should include the line:<br />
+     action(type=&quot;omfwd&quot; protocol=&quot;tcp&quot; target=&quot;[organization defined logging server IP]&quot; port=&quot;[organization defined logging server port]&quot; template=&quot;RedisLabsEventTemplate&quot; )<br />
+<br />
+If it does not, this is a finding.<br />
+<br />
+If the DBMS has a continuous network connection to the centralized log management system, but the DBMS audit records are not written directly to the centralized log management system or transferred in near-real-time, this is a finding.<br />
+<br />
+If the DBMS does not have a continuous network connection to the centralized log management system, and the DBMS audit records are not transferred to the centralized log management system weekly or more often, this is a finding.</p><h2>Vulnerability Number</h2><p>V-251196</p><h2>Documentable</h2><p>False</p><h2>Rule Version</h2><p>RD6X-00-005600</p><h2>Severity Override Guidance</h2><p>Review the system documentation for a description of how audit records are offloaded. By default, all log entries shown on the log page in the Redis Enterprise UI are also written to syslog. Then, rsyslog can be configured to monitor the syslog. All alerts are logged to syslog if the alerts are configured to be enabled, in addition to other log entries. These logs can be configured to be offloaded to a centralized log management system.<br />
+<br />
+Verify that Redis Enterprise is configured on the server to send all logs to a centralized log management system by examining the redislabs.conf file found in /etc/rsyslog.d.<br />
+<br />
+The file should include the line:<br />
+     action(type=&quot;omfwd&quot; protocol=&quot;tcp&quot; target=&quot;[organization defined logging server IP]&quot; port=&quot;[organization defined logging server port]&quot; template=&quot;RedisLabsEventTemplate&quot; )<br />
+<br />
+If it does not, this is a finding.<br />
+<br />
+If the DBMS has a continuous network connection to the centralized log management system, but the DBMS audit records are not written directly to the centralized log management system or transferred in near-real-time, this is a finding.<br />
+<br />
+If the DBMS does not have a continuous network connection to the centralized log management system, and the DBMS audit records are not transferred to the centralized log management system weekly or more often, this is a finding.</p><h2>Check Content Reference</h2><p>M</p><h2>Target Key</h2><p>5443</p></body></html>

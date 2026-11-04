@@ -1,0 +1,63 @@
+<!doctype html><html lang="en"><head><meta charset="utf-8"><title>STIGQter: STIG Check Details: SV-265984r1024858_rule: The F5 BIG-IP DNS must use valid root name servers in the local root zone file.</title><link rel="icon" type="image/svg+xml" href="STIGQter.svg" /><script async src="https://www.googletagmanager.com/gtag/js?id=UA-31381839-2"></script><script src="include.js"></script><script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-4110907817782130" crossorigin="anonymous"></script></head><body><div><img src="STIGQter.svg" alt="STIGQter" style="height:1em;" /> <a href="https://www.stigqter.com/">STIGQter</a>: <a href="main.html">STIG Summary</a>: <a href="U_F5_BIG-IP_TMOS_DNS_STIG_V1R1_Manual-xccdf.html">F5 BIG-IP TMOS DNS Security Technical Implementation Guide Version: 1 Release: 1 Benchmark Date: 26 Sep 2024</a>:</div> <h1>The F5 BIG-IP DNS must use valid root name servers in the local root zone file.</h1><h2>DISA Rule</h2><p>SV-265984r1024858_rule</p><h2>Vulnerability Number</h2><p>V-265984</p><h2>Group Title</h2><p>SRG-APP-000516-DNS-000102</p><h2>Rule Version</h2><p>F5BI-DN-300015</p><h2>Severity</h2><p>CAT II</p><h2>CCI(s)</h2><ul><li>CCI-000366 - Implement the security configuration settings.</li></ul><h2>Weight</h2><p>10</p><h2>Fix Recommendation</h2><p>This is only applicable if DNS recursion is being performed by the BIG-IP AND a custom root hint list must be defined.<br />
+<br />
+Enable recursion for named:<br />
+From the BIG-IP GUI:<br />
+1. DNS.<br />
+2. Zones.<br />
+3. ZoneRunner.<br />
+4. Named Configuration.<br />
+5. Change the recursion option to &quot;recursion yes;&quot;.<br />
+6. Click &quot;Update&quot;.<br />
+<br />
+Create a hint zone using ZoneRunner:<br />
+From the BIG-IP GUI:<br />
+1. DNS.<br />
+2. Zones.<br />
+3. ZoneRunner.<br />
+4. Zone List.<br />
+5. Create.<br />
+6. For the View Name option, select the view for which the hint zone will apply.<br />
+7. For the Zone Name, enter a period character &quot;.&quot; (without quotes).<br />
+8. For the Zone Type, select &quot;Hint&quot;.<br />
+9. Change the Zone File Name to &quot;db.external.named.root.&quot; (without quotes).<br />
+10. Click &quot;Finished&quot;.<br />
+<br />
+Edit the hint zone file:<br />
+From the BIG-IP CLI:<br />
+1. Edit the root hint file:<br />
+vi /var/named/config/namedb/db.external.named.root.<br />
+2. Paste the list of valid root name servers. Note: A copy of the latest root server list can be found at the following location:<br />
+http://www.internic.net/zones/named.cache.<br />
+3. Save the file.<br />
+4. Update the time stamp on: /var/named/config/named.conf<br />
+touch /var/named/config/named.conf<br />
+5. Restart named:<br />
+tmsh restart /sys service named<br />
+6. Restart zrd:<br />
+tmsh restart /sys service zrd<br />
+<br />
+Note: The hint zone does not display any information when viewed in the ZoneRunner Configuration utility. The information is used by named for the purpose of querying and receiving the most up-to-date list of root servers. It cannot be updated or modified using the ZoneRunner utility.</p><h2>Check Contents</h2><p>This is only applicable if DNS recursion is being performed by the BIG-IP AND a custom root hint list must be defined.<br />
+<br />
+From the BIG-IP GUI:<br />
+1. DNS.<br />
+2. Zones.<br />
+3. ZoneRunner.<br />
+4. Zone List.<br />
+5. Verify there is no Zone Name called &quot;.&quot;.<br />
+6. If a &quot;.&quot; Zone Name exists, log in to the BIG-IP CLI and run the following commands:<br />
+cat /var/named/config/namedb/db.external.named.root.<br />
+7. Verify valid root name servers are configured.<br />
+<br />
+If the BIG-IP appliance is not configured to use valid root name servers in the local root zone file, this is a finding.</p><h2>Vulnerability Number</h2><p>V-265984</p><h2>Documentable</h2><p>False</p><h2>Rule Version</h2><p>F5BI-DN-300015</p><h2>Severity Override Guidance</h2><p>This is only applicable if DNS recursion is being performed by the BIG-IP AND a custom root hint list must be defined.<br />
+<br />
+From the BIG-IP GUI:<br />
+1. DNS.<br />
+2. Zones.<br />
+3. ZoneRunner.<br />
+4. Zone List.<br />
+5. Verify there is no Zone Name called &quot;.&quot;.<br />
+6. If a &quot;.&quot; Zone Name exists, log in to the BIG-IP CLI and run the following commands:<br />
+cat /var/named/config/namedb/db.external.named.root.<br />
+7. Verify valid root name servers are configured.<br />
+<br />
+If the BIG-IP appliance is not configured to use valid root name servers in the local root zone file, this is a finding.</p><h2>Check Content Reference</h2><p>M</p><h2>Target Key</h2><p>5638</p></body></html>

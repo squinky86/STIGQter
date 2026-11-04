@@ -1,0 +1,127 @@
+<!doctype html><html lang="en"><head><meta charset="utf-8"><title>STIGQter: STIG Check Details: SV-223558r1225783_rule: IBM z/OS Emergency LOGONIDs must be properly defined.</title><link rel="icon" type="image/svg+xml" href="STIGQter.svg" /><script async src="https://www.googletagmanager.com/gtag/js?id=UA-31381839-2"></script><script src="include.js"></script><script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-4110907817782130" crossorigin="anonymous"></script></head><body><div><img src="STIGQter.svg" alt="STIGQter" style="height:1em;" /> <a href="https://www.stigqter.com/">STIGQter</a>: <a href="main.html">STIG Summary</a>: <a href="U_IBM_zOS_ACF2_STIG_V9R9_Manual-xccdf.html">IBM z/OS ACF2 Security Technical Implementation Guide Version: 9 Release: 9 Benchmark Date: 01 Jul 2026</a>:</div> <h1>IBM z/OS Emergency LOGONIDs must be properly defined.</h1><h2>DISA Rule</h2><p>SV-223558r1225783_rule</p><h2>Vulnerability Number</h2><p>V-223558</p><h2>Group Title</h2><p>SRG-OS-000480-GPOS-00227</p><h2>Rule Version</h2><p>ACF2-OS-000220</p><h2>Severity</h2><p>CAT II</p><h2>CCI(s)</h2><ul><li>CCI-000366 - Implement the security configuration settings.</li></ul><h2>Weight</h2><p>10</p><h2>Fix Recommendation</h2><p>Ensure that Emergency Logonids use these fields to enforce restrictions for Emergency logonids. <br />
+<br />
+Two classes of emergency logonids may exist. The following privileges and specifications will be used for these logonids:<br />
+<br />
+Note: Only the emergency logonid with the security administration logonid attributes is required.<br />
+<br />
+(1) For emergency IDs with the ability to access and update all system data sets, but which do not have security administration privileges:<br />
+<br />
+NOFSRETAIN<br />
+JCL<br />
+JOB<br />
+MONITOR<br />
+NON CNCL (Will force logging of all activity.)<br />
+TSO<br />
+TSOPROC(xxxxxxxx)<br />
+TSOACCT(none)<br />
+<br />
+Example:<br />
+<br />
+SET LID<br />
+INSERT logonid NOFSRETAIN JCL JOB MONITOR NON-CNCL TSO TSOPRC(xxxxxxxx) TSOACCT(none)<br />
+<br />
+(2) For emergency IDs with security administration privileges, but which cannot access and update system data sets:<br />
+<br />
+ACCOUNT<br />
+NOFSRETAIN<br />
+JCL<br />
+JOB<br />
+MONITOR<br />
+NONON CNCL<br />
+RULEVLD<br />
+RSRCVLD<br />
+SECURITY<br />
+TSO<br />
+TSOPROC(xxxxxxxx)<br />
+TSOACCT(none)<br />
+<br />
+Example:<br />
+<br />
+SET LID<br />
+INSERT logonid ACCOUNT NOFSRETAIN JCL JOB MONITOR RULEVLD RSRCVLD NONON-CNCL SECURITY TSO TSOPRC(xxxxxxxx) TSOACCT(none)   <br />
+<br />
+If no emergency logonids are in use on the system, develop and document a procedure to manage emergencies access to the system.</p><h2>Check Contents</h2><p>Ask the system administrator to provide a list of all emergency logonids available to the site along with the associated function of each.<br />
+If there are no emergency logonids defined, ask the system administrator for an alternate documented procedure to handle emergencies. If there are no emergency logonids and no documented emergency procedure, this is a finding.<br />
+<br />
+If emergency logonids exist, at a minimum, a logonid will exist with the security administration attributes specified in accordance with the following requirements:<br />
+<br />
+For emergency IDs with security administration privileges, but which cannot access and update system data sets:<br />
+<br />
+ACCOUNT<br />
+<br />
+JCL<br />
+JOB<br />
+MONITOR<br />
+NONON CNCL<br />
+RULEVLD<br />
+RSRCVLD<br />
+SECURITY<br />
+TSO<br />
+TSOPROC(xxxxxxxx)<br />
+TSOACCT(none)<br />
+<br />
+An additional class of logonids can exist to perform all operating system functions except ESM administration.<br />
+<br />
+These emergency logonid/logonid(s) will have ability to access and update all system data sets, but will not have security administration privileges. See the following requirements:<br />
+<br />
+JCL<br />
+JOB<br />
+MONITOR<br />
+NON CNCL (Will force logging of all activity.)<br />
+TSO<br />
+TSOPROC(xxxxxxxx)<br />
+TSOACCT(none)<br />
+<br />
+All emergency logonid/logonid(s) are to be implemented with logging to provide an audit trail of their activities.<br />
+<br />
+All emergency logonid/logonid(s) are to be maintained in both the ESM and SYS1.UADS to ensure they are available in the event that the ESM is not functional.<br />
+<br />
+All emergency logonid/logonid(s) will have distinct, different passwords in SYS1.UADS and in the ESM, and the site is to establish procedures to ensure that the passwords differ. The password for any ID in SYS1.UADS is never to match the password for the same ID in the ESM.<br />
+<br />
+All emergency logonid/logonid(s) will have documented procedures to provide a mechanism for the use of the IDs. Their release for use is to be logged, and the log is to be maintained by the ISSO. When an emergency logonid is released for use, its password is to be reset by the ISSO within 12 hours.<br />
+<br />
+If all the emergency logonid items above are true, this is not a finding.<br />
+<br />
+If any item above is untrue, this is a finding.</p><h2>Vulnerability Number</h2><p>V-223558</p><h2>Documentable</h2><p>False</p><h2>Rule Version</h2><p>ACF2-OS-000220</p><h2>Severity Override Guidance</h2><p>Ask the system administrator to provide a list of all emergency logonids available to the site along with the associated function of each.<br />
+If there are no emergency logonids defined, ask the system administrator for an alternate documented procedure to handle emergencies. If there are no emergency logonids and no documented emergency procedure, this is a finding.<br />
+<br />
+If emergency logonids exist, at a minimum, a logonid will exist with the security administration attributes specified in accordance with the following requirements:<br />
+<br />
+For emergency IDs with security administration privileges, but which cannot access and update system data sets:<br />
+<br />
+ACCOUNT<br />
+<br />
+JCL<br />
+JOB<br />
+MONITOR<br />
+NONON CNCL<br />
+RULEVLD<br />
+RSRCVLD<br />
+SECURITY<br />
+TSO<br />
+TSOPROC(xxxxxxxx)<br />
+TSOACCT(none)<br />
+<br />
+An additional class of logonids can exist to perform all operating system functions except ESM administration.<br />
+<br />
+These emergency logonid/logonid(s) will have ability to access and update all system data sets, but will not have security administration privileges. See the following requirements:<br />
+<br />
+JCL<br />
+JOB<br />
+MONITOR<br />
+NON CNCL (Will force logging of all activity.)<br />
+TSO<br />
+TSOPROC(xxxxxxxx)<br />
+TSOACCT(none)<br />
+<br />
+All emergency logonid/logonid(s) are to be implemented with logging to provide an audit trail of their activities.<br />
+<br />
+All emergency logonid/logonid(s) are to be maintained in both the ESM and SYS1.UADS to ensure they are available in the event that the ESM is not functional.<br />
+<br />
+All emergency logonid/logonid(s) will have distinct, different passwords in SYS1.UADS and in the ESM, and the site is to establish procedures to ensure that the passwords differ. The password for any ID in SYS1.UADS is never to match the password for the same ID in the ESM.<br />
+<br />
+All emergency logonid/logonid(s) will have documented procedures to provide a mechanism for the use of the IDs. Their release for use is to be logged, and the log is to be maintained by the ISSO. When an emergency logonid is released for use, its password is to be reset by the ISSO within 12 hours.<br />
+<br />
+If all the emergency logonid items above are true, this is not a finding.<br />
+<br />
+If any item above is untrue, this is a finding.</p><h2>Check Content Reference</h2><p>M</p><h2>Target Key</h2><p>4100</p></body></html>

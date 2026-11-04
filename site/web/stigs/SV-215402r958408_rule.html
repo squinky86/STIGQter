@@ -1,0 +1,24 @@
+<!doctype html><html lang="en"><head><meta charset="utf-8"><title>STIGQter: STIG Check Details: SV-215402r958408_rule: The AIX SSH daemon must be configured to only use FIPS 140-2 approved ciphers.</title><link rel="icon" type="image/svg+xml" href="STIGQter.svg" /><script async src="https://www.googletagmanager.com/gtag/js?id=UA-31381839-2"></script><script src="include.js"></script><script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-4110907817782130" crossorigin="anonymous"></script></head><body><div><img src="STIGQter.svg" alt="STIGQter" style="height:1em;" /> <a href="https://www.stigqter.com/">STIGQter</a>: <a href="main.html">STIG Summary</a>: <a href="U_IBM_AIX_7-x_STIG_V3R3_Manual-xccdf.html">IBM AIX 7.x Security Technical Implementation Guide Version: 3 Release: 3 Benchmark Date: 01 Jul 2026</a>:</div> <h1>The AIX SSH daemon must be configured to only use FIPS 140-2 approved ciphers.</h1><h2>DISA Rule</h2><p>SV-215402r958408_rule</p><h2>Vulnerability Number</h2><p>V-215402</p><h2>Group Title</h2><p>SRG-OS-000033-GPOS-00014</p><h2>Rule Version</h2><p>AIX7-00-003100</p><h2>Severity</h2><p>CAT II</p><h2>CCI(s)</h2><ul><li>CCI-000068 - Implement cryptographic mechanisms to protect the confidentiality of remote access sessions.</li></ul><h2>Weight</h2><p>10</p><h2>Fix Recommendation</h2><p>Edit the &quot;/etc/ssh/sshd_config&quot; file and add or edit a &quot;Ciphers&quot; line like this:<br />
+Ciphers aes128-ctr,aes192-ctr,aes256-ctr<br />
+<br />
+Restart the SSH daemon:<br />
+# stopsrc -s sshd<br />
+# startsrc -s sshd</p><h2>Check Contents</h2><p>Check the SSH daemon configuration for allowed ciphers by running the following command: <br />
+# grep -i ciphers /etc/ssh/sshd_config | grep -v '^#' <br />
+<br />
+The above command should yield the following output:<br />
+Ciphers aes128-ctr,aes192-ctr,aes256-ctr<br />
+<br />
+If any of the following conditions are true, this is a finding.<br />
+1. No line is returned (default ciphers);<br />
+2. The returned ciphers list contains any cipher not starting with aes;<br />
+3. The returned ciphers list contains any cipher ending with cbc.</p><h2>Vulnerability Number</h2><p>V-215402</p><h2>Documentable</h2><p>False</p><h2>Rule Version</h2><p>AIX7-00-003100</p><h2>Severity Override Guidance</h2><p>Check the SSH daemon configuration for allowed ciphers by running the following command: <br />
+# grep -i ciphers /etc/ssh/sshd_config | grep -v '^#' <br />
+<br />
+The above command should yield the following output:<br />
+Ciphers aes128-ctr,aes192-ctr,aes256-ctr<br />
+<br />
+If any of the following conditions are true, this is a finding.<br />
+1. No line is returned (default ciphers);<br />
+2. The returned ciphers list contains any cipher not starting with aes;<br />
+3. The returned ciphers list contains any cipher ending with cbc.</p><h2>Check Content Reference</h2><p>M</p><h2>Target Key</h2><p>4012</p></body></html>

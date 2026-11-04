@@ -1,0 +1,31 @@
+<!doctype html><html lang="en"><head><meta charset="utf-8"><title>STIGQter: STIG Check Details: SV-215425r991589_rule: The local initialization file lists of preloaded libraries must contain only absolute paths on AIX.</title><link rel="icon" type="image/svg+xml" href="STIGQter.svg" /><script async src="https://www.googletagmanager.com/gtag/js?id=UA-31381839-2"></script><script src="include.js"></script><script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-4110907817782130" crossorigin="anonymous"></script></head><body><div><img src="STIGQter.svg" alt="STIGQter" style="height:1em;" /> <a href="https://www.stigqter.com/">STIGQter</a>: <a href="main.html">STIG Summary</a>: <a href="U_IBM_AIX_7-x_STIG_V3R3_Manual-xccdf.html">IBM AIX 7.x Security Technical Implementation Guide Version: 3 Release: 3 Benchmark Date: 01 Jul 2026</a>:</div> <h1>The local initialization file lists of preloaded libraries must contain only absolute paths on AIX.</h1><h2>DISA Rule</h2><p>SV-215425r991589_rule</p><h2>Vulnerability Number</h2><p>V-215425</p><h2>Group Title</h2><p>SRG-OS-000480-GPOS-00227</p><h2>Rule Version</h2><p>AIX7-00-003130</p><h2>Severity</h2><p>CAT II</p><h2>CCI(s)</h2><ul><li>CCI-000366 - Implement the security configuration settings.</li></ul><h2>Weight</h2><p>10</p><h2>Fix Recommendation</h2><p>Edit the local initialization file and remove the relative path entry from the library preload variable &quot;LDR_PRELOAD&quot;.</p><h2>Check Contents</h2><p>Identify local initialization files that have library search paths:  <br />
+<br />
+# cat /etc/passwd | cut -f 1,1 -d &quot;:&quot; | xargs -n1 -IUSER sh -c 'grep -l LDR_PRELOAD ~USER/.*' <br />
+/root/.sh_history<br />
+/home/doejohn/.profile<br />
+/home/doejane/.profile<br />
+<br />
+For each file identified above, verify the search path contains only absolute paths:<br />
+Note: This variable is formatted as a colon-separated list of paths.<br />
+<br />
+# cat &lt;local_initilization_file&gt; | grep -Ei 'ldr|preload'<br />
+LDR_PRELOAD=/usr/lib<br />
+<br />
+If the paths listed have not been documented and authorized by the ISSO/ISSM, this is a finding.<br />
+If there is an empty entry, such as a leading or trailing colon, or two consecutive colons, this is a finding. <br />
+If an entry begins with a character other than a slash (/) or other than &quot;$PATH&quot;, it is a relative path, and this is a finding.</p><h2>Vulnerability Number</h2><p>V-215425</p><h2>Documentable</h2><p>False</p><h2>Rule Version</h2><p>AIX7-00-003130</p><h2>Severity Override Guidance</h2><p>Identify local initialization files that have library search paths:  <br />
+<br />
+# cat /etc/passwd | cut -f 1,1 -d &quot;:&quot; | xargs -n1 -IUSER sh -c 'grep -l LDR_PRELOAD ~USER/.*' <br />
+/root/.sh_history<br />
+/home/doejohn/.profile<br />
+/home/doejane/.profile<br />
+<br />
+For each file identified above, verify the search path contains only absolute paths:<br />
+Note: This variable is formatted as a colon-separated list of paths.<br />
+<br />
+# cat &lt;local_initilization_file&gt; | grep -Ei 'ldr|preload'<br />
+LDR_PRELOAD=/usr/lib<br />
+<br />
+If the paths listed have not been documented and authorized by the ISSO/ISSM, this is a finding.<br />
+If there is an empty entry, such as a leading or trailing colon, or two consecutive colons, this is a finding. <br />
+If an entry begins with a character other than a slash (/) or other than &quot;$PATH&quot;, it is a relative path, and this is a finding.</p><h2>Check Content Reference</h2><p>M</p><h2>Target Key</h2><p>4012</p></body></html>

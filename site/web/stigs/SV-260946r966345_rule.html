@@ -1,0 +1,39 @@
+<!doctype html><html lang="en"><head><meta charset="utf-8"><title>STIGQter: STIG Check Details: SV-260946r966345_rule: MKE must display the Standard Mandatory DOD Notice and Consent Banner before granting access to platform components.</title><link rel="icon" type="image/svg+xml" href="STIGQter.svg" /><script async src="https://www.googletagmanager.com/gtag/js?id=UA-31381839-2"></script><script src="include.js"></script><script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-4110907817782130" crossorigin="anonymous"></script></head><body><div><img src="STIGQter.svg" alt="STIGQter" style="height:1em;" /> <a href="https://www.stigqter.com/">STIGQter</a>: <a href="main.html">STIG Summary</a>: <a href="U_Mirantis_Kubernetes_Engine_STIG_V2R1_Manual-xccdf.html">Mirantis Kubernetes Engine Security Technical Implementation Guide Version: 2 Release: 1 Benchmark Date: 24 Jul 2024</a>:</div> <h1>MKE must display the Standard Mandatory DOD Notice and Consent Banner before granting access to platform components.</h1><h2>DISA Rule</h2><p>SV-260946r966345_rule</p><h2>Vulnerability Number</h2><p>V-260946</p><h2>Group Title</h2><p>SRG-APP-000068-CTR-000120</p><h2>Rule Version</h2><p>CNTR-MK-000170</p><h2>Severity</h2><p>CAT III</p><h2>CCI(s)</h2><ul><li>CCI-000048 - Display an organization-defined system use notification message or banner to users before granting access to the system that provides privacy and security notices consistent with applicable federal laws, Executive Orders, directives, policies, regulations, standards, and guidelines.</li></ul><h2>Weight</h2><p>10</p><h2>Fix Recommendation</h2><p>Configure MKE to display the Standard Mandatory DOD Notice and Consent Banner before granting access to MKE:<br />
+<br />
+Modify the existing MKE configuration:<br />
+Working as an MKE admin, use the config-toml API from within the directory of the client certificate bundle to export the current MKE settings to a TOML file (mke-config.toml).<br />
+<br />
+1. Define the following environment variables:<br />
+<br />
+export MKE_USERNAME=&lt;mke-username&gt;<br />
+export MKE_PASSWORD=&lt;mke-password&gt;<br />
+export MKE_HOST=&lt;mke-fqdm-or-ip-address&gt;<br />
+<br />
+2. Obtain and define an AUTHTOKEN environment variable by executing the following:<br />
+<br />
+AUTHTOKEN=$(curl --silent --insecure --data '{&quot;username&quot;:&quot;'$MKE_USERNAME'&quot;,&quot;password&quot;:&quot;'$MKE_PASSWORD'&quot;}' https://$MKE_HOST/auth/login | jq --raw-output .auth_token)<br />
+<br />
+3. Download the current MKE configuration file by executing the following:<br />
+<br />
+curl --silent --insecure -X GET &quot;https://$MKE_HOST/api/MKE/config-toml&quot; -H &quot;accept: application/toml&quot; -H &quot;Authorization: Bearer $AUTHTOKEN&quot; &gt; mke-config.toml<br />
+<br />
+4. Edit the MKE configuration (mke-config.toml) modify &quot;pre_logon_message&quot; settings to match the Standard Mandatory DOD Notice and Consent Banner.<br />
+<br />
+Example:<br />
+pre_logon_message = &quot;You are accessing a U.S. Government (USG) Information System (IS) that is provided for USG-authorized use only. By using this IS (which includes any device attached to this IS), you consent to the following conditions :\n\n-The USG routinely intercepts and monitors communications on this IS for purposes including, but not limited to, penetration testing, COMSEC monitoring, network operations and defense, personnel misconduct (PM), law enforcement (LE), and counterintelligence (CI) investigations.\n\n-At any time, the USG may inspect and seize data stored on this IS.\n\n-Communications using, or data stored on, this IS are not private, are subject to routine monitoring, interception, and search, and may be disclosed or used for any USG-authorized purpose.\n\n-This IS includes security measures (e.g., authentication and access controls) to protect USG interests--not for your personal benefit or privacy.\n\n-Notwithstanding the above, using this IS does not constitute consent to PM, LE or CI investigative searching or monitoring of the content of privileged communications, or work product, related to personal representation or services by attorneys, psychotherapists, or clergy, and their assistants. Such communications and work product are private and confidential. See User Agreement for details.&quot;<br />
+<br />
+5. Upload the edited MKE configuration file by executing the following:<br />
+<br />
+curl --silent --insecure -X PUT -H &quot;accept: application/toml&quot; -H &quot;Authorization: Bearer $AUTHTOKEN&quot; --upload-file 'mke-config.toml' https://$MKE_HOST/api/MKE/config-toml<br />
+<br />
+Note: Users may need to reacquire the AUTHTOKEN, if significant time has passed since it was first acquired.<br />
+<br />
+6. Log in to MKE and verify that the Standard Mandatory DOD Notice and Consent Banner is being displayed before granting access.</p><h2>Check Contents</h2><p>Review the MKE configuration to determine if the Standard Mandatory DOD Notice and Consent Banner is configured to be displayed before granting access to platform components.<br />
+<br />
+Log in to MKE and verify that the Standard Mandatory DOD Notice and Consent Banner is being displayed before granting access.<br />
+<br />
+If the Standard Mandatory DOD Notice and Consent Banner is not configured or is not displayed before granting access to MKE, this is a finding.</p><h2>Vulnerability Number</h2><p>V-260946</p><h2>Documentable</h2><p>False</p><h2>Rule Version</h2><p>CNTR-MK-000170</p><h2>Severity Override Guidance</h2><p>Review the MKE configuration to determine if the Standard Mandatory DOD Notice and Consent Banner is configured to be displayed before granting access to platform components.<br />
+<br />
+Log in to MKE and verify that the Standard Mandatory DOD Notice and Consent Banner is being displayed before granting access.<br />
+<br />
+If the Standard Mandatory DOD Notice and Consent Banner is not configured or is not displayed before granting access to MKE, this is a finding.</p><h2>Check Content Reference</h2><p>M</p><h2>Target Key</h2><p>5595</p></body></html>

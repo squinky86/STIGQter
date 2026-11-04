@@ -1,0 +1,47 @@
+<!doctype html><html lang="en"><head><meta charset="utf-8"><title>STIGQter: STIG Check Details: SV-248683r958402_rule: OL 8 must prevent a user from overriding the session idle-delay setting for the graphical user interface.</title><link rel="icon" type="image/svg+xml" href="STIGQter.svg" /><script async src="https://www.googletagmanager.com/gtag/js?id=UA-31381839-2"></script><script src="include.js"></script><script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-4110907817782130" crossorigin="anonymous"></script></head><body><div><img src="STIGQter.svg" alt="STIGQter" style="height:1em;" /> <a href="https://www.stigqter.com/">STIGQter</a>: <a href="main.html">STIG Summary</a>: <a href="U_Oracle_Linux_8_STIG_V2R9_Manual-xccdf.html">Oracle Linux 8 Security Technical Implementation Guide Version: 2 Release: 9 Benchmark Date: 01 Jul 2026</a>:</div> <h1>OL 8 must prevent a user from overriding the session idle-delay setting for the graphical user interface.</h1><h2>DISA Rule</h2><p>SV-248683r958402_rule</p><h2>Vulnerability Number</h2><p>V-248683</p><h2>Group Title</h2><p>SRG-OS-000029-GPOS-00010</p><h2>Rule Version</h2><p>OL08-00-020081</p><h2>Severity</h2><p>CAT II</p><h2>CCI(s)</h2><ul><li>CCI-000057 - The information system initiates a session lock after the organization-defined time period of inactivity.</li><li>CCI-000060 - Conceal, via the device lock, information previously visible on the display with a publicly viewable image.</li></ul><h2>Weight</h2><p>10</p><h2>Fix Recommendation</h2><p>Configure OL 8 to prevent a user from overriding settings for graphical user interfaces. <br />
+ <br />
+Create a database to contain the system-wide screensaver settings (if it does not already exist) with the following command. <br />
+ <br />
+Note: The example below is using the database &quot;local&quot; for the system, so if the system is using another database in &quot;/etc/dconf/profile/user&quot;, the file should be created under the appropriate subdirectory. <br />
+ <br />
+$ sudo touch /etc/dconf/db/local.d/locks/session <br />
+ <br />
+Add the following setting to prevent non-privileged users from modifying it: <br />
+<br />
+/org/gnome/desktop/screensaver/idle-delay</p><h2>Check Contents</h2><p>Note: This requirement assumes the use of the OL 8 default graphical user interface, Gnome Shell. If the system does not have any graphical user interface installed, this requirement is Not Applicable. <br />
+<br />
+Verify the operating system prevents a user from overriding settings for graphical user interfaces. <br />
+ <br />
+Determine which profile the system database is using with the following command: <br />
+ <br />
+$ sudo grep system-db /etc/dconf/profile/user <br />
+ <br />
+system-db:local <br />
+ <br />
+Check that graphical settings are locked from non-privileged user modification with the following command. <br />
+ <br />
+Note: The example below is using the database &quot;local&quot; for the system, so the path is &quot;/etc/dconf/db/local.d&quot;. This path must be modified if a database other than &quot;local&quot; is being used. <br />
+ <br />
+$ sudo grep -i idle /etc/dconf/db/local.d/locks/* <br />
+ <br />
+/org/gnome/desktop/screensaver/idle-delay <br />
+ <br />
+If the command does not return at least the example result, this is a finding.</p><h2>Vulnerability Number</h2><p>V-248683</p><h2>Documentable</h2><p>False</p><h2>Rule Version</h2><p>OL08-00-020081</p><h2>Severity Override Guidance</h2><p>Note: This requirement assumes the use of the OL 8 default graphical user interface, Gnome Shell. If the system does not have any graphical user interface installed, this requirement is Not Applicable. <br />
+<br />
+Verify the operating system prevents a user from overriding settings for graphical user interfaces. <br />
+ <br />
+Determine which profile the system database is using with the following command: <br />
+ <br />
+$ sudo grep system-db /etc/dconf/profile/user <br />
+ <br />
+system-db:local <br />
+ <br />
+Check that graphical settings are locked from non-privileged user modification with the following command. <br />
+ <br />
+Note: The example below is using the database &quot;local&quot; for the system, so the path is &quot;/etc/dconf/db/local.d&quot;. This path must be modified if a database other than &quot;local&quot; is being used. <br />
+ <br />
+$ sudo grep -i idle /etc/dconf/db/local.d/locks/* <br />
+ <br />
+/org/gnome/desktop/screensaver/idle-delay <br />
+ <br />
+If the command does not return at least the example result, this is a finding.</p><h2>Check Content Reference</h2><p>M</p><h2>Target Key</h2><p>5416</p></body></html>

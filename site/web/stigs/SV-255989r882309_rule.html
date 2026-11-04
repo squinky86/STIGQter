@@ -1,0 +1,56 @@
+<!doctype html><html lang="en"><head><meta charset="utf-8"><title>STIGQter: STIG Check Details: SV-255989r882309_rule: The Arista BGP router must be configured to reject inbound route advertisements for any prefixes belonging to the local autonomous system (AS).</title><link rel="icon" type="image/svg+xml" href="STIGQter.svg" /><script async src="https://www.googletagmanager.com/gtag/js?id=UA-31381839-2"></script><script src="include.js"></script><script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-4110907817782130" crossorigin="anonymous"></script></head><body><div><img src="STIGQter.svg" alt="STIGQter" style="height:1em;" /> <a href="https://www.stigqter.com/">STIGQter</a>: <a href="main.html">STIG Summary</a>: <a href="U_Arista_MLS_EOS_4-X_Router_STIG_V2R2_Manual-xccdf.html">Arista MLS EOS 4.X Router Security Technical Implementation Guide Version: 2 Release: 2 Benchmark Date: 02 Apr 2025</a>:</div> <h1>The Arista BGP router must be configured to reject inbound route advertisements for any prefixes belonging to the local autonomous system (AS).</h1><h2>DISA Rule</h2><p>SV-255989r882309_rule</p><h2>Vulnerability Number</h2><p>V-255989</p><h2>Group Title</h2><p>SRG-NET-000018-RTR-000003</p><h2>Rule Version</h2><p>ARST-RT-000030</p><h2>Severity</h2><p>CAT II</p><h2>CCI(s)</h2><ul><li>CCI-001368 - Enforce approved authorizations for controlling the flow of information within the system based on organization-defined information flow control policies.</li></ul><h2>Weight</h2><p>10</p><h2>Fix Recommendation</h2><p>Configure Arista eBGP routers to reject inbound route advertisements for prefixes that are not allocated to that specific customer.<br />
+<br />
+Step 1: Configure the prefix-list to reject inbound route advertisements belonging to the local AS.<br />
+<br />
+router(config)#ip prefix-list LOCAL_SCOPE_BOUNDARY<br />
+router(config-ip-pfx)#seq 10 deny 10.12.0.0/16<br />
+router(config-ip-pfx)#seq 100 permit 0.0.0.0/0 le32<br />
+ <br />
+Step 2: Configure a route-map to match the prefix-list.<br />
+<br />
+router(config)#route-map LOCAL_AS deny<br />
+router(config-route-map-LOCAL_AS)#match IP address prefix-list LOCAL_SCOPE_BOUNDARY<br />
+router(config-route-map-LOCAL_AS)#exit<br />
+<br />
+Step 3: Configure the route-map to be applied inbound to the appropriate BGP neighbor.<br />
+<br />
+router(config)#router bgp 65000<br />
+router(config-router-bgp)#neighbor 10.12.0.0 prefix-list LOCAL_SCOPE_BOUNDARY in</p><h2>Check Contents</h2><p>Review the Arista router configuration to verify that it will reject routes belonging to the local AS.<br />
+<br />
+The prefix filter must be referenced inbound on the appropriate BGP neighbor statements.<br />
+<br />
+Step 1: Review the prefix lists configured on the router to filter the local AS prefix (10.12.0.0/16). To verify IP prefix lists are configured, execute the command &quot;show ip prefix-list&quot;.<br />
+<br />
+router#sh ip prefix-list<br />
+router#ip prefix-list LOCAL_SCOPE_BOUNDARY<br />
+   seq 10 deny 10.12.0.0/16<br />
+   seq  100 permit  0.0.0.0/0 le32<br />
+<br />
+Step 2: Review the BGP configuration to verify the prefix filter is applied inbound to the BGP neighbor. To verify the BGP config and verify the prefix is applied, execute the command &quot;show run | section router bgp&quot;.<br />
+<br />
+router bgp 65000<br />
+  router-id 10.11.11.11<br />
+  address-family ipv4<br />
+    no neighbor 10.11.12.2 prefix-list out     <br />
+    neighbor 10.12.0.0 prefix-list LOCAL_SCOPE_BOUNDARY in<br />
+<br />
+If the Arista router is not configured to reject inbound route advertisements belonging to the local AS, this is a finding.</p><h2>Vulnerability Number</h2><p>V-255989</p><h2>Documentable</h2><p>False</p><h2>Rule Version</h2><p>ARST-RT-000030</p><h2>Severity Override Guidance</h2><p>Review the Arista router configuration to verify that it will reject routes belonging to the local AS.<br />
+<br />
+The prefix filter must be referenced inbound on the appropriate BGP neighbor statements.<br />
+<br />
+Step 1: Review the prefix lists configured on the router to filter the local AS prefix (10.12.0.0/16). To verify IP prefix lists are configured, execute the command &quot;show ip prefix-list&quot;.<br />
+<br />
+router#sh ip prefix-list<br />
+router#ip prefix-list LOCAL_SCOPE_BOUNDARY<br />
+   seq 10 deny 10.12.0.0/16<br />
+   seq  100 permit  0.0.0.0/0 le32<br />
+<br />
+Step 2: Review the BGP configuration to verify the prefix filter is applied inbound to the BGP neighbor. To verify the BGP config and verify the prefix is applied, execute the command &quot;show run | section router bgp&quot;.<br />
+<br />
+router bgp 65000<br />
+  router-id 10.11.11.11<br />
+  address-family ipv4<br />
+    no neighbor 10.11.12.2 prefix-list out     <br />
+    neighbor 10.12.0.0 prefix-list LOCAL_SCOPE_BOUNDARY in<br />
+<br />
+If the Arista router is not configured to reject inbound route advertisements belonging to the local AS, this is a finding.</p><h2>Check Content Reference</h2><p>M</p><h2>Target Key</h2><p>5513</p></body></html>

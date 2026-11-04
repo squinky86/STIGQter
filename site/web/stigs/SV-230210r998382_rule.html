@@ -1,0 +1,91 @@
+<!doctype html><html lang="en"><head><meta charset="utf-8"><title>STIGQter: STIG Check Details: SV-230210r998382_rule: IBM RACF exit ICHPWX11 for password phrases must be installed and properly configured.</title><link rel="icon" type="image/svg+xml" href="STIGQter.svg" /><script async src="https://www.googletagmanager.com/gtag/js?id=UA-31381839-2"></script><script src="include.js"></script><script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-4110907817782130" crossorigin="anonymous"></script></head><body><div><img src="STIGQter.svg" alt="STIGQter" style="height:1em;" /> <a href="https://www.stigqter.com/">STIGQter</a>: <a href="main.html">STIG Summary</a>: <a href="U_IBM_zOS_RACF_STIG_V9R9_Manual-xccdf.html">IBM z/OS RACF Security Technical Implementation Guide Version: 9 Release: 9 Benchmark Date: 01 Jul 2026</a>:</div> <h1>IBM RACF exit ICHPWX11 for password phrases must be installed and properly configured.</h1><h2>DISA Rule</h2><p>SV-230210r998382_rule</p><h2>Vulnerability Number</h2><p>V-230210</p><h2>Group Title</h2><p>SRG-OS-000070-GPOS-00038</p><h2>Rule Version</h2><p>RACF-ES-000785</p><h2>Severity</h2><p>CAT II</p><h2>CCI(s)</h2><ul><li>CCI-004066 - For password-based authentication, enforce organization-defined composition and complexity rules.</li></ul><h2>Weight</h2><p>10</p><h2>Fix Recommendation</h2><p>Evaluate the impact associated with implementation of the control option. Develop a plan of action to implement the control option as specified in the example below:<br />
+<br />
+For z/OS release 1.12 through z/OS release 2.1, APARs OA43998 and OA43999 must be applied.<br />
+<br />
+Install exit IRRPHREX according to the following guidelines:<br />
+REXX Parameter Setting<br />
+<br />
+Phr_minlen = 15 /* Minimum length */<br />
+Phr_maxlen = 100 /* Maximum passphrase length */<br />
+numbers = '0123456789' <br />
+letters = 'abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ' <br />
+special = '&amp;*@ :=!-%.#?|-' &quot; <br />
+Phr_allowed_chars = numbers||letters||special <br />
+Phr_leading_blanks = 'no' <br />
+Phr_trailing_blanks = 'no' <br />
+Phr_name_allowed = 'no' <br />
+Phr_name_minlen = 3 <br />
+Phr_repeat_chars_chk = 'yes' <br />
+Phr_userid_allowed = 'no' <br />
+Phr_req_types = 4 <br />
+Phr_min_unique = Phr_minlen % 2 /* 'Half' of chars must be unique  */  <br />
+Phr_min_unique_norm = 'yes' <br />
+Phr_word_unique = 0 <br />
+Phr_word_unique_upper = 'yes' <br />
+Phr_word_minlen = 4 <br />
+Phr_dict.1 = 'IBM' <br />
+Phr_dict.2 = 'RACF' <br />
+Phr_dict.3 = 'PASSWORD'<br />
+Phr_dict.4 = 'PHRASE' <br />
+Phr_dict.5 = 'PASSPHRAS<br />
+Phr_dict.6 = 'SECRET' <br />
+Phr_dict.7 = 'IBMUSER' <br />
+Phr_dict.8 = 'SYS1'<br />
+<br />
+Note: RACF exit ICHPHX11 is coded to call a System REXX named IRRPHREX, so the name cannot be changed without a corresponding change to ICHPWX11.<br />
+<br />
+System REXX requires that this exec (IRRPHREX) reside in the REXXLIB concatenation.<br />
+<br />
+Update parameters in IRRPHREX according to table Parameters for RACF IRRPWREX as listed above.</p><h2>Check Contents</h2><p>From a system console screen issue the following modify command:<br />
+F AXR,IRRPHREX LIST<br />
+<br />
+Review the results of the modify command. <br />
+<br />
+If all of the following options are listed, this is not a finding.<br />
+<br />
+-The number of required character types is four.<br />
+(ensures that at least one uppercase, one lowercase, one number, and one special character is used in password phrase)<br />
+<br />
+-The user's name is not contained in the password phrase.<br />
+(Only three consecutive characters of the user's name are allowed)<br />
+<br />
+-The minimum password phrase length checked is 15.<br />
+<br />
+-The user ID is not contained in the password phrase.<br />
+(Only three consecutive characters of the user ID are allowed)<br />
+<br />
+-The new password phrase is at least 50 percent changed positions of the old password phrase.<br />
+(These positions need to be consecutive to cause a failure and this check is not case sensitive)<br />
+<br />
+-A minimum list of eight restricted words are being checked:<br />
+'IBM' , 'RACF', 'PASSWORD', 'PHRASE', 'PASSPHRASE', 'SECRET', 'IBMUSER', 'SYS1'<br />
+<br />
+If the modify command fails or returns the following message in the system log, this is a finding.<br />
+<br />
+IRX0406E REXX exec load file REXXLIB does not contain exec member IRRPHREX.</p><h2>Vulnerability Number</h2><p>V-230210</p><h2>Documentable</h2><p>False</p><h2>Rule Version</h2><p>RACF-ES-000785</p><h2>Severity Override Guidance</h2><p>From a system console screen issue the following modify command:<br />
+F AXR,IRRPHREX LIST<br />
+<br />
+Review the results of the modify command. <br />
+<br />
+If all of the following options are listed, this is not a finding.<br />
+<br />
+-The number of required character types is four.<br />
+(ensures that at least one uppercase, one lowercase, one number, and one special character is used in password phrase)<br />
+<br />
+-The user's name is not contained in the password phrase.<br />
+(Only three consecutive characters of the user's name are allowed)<br />
+<br />
+-The minimum password phrase length checked is 15.<br />
+<br />
+-The user ID is not contained in the password phrase.<br />
+(Only three consecutive characters of the user ID are allowed)<br />
+<br />
+-The new password phrase is at least 50 percent changed positions of the old password phrase.<br />
+(These positions need to be consecutive to cause a failure and this check is not case sensitive)<br />
+<br />
+-A minimum list of eight restricted words are being checked:<br />
+'IBM' , 'RACF', 'PASSWORD', 'PHRASE', 'PASSPHRASE', 'SECRET', 'IBMUSER', 'SYS1'<br />
+<br />
+If the modify command fails or returns the following message in the system log, this is a finding.<br />
+<br />
+IRX0406E REXX exec load file REXXLIB does not contain exec member IRRPHREX.</p><h2>Check Content Reference</h2><p>M</p><h2>Target Key</h2><p>4101</p></body></html>

@@ -1,0 +1,38 @@
+<!doctype html><html lang="en"><head><meta charset="utf-8"><title>STIGQter: STIG Check Details: SV-223592r1225815_rule: IBM z/OS Syslog daemon must be properly defined and secured.</title><link rel="icon" type="image/svg+xml" href="STIGQter.svg" /><script async src="https://www.googletagmanager.com/gtag/js?id=UA-31381839-2"></script><script src="include.js"></script><script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-4110907817782130" crossorigin="anonymous"></script></head><body><div><img src="STIGQter.svg" alt="STIGQter" style="height:1em;" /> <a href="https://www.stigqter.com/">STIGQter</a>: <a href="main.html">STIG Summary</a>: <a href="U_IBM_zOS_ACF2_STIG_V9R9_Manual-xccdf.html">IBM z/OS ACF2 Security Technical Implementation Guide Version: 9 Release: 9 Benchmark Date: 01 Jul 2026</a>:</div> <h1>IBM z/OS Syslog daemon must be properly defined and secured.</h1><h2>DISA Rule</h2><p>SV-223592r1225815_rule</p><h2>Vulnerability Number</h2><p>V-223592</p><h2>Group Title</h2><p>SRG-OS-000104-GPOS-00051</p><h2>Rule Version</h2><p>ACF2-SL-000030</p><h2>Severity</h2><p>CAT II</p><h2>CCI(s)</h2><ul><li>CCI-000764 - Uniquely identify and authenticate organizational users and associate that unique identification with processes acting on behalf of those users.</li></ul><h2>Weight</h2><p>10</p><h2>Fix Recommendation</h2><p>Define the Syslog daemon logonid as SYSLOGD with the STC attribute.<br />
+<br />
+To set up and use as an MVS Started Proc, the following sample commands are provided:<br />
+SET LID<br />
+INSERT SYSLOGD NAME(SYSLOGD STC) GROUP(stctcpx) STC<br />
+<br />
+The SYSLOGD userid has UID(0), HOME('/'), and PROGRAM('/bin/sh') specified in the OMVS segment.<br />
+<br />
+SET PROFILE(USER) DIVISION(OMVS)<br />
+INSERT SYSLOGD UID(0) HOME(/) PROGRAM(/bin/sh)<br />
+<br />
+F ACF2,REBUILD(USR),CLASS(P)<br />
+<br />
+If /etc/rc is used to start the Syslog daemon ensure that the _BPX_JOBNAME and _BPX_ USERID environment variables are assigned a value of SYSLOGD.</p><h2>Check Contents</h2><p>The Syslog daemon is defined as SYSLOGD.<br />
+<br />
+From the ACF command screen enter:<br />
+SET LID<br />
+LIST SYSLOGD<br />
+<br />
+If the Syslog daemon is not defined, this is a finding.<br />
+<br />
+If the SYSLOGD logonid is not defined with the STC attribute, this is a finding.<br />
+<br />
+If the SYSLOGD userid has UID(0), HOME('/'), and PROGRAM('/bin/sh') specified in the OMVS segment, this is not a finding. <br />
+<br />
+If Syslog daemon is started from /etc/rc then ensure that the _BPX_JOBNAME and _BPX_USERID environment variables are assigned a value of SYSLOGD.</p><h2>Vulnerability Number</h2><p>V-223592</p><h2>Documentable</h2><p>False</p><h2>Rule Version</h2><p>ACF2-SL-000030</p><h2>Severity Override Guidance</h2><p>The Syslog daemon is defined as SYSLOGD.<br />
+<br />
+From the ACF command screen enter:<br />
+SET LID<br />
+LIST SYSLOGD<br />
+<br />
+If the Syslog daemon is not defined, this is a finding.<br />
+<br />
+If the SYSLOGD logonid is not defined with the STC attribute, this is a finding.<br />
+<br />
+If the SYSLOGD userid has UID(0), HOME('/'), and PROGRAM('/bin/sh') specified in the OMVS segment, this is not a finding. <br />
+<br />
+If Syslog daemon is started from /etc/rc then ensure that the _BPX_JOBNAME and _BPX_USERID environment variables are assigned a value of SYSLOGD.</p><h2>Check Content Reference</h2><p>M</p><h2>Target Key</h2><p>4100</p></body></html>

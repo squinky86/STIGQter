@@ -1,0 +1,25 @@
+<!doctype html><html lang="en"><head><meta charset="utf-8"><title>STIGQter: STIG Check Details: SV-275732r1148294_rule: Ubuntu OS must generate audit records when successful/unsuccessful attempts to modify the /etc/sudoers.d directory occur.</title><link rel="icon" type="image/svg+xml" href="STIGQter.svg" /><script async src="https://www.googletagmanager.com/gtag/js?id=UA-31381839-2"></script><script src="include.js"></script><script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-4110907817782130" crossorigin="anonymous"></script></head><body><div><img src="STIGQter.svg" alt="STIGQter" style="height:1em;" /> <a href="https://www.stigqter.com/">STIGQter</a>: <a href="main.html">STIG Summary</a>: <a href="U_RB_NetIM_OS_STIG_V1R1_Manual-xccdf.html">Riverbed NetIM OS Security Technical Implementation Guide Version: 1 Release: 1 Benchmark Date: 11 Sep 2025</a>:</div> <h1>Ubuntu OS must generate audit records when successful/unsuccessful attempts to modify the /etc/sudoers.d directory occur.</h1><h2>DISA Rule</h2><p>SV-275732r1148294_rule</p><h2>Vulnerability Number</h2><p>V-275732</p><h2>Group Title</h2><p>SRG-OS-000466-GPOS-00210</p><h2>Rule Version</h2><p>RIIM-OS-654225</p><h2>Severity</h2><p>CAT II</p><h2>CCI(s)</h2><ul><li>CCI-000172 - Generate audit records for the event types defined in AU-2 c that include the audit record content defined in AU-3.</li></ul><h2>Weight</h2><p>10</p><h2>Fix Recommendation</h2><p>Configure Ubuntu OS to generate audit records for all modifications that affect &quot;/etc/sudoers.d&quot; directory.   <br />
+ <br />
+Add or modify the following line to &quot;/etc/audit/rules.d/stig.rules&quot;:  <br />
+ <br />
+-w /etc/sudoers.d -p wa -k privilege_modification  <br />
+ <br />
+To reload the rules file, issue the following command:  <br />
+ <br />
+     $ sudo augenrules --load <br />
+ <br />
+Note: The &quot;-k &lt;keyname&gt;&quot; at the end of the line gives the rule a unique meaning to help during an audit investigation. The &lt;keyname&gt; does not need to match the example above.</p><h2>Check Contents</h2><p>Verify Ubuntu OS generates audit records for all modifications that affect &quot;/etc/sudoers.d&quot; directory by using the following command:   <br />
+  <br />
+     $ sudo auditctl -l | grep sudoers.d  <br />
+     -w /etc/sudoers.d -p wa -k privilege_modification  <br />
+  <br />
+If the command does not return a line that matches the example or the line is commented out, this is a finding.  <br />
+  <br />
+Note: The &quot;-k&quot; value is arbitrary and can be different from the example output above.</p><h2>Vulnerability Number</h2><p>V-275732</p><h2>Documentable</h2><p>False</p><h2>Rule Version</h2><p>RIIM-OS-654225</p><h2>Severity Override Guidance</h2><p>Verify Ubuntu OS generates audit records for all modifications that affect &quot;/etc/sudoers.d&quot; directory by using the following command:   <br />
+  <br />
+     $ sudo auditctl -l | grep sudoers.d  <br />
+     -w /etc/sudoers.d -p wa -k privilege_modification  <br />
+  <br />
+If the command does not return a line that matches the example or the line is commented out, this is a finding.  <br />
+  <br />
+Note: The &quot;-k&quot; value is arbitrary and can be different from the example output above.</p><h2>Check Content Reference</h2><p>M</p><h2>Target Key</h2><p>5706</p></body></html>

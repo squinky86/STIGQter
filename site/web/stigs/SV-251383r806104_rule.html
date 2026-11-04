@@ -1,0 +1,69 @@
+<!doctype html><html lang="en"><head><meta charset="utf-8"><title>STIGQter: STIG Check Details: SV-251383r806104_rule: Multi-Protocol Labeled Switching (MPLS) protocols deployed to build Label-Switch Path (LSP) tunnels must authenticate all messages with a hash function using the most secured cryptographic algorithm available.</title><link rel="icon" type="image/svg+xml" href="STIGQter.svg" /><script async src="https://www.googletagmanager.com/gtag/js?id=UA-31381839-2"></script><script src="include.js"></script><script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-4110907817782130" crossorigin="anonymous"></script></head><body><div><img src="STIGQter.svg" alt="STIGQter" style="height:1em;" /> <a href="https://www.stigqter.com/">STIGQter</a>: <a href="main.html">STIG Summary</a>: <a href="U_Network_Infrastructure_Policy_STIG_V10R7_Manual-xccdf.html">Network Infrastructure Policy Security Technical Implementation Guide Version: 10 Release: 7 Benchmark Date: 24 Oct 2024</a>:</div> <h1>Multi-Protocol Labeled Switching (MPLS) protocols deployed to build Label-Switch Path (LSP) tunnels must authenticate all messages with a hash function using the most secured cryptographic algorithm available.</h1><h2>DISA Rule</h2><p>SV-251383r806104_rule</p><h2>Vulnerability Number</h2><p>V-251383</p><h2>Group Title</h2><p>NET2000</p><h2>Rule Version</h2><p>NET2000</p><h2>Severity</h2><p>CAT II</p><h2>CCI(s)</h2><ul><li>CCI-000803 - Implement mechanisms for authentication to a cryptographic module that meet the requirements of applicable laws, Executive Orders, directives, policies, regulations, standards, and guidance for such authentication.</li></ul><h2>Weight</h2><p>10</p><h2>Fix Recommendation</h2><p>Implement neighbor authentication using a secured hashing algorithm for all signaling protocols deployed to build LSP tunnels.</p><h2>Check Contents</h2><p>Review the router configuration to determine if LDP and RSVP messages are being authenticated as shown in the examples below.<br />
+<br />
+If authentication is not being used for these protocols using a secured hashing algorithm for message authentication, this is a finding.<br />
+<br />
+An LDP session is secured by configuring a password for each LDP peer as shown in the example below:<br />
+<br />
+mpls ip<br />
+mpls label protocol ldp<br />
+mpls ldp neighbor 10.1.1.1 password xzxxxxxxxxxxx <br />
+mpls ldp neighbor 10.3.3.3 password xxxxxzzzzxxxz<br />
+<br />
+The IP address 10.1.1.1 and 10.3.3.3 in this example are the router IDs of the neighbors for which this router has an LDP session requiring MD5 authentication. To specify that the router ID 10.1.1.1 is to be found in VPN routing/forwarding instance (VRF) named VPN1 instead of the global route table, the &quot;vrf&quot; keyword is used in the command as shown in the following example:<br />
+<br />
+mpls ldp neighbor vrf VPN1 10.1.1.1 password xxxxxxxxxxxxxxxxx<br />
+<br />
+A group of peers using the same MD5 password can be configured as shown in the example below: <br />
+<br />
+mpls ldp password for 10 xxxxxxxxxxxxxxx<br />
+mpls ldp password required for 10<br />
+!<br />
+access-list 10 permit 10.1.1.1<br />
+access-list 10 permit 10.3.3.3<br />
+access-list 10 permit 10.4.4.4<br />
+<br />
+The access list specifies a password is mandatory for LDP sessions with neighbors whose LDP router IDs are permitted by the access list.<br />
+<br />
+To configure MD5 or SHA-1 authentication for RSVP, both ip rsvp authentication key and ip rsvp authentication commands must be configured as shown in the example below. The latter command simply enables authentication.<br />
+<br />
+interface Ethernet0/0<br />
+ip address 192.168.101.2 255.255.255.0<br />
+ip rsvp bandwidth 7500 7500<br />
+ip rsvp authentication type sha-1<br />
+ip rsvp authentication key xxxxxxxx ip rsvp authentication<br />
+<br />
+Note: If SHA-1 is not specified using the ip rsvp authentication type command, MD5 will be utilized.</p><h2>Vulnerability Number</h2><p>V-251383</p><h2>Documentable</h2><p>False</p><h2>Rule Version</h2><p>NET2000</p><h2>Severity Override Guidance</h2><p>Review the router configuration to determine if LDP and RSVP messages are being authenticated as shown in the examples below.<br />
+<br />
+If authentication is not being used for these protocols using a secured hashing algorithm for message authentication, this is a finding.<br />
+<br />
+An LDP session is secured by configuring a password for each LDP peer as shown in the example below:<br />
+<br />
+mpls ip<br />
+mpls label protocol ldp<br />
+mpls ldp neighbor 10.1.1.1 password xzxxxxxxxxxxx <br />
+mpls ldp neighbor 10.3.3.3 password xxxxxzzzzxxxz<br />
+<br />
+The IP address 10.1.1.1 and 10.3.3.3 in this example are the router IDs of the neighbors for which this router has an LDP session requiring MD5 authentication. To specify that the router ID 10.1.1.1 is to be found in VPN routing/forwarding instance (VRF) named VPN1 instead of the global route table, the &quot;vrf&quot; keyword is used in the command as shown in the following example:<br />
+<br />
+mpls ldp neighbor vrf VPN1 10.1.1.1 password xxxxxxxxxxxxxxxxx<br />
+<br />
+A group of peers using the same MD5 password can be configured as shown in the example below: <br />
+<br />
+mpls ldp password for 10 xxxxxxxxxxxxxxx<br />
+mpls ldp password required for 10<br />
+!<br />
+access-list 10 permit 10.1.1.1<br />
+access-list 10 permit 10.3.3.3<br />
+access-list 10 permit 10.4.4.4<br />
+<br />
+The access list specifies a password is mandatory for LDP sessions with neighbors whose LDP router IDs are permitted by the access list.<br />
+<br />
+To configure MD5 or SHA-1 authentication for RSVP, both ip rsvp authentication key and ip rsvp authentication commands must be configured as shown in the example below. The latter command simply enables authentication.<br />
+<br />
+interface Ethernet0/0<br />
+ip address 192.168.101.2 255.255.255.0<br />
+ip rsvp bandwidth 7500 7500<br />
+ip rsvp authentication type sha-1<br />
+ip rsvp authentication key xxxxxxxx ip rsvp authentication<br />
+<br />
+Note: If SHA-1 is not specified using the ip rsvp authentication type command, MD5 will be utilized.</p><h2>Check Content Reference</h2><p>M</p><h2>Target Key</h2><p>5444</p></body></html>

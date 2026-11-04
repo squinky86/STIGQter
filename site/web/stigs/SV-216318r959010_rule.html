@@ -1,0 +1,44 @@
+<!doctype html><html lang="en"><head><meta charset="utf-8"><title>STIGQter: STIG Check Details: SV-216318r959010_rule: TCP Wrappers must be enabled and configured per site policy to only allow access by approved hosts and services.</title><link rel="icon" type="image/svg+xml" href="STIGQter.svg" /><script async src="https://www.googletagmanager.com/gtag/js?id=UA-31381839-2"></script><script src="include.js"></script><script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-4110907817782130" crossorigin="anonymous"></script></head><body><div><img src="STIGQter.svg" alt="STIGQter" style="height:1em;" /> <a href="https://www.stigqter.com/">STIGQter</a>: <a href="main.html">STIG Summary</a>: <a href="U_SOL_11_SPARC_STIG_V3R6_Manual-xccdf.html">Solaris 11 SPARC Security Technical Implementation Guide Version: 3 Release: 6 Benchmark Date: 01 Jul 2026</a>:</div> <h1>TCP Wrappers must be enabled and configured per site policy to only allow access by approved hosts and services.</h1><h2>DISA Rule</h2><p>SV-216318r959010_rule</p><h2>Vulnerability Number</h2><p>V-216318</p><h2>Group Title</h2><p>SRG-OS-000480</p><h2>Rule Version</h2><p>SOL-11.1-030050</p><h2>Severity</h2><p>CAT II</p><h2>CCI(s)</h2><ul><li>CCI-000366 - Implement the security configuration settings.</li></ul><h2>Weight</h2><p>10</p><h2>Fix Recommendation</h2><p>The root role is required.<br />
+<br />
+To enable TCP Wrappers, run the following commands:<br />
+<br />
+1. Create and customize your policy in /etc/hosts.allow:<br />
+# echo &quot;ALL: [net]/[mask], [net]/[mask], ...&quot; &gt; /etc/hosts.allow <br />
+<br />
+where each [net&gt;/[mask&gt; combination (for example, the Class C address block &quot;192.168.1.0/255.255.255.0&quot;) can represent one network block in use by your organization that requires access to this system.<br />
+<br />
+2. Create a default deny policy in /etc/hosts.deny: <br />
+<br />
+# echo &quot;ALL: ALL&quot; &gt;/etc/hosts.deny<br />
+<br />
+3. Enable TCP Wrappers for all services started by inetd:<br />
+<br />
+# inetadm -M tcp_wrappers=TRUE<br />
+<br />
+The versions of SunSSH (0.5.11) and sendmail that ship with Solaris 11 will automatically use TCP Wrappers to filter access if a hosts.allow or hosts.deny file exists.<br />
+<br />
+The use of OpenSSH access is controlled by the sshd_config file starting with Solaris 11.3. <br />
+<br />
+SunSSH is removed starting with Solaris 11.4.</p><h2>Check Contents</h2><p>Check that TCP Wrappers are enabled and the host.deny and host.allow files exist.<br />
+<br />
+# inetadm -p | grep tcp_wrappers<br />
+<br />
+If the output of this command is &quot;tcp_wrappers=FALSE&quot;, this is a finding.<br />
+<br />
+# ls /etc/hosts.deny<br />
+/etc/hosts.deny<br />
+# ls /etc/hosts.allow<br />
+/etc/hosts.allow<br />
+<br />
+If these files do not exist or do not contain the names of allowed or denied hosts, this is a finding.</p><h2>Vulnerability Number</h2><p>V-216318</p><h2>Documentable</h2><p>False</p><h2>Rule Version</h2><p>SOL-11.1-030050</p><h2>Severity Override Guidance</h2><p>Check that TCP Wrappers are enabled and the host.deny and host.allow files exist.<br />
+<br />
+# inetadm -p | grep tcp_wrappers<br />
+<br />
+If the output of this command is &quot;tcp_wrappers=FALSE&quot;, this is a finding.<br />
+<br />
+# ls /etc/hosts.deny<br />
+/etc/hosts.deny<br />
+# ls /etc/hosts.allow<br />
+/etc/hosts.allow<br />
+<br />
+If these files do not exist or do not contain the names of allowed or denied hosts, this is a finding.</p><h2>Check Content Reference</h2><p>M</p><h2>Target Key</h2><p>4022</p></body></html>

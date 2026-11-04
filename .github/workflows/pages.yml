@@ -1,0 +1,74 @@
+name: Pages
+
+on:
+  push:
+    branches: [main]
+    paths: ['site/**', 'doc/**', 'README.md', 'CHANGES.md', 'SECURITY.md', 'plan-overhaul.md', '.github/workflows/pages.yml']
+  pull_request:
+    branches: [main]
+    paths: ['site/**', 'doc/**', 'README.md', 'CHANGES.md', 'SECURITY.md', 'plan-overhaul.md', '.github/workflows/pages.yml']
+  workflow_dispatch:
+    inputs:
+      deploy:
+        description: Publish the validated site
+        type: boolean
+        default: false
+  schedule:
+    - cron: '47 5 * * 1'
+
+permissions:
+  contents: read
+
+concurrency:
+  group: pages-${{ github.ref }}
+  cancel-in-progress: ${{ github.event_name == 'pull_request' }}
+
+jobs:
+  build:
+    if: github.event_name != 'schedule'
+    runs-on: ubuntu-26.04
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+      - name: Install documentation and compatibility test dependencies
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y --no-install-recommends python3-markdown php-cli php-zip
+      - name: Build public artifact
+        env:
+          SITE_BASE_URL: ${{ vars.SITE_BASE_URL || 'https://squinky86.github.io/STIGQter/' }}
+        run: |
+          python3 site/scripts/build_site.py --base-url "$SITE_BASE_URL"
+          python3 site/scripts/check_site.py site/_site --base-url "$SITE_BASE_URL"
+          python3 -m unittest discover -s site/scripts -p 'test_*.py'
+      - uses: actions/upload-pages-artifact@fc324d3547104276b827a68afc52ff2a11cc49c9 # v5.0.0
+        with:
+          path: site/_site
+
+  deploy:
+    if: (github.event_name == 'push' && github.ref == 'refs/heads/main') || (github.event_name == 'workflow_dispatch' && inputs.deploy)
+    needs: build
+    runs-on: ubuntu-26.04
+    timeout-minutes: 10
+    permissions:
+      pages: write
+      id-token: write
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    steps:
+      - uses: actions/configure-pages@45bfe0192ca1faeb007ade9deae92b16b8254a0d # v6.0.0
+      - id: deployment
+        uses: actions/deploy-pages@368f82528645a54fb793d4d04e342629a3f51346 # v5.0.1
+
+  monitor:
+    needs: [build, deploy]
+    if: always() && (github.event_name == 'schedule' || needs.deploy.result == 'success' || (github.event_name == 'workflow_dispatch' && !inputs.deploy && needs.build.result == 'success'))
+    runs-on: ubuntu-26.04
+    timeout-minutes: 5
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+      - run: python3 site/scripts/monitor.py
+        env:
+          SITE_BASE_URL: ${{ vars.SITE_BASE_URL || 'https://squinky86.github.io/STIGQter/' }}
+          CHECK_LEGACY: ${{ vars.CHECK_LEGACY || 'false' }}

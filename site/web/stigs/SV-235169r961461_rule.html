@@ -1,0 +1,55 @@
+<!doctype html><html lang="en"><head><meta charset="utf-8"><title>STIGQter: STIG Check Details: SV-235169r961461_rule: The MySQL Database Server 8.0 must enforce access restrictions associated with changes to the configuration of the MySQL Database Server 8.0 or database(s).</title><link rel="icon" type="image/svg+xml" href="STIGQter.svg" /><script async src="https://www.googletagmanager.com/gtag/js?id=UA-31381839-2"></script><script src="include.js"></script><script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-4110907817782130" crossorigin="anonymous"></script></head><body><div><img src="STIGQter.svg" alt="STIGQter" style="height:1em;" /> <a href="https://www.stigqter.com/">STIGQter</a>: <a href="main.html">STIG Summary</a>: <a href="U_Oracle_MySQL_8-0_STIG_V2R2_Manual-xccdf.html">Oracle MySQL 8.0 Security Technical Implementation Guide Version: 2 Release: 2 Benchmark Date: 24 Oct 2024</a>:</div> <h1>The MySQL Database Server 8.0 must enforce access restrictions associated with changes to the configuration of the MySQL Database Server 8.0 or database(s).</h1><h2>DISA Rule</h2><p>SV-235169r961461_rule</p><h2>Vulnerability Number</h2><p>V-235169</p><h2>Group Title</h2><p>SRG-APP-000380-DB-000360</p><h2>Rule Version</h2><p>MYS8-00-009200</p><h2>Severity</h2><p>CAT II</p><h2>CCI(s)</h2><ul><li>CCI-001813 - Enforce access restrictions using organization-defined mechanisms.</li></ul><h2>Weight</h2><p>10</p><h2>Fix Recommendation</h2><p>Configure the MySQL Database Server 8.0 to enforce access restrictions associated with changes to the configuration of the MySQL Database Server 8.0 or database(s).<br />
+<br />
+Check and change file permissions on the MySQL Configuration file so the mysql OS user owns and file and is the only user with read-write permissions. Use the SHOW GRANTS statements to audit who has SUPER permissions and remove any users with excess privileges.<br />
+<br />
+For my.cnf, change ownership and permissions to:<br />
+File or Resource                Location        Owner   Directory Permissions   File Permissions<br />
+MySQL configuration file        /etc/my.cnf     root    drwxr-xr-x              -rw-r--r--<br />
+<br />
+The mysqld-auto.cnf is created and managed by the mysql instance, as such permissions should be correct. If not correct, change &quot;owner&quot; to &quot;mysql&quot; and &quot;rw r&quot; to &quot;640&quot;.</p><h2>Check Contents</h2><p>Review the security configuration of the MySQL Database Server 8.0 and database(s). If it does not enforce access restrictions associated with changes to the configuration of the MySQL Database Server 8.0 or database(s), this is a finding.<br />
+<br />
+MySQL configuration can be set two ways:  <br />
+1) The mysql configuration file. This file must be owned and permissions to read or write to it limited to the mysql OS user only. <br />
+2) Via a SET command within the server itself. These commands may be limited by limiting &quot;server administration&quot; privileges. User privileges can be shown using the SHOW GRANTS [FOR user]. This data is written to mysqld-auto.cnf file.<br />
+<br />
+See the mysql secure configuration guide for more information.<br />
+<br />
+Run the following command to check the mysql the linux permissions on my.cnf: <br />
+ls -l /etc/my.cnf<br />
+<br />
+The permissions must be:<br />
+File or Resource                Location        Owner   Directory Permissions   File Permissions<br />
+MySQL configuration file        /etc/my.cnf     root    drwxr-xr-x              -rw-r--r--<br />
+<br />
+If the permissions are more permissive than the above, this is a finding.<br />
+<br />
+As of mysql 8.0 configuration variables can also be set and changed using persist system variable settings that save to a file named mysqld-auto.cnf<br />
+This file is in the mysql data dir. See the example below.<br />
+<br />
+sudo ls -l /usr/local/mysql-commercial-8.0.16-macos10.14-x86_64/data/mysqld-auto.cnf<br />
+-rw-r-----  1 _mysql  _mysql  2721 May 13 14:00 /usr/local/mysql-commercial-8.0.16-macos10.14-x86_64/data/mysqld-auto.cnf<br />
+<br />
+If the permissions of the mysqld-auto.cnf are more permissive, this is a finding.</p><h2>Vulnerability Number</h2><p>V-235169</p><h2>Documentable</h2><p>False</p><h2>Rule Version</h2><p>MYS8-00-009200</p><h2>Severity Override Guidance</h2><p>Review the security configuration of the MySQL Database Server 8.0 and database(s). If it does not enforce access restrictions associated with changes to the configuration of the MySQL Database Server 8.0 or database(s), this is a finding.<br />
+<br />
+MySQL configuration can be set two ways:  <br />
+1) The mysql configuration file. This file must be owned and permissions to read or write to it limited to the mysql OS user only. <br />
+2) Via a SET command within the server itself. These commands may be limited by limiting &quot;server administration&quot; privileges. User privileges can be shown using the SHOW GRANTS [FOR user]. This data is written to mysqld-auto.cnf file.<br />
+<br />
+See the mysql secure configuration guide for more information.<br />
+<br />
+Run the following command to check the mysql the linux permissions on my.cnf: <br />
+ls -l /etc/my.cnf<br />
+<br />
+The permissions must be:<br />
+File or Resource                Location        Owner   Directory Permissions   File Permissions<br />
+MySQL configuration file        /etc/my.cnf     root    drwxr-xr-x              -rw-r--r--<br />
+<br />
+If the permissions are more permissive than the above, this is a finding.<br />
+<br />
+As of mysql 8.0 configuration variables can also be set and changed using persist system variable settings that save to a file named mysqld-auto.cnf<br />
+This file is in the mysql data dir. See the example below.<br />
+<br />
+sudo ls -l /usr/local/mysql-commercial-8.0.16-macos10.14-x86_64/data/mysqld-auto.cnf<br />
+-rw-r-----  1 _mysql  _mysql  2721 May 13 14:00 /usr/local/mysql-commercial-8.0.16-macos10.14-x86_64/data/mysqld-auto.cnf<br />
+<br />
+If the permissions of the mysqld-auto.cnf are more permissive, this is a finding.</p><h2>Check Content Reference</h2><p>M</p><h2>Target Key</h2><p>5277</p></body></html>

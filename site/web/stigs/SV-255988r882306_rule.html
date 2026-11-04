@@ -1,0 +1,55 @@
+<!doctype html><html lang="en"><head><meta charset="utf-8"><title>STIGQter: STIG Check Details: SV-255988r882306_rule: The Arista BGP router must be configured to reject inbound route advertisements for any Bogon prefixes.</title><link rel="icon" type="image/svg+xml" href="STIGQter.svg" /><script async src="https://www.googletagmanager.com/gtag/js?id=UA-31381839-2"></script><script src="include.js"></script><script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-4110907817782130" crossorigin="anonymous"></script></head><body><div><img src="STIGQter.svg" alt="STIGQter" style="height:1em;" /> <a href="https://www.stigqter.com/">STIGQter</a>: <a href="main.html">STIG Summary</a>: <a href="U_Arista_MLS_EOS_4-X_Router_STIG_V2R2_Manual-xccdf.html">Arista MLS EOS 4.X Router Security Technical Implementation Guide Version: 2 Release: 2 Benchmark Date: 02 Apr 2025</a>:</div> <h1>The Arista BGP router must be configured to reject inbound route advertisements for any Bogon prefixes.</h1><h2>DISA Rule</h2><p>SV-255988r882306_rule</p><h2>Vulnerability Number</h2><p>V-255988</p><h2>Group Title</h2><p>SRG-NET-000018-RTR-000002</p><h2>Rule Version</h2><p>ARST-RT-000020</p><h2>Severity</h2><p>CAT II</p><h2>CCI(s)</h2><ul><li>CCI-001368 - Enforce approved authorizations for controlling the flow of information within the system based on organization-defined information flow control policies.</li></ul><h2>Weight</h2><p>10</p><h2>Fix Recommendation</h2><p>Step 1: Configure the BGP Bogon Prefix List.<br />
+<br />
+LEAF-1A(config)#ip prefix-list BOGON_v4<br />
+LEAF-1A(config-ip-pfx)#seq 1 deny 0.0.0.0/8 le 32<br />
+LEAF-1A(config-ip-pfx)#seq 2 deny 10.0.0.0/8 le 32<br />
+LEAF-1A(config-ip-pfx)#seq 3 deny 100.64.0.0/10 le 32<br />
+LEAF-1A(config-ip-pfx)#seq 4 deny 127.0.0.0/8 le 32<br />
+LEAF-1A(config-ip-pfx)#seq 5 deny 169.254.0.0/16 le 32<br />
+LEAF-1A(config-ip-pfx)#seq 6 deny 172.16.0.0/12 le 32<br />
+LEAF-1A(config-ip-pfx)#seq 100 permit 0.0.0.0/0 ge 8<br />
+<br />
+Step 2: Configure the prefix list inbound to the appropriate BGP neighbor.<br />
+<br />
+LEAF-1A(config)#router bgp 65001     <br />
+LEAF-1A(config-router-bgp)#neighbor 100.2.1.1 prefix-list BOGON_v4 in</p><h2>Check Contents</h2><p>Review the Arista router configuration to verify it will reject routes of any Bogon prefixes.<br />
+<br />
+The prefix filter must be referenced inbound on the appropriate BGP neighbor statements.<br />
+<br />
+Step 1: Review the BGP Bogon Prefix Lists configured. To verify IP prefix lists are configured, execute the command &quot;show ip prefix-list&quot;.<br />
+<br />
+ip prefix-list BOGON_v4<br />
+  seq 1 deny 0.0.0.0/8 le 32<br />
+  seq 2 deny 10.0.0.0/8 le 32<br />
+  seq 3 deny 100.64.0.0/10 le 32<br />
+  seq 4 deny 127.0.0.0/8 le 32<br />
+  seq 5 deny 169.254.0.0/16 le 32<br />
+  seq 6 deny 172.16.0.0/12 le 32<br />
+  seq 100 permit 0.0.0.0/0 ge 8<br />
+<br />
+Step 2: Review the prefix lists inbound to the appropriate BGP neighbor to verify the BGP config and verify the prefix is applied. Execute the command &quot;show ip bgp nei X.2.1.1&quot;.<br />
+<br />
+router bgp 65001     <br />
+  neighbor 100.2.1.1 prefix-list BOGON_v4 in<br />
+<br />
+If the Arista router is not configured to reject or permit inbound route advertisements for any bogon prefixes, this is a finding.</p><h2>Vulnerability Number</h2><p>V-255988</p><h2>Documentable</h2><p>False</p><h2>Rule Version</h2><p>ARST-RT-000020</p><h2>Severity Override Guidance</h2><p>Review the Arista router configuration to verify it will reject routes of any Bogon prefixes.<br />
+<br />
+The prefix filter must be referenced inbound on the appropriate BGP neighbor statements.<br />
+<br />
+Step 1: Review the BGP Bogon Prefix Lists configured. To verify IP prefix lists are configured, execute the command &quot;show ip prefix-list&quot;.<br />
+<br />
+ip prefix-list BOGON_v4<br />
+  seq 1 deny 0.0.0.0/8 le 32<br />
+  seq 2 deny 10.0.0.0/8 le 32<br />
+  seq 3 deny 100.64.0.0/10 le 32<br />
+  seq 4 deny 127.0.0.0/8 le 32<br />
+  seq 5 deny 169.254.0.0/16 le 32<br />
+  seq 6 deny 172.16.0.0/12 le 32<br />
+  seq 100 permit 0.0.0.0/0 ge 8<br />
+<br />
+Step 2: Review the prefix lists inbound to the appropriate BGP neighbor to verify the BGP config and verify the prefix is applied. Execute the command &quot;show ip bgp nei X.2.1.1&quot;.<br />
+<br />
+router bgp 65001     <br />
+  neighbor 100.2.1.1 prefix-list BOGON_v4 in<br />
+<br />
+If the Arista router is not configured to reject or permit inbound route advertisements for any bogon prefixes, this is a finding.</p><h2>Check Content Reference</h2><p>M</p><h2>Target Key</h2><p>5513</p></body></html>

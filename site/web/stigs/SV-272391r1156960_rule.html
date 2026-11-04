@@ -1,0 +1,35 @@
+<!doctype html><html lang="en"><head><meta charset="utf-8"><title>STIGQter: STIG Check Details: SV-272391r1156960_rule: On the BIND 9.x server, the private key corresponding to the zone signing key (ZSK), stored on name servers accepting dynamic updates, must be group owned by named.</title><link rel="icon" type="image/svg+xml" href="STIGQter.svg" /><script async src="https://www.googletagmanager.com/gtag/js?id=UA-31381839-2"></script><script src="include.js"></script><script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-4110907817782130" crossorigin="anonymous"></script></head><body><div><img src="STIGQter.svg" alt="STIGQter" style="height:1em;" /> <a href="https://www.stigqter.com/">STIGQter</a>: <a href="main.html">STIG Summary</a>: <a href="U_BIND_9-x_STIG_V3R3_Manual-xccdf.html">BIND 9.x Security Technical Implementation Guide Version: 3 Release: 3 Benchmark Date: 01 Jul 2026</a>:</div> <h1>On the BIND 9.x server, the private key corresponding to the zone signing key (ZSK), stored on name servers accepting dynamic updates, must be group owned by named.</h1><h2>DISA Rule</h2><p>SV-272391r1156960_rule</p><h2>Vulnerability Number</h2><p>V-272391</p><h2>Group Title</h2><p>SRG-APP-000516-DNS-000111</p><h2>Rule Version</h2><p>BIND-9X-001350</p><h2>Severity</h2><p>CAT II</p><h2>CCI(s)</h2><ul><li>CCI-000366 - Implement the security configuration settings.</li></ul><h2>Weight</h2><p>10</p><h2>Fix Recommendation</h2><p>Change the group ownership of the ZSK private key to the root group account.<br />
+<br />
+# chgrp named &lt;key_file&gt;</p><h2>Check Contents</h2><p>Note: This check only verifies for ZSK key file ownership. Permissions for key files are required under BIND-9X-001132 and BIND-9X-001142.<br />
+<br />
+For each signed zone file, identify the ZSK &quot;key id&quot; number:<br />
+<br />
+# cat &lt;signed_zone_file&gt; | grep -i &quot;zsk&quot;<br />
+ZSK; alg = ECDSAP256SHA256; key id = 22335<br />
+<br />
+Using the ZSK &quot;key id&quot;, verify the private ZSK.<br />
+<br />
+Kexample.com.+008+22335.private<br />
+<br />
+Verify that the private ZSK is owned by &quot;named&quot;:<br />
+<br />
+# ls -l &lt;ZSK_key_file&gt;<br />
+-r------- 1 named named  1776 Jul 3 17:56 Kexample.com.+008+22335.private<br />
+<br />
+If the key file is not group owned by named, this is a finding.</p><h2>Vulnerability Number</h2><p>V-272391</p><h2>Documentable</h2><p>False</p><h2>Rule Version</h2><p>BIND-9X-001350</p><h2>Severity Override Guidance</h2><p>Note: This check only verifies for ZSK key file ownership. Permissions for key files are required under BIND-9X-001132 and BIND-9X-001142.<br />
+<br />
+For each signed zone file, identify the ZSK &quot;key id&quot; number:<br />
+<br />
+# cat &lt;signed_zone_file&gt; | grep -i &quot;zsk&quot;<br />
+ZSK; alg = ECDSAP256SHA256; key id = 22335<br />
+<br />
+Using the ZSK &quot;key id&quot;, verify the private ZSK.<br />
+<br />
+Kexample.com.+008+22335.private<br />
+<br />
+Verify that the private ZSK is owned by &quot;named&quot;:<br />
+<br />
+# ls -l &lt;ZSK_key_file&gt;<br />
+-r------- 1 named named  1776 Jul 3 17:56 Kexample.com.+008+22335.private<br />
+<br />
+If the key file is not group owned by named, this is a finding.</p><h2>Check Content Reference</h2><p>M</p><h2>Target Key</h2><p>5687</p></body></html>

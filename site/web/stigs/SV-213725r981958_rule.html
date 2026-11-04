@@ -1,0 +1,55 @@
+<!doctype html><html lang="en"><head><meta charset="utf-8"><title>STIGQter: STIG Check Details: SV-213725r981958_rule: DB2 must produce audit records of its enforcement of access restrictions associated with changes to the configuration of DB2 or database(s).</title><link rel="icon" type="image/svg+xml" href="STIGQter.svg" /><script async src="https://www.googletagmanager.com/gtag/js?id=UA-31381839-2"></script><script src="include.js"></script><script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-4110907817782130" crossorigin="anonymous"></script></head><body><div><img src="STIGQter.svg" alt="STIGQter" style="height:1em;" /> <a href="https://www.stigqter.com/">STIGQter</a>: <a href="main.html">STIG Summary</a>: <a href="U_IBM_DB2_V10-5_LUW_STIG_V2R2_Manual-xccdf.html">IBM DB2 V10.5 LUW Security Technical Implementation Guide Version: 2 Release: 2 Benchmark Date: 01 Jul 2026</a>:</div> <h1>DB2 must produce audit records of its enforcement of access restrictions associated with changes to the configuration of DB2 or database(s).</h1><h2>DISA Rule</h2><p>SV-213725r981958_rule</p><h2>Vulnerability Number</h2><p>V-213725</p><h2>Group Title</h2><p>SRG-APP-000381-DB-000361</p><h2>Rule Version</h2><p>DB2X-00-008200</p><h2>Severity</h2><p>CAT II</p><h2>CCI(s)</h2><ul><li>CCI-000366 - Implement the security configuration settings.</li></ul><h2>Weight</h2><p>10</p><h2>Fix Recommendation</h2><p>Run the following command to set the auditing at the instance level: <br />
+<br />
+     $db2audit configure scope sysadmin status both error type audit<br />
+<br />
+Run the following command to set the auditing at the database level: <br />
+DB2&gt; CREATE AUDIT POLICY &lt;DB audit policy name&gt; CATEGORIES SYSADMIN STATUS BOTH, CONTEXT STATUS BOTH ERROR TYPE AUDIT<br />
+<br />
+Run the following command if the auditing policy exists but does not include the sysadmin category: <br />
+DB2&gt; ALTER AUDIT POLICY &lt;DB audit policy name&gt; SYSADMIN STATUS BOTH, CONTEXT STATUS BOTH ERROR TYPE AUDIT <br />
+<br />
+If CREATE was used above, apply the policy created above to the database: <br />
+DB2&gt; AUDIT DATABASE USING POLICY &lt;DB audit policy name&gt;<br />
+<br />
+Note: See the following page for knowledgebase information regarding the ALTER AUDIT POLICY: <br />
+http://www.ibm.com/support/knowledgecenter/SSEPGG_10.5.0/com.ibm.db2.luw.sql.ref.doc/doc/r0050608.html?lang=en</p><h2>Check Contents</h2><p>To audit changes in configuration, the SYSADMIN category needs to be audited at both the instance level and the database level.<br />
+<br />
+Run the following command to ensure that the SYSADMIN category is being audited at the instance level: <br />
+<br />
+     $db2audit describe<br />
+<br />
+If Log system administrator events is not set to “Both”, this is a finding.<br />
+<br />
+Run the following SQL statement to ensure that an audit policy exists at the database level: <br />
+DB2&gt; SELECT AUDITPOLICYNAME, AUDITPOLICYID <br />
+           FROM SYSCAT.AUDITUSE <br />
+           WHERE OBJECTTYPE = ' '<br />
+<br />
+If no rows are returned, this is a finding.<br />
+<br />
+For the audit policy returned in the statement above, run the following SQL statement to confirm that the SYSADMIN category is part of that policy and the ERROR TYPE='A': <br />
+DB2&gt; SELECT AUDITPOLICYNAME, SYSADMINSTATUS, CONTEXTSTATUS, ERRORTYPE AS ERRORTYPE <br />
+           FROM SYSCAT.AUDITPOLICIES <br />
+           WHERE AUDITPOLICYID = &lt;audit policy ID&gt;<br />
+<br />
+If the values for SYSADMINSTATUS and CONTEXTSTATUS are not 'B' (Both) or ERRORTYPE is not 'A' (Audit), this is a finding.</p><h2>Vulnerability Number</h2><p>V-213725</p><h2>Documentable</h2><p>False</p><h2>Rule Version</h2><p>DB2X-00-008200</p><h2>Severity Override Guidance</h2><p>To audit changes in configuration, the SYSADMIN category needs to be audited at both the instance level and the database level.<br />
+<br />
+Run the following command to ensure that the SYSADMIN category is being audited at the instance level: <br />
+<br />
+     $db2audit describe<br />
+<br />
+If Log system administrator events is not set to “Both”, this is a finding.<br />
+<br />
+Run the following SQL statement to ensure that an audit policy exists at the database level: <br />
+DB2&gt; SELECT AUDITPOLICYNAME, AUDITPOLICYID <br />
+           FROM SYSCAT.AUDITUSE <br />
+           WHERE OBJECTTYPE = ' '<br />
+<br />
+If no rows are returned, this is a finding.<br />
+<br />
+For the audit policy returned in the statement above, run the following SQL statement to confirm that the SYSADMIN category is part of that policy and the ERROR TYPE='A': <br />
+DB2&gt; SELECT AUDITPOLICYNAME, SYSADMINSTATUS, CONTEXTSTATUS, ERRORTYPE AS ERRORTYPE <br />
+           FROM SYSCAT.AUDITPOLICIES <br />
+           WHERE AUDITPOLICYID = &lt;audit policy ID&gt;<br />
+<br />
+If the values for SYSADMINSTATUS and CONTEXTSTATUS are not 'B' (Both) or ERRORTYPE is not 'A' (Audit), this is a finding.</p><h2>Check Content Reference</h2><p>M</p><h2>Target Key</h2><p>3989</p></body></html>

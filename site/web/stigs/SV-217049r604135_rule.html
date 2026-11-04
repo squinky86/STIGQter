@@ -1,0 +1,304 @@
+<!doctype html><html lang="en"><head><meta charset="utf-8"><title>STIGQter: STIG Check Details: SV-217049r604135_rule: The Juniper router must be configured to only permit management traffic that ingresses and egresses the OOBM interface.</title><link rel="icon" type="image/svg+xml" href="STIGQter.svg" /><script async src="https://www.googletagmanager.com/gtag/js?id=UA-31381839-2"></script><script src="include.js"></script><script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-4110907817782130" crossorigin="anonymous"></script></head><body><div><img src="STIGQter.svg" alt="STIGQter" style="height:1em;" /> <a href="https://www.stigqter.com/">STIGQter</a>: <a href="main.html">STIG Summary</a>: <a href="U_Juniper_Router_RTR_STIG_V3R2_Manual-xccdf.html">Juniper Router RTR Security Technical Implementation Guide Version: 3 Release: 2 Benchmark Date: 30 Jan 2025</a>:</div> <h1>The Juniper router must be configured to only permit management traffic that ingresses and egresses the OOBM interface.</h1><h2>DISA Rule</h2><p>SV-217049r604135_rule</p><h2>Vulnerability Number</h2><p>V-217049</p><h2>Group Title</h2><p>SRG-NET-000205-RTR-000012</p><h2>Rule Version</h2><p>JUNI-RT-000440</p><h2>Severity</h2><p>CAT II</p><h2>CCI(s)</h2><ul><li>CCI-001097 - Monitor and control communications at the external managed interfaces to the system and at key managed interfaces within the system.</li></ul><h2>Weight</h2><p>10</p><h2>Fix Recommendation</h2><p>If the management interface is not a dedicated OOBM interface, it must be configured with both an ingress and egress filter.<br />
+<br />
+Configure an inbound filter a shown in the example below.<br />
+<br />
+[edit firewall family inet]<br />
+set filter OOBM_INBOUND term ALLOW_SNMP from protocol udp port snmp<br />
+set filter OOBM_INBOUND term ALLOW_SNMP then accept<br />
+set filter OOBM_INBOUND term ALLOW_TACACS from protocol tcp port tacacs<br />
+set filter OOBM_INBOUND term ALLOW_TACACS then accept<br />
+set filter OOBM_INBOUND term ALLOW_SSH from protocol tcp port ssh<br />
+set filter OOBM_INBOUND term ALLOW_SSH then accept<br />
+set filter OOBM_INBOUND term ALLOW_NTP from protocol udp port ntp<br />
+set filter OOBM_INBOUND term ALLOW_NTP then accept<br />
+set filter OOBM_INBOUND term ALLOW_ICMP from protocol icmp<br />
+set filter OOBM_INBOUND term ALLOW_ICMP then accept<br />
+set filter OOBM_INBOUND term DENY_OTHER then syslog discard<br />
+<br />
+Configure an outbound filter a shown in the example below.<br />
+<br />
+set filter OOBM_OUTBOUND term ALLOW_SNMP from protocol udp port [snmp snmptrap]<br />
+set filter OOBM_OUTBOUND term ALLOW_SNMP then accept<br />
+set filter OOBM_OUTBOUND term ALLOW_TACACS from protocol tcp port tacacs<br />
+set filter OOBM_OUTBOUND term ALLOW_TACACS then accept<br />
+set filter OOBM_OUTBOUND term ALLOW_SSH from protocol tcp port ssh<br />
+set filter OOBM_OUTBOUND term ALLOW_SSH then accept<br />
+set filter OOBM_OUTBOUND term ALLOW_NTP from protocol udp port ntp<br />
+set filter OOBM_OUTBOUND term ALLOW_NTP then accept<br />
+set filter OOBM_OUTBOUND term ALLOW_SYSLOG from protocol udp port <br />
+set filter OOBM_OUTBOUND term ALLOW_SYSLOG then accept<br />
+set filter OOBM_OUTBOUND term ALLOW_NETFLOW from protocol udp port [2055 9995 9996]<br />
+set filter OOBM_OUTBOUND term ALLOW_NETFLOW then accept<br />
+set filter OOBM_OUTBOUND term DENY_OTHER then syslog discard<br />
+<br />
+Apply the filters to the OOBM interfaces.<br />
+<br />
+[edit interfaces ge-0/0/0  unit 0 family inet]<br />
+set filter input OOBM_INBOUND<br />
+set filter output OOBM_OUTBOUND</p><h2>Check Contents</h2><p>Verify that the managed interface has an inbound and outbound filter configured. <br />
+<br />
+interfaces {<br />
+    …<br />
+    …<br />
+    …<br />
+    ge-0/0/0 {<br />
+        description &quot;OOBM Network&quot;;<br />
+        unit 0 {<br />
+            family inet {<br />
+                filter {<br />
+                    input OOBM_INBOUND;<br />
+                    output OOBM_OUTBOUND;<br />
+                }<br />
+                address 10.2.14.1/24;<br />
+            }<br />
+        }<br />
+    }<br />
+<br />
+Verify that the ingress filter only allows management and ICMP traffic. <br />
+<br />
+firewall {<br />
+    family inet {<br />
+        …<br />
+        …<br />
+        …<br />
+        filter OOBM_INBOUND {<br />
+            term ALLOW_SNMP {<br />
+                from {<br />
+                    protocol udp;<br />
+                    port snmp;<br />
+                }<br />
+                then accept;<br />
+            }<br />
+            term ALLOW_TACACS {<br />
+                from {<br />
+                    protocol tcp;<br />
+                    port tacacs;<br />
+                }<br />
+                then accept;<br />
+            }<br />
+            term ALLOW_ICMP {<br />
+                from {<br />
+                    protocol icmp;<br />
+                }<br />
+                then accept;<br />
+            }<br />
+            term ALLOW_SSH {<br />
+                from {<br />
+                    protocol tcp;<br />
+                    port ssh;<br />
+                }<br />
+                then accept;<br />
+            }<br />
+            term ALLOW_NTP {<br />
+                from {<br />
+                    protocol tcp;<br />
+                    port ntp;<br />
+                }<br />
+                then accept;<br />
+            }<br />
+            term DENY_OTHER {<br />
+                then {<br />
+                    syslog;<br />
+                    discard;<br />
+                }<br />
+            }<br />
+        }<br />
+    }<br />
+}<br />
+<br />
+Verify that the ingress filter only allows management and ICMP traffic. <br />
+<br />
+firewall {<br />
+    family inet {<br />
+        …<br />
+        …<br />
+        …<br />
+        filter OOBM_OUTBOUND {<br />
+            term ALLOW_SNMP {<br />
+                from {<br />
+                    protocol udp;<br />
+                    port [ snmp snmptrap ];<br />
+                }<br />
+                then accept;<br />
+            }<br />
+            term ALLOW_TACACS {<br />
+                from {<br />
+                    protocol tcp;<br />
+                    port tacacs;<br />
+                }<br />
+                then accept;<br />
+            }<br />
+            term ALLOW_SSH {<br />
+                from {<br />
+                    protocol tcp;<br />
+                    port ssh;<br />
+                }<br />
+                then accept;<br />
+            }<br />
+            term ALLOW_NTP {<br />
+                from {<br />
+                    protocol udp;<br />
+                    port ntp;<br />
+                }<br />
+                then accept;<br />
+            }<br />
+            term ALLOW_SYSLOG {<br />
+                from {<br />
+                    protocol udp;<br />
+                    port syslog;<br />
+                }<br />
+                then accept;<br />
+            }<br />
+            term ALLOW_NETFLOW {<br />
+                from {<br />
+                    protocol udp;<br />
+                    port [ 2055 9995 9996 ];<br />
+                }<br />
+                then accept;<br />
+            }<br />
+            term DENY_OTHER {<br />
+                then {<br />
+                    syslog;<br />
+                    discard;<br />
+                }<br />
+            }<br />
+        }<br />
+    }<br />
+}<br />
+<br />
+Caveat: If the management interface is a true OOBM interface, this requirement is not applicable.<br />
+<br />
+If the router does not restrict traffic that ingresses and egresses the management interface, this is a finding.</p><h2>Vulnerability Number</h2><p>V-217049</p><h2>Documentable</h2><p>False</p><h2>Rule Version</h2><p>JUNI-RT-000440</p><h2>Severity Override Guidance</h2><p>Verify that the managed interface has an inbound and outbound filter configured. <br />
+<br />
+interfaces {<br />
+    …<br />
+    …<br />
+    …<br />
+    ge-0/0/0 {<br />
+        description &quot;OOBM Network&quot;;<br />
+        unit 0 {<br />
+            family inet {<br />
+                filter {<br />
+                    input OOBM_INBOUND;<br />
+                    output OOBM_OUTBOUND;<br />
+                }<br />
+                address 10.2.14.1/24;<br />
+            }<br />
+        }<br />
+    }<br />
+<br />
+Verify that the ingress filter only allows management and ICMP traffic. <br />
+<br />
+firewall {<br />
+    family inet {<br />
+        …<br />
+        …<br />
+        …<br />
+        filter OOBM_INBOUND {<br />
+            term ALLOW_SNMP {<br />
+                from {<br />
+                    protocol udp;<br />
+                    port snmp;<br />
+                }<br />
+                then accept;<br />
+            }<br />
+            term ALLOW_TACACS {<br />
+                from {<br />
+                    protocol tcp;<br />
+                    port tacacs;<br />
+                }<br />
+                then accept;<br />
+            }<br />
+            term ALLOW_ICMP {<br />
+                from {<br />
+                    protocol icmp;<br />
+                }<br />
+                then accept;<br />
+            }<br />
+            term ALLOW_SSH {<br />
+                from {<br />
+                    protocol tcp;<br />
+                    port ssh;<br />
+                }<br />
+                then accept;<br />
+            }<br />
+            term ALLOW_NTP {<br />
+                from {<br />
+                    protocol tcp;<br />
+                    port ntp;<br />
+                }<br />
+                then accept;<br />
+            }<br />
+            term DENY_OTHER {<br />
+                then {<br />
+                    syslog;<br />
+                    discard;<br />
+                }<br />
+            }<br />
+        }<br />
+    }<br />
+}<br />
+<br />
+Verify that the ingress filter only allows management and ICMP traffic. <br />
+<br />
+firewall {<br />
+    family inet {<br />
+        …<br />
+        …<br />
+        …<br />
+        filter OOBM_OUTBOUND {<br />
+            term ALLOW_SNMP {<br />
+                from {<br />
+                    protocol udp;<br />
+                    port [ snmp snmptrap ];<br />
+                }<br />
+                then accept;<br />
+            }<br />
+            term ALLOW_TACACS {<br />
+                from {<br />
+                    protocol tcp;<br />
+                    port tacacs;<br />
+                }<br />
+                then accept;<br />
+            }<br />
+            term ALLOW_SSH {<br />
+                from {<br />
+                    protocol tcp;<br />
+                    port ssh;<br />
+                }<br />
+                then accept;<br />
+            }<br />
+            term ALLOW_NTP {<br />
+                from {<br />
+                    protocol udp;<br />
+                    port ntp;<br />
+                }<br />
+                then accept;<br />
+            }<br />
+            term ALLOW_SYSLOG {<br />
+                from {<br />
+                    protocol udp;<br />
+                    port syslog;<br />
+                }<br />
+                then accept;<br />
+            }<br />
+            term ALLOW_NETFLOW {<br />
+                from {<br />
+                    protocol udp;<br />
+                    port [ 2055 9995 9996 ];<br />
+                }<br />
+                then accept;<br />
+            }<br />
+            term DENY_OTHER {<br />
+                then {<br />
+                    syslog;<br />
+                    discard;<br />
+                }<br />
+            }<br />
+        }<br />
+    }<br />
+}<br />
+<br />
+Caveat: If the management interface is a true OOBM interface, this requirement is not applicable.<br />
+<br />
+If the router does not restrict traffic that ingresses and egresses the management interface, this is a finding.</p><h2>Check Content Reference</h2><p>M</p><h2>Target Key</h2><p>4032</p></body></html>

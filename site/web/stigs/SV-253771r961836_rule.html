@@ -1,0 +1,114 @@
+<!doctype html><html lang="en"><head><meta charset="utf-8"><title>STIGQter: STIG Check Details: SV-253771r961836_rule: MariaDB must generate audit records when unsuccessful accesses to objects occur.</title><link rel="icon" type="image/svg+xml" href="STIGQter.svg" /><script async src="https://www.googletagmanager.com/gtag/js?id=UA-31381839-2"></script><script src="include.js"></script><script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-4110907817782130" crossorigin="anonymous"></script></head><body><div><img src="STIGQter.svg" alt="STIGQter" style="height:1em;" /> <a href="https://www.stigqter.com/">STIGQter</a>: <a href="main.html">STIG Summary</a>: <a href="U_MariaDB_Enterprise_10-x_STIG_V2R5_Manual-xccdf.html">MariaDB Enterprise 10.x Security Technical Implementation Guide Version: 2 Release: 5 Benchmark Date: 01 Apr 2026</a>:</div> <h1>MariaDB must generate audit records when unsuccessful accesses to objects occur.</h1><h2>DISA Rule</h2><p>SV-253771r961836_rule</p><h2>Vulnerability Number</h2><p>V-253771</p><h2>Group Title</h2><p>SRG-APP-000507-DB-000357</p><h2>Rule Version</h2><p>MADB-10-011900</p><h2>Severity</h2><p>CAT II</p><h2>CCI(s)</h2><ul><li>CCI-000172 - Generate audit records for the event types defined in AU-2 c that include the audit record content defined in AU-3.</li></ul><h2>Weight</h2><p>10</p><h2>Fix Recommendation</h2><p>If the MariaDB Enterprise Audit plugin is not active, enable it in one of the two following ways. <br />
+<br />
+1. Config file (requires restart): <br />
+<br />
+[mariadb]<br />
+server_audit_logging = ON<br />
+<br />
+2. SQL (does not require restart): <br />
+<br />
+MariaDB&gt; SET GLOBAL server_audit_logging=ON;<br />
+<br />
+Once the MariaDB Enterprise Audit plugin is loaded, verify the MariaDB Enterprise Audit plugin is loaded and actively logging:<br />
+<br />
+MariaDB&gt; SHOW GLOBAL STATUS LIKE 'Server_audit_active';<br />
+<br />
+If the necessary auditing is not in place for all or specific users, modify the filters. <br />
+<br />
+To modify the default filter, delete and recreate: <br />
+<br />
+MariaDB&gt; DELETE FROM mysql.server_audit_filters WHERE filtername = 'default';<br />
+<br />
+MariaDB&gt; INSERT INTO mysql.server_audit_filters (filtername, rule)<br />
+   VALUES ('default',<br />
+      JSON_COMPACT(<br />
+         '{<br />
+            &quot;logging&quot;:&quot;ON&quot;,<br />
+            &quot;connect_event&quot;:&quot;ALL&quot;,<br />
+            &quot;query_event&quot;:&quot;ALL&quot;,<br />
+            &quot;table_event&quot;:&quot;ALL&quot;<br />
+         }'<br />
+      ));<br />
+<br />
+Specific objects can be added to filters with inclusion or exclusion. <br />
+<br />
+ignore_databases: Do not log actions on these databases. <br />
+ignore_tables: Do not log actions on these tables. <br />
+databases: Log actions on these databases.<br />
+tables: Log actions on these tables.<br />
+<br />
+Example: <br />
+<br />
+MariaDB&gt; INSERT INTO mysql.server_audit_filters (filtername, rule)<br />
+   VALUES (<br />
+       'reporting',<br />
+       JSON_COMPACT(<br />
+          '{<br />
+              &quot;tables&quot;: [<br />
+                  &quot;production.*&quot;,<br />
+                  &quot;reporting.*&quot;,<br />
+                  {<br />
+                     &quot;table_event&quot;: [<br />
+                         &quot;WRITE&quot;,<br />
+                         &quot;CREATE&quot;,<br />
+                         &quot;DROP&quot;,<br />
+                         &quot;RENAME&quot;,<br />
+                         &quot;ALTER&quot;<br />
+                     ],<br />
+                     &quot;query_event&quot;: [<br />
+                         &quot;DML&quot;,<br />
+                         &quot;DDL&quot;,<br />
+                         {<br />
+                             &quot;ignore_tables&quot;: [<br />
+                                 &quot;production.customer_profiles&quot;,<br />
+                                 &quot;production.customer_addresses&quot;<br />
+                             ]<br />
+                         }<br />
+                     ]<br />
+                  }<br />
+              ]<br />
+          }'<br />
+       )<br />
+    );</p><h2>Check Contents</h2><p>Verify the MariaDB Enterprise Audit plugin is loaded and actively logging:<br />
+<br />
+MariaDB&gt; SHOW GLOBAL STATUS LIKE 'Server_audit_active';<br />
+<br />
+Default Audit Filter is applied to all users by default. <br />
+<br />
+Named Audit Filters are assigned to specific users. <br />
+<br />
+Check what filters are in place by running the following as an administrative user: <br />
+<br />
+MariaDB&gt; SELECT * FROM mysql.server_audit_filters;<br />
+<br />
+Check what Named Audit Filters are assigned to what users: <br />
+<br />
+MariaDB&gt; SELECT sau.host, sau.user, saf.filtername,<br />
+   JSON_DETAILED(saf.rule)<br />
+FROM mysql.server_audit_filters saf<br />
+JOIN mysql.server_audit_users sau<br />
+   ON saf.filtername = sau.filtername<br />
+WHERE saf.filtername != 'default'\G<br />
+<br />
+If the MariaDB Enterprise Audit plugin is not active and/or necessary auditing is not in place, this is a finding.</p><h2>Vulnerability Number</h2><p>V-253771</p><h2>Documentable</h2><p>False</p><h2>Rule Version</h2><p>MADB-10-011900</p><h2>Severity Override Guidance</h2><p>Verify the MariaDB Enterprise Audit plugin is loaded and actively logging:<br />
+<br />
+MariaDB&gt; SHOW GLOBAL STATUS LIKE 'Server_audit_active';<br />
+<br />
+Default Audit Filter is applied to all users by default. <br />
+<br />
+Named Audit Filters are assigned to specific users. <br />
+<br />
+Check what filters are in place by running the following as an administrative user: <br />
+<br />
+MariaDB&gt; SELECT * FROM mysql.server_audit_filters;<br />
+<br />
+Check what Named Audit Filters are assigned to what users: <br />
+<br />
+MariaDB&gt; SELECT sau.host, sau.user, saf.filtername,<br />
+   JSON_DETAILED(saf.rule)<br />
+FROM mysql.server_audit_filters saf<br />
+JOIN mysql.server_audit_users sau<br />
+   ON saf.filtername = sau.filtername<br />
+WHERE saf.filtername != 'default'\G<br />
+<br />
+If the MariaDB Enterprise Audit plugin is not active and/or necessary auditing is not in place, this is a finding.</p><h2>Check Content Reference</h2><p>M</p><h2>Target Key</h2><p>5475</p></body></html>

@@ -1,0 +1,146 @@
+<!doctype html><html lang="en"><head><meta charset="utf-8"><title>STIGQter: STIG Check Details: SV-283916r1203997_rule: The Nokia router providing connectivity to the Network Operations Center (NOC) must be configured to forward all in-band management traffic via a Media Access Control Security (MACsec) tunnel.</title><link rel="icon" type="image/svg+xml" href="STIGQter.svg" /><script async src="https://www.googletagmanager.com/gtag/js?id=UA-31381839-2"></script><script src="include.js"></script><script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-4110907817782130" crossorigin="anonymous"></script></head><body><div><img src="STIGQter.svg" alt="STIGQter" style="height:1em;" /> <a href="https://www.stigqter.com/">STIGQter</a>: <a href="main.html">STIG Summary</a>: <a href="U_Nokia_SR_OS_25-x_RTR_V1R1_STIG_Manual-xccdf.html">Nokia Service Router OS 25.x Router Security Technical Implementation Guide Version: 1 Release: 1 Benchmark Date: 28 Apr 2026</a>:</div> <h1>The Nokia router providing connectivity to the Network Operations Center (NOC) must be configured to forward all in-band management traffic via a Media Access Control Security (MACsec) tunnel.</h1><h2>DISA Rule</h2><p>SV-283916r1203997_rule</p><h2>Vulnerability Number</h2><p>V-283916</p><h2>Group Title</h2><p>SRG-NET-000205-RTR-000013</p><h2>Rule Version</h2><p>NOKI-RT-001080</p><h2>Severity</h2><p>CAT II</p><h2>CCI(s)</h2><ul><li>CCI-001097 - Monitor and control communications at the external managed interfaces to the system and at key managed interfaces within the system.</li></ul><h2>Weight</h2><p>10</p><h2>Fix Recommendation</h2><p>Configure the connection association using the example below: <br />
+<br />
+- configure macsec connectivity-association &quot;FJM-MACsec1&quot;<br />
+- config&gt;macsec&gt;connectivity-association# clear-tag-mode single-tag<br />
+- config&gt;macsec&gt;connectivity-association# replay-window-size 2<br />
+- config&gt;macsec&gt;connectivity-association# replay-protection<br />
+- config&gt;macsec&gt;connectivity-association# cipher-suite gcm-aes-256<br />
+- config&gt;macsec&gt;connectivity-association# static-cak<br />
+- config&gt;macsec&gt;conn-assoc&gt;static-cak# pre-shared-key 1 encryption-type aes-256-cmac create<br />
+- config&gt;macsec&gt;conn-assoc&gt;static-cak&gt;pre-shared-key# cak wrlzKvncyuYlYKdRwW3SEUPnGZ6y4qPMTlmCZ0QvnOIx66eDgHY57Q27QnvLiy/x hash2<br />
+- config&gt;macsec&gt;conn-assoc&gt;static-cak&gt;pre-shared-key# ckn dead123456789012345678901234567890123456789012345678901234567890<br />
+- config&gt;macsec&gt;conn-assoc&gt;static-cak&gt;pre-shared-key# exit<br />
+- config&gt;macsec&gt;conn-assoc&gt;static-cak# pre-shared-key 2 encryption-type aes-256-cmac create<br />
+- config&gt;macsec&gt;conn-assoc&gt;static-cak&gt;pre-shared-key# cak 6aF8QgBi/cWEa9SiYTxte38+RqnQLgeMQemd0PjWb61P2kPOg5Pc9clNySHiwfmA hash2<br />
+- config&gt;macsec&gt;conn-assoc&gt;static-cak&gt;pre-shared-key# ckn beef123456789012345678901234567890123456789012345678901234567890<br />
+- config&gt;macsec&gt;conn-assoc&gt;static-cak&gt;pre-shared-key# exit<br />
+- config&gt;macsec&gt;conn-assoc&gt;static-cak# active-psk 2<br />
+- config&gt;macsec&gt;conn-assoc&gt;static-cak# mka-key-server-priority 1<br />
+- config&gt;macsec&gt;conn-assoc&gt;static-cak# exit<br />
+- config&gt;macsec&gt;connectivity-association# no shutdown<br />
+- config&gt;macsec&gt;connectivity-association# exit all<br />
+<br />
+Configure the port using the example below: <br />
+<br />
+- configure port 1/1/c15/1<br />
+- config&gt;port# ethernet dot1x<br />
+- config&gt;port&gt;ethernet&gt;dot1x# macsec<br />
+- config&gt;port&gt;ethernet&gt;dot1x&gt;macsec# sub-port 1 create<br />
+- config&gt;port&gt;ethernet&gt;dot1x&gt;macsec&gt;sub-port# ca-name FJM-MACsec1                                                                                                                                                                                                                                         <br />
+- config&gt;port&gt;ethernet&gt;dot1x&gt;macsec&gt;sub-port# encap-match single-tag 10<br />
+- config&gt;port&gt;ethernet&gt;dot1x&gt;macsec&gt;sub-port# max-peer 1<br />
+- config&gt;port&gt;ethernet&gt;dot1x&gt;macsec&gt;sub-port# no shutdown<br />
+- config&gt;port&gt;ethernet&gt;dot1x&gt;macsec&gt;sub-port# exit<br />
+- config&gt;port&gt;ethernet&gt;dot1x&gt;macsec# exit<br />
+- config&gt;port&gt;ethernet&gt;dot1x# no shutdown<br />
+- config&gt;port&gt;ethernet&gt;dot1x# exit<br />
+- config&gt;port# no shutdown<br />
+- config&gt;port# exit all</p><h2>Check Contents</h2><p>Verify the connection association using the command below: <br />
+<br />
+- show macsec connectivity-association &quot;FJM-MACsec1&quot; detail<br />
+<br />
+Connectivity Association &quot;FJM-MACsec1&quot;<br />
+Admin State        : Up<br />
+Description        : FJM-MACsec1<br />
+Delay Protection   : Disabled<br />
+Replay Protection  : Enabled<br />
+Replay Window Size : 2<br />
+Macsec Encrypt     : Enabled<br />
+Clear Tag Mode     : single-tag<br />
+Cipher Suite       : gcm-aes-256<br />
+Encryption Offset  : 0<br />
+Assigned ports     : 1/1/c15/1:1 <br />
+<br />
+-------------------------------------------------------------------------------<br />
+Static Cak<br />
+-------------------------------------------------------------------------------<br />
+MKA Key Server Priority      : 1<br />
+Active Pre-Shared-Key Index  : 2<br />
+Hello Interval               : 2<br />
+Active Pre-Shared-Key CKN    : beef12345678901234567890123456789012345678901234<br />
+                               5678901234567890<br />
+Encryption Type              : aes-256-cmac<br />
+<br />
+Verify macsec mks-session using the command below: <br />
+<br />
+- show macsec mka-session port 1/1/c15/1 detail<br />
+<br />
+MKA Session for port 1/1/c15/1: sub-port 1 encap :10<br />
+<br />
+Security Zone      : 14<br />
+CA Name            : FJM-MACsec1<br />
+MKA Oper State     : in-service<br />
+Oper Cipher Suite  : gcm-aes-256<br />
+Oper Encrypt Offset: 0<br />
+CAK Name           : beef123456789012345678901234567890123456789012345678901234<br />
+                     567890<br />
+MKA Member ID      : 8ec720196e42d3ab16921210<br />
+Transmit Interval  : 2000<br />
+Outbound SCI       : 0031263b8cc40001<br />
+MKA Encapsulation  : :10<br />
+Message Number     : 501<br />
+Key Number         : 3<br />
+Key Server         : no<br />
+Key Server Priority: 1<br />
+Latest SAK AN      : 2<br />
+Latest SAK KI      : dcf5a9fd6e055c47744f276c00000003<br />
+Latest SAK LPN     : 1<br />
+Previous SAK AN    : 0<br />
+Previous SAK KI    : 00000000000000000000000000000000<br />
+Previous SAK LPN   : 0<br />
+<br />
+If the management traffic is not secured via MACsec tunnel, this is a finding.</p><h2>Vulnerability Number</h2><p>V-283916</p><h2>Documentable</h2><p>False</p><h2>Rule Version</h2><p>NOKI-RT-001080</p><h2>Severity Override Guidance</h2><p>Verify the connection association using the command below: <br />
+<br />
+- show macsec connectivity-association &quot;FJM-MACsec1&quot; detail<br />
+<br />
+Connectivity Association &quot;FJM-MACsec1&quot;<br />
+Admin State        : Up<br />
+Description        : FJM-MACsec1<br />
+Delay Protection   : Disabled<br />
+Replay Protection  : Enabled<br />
+Replay Window Size : 2<br />
+Macsec Encrypt     : Enabled<br />
+Clear Tag Mode     : single-tag<br />
+Cipher Suite       : gcm-aes-256<br />
+Encryption Offset  : 0<br />
+Assigned ports     : 1/1/c15/1:1 <br />
+<br />
+-------------------------------------------------------------------------------<br />
+Static Cak<br />
+-------------------------------------------------------------------------------<br />
+MKA Key Server Priority      : 1<br />
+Active Pre-Shared-Key Index  : 2<br />
+Hello Interval               : 2<br />
+Active Pre-Shared-Key CKN    : beef12345678901234567890123456789012345678901234<br />
+                               5678901234567890<br />
+Encryption Type              : aes-256-cmac<br />
+<br />
+Verify macsec mks-session using the command below: <br />
+<br />
+- show macsec mka-session port 1/1/c15/1 detail<br />
+<br />
+MKA Session for port 1/1/c15/1: sub-port 1 encap :10<br />
+<br />
+Security Zone      : 14<br />
+CA Name            : FJM-MACsec1<br />
+MKA Oper State     : in-service<br />
+Oper Cipher Suite  : gcm-aes-256<br />
+Oper Encrypt Offset: 0<br />
+CAK Name           : beef123456789012345678901234567890123456789012345678901234<br />
+                     567890<br />
+MKA Member ID      : 8ec720196e42d3ab16921210<br />
+Transmit Interval  : 2000<br />
+Outbound SCI       : 0031263b8cc40001<br />
+MKA Encapsulation  : :10<br />
+Message Number     : 501<br />
+Key Number         : 3<br />
+Key Server         : no<br />
+Key Server Priority: 1<br />
+Latest SAK AN      : 2<br />
+Latest SAK KI      : dcf5a9fd6e055c47744f276c00000003<br />
+Latest SAK LPN     : 1<br />
+Previous SAK AN    : 0<br />
+Previous SAK KI    : 00000000000000000000000000000000<br />
+Previous SAK LPN   : 0<br />
+<br />
+If the management traffic is not secured via MACsec tunnel, this is a finding.</p><h2>Check Content Reference</h2><p>M</p><h2>Target Key</h2><p>5746</p></body></html>

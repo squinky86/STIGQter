@@ -1,0 +1,78 @@
+<!doctype html><html lang="en"><head><meta charset="utf-8"><title>STIGQter: STIG Check Details: SV-278400r1172752_rule: NGINX must accept Personal Identity Verification (PIV) credentials.</title><link rel="icon" type="image/svg+xml" href="STIGQter.svg" /><script async src="https://www.googletagmanager.com/gtag/js?id=UA-31381839-2"></script><script src="include.js"></script><script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-4110907817782130" crossorigin="anonymous"></script></head><body><div><img src="STIGQter.svg" alt="STIGQter" style="height:1em;" /> <a href="https://www.stigqter.com/">STIGQter</a>: <a href="main.html">STIG Summary</a>: <a href="U_F5_NGINX_STIG_V1R1_Manual-xccdf.html">F5 NGINX Security Technical Implementation Guide Version: 1 Release: 1 Benchmark Date: 25 Nov 2025</a>:</div> <h1>NGINX must accept Personal Identity Verification (PIV) credentials.</h1><h2>DISA Rule</h2><p>SV-278400r1172752_rule</p><h2>Vulnerability Number</h2><p>V-278400</p><h2>Group Title</h2><p>SRG-APP-000391</p><h2>Rule Version</h2><p>NGNX-APP-001650</p><h2>Severity</h2><p>CAT II</p><h2>CCI(s)</h2><ul><li>CCI-001953 - Accepts Personal Identity Verification-compliant credentials.</li><li>CCI-001954 - Electronically verifies Personal Identity Verification-compliant credentials.</li><li>CCI-002009 - Accept Personal Identity Verification-compliant credentials from other federal agencies.</li><li>CCI-002010 - Electronically verify Personal Identity Verification-compliant credentials from other federal agencies.</li></ul><h2>Weight</h2><p>10</p><h2>Fix Recommendation</h2><p>NGINX installs OpenSSL by default. If not installed, follow the OS documentation.<br />
+<br />
+Include the following lines in the server {} block of nginx.conf:<br />
+<br />
+ ssl_certificate /etc/nginx/ssl/server_cert.pem;<br />
+ ssl_certificate_key /etc/nginx/ssl/server_key.pem;<br />
+ # Enable client certificate verification<br />
+ ssl_client_certificate /etc/nginx/ca_cert.pem;<br />
+ ssl_verify_client on;<br />
+ # Optional: Set verification depth for client certificates<br />
+ ssl_verify_depth 2;<br />
+ location / {<br />
+  proxy_pass http://backend_service;<br />
+  # Restrict access to valid PIV credentials<br />
+  if ($ssl_client_verify != SUCCESS) {<br />
+   return 403;<br />
+  }<br />
+ }<br />
+<br />
+Save and exit. Restart NGINX after modifying the configuration:<br />
+<br />
+# nginx -s reload</p><h2>Check Contents</h2><p>Determine path to NGINX config file:<br />
+<br />
+# nginx -qT | grep &quot;# configuration&quot;<br />
+# configuration file /etc/nginx/nginx.conf:<br />
+<br />
+Note: The default NGINX configuration is &quot;/etc/nginx/nginx.conf&quot;, though various files may also be included.<br />
+<br />
+Check that the nginx.conf file has the SSL Certificate/Key installed, the SSL Client Certificate is present, and SSL Verify is configured.<br />
+<br />
+server {<br />
+ listen 443 ssl;<br />
+ server_name example.com;<br />
+ ssl_certificate /etc/nginx/ssl/server_cert.pem;<br />
+ ssl_certificate_key /etc/nginx/ssl/server_key.pem;<br />
+ # Enable client certificate verification<br />
+ ssl_client_certificate /etc/nginx/ca_cert.pem;<br />
+ ssl_verify_client on;<br />
+ # Optional: Set verification depth for client certificates<br />
+ ssl_verify_depth 2;<br />
+ location / {<br />
+  proxy_pass http://backend_service;<br />
+  # Restrict access to valid PIV credentials<br />
+  if ($ssl_client_verify != SUCCESS) {<br />
+   return 403;<br />
+   }<br />
+  }<br />
+ }<br />
+<br />
+If the certificates are not configured and ssl_verify is not enabled, this is a finding.</p><h2>Vulnerability Number</h2><p>V-278400</p><h2>Documentable</h2><p>False</p><h2>Rule Version</h2><p>NGNX-APP-001650</p><h2>Severity Override Guidance</h2><p>Determine path to NGINX config file:<br />
+<br />
+# nginx -qT | grep &quot;# configuration&quot;<br />
+# configuration file /etc/nginx/nginx.conf:<br />
+<br />
+Note: The default NGINX configuration is &quot;/etc/nginx/nginx.conf&quot;, though various files may also be included.<br />
+<br />
+Check that the nginx.conf file has the SSL Certificate/Key installed, the SSL Client Certificate is present, and SSL Verify is configured.<br />
+<br />
+server {<br />
+ listen 443 ssl;<br />
+ server_name example.com;<br />
+ ssl_certificate /etc/nginx/ssl/server_cert.pem;<br />
+ ssl_certificate_key /etc/nginx/ssl/server_key.pem;<br />
+ # Enable client certificate verification<br />
+ ssl_client_certificate /etc/nginx/ca_cert.pem;<br />
+ ssl_verify_client on;<br />
+ # Optional: Set verification depth for client certificates<br />
+ ssl_verify_depth 2;<br />
+ location / {<br />
+  proxy_pass http://backend_service;<br />
+  # Restrict access to valid PIV credentials<br />
+  if ($ssl_client_verify != SUCCESS) {<br />
+   return 403;<br />
+   }<br />
+  }<br />
+ }<br />
+<br />
+If the certificates are not configured and ssl_verify is not enabled, this is a finding.</p><h2>Check Content Reference</h2><p>M</p><h2>Target Key</h2><p>5720</p></body></html>

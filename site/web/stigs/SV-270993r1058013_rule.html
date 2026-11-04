@@ -1,0 +1,86 @@
+<!doctype html><html lang="en"><head><meta charset="utf-8"><title>STIGQter: STIG Check Details: SV-270993r1058013_rule: The Dragos Platform must notify system administrators and information system security officer (ISSO) of local account activity.</title><link rel="icon" type="image/svg+xml" href="STIGQter.svg" /><script async src="https://www.googletagmanager.com/gtag/js?id=UA-31381839-2"></script><script src="include.js"></script><script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-4110907817782130" crossorigin="anonymous"></script></head><body><div><img src="STIGQter.svg" alt="STIGQter" style="height:1em;" /> <a href="https://www.stigqter.com/">STIGQter</a>: <a href="main.html">STIG Summary</a>: <a href="U_Dragos_Platform_2-x_STIG_V1R6_Manual-xccdf.html">Dragos Platform 2.x Security Technical Implementation Guide Version: 1 Release: 6 Benchmark Date: 01 Apr 2026</a>:</div> <h1>The Dragos Platform must notify system administrators and information system security officer (ISSO) of local account activity.</h1><h2>DISA Rule</h2><p>SV-270993r1058013_rule</p><h2>Vulnerability Number</h2><p>V-270993</p><h2>Group Title</h2><p>SRG-APP-000291</p><h2>Rule Version</h2><p>DRAG-OT-001190</p><h2>Severity</h2><p>CAT II</p><h2>CCI(s)</h2><ul><li>CCI-000366 - Implement the security configuration settings.</li></ul><h2>Weight</h2><p>10</p><h2>Fix Recommendation</h2><p>1. If a notification does not appear, install KP-CW-24-001. This knowledge pack will add this and other notifications relevant to the STIG to the Dragos Platform.<br />
+<br />
+Adding Knowledge Pack:<br />
+While logged in to the Dragos Platform with administrative privileges, navigate to Admin &gt;&gt; SiteStore Management &gt;&gt; Knowledge Packs.<br />
+<br />
+Locate all &quot;STIG-KP_Plus&quot; Knowledge Pack(s).<br />
+<br />
+Click &quot;Deploy&quot; button next to the Knowledge Pack(s).<br />
+<br />
+Fill in the form and click &quot;DEPLOY&quot;.<br />
+<br />
+2. If a notification appears but is not received by the aggregate/syslog server, ensure there is a rule to trigger a syslog export in the &quot;Notifications&quot; applet of the Dragos Platform. If not, create one.<br />
+<br />
+To create a rule, navigate to Notification &gt;&gt; RULES Tab.<br />
+<br />
+Create two Attributes.<br />
+<br />
+Click &quot;NEW RULE&quot;.<br />
+<br />
+Fill in Name and Processing Order.<br />
+<br />
+Click &quot;ADD ATTRIBUTE&quot; in the &quot;If ANY of the following&quot; block<br />
+Type = &quot;Detected By&quot;<br />
+Select Operation = &quot;Equals&quot;<br />
+Select Value = &quot;Authentication to the Dragos Platform&quot;<br />
+<br />
+Click &quot;ADD ATTRIBUTE&quot; in the &quot;If ANY of the following&quot; block<br />
+Type = &quot;Detected By&quot;<br />
+Select Operation = &quot;Equals&quot;<br />
+Select Value = &quot;User Account Activity&quot;<br />
+<br />
+In the &quot;THEN perform the following actions block:<br />
+Click &quot;ADD ACTION&quot;<br />
+Action = Send Syslog (third-party server)<br />
+<br />
+Click &quot;SAVE&quot;.</p><h2>Check Contents</h2><p>While logged in to the Dragos Platform with a user account with administrative privileges, navigate to Admin &gt;&gt; User Management &gt;&gt; Users.<br />
+<br />
+Create a new user account (does not require roles or authentication). <br />
+<br />
+(Within 15 minutes)<br />
+1. Click the &quot;Notifications&quot; button. <br />
+Verify a notification appears within Dragos Platform notifications page. <br />
+<br />
+If a notification does not occur, this is a finding. <br />
+<br />
+2. Observe that the same notification appears in the aggregate server/syslog recipient.<br />
+(Note: Depending on the software application used, steps to view syslog third-party alerts may vary.)<br />
+<br />
+If an alert is not being sent to third-party syslog, this is a finding. <br />
+<br />
+3. Check Rules:<br />
+Navigate to Notification &gt;&gt; RULES Tab.<br />
+<br />
+Verify a rule exists and has the following:<br />
+Action = &quot;Send Syslog (third-party server)&quot;<br />
+Criteria = &quot;Detected By Equals Authentication to the Dragos Platform&quot;<br />
+          &quot;Detected By Equals User Account Activity&quot; <br />
+<br />
+If a rule does not exist with the correct Action and Criteria, this is a finding.<br />
+<br />
+4. Remove the test user just created.</p><h2>Vulnerability Number</h2><p>V-270993</p><h2>Documentable</h2><p>False</p><h2>Rule Version</h2><p>DRAG-OT-001190</p><h2>Severity Override Guidance</h2><p>While logged in to the Dragos Platform with a user account with administrative privileges, navigate to Admin &gt;&gt; User Management &gt;&gt; Users.<br />
+<br />
+Create a new user account (does not require roles or authentication). <br />
+<br />
+(Within 15 minutes)<br />
+1. Click the &quot;Notifications&quot; button. <br />
+Verify a notification appears within Dragos Platform notifications page. <br />
+<br />
+If a notification does not occur, this is a finding. <br />
+<br />
+2. Observe that the same notification appears in the aggregate server/syslog recipient.<br />
+(Note: Depending on the software application used, steps to view syslog third-party alerts may vary.)<br />
+<br />
+If an alert is not being sent to third-party syslog, this is a finding. <br />
+<br />
+3. Check Rules:<br />
+Navigate to Notification &gt;&gt; RULES Tab.<br />
+<br />
+Verify a rule exists and has the following:<br />
+Action = &quot;Send Syslog (third-party server)&quot;<br />
+Criteria = &quot;Detected By Equals Authentication to the Dragos Platform&quot;<br />
+          &quot;Detected By Equals User Account Activity&quot; <br />
+<br />
+If a rule does not exist with the correct Action and Criteria, this is a finding.<br />
+<br />
+4. Remove the test user just created.</p><h2>Check Content Reference</h2><p>M</p><h2>Target Key</h2><p>5675</p></body></html>

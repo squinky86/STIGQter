@@ -1,0 +1,196 @@
+<!doctype html><html lang="en"><head><meta charset="utf-8"><title>STIGQter: STIG Check Details: SV-257512r960786_rule: Open Shift must automatically audit account removal actions.</title><link rel="icon" type="image/svg+xml" href="STIGQter.svg" /><script async src="https://www.googletagmanager.com/gtag/js?id=UA-31381839-2"></script><script src="include.js"></script><script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-4110907817782130" crossorigin="anonymous"></script></head><body><div><img src="STIGQter.svg" alt="STIGQter" style="height:1em;" /> <a href="https://www.stigqter.com/">STIGQter</a>: <a href="main.html">STIG Summary</a>: <a href="U_RH_OpenShift_Container_Platform_4-x_STIG_V2R6_Manual-xccdf.html">Red Hat OpenShift Container Platform 4.x Security Technical Implementation Guide Version: 2 Release: 6 Benchmark Date: 01 Jul 2026</a>:</div> <h1>Open Shift must automatically audit account removal actions.</h1><h2>DISA Rule</h2><p>SV-257512r960786_rule</p><h2>Vulnerability Number</h2><p>V-257512</p><h2>Group Title</h2><p>SRG-APP-000029-CTR-000085</p><h2>Rule Version</h2><p>CNTR-OS-000080</p><h2>Severity</h2><p>CAT II</p><h2>CCI(s)</h2><ul><li>CCI-001405 - Automatically audit account removal actions.</li></ul><h2>Weight</h2><p>10</p><h2>Fix Recommendation</h2><p>Apply the machine config by executing the following:<br />
+<br />
+for mcpool in $(oc get mcp -oname | sed &quot;s:.*/::&quot; ); do<br />
+echo &quot;apiVersion: machineconfiguration.openshift.io/v1<br />
+kind: MachineConfig<br />
+metadata:<br />
+  name: 75-setuid-setgid-binaries-$mcpool<br />
+  labels:<br />
+    machineconfiguration.openshift.io/role: $mcpool<br />
+spec:<br />
+  config:<br />
+    ignition:<br />
+      version: 3.1.0<br />
+    storage:<br />
+      files:<br />
+      - contents:<br />
+          source: data:,-a%20always%2Cexit%20-F%20path%3D/usr/bin/chage%20-F%20auid%3E%3D1000%20-F%20auid%21%3Dunset%20-F%20key%3Dprivileged%0A<br />
+        mode: 0644<br />
+        path: /etc/audit/rules.d/75-usr_bin_chage_execution.rules<br />
+        overwrite: true<br />
+      - contents:<br />
+          source: data:,-a%20always%2Cexit%20-F%20path%3D/usr/bin/fusermount%20-F%20auid%3E%3D1000%20-F%20auid%21%3Dunset%20-F%20key%3Dprivileged%0A<br />
+        mode: 0644<br />
+        path: /etc/audit/rules.d/75-usr_bin_fusermount_execution.rules<br />
+        overwrite: true<br />
+      - contents:<br />
+          source: data:,-a%20always%2Cexit%20-F%20path%3D/usr/bin/fusermount3%20-F%20auid%3E%3D1000%20-F%20auid%21%3Dunset%20-F%20key%3Dprivileged%0A<br />
+        mode: 0644<br />
+        path: /etc/audit/rules.d/75-usr_bin_fusermount3_execution.rules<br />
+        overwrite: true<br />
+      - contents:<br />
+          source: data:,-a%20always%2Cexit%20-F%20path%3D/usr/bin/gpasswd%20-F%20auid%3E%3D1000%20-F%20auid%21%3Dunset%20-F%20key%3Dprivileged%0A<br />
+        mode: 0644<br />
+        path: /etc/audit/rules.d/75-usr_bin_gpasswd_execution.rules<br />
+        overwrite: true<br />
+      - contents:<br />
+          source: data:,-a%20always%2Cexit%20-F%20path%3D/usr/bin/mount%20-F%20auid%3E%3D1000%20-F%20auid%21%3Dunset%20-F%20key%3Dprivileged%0A<br />
+        mode: 0644<br />
+        path: /etc/audit/rules.d/75-usr_bin_mount_execution.rules<br />
+        overwrite: true<br />
+      - contents:<br />
+          source: data:,-a%20always%2Cexit%20-F%20path%3D/usr/bin/newgrp%20-F%20auid%3E%3D1000%20-F%20auid%21%3Dunset%20-F%20key%3Dprivileged%0A<br />
+        mode: 0644<br />
+        path: /etc/audit/rules.d/75-usr_bin_newgrp_execution.rules<br />
+        overwrite: true<br />
+      - contents:<br />
+          source: data:,-a%20always%2Cexit%20-F%20path%3D/usr/bin/passwd%20-F%20auid%3E%3D1000%20-F%20auid%21%3Dunset%20-F%20key%3Dprivileged%0A<br />
+        mode: 0644<br />
+        path: /etc/audit/rules.d/75-usr_bin_passwd_execution.rules<br />
+        overwrite: true<br />
+      - contents:<br />
+          source: data:,-a%20always%2Cexit%20-F%20path%3D/usr/bin/pkexec%20-F%20auid%3E%3D1000%20-F%20auid%21%3Dunset%20-F%20key%3Dprivileged%0A<br />
+        mode: 0644<br />
+        path: /etc/audit/rules.d/75-usr_bin_pkexec_execution.rules<br />
+        overwrite: true<br />
+      - contents:<br />
+          source: data:,-a%20always%2Cexit%20-F%20path%3D/usr/bin/su%20-F%20auid%3E%3D1000%20-F%20auid%21%3Dunset%20-F%20key%3Dprivileged%0A<br />
+        mode: 0644<br />
+        path: /etc/audit/rules.d/75-usr_bin_su_execution.rules<br />
+        overwrite: true<br />
+      - contents:<br />
+          source: data:,-a%20always%2Cexit%20-F%20path%3D/usr/bin/sudo%20-F%20auid%3E%3D1000%20-F%20auid%21%3Dunset%20-F%20key%3Dprivileged%0A<br />
+        mode: 0644<br />
+        path: /etc/audit/rules.d/75-usr_bin_sudo_execution.rules<br />
+        overwrite: true<br />
+      - contents:<br />
+          source: data:,-a%20always%2Cexit%20-F%20path%3D/usr/bin/umount%20-F%20auid%3E%3D1000%20-F%20auid%21%3Dunset%20-F%20key%3Dprivileged%0A<br />
+        mode: 0644<br />
+        path: /etc/audit/rules.d/75-usr_bin_umount_execution.rules<br />
+        overwrite: true<br />
+      - contents:<br />
+          source: data:,-a%20always%2Cexit%20-F%20path%3D/usr/lib/polkit-1/polkit-agent-helper-1%20-F%20auid%3E%3D1000%20-F%20auid%21%3Dunset%20-F%20key%3Dprivileged%0A<br />
+        mode: 0644<br />
+        path: /etc/audit/rules.d/75-usr_lib_polkit_helper_execution.rules<br />
+        overwrite: true<br />
+      - contents:<br />
+          source: data:,-a%20always%2Cexit%20-F%20path%3D/usr/libexec/dbus-1/dbus-daemon-launch-helper%20-F%20auid%3E%3D1000%20-F%20auid%21%3Dunset%20-F%20key%3Dprivileged%0A<br />
+        mode: 0644<br />
+        path: /etc/audit/rules.d/75-dbus_daemon_launch_helper.rules<br />
+        overwrite: true<br />
+      - contents:<br />
+          source: data:,-a%20always%2Cexit%20-F%20path%3D/usr/libexec/sssd/krb5_child%20-F%20auid%3E%3D1000%20-F%20auid%21%3Dunset%20-F%20key%3Dprivileged%0A<br />
+        mode: 0644<br />
+        path: /etc/audit/rules.d/75-usr_libexec_sssd_krb5_child.rules<br />
+        overwrite: true<br />
+      - contents:<br />
+          source: data:,-a%20always%2Cexit%20-F%20path%3D/usr/libexec/sssd/ldap_child%20-F%20auid%3E%3D1000%20-F%20auid%21%3Dunset%20-F%20key%3Dprivileged%0A<br />
+        mode: 0644<br />
+        path: /etc/audit/rules.d/75-usr_libexec_sssd_ldap_child.rules<br />
+        overwrite: true<br />
+      - contents:<br />
+          source: data:,-a%20always%2Cexit%20-F%20path%3D/usr/libexec/sssd/proxy_child%20-F%20auid%3E%3D1000%20-F%20auid%21%3Dunset%20-F%20key%3Dprivileged%0A<br />
+        mode: 0644<br />
+        path: /etc/audit/rules.d/75-usr_libexec_sssd_proxy_child.rules<br />
+        overwrite: true<br />
+      - contents:<br />
+          source: data:,-a%20always%2Cexit%20-F%20path%3D/usr/libexec/sssd/selinux_child%20-F%20auid%3E%3D1000%20-F%20auid%21%3Dunset%20-F%20key%3Dprivileged%0A<br />
+        mode: 0644<br />
+        path: /etc/audit/rules.d/75-usr_libexec_sssd_selinux_child.rules<br />
+        overwrite: true<br />
+      - contents:<br />
+          source: data:,-a%20always%2Cexit%20-F%20path%3D/usr/sbin/grub2-set-bootflag%20-F%20auid%3E%3D1000%20-F%20auid%21%3Dunset%20-F%20key%3Dprivileged%0A<br />
+        mode: 0644<br />
+        path: /etc/audit/rules.d/75-grub2_set_bootflag.rules<br />
+        overwrite: true<br />
+      - contents:<br />
+          source: data:,-a%20always%2Cexit%20-F%20path%3D/usr/sbin/mount.nfs%20-F%20auid%3E%3D1000%20-F%20auid%21%3Dunset%20-F%20key%3Dprivileged%0A<br />
+        mode: 0644<br />
+        path: /etc/audit/rules.d/75-usr_sbin_mount_nfs.rules<br />
+        overwrite: true<br />
+      - contents:<br />
+          source: data:,-a%20always%2Cexit%20-F%20path%3D/usr/sbin/pam_timestamp_check%20-F%20auid%3E%3D1000%20-F%20auid%21%3Dunset%20-F%20key%3Dprivileged%0A<br />
+        mode: 0644<br />
+        path: /etc/audit/rules.d/75-usr_sbin_pam_timestamp_check.rules<br />
+        overwrite: true<br />
+      - contents:<br />
+          source: data:,-a%20always%2Cexit%20-F%20path%3D/usr/sbin/unix_chkpwd%20-F%20auid%3E%3D1000%20-F%20auid%21%3Dunset%20-F%20key%3Dprivileged%0A<br />
+        mode: 0644<br />
+        path: /etc/audit/rules.d/75-usr_sbin_unix_chkpwd.rules<br />
+        overwrite: true<br />
+&quot; | oc apply -f -<br />
+done</p><h2>Check Contents</h2><p>Verify the audit rules capture the execution of setuid and setgid binaries by executing the following:<br />
+ <br />
+for node in $(oc get node -oname); do oc debug $node -- chroot /host /bin/bash -c 'echo -n &quot;$HOSTNAME &quot;; grep -e key=privileged /etc/audit/audit.rules || echo &quot;not found&quot;' 2&gt;/dev/null; done<br />
+<br />
+If &quot;not found&quot; is printed, this is a finding.<br />
+<br />
+Confirm the following rules exist on each node:<br />
+<br />
+-a always,exit -S all -F path=/usr/libexec/dbus-1/dbus-daemon-launch-helper -F auid&gt;=1000 -F auid!=unset -F key=privileged<br />
+-a always,exit -S all -F path=/usr/sbin/grub2-set-bootflag -F auid&gt;=1000 -F auid!=unset -F key=privileged<br />
+-a always,exit -S all -F path=/usr/libexec/openssh/ssh-keysign -F auid&gt;=1000 -F auid!=unset -F key=privileged<br />
+-a always,exit -S all -F path=/usr/bin/chage -F auid&gt;=1000 -F auid!=unset -F key=privileged<br />
+-a always,exit -S all -F path=/usr/bin/fusermount3 -F auid&gt;=1000 -F auid!=unset -F key=privileged<br />
+-a always,exit -S all -F path=/usr/bin/fusermount -F auid&gt;=1000 -F auid!=unset -F key=privileged<br />
+-a always,exit -S all -F path=/usr/bin/gpasswd -F auid&gt;=1000 -F auid!=unset -F key=privileged<br />
+-a always,exit -S all -F path=/usr/bin/mount -F auid&gt;=1000 -F auid!=unset -F key=privileged<br />
+-a always,exit -S all -F path=/usr/bin/newgrp -F auid&gt;=1000 -F auid!=unset -F key=privileged<br />
+-a always,exit -S all -F path=/usr/bin/passwd -F auid&gt;=1000 -F auid!=unset -F key=privileged<br />
+-a always,exit -S all -F path=/usr/bin/pkexec -F auid&gt;=1000 -F auid!=unset -F key=privileged<br />
+-a always,exit -S all -F path=/usr/bin/sudo -F auid&gt;=1000 -F auid!=unset -F key=privileged<br />
+-a always,exit -S all -F path=/usr/bin/su -F auid&gt;=1000 -F auid!=unset -F key=privileged<br />
+-a always,exit -S all -F path=/usr/bin/umount -F auid&gt;=1000 -F auid!=unset -F key=privileged<br />
+-a always,exit -S all -F path=/usr/bin/write -F auid&gt;=1000 -F auid!=unset -F key=privileged<br />
+-a always,exit -S all -F path=/usr/libexec/sssd/krb5_child -F auid&gt;=1000 -F auid!=unset -F key=privileged<br />
+-a always,exit -S all -F path=/usr/libexec/sssd/ldap_child -F auid&gt;=1000 -F auid!=unset -F key=privileged<br />
+-a always,exit -S all -F path=/usr/libexec/sssd/proxy_child -F auid&gt;=1000 -F auid!=unset -F key=privileged<br />
+-a always,exit -S all -F path=/usr/libexec/sssd/selinux_child -F auid&gt;=1000 -F auid!=unset -F key=privileged<br />
+-a always,exit -S all -F path=/usr/libexec/utempter -F auid&gt;=1000 -F auid!=unset -F key=privileged<br />
+-a always,exit -S all -F path=/usr/lib/polkit-1/polkit-agent-helper-1 -F auid&gt;=1000 -F auid!=unset -F key=privileged<br />
+-a always,exit -S all -F path=/usr/sbin/mount.nfs -F auid&gt;=1000 -F auid!=unset -F key=privileged<br />
+-a always,exit -S all -F path=/usr/sbin/pam_timestamp_check -F auid&gt;=1000 -F auid!=unset -F key=privileged<br />
+-a always,exit -S all -F path=/usr/sbin/unix_chkpwd -F auid&gt;=1000 -F auid!=unset -F key=privileged<br />
+<br />
+To find all setuid binaries on the system, execute the following:<br />
+<br />
+for node in $(oc get node -oname); do oc debug $node -- chroot /host /bin/bash -c 'echo -n &quot;$HOSTNAME &quot;; find / -xdev -type f -perm -4000 -o -type f -perm -2000 2&gt;/dev/null'; done<br />
+<br />
+If any setuid binary does not have a corresponding audit rule, this is a finding.</p><h2>Vulnerability Number</h2><p>V-257512</p><h2>Documentable</h2><p>False</p><h2>Rule Version</h2><p>CNTR-OS-000080</p><h2>Severity Override Guidance</h2><p>Verify the audit rules capture the execution of setuid and setgid binaries by executing the following:<br />
+ <br />
+for node in $(oc get node -oname); do oc debug $node -- chroot /host /bin/bash -c 'echo -n &quot;$HOSTNAME &quot;; grep -e key=privileged /etc/audit/audit.rules || echo &quot;not found&quot;' 2&gt;/dev/null; done<br />
+<br />
+If &quot;not found&quot; is printed, this is a finding.<br />
+<br />
+Confirm the following rules exist on each node:<br />
+<br />
+-a always,exit -S all -F path=/usr/libexec/dbus-1/dbus-daemon-launch-helper -F auid&gt;=1000 -F auid!=unset -F key=privileged<br />
+-a always,exit -S all -F path=/usr/sbin/grub2-set-bootflag -F auid&gt;=1000 -F auid!=unset -F key=privileged<br />
+-a always,exit -S all -F path=/usr/libexec/openssh/ssh-keysign -F auid&gt;=1000 -F auid!=unset -F key=privileged<br />
+-a always,exit -S all -F path=/usr/bin/chage -F auid&gt;=1000 -F auid!=unset -F key=privileged<br />
+-a always,exit -S all -F path=/usr/bin/fusermount3 -F auid&gt;=1000 -F auid!=unset -F key=privileged<br />
+-a always,exit -S all -F path=/usr/bin/fusermount -F auid&gt;=1000 -F auid!=unset -F key=privileged<br />
+-a always,exit -S all -F path=/usr/bin/gpasswd -F auid&gt;=1000 -F auid!=unset -F key=privileged<br />
+-a always,exit -S all -F path=/usr/bin/mount -F auid&gt;=1000 -F auid!=unset -F key=privileged<br />
+-a always,exit -S all -F path=/usr/bin/newgrp -F auid&gt;=1000 -F auid!=unset -F key=privileged<br />
+-a always,exit -S all -F path=/usr/bin/passwd -F auid&gt;=1000 -F auid!=unset -F key=privileged<br />
+-a always,exit -S all -F path=/usr/bin/pkexec -F auid&gt;=1000 -F auid!=unset -F key=privileged<br />
+-a always,exit -S all -F path=/usr/bin/sudo -F auid&gt;=1000 -F auid!=unset -F key=privileged<br />
+-a always,exit -S all -F path=/usr/bin/su -F auid&gt;=1000 -F auid!=unset -F key=privileged<br />
+-a always,exit -S all -F path=/usr/bin/umount -F auid&gt;=1000 -F auid!=unset -F key=privileged<br />
+-a always,exit -S all -F path=/usr/bin/write -F auid&gt;=1000 -F auid!=unset -F key=privileged<br />
+-a always,exit -S all -F path=/usr/libexec/sssd/krb5_child -F auid&gt;=1000 -F auid!=unset -F key=privileged<br />
+-a always,exit -S all -F path=/usr/libexec/sssd/ldap_child -F auid&gt;=1000 -F auid!=unset -F key=privileged<br />
+-a always,exit -S all -F path=/usr/libexec/sssd/proxy_child -F auid&gt;=1000 -F auid!=unset -F key=privileged<br />
+-a always,exit -S all -F path=/usr/libexec/sssd/selinux_child -F auid&gt;=1000 -F auid!=unset -F key=privileged<br />
+-a always,exit -S all -F path=/usr/libexec/utempter -F auid&gt;=1000 -F auid!=unset -F key=privileged<br />
+-a always,exit -S all -F path=/usr/lib/polkit-1/polkit-agent-helper-1 -F auid&gt;=1000 -F auid!=unset -F key=privileged<br />
+-a always,exit -S all -F path=/usr/sbin/mount.nfs -F auid&gt;=1000 -F auid!=unset -F key=privileged<br />
+-a always,exit -S all -F path=/usr/sbin/pam_timestamp_check -F auid&gt;=1000 -F auid!=unset -F key=privileged<br />
+-a always,exit -S all -F path=/usr/sbin/unix_chkpwd -F auid&gt;=1000 -F auid!=unset -F key=privileged<br />
+<br />
+To find all setuid binaries on the system, execute the following:<br />
+<br />
+for node in $(oc get node -oname); do oc debug $node -- chroot /host /bin/bash -c 'echo -n &quot;$HOSTNAME &quot;; find / -xdev -type f -perm -4000 -o -type f -perm -2000 2&gt;/dev/null'; done<br />
+<br />
+If any setuid binary does not have a corresponding audit rule, this is a finding.</p><h2>Check Content Reference</h2><p>M</p><h2>Target Key</h2><p>5547</p></body></html>

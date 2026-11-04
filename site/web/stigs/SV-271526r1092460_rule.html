@@ -1,0 +1,99 @@
+<!doctype html><html lang="en"><head><meta charset="utf-8"><title>STIGQter: STIG Check Details: SV-271526r1092460_rule: OL 9 must ensure cryptographic verification of vendor software packages.</title><link rel="icon" type="image/svg+xml" href="STIGQter.svg" /><script async src="https://www.googletagmanager.com/gtag/js?id=UA-31381839-2"></script><script src="include.js"></script><script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-4110907817782130" crossorigin="anonymous"></script></head><body><div><img src="STIGQter.svg" alt="STIGQter" style="height:1em;" /> <a href="https://www.stigqter.com/">STIGQter</a>: <a href="main.html">STIG Summary</a>: <a href="U_Oracle_Linux_9_STIG_V1R6_Manual-xccdf.html">Oracle Linux 9 Security Technical Implementation Guide Version: 1 Release: 6 Benchmark Date: 01 Jul 2026</a>:</div> <h1>OL 9 must ensure cryptographic verification of vendor software packages.</h1><h2>DISA Rule</h2><p>SV-271526r1092460_rule</p><h2>Vulnerability Number</h2><p>V-271526</p><h2>Group Title</h2><p>SRG-OS-000366-GPOS-00153</p><h2>Rule Version</h2><p>OL09-00-000499</p><h2>Severity</h2><p>CAT II</p><h2>CCI(s)</h2><ul><li>CCI-003992 - Prevent the installation of organization-defined software and firmware components without verification that the component has been digitally signed using a certificate that is recognized and approved by the organization.</li></ul><h2>Weight</h2><p>10</p><h2>Fix Recommendation</h2><p>Install Oracle package-signing keys on the system and verify their fingerprints match vendor values.<br />
+<br />
+To verify Oracle Linux Downloads, users need:<br />
+-A checksum file corresponding to the downloaded ISO.<br />
+-The public GPG key to verify the Oracle key used to sign the checksum file.<br />
+<br />
+The checksum file contains a list of files that are part of a download package with the corresponding checksums as well as a GPG signature. The GPG signature enables anyone to verify that checksum file was published by Oracle. The steps below describe how to verify they checksum file itself and then verify the contents of the Oracle Linux download by checking against the checksum file.<br />
+<br />
+Import the Oracle Linux GPG key corresponding to the Oracle Linux release:<br />
+<br />
+$ curl https://yum.oracle.com/RPM-GPG-KEY-oracle-ol9 | gpg --import<br />
+<br />
+Note: No &quot;sudo&quot; for curl command<br />
+<br />
+Download the appropriate checksum file and place it in the same directory as the Oracle Linux ISO download:<br />
+<br />
+$ curl https://linux.oracle.com/security/gpg/checksum/OracleLinux-R9-U3-Server-x86_64.checksum &gt; OracleLinux-R9-U3-Server-x86_64.checksum<br />
+<br />
+Download GPG Key:<br />
+<br />
+ $ curl https://yum.oracle.com/RPM-GPG-KEY-oracle-ol9 -o RPM-GPG-KEY-oracle<br />
+Note: No &quot;sudo&quot; for curl command<br />
+<br />
+To verify the checksum file:<br />
+<br />
+$ gpg --verify-files OracleLinux-R9-U3-Server-x86_64.checksum<br />
+gpg: Signature made Wed 15 Nov 2023 07:22:32 AM EST<br />
+gpg:                using RSA key 3E6D826D3FBAB389C2F38E34BC4D06A08D8B756F<br />
+gpg:                issuer &quot;secalert_us@oracle.com&quot;<br />
+gpg: Good signature from &quot;Oracle Linux (release key 1) &lt;secalert_us@oracle.com&gt;&quot; [unknown]<br />
+gpg: WARNING: The key's User ID is not certified with a trusted signature!<br />
+gpg:          There is no indication that the signature belongs to the owner.<br />
+Primary key fingerprint: 3E6D 826D 3FBA B389 C2F3  8E34 BC4D 06A0 8D8B 756F<br />
+<br />
+Verify the ISO download as follows:<br />
+<br />
+$ grep OracleLinux-R9-U3-x86_64-boot.iso OracleLinux-R9-U3-Server-x86_64.checksum | sha256sum -c<br />
+<br />
+OracleLinux-R9-U3-x86_64-boot.iso: OK</p><h2>Check Contents</h2><p>Verify that OL 9 ensures cryptographic verification of vendor software packages by confirming that Oracle package-signing keys are installed on the system, and verify their fingerprints match vendor values.<br />
+<br />
+Note: For OL 9 software packages, Oracle uses GPG keys labeled &quot;release key 1&quot; and &quot;auxiliary key 1&quot;. The keys are defined in key file &quot;/etc/pki/rpm-gpg/RPM-GPG-KEY-oracle&quot; by default.<br />
+<br />
+List Oracle GPG keys installed on the system:<br />
+<br />
+$ sudo rpm -q --queryformat &quot;%{SUMMARY}\n&quot; gpg-pubkey | grep -i &quot;oracle&quot;<br />
+<br />
+Oracle Linux (release key 1) &lt;secalert_us@oracle.com&gt; public key<br />
+Oracle Linux (backup key 1) &lt;secalert_us@oracle.com&gt; public key<br />
+<br />
+If Oracle GPG keys &quot;release key 1&quot; and &quot;backup key 1&quot; are not installed, this is a finding.<br />
+<br />
+List key fingerprints of installed Oracle GPG keys:<br />
+<br />
+$ sudo gpg -q --keyid-format short --with-fingerprint /etc/pki/rpm-gpg/RPM-GPG-KEY-oracle<br />
+<br />
+If key file &quot;/etc/pki/rpm-gpg/RPM-GPG-KEY-oracle&quot; is missing, this is a finding.<br />
+<br />
+pub   rsa4096/8D8B756F 2022-01-19 [SC] [expires: 2042-01-14]<br />
+      Key fingerprint = 3E6D 826D 3FBA B389 C2F3  8E34 BC4D 06A0 8D8B 756F<br />
+uid                   Oracle Linux (release key 1) &lt;secalert_us@oracle.com&gt;<br />
+sub   rsa4096/2E708C25 2022-01-19 [E] [expires: 2041-06-01]<br />
+pub   rsa4096/8B4EFBE6 2022-01-19 [SC] [expires: 2042-01-14]<br />
+      Key fingerprint = 9822 3175 9C74 6706 5D0C  E9B2 A7DD 0708 8B4E FBE6<br />
+uid                   Oracle Linux (backup key 1) &lt;secalert_us@oracle.com&gt;<br />
+sub   rsa4096/DA900791 2022-01-19 [E] [expires: 2041-06-02]<br />
+<br />
+Compare key fingerprints of installed Oracle GPG keys with fingerprints listed for OL 9 on Oracle verification webpage at https://linux.oracle.com/security/gpg/#gpg.<br />
+<br />
+If key fingerprints do not match, this is a finding.</p><h2>Vulnerability Number</h2><p>V-271526</p><h2>Documentable</h2><p>False</p><h2>Rule Version</h2><p>OL09-00-000499</p><h2>Severity Override Guidance</h2><p>Verify that OL 9 ensures cryptographic verification of vendor software packages by confirming that Oracle package-signing keys are installed on the system, and verify their fingerprints match vendor values.<br />
+<br />
+Note: For OL 9 software packages, Oracle uses GPG keys labeled &quot;release key 1&quot; and &quot;auxiliary key 1&quot;. The keys are defined in key file &quot;/etc/pki/rpm-gpg/RPM-GPG-KEY-oracle&quot; by default.<br />
+<br />
+List Oracle GPG keys installed on the system:<br />
+<br />
+$ sudo rpm -q --queryformat &quot;%{SUMMARY}\n&quot; gpg-pubkey | grep -i &quot;oracle&quot;<br />
+<br />
+Oracle Linux (release key 1) &lt;secalert_us@oracle.com&gt; public key<br />
+Oracle Linux (backup key 1) &lt;secalert_us@oracle.com&gt; public key<br />
+<br />
+If Oracle GPG keys &quot;release key 1&quot; and &quot;backup key 1&quot; are not installed, this is a finding.<br />
+<br />
+List key fingerprints of installed Oracle GPG keys:<br />
+<br />
+$ sudo gpg -q --keyid-format short --with-fingerprint /etc/pki/rpm-gpg/RPM-GPG-KEY-oracle<br />
+<br />
+If key file &quot;/etc/pki/rpm-gpg/RPM-GPG-KEY-oracle&quot; is missing, this is a finding.<br />
+<br />
+pub   rsa4096/8D8B756F 2022-01-19 [SC] [expires: 2042-01-14]<br />
+      Key fingerprint = 3E6D 826D 3FBA B389 C2F3  8E34 BC4D 06A0 8D8B 756F<br />
+uid                   Oracle Linux (release key 1) &lt;secalert_us@oracle.com&gt;<br />
+sub   rsa4096/2E708C25 2022-01-19 [E] [expires: 2041-06-01]<br />
+pub   rsa4096/8B4EFBE6 2022-01-19 [SC] [expires: 2042-01-14]<br />
+      Key fingerprint = 9822 3175 9C74 6706 5D0C  E9B2 A7DD 0708 8B4E FBE6<br />
+uid                   Oracle Linux (backup key 1) &lt;secalert_us@oracle.com&gt;<br />
+sub   rsa4096/DA900791 2022-01-19 [E] [expires: 2041-06-02]<br />
+<br />
+Compare key fingerprints of installed Oracle GPG keys with fingerprints listed for OL 9 on Oracle verification webpage at https://linux.oracle.com/security/gpg/#gpg.<br />
+<br />
+If key fingerprints do not match, this is a finding.</p><h2>Check Content Reference</h2><p>M</p><h2>Target Key</h2><p>5680</p></body></html>

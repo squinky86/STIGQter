@@ -1,0 +1,98 @@
+<!doctype html><html lang="en"><head><meta charset="utf-8"><title>STIGQter: STIG Check Details: SV-256006r882360_rule: The out-of-band management (OOBM) Arista gateway router must be configured to not redistribute routes between the management network routing domain and the managed network routing domain.</title><link rel="icon" type="image/svg+xml" href="STIGQter.svg" /><script async src="https://www.googletagmanager.com/gtag/js?id=UA-31381839-2"></script><script src="include.js"></script><script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-4110907817782130" crossorigin="anonymous"></script></head><body><div><img src="STIGQter.svg" alt="STIGQter" style="height:1em;" /> <a href="https://www.stigqter.com/">STIGQter</a>: <a href="main.html">STIG Summary</a>: <a href="U_Arista_MLS_EOS_4-X_Router_STIG_V2R2_Manual-xccdf.html">Arista MLS EOS 4.X Router Security Technical Implementation Guide Version: 2 Release: 2 Benchmark Date: 02 Apr 2025</a>:</div> <h1>The out-of-band management (OOBM) Arista gateway router must be configured to not redistribute routes between the management network routing domain and the managed network routing domain.</h1><h2>DISA Rule</h2><p>SV-256006r882360_rule</p><h2>Vulnerability Number</h2><p>V-256006</p><h2>Group Title</h2><p>SRG-NET-000019-RTR-000012</p><h2>Rule Version</h2><p>ARST-RT-000200</p><h2>Severity</h2><p>CAT II</p><h2>CCI(s)</h2><ul><li>CCI-001414 - Enforce approved authorizations for controlling the flow of information between connected systems based on organization-defined information flow control policies.</li></ul><h2>Weight</h2><p>10</p><h2>Fix Recommendation</h2><p>This requirement is not applicable for the DODIN backbone.<br />
+<br />
+Configure the Interior Gateway Protocol instance used for the managed network to prohibit redistribution of routes into the Interior Gateway Protocol instance used for the management network and vice versa.<br />
+<br />
+PROD IGP Routing Domain:<br />
+<br />
+Step 1: Configure the interface.<br />
+<br />
+interface Et3/17/1<br />
+ description To_PROD<br />
+ ip address 10.1.12.1/24<br />
+<br />
+Step 2: Configure the OSPF process to remove the IGP redistribution.<br />
+<br />
+router ospf 100<br />
+   network 10.1.0.0/24 area 0.0.0.0<br />
+   no redistribute rip<br />
+<br />
+OOBM IGP Routing Domain, running on the management network<br />
+<br />
+Step 3: Configure the interface.<br />
+<br />
+interface Et3/17/1<br />
+ description To_OOBM<br />
+ ip address 172.16.10.1/24<br />
+ <br />
+Step 4: Configure the RIP process to remove the IGP redistribution.<br />
+<br />
+router rip<br />
+   network 172.16.10.0/24 <br />
+   no redistribute ospf<br />
+   no shutdown</p><h2>Check Contents</h2><p>This requirement is not applicable for the DODIN backbone.<br />
+<br />
+Verify the Interior Gateway Protocol instance used for the managed network does not redistribute routes into the Interior Gateway Protocol instance used for the management network and vice versa.<br />
+<br />
+PROD IGP Routing Domain:<br />
+<br />
+Step 1: To verify interfaces and vrf instance are configured, execute the command &quot;show run int YY&quot;.<br />
+<br />
+interface Et3/17/1<br />
+ description To_PROD<br />
+ ip address 10.1.12.1/24<br />
+<br />
+Step 2: Verify the OSPF configuration, the PROD subnet is advertised, and IGP redistribution is removed in the OSPF process. To verify the OSPF configuration, execute the command &quot;show run section router ospf&quot;.<br />
+<br />
+router ospf 100 vrf PROD<br />
+   network 10.1.0.0/24 area 0.0.0.0<br />
+   no redistribute rip<br />
+<br />
+OOBM IGP Routing Domain, running on the management network<br />
+<br />
+Step 3: To verify interfaces are configured, execute the command &quot;show run int YY&quot;. <br />
+<br />
+interface Et3/17/2<br />
+ description To_OOBM<br />
+ ip address 172.16.10.1/24<br />
+ <br />
+Step 4: Verify the RIP configuration, the OOBM subnet is advertised, and IGP redistribution is removed in the RIP process. To verify the RIP configuration, execute the command &quot;show run section router rip&quot;.<br />
+<br />
+router rip<br />
+   network 172.16.10.0/24 <br />
+   no redistribute ospf<br />
+   no shutdown<br />
+<br />
+If the Interior Gateway Protocol instance used for the managed network redistributes routes into the Interior Gateway Protocol instance used for the management network or vice versa, this is a finding.</p><h2>Vulnerability Number</h2><p>V-256006</p><h2>Documentable</h2><p>False</p><h2>Rule Version</h2><p>ARST-RT-000200</p><h2>Severity Override Guidance</h2><p>This requirement is not applicable for the DODIN backbone.<br />
+<br />
+Verify the Interior Gateway Protocol instance used for the managed network does not redistribute routes into the Interior Gateway Protocol instance used for the management network and vice versa.<br />
+<br />
+PROD IGP Routing Domain:<br />
+<br />
+Step 1: To verify interfaces and vrf instance are configured, execute the command &quot;show run int YY&quot;.<br />
+<br />
+interface Et3/17/1<br />
+ description To_PROD<br />
+ ip address 10.1.12.1/24<br />
+<br />
+Step 2: Verify the OSPF configuration, the PROD subnet is advertised, and IGP redistribution is removed in the OSPF process. To verify the OSPF configuration, execute the command &quot;show run section router ospf&quot;.<br />
+<br />
+router ospf 100 vrf PROD<br />
+   network 10.1.0.0/24 area 0.0.0.0<br />
+   no redistribute rip<br />
+<br />
+OOBM IGP Routing Domain, running on the management network<br />
+<br />
+Step 3: To verify interfaces are configured, execute the command &quot;show run int YY&quot;. <br />
+<br />
+interface Et3/17/2<br />
+ description To_OOBM<br />
+ ip address 172.16.10.1/24<br />
+ <br />
+Step 4: Verify the RIP configuration, the OOBM subnet is advertised, and IGP redistribution is removed in the RIP process. To verify the RIP configuration, execute the command &quot;show run section router rip&quot;.<br />
+<br />
+router rip<br />
+   network 172.16.10.0/24 <br />
+   no redistribute ospf<br />
+   no shutdown<br />
+<br />
+If the Interior Gateway Protocol instance used for the managed network redistributes routes into the Interior Gateway Protocol instance used for the management network or vice versa, this is a finding.</p><h2>Check Content Reference</h2><p>M</p><h2>Target Key</h2><p>5513</p></body></html>

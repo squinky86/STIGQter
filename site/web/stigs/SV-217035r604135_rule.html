@@ -1,0 +1,112 @@
+<!doctype html><html lang="en"><head><meta charset="utf-8"><title>STIGQter: STIG Check Details: SV-217035r604135_rule: The Juniper perimeter router must be configured to not redistribute static routes to an alternate gateway service provider into BGP or an IGP peering with the NIPRNet or to other autonomous systems.</title><link rel="icon" type="image/svg+xml" href="STIGQter.svg" /><script async src="https://www.googletagmanager.com/gtag/js?id=UA-31381839-2"></script><script src="include.js"></script><script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-4110907817782130" crossorigin="anonymous"></script></head><body><div><img src="STIGQter.svg" alt="STIGQter" style="height:1em;" /> <a href="https://www.stigqter.com/">STIGQter</a>: <a href="main.html">STIG Summary</a>: <a href="U_Juniper_Router_RTR_STIG_V3R2_Manual-xccdf.html">Juniper Router RTR Security Technical Implementation Guide Version: 3 Release: 2 Benchmark Date: 30 Jan 2025</a>:</div> <h1>The Juniper perimeter router must be configured to not redistribute static routes to an alternate gateway service provider into BGP or an IGP peering with the NIPRNet or to other autonomous systems.</h1><h2>DISA Rule</h2><p>SV-217035r604135_rule</p><h2>Vulnerability Number</h2><p>V-217035</p><h2>Group Title</h2><p>SRG-NET-000019-RTR-000010</p><h2>Rule Version</h2><p>JUNI-RT-000300</p><h2>Severity</h2><p>CAT III</p><h2>CCI(s)</h2><ul><li>CCI-001414 - Enforce approved authorizations for controlling the flow of information between connected systems based on organization-defined information flow control policies.</li></ul><h2>Weight</h2><p>10</p><h2>Fix Recommendation</h2><p>This requirement is not applicable for the DoDIN Backbone.<br />
+<br />
+Configure the router so that static routes are not redistributed to an alternate gateway into either a BGP or any IGP peering with the NIPRNet or to any other autonomous systems. This can be done by excluding that route in the export policy as shown in the example below.<br />
+<br />
+[edit policy-options policy-statement REDISTRIBUTE]<br />
+set term NOT_ISP_DEFAULT from protocol static route-filter 0.0.0.0/0 exact<br />
+set term NOT_ISP_DEFAULT then reject<br />
+insert term set term NOT_ISP_DEFAULT before term EXPORT_STATIC</p><h2>Check Contents</h2><p>This requirement is not applicable for the DoDIN Backbone.<br />
+<br />
+Review the configurations under the protocols hierarchy. If the export statement is configured as shown in the example below proceed to step 2.<br />
+<br />
+}<br />
+protocols {<br />
+    bgp {<br />
+        group AS_5 {<br />
+            type external;<br />
+            export REDISTRIBUTE;<br />
+            peer-as 5;<br />
+        …<br />
+        …<br />
+        …<br />
+            }<br />
+        }<br />
+    }<br />
+    ospf {<br />
+        export REDISTRIBUTE;<br />
+        area 0.0.0.0 {<br />
+            interface ge-0/0/0 {<br />
+            …<br />
+            …<br />
+            …<br />
+            }<br />
+        }<br />
+    }<br />
+}<br />
+<br />
+Review the export policy referenced above to determine if static routes are being exported as shown in the example below.<br />
+<br />
+policy-options {<br />
+    …<br />
+    …<br />
+    …<br />
+    }<br />
+    policy-statement REDISTRIBUTE {<br />
+        term EXPORT_STATIC {<br />
+            from protocol static;<br />
+            then accept;<br />
+        }<br />
+    }<br />
+}<br />
+<br />
+Review the static routes that have been configured to determine if there routes with the next hop address that of the alternate gateway.<br />
+<br />
+routing-options {<br />
+    static {<br />
+        route 10.1.16.0/24 next-hop 10.1.12.1;<br />
+        route 0.0.0.0/0 next-hop 144.22.1.3;<br />
+    }<br />
+<br />
+If the static routes to the alternate gateway are being redistributed into BGP or any IGP peering to a NIPRNet gateway or any other autonomous system, this is a finding.</p><h2>Vulnerability Number</h2><p>V-217035</p><h2>Documentable</h2><p>False</p><h2>Rule Version</h2><p>JUNI-RT-000300</p><h2>Severity Override Guidance</h2><p>This requirement is not applicable for the DoDIN Backbone.<br />
+<br />
+Review the configurations under the protocols hierarchy. If the export statement is configured as shown in the example below proceed to step 2.<br />
+<br />
+}<br />
+protocols {<br />
+    bgp {<br />
+        group AS_5 {<br />
+            type external;<br />
+            export REDISTRIBUTE;<br />
+            peer-as 5;<br />
+        …<br />
+        …<br />
+        …<br />
+            }<br />
+        }<br />
+    }<br />
+    ospf {<br />
+        export REDISTRIBUTE;<br />
+        area 0.0.0.0 {<br />
+            interface ge-0/0/0 {<br />
+            …<br />
+            …<br />
+            …<br />
+            }<br />
+        }<br />
+    }<br />
+}<br />
+<br />
+Review the export policy referenced above to determine if static routes are being exported as shown in the example below.<br />
+<br />
+policy-options {<br />
+    …<br />
+    …<br />
+    …<br />
+    }<br />
+    policy-statement REDISTRIBUTE {<br />
+        term EXPORT_STATIC {<br />
+            from protocol static;<br />
+            then accept;<br />
+        }<br />
+    }<br />
+}<br />
+<br />
+Review the static routes that have been configured to determine if there routes with the next hop address that of the alternate gateway.<br />
+<br />
+routing-options {<br />
+    static {<br />
+        route 10.1.16.0/24 next-hop 10.1.12.1;<br />
+        route 0.0.0.0/0 next-hop 144.22.1.3;<br />
+    }<br />
+<br />
+If the static routes to the alternate gateway are being redistributed into BGP or any IGP peering to a NIPRNet gateway or any other autonomous system, this is a finding.</p><h2>Check Content Reference</h2><p>M</p><h2>Target Key</h2><p>4032</p></body></html>

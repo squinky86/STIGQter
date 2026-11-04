@@ -1,0 +1,40 @@
+<!doctype html><html lang="en"><head><meta charset="utf-8"><title>STIGQter: STIG Check Details: SV-278385r1171907_rule: NGINX must provide audit records for DOD-defined auditable events.</title><link rel="icon" type="image/svg+xml" href="STIGQter.svg" /><script async src="https://www.googletagmanager.com/gtag/js?id=UA-31381839-2"></script><script src="include.js"></script><script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-4110907817782130" crossorigin="anonymous"></script></head><body><div><img src="STIGQter.svg" alt="STIGQter" style="height:1em;" /> <a href="https://www.stigqter.com/">STIGQter</a>: <a href="main.html">STIG Summary</a>: <a href="U_F5_NGINX_STIG_V1R1_Manual-xccdf.html">F5 NGINX Security Technical Implementation Guide Version: 1 Release: 1 Benchmark Date: 25 Nov 2025</a>:</div> <h1>NGINX must provide audit records for DOD-defined auditable events.</h1><h2>DISA Rule</h2><p>SV-278385r1171907_rule</p><h2>Vulnerability Number</h2><p>V-278385</p><h2>Group Title</h2><p>SRG-APP-000089</p><h2>Rule Version</h2><p>NGNX-APP-000240</p><h2>Severity</h2><p>CAT II</p><h2>CCI(s)</h2><ul><li>CCI-000169 - Provide audit record generation capability for the event types the system is capable of auditing as defined in AU-2 a. on organization-defined information system components.</li><li>CCI-000166 - Provide irrefutable evidence that an individual (or process acting on behalf of an individual) falsely denying having performed organization-defined actions to be covered by non-repudiation.</li><li>CCI-000172 - Generate audit records for the event types defined in AU-2 c that include the audit record content defined in AU-3.</li><li>CCI-000130 - Ensure that audit records containing information that establishes what type of event occurred.</li><li>CCI-000131 - Ensure that audit records containing information that establishes when the event occurred.</li><li>CCI-000132 - Ensure that audit records containing information that establishes where the event occurred.</li><li>CCI-000133 - Ensure that audit records containing information that establishes the source of the event.</li><li>CCI-000134 - Ensure that audit records containing information that establishes the outcome of the event.</li><li>CCI-001487 - Ensure that audit records containing information that establishes the identity of any individuals, subjects, or objects/entities associated with the event.</li><li>CCI-001890 - Record time stamps for audit records that use Coordinated Universal Time, have a fixed local time offset from Coordinated Universal Time, or that include the local time offset as part of the time stamp.</li><li>CCI-001889 - Record time stamps for audit records that meet organization-defined granularity of time measurement.</li></ul><h2>Weight</h2><p>10</p><h2>Fix Recommendation</h2><p>Determine the path to NGINX config file(s):<br />
+<br />
+nginx -qT | grep &quot;# configuration&quot;<br />
+# configuration file /etc/nginx/nginx.conf:<br />
+<br />
+Note: The default NGINX configuration is &quot;/etc/nginx/nginx.conf&quot;, though various files may also be included.<br />
+<br />
+Include the $server_name, $server_addr, $remote_addr, $remote_user, $time_local, $status, $request, $request_id, $http_user_agent, $http_x_forwarded_for, or any organization defined variable in any custom log_format directives.<br />
+<br />
+For example:<br />
+ <br />
+    log_format custom '$remote_addr - $remote_user [$time_local] &quot;$request&quot; '<br />
+                      '$status $body_bytes_sent &quot;$http_referer&quot; '<br />
+                      '&quot;$http_user_agent&quot; &quot;$http_x_forwarded_for&quot;';<br />
+<br />
+Restart NGINX:<br />
+<br />
+nginx -s reload</p><h2>Check Contents</h2><p>Determine the path to NGINX config file(s):<br />
+<br />
+nginx -qT | grep &quot;# configuration&quot;<br />
+# configuration file /etc/nginx/nginx.conf:<br />
+<br />
+Note: The default NGINX configuration is &quot;/etc/nginx/nginx.conf&quot;, though various files may also be included.<br />
+<br />
+cat &lt;path to config&gt;<br />
+<br />
+Verify that $server_name, $server_addr, $remote_addr, $remote_user, $time_local, $status, $request, $request_id, $http_user_agent, $http_x_forwarded_for, and/or any organization defined variables are included in any custom log_format directive.<br />
+<br />
+If a custom log_format is defined and does not include a minimum of $server_name, $server_addr, $remote_addr, $remote_user, $time_local, $status, $request, $request_id, $http_user_agent, and $http_x_forwarded_for, this is a finding.</p><h2>Vulnerability Number</h2><p>V-278385</p><h2>Documentable</h2><p>False</p><h2>Rule Version</h2><p>NGNX-APP-000240</p><h2>Severity Override Guidance</h2><p>Determine the path to NGINX config file(s):<br />
+<br />
+nginx -qT | grep &quot;# configuration&quot;<br />
+# configuration file /etc/nginx/nginx.conf:<br />
+<br />
+Note: The default NGINX configuration is &quot;/etc/nginx/nginx.conf&quot;, though various files may also be included.<br />
+<br />
+cat &lt;path to config&gt;<br />
+<br />
+Verify that $server_name, $server_addr, $remote_addr, $remote_user, $time_local, $status, $request, $request_id, $http_user_agent, $http_x_forwarded_for, and/or any organization defined variables are included in any custom log_format directive.<br />
+<br />
+If a custom log_format is defined and does not include a minimum of $server_name, $server_addr, $remote_addr, $remote_user, $time_local, $status, $request, $request_id, $http_user_agent, and $http_x_forwarded_for, this is a finding.</p><h2>Check Content Reference</h2><p>M</p><h2>Target Key</h2><p>5720</p></body></html>

@@ -1,0 +1,102 @@
+<!doctype html><html lang="en"><head><meta charset="utf-8"><title>STIGQter: STIG Check Details: SV-254001r844036_rule: The Juniper router must be configured to use encryption for routing protocol authentication.</title><link rel="icon" type="image/svg+xml" href="STIGQter.svg" /><script async src="https://www.googletagmanager.com/gtag/js?id=UA-31381839-2"></script><script src="include.js"></script><script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-4110907817782130" crossorigin="anonymous"></script></head><body><div><img src="STIGQter.svg" alt="STIGQter" style="height:1em;" /> <a href="https://www.stigqter.com/">STIGQter</a>: <a href="main.html">STIG Summary</a>: <a href="U_Juniper_EX_Switches_RTR_STIG_V2R1_Manual-xccdf.html">Juniper EX Series Switches Router Security Technical Implementation Guide Version: 2 Release: 1 Benchmark Date: 24 Jul 2024</a>:</div> <h1>The Juniper router must be configured to use encryption for routing protocol authentication.</h1><h2>DISA Rule</h2><p>SV-254001r844036_rule</p><h2>Vulnerability Number</h2><p>V-254001</p><h2>Group Title</h2><p>SRG-NET-000168-RTR-000077</p><h2>Rule Version</h2><p>JUEX-RT-000290</p><h2>Severity</h2><p>CAT II</p><h2>CCI(s)</h2><ul><li>CCI-000803 - Implement mechanisms for authentication to a cryptographic module that meet the requirements of applicable laws, Executive Orders, directives, policies, regulations, standards, and guidance for such authentication.</li></ul><h2>Weight</h2><p>10</p><h2>Fix Recommendation</h2><p>Configure routing protocol authentication to encrypt the authentication key.<br />
+<br />
+set protocols ospf area &lt;area number&gt; interface &lt;interface name&gt;.&lt;logical unit&gt; authentication md5 &lt;key ID&gt; key &quot;&lt;PSK&gt;&quot; <br />
+-or-<br />
+set protocols ospf area &lt;area number&gt; interface &lt;interface name&gt;.&lt;logical unit&gt; ipsec-sa &lt;SA name&gt;<br />
+<br />
+set protocols ospf3 area &lt;area number&gt; interface &lt;interface name&gt;.&lt;logical unit&gt; ipsec-sa &lt;SA name&gt;<br />
+<br />
+set security ipsec security-association &lt;SA name&gt; mode transport<br />
+set security ipsec security-association &lt;SA name&gt; manual direction bidirectional protocol (ah | esp | bundle)<br />
+set security ipsec security-association &lt;SA name&gt; manual direction bidirectional spi &lt;manually configured SPI (256..16639)&gt;<br />
+set security ipsec security-association &lt;SA name&gt; manual direction bidirectional encryption algorithm (hmac-sha1-96 | hmac-sha-256-128)<br />
+set security ipsec security-association &lt;SA name&gt; manual direction bidirectional authentication key hexadecimal &quot;&lt;appropriate PSK&gt;&quot;<br />
+Note: Encryption keys can also be entered as ASCII with the keyword 'ascii-text' replacing 'hexadecimal'. Regardless of key type, the PSK is hashed in the configuration.</p><h2>Check Contents</h2><p>Review the router configuration.<br />
+<br />
+For every protocol that affects the routing or forwarding tables (where information is exchanged between neighbors), verify that neighbor router authentication is encrypting the authentication key.<br />
+<br />
+[edit protocols]<br />
+ospf {<br />
+    area &lt;area number&gt; {<br />
+        interface &lt;interface name&gt;.&lt;logical unit&gt; {<br />
+            authentication {<br />
+                md5 1 key &quot;$8$aes256-gcm$hmac-sha2-256$100$hvt9Fpk6EEU$I2FKFJNrdKHpp1xesMB0aA$l9BsHxOYO4+B8f7erRj8Hw$A9PYzx53Ius&quot;; ## SECRET-DATA<br />
+            }<br />
+        }<br />
+        interface &lt;interface name&gt;.&lt;logical unit&gt; {<br />
+           ipsec-sa &lt;SA name&gt;;<br />
+        }<br />
+    }<br />
+}<br />
+ospf3 {<br />
+    area &lt;area number&gt; {<br />
+        interface &lt;interface name&gt;.&lt;logical unit&gt; {<br />
+            ipsec-sa &lt;SA name&gt;;<br />
+        }<br />
+    }<br />
+}<br />
+<br />
+Note: OSPFv3 only supports IPsec SA authentication; OSPFv2 supports both IPsec SA and MD5 authentication. MD5 authentication is only included to support devices that do not support IPsec SA authentication.<br />
+<br />
+Verify the OSPFv3 SA.<br />
+[edit security ipsec]<br />
+security-association &lt;SA name&gt; {<br />
+    mode transport;<br />
+    manual {<br />
+        direction bidirectional {<br />
+            protocol (ah | esp | bundle);<br />
+            spi (256..16639); &lt;&lt;&lt; The SPI is an integer value that must match the peer<br />
+            encryption {<br />
+                algorithm (hmac-sha1-96 | hmac-sha-256-128);<br />
+                key hexadecimal &quot;$8$aes256-gcm$hmac-sha2-256$100$QAP67/2oV/s$nz+2A3zRz40fwxMJdbbA0Q$R5A/koX36OvUWBB543QwAA$tQrR3fkCL2oQ3V1O2Tw2lYl7THNuqBQ6hpyi8naLlXMaKQM0SdJYefQU41rB3zpjisVIWBwS+S8+O146luRf3Q&quot;; ## SECRET-DATA<br />
+            }<br />
+        }<br />
+    }<br />
+}<br />
+Note: OSPFv3 SA uses manual transport mode encapsulating security payload (ESP) associations.<br />
+<br />
+If authentication is not encrypting the authentication key, this is a finding.</p><h2>Vulnerability Number</h2><p>V-254001</p><h2>Documentable</h2><p>False</p><h2>Rule Version</h2><p>JUEX-RT-000290</p><h2>Severity Override Guidance</h2><p>Review the router configuration.<br />
+<br />
+For every protocol that affects the routing or forwarding tables (where information is exchanged between neighbors), verify that neighbor router authentication is encrypting the authentication key.<br />
+<br />
+[edit protocols]<br />
+ospf {<br />
+    area &lt;area number&gt; {<br />
+        interface &lt;interface name&gt;.&lt;logical unit&gt; {<br />
+            authentication {<br />
+                md5 1 key &quot;$8$aes256-gcm$hmac-sha2-256$100$hvt9Fpk6EEU$I2FKFJNrdKHpp1xesMB0aA$l9BsHxOYO4+B8f7erRj8Hw$A9PYzx53Ius&quot;; ## SECRET-DATA<br />
+            }<br />
+        }<br />
+        interface &lt;interface name&gt;.&lt;logical unit&gt; {<br />
+           ipsec-sa &lt;SA name&gt;;<br />
+        }<br />
+    }<br />
+}<br />
+ospf3 {<br />
+    area &lt;area number&gt; {<br />
+        interface &lt;interface name&gt;.&lt;logical unit&gt; {<br />
+            ipsec-sa &lt;SA name&gt;;<br />
+        }<br />
+    }<br />
+}<br />
+<br />
+Note: OSPFv3 only supports IPsec SA authentication; OSPFv2 supports both IPsec SA and MD5 authentication. MD5 authentication is only included to support devices that do not support IPsec SA authentication.<br />
+<br />
+Verify the OSPFv3 SA.<br />
+[edit security ipsec]<br />
+security-association &lt;SA name&gt; {<br />
+    mode transport;<br />
+    manual {<br />
+        direction bidirectional {<br />
+            protocol (ah | esp | bundle);<br />
+            spi (256..16639); &lt;&lt;&lt; The SPI is an integer value that must match the peer<br />
+            encryption {<br />
+                algorithm (hmac-sha1-96 | hmac-sha-256-128);<br />
+                key hexadecimal &quot;$8$aes256-gcm$hmac-sha2-256$100$QAP67/2oV/s$nz+2A3zRz40fwxMJdbbA0Q$R5A/koX36OvUWBB543QwAA$tQrR3fkCL2oQ3V1O2Tw2lYl7THNuqBQ6hpyi8naLlXMaKQM0SdJYefQU41rB3zpjisVIWBwS+S8+O146luRf3Q&quot;; ## SECRET-DATA<br />
+            }<br />
+        }<br />
+    }<br />
+}<br />
+Note: OSPFv3 SA uses manual transport mode encapsulating security payload (ESP) associations.<br />
+<br />
+If authentication is not encrypting the authentication key, this is a finding.</p><h2>Check Content Reference</h2><p>M</p><h2>Target Key</h2><p>5479</p></body></html>

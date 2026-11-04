@@ -7,7 +7,7 @@
 
 QUrl ReleaseMetadata::siteUrl()
 {
-    return QUrl(QStringLiteral("https://squinky86.github.io/stigqter.com/"));
+    return QUrl(QStringLiteral("https://squinky86.github.io/STIGQter/"));
 }
 
 QUrl ReleaseMetadata::latestUrl()

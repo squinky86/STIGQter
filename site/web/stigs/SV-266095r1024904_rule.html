@@ -1,0 +1,97 @@
+<!doctype html><html lang="en"><head><meta charset="utf-8"><title>STIGQter: STIG Check Details: SV-266095r1024904_rule: The F5 BIG-IP appliance must set the idle time before automatic logout to five minutes of inactivity except to fulfill documented and validated mission requirements.</title><link rel="icon" type="image/svg+xml" href="STIGQter.svg" /><script async src="https://www.googletagmanager.com/gtag/js?id=UA-31381839-2"></script><script src="include.js"></script><script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-4110907817782130" crossorigin="anonymous"></script></head><body><div><img src="STIGQter.svg" alt="STIGQter" style="height:1em;" /> <a href="https://www.stigqter.com/">STIGQter</a>: <a href="main.html">STIG Summary</a>: <a href="U_F5_BIG-IP_TMOS_NDM_STIG_V1R2_Manual-xccdf.html">F5 BIG-IP TMOS NDM Security Technical Implementation Guide Version: 1 Release: 2 Benchmark Date: 02 Jul 2025</a>:</div> <h1>The F5 BIG-IP appliance must set the idle time before automatic logout to five minutes of inactivity except to fulfill documented and validated mission requirements.</h1><h2>DISA Rule</h2><p>SV-266095r1024904_rule</p><h2>Vulnerability Number</h2><p>V-266095</p><h2>Group Title</h2><p>SRG-APP-000190-NDM-000267</p><h2>Rule Version</h2><p>F5BI-DM-300057</p><h2>Severity</h2><p>CAT I</p><h2>CCI(s)</h2><ul><li>CCI-001133 - Terminate the network connection associated with a communications session at the end of the session or after an organization-defined time period of inactivity.</li><li>CCI-000057 - The information system initiates a session lock after the organization-defined time period of inactivity.</li></ul><h2>Weight</h2><p>10</p><h2>Fix Recommendation</h2><p>From the BIG-IP GUI:<br />
+HTTPD/TMSH:<br />
+1. System.<br />
+2. Preferences.<br />
+3. Under Security Settings configure &quot;Idle Time Before Automatic Logout&quot; to 300 seconds.<br />
+4. Click &quot;Update&quot;.<br />
+<br />
+SSHD:<br />
+1. System.<br />
+2. Configuration.<br />
+3. Device.<br />
+4. SSHD.<br />
+5. Configure &quot;Idle Time Before Automatic Logout&quot; to 300 seconds.<br />
+6. Click &quot;Update&quot;.<br />
+<br />
+From the BIG-IP Console, issue the following commands:<br />
+HTTPD/TMSH:<br />
+tmsh modify sys httpd auth-pam-idle-timeout 300<br />
+<br />
+tmsh modify sys httpd auth-pam-dashboard-timeout on<br />
+<br />
+tmsh modify sys global-settings console-inactivity-timeout 300<br />
+<br />
+tmsh modify cli global-settings idle-timeout 5<br />
+<br />
+SSHD:<br />
+tmsh modify sys sshd inactivity-timeout 300<br />
+<br />
+tmsh save sys config</p><h2>Check Contents</h2><p>If a documented and validated reason for not implementing the five-minute idle timeout exists, this is not a finding.<br />
+<br />
+From the BIG-IP GUI:<br />
+HTTPD/TMSH:<br />
+1. System.<br />
+2. Preferences.<br />
+3. Under Security Settings, verify &quot;Idle Time Before Automatic Logout&quot; is configured for 300 seconds or less.<br />
+<br />
+SSHD:<br />
+1. System.<br />
+2. Configuration.<br />
+3. Device.<br />
+4. SSHD.<br />
+5. Verify &quot;Idle Time Before Automatic Logout&quot; is configured for 300 seconds or less.<br />
+<br />
+From the BIG-IP Console, issue the following commands:<br />
+HTTPD/TMSH:<br />
+<br />
+tmsh list sys httpd auth-pam-idle-timeout<br />
+Note: This must return a value of 300 or less.<br />
+<br />
+tmsh list sys httpd auth-pam-dashboard-timeout<br />
+Note: This must return a value of &quot;on&quot;.<br />
+<br />
+tmsh list sys global-settings console-inactivity-timeout<br />
+Note: This must return a value of 300 or less.<br />
+<br />
+tmsh list cli global-settings idle-timeout<br />
+Note: This must return a value of 5.<br />
+<br />
+SSHD:<br />
+tmsh list sys sshd inactivity-timeout<br />
+Note: This must return a value of 300 or less.<br />
+<br />
+If the BIG-IP appliance is not configured to terminate inactive sessions after five minutes of inactivity, this is a finding.</p><h2>Vulnerability Number</h2><p>V-266095</p><h2>Documentable</h2><p>False</p><h2>Rule Version</h2><p>F5BI-DM-300057</p><h2>Severity Override Guidance</h2><p>If a documented and validated reason for not implementing the five-minute idle timeout exists, this is not a finding.<br />
+<br />
+From the BIG-IP GUI:<br />
+HTTPD/TMSH:<br />
+1. System.<br />
+2. Preferences.<br />
+3. Under Security Settings, verify &quot;Idle Time Before Automatic Logout&quot; is configured for 300 seconds or less.<br />
+<br />
+SSHD:<br />
+1. System.<br />
+2. Configuration.<br />
+3. Device.<br />
+4. SSHD.<br />
+5. Verify &quot;Idle Time Before Automatic Logout&quot; is configured for 300 seconds or less.<br />
+<br />
+From the BIG-IP Console, issue the following commands:<br />
+HTTPD/TMSH:<br />
+<br />
+tmsh list sys httpd auth-pam-idle-timeout<br />
+Note: This must return a value of 300 or less.<br />
+<br />
+tmsh list sys httpd auth-pam-dashboard-timeout<br />
+Note: This must return a value of &quot;on&quot;.<br />
+<br />
+tmsh list sys global-settings console-inactivity-timeout<br />
+Note: This must return a value of 300 or less.<br />
+<br />
+tmsh list cli global-settings idle-timeout<br />
+Note: This must return a value of 5.<br />
+<br />
+SSHD:<br />
+tmsh list sys sshd inactivity-timeout<br />
+Note: This must return a value of 300 or less.<br />
+<br />
+If the BIG-IP appliance is not configured to terminate inactive sessions after five minutes of inactivity, this is a finding.</p><h2>Check Content Reference</h2><p>M</p><h2>Target Key</h2><p>5639</p></body></html>

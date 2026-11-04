@@ -1,0 +1,145 @@
+<!doctype html><html lang="en"><head><meta charset="utf-8"><title>STIGQter: STIG Check Details: SV-220423r929046_rule: The Cisco switch must be configured to enable routing protocol authentication using FIPS 198-1 algorithms with keys not exceeding 180 days of lifetime.</title><link rel="icon" type="image/svg+xml" href="STIGQter.svg" /><script async src="https://www.googletagmanager.com/gtag/js?id=UA-31381839-2"></script><script src="include.js"></script><script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-4110907817782130" crossorigin="anonymous"></script></head><body><div><img src="STIGQter.svg" alt="STIGQter" style="height:1em;" /> <a href="https://www.stigqter.com/">STIGQter</a>: <a href="main.html">STIG Summary</a>: <a href="U_Cisco_IOS_Switch_RTR_STIG_V3R3_Manual-xccdf.html">Cisco IOS Switch RTR Security Technical Implementation Guide Version: 3 Release: 3 Benchmark Date: 01 Apr 2026</a>:</div> <h1>The Cisco switch must be configured to enable routing protocol authentication using FIPS 198-1 algorithms with keys not exceeding 180 days of lifetime.</h1><h2>DISA Rule</h2><p>SV-220423r929046_rule</p><h2>Vulnerability Number</h2><p>V-220423</p><h2>Group Title</h2><p>SRG-NET-000168-RTR-000078</p><h2>Rule Version</h2><p>CISC-RT-000050</p><h2>Severity</h2><p>CAT II</p><h2>CCI(s)</h2><ul><li>CCI-000803 - Implement mechanisms for authentication to a cryptographic module that meet the requirements of applicable laws, Executive Orders, directives, policies, regulations, standards, and guidance for such authentication.</li><li>CCI-002205 - Uniquely identify and authenticate source by organization, system, application, service, and/or individual for information transfer.</li></ul><h2>Weight</h2><p>10</p><h2>Fix Recommendation</h2><p>Configure routing protocol authentication to use a NIST-validated FIPS 198-1 message authentication code algorithm with keys not exceeding 180 days of lifetime as shown in the examples.<br />
+<br />
+BGP Example:<br />
+<br />
+Step 1: Configure a keychain using a FIPS 198-1 algorithm with a key duration not exceeding 180 days.<br />
+<br />
+key chain &lt;KEY-CHAIN-NAME&gt; tcp <br />
+key &lt;KEY-ID&gt;<br />
+send-id &lt;ID&gt;<br />
+recv-id &lt;ID&gt;<br />
+cryptographic-algorithm hmac-sha256<br />
+key-string &lt;KEY&gt;<br />
+accept-lifetime 00:00:00 Jan 1 2022 duration 180<br />
+send-lifetime 00:00:00 Jan 1 2022 duration 180 <br />
+!<br />
+<br />
+Step 2: Configure BGP autonomous system to use the keychain for authentication.<br />
+<br />
+router bgp &lt;ASN&gt;<br />
+no synchronization<br />
+bgp log-neighbor-changes<br />
+neighbor x.x.x.x remote-as &lt;ASN&gt;<br />
+neighbor x.x.x.x ao &lt;KEY-CHAIN-NAME&gt;<br />
+<br />
+OSPF Example:<br />
+<br />
+Step 1: Configure a keychain using a FIPS 198-1 algorithm with a key duration not exceeding 180 days.<br />
+<br />
+key chain OSPF_KEY_CHAIN<br />
+key 1<br />
+key-string xxxxxxx<br />
+send-lifetime 00:00:00 Jan 1 2018 23:59:59 Mar 31 2018<br />
+accept-lifetime 00:00:00 Jan 1 2018 01:05:00 Apr 1 2018<br />
+cryptographic-algorithm hmac-sha-256<br />
+key 2<br />
+key-string yyyyyyy<br />
+send-lifetime 00:00:00 Apr 1 2018 23:59:59 Jun 30 2018<br />
+accept-lifetime 23:55:00 Mar 31 2018 01:05:00 Jul 1 2018<br />
+cryptographic-algorithm hmac-sha-256<br />
+<br />
+Step 2: Configure OSPF to use the keychain for authentication.<br />
+<br />
+interface GigabitEthernet0/1<br />
+ip address x.x.x.x 255.255.255.0<br />
+ip ospf authentication key-chain OSPF_KEY_CHAIN</p><h2>Check Contents</h2><p>Review the switch configuration using the configuration examples below for BGP and OSPF.<br />
+<br />
+EIGRP, RIP, and IS-IS only support MD5 and will incur a permanent finding for those protocols.<br />
+<br />
+Note: The 180-day key lifetime is Not Applicable for the DODIN Backbone. The remainder of the requirement still applies.<br />
+<br />
+Verify that neighbor router authentication is enabled for all routing protocols. If neighbor authentication is not enabled this is a finding.<br />
+<br />
+Verify that authentication is configured to use FIPS 198-1 message authentication algorithms. If the routing protocol authentication is not configured to use FIPS 198-1 algorithms this is a finding.<br />
+<br />
+Verify that the protocol key lifetime is configured to not exceed 180 days. If any protocol key lifetime is configured to exceed 180 days this is a finding.<br />
+<br />
+BGP Example:<br />
+<br />
+key chain &lt;KEY-CHAIN-NAME&gt; tcp <br />
+key &lt;KEY-ID&gt;<br />
+send-id &lt;ID&gt;<br />
+recv-id &lt;ID&gt;<br />
+cryptographic-algorithm hmac-sha256<br />
+key-string &lt;KEY&gt;<br />
+accept-lifetime 00:00:00 Jan 1 2022 duration 180<br />
+send-lifetime 00:00:00 Jan 1 2022 duration 180 <br />
+!<br />
+!<br />
+router bgp &lt;ASN&gt;<br />
+no synchronization<br />
+bgp log-neighbor-changes<br />
+neighbor x.x.x.x remote-as &lt;ASN&gt;<br />
+neighbor x.x.x.x ao &lt;KEY-CHAIN-NAME&gt;<br />
+<br />
+Note: TCP-AO is used to replace MD5 in BGP authentication. <br />
+<br />
+OSPF Example:<br />
+<br />
+key chain OSPF_KEY_CHAIN<br />
+key 1<br />
+key-string xxxxxxx<br />
+send-lifetime 00:00:00 Jan 1 2018 23:59:59 Mar 31 2018<br />
+accept-lifetime 00:00:00 Jan 1 2018 01:05:00 Apr 1 2018<br />
+cryptographic-algorithm hmac-sha-256<br />
+key 2<br />
+key-string yyyyyyy<br />
+send-lifetime 00:00:00 Apr 1 2018 23:59:59 Jun 30 2018<br />
+accept-lifetime 23:55:00 Mar 31 2018 01:05:00 Jul 1 2018<br />
+cryptographic-algorithm hmac-sha-256<br />
+…<br />
+…<br />
+…<br />
+interface GigabitEthernet0/1<br />
+ip address x.x.x.x 255.255.255.0<br />
+ip ospf authentication key-chain OSPF_KEY_CHAIN</p><h2>Vulnerability Number</h2><p>V-220423</p><h2>Documentable</h2><p>False</p><h2>Rule Version</h2><p>CISC-RT-000050</p><h2>Severity Override Guidance</h2><p>Review the switch configuration using the configuration examples below for BGP and OSPF.<br />
+<br />
+EIGRP, RIP, and IS-IS only support MD5 and will incur a permanent finding for those protocols.<br />
+<br />
+Note: The 180-day key lifetime is Not Applicable for the DODIN Backbone. The remainder of the requirement still applies.<br />
+<br />
+Verify that neighbor router authentication is enabled for all routing protocols. If neighbor authentication is not enabled this is a finding.<br />
+<br />
+Verify that authentication is configured to use FIPS 198-1 message authentication algorithms. If the routing protocol authentication is not configured to use FIPS 198-1 algorithms this is a finding.<br />
+<br />
+Verify that the protocol key lifetime is configured to not exceed 180 days. If any protocol key lifetime is configured to exceed 180 days this is a finding.<br />
+<br />
+BGP Example:<br />
+<br />
+key chain &lt;KEY-CHAIN-NAME&gt; tcp <br />
+key &lt;KEY-ID&gt;<br />
+send-id &lt;ID&gt;<br />
+recv-id &lt;ID&gt;<br />
+cryptographic-algorithm hmac-sha256<br />
+key-string &lt;KEY&gt;<br />
+accept-lifetime 00:00:00 Jan 1 2022 duration 180<br />
+send-lifetime 00:00:00 Jan 1 2022 duration 180 <br />
+!<br />
+!<br />
+router bgp &lt;ASN&gt;<br />
+no synchronization<br />
+bgp log-neighbor-changes<br />
+neighbor x.x.x.x remote-as &lt;ASN&gt;<br />
+neighbor x.x.x.x ao &lt;KEY-CHAIN-NAME&gt;<br />
+<br />
+Note: TCP-AO is used to replace MD5 in BGP authentication. <br />
+<br />
+OSPF Example:<br />
+<br />
+key chain OSPF_KEY_CHAIN<br />
+key 1<br />
+key-string xxxxxxx<br />
+send-lifetime 00:00:00 Jan 1 2018 23:59:59 Mar 31 2018<br />
+accept-lifetime 00:00:00 Jan 1 2018 01:05:00 Apr 1 2018<br />
+cryptographic-algorithm hmac-sha-256<br />
+key 2<br />
+key-string yyyyyyy<br />
+send-lifetime 00:00:00 Apr 1 2018 23:59:59 Jun 30 2018<br />
+accept-lifetime 23:55:00 Mar 31 2018 01:05:00 Jul 1 2018<br />
+cryptographic-algorithm hmac-sha-256<br />
+…<br />
+…<br />
+…<br />
+interface GigabitEthernet0/1<br />
+ip address x.x.x.x 255.255.255.0<br />
+ip ospf authentication key-chain OSPF_KEY_CHAIN</p><h2>Check Content Reference</h2><p>M</p><h2>Target Key</h2><p>4065</p></body></html>

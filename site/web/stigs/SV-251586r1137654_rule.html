@@ -1,0 +1,76 @@
+<!doctype html><html lang="en"><head><meta charset="utf-8"><title>STIGQter: STIG Check Details: SV-251586r1137654_rule: All installation-delivered IDMS USER-level tasks must be properly secured.</title><link rel="icon" type="image/svg+xml" href="STIGQter.svg" /><script async src="https://www.googletagmanager.com/gtag/js?id=UA-31381839-2"></script><script src="include.js"></script><script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-4110907817782130" crossorigin="anonymous"></script></head><body><div><img src="STIGQter.svg" alt="STIGQter" style="height:1em;" /> <a href="https://www.stigqter.com/">STIGQter</a>: <a href="main.html">STIG Summary</a>: <a href="U_CA_IDMS_STIG_V2R2_Manual-xccdf.html">CA IDMS Security Technical Implementation Guide Version: 2 Release: 2 Benchmark Date: 01 Jul 2026</a>:</div> <h1>All installation-delivered IDMS USER-level tasks must be properly secured.</h1><h2>DISA Rule</h2><p>SV-251586r1137654_rule</p><h2>Vulnerability Number</h2><p>V-251586</p><h2>Group Title</h2><p>SRG-APP-000033-DB-000084</p><h2>Rule Version</h2><p>IDMS-DB-000060</p><h2>Severity</h2><p>CAT II</p><h2>CCI(s)</h2><ul><li>CCI-000213 - Enforce approved authorizations for logical access to information and system resources in accordance with applicable access control policies.</li><li>CCI-001082 - Separate user functionality, including user interface services, from system management functionality.</li></ul><h2>Weight</h2><p>10</p><h2>Fix Recommendation</h2><p>The SRTT module must be coded to enable task-level security. When using an external security manager (ESM), this could be done in the following manner:<br />
+ <br />
+#SECRTT TYPE=ENTRY,                          X<br />
+ RESTYPE=TASK,                                     X<br />
+ SECBY=EXTERNAL ,                               X<br />
+ EXTNAME=(RESTYPE,RESNAME),        X<br />
+ EXTCLS='CA@IDMS'<br />
+<br />
+or to give access specifically to one or more tasks (in this case, to ADS):<br />
+<br />
+#SECRTT TYPE=ENTRY, RESTYPE=TASK,                             X<br />
+  SECBY=OFF,                                                                        X               <br />
+ EXTNAME=(RESTYPE,RESNAME),EXTCLS='CA@IDMS'<br />
+<br />
+with an OCCUR statement for each task:<br />
+<br />
+#SECRTT TYPE=OCCUR,RESTYPE=TASK,                               X<br />
+ SECBY=EXTERNAL,                                                                 X <br />
+ RESNAME='ADS'                                                                           <br />
+<br />
+Using the above examples, the ESM must be configured to grant access for resource name &quot;TASK.task-name&quot; to security group (or role) USER, for security class &quot;CA@IDMS&quot;, where &quot;task-name&quot; is one of the user-level tasks listed. This grant must be repeated for each Task in the list. The appropriate ESM rules must then be given to the appropriate users. For instance, in Top Secret:<br />
+TSS PER(user_id) CA@IDMS(TASK.ADS)<br />
+<br />
+In ACF2:<br />
+$KEY(TASK.ADS) TYPE(CA@IDMS) <br />
+ UID(user_id) ALLOW<br />
+<br />
+In RACF:<br />
+PERMIT TASK.ADS CLASS(CA@IDMS) ID(user_id) ACCESS(READ)<br />
+<br />
+After making the above changes, assemble and link RHDCSRTT to create a new SRTT. To implement the new SRTT, either recycle any CVs that use the SRTT or issue these commands:       <br />
+ <br />
+DCMT VARY NUCLEUS MODULE RHDCSRTT NEW COPY <br />
+DCMT VARY NUCLEUS RELOAD</p><h2>Check Contents</h2><p>Examine load module &quot;RHDCSRTT&quot; by executing CA IDMS utility &quot;IDMSSRTD&quot;, or by issuing command &quot;DCMT DISPLAY SRTT&quot; while signed onto the CV, and reviewing the output. <br />
+<br />
+Note: This requires PTFs SO07995 and SO09476.<br />
+<br />
+Validate the following suggested user-level tasks are secured in the SRTT (included, for example, in the roles of DCADMIN-, DBADMIN-, and DEVELOPER-level security). <br />
+<br />
+Note: USER, DEVELOPER, DBADMIN, and DCADMIN are suggested categories only.<br />
+ ADS<br />
+ OCF     <br />
+ OCFT    <br />
+ OCFX    <br />
+ OLP     <br />
+ OLQ     <br />
+ OLQNT   <br />
+ OLQT    <br />
+ OLQTNOTE<br />
+ <br />
+If &quot;TASK&quot; is not found as the resource type in any of the entries, this is a finding. <br />
+<br />
+If &quot;TASK&quot; is secured internally, this is a finding. <br />
+<br />
+If &quot;TASK&quot; is secured externally in the SRTT, review the SRTT entries to ensure that the above tasks are secured and review ESM for external class and external name format to verify the appropriate authorizations have been defined. If they have not, this is a finding.</p><h2>Vulnerability Number</h2><p>V-251586</p><h2>Documentable</h2><p>False</p><h2>Rule Version</h2><p>IDMS-DB-000060</p><h2>Severity Override Guidance</h2><p>Examine load module &quot;RHDCSRTT&quot; by executing CA IDMS utility &quot;IDMSSRTD&quot;, or by issuing command &quot;DCMT DISPLAY SRTT&quot; while signed onto the CV, and reviewing the output. <br />
+<br />
+Note: This requires PTFs SO07995 and SO09476.<br />
+<br />
+Validate the following suggested user-level tasks are secured in the SRTT (included, for example, in the roles of DCADMIN-, DBADMIN-, and DEVELOPER-level security). <br />
+<br />
+Note: USER, DEVELOPER, DBADMIN, and DCADMIN are suggested categories only.<br />
+ ADS<br />
+ OCF     <br />
+ OCFT    <br />
+ OCFX    <br />
+ OLP     <br />
+ OLQ     <br />
+ OLQNT   <br />
+ OLQT    <br />
+ OLQTNOTE<br />
+ <br />
+If &quot;TASK&quot; is not found as the resource type in any of the entries, this is a finding. <br />
+<br />
+If &quot;TASK&quot; is secured internally, this is a finding. <br />
+<br />
+If &quot;TASK&quot; is secured externally in the SRTT, review the SRTT entries to ensure that the above tasks are secured and review ESM for external class and external name format to verify the appropriate authorizations have been defined. If they have not, this is a finding.</p><h2>Check Content Reference</h2><p>M</p><h2>Target Key</h2><p>5418</p></body></html>

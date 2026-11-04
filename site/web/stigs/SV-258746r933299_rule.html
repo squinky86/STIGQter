@@ -1,0 +1,44 @@
+<!doctype html><html lang="en"><head><meta charset="utf-8"><title>STIGQter: STIG Check Details: SV-258746r933299_rule: The ESXi Image Profile and vSphere Installation Bundle (VIB) acceptance level must be verified.</title><link rel="icon" type="image/svg+xml" href="STIGQter.svg" /><script async src="https://www.googletagmanager.com/gtag/js?id=UA-31381839-2"></script><script src="include.js"></script><script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-4110907817782130" crossorigin="anonymous"></script></head><body><div><img src="STIGQter.svg" alt="STIGQter" style="height:1em;" /> <a href="https://www.stigqter.com/">STIGQter</a>: <a href="main.html">STIG Summary</a>: <a href="U_VMW_vSphere_8-0-ESXi_STIG_V1R1_Manual-xccdf.html">VMware vSphere 8.0 ESXi Security Technical Implementation Guide Version: 1 Release: 1 Benchmark Date: 31 Oct 2023</a>:</div> <h1>The ESXi Image Profile and vSphere Installation Bundle (VIB) acceptance level must be verified.</h1><h2>DISA Rule</h2><p>SV-258746r933299_rule</p><h2>Vulnerability Number</h2><p>V-258746</p><h2>Group Title</h2><p>SRG-OS-000366-VMM-001430</p><h2>Rule Version</h2><p>ESXI-80-000133</p><h2>Severity</h2><p>CAT I</p><h2>CCI(s)</h2><ul><li>CCI-001774 - Employ a deny-all, permit-by-exception policy to allow the execution of authorized software programs on the system.</li></ul><h2>Weight</h2><p>10</p><h2>Fix Recommendation</h2><p>From the vSphere Client, go to Hosts and Clusters.<br />
+<br />
+Select the ESXi Host &gt;&gt; Configure &gt;&gt; System &gt;&gt; Security Profile.<br />
+<br />
+Under &quot;Host Image Profile Acceptance Level&quot;, click &quot;Edit&quot;.<br />
+<br />
+Using the drop-down selection, set the acceptance level as &quot;VMwareCertified&quot;, &quot;VMwareAccepted&quot;, or &quot;PartnerSupported&quot;. The default is &quot;PartnerSupported&quot;.<br />
+<br />
+or<br />
+<br />
+From a PowerCLI command prompt while connected to the ESXi host, run the following commands:<br />
+<br />
+$esxcli = Get-EsxCli -v2<br />
+$arguments = $esxcli.software.acceptance.set.CreateArgs()<br />
+$arguments.level = &quot;PartnerSupported&quot;<br />
+$esxcli.software.acceptance.set.Invoke($arguments)<br />
+<br />
+Note: &quot;VMwareCertified&quot; or &quot;VMwareAccepted&quot; may be substituted for &quot;PartnerSupported&quot;, depending on local requirements. These are case sensitive.</p><h2>Check Contents</h2><p>From the vSphere Client, go to Hosts and Clusters.<br />
+<br />
+Select the ESXi Host &gt;&gt; Configure &gt;&gt; System &gt;&gt; Security Profile.<br />
+<br />
+Under &quot;Host Image Profile Acceptance Level&quot; view the acceptance level.<br />
+<br />
+or<br />
+<br />
+From a PowerCLI command prompt while connected to the ESXi host, run the following commands:<br />
+<br />
+$esxcli = Get-EsxCli -v2<br />
+$esxcli.software.acceptance.get.Invoke()<br />
+<br />
+If the acceptance level is &quot;CommunitySupported&quot;, this is a finding.</p><h2>Vulnerability Number</h2><p>V-258746</p><h2>Documentable</h2><p>False</p><h2>Rule Version</h2><p>ESXI-80-000133</p><h2>Severity Override Guidance</h2><p>From the vSphere Client, go to Hosts and Clusters.<br />
+<br />
+Select the ESXi Host &gt;&gt; Configure &gt;&gt; System &gt;&gt; Security Profile.<br />
+<br />
+Under &quot;Host Image Profile Acceptance Level&quot; view the acceptance level.<br />
+<br />
+or<br />
+<br />
+From a PowerCLI command prompt while connected to the ESXi host, run the following commands:<br />
+<br />
+$esxcli = Get-EsxCli -v2<br />
+$esxcli.software.acceptance.get.Invoke()<br />
+<br />
+If the acceptance level is &quot;CommunitySupported&quot;, this is a finding.</p><h2>Check Content Reference</h2><p>M</p><h2>Target Key</h2><p>5562</p></body></html>

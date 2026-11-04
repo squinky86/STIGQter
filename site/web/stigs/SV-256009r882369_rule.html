@@ -1,0 +1,188 @@
+<!doctype html><html lang="en"><head><meta charset="utf-8"><title>STIGQter: STIG Check Details: SV-256009r882369_rule: The Arista router must be configured to have all non-essential capabilities disabled.</title><link rel="icon" type="image/svg+xml" href="STIGQter.svg" /><script async src="https://www.googletagmanager.com/gtag/js?id=UA-31381839-2"></script><script src="include.js"></script><script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-4110907817782130" crossorigin="anonymous"></script></head><body><div><img src="STIGQter.svg" alt="STIGQter" style="height:1em;" /> <a href="https://www.stigqter.com/">STIGQter</a>: <a href="main.html">STIG Summary</a>: <a href="U_Arista_MLS_EOS_4-X_Router_STIG_V2R2_Manual-xccdf.html">Arista MLS EOS 4.X Router Security Technical Implementation Guide Version: 2 Release: 2 Benchmark Date: 02 Apr 2025</a>:</div> <h1>The Arista router must be configured to have all non-essential capabilities disabled.</h1><h2>DISA Rule</h2><p>SV-256009r882369_rule</p><h2>Vulnerability Number</h2><p>V-256009</p><h2>Group Title</h2><p>SRG-NET-000131-RTR-000035</p><h2>Rule Version</h2><p>ARST-RT-000260</p><h2>Severity</h2><p>CAT III</p><h2>CCI(s)</h2><ul><li>CCI-000381 - Configure the system to provide only organization-defined mission essential capabilities.</li></ul><h2>Weight</h2><p>10</p><h2>Fix Recommendation</h2><p>Remove unneeded services and functions from the router. Removal is recommended because the service or function may be inadvertently enabled otherwise. However, if removal is not possible, disable the service or function.<br />
+<br />
+Step 1: Configure the Arista device to disable the features that are not required.<br />
+<br />
+no logging console<br />
+no ip domain lookup source-interface lo0 <br />
+no ntp<br />
+no mlag configuration <br />
+no dhcp server <br />
+<br />
+Step 2: Configure the Arista device to disable the use of VLAN 1.<br />
+<br />
+vlan 1 state suspend <br />
+interface e1<br />
+!<br />
+<br />
+Step 3: Configure all unused ports to designated VLAN and suspend the VLAN to disable all unused ports.<br />
+<br />
+   routerport trunk native vlan 1000 <br />
+   routerport trunk allowed vlan except 1</p><h2>Check Contents</h2><p>Review the Arista router configuration to determine if services or functions not required for operation or not related to router functionality (e.g., DNS, email client or server, FTP server, or web server) are enabled.<br />
+<br />
+The Arista router commands can disable any individual features not required.<br />
+<br />
+router(config)#no ip ftp [source] interfaceno logging console<br />
+no ip domain lookup source-interface lo0 <br />
+no ntp<br />
+no mlag configuration <br />
+no dhcp server<br />
+no dns domain<br />
+snmp-server community community1 ro<br />
+vlan 1 trunk group DO_NOT_USE<br />
+logging trap 6<br />
+<br />
+The Arista router configuration sample below demonstrates the default security configuration and available services that can be configured.<br />
+<br />
+!<br />
+management console<br />
+   idle-timeout 0<br />
+!<br />
+management ssh<br />
+   idle-timeout 0<br />
+!<br />
+management telnet<br />
+   shutdown<br />
+   idle-timeout 0<br />
+!<br />
+aaa authentication login default local<br />
+no aaa authentication login console<br />
+aaa authentication enable default local<br />
+no aaa authorization console<br />
+no aaa authorization exec default<br />
+no aaa authorization commands all default<br />
+aaa authorization config-commands<br />
+no aaa accounting exec console<br />
+no aaa accounting commands all console<br />
+no aaa accounting exec default<br />
+no aaa accounting commands all default<br />
+!<br />
+no enable secret<br />
+no aaa root<br />
+no aaa authentication policy local allow-nopassword-remote-login<br />
+!<br />
+username admin privilege 1 nopassword<br />
+!<br />
+no radius-server key<br />
+radius-server timeout 5<br />
+radius-server retransmit 3<br />
+no radius-server deadtime<br />
+!<br />
+no snmp-server engineID local<br />
+no snmp-server chassis-id<br />
+no snmp-server contact<br />
+no snmp-server location<br />
+no snmp-server source-interface<br />
+snmp-server enable traps<br />
+default snmp-server enable traps entity<br />
+default snmp-server enable traps lldp<br />
+default snmp-server enable traps snmp<br />
+default snmp-server enable traps spanning-tree<br />
+default snmp-server enable traps test<br />
+!<br />
+spanning-tree mode mstp<br />
+spanning-tree max-age 20<br />
+spanning-tree forward-time 15<br />
+spanning-tree transmit hold-count 6<br />
+spanning-tree max-hops 20<br />
+no spanning-tree portfast bpduguard default<br />
+no spanning-tree loopguard default<br />
+spanning-tree bpduguard rate-limit default<br />
+spanning-tree mst 0 priority 32768<br />
+!<br />
+control-plane<br />
+   ip access-group default-control-plane-acl in<br />
+!<br />
+no tacacs-server key<br />
+tacacs-server timeout 5<br />
+!<br />
+no banner login<br />
+no banner motd<br />
+!<br />
+ <br />
+Note that only SSH is enabled by default. All cleartext protocols (telnet, SNMP) are disabled by default.<br />
+<br />
+If unnecessary services and functions are enabled on the Arista router, this is a finding.</p><h2>Vulnerability Number</h2><p>V-256009</p><h2>Documentable</h2><p>False</p><h2>Rule Version</h2><p>ARST-RT-000260</p><h2>Severity Override Guidance</h2><p>Review the Arista router configuration to determine if services or functions not required for operation or not related to router functionality (e.g., DNS, email client or server, FTP server, or web server) are enabled.<br />
+<br />
+The Arista router commands can disable any individual features not required.<br />
+<br />
+router(config)#no ip ftp [source] interfaceno logging console<br />
+no ip domain lookup source-interface lo0 <br />
+no ntp<br />
+no mlag configuration <br />
+no dhcp server<br />
+no dns domain<br />
+snmp-server community community1 ro<br />
+vlan 1 trunk group DO_NOT_USE<br />
+logging trap 6<br />
+<br />
+The Arista router configuration sample below demonstrates the default security configuration and available services that can be configured.<br />
+<br />
+!<br />
+management console<br />
+   idle-timeout 0<br />
+!<br />
+management ssh<br />
+   idle-timeout 0<br />
+!<br />
+management telnet<br />
+   shutdown<br />
+   idle-timeout 0<br />
+!<br />
+aaa authentication login default local<br />
+no aaa authentication login console<br />
+aaa authentication enable default local<br />
+no aaa authorization console<br />
+no aaa authorization exec default<br />
+no aaa authorization commands all default<br />
+aaa authorization config-commands<br />
+no aaa accounting exec console<br />
+no aaa accounting commands all console<br />
+no aaa accounting exec default<br />
+no aaa accounting commands all default<br />
+!<br />
+no enable secret<br />
+no aaa root<br />
+no aaa authentication policy local allow-nopassword-remote-login<br />
+!<br />
+username admin privilege 1 nopassword<br />
+!<br />
+no radius-server key<br />
+radius-server timeout 5<br />
+radius-server retransmit 3<br />
+no radius-server deadtime<br />
+!<br />
+no snmp-server engineID local<br />
+no snmp-server chassis-id<br />
+no snmp-server contact<br />
+no snmp-server location<br />
+no snmp-server source-interface<br />
+snmp-server enable traps<br />
+default snmp-server enable traps entity<br />
+default snmp-server enable traps lldp<br />
+default snmp-server enable traps snmp<br />
+default snmp-server enable traps spanning-tree<br />
+default snmp-server enable traps test<br />
+!<br />
+spanning-tree mode mstp<br />
+spanning-tree max-age 20<br />
+spanning-tree forward-time 15<br />
+spanning-tree transmit hold-count 6<br />
+spanning-tree max-hops 20<br />
+no spanning-tree portfast bpduguard default<br />
+no spanning-tree loopguard default<br />
+spanning-tree bpduguard rate-limit default<br />
+spanning-tree mst 0 priority 32768<br />
+!<br />
+control-plane<br />
+   ip access-group default-control-plane-acl in<br />
+!<br />
+no tacacs-server key<br />
+tacacs-server timeout 5<br />
+!<br />
+no banner login<br />
+no banner motd<br />
+!<br />
+ <br />
+Note that only SSH is enabled by default. All cleartext protocols (telnet, SNMP) are disabled by default.<br />
+<br />
+If unnecessary services and functions are enabled on the Arista router, this is a finding.</p><h2>Check Content Reference</h2><p>M</p><h2>Target Key</h2><p>5513</p></body></html>

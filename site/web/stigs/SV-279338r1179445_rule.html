@@ -1,0 +1,190 @@
+<!doctype html><html lang="en"><head><meta charset="utf-8"><title>STIGQter: STIG Check Details: SV-279338r1179445_rule: MongoDB must limit privileges to change software modules, to include stored procedures, functions and triggers, and links to software external to MongoDB.</title><link rel="icon" type="image/svg+xml" href="STIGQter.svg" /><script async src="https://www.googletagmanager.com/gtag/js?id=UA-31381839-2"></script><script src="include.js"></script><script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-4110907817782130" crossorigin="anonymous"></script></head><body><div><img src="STIGQter.svg" alt="STIGQter" style="height:1em;" /> <a href="https://www.stigqter.com/">STIGQter</a>: <a href="main.html">STIG Summary</a>: <a href="U_MDB_Enterprise_Advanced_8-x_STIG_V1R1_Manual-xccdf.html">MongoDB Enterprise Advanced 8.x Security Technical Implementation Guide Version: 1 Release: 1 Benchmark Date: 26 Jan 2026</a>:</div> <h1>MongoDB must limit privileges to change software modules, to include stored procedures, functions and triggers, and links to software external to MongoDB.</h1><h2>DISA Rule</h2><p>SV-279338r1179445_rule</p><h2>Vulnerability Number</h2><p>V-279338</p><h2>Group Title</h2><p>SRG-APP-000133-DB-000179</p><h2>Rule Version</h2><p>MD8X-00-002400</p><h2>Severity</h2><p>CAT II</p><h2>CCI(s)</h2><ul><li>CCI-001499 - Limit privileges to change software resident within software libraries.</li></ul><h2>Weight</h2><p>10</p><h2>Fix Recommendation</h2><p>Implement procedures to monitor for unauthorized changes to DBMS software libraries, related software application libraries, and configuration files. If a third-party automated tool is not employed, an automated job that reports file information on the directories and files of interest and compares them to the baseline report for the same will meet the requirement. Examples of such products are Puppet, Chef, or Ansible.<br />
+<br />
+Alternately, users can write scripts to inspect the database software libraries, related applications, and configuration files to detect changes and to take appropriate actions or notifications if changes are detected. Use file hashes or checksums for comparisons, as file dates may be manipulated by malicious users.<br />
+<br />
+For example, if the running of the monitoring shell script &quot;check_mongodb_256sha_hashes.sh&quot; shown in the &quot;Check&quot; returned the following:<br />
+<br />
+$ ./check_mongodb_256sha_hashes.sh<br />
+&quot;Change detected in /etc/mongod.conf&quot;<br />
+<br />
+For each file in which a change has been detected, investigate the possible causes of the change for that file.<br />
+<br />
+In this case, inspect the &quot;/etc/mongod.conf&quot; file for changes in its content.</p><h2>Check Contents</h2><p>Review monitoring procedures and implementation evidence to verify monitoring of changes to database software libraries, related applications, and configuration files occurs.<br />
+<br />
+Verify the list of files, directories, and database application objects (procedures, functions, and triggers) being monitored is complete.<br />
+<br />
+There are many possible options to monitor the database. The most common are making use of a monitoring tool or running a script periodically.<br />
+<br />
+If a monitoring tool is actively being used to monitor the database and there is proof of the tool being active, this is not a finding.<br />
+<br />
+Where monitoring is implemented by running a Bash shell script (either scheduled or on demand), the script should check the current SHA-256 checksum of the MongoDB files with the original SHA-256 checksum after installation and configuration.<br />
+<br />
+Create and run the following shell script &quot;check_mongodb_256sha_hashes.sh&quot; from its containing Linux directory as a system administrator.<br />
+<br />
+$ ./check_mongodb_256sha_hashes.sh<br />
+<br />
+If the output is not the following, this is a finding:<br />
+<br />
+&quot;No changes detected in the monitored files.&quot;<br />
+<br />
+The shell script file &quot;check_mongodb_2456sha_hashes.sh&quot; is as follows:<br />
+<br />
+# filename: check_mongodb_256sha_hashes.sh<br />
+#!/bin/bash<br />
+<br />
+# Function to compute SHA-256 hash of the specified file<br />
+file_hash() {<br />
+    sha256sum &quot;$1&quot; | awk '{print $1}'<br />
+}<br />
+<br />
+# Function to check the list of files for any changes based on their SHA-256 hashes<br />
+check_files() {<br />
+    local changed=0<br />
+    declare -A stored_hashes<br />
+<br />
+    # Try to load last known hashes<br />
+    if [ -f file_hashes.txt ]; then<br />
+        while IFS=: read -r file hash; do<br />
+            stored_hashes[&quot;$file&quot;]=$hash<br />
+        done &lt; file_hashes.txt<br />
+    fi<br />
+<br />
+    # Check each file's hash against stored hashes<br />
+    for file in &quot;$@&quot;; do<br />
+        if [ -f &quot;$file&quot; ]; then<br />
+            current_hash=$(file_hash &quot;$file&quot;)<br />
+            if [[ &quot;${stored_hashes[$file]}&quot; != &quot;$current_hash&quot; ]]; then<br />
+                if [[ -n &quot;${stored_hashes[$file]}&quot; ]]; then<br />
+                    echo &quot;Change detected in $file&quot;<br />
+                else<br />
+                    echo &quot;New file added or first time hashing: $file&quot;<br />
+                fi<br />
+                changed=1<br />
+                stored_hashes[&quot;$file&quot;]=$current_hash<br />
+            fi<br />
+        else<br />
+            echo &quot;Warning: $file does not exist.&quot;<br />
+        fi<br />
+    done<br />
+<br />
+    # Save the updated hashes<br />
+    &gt; file_hashes.txt<br />
+    for file in &quot;${!stored_hashes[@]}&quot;; do<br />
+        echo &quot;$file:${stored_hashes[$file]}&quot; &gt;&gt; file_hashes.txt<br />
+    done<br />
+<br />
+    if [ &quot;$changed&quot; -eq 0 ]; then<br />
+        echo &quot;No changes detected in the monitored files.&quot;<br />
+    fi<br />
+}<br />
+<br />
+# List of files to monitor<br />
+files_to_check=(<br />
+    &quot;/etc/mongod.conf&quot;<br />
+    &quot;/usr/bin/mongod&quot;<br />
+    &quot;/usr/bin/mongos&quot;<br />
+    &quot;/usr/bin/mongosh&quot;<br />
+    &quot;/usr/bin/mongocryptd&quot;<br />
+    &quot;/usr/bin/mongodecrypt&quot;<br />
+    &quot;/usr/bin/mongodump&quot;<br />
+    &quot;/usr/bin/mongoexport&quot;<br />
+    &quot;/usr/bin/mongofiles&quot;<br />
+    &quot;/usr/bin/mongoimport&quot;<br />
+    &quot;/usr/bin/mongokerberos&quot;<br />
+    &quot;/usr/bin/mongoldap&quot;<br />
+    &quot;/usr/bin/mongorestore&quot;<br />
+    &quot;/usr/bin/mongostat&quot;<br />
+    &quot;/usr/bin/mongotop&quot;<br />
+)<br />
+<br />
+# Invoke check_files function with the list of files<br />
+check_files &quot;${files_to_check[@]}&quot;</p><h2>Vulnerability Number</h2><p>V-279338</p><h2>Documentable</h2><p>False</p><h2>Rule Version</h2><p>MD8X-00-002400</p><h2>Severity Override Guidance</h2><p>Review monitoring procedures and implementation evidence to verify monitoring of changes to database software libraries, related applications, and configuration files occurs.<br />
+<br />
+Verify the list of files, directories, and database application objects (procedures, functions, and triggers) being monitored is complete.<br />
+<br />
+There are many possible options to monitor the database. The most common are making use of a monitoring tool or running a script periodically.<br />
+<br />
+If a monitoring tool is actively being used to monitor the database and there is proof of the tool being active, this is not a finding.<br />
+<br />
+Where monitoring is implemented by running a Bash shell script (either scheduled or on demand), the script should check the current SHA-256 checksum of the MongoDB files with the original SHA-256 checksum after installation and configuration.<br />
+<br />
+Create and run the following shell script &quot;check_mongodb_256sha_hashes.sh&quot; from its containing Linux directory as a system administrator.<br />
+<br />
+$ ./check_mongodb_256sha_hashes.sh<br />
+<br />
+If the output is not the following, this is a finding:<br />
+<br />
+&quot;No changes detected in the monitored files.&quot;<br />
+<br />
+The shell script file &quot;check_mongodb_2456sha_hashes.sh&quot; is as follows:<br />
+<br />
+# filename: check_mongodb_256sha_hashes.sh<br />
+#!/bin/bash<br />
+<br />
+# Function to compute SHA-256 hash of the specified file<br />
+file_hash() {<br />
+    sha256sum &quot;$1&quot; | awk '{print $1}'<br />
+}<br />
+<br />
+# Function to check the list of files for any changes based on their SHA-256 hashes<br />
+check_files() {<br />
+    local changed=0<br />
+    declare -A stored_hashes<br />
+<br />
+    # Try to load last known hashes<br />
+    if [ -f file_hashes.txt ]; then<br />
+        while IFS=: read -r file hash; do<br />
+            stored_hashes[&quot;$file&quot;]=$hash<br />
+        done &lt; file_hashes.txt<br />
+    fi<br />
+<br />
+    # Check each file's hash against stored hashes<br />
+    for file in &quot;$@&quot;; do<br />
+        if [ -f &quot;$file&quot; ]; then<br />
+            current_hash=$(file_hash &quot;$file&quot;)<br />
+            if [[ &quot;${stored_hashes[$file]}&quot; != &quot;$current_hash&quot; ]]; then<br />
+                if [[ -n &quot;${stored_hashes[$file]}&quot; ]]; then<br />
+                    echo &quot;Change detected in $file&quot;<br />
+                else<br />
+                    echo &quot;New file added or first time hashing: $file&quot;<br />
+                fi<br />
+                changed=1<br />
+                stored_hashes[&quot;$file&quot;]=$current_hash<br />
+            fi<br />
+        else<br />
+            echo &quot;Warning: $file does not exist.&quot;<br />
+        fi<br />
+    done<br />
+<br />
+    # Save the updated hashes<br />
+    &gt; file_hashes.txt<br />
+    for file in &quot;${!stored_hashes[@]}&quot;; do<br />
+        echo &quot;$file:${stored_hashes[$file]}&quot; &gt;&gt; file_hashes.txt<br />
+    done<br />
+<br />
+    if [ &quot;$changed&quot; -eq 0 ]; then<br />
+        echo &quot;No changes detected in the monitored files.&quot;<br />
+    fi<br />
+}<br />
+<br />
+# List of files to monitor<br />
+files_to_check=(<br />
+    &quot;/etc/mongod.conf&quot;<br />
+    &quot;/usr/bin/mongod&quot;<br />
+    &quot;/usr/bin/mongos&quot;<br />
+    &quot;/usr/bin/mongosh&quot;<br />
+    &quot;/usr/bin/mongocryptd&quot;<br />
+    &quot;/usr/bin/mongodecrypt&quot;<br />
+    &quot;/usr/bin/mongodump&quot;<br />
+    &quot;/usr/bin/mongoexport&quot;<br />
+    &quot;/usr/bin/mongofiles&quot;<br />
+    &quot;/usr/bin/mongoimport&quot;<br />
+    &quot;/usr/bin/mongokerberos&quot;<br />
+    &quot;/usr/bin/mongoldap&quot;<br />
+    &quot;/usr/bin/mongorestore&quot;<br />
+    &quot;/usr/bin/mongostat&quot;<br />
+    &quot;/usr/bin/mongotop&quot;<br />
+)<br />
+<br />
+# Invoke check_files function with the list of files<br />
+check_files &quot;${files_to_check[@]}&quot;</p><h2>Check Content Reference</h2><p>M</p><h2>Target Key</h2><p>5728</p></body></html>

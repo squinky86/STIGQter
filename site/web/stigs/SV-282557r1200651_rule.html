@@ -1,0 +1,23 @@
+<!doctype html><html lang="en"><head><meta charset="utf-8"><title>STIGQter: STIG Check Details: SV-282557r1200651_rule: The systemd Ctrl-Alt-Delete burst key sequence in TOSS 5 must be disabled.</title><link rel="icon" type="image/svg+xml" href="STIGQter.svg" /><script async src="https://www.googletagmanager.com/gtag/js?id=UA-31381839-2"></script><script src="include.js"></script><script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-4110907817782130" crossorigin="anonymous"></script></head><body><div><img src="STIGQter.svg" alt="STIGQter" style="height:1em;" /> <a href="https://www.stigqter.com/">STIGQter</a>: <a href="main.html">STIG Summary</a>: <a href="U_TOSS_5 _STIG_V1R1_Manual-xccdf.html">Tri-Lab Operating System Stack (TOSS) 5 Security Technical Implementation Guide Version: 1 Release: 1 Benchmark Date: 26 Mar 2026</a>:</div> <h1>The systemd Ctrl-Alt-Delete burst key sequence in TOSS 5 must be disabled.</h1><h2>DISA Rule</h2><p>SV-282557r1200651_rule</p><h2>Vulnerability Number</h2><p>V-282557</p><h2>Group Title</h2><p>SRG-OS-000324-GPOS-00125</p><h2>Rule Version</h2><p>TOSS-05-000090</p><h2>Severity</h2><p>CAT I</p><h2>CCI(s)</h2><ul><li>CCI-002235 - Prevent non-privileged users from executing privileged functions.</li></ul><h2>Weight</h2><p>10</p><h2>Fix Recommendation</h2><p>Configure TOSS 5 to disable &quot;CtrlAltDelBurstAction&quot; by adding it to a drop file in a &quot;/etc/systemd/system.conf.d/&quot; configuration file:<br />
+<br />
+If no drop file exists, create one using the following command:<br />
+<br />
+$ sudo mkdir -p /etc/systemd/system.conf.d &amp;&amp; sudo vi /etc/systemd/system.conf.d/55-CtrlAltDel-BurstAction<br />
+<br />
+Edit the file to contain the setting by adding the following text:<br />
+<br />
+CtrlAltDelBurstAction=none<br />
+<br />
+Reload the daemon for this change to take effect.<br />
+<br />
+$ sudo systemctl daemon-reload</p><h2>Check Contents</h2><p>Verify TOSS 5 is configured to not reboot the system when Ctrl-Alt-Delete is pressed seven times within two seconds using the following command:<br />
+<br />
+$ sudo grep -iR CtrlAltDelBurstAction /etc/systemd/system*<br />
+/etc/systemd/system.conf.d/55-CtrlAltDel-BurstAction:CtrlAltDelBurstAction=none<br />
+<br />
+If &quot;CtrlAltDelBurstAction&quot; is not set to &quot;none&quot;, is commented out, or is missing, this is a finding.</p><h2>Vulnerability Number</h2><p>V-282557</p><h2>Documentable</h2><p>False</p><h2>Rule Version</h2><p>TOSS-05-000090</p><h2>Severity Override Guidance</h2><p>Verify TOSS 5 is configured to not reboot the system when Ctrl-Alt-Delete is pressed seven times within two seconds using the following command:<br />
+<br />
+$ sudo grep -iR CtrlAltDelBurstAction /etc/systemd/system*<br />
+/etc/systemd/system.conf.d/55-CtrlAltDel-BurstAction:CtrlAltDelBurstAction=none<br />
+<br />
+If &quot;CtrlAltDelBurstAction&quot; is not set to &quot;none&quot;, is commented out, or is missing, this is a finding.</p><h2>Check Content Reference</h2><p>M</p><h2>Target Key</h2><p>5738</p></body></html>

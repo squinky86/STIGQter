@@ -1,0 +1,51 @@
+<!doctype html><html lang="en"><head><meta charset="utf-8"><title>STIGQter: STIG Check Details: SV-270561r1112485_rule: Oracle Database must enforce the DOD standards for password complexity.</title><link rel="icon" type="image/svg+xml" href="STIGQter.svg" /><script async src="https://www.googletagmanager.com/gtag/js?id=UA-31381839-2"></script><script src="include.js"></script><script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-4110907817782130" crossorigin="anonymous"></script></head><body><div><img src="STIGQter.svg" alt="STIGQter" style="height:1em;" /> <a href="https://www.stigqter.com/">STIGQter</a>: <a href="main.html">STIG Summary</a>: <a href="U_Oracle_Database_19c_STIG_V1R5_Manual-xccdf.html">Oracle Database 19c Security Technical Implementation Guide Version: 1 Release: 5 Benchmark Date: 01 Apr 2026</a>:</div> <h1>Oracle Database must enforce the DOD standards for password complexity.</h1><h2>DISA Rule</h2><p>SV-270561r1112485_rule</p><h2>Vulnerability Number</h2><p>V-270561</p><h2>Group Title</h2><p>SRG-APP-000164-DB-000401</p><h2>Rule Version</h2><p>O19C-00-013900</p><h2>Severity</h2><p>CAT II</p><h2>CCI(s)</h2><ul><li>CCI-000366 - Implement the security configuration settings.</li></ul><h2>Weight</h2><p>10</p><h2>Fix Recommendation</h2><p>If all user accounts are authenticated by the OS or an enterprise-level authentication/access mechanism, and not by Oracle, no fix to the DBMS is required.<br />
+<br />
+If any user accounts are managed by Oracle, develop, test, and implement a password verification function that enforces DOD requirements.<br />
+<br />
+Oracle supplies a sample function called ORA12C_STIG_VERIFY_FUNCTION. This can be used as the starting point for a customized function. The script file is found in the following location on the server depending on OS:<br />
+<br />
+Windows:<br />
+%ORACLE_HOME%\RDBMS\ADMIN\catpvf.sql<br />
+<br />
+Unix/Linux:<br />
+$ORACLE_HOME/rdbms/admin/catpvf.sql</p><h2>Check Contents</h2><p>If all user accounts are authenticated by the OS or an enterprise-level authentication/access mechanism and not by Oracle, this is not a finding.<br />
+<br />
+For each profile that can be applied to accounts where authentication is under Oracle's control, determine the password verification function that is in use:<br />
+<br />
+SELECT * FROM SYS.DBA_PROFILES <br />
+WHERE RESOURCE_NAME = 'PASSWORD_VERIFY_FUNCTION'<br />
+ORDER BY PROFILE;<br />
+<br />
+Note: Profiles can inherit settings from another profile so some password functions could be set to DEFAULT. If so, review the DEFAULT profile function name. <br />
+<br />
+If the function name is null for any profile, this is a finding.<br />
+<br />
+Review the password verification functions specified for the PASSWORD_VERIFY_FUNCTION settings for each profile. Determine whether the following rules are enforced by the code in those functions. <br />
+a. Minimum of 15 characters, including at least one of each of the following character sets:<br />
+- Uppercase<br />
+- Lowercase<br />
+- Numeric<br />
+- Special characters (e.g., ~ ! @ # $ % ^ &amp; * ( ) _ + = - ' [ ] / ? &gt; &lt;)<br />
+b. Minimum number of characters changed from previous password: 50 percent of the minimum password length; that is, eight.<br />
+<br />
+If any of the above password requirements are not included in the function, this is a finding.</p><h2>Vulnerability Number</h2><p>V-270561</p><h2>Documentable</h2><p>False</p><h2>Rule Version</h2><p>O19C-00-013900</p><h2>Severity Override Guidance</h2><p>If all user accounts are authenticated by the OS or an enterprise-level authentication/access mechanism and not by Oracle, this is not a finding.<br />
+<br />
+For each profile that can be applied to accounts where authentication is under Oracle's control, determine the password verification function that is in use:<br />
+<br />
+SELECT * FROM SYS.DBA_PROFILES <br />
+WHERE RESOURCE_NAME = 'PASSWORD_VERIFY_FUNCTION'<br />
+ORDER BY PROFILE;<br />
+<br />
+Note: Profiles can inherit settings from another profile so some password functions could be set to DEFAULT. If so, review the DEFAULT profile function name. <br />
+<br />
+If the function name is null for any profile, this is a finding.<br />
+<br />
+Review the password verification functions specified for the PASSWORD_VERIFY_FUNCTION settings for each profile. Determine whether the following rules are enforced by the code in those functions. <br />
+a. Minimum of 15 characters, including at least one of each of the following character sets:<br />
+- Uppercase<br />
+- Lowercase<br />
+- Numeric<br />
+- Special characters (e.g., ~ ! @ # $ % ^ &amp; * ( ) _ + = - ' [ ] / ? &gt; &lt;)<br />
+b. Minimum number of characters changed from previous password: 50 percent of the minimum password length; that is, eight.<br />
+<br />
+If any of the above password requirements are not included in the function, this is a finding.</p><h2>Check Content Reference</h2><p>M</p><h2>Target Key</h2><p>5672</p></body></html>

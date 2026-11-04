@@ -1,0 +1,33 @@
+<!doctype html><html lang="en"><head><meta charset="utf-8"><title>STIGQter: STIG Check Details: SV-256966r1138080_rule: Automation Controller NGINX web servers must install security-relevant software updates within the configured time period directed by an authoritative source (e.g., IAVM, CTOs, DTMs, and STIGs).</title><link rel="icon" type="image/svg+xml" href="STIGQter.svg" /><script async src="https://www.googletagmanager.com/gtag/js?id=UA-31381839-2"></script><script src="include.js"></script><script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-4110907817782130" crossorigin="anonymous"></script></head><body><div><img src="STIGQter.svg" alt="STIGQter" style="height:1em;" /> <a href="https://www.stigqter.com/">STIGQter</a>: <a href="main.html">STIG Summary</a>: <a href="U_RH_Ansible_Automation_Controller_WS_STIG_V2R3_Manual-xccdf.html">Red Hat Ansible Automation Controller Web Server Security Technical Implementation Guide Version: 2 Release: 3 Benchmark Date: 05 Jan 2026</a>:</div> <h1>Automation Controller NGINX web servers must install security-relevant software updates within the configured time period directed by an authoritative source (e.g., IAVM, CTOs, DTMs, and STIGs).</h1><h2>DISA Rule</h2><p>SV-256966r1138080_rule</p><h2>Vulnerability Number</h2><p>V-256966</p><h2>Group Title</h2><p>SRG-APP-000456-WSR-000187</p><h2>Rule Version</h2><p>APWS-AT-000940</p><h2>Severity</h2><p>CAT II</p><h2>CCI(s)</h2><ul><li>CCI-002605 - Install security-relevant software updates within an organization-defined time period of the release of the updates.</li></ul><h2>Weight</h2><p>10</p><h2>Fix Recommendation</h2><p>As a system administrator, for each Automation Controller NGINX web server host, perform the following:<br />
+<br />
+1. Either configure update repositories in accordance with organizationally defined requirements or subscribe to Red Hat update repositories for the underlying operating system.<br />
+<br />
+2. Execute an update from these repositories:<br />
+<br />
+$ yum update -y<br />
+<br />
+3. Perform one of the following:<br />
+<br />
+3.1. Schedule an update to occur every 30 days, or in accordance with organizationally defined policy:<br />
+<br />
+$ yum install -y dnf-automatic  &amp;&amp; sed -i '/apply_updates/s/no/yes/' /etc/dnf/automatic.conf &amp;&amp; sed -i '/OnCalendar/s/^OnCalendar\s*=.*/OnCalendar=*-1-* 6:00/' /usr/lib/systemd/system/dnf-automatic.timer &amp;&amp; systemctl enable --now dnf-automatic.timer<br />
+<br />
+3.2. Schedule manual updates to occur at least every 30 days, or in accordance with organizationally defined policy. <br />
+<br />
+4. Restart the Automation Controller NGINX web server host.</p><h2>Check Contents</h2><p>As a System Administrator for each Automation Controller NGINX web server host, verify the system is configured to receive updates from an organizationally defined source for authoritative system updates:<br />
+<br />
+yum -v repolist<br />
+<br />
+If each URL is not valid and consistent with organizationally defined requirements, this is a finding.<br />
+<br />
+If each repository is not enabled in accordance with organizationally defined requirements, this is a finding.<br />
+<br />
+If the system is not configured to automatically receive and apply system updates from this source at least every 30 days, or manually receive and apply updates at least every 30 days, this is a finding.</p><h2>Vulnerability Number</h2><p>V-256966</p><h2>Documentable</h2><p>False</p><h2>Rule Version</h2><p>APWS-AT-000940</p><h2>Severity Override Guidance</h2><p>As a System Administrator for each Automation Controller NGINX web server host, verify the system is configured to receive updates from an organizationally defined source for authoritative system updates:<br />
+<br />
+yum -v repolist<br />
+<br />
+If each URL is not valid and consistent with organizationally defined requirements, this is a finding.<br />
+<br />
+If each repository is not enabled in accordance with organizationally defined requirements, this is a finding.<br />
+<br />
+If the system is not configured to automatically receive and apply system updates from this source at least every 30 days, or manually receive and apply updates at least every 30 days, this is a finding.</p><h2>Check Content Reference</h2><p>M</p><h2>Target Key</h2><p>5535</p></body></html>

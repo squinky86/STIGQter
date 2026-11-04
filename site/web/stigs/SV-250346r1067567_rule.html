@@ -1,0 +1,31 @@
+<!doctype html><html lang="en"><head><meta charset="utf-8"><title>STIGQter: STIG Check Details: SV-250346r1067567_rule: The WebSphere Liberty Server LTPA keys password must be changed.</title><link rel="icon" type="image/svg+xml" href="STIGQter.svg" /><script async src="https://www.googletagmanager.com/gtag/js?id=UA-31381839-2"></script><script src="include.js"></script><script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-4110907817782130" crossorigin="anonymous"></script></head><body><div><img src="STIGQter.svg" alt="STIGQter" style="height:1em;" /> <a href="https://www.stigqter.com/">STIGQter</a>: <a href="main.html">STIG Summary</a>: <a href="U_IBM_WebSphere_Liberty_Server_STIG_V2R4_Manual-xccdf.html">IBM WebSphere Liberty Server Security Technical Implementation Guide Version: 2 Release: 4 Benchmark Date: 01 Apr 2026</a>:</div> <h1>The WebSphere Liberty Server LTPA keys password must be changed.</h1><h2>DISA Rule</h2><p>SV-250346r1067567_rule</p><h2>Vulnerability Number</h2><p>V-250346</p><h2>Group Title</h2><p>SRG-APP-000428-AS-000265</p><h2>Rule Version</h2><p>IBMW-LS-001050</p><h2>Severity</h2><p>CAT II</p><h2>CCI(s)</h2><ul><li>CCI-002475 - Implement cryptographic mechanisms to prevent unauthorized modification of organization-defined information when at rest on organization-defined system components.</li></ul><h2>Weight</h2><p>10</p><h2>Fix Recommendation</h2><p>To update key password and force a regeneration of keys follow these steps. To obtain encoded values, use the Liberty &quot;securityUtility encode&quot; command.<br />
+<br />
+1. Shut down the server.<br />
+<br />
+2. Configure the &lt;ltpa&gt; element in the server.xml file as follows, replacing the sample values in the example with local values. The password may be encoded or encrypted.<br />
+<br />
+&lt;ltpa keysFileName=&quot;yourLTPAKeysFileName.keys&quot; keysPassword=&quot;yourkeysPassword&quot; expiration=&quot;120&quot; /&gt;<br />
+<br />
+3. Delete the existing ${wlp.server.dir}/resources/security/ltpa.keys file.<br />
+<br />
+4. Sync changes with all servers in the cell.<br />
+<br />
+5. Start the servers.</p><h2>Check Contents</h2><p>If LTPA is not used, this requirement is not a finding.<br />
+<br />
+As a privileged user with access to ${server.config.dir}/server.xml file, review the server.xml file and locate LTPA settings. If the LTPA settings do not exist, this is not a finding.<br />
+<br />
+EXAMPLE:<br />
+grep -i &quot;&lt;ltpa&quot; server.xml<br />
+<br />
+ &lt;ltpa keysFileName=&quot;LTPA.keys&quot; keysPassword=&quot;myLTPAkeysPassword&quot; expiration=&quot;120&quot; monitorInterval=&quot;5s&quot; /&gt;<br />
+<br />
+If the LTPA setting exists and the password is set to &quot;WebAS&quot;, this is a finding.</p><h2>Vulnerability Number</h2><p>V-250346</p><h2>Documentable</h2><p>False</p><h2>Rule Version</h2><p>IBMW-LS-001050</p><h2>Severity Override Guidance</h2><p>If LTPA is not used, this requirement is not a finding.<br />
+<br />
+As a privileged user with access to ${server.config.dir}/server.xml file, review the server.xml file and locate LTPA settings. If the LTPA settings do not exist, this is not a finding.<br />
+<br />
+EXAMPLE:<br />
+grep -i &quot;&lt;ltpa&quot; server.xml<br />
+<br />
+ &lt;ltpa keysFileName=&quot;LTPA.keys&quot; keysPassword=&quot;myLTPAkeysPassword&quot; expiration=&quot;120&quot; monitorInterval=&quot;5s&quot; /&gt;<br />
+<br />
+If the LTPA setting exists and the password is set to &quot;WebAS&quot;, this is a finding.</p><h2>Check Content Reference</h2><p>M</p><h2>Target Key</h2><p>5424</p></body></html>

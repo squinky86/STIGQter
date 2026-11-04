@@ -1,0 +1,57 @@
+<!doctype html><html lang="en"><head><meta charset="utf-8"><title>STIGQter: STIG Check Details: SV-257545r1208204_rule: OpenShift must separate user functionality (including user interface services) from information system management functionality.</title><link rel="icon" type="image/svg+xml" href="STIGQter.svg" /><script async src="https://www.googletagmanager.com/gtag/js?id=UA-31381839-2"></script><script src="include.js"></script><script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-4110907817782130" crossorigin="anonymous"></script></head><body><div><img src="STIGQter.svg" alt="STIGQter" style="height:1em;" /> <a href="https://www.stigqter.com/">STIGQter</a>: <a href="main.html">STIG Summary</a>: <a href="U_RH_OpenShift_Container_Platform_4-x_STIG_V2R6_Manual-xccdf.html">Red Hat OpenShift Container Platform 4.x Security Technical Implementation Guide Version: 2 Release: 6 Benchmark Date: 01 Jul 2026</a>:</div> <h1>OpenShift must separate user functionality (including user interface services) from information system management functionality.</h1><h2>DISA Rule</h2><p>SV-257545r1208204_rule</p><h2>Vulnerability Number</h2><p>V-257545</p><h2>Group Title</h2><p>SRG-APP-000211-CTR-000530</p><h2>Rule Version</h2><p>CNTR-OS-000500</p><h2>Severity</h2><p>CAT II</p><h2>CCI(s)</h2><ul><li>CCI-001082 - Separate user functionality, including user interface services, from system management functionality.</li></ul><h2>Weight</h2><p>10</p><h2>Fix Recommendation</h2><p>Disable and remove passwords from root and core accounts by executing the following:<br />
+<br />
+ for node in $(oc get node -oname); do oc debug $node -- chroot /host /bin/bash -c 'usermod -p '*' root; usermod -p '*' core' 2&gt;/dev/null; done<br />
+ <br />
+Remove any additional user accounts from the nodes by executing the following:<br />
+oc debug node/&lt;node&gt; -- chroot /host /bin/bash -c 'userdel &lt;user&gt;'<br />
+<br />
+Where OpenShift Virtualization is enabled:<br />
+oc get rolebinding -ojson | jq -r '.items[] | select(.roleRef.name | contains(&quot;token.kubevirt.io:generate&quot;)) | .metadata.name' | xargs oc delete rolebinding</p><h2>Check Contents</h2><p>Verify root and core are the only user accounts on the nodes by executing the following:<br />
+ for node in $(oc get node -oname); do oc debug $node -- chroot /host /bin/bash -c 'echo -n '$HOSTNAME '; cat /etc/passwd' 2&gt;/dev/null; done<br />
+ <br />
+The output will look similar to:<br />
+&lt;node_name&gt; root:x:0:0:root:/root:/bin/bash<br />
+core:x:1000:1000:CoreOS Admin:/var/home/core:/bin/bash<br />
+containers:x:993:995:User for housing the sub ID range for containers:/var/home/containers:/sbin/nologin<br />
+ <br />
+If there are any user accounts in addition to root, containers, and core, this is a finding.<br />
+ <br />
+Verify the root and core users are set to disable password logon by executing the following:<br />
+ for node in $(oc get node -oname); do oc debug $node -- chroot /host /bin/bash -c 'echo -n '$HOSTNAME '; grep -e '^root' -e '^core' /etc/shadow' 2&gt;/dev/null; done<br />
+<br />
+The output will look similar to:<br />
+&lt;node_name&gt;<br />
+root:*:18367:0:99999:7:::<br />
+core:*:18939:0:99999:7:::<br />
+ <br />
+If the password entry has anything other than '*', this is a finding.<br />
+<br />
+Where OpenShift Virtualization is enabled:<br />
+$ oc get rolebinding -ojson | jq -c '.items[] | select(.roleRef.name<br />
+| contains(&quot;token.kubevirt.io:generate&quot;))'<br />
+<br />
+If these results show users with this rolebinding, this is a finding.</p><h2>Vulnerability Number</h2><p>V-257545</p><h2>Documentable</h2><p>False</p><h2>Rule Version</h2><p>CNTR-OS-000500</p><h2>Severity Override Guidance</h2><p>Verify root and core are the only user accounts on the nodes by executing the following:<br />
+ for node in $(oc get node -oname); do oc debug $node -- chroot /host /bin/bash -c 'echo -n '$HOSTNAME '; cat /etc/passwd' 2&gt;/dev/null; done<br />
+ <br />
+The output will look similar to:<br />
+&lt;node_name&gt; root:x:0:0:root:/root:/bin/bash<br />
+core:x:1000:1000:CoreOS Admin:/var/home/core:/bin/bash<br />
+containers:x:993:995:User for housing the sub ID range for containers:/var/home/containers:/sbin/nologin<br />
+ <br />
+If there are any user accounts in addition to root, containers, and core, this is a finding.<br />
+ <br />
+Verify the root and core users are set to disable password logon by executing the following:<br />
+ for node in $(oc get node -oname); do oc debug $node -- chroot /host /bin/bash -c 'echo -n '$HOSTNAME '; grep -e '^root' -e '^core' /etc/shadow' 2&gt;/dev/null; done<br />
+<br />
+The output will look similar to:<br />
+&lt;node_name&gt;<br />
+root:*:18367:0:99999:7:::<br />
+core:*:18939:0:99999:7:::<br />
+ <br />
+If the password entry has anything other than '*', this is a finding.<br />
+<br />
+Where OpenShift Virtualization is enabled:<br />
+$ oc get rolebinding -ojson | jq -c '.items[] | select(.roleRef.name<br />
+| contains(&quot;token.kubevirt.io:generate&quot;))'<br />
+<br />
+If these results show users with this rolebinding, this is a finding.</p><h2>Check Content Reference</h2><p>M</p><h2>Target Key</h2><p>5547</p></body></html>

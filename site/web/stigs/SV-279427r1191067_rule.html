@@ -1,0 +1,41 @@
+<!doctype html><html lang="en"><head><meta charset="utf-8"><title>STIGQter: STIG Check Details: SV-279427r1191067_rule: Nutanix AOS must be configured to protect the application server log files from unauthorized access.</title><link rel="icon" type="image/svg+xml" href="STIGQter.svg" /><script async src="https://www.googletagmanager.com/gtag/js?id=UA-31381839-2"></script><script src="include.js"></script><script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-4110907817782130" crossorigin="anonymous"></script></head><body><div><img src="STIGQter.svg" alt="STIGQter" style="height:1em;" /> <a href="https://www.stigqter.com/">STIGQter</a>: <a href="main.html">STIG Summary</a>: <a href="U_NTX_Acropolis_AS_STIG_V1R1_Manual-xccdf.html">Nutanix Acropolis Application Server Security Technical Implementation Guide Version: 1 Release: 1 Benchmark Date: 26 Jan 2026</a>:</div> <h1>Nutanix AOS must be configured to protect the application server log files from unauthorized access.</h1><h2>DISA Rule</h2><p>SV-279427r1191067_rule</p><h2>Vulnerability Number</h2><p>V-279427</p><h2>Group Title</h2><p>SRG-APP-000118-AS-000078</p><h2>Rule Version</h2><p>NXAC-AS-000020</p><h2>Severity</h2><p>CAT II</p><h2>CCI(s)</h2><ul><li>CCI-000162 - Protect audit information from unauthorized access.</li><li>CCI-000163 - Protect audit information from unauthorized modification.</li><li>CCI-000164 - Protect audit information from unauthorized deletion.</li></ul><h2>Weight</h2><p>10</p><h2>Fix Recommendation</h2><p>Configure the Nutanix VM application server Prism Element log file permissions.<br />
+<br />
+1. Run the following command:<br />
+<br />
+$ sudo salt-call state.sls security/CVM/interactivenutanixCVM<br />
+<br />
+2. For Prism Central, run the following command:<br />
+<br />
+$ sudo salt-call state.sls security/PCVM/interactivenutanixPCVM<br />
+<br />
+3. For Files, run the following command:<br />
+<br />
+$ sudo salt-call state.sls security/AFS/interactivenutanixAFS</p><h2>Check Contents</h2><p>Confirm the Nutanix VM application server log files are protected from unauthorized read access.<br />
+<br />
+The Nutanix AOS log files are owned by the Nutanix user and have a file permission of &quot;640&quot;.<br />
+<br />
+1. Identify the actual file name by looking at alert_manager.INFO, which is a symlink for the actual rotating file name.<br />
+<br />
+$ sudo ls -al /home/nutanix/data/logs/alert_manager.INFO <br />
+lrwxrwxrwx. 1 nutanix nutanix 75 Nov  1 17:50 /home/nutanix/data/logs/alert_manager.INFO -&gt; alert_manager.ntnx-&lt;CVM_NAME&gt;.nutanix.log.INFO.&lt;LOG_NUMBER&gt;<br />
+<br />
+2. Execute a stat command on the actual application server log file name.<br />
+<br />
+$ sudo stat -c &quot;%a %n&quot; /home/nutanix/data/logs/alert_manager.ntnx-&lt;CVM_NAME&gt;.nutanix.log.INFO.&lt;LOG_NUMBER&gt;<br />
+640  /home/nutanix/data/logs/alert_manager.ntnx&lt;CVM_NAME&gt;.nutanix.log.INFO.&lt;LOG_NUMBER&gt;<br />
+<br />
+If the output of the actual log file name is not 640, this is a finding.</p><h2>Vulnerability Number</h2><p>V-279427</p><h2>Documentable</h2><p>False</p><h2>Rule Version</h2><p>NXAC-AS-000020</p><h2>Severity Override Guidance</h2><p>Confirm the Nutanix VM application server log files are protected from unauthorized read access.<br />
+<br />
+The Nutanix AOS log files are owned by the Nutanix user and have a file permission of &quot;640&quot;.<br />
+<br />
+1. Identify the actual file name by looking at alert_manager.INFO, which is a symlink for the actual rotating file name.<br />
+<br />
+$ sudo ls -al /home/nutanix/data/logs/alert_manager.INFO <br />
+lrwxrwxrwx. 1 nutanix nutanix 75 Nov  1 17:50 /home/nutanix/data/logs/alert_manager.INFO -&gt; alert_manager.ntnx-&lt;CVM_NAME&gt;.nutanix.log.INFO.&lt;LOG_NUMBER&gt;<br />
+<br />
+2. Execute a stat command on the actual application server log file name.<br />
+<br />
+$ sudo stat -c &quot;%a %n&quot; /home/nutanix/data/logs/alert_manager.ntnx-&lt;CVM_NAME&gt;.nutanix.log.INFO.&lt;LOG_NUMBER&gt;<br />
+640  /home/nutanix/data/logs/alert_manager.ntnx&lt;CVM_NAME&gt;.nutanix.log.INFO.&lt;LOG_NUMBER&gt;<br />
+<br />
+If the output of the actual log file name is not 640, this is a finding.</p><h2>Check Content Reference</h2><p>M</p><h2>Target Key</h2><p>5729</p></body></html>

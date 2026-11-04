@@ -1,0 +1,144 @@
+<!doctype html><html lang="en"><head><meta charset="utf-8"><title>STIGQter: STIG Check Details: SV-256941r1155084_rule: The Automation Controller servers must use encrypted communication for all channels given the high impact of those services to an organization's infrastructure.</title><link rel="icon" type="image/svg+xml" href="STIGQter.svg" /><script async src="https://www.googletagmanager.com/gtag/js?id=UA-31381839-2"></script><script src="include.js"></script><script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-4110907817782130" crossorigin="anonymous"></script></head><body><div><img src="STIGQter.svg" alt="STIGQter" style="height:1em;" /> <a href="https://www.stigqter.com/">STIGQter</a>: <a href="main.html">STIG Summary</a>: <a href="U_RH_Ansible_Automation_Controller_WS_STIG_V2R3_Manual-xccdf.html">Red Hat Ansible Automation Controller Web Server Security Technical Implementation Guide Version: 2 Release: 3 Benchmark Date: 05 Jan 2026</a>:</div> <h1>The Automation Controller servers must use encrypted communication for all channels given the high impact of those services to an organization's infrastructure.</h1><h2>DISA Rule</h2><p>SV-256941r1155084_rule</p><h2>Vulnerability Number</h2><p>V-256941</p><h2>Group Title</h2><p>SRG-APP-000014-WSR-000006</p><h2>Rule Version</h2><p>APWS-AT-000030</p><h2>Severity</h2><p>CAT II</p><h2>CCI(s)</h2><ul><li>CCI-000068 - Implement cryptographic mechanisms to protect the confidentiality of remote access sessions.</li></ul><h2>Weight</h2><p>10</p><h2>Fix Recommendation</h2><p>Web Server TLS and Cipher Configuration<br />
+<br />
+As a system administrator for each Automation Controller NGINX web server:<br />
+<br />
+1. Identify the active configuration file:<br />
+NGINXCONF=$(nginx -V 2&gt;&amp;1 | tr ' ' '\n' | sed -ne '/conf-path/{s/.*conf-path=\(.*\)/\1/;p}')<br />
+<br />
+2. Edit the configuration:<br />
+sudo -e &quot;$NGINXCONF&quot;<br />
+<br />
+3. Ensure the ssl_protocols line is configured as (note the leading spaces):<br />
+&quot;        ssl_protocols TLSv1.2 TLSv1.3;<br />
+<br />
+If the directive does not exist, add it immediately after the ssl_ciphers line.<br />
+<br />
+4. Ensure the ssl_ciphers line is configured as(note the leading spaces):<br />
+&quot;        ssl_ciphers PROFILE=SYSTEM;&quot;<br />
+<br />
+5. Save the file and apply the changes:<br />
+sudo nginx -t &amp;&amp; sudo systemctl restart nginx<br />
+<br />
+Database TLS Configuration<br />
+<br />
+1. Edit the Ansible Automation Platform installer inventory file and set:<br />
+pg_sslmode='verify-full'<br />
+postgres_use_ssl=true<br />
+<br />
+<br />
+2. Reconfigure the controller:<br />
+sudo ./setup.sh</p><h2>Check Contents</h2><p>1. Web Server Must Enforce TLS 1.2 or Higher<br />
+<br />
+As a system administrator for each Automation Controller NGINX web server, validate the effective TLS protocol configuration.<br />
+<br />
+Obtain the active nginx.conf path:<br />
+NGINXCONF=$(nginx -V 2&gt;&amp;1 | tr ' ' '\n' | sed -ne '/conf-path/{s/.*conf-path=\(.*\)/\1/;p}')<br />
+<br />
+Execute the following command:<br />
+sudo grep -E '^[[:space:]]*ssl_protocols[[:space:]]+.*(TLSv1\.2|TLSv1\.3)' &quot;$NGINXCONF&quot; &gt;/dev/null || echo &quot;FAILED&quot;<br />
+<br />
+<br />
+Pass condition: ssl_protocols includes TLSv1.2 or TLSv1.3.<br />
+Fail condition: ssl_protocols missing, or only legacy protocols configured.<br />
+<br />
+If &quot;FAILED&quot; is displayed, this is a finding.<br />
+<br />
+<br />
+2. Web Server Must Use Host OS–Provided Cipher Policy.<br />
+<br />
+Validate the cipher suite binding is set to the system crypto policy.<br />
+<br />
+Obtain the active nginx.conf path:<br />
+NGINXCONF=$(nginx -V 2&gt;&amp;1 | tr ' ' '\n' | sed -ne '/conf-path/{s/.*conf-path=\(.*\)/\1/;p}')<br />
+<br />
+<br />
+Execute the following command:<br />
+<br />
+sudo grep -Eq '^[[:space:]]*ssl_ciphers[[:space:]]+PROFILE=SYSTEM[[:space:]]*;[[:space:]]*$' &quot;$NGINXCONF&quot; || echo &quot;FAILED&quot;<br />
+<br />
+Pass condition: ssl_ciphers PROFILE=SYSTEM; (exact directive, whitespace-tolerant).<br />
+<br />
+If &quot;FAILED&quot; is displayed, this is a finding.<br />
+<br />
+3. External Database Connections Must Use TLS With Certificate Verification.<br />
+<br />
+Automation Controller may be configured to connect to PostgreSQL databases with or without TLS. The Administrator must check the contents of the file at /etc/tower/conf.d/postgres.py with root permissions to determine if pg_sslmode was configured with &quot;verify-full&quot; for any external databases at the time of installation.<br />
+<br />
+3.1 Client-Side<br />
+<br />
+Execute the following command:<br />
+sudo python3 -c 'exec(open(&quot;/etc/tower/conf.d/postgres.py&quot;).read()); import sys; bad=[n for n,c in DATABASES.items() if c.get(&quot;HOST&quot;) not in (&quot;127.0.0.1&quot;,&quot;localhost&quot;,&quot;&quot;) and c.get(&quot;OPTIONS&quot;,{}).get(&quot;sslmode&quot;)!=&quot;verify-full&quot;]; sys.exit(0 if not bad else 1)' || echo &quot;FAILED&quot;<br />
+<br />
+<br />
+If &quot;FAILED&quot; is displayed, this is a finding.<br />
+<br />
+3.2 Server-Side<br />
+<br />
+Confirm the database server negotiates TLS.<br />
+<br />
+Get DB host:port for the default connection:<br />
+PGCON=$(sudo python3 -c 'exec(open(&quot;/etc/tower/conf.d/postgres.py&quot;).read()); import sys; d=DATABASES.get(&quot;default&quot;,{}); h=d.get(&quot;HOST&quot;,&quot;&quot;); p=d.get(&quot;PORT&quot;,&quot;&quot;); print(f&quot;{h}:{p}&quot; if h and p else &quot;&quot;, end=&quot;&quot;)')<br />
+<br />
+<br />
+Validate SSL with psql (requires psql client):<br />
+<br />
+test -n &quot;$PGCON&quot; &amp;&amp; psql &quot;postgresql://${PGCON}/postgres?sslmode=require&quot; -qAt -c '\conninfo' 2&gt;/dev/null | grep -qi 'SSL connection' || echo &quot;FAILED&quot;<br />
+<br />
+If &quot;FAILED&quot; is displayed, this is a finding.</p><h2>Vulnerability Number</h2><p>V-256941</p><h2>Documentable</h2><p>False</p><h2>Rule Version</h2><p>APWS-AT-000030</p><h2>Severity Override Guidance</h2><p>1. Web Server Must Enforce TLS 1.2 or Higher<br />
+<br />
+As a system administrator for each Automation Controller NGINX web server, validate the effective TLS protocol configuration.<br />
+<br />
+Obtain the active nginx.conf path:<br />
+NGINXCONF=$(nginx -V 2&gt;&amp;1 | tr ' ' '\n' | sed -ne '/conf-path/{s/.*conf-path=\(.*\)/\1/;p}')<br />
+<br />
+Execute the following command:<br />
+sudo grep -E '^[[:space:]]*ssl_protocols[[:space:]]+.*(TLSv1\.2|TLSv1\.3)' &quot;$NGINXCONF&quot; &gt;/dev/null || echo &quot;FAILED&quot;<br />
+<br />
+<br />
+Pass condition: ssl_protocols includes TLSv1.2 or TLSv1.3.<br />
+Fail condition: ssl_protocols missing, or only legacy protocols configured.<br />
+<br />
+If &quot;FAILED&quot; is displayed, this is a finding.<br />
+<br />
+<br />
+2. Web Server Must Use Host OS–Provided Cipher Policy.<br />
+<br />
+Validate the cipher suite binding is set to the system crypto policy.<br />
+<br />
+Obtain the active nginx.conf path:<br />
+NGINXCONF=$(nginx -V 2&gt;&amp;1 | tr ' ' '\n' | sed -ne '/conf-path/{s/.*conf-path=\(.*\)/\1/;p}')<br />
+<br />
+<br />
+Execute the following command:<br />
+<br />
+sudo grep -Eq '^[[:space:]]*ssl_ciphers[[:space:]]+PROFILE=SYSTEM[[:space:]]*;[[:space:]]*$' &quot;$NGINXCONF&quot; || echo &quot;FAILED&quot;<br />
+<br />
+Pass condition: ssl_ciphers PROFILE=SYSTEM; (exact directive, whitespace-tolerant).<br />
+<br />
+If &quot;FAILED&quot; is displayed, this is a finding.<br />
+<br />
+3. External Database Connections Must Use TLS With Certificate Verification.<br />
+<br />
+Automation Controller may be configured to connect to PostgreSQL databases with or without TLS. The Administrator must check the contents of the file at /etc/tower/conf.d/postgres.py with root permissions to determine if pg_sslmode was configured with &quot;verify-full&quot; for any external databases at the time of installation.<br />
+<br />
+3.1 Client-Side<br />
+<br />
+Execute the following command:<br />
+sudo python3 -c 'exec(open(&quot;/etc/tower/conf.d/postgres.py&quot;).read()); import sys; bad=[n for n,c in DATABASES.items() if c.get(&quot;HOST&quot;) not in (&quot;127.0.0.1&quot;,&quot;localhost&quot;,&quot;&quot;) and c.get(&quot;OPTIONS&quot;,{}).get(&quot;sslmode&quot;)!=&quot;verify-full&quot;]; sys.exit(0 if not bad else 1)' || echo &quot;FAILED&quot;<br />
+<br />
+<br />
+If &quot;FAILED&quot; is displayed, this is a finding.<br />
+<br />
+3.2 Server-Side<br />
+<br />
+Confirm the database server negotiates TLS.<br />
+<br />
+Get DB host:port for the default connection:<br />
+PGCON=$(sudo python3 -c 'exec(open(&quot;/etc/tower/conf.d/postgres.py&quot;).read()); import sys; d=DATABASES.get(&quot;default&quot;,{}); h=d.get(&quot;HOST&quot;,&quot;&quot;); p=d.get(&quot;PORT&quot;,&quot;&quot;); print(f&quot;{h}:{p}&quot; if h and p else &quot;&quot;, end=&quot;&quot;)')<br />
+<br />
+<br />
+Validate SSL with psql (requires psql client):<br />
+<br />
+test -n &quot;$PGCON&quot; &amp;&amp; psql &quot;postgresql://${PGCON}/postgres?sslmode=require&quot; -qAt -c '\conninfo' 2&gt;/dev/null | grep -qi 'SSL connection' || echo &quot;FAILED&quot;<br />
+<br />
+If &quot;FAILED&quot; is displayed, this is a finding.</p><h2>Check Content Reference</h2><p>M</p><h2>Target Key</h2><p>5535</p></body></html>

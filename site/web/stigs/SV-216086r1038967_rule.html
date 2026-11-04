@@ -1,0 +1,98 @@
+<!doctype html><html lang="en"><head><meta charset="utf-8"><title>STIGQter: STIG Check Details: SV-216086r1038967_rule: User passwords must be changed at least every 60 days.</title><link rel="icon" type="image/svg+xml" href="STIGQter.svg" /><script async src="https://www.googletagmanager.com/gtag/js?id=UA-31381839-2"></script><script src="include.js"></script><script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-4110907817782130" crossorigin="anonymous"></script></head><body><div><img src="STIGQter.svg" alt="STIGQter" style="height:1em;" /> <a href="https://www.stigqter.com/">STIGQter</a>: <a href="main.html">STIG Summary</a>: <a href="U_SOL_11_x86_STIG_V3R6_Manual-xccdf.html">Solaris 11 X86 Security Technical Implementation Guide Version: 3 Release: 6 Benchmark Date: 01 Jul 2026</a>:</div> <h1>User passwords must be changed at least every 60 days.</h1><h2>DISA Rule</h2><p>SV-216086r1038967_rule</p><h2>Vulnerability Number</h2><p>V-216086</p><h2>Group Title</h2><p>SRG-OS-000076</p><h2>Rule Version</h2><p>SOL-11.1-040010</p><h2>Severity</h2><p>CAT II</p><h2>CCI(s)</h2><ul><li>CCI-004066 - For password-based authentication, enforce organization-defined composition and complexity rules.</li></ul><h2>Weight</h2><p>10</p><h2>Fix Recommendation</h2><p>The User Security role is required.<br />
+<br />
+For Solaris 11, 11.1, 11.2, and 11.3:<br />
+<br />
+Change each username to enforce 56 day password changes.<br />
+<br />
+# pfexec passwd -x 56 [username]<br />
+<br />
+# pfedit /etc/default/passwd <br />
+<br />
+Search for MAXWEEKS. Change the line to read:<br />
+<br />
+MAXWEEKS=8<br />
+<br />
+For Solaris 11.4 or newer:<br />
+<br />
+Change each username to enforce 60 day password changes.<br />
+<br />
+# pfexec passwd -x 60 [username]<br />
+<br />
+# pfedit /etc/default/passwd <br />
+Note: It is an error to set both the WEEKS and the DAYS variant for a given MIN/MAX/WARN variable.<br />
+<br />
+Search for MAXDAYS. Change the line to read:<br />
+<br />
+MAXDAYS=60<br />
+<br />
+Search for MAXWEEKS. Change the line to read:<br />
+<br />
+#MAXWEEKS=</p><h2>Check Contents</h2><p>The root role is required.<br />
+<br />
+Determine if user passwords are properly configured to be changed every 60 days.<br />
+<br />
+Determine the OS version to be secured.<br />
+# uname -v<br />
+<br />
+For Solaris 11, 11.1, 11.2, and 11.3:<br />
+<br />
+# logins -ox |awk -F: '( $1 != &quot;root&quot; &amp;&amp; $8 != &quot;LK&quot; &amp;&amp; $8 != &quot;NL&quot; &amp;&amp; ( $11 &gt; “56&quot; || $11 &lt; “1&quot; )) { print }'<br />
+<br />
+If output is returned and the listed account is accessed via direct logon, this is a finding.<br />
+<br />
+Check that /etc/default/password is configured to enforce password expiration every eight weeks or less.<br />
+<br />
+# grep &quot;^MAXWEEKS=&quot; /etc/default/passwd <br />
+<br />
+If the command does not report MAXWEEKS=8 or less, this is a finding.<br />
+<br />
+For Solaris 11.4 or newer:<br />
+<br />
+# logins -ox |awk -F: '( $1 != &quot;root&quot; &amp;&amp; $8 != &quot;LK&quot; &amp;&amp; $8 != &quot;NL&quot; &amp;&amp; ($11 &gt; &quot;60&quot;|| $11 &lt; &quot;1&quot;)) { print }'<br />
+<br />
+If output is returned and the listed account is accessed via direct logon, this is a finding.<br />
+<br />
+Check that /etc/default/password is configured to enforce password expiration every 60 days or less.<br />
+Note: It is an error to set both the WEEKS and the DAYS variant for a given MIN/MAX/WARN variable.<br />
+<br />
+# grep &quot;^MAXDAYS=&quot; /etc/default/passwd <br />
+<br />
+If the command does not report MAXDAYS=60 or less, this is a finding.<br />
+<br />
+# grep &quot;^MAXWEEKS=&quot; /etc/default/passwd <br />
+<br />
+If output is returned, this is a finding.</p><h2>Vulnerability Number</h2><p>V-216086</p><h2>Documentable</h2><p>False</p><h2>Rule Version</h2><p>SOL-11.1-040010</p><h2>Severity Override Guidance</h2><p>The root role is required.<br />
+<br />
+Determine if user passwords are properly configured to be changed every 60 days.<br />
+<br />
+Determine the OS version to be secured.<br />
+# uname -v<br />
+<br />
+For Solaris 11, 11.1, 11.2, and 11.3:<br />
+<br />
+# logins -ox |awk -F: '( $1 != &quot;root&quot; &amp;&amp; $8 != &quot;LK&quot; &amp;&amp; $8 != &quot;NL&quot; &amp;&amp; ( $11 &gt; “56&quot; || $11 &lt; “1&quot; )) { print }'<br />
+<br />
+If output is returned and the listed account is accessed via direct logon, this is a finding.<br />
+<br />
+Check that /etc/default/password is configured to enforce password expiration every eight weeks or less.<br />
+<br />
+# grep &quot;^MAXWEEKS=&quot; /etc/default/passwd <br />
+<br />
+If the command does not report MAXWEEKS=8 or less, this is a finding.<br />
+<br />
+For Solaris 11.4 or newer:<br />
+<br />
+# logins -ox |awk -F: '( $1 != &quot;root&quot; &amp;&amp; $8 != &quot;LK&quot; &amp;&amp; $8 != &quot;NL&quot; &amp;&amp; ($11 &gt; &quot;60&quot;|| $11 &lt; &quot;1&quot;)) { print }'<br />
+<br />
+If output is returned and the listed account is accessed via direct logon, this is a finding.<br />
+<br />
+Check that /etc/default/password is configured to enforce password expiration every 60 days or less.<br />
+Note: It is an error to set both the WEEKS and the DAYS variant for a given MIN/MAX/WARN variable.<br />
+<br />
+# grep &quot;^MAXDAYS=&quot; /etc/default/passwd <br />
+<br />
+If the command does not report MAXDAYS=60 or less, this is a finding.<br />
+<br />
+# grep &quot;^MAXWEEKS=&quot; /etc/default/passwd <br />
+<br />
+If output is returned, this is a finding.</p><h2>Check Content Reference</h2><p>M</p><h2>Target Key</h2><p>4021</p></body></html>

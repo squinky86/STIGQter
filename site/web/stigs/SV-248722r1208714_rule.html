@@ -1,0 +1,37 @@
+<!doctype html><html lang="en"><head><meta charset="utf-8"><title>STIGQter: STIG Check Details: SV-248722r1208714_rule: The OL 8 audit system must be configured to audit the execution of privileged functions and prevent all software from executing at higher privilege levels than users executing the software.</title><link rel="icon" type="image/svg+xml" href="STIGQter.svg" /><script async src="https://www.googletagmanager.com/gtag/js?id=UA-31381839-2"></script><script src="include.js"></script><script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-4110907817782130" crossorigin="anonymous"></script></head><body><div><img src="STIGQter.svg" alt="STIGQter" style="height:1em;" /> <a href="https://www.stigqter.com/">STIGQter</a>: <a href="main.html">STIG Summary</a>: <a href="U_Oracle_Linux_8_STIG_V2R9_Manual-xccdf.html">Oracle Linux 8 Security Technical Implementation Guide Version: 2 Release: 9 Benchmark Date: 01 Jul 2026</a>:</div> <h1>The OL 8 audit system must be configured to audit the execution of privileged functions and prevent all software from executing at higher privilege levels than users executing the software.</h1><h2>DISA Rule</h2><p>SV-248722r1208714_rule</p><h2>Vulnerability Number</h2><p>V-248722</p><h2>Group Title</h2><p>SRG-OS-000326-GPOS-00126</p><h2>Rule Version</h2><p>OL08-00-030000</p><h2>Severity</h2><p>CAT II</p><h2>CCI(s)</h2><ul><li>CCI-002233 - Prevent the organization-defined software from executing at higher privilege levels than users executing the software.</li><li>CCI-002234 - Log the execution of privileged functions.</li></ul><h2>Weight</h2><p>10</p><h2>Fix Recommendation</h2><p>Configure OL 8 to audit the execution of the &quot;execve&quot; system call. <br />
+ <br />
+Add or update the following file system rules to &quot;/etc/audit/rules.d/audit.rules&quot;: <br />
+ <br />
+-a always,exit -F arch=b32 -S execve -C uid!=euid -F euid=0 key=execpriv <br />
+-a always,exit -F arch=b64 -S execve -C uid!=euid -F euid=0 key=execpriv <br />
+ <br />
+-a always,exit -F arch=b32 -S execve -C gid!=egid -F egid=0 key=execpriv <br />
+-a always,exit -F arch=b64 -S execve -C gid!=egid -F egid=0 key=execpriv<br />
+ <br />
+The audit daemon must be restarted for the changes to take effect. To restart the audit daemon, run the following command: <br />
+ <br />
+$ sudo service auditd restart</p><h2>Check Contents</h2><p>Verify OL 8 audits the execution of privileged functions. <br />
+ <br />
+Check if OL 8 is configured to audit the execution of the &quot;execve&quot; system call by running the following command: <br />
+ <br />
+$ sudo grep execve /etc/audit/audit.rules <br />
+ <br />
+-a always,exit -F arch=b32 -S execve -C uid!=euid -F euid=0 key=execpriv <br />
+-a always,exit -F arch=b64 -S execve -C uid!=euid -F euid=0 key=execpriv <br />
+ <br />
+-a always,exit -F arch=b32 -S execve -C gid!=egid -F egid=0 key=execpriv <br />
+-a always,exit -F arch=b64 -S execve -C gid!=egid -F egid=0 key=execpriv<br />
+ <br />
+If the command does not return all lines or the lines are commented out, this is a finding.</p><h2>Vulnerability Number</h2><p>V-248722</p><h2>Documentable</h2><p>False</p><h2>Rule Version</h2><p>OL08-00-030000</p><h2>Severity Override Guidance</h2><p>Verify OL 8 audits the execution of privileged functions. <br />
+ <br />
+Check if OL 8 is configured to audit the execution of the &quot;execve&quot; system call by running the following command: <br />
+ <br />
+$ sudo grep execve /etc/audit/audit.rules <br />
+ <br />
+-a always,exit -F arch=b32 -S execve -C uid!=euid -F euid=0 key=execpriv <br />
+-a always,exit -F arch=b64 -S execve -C uid!=euid -F euid=0 key=execpriv <br />
+ <br />
+-a always,exit -F arch=b32 -S execve -C gid!=egid -F egid=0 key=execpriv <br />
+-a always,exit -F arch=b64 -S execve -C gid!=egid -F egid=0 key=execpriv<br />
+ <br />
+If the command does not return all lines or the lines are commented out, this is a finding.</p><h2>Check Content Reference</h2><p>M</p><h2>Target Key</h2><p>5416</p></body></html>

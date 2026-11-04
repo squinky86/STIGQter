@@ -1,0 +1,111 @@
+<!doctype html><html lang="en"><head><meta charset="utf-8"><title>STIGQter: STIG Check Details: SV-273615r1111064_rule: The RUCKUS ICX out-of-band management (OOBM) gateway router must be configured to block any traffic destined to itself that is not sourced from the OOBM network or the Network Operations Center (NOC).</title><link rel="icon" type="image/svg+xml" href="STIGQter.svg" /><script async src="https://www.googletagmanager.com/gtag/js?id=UA-31381839-2"></script><script src="include.js"></script><script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-4110907817782130" crossorigin="anonymous"></script></head><body><div><img src="STIGQter.svg" alt="STIGQter" style="height:1em;" /> <a href="https://www.stigqter.com/">STIGQter</a>: <a href="main.html">STIG Summary</a>: <a href="U_RUCKUS_ICX_RTR_STIG_V1R1_Manual-xccdf.html">RUCKUS ICX Router Security Technical Implementation Guide Version: 1 Release: 1 Benchmark Date: 27 May 2025</a>:</div> <h1>The RUCKUS ICX out-of-band management (OOBM) gateway router must be configured to block any traffic destined to itself that is not sourced from the OOBM network or the Network Operations Center (NOC).</h1><h2>DISA Rule</h2><p>SV-273615r1111064_rule</p><h2>Vulnerability Number</h2><p>V-273615</p><h2>Group Title</h2><p>SRG-NET-000205-RTR-000011</p><h2>Rule Version</h2><p>RCKS-RTR-000480</p><h2>Severity</h2><p>CAT II</p><h2>CCI(s)</h2><ul><li>CCI-001097 - Monitor and control communications at the external managed interfaces to the system and at key managed interfaces within the system.</li></ul><h2>Weight</h2><p>10</p><h2>Fix Recommendation</h2><p>This requirement is not applicable for the DODIN Backbone.<br />
+<br />
+Configure traffic from the managed network to not be able to access the OOBM gateway router using either receive path or interface ingress ACLs.<br />
+<br />
+1. Configure the ACL to only allow traffic to the route processor from the OOBM backbone and the NOC.<br />
+ICX(config)#ip access ext TRAFFIC_FROM_NOC<br />
+ICX(config-ext-ipacl-TRAFFIC_FROM_NOC)#permit ip 10.11.1.0/24 host 10.11.1.8<br />
+ICX(config-ext-ipacl-TRAFFIC_FROM_NOC)#permit ip 10.12.1.0/24 host 10.11.1.8<br />
+ICX(config-ext-ipacl-TRAFFIC_FROM_NOC)#permit ip 10.11.1.0/24 host 10.13.1.1<br />
+ICX(config-ext-ipacl-TRAFFIC_FROM_NOC)#permit ip 10.12.1.0/24 host 10.13.1.1<br />
+ICX(config-ext-ipacl-TRAFFIC_FROM_NOC)#deny ip any host 10.11.1.8 log<br />
+ICX(config-ext-ipacl-TRAFFIC_FROM_NOC)#deny ip any host 10.13.1.1 log<br />
+ICX(config-ext-ipacl-TRAFFIC_FROM_NOC)#permit ip 10.11.1.0/24 10.13.1.0/24<br />
+ICX(config-ext-ipacl-TRAFFIC_FROM_NOC)#permit ip 10.12.1.0/24 10.13.1.0/24<br />
+ICX(config-ext-ipacl-TRAFFIC_FROM_NOC)#deny ip any any log<br />
+<br />
+2. Configure the ACL to only allow traffic to the route processor from the OOBM LAN.<br />
+ICX(config)#ip access ext TRAFFIC_TO_NOC<br />
+ICX(config-ext-ipacl-TRAFFIC_TO_NOC)#permit ip 10.13.1.0/24 host 10.13.1.1<br />
+ICX(config-ext-ipacl-TRAFFIC_TO_NOC)#permit ip 10.13.1.0/24 host 10.11.1.8<br />
+ICX(config-ext-ipacl-TRAFFIC_TO_NOC)#deny ip any host 10.13.1.1 log<br />
+ICX(config-ext-ipacl-TRAFFIC_TO_NOC)#deny ip any host 10.11.1.8 log<br />
+ICX(config-ext-ipacl-TRAFFIC_TO_NOC)#permit ip 10.13.1.0/24 10.11.1.0/24<br />
+ICX(config-ext-ipacl-TRAFFIC_TO_NOC)#permit ip 10.13.1.0/24 10.12.1.0/24<br />
+ICX(config-ext-ipacl-TRAFFIC_TO_NOC)#deny ip any any log<br />
+<br />
+3. Apply the ACLs configured above to the appropriate OOBM interfaces as shown in the example below:<br />
+ICX(config)#interface ethernet 1/2/1<br />
+ICX(config-if-e10000-1/2/1)#port-name OOBM-to-NOC<br />
+ICX(config-if-e10000-1/2/1)#ip access-group TRAFFIC_FROM_NOC in logging enable<br />
+ICX(config-if-e10000-1/2/1)#interface ethernet 1/2/2<br />
+ICX(config-if-e10000-1/2/2)#port-name OOBM_LAN_ACCESS_SWITCH<br />
+ICX(config-if-e10000-1/2/2)#ip access-group TRAFFIC_TO_NOC in logging enable</p><h2>Check Contents</h2><p>This requirement is not applicable for the DODIN Backbone.<br />
+<br />
+Verify traffic destined to itself is only sourced by the OOBM or the NOC. In the example below, the OOBM backbone network is 10.11.1.0/24, the NOC address spaces is 10.12.1.0/24, and the OOBM LAN address space at remote site connecting to the managed network is 10.13.1.0/24.<br />
+<br />
+1. Note the inbound ACL applied to the OOBM interfaces.<br />
+interface ethernet 1/2/1<br />
+ port-name OOBM-to-NOC<br />
+ ip address 10.11.1.8 255.255.255.0<br />
+ ip access-group TRAFFIC_FROM_NOC in logging enable<br />
+!<br />
+interface ethernet 1/2/2<br />
+ port-name OOBM_LAN_ACCESS_SWITCH<br />
+ ip address 10.13.1.1 255.255.255.0<br />
+ ip access-group TRAFFIC_TO_NOC in logging enable<br />
+<br />
+2. Review the inbound ACL bound to any OOB interface connecting to the OOBM backbone and verify traffic destined to itself is only from the OOBM or NOC address space.<br />
+ip access-list extended TRAFFIC_FROM_NOC<br />
+ sequence 10 permit ip 10.11.1.0 0.0.0.255 host 10.11.1.8<br />
+ sequence 20 permit ip 10.12.1.0 0.0.0.255 host 10.11.1.8<br />
+ sequence 30 permit ip 10.11.1.0 0.0.0.255 host 10.13.1.1<br />
+ sequence 40 permit ip 10.12.1.0 0.0.0.255 host 10.13.1.1<br />
+ sequence 50 deny ip any host 10.11.1.8 log<br />
+ sequence 60 deny ip any host 10.13.1.1 log<br />
+ sequence 70 permit ip 10.11.1.0 0.0.0.255 10.13.1.0 0.0.0.255<br />
+ sequence 80 permit ip 10.12.1.0 0.0.0.255 10.13.1.0 0.0.0.255<br />
+ sequence 90 deny ip any any log<br />
+!<br />
+<br />
+3. Review the inbound ACL bound to any OOBM LAN interfaces and verify traffic destined to itself is from the OOBM LAN address space.<br />
+ip access-list extended TRAFFIC_TO_NOC<br />
+ sequence 10 permit ip 10.13.1.0 0.0.0.255 host 10.13.1.1<br />
+ sequence 20 permit ip 10.13.1.0 0.0.0.255 host 10.11.1.8<br />
+ sequence 30 deny ip any host 10.13.1.1 log<br />
+ sequence 40 deny ip any host 10.11.1.8 log<br />
+ sequence 50 permit ip 10.13.1.0 0.0.0.255 10.11.1.0 0.0.0.255<br />
+ sequence 60 permit ip 10.13.1.0 0.0.0.255 10.12.1.0 0.0.0.255<br />
+ sequence 70 deny ip any any log<br />
+!<br />
+<br />
+If the router does not block any traffic destined to itself that is not sourced from the OOBM network or the NOC, this is a finding.</p><h2>Vulnerability Number</h2><p>V-273615</p><h2>Documentable</h2><p>False</p><h2>Rule Version</h2><p>RCKS-RTR-000480</p><h2>Severity Override Guidance</h2><p>This requirement is not applicable for the DODIN Backbone.<br />
+<br />
+Verify traffic destined to itself is only sourced by the OOBM or the NOC. In the example below, the OOBM backbone network is 10.11.1.0/24, the NOC address spaces is 10.12.1.0/24, and the OOBM LAN address space at remote site connecting to the managed network is 10.13.1.0/24.<br />
+<br />
+1. Note the inbound ACL applied to the OOBM interfaces.<br />
+interface ethernet 1/2/1<br />
+ port-name OOBM-to-NOC<br />
+ ip address 10.11.1.8 255.255.255.0<br />
+ ip access-group TRAFFIC_FROM_NOC in logging enable<br />
+!<br />
+interface ethernet 1/2/2<br />
+ port-name OOBM_LAN_ACCESS_SWITCH<br />
+ ip address 10.13.1.1 255.255.255.0<br />
+ ip access-group TRAFFIC_TO_NOC in logging enable<br />
+<br />
+2. Review the inbound ACL bound to any OOB interface connecting to the OOBM backbone and verify traffic destined to itself is only from the OOBM or NOC address space.<br />
+ip access-list extended TRAFFIC_FROM_NOC<br />
+ sequence 10 permit ip 10.11.1.0 0.0.0.255 host 10.11.1.8<br />
+ sequence 20 permit ip 10.12.1.0 0.0.0.255 host 10.11.1.8<br />
+ sequence 30 permit ip 10.11.1.0 0.0.0.255 host 10.13.1.1<br />
+ sequence 40 permit ip 10.12.1.0 0.0.0.255 host 10.13.1.1<br />
+ sequence 50 deny ip any host 10.11.1.8 log<br />
+ sequence 60 deny ip any host 10.13.1.1 log<br />
+ sequence 70 permit ip 10.11.1.0 0.0.0.255 10.13.1.0 0.0.0.255<br />
+ sequence 80 permit ip 10.12.1.0 0.0.0.255 10.13.1.0 0.0.0.255<br />
+ sequence 90 deny ip any any log<br />
+!<br />
+<br />
+3. Review the inbound ACL bound to any OOBM LAN interfaces and verify traffic destined to itself is from the OOBM LAN address space.<br />
+ip access-list extended TRAFFIC_TO_NOC<br />
+ sequence 10 permit ip 10.13.1.0 0.0.0.255 host 10.13.1.1<br />
+ sequence 20 permit ip 10.13.1.0 0.0.0.255 host 10.11.1.8<br />
+ sequence 30 deny ip any host 10.13.1.1 log<br />
+ sequence 40 deny ip any host 10.11.1.8 log<br />
+ sequence 50 permit ip 10.13.1.0 0.0.0.255 10.11.1.0 0.0.0.255<br />
+ sequence 60 permit ip 10.13.1.0 0.0.0.255 10.12.1.0 0.0.0.255<br />
+ sequence 70 deny ip any any log<br />
+!<br />
+<br />
+If the router does not block any traffic destined to itself that is not sourced from the OOBM network or the NOC, this is a finding.</p><h2>Check Content Reference</h2><p>M</p><h2>Target Key</h2><p>5696</p></body></html>

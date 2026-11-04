@@ -1,0 +1,41 @@
+<!doctype html><html lang="en"><head><meta charset="utf-8"><title>STIGQter: STIG Check Details: SV-278387r1172701_rule: NGINX must prevent the execution of unapproved modules.</title><link rel="icon" type="image/svg+xml" href="STIGQter.svg" /><script async src="https://www.googletagmanager.com/gtag/js?id=UA-31381839-2"></script><script src="include.js"></script><script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-4110907817782130" crossorigin="anonymous"></script></head><body><div><img src="STIGQter.svg" alt="STIGQter" style="height:1em;" /> <a href="https://www.stigqter.com/">STIGQter</a>: <a href="main.html">STIG Summary</a>: <a href="U_F5_NGINX_STIG_V1R1_Manual-xccdf.html">F5 NGINX Security Technical Implementation Guide Version: 1 Release: 1 Benchmark Date: 25 Nov 2025</a>:</div> <h1>NGINX must prevent the execution of unapproved modules.</h1><h2>DISA Rule</h2><p>SV-278387r1172701_rule</p><h2>Vulnerability Number</h2><p>V-278387</p><h2>Group Title</h2><p>SRG-APP-000112</p><h2>Rule Version</h2><p>NGNX-APP-000370</p><h2>Severity</h2><p>CAT II</p><h2>CCI(s)</h2><ul><li>CCI-001695 - Prevent the execution of organization-defined unacceptable mobile code.</li></ul><h2>Weight</h2><p>10</p><h2>Fix Recommendation</h2><p>Set permissions on directory containing external modules to read only for &quot;Other&quot; only.<br />
+<br />
+The directory may be organizationally defined. The default path is /usr/lib/nginx/modules.<br />
+<br />
+# chmod o-wx /usr/lib/nginx/modules</p><h2>Check Contents</h2><p>Check nginx.conf for external modules being loaded (grep load_module). <br />
+<br />
+If additional modules are being loaded, confirm the directory does not include write or execute for other users.<br />
+<br />
+Determine the path to nginx config file(s):<br />
+<br />
+# nginx -qT | grep &quot;# configuration&quot;<br />
+# configuration file /etc/nginx/nginx.conf:<br />
+<br />
+Note: The default NGINX configuration is &quot;/etc/nginx/nginx.conf&quot;, though various files may also be included.<br />
+<br />
+# grep load_module /etc/nginx/nginx.conf<br />
+load_module modules/ngx_http_app_protect_module.so;<br />
+# ls -la /etc/nginx/modules<br />
+lrwxrwxrwx 1 root root 22 Oct 10 2023 modules -&gt; /usr/lib/nginx/modules<br />
+# ls -la /usr/lib/nginx<br />
+drwxr-xr-x root root 4096 Jan 30 2024 modules<br />
+<br />
+If directory where modules are loaded is writeable by other, this is a finding.</p><h2>Vulnerability Number</h2><p>V-278387</p><h2>Documentable</h2><p>False</p><h2>Rule Version</h2><p>NGNX-APP-000370</p><h2>Severity Override Guidance</h2><p>Check nginx.conf for external modules being loaded (grep load_module). <br />
+<br />
+If additional modules are being loaded, confirm the directory does not include write or execute for other users.<br />
+<br />
+Determine the path to nginx config file(s):<br />
+<br />
+# nginx -qT | grep &quot;# configuration&quot;<br />
+# configuration file /etc/nginx/nginx.conf:<br />
+<br />
+Note: The default NGINX configuration is &quot;/etc/nginx/nginx.conf&quot;, though various files may also be included.<br />
+<br />
+# grep load_module /etc/nginx/nginx.conf<br />
+load_module modules/ngx_http_app_protect_module.so;<br />
+# ls -la /etc/nginx/modules<br />
+lrwxrwxrwx 1 root root 22 Oct 10 2023 modules -&gt; /usr/lib/nginx/modules<br />
+# ls -la /usr/lib/nginx<br />
+drwxr-xr-x root root 4096 Jan 30 2024 modules<br />
+<br />
+If directory where modules are loaded is writeable by other, this is a finding.</p><h2>Check Content Reference</h2><p>M</p><h2>Target Key</h2><p>5720</p></body></html>

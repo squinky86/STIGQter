@@ -1,0 +1,61 @@
+<!doctype html><html lang="en"><head><meta charset="utf-8"><title>STIGQter: STIG Check Details: SV-269429r1050312_rule: AlmaLinux OS 9 local disk partitions must implement cryptographic mechanisms to prevent unauthorized disclosure or modification of all information that requires at rest protection.</title><link rel="icon" type="image/svg+xml" href="STIGQter.svg" /><script async src="https://www.googletagmanager.com/gtag/js?id=UA-31381839-2"></script><script src="include.js"></script><script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-4110907817782130" crossorigin="anonymous"></script></head><body><div><img src="STIGQter.svg" alt="STIGQter" style="height:1em;" /> <a href="https://www.stigqter.com/">STIGQter</a>: <a href="main.html">STIG Summary</a>: <a href="U_CL_AlmaLinux_OS_9_STIG_V1R7_Manual-xccdf.html">Cloud Linux AlmaLinux OS 9 Security Technical Implementation Guide Version: 1 Release: 7 Benchmark Date: 01 Jul 2026</a>:</div> <h1>AlmaLinux OS 9 local disk partitions must implement cryptographic mechanisms to prevent unauthorized disclosure or modification of all information that requires at rest protection.</h1><h2>DISA Rule</h2><p>SV-269429r1050312_rule</p><h2>Vulnerability Number</h2><p>V-269429</p><h2>Group Title</h2><p>SRG-OS-000405-GPOS-00184</p><h2>Rule Version</h2><p>ALMA-09-041600</p><h2>Severity</h2><p>CAT I</p><h2>CCI(s)</h2><ul><li>CCI-002476 - Implement cryptographic mechanisms to prevent unauthorized disclosure of organization-defined information at rest on organization-defined system components.</li><li>CCI-002475 - Implement cryptographic mechanisms to prevent unauthorized modification of organization-defined information when at rest on organization-defined system components.</li><li>CCI-001199 - Protects the confidentiality and/or integrity of organization-defined information at rest.</li></ul><h2>Weight</h2><p>10</p><h2>Fix Recommendation</h2><p>Configure AlmaLinux OS 9 to prevent unauthorized modification of all information at rest by using disk encryption.<br />
+<br />
+Encrypting a partition in an already installed system is more difficult, because existing partitions will need to be resized and changed.<br />
+<br />
+To encrypt an entire partition, dedicate a partition for encryption in the partition layout.</p><h2>Check Contents</h2><p>Note: If there is a documented and approved reason for not having data-at-rest encryption at the operating system level, such as encryption provided by a hypervisor or a disk storage array in a virtualized environment, this requirement is Not Applicable.<br />
+<br />
+Verify AlmaLinux OS 9 prevents unauthorized disclosure or modification of all information requiring at-rest protection by using disk encryption. <br />
+<br />
+Verify all system partitions are encrypted with the following command:<br />
+<br />
+$ lsblk -e11 -oNAME,FSTYPE,FSVER,MOUNTPOINTS<br />
+<br />
+NAME                                            FSTYPE      FSVER    MOUNTPOINTS<br />
+sda                                                                  <br />
++-sda1                                          vfat        FAT16    /boot/efi<br />
++-sda2                                          xfs                  /boot<br />
++-sda3                                          LVM2_member LVM2 001 <br />
+  +-rootvg-root                                 crypto_LUKS 2        <br />
+  ¦ +-luks-8a7154ec-8eeb-46c8-9d75-66fc4b81d665 xfs                  /<br />
+  +-rootvg-swap                                 crypto_LUKS 2        <br />
+  ¦ +-luks-89bf0df8-547f-4613-af07-215e5f63e9a9 swap        1        [SWAP]<br />
+  +-rootvg-home                                 crypto_LUKS 2        <br />
+  ¦ +-luks-10a20c46-483d-4d12-831f-5328eda28fd1 xfs                  /home<br />
+  +-rootvg-varlogaudit                          crypto_LUKS 2        <br />
+  ¦ +-luks-29b74747-2f82-4472-82f5-0b5eb764effc xfs                  /var/log/audit<br />
+  +-rootvg-varlog                               crypto_LUKS 2        <br />
+  ¦ +-luks-e0d162f5-fad8-463e-8e39-6bd09e682961 xfs                  /var/log<br />
+  +-rootvg-vartmp                               crypto_LUKS 2        <br />
+  ¦ +-luks-0e7206e7-bfb1-4a23-ae14-b9cea7cf46d5 xfs                  /var/tmp<br />
+  +-rootvg-var                                  crypto_LUKS 2        <br />
+    +-luks-b23d8276-7844-4e79-8a58-505150b4eb42 xfs                  /var<br />
+<br />
+Every persistent disk partition present must be of type &quot;crypto_LUKS&quot;. If any partitions other than the /boot partitions are not type &quot;crypto_LUKS&quot;, ask the administrator to indicate how the partitions are encrypted. If there is no evidence that these partitions are encrypted, this is a finding.</p><h2>Vulnerability Number</h2><p>V-269429</p><h2>Documentable</h2><p>False</p><h2>Rule Version</h2><p>ALMA-09-041600</p><h2>Severity Override Guidance</h2><p>Note: If there is a documented and approved reason for not having data-at-rest encryption at the operating system level, such as encryption provided by a hypervisor or a disk storage array in a virtualized environment, this requirement is Not Applicable.<br />
+<br />
+Verify AlmaLinux OS 9 prevents unauthorized disclosure or modification of all information requiring at-rest protection by using disk encryption. <br />
+<br />
+Verify all system partitions are encrypted with the following command:<br />
+<br />
+$ lsblk -e11 -oNAME,FSTYPE,FSVER,MOUNTPOINTS<br />
+<br />
+NAME                                            FSTYPE      FSVER    MOUNTPOINTS<br />
+sda                                                                  <br />
++-sda1                                          vfat        FAT16    /boot/efi<br />
++-sda2                                          xfs                  /boot<br />
++-sda3                                          LVM2_member LVM2 001 <br />
+  +-rootvg-root                                 crypto_LUKS 2        <br />
+  ¦ +-luks-8a7154ec-8eeb-46c8-9d75-66fc4b81d665 xfs                  /<br />
+  +-rootvg-swap                                 crypto_LUKS 2        <br />
+  ¦ +-luks-89bf0df8-547f-4613-af07-215e5f63e9a9 swap        1        [SWAP]<br />
+  +-rootvg-home                                 crypto_LUKS 2        <br />
+  ¦ +-luks-10a20c46-483d-4d12-831f-5328eda28fd1 xfs                  /home<br />
+  +-rootvg-varlogaudit                          crypto_LUKS 2        <br />
+  ¦ +-luks-29b74747-2f82-4472-82f5-0b5eb764effc xfs                  /var/log/audit<br />
+  +-rootvg-varlog                               crypto_LUKS 2        <br />
+  ¦ +-luks-e0d162f5-fad8-463e-8e39-6bd09e682961 xfs                  /var/log<br />
+  +-rootvg-vartmp                               crypto_LUKS 2        <br />
+  ¦ +-luks-0e7206e7-bfb1-4a23-ae14-b9cea7cf46d5 xfs                  /var/tmp<br />
+  +-rootvg-var                                  crypto_LUKS 2        <br />
+    +-luks-b23d8276-7844-4e79-8a58-505150b4eb42 xfs                  /var<br />
+<br />
+Every persistent disk partition present must be of type &quot;crypto_LUKS&quot;. If any partitions other than the /boot partitions are not type &quot;crypto_LUKS&quot;, ask the administrator to indicate how the partitions are encrypted. If there is no evidence that these partitions are encrypted, this is a finding.</p><h2>Check Content Reference</h2><p>M</p><h2>Target Key</h2><p>5664</p></body></html>

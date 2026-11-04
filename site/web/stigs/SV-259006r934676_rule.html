@@ -1,0 +1,35 @@
+<!doctype html><html lang="en"><head><meta charset="utf-8"><title>STIGQter: STIG Check Details: SV-259006r934676_rule: The vCenter ESX Agent Manager service must produce log records containing sufficient information regarding event details.</title><link rel="icon" type="image/svg+xml" href="STIGQter.svg" /><script async src="https://www.googletagmanager.com/gtag/js?id=UA-31381839-2"></script><script src="include.js"></script><script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-4110907817782130" crossorigin="anonymous"></script></head><body><div><img src="STIGQter.svg" alt="STIGQter" style="height:1em;" /> <a href="https://www.stigqter.com/">STIGQter</a>: <a href="main.html">STIG Summary</a>: <a href="U_VMW_vSphere_8-0_VCSA_EAM_STIG_V1R1_Manual-xccdf.html">VMware vSphere 8.0 vCenter Appliance ESX Agent Manager (EAM) Security Technical Implementation Guide Version: 1 Release: 1 Benchmark Date: 31 Oct 2023</a>:</div> <h1>The vCenter ESX Agent Manager service must produce log records containing sufficient information regarding event details.</h1><h2>DISA Rule</h2><p>SV-259006r934676_rule</p><h2>Vulnerability Number</h2><p>V-259006</p><h2>Group Title</h2><p>SRG-APP-000095-AS-000056</p><h2>Rule Version</h2><p>VCEM-80-000014</p><h2>Severity</h2><p>CAT II</p><h2>CCI(s)</h2><ul><li>CCI-000067 - Employ automated mechanisms to monitor remote access methods.</li><li>CCI-000130 - Ensure that audit records containing information that establishes what type of event occurred.</li><li>CCI-000131 - Ensure that audit records containing information that establishes when the event occurred.</li><li>CCI-000132 - Ensure that audit records containing information that establishes where the event occurred.</li><li>CCI-000133 - Ensure that audit records containing information that establishes the source of the event.</li><li>CCI-000134 - Ensure that audit records containing information that establishes the outcome of the event.</li><li>CCI-000166 - Provide irrefutable evidence that an individual (or process acting on behalf of an individual) falsely denying having performed organization-defined actions to be covered by non-repudiation.</li><li>CCI-000169 - Provide audit record generation capability for the event types the system is capable of auditing as defined in AU-2 a. on organization-defined information system components.</li><li>CCI-000171 - Allow organization-defined personnel or roles to select the event types that are to be logged by specific components of the system.</li><li>CCI-000172 - Generate audit records for the event types defined in AU-2 c that include the audit record content defined in AU-3.</li><li>CCI-001487 - Ensure that audit records containing information that establishes the identity of any individuals, subjects, or objects/entities associated with the event.</li><li>CCI-001889 - Record time stamps for audit records that meet organization-defined granularity of time measurement.</li><li>CCI-002234 - Log the execution of privileged functions.</li></ul><h2>Weight</h2><p>10</p><h2>Fix Recommendation</h2><p>Navigate to and open:<br />
+<br />
+/usr/lib/vmware-eam/web/conf/server.xml<br />
+<br />
+Inside the &lt;Host&gt; node, find the &quot;AccessLogValve&quot; &lt;Valve&gt; node and replace the &quot;pattern&quot; element as follows:<br />
+<br />
+pattern=&quot;%h %{X-Forwarded-For}i %l %u %t [%I] &amp;quot;%r&amp;quot; %s %b [Processing time %D msec] &amp;quot;%{User-Agent}i&amp;quot;&quot;<br />
+<br />
+Restart the service with the following command:<br />
+<br />
+# vmon-cli --restart eam</p><h2>Check Contents</h2><p>At the command prompt, run the following command:<br />
+<br />
+# xmllint --xpath '/Server/Service/Engine/Host/Valve[@className=&quot;org.apache.catalina.valves.AccessLogValve&quot;]/@pattern' /usr/lib/vmware-eam/web/conf/server.xml<br />
+<br />
+Example result:<br />
+<br />
+pattern=&quot;%h %{X-Forwarded-For}i %l %u %t [%I] &amp;quot;%r&amp;quot; %s %b [Processing time %D msec] &amp;quot;%{User-Agent}i&amp;quot;&quot;<br />
+<br />
+Required elements:<br />
+<br />
+%h %{X-Forwarded-For}i %l %t %u &amp;quot;%r&amp;quot; %s %b<br />
+<br />
+If the log pattern does not contain the required elements in any order, this is a finding.</p><h2>Vulnerability Number</h2><p>V-259006</p><h2>Documentable</h2><p>False</p><h2>Rule Version</h2><p>VCEM-80-000014</p><h2>Severity Override Guidance</h2><p>At the command prompt, run the following command:<br />
+<br />
+# xmllint --xpath '/Server/Service/Engine/Host/Valve[@className=&quot;org.apache.catalina.valves.AccessLogValve&quot;]/@pattern' /usr/lib/vmware-eam/web/conf/server.xml<br />
+<br />
+Example result:<br />
+<br />
+pattern=&quot;%h %{X-Forwarded-For}i %l %u %t [%I] &amp;quot;%r&amp;quot; %s %b [Processing time %D msec] &amp;quot;%{User-Agent}i&amp;quot;&quot;<br />
+<br />
+Required elements:<br />
+<br />
+%h %{X-Forwarded-For}i %l %t %u &amp;quot;%r&amp;quot; %s %b<br />
+<br />
+If the log pattern does not contain the required elements in any order, this is a finding.</p><h2>Check Content Reference</h2><p>M</p><h2>Target Key</h2><p>5564</p></body></html>

@@ -1,0 +1,55 @@
+<!doctype html><html lang="en"><head><meta charset="utf-8"><title>STIGQter: STIG Check Details: SV-252957r958736_rule: TOSS must automatically lock an account until the locked account is released by an administrator when three unsuccessful logon attempts in 15 minutes occur.</title><link rel="icon" type="image/svg+xml" href="STIGQter.svg" /><script async src="https://www.googletagmanager.com/gtag/js?id=UA-31381839-2"></script><script src="include.js"></script><script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-4110907817782130" crossorigin="anonymous"></script></head><body><div><img src="STIGQter.svg" alt="STIGQter" style="height:1em;" /> <a href="https://www.stigqter.com/">STIGQter</a>: <a href="main.html">STIG Summary</a>: <a href="U_TOSS_4_STIG_V2R6_Manual-xccdf.html">Tri-Lab Operating System Stack (TOSS) 4 Security Technical Implementation Guide Version: 2 Release: 6 Benchmark Date: 01 Jul 2026</a>:</div> <h1>TOSS must automatically lock an account until the locked account is released by an administrator when three unsuccessful logon attempts in 15 minutes occur.</h1><h2>DISA Rule</h2><p>SV-252957r958736_rule</p><h2>Vulnerability Number</h2><p>V-252957</p><h2>Group Title</h2><p>SRG-OS-000329-GPOS-00128</p><h2>Rule Version</h2><p>TOSS-04-020170</p><h2>Severity</h2><p>CAT II</p><h2>CCI(s)</h2><ul><li>CCI-002238 - Automatically lock the account or node for either an organization-defined time period, until the locked account or node is released by an administrator, or delays the next logon prompt according to the organization-defined delay algorithm when the maximum number of unsuccessful logon attempts is exceeded.</li></ul><h2>Weight</h2><p>10</p><h2>Fix Recommendation</h2><p>Configure the operating system to lock an account until released by an administrator when three unsuccessful logon attempts occur in 15 minutes.<br />
+<br />
+Add and/or modify the appropriate sections of the &quot;/etc/pam.d/system-auth&quot; and &quot;/etc/pam.d/password-auth&quot; files to match the following lines:<br />
+<br />
+auth required pam_faillock.so preauth<br />
+auth required pam_faillock.so authfail<br />
+account required pam_faillock.so<br />
+<br />
+Add and/or modify the &quot;/etc/security/faillock.conf&quot; file to match the following line:<br />
+<br />
+unlock_time = 0</p><h2>Check Contents</h2><p>Check that the system locks an account after three unsuccessful logon attempts within a period of 15 minutes until released by an administrator with the following commands.<br />
+<br />
+Note: If a centralized authentication platform (AD, IdM, LDAP, etc) is utilized for authentication, then this requirement is not applicable, to allow the centralized platform to solely manage user lockout.<br />
+<br />
+Verify the pam_faillock.so module is present in the &quot;/etc/pam.d/system-auth&quot; and &quot; /etc/pam.d/password-auth&quot; files:<br />
+<br />
+$ sudo grep pam_faillock.so /etc/pam.d/system-auth /etc/pam.d/password-auth<br />
+<br />
+/etc/pam.d/system-auth:auth required pam_faillock.so preauth<br />
+/etc/pam.d/system-auth:auth required pam_faillock.so authfail<br />
+/etc/pam.d/system-auth:account required pam_faillock.so<br />
+/etc/pam.d/password-auth:auth required pam_faillock.so preauth<br />
+/etc/pam.d/password-auth:auth required pam_faillock.so authfail<br />
+/etc/pam.d/password-auth:account required pam_faillock.so preauth<br />
+<br />
+If the pam_failllock.so module is not present in the &quot;/etc/pam.d/system-auth&quot; and &quot; /etc/pam.d/password-auth&quot; files, this is a finding.<br />
+<br />
+Verify the &quot;/etc/security/faillock.conf&quot; file is configured to lock an account until released by an administrator after three unsuccessful logon attempts:<br />
+<br />
+$ sudo grep 'unlock_time =' /etc/security/faillock.conf<br />
+unlock_time = 0<br />
+<br />
+If the &quot;unlock_time&quot; option is not set to &quot;0&quot;, is missing or commented out, this is a finding.</p><h2>Vulnerability Number</h2><p>V-252957</p><h2>Documentable</h2><p>False</p><h2>Rule Version</h2><p>TOSS-04-020170</p><h2>Severity Override Guidance</h2><p>Check that the system locks an account after three unsuccessful logon attempts within a period of 15 minutes until released by an administrator with the following commands.<br />
+<br />
+Note: If a centralized authentication platform (AD, IdM, LDAP, etc) is utilized for authentication, then this requirement is not applicable, to allow the centralized platform to solely manage user lockout.<br />
+<br />
+Verify the pam_faillock.so module is present in the &quot;/etc/pam.d/system-auth&quot; and &quot; /etc/pam.d/password-auth&quot; files:<br />
+<br />
+$ sudo grep pam_faillock.so /etc/pam.d/system-auth /etc/pam.d/password-auth<br />
+<br />
+/etc/pam.d/system-auth:auth required pam_faillock.so preauth<br />
+/etc/pam.d/system-auth:auth required pam_faillock.so authfail<br />
+/etc/pam.d/system-auth:account required pam_faillock.so<br />
+/etc/pam.d/password-auth:auth required pam_faillock.so preauth<br />
+/etc/pam.d/password-auth:auth required pam_faillock.so authfail<br />
+/etc/pam.d/password-auth:account required pam_faillock.so preauth<br />
+<br />
+If the pam_failllock.so module is not present in the &quot;/etc/pam.d/system-auth&quot; and &quot; /etc/pam.d/password-auth&quot; files, this is a finding.<br />
+<br />
+Verify the &quot;/etc/security/faillock.conf&quot; file is configured to lock an account until released by an administrator after three unsuccessful logon attempts:<br />
+<br />
+$ sudo grep 'unlock_time =' /etc/security/faillock.conf<br />
+unlock_time = 0<br />
+<br />
+If the &quot;unlock_time&quot; option is not set to &quot;0&quot;, is missing or commented out, this is a finding.</p><h2>Check Content Reference</h2><p>M</p><h2>Target Key</h2><p>5469</p></body></html>

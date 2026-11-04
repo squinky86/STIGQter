@@ -1,0 +1,69 @@
+<!doctype html><html lang="en"><head><meta charset="utf-8"><title>STIGQter: STIG Check Details: SV-270574r1192921_rule: Oracle Database must take steps to protect data at rest and ensure confidentiality and integrity of application data.</title><link rel="icon" type="image/svg+xml" href="STIGQter.svg" /><script async src="https://www.googletagmanager.com/gtag/js?id=UA-31381839-2"></script><script src="include.js"></script><script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-4110907817782130" crossorigin="anonymous"></script></head><body><div><img src="STIGQter.svg" alt="STIGQter" style="height:1em;" /> <a href="https://www.stigqter.com/">STIGQter</a>: <a href="main.html">STIG Summary</a>: <a href="U_Oracle_Database_19c_STIG_V1R5_Manual-xccdf.html">Oracle Database 19c Security Technical Implementation Guide Version: 1 Release: 5 Benchmark Date: 01 Apr 2026</a>:</div> <h1>Oracle Database must take steps to protect data at rest and ensure confidentiality and integrity of application data.</h1><h2>DISA Rule</h2><p>SV-270574r1192921_rule</p><h2>Vulnerability Number</h2><p>V-270574</p><h2>Group Title</h2><p>SRG-APP-000231-DB-000154</p><h2>Rule Version</h2><p>O19C-00-016800</p><h2>Severity</h2><p>CAT I</p><h2>CCI(s)</h2><ul><li>CCI-001199 - Protects the confidentiality and/or integrity of organization-defined information at rest.</li></ul><h2>Weight</h2><p>10</p><h2>Fix Recommendation</h2><p>Apply appropriate controls to protect the confidentiality and integrity of data at rest in the database.<br />
+<br />
+If no site-specific precautions are in place, use Oracle Advanced Security Option to encrypt data at rest.<br />
+<br />
+If Oracle Advanced Security Option is not an option, use site-specific procedures to secure data at rest.</p><h2>Check Contents</h2><p>Review system documentation to determine whether the system handles classified information. If the system does not handle classified information, the severity of this check is downgraded to CAT II. <br />
+ <br />
+If the application owner and authorizing official (AO) have determined that encryption of data at rest is required, verify the data on secondary devices is encrypted. <br />
+ <br />
+If full-disk encryption is being used, this is not a finding. <br />
+<br />
+If data encryption is required, verify that the data is encrypted before being put on the secondary device. To ensure that the appropriate controls are in place, discuss the precautions taken with the site database administrators (DBAs) and system administrators (SAs) and try to modify data at rest.<br />
+<br />
+Oracle recommends using Transparent Data Encryption, which is part of Oracle Advanced Security Option, to protect data.<br />
+<br />
+To verify the data is encrypted, upon an auditor's request, Oracle provides views that document the encryption status of the database. For TDE column encryption, use the view &quot;dba_encrypted_columns&quot;, which lists the owner, table name, column name, encryption algorithm, and salt for all encrypted columns. For TDE tablespace encryption, the following SQL statement lists all encrypted tablespaces with their encryption algorithm and corresponding, encrypted, data files. Issue the following commands to verify the data at rest is encrypted.<br />
+<br />
+$ sqlplus connect as sysdba<br />
+<br />
+SQL&gt; SELECT t.name &quot;TSName&quot;,<br />
+e.encryptionalg &quot;Algorithm&quot;,<br />
+d.file_name &quot;File Name&quot;<br />
+FROM v$tablespace t,<br />
+v$encrypted_tablespaces e,<br />
+dba_data_files d<br />
+WHERE t.ts# = e.ts#<br />
+and t.name = d.tablespace_name;<br />
+<br />
+The next SQL statement lists the table owner, tables within encrypted tablespaces, and the encryption algorithm:<br />
+<br />
+SQL&gt; SELECT a.owner &quot;Owner&quot;,<br />
+a.table_name &quot;Table Name&quot;,<br />
+e.encryptionalg &quot;Algorithm&quot;<br />
+FROM dba_tables a,<br />
+v$encrypted_tablespaces e<br />
+WHERE a.tablespace_name in (select t.name from v$tablespace t, v$encrypted_tablespaces e where t.ts# = e.ts#);<br />
+<br />
+For each database where encryption is required, verify that encryption is in effect. If it is not, this is a finding.</p><h2>Vulnerability Number</h2><p>V-270574</p><h2>Documentable</h2><p>False</p><h2>Rule Version</h2><p>O19C-00-016800</p><h2>Severity Override Guidance</h2><p>Review system documentation to determine whether the system handles classified information. If the system does not handle classified information, the severity of this check is downgraded to CAT II. <br />
+ <br />
+If the application owner and authorizing official (AO) have determined that encryption of data at rest is required, verify the data on secondary devices is encrypted. <br />
+ <br />
+If full-disk encryption is being used, this is not a finding. <br />
+<br />
+If data encryption is required, verify that the data is encrypted before being put on the secondary device. To ensure that the appropriate controls are in place, discuss the precautions taken with the site database administrators (DBAs) and system administrators (SAs) and try to modify data at rest.<br />
+<br />
+Oracle recommends using Transparent Data Encryption, which is part of Oracle Advanced Security Option, to protect data.<br />
+<br />
+To verify the data is encrypted, upon an auditor's request, Oracle provides views that document the encryption status of the database. For TDE column encryption, use the view &quot;dba_encrypted_columns&quot;, which lists the owner, table name, column name, encryption algorithm, and salt for all encrypted columns. For TDE tablespace encryption, the following SQL statement lists all encrypted tablespaces with their encryption algorithm and corresponding, encrypted, data files. Issue the following commands to verify the data at rest is encrypted.<br />
+<br />
+$ sqlplus connect as sysdba<br />
+<br />
+SQL&gt; SELECT t.name &quot;TSName&quot;,<br />
+e.encryptionalg &quot;Algorithm&quot;,<br />
+d.file_name &quot;File Name&quot;<br />
+FROM v$tablespace t,<br />
+v$encrypted_tablespaces e,<br />
+dba_data_files d<br />
+WHERE t.ts# = e.ts#<br />
+and t.name = d.tablespace_name;<br />
+<br />
+The next SQL statement lists the table owner, tables within encrypted tablespaces, and the encryption algorithm:<br />
+<br />
+SQL&gt; SELECT a.owner &quot;Owner&quot;,<br />
+a.table_name &quot;Table Name&quot;,<br />
+e.encryptionalg &quot;Algorithm&quot;<br />
+FROM dba_tables a,<br />
+v$encrypted_tablespaces e<br />
+WHERE a.tablespace_name in (select t.name from v$tablespace t, v$encrypted_tablespaces e where t.ts# = e.ts#);<br />
+<br />
+For each database where encryption is required, verify that encryption is in effect. If it is not, this is a finding.</p><h2>Check Content Reference</h2><p>M</p><h2>Target Key</h2><p>5672</p></body></html>

@@ -1,0 +1,74 @@
+<!doctype html><html lang="en"><head><meta charset="utf-8"><title>STIGQter: STIG Check Details: SV-270917r1155096_rule: The publicly accessible Dragos Platform application must display the Standard Mandatory DOD Notice and Consent Banner before granting access to Dragos Platform.</title><link rel="icon" type="image/svg+xml" href="STIGQter.svg" /><script async src="https://www.googletagmanager.com/gtag/js?id=UA-31381839-2"></script><script src="include.js"></script><script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-4110907817782130" crossorigin="anonymous"></script></head><body><div><img src="STIGQter.svg" alt="STIGQter" style="height:1em;" /> <a href="https://www.stigqter.com/">STIGQter</a>: <a href="main.html">STIG Summary</a>: <a href="U_Dragos_Platform_2-x_STIG_V1R6_Manual-xccdf.html">Dragos Platform 2.x Security Technical Implementation Guide Version: 1 Release: 6 Benchmark Date: 01 Apr 2026</a>:</div> <h1>The publicly accessible Dragos Platform application must display the Standard Mandatory DOD Notice and Consent Banner before granting access to Dragos Platform.</h1><h2>DISA Rule</h2><p>SV-270917r1155096_rule</p><h2>Vulnerability Number</h2><p>V-270917</p><h2>Group Title</h2><p>SRG-APP-000070</p><h2>Rule Version</h2><p>DRAG-OT-000220</p><h2>Severity</h2><p>CAT II</p><h2>CCI(s)</h2><ul><li>CCI-001384 - For publicly accessible systems, display system use information with organization-defined conditions before granting further access to the publicly accessible system.</li><li>CCI-001385 - For publicly accessible systems, displays references, if any, to monitoring that are consistent with privacy accommodations for such systems that generally prohibit those activities.</li><li>CCI-001386 - For publicly accessible systems, displays references, if any, to recording that are consistent with privacy accommodations for such systems that generally prohibit those activities.</li><li>CCI-001387 - For publicly accessible systems, displays references, if any, to auditing that are consistent with privacy accommodations for such systems that generally prohibit those activities.</li><li>CCI-001388 - For publicly accessible systems, includes a description of the authorized uses of the system.</li></ul><h2>Weight</h2><p>10</p><h2>Fix Recommendation</h2><p>1. Download the following script, and put it in the /root directory on the sitestore where you want to apply the DOD Banner:<br />
+<br />
+import os, json, sys, time<br />
+# Created by bdudley@dragos.com to assist with Dragos STIG implementation<br />
+# specifically related to DOD Banner for web UI before login<br />
+os.chdir(&quot;/root&quot;)<br />
+# version compatibility check<br />
+if 'Platform Version: 2.' not in os.popen(&quot;dragoscmd version&quot;).read():<br />
+    print(&quot;This version of the Dragos platform is incompatible with this script.&quot;)<br />
+    exit()<br />
+DOD_BANNER_JS = &quot;alert('You are accessing a U.S. Government (USG) Information System (IS) that is provided for USG-authorized use only.\\nBy using this IS (which includes any device attached to this IS), you consent to the following conditions:\\n-The USG routinely intercepts and monitors communications on this IS for purposes including, but not limited to, penetration testing, COMSEC monitoring, network operations and defense, personnel misconduct (PM), law enforcement (LE), and counterintelligence (CI) investigations.\\n-At any time, the USG may inspect and seize data stored on this IS.\\n-Communications using, or data stored on, this IS are not private, are subject to routine monitoring, interception, and search, and may be disclosed or used for any USG-authorized purpose.\\n-This IS includes security measures (e.g., authentication and access controls) to protect USG interests--not for your personal benefit or privacy.\\n-Notwithstanding the above, using this IS does not constitute consent to PM, LE or CI investigative searching or monitoring of the content of privileged communications, or work product, related to personal representation or services by attorneys, psychotherapists, or clergy, and their assistants. Such communications and work product are private and confidential. See User Agreement for details.');&quot;<br />
+fstream = open('banner.js', 'w')<br />
+fstream.write(DOD_BANNER_JS)<br />
+fstream.close()<br />
+# get the platform-ui container id<br />
+platformui = os.popen(&quot;kubectl get pods | grep platform-ui | grep -v platform-ui-logger | awk '{print $1}'&quot;).read().strip()<br />
+BANNER_DIR = '/usr/share/nginx/html/source/'<br />
+HTML_DIR = '/usr/share/nginx/html/'<br />
+if &quot;--restore-defaults&quot; in sys.argv:<br />
+    print(&quot;Restoring to default, no banner.&quot;)<br />
+    os.system(&quot;kubectl -n dragos-sitestore cp ./index.html.bak &quot;+platformui+&quot;:&quot;+HTML_DIR+&quot;index.html&quot;)<br />
+    print(&quot;Done, reload the page to test changes.&quot;)<br />
+    exit()<br />
+# this will check periodically to make sure the banner changes persisted, and re-apply them if not<br />
+if &quot;--persist-banner&quot; in sys.argv:<br />
+    # check the current settings<br />
+    current_html = os.popen(&quot;curl -k https://localhost&quot;).read()<br />
+    if &quot;./source/banner.js&quot; in current_html:<br />
+        print(&quot;Banner is currently set, taking no action.&quot;)<br />
+        exit()<br />
+    else:<br />
+        fstream = open(&quot;banner.log&quot;, &quot;a&quot;)<br />
+        fstream.write(&quot;[&quot;+time.ctime().replace(&quot;  &quot;, &quot;&quot;)+&quot;] banner was not set, setting banner now.\n&quot;)<br />
+        fstream.close()<br />
+    # put the banner js file in the appropriate directory<br />
+    os.system(&quot;kubectl -n dragos-sitestore cp ./banner.js &quot;+platformui+&quot;:&quot;+BANNER_DIR+&quot;banner.js&quot;)<br />
+    # update the current version of index.html in the pod<br />
+    os.system(&quot;kubectl -n dragos-sitestore cp ./index.html.patched &quot;+platformui+&quot;:&quot;+HTML_DIR+&quot;index.html&quot;)<br />
+    exit()<br />
+# is the sitestore up and running?<br />
+if &quot;System is ready.&quot; not in os.popen(&quot;dragoscmd system k3s status&quot;).read():<br />
+    print(&quot;System is not ready, wait until all pods are started before configuring banner.&quot;)<br />
+    exit()<br />
+# is there a backup of the old index.html file<br />
+if os.path.exists('index.html.bak') == False:<br />
+    print(&quot;Creating an index.html backup...&quot;)<br />
+    os.system(&quot;kubectl -n dragos-sitestore cp &quot;+platformui+&quot;:&quot;+HTML_DIR+&quot;index.html ./index.html.bak&quot;)<br />
+    print(&quot;Done.&quot;)<br />
+# put the banner js file in the appropriate directory<br />
+os.system(&quot;kubectl -n dragos-sitestore cp ./banner.js &quot;+platformui+&quot;:&quot;+BANNER_DIR+&quot;banner.js&quot;)<br />
+# perform appropriate patching on the index.html backup<br />
+fstream = open(&quot;index.html.bak&quot;, &quot;r&quot;)<br />
+html = fstream.read()<br />
+fstream.close()<br />
+original = '&lt;script nonce=&quot;**CSP_NONCE**&quot; type=&quot;module&quot; crossorigin'<br />
+replacement = '&lt;script src=&quot;./source/banner.js&quot; nonce=&quot;**CSP_NONCE**&quot;&gt;&lt;/script&gt;&lt;script nonce=&quot;**CSP_NONCE**&quot; type=&quot;module&quot; crossorigin'<br />
+fstream = open(&quot;index.html.patched&quot;, &quot;w&quot;)<br />
+fstream.write(html.replace(original, replacement))<br />
+fstream.close()<br />
+# update the current version of index.html in the pod<br />
+os.system(&quot;kubectl -n dragos-sitestore cp ./index.html.patched &quot;+platformui+&quot;:&quot;+HTML_DIR+&quot;index.html&quot;)<br />
+print(&quot;Banner configuration changes complete, reload the login page (or logout) to see the popup.  If the formatting for the popup needs to be adjusted, make the changes in the banner block above and re-run this script.&quot;)<br />
+print(&quot;\nUse the below format to create a cron that makes the banner persist through reboots:\n\n*/5 * * * * python3 /root/DOD_Banner_Config_Utility.py --persist-banner\n\n&quot;)<br />
+<br />
+2. Run the script with the following syntax: python3 DOD_Banner_Config_Utility.py, and go to the sitestore login page to verify the banner is present.<br />
+3. Schedule the cron with the following syntax to make sure the change survives reboots: 5 * * * * python3 /root/DOD_Banner_Config_Utility.py --persist-banner</p><h2>Check Contents</h2><p>Verify that the Standard Mandatory DOD Notice and Consent Banner appears before being granted access to Dragos Platform UI. <br />
+<br />
+If the Standard Mandatory DOD Notice is not presented, this is a finding.<br />
+<br />
+Example Banner: You are accessing a U.S. Government (USG) Information System (IS) that is provided for USG-authorized use only.\\nBy using this IS (which includes any device attached to this IS), you consent to the following conditions:\\n-The USG routinely intercepts and monitors communications on this IS for purposes including, but not limited to, penetration testing, COMSEC monitoring, network operations and defense, personnel misconduct (PM), law enforcement (LE), and counterintelligence (CI) investigations.\\n-At any time, the USG may inspect and seize data stored on this IS.\\n-Communications using, or data stored on, this IS are not private, are subject to routine monitoring, interception, and search, and may be disclosed or used for any USG-authorized purpose.\\n-This IS includes security measures (e.g., authentication and access controls) to protect USG interests--not for your personal benefit or privacy.\\n-Notwithstanding the above, using this IS does not constitute consent to PM, LE or CI investigative searching or monitoring of the content of privileged communications, or work product, related to personal representation or services by attorneys, psychotherapists, or clergy, and their assistants. Such communications and work product are private and confidential. See User Agreement for details.</p><h2>Vulnerability Number</h2><p>V-270917</p><h2>Documentable</h2><p>False</p><h2>Rule Version</h2><p>DRAG-OT-000220</p><h2>Severity Override Guidance</h2><p>Verify that the Standard Mandatory DOD Notice and Consent Banner appears before being granted access to Dragos Platform UI. <br />
+<br />
+If the Standard Mandatory DOD Notice is not presented, this is a finding.<br />
+<br />
+Example Banner: You are accessing a U.S. Government (USG) Information System (IS) that is provided for USG-authorized use only.\\nBy using this IS (which includes any device attached to this IS), you consent to the following conditions:\\n-The USG routinely intercepts and monitors communications on this IS for purposes including, but not limited to, penetration testing, COMSEC monitoring, network operations and defense, personnel misconduct (PM), law enforcement (LE), and counterintelligence (CI) investigations.\\n-At any time, the USG may inspect and seize data stored on this IS.\\n-Communications using, or data stored on, this IS are not private, are subject to routine monitoring, interception, and search, and may be disclosed or used for any USG-authorized purpose.\\n-This IS includes security measures (e.g., authentication and access controls) to protect USG interests--not for your personal benefit or privacy.\\n-Notwithstanding the above, using this IS does not constitute consent to PM, LE or CI investigative searching or monitoring of the content of privileged communications, or work product, related to personal representation or services by attorneys, psychotherapists, or clergy, and their assistants. Such communications and work product are private and confidential. See User Agreement for details.</p><h2>Check Content Reference</h2><p>M</p><h2>Target Key</h2><p>5675</p></body></html>

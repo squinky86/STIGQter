@@ -1,0 +1,77 @@
+<!doctype html><html lang="en"><head><meta charset="utf-8"><title>STIGQter: STIG Check Details: SV-254038r844147_rule: The Juniper BGP router must be configured to limit the prefix size on any inbound route advertisement to /24 or the least significant prefixes issued to the customer.</title><link rel="icon" type="image/svg+xml" href="STIGQter.svg" /><script async src="https://www.googletagmanager.com/gtag/js?id=UA-31381839-2"></script><script src="include.js"></script><script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-4110907817782130" crossorigin="anonymous"></script></head><body><div><img src="STIGQter.svg" alt="STIGQter" style="height:1em;" /> <a href="https://www.stigqter.com/">STIGQter</a>: <a href="main.html">STIG Summary</a>: <a href="U_Juniper_EX_Switches_RTR_STIG_V2R1_Manual-xccdf.html">Juniper EX Series Switches Router Security Technical Implementation Guide Version: 2 Release: 1 Benchmark Date: 24 Jul 2024</a>:</div> <h1>The Juniper BGP router must be configured to limit the prefix size on any inbound route advertisement to /24 or the least significant prefixes issued to the customer.</h1><h2>DISA Rule</h2><p>SV-254038r844147_rule</p><h2>Vulnerability Number</h2><p>V-254038</p><h2>Group Title</h2><p>SRG-NET-000362-RTR-000118</p><h2>Rule Version</h2><p>JUEX-RT-000660</p><h2>Severity</h2><p>CAT III</p><h2>CCI(s)</h2><ul><li>CCI-002385 - Protect against or limit the effects of organization-defined types of denial of service events.</li></ul><h2>Weight</h2><p>10</p><h2>Fix Recommendation</h2><p>Configure all eBGP routers to use the prefix limit feature to protect against route table flooding and prefix deaggregation attacks.<br />
+<br />
+set policy-options policy-statement &lt;statement name&gt; term 1 from route-filter 0.0.0.0/0 prefix-length-range /25-/32<br />
+set policy-options policy-statement &lt;statement name&gt; term 1 then reject<br />
+<br />
+set protocols bgp group &lt;group name&gt; type external<br />
+set protocols bgp group &lt;group name&gt; import &lt;statement name&gt;<br />
+set protocols bgp group &lt;group name&gt; local-as &lt;local AS number&gt;<br />
+set protocols bgp group &lt;group name&gt; neighbor &lt;neighbor 1 address&gt; import &lt;statement name&gt;<br />
+set protocols bgp group &lt;group name&gt; neighbor &lt;neighbor 1 address&gt; authentication-key &lt;PSK value&gt;<br />
+set protocols bgp group &lt;group name&gt; neighbor &lt;neighbor 2 address&gt; import &lt;statement name&gt;<br />
+set protocols bgp group &lt;group name&gt; neighbor &lt;neighbor 2 address&gt; ipsec-sa &lt;SA name&gt;<br />
+set protocols bgp import &lt;statement name&gt;</p><h2>Check Contents</h2><p>This requirement is not applicable for the DODIN Backbone. <br />
+<br />
+Review the router configuration to verify that there is a filter to reject inbound route advertisements that are greater than /24, or the least significant prefixes issued to the customer, whichever is larger. Verify each BGP neighbor implements an import policy. BGP import policies are supported in three locations: Global (at [edit protocols bgp]), group (at [edit protocols bgp group &lt;name&gt;]), and for each neighbor (at [edit protocols bgp group &lt;name&gt; neighbor &lt;neighbor address&gt;]) with the most specific import statement being applied. Multiple policy statements may be necessary to address each customer's requirements.<br />
+<br />
+[edit policy-options]<br />
+policy-statement reject-long-prefixes {<br />
+    term 1 {<br />
+        from {<br />
+            route-filter 0.0.0.0/0 prefix-length-range /25-/32;<br />
+        }<br />
+        then reject;<br />
+    }<br />
+    &lt;additional terms&gt;<br />
+}<br />
+[edit protocols]<br />
+bgp {<br />
+    group &lt;group name&gt; {<br />
+        type external;<br />
+        import &lt;policy statement name&gt;; &lt;&lt; Applied instead of global BGP policy unless a more specific neighbor import filter exists. Excludes all terms in the global filter.<br />
+        local-as &lt;local AS number&gt;;<br />
+        neighbor &lt;neighbor 1 address&gt; {<br />
+            import &lt;policy statement name&gt;; &lt;&lt; Most specific import filter. If configured, only this filter applies to this neighbor (all other terms in all other filters ignored).<br />
+            authentication-key &quot;$8$aes256-gcm$hmac-sha2-256$100$cFQ99Gy83Og$SCMVXvnfna7/cZqH9fCECQ$bCVokm+es94xFJONmbKFNA$4561Uc/r&quot;; ## SECRET-DATA<br />
+        }<br />
+        neighbor &lt;neighbor 2 address&gt; {<br />
+            import &lt;policy statement name&gt;; &lt;&lt; Most specific import filter. If configured, only this filter applies to this neighbor (all other terms in all other filters ignored).<br />
+            ipsec-sa &lt;SA name&gt;;<br />
+        }<br />
+    }<br />
+    import &lt;policy statement name&gt;; &lt;&lt; Least specific import filter.<br />
+}<br />
+<br />
+If the router is not configured to limit the prefix size on any inbound route advertisement to /24 or the least significant prefixes issued to the customer, this is a finding.</p><h2>Vulnerability Number</h2><p>V-254038</p><h2>Documentable</h2><p>False</p><h2>Rule Version</h2><p>JUEX-RT-000660</p><h2>Severity Override Guidance</h2><p>This requirement is not applicable for the DODIN Backbone. <br />
+<br />
+Review the router configuration to verify that there is a filter to reject inbound route advertisements that are greater than /24, or the least significant prefixes issued to the customer, whichever is larger. Verify each BGP neighbor implements an import policy. BGP import policies are supported in three locations: Global (at [edit protocols bgp]), group (at [edit protocols bgp group &lt;name&gt;]), and for each neighbor (at [edit protocols bgp group &lt;name&gt; neighbor &lt;neighbor address&gt;]) with the most specific import statement being applied. Multiple policy statements may be necessary to address each customer's requirements.<br />
+<br />
+[edit policy-options]<br />
+policy-statement reject-long-prefixes {<br />
+    term 1 {<br />
+        from {<br />
+            route-filter 0.0.0.0/0 prefix-length-range /25-/32;<br />
+        }<br />
+        then reject;<br />
+    }<br />
+    &lt;additional terms&gt;<br />
+}<br />
+[edit protocols]<br />
+bgp {<br />
+    group &lt;group name&gt; {<br />
+        type external;<br />
+        import &lt;policy statement name&gt;; &lt;&lt; Applied instead of global BGP policy unless a more specific neighbor import filter exists. Excludes all terms in the global filter.<br />
+        local-as &lt;local AS number&gt;;<br />
+        neighbor &lt;neighbor 1 address&gt; {<br />
+            import &lt;policy statement name&gt;; &lt;&lt; Most specific import filter. If configured, only this filter applies to this neighbor (all other terms in all other filters ignored).<br />
+            authentication-key &quot;$8$aes256-gcm$hmac-sha2-256$100$cFQ99Gy83Og$SCMVXvnfna7/cZqH9fCECQ$bCVokm+es94xFJONmbKFNA$4561Uc/r&quot;; ## SECRET-DATA<br />
+        }<br />
+        neighbor &lt;neighbor 2 address&gt; {<br />
+            import &lt;policy statement name&gt;; &lt;&lt; Most specific import filter. If configured, only this filter applies to this neighbor (all other terms in all other filters ignored).<br />
+            ipsec-sa &lt;SA name&gt;;<br />
+        }<br />
+    }<br />
+    import &lt;policy statement name&gt;; &lt;&lt; Least specific import filter.<br />
+}<br />
+<br />
+If the router is not configured to limit the prefix size on any inbound route advertisement to /24 or the least significant prefixes issued to the customer, this is a finding.</p><h2>Check Content Reference</h2><p>M</p><h2>Target Key</h2><p>5479</p></body></html>

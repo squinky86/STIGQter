@@ -1,0 +1,41 @@
+<!doctype html><html lang="en"><head><meta charset="utf-8"><title>STIGQter: STIG Check Details: SV-251584r1137654_rule: IDMS must allow only authorized users to sign on to an IDMS CV.</title><link rel="icon" type="image/svg+xml" href="STIGQter.svg" /><script async src="https://www.googletagmanager.com/gtag/js?id=UA-31381839-2"></script><script src="include.js"></script><script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-4110907817782130" crossorigin="anonymous"></script></head><body><div><img src="STIGQter.svg" alt="STIGQter" style="height:1em;" /> <a href="https://www.stigqter.com/">STIGQter</a>: <a href="main.html">STIG Summary</a>: <a href="U_CA_IDMS_STIG_V2R2_Manual-xccdf.html">CA IDMS Security Technical Implementation Guide Version: 2 Release: 2 Benchmark Date: 01 Jul 2026</a>:</div> <h1>IDMS must allow only authorized users to sign on to an IDMS CV.</h1><h2>DISA Rule</h2><p>SV-251584r1137654_rule</p><h2>Vulnerability Number</h2><p>V-251584</p><h2>Group Title</h2><p>SRG-APP-000033-DB-000084</p><h2>Rule Version</h2><p>IDMS-DB-000030</p><h2>Severity</h2><p>CAT I</p><h2>CCI(s)</h2><ul><li>CCI-000213 - Enforce approved authorizations for logical access to information and system resources in accordance with applicable access control policies.</li></ul><h2>Weight</h2><p>10</p><h2>Fix Recommendation</h2><p>In the source for RHDCSRTT add a #SECRTT entry to secure the sign-on process such as this example:<br />
+<br />
+          #SECRTT TYPE=ENTRY,                                           X<br />
+                    RESTYPE=SGON,                                           X<br />
+                   SECBY=EXTERNAL,                                         X<br />
+                   EXTCLS='CA@IDMS',                                  X<br />
+                   EXTNAME=(RESTYPE,RESNAME)                                    <br />
+<br />
+The RESNAME used during sign-on is the CV system name as defined in SYSGEN. To find the system name sign into SYSGEN in the CV. Then issue command &quot;SIGNON DICT SYST&quot; and then issue command &quot;DISP SYS nnn&quot; where nnn is the CV number. Look for &quot;SYSTEM ID IS&quot; to find the system name used as RESNAME.<br />
+<br />
+Before implementing changes, contact the security administrator and ensure that the ESM has the necessary rules for the EXTCLS and EXTNAME values chosen. The appropriate ESM rules must then be given to the appropriate users. For instance, in Top Secret:<br />
+TSS PER(user_id) CA@IDMS(SGON.your_extname)<br />
+<br />
+In ACF2:<br />
+$KEY(SGON.your_extname) TYPE(CA@IDMS) <br />
+ UID(user_id) ALLOW<br />
+<br />
+After making the above changes, assemble and link RHDCSRTT to create a new SRTT. To implement the new SRTT, either recycle any CVs that use the SRTT or issue these commands:<br />
+<br />
+DCMT VARY NUCLEUS MODULE RHDCSRTT NEW COPY <br />
+DCMT VARY NUCLEUS RELOAD</p><h2>Check Contents</h2><p>Examine load module RHDCSRTT by executing CA IDMS utility IDMSSRTD, or by issuing command &quot;DCMT DISPLAY SRTT&quot; while signed onto the CV, and reviewing the output. <br />
+<br />
+Note that this requires PTFs SO07995 and SO09476.<br />
+<br />
+Look for a #SECRTT statement with the string &quot;RESTYPE=SGON&quot; and SECBY=EXTERNAL. <br />
+<br />
+If no &quot;RESTYPE=SGON&quot; is found or &quot;SECBY=OFF&quot; or &quot;SECBY=INTERNAL&quot; is specified, this is a finding.<br />
+<br />
+Execute an external security manager (ESM) resource access list for resource &quot;SGON&quot; for each CV on the system.<br />
+<br />
+If the resource access is not restricted to only users authorized in the site security plan, this is a finding.</p><h2>Vulnerability Number</h2><p>V-251584</p><h2>Documentable</h2><p>False</p><h2>Rule Version</h2><p>IDMS-DB-000030</p><h2>Severity Override Guidance</h2><p>Examine load module RHDCSRTT by executing CA IDMS utility IDMSSRTD, or by issuing command &quot;DCMT DISPLAY SRTT&quot; while signed onto the CV, and reviewing the output. <br />
+<br />
+Note that this requires PTFs SO07995 and SO09476.<br />
+<br />
+Look for a #SECRTT statement with the string &quot;RESTYPE=SGON&quot; and SECBY=EXTERNAL. <br />
+<br />
+If no &quot;RESTYPE=SGON&quot; is found or &quot;SECBY=OFF&quot; or &quot;SECBY=INTERNAL&quot; is specified, this is a finding.<br />
+<br />
+Execute an external security manager (ESM) resource access list for resource &quot;SGON&quot; for each CV on the system.<br />
+<br />
+If the resource access is not restricted to only users authorized in the site security plan, this is a finding.</p><h2>Check Content Reference</h2><p>M</p><h2>Target Key</h2><p>5418</p></body></html>

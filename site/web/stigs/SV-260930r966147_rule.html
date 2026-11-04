@@ -1,0 +1,35 @@
+<!doctype html><html lang="en"><head><meta charset="utf-8"><title>STIGQter: STIG Check Details: SV-260930r966147_rule: MKE must not permit users to create pods that share host process namespace.</title><link rel="icon" type="image/svg+xml" href="STIGQter.svg" /><script async src="https://www.googletagmanager.com/gtag/js?id=UA-31381839-2"></script><script src="include.js"></script><script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-4110907817782130" crossorigin="anonymous"></script></head><body><div><img src="STIGQter.svg" alt="STIGQter" style="height:1em;" /> <a href="https://www.stigqter.com/">STIGQter</a>: <a href="main.html">STIG Summary</a>: <a href="U_Mirantis_Kubernetes_Engine_STIG_V2R1_Manual-xccdf.html">Mirantis Kubernetes Engine Security Technical Implementation Guide Version: 2 Release: 1 Benchmark Date: 24 Jul 2024</a>:</div> <h1>MKE must not permit users to create pods that share host process namespace.</h1><h2>DISA Rule</h2><p>SV-260930r966147_rule</p><h2>Vulnerability Number</h2><p>V-260930</p><h2>Group Title</h2><p>SRG-APP-000148-CTR-000345</p><h2>Rule Version</h2><p>CNTR-MK-000680</p><h2>Severity</h2><p>CAT II</p><h2>CCI(s)</h2><ul><li>CCI-000764 - Uniquely identify and authenticate organizational users and associate that unique identification with processes acting on behalf of those users.</li></ul><h2>Weight</h2><p>10</p><h2>Fix Recommendation</h2><p>When using Kubernetes orchestration, this check is Not Applicable.<br />
+<br />
+Using Swarm orchestration, review and remove nonsystem containers previously created by these users utilizing shared namespaces or with a PidMode=host using the following:<br />
+<br />
+docker container rm [container]</p><h2>Check Contents</h2><p>When using Kubernetes orchestration, this check is Not Applicable.<br />
+<br />
+When using Swarm orchestration, to ensure the host's process namespace is not shared, log in via CLI:<br />
+<br />
+Execute the following using the MKE client bundle:<br />
+<br />
+container_ids=$(docker ps --quiet --filter=label=com.docker.ucp.version)<br />
+for container_id in $container_ids<br />
+do<br />
+   container_name=$(docker inspect -f '{{.Name}}' $container_id | cut -c2-)<br />
+   pid_mode=$(docker inspect -f '{{.HostConfig.PidMode}}' $container_id)<br />
+<br />
+   echo &quot;Container Name: $container_name, ID: $container_id, PidMode: $pid_mode&quot;<br />
+done<br />
+<br />
+If PidMode = &quot;host&quot;, this is a finding.</p><h2>Vulnerability Number</h2><p>V-260930</p><h2>Documentable</h2><p>False</p><h2>Rule Version</h2><p>CNTR-MK-000680</p><h2>Severity Override Guidance</h2><p>When using Kubernetes orchestration, this check is Not Applicable.<br />
+<br />
+When using Swarm orchestration, to ensure the host's process namespace is not shared, log in via CLI:<br />
+<br />
+Execute the following using the MKE client bundle:<br />
+<br />
+container_ids=$(docker ps --quiet --filter=label=com.docker.ucp.version)<br />
+for container_id in $container_ids<br />
+do<br />
+   container_name=$(docker inspect -f '{{.Name}}' $container_id | cut -c2-)<br />
+   pid_mode=$(docker inspect -f '{{.HostConfig.PidMode}}' $container_id)<br />
+<br />
+   echo &quot;Container Name: $container_name, ID: $container_id, PidMode: $pid_mode&quot;<br />
+done<br />
+<br />
+If PidMode = &quot;host&quot;, this is a finding.</p><h2>Check Content Reference</h2><p>M</p><h2>Target Key</h2><p>5595</p></body></html>

@@ -1,0 +1,47 @@
+<!doctype html><html lang="en"><head><meta charset="utf-8"><title>STIGQter: STIG Check Details: SV-269583r1053524_rule: Xylok Security Suite must audit the enforcement actions used to restrict access associated with changes to it.</title><link rel="icon" type="image/svg+xml" href="STIGQter.svg" /><script async src="https://www.googletagmanager.com/gtag/js?id=UA-31381839-2"></script><script src="include.js"></script><script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-4110907817782130" crossorigin="anonymous"></script></head><body><div><img src="STIGQter.svg" alt="STIGQter" style="height:1em;" /> <a href="https://www.stigqter.com/">STIGQter</a>: <a href="main.html">STIG Summary</a>: <a href="U_Xylok_Security_Suite_20-x_STIG_V1R2_Manual-xccdf.html">Xylok Security Suite 20.x Security Technical Implementation Guide Version: 1 Release: 2 Benchmark Date: 05 Jan 2026</a>:</div> <h1>Xylok Security Suite must audit the enforcement actions used to restrict access associated with changes to it.</h1><h2>DISA Rule</h2><p>SV-269583r1053524_rule</p><h2>Vulnerability Number</h2><p>V-269583</p><h2>Group Title</h2><p>SRG-APP-000381</p><h2>Rule Version</h2><p>XYLK-20-000162</p><h2>Severity</h2><p>CAT II</p><h2>CCI(s)</h2><ul><li>CCI-003938 - Automatically generate audit records of the enforcement actions.</li></ul><h2>Weight</h2><p>10</p><h2>Fix Recommendation</h2><p>Setting up auditing of a file in RHEL 8 involves using the auditd service and creating specific audit rules. Below are the steps to set up auditing for /etc/xylok.conf:<br />
+<br />
+1. Ensure that the audit package is installed on your system by running the following: <br />
+sudo dnf install audit<br />
+<br />
+2. Start the auditd service if it is not already running:<br />
+sudo systemctl start auditd<br />
+<br />
+3. Enable the service to start automatically on boot:<br />
+sudo systemctl enable auditd<br />
+<br />
+4. Create an Audit Rule for the /etc/xylok.conf File:<br />
+sudo auditctl -w /etc/xylok.conf -p warx -k xylok_config<br />
+<br />
+5. Make the Audit Rule Persistent (optional):<br />
+The rule set using auditctl will be active only until the next reboot. To make it persistent, add it to the /etc/audit/rules.d/audit.rules file.<br />
+Open the file in a text editor:<br />
+sudo vi /etc/audit/rules.d/audit.rules<br />
+<br />
+Add the rule at the end of the file:<br />
+-w /etc/xylok.conf -p warx -k xylok_config<br />
+<br />
+6. After making the rule persistent, restart the audit service to apply the changes:<br />
+sudo systemctl restart auditd<br />
+<br />
+7. The events related to the audited file will be recorded in /var/log/audit/audit.log.<br />
+To view the logs, use the ausearch command:<br />
+sudo ausearch -k xylok_config<br />
+<br />
+8. To confirm that the rule is in place, list all current audit rules with:<br />
+sudo auditctl -l</p><h2>Check Contents</h2><p>From the host machine as a normal user, verify the host OS generates audit records for all account creations, modifications, disabling, and termination events that affect &quot;/etc/xylok.conf&quot; with the following command:<br />
+<br />
+Note: Directions are for Red Hat Enterprise Linux (RHEL) 8 and similar. If using a different OS, the steps may vary.<br />
+<br />
+$ sudo grep /etc/xylok.conf /etc/audit/audit.rules<br />
+<br />
+-w /etc/xylok.conf -p warx -k xylok_config<br />
+<br />
+If the command does not return a line, or the line is commented out, this is a finding</p><h2>Vulnerability Number</h2><p>V-269583</p><h2>Documentable</h2><p>False</p><h2>Rule Version</h2><p>XYLK-20-000162</p><h2>Severity Override Guidance</h2><p>From the host machine as a normal user, verify the host OS generates audit records for all account creations, modifications, disabling, and termination events that affect &quot;/etc/xylok.conf&quot; with the following command:<br />
+<br />
+Note: Directions are for Red Hat Enterprise Linux (RHEL) 8 and similar. If using a different OS, the steps may vary.<br />
+<br />
+$ sudo grep /etc/xylok.conf /etc/audit/audit.rules<br />
+<br />
+-w /etc/xylok.conf -p warx -k xylok_config<br />
+<br />
+If the command does not return a line, or the line is commented out, this is a finding</p><h2>Check Content Reference</h2><p>M</p><h2>Target Key</h2><p>5665</p></body></html>

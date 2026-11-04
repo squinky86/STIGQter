@@ -1,0 +1,92 @@
+<!doctype html><html lang="en"><head><meta charset="utf-8"><title>STIGQter: STIG Check Details: SV-216668r1117237_rule: The Cisco perimeter router must be configured to not redistribute static routes to an alternate gateway service provider into BGP or an Interior Gateway Protocol (IGP) peering with the NIPRNet or to other autonomous systems.</title><link rel="icon" type="image/svg+xml" href="STIGQter.svg" /><script async src="https://www.googletagmanager.com/gtag/js?id=UA-31381839-2"></script><script src="include.js"></script><script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-4110907817782130" crossorigin="anonymous"></script></head><body><div><img src="STIGQter.svg" alt="STIGQter" style="height:1em;" /> <a href="https://www.stigqter.com/">STIGQter</a>: <a href="main.html">STIG Summary</a>: <a href="U_Cisco_IOS-XE_Router_RTR_STIG_V3R5_Manual-xccdf.html">Cisco IOS XE Router RTR Security Technical Implementation Guide Version: 3 Release: 5 Benchmark Date: 01 Oct 2025</a>:</div> <h1>The Cisco perimeter router must be configured to not redistribute static routes to an alternate gateway service provider into BGP or an Interior Gateway Protocol (IGP) peering with the NIPRNet or to other autonomous systems.</h1><h2>DISA Rule</h2><p>SV-216668r1117237_rule</p><h2>Vulnerability Number</h2><p>V-216668</p><h2>Group Title</h2><p>SRG-NET-000019-RTR-000010</p><h2>Rule Version</h2><p>CISC-RT-000300</p><h2>Severity</h2><p>CAT III</p><h2>CCI(s)</h2><ul><li>CCI-001414 - Enforce approved authorizations for controlling the flow of information between connected systems based on organization-defined information flow control policies.</li></ul><h2>Weight</h2><p>10</p><h2>Fix Recommendation</h2><p>This requirement is not applicable for the DODIN Backbone.<br />
+<br />
+Configure the router so that static routes are not redistributed to an alternate gateway into either a BGP or any IGP peering with the NIPRNet or to any other autonomous systems. This can be done by excluding that route in the route-map as shown in the example below:<br />
+<br />
+Step 1: Configure a prefix list for any static routes with the alternate gateway as the next-hop address.<br />
+<br />
+R5(config)#ip prefix-list ISP_PREFIX permit x.x.x.0/24<br />
+<br />
+Step 2: Configure a route map that will deny the state routes to the ISP.<br />
+<br />
+R5(config)#route-map FILTER_ISP_STATIC deny 10<br />
+R5(config-route-map)#match ip address prefix-list ISP_PREFIX<br />
+R5(config-route-map)#exit<br />
+R5(config)#route-map FILTER_ISP_STATIC permit 20<br />
+R5(config-route-map)#exit<br />
+<br />
+Step 3: Apply the route-map to the IGP and BGP redistribute static commands as shown in the EIGRP example.<br />
+<br />
+R5(config)#router eigrp 1<br />
+R5(config-router)#redistribute static route-map FILTER_ISP_STATIC</p><h2>Check Contents</h2><p>This requirement is not applicable for the DODIN Backbone.<br />
+<br />
+Step 1: Review the IGP and BGP configurations. If there are redistribute static statements configured as shown in examples below, proceed to step 2.<br />
+<br />
+OSPF Example:<br />
+<br />
+router ospf 1<br />
+ log-adjacency-changes<br />
+ redistribute static subnets<br />
+ network 0.0.0.0 255.255.255.255 area 0<br />
+<br />
+EIGRP example:<br />
+<br />
+router eigrp 1<br />
+ network 10.1.15.0 0.0.0.255<br />
+ redistribute static<br />
+<br />
+RIP example:<br />
+<br />
+router rip<br />
+ version 2<br />
+ redistribute static<br />
+ network 10.0.0.0<br />
+<br />
+BGP example:<br />
+<br />
+router bgp nn<br />
+ no synchronization<br />
+ bgp log-neighbor-changes<br />
+ redistribute static<br />
+ neighbor x.11.1.7 remote-as nn<br />
+ neighbor x.11.1.7 password xxxxxxx<br />
+ no auto-summary<br />
+<br />
+Step 2: Review the static routes that have been configured to determine if any contain the next hop address of the alternate gateway.<br />
+<br />
+If the static routes to the alternate gateway are being redistributed into BGP or any IGP peering to a NIPRNet gateway or any other autonomous system, this is a finding.</p><h2>Vulnerability Number</h2><p>V-216668</p><h2>Documentable</h2><p>False</p><h2>Rule Version</h2><p>CISC-RT-000300</p><h2>Severity Override Guidance</h2><p>This requirement is not applicable for the DODIN Backbone.<br />
+<br />
+Step 1: Review the IGP and BGP configurations. If there are redistribute static statements configured as shown in examples below, proceed to step 2.<br />
+<br />
+OSPF Example:<br />
+<br />
+router ospf 1<br />
+ log-adjacency-changes<br />
+ redistribute static subnets<br />
+ network 0.0.0.0 255.255.255.255 area 0<br />
+<br />
+EIGRP example:<br />
+<br />
+router eigrp 1<br />
+ network 10.1.15.0 0.0.0.255<br />
+ redistribute static<br />
+<br />
+RIP example:<br />
+<br />
+router rip<br />
+ version 2<br />
+ redistribute static<br />
+ network 10.0.0.0<br />
+<br />
+BGP example:<br />
+<br />
+router bgp nn<br />
+ no synchronization<br />
+ bgp log-neighbor-changes<br />
+ redistribute static<br />
+ neighbor x.11.1.7 remote-as nn<br />
+ neighbor x.11.1.7 password xxxxxxx<br />
+ no auto-summary<br />
+<br />
+Step 2: Review the static routes that have been configured to determine if any contain the next hop address of the alternate gateway.<br />
+<br />
+If the static routes to the alternate gateway are being redistributed into BGP or any IGP peering to a NIPRNet gateway or any other autonomous system, this is a finding.</p><h2>Check Content Reference</h2><p>M</p><h2>Target Key</h2><p>4028</p></body></html>

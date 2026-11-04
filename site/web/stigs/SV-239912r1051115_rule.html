@@ -1,0 +1,38 @@
+<!doctype html><html lang="en"><head><meta charset="utf-8"><title>STIGQter: STIG Check Details: SV-239912r1051115_rule: The Cisco ASA must be configured with only one local account to be used as the account of last resort in the event the authentication server is unavailable.</title><link rel="icon" type="image/svg+xml" href="STIGQter.svg" /><script async src="https://www.googletagmanager.com/gtag/js?id=UA-31381839-2"></script><script src="include.js"></script><script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-4110907817782130" crossorigin="anonymous"></script></head><body><div><img src="STIGQter.svg" alt="STIGQter" style="height:1em;" /> <a href="https://www.stigqter.com/">STIGQter</a>: <a href="main.html">STIG Summary</a>: <a href="U_Cisco_ASA_NDM_STIG_V2R5_Manual-xccdf.html">Cisco ASA NDM Security Technical Implementation Guide Version: 2 Release: 5 Benchmark Date: 01 Jul 2026</a>:</div> <h1>The Cisco ASA must be configured with only one local account to be used as the account of last resort in the event the authentication server is unavailable.</h1><h2>DISA Rule</h2><p>SV-239912r1051115_rule</p><h2>Vulnerability Number</h2><p>V-239912</p><h2>Group Title</h2><p>SRG-APP-000148-NDM-000346</p><h2>Rule Version</h2><p>CASA-ND-000450</p><h2>Severity</h2><p>CAT II</p><h2>CCI(s)</h2><ul><li>CCI-001358 - Establish privileged user accounts in accordance with a role-based access scheme; or an attribute-based access scheme.</li></ul><h2>Weight</h2><p>10</p><h2>Fix Recommendation</h2><p>Step 1: Configure a local account with the necessary privilege level to troubleshoot network outage and restore operations as shown in the following example.<br />
+<br />
+ASA(config)# username LAST_RESORT privilege 15<br />
+ASA(config)# username LAST_RESORT password xxxxxxxxxxxxx<br />
+<br />
+Step 2: Define the AAA server.<br />
+<br />
+ASA(config)# aaa-server RADIUS_GROUP protocol radius <br />
+ASA(config-aaa-server-group)# exit<br />
+ASA(config)# aaa-server RADIUS_GROUP (NDM_INTERFACE) host 10.1.48.10<br />
+ASA(config-aaa-server-host)# key xxxxxxxxx<br />
+ASA(config-aaa-server-host)# exit<br />
+<br />
+Step 3: Configure the authentication to use an AAA server with the fallback to use the local account if the authentication server is not reachable as shown in the following example.<br />
+<br />
+ASA(config)# aaa authentication serial console RADIUS_GROUP LOCAL<br />
+ASA(config)# aaa authentication ssh console RADIUS_GROUP LOCAL<br />
+ASA(config)# end</p><h2>Check Contents</h2><p>Step 1: Review the Cisco ASA configuration to verify that a local account for last resort has been configured with a privilege level that will enable the administrator to troubleshoot connectivity to the authentication server.<br />
+<br />
+username LAST_RESORT password $sha512$5000$tb2eaIcI/Q5Q==$ScFJI1ChS4gIjXw== pbkdf2 privilege 15<br />
+<br />
+Step 2: Verify the fallback to use local account has been configured as shown in the example below.<br />
+<br />
+user-identity default-domain LOCAL<br />
+aaa authentication serial console RADIUS_GROUP LOCAL<br />
+aaa authentication ssh console RADIUS_GROUP LOCAL<br />
+<br />
+If the Cisco ASA is not configured with only one local account to be used as the account of last resort in the event the authentication server is unavailable, this is a finding.</p><h2>Vulnerability Number</h2><p>V-239912</p><h2>Documentable</h2><p>False</p><h2>Rule Version</h2><p>CASA-ND-000450</p><h2>Severity Override Guidance</h2><p>Step 1: Review the Cisco ASA configuration to verify that a local account for last resort has been configured with a privilege level that will enable the administrator to troubleshoot connectivity to the authentication server.<br />
+<br />
+username LAST_RESORT password $sha512$5000$tb2eaIcI/Q5Q==$ScFJI1ChS4gIjXw== pbkdf2 privilege 15<br />
+<br />
+Step 2: Verify the fallback to use local account has been configured as shown in the example below.<br />
+<br />
+user-identity default-domain LOCAL<br />
+aaa authentication serial console RADIUS_GROUP LOCAL<br />
+aaa authentication ssh console RADIUS_GROUP LOCAL<br />
+<br />
+If the Cisco ASA is not configured with only one local account to be used as the account of last resort in the event the authentication server is unavailable, this is a finding.</p><h2>Check Content Reference</h2><p>M</p><h2>Target Key</h2><p>5342</p></body></html>

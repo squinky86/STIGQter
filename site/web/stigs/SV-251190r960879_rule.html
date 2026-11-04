@@ -1,0 +1,79 @@
+<!doctype html><html lang="en"><head><meta charset="utf-8"><title>STIGQter: STIG Check Details: SV-251190r960879_rule: Redis Enterprise DBMS must provide audit record generation capability for DoD-defined auditable events within all DBMS/database components.</title><link rel="icon" type="image/svg+xml" href="STIGQter.svg" /><script async src="https://www.googletagmanager.com/gtag/js?id=UA-31381839-2"></script><script src="include.js"></script><script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-4110907817782130" crossorigin="anonymous"></script></head><body><div><img src="STIGQter.svg" alt="STIGQter" style="height:1em;" /> <a href="https://www.stigqter.com/">STIGQter</a>: <a href="main.html">STIG Summary</a>: <a href="U_Redis_Enterprise_6-x_STIG_V2R2_Manual-xccdf.html">Redis Enterprise 6.x Security Technical Implementation Guide Version: 2 Release: 2 Benchmark Date: 24 Oct 2024</a>:</div> <h1>Redis Enterprise DBMS must provide audit record generation capability for DoD-defined auditable events within all DBMS/database components.</h1><h2>DISA Rule</h2><p>SV-251190r960879_rule</p><h2>Vulnerability Number</h2><p>V-251190</p><h2>Group Title</h2><p>SRG-APP-000089-DB-000064</p><h2>Rule Version</h2><p>RD6X-00-001400</p><h2>Severity</h2><p>CAT II</p><h2>CCI(s)</h2><ul><li>CCI-000169 - Provide audit record generation capability for the event types the system is capable of auditing as defined in AU-2 a. on organization-defined information system components.</li></ul><h2>Weight</h2><p>10</p><h2>Fix Recommendation</h2><p>Logging verbosity on Redis Enterprise can be changed for error messages and debugging purposes. Auditing and logging levels for user actions on the control plane does not change and cannot be configured.<br />
+<br />
+Configure the verbosity to the organizationally defined level:<br />
+<br />
+1. Enter the relevant node and run the following commands (run on each desired node): <br />
+- ccs-cli hset dmc:&lt;node_id&gt; log_level &lt;log_level&gt;<br />
+- ccs-cli hset dmc:&lt;node_id&gt; mgmt_log_level &lt;log_level&gt;<br />
+<br />
+2. Reconfigure the DMC: <br />
+rlutil dmc_reconf dmc=&lt;node_id&gt;<br />
+<br />
+3. Set a specific log level in the DMC for a given DB:<br />
+- ccs-cli hset bdb:&lt;db_id&gt; log_level &lt;log_level&gt; <br />
+- rlutil dmc_reconf bdb=&lt;db_id&gt; <br />
+<br />
+Logging levels include:<br />
+1. Debug (DBG) - at this level, anything goes, to include whatever a developer finds useful for debugging. This level should very rarely be active in production and is intended for developers only.<br />
+<br />
+2. Trace (TRC) - used for tracking specific elements' lifespan, issues a few messages (only those important for tracing element) per flow. It might be used in production, under very restrictive and careful watch, for very short periods of time.<br />
+<br />
+3. Info (INF) - positive events changing the behavior of app or one of its major elements: a key component started, configuration changed, etc.<br />
+<br />
+4. Warn (WRN) - events that have temporary (usually recoverable) negative impact on one or more major application elements (server went down, a temporary lack or resources, etc.), such events lead to undesired impact on many sub-elements, while others can still function properly.<br />
+<br />
+5. Error (ERR) - unexpected, harmful events - a key element/component cannot function properly, there is no way to recover proper functionality until this situation is resolved (configuration in accessible, or fundamentally broken, network unreachable, etc.).<br />
+<br />
+6. Fatal (FTL) - unrecoverable state. Usually, the last message (or one of very few of them) in an app's lifetime.<br />
+<br />
+NOTICE: Level info (3) and above are enabled by default.</p><h2>Check Contents</h2><p>Review the organization documentation to determine the organization-defined auditable events.<br />
+<br />
+To validate the log of an event, check the logs tab for configuration actions within Redis Enterprise.<br />
+ <br />
+On the Redis Enterprise UI:<br />
+1. Log in to Redis Enterprise.<br />
+2. Navigate to the logs page.<br />
+3. Review the logs as needed to verify they meet organizationally defined audit events.<br />
+<br />
+On the underlying server, logs may also be found in /var/opt/redislabs/log/&lt;log_name&gt;<br />
+<br />
+The eventlog.log and cnm_http log files contain all logs.<br />
+<br />
+To check, perform an event that should trigger an organizationally defined audit log.<br />
+<br />
+Review logs in the UI, and in /var/opt/redislabs/log/eventlog.log and /var/opt/redislabs/log/cnm_http.log for applicable event logs.<br />
+<br />
+Check DBMS auditing to determine whether organization-defined auditable events are being audited by the system.<br />
+<br />
+To check the current verbosity (log level), run the following command from the underlying node (as root):<br />
+<br />
+ccs-cli hget dmc:&lt;node_id&gt; log_level and ccs-cli hget dmc:&lt;node_id&gt; mgmt_log_level<br />
+<br />
+If the field does not exist it means the DMC is working with its default log_level which is &quot;info&quot;.<br />
+<br />
+If the action is not captured in the logs page audit trail, this is a finding.</p><h2>Vulnerability Number</h2><p>V-251190</p><h2>Documentable</h2><p>False</p><h2>Rule Version</h2><p>RD6X-00-001400</p><h2>Severity Override Guidance</h2><p>Review the organization documentation to determine the organization-defined auditable events.<br />
+<br />
+To validate the log of an event, check the logs tab for configuration actions within Redis Enterprise.<br />
+ <br />
+On the Redis Enterprise UI:<br />
+1. Log in to Redis Enterprise.<br />
+2. Navigate to the logs page.<br />
+3. Review the logs as needed to verify they meet organizationally defined audit events.<br />
+<br />
+On the underlying server, logs may also be found in /var/opt/redislabs/log/&lt;log_name&gt;<br />
+<br />
+The eventlog.log and cnm_http log files contain all logs.<br />
+<br />
+To check, perform an event that should trigger an organizationally defined audit log.<br />
+<br />
+Review logs in the UI, and in /var/opt/redislabs/log/eventlog.log and /var/opt/redislabs/log/cnm_http.log for applicable event logs.<br />
+<br />
+Check DBMS auditing to determine whether organization-defined auditable events are being audited by the system.<br />
+<br />
+To check the current verbosity (log level), run the following command from the underlying node (as root):<br />
+<br />
+ccs-cli hget dmc:&lt;node_id&gt; log_level and ccs-cli hget dmc:&lt;node_id&gt; mgmt_log_level<br />
+<br />
+If the field does not exist it means the DMC is working with its default log_level which is &quot;info&quot;.<br />
+<br />
+If the action is not captured in the logs page audit trail, this is a finding.</p><h2>Check Content Reference</h2><p>M</p><h2>Target Key</h2><p>5443</p></body></html>

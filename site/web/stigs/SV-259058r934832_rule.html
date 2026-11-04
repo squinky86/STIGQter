@@ -1,0 +1,44 @@
+<!doctype html><html lang="en"><head><meta charset="utf-8"><title>STIGQter: STIG Check Details: SV-259058r934832_rule: The vCenter Lookup service debug parameter must be disabled.</title><link rel="icon" type="image/svg+xml" href="STIGQter.svg" /><script async src="https://www.googletagmanager.com/gtag/js?id=UA-31381839-2"></script><script src="include.js"></script><script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-4110907817782130" crossorigin="anonymous"></script></head><body><div><img src="STIGQter.svg" alt="STIGQter" style="height:1em;" /> <a href="https://www.stigqter.com/">STIGQter</a>: <a href="main.html">STIG Summary</a>: <a href="U_VMW_vSphere_8-0_VCSA_Lookup_Svc_STIG_V1R1_Manual-xccdf.html">VMware vSphere 8.0 vCenter Appliance Lookup Service Security Technical Implementation Guide Version: 1 Release: 1 Benchmark Date: 31 Oct 2023</a>:</div> <h1>The vCenter Lookup service debug parameter must be disabled.</h1><h2>DISA Rule</h2><p>SV-259058r934832_rule</p><h2>Vulnerability Number</h2><p>V-259058</p><h2>Group Title</h2><p>SRG-APP-000141-AS-000095</p><h2>Rule Version</h2><p>VCLU-80-000136</p><h2>Severity</h2><p>CAT II</p><h2>CCI(s)</h2><ul><li>CCI-000381 - Configure the system to provide only organization-defined mission essential capabilities.</li></ul><h2>Weight</h2><p>10</p><h2>Fix Recommendation</h2><p>Navigate to and open:<br />
+<br />
+/usr/lib/vmware-lookupsvc/conf/web.xml<br />
+<br />
+Navigate to all &lt;debug&gt; nodes that are not set to &quot;0&quot;.<br />
+<br />
+Set the &lt;param-value&gt; to &quot;0&quot; in all &lt;param-name&gt;debug&lt;/param-name&gt; nodes.<br />
+<br />
+Note: The debug setting should look like the following:<br />
+<br />
+&lt;init-param&gt;<br />
+      &lt;param-name&gt;debug&lt;/param-name&gt;<br />
+      &lt;param-value&gt;0&lt;/param-value&gt;<br />
+&lt;/init-param&gt;<br />
+<br />
+Restart the service with the following command:<br />
+<br />
+# vmon-cli --restart lookupsvc</p><h2>Check Contents</h2><p>At the command prompt, run the following command:<br />
+<br />
+# xmllint --format /usr/lib/vmware-lookupsvc/conf/web.xml | sed 's/xmlns=&quot;.*&quot;//g' | xmllint --xpath '//param-name[text()=&quot;debug&quot;]/parent::init-param' -<br />
+<br />
+Example result:<br />
+<br />
+&lt;init-param&gt;<br />
+      &lt;param-name&gt;debug&lt;/param-name&gt;<br />
+      &lt;param-value&gt;0&lt;/param-value&gt;<br />
+&lt;/init-param&gt;<br />
+<br />
+If the &quot;debug&quot; parameter is specified and is not &quot;0&quot;, this is a finding.<br />
+<br />
+If the &quot;debug&quot; parameter does not exist, this is not a finding.</p><h2>Vulnerability Number</h2><p>V-259058</p><h2>Documentable</h2><p>False</p><h2>Rule Version</h2><p>VCLU-80-000136</p><h2>Severity Override Guidance</h2><p>At the command prompt, run the following command:<br />
+<br />
+# xmllint --format /usr/lib/vmware-lookupsvc/conf/web.xml | sed 's/xmlns=&quot;.*&quot;//g' | xmllint --xpath '//param-name[text()=&quot;debug&quot;]/parent::init-param' -<br />
+<br />
+Example result:<br />
+<br />
+&lt;init-param&gt;<br />
+      &lt;param-name&gt;debug&lt;/param-name&gt;<br />
+      &lt;param-value&gt;0&lt;/param-value&gt;<br />
+&lt;/init-param&gt;<br />
+<br />
+If the &quot;debug&quot; parameter is specified and is not &quot;0&quot;, this is a finding.<br />
+<br />
+If the &quot;debug&quot; parameter does not exist, this is not a finding.</p><h2>Check Content Reference</h2><p>M</p><h2>Target Key</h2><p>5565</p></body></html>

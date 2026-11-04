@@ -1,0 +1,41 @@
+<!doctype html><html lang="en"><head><meta charset="utf-8"><title>STIGQter: STIG Check Details: SV-260911r1015770_rule: Swarm Secrets or Kubernetes Secrets must be used.</title><link rel="icon" type="image/svg+xml" href="STIGQter.svg" /><script async src="https://www.googletagmanager.com/gtag/js?id=UA-31381839-2"></script><script src="include.js"></script><script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-4110907817782130" crossorigin="anonymous"></script></head><body><div><img src="STIGQter.svg" alt="STIGQter" style="height:1em;" /> <a href="https://www.stigqter.com/">STIGQter</a>: <a href="main.html">STIG Summary</a>: <a href="U_Mirantis_Kubernetes_Engine_STIG_V2R1_Manual-xccdf.html">Mirantis Kubernetes Engine Security Technical Implementation Guide Version: 2 Release: 1 Benchmark Date: 24 Jul 2024</a>:</div> <h1>Swarm Secrets or Kubernetes Secrets must be used.</h1><h2>DISA Rule</h2><p>SV-260911r1015770_rule</p><h2>Vulnerability Number</h2><p>V-260911</p><h2>Group Title</h2><p>SRG-APP-000033-CTR-000100</p><h2>Rule Version</h2><p>CNTR-MK-000130</p><h2>Severity</h2><p>CAT II</p><h2>CCI(s)</h2><ul><li>CCI-000213 - Enforce approved authorizations for logical access to information and system resources in accordance with applicable access control policies.</li><li>CCI-001499 - Limit privileges to change software resident within software libraries.</li><li>CCI-004062 - For password-based authentication, store passwords using an approved salted key derivation function, preferably using a keyed hash.</li><li>CCI-002450 - Implement organization-defined types of cryptography for each specified cryptography use.</li><li>CCI-002476 - Implement cryptographic mechanisms to prevent unauthorized disclosure of organization-defined information at rest on organization-defined system components.</li></ul><h2>Weight</h2><p>10</p><h2>Fix Recommendation</h2><p>To create secrets when using Swarm Orchestration, log in to the MKE UI. Navigate to Swarm &gt;&gt; Secrets, and then click &quot;Create&quot;.<br />
+<br />
+Provide a name for the secret and enter the data into the &quot;Content&quot; field.<br />
+<br />
+Add a label to allow for RBAC features to be used for access to secret.<br />
+<br />
+Click &quot;Save&quot;.<br />
+<br />
+To create secrets when using Kubernetes orchestration, run the following command on the MKE Controller node:<br />
+<br />
+Configure the $AUTH variable to contain the token for the SCIM API endpoint.<br />
+<br />
+curl -X PUT -H 'Accept: application/json' -H &quot;Authorization: Bearer $AUTH&quot; -d '{&quot;KMSEnabled&quot;:true,&quot;KMSName&quot;&quot;:&quot;&lt;kms_name&gt;&quot;,&quot;KMSEndpoint&quot;:&quot;/var/kms&quot;}' &quot;https://$MKE_ADDRESS/api/MKE/config/kubernetes&quot;</p><h2>Check Contents</h2><p>Review the System Security Plan (SSP) and identify applications that leverage configuration files and/or small amounts of user-generated data, and ensure the data is stored in Docker Secrets or Kubernetes Secrets.<br />
+<br />
+When using Swarm orchestration, log in to the MKE web UI and navigate to Swarm &gt;&gt; Secrets and view the configured secrets.<br />
+<br />
+If items identified for secure storage are not included in the secrets, this is a finding.<br />
+<br />
+When using Kubernetes orchestration, log on to the MKE Controller node then run the following command:<br />
+<br />
+kubectl get all -o jsonpath='{range .items[?(@..secretKeyRef)]} {.kind} {.metadata.name} {&quot;\n&quot;}{end}' -A<br />
+<br />
+Or, using API, configure the $AUTH variable to contain the token for the SCIM API endpoint:<br />
+<br />
+curl -k 'Accept: application/json' -H &quot;Authorization: Bearer $AUTH&quot; -s &quot;https://$MKE_ADDRESS/api/MKE/config/kubernetes&quot; | jq '.KMSEnabled' true<br />
+<br />
+If any of the values returned reference environment variables, this is a finding.</p><h2>Vulnerability Number</h2><p>V-260911</p><h2>Documentable</h2><p>False</p><h2>Rule Version</h2><p>CNTR-MK-000130</p><h2>Severity Override Guidance</h2><p>Review the System Security Plan (SSP) and identify applications that leverage configuration files and/or small amounts of user-generated data, and ensure the data is stored in Docker Secrets or Kubernetes Secrets.<br />
+<br />
+When using Swarm orchestration, log in to the MKE web UI and navigate to Swarm &gt;&gt; Secrets and view the configured secrets.<br />
+<br />
+If items identified for secure storage are not included in the secrets, this is a finding.<br />
+<br />
+When using Kubernetes orchestration, log on to the MKE Controller node then run the following command:<br />
+<br />
+kubectl get all -o jsonpath='{range .items[?(@..secretKeyRef)]} {.kind} {.metadata.name} {&quot;\n&quot;}{end}' -A<br />
+<br />
+Or, using API, configure the $AUTH variable to contain the token for the SCIM API endpoint:<br />
+<br />
+curl -k 'Accept: application/json' -H &quot;Authorization: Bearer $AUTH&quot; -s &quot;https://$MKE_ADDRESS/api/MKE/config/kubernetes&quot; | jq '.KMSEnabled' true<br />
+<br />
+If any of the values returned reference environment variables, this is a finding.</p><h2>Check Content Reference</h2><p>M</p><h2>Target Key</h2><p>5595</p></body></html>

@@ -1,0 +1,49 @@
+<!doctype html><html lang="en"><head><meta charset="utf-8"><title>STIGQter: STIG Check Details: SV-253731r1018601_rule: MariaDB must prohibit user installation of logic modules (stored procedures, functions, triggers, views, etc.) without explicit privileged status.</title><link rel="icon" type="image/svg+xml" href="STIGQter.svg" /><script async src="https://www.googletagmanager.com/gtag/js?id=UA-31381839-2"></script><script src="include.js"></script><script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-4110907817782130" crossorigin="anonymous"></script></head><body><div><img src="STIGQter.svg" alt="STIGQter" style="height:1em;" /> <a href="https://www.stigqter.com/">STIGQter</a>: <a href="main.html">STIG Summary</a>: <a href="U_MariaDB_Enterprise_10-x_STIG_V2R5_Manual-xccdf.html">MariaDB Enterprise 10.x Security Technical Implementation Guide Version: 2 Release: 5 Benchmark Date: 01 Apr 2026</a>:</div> <h1>MariaDB must prohibit user installation of logic modules (stored procedures, functions, triggers, views, etc.) without explicit privileged status.</h1><h2>DISA Rule</h2><p>SV-253731r1018601_rule</p><h2>Vulnerability Number</h2><p>V-253731</p><h2>Group Title</h2><p>SRG-APP-000378-DB-000365</p><h2>Rule Version</h2><p>MADB-10-007800</p><h2>Severity</h2><p>CAT II</p><h2>CCI(s)</h2><ul><li>CCI-003980 - Allow user installation of software only with explicit privileged status.</li></ul><h2>Weight</h2><p>10</p><h2>Fix Recommendation</h2><p>Document and obtain approval for any nonadministrative users who require the ability to create, alter, or replace logic modules.<br />
+<br />
+Check the security guide to implement the approved permissions. Revoke any unapproved permissions.</p><h2>Check Contents</h2><p>If MariaDB supports only software development, experimentation and/or developer-level testing (that is, excluding production systems, integration testing, stress testing, and user acceptance testing), this is not a finding.<br />
+<br />
+Review MariaDB and database security settings with respect to nonadministrative users ability to create, alter, or replace logic modules, to include but not necessarily only stored procedures, functions, triggers, and views.<br />
+<br />
+1. To list the privileges for all users on all tables and schemas, as the database administrator, do the following:<br />
+ <br />
+Gather a list of SHOW GRANTS commands. SHOW GRANTS will list the privileges granted to the account.<br />
+<br />
+Run this script to create the SHOW GRANTS script for each user: <br />
+MariaDB&gt; SELECT DISTINCT CONCAT( 'SHOW GRANTS FOR ', user,'@', host,';') AS grantQuery FROM mysql.user WHERE is_role = 'N';<br />
+<br />
+Run each SHOW GRANTS command for each user.<br />
+ <br />
+2. Only DEFINERS of routines (functions and procedures) can change routines. To view the DEFINERS of all functions and procedures, as database administrator run the following SQL:<br />
+ <br />
+MariaDB&gt;  SELECT * FROM mysql.proc \G<br />
+ <br />
+3. Only DEFINERS of triggers can change triggers. To view all triggers and their DEFINERS, as database administrator run the following SQL: <br />
+<br />
+MariaDB&gt;  SELECT * FROM information_schema.triggers \G<br />
+ <br />
+4. Views: At view definition time, the view creator must have the privileges needed to use the top-level objects accessed by the view. For example, if the view definition refers to table columns, the creator must have privileges for the columns, as described previously. If the definition refers to a stored function, only the privileges needed to invoke the function can be checked. The privileges required when the function runs can be checked only as it executes. For different invocations of the function, different execution paths within the function might be taken.<br />
+<br />
+If any such permissions exist and are not documented and approved, this is a finding.</p><h2>Vulnerability Number</h2><p>V-253731</p><h2>Documentable</h2><p>False</p><h2>Rule Version</h2><p>MADB-10-007800</p><h2>Severity Override Guidance</h2><p>If MariaDB supports only software development, experimentation and/or developer-level testing (that is, excluding production systems, integration testing, stress testing, and user acceptance testing), this is not a finding.<br />
+<br />
+Review MariaDB and database security settings with respect to nonadministrative users ability to create, alter, or replace logic modules, to include but not necessarily only stored procedures, functions, triggers, and views.<br />
+<br />
+1. To list the privileges for all users on all tables and schemas, as the database administrator, do the following:<br />
+ <br />
+Gather a list of SHOW GRANTS commands. SHOW GRANTS will list the privileges granted to the account.<br />
+<br />
+Run this script to create the SHOW GRANTS script for each user: <br />
+MariaDB&gt; SELECT DISTINCT CONCAT( 'SHOW GRANTS FOR ', user,'@', host,';') AS grantQuery FROM mysql.user WHERE is_role = 'N';<br />
+<br />
+Run each SHOW GRANTS command for each user.<br />
+ <br />
+2. Only DEFINERS of routines (functions and procedures) can change routines. To view the DEFINERS of all functions and procedures, as database administrator run the following SQL:<br />
+ <br />
+MariaDB&gt;  SELECT * FROM mysql.proc \G<br />
+ <br />
+3. Only DEFINERS of triggers can change triggers. To view all triggers and their DEFINERS, as database administrator run the following SQL: <br />
+<br />
+MariaDB&gt;  SELECT * FROM information_schema.triggers \G<br />
+ <br />
+4. Views: At view definition time, the view creator must have the privileges needed to use the top-level objects accessed by the view. For example, if the view definition refers to table columns, the creator must have privileges for the columns, as described previously. If the definition refers to a stored function, only the privileges needed to invoke the function can be checked. The privileges required when the function runs can be checked only as it executes. For different invocations of the function, different execution paths within the function might be taken.<br />
+<br />
+If any such permissions exist and are not documented and approved, this is a finding.</p><h2>Check Content Reference</h2><p>M</p><h2>Target Key</h2><p>5475</p></body></html>

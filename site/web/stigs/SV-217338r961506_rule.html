@@ -1,0 +1,109 @@
+<!doctype html><html lang="en"><head><meta charset="utf-8"><title>STIGQter: STIG Check Details: SV-217338r961506_rule: The Juniper router must be configured to encrypt SNMP messages using a FIPS 140-2 approved algorithm.</title><link rel="icon" type="image/svg+xml" href="STIGQter.svg" /><script async src="https://www.googletagmanager.com/gtag/js?id=UA-31381839-2"></script><script src="include.js"></script><script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-4110907817782130" crossorigin="anonymous"></script></head><body><div><img src="STIGQter.svg" alt="STIGQter" style="height:1em;" /> <a href="https://www.stigqter.com/">STIGQter</a>: <a href="main.html">STIG Summary</a>: <a href="U_Juniper_Router_NDM_STIG_V3R2_Manual-xccdf.html">Juniper Router NDM Security Technical Implementation Guide Version: 3 Release: 2 Benchmark Date: 30 Jan 2025</a>:</div> <h1>The Juniper router must be configured to encrypt SNMP messages using a FIPS 140-2 approved algorithm.</h1><h2>DISA Rule</h2><p>SV-217338r961506_rule</p><h2>Vulnerability Number</h2><p>V-217338</p><h2>Group Title</h2><p>SRG-APP-000395-NDM-000310</p><h2>Rule Version</h2><p>JUNI-ND-001130</p><h2>Severity</h2><p>CAT II</p><h2>CCI(s)</h2><ul><li>CCI-000068 - Implement cryptographic mechanisms to protect the confidentiality of remote access sessions.</li></ul><h2>Weight</h2><p>10</p><h2>Fix Recommendation</h2><p>Configure the router to encrypt SNMP messages using a FIPS 140-2 approved algorithm as shown in the example below.<br />
+<br />
+[edit snmp]<br />
+set v3 usm local-engine user R5_NMS authentication-sha authentication-password xxxxxxxxxx<br />
+set v3 usm local-engine user R5_NMS privacy-aes128 privacy-password xxxxxxxxxx<br />
+set v3 target-address NMS_HOST address 10.1.58.2<br />
+edit v3 target-address NMS_HOST<br />
+<br />
+[edit snmp v3 target-address NMS_HOST]<br />
+set address-mask 255.255.255.0<br />
+set tag-list NMS<br />
+set target-parameters TP1<br />
+exit<br />
+<br />
+[edit snmp]<br />
+set v3 target-parameters TP1 parameters message-processing-model v3<br />
+set v3 target-parameters TP1 parameters security-model usm<br />
+set v3 target-parameters TP1 parameters security-name R5_NMS<br />
+set v3 target-parameters TP1 parameters security-level privacy<br />
+set v3 snmp-community index1 security-name R5_NMS tag NMS<br />
+set v3 notify SEND_TRAPS type trap tag NMS<br />
+<br />
+Note: SNMPv3 security level privacy also authenticates the messages using the configured HMAC; hence, the authentication key must also be configured as shown in the example above.</p><h2>Check Contents</h2><p>Review the router configuration to verify that it is compliant with this requirement as shown in the example below.<br />
+<br />
+snmp {<br />
+    v3 {<br />
+        usm {<br />
+            local-engine {<br />
+                user R5_NMS {<br />
+                    authentication-sha {<br />
+                        authentication-key &quot;$8$vOiLX-Vb2oaUwsJDiHmPz3690BcSevM&quot;; ## SECRET-DATA<br />
+                    }<br />
+                    privacy-aes128 {<br />
+                        privacy-key &quot;$8$3Q4T9CuOBESyK1IrvW87NwYgoDiPfz3nCs24Z&quot;; ## SECRET-DATA<br />
+                    }<br />
+                }<br />
+            }<br />
+        }<br />
+        target-address NMS_HOST {<br />
+            address 10.1.58.2;<br />
+            address-mask 255.255.255.0;<br />
+            tag-list NMS;<br />
+            target-parameters TP1;<br />
+        }<br />
+        target-parameters TP1 {<br />
+            parameters {<br />
+                message-processing-model v3;<br />
+                security-model usm;<br />
+                security-level privacy;<br />
+                security-name R5_NMS;<br />
+            }<br />
+        }<br />
+        notify SEND_TRAPS {<br />
+            type trap;<br />
+            tag NMS;<br />
+        }<br />
+        snmp-community index1 {<br />
+            security-name R5_NMS;<br />
+            tag NMS;<br />
+        }<br />
+    }<br />
+} <br />
+<br />
+Note: SNMPv3 security level privacy also authenticates the messages using the configured HMAC.<br />
+<br />
+If the router is not configured to encrypt SNMP messages using a FIPS 140-2 approved algorithm, this is a finding.</p><h2>Vulnerability Number</h2><p>V-217338</p><h2>Documentable</h2><p>False</p><h2>Rule Version</h2><p>JUNI-ND-001130</p><h2>Severity Override Guidance</h2><p>Review the router configuration to verify that it is compliant with this requirement as shown in the example below.<br />
+<br />
+snmp {<br />
+    v3 {<br />
+        usm {<br />
+            local-engine {<br />
+                user R5_NMS {<br />
+                    authentication-sha {<br />
+                        authentication-key &quot;$8$vOiLX-Vb2oaUwsJDiHmPz3690BcSevM&quot;; ## SECRET-DATA<br />
+                    }<br />
+                    privacy-aes128 {<br />
+                        privacy-key &quot;$8$3Q4T9CuOBESyK1IrvW87NwYgoDiPfz3nCs24Z&quot;; ## SECRET-DATA<br />
+                    }<br />
+                }<br />
+            }<br />
+        }<br />
+        target-address NMS_HOST {<br />
+            address 10.1.58.2;<br />
+            address-mask 255.255.255.0;<br />
+            tag-list NMS;<br />
+            target-parameters TP1;<br />
+        }<br />
+        target-parameters TP1 {<br />
+            parameters {<br />
+                message-processing-model v3;<br />
+                security-model usm;<br />
+                security-level privacy;<br />
+                security-name R5_NMS;<br />
+            }<br />
+        }<br />
+        notify SEND_TRAPS {<br />
+            type trap;<br />
+            tag NMS;<br />
+        }<br />
+        snmp-community index1 {<br />
+            security-name R5_NMS;<br />
+            tag NMS;<br />
+        }<br />
+    }<br />
+} <br />
+<br />
+Note: SNMPv3 security level privacy also authenticates the messages using the configured HMAC.<br />
+<br />
+If the router is not configured to encrypt SNMP messages using a FIPS 140-2 approved algorithm, this is a finding.</p><h2>Check Content Reference</h2><p>M</p><h2>Target Key</h2><p>4034</p></body></html>

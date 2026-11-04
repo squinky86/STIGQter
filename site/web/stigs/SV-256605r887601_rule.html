@@ -1,0 +1,13 @@
+<!doctype html><html lang="en"><head><meta charset="utf-8"><title>STIGQter: STIG Check Details: SV-256605r887601_rule: VMware Postgres must not allow schema access to unauthorized accounts.</title><link rel="icon" type="image/svg+xml" href="STIGQter.svg" /><script async src="https://www.googletagmanager.com/gtag/js?id=UA-31381839-2"></script><script src="include.js"></script><script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-4110907817782130" crossorigin="anonymous"></script></head><body><div><img src="STIGQter.svg" alt="STIGQter" style="height:1em;" /> <a href="https://www.stigqter.com/">STIGQter</a>: <a href="main.html">STIG Summary</a>: <a href="U_VMW_vSphere_7-0_vCA_PostgreSQL_STIG_V1R2_Manual-xccdf.html">VMware vSphere 7.0 vCenter Appliance PostgreSQL Security Technical Implementation Guide Version: 1 Release: 2 Benchmark Date: 26 Jul 2023</a>:</div> <h1>VMware Postgres must not allow schema access to unauthorized accounts.</h1><h2>DISA Rule</h2><p>SV-256605r887601_rule</p><h2>Vulnerability Number</h2><p>V-256605</p><h2>Group Title</h2><p>SRG-APP-000233-DB-000124</p><h2>Rule Version</h2><p>VCPG-70-000015</p><h2>Severity</h2><p>CAT II</p><h2>CCI(s)</h2><ul><li>CCI-001084 - Isolate security functions from nonsecurity functions.</li></ul><h2>Weight</h2><p>10</p><h2>Fix Recommendation</h2><p>At the command prompt, run the following command:<br />
+<br />
+# /opt/vmware/vpostgres/current/bin/psql -U postgres -c &quot;REVOKE ALL PRIVILEGES ON &lt;name&gt; FROM &lt;user&gt;;&quot;<br />
+<br />
+Replace &lt;name&gt; and &lt;user&gt; with the Access Privilege name and account, respectively, discovered during the check.</p><h2>Check Contents</h2><p>At the command prompt, run the following command:<br />
+<br />
+# /opt/vmware/vpostgres/current/bin/psql -U postgres -c &quot;\dp .*.;&quot; |grep -E &quot;information_schema|pg_catalog&quot;|awk -F '|' '{print $4}'|awk -F '/' '{print $1}'|grep -v &quot;=r&quot; | grep -v &quot;^[[:space:]]*$&quot; | grep -v &quot;postgres&quot;<br />
+<br />
+If any lines are returned, this is a finding.</p><h2>Vulnerability Number</h2><p>V-256605</p><h2>Documentable</h2><p>False</p><h2>Rule Version</h2><p>VCPG-70-000015</p><h2>Severity Override Guidance</h2><p>At the command prompt, run the following command:<br />
+<br />
+# /opt/vmware/vpostgres/current/bin/psql -U postgres -c &quot;\dp .*.;&quot; |grep -E &quot;information_schema|pg_catalog&quot;|awk -F '|' '{print $4}'|awk -F '/' '{print $1}'|grep -v &quot;=r&quot; | grep -v &quot;^[[:space:]]*$&quot; | grep -v &quot;postgres&quot;<br />
+<br />
+If any lines are returned, this is a finding.</p><h2>Check Content Reference</h2><p>M</p><h2>Target Key</h2><p>5521</p></body></html>

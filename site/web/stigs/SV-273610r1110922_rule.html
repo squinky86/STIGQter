@@ -1,0 +1,42 @@
+<!doctype html><html lang="en"><head><meta charset="utf-8"><title>STIGQter: STIG Check Details: SV-273610r1110922_rule: The RUCKUS ICX BGP router must be configured to reject outbound route advertisements for any prefixes belonging to the IP core.</title><link rel="icon" type="image/svg+xml" href="STIGQter.svg" /><script async src="https://www.googletagmanager.com/gtag/js?id=UA-31381839-2"></script><script src="include.js"></script><script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-4110907817782130" crossorigin="anonymous"></script></head><body><div><img src="STIGQter.svg" alt="STIGQter" style="height:1em;" /> <a href="https://www.stigqter.com/">STIGQter</a>: <a href="main.html">STIG Summary</a>: <a href="U_RUCKUS_ICX_RTR_STIG_V1R1_Manual-xccdf.html">RUCKUS ICX Router Security Technical Implementation Guide Version: 1 Release: 1 Benchmark Date: 27 May 2025</a>:</div> <h1>The RUCKUS ICX BGP router must be configured to reject outbound route advertisements for any prefixes belonging to the IP core.</h1><h2>DISA Rule</h2><p>SV-273610r1110922_rule</p><h2>Vulnerability Number</h2><p>V-273610</p><h2>Group Title</h2><p>SRG-NET-000205-RTR-000006</p><h2>Rule Version</h2><p>RCKS-RTR-000430</p><h2>Severity</h2><p>CAT II</p><h2>CCI(s)</h2><ul><li>CCI-001097 - Monitor and control communications at the external managed interfaces to the system and at key managed interfaces within the system.</li></ul><h2>Weight</h2><p>10</p><h2>Fix Recommendation</h2><p>Configure all eBGP routers to filter outbound route advertisements belonging to the IP core.<br />
+<br />
+1. Configure a prefix-list for containing all customer and local AS prefixes as shown in the example below:<br />
+ICX(config)#ip prefix-list FILTER_CORE_PREFIXES seq 10 deny x.1.1.0/24 le 32<br />
+ICX(config)#ip prefix-list FILTER_CORE_PREFIXES seq 20 deny x.1.2.0/24 le 32<br />
+ICX(config)#ip prefix-list FILTER_CORE_PREFIXES seq 30 permit 0.0.0.0/0 ge 8<br />
+<br />
+2. Apply the prefix-list filter outbound to each neighbor as shown in the following example:<br />
+ICX(config)#router bgp<br />
+ICX(config-bgp-router)#neighbor x.0.0.1 prefix-list FILTER_CORE_PREFIXES out</p><h2>Check Contents</h2><p>Review the router configuration to verify there is a filter defined to block route advertisements for prefixes that belong to the IP core. <br />
+<br />
+1. Verify a prefix-list has been configured containing prefixes belonging to the IP core.<br />
+ip prefix-list FILTER_CORE_PREFIXES seq 10 deny x.1.1.0/24 le 32<br />
+ip prefix-list FILTER_CORE_PREFIXES seq 20 deny x.1.2.0/24 le 32<br />
+ip prefix-list FILTER_CORE_PREFIXES seq 30 permit 0.0.0.0/0 ge 8<br />
+<br />
+2. Verify the prefix-list has been applied to all external BGP peers as shown in the example below:<br />
+router bgp<br />
+ local-as xxxx<br />
+ neighbor x.0.0.1 remote-as yy<br />
+ neighbor x.0.0.1 ao mykeychain<br />
+<br />
+ address-family ipv4 unicast<br />
+ neighbor x.0.0.1 prefix-list FILTER_CORE_PREFIXES out<br />
+<br />
+If the router is not configured to reject outbound route advertisements for prefixes belonging to the IP core, this is a finding.</p><h2>Vulnerability Number</h2><p>V-273610</p><h2>Documentable</h2><p>False</p><h2>Rule Version</h2><p>RCKS-RTR-000430</p><h2>Severity Override Guidance</h2><p>Review the router configuration to verify there is a filter defined to block route advertisements for prefixes that belong to the IP core. <br />
+<br />
+1. Verify a prefix-list has been configured containing prefixes belonging to the IP core.<br />
+ip prefix-list FILTER_CORE_PREFIXES seq 10 deny x.1.1.0/24 le 32<br />
+ip prefix-list FILTER_CORE_PREFIXES seq 20 deny x.1.2.0/24 le 32<br />
+ip prefix-list FILTER_CORE_PREFIXES seq 30 permit 0.0.0.0/0 ge 8<br />
+<br />
+2. Verify the prefix-list has been applied to all external BGP peers as shown in the example below:<br />
+router bgp<br />
+ local-as xxxx<br />
+ neighbor x.0.0.1 remote-as yy<br />
+ neighbor x.0.0.1 ao mykeychain<br />
+<br />
+ address-family ipv4 unicast<br />
+ neighbor x.0.0.1 prefix-list FILTER_CORE_PREFIXES out<br />
+<br />
+If the router is not configured to reject outbound route advertisements for prefixes belonging to the IP core, this is a finding.</p><h2>Check Content Reference</h2><p>M</p><h2>Target Key</h2><p>5696</p></body></html>

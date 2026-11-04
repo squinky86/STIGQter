@@ -1,0 +1,51 @@
+<!doctype html><html lang="en"><head><meta charset="utf-8"><title>STIGQter: STIG Check Details: SV-278389r1172704_rule: NGINX must be configured to prohibit or restrict using ports, protocols, and/or services.</title><link rel="icon" type="image/svg+xml" href="STIGQter.svg" /><script async src="https://www.googletagmanager.com/gtag/js?id=UA-31381839-2"></script><script src="include.js"></script><script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-4110907817782130" crossorigin="anonymous"></script></head><body><div><img src="STIGQter.svg" alt="STIGQter" style="height:1em;" /> <a href="https://www.stigqter.com/">STIGQter</a>: <a href="main.html">STIG Summary</a>: <a href="U_F5_NGINX_STIG_V1R1_Manual-xccdf.html">F5 NGINX Security Technical Implementation Guide Version: 1 Release: 1 Benchmark Date: 25 Nov 2025</a>:</div> <h1>NGINX must be configured to prohibit or restrict using ports, protocols, and/or services.</h1><h2>DISA Rule</h2><p>SV-278389r1172704_rule</p><h2>Vulnerability Number</h2><p>V-278389</p><h2>Group Title</h2><p>SRG-APP-000142</p><h2>Rule Version</h2><p>NGNX-APP-000510</p><h2>Severity</h2><p>CAT II</p><h2>CCI(s)</h2><ul><li>CCI-000382 - Configure the system to prohibit or restrict the use of organization-defined prohibited or restricted functions, system ports, protocols, software, and/or services.</li><li>CCI-000381 - Configure the system to provide only organization-defined mission essential capabilities.</li><li>CCI-001762 - Disable or remove organization-defined functions, ports, protocols, software, and services within the system deemed to be unnecessary and/or nonsecure.</li></ul><h2>Weight</h2><p>10</p><h2>Fix Recommendation</h2><p>Edit the NGINX configuration file(s) and remove any unnecessary listen directives.<br />
+<br />
+On listen directives that are organizationally defined to need TLS, ensure that the listen directive includes SSL and SSL redirection.<br />
+<br />
+After saving the configuration, reload NGINX:<br />
+<br />
+# nginx -s reload</p><h2>Check Contents</h2><p>Determine the path to NGINX config file(s):<br />
+<br />
+# nginx -qT | grep &quot;# configuration&quot;<br />
+# configuration file /etc/nginx/nginx.conf:<br />
+<br />
+Note: The default NGINX configuration is &quot;/etc/nginx/nginx.conf&quot;, though various files may also be included.<br />
+<br />
+Review the configurations looking for any listen directives.<br />
+<br />
+If listen directives are enabled but unnecessary, this is a finding.<br />
+<br />
+Verify that listeners are using SSL and redirects to SSL-enabled listeners.<br />
+<br />
+# nginx -c &lt;path to nginx config&gt; -qT | grep -A5 listen<br />
+    listen 192.168.0.254:80;<br />
+    return 301 https://$host/$request_uri;<br />
+    } <br />
+<br />
+`<br />
+    listen 192.168.0.254:443 ssl default_server;<br />
+    ...<br />
+<br />
+If the listen directive does not include SSL and there is not a redirect to an SSL listener, this is a finding.</p><h2>Vulnerability Number</h2><p>V-278389</p><h2>Documentable</h2><p>False</p><h2>Rule Version</h2><p>NGNX-APP-000510</p><h2>Severity Override Guidance</h2><p>Determine the path to NGINX config file(s):<br />
+<br />
+# nginx -qT | grep &quot;# configuration&quot;<br />
+# configuration file /etc/nginx/nginx.conf:<br />
+<br />
+Note: The default NGINX configuration is &quot;/etc/nginx/nginx.conf&quot;, though various files may also be included.<br />
+<br />
+Review the configurations looking for any listen directives.<br />
+<br />
+If listen directives are enabled but unnecessary, this is a finding.<br />
+<br />
+Verify that listeners are using SSL and redirects to SSL-enabled listeners.<br />
+<br />
+# nginx -c &lt;path to nginx config&gt; -qT | grep -A5 listen<br />
+    listen 192.168.0.254:80;<br />
+    return 301 https://$host/$request_uri;<br />
+    } <br />
+<br />
+`<br />
+    listen 192.168.0.254:443 ssl default_server;<br />
+    ...<br />
+<br />
+If the listen directive does not include SSL and there is not a redirect to an SSL listener, this is a finding.</p><h2>Check Content Reference</h2><p>M</p><h2>Target Key</h2><p>5720</p></body></html>

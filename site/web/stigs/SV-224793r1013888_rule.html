@@ -1,0 +1,115 @@
+<!doctype html><html lang="en"><head><meta charset="utf-8"><title>STIGQter: STIG Check Details: SV-224793r1013888_rule: Tomcat SSL must be restricted except for ISEC7 SPHERE tasks.</title><link rel="icon" type="image/svg+xml" href="STIGQter.svg" /><script async src="https://www.googletagmanager.com/gtag/js?id=UA-31381839-2"></script><script src="include.js"></script><script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-4110907817782130" crossorigin="anonymous"></script></head><body><div><img src="STIGQter.svg" alt="STIGQter" style="height:1em;" /> <a href="https://www.stigqter.com/">STIGQter</a>: <a href="main.html">STIG Summary</a>: <a href="U_ISEC7_Sphere_STIG_V3R1_Manual-xccdf.html">ISEC7 Sphere Security Technical Implementation Guide Version: 3 Release: 1 Benchmark Date: 24 Oct 2024</a>:</div> <h1>Tomcat SSL must be restricted except for ISEC7 SPHERE tasks.</h1><h2>DISA Rule</h2><p>SV-224793r1013888_rule</p><h2>Vulnerability Number</h2><p>V-224793</p><h2>Group Title</h2><p>SRG-APP-000439</p><h2>Rule Version</h2><p>ISEC-06-551700</p><h2>Severity</h2><p>CAT II</p><h2>CCI(s)</h2><ul><li>CCI-002418 - Protect the confidentiality and/or integrity of transmitted information.</li></ul><h2>Weight</h2><p>10</p><h2>Fix Recommendation</h2><p>To restrict Tomcat SSL to only ISEC7 SPHERE tasks, run the ISEC7 integrated installer or use the following manual procedure:<br />
+<br />
+To restrict SSL for all users except for agent task, the user needs to add a security constraint tag to &lt;Drive&gt;:\ProgramFiles\ISEC7 SPHERE\Tomcat\conf\web.xml.<br />
+<br />
+Log in to the ISEC7 SPHERE server.<br />
+Navigate to &lt;Drive&gt;:\ProgramFiles\ISEC7 SPHERE\Tomcat\conf\.<br />
+Edit the web.xml file with Notepad.exe.<br />
+Add the following entry:<br />
+<br />
+&lt;security-constraint&gt;<br />
+ &lt;web-resource-collection&gt;<br />
+  &lt;web-resource-name&gt;Unsecure&lt;/web-resource-name&gt;<br />
+  &lt;!-- Agent --&gt;<br />
+  &lt;url-pattern&gt;/BNator/agent/*&lt;/url-pattern&gt;<br />
+  &lt;url-pattern&gt;/app/agent/*&lt;/url-pattern&gt;<br />
+  &lt;url-pattern&gt;/app/admin/agentinstaller.jnlp&lt;/url-pattern&gt;<br />
+  &lt;!-- Client --&gt;<br />
+  &lt;url-pattern&gt;/app/clients/*&lt;/url-pattern&gt;<br />
+  &lt;url-pattern&gt;/app/data/*&lt;/url-pattern&gt;<br />
+  &lt;!-- Remote Control --&gt;<br />
+  &lt;url-pattern&gt;/rc/*&lt;/url-pattern&gt;<br />
+  &lt;!-- Traffic Push --&gt;<br />
+  &lt;url-pattern&gt;/BNator/uss/trafficinfo/*&lt;/url-pattern&gt;<br />
+  &lt;url-pattern&gt;/BNator/data/mds/trafficpush&lt;/url-pattern&gt;<br />
+  &lt;url-pattern&gt;/BNator/favorites/*&lt;/url-pattern&gt;<br />
+  &lt;url-pattern&gt;/app/resource/*&lt;/url-pattern&gt;<br />
+ &lt;/web-resource-collection&gt;<br />
+&lt;/security-constraint&gt;<br />
+<br />
+&lt;security-constraint&gt;<br />
+ &lt;web-resource-collection&gt;<br />
+  &lt;web-resource-name&gt;Secure&lt;/web-resource-name&gt;<br />
+  &lt;url-pattern&gt;/*&lt;/url-pattern&gt;<br />
+ &lt;/web-resource-collection&gt;<br />
+<br />
+ &lt;user-data-constraint&gt;<br />
+  &lt;transport-guarantee&gt;CONFIDENTIAL&lt;/transport-guarantee&gt;<br />
+ &lt;/user-data-constraint&gt;<br />
+&lt;/security-constraint&gt;</p><h2>Check Contents</h2><p>Verify Tomcat SSL is restricted to only ISEC7 SPHERE tasks.<br />
+<br />
+Log in to the ISEC7 SPHERE server.<br />
+Navigate to &lt;Drive&gt;:\ProgramFiles\ISEC7 SPHERE\Tomcat\conf\.<br />
+Edit the web.xml file with Notepad.exe.<br />
+Verify the following entries are present:<br />
+<br />
+&lt;security-constraint&gt;<br />
+ &lt;web-resource-collection&gt;<br />
+  &lt;web-resource-name&gt;Unsecure&lt;/web-resource-name&gt;<br />
+  &lt;!-- Agent --&gt;<br />
+  &lt;url-pattern&gt;/BNator/agent/*&lt;/url-pattern&gt;<br />
+  &lt;url-pattern&gt;/app/agent/*&lt;/url-pattern&gt;<br />
+  &lt;url-pattern&gt;/app/admin/agentinstaller.jnlp&lt;/url-pattern&gt;<br />
+  &lt;!-- Client --&gt;<br />
+  &lt;url-pattern&gt;/app/clients/*&lt;/url-pattern&gt;<br />
+  &lt;url-pattern&gt;/app/data/*&lt;/url-pattern&gt;<br />
+  &lt;!-- Remote Control --&gt;<br />
+  &lt;url-pattern&gt;/rc/*&lt;/url-pattern&gt;<br />
+  &lt;!-- Traffic Push --&gt;<br />
+  &lt;url-pattern&gt;/BNator/uss/trafficinfo/*&lt;/url-pattern&gt;<br />
+  &lt;url-pattern&gt;/BNator/data/mds/trafficpush&lt;/url-pattern&gt;<br />
+  &lt;url-pattern&gt;/BNator/favorites/*&lt;/url-pattern&gt;<br />
+  &lt;url-pattern&gt;/app/resource/*&lt;/url-pattern&gt;<br />
+ &lt;/web-resource-collection&gt;<br />
+&lt;/security-constraint&gt;<br />
+<br />
+&lt;security-constraint&gt;<br />
+ &lt;web-resource-collection&gt;<br />
+  &lt;web-resource-name&gt;Secure&lt;/web-resource-name&gt;<br />
+  &lt;url-pattern&gt;/*&lt;/url-pattern&gt;<br />
+ &lt;/web-resource-collection&gt;<br />
+<br />
+ &lt;user-data-constraint&gt;<br />
+  &lt;transport-guarantee&gt;CONFIDENTIAL&lt;/transport-guarantee&gt;<br />
+ &lt;/user-data-constraint&gt;<br />
+&lt;/security-constraint&gt;<br />
+<br />
+If Tomcat SSL is not restricted to only ISEC7 SPHERE tasks, this is a finding.</p><h2>Vulnerability Number</h2><p>V-224793</p><h2>Documentable</h2><p>False</p><h2>Rule Version</h2><p>ISEC-06-551700</p><h2>Severity Override Guidance</h2><p>Verify Tomcat SSL is restricted to only ISEC7 SPHERE tasks.<br />
+<br />
+Log in to the ISEC7 SPHERE server.<br />
+Navigate to &lt;Drive&gt;:\ProgramFiles\ISEC7 SPHERE\Tomcat\conf\.<br />
+Edit the web.xml file with Notepad.exe.<br />
+Verify the following entries are present:<br />
+<br />
+&lt;security-constraint&gt;<br />
+ &lt;web-resource-collection&gt;<br />
+  &lt;web-resource-name&gt;Unsecure&lt;/web-resource-name&gt;<br />
+  &lt;!-- Agent --&gt;<br />
+  &lt;url-pattern&gt;/BNator/agent/*&lt;/url-pattern&gt;<br />
+  &lt;url-pattern&gt;/app/agent/*&lt;/url-pattern&gt;<br />
+  &lt;url-pattern&gt;/app/admin/agentinstaller.jnlp&lt;/url-pattern&gt;<br />
+  &lt;!-- Client --&gt;<br />
+  &lt;url-pattern&gt;/app/clients/*&lt;/url-pattern&gt;<br />
+  &lt;url-pattern&gt;/app/data/*&lt;/url-pattern&gt;<br />
+  &lt;!-- Remote Control --&gt;<br />
+  &lt;url-pattern&gt;/rc/*&lt;/url-pattern&gt;<br />
+  &lt;!-- Traffic Push --&gt;<br />
+  &lt;url-pattern&gt;/BNator/uss/trafficinfo/*&lt;/url-pattern&gt;<br />
+  &lt;url-pattern&gt;/BNator/data/mds/trafficpush&lt;/url-pattern&gt;<br />
+  &lt;url-pattern&gt;/BNator/favorites/*&lt;/url-pattern&gt;<br />
+  &lt;url-pattern&gt;/app/resource/*&lt;/url-pattern&gt;<br />
+ &lt;/web-resource-collection&gt;<br />
+&lt;/security-constraint&gt;<br />
+<br />
+&lt;security-constraint&gt;<br />
+ &lt;web-resource-collection&gt;<br />
+  &lt;web-resource-name&gt;Secure&lt;/web-resource-name&gt;<br />
+  &lt;url-pattern&gt;/*&lt;/url-pattern&gt;<br />
+ &lt;/web-resource-collection&gt;<br />
+<br />
+ &lt;user-data-constraint&gt;<br />
+  &lt;transport-guarantee&gt;CONFIDENTIAL&lt;/transport-guarantee&gt;<br />
+ &lt;/user-data-constraint&gt;<br />
+&lt;/security-constraint&gt;<br />
+<br />
+If Tomcat SSL is not restricted to only ISEC7 SPHERE tasks, this is a finding.</p><h2>Check Content Reference</h2><p>M</p><h2>Target Key</h2><p>4200</p></body></html>

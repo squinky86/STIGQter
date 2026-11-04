@@ -1,0 +1,67 @@
+<!doctype html><html lang="en"><head><meta charset="utf-8"><title>STIGQter: STIG Check Details: SV-216367r958398_rule: The operating system must limit the number of concurrent sessions for each account to an organization-defined number of sessions.</title><link rel="icon" type="image/svg+xml" href="STIGQter.svg" /><script async src="https://www.googletagmanager.com/gtag/js?id=UA-31381839-2"></script><script src="include.js"></script><script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-4110907817782130" crossorigin="anonymous"></script></head><body><div><img src="STIGQter.svg" alt="STIGQter" style="height:1em;" /> <a href="https://www.stigqter.com/">STIGQter</a>: <a href="main.html">STIG Summary</a>: <a href="U_SOL_11_SPARC_STIG_V3R6_Manual-xccdf.html">Solaris 11 SPARC Security Technical Implementation Guide Version: 3 Release: 6 Benchmark Date: 01 Jul 2026</a>:</div> <h1>The operating system must limit the number of concurrent sessions for each account to an organization-defined number of sessions.</h1><h2>DISA Rule</h2><p>SV-216367r958398_rule</p><h2>Vulnerability Number</h2><p>V-216367</p><h2>Group Title</h2><p>SRG-OS-000027</p><h2>Rule Version</h2><p>SOL-11.1-040500</p><h2>Severity</h2><p>CAT III</p><h2>CCI(s)</h2><ul><li>CCI-000054 - Limit the number of concurrent sessions for each organization-defined account and/or account type to an organization-defined number.</li></ul><h2>Weight</h2><p>10</p><h2>Fix Recommendation</h2><p>Identify the organizational requirements for maximum number of sessions and which users must be restricted. If there are no requirements to limit concurrent sessions, this item does not apply.<br />
+<br />
+The Project Management profile is required.<br />
+<br />
+For each user requiring concurrent session restrictions, add the user to the special user.[username] project where [username] is the user's account username where [MAX] is equal to the organizational requirement.<br />
+<br />
+# pfexec projadd -K 'project.max-tasks=(privileged,[MAX],deny)' user.[username]<br />
+<br />
+Determine the project membership for the user.<br />
+<br />
+# projects [username]<br />
+<br />
+If the user is a member of any projects other than default, group.[groupname], or user.[username], remove that project from the user's account.<br />
+<br />
+The root role is required.<br />
+<br />
+# pfedit /etc/user_attr<br />
+<br />
+Locate the line containing the user's username. Remove any project=[projectname] entries from the fifth field.<br />
+<br />
+# pfedit /etc/project<br />
+<br />
+Locate the line containing the user's username in a project other than default, group.[groupname], or user.[username], and remove the user from the project's entry or entries from the fourth field.</p><h2>Check Contents</h2><p>Identify the organizational requirements for maximum number of sessions and which users must be restricted. If there are no requirements to limit concurrent sessions, this item does not apply.<br />
+<br />
+For each user requiring concurrent session restrictions, determine if that user is in the user.[username] project where [username] is the user's account username.<br />
+<br />
+# projects [username] | grep user<br />
+<br />
+If the output does not include the project user.[username], this is a finding.<br />
+<br />
+Determine the project membership for the user.<br />
+<br />
+# projects [username]<br />
+<br />
+If the user is a member of any project other than default, group.[groupname], or user.[username], this is a finding.<br />
+<br />
+Determine whether the max-tasks resource control is enabled properly.<br />
+<br />
+# projects -l user.[username] | grep attribs<br />
+<br />
+If the output does not include the text:<br />
+<br />
+attribs: project.max-tasks=(privileged,[MAX],deny)<br />
+<br />
+where [MAX] is the organization-defined maximum number of concurrent sessions, this is a finding.</p><h2>Vulnerability Number</h2><p>V-216367</p><h2>Documentable</h2><p>False</p><h2>Rule Version</h2><p>SOL-11.1-040500</p><h2>Severity Override Guidance</h2><p>Identify the organizational requirements for maximum number of sessions and which users must be restricted. If there are no requirements to limit concurrent sessions, this item does not apply.<br />
+<br />
+For each user requiring concurrent session restrictions, determine if that user is in the user.[username] project where [username] is the user's account username.<br />
+<br />
+# projects [username] | grep user<br />
+<br />
+If the output does not include the project user.[username], this is a finding.<br />
+<br />
+Determine the project membership for the user.<br />
+<br />
+# projects [username]<br />
+<br />
+If the user is a member of any project other than default, group.[groupname], or user.[username], this is a finding.<br />
+<br />
+Determine whether the max-tasks resource control is enabled properly.<br />
+<br />
+# projects -l user.[username] | grep attribs<br />
+<br />
+If the output does not include the text:<br />
+<br />
+attribs: project.max-tasks=(privileged,[MAX],deny)<br />
+<br />
+where [MAX] is the organization-defined maximum number of concurrent sessions, this is a finding.</p><h2>Check Content Reference</h2><p>M</p><h2>Target Key</h2><p>4022</p></body></html>

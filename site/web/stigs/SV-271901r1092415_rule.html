@@ -1,0 +1,43 @@
+<!doctype html><html lang="en"><head><meta charset="utf-8"><title>STIGQter: STIG Check Details: SV-271901r1092415_rule: OL 9 must only allow the use of DOD PKI-established certificate authorities for authentication in the establishment of protected sessions to OL 9.</title><link rel="icon" type="image/svg+xml" href="STIGQter.svg" /><script async src="https://www.googletagmanager.com/gtag/js?id=UA-31381839-2"></script><script src="include.js"></script><script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-4110907817782130" crossorigin="anonymous"></script></head><body><div><img src="STIGQter.svg" alt="STIGQter" style="height:1em;" /> <a href="https://www.stigqter.com/">STIGQter</a>: <a href="main.html">STIG Summary</a>: <a href="U_Oracle_Linux_9_STIG_V1R6_Manual-xccdf.html">Oracle Linux 9 Security Technical Implementation Guide Version: 1 Release: 6 Benchmark Date: 01 Jul 2026</a>:</div> <h1>OL 9 must only allow the use of DOD PKI-established certificate authorities for authentication in the establishment of protected sessions to OL 9.</h1><h2>DISA Rule</h2><p>SV-271901r1092415_rule</p><h2>Vulnerability Number</h2><p>V-271901</p><h2>Group Title</h2><p>SRG-OS-000403-GPOS-00182</p><h2>Rule Version</h2><p>OL09-00-900140</p><h2>Severity</h2><p>CAT II</p><h2>CCI(s)</h2><ul><li>CCI-002470 - Only allow the use of organization-defined certificate authorities for verification of the establishment of protected sessions.</li></ul><h2>Weight</h2><p>10</p><h2>Fix Recommendation</h2><p>Configure OL 9 to only allow the use of DOD PKI-established certificate authorities.<br />
+<br />
+For each untrusted CA, export the certificate to a file and add it to the blocklist:<br />
+<br />
+$ trust dump --filter &quot;pkcs11:id=%7C%42%96%AE%DE%4B%48%3B%FA%92%F8%9E%8C%CF%6D%8B%A9%72%37%95;type=cert&quot; &gt; /etc/pki/ca-trust/source/blocklist/ISRGRootX2<br />
+<br />
+$ update-ca-trust <br />
+<br />
+Verify that the certificate is in the blocklist:<br />
+<br />
+$ trust list --filter=blocklist<br />
+p11-kit: overriding trust for anchor in blocklist: ISRGRootX2<br />
+pkcs11:id=%7C%42%96%AE%DE%4B%48%3B%FA%92%F8%9E%8C%CF%6D%8B%A9%72%37%95;type=cert<br />
+    type: certificate<br />
+    label: ISRG Root X2<br />
+    trust: distrusted<br />
+    category: authority<br />
+<br />
+pkcs11:id=%88%68%BF%E0%8E%35%C4%3B%38%6B%62%F7%28%3B%84%81%C8%0C%D7%4D;type=cert<br />
+    type: certificate<br />
+    label: Explicitly Distrust DigiNotar Root CA<br />
+    trust: distrusted<br />
+    category: authority</p><h2>Check Contents</h2><p>Verify OL 9 only allows the use of DOD PKI-established certificate authorities using the following command:<br />
+<br />
+$ trust list<br />
+<br />
+pkcs11:id=%7C%42%96%AE%DE%4B%48%3B%FA%92%F8%9E%8C%CF%6D%8B%A9%72%37%95;type=cert<br />
+    type: certificate<br />
+    label: ISRG Root X2<br />
+    trust: anchor<br />
+    category: authority<br />
+<br />
+If any nonapproved CAs are returned, this is a finding.</p><h2>Vulnerability Number</h2><p>V-271901</p><h2>Documentable</h2><p>False</p><h2>Rule Version</h2><p>OL09-00-900140</p><h2>Severity Override Guidance</h2><p>Verify OL 9 only allows the use of DOD PKI-established certificate authorities using the following command:<br />
+<br />
+$ trust list<br />
+<br />
+pkcs11:id=%7C%42%96%AE%DE%4B%48%3B%FA%92%F8%9E%8C%CF%6D%8B%A9%72%37%95;type=cert<br />
+    type: certificate<br />
+    label: ISRG Root X2<br />
+    trust: anchor<br />
+    category: authority<br />
+<br />
+If any nonapproved CAs are returned, this is a finding.</p><h2>Check Content Reference</h2><p>M</p><h2>Target Key</h2><p>5680</p></body></html>

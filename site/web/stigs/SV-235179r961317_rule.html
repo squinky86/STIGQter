@@ -1,0 +1,128 @@
+<!doctype html><html lang="en"><head><meta charset="utf-8"><title>STIGQter: STIG Check Details: SV-235179r961317_rule: The MySQL Database Server 8.0 must enforce discretionary access control policies, as defined by the data owner, over defined subjects and objects.</title><link rel="icon" type="image/svg+xml" href="STIGQter.svg" /><script async src="https://www.googletagmanager.com/gtag/js?id=UA-31381839-2"></script><script src="include.js"></script><script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-4110907817782130" crossorigin="anonymous"></script></head><body><div><img src="STIGQter.svg" alt="STIGQter" style="height:1em;" /> <a href="https://www.stigqter.com/">STIGQter</a>: <a href="main.html">STIG Summary</a>: <a href="U_Oracle_MySQL_8-0_STIG_V2R2_Manual-xccdf.html">Oracle MySQL 8.0 Security Technical Implementation Guide Version: 2 Release: 2 Benchmark Date: 24 Oct 2024</a>:</div> <h1>The MySQL Database Server 8.0 must enforce discretionary access control policies, as defined by the data owner, over defined subjects and objects.</h1><h2>DISA Rule</h2><p>SV-235179r961317_rule</p><h2>Vulnerability Number</h2><p>V-235179</p><h2>Group Title</h2><p>SRG-APP-000328-DB-000301</p><h2>Rule Version</h2><p>MYS8-00-010500</p><h2>Severity</h2><p>CAT II</p><h2>CCI(s)</h2><ul><li>CCI-002165 - Enforce organization-defined discretionary access control policies over defined subjects and objects.</li></ul><h2>Weight</h2><p>10</p><h2>Fix Recommendation</h2><p>To correct object ownership:<br />
+<br />
+To revoke any unauthorized permissions:<br />
+<br />
+REVOKE<br />
+    priv_type [(column_list)]<br />
+      [, priv_type [(column_list)]] ...<br />
+    ON [object_type] priv_level<br />
+    FROM user_or_role [, user_or_role] ...<br />
+<br />
+REVOKE ALL [PRIVILEGES], GRANT OPTION<br />
+    FROM user_or_role [, user_or_role] ...<br />
+<br />
+REVOKE PROXY ON user_or_role<br />
+    FROM user_or_role [, user_or_role] ...<br />
+<br />
+REVOKE role [, role ] ...<br />
+    FROM user_or_role [, user_or_role ] ...</p><h2>Check Contents</h2><p>Use the following query to discover database object access rights:<br />
+<br />
+Users with DDL rights on database objects<br />
+At Instance Level<br />
+SELECT *<br />
+FROM `mysql`.`user`<br />
+WHERE  (`mysql`.`user`.`user` not like 'mysql.%')  AND (<br />
+    `user`.`Create_priv` = 'Y' OR<br />
+    `user`.`Drop_priv` = 'Y' OR<br />
+    `user`.`Grant_priv` = 'Y' OR<br />
+    `user`.`References_priv` = 'Y' OR<br />
+    `user`.`Index_priv` = 'Y' OR<br />
+    `user`.`Alter_priv` = 'Y' OR<br />
+    `user`.`Super_priv` = 'Y' OR<br />
+    `user`.`Execute_priv` = 'Y' OR<br />
+    `user`.`Create_view_priv` = 'Y' OR<br />
+    `user`.`Create_routine_priv` = 'Y' OR<br />
+    `user`.`Alter_routine_priv` = 'Y' OR<br />
+    `user`.`Create_user_priv` = 'Y' OR<br />
+    `user`.`Event_priv` = 'Y' OR<br />
+    `user`.`Trigger_priv` = 'Y' OR<br />
+    `user`.`Create_role_priv` = 'Y' OR<br />
+    `user`.`Drop_role_priv` = 'Y') ;<br />
+<br />
+At DB/Schema Level - Users with DDL rights on database objects<br />
+Ensure only administrative users are returned in the result set.<br />
+SELECT * FROM mysql.db where<br />
+    (`db`.`Grant_priv` = 'Y' OR<br />
+    `db`.`References_priv`= 'Y' OR<br />
+    `db`.`Index_priv`= 'Y' OR<br />
+    `db`.`Alter_priv`= 'Y' OR<br />
+    `db`.`Create_tmp_table_priv`= 'Y' OR<br />
+    `db`.`Lock_tables_priv`= 'Y' OR<br />
+    `db`.`Create_view_priv`= 'Y' OR<br />
+    `db`.`Show_view_priv`= 'Y' OR<br />
+    `db`.`Create_routine_priv`= 'Y' OR<br />
+    `db`.`Alter_routine_priv`= 'Y' OR<br />
+    `db`.`Execute_priv`= 'Y' OR<br />
+    `db`.`Event_priv`= 'Y' OR<br />
+    `db`.`Trigger_priv`) and user not like 'mysql.%';<br />
+<br />
+Ensure only administrative users are returned in the result set.<br />
+<br />
+Use the following query to discover database users who have been delegated the right to grant permissions to other users:<br />
+<br />
+Execute the following SQL statements to audit this setting:<br />
+SELECT `USER_PRIVILEGES`.`GRANTEE`,<br />
+    `USER_PRIVILEGES`.`TABLE_CATALOG`,<br />
+    `USER_PRIVILEGES`.`PRIVILEGE_TYPE`,<br />
+    `USER_PRIVILEGES`.`IS_GRANTABLE`<br />
+FROM `information_schema`.`USER_PRIVILEGES`<br />
+where `USER_PRIVILEGES`.`IS_GRANTABLE`='YES';<br />
+<br />
+Ensure only administrative users are returned in the result set.<br />
+<br />
+If any of these rights are not documented and authorized, this is a finding.</p><h2>Vulnerability Number</h2><p>V-235179</p><h2>Documentable</h2><p>False</p><h2>Rule Version</h2><p>MYS8-00-010500</p><h2>Severity Override Guidance</h2><p>Use the following query to discover database object access rights:<br />
+<br />
+Users with DDL rights on database objects<br />
+At Instance Level<br />
+SELECT *<br />
+FROM `mysql`.`user`<br />
+WHERE  (`mysql`.`user`.`user` not like 'mysql.%')  AND (<br />
+    `user`.`Create_priv` = 'Y' OR<br />
+    `user`.`Drop_priv` = 'Y' OR<br />
+    `user`.`Grant_priv` = 'Y' OR<br />
+    `user`.`References_priv` = 'Y' OR<br />
+    `user`.`Index_priv` = 'Y' OR<br />
+    `user`.`Alter_priv` = 'Y' OR<br />
+    `user`.`Super_priv` = 'Y' OR<br />
+    `user`.`Execute_priv` = 'Y' OR<br />
+    `user`.`Create_view_priv` = 'Y' OR<br />
+    `user`.`Create_routine_priv` = 'Y' OR<br />
+    `user`.`Alter_routine_priv` = 'Y' OR<br />
+    `user`.`Create_user_priv` = 'Y' OR<br />
+    `user`.`Event_priv` = 'Y' OR<br />
+    `user`.`Trigger_priv` = 'Y' OR<br />
+    `user`.`Create_role_priv` = 'Y' OR<br />
+    `user`.`Drop_role_priv` = 'Y') ;<br />
+<br />
+At DB/Schema Level - Users with DDL rights on database objects<br />
+Ensure only administrative users are returned in the result set.<br />
+SELECT * FROM mysql.db where<br />
+    (`db`.`Grant_priv` = 'Y' OR<br />
+    `db`.`References_priv`= 'Y' OR<br />
+    `db`.`Index_priv`= 'Y' OR<br />
+    `db`.`Alter_priv`= 'Y' OR<br />
+    `db`.`Create_tmp_table_priv`= 'Y' OR<br />
+    `db`.`Lock_tables_priv`= 'Y' OR<br />
+    `db`.`Create_view_priv`= 'Y' OR<br />
+    `db`.`Show_view_priv`= 'Y' OR<br />
+    `db`.`Create_routine_priv`= 'Y' OR<br />
+    `db`.`Alter_routine_priv`= 'Y' OR<br />
+    `db`.`Execute_priv`= 'Y' OR<br />
+    `db`.`Event_priv`= 'Y' OR<br />
+    `db`.`Trigger_priv`) and user not like 'mysql.%';<br />
+<br />
+Ensure only administrative users are returned in the result set.<br />
+<br />
+Use the following query to discover database users who have been delegated the right to grant permissions to other users:<br />
+<br />
+Execute the following SQL statements to audit this setting:<br />
+SELECT `USER_PRIVILEGES`.`GRANTEE`,<br />
+    `USER_PRIVILEGES`.`TABLE_CATALOG`,<br />
+    `USER_PRIVILEGES`.`PRIVILEGE_TYPE`,<br />
+    `USER_PRIVILEGES`.`IS_GRANTABLE`<br />
+FROM `information_schema`.`USER_PRIVILEGES`<br />
+where `USER_PRIVILEGES`.`IS_GRANTABLE`='YES';<br />
+<br />
+Ensure only administrative users are returned in the result set.<br />
+<br />
+If any of these rights are not documented and authorized, this is a finding.</p><h2>Check Content Reference</h2><p>M</p><h2>Target Key</h2><p>5277</p></body></html>

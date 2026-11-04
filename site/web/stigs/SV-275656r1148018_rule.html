@@ -1,0 +1,35 @@
+<!doctype html><html lang="en"><head><meta charset="utf-8"><title>STIGQter: STIG Check Details: SV-275656r1148018_rule: Ubuntu OS must be configured so that when passwords are changed or new passwords are established, pwquality must be used.</title><link rel="icon" type="image/svg+xml" href="STIGQter.svg" /><script async src="https://www.googletagmanager.com/gtag/js?id=UA-31381839-2"></script><script src="include.js"></script><script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-4110907817782130" crossorigin="anonymous"></script></head><body><div><img src="STIGQter.svg" alt="STIGQter" style="height:1em;" /> <a href="https://www.stigqter.com/">STIGQter</a>: <a href="main.html">STIG Summary</a>: <a href="U_RB_NetIM_OS_STIG_V1R1_Manual-xccdf.html">Riverbed NetIM OS Security Technical Implementation Guide Version: 1 Release: 1 Benchmark Date: 11 Sep 2025</a>:</div> <h1>Ubuntu OS must be configured so that when passwords are changed or new passwords are established, pwquality must be used.</h1><h2>DISA Rule</h2><p>SV-275656r1148018_rule</p><h2>Vulnerability Number</h2><p>V-275656</p><h2>Group Title</h2><p>SRG-OS-000710-GPOS-00160</p><h2>Rule Version</h2><p>RIIM-OS-611045</p><h2>Severity</h2><p>CAT II</p><h2>CCI(s)</h2><ul><li>CCI-004061 - For password-based authentication, verify when users create or update passwords, that the passwords are not found on the list of commonly-used, expected, or compromised passwords in IA-5 (1) (a).</li><li>CCI-004064 - For password-based authentication, allow user selection of long passwords and passphrases, including spaces and all printable characters.</li><li>CCI-004065 - For password-based authentication, employ automated tools to assist the user in selecting strong password authenticators.</li><li>CCI-000366 - Implement the security configuration settings.</li></ul><h2>Weight</h2><p>10</p><h2>Fix Recommendation</h2><p>Configure Ubuntu OS to enforce password complexity rules. <br />
+  <br />
+Add or modify the following line in the &quot;/etc/security/pwquality.conf&quot; file: <br />
+  <br />
+enforcing = 1  <br />
+  <br />
+Add or modify the following line in the &quot;/etc/pam.d/common-password&quot; file: <br />
+  <br />
+password requisite pam_pwquality.so retry=3  <br />
+  <br />
+Note: The value of &quot;retry&quot; should be between &quot;1&quot; and &quot;3&quot;.</p><h2>Check Contents</h2><p>Verify Ubuntu OS enforces password complexity rules by using the following command:   <br />
+ <br />
+     $ grep -i enforcing /etc/security/pwquality.conf  <br />
+     enforcing = 1  <br />
+  <br />
+If &quot;enforcing&quot; is not &quot;1&quot;, is commented out, or is missing, this is a finding.  <br />
+  <br />
+Check for the use of &quot;pwquality&quot; by using the following command:  <br />
+  <br />
+     $ cat /etc/pam.d/common-password | grep requisite | grep pam_pwquality <br />
+      password     requisite     pam_pwquality.so retry=3  <br />
+  <br />
+If &quot;retry&quot; is set to &quot;0&quot; or is greater than &quot;3&quot;, or is missing, this is a finding.</p><h2>Vulnerability Number</h2><p>V-275656</p><h2>Documentable</h2><p>False</p><h2>Rule Version</h2><p>RIIM-OS-611045</p><h2>Severity Override Guidance</h2><p>Verify Ubuntu OS enforces password complexity rules by using the following command:   <br />
+ <br />
+     $ grep -i enforcing /etc/security/pwquality.conf  <br />
+     enforcing = 1  <br />
+  <br />
+If &quot;enforcing&quot; is not &quot;1&quot;, is commented out, or is missing, this is a finding.  <br />
+  <br />
+Check for the use of &quot;pwquality&quot; by using the following command:  <br />
+  <br />
+     $ cat /etc/pam.d/common-password | grep requisite | grep pam_pwquality <br />
+      password     requisite     pam_pwquality.so retry=3  <br />
+  <br />
+If &quot;retry&quot; is set to &quot;0&quot; or is greater than &quot;3&quot;, or is missing, this is a finding.</p><h2>Check Content Reference</h2><p>M</p><h2>Target Key</h2><p>5706</p></body></html>

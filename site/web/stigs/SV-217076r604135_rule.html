@@ -1,0 +1,91 @@
+<!doctype html><html lang="en"><head><meta charset="utf-8"><title>STIGQter: STIG Check Details: SV-217076r604135_rule: The Juniper PE router must be configured to block any traffic that is destined to IP core infrastructure.</title><link rel="icon" type="image/svg+xml" href="STIGQter.svg" /><script async src="https://www.googletagmanager.com/gtag/js?id=UA-31381839-2"></script><script src="include.js"></script><script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-4110907817782130" crossorigin="anonymous"></script></head><body><div><img src="STIGQter.svg" alt="STIGQter" style="height:1em;" /> <a href="https://www.stigqter.com/">STIGQter</a>: <a href="main.html">STIG Summary</a>: <a href="U_Juniper_Router_RTR_STIG_V3R2_Manual-xccdf.html">Juniper Router RTR Security Technical Implementation Guide Version: 3 Release: 2 Benchmark Date: 30 Jan 2025</a>:</div> <h1>The Juniper PE router must be configured to block any traffic that is destined to IP core infrastructure.</h1><h2>DISA Rule</h2><p>SV-217076r604135_rule</p><h2>Vulnerability Number</h2><p>V-217076</p><h2>Group Title</h2><p>SRG-NET-000205-RTR-000007</p><h2>Rule Version</h2><p>JUNI-RT-000710</p><h2>Severity</h2><p>CAT I</p><h2>CCI(s)</h2><ul><li>CCI-001097 - Monitor and control communications at the external managed interfaces to the system and at key managed interfaces within the system.</li></ul><h2>Weight</h2><p>10</p><h2>Fix Recommendation</h2><p>Configure protection for the IP core to be implemented at the edges by blocking any traffic with a destination address assigned to the IP core infrastructure.<br />
+<br />
+Configure an ingress filter to discard and log packets destined to the IP core address space. <br />
+<br />
+[edit firewall family inet]<br />
+set filter INGRESS_FILTER term BLOCK_TO_CORE from destination-address x.x.x.x/8<br />
+set filter INGRESS_FILTER term BLOCK_TO_CORE then log discard<br />
+set filter INGRESS_FILTER term ALLOW_TRANSIT_TRAFFIC then accept<br />
+<br />
+Apply the filter inbound to all CE-facing interfaces.<br />
+<br />
+[edit interfaces ge-0/1/0 unit 0]<br />
+set family inet filter input INGRESS_FILTER</p><h2>Check Contents</h2><p>Review the router configuration to verify that an ingress filter is applied to all CE-facing interfaces. <br />
+<br />
+interfaces {<br />
+    ge-0/1/0 {<br />
+        description &quot;link to Customer 2&quot;;<br />
+        unit 0 {<br />
+            family inet {<br />
+                filter {<br />
+                    input INGRESS_FILTER;<br />
+                }<br />
+                address x.x.x.x/30;<br />
+            }<br />
+        }<br />
+    }<br />
+<br />
+Verify that the ingress filter discards and logs packets destined to the IP core address space. <br />
+<br />
+firewall {<br />
+    family inet {<br />
+        filter INGRESS_FILTER {<br />
+            term BLOCK_TO_CORE {<br />
+                from {<br />
+                    destination-address {<br />
+                        x.x.x.x/8;<br />
+                    }<br />
+                }<br />
+                then {<br />
+                    log;<br />
+                    discard;<br />
+                }<br />
+            }<br />
+            term ALLOW_TRANSIT_TRAFFIC {<br />
+                then accept;<br />
+            }<br />
+        }<br />
+    }<br />
+<br />
+If the PE router is not configured to block any traffic with a destination address assigned to the IP core infrastructure, this is a finding.<br />
+<br />
+Note: Internet Control Message Protocol (ICMP) echo requests and traceroutes will be allowed to the edge from external adjacent neighbors.</p><h2>Vulnerability Number</h2><p>V-217076</p><h2>Documentable</h2><p>False</p><h2>Rule Version</h2><p>JUNI-RT-000710</p><h2>Severity Override Guidance</h2><p>Review the router configuration to verify that an ingress filter is applied to all CE-facing interfaces. <br />
+<br />
+interfaces {<br />
+    ge-0/1/0 {<br />
+        description &quot;link to Customer 2&quot;;<br />
+        unit 0 {<br />
+            family inet {<br />
+                filter {<br />
+                    input INGRESS_FILTER;<br />
+                }<br />
+                address x.x.x.x/30;<br />
+            }<br />
+        }<br />
+    }<br />
+<br />
+Verify that the ingress filter discards and logs packets destined to the IP core address space. <br />
+<br />
+firewall {<br />
+    family inet {<br />
+        filter INGRESS_FILTER {<br />
+            term BLOCK_TO_CORE {<br />
+                from {<br />
+                    destination-address {<br />
+                        x.x.x.x/8;<br />
+                    }<br />
+                }<br />
+                then {<br />
+                    log;<br />
+                    discard;<br />
+                }<br />
+            }<br />
+            term ALLOW_TRANSIT_TRAFFIC {<br />
+                then accept;<br />
+            }<br />
+        }<br />
+    }<br />
+<br />
+If the PE router is not configured to block any traffic with a destination address assigned to the IP core infrastructure, this is a finding.<br />
+<br />
+Note: Internet Control Message Protocol (ICMP) echo requests and traceroutes will be allowed to the edge from external adjacent neighbors.</p><h2>Check Content Reference</h2><p>M</p><h2>Target Key</h2><p>4032</p></body></html>

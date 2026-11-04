@@ -1,0 +1,50 @@
+<!doctype html><html lang="en"><head><meta charset="utf-8"><title>STIGQter: STIG Check Details: SV-273588r1110913_rule: The RUCKUS ICX out-of-band management (OOBM) gateway router must be configured to have separate Interior Gateway Protocol (IGP) instances for the managed network and management network.</title><link rel="icon" type="image/svg+xml" href="STIGQter.svg" /><script async src="https://www.googletagmanager.com/gtag/js?id=UA-31381839-2"></script><script src="include.js"></script><script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-4110907817782130" crossorigin="anonymous"></script></head><body><div><img src="STIGQter.svg" alt="STIGQter" style="height:1em;" /> <a href="https://www.stigqter.com/">STIGQter</a>: <a href="main.html">STIG Summary</a>: <a href="U_RUCKUS_ICX_RTR_STIG_V1R1_Manual-xccdf.html">RUCKUS ICX Router Security Technical Implementation Guide Version: 1 Release: 1 Benchmark Date: 27 May 2025</a>:</div> <h1>The RUCKUS ICX out-of-band management (OOBM) gateway router must be configured to have separate Interior Gateway Protocol (IGP) instances for the managed network and management network.</h1><h2>DISA Rule</h2><p>SV-273588r1110913_rule</p><h2>Vulnerability Number</h2><p>V-273588</p><h2>Group Title</h2><p>SRG-NET-000019-RTR-000011</p><h2>Rule Version</h2><p>RCKS-RTR-000200</p><h2>Severity</h2><p>CAT II</p><h2>CCI(s)</h2><ul><li>CCI-001414 - Enforce approved authorizations for controlling the flow of information between connected systems based on organization-defined information flow control policies.</li></ul><h2>Weight</h2><p>10</p><h2>Fix Recommendation</h2><p>This requirement is not applicable for the DODIN Backbone.<br />
+<br />
+Configure separate Mgmt and Prod VRFs and assign interfaces as appropriate:<br />
+ICX(config)# vrf Mgmt<br />
+ICX(config-vrf-Mgmt)# rd 11:11<br />
+ICX(config-vrf-Mgmt)# address-family ipv4 unicast<br />
+ICX(config-vrf-Mgmt)# exit <br />
+ICX(config)# vrf Prod<br />
+ICX(config-vrf-Prod)# rd 10:10<br />
+ICX(config-vrf-Prod)# address-family ipv4 unicast<br />
+ICX(config-vrf-Prod)# exit <br />
+<br />
+ICX(config)# router ospf vrf Mgmt<br />
+ICX(config-ospf-router)# area 0<br />
+ICX(config-ospf-router)# exit<br />
+<br />
+ICX(config)# interface ve 10<br />
+ICX(config-vif-10)# vrf forwarding Mgmt<br />
+Warning: All IPv4 and IPv6 addresses (including link-local) on this interface have been removed<br />
+have been removed<br />
+ICX(config-vif-10)# ip address x.x.x.x/24<br />
+ICX(config-vif-10)# ip ospf area 0<br />
+ICX(config-vif-10)# ip ospf passive<br />
+ICX(config-vif-10)# exit<br />
+<br />
+The above example assigns L3 interface from VLAN 10 to VRF Mgmt.</p><h2>Check Contents</h2><p>This requirement is not applicable for the DODIN Backbone.<br />
+<br />
+Verify there is a separate VRF for management and production domains:<br />
+ICX# show vrf<br />
+Total number of VRFs configured: 2<br />
+Status Codes - A:active, D:pending deletion, I:inactive<br />
+Name                 Default RD vrf|v4|v6          Routes Interfaces<br />
+Mgmt                 1:1         A | A| A              12 ve111 ve211 ve311*<br />
+Prod                 10:12       A | A| A               4 ve1117 port-id tn1*<br />
+Total number of IPv4 unicast route for all non-default VRF is 8<br />
+Total number of IPv6 unicast route for all non-default VRF is 8<br />
+<br />
+If the OOBM gateway router does not have separate VRFs for management and production or the interfaces are associated with the wrong VRF, this is a finding.</p><h2>Vulnerability Number</h2><p>V-273588</p><h2>Documentable</h2><p>False</p><h2>Rule Version</h2><p>RCKS-RTR-000200</p><h2>Severity Override Guidance</h2><p>This requirement is not applicable for the DODIN Backbone.<br />
+<br />
+Verify there is a separate VRF for management and production domains:<br />
+ICX# show vrf<br />
+Total number of VRFs configured: 2<br />
+Status Codes - A:active, D:pending deletion, I:inactive<br />
+Name                 Default RD vrf|v4|v6          Routes Interfaces<br />
+Mgmt                 1:1         A | A| A              12 ve111 ve211 ve311*<br />
+Prod                 10:12       A | A| A               4 ve1117 port-id tn1*<br />
+Total number of IPv4 unicast route for all non-default VRF is 8<br />
+Total number of IPv6 unicast route for all non-default VRF is 8<br />
+<br />
+If the OOBM gateway router does not have separate VRFs for management and production or the interfaces are associated with the wrong VRF, this is a finding.</p><h2>Check Content Reference</h2><p>M</p><h2>Target Key</h2><p>5696</p></body></html>

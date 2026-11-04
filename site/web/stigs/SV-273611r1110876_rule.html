@@ -1,0 +1,42 @@
+<!doctype html><html lang="en"><head><meta charset="utf-8"><title>STIGQter: STIG Check Details: SV-273611r1110876_rule: The RUCKUS ICX PE router must be configured to block any traffic destined to IP core infrastructure.</title><link rel="icon" type="image/svg+xml" href="STIGQter.svg" /><script async src="https://www.googletagmanager.com/gtag/js?id=UA-31381839-2"></script><script src="include.js"></script><script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-4110907817782130" crossorigin="anonymous"></script></head><body><div><img src="STIGQter.svg" alt="STIGQter" style="height:1em;" /> <a href="https://www.stigqter.com/">STIGQter</a>: <a href="main.html">STIG Summary</a>: <a href="U_RUCKUS_ICX_RTR_STIG_V1R1_Manual-xccdf.html">RUCKUS ICX Router Security Technical Implementation Guide Version: 1 Release: 1 Benchmark Date: 27 May 2025</a>:</div> <h1>The RUCKUS ICX PE router must be configured to block any traffic destined to IP core infrastructure.</h1><h2>DISA Rule</h2><p>SV-273611r1110876_rule</p><h2>Vulnerability Number</h2><p>V-273611</p><h2>Group Title</h2><p>SRG-NET-000205-RTR-000007</p><h2>Rule Version</h2><p>RCKS-RTR-000440</p><h2>Severity</h2><p>CAT I</p><h2>CCI(s)</h2><ul><li>CCI-001097 - Monitor and control communications at the external managed interfaces to the system and at key managed interfaces within the system.</li></ul><h2>Weight</h2><p>10</p><h2>Fix Recommendation</h2><p>Configure protection for the IP core to be implemented at the edges by blocking any traffic with a destination address assigned to the IP core infrastructure.<br />
+<br />
+1. Configure an ingress ACL to discard and log packets destined to the IP core address space.<br />
+ICX(config)#ip access-list ext BLOCK_TO_CORE<br />
+ICX(config-ext-ipacl-BLOCK_TO_CORE)#deny ip any 10.x.0.0/16 log<br />
+ICX(config-ext-ipacl-BLOCK_TO_CORE)#remark permit other traffic<br />
+ICX(config-ext-ipacl-BLOCK_TO_CORE)#permit ip any any<br />
+<br />
+2. Apply the ACL inbound to all external or CE-facing interfaces.<br />
+ICX(config)#interface ethernet 1/1/1<br />
+ICX(config-if-e10000-1/1/1)#port-name CE_port<br />
+ICX(config-if-e10000-1/1/1)#ip access-group BLOCK_TO_CORE in logging enable</p><h2>Check Contents</h2><p>Review the router configuration to verify an ingress ACL is applied to all CE-facing interfaces and verify the ingress ACL rejects and logs packets destined to the IP core address block. <br />
+<br />
+1. Review the router configuration to verify that an ingress ACL is applied to all external or CE-facing interfaces.<br />
+interface ethernet 1/1/1<br />
+ ip address x.1.1.2/30<br />
+ ip access-group BLOCK_TO_CORE in logging enable<br />
+!<br />
+<br />
+2. Verify the ingress ACL discards and logs packets destined to the IP core address space. <br />
+ip access-list extended BLOCK_TO_CORE<br />
+ sequence 10 deny ip any 10.x.0.0 0.0.255.255 log<br />
+ remark permit other traffic<br />
+ sequence 20 permit ip any any<br />
+!<br />
+<br />
+If the PE router is not configured to block any traffic with a destination address assigned to the IP core infrastructure, this is a finding.</p><h2>Vulnerability Number</h2><p>V-273611</p><h2>Documentable</h2><p>False</p><h2>Rule Version</h2><p>RCKS-RTR-000440</p><h2>Severity Override Guidance</h2><p>Review the router configuration to verify an ingress ACL is applied to all CE-facing interfaces and verify the ingress ACL rejects and logs packets destined to the IP core address block. <br />
+<br />
+1. Review the router configuration to verify that an ingress ACL is applied to all external or CE-facing interfaces.<br />
+interface ethernet 1/1/1<br />
+ ip address x.1.1.2/30<br />
+ ip access-group BLOCK_TO_CORE in logging enable<br />
+!<br />
+<br />
+2. Verify the ingress ACL discards and logs packets destined to the IP core address space. <br />
+ip access-list extended BLOCK_TO_CORE<br />
+ sequence 10 deny ip any 10.x.0.0 0.0.255.255 log<br />
+ remark permit other traffic<br />
+ sequence 20 permit ip any any<br />
+!<br />
+<br />
+If the PE router is not configured to block any traffic with a destination address assigned to the IP core infrastructure, this is a finding.</p><h2>Check Content Reference</h2><p>M</p><h2>Target Key</h2><p>5696</p></body></html>

@@ -1,0 +1,114 @@
+<!doctype html><html lang="en"><head><meta charset="utf-8"><title>STIGQter: STIG Check Details: SV-253953r1082342_rule: The Juniper EX switch must be configured to permit authorized users to remotely view, in real time, all content related to an established user session from a component separate from the layer 2 switch.</title><link rel="icon" type="image/svg+xml" href="STIGQter.svg" /><script async src="https://www.googletagmanager.com/gtag/js?id=UA-31381839-2"></script><script src="include.js"></script><script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-4110907817782130" crossorigin="anonymous"></script></head><body><div><img src="STIGQter.svg" alt="STIGQter" style="height:1em;" /> <a href="https://www.stigqter.com/">STIGQter</a>: <a href="main.html">STIG Summary</a>: <a href="U_Juniper_EX_Switches_L2S_STIG_V2R5_Manual-xccdf.html">Juniper EX Series Switches Layer 2 Switch Security Technical Implementation Guide Version: 2 Release: 5 Benchmark Date: 01 Jul 2026</a>:</div> <h1>The Juniper EX switch must be configured to permit authorized users to remotely view, in real time, all content related to an established user session from a component separate from the layer 2 switch.</h1><h2>DISA Rule</h2><p>SV-253953r1082342_rule</p><h2>Vulnerability Number</h2><p>V-253953</p><h2>Group Title</h2><p>SRG-NET-000332-L2S-000002</p><h2>Rule Version</h2><p>JUEX-L2-000060</p><h2>Severity</h2><p>CAT II</p><h2>CCI(s)</h2><ul><li>CCI-001920 - Provide the capability for authorized users to remotely view and hear content related to an established user session in real time.</li></ul><h2>Weight</h2><p>10</p><h2>Fix Recommendation</h2><p>Enable the feature or configure the switch so that it is capable of capturing ingress and egress packets from any designated switch port for the purpose of monitoring a specific user session.<br />
+<br />
+set vlans &lt;destination VLAN name&gt; vlan-id &lt;VLAN ID&gt;<br />
+<br />
+set interfaces &lt;interface name&gt; unit 0 family ethernet-switching interface-mode trunk<br />
+set interfaces &lt;interface name&gt; unit 0 family ethernet-switching vlan members &lt;destination VLAN name&gt;<br />
+<br />
+set forwarding-options analyzer &lt;analyzer name&gt; input ingress interface &lt;input interface&gt;.&lt;logical unit&gt;<br />
+-or-<br />
+set forwarding-options analyzer &lt;analyzer name&gt; input ingress interface irb.&lt;logical unit&gt;<br />
+<br />
+set forwarding-options analyzer &lt;analyzer name&gt; input egress interface &lt;input interface&gt;.&lt;logical unit&gt;<br />
+-or-<br />
+set forwarding-options analyzer &lt;analyzer name&gt; input egress interface irb.&lt;logical unit&gt;<br />
+<br />
+set forwarding-options analyzer &lt;analyzer name&gt; output vlan &lt;destination VLAN name&gt;</p><h2>Check Contents</h2><p>Verify if the switch configuration has an analyzer to capture ingress and egress packets from any designated switch port for the purpose of remotely monitoring a specific user session.  <br />
+<br />
+Packet capture using the [edit forwarding-options analyzer &lt;analyzer name&gt;] configuration will only be present and enabled when actively monitoring sessions.<br />
+<br />
+The Juniper switch supports either output interface or output vlan. To output to a VLAN that is trunked to a remote location, configure the switch with the destination VLAN, configure the uplink interface as trunked, and include the remote analyzer VLAN in the uplink trunk. <br />
+<br />
+If actively capturing packets, verify an analyzer is present.<br />
+[edit vlans]<br />
+&lt;destination VLAN name&gt; {<br />
+    vlan-id &lt;VLAN ID&gt;;<br />
+}<br />
+<br />
+[edit interfaces]<br />
+&lt;interface name&gt; {<br />
+    unit 0 {<br />
+        family ethernet-switching {<br />
+            interface-mode trunk;<br />
+            vlan {<br />
+                members &lt;destination VLAN name&gt;;<br />
+            }<br />
+        }<br />
+    }<br />
+}<br />
+<br />
+[edit forwarding-options]<br />
+analyzer {<br />
+    &lt;analyzer name&gt; {<br />
+        input {<br />
+            ingress {<br />
+                interface &lt;input interface&gt;.&lt;logical unit&gt;;<br />
+                -or-<br />
+                interface irb.&lt;logical unit&gt;;<br />
+            }<br />
+            egress {<br />
+                interface &lt;input interface&gt;.&lt;logical unit&gt;;<br />
+                -or-<br />
+                interface irb.&lt;logical unit&gt;;<br />
+            }<br />
+        output {<br />
+            vlan {<br />
+                &lt;destination VLAN name&gt;;<br />
+            }<br />
+        }<br />
+    }<br />
+}<br />
+Note: Simultaneously mirroring both ingress and egress traffic may exceed the output interface capacity. Packet mirroring consumes resources and should only be enabled when actively monitoring sessions.<br />
+<br />
+If active monitoring is not currently required, the lack of an analyzer, or the presence of an inactive (disabled) analyzer, is not a finding.<br />
+<br />
+If the switch is not configured to capture ingress and egress packets from a designated access interface for the purpose of remotely monitoring a specific user session, this is a finding.</p><h2>Vulnerability Number</h2><p>V-253953</p><h2>Documentable</h2><p>False</p><h2>Rule Version</h2><p>JUEX-L2-000060</p><h2>Severity Override Guidance</h2><p>Verify if the switch configuration has an analyzer to capture ingress and egress packets from any designated switch port for the purpose of remotely monitoring a specific user session.  <br />
+<br />
+Packet capture using the [edit forwarding-options analyzer &lt;analyzer name&gt;] configuration will only be present and enabled when actively monitoring sessions.<br />
+<br />
+The Juniper switch supports either output interface or output vlan. To output to a VLAN that is trunked to a remote location, configure the switch with the destination VLAN, configure the uplink interface as trunked, and include the remote analyzer VLAN in the uplink trunk. <br />
+<br />
+If actively capturing packets, verify an analyzer is present.<br />
+[edit vlans]<br />
+&lt;destination VLAN name&gt; {<br />
+    vlan-id &lt;VLAN ID&gt;;<br />
+}<br />
+<br />
+[edit interfaces]<br />
+&lt;interface name&gt; {<br />
+    unit 0 {<br />
+        family ethernet-switching {<br />
+            interface-mode trunk;<br />
+            vlan {<br />
+                members &lt;destination VLAN name&gt;;<br />
+            }<br />
+        }<br />
+    }<br />
+}<br />
+<br />
+[edit forwarding-options]<br />
+analyzer {<br />
+    &lt;analyzer name&gt; {<br />
+        input {<br />
+            ingress {<br />
+                interface &lt;input interface&gt;.&lt;logical unit&gt;;<br />
+                -or-<br />
+                interface irb.&lt;logical unit&gt;;<br />
+            }<br />
+            egress {<br />
+                interface &lt;input interface&gt;.&lt;logical unit&gt;;<br />
+                -or-<br />
+                interface irb.&lt;logical unit&gt;;<br />
+            }<br />
+        output {<br />
+            vlan {<br />
+                &lt;destination VLAN name&gt;;<br />
+            }<br />
+        }<br />
+    }<br />
+}<br />
+Note: Simultaneously mirroring both ingress and egress traffic may exceed the output interface capacity. Packet mirroring consumes resources and should only be enabled when actively monitoring sessions.<br />
+<br />
+If active monitoring is not currently required, the lack of an analyzer, or the presence of an inactive (disabled) analyzer, is not a finding.<br />
+<br />
+If the switch is not configured to capture ingress and egress packets from a designated access interface for the purpose of remotely monitoring a specific user session, this is a finding.</p><h2>Check Content Reference</h2><p>M</p><h2>Target Key</h2><p>5478</p></body></html>

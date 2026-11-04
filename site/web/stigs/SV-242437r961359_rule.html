@@ -1,0 +1,98 @@
+<!doctype html><html lang="en"><head><meta charset="utf-8"><title>STIGQter: STIG Check Details: SV-242437r961359_rule: Kubernetes must have a pod security policy set.</title><link rel="icon" type="image/svg+xml" href="STIGQter.svg" /><script async src="https://www.googletagmanager.com/gtag/js?id=UA-31381839-2"></script><script src="include.js"></script><script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-4110907817782130" crossorigin="anonymous"></script></head><body><div><img src="STIGQter.svg" alt="STIGQter" style="height:1em;" /> <a href="https://www.stigqter.com/">STIGQter</a>: <a href="main.html">STIG Summary</a>: <a href="U_Kubernetes_STIG_V2R6_Manual-xccdf.html">Kubernetes Security Technical Implementation Guide Version: 2 Release: 6 Benchmark Date: 01 Apr 2026</a>:</div> <h1>Kubernetes must have a pod security policy set.</h1><h2>DISA Rule</h2><p>SV-242437r961359_rule</p><h2>Vulnerability Number</h2><p>V-242437</p><h2>Group Title</h2><p>SRG-APP-000342-CTR-000775</p><h2>Rule Version</h2><p>CNTR-K8-002010</p><h2>Severity</h2><p>CAT I</p><h2>CCI(s)</h2><ul><li>CCI-002263 - Provides the means to associate organization-defined types of security attributes having organization-defined security attribute values with information in process.</li></ul><h2>Weight</h2><p>10</p><h2>Fix Recommendation</h2><p>From the Control Plane, save the following policy to a file called restricted.yml.<br />
+<br />
+apiVersion: policy/v1beta1<br />
+kind: PodSecurityPolicy<br />
+metadata:<br />
+name: restricted<br />
+annotations:<br />
+apparmor.security.beta.kubernetes.io/allowedProfileNames: 'runtime/default',<br />
+seccomp.security.alpha.kubernetes.io/defaultProfileName: 'runtime/default',<br />
+apparmor.security.beta.kubernetes.io/defaultProfileName: 'runtime/default'<br />
+spec:<br />
+privileged: false<br />
+# Required to prevent escalations to root.<br />
+allowPrivilegeEscalation: false<br />
+# This is redundant with non-root + disallow privilege escalation,<br />
+# but we can provide it for defense in depth.<br />
+requiredDropCapabilities:<br />
+- ALL<br />
+# Allow core volume types.<br />
+volumes:<br />
+- 'configMap'<br />
+- 'emptyDir'<br />
+- 'projected'<br />
+- 'secret'<br />
+- 'downwardAPI'<br />
+# Assume that persistentVolumes set up by the cluster admin are safe to use.<br />
+- 'persistentVolumeClaim'<br />
+hostNetwork: false<br />
+hostIPC: false<br />
+hostPID: false<br />
+runAsUser:<br />
+# Require the container to run without root privileges.<br />
+rule: 'MustRunAsNonRoot'<br />
+seLinux:<br />
+# This policy assumes the nodes are using AppArmor rather than SELinux.<br />
+rule: 'RunAsAny'<br />
+supplementalGroups:<br />
+rule: 'MustRunAs'<br />
+ranges:<br />
+# Forbid adding the root group.<br />
+- min: 1<br />
+max: 65535<br />
+fsGroup:<br />
+rule: 'MustRunAs'<br />
+ranges:<br />
+# Forbid adding the root group.<br />
+- min: 1<br />
+max: 65535<br />
+readOnlyRootFilesystem: false<br />
+<br />
+To implement the policy, run the command:<br />
+kubectl create -f restricted.yml</p><h2>Check Contents</h2><p>Prior to version 1.21, to enforce security policiesPod Security Policies (psp) were used. Those are now deprecated and will be removed from version 1.25.<br />
+<br />
+Migrate from PSP to PSA:<br />
+https://kubernetes.io/docs/tasks/configure-pod-container/migrate-from-psp/ <br />
+<br />
+Pre-version 1.25 Check:<br />
+On the Control Plane, run the command:<br />
+kubectl get podsecuritypolicy<br />
+<br />
+If there is no pod security policy configured, this is a finding. <br />
+<br />
+For any pod security policies listed, edit the policy with the command:<br />
+kubectl edit podsecuritypolicy policyname<br />
+(Note: &quot;policyname&quot; is the name of the policy.)<br />
+<br />
+Review the runAsUser, supplementalGroups and fsGroup sections of the policy.<br />
+<br />
+If any of these sections are missing, this is a finding.<br />
+<br />
+If the rule within the runAsUser section is not set to &quot;MustRunAsNonRoot&quot;, this is a finding.<br />
+<br />
+If the ranges within the supplementalGroups section has min set to &quot;0&quot; or min is missing, this is a finding.<br />
+<br />
+If the ranges within the fsGroup section has a min set to &quot;0&quot; or the min is missing, this is a finding.</p><h2>Vulnerability Number</h2><p>V-242437</p><h2>Documentable</h2><p>False</p><h2>Rule Version</h2><p>CNTR-K8-002010</p><h2>Severity Override Guidance</h2><p>Prior to version 1.21, to enforce security policiesPod Security Policies (psp) were used. Those are now deprecated and will be removed from version 1.25.<br />
+<br />
+Migrate from PSP to PSA:<br />
+https://kubernetes.io/docs/tasks/configure-pod-container/migrate-from-psp/ <br />
+<br />
+Pre-version 1.25 Check:<br />
+On the Control Plane, run the command:<br />
+kubectl get podsecuritypolicy<br />
+<br />
+If there is no pod security policy configured, this is a finding. <br />
+<br />
+For any pod security policies listed, edit the policy with the command:<br />
+kubectl edit podsecuritypolicy policyname<br />
+(Note: &quot;policyname&quot; is the name of the policy.)<br />
+<br />
+Review the runAsUser, supplementalGroups and fsGroup sections of the policy.<br />
+<br />
+If any of these sections are missing, this is a finding.<br />
+<br />
+If the rule within the runAsUser section is not set to &quot;MustRunAsNonRoot&quot;, this is a finding.<br />
+<br />
+If the ranges within the supplementalGroups section has min set to &quot;0&quot; or min is missing, this is a finding.<br />
+<br />
+If the ranges within the fsGroup section has a min set to &quot;0&quot; or the min is missing, this is a finding.</p><h2>Check Content Reference</h2><p>M</p><h2>Target Key</h2><p>5376</p></body></html>

@@ -1,0 +1,53 @@
+<!doctype html><html lang="en"><head><meta charset="utf-8"><title>STIGQter: STIG Check Details: SV-250327r1043188_rule: The WebSphere Liberty Server must be configured to offload logs to a centralized system.</title><link rel="icon" type="image/svg+xml" href="STIGQter.svg" /><script async src="https://www.googletagmanager.com/gtag/js?id=UA-31381839-2"></script><script src="include.js"></script><script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-4110907817782130" crossorigin="anonymous"></script></head><body><div><img src="STIGQter.svg" alt="STIGQter" style="height:1em;" /> <a href="https://www.stigqter.com/">STIGQter</a>: <a href="main.html">STIG Summary</a>: <a href="U_IBM_WebSphere_Liberty_Server_STIG_V2R4_Manual-xccdf.html">IBM WebSphere Liberty Server Security Technical Implementation Guide Version: 2 Release: 4 Benchmark Date: 01 Apr 2026</a>:</div> <h1>The WebSphere Liberty Server must be configured to offload logs to a centralized system.</h1><h2>DISA Rule</h2><p>SV-250327r1043188_rule</p><h2>Vulnerability Number</h2><p>V-250327</p><h2>Group Title</h2><p>SRG-APP-000109-AS-000070</p><h2>Rule Version</h2><p>IBMW-LS-000230</p><h2>Severity</h2><p>CAT II</p><h2>CCI(s)</h2><ul><li>CCI-000140 - Take organization-defined actions upon audit failure include, shutting down the system, overwriting oldest audit records, and stopping the generation of audit records.</li><li>CCI-001851 - Transfer audit logs per organization-defined frequency to a different system, system component, or media than the system or system component conducting the logging.</li></ul><h2>Weight</h2><p>10</p><h2>Fix Recommendation</h2><p>To send Liberty logs to a centralized syslog system, the Elastic environment must be set up as per the ELK stack/Elasticsearch directions. Once that is completed, configure the server.xml. The following is a sample configuration. Individual keystore, truststore, and authentication settings will vary. The SME must substitute their own values as needed. <br />
+<br />
+The message, audit, and accessLog sources must be included at a minimum.<br />
+<br />
+For additional information refer to the IBM website:<br />
+https://www.ibm.com/support/knowledgecenter/SSEQTP_liberty/com.ibm.WebSphere.wlp.doc/ae/twlp_analytics_logstash.html<br />
+<br />
+EXAMPLE:<br />
+<br />
+&lt;featureManager&gt;<br />
+    &lt;feature&gt;logstashCollector-1.0&lt;/feature&gt;<br />
+&lt;/featureManager&gt;<br />
+<br />
+&lt;keyStore id=&quot;defaultKeyStore&quot; password=&quot;xxxxxxx&quot; /&gt;<br />
+&lt;keyStore id=&quot;defaultTrustStore&quot; location=&quot;trust.jks&quot; password=&quot;xxxxxxx&quot; /&gt;<br />
+&lt;ssl id=&quot;myTLSConfig&quot; trustStoreRef=&quot;defaultTrustStore&quot; keyStoreRef=&quot;defaultKeyStore&quot; /&gt;<br />
+<br />
+&lt;logstashCollector <br />
+source=&quot;message,accessLog,audit&quot; <br />
+hostName=&quot;your ELK stack server&quot; <br />
+port=&quot;Your ELK stack port&quot; <br />
+sslRef=&quot;myTLSConfig&quot;&gt;<br />
+&lt;/logstashCollector&gt;</p><h2>Check Contents</h2><p>As a privileged user with local file access to ${server.config.dir}/server.xml, verify the logstashCollector-1.0 feature is enabled.<br />
+<br />
+grep -i -A5 logstashcollector server.xml<br />
+<br />
+EXAMPLE:<br />
+&lt;featureManager&gt;<br />
+    &lt;feature&gt;logstashCollector-1.0&lt;/feature&gt;<br />
+&lt;/featureManager&gt;<br />
+<br />
+&lt;logstashCollector source=&quot;message,accessLog,audit&quot;<br />
+          hostName=&quot;&lt;ip address of logstash server&gt;&quot;<br />
+          port=&quot;&lt;port of logstash server&gt;&quot;<br />
+          sslRef=&quot;DefaultTLSSettings&quot;<br />
+  &lt;/logstashCollector&gt;<br />
+<br />
+If &quot;logstashCollector&quot; is not a configured feature and the logstashCollector &quot;source&quot; setting does not contain &quot;message,accessLog,audit&quot;, this is a finding.</p><h2>Vulnerability Number</h2><p>V-250327</p><h2>Documentable</h2><p>False</p><h2>Rule Version</h2><p>IBMW-LS-000230</p><h2>Severity Override Guidance</h2><p>As a privileged user with local file access to ${server.config.dir}/server.xml, verify the logstashCollector-1.0 feature is enabled.<br />
+<br />
+grep -i -A5 logstashcollector server.xml<br />
+<br />
+EXAMPLE:<br />
+&lt;featureManager&gt;<br />
+    &lt;feature&gt;logstashCollector-1.0&lt;/feature&gt;<br />
+&lt;/featureManager&gt;<br />
+<br />
+&lt;logstashCollector source=&quot;message,accessLog,audit&quot;<br />
+          hostName=&quot;&lt;ip address of logstash server&gt;&quot;<br />
+          port=&quot;&lt;port of logstash server&gt;&quot;<br />
+          sslRef=&quot;DefaultTLSSettings&quot;<br />
+  &lt;/logstashCollector&gt;<br />
+<br />
+If &quot;logstashCollector&quot; is not a configured feature and the logstashCollector &quot;source&quot; setting does not contain &quot;message,accessLog,audit&quot;, this is a finding.</p><h2>Check Content Reference</h2><p>M</p><h2>Target Key</h2><p>5424</p></body></html>

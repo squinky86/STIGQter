@@ -1,0 +1,50 @@
+<!doctype html><html lang="en"><head><meta charset="utf-8"><title>STIGQter: STIG Check Details: SV-216746r856437_rule: The Cisco router must be configured to have Internet Control Message Protocol (ICMP) unreachable messages disabled on all external interfaces.</title><link rel="icon" type="image/svg+xml" href="STIGQter.svg" /><script async src="https://www.googletagmanager.com/gtag/js?id=UA-31381839-2"></script><script src="include.js"></script><script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-4110907817782130" crossorigin="anonymous"></script></head><body><div><img src="STIGQter.svg" alt="STIGQter" style="height:1em;" /> <a href="https://www.stigqter.com/">STIGQter</a>: <a href="main.html">STIG Summary</a>: <a href="U_Cisco_IOS-XR_Router_RTR_STIG_V3R3_Manual-xccdf.html">Cisco IOS XR Router RTR Security Technical Implementation Guide Version: 3 Release: 3 Benchmark Date: 01 Oct 2025</a>:</div> <h1>The Cisco router must be configured to have Internet Control Message Protocol (ICMP) unreachable messages disabled on all external interfaces.</h1><h2>DISA Rule</h2><p>SV-216746r856437_rule</p><h2>Vulnerability Number</h2><p>V-216746</p><h2>Group Title</h2><p>SRG-NET-000362-RTR-000113</p><h2>Rule Version</h2><p>CISC-RT-000170</p><h2>Severity</h2><p>CAT II</p><h2>CCI(s)</h2><ul><li>CCI-002385 - Protect against or limit the effects of organization-defined types of denial of service events.</li></ul><h2>Weight</h2><p>10</p><h2>Fix Recommendation</h2><p>Disable ip unreachables on all external interfaces as shown below.<br />
+<br />
+RP/0/0/CPU0:R3(config)#int g0/0/0/1<br />
+RP/0/0/CPU0:R3(config-if)#ipv4 unreachables disable <br />
+<br />
+Alternative – DODIN Backbone <br />
+<br />
+Configure the PE router to rate limit ICMP unreachable messages as shown in the example below.<br />
+<br />
+RP/0/0/CPU0:R3(config)#icmp ipv4 rate-limit unreachable df 1000<br />
+RP/0/0/CPU0:R3(config)#icmp ipv4 rate-limit unreachable 60000<br />
+RP/0/0/CPU0:R3(config)#end</p><h2>Check Contents</h2><p>Review the configuration to verify the ipv4 unreachables disable command has been configured on all external interfaces as shown in the configuration example below.<br />
+<br />
+interface GigabitEthernet0/0/0/1<br />
+ ipv4 address x.11.1.2 255.255.255.252<br />
+ ipv4 unreachables disable <br />
+<br />
+Note: ICMP unreachables must also be configured. On the Null0 interface if it is used to black hole traffic.<br />
+<br />
+If ICMP unreachable notifications are sent from any external or Null0 interface, this is a finding.<br />
+<br />
+Alternative – DODIN Backbone <br />
+<br />
+Verify that the PE router is configured to rate limit ICMP unreachable messages as shown in the example below.<br />
+<br />
+ip icmp ipv4 rate-limit unreachable 60000<br />
+ip icmp ipv4 rate-limit unreachable DF 1000<br />
+<br />
+Note: In the example above, packet-too-big message (ICMP Type 3 Code 4) can be sent once every second, while all other destination unreachable messages can be sent once every minute. This will avoid disrupting Path MTU Discovery for traffic traversing the backbone while mitigating the risk of an ICMP unreachable denial of service attack.<br />
+<br />
+IF the PE router is not configured to rate limit ICMP unreachable messages, this is a finding.</p><h2>Vulnerability Number</h2><p>V-216746</p><h2>Documentable</h2><p>False</p><h2>Rule Version</h2><p>CISC-RT-000170</p><h2>Severity Override Guidance</h2><p>Review the configuration to verify the ipv4 unreachables disable command has been configured on all external interfaces as shown in the configuration example below.<br />
+<br />
+interface GigabitEthernet0/0/0/1<br />
+ ipv4 address x.11.1.2 255.255.255.252<br />
+ ipv4 unreachables disable <br />
+<br />
+Note: ICMP unreachables must also be configured. On the Null0 interface if it is used to black hole traffic.<br />
+<br />
+If ICMP unreachable notifications are sent from any external or Null0 interface, this is a finding.<br />
+<br />
+Alternative – DODIN Backbone <br />
+<br />
+Verify that the PE router is configured to rate limit ICMP unreachable messages as shown in the example below.<br />
+<br />
+ip icmp ipv4 rate-limit unreachable 60000<br />
+ip icmp ipv4 rate-limit unreachable DF 1000<br />
+<br />
+Note: In the example above, packet-too-big message (ICMP Type 3 Code 4) can be sent once every second, while all other destination unreachable messages can be sent once every minute. This will avoid disrupting Path MTU Discovery for traffic traversing the backbone while mitigating the risk of an ICMP unreachable denial of service attack.<br />
+<br />
+IF the PE router is not configured to rate limit ICMP unreachable messages, this is a finding.</p><h2>Check Content Reference</h2><p>M</p><h2>Target Key</h2><p>4029</p></body></html>

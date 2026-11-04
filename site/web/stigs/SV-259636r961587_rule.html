@@ -1,0 +1,44 @@
+<!doctype html><html lang="en"><head><meta charset="utf-8"><title>STIGQter: STIG Check Details: SV-259636r961587_rule: The Exchange Edge server must point to a trusted list of DNS servers for external and internal resolution.</title><link rel="icon" type="image/svg+xml" href="STIGQter.svg" /><script async src="https://www.googletagmanager.com/gtag/js?id=UA-31381839-2"></script><script src="include.js"></script><script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-4110907817782130" crossorigin="anonymous"></script></head><body><div><img src="STIGQter.svg" alt="STIGQter" style="height:1em;" /> <a href="https://www.stigqter.com/">STIGQter</a>: <a href="main.html">STIG Summary</a>: <a href="U_MS_Exchange_2019_Edge_Server_STIG_V2R2_Manual-xccdf.html">Microsoft Exchange 2019 Edge Server Security Technical Implementation Guide Version: 2 Release: 2 Benchmark Date: 30 Jan 2025</a>:</div> <h1>The Exchange Edge server must point to a trusted list of DNS servers for external and internal resolution.</h1><h2>DISA Rule</h2><p>SV-259636r961587_rule</p><h2>Vulnerability Number</h2><p>V-259636</p><h2>Group Title</h2><p>SRG-APP-000424</p><h2>Rule Version</h2><p>EX19-ED-000224</p><h2>Severity</h2><p>CAT II</p><h2>CCI(s)</h2><ul><li>CCI-002466 - Request data integrity verification on the name/address resolution responses the system receives from authoritative sources.</li></ul><h2>Weight</h2><p>10</p><h2>Fix Recommendation</h2><p>Verify in the EDSP or consult with the appropriate personnel who manage which DNS servers to use for Internal and External DNS resolution.<br />
+<br />
+If a GUID for the External and Internal network adapters are applicable, then gather the values to populate the appropriate properties with the following commands:<br />
+<br />
+netsh lan show interfaces<br />
+<br />
+This will provide the adapters and the GUIDs for each. Identify the external and internal adapters for the Edge server.<br />
+<br />
+Once gathered, run the following:<br />
+<br />
+Set-TransportService -Identity &lt;name of server&gt; -ExternalDNSAdapterEnabled $true -ExternalDNSAdapterGuid &lt;externalAdapterGUID&gt; -InternalDNSAdapterEnabled $true -InternalDNSAdapterGuid &lt;InternalAdapterGuid&gt;<br />
+<br />
+If the &quot;ExternalDNSAdapterEnabled&quot; or InternalDNSAdapterEnabled are set to false, use the following to set the DNS configuration:<br />
+<br />
+Set-TransportService -Identity  &lt;name of server&gt; -InternalDNSServers @{add=&quot;Trusted DNS IP1&quot;,&quot;Trusted DNS IP2&quot;}<br />
+Set-TransportService -Identity  &lt;name of server&gt; -ExternalDNSServers @{add=&quot;Trusted DNS IP1&quot;,&quot;Trusted DNS IP2&quot;}</p><h2>Check Contents</h2><p>Verify in the EDSP or consult with the appropriate personnel who manage DNS which servers to use for Internal and External DNS resolution. <br />
+<br />
+If the server is not multi-homed, this does not apply.<br />
+<br />
+In Exchange Management Shell, run the following command:<br />
+<br />
+Get-TransportService |Format-List *dns*<br />
+<br />
+If &quot;ExternalDNSAdapterEnabled : True&quot;, and no GUID exists, this is a finding.<br />
+<br />
+If &quot;ExternalDNSAdapterEnabled : False&quot;, and the property &quot;ExternalDNSServers&quot; is not populated with the documented trusted DNS servers for External DNS queries, this is a finding.<br />
+<br />
+If &quot;InternalDNSAdapterEnabled : True&quot; and no GUID exists, this is a finding.<br />
+<br />
+If &quot;InternalDNSAdapterEnabled : False&quot; and the property &quot;InternalDNSServers&quot; is not populated the documented trusted DNS servers for Internal DNS queries, this is a finding.</p><h2>Vulnerability Number</h2><p>V-259636</p><h2>Documentable</h2><p>False</p><h2>Rule Version</h2><p>EX19-ED-000224</p><h2>Severity Override Guidance</h2><p>Verify in the EDSP or consult with the appropriate personnel who manage DNS which servers to use for Internal and External DNS resolution. <br />
+<br />
+If the server is not multi-homed, this does not apply.<br />
+<br />
+In Exchange Management Shell, run the following command:<br />
+<br />
+Get-TransportService |Format-List *dns*<br />
+<br />
+If &quot;ExternalDNSAdapterEnabled : True&quot;, and no GUID exists, this is a finding.<br />
+<br />
+If &quot;ExternalDNSAdapterEnabled : False&quot;, and the property &quot;ExternalDNSServers&quot; is not populated with the documented trusted DNS servers for External DNS queries, this is a finding.<br />
+<br />
+If &quot;InternalDNSAdapterEnabled : True&quot; and no GUID exists, this is a finding.<br />
+<br />
+If &quot;InternalDNSAdapterEnabled : False&quot; and the property &quot;InternalDNSServers&quot; is not populated the documented trusted DNS servers for Internal DNS queries, this is a finding.</p><h2>Check Content Reference</h2><p>M</p><h2>Target Key</h2><p>5579</p></body></html>

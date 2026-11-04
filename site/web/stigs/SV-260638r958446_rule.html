@@ -1,0 +1,34 @@
+<!doctype html><html lang="en"><head><meta charset="utf-8"><title>STIGQter: STIG Check Details: SV-260638r958446_rule: Ubuntu 22.04 LTS must generate audit records for any use of the setxattr, fsetxattr, lsetxattr, removexattr, fremovexattr, and lremovexattr system calls.</title><link rel="icon" type="image/svg+xml" href="STIGQter.svg" /><script async src="https://www.googletagmanager.com/gtag/js?id=UA-31381839-2"></script><script src="include.js"></script><script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-4110907817782130" crossorigin="anonymous"></script></head><body><div><img src="STIGQter.svg" alt="STIGQter" style="height:1em;" /> <a href="https://www.stigqter.com/">STIGQter</a>: <a href="main.html">STIG Summary</a>: <a href="U_CAN_Ubuntu_22-04_LTS_STIG_V2R9_Manual-xccdf.html">Canonical Ubuntu 22.04 LTS Security Technical Implementation Guide Version: 2 Release: 9 Benchmark Date: 01 Jul 2026</a>:</div> <h1>Ubuntu 22.04 LTS must generate audit records for any use of the setxattr, fsetxattr, lsetxattr, removexattr, fremovexattr, and lremovexattr system calls.</h1><h2>DISA Rule</h2><p>SV-260638r958446_rule</p><h2>Vulnerability Number</h2><p>V-260638</p><h2>Group Title</h2><p>SRG-OS-000064-GPOS-00033</p><h2>Rule Version</h2><p>UBTU-22-654180</p><h2>Severity</h2><p>CAT II</p><h2>CCI(s)</h2><ul><li>CCI-000172 - Generate audit records for the event types defined in AU-2 c that include the audit record content defined in AU-3.</li></ul><h2>Weight</h2><p>10</p><h2>Fix Recommendation</h2><p>Configure the audit system to generate an audit event for any successful/unsuccessful use of the &quot;setxattr&quot;, &quot;fsetxattr&quot;, &quot;lsetxattr&quot;, &quot;removexattr&quot;, &quot;fremovexattr&quot;, and &quot;lremovexattr&quot; system calls.  <br />
+  <br />
+Add or modify the following lines in the &quot;/etc/audit/rules.d/stig.rules&quot; file:  <br />
+  <br />
+-a always,exit -F arch=b32 -S setxattr,fsetxattr,lsetxattr,removexattr,fremovexattr,lremovexattr -F auid&gt;=1000 -F auid!=unset -k perm_mod  <br />
+-a always,exit -F arch=b32 -S setxattr,fsetxattr,lsetxattr,removexattr,fremovexattr,lremovexattr -F auid=0 -k perm_mod   <br />
+-a always,exit -F arch=b64 -S setxattr,fsetxattr,lsetxattr,removexattr,fremovexattr,lremovexattr -F auid&gt;=1000 -F auid!=unset -k perm_mod  <br />
+-a always,exit -F arch=b64 -S setxattr,fsetxattr,lsetxattr,removexattr,fremovexattr,lremovexattr -F auid=0 -k perm_mod   <br />
+  <br />
+To reload the rules file, issue the following command:  <br />
+  <br />
+     $ sudo augenrules --load <br />
+ <br />
+Note: The &quot;-k &lt;keyname&gt;&quot; at the end of the line gives the rule a unique meaning to help during an audit investigation. The &lt;keyname&gt; does not need to match the example above.</p><h2>Check Contents</h2><p>Verify Ubuntu 22.04 LTS generates an audit record upon successful/unsuccessful attempts to use the &quot;setxattr&quot;, &quot;fsetxattr&quot;, &quot;lsetxattr&quot;, &quot;removexattr&quot;, &quot;fremovexattr&quot;, and &quot;lremovexattr&quot; system calls by using the following command:  <br />
+  <br />
+     $ sudo auditctl -l | grep xattr  <br />
+     -a always,exit -F arch=b32 -S setxattr,fsetxattr,lsetxattr,removexattr,fremovexattr,lremovexattr -F auid&gt;=1000 -F auid!=-1 -F key=perm_mod  <br />
+     -a always,exit -F arch=b32 -S setxattr,fsetxattr,lsetxattr,removexattr,fremovexattr,lremovexattr -F auid=0 -k perm_mod   <br />
+     -a always,exit -F arch=b64 -S setxattr,fsetxattr,lsetxattr,removexattr,fremovexattr,lremovexattr -F auid&gt;=1000 -F auid!=-1 -F key=perm_mod  <br />
+     -a always,exit -F arch=b64 -S setxattr,fsetxattr,lsetxattr,removexattr,fremovexattr,lremovexattr -F auid=0 -k perm_mod   <br />
+  <br />
+If the command does not return audit rules for the &quot;setxattr&quot;, &quot;fsetxattr&quot;, &quot;lsetxattr&quot;, &quot;removexattr&quot;, &quot;fremovexattr&quot; and &quot;lremovexattr&quot; syscalls or the lines are commented out, this is a finding.  <br />
+  <br />
+Note: The &quot;key=&quot; value is arbitrary and can be different from the example output above.</p><h2>Vulnerability Number</h2><p>V-260638</p><h2>Documentable</h2><p>False</p><h2>Rule Version</h2><p>UBTU-22-654180</p><h2>Severity Override Guidance</h2><p>Verify Ubuntu 22.04 LTS generates an audit record upon successful/unsuccessful attempts to use the &quot;setxattr&quot;, &quot;fsetxattr&quot;, &quot;lsetxattr&quot;, &quot;removexattr&quot;, &quot;fremovexattr&quot;, and &quot;lremovexattr&quot; system calls by using the following command:  <br />
+  <br />
+     $ sudo auditctl -l | grep xattr  <br />
+     -a always,exit -F arch=b32 -S setxattr,fsetxattr,lsetxattr,removexattr,fremovexattr,lremovexattr -F auid&gt;=1000 -F auid!=-1 -F key=perm_mod  <br />
+     -a always,exit -F arch=b32 -S setxattr,fsetxattr,lsetxattr,removexattr,fremovexattr,lremovexattr -F auid=0 -k perm_mod   <br />
+     -a always,exit -F arch=b64 -S setxattr,fsetxattr,lsetxattr,removexattr,fremovexattr,lremovexattr -F auid&gt;=1000 -F auid!=-1 -F key=perm_mod  <br />
+     -a always,exit -F arch=b64 -S setxattr,fsetxattr,lsetxattr,removexattr,fremovexattr,lremovexattr -F auid=0 -k perm_mod   <br />
+  <br />
+If the command does not return audit rules for the &quot;setxattr&quot;, &quot;fsetxattr&quot;, &quot;lsetxattr&quot;, &quot;removexattr&quot;, &quot;fremovexattr&quot; and &quot;lremovexattr&quot; syscalls or the lines are commented out, this is a finding.  <br />
+  <br />
+Note: The &quot;key=&quot; value is arbitrary and can be different from the example output above.</p><h2>Check Content Reference</h2><p>M</p><h2>Target Key</h2><p>5594</p></body></html>

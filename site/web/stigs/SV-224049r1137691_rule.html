@@ -1,0 +1,228 @@
+<!doctype html><html lang="en"><head><meta charset="utf-8"><title>STIGQter: STIG Check Details: SV-224049r1137691_rule: IBM z/OS DFSMS resources must be protected in accordance with the proper security requirements.</title><link rel="icon" type="image/svg+xml" href="STIGQter.svg" /><script async src="https://www.googletagmanager.com/gtag/js?id=UA-31381839-2"></script><script src="include.js"></script><script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-4110907817782130" crossorigin="anonymous"></script></head><body><div><img src="STIGQter.svg" alt="STIGQter" style="height:1em;" /> <a href="https://www.stigqter.com/">STIGQter</a>: <a href="main.html">STIG Summary</a>: <a href="U_IBM_zOS_TSS_STIG_V9R9_Manual-xccdf.html">IBM z/OS TSS Security Technical Implementation Guide Version: 9 Release: 9 Benchmark Date: 01 Jul 2026</a>:</div> <h1>IBM z/OS DFSMS resources must be protected in accordance with the proper security requirements.</h1><h2>DISA Rule</h2><p>SV-224049r1137691_rule</p><h2>Vulnerability Number</h2><p>V-224049</p><h2>Group Title</h2><p>SRG-OS-000080-GPOS-00048</p><h2>Rule Version</h2><p>TSS0-SM-000010</p><h2>Severity</h2><p>CAT II</p><h2>CCI(s)</h2><ul><li>CCI-000213 - Enforce approved authorizations for logical access to information and system resources in accordance with applicable access control policies.</li><li>CCI-002235 - Prevent non-privileged users from executing privileged functions.</li></ul><h2>Weight</h2><p>10</p><h2>Fix Recommendation</h2><p>Ensure that the following are properly specified in the ESM.<br />
+<br />
+Note: The resources and/or resource prefixes identified below are examples of a possible installation. The actual resource type, resources, and/or resource prefixes are determined when the product is actually installed on a system through the product's installation guide and can be site specific.<br />
+<br />
+Below is listed the access requirements for SMS Resources. Ensure the guidelines for the resources and/or generic equivalent are followed.<br />
+<br />
+The TSS resources are owned and/or DEFPROT is specified for the resource class.<br />
+<br />
+Configure resource STGADMIN.IGG.CATALOG.SECURITY.CHANGE with no access.<br />
+Note: The resource STGADMIN.IGG.CATALOG.SECURITY.CHANGE can be defined with read access for migration purposes. If it is, a detailed migration plan must be documented and filed with the ISSM that determines a definite migration period. All access must be logged. At the completion of migration this resource must be configured with access = NONE.<br />
+<br />
+Configure STGADMIN.IGG.CATALOG.SECURITY.BOTH to have READ access for all.<br />
+<br />
+TSS ADD(ADMIN) IBMFAC(STGADMIN)<br />
+or<br />
+TSS REPLACE(RDT) RESCLASS(IBMFAC) ATTR(DEFPROT)<br />
+The STGADMIN.DPDSRN.olddsname is restricted to System Programmers and all access is logged.<br />
+<br />
+Example:<br />
+TSS PERMIT(syspsmpl) IBMFAC(STGADMIN.DPDSRN.olddsname) -<br />
+ACCESS(READ) ACTION(AUDIT)<br />
+<br />
+The STGADMIN.IGD.ACTIVATE.CONFIGURATION is restricted to system programmers and all access is logged.<br />
+<br />
+Example:<br />
+TSS PERMIT(syspsmpl) IBMFAC(STGADMIN.IGD.ACTIVATE.CONFIGURATION) -<br />
+ACCESS(READ) ACTION(AUDIT)<br />
+<br />
+The STGADMIN.IGG.DEFDEL.UALIAS is restricted to system programmers and security personnel and all access is logged.<br />
+<br />
+Example:<br />
+TSS PERMIT(secasmpl) IBMFAC(STGADMIN.IGG.DEFDEL.UALIAS) -<br />
+ACCESS(READ) ACTION(AUDIT)<br />
+TSS PERMIT(secdsmpl) IBMFAC(STGADMIN.IGG.DEFDEL.UALIAS) -<br />
+ACCESS(READ) ACTION(AUDIT)<br />
+TSS PERMIT(syspsmpl) IBMFAC(STGADMIN.IGG.DEFDEL.UALIAS) -<br />
+ACCESS(READ) ACTION(AUDIT)<br />
+<br />
+The following resources and prefixes may be available to the end user.<br />
+<br />
+Example:<br />
+STGADMIN.ADR.COPY.CNCURRNT<br />
+STGADMIN.ADR.COPY.FLASHCPY<br />
+STGADMIN.ADR.COPY.TOLERATE.ENQF<br />
+STGADMIN.ADR.DUMP.CNCURRNT<br />
+STGADMIN.ADR.DUMP.TOLERATE.ENQF<br />
+STGADMIN.ADR.RESTORE.TOLERATE.ENQF<br />
+STGADMIN.ARC.ENDUSER.<br />
+STGADMIN.IGG.ALTER.SMS<br />
+<br />
+Example:<br />
+TSS PERMIT(endusers) IBMFAC(STGADMIN.ADR.COPY.CNCURRNT.) -<br />
+ACCESS(READ)<br />
+<br />
+The following resource is restricted to Application Production Support Team members, Automated Operations, DASD managers, and system programmers.<br />
+<br />
+STGADMIN.IDC.DCOLLECT<br />
+<br />
+Example:<br />
+TSS PERMIT(appssmpl) IBMFAC(STGADMIN.IDC.DCOLLECT) ACCESS(READ)<br />
+TSS PERMIT(autosmpl) IBMFAC(STGADMIN.IDC.DCOLLECT) ACCESS(READ)<br />
+TSS PERMIT(dasbsmpl) IBMFAC(STGADMIN.IDC.DCOLLECT) ACCESS(READ)<br />
+TSS PERMIT(dasdsmpl) IBMFAC(STGADMIN.IDC.DCOLLECT) ACCESS(READ)<br />
+TSS PERMIT(syspsmpl) IBMFAC(STGADMIN.IDC.DCOLLECT) ACCESS(READ)<br />
+<br />
+The following resources are restricted to Application Production Support Team members, DASD managers, and system programmers.<br />
+<br />
+Example:<br />
+STGADMIN.ARC.CANCEL<br />
+STGADMIN.ARC.LIST<br />
+STGADMIN.ARC.QUERY<br />
+STGADMIN.ARC.REPORT<br />
+STGADMIN.DMO.CONFIG<br />
+STGADMIN.IFG.READVTOC<br />
+STGADMIN.IGG.DELGDG.FORCE<br />
+<br />
+Example:<br />
+TSS PERMIT(appssmpl) IBMFAC(STGADMIN.ARC.CANCEL) ACCESS(READ)<br />
+TSS PERMIT(dasbsmpl) IBMFAC(STGADMIN.ARC.CANCEL) ACCESS(READ)<br />
+TSS PERMIT(dasdsmpl) IBMFAC(STGADMIN.ARC.CANCEL) ACCESS(READ)<br />
+TSS PERMIT(syspsmpl) IBMFAC(STGADMIN.ARC.CANCEL) ACCESS(READ)<br />
+<br />
+The following resource prefixes, at a minimum, are restricted to DASD managers and system programmers.<br />
+<br />
+STGADMIN.ADR<br />
+STGADMIN.ANT<br />
+STGADMIN.ARC<br />
+STGADMIN.DMO<br />
+STGADMIN.ICK<br />
+STGADMIN.IDC<br />
+STGADMIN.IFG<br />
+STGADMIN.IGG<br />
+STGADMIN.IGWSHCDS<br />
+<br />
+Example:<br />
+<br />
+TSS PERMIT(dasbsmpl) IBMFAC(STGADMIN.ADR) ACCESS(READ)<br />
+TSS PERMIT(dasdsmpl) IBMFAC(STGADMIN.ADR) ACCESS(READ)<br />
+TSS PERMIT(syspsmpl) IBMFAC(STGADMIN.ADR) ACCESS(READ)<br />
+<br />
+The following Storage Administrator functions prefix is restricted to DASD managers and system programmers and all access is logged.<br />
+<br />
+STGADMIN.ADR.STGADMIN.<br />
+<br />
+Example:<br />
+<br />
+TSS PERMIT(dasbsmpl) IBMFAC(STGADMIN.ADR.STGADMIN.) ACCESS(READ) -<br />
+ACTION(AUDIT)<br />
+TSS PERMIT(dasdsmpl) IBMFAC(STGADMIN.ADR.STGADMIN.) ACCESS(READ) -<br />
+ACTION(AUDIT)<br />
+TSS PERMIT(syspsmpl) IBMFAC(STGADMIN.ADR.STGADMIN.) ACCESS(READ) -<br />
+ACTION(AUDIT)</p><h2>Check Contents</h2><p>If all SMS resources and/or generic equivalent are properly protected according to the requirements specified and the following guidance is true, this is not a finding.<br />
+<br />
+The TSS resources are owned or DEFPROT is specified for the resource class.<br />
+<br />
+To avoid authorization failures once a base cluster is accessed via a PATH or AIX by a user or application that has authority to the PATH and AIX, but not the base cluster, APAR OA50118 must be applied.<br />
+<br />
+The resource STGADMIN.IGG.CATALOG.SECURITY.CHANGE is defined with access of NONE.<br />
+The resource STGADMIN.IGG.CATALOG.SECURITY.BOTH is defined with access of READ.<br />
+<br />
+Note: The resource STGADMIN.IGG.CATALOG.SECURITY.CHANGE can be defined with read access for migration purposes. If it is, a detailed migration plan must be documented and filed by the ISSM that determines a definite migration period. All access must be logged. At the completion of migration, this resource must be configured with access of NONE.<br />
+<br />
+If the resource STGADMIN.IGG.CATALOG.SECURITY.CHANGE and STGADMIN.IGG.CATALOG.SECURITY.BOTH are both defined, ADMIN.IGG.CATALOG.SECURITY.BOTH takes precedence.<br />
+<br />
+STGADMIN.DPDSRN.olddsname is restricted to system programmers and all access is logged.<br />
+<br />
+The STGADMIN.IGD.ACTIVATE.CONFIGURATION is restricted to system programmers and all access is logged.<br />
+<br />
+The STGADMIN.IGG.DEFDEL.UALIAS is restricted to centralized and decentralized security personnel and system programmers and all access is logged.<br />
+<br />
+The following resources and prefixes may be available to the end user.<br />
+<br />
+STGADMIN.ADR.COPY.CNCURRNT<br />
+STGADMIN.ADR.COPY.FLASHCPY<br />
+STGADMIN.ADR.COPY.TOLERATE.ENQF<br />
+STGADMIN.ADR.DUMP.CNCURRNT<br />
+STGADMIN.ADR.DUMP.TOLERATE.ENQF<br />
+STGADMIN.ADR.RESTORE.TOLERATE.ENQF<br />
+STGADMIN.ARC.ENDUSER.<br />
+STGADMIN.IGG.ALTER.SMS<br />
+<br />
+The following resource is restricted to Application Production Support Team members, Automated Operations, DASD managers, and system programmers.<br />
+<br />
+STGADMIN.IDC.DCOLLECT<br />
+<br />
+The following resources are restricted to Application Production Support Team members, DASD managers, and system programmers.<br />
+<br />
+STGADMIN.ARC.CANCEL<br />
+STGADMIN.ARC.LIST<br />
+STGADMIN.ARC.QUERY<br />
+STGADMIN.ARC.REPORT<br />
+STGADMIN.DMO.CONFIG<br />
+STGADMIN.IFG.READVTOC<br />
+STGADMIN.IGG.DELGDG.FORCE<br />
+<br />
+The following resource prefixes, at a minimum, are restricted to DASD managers and system programmers.<br />
+<br />
+STGADMIN.ADR<br />
+STGADMIN.ANT<br />
+STGADMIN.ARC<br />
+STGADMIN.DMO<br />
+STGADMIN.ICK<br />
+STGADMIN.IDC<br />
+STGADMIN.IFG<br />
+STGADMIN.IGG<br />
+STGADMIN.IGWSHCDS<br />
+<br />
+The following Storage Administrator functions prefix is restricted to DASD managers and system programmers and all access is logged.<br />
+<br />
+STGADMIN.ADR.STGADMIN.</p><h2>Vulnerability Number</h2><p>V-224049</p><h2>Documentable</h2><p>False</p><h2>Rule Version</h2><p>TSS0-SM-000010</p><h2>Severity Override Guidance</h2><p>If all SMS resources and/or generic equivalent are properly protected according to the requirements specified and the following guidance is true, this is not a finding.<br />
+<br />
+The TSS resources are owned or DEFPROT is specified for the resource class.<br />
+<br />
+To avoid authorization failures once a base cluster is accessed via a PATH or AIX by a user or application that has authority to the PATH and AIX, but not the base cluster, APAR OA50118 must be applied.<br />
+<br />
+The resource STGADMIN.IGG.CATALOG.SECURITY.CHANGE is defined with access of NONE.<br />
+The resource STGADMIN.IGG.CATALOG.SECURITY.BOTH is defined with access of READ.<br />
+<br />
+Note: The resource STGADMIN.IGG.CATALOG.SECURITY.CHANGE can be defined with read access for migration purposes. If it is, a detailed migration plan must be documented and filed by the ISSM that determines a definite migration period. All access must be logged. At the completion of migration, this resource must be configured with access of NONE.<br />
+<br />
+If the resource STGADMIN.IGG.CATALOG.SECURITY.CHANGE and STGADMIN.IGG.CATALOG.SECURITY.BOTH are both defined, ADMIN.IGG.CATALOG.SECURITY.BOTH takes precedence.<br />
+<br />
+STGADMIN.DPDSRN.olddsname is restricted to system programmers and all access is logged.<br />
+<br />
+The STGADMIN.IGD.ACTIVATE.CONFIGURATION is restricted to system programmers and all access is logged.<br />
+<br />
+The STGADMIN.IGG.DEFDEL.UALIAS is restricted to centralized and decentralized security personnel and system programmers and all access is logged.<br />
+<br />
+The following resources and prefixes may be available to the end user.<br />
+<br />
+STGADMIN.ADR.COPY.CNCURRNT<br />
+STGADMIN.ADR.COPY.FLASHCPY<br />
+STGADMIN.ADR.COPY.TOLERATE.ENQF<br />
+STGADMIN.ADR.DUMP.CNCURRNT<br />
+STGADMIN.ADR.DUMP.TOLERATE.ENQF<br />
+STGADMIN.ADR.RESTORE.TOLERATE.ENQF<br />
+STGADMIN.ARC.ENDUSER.<br />
+STGADMIN.IGG.ALTER.SMS<br />
+<br />
+The following resource is restricted to Application Production Support Team members, Automated Operations, DASD managers, and system programmers.<br />
+<br />
+STGADMIN.IDC.DCOLLECT<br />
+<br />
+The following resources are restricted to Application Production Support Team members, DASD managers, and system programmers.<br />
+<br />
+STGADMIN.ARC.CANCEL<br />
+STGADMIN.ARC.LIST<br />
+STGADMIN.ARC.QUERY<br />
+STGADMIN.ARC.REPORT<br />
+STGADMIN.DMO.CONFIG<br />
+STGADMIN.IFG.READVTOC<br />
+STGADMIN.IGG.DELGDG.FORCE<br />
+<br />
+The following resource prefixes, at a minimum, are restricted to DASD managers and system programmers.<br />
+<br />
+STGADMIN.ADR<br />
+STGADMIN.ANT<br />
+STGADMIN.ARC<br />
+STGADMIN.DMO<br />
+STGADMIN.ICK<br />
+STGADMIN.IDC<br />
+STGADMIN.IFG<br />
+STGADMIN.IGG<br />
+STGADMIN.IGWSHCDS<br />
+<br />
+The following Storage Administrator functions prefix is restricted to DASD managers and system programmers and all access is logged.<br />
+<br />
+STGADMIN.ADR.STGADMIN.</p><h2>Check Content Reference</h2><p>M</p><h2>Target Key</h2><p>4102</p></body></html>

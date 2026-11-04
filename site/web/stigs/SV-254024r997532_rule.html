@@ -1,0 +1,87 @@
+<!doctype html><html lang="en"><head><meta charset="utf-8"><title>STIGQter: STIG Check Details: SV-254024r997532_rule: The Juniper PE router must be configured to ignore or block all packets with any IP options.</title><link rel="icon" type="image/svg+xml" href="STIGQter.svg" /><script async src="https://www.googletagmanager.com/gtag/js?id=UA-31381839-2"></script><script src="include.js"></script><script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-4110907817782130" crossorigin="anonymous"></script></head><body><div><img src="STIGQter.svg" alt="STIGQter" style="height:1em;" /> <a href="https://www.stigqter.com/">STIGQter</a>: <a href="main.html">STIG Summary</a>: <a href="U_Juniper_EX_Switches_RTR_STIG_V2R1_Manual-xccdf.html">Juniper EX Series Switches Router Security Technical Implementation Guide Version: 2 Release: 1 Benchmark Date: 24 Jul 2024</a>:</div> <h1>The Juniper PE router must be configured to ignore or block all packets with any IP options.</h1><h2>DISA Rule</h2><p>SV-254024r997532_rule</p><h2>Vulnerability Number</h2><p>V-254024</p><h2>Group Title</h2><p>SRG-NET-000205-RTR-000016</p><h2>Rule Version</h2><p>JUEX-RT-000520</p><h2>Severity</h2><p>CAT II</p><h2>CCI(s)</h2><ul><li>CCI-002403 - Only allow incoming communications from organization-defined authorized sources routed to organization-defined authorized destinations.</li><li>CCI-004866 - Employ organization-defined controls by type of denial-of-service to achieve the denial-of-service objective.</li></ul><h2>Weight</h2><p>10</p><h2>Fix Recommendation</h2><p>Configure the router to drop all packets with IP options.<br />
+<br />
+set firewall family inet filter &lt;filter name&gt; term 1 from ip-options any<br />
+set firewall family inet filter &lt;filter name&gt; term 1 then log<br />
+set firewall family inet filter &lt;filter name&gt; term 1 then syslog<br />
+set firewall family inet filter &lt;filter name&gt; term 1 then discard<br />
+&lt;additional accept terms&gt;<br />
+set firewall family inet filter default term 1 then log<br />
+set firewall family inet filter default term 1 then syslog<br />
+set firewall family inet filter default term 1 then discard<br />
+<br />
+set interfaces &lt;interface name&gt; unit &lt;number&gt; family inet filter input &lt;filter name&gt;<br />
+set interfaces &lt;interface name&gt; unit &lt;number&gt; family inet address &lt;IPv4 address&gt;/&lt;mask&gt;</p><h2>Check Contents</h2><p>Review the router configuration to determine if it will block all packets with IP options.<br />
+<br />
+[edit firewall family inet]<br />
+filter &lt;name&gt; {<br />
+    term 1 {<br />
+        from {<br />
+            ip-options any;<br />
+        }<br />
+        then {<br />
+            log;<br />
+            syslog;<br />
+            discard;<br />
+        }<br />
+    }<br />
+    &lt;additional accept terms&gt;<br />
+    term default {<br />
+        then {<br />
+            log;<br />
+            syslog;<br />
+            discard;<br />
+        }<br />
+    }<br />
+}<br />
+[edit interfaces]<br />
+&lt;interface name&gt; {<br />
+    unit &lt;number&gt; {<br />
+        family inet {<br />
+            filter input &lt;filter name&gt;;<br />
+            address &lt;IPv4 address&gt;/&lt;mask&gt;;<br />
+        }<br />
+    }<br />
+}<br />
+<br />
+Note: Some Juniper devices support both monolithic filters and filter lists. Filter lists separate each term, or set of terms, into a separate filter that is applied sequentially to an interface. If using filter lists, the keywords &quot;input&quot; or &quot;output&quot; change to &quot;input-list&quot; or &quot;output-list&quot;. Verify the final list item is a deny-all filter. The deny-all filter is created once per family and can be reused across multiple lists. For example:<br />
+<br />
+input-list [ permit_mgt permit_routing_protocols default-deny ];<br />
+<br />
+If the router is not configured to drop all packets with IP options, this is a finding.</p><h2>Vulnerability Number</h2><p>V-254024</p><h2>Documentable</h2><p>False</p><h2>Rule Version</h2><p>JUEX-RT-000520</p><h2>Severity Override Guidance</h2><p>Review the router configuration to determine if it will block all packets with IP options.<br />
+<br />
+[edit firewall family inet]<br />
+filter &lt;name&gt; {<br />
+    term 1 {<br />
+        from {<br />
+            ip-options any;<br />
+        }<br />
+        then {<br />
+            log;<br />
+            syslog;<br />
+            discard;<br />
+        }<br />
+    }<br />
+    &lt;additional accept terms&gt;<br />
+    term default {<br />
+        then {<br />
+            log;<br />
+            syslog;<br />
+            discard;<br />
+        }<br />
+    }<br />
+}<br />
+[edit interfaces]<br />
+&lt;interface name&gt; {<br />
+    unit &lt;number&gt; {<br />
+        family inet {<br />
+            filter input &lt;filter name&gt;;<br />
+            address &lt;IPv4 address&gt;/&lt;mask&gt;;<br />
+        }<br />
+    }<br />
+}<br />
+<br />
+Note: Some Juniper devices support both monolithic filters and filter lists. Filter lists separate each term, or set of terms, into a separate filter that is applied sequentially to an interface. If using filter lists, the keywords &quot;input&quot; or &quot;output&quot; change to &quot;input-list&quot; or &quot;output-list&quot;. Verify the final list item is a deny-all filter. The deny-all filter is created once per family and can be reused across multiple lists. For example:<br />
+<br />
+input-list [ permit_mgt permit_routing_protocols default-deny ];<br />
+<br />
+If the router is not configured to drop all packets with IP options, this is a finding.</p><h2>Check Content Reference</h2><p>M</p><h2>Target Key</h2><p>5479</p></body></html>

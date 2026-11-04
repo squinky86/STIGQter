@@ -1,0 +1,57 @@
+<!doctype html><html lang="en"><head><meta charset="utf-8"><title>STIGQter: STIG Check Details: SV-279621r1192336_rule: Nutanix OS must protect the confidentiality and integrity of all information at rest.</title><link rel="icon" type="image/svg+xml" href="STIGQter.svg" /><script async src="https://www.googletagmanager.com/gtag/js?id=UA-31381839-2"></script><script src="include.js"></script><script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-4110907817782130" crossorigin="anonymous"></script></head><body><div><img src="STIGQter.svg" alt="STIGQter" style="height:1em;" /> <a href="https://www.stigqter.com/">STIGQter</a>: <a href="main.html">STIG Summary</a>: <a href="U_NTX_Acropolis_OS_STIG_V1R1_Manual-xccdf.html">Nutanix Acropolis GPOS Security Technical Implementation Guide Version: 1 Release: 1 Benchmark Date: 26 Jan 2026</a>:</div> <h1>Nutanix OS must protect the confidentiality and integrity of all information at rest.</h1><h2>DISA Rule</h2><p>SV-279621r1192336_rule</p><h2>Vulnerability Number</h2><p>V-279621</p><h2>Group Title</h2><p>SRG-OS-000185-GPOS-00079</p><h2>Rule Version</h2><p>NXAC-OS-000188</p><h2>Severity</h2><p>CAT I</p><h2>CCI(s)</h2><ul><li>CCI-001199 - Protects the confidentiality and/or integrity of organization-defined information at rest.</li><li>CCI-002475 - Implement cryptographic mechanisms to prevent unauthorized modification of organization-defined information when at rest on organization-defined system components.</li><li>CCI-002476 - Implement cryptographic mechanisms to prevent unauthorized disclosure of organization-defined information at rest on organization-defined system components.</li></ul><h2>Weight</h2><p>10</p><h2>Fix Recommendation</h2><p>1. For AOS, Prism Central, and Files, file partition encryption is done during installation. During foundation, there is an installation option box to enable &quot;crypto_LUKS&quot;, this must be ticked before proceeding with installation. If data-at-rest encryption is not enabled during installation, the system must be re-installed with the proper options selected.<br />
+<br />
+2. For AHV, configure data-at-rest encryption on partitions using Luks Crypto modules. Enabling partition encryption must be done during imaging using Foundation VM. On the foundation VM in the imaging deployment screen, select tick the option, then enter the following command.<br />
+<br />
+enable_luks=true</p><h2>Check Contents</h2><p>1. For AOS, Prism Central, and Files, verify every persistent disk partition present is the type &quot;crytpo_LUKS&quot; using the following command.<br />
+<br />
+$ sudo blkid<br />
+/dev/sdb4: UUID=&quot;990b15e8-64b1-4720-bc63-57d1ffdfef96&quot; TYPE=&quot;crypto_LUKS&quot; PARTLABEL=&quot;primary&quot; PARTUUID=&quot;860391ab-f6dd-4315-915c-9bf3f5aec840&quot;<br />
+/dev/sdc1: UUID=&quot;a61e3060-a330-420f-be2e-dd25f4a4d5cc&quot; TYPE=&quot;crypto_LUKS&quot; PARTLABEL=&quot;primary&quot; PARTUUID=&quot;c685393a-1bea-4831-9058-7baadc5f5bfb&quot;<br />
+/dev/sdd1: UUID=&quot;4a45d2a9-1022-4f12-b547-df565f21c10d&quot; TYPE=&quot;crypto_LUKS&quot; PARTLABEL=&quot;primary&quot; PARTUUID=&quot;7ec91c7a-211d-43cf-8766-1f976d1a2ee6&quot;<br />
+/dev/sde1: UUID=&quot;7932a4d3-4e6b-44cc-a91b-2163e1a2ae08&quot; TYPE=&quot;crypto_LUKS&quot; PARTLABEL=&quot;primary&quot; PARTUUID=&quot;eea7b909-f533-47cf-af9a-fbe6547f1a81&quot;<br />
+/dev/sdf1: UUID=&quot;fb191583-434d-4efe-af42-649b0a8d8d7e&quot; TYPE=&quot;crypto_LUKS&quot; PARTLABEL=&quot;primary&quot; PARTUUID=&quot;8db3b9f9-db7e-4e23-b13a-813cdd9fcac5&quot;<br />
+/dev/md2: UUID=&quot;8f9f9b65-feeb-4008-8e6a-0fab3bc3b0cc&quot; TYPE=&quot;crypto_LUKS&quot;<br />
+/dev/md1: UUID=&quot;c159835d-96de-4711-9090-4a2f3fa47b0c&quot; TYPE=&quot;crypto_LUKS&quot;<br />
+/dev/md0: UUID=&quot;b3eaf528-eb28-4afd-b7c8-8e2d03fe4a5e&quot; TYPE=&quot;crypto_LUKS&quot;<br />
+/dev/loop0: UUID=&quot;517f3cfa-1912-4ff0-94bb-c17d953947dc&quot; BLOCK_SIZE=&quot;4096&quot; TYPE=&quot;ext4&quot;<br />
+/dev/loop1: UUID=&quot;e2fb344c-991b-4f50-ac8c-76b7a369737f&quot; BLOCK_SIZE=&quot;4096&quot; TYPE=&quot;ext4&quot;<br />
+/dev/loop2: UUID=&quot;f9ca379d-74cb-49f4-9737-10852b04717d&quot; BLOCK_SIZE=&quot;4096&quot; TYPE=&quot;ext4&quot;<br />
+/dev/loop3: UUID=&quot;f9521269-ad69-4ac1-98c1-989d258bb996&quot; BLOCK_SIZE=&quot;1024&quot; TYPE=&quot;ext4&quot;<br />
+/dev/mapper/luks-b3eaf528-eb28-4afd-b7c8-8e2d03fe4a5e: UUID=&quot;90d4d623-919e-4d21-b4a3-66f10d23b76c&quot; B<br />
+<br />
+2. Verify that AHV is configured for data-at-rest encryption using LUKS Crypto modules using the following command.<br />
+<br />
+Note: A TPM hardware module is required on each AHV node.<br />
+<br />
+$ sudo blkid<br />
+/dev/mapper/AHV-root: UUID=&quot;67b7d7fe-de60-6fd0-befb-e6748cf97743&quot; TYPE=&quot;crypto_LUKS&quot;<br />
+<br />
+Every persistent disk partition present must be of type &quot;crypto_LUKS&quot;. If any partitions other than the boot partition or pseudo file systems (such as /proc or /sys) are not type &quot;crypto_LUKS&quot;, ask the administrator to indicate how the partitions are encrypted. <br />
+<br />
+If partitions are not encrypted, this is a finding.</p><h2>Vulnerability Number</h2><p>V-279621</p><h2>Documentable</h2><p>False</p><h2>Rule Version</h2><p>NXAC-OS-000188</p><h2>Severity Override Guidance</h2><p>1. For AOS, Prism Central, and Files, verify every persistent disk partition present is the type &quot;crytpo_LUKS&quot; using the following command.<br />
+<br />
+$ sudo blkid<br />
+/dev/sdb4: UUID=&quot;990b15e8-64b1-4720-bc63-57d1ffdfef96&quot; TYPE=&quot;crypto_LUKS&quot; PARTLABEL=&quot;primary&quot; PARTUUID=&quot;860391ab-f6dd-4315-915c-9bf3f5aec840&quot;<br />
+/dev/sdc1: UUID=&quot;a61e3060-a330-420f-be2e-dd25f4a4d5cc&quot; TYPE=&quot;crypto_LUKS&quot; PARTLABEL=&quot;primary&quot; PARTUUID=&quot;c685393a-1bea-4831-9058-7baadc5f5bfb&quot;<br />
+/dev/sdd1: UUID=&quot;4a45d2a9-1022-4f12-b547-df565f21c10d&quot; TYPE=&quot;crypto_LUKS&quot; PARTLABEL=&quot;primary&quot; PARTUUID=&quot;7ec91c7a-211d-43cf-8766-1f976d1a2ee6&quot;<br />
+/dev/sde1: UUID=&quot;7932a4d3-4e6b-44cc-a91b-2163e1a2ae08&quot; TYPE=&quot;crypto_LUKS&quot; PARTLABEL=&quot;primary&quot; PARTUUID=&quot;eea7b909-f533-47cf-af9a-fbe6547f1a81&quot;<br />
+/dev/sdf1: UUID=&quot;fb191583-434d-4efe-af42-649b0a8d8d7e&quot; TYPE=&quot;crypto_LUKS&quot; PARTLABEL=&quot;primary&quot; PARTUUID=&quot;8db3b9f9-db7e-4e23-b13a-813cdd9fcac5&quot;<br />
+/dev/md2: UUID=&quot;8f9f9b65-feeb-4008-8e6a-0fab3bc3b0cc&quot; TYPE=&quot;crypto_LUKS&quot;<br />
+/dev/md1: UUID=&quot;c159835d-96de-4711-9090-4a2f3fa47b0c&quot; TYPE=&quot;crypto_LUKS&quot;<br />
+/dev/md0: UUID=&quot;b3eaf528-eb28-4afd-b7c8-8e2d03fe4a5e&quot; TYPE=&quot;crypto_LUKS&quot;<br />
+/dev/loop0: UUID=&quot;517f3cfa-1912-4ff0-94bb-c17d953947dc&quot; BLOCK_SIZE=&quot;4096&quot; TYPE=&quot;ext4&quot;<br />
+/dev/loop1: UUID=&quot;e2fb344c-991b-4f50-ac8c-76b7a369737f&quot; BLOCK_SIZE=&quot;4096&quot; TYPE=&quot;ext4&quot;<br />
+/dev/loop2: UUID=&quot;f9ca379d-74cb-49f4-9737-10852b04717d&quot; BLOCK_SIZE=&quot;4096&quot; TYPE=&quot;ext4&quot;<br />
+/dev/loop3: UUID=&quot;f9521269-ad69-4ac1-98c1-989d258bb996&quot; BLOCK_SIZE=&quot;1024&quot; TYPE=&quot;ext4&quot;<br />
+/dev/mapper/luks-b3eaf528-eb28-4afd-b7c8-8e2d03fe4a5e: UUID=&quot;90d4d623-919e-4d21-b4a3-66f10d23b76c&quot; B<br />
+<br />
+2. Verify that AHV is configured for data-at-rest encryption using LUKS Crypto modules using the following command.<br />
+<br />
+Note: A TPM hardware module is required on each AHV node.<br />
+<br />
+$ sudo blkid<br />
+/dev/mapper/AHV-root: UUID=&quot;67b7d7fe-de60-6fd0-befb-e6748cf97743&quot; TYPE=&quot;crypto_LUKS&quot;<br />
+<br />
+Every persistent disk partition present must be of type &quot;crypto_LUKS&quot;. If any partitions other than the boot partition or pseudo file systems (such as /proc or /sys) are not type &quot;crypto_LUKS&quot;, ask the administrator to indicate how the partitions are encrypted. <br />
+<br />
+If partitions are not encrypted, this is a finding.</p><h2>Check Content Reference</h2><p>M</p><h2>Target Key</h2><p>5730</p></body></html>

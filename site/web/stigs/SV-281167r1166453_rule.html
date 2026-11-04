@@ -1,0 +1,36 @@
+<!doctype html><html lang="en"><head><meta charset="utf-8"><title>STIGQter: STIG Check Details: SV-281167r1166453_rule: RHEL 10 must require a unique superusers name upon booting into single-user and maintenance modes.</title><link rel="icon" type="image/svg+xml" href="STIGQter.svg" /><script async src="https://www.googletagmanager.com/gtag/js?id=UA-31381839-2"></script><script src="include.js"></script><script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-4110907817782130" crossorigin="anonymous"></script></head><body><div><img src="STIGQter.svg" alt="STIGQter" style="height:1em;" /> <a href="https://www.stigqter.com/">STIGQter</a>: <a href="main.html">STIG Summary</a>: <a href="U_RHEL_10_STIG_V1R2_Manual-xccdf.html">Red Hat Enterprise Linux 10 Security Technical Implementation Guide Version: 1 Release: 2 Benchmark Date: 01 Jul 2026</a>:</div> <h1>RHEL 10 must require a unique superusers name upon booting into single-user and maintenance modes.</h1><h2>DISA Rule</h2><p>SV-281167r1166453_rule</p><h2>Vulnerability Number</h2><p>V-281167</p><h2>Group Title</h2><p>SRG-OS-000080-GPOS-00048</p><h2>Rule Version</h2><p>RHEL-10-600010</p><h2>Severity</h2><p>CAT II</p><h2>CCI(s)</h2><ul><li>CCI-000213 - Enforce approved authorizations for logical access to information and system resources in accordance with applicable access control policies.</li></ul><h2>Weight</h2><p>10</p><h2>Fix Recommendation</h2><p>Configure RHEL 10 to have a unique username for the grub superuser account.<br />
+<br />
+Edit the &quot;/etc/grub.d/01_users&quot; file and add or modify the following lines with a nondefault username for the superuser account:<br />
+<br />
+set superusers=&quot;&lt;accountname&gt;&quot;<br />
+export superusers<br />
+<br />
+Once the superuser account has been added, update the &quot;grub.cfg&quot; file by regenerating the GRUB configuration with the following command:<br />
+<br />
+$ sudo grub2-mkconfig -o /boot/grub2/grub.cfg --update-bls-cmdline<br />
+<br />
+Reboot the system:<br />
+<br />
+$ sudo reboot</p><h2>Check Contents</h2><p>Verify RHEL 10 requires a unique superusers name upon booting into single-user and maintenance modes.<br />
+<br />
+Verify that the boot loader superuser account has been set with the following command:<br />
+<br />
+$ sudo grep -A1 &quot;superusers&quot; /etc/grub2.cfg<br />
+set superusers=&quot;&lt;accountname&gt;&quot;<br />
+export superusers<br />
+password_pbkdf2 &lt;accountname&gt; ${GRUB2_PASSWORD}<br />
+<br />
+Verify &lt;accountname&gt; is not a common name such as root, admin, or administrator.<br />
+<br />
+If superusers contains easily guessable usernames, this is a finding.</p><h2>Vulnerability Number</h2><p>V-281167</p><h2>Documentable</h2><p>False</p><h2>Rule Version</h2><p>RHEL-10-600010</p><h2>Severity Override Guidance</h2><p>Verify RHEL 10 requires a unique superusers name upon booting into single-user and maintenance modes.<br />
+<br />
+Verify that the boot loader superuser account has been set with the following command:<br />
+<br />
+$ sudo grep -A1 &quot;superusers&quot; /etc/grub2.cfg<br />
+set superusers=&quot;&lt;accountname&gt;&quot;<br />
+export superusers<br />
+password_pbkdf2 &lt;accountname&gt; ${GRUB2_PASSWORD}<br />
+<br />
+Verify &lt;accountname&gt; is not a common name such as root, admin, or administrator.<br />
+<br />
+If superusers contains easily guessable usernames, this is a finding.</p><h2>Check Content Reference</h2><p>M</p><h2>Target Key</h2><p>5733</p></body></html>

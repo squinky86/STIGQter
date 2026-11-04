@@ -1,0 +1,33 @@
+<!doctype html><html lang="en"><head><meta charset="utf-8"><title>STIGQter: STIG Check Details: SV-283840r1203769_rule: The Nokia perimeter router must be configured drop IPv6 packets with a Routing Header type of 0, 1, or 3-255.</title><link rel="icon" type="image/svg+xml" href="STIGQter.svg" /><script async src="https://www.googletagmanager.com/gtag/js?id=UA-31381839-2"></script><script src="include.js"></script><script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-4110907817782130" crossorigin="anonymous"></script></head><body><div><img src="STIGQter.svg" alt="STIGQter" style="height:1em;" /> <a href="https://www.stigqter.com/">STIGQter</a>: <a href="main.html">STIG Summary</a>: <a href="U_Nokia_SR_OS_25-x_RTR_V1R1_STIG_Manual-xccdf.html">Nokia Service Router OS 25.x Router Security Technical Implementation Guide Version: 1 Release: 1 Benchmark Date: 28 Apr 2026</a>:</div> <h1>The Nokia perimeter router must be configured drop IPv6 packets with a Routing Header type of 0, 1, or 3-255.</h1><h2>DISA Rule</h2><p>SV-283840r1203769_rule</p><h2>Vulnerability Number</h2><p>V-283840</p><h2>Group Title</h2><p>SRG-NET-000364-RTR-000201</p><h2>Rule Version</h2><p>NOKI-RT-000220</p><h2>Severity</h2><p>CAT II</p><h2>CCI(s)</h2><ul><li>CCI-002403 - Only allow incoming communications from organization-defined authorized sources routed to organization-defined authorized destinations.</li></ul><h2>Weight</h2><p>10</p><h2>Fix Recommendation</h2><p>Configure the router to drop IPv6 packets with Routing Header of type 0, 1, or 3-255.<br />
+<br />
+Configure an IPv6 filter, as shown in the example below: <br />
+<br />
+- configure filter ipv6-filter 20 create<br />
+- config&gt;filter&gt;ipv6-filter# entry 20 create<br />
+- config&gt;filter&gt;ipv6-filter&gt;entry$ match routing-type0 true<br />
+- config&gt;filter&gt;ipv6-filter&gt;entry$ action drop<br />
+- config&gt;filter&gt;ipv6-filter&gt;entry$ exit all<br />
+<br />
+Apply the IPv6 filter to the interface:<br />
+<br />
+- configure router interface &quot;TO-PE2&quot; ingress filter ipv6 20</p><h2>Check Contents</h2><p>This requirement is not applicable for the DODIN Backbone. <br />
+<br />
+Review the router configuration to determine if it is configured to drop IPv6 packets containing a Routing Header of type 0, 1, or 3-255.<br />
+<br />
+Use the command below and determine if any &quot;Ingr IPv6 Flt&quot; is applied:<br />
+<br />
+- show router interface &quot;TO-PE2&quot; detail | match &quot;Ingr IPv6 Flt&quot;<br />
+<br />
+Egr IPv6 Flt     : none                 Ingr IPv6 Flt     : 20<br />
+<br />
+If the router is not configured to drop IPv6 packets containing a Routing Header of type 0, 1, or 3-255, this is a finding.</p><h2>Vulnerability Number</h2><p>V-283840</p><h2>Documentable</h2><p>False</p><h2>Rule Version</h2><p>NOKI-RT-000220</p><h2>Severity Override Guidance</h2><p>This requirement is not applicable for the DODIN Backbone. <br />
+<br />
+Review the router configuration to determine if it is configured to drop IPv6 packets containing a Routing Header of type 0, 1, or 3-255.<br />
+<br />
+Use the command below and determine if any &quot;Ingr IPv6 Flt&quot; is applied:<br />
+<br />
+- show router interface &quot;TO-PE2&quot; detail | match &quot;Ingr IPv6 Flt&quot;<br />
+<br />
+Egr IPv6 Flt     : none                 Ingr IPv6 Flt     : 20<br />
+<br />
+If the router is not configured to drop IPv6 packets containing a Routing Header of type 0, 1, or 3-255, this is a finding.</p><h2>Check Content Reference</h2><p>M</p><h2>Target Key</h2><p>5746</p></body></html>

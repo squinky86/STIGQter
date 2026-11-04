@@ -1,0 +1,116 @@
+<!doctype html><html lang="en"><head><meta charset="utf-8"><title>STIGQter: STIG Check Details: SV-254035r844138_rule: The Juniper router must be configured to have Internet Control Message Protocol (ICMP) mask replies disabled on all external interfaces.</title><link rel="icon" type="image/svg+xml" href="STIGQter.svg" /><script async src="https://www.googletagmanager.com/gtag/js?id=UA-31381839-2"></script><script src="include.js"></script><script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-4110907817782130" crossorigin="anonymous"></script></head><body><div><img src="STIGQter.svg" alt="STIGQter" style="height:1em;" /> <a href="https://www.stigqter.com/">STIGQter</a>: <a href="main.html">STIG Summary</a>: <a href="U_Juniper_EX_Switches_RTR_STIG_V2R1_Manual-xccdf.html">Juniper EX Series Switches Router Security Technical Implementation Guide Version: 2 Release: 1 Benchmark Date: 24 Jul 2024</a>:</div> <h1>The Juniper router must be configured to have Internet Control Message Protocol (ICMP) mask replies disabled on all external interfaces.</h1><h2>DISA Rule</h2><p>SV-254035r844138_rule</p><h2>Vulnerability Number</h2><p>V-254035</p><h2>Group Title</h2><p>SRG-NET-000362-RTR-000114</p><h2>Rule Version</h2><p>JUEX-RT-000630</p><h2>Severity</h2><p>CAT II</p><h2>CCI(s)</h2><ul><li>CCI-002385 - Protect against or limit the effects of organization-defined types of denial of service events.</li></ul><h2>Weight</h2><p>10</p><h2>Fix Recommendation</h2><p>Disable ICMP mask replies on all external interfaces.<br />
+<br />
+set policy-options prefix-list router-addresses-ipv4 &lt;external interface address&gt;/32<br />
+set policy-options prefix-list router-addresses-ipv4 &lt;internal subnet&gt;/&lt;mask&gt;<br />
+<br />
+set firewall family inet filter &lt;name&gt; term 1 from source-prefix-list router-address-ipv4<br />
+set firewall family inet filter &lt;name&gt; term 1 from protocol icmp<br />
+set firewall family inet filter &lt;name&gt; term 1 from icmp-type mask-reply<br />
+set firewall family inet filter &lt;name&gt; term 1 then log<br />
+set firewall family inet filter &lt;name&gt; term 1 then syslog<br />
+set firewall family inet filter &lt;name&gt; term 1 then discard<br />
+&lt;additional terms&gt;<br />
+set firewall family inet filter &lt;name&gt; term default then log<br />
+set firewall family inet filter &lt;name&gt; term default then syslog<br />
+set firewall family inet filter &lt;name&gt; term default then discard<br />
+<br />
+set interfaces &lt;interface name&gt; unit &lt;number&gt; family inet filter output &lt;filter name&gt;<br />
+set interfaces &lt;interface name&gt; unit &lt;number&gt; family inet address &lt;IPv4 address&gt;.&lt;mask&gt;</p><h2>Check Contents</h2><p>Review the device configuration to determine if controls have been defined to ensure the router does not send ICMP Mask Reply messages out to any external interfaces.<br />
+<br />
+[edit policy-options]<br />
+prefix-list router-address-ipv4 {<br />
+    &lt;external interface address&gt;/32;<br />
+    &lt;internal subnet&gt;/&lt;mask&gt;;<br />
+}<br />
+[edit firewall family inet]<br />
+filter &lt;name&gt; {<br />
+    term 1 {<br />
+        from {<br />
+            source-prefix-list {<br />
+                router-address-ipv4; <br />
+            }<br />
+            protocol icmp;<br />
+            icmp-type mask-reply;<br />
+        }<br />
+        then {<br />
+            log;<br />
+            syslog;<br />
+            discard;<br />
+        }<br />
+    }<br />
+    &lt;additional terms&gt;<br />
+    term default {<br />
+        then {<br />
+            log;<br />
+            syslog;<br />
+            discard;<br />
+        }<br />
+    }<br />
+}<br />
+<br />
+[edit interfaces]<br />
+&lt;external interface&gt; {<br />
+    unit &lt;number&gt; {<br />
+        family inet {<br />
+            filter {<br />
+                output &lt;filter name&gt;;<br />
+            }<br />
+            address &lt;IPv4 address&gt;/&lt;mask&gt;;<br />
+        }<br />
+    }<br />
+}<br />
+<br />
+Note: Some Juniper devices support both monolithic filters and filter lists. Filter lists separate each term, or set of terms, into a separate filter that is applied sequentially to an interface. If using filter lists, the keywords &quot;input&quot; or &quot;output&quot; change to &quot;input-list&quot; or &quot;output-list&quot;. Verify the final list item is a deny-all filter. The deny-all filter is created once per family and can be reused across multiple lists. For example:<br />
+<br />
+input-list [ permit_mgt permit_routing_protocols default-deny ];<br />
+<br />
+If ICMP Mask Reply messages are enabled on any external interfaces, this is a finding.</p><h2>Vulnerability Number</h2><p>V-254035</p><h2>Documentable</h2><p>False</p><h2>Rule Version</h2><p>JUEX-RT-000630</p><h2>Severity Override Guidance</h2><p>Review the device configuration to determine if controls have been defined to ensure the router does not send ICMP Mask Reply messages out to any external interfaces.<br />
+<br />
+[edit policy-options]<br />
+prefix-list router-address-ipv4 {<br />
+    &lt;external interface address&gt;/32;<br />
+    &lt;internal subnet&gt;/&lt;mask&gt;;<br />
+}<br />
+[edit firewall family inet]<br />
+filter &lt;name&gt; {<br />
+    term 1 {<br />
+        from {<br />
+            source-prefix-list {<br />
+                router-address-ipv4; <br />
+            }<br />
+            protocol icmp;<br />
+            icmp-type mask-reply;<br />
+        }<br />
+        then {<br />
+            log;<br />
+            syslog;<br />
+            discard;<br />
+        }<br />
+    }<br />
+    &lt;additional terms&gt;<br />
+    term default {<br />
+        then {<br />
+            log;<br />
+            syslog;<br />
+            discard;<br />
+        }<br />
+    }<br />
+}<br />
+<br />
+[edit interfaces]<br />
+&lt;external interface&gt; {<br />
+    unit &lt;number&gt; {<br />
+        family inet {<br />
+            filter {<br />
+                output &lt;filter name&gt;;<br />
+            }<br />
+            address &lt;IPv4 address&gt;/&lt;mask&gt;;<br />
+        }<br />
+    }<br />
+}<br />
+<br />
+Note: Some Juniper devices support both monolithic filters and filter lists. Filter lists separate each term, or set of terms, into a separate filter that is applied sequentially to an interface. If using filter lists, the keywords &quot;input&quot; or &quot;output&quot; change to &quot;input-list&quot; or &quot;output-list&quot;. Verify the final list item is a deny-all filter. The deny-all filter is created once per family and can be reused across multiple lists. For example:<br />
+<br />
+input-list [ permit_mgt permit_routing_protocols default-deny ];<br />
+<br />
+If ICMP Mask Reply messages are enabled on any external interfaces, this is a finding.</p><h2>Check Content Reference</h2><p>M</p><h2>Target Key</h2><p>5479</p></body></html>

@@ -1,0 +1,59 @@
+<!doctype html><html lang="en"><head><meta charset="utf-8"><title>STIGQter: STIG Check Details: SV-279194r1170667_rule: The Edge SWG must generate error messages that provide the information necessary for corrective actions without revealing information that could be exploited by adversaries.</title><link rel="icon" type="image/svg+xml" href="STIGQter.svg" /><script async src="https://www.googletagmanager.com/gtag/js?id=UA-31381839-2"></script><script src="include.js"></script><script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-4110907817782130" crossorigin="anonymous"></script></head><body><div><img src="STIGQter.svg" alt="STIGQter" style="height:1em;" /> <a href="https://www.stigqter.com/">STIGQter</a>: <a href="main.html">STIG Summary</a>: <a href="U_SYM_Edge_SWG_ALG_STIG_V1R1_Manual-xccdf.html">Symantec Edge SWG ALG Security Technical Implementation Guide Version: 1 Release: 1 Benchmark Date: 25 Nov 2025</a>:</div> <h1>The Edge SWG must generate error messages that provide the information necessary for corrective actions without revealing information that could be exploited by adversaries.</h1><h2>DISA Rule</h2><p>SV-279194r1170667_rule</p><h2>Vulnerability Number</h2><p>V-279194</p><h2>Group Title</h2><p>SRG-NET-000273-ALG-000129</p><h2>Rule Version</h2><p>SYME-00-006600</p><h2>Severity</h2><p>CAT II</p><h2>CCI(s)</h2><ul><li>CCI-001312 - Generates error messages that provide information necessary for corrective actions without revealing information that could be exploited.</li></ul><h2>Weight</h2><p>10</p><h2>Fix Recommendation</h2><p>These procedures will create a user-defined exception page that will show only necessary errors to the proxy user with specific contact information.<br />
+1. Log in to the Edge SWG SSH CLI.<br />
+2. Enter &quot;enable&quot; and &quot;configure terminal&quot;.<br />
+3. Enter &quot;exceptions&quot;.<br />
+4. Enter &quot;create DOD-BLOCKS&quot;.<br />
+5. Enter &quot;edit DOD-BLOCKS&quot;.<br />
+6. Enter &quot;inline format EOF&quot;.<br />
+7. Copy and paste the data below exactly as it appears and edit items such as Organization, email addresses, etc.:<br />
+<br />
+&lt;!DOCTYPE html&gt;<br />
+&lt;html&gt; <br />
+&lt;head&gt;<br />
+&lt;title&gt;Denied Access Policy &lt;/title&gt;<br />
+&lt;meta name= &quot;author&quot; content = &quot;SAMPLE ORGANIZATION&quot; &gt;<br />
+&lt;meta name=&quot;description&quot; content = &quot;Denied Access Policy&quot; &gt;<br />
+&lt;meta name=&quot;category&quot; content = &quot;$(exception.category)&quot;&gt;<br />
+&lt;/head&gt;<br />
+&lt;body&gt;<br />
+&lt;center&gt;<br />
+&lt;p&gt;<br />
+&lt;font face = &quot;Arial, Helvetica, sans-serif&quot; size = &quot;4&quot; color = &quot;Red&quot; &gt;&lt;b&gt;You have reached a website that is currently being blocked due to malicious activity and/or current acceptable use policies.&lt;/font&gt;&lt;br&gt;<br />
+&lt;font face= &quot;Arial, Helvetica, sans-serif&quot; size = &quot;4&quot; color = &quot;Red&quot;&gt;INTERNET USAGE IS MONITORED AND LOGGED.&lt;/font&gt;&lt;br&gt;<br />
+&lt;font face = &quot;Arial, Helvetica, sans-serif&quot; size = &quot;3&quot; color = &quot;Red&quot;&gt;&lt;b&gt;Your IP address: $(client.address) &lt;br&gt;Your username:  $(user.name) &lt;br&gt; Banned Website: $(url) &lt;br&gt; Website IP address: $(url.address)&lt;br&gt;Banned Category: $(category) &lt;br&gt; Rule Name: $(exception.id)&lt;/b&gt;&lt;/font&gt;&lt;br&gt;<br />
+&lt;br&gt;<br />
+&lt;font face = &quot;Arial, Helvetica, sans-serif&quot; size = &quot;4&quot; color = &quot;red&quot; &gt; This has been reported by:  $(proxy.name)&lt;font&gt;&lt;br&gt;<br />
+&lt;A href='mailto:email@mail.mil?subject=Barred web page $(url),IP address: $(client.address)&amp;body=IP address:$(client.address)%0DYour username:$(user.name)%0DBanned Website:$(url)%0DWebsite IP address:$(url.address)%0DBanned Category:$(category)%0DRule Name:$(exception.id)' &gt; If you have further questions or require assistance click here to send an email &lt;br&gt; to your Information Management Office (IMO) or ORGANIZATION Cyber Security &amp; Risk Management&lt;/a&gt;&lt;/font&gt;&lt;/a&gt;&lt;/font&gt;<br />
+&lt;/p&gt;<br />
+&lt;/center&gt;<br />
+&lt;/body&gt;<br />
+&lt;/html&gt;<br />
+EOF<br />
+<br />
+8. After the EOF, click &quot;Enter&quot;.<br />
+9. Enter &quot;http-code 403&quot;.<br />
+<br />
+1. In the Edge SWG Web UI, navigate to the VPM.<br />
+2. Under the Web Access Layer for the Action on disallowed content, click &quot;Set and Add New Object&quot;.<br />
+3. Select &quot;Return Exception&quot;.<br />
+4. Enter a name and select &quot;User-defined exception&quot;.<br />
+5. Select the previously created user-defined exception.<br />
+6. Check the box for &quot;Force exception even if later policy would allow request&quot;.<br />
+7. Click &quot;Set&quot; and repeat steps for other services being proxied.<br />
+8. Click &quot;Apply Policy&quot;.</p><h2>Check Contents</h2><p>1. Log in to the Edge SWG SSH CLI. <br />
+2. Enter &quot;enable&quot;.<br />
+3. Enter &quot;show exceptions&quot;. <br />
+<br />
+If there are no user-define d exceptions, this is finding.<br />
+<br />
+In the Edge SWG Web UI, navigate to the VPM. <br />
+<br />
+Under the Web Access Layer, for the Action on disallowed content, if there is no User-Defined exception implemented, this is a finding.</p><h2>Vulnerability Number</h2><p>V-279194</p><h2>Documentable</h2><p>False</p><h2>Rule Version</h2><p>SYME-00-006600</p><h2>Severity Override Guidance</h2><p>1. Log in to the Edge SWG SSH CLI. <br />
+2. Enter &quot;enable&quot;.<br />
+3. Enter &quot;show exceptions&quot;. <br />
+<br />
+If there are no user-define d exceptions, this is finding.<br />
+<br />
+In the Edge SWG Web UI, navigate to the VPM. <br />
+<br />
+Under the Web Access Layer, for the Action on disallowed content, if there is no User-Defined exception implemented, this is a finding.</p><h2>Check Content Reference</h2><p>M</p><h2>Target Key</h2><p>5725</p></body></html>

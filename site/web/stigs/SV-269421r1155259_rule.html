@@ -1,0 +1,29 @@
+<!doctype html><html lang="en"><head><meta charset="utf-8"><title>STIGQter: STIG Check Details: SV-269421r1155259_rule: AlmaLinux OS 9 must terminate idle user sessions.</title><link rel="icon" type="image/svg+xml" href="STIGQter.svg" /><script async src="https://www.googletagmanager.com/gtag/js?id=UA-31381839-2"></script><script src="include.js"></script><script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-4110907817782130" crossorigin="anonymous"></script></head><body><div><img src="STIGQter.svg" alt="STIGQter" style="height:1em;" /> <a href="https://www.stigqter.com/">STIGQter</a>: <a href="main.html">STIG Summary</a>: <a href="U_CL_AlmaLinux_OS_9_STIG_V1R7_Manual-xccdf.html">Cloud Linux AlmaLinux OS 9 Security Technical Implementation Guide Version: 1 Release: 7 Benchmark Date: 01 Jul 2026</a>:</div> <h1>AlmaLinux OS 9 must terminate idle user sessions.</h1><h2>DISA Rule</h2><p>SV-269421r1155259_rule</p><h2>Vulnerability Number</h2><p>V-269421</p><h2>Group Title</h2><p>SRG-OS-000163-GPOS-00072</p><h2>Rule Version</h2><p>ALMA-09-040500</p><h2>Severity</h2><p>CAT II</p><h2>CCI(s)</h2><ul><li>CCI-001133 - Terminate the network connection associated with a communications session at the end of the session or after an organization-defined time period of inactivity.</li></ul><h2>Weight</h2><p>10</p><h2>Fix Recommendation</h2><p>Configure AlmaLinux OS 9 to log out idle sessions.<br />
+<br />
+Create the directory if necessary:<br />
+<br />
+$ mkdir -p /etc/systemd/logind.conf.d/<br />
+<br />
+Create a *.conf file in /etc/systemd/logind.conf.d/ with the following content:<br />
+<br />
+[Login]<br />
+StopIdleSessionSec=600<br />
+KillUserProcesses=no<br />
+<br />
+Restart systemd-logind:<br />
+<br />
+$ systemctl restart systemd-logind</p><h2>Check Contents</h2><p>Verify that AlmaLinux OS 9 logs out sessions that are idle for 10 minutes with the following command:<br />
+<br />
+$ systemd-analyze cat-config systemd/logind.conf | grep StopIdleSessionSec<br />
+<br />
+#StopIdleSessionSec=infinity<br />
+StopIdleSessionSec=600<br />
+<br />
+If &quot;StopIdleSessionSec&quot; is not configured to &quot;600&quot; seconds, this is a finding.</p><h2>Vulnerability Number</h2><p>V-269421</p><h2>Documentable</h2><p>False</p><h2>Rule Version</h2><p>ALMA-09-040500</p><h2>Severity Override Guidance</h2><p>Verify that AlmaLinux OS 9 logs out sessions that are idle for 10 minutes with the following command:<br />
+<br />
+$ systemd-analyze cat-config systemd/logind.conf | grep StopIdleSessionSec<br />
+<br />
+#StopIdleSessionSec=infinity<br />
+StopIdleSessionSec=600<br />
+<br />
+If &quot;StopIdleSessionSec&quot; is not configured to &quot;600&quot; seconds, this is a finding.</p><h2>Check Content Reference</h2><p>M</p><h2>Target Key</h2><p>5664</p></body></html>

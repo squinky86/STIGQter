@@ -1,0 +1,82 @@
+<!doctype html><html lang="en"><head><meta charset="utf-8"><title>STIGQter: STIG Check Details: SV-235101r960936_rule: The audit information produced by the MySQL Database Server 8.0 must be protected from unauthorized deletion.</title><link rel="icon" type="image/svg+xml" href="STIGQter.svg" /><script async src="https://www.googletagmanager.com/gtag/js?id=UA-31381839-2"></script><script src="include.js"></script><script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-4110907817782130" crossorigin="anonymous"></script></head><body><div><img src="STIGQter.svg" alt="STIGQter" style="height:1em;" /> <a href="https://www.stigqter.com/">STIGQter</a>: <a href="main.html">STIG Summary</a>: <a href="U_Oracle_MySQL_8-0_STIG_V2R2_Manual-xccdf.html">Oracle MySQL 8.0 Security Technical Implementation Guide Version: 2 Release: 2 Benchmark Date: 24 Oct 2024</a>:</div> <h1>The audit information produced by the MySQL Database Server 8.0 must be protected from unauthorized deletion.</h1><h2>DISA Rule</h2><p>SV-235101r960936_rule</p><h2>Vulnerability Number</h2><p>V-235101</p><h2>Group Title</h2><p>SRG-APP-000120-DB-000061</p><h2>Rule Version</h2><p>MYS8-00-001400</p><h2>Severity</h2><p>CAT II</p><h2>CCI(s)</h2><ul><li>CCI-000164 - Protect audit information from unauthorized deletion.</li></ul><h2>Weight</h2><p>10</p><h2>Fix Recommendation</h2><p>Apply controls and modify permissions to protect database audit log data from unauthorized access, whether stored in the database itself or at the OS level.<br />
+<br />
+sudo vi /etc/my.cnf<br />
+[mysqld]<br />
+audit-log=FORCE_PLUS_PERMANENT<br />
+audit-log-format=JSON<br />
+audit-log-encryption=AES<br />
+<br />
+After changing the my.cnf, restart the server.<br />
+<br />
+If not performed already, set the audit log password.<br />
+SELECT audit_log_encryption_password_set(password);<br />
+<br />
+Set appropriate permissions on the directory and audit files.<br />
+sudo chown mysql &lt;audit directory path&gt;<br />
+sudo chgrp mysql &lt;audit directory path&gt;<br />
+Change permissions <br />
+chmod 750 &lt;directory path&gt;</p><h2>Check Contents</h2><p>Review locations of audit logs, both internal to the database and database audit logs located at the operating system level.<br />
+<br />
+Verify there are appropriate controls and permissions to protect the audit information from unauthorized access.<br />
+<br />
+Run this script in the database to find the path and file name:<br />
+SELECT VARIABLE_NAME, VARIABLE_VALUE<br />
+FROM performance_schema.global_variables<br />
+WHERE VARIABLE_NAME LIKE 'audit_log_file';<br />
+<br />
+If there is no path for audit_log_file then the audit files are located in the datadir. Run the this script to find the data directory:<br />
+SELECT VARIABLE_NAME, VARIABLE_VALUE<br />
+FROM performance_schema.global_variables<br />
+WHERE VARIABLE_NAME LIKE 'datadir';<br />
+<br />
+From the OS command line, run: <br />
+ls -l &lt;directory where audit log files are located&gt;<br />
+ls -l &lt;directory where audit log files are located&gt; | grep -i &lt;audit_file_name&gt;<br />
+For example if the values returned by - &quot;select @@datadir, @@audit_log_file; &quot; are  /usr/local/mysql/data/,  audit.log<br />
+ls -l  /usr/local/mysql/data/<br />
+<br />
+See below for an example:<br />
+Note: .enc file extension means the files are encrypted.<br />
+<br />
+ls -l  &lt;directory where audit log files are located&gt;/ | grep -i audit<br />
+-rw-r-----    1 _mysql  _mysql  10083871 Apr 16 15:38 audit.20190416T203832.log<br />
+-rw-r-----    1 _mysql  _mysql    398709 Apr 18 10:34 audit.20190418T153446.log<br />
+-rw-r-----    1 _mysql  _mysql     15237 Apr 18 10:44 audit.20190418T154402.log<br />
+-rw-r-----    1 _mysql  _mysql    876206 Apr 24 14:00 audit.20190424T190008.log<br />
+-rw-r-----    1 _mysql  _mysql     30208 Apr 24 14:10 audit.20190424T191044.log.enc<br />
+<br />
+If the owner and group are not &quot;mysql&quot; or &quot;_mysql&quot;, this is a finding.<br />
+<br />
+If the directory or file permissions are more permissive than owner having Read/Write (RW) and group having Read (R) access to the audit files, aka &quot;750&quot;, this is a finding.</p><h2>Vulnerability Number</h2><p>V-235101</p><h2>Documentable</h2><p>False</p><h2>Rule Version</h2><p>MYS8-00-001400</p><h2>Severity Override Guidance</h2><p>Review locations of audit logs, both internal to the database and database audit logs located at the operating system level.<br />
+<br />
+Verify there are appropriate controls and permissions to protect the audit information from unauthorized access.<br />
+<br />
+Run this script in the database to find the path and file name:<br />
+SELECT VARIABLE_NAME, VARIABLE_VALUE<br />
+FROM performance_schema.global_variables<br />
+WHERE VARIABLE_NAME LIKE 'audit_log_file';<br />
+<br />
+If there is no path for audit_log_file then the audit files are located in the datadir. Run the this script to find the data directory:<br />
+SELECT VARIABLE_NAME, VARIABLE_VALUE<br />
+FROM performance_schema.global_variables<br />
+WHERE VARIABLE_NAME LIKE 'datadir';<br />
+<br />
+From the OS command line, run: <br />
+ls -l &lt;directory where audit log files are located&gt;<br />
+ls -l &lt;directory where audit log files are located&gt; | grep -i &lt;audit_file_name&gt;<br />
+For example if the values returned by - &quot;select @@datadir, @@audit_log_file; &quot; are  /usr/local/mysql/data/,  audit.log<br />
+ls -l  /usr/local/mysql/data/<br />
+<br />
+See below for an example:<br />
+Note: .enc file extension means the files are encrypted.<br />
+<br />
+ls -l  &lt;directory where audit log files are located&gt;/ | grep -i audit<br />
+-rw-r-----    1 _mysql  _mysql  10083871 Apr 16 15:38 audit.20190416T203832.log<br />
+-rw-r-----    1 _mysql  _mysql    398709 Apr 18 10:34 audit.20190418T153446.log<br />
+-rw-r-----    1 _mysql  _mysql     15237 Apr 18 10:44 audit.20190418T154402.log<br />
+-rw-r-----    1 _mysql  _mysql    876206 Apr 24 14:00 audit.20190424T190008.log<br />
+-rw-r-----    1 _mysql  _mysql     30208 Apr 24 14:10 audit.20190424T191044.log.enc<br />
+<br />
+If the owner and group are not &quot;mysql&quot; or &quot;_mysql&quot;, this is a finding.<br />
+<br />
+If the directory or file permissions are more permissive than owner having Read/Write (RW) and group having Read (R) access to the audit files, aka &quot;750&quot;, this is a finding.</p><h2>Check Content Reference</h2><p>M</p><h2>Target Key</h2><p>5277</p></body></html>

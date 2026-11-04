@@ -1,0 +1,73 @@
+<!doctype html><html lang="en"><head><meta charset="utf-8"><title>STIGQter: STIG Check Details: SV-272436r1137676_rule: A BIND 9.x server must implement NIST FIPS-validated cryptography for provisioning digital signatures and generating cryptographic hashes.</title><link rel="icon" type="image/svg+xml" href="STIGQter.svg" /><script async src="https://www.googletagmanager.com/gtag/js?id=UA-31381839-2"></script><script src="include.js"></script><script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-4110907817782130" crossorigin="anonymous"></script></head><body><div><img src="STIGQter.svg" alt="STIGQter" style="height:1em;" /> <a href="https://www.stigqter.com/">STIGQter</a>: <a href="main.html">STIG Summary</a>: <a href="U_BIND_9-x_STIG_V3R3_Manual-xccdf.html">BIND 9.x Security Technical Implementation Guide Version: 3 Release: 3 Benchmark Date: 01 Jul 2026</a>:</div> <h1>A BIND 9.x server must implement NIST FIPS-validated cryptography for provisioning digital signatures and generating cryptographic hashes.</h1><h2>DISA Rule</h2><p>SV-272436r1137676_rule</p><h2>Vulnerability Number</h2><p>V-272436</p><h2>Group Title</h2><p>SRG-APP-000514-DNS-000075</p><h2>Rule Version</h2><p>BIND-9X-002050</p><h2>Severity</h2><p>CAT II</p><h2>CCI(s)</h2><ul><li>CCI-002450 - Implement organization-defined types of cryptography for each specified cryptography use.</li></ul><h2>Weight</h2><p>10</p><h2>Fix Recommendation</h2><p>Create new DNSSEC and TSIG keys using a FIPS-approved cryptographic algorithm that meets or exceeds the strength of SHA-256.</p><h2>Check Contents</h2><p>Verify that the DNSSEC and TSIG keys used by the BIND 9.x implementation are FIPS compliant.<br />
+<br />
+If the server is in a classified network, the DNSSEC portion of the requirement is Not Applicable.<br />
+<br />
+DNSSEC keys:<br />
+<br />
+Inspect the &quot;named.conf&quot; file and identify all of the DNSSEC signed zone files:<br />
+<br />
+zone &quot;example.com&quot; {<br />
+file &quot;signed_zone_file&quot;;<br />
+};<br />
+<br />
+For each signed zone file identified, inspect the file for the &quot;DNSKEY&quot; records: <br />
+<br />
+86400 DNSKEY 257 3 8 (<br />
+&lt;KEY HASH&gt;<br />
+) ; KSK; <br />
+86400 DNSKEY 256 3 8 (<br />
+&lt;KEY HASH&gt;<br />
+) ; ZSK; <br />
+<br />
+The fifth field in the above example identifies what algorithm was used to create the DNSKEY. <br />
+<br />
+If the fifth field, if the KSK DNSKEY is less than &quot;8&quot; (SHA256), this is a finding.<br />
+<br />
+If the algorithm used to create the ZSK is less than &quot;8&quot; (SHA256), this is a finding.<br />
+<br />
+TSIG keys: <br />
+<br />
+Inspect the &quot;named.conf&quot; file and identify all of the TSIG key statements: <br />
+<br />
+key tsig_example. {<br />
+algorithm hmac-SHA256;<br />
+include &quot;tsig-example.key&quot;;<br />
+};<br />
+<br />
+If each key statement does not use &quot;hmac-SHA256&quot; or a stronger algorithm, this is a finding.</p><h2>Vulnerability Number</h2><p>V-272436</p><h2>Documentable</h2><p>False</p><h2>Rule Version</h2><p>BIND-9X-002050</p><h2>Severity Override Guidance</h2><p>Verify that the DNSSEC and TSIG keys used by the BIND 9.x implementation are FIPS compliant.<br />
+<br />
+If the server is in a classified network, the DNSSEC portion of the requirement is Not Applicable.<br />
+<br />
+DNSSEC keys:<br />
+<br />
+Inspect the &quot;named.conf&quot; file and identify all of the DNSSEC signed zone files:<br />
+<br />
+zone &quot;example.com&quot; {<br />
+file &quot;signed_zone_file&quot;;<br />
+};<br />
+<br />
+For each signed zone file identified, inspect the file for the &quot;DNSKEY&quot; records: <br />
+<br />
+86400 DNSKEY 257 3 8 (<br />
+&lt;KEY HASH&gt;<br />
+) ; KSK; <br />
+86400 DNSKEY 256 3 8 (<br />
+&lt;KEY HASH&gt;<br />
+) ; ZSK; <br />
+<br />
+The fifth field in the above example identifies what algorithm was used to create the DNSKEY. <br />
+<br />
+If the fifth field, if the KSK DNSKEY is less than &quot;8&quot; (SHA256), this is a finding.<br />
+<br />
+If the algorithm used to create the ZSK is less than &quot;8&quot; (SHA256), this is a finding.<br />
+<br />
+TSIG keys: <br />
+<br />
+Inspect the &quot;named.conf&quot; file and identify all of the TSIG key statements: <br />
+<br />
+key tsig_example. {<br />
+algorithm hmac-SHA256;<br />
+include &quot;tsig-example.key&quot;;<br />
+};<br />
+<br />
+If each key statement does not use &quot;hmac-SHA256&quot; or a stronger algorithm, this is a finding.</p><h2>Check Content Reference</h2><p>M</p><h2>Target Key</h2><p>5687</p></body></html>

@@ -1,0 +1,71 @@
+<!doctype html><html lang="en"><head><meta charset="utf-8"><title>STIGQter: STIG Check Details: SV-242248r961461_rule: The TippingPoint SMS must enforce access restrictions associated with changes to device configuration.</title><link rel="icon" type="image/svg+xml" href="STIGQter.svg" /><script async src="https://www.googletagmanager.com/gtag/js?id=UA-31381839-2"></script><script src="include.js"></script><script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-4110907817782130" crossorigin="anonymous"></script></head><body><div><img src="STIGQter.svg" alt="STIGQter" style="height:1em;" /> <a href="https://www.stigqter.com/">STIGQter</a>: <a href="main.html">STIG Summary</a>: <a href="U_TM_TippingPoint_NDM_STIG_V2R3_Manual-xccdf.html">Trend Micro TippingPoint NDM Security Technical Implementation Guide Version: 2 Release: 3 Benchmark Date: 02 Apr 2025</a>:</div> <h1>The TippingPoint SMS must enforce access restrictions associated with changes to device configuration.</h1><h2>DISA Rule</h2><p>SV-242248r961461_rule</p><h2>Vulnerability Number</h2><p>V-242248</p><h2>Group Title</h2><p>SRG-APP-000380-NDM-000304</p><h2>Rule Version</h2><p>TIPP-NM-000420</p><h2>Severity</h2><p>CAT II</p><h2>CCI(s)</h2><ul><li>CCI-001813 - Enforce access restrictions using organization-defined mechanisms.</li></ul><h2>Weight</h2><p>10</p><h2>Fix Recommendation</h2><p>Follow these configuration steps to enable CAC/LDAPS authentication and authorization to the Trend Micro TippingPoint SMS client. The Site's LDAPS/AD environment must be configured to audit all account actions.<br />
+<br />
+I. Certificate Load Steps: <br />
+1. Log in to the SMS client. <br />
+2. Select Certificate Management &gt;&gt; CA certificates &gt;&gt; Import. <br />
+3. Find the CA signing certificate bundle for the LDAPS servers on your machine. <br />
+4. Enter the name, then select browse to find the CA certificate.<br />
+5. Click OK.<br />
+6. Repeat steps for all other DoD Root and Intermediate CAs being used for the administrator’s admin-token/CACs.<br />
+<br />
+II. LDAP Authorization configuration steps: <br />
+1. Select Authentication and Authorization &gt;&gt; Groups &gt;&gt; New.<br />
+2. Type the name of the LDAP group exactly as it appears as the CN in the active directory domain. <br />
+3. Add all site-specific details including which role to map superuser, admin, or operator. <br />
+4. Under Active Directory Group Mapping ensure the item &quot;map this group to the same named group in active directory&quot; is selected. <br />
+5. Select OK.<br />
+<br />
+III. LDAPS Server configuration - ensure a DNS resolver has been configured in accordance with the admin guide, and this DNS resolver knows how to resolve the domain the SMS will log into: <br />
+1. Under Admin, navigate to Authentication and CAC &gt;&gt; Edit. <br />
+2. Enter the Server address: ensure it is the fully qualified domain name as the LDAPS certificate will likely have it.<br />
+3. Enable SSL: must be checked for LDAPS. <br />
+4. Current certificate: must be the intermediate root certificate/issuing CA certificate for the domain controllers - this is the CA certificate loaded in the first section. <br />
+5. Port: 636 or your DoD LDAPS port, if different.<br />
+6. Timeout: 30 seconds is the default.<br />
+7. Admin name: the account that has privileges to access the directory schema – format is username@domain.name <br />
+8. Admin password: password of previous admin account. <br />
+9. User search base: this is the LDAP directory tree for the accounts that will be allowed. Example: ou=Trend Micro,dc=dod,dc=disa,dc=mil <br />
+10. User search attribute: normally in DoD this is userPrincipalName.<br />
+11. User display attribute: normally in DoD this is sAMAccountName.<br />
+12. Group search base: this is the LDAP directory tree for the groups that will be allowed. Example: ou=Trend Micro,dc=dod,dc=disa,dc=mil <br />
+13. Group name attribute: normally it is cn.<br />
+14. Select the test button to ensure all configurations provided function correctly. <br />
+15. Select OK.<br />
+<br />
+IV. Enable OCSP revocation checking: <br />
+1. Under OCSP Settings, navigate to Certificate Management and Revocation &gt;&gt; New &gt;&gt; Certificate Authority. <br />
+2. Type the full OCSP URI (e.g. http://ocsp.disa.mil).<br />
+3. Repeat this step for all CA certificates in the CAC trust chain.<br />
+4. Optionally, to add a CRL click New under Certificate Revocation Lists.<br />
+5. Select the Certificate Authority. <br />
+6. Type the full CRL path including to the specific CRL file (e.g. http://crl.disa.mil/certificate.crl).<br />
+<br />
+V. Enable CAC authentication/LDAPS authorization: <br />
+1. Navigate to Admin &gt;&gt; Authentication and Groups &gt;&gt; Edit.<br />
+2. Click Use CAC Authentication (ensure the local emergency user account is checked for local access in case of emergency troubleshooting). <br />
+3. Select OK. <br />
+4. Close the SMS client.<br />
+<br />
+VI. Test CAC authentication: <br />
+1. Ensure one other smartcard reader is enabled in the device manager of the computer you are using. <br />
+2. Open the SMS client. <br />
+3. Type the hostname/IP of the SMS server.<br />
+4. Ensuring the CAC/admin token is inserted in the reader, type the PIN of the CAC. <br />
+5. Select the certificate to use to login.<br />
+6. Select OK. <br />
+7. User should be taken to the dashboard and configuration area of the SMS.<br />
+<br />
+VII. Troubleshooting: <br />
+1. If you receive errors logging in with CAC go to the serial console of the SMS server. <br />
+2. Login with the local account of last resort. <br />
+3. Type the command &quot;set cac.disable = yes&quot; - this will give your local admin login access to the SMS client to troubleshoot any configuration errors.</p><h2>Check Contents</h2><p>In the Trend Micro TippingPoint system, ensure the SMS client is using CAC authentication and LDAPS authorization.<br />
+<br />
+1. Log in to the SMS client. <br />
+2. Navigate to Authentication and Authorization &gt;&gt; Authentication. <br />
+<br />
+If &quot;Use CAC authentication&quot; is not selected, this is a finding.</p><h2>Vulnerability Number</h2><p>V-242248</p><h2>Documentable</h2><p>False</p><h2>Rule Version</h2><p>TIPP-NM-000420</p><h2>Severity Override Guidance</h2><p>In the Trend Micro TippingPoint system, ensure the SMS client is using CAC authentication and LDAPS authorization.<br />
+<br />
+1. Log in to the SMS client. <br />
+2. Navigate to Authentication and Authorization &gt;&gt; Authentication. <br />
+<br />
+If &quot;Use CAC authentication&quot; is not selected, this is a finding.</p><h2>Check Content Reference</h2><p>M</p><h2>Target Key</h2><p>5369</p></body></html>

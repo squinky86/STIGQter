@@ -1,0 +1,63 @@
+<!doctype html><html lang="en"><head><meta charset="utf-8"><title>STIGQter: STIG Check Details: SV-258589r954210_rule: The ICS must be configured to use multifactor authentication (e.g., DOD PKI) for network access to nonprivileged accounts.</title><link rel="icon" type="image/svg+xml" href="STIGQter.svg" /><script async src="https://www.googletagmanager.com/gtag/js?id=UA-31381839-2"></script><script src="include.js"></script><script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-4110907817782130" crossorigin="anonymous"></script></head><body><div><img src="STIGQter.svg" alt="STIGQter" style="height:1em;" /> <a href="https://www.stigqter.com/">STIGQter</a>: <a href="main.html">STIG Summary</a>: <a href="U_Ivanti_Connect_Secure_VPN_STIG_V2R2_Manual-xccdf.html">Ivanti Connect Secure VPN Security Technical Implementation Guide Version: 2 Release: 2 Benchmark Date: 01 Oct 2025</a>:</div> <h1>The ICS must be configured to use multifactor authentication (e.g., DOD PKI) for network access to nonprivileged accounts.</h1><h2>DISA Rule</h2><p>SV-258589r954210_rule</p><h2>Vulnerability Number</h2><p>V-258589</p><h2>Group Title</h2><p>SRG-NET-000140-VPN-000500</p><h2>Rule Version</h2><p>IVCS-VN-000190</p><h2>Severity</h2><p>CAT I</p><h2>CCI(s)</h2><ul><li>CCI-000766 - Implement multifactor authentication for network access to non-privileged accounts.</li><li>CCI-001954 - Electronically verifies Personal Identity Verification-compliant credentials.</li></ul><h2>Weight</h2><p>10</p><h2>Fix Recommendation</h2><p>Configure the user realm to use DOD PKI and the site's authentication servers. A sign-in policy is then applied in accordance with the site's access configuration. The focus for this requirement is on the path so the installation of the device certificates is not included.<br />
+<br />
+In the ICS Web UI, navigate to Authentication &gt;&gt; Auth Servers.<br />
+1. Click &quot;New Servers&quot;. Under &quot;server type&quot;, select Certificate Server &gt;&gt; New Server.<br />
+2. Type a Name. Under User Name template type this exactly: &lt;certAttr.altname.UPN&gt;<br />
+3. Click &quot;Save Changes&quot;.<br />
+4. Navigate to Authentication &gt;&gt; Auth Servers.<br />
+5. Click &quot;New Servers&quot;. Under &quot;server type&quot;, select LDAP Server &gt;&gt; New Server.<br />
+6. Type a name for the primary LDAP server domain.<br />
+7. LDAP server: the FQDN of the server (an IP address may cause an error as the LDAP server certificate might not have an IP in the SAN field).<br />
+8. LDAP port: 636 (this is for LDAPS).<br />
+9. Backup LDAP Server1: the FQDN of the secondary server (an IP address may cause an error as the LDAP server certificate might not have an IP in the SAN field).<br />
+10. Backup LDAP Port1: 636.<br />
+11. If a third LDAP server is needed, add this and the port info under Backup LDAP Server2 and Backup LDAP Port2.<br />
+12. LDAP Server Type: Active Directory.<br />
+13. Connection: LDAPS.<br />
+14. Ensure Validate Server Certificate is checked.<br />
+15. Connection Timeout: 15.<br />
+16. Search Timeout: 60.<br />
+17. Scroll down to the bottom and click &quot;Save Changes&quot;. Click &quot;Test Settings&quot; to ensure valid communications are possible.<br />
+NOTE: If there are failures in this testing, ensure that the step for Device Certificates and Trusted Server CAs were completed as this will cause LDAPS certificate issues.<br />
+18. Under authentication required, click the box for Authentication required to search LDAP.<br />
+19. Enter the service account's Admin DN using this as an example format: CN=PCS.SVC,OU=IVANTI,DC=DOD,DC=mil<br />
+20. Enter the service account's password.<br />
+21. Under &quot;Finding user entries&quot;, add the base DN of the domain as an example format: DC=DOD,DC=mil<br />
+22. Under &quot;filter&quot;, use this specific attribute configuration: userPrincipalName=&lt;USER&gt;<br />
+23. Under &quot;group membership&quot;, add the base DN of where admin users that will access, using this as an example format: OU=IVANTI,DC=DOD,DC=mil<br />
+24. Under &quot;filter&quot;, use the following: cn=&lt;GROUPNAME&gt;<br />
+25. Under &quot;member attribute&quot;, use the following: member.<br />
+26. Click &quot;Save Changes&quot;.<br />
+27. Now back in the same LDAP server configuration screen, scroll down and click the &quot;Server Catalog&quot; hyperlink.<br />
+28. Under &quot;attributes&quot;, click &quot;New&quot;, Type: userPrincipalName, and click &quot;Save Changes&quot;.<br />
+29. Under &quot;groups&quot;, click &quot;Search&quot;. In the search box, type the group name used for user logins.<br />
+30. Check the box next to the group that is found and click &quot;Add Selected&quot;.<br />
+31. Repeat these steps for all various groups needed for various user/computer roles on the ICS system.<br />
+<br />
+In the ICS Web UI, navigate to Users &gt;&gt; Users Realms.<br />
+1. Click the user realm being used for remote access VPN logins.<br />
+2. Under &quot;servers&quot;, go to &quot;Authentication&quot; and select the certificate authentication realm created that included the customized User template of &lt;certAttr.altname.UPN&gt;.<br />
+3. Under &quot;Directory/Attribute&quot;, select the previously created LDAP server.<br />
+4. Check the box for &quot;Enable dynamic policy evaluation&quot;.<br />
+5. Check both the &quot;Refresh roles&quot; and &quot;refresh resource policies&quot;.<br />
+6. Click &quot;Save Changes&quot;.<br />
+7. Go to the &quot;Role Mapping&quot; tab.<br />
+8. Click &quot;New Rule&quot;.<br />
+9. Select &quot;Rule based on Group Membership&quot; and click &quot;Update&quot;.<br />
+10. Type a name for this rule.<br />
+11. Select &quot;is&quot;.<br />
+12. Type the group name exactly as it appears as the CN LDAP attribute.<br />
+13. Select the role needed for these VPN logins.<br />
+14. Click &quot;Save Changes&quot;.</p><h2>Check Contents</h2><p>In the ICS Web UI, navigate to Users &gt;&gt; User Realms &gt;&gt; User Realms.<br />
+1. Click the user realm that is currently being used on the ICS for standard remote access VPN logins.<br />
+2. View &quot;General&quot; tab, under Servers &gt;&gt; Authentication. Verify a certificate authentication server is configured.<br />
+3. View &quot;General&quot; tab, under Servers &gt;&gt; Directory/Attribute. Verify there is an entry defined.<br />
+4. View &quot;Role Mapping&quot; tab, under &quot;when users meet these conditions&quot;, verify &quot;Group&quot; is used with the local user active directory group selected and assigned to the role that was created.<br />
+<br />
+If the ICS does not use DOD PKI for network access to nonprivileged accounts, this is a finding.</p><h2>Vulnerability Number</h2><p>V-258589</p><h2>Documentable</h2><p>False</p><h2>Rule Version</h2><p>IVCS-VN-000190</p><h2>Severity Override Guidance</h2><p>In the ICS Web UI, navigate to Users &gt;&gt; User Realms &gt;&gt; User Realms.<br />
+1. Click the user realm that is currently being used on the ICS for standard remote access VPN logins.<br />
+2. View &quot;General&quot; tab, under Servers &gt;&gt; Authentication. Verify a certificate authentication server is configured.<br />
+3. View &quot;General&quot; tab, under Servers &gt;&gt; Directory/Attribute. Verify there is an entry defined.<br />
+4. View &quot;Role Mapping&quot; tab, under &quot;when users meet these conditions&quot;, verify &quot;Group&quot; is used with the local user active directory group selected and assigned to the role that was created.<br />
+<br />
+If the ICS does not use DOD PKI for network access to nonprivileged accounts, this is a finding.</p><h2>Check Content Reference</h2><p>M</p><h2>Target Key</h2><p>5559</p></body></html>

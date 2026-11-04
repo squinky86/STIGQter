@@ -1,0 +1,60 @@
+<!doctype html><html lang="en"><head><meta charset="utf-8"><title>STIGQter: STIG Check Details: SV-224519r1144953_rule: NetView STC data sets are not properly protected.</title><link rel="icon" type="image/svg+xml" href="STIGQter.svg" /><script async src="https://www.googletagmanager.com/gtag/js?id=UA-31381839-2"></script><script src="include.js"></script><script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-4110907817782130" crossorigin="anonymous"></script></head><body><div><img src="STIGQter.svg" alt="STIGQter" style="height:1em;" /> <a href="https://www.stigqter.com/">STIGQter</a>: <a href="main.html">STIG Summary</a>: <a href="U_zOS_NetView_for_RACF_STIG_V7R2_Manual-xccdf.html">z/OS NetView for RACF Security Technical Implementation Guide Version: 7 Release: 2 Benchmark Date: 01 Oct 2025</a>:</div> <h1>NetView STC data sets are not properly protected.</h1><h2>DISA Rule</h2><p>SV-224519r1144953_rule</p><h2>Vulnerability Number</h2><p>V-224519</p><h2>Group Title</h2><p>SRG-OS-000259</p><h2>Rule Version</h2><p>ZNETR001</p><h2>Severity</h2><p>CAT II</p><h2>CCI(s)</h2><ul><li>CCI-001499 - Limit privileges to change software resident within software libraries.</li></ul><h2>Weight</h2><p>10</p><h2>Fix Recommendation</h2><p>The ISSO will ensure that WRITE and/or greater access to NetView STC data sets are limited to System Programmers and NetView STC only, unless a letter justifying access is filed with the ISSO. Auditors should have READ access.<br />
+<br />
+The installing Systems Programmer will identify and document the product data sets and categorize them according to who will have WRITE and/or greater access and if required that all WRITE and/or greater access is logged. He will identify if any additional groups have WRITE and/or greater access for specific data sets, and once documented he will work with the ISSO to see that they are properly restricted to the ACP (Access Control Program) active on the system.<br />
+<br />
+Data sets to be protected will be: <br />
+SYS3.NETVIEW.&lt;systemid&gt;.** (VSAM data sets)<br />
+<br />
+The following commands are provided as a sample for implementing data set controls:<br />
+<br />
+ad 'sys3.netview.&lt;systemid&gt;.&lt;VSAMDS&gt;.**' uacc(none) owner(sys3) -<br />
+  audit(success(update) failures(read)) -<br />
+  data('netview site VSAM data sets')<br />
+pe 'sys3.netview.&lt;systemid&gt;.**' id(audtaudt) acc(r)<br />
+pe 'sys3.netview.&lt;systemid&gt;.**' id(CNMPROC syspaudt tstcaudt) acc(a)<br />
+<br />
+The VSAM data set required for greater than READ access are:<br />
+SYS3.NETVIEW.&lt;systemid&gt;.AAUVSPL<br />
+SYS3.NETVIEW.&lt;systemid&gt;.AAUVSSL<br />
+SYS3.NETVIEW.&lt;systemid&gt;.BNJLGPR<br />
+SYS3.NETVIEW.&lt;systemid&gt;.BNJLGSE<br />
+SYS3.NETVIEW.&lt;systemid&gt;.BNJ36PR<br />
+SYS3.NETVIEW.&lt;systemid&gt;.BNJ36SE<br />
+SYS3.NETVIEW.&lt;systemid&gt;.DSIKPNL<br />
+SYS3.NETVIEW.&lt;systemid&gt;.DSILIST<br />
+SYS3.NETVIEW.&lt;systemid&gt;.DSILOGP<br />
+SYS3.NETVIEW.&lt;systemid&gt;.DSILOGS<br />
+SYS3.NETVIEW.&lt;systemid&gt;.DSISVRT<br />
+SYS3.NETVIEW.&lt;systemid&gt;.DSITRCP<br />
+SYS3.NETVIEW.&lt;systemid&gt;.DSITRCS<br />
+SYS3.NETVIEW.&lt;systemid&gt;.SDSIOPEN</p><h2>Check Contents</h2><p>Refer to the following report produced by the Data Set and Resource Data Collection:<br />
+<br />
+- SENSITVE.RPT(NETVSTC).<br />
+<br />
+Automated Analysis<br />
+Refer to the following report produced by the Data Set and Resource Data Collection:<br />
+<br />
+- PDI(ZNET0001).<br />
+<br />
+Verify that access to the NetView STC data sets are properly restricted. If the following guidance is true, this is not a finding.<br />
+<br />
+The RACF data set rules for the data sets restricts READ access to auditors.<br />
+<br />
+The RACF data set rules for the data sets restricts WRITE and/or greater access to systems programming personnel.<br />
+<br />
+The RACF data set rules for the data sets restricts WRITE and/or greater access to the product STC(s) and/or batch job(s).</p><h2>Vulnerability Number</h2><p>V-224519</p><h2>Documentable</h2><p>False</p><h2>Rule Version</h2><p>ZNETR001</p><h2>Severity Override Guidance</h2><p>Refer to the following report produced by the Data Set and Resource Data Collection:<br />
+<br />
+- SENSITVE.RPT(NETVSTC).<br />
+<br />
+Automated Analysis<br />
+Refer to the following report produced by the Data Set and Resource Data Collection:<br />
+<br />
+- PDI(ZNET0001).<br />
+<br />
+Verify that access to the NetView STC data sets are properly restricted. If the following guidance is true, this is not a finding.<br />
+<br />
+The RACF data set rules for the data sets restricts READ access to auditors.<br />
+<br />
+The RACF data set rules for the data sets restricts WRITE and/or greater access to systems programming personnel.<br />
+<br />
+The RACF data set rules for the data sets restricts WRITE and/or greater access to the product STC(s) and/or batch job(s).</p><h2>Check Content Reference</h2><p>M</p><h2>Target Key</h2><p>4159</p></body></html>

@@ -1,0 +1,60 @@
+<!doctype html><html lang="en"><head><meta charset="utf-8"><title>STIGQter: STIG Check Details: SV-276298r1150102_rule: The audit information produced by Azure SQL Managed Instance must be protected from unauthorized access.</title><link rel="icon" type="image/svg+xml" href="STIGQter.svg" /><script async src="https://www.googletagmanager.com/gtag/js?id=UA-31381839-2"></script><script src="include.js"></script><script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-4110907817782130" crossorigin="anonymous"></script></head><body><div><img src="STIGQter.svg" alt="STIGQter" style="height:1em;" /> <a href="https://www.stigqter.com/">STIGQter</a>: <a href="main.html">STIG Summary</a>: <a href="U_MS_Azure_SQL_MI_STIG_V1R1_Manual-xccdf.html">Microsoft Azure SQL Managed Instance Security Technical Implementation Guide Version: 1 Release: 1 Benchmark Date: 23 Sep 2025</a>:</div> <h1>The audit information produced by Azure SQL Managed Instance must be protected from unauthorized access.</h1><h2>DISA Rule</h2><p>SV-276298r1150102_rule</p><h2>Vulnerability Number</h2><p>V-276298</p><h2>Group Title</h2><p>SRG-APP-000118-DB-000059</p><h2>Rule Version</h2><p>MSQL-D0-005900</p><h2>Severity</h2><p>CAT II</p><h2>CCI(s)</h2><ul><li>CCI-000162 - Protect audit information from unauthorized access.</li><li>CCI-000163 - Protect audit information from unauthorized modification.</li><li>CCI-000164 - Protect audit information from unauthorized deletion.</li></ul><h2>Weight</h2><p>10</p><h2>Fix Recommendation</h2><p>Modify storage permissions to meet the requirement to protect against unauthorized access.<br />
+ <br />
+To review the storage configuration, navigate to the Azure Portal and review the audit storage configuration.<br />
+ <br />
+1. Navigate to the audit storage account then select &quot;Containers&quot; under the Data Storage heading. <br />
+2. Select the Audit Container name from the query result. <br />
+3. Scroll to the Settings heading on the left-side menu and select &quot;Configuration&quot;. <br />
+- Set &quot;Secure transfer required&quot; to Enabled.<br />
+- Set &quot;Allow Blob anonymous access&quot; to Disabled.<br />
+- Set &quot;Allow storage account key access&quot; to Disabled.<br />
+- Set &quot;Allow recommended upper limit for shared access signature (SAS) expiry interval&quot; to an organizationally defined limit.<br />
+- Set &quot;Minimum TLS version&quot; to the latest available version that is supported by the application.</p><h2>Check Contents</h2><p>To obtain the Azure SQL Managed Instance audit file location(s), connect to the Azure SQL Managed Instance in SSMS and run the following query: <br />
+<br />
+SELECT<br />
+[AuditStorageAccount] = SUBSTRING(audit_file_path, CHARINDEX('://', audit_file_path ) + 3, CHARINDEX('.', audit_file_path ) - CHARINDEX('://', audit_file_path ) - 3)<br />
+,[AuditContainer] = SUBSTRING(audit_file_path, CHARINDEX('/', audit_file_path, CHARINDEX('//', audit_file_path) + 2) + 1, CHARINDEX('/', audit_file_path, CHARINDEX('/', audit_file_path, CHARINDEX('//', audit_file_path) + 2) + 1) - CHARINDEX('/', audit_file_path, CHARINDEX('//',audit_file_path) + 2) - 1)<br />
+FROM sys.dm_server_audit_status<br />
+WHERE audit_file_path IS NOT NULL <br />
+<br />
+The result will display the name of the storage account where the audit data is stored and the audit container.<br />
+<br />
+Review the storage settings for the audit.<br />
+ <br />
+Verify that the audit storage has the correct permissions by doing the following:<br />
+<br />
+1. Navigate to the audit storage account then select &quot;Containers&quot; under the Data Storage heading. <br />
+2. Select the Audit Container name from the query result. <br />
+3. Scroll to the Settings heading on the left-side menu and select &quot;Configuration&quot;. <br />
+4. Verify the following settings: <br />
+- &quot;Secure transfer required&quot; must be Enabled.<br />
+- &quot;Allow Blob anonymous access&quot; must be Disabled.<br />
+- &quot;Allow storage account key access&quot; must be Disabled. <br />
+- &quot;Allow recommended upper limit for shared access signature (SAS) expiry interval&quot; must have an organizationally defined limit.<br />
+- &quot;Minimum TLS version&quot; must be set to the latest available version that is supported by the application.<br />
+ <br />
+Any settings that do not match the above requirements must be approved and documented, if not, this is a finding.</p><h2>Vulnerability Number</h2><p>V-276298</p><h2>Documentable</h2><p>False</p><h2>Rule Version</h2><p>MSQL-D0-005900</p><h2>Severity Override Guidance</h2><p>To obtain the Azure SQL Managed Instance audit file location(s), connect to the Azure SQL Managed Instance in SSMS and run the following query: <br />
+<br />
+SELECT<br />
+[AuditStorageAccount] = SUBSTRING(audit_file_path, CHARINDEX('://', audit_file_path ) + 3, CHARINDEX('.', audit_file_path ) - CHARINDEX('://', audit_file_path ) - 3)<br />
+,[AuditContainer] = SUBSTRING(audit_file_path, CHARINDEX('/', audit_file_path, CHARINDEX('//', audit_file_path) + 2) + 1, CHARINDEX('/', audit_file_path, CHARINDEX('/', audit_file_path, CHARINDEX('//', audit_file_path) + 2) + 1) - CHARINDEX('/', audit_file_path, CHARINDEX('//',audit_file_path) + 2) - 1)<br />
+FROM sys.dm_server_audit_status<br />
+WHERE audit_file_path IS NOT NULL <br />
+<br />
+The result will display the name of the storage account where the audit data is stored and the audit container.<br />
+<br />
+Review the storage settings for the audit.<br />
+ <br />
+Verify that the audit storage has the correct permissions by doing the following:<br />
+<br />
+1. Navigate to the audit storage account then select &quot;Containers&quot; under the Data Storage heading. <br />
+2. Select the Audit Container name from the query result. <br />
+3. Scroll to the Settings heading on the left-side menu and select &quot;Configuration&quot;. <br />
+4. Verify the following settings: <br />
+- &quot;Secure transfer required&quot; must be Enabled.<br />
+- &quot;Allow Blob anonymous access&quot; must be Disabled.<br />
+- &quot;Allow storage account key access&quot; must be Disabled. <br />
+- &quot;Allow recommended upper limit for shared access signature (SAS) expiry interval&quot; must have an organizationally defined limit.<br />
+- &quot;Minimum TLS version&quot; must be set to the latest available version that is supported by the application.<br />
+ <br />
+Any settings that do not match the above requirements must be approved and documented, if not, this is a finding.</p><h2>Check Content Reference</h2><p>M</p><h2>Target Key</h2><p>5711</p></body></html>

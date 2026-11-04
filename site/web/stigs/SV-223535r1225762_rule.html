@@ -1,0 +1,127 @@
+<!doctype html><html lang="en"><head><meta charset="utf-8"><title>STIGQter: STIG Check Details: SV-223535r1225762_rule: IBM z/OS JES2 input sources must be controlled in accordance with the proper security requirements.</title><link rel="icon" type="image/svg+xml" href="STIGQter.svg" /><script async src="https://www.googletagmanager.com/gtag/js?id=UA-31381839-2"></script><script src="include.js"></script><script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-4110907817782130" crossorigin="anonymous"></script></head><body><div><img src="STIGQter.svg" alt="STIGQter" style="height:1em;" /> <a href="https://www.stigqter.com/">STIGQter</a>: <a href="main.html">STIG Summary</a>: <a href="U_IBM_zOS_ACF2_STIG_V9R9_Manual-xccdf.html">IBM z/OS ACF2 Security Technical Implementation Guide Version: 9 Release: 9 Benchmark Date: 01 Jul 2026</a>:</div> <h1>IBM z/OS JES2 input sources must be controlled in accordance with the proper security requirements.</h1><h2>DISA Rule</h2><p>SV-223535r1225762_rule</p><h2>Vulnerability Number</h2><p>V-223535</p><h2>Group Title</h2><p>SRG-OS-000080-GPOS-00048</p><h2>Rule Version</h2><p>ACF2-JS-000080</p><h2>Severity</h2><p>CAT II</p><h2>CCI(s)</h2><ul><li>CCI-000213 - Enforce approved authorizations for logical access to information and system resources in accordance with applicable access control policies.</li></ul><h2>Weight</h2><p>10</p><h2>Fix Recommendation</h2><p>NOTE: If CLASMAP defines JESINPUT as anything other than TYPE(INP), replace INP below with the appropriate three letters.<br />
+<br />
+Configure resources in the JESINPUT resource class (i.e., TYPE(INP)) granting read access to authorized users for each of the following input resources:<br />
+INTRDR (internal reader for batch jobs)<br />
+nodename (NJE node)<br />
+OFFn.- (spool offload receiver)<br />
+OFFn.JR (spool offload job receiver)<br />
+OFFn.SR (spool offload SYSOUT receiver)<br />
+Rnnnn.RDm (RJE workstation)<br />
+RDRnn (local card reader)<br />
+STCINRDR (internal reader for started tasks)<br />
+TSUINRDR (internal reader for TSO logons)<br />
+<br />
+The resource definition will be generic if all of the resources of the same type have identical access controls (e.g., if all off load receivers are equivalent). The default access will be NONE except for sources that are permitted to submit jobs for all users. Those resources may be defined as either NONE or READ.<br />
+<br />
+Nodename is the NAME parameter value specified on the NODE statement. Review the JES2 parameters for NJE node definitions by searching for NODE( in the JES2 parameters.<br />
+<br />
+OFFn, where n is the number of the offload receiver. Determine the numbers by searching for OFF( in the JES2 parameters.<br />
+<br />
+Rnnnn.RDm, where nnnn is the number of the remote workstation and m is the number of the reader. Determine the numbers by searching for .RD in the JES2 parameters.<br />
+<br />
+RDRnn, where nn is the number of the reader. Determine the numbers by searching for RDR( in the JES2 parameters.<br />
+<br />
+Ensure the following items are in effect:<br />
+<br />
+The CLASMAP record defines the JESINPUT resource class.<br />
+<br />
+Example:<br />
+SHOW CLASMAP<br />
+<br />
+The resources mentioned in (b) are protected by generic and/or fully qualified rules defined to the JESINPUT resource class.<br />
+<br />
+A default access of PREVENT is specified for all resources.<br />
+<br />
+NOTE: A default access of READ is allowed for input sources that are permitted to submit jobs for all users. Currently, there is no guidance on which input sources are appropriate for a default access of READ. However, common sense should prevail during the analysis. For example, a default access of READ would typically be inappropriate for RJE, NJE, offload, and STC input sources.<br />
+<br />
+Examples:<br />
+$KEY(STCINRDR) TYPE(INP)<br />
+- UID(*) PREVENT <br />
+<br />
+$KEY(TSUINRDR) TYPE(INP)<br />
+- UID(*) PREVENT <br />
+<br />
+$KEY(RDR*****) TYPE(INP)<br />
+$MEMBER(RDR#####) <br />
+- UID(*) PREVENT <br />
+<br />
+$KEY(OFF*****) TYPE(INP) <br />
+$MEMBER(OFF#####) <br />
+JR UID(oper) SERVICE(READ)<br />
+JR UID(*) PREVENT <br />
+SR UID(oper) SERVICE(READ)<br />
+SR UID(*) PREVENT <br />
+- UID(oper) SERVICE(READ) <br />
+- UID(*) PREVENT</p><h2>Check Contents</h2><p>From the ACF input screen enter:<br />
+SET CONTROL(GSO)<br />
+LIST LIKE(CLASMAP-) <br />
+Or<br />
+SHOW CLASMAP {to determine the resource type for JESINPUT}<br />
+NOTE: If CLASMAP defines JESINPUT as anything other than TYPE(INP), replace INP below with the appropriate three letters.<br />
+<br />
+SET RESOURCE(INP)<br />
+LIST LIKE(-)<br />
+<br />
+NOTE: If any of the following are not defined within the JES2 parameters, the resource in the JESINPUT resource class does not have to be defined.<br />
+<br />
+Nodename is the NAME parameter in the NODE statement. Review the NJE node definitions by searching for NODE( in the JES2 parameters.<br />
+<br />
+OFFn, where n is the number of the offload receiver. Review the spool offload receiver definitions by searching for OFF( in the JES2 parameters.<br />
+<br />
+Rnnnn, where nnnn is the number of the remote workstation. Review the RJE node definitions by searching for RMT( in the JES2 parameters.<br />
+<br />
+RDRnn, where nn is the number of the reader. Review the reader definitions by searching for RDR( in the JES2 parameters.<br />
+<br />
+If the resources mentioned below are protected by generic and/or fully qualified rules defined to the JESINPUT resource class this is not a finding.<br />
+<br />
+If a default access of PREVENT is specified for all resources this is not a finding.<br />
+<br />
+If the ACF2 resources and/or generic equivalent identified below are defined with access restricted to the appropriate personnel this is not a finding.<br />
+<br />
+NOTE: Use common sense during the analysis. For example, access to the offload input sources should be limited to systems personnel (e.g., operations staff).<br />
+<br />
+NOTE: A default access of READ is allowed for input sources that are permitted to submit jobs for all users. No guidance on which input sources are appropriate for a default access of READ. However, common sense should prevail during the analysis. For example, a default access of READ would typically be inappropriate for RJE, NJE, offload, and STC input sources.<br />
+<br />
+INTRDR (internal reader for batch jobs)<br />
+nodename (NJE node)<br />
+OFFn.- (spool offload receiver)<br />
+Rnnnn.- (RJE workstation)<br />
+RDRnn (local card reader)<br />
+STCINRDR (internal reader for started tasks)<br />
+TSUINRDR (internal reader for TSO logons)</p><h2>Vulnerability Number</h2><p>V-223535</p><h2>Documentable</h2><p>False</p><h2>Rule Version</h2><p>ACF2-JS-000080</p><h2>Severity Override Guidance</h2><p>From the ACF input screen enter:<br />
+SET CONTROL(GSO)<br />
+LIST LIKE(CLASMAP-) <br />
+Or<br />
+SHOW CLASMAP {to determine the resource type for JESINPUT}<br />
+NOTE: If CLASMAP defines JESINPUT as anything other than TYPE(INP), replace INP below with the appropriate three letters.<br />
+<br />
+SET RESOURCE(INP)<br />
+LIST LIKE(-)<br />
+<br />
+NOTE: If any of the following are not defined within the JES2 parameters, the resource in the JESINPUT resource class does not have to be defined.<br />
+<br />
+Nodename is the NAME parameter in the NODE statement. Review the NJE node definitions by searching for NODE( in the JES2 parameters.<br />
+<br />
+OFFn, where n is the number of the offload receiver. Review the spool offload receiver definitions by searching for OFF( in the JES2 parameters.<br />
+<br />
+Rnnnn, where nnnn is the number of the remote workstation. Review the RJE node definitions by searching for RMT( in the JES2 parameters.<br />
+<br />
+RDRnn, where nn is the number of the reader. Review the reader definitions by searching for RDR( in the JES2 parameters.<br />
+<br />
+If the resources mentioned below are protected by generic and/or fully qualified rules defined to the JESINPUT resource class this is not a finding.<br />
+<br />
+If a default access of PREVENT is specified for all resources this is not a finding.<br />
+<br />
+If the ACF2 resources and/or generic equivalent identified below are defined with access restricted to the appropriate personnel this is not a finding.<br />
+<br />
+NOTE: Use common sense during the analysis. For example, access to the offload input sources should be limited to systems personnel (e.g., operations staff).<br />
+<br />
+NOTE: A default access of READ is allowed for input sources that are permitted to submit jobs for all users. No guidance on which input sources are appropriate for a default access of READ. However, common sense should prevail during the analysis. For example, a default access of READ would typically be inappropriate for RJE, NJE, offload, and STC input sources.<br />
+<br />
+INTRDR (internal reader for batch jobs)<br />
+nodename (NJE node)<br />
+OFFn.- (spool offload receiver)<br />
+Rnnnn.- (RJE workstation)<br />
+RDRnn (local card reader)<br />
+STCINRDR (internal reader for started tasks)<br />
+TSUINRDR (internal reader for TSO logons)</p><h2>Check Content Reference</h2><p>M</p><h2>Target Key</h2><p>4100</p></body></html>

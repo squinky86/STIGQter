@@ -1,0 +1,41 @@
+<!doctype html><html lang="en"><head><meta charset="utf-8"><title>STIGQter: STIG Check Details: SV-270533r1065215_rule: Oracle application administration roles must be disabled if not required and authorized.</title><link rel="icon" type="image/svg+xml" href="STIGQter.svg" /><script async src="https://www.googletagmanager.com/gtag/js?id=UA-31381839-2"></script><script src="include.js"></script><script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-4110907817782130" crossorigin="anonymous"></script></head><body><div><img src="STIGQter.svg" alt="STIGQter" style="height:1em;" /> <a href="https://www.stigqter.com/">STIGQter</a>: <a href="main.html">STIG Summary</a>: <a href="U_Oracle_Database_19c_STIG_V1R5_Manual-xccdf.html">Oracle Database 19c Security Technical Implementation Guide Version: 1 Release: 5 Benchmark Date: 01 Apr 2026</a>:</div> <h1>Oracle application administration roles must be disabled if not required and authorized.</h1><h2>DISA Rule</h2><p>SV-270533r1065215_rule</p><h2>Vulnerability Number</h2><p>V-270533</p><h2>Group Title</h2><p>SRG-APP-000516-DB-000363</p><h2>Rule Version</h2><p>O19C-00-010100</p><h2>Severity</h2><p>CAT II</p><h2>CCI(s)</h2><ul><li>CCI-000366 - Implement the security configuration settings.</li></ul><h2>Weight</h2><p>10</p><h2>Fix Recommendation</h2><p>For each role assignment returned, issue:<br />
+<br />
+From SQL*Plus:<br />
+<br />
+alter user [username] default role all except [role];<br />
+<br />
+If the user has more than one application administration role assigned, then remove assigned roles from default assignment and assign individually the appropriate default roles.</p><h2>Check Contents</h2><p>Run the SQL query:<br />
+<br />
+select grantee, granted_role from dba_role_privs<br />
+where default_role='YES'<br />
+and granted_role in<br />
+(select grantee from dba_sys_privs where upper(privilege) like '%USER%') <br />
+and grantee not in<br />
+(&lt;list of nonapplicable accounts&gt;)<br />
+and grantee not in (select distinct owner from dba_tables)<br />
+and grantee not in<br />
+(select distinct username from dba_users where upper(account_status) like<br />
+'%LOCKED%');<br />
+<br />
+With respect to the list of special accounts that are excluded from this requirement, it is expected that the database administrator (DBA) will maintain the list to suit local circumstances, adding special accounts as necessary and removing any that are not supposed to be in use in the Oracle deployment that is under review.<br />
+<br />
+Review the list of accounts reported for this check and ensures that they are authorized application administration roles.<br />
+<br />
+If any are not authorized application administration roles, this is a finding.</p><h2>Vulnerability Number</h2><p>V-270533</p><h2>Documentable</h2><p>False</p><h2>Rule Version</h2><p>O19C-00-010100</p><h2>Severity Override Guidance</h2><p>Run the SQL query:<br />
+<br />
+select grantee, granted_role from dba_role_privs<br />
+where default_role='YES'<br />
+and granted_role in<br />
+(select grantee from dba_sys_privs where upper(privilege) like '%USER%') <br />
+and grantee not in<br />
+(&lt;list of nonapplicable accounts&gt;)<br />
+and grantee not in (select distinct owner from dba_tables)<br />
+and grantee not in<br />
+(select distinct username from dba_users where upper(account_status) like<br />
+'%LOCKED%');<br />
+<br />
+With respect to the list of special accounts that are excluded from this requirement, it is expected that the database administrator (DBA) will maintain the list to suit local circumstances, adding special accounts as necessary and removing any that are not supposed to be in use in the Oracle deployment that is under review.<br />
+<br />
+Review the list of accounts reported for this check and ensures that they are authorized application administration roles.<br />
+<br />
+If any are not authorized application administration roles, this is a finding.</p><h2>Check Content Reference</h2><p>M</p><h2>Target Key</h2><p>5672</p></body></html>

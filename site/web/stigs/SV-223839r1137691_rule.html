@@ -1,0 +1,69 @@
+<!doctype html><html lang="en"><head><meta charset="utf-8"><title>STIGQter: STIG Check Details: SV-223839r1137691_rule: IBM z/OS BPX resource(s) must be protected in accordance with security requirements.</title><link rel="icon" type="image/svg+xml" href="STIGQter.svg" /><script async src="https://www.googletagmanager.com/gtag/js?id=UA-31381839-2"></script><script src="include.js"></script><script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-4110907817782130" crossorigin="anonymous"></script></head><body><div><img src="STIGQter.svg" alt="STIGQter" style="height:1em;" /> <a href="https://www.stigqter.com/">STIGQter</a>: <a href="main.html">STIG Summary</a>: <a href="U_IBM_zOS_RACF_STIG_V9R9_Manual-xccdf.html">IBM z/OS RACF Security Technical Implementation Guide Version: 9 Release: 9 Benchmark Date: 01 Jul 2026</a>:</div> <h1>IBM z/OS BPX resource(s) must be protected in accordance with security requirements.</h1><h2>DISA Rule</h2><p>SV-223839r1137691_rule</p><h2>Vulnerability Number</h2><p>V-223839</p><h2>Group Title</h2><p>SRG-OS-000080-GPOS-00048</p><h2>Rule Version</h2><p>RACF-US-000020</p><h2>Severity</h2><p>CAT II</p><h2>CCI(s)</h2><ul><li>CCI-000213 - Enforce approved authorizations for logical access to information and system resources in accordance with applicable access control policies.</li></ul><h2>Weight</h2><p>10</p><h2>Fix Recommendation</h2><p>There are a number of resources available under z/OS UNIX that must be secured in order to preserve system integrity while allowing effective application and user access. All of these resources might not be used in every configuration, but several of them have critical impacts.<br />
+<br />
+The default access for each of these resources must be no access. A generic resource (e.g., BPX.**) must also be set to a default access of none to cover future additions. Because they convey especially powerful privileges, the settings for BPX.DAEMON, BPX.SAFFASTPATH, BPX.SERVER, and BPX.SUPERUSER require special attention.<br />
+<br />
+Access to BPX.DAEMON must be restricted to the z/OS UNIX kernel userid, z/OS UNIX daemons (e.g., inetd, syslogd, ftpd), and other system software daemons (e.g., web servers).<br />
+<br />
+As noted above, the BPX.SAFFASTPATH definition can cause successful security checks not to be audited. Because auditing of all accesses is required for some system files, BPX.SAFFASTPATH must not be used. <br />
+<br />
+Access to BPX.SERVER must be restricted to system software processes that act as servers under z/OS UNIX (e.g., web servers).<br />
+<br />
+Access to BPX.SUPERUSER must be restricted to Security Administrators and individual systems programming personnel. It is not appropriate for all systems programming personnel, only for those with responsibilities for components or products that use z/OS UNIX and that require superuser capability for maintenance.<br />
+<br />
+-The RACF rules for the BPX.** resource specify a default access of NONE.<br />
+-There are no RACF user access to the BPX.** resource.<br />
+-There is no RACF rule for BPX.SAFFASTPATH defined.<br />
+-The RACF rules for each of the BPX resources specify a UACC value of NONE.<br />
+-The RACF rules for each of the BPX resources restrict access to appropriate system tasks or systems programming personnel as specified.<br />
+<br />
+The following list of sample commands is provided to implement this requirement:<br />
+<br />
+rdef facility bpx.** UACC(none) owner(admin) audit(all(read)) - data('see zuss0021') <br />
+rdef facility bpx.daemon UACC(none) owner(admin) - <br />
+audit(all(read)) data('see zuss0021') <br />
+pe bpx.daemon cl(facility id(&lt;authorized_users&gt;) <br />
+rdef facility bpx.debug UACC(none) owner(admin) - <br />
+audit(all(read)) data('see zuss0021') <br />
+pe bpx.debug cl(facility id(&lt;authorized_users&gt;) <br />
+rdef facility bpx.fileattr.apf UACC(none) owner(admin) - <br />
+audit(all(read)) data('see zuss0021') <br />
+pe bpx.fileattr.apf cl(facility id(&lt;authorized_users&gt;) <br />
+rdef facility bpx.fileattr.progctl UACC(none) owner(admin) - <br />
+audit(all(read)) data('see zuss0021') <br />
+pe bpx.fileattr.progctl cl(facility id(&lt;authorized_users&gt;) <br />
+rdef facility bpx.jobname UACC(none) owner(admin) - <br />
+audit(all(read)) data('see zuss0021') <br />
+pe bpx.jobname cl(facility id(&lt;authorized_users&gt;) <br />
+rdef facility bpx.server UACC(none) owner(admin) - <br />
+audit(all(read)) data('see zuss0021') <br />
+pe bpx.server cl(facility id(&lt;authorized_users&gt;) <br />
+rdef facility bpx.smf UACC(none) owner(admin) - <br />
+audit(all(read)) data('see zuss0021') <br />
+pe bpx.smf cl(facility id(&lt;authorized_users&gt;) <br />
+rdef facility bpx.stor.swap UACC(none) owner(admin) -<br />
+audit(all(read)) data('see zuss0021') <br />
+pe bpx.stor.swap cl(facility id(&lt;authorized_users&gt;) <br />
+rdef facility bpx.superuser UACC(none) owner(admin) -<br />
+audit(all(read)) data('see zuss0021') <br />
+pe bpx.superuser cl(facility id(&lt;authorized_users&gt;) <br />
+rdef facility bpx.wlmserver UACC(none) owner(admin) -<br />
+audit(all(read)) data('see zuss0021') <br />
+pe bpx.wlmserver cl(facility id(&lt;authorized_users&gt;)</p><h2>Check Contents</h2><p>From the ISPF Command Shell enter:<br />
+RL FACILITY * AUTHUSER<br />
+<br />
+If the RACF rules for the BPX.** resource specify a default access of NONE, this is not a finding.<br />
+<br />
+If there are no RACF user access to the BPX.** resource, this is not a finding.<br />
+<br />
+If there is no RACF rule for BPX.SAFFASTPATH defined, this is not a finding.<br />
+<br />
+If the RACF rules for each of the BPX resources listed in the z/OS UNIX System Services Planning, Establishing UNIX security, restrict access to appropriate system tasks or systems programming personnel, this is not a finding.</p><h2>Vulnerability Number</h2><p>V-223839</p><h2>Documentable</h2><p>False</p><h2>Rule Version</h2><p>RACF-US-000020</p><h2>Severity Override Guidance</h2><p>From the ISPF Command Shell enter:<br />
+RL FACILITY * AUTHUSER<br />
+<br />
+If the RACF rules for the BPX.** resource specify a default access of NONE, this is not a finding.<br />
+<br />
+If there are no RACF user access to the BPX.** resource, this is not a finding.<br />
+<br />
+If there is no RACF rule for BPX.SAFFASTPATH defined, this is not a finding.<br />
+<br />
+If the RACF rules for each of the BPX resources listed in the z/OS UNIX System Services Planning, Establishing UNIX security, restrict access to appropriate system tasks or systems programming personnel, this is not a finding.</p><h2>Check Content Reference</h2><p>M</p><h2>Target Key</h2><p>4101</p></body></html>

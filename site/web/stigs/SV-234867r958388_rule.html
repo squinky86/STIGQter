@@ -1,0 +1,42 @@
+<!doctype html><html lang="en"><head><meta charset="utf-8"><title>STIGQter: STIG Check Details: SV-234867r958388_rule: The SUSE operating system must lock an account after three consecutive invalid access attempts.</title><link rel="icon" type="image/svg+xml" href="STIGQter.svg" /><script async src="https://www.googletagmanager.com/gtag/js?id=UA-31381839-2"></script><script src="include.js"></script><script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-4110907817782130" crossorigin="anonymous"></script></head><body><div><img src="STIGQter.svg" alt="STIGQter" style="height:1em;" /> <a href="https://www.stigqter.com/">STIGQter</a>: <a href="main.html">STIG Summary</a>: <a href="U_SLES_15_STIG_V2R8_Manual-xccdf.html">SUSE Linux Enterprise Server 15 Security Technical Implementation Guide Version: 2 Release: 8 Benchmark Date: 01 Jul 2026</a>:</div> <h1>The SUSE operating system must lock an account after three consecutive invalid access attempts.</h1><h2>DISA Rule</h2><p>SV-234867r958388_rule</p><h2>Vulnerability Number</h2><p>V-234867</p><h2>Group Title</h2><p>SRG-OS-000021-GPOS-00005</p><h2>Rule Version</h2><p>SLES-15-020010</p><h2>Severity</h2><p>CAT II</p><h2>CCI(s)</h2><ul><li>CCI-000044 - Enforce the organization-defined limit of consecutive invalid logon attempts by a user during the organization-defined time period.</li><li>CCI-002238 - Automatically lock the account or node for either an organization-defined time period, until the locked account or node is released by an administrator, or delays the next logon prompt according to the organization-defined delay algorithm when the maximum number of unsuccessful logon attempts is exceeded.</li></ul><h2>Weight</h2><p>10</p><h2>Fix Recommendation</h2><p>Configure the operating system to lock an account when three unsuccessful access attempts occur.<br />
+<br />
+Modify the first line of the auth section &quot;/etc/pam.d/common-auth&quot; file to match the following lines:<br />
+<br />
+auth required pam_tally2.so onerr=fail silent audit deny=3<br />
+<br />
+Add or modify the following line in the /etc/pam.d/common-account file:<br />
+account required pam_tally2.so <br />
+<br />
+Note: Manual changes to the listed files may be overwritten by the &quot;pam-config&quot; program. The &quot;pam-config&quot; program should not be used to update the configurations listed in this requirement.</p><h2>Check Contents</h2><p>Verify the SUSE operating system locks a user account after three consecutive failed access attempts until the locked account is released by an administrator. <br />
+<br />
+Check that the system locks a user account after three consecutive failed login attempts using the following command: <br />
+<br />
+&gt; grep pam_tally2.so /etc/pam.d/common-auth <br />
+auth required pam_tally2.so onerr=fail deny=3 <br />
+<br />
+If no line is returned or the line is commented out, this is a finding.<br />
+If the line is missing &quot;onerr=fail&quot;, this is a finding.<br />
+If the line has &quot;deny&quot; set to a value other than 1, 2, or 3, this is a finding.<br />
+<br />
+Check that the system resets the failed login attempts counter after a successful login using the following command: <br />
+<br />
+&gt; grep pam_tally2.so /etc/pam.d/common-account <br />
+account required pam_tally2.so<br />
+<br />
+If the account option is missing, or commented out, this is a finding.</p><h2>Vulnerability Number</h2><p>V-234867</p><h2>Documentable</h2><p>False</p><h2>Rule Version</h2><p>SLES-15-020010</p><h2>Severity Override Guidance</h2><p>Verify the SUSE operating system locks a user account after three consecutive failed access attempts until the locked account is released by an administrator. <br />
+<br />
+Check that the system locks a user account after three consecutive failed login attempts using the following command: <br />
+<br />
+&gt; grep pam_tally2.so /etc/pam.d/common-auth <br />
+auth required pam_tally2.so onerr=fail deny=3 <br />
+<br />
+If no line is returned or the line is commented out, this is a finding.<br />
+If the line is missing &quot;onerr=fail&quot;, this is a finding.<br />
+If the line has &quot;deny&quot; set to a value other than 1, 2, or 3, this is a finding.<br />
+<br />
+Check that the system resets the failed login attempts counter after a successful login using the following command: <br />
+<br />
+&gt; grep pam_tally2.so /etc/pam.d/common-account <br />
+account required pam_tally2.so<br />
+<br />
+If the account option is missing, or commented out, this is a finding.</p><h2>Check Content Reference</h2><p>M</p><h2>Target Key</h2><p>5274</p></body></html>

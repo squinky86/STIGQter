@@ -1,0 +1,42 @@
+<!doctype html><html lang="en"><head><meta charset="utf-8"><title>STIGQter: STIG Check Details: SV-258732r933257_rule: The ESXi host Secure Shell (SSH) daemon must use FIPS 140-2 validated cryptographic modules to protect the confidentiality of remote access sessions.</title><link rel="icon" type="image/svg+xml" href="STIGQter.svg" /><script async src="https://www.googletagmanager.com/gtag/js?id=UA-31381839-2"></script><script src="include.js"></script><script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-4110907817782130" crossorigin="anonymous"></script></head><body><div><img src="STIGQter.svg" alt="STIGQter" style="height:1em;" /> <a href="https://www.stigqter.com/">STIGQter</a>: <a href="main.html">STIG Summary</a>: <a href="U_VMW_vSphere_8-0-ESXi_STIG_V1R1_Manual-xccdf.html">VMware vSphere 8.0 ESXi Security Technical Implementation Guide Version: 1 Release: 1 Benchmark Date: 31 Oct 2023</a>:</div> <h1>The ESXi host Secure Shell (SSH) daemon must use FIPS 140-2 validated cryptographic modules to protect the confidentiality of remote access sessions.</h1><h2>DISA Rule</h2><p>SV-258732r933257_rule</p><h2>Vulnerability Number</h2><p>V-258732</p><h2>Group Title</h2><p>SRG-OS-000033-VMM-000140</p><h2>Rule Version</h2><p>ESXI-80-000014</p><h2>Severity</h2><p>CAT I</p><h2>CCI(s)</h2><ul><li>CCI-000068 - Implement cryptographic mechanisms to protect the confidentiality of remote access sessions.</li></ul><h2>Weight</h2><p>10</p><h2>Fix Recommendation</h2><p>From an ESXi shell, run the following command:<br />
+<br />
+# esxcli system security fips140 ssh set -e true<br />
+<br />
+or<br />
+<br />
+From a PowerCLI command prompt while connected to the ESXi host, run the following commands:<br />
+<br />
+$esxcli = Get-EsxCli -v2<br />
+$arguments = $esxcli.system.security.fips140.ssh.set.CreateArgs()<br />
+$arguments.enable = $true<br />
+$esxcli.system.security.fips140.ssh.set.Invoke($arguments)</p><h2>Check Contents</h2><p>From an ESXi shell, run the following command:<br />
+<br />
+# esxcli system security fips140 ssh get<br />
+<br />
+or<br />
+<br />
+From a PowerCLI command prompt while connected to the ESXi host, run the following commands:<br />
+<br />
+$esxcli = Get-EsxCli -v2<br />
+$esxcli.system.security.fips140.ssh.get.invoke()<br />
+<br />
+Expected result:<br />
+<br />
+Enabled: true<br />
+<br />
+If the FIPS mode is not enabled for SSH, this is a finding.</p><h2>Vulnerability Number</h2><p>V-258732</p><h2>Documentable</h2><p>False</p><h2>Rule Version</h2><p>ESXI-80-000014</p><h2>Severity Override Guidance</h2><p>From an ESXi shell, run the following command:<br />
+<br />
+# esxcli system security fips140 ssh get<br />
+<br />
+or<br />
+<br />
+From a PowerCLI command prompt while connected to the ESXi host, run the following commands:<br />
+<br />
+$esxcli = Get-EsxCli -v2<br />
+$esxcli.system.security.fips140.ssh.get.invoke()<br />
+<br />
+Expected result:<br />
+<br />
+Enabled: true<br />
+<br />
+If the FIPS mode is not enabled for SSH, this is a finding.</p><h2>Check Content Reference</h2><p>M</p><h2>Target Key</h2><p>5562</p></body></html>

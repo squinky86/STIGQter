@@ -1,0 +1,45 @@
+<!doctype html><html lang="en"><head><meta charset="utf-8"><title>STIGQter: STIG Check Details: SV-251617r961131_rule: CA IDMS must isolate the security manager to which users, groups, roles are assigned authorities/permissions to resources.</title><link rel="icon" type="image/svg+xml" href="STIGQter.svg" /><script async src="https://www.googletagmanager.com/gtag/js?id=UA-31381839-2"></script><script src="include.js"></script><script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-4110907817782130" crossorigin="anonymous"></script></head><body><div><img src="STIGQter.svg" alt="STIGQter" style="height:1em;" /> <a href="https://www.stigqter.com/">STIGQter</a>: <a href="main.html">STIG Summary</a>: <a href="U_CA_IDMS_STIG_V2R2_Manual-xccdf.html">CA IDMS Security Technical Implementation Guide Version: 2 Release: 2 Benchmark Date: 01 Jul 2026</a>:</div> <h1>CA IDMS must isolate the security manager to which users, groups, roles are assigned authorities/permissions to resources.</h1><h2>DISA Rule</h2><p>SV-251617r961131_rule</p><h2>Vulnerability Number</h2><p>V-251617</p><h2>Group Title</h2><p>SRG-APP-000233-DB-000124</p><h2>Rule Version</h2><p>IDMS-DB-000460</p><h2>Severity</h2><p>CAT II</p><h2>CCI(s)</h2><ul><li>CCI-001084 - Isolate security functions from nonsecurity functions.</li></ul><h2>Weight</h2><p>10</p><h2>Fix Recommendation</h2><p>In the internally secured entries that are to be changed to external security, change the #SECRTT parms SECBY=INTERNAL to SECBY=EXTERNAL. Add the parameters EXTCLS and EXTNAME to the entry using the resource class and name defined in the ESM. For instance: <br />
+<br />
+#SECRTT TYPE=ENTRY,SECBY=EXTERNAL,              X<br />
+ RESTYPE=restype,EXTCLS=CA@IDMS,                 X<br />
+ EXTNAME=(extname_definition)<br />
+<br />
+Secure the resources through the ESM chosen by the organization (e.g., TSS, ACF 2, RACF) using the EXTCLS and the EXTNAME defined in the SRTT on the entry for the resource type. EXTCLS maps the CA IDMS resource type to the resource class defined in the external security system. The EXTNAME defines the format of the resource name defined to the ESM. <br />
+<br />
+Interrogate the security office regarding current and needed rules and definitions in the ESM. Define the users, groups, roles access to the resource in the ESM. For local batch jobs that access database files, define appropriate dataset-level security through the ESM. <br />
+<br />
+For example, in Top Secret:<br />
+TSS ADDTO(restype) CA@IDMS(SYST)<br />
+TSS PER(user_id) CA@IDMS(restype.the_extname)<br />
+<br />
+In ACF2:<br />
+$KEY(restype.the_extname) TYPE(CA@IDMS) <br />
+ UID(user_id) ALLOW<br />
+<br />
+RDEFINE CA@IDMS restype UACC(NONE)<br />
+PERMIT restype.the_extname CLASS(CA@IDMS) ID(user_id) ACCESS(READ)<br />
+<br />
+After making the above changes, assemble and link RHDCSRTT to create a new SRTT. To implement the new SRTT, either recycle any CVs that use the SRTT or issue these commands:       <br />
+ <br />
+   DCMT VARY NUCLEUS MODULE RHDCSRTT NEW COPY <br />
+   DCMT VARY NUCLEUS RELOAD</p><h2>Check Contents</h2><p>Identify CA IDMS security domains (a set of DC systems and local mode applications sharing a single user catalog and SRTT). For a given security domain, log on to one DC system. Issue DCPROFIL. If there is nothing specified for &quot;Security System&quot; and therefore no external security system being used, this is a finding.<br />
+<br />
+Examine load module RHDCSRTT by executing CA IDMS utility IDMSSRTD, or by issuing command &quot;DCMT DISPLAY SRTT&quot; while signed onto the CV, and reviewing the output.<br />
+<br />
+Note: This requires PTFs SO07995 and SO09476.<br />
+<br />
+If any entries have SECBY=INTERNAL, this is a finding.<br />
+<br />
+For local batch jobs (i.e., those jobs that access database files without going through the CA IDMS system), dataset-level security should be defined in the external security manager (ESM) with authorizations according the site security plan. If it is not, this is a finding.<br />
+<br />
+Check those resources that are secured externally to make sure the mapping to the ESM is correct. Check that the ESM entry for the externally secured resource is correctly configured for the external resource class and the external name of the resource being secured. The external name must match the format of the external name construction tokens found in the entry. If the ESM specification does not match the RHDCSRTT entry, this is a finding.</p><h2>Vulnerability Number</h2><p>V-251617</p><h2>Documentable</h2><p>False</p><h2>Rule Version</h2><p>IDMS-DB-000460</p><h2>Severity Override Guidance</h2><p>Identify CA IDMS security domains (a set of DC systems and local mode applications sharing a single user catalog and SRTT). For a given security domain, log on to one DC system. Issue DCPROFIL. If there is nothing specified for &quot;Security System&quot; and therefore no external security system being used, this is a finding.<br />
+<br />
+Examine load module RHDCSRTT by executing CA IDMS utility IDMSSRTD, or by issuing command &quot;DCMT DISPLAY SRTT&quot; while signed onto the CV, and reviewing the output.<br />
+<br />
+Note: This requires PTFs SO07995 and SO09476.<br />
+<br />
+If any entries have SECBY=INTERNAL, this is a finding.<br />
+<br />
+For local batch jobs (i.e., those jobs that access database files without going through the CA IDMS system), dataset-level security should be defined in the external security manager (ESM) with authorizations according the site security plan. If it is not, this is a finding.<br />
+<br />
+Check those resources that are secured externally to make sure the mapping to the ESM is correct. Check that the ESM entry for the externally secured resource is correctly configured for the external resource class and the external name of the resource being secured. The external name must match the format of the external name construction tokens found in the entry. If the ESM specification does not match the RHDCSRTT entry, this is a finding.</p><h2>Check Content Reference</h2><p>M</p><h2>Target Key</h2><p>5418</p></body></html>

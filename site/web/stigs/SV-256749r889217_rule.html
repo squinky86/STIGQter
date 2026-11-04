@@ -1,0 +1,27 @@
+<!doctype html><html lang="en"><head><meta charset="utf-8"><title>STIGQter: STIG Check Details: SV-256749r889217_rule: The Security Token Service must record user access in a format that enables monitoring of remote access.</title><link rel="icon" type="image/svg+xml" href="STIGQter.svg" /><script async src="https://www.googletagmanager.com/gtag/js?id=UA-31381839-2"></script><script src="include.js"></script><script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-4110907817782130" crossorigin="anonymous"></script></head><body><div><img src="STIGQter.svg" alt="STIGQter" style="height:1em;" /> <a href="https://www.stigqter.com/">STIGQter</a>: <a href="main.html">STIG Summary</a>: <a href="U_VMW_vSphere_7-0_vCA_STS_STIG_V1R2_Manual-xccdf.html">VMware vSphere 7.0 vCenter Appliance STS Security Technical Implementation Guide Version: 1 Release: 2 Benchmark Date: 26 Jul 2023</a>:</div> <h1>The Security Token Service must record user access in a format that enables monitoring of remote access.</h1><h2>DISA Rule</h2><p>SV-256749r889217_rule</p><h2>Vulnerability Number</h2><p>V-256749</p><h2>Group Title</h2><p>SRG-APP-000016-WSR-000005</p><h2>Rule Version</h2><p>VCST-70-000005</p><h2>Severity</h2><p>CAT II</p><h2>CCI(s)</h2><ul><li>CCI-000067 - Employ automated mechanisms to monitor remote access methods.</li><li>CCI-000130 - Ensure that audit records containing information that establishes what type of event occurred.</li><li>CCI-000131 - Ensure that audit records containing information that establishes when the event occurred.</li><li>CCI-000132 - Ensure that audit records containing information that establishes where the event occurred.</li><li>CCI-000133 - Ensure that audit records containing information that establishes the source of the event.</li><li>CCI-000134 - Ensure that audit records containing information that establishes the outcome of the event.</li><li>CCI-001487 - Ensure that audit records containing information that establishes the identity of any individuals, subjects, or objects/entities associated with the event.</li><li>CCI-001889 - Record time stamps for audit records that meet organization-defined granularity of time measurement.</li><li>CCI-001890 - Record time stamps for audit records that use Coordinated Universal Time, have a fixed local time offset from Coordinated Universal Time, or that include the local time offset as part of the time stamp.</li></ul><h2>Weight</h2><p>10</p><h2>Fix Recommendation</h2><p>Navigate to and open: <br />
+ <br />
+/usr/lib/vmware-sso/vmware-sts/conf/server.xml <br />
+ <br />
+Inside the &lt;Host&gt; node, find the &quot;AccessLogValve&quot; &lt;Valve&gt; node and replace the &quot;pattern&quot; element as follows: <br />
+ <br />
+pattern=&quot;%t %I [RemoteIP] %{X-Forwarded-For}i %u [Request] %h:%{remote}p to local %{local}p - %H %m %U%q    [Response] %s - %b bytes    [Perf] process %Dms / commit %Fms / conn [%X]&quot; <br />
+ <br />
+Restart the service with the following command: <br />
+ <br />
+# vmon-cli --restart sts</p><h2>Check Contents</h2><p>At the command prompt, run the following command: <br />
+ <br />
+# xmllint --format /usr/lib/vmware-sso/vmware-sts/conf/server.xml | sed '2 s/xmlns=&quot;.*&quot;//g' | xmllint --xpath '/Server/Service/Engine/Host/Valve[@className=&quot;org.apache.catalina.valves.AccessLogValve&quot;]/@pattern' - <br />
+ <br />
+Expected result: <br />
+ <br />
+pattern=&quot;%t %I [RemoteIP] %{X-Forwarded-For}i %u [Request] %h:%{remote}p to local %{local}p - %H %m %U%q    [Response] %s - %b bytes    [Perf] process %Dms / commit %Fms / conn [%X]&quot; <br />
+ <br />
+If the output does not match the expected result, this is a finding.</p><h2>Vulnerability Number</h2><p>V-256749</p><h2>Documentable</h2><p>False</p><h2>Rule Version</h2><p>VCST-70-000005</p><h2>Severity Override Guidance</h2><p>At the command prompt, run the following command: <br />
+ <br />
+# xmllint --format /usr/lib/vmware-sso/vmware-sts/conf/server.xml | sed '2 s/xmlns=&quot;.*&quot;//g' | xmllint --xpath '/Server/Service/Engine/Host/Valve[@className=&quot;org.apache.catalina.valves.AccessLogValve&quot;]/@pattern' - <br />
+ <br />
+Expected result: <br />
+ <br />
+pattern=&quot;%t %I [RemoteIP] %{X-Forwarded-For}i %u [Request] %h:%{remote}p to local %{local}p - %H %m %U%q    [Response] %s - %b bytes    [Perf] process %Dms / commit %Fms / conn [%X]&quot; <br />
+ <br />
+If the output does not match the expected result, this is a finding.</p><h2>Check Content Reference</h2><p>M</p><h2>Target Key</h2><p>5527</p></body></html>

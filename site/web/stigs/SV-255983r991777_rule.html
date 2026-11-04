@@ -1,0 +1,40 @@
+<!doctype html><html lang="en"><head><meta charset="utf-8"><title>STIGQter: STIG Check Details: SV-255983r991777_rule: The Arista MLS layer 2 switch must not use the default VLAN for management traffic.</title><link rel="icon" type="image/svg+xml" href="STIGQter.svg" /><script async src="https://www.googletagmanager.com/gtag/js?id=UA-31381839-2"></script><script src="include.js"></script><script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-4110907817782130" crossorigin="anonymous"></script></head><body><div><img src="STIGQter.svg" alt="STIGQter" style="height:1em;" /> <a href="https://www.stigqter.com/">STIGQter</a>: <a href="main.html">STIG Summary</a>: <a href="U_Arista_MLS_EOS_4-X_L2S_STIG_V2R3_Manual-xccdf.html">Arista MLS EOS 4.X L2S Security Technical Implementation Guide Version: 2 Release: 3 Benchmark Date: 02 Jul 2025</a>:</div> <h1>The Arista MLS layer 2 switch must not use the default VLAN for management traffic.</h1><h2>DISA Rule</h2><p>SV-255983r991777_rule</p><h2>Vulnerability Number</h2><p>V-255983</p><h2>Group Title</h2><p>SRG-NET-000512-L2S-000010</p><h2>Rule Version</h2><p>ARST-L2-000200</p><h2>Severity</h2><p>CAT II</p><h2>CCI(s)</h2><ul><li>CCI-004931 - Establish organization-defined alternate communications paths for system operations organizational command and control.</li></ul><h2>Weight</h2><p>10</p><h2>Fix Recommendation</h2><p>Step 1: Configure the Arista MLS switch for a VRF instance for Management Network access by using the following commands:<br />
+<br />
+switch(config)#vrf instance Management_Network<br />
+switch(config-vrf-Management_Network)#exit<br />
+<br />
+Step 2: Configure the Ethernet port for VRF Management_Network and IP address for the management network traffic:<br />
+<br />
+switch(config-if-Et12)#vrf Management_Network <br />
+switch(config-if-Et12)#ip address 10.10.40.254/30<br />
+switch(config-if-Et12)#exit</p><h2>Check Contents</h2><p>Verify the Arista MLS configuration for a Management_Network VRF instance globally on the switch with the following example:<br />
+<br />
+switch(config)#sh run | sec vrf<br />
+ip name-server vrf default 192.168.10.20<br />
+!<br />
+vrf instance Management_Network<br />
+!<br />
+interface Ethernet12<br />
+   description MANAGEMENT NETWORK PORT<br />
+   no switchport<br />
+   vrf Management_Network<br />
+   ip address 10.10.40.254/30<br />
+!<br />
+ip routing vrf Management_Network <br />
+<br />
+If the VRF is not configured to prevent the default VLAN from being used to access the switch, this is a finding.</p><h2>Vulnerability Number</h2><p>V-255983</p><h2>Documentable</h2><p>False</p><h2>Rule Version</h2><p>ARST-L2-000200</p><h2>Severity Override Guidance</h2><p>Verify the Arista MLS configuration for a Management_Network VRF instance globally on the switch with the following example:<br />
+<br />
+switch(config)#sh run | sec vrf<br />
+ip name-server vrf default 192.168.10.20<br />
+!<br />
+vrf instance Management_Network<br />
+!<br />
+interface Ethernet12<br />
+   description MANAGEMENT NETWORK PORT<br />
+   no switchport<br />
+   vrf Management_Network<br />
+   ip address 10.10.40.254/30<br />
+!<br />
+ip routing vrf Management_Network <br />
+<br />
+If the VRF is not configured to prevent the default VLAN from being used to access the switch, this is a finding.</p><h2>Check Content Reference</h2><p>M</p><h2>Target Key</h2><p>5512</p></body></html>

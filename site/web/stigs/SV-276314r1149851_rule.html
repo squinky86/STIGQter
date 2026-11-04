@@ -1,0 +1,97 @@
+<!doctype html><html lang="en"><head><meta charset="utf-8"><title>STIGQter: STIG Check Details: SV-276314r1149851_rule: Azure SQL Managed Instance must generate audit records when attempts to add privileges/permissions occur.</title><link rel="icon" type="image/svg+xml" href="STIGQter.svg" /><script async src="https://www.googletagmanager.com/gtag/js?id=UA-31381839-2"></script><script src="include.js"></script><script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-4110907817782130" crossorigin="anonymous"></script></head><body><div><img src="STIGQter.svg" alt="STIGQter" style="height:1em;" /> <a href="https://www.stigqter.com/">STIGQter</a>: <a href="main.html">STIG Summary</a>: <a href="U_MS_Azure_SQL_MI_STIG_V1R1_Manual-xccdf.html">Microsoft Azure SQL Managed Instance Security Technical Implementation Guide Version: 1 Release: 1 Benchmark Date: 23 Sep 2025</a>:</div> <h1>Azure SQL Managed Instance must generate audit records when attempts to add privileges/permissions occur.</h1><h2>DISA Rule</h2><p>SV-276314r1149851_rule</p><h2>Vulnerability Number</h2><p>V-276314</p><h2>Group Title</h2><p>SRG-APP-000495-DB-000327</p><h2>Rule Version</h2><p>MSQL-D0-013400</p><h2>Severity</h2><p>CAT II</p><h2>CCI(s)</h2><ul><li>CCI-000172 - Generate audit records for the event types defined in AU-2 c that include the audit record content defined in AU-3.</li></ul><h2>Weight</h2><p>10</p><h2>Fix Recommendation</h2><p>Deploy an audit to review attempts to add privileges/permissions. <br />
+<br />
+Refer to the supplemental file &quot;AzureSQLMIAudit.sql&quot; script.  <br />
+<br />
+Reference: https://learn.microsoft.com/en-us/azure/azure-sql/managed-instance/auditing-configure?view=azuresql</p><h2>Check Contents</h2><p>Check that the Azure SQL Managed Instance Audit has a STIG compliant audit.<br />
+ <br />
+Determine if an audit is configured and started by executing the following query:<br />
+ <br />
+SELECT name AS 'Audit Name',<br />
+status_desc AS 'Audit Status',<br />
+audit_file_path AS 'Current Audit File'<br />
+FROM sys.dm_server_audit_status<br />
+WHERE name NOT IN ('admin_audit','SqlDbThreatDetection_ServerAudit')<br />
+<br />
+Execute the following query to verify the required audit actions are included in the server audit specification: <br />
+<br />
+SELECT a.name AS 'AuditName', <br />
+s.name AS 'SpecName', <br />
+d.audit_action_name AS 'ActionName', <br />
+d.audited_result AS 'Result' <br />
+FROM sys.server_audit_specifications s <br />
+JOIN sys.server_audits a ON s.audit_guid = a.audit_guid <br />
+JOIN sys.server_audit_specification_details d ON s.server_specification_id = d.server_specification_id <br />
+WHERE a.is_state_enabled = 1<br />
+AND d.audit_action_name IN ('DATABASE_OBJECT_OWNERSHIP_CHANGE_GROUP'<br />
+,'DATABASE_OBJECT_PERMISSION_CHANGE_GROUP'<br />
+,'DATABASE_OWNERSHIP_CHANGE_GROUP'<br />
+,'DATABASE_PERMISSION_CHANGE_GROUP'<br />
+,'DATABASE_ROLE_MEMBER_CHANGE_GROUP'<br />
+,'SCHEMA_OBJECT_OWNERSHIP_CHANGE_GROUP'<br />
+,'SCHEMA_OBJECT_PERMISSION_CHANGE_GROUP'<br />
+,'SERVER_OBJECT_OWNERSHIP_CHANGE_GROUP'<br />
+,'SERVER_OBJECT_PERMISSION_CHANGE_GROUP'<br />
+,'SERVER_PERMISSION_CHANGE_GROUP'<br />
+,'SERVER_ROLE_MEMBER_CHANGE_GROUP')<br />
+ <br />
+If any of the following audit actions are not returned in an active audit, this is a finding.<br />
+ <br />
+DATABASE_OBJECT_OWNERSHIP_CHANGE_GROUP <br />
+DATABASE_OBJECT_PERMISSION_CHANGE_GROUP <br />
+DATABASE_OWNERSHIP_CHANGE_GROUP <br />
+DATABASE_PERMISSION_CHANGE_GROUP <br />
+DATABASE_ROLE_MEMBER_CHANGE_GROUP <br />
+SCHEMA_OBJECT_OWNERSHIP_CHANGE_GROUP <br />
+SCHEMA_OBJECT_PERMISSION_CHANGE_GROUP <br />
+SERVER_OBJECT_OWNERSHIP_CHANGE_GROUP <br />
+SERVER_OBJECT_PERMISSION_CHANGE_GROUP <br />
+SERVER_PERMISSION_CHANGE_GROUP <br />
+SERVER_ROLE_MEMBER_CHANGE_GROUP <br />
+ <br />
+If no records are returned, this is a finding.</p><h2>Vulnerability Number</h2><p>V-276314</p><h2>Documentable</h2><p>False</p><h2>Rule Version</h2><p>MSQL-D0-013400</p><h2>Severity Override Guidance</h2><p>Check that the Azure SQL Managed Instance Audit has a STIG compliant audit.<br />
+ <br />
+Determine if an audit is configured and started by executing the following query:<br />
+ <br />
+SELECT name AS 'Audit Name',<br />
+status_desc AS 'Audit Status',<br />
+audit_file_path AS 'Current Audit File'<br />
+FROM sys.dm_server_audit_status<br />
+WHERE name NOT IN ('admin_audit','SqlDbThreatDetection_ServerAudit')<br />
+<br />
+Execute the following query to verify the required audit actions are included in the server audit specification: <br />
+<br />
+SELECT a.name AS 'AuditName', <br />
+s.name AS 'SpecName', <br />
+d.audit_action_name AS 'ActionName', <br />
+d.audited_result AS 'Result' <br />
+FROM sys.server_audit_specifications s <br />
+JOIN sys.server_audits a ON s.audit_guid = a.audit_guid <br />
+JOIN sys.server_audit_specification_details d ON s.server_specification_id = d.server_specification_id <br />
+WHERE a.is_state_enabled = 1<br />
+AND d.audit_action_name IN ('DATABASE_OBJECT_OWNERSHIP_CHANGE_GROUP'<br />
+,'DATABASE_OBJECT_PERMISSION_CHANGE_GROUP'<br />
+,'DATABASE_OWNERSHIP_CHANGE_GROUP'<br />
+,'DATABASE_PERMISSION_CHANGE_GROUP'<br />
+,'DATABASE_ROLE_MEMBER_CHANGE_GROUP'<br />
+,'SCHEMA_OBJECT_OWNERSHIP_CHANGE_GROUP'<br />
+,'SCHEMA_OBJECT_PERMISSION_CHANGE_GROUP'<br />
+,'SERVER_OBJECT_OWNERSHIP_CHANGE_GROUP'<br />
+,'SERVER_OBJECT_PERMISSION_CHANGE_GROUP'<br />
+,'SERVER_PERMISSION_CHANGE_GROUP'<br />
+,'SERVER_ROLE_MEMBER_CHANGE_GROUP')<br />
+ <br />
+If any of the following audit actions are not returned in an active audit, this is a finding.<br />
+ <br />
+DATABASE_OBJECT_OWNERSHIP_CHANGE_GROUP <br />
+DATABASE_OBJECT_PERMISSION_CHANGE_GROUP <br />
+DATABASE_OWNERSHIP_CHANGE_GROUP <br />
+DATABASE_PERMISSION_CHANGE_GROUP <br />
+DATABASE_ROLE_MEMBER_CHANGE_GROUP <br />
+SCHEMA_OBJECT_OWNERSHIP_CHANGE_GROUP <br />
+SCHEMA_OBJECT_PERMISSION_CHANGE_GROUP <br />
+SERVER_OBJECT_OWNERSHIP_CHANGE_GROUP <br />
+SERVER_OBJECT_PERMISSION_CHANGE_GROUP <br />
+SERVER_PERMISSION_CHANGE_GROUP <br />
+SERVER_ROLE_MEMBER_CHANGE_GROUP <br />
+ <br />
+If no records are returned, this is a finding.</p><h2>Check Content Reference</h2><p>M</p><h2>Target Key</h2><p>5711</p></body></html>

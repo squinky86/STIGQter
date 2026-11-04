@@ -1,0 +1,35 @@
+<!doctype html><html lang="en"><head><meta charset="utf-8"><title>STIGQter: STIG Check Details: SV-230469r958752_rule: RHEL 8 must allocate an audit_backlog_limit of sufficient size to capture processes that start prior to the audit daemon.</title><link rel="icon" type="image/svg+xml" href="STIGQter.svg" /><script async src="https://www.googletagmanager.com/gtag/js?id=UA-31381839-2"></script><script src="include.js"></script><script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-4110907817782130" crossorigin="anonymous"></script></head><body><div><img src="STIGQter.svg" alt="STIGQter" style="height:1em;" /> <a href="https://www.stigqter.com/">STIGQter</a>: <a href="main.html">STIG Summary</a>: <a href="U_RHEL_8_STIG_V2R8_Manual-xccdf.html">Red Hat Enterprise Linux 8 Security Technical Implementation Guide Version: 2 Release: 8 Benchmark Date: 01 Jul 2026</a>:</div> <h1>RHEL 8 must allocate an audit_backlog_limit of sufficient size to capture processes that start prior to the audit daemon.</h1><h2>DISA Rule</h2><p>SV-230469r958752_rule</p><h2>Vulnerability Number</h2><p>V-230469</p><h2>Group Title</h2><p>SRG-OS-000341-GPOS-00132</p><h2>Rule Version</h2><p>RHEL-08-030602</p><h2>Severity</h2><p>CAT III</p><h2>CCI(s)</h2><ul><li>CCI-001849 - Allocate audit log storage capacity to accommodate organization-defined audit record retention requirements.</li></ul><h2>Weight</h2><p>10</p><h2>Fix Recommendation</h2><p>Configure RHEL 8 to allocate sufficient audit_backlog_limit to capture processes that start prior to the audit daemon with the following command:<br />
+<br />
+$ sudo grubby --update-kernel=ALL --args=&quot;audit_backlog_limit=8192&quot;<br />
+<br />
+Add or modify the following line in &quot;/etc/default/grub&quot; to ensure the configuration survives kernel updates:<br />
+<br />
+GRUB_CMDLINE_LINUX=&quot;audit_backlog_limit=8192&quot;</p><h2>Check Contents</h2><p>Verify RHEL 8 allocates a sufficient audit_backlog_limit to capture processes that start prior to the audit daemon with the following commands:<br />
+<br />
+$ sudo grub2-editenv list | grep audit<br />
+<br />
+kernelopts=root=/dev/mapper/rhel-root ro crashkernel=auto resume=/dev/mapper/rhel-swap rd.lvm.lv=rhel/root rd.lvm.lv=rhel/swap rhgb quiet fips=1 audit=1 audit_backlog_limit=8192 boot=UUID=8d171156-cd61-421c-ba41-1c021ac29e82<br />
+<br />
+If the &quot;audit_backlog_limit&quot; entry does not equal &quot;8192&quot; or greater, is missing, or the line is commented out, this is a finding.<br />
+<br />
+Check the audit_backlog_limit is set to persist in kernel updates: <br />
+<br />
+$ sudo grep audit /etc/default/grub<br />
+<br />
+GRUB_CMDLINE_LINUX=&quot;audit_backlog_limit=8192&quot;<br />
+<br />
+If &quot;audit_backlog_limit&quot; is not set to &quot;8192&quot; or greater, is missing or commented out, this is a finding.</p><h2>Vulnerability Number</h2><p>V-230469</p><h2>Documentable</h2><p>False</p><h2>Rule Version</h2><p>RHEL-08-030602</p><h2>Severity Override Guidance</h2><p>Verify RHEL 8 allocates a sufficient audit_backlog_limit to capture processes that start prior to the audit daemon with the following commands:<br />
+<br />
+$ sudo grub2-editenv list | grep audit<br />
+<br />
+kernelopts=root=/dev/mapper/rhel-root ro crashkernel=auto resume=/dev/mapper/rhel-swap rd.lvm.lv=rhel/root rd.lvm.lv=rhel/swap rhgb quiet fips=1 audit=1 audit_backlog_limit=8192 boot=UUID=8d171156-cd61-421c-ba41-1c021ac29e82<br />
+<br />
+If the &quot;audit_backlog_limit&quot; entry does not equal &quot;8192&quot; or greater, is missing, or the line is commented out, this is a finding.<br />
+<br />
+Check the audit_backlog_limit is set to persist in kernel updates: <br />
+<br />
+$ sudo grep audit /etc/default/grub<br />
+<br />
+GRUB_CMDLINE_LINUX=&quot;audit_backlog_limit=8192&quot;<br />
+<br />
+If &quot;audit_backlog_limit&quot; is not set to &quot;8192&quot; or greater, is missing or commented out, this is a finding.</p><h2>Check Content Reference</h2><p>M</p><h2>Target Key</h2><p>2921</p></body></html>

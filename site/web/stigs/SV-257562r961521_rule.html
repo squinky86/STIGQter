@@ -1,0 +1,31 @@
+<!doctype html><html lang="en"><head><meta charset="utf-8"><title>STIGQter: STIG Check Details: SV-257562r961521_rule: OpenShift must set server token max age no greater than eight hours.</title><link rel="icon" type="image/svg+xml" href="STIGQter.svg" /><script async src="https://www.googletagmanager.com/gtag/js?id=UA-31381839-2"></script><script src="include.js"></script><script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-4110907817782130" crossorigin="anonymous"></script></head><body><div><img src="STIGQter.svg" alt="STIGQter" style="height:1em;" /> <a href="https://www.stigqter.com/">STIGQter</a>: <a href="main.html">STIG Summary</a>: <a href="U_RH_OpenShift_Container_Platform_4-x_STIG_V2R6_Manual-xccdf.html">Red Hat OpenShift Container Platform 4.x Security Technical Implementation Guide Version: 2 Release: 6 Benchmark Date: 01 Jul 2026</a>:</div> <h1>OpenShift must set server token max age no greater than eight hours.</h1><h2>DISA Rule</h2><p>SV-257562r961521_rule</p><h2>Vulnerability Number</h2><p>V-257562</p><h2>Group Title</h2><p>SRG-APP-000400-CTR-000960</p><h2>Rule Version</h2><p>CNTR-OS-000760</p><h2>Severity</h2><p>CAT II</p><h2>CCI(s)</h2><ul><li>CCI-002007 - Prohibit the use of cached authenticators after an organization-defined time period.</li></ul><h2>Weight</h2><p>10</p><h2>Fix Recommendation</h2><p>To set the OAuth server token max age, edit the OAuth server object by executing the following:<br />
+<br />
+oc patch oauth cluster --type merge -p '{&quot;spec&quot;:{&quot;tokenConfig&quot;:{&quot;accessTokenMaxAgeSeconds&quot;: 28800}}}'<br />
+<br />
+To set the OAuth client token max age, edit the OAuth client object by executing the following:<br />
+<br />
+cli in $(oc get oauthclient -oname); do oc patch oauthclient $cli --type=merge -p '{&quot;accessTokenMaxAgeSeconds&quot;: 28800}'; done</p><h2>Check Contents</h2><p>To check if the OAuth server token max age is configured, execute the following:<br />
+<br />
+oc get oauth cluster -ojsonpath='{.spec.tokenConfig.accessTokenMaxAgeSeconds}'<br />
+<br />
+If the output timeout value on the OAuth server is &gt;&quot;28800&quot; or missing, this is a finding.<br />
+<br />
+Check the OAuth client token value (this can be set on each client also).<br />
+<br />
+Check all clients OAuth client token max age configuration by execute the following:<br />
+<br />
+oc get oauthclients -ojson | jq -r '.items[] | { accessTokenMaxAgeSeconds: .accessTokenMaxAgeSeconds}'<br />
+<br />
+If the output returns a timeout value of &gt;&quot;28800&quot; for any client, this is a finding.</p><h2>Vulnerability Number</h2><p>V-257562</p><h2>Documentable</h2><p>False</p><h2>Rule Version</h2><p>CNTR-OS-000760</p><h2>Severity Override Guidance</h2><p>To check if the OAuth server token max age is configured, execute the following:<br />
+<br />
+oc get oauth cluster -ojsonpath='{.spec.tokenConfig.accessTokenMaxAgeSeconds}'<br />
+<br />
+If the output timeout value on the OAuth server is &gt;&quot;28800&quot; or missing, this is a finding.<br />
+<br />
+Check the OAuth client token value (this can be set on each client also).<br />
+<br />
+Check all clients OAuth client token max age configuration by execute the following:<br />
+<br />
+oc get oauthclients -ojson | jq -r '.items[] | { accessTokenMaxAgeSeconds: .accessTokenMaxAgeSeconds}'<br />
+<br />
+If the output returns a timeout value of &gt;&quot;28800&quot; for any client, this is a finding.</p><h2>Check Content Reference</h2><p>M</p><h2>Target Key</h2><p>5547</p></body></html>

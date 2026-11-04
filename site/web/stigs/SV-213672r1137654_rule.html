@@ -1,0 +1,71 @@
+<!doctype html><html lang="en"><head><meta charset="utf-8"><title>STIGQter: STIG Check Details: SV-213672r1137654_rule: DB2 must enforce approved authorizations for logical access to information and system resources in accordance with applicable access control policies.</title><link rel="icon" type="image/svg+xml" href="STIGQter.svg" /><script async src="https://www.googletagmanager.com/gtag/js?id=UA-31381839-2"></script><script src="include.js"></script><script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-4110907817782130" crossorigin="anonymous"></script></head><body><div><img src="STIGQter.svg" alt="STIGQter" style="height:1em;" /> <a href="https://www.stigqter.com/">STIGQter</a>: <a href="main.html">STIG Summary</a>: <a href="U_IBM_DB2_V10-5_LUW_STIG_V2R2_Manual-xccdf.html">IBM DB2 V10.5 LUW Security Technical Implementation Guide Version: 2 Release: 2 Benchmark Date: 01 Jul 2026</a>:</div> <h1>DB2 must enforce approved authorizations for logical access to information and system resources in accordance with applicable access control policies.</h1><h2>DISA Rule</h2><p>SV-213672r1137654_rule</p><h2>Vulnerability Number</h2><p>V-213672</p><h2>Group Title</h2><p>SRG-APP-000033-DB-000084</p><h2>Rule Version</h2><p>DB2X-00-000400</p><h2>Severity</h2><p>CAT II</p><h2>CCI(s)</h2><ul><li>CCI-000213 - Enforce approved authorizations for logical access to information and system resources in accordance with applicable access control policies.</li></ul><h2>Weight</h2><p>10</p><h2>Fix Recommendation</h2><p>If a privilege is granted directly to PUBLIC, revoke it using the appropriate variation of the REVOKE statement specific to the object on which the privilege is granted. For example, if PUBLIC has EXECUTE privileges are on a package X.Y, revoke them using the REVOKE (package privileges).<br />
+<br />
+DB2&gt; REVOKE EXECUTE ON PACKAGE X.Y FROM PUBLIC<br />
+<br />
+If a privilege has been granted indirectly to PUBLIC through membership in a database role, revoke membership in that database role from PUBLIC using the REVOKE (role) statement. <br />
+<br />
+DB2&gt; REVOKE ROLE &lt;role name&gt; FROM PUBLIC<br />
+<br />
+If an authority is granted directly to PUBLIC, revoke it using the appropriate variation of the REVOKE (database authorities) statement. For example, if the CONNECT row shows a ‘Y’ value in the D_PUBLIC column, revoke CONNECT authority using this statement: <br />
+<br />
+DB2&gt; REVOKE CONNECT ON DATABASE FROM PUBLIC<br />
+<br />
+If an authority is granted indirectly to PUBLIC through a database role, revoke membership in that database role from PUBLIC using the REVOKE (role) statement. <br />
+<br />
+DB2&gt; REVOKE ROLE &lt;role name&gt; FROM PUBLIC<br />
+<br />
+To determine what database roles PUBLIC belongs, issue this query:<br />
+<br />
+DB2&gt; SELECT ROLENAME  FROM TABLE (SYSPROC.AUTH_LIST_ROLES_FOR_AUTHID ('PUBLIC', 'G') )<br />
+<br />
+Notes: To prevent the default assignment of authorities and privileges to PUBLIC when a database is created, one should use the restrictive option on the create database statement as demonstrated below:<br />
+<br />
+DB2&gt; CREATE DATABASE &lt;dbname&gt; RESTRICTIVE<br />
+<br />
+One can determine if a database was created with restrictive by looking at the value of restrict_access database configuration parameter using the following command at the command prompt: <br />
+<br />
+$db2 get db cfg<br />
+<br />
+http://www.ibm.com/support/knowledgecenter/SSEPGG_10.5.0/com.ibm.db2.luw.sql.ref.doc/doc/r0000981.html?cp=SSEPGG_10.5.0%2F2-12-7-181&amp;lang=en<br />
+<br />
+As authorities and privileges can be granted to PUBLIC after the database is created, it is recommended to run the above checks on a regular basis.</p><h2>Check Contents</h2><p>Use the following query to determine if PUBLIC has been directly granted any privileges on objects in the database:<br />
+<br />
+DB2&gt; SELECT PRIVILEGE, OBJECTNAME, OBJECTSCHEMA, OBJECTTYPE FROM SYSIBMADM.PRIVILEGES WHERE AUTHID = 'PUBLIC'<br />
+<br />
+If any rows are returned, this is a finding.<br />
+<br />
+Use the following query to determine if PUBLIC has been granted membership in any database roles:<br />
+<br />
+DB2&gt; SELECT ROLENAME  FROM TABLE (SYSPROC.AUTH_LIST_ROLES_FOR_AUTHID ('PUBLIC', 'G') )<br />
+<br />
+For each role returned by this query, determine if any privileges have been granted to it with the following query:<br />
+<br />
+DB2&gt; SELECT PRIVILEGE, OBJECTNAME, OBJECTSCHEMA, OBJECTTYPE FROM SYSIBMADM.PRIVILEGES WHERE AUTHID = '&lt;rolename&gt;' AND AUTHIDTYPE = 'R'<br />
+<br />
+If any rows are returned, this is a finding.<br />
+<br />
+Use the following query to determine if PUBLIC has been granted any database authorities directly or indirectly through a database role:<br />
+<br />
+DB2&gt; SELECT AUTHORITY, D_PUBLIC, ROLE_PUBLIC FROM TABLE(SYSPROC.AUTH_LIST_AUTHORITIES_FOR_AUTHID ('PUBLIC', 'G') )<br />
+<br />
+If any of the rows have a ‘Y’ value in the D_PUBLIC column, this is a finding. If any of the rows have a ‘Y’ value in the ROLE_PUBLIC column, this is a finding.</p><h2>Vulnerability Number</h2><p>V-213672</p><h2>Documentable</h2><p>False</p><h2>Rule Version</h2><p>DB2X-00-000400</p><h2>Severity Override Guidance</h2><p>Use the following query to determine if PUBLIC has been directly granted any privileges on objects in the database:<br />
+<br />
+DB2&gt; SELECT PRIVILEGE, OBJECTNAME, OBJECTSCHEMA, OBJECTTYPE FROM SYSIBMADM.PRIVILEGES WHERE AUTHID = 'PUBLIC'<br />
+<br />
+If any rows are returned, this is a finding.<br />
+<br />
+Use the following query to determine if PUBLIC has been granted membership in any database roles:<br />
+<br />
+DB2&gt; SELECT ROLENAME  FROM TABLE (SYSPROC.AUTH_LIST_ROLES_FOR_AUTHID ('PUBLIC', 'G') )<br />
+<br />
+For each role returned by this query, determine if any privileges have been granted to it with the following query:<br />
+<br />
+DB2&gt; SELECT PRIVILEGE, OBJECTNAME, OBJECTSCHEMA, OBJECTTYPE FROM SYSIBMADM.PRIVILEGES WHERE AUTHID = '&lt;rolename&gt;' AND AUTHIDTYPE = 'R'<br />
+<br />
+If any rows are returned, this is a finding.<br />
+<br />
+Use the following query to determine if PUBLIC has been granted any database authorities directly or indirectly through a database role:<br />
+<br />
+DB2&gt; SELECT AUTHORITY, D_PUBLIC, ROLE_PUBLIC FROM TABLE(SYSPROC.AUTH_LIST_AUTHORITIES_FOR_AUTHID ('PUBLIC', 'G') )<br />
+<br />
+If any of the rows have a ‘Y’ value in the D_PUBLIC column, this is a finding. If any of the rows have a ‘Y’ value in the ROLE_PUBLIC column, this is a finding.</p><h2>Check Content Reference</h2><p>M</p><h2>Target Key</h2><p>3989</p></body></html>

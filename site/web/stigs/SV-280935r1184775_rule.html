@@ -1,0 +1,95 @@
+<!doctype html><html lang="en"><head><meta charset="utf-8"><title>STIGQter: STIG Check Details: SV-280935r1184775_rule: RHEL 10 must implement cryptographic mechanisms to prevent unauthorized disclosure or modification of all information on local disk partitions that requires at-rest protection.</title><link rel="icon" type="image/svg+xml" href="STIGQter.svg" /><script async src="https://www.googletagmanager.com/gtag/js?id=UA-31381839-2"></script><script src="include.js"></script><script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-4110907817782130" crossorigin="anonymous"></script></head><body><div><img src="STIGQter.svg" alt="STIGQter" style="height:1em;" /> <a href="https://www.stigqter.com/">STIGQter</a>: <a href="main.html">STIG Summary</a>: <a href="U_RHEL_10_STIG_V1R2_Manual-xccdf.html">Red Hat Enterprise Linux 10 Security Technical Implementation Guide Version: 1 Release: 2 Benchmark Date: 01 Jul 2026</a>:</div> <h1>RHEL 10 must implement cryptographic mechanisms to prevent unauthorized disclosure or modification of all information on local disk partitions that requires at-rest protection.</h1><h2>DISA Rule</h2><p>SV-280935r1184775_rule</p><h2>Vulnerability Number</h2><p>V-280935</p><h2>Group Title</h2><p>SRG-OS-000405-GPOS-00184</p><h2>Rule Version</h2><p>RHEL-10-000510</p><h2>Severity</h2><p>CAT I</p><h2>CCI(s)</h2><ul><li>CCI-002476 - Implement cryptographic mechanisms to prevent unauthorized disclosure of organization-defined information at rest on organization-defined system components.</li><li>CCI-001199 - Protects the confidentiality and/or integrity of organization-defined information at rest.</li><li>CCI-002475 - Implement cryptographic mechanisms to prevent unauthorized modification of organization-defined information when at rest on organization-defined system components.</li></ul><h2>Weight</h2><p>10</p><h2>Fix Recommendation</h2><p>Configure RHEL 10 to prevent unauthorized modification of all information at rest by using disk encryption.<br />
+<br />
+Encrypting a partition in an already installed system is more difficult, because existing partitions will have to be resized and changed.<br />
+<br />
+To encrypt an entire partition, dedicate a partition for encryption in the partition layout.</p><h2>Check Contents</h2><p>Note: If there is a documented and approved reason for not having data-at-rest encryption at the operating system level, such as encryption provided by a hypervisor or a disk storage array in a virtualized environment, this requirement is not applicable.<br />
+<br />
+Verify RHEL 10 prevents unauthorized disclosure or modification of all information requiring at-rest protection by using disk encryption.<br />
+<br />
+List all block devices in tree-like format:<br />
+<br />
+$ sudo lsblk --tree<br />
+NAME                                            MAJ:MIN RM  SIZE RO TYPE  MOUNTPOINTS<br />
+sda                                               8:0    0   64G  0 disk<br />
++-sda1                                            8:1    0  600M  0 part  /boot/efi<br />
++-sda2                                            8:2    0    1G  0 part  /boot<br />
++-sda3                                            8:3    0 62.4G  0 part<br />
+  +-rhel-root                                   253:0    0   23G  0 lvm<br />
+  ¦ +-luks-9f886368-bf3e-4d17-86ed-a71dd6571bb4 253:2    0   23G  0 crypt /<br />
+  +-rhel-swap                                   253:1    0  6.4G  0 lvm   [SWAP]<br />
+  +-rhel-var_tmp                                253:3    0    3G  0 lvm<br />
+  ¦ +-luks-c98555c8-0462-4b97-9afa-6db8c4bfee3b 253:14   0    3G  0 crypt /var/tmp<br />
+  +-rhel-var_log_audit                          253:4    0   10G  0 lvm<br />
+  ¦ +-luks-4e45e1ad-5337-42c4-a19f-ee12ccc1d502 253:9    0   10G  0 crypt /var/log/audit<br />
+  +-rhel-tmp                                    253:5    0    2G  0 lvm<br />
+  ¦ +-luks-2d7e1b45-73c4-4282-8838-15a897e0d04e 253:11   0    2G  0 crypt /tmp<br />
+  +-rhel-home                                   253:6    0   10G  0 lvm<br />
+  ¦ +-luks-ca2261ed-7b00-4b7b-84cd-8cd6d8fa4b28 253:12   0   10G  0 crypt /home<br />
+  +-rhel-var                                    253:7    0    5G  0 lvm<br />
+  ¦ +-luks-51150299-f295-4145-b8f0-ebe9c6dfd5a0 253:13   0    5G  0 crypt /var<br />
+  +-rhel-var_log                                253:8    0    3G  0 lvm<br />
+    +-luks-c651f493-9fdc-4c6e-a711-0a4f03149661 253:10   0    3G  0 crypt /var/log<br />
+<br />
+Verify that the block device tree for each persistent filesystem, excluding the /boot and /boot/efi filesystems, has at least one parent block device of type &quot;crypt&quot; and that the encryption type is LUKS:<br />
+<br />
+$ sudo cryptsetup status luks-9f886368-bf3e-4d17-86ed-a71dd6571bb4<br />
+/dev/mapper/luks-9f886368-bf3e-4d17-86ed-a71dd6571bb4 is active and is in use.<br />
+  type:    LUKS2<br />
+  cipher:  aes-xts-plain64<br />
+  keysize: 512 bits<br />
+  key location: keyring<br />
+  device:  /dev/mapper/rhel-root<br />
+  sector size:  512<br />
+  offset:  32768 sectors<br />
+  size:    48201728 sectors<br />
+  mode:    read/write<br />
+  flags:   discards<br />
+<br />
+If there are persistent filesystems (other than /boot or /boot/efi) whose block device trees do not have a crypt block device of type LUKS, ask the administrator to indicate how persistent filesystems are encrypted.<br />
+<br />
+If there is no evidence that persistent filesystems are encrypted, this is a finding.</p><h2>Vulnerability Number</h2><p>V-280935</p><h2>Documentable</h2><p>False</p><h2>Rule Version</h2><p>RHEL-10-000510</p><h2>Severity Override Guidance</h2><p>Note: If there is a documented and approved reason for not having data-at-rest encryption at the operating system level, such as encryption provided by a hypervisor or a disk storage array in a virtualized environment, this requirement is not applicable.<br />
+<br />
+Verify RHEL 10 prevents unauthorized disclosure or modification of all information requiring at-rest protection by using disk encryption.<br />
+<br />
+List all block devices in tree-like format:<br />
+<br />
+$ sudo lsblk --tree<br />
+NAME                                            MAJ:MIN RM  SIZE RO TYPE  MOUNTPOINTS<br />
+sda                                               8:0    0   64G  0 disk<br />
++-sda1                                            8:1    0  600M  0 part  /boot/efi<br />
++-sda2                                            8:2    0    1G  0 part  /boot<br />
++-sda3                                            8:3    0 62.4G  0 part<br />
+  +-rhel-root                                   253:0    0   23G  0 lvm<br />
+  ¦ +-luks-9f886368-bf3e-4d17-86ed-a71dd6571bb4 253:2    0   23G  0 crypt /<br />
+  +-rhel-swap                                   253:1    0  6.4G  0 lvm   [SWAP]<br />
+  +-rhel-var_tmp                                253:3    0    3G  0 lvm<br />
+  ¦ +-luks-c98555c8-0462-4b97-9afa-6db8c4bfee3b 253:14   0    3G  0 crypt /var/tmp<br />
+  +-rhel-var_log_audit                          253:4    0   10G  0 lvm<br />
+  ¦ +-luks-4e45e1ad-5337-42c4-a19f-ee12ccc1d502 253:9    0   10G  0 crypt /var/log/audit<br />
+  +-rhel-tmp                                    253:5    0    2G  0 lvm<br />
+  ¦ +-luks-2d7e1b45-73c4-4282-8838-15a897e0d04e 253:11   0    2G  0 crypt /tmp<br />
+  +-rhel-home                                   253:6    0   10G  0 lvm<br />
+  ¦ +-luks-ca2261ed-7b00-4b7b-84cd-8cd6d8fa4b28 253:12   0   10G  0 crypt /home<br />
+  +-rhel-var                                    253:7    0    5G  0 lvm<br />
+  ¦ +-luks-51150299-f295-4145-b8f0-ebe9c6dfd5a0 253:13   0    5G  0 crypt /var<br />
+  +-rhel-var_log                                253:8    0    3G  0 lvm<br />
+    +-luks-c651f493-9fdc-4c6e-a711-0a4f03149661 253:10   0    3G  0 crypt /var/log<br />
+<br />
+Verify that the block device tree for each persistent filesystem, excluding the /boot and /boot/efi filesystems, has at least one parent block device of type &quot;crypt&quot; and that the encryption type is LUKS:<br />
+<br />
+$ sudo cryptsetup status luks-9f886368-bf3e-4d17-86ed-a71dd6571bb4<br />
+/dev/mapper/luks-9f886368-bf3e-4d17-86ed-a71dd6571bb4 is active and is in use.<br />
+  type:    LUKS2<br />
+  cipher:  aes-xts-plain64<br />
+  keysize: 512 bits<br />
+  key location: keyring<br />
+  device:  /dev/mapper/rhel-root<br />
+  sector size:  512<br />
+  offset:  32768 sectors<br />
+  size:    48201728 sectors<br />
+  mode:    read/write<br />
+  flags:   discards<br />
+<br />
+If there are persistent filesystems (other than /boot or /boot/efi) whose block device trees do not have a crypt block device of type LUKS, ask the administrator to indicate how persistent filesystems are encrypted.<br />
+<br />
+If there is no evidence that persistent filesystems are encrypted, this is a finding.</p><h2>Check Content Reference</h2><p>M</p><h2>Target Key</h2><p>5733</p></body></html>

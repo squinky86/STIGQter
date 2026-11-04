@@ -1,0 +1,81 @@
+<!doctype html><html lang="en"><head><meta charset="utf-8"><title>STIGQter: STIG Check Details: SV-216411r959010_rule: The operating system must use cryptographic mechanisms to protect and restrict access to information on portable digital media.</title><link rel="icon" type="image/svg+xml" href="STIGQter.svg" /><script async src="https://www.googletagmanager.com/gtag/js?id=UA-31381839-2"></script><script src="include.js"></script><script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-4110907817782130" crossorigin="anonymous"></script></head><body><div><img src="STIGQter.svg" alt="STIGQter" style="height:1em;" /> <a href="https://www.stigqter.com/">STIGQter</a>: <a href="main.html">STIG Summary</a>: <a href="U_SOL_11_SPARC_STIG_V3R6_Manual-xccdf.html">Solaris 11 SPARC Security Technical Implementation Guide Version: 3 Release: 6 Benchmark Date: 01 Jul 2026</a>:</div> <h1>The operating system must use cryptographic mechanisms to protect and restrict access to information on portable digital media.</h1><h2>DISA Rule</h2><p>SV-216411r959010_rule</p><h2>Vulnerability Number</h2><p>V-216411</p><h2>Group Title</h2><p>SRG-OS-000480</p><h2>Rule Version</h2><p>SOL-11.1-060140</p><h2>Severity</h2><p>CAT II</p><h2>CCI(s)</h2><ul><li>CCI-000366 - Implement the security configuration settings.</li></ul><h2>Weight</h2><p>10</p><h2>Fix Recommendation</h2><p>The root role is required.<br />
+<br />
+Format a removable device as a ZFS encrypted file system.<br />
+<br />
+This action applies to the global zone only. Determine the zone that you are currently securing.<br />
+<br />
+# zonename<br />
+<br />
+If the command output is &quot;global&quot;, this action applies.<br />
+<br />
+The ZFS File System Management and ZFS Storage management profiles are required.<br />
+<br />
+Insert the removable device:<br />
+<br />
+# rmformat<br />
+<br />
+This command lists all attached removable devices. Note the device logical node name. For example: /dev/rdsk/c8t0d0p0<br />
+<br />
+Create an encrypted zpool on this device using a poolname of your choice:<br />
+<br />
+# pfexec zpool create -O encryption=on [poolname] c8t0d0p0<br />
+<br />
+Enter a passphrase and confirm the passphrase. Keep the passphrase secure.<br />
+<br />
+Export the zpool before removing the media:<br />
+<br />
+# pfexec export [poolname]<br />
+<br />
+It will be necessary to enter the passphrase when inserting and importing the removable media zpool:<br />
+Insert the removable media<br />
+# pfexec import [poolname]<br />
+<br />
+Only store data in the encrypted file system.</p><h2>Check Contents</h2><p>This check applies to the global zone only. Determine the zone that you are currently securing.<br />
+<br />
+# zonename<br />
+<br />
+If the command output is &quot;global&quot;, this check applies.<br />
+<br />
+Determine the logical node of all attached removable media:<br />
+<br />
+# rmformat<br />
+<br />
+This command lists all attached removable devices. Note the device logical node name. For example: /dev/rdsk/c8t0d0p0<br />
+<br />
+Determine which zpool is mapped to the device:<br />
+<br />
+# zpool status<br />
+<br />
+Determine the file system names of the portable digital media:<br />
+<br />
+# zfs list | grep [poolname]<br />
+<br />
+Using the file system name, determine if the removal media is encrypted:<br />
+<br />
+# zfs get encryption [filesystem] <br />
+<br />
+If &quot;encryption off&quot; is listed, this is a finding.</p><h2>Vulnerability Number</h2><p>V-216411</p><h2>Documentable</h2><p>False</p><h2>Rule Version</h2><p>SOL-11.1-060140</p><h2>Severity Override Guidance</h2><p>This check applies to the global zone only. Determine the zone that you are currently securing.<br />
+<br />
+# zonename<br />
+<br />
+If the command output is &quot;global&quot;, this check applies.<br />
+<br />
+Determine the logical node of all attached removable media:<br />
+<br />
+# rmformat<br />
+<br />
+This command lists all attached removable devices. Note the device logical node name. For example: /dev/rdsk/c8t0d0p0<br />
+<br />
+Determine which zpool is mapped to the device:<br />
+<br />
+# zpool status<br />
+<br />
+Determine the file system names of the portable digital media:<br />
+<br />
+# zfs list | grep [poolname]<br />
+<br />
+Using the file system name, determine if the removal media is encrypted:<br />
+<br />
+# zfs get encryption [filesystem] <br />
+<br />
+If &quot;encryption off&quot; is listed, this is a finding.</p><h2>Check Content Reference</h2><p>M</p><h2>Target Key</h2><p>4022</p></body></html>

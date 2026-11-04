@@ -1,0 +1,71 @@
+<!doctype html><html lang="en"><head><meta charset="utf-8"><title>STIGQter: STIG Check Details: SV-269872r1052001_rule: The Dell OS10 Router must be configured to restrict traffic destined to itself.</title><link rel="icon" type="image/svg+xml" href="STIGQter.svg" /><script async src="https://www.googletagmanager.com/gtag/js?id=UA-31381839-2"></script><script src="include.js"></script><script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-4110907817782130" crossorigin="anonymous"></script></head><body><div><img src="STIGQter.svg" alt="STIGQter" style="height:1em;" /> <a href="https://www.stigqter.com/">STIGQter</a>: <a href="main.html">STIG Summary</a>: <a href="U_Dell_OS10_Switch_RTR_STIG_V1R2_Manual-xccdf.html">Dell OS10 Switch Router Security Technical Implementation Guide Version: 1 Release: 2 Benchmark Date: 01 Apr 2026</a>:</div> <h1>The Dell OS10 Router must be configured to restrict traffic destined to itself.</h1><h2>DISA Rule</h2><p>SV-269872r1052001_rule</p><h2>Vulnerability Number</h2><p>V-269872</p><h2>Group Title</h2><p>SRG-NET-000205-RTR-000001</p><h2>Rule Version</h2><p>OS10-RTR-000380</p><h2>Severity</h2><p>CAT I</p><h2>CCI(s)</h2><ul><li>CCI-001097 - Monitor and control communications at the external managed interfaces to the system and at key managed interfaces within the system.</li></ul><h2>Weight</h2><p>10</p><h2>Fix Recommendation</h2><p>Configure the router with receive path filters to restrict traffic destined to the router.<br />
+<br />
+Step 1: Configure inbound ACLs to restrict which packets should be allowed to reach to the control plane from the OOBM management port and from the front panel data ports. <br />
+<br />
+OS10(config)# ip access-list MGMT_TRAFFIC_FROM_OOBM<br />
+OS10(config-ipv4-acl)# permit ...<br />
+OS10(config-ipv4-acl)# permit ...<br />
+OS10(config-ipv4-acl)# deny ... log<br />
+OS10(config-ipv4-acl)# deny ... log<br />
+<br />
+OS10(config)# ip access-list MGMT_TRAFFIC_FROM_DATA<br />
+OS10(config-ipv4-acl)# permit ...<br />
+OS10(config-ipv4-acl)# permit ...<br />
+OS10(config-ipv4-acl)# deny ... log<br />
+OS10(config-ipv4-acl)# deny ... log<br />
+<br />
+Step 2: Apply the ACLs to the ingress of the control-plane.<br />
+<br />
+OS10(config)# control-plane<br />
+OS10(config-control-plane)# ip access-group MGMT_TRAFFIC_FROM_OOBM mgmt in<br />
+OS10(config-control-plane)# ip access-group MGMT_TRAFFIC_FROM_DATA data in</p><h2>Check Contents</h2><p>Review the access control list (ACL) or filter for the router receive path and verify that it will only process specific management plane and control plane traffic from specific sources.<br />
+<br />
+Step 1: Examine the interface configuration for the control plane ACLs applied to the traffic destined to the router control plane from the OOBM management port or front panel data ports.<br />
+<br />
+!<br />
+control-plane<br />
+ ip access-group MGMT_TRAFFIC_FROM_OOBM mgmt in<br />
+ ip access-group MGMT_TRAFFIC_FROM_DATA data in<br />
+<br />
+Step 2: Review the control plane ACLs verify traffic is limited appropriately.<br />
+<br />
+!<br />
+ip access-list MGMT_TRAFFIC_FROM_OOBM<br />
+ seq 10 permit ...<br />
+ seq 20 permit ...<br />
+ seq 30 deny ... log<br />
+ seq 40 deny ... log<br />
+<br />
+!<br />
+ip access-list MGMT_TRAFFIC_FROM_DATA<br />
+ seq 10 permit ...<br />
+ seq 20 permit ...<br />
+ seq 30 deny ... log<br />
+ seq 40 deny ... log<br />
+<br />
+If the router is not configured with a receive-path filter to restrict traffic destined to itself, this is a finding.</p><h2>Vulnerability Number</h2><p>V-269872</p><h2>Documentable</h2><p>False</p><h2>Rule Version</h2><p>OS10-RTR-000380</p><h2>Severity Override Guidance</h2><p>Review the access control list (ACL) or filter for the router receive path and verify that it will only process specific management plane and control plane traffic from specific sources.<br />
+<br />
+Step 1: Examine the interface configuration for the control plane ACLs applied to the traffic destined to the router control plane from the OOBM management port or front panel data ports.<br />
+<br />
+!<br />
+control-plane<br />
+ ip access-group MGMT_TRAFFIC_FROM_OOBM mgmt in<br />
+ ip access-group MGMT_TRAFFIC_FROM_DATA data in<br />
+<br />
+Step 2: Review the control plane ACLs verify traffic is limited appropriately.<br />
+<br />
+!<br />
+ip access-list MGMT_TRAFFIC_FROM_OOBM<br />
+ seq 10 permit ...<br />
+ seq 20 permit ...<br />
+ seq 30 deny ... log<br />
+ seq 40 deny ... log<br />
+<br />
+!<br />
+ip access-list MGMT_TRAFFIC_FROM_DATA<br />
+ seq 10 permit ...<br />
+ seq 20 permit ...<br />
+ seq 30 deny ... log<br />
+ seq 40 deny ... log<br />
+<br />
+If the router is not configured with a receive-path filter to restrict traffic destined to itself, this is a finding.</p><h2>Check Content Reference</h2><p>M</p><h2>Target Key</h2><p>5668</p></body></html>

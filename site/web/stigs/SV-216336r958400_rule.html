@@ -1,0 +1,101 @@
+<!doctype html><html lang="en"><head><meta charset="utf-8"><title>STIGQter: STIG Check Details: SV-216336r958400_rule: The system must require users to re-authenticate to unlock a graphical desktop environment.</title><link rel="icon" type="image/svg+xml" href="STIGQter.svg" /><script async src="https://www.googletagmanager.com/gtag/js?id=UA-31381839-2"></script><script src="include.js"></script><script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-4110907817782130" crossorigin="anonymous"></script></head><body><div><img src="STIGQter.svg" alt="STIGQter" style="height:1em;" /> <a href="https://www.stigqter.com/">STIGQter</a>: <a href="main.html">STIG Summary</a>: <a href="U_SOL_11_SPARC_STIG_V3R6_Manual-xccdf.html">Solaris 11 SPARC Security Technical Implementation Guide Version: 3 Release: 6 Benchmark Date: 01 Jul 2026</a>:</div> <h1>The system must require users to re-authenticate to unlock a graphical desktop environment.</h1><h2>DISA Rule</h2><p>SV-216336r958400_rule</p><h2>Vulnerability Number</h2><p>V-216336</p><h2>Group Title</h2><p>SRG-OS-000028</p><h2>Rule Version</h2><p>SOL-11.1-040170</p><h2>Severity</h2><p>CAT II</p><h2>CCI(s)</h2><ul><li>CCI-000056 - Retain the device lock until the user reestablishes access using established identification and authentication procedures.</li></ul><h2>Weight</h2><p>10</p><h2>Fix Recommendation</h2><p>The root role is required.<br />
+<br />
+Edit the global screensaver configuration file to ensure 15 minute screen lock.<br />
+<br />
+# pfedit /usr/share/X11/app-defaults/XScreenSaver<br />
+<br />
+Find the timeout control lines and change them to read:<br />
+<br />
+*timeout: 0:15:00<br />
+*lockTimeout: 0:00:05<br />
+*lock: True<br />
+<br />
+For each user on the system, edit their local $HOME/.xscreensaver file and change the timeout values.<br />
+<br />
+# pfedit $HOME/.xscreensaver<br />
+<br />
+Find the timeout control lines and change them to read:<br />
+<br />
+timeout: 0:15:00<br />
+lockTimeout: 0:00:05<br />
+lock: True</p><h2>Check Contents</h2><p>If the system is not running XWindows, this check does not apply.<br />
+<br />
+Determine if the screen saver timeout is configured properly.<br />
+<br />
+# grep &quot;^\*timeout:&quot; /usr/share/X11/app-defaults/XScreenSaver<br />
+<br />
+If the output is not:<br />
+*timeout: 0:15:00<br />
+or a shorter time interval, this is a finding.<br />
+<br />
+# grep &quot;^\*lockTimeout:&quot; /usr/share/X11/app-defaults/XScreenSaver<br />
+<br />
+If the output is not:<br />
+*lockTimeout: 0:00:05<br />
+or a shorter time interval, this is a finding.<br />
+<br />
+# grep &quot;^\*lock:&quot; /usr/share/X11/app-defaults/XScreenSaver<br />
+<br />
+If the output is not:<br />
+*lock: True<br />
+this is a finding.<br />
+<br />
+For each existing user, check the configuring of their personal .xscreensaver file.<br />
+<br />
+# grep &quot;^timeout:&quot; $HOME/.xscreensaver<br />
+<br />
+If the output is not:<br />
+timeout: 0:15:00<br />
+or a shorter time interval, this is a finding.<br />
+<br />
+# grep &quot;^lockTimeout:&quot; $HOME/.xscreensaver<br />
+<br />
+If the output is not:<br />
+lockTimeout: 0:00:05<br />
+or a shorter time interval, this is a finding.<br />
+<br />
+# grep &quot;^lock:&quot; $HOME/.xscreensaver<br />
+<br />
+If the output is not:<br />
+lock: True<br />
+this is a finding.</p><h2>Vulnerability Number</h2><p>V-216336</p><h2>Documentable</h2><p>False</p><h2>Rule Version</h2><p>SOL-11.1-040170</p><h2>Severity Override Guidance</h2><p>If the system is not running XWindows, this check does not apply.<br />
+<br />
+Determine if the screen saver timeout is configured properly.<br />
+<br />
+# grep &quot;^\*timeout:&quot; /usr/share/X11/app-defaults/XScreenSaver<br />
+<br />
+If the output is not:<br />
+*timeout: 0:15:00<br />
+or a shorter time interval, this is a finding.<br />
+<br />
+# grep &quot;^\*lockTimeout:&quot; /usr/share/X11/app-defaults/XScreenSaver<br />
+<br />
+If the output is not:<br />
+*lockTimeout: 0:00:05<br />
+or a shorter time interval, this is a finding.<br />
+<br />
+# grep &quot;^\*lock:&quot; /usr/share/X11/app-defaults/XScreenSaver<br />
+<br />
+If the output is not:<br />
+*lock: True<br />
+this is a finding.<br />
+<br />
+For each existing user, check the configuring of their personal .xscreensaver file.<br />
+<br />
+# grep &quot;^timeout:&quot; $HOME/.xscreensaver<br />
+<br />
+If the output is not:<br />
+timeout: 0:15:00<br />
+or a shorter time interval, this is a finding.<br />
+<br />
+# grep &quot;^lockTimeout:&quot; $HOME/.xscreensaver<br />
+<br />
+If the output is not:<br />
+lockTimeout: 0:00:05<br />
+or a shorter time interval, this is a finding.<br />
+<br />
+# grep &quot;^lock:&quot; $HOME/.xscreensaver<br />
+<br />
+If the output is not:<br />
+lock: True<br />
+this is a finding.</p><h2>Check Content Reference</h2><p>M</p><h2>Target Key</h2><p>4022</p></body></html>

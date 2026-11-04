@@ -1,0 +1,28 @@
+<!doctype html><html lang="en"><head><meta charset="utf-8"><title>STIGQter: STIG Check Details: SV-272496r1155582_rule: RHEL 9 must elevate the SELinux context when an administrator calls the sudo command.</title><link rel="icon" type="image/svg+xml" href="STIGQter.svg" /><script async src="https://www.googletagmanager.com/gtag/js?id=UA-31381839-2"></script><script src="include.js"></script><script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-4110907817782130" crossorigin="anonymous"></script></head><body><div><img src="STIGQter.svg" alt="STIGQter" style="height:1em;" /> <a href="https://www.stigqter.com/">STIGQter</a>: <a href="main.html">STIG Summary</a>: <a href="U_RHEL_9_STIG_V2R9_Manual-xccdf.html">Red Hat Enterprise Linux 9 Security Technical Implementation Guide Version: 2 Release: 9 Benchmark Date: 01 Jul 2026</a>:</div> <h1>RHEL 9 must elevate the SELinux context when an administrator calls the sudo command.</h1><h2>DISA Rule</h2><p>SV-272496r1155582_rule</p><h2>Vulnerability Number</h2><p>V-272496</p><h2>Group Title</h2><p>SRG-OS-000445-GPOS-00199</p><h2>Rule Version</h2><p>RHEL-09-431016</p><h2>Severity</h2><p>CAT II</p><h2>CCI(s)</h2><ul><li>CCI-002235 - Prevent non-privileged users from executing privileged functions.</li></ul><h2>Weight</h2><p>10</p><h2>Fix Recommendation</h2><p>Configure RHEL 9 to elevate the SELinux context when an administrator calls the sudo command.<br />
+<br />
+Edit a file in the &quot;/etc/sudoers.d&quot; directory with the following command:<br />
+<br />
+$ sudo visudo -f /etc/sudoers.d/&lt;customfile&gt;<br />
+<br />
+Use the following example to build the &lt;customfile&gt; in the /etc/sudoers.d directory to allow any administrator belonging to a designated sudoers admin group to elevate their SELinux context with the use of the sudo command:<br />
+<br />
+%{designated_group_or_user_name} ALL=(ALL) TYPE=sysadm_t ROLE=sysadm_r ALL<br />
+<br />
+Remove any configurations that conflict with the above from the following locations:<br />
+ <br />
+/etc/sudoers<br />
+/etc/sudoers.d/</p><h2>Check Contents</h2><p>Verify RHEL 9 elevates the SELinux context when an administrator calls the sudo command with the following command:<br />
+<br />
+This command must be run as root:<br />
+<br />
+# grep -r sysadm_r /etc/sudoers /etc/sudoers.d<br />
+%{designated_group_or_user_name} ALL=(ALL) TYPE=sysadm_t ROLE=sysadm_r ALL<br />
+<br />
+If a designated sudoers administrator group or account(s) is not configured to elevate the SELinux type and role to &quot;sysadm_t&quot; and &quot;sysadm_r&quot; with the use of the sudo command, this is a finding.</p><h2>Vulnerability Number</h2><p>V-272496</p><h2>Documentable</h2><p>False</p><h2>Rule Version</h2><p>RHEL-09-431016</p><h2>Severity Override Guidance</h2><p>Verify RHEL 9 elevates the SELinux context when an administrator calls the sudo command with the following command:<br />
+<br />
+This command must be run as root:<br />
+<br />
+# grep -r sysadm_r /etc/sudoers /etc/sudoers.d<br />
+%{designated_group_or_user_name} ALL=(ALL) TYPE=sysadm_t ROLE=sysadm_r ALL<br />
+<br />
+If a designated sudoers administrator group or account(s) is not configured to elevate the SELinux type and role to &quot;sysadm_t&quot; and &quot;sysadm_r&quot; with the use of the sudo command, this is a finding.</p><h2>Check Content Reference</h2><p>M</p><h2>Target Key</h2><p>5551</p></body></html>

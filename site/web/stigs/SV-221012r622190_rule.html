@@ -1,0 +1,57 @@
+<!doctype html><html lang="en"><head><meta charset="utf-8"><title>STIGQter: STIG Check Details: SV-221012r622190_rule: The Cisco perimeter switch must be configured to filter traffic destined to the enclave in accordance with the guidelines contained in DoD Instruction 8551.1.</title><link rel="icon" type="image/svg+xml" href="STIGQter.svg" /><script async src="https://www.googletagmanager.com/gtag/js?id=UA-31381839-2"></script><script src="include.js"></script><script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-4110907817782130" crossorigin="anonymous"></script></head><body><div><img src="STIGQter.svg" alt="STIGQter" style="height:1em;" /> <a href="https://www.stigqter.com/">STIGQter</a>: <a href="main.html">STIG Summary</a>: <a href="U_Cisco_IOS-XE_Switch_RTR_STIG_V3R4_Manual-xccdf.html">Cisco IOS XE Switch RTR Security Technical Implementation Guide Version: 3 Release: 4 Benchmark Date: 01 Apr 2026</a>:</div> <h1>The Cisco perimeter switch must be configured to filter traffic destined to the enclave in accordance with the guidelines contained in DoD Instruction 8551.1.</h1><h2>DISA Rule</h2><p>SV-221012r622190_rule</p><h2>Vulnerability Number</h2><p>V-221012</p><h2>Group Title</h2><p>SRG-NET-000205-RTR-000003</p><h2>Rule Version</h2><p>CISC-RT-000320</p><h2>Severity</h2><p>CAT II</p><h2>CCI(s)</h2><ul><li>CCI-001097 - Monitor and control communications at the external managed interfaces to the system and at key managed interfaces within the system.</li></ul><h2>Weight</h2><p>10</p><h2>Fix Recommendation</h2><p>Configure the switch to use an inbound ACL on all external interfaces as shown in the example below to restrict traffic in accordance with the guidelines contained in DOD Instruction 8551.1.<br />
+<br />
+SW1(config)#ip access-list extended EXTERNAL_ACL_INBOUND<br />
+SW1(config-ext-nacl)#permit tcp any any established<br />
+SW1(config-ext-nacl)#permit tcp host x.11.1.1 eq bgp host x.11.1.2 <br />
+SW1(config-ext-nacl)#permit tcp host x.11.1.1 host x.11.1.2 eq bgp<br />
+SW1(config-ext-nacl)#permit icmp host x.11.1.1 host x.11.1.2 echo<br />
+SW1(config-ext-nacl)#permit icmp host x.11.1.1 host x.11.1.2 echo-reply<br />
+…<br />
+… &lt; must be in accordance with DoD Instruction 8551.1&gt;<br />
+…<br />
+SW1(config-ext-nacl)#deny ip any any log-input<br />
+SW1(config-ext-nacl)#exit<br />
+SW1(config)#int g0/2<br />
+SW1(config-if)#ip access-group EXTERNAL_ACL_INBOUND in</p><h2>Check Contents</h2><p>Review the switch configuration to verify that the ingress ACL is in accordance with DoD 8551.1.<br />
+<br />
+Step 1: Verify that an inbound ACL is configured on all external interfaces.<br />
+<br />
+interface GigabitEthernet0/2<br />
+ ip address x.11.1.2 255.255.255.254<br />
+ ip access-group EXTERNAL_ACL_INBOUND in<br />
+<br />
+Step 2. Review the inbound ACL to verify that it is filtering traffic in accordance with DoD 8551.1.<br />
+<br />
+ip access-list extended EXTERNAL_ACL_INBOUND<br />
+ permit tcp any any established<br />
+ permit tcp host x.11.1.1 eq bgp host x.11.1.2<br />
+ permit tcp host x.11.1.1 host x.11.1.2 eq bgp<br />
+ permit icmp host x.11.1.1 host x.11.1.2 echo<br />
+ permit icmp host x.11.1.1 host x.11.1.2 echo-reply<br />
+…<br />
+ … &lt; must be in accordance with DoD Instruction 8551.1&gt;<br />
+…<br />
+deny ip any any log-input<br />
+<br />
+If the switch does not filter traffic in accordance with the guidelines contained in DoD 8551.1, this is a finding.</p><h2>Vulnerability Number</h2><p>V-221012</p><h2>Documentable</h2><p>False</p><h2>Rule Version</h2><p>CISC-RT-000320</p><h2>Severity Override Guidance</h2><p>Review the switch configuration to verify that the ingress ACL is in accordance with DoD 8551.1.<br />
+<br />
+Step 1: Verify that an inbound ACL is configured on all external interfaces.<br />
+<br />
+interface GigabitEthernet0/2<br />
+ ip address x.11.1.2 255.255.255.254<br />
+ ip access-group EXTERNAL_ACL_INBOUND in<br />
+<br />
+Step 2. Review the inbound ACL to verify that it is filtering traffic in accordance with DoD 8551.1.<br />
+<br />
+ip access-list extended EXTERNAL_ACL_INBOUND<br />
+ permit tcp any any established<br />
+ permit tcp host x.11.1.1 eq bgp host x.11.1.2<br />
+ permit tcp host x.11.1.1 host x.11.1.2 eq bgp<br />
+ permit icmp host x.11.1.1 host x.11.1.2 echo<br />
+ permit icmp host x.11.1.1 host x.11.1.2 echo-reply<br />
+…<br />
+ … &lt; must be in accordance with DoD Instruction 8551.1&gt;<br />
+…<br />
+deny ip any any log-input<br />
+<br />
+If the switch does not filter traffic in accordance with the guidelines contained in DoD 8551.1, this is a finding.</p><h2>Check Content Reference</h2><p>M</p><h2>Target Key</h2><p>4074</p></body></html>

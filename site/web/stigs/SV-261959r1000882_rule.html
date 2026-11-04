@@ -1,0 +1,57 @@
+<!doctype html><html lang="en"><head><meta charset="utf-8"><title>STIGQter: STIG Check Details: SV-261959r1000882_rule: PostgreSQL must generate audit records when unsuccessful attempts to execute privileged activities or other system-level access occur.</title><link rel="icon" type="image/svg+xml" href="STIGQter.svg" /><script async src="https://www.googletagmanager.com/gtag/js?id=UA-31381839-2"></script><script src="include.js"></script><script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-4110907817782130" crossorigin="anonymous"></script></head><body><div><img src="STIGQter.svg" alt="STIGQter" style="height:1em;" /> <a href="https://www.stigqter.com/">STIGQter</a>: <a href="main.html">STIG Summary</a>: <a href="U_CD_Postgres_16_STIG_V1R3_Manual-xccdf.html">Crunchy Data Postgres 16 Security Technical Implementation Guide Version: 1 Release: 3 Benchmark Date: 01 Jul 2026</a>:</div> <h1>PostgreSQL must generate audit records when unsuccessful attempts to execute privileged activities or other system-level access occur.</h1><h2>DISA Rule</h2><p>SV-261959r1000882_rule</p><h2>Vulnerability Number</h2><p>V-261959</p><h2>Group Title</h2><p>SRG-APP-000504-DB-000355</p><h2>Rule Version</h2><p>CD16-00-011500</p><h2>Severity</h2><p>CAT II</p><h2>CCI(s)</h2><ul><li>CCI-000172 - Generate audit records for the event types defined in AU-2 c that include the audit record content defined in AU-3.</li></ul><h2>Weight</h2><p>10</p><h2>Fix Recommendation</h2><p>Configure PostgreSQL to produce audit records when unsuccessful attempts to execute privileged SQL.<br />
+<br />
+All denials are logged by default if logging is enabled. To ensure logging is enabled, see the instructions in the supplementary content APPENDIX-C.</p><h2>Check Contents</h2><p>Note: The following instructions use the PGDATA and PGLOG environment variables. Refer to APPENDIX-F for instructions on configuring PGDATA and APPENDIX-I on PGLOG.<br />
+<br />
+As the database administrator (shown here as &quot;postgres&quot;), create the role &quot;bob&quot; by running the following SQL:<br />
+<br />
+$ sudo su - postgres<br />
+$ psql -c &quot;CREATE ROLE bob&quot;<br />
+<br />
+Change the current role to bob and attempt to execute privileged activity:<br />
+<br />
+$ psql -c &quot;CREATE ROLE stig_test SUPERUSER&quot;<br />
+$ psql -c &quot;CREATE ROLE stig_test CREATEDB&quot;<br />
+$ psql -c &quot;CREATE ROLE stig_test CREATEROLE&quot;<br />
+$ psql -c &quot;CREATE ROLE stig_test CREATEUSER&quot;<br />
+<br />
+As the database administrator (shown here as &quot;postgres&quot;), verify that an audit event was produced (use the latest log):<br />
+<br />
+$ sudo su - postgres<br />
+$ cat ${PGDATA?}/${PGLOG?}/&lt;latest_log&gt;<br />
+&lt; 2024-02-23 20:16:32.396 UTC postgres 56cfa74f.79eb postgres: &gt;ERROR: must be superuser to create superusers<br />
+&lt; 2024-02-23 20:16:32.396 UTC postgres 56cfa74f.79eb postgres: &gt;STATEMENT: CREATE ROLE stig_test SUPERUSER;<br />
+&lt; 2024-02-23 20:16:48.725 UTC postgres 56cfa74f.79eb postgres: &gt;ERROR: permission denied to create role<br />
+&lt; 2024-02-23 20:16:48.725 UTC postgres 56cfa74f.79eb postgres: &gt;STATEMENT: CREATE ROLE stig_test CREATEDB;<br />
+&lt; 2024-02-23 20:16:54.365 UTC postgres 56cfa74f.79eb postgres: &gt;ERROR: permission denied to create role<br />
+&lt; 2024-02-23 20:16:54.365 UTC postgres 56cfa74f.79eb postgres: &gt;STATEMENT: CREATE ROLE stig_test CREATEROLE;<br />
+&lt; 2024-02-23 20:17:05.949 UTC postgres 56cfa74f.79eb postgres: &gt;ERROR: must be superuser to create superusers<br />
+&lt; 2024-02-23 20:17:05.949 UTC postgres 56cfa74f.79eb postgres: &gt;STATEMENT: CREATE ROLE stig_test CREATEUSER;<br />
+<br />
+If audit records are not produced, this is a finding.</p><h2>Vulnerability Number</h2><p>V-261959</p><h2>Documentable</h2><p>False</p><h2>Rule Version</h2><p>CD16-00-011500</p><h2>Severity Override Guidance</h2><p>Note: The following instructions use the PGDATA and PGLOG environment variables. Refer to APPENDIX-F for instructions on configuring PGDATA and APPENDIX-I on PGLOG.<br />
+<br />
+As the database administrator (shown here as &quot;postgres&quot;), create the role &quot;bob&quot; by running the following SQL:<br />
+<br />
+$ sudo su - postgres<br />
+$ psql -c &quot;CREATE ROLE bob&quot;<br />
+<br />
+Change the current role to bob and attempt to execute privileged activity:<br />
+<br />
+$ psql -c &quot;CREATE ROLE stig_test SUPERUSER&quot;<br />
+$ psql -c &quot;CREATE ROLE stig_test CREATEDB&quot;<br />
+$ psql -c &quot;CREATE ROLE stig_test CREATEROLE&quot;<br />
+$ psql -c &quot;CREATE ROLE stig_test CREATEUSER&quot;<br />
+<br />
+As the database administrator (shown here as &quot;postgres&quot;), verify that an audit event was produced (use the latest log):<br />
+<br />
+$ sudo su - postgres<br />
+$ cat ${PGDATA?}/${PGLOG?}/&lt;latest_log&gt;<br />
+&lt; 2024-02-23 20:16:32.396 UTC postgres 56cfa74f.79eb postgres: &gt;ERROR: must be superuser to create superusers<br />
+&lt; 2024-02-23 20:16:32.396 UTC postgres 56cfa74f.79eb postgres: &gt;STATEMENT: CREATE ROLE stig_test SUPERUSER;<br />
+&lt; 2024-02-23 20:16:48.725 UTC postgres 56cfa74f.79eb postgres: &gt;ERROR: permission denied to create role<br />
+&lt; 2024-02-23 20:16:48.725 UTC postgres 56cfa74f.79eb postgres: &gt;STATEMENT: CREATE ROLE stig_test CREATEDB;<br />
+&lt; 2024-02-23 20:16:54.365 UTC postgres 56cfa74f.79eb postgres: &gt;ERROR: permission denied to create role<br />
+&lt; 2024-02-23 20:16:54.365 UTC postgres 56cfa74f.79eb postgres: &gt;STATEMENT: CREATE ROLE stig_test CREATEROLE;<br />
+&lt; 2024-02-23 20:17:05.949 UTC postgres 56cfa74f.79eb postgres: &gt;ERROR: must be superuser to create superusers<br />
+&lt; 2024-02-23 20:17:05.949 UTC postgres 56cfa74f.79eb postgres: &gt;STATEMENT: CREATE ROLE stig_test CREATEUSER;<br />
+<br />
+If audit records are not produced, this is a finding.</p><h2>Check Content Reference</h2><p>M</p><h2>Target Key</h2><p>5598</p></body></html>

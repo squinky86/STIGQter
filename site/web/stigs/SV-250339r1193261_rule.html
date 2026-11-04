@@ -1,0 +1,232 @@
+<!doctype html><html lang="en"><head><meta charset="utf-8"><title>STIGQter: STIG Check Details: SV-250339r1193261_rule: The WebSphere Liberty Server must use FIPS 140-2 approved encryption modules when authenticating users and processes.</title><link rel="icon" type="image/svg+xml" href="STIGQter.svg" /><script async src="https://www.googletagmanager.com/gtag/js?id=UA-31381839-2"></script><script src="include.js"></script><script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-4110907817782130" crossorigin="anonymous"></script></head><body><div><img src="STIGQter.svg" alt="STIGQter" style="height:1em;" /> <a href="https://www.stigqter.com/">STIGQter</a>: <a href="main.html">STIG Summary</a>: <a href="U_IBM_WebSphere_Liberty_Server_STIG_V2R4_Manual-xccdf.html">IBM WebSphere Liberty Server Security Technical Implementation Guide Version: 2 Release: 4 Benchmark Date: 01 Apr 2026</a>:</div> <h1>The WebSphere Liberty Server must use FIPS 140-2 approved encryption modules when authenticating users and processes.</h1><h2>DISA Rule</h2><p>SV-250339r1193261_rule</p><h2>Vulnerability Number</h2><p>V-250339</p><h2>Group Title</h2><p>SRG-APP-000179-AS-000129</p><h2>Rule Version</h2><p>IBMW-LS-000520</p><h2>Severity</h2><p>CAT I</p><h2>CCI(s)</h2><ul><li>CCI-000803 - Implement mechanisms for authentication to a cryptographic module that meet the requirements of applicable laws, Executive Orders, directives, policies, regulations, standards, and guidance for such authentication.</li><li>CCI-001188 - Generate a unique session identifier for each session with organization-defined randomness requirements.</li><li>CCI-002418 - Protect the confidentiality and/or integrity of transmitted information.</li><li>CCI-002422 - Maintain the confidentiality and/or integrity of information during reception.</li><li>CCI-002450 - Implement organization-defined types of cryptography for each specified cryptography use.</li></ul><h2>Weight</h2><p>10</p><h2>Fix Recommendation</h2><p>There are two ways to meet this requirement. Only one method is required.<br />
+<br />
+If IBM JDK 8 is installed and configured to run with WebSphere Liberty, proceed with method (I).<br />
+<br />
+If IBM Semeru Runtimes version 11 and above is installed and configured with WebSphere Liberty, proceed with method (II). Currently IBM Semeru supports FIPS on RedHat Enterprise Linux.<br />
+<br />
+Method (I) IBM JDK 8 is configured to run with WebSphere Liberty:<br />
+<br />
+1. Edit/create the ${server.config.dir}/jvm.options file. <br />
+Edit/add the following two properties:<br />
+Dcom.ibm.jsse2.usefipsprovider=true <br />
+Dcom.ibm.jsse2.usefipsProviderName=IBMJCEPlusFIPS <br />
+<br />
+2. Edit ${JAVA_HOME}/jre/lib/security/java.security file and locate the list of cryptographic providers. Edit/add the following four providers: <br />
+<br />
+security.provider.1=com.ibm.jsse2.IBMJSSEProvider2<br />
+security.provider.2=com.ibm.crypto.plus.provider.IBMJCEPlusFIPS <br />
+security.provider.3=com.ibm.crypto.provider.IBMJCE<br />
+security.provider.4=com.ibm.crypto.plus.provider.IBMJCEPlus<br />
+<br />
+Method (II) Semeru Runtimes version 11 and above is installed and configured with WebSphere Liberty. Requires RedHat Enterprise Linux as the Host Operating System.<br />
+<br />
+1. Log in as root or super user.<br />
+<br />
+2. Enable FIPS on the RedHat Enterprise Linux. <br />
+$ fips-mode-setup --enable<br />
+$ fips-mode-setup --check<br />
+ <br />
+3. Update/create the ${server.config.dir}/jvm.options.<br />
+Edit/add the following property:<br />
+Dsemeru.fips=true <br />
+<br />
+4. Install NSS packages. Run &quot;$ dnf install nss&quot;.<br />
+<br />
+5. Import keystores to NSS Database by using &quot;pk12util&quot; command. Replace &quot;changeit&quot; for -W option to the desired password. <br />
+<br />
+$ pk12util -i resources/security/key.p12 -W changeit -d /etc/pki/nssdb<br />
+pk12util: PKCS12 IMPORT SUCCESSFUL<br />
+<br />
+6. Mark the imported certificates as a trusted certificate authority (CA).<br />
+<br />
+$ certutil -M -n default -t &quot;CT,CT,CT&quot; -d /etc/pki/nssdb<br />
+<br />
+7. List the contents of the NSS Database to confirm the alias name and the Trust Attributes.<br />
+<br />
+$ certutil -L -d /etc/pki/nssdb<br />
+Certificate Nickname                                         Trust Attributes<br />
+                                                                       SSL,S/MIME,JAR/XPI<br />
+default                                                        CTu,Cu,Cu<br />
+<br />
+8. Create a config file (pkcs11cfg.cfg) with the contents below. It will be used by ${server.config.dir}/server.xml. <br />
+<br />
+name = NSS-FIPS<br />
+library = /usr/lib64/libsoftokn3.so<br />
+slot = 3<br />
+showInfo = true<br />
+<br />
+9. Update the ${server.config.dir}/server.xml file to use the configuration file in its SSL configuration. <br />
+<br />
+&lt;ssl id=&quot;defaultSSLConfig&quot;<br />
+         keyStoreRef=&quot;defaultKeyStore&quot;<br />
+         sslProtocol=&quot;TLSv1.2&quot; /&gt;    <br />
+&lt;keyStore id=&quot;defaultKeyStore&quot; password=&quot;password used in -W parameter earlier here&quot;<br />
+         location=&quot;${server.config.dir}/pkcs11cfg.cfg&quot; type=&quot;PKCS11&quot;<br />
+         fileBased=&quot;false&quot; provider=&quot;SunPKCS11-NSS-FIPS&quot;/&gt;<br />
+<br />
+9.1 Find the &lt;keyStore/&gt; configuration referenced in the ssl configuration as &quot;keyStoreRef&quot;. <br />
+9.2 Set &quot;provider&quot; attribute to either &quot;SunPKCS11-NSS-FIPS&quot; or &quot;PKCS11-NSS-FIPS&quot;.<br />
+9.3 Set the &quot;type&quot; attribute to &quot;PKCS11&quot;.<br />
+9.4 Set the &quot;fileBased&quot; attribute to &quot;false&quot;.<br />
+9.5 Set the &quot;location&quot; attribute to point to the NSS keystore configuration created in step 8 (pkcs11.cfg.cfg).<br />
+9.6 Verify the file is in a location accessible to Liberty.</p><h2>Check Contents</h2><p>Note: If FIPS 140-3 is configured in IBMW-LS-001200, then this is Not Applicable.<br />
+<br />
+There are two ways to meet this requirement. Only one method is required.<br />
+<br />
+If IBM JDK 8 is installed and configured to run with WebSphere Liberty, proceed with method (I).<br />
+<br />
+If IBM Semeru Runtimes version 11 and above is installed and configured with WebSphere Liberty, proceed with method (II). Currently IBM Semeru supports FIPS on RedHat Enterprise Linux.<br />
+<br />
+Method (I) IBM JDK 8 is configured to run with WebSphere Liberty:<br />
+<br />
+1. Review the ${server.config.dir}/jvm.options file. Verify FIPS is in use by checking the following lines:<br />
+ <br />
+Dcom.ibm.jsse2.usefipsprovider=true <br />
+Dcom.ibm.jsse2.usefipsProviderName=IBMJCEPlusFIPS<br />
+<br />
+If the properties are not set as shown in the ${server.config.dir}/jvm.options file, this is a finding.<br />
+<br />
+2. Open ${JAVA_HOME}/jre/lib/security/java.security file. Locate the list of cryptographic providers and confirm the following entries in the provider list:<br />
+<br />
+com.ibm.jsse2.IBMJSSEProvider2<br />
+com.ibm.crypto.plus.provider.IBMJCEPlusFIPS<br />
+com.ibm.crypto.provider.IBMJCE<br />
+com.ibm.crypto.plus.provider.IBMJCEPlus<br />
+<br />
+If the entries are not set as shown in the ${JAVA_HOME}/jre/lib/security/java.security file, this is a finding.<br />
+<br />
+Method (II) Semeru Runtimes version 11 and above is installed and configured with WebSphere Liberty. Requires RedHat Enterprise Linux as the Host Operating System.<br />
+<br />
+1. Run the following command on the RedHat Enterprise Linux. Verify FIPS mode is enabled. <br />
+# fips-mode-setup --check<br />
+If FIPS mode is not enabled, this is a finding.<br />
+ <br />
+2. Review the ${server.config.dir}/jvm.options file. Verify &quot;semeru.fips&quot; property is set to true. <br />
+Dsemeru.fips=true<br />
+If the property is not set as shown in the ${server.config.dir}/jvm.options file, this is a finding.<br />
+<br />
+3. Confirm NSS packages are installed by running &quot;# dnf install nss&quot; in a terminal.<br />
+<br />
+# dnf install nss<br />
+Updating Subscription Management repositories.<br />
+Last metadata expiration check: 0:56:30 ago on Wed 13 Sep 2023 07:29:35 AM PDT.<br />
+Package nss-3.79.0-11.el8_7.x86_64 is already installed.<br />
+Dependencies resolved.<br />
+Nothing to do.<br />
+Complete!<br />
+<br />
+If the command does not return output stating NSS is installed, this is a finding.<br />
+<br />
+4. Confirm NSS Database has the keystore imported by running &quot;# certutil -L -d /etc/pki/nssdb&quot; in a terminal. <br />
+<br />
+# certutil -L -d /etc/pki/nssdb<br />
+Certificate Nickname                                         Trust Attributes<br />
+                                                             SSL,S/MIME,JAR/XPI<br />
+default                                                      CTu,Cu,Cu<br />
+<br />
+If the command does not return the results as shown, this is a finding.<br />
+<br />
+5. Review the ${server.config.dir}/server.xml and confirm the following entries:<br />
+<br />
+name = NSS-FIPS<br />
+library = /usr/lib64/libsoftokn3.so<br />
+slot = 3<br />
+showInfo = true<br />
+<br />
+If the entries are not set as shown in the ${server.config.dir}/server.xml file, this is a finding.<br />
+<br />
+6. Review the ${server.config.dir}/server.xml file with the following steps:<br />
+<br />
+6.1 Locate &lt;ssl&gt; configuration that is specifying the default SSL configuration for Liberty.<br />
+6.2 Locate the &quot;keyStoreRef&quot; attribute in the &lt;ssl&gt; configuration and find the referenced &lt;keyStore&gt; configuration. <br />
+6.3 Verify the &quot;provider&quot; attribute is set to either &quot;SunPKCS11-NSS-FIPS&quot; or &quot;PKCS11-NSS-FIPS&quot; in the &lt;keyStore&gt; configuration. <br />
+6.4 Verify the &quot;type&quot; attribute is set to &quot;PKCS11&quot;.<br />
+6.5 Verify the &quot;fileBased&quot; attribute is set to &quot;false&quot;.<br />
+6.6 Find the &quot;location&quot; attribute for the configuration file of NSS keystore database (In the example below, it is &quot;/tmp/pkcs11cfg.cfg&quot;).<br />
+6.7 Verify the file is in a location accessible to Liberty.<br />
+<br />
+Snippet of server.xml:<br />
+&lt;ssl id=&quot;defaultSSLConfig&quot; keyStoreRef=&quot;defaultKeyStore&quot; sslProtocol=&quot;TLSv1.2&quot; /&gt;<br />
+&lt;keyStore id=&quot;defaultKeyStore&quot; password=&quot;{xor}Lz4sLCgwLTsINis3&quot; location=&quot;/tmp/pkcs11cfg.cfg&quot; type=&quot;PKCS11&quot; fileBased=&quot;false&quot; provider=&quot;SunPKCS11-NSS-FIPS&quot; /&gt;<br />
+<br />
+If the entries are not set as shown in the ${server.config.dir}/server.xml file, this is a finding.</p><h2>Vulnerability Number</h2><p>V-250339</p><h2>Documentable</h2><p>False</p><h2>Rule Version</h2><p>IBMW-LS-000520</p><h2>Severity Override Guidance</h2><p>Note: If FIPS 140-3 is configured in IBMW-LS-001200, then this is Not Applicable.<br />
+<br />
+There are two ways to meet this requirement. Only one method is required.<br />
+<br />
+If IBM JDK 8 is installed and configured to run with WebSphere Liberty, proceed with method (I).<br />
+<br />
+If IBM Semeru Runtimes version 11 and above is installed and configured with WebSphere Liberty, proceed with method (II). Currently IBM Semeru supports FIPS on RedHat Enterprise Linux.<br />
+<br />
+Method (I) IBM JDK 8 is configured to run with WebSphere Liberty:<br />
+<br />
+1. Review the ${server.config.dir}/jvm.options file. Verify FIPS is in use by checking the following lines:<br />
+ <br />
+Dcom.ibm.jsse2.usefipsprovider=true <br />
+Dcom.ibm.jsse2.usefipsProviderName=IBMJCEPlusFIPS<br />
+<br />
+If the properties are not set as shown in the ${server.config.dir}/jvm.options file, this is a finding.<br />
+<br />
+2. Open ${JAVA_HOME}/jre/lib/security/java.security file. Locate the list of cryptographic providers and confirm the following entries in the provider list:<br />
+<br />
+com.ibm.jsse2.IBMJSSEProvider2<br />
+com.ibm.crypto.plus.provider.IBMJCEPlusFIPS<br />
+com.ibm.crypto.provider.IBMJCE<br />
+com.ibm.crypto.plus.provider.IBMJCEPlus<br />
+<br />
+If the entries are not set as shown in the ${JAVA_HOME}/jre/lib/security/java.security file, this is a finding.<br />
+<br />
+Method (II) Semeru Runtimes version 11 and above is installed and configured with WebSphere Liberty. Requires RedHat Enterprise Linux as the Host Operating System.<br />
+<br />
+1. Run the following command on the RedHat Enterprise Linux. Verify FIPS mode is enabled. <br />
+# fips-mode-setup --check<br />
+If FIPS mode is not enabled, this is a finding.<br />
+ <br />
+2. Review the ${server.config.dir}/jvm.options file. Verify &quot;semeru.fips&quot; property is set to true. <br />
+Dsemeru.fips=true<br />
+If the property is not set as shown in the ${server.config.dir}/jvm.options file, this is a finding.<br />
+<br />
+3. Confirm NSS packages are installed by running &quot;# dnf install nss&quot; in a terminal.<br />
+<br />
+# dnf install nss<br />
+Updating Subscription Management repositories.<br />
+Last metadata expiration check: 0:56:30 ago on Wed 13 Sep 2023 07:29:35 AM PDT.<br />
+Package nss-3.79.0-11.el8_7.x86_64 is already installed.<br />
+Dependencies resolved.<br />
+Nothing to do.<br />
+Complete!<br />
+<br />
+If the command does not return output stating NSS is installed, this is a finding.<br />
+<br />
+4. Confirm NSS Database has the keystore imported by running &quot;# certutil -L -d /etc/pki/nssdb&quot; in a terminal. <br />
+<br />
+# certutil -L -d /etc/pki/nssdb<br />
+Certificate Nickname                                         Trust Attributes<br />
+                                                             SSL,S/MIME,JAR/XPI<br />
+default                                                      CTu,Cu,Cu<br />
+<br />
+If the command does not return the results as shown, this is a finding.<br />
+<br />
+5. Review the ${server.config.dir}/server.xml and confirm the following entries:<br />
+<br />
+name = NSS-FIPS<br />
+library = /usr/lib64/libsoftokn3.so<br />
+slot = 3<br />
+showInfo = true<br />
+<br />
+If the entries are not set as shown in the ${server.config.dir}/server.xml file, this is a finding.<br />
+<br />
+6. Review the ${server.config.dir}/server.xml file with the following steps:<br />
+<br />
+6.1 Locate &lt;ssl&gt; configuration that is specifying the default SSL configuration for Liberty.<br />
+6.2 Locate the &quot;keyStoreRef&quot; attribute in the &lt;ssl&gt; configuration and find the referenced &lt;keyStore&gt; configuration. <br />
+6.3 Verify the &quot;provider&quot; attribute is set to either &quot;SunPKCS11-NSS-FIPS&quot; or &quot;PKCS11-NSS-FIPS&quot; in the &lt;keyStore&gt; configuration. <br />
+6.4 Verify the &quot;type&quot; attribute is set to &quot;PKCS11&quot;.<br />
+6.5 Verify the &quot;fileBased&quot; attribute is set to &quot;false&quot;.<br />
+6.6 Find the &quot;location&quot; attribute for the configuration file of NSS keystore database (In the example below, it is &quot;/tmp/pkcs11cfg.cfg&quot;).<br />
+6.7 Verify the file is in a location accessible to Liberty.<br />
+<br />
+Snippet of server.xml:<br />
+&lt;ssl id=&quot;defaultSSLConfig&quot; keyStoreRef=&quot;defaultKeyStore&quot; sslProtocol=&quot;TLSv1.2&quot; /&gt;<br />
+&lt;keyStore id=&quot;defaultKeyStore&quot; password=&quot;{xor}Lz4sLCgwLTsINis3&quot; location=&quot;/tmp/pkcs11cfg.cfg&quot; type=&quot;PKCS11&quot; fileBased=&quot;false&quot; provider=&quot;SunPKCS11-NSS-FIPS&quot; /&gt;<br />
+<br />
+If the entries are not set as shown in the ${server.config.dir}/server.xml file, this is a finding.</p><h2>Check Content Reference</h2><p>M</p><h2>Target Key</h2><p>5424</p></body></html>

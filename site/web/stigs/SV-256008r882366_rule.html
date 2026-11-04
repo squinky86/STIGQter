@@ -1,0 +1,74 @@
+<!doctype html><html lang="en"><head><meta charset="utf-8"><title>STIGQter: STIG Check Details: SV-256008r882366_rule: The Arista router must be configured to produce audit records containing information to establish where the events occurred.</title><link rel="icon" type="image/svg+xml" href="STIGQter.svg" /><script async src="https://www.googletagmanager.com/gtag/js?id=UA-31381839-2"></script><script src="include.js"></script><script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-4110907817782130" crossorigin="anonymous"></script></head><body><div><img src="STIGQter.svg" alt="STIGQter" style="height:1em;" /> <a href="https://www.stigqter.com/">STIGQter</a>: <a href="main.html">STIG Summary</a>: <a href="U_Arista_MLS_EOS_4-X_Router_STIG_V2R2_Manual-xccdf.html">Arista MLS EOS 4.X Router Security Technical Implementation Guide Version: 2 Release: 2 Benchmark Date: 02 Apr 2025</a>:</div> <h1>The Arista router must be configured to produce audit records containing information to establish where the events occurred.</h1><h2>DISA Rule</h2><p>SV-256008r882366_rule</p><h2>Vulnerability Number</h2><p>V-256008</p><h2>Group Title</h2><p>SRG-NET-000076-RTR-000001</p><h2>Rule Version</h2><p>ARST-RT-000230</p><h2>Severity</h2><p>CAT II</p><h2>CCI(s)</h2><ul><li>CCI-000132 - Ensure that audit records containing information that establishes where the event occurred.</li><li>CCI-000133 - Ensure that audit records containing information that establishes the source of the event.</li><li>CCI-000134 - Ensure that audit records containing information that establishes the outcome of the event.</li></ul><h2>Weight</h2><p>10</p><h2>Fix Recommendation</h2><p>Configure the router to record the interface in the log record for packets being dropped.<br />
+<br />
+Step 1: Configure the ACL.<br />
+<br />
+router(config)#ip access-list test1<br />
+router(config-acl-test1)#15 permit ip 10.30.30.0/24 host 10.20.10.1<br />
+router(config-acl-test1)#15 deny ip 10.30.10.0/24 host 10.20.10.1 log<br />
+<br />
+Step 2: Apply the ACL ingress on the appropriate interface.<br />
+<br />
+router(config)#interface ethernet 3<br />
+router(config-if-Et3)#ip access-group test1 in</p><h2>Check Contents</h2><p>The Arista router must log all packets that have been dropped via the access control list (ACL).<br />
+<br />
+Log output must contain an interface name as to where the packet was filtered.<br />
+<br />
+Step 1: To verify the deny ACL is created with the log statement for dropped packets, execute the command &quot;show ip access-list&quot;.<br />
+<br />
+ip access-list test1<br />
+ permit ip 10.30.30.0/24 host 10.20.10.1<br />
+ deny ip 10.30.10.0/24 host 10.20.10.1 log<br />
+<br />
+Step 2: To verify the ACL ingress is applied on the appropriate interface, execute the command &quot;show run interface YY&quot;.<br />
+<br />
+interface ethernet 3<br />
+ ip access-group test1 in<br />
+<br />
+######<br />
+<br />
+Variables in the syslog messages display the following values:<br />
+---------------------------------------------------------------<br />
+acl Name of ACL.<br />
+intf Name of interface that received the packet.<br />
+filter Action triggered by ACL (denied or permitted).<br />
+protocol IP protocol specified by packet.<br />
+vlan Number of VLAN receiving packet.<br />
+ether EtherType protocol specified by packet.<br />
+src-ip and dst-ip source and destination IP addresses.<br />
+src-prt and dst-prt source and destination ports.<br />
+src-mac and dst-mac source and destination MAC addresses.<br />
+<br />
+If the logged output does not contain an interface name as to where the packet was filtered, this is a finding.<br />
+<br />
+If the Arista router fails to log all packets that have been dropped via the ACL, this is a finding.</p><h2>Vulnerability Number</h2><p>V-256008</p><h2>Documentable</h2><p>False</p><h2>Rule Version</h2><p>ARST-RT-000230</p><h2>Severity Override Guidance</h2><p>The Arista router must log all packets that have been dropped via the access control list (ACL).<br />
+<br />
+Log output must contain an interface name as to where the packet was filtered.<br />
+<br />
+Step 1: To verify the deny ACL is created with the log statement for dropped packets, execute the command &quot;show ip access-list&quot;.<br />
+<br />
+ip access-list test1<br />
+ permit ip 10.30.30.0/24 host 10.20.10.1<br />
+ deny ip 10.30.10.0/24 host 10.20.10.1 log<br />
+<br />
+Step 2: To verify the ACL ingress is applied on the appropriate interface, execute the command &quot;show run interface YY&quot;.<br />
+<br />
+interface ethernet 3<br />
+ ip access-group test1 in<br />
+<br />
+######<br />
+<br />
+Variables in the syslog messages display the following values:<br />
+---------------------------------------------------------------<br />
+acl Name of ACL.<br />
+intf Name of interface that received the packet.<br />
+filter Action triggered by ACL (denied or permitted).<br />
+protocol IP protocol specified by packet.<br />
+vlan Number of VLAN receiving packet.<br />
+ether EtherType protocol specified by packet.<br />
+src-ip and dst-ip source and destination IP addresses.<br />
+src-prt and dst-prt source and destination ports.<br />
+src-mac and dst-mac source and destination MAC addresses.<br />
+<br />
+If the logged output does not contain an interface name as to where the packet was filtered, this is a finding.<br />
+<br />
+If the Arista router fails to log all packets that have been dropped via the ACL, this is a finding.</p><h2>Check Content Reference</h2><p>M</p><h2>Target Key</h2><p>5513</p></body></html>

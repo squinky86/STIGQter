@@ -1,0 +1,36 @@
+<!doctype html><html lang="en"><head><meta charset="utf-8"><title>STIGQter: STIG Check Details: SV-269879r1052022_rule: The Dell OS10 out-of-band management (OOBM) gateway router must be configured to forward only authorized management traffic to the Network Operations Center (NOC).</title><link rel="icon" type="image/svg+xml" href="STIGQter.svg" /><script async src="https://www.googletagmanager.com/gtag/js?id=UA-31381839-2"></script><script src="include.js"></script><script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-4110907817782130" crossorigin="anonymous"></script></head><body><div><img src="STIGQter.svg" alt="STIGQter" style="height:1em;" /> <a href="https://www.stigqter.com/">STIGQter</a>: <a href="main.html">STIG Summary</a>: <a href="U_Dell_OS10_Switch_RTR_STIG_V1R2_Manual-xccdf.html">Dell OS10 Switch Router Security Technical Implementation Guide Version: 1 Release: 2 Benchmark Date: 01 Apr 2026</a>:</div> <h1>The Dell OS10 out-of-band management (OOBM) gateway router must be configured to forward only authorized management traffic to the Network Operations Center (NOC).</h1><h2>DISA Rule</h2><p>SV-269879r1052022_rule</p><h2>Vulnerability Number</h2><p>V-269879</p><h2>Group Title</h2><p>SRG-NET-000205-RTR-000010</p><h2>Rule Version</h2><p>OS10-RTR-000470</p><h2>Severity</h2><p>CAT II</p><h2>CCI(s)</h2><ul><li>CCI-001097 - Monitor and control communications at the external managed interfaces to the system and at key managed interfaces within the system.</li></ul><h2>Weight</h2><p>10</p><h2>Fix Recommendation</h2><p>This requirement is not applicable for the DODIN Backbone.<br />
+<br />
+Configure ACLs based on port, source IP address, and destination IP address to permit only authorized management traffic through the OOBM interfaces used for forwarding management data.<br />
+<br />
+Step 1: Configure named ACL with appropriate filter rules.<br />
+<br />
+OS10(config)# ip access-list MGMT_TRAFFIC_TO_NOC<br />
+OS10(config-ipv4-acl)# permit tcp 10.10.0.0/16 10.10.0.0/16 eq 22<br />
+OS10(config-ipv4-acl)# permit udp 10.10.0.0/16 10.10.0.0/16 range 161 162<br />
+OS10(config-ipv4-acl)# permit udp 10.10.0.0/16 10.10.0.0/16 range 1812 1813<br />
+OS10(config-ipv4-acl)# permit tcp 10.10.0.0/16 10.10.0.0/16 range 1812 1813<br />
+OS10(config-ipv4-acl)# permit udp 10.10.0.0/16 10.10.0.0/16 eq 123<br />
+OS10(config-ipv4-acl)# permit udp 10.10.0.0/16 10.10.0.0/16 eq 514<br />
+OS10(config-ipv4-acl)# permit tcp 10.10.0.0/16 10.10.0.0/16 eq 6514<br />
+OS10(config-ipv4-acl)# deny ip any any log<br />
+<br />
+Step 2: Apply the ACLs on the appropriate external and internal interfaces.<br />
+<br />
+OS10(config-ipv4-acl)# interface ethernet1/1/1<br />
+OS10(conf-if-eth1/1/4)# ip access-group MGMT_TRAFFIC_TO_NOC out</p><h2>Check Contents</h2><p>This requirement is not applicable for the DODIN Backbone.<br />
+<br />
+Review the network topology diagram to determine connectivity between the managed network and the NOC. <br />
+<br />
+Review the OOBM gateway router configuration to validate the path that the management traffic traverses.<br />
+<br />
+Verify that only management traffic is forwarded through the OOBM interface.<br />
+<br />
+If traffic other than authorized management traffic is permitted through the OOBM interface, this is a finding.</p><h2>Vulnerability Number</h2><p>V-269879</p><h2>Documentable</h2><p>False</p><h2>Rule Version</h2><p>OS10-RTR-000470</p><h2>Severity Override Guidance</h2><p>This requirement is not applicable for the DODIN Backbone.<br />
+<br />
+Review the network topology diagram to determine connectivity between the managed network and the NOC. <br />
+<br />
+Review the OOBM gateway router configuration to validate the path that the management traffic traverses.<br />
+<br />
+Verify that only management traffic is forwarded through the OOBM interface.<br />
+<br />
+If traffic other than authorized management traffic is permitted through the OOBM interface, this is a finding.</p><h2>Check Content Reference</h2><p>M</p><h2>Target Key</h2><p>5668</p></body></html>

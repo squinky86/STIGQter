@@ -1,0 +1,18 @@
+<!doctype html><html lang="en"><head><meta charset="utf-8"><title>STIGQter: STIG Check Details: SV-256953r961041_rule: Only authenticated system administrators or the designated PKI Sponsor for an Automation Controller NGINX web server must have access to any Automation Controller NGINX web server's private key.</title><link rel="icon" type="image/svg+xml" href="STIGQter.svg" /><script async src="https://www.googletagmanager.com/gtag/js?id=UA-31381839-2"></script><script src="include.js"></script><script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-4110907817782130" crossorigin="anonymous"></script></head><body><div><img src="STIGQter.svg" alt="STIGQter" style="height:1em;" /> <a href="https://www.stigqter.com/">STIGQter</a>: <a href="main.html">STIG Summary</a>: <a href="U_RH_Ansible_Automation_Controller_WS_STIG_V2R3_Manual-xccdf.html">Red Hat Ansible Automation Controller Web Server Security Technical Implementation Guide Version: 2 Release: 3 Benchmark Date: 05 Jan 2026</a>:</div> <h1>Only authenticated system administrators or the designated PKI Sponsor for an Automation Controller NGINX web server must have access to any Automation Controller NGINX web server's private key.</h1><h2>DISA Rule</h2><p>SV-256953r961041_rule</p><h2>Vulnerability Number</h2><p>V-256953</p><h2>Group Title</h2><p>SRG-APP-000176-WSR-000096</p><h2>Rule Version</h2><p>APWS-AT-000400</p><h2>Severity</h2><p>CAT II</p><h2>CCI(s)</h2><ul><li>CCI-000186 - For public key-based authentication, enforce authorized access to the corresponding private key.</li></ul><h2>Weight</h2><p>10</p><h2>Fix Recommendation</h2><p>As a System Administrator for each Automation Controller NGINX web server host, set the permissions:<br />
+<br />
+NGINXCONF=`nginx -V 2&gt;&amp;1 | tr ' ' '\n' | sed -ne '/conf-path/{s/.*conf-path=\(.*\)/\1/;p}' `<br />
+TOWER_KEY=`sed -n 's/^\s*ssl_certificate_key\s*\(.*\);/\1/p' $NGINXCONF`<br />
+sudo chown root:awx $TOWER_KEY<br />
+sudo chmod 600 $TOWER_KEY</p><h2>Check Contents</h2><p>As a System Administrator for each Automation Controller NGINX web server host, verify the location of the NGINX configuration:<br />
+<br />
+NGINXCONF=`nginx -V 2&gt;&amp;1 | tr ' ' '\n' | sed -ne '/conf-path/{s/.*conf-path=\(.*\)/\1/;p}' `<br />
+TOWER_KEY=`sed -n 's/^\s*ssl_certificate_key\s*\(.*\);/\1/p' $NGINXCONF`<br />
+stat -c &quot;%a %U %G&quot; $TOWER_KEY| grep &quot;600 root awx&quot; || echo &quot;FAILED&quot; <br />
+<br />
+If &quot;FAILED&quot; is displayed, this is a finding.</p><h2>Vulnerability Number</h2><p>V-256953</p><h2>Documentable</h2><p>False</p><h2>Rule Version</h2><p>APWS-AT-000400</p><h2>Severity Override Guidance</h2><p>As a System Administrator for each Automation Controller NGINX web server host, verify the location of the NGINX configuration:<br />
+<br />
+NGINXCONF=`nginx -V 2&gt;&amp;1 | tr ' ' '\n' | sed -ne '/conf-path/{s/.*conf-path=\(.*\)/\1/;p}' `<br />
+TOWER_KEY=`sed -n 's/^\s*ssl_certificate_key\s*\(.*\);/\1/p' $NGINXCONF`<br />
+stat -c &quot;%a %U %G&quot; $TOWER_KEY| grep &quot;600 root awx&quot; || echo &quot;FAILED&quot; <br />
+<br />
+If &quot;FAILED&quot; is displayed, this is a finding.</p><h2>Check Content Reference</h2><p>M</p><h2>Target Key</h2><p>5535</p></body></html>

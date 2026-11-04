@@ -1,0 +1,74 @@
+<!doctype html><html lang="en"><head><meta charset="utf-8"><title>STIGQter: STIG Check Details: SV-216820r1117236_rule: The Cisco Multicast Source Discovery Protocol (MSDP) router must be configured to filter received source-active multicast advertisements for any undesirable multicast groups and sources.</title><link rel="icon" type="image/svg+xml" href="STIGQter.svg" /><script async src="https://www.googletagmanager.com/gtag/js?id=UA-31381839-2"></script><script src="include.js"></script><script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-4110907817782130" crossorigin="anonymous"></script></head><body><div><img src="STIGQter.svg" alt="STIGQter" style="height:1em;" /> <a href="https://www.stigqter.com/">STIGQter</a>: <a href="main.html">STIG Summary</a>: <a href="U_Cisco_IOS-XR_Router_RTR_STIG_V3R3_Manual-xccdf.html">Cisco IOS XR Router RTR Security Technical Implementation Guide Version: 3 Release: 3 Benchmark Date: 01 Oct 2025</a>:</div> <h1>The Cisco Multicast Source Discovery Protocol (MSDP) router must be configured to filter received source-active multicast advertisements for any undesirable multicast groups and sources.</h1><h2>DISA Rule</h2><p>SV-216820r1117236_rule</p><h2>Vulnerability Number</h2><p>V-216820</p><h2>Group Title</h2><p>SRG-NET-000018-RTR-000007</p><h2>Rule Version</h2><p>CISC-RT-000920</p><h2>Severity</h2><p>CAT III</p><h2>CCI(s)</h2><ul><li>CCI-001368 - Enforce approved authorizations for controlling the flow of information within the system based on organization-defined information flow control policies.</li></ul><h2>Weight</h2><p>10</p><h2>Fix Recommendation</h2><p>Configure the MSDP router to filter received source-active multicast advertisements for any undesirable multicast groups and sources as shown in the example below.<br />
+<br />
+RP/0/0/CPU0:R2(config)#ipv4 access-list INBOUND_MSDP_SA_FILTER<br />
+RP/0/0/CPU0:R2(config-ipv4-acl)#deny   ip any host 224.0.1.3<br />
+RP/0/0/CPU0:R2(config-ipv4-acl)#deny ipv4 any host 224.0.1.24<br />
+RP/0/0/CPU0:R2(config-ipv4-acl)#deny ipv4 any host 224.0.1.22<br />
+RP/0/0/CPU0:R2(config-ipv4-acl)#deny ipv4 any host 224.0.1.2<br />
+RP/0/0/CPU0:R2(config-ipv4-acl)#deny ipv4 any host 224.0.1.35<br />
+RP/0/0/CPU0:R2(config-ipv4-acl)#deny ipv4 any host 224.0.1.60<br />
+RP/0/0/CPU0:R2(config-ipv4-acl)#deny ipv4 any host 224.0.1.39<br />
+RP/0/0/CPU0:R2(config-ipv4-acl)#deny ipv4 any host 224.0.1.40<br />
+RP/0/0/CPU0:R2(config-ipv4-acl)#deny ipv4 any 232.0.0.0 0.255.255.255<br />
+RP/0/0/CPU0:R2(config-ipv4-acl)#deny ipv4 any 239.0.0.0 0.255.255.255<br />
+RP/0/0/CPU0:R2(config-ipv4-acl)#deny ipv4 10.0.0.0 0.255.255.255 any<br />
+RP/0/0/CPU0:R2(config-ipv4-acl)#deny ipv4 127.0.0.0 0.255.255.255 any<br />
+RP/0/0/CPU0:R2(config-ipv4-acl)#deny ipv4 172.16.0.0 0.15.255.255 any<br />
+RP/0/0/CPU0:R2(config-ipv4-acl)#deny ipv4 192.168.0.0 0.0.255.255 any<br />
+RP/0/0/CPU0:R2(config-ipv4-acl)#permit ipv4 any any<br />
+RP/0/0/CPU0:R2(config-ipv4-acl)#exit<br />
+RP/0/0/CPU0:R2(config)#router msdp<br />
+RP/0/0/CPU0:R2(config-msdp)#sa-filter in list INBOUND_MSDP_SA_FILTER<br />
+RP/0/0/CPU0:R2(config-msdp)#end</p><h2>Check Contents</h2><p>Review the router configuration to determine if there is import policy to block source-active multicast advertisements for any undesirable multicast groups, as well as any (S, G) states with undesirable source addresses. <br />
+<br />
+Step 1: Verify that an inbound source-active filter is bound to each MSDP peer.<br />
+<br />
+router msdp<br />
+ sa-filter in list INBOUND_MSDP_SA_FILTER<br />
+<br />
+Step 2: Review the access lists referenced by the source-active filter to verify that undesirable multicast groups, auto-RP, single source multicast (SSM) groups, and advertisements from undesirable sources are blocked.<br />
+<br />
+ipv4 access-list INBOUND_MSDP_SA_FILTER<br />
+ 10 deny ipv4 any host 224.0.1.3<br />
+ 20 deny ipv4 any host 224.0.1.24<br />
+ 30 deny ipv4 any host 224.0.1.22<br />
+ 40 deny ipv4 any host 224.0.1.2<br />
+ 50 deny ipv4 any host 224.0.1.35<br />
+ 60 deny ipv4 any host 224.0.1.60<br />
+ 70 deny ipv4 any host 224.0.1.39<br />
+ 80 deny ipv4 any host 224.0.1.40<br />
+ 90 deny ipv4 any 232.0.0.0 0.255.255.255<br />
+ 100 deny ipv4 any 239.0.0.0 0.255.255.255<br />
+ 110 deny ipv4 10.0.0.0 0.255.255.255 any<br />
+ 120 deny ipv4 127.0.0.0 0.255.255.255 any<br />
+ 130 deny ipv4 172.16.0.0 0.15.255.255 any<br />
+ 140 deny ipv4 192.168.0.0 0.0.255.255 any<br />
+ 150 permit ipv4 any any<br />
+<br />
+If the router is not configured with an import policy to filter undesirable SA multicast advertisements, this is a finding.</p><h2>Vulnerability Number</h2><p>V-216820</p><h2>Documentable</h2><p>False</p><h2>Rule Version</h2><p>CISC-RT-000920</p><h2>Severity Override Guidance</h2><p>Review the router configuration to determine if there is import policy to block source-active multicast advertisements for any undesirable multicast groups, as well as any (S, G) states with undesirable source addresses. <br />
+<br />
+Step 1: Verify that an inbound source-active filter is bound to each MSDP peer.<br />
+<br />
+router msdp<br />
+ sa-filter in list INBOUND_MSDP_SA_FILTER<br />
+<br />
+Step 2: Review the access lists referenced by the source-active filter to verify that undesirable multicast groups, auto-RP, single source multicast (SSM) groups, and advertisements from undesirable sources are blocked.<br />
+<br />
+ipv4 access-list INBOUND_MSDP_SA_FILTER<br />
+ 10 deny ipv4 any host 224.0.1.3<br />
+ 20 deny ipv4 any host 224.0.1.24<br />
+ 30 deny ipv4 any host 224.0.1.22<br />
+ 40 deny ipv4 any host 224.0.1.2<br />
+ 50 deny ipv4 any host 224.0.1.35<br />
+ 60 deny ipv4 any host 224.0.1.60<br />
+ 70 deny ipv4 any host 224.0.1.39<br />
+ 80 deny ipv4 any host 224.0.1.40<br />
+ 90 deny ipv4 any 232.0.0.0 0.255.255.255<br />
+ 100 deny ipv4 any 239.0.0.0 0.255.255.255<br />
+ 110 deny ipv4 10.0.0.0 0.255.255.255 any<br />
+ 120 deny ipv4 127.0.0.0 0.255.255.255 any<br />
+ 130 deny ipv4 172.16.0.0 0.15.255.255 any<br />
+ 140 deny ipv4 192.168.0.0 0.0.255.255 any<br />
+ 150 permit ipv4 any any<br />
+<br />
+If the router is not configured with an import policy to filter undesirable SA multicast advertisements, this is a finding.</p><h2>Check Content Reference</h2><p>M</p><h2>Target Key</h2><p>4029</p></body></html>

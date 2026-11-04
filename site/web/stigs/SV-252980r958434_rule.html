@@ -1,0 +1,33 @@
+<!doctype html><html lang="en"><head><meta charset="utf-8"><title>STIGQter: STIG Check Details: SV-252980r958434_rule: TOSS audit logs must be owned by group root to prevent unauthorized read access.</title><link rel="icon" type="image/svg+xml" href="STIGQter.svg" /><script async src="https://www.googletagmanager.com/gtag/js?id=UA-31381839-2"></script><script src="include.js"></script><script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-4110907817782130" crossorigin="anonymous"></script></head><body><div><img src="STIGQter.svg" alt="STIGQter" style="height:1em;" /> <a href="https://www.stigqter.com/">STIGQter</a>: <a href="main.html">STIG Summary</a>: <a href="U_TOSS_4_STIG_V2R6_Manual-xccdf.html">Tri-Lab Operating System Stack (TOSS) 4 Security Technical Implementation Guide Version: 2 Release: 6 Benchmark Date: 01 Jul 2026</a>:</div> <h1>TOSS audit logs must be owned by group root to prevent unauthorized read access.</h1><h2>DISA Rule</h2><p>SV-252980r958434_rule</p><h2>Vulnerability Number</h2><p>V-252980</p><h2>Group Title</h2><p>SRG-OS-000057-GPOS-00027</p><h2>Rule Version</h2><p>TOSS-04-030150</p><h2>Severity</h2><p>CAT II</p><h2>CCI(s)</h2><ul><li>CCI-000162 - Protect audit information from unauthorized access.</li><li>CCI-000163 - Protect audit information from unauthorized modification.</li><li>CCI-000164 - Protect audit information from unauthorized deletion.</li></ul><h2>Weight</h2><p>10</p><h2>Fix Recommendation</h2><p>Configure the audit log and audit log directory to be protected from unauthorized read access, by setting the correct owner as &quot;root&quot; with the following command:<br />
+<br />
+$ sudo chgrp root [audit_log_file]<br />
+<br />
+Replace &quot;[audit_log_file]&quot; to the correct audit log path, by default this location is &quot;/var/log/audit/audit.log.&quot;<br />
+<br />
+Configure the audit log to be owned by root by configuring the log group in the /etc/audit/auditd.conf file:<br />
+<br />
+log_group = root</p><h2>Check Contents</h2><p>Verify the audit logs are owned by group root.<br />
+<br />
+First, determine where the audit logs are stored with the following command:<br />
+<br />
+$ sudo grep -iw log_file /etc/audit/auditd.conf<br />
+log_file = /var/log/audit/audit.log<br />
+<br />
+Using the location of the audit log file, check if the audit log is owned by group &quot;root&quot; with the following command:<br />
+<br />
+$ sudo ls -l /var/log/audit/audit.log<br />
+-rw------- 1 root root 908084 Jul 19 23:10 /var/log/audit/audit.log<br />
+<br />
+If the audit log is not owned by group &quot;root&quot;, this is a finding.</p><h2>Vulnerability Number</h2><p>V-252980</p><h2>Documentable</h2><p>False</p><h2>Rule Version</h2><p>TOSS-04-030150</p><h2>Severity Override Guidance</h2><p>Verify the audit logs are owned by group root.<br />
+<br />
+First, determine where the audit logs are stored with the following command:<br />
+<br />
+$ sudo grep -iw log_file /etc/audit/auditd.conf<br />
+log_file = /var/log/audit/audit.log<br />
+<br />
+Using the location of the audit log file, check if the audit log is owned by group &quot;root&quot; with the following command:<br />
+<br />
+$ sudo ls -l /var/log/audit/audit.log<br />
+-rw------- 1 root root 908084 Jul 19 23:10 /var/log/audit/audit.log<br />
+<br />
+If the audit log is not owned by group &quot;root&quot;, this is a finding.</p><h2>Check Content Reference</h2><p>M</p><h2>Target Key</h2><p>5469</p></body></html>

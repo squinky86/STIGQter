@@ -1,0 +1,45 @@
+<!doctype html><html lang="en"><head><meta charset="utf-8"><title>STIGQter: STIG Check Details: SV-213960r1018585_rule: Access to linked servers must be disabled or restricted, unless specifically required and approved.</title><link rel="icon" type="image/svg+xml" href="STIGQter.svg" /><script async src="https://www.googletagmanager.com/gtag/js?id=UA-31381839-2"></script><script src="include.js"></script><script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-4110907817782130" crossorigin="anonymous"></script></head><body><div><img src="STIGQter.svg" alt="STIGQter" style="height:1em;" /> <a href="https://www.stigqter.com/">STIGQter</a>: <a href="main.html">STIG Summary</a>: <a href="U_MS_SQL_Server_2016_Instance_STIG_V3R6_Manual-xccdf.html">MS SQL Server 2016 Instance Security Technical Implementation Guide Version: 3 Release: 6 Benchmark Date: 05 Jan 2026</a>:</div> <h1>Access to linked servers must be disabled or restricted, unless specifically required and approved.</h1><h2>DISA Rule</h2><p>SV-213960r1018585_rule</p><h2>Vulnerability Number</h2><p>V-213960</p><h2>Group Title</h2><p>SRG-APP-000141-DB-000093</p><h2>Rule Version</h2><p>SQL6-D0-007500</p><h2>Severity</h2><p>CAT II</p><h2>CCI(s)</h2><ul><li>CCI-000381 - Configure the system to provide only organization-defined mission essential capabilities.</li></ul><h2>Weight</h2><p>10</p><h2>Fix Recommendation</h2><p>Disable use of or remove any linked servers that are not authorized.  <br />
+ <br />
+To remove a linked server and all associated logins run the following: <br />
+ <br />
+sp_dropserver 'LinkedServerName', 'droplogins'; <br />
+ <br />
+To remove a login from a linked server run the following: <br />
+ <br />
+EXEC sp_droplinkedsrvlogin 'LoginName', NULL;</p><h2>Check Contents</h2><p>A linked server allows for access to distributed, heterogeneous queries against OLE DB data sources. After a linked server is created, distributed queries can be run against this server, and queries can join tables from more than one data source. If the linked server is defined as an instance of SQL Server, remote stored procedures can be executed.<br />
+ <br />
+To obtain a list of linked servers, execute the following command:<br />
+ <br />
+SELECT name<br />
+FROM sys.servers s <br />
+WHERE s.is_linked = 1 <br />
+ <br />
+Review the system documentation to determine whether the linked servers listed are required and approved. If it is not approved, this is a finding. <br />
+ <br />
+Run the following to get a linked server login mapping: <br />
+ <br />
+SELECT s.name, p.principal_id, l.remote_name <br />
+FROM sys.servers s <br />
+JOIN sys.linked_logins l ON s.server_id = l.server_id <br />
+LEFT JOIN sys.server_principals p ON l.local_principal_id = p.principal_id <br />
+WHERE s.is_linked = 1 <br />
+ <br />
+Review the linked login mapping and check the remote name as it can impersonate sysadmin. If a login in the list is impersonating sysadmin and system documentation does not require this, it is a finding.</p><h2>Vulnerability Number</h2><p>V-213960</p><h2>Documentable</h2><p>False</p><h2>Rule Version</h2><p>SQL6-D0-007500</p><h2>Severity Override Guidance</h2><p>A linked server allows for access to distributed, heterogeneous queries against OLE DB data sources. After a linked server is created, distributed queries can be run against this server, and queries can join tables from more than one data source. If the linked server is defined as an instance of SQL Server, remote stored procedures can be executed.<br />
+ <br />
+To obtain a list of linked servers, execute the following command:<br />
+ <br />
+SELECT name<br />
+FROM sys.servers s <br />
+WHERE s.is_linked = 1 <br />
+ <br />
+Review the system documentation to determine whether the linked servers listed are required and approved. If it is not approved, this is a finding. <br />
+ <br />
+Run the following to get a linked server login mapping: <br />
+ <br />
+SELECT s.name, p.principal_id, l.remote_name <br />
+FROM sys.servers s <br />
+JOIN sys.linked_logins l ON s.server_id = l.server_id <br />
+LEFT JOIN sys.server_principals p ON l.local_principal_id = p.principal_id <br />
+WHERE s.is_linked = 1 <br />
+ <br />
+Review the linked login mapping and check the remote name as it can impersonate sysadmin. If a login in the list is impersonating sysadmin and system documentation does not require this, it is a finding.</p><h2>Check Content Reference</h2><p>M</p><h2>Target Key</h2><p>3993</p></body></html>

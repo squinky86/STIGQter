@@ -1,0 +1,41 @@
+<!doctype html><html lang="en"><head><meta charset="utf-8"><title>STIGQter: STIG Check Details: SV-271836r1092637_rule: OL 9 must configure SELinux context type to allow the use of a nondefault faillock tally directory.</title><link rel="icon" type="image/svg+xml" href="STIGQter.svg" /><script async src="https://www.googletagmanager.com/gtag/js?id=UA-31381839-2"></script><script src="include.js"></script><script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-4110907817782130" crossorigin="anonymous"></script></head><body><div><img src="STIGQter.svg" alt="STIGQter" style="height:1em;" /> <a href="https://www.stigqter.com/">STIGQter</a>: <a href="main.html">STIG Summary</a>: <a href="U_Oracle_Linux_9_STIG_V1R6_Manual-xccdf.html">Oracle Linux 9 Security Technical Implementation Guide Version: 1 Release: 6 Benchmark Date: 01 Jul 2026</a>:</div> <h1>OL 9 must configure SELinux context type to allow the use of a nondefault faillock tally directory.</h1><h2>DISA Rule</h2><p>SV-271836r1092637_rule</p><h2>Vulnerability Number</h2><p>V-271836</p><h2>Group Title</h2><p>SRG-OS-000021-GPOS-00005</p><h2>Rule Version</h2><p>OL09-00-003010</p><h2>Severity</h2><p>CAT II</p><h2>CCI(s)</h2><ul><li>CCI-000044 - Enforce the organization-defined limit of consecutive invalid logon attempts by a user during the organization-defined time period.</li></ul><h2>Weight</h2><p>10</p><h2>Fix Recommendation</h2><p>Configure OL 9 to allow the use of a nondefault faillock tally directory while SELinux enforces a targeted policy.<br />
+<br />
+Create a nondefault faillock tally directory (if it does not already exist) with the following example:<br />
+<br />
+$ sudo mkdir /var/log/faillock<br />
+<br />
+Update the /etc/selinux/targeted/contexts/files/file_contexts.local with &quot;faillog_t&quot; context type for the nondefault faillock tally directory with the following command:<br />
+<br />
+$ sudo semanage fcontext -a -t faillog_t &quot;/var/log/faillock(/.*)?&quot;<br />
+<br />
+Update the context type of the nondefault faillock directory/subdirectories and files with the following command:<br />
+<br />
+$ sudo restorecon -R -v /var/log/faillock</p><h2>Check Contents</h2><p>Note: If the system does not have SELinux enabled and enforcing a targeted policy, or if the pam_faillock module is not configured for use, this requirement is Not Applicable.<br />
+<br />
+Verify that OL 9 configures the SELinux context type to allow the use of a nondefault faillock tally directory.<br />
+<br />
+Verify the location of the nondefault tally directory for the pam_faillock module with the following command:<br />
+<br />
+$ grep 'dir =' /etc/security/faillock.conf<br />
+dir = /var/log/faillock<br />
+<br />
+Check the security context type of the nondefault tally directory with the following command:<br />
+<br />
+$ ls -Zd /var/log/faillock<br />
+unconfined_u:object_r:faillog_t:s0 /var/log/faillock<br />
+<br />
+If the security context type of the nondefault tally directory is not &quot;faillog_t&quot;, this is a finding.</p><h2>Vulnerability Number</h2><p>V-271836</p><h2>Documentable</h2><p>False</p><h2>Rule Version</h2><p>OL09-00-003010</p><h2>Severity Override Guidance</h2><p>Note: If the system does not have SELinux enabled and enforcing a targeted policy, or if the pam_faillock module is not configured for use, this requirement is Not Applicable.<br />
+<br />
+Verify that OL 9 configures the SELinux context type to allow the use of a nondefault faillock tally directory.<br />
+<br />
+Verify the location of the nondefault tally directory for the pam_faillock module with the following command:<br />
+<br />
+$ grep 'dir =' /etc/security/faillock.conf<br />
+dir = /var/log/faillock<br />
+<br />
+Check the security context type of the nondefault tally directory with the following command:<br />
+<br />
+$ ls -Zd /var/log/faillock<br />
+unconfined_u:object_r:faillog_t:s0 /var/log/faillock<br />
+<br />
+If the security context type of the nondefault tally directory is not &quot;faillog_t&quot;, this is a finding.</p><h2>Check Content Reference</h2><p>M</p><h2>Target Key</h2><p>5680</p></body></html>

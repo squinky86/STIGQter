@@ -1,0 +1,70 @@
+<!doctype html><html lang="en"><head><meta charset="utf-8"><title>STIGQter: STIG Check Details: SV-254555r1188300_rule: Rancher RKE2 components must be configured in accordance with the security configuration settings based on DOD security configuration or implementation guidance, including SRGs, STIGs, NSA configuration guides, CTOs, and DTMs.</title><link rel="icon" type="image/svg+xml" href="STIGQter.svg" /><script async src="https://www.googletagmanager.com/gtag/js?id=UA-31381839-2"></script><script src="include.js"></script><script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-4110907817782130" crossorigin="anonymous"></script></head><body><div><img src="STIGQter.svg" alt="STIGQter" style="height:1em;" /> <a href="https://www.stigqter.com/">STIGQter</a>: <a href="main.html">STIG Summary</a>: <a href="U_RGS_RKE2_STIG_V2R7_Manual-xccdf.html">Rancher Government Solutions RKE2 Security Technical Implementation Guide Version: 2 Release: 7 Benchmark Date: 01 Jul 2026</a>:</div> <h1>Rancher RKE2 components must be configured in accordance with the security configuration settings based on DOD security configuration or implementation guidance, including SRGs, STIGs, NSA configuration guides, CTOs, and DTMs.</h1><h2>DISA Rule</h2><p>SV-254555r1188300_rule</p><h2>Vulnerability Number</h2><p>V-254555</p><h2>Group Title</h2><p>SRG-APP-000026-CTR-000070</p><h2>Rule Version</h2><p>CNTR-R2-000060</p><h2>Severity</h2><p>CAT II</p><h2>CCI(s)</h2><ul><li>CCI-000018 - Automatically audit account creation actions.</li><li>CCI-000130 - Ensure that audit records containing information that establishes what type of event occurred.</li><li>CCI-000131 - Ensure that audit records containing information that establishes when the event occurred.</li><li>CCI-000132 - Ensure that audit records containing information that establishes where the event occurred.</li><li>CCI-000133 - Ensure that audit records containing information that establishes the source of the event.</li><li>CCI-000134 - Ensure that audit records containing information that establishes the outcome of the event.</li><li>CCI-000135 - Generate audit records containing the organization-defined additional information that is to be included in the audit records.</li><li>CCI-000172 - Generate audit records for the event types defined in AU-2 c that include the audit record content defined in AU-3.</li><li>CCI-000366 - Implement the security configuration settings.</li><li>CCI-001403 - Automatically audit account modification actions.</li><li>CCI-001404 - Automatically audit account disabling actions.</li><li>CCI-001464 - Initiates session audits automatically at system start-up.</li><li>CCI-001487 - Ensure that audit records containing information that establishes the identity of any individuals, subjects, or objects/entities associated with the event.</li><li>CCI-003938 - Automatically generate audit records of the enforcement actions.</li><li>CCI-001851 - Transfer audit logs per organization-defined frequency to a different system, system component, or media than the system or system component conducting the logging.</li><li>CCI-001889 - Record time stamps for audit records that meet organization-defined granularity of time measurement.</li><li>CCI-001890 - Record time stamps for audit records that use Coordinated Universal Time, have a fixed local time offset from Coordinated Universal Time, or that include the local time offset as part of the time stamp.</li><li>CCI-002130 - Automatically audit account enabling actions.</li><li>CCI-002234 - Log the execution of privileged functions.</li><li>CCI-002884 - Log organization-defined audit events for nonlocal maintenance and diagnostic sessions.</li></ul><h2>Weight</h2><p>10</p><h2>Fix Recommendation</h2><p>Edit the &quot;/etc/rancher/rke2/config.yaml&quot; file and enable the audit-policy-file: /etc/rancher/rke2/audit-policy.yaml<br />
+<br />
+Edit the RKE2 configuration file on all RKE2 hosts, located at /etc/rancher/rke2/config.yaml, so it contains the required configuration.<br />
+<br />
+--audit-policy-file= Path to the file that defines the audit policy configuration. (Example: /etc/rancher/rke2/audit-policy.yaml) --audit-log-mode=blocking-strict<br />
+<br />
+If configuration file is updated, restart the RKE2 using the command &quot;systemctl restart rke2-server&quot; for server hosts or &quot;systemctl restart rke2-agent&quot; for agent hosts.<br />
+<br />
+Edit the RKE2 configuration file on all RKE2 hosts, located at /etc/rancher/rke2/config.yaml, so that it contains required configuration.<br />
+<br />
+If using RKE2 v1.24 or older, set: profile: cis-1.6<br />
+<br />
+If using RKE2 v1.25 or newer, set: profile: cis-1.23<br />
+<br />
+For October 2023 releases (v1.25.15+rke2r1, v1.26.10+rke2r1, v1.27.7+rke2r1, v1.28.3+rke2r1), use the generic profile &quot;cis&quot;.<br />
+<br />
+If configuration file is updated, restart RKE2 using the command &quot;systemctl restart rke2-server&quot; for server hosts or &quot;systemctl restart rke2-agent&quot; for agent hosts.<br />
+<br />
+Edit the audit policy file, by default, located at /etc/rancher/rke2/audit-policy.yaml to look like the following:<br />
+<br />
+apiVersion: audit.k8s.io/v1 kind: Policy metadata: name: rke2-audit-policy rules:<br />
+<br />
+level: Metadata resources:<br />
+group: &quot;&quot; resources: [&quot;secrets&quot;]<br />
+level: RequestResponse resources:<br />
+group: &quot;&quot; resources: [&quot;*&quot;]<br />
+<br />
+If configuration files are updated on a host, restart the RKE2 service using the command &quot;systemctl restart rke2-server&quot; for server hosts and &quot;systemctl restart rke2-agent&quot; for agent hosts.</p><h2>Check Contents</h2><p>Audit logging and policies:<br />
+<br />
+On all hosts running RKE2, run the command: <br />
+<br />
+/bin/ps -ef | grep kube-apiserver | grep -v grep<br />
+<br />
+If --audit-policy-file is not set, this is a finding. If --audit-log-mode is not = &quot;blocking-strict&quot;, this is a finding.<br />
+<br />
+Ensure the RKE2 configuration file on all RKE2 hosts, located at /etc/rancher/rke2/config.yaml, contains CIS profile setting. Run the following command: cat /etc/rancher/rke2/config.yaml<br />
+RKE2 can be started with the profile flag set to cis, cis-1.23, or cis-1.6 depending on the RKE2 version. Available with October 2023 releases (v1.25.15+rke2r1, v1.26.10+rke2r1, v1.27.7+rke2r1, v1.28.3+rke2r1), use the generic profile: &quot;cis&quot;.<br />
+<br />
+If a value for profile is not found or is not set correctly, this is a finding. (Example: &quot;profile: cis&quot;)<br />
+<br />
+Check the contents of the audit-policy file. By default, RKE2 expects the audit-policy file to be located at /etc/rancher/rke2/audit-policy.yaml; however, this location can be overridden in the /etc/rancher/rke2/config.yaml file with argument 'kube-apiserver-arg: &quot;audit-policy-file=/etc/rancher/rke2/audit-policy.yaml&quot;'.<br />
+If the audit policy file does not exist or does not look like the following, this is a finding.<br />
+<br />
+apiVersion: audit.k8s.io/v1 kind: Policy metadata: name: rke2-audit-policy rules:<br />
+<br />
+level: Metadata resources:<br />
+group: &quot;&quot; resources: [&quot;secrets&quot;]<br />
+level: RequestResponse resources:<br />
+group: &quot;&quot; resources: [&quot;*&quot;]</p><h2>Vulnerability Number</h2><p>V-254555</p><h2>Documentable</h2><p>False</p><h2>Rule Version</h2><p>CNTR-R2-000060</p><h2>Severity Override Guidance</h2><p>Audit logging and policies:<br />
+<br />
+On all hosts running RKE2, run the command: <br />
+<br />
+/bin/ps -ef | grep kube-apiserver | grep -v grep<br />
+<br />
+If --audit-policy-file is not set, this is a finding. If --audit-log-mode is not = &quot;blocking-strict&quot;, this is a finding.<br />
+<br />
+Ensure the RKE2 configuration file on all RKE2 hosts, located at /etc/rancher/rke2/config.yaml, contains CIS profile setting. Run the following command: cat /etc/rancher/rke2/config.yaml<br />
+RKE2 can be started with the profile flag set to cis, cis-1.23, or cis-1.6 depending on the RKE2 version. Available with October 2023 releases (v1.25.15+rke2r1, v1.26.10+rke2r1, v1.27.7+rke2r1, v1.28.3+rke2r1), use the generic profile: &quot;cis&quot;.<br />
+<br />
+If a value for profile is not found or is not set correctly, this is a finding. (Example: &quot;profile: cis&quot;)<br />
+<br />
+Check the contents of the audit-policy file. By default, RKE2 expects the audit-policy file to be located at /etc/rancher/rke2/audit-policy.yaml; however, this location can be overridden in the /etc/rancher/rke2/config.yaml file with argument 'kube-apiserver-arg: &quot;audit-policy-file=/etc/rancher/rke2/audit-policy.yaml&quot;'.<br />
+If the audit policy file does not exist or does not look like the following, this is a finding.<br />
+<br />
+apiVersion: audit.k8s.io/v1 kind: Policy metadata: name: rke2-audit-policy rules:<br />
+<br />
+level: Metadata resources:<br />
+group: &quot;&quot; resources: [&quot;secrets&quot;]<br />
+level: RequestResponse resources:<br />
+group: &quot;&quot; resources: [&quot;*&quot;]</p><h2>Check Content Reference</h2><p>M</p><h2>Target Key</h2><p>5486</p></body></html>

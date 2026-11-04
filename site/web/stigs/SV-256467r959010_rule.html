@@ -1,0 +1,39 @@
+<!doctype html><html lang="en"><head><meta charset="utf-8"><title>STIGQter: STIG Check Details: SV-256467r959010_rule: Access to virtual machines (VMs) through the &quot;dvfilter&quot; network Application Programming Interface (API) must be controlled.</title><link rel="icon" type="image/svg+xml" href="STIGQter.svg" /><script async src="https://www.googletagmanager.com/gtag/js?id=UA-31381839-2"></script><script src="include.js"></script><script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-4110907817782130" crossorigin="anonymous"></script></head><body><div><img src="STIGQter.svg" alt="STIGQter" style="height:1em;" /> <a href="https://www.stigqter.com/">STIGQter</a>: <a href="main.html">STIG Summary</a>: <a href="U_VMW_vSphere_7-0_Virtual_Machine_STIG_V1R4_Manual-xccdf.html">VMware vSphere 7.0 Virtual Machine Security Technical Implementation Guide Version: 1 Release: 4 Benchmark Date: 30 Jan 2025</a>:</div> <h1>Access to virtual machines (VMs) through the &quot;dvfilter&quot; network Application Programming Interface (API) must be controlled.</h1><h2>DISA Rule</h2><p>SV-256467r959010_rule</p><h2>Vulnerability Number</h2><p>V-256467</p><h2>Group Title</h2><p>SRG-OS-000480-VMM-002000</p><h2>Rule Version</h2><p>VMCH-70-000019</p><h2>Severity</h2><p>CAT III</p><h2>CCI(s)</h2><ul><li>CCI-000366 - Implement the security configuration settings.</li></ul><h2>Weight</h2><p>10</p><h2>Fix Recommendation</h2><p>From the vSphere Client, right-click the Virtual Machine and go to Edit Settings &gt;&gt; VM Options &gt;&gt; Advanced &gt;&gt; Configuration Parameters &gt;&gt; Edit Configuration.<br />
+<br />
+Look for settings with the format &quot;ethernet*.filter*.name&quot;.<br />
+<br />
+Ensure only required VMs use this setting.<br />
+<br />
+Note: The VM must be powered off to configure the advanced settings through the vSphere Client. Therefore, it is recommended to configure these settings with PowerCLI as this can be done while the VM is powered on. Settings do not take effect via either method until the virtual machine is cold started, not rebooted.<br />
+<br />
+or<br />
+<br />
+From a PowerCLI command prompt while connected to the ESXi host or vCenter server, run the following command:<br />
+<br />
+Get-VM &quot;VM Name&quot; | Get-AdvancedSetting -Name ethernetX.filterY.name | Remove-AdvancedSetting<br />
+<br />
+Note: Change the X and Y values to match the specific setting in the organization's environment.</p><h2>Check Contents</h2><p>From the vSphere Client, right-click the Virtual Machine and go to Edit Settings &gt;&gt; VM Options &gt;&gt; Advanced &gt;&gt; Configuration Parameters &gt;&gt; Edit Configuration.<br />
+<br />
+Look for settings with the format &quot;ethernet*.filter*.name&quot;.<br />
+<br />
+or<br />
+<br />
+From a PowerCLI command prompt while connected to the ESXi host or vCenter server, run the following command:<br />
+<br />
+Get-VM &quot;VM Name&quot; | Get-AdvancedSetting -Name &quot;ethernet*.filter*.name*&quot;<br />
+<br />
+If the virtual machine advanced setting &quot;ethernet*.filter*.name&quot; exists and dvfilters are not in use, this is a finding.<br />
+<br />
+If the virtual machine advanced setting &quot;ethernet*.filter*.name&quot; exists and the value is not valid, this is a finding.</p><h2>Vulnerability Number</h2><p>V-256467</p><h2>Documentable</h2><p>False</p><h2>Rule Version</h2><p>VMCH-70-000019</p><h2>Severity Override Guidance</h2><p>From the vSphere Client, right-click the Virtual Machine and go to Edit Settings &gt;&gt; VM Options &gt;&gt; Advanced &gt;&gt; Configuration Parameters &gt;&gt; Edit Configuration.<br />
+<br />
+Look for settings with the format &quot;ethernet*.filter*.name&quot;.<br />
+<br />
+or<br />
+<br />
+From a PowerCLI command prompt while connected to the ESXi host or vCenter server, run the following command:<br />
+<br />
+Get-VM &quot;VM Name&quot; | Get-AdvancedSetting -Name &quot;ethernet*.filter*.name*&quot;<br />
+<br />
+If the virtual machine advanced setting &quot;ethernet*.filter*.name&quot; exists and dvfilters are not in use, this is a finding.<br />
+<br />
+If the virtual machine advanced setting &quot;ethernet*.filter*.name&quot; exists and the value is not valid, this is a finding.</p><h2>Check Content Reference</h2><p>M</p><h2>Target Key</h2><p>5519</p></body></html>

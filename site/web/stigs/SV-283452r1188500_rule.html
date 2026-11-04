@@ -1,0 +1,98 @@
+<!doctype html><html lang="en"><head><meta charset="utf-8"><title>STIGQter: STIG Check Details: SV-283452r1188500_rule: Amazon Linux 2023 must implement a FIPS 140-2/140-3 compliant systemwide cryptographic policy.</title><link rel="icon" type="image/svg+xml" href="STIGQter.svg" /><script async src="https://www.googletagmanager.com/gtag/js?id=UA-31381839-2"></script><script src="include.js"></script><script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-4110907817782130" crossorigin="anonymous"></script></head><body><div><img src="STIGQter.svg" alt="STIGQter" style="height:1em;" /> <a href="https://www.stigqter.com/">STIGQter</a>: <a href="main.html">STIG Summary</a>: <a href="U_Amazon_Linux_2023_STIG_V1R4_Manual-xccdf.html">Amazon Linux 2023 Security Technical Implementation Guide Version: 1 Release: 4 Benchmark Date: 01 Jul 2026</a>:</div> <h1>Amazon Linux 2023 must implement a FIPS 140-2/140-3 compliant systemwide cryptographic policy.</h1><h2>DISA Rule</h2><p>SV-283452r1188500_rule</p><h2>Vulnerability Number</h2><p>V-283452</p><h2>Group Title</h2><p>SRG-OS-000396-GPOS-00176</p><h2>Rule Version</h2><p>AZLX-23-001270</p><h2>Severity</h2><p>CAT I</p><h2>CCI(s)</h2><ul><li>CCI-000803 - Implement mechanisms for authentication to a cryptographic module that meet the requirements of applicable laws, Executive Orders, directives, policies, regulations, standards, and guidance for such authentication.</li><li>CCI-002450 - Implement organization-defined types of cryptography for each specified cryptography use.</li><li>CCI-002890 - Implement organization-defined cryptographic mechanisms to protect the integrity of nonlocal maintenance and diagnostic communications.</li><li>CCI-003123 - Implement organization-defined cryptographic mechanisms to protect the confidentiality of nonlocal maintenance and diagnostic communications.</li><li>CCI-002421 - Implement cryptographic mechanisms to prevent unauthorized disclosure of information and/or detect changes to information during transmission.</li></ul><h2>Weight</h2><p>10</p><h2>Fix Recommendation</h2><p>Configure Amazon Linux 2023 to use a FIPS 140-2/140-3 compliant systemwide cryptographic policy.<br />
+ <br />
+Create subpolicies for enhancements to the systemwide crypto-policy with the following commands:<br />
+ <br />
+Create or edit the SCOPES-AND-WILDCARDS policy module in a text editor and insert options that modify the systemwide cryptographic policy as follows:<br />
+$ sudo vi /etc/crypto-policies/policies/modules/SCOPES-AND-WILDCARDS.pmod<br />
+ <br />
+Add the following lines to the policy:<br />
+# Disable CHACHA20-POLY1305 for the TLS protocol (OpenSSL, GnuTLS, NSS, and OpenJDK)<br />
+cipher@TLS = -CHACHA20-POLY1305<br />
+ <br />
+# Disable all CBC mode ciphers for the SSH protocol (libssh and OpenSSH)<br />
+cipher@SSH = -*-CBC<br />
+ <br />
+Create or edit the OPENSSH-SUBPOLICY module in a text editor and insert options that modify the systemwide crypto-policy as follows:<br />
+$ sudo vi /etc/crypto-policies/policies/modules/OPENSSH-SUBPOLICY.pmod<br />
+ <br />
+Add the following lines to the policy:<br />
+# Define ciphers for OpenSSH<br />
+cipher@SSH=AES-256-GCM AES-128-GCM AES-256-CTR AES-128-CTR<br />
+ <br />
+# Define MACs for OpenSSH<br />
+mac@SSH=HMAC-SHA2-512 HMAC-SHA2-256<br />
+ <br />
+Create or edit the REQUIRE.pmod file and add the following lines to include the subpolicies in the FIPS configuration with the following command:<br />
+<br />
+$ sudo vi /etc/crypto-policies/policies/modules/REQUIRE.pmod<br />
+ <br />
+Add the following lines to REQUIRE.pmod:<br />
+@OPENSSH-SUBPOLICY<br />
+@SCOPES-AND-WILDCARDS<br />
+ <br />
+Apply the policy enhancements to the FIPS systemwide cryptographic policy level with the following command:<br />
+ <br />
+$ sudo update-crypto-policies --set FIPS<br />
+<br />
+Note: If additional subpolicies are being employed, they should be added to the REQUIRE.pmod as well. REQUIRE.pmod is included in the systemwide crypto-policy when it is set.<br />
+ <br />
+To make the cryptographic settings effective for already running services and applications, restart the system:<br />
+$ sudo reboot</p><h2>Check Contents</h2><p>Verify Amazon Linux 2023 is set to use a FIPS 140-2/140-3 compliant systemwide cryptographic policy.<br />
+<br />
+$ update-crypto-policies --show<br />
+FIPS<br />
+ <br />
+If the systemwide crypto policy is not set to &quot;FIPS&quot;, this is a finding.<br />
+<br />
+Inspect the contents of the REQUIRE.pmod file (if it exists) to verify only authorized modifications to the current policy are included with the following command:<br />
+<br />
+$ cat /etc/crypto-policies/policies/modules/REQUIRE.pmod<br />
+<br />
+Note: If subpolicies have been configured, they could be listed in a colon-separated list starting with FIPS as follows FIPS:&lt;SUBPOLICY-NAME&gt;:&lt;SUBPOLICY-NAME&gt;. This is not a finding.<br />
+<br />
+If the AD-SUPPORT subpolicy module is included (e.g., &quot;FIPS:AD-SUPPORT&quot;), and Active Directory support is not documented as an operational requirement with the information system security officer (ISSO), this is a finding.<br />
+<br />
+If the NO-ENFORCE-EMS subpolicy module is included (e.g., &quot;FIPS:NO-ENFORCE-EMS&quot;), and not enforcing EMS is not documented as an operational requirement with the ISSO, this is a finding.<br />
+<br />
+Verify the current minimum crypto-policy configuration with the following commands:<br />
+ <br />
+$ grep -E 'rsa_size|hash' /etc/crypto-policies/state/CURRENT.pol<br />
+hash = SHA2-256 SHA2-384 SHA2-512 SHA2-224 SHA3-256 SHA3-384 SHA3-512 SHAKE-256<br />
+min_rsa_size = 2048<br />
+ <br />
+If the &quot;hash&quot; values do not include at least the following FIPS 140-2/140-3 compliant algorithms &quot;SHA2-256 SHA2-384 SHA2-512 SHA2-224 SHA3-256 SHA3-384 SHA3-512 SHAKE-256&quot;, this is a finding.<br />
+<br />
+If there are algorithms that include &quot;SHA1&quot; or a hash value less than &quot;256&quot; this is a finding.<br />
+<br />
+If the &quot;min_rsa_size&quot; is not set to a value of at least 2048, this is a finding.<br />
+ <br />
+If these commands do not return any output, this is a finding.</p><h2>Vulnerability Number</h2><p>V-283452</p><h2>Documentable</h2><p>False</p><h2>Rule Version</h2><p>AZLX-23-001270</p><h2>Severity Override Guidance</h2><p>Verify Amazon Linux 2023 is set to use a FIPS 140-2/140-3 compliant systemwide cryptographic policy.<br />
+<br />
+$ update-crypto-policies --show<br />
+FIPS<br />
+ <br />
+If the systemwide crypto policy is not set to &quot;FIPS&quot;, this is a finding.<br />
+<br />
+Inspect the contents of the REQUIRE.pmod file (if it exists) to verify only authorized modifications to the current policy are included with the following command:<br />
+<br />
+$ cat /etc/crypto-policies/policies/modules/REQUIRE.pmod<br />
+<br />
+Note: If subpolicies have been configured, they could be listed in a colon-separated list starting with FIPS as follows FIPS:&lt;SUBPOLICY-NAME&gt;:&lt;SUBPOLICY-NAME&gt;. This is not a finding.<br />
+<br />
+If the AD-SUPPORT subpolicy module is included (e.g., &quot;FIPS:AD-SUPPORT&quot;), and Active Directory support is not documented as an operational requirement with the information system security officer (ISSO), this is a finding.<br />
+<br />
+If the NO-ENFORCE-EMS subpolicy module is included (e.g., &quot;FIPS:NO-ENFORCE-EMS&quot;), and not enforcing EMS is not documented as an operational requirement with the ISSO, this is a finding.<br />
+<br />
+Verify the current minimum crypto-policy configuration with the following commands:<br />
+ <br />
+$ grep -E 'rsa_size|hash' /etc/crypto-policies/state/CURRENT.pol<br />
+hash = SHA2-256 SHA2-384 SHA2-512 SHA2-224 SHA3-256 SHA3-384 SHA3-512 SHAKE-256<br />
+min_rsa_size = 2048<br />
+ <br />
+If the &quot;hash&quot; values do not include at least the following FIPS 140-2/140-3 compliant algorithms &quot;SHA2-256 SHA2-384 SHA2-512 SHA2-224 SHA3-256 SHA3-384 SHA3-512 SHAKE-256&quot;, this is a finding.<br />
+<br />
+If there are algorithms that include &quot;SHA1&quot; or a hash value less than &quot;256&quot; this is a finding.<br />
+<br />
+If the &quot;min_rsa_size&quot; is not set to a value of at least 2048, this is a finding.<br />
+ <br />
+If these commands do not return any output, this is a finding.</p><h2>Check Content Reference</h2><p>M</p><h2>Target Key</h2><p>5700</p></body></html>

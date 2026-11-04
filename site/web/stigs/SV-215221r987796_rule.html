@@ -1,0 +1,30 @@
+<!doctype html><html lang="en"><head><meta charset="utf-8"><title>STIGQter: STIG Check Details: SV-215221r987796_rule: AIX root passwords must never be passed over a network in clear text form.</title><link rel="icon" type="image/svg+xml" href="STIGQter.svg" /><script async src="https://www.googletagmanager.com/gtag/js?id=UA-31381839-2"></script><script src="include.js"></script><script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-4110907817782130" crossorigin="anonymous"></script></head><body><div><img src="STIGQter.svg" alt="STIGQter" style="height:1em;" /> <a href="https://www.stigqter.com/">STIGQter</a>: <a href="main.html">STIG Summary</a>: <a href="U_IBM_AIX_7-x_STIG_V3R3_Manual-xccdf.html">IBM AIX 7.x Security Technical Implementation Guide Version: 3 Release: 3 Benchmark Date: 01 Jul 2026</a>:</div> <h1>AIX root passwords must never be passed over a network in clear text form.</h1><h2>DISA Rule</h2><p>SV-215221r987796_rule</p><h2>Vulnerability Number</h2><p>V-215221</p><h2>Group Title</h2><p>SRG-OS-000074-GPOS-00042</p><h2>Rule Version</h2><p>AIX7-00-001124</p><h2>Severity</h2><p>CAT I</p><h2>CCI(s)</h2><ul><li>CCI-000197 - For password-based authentication, transmit passwords only cryptographically-protected channels.</li></ul><h2>Weight</h2><p>10</p><h2>Fix Recommendation</h2><p>If OpenSSH server is not installed, install it from the from AIX DVD Volume 1 using the following command (assuming that the DVD device is /dev/cd0):<br />
+# installp -aXYgd /dev/cd0 -e /tmp/install.log openssh.base.server<br />
+<br />
+Start SSH server if it is not started:<br />
+# startsrc -s sshd<br />
+<br />
+Enable SSH on the system and use it for all remote connections used to attain root access. <br />
+<br />
+Disable direct root remote login:<br />
+# chsec -f /etc/security/user -s root -a rlogin=false</p><h2>Check Contents</h2><p>Determine if root has logged in over an unencrypted network connection: <br />
+<br />
+# last | grep &quot;root &quot; | egrep -v &quot;reboot|console&quot; | more <br />
+root      pts/1        10.74.17.76           Jul 4 16:44 - 17:39  (00:54)<br />
+<br />
+Next, determine if the SSH daemon is running: <br />
+<br />
+# ps -ef |grep sshd <br />
+root  3670408  6029762   0   Jan 24      -  0:00 /usr/sbin/sshd<br />
+<br />
+If root has logged in over the network and SSHD is not running, this is a finding.</p><h2>Vulnerability Number</h2><p>V-215221</p><h2>Documentable</h2><p>False</p><h2>Rule Version</h2><p>AIX7-00-001124</p><h2>Severity Override Guidance</h2><p>Determine if root has logged in over an unencrypted network connection: <br />
+<br />
+# last | grep &quot;root &quot; | egrep -v &quot;reboot|console&quot; | more <br />
+root      pts/1        10.74.17.76           Jul 4 16:44 - 17:39  (00:54)<br />
+<br />
+Next, determine if the SSH daemon is running: <br />
+<br />
+# ps -ef |grep sshd <br />
+root  3670408  6029762   0   Jan 24      -  0:00 /usr/sbin/sshd<br />
+<br />
+If root has logged in over the network and SSHD is not running, this is a finding.</p><h2>Check Content Reference</h2><p>M</p><h2>Target Key</h2><p>4012</p></body></html>

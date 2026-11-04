@@ -1,0 +1,53 @@
+<!doctype html><html lang="en"><head><meta charset="utf-8"><title>STIGQter: STIG Check Details: SV-255999r882339_rule: The Arista multicast router must be configured to bind a Protocol Independent Multicast (PIM) neighbor filter to interfaces that have PIM enabled.</title><link rel="icon" type="image/svg+xml" href="STIGQter.svg" /><script async src="https://www.googletagmanager.com/gtag/js?id=UA-31381839-2"></script><script src="include.js"></script><script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-4110907817782130" crossorigin="anonymous"></script></head><body><div><img src="STIGQter.svg" alt="STIGQter" style="height:1em;" /> <a href="https://www.stigqter.com/">STIGQter</a>: <a href="main.html">STIG Summary</a>: <a href="U_Arista_MLS_EOS_4-X_Router_STIG_V2R2_Manual-xccdf.html">Arista MLS EOS 4.X Router Security Technical Implementation Guide Version: 2 Release: 2 Benchmark Date: 02 Apr 2025</a>:</div> <h1>The Arista multicast router must be configured to bind a Protocol Independent Multicast (PIM) neighbor filter to interfaces that have PIM enabled.</h1><h2>DISA Rule</h2><p>SV-255999r882339_rule</p><h2>Vulnerability Number</h2><p>V-255999</p><h2>Group Title</h2><p>SRG-NET-000019-RTR-000004</p><h2>Rule Version</h2><p>ARST-RT-000130</p><h2>Severity</h2><p>CAT II</p><h2>CCI(s)</h2><ul><li>CCI-001414 - Enforce approved authorizations for controlling the flow of information between connected systems based on organization-defined information flow control policies.</li></ul><h2>Weight</h2><p>10</p><h2>Fix Recommendation</h2><p>This requirement is not applicable for the DODIN backbone.<br />
+<br />
+Configure neighbor filters to only accept PIM control plane traffic from documented PIM neighbors. Bind neighbor filters to all PIM-enabled interfaces.<br />
+<br />
+Step 1: Configure an ACL that will specify the authorized PIM neighbors.<br />
+<br />
+router(config)#ip access-list standard filter_1<br />
+router(config-std-acl-filter_1)#permit 10.13.24.9/24<br />
+router(config-std-acl-filter_1)#exit<br />
+<br />
+Step 2: Configure a PIM neighbor-filter command and apply it on all PIM-enabled interfaces that are referencing the PIM neighbor ACL.<br />
+<br />
+router(config)#interface vlan 4<br />
+router(config-if-Vl4)#pim ipv4 neighbor-filter filter_1<br />
+router(config-if-Vl4)#exit</p><h2>Check Contents</h2><p>This requirement is not applicable for the DODIN backbone.<br />
+<br />
+Review the Arista router multicast topology diagram and determine if router interfaces are enabled for IPv4 or IPv6 multicast routing.<br />
+<br />
+If the router is enabled for multicast routing, verify all interfaces enabled for PIM have a neighbor filter bound to the interface. The neighbor filter must only accept PIM control plane traffic from the documented PIM neighbors.<br />
+<br />
+Step 1: Verify the ACL is configured that will specify the authorized PIM neighbors. To verify IP access lists are configured, execute the command &quot;show ip access-lists&quot;.<br />
+<br />
+ip access-list standard filter_1<br />
+  permit 10.13.24.9/24<br />
+  exit<br />
+<br />
+Step 2: Verify the PIM neighbor-filter is configured on PIM-enabled interfaces. To verify interfaces are configured, execute the command &quot;show run int YY&quot;.<br />
+<br />
+interface vlan 4<br />
+  pim ipv4 sparse-mode<br />
+  pim ipv4 neighbor-filter filter_1<br />
+  exit<br />
+<br />
+If PIM neighbor filters are not bound to all interfaces that have PIM enabled, this is a finding.</p><h2>Vulnerability Number</h2><p>V-255999</p><h2>Documentable</h2><p>False</p><h2>Rule Version</h2><p>ARST-RT-000130</p><h2>Severity Override Guidance</h2><p>This requirement is not applicable for the DODIN backbone.<br />
+<br />
+Review the Arista router multicast topology diagram and determine if router interfaces are enabled for IPv4 or IPv6 multicast routing.<br />
+<br />
+If the router is enabled for multicast routing, verify all interfaces enabled for PIM have a neighbor filter bound to the interface. The neighbor filter must only accept PIM control plane traffic from the documented PIM neighbors.<br />
+<br />
+Step 1: Verify the ACL is configured that will specify the authorized PIM neighbors. To verify IP access lists are configured, execute the command &quot;show ip access-lists&quot;.<br />
+<br />
+ip access-list standard filter_1<br />
+  permit 10.13.24.9/24<br />
+  exit<br />
+<br />
+Step 2: Verify the PIM neighbor-filter is configured on PIM-enabled interfaces. To verify interfaces are configured, execute the command &quot;show run int YY&quot;.<br />
+<br />
+interface vlan 4<br />
+  pim ipv4 sparse-mode<br />
+  pim ipv4 neighbor-filter filter_1<br />
+  exit<br />
+<br />
+If PIM neighbor filters are not bound to all interfaces that have PIM enabled, this is a finding.</p><h2>Check Content Reference</h2><p>M</p><h2>Target Key</h2><p>5513</p></body></html>

@@ -1,0 +1,48 @@
+<!doctype html><html lang="en"><head><meta charset="utf-8"><title>STIGQter: STIG Check Details: SV-248702r1015060_rule: OL 8 must implement multifactor authentication for access to interactive accounts.</title><link rel="icon" type="image/svg+xml" href="STIGQter.svg" /><script async src="https://www.googletagmanager.com/gtag/js?id=UA-31381839-2"></script><script src="include.js"></script><script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-4110907817782130" crossorigin="anonymous"></script></head><body><div><img src="STIGQter.svg" alt="STIGQter" style="height:1em;" /> <a href="https://www.stigqter.com/">STIGQter</a>: <a href="main.html">STIG Summary</a>: <a href="U_Oracle_Linux_8_STIG_V2R9_Manual-xccdf.html">Oracle Linux 8 Security Technical Implementation Guide Version: 2 Release: 9 Benchmark Date: 01 Jul 2026</a>:</div> <h1>OL 8 must implement multifactor authentication for access to interactive accounts.</h1><h2>DISA Rule</h2><p>SV-248702r1015060_rule</p><h2>Vulnerability Number</h2><p>V-248702</p><h2>Group Title</h2><p>SRG-OS-000105-GPOS-00052</p><h2>Rule Version</h2><p>OL08-00-020250</p><h2>Severity</h2><p>CAT II</p><h2>CCI(s)</h2><ul><li>CCI-000765 - Implement multifactor authentication for network access to privileged accounts.</li><li>CCI-000766 - Implement multifactor authentication for network access to non-privileged accounts.</li><li>CCI-004047 - Implement multi-factor authentication for local; network; and/or remote access to privileged accounts; and/or non-privileged accounts such that the device meets organization-defined strength of mechanism requirements.</li></ul><h2>Weight</h2><p>10</p><h2>Fix Recommendation</h2><p>Configure OL 8 to use multifactor authentication for local access to accounts.<br />
+<br />
+Add or update the &quot;pam_cert_auth&quot; setting in the &quot;/etc/sssd/sssd.conf&quot; file to match the following line:<br />
+<br />
+     [pam]<br />
+     pam_cert_auth = True<br />
+<br />
+Add or update &quot;pam_sss.so&quot; with &quot;try_cert_auth&quot; or &quot;require_cert_auth&quot; in the &quot;/etc/pam.d/system-auth&quot; and &quot;/etc/pam.d/smartcard-auth&quot; files based on the following examples:<br />
+<br />
+     /etc/pam.d/smartcard-auth:auth sufficient pam_sss.so try_cert_auth<br />
+<br />
+     /etc/pam.d/system-auth:auth [success=done authinfo_unavail=ignore ignore=ignore default=die] pam_sss.so try_cert_auth<br />
+<br />
+The &quot;sssd&quot; service must be restarted for the changes to take effect. To restart the &quot;sssd&quot; service, run the following command:<br />
+<br />
+     $ sudo systemctl restart sssd.service</p><h2>Check Contents</h2><p>Verify OL 8 uses multifactor authentication for local access to accounts.<br />
+<br />
+Note: If the system administrator (SA) demonstrates the use of an approved alternate multifactor authentication method, this requirement is Not Applicable.<br />
+<br />
+Check that the &quot;pam_cert_auth&quot; setting is set to &quot;true&quot; in the &quot;/etc/sssd/sssd.conf&quot; file.<br />
+<br />
+Check that the &quot;try_cert_auth&quot; or &quot;require_cert_auth&quot; options are configured in both &quot;/etc/pam.d/system-auth&quot; and &quot;/etc/pam.d/smartcard-auth&quot; files with the following command:<br />
+<br />
+     $ sudo grep -ir cert_auth /etc/sssd/sssd.conf /etc/sssd/conf.d/*.conf /etc/pam.d/*<br />
+<br />
+     /etc/sssd/sssd.conf:pam_cert_auth = True<br />
+     /etc/pam.d/smartcard-auth:auth sufficient pam_sss.so try_cert_auth<br />
+     /etc/pam.d/system-auth:auth [success=done authinfo_unavail=ignore ignore=ignore default=die] pam_sss.so try_cert_auth<br />
+<br />
+If &quot;pam_cert_auth&quot; is not set to &quot;true&quot; in &quot;/etc/sssd/sssd.conf&quot;, this is a finding.<br />
+<br />
+If &quot;pam_sss.so&quot; is not set to &quot;try_cert_auth&quot; or &quot;require_cert_auth&quot; in both the &quot;/etc/pam.d/smartcard-auth&quot; and &quot;/etc/pam.d/system-auth&quot; files, this is a finding.</p><h2>Vulnerability Number</h2><p>V-248702</p><h2>Documentable</h2><p>False</p><h2>Rule Version</h2><p>OL08-00-020250</p><h2>Severity Override Guidance</h2><p>Verify OL 8 uses multifactor authentication for local access to accounts.<br />
+<br />
+Note: If the system administrator (SA) demonstrates the use of an approved alternate multifactor authentication method, this requirement is Not Applicable.<br />
+<br />
+Check that the &quot;pam_cert_auth&quot; setting is set to &quot;true&quot; in the &quot;/etc/sssd/sssd.conf&quot; file.<br />
+<br />
+Check that the &quot;try_cert_auth&quot; or &quot;require_cert_auth&quot; options are configured in both &quot;/etc/pam.d/system-auth&quot; and &quot;/etc/pam.d/smartcard-auth&quot; files with the following command:<br />
+<br />
+     $ sudo grep -ir cert_auth /etc/sssd/sssd.conf /etc/sssd/conf.d/*.conf /etc/pam.d/*<br />
+<br />
+     /etc/sssd/sssd.conf:pam_cert_auth = True<br />
+     /etc/pam.d/smartcard-auth:auth sufficient pam_sss.so try_cert_auth<br />
+     /etc/pam.d/system-auth:auth [success=done authinfo_unavail=ignore ignore=ignore default=die] pam_sss.so try_cert_auth<br />
+<br />
+If &quot;pam_cert_auth&quot; is not set to &quot;true&quot; in &quot;/etc/sssd/sssd.conf&quot;, this is a finding.<br />
+<br />
+If &quot;pam_sss.so&quot; is not set to &quot;try_cert_auth&quot; or &quot;require_cert_auth&quot; in both the &quot;/etc/pam.d/smartcard-auth&quot; and &quot;/etc/pam.d/system-auth&quot; files, this is a finding.</p><h2>Check Content Reference</h2><p>M</p><h2>Target Key</h2><p>5416</p></body></html>

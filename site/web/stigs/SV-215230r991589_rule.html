@@ -1,0 +1,65 @@
+<!doctype html><html lang="en"><head><meta charset="utf-8"><title>STIGQter: STIG Check Details: SV-215230r991589_rule: The password hashes stored on AIX system must have been generated using a FIPS 140-2 approved cryptographic hashing algorithm.</title><link rel="icon" type="image/svg+xml" href="STIGQter.svg" /><script async src="https://www.googletagmanager.com/gtag/js?id=UA-31381839-2"></script><script src="include.js"></script><script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-4110907817782130" crossorigin="anonymous"></script></head><body><div><img src="STIGQter.svg" alt="STIGQter" style="height:1em;" /> <a href="https://www.stigqter.com/">STIGQter</a>: <a href="main.html">STIG Summary</a>: <a href="U_IBM_AIX_7-x_STIG_V3R3_Manual-xccdf.html">IBM AIX 7.x Security Technical Implementation Guide Version: 3 Release: 3 Benchmark Date: 01 Jul 2026</a>:</div> <h1>The password hashes stored on AIX system must have been generated using a FIPS 140-2 approved cryptographic hashing algorithm.</h1><h2>DISA Rule</h2><p>SV-215230r991589_rule</p><h2>Vulnerability Number</h2><p>V-215230</p><h2>Group Title</h2><p>SRG-OS-000480-GPOS-00227</p><h2>Rule Version</h2><p>AIX7-00-001134</p><h2>Severity</h2><p>CAT II</p><h2>CCI(s)</h2><ul><li>CCI-000366 - Implement the security configuration settings.</li></ul><h2>Weight</h2><p>10</p><h2>Fix Recommendation</h2><p>Set the system wide password algorithm to &quot;ssha256&quot; or &quot;ssha512&quot; by running the following command:<br />
+<br />
+# chsec -f /etc/security/login.cfg -s usw -a pwd_algorithm=ssha512<br />
+<br />
+Change the passwords for all accounts using non-compliant password hashes by running the following command: <br />
+<br />
+$ passwd [user_name]</p><h2>Check Contents</h2><p>Verify that the system wide password algorithm is set to {ssha256} or {ssha512} by running the following command:<br />
+<br />
+# lssec -f /etc/security/login.cfg -s usw -a pwd_algorithm<br />
+usw pwd_algorithm=ssha512<br />
+<br />
+If the &quot;pwd_algorithm&quot; is not set to &quot;ssha256&quot; or &quot;ssha512&quot;, this is a finding.<br />
+<br />
+Verify no password hashes in /etc/passwd by running the following command: <br />
+<br />
+# cat /etc/passwd | cut -f2,2 -d&quot;:&quot; <br />
+!<br />
+!<br />
+!<br />
+!<br />
+*<br />
+*<br />
+*<br />
+*<br />
+<br />
+If there are password hashes present, this is a finding. <br />
+<br />
+Verify all password hashes in &quot;/etc/security/passwd&quot; begin with {ssha256} or {ssha512} by running commands: <br />
+ <br />
+# cat /etc/security/passwd | grep password <br />
+        password = {ssha512}06$e58YOawe/7UhChqh$hZEWlP4040jarX1NeOujmcxd.7qerUvjW9lM9djJsDITtdjFvVpLX.r04xieOWrbH0qb0SJJ98a0tmgZBzPP..<br />
+        password = {ssha512}06$Y6ztvMxKGdITxPex$B81/GDTEPt0xwp.BX1VhY9mAPaWHXdNoLI9D0T6dBExgo6r87X0etnfjxWODT73.udrbAY.F4HzaBR68lN5/..<br />
+        password = {ssha512}06$iIXQQqs.mdGpC9Wu$cXSajikWYKAUacbF50FNlFgYYSgTklGf4uhXb1J/GyBGF5j5aWa4YG5Ah2uaAHv/Jmbmx.7yBm8iXz9Pz1LM..<br />
+        password = {ssha512}06$3Sw24rPVdqDFFCIl$d1dZs7GYmTXnD9i270SxozIBxN0pqq/bNn0YbyKeDq0o6Y.j9qfkeH373DwkHBWgrifNcgj/K0pVyzjMg6QN..<br />
+<br />
+If any password hashes are present not beginning with {ssha256} or {ssha512}, this is a finding.</p><h2>Vulnerability Number</h2><p>V-215230</p><h2>Documentable</h2><p>False</p><h2>Rule Version</h2><p>AIX7-00-001134</p><h2>Severity Override Guidance</h2><p>Verify that the system wide password algorithm is set to {ssha256} or {ssha512} by running the following command:<br />
+<br />
+# lssec -f /etc/security/login.cfg -s usw -a pwd_algorithm<br />
+usw pwd_algorithm=ssha512<br />
+<br />
+If the &quot;pwd_algorithm&quot; is not set to &quot;ssha256&quot; or &quot;ssha512&quot;, this is a finding.<br />
+<br />
+Verify no password hashes in /etc/passwd by running the following command: <br />
+<br />
+# cat /etc/passwd | cut -f2,2 -d&quot;:&quot; <br />
+!<br />
+!<br />
+!<br />
+!<br />
+*<br />
+*<br />
+*<br />
+*<br />
+<br />
+If there are password hashes present, this is a finding. <br />
+<br />
+Verify all password hashes in &quot;/etc/security/passwd&quot; begin with {ssha256} or {ssha512} by running commands: <br />
+ <br />
+# cat /etc/security/passwd | grep password <br />
+        password = {ssha512}06$e58YOawe/7UhChqh$hZEWlP4040jarX1NeOujmcxd.7qerUvjW9lM9djJsDITtdjFvVpLX.r04xieOWrbH0qb0SJJ98a0tmgZBzPP..<br />
+        password = {ssha512}06$Y6ztvMxKGdITxPex$B81/GDTEPt0xwp.BX1VhY9mAPaWHXdNoLI9D0T6dBExgo6r87X0etnfjxWODT73.udrbAY.F4HzaBR68lN5/..<br />
+        password = {ssha512}06$iIXQQqs.mdGpC9Wu$cXSajikWYKAUacbF50FNlFgYYSgTklGf4uhXb1J/GyBGF5j5aWa4YG5Ah2uaAHv/Jmbmx.7yBm8iXz9Pz1LM..<br />
+        password = {ssha512}06$3Sw24rPVdqDFFCIl$d1dZs7GYmTXnD9i270SxozIBxN0pqq/bNn0YbyKeDq0o6Y.j9qfkeH373DwkHBWgrifNcgj/K0pVyzjMg6QN..<br />
+<br />
+If any password hashes are present not beginning with {ssha256} or {ssha512}, this is a finding.</p><h2>Check Content Reference</h2><p>M</p><h2>Target Key</h2><p>4012</p></body></html>

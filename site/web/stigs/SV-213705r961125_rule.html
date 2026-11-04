@@ -1,0 +1,45 @@
+<!doctype html><html lang="en"><head><meta charset="utf-8"><title>STIGQter: STIG Check Details: SV-213705r961125_rule: In the event of a system failure, DB2 must preserve any information necessary to determine cause of failure and any information necessary to return to operations with least disruption to mission processes.</title><link rel="icon" type="image/svg+xml" href="STIGQter.svg" /><script async src="https://www.googletagmanager.com/gtag/js?id=UA-31381839-2"></script><script src="include.js"></script><script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-4110907817782130" crossorigin="anonymous"></script></head><body><div><img src="STIGQter.svg" alt="STIGQter" style="height:1em;" /> <a href="https://www.stigqter.com/">STIGQter</a>: <a href="main.html">STIG Summary</a>: <a href="U_IBM_DB2_V10-5_LUW_STIG_V2R2_Manual-xccdf.html">IBM DB2 V10.5 LUW Security Technical Implementation Guide Version: 2 Release: 2 Benchmark Date: 01 Jul 2026</a>:</div> <h1>In the event of a system failure, DB2 must preserve any information necessary to determine cause of failure and any information necessary to return to operations with least disruption to mission processes.</h1><h2>DISA Rule</h2><p>SV-213705r961125_rule</p><h2>Vulnerability Number</h2><p>V-213705</p><h2>Group Title</h2><p>SRG-APP-000226-DB-000147</p><h2>Rule Version</h2><p>DB2X-00-005300</p><h2>Severity</h2><p>CAT II</p><h2>CCI(s)</h2><ul><li>CCI-001665 - Preserve organization-defined system state information in the event of a system failure.</li></ul><h2>Weight</h2><p>10</p><h2>Fix Recommendation</h2><p>Modify the database backup plan to include whether the database needs to be in archive logging, the correct recovery model to be used, the backup schedule, and the plan for testing the database restoration.<br />
+<br />
+Update db2 logging to archive logging for the database which requires roll forward recovery using the following db2 command:<br />
+<br />
+     $db2 update db2 cfg for &lt;database name&gt; using LOGARCHMETH1 &lt;value&gt;<br />
+<br />
+Note: Set the value as per your online file system or backup vendor like TSM <br />
+<br />
+Verify and correct the scheduled backup jobs.<br />
+<br />
+Correct any issues that have been causing backups to fail.<br />
+<br />
+Test the restoration of the database at least once a year; correct any issues that cause it to fail. Maintain a record of these tests.<br />
+<br />
+Note: <br />
+http://www.ibm.com/support/knowledgecenter/SSEPGG_10.1.0/com.ibm.db2.luw.admin.config.doc/doc/r0011448.html<br />
+http://www.ibm.com/support/knowledgecenter/SSEPGG_10.5.0/com.ibm.db2.luw.admin.cmd.doc/doc/r0001991.html</p><h2>Check Contents</h2><p>Review the system backup and recovery plan for db2 database to determine whether the database is in archive logging or circular logging, the recovery methods to be used, the backup schedule, backup media integration and the plan for testing database restoration. If any information is absent, this is a finding.<br />
+<br />
+Run the following command to get the details on the logging method:<br />
+<br />
+     $db2 get db cfg<br />
+<br />
+If roll forward recovery is required and both logarchmeth1 and logarchmeth2 are set to value OFF then DB2 is not in archive logging, this is a finding.<br />
+<br />
+Run the following command to verify backup history:<br />
+<br />
+     $db2 list history backup all for &lt;dbname&gt;<br />
+<br />
+Review the output of the above to see frequency and mode of backups, If the database is not being backed up per the organization’s system backup plan, this is a finding. <br />
+<br />
+Review evidence that database recovery is tested annually or more often per the backup and recovery document, and that the most recent test was successful. If not, this is a finding.</p><h2>Vulnerability Number</h2><p>V-213705</p><h2>Documentable</h2><p>False</p><h2>Rule Version</h2><p>DB2X-00-005300</p><h2>Severity Override Guidance</h2><p>Review the system backup and recovery plan for db2 database to determine whether the database is in archive logging or circular logging, the recovery methods to be used, the backup schedule, backup media integration and the plan for testing database restoration. If any information is absent, this is a finding.<br />
+<br />
+Run the following command to get the details on the logging method:<br />
+<br />
+     $db2 get db cfg<br />
+<br />
+If roll forward recovery is required and both logarchmeth1 and logarchmeth2 are set to value OFF then DB2 is not in archive logging, this is a finding.<br />
+<br />
+Run the following command to verify backup history:<br />
+<br />
+     $db2 list history backup all for &lt;dbname&gt;<br />
+<br />
+Review the output of the above to see frequency and mode of backups, If the database is not being backed up per the organization’s system backup plan, this is a finding. <br />
+<br />
+Review evidence that database recovery is tested annually or more often per the backup and recovery document, and that the most recent test was successful. If not, this is a finding.</p><h2>Check Content Reference</h2><p>M</p><h2>Target Key</h2><p>3989</p></body></html>

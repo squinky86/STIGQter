@@ -1,0 +1,48 @@
+<!doctype html><html lang="en"><head><meta charset="utf-8"><title>STIGQter: STIG Check Details: SV-256431r1067573_rule: The ESXi host must use DOD-approved certificates.</title><link rel="icon" type="image/svg+xml" href="STIGQter.svg" /><script async src="https://www.googletagmanager.com/gtag/js?id=UA-31381839-2"></script><script src="include.js"></script><script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-4110907817782130" crossorigin="anonymous"></script></head><body><div><img src="STIGQter.svg" alt="STIGQter" style="height:1em;" /> <a href="https://www.stigqter.com/">STIGQter</a>: <a href="main.html">STIG Summary</a>: <a href="U_VMW_vSphere_7-0_ESXi_STIG_V1R4_Manual-xccdf.html">VMware vSphere 7.0 ESXi Security Technical Implementation Guide Version: 1 Release: 4 Benchmark Date: 02 Apr 2025</a>:</div> <h1>The ESXi host must use DOD-approved certificates.</h1><h2>DISA Rule</h2><p>SV-256431r1067573_rule</p><h2>Vulnerability Number</h2><p>V-256431</p><h2>Group Title</h2><p>SRG-OS-000480-VMM-002000</p><h2>Rule Version</h2><p>ESXI-70-000078</p><h2>Severity</h2><p>CAT II</p><h2>CCI(s)</h2><ul><li>CCI-000366 - Implement the security configuration settings.</li></ul><h2>Weight</h2><p>10</p><h2>Fix Recommendation</h2><p>Join the ESXi host to vCenter before replacing the certificate.<br />
+<br />
+Obtain a DOD-issued certificate and private key for the host following the requirements below:<br />
+<br />
+Key size: 2048 bits or more (PEM encoded)<br />
+<br />
+Key format: PEM<br />
+VMware supports PKCS8 and PKCS1 (RSA keys)<br />
+x509 version 3<br />
+<br />
+SubjectAltName must contain DNS Name=&lt;machine_FQDN&gt;<br />
+<br />
+CRT (Base-64) format<br />
+<br />
+Contains the following Key Usages: Digital Signature, Non Repudiation, Key Encipherment<br />
+<br />
+Start time of one day before the current time<br />
+<br />
+CN (and SubjectAltName) set to the host name (or IP address) that the ESXi host has in the vCenter Server inventory<br />
+<br />
+From the vSphere Web Client, select the ESXi host's vCenter Server &gt;&gt; Configure &gt;&gt; System &gt;&gt; Advanced Settings.<br />
+<br />
+Select the &quot;vpxd.certmgmt.mode&quot; value and ensure it is set to &quot;custom&quot;.<br />
+<br />
+Put the host into maintenance mode.<br />
+<br />
+Temporarily enable Secure Shell (SSH) on the host. Use Secure Copy Protocol (SCP) to transfer the new certificate and key to /tmp. SSH to the host. Back up the existing certificate and key:<br />
+<br />
+# mv /etc/vmware/ssl/rui.crt /etc/vmware/ssl/rui.crt.bak<br />
+# mv /etc/vmware/ssl/rui.key /etc/vmware/ssl/rui.key.bak<br />
+<br />
+Copy the new certificate and key to &quot;/etc/vmware/ssl/&quot; and rename them to &quot;rui.crt&quot; and &quot;rui.key&quot; respectively.<br />
+<br />
+Restart management agents to implement the new certificate:<br />
+<br />
+# services.sh restart</p><h2>Check Contents</h2><p>From the vSphere Client, go to Hosts and Clusters.<br />
+<br />
+Select the ESXi Host &gt;&gt; Configure &gt;&gt; System &gt;&gt; Certificate.<br />
+<br />
+If the issuer is not a DOD-approved certificate authority, or other AO-approved certificate authority, this is a finding.<br />
+<br />
+If the host will never be accessed directly (virtual machine console connections bypass vCenter), this is not a finding.</p><h2>Vulnerability Number</h2><p>V-256431</p><h2>Documentable</h2><p>False</p><h2>Rule Version</h2><p>ESXI-70-000078</p><h2>Severity Override Guidance</h2><p>From the vSphere Client, go to Hosts and Clusters.<br />
+<br />
+Select the ESXi Host &gt;&gt; Configure &gt;&gt; System &gt;&gt; Certificate.<br />
+<br />
+If the issuer is not a DOD-approved certificate authority, or other AO-approved certificate authority, this is a finding.<br />
+<br />
+If the host will never be accessed directly (virtual machine console connections bypass vCenter), this is not a finding.</p><h2>Check Content Reference</h2><p>M</p><h2>Target Key</h2><p>5518</p></body></html>

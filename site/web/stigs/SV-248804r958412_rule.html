@@ -1,0 +1,37 @@
+<!doctype html><html lang="en"><head><meta charset="utf-8"><title>STIGQter: STIG Check Details: SV-248804r958412_rule: OL 8 must allocate an &quot;audit_backlog_limit&quot; of sufficient size to capture processes that start prior to the audit daemon.</title><link rel="icon" type="image/svg+xml" href="STIGQter.svg" /><script async src="https://www.googletagmanager.com/gtag/js?id=UA-31381839-2"></script><script src="include.js"></script><script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-4110907817782130" crossorigin="anonymous"></script></head><body><div><img src="STIGQter.svg" alt="STIGQter" style="height:1em;" /> <a href="https://www.stigqter.com/">STIGQter</a>: <a href="main.html">STIG Summary</a>: <a href="U_Oracle_Linux_8_STIG_V2R9_Manual-xccdf.html">Oracle Linux 8 Security Technical Implementation Guide Version: 2 Release: 9 Benchmark Date: 01 Jul 2026</a>:</div> <h1>OL 8 must allocate an &quot;audit_backlog_limit&quot; of sufficient size to capture processes that start prior to the audit daemon.</h1><h2>DISA Rule</h2><p>SV-248804r958412_rule</p><h2>Vulnerability Number</h2><p>V-248804</p><h2>Group Title</h2><p>SRG-OS-000037-GPOS-00015</p><h2>Rule Version</h2><p>OL08-00-030602</p><h2>Severity</h2><p>CAT III</p><h2>CCI(s)</h2><ul><li>CCI-000130 - Ensure that audit records containing information that establishes what type of event occurred.</li><li>CCI-000135 - Generate audit records containing the organization-defined additional information that is to be included in the audit records.</li><li>CCI-000169 - Provide audit record generation capability for the event types the system is capable of auditing as defined in AU-2 a. on organization-defined information system components.</li><li>CCI-000172 - Generate audit records for the event types defined in AU-2 c that include the audit record content defined in AU-3.</li><li>CCI-002884 - Log organization-defined audit events for nonlocal maintenance and diagnostic sessions.</li></ul><h2>Weight</h2><p>10</p><h2>Fix Recommendation</h2><p>Configure OL 8 to allocate sufficient &quot;audit_backlog_limit&quot; to capture processes that start prior to the audit daemon with the following command: <br />
+ <br />
+$ sudo grubby --update-kernel=ALL --args=&quot;audit_backlog_limit=8192&quot; <br />
+ <br />
+Add or modify the following line in &quot;/etc/default/grub&quot; to ensure the configuration survives kernel updates: <br />
+ <br />
+GRUB_CMDLINE_LINUX=&quot;audit_backlog_limit=8192&quot; <br />
+ <br />
+If audit records are not stored on a partition made specifically for audit records, a new partition with sufficient space will need be to be created.</p><h2>Check Contents</h2><p>Verify OL 8 allocates a sufficient &quot;audit_backlog_limit&quot; to capture processes that start prior to the audit daemon with the following commands: <br />
+ <br />
+$ sudo grub2-editenv list | grep audit <br />
+ <br />
+kernelopts=root=/dev/mapper/ol-root ro crashkernel=auto resume=/dev/mapper/ol-swap rd.lvm.lv=ol/root rd.lvm.lv=ol/swap rhgb quiet fips=1 audit=1 audit_backlog_limit=8192 boot=UUID=8d171156-cd61-421c-ba41-1c021ac29e82 <br />
+ <br />
+If the &quot;audit_backlog_limit&quot; entry does not equal &quot;8192&quot; or larger, is missing, or the line is commented out, this is a finding. <br />
+ <br />
+Verify &quot;audit_backlog_limit&quot; is set to persist in kernel updates:  <br />
+ <br />
+$ sudo grep audit /etc/default/grub <br />
+ <br />
+GRUB_CMDLINE_LINUX=&quot;audit_backlog_limit=8192&quot; <br />
+ <br />
+If &quot;audit_backlog_limit&quot; is not set to &quot;8192&quot; or larger or is missing or commented out, this is a finding.</p><h2>Vulnerability Number</h2><p>V-248804</p><h2>Documentable</h2><p>False</p><h2>Rule Version</h2><p>OL08-00-030602</p><h2>Severity Override Guidance</h2><p>Verify OL 8 allocates a sufficient &quot;audit_backlog_limit&quot; to capture processes that start prior to the audit daemon with the following commands: <br />
+ <br />
+$ sudo grub2-editenv list | grep audit <br />
+ <br />
+kernelopts=root=/dev/mapper/ol-root ro crashkernel=auto resume=/dev/mapper/ol-swap rd.lvm.lv=ol/root rd.lvm.lv=ol/swap rhgb quiet fips=1 audit=1 audit_backlog_limit=8192 boot=UUID=8d171156-cd61-421c-ba41-1c021ac29e82 <br />
+ <br />
+If the &quot;audit_backlog_limit&quot; entry does not equal &quot;8192&quot; or larger, is missing, or the line is commented out, this is a finding. <br />
+ <br />
+Verify &quot;audit_backlog_limit&quot; is set to persist in kernel updates:  <br />
+ <br />
+$ sudo grep audit /etc/default/grub <br />
+ <br />
+GRUB_CMDLINE_LINUX=&quot;audit_backlog_limit=8192&quot; <br />
+ <br />
+If &quot;audit_backlog_limit&quot; is not set to &quot;8192&quot; or larger or is missing or commented out, this is a finding.</p><h2>Check Content Reference</h2><p>M</p><h2>Target Key</h2><p>5416</p></body></html>

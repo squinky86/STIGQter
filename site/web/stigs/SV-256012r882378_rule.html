@@ -1,0 +1,89 @@
+<!doctype html><html lang="en"><head><meta charset="utf-8"><title>STIGQter: STIG Check Details: SV-256012r882378_rule: The PE router must be configured to enforce a Quality-of-Service (QoS) policy to limit the effects of packet flooding denial-of-service (DoS) attacks.</title><link rel="icon" type="image/svg+xml" href="STIGQter.svg" /><script async src="https://www.googletagmanager.com/gtag/js?id=UA-31381839-2"></script><script src="include.js"></script><script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-4110907817782130" crossorigin="anonymous"></script></head><body><div><img src="STIGQter.svg" alt="STIGQter" style="height:1em;" /> <a href="https://www.stigqter.com/">STIGQter</a>: <a href="main.html">STIG Summary</a>: <a href="U_Arista_MLS_EOS_4-X_Router_STIG_V2R2_Manual-xccdf.html">Arista MLS EOS 4.X Router Security Technical Implementation Guide Version: 2 Release: 2 Benchmark Date: 02 Apr 2025</a>:</div> <h1>The PE router must be configured to enforce a Quality-of-Service (QoS) policy to limit the effects of packet flooding denial-of-service (DoS) attacks.</h1><h2>DISA Rule</h2><p>SV-256012r882378_rule</p><h2>Vulnerability Number</h2><p>V-256012</p><h2>Group Title</h2><p>SRG-NET-000193-RTR-000112</p><h2>Rule Version</h2><p>ARST-RT-000300</p><h2>Severity</h2><p>CAT II</p><h2>CCI(s)</h2><ul><li>CCI-001095 - Manage capacity, bandwidth, or other redundancy to limit the effects of information flooding types of denial of service attacks.</li></ul><h2>Weight</h2><p>10</p><h2>Fix Recommendation</h2><p>Implement a mechanism for traffic prioritization and bandwidth reservation. This mechanism must enforce the traffic priorities specified by the Combatant Commands/Services/Agencies.<br />
+<br />
+Step 1: Configure the Arista router for traffic queuing based on traffic prioritization and bandwidth reservation.<br />
+<br />
+router(config)#vlan 4033<br />
+   trunk group 4033<br />
+!<br />
+interface Port-Channel33<br />
+   description L3-PO33-&gt;Distro1-QFX5200-32C-100G<br />
+   routerport trunk allowed vlan 2100-2102,4033<br />
+   routerport mode trunk<br />
+   routerport trunk group 4033<br />
+   qos trust dscp<br />
+   !<br />
+   tx-queue 0<br />
+      bandwidth percent 20<br />
+   !<br />
+   tx-queue 1<br />
+      bandwidth percent 40<br />
+      shape rate 40088888<br />
+   !<br />
+   tx-queue 2<br />
+      bandwidth percent 15<br />
+      shape rate 15022222<br />
+  !<br />
+   tx-queue 3<br />
+      bandwidth percent 25<br />
+      shape rate 25250000<br />
+<br />
+Step 2: Configure the Arista router differentiated services code point (DSCP) with a 6-bit field in the IP header, which marks all traffic for protocol-specific traffic with the configured DSCP value.<br />
+<br />
+router(config)#qos map dscp 0 1 2 3 4 5 6 7 16 17 18 19 20 21 22 23 24 25 26 27 28 29 30 31 32 33 34 35 36 37 38 40 41 42 43 44 46 47 48 50 51 52 53 54 55 56 57 58 59 60 61 62 63 to traffic-class 0<br />
+qos map dscp 11 to traffic-class 1<br />
+qos map dscp 39 to traffic-class 2<br />
+qos map dscp 15 49 to traffic-class 3<br />
+!<br />
+<br />
+Step 3: Configure the Arista router trusted routed links with the quality of service port trust mode on the Ethernet interface. <br />
+<br />
+router(config)#interface Ethernet 2<br />
+description OSPF LINK TO DODIN ENCLAVE<br />
+   no routerport<br />
+   ip address 172.16.50.1/30<br />
+   ipv6 nd ra hop-limit 32<br />
+   ip access-group STIG in<br />
+   ip ospf authentication message-digest<br />
+   ip ospf message-digest-key 1 md5 7 OQ62NhxhqcbWEps4eZjZOg==<br />
+   ipv6 ospf encryption ipsec spi 1 esp null sha1 passphrase 7 ZauLr6BwU+Q1MGMLbbys9A==<br />
+   qos trust dscp</p><h2>Check Contents</h2><p>Review the Arista router configuration and interview the System Administrator to verify that a mechanism for traffic prioritization and bandwidth reservation exists.<br />
+<br />
+This arrangement must ensure that sufficient capacity is available for mission-critical traffic and enforce the traffic priorities specified by the Combatant Commands/Services/Agencies.<br />
+<br />
+Review the Arista router configuration to verify traffic prioritization and bandwidth reservations.<br />
+<br />
+router#sh run | sec bandwidth<br />
+interface Port-Channel33<br />
+   tx-queue 0<br />
+      bandwidth percent 20<br />
+   tx-queue 1<br />
+      bandwidth percent 40<br />
+   tx-queue 2<br />
+      bandwidth percent 15<br />
+   tx-queue 3<br />
+      bandwidth percent 25<br />
+policy-map type copp copp-system-policy<br />
+   class copp-system-lldp<br />
+      bandwidth kbps 500<br />
+<br />
+If no such scheme exists or it is not configured, this is a finding.</p><h2>Vulnerability Number</h2><p>V-256012</p><h2>Documentable</h2><p>False</p><h2>Rule Version</h2><p>ARST-RT-000300</p><h2>Severity Override Guidance</h2><p>Review the Arista router configuration and interview the System Administrator to verify that a mechanism for traffic prioritization and bandwidth reservation exists.<br />
+<br />
+This arrangement must ensure that sufficient capacity is available for mission-critical traffic and enforce the traffic priorities specified by the Combatant Commands/Services/Agencies.<br />
+<br />
+Review the Arista router configuration to verify traffic prioritization and bandwidth reservations.<br />
+<br />
+router#sh run | sec bandwidth<br />
+interface Port-Channel33<br />
+   tx-queue 0<br />
+      bandwidth percent 20<br />
+   tx-queue 1<br />
+      bandwidth percent 40<br />
+   tx-queue 2<br />
+      bandwidth percent 15<br />
+   tx-queue 3<br />
+      bandwidth percent 25<br />
+policy-map type copp copp-system-policy<br />
+   class copp-system-lldp<br />
+      bandwidth kbps 500<br />
+<br />
+If no such scheme exists or it is not configured, this is a finding.</p><h2>Check Content Reference</h2><p>M</p><h2>Target Key</h2><p>5513</p></body></html>

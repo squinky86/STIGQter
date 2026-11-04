@@ -1,0 +1,52 @@
+<!doctype html><html lang="en"><head><meta charset="utf-8"><title>STIGQter: STIG Check Details: SV-271307r1109241_rule: If DBMS authentication using passwords is employed, SQL Server must enforce the DOD standards for password complexity and lifetime.</title><link rel="icon" type="image/svg+xml" href="STIGQter.svg" /><script async src="https://www.googletagmanager.com/gtag/js?id=UA-31381839-2"></script><script src="include.js"></script><script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-4110907817782130" crossorigin="anonymous"></script></head><body><div><img src="STIGQter.svg" alt="STIGQter" style="height:1em;" /> <a href="https://www.stigqter.com/">STIGQter</a>: <a href="main.html">STIG Summary</a>: <a href="U_MS_SQL_Server_2022_Instance_STIG_V1R4_Manual-xccdf.html">Microsoft SQL Server 2022 Instance Security Technical Implementation Guide Version: 1 Release: 4 Benchmark Date: 01 Apr 2026</a>:</div> <h1>If DBMS authentication using passwords is employed, SQL Server must enforce the DOD standards for password complexity and lifetime.</h1><h2>DISA Rule</h2><p>SV-271307r1109241_rule</p><h2>Vulnerability Number</h2><p>V-271307</p><h2>Group Title</h2><p>SRG-APP-000164-DB-000401</p><h2>Rule Version</h2><p>SQLI-22-007900</p><h2>Severity</h2><p>CAT I</p><h2>CCI(s)</h2><ul><li>CCI-004066 - For password-based authentication, enforce organization-defined composition and complexity rules.</li><li>CCI-003627 - Disable accounts when the accounts have expired.</li></ul><h2>Weight</h2><p>10</p><h2>Fix Recommendation</h2><p>Ensure check of policy and expiration are enforced when SQL logins are created. <br />
+<br />
+Use the command below to set CHECK_EXPIRATION and CHECK_POLICY  for any login found to be noncompliant:<br />
+<br />
+ALTER LOGIN [LoginnameHere] WITH CHECK_EXPIRATION=ON;<br />
+ALTER LOGIN [LoginNameHere] WITH CHECK_POLICY=ON;<br />
+<br />
+New SQL authenticated logins must be created with CHECK_EXPIRATION and CHECK_POLICY set to ON.<br />
+<br />
+CREATE LOGIN [LoginNameHere]  WITH PASSWORD = 'ComplexPasswordHere', CHECK_EXPIRATION = ON, CHECK_POLICY = ON;</p><h2>Check Contents</h2><p>Check for use of SQL Authentication:<br />
+<br />
+SELECT CASE SERVERPROPERTY('IsIntegratedSecurityOnly')<br />
+WHEN 1 THEN 'Windows Authentication' WHEN 0 THEN 'SQL Authentication' <br />
+END as [Authentication Mode]<br />
+<br />
+If the returned value in the &quot;Authentication Mode&quot; column is &quot;Windows Authentication&quot;, this is not a finding.  <br />
+<br />
+SQL Server should be configured to inherit password complexity and password lifetime rules from the operating system. Review the SQL Server Instance to ensure logons are created with respect to the complexity settings and password lifetime rules by running the following statement:<br />
+<br />
+SELECT<br />
+[name],<br />
+is_expiration_checked,<br />
+is_policy_checked,*<br />
+FROM<br />
+sys.sql_logins<br />
+WHERE<br />
+is_disabled = 0<br />
+AND name NOT IN ('##MS_PolicyTsqlExecutionLogin##','##MS_PolicyEventProcessingLogin##')<br />
+AND sid &lt;&gt; 1<br />
+ <br />
+If any account does not have both &quot;is_expiration_checked&quot; and &quot;is_policy_checked&quot; equal to &quot;1&quot;, this is a finding.</p><h2>Vulnerability Number</h2><p>V-271307</p><h2>Documentable</h2><p>False</p><h2>Rule Version</h2><p>SQLI-22-007900</p><h2>Severity Override Guidance</h2><p>Check for use of SQL Authentication:<br />
+<br />
+SELECT CASE SERVERPROPERTY('IsIntegratedSecurityOnly')<br />
+WHEN 1 THEN 'Windows Authentication' WHEN 0 THEN 'SQL Authentication' <br />
+END as [Authentication Mode]<br />
+<br />
+If the returned value in the &quot;Authentication Mode&quot; column is &quot;Windows Authentication&quot;, this is not a finding.  <br />
+<br />
+SQL Server should be configured to inherit password complexity and password lifetime rules from the operating system. Review the SQL Server Instance to ensure logons are created with respect to the complexity settings and password lifetime rules by running the following statement:<br />
+<br />
+SELECT<br />
+[name],<br />
+is_expiration_checked,<br />
+is_policy_checked,*<br />
+FROM<br />
+sys.sql_logins<br />
+WHERE<br />
+is_disabled = 0<br />
+AND name NOT IN ('##MS_PolicyTsqlExecutionLogin##','##MS_PolicyEventProcessingLogin##')<br />
+AND sid &lt;&gt; 1<br />
+ <br />
+If any account does not have both &quot;is_expiration_checked&quot; and &quot;is_policy_checked&quot; equal to &quot;1&quot;, this is a finding.</p><h2>Check Content Reference</h2><p>M</p><h2>Target Key</h2><p>5677</p></body></html>

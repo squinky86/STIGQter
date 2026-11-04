@@ -1,0 +1,43 @@
+<!doctype html><html lang="en"><head><meta charset="utf-8"><title>STIGQter: STIG Check Details: SV-254281r1051090_rule: The Windows Server 2022 time service must synchronize with an appropriate DOD time source.</title><link rel="icon" type="image/svg+xml" href="STIGQter.svg" /><script async src="https://www.googletagmanager.com/gtag/js?id=UA-31381839-2"></script><script src="include.js"></script><script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-4110907817782130" crossorigin="anonymous"></script></head><body><div><img src="STIGQter.svg" alt="STIGQter" style="height:1em;" /> <a href="https://www.stigqter.com/">STIGQter</a>: <a href="main.html">STIG Summary</a>: <a href="U_MS_Windows_Server_2022_STIG_V2R9_Manual-xccdf.html">Microsoft Windows Server 2022 Security Technical Implementation Guide Version: 2 Release: 9 Benchmark Date: 01 Jul 2026</a>:</div> <h1>The Windows Server 2022 time service must synchronize with an appropriate DOD time source.</h1><h2>DISA Rule</h2><p>SV-254281r1051090_rule</p><h2>Vulnerability Number</h2><p>V-254281</p><h2>Group Title</h2><p>SRG-OS-000355-GPOS-00143</p><h2>Rule Version</h2><p>WN22-00-000440</p><h2>Severity</h2><p>CAT III</p><h2>CCI(s)</h2><ul><li>CCI-004923 - Compare the internal system clocks on an organization-defined frequency with organization-defined authoritative time source.</li></ul><h2>Weight</h2><p>10</p><h2>Fix Recommendation</h2><p>Configure the system to synchronize time with an appropriate DOD time source.<br />
+<br />
+Domain-joined systems use NT5DS to synchronize time from other systems in the domain by default.<br />
+<br />
+If the system needs to be configured to an NTP server, configure the system to point to an authorized time server by setting the policy value for Computer Configuration &gt;&gt; Administrative Templates &gt;&gt; System &gt;&gt; Windows Time Service &gt;&gt; Time Providers. Change &quot;Configure Windows NTP Client&quot; to &quot;Enabled&quot;, and configure the &quot;NtpServer&quot; field to point to an appropriate DOD time server.<br />
+<br />
+The US Naval Observatory operates stratum 1 time servers, identified at https://www.cnmoc.usff.navy.mil/Our-Commands/United-States-Naval-Observatory/Precise-Time-Department/Network-Time-Protocol-NTP/. Time synchronization will occur through a hierarchy of time servers down to the local level. Clients and lower-level servers will synchronize with an authorized time server in the hierarchy.</p><h2>Check Contents</h2><p>Review the Windows time service configuration.<br />
+<br />
+Open an elevated &quot;Command Prompt&quot; (run as administrator).<br />
+<br />
+Enter &quot;W32tm /query /configuration&quot;.<br />
+<br />
+Domain-joined systems (excluding the domain controller with the PDC emulator role):<br />
+<br />
+If the value for &quot;Type&quot; under &quot;NTP Client&quot; is not &quot;NT5DS&quot;, this is a finding.<br />
+<br />
+Other systems:<br />
+<br />
+If systems are configured with a &quot;Type&quot; of &quot;NTP&quot;, including standalone or nondomain-joined systems and the domain controller with the PDC Emulator role, and do not have a DOD time server defined for &quot;NTPServer&quot;, this is a finding.<br />
+<br />
+To determine the domain controller with the PDC Emulator role:<br />
+<br />
+Open &quot;PowerShell&quot;.<br />
+<br />
+Enter &quot;Get-ADDomain | FT PDCEmulator&quot;.</p><h2>Vulnerability Number</h2><p>V-254281</p><h2>Documentable</h2><p>False</p><h2>Rule Version</h2><p>WN22-00-000440</p><h2>Severity Override Guidance</h2><p>Review the Windows time service configuration.<br />
+<br />
+Open an elevated &quot;Command Prompt&quot; (run as administrator).<br />
+<br />
+Enter &quot;W32tm /query /configuration&quot;.<br />
+<br />
+Domain-joined systems (excluding the domain controller with the PDC emulator role):<br />
+<br />
+If the value for &quot;Type&quot; under &quot;NTP Client&quot; is not &quot;NT5DS&quot;, this is a finding.<br />
+<br />
+Other systems:<br />
+<br />
+If systems are configured with a &quot;Type&quot; of &quot;NTP&quot;, including standalone or nondomain-joined systems and the domain controller with the PDC Emulator role, and do not have a DOD time server defined for &quot;NTPServer&quot;, this is a finding.<br />
+<br />
+To determine the domain controller with the PDC Emulator role:<br />
+<br />
+Open &quot;PowerShell&quot;.<br />
+<br />
+Enter &quot;Get-ADDomain | FT PDCEmulator&quot;.</p><h2>Check Content Reference</h2><p>M</p><h2>Target Key</h2><p>5485</p></body></html>

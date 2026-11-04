@@ -1,0 +1,330 @@
+<!doctype html><html lang="en"><head><meta charset="utf-8"><title>STIGQter: STIG Check Details: SV-254049r945857_rule: The Juniper perimeter router must be configured to block all outbound management traffic.</title><link rel="icon" type="image/svg+xml" href="STIGQter.svg" /><script async src="https://www.googletagmanager.com/gtag/js?id=UA-31381839-2"></script><script src="include.js"></script><script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-4110907817782130" crossorigin="anonymous"></script></head><body><div><img src="STIGQter.svg" alt="STIGQter" style="height:1em;" /> <a href="https://www.stigqter.com/">STIGQter</a>: <a href="main.html">STIG Summary</a>: <a href="U_Juniper_EX_Switches_RTR_STIG_V2R1_Manual-xccdf.html">Juniper EX Series Switches Router Security Technical Implementation Guide Version: 2 Release: 1 Benchmark Date: 24 Jul 2024</a>:</div> <h1>The Juniper perimeter router must be configured to block all outbound management traffic.</h1><h2>DISA Rule</h2><p>SV-254049r945857_rule</p><h2>Vulnerability Number</h2><p>V-254049</p><h2>Group Title</h2><p>SRG-NET-000364-RTR-000113</p><h2>Rule Version</h2><p>JUEX-RT-000770</p><h2>Severity</h2><p>CAT II</p><h2>CCI(s)</h2><ul><li>CCI-001097 - Monitor and control communications at the external managed interfaces to the system and at key managed interfaces within the system.</li></ul><h2>Weight</h2><p>10</p><h2>Fix Recommendation</h2><p>This requirement is not applicable for the DODIN Backbone.<br />
+<br />
+Configure the perimeter router of the managed network with a firewall filter on the egress interface to block all outbound management traffic.<br />
+<br />
+set firewall family inet filter &lt;name&gt; term block-UDP-MGT-SRC from protocol udp<br />
+set firewall family inet filter &lt;name&gt; term block-UDP-MGT-SRC from source-port [ snmp snmptrap 2055 9995 9996 ]<br />
+set firewall family inet filter &lt;name&gt; term block-UDP-MGT-SRC then syslog <br />
+set firewall family inet filter &lt;name&gt; term block-UDP-MGT-SRC then discard <br />
+set firewall family inet filter &lt;name&gt; term block-TCP-MGT-SRC from protocol tcp<br />
+set firewall family inet filter &lt;name&gt; term block-TCP-MGT-SRC from source-port [ ssh tacacs ]<br />
+set firewall family inet filter &lt;name&gt; term block-TCP-MGT-SRC then syslog <br />
+set firewall family inet filter &lt;name&gt; term block-TCP-MGT-SRC then discard <br />
+set firewall family inet filter &lt;name&gt; term block-UDP-MGT-DST from protocol udp<br />
+set firewall family inet filter &lt;name&gt; term block-UDP-MGT-DST from destination-port [ snmp snmptrap 2055 9995 9996 ]<br />
+set firewall family inet filter &lt;name&gt; term block-UDP-MGT-DST then syslog <br />
+set firewall family inet filter &lt;name&gt; term block-UDP-MGT-DST then discard <br />
+set firewall family inet filter &lt;name&gt; term block-TCP-MGT-DST from protocol tcp<br />
+set firewall family inet filter &lt;name&gt; term block-TCP-MGT-DST from destination-port [ ssh tacacs ]<br />
+set firewall family inet filter &lt;name&gt; term block-TCP-MGT-DST then syslog <br />
+set firewall family inet filter &lt;name&gt; term block-TCP-MGT-DST then discard <br />
+&lt;additional terms&gt;<br />
+set firewall family inet filter &lt;name&gt; term accept-others then accept <br />
+<br />
+set firewall family inet6 filter &lt;name&gt; term block-UDP-MGT-SRC from next-header udp<br />
+set firewall family inet6 filter &lt;name&gt; term block-UDP-MGT-SRC from source-port [ snmp snmptrap 2055 9995 9996 ]<br />
+set firewall family inet6 filter &lt;name&gt; term block-UDP-MGT-SRC then syslog <br />
+set firewall family inet6 filter &lt;name&gt; term block-UDP-MGT-SRC then discard <br />
+set firewall family inet6 filter &lt;name&gt; term block-TCP-MGT-SRC from next-header tcp<br />
+set firewall family inet6 filter &lt;name&gt; term block-TCP-MGT-SRC from source-port [ ssh tacacs ]<br />
+set firewall family inet6 filter &lt;name&gt; term block-TCP-MGT-SRC then syslog <br />
+set firewall family inet6 filter &lt;name&gt; term block-TCP-MGT-SRC then discard <br />
+set firewall family inet6 filter &lt;name&gt; term block-UDP-MGT-DST from next-header udp<br />
+set firewall family inet6 filter &lt;name&gt; term block-UDP-MGT-DST from destination-port [ snmp snmptrap 2055 9995 9996 ]<br />
+set firewall family inet6 filter &lt;name&gt; term block-UDP-MGT-DST then syslog <br />
+set firewall family inet6 filter &lt;name&gt; term block-UDP-MGT-DST then discard <br />
+set firewall family inet6 filter &lt;name&gt; term block-TCP-MGT-DST from next-header tcp<br />
+set firewall family inet6 filter &lt;name&gt; term block-TCP-MGT-DST from destination-port [ ssh tacacs ]<br />
+set firewall family inet6 filter &lt;name&gt; term block-TCP-MGT-DST then syslog <br />
+set firewall family inet6 filter &lt;name&gt; term block-TCP-MGT-DST then discard <br />
+&lt;additional terms&gt;<br />
+set firewall family inet6 filter &lt;name&gt; term accept-others then accept <br />
+<br />
+set interfaces &lt;external interface&gt; unit &lt;number&gt; family inet filter output &lt;name&gt;<br />
+set interfaces &lt;external interface&gt; unit &lt;number&gt; family inet address &lt;IPv4 address&gt;/&lt;mask&gt;<br />
+set interfaces &lt;external interface&gt; unit &lt;number&gt; family inet6 filter output &lt;name&gt;<br />
+set interfaces &lt;external interface&gt; unit &lt;number&gt; family inet6 address &lt;IPv6 address&gt;/&lt;prefix&gt;</p><h2>Check Contents</h2><p>This requirement is not applicable for the DODIN Backbone.<br />
+<br />
+The perimeter router of the managed network must be configured with a firewall filter on the egress interface to block all management traffic.<br />
+<br />
+[edit firewall]<br />
+family inet {<br />
+    filter &lt;name&gt; {<br />
+        term block-UDP-MGT-SRC {<br />
+            from {<br />
+                protocol udp;<br />
+                source-port [ snmp snmptrap 2055 9995 9996 ];<br />
+            }<br />
+            then {<br />
+                syslog;<br />
+                discard;<br />
+            }<br />
+        }<br />
+        term block-TCP-MGT-SRC {<br />
+            from {<br />
+                protocol tcp;<br />
+                source-port [ ssh tacacs ];<br />
+            }<br />
+            then {<br />
+                syslog;<br />
+                discard;<br />
+            }<br />
+        }<br />
+        term block-UDP-MGT-DST {<br />
+            from {<br />
+                protocol udp;<br />
+                destination-port [ snmp snmptrap 2055 9995 9996 ];<br />
+            }<br />
+            then {<br />
+                syslog;<br />
+                discard;<br />
+            }<br />
+        }<br />
+        term block-TCP-MGT-DST {<br />
+            from {<br />
+                protocol tcp;<br />
+                destination-port [ ssh tacacs ];<br />
+            }<br />
+            then {<br />
+                syslog;<br />
+                discard;<br />
+            }<br />
+        }<br />
+        &lt;additional terms&gt;<br />
+        term accept-other {<br />
+            then accept;<br />
+        }<br />
+    }<br />
+}<br />
+family inet6 {<br />
+    filter &lt;name&gt; {<br />
+        term block-UDP-MGT-SRC {<br />
+            from {<br />
+                next-header udp;<br />
+                source-port [ snmp snmptrap 2055 9995 9996 ];<br />
+            }<br />
+            then {<br />
+                syslog;<br />
+                discard;<br />
+            }<br />
+        }<br />
+        term block-TCP-MGT-SRC {<br />
+            from {<br />
+                next-header tcp;<br />
+                source-port [ ssh tacacs ];<br />
+            }<br />
+            then {<br />
+                syslog;<br />
+                discard;<br />
+            }<br />
+        }<br />
+        term block-UDP-MGT-DST {<br />
+            from {<br />
+                next-header udp;<br />
+                destination-port [ snmp snmptrap 2055 9995 9996 ];<br />
+            }<br />
+            then {<br />
+                syslog;<br />
+                discard;<br />
+            }<br />
+        }<br />
+        term block-TCP-MGT-DST {<br />
+            from {<br />
+                next-header tcp;<br />
+                destination-port [ ssh tacacs ];<br />
+            }<br />
+            then {<br />
+                syslog;<br />
+                discard;<br />
+            }<br />
+        }<br />
+        &lt;additional terms&gt;<br />
+        term accept-other {<br />
+            then accept;<br />
+        }<br />
+    }<br />
+}<br />
+<br />
+Note: Some platforms support the &quot;port&quot; match criterion. For those platforms, only a single term is required to flag on both source- and destination-port. For example:<br />
+[edit firewall]<br />
+family [inet|inet6] {<br />
+    filter &lt;name&gt; {<br />
+        term &lt;name&gt; {<br />
+            from {<br />
+                :<br />
+                port [ port1 port2... ];<br />
+            }<br />
+            then {<br />
+                syslog;<br />
+                discard;<br />
+            }<br />
+        }<br />
+        &lt;additional terms&gt;<br />
+    }<br />
+}<br />
+<br />
+Verify the filter is applied to external interfaces.<br />
+[edit interfaces]<br />
+&lt;external interface&gt; {<br />
+    unit &lt;number&gt; {<br />
+        family inet {<br />
+            filter {<br />
+                output &lt;name&gt;;<br />
+            }<br />
+            address &lt;IPv4 address&gt;/&lt;mask&gt;;<br />
+        }<br />
+        family inet6 {<br />
+            filter {<br />
+                output &lt;name&gt;;<br />
+            }<br />
+            address &lt;IPv6 address&gt;/&lt;prefix&gt;;<br />
+        }<br />
+    }<br />
+}<br />
+Note: Some Juniper devices support both monolithic filters and filter lists. Filter lists separate each term, or set of terms, into a separate filter that is applied sequentially to an interface. If using filter lists, the keywords &quot;input&quot; or &quot;output&quot; change to &quot;input-list&quot; or &quot;output-list&quot;. Verify the final list item is a deny-all filter. The deny-all filter is created once per family and can be reused across multiple lists. For example:<br />
+<br />
+input-list [ permit_mgt permit_routing_protocols default-deny ];<br />
+<br />
+If management traffic is not blocked at the perimeter, this is a finding.</p><h2>Vulnerability Number</h2><p>V-254049</p><h2>Documentable</h2><p>False</p><h2>Rule Version</h2><p>JUEX-RT-000770</p><h2>Severity Override Guidance</h2><p>This requirement is not applicable for the DODIN Backbone.<br />
+<br />
+The perimeter router of the managed network must be configured with a firewall filter on the egress interface to block all management traffic.<br />
+<br />
+[edit firewall]<br />
+family inet {<br />
+    filter &lt;name&gt; {<br />
+        term block-UDP-MGT-SRC {<br />
+            from {<br />
+                protocol udp;<br />
+                source-port [ snmp snmptrap 2055 9995 9996 ];<br />
+            }<br />
+            then {<br />
+                syslog;<br />
+                discard;<br />
+            }<br />
+        }<br />
+        term block-TCP-MGT-SRC {<br />
+            from {<br />
+                protocol tcp;<br />
+                source-port [ ssh tacacs ];<br />
+            }<br />
+            then {<br />
+                syslog;<br />
+                discard;<br />
+            }<br />
+        }<br />
+        term block-UDP-MGT-DST {<br />
+            from {<br />
+                protocol udp;<br />
+                destination-port [ snmp snmptrap 2055 9995 9996 ];<br />
+            }<br />
+            then {<br />
+                syslog;<br />
+                discard;<br />
+            }<br />
+        }<br />
+        term block-TCP-MGT-DST {<br />
+            from {<br />
+                protocol tcp;<br />
+                destination-port [ ssh tacacs ];<br />
+            }<br />
+            then {<br />
+                syslog;<br />
+                discard;<br />
+            }<br />
+        }<br />
+        &lt;additional terms&gt;<br />
+        term accept-other {<br />
+            then accept;<br />
+        }<br />
+    }<br />
+}<br />
+family inet6 {<br />
+    filter &lt;name&gt; {<br />
+        term block-UDP-MGT-SRC {<br />
+            from {<br />
+                next-header udp;<br />
+                source-port [ snmp snmptrap 2055 9995 9996 ];<br />
+            }<br />
+            then {<br />
+                syslog;<br />
+                discard;<br />
+            }<br />
+        }<br />
+        term block-TCP-MGT-SRC {<br />
+            from {<br />
+                next-header tcp;<br />
+                source-port [ ssh tacacs ];<br />
+            }<br />
+            then {<br />
+                syslog;<br />
+                discard;<br />
+            }<br />
+        }<br />
+        term block-UDP-MGT-DST {<br />
+            from {<br />
+                next-header udp;<br />
+                destination-port [ snmp snmptrap 2055 9995 9996 ];<br />
+            }<br />
+            then {<br />
+                syslog;<br />
+                discard;<br />
+            }<br />
+        }<br />
+        term block-TCP-MGT-DST {<br />
+            from {<br />
+                next-header tcp;<br />
+                destination-port [ ssh tacacs ];<br />
+            }<br />
+            then {<br />
+                syslog;<br />
+                discard;<br />
+            }<br />
+        }<br />
+        &lt;additional terms&gt;<br />
+        term accept-other {<br />
+            then accept;<br />
+        }<br />
+    }<br />
+}<br />
+<br />
+Note: Some platforms support the &quot;port&quot; match criterion. For those platforms, only a single term is required to flag on both source- and destination-port. For example:<br />
+[edit firewall]<br />
+family [inet|inet6] {<br />
+    filter &lt;name&gt; {<br />
+        term &lt;name&gt; {<br />
+            from {<br />
+                :<br />
+                port [ port1 port2... ];<br />
+            }<br />
+            then {<br />
+                syslog;<br />
+                discard;<br />
+            }<br />
+        }<br />
+        &lt;additional terms&gt;<br />
+    }<br />
+}<br />
+<br />
+Verify the filter is applied to external interfaces.<br />
+[edit interfaces]<br />
+&lt;external interface&gt; {<br />
+    unit &lt;number&gt; {<br />
+        family inet {<br />
+            filter {<br />
+                output &lt;name&gt;;<br />
+            }<br />
+            address &lt;IPv4 address&gt;/&lt;mask&gt;;<br />
+        }<br />
+        family inet6 {<br />
+            filter {<br />
+                output &lt;name&gt;;<br />
+            }<br />
+            address &lt;IPv6 address&gt;/&lt;prefix&gt;;<br />
+        }<br />
+    }<br />
+}<br />
+Note: Some Juniper devices support both monolithic filters and filter lists. Filter lists separate each term, or set of terms, into a separate filter that is applied sequentially to an interface. If using filter lists, the keywords &quot;input&quot; or &quot;output&quot; change to &quot;input-list&quot; or &quot;output-list&quot;. Verify the final list item is a deny-all filter. The deny-all filter is created once per family and can be reused across multiple lists. For example:<br />
+<br />
+input-list [ permit_mgt permit_routing_protocols default-deny ];<br />
+<br />
+If management traffic is not blocked at the perimeter, this is a finding.</p><h2>Check Content Reference</h2><p>M</p><h2>Target Key</h2><p>5479</p></body></html>

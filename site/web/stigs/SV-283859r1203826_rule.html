@@ -1,0 +1,137 @@
+<!doctype html><html lang="en"><head><meta charset="utf-8"><title>STIGQter: STIG Check Details: SV-283859r1203826_rule: The Nokia router must implement physically or logically separate subnetworks to isolate organization-defined critical system components and functions.</title><link rel="icon" type="image/svg+xml" href="STIGQter.svg" /><script async src="https://www.googletagmanager.com/gtag/js?id=UA-31381839-2"></script><script src="include.js"></script><script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-4110907817782130" crossorigin="anonymous"></script></head><body><div><img src="STIGQter.svg" alt="STIGQter" style="height:1em;" /> <a href="https://www.stigqter.com/">STIGQter</a>: <a href="main.html">STIG Summary</a>: <a href="U_Nokia_SR_OS_25-x_RTR_V1R1_STIG_Manual-xccdf.html">Nokia Service Router OS 25.x Router Security Technical Implementation Guide Version: 1 Release: 1 Benchmark Date: 28 Apr 2026</a>:</div> <h1>The Nokia router must implement physically or logically separate subnetworks to isolate organization-defined critical system components and functions.</h1><h2>DISA Rule</h2><p>SV-283859r1203826_rule</p><h2>Vulnerability Number</h2><p>V-283859</p><h2>Group Title</h2><p>SRG-NET-000715-RTR-000120</p><h2>Rule Version</h2><p>NOKI-RT-000410</p><h2>Severity</h2><p>CAT II</p><h2>CCI(s)</h2><ul><li>CCI-004891 - Implement physically or logically separate subnetworks to isolate organization-defined critical system components and functions.</li></ul><h2>Weight</h2><p>10</p><h2>Fix Recommendation</h2><p>Configure the router to implement physically or logically separate subnetworks to isolate organization-defined critical system components and functions.<br />
+<br />
+Configure logically separate subnetworks by configuring the VPRN service, as shown in the example below:<br />
+<br />
+- configure service vprn 30 customer 1 create<br />
+- config&gt;service&gt;vprn# router-id 3.3.3.3<br />
+- config&gt;service&gt;vprn# autonomous-system 65100<br />
+- config&gt;service&gt;vprn# interface &quot;TO-CE&quot; create<br />
+- config&gt;service&gt;vprn&gt;if# address 172.10.10.1/24<br />
+- config&gt;service&gt;vprn&gt;if# sap 1/1/c5/1 create<br />
+- config&gt;service&gt;vprn&gt;if&gt;sap# exit<br />
+- config&gt;service&gt;vprn&gt;if# exit <br />
+- config&gt;service&gt;vprn# bgp-ipvpn<br />
+- config&gt;service&gt;vprn&gt;bgp-ipvpn# mpls<br />
+- config&gt;service&gt;vprn&gt;bgp-ipvpn&gt;mpls# auto-bind-tunnel resolution any<br />
+- config&gt;service&gt;vprn&gt;bgp-ipvpn&gt;mpls# route-distinguisher 3.3.3.3:30<br />
+- config&gt;service&gt;vprn&gt;bgp-ipvpn&gt;mpls# vrf-target target:65100:30<br />
+- config&gt;service&gt;vprn&gt;bgp-ipvpn&gt;mpls# no shutdown<br />
+- config&gt;service&gt;vprn&gt;bgp-ipvpn&gt;mpls# exit<br />
+- config&gt;service&gt;vprn&gt;bgp-ipvpn# exit<br />
+- config&gt;service&gt;vprn# exit all</p><h2>Check Contents</h2><p>Verify the router is configured to implement physically or logically separate subnetworks to isolate organization-defined critical system components and functions.<br />
+<br />
+Verify the Virtual Private Routed Network (VPRN) service information, as shown in the example below:<br />
+<br />
+- show service id 30 base<br />
+<br />
+Service Basic Information<br />
+<br />
+Service Id        : 30                  Vpn Id            : 0<br />
+Service Type      : VPRN<br />
+MACSec enabled    : no<br />
+Name              : 30<br />
+Description       : (Not Specified)<br />
+Customer Id       : 1                   Creation Origin   : manual<br />
+Last Status Change: 12/11/2025 17:17:26<br />
+Last Mgmt Change  : 12/11/2025 17:17:26<br />
+Admin State       : Up                  Oper State        : Up<br />
+<br />
+Router Oper State : Up<br />
+Route Dist.       : 3.3.3.3:30          VPRN Type         : regular<br />
+Oper Route Dist   : 3.3.3.3:30<br />
+Oper RD Type      : configured<br />
+AS Number         : 65100               Router Id         : 3.3.3.3<br />
+ECMP              : Enabled             ECMP Max Routes   : 1<br />
+Max IPv4 Routes   : No Limit<br />
+Local Rt Domain-Id: None                D-Path Lng Ignore : Disabled<br />
+<br />
+Auto Bind Tunnel<br />
+Allow Flex-Alg-Fb : Disabled<br />
+Resolution        : any<br />
+Weighted ECMP     : Disabled            ECMP Max Routes   : 1<br />
+Strict Tnl Tag    : Disabled<br />
+<br />
+Max IPv6 Routes   : No Limit<br />
+Ignore NH Metric  : Disabled<br />
+Hash Label        : Disabled<br />
+Entropy Label     : Disabled<br />
+Vrf Target        : target:65100:30<br />
+Vrf Import        : None<br />
+Vrf Export        : None<br />
+MVPN Vrf Target   : None<br />
+MVPN Vrf Import   : None<br />
+MVPN Vrf Export   : None<br />
+Car. Sup C-VPN    : Disabled<br />
+Label mode        : vrf<br />
+BGP VPN Backup    : Disabled<br />
+BGP Export Inactv : Disabled<br />
+LOG all events    : Disabled<br />
+<br />
+SAP Count         : 1                   SDP Bind Count    : 0<br />
+<br />
+-------------------------------------------------------------------------------<br />
+Service Access &amp; Destination Points<br />
+-------------------------------------------------------------------------------<br />
+Identifier                               Type         AdmMTU  OprMTU  Adm  Opr<br />
+-------------------------------------------------------------------------------<br />
+sap:1/1/c5/1                             null         1514    1514    Up   Up<br />
+<br />
+If the router is not configured to implement physically or logically separate subnetworks to isolate organization-defined critical system components and functions, this is a finding.</p><h2>Vulnerability Number</h2><p>V-283859</p><h2>Documentable</h2><p>False</p><h2>Rule Version</h2><p>NOKI-RT-000410</p><h2>Severity Override Guidance</h2><p>Verify the router is configured to implement physically or logically separate subnetworks to isolate organization-defined critical system components and functions.<br />
+<br />
+Verify the Virtual Private Routed Network (VPRN) service information, as shown in the example below:<br />
+<br />
+- show service id 30 base<br />
+<br />
+Service Basic Information<br />
+<br />
+Service Id        : 30                  Vpn Id            : 0<br />
+Service Type      : VPRN<br />
+MACSec enabled    : no<br />
+Name              : 30<br />
+Description       : (Not Specified)<br />
+Customer Id       : 1                   Creation Origin   : manual<br />
+Last Status Change: 12/11/2025 17:17:26<br />
+Last Mgmt Change  : 12/11/2025 17:17:26<br />
+Admin State       : Up                  Oper State        : Up<br />
+<br />
+Router Oper State : Up<br />
+Route Dist.       : 3.3.3.3:30          VPRN Type         : regular<br />
+Oper Route Dist   : 3.3.3.3:30<br />
+Oper RD Type      : configured<br />
+AS Number         : 65100               Router Id         : 3.3.3.3<br />
+ECMP              : Enabled             ECMP Max Routes   : 1<br />
+Max IPv4 Routes   : No Limit<br />
+Local Rt Domain-Id: None                D-Path Lng Ignore : Disabled<br />
+<br />
+Auto Bind Tunnel<br />
+Allow Flex-Alg-Fb : Disabled<br />
+Resolution        : any<br />
+Weighted ECMP     : Disabled            ECMP Max Routes   : 1<br />
+Strict Tnl Tag    : Disabled<br />
+<br />
+Max IPv6 Routes   : No Limit<br />
+Ignore NH Metric  : Disabled<br />
+Hash Label        : Disabled<br />
+Entropy Label     : Disabled<br />
+Vrf Target        : target:65100:30<br />
+Vrf Import        : None<br />
+Vrf Export        : None<br />
+MVPN Vrf Target   : None<br />
+MVPN Vrf Import   : None<br />
+MVPN Vrf Export   : None<br />
+Car. Sup C-VPN    : Disabled<br />
+Label mode        : vrf<br />
+BGP VPN Backup    : Disabled<br />
+BGP Export Inactv : Disabled<br />
+LOG all events    : Disabled<br />
+<br />
+SAP Count         : 1                   SDP Bind Count    : 0<br />
+<br />
+-------------------------------------------------------------------------------<br />
+Service Access &amp; Destination Points<br />
+-------------------------------------------------------------------------------<br />
+Identifier                               Type         AdmMTU  OprMTU  Adm  Opr<br />
+-------------------------------------------------------------------------------<br />
+sap:1/1/c5/1                             null         1514    1514    Up   Up<br />
+<br />
+If the router is not configured to implement physically or logically separate subnetworks to isolate organization-defined critical system components and functions, this is a finding.</p><h2>Check Content Reference</h2><p>M</p><h2>Target Key</h2><p>5746</p></body></html>

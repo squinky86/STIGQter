@@ -1,0 +1,72 @@
+<!doctype html><html lang="en"><head><meta charset="utf-8"><title>STIGQter: STIG Check Details: SV-276225r1150094_rule: Azure SQL Managed Instances must integrate with Microsoft Entra ID for providing account management and automation for all users, groups, roles, and any other principals.</title><link rel="icon" type="image/svg+xml" href="STIGQter.svg" /><script async src="https://www.googletagmanager.com/gtag/js?id=UA-31381839-2"></script><script src="include.js"></script><script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-4110907817782130" crossorigin="anonymous"></script></head><body><div><img src="STIGQter.svg" alt="STIGQter" style="height:1em;" /> <a href="https://www.stigqter.com/">STIGQter</a>: <a href="main.html">STIG Summary</a>: <a href="U_MS_Azure_SQL_MI_STIG_V1R1_Manual-xccdf.html">Microsoft Azure SQL Managed Instance Security Technical Implementation Guide Version: 1 Release: 1 Benchmark Date: 23 Sep 2025</a>:</div> <h1>Azure SQL Managed Instances must integrate with Microsoft Entra ID for providing account management and automation for all users, groups, roles, and any other principals.</h1><h2>DISA Rule</h2><p>SV-276225r1150094_rule</p><h2>Vulnerability Number</h2><p>V-276225</p><h2>Group Title</h2><p>SRG-APP-000023-DB-000001</p><h2>Rule Version</h2><p>MSQL-00-000100</p><h2>Severity</h2><p>CAT I</p><h2>CCI(s)</h2><ul><li>CCI-000015 - Support the management of system accounts using (organization-defined automated mechanisms).</li></ul><h2>Weight</h2><p>10</p><h2>Fix Recommendation</h2><p>If mixed mode is required, document the need and justification; describe the measures taken to ensure the use of Azure SQL Managed Instance authentication is kept to a minimum; describe the measures taken to safeguard passwords; list or describe the SQL logins used; and obtain official approval.  <br />
+<br />
+If mixed mode is not required, for each account being managed by SQL MI but not requiring it, drop or disable the SQL Database user. Replace it with an appropriately configured account, as needed. <br />
+<br />
+To drop a user in the SSMS Object Explorer, navigate to Databases &gt;&gt; database &gt;&gt; Security &gt;&gt; Users. <br />
+<br />
+Right-click on the user name and then click &quot;Delete&quot;.  <br />
+<br />
+To drop a user via a query, change the context to the database_name to be evaluated: DROP USER.  <br />
+<br />
+To enable Microsoft Entra-only Authentication, in a PowerShell or Cloud Shell interface, run the statement:<br />
+<br />
+az sql mi ad-only-auth enable --resource-group myresource --name myinstance <br />
+<br />
+OR <br />
+<br />
+Enable-AzSqlInstanceActiveDirectoryOnlyAuthentication -InstanceName myinstance -ResourceGroupName myresource<br />
+<br />
+More information regarding this process is available at the following link:<br />
+https://docs.microsoft.com/en-us/azure/azure-sql/database/authentication-azure-ad-only-authentication.</p><h2>Check Contents</h2><p>Determine if Azure SQL Managed Instance is configured to use Microsoft Entra ID authentication only.  <br />
+<br />
+Only Microsoft Entra ID will be used to authenticate to the server. SQL authentication will be disabled, including SQL Server administrators and users.  <br />
+<br />
+In a PowerShell or Cloud Shell interface, run the statement:<br />
+  <br />
+az sql mi ad-only-auth get --resource-group myresource --name myinstance<br />
+<br />
+OR  <br />
+<br />
+Get-AzSqlInstanceActiveDirectoryOnlyAuthentication -InstanceName myinstance -ResourceGroupName myresource  <br />
+<br />
+If the returned value in the &quot;AzureADOnlyAuthentication&quot; column is &quot;True&quot;, this is not a finding.  <br />
+<br />
+If Mixed mode (both SQL Server authentication and Entra ID authentication) is in use and the need for mixed mode has not been documented and approved, this is a finding.  <br />
+<br />
+From the documentation, obtain the list of accounts authorized to be managed by Azure SQL Managed Instance.  <br />
+<br />
+Determine the accounts (SQL Logins) actually managed by Azure SQL Managed Instance. Run the statement:  <br />
+<br />
+SELECT name  FROM sys.database_principals  WHERE type_desc = 'SQL_USER'  AND authentication_type_desc = 'INSTANCE';  <br />
+<br />
+If any accounts listed by the query are not listed in the documentation, this is a finding.<br />
+<br />
+Risk must be accepted by the information system security officer (ISSO)/information system security manager (ISSM).  <br />
+<br />
+More information regarding this process is available at: https://docs.microsoft.com/en-us/azure/azure-sql/database/authentication-azure-ad-only-authentication.</p><h2>Vulnerability Number</h2><p>V-276225</p><h2>Documentable</h2><p>False</p><h2>Rule Version</h2><p>MSQL-00-000100</p><h2>Severity Override Guidance</h2><p>Determine if Azure SQL Managed Instance is configured to use Microsoft Entra ID authentication only.  <br />
+<br />
+Only Microsoft Entra ID will be used to authenticate to the server. SQL authentication will be disabled, including SQL Server administrators and users.  <br />
+<br />
+In a PowerShell or Cloud Shell interface, run the statement:<br />
+  <br />
+az sql mi ad-only-auth get --resource-group myresource --name myinstance<br />
+<br />
+OR  <br />
+<br />
+Get-AzSqlInstanceActiveDirectoryOnlyAuthentication -InstanceName myinstance -ResourceGroupName myresource  <br />
+<br />
+If the returned value in the &quot;AzureADOnlyAuthentication&quot; column is &quot;True&quot;, this is not a finding.  <br />
+<br />
+If Mixed mode (both SQL Server authentication and Entra ID authentication) is in use and the need for mixed mode has not been documented and approved, this is a finding.  <br />
+<br />
+From the documentation, obtain the list of accounts authorized to be managed by Azure SQL Managed Instance.  <br />
+<br />
+Determine the accounts (SQL Logins) actually managed by Azure SQL Managed Instance. Run the statement:  <br />
+<br />
+SELECT name  FROM sys.database_principals  WHERE type_desc = 'SQL_USER'  AND authentication_type_desc = 'INSTANCE';  <br />
+<br />
+If any accounts listed by the query are not listed in the documentation, this is a finding.<br />
+<br />
+Risk must be accepted by the information system security officer (ISSO)/information system security manager (ISSM).  <br />
+<br />
+More information regarding this process is available at: https://docs.microsoft.com/en-us/azure/azure-sql/database/authentication-azure-ad-only-authentication.</p><h2>Check Content Reference</h2><p>M</p><h2>Target Key</h2><p>5711</p></body></html>

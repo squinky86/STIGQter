@@ -1,0 +1,33 @@
+<!doctype html><html lang="en"><head><meta charset="utf-8"><title>STIGQter: STIG Check Details: SV-268096r1130994_rule: Successful/unsuccessful uses of the init_module, finit_module, and delete_module system calls in NixOS must generate an audit record.</title><link rel="icon" type="image/svg+xml" href="STIGQter.svg" /><script async src="https://www.googletagmanager.com/gtag/js?id=UA-31381839-2"></script><script src="include.js"></script><script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-4110907817782130" crossorigin="anonymous"></script></head><body><div><img src="STIGQter.svg" alt="STIGQter" style="height:1em;" /> <a href="https://www.stigqter.com/">STIGQter</a>: <a href="main.html">STIG Summary</a>: <a href="U_Anduril_NixOS_STIG_V1R2_Manual-xccdf.html">Anduril NixOS Security Technical Implementation Guide Version: 1 Release: 2 Benchmark Date: 01 Oct 2025</a>:</div> <h1>Successful/unsuccessful uses of the init_module, finit_module, and delete_module system calls in NixOS must generate an audit record.</h1><h2>DISA Rule</h2><p>SV-268096r1130994_rule</p><h2>Vulnerability Number</h2><p>V-268096</p><h2>Group Title</h2><p>SRG-OS-000042-GPOS-00020</p><h2>Rule Version</h2><p>ANIX-00-000290</p><h2>Severity</h2><p>CAT II</p><h2>CCI(s)</h2><ul><li>CCI-000135 - Generate audit records containing the organization-defined additional information that is to be included in the audit records.</li><li>CCI-000172 - Generate audit records for the event types defined in AU-2 c that include the audit record content defined in AU-3.</li></ul><h2>Weight</h2><p>10</p><h2>Fix Recommendation</h2><p>Configure /etc/nixos/configuration.nix to log successful/unsuccessful attempts to use the &quot;init_module&quot;, &quot;finit_module&quot;, and &quot;delete_module&quot; system calls.<br />
+<br />
+Add the following Nix code to the NixOS Configuration, usually located in /etc/nixos/configuration.nix or /etc/nixos/flake.nix:<br />
+<br />
+ security.audit.rules = [<br />
+  &quot;-a always,exit -F arch=b32 -S init_module,finit_module,delete_module -F auid&gt;=1000 -F auid!=unset -k module_chng&quot;<br />
+  &quot;-a always,exit -F arch=b64 -S init_module,finit_module,delete_module -F auid&gt;=1000 -F auid!=unset -k module_chng&quot;<br />
+ ];<br />
+<br />
+Rebuild and switch to the new NixOS configuration:<br />
+$ sudo nixos-rebuild switch</p><h2>Check Contents</h2><p>Verify NixOS generates an audit record upon successful/unsuccessful attempts to use the &quot;init_module&quot;, &quot;finit_module&quot;, and &quot;delete_module&quot; system calls.<br />
+<br />
+Check the auditing rules currently loaded into the audit daemon with the following command:<br />
+<br />
+$ sudo auditctl -l | grep -w init_module<br />
+<br />
+-a always,exit -F arch=b32 -S init_module,finit_module,delete_module -F auid&gt;=1000 -F auid!=-1 -k module_chng<br />
+-a always,exit -F arch=b64 -S init_module,finit_module,delete_module -F auid&gt;=1000 -F auid!=-1 -k module_chng<br />
+<br />
+If the command does not return an audit rule for &quot;init_module&quot;, &quot;finit_module&quot;, and &quot;delete_module&quot;, this is a finding.<br />
+<br />
+Note: The &quot;-k&quot; allows for specifying an arbitrary identifier. The string following &quot;-k&quot; does not need to match the example output above.</p><h2>Vulnerability Number</h2><p>V-268096</p><h2>Documentable</h2><p>False</p><h2>Rule Version</h2><p>ANIX-00-000290</p><h2>Severity Override Guidance</h2><p>Verify NixOS generates an audit record upon successful/unsuccessful attempts to use the &quot;init_module&quot;, &quot;finit_module&quot;, and &quot;delete_module&quot; system calls.<br />
+<br />
+Check the auditing rules currently loaded into the audit daemon with the following command:<br />
+<br />
+$ sudo auditctl -l | grep -w init_module<br />
+<br />
+-a always,exit -F arch=b32 -S init_module,finit_module,delete_module -F auid&gt;=1000 -F auid!=-1 -k module_chng<br />
+-a always,exit -F arch=b64 -S init_module,finit_module,delete_module -F auid&gt;=1000 -F auid!=-1 -k module_chng<br />
+<br />
+If the command does not return an audit rule for &quot;init_module&quot;, &quot;finit_module&quot;, and &quot;delete_module&quot;, this is a finding.<br />
+<br />
+Note: The &quot;-k&quot; allows for specifying an arbitrary identifier. The string following &quot;-k&quot; does not need to match the example output above.</p><h2>Check Content Reference</h2><p>M</p><h2>Target Key</h2><p>5658</p></body></html>

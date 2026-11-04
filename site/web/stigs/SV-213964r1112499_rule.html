@@ -1,0 +1,53 @@
+<!doctype html><html lang="en"><head><meta charset="utf-8"><title>STIGQter: STIG Check Details: SV-213964r1112499_rule: If DBMS authentication using passwords is employed, SQL Server must enforce the DOD standards for password complexity and lifetime.</title><link rel="icon" type="image/svg+xml" href="STIGQter.svg" /><script async src="https://www.googletagmanager.com/gtag/js?id=UA-31381839-2"></script><script src="include.js"></script><script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-4110907817782130" crossorigin="anonymous"></script></head><body><div><img src="STIGQter.svg" alt="STIGQter" style="height:1em;" /> <a href="https://www.stigqter.com/">STIGQter</a>: <a href="main.html">STIG Summary</a>: <a href="U_MS_SQL_Server_2016_Instance_STIG_V3R6_Manual-xccdf.html">MS SQL Server 2016 Instance Security Technical Implementation Guide Version: 3 Release: 6 Benchmark Date: 05 Jan 2026</a>:</div> <h1>If DBMS authentication using passwords is employed, SQL Server must enforce the DOD standards for password complexity and lifetime.</h1><h2>DISA Rule</h2><p>SV-213964r1112499_rule</p><h2>Vulnerability Number</h2><p>V-213964</p><h2>Group Title</h2><p>SRG-APP-000164-DB-000401</p><h2>Rule Version</h2><p>SQL6-D0-007900</p><h2>Severity</h2><p>CAT I</p><h2>CCI(s)</h2><ul><li>CCI-004066 - For password-based authentication, enforce organization-defined composition and complexity rules.</li></ul><h2>Weight</h2><p>10</p><h2>Fix Recommendation</h2><p>Configure the SQL Server operating system and SQL Server logins for compliance. <br />
+<br />
+Review the Operating System settings relating to password complexity.<br />
+<br />
+Ensure SQL Server is configured to inherit password complexity rules from the operating system for SQL logins. Ensure check of policy and expiration are enforced when SQL logins are created. <br />
+<br />
+CREATE LOGIN &lt;login_name&gt; WITH PASSWORD= &lt;enterStrongPasswordHere&gt;, CHECK_EXPIRATION = ON, CHECK_POLICY = ON;</p><h2>Check Contents</h2><p>Check for use of SQL Server Authentication:<br />
+<br />
+SELECT CASE SERVERPROPERTY('IsIntegratedSecurityOnly') WHEN 1 THEN 'Windows Authentication' WHEN 0 THEN 'SQL Server Authentication' END as [Authentication Mode]<br />
+<br />
+If the returned value in the &quot;Authentication Mode&quot; column is &quot;Windows Authentication&quot;, this is not a finding.<br />
+<br />
+If the returned value in the &quot;Authentication Mode&quot; column is &quot;SQL Server Authentication&quot;, SQL Server should be configured to inherit password complexity and password lifetime rules from the operating system.<br />
+<br />
+Review SQL Server to ensure logons are created with respect to the complexity settings and password lifetime rules by running the statement:<br />
+<br />
+SELECT [name], is_expiration_checked, is_policy_checked<br />
+FROM sys.sql_logins<br />
+<br />
+Review any accounts returned by the query other than the disabled SA account, ##MS_PolicyTsqlExecutionLogin##, ##MS_PolicyEventProcessingLogin##, ##MS_SSISServerCleanupJobLogin##, and other internal accounts that start with ##MS.<br />
+<br />
+If any account does not have both &quot;is_expiration_checked&quot; and &quot;is_policy_checked&quot; equal to “1”, this is a finding.<br />
+<br />
+Review the operating system settings relating to password complexity.<br />
+<br />
+To check the server operating system for password complexity:<br />
+<br />
+Navigate to Start &gt;&gt; All Programs &gt;&gt; Administrative Tools &gt;&gt; Local Security Policy, and to review the local policies on the machine, go to Account Policy &gt;&gt; Password Policy.<br />
+<br />
+Ensure the DISA Windows Password Policy is set on the SQL Server member server. If any are not, this is a finding.</p><h2>Vulnerability Number</h2><p>V-213964</p><h2>Documentable</h2><p>False</p><h2>Rule Version</h2><p>SQL6-D0-007900</p><h2>Severity Override Guidance</h2><p>Check for use of SQL Server Authentication:<br />
+<br />
+SELECT CASE SERVERPROPERTY('IsIntegratedSecurityOnly') WHEN 1 THEN 'Windows Authentication' WHEN 0 THEN 'SQL Server Authentication' END as [Authentication Mode]<br />
+<br />
+If the returned value in the &quot;Authentication Mode&quot; column is &quot;Windows Authentication&quot;, this is not a finding.<br />
+<br />
+If the returned value in the &quot;Authentication Mode&quot; column is &quot;SQL Server Authentication&quot;, SQL Server should be configured to inherit password complexity and password lifetime rules from the operating system.<br />
+<br />
+Review SQL Server to ensure logons are created with respect to the complexity settings and password lifetime rules by running the statement:<br />
+<br />
+SELECT [name], is_expiration_checked, is_policy_checked<br />
+FROM sys.sql_logins<br />
+<br />
+Review any accounts returned by the query other than the disabled SA account, ##MS_PolicyTsqlExecutionLogin##, ##MS_PolicyEventProcessingLogin##, ##MS_SSISServerCleanupJobLogin##, and other internal accounts that start with ##MS.<br />
+<br />
+If any account does not have both &quot;is_expiration_checked&quot; and &quot;is_policy_checked&quot; equal to “1”, this is a finding.<br />
+<br />
+Review the operating system settings relating to password complexity.<br />
+<br />
+To check the server operating system for password complexity:<br />
+<br />
+Navigate to Start &gt;&gt; All Programs &gt;&gt; Administrative Tools &gt;&gt; Local Security Policy, and to review the local policies on the machine, go to Account Policy &gt;&gt; Password Policy.<br />
+<br />
+Ensure the DISA Windows Password Policy is set on the SQL Server member server. If any are not, this is a finding.</p><h2>Check Content Reference</h2><p>M</p><h2>Target Key</h2><p>3993</p></body></html>

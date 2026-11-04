@@ -1,0 +1,85 @@
+<!doctype html><html lang="en"><head><meta charset="utf-8"><title>STIGQter: STIG Check Details: SV-261909r1000980_rule: PostgreSQL must reveal detailed error messages only to the information system security officer (ISSO), information system security manager (ISSM), system administrator (SA), and database administrator (DBA).</title><link rel="icon" type="image/svg+xml" href="STIGQter.svg" /><script async src="https://www.googletagmanager.com/gtag/js?id=UA-31381839-2"></script><script src="include.js"></script><script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-4110907817782130" crossorigin="anonymous"></script></head><body><div><img src="STIGQter.svg" alt="STIGQter" style="height:1em;" /> <a href="https://www.stigqter.com/">STIGQter</a>: <a href="main.html">STIG Summary</a>: <a href="U_CD_Postgres_16_STIG_V1R3_Manual-xccdf.html">Crunchy Data Postgres 16 Security Technical Implementation Guide Version: 1 Release: 3 Benchmark Date: 01 Jul 2026</a>:</div> <h1>PostgreSQL must reveal detailed error messages only to the information system security officer (ISSO), information system security manager (ISSM), system administrator (SA), and database administrator (DBA).</h1><h2>DISA Rule</h2><p>SV-261909r1000980_rule</p><h2>Vulnerability Number</h2><p>V-261909</p><h2>Group Title</h2><p>SRG-APP-000267-DB-000163</p><h2>Rule Version</h2><p>CD16-00-006100</p><h2>Severity</h2><p>CAT II</p><h2>CCI(s)</h2><ul><li>CCI-001314 - Reveal error messages only to organization-defined personnel or roles.</li></ul><h2>Weight</h2><p>10</p><h2>Fix Recommendation</h2><p>Note: The following instructions use the PGDATA environment variable. Refer to APPENDIX-F for instructions on configuring PGDATA.<br />
+<br />
+To set the level of detail for error messages exposed to clients, as the DBA (shown here as &quot;postgres&quot;), run the following commands:<br />
+<br />
+$ sudo su - postgres<br />
+$ vi ${PGDATA?}/postgresql.conf<br />
+client_min_messages = error</p><h2>Check Contents</h2><p>Note: The following instructions use the PGDATA and PGLOG environment variables. Refer to APPENDIX-F for instructions on configuring PGDATA and APPENDIX-I for instructions on configuring PGLOG.<br />
+<br />
+Check PostgreSQL settings and custom database code to determine if detailed error messages are ever displayed to unauthorized individuals.<br />
+<br />
+To check the level of detail for errors exposed to clients, as the DBA (shown here as &quot;postgres&quot;), run the following:<br />
+<br />
+$ sudo su - postgres<br />
+$ psql -c &quot;SHOW client_min_messages;&quot;<br />
+<br />
+If client_min_messages is not set to error, this is a finding.<br />
+<br />
+If detailed error messages are displayed to individuals not authorized to view them, this is a finding.<br />
+<br />
+#### stderr Logging<br />
+<br />
+Logs may contain detailed information and should only be accessible by the database owner.<br />
+<br />
+As the database administrator, verify the following settings of logs.<br />
+<br />
+Note: Consult the organization's documentation on acceptable log privileges.<br />
+<br />
+$ sudo su - postgres<br />
+$ psql -c &quot;SHOW log_file_mode;&quot; <br />
+<br />
+Verify the log files have the set configurations.<br />
+<br />
+$ ls -l ${PGLOG?}<br />
+total 32<br />
+-rw-------. 1 postgres postgres 0 Apr 8 00:00 postgresql-Fri.log<br />
+-rw-------. 1 postgres postgres 8288 Apr 11 17:36 postgresql-Mon.log<br />
+-rw-------. 1 postgres postgres 0 Apr 9 00:00 postgresql-Sat.log<br />
+-rw-------. 1 postgres postgres 0 Apr 10 00:00 postgresql-Sun.log<br />
+-rw-------. 1 postgres postgres 16212 Apr 7 17:05 postgresql-Thu.log<br />
+-rw-------. 1 postgres postgres 1130 Apr 6 17:56 postgresql-Wed.log<br />
+<br />
+If logs are not owned by the database administrator or have permissions that are not 0600, this is a finding.<br />
+<br />
+#### syslog Logging<br />
+<br />
+If PostgreSQL is configured to use syslog for logging, consult organization location and permissions for syslog log files. If the logs are not owned by root or have permissions that are not 0600, this is a finding.</p><h2>Vulnerability Number</h2><p>V-261909</p><h2>Documentable</h2><p>False</p><h2>Rule Version</h2><p>CD16-00-006100</p><h2>Severity Override Guidance</h2><p>Note: The following instructions use the PGDATA and PGLOG environment variables. Refer to APPENDIX-F for instructions on configuring PGDATA and APPENDIX-I for instructions on configuring PGLOG.<br />
+<br />
+Check PostgreSQL settings and custom database code to determine if detailed error messages are ever displayed to unauthorized individuals.<br />
+<br />
+To check the level of detail for errors exposed to clients, as the DBA (shown here as &quot;postgres&quot;), run the following:<br />
+<br />
+$ sudo su - postgres<br />
+$ psql -c &quot;SHOW client_min_messages;&quot;<br />
+<br />
+If client_min_messages is not set to error, this is a finding.<br />
+<br />
+If detailed error messages are displayed to individuals not authorized to view them, this is a finding.<br />
+<br />
+#### stderr Logging<br />
+<br />
+Logs may contain detailed information and should only be accessible by the database owner.<br />
+<br />
+As the database administrator, verify the following settings of logs.<br />
+<br />
+Note: Consult the organization's documentation on acceptable log privileges.<br />
+<br />
+$ sudo su - postgres<br />
+$ psql -c &quot;SHOW log_file_mode;&quot; <br />
+<br />
+Verify the log files have the set configurations.<br />
+<br />
+$ ls -l ${PGLOG?}<br />
+total 32<br />
+-rw-------. 1 postgres postgres 0 Apr 8 00:00 postgresql-Fri.log<br />
+-rw-------. 1 postgres postgres 8288 Apr 11 17:36 postgresql-Mon.log<br />
+-rw-------. 1 postgres postgres 0 Apr 9 00:00 postgresql-Sat.log<br />
+-rw-------. 1 postgres postgres 0 Apr 10 00:00 postgresql-Sun.log<br />
+-rw-------. 1 postgres postgres 16212 Apr 7 17:05 postgresql-Thu.log<br />
+-rw-------. 1 postgres postgres 1130 Apr 6 17:56 postgresql-Wed.log<br />
+<br />
+If logs are not owned by the database administrator or have permissions that are not 0600, this is a finding.<br />
+<br />
+#### syslog Logging<br />
+<br />
+If PostgreSQL is configured to use syslog for logging, consult organization location and permissions for syslog log files. If the logs are not owned by root or have permissions that are not 0600, this is a finding.</p><h2>Check Content Reference</h2><p>M</p><h2>Target Key</h2><p>5598</p></body></html>

@@ -1,0 +1,79 @@
+<!doctype html><html lang="en"><head><meta charset="utf-8"><title>STIGQter: STIG Check Details: SV-242397r1137638_rule: The Kubernetes kubelet staticPodPath must not enable static pods.</title><link rel="icon" type="image/svg+xml" href="STIGQter.svg" /><script async src="https://www.googletagmanager.com/gtag/js?id=UA-31381839-2"></script><script src="include.js"></script><script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-4110907817782130" crossorigin="anonymous"></script></head><body><div><img src="STIGQter.svg" alt="STIGQter" style="height:1em;" /> <a href="https://www.stigqter.com/">STIGQter</a>: <a href="main.html">STIG Summary</a>: <a href="U_Kubernetes_STIG_V2R6_Manual-xccdf.html">Kubernetes Security Technical Implementation Guide Version: 2 Release: 6 Benchmark Date: 01 Apr 2026</a>:</div> <h1>The Kubernetes kubelet staticPodPath must not enable static pods.</h1><h2>DISA Rule</h2><p>SV-242397r1137638_rule</p><h2>Vulnerability Number</h2><p>V-242397</p><h2>Group Title</h2><p>SRG-APP-000033-CTR-000090</p><h2>Rule Version</h2><p>CNTR-K8-000440</p><h2>Severity</h2><p>CAT I</p><h2>CCI(s)</h2><ul><li>CCI-000213 - Enforce approved authorizations for logical access to information and system resources in accordance with applicable access control policies.</li></ul><h2>Weight</h2><p>10</p><h2>Fix Recommendation</h2><p>1. Remove staticPodPath setting on Kubernetes worker nodes:<br />
+<br />
+a. On each Worker node, run the command:<br />
+    ps -ef | grep kubelet<br />
+<br />
+b. Note the path to the config file (identified by --config).<br />
+<br />
+c. Edit the Kubernetes kubelet file in the --config directory on the Worker nodes. Remove the setting &quot;staticPodPath&quot;.<br />
+<br />
+d. Restart the kubelet service using the following command:<br />
+    systemctl daemon-reload &amp;&amp; systemctl restart kubelet<br />
+<br />
+2. Remove Kubelet Systemd Service Arguments:<br />
+<br />
+a. Modify the systemd Service File. Run the command:<br />
+    sudo systemctl edit --full kubelet<br />
+<br />
+(Example Return:ExecStart=/usr/bin/kubelet --pod-manifest-path=/etc/kubernetes/manifests)<br />
+<br />
+b. Find and remove --pod-manifest-path.<br />
+<br />
+c. Save and exit the editor.<br />
+<br />
+d. Restart the kubelet service using the following command:<br />
+    systemctl daemon-reload &amp;&amp; systemctl restart kubelet</p><h2>Check Contents</h2><p>If staticPodPath is missing in the Kubelet config and in the systemd arguments, the node does not support static pods.<br />
+<br />
+1. To find the staticPodPath setting on Kubernetes worker nodes, follow these steps:<br />
+<br />
+ a. On the Worker nodes, run the command:<br />
+     ps -ef | grep kubelet<br />
+<br />
+b. Note the path to the Kubelet configuration file (identified by --config).<br />
+    (ls /var/lib/kubelet/config.yaml is the common location.)<br />
+<br />
+c. Run the command:<br />
+    grep -i staticPodPath &lt;path_to_config_file&gt;<br />
+<br />
+If any of the Worker nodes return a value for &quot;staticPodPath&quot;, this is a finding.<br />
+<br />
+If staticPodPath is not in the config file, check if it is set as a command-line argument.<br />
+<br />
+2. Check Kubelet Systemd Service Arguments.<br />
+<br />
+a. Run the following command to check the Kubelet service:<br />
+    sudo systemctl cat kubelet | grep pod-manifest-path<br />
+<br />
+If there is no output, staticPodPath is not set in systemd arguments.<br />
+<br />
+If there is any return, this is a finding.<br />
+<br />
+(Example Return:ExecStart=/usr/bin/kubelet --pod-manifest-path=/etc/kubernetes/manifests<br />
+This means static pods are defined in /etc/kubernetes/manifests.)</p><h2>Vulnerability Number</h2><p>V-242397</p><h2>Documentable</h2><p>False</p><h2>Rule Version</h2><p>CNTR-K8-000440</p><h2>Severity Override Guidance</h2><p>If staticPodPath is missing in the Kubelet config and in the systemd arguments, the node does not support static pods.<br />
+<br />
+1. To find the staticPodPath setting on Kubernetes worker nodes, follow these steps:<br />
+<br />
+ a. On the Worker nodes, run the command:<br />
+     ps -ef | grep kubelet<br />
+<br />
+b. Note the path to the Kubelet configuration file (identified by --config).<br />
+    (ls /var/lib/kubelet/config.yaml is the common location.)<br />
+<br />
+c. Run the command:<br />
+    grep -i staticPodPath &lt;path_to_config_file&gt;<br />
+<br />
+If any of the Worker nodes return a value for &quot;staticPodPath&quot;, this is a finding.<br />
+<br />
+If staticPodPath is not in the config file, check if it is set as a command-line argument.<br />
+<br />
+2. Check Kubelet Systemd Service Arguments.<br />
+<br />
+a. Run the following command to check the Kubelet service:<br />
+    sudo systemctl cat kubelet | grep pod-manifest-path<br />
+<br />
+If there is no output, staticPodPath is not set in systemd arguments.<br />
+<br />
+If there is any return, this is a finding.<br />
+<br />
+(Example Return:ExecStart=/usr/bin/kubelet --pod-manifest-path=/etc/kubernetes/manifests<br />
+This means static pods are defined in /etc/kubernetes/manifests.)</p><h2>Check Content Reference</h2><p>M</p><h2>Target Key</h2><p>5376</p></body></html>

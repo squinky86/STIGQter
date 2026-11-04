@@ -1,0 +1,41 @@
+<!doctype html><html lang="en"><head><meta charset="utf-8"><title>STIGQter: STIG Check Details: SV-255979r882279_rule: The Arista MLS layer 2 switch must have all trunk links enabled statically.</title><link rel="icon" type="image/svg+xml" href="STIGQter.svg" /><script async src="https://www.googletagmanager.com/gtag/js?id=UA-31381839-2"></script><script src="include.js"></script><script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-4110907817782130" crossorigin="anonymous"></script></head><body><div><img src="STIGQter.svg" alt="STIGQter" style="height:1em;" /> <a href="https://www.stigqter.com/">STIGQter</a>: <a href="main.html">STIG Summary</a>: <a href="U_Arista_MLS_EOS_4-X_L2S_STIG_V2R3_Manual-xccdf.html">Arista MLS EOS 4.X L2S Security Technical Implementation Guide Version: 2 Release: 3 Benchmark Date: 02 Jul 2025</a>:</div> <h1>The Arista MLS layer 2 switch must have all trunk links enabled statically.</h1><h2>DISA Rule</h2><p>SV-255979r882279_rule</p><h2>Vulnerability Number</h2><p>V-255979</p><h2>Group Title</h2><p>SRG-NET-000512-L2S-000005</p><h2>Rule Version</h2><p>ARST-L2-000160</p><h2>Severity</h2><p>CAT II</p><h2>CCI(s)</h2><ul><li>CCI-000366 - Implement the security configuration settings.</li></ul><h2>Weight</h2><p>10</p><h2>Fix Recommendation</h2><p>Configure static Ethernet interfaces for switchport trunk mode. Ensure required VLAN member tagged traffic is allowed and all other VLAN traffic will be dropped unless an associated untagged native VLAN for the Ethernet interface is allowed.<br />
+<br />
+switch#configure<br />
+switch(config)#interface Ethernet6<br />
+   description STIG Static Trunk<br />
+   speed forced 10000full<br />
+   switchport trunk native vlan 2102<br />
+   switchport trunk allowed vlan 2100-2102<br />
+   switchport mode trunk<br />
+!<br />
+switch(config)#interface Ethernet7<br />
+   description STIG Static Trunk<br />
+   speed forced 10000full<br />
+   switchport trunk native vlan 3102<br />
+   switchport trunk allowed vlan 3100-3102<br />
+   switchport mode trunk<br />
+!</p><h2>Check Contents</h2><p>Review the Arista MLS switch configuration to verify that all Ethernet interfaces designated as trunk links are statically configured to specify only member tagged VLAN traffic is allowed and all nonmember VLAN traffic will be dropped unless untagged traffic is associated with the interface's native VLAN.<br />
+<br />
+switch#show run | section trunk<br />
+!<br />
+interface Ethernet6<br />
+   description STIG Static Trunk<br />
+   speed forced 10000full<br />
+   switchport trunk native vlan 2102<br />
+   switchport trunk allowed vlan 2100-2102<br />
+   switchport mode trunk<br />
+!<br />
+<br />
+If trunk negotiation is enabled on any interface, this is a finding.</p><h2>Vulnerability Number</h2><p>V-255979</p><h2>Documentable</h2><p>False</p><h2>Rule Version</h2><p>ARST-L2-000160</p><h2>Severity Override Guidance</h2><p>Review the Arista MLS switch configuration to verify that all Ethernet interfaces designated as trunk links are statically configured to specify only member tagged VLAN traffic is allowed and all nonmember VLAN traffic will be dropped unless untagged traffic is associated with the interface's native VLAN.<br />
+<br />
+switch#show run | section trunk<br />
+!<br />
+interface Ethernet6<br />
+   description STIG Static Trunk<br />
+   speed forced 10000full<br />
+   switchport trunk native vlan 2102<br />
+   switchport trunk allowed vlan 2100-2102<br />
+   switchport mode trunk<br />
+!<br />
+<br />
+If trunk negotiation is enabled on any interface, this is a finding.</p><h2>Check Content Reference</h2><p>M</p><h2>Target Key</h2><p>5512</p></body></html>

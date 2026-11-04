@@ -1,0 +1,99 @@
+<!doctype html><html lang="en"><head><meta charset="utf-8"><title>STIGQter: STIG Check Details: SV-213676r960885_rule: DB2 must generate audit records when privileges/permissions are retrieved.</title><link rel="icon" type="image/svg+xml" href="STIGQter.svg" /><script async src="https://www.googletagmanager.com/gtag/js?id=UA-31381839-2"></script><script src="include.js"></script><script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-4110907817782130" crossorigin="anonymous"></script></head><body><div><img src="STIGQter.svg" alt="STIGQter" style="height:1em;" /> <a href="https://www.stigqter.com/">STIGQter</a>: <a href="main.html">STIG Summary</a>: <a href="U_IBM_DB2_V10-5_LUW_STIG_V2R2_Manual-xccdf.html">IBM DB2 V10.5 LUW Security Technical Implementation Guide Version: 2 Release: 2 Benchmark Date: 01 Jul 2026</a>:</div> <h1>DB2 must generate audit records when privileges/permissions are retrieved.</h1><h2>DISA Rule</h2><p>SV-213676r960885_rule</p><h2>Vulnerability Number</h2><p>V-213676</p><h2>Group Title</h2><p>SRG-APP-000091-DB-000066</p><h2>Rule Version</h2><p>DB2X-00-000800</p><h2>Severity</h2><p>CAT II</p><h2>CCI(s)</h2><ul><li>CCI-000172 - Generate audit records for the event types defined in AU-2 c that include the audit record content defined in AU-3.</li></ul><h2>Weight</h2><p>10</p><h2>Fix Recommendation</h2><p>Define the audit policy using the CREATE AUDIT POLICY SQL statement:<br />
+DB2&gt; CREATE AUDIT POLICY CATALOGAUDIT CATEGORIES CONTEXT STATUS BOTH, EXECUTE STATUS BOTH ERROR TYPE AUDIT<br />
+<br />
+To modify an existing audit policy, replace &quot;CREATE&quot; with &quot;ALTER&quot; in the preceding statement. Only the categories explicitly named in the statement will be affected.  In this case, the changes take effect immediately.<br />
+<br />
+If CREATE was used above, apply the correct audit policy to either the database as a whole or to the specific catalog tables using one of these two statements:<br />
+DB2&gt; AUDIT DATABASE USING POLICY CATALOGAUDIT <br />
+  Or <br />
+DB2&gt; AUDIT TABLE &lt;table name&gt; USING POLICY CATALOGAUDIT<br />
+<br />
+Note: The Database level policy in the Check category, covered in SRG-DB2X-00-000600, generates audit events of successful/unsuccessful read attempts on views based on these catalog tables.</p><h2>Check Contents</h2><p>To monitor who/what is reading the privilege/permission/role information from catalog tables a minimum audit set of CONTEXT and EXECUTE (with data) categories on the following catalog tables are required:<br />
+<br />
+SYSIBM.SYSINDEXAUTH<br />
+SYSIBM.SYSPLANAUTH<br />
+SYSIBM.SYSPASSTHRUAUTH<br />
+SYSIBM.SYSROUTINEAUTH<br />
+SYSIBM.SYSSCHEMAAUTH<br />
+SYSIBM.SYSSECURITYLABELACCESS<br />
+SYSIBM.SYSSECURITYPOLICYEXEMPTIONS<br />
+SYSIBM.SYSSEQUENCEAUTH<br />
+SYSIBM.SYSSURROGATEAUTHIDS<br />
+SYSIBM.SYSTABAUTH <br />
+SYSIBM.SYSTBSPACEAUTH <br />
+SYSIBM.SYSXSROBJECTAUTH<br />
+SYSIBM.SYSCOLAUTH<br />
+SYSIBM.SYSLIBRARYAUTH<br />
+SYSIBM.SYSMODULEAUTH<br />
+SYSIBM.SYSROLEAUTH<br />
+SYSIBM.SYSVARIABLEAUTH<br />
+SYSIBM.SYSWORKLOADAUTH<br />
+SYSIBM.SYSDBAUTH<br />
+SYSIBM.SYSUSERAUTH<br />
+<br />
+Run the following SQL statement to ensure that an audit policy is defined upon the above catalog tables and/or the database:<br />
+<br />
+DB2&gt; SELECT AUDITPOLICYNAME, OBJECTSCHEMA, OBJECTNAME, OBJECTTYPE <br />
+FROM SYSCAT.AUDITUSE <br />
+WHERE OBJECTTYPE IN ('T',' ')<br />
+<br />
+If no rows are returned, this is a finding. <br />
+<br />
+If a row with the OBJECTTYPE of ' ' (Database; value is a blank) exists in the output, it is a database level policy. <br />
+<br />
+If a row with OBJECTTYPE of 'T' exists in the output, it is a table level policy.<br />
+<br />
+For each audit policy returned in the statement above, run the following SQL statement to confirm that the CONTEXT and EXECUTE categories are part of that policy:<br />
+<br />
+DB2&gt; SELECT AUDITPOLICYNAME, CONTEXTSTATUS, EXECUTESTATUS, ERRORTYPE AS ERRORTYPE <br />
+FROM SYSCAT.AUDITPOLICIES<br />
+<br />
+If the values for CONTEXTSTATUS and EXECUTESTATUS are not 'B' (Both) or ERRORTYPE is not 'A' (Audit), this is a finding.<br />
+<br />
+If a database policy does not exist or does not cover CONTEXTSTATUS or EXECUTESTATUS then check if the appropriate policies are defined for all the required tables listed above.<br />
+<br />
+If audit policies for the required tables do not have the values for the CONTEXTSTATUS and EXECUTESTATUS columns set to 'S' (Success) or 'B' (Both) or ERRORTYPE is not 'A' (Audit), this is a finding.</p><h2>Vulnerability Number</h2><p>V-213676</p><h2>Documentable</h2><p>False</p><h2>Rule Version</h2><p>DB2X-00-000800</p><h2>Severity Override Guidance</h2><p>To monitor who/what is reading the privilege/permission/role information from catalog tables a minimum audit set of CONTEXT and EXECUTE (with data) categories on the following catalog tables are required:<br />
+<br />
+SYSIBM.SYSINDEXAUTH<br />
+SYSIBM.SYSPLANAUTH<br />
+SYSIBM.SYSPASSTHRUAUTH<br />
+SYSIBM.SYSROUTINEAUTH<br />
+SYSIBM.SYSSCHEMAAUTH<br />
+SYSIBM.SYSSECURITYLABELACCESS<br />
+SYSIBM.SYSSECURITYPOLICYEXEMPTIONS<br />
+SYSIBM.SYSSEQUENCEAUTH<br />
+SYSIBM.SYSSURROGATEAUTHIDS<br />
+SYSIBM.SYSTABAUTH <br />
+SYSIBM.SYSTBSPACEAUTH <br />
+SYSIBM.SYSXSROBJECTAUTH<br />
+SYSIBM.SYSCOLAUTH<br />
+SYSIBM.SYSLIBRARYAUTH<br />
+SYSIBM.SYSMODULEAUTH<br />
+SYSIBM.SYSROLEAUTH<br />
+SYSIBM.SYSVARIABLEAUTH<br />
+SYSIBM.SYSWORKLOADAUTH<br />
+SYSIBM.SYSDBAUTH<br />
+SYSIBM.SYSUSERAUTH<br />
+<br />
+Run the following SQL statement to ensure that an audit policy is defined upon the above catalog tables and/or the database:<br />
+<br />
+DB2&gt; SELECT AUDITPOLICYNAME, OBJECTSCHEMA, OBJECTNAME, OBJECTTYPE <br />
+FROM SYSCAT.AUDITUSE <br />
+WHERE OBJECTTYPE IN ('T',' ')<br />
+<br />
+If no rows are returned, this is a finding. <br />
+<br />
+If a row with the OBJECTTYPE of ' ' (Database; value is a blank) exists in the output, it is a database level policy. <br />
+<br />
+If a row with OBJECTTYPE of 'T' exists in the output, it is a table level policy.<br />
+<br />
+For each audit policy returned in the statement above, run the following SQL statement to confirm that the CONTEXT and EXECUTE categories are part of that policy:<br />
+<br />
+DB2&gt; SELECT AUDITPOLICYNAME, CONTEXTSTATUS, EXECUTESTATUS, ERRORTYPE AS ERRORTYPE <br />
+FROM SYSCAT.AUDITPOLICIES<br />
+<br />
+If the values for CONTEXTSTATUS and EXECUTESTATUS are not 'B' (Both) or ERRORTYPE is not 'A' (Audit), this is a finding.<br />
+<br />
+If a database policy does not exist or does not cover CONTEXTSTATUS or EXECUTESTATUS then check if the appropriate policies are defined for all the required tables listed above.<br />
+<br />
+If audit policies for the required tables do not have the values for the CONTEXTSTATUS and EXECUTESTATUS columns set to 'S' (Success) or 'B' (Both) or ERRORTYPE is not 'A' (Audit), this is a finding.</p><h2>Check Content Reference</h2><p>M</p><h2>Target Key</h2><p>3989</p></body></html>

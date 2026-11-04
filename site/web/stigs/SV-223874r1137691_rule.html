@@ -1,0 +1,104 @@
+<!doctype html><html lang="en"><head><meta charset="utf-8"><title>STIGQter: STIG Check Details: SV-223874r1137691_rule: CA-TSS Security control ACIDs must be limited to the administrative authorities authorized and that require these privileges to perform their job duties.</title><link rel="icon" type="image/svg+xml" href="STIGQter.svg" /><script async src="https://www.googletagmanager.com/gtag/js?id=UA-31381839-2"></script><script src="include.js"></script><script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-4110907817782130" crossorigin="anonymous"></script></head><body><div><img src="STIGQter.svg" alt="STIGQter" style="height:1em;" /> <a href="https://www.stigqter.com/">STIGQter</a>: <a href="main.html">STIG Summary</a>: <a href="U_IBM_zOS_TSS_STIG_V9R9_Manual-xccdf.html">IBM z/OS TSS Security Technical Implementation Guide Version: 9 Release: 9 Benchmark Date: 01 Jul 2026</a>:</div> <h1>CA-TSS Security control ACIDs must be limited to the administrative authorities authorized and that require these privileges to perform their job duties.</h1><h2>DISA Rule</h2><p>SV-223874r1137691_rule</p><h2>Vulnerability Number</h2><p>V-223874</p><h2>Group Title</h2><p>SRG-OS-000080-GPOS-00048</p><h2>Rule Version</h2><p>TSS0-ES-000010</p><h2>Severity</h2><p>CAT I</p><h2>CCI(s)</h2><ul><li>CCI-000213 - Enforce approved authorizations for logical access to information and system resources in accordance with applicable access control policies.</li></ul><h2>Weight</h2><p>10</p><h2>Fix Recommendation</h2><p>Review all security administrator ACIDs. Evaluate the impact of limiting the amount of excessive administrative authorities. Develop a plan of action and implement the changes.<br />
+<br />
+The following are examples for other types (DCA, VCA, ZCA, LSCA) that require administrative authorities: (note: these are examples and does not mean everyone should have all of these levels).<br />
+<br />
+data set(ALL)ACC(ALL)<br />
+data set(XAUTH,OWN,REPORT,AUDIT,INFO)ACC(ALL)<br />
+OTRAN(ALL)ACC(ALL)<br />
+ACID(ALL)<br />
+ACID(INFO,MAINTAIN)<br />
+MISC1(INSTDATA,SUSPEND,TSSSIM,NOATS)<br />
+MISC2(TSO,TARGET)<br />
+MISC8(PWMAINT,REMASUSP)<br />
+MISC9(GENERIC)<br />
+FACILITY(BATCH, TSO, ROSCOE, CICS, xxxx)<br />
+<br />
+Where &quot;xxxx&quot; is a facility the application security team grants access into for their application users. This must not be STC, CA1, DFHSM, or other domain level mastfac/facility. This is only for those &quot;onlines&quot; that users truly log in to for access to their applications/data such as TSO, CICS regions, IDMS, ROSCOE, FTP, etc.<br />
+<br />
+TSS ADMIN(acid)RESOURCE(REPORT,INFO,AUDIT) can be allowed and is required to run TSSUTIL reports.<br />
+<br />
+Note: &quot;RESOURCE&quot; can specify a more specific Resource Class, such as &quot;OTRAN&quot;, &quot;data set&quot;, &quot;IDMSGON&quot;, &quot;PROGRAM&quot; for non SCA/MSCA type of accounts. These administrators will not have &quot;RESOURCE&quot; specified in administrative authority. <br />
+<br />
+Note: &quot;ALL&quot; will display as &quot;*ALL*&quot; but also means approved for any single administrative authority under that specific item.</p><h2>Check Contents</h2><p>From the ISPF Command Shell enter:<br />
+<br />
+TSS LIST(ACIDS) DATA(ADMIN, BASIC)<br />
+<br />
+If any ACIDs other than TYPE=CENTRAL (SCA/MSCA) has the following administrative authority, this is a finding.<br />
+<br />
+FACILITIES(ALL)<br />
+PROGRAM(ALL)<br />
+PROGRAM(OWN)<br />
+RESOURCE(ALL)<br />
+ROSRES(ALL)<br />
+VOLUME(ALL)<br />
+VOLUME(OWN)<br />
+<br />
+MISC1(ALL)<br />
+MISC1(LCF)<br />
+MISC1(LTIME)<br />
+MISC1(RDT)<br />
+MISC1(USER)<br />
+<br />
+MISC2(ALL)<br />
+MISC2(DLF)<br />
+MISC2(NDT)<br />
+MISC2(SMS)<br />
+<br />
+MISC4(ALL)<br />
+<br />
+MISC8(ALL)<br />
+MISC8(LISTAPLU)<br />
+MISC8(LISTRDT)<br />
+MISC8(LISTSDT)<br />
+MISC8(LISTSTC)<br />
+MISC8(MCS)<br />
+<br />
+MISC9(ALL)<br />
+MISC9(BYPASS)<br />
+MISC9(CONSOLE)<br />
+MISC9(GLOBAL)<br />
+MISC9(MASTFAC)<br />
+MISC9(MODE)<br />
+MISC9(STC)<br />
+MISC9(TRACE)</p><h2>Vulnerability Number</h2><p>V-223874</p><h2>Documentable</h2><p>False</p><h2>Rule Version</h2><p>TSS0-ES-000010</p><h2>Severity Override Guidance</h2><p>From the ISPF Command Shell enter:<br />
+<br />
+TSS LIST(ACIDS) DATA(ADMIN, BASIC)<br />
+<br />
+If any ACIDs other than TYPE=CENTRAL (SCA/MSCA) has the following administrative authority, this is a finding.<br />
+<br />
+FACILITIES(ALL)<br />
+PROGRAM(ALL)<br />
+PROGRAM(OWN)<br />
+RESOURCE(ALL)<br />
+ROSRES(ALL)<br />
+VOLUME(ALL)<br />
+VOLUME(OWN)<br />
+<br />
+MISC1(ALL)<br />
+MISC1(LCF)<br />
+MISC1(LTIME)<br />
+MISC1(RDT)<br />
+MISC1(USER)<br />
+<br />
+MISC2(ALL)<br />
+MISC2(DLF)<br />
+MISC2(NDT)<br />
+MISC2(SMS)<br />
+<br />
+MISC4(ALL)<br />
+<br />
+MISC8(ALL)<br />
+MISC8(LISTAPLU)<br />
+MISC8(LISTRDT)<br />
+MISC8(LISTSDT)<br />
+MISC8(LISTSTC)<br />
+MISC8(MCS)<br />
+<br />
+MISC9(ALL)<br />
+MISC9(BYPASS)<br />
+MISC9(CONSOLE)<br />
+MISC9(GLOBAL)<br />
+MISC9(MASTFAC)<br />
+MISC9(MODE)<br />
+MISC9(STC)<br />
+MISC9(TRACE)</p><h2>Check Content Reference</h2><p>M</p><h2>Target Key</h2><p>4102</p></body></html>

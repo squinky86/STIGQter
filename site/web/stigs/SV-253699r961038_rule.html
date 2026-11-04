@@ -1,0 +1,38 @@
+<!doctype html><html lang="en"><head><meta charset="utf-8"><title>STIGQter: STIG Check Details: SV-253699r961038_rule: MariaDB, when utilizing PKI-based authentication, must validate certificates by performing RFC 5280-compliant certification path validation.</title><link rel="icon" type="image/svg+xml" href="STIGQter.svg" /><script async src="https://www.googletagmanager.com/gtag/js?id=UA-31381839-2"></script><script src="include.js"></script><script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-4110907817782130" crossorigin="anonymous"></script></head><body><div><img src="STIGQter.svg" alt="STIGQter" style="height:1em;" /> <a href="https://www.stigqter.com/">STIGQter</a>: <a href="main.html">STIG Summary</a>: <a href="U_MariaDB_Enterprise_10-x_STIG_V2R5_Manual-xccdf.html">MariaDB Enterprise 10.x Security Technical Implementation Guide Version: 2 Release: 5 Benchmark Date: 01 Apr 2026</a>:</div> <h1>MariaDB, when utilizing PKI-based authentication, must validate certificates by performing RFC 5280-compliant certification path validation.</h1><h2>DISA Rule</h2><p>SV-253699r961038_rule</p><h2>Vulnerability Number</h2><p>V-253699</p><h2>Group Title</h2><p>SRG-APP-000175-DB-000067</p><h2>Rule Version</h2><p>MADB-10-004000</p><h2>Severity</h2><p>CAT II</p><h2>CCI(s)</h2><ul><li>CCI-000185 - For public key-based authentication, validate certificates by constructing and verifying a certification path to an accepted trust anchor including checking certificate status information.</li></ul><h2>Weight</h2><p>10</p><h2>Fix Recommendation</h2><p>As the administrator locate the MariaDB configuration file to change. This varies depending on setup and how configuration files are managed but should be in /etc/my.cnf.d/. It is recommended to have a separate configuration file within this directory for SSL connection information. <br />
+<br />
+In the [server] section add the lines for SSL:<br />
+<br />
+ssl-ca=/path/to/ssl/ca-cert.pem<br />
+ssl-cert=/path/to/ssl/server-cert.pem<br />
+ssl-key=/path/to/ssl/server-key.pem<br />
+<br />
+To fully implement SSL for MariaDB, the client settings and user accounts need to be set up as well. More information can be found here:<br />
+https://mariadb.com/kb/en/securing-connections-for-client-and-server/</p><h2>Check Contents</h2><p>As the database administrator, list all users and their SSL setup by running the following:<br />
+<br />
+MariaDB&gt; SELECT user, host, ssl_type FROM mysql.user;<br />
+<br />
+Use the result of the next query to verify the MariaDB Server is using certificates:<br />
+<br />
+MariaDB&gt;  STATUS;<br />
+<br />
+Verify the line beginning with &quot;SSL:&quot; returns expected SSL information. <br />
+<br />
+Using the following query, verify SSL is configured as expected: <br />
+<br />
+MariaDB&gt;  SHOW GLOBAL VARIABLES LIKE  %ssl% ;<br />
+<br />
+If not configured as expected, this is a finding.</p><h2>Vulnerability Number</h2><p>V-253699</p><h2>Documentable</h2><p>False</p><h2>Rule Version</h2><p>MADB-10-004000</p><h2>Severity Override Guidance</h2><p>As the database administrator, list all users and their SSL setup by running the following:<br />
+<br />
+MariaDB&gt; SELECT user, host, ssl_type FROM mysql.user;<br />
+<br />
+Use the result of the next query to verify the MariaDB Server is using certificates:<br />
+<br />
+MariaDB&gt;  STATUS;<br />
+<br />
+Verify the line beginning with &quot;SSL:&quot; returns expected SSL information. <br />
+<br />
+Using the following query, verify SSL is configured as expected: <br />
+<br />
+MariaDB&gt;  SHOW GLOBAL VARIABLES LIKE  %ssl% ;<br />
+<br />
+If not configured as expected, this is a finding.</p><h2>Check Content Reference</h2><p>M</p><h2>Target Key</h2><p>5475</p></body></html>

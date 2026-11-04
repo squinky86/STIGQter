@@ -1,0 +1,174 @@
+<!doctype html><html lang="en"><head><meta charset="utf-8"><title>STIGQter: STIG Check Details: SV-254044r997536_rule: The Juniper BGP router must be configured to enable the Generalized TTL Security Mechanism (GTSM).</title><link rel="icon" type="image/svg+xml" href="STIGQter.svg" /><script async src="https://www.googletagmanager.com/gtag/js?id=UA-31381839-2"></script><script src="include.js"></script><script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-4110907817782130" crossorigin="anonymous"></script></head><body><div><img src="STIGQter.svg" alt="STIGQter" style="height:1em;" /> <a href="https://www.stigqter.com/">STIGQter</a>: <a href="main.html">STIG Summary</a>: <a href="U_Juniper_EX_Switches_RTR_STIG_V2R1_Manual-xccdf.html">Juniper EX Series Switches Router Security Technical Implementation Guide Version: 2 Release: 1 Benchmark Date: 24 Jul 2024</a>:</div> <h1>The Juniper BGP router must be configured to enable the Generalized TTL Security Mechanism (GTSM).</h1><h2>DISA Rule</h2><p>SV-254044r997536_rule</p><h2>Vulnerability Number</h2><p>V-254044</p><h2>Group Title</h2><p>SRG-NET-000362-RTR-000124</p><h2>Rule Version</h2><p>JUEX-RT-000720</p><h2>Severity</h2><p>CAT III</p><h2>CCI(s)</h2><ul><li>CCI-002385 - Protect against or limit the effects of organization-defined types of denial of service events.</li><li>CCI-004866 - Employ organization-defined controls by type of denial-of-service to achieve the denial-of-service objective.</li></ul><h2>Weight</h2><p>10</p><h2>Fix Recommendation</h2><p>Configure all Exterior Border Gateway Protocol peering sessions to use GTSM.<br />
+<br />
+set firewall family inet filter gtsm term 1 from protocol tcp<br />
+set firewall family inet filter gtsm term 1 from ttl 255<br />
+set firewall family inet filter gtsm term 1 from destination-port bgp<br />
+set firewall family inet filter gtsm term 1 then accept<br />
+set firewall family inet filter gtsm term 2 from protocol tcp<br />
+set firewall family inet filter gtsm term 2 from destination-port bgp<br />
+set firewall family inet filter gtsm term 2 then log<br />
+set firewall family inet filter gtsm term 2 then syslog<br />
+set firewall family inet filter gtsm term 2 then discard<br />
+&lt;additional accept terms&gt;<br />
+set firewall family inet filter gtsm term default then log<br />
+set firewall family inet filter gtsm term default then syslog<br />
+set firewall family inet filter gtsm term default then discard<br />
+<br />
+For those platforms that support 'ttl-except':<br />
+set firewall family inet filter gtsm term 1 from protocol tcp<br />
+set firewall family inet filter gtsm term 1 from ttl-except 255<br />
+set firewall family inet filter gtsm term 1 from destination-port bgp<br />
+set firewall family inet filter gtsm term 1 then log<br />
+set firewall family inet filter gtsm term 1 then syslog<br />
+set firewall family inet filter gtsm term 1 then discard<br />
+&lt;additional accept terms&gt;<br />
+set firewall family inet filter gtsm term default then log<br />
+set firewall family inet filter gtsm term default then syslog<br />
+set firewall family inet filter gtsm term default then discard<br />
+<br />
+set interfaces &lt;BGP interface&gt; unit &lt;number&gt; family inet filter input gtsm<br />
+set interfaces &lt;BGP interface&gt; unit &lt;number&gt; family inet address &lt;IPv4 address&gt;.&lt;mask&gt;</p><h2>Check Contents</h2><p>Review the router configuration. Verify a firewall filter term discards BGP packets with a TTL less than 255.<br />
+[edit firewall family inet]<br />
+filter gtsm {<br />
+    term 1 {<br />
+        from {<br />
+            protocol tcp;<br />
+            ttl 255;<br />
+            destination-port bgp;<br />
+        }<br />
+        then accept;<br />
+    }<br />
+    term 2 {<br />
+        from {<br />
+            protocol tcp;<br />
+            destination-port bgp;<br />
+        }<br />
+        then {<br />
+            log;<br />
+            syslog;<br />
+            discard;<br />
+        }<br />
+    }<br />
+    &lt;additional accept terms&gt;<br />
+    term default {<br />
+        then {<br />
+            log;<br />
+            syslog;<br />
+            discard;<br />
+        }<br />
+    }<br />
+}<br />
+<br />
+Some routers support the &quot;ttl-except&quot; directive that can replace the two term filter shown above. For example:<br />
+[edit firewall family inet]<br />
+filter gtsm {<br />
+    term 1 {<br />
+        from {<br />
+            protocol tcp;<br />
+            ttl-except 255;<br />
+            destination-port bgp;<br />
+        }<br />
+        then {<br />
+            log;<br />
+            syslog;<br />
+            discard;<br />
+        }<br />
+    }<br />
+    &lt;additional accept terms&gt;<br />
+    term default {<br />
+        then {<br />
+            log;<br />
+            syslog;<br />
+            discard;<br />
+        }<br />
+    }<br />
+}<br />
+<br />
+Verify the filter is applied to BGP neighbor interfaces.<br />
+[edit interfaces]<br />
+&lt;bgp interface&gt; {<br />
+    unit &lt;number&gt; {<br />
+        family inet {<br />
+            filter input gtsm;<br />
+        }<br />
+        address &lt;IPv4 address&gt;.&lt;mask&gt;;<br />
+    }<br />
+}<br />
+<br />
+Note: Some Juniper devices support both monolithic filters and filter lists. Filter lists separate each term, or set of terms, into a separate filter that is applied sequentially to an interface. If using filter lists, the keywords &quot;input&quot; or &quot;output&quot; change to &quot;input-list&quot; or &quot;output-list&quot;. Verify the final list item is a deny-all filter. The deny-all filter is created once per family and can be reused across multiple lists. For example:<br />
+<br />
+input-list [ permit_mgt permit_routing_protocols default-deny ];<br />
+<br />
+If the router is not configured to use GTSM for all Exterior Border Gateway Protocol peering sessions, this is a finding.</p><h2>Vulnerability Number</h2><p>V-254044</p><h2>Documentable</h2><p>False</p><h2>Rule Version</h2><p>JUEX-RT-000720</p><h2>Severity Override Guidance</h2><p>Review the router configuration. Verify a firewall filter term discards BGP packets with a TTL less than 255.<br />
+[edit firewall family inet]<br />
+filter gtsm {<br />
+    term 1 {<br />
+        from {<br />
+            protocol tcp;<br />
+            ttl 255;<br />
+            destination-port bgp;<br />
+        }<br />
+        then accept;<br />
+    }<br />
+    term 2 {<br />
+        from {<br />
+            protocol tcp;<br />
+            destination-port bgp;<br />
+        }<br />
+        then {<br />
+            log;<br />
+            syslog;<br />
+            discard;<br />
+        }<br />
+    }<br />
+    &lt;additional accept terms&gt;<br />
+    term default {<br />
+        then {<br />
+            log;<br />
+            syslog;<br />
+            discard;<br />
+        }<br />
+    }<br />
+}<br />
+<br />
+Some routers support the &quot;ttl-except&quot; directive that can replace the two term filter shown above. For example:<br />
+[edit firewall family inet]<br />
+filter gtsm {<br />
+    term 1 {<br />
+        from {<br />
+            protocol tcp;<br />
+            ttl-except 255;<br />
+            destination-port bgp;<br />
+        }<br />
+        then {<br />
+            log;<br />
+            syslog;<br />
+            discard;<br />
+        }<br />
+    }<br />
+    &lt;additional accept terms&gt;<br />
+    term default {<br />
+        then {<br />
+            log;<br />
+            syslog;<br />
+            discard;<br />
+        }<br />
+    }<br />
+}<br />
+<br />
+Verify the filter is applied to BGP neighbor interfaces.<br />
+[edit interfaces]<br />
+&lt;bgp interface&gt; {<br />
+    unit &lt;number&gt; {<br />
+        family inet {<br />
+            filter input gtsm;<br />
+        }<br />
+        address &lt;IPv4 address&gt;.&lt;mask&gt;;<br />
+    }<br />
+}<br />
+<br />
+Note: Some Juniper devices support both monolithic filters and filter lists. Filter lists separate each term, or set of terms, into a separate filter that is applied sequentially to an interface. If using filter lists, the keywords &quot;input&quot; or &quot;output&quot; change to &quot;input-list&quot; or &quot;output-list&quot;. Verify the final list item is a deny-all filter. The deny-all filter is created once per family and can be reused across multiple lists. For example:<br />
+<br />
+input-list [ permit_mgt permit_routing_protocols default-deny ];<br />
+<br />
+If the router is not configured to use GTSM for all Exterior Border Gateway Protocol peering sessions, this is a finding.</p><h2>Check Content Reference</h2><p>M</p><h2>Target Key</h2><p>5479</p></body></html>

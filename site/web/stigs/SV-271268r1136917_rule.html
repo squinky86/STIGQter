@@ -1,0 +1,45 @@
+<!doctype html><html lang="en"><head><meta charset="utf-8"><title>STIGQter: STIG Check Details: SV-271268r1136917_rule: SQL Server must protect against a user falsely repudiating by ensuring the NT AUTHORITY SYSTEM account is not used for administration.</title><link rel="icon" type="image/svg+xml" href="STIGQter.svg" /><script async src="https://www.googletagmanager.com/gtag/js?id=UA-31381839-2"></script><script src="include.js"></script><script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-4110907817782130" crossorigin="anonymous"></script></head><body><div><img src="STIGQter.svg" alt="STIGQter" style="height:1em;" /> <a href="https://www.stigqter.com/">STIGQter</a>: <a href="main.html">STIG Summary</a>: <a href="U_MS_SQL_Server_2022_Instance_STIG_V1R4_Manual-xccdf.html">Microsoft SQL Server 2022 Instance Security Technical Implementation Guide Version: 1 Release: 4 Benchmark Date: 01 Apr 2026</a>:</div> <h1>SQL Server must protect against a user falsely repudiating by ensuring the NT AUTHORITY SYSTEM account is not used for administration.</h1><h2>DISA Rule</h2><p>SV-271268r1136917_rule</p><h2>Vulnerability Number</h2><p>V-271268</p><h2>Group Title</h2><p>SRG-APP-000080-DB-000063</p><h2>Rule Version</h2><p>SQLI-22-004100</p><h2>Severity</h2><p>CAT II</p><h2>CCI(s)</h2><ul><li>CCI-000166 - Provide irrefutable evidence that an individual (or process acting on behalf of an individual) falsely denying having performed organization-defined actions to be covered by non-repudiation.</li></ul><h2>Weight</h2><p>10</p><h2>Fix Recommendation</h2><p>Remove permissions that were identified as not allowed in the check content.<br />
+<br />
+USE Master;<br />
+<br />
+REVOKE &lt;Permission&gt; TO [NT AUTHORITY\SYSTEM]<br />
+<br />
+GO<br />
+<br />
+To grant permissions to services or applications, use the Service SID of the service or a domain service account.</p><h2>Check Contents</h2><p>Execute the following queries. The first query checks for clustering and availability groups being provisioned in the database engine. The second query lists permissions granted to the local system account.<br />
+<br />
+SELECT<br />
+    SERVERPROPERTY('IsClustered') AS [IsClustered],<br />
+    SERVERPROPERTY('IsHadrEnabled') AS [IsHadrEnabled]<br />
+<br />
+EXECUTE AS LOGIN = 'NT AUTHORITY\SYSTEM'<br />
+<br />
+SELECT * FROM fn_my_permissions(NULL, 'server')<br />
+<br />
+REVERT<br />
+<br />
+GO<br />
+<br />
+If &quot;IsClustered&quot; returns &quot;1&quot;, &quot;IsHadrEnabled&quot; returns &quot;0&quot;, and any permissions have been granted to the Local System account beyond &quot;CONNECT SQL&quot;, &quot;VIEW SERVER STATE&quot;, &quot;VIEW ANY DATABASE&quot;, &quot;VIEW SERVER PERFORMANCE STATE&quot;, and &quot;VIEW SERVER SECURITY STATE&quot;, this is a finding.<br />
+ <br />
+If &quot;IsHadrEnabled&quot; returns &quot;1&quot; and any permissions have been granted to the Local System account beyond &quot;CONNECT SQL&quot;, &quot;CREATE AVAILABILITY GROUP&quot;, &quot;ALTER ANY AVAILABILITY GROUP&quot;, &quot;VIEW SERVER STATE&quot;, &quot;VIEW ANY DATABASE&quot;, &quot;VIEW SERVER PERFORMANCE STATE&quot;, and &quot;VIEW SERVER SECURITY STATE&quot;, this is a finding.<br />
+ <br />
+If both &quot;IsClustered&quot; and &quot;IsHadrEnabled&quot; return &quot;0&quot; and any permissions have been granted to the Local System account beyond &quot;CONNECT SQL&quot; and &quot;VIEW ANY DATABASE&quot;, this is a finding.</p><h2>Vulnerability Number</h2><p>V-271268</p><h2>Documentable</h2><p>False</p><h2>Rule Version</h2><p>SQLI-22-004100</p><h2>Severity Override Guidance</h2><p>Execute the following queries. The first query checks for clustering and availability groups being provisioned in the database engine. The second query lists permissions granted to the local system account.<br />
+<br />
+SELECT<br />
+    SERVERPROPERTY('IsClustered') AS [IsClustered],<br />
+    SERVERPROPERTY('IsHadrEnabled') AS [IsHadrEnabled]<br />
+<br />
+EXECUTE AS LOGIN = 'NT AUTHORITY\SYSTEM'<br />
+<br />
+SELECT * FROM fn_my_permissions(NULL, 'server')<br />
+<br />
+REVERT<br />
+<br />
+GO<br />
+<br />
+If &quot;IsClustered&quot; returns &quot;1&quot;, &quot;IsHadrEnabled&quot; returns &quot;0&quot;, and any permissions have been granted to the Local System account beyond &quot;CONNECT SQL&quot;, &quot;VIEW SERVER STATE&quot;, &quot;VIEW ANY DATABASE&quot;, &quot;VIEW SERVER PERFORMANCE STATE&quot;, and &quot;VIEW SERVER SECURITY STATE&quot;, this is a finding.<br />
+ <br />
+If &quot;IsHadrEnabled&quot; returns &quot;1&quot; and any permissions have been granted to the Local System account beyond &quot;CONNECT SQL&quot;, &quot;CREATE AVAILABILITY GROUP&quot;, &quot;ALTER ANY AVAILABILITY GROUP&quot;, &quot;VIEW SERVER STATE&quot;, &quot;VIEW ANY DATABASE&quot;, &quot;VIEW SERVER PERFORMANCE STATE&quot;, and &quot;VIEW SERVER SECURITY STATE&quot;, this is a finding.<br />
+ <br />
+If both &quot;IsClustered&quot; and &quot;IsHadrEnabled&quot; return &quot;0&quot; and any permissions have been granted to the Local System account beyond &quot;CONNECT SQL&quot; and &quot;VIEW ANY DATABASE&quot;, this is a finding.</p><h2>Check Content Reference</h2><p>M</p><h2>Target Key</h2><p>5677</p></body></html>

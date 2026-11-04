@@ -1,0 +1,189 @@
+<!doctype html><html lang="en"><head><meta charset="utf-8"><title>STIGQter: STIG Check Details: SV-270504r1167741_rule: Oracle Database must generate audit records for the DOD-selected list of auditable events, when successfully accessed, added, modified, or deleted, to the extent such information is available.</title><link rel="icon" type="image/svg+xml" href="STIGQter.svg" /><script async src="https://www.googletagmanager.com/gtag/js?id=UA-31381839-2"></script><script src="include.js"></script><script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-4110907817782130" crossorigin="anonymous"></script></head><body><div><img src="STIGQter.svg" alt="STIGQter" style="height:1em;" /> <a href="https://www.stigqter.com/">STIGQter</a>: <a href="main.html">STIG Summary</a>: <a href="U_Oracle_Database_19c_STIG_V1R5_Manual-xccdf.html">Oracle Database 19c Security Technical Implementation Guide Version: 1 Release: 5 Benchmark Date: 01 Apr 2026</a>:</div> <h1>Oracle Database must generate audit records for the DOD-selected list of auditable events, when successfully accessed, added, modified, or deleted, to the extent such information is available.</h1><h2>DISA Rule</h2><p>SV-270504r1167741_rule</p><h2>Vulnerability Number</h2><p>V-270504</p><h2>Group Title</h2><p>SRG-APP-000091-DB-000066</p><h2>Rule Version</h2><p>O19C-00-002000</p><h2>Severity</h2><p>CAT II</p><h2>CCI(s)</h2><ul><li>CCI-000172 - Generate audit records for the event types defined in AU-2 c that include the audit record content defined in AU-3.</li></ul><h2>Weight</h2><p>10</p><h2>Fix Recommendation</h2><p>Both Standard and Unified Auditing are allowed in Oracle Database 19c.<br />
+The default is mixed auditing mode.<br />
+The predefined policy ORA_SECURECONFIG is enabled by default in mixed mode.<br />
+<br />
+Configure the DBMS's auditing settings to include auditing of events on the DOD-selected list of auditable events.<br />
+<br />
+1. Successful attempts to access, modify, or delete privileges, security objects, security levels, or categories of information (e.g., classification levels).<br />
+<br />
+To audit granting and revocation of any privilege:<br />
+CREATE AUDIT POLICY &lt;policy_name&gt; ACTIONS GRANT;<br />
+CREATE AUDIT POLICY &lt;policy_name&gt; ACTIONS REVOKE;<br />
+<br />
+To audit grants of object privileges on a specific object:<br />
+CREATE AUDIT POLICY &lt;policy_name&gt; ACTIONS GRANT ON &lt;schema&gt;.&lt;object&gt;;<br />
+<br />
+If Oracle Label Security is enabled, this will audit all OLS administrative actions:<br />
+CREATE AUDIT POLICY &lt;policy_name&gt; ACTIONS COMPONENT = OLS ALL;<br />
+<br />
+2. Successful and unsuccessful logon attempts, privileged activities or other system-level access.<br />
+ <br />
+To audit all user logon attempts:<br />
+CREATE AUDIT POLICY &lt;policy_name&gt; ACTIONS LOGON;<br />
+<br />
+To audit only logon attempts using administrative privileges (e.g., AS SYSDBA):<br />
+AUDIT POLICY &lt;policy_name&gt; BY sys, sysoper, sysbackup, sysdg, syskm;<br />
+<br />
+3. Starting and ending time for user access to the system, concurrent logons from different workstations.<br />
+<br />
+This policy will audit all logon and logoff events. An individual session is identified in the UNIFIED_AUDIT_TRAIL by the tuple (DBID, INSTANCE_ID, SESSIONID) and the start and end time will be indicated by the EVENT_TIMESTAMP of the logon and logoff events:<br />
+<br />
+CREATE AUDIT POLICY &lt;policy_name&gt; ACTIONS logon, logoff;<br />
+<br />
+4. Successful and unsuccessful accesses to objects.<br />
+<br />
+To audit all accesses to a specific table:<br />
+CREATE AUDIT POLICY &lt;policy_name&gt; ACTIONS select, insert, delete, alter ON &lt;schema&gt;.&lt;object&gt;; <br />
+<br />
+Different actions are defined for other object types. To audit all supported actions on a specific object:<br />
+CREATE AUDIT POLICY &lt;policy_name&gt; ACTIONS all ON &lt;schema&gt;.&lt;object&gt;;<br />
+ <br />
+5. All program initiations.<br />
+<br />
+To audit execution of any PL/SQL program unit:<br />
+CREATE AUDIT POLICY &lt;policy_name&gt; ACTIONS execute;<br />
+<br />
+To audit execution of a specific function, procedure, or package:<br />
+CREATE AUDIT POLICY &lt;policy_name&gt; ACTIONS execute ON &lt;schema&gt;.&lt;object&gt;;<br />
+<br />
+6. All direct access to the information system.<br />
+[Not applicable to Database audit. Monitor using OS auditing.]<br />
+<br />
+7. All account creations, modifications, disabling, and terminations.<br />
+<br />
+To audit all user administration actions:<br />
+CREATE AUDIT POLICY &lt;policy_name&gt; actions create user, alter user, drop user, change password;<br />
+<br />
+8. All kernel module loads, unloads, and restarts.<br />
+[Not applicable to Database audit. Monitor using OS auditing.]<br />
+ <br />
+9. All database parameter changes.<br />
+<br />
+To audit any database parameter changes, dynamic or static:<br />
+CREATE AUDIT POLICY &lt;policy_name&gt; ACTIONS alter database, alter system, create spfile;<br />
+<br />
+Applying the Policy:<br />
+<br />
+The following command will enable the policy in all database sessions and audit both successful and unsuccessful actions:<br />
+AUDIT POLICY &lt;policy_name&gt;;<br />
+<br />
+To audit only unsuccessful actions, add the WHENEVER NOT SUCCESSFUL modifier:<br />
+AUDIT POLICY &lt;policy_name&gt; WHENEVER NOT SUCCESSFUL;<br />
+<br />
+Either command above can be limited to only database sessions started by a specific user as follows:<br />
+AUDIT POLICY &lt;policy_name&gt; BY &lt;user&gt;;<br />
+AUDIT POLICY &lt;policy_name&gt; BY &lt;user&gt; WHENEVER NOT SUCCESSFUL;</p><h2>Check Contents</h2><p>Check Oracle Database settings to determine if auditing is being performed on the DOD-required list of auditable events supplied in the discussion.<br />
+<br />
+If Standard Auditing is used:<br />
+To verify Oracle is configured to capture audit data, enter the following SQL*Plus command:<br />
+<br />
+SHOW PARAMETER AUDIT_TRAIL<br />
+<br />
+Or the following SQL query:<br />
+<br />
+col display_value format a10<br />
+col default_value format a10<br />
+SELECT inst_id, con_id, display_value, default_value, isdefault<br />
+FROM sys.gv_$parameter WHERE name = 'audit_trail';<br />
+<br />
+If Oracle returns the value &quot;NONE&quot;, this is a finding.<br />
+<br />
+To confirm Oracle audit is capturing information on the required events, review the contents of the SYS.AUD$ table or the audit file, whichever is in use. If auditable events are not listed, this is a finding.<br />
+<br />
+If Unified Auditing is used:<br />
+To verify Oracle is configured to capture audit data, enter the following SQL*Plus command:<br />
+<br />
+col value format a10<br />
+SELECT inst_id, con_id, value<br />
+FROM sys.gv_$option<br />
+WHERE parameter = 'Unified Auditing';<br />
+<br />
+If Oracle returns a value something other than &quot;TRUE&quot;, this is a finding.<br />
+<br />
+Unified Audit supports named audit policies, which are defined using the CREATE AUDIT POLICY statement. A policy specifies the actions that should be audited and the objects to which it should apply. If no specific objects are included in the policy definition, it applies to all objects.<br />
+<br />
+A named policy is enabled using the AUDIT POLICY statement. It can be enabled for all users, for specific users only, or for all except a specified list of users. The policy can audit successful actions, unsuccessful actions, or both.<br />
+<br />
+Verifying existing audit policy: existing Unified Audit policies are listed in the view AUDIT_UNIFIED_POLICIES. The AUDIT_OPTION column contains one of the actions specified in a CREATE AUDIT POLICY statement. The AUDIT_OPTION_TYPE column contains &quot;STANDARD ACTION&quot; for a policy that applies to all objects or &quot;OBJECT ACTION&quot; for a policy that audits actions on a specific object.<br />
+<br />
+SELECT policy_name<br />
+FROM sys.audit_unified_policies<br />
+WHERE audit_option = 'GRANT'<br />
+AND audit_option_type= 'STANDARD ACTION';<br />
+<br />
+<br />
+To find policies that audit privilege grants on specific objects:<br />
+<br />
+col policy_name format a20<br />
+col object_schema format a20<br />
+col object_name format a30<br />
+SELECT policy_name, object_schema, object_name <br />
+FROM sys.audit_unified_policies <br />
+WHERE audit_option = 'GRANT'<br />
+AND audit_option_type = 'OBJECT ACTION';<br />
+<br />
+<br />
+The view AUDIT_UNIFIED_ENABLED_POLICIES shows which Unified Audit policies are enabled. The ENABLED_OPT and USER_NAME columns show the users for whom the policy is enabled or &quot;ALL USERS&quot;. The SUCCESS and FAILURE columns indicate if the policy is enabled for successful or unsuccessful actions, respectively.<br />
+<br />
+col entity_name format a30<br />
+SELECT policy_name, enabled_option, entity_name, success, failure<br />
+FROM sys.audit_unified_enabled_policies;<br />
+<br />
+If auditing is not being performed for all the events listed above, this is a finding.</p><h2>Vulnerability Number</h2><p>V-270504</p><h2>Documentable</h2><p>False</p><h2>Rule Version</h2><p>O19C-00-002000</p><h2>Severity Override Guidance</h2><p>Check Oracle Database settings to determine if auditing is being performed on the DOD-required list of auditable events supplied in the discussion.<br />
+<br />
+If Standard Auditing is used:<br />
+To verify Oracle is configured to capture audit data, enter the following SQL*Plus command:<br />
+<br />
+SHOW PARAMETER AUDIT_TRAIL<br />
+<br />
+Or the following SQL query:<br />
+<br />
+col display_value format a10<br />
+col default_value format a10<br />
+SELECT inst_id, con_id, display_value, default_value, isdefault<br />
+FROM sys.gv_$parameter WHERE name = 'audit_trail';<br />
+<br />
+If Oracle returns the value &quot;NONE&quot;, this is a finding.<br />
+<br />
+To confirm Oracle audit is capturing information on the required events, review the contents of the SYS.AUD$ table or the audit file, whichever is in use. If auditable events are not listed, this is a finding.<br />
+<br />
+If Unified Auditing is used:<br />
+To verify Oracle is configured to capture audit data, enter the following SQL*Plus command:<br />
+<br />
+col value format a10<br />
+SELECT inst_id, con_id, value<br />
+FROM sys.gv_$option<br />
+WHERE parameter = 'Unified Auditing';<br />
+<br />
+If Oracle returns a value something other than &quot;TRUE&quot;, this is a finding.<br />
+<br />
+Unified Audit supports named audit policies, which are defined using the CREATE AUDIT POLICY statement. A policy specifies the actions that should be audited and the objects to which it should apply. If no specific objects are included in the policy definition, it applies to all objects.<br />
+<br />
+A named policy is enabled using the AUDIT POLICY statement. It can be enabled for all users, for specific users only, or for all except a specified list of users. The policy can audit successful actions, unsuccessful actions, or both.<br />
+<br />
+Verifying existing audit policy: existing Unified Audit policies are listed in the view AUDIT_UNIFIED_POLICIES. The AUDIT_OPTION column contains one of the actions specified in a CREATE AUDIT POLICY statement. The AUDIT_OPTION_TYPE column contains &quot;STANDARD ACTION&quot; for a policy that applies to all objects or &quot;OBJECT ACTION&quot; for a policy that audits actions on a specific object.<br />
+<br />
+SELECT policy_name<br />
+FROM sys.audit_unified_policies<br />
+WHERE audit_option = 'GRANT'<br />
+AND audit_option_type= 'STANDARD ACTION';<br />
+<br />
+<br />
+To find policies that audit privilege grants on specific objects:<br />
+<br />
+col policy_name format a20<br />
+col object_schema format a20<br />
+col object_name format a30<br />
+SELECT policy_name, object_schema, object_name <br />
+FROM sys.audit_unified_policies <br />
+WHERE audit_option = 'GRANT'<br />
+AND audit_option_type = 'OBJECT ACTION';<br />
+<br />
+<br />
+The view AUDIT_UNIFIED_ENABLED_POLICIES shows which Unified Audit policies are enabled. The ENABLED_OPT and USER_NAME columns show the users for whom the policy is enabled or &quot;ALL USERS&quot;. The SUCCESS and FAILURE columns indicate if the policy is enabled for successful or unsuccessful actions, respectively.<br />
+<br />
+col entity_name format a30<br />
+SELECT policy_name, enabled_option, entity_name, success, failure<br />
+FROM sys.audit_unified_enabled_policies;<br />
+<br />
+If auditing is not being performed for all the events listed above, this is a finding.</p><h2>Check Content Reference</h2><p>M</p><h2>Target Key</h2><p>5672</p></body></html>

@@ -1,0 +1,177 @@
+<!doctype html><html lang="en"><head><meta charset="utf-8"><title>STIGQter: STIG Check Details: SV-279553r1192405_rule: Nutanix OS must provide audit record generation for successful and unsuccessful attempts to move, remove, or delete files and directories.</title><link rel="icon" type="image/svg+xml" href="STIGQter.svg" /><script async src="https://www.googletagmanager.com/gtag/js?id=UA-31381839-2"></script><script src="include.js"></script><script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-4110907817782130" crossorigin="anonymous"></script></head><body><div><img src="STIGQter.svg" alt="STIGQter" style="height:1em;" /> <a href="https://www.stigqter.com/">STIGQter</a>: <a href="main.html">STIG Summary</a>: <a href="U_NTX_Acropolis_OS_STIG_V1R1_Manual-xccdf.html">Nutanix Acropolis GPOS Security Technical Implementation Guide Version: 1 Release: 1 Benchmark Date: 26 Jan 2026</a>:</div> <h1>Nutanix OS must provide audit record generation for successful and unsuccessful attempts to move, remove, or delete files and directories.</h1><h2>DISA Rule</h2><p>SV-279553r1192405_rule</p><h2>Vulnerability Number</h2><p>V-279553</p><h2>Group Title</h2><p>SRG-OS-000062-GPOS-00031</p><h2>Rule Version</h2><p>NXAC-OS-000047</p><h2>Severity</h2><p>CAT II</p><h2>CCI(s)</h2><ul><li>CCI-000169 - Provide audit record generation capability for the event types the system is capable of auditing as defined in AU-2 a. on organization-defined information system components.</li><li>CCI-000172 - Generate audit records for the event types defined in AU-2 c that include the audit record content defined in AU-3.</li></ul><h2>Weight</h2><p>10</p><h2>Fix Recommendation</h2><p>Configure the OS to generate audit records for successful/unsuccessful attempts to use the &quot;rename&quot;, &quot;unlink&quot;, &quot;rmdir&quot;, &quot;renameat&quot;, and &quot;unlinkat&quot; system calls by using the following command to check the file system rules in &quot;/etc/audit/audit.rules&quot;.<br />
+<br />
+1. For AOS, configure the audit rules.<br />
+<br />
+$ sudo salt-call state.sls security/CVM/auditCVM<br />
+<br />
+2. For Prism Central, configure the audit rules.<br />
+<br />
+$ sudo salt-call state.sls security/PCVM/auditPCVM<br />
+<br />
+3. For Files, configure the audit rules.<br />
+<br />
+$ sudo salt-call state.sls security/AFS/auditAFS<br />
+<br />
+4. For AHV, configure the audit rules.<br />
+<br />
+$ sudo salt-call state.sls security/KVM/auditKVM</p><h2>Check Contents</h2><p>Verify Nutanix OS generates an audit record upon successful/unsuccessful attempts to use the &quot;rename&quot;, &quot;unlink&quot;, &quot;rmdir&quot;, &quot;renameat&quot;, and &quot;unlinkat&quot; system calls by using the following commands to check the file system rules in &quot;/etc/audit/audit.rules&quot; using the following commands.<br />
+<br />
+$ sudo grep -w &quot;\-S mount&quot; /etc/audit/audit.rules<br />
+-a always,exit -F arch=b64 -S mount -F auid=0 -k audit_time_perm_mod_export_delete<br />
+-a always,exit -F arch=b64 -S mount -F auid&gt;=1000 -F auid!=4294967295 -k audit_time_perm_mod_export_delete<br />
+-a always,exit -F arch=b32 -S mount -F auid=0 -k audit_time_perm_mod_export_delete<br />
+-a always,exit -F arch=b32 -S mount -F auid&gt;=1000 -F auid!=4294967295 -k audit_time_perm_mod_export_delete<br />
+<br />
+$ sudo grep -w &quot;rename&quot; /etc/audit/audit.rules<br />
+-a always,exit -F arch=b64 -S rename -F auid=0 -k audit_time_perm_mod_export_delete<br />
+-a always,exit -F arch=b64 -S rename -F auid&gt;=1000 -F auid!=4294967295 -k audit_time_perm_mod_export_delete<br />
+-a always,exit -F arch=b32 -S rename -F auid=0 -k audit_time_perm_mod_export_delete<br />
+-a always,exit -F arch=b32 -S rename -F auid&gt;=1000 -F auid!=4294967295 -k audit_time_perm_mod_export_delete<br />
+<br />
+$ sudo grep -w &quot;renameat&quot; /etc/audit/audit.rules<br />
+-a always,exit -F arch=b64 -S renameat -F auid=0 -k audit_time_perm_mod_export_delete<br />
+-a always,exit -F arch=b64 -S renameat -F auid&gt;=1000 -F auid!=4294967295 -k audit_time_perm_mod_export_delete<br />
+-a always,exit -F arch=b32 -S renameat -F auid=0 -k audit_time_perm_mod_export_delete<br />
+-a always,exit -F arch=b32 -S renameat -F auid&gt;=1000 -F auid!=4294967295 -k audit_time_perm_mod_export_delete<br />
+<br />
+$ sudo grep -w &quot;rmdir&quot; /etc/audit/audit.rules<br />
+-a always,exit -F arch=b64 -S rmdir -F auid=0 -k audit_time_perm_mod_export_delete<br />
+-a always,exit -F arch=b64 -S rmdir -F auid&gt;=1000 -F auid!=4294967295 -k audit_time_perm_mod_export_delete<br />
+-a always,exit -F arch=b32 -S rmdir -F auid=0 -k audit_time_perm_mod_export_delete<br />
+-a always,exit -F arch=b32 -S rmdir -F auid&gt;=1000 -F auid!=4294967295 -k audit_time_perm_mod_export_delete<br />
+<br />
+$ sudo grep -w &quot;unlink&quot; /etc/audit/audit.rules<br />
+-a always,exit -F arch=b64 -S unlink -F auid=0 -k audit_time_perm_mod_export_delete<br />
+-a always,exit -F arch=b64 -S unlink -F auid&gt;=1000 -F auid!=4294967295 -k audit_time_perm_mod_export_delete<br />
+-a always,exit -F arch=b32 -S unlink -F auid=0 -k audit_time_perm_mod_export_delete<br />
+-a always,exit -F arch=b32 -S unlink -F auid&gt;=1000 -F auid!=4294967295 -k audit_time_perm_mod_export_delete<br />
+<br />
+$ sudo grep -w &quot;unlinkat&quot; /etc/audit/audit.rules<br />
+-a always,exit -F arch=b64 -S unlinkat -F auid=0 -k audit_time_perm_mod_export_delete<br />
+-a always,exit -F arch=b64 -S unlinkat -F auid&gt;=1000 -F auid!=4294967295 -k audit_time_perm_mod_export_delete<br />
+-a always,exit -F arch=b32 -S unlinkat -F auid=0 -k audit_time_perm_mod_export_delete<br />
+-a always,exit -F arch=b32 -S unlinkat -F auid&gt;=1000 -F auid!=4294967295 -k audit_time_perm_mod_export_delete<br />
+<br />
+$ sudo grep -w chown /etc/audit/audit.rules<br />
+-a always,exit -F arch=b64 -S chown -F auid=0 -k audit_time_perm_mod_export_delete<br />
+-a always,exit -F arch=b64 -S chown -F auid&gt;=1000 -F auid!=4294967295 -k audit_time_perm_mod_export_delete<br />
+-a always,exit -F arch=b32 -S chown -F auid=0 -k audit_time_perm_mod_export_delete<br />
+-a always,exit -F arch=b32 -S chown -F auid&gt;=1000 -F auid!=4294967295 -k audit_time_perm_mod_export_delete<br />
+<br />
+$ sudo grep -w chmod /etc/audit/audit.rules<br />
+-a always,exit -F arch=b64 -S chmod -F auid=0 -k audit_time_perm_mod_export_delete<br />
+-a always,exit -F arch=b64 -S chmod -F auid&gt;=1000 -F auid!=4294967295 -k audit_time_perm_mod_export_delete<br />
+-a always,exit -F arch=b32 -S chmod -F auid=0 -k audit_time_perm_mod_export_delete<br />
+-a always,exit -F arch=b32 -S chmod -F auid&gt;=1000 -F auid!=4294967295 -k audit_time_perm_mod_export_delete<br />
+<br />
+$ sudo grep -w lchown /etc/audit/audit.rules<br />
+-a always,exit -F arch=b64 -S lchown -F auid=0 -k audit_time_perm_mod_export_delete<br />
+-a always,exit -F arch=b64 -S lchown -F auid&gt;=1000 -F auid!=4294967295 -k audit_time_perm_mod_export_delete<br />
+-a always,exit -F arch=b32 -S lchown -F auid=0 -k audit_time_perm_mod_export_delete<br />
+-a always,exit -F arch=b32 -S lchown -F auid&gt;=1000 -F auid!=4294967295 -k audit_time_perm_mod_export_delete<br />
+<br />
+$ sudo grep -w fchownat /etc/audit/audit.rules<br />
+-a always,exit -F arch=b64 -S fchownat -F auid=0 -k audit_time_perm_mod_export_delete<br />
+-a always,exit -F arch=b64 -S fchownat -F auid&gt;=1000 -F auid!=4294967295 -k audit_time_perm_mod_export_delete<br />
+-a always,exit -F arch=b32 -S fchownat -F auid=0 -k audit_time_perm_mod_export_delete<br />
+-a always,exit -F arch=b32 -S fchownat -F auid&gt;=1000 -F auid!=4294967295 -k audit_time_perm_mod_export_delete<br />
+<br />
+$ sudo grep -w fchown /etc/audit/audit.rules<br />
+-a always,exit -F arch=b64 -S fchown -F auid=0 -k audit_time_perm_mod_export_delete<br />
+-a always,exit -F arch=b64 -S fchown -F auid&gt;=1000 -F auid!=4294967295 -k audit_time_perm_mod_export_delete<br />
+-a always,exit -F arch=b32 -S fchown -F auid=0 -k audit_time_perm_mod_export_delete<br />
+-a always,exit -F arch=b32 -S fchown -F auid&gt;=1000 -F auid!=4294967295 -k audit_time_perm_mod_export_delete<br />
+<br />
+$ sudo grep -w fchmodat /etc/audit/audit.rules<br />
+-a always,exit -F arch=b64 -S fchmodat -F auid=0 -k audit_time_perm_mod_export_delete<br />
+-a always,exit -F arch=b64 -S fchmodat -F auid&gt;=1000 -F auid!=4294967295 -k audit_time_perm_mod_export_delete<br />
+-a always,exit -F arch=b32 -S fchmodat -F auid=0 -k audit_time_perm_mod_export_delete<br />
+-a always,exit -F arch=b32 -S fchmodat -F auid&gt;=1000 -F auid!=4294967295 -k audit_time_perm_mod_export_delete<br />
+<br />
+$ sudo grep -w fchmod /etc/audit/audit.rules<br />
+-a always,exit -F arch=b64 -S fchmod -F auid=0 -k audit_time_perm_mod_export_delete<br />
+-a always,exit -F arch=b64 -S fchmod -F auid&gt;=1000 -F auid!=4294967295 -k audit_time_perm_mod_export_delete<br />
+-a always,exit -F arch=b32 -S fchmod -F auid=0 -k audit_time_perm_mod_export_delete<br />
+-a always,exit -F arch=b32 -S fchmod -F auid&gt;=1000 -F auid!=4294967295 -k audit_time_perm_mod_export_delete<br />
+<br />
+If the commands do not return the appropriate response line as indicated above, or if the lines are commented out, this is a finding.</p><h2>Vulnerability Number</h2><p>V-279553</p><h2>Documentable</h2><p>False</p><h2>Rule Version</h2><p>NXAC-OS-000047</p><h2>Severity Override Guidance</h2><p>Verify Nutanix OS generates an audit record upon successful/unsuccessful attempts to use the &quot;rename&quot;, &quot;unlink&quot;, &quot;rmdir&quot;, &quot;renameat&quot;, and &quot;unlinkat&quot; system calls by using the following commands to check the file system rules in &quot;/etc/audit/audit.rules&quot; using the following commands.<br />
+<br />
+$ sudo grep -w &quot;\-S mount&quot; /etc/audit/audit.rules<br />
+-a always,exit -F arch=b64 -S mount -F auid=0 -k audit_time_perm_mod_export_delete<br />
+-a always,exit -F arch=b64 -S mount -F auid&gt;=1000 -F auid!=4294967295 -k audit_time_perm_mod_export_delete<br />
+-a always,exit -F arch=b32 -S mount -F auid=0 -k audit_time_perm_mod_export_delete<br />
+-a always,exit -F arch=b32 -S mount -F auid&gt;=1000 -F auid!=4294967295 -k audit_time_perm_mod_export_delete<br />
+<br />
+$ sudo grep -w &quot;rename&quot; /etc/audit/audit.rules<br />
+-a always,exit -F arch=b64 -S rename -F auid=0 -k audit_time_perm_mod_export_delete<br />
+-a always,exit -F arch=b64 -S rename -F auid&gt;=1000 -F auid!=4294967295 -k audit_time_perm_mod_export_delete<br />
+-a always,exit -F arch=b32 -S rename -F auid=0 -k audit_time_perm_mod_export_delete<br />
+-a always,exit -F arch=b32 -S rename -F auid&gt;=1000 -F auid!=4294967295 -k audit_time_perm_mod_export_delete<br />
+<br />
+$ sudo grep -w &quot;renameat&quot; /etc/audit/audit.rules<br />
+-a always,exit -F arch=b64 -S renameat -F auid=0 -k audit_time_perm_mod_export_delete<br />
+-a always,exit -F arch=b64 -S renameat -F auid&gt;=1000 -F auid!=4294967295 -k audit_time_perm_mod_export_delete<br />
+-a always,exit -F arch=b32 -S renameat -F auid=0 -k audit_time_perm_mod_export_delete<br />
+-a always,exit -F arch=b32 -S renameat -F auid&gt;=1000 -F auid!=4294967295 -k audit_time_perm_mod_export_delete<br />
+<br />
+$ sudo grep -w &quot;rmdir&quot; /etc/audit/audit.rules<br />
+-a always,exit -F arch=b64 -S rmdir -F auid=0 -k audit_time_perm_mod_export_delete<br />
+-a always,exit -F arch=b64 -S rmdir -F auid&gt;=1000 -F auid!=4294967295 -k audit_time_perm_mod_export_delete<br />
+-a always,exit -F arch=b32 -S rmdir -F auid=0 -k audit_time_perm_mod_export_delete<br />
+-a always,exit -F arch=b32 -S rmdir -F auid&gt;=1000 -F auid!=4294967295 -k audit_time_perm_mod_export_delete<br />
+<br />
+$ sudo grep -w &quot;unlink&quot; /etc/audit/audit.rules<br />
+-a always,exit -F arch=b64 -S unlink -F auid=0 -k audit_time_perm_mod_export_delete<br />
+-a always,exit -F arch=b64 -S unlink -F auid&gt;=1000 -F auid!=4294967295 -k audit_time_perm_mod_export_delete<br />
+-a always,exit -F arch=b32 -S unlink -F auid=0 -k audit_time_perm_mod_export_delete<br />
+-a always,exit -F arch=b32 -S unlink -F auid&gt;=1000 -F auid!=4294967295 -k audit_time_perm_mod_export_delete<br />
+<br />
+$ sudo grep -w &quot;unlinkat&quot; /etc/audit/audit.rules<br />
+-a always,exit -F arch=b64 -S unlinkat -F auid=0 -k audit_time_perm_mod_export_delete<br />
+-a always,exit -F arch=b64 -S unlinkat -F auid&gt;=1000 -F auid!=4294967295 -k audit_time_perm_mod_export_delete<br />
+-a always,exit -F arch=b32 -S unlinkat -F auid=0 -k audit_time_perm_mod_export_delete<br />
+-a always,exit -F arch=b32 -S unlinkat -F auid&gt;=1000 -F auid!=4294967295 -k audit_time_perm_mod_export_delete<br />
+<br />
+$ sudo grep -w chown /etc/audit/audit.rules<br />
+-a always,exit -F arch=b64 -S chown -F auid=0 -k audit_time_perm_mod_export_delete<br />
+-a always,exit -F arch=b64 -S chown -F auid&gt;=1000 -F auid!=4294967295 -k audit_time_perm_mod_export_delete<br />
+-a always,exit -F arch=b32 -S chown -F auid=0 -k audit_time_perm_mod_export_delete<br />
+-a always,exit -F arch=b32 -S chown -F auid&gt;=1000 -F auid!=4294967295 -k audit_time_perm_mod_export_delete<br />
+<br />
+$ sudo grep -w chmod /etc/audit/audit.rules<br />
+-a always,exit -F arch=b64 -S chmod -F auid=0 -k audit_time_perm_mod_export_delete<br />
+-a always,exit -F arch=b64 -S chmod -F auid&gt;=1000 -F auid!=4294967295 -k audit_time_perm_mod_export_delete<br />
+-a always,exit -F arch=b32 -S chmod -F auid=0 -k audit_time_perm_mod_export_delete<br />
+-a always,exit -F arch=b32 -S chmod -F auid&gt;=1000 -F auid!=4294967295 -k audit_time_perm_mod_export_delete<br />
+<br />
+$ sudo grep -w lchown /etc/audit/audit.rules<br />
+-a always,exit -F arch=b64 -S lchown -F auid=0 -k audit_time_perm_mod_export_delete<br />
+-a always,exit -F arch=b64 -S lchown -F auid&gt;=1000 -F auid!=4294967295 -k audit_time_perm_mod_export_delete<br />
+-a always,exit -F arch=b32 -S lchown -F auid=0 -k audit_time_perm_mod_export_delete<br />
+-a always,exit -F arch=b32 -S lchown -F auid&gt;=1000 -F auid!=4294967295 -k audit_time_perm_mod_export_delete<br />
+<br />
+$ sudo grep -w fchownat /etc/audit/audit.rules<br />
+-a always,exit -F arch=b64 -S fchownat -F auid=0 -k audit_time_perm_mod_export_delete<br />
+-a always,exit -F arch=b64 -S fchownat -F auid&gt;=1000 -F auid!=4294967295 -k audit_time_perm_mod_export_delete<br />
+-a always,exit -F arch=b32 -S fchownat -F auid=0 -k audit_time_perm_mod_export_delete<br />
+-a always,exit -F arch=b32 -S fchownat -F auid&gt;=1000 -F auid!=4294967295 -k audit_time_perm_mod_export_delete<br />
+<br />
+$ sudo grep -w fchown /etc/audit/audit.rules<br />
+-a always,exit -F arch=b64 -S fchown -F auid=0 -k audit_time_perm_mod_export_delete<br />
+-a always,exit -F arch=b64 -S fchown -F auid&gt;=1000 -F auid!=4294967295 -k audit_time_perm_mod_export_delete<br />
+-a always,exit -F arch=b32 -S fchown -F auid=0 -k audit_time_perm_mod_export_delete<br />
+-a always,exit -F arch=b32 -S fchown -F auid&gt;=1000 -F auid!=4294967295 -k audit_time_perm_mod_export_delete<br />
+<br />
+$ sudo grep -w fchmodat /etc/audit/audit.rules<br />
+-a always,exit -F arch=b64 -S fchmodat -F auid=0 -k audit_time_perm_mod_export_delete<br />
+-a always,exit -F arch=b64 -S fchmodat -F auid&gt;=1000 -F auid!=4294967295 -k audit_time_perm_mod_export_delete<br />
+-a always,exit -F arch=b32 -S fchmodat -F auid=0 -k audit_time_perm_mod_export_delete<br />
+-a always,exit -F arch=b32 -S fchmodat -F auid&gt;=1000 -F auid!=4294967295 -k audit_time_perm_mod_export_delete<br />
+<br />
+$ sudo grep -w fchmod /etc/audit/audit.rules<br />
+-a always,exit -F arch=b64 -S fchmod -F auid=0 -k audit_time_perm_mod_export_delete<br />
+-a always,exit -F arch=b64 -S fchmod -F auid&gt;=1000 -F auid!=4294967295 -k audit_time_perm_mod_export_delete<br />
+-a always,exit -F arch=b32 -S fchmod -F auid=0 -k audit_time_perm_mod_export_delete<br />
+-a always,exit -F arch=b32 -S fchmod -F auid&gt;=1000 -F auid!=4294967295 -k audit_time_perm_mod_export_delete<br />
+<br />
+If the commands do not return the appropriate response line as indicated above, or if the lines are commented out, this is a finding.</p><h2>Check Content Reference</h2><p>M</p><h2>Target Key</h2><p>5730</p></body></html>

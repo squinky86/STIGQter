@@ -1,0 +1,50 @@
+<!doctype html><html lang="en"><head><meta charset="utf-8"><title>STIGQter: STIG Check Details: SV-215310r958640_rule: If Bourne / ksh shell is used, AIX must display logout messages.</title><link rel="icon" type="image/svg+xml" href="STIGQter.svg" /><script async src="https://www.googletagmanager.com/gtag/js?id=UA-31381839-2"></script><script src="include.js"></script><script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-4110907817782130" crossorigin="anonymous"></script></head><body><div><img src="STIGQter.svg" alt="STIGQter" style="height:1em;" /> <a href="https://www.stigqter.com/">STIGQter</a>: <a href="main.html">STIG Summary</a>: <a href="U_IBM_AIX_7-x_STIG_V3R3_Manual-xccdf.html">IBM AIX 7.x Security Technical Implementation Guide Version: 3 Release: 3 Benchmark Date: 01 Jul 2026</a>:</div> <h1>If Bourne / ksh shell is used, AIX must display logout messages.</h1><h2>DISA Rule</h2><p>SV-215310r958640_rule</p><h2>Vulnerability Number</h2><p>V-215310</p><h2>Group Title</h2><p>SRG-OS-000281-GPOS-00111</p><h2>Rule Version</h2><p>AIX7-00-002129</p><h2>Severity</h2><p>CAT III</p><h2>CCI(s)</h2><ul><li>CCI-002364 - Display an explicit logout message to users indicating the reliable termination of authenticated communications sessions.</li></ul><h2>Weight</h2><p>10</p><h2>Fix Recommendation</h2><p>Create the &quot;.logout&quot; file if it does not exist.<br />
+<br />
+Add the following two lines to &quot;.logout&quot; to display a logout message and sleep for &quot;5&quot; seconds:<br />
+echo &quot;You are being disconnected.&quot;<br />
+sleep 5<br />
+<br />
+Create, or modify, &quot;.profile&quot; to include the following line:<br />
+trap '$HOME/.logout' EXIT</p><h2>Check Contents</h2><p>Verify users have a &quot;.logout&quot; file in their home directory:<br />
+<br />
+# for home in `cut -d: -f6 /etc/passwd`; do ls -alL $home/.logout; done<br />
+-rwxr-----    1 root  system           297 Jan 29 09:47 /root/.logout<br />
+-rwxr-----    1 doejohn  staff        297 Jul 4 00:47 /home/doejohn/.logout<br />
+<br />
+If an interactive user does not have their &quot;.logout&quot; file, this is a finding.<br />
+<br />
+Verify that each &quot;.logout&quot; file identified above contains a logout message:<br />
+<br />
+# cat &lt;user_home_directory&gt;/.logout<br />
+echo &quot;You are being disconnected.&quot;<br />
+sleep 5<br />
+<br />
+If the &quot;.logout&quot; file does not display a logout message, this is a finding.<br />
+<br />
+Verify each users' &quot;.profile&quot; file calls &quot;$HOME/.logout&quot; while logging out:<br />
+<br />
+# grep &quot;trap '$HOME/.logout' EXIT &quot; &lt;user_home_directory&gt;/.profile<br />
+trap '$HOME/.logout' EXIT<br />
+<br />
+If the &quot;.profile&quot; file does not call &quot;$HOME/.logout&quot;, this is a finding.</p><h2>Vulnerability Number</h2><p>V-215310</p><h2>Documentable</h2><p>False</p><h2>Rule Version</h2><p>AIX7-00-002129</p><h2>Severity Override Guidance</h2><p>Verify users have a &quot;.logout&quot; file in their home directory:<br />
+<br />
+# for home in `cut -d: -f6 /etc/passwd`; do ls -alL $home/.logout; done<br />
+-rwxr-----    1 root  system           297 Jan 29 09:47 /root/.logout<br />
+-rwxr-----    1 doejohn  staff        297 Jul 4 00:47 /home/doejohn/.logout<br />
+<br />
+If an interactive user does not have their &quot;.logout&quot; file, this is a finding.<br />
+<br />
+Verify that each &quot;.logout&quot; file identified above contains a logout message:<br />
+<br />
+# cat &lt;user_home_directory&gt;/.logout<br />
+echo &quot;You are being disconnected.&quot;<br />
+sleep 5<br />
+<br />
+If the &quot;.logout&quot; file does not display a logout message, this is a finding.<br />
+<br />
+Verify each users' &quot;.profile&quot; file calls &quot;$HOME/.logout&quot; while logging out:<br />
+<br />
+# grep &quot;trap '$HOME/.logout' EXIT &quot; &lt;user_home_directory&gt;/.profile<br />
+trap '$HOME/.logout' EXIT<br />
+<br />
+If the &quot;.profile&quot; file does not call &quot;$HOME/.logout&quot;, this is a finding.</p><h2>Check Content Reference</h2><p>M</p><h2>Target Key</h2><p>4012</p></body></html>

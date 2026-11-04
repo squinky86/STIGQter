@@ -1,0 +1,47 @@
+<!doctype html><html lang="en"><head><meta charset="utf-8"><title>STIGQter: STIG Check Details: SV-258737r933272_rule: The ESXi host must uniquely identify and must authenticate organizational users by using Active Directory.</title><link rel="icon" type="image/svg+xml" href="STIGQter.svg" /><script async src="https://www.googletagmanager.com/gtag/js?id=UA-31381839-2"></script><script src="include.js"></script><script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-4110907817782130" crossorigin="anonymous"></script></head><body><div><img src="STIGQter.svg" alt="STIGQter" style="height:1em;" /> <a href="https://www.stigqter.com/">STIGQter</a>: <a href="main.html">STIG Summary</a>: <a href="U_VMW_vSphere_8-0-ESXi_STIG_V1R1_Manual-xccdf.html">VMware vSphere 8.0 ESXi Security Technical Implementation Guide Version: 1 Release: 1 Benchmark Date: 31 Oct 2023</a>:</div> <h1>The ESXi host must uniquely identify and must authenticate organizational users by using Active Directory.</h1><h2>DISA Rule</h2><p>SV-258737r933272_rule</p><h2>Vulnerability Number</h2><p>V-258737</p><h2>Group Title</h2><p>SRG-OS-000104-VMM-000500</p><h2>Rule Version</h2><p>ESXI-80-000049</p><h2>Severity</h2><p>CAT III</p><h2>CCI(s)</h2><ul><li>CCI-000764 - Uniquely identify and authenticate organizational users and associate that unique identification with processes acting on behalf of those users.</li><li>CCI-001682 - Automatically removes or disables emergency accounts after an organization-defined time period for each type of account.</li><li>CCI-001941 - Implement replay-resistant authentication mechanisms for access to privileged accounts and/or non-privileged accounts.</li></ul><h2>Weight</h2><p>10</p><h2>Fix Recommendation</h2><p>From the vSphere Client, go to Hosts and Clusters.<br />
+<br />
+Select the ESXi Host &gt;&gt; Configure &gt;&gt; System &gt;&gt; Authentication Services.<br />
+<br />
+Click &quot;Join Domain...&quot; and enter the AD domain to join.<br />
+<br />
+Select the &quot;Using credentials&quot; radio button and enter the credentials of an account with permissions to join machines to AD (use UPN naming &quot;user@domain&quot;). Click &quot;OK&quot;.<br />
+<br />
+or<br />
+<br />
+From a PowerCLI command prompt while connected to the ESXi host, run the following command:<br />
+<br />
+Get-VMHost | Get-VMHostAuthentication | Set-VMHostAuthentication -JoinDomain -Domain &quot;domain name&quot; -User &quot;username&quot; -Password &quot;password&quot;<br />
+<br />
+If any local user accounts are present besides root and service accounts, delete them by going to Host UI &gt;&gt; Manage &gt;&gt; Security &amp; Users &gt;&gt; Users.</p><h2>Check Contents</h2><p>For systems that do not use Active Directory and have no local user accounts other than root and/or service accounts, this is not applicable.<br />
+<br />
+From the vSphere Client, go to Hosts and Clusters.<br />
+<br />
+Select the ESXi Host &gt;&gt; Configure &gt;&gt; System &gt;&gt; Authentication Services.<br />
+<br />
+Verify the &quot;Directory Services Type&quot; is set to &quot;Active Directory&quot;.<br />
+<br />
+or<br />
+<br />
+From a PowerCLI command prompt while connected to the ESXi host, run the following command:<br />
+<br />
+Get-VMHost | Get-VMHostAuthentication<br />
+<br />
+For systems that do not use Active Directory and do have local user accounts, other than root and/or service accounts, this is a finding.<br />
+<br />
+If the &quot;Directory Services Type&quot; is not set to &quot;Active Directory&quot;, this is a finding.</p><h2>Vulnerability Number</h2><p>V-258737</p><h2>Documentable</h2><p>False</p><h2>Rule Version</h2><p>ESXI-80-000049</p><h2>Severity Override Guidance</h2><p>For systems that do not use Active Directory and have no local user accounts other than root and/or service accounts, this is not applicable.<br />
+<br />
+From the vSphere Client, go to Hosts and Clusters.<br />
+<br />
+Select the ESXi Host &gt;&gt; Configure &gt;&gt; System &gt;&gt; Authentication Services.<br />
+<br />
+Verify the &quot;Directory Services Type&quot; is set to &quot;Active Directory&quot;.<br />
+<br />
+or<br />
+<br />
+From a PowerCLI command prompt while connected to the ESXi host, run the following command:<br />
+<br />
+Get-VMHost | Get-VMHostAuthentication<br />
+<br />
+For systems that do not use Active Directory and do have local user accounts, other than root and/or service accounts, this is a finding.<br />
+<br />
+If the &quot;Directory Services Type&quot; is not set to &quot;Active Directory&quot;, this is a finding.</p><h2>Check Content Reference</h2><p>M</p><h2>Target Key</h2><p>5562</p></body></html>

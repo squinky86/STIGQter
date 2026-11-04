@@ -1,0 +1,336 @@
+<!doctype html><html lang="en"><head><meta charset="utf-8"><title>STIGQter: STIG Check Details: SV-217015r604135_rule: The Juniper router must be configured to authenticate all routing protocol messages using NIST-validated FIPS 140-2 message authentication code algorithm.</title><link rel="icon" type="image/svg+xml" href="STIGQter.svg" /><script async src="https://www.googletagmanager.com/gtag/js?id=UA-31381839-2"></script><script src="include.js"></script><script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-4110907817782130" crossorigin="anonymous"></script></head><body><div><img src="STIGQter.svg" alt="STIGQter" style="height:1em;" /> <a href="https://www.stigqter.com/">STIGQter</a>: <a href="main.html">STIG Summary</a>: <a href="U_Juniper_Router_RTR_STIG_V3R2_Manual-xccdf.html">Juniper Router RTR Security Technical Implementation Guide Version: 3 Release: 2 Benchmark Date: 30 Jan 2025</a>:</div> <h1>The Juniper router must be configured to authenticate all routing protocol messages using NIST-validated FIPS 140-2 message authentication code algorithm.</h1><h2>DISA Rule</h2><p>SV-217015r604135_rule</p><h2>Vulnerability Number</h2><p>V-217015</p><h2>Group Title</h2><p>SRG-NET-000168-RTR-000078</p><h2>Rule Version</h2><p>JUNI-RT-000050</p><h2>Severity</h2><p>CAT II</p><h2>CCI(s)</h2><ul><li>CCI-000803 - Implement mechanisms for authentication to a cryptographic module that meet the requirements of applicable laws, Executive Orders, directives, policies, regulations, standards, and guidance for such authentication.</li></ul><h2>Weight</h2><p>10</p><h2>Fix Recommendation</h2><p>Configure routing protocol authentication to use a NIST-validated FIPS 140-2 message authentication code algorithm.<br />
+<br />
+IS-IS Example:<br />
+<br />
+[edit security authentication-key-chains]<br />
+set key-chain ISIS_KEY key 1 options isis-enhanced<br />
+set key-chain ISIS_KEY key 2 options isis-enhanced<br />
+set key-chain ISIS_KEY key 3 options isis-enhanced<br />
+set key-chain ISIS_KEY key 1 start-time 2018-05-01.12:00 algorithm hmac-sha-1 secret xxxxxxxxxxxxx<br />
+set key-chain ISIS_KEY key 2 start-time 2018-09-01.12:00 algorithm hmac-sha-1 secret xxxxxxxxxxxxx<br />
+set key-chain ISIS_KEY key 3 start-time 2019-01-01.12:00 algorithm hmac-sha-1 secret xxxxxxxxxxxxx<br />
+<br />
+[edit protocols]<br />
+set isis level 1 authentication-key-chain ISIS_KEY<br />
+set isis interface ge-0/0/0 level 1 hello-authentication-key-chain ISIS_KEY<br />
+set isis interface ge-0/0/0 level 2 hello-authentication-key-chain ISIS_KEY<br />
+<br />
+BGP Example:<br />
+<br />
+[edit security authentication-key-chains]<br />
+set key-chain BGP_KEY key 1 start-time 2018-05-01.12:00 secret xxxxxxxxxxxxx<br />
+set key-chain BGP_KEY key 2 start-time 2018-09-01.12:00 secret xxxxxxxxxxxxx<br />
+set key-chain BGP_KEY key 3 start-time 2019-01-01.12:00 secret xxxxxxxxxxxxx<br />
+<br />
+[edit protocols bgp group AS_5]<br />
+set neighbor 11.1.25.5 authentication-algorithm hmac-sha-1-96<br />
+set neighbor 11.1.25.5 authentication-key-chain BGP_KEY<br />
+set neighbor 11.1.1.1 authentication-algorithm hmac-sha-1-96<br />
+set neighbor 11.1.1.1 authentication-key-chain BGP_KEY<br />
+<br />
+OSPF Example:<br />
+<br />
+Configure IPsec Security Association<br />
+[edit security ipsec]<br />
+set security-association IPSEC-SA1<br />
+set security-association IPSEC-SA1 mode transport<br />
+set security-association IPSEC-SA1 manual direction bidirectional<br />
+set security-association IPSEC-SA1 manual direction bidirectional protocol ah<br />
+set security-association IPSEC-SA1 manual direction bidirectional spi 256 <br />
+set security-association IPSEC-SA1 manual direction bidirectional authentication algorithm hmac-sha1-96 key ascii-text 1234567890abcdefghij <br />
+<br />
+[edit protocols ospf area 0.0.0.0]<br />
+set interface ge-0/0/0 ipsec-sa IPSEC-SA1<br />
+set interface ge-0/1/0 ipsec-sa IPSEC-SA1<br />
+set interface ge-0/2/0 ipsec-sa IPSEC-SA1<br />
+<br />
+[edit protocols ospf area 0.0.0.0]<br />
+set interface ge-1/2/0 ipsec-sa IPSEC-SA1</p><h2>Check Contents</h2><p>Review the router configuration to verify it is using a NIST-validated FIPS 140-2 message authentication code algorithm to authenticate routing protocol messages.<br />
+<br />
+IS-IS Example:<br />
+<br />
+security {<br />
+     …<br />
+    …<br />
+    …<br />
+    }<br />
+    authentication-key-chains {<br />
+        key-chain ISIS_KEY {<br />
+            key 1 {<br />
+                secret &quot;$8$W8oXxdji.f5F-VQn&quot;; ## SECRET-DATA<br />
+                start-time &quot;2018-5-1.12:00:00 +0000&quot;;<br />
+                algorithm hmac-sha-1;<br />
+                options isis-enhanced;<br />
+            }<br />
+            key 2 {<br />
+                secret &quot;$8$Q4953nCrlMLX-9A7V&quot;; ## SECRET-DATA<br />
+                start-time &quot;2018-9-1.12:00:00 +0000&quot;;<br />
+                algorithm hmac-sha-1;<br />
+                options isis-enhanced;<br />
+            }<br />
+            key 3 {<br />
+                secret &quot;$8$UeiHmpu1Ehr.PSe&quot;; ## SECRET-DATA<br />
+                start-time &quot;2019-1-1.12:00:00 +0000&quot;;<br />
+                algorithm hmac-sha-1;<br />
+                options isis-enhanced;<br />
+            }<br />
+        }<br />
+    }<br />
+}<br />
+<br />
+protocols {<br />
+    …<br />
+    …<br />
+    …<br />
+    isis {<br />
+        level 1 authentication-key-chain ISIS_KEY;<br />
+        level 2 authentication-key-chain ISIS_KEY;<br />
+        interface ge-0/0/0 {<br />
+            level 1 hello-authentication-key-chain ISIS_KEY;<br />
+            level 2 hello-authentication-key-chain ISIS_KEY;<br />
+        }<br />
+        interface lo0.0;<br />
+    }<br />
+<br />
+BGP Example:<br />
+<br />
+}<br />
+security {<br />
+    …<br />
+    …<br />
+    …<br />
+    }<br />
+    authentication-key-chains {<br />
+        key-chain BGP_KEY {<br />
+            key 1 {<br />
+                secret &quot;$8$PTQnhclvMX3687&quot;; ## SECRET-DATA<br />
+                start-time &quot;2018-5-1.12:00:00 +0000&quot;;<br />
+            }<br />
+            key 2 {<br />
+                secret &quot;$8$iq.5OBESyKfTlM&quot;; ## SECRET-DATA<br />
+                start-time &quot;2018-9-1.12:00:00 +0000&quot;;<br />
+            }<br />
+            key 3 {<br />
+                secret &quot;$8$ZADjqAtOIRSk.hr&quot;; ## SECRET-DATA<br />
+                start-time &quot;2019-1-1.12:00:00 +0000&quot;;<br />
+            }<br />
+        }<br />
+<br />
+protocols {<br />
+    bgp {<br />
+        group AS_2 {<br />
+            type external;<br />
+            peer-as 2;<br />
+            neighbor 11.1.25.2 {<br />
+                authentication-algorithm hmac-sha-1-96;<br />
+                authentication-key-chain BGP_KEY;<br />
+            }<br />
+            neighbor 11.1.1.1 {<br />
+                authentication-algorithm hmac-sha-1-96;<br />
+                authentication-key-chain BGP_KEY;<br />
+            }<br />
+        }<br />
+    }<br />
+<br />
+OSPF Example:<br />
+<br />
+IPsec authentication must be used to authenticate OSPF messages with a FIPS 140-2 message authentication code algorithm. <br />
+<br />
+Step 1: Verify the authentication algorithm in the IPsec security association as shown in the example below.<br />
+<br />
+security {<br />
+    …<br />
+    …<br />
+    …<br />
+    ipsec {<br />
+        security-association IPSEC-SA1 {<br />
+            mode transport;<br />
+            manual {<br />
+                direction bidirectional {<br />
+                    protocol ah;<br />
+                    spi 256;<br />
+                    authentication {<br />
+                        algorithm hmac-sha1-96;<br />
+                        key ascii-text &quot;$8$u6M6OEcrevL7-YaZUjHmF39B1hP5CuBRle&quot;; ## SECRET-DATA<br />
+                    }<br />
+                }<br />
+            }<br />
+        }<br />
+    }<br />
+<br />
+Step 2: Verify that an IPsec security association has been configured on the interfaces as shown in the following example:<br />
+<br />
+protocols {<br />
+    …<br />
+    …<br />
+    …<br />
+    ospf {<br />
+        area 0.0.0.0 {<br />
+            interface ge-0/0/0 {<br />
+                   ipsec-sa IPSEC-SA1;<br />
+            }<br />
+            interface ge-0/1/0 {<br />
+                   ipsec-sa IPSEC-SA1;<br />
+            }<br />
+            interface lo0.0;<br />
+            interface ge-0/2/0 {<br />
+                   ipsec-sa IPSEC-SA1;<br />
+            }<br />
+        }<br />
+    }<br />
+    ospf3 {<br />
+        area 0.0.0.0 {<br />
+            interface ge-1/2/0 {<br />
+                   ipsec-sa IPSEC-SA1;<br />
+            }<br />
+        }<br />
+    }<br />
+}<br />
+<br />
+If a NIST-validated FIPS 140-2 message authentication code algorithm is not being used to authenticate routing protocol messages, this is a finding.<br />
+<br />
+Note: Juniper does not support FIPS 140-2 message authentication code algorithm for RIP.</p><h2>Vulnerability Number</h2><p>V-217015</p><h2>Documentable</h2><p>False</p><h2>Rule Version</h2><p>JUNI-RT-000050</p><h2>Severity Override Guidance</h2><p>Review the router configuration to verify it is using a NIST-validated FIPS 140-2 message authentication code algorithm to authenticate routing protocol messages.<br />
+<br />
+IS-IS Example:<br />
+<br />
+security {<br />
+     …<br />
+    …<br />
+    …<br />
+    }<br />
+    authentication-key-chains {<br />
+        key-chain ISIS_KEY {<br />
+            key 1 {<br />
+                secret &quot;$8$W8oXxdji.f5F-VQn&quot;; ## SECRET-DATA<br />
+                start-time &quot;2018-5-1.12:00:00 +0000&quot;;<br />
+                algorithm hmac-sha-1;<br />
+                options isis-enhanced;<br />
+            }<br />
+            key 2 {<br />
+                secret &quot;$8$Q4953nCrlMLX-9A7V&quot;; ## SECRET-DATA<br />
+                start-time &quot;2018-9-1.12:00:00 +0000&quot;;<br />
+                algorithm hmac-sha-1;<br />
+                options isis-enhanced;<br />
+            }<br />
+            key 3 {<br />
+                secret &quot;$8$UeiHmpu1Ehr.PSe&quot;; ## SECRET-DATA<br />
+                start-time &quot;2019-1-1.12:00:00 +0000&quot;;<br />
+                algorithm hmac-sha-1;<br />
+                options isis-enhanced;<br />
+            }<br />
+        }<br />
+    }<br />
+}<br />
+<br />
+protocols {<br />
+    …<br />
+    …<br />
+    …<br />
+    isis {<br />
+        level 1 authentication-key-chain ISIS_KEY;<br />
+        level 2 authentication-key-chain ISIS_KEY;<br />
+        interface ge-0/0/0 {<br />
+            level 1 hello-authentication-key-chain ISIS_KEY;<br />
+            level 2 hello-authentication-key-chain ISIS_KEY;<br />
+        }<br />
+        interface lo0.0;<br />
+    }<br />
+<br />
+BGP Example:<br />
+<br />
+}<br />
+security {<br />
+    …<br />
+    …<br />
+    …<br />
+    }<br />
+    authentication-key-chains {<br />
+        key-chain BGP_KEY {<br />
+            key 1 {<br />
+                secret &quot;$8$PTQnhclvMX3687&quot;; ## SECRET-DATA<br />
+                start-time &quot;2018-5-1.12:00:00 +0000&quot;;<br />
+            }<br />
+            key 2 {<br />
+                secret &quot;$8$iq.5OBESyKfTlM&quot;; ## SECRET-DATA<br />
+                start-time &quot;2018-9-1.12:00:00 +0000&quot;;<br />
+            }<br />
+            key 3 {<br />
+                secret &quot;$8$ZADjqAtOIRSk.hr&quot;; ## SECRET-DATA<br />
+                start-time &quot;2019-1-1.12:00:00 +0000&quot;;<br />
+            }<br />
+        }<br />
+<br />
+protocols {<br />
+    bgp {<br />
+        group AS_2 {<br />
+            type external;<br />
+            peer-as 2;<br />
+            neighbor 11.1.25.2 {<br />
+                authentication-algorithm hmac-sha-1-96;<br />
+                authentication-key-chain BGP_KEY;<br />
+            }<br />
+            neighbor 11.1.1.1 {<br />
+                authentication-algorithm hmac-sha-1-96;<br />
+                authentication-key-chain BGP_KEY;<br />
+            }<br />
+        }<br />
+    }<br />
+<br />
+OSPF Example:<br />
+<br />
+IPsec authentication must be used to authenticate OSPF messages with a FIPS 140-2 message authentication code algorithm. <br />
+<br />
+Step 1: Verify the authentication algorithm in the IPsec security association as shown in the example below.<br />
+<br />
+security {<br />
+    …<br />
+    …<br />
+    …<br />
+    ipsec {<br />
+        security-association IPSEC-SA1 {<br />
+            mode transport;<br />
+            manual {<br />
+                direction bidirectional {<br />
+                    protocol ah;<br />
+                    spi 256;<br />
+                    authentication {<br />
+                        algorithm hmac-sha1-96;<br />
+                        key ascii-text &quot;$8$u6M6OEcrevL7-YaZUjHmF39B1hP5CuBRle&quot;; ## SECRET-DATA<br />
+                    }<br />
+                }<br />
+            }<br />
+        }<br />
+    }<br />
+<br />
+Step 2: Verify that an IPsec security association has been configured on the interfaces as shown in the following example:<br />
+<br />
+protocols {<br />
+    …<br />
+    …<br />
+    …<br />
+    ospf {<br />
+        area 0.0.0.0 {<br />
+            interface ge-0/0/0 {<br />
+                   ipsec-sa IPSEC-SA1;<br />
+            }<br />
+            interface ge-0/1/0 {<br />
+                   ipsec-sa IPSEC-SA1;<br />
+            }<br />
+            interface lo0.0;<br />
+            interface ge-0/2/0 {<br />
+                   ipsec-sa IPSEC-SA1;<br />
+            }<br />
+        }<br />
+    }<br />
+    ospf3 {<br />
+        area 0.0.0.0 {<br />
+            interface ge-1/2/0 {<br />
+                   ipsec-sa IPSEC-SA1;<br />
+            }<br />
+        }<br />
+    }<br />
+}<br />
+<br />
+If a NIST-validated FIPS 140-2 message authentication code algorithm is not being used to authenticate routing protocol messages, this is a finding.<br />
+<br />
+Note: Juniper does not support FIPS 140-2 message authentication code algorithm for RIP.</p><h2>Check Content Reference</h2><p>M</p><h2>Target Key</h2><p>4032</p></body></html>

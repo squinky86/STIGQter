@@ -1,0 +1,135 @@
+<!doctype html><html lang="en"><head><meta charset="utf-8"><title>STIGQter: STIG Check Details: SV-221071r1195277_rule: The Cisco switch must be configured to enforce approved authorizations for controlling the flow of information within the network based on organization-defined information flow control policies.</title><link rel="icon" type="image/svg+xml" href="STIGQter.svg" /><script async src="https://www.googletagmanager.com/gtag/js?id=UA-31381839-2"></script><script src="include.js"></script><script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-4110907817782130" crossorigin="anonymous"></script></head><body><div><img src="STIGQter.svg" alt="STIGQter" style="height:1em;" /> <a href="https://www.stigqter.com/">STIGQter</a>: <a href="main.html">STIG Summary</a>: <a href="U_Cisco_NX-OS_Switch_RTR_STIG_V3R4_Manual-xccdf.html">Cisco NX OS Switch RTR Security Technical Implementation Guide Version: 3 Release: 4 Benchmark Date: 01 Apr 2026</a>:</div> <h1>The Cisco switch must be configured to enforce approved authorizations for controlling the flow of information within the network based on organization-defined information flow control policies.</h1><h2>DISA Rule</h2><p>SV-221071r1195277_rule</p><h2>Vulnerability Number</h2><p>V-221071</p><h2>Group Title</h2><p>SRG-NET-000018-RTR-000001</p><h2>Rule Version</h2><p>CISC-RT-000010</p><h2>Severity</h2><p>CAT II</p><h2>CCI(s)</h2><ul><li>CCI-001368 - Enforce approved authorizations for controlling the flow of information within the system based on organization-defined information flow control policies.</li></ul><h2>Weight</h2><p>10</p><h2>Fix Recommendation</h2><p>Configure ACLs to allow or deny traffic for specific source and destination addresses as well as ports and protocols between various subnets as required. The commands used below were used to create the configuration as shown in the check content.<br />
+<br />
+SW1(config)# ip access-list FILTER_SERVER_TRAFFIC<br />
+SW1(config-acl)# permit tcp any 10.1.12.0 0.0.0.255 eq lpd <br />
+SW1(config-acl)# permit tcp any 10.1.12.0 0.0.0.255 eq 631<br />
+SW1(config-acl)# permit tcp any 10.1.12.0 0.0.0.255 eq 9100<br />
+SW1(config-acl)# permit tcp any 10.1.13.0 0.0.0.255 eq 1433<br />
+SW1(config-acl)# permit tcp any 10.1.13.0 0.0.0.255 eq 1434<br />
+SW1(config-acl)# permit tcp any 10.1.13.0 0.0.0.255 eq 4022<br />
+SW1(config-acl)# permit icmp any any<br />
+SW1(config-acl)# permit ospf any any<br />
+SW1(config-acl)# deny ip any any<br />
+SW1(config-acl)# exit<br />
+SW1(config)# int e2/3<br />
+SW1(config-if)# ip access-group FILTER_SERVER_TRAFFIC in<br />
+SW1(config-if)# end<br />
+<br />
+Alternate: Inter-VLAN routing<br />
+<br />
+SW1(config)# ip access-list FILTER_PRINTER_VLAN<br />
+SW1(config-acl)# permit tcp any any eq lpd <br />
+SW1(config-acl)# permit tcp any any eq 631<br />
+SW1(config-acl)# permit tcp any any eq 9100<br />
+SW1(config-acl)# permit icmp any any<br />
+SW1(config-acl)# deny ip any any<br />
+SW1(config-acl)# exit<br />
+SW1(config)# ip access-list FILTER_SQL_VLAN<br />
+SW1(config-acl)# permit tcp any any eq 1433<br />
+SW1(config-acl)# permit tcp any any eq 1434<br />
+SW1(config-acl)# permit tcp any any eq 4033<br />
+SW1(config-acl)# permit icmp any any<br />
+SW1(config-acl)# deny ip any any<br />
+SW1(config-acl)# exit<br />
+SW1(config)# int vlan 12<br />
+SW1(config-if)# ip access-group FILTER_PRINTER_VLAN out<br />
+SW1(config-if)# exit<br />
+SW1(config)# int vlan 13<br />
+SW1(config-if)# ip access-group FILTER_SQL_VLAN out<br />
+SW1(config-if)# end</p><h2>Check Contents</h2><p>If Virtual Routing and Forwarding (VRF) is used to segment traffic and force traffic to traverse through next generation firewalls with ACLs, this requirement is not applicable.<br />
+<br />
+Review the switch configuration to verify that ACLs are configured to allow or deny traffic for specific source and destination addresses as well as ports and protocols. For example, the configuration below will allow only printer traffic into subnet 10.1.12.0/24 and SQL traffic into subnet 10.1.13.0/24. ICMP is allowed for troubleshooting and OSPF is the routing protocol used within the network.<br />
+<br />
+interface Ethernet2/3<br />
+ no switchport<br />
+ ip access-group FILTER_SERVER_TRAFFIC in<br />
+ ip address 10.1.23.2/24<br />
+ no shutdown <br />
+…<br />
+…<br />
+…<br />
+ip access-list FILTER_SERVER_TRAFFIC<br />
+ 10 permit tcp any 10.1.12.0/24 eq lpd <br />
+ 20 permit tcp any 10.1.12.0/24 eq 631 <br />
+ 30 permit tcp any 10.1.12.0/24 eq 9100 <br />
+ 40 permit tcp any 10.1.13.0/24 eq 1433 <br />
+ 50 permit tcp any 10.1.13.0/24 eq 1434 <br />
+ 60 permit tcp any 10.1.13.0/24 eq 4022 <br />
+ 70 permit icmp any any <br />
+ 80 permit ospf any any <br />
+ 90 deny ip any any<br />
+<br />
+Alternate: Inter-VLAN routing<br />
+<br />
+interface Vlan12<br />
+ ip address 10.1.12.1 255.255.255.0<br />
+ ip access-group FILTER_PRINTER_VLAN out<br />
+!<br />
+interface Vlan13<br />
+ ip address 10.1.13.1 255.255.255.0<br />
+ ip access-group FILTER_SQL_VLAN out<br />
+…<br />
+…<br />
+…<br />
+ip access-list FILTER_PRINTER_VLAN<br />
+ 10 permit tcp any any eq lpd <br />
+ 20 permit tcp any any eq 631 <br />
+ 30 permit tcp any any eq 9100 <br />
+ 40 permit icmp any any <br />
+ 50 deny ip any any<br />
+ip access-list FILTER_SQL_VLAN<br />
+ 10 permit tcp any any eq 1433 <br />
+ 20 permit tcp any any eq 1434 <br />
+ 30 permit tcp any any eq 4033 <br />
+ 40 permit icmp any any <br />
+ 50 deny ip any any<br />
+<br />
+If the switch is not configured to enforce approved authorizations for controlling the flow of information within the network based on organization-defined information flow control policies, this is a finding.</p><h2>Vulnerability Number</h2><p>V-221071</p><h2>Documentable</h2><p>False</p><h2>Rule Version</h2><p>CISC-RT-000010</p><h2>Severity Override Guidance</h2><p>If Virtual Routing and Forwarding (VRF) is used to segment traffic and force traffic to traverse through next generation firewalls with ACLs, this requirement is not applicable.<br />
+<br />
+Review the switch configuration to verify that ACLs are configured to allow or deny traffic for specific source and destination addresses as well as ports and protocols. For example, the configuration below will allow only printer traffic into subnet 10.1.12.0/24 and SQL traffic into subnet 10.1.13.0/24. ICMP is allowed for troubleshooting and OSPF is the routing protocol used within the network.<br />
+<br />
+interface Ethernet2/3<br />
+ no switchport<br />
+ ip access-group FILTER_SERVER_TRAFFIC in<br />
+ ip address 10.1.23.2/24<br />
+ no shutdown <br />
+…<br />
+…<br />
+…<br />
+ip access-list FILTER_SERVER_TRAFFIC<br />
+ 10 permit tcp any 10.1.12.0/24 eq lpd <br />
+ 20 permit tcp any 10.1.12.0/24 eq 631 <br />
+ 30 permit tcp any 10.1.12.0/24 eq 9100 <br />
+ 40 permit tcp any 10.1.13.0/24 eq 1433 <br />
+ 50 permit tcp any 10.1.13.0/24 eq 1434 <br />
+ 60 permit tcp any 10.1.13.0/24 eq 4022 <br />
+ 70 permit icmp any any <br />
+ 80 permit ospf any any <br />
+ 90 deny ip any any<br />
+<br />
+Alternate: Inter-VLAN routing<br />
+<br />
+interface Vlan12<br />
+ ip address 10.1.12.1 255.255.255.0<br />
+ ip access-group FILTER_PRINTER_VLAN out<br />
+!<br />
+interface Vlan13<br />
+ ip address 10.1.13.1 255.255.255.0<br />
+ ip access-group FILTER_SQL_VLAN out<br />
+…<br />
+…<br />
+…<br />
+ip access-list FILTER_PRINTER_VLAN<br />
+ 10 permit tcp any any eq lpd <br />
+ 20 permit tcp any any eq 631 <br />
+ 30 permit tcp any any eq 9100 <br />
+ 40 permit icmp any any <br />
+ 50 deny ip any any<br />
+ip access-list FILTER_SQL_VLAN<br />
+ 10 permit tcp any any eq 1433 <br />
+ 20 permit tcp any any eq 1434 <br />
+ 30 permit tcp any any eq 4033 <br />
+ 40 permit icmp any any <br />
+ 50 deny ip any any<br />
+<br />
+If the switch is not configured to enforce approved authorizations for controlling the flow of information within the network based on organization-defined information flow control policies, this is a finding.</p><h2>Check Content Reference</h2><p>M</p><h2>Target Key</h2><p>4075</p></body></html>

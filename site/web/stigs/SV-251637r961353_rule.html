@@ -1,0 +1,84 @@
+<!doctype html><html lang="en"><head><meta charset="utf-8"><title>STIGQter: STIG Check Details: SV-251637r961353_rule: IDMS must prevent unauthorized users from executing certain privileged commands that can be used to change the runtime IDMS environment.</title><link rel="icon" type="image/svg+xml" href="STIGQter.svg" /><script async src="https://www.googletagmanager.com/gtag/js?id=UA-31381839-2"></script><script src="include.js"></script><script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-4110907817782130" crossorigin="anonymous"></script></head><body><div><img src="STIGQter.svg" alt="STIGQter" style="height:1em;" /> <a href="https://www.stigqter.com/">STIGQter</a>: <a href="main.html">STIG Summary</a>: <a href="U_CA_IDMS_STIG_V2R2_Manual-xccdf.html">CA IDMS Security Technical Implementation Guide Version: 2 Release: 2 Benchmark Date: 01 Jul 2026</a>:</div> <h1>IDMS must prevent unauthorized users from executing certain privileged commands that can be used to change the runtime IDMS environment.</h1><h2>DISA Rule</h2><p>SV-251637r961353_rule</p><h2>Vulnerability Number</h2><p>V-251637</p><h2>Group Title</h2><p>SRG-APP-000340-DB-000304</p><h2>Rule Version</h2><p>IDMS-DB-000660</p><h2>Severity</h2><p>CAT II</p><h2>CCI(s)</h2><ul><li>CCI-002235 - Prevent non-privileged users from executing privileged functions.</li></ul><h2>Weight</h2><p>10</p><h2>Fix Recommendation</h2><p>The SRTT must contain one or more entries to enable the external security of RESTYPE=ACTI. For example:<br />
+ <br />
+#SECRTT TYPE=ENTRY,RESTYPE=ACTI, SECBY=EXTERNAL,      EXTCLS='CA@IDMS',EXTNAME=(SYST,ACTIVITY)       <br />
+<br />
+Update the source for IDMSCTAB as needed. <br />
+<br />
+This example #CTABGEN entry secures the DCMT commands listed in the check and assigns a task number to each:<br />
+<br />
+CTAB  TITLE 'GENERATE DCMT SECURITY TABLE'                              <br />
+         #CTABGEN LOGIN=YES,                                           X<br />
+               (A,1,B,2,C,3,D,4,E,5,F,6,G,7,H,8,I,9),                  X<br />
+               (N022,A),                DCMT DISPLAY MEMORY            X<br />
+               (N046001,B),             DCMT VARY DYNAMIC PROGRAM      X<br />
+               (N046002,C),             DCMT VARY DYNAMIC TASK         X<br />
+               (N050,D),                DCMT VARY LOADLIB              X<br />
+               (N033,E),                DCMT VARY MEMORY               X<br />
+               (N063,F),                DCMT VARY NUCLEUS              X<br />
+               (N025,G),                DCMT VARY PROGRAM              X<br />
+               (N073,H),                DCMT VARY RUN UNIT             X<br />
+               (N095,I)                 DCMT VARY SYSGEN                <br />
+         END                                                            <br />
+<br />
+The ACTIVITY passed to the ESM will be the first up to five  bytes of the application name followed by the three-byte activity number or, using the above example, DCMT009 for a DCMT VARY SYSGEN command.<br />
+ <br />
+After making the above changes, IDMSCTAB and RHDCSRTT must be reassembled and relinked. To implement the new SRTT and IDMSCTAB, either recycle any CVs that use the SRTT or issue these commands:<br />
+<br />
+   DCMT VARY NUCLEUS MODULE RHDCSRTT NEW COPY <br />
+    DCMT VARY NUCLEUS MODULE IDMSCTAB NEW COPY <br />
+    DCMT VARY NUCLEUS RELOAD<br />
+<br />
+Also verify the ESM gives access to the appropriate users. Here are Top Secret commands based on the above information. Assume that the SYSTEM ID in SYSGEN is TEST001:<br />
+TSS PER(user_id) CA@IDMS(TEST001.DCMT001)</p><h2>Check Contents</h2><p>Verify that the following DCMT commands are protected for use by the appropriate users:<br />
+<br />
+DCMT DISPLAY MEMORY                             <br />
+DCMT VARY DYNAMIC PROGRAM<br />
+DCMT VARY DYNAMIC TASK<br />
+DCMT VARY LOADLIB<br />
+DCMT VARY MEMORY<br />
+DCMT VARY NUCLEUS<br />
+DCMT VARY PROGRAM<br />
+DCMT VARY RUN UNIT<br />
+DCMT VARY SYSGEN<br />
+<br />
+Examine load module IDMSCTAB using CA IDMS utility IDMSCTAD, or by issuing command &quot;DCMT DISPLAY CTAB&quot; while signed onto the CV and reviewing the output. <br />
+<br />
+Note: This requires PTF SO08199.<br />
+<br />
+If the command codes for the commands listed above are not present in the output, this is a finding. <br />
+<br />
+Examine load module RHDCSRTT by executing CA IDMS utility IDMSSRTD, or by issuing command &quot;DCMT DISPLAY SRTT&quot; while signed onto the CV and reviewing the output.<br />
+<br />
+Note: This requires PTFs SO07995 and SO09476.<br />
+<br />
+Review the output to determine if there are ACTI entries to secure the above commands. Activity numbers are assigned in IDMSCTAB and used in the SRTT formats for the external resource name. <br />
+<br />
+Contact the security office if the resource access is not restricted to only users authorized in the site security plan. <br />
+<br />
+If the resource access is not restricted to only users authorized in the site security plan, this is a finding.</p><h2>Vulnerability Number</h2><p>V-251637</p><h2>Documentable</h2><p>False</p><h2>Rule Version</h2><p>IDMS-DB-000660</p><h2>Severity Override Guidance</h2><p>Verify that the following DCMT commands are protected for use by the appropriate users:<br />
+<br />
+DCMT DISPLAY MEMORY                             <br />
+DCMT VARY DYNAMIC PROGRAM<br />
+DCMT VARY DYNAMIC TASK<br />
+DCMT VARY LOADLIB<br />
+DCMT VARY MEMORY<br />
+DCMT VARY NUCLEUS<br />
+DCMT VARY PROGRAM<br />
+DCMT VARY RUN UNIT<br />
+DCMT VARY SYSGEN<br />
+<br />
+Examine load module IDMSCTAB using CA IDMS utility IDMSCTAD, or by issuing command &quot;DCMT DISPLAY CTAB&quot; while signed onto the CV and reviewing the output. <br />
+<br />
+Note: This requires PTF SO08199.<br />
+<br />
+If the command codes for the commands listed above are not present in the output, this is a finding. <br />
+<br />
+Examine load module RHDCSRTT by executing CA IDMS utility IDMSSRTD, or by issuing command &quot;DCMT DISPLAY SRTT&quot; while signed onto the CV and reviewing the output.<br />
+<br />
+Note: This requires PTFs SO07995 and SO09476.<br />
+<br />
+Review the output to determine if there are ACTI entries to secure the above commands. Activity numbers are assigned in IDMSCTAB and used in the SRTT formats for the external resource name. <br />
+<br />
+Contact the security office if the resource access is not restricted to only users authorized in the site security plan. <br />
+<br />
+If the resource access is not restricted to only users authorized in the site security plan, this is a finding.</p><h2>Check Content Reference</h2><p>M</p><h2>Target Key</h2><p>5418</p></body></html>

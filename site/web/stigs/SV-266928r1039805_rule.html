@@ -1,0 +1,41 @@
+<!doctype html><html lang="en"><head><meta charset="utf-8"><title>STIGQter: STIG Check Details: SV-266928r1039805_rule: AOS must be configured to prohibit the use of all unnecessary and/or nonsecure functions, ports, protocols, and/or services.</title><link rel="icon" type="image/svg+xml" href="STIGQter.svg" /><script async src="https://www.googletagmanager.com/gtag/js?id=UA-31381839-2"></script><script src="include.js"></script><script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-4110907817782130" crossorigin="anonymous"></script></head><body><div><img src="STIGQter.svg" alt="STIGQter" style="height:1em;" /> <a href="https://www.stigqter.com/">STIGQter</a>: <a href="main.html">STIG Summary</a>: <a href="U_HPE_Aruba_Networking_AOS_NDM_STIG_V1R1_Manual-xccdf.html">HPE Aruba Networking AOS NDM Security Technical Implementation Guide Version: 1 Release: 1 Benchmark Date: 22 Oct 2024</a>:</div> <h1>AOS must be configured to prohibit the use of all unnecessary and/or nonsecure functions, ports, protocols, and/or services.</h1><h2>DISA Rule</h2><p>SV-266928r1039805_rule</p><h2>Vulnerability Number</h2><p>V-266928</p><h2>Group Title</h2><p>SRG-APP-000142-NDM-000245</p><h2>Rule Version</h2><p>ARBA-ND-000245</p><h2>Severity</h2><p>CAT I</p><h2>CCI(s)</h2><ul><li>CCI-000382 - Configure the system to prohibit or restrict the use of organization-defined prohibited or restricted functions, system ports, protocols, software, and/or services.</li></ul><h2>Weight</h2><p>10</p><h2>Fix Recommendation</h2><p>Configure AOS with the following commands: <br />
+configure terminal <br />
+firewall cp <br />
+ipv4 deny any proto 6 ports 17 17 <br />
+ipv4 deny any proto 6 ports 8080 8080 <br />
+ipv4 deny any proto 6 ports 8081 8081 <br />
+ipv4 deny any proto 6 ports 8082 8082 <br />
+ipv4 deny any proto 6 ports 8088 8088 <br />
+ipv6 deny any proto 6 ports 17 17 <br />
+ipv6 deny any proto 6 ports 8080 8080 <br />
+ipv6 deny any proto 6 ports 8081 8081 <br />
+ipv6 deny any proto 6 ports 8082 8082 <br />
+ipv6 deny any proto 6 ports 8088 8088 <br />
+exit <br />
+write memory <br />
+ <br />
+For any OSPF entries found: <br />
+no router ospf <br />
+no router ospf router-id &lt;IP address&gt; <br />
+no router ospf redistribute vlan &lt;#&gt; <br />
+no &lt;any other ospf entries&gt; <br />
+write memory <br />
+ <br />
+Block any other ports as desired using the following example:  <br />
+configure terminal <br />
+firewall cp <br />
+&lt;ipv4/ipv6&gt; deny any proto &lt;ftp, http, telnet, tftp, protocol #&gt; ports &lt;start port 0-65535&gt; &lt;end port 0-65535&gt;  <br />
+exit <br />
+write memory</p><h2>Check Contents</h2><p>Verify the AOS configuration with the following commands: <br />
+show firewall-cp <br />
+show running-config | include ospf <br />
+ <br />
+Verify that OSPF is not enabled and only unnecessary and/or nonsecure functions, ports, protocols, and/or services are denied.  <br />
+ <br />
+If OSPF is enabled or any unnecessary and/or nonsecure functions, ports, protocols, and/or services are allowed, this is a finding.</p><h2>Vulnerability Number</h2><p>V-266928</p><h2>Documentable</h2><p>False</p><h2>Rule Version</h2><p>ARBA-ND-000245</p><h2>Severity Override Guidance</h2><p>Verify the AOS configuration with the following commands: <br />
+show firewall-cp <br />
+show running-config | include ospf <br />
+ <br />
+Verify that OSPF is not enabled and only unnecessary and/or nonsecure functions, ports, protocols, and/or services are denied.  <br />
+ <br />
+If OSPF is enabled or any unnecessary and/or nonsecure functions, ports, protocols, and/or services are allowed, this is a finding.</p><h2>Check Content Reference</h2><p>M</p><h2>Target Key</h2><p>5648</p></body></html>

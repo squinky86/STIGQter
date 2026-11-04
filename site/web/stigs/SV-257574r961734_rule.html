@@ -1,0 +1,87 @@
+<!doctype html><html lang="en"><head><meta charset="utf-8"><title>STIGQter: STIG Check Details: SV-257574r961734_rule: OpenShift must perform verification of the correct operation of security functions: upon startup and/or restart; upon command by a user with privileged access; and/or every 30 days.</title><link rel="icon" type="image/svg+xml" href="STIGQter.svg" /><script async src="https://www.googletagmanager.com/gtag/js?id=UA-31381839-2"></script><script src="include.js"></script><script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-4110907817782130" crossorigin="anonymous"></script></head><body><div><img src="STIGQter.svg" alt="STIGQter" style="height:1em;" /> <a href="https://www.stigqter.com/">STIGQter</a>: <a href="main.html">STIG Summary</a>: <a href="U_RH_OpenShift_Container_Platform_4-x_STIG_V2R6_Manual-xccdf.html">Red Hat OpenShift Container Platform 4.x Security Technical Implementation Guide Version: 2 Release: 6 Benchmark Date: 01 Jul 2026</a>:</div> <h1>OpenShift must perform verification of the correct operation of security functions: upon startup and/or restart; upon command by a user with privileged access; and/or every 30 days.</h1><h2>DISA Rule</h2><p>SV-257574r961734_rule</p><h2>Vulnerability Number</h2><p>V-257574</p><h2>Group Title</h2><p>SRG-APP-000473-CTR-001175</p><h2>Rule Version</h2><p>CNTR-OS-000920</p><h2>Severity</h2><p>CAT II</p><h2>CCI(s)</h2><ul><li>CCI-002699 - Perform verification of the correct operation of organization-defined security functions: when the system is in an organization-defined transitional state; upon command by a user with appropriate privileges; and/or on an organization-defined frequency.</li></ul><h2>Weight</h2><p>10</p><h2>Fix Recommendation</h2><p>If Red Hat OpenShift Compliance Operator is not used, this check is Not Applicable.<br />
+<br />
+The compliance operator must be leveraged to ensure that components are configured in alignment with the SSP at a desired schedule. Install the Compliance Operator by executing the following:<br />
+<br />
+oc apply -f - &lt;&lt; 'EOF'<br />
+---<br />
+apiVersion: project.openshift.io/v1<br />
+kind: Project<br />
+metadata:<br />
+  labels:<br />
+    kubernetes.io/metadata.name: openshift-compliance<br />
+    openshift.io/cluster-monitoring: &quot;true&quot;<br />
+  name: openshift-compliance<br />
+spec: {}<br />
+...<br />
+---<br />
+apiVersion: operators.coreos.com/v1<br />
+kind: OperatorGroup<br />
+metadata:<br />
+  name: compliance-operator<br />
+  namespace: openshift-compliance<br />
+spec:<br />
+  targetNamespaces:<br />
+  - openshift-compliance<br />
+...<br />
+---<br />
+apiVersion: operators.coreos.com/v1alpha1<br />
+kind: Subscription<br />
+metadata:<br />
+  name: compliance-operator<br />
+  namespace: openshift-compliance<br />
+spec:<br />
+  channel: release-0.1<br />
+  installPlanApproval: Automatic<br />
+  name: compliance-operator<br />
+  source: redhat-operators<br />
+  sourceNamespace: openshift-marketplace<br />
+...<br />
+EOF<br />
+<br />
+Following installation of the Compliance Operator, a ScanSettingBinding object that configures the Compliance Operator to use the desired scan cadence must be created. If users have the definition for ScanSettingBinding in a YAML file named my-scansettingbinding.yml, users would apply that ScanSettingBinding by executing the following:<br />
+<br />
+oc apply -f my-scansettingbinding.yml -n openshift-compliance<br />
+<br />
+For more information about the compliance operator and its use, including the configurability of scheduling of scan cadence in ScanSetting resources and the role-based access control requirements for manually triggered scans, refer to https://docs.openshift.com/container-platform/4.8/security/compliance_operator/compliance-operator-understanding.html.</p><h2>Check Contents</h2><p>If Red Hat OpenShift Compliance Operator is not used, this check is Not Applicable.<br />
+<br />
+Review the cluster configuration to validate that all required security functions are being validated with the Compliance Operator.<br />
+<br />
+To map the schedule of every profile through its ScanSettingBinding and output the schedules on which each Profile or TailoredProfile is run, execute the following commands:<br />
+ <br />
+declare -A binding_profiles<br />
+ declare -A binding_schedule<br />
+ while read binding setting profiles; do binding_profiles[$binding]=&quot;$profiles&quot;; binding_schedule[$binding]=$(oc get scansetting -n openshift-compliance $setting -ojsonpath='{.schedule}'); done &lt; &lt;(oc get scansettingbinding -n openshift-compliance -ojsonpath='{range .items[*]}{.metadata.name} {.settingsRef.name} {range .profiles[*]}{.name} {end}{&quot;\n&quot;}{end}')<br />
+ for binding in &quot;${!binding_profiles[@]}&quot;; do for profile in ${binding_profiles[$binding]}; do echo &quot;$profile: ${binding_schedule[$binding]}&quot;; done; done<br />
+<br />
+If any error is returned, this is a finding.<br />
+<br />
+If the schedules are not at least monthly or within the organizationally defined periodicity, this is a finding.<br />
+<br />
+Check the profiles that are bound to schedules by executing the following:<br />
+<br />
+To determine which rules are enforced by the profiles that are currently bound to the scheduled periodicities, execute the following commands:<br />
+<br />
+for binding in &quot;${!binding_profiles[@]}&quot;; do for profile in ${binding_profiles[$binding]}; do for rule in $(oc get profile.compliance $profile -n openshift-compliance -ojsonpath='{range .rules[*]}{$}{&quot;\n&quot;}{end}'); do echo &quot;$rule: ${binding_schedule[$binding]}&quot;; done; done; done | sort -u<br />
+<br />
+If the profiles that are bound to schedules do not cover the organization-designed security functions, this is a finding.</p><h2>Vulnerability Number</h2><p>V-257574</p><h2>Documentable</h2><p>False</p><h2>Rule Version</h2><p>CNTR-OS-000920</p><h2>Severity Override Guidance</h2><p>If Red Hat OpenShift Compliance Operator is not used, this check is Not Applicable.<br />
+<br />
+Review the cluster configuration to validate that all required security functions are being validated with the Compliance Operator.<br />
+<br />
+To map the schedule of every profile through its ScanSettingBinding and output the schedules on which each Profile or TailoredProfile is run, execute the following commands:<br />
+ <br />
+declare -A binding_profiles<br />
+ declare -A binding_schedule<br />
+ while read binding setting profiles; do binding_profiles[$binding]=&quot;$profiles&quot;; binding_schedule[$binding]=$(oc get scansetting -n openshift-compliance $setting -ojsonpath='{.schedule}'); done &lt; &lt;(oc get scansettingbinding -n openshift-compliance -ojsonpath='{range .items[*]}{.metadata.name} {.settingsRef.name} {range .profiles[*]}{.name} {end}{&quot;\n&quot;}{end}')<br />
+ for binding in &quot;${!binding_profiles[@]}&quot;; do for profile in ${binding_profiles[$binding]}; do echo &quot;$profile: ${binding_schedule[$binding]}&quot;; done; done<br />
+<br />
+If any error is returned, this is a finding.<br />
+<br />
+If the schedules are not at least monthly or within the organizationally defined periodicity, this is a finding.<br />
+<br />
+Check the profiles that are bound to schedules by executing the following:<br />
+<br />
+To determine which rules are enforced by the profiles that are currently bound to the scheduled periodicities, execute the following commands:<br />
+<br />
+for binding in &quot;${!binding_profiles[@]}&quot;; do for profile in ${binding_profiles[$binding]}; do for rule in $(oc get profile.compliance $profile -n openshift-compliance -ojsonpath='{range .rules[*]}{$}{&quot;\n&quot;}{end}'); do echo &quot;$rule: ${binding_schedule[$binding]}&quot;; done; done; done | sort -u<br />
+<br />
+If the profiles that are bound to schedules do not cover the organization-designed security functions, this is a finding.</p><h2>Check Content Reference</h2><p>M</p><h2>Target Key</h2><p>5547</p></body></html>

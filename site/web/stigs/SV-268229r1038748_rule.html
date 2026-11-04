@@ -1,0 +1,43 @@
+<!doctype html><html lang="en"><head><meta charset="utf-8"><title>STIGQter: STIG Check Details: SV-268229r1038748_rule: The HYCU virtual appliance must retain the Standard Mandatory DOD Notice and Consent Banner on the screen until the administrator acknowledges the usage conditions and takes explicit actions to log in for further access.</title><link rel="icon" type="image/svg+xml" href="STIGQter.svg" /><script async src="https://www.googletagmanager.com/gtag/js?id=UA-31381839-2"></script><script src="include.js"></script><script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-4110907817782130" crossorigin="anonymous"></script></head><body><div><img src="STIGQter.svg" alt="STIGQter" style="height:1em;" /> <a href="https://www.stigqter.com/">STIGQter</a>: <a href="main.html">STIG Summary</a>: <a href="U_HYCU_Protege_STIG_V1R3_Manual-xccdf.html">HYCU Protege Security Technical Implementation Guide Version: 1 Release: 3 Benchmark Date: 01 Jul 2026</a>:</div> <h1>The HYCU virtual appliance must retain the Standard Mandatory DOD Notice and Consent Banner on the screen until the administrator acknowledges the usage conditions and takes explicit actions to log in for further access.</h1><h2>DISA Rule</h2><p>SV-268229r1038748_rule</p><h2>Vulnerability Number</h2><p>V-268229</p><h2>Group Title</h2><p>SRG-APP-000069-NDM-000216</p><h2>Rule Version</h2><p>HYCU-ND-000110</p><h2>Severity</h2><p>CAT II</p><h2>CCI(s)</h2><ul><li>CCI-000050 - Retain the notification message or banner on the screen until users acknowledge the usage conditions and take explicit actions to log on to or further access the system.</li></ul><h2>Weight</h2><p>10</p><h2>Fix Recommendation</h2><p>Change the GUI login page welcome message and look of the console/ssh login by following the procedure below:<br />
+<br />
+1. Open a remote session to the HYCU backup controller:<br />
+ssh hycu@&lt;HYCUBackupControllerIPAddress&gt;<br />
+<br />
+2. Create the /hycudata/var/branding folder by executing:<br />
+sudo mkdir -p /hycudata/var/branding<br />
+<br />
+3. Make the following files available in /hycudata/var/branding:<br />
+loginImage.PNG/ JPG - Login screen background (1920 x 1440)<br />
+<br />
+console.txt - Pre-login banner for text-based console<br />
+<br />
+sshd.txt - Pre-login banner for SSH access<br />
+<br />
+4. Update the branding configuration by running the following command:<br />
+sudo /opt/grizzly/bin/hycu-branding.sh<br />
+<br />
+5. Perform a hard reload of the HYCU Web UI page in the web browser.</p><h2>Check Contents</h2><p>Log in to the HYCU VM console and verify the banner setting is in use in the &quot;/etc/ssh/sshd_config&quot; file by executing the following command:<br />
+grep Banner /etc/ssh/sshd_config<br />
+<br />
+If the banner is not set to &quot;/etc/issue&quot;, this is a finding.<br />
+<br />
+Verify &quot;/etc/issue&quot; contains valid DOD notice text by executing the following command:<br />
+sudo cat /etc/issue<br />
+<br />
+If DOD Notice is not present in the &quot;/etc/issue&quot; file, this is a finding.<br />
+<br />
+Open the HYCU Web UI login page and verify the mandatory notice is present on the Welcome page.<br />
+<br />
+If the mandatory notice is not present at HYCU Web UI Welcome page, this is a finding.</p><h2>Vulnerability Number</h2><p>V-268229</p><h2>Documentable</h2><p>False</p><h2>Rule Version</h2><p>HYCU-ND-000110</p><h2>Severity Override Guidance</h2><p>Log in to the HYCU VM console and verify the banner setting is in use in the &quot;/etc/ssh/sshd_config&quot; file by executing the following command:<br />
+grep Banner /etc/ssh/sshd_config<br />
+<br />
+If the banner is not set to &quot;/etc/issue&quot;, this is a finding.<br />
+<br />
+Verify &quot;/etc/issue&quot; contains valid DOD notice text by executing the following command:<br />
+sudo cat /etc/issue<br />
+<br />
+If DOD Notice is not present in the &quot;/etc/issue&quot; file, this is a finding.<br />
+<br />
+Open the HYCU Web UI login page and verify the mandatory notice is present on the Welcome page.<br />
+<br />
+If the mandatory notice is not present at HYCU Web UI Welcome page, this is a finding.</p><h2>Check Content Reference</h2><p>M</p><h2>Target Key</h2><p>5660</p></body></html>

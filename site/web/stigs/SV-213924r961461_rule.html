@@ -1,0 +1,65 @@
+<!doctype html><html lang="en"><head><meta charset="utf-8"><title>STIGQter: STIG Check Details: SV-213924r961461_rule: SQL Server must enforce access restrictions associated with changes to the configuration of the database(s).</title><link rel="icon" type="image/svg+xml" href="STIGQter.svg" /><script async src="https://www.googletagmanager.com/gtag/js?id=UA-31381839-2"></script><script src="include.js"></script><script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-4110907817782130" crossorigin="anonymous"></script></head><body><div><img src="STIGQter.svg" alt="STIGQter" style="height:1em;" /> <a href="https://www.stigqter.com/">STIGQter</a>: <a href="main.html">STIG Summary</a>: <a href="U_MS_SQL_Server_2016_Database_STIG_V3R5_Manual-xccdf.html">MS SQL Server 2016 Database Security Technical Implementation Guide Version: 3 Release: 5 Benchmark Date: 01 Apr 2026</a>:</div> <h1>SQL Server must enforce access restrictions associated with changes to the configuration of the database(s).</h1><h2>DISA Rule</h2><p>SV-213924r961461_rule</p><h2>Vulnerability Number</h2><p>V-213924</p><h2>Group Title</h2><p>SRG-APP-000380-DB-000360</p><h2>Rule Version</h2><p>SQL6-D0-003100</p><h2>Severity</h2><p>CAT II</p><h2>CCI(s)</h2><ul><li>CCI-001813 - Enforce access restrictions using organization-defined mechanisms.</li></ul><h2>Weight</h2><p>10</p><h2>Fix Recommendation</h2><p>Remove unauthorized users from roles:<br />
+<br />
+ALTER ROLE DROP MEMBER user;<br />
+<br />
+https://msdn.microsoft.com/en-us/library/ms189775.aspx<br />
+<br />
+Set the owner of the database to an authorized login:<br />
+<br />
+ALTER AUTHORIZATION ON database::DatabaseName TO login;<br />
+<br />
+https://msdn.microsoft.com/en-us/library/ms187359.aspx</p><h2>Check Contents</h2><p>Execute the following query to obtain a listing of user databases whose owner is a member of a fixed server role:<br />
+<br />
+ SELECT <br />
+              D.name AS database_name, SUSER_SNAME(D.owner_sid) AS owner_name,<br />
+              FRM.is_fixed_role_member<br />
+FROM sys.databases D<br />
+OUTER APPLY (<br />
+              SELECT MAX(fixed_role_member) AS is_fixed_role_member<br />
+              FROM (<br />
+                            SELECT IS_SRVROLEMEMBER(R.name, SUSER_SNAME(D.owner_sid)) AS fixed_role_member<br />
+                            FROM sys.server_principals R<br />
+                            WHERE is_fixed_role = 1<br />
+              ) A<br />
+) FRM<br />
+WHERE D.database_id &gt; 4<br />
+              AND (FRM.is_fixed_role_member = 1 <br />
+                            OR FRM.is_fixed_role_member IS NULL)<br />
+ORDER BY database_name <br />
+<br />
+If no databases are returned, this is not a finding. <br />
+<br />
+For each database/login returned, review the Server Role memberships <br />
+<br />
+1.	In SQL Server Management Studio, Expand “Logins”<br />
+2.	Double-click the name of the Login<br />
+3.	Click the “Server Roles” tab <br />
+<br />
+If any server roles are selected, but not documented and authorized, this is a finding.</p><h2>Vulnerability Number</h2><p>V-213924</p><h2>Documentable</h2><p>False</p><h2>Rule Version</h2><p>SQL6-D0-003100</p><h2>Severity Override Guidance</h2><p>Execute the following query to obtain a listing of user databases whose owner is a member of a fixed server role:<br />
+<br />
+ SELECT <br />
+              D.name AS database_name, SUSER_SNAME(D.owner_sid) AS owner_name,<br />
+              FRM.is_fixed_role_member<br />
+FROM sys.databases D<br />
+OUTER APPLY (<br />
+              SELECT MAX(fixed_role_member) AS is_fixed_role_member<br />
+              FROM (<br />
+                            SELECT IS_SRVROLEMEMBER(R.name, SUSER_SNAME(D.owner_sid)) AS fixed_role_member<br />
+                            FROM sys.server_principals R<br />
+                            WHERE is_fixed_role = 1<br />
+              ) A<br />
+) FRM<br />
+WHERE D.database_id &gt; 4<br />
+              AND (FRM.is_fixed_role_member = 1 <br />
+                            OR FRM.is_fixed_role_member IS NULL)<br />
+ORDER BY database_name <br />
+<br />
+If no databases are returned, this is not a finding. <br />
+<br />
+For each database/login returned, review the Server Role memberships <br />
+<br />
+1.	In SQL Server Management Studio, Expand “Logins”<br />
+2.	Double-click the name of the Login<br />
+3.	Click the “Server Roles” tab <br />
+<br />
+If any server roles are selected, but not documented and authorized, this is a finding.</p><h2>Check Content Reference</h2><p>M</p><h2>Target Key</h2><p>3992</p></body></html>

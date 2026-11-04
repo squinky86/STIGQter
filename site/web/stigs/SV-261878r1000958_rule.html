@@ -1,0 +1,71 @@
+<!doctype html><html lang="en"><head><meta charset="utf-8"><title>STIGQter: STIG Check Details: SV-261878r1000958_rule: PostgreSQL must protect its audit features from unauthorized access.</title><link rel="icon" type="image/svg+xml" href="STIGQter.svg" /><script async src="https://www.googletagmanager.com/gtag/js?id=UA-31381839-2"></script><script src="include.js"></script><script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-4110907817782130" crossorigin="anonymous"></script></head><body><div><img src="STIGQter.svg" alt="STIGQter" style="height:1em;" /> <a href="https://www.stigqter.com/">STIGQter</a>: <a href="main.html">STIG Summary</a>: <a href="U_CD_Postgres_16_STIG_V1R3_Manual-xccdf.html">Crunchy Data Postgres 16 Security Technical Implementation Guide Version: 1 Release: 3 Benchmark Date: 01 Jul 2026</a>:</div> <h1>PostgreSQL must protect its audit features from unauthorized access.</h1><h2>DISA Rule</h2><p>SV-261878r1000958_rule</p><h2>Vulnerability Number</h2><p>V-261878</p><h2>Group Title</h2><p>SRG-APP-000121-DB-000202</p><h2>Rule Version</h2><p>CD16-00-002300</p><h2>Severity</h2><p>CAT II</p><h2>CCI(s)</h2><ul><li>CCI-001493 - Protect audit tools from unauthorized access.</li></ul><h2>Weight</h2><p>10</p><h2>Fix Recommendation</h2><p>Note: The following instructions use the PGDATA and PGVER environment variables. Refer to APPENDIX-F for instructions on configuring PGDATA, APPENDIX-H for PGVER and APPENDIX-I for PGLOG.<br />
+<br />
+If PGLOG or PGDATA are not owned by postgres user and group, configure them as follows: <br />
+<br />
+$ sudo chown -R postgres:postgres ${PGDATA?}<br />
+$ sudo chown -R postgres:postgres ${PGLOG?}<br />
+<br />
+If the pgaudit installation is not owned by root user and group, configure it as follows:<br />
+<br />
+$ sudo chown -R root:root /usr/pgsql-${PGVER?}/share/extension/pgaudit*<br />
+<br />
+To remove superuser from a role, as the database administrator (shown here as &quot;postgres&quot;), run the following SQL:<br />
+<br />
+$ sudo su - postgres<br />
+$ psql -c &quot;ALTER ROLE &lt;role-name&gt; WITH NOSUPERUSER&quot;</p><h2>Check Contents</h2><p>Note: The following instructions use the PGDATA and PGVER environment variables. Refer to APPENDIX-F for instructions on configuring PGDATA, APPENDIX-H for PGVER, and APPENDIX-I for PGLOG. Only the database owner and superuser can alter configuration of PostgreSQL.<br />
+<br />
+Ensure the PGLOG directory is owned by postgres user and group:<br />
+<br />
+$ sudo su - postgres<br />
+$ ls -la ${PGLOG?} <br />
+<br />
+If PGLOG is not owned by the database owner, this is a finding. <br />
+<br />
+Ensure the data directory is owned by postgres user and group. <br />
+<br />
+$ sudo su - postgres<br />
+$ ls -la ${PGDATA?}<br />
+<br />
+If PGDATA is not owned by the database owner, this is a finding.<br />
+<br />
+Ensure the pgaudit installation is owned by root:<br />
+<br />
+$ sudo su - postgres<br />
+$ ls -la /usr/pgsql-${PGVER?}/share/extension/pgaudit*<br />
+<br />
+If the pgaudit installation is not owned by root, this is a finding.<br />
+<br />
+As the database administrator (shown here as &quot;postgres&quot;), run the following SQL to list all roles and their privileges:<br />
+<br />
+$ sudo su - postgres<br />
+$ psql -x -c &quot;\du&quot;<br />
+<br />
+If any role has &quot;superuser&quot; that should not, this is a finding.</p><h2>Vulnerability Number</h2><p>V-261878</p><h2>Documentable</h2><p>False</p><h2>Rule Version</h2><p>CD16-00-002300</p><h2>Severity Override Guidance</h2><p>Note: The following instructions use the PGDATA and PGVER environment variables. Refer to APPENDIX-F for instructions on configuring PGDATA, APPENDIX-H for PGVER, and APPENDIX-I for PGLOG. Only the database owner and superuser can alter configuration of PostgreSQL.<br />
+<br />
+Ensure the PGLOG directory is owned by postgres user and group:<br />
+<br />
+$ sudo su - postgres<br />
+$ ls -la ${PGLOG?} <br />
+<br />
+If PGLOG is not owned by the database owner, this is a finding. <br />
+<br />
+Ensure the data directory is owned by postgres user and group. <br />
+<br />
+$ sudo su - postgres<br />
+$ ls -la ${PGDATA?}<br />
+<br />
+If PGDATA is not owned by the database owner, this is a finding.<br />
+<br />
+Ensure the pgaudit installation is owned by root:<br />
+<br />
+$ sudo su - postgres<br />
+$ ls -la /usr/pgsql-${PGVER?}/share/extension/pgaudit*<br />
+<br />
+If the pgaudit installation is not owned by root, this is a finding.<br />
+<br />
+As the database administrator (shown here as &quot;postgres&quot;), run the following SQL to list all roles and their privileges:<br />
+<br />
+$ sudo su - postgres<br />
+$ psql -x -c &quot;\du&quot;<br />
+<br />
+If any role has &quot;superuser&quot; that should not, this is a finding.</p><h2>Check Content Reference</h2><p>M</p><h2>Target Key</h2><p>5598</p></body></html>

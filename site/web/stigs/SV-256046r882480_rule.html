@@ -1,0 +1,45 @@
+<!doctype html><html lang="en"><head><meta charset="utf-8"><title>STIGQter: STIG Check Details: SV-256046r882480_rule: The Arista multicast Designated Router (DR) must be configured to filter the Internet Group Management Protocol (IGMP) and Multicast Listener Discovery (MLD) Report messages to allow hosts to join a multicast group only from sources that have been approved by the organization.</title><link rel="icon" type="image/svg+xml" href="STIGQter.svg" /><script async src="https://www.googletagmanager.com/gtag/js?id=UA-31381839-2"></script><script src="include.js"></script><script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-4110907817782130" crossorigin="anonymous"></script></head><body><div><img src="STIGQter.svg" alt="STIGQter" style="height:1em;" /> <a href="https://www.stigqter.com/">STIGQter</a>: <a href="main.html">STIG Summary</a>: <a href="U_Arista_MLS_EOS_4-X_Router_STIG_V2R2_Manual-xccdf.html">Arista MLS EOS 4.X Router Security Technical Implementation Guide Version: 2 Release: 2 Benchmark Date: 02 Apr 2025</a>:</div> <h1>The Arista multicast Designated Router (DR) must be configured to filter the Internet Group Management Protocol (IGMP) and Multicast Listener Discovery (MLD) Report messages to allow hosts to join a multicast group only from sources that have been approved by the organization.</h1><h2>DISA Rule</h2><p>SV-256046r882480_rule</p><h2>Vulnerability Number</h2><p>V-256046</p><h2>Group Title</h2><p>SRG-NET-000364-RTR-000115</p><h2>Rule Version</h2><p>ARST-RT-000670</p><h2>Severity</h2><p>CAT II</p><h2>CCI(s)</h2><ul><li>CCI-002403 - Only allow incoming communications from organization-defined authorized sources routed to organization-defined authorized destinations.</li></ul><h2>Weight</h2><p>10</p><h2>Fix Recommendation</h2><p>Configure the Arista DR to filter the IGMP and MLD report messages to allow hosts to join only multicast groups from sources that have been approved.<br />
+<br />
+Step 1: Configure the ACL to filter the unauthorized IGMP groups.<br />
+<br />
+LEAF-1A(config-if-Et3)#ip access-list standard ALLOWED_SOURCES<br />
+LEAF-1A(config-std-acl-ALLOWED_SOURCES)#  10 permit 232.0.0.0/8<br />
+LEAF-1A(config-std-acl-ALLOWED_SOURCES)#  20 deny any log<br />
+<br />
+Step 2: Configure the IGMP filter in IGMP process.<br />
+<br />
+LEAF-1A(config)#router pim sparse-mode<br />
+LEAF-1A(config-router-pim-sparse)#  ipv4 <br />
+LEAF-1A(config-router-pim-sparse-ipv4)#    ssm range ALLOWED_SOURCES</p><h2>Check Contents</h2><p>Review the configuration of the Arista DR to verify it is filtering IGMP or MLD report messages, allowing hosts to only join multicast groups from sources that have been approved.<br />
+<br />
+Note: This requirement is only applicable to Source Specific Multicast (SSM) implementation.<br />
+<br />
+Step 1: To verify the ACL filters the unauthorized IGMP joins, execute the command &quot;sh ip access-list&quot;.<br />
+<br />
+ip access-list standard ALLOWED_SOURCES<br />
+  10 permit 232.0.0.0/8<br />
+  20 deny any log<br />
+  <br />
+Step 2: Verify the ACL is configured on internal host-facing interfaces (pim process) to filter IGMP joins.<br />
+<br />
+router pim sparse-mode<br />
+  ipv4 <br />
+    ssm range ALLOWED_SOURCES<br />
+<br />
+If the Arista DR is not filtering IGMP or MLD report messages, this is a finding.</p><h2>Vulnerability Number</h2><p>V-256046</p><h2>Documentable</h2><p>False</p><h2>Rule Version</h2><p>ARST-RT-000670</p><h2>Severity Override Guidance</h2><p>Review the configuration of the Arista DR to verify it is filtering IGMP or MLD report messages, allowing hosts to only join multicast groups from sources that have been approved.<br />
+<br />
+Note: This requirement is only applicable to Source Specific Multicast (SSM) implementation.<br />
+<br />
+Step 1: To verify the ACL filters the unauthorized IGMP joins, execute the command &quot;sh ip access-list&quot;.<br />
+<br />
+ip access-list standard ALLOWED_SOURCES<br />
+  10 permit 232.0.0.0/8<br />
+  20 deny any log<br />
+  <br />
+Step 2: Verify the ACL is configured on internal host-facing interfaces (pim process) to filter IGMP joins.<br />
+<br />
+router pim sparse-mode<br />
+  ipv4 <br />
+    ssm range ALLOWED_SOURCES<br />
+<br />
+If the Arista DR is not filtering IGMP or MLD report messages, this is a finding.</p><h2>Check Content Reference</h2><p>M</p><h2>Target Key</h2><p>5513</p></body></html>

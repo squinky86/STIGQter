@@ -1,0 +1,44 @@
+<!doctype html><html lang="en"><head><meta charset="utf-8"><title>STIGQter: STIG Check Details: SV-279166r1170654_rule: The ALG providing user authentication intermediary services must uniquely identify and authenticate nonorganizational users (or processes acting on behalf of nonorganizational users).</title><link rel="icon" type="image/svg+xml" href="STIGQter.svg" /><script async src="https://www.googletagmanager.com/gtag/js?id=UA-31381839-2"></script><script src="include.js"></script><script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-4110907817782130" crossorigin="anonymous"></script></head><body><div><img src="STIGQter.svg" alt="STIGQter" style="height:1em;" /> <a href="https://www.stigqter.com/">STIGQter</a>: <a href="main.html">STIG Summary</a>: <a href="U_SYM_Edge_SWG_ALG_STIG_V1R1_Manual-xccdf.html">Symantec Edge SWG ALG Security Technical Implementation Guide Version: 1 Release: 1 Benchmark Date: 25 Nov 2025</a>:</div> <h1>The ALG providing user authentication intermediary services must uniquely identify and authenticate nonorganizational users (or processes acting on behalf of nonorganizational users).</h1><h2>DISA Rule</h2><p>SV-279166r1170654_rule</p><h2>Vulnerability Number</h2><p>V-279166</p><h2>Group Title</h2><p>SRG-NET-000169-ALG-000102</p><h2>Rule Version</h2><p>SYME-00-002500</p><h2>Severity</h2><p>CAT II</p><h2>CCI(s)</h2><ul><li>CCI-000804 - Uniquely identify and authenticate non-organizational users or processes acting on behalf of non-organizational users.</li><li>CCI-000213 - Enforce approved authorizations for logical access to information and system resources in accordance with applicable access control policies.</li><li>CCI-000764 - Uniquely identify and authenticate organizational users and associate that unique identification with processes acting on behalf of those users.</li><li>CCI-000766 - Implement multifactor authentication for network access to non-privileged accounts.</li><li>CCI-001941 - Implement replay-resistant authentication mechanisms for access to privileged accounts and/or non-privileged accounts.</li><li>CCI-000185 - For public key-based authentication, validate certificates by constructing and verifying a certification path to an accepted trust anchor including checking certificate status information.</li><li>CCI-000187 - For public key-based authentication, map the authenticated identity to the account of the individual or group.</li><li>CCI-001368 - Enforce approved authorizations for controlling the flow of information within the system based on organization-defined information flow control policies.</li><li>CCI-001414 - Enforce approved authorizations for controlling the flow of information between connected systems based on organization-defined information flow control policies.</li><li>CCI-000197 - For password-based authentication, transmit passwords only cryptographically-protected channels.</li></ul><h2>Weight</h2><p>10</p><h2>Fix Recommendation</h2><p>1. In the Edge SWG Web UI, navigate to the VPM.<br />
+2. Add a web access layer called &quot;Web Access Layer&quot;.<br />
+3. Click &quot;Add a rule.&quot; <br />
+4. Under &quot;Source&quot;, left-click and select &quot;Set&quot;.<br />
+5. Click &quot;Add a new object&quot; and select &quot;Group&quot;.<br />
+6. Enter the full DN of the LDAP group. For example: CN=broadcom.proxyusers.gsg,OU=BROADCOM,DC=dod,DC=mil<br />
+7. Under &quot;Authentication Realm&quot;, select the CAC Certificate.<br />
+8. Click &quot;Apply&quot; and then click &quot;Set&quot;.<br />
+9. Click &quot;Service&quot; and then click &quot;Set&quot;.<br />
+10. Click &quot;Add a new object&quot;.<br />
+11. Click &quot;Client Protocol&quot;, select &quot;HTTP&quot;, and then click &quot;Apply and set&quot;.<br />
+12. Under &quot;Action&quot;, left-click and set to &quot;Allow&quot;.<br />
+13. Under &quot;Track&quot;, left-click &quot;Add a new Object&quot;.<br />
+14. Click &quot;Event Log&quot;.<br />
+15. Under &quot;Details&quot;, add the following text: &quot;$(appliance.name)$(appliance.primary_address)$(c-ip)$(c-port)$(c-uri)$(c-uri-address)$(c-uri-cookie-domain)$(c-uri-extension)$(c-uri-host)$(c-uri-hostname)$(c-uri-path)$(c-ur-pathquery)$(client.address)$(client.certificate.subject)$(client.host)$(client.public_address)$(cs-auth-group)$(cs-categories-policy)$(date)$(user.name)$(user.x509.subject)&quot;<br />
+16. Under &quot;Category&quot;, select &quot;All&quot;.<br />
+17. Under &quot;Display options&quot;, select &quot;Both&quot;.<br />
+18. Click &quot;Apply and set&quot;.<br />
+19. Repeat the above procedure for each service/protocol being proxied with authorization enforcement. For example, ensure HTTPS is selected when doing HTTPS and not HTTP.<br />
+20. Click &quot;Apply Policy&quot;.<br />
+<br />
+1. Navigate to the top of the VPM and add a new layer. It must be a CPL layer.<br />
+2. Include the following in the layer text:<br />
+&lt;Proxy&gt;<br />
+ url.regex=&quot;ssl://&quot; authenticate(no)<br />
+<br />
+&lt;Proxy&gt;client.certificate.require(yes)<br />
+     service.name=!(CAC-MC-Notify,HTTPS-Console) authenticate(CAC) authenticate.force(no) authenticate.mode(auto)<br />
+<br />
+Note: The CAC-MC-Notify and HTTPS-Console must match a proxy or reverse service in use. The authenticate(CAC) must represent the Certificate Authentication Realm previously configured.<br />
+<br />
+3. Click &quot;Apply Policy&quot;.</p><h2>Check Contents</h2><p>In the Edge SWG Web UI, navigate to the Visual Policy Manager (VPM).<br />
+<br />
+If there is not a Web Access Layer, and the authorization has not been configured on this layer for the proxy users based on the CAC/LDAP authentication realm, this is a finding.<br />
+<br />
+If there are not specific services restricted to each group, this is a finding.<br />
+<br />
+Ensure there is a CPL layer that includes a client certificate requirement rule; otherwise, this is a finding.</p><h2>Vulnerability Number</h2><p>V-279166</p><h2>Documentable</h2><p>False</p><h2>Rule Version</h2><p>SYME-00-002500</p><h2>Severity Override Guidance</h2><p>In the Edge SWG Web UI, navigate to the Visual Policy Manager (VPM).<br />
+<br />
+If there is not a Web Access Layer, and the authorization has not been configured on this layer for the proxy users based on the CAC/LDAP authentication realm, this is a finding.<br />
+<br />
+If there are not specific services restricted to each group, this is a finding.<br />
+<br />
+Ensure there is a CPL layer that includes a client certificate requirement rule; otherwise, this is a finding.</p><h2>Check Content Reference</h2><p>M</p><h2>Target Key</h2><p>5725</p></body></html>

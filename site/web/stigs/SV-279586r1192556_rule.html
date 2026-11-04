@@ -1,0 +1,83 @@
+<!doctype html><html lang="en"><head><meta charset="utf-8"><title>STIGQter: STIG Check Details: SV-279586r1192556_rule: Nutanix OS must enable an application firewall.</title><link rel="icon" type="image/svg+xml" href="STIGQter.svg" /><script async src="https://www.googletagmanager.com/gtag/js?id=UA-31381839-2"></script><script src="include.js"></script><script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-4110907817782130" crossorigin="anonymous"></script></head><body><div><img src="STIGQter.svg" alt="STIGQter" style="height:1em;" /> <a href="https://www.stigqter.com/">STIGQter</a>: <a href="main.html">STIG Summary</a>: <a href="U_NTX_Acropolis_OS_STIG_V1R1_Manual-xccdf.html">Nutanix Acropolis GPOS Security Technical Implementation Guide Version: 1 Release: 1 Benchmark Date: 26 Jan 2026</a>:</div> <h1>Nutanix OS must enable an application firewall.</h1><h2>DISA Rule</h2><p>SV-279586r1192556_rule</p><h2>Vulnerability Number</h2><p>V-279586</p><h2>Group Title</h2><p>SRG-OS-000480-GPOS-00232</p><h2>Rule Version</h2><p>NXAC-OS-000133</p><h2>Severity</h2><p>CAT II</p><h2>CCI(s)</h2><ul><li>CCI-001764 - Prevent program execution in accordance with organization-defined policies, rules of behavior, and/or access agreements regarding software program usage and restrictions; rules authorizing the terms and conditions of software program usage.</li><li>CCI-001774 - Employ a deny-all, permit-by-exception policy to allow the execution of authorized software programs on the system.</li></ul><h2>Weight</h2><p>10</p><h2>Fix Recommendation</h2><p>1. For AOS, configure fapolicyd.service using the following command.<br />
+<br />
+$ sudo salt-call state.sls security/CVM/fapolicydCVM.sls<br />
+<br />
+2. For Prism Central, configure fapolicyd.service using the following command.<br />
+<br />
+$ sudo salt-call state.sls security/PCVM/fapolicydPCVM.sls<br />
+<br />
+3. For Files, configure fapolicyd.service using the following command.<br />
+<br />
+$ sudo salt-call state.sls security/AFS/fapolicydAFS.sls<br />
+<br />
+4. Configure AHV to restrict using SSH using the following command.<br />
+<br />
+$ sudo salt-call state.sls security/KVM/iptables/init</p><h2>Check Contents</h2><p>1. Verify AOS, Prism Central, and Files has &quot;fapolicyd&quot; installed and is configured for deny-all, permit by exception policy using the following command.<br />
+<br />
+$ sudo systemctl status fapolicyd.service <br />
+fapolicyd.service - File Access Policy Daemon<br />
+   Loaded: loaded (/usr/lib/systemd/system/fapolicyd.service; enabled; vendor preset: disabled)<br />
+   Active: active (running)<br />
+<br />
+$ sudo grep permissive /etc/fapolicyd/fapolicyd.conf <br />
+permissive = 0<br />
+<br />
+$sudo tail /etc/fapolicyd/compiled.rules<br />
+deny_audit perm=any pattern=ld_so : all<br />
+deny_audit perm=any all : ftype=application/x-bad-elf<br />
+allow perm=open all : ftype=application/x-sharedlib trust=1<br />
+deny perm=any all : all<br />
+<br />
+2. For AHV, verify iptables services are &quot;Loaded&quot; and &quot;Active&quot;.<br />
+<br />
+$ sudo service iptables status<br />
+iptables.service - IPv4 firewall with iptables<br />
+   Loaded: loaded (/usr/lib/systemd/system/iptables.service; enabled; vendor preset: disabled)<br />
+   Active: active (exited) since Mon 2021-08-02 15:02:12 CDT; 2 weeks 6 days ago<br />
+ Main PID: 1250 (code=exited, status=0/SUCCESS)<br />
+   CGroup: /system.slice/iptables.service<br />
+<br />
+3. If IPv6 is in use, run the following command.<br />
+<br />
+$ sudo service ip6tables status<br />
+ip6tables.service - IPv6 firewall with ip6tables<br />
+   Loaded: loaded (/usr/lib/systemd/system/ip6tables.service; enabled; vendor preset: disabled)<br />
+   Active: active (exited) since Mon 2021-08-02 15:02:12 CDT; 2 weeks 6 days ago<br />
+ Main PID: 1313 (code=exited, status=0/SUCCESS)<br />
+   CGroup: /system.slice/ip6tables.service<br />
+<br />
+If an application firewall is not configured or is not installed or enabled, this is a finding.</p><h2>Vulnerability Number</h2><p>V-279586</p><h2>Documentable</h2><p>False</p><h2>Rule Version</h2><p>NXAC-OS-000133</p><h2>Severity Override Guidance</h2><p>1. Verify AOS, Prism Central, and Files has &quot;fapolicyd&quot; installed and is configured for deny-all, permit by exception policy using the following command.<br />
+<br />
+$ sudo systemctl status fapolicyd.service <br />
+fapolicyd.service - File Access Policy Daemon<br />
+   Loaded: loaded (/usr/lib/systemd/system/fapolicyd.service; enabled; vendor preset: disabled)<br />
+   Active: active (running)<br />
+<br />
+$ sudo grep permissive /etc/fapolicyd/fapolicyd.conf <br />
+permissive = 0<br />
+<br />
+$sudo tail /etc/fapolicyd/compiled.rules<br />
+deny_audit perm=any pattern=ld_so : all<br />
+deny_audit perm=any all : ftype=application/x-bad-elf<br />
+allow perm=open all : ftype=application/x-sharedlib trust=1<br />
+deny perm=any all : all<br />
+<br />
+2. For AHV, verify iptables services are &quot;Loaded&quot; and &quot;Active&quot;.<br />
+<br />
+$ sudo service iptables status<br />
+iptables.service - IPv4 firewall with iptables<br />
+   Loaded: loaded (/usr/lib/systemd/system/iptables.service; enabled; vendor preset: disabled)<br />
+   Active: active (exited) since Mon 2021-08-02 15:02:12 CDT; 2 weeks 6 days ago<br />
+ Main PID: 1250 (code=exited, status=0/SUCCESS)<br />
+   CGroup: /system.slice/iptables.service<br />
+<br />
+3. If IPv6 is in use, run the following command.<br />
+<br />
+$ sudo service ip6tables status<br />
+ip6tables.service - IPv6 firewall with ip6tables<br />
+   Loaded: loaded (/usr/lib/systemd/system/ip6tables.service; enabled; vendor preset: disabled)<br />
+   Active: active (exited) since Mon 2021-08-02 15:02:12 CDT; 2 weeks 6 days ago<br />
+ Main PID: 1313 (code=exited, status=0/SUCCESS)<br />
+   CGroup: /system.slice/ip6tables.service<br />
+<br />
+If an application firewall is not configured or is not installed or enabled, this is a finding.</p><h2>Check Content Reference</h2><p>M</p><h2>Target Key</h2><p>5730</p></body></html>

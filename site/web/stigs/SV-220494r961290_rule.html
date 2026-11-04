@@ -1,0 +1,46 @@
+<!doctype html><html lang="en"><head><meta charset="utf-8"><title>STIGQter: STIG Check Details: SV-220494r961290_rule: The Cisco switch must be configured to automatically audit account enabling actions.</title><link rel="icon" type="image/svg+xml" href="STIGQter.svg" /><script async src="https://www.googletagmanager.com/gtag/js?id=UA-31381839-2"></script><script src="include.js"></script><script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-4110907817782130" crossorigin="anonymous"></script></head><body><div><img src="STIGQter.svg" alt="STIGQter" style="height:1em;" /> <a href="https://www.stigqter.com/">STIGQter</a>: <a href="main.html">STIG Summary</a>: <a href="U_Cisco_NX-OS_Switch_NDM_STIG_V3R6_Manual-xccdf.html">Cisco NX OS Switch NDM Security Technical Implementation Guide Version: 3 Release: 6 Benchmark Date: 05 Jan 2026</a>:</div> <h1>The Cisco switch must be configured to automatically audit account enabling actions.</h1><h2>DISA Rule</h2><p>SV-220494r961290_rule</p><h2>Vulnerability Number</h2><p>V-220494</p><h2>Group Title</h2><p>SRG-APP-000319-NDM-000283</p><h2>Rule Version</h2><p>CISC-ND-000880</p><h2>Severity</h2><p>CAT II</p><h2>CCI(s)</h2><ul><li>CCI-002130 - Automatically audit account enabling actions.</li></ul><h2>Weight</h2><p>10</p><h2>Fix Recommendation</h2><p>Configure the switch to log account enabling using the following steps:<br />
+<br />
+Step 1: Configure the AAA servers as shown in the example below:<br />
+<br />
+SW1(config)# radius-server host 10.1.48.10 <br />
+SW1(config)# radius-server host 10.1.48.12<br />
+<br />
+Step 2: Configure an AAA server group as shown in the example below:<br />
+<br />
+SW1(config)# aaa group server radius RADIUS_SERVERS<br />
+SW1(config-radius)# server 10.1.48.10 <br />
+SW1(config-radius)# server 10.1.48.12<br />
+SW1(config-radius)# exit<br />
+<br />
+Step 3: Enable AAA accounting as shown in the example below:<br />
+<br />
+SW1(config)# aaa accounting default group RADIUS_SERVERS<br />
+SW1(config)# end</p><h2>Check Contents</h2><p>Review the switch configuration to determine if it automatically audits account enabling. The configuration should look similar to the example below:<br />
+<br />
+Step 1: Verify that account records will be sent to an AAA server as shown in the example below:<br />
+<br />
+aaa accounting default group RADIUS_SERVERS<br />
+<br />
+Step 2: Verify that the referenced group name has defined AAA servers that are online.<br />
+<br />
+aaa group server radius RADIUS_SERVERS <br />
+ server 10.1.48.10 <br />
+ server 10.1.48.12<br />
+<br />
+Note: Cisco NX-OS devices report configuration activity to TACACS+ or RADIUS servers in the form of accounting records. Each accounting record contains accounting attribute-value (AV) pairs and is stored on the AAA server.<br />
+<br />
+If account enabling is not automatically audited, this is a finding.</p><h2>Vulnerability Number</h2><p>V-220494</p><h2>Documentable</h2><p>False</p><h2>Rule Version</h2><p>CISC-ND-000880</p><h2>Severity Override Guidance</h2><p>Review the switch configuration to determine if it automatically audits account enabling. The configuration should look similar to the example below:<br />
+<br />
+Step 1: Verify that account records will be sent to an AAA server as shown in the example below:<br />
+<br />
+aaa accounting default group RADIUS_SERVERS<br />
+<br />
+Step 2: Verify that the referenced group name has defined AAA servers that are online.<br />
+<br />
+aaa group server radius RADIUS_SERVERS <br />
+ server 10.1.48.10 <br />
+ server 10.1.48.12<br />
+<br />
+Note: Cisco NX-OS devices report configuration activity to TACACS+ or RADIUS servers in the form of accounting records. Each accounting record contains accounting attribute-value (AV) pairs and is stored on the AAA server.<br />
+<br />
+If account enabling is not automatically audited, this is a finding.</p><h2>Check Content Reference</h2><p>M</p><h2>Target Key</h2><p>4066</p></body></html>

@@ -1,0 +1,49 @@
+<!doctype html><html lang="en"><head><meta charset="utf-8"><title>STIGQter: STIG Check Details: SV-216123r959010_rule: Unauthorized use of the at or cron capabilities must not be permitted.</title><link rel="icon" type="image/svg+xml" href="STIGQter.svg" /><script async src="https://www.googletagmanager.com/gtag/js?id=UA-31381839-2"></script><script src="include.js"></script><script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-4110907817782130" crossorigin="anonymous"></script></head><body><div><img src="STIGQter.svg" alt="STIGQter" style="height:1em;" /> <a href="https://www.stigqter.com/">STIGQter</a>: <a href="main.html">STIG Summary</a>: <a href="U_SOL_11_x86_STIG_V3R6_Manual-xccdf.html">Solaris 11 X86 Security Technical Implementation Guide Version: 3 Release: 6 Benchmark Date: 01 Jul 2026</a>:</div> <h1>Unauthorized use of the at or cron capabilities must not be permitted.</h1><h2>DISA Rule</h2><p>SV-216123r959010_rule</p><h2>Vulnerability Number</h2><p>V-216123</p><h2>Group Title</h2><p>SRG-OS-000480</p><h2>Rule Version</h2><p>SOL-11.1-040420</p><h2>Severity</h2><p>CAT II</p><h2>CCI(s)</h2><ul><li>CCI-000366 - Implement the security configuration settings.</li></ul><h2>Weight</h2><p>10</p><h2>Fix Recommendation</h2><p>The root role is required.<br />
+<br />
+Modify the cron configuration files.<br />
+<br />
+# mv /etc/cron.d/cron.deny /etc/cron.d/cron.deny.temp<br />
+# mv /etc/cron.d/at.deny /etc/cron.d/at.deny.temp<br />
+<br />
+Skip the remaining steps only if using the “solaris.jobs.user” RBAC role.<br />
+<br />
+# echo root &gt; /etc/cron.d/cron.allow<br />
+# cp /dev/null /etc/cron.d/at.allow<br />
+# chown root:root /etc/cron.d/cron.allow /etc/cron.d/at.allow<br />
+# chmod 400 /etc/cron.d/cron.allow /etc/cron.d/at.allow</p><h2>Check Contents</h2><p>Check that &quot;at&quot; and &quot;cron&quot; users are configured correctly.<br />
+<br />
+# ls /etc/cron.d/cron.deny<br />
+<br />
+If cron.deny exists, this is a finding.<br />
+<br />
+# ls /etc/cron.d/at.deny<br />
+<br />
+If at.deny exists, this is a finding.<br />
+<br />
+# cat /etc/cron.d/cron.allow<br />
+<br />
+cron.allow should have a single entry for &quot;root&quot;, or the cron.allow file is removed if using RBAC.  <br />
+ <br />
+If any accounts other than root that are listed and they are not properly documented with the IA staff, this is a finding.<br />
+<br />
+# wc -l /etc/cron.d/at.allow | awk '{ print $1 }'<br />
+<br />
+If the output is non-zero, this is a finding, or the at.allow file is removed if using RBAC.</p><h2>Vulnerability Number</h2><p>V-216123</p><h2>Documentable</h2><p>False</p><h2>Rule Version</h2><p>SOL-11.1-040420</p><h2>Severity Override Guidance</h2><p>Check that &quot;at&quot; and &quot;cron&quot; users are configured correctly.<br />
+<br />
+# ls /etc/cron.d/cron.deny<br />
+<br />
+If cron.deny exists, this is a finding.<br />
+<br />
+# ls /etc/cron.d/at.deny<br />
+<br />
+If at.deny exists, this is a finding.<br />
+<br />
+# cat /etc/cron.d/cron.allow<br />
+<br />
+cron.allow should have a single entry for &quot;root&quot;, or the cron.allow file is removed if using RBAC.  <br />
+ <br />
+If any accounts other than root that are listed and they are not properly documented with the IA staff, this is a finding.<br />
+<br />
+# wc -l /etc/cron.d/at.allow | awk '{ print $1 }'<br />
+<br />
+If the output is non-zero, this is a finding, or the at.allow file is removed if using RBAC.</p><h2>Check Content Reference</h2><p>M</p><h2>Target Key</h2><p>4021</p></body></html>

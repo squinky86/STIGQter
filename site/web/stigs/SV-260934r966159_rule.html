@@ -1,0 +1,21 @@
+<!doctype html><html lang="en"><head><meta charset="utf-8"><title>STIGQter: STIG Check Details: SV-260934r966159_rule: All containers must be restricted from acquiring additional privileges.</title><link rel="icon" type="image/svg+xml" href="STIGQter.svg" /><script async src="https://www.googletagmanager.com/gtag/js?id=UA-31381839-2"></script><script src="include.js"></script><script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-4110907817782130" crossorigin="anonymous"></script></head><body><div><img src="STIGQter.svg" alt="STIGQter" style="height:1em;" /> <a href="https://www.stigqter.com/">STIGQter</a>: <a href="main.html">STIG Summary</a>: <a href="U_Mirantis_Kubernetes_Engine_STIG_V2R1_Manual-xccdf.html">Mirantis Kubernetes Engine Security Technical Implementation Guide Version: 2 Release: 1 Benchmark Date: 24 Jul 2024</a>:</div> <h1>All containers must be restricted from acquiring additional privileges.</h1><h2>DISA Rule</h2><p>SV-260934r966159_rule</p><h2>Vulnerability Number</h2><p>V-260934</p><h2>Group Title</h2><p>SRG-APP-000243-CTR-000595</p><h2>Rule Version</h2><p>CNTR-MK-001010</p><h2>Severity</h2><p>CAT II</p><h2>CCI(s)</h2><ul><li>CCI-001090 - Prevent unauthorized and unintended information transfer via shared system resources.</li><li>CCI-002233 - Prevent the organization-defined software from executing at higher privilege levels than users executing the software.</li></ul><h2>Weight</h2><p>10</p><h2>Fix Recommendation</h2><p>Start the containers using the following:<br />
+<br />
+docker run --rm -it --security-opt=no-new-privileges &lt;image&gt;<br />
+<br />
+A reference for the Docker run command can be found at https://docs.docker.com/engine/reference/run/.<br />
+<br />
+no-new-privileges command information can be found here: https://docs.mirantis.com/mke/3.7/install/plan-deployment/mcr-considerations/no-new-privileges.html.</p><h2>Check Contents</h2><p>This check must be executed on all nodes in an MKE cluster to ensure all containers are restricted from acquiring additional privileges.<br />
+<br />
+Via CLI:<br />
+Linux: As an MKE Admin, execute the following command using a Universal Control Plane (MKE) client bundle:<br />
+<br />
+docker ps --quiet --all | xargs -L 1 docker inspect --format '{{ .Id }}: SecurityOpt={{ .HostConfig.SecurityOpt }}'<br />
+<br />
+The above command returns the security options currently configured for the running containers. If the &quot;SecurityOpt=&quot; setting does not include the &quot;no-new-privileges&quot; flag, this is a finding.</p><h2>Vulnerability Number</h2><p>V-260934</p><h2>Documentable</h2><p>False</p><h2>Rule Version</h2><p>CNTR-MK-001010</p><h2>Severity Override Guidance</h2><p>This check must be executed on all nodes in an MKE cluster to ensure all containers are restricted from acquiring additional privileges.<br />
+<br />
+Via CLI:<br />
+Linux: As an MKE Admin, execute the following command using a Universal Control Plane (MKE) client bundle:<br />
+<br />
+docker ps --quiet --all | xargs -L 1 docker inspect --format '{{ .Id }}: SecurityOpt={{ .HostConfig.SecurityOpt }}'<br />
+<br />
+The above command returns the security options currently configured for the running containers. If the &quot;SecurityOpt=&quot; setting does not include the &quot;no-new-privileges&quot; flag, this is a finding.</p><h2>Check Content Reference</h2><p>M</p><h2>Target Key</h2><p>5595</p></body></html>

@@ -1,0 +1,131 @@
+<!doctype html><html lang="en"><head><meta charset="utf-8"><title>STIGQter: STIG Check Details: SV-256016r882390_rule: The Arista router must be configured to restrict traffic destined to itself.</title><link rel="icon" type="image/svg+xml" href="STIGQter.svg" /><script async src="https://www.googletagmanager.com/gtag/js?id=UA-31381839-2"></script><script src="include.js"></script><script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-4110907817782130" crossorigin="anonymous"></script></head><body><div><img src="STIGQter.svg" alt="STIGQter" style="height:1em;" /> <a href="https://www.stigqter.com/">STIGQter</a>: <a href="main.html">STIG Summary</a>: <a href="U_Arista_MLS_EOS_4-X_Router_STIG_V2R2_Manual-xccdf.html">Arista MLS EOS 4.X Router Security Technical Implementation Guide Version: 2 Release: 2 Benchmark Date: 02 Apr 2025</a>:</div> <h1>The Arista router must be configured to restrict traffic destined to itself.</h1><h2>DISA Rule</h2><p>SV-256016r882390_rule</p><h2>Vulnerability Number</h2><p>V-256016</p><h2>Group Title</h2><p>SRG-NET-000205-RTR-000001</p><h2>Rule Version</h2><p>ARST-RT-000340</p><h2>Severity</h2><p>CAT I</p><h2>CCI(s)</h2><ul><li>CCI-001097 - Monitor and control communications at the external managed interfaces to the system and at key managed interfaces within the system.</li></ul><h2>Weight</h2><p>10</p><h2>Fix Recommendation</h2><p>Configure all Arista routers with receive path filters to restrict traffic destined to the router.<br />
+<br />
+Step 1: Configure the Control plane policy to restrict the LLDP traffic to CPU.<br />
+<br />
+router(config)#policy-map type copp copp-system-policy<br />
+router(config-pmap-copp-system-policy)#class copp-system-lldp<br />
+router(config-pmap-c-copp-system-policy-copp-system-lldp)#bandwidth kbps 500<br />
+<br />
+Step 2: Configure an ACL inbound to allow traffic per the requirement and deny all by default.<br />
+<br />
+ip access-list INBOUND<br />
+   10 permit tcp 10.10.10.0/24 host 10.20.10.1 eq ssh telnet<br />
+   20 permit tcp 10.10.10.0/24 any eq www https<br />
+   30 permit udp 10.20.20.0/24 any eq bootps snmp<br />
+<br />
+Step 3: Apply the ACL inbound on all external interfaces.<br />
+<br />
+router(config)#interface ethernet 13<br />
+router(config-if-Et13)#ip access-group INBOUND in</p><h2>Check Contents</h2><p>Review the access control list (ACL) or filter for the Arista router receive path and verify that it will only process specific management plane and control plane traffic from specific sources.<br />
+<br />
+Note: If the platform does not support the receive path filter, verify all layer 3 interfaces have an ingress ACL to control what packets are allowed to be destined to the router for processing.<br />
+<br />
+Step 1: Review the Arista router configuration for Control Plane ACL, which can be modified to permit or deny additional protocols that can be matched via an extended access-list for management traffic. Sample Default CP ACL:<br />
+<br />
+!<br />
+ip access-list ENCLAVE_GATEWAY_FILTER<br />
+   10 permit ip any 172.16.0.0/16<br />
+!<br />
+ip access-list STIG<br />
+   10 deny ip 172.16.50.0/30 10.10.100.0/24<br />
+!<br />
+ip access-list control-plane-modified<br />
+   !! Line 180 added for AMLS-L3-000260 which requires eBGP GTSM or equivalent<br />
+   statistics per-entry<br />
+   10 permit icmp any any<br />
+   20 permit ip any any tracked<br />
+   30 permit udp any any eq bfd ttl eq 255<br />
+   40 permit udp any any eq bfd-echo ttl eq 254<br />
+   50 permit ospf any any<br />
+   60 permit tcp any any eq ssh telnet www snmp bgp https msdp<br />
+   70 permit udp any any eq bootps bootpc snmp rip ntp<br />
+   80 permit tcp any any eq mlag ttl eq 255<br />
+   90 permit udp any any eq mlag ttl eq 255<br />
+   100 permit vrrp any any<br />
+   110 permit ahp any any<br />
+   120 permit pim any any<br />
+   130 permit igmp any any<br />
+   140 permit tcp any any range 5900 5910<br />
+   150 permit tcp any any range 50000 50100<br />
+   160 permit udp any any range 51000 51100<br />
+   170 permit tcp any any eq mlag-arp-sync ttl eq 255<br />
+   180 permit tcp 192.168.1.0/30 192.168.1.0/30 eq bgp ttl eq 255 log <br />
+<br />
+Step 2: Verify the control plane policy is configured to restricting the LLDP traffic to CPU.<br />
+<br />
+router#show running-config | section policy-map<br />
+policy-map type copp copp-system-policy<br />
+   class copp-system-lldp<br />
+   bandwidth kbps 500<br />
+<br />
+Step 3: To verify the ACL is configured to allow the traffic per the requirement and deny all by default, execute the command &quot;sh ip access-list&quot;.<br />
+<br />
+router#show ip access-list<br />
+ip access-list INBOUND<br />
+   10 permit tcp 10.10.10.0/24 host 10.20.10.1 eq ssh telnet<br />
+   20 permit tcp 10.10.10.0/24 any eq www https<br />
+   30 permit udp 10.20.20.0/24 any eq bootps snmp<br />
+<br />
+Step 4: To verify the ACL is applied inbound on all external interfaces, execute the command &quot;sh run int Eth YY&quot;.<br />
+<br />
+router#show running-config interface Ethernet 13<br />
+interface ethernet 13<br />
+  ip access-group INBOUND in<br />
+<br />
+If the Arista router is not configured with a receive-path filter to restrict traffic destined to itself, this is a finding.</p><h2>Vulnerability Number</h2><p>V-256016</p><h2>Documentable</h2><p>False</p><h2>Rule Version</h2><p>ARST-RT-000340</p><h2>Severity Override Guidance</h2><p>Review the access control list (ACL) or filter for the Arista router receive path and verify that it will only process specific management plane and control plane traffic from specific sources.<br />
+<br />
+Note: If the platform does not support the receive path filter, verify all layer 3 interfaces have an ingress ACL to control what packets are allowed to be destined to the router for processing.<br />
+<br />
+Step 1: Review the Arista router configuration for Control Plane ACL, which can be modified to permit or deny additional protocols that can be matched via an extended access-list for management traffic. Sample Default CP ACL:<br />
+<br />
+!<br />
+ip access-list ENCLAVE_GATEWAY_FILTER<br />
+   10 permit ip any 172.16.0.0/16<br />
+!<br />
+ip access-list STIG<br />
+   10 deny ip 172.16.50.0/30 10.10.100.0/24<br />
+!<br />
+ip access-list control-plane-modified<br />
+   !! Line 180 added for AMLS-L3-000260 which requires eBGP GTSM or equivalent<br />
+   statistics per-entry<br />
+   10 permit icmp any any<br />
+   20 permit ip any any tracked<br />
+   30 permit udp any any eq bfd ttl eq 255<br />
+   40 permit udp any any eq bfd-echo ttl eq 254<br />
+   50 permit ospf any any<br />
+   60 permit tcp any any eq ssh telnet www snmp bgp https msdp<br />
+   70 permit udp any any eq bootps bootpc snmp rip ntp<br />
+   80 permit tcp any any eq mlag ttl eq 255<br />
+   90 permit udp any any eq mlag ttl eq 255<br />
+   100 permit vrrp any any<br />
+   110 permit ahp any any<br />
+   120 permit pim any any<br />
+   130 permit igmp any any<br />
+   140 permit tcp any any range 5900 5910<br />
+   150 permit tcp any any range 50000 50100<br />
+   160 permit udp any any range 51000 51100<br />
+   170 permit tcp any any eq mlag-arp-sync ttl eq 255<br />
+   180 permit tcp 192.168.1.0/30 192.168.1.0/30 eq bgp ttl eq 255 log <br />
+<br />
+Step 2: Verify the control plane policy is configured to restricting the LLDP traffic to CPU.<br />
+<br />
+router#show running-config | section policy-map<br />
+policy-map type copp copp-system-policy<br />
+   class copp-system-lldp<br />
+   bandwidth kbps 500<br />
+<br />
+Step 3: To verify the ACL is configured to allow the traffic per the requirement and deny all by default, execute the command &quot;sh ip access-list&quot;.<br />
+<br />
+router#show ip access-list<br />
+ip access-list INBOUND<br />
+   10 permit tcp 10.10.10.0/24 host 10.20.10.1 eq ssh telnet<br />
+   20 permit tcp 10.10.10.0/24 any eq www https<br />
+   30 permit udp 10.20.20.0/24 any eq bootps snmp<br />
+<br />
+Step 4: To verify the ACL is applied inbound on all external interfaces, execute the command &quot;sh run int Eth YY&quot;.<br />
+<br />
+router#show running-config interface Ethernet 13<br />
+interface ethernet 13<br />
+  ip access-group INBOUND in<br />
+<br />
+If the Arista router is not configured with a receive-path filter to restrict traffic destined to itself, this is a finding.</p><h2>Check Content Reference</h2><p>M</p><h2>Target Key</h2><p>5513</p></body></html>

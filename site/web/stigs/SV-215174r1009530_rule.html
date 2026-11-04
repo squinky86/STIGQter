@@ -1,0 +1,43 @@
+<!doctype html><html lang="en"><head><meta charset="utf-8"><title>STIGQter: STIG Check Details: SV-215174r1009530_rule: If AIX is using LDAP for authentication or account information, the /etc/ldap.conf file (or equivalent) must not contain passwords.</title><link rel="icon" type="image/svg+xml" href="STIGQter.svg" /><script async src="https://www.googletagmanager.com/gtag/js?id=UA-31381839-2"></script><script src="include.js"></script><script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-4110907817782130" crossorigin="anonymous"></script></head><body><div><img src="STIGQter.svg" alt="STIGQter" style="height:1em;" /> <a href="https://www.stigqter.com/">STIGQter</a>: <a href="main.html">STIG Summary</a>: <a href="U_IBM_AIX_7-x_STIG_V3R3_Manual-xccdf.html">IBM AIX 7.x Security Technical Implementation Guide Version: 3 Release: 3 Benchmark Date: 01 Jul 2026</a>:</div> <h1>If AIX is using LDAP for authentication or account information, the /etc/ldap.conf file (or equivalent) must not contain passwords.</h1><h2>DISA Rule</h2><p>SV-215174r1009530_rule</p><h2>Vulnerability Number</h2><p>V-215174</p><h2>Group Title</h2><p>SRG-OS-000073-GPOS-00041</p><h2>Rule Version</h2><p>AIX7-00-001007</p><h2>Severity</h2><p>CAT I</p><h2>CCI(s)</h2><ul><li>CCI-004062 - For password-based authentication, store passwords using an approved salted key derivation function, preferably using a keyed hash.</li></ul><h2>Weight</h2><p>10</p><h2>Fix Recommendation</h2><p>To remove the clear-text password for &quot;bindpwd&quot;, do the following two steps:<br />
+Edit &quot;/etc/security/ldap/ldap.cfg&quot; to remove the &quot;bindpwd&quot; line and save the change; <br />
+<br />
+Re-config the LDAP client using the &quot;mksecldap&quot; command:<br />
+# mksecldap -c -h &lt;LDAP_HOST:LDAP_PORT&gt; -A &lt;auth_type&gt; -D &lt;Default_Entry&gt; -d &lt;BASE_DN&gt; -a &lt;BIND_USER&gt; -p &lt;BIND_PASSWORD&gt; -k &lt;KDB_FILE&gt; -w &lt;KDB_PASSWORD&gt;<br />
+<br />
+Note: Depending on which version of GSKit is installed on AIX, the GSK commands that are used to manage the Key Database (KDB) have different names. The possible GSK commands are: &quot;gsk8capicmd&quot; (used below), &quot;gsk8capicmd_64&quot; and &quot;gsk7cmd&quot;.<br />
+<br />
+To use the stashed password for SSL key database (KDB), do the following two steps:<br />
+Edit &quot;/etc/security/ldap/ldap.cfg&quot; to remove the &quot;ldapsslkeypwd&quot; line and save the change;<br />
+<br />
+Run the &quot;gsk8capicmd&quot; to create a stashed password file for the SSL KDB:<br />
+# gsk8capicmd -keydb -stashpw -db &lt;KDB_FILE&gt; -pw &lt;KDB_PASSWORD&gt;</p><h2>Check Contents</h2><p>Examine the LDAP configuration file &quot;/etc/security/ldap/ldap.cfg&quot; for possible clear-text password for &quot;bindpwd&quot;.<br />
+<br />
+From the command prompt, run the following command:<br />
+# grep ^bindpwd: /etc/security/ldap/ldap.cfg<br />
+<br />
+The above command should yield the following output:<br />
+bindpwd:{DESv2}57AEE2BCED 764373462FC7B62736D9A<br />
+<br />
+If the returned entry has an unencrypted password (the output line does not start with &quot;bindpwd:{DES&quot;), this is a finding. <br />
+<br />
+Examine the LDAP configuration file &quot;/etc/security/ldap/ldap.cfg&quot; for using stashed password for SSL key database (KDB).<br />
+<br />
+Check for &quot;ldapsslkeypwd&quot; in LDAP config file using the follow command: <br />
+# grep '^ldapsslkeypwd' /etc/security/ldap/ldap.cfg <br />
+<br />
+If the command returned a line, this is a finding.</p><h2>Vulnerability Number</h2><p>V-215174</p><h2>Documentable</h2><p>False</p><h2>Rule Version</h2><p>AIX7-00-001007</p><h2>Severity Override Guidance</h2><p>Examine the LDAP configuration file &quot;/etc/security/ldap/ldap.cfg&quot; for possible clear-text password for &quot;bindpwd&quot;.<br />
+<br />
+From the command prompt, run the following command:<br />
+# grep ^bindpwd: /etc/security/ldap/ldap.cfg<br />
+<br />
+The above command should yield the following output:<br />
+bindpwd:{DESv2}57AEE2BCED 764373462FC7B62736D9A<br />
+<br />
+If the returned entry has an unencrypted password (the output line does not start with &quot;bindpwd:{DES&quot;), this is a finding. <br />
+<br />
+Examine the LDAP configuration file &quot;/etc/security/ldap/ldap.cfg&quot; for using stashed password for SSL key database (KDB).<br />
+<br />
+Check for &quot;ldapsslkeypwd&quot; in LDAP config file using the follow command: <br />
+# grep '^ldapsslkeypwd' /etc/security/ldap/ldap.cfg <br />
+<br />
+If the command returned a line, this is a finding.</p><h2>Check Content Reference</h2><p>M</p><h2>Target Key</h2><p>4012</p></body></html>

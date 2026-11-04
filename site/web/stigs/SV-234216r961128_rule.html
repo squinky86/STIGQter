@@ -1,0 +1,66 @@
+<!doctype html><html lang="en"><head><meta charset="utf-8"><title>STIGQter: STIG Check Details: SV-234216r961128_rule: The FortiGate device must only allow authorized administrators to view or change the device configuration, system files, and other files stored either in the device or on removable media (such as a flash drive).</title><link rel="icon" type="image/svg+xml" href="STIGQter.svg" /><script async src="https://www.googletagmanager.com/gtag/js?id=UA-31381839-2"></script><script src="include.js"></script><script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-4110907817782130" crossorigin="anonymous"></script></head><body><div><img src="STIGQter.svg" alt="STIGQter" style="height:1em;" /> <a href="https://www.stigqter.com/">STIGQter</a>: <a href="main.html">STIG Summary</a>: <a href="U_FN_FortiGate_Firewall_NDM_STIG_V1R5_Manual-xccdf.html">Fortinet FortiGate Firewall NDM Security Technical Implementation Guide Version: 1 Release: 5 Benchmark Date: 05 Jan 2026</a>:</div> <h1>The FortiGate device must only allow authorized administrators to view or change the device configuration, system files, and other files stored either in the device or on removable media (such as a flash drive).</h1><h2>DISA Rule</h2><p>SV-234216r961128_rule</p><h2>Vulnerability Number</h2><p>V-234216</p><h2>Group Title</h2><p>SRG-APP-000231-NDM-000271</p><h2>Rule Version</h2><p>FGFW-ND-000285</p><h2>Severity</h2><p>CAT I</p><h2>CCI(s)</h2><ul><li>CCI-001199 - Protects the confidentiality and/or integrity of organization-defined information at rest.</li></ul><h2>Weight</h2><p>10</p><h2>Fix Recommendation</h2><p>Log in to the FortiGate GUI with Super-Admin privilege.<br />
+<br />
+1. Open a CLI console, via SSH or available from the GUI.<br />
+2. First edit the admin profile by running the following command:<br />
+<br />
+     # config system accprofile <br />
+           # edit {PROFILE NAME}<br />
+                 # set sysgrp read-write<br />
+          # next<br />
+     # end<br />
+Then, assign appropriate admin profiles to the administrator account. <br />
+     # config system admin  <br />
+          # edit {ADMIN NAME}<br />
+          # set accprofile  {PROFILE NAME}<br />
+          # next<br />
+     # end<br />
+<br />
+This profile should only be assigned to administrators authorized to change system configurations.</p><h2>Check Contents</h2><p>Log in to the FortiGate GUI with Super-Admin privilege.<br />
+<br />
+1. Click System.<br />
+2. Click Administrators.<br />
+3. Click each administrator and hover over the profile that is assigned to the role.<br />
+4. Click Edit.<br />
+5. Verify that the permission on System is set to READ or Read/Write.<br />
+<br />
+If any unauthorized administrator has Read/Write access to System, this is a finding.<br />
+<br />
+or <br />
+<br />
+1. Open a CLI console, via SSH or available from the GUI.<br />
+2. Run the following command for all low privileged admin users:<br />
+<br />
+     # show system admin  {ADMIN NAME}  | grep -i accprofile<br />
+The output should be:  <br />
+           set accprofile {PROFILE NAME}<br />
+<br />
+Use the profile name from the output result of above command. <br />
+     # show system accprofile {PROFILE NAME} | grep -i sysgrp<br />
+The output should be:  <br />
+          set sysgrp none<br />
+          <br />
+If any low privileged admin user has sysgrp parameter set to values other than NONE, this is a finding.</p><h2>Vulnerability Number</h2><p>V-234216</p><h2>Documentable</h2><p>False</p><h2>Rule Version</h2><p>FGFW-ND-000285</p><h2>Severity Override Guidance</h2><p>Log in to the FortiGate GUI with Super-Admin privilege.<br />
+<br />
+1. Click System.<br />
+2. Click Administrators.<br />
+3. Click each administrator and hover over the profile that is assigned to the role.<br />
+4. Click Edit.<br />
+5. Verify that the permission on System is set to READ or Read/Write.<br />
+<br />
+If any unauthorized administrator has Read/Write access to System, this is a finding.<br />
+<br />
+or <br />
+<br />
+1. Open a CLI console, via SSH or available from the GUI.<br />
+2. Run the following command for all low privileged admin users:<br />
+<br />
+     # show system admin  {ADMIN NAME}  | grep -i accprofile<br />
+The output should be:  <br />
+           set accprofile {PROFILE NAME}<br />
+<br />
+Use the profile name from the output result of above command. <br />
+     # show system accprofile {PROFILE NAME} | grep -i sysgrp<br />
+The output should be:  <br />
+          set sysgrp none<br />
+          <br />
+If any low privileged admin user has sysgrp parameter set to values other than NONE, this is a finding.</p><h2>Check Content Reference</h2><p>M</p><h2>Target Key</h2><p>5260</p></body></html>

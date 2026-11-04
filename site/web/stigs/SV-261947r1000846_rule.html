@@ -1,0 +1,41 @@
+<!doctype html><html lang="en"><head><meta charset="utf-8"><title>STIGQter: STIG Check Details: SV-261947r1000846_rule: PostgreSQL must generate audit records when unsuccessful attempts to modify security objects occur.</title><link rel="icon" type="image/svg+xml" href="STIGQter.svg" /><script async src="https://www.googletagmanager.com/gtag/js?id=UA-31381839-2"></script><script src="include.js"></script><script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-4110907817782130" crossorigin="anonymous"></script></head><body><div><img src="STIGQter.svg" alt="STIGQter" style="height:1em;" /> <a href="https://www.stigqter.com/">STIGQter</a>: <a href="main.html">STIG Summary</a>: <a href="U_CD_Postgres_16_STIG_V1R3_Manual-xccdf.html">Crunchy Data Postgres 16 Security Technical Implementation Guide Version: 1 Release: 3 Benchmark Date: 01 Jul 2026</a>:</div> <h1>PostgreSQL must generate audit records when unsuccessful attempts to modify security objects occur.</h1><h2>DISA Rule</h2><p>SV-261947r1000846_rule</p><h2>Vulnerability Number</h2><p>V-261947</p><h2>Group Title</h2><p>SRG-APP-000496-DB-000335</p><h2>Rule Version</h2><p>CD16-00-010300</p><h2>Severity</h2><p>CAT II</p><h2>CCI(s)</h2><ul><li>CCI-000172 - Generate audit records for the event types defined in AU-2 c that include the audit record content defined in AU-3.</li></ul><h2>Weight</h2><p>10</p><h2>Fix Recommendation</h2><p>Configure PostgreSQL to produce audit records when unsuccessful attempts to modify security objects occur.<br />
+<br />
+Unsuccessful attempts to modify security objects can be logged if logging is enabled. To ensure logging is enabled, review supplementary content APPENDIX-C for instructions on enabling logging.</p><h2>Check Contents</h2><p>Note: The following instructions use the PGDATA and PGLOG environment variables. Refer to APPENDIX-F for instructions on configuring PGDATA and APPENDIX-I for PGLOG.<br />
+<br />
+As the database administrator (shown here as &quot;postgres&quot;), create a test role by running the following SQL:<br />
+<br />
+$ sudo su - postgres<br />
+$ psql -c &quot;CREATE ROLE bob&quot;<br />
+<br />
+To test if audit records are generated from unsuccessful attempts at modifying security objects, run the following SQL:<br />
+<br />
+$ sudo su - postgres<br />
+$ psql -c &quot;SET ROLE bob; UPDATE pg_authid SET rolsuper = 't' WHERE rolname = 'bob';&quot;<br />
+<br />
+As the database administrator (shown here as &quot;postgres&quot;), verify the denials were logged:<br />
+<br />
+$ sudo su - postgres<br />
+$ cat ${PGDATA?}/${PGLOG?}/&lt;latest_log&gt;<br />
+&lt; 2024-03-17 10:34:00.017 EDT bob 56eabf52.b62 postgres: &gt;ERROR: permission denied for relation pg_authid<br />
+&lt; 2024-03-17 10:34:00.017 EDT bob 56eabf52.b62 postgres: &gt;STATEMENT: UPDATE pg_authid SET rolsuper = 't' WHERE rolname = 'bob';<br />
+<br />
+If denials are not logged, this is a finding.</p><h2>Vulnerability Number</h2><p>V-261947</p><h2>Documentable</h2><p>False</p><h2>Rule Version</h2><p>CD16-00-010300</p><h2>Severity Override Guidance</h2><p>Note: The following instructions use the PGDATA and PGLOG environment variables. Refer to APPENDIX-F for instructions on configuring PGDATA and APPENDIX-I for PGLOG.<br />
+<br />
+As the database administrator (shown here as &quot;postgres&quot;), create a test role by running the following SQL:<br />
+<br />
+$ sudo su - postgres<br />
+$ psql -c &quot;CREATE ROLE bob&quot;<br />
+<br />
+To test if audit records are generated from unsuccessful attempts at modifying security objects, run the following SQL:<br />
+<br />
+$ sudo su - postgres<br />
+$ psql -c &quot;SET ROLE bob; UPDATE pg_authid SET rolsuper = 't' WHERE rolname = 'bob';&quot;<br />
+<br />
+As the database administrator (shown here as &quot;postgres&quot;), verify the denials were logged:<br />
+<br />
+$ sudo su - postgres<br />
+$ cat ${PGDATA?}/${PGLOG?}/&lt;latest_log&gt;<br />
+&lt; 2024-03-17 10:34:00.017 EDT bob 56eabf52.b62 postgres: &gt;ERROR: permission denied for relation pg_authid<br />
+&lt; 2024-03-17 10:34:00.017 EDT bob 56eabf52.b62 postgres: &gt;STATEMENT: UPDATE pg_authid SET rolsuper = 't' WHERE rolname = 'bob';<br />
+<br />
+If denials are not logged, this is a finding.</p><h2>Check Content Reference</h2><p>M</p><h2>Target Key</h2><p>5598</p></body></html>

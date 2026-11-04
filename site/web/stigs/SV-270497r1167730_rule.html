@@ -1,0 +1,28 @@
+<!doctype html><html lang="en"><head><meta charset="utf-8"><title>STIGQter: STIG Check Details: SV-270497r1167730_rule: Oracle Database must automatically terminate a user session after organization-defined conditions or trigger events requiring session disconnect.</title><link rel="icon" type="image/svg+xml" href="STIGQter.svg" /><script async src="https://www.googletagmanager.com/gtag/js?id=UA-31381839-2"></script><script src="include.js"></script><script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-4110907817782130" crossorigin="anonymous"></script></head><body><div><img src="STIGQter.svg" alt="STIGQter" style="height:1em;" /> <a href="https://www.stigqter.com/">STIGQter</a>: <a href="main.html">STIG Summary</a>: <a href="U_Oracle_Database_19c_STIG_V1R5_Manual-xccdf.html">Oracle Database 19c Security Technical Implementation Guide Version: 1 Release: 5 Benchmark Date: 01 Apr 2026</a>:</div> <h1>Oracle Database must automatically terminate a user session after organization-defined conditions or trigger events requiring session disconnect.</h1><h2>DISA Rule</h2><p>SV-270497r1167730_rule</p><h2>Vulnerability Number</h2><p>V-270497</p><h2>Group Title</h2><p>SRG-APP-000295-DB-000305</p><h2>Rule Version</h2><p>O19C-00-000300</p><h2>Severity</h2><p>CAT II</p><h2>CCI(s)</h2><ul><li>CCI-002361 - Automatically terminate a user session after organization-defined conditions or trigger events requiring session disconnect.</li><li>CCI-002363 - Provide a logout capability for user-initiated communications sessions whenever authentication is used to gain access to organization-defined information resources.</li></ul><h2>Weight</h2><p>10</p><h2>Fix Recommendation</h2><p>Configure the database management system (DBMS) to automatically terminate a user session after organization-defined conditions, 15 minutes, or a trigger event requiring session termination.<br />
+<br />
+To terminate a session after a certain amount of time independent of the consumed resources needed by other users, then set the MAX_IDLE_TIME initialization parameter. The MAX_IDLE_TIME parameter specifies the maximum number of minutes a session can be idle. After the specified amount of time, MAX_IDLE_TIME kills sessions.<br />
+<br />
+ALTER SYSTEM SET max_idle_time = 15 <br />
+COMMENT = 'Altered &lt;date&gt; for STIG compliance'  -- self documenting<br />
+SID = '*'                                       -- required for RAC<br />
+SCOPE = BOTH;</p><h2>Check Contents</h2><p>Review system documentation to obtain the organization's definition of circumstances requiring automatic session termination. If the documentation explicitly states that such termination is not required or is prohibited, this is not a finding.<br />
+<br />
+If no documentation exists or an automatic session termination time is not explicitly defined, assume a time of 15 minutes.<br />
+<br />
+To check the max_idle_time set, run the following query:<br />
+<br />
+SELECT gp.inst_id, gp.con_id, gp.value<br />
+FROM sys.gv_$parameter gp<br />
+WHERE gp.name = 'max_idle_time';<br />
+<br />
+If the value returned is &quot;0&quot; or does not match the documented requirement (or 15 when none is specified), this is a finding.</p><h2>Vulnerability Number</h2><p>V-270497</p><h2>Documentable</h2><p>False</p><h2>Rule Version</h2><p>O19C-00-000300</p><h2>Severity Override Guidance</h2><p>Review system documentation to obtain the organization's definition of circumstances requiring automatic session termination. If the documentation explicitly states that such termination is not required or is prohibited, this is not a finding.<br />
+<br />
+If no documentation exists or an automatic session termination time is not explicitly defined, assume a time of 15 minutes.<br />
+<br />
+To check the max_idle_time set, run the following query:<br />
+<br />
+SELECT gp.inst_id, gp.con_id, gp.value<br />
+FROM sys.gv_$parameter gp<br />
+WHERE gp.name = 'max_idle_time';<br />
+<br />
+If the value returned is &quot;0&quot; or does not match the documented requirement (or 15 when none is specified), this is a finding.</p><h2>Check Content Reference</h2><p>M</p><h2>Target Key</h2><p>5672</p></body></html>

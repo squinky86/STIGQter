@@ -1,0 +1,35 @@
+<!doctype html><html lang="en"><head><meta charset="utf-8"><title>STIGQter: STIG Check Details: SV-255377r961860_rule: Azure SQL Database must offload audit data to a separate log management facility; this must be continuous and in near real time for systems with a network connection to the storage facility and weekly or more often for stand-alone systems.</title><link rel="icon" type="image/svg+xml" href="STIGQter.svg" /><script async src="https://www.googletagmanager.com/gtag/js?id=UA-31381839-2"></script><script src="include.js"></script><script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-4110907817782130" crossorigin="anonymous"></script></head><body><div><img src="STIGQter.svg" alt="STIGQter" style="height:1em;" /> <a href="https://www.stigqter.com/">STIGQter</a>: <a href="main.html">STIG Summary</a>: <a href="U_MS_Azure_SQL_DB_STIG_V2R3_Manual-xccdf.html">Microsoft Azure SQL Database Security Technical Implementation Guide Version: 2 Release: 3 Benchmark Date: 02 Jul 2025</a>:</div> <h1>Azure SQL Database must offload audit data to a separate log management facility; this must be continuous and in near real time for systems with a network connection to the storage facility and weekly or more often for stand-alone systems.</h1><h2>DISA Rule</h2><p>SV-255377r961860_rule</p><h2>Vulnerability Number</h2><p>V-255377</p><h2>Group Title</h2><p>SRG-APP-000515-DB-000318</p><h2>Rule Version</h2><p>ASQL-00-015900</p><h2>Severity</h2><p>CAT II</p><h2>CCI(s)</h2><ul><li>CCI-001851 - Transfer audit logs per organization-defined frequency to a different system, system component, or media than the system or system component conducting the logging.</li></ul><h2>Weight</h2><p>10</p><h2>Fix Recommendation</h2><p>Enable immutable storage so that audit logs cannot be modified or deleted accidently.<br />
+https://docs.microsoft.com/en-us/azure/storage/blobs/immutable-policy-configure-container-scope?tabs=azure-portal<br />
+<br />
+To configure a time-based retention policy on a container with the Azure portal, follow these steps:<br />
+<br />
+1. Navigate to the desired container.<br />
+2. Select &quot;More&quot; on the right, then select &quot;Access policy&quot;.<br />
+3. In the Immutable blob storage section, select &quot;Add policy&quot;.<br />
+4. In the Policy type field, select &quot;Time-based retention&quot;, and specify the retention period in days.<br />
+5. To create a policy with container scope, do not check the box for &quot;Enable&quot; version-level immutability.<br />
+6. If desired, select &quot;Allow additional protected appends&quot; to enable writes to append blobs that are protected by an immutability policy.<br />
+<br />
+PowerShell:<br />
+Set-AzRmStorageContainerImmutabilityPolicy -ResourceGroupName &lt;resource-group&gt; `<br />
+    -StorageAccountName &lt;storage-account&gt; `<br />
+    -ContainerName &lt;container&gt; `<br />
+    -ImmutabilityPeriod 10<br />
+<br />
+Alternatively, enable at least two types of audit storage for the Azure SQL Database.<br />
+In the Azure Portal, select &quot;Auditing&quot;.<br />
+Check at least two of the available storage types and select &quot;Save&quot;.</p><h2>Check Contents</h2><p>Review the system documentation for a description of how audit records are stored. <br />
+ <br />
+1. Review the Auditing link in the Azure Portal for the SQL Database. Ensure audit logs are written to more than one storage system. If not, navigate to the Storage Container where the audits are stored via the Portal. <br />
+2. Select &quot;Containers&quot;. <br />
+3. Select the ellipsis on the container for the audit storage. <br />
+4. Select &quot;Access Policy&quot;. <br />
+<br />
+Verify that an Immutable Blob Storage policy has been added to the audit container. If Azure audit logs are written to only one storage system or immutable storage is not enabled, this is a finding.</p><h2>Vulnerability Number</h2><p>V-255377</p><h2>Documentable</h2><p>False</p><h2>Rule Version</h2><p>ASQL-00-015900</p><h2>Severity Override Guidance</h2><p>Review the system documentation for a description of how audit records are stored. <br />
+ <br />
+1. Review the Auditing link in the Azure Portal for the SQL Database. Ensure audit logs are written to more than one storage system. If not, navigate to the Storage Container where the audits are stored via the Portal. <br />
+2. Select &quot;Containers&quot;. <br />
+3. Select the ellipsis on the container for the audit storage. <br />
+4. Select &quot;Access Policy&quot;. <br />
+<br />
+Verify that an Immutable Blob Storage policy has been added to the audit container. If Azure audit logs are written to only one storage system or immutable storage is not enabled, this is a finding.</p><h2>Check Content Reference</h2><p>M</p><h2>Target Key</h2><p>5500</p></body></html>

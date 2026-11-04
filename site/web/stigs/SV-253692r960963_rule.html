@@ -1,0 +1,86 @@
+<!doctype html><html lang="en"><head><meta charset="utf-8"><title>STIGQter: STIG Check Details: SV-253692r960963_rule: Access to external executables must be disabled or restricted.</title><link rel="icon" type="image/svg+xml" href="STIGQter.svg" /><script async src="https://www.googletagmanager.com/gtag/js?id=UA-31381839-2"></script><script src="include.js"></script><script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-4110907817782130" crossorigin="anonymous"></script></head><body><div><img src="STIGQter.svg" alt="STIGQter" style="height:1em;" /> <a href="https://www.stigqter.com/">STIGQter</a>: <a href="main.html">STIG Summary</a>: <a href="U_MariaDB_Enterprise_10-x_STIG_V2R5_Manual-xccdf.html">MariaDB Enterprise 10.x Security Technical Implementation Guide Version: 2 Release: 5 Benchmark Date: 01 Apr 2026</a>:</div> <h1>Access to external executables must be disabled or restricted.</h1><h2>DISA Rule</h2><p>SV-253692r960963_rule</p><h2>Vulnerability Number</h2><p>V-253692</p><h2>Group Title</h2><p>SRG-APP-000141-DB-000093</p><h2>Rule Version</h2><p>MADB-10-003400</p><h2>Severity</h2><p>CAT II</p><h2>CCI(s)</h2><ul><li>CCI-000381 - Configure the system to provide only organization-defined mission essential capabilities.</li></ul><h2>Weight</h2><p>10</p><h2>Fix Recommendation</h2><p>To disable LOAD DATA LOCAL INFILE make the following update as the database administrator:<br />
+<br />
+Edit the mariadb-enterprise.cnf configuration file located in /etc/my.cnf.d/.<br />
+<br />
+Under [mariadb], add the following: <br />
+<br />
+local_infile = 0 <br />
+<br />
+Save the configuration file. This change will not take effect until MariaDB Enterprise Server is restarted.  <br />
+<br />
+To remove FILE and GRANT OPTION privileges use the right combination of the following commands:<br />
+1. revoke FILE privilege from a user<br />
+MariaDB&gt; REVOKE FILE FROM 'user'@'host';<br />
+<br />
+2. revoke FILE privilege from a role<br />
+MariaDB&gt;  REVOKE FILE FROM role; <br />
+<br />
+3. revoke GRANT OPTION privilege from a user<br />
+MariaDB&gt; REVOKE GRANT OPTION FROM 'user'@'host'; <br />
+<br />
+4. revoke a role grant from a user<br />
+MariaDB&gt;  REVOKE ROLE FROM grantee;</p><h2>Check Contents</h2><p>MariaDB's LOAD DATA LOCAL INFILE command can interact with the server's underlying OS.  <br />
+<br />
+To check the value of this option, run the following command as the database administrator: <br />
+<br />
+MariaDB&gt;  SHOW GLOBAL VARIABLES LIKE 'local_infile'; <br />
+ <br />
+Verify the option is set according to the security guide. If it is not, this is a finding. <br />
+ <br />
+If the value of local_infile is set to ON per the security guide, user privileges must be checked. Only users with FILE privilege can use the LOAD DATA LOCAL INFILE command.<br />
+<br />
+To check the users who have FILE privilege against the security guide, run the following commands as the database administrator.<br />
+<br />
+1. Check which users have FILE privilege and GRANT OPTION privileges and compare to the security guide to determine if a user has FILE privilege that should not or if a user has GRANT OPTION and should not.  <br />
+<br />
+If the users have privileges they should not have, this is a finding.<br />
+<br />
+Run this script to create the SHOW GRANTS script for each user: <br />
+MariaDB&gt;  SELECT DISTINCT CONCAT( 'SHOW GRANTS FOR ', user,'@', host,';') AS grantQuery FROM mysql.user WHERE is_role = 'N';<br />
+<br />
+Run each SHOW GRANTS command for each user.<br />
+MariaDB&gt; SHOW GRANTS FOR 'user'@'host';<br />
+ <br />
+2. Check which roles have FILE privilege and GRANT OPTION privileges and compare to the security guide to determine if a role has FILE privilege that should not or if a role has GRANT OPTION and should not. <br />
+<br />
+If the roles have privileges they should not have, this is a finding.<br />
+<br />
+MariaDB&gt;  SELECT DISTINCT CONCAT('SHOW GRANTS FOR ',role, ';') FROM mysql.roles_mapping;<br />
+<br />
+Run each SHOW GRANTS command for each role.<br />
+ <br />
+3. From the two outputs above, check which users and roles can set roles and grant privileges by checking who has GRANT OPTION and FILE privileges and comparing to the security guide.<br />
+<br />
+If any user or role has GRANT OPTION or FILE privileges they should not have, this is a finding.</p><h2>Vulnerability Number</h2><p>V-253692</p><h2>Documentable</h2><p>False</p><h2>Rule Version</h2><p>MADB-10-003400</p><h2>Severity Override Guidance</h2><p>MariaDB's LOAD DATA LOCAL INFILE command can interact with the server's underlying OS.  <br />
+<br />
+To check the value of this option, run the following command as the database administrator: <br />
+<br />
+MariaDB&gt;  SHOW GLOBAL VARIABLES LIKE 'local_infile'; <br />
+ <br />
+Verify the option is set according to the security guide. If it is not, this is a finding. <br />
+ <br />
+If the value of local_infile is set to ON per the security guide, user privileges must be checked. Only users with FILE privilege can use the LOAD DATA LOCAL INFILE command.<br />
+<br />
+To check the users who have FILE privilege against the security guide, run the following commands as the database administrator.<br />
+<br />
+1. Check which users have FILE privilege and GRANT OPTION privileges and compare to the security guide to determine if a user has FILE privilege that should not or if a user has GRANT OPTION and should not.  <br />
+<br />
+If the users have privileges they should not have, this is a finding.<br />
+<br />
+Run this script to create the SHOW GRANTS script for each user: <br />
+MariaDB&gt;  SELECT DISTINCT CONCAT( 'SHOW GRANTS FOR ', user,'@', host,';') AS grantQuery FROM mysql.user WHERE is_role = 'N';<br />
+<br />
+Run each SHOW GRANTS command for each user.<br />
+MariaDB&gt; SHOW GRANTS FOR 'user'@'host';<br />
+ <br />
+2. Check which roles have FILE privilege and GRANT OPTION privileges and compare to the security guide to determine if a role has FILE privilege that should not or if a role has GRANT OPTION and should not. <br />
+<br />
+If the roles have privileges they should not have, this is a finding.<br />
+<br />
+MariaDB&gt;  SELECT DISTINCT CONCAT('SHOW GRANTS FOR ',role, ';') FROM mysql.roles_mapping;<br />
+<br />
+Run each SHOW GRANTS command for each role.<br />
+ <br />
+3. From the two outputs above, check which users and roles can set roles and grant privileges by checking who has GRANT OPTION and FILE privileges and comparing to the security guide.<br />
+<br />
+If any user or role has GRANT OPTION or FILE privileges they should not have, this is a finding.</p><h2>Check Content Reference</h2><p>M</p><h2>Target Key</h2><p>5475</p></body></html>

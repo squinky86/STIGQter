@@ -1,0 +1,31 @@
+<!doctype html><html lang="en"><head><meta charset="utf-8"><title>STIGQter: STIG Check Details: SV-279620r1192503_rule: Nutanix OS must employ strong authenticators in the establishment of nonlocal maintenance and diagnostic sessions.</title><link rel="icon" type="image/svg+xml" href="STIGQter.svg" /><script async src="https://www.googletagmanager.com/gtag/js?id=UA-31381839-2"></script><script src="include.js"></script><script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-4110907817782130" crossorigin="anonymous"></script></head><body><div><img src="STIGQter.svg" alt="STIGQter" style="height:1em;" /> <a href="https://www.stigqter.com/">STIGQter</a>: <a href="main.html">STIG Summary</a>: <a href="U_NTX_Acropolis_OS_STIG_V1R1_Manual-xccdf.html">Nutanix Acropolis GPOS Security Technical Implementation Guide Version: 1 Release: 1 Benchmark Date: 26 Jan 2026</a>:</div> <h1>Nutanix OS must employ strong authenticators in the establishment of nonlocal maintenance and diagnostic sessions.</h1><h2>DISA Rule</h2><p>SV-279620r1192503_rule</p><h2>Vulnerability Number</h2><p>V-279620</p><h2>Group Title</h2><p>SRG-OS-000125-GPOS-00065</p><h2>Rule Version</h2><p>NXAC-OS-000184</p><h2>Severity</h2><p>CAT I</p><h2>CCI(s)</h2><ul><li>CCI-000877 - Employ strong authentication in the establishment of nonlocal maintenance and diagnostic sessions.</li></ul><h2>Weight</h2><p>10</p><h2>Fix Recommendation</h2><p>Configure SSH.<br />
+<br />
+1. For AOS, configure SSH, then restart the SSH for the changes to take effect.<br />
+<br />
+$ sudo salt-call state.sls security/CVM/sshdCVM<br />
+$ sudo systemctl restart sshd<br />
+<br />
+2. For Prism Central, configure SSH, then restart the SSH for the changes to take effect.<br />
+<br />
+$ sudo salt-call state.sls security/PCVM/sshdPCVM<br />
+$ sudo systemctl restart sshd<br />
+<br />
+3. For Files, configure SSH, then restart the SSH for the changes to take effect.<br />
+<br />
+$ sudo salt-call state.sls security/AFS/sshdAFS<br />
+$ sudo systemctl restart sshd<br />
+<br />
+4. For AHV configure SSH, then restart the SSH for the changes to take effect.<br />
+<br />
+$ sudo salt-call state.sls security/KVM/sshdKVM<br />
+$ sudo systemctl restart sshd</p><h2>Check Contents</h2><p>Verify Nutanix OS is configured to use only MACs employing FIPS 140-3-approved algorithms using the following command.<br />
+<br />
+$ sudo grep -i ciphers /etc/crypto-policies/back-ends/opensshserver.config<br />
+CRYPTO_POLICY=Ciphers=aes256-ctr,aes192-ctr,aes128-ctr,aes256-gcm@openssh.com,aes128-gcm@openssh.com <br />
+<br />
+If the cipher entries in the &quot;opensshserver.config&quot; file have any hashes other than shown here, the order differs from the example above, or they are missing or commented out, this is a finding.</p><h2>Vulnerability Number</h2><p>V-279620</p><h2>Documentable</h2><p>False</p><h2>Rule Version</h2><p>NXAC-OS-000184</p><h2>Severity Override Guidance</h2><p>Verify Nutanix OS is configured to use only MACs employing FIPS 140-3-approved algorithms using the following command.<br />
+<br />
+$ sudo grep -i ciphers /etc/crypto-policies/back-ends/opensshserver.config<br />
+CRYPTO_POLICY=Ciphers=aes256-ctr,aes192-ctr,aes128-ctr,aes256-gcm@openssh.com,aes128-gcm@openssh.com <br />
+<br />
+If the cipher entries in the &quot;opensshserver.config&quot; file have any hashes other than shown here, the order differs from the example above, or they are missing or commented out, this is a finding.</p><h2>Check Content Reference</h2><p>M</p><h2>Target Key</h2><p>5730</p></body></html>

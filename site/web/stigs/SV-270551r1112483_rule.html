@@ -1,0 +1,51 @@
+<!doctype html><html lang="en"><head><meta charset="utf-8"><title>STIGQter: STIG Check Details: SV-270551r1112483_rule: Oracle Database must disable user accounts after 35 days of inactivity.</title><link rel="icon" type="image/svg+xml" href="STIGQter.svg" /><script async src="https://www.googletagmanager.com/gtag/js?id=UA-31381839-2"></script><script src="include.js"></script><script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-4110907817782130" crossorigin="anonymous"></script></head><body><div><img src="STIGQter.svg" alt="STIGQter" style="height:1em;" /> <a href="https://www.stigqter.com/">STIGQter</a>: <a href="main.html">STIG Summary</a>: <a href="U_Oracle_Database_19c_STIG_V1R5_Manual-xccdf.html">Oracle Database 19c Security Technical Implementation Guide Version: 1 Release: 5 Benchmark Date: 01 Apr 2026</a>:</div> <h1>Oracle Database must disable user accounts after 35 days of inactivity.</h1><h2>DISA Rule</h2><p>SV-270551r1112483_rule</p><h2>Vulnerability Number</h2><p>V-270551</p><h2>Group Title</h2><p>SRG-APP-000516-DB-000363</p><h2>Rule Version</h2><p>O19C-00-012500</p><h2>Severity</h2><p>CAT II</p><h2>CCI(s)</h2><ul><li>CCI-003627 - Disable accounts when the accounts have expired.</li></ul><h2>Weight</h2><p>10</p><h2>Fix Recommendation</h2><p>For accounts managed by Oracle, issue the statement:<br />
+<br />
+ALTER PROFILE profile_name LIMIT inactive_account_time 35;<br />
+<br />
+Or<br />
+<br />
+Change the profile for the DBMS account to ORA_STIG_PROFILE (which has the inactive_account_time parameter set to 35):<br />
+<br />
+ALTER USER user_name PROFILE ora_stig_profile;<br />
+<br />
+An alternate method is to create a script or store procedure that runs once a day.<br />
+<br />
+Write a SQL statement to determine accounts that have not logged in within 35 days:<br />
+<br />
+Example:<br />
+select username from dba_audit_trail where action_name = 'LOGON'<br />
+group by username having max(timestamp) &lt; sysdate - 36<br />
+<br />
+Then, disable all accounts that have not logged in within 35 days.</p><h2>Check Contents</h2><p>If all user accounts are managed and authenticated by the OS or an enterprise-level authentication/access mechanism, and not by Oracle, this is not a finding.<br />
+<br />
+For accounts managed by Oracle, check DBMS settings to determine if accounts are automatically disabled by the system after 35 days of inactivity. <br />
+<br />
+In Oracle 12c, Oracle introduced a new security parameter in the profile called INACTIVE_ACCOUNT_TIME. This parameter specifies the number of days permitted the account will be in OPEN state since the last login, after that will be LOCKED if no successful logins happens after the specified duration.<br />
+<br />
+Check to verify what profile each user is associated with, if any, with this query:<br />
+<br />
+select username, profile from dba_users order by 1,2;<br />
+<br />
+Then, check the profile to verify what the inactive_account_time is set to in the table dba_profiles; the inactive_account_time is a value stored in the LIMIT column, and identified by the value inactive_account_time in the RESOURCE_NAME column.<br />
+<br />
+SQL&gt;select profile, resource_name, resource_type, limit from dba_profiles where upper(resource_name) = 'INACTIVE_ACCOUNT_TIME';<br />
+<br />
+If the INACTIVE_ACCOUNT_TIME parameter is set to UNLIMITED (default) or it is set to more than 35 days, this is a finding.<br />
+<br />
+If INACTIVE_ACCOUNT_TIME is not a parameter associated with the profile, then check for a script or an automated job that is run daily that checks the audit trail or to ensure every user account has logged in within the last 35 days. If one is not present, this is a finding.</p><h2>Vulnerability Number</h2><p>V-270551</p><h2>Documentable</h2><p>False</p><h2>Rule Version</h2><p>O19C-00-012500</p><h2>Severity Override Guidance</h2><p>If all user accounts are managed and authenticated by the OS or an enterprise-level authentication/access mechanism, and not by Oracle, this is not a finding.<br />
+<br />
+For accounts managed by Oracle, check DBMS settings to determine if accounts are automatically disabled by the system after 35 days of inactivity. <br />
+<br />
+In Oracle 12c, Oracle introduced a new security parameter in the profile called INACTIVE_ACCOUNT_TIME. This parameter specifies the number of days permitted the account will be in OPEN state since the last login, after that will be LOCKED if no successful logins happens after the specified duration.<br />
+<br />
+Check to verify what profile each user is associated with, if any, with this query:<br />
+<br />
+select username, profile from dba_users order by 1,2;<br />
+<br />
+Then, check the profile to verify what the inactive_account_time is set to in the table dba_profiles; the inactive_account_time is a value stored in the LIMIT column, and identified by the value inactive_account_time in the RESOURCE_NAME column.<br />
+<br />
+SQL&gt;select profile, resource_name, resource_type, limit from dba_profiles where upper(resource_name) = 'INACTIVE_ACCOUNT_TIME';<br />
+<br />
+If the INACTIVE_ACCOUNT_TIME parameter is set to UNLIMITED (default) or it is set to more than 35 days, this is a finding.<br />
+<br />
+If INACTIVE_ACCOUNT_TIME is not a parameter associated with the profile, then check for a script or an automated job that is run daily that checks the audit trail or to ensure every user account has logged in within the last 35 days. If one is not present, this is a finding.</p><h2>Check Content Reference</h2><p>M</p><h2>Target Key</h2><p>5672</p></body></html>

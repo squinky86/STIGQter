@@ -1,0 +1,40 @@
+<!doctype html><html lang="en"><head><meta charset="utf-8"><title>STIGQter: STIG Check Details: SV-216116r959010_rule: The rhost-based authentication for SSH must be disabled.</title><link rel="icon" type="image/svg+xml" href="STIGQter.svg" /><script async src="https://www.googletagmanager.com/gtag/js?id=UA-31381839-2"></script><script src="include.js"></script><script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-4110907817782130" crossorigin="anonymous"></script></head><body><div><img src="STIGQter.svg" alt="STIGQter" style="height:1em;" /> <a href="https://www.stigqter.com/">STIGQter</a>: <a href="main.html">STIG Summary</a>: <a href="U_SOL_11_x86_STIG_V3R6_Manual-xccdf.html">Solaris 11 X86 Security Technical Implementation Guide Version: 3 Release: 6 Benchmark Date: 01 Jul 2026</a>:</div> <h1>The rhost-based authentication for SSH must be disabled.</h1><h2>DISA Rule</h2><p>SV-216116r959010_rule</p><h2>Vulnerability Number</h2><p>V-216116</p><h2>Group Title</h2><p>SRG-OS-000480</p><h2>Rule Version</h2><p>SOL-11.1-040350</p><h2>Severity</h2><p>CAT II</p><h2>CCI(s)</h2><ul><li>CCI-000366 - Implement the security configuration settings.</li></ul><h2>Weight</h2><p>10</p><h2>Fix Recommendation</h2><p>The root role is required.<br />
+<br />
+Modify the sshd_config file<br />
+<br />
+# pfedit /etc/ssh/sshd_config<br />
+<br />
+Locate the line containing:<br />
+<br />
+IgnoreRhosts<br />
+<br />
+Change it to:<br />
+<br />
+IgnoreRhosts yes<br />
+<br />
+Restart the SSH service.<br />
+<br />
+# svcadm restart svc:/network/ssh<br />
+<br />
+<br />
+This action will only set the IgnoreRhosts line if it already exists in the file to ensure that it is set to the proper value. If the IgnoreRhosts line does not exist in the file, the default setting of &quot;Yes&quot; is automatically used, so no additional changes are needed.</p><h2>Check Contents</h2><p>Determine if rhost-based authentication is enabled.<br />
+<br />
+# grep &quot;^IgnoreRhosts&quot; /etc/ssh/sshd_config<br />
+<br />
+If the output is produced and it is not:<br />
+<br />
+IgnoreRhosts yes<br />
+<br />
+this is a finding.<br />
+<br />
+If the IgnoreRhosts line does not exist in the file, the default setting of &quot;Yes&quot; is automatically used and there is no finding.</p><h2>Vulnerability Number</h2><p>V-216116</p><h2>Documentable</h2><p>False</p><h2>Rule Version</h2><p>SOL-11.1-040350</p><h2>Severity Override Guidance</h2><p>Determine if rhost-based authentication is enabled.<br />
+<br />
+# grep &quot;^IgnoreRhosts&quot; /etc/ssh/sshd_config<br />
+<br />
+If the output is produced and it is not:<br />
+<br />
+IgnoreRhosts yes<br />
+<br />
+this is a finding.<br />
+<br />
+If the IgnoreRhosts line does not exist in the file, the default setting of &quot;Yes&quot; is automatically used and there is no finding.</p><h2>Check Content Reference</h2><p>M</p><h2>Target Key</h2><p>4021</p></body></html>

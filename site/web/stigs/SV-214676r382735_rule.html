@@ -1,0 +1,32 @@
+<!doctype html><html lang="en"><head><meta charset="utf-8"><title>STIGQter: STIG Check Details: SV-214676r382735_rule: The Juniper SRX Services Gateway VPN must ensure inbound and outbound traffic is configured with a security policy in compliance with information flow control policies.</title><link rel="icon" type="image/svg+xml" href="STIGQter.svg" /><script async src="https://www.googletagmanager.com/gtag/js?id=UA-31381839-2"></script><script src="include.js"></script><script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-4110907817782130" crossorigin="anonymous"></script></head><body><div><img src="STIGQter.svg" alt="STIGQter" style="height:1em;" /> <a href="https://www.stigqter.com/">STIGQter</a>: <a href="main.html">STIG Summary</a>: <a href="U_Juniper_SRX_SG_VPN_STIG_V3R2_Manual-xccdf.html">Juniper SRX Services Gateway VPN Security Technical Implementation Guide Version: 3 Release: 2 Benchmark Date: 30 Jan 2025</a>:</div> <h1>The Juniper SRX Services Gateway VPN must ensure inbound and outbound traffic is configured with a security policy in compliance with information flow control policies.</h1><h2>DISA Rule</h2><p>SV-214676r382735_rule</p><h2>Vulnerability Number</h2><p>V-214676</p><h2>Group Title</h2><p>SRG-NET-000019</p><h2>Rule Version</h2><p>JUSX-VN-000009</p><h2>Severity</h2><p>CAT II</p><h2>CCI(s)</h2><ul><li>CCI-001414 - Enforce approved authorizations for controlling the flow of information between connected systems based on organization-defined information flow control policies.</li></ul><h2>Weight</h2><p>10</p><h2>Fix Recommendation</h2><p>The following example command is an example of an IPsec policy.<br />
+<br />
+[edit]<br />
+set security ipsec policy &lt;IPSEC-POLICY&gt; perfect-forward-secrecy keys group14<br />
+set security ipsec policy &lt;IPSEC-POLICY&gt; proposals &lt;IPSEC-PROPOSAL&gt;<br />
+<br />
+The following command is an example of how to define an IPsec VPN using the IPsec policy and a secure tunnel interface. Alternatively, administrators can configure on-traffic tunnel establishment.<br />
+<br />
+[edit]<br />
+set security ipsec vpn &lt;VPN&gt; bind-interface st0.0<br />
+set security ipsec vpn &lt;VPN&gt; ike gateway &lt;IKE-PEER&gt;<br />
+set security ipsec vpn &lt;VPN&gt; ike ipsec-policy &lt;IPSEC-POLICY&gt;<br />
+set security ipsec vpn &lt;VPN&gt; establish-tunnels immediately<br />
+<br />
+For site-to-site VPN implementation, the SRX device is configured to route traffic over the IPsec VPN’s secure tunnel interface by establishing a route with the next-hop specified as the secure tunnel interface. The following commands configure an IPv4 and IPv6 static route for their respective secure tunnels.<br />
+<br />
+set routing-options static route &lt;IPv4 network/netmask&gt; next-hop st0.0<br />
+set routing-options rib inet6.0 static route &lt;IPv6 network/netmask&gt; next-hop st0.1</p><h2>Check Contents</h2><p>Verify an IPsec policy is configured and used to control the VPN information flow.<br />
+<br />
+[edit]<br />
+show security ipsec<br />
+<br />
+Inspect the security policy.<br />
+<br />
+If VPN traffic is not configured and controlled using an IPsec policy, this is a finding.</p><h2>Vulnerability Number</h2><p>V-214676</p><h2>Documentable</h2><p>False</p><h2>Rule Version</h2><p>JUSX-VN-000009</p><h2>Severity Override Guidance</h2><p>Verify an IPsec policy is configured and used to control the VPN information flow.<br />
+<br />
+[edit]<br />
+show security ipsec<br />
+<br />
+Inspect the security policy.<br />
+<br />
+If VPN traffic is not configured and controlled using an IPsec policy, this is a finding.</p><h2>Check Content Reference</h2><p>M</p><h2>Target Key</h2><p>4009</p></body></html>

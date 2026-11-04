@@ -1,0 +1,43 @@
+<!doctype html><html lang="en"><head><meta charset="utf-8"><title>STIGQter: STIG Check Details: SV-256609r887613_rule: &quot;Rsyslog&quot; must be configured to monitor VMware Postgres logs.</title><link rel="icon" type="image/svg+xml" href="STIGQter.svg" /><script async src="https://www.googletagmanager.com/gtag/js?id=UA-31381839-2"></script><script src="include.js"></script><script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-4110907817782130" crossorigin="anonymous"></script></head><body><div><img src="STIGQter.svg" alt="STIGQter" style="height:1em;" /> <a href="https://www.stigqter.com/">STIGQter</a>: <a href="main.html">STIG Summary</a>: <a href="U_VMW_vSphere_7-0_vCA_PostgreSQL_STIG_V1R2_Manual-xccdf.html">VMware vSphere 7.0 vCenter Appliance PostgreSQL Security Technical Implementation Guide Version: 1 Release: 2 Benchmark Date: 26 Jul 2023</a>:</div> <h1>&quot;Rsyslog&quot; must be configured to monitor VMware Postgres logs.</h1><h2>DISA Rule</h2><p>SV-256609r887613_rule</p><h2>Vulnerability Number</h2><p>V-256609</p><h2>Group Title</h2><p>SRG-APP-000359-DB-000319</p><h2>Rule Version</h2><p>VCPG-70-000019</p><h2>Severity</h2><p>CAT II</p><h2>CCI(s)</h2><ul><li>CCI-001851 - Transfer audit logs per organization-defined frequency to a different system, system component, or media than the system or system component conducting the logging.</li><li>CCI-001855 - Provide a warning to organization-defined personnel, roles, and/or locations within an organization-defined time period when allocated audit log storage volume reaches an organization-defined percentage of repository maximum audit log storage capacity.</li><li>CCI-001858 - Provide an alert in an organization-defined real-time-period to organization-defined personnel, roles, and/or locations when organization-defined audit failure events requiring real-time alerts occur.</li></ul><h2>Weight</h2><p>10</p><h2>Fix Recommendation</h2><p>Navigate to and open:<br />
+<br />
+/etc/vmware-syslog/vmware-services-vmware-vpostgres.conf<br />
+<br />
+Create the file if it does not exist.<br />
+<br />
+Set the contents of the file as follows:<br />
+<br />
+# vmware-vpostgres first logs, before loading configuration<br />
+input(type=&quot;imfile&quot;<br />
+      File=&quot;/var/log/vmware/vpostgres/serverlog.std*&quot;<br />
+      Tag=&quot;vpostgres-first&quot;<br />
+      Severity=&quot;info&quot;<br />
+      Facility=&quot;local0&quot;)<br />
+# vmware-vpostgres logs<br />
+input(type=&quot;imfile&quot;<br />
+      File=&quot;/var/log/vmware/vpostgres/postgresql-*.log&quot;<br />
+      Tag=&quot;vpostgres&quot;<br />
+      Severity=&quot;info&quot;<br />
+      Facility=&quot;local0&quot;)<br />
+<br />
+Navigate to and open:<br />
+<br />
+/etc/vmware-syslog/vmware-services-vmware-postgres-archiver.conf<br />
+<br />
+Create the file if it does not exist.<br />
+<br />
+Set the contents of the file as follows:<br />
+<br />
+# vmware-postgres-archiver logs<br />
+input(type=&quot;imfile&quot;<br />
+      File=&quot;/var/log/vmware/vpostgres/pg_archiver.log.std*&quot;<br />
+      Tag=&quot;postgres-archiver&quot;<br />
+      Severity=&quot;info&quot;<br />
+      Facility=&quot;local0&quot;)</p><h2>Check Contents</h2><p>At the command prompt, run the following command:<br />
+<br />
+# rpm -V VMware-Postgres-cis-visl-scripts|grep -E &quot;vmware-services-vmware-vpostgres.conf|vmware-services-vmware-postgres-archiver.conf&quot; | grep &quot;^..5......&quot;<br />
+<br />
+If the command returns any output, this is a finding.</p><h2>Vulnerability Number</h2><p>V-256609</p><h2>Documentable</h2><p>False</p><h2>Rule Version</h2><p>VCPG-70-000019</p><h2>Severity Override Guidance</h2><p>At the command prompt, run the following command:<br />
+<br />
+# rpm -V VMware-Postgres-cis-visl-scripts|grep -E &quot;vmware-services-vmware-vpostgres.conf|vmware-services-vmware-postgres-archiver.conf&quot; | grep &quot;^..5......&quot;<br />
+<br />
+If the command returns any output, this is a finding.</p><h2>Check Content Reference</h2><p>M</p><h2>Target Key</h2><p>5521</p></body></html>

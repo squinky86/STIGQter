@@ -1,0 +1,59 @@
+<!doctype html><html lang="en"><head><meta charset="utf-8"><title>STIGQter: STIG Check Details: SV-258966r934556_rule: The vCenter Server must not override port group settings at the port level on distributed switches.</title><link rel="icon" type="image/svg+xml" href="STIGQter.svg" /><script async src="https://www.googletagmanager.com/gtag/js?id=UA-31381839-2"></script><script src="include.js"></script><script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-4110907817782130" crossorigin="anonymous"></script></head><body><div><img src="STIGQter.svg" alt="STIGQter" style="height:1em;" /> <a href="https://www.stigqter.com/">STIGQter</a>: <a href="main.html">STIG Summary</a>: <a href="U_VMW_vSphere_8-0_vCenter_STIG_V1R1_Manual-xccdf.html">VMware vSphere 8.0 vCenter Security Technical Implementation Guide Version: 1 Release: 1 Benchmark Date: 31 Oct 2023</a>:</div> <h1>The vCenter Server must not override port group settings at the port level on distributed switches.</h1><h2>DISA Rule</h2><p>SV-258966r934556_rule</p><h2>Vulnerability Number</h2><p>V-258966</p><h2>Group Title</h2><p>SRG-APP-000516</p><h2>Rule Version</h2><p>VCSA-80-000301</p><h2>Severity</h2><p>CAT II</p><h2>CCI(s)</h2><ul><li>CCI-000366 - Implement the security configuration settings.</li></ul><h2>Weight</h2><p>10</p><h2>Fix Recommendation</h2><p>From the vSphere Client, go to &quot;Networking&quot;.<br />
+<br />
+Select a distributed switch &gt;&gt; Select a distributed port group &gt;&gt; Configure &gt;&gt; Settings &gt;&gt; Properties.<br />
+<br />
+Click &quot;Edit&quot;.<br />
+<br />
+Select advanced and update all port policies besides &quot;Block Ports&quot; to &quot;disabled&quot; and click &quot;OK&quot;.<br />
+<br />
+or<br />
+<br />
+From a PowerCLI command prompt while connected to the vCenter server, run the following command:<br />
+<br />
+$pgs = Get-VDPortgroup | Get-View<br />
+ForEach($pg in $pgs){<br />
+$spec = New-Object VMware.Vim.DVPortgroupConfigSpec<br />
+$spec.configversion = $pg.Config.ConfigVersion<br />
+$spec.Policy = New-Object VMware.Vim.VMwareDVSPortgroupPolicy<br />
+$spec.Policy.VlanOverrideAllowed = $False<br />
+$spec.Policy.UplinkTeamingOverrideAllowed = $False<br />
+$spec.Policy.SecurityPolicyOverrideAllowed = $False<br />
+$spec.Policy.IpfixOverrideAllowed = $False<br />
+$spec.Policy.BlockOverrideAllowed = $True<br />
+$spec.Policy.ShapingOverrideAllowed = $False<br />
+$spec.Policy.VendorConfigOverrideAllowed = $False<br />
+$spec.Policy.TrafficFilterOverrideAllowed = $False<br />
+$pg.ReconfigureDVPortgroup_Task($spec)<br />
+}</p><h2>Check Contents</h2><p>If distributed switches are not used, this is not applicable.<br />
+<br />
+From the vSphere Client, go to &quot;Networking&quot;.<br />
+<br />
+Select a distributed switch &gt;&gt; Select a distributed port group &gt;&gt; Configure &gt;&gt; Settings &gt;&gt; Properties.<br />
+<br />
+Review the &quot;Override port policies&quot;.<br />
+<br />
+or<br />
+<br />
+From a PowerCLI command prompt while connected to the vCenter server, run the following command:<br />
+<br />
+(Get-VDPortgroup).ExtensionData.Config.Policy<br />
+<br />
+If there are any distributed port groups that allow overridden port policies, this is a finding.<br />
+<br />
+Note: This does not apply to the &quot;Block Ports&quot; or &quot;Configure reset at disconnect&quot; policies.</p><h2>Vulnerability Number</h2><p>V-258966</p><h2>Documentable</h2><p>False</p><h2>Rule Version</h2><p>VCSA-80-000301</p><h2>Severity Override Guidance</h2><p>If distributed switches are not used, this is not applicable.<br />
+<br />
+From the vSphere Client, go to &quot;Networking&quot;.<br />
+<br />
+Select a distributed switch &gt;&gt; Select a distributed port group &gt;&gt; Configure &gt;&gt; Settings &gt;&gt; Properties.<br />
+<br />
+Review the &quot;Override port policies&quot;.<br />
+<br />
+or<br />
+<br />
+From a PowerCLI command prompt while connected to the vCenter server, run the following command:<br />
+<br />
+(Get-VDPortgroup).ExtensionData.Config.Policy<br />
+<br />
+If there are any distributed port groups that allow overridden port policies, this is a finding.<br />
+<br />
+Note: This does not apply to the &quot;Block Ports&quot; or &quot;Configure reset at disconnect&quot; policies.</p><h2>Check Content Reference</h2><p>M</p><h2>Target Key</h2><p>5573</p></body></html>

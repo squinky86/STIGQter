@@ -1,0 +1,90 @@
+<!doctype html><html lang="en"><head><meta charset="utf-8"><title>STIGQter: STIG Check Details: SV-223752r1137691_rule: IBM z/OS JESTRACE and/or SYSLOG resources must be protected in accordance with security requirements.</title><link rel="icon" type="image/svg+xml" href="STIGQter.svg" /><script async src="https://www.googletagmanager.com/gtag/js?id=UA-31381839-2"></script><script src="include.js"></script><script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-4110907817782130" crossorigin="anonymous"></script></head><body><div><img src="STIGQter.svg" alt="STIGQter" style="height:1em;" /> <a href="https://www.stigqter.com/">STIGQter</a>: <a href="main.html">STIG Summary</a>: <a href="U_IBM_zOS_RACF_STIG_V9R9_Manual-xccdf.html">IBM z/OS RACF Security Technical Implementation Guide Version: 9 Release: 9 Benchmark Date: 01 Jul 2026</a>:</div> <h1>IBM z/OS JESTRACE and/or SYSLOG resources must be protected in accordance with security requirements.</h1><h2>DISA Rule</h2><p>SV-223752r1137691_rule</p><h2>Vulnerability Number</h2><p>V-223752</p><h2>Group Title</h2><p>SRG-OS-000080-GPOS-00048</p><h2>Rule Version</h2><p>RACF-JS-000080</p><h2>Severity</h2><p>CAT II</p><h2>CCI(s)</h2><ul><li>CCI-000213 - Enforce approved authorizations for logical access to information and system resources in accordance with applicable access control policies.</li></ul><h2>Weight</h2><p>10</p><h2>Fix Recommendation</h2><p>Configure RACF access authorization for resources defined to the JESTRACE and SYSLOG resources in the JESSPOOL resource class to be restricted to the appropriate personnel a detailed below.<br />
+<br />
+Review the following resources defined to the JESSPOOL resource class:<br />
+<br />
+localnodeid.JES2.$TRCLOG.taskid.*.JESTRACE<br />
+localnodeid.+MASTER+.SYSLOG.jobid.*.SYSLOG or<br />
+localnodeid.+BYPASS+.SYSLOG.jobid.*.SYSLOG<br />
+<br />
+Note: These resource profiles may be more generic as long as they pertain directly to the JESTRACE and SYSLOG data sets. For example:<br />
+<br />
+localnodeid.JES2.$TRCLOG.*.**<br />
+localnodeid.+MASTER+.SYSLOG.*.** or<br />
+localnodeid.+BYPASS+.SYSLOG.*.**<br />
+<br />
+Note: Review the JES2 parameters to determine the localnodeid by searching for OWNNODE in the NJEDEF statement, and then searching for NODE(nnnn) (where nnnn is the value specified by OWNNODE). The NAME parameter value specified on this NODE statement is the localnodeid. Another method is to issue the JES2 command $D NODE,NAME,OWNNODE=YES to obtain the NAME of the OWNNODE.<br />
+<br />
+Ensure that access authorization for the resources mentioned above is restricted to the following:<br />
+<br />
+Userid(s) associated with external writer(s) can have complete access.<br />
+<br />
+Note: An external writer is a STC that removes data sets from the JES spool. In this case, it is responsible for archiving the JESTRACE and SYSLOG data sets. The STC default name is XWTR and the external writer program is called IASXWR00. <br />
+<br />
+Systems personnel and security administrators responsible for diagnosing JES2 and z/OS problems can have complete access.<br />
+<br />
+Application Development and Application Support personnel responsible for diagnosing application problems can have READ access to the SYSLOG resource.<br />
+<br />
+Examples:<br />
+RDEFINE JESSPOOL localnodeid.JES2.$TRCLOG.*.** audit(failures(read)) UACC(none) -<br />
+data('Reference srr finding ZJES0044 ') owner(admin)<br />
+<br />
+RDEFINE JESSPOOL localnodeid.+MASTER+.SYSLOG.*.** audit(failures(read)) UACC(none) -<br />
+data('Reference srr finding ZJES0044') owner(admin)<br />
+or<br />
+RDEFINE JESSPOOL localnodeid.+BYPASS+.SYSLOG.*.** audit(failures(read)) UACC(none) -<br />
+data('Reference srr finding ZJES0044') owner(admin)<br />
+<br />
+PE localnodeid.JES2.$TRCLOG.** cl(jesspool) id(&lt;syspsmpl&gt; &lt;secasmpl&gt;) acc(a)<br />
+PE localnodeid.+MASTER+.SYSLOG.*.** cl(jesspool) id(&lt;syspsmpl&gt; &lt;secasmpl&gt;) acc(a)<br />
+PE localnodeid.+MASTER+.SYSLOG.*.** cl(jesspool) id(&lt;appdpsmpl&gt; &lt;appssmpl&gt;) acc(r)<br />
+or<br />
+PE localnodeid.+BYPASS+.SYSLOG.*.** cl(jesspool) id(&lt;syspsmpl&gt; &lt;secasmpl&gt;) acc(a)<br />
+PE localnodeid.+BYPASS+.SYSLOG.*.** cl(jesspool) id(&lt;appdpsmpl&gt; &lt;appssmpl&gt;) acc(r)</p><h2>Check Contents</h2><p>Refer to the JESPARM member of SYS1.PARMLIB.<br />
+<br />
+Review the JES2 parameters to determine the localnodeid by searching for OWNNODE in the NJEDEF statement, and then searching for NODE(nnnn) (where nnnn is the value specified by OWNNODE). The NAME parameter value specified on this NODE statement is the localnodeid. Another method is to issue the JES2 command $D NODE,NAME,OWNNODE=YES to obtain the NAME of the OWNNODE.<br />
+<br />
+From the ISPF Command Shell enter:<br />
+RL JESSPOOL *<br />
+Review the following resources defined to the JESSPOOL resource class:<br />
+<br />
+localnodeid.JES2.$TRCLOG.taskid.*.JESTRACE<br />
+localnodeid.+MASTER+.SYSLOG.jobid.*.SYSLOG or<br />
+localnodeid.+BYPASS+.SYSLOG.jobid.-.SYSLOG<br />
+<br />
+NOTE: These resource profiles may be more generic as long as they pertain directly to the JESTRACE and SYSLOG data sets. For example:<br />
+<br />
+localnodeid.JES2.*.*.*.JESTRACE<br />
+localnodeid.+MASTER+.*.*.*.SYSLOG or<br />
+localnodeid.+BYPASS+.*.*.*.SYSLOG<br />
+<br />
+If Userid(s) associated with external writer(s) have complete access, this is not a finding.<br />
+<br />
+Note: An external writer is an STC that removes data sets from the JES spool. In this case, it is responsible for archiving the JESTRACE and SYSLOG data sets. The STC default name is XWTR and the external writer program is called IASXWR00.<br />
+<br />
+If Systems personnel and security administrators responsible for diagnosing JES2 and z/OS problems have complete access, this is not a finding.<br />
+<br />
+If Application Development and Application Support personnel responsible for diagnosing application problems have READ access to the SYSLOG resource, this is not a finding.</p><h2>Vulnerability Number</h2><p>V-223752</p><h2>Documentable</h2><p>False</p><h2>Rule Version</h2><p>RACF-JS-000080</p><h2>Severity Override Guidance</h2><p>Refer to the JESPARM member of SYS1.PARMLIB.<br />
+<br />
+Review the JES2 parameters to determine the localnodeid by searching for OWNNODE in the NJEDEF statement, and then searching for NODE(nnnn) (where nnnn is the value specified by OWNNODE). The NAME parameter value specified on this NODE statement is the localnodeid. Another method is to issue the JES2 command $D NODE,NAME,OWNNODE=YES to obtain the NAME of the OWNNODE.<br />
+<br />
+From the ISPF Command Shell enter:<br />
+RL JESSPOOL *<br />
+Review the following resources defined to the JESSPOOL resource class:<br />
+<br />
+localnodeid.JES2.$TRCLOG.taskid.*.JESTRACE<br />
+localnodeid.+MASTER+.SYSLOG.jobid.*.SYSLOG or<br />
+localnodeid.+BYPASS+.SYSLOG.jobid.-.SYSLOG<br />
+<br />
+NOTE: These resource profiles may be more generic as long as they pertain directly to the JESTRACE and SYSLOG data sets. For example:<br />
+<br />
+localnodeid.JES2.*.*.*.JESTRACE<br />
+localnodeid.+MASTER+.*.*.*.SYSLOG or<br />
+localnodeid.+BYPASS+.*.*.*.SYSLOG<br />
+<br />
+If Userid(s) associated with external writer(s) have complete access, this is not a finding.<br />
+<br />
+Note: An external writer is an STC that removes data sets from the JES spool. In this case, it is responsible for archiving the JESTRACE and SYSLOG data sets. The STC default name is XWTR and the external writer program is called IASXWR00.<br />
+<br />
+If Systems personnel and security administrators responsible for diagnosing JES2 and z/OS problems have complete access, this is not a finding.<br />
+<br />
+If Application Development and Application Support personnel responsible for diagnosing application problems have READ access to the SYSLOG resource, this is not a finding.</p><h2>Check Content Reference</h2><p>M</p><h2>Target Key</h2><p>4101</p></body></html>

@@ -1,0 +1,83 @@
+<!doctype html><html lang="en"><head><meta charset="utf-8"><title>STIGQter: STIG Check Details: SV-279549r1192397_rule: Nutanix OS must provide audit record generation capability for DOD-defined auditable events for account changes.</title><link rel="icon" type="image/svg+xml" href="STIGQter.svg" /><script async src="https://www.googletagmanager.com/gtag/js?id=UA-31381839-2"></script><script src="include.js"></script><script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-4110907817782130" crossorigin="anonymous"></script></head><body><div><img src="STIGQter.svg" alt="STIGQter" style="height:1em;" /> <a href="https://www.stigqter.com/">STIGQter</a>: <a href="main.html">STIG Summary</a>: <a href="U_NTX_Acropolis_OS_STIG_V1R1_Manual-xccdf.html">Nutanix Acropolis GPOS Security Technical Implementation Guide Version: 1 Release: 1 Benchmark Date: 26 Jan 2026</a>:</div> <h1>Nutanix OS must provide audit record generation capability for DOD-defined auditable events for account changes.</h1><h2>DISA Rule</h2><p>SV-279549r1192397_rule</p><h2>Vulnerability Number</h2><p>V-279549</p><h2>Group Title</h2><p>SRG-OS-000062-GPOS-00031</p><h2>Rule Version</h2><p>NXAC-OS-000043</p><h2>Severity</h2><p>CAT II</p><h2>CCI(s)</h2><ul><li>CCI-000169 - Provide audit record generation capability for the event types the system is capable of auditing as defined in AU-2 a. on organization-defined information system components.</li><li>CCI-000135 - Generate audit records containing the organization-defined additional information that is to be included in the audit records.</li></ul><h2>Weight</h2><p>10</p><h2>Fix Recommendation</h2><p>1. For AOS, configure the audit rules.<br />
+<br />
+$ sudo salt-call state.sls security/CVM/auditCVM<br />
+<br />
+2. For Prism Central, configure the audit rules.<br />
+<br />
+$ sudo salt-call state.sls security/PCVM/auditPCVM<br />
+<br />
+3. For Files, configure the audit rules.<br />
+<br />
+$ sudo salt-call state.sls security/AFS/auditAFS<br />
+<br />
+4. For AHV, configure the audit rules.<br />
+<br />
+$ sudo salt-call state.sls security/KVM/auditKVM</p><h2>Check Contents</h2><p>Verify Nutanix OS generates full-text recording of privileged commands by running the following commands.<br />
+<br />
+$ sudo grep -iw &quot;postdrop&quot; /etc/audit/audit.rules <br />
+-a always,exit -F path=/usr/sbin/postdrop -F perm=x -F auid=nutanix -F auid!=4294967295 -k privileged<br />
+-a always,exit -F path=/usr/sbin/postdrop -F perm=x -F auid&gt;=1000 -F auid!=4294967295 -k privileged<br />
+<br />
+ $ sudo grep -iw &quot;unix_update&quot; /etc/audit/audit.rules <br />
+-a always,exit -F path=/usr/sbin/unix_update -F perm=x -F auid=nutanix -F auid!=unset -k privileged-unix-update<br />
+-a always,exit -F path=/usr/sbin/unix_update -F perm=x -F auid&gt;=1000 -F auid!=unset -k privileged-unix-update<br />
+<br />
+$ sudo grep -w &quot;postqueue&quot; /etc/audit/audit.rules<br />
+-a always,exit -F path=/usr/sbin/postqueue -F perm=x -F auid=nutanix -F auid!=4294967295 -k privileged<br />
+-a always,exit -F path=/usr/sbin/postqueue -F perm=x -F auid&gt;=1000 -F auid!=4294967295 -k privileged<br />
+<br />
+$ sudo grep -w &quot;semanage&quot; /etc/audit/audit.rules<br />
+-a always,exit -F path=/usr/sbin/semanage -F perm=x -F auid=nutanix -F auid!=4294967295 -k secobjects<br />
+-a always,exit -F path=/usr/sbin/semanage -F perm=x -F auid&gt;=1000 -F auid!=4294967295 -k secobjects<br />
+<br />
+$ sudo grep -w &quot;setfiles&quot; /etc/audit/audit.rules<br />
+-a always,exit -F path=/usr/sbin/setfiles -F perm=x -F auid=nutanix -F auid!=4294967295 -k privileged-priv_change<br />
+-a always,exit -F path=/usr/sbin/setfiles -F perm=x -F auid&gt;=1000 -F auid!=4294967295 -k privileged-priv_change<br />
+<br />
+$ sudo grep -w &quot;userhelper&quot; /etc/audit/audit.rules<br />
+-a always,exit -F path=/usr/sbin/userhelper -F perm=x -F auid=nutanix -F auid!=4294967295 -k privileged-passwd<br />
+-a always,exit -F path=/usr/sbin/userhelper -F perm=x -F auid&gt;=1000 -F auid!=4294967295 -k privileged-passwd<br />
+<br />
+$ sudo grep -w &quot;setsebool&quot; /etc/audit/audit.rules<br />
+-a always,exit -F path=/usr/sbin/setsebool -F perm=x -F auid=nutanix -F auid!=4294967295 -k secobjects<br />
+-a always,exit -F path=/usr/sbin/setsebool -F perm=x -F auid&gt;=1000 -F auid!=4294967295 -k secobjects<br />
+<br />
+$ sudo grep -w &quot;unix_chkpwd&quot; /etc/audit/audit.rules<br />
+-a always,exit -F path=/usr/sbin/unix_chkpwd -F perm=x -F auid=nutanix -F auid!=4294967295 -k privileged<br />
+-a always,exit -F path=/usr/sbin/unix_chkpwd -F perm=x -F auid&gt;=1000 -F auid!=4294967295 -k privileged<br />
+<br />
+If any of the audit rule commands does not return a line or the line is commented out, this is a finding.</p><h2>Vulnerability Number</h2><p>V-279549</p><h2>Documentable</h2><p>False</p><h2>Rule Version</h2><p>NXAC-OS-000043</p><h2>Severity Override Guidance</h2><p>Verify Nutanix OS generates full-text recording of privileged commands by running the following commands.<br />
+<br />
+$ sudo grep -iw &quot;postdrop&quot; /etc/audit/audit.rules <br />
+-a always,exit -F path=/usr/sbin/postdrop -F perm=x -F auid=nutanix -F auid!=4294967295 -k privileged<br />
+-a always,exit -F path=/usr/sbin/postdrop -F perm=x -F auid&gt;=1000 -F auid!=4294967295 -k privileged<br />
+<br />
+ $ sudo grep -iw &quot;unix_update&quot; /etc/audit/audit.rules <br />
+-a always,exit -F path=/usr/sbin/unix_update -F perm=x -F auid=nutanix -F auid!=unset -k privileged-unix-update<br />
+-a always,exit -F path=/usr/sbin/unix_update -F perm=x -F auid&gt;=1000 -F auid!=unset -k privileged-unix-update<br />
+<br />
+$ sudo grep -w &quot;postqueue&quot; /etc/audit/audit.rules<br />
+-a always,exit -F path=/usr/sbin/postqueue -F perm=x -F auid=nutanix -F auid!=4294967295 -k privileged<br />
+-a always,exit -F path=/usr/sbin/postqueue -F perm=x -F auid&gt;=1000 -F auid!=4294967295 -k privileged<br />
+<br />
+$ sudo grep -w &quot;semanage&quot; /etc/audit/audit.rules<br />
+-a always,exit -F path=/usr/sbin/semanage -F perm=x -F auid=nutanix -F auid!=4294967295 -k secobjects<br />
+-a always,exit -F path=/usr/sbin/semanage -F perm=x -F auid&gt;=1000 -F auid!=4294967295 -k secobjects<br />
+<br />
+$ sudo grep -w &quot;setfiles&quot; /etc/audit/audit.rules<br />
+-a always,exit -F path=/usr/sbin/setfiles -F perm=x -F auid=nutanix -F auid!=4294967295 -k privileged-priv_change<br />
+-a always,exit -F path=/usr/sbin/setfiles -F perm=x -F auid&gt;=1000 -F auid!=4294967295 -k privileged-priv_change<br />
+<br />
+$ sudo grep -w &quot;userhelper&quot; /etc/audit/audit.rules<br />
+-a always,exit -F path=/usr/sbin/userhelper -F perm=x -F auid=nutanix -F auid!=4294967295 -k privileged-passwd<br />
+-a always,exit -F path=/usr/sbin/userhelper -F perm=x -F auid&gt;=1000 -F auid!=4294967295 -k privileged-passwd<br />
+<br />
+$ sudo grep -w &quot;setsebool&quot; /etc/audit/audit.rules<br />
+-a always,exit -F path=/usr/sbin/setsebool -F perm=x -F auid=nutanix -F auid!=4294967295 -k secobjects<br />
+-a always,exit -F path=/usr/sbin/setsebool -F perm=x -F auid&gt;=1000 -F auid!=4294967295 -k secobjects<br />
+<br />
+$ sudo grep -w &quot;unix_chkpwd&quot; /etc/audit/audit.rules<br />
+-a always,exit -F path=/usr/sbin/unix_chkpwd -F perm=x -F auid=nutanix -F auid!=4294967295 -k privileged<br />
+-a always,exit -F path=/usr/sbin/unix_chkpwd -F perm=x -F auid&gt;=1000 -F auid!=4294967295 -k privileged<br />
+<br />
+If any of the audit rule commands does not return a line or the line is commented out, this is a finding.</p><h2>Check Content Reference</h2><p>M</p><h2>Target Key</h2><p>5730</p></body></html>

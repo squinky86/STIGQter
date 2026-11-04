@@ -1,0 +1,39 @@
+<!doctype html><html lang="en"><head><meta charset="utf-8"><title>STIGQter: STIG Check Details: SV-279273r1170704_rule: The Edge SWG must obtain its public key certificates from an appropriate certificate policy through an approved service provider.</title><link rel="icon" type="image/svg+xml" href="STIGQter.svg" /><script async src="https://www.googletagmanager.com/gtag/js?id=UA-31381839-2"></script><script src="include.js"></script><script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-4110907817782130" crossorigin="anonymous"></script></head><body><div><img src="STIGQter.svg" alt="STIGQter" style="height:1em;" /> <a href="https://www.stigqter.com/">STIGQter</a>: <a href="main.html">STIG Summary</a>: <a href="U_SYM_Edge_SWG_NDM_STIG_V1R2_Manual-xccdf.html">Symantec Edge SWG NDM Security Technical Implementation Guide Version: 1 Release: 2 Benchmark Date: 01 Apr 2026</a>:</div> <h1>The Edge SWG must obtain its public key certificates from an appropriate certificate policy through an approved service provider.</h1><h2>DISA Rule</h2><p>SV-279273r1170704_rule</p><h2>Vulnerability Number</h2><p>V-279273</p><h2>Group Title</h2><p>SRG-APP-000516-NDM-000344</p><h2>Rule Version</h2><p>SYME-ND-000800</p><h2>Severity</h2><p>CAT II</p><h2>CCI(s)</h2><ul><li>CCI-000366 - Implement the security configuration settings.</li><li>CCI-001159 - Issue public key certificates under an organization-defined certificate policy or obtain public key certificates from an approved service provider.</li><li>CCI-004909 - Include only approved trust anchors in trust stores or certificate stores managed by the organization.</li></ul><h2>Weight</h2><p>10</p><h2>Fix Recommendation</h2><p>1. Log in to the Edge SWG SSH CLI.<br />
+2. Enter &quot;enable&quot; and &quot;configure terminal&quot;.<br />
+3. Enter &quot;ssl&quot;.<br />
+4. Enter &quot;create fips keyring show fips-keyring 2048&quot;. The &quot;fips-keyring&quot; name can be changed to whatever the site wants to use.<br />
+5. Enter &quot;create signing-request fips-keyring&quot;.<br />
+6. Enter &quot;view signing-request fips-keyring&quot;. Copy the signing request PEM data and provide it to the CA for certificate issuance.<br />
+7. Once the DOD CA issues/signs the certificate for the keyring type &quot;inline certificate fips-keyring ~&quot;, paste the raw certificate data into a text editor, then press enter. Ensure the &quot;~&quot; is present at the end of the inserted text.<br />
+8. For each LDAP server, CA certificate, and CAC authentication CA certificate, issue the following command: &quot;inline fips ca-certificate DODCA1 ~&quot;. Ensure the ~ is entered at the end of the certificate data paste. Note: DODCA1 is used as an example.<br />
+9. Repeat the &quot;inline fips ca-certificate&quot; command for all CA certificates in use for LDAPS and CAC authentication.<br />
+10. Create a new FIPS-enabled CCL by entering: &quot;create fips ccl fips-ccl&quot;. The fips-ccl name can be changed to whatever the site wants to use.<br />
+11. Enter &quot;edit ccl fips-ccl&quot;.<br />
+12. Enter &quot;add&quot;, then enter all the CAs added in all previous steps.<br />
+13. Create an SSL device profile by entering: &quot;create fips ssl-device-profile fips-profile fips-keyring&quot;. The &quot;fips-profile&quot; name can be changed to whatever the site wants to use.</p><h2>Check Contents</h2><p>1. Log in to the Edge SWG SSH CLI.<br />
+2. Enter &quot;enable&quot; and &quot;configure terminal&quot;.<br />
+3. Issue the command &quot;ssl&quot;, then issue the command &quot;view keyring&quot;.<br />
+4. Find the keyrings that state: &quot;FIPS compliant: yes&quot;.<br />
+<br />
+1. Log in to the Edge SWG Web UI.<br />
+2. Navigate to the Configuration tab. <br />
+3. Click the SSL, and then keyrings section.<br />
+<br />
+If the keyring in use was not FIPS compliant from step #3 above, this is a finding.<br />
+<br />
+Click the keyring in use.<br />
+<br />
+If the certificate in the keyring was not issued by a DOD certificate authority this is a finding.</p><h2>Vulnerability Number</h2><p>V-279273</p><h2>Documentable</h2><p>False</p><h2>Rule Version</h2><p>SYME-ND-000800</p><h2>Severity Override Guidance</h2><p>1. Log in to the Edge SWG SSH CLI.<br />
+2. Enter &quot;enable&quot; and &quot;configure terminal&quot;.<br />
+3. Issue the command &quot;ssl&quot;, then issue the command &quot;view keyring&quot;.<br />
+4. Find the keyrings that state: &quot;FIPS compliant: yes&quot;.<br />
+<br />
+1. Log in to the Edge SWG Web UI.<br />
+2. Navigate to the Configuration tab. <br />
+3. Click the SSL, and then keyrings section.<br />
+<br />
+If the keyring in use was not FIPS compliant from step #3 above, this is a finding.<br />
+<br />
+Click the keyring in use.<br />
+<br />
+If the certificate in the keyring was not issued by a DOD certificate authority this is a finding.</p><h2>Check Content Reference</h2><p>M</p><h2>Target Key</h2><p>5726</p></body></html>

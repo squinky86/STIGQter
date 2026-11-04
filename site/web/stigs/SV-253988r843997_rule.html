@@ -1,0 +1,41 @@
+<!doctype html><html lang="en"><head><meta charset="utf-8"><title>STIGQter: STIG Check Details: SV-253988r843997_rule: The Juniper router must be configured to have all inactive interfaces disabled.</title><link rel="icon" type="image/svg+xml" href="STIGQter.svg" /><script async src="https://www.googletagmanager.com/gtag/js?id=UA-31381839-2"></script><script src="include.js"></script><script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-4110907817782130" crossorigin="anonymous"></script></head><body><div><img src="STIGQter.svg" alt="STIGQter" style="height:1em;" /> <a href="https://www.stigqter.com/">STIGQter</a>: <a href="main.html">STIG Summary</a>: <a href="U_Juniper_EX_Switches_RTR_STIG_V2R1_Manual-xccdf.html">Juniper EX Series Switches Router Security Technical Implementation Guide Version: 2 Release: 1 Benchmark Date: 24 Jul 2024</a>:</div> <h1>The Juniper router must be configured to have all inactive interfaces disabled.</h1><h2>DISA Rule</h2><p>SV-253988r843997_rule</p><h2>Vulnerability Number</h2><p>V-253988</p><h2>Group Title</h2><p>SRG-NET-000019-RTR-000007</p><h2>Rule Version</h2><p>JUEX-RT-000160</p><h2>Severity</h2><p>CAT III</p><h2>CCI(s)</h2><ul><li>CCI-001414 - Enforce approved authorizations for controlling the flow of information between connected systems based on organization-defined information flow control policies.</li></ul><h2>Weight</h2><p>10</p><h2>Fix Recommendation</h2><p>Disable inactive interfaces.<br />
+<br />
+delete interfaces &lt;interface name&gt;<br />
+-or-<br />
+set interfaces &lt;interface name&gt; disable<br />
+-or-<br />
+set interfaces interface-range DISABLED_INTERFACES member &lt;interface name&gt;<br />
+set interfaces interface-range DISABLED_INTERFACES member-range &lt;first interface name&gt; to &lt;last interface name&gt;<br />
+set interfaces interface-range DISABLED_INTERFACES disable</p><h2>Check Contents</h2><p>Review the router configuration and verify unused interfaces are not configured (implicitly disabled) or are explicitly disabled. If explicitly disabling interfaces, verify multiple interfaces are disabled with the &quot;interface-range&quot; command or separately at each interface declaration.<br />
+<br />
+[edit interfaces]<br />
+interface-range DISABLED_INTERFACES {<br />
+    member &lt;interface name&gt;;<br />
+    member-range &lt;first interface&gt; to &lt;last interface&gt;;<br />
+    disable;<br />
+}<br />
+&lt;interface name&gt; {<br />
+    disable;<br />
+}<br />
+<br />
+Note: Individually disabled interfaces should not be included in any &quot;interface-range&quot; stanza. The &quot;member-range&quot; directive assigns the configured parameter(s) to contiguously numbered interfaces.<br />
+<br />
+Junos lists interfaces in order so a &quot;missing&quot; interface is not enabled. For instance, if ge-0/0/0 and ge-0/0/2 are configured, but there is no individual ge-0/0/1 stanza and that interface is not a member of an interface-range, then ge-0/0/1 is implicitly disabled.<br />
+<br />
+If an interface is not being used but is configured or enabled, this is a finding.</p><h2>Vulnerability Number</h2><p>V-253988</p><h2>Documentable</h2><p>False</p><h2>Rule Version</h2><p>JUEX-RT-000160</p><h2>Severity Override Guidance</h2><p>Review the router configuration and verify unused interfaces are not configured (implicitly disabled) or are explicitly disabled. If explicitly disabling interfaces, verify multiple interfaces are disabled with the &quot;interface-range&quot; command or separately at each interface declaration.<br />
+<br />
+[edit interfaces]<br />
+interface-range DISABLED_INTERFACES {<br />
+    member &lt;interface name&gt;;<br />
+    member-range &lt;first interface&gt; to &lt;last interface&gt;;<br />
+    disable;<br />
+}<br />
+&lt;interface name&gt; {<br />
+    disable;<br />
+}<br />
+<br />
+Note: Individually disabled interfaces should not be included in any &quot;interface-range&quot; stanza. The &quot;member-range&quot; directive assigns the configured parameter(s) to contiguously numbered interfaces.<br />
+<br />
+Junos lists interfaces in order so a &quot;missing&quot; interface is not enabled. For instance, if ge-0/0/0 and ge-0/0/2 are configured, but there is no individual ge-0/0/1 stanza and that interface is not a member of an interface-range, then ge-0/0/1 is implicitly disabled.<br />
+<br />
+If an interface is not being used but is configured or enabled, this is a finding.</p><h2>Check Content Reference</h2><p>M</p><h2>Target Key</h2><p>5479</p></body></html>

@@ -1,0 +1,58 @@
+<!doctype html><html lang="en"><head><meta charset="utf-8"><title>STIGQter: STIG Check Details: SV-253727r961392_rule: MariaDB must allocate audit record storage capacity in accordance with organization-defined audit record storage requirements.</title><link rel="icon" type="image/svg+xml" href="STIGQter.svg" /><script async src="https://www.googletagmanager.com/gtag/js?id=UA-31381839-2"></script><script src="include.js"></script><script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-4110907817782130" crossorigin="anonymous"></script></head><body><div><img src="STIGQter.svg" alt="STIGQter" style="height:1em;" /> <a href="https://www.stigqter.com/">STIGQter</a>: <a href="main.html">STIG Summary</a>: <a href="U_MariaDB_Enterprise_10-x_STIG_V2R5_Manual-xccdf.html">MariaDB Enterprise 10.x Security Technical Implementation Guide Version: 2 Release: 5 Benchmark Date: 01 Apr 2026</a>:</div> <h1>MariaDB must allocate audit record storage capacity in accordance with organization-defined audit record storage requirements.</h1><h2>DISA Rule</h2><p>SV-253727r961392_rule</p><h2>Vulnerability Number</h2><p>V-253727</p><h2>Group Title</h2><p>SRG-APP-000357-DB-000316</p><h2>Rule Version</h2><p>MADB-10-007300</p><h2>Severity</h2><p>CAT II</p><h2>CCI(s)</h2><ul><li>CCI-001849 - Allocate audit log storage capacity to accommodate organization-defined audit record retention requirements.</li></ul><h2>Weight</h2><p>10</p><h2>Fix Recommendation</h2><p>MariaDB audit log file location either goes to the syslog directory (if logging is set to SYSLOG) or is controlled by the server_audit_file_path in the MariaDB my.cnf configuration file.<br />
+<br />
+If the audit log file directory does not have enough disk space available, then increase the diskspace available for the audit log file directory or move the audit log file directory to another location that has more disk space available.<br />
+Allocate sufficient audit file space to support peak demand.<br />
+ <br />
+If server_audit_output_type=FILE set the directory in /etc/my.cnf to one that is managed by the centralized management system.<br />
+<br />
+[mariadb]<br />
+server_audit_file_path=  mydir / mylogfilename .log <br />
+<br />
+Now, as the system administrator, restart the server with the new configuration: <br />
+        $ systemctl restart mysqld<br />
+ <br />
+Allocate sufficient audit file space to support peak demand for the log files.</p><h2>Check Contents</h2><p>Investigate whether there have been any incidents where MariaDB ran out of audit file log disk space since the last time the space was allocated or other corrective measures were taken.<br />
+<br />
+If there have been incidents where MariaDB ran out of audit log file disk space, this is a finding.<br />
+<br />
+MariaDB can be configured to use syslog or any OS system file to store audit records to designated disk directories.<br />
+<br />
+Check the log file location:<br />
+<br />
+To check how much storage capacity is available for audit records, first determine the location where the audit logs are being written by executing the following command. Run the following SQL:<br />
+<br />
+show global variables like  'server_audit%' ;<br />
+<br />
+For system logs (syslog): <br />
+     From the query above verify the value of:<br />
+       server_audit_output_type=SYSLOG<br />
+<br />
+For OS file:<br />
+     From the query above verify the value of:<br />
+       server_audit_output_type=FILE<br />
+<br />
+If written to SYSLOG, follow the procedure for storage in the corresponding OS STIG.<br />
+<br />
+If written to FILE, check the remaining storage on the disk. If it does not meet organizationally defined audit record storage requirements, this is a finding.</p><h2>Vulnerability Number</h2><p>V-253727</p><h2>Documentable</h2><p>False</p><h2>Rule Version</h2><p>MADB-10-007300</p><h2>Severity Override Guidance</h2><p>Investigate whether there have been any incidents where MariaDB ran out of audit file log disk space since the last time the space was allocated or other corrective measures were taken.<br />
+<br />
+If there have been incidents where MariaDB ran out of audit log file disk space, this is a finding.<br />
+<br />
+MariaDB can be configured to use syslog or any OS system file to store audit records to designated disk directories.<br />
+<br />
+Check the log file location:<br />
+<br />
+To check how much storage capacity is available for audit records, first determine the location where the audit logs are being written by executing the following command. Run the following SQL:<br />
+<br />
+show global variables like  'server_audit%' ;<br />
+<br />
+For system logs (syslog): <br />
+     From the query above verify the value of:<br />
+       server_audit_output_type=SYSLOG<br />
+<br />
+For OS file:<br />
+     From the query above verify the value of:<br />
+       server_audit_output_type=FILE<br />
+<br />
+If written to SYSLOG, follow the procedure for storage in the corresponding OS STIG.<br />
+<br />
+If written to FILE, check the remaining storage on the disk. If it does not meet organizationally defined audit record storage requirements, this is a finding.</p><h2>Check Content Reference</h2><p>M</p><h2>Target Key</h2><p>5475</p></body></html>

@@ -1,0 +1,103 @@
+<!doctype html><html lang="en"><head><meta charset="utf-8"><title>STIGQter: STIG Check Details: SV-220014r1016297_rule: The operating system must synchronize internal information system clocks with a server that is synchronized to one of the redundant United States Naval Observatory (USNO) time servers or a time server designated for the appropriate DOD network (NIPRNet/SIPRNet), and/or the Global Positioning System (GPS).</title><link rel="icon" type="image/svg+xml" href="STIGQter.svg" /><script async src="https://www.googletagmanager.com/gtag/js?id=UA-31381839-2"></script><script src="include.js"></script><script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-4110907817782130" crossorigin="anonymous"></script></head><body><div><img src="STIGQter.svg" alt="STIGQter" style="height:1em;" /> <a href="https://www.stigqter.com/">STIGQter</a>: <a href="main.html">STIG Summary</a>: <a href="U_SOL_11_x86_STIG_V3R6_Manual-xccdf.html">Solaris 11 X86 Security Technical Implementation Guide Version: 3 Release: 6 Benchmark Date: 01 Jul 2026</a>:</div> <h1>The operating system must synchronize internal information system clocks with a server that is synchronized to one of the redundant United States Naval Observatory (USNO) time servers or a time server designated for the appropriate DOD network (NIPRNet/SIPRNet), and/or the Global Positioning System (GPS).</h1><h2>DISA Rule</h2><p>SV-220014r1016297_rule</p><h2>Vulnerability Number</h2><p>V-220014</p><h2>Group Title</h2><p>SRG-OS-000356</p><h2>Rule Version</h2><p>SOL-11.1-090020</p><h2>Severity</h2><p>CAT II</p><h2>CCI(s)</h2><ul><li>CCI-004926 - Synchronize the internal system clocks to the authoritative time source when the time difference is greater than organization-defined time period.</li></ul><h2>Weight</h2><p>10</p><h2>Fix Recommendation</h2><p>The root role is required.<br />
+<br />
+Determine the zone to be secured.<br />
+<br />
+# zonename<br />
+<br />
+If the command output is not &quot;global&quot;, then NTP must be disabled.<br />
+<br />
+# svcadm disable ntp<br />
+<br />
+If the output from &quot;zonename&quot; is &quot;global&quot;, then NTP must be enabled.<br />
+<br />
+To activate the ntpd daemon, the ntp.conf file must first be created.<br />
+<br />
+# cp /etc/inet/ntp.client /etc/inet/ntp.conf<br />
+<br />
+# pfedit /etc/inet/ntp.conf<br />
+<br />
+Make site-specific changes to this file as needed in the form.<br />
+<br />
+server [ntpserver]<br />
+<br />
+Locate the line containing maxpoll (if it exists).<br />
+<br />
+Delete the line.<br />
+<br />
+Start the ntpd daemon.<br />
+<br />
+# svcadm enable ntp<br />
+<br />
+Use a local authoritative time server synchronizing to an authorized DOD time source, a USNO-based time server, or a GPS. Ensure all systems in the facility feed from one or more local time servers that feed from the authoritative time server.<br />
+<br />
+Edit the NTP configuration files and make the necessary changes to add the approved time servers per Solaris documentation.</p><h2>Check Contents</h2><p>NTP must be used and used only in the global zone. Determine the zone to be secured.<br />
+<br />
+# zonename<br />
+<br />
+If the command output is not &quot;global&quot;, then NTP must be disabled. Check the system for a running NTP daemon.<br />
+<br />
+# svcs -Ho state ntp<br />
+<br />
+If NTP is online, this is a finding.<br />
+<br />
+If the output from &quot;zonename&quot; is &quot;global&quot;, then NTP must be enabled. Check the system for a running NTP daemon.<br />
+<br />
+# svcs -Ho state ntp<br />
+<br />
+<br />
+If NTP is not online, this is a finding.<br />
+<br />
+If NTP is running, confirm the servers and peers or multicast client (as applicable) are local or an authoritative U.S. DOD source.<br />
+<br />
+For the NTP daemon:<br />
+<br />
+# more /etc/inet/ntp.conf<br />
+<br />
+If a nonlocal/nonauthoritative (non-DOD source, non-USNO-based, or non-GPS) time server is used, this is a finding.<br />
+<br />
+Determine if the time synchronization frequency is correct.<br />
+<br />
+# grep &quot;maxpoll&quot; /etc/inet/ntp.conf<br />
+<br />
+If the command returns &quot;File not found&quot; or any value for maxpoll, this is a finding.<br />
+<br />
+Determine if the running NTP server is configured properly.<br />
+<br />
+# ntpq -p | awk '($6 ~ /[0-9]+/ &amp;&amp; $6 &gt; 86400) { print $1&quot; &quot;$6 }'<br />
+<br />
+This will print out the name of any time server whose current polling time is greater than 24 hours (along with the actual value). If there is any output, this is a finding.</p><h2>Vulnerability Number</h2><p>V-220014</p><h2>Documentable</h2><p>False</p><h2>Rule Version</h2><p>SOL-11.1-090020</p><h2>Severity Override Guidance</h2><p>NTP must be used and used only in the global zone. Determine the zone to be secured.<br />
+<br />
+# zonename<br />
+<br />
+If the command output is not &quot;global&quot;, then NTP must be disabled. Check the system for a running NTP daemon.<br />
+<br />
+# svcs -Ho state ntp<br />
+<br />
+If NTP is online, this is a finding.<br />
+<br />
+If the output from &quot;zonename&quot; is &quot;global&quot;, then NTP must be enabled. Check the system for a running NTP daemon.<br />
+<br />
+# svcs -Ho state ntp<br />
+<br />
+<br />
+If NTP is not online, this is a finding.<br />
+<br />
+If NTP is running, confirm the servers and peers or multicast client (as applicable) are local or an authoritative U.S. DOD source.<br />
+<br />
+For the NTP daemon:<br />
+<br />
+# more /etc/inet/ntp.conf<br />
+<br />
+If a nonlocal/nonauthoritative (non-DOD source, non-USNO-based, or non-GPS) time server is used, this is a finding.<br />
+<br />
+Determine if the time synchronization frequency is correct.<br />
+<br />
+# grep &quot;maxpoll&quot; /etc/inet/ntp.conf<br />
+<br />
+If the command returns &quot;File not found&quot; or any value for maxpoll, this is a finding.<br />
+<br />
+Determine if the running NTP server is configured properly.<br />
+<br />
+# ntpq -p | awk '($6 ~ /[0-9]+/ &amp;&amp; $6 &gt; 86400) { print $1&quot; &quot;$6 }'<br />
+<br />
+This will print out the name of any time server whose current polling time is greater than 24 hours (along with the actual value). If there is any output, this is a finding.</p><h2>Check Content Reference</h2><p>M</p><h2>Target Key</h2><p>4021</p></body></html>

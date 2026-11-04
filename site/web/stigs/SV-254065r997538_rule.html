@@ -1,0 +1,59 @@
+<!doctype html><html lang="en"><head><meta charset="utf-8"><title>STIGQter: STIG Check Details: SV-254065r997538_rule: The Juniper PE router must be configured to have each Virtual Routing and Forwarding (VRF) instance with the appropriate Route Target (RT).</title><link rel="icon" type="image/svg+xml" href="STIGQter.svg" /><script async src="https://www.googletagmanager.com/gtag/js?id=UA-31381839-2"></script><script src="include.js"></script><script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-4110907817782130" crossorigin="anonymous"></script></head><body><div><img src="STIGQter.svg" alt="STIGQter" style="height:1em;" /> <a href="https://www.stigqter.com/">STIGQter</a>: <a href="main.html">STIG Summary</a>: <a href="U_Juniper_EX_Switches_RTR_STIG_V2R1_Manual-xccdf.html">Juniper EX Series Switches Router Security Technical Implementation Guide Version: 2 Release: 1 Benchmark Date: 24 Jul 2024</a>:</div> <h1>The Juniper PE router must be configured to have each Virtual Routing and Forwarding (VRF) instance with the appropriate Route Target (RT).</h1><h2>DISA Rule</h2><p>SV-254065r997538_rule</p><h2>Vulnerability Number</h2><p>V-254065</p><h2>Group Title</h2><p>SRG-NET-000512-RTR-000006</p><h2>Rule Version</h2><p>JUEX-RT-000930</p><h2>Severity</h2><p>CAT I</p><h2>CCI(s)</h2><ul><li>CCI-000366 - Implement the security configuration settings.</li><li>CCI-004891 - Implement physically or logically separate subnetworks to isolate organization-defined critical system components and functions.</li></ul><h2>Weight</h2><p>10</p><h2>Fix Recommendation</h2><p>Configure all J-PE routers to have the correct VRF defined with the appropriate RT.<br />
+<br />
+set routing-instances &lt;name&gt; description &lt;&quot;appropriate description&quot;&gt;<br />
+set routing-instances &lt;name&gt; instance-type vrf<br />
+set routing-instances &lt;name&gt; interface &lt;ce-facing interface&gt;.&lt;logical unit&gt;<br />
+set routing-instances &lt;name&gt; route-distinguisher 33:33 &lt;&lt; Must match the design plan for &quot;customer 1&quot;.<br />
+set routing-instances &lt;name&gt; vrf-target cust1:33:33 &lt;&lt; Must match the design plan for &quot;customer 1&quot;.<br />
+set routing-instances &lt;name&gt; vrf-table-label<br />
+set routing-instances &lt;name&gt; protocols ospf area &lt;number&gt; interface &lt;ce-facing interface&gt;.&lt;logical unit&gt;</p><h2>Check Contents</h2><p>Verify that the correct RT is configured for each VRF.<br />
+<br />
+Review the design plan for MPLS/L3VPN and VRF-lite to determine what RTs have been assigned for each VRF.<br />
+<br />
+Review the route-distinguisher and vrf-target statements under each configured VRF and verify that the correct RTs have been defined for each VRF. Assuming the assigned RT for &quot;customer 1&quot; is &quot;cust1:33:33&quot;, verify vrf-target matches.<br />
+<br />
+[edit routing-instances]<br />
+&lt;instance name&gt; {<br />
+    description &quot;To customer 1&quot;;<br />
+    instance-type vrf;<br />
+    interface &lt;ce-facing interface&gt;.&lt;logical unit&gt;;<br />
+    route-distinguisher 33:33; &lt;&lt; Must match the design plan for &quot;customer 1&quot;.<br />
+    vrf-target cust1:33:33; &lt;&lt; Must match the design plan for &quot;customer 1&quot;.<br />
+    vrf-table-label;<br />
+    protocols {<br />
+        ospf {<br />
+            area &lt;number&gt; {<br />
+                interface &lt;ce-facing interface&gt;.&lt;logical unit&gt;;<br />
+            }<br />
+        }<br />
+    }<br />
+}<br />
+<br />
+Note: In L3 VPN, the CE router forms an adjacency with the PE router (OSPF in the example).<br />
+<br />
+If there are VRFs configured with the wrong RT, this is a finding.</p><h2>Vulnerability Number</h2><p>V-254065</p><h2>Documentable</h2><p>False</p><h2>Rule Version</h2><p>JUEX-RT-000930</p><h2>Severity Override Guidance</h2><p>Verify that the correct RT is configured for each VRF.<br />
+<br />
+Review the design plan for MPLS/L3VPN and VRF-lite to determine what RTs have been assigned for each VRF.<br />
+<br />
+Review the route-distinguisher and vrf-target statements under each configured VRF and verify that the correct RTs have been defined for each VRF. Assuming the assigned RT for &quot;customer 1&quot; is &quot;cust1:33:33&quot;, verify vrf-target matches.<br />
+<br />
+[edit routing-instances]<br />
+&lt;instance name&gt; {<br />
+    description &quot;To customer 1&quot;;<br />
+    instance-type vrf;<br />
+    interface &lt;ce-facing interface&gt;.&lt;logical unit&gt;;<br />
+    route-distinguisher 33:33; &lt;&lt; Must match the design plan for &quot;customer 1&quot;.<br />
+    vrf-target cust1:33:33; &lt;&lt; Must match the design plan for &quot;customer 1&quot;.<br />
+    vrf-table-label;<br />
+    protocols {<br />
+        ospf {<br />
+            area &lt;number&gt; {<br />
+                interface &lt;ce-facing interface&gt;.&lt;logical unit&gt;;<br />
+            }<br />
+        }<br />
+    }<br />
+}<br />
+<br />
+Note: In L3 VPN, the CE router forms an adjacency with the PE router (OSPF in the example).<br />
+<br />
+If there are VRFs configured with the wrong RT, this is a finding.</p><h2>Check Content Reference</h2><p>M</p><h2>Target Key</h2><p>5479</p></body></html>

@@ -1,0 +1,55 @@
+<!doctype html><html lang="en"><head><meta charset="utf-8"><title>STIGQter: STIG Check Details: SV-255336r961044_rule: Azure SQL Database must map the PKI-authenticated identity to an associated user account.</title><link rel="icon" type="image/svg+xml" href="STIGQter.svg" /><script async src="https://www.googletagmanager.com/gtag/js?id=UA-31381839-2"></script><script src="include.js"></script><script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-4110907817782130" crossorigin="anonymous"></script></head><body><div><img src="STIGQter.svg" alt="STIGQter" style="height:1em;" /> <a href="https://www.stigqter.com/">STIGQter</a>: <a href="main.html">STIG Summary</a>: <a href="U_MS_Azure_SQL_DB_STIG_V2R3_Manual-xccdf.html">Microsoft Azure SQL Database Security Technical Implementation Guide Version: 2 Release: 3 Benchmark Date: 02 Jul 2025</a>:</div> <h1>Azure SQL Database must map the PKI-authenticated identity to an associated user account.</h1><h2>DISA Rule</h2><p>SV-255336r961044_rule</p><h2>Vulnerability Number</h2><p>V-255336</p><h2>Group Title</h2><p>SRG-APP-000177-DB-000069</p><h2>Rule Version</h2><p>ASQL-00-008500</p><h2>Severity</h2><p>CAT II</p><h2>CCI(s)</h2><ul><li>CCI-000187 - For public key-based authentication, map the authenticated identity to the account of the individual or group.</li></ul><h2>Weight</h2><p>10</p><h2>Fix Recommendation</h2><p>To set the Azure Active Directory Administrator, use the following PowerShell command: <br />
+<br />
+$LogicalServerName = &quot;myServer&quot; <br />
+Set-AzSqlServerActiveDirectoryAdministrator -ResourceGroupName &quot;myResourceGroup&quot; -ServerName $LogicalServerName -DisplayName &quot;myAADIdentify&quot;<br />
+<br />
+Azure Active Directory Authentication can be enabled using either PowerShell or the Azure CLI.<br />
+<br />
+To enable Azure Active Directory Authentication using PowerShell, use the commands below: <br />
+<br />
+######<br />
+###### Sets the AAD Admin in the SQL Server using PowerShell ######<br />
+######<br />
+$LogicalServerName = &quot;myServer&quot; <br />
+$ResourceGroup = &quot;myResourceGroup&quot;<br />
+$DisplayName = &quot;&lt;AAD Principal&gt;&quot; <br />
+$ObjectId = &quot;&lt;GUID for AAD Principal&gt;&quot;<br />
+<br />
+Set-AzSqlServerActiveDirectoryAdministrator `<br />
+-ResourceGroupName $ResourceGroup `<br />
+-ServerName $LogicalServerName `<br />
+-DisplayName $DisplayName `<br />
+-ObjectId$ObjectId<br />
+<br />
+#Sets AD Admin Only<br />
+Get-AzSqlServer -ServerName $LogicalServerName `<br />
+| Enable-AzSqlServerActiveDirectoryOnlyAuthentication<br />
+<br />
+To enable Azure Active Directory Authentication using the Azure CLI, use the commands below:<br />
+<br />
+######<br />
+###### Sets the AAD Admin in the SQL Server using the Azure CLI ######<br />
+######<br />
+az sql server ad-admin create `<br />
+--resource-group $ResourceGroup <br />
+--server $LogicalServerName `<br />
+--display-name $DisplayName `<br />
+--object-id $ObjectId `<br />
+<br />
+#Sets AD Admin Only<br />
+az sql server ad-only-auth enable `<br />
+--resource-group $ResourceGroup `<br />
+--name $LogicalServerName <br />
+<br />
+https://docs.microsoft.com/en-us/cli/azure/sql/server/ad-only-auth?view=azure-cli-latest<br />
+https://docs.microsoft.com/en-us/azure/azure-sql/database/authentication-aad-configure?tabs=azure-powershell</p><h2>Check Contents</h2><p>To verify that Azure Active Directory is configured as the authentication type, use the following PowerShell commands: <br />
+<br />
+$LogicalServerName = &quot;myServer&quot; <br />
+Get-AzSqlServer -ServerName $LogicalServerName | Get-AzSqlServerActiveDirectoryOnlyAuthentication<br />
+<br />
+If AzureADOnlyAuthentication returns False, this is a finding.</p><h2>Vulnerability Number</h2><p>V-255336</p><h2>Documentable</h2><p>False</p><h2>Rule Version</h2><p>ASQL-00-008500</p><h2>Severity Override Guidance</h2><p>To verify that Azure Active Directory is configured as the authentication type, use the following PowerShell commands: <br />
+<br />
+$LogicalServerName = &quot;myServer&quot; <br />
+Get-AzSqlServer -ServerName $LogicalServerName | Get-AzSqlServerActiveDirectoryOnlyAuthentication<br />
+<br />
+If AzureADOnlyAuthentication returns False, this is a finding.</p><h2>Check Content Reference</h2><p>M</p><h2>Target Key</h2><p>5500</p></body></html>

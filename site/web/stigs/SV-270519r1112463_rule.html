@@ -1,0 +1,71 @@
+<!doctype html><html lang="en"><head><meta charset="utf-8"><title>STIGQter: STIG Check Details: SV-270519r1112463_rule: The role(s)/group(s) used to modify database structure (including but not necessarily limited to tables, indexes, storage, etc.) and logic modules (stored procedures, functions, triggers, links to software external to the DBMS, etc.) must be restricted to authorized users.</title><link rel="icon" type="image/svg+xml" href="STIGQter.svg" /><script async src="https://www.googletagmanager.com/gtag/js?id=UA-31381839-2"></script><script src="include.js"></script><script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-4110907817782130" crossorigin="anonymous"></script></head><body><div><img src="STIGQter.svg" alt="STIGQter" style="height:1em;" /> <a href="https://www.stigqter.com/">STIGQter</a>: <a href="main.html">STIG Summary</a>: <a href="U_Oracle_Database_19c_STIG_V1R5_Manual-xccdf.html">Oracle Database 19c Security Technical Implementation Guide Version: 1 Release: 5 Benchmark Date: 01 Apr 2026</a>:</div> <h1>The role(s)/group(s) used to modify database structure (including but not necessarily limited to tables, indexes, storage, etc.) and logic modules (stored procedures, functions, triggers, links to software external to the DBMS, etc.) must be restricted to authorized users.</h1><h2>DISA Rule</h2><p>SV-270519r1112463_rule</p><h2>Vulnerability Number</h2><p>V-270519</p><h2>Group Title</h2><p>SRG-APP-000133-DB-000362</p><h2>Rule Version</h2><p>O19C-00-008300</p><h2>Severity</h2><p>CAT II</p><h2>CCI(s)</h2><ul><li>CCI-001499 - Limit privileges to change software resident within software libraries.</li></ul><h2>Weight</h2><p>10</p><h2>Fix Recommendation</h2><p>Create roles for administrative function assignments. Assign the necessary privileges for the administrative functions to a role. Do not assign administrative privileges directly to users, except for those that Oracle does not permit to be assigned via roles.</p><h2>Check Contents</h2><p>Review accounts for direct assignment of administrative privileges. Connected as SYSDBA, run the query:<br />
+<br />
+SELECT grantee, privilege<br />
+FROM dba_sys_privs<br />
+WHERE grantee IN <br />
+(<br />
+SELECT username<br />
+FROM dba_users<br />
+WHERE username NOT IN <br />
+(<br />
+'XDB', 'SYSTEM', 'SYS', 'LBACSYS',<br />
+'DVSYS', 'DVF', 'SYSMAN_RO',<br />
+'SYSMAN_BIPLATFORM', 'SYSMAN_MDS',<br />
+'SYSMAN_OPSS', 'SYSMAN_STB', 'DBSNMP',<br />
+'SYSMAN', 'APEX_040200', 'WMSYS',<br />
+'SYSDG', 'SYSBACKUP', 'SPATIAL_WFS_ADMIN_USR',<br />
+'SPATIAL_CSW_ADMIN_US', 'GSMCATUSER',<br />
+'OLAPSYS', 'SI_INFORMTN_SCHEMA',<br />
+'OUTLN', 'ORDSYS', 'ORDDATA', 'OJVMSYS',<br />
+'ORACLE_OCM', 'MDSYS', 'ORDPLUGINS',<br />
+'GSMADMIN_INTERNAL', 'MDDATA', 'FLOWS_FILES',<br />
+'DIP', 'CTXSYS', 'AUDSYS',<br />
+'APPQOSSYS', 'APEX_PUBLIC_USER', 'ANONYMOUS',<br />
+'SPATIAL_CSW_ADMIN_USR', 'SYSKM',<br />
+'SYSMAN_TYPES', 'MGMT_VIEW',<br />
+'EUS_ENGINE_USER', 'EXFSYS', 'SYSMAN_APM'<br />
+)<br />
+)<br />
+AND privilege NOT IN ('UNLIMITED TABLESPACE'<br />
+, 'REFERENCES', 'INDEX', 'SYSDBA', 'SYSOPER', 'CREATE SESSION'<br />
+)<br />
+ORDER BY 1, 2;<br />
+<br />
+If any administrative privileges have been assigned directly to a database account, this is a finding.<br />
+<br />
+The list of special accounts that are excluded from this requirement may not be complete. It is expected that the database administrator (DBA) will edit the list to suit local circumstances, adding other special accounts as necessary, and removing any that are not supposed to be in use in the Oracle deployment that is under review.</p><h2>Vulnerability Number</h2><p>V-270519</p><h2>Documentable</h2><p>False</p><h2>Rule Version</h2><p>O19C-00-008300</p><h2>Severity Override Guidance</h2><p>Review accounts for direct assignment of administrative privileges. Connected as SYSDBA, run the query:<br />
+<br />
+SELECT grantee, privilege<br />
+FROM dba_sys_privs<br />
+WHERE grantee IN <br />
+(<br />
+SELECT username<br />
+FROM dba_users<br />
+WHERE username NOT IN <br />
+(<br />
+'XDB', 'SYSTEM', 'SYS', 'LBACSYS',<br />
+'DVSYS', 'DVF', 'SYSMAN_RO',<br />
+'SYSMAN_BIPLATFORM', 'SYSMAN_MDS',<br />
+'SYSMAN_OPSS', 'SYSMAN_STB', 'DBSNMP',<br />
+'SYSMAN', 'APEX_040200', 'WMSYS',<br />
+'SYSDG', 'SYSBACKUP', 'SPATIAL_WFS_ADMIN_USR',<br />
+'SPATIAL_CSW_ADMIN_US', 'GSMCATUSER',<br />
+'OLAPSYS', 'SI_INFORMTN_SCHEMA',<br />
+'OUTLN', 'ORDSYS', 'ORDDATA', 'OJVMSYS',<br />
+'ORACLE_OCM', 'MDSYS', 'ORDPLUGINS',<br />
+'GSMADMIN_INTERNAL', 'MDDATA', 'FLOWS_FILES',<br />
+'DIP', 'CTXSYS', 'AUDSYS',<br />
+'APPQOSSYS', 'APEX_PUBLIC_USER', 'ANONYMOUS',<br />
+'SPATIAL_CSW_ADMIN_USR', 'SYSKM',<br />
+'SYSMAN_TYPES', 'MGMT_VIEW',<br />
+'EUS_ENGINE_USER', 'EXFSYS', 'SYSMAN_APM'<br />
+)<br />
+)<br />
+AND privilege NOT IN ('UNLIMITED TABLESPACE'<br />
+, 'REFERENCES', 'INDEX', 'SYSDBA', 'SYSOPER', 'CREATE SESSION'<br />
+)<br />
+ORDER BY 1, 2;<br />
+<br />
+If any administrative privileges have been assigned directly to a database account, this is a finding.<br />
+<br />
+The list of special accounts that are excluded from this requirement may not be complete. It is expected that the database administrator (DBA) will edit the list to suit local circumstances, adding other special accounts as necessary, and removing any that are not supposed to be in use in the Oracle deployment that is under review.</p><h2>Check Content Reference</h2><p>M</p><h2>Target Key</h2><p>5672</p></body></html>

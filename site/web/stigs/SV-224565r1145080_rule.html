@@ -1,0 +1,50 @@
+<!doctype html><html lang="en"><head><meta charset="utf-8"><title>STIGQter: STIG Check Details: SV-224565r1145080_rule: WebSphere MQ context resources defined to the appropriate ADMIN resource class must be protected in accordance with security requirements.</title><link rel="icon" type="image/svg+xml" href="STIGQter.svg" /><script async src="https://www.googletagmanager.com/gtag/js?id=UA-31381839-2"></script><script src="include.js"></script><script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-4110907817782130" crossorigin="anonymous"></script></head><body><div><img src="STIGQter.svg" alt="STIGQter" style="height:1em;" /> <a href="https://www.stigqter.com/">STIGQter</a>: <a href="main.html">STIG Summary</a>: <a href="U_zOS_WebsphereMQ_for_RACF_STIG_V7R3_Manual-xccdf.html">zOS WebSphere MQ for RACF Security Technical Implementation Guide Version: 7 Release: 3 Benchmark Date: 01 Jul 2026</a>:</div> <h1>WebSphere MQ context resources defined to the appropriate ADMIN resource class must be protected in accordance with security requirements.</h1><h2>DISA Rule</h2><p>SV-224565r1145080_rule</p><h2>Vulnerability Number</h2><p>V-224565</p><h2>Group Title</h2><p>SRG-OS-000080</p><h2>Rule Version</h2><p>ZWMQ0058</p><h2>Severity</h2><p>CAT II</p><h2>CCI(s)</h2><ul><li>CCI-000213 - Enforce approved authorizations for logical access to information and system resources in accordance with applicable access control policies.</li></ul><h2>Weight</h2><p>10</p><h2>Fix Recommendation</h2><p>Context security validates whether a userid has authority to pass or set identity and/or origin data for a message. Context security will be active, and all profiles ssid.CONTEXT will be defined to the appropriate ADMIN class with UACC(NONE) specified, where ssid is the queue manager name.<br />
+<br />
+READ access is required when the PASS option is specified for an MQOPEN or MQPUT1. Update or control access is required when the SET or OUTPUT option is specified.<br />
+<br />
+For all context resources (i.e., ssid.CONTEXT) defined to the MQADMIN or MXADMIN resource class, ensure the following items are in effect:<br />
+<br />
+Note: ssid is the queue manager name (a.k.a., subsystem identifier).<br />
+<br />
+Resource profiles are defined with a UACC(NONE).<br />
+Access authorization restricts access to users requiring the ability to pass or set identity and/or origin data for a message. This is difficult to determine. However, an item for concern may be a profile with * READ specified in the access list.<br />
+<br />
+A set of sample commands are provided below to implement the minimum profiles necessary for proper security. <br />
+<br />
+/* THE FOLLOWING PROFILE FORCES GRANULAR PROFILES DEFINITIONS */<br />
+RDEF MQADMIN ** UACC(NONE) OWNER(ADMIN) AUDIT(ALL(READ)) DATA('MQADMIN DENY-BY-DEFAULT PROFILE')<br />
+<br />
+RDEF MQADMIN &lt;ssid&gt;.CONTEXT UACC(NONE) OWNER(ADMIN) AUDIT(ALL(READ)) DATA('MQADMIN PROFILE REQUIRED FOR CONTEXT SECURITY')<br />
+<br />
+The following is a sample of the commands required to allow a systems programming group (SYS1) to offload and reload messages for queue manager (QMD1):<br />
+<br />
+PERMIT QMD1.CONTEXT CLASS(MQADMIN) ID(SYS1) ACCESS(CONTROL)<br />
+<br />
+The following refresh is required for RACListed classes:<br />
+<br />
+SETR RACL(MQADMIN) REF<br />
+<br />
+Note that an additional WebSphere MQ Refresh may be required for active queue managers. This is done from the CONSOLE:<br />
+<br />
+The example is for a queue manager named QMD1:<br />
+&gt;QMD1 REFRESH SECURITY(*)</p><h2>Check Contents</h2><p>Refer to the following reports produced by the RACF Data Collection:<br />
+<br />
+- SENSITVE.RPT(MQADMIN).<br />
+- SENSITVE.RPT(MXADMIN).<br />
+<br />
+For all context resources (i.e., ssid.CONTEXT) defined to the MQADMIN and GMQADMIN resource classes (or MXADMIN and GMXADMIN resource classes, if SCYCASE is set to MIXED). If the following guidance is true, this is not a finding.<br />
+<br />
+Note: ssid is the queue manager name (a.k.a., subsystem identifier).<br />
+<br />
+Resource profiles are defined with a UACC(NONE).<br />
+Access authorization restricts access to users requiring the ability to pass or set identity and/or origin data for a message. This is difficult to determine. However, an item for concern may be a profile with * READ specified in the access list.</p><h2>Vulnerability Number</h2><p>V-224565</p><h2>Documentable</h2><p>False</p><h2>Rule Version</h2><p>ZWMQ0058</p><h2>Severity Override Guidance</h2><p>Refer to the following reports produced by the RACF Data Collection:<br />
+<br />
+- SENSITVE.RPT(MQADMIN).<br />
+- SENSITVE.RPT(MXADMIN).<br />
+<br />
+For all context resources (i.e., ssid.CONTEXT) defined to the MQADMIN and GMQADMIN resource classes (or MXADMIN and GMXADMIN resource classes, if SCYCASE is set to MIXED). If the following guidance is true, this is not a finding.<br />
+<br />
+Note: ssid is the queue manager name (a.k.a., subsystem identifier).<br />
+<br />
+Resource profiles are defined with a UACC(NONE).<br />
+Access authorization restricts access to users requiring the ability to pass or set identity and/or origin data for a message. This is difficult to determine. However, an item for concern may be a profile with * READ specified in the access list.</p><h2>Check Content Reference</h2><p>M</p><h2>Target Key</h2><p>4167</p></body></html>

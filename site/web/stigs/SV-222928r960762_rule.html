@@ -1,0 +1,39 @@
+<!doctype html><html lang="en"><head><meta charset="utf-8"><title>STIGQter: STIG Check Details: SV-222928r960762_rule: HTTP Strict Transport Security (HSTS) must be enabled.</title><link rel="icon" type="image/svg+xml" href="STIGQter.svg" /><script async src="https://www.googletagmanager.com/gtag/js?id=UA-31381839-2"></script><script src="include.js"></script><script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-4110907817782130" crossorigin="anonymous"></script></head><body><div><img src="STIGQter.svg" alt="STIGQter" style="height:1em;" /> <a href="https://www.stigqter.com/">STIGQter</a>: <a href="main.html">STIG Summary</a>: <a href="U_Apache_Tomcat_Application_Server_9_STIG_V3R4_Manual-xccdf.html">Apache Tomcat Application Server 9 Security Technical Implementation Guide Version: 3 Release: 4 Benchmark Date: 01 Apr 2026</a>:</div> <h1>HTTP Strict Transport Security (HSTS) must be enabled.</h1><h2>DISA Rule</h2><p>SV-222928r960762_rule</p><h2>Vulnerability Number</h2><p>V-222928</p><h2>Group Title</h2><p>SRG-APP-000015-AS-000010</p><h2>Rule Version</h2><p>TCAT-AS-000030</p><h2>Severity</h2><p>CAT III</p><h2>CCI(s)</h2><ul><li>CCI-001453 - Implement cryptographic mechanisms to protect the integrity of remote access sessions.</li></ul><h2>Weight</h2><p>10</p><h2>Fix Recommendation</h2><p>From the Tomcat server as a privileged user, edit the web.xml file:<br />
+<br />
+sudo nano $CATALINA_BASE/conf/web.xml file.<br />
+<br />
+Uncomment the existing httpHeaderSecurity filter section or create the filter section using the following code:<br />
+<br />
+NOTE: includeSubDomains param-value and url-pattern values may change and can vary according to local deployment requirements. <br />
+&lt;filter&gt;<br />
+&lt;filter-name&gt;httpHeaderSecurity&lt;/filter-name&gt;<br />
+&lt;filter-class&gt;org.apache.catalina.filters.HttpHeaderSecurityFilter&lt;/filter-class&gt;<br />
+&lt;init-param&gt;<br />
+ &lt;param-name&gt;hstsEnabled&lt;/param-name&gt;<br />
+ &lt;param-value&gt;true&lt;/param-value&gt;<br />
+&lt;/init-param&gt;<br />
+&lt;init-param&gt;<br />
+ &lt;param-name&gt;hstsMaxAgeSeconds&lt;/param-name&gt;<br />
+ &lt;param-value&gt;31536000&lt;/param-value&gt;<br />
+ &lt;/init-param&gt;<br />
+ &lt;init-param&gt;<br />
+ &lt;param-name&gt;hstsIncludeSubDomains&lt;/param-name&gt;<br />
+ &lt;param-value&gt;true&lt;/param-value&gt;<br />
+ &lt;/init-param&gt;<br />
+&lt;async-supported&gt;true&lt;/async-supported&gt;<br />
+&lt;/filter&gt;<br />
+<br />
+Create or uncomment the httpHeaderSecurity filter mapping:<br />
+&lt;filter-mapping&gt;<br />
+&lt;filter-name&gt;httpHeaderSecurity&lt;/filter-name&gt;<br />
+&lt;url-pattern&gt;/*&lt;/url-pattern&gt;<br />
+&lt;dispatcher&gt;REQUEST&lt;/dispatcher&gt;<br />
+&lt;/filter-mapping&gt;</p><h2>Check Contents</h2><p>From the Tomcat server console, run the following command:<br />
+<br />
+sudo grep -i -A5 -B8 hstsEnable $CATALINA_BASE/conf/web.xml file.<br />
+<br />
+If the httpHeaderSecurity filter is commented out or if hstsEnable is not set to &quot;true&quot;, this is a finding.</p><h2>Vulnerability Number</h2><p>V-222928</p><h2>Documentable</h2><p>False</p><h2>Rule Version</h2><p>TCAT-AS-000030</p><h2>Severity Override Guidance</h2><p>From the Tomcat server console, run the following command:<br />
+<br />
+sudo grep -i -A5 -B8 hstsEnable $CATALINA_BASE/conf/web.xml file.<br />
+<br />
+If the httpHeaderSecurity filter is commented out or if hstsEnable is not set to &quot;true&quot;, this is a finding.</p><h2>Check Content Reference</h2><p>M</p><h2>Target Key</h2><p>4094</p></body></html>

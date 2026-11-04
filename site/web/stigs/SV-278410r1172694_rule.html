@@ -1,0 +1,95 @@
+<!doctype html><html lang="en"><head><meta charset="utf-8"><title>STIGQter: STIG Check Details: SV-278410r1172694_rule: NGINX must generate, manage, and protect from disclosure and misuse the cryptographic keys that protect access tokens.</title><link rel="icon" type="image/svg+xml" href="STIGQter.svg" /><script async src="https://www.googletagmanager.com/gtag/js?id=UA-31381839-2"></script><script src="include.js"></script><script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-4110907817782130" crossorigin="anonymous"></script></head><body><div><img src="STIGQter.svg" alt="STIGQter" style="height:1em;" /> <a href="https://www.stigqter.com/">STIGQter</a>: <a href="main.html">STIG Summary</a>: <a href="U_F5_NGINX_STIG_V1R1_Manual-xccdf.html">F5 NGINX Security Technical Implementation Guide Version: 1 Release: 1 Benchmark Date: 25 Nov 2025</a>:</div> <h1>NGINX must generate, manage, and protect from disclosure and misuse the cryptographic keys that protect access tokens.</h1><h2>DISA Rule</h2><p>SV-278410r1172694_rule</p><h2>Vulnerability Number</h2><p>V-278410</p><h2>Group Title</h2><p>SRG-APP-000965</p><h2>Rule Version</h2><p>NGNX-APP-003220</p><h2>Severity</h2><p>CAT II</p><h2>CCI(s)</h2><ul><li>CCI-000366 - Implement the security configuration settings.</li></ul><h2>Weight</h2><p>10</p><h2>Fix Recommendation</h2><p>Set proper file permissions for SSL certificate and private key:<br />
+<br />
+# chmod 644 /home/ubuntu/nginx.com.crt<br />
+# chmod 600 /home/ubuntu/nginx.com.key<br />
+# chown nginx:nginx /home/ubuntu/nginx.com.crt<br />
+# chown nginx:nginx /home/ubuntu/nginx.com.key<br />
+<br />
+Move certificates to secure location:<br />
+<br />
+# mkdir -p /etc/nginx/ssl<br />
+# mv /home/ubuntu/dev.sports.com.* /etc/nginx/ssl/<br />
+# chmod 700 /etc/nginx/ssl<br />
+<br />
+Update NGINX configuration to use secure certificate location:<br />
+<br />
+server {<br />
+    listen 443 ssl;<br />
+    ssl_certificate     /etc/nginx/ssl/nginx.com.crt;<br />
+    ssl_certificate_key /etc/nginx/ssl/nginx.com.key;<br />
+    ssl_session_cache shared:SSL:10m;<br />
+    ssl_dhparam /etc/nginx/ssl/dhparam.pem;<br />
+}<br />
+<br />
+Generate strong DH parameters if not present:<br />
+<br />
+# openssl dhparam -out /etc/nginx/ssl/dhparam.pem 2048<br />
+# chmod 644 /etc/nginx/ssl/dhparam.pem</p><h2>Check Contents</h2><p>Check SSL/TLS certificate and private key file permissions:<br />
+<br />
+# ls -la /home/ubuntu/nginx.com.crt<br />
+# ls -la /home/ubuntu/nginx.com.key<br />
+<br />
+Verify:<br />
+- Certificate file permissions are 644 or more restrictive.<br />
+- Private key file permissions are 600 or more restrictive.<br />
+- Files are owned by nginx user or root.<br />
+- Files are not world-readable or group-writable.<br />
+<br />
+If these permissions are not set, this is a finding.<br />
+<br />
+Verify certificate validity and strength:<br />
+<br />
+# openssl x509 -in /home/ubuntu/nginx.com.crt -text -noout<br />
+<br />
+Verify:<br />
+- Certificate is not expired.<br />
+- Uses RSA key length of 2048 bits minimum or ECDSA P-256 minimum.<br />
+- Signature algorithm is SHA-256 or stronger (not SHA-1 or MD5).<br />
+- Certificate chain is complete and valid.<br />
+<br />
+If these values are not met, this is a finding.<br />
+<br />
+Verify private key strength and protection:<br />
+<br />
+# openssl rsa -in /home/ubuntu/nginx.com.key -text -noout -check<br />
+<br />
+Verify:<br />
+- Key length is 2048 bits minimum.<br />
+- Key is not encrypted with weak algorithms.<br />
+- Key passes integrity check.<br />
+<br />
+If these key values are not set, this is a finding.</p><h2>Vulnerability Number</h2><p>V-278410</p><h2>Documentable</h2><p>False</p><h2>Rule Version</h2><p>NGNX-APP-003220</p><h2>Severity Override Guidance</h2><p>Check SSL/TLS certificate and private key file permissions:<br />
+<br />
+# ls -la /home/ubuntu/nginx.com.crt<br />
+# ls -la /home/ubuntu/nginx.com.key<br />
+<br />
+Verify:<br />
+- Certificate file permissions are 644 or more restrictive.<br />
+- Private key file permissions are 600 or more restrictive.<br />
+- Files are owned by nginx user or root.<br />
+- Files are not world-readable or group-writable.<br />
+<br />
+If these permissions are not set, this is a finding.<br />
+<br />
+Verify certificate validity and strength:<br />
+<br />
+# openssl x509 -in /home/ubuntu/nginx.com.crt -text -noout<br />
+<br />
+Verify:<br />
+- Certificate is not expired.<br />
+- Uses RSA key length of 2048 bits minimum or ECDSA P-256 minimum.<br />
+- Signature algorithm is SHA-256 or stronger (not SHA-1 or MD5).<br />
+- Certificate chain is complete and valid.<br />
+<br />
+If these values are not met, this is a finding.<br />
+<br />
+Verify private key strength and protection:<br />
+<br />
+# openssl rsa -in /home/ubuntu/nginx.com.key -text -noout -check<br />
+<br />
+Verify:<br />
+- Key length is 2048 bits minimum.<br />
+- Key is not encrypted with weak algorithms.<br />
+- Key passes integrity check.<br />
+<br />
+If these key values are not set, this is a finding.</p><h2>Check Content Reference</h2><p>M</p><h2>Target Key</h2><p>5720</p></body></html>
