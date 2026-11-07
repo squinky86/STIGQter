@@ -48,6 +48,7 @@
 #include <QPlainTextEdit>
 #include <QPushButton>
 #include <QStandardPaths>
+#include <QTemporaryDir>
 #include <QTemporaryFile>
 #include <QTextEdit>
 #include <QThread>
@@ -168,11 +169,10 @@ void TestSTIGQter::test00_LocalFileDownload()
     QCOMPARE(downloaded.readAll(), payload);
 
     // A missing local source must fail and restore the destination's state.
-    QTemporaryFile missingSource;
-    QVERIFY(missingSource.open());
-    const QString missingPath = missingSource.fileName();
-    missingSource.close();
-    QVERIFY(QFile::remove(missingPath));
+    QTemporaryDir missingDirectory;
+    QVERIFY(missingDirectory.isValid());
+    const QString missingPath = missingDirectory.filePath(QStringLiteral("missing.txt"));
+    QVERIFY(!QFile::exists(missingPath));
 
     QTemporaryFile failedDestination;
     QVERIFY(failedDestination.open());
@@ -235,6 +235,10 @@ void TestSTIGQter::test03_IndexSTIGs()
     // The assessment-field test needs three attached guides while the V5R2
     // fixture must remain unattached for the upgrade test. Add two distinct,
     // lightweight variants of V5R1 to satisfy both conditions.
+    // QTemporaryFile retains its native handle after close(); use paths in a
+    // temporary directory so libzip can replace the files on Windows as well.
+    QTemporaryDir archives;
+    QVERIFY(archives.isValid());
     for (int variant = 1; variant <= 2; ++variant)
     {
         QByteArray variantXccdf = sourceVariantFiles.value(xccdfPath);
@@ -248,10 +252,7 @@ void TestSTIGQter::test03_IndexSTIGs()
         variantFiles.insert(QStringLiteral("U_ASD_TEST_%1_Manual-xccdf.xml").arg(variant),
                             variantXccdf);
 
-        QTemporaryFile variantArchive;
-        QVERIFY(variantArchive.open());
-        const QString variantArchivePath = variantArchive.fileName();
-        variantArchive.close();
+        const QString variantArchivePath = archives.filePath(QStringLiteral("variant-%1.zip").arg(variant));
         QVERIFY(CreateZip(variantArchivePath, variantFiles));
 
         const QByteArray variantContents = readFixture(variantArchivePath);
@@ -262,10 +263,7 @@ void TestSTIGQter::test03_IndexSTIGs()
     for (const QByteArray &contents : quarterlyFiles)
         QVERIFY(!contents.isEmpty());
 
-    QTemporaryFile quarterlyArchive;
-    QVERIFY(quarterlyArchive.open());
-    const QString quarterlyArchivePath = quarterlyArchive.fileName();
-    quarterlyArchive.close();
+    const QString quarterlyArchivePath = archives.filePath(QStringLiteral("quarterly.zip"));
     QVERIFY(CreateZip(quarterlyArchivePath, quarterlyFiles));
 
     {

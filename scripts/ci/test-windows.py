@@ -114,10 +114,14 @@ def main():
         environment = os.environ.copy()
         environment["QT_QPA_PLATFORM"] = "windows"
         environment["STIGQTER_LIVE_RELEASE_CHECK"] = "1"
-        subprocess.run([str(test), "-o", f"{RESULTS / 'windows-tests.txt'},txt", "-o",
-                        f"{RESULTS / 'windows-tests.xml'},junitxml"], cwd=runtime,
-                       env=environment, timeout=900, check=True)
-        print((RESULTS / "windows-tests.txt").read_text(), flush=True)
+        try:
+            subprocess.run([str(test), "-o", f"{RESULTS / 'windows-tests.txt'},txt", "-o",
+                            f"{RESULTS / 'windows-tests.xml'},junitxml"], cwd=runtime,
+                           env=environment, timeout=900, check=True)
+        finally:
+            report = RESULTS / "windows-tests.txt"
+            if report.exists():
+                print(report.read_text(encoding="utf-8", errors="replace"), flush=True)
 
         package = runtime / "portable"
         with zipfile.ZipFile(dist / f"STIGQter-{version}-win64.zip") as archive:
