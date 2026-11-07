@@ -1,9 +1,11 @@
 #!/usr/bin/env python3
 """Run the static Qt suite and the shipped executable on a disposable Windows runner."""
+import argparse
 import ctypes
 from ctypes import wintypes
 from contextlib import closing
 import hashlib
+import json
 import os
 from pathlib import Path
 import shutil
@@ -24,7 +26,7 @@ def sha256(path):
         return hashlib.file_digest(stream, "sha256").hexdigest()
 
 
-def main_window(pid, title):
+def process_windows(pid):
     user32 = ctypes.WinDLL("user32", use_last_error=True)
     callback_type = ctypes.WINFUNCTYPE(wintypes.BOOL, wintypes.HWND, wintypes.LPARAM)
     user32.EnumWindows.argtypes = [callback_type, wintypes.LPARAM]
@@ -39,12 +41,12 @@ def main_window(pid, title):
         user32.GetWindowThreadProcessId(hwnd, ctypes.byref(owner))
         text = ctypes.create_unicode_buffer(512)
         user32.GetWindowTextW(hwnd, text, len(text))
-        if owner.value == pid and user32.IsWindowVisible(hwnd) and text.value == title:
-            found.append(hwnd)
+        if owner.value == pid and user32.IsWindowVisible(hwnd):
+            found.append((hwnd, text.value))
         return True
 
     user32.EnumWindows(visit, 0)
-    return found[0] if found else None
+    return found
 
 
 def smoke(executable, database, version, label):
@@ -57,21 +59,30 @@ def smoke(executable, database, version, label):
         deadline = time.monotonic() + 90
         window = None
         ready = False
+        windows = []
+        database_error = None
         while time.monotonic() < deadline:
             if process.poll() is not None:
                 raise RuntimeError(f"{label}: exited during startup ({process.returncode})")
-            window = main_window(process.pid, f"STIGQter {version}")
+            windows = process_windows(process.pid)
+            title = f"STIGQter {version}"
+            # Qt may append applicationDisplayName to the native title.
+            window = next((hwnd for hwnd, caption in windows
+                           if caption == title or caption.startswith(title + " ")), None)
             if database.exists():
                 try:
                     with closing(sqlite3.connect(database, timeout=1)) as db:
                         ready = db.execute("SELECT COUNT(*) FROM CCI").fetchone()[0] > 0
-                except sqlite3.Error:
-                    pass
+                except sqlite3.Error as error:
+                    database_error = str(error)
             if window and ready:
                 break
             time.sleep(0.5)
         if not window or not ready:
-            raise RuntimeError(f"{label}: main window or initialized SQLite database missing")
+            details = {"windows": windows, "database_ready": ready, "database_error": database_error,
+                       "database_size": database.stat().st_size if database.exists() else None}
+            (RESULTS / f"{label.replace(' ', '-')}-startup.json").write_text(json.dumps(details, indent=2))
+            raise RuntimeError(f"{label}: startup incomplete: {details}")
         # Give the startup version worker time to finish, then request a normal close.
         time.sleep(10)
         user32 = ctypes.WinDLL("user32", use_last_error=True)
@@ -94,6 +105,9 @@ def smoke(executable, database, version, label):
 
 
 def main():
+    parser = argparse.ArgumentParser(description=__doc__)
+    parser.add_argument("--smoke-only", action="store_true", help="Diagnose an existing package without rerunning Qt Test")
+    args = parser.parse_args()
     if sys.platform != "win32" or os.environ.get("GITHUB_ACTIONS") != "true":
         raise RuntimeError("Run only in a disposable GitHub-hosted Windows job")
     RESULTS.mkdir(parents=True, exist_ok=True)
@@ -110,19 +124,20 @@ def main():
         fixtures.mkdir()
         for name in ("U_ASD_V5R1_STIG.zip", "U_ASD_V5R2_STIG.zip", "emassTRImport.xlsx", "xccdf_lol.xml"):
             shutil.copy2(ROOT / "tests" / name, fixtures)
-        test = runtime / "tst_stigqter.exe"
-        shutil.copy2(ROOT / ".build/windows/tests/release/tst_stigqter.exe", test)
-        environment = os.environ.copy()
-        environment["QT_QPA_PLATFORM"] = "windows"
-        environment["STIGQTER_LIVE_RELEASE_CHECK"] = "1"
-        try:
-            subprocess.run([str(test), "-o", f"{RESULTS / 'windows-tests.txt'},txt", "-o",
-                            f"{RESULTS / 'windows-tests.xml'},junitxml"], cwd=runtime,
-                           env=environment, timeout=900, check=True)
-        finally:
-            report = RESULTS / "windows-tests.txt"
-            if report.exists():
-                print(report.read_text(encoding="utf-8", errors="replace"), flush=True)
+        if not args.smoke_only:
+            test = runtime / "tst_stigqter.exe"
+            shutil.copy2(ROOT / ".build/windows/tests/release/tst_stigqter.exe", test)
+            environment = os.environ.copy()
+            environment["QT_QPA_PLATFORM"] = "windows"
+            environment["STIGQTER_LIVE_RELEASE_CHECK"] = "1"
+            try:
+                subprocess.run([str(test), "-o", f"{RESULTS / 'windows-tests.txt'},txt", "-o",
+                                f"{RESULTS / 'windows-tests.xml'},junitxml"], cwd=runtime,
+                               env=environment, timeout=900, check=True)
+            finally:
+                report = RESULTS / "windows-tests.txt"
+                if report.exists():
+                    print(report.read_text(encoding="utf-8", errors="replace"), flush=True)
 
         package = runtime / "portable"
         with zipfile.ZipFile(dist / f"STIGQter-{version}-win64.zip") as archive:
@@ -146,8 +161,9 @@ def main():
             if appdata.exists():
                 shutil.rmtree(appdata)
     (RESULTS / "windows-smoke.txt").write_text(
-        f"STIGQter {version}: package hashes and ZIP/EXE identity verified; native Qt suite passed; "
-        "portable and normal SQLite startup, live Pages TLS, and clean shutdown passed.\n")
+        f"STIGQter {version}: package hashes and ZIP/EXE identity verified; "
+        "portable and normal SQLite startup, startup version check, and clean shutdown passed.\n"
+        + ("Qt suite omitted for package diagnostics.\n" if args.smoke_only else "Native Qt suite and live Pages TLS passed.\n"))
 
 
 if __name__ == "__main__":

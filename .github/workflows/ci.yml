@@ -6,6 +6,11 @@ on:
   pull_request:
     branches: [main]
   workflow_dispatch:
+    inputs:
+      windows_smoke_run:
+        description: Existing CI run whose Windows package should receive startup diagnostics only
+        type: string
+        required: false
   workflow_call:
     inputs:
       ref:
@@ -27,6 +32,7 @@ env:
 jobs:
   linux:
     name: Linux build, tests and package
+    if: ${{ !inputs.windows_smoke_run }}
     runs-on: ubuntu-26.04
     timeout-minutes: 30
     steps:
@@ -58,6 +64,7 @@ jobs:
 
   windows:
     name: Static Windows Qt 6.12
+    if: ${{ !inputs.windows_smoke_run }}
     runs-on: ubuntu-26.04
     timeout-minutes: 180
     steps:
@@ -111,9 +118,33 @@ jobs:
           path: .build/results/
           if-no-files-found: error
 
+  windows-diagnostics:
+    name: Windows package diagnostics
+    if: ${{ github.event_name == 'workflow_dispatch' && inputs.windows_smoke_run != '' }}
+    runs-on: windows-2025
+    timeout-minutes: 10
+    permissions:
+      contents: read
+      actions: read
+    steps:
+      - uses: actions/checkout@v7
+      - uses: actions/download-artifact@v8
+        with:
+          name: windows-package
+          path: .build/dist
+          run-id: ${{ inputs.windows_smoke_run }}
+          github-token: ${{ github.token }}
+      - run: python scripts/ci/test-windows.py --smoke-only
+      - uses: actions/upload-artifact@v7
+        if: always()
+        with:
+          name: windows-diagnostics
+          path: .build/results/
+          if-no-files-found: error
+
   codeql:
     name: CodeQL
-    if: ${{ !inputs.ref && !startsWith(github.ref, 'refs/tags/') }}
+    if: ${{ !inputs.ref && !inputs.windows_smoke_run && !startsWith(github.ref, 'refs/tags/') }}
     runs-on: ubuntu-26.04
     timeout-minutes: 30
     permissions:
@@ -132,7 +163,7 @@ jobs:
 
   coverage:
     name: Coverage
-    if: ${{ !inputs.ref && (github.event_name == 'schedule' || github.event_name == 'workflow_dispatch') }}
+    if: ${{ !inputs.ref && !inputs.windows_smoke_run && (github.event_name == 'schedule' || github.event_name == 'workflow_dispatch') }}
     runs-on: ubuntu-26.04
     timeout-minutes: 40
     env:
