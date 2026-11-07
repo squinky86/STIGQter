@@ -29,7 +29,7 @@ jobs:
     runs-on: ubuntu-26.04
     timeout-minutes: 10
     steps:
-      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+      - uses: actions/checkout@v7
       - name: Install documentation and compatibility test dependencies
         run: |
           sudo apt-get update
@@ -41,7 +41,7 @@ jobs:
           python3 site/scripts/build_site.py --base-url "$SITE_BASE_URL"
           python3 site/scripts/check_site.py site/_site --base-url "$SITE_BASE_URL"
           python3 -m unittest discover -s site/scripts -p 'test_*.py'
-      - uses: actions/upload-pages-artifact@fc324d3547104276b827a68afc52ff2a11cc49c9 # v5.0.0
+      - uses: actions/upload-pages-artifact@v5
         with:
           path: site/_site
 
@@ -57,9 +57,9 @@ jobs:
       name: github-pages
       url: ${{ steps.deployment.outputs.page_url }}
     steps:
-      - uses: actions/configure-pages@45bfe0192ca1faeb007ade9deae92b16b8254a0d # v6.0.0
+      - uses: actions/configure-pages@v6
       - id: deployment
-        uses: actions/deploy-pages@368f82528645a54fb793d4d04e342629a3f51346 # v5.0.1
+        uses: actions/deploy-pages@v5
 
   monitor:
     needs: [build, deploy]
@@ -67,7 +67,7 @@ jobs:
     runs-on: ubuntu-26.04
     timeout-minutes: 5
     steps:
-      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+      - uses: actions/checkout@v7
       - run: python3 site/scripts/monitor.py
         env:
           SITE_BASE_URL: ${{ vars.SITE_BASE_URL || 'https://squinky86.github.io/STIGQter/' }}

@@ -1004,6 +1004,32 @@ void TestSTIGQter::test00_StableRelease()
     db.UpdateVariable(QStringLiteral("checkVersion"), QStringLiteral("false"));
 }
 
+void TestSTIGQter::test00_PublishedRelease()
+{
+    if (!qEnvironmentVariableIsSet("STIGQTER_LIVE_RELEASE_CHECK"))
+        QSKIP("Live Pages TLS check is enabled by the release runtime job");
+    // Exercise the default startup endpoint and the linked Qt TLS backend.
+    const auto response = Downloads::fetch(ReleaseMetadata::latestUrl());
+    QVERIFY2(response.ok, qPrintable(response.error));
+    ReleaseMetadata::StableRelease release;
+    QString error;
+    QVERIFY2(ReleaseMetadata::parse(response.data, release, error), qPrintable(error));
+
+    WorkerCheckVersion worker;
+    QSignalSpy statuses(&worker, &Worker::updateStatus);
+    QSignalSpy warnings(&worker, &Worker::ThrowWarning);
+    QSignalSpy finished(&worker, &Worker::finished);
+    DbManager db;
+    db.UpdateVariable(QStringLiteral("checkVersion"), QStringLiteral("true"));
+    worker.process();
+    db.UpdateVariable(QStringLiteral("checkVersion"), QStringLiteral("false"));
+    QCOMPARE(finished.size(), 1);
+    QVERIFY(!statuses.isEmpty());
+    QVERIFY2(!statuses.last().first().toString().contains(QStringLiteral("Unable to check")),
+             qPrintable(statuses.last().first().toString()));
+    QCOMPARE(warnings.size(), ReleaseMetadata::isNewer(release, VERSION) ? 1 : 0);
+}
+
 void TestSTIGQter::test00_HttpDownloads()
 {
     HttpFixture server;

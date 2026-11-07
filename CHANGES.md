@@ -9,6 +9,8 @@
 -   Preserve CKLB `not_a_finding` results when importing exported checklists
 -   Use normalized paths for Windows bulk checklist exports and surface nested writer failures
 -   Consolidate GitHub Actions on Ubuntu 26.04 and build static Windows packages with pinned Qt 6.12 sources
+-   Gate releases on native Windows integration tests, portable/user-database startup and shutdown, live Pages TLS checks, and Ubuntu package installation
+-   Use stable major-version GitHub Actions tags for workflow dependencies
 -   Migrate NIST 800-53 controls to Revision 5 (RMF)
 -   Add support for cklb files
 -   Complete the STIG editor: edit, add, and delete checks and CCI mappings, and export a STIG to a re-importable XCCDF zip

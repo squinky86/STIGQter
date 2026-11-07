@@ -40,6 +40,7 @@ private Q_SLOTS:
     void test00_Classification();
     void test00_LocalFileDownload();
     void test00_StableRelease();
+    void test00_PublishedRelease();
     void test00_HttpDownloads();
     void test00_UntrustedTls();
     void test00_ContentCatalog();

@@ -20,9 +20,17 @@ def is_allowed(d):
     dl = d.lower()
     return dl in allowed_lower or dl.startswith('api-ms-win-')
 pe = pefile.PE(sys.argv[1], fast_load=True)
+if pe.FILE_HEADER.Machine != 0x8664 or pe.OPTIONAL_HEADER.Magic != 0x20b:
+    sys.exit('ERROR: expected a Windows x64 PE32+ executable')
+if pe.FILE_HEADER.Characteristics & 0x2000:
+    sys.exit('ERROR: expected an executable, not a DLL')
 pe.parse_data_directories(directories=[
-    pefile.DIRECTORY_ENTRY['IMAGE_DIRECTORY_ENTRY_IMPORT']])
-imports = sorted({e.dll.decode() for e in pe.DIRECTORY_ENTRY_IMPORT})
+    pefile.DIRECTORY_ENTRY['IMAGE_DIRECTORY_ENTRY_IMPORT'],
+    pefile.DIRECTORY_ENTRY['IMAGE_DIRECTORY_ENTRY_DELAY_IMPORT']])
+imports = sorted({e.dll.decode() for directory in ('DIRECTORY_ENTRY_IMPORT', 'DIRECTORY_ENTRY_DELAY_IMPORT')
+                  for e in getattr(pe, directory, [])})
+if not imports:
+    sys.exit('ERROR: executable has no Windows imports')
 print('Imported DLLs:')
 for d in imports:
     print(f'  {d}')
