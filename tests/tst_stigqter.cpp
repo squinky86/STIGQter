@@ -59,9 +59,9 @@ TestSTIGQter::TestSTIGQter(QObject *parent) : QObject(parent)
 {
 }
 
-void TestSTIGQter::procEvents()
+void TestSTIGQter::procEvents(int timeout)
 {
-    QTRY_VERIFY_WITH_TIMEOUT(w->isProcessingEnabled(), 120000);
+    QTRY_VERIFY_WITH_TIMEOUT(w->isProcessingEnabled(), timeout);
     QApplication::processEvents();
 }
 
@@ -273,7 +273,9 @@ void TestSTIGQter::test03_IndexSTIGs()
     }
 
     QMetaObject::invokeMethod(w, "DownloadSTIGs", Qt::DirectConnection);
-    procEvents();
+    // Four complete guides exceed two minutes on hosted Windows disks.
+    // Keep this below Qt Test's five-minute per-function watchdog.
+    procEvents(240000);
 
     DbManager db;
     QCOMPARE(db.GetSTIGs().count(), 4);

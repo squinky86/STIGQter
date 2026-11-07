@@ -33,7 +33,7 @@ public:
 private:
     STIGQter *w = nullptr;
     QString _testDataPath;
-    void procEvents();
+    void procEvents(int timeout = 120000);
 
 private Q_SLOTS:
     void initTestCase();
