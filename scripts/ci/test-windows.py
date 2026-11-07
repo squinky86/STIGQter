@@ -2,6 +2,7 @@
 """Run the static Qt suite and the shipped executable on a disposable Windows runner."""
 import ctypes
 from ctypes import wintypes
+from contextlib import closing
 import hashlib
 import os
 from pathlib import Path
@@ -62,7 +63,7 @@ def smoke(executable, database, version, label):
             window = main_window(process.pid, f"STIGQter {version}")
             if database.exists():
                 try:
-                    with sqlite3.connect(database, timeout=1) as db:
+                    with closing(sqlite3.connect(database, timeout=1)) as db:
                         ready = db.execute("SELECT COUNT(*) FROM CCI").fetchone()[0] > 0
                 except sqlite3.Error:
                     pass
@@ -79,7 +80,7 @@ def smoke(executable, database, version, label):
             raise ctypes.WinError(ctypes.get_last_error())
         if process.wait(timeout=60) != 0:
             raise RuntimeError(f"{label}: nonzero shutdown status ({process.returncode})")
-        with sqlite3.connect(database) as db:
+        with closing(sqlite3.connect(database)) as db:
             if db.execute("PRAGMA integrity_check").fetchone()[0] != "ok":
                 raise RuntimeError(f"{label}: SQLite integrity check failed")
             errors = db.execute("SELECT message FROM Log WHERE message LIKE 'Version check unavailable:%'").fetchall()
