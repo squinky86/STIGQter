@@ -14,6 +14,32 @@ from render_docs import render as render_docs
 ROOT = Path(__file__).resolve().parents[1]
 
 
+def release_downloads(stable):
+    version = stable["version"]
+    assets = {asset["name"]: asset["url"] for asset in stable.get("assets", [])}
+    groups = (
+        ("Windows x64", ((f"STIGQter-{version}-win64.zip", "Portable ZIP"),
+                         (f"STIGQter-{version}-win64.exe", "Standalone EXE"),
+                         ("SHA256SUMS-windows.txt", "SHA-256 checksums"))),
+        ("Other downloads", ((f"STIGQter-{version}-ubuntu26.04-amd64.deb", "Ubuntu 26.04 amd64"),
+                            (f"STIGQter-{version}-source.tar.gz", "Source archive"))),
+    )
+    paragraphs = []
+    for label, packages in groups:
+        links = []
+        for name, title in packages:
+            if name not in assets:
+                continue
+            expected = f"https://github.com/squinky86/STIGQter/releases/download/{version}/{name}"
+            if assets[name] != expected:
+                raise ValueError(f"Unexpected download URL for {name}")
+            links.append(f'<a href="{escape(expected)}">{title}</a>')
+        if links:
+            paragraphs.append(f'<p>{label}: ' + ' · '.join(links) + '.</p>')
+    paragraphs.append(f'<p><a href="{escape(stable["url"])}">Release notes and all downloads</a>.</p>')
+    return '\n'.join(paragraphs)
+
+
 def build(output, base_url):
     output = output.resolve()
     if output != ROOT / "_site" and output.exists():
@@ -66,6 +92,7 @@ def build(output, base_url):
     index = (output / "index.html").read_text()
     index = re.sub(r'(<strong>Current Version:</strong>).*?</p>',
                    lambda _: f'<strong>Current Version:</strong> <a href="{escape(stable["url"])}">{stable["version"]}</a></p>', index)
+    index = index.replace('<!-- release-downloads -->', release_downloads(stable))
     index = index.replace("</head>", f'<link rel="canonical" href="{escape(base_url)}">\n</head>')
     (output / "index.html").write_text(index)
     render_docs(ROOT.parent, output, base_url)

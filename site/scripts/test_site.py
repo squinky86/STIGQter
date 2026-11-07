@@ -3,10 +3,27 @@ import tempfile
 import unittest
 
 from check_site import check
+from build_site import release_downloads
 from render_docs import render
 
 
 class SiteTests(unittest.TestCase):
+    def test_download_links_follow_published_metadata(self):
+        for version in ('2.0.0', '2.1.0'):
+            name = f'STIGQter-{version}-win64.zip'
+            url = f'https://github.com/squinky86/STIGQter/releases/download/{version}/{name}'
+            stable = {'version': version, 'url': f'https://github.com/squinky86/STIGQter/releases/tag/{version}',
+                      'assets': [{'name': name, 'url': url}]}
+            page = release_downloads(stable)
+            self.assertIn(f'href="{url}"', page)
+            self.assertNotIn('Standalone EXE', page)
+            self.assertNotIn('actions/workflows', page)
+            stable['assets'][0]['url'] = 'https://example.org/unreviewed.exe'
+            with self.assertRaises(ValueError):
+                release_downloads(stable)
+        self.assertIn('Release notes and all downloads', release_downloads(
+            {'version': '1.2.7', 'url': 'https://github.com/squinky86/STIGQter/releases/tag/1.2.7', 'assets': []}))
+
     def test_documentation_uses_current_sources_and_resolves_repository_links(self):
         with tempfile.TemporaryDirectory() as directory:
             project = Path(directory)

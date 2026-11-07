@@ -6,7 +6,7 @@ This is the review record for the local overhaul, based on application commit `8
 
 - Shared qmake source/resource configuration; production UI scenario code moved to tests; persistence, classification, archive handling, and checklist parsing/writing split behind their existing interfaces.
 - Bounded, TLS-verified downloads; static stable-release and exact STIG catalog contracts; verified catalog cache and temporary quarterly-archive reuse within each import batch; explicit failure reporting and manual import fallback.
-- Latest-stable checks use `https://squinky86.github.io/STIGQter/metadata/v1/releases.json`. This is the corrected endpoint in the existing STIGQter repository. Metadata still advertises the actually published stable 1.2.7; source version 2.0.0 remains unreleased. Older published versions never trigger a downgrade prompt.
+- Latest-stable checks use `https://squinky86.github.io/STIGQter/metadata/v1/releases.json`. This is the corrected endpoint in the existing STIGQter repository. Stable metadata is generated from verified published packages; the 2.0.0 release record appears below. Older published versions never trigger a downgrade prompt.
 - Worker/thread/SQL cleanup; XCCDF imports moved off the GUI thread with transactional updates and selection preservation; remapping transactions; atomic project/checklist writes; indexed checklist upgrades.
 - Two application workflows (CI and draft release), shared build scripts, explicit Ubuntu 26.04 runners, pinned static Qt 6.12 Windows sources, and Pages build/deployment/monitoring alongside them in the same repository.
 - Static historical website, immutable metadata/catalog generation, current public DISA content inventory, repaired legacy PHP contracts, rollback snapshots, and operator handoff.
@@ -71,17 +71,28 @@ Pages uses its project URL with HTTPS and no custom domain yet. No stable deskto
 
 The site is now maintained under `site/` in this repository. Its Pages workflow builds the historical public library and renders the user guide, README, release notes, security policy, and maintenance documentation from their Markdown sources. The link crawl handles the `/STIGQter/` project prefix and the custom-domain root. Desktop release/content checks target `https://squinky86.github.io/STIGQter/metadata/v1/`.
 
-The separate-repository deployment described in the original publication was an incorrect interpretation of the intended layout. The local source was preserved before the maintainer proposed deleting that repository. No separate checkout or repository is needed to build or maintain the replacement site. Domain/DNS and stable-release gates below still apply.
+The separate-repository deployment described in the original publication was an incorrect interpretation of the intended layout. The local source was preserved before the maintainer proposed deleting that repository. No separate checkout or repository is needed to build or maintain the replacement site. Domain/DNS gates below still apply. Desktop publication is recorded in the following release section.
 
 Local consolidation checks pass: eight website tests, the full link crawl over 20,184 HTML pages, and generated documentation previews at 390×844 and 1440×1000. The public artifact contains 20,207 files and remains about 74 MiB. PHP, caches, backups, server configuration, and assessment files remain excluded. The Pages workflow uses Ubuntu 26.04 and runs the live site/metadata monitor after deployment. The application and test targets rebuild successfully, and the isolated desktop suite passes all 30 tests with no failures or skips in 181.805 seconds. The successful standalone test run followed an interrupted combined build/test invocation.
 
-## Remaining release and domain gates
+## STIGQter 2.0.0 release — 7 November 2026
 
-These are remaining acceptance/publication steps, not claims of completed validation:
+[Release 2.0.0](https://github.com/squinky86/STIGQter/releases/tag/2.0.0) is published from annotated tag `2.0.0`, commit `7c74a6d8067a684b588b87d6ee9a900b3177b6b4`. The [tag-triggered release workflow](https://github.com/squinky86/STIGQter/actions/runs/42376432911) passed tag/VERSION validation, Linux build/tests/package installation and removal, static Windows builds and PE checks, native Windows validation, and draft creation with all six attachments. The [main CI run for that commit](https://github.com/squinky86/STIGQter/actions/runs/42376225914) also passed, including CodeQL. The [coverage job using stable action tags](https://github.com/squinky86/STIGQter/actions/runs/42373749870/job/128407017174) passed Sonar and Coveralls publication.
 
-1. Review the published Pages preview and the application artifacts before shipping the new desktop client. The new update/content endpoints are live; offline/manual fallbacks remain available.
-2. Configure branch protection if desired: `main` currently has no required-check rule. The replacement checks are Linux build/tests/package, static Windows Qt 6.12, and CodeQL; weekly/manual coverage publishes successfully using the existing Sonar credential.
-3. Perform native Windows startup, SQLite, TLS, import/export/report, shutdown, and compact/large-window acceptance on advertised Windows versions. Cross-compilation and PE inspection do not prove those behaviors. No Windows runtime or Wine is available here; NSIS installation is not part of the portable release pipeline.
-4. Install/uninstall the final `.deb` in a disposable Ubuntu 26.04 environment and perform interactive Linux acceptance. Local package construction, dependency simulation, extracted-binary startup, and offscreen tests are narrower evidence.
-5. Inventory and back up the live website configuration/DNS/TLS/cron state, assign primary and backup operators, validate actual supported released clients against the legacy bridge, then have the website publisher carry out the reviewed cutover. Local PHP contract tests do not replace live-client acceptance.
-6. Publish reviewed release assets first, then the stable metadata pointer. Retain bridge hosting for the announced support window and one quarterly cycle; retirement is a separate support decision. Keep previous complete metadata/artifacts and configuration backups for rollback.
+The tagged native Windows run passed **31 tests, zero failures/skips** on Windows Server 2025 with static Qt 6.12.0. This includes checklist import/export, reports, classification, SQLite, untrusted TLS rejection, and a live check of the default GitHub Pages release URL. The shipped EXE then passed visible-window startup, database initialization, startup version checking, and clean shutdown with both portable and normal user databases, with only Windows system directories on PATH. Windows testing exposed retained temporary-file handles and an insufficient test import timeout; the fixtures now use temporary directories and the full four-guide import has a bounded four-minute allowance. Native window detection accepts Qt's application-name suffix.
+
+The release EXE is x64 PE32+, imports only Windows system DLLs (including delayed imports), enables ASLR/DEP/high-entropy VA, and retains a zero PE build timestamp after stripping. The ZIP contains the exact same executable plus LICENSE, README, CHANGES, and the pinned dependency source manifest.
+
+| Windows asset | Bytes | SHA-256 |
+| --- | ---: | --- |
+| `STIGQter-2.0.0-win64.exe` | 31,574,016 | `db5a2a944d20265838303faab23026ce391ca1e548cd929f6a5fe48da067dcca` |
+| `STIGQter-2.0.0-win64.zip` | 12,548,918 | `33f537b0742a4333edccee0bac6da434ade63d4489b69e848ac79eac057e72a9` |
+
+All six public assets were downloaded anonymously and matched GitHub's SHA-256 digests, the checked checksum files, and the tagged workflow artifacts. The source archive's VERSION, update worker/URL, dependency manifest, and CI configuration match the tag. Stable metadata was generated from the published release API response after these checks. The site generates its download links from that same manifest, and nine site tests pass, including version/link consistency and rejection of unrelated package URLs.
+
+## Remaining platform and domain acceptance
+
+- Complete maintainer desktop acceptance on the intended Windows client versions and interactive Linux systems. The native automated evidence above is from Windows Server 2025; the Windows package is portable and does not include an NSIS installer.
+- Configure branch protection if desired, including the native Windows runtime job alongside Linux build/tests/package, static Windows Qt, and CodeQL.
+- Inventory and back up live website configuration, DNS, TLS, and cron state; assign primary and backup operators; validate supported legacy clients against the compatibility bridge before any domain cutover or retirement.
+- Retain previous releases, complete metadata/catalog snapshots, and bridge archives for rollback. Legacy endpoint retirement remains a separate support decision.

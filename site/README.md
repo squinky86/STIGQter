@@ -54,6 +54,8 @@ The historical HTML has separate provenance from the current downloadable catalo
 
 After reviewed desktop packages are public, run `python3 site/scripts/release_metadata.py`. It reads GitHub's latest published release, rejects drafts/prereleases or missing packages/digests, and does not copy the development `VERSION` into stable metadata. Use `--input` with a saved API response for offline reproduction. Verify anonymous downloads, review the diff in `site/web/metadata/v1/releases.json`, then publish through the normal main-branch workflow.
 
+The site builder renders the home page's Windows, Ubuntu, source, and checksum links from that same published manifest. It only lists assets that exist and rejects package URLs that do not belong to the advertised release.
+
 ## Custom domain and legacy compatibility
 
 The Pages preview can be tested before changing DNS. The existing production host and its PHP routes remain separate from static Pages hosting. The supplied `site/legacy/` files and PHP endpoints are compatibility deployment inputs, not Pages content.
