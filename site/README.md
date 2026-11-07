@@ -32,7 +32,7 @@ The default URL is `https://squinky86.github.io/STIGQter/`. The desktop's `Relea
 
 ## Content refresh
 
-Current metadata describes published stable **1.2.7**; **2.0.0 remains unreleased**. The reviewed October 2026 public DISA bundle contains 399 exact STIG identities and 375,827,141 bytes, SHA-256 `ea581eb2d5c4a210440852b67ea4dd9564fffdf57c8c94aec971047fe0c01d1d`. The preceding July manifest is retained in `site/metadata-history/2026-07-content.json`; older immutable catalogs remain available for cached clients and rollback.
+Stable metadata describes the latest verified, published GitHub release; it is never inferred from the development `VERSION` file. The reviewed October 2026 public DISA bundle contains 399 exact STIG identities and 375,827,141 bytes, SHA-256 `ea581eb2d5c4a210440852b67ea4dd9564fffdf57c8c94aec971047fe0c01d1d`. The preceding July manifest is retained in `site/metadata-history/2026-07-content.json`; older immutable catalogs remain available for cached clients and rollback.
 
 Download only the public quarterly archive using normal TLS verification. Do not use user databases, restricted content, assessment exports, or server backups as publication inputs.
 

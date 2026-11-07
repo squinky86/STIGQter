@@ -8,7 +8,7 @@ STIG checks are mapped to CCIs and rolled up against the NIST SP 800-53 Revision
 
 Download published versions from [GitHub Releases](https://github.com/squinky86/STIGQter/releases/latest). The version in this checkout may still be unreleased. CI artifacts are development builds and expire; they are not the stable download channel.
 
-The release workflow prepares a portable Windows x64 executable/ZIP using static Qt 6.12, an Ubuntu 26.04 amd64 `.deb`, and a source archive. Native Windows smoke testing and package installation checks are required before publishing a release. Other Debian/Ubuntu versions and the existing Gentoo/NSIS packaging need their own validation; the Ubuntu package does not establish compatibility with Kali or older Debian releases.
+The release workflow prepares a portable Windows x64 executable/ZIP using static Qt 6.12, an Ubuntu 26.04 amd64 `.deb`, and a source archive. CI runs native Windows integration and portable-startup tests, checks live Pages TLS, and installs/removes the Ubuntu package before preparing a release draft. Other Debian/Ubuntu versions and the existing Gentoo/NSIS packaging need their own validation; the Ubuntu package does not establish compatibility with Kali or older Debian releases.
 
 The source has the following dependencies (with minimum version numbers):
 
@@ -18,7 +18,7 @@ The source has the following dependencies (with minimum version numbers):
 
 Build with `qmake6 STIGQter.pro` and `make`, or use `bash scripts/ci/build-linux.sh` for separate build directories. On Ubuntu 26.04, `bash scripts/ci/setup.sh linux` installs development dependencies. Build the tests through the same script, then run `bash scripts/ci/test.sh`; it provides disposable fixture/output directories and isolated settings. Do not run tests beside a portable `STIGQter.db`.
 
-Update checks read `https://squinky86.github.io/STIGQter/metadata/v1/releases.json`. Only a newer published stable release produces an update prompt. Quarterly downloads and automatic missing-STIG lookup use the versioned catalog at the same Pages site. Failed checks do not prevent offline work; manual ZIP imports and custom quarterly URLs remain supported. Automatic downloads verify the archive size and SHA-256. Update checks can still be disabled in Options. The [Pages preview](https://squinky86.github.io/STIGQter/) and metadata are live; stable metadata still advertises the published 1.2.7 release.
+Update checks read `https://squinky86.github.io/STIGQter/metadata/v1/releases.json`. Only a newer published stable release produces an update prompt. Quarterly downloads and automatic missing-STIG lookup use the versioned catalog at the same Pages site. Failed checks do not prevent offline work; manual ZIP imports and custom quarterly URLs remain supported. Automatic downloads verify the archive size and SHA-256. Update checks can still be disabled in Options. The [Pages site](https://squinky86.github.io/STIGQter/) and metadata are live. The stable pointer is updated only after the release packages are published and their public downloads are verified.
 
 The working database remains in the existing application-data directory, or beside the executable when using a portable database. No data-location or schema-version change is part of this overhaul. Back up `.stigqter` snapshots before upgrading.
 

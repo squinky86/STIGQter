@@ -1,6 +1,6 @@
 # Maintenance and release handoff
 
-The overhaul is published on `main`, now the application repository's default branch. The website lives in `site/` in this same repository; its Pages workflow publishes the [GitHub Pages preview](https://squinky86.github.io/STIGQter/) and generates the documentation from the Markdown sources. Keep `VERSION` at 2.0.0 until the desktop release decision; published stable metadata remains 1.2.7. Domain cutover, legacy-host changes, and a stable desktop release remain separate acceptance steps.
+The overhaul is published on `main`, now the application repository's default branch. The website lives in `site/` in this same repository; its Pages workflow publishes the [GitHub Pages preview](https://squinky86.github.io/STIGQter/) and generates the documentation from the Markdown sources. Release tags must match `VERSION`; stable metadata is generated from published GitHub releases after package verification. Domain cutover, legacy-host changes, and a stable desktop release remain separate acceptance steps.
 
 ## Build and verify
 
