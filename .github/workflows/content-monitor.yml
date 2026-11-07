@@ -1,0 +1,42 @@
+name: STIG content monitor
+
+on:
+  schedule:
+    - cron: '47 5 * * *'
+  workflow_dispatch:
+  push:
+    branches: [main]
+    paths:
+      - 'site/web/metadata/v1/content.json'
+      - 'site/scripts/content_monitor.py'
+      - '.github/workflows/content-monitor.yml'
+
+permissions:
+  contents: read
+
+# Serialize scheduled, manual, and metadata-update runs to avoid duplicate issues.
+concurrency:
+  group: stig-content-monitor
+  cancel-in-progress: false
+
+jobs:
+  check:
+    if: github.repository == 'squinky86/STIGQter' && github.ref == 'refs/heads/main'
+    runs-on: ubuntu-26.04
+    timeout-minutes: 15
+    permissions:
+      contents: read
+      issues: write
+    steps:
+      - uses: actions/checkout@v7
+        with:
+          persist-credentials: false
+      - name: Discover and hash DISA's public compilation
+        id: content
+        timeout-minutes: 12
+        run: python3 site/scripts/content_monitor.py --report "$RUNNER_TEMP/stig-content-report.json"
+      - name: Record content updates or monitoring failures
+        if: always() && steps.content.outcome != 'skipped'
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: python3 site/scripts/content_monitor.py --notify-report "$RUNNER_TEMP/stig-content-report.json"

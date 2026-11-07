@@ -35,18 +35,8 @@ def main():
     if age.days > 120:
         raise ValueError(f"Content metadata has not been reviewed for {age.days} days")
     fetch(manifest["quarterly"]["url"], "HEAD")
-    # A new quarterly file is a review signal, never an automatic publication.
-    now = datetime.now(timezone.utc)
-    quarter = ("January", "April", "July", "October")[(now.month - 1) // 3]
-    candidate = f"https://dl.dod.cyber.mil/wp-content/uploads/stigs/zip/U_SRG-STIG_Library_{quarter}_{now.year}.zip"
-    if candidate != manifest["quarterly"]["url"]:
-        from urllib.error import HTTPError
-        try:
-            fetch(candidate, "HEAD")
-        except HTTPError as error:
-            if error.code != 404: raise
-        else:
-            raise ValueError(f"A newer quarterly bundle is available for review: {candidate}")
+    # Compilation discovery and issue tracking run independently each day in
+    # content_monitor.py, so a site-health failure cannot mask a DISA update.
     if os.environ.get("CHECK_LEGACY") == "true":
         old = fetch("https://www.stigqter.com/update.php", user_agent="STIGQter/0.0.0")
         current = fetch("https://www.stigqter.com/update.php", user_agent="STIGQter/" + release["stable"]["version"])
